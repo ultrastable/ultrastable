@@ -18,13 +18,9 @@ export const REGISTRY = {
     scopes: ['openid', 'email', 'https://www.googleapis.com/auth/drive.file', 'https://www.googleapis.com/auth/calendar.events'], extra: { access_type: 'offline', prompt: 'consent' }, env: 'OAUTH_GOOGLE' },
   microsoft: { title: 'Microsoft', type: 'oauth', authorize: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize', token: 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
     scopes: ['offline_access', 'openid', 'email', 'User.Read', 'Files.ReadWrite', 'Calendars.ReadWrite'], extra: {}, env: 'OAUTH_MICROSOFT' },
-<<<<<<< HEAD
-  buffer: { title: 'Buffer', type: 'oauth', authorize: 'https://buffer.com/oauth2/authorize', token: 'https://api.bufferapp.com/1/oauth2/token.json', scopes: [], extra: {}, env: 'OAUTH_BUFFER' },
+  buffer: { title: 'Buffer', type: 'oauth', authorize: 'https://auth.buffer.com/auth', token: 'https://auth.buffer.com/token', scopes: ['posts:read', 'posts:write', 'account:read', 'offline_access'], extra: { prompt: 'consent' }, env: 'OAUTH_BUFFER', dcr: 'https://auth.buffer.com/reg' },  // SOCIAL-MODULE-1: Buffer's own OAuth 2 (authorization code with PKCE, public client: no secret). The app registers itself at Buffer's registration endpoint (RFC 7591), so no owner step exists
   linkedin: { title: 'LinkedIn', type: 'oauth', authorize: 'https://www.linkedin.com/oauth/v2/authorization', token: 'https://www.linkedin.com/oauth/v2/accessToken',
     scopes: ['openid', 'profile', 'w_member_social'], extra: {}, env: 'OAUTH_LINKEDIN' },  // THOUGHT-1: posts white papers on the owner's own LinkedIn; tokens last 60 days with no refresh, so getToken reports expiry
-=======
-  buffer: { title: 'Buffer', type: 'oauth', authorize: 'https://auth.buffer.com/auth', token: 'https://auth.buffer.com/token', scopes: ['posts:read', 'posts:write', 'account:read', 'offline_access'], extra: { prompt: 'consent' }, env: 'OAUTH_BUFFER', dcr: 'https://auth.buffer.com/reg' },  // SOCIAL-MODULE-1: Buffer's own OAuth 2 (authorization code with PKCE, public client: no secret). The app registers itself at Buffer's registration endpoint (RFC 7591), so no owner step exists
->>>>>>> 87304828d73b1922fa1e705a00e82fa266d6bd1f
   bluesky: { title: 'Bluesky', type: 'social', connect: '/connect/bluesky' },  // REACH-1: atproto OAuth in social.js
   mastodon: { title: 'Mastodon', type: 'social', connect: '/connect/mastodon' },  // REACH-1: app registration + OAuth in social.js
   github: { title: 'GitHub', type: 'github-app', connect: '/connect/github' },  // the GitHub App manifest flow in routes.js

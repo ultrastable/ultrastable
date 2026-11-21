@@ -196,12 +196,8 @@ export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), t
     try {
       if (ch === 'buffer') {
         const failed = rows.filter(r => r.id === p.id && r.channel.startsWith('buffer:') && r.status === 'failed').map(r => r.channel.slice(7));
-<<<<<<< HEAD
-        for (const [svc, id] of Object.entries(await postBuffer(m.access, long, f, short, failed))) await rec('buffer:' + svc, id, /^failed/.test(id) ? 'failed' : 'queued');  // queued until reconcileBuffer reads the public post back
-=======
         const bt = await getToken(db, env, tenant, 'oauth:buffer', { fetch: f, now }); if (!bt.ok) throw new Error('buffer: ' + bt.error);  // the access token lives about an hour; it is renewed here
-        for (const [svc, id] of Object.entries(await postBuffer(bt.token, p.long || p.text, f, p.text, failed))) await rec('buffer:' + svc, id, /^failed/.test(id) ? 'failed' : 'queued');  // queued until reconcileBuffer reads the public post back
->>>>>>> 87304828d73b1922fa1e705a00e82fa266d6bd1f
+        for (const [svc, id] of Object.entries(await postBuffer(bt.token, long, f, short, failed))) await rec('buffer:' + svc, id, /^failed/.test(id) ? 'failed' : 'queued');  // queued until reconcileBuffer reads the public post back
         continue;
       }
       if (ch === 'relay') {
