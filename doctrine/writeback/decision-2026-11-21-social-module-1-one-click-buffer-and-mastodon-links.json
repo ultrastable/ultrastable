@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-21-social-module-1-one-click-buffer-and-mastodon-links",
+  "kind": "decision",
+  "date": "2026-11-21",
+  "title": "SOCIAL-MODULE-1: one-click Buffer and Mastodon links",
+  "body": "Buffer registers its own OAuth app at its registration endpoint and uses authorization code with PKCE as a public client, so the connect link needs no key from a person. Mastodon uses one link with the instance in it. Never-linked channels appear in the owner-acts list.",
+  "probe": "grep:seed/worker/src/auth/connectors.js::dynamicClient",
+  "session": "session_0156nqDvG8EF1bx4LXrvu9rj"
+ },
+ "kind": "decision",
+ "title": "SOCIAL-MODULE-1: one-click Buffer and Mastodon links",
+ "session": "session_0156nqDvG8EF1bx4LXrvu9rj"
+}
