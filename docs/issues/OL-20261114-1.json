@@ -1,7 +1,7 @@
 {
   "id": "OL-20261114-1",
   "title": "OL-20261114-1: MCP registry publish waits on GitHub Actions billing",
-  "body": "**Owner:** marketing-manager\n**Trigger:** Actions jobs run again, or Q-PROMO-mcp-registry taken\n**Done check:** grep:ops/promotion/outcomes.jsonl::mcp-registry\n**Status:** open\n\nmcp-registry.yml publishes via GitHub OIDC; every Actions job is refused for billing (existing NEEDS-YOU card). Second route: DNS-key login for io.ultrastable from the tick Worker (Q-PROMO-mcp-registry).",
+  "body": "**Owner:** marketing-manager\n**Trigger:** Actions jobs run again, or Q-PROMO-mcp-registry taken\n**Done check:** grep:ops/promotion/outcomes.jsonl::mcp-registry\n**Status:** closed\n\nmcp-registry.yml publishes via GitHub OIDC; every Actions job is refused for billing (existing NEEDS-YOU card). Second route: DNS-key login for io.ultrastable from the tick Worker (Q-PROMO-mcp-registry).\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 169.6 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
   "labels": [
     "role:marketing-manager",
     "open-loop"
