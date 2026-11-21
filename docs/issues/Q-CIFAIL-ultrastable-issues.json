@@ -1,0 +1,11 @@
+{
+  "id": "Q-CIFAIL-ultrastable-issues",
+  "title": "Q-CIFAIL-ultrastable-issues: issues is failing in ultrastable/ultrastable",
+  "body": "**Owner:** staff\n**Trigger:** every executor run and every ciwatch run\n**Done check:** cmd:python3 -m foundation ciwatch --probe ultrastable/ultrastable issues\n**Status:** open\n\nCIWATCH-1: workflow `issues` in ultrastable/ultrastable is red on its default branch (failure, 2026-11-21T10:16:02Z): https://github.com/ultrastable/ultrastable/actions/runs/44893515287\n\nFix the root cause in the repository where the defect lives; do not skip or weaken the check. Failed log tail:\n\n```\nsweep\tTriage\t\ufeff2026-11-21T10:19:12.9844789Z ##[group]Run bash scripts/triage.sh\nsweep\tTriage\t2026-11-21T10:19:12.9845120Z ^[[36;1mbash scripts/triage.sh^[[0m\nsweep\tTriage\t2026-11-21T10:19:12.9872574Z shell: /usr/bin/bash -e {0}\nsweep\tTriage\t2026-11-21T10:19:12.9872920Z env:\nsweep\tTriage\t2026-11-21T10:19:12.9874751Z   GH_TOKEN: ***\nsweep\tTriage\t2026-11-21T10:19:12.9875004Z ##[endgroup]\nsweep\tTriage\t2026-11-21T10:19:45.6933488Z #849 triaged sla:set,agent-ready\nsweep\tTriage\t2026-11-21T10:19:45.6960106Z safe-gh: 1 gh call(s) failed\nsweep\tTriage\t2026-11-21T10:19:45.6981801Z ##[error]Process completed with exit code 1.\n```",
+  "labels": [
+    "role:staff",
+    "ci-failure"
+  ],
+  "milestone": "Now",
+  "workstream": "Reliability"
+}
