@@ -4,6 +4,7 @@
 
   python3 -m foundation modelwatch --check              fails when source names a model the catalog measured as retired
   python3 -m foundation modelwatch --status             every referenced id: available, retired, refused or unmeasured
+  python3 -m foundation modelwatch --observed [--apply] retirements the executor met (ops/models-observed.jsonl) into the catalog, source rewritten
   python3 -m foundation modelwatch --refresh [--apply]  run each referenced id once on Workers AI (CLOUDFLARE_API_TOKEN and
                                                         CLOUDFLARE_ACCOUNT_ID), record 410 as retired with a successor and 403 as
                                                         refused; --apply also rewrites retired ids in source to their successor
@@ -116,6 +117,26 @@ def refresh(root=REPO, apply=False, env=None, run=run_once, now=None) -> dict:
     return {"measured": measured, "changed": changed, "rewritten": rewritten}
 
 
+def observed(root=REPO, apply=False) -> dict:
+    """MODEL-HEAL-1: 410s the executor met (ops/models-observed.jsonl, written by foundation/agents.heal) become catalog retirements with their
+    successor, and --apply rewrites source to the successor. This is the refresh route that needs no Workers AI credential on its host."""
+    p = Path(root) / "ops/models-observed.jsonl"
+    rows = [json.loads(x) for x in p.read_text(encoding="utf-8").splitlines() if x.strip()] if p.is_file() else []
+    d, changed = load(root), []
+    for r in rows:
+        m = r.get("model")
+        if r.get("status") == 410 and m and m not in d["retired"]:
+            d["available"] = [a for a in d["available"] if a != m]
+            succ = r.get("successor") if r.get("successor") in d["available"] else successor(m, d) if d["available"] else ""
+            d["retired"][m] = {"evidence": f"HTTP 410 seen by the executor at {r.get('at')}", "successor": succ}
+            changed.append([m, succ])
+    rewritten = []
+    if apply and changed:
+        (Path(root) / DATA).write_text(json.dumps(d, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+        rewritten = rewrite(root, d)
+    return {"observed": len(rows), "changed": changed, "rewritten": rewritten}
+
+
 def rewrite(root, d) -> list[str]:
     out = []
     for rel, p in files(root, d):
@@ -131,6 +152,9 @@ def rewrite(root, d) -> list[str]:
 
 def main(argv=None) -> int:
     argv = sys.argv[1:] if argv is None else argv
+    if "--observed" in argv:
+        print(json.dumps(observed(apply="--apply" in argv)))
+        return 0
     if "--refresh" in argv:
         print(json.dumps(refresh(apply="--apply" in argv)))
         return 0

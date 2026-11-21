@@ -4,6 +4,7 @@
   python3 -m foundation criticality --check            the declaration and the mantra are intact (CI)
   python3 -m foundation criticality --gate             print the queue the executor may take under the current k
   python3 -m foundation criticality --origin <sha>     print who originated a commit: executor, self-agent, outside or unknown
+  python3 -m foundation criticality --deploy-origin <sha> [--json]   origin of what a deploy carried live (DEPLOY-ORIGIN-2)
 
 MANTRA = "Ship. Verify. Spend less than it earns. Feed the next loop."  Each clause is a check, not a sentence:
   Ship                         at least one deploy recorded in the window (ops/deploys.jsonl)
@@ -80,7 +81,10 @@ def origin_of(text: str | None, c: dict | None = None) -> str:
         return "unknown"
     sr = (c or cfg()).get("self_reference", {})
     mk = sr.get("markers", {})
-    if mk.get("executor") and mk["executor"] in text:
+    if mk.get("executor_re"):  # ORIGIN-MARKER-1: the executor writes the marker at the start of a line with its run time; prose that mentions it is not a run
+        if re.search(mk["executor_re"], text):
+            return "executor"
+    elif mk.get("executor") and mk["executor"] in text:
         return "executor"
     m = re.search(mk.get("handoff_agent", r"(?m)^agent:\s*(\S+)"), text)
     if m and m.group(1).lower().startswith(tuple(sr.get("self_agents_prefixes", []))):
@@ -96,8 +100,57 @@ def commit_message(root, sha: str) -> str | None:
     return r.stdout if r.returncode == 0 and r.stdout.strip() else None
 
 
-def deploy_origin(root, row: dict, c: dict) -> str:
-    return row.get("origin") or origin_of(commit_message(root, row.get("sha", "")), c)
+def deploy_origin(root, row: dict, c: dict, before: list | None = None) -> str:
+    """A row written since DEPLOY-ORIGIN-2 carries its origin. An older row is judged by what it carried when its commit is in this clone,
+    and is unknown otherwise (never guessed from HEAD)."""
+    if row.get("origin"):
+        return row["origin"]
+    sha = row.get("sha", "")
+    if before is not None and commit_message(root, sha) is not None:
+        return carried_origin(root, sha, before, c)["origin"]
+    return origin_of(commit_message(root, sha), c)
+
+
+SELF_RANK = {"executor": 3, "self-agent": 2, "outside": 1, "unknown": 0}
+
+
+def _git(root, *a) -> str | None:
+    r = subprocess.run(["git", *a], cwd=root, capture_output=True, text=True)
+    return r.stdout if r.returncode == 0 else None
+
+
+def carried_origin(root=REPO, sha: str = "", deploys: list | None = None, c: dict | None = None) -> dict:
+    """DEPLOY-ORIGIN-2: who originated the change a deploy put live. A deploy runs on whatever commit is newest when it starts, which is usually
+    a bookkeeping commit (regen-generated, a recorded deploy, a ledger), so reading only that commit's message called every executor change
+    'outside' or 'unknown'. The deploy carries every substantive commit since the previous deployed commit; its origin is the most self-made
+    of them (executor > self-agent > outside). A sha this clone does not have falls back to HEAD; no readable commit is unknown, never self."""
+    c = c or cfg(root)
+    root = Path(root)
+    if not (sha and re.fullmatch(r"[0-9a-f]{7,40}", sha) and _git(root, "cat-file", "-e", sha + "^{commit}") is not None):
+        sha = (_git(root, "rev-parse", "HEAD") or "").strip()
+    if not sha:
+        return {"origin": "unknown", "sha": "", "carried": []}
+    rows = deploys if deploys is not None else _rows(root, "ops/deploys.jsonl")
+    prev = None
+    for r in reversed(rows):
+        for k in ("main_sha", "sha"):
+            s = r.get(k) or ""
+            if s and s != sha and re.fullmatch(r"[0-9a-f]{7,40}", s) and _git(root, "merge-base", "--is-ancestor", s, sha) is not None:
+                prev = s; break
+        if prev:
+            break
+    log = _git(root, "log", "--format=%H%x1f%B%x1e", f"{prev}..{sha}" if prev else "-1", *([] if prev else [sha])) or ""
+    carried = []
+    for chunk in log.split("\x1e"):
+        if "\x1f" not in chunk:
+            continue
+        h, msg = chunk.strip().split("\x1f", 1)
+        first = msg.strip().splitlines()[0] if msg.strip() else ""
+        if not first or "[skip ci]" in first:
+            continue  # bookkeeping commits carry no change of their own
+        carried.append({"sha": h[:12], "origin": origin_of(msg, c)})
+    best = max((x["origin"] for x in carried), key=lambda o: SELF_RANK.get(o, 0), default="unknown")
+    return {"origin": best, "sha": sha, "since": prev, "carried": carried[:50], "omitted": max(0, len(carried) - 50)}
 
 
 def bootstrap_holds(root=REPO) -> bool | None:
@@ -114,7 +167,8 @@ def bootstrap_holds(root=REPO) -> bool | None:
 def compute(root=REPO, now: datetime | None = None, feed_ok: bool | None = None) -> dict:
     c, now = cfg(root), now or datetime.now(timezone.utc)
     since = now - timedelta(hours=c["window_hours"])
-    dep = [r for r in _rows(root, "ops/deploys.jsonl") if r.get("at") and _ts(r["at"]) >= since]
+    allrows = _rows(root, "ops/deploys.jsonl")
+    dep = [r for r in allrows if r.get("at") and _ts(r["at"]) >= since]
     verified = [r for r in dep if r.get("uploaded") and r.get("live_matches_commit")]
     cost, touches = normalized_cost(root), human_touches(root)
     if feed_ok is None:
@@ -124,8 +178,13 @@ def compute(root=REPO, now: datetime | None = None, feed_ok: bool | None = None)
     k = round(len(verified) / denom, 3)
     sr = c.get("self_reference", {})
     origins = {}
+    pos = {id(r): i for i, r in enumerate(allrows)}
+    seen = {}
     for r in verified:
-        o = deploy_origin(root, r, c); origins[o] = origins.get(o, 0) + 1
+        key = (r.get("origin"), r.get("sha"))
+        if key not in seen:  # one git walk per deployed commit, not per worker
+            seen[key] = deploy_origin(root, r, c, allrows[:pos.get(id(r), 0)] if id(r) in pos else None)
+        o = seen[key]; origins[o] = origins.get(o, 0) + 1
     self_n = sum(n for o, n in origins.items() if o in sr.get("self_origins", ()))
     k_self, boot = round(self_n / denom, 3), bootstrap_holds(root)
     regime = "subcritical" if k < c["k_floor"] else "self-sustaining" if k_self >= c["k_floor"] and boot is not False else "driven"
@@ -222,6 +281,9 @@ def main(argv=None) -> int:
         e = check(); print("\n".join(e) or "criticality ok: " + MANTRA); return 1 if e else 0
     if "--tick" in a:
         r = tick(apply="--apply" in a); print(json.dumps(r, indent=2)); return 1 if r["stalled"] and "--apply" not in a else 0  # applied: the stall is logged and filed as an item, which is the escalation
+    if "--deploy-origin" in a:
+        i = a.index("--deploy-origin"); r = carried_origin(REPO, a[i + 1] if i + 1 < len(a) else "")
+        print(json.dumps(r) if "--json" in a else r["origin"]); return 0
     if "--origin" in a:
         i = a.index("--origin"); sha = a[i + 1] if i + 1 < len(a) else ""
         print(origin_of(commit_message(REPO, sha))); return 0

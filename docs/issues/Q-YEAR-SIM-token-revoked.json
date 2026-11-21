@@ -1,0 +1,12 @@
+{
+  "id": "Q-YEAR-SIM-token-revoked",
+  "title": "Q-YEAR-SIM-token-revoked: capacity stays at 0.6 after it, for good",
+  "body": "**Owner:** executor\n**Trigger:** the year simulation (YEAR-SIM-1) on the watchdog run\n**Done check:** cmd:python3 -m foundation yearsim --probe token-revoked\n**Status:** open\n\nFault class `token-revoked`: capacity stays at 0.6 after it, for good. Drill evidence: expiring detected: expiring; revoked detected: invalid; renewal of the credentials the loops use: ['auto', 'auto']; revocation needs one sign-in through /connect, the per-run Actions token keeps merging meanwhile\n\nBuild the mechanism that recovers from it without a person, then the drill in foundation/yearsim.py must exercise it.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation yearsim --probe token-revoked` exits 0.\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "unattended"
+  ],
+  "milestone": "Now",
+  "workstream": "Ultrastability"
+}

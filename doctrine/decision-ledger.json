@@ -4217,6 +4217,31 @@
    "body": "ip/, business/, docs/ip, docs/legal, docs/strategy moved to private ultrastable/ops admin/ (ops#39); live loop data moved to instances/ultrastable/; seed memory template made generic; foundation template --check guards it in checks.",
    "probe": "grep:.github/workflows/checks.yml::foundation template --check",
    "session": "https://claude.ai/code/session_0156nqDspXJUG7Zn1gEZQR5f"
+  },
+  {
+   "id": "lesson-2026-11-21-carried-prs-fold-their-write-backs-into-the-ledger-on-regen",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "Carried PRs fold their write-backs into the ledger on regen",
+   "body": "After regen folds write-back files, a session that made commits needs a fresh record citing it; add one per carried PR.",
+   "probe": "file:foundation/writeback.py",
+   "session": "session_0156nqDtycGejegSYjhFJ1MF"
+  },
+  {
+   "id": "decision-2026-11-21-template-code-only-carried",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "TEMPLATE-CODE-ONLY-1 carried onto main without workflow edits",
+   "body": "PR 847 was closed by SLA-8H-1; its non-workflow content is carried as one change from current main. Admin papers leave the template; doctrine/template-boundary.json and foundation/template.py enforce it.",
+   "probe": "file:doctrine/template-boundary.json"
+  },
+  {
+   "id": "decision-2026-11-21-year-sim-carried",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "YEAR-SIM-1 and SAY-DO-1 carried onto main; watchdog runs them through the ultrastability tick",
+   "body": "PR 1188 was closed by SLA-8H-1. Its code is carried from current main. Workflow edits are denied to model branches by the worker gate, so the three runs are wired into the tick the watchdog already runs (WATCHDOG-FOLLOW-1). The watchdog git-add list for their ledgers is a workflow change left to the executor lane.",
+   "probe": "file:foundation/yearsim.py"
   }
  ]
 }

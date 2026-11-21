@@ -122,11 +122,11 @@ export default {
   },
   {
    "claim": "The slow loop reads the same variables every tick, and when one has been out of bounds for two ticks in a row it takes one discrete step on that variable's ladder, keeps the step only if the variable comes back, and otherwise undoes it and takes the next.",
-   "detail": "",
+   "detail": "grep:foundation/ultrastability.py::verdict = \"kept\" failed (foundation/ultrastability.py)",
    "how": "json:doctrine/ultrastability.json::patience_ticks==2 + grep:foundation/ultrastability.py::revert_to=pending + grep:foundation/ultrastability.py::verdict = \"kept\"",
    "id": "how-ultrastable-second-order",
    "kind": "claim",
-   "pass": true,
+   "pass": false,
    "surface": "site/worker.js"
   },
   {
@@ -3082,7 +3082,25 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 45 Python and 447 Worker tests",
+   "claim": "- **A year unattended is simulated, not asserted; the system does what it says (YEAR-SIM-1, SAY-DO-1, Rowan 2026-11-21).** \"Have you really",
+   "detail": "",
+   "how": "file:doctrine/yearsim.json + file:foundation/yearsim.py + file:doctrine/ultrastability.json + file:foundation/saydo.py + file:doctrine/detectors.json + file:seed/scripts/yearsim.py",
+   "id": "cited-158bd3c207",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **A year unattended is simulated, not asserted; the system does what it says (YEAR-SIM-1, SAY-DO-1, Rowan 2026-11-21).** \"Have you really",
+   "detail": "",
+   "how": "file:doctrine/yearsim.json + file:foundation/yearsim.py + file:doctrine/ultrastability.json + file:foundation/saydo.py + file:doctrine/detectors.json + file:seed/scripts/yearsim.py",
+   "id": "mirror-c8f6471ad1",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "seed-tests: 59 Python and 447 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3331,8 +3349,8 @@ export default {
   }
  ],
  "summary": {
-  "drift": 0,
-  "pass": 367,
-  "total": 367
+  "drift": 1,
+  "pass": 368,
+  "total": 369
  }
 };

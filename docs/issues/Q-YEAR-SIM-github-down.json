@@ -1,0 +1,12 @@
+{
+  "id": "Q-YEAR-SIM-github-down",
+  "title": "Q-YEAR-SIM-github-down: its recovery is declared but no drill exercises code",
+  "body": "**Owner:** executor\n**Trigger:** the year simulation (YEAR-SIM-1) on the watchdog run\n**Done check:** cmd:python3 -m foundation yearsim --probe github-down\n**Status:** open\n\nFault class `github-down`: its recovery is declared but no drill exercises code. Drill evidence: while GitHub is down nothing merges anywhere; the loops resume from the repository when it returns (declared, not exercised)\n\nBuild the mechanism that recovers from it without a person, then the drill in foundation/yearsim.py must exercise it.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation yearsim --probe github-down` exits 0.\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "unattended"
+  ],
+  "milestone": "Now",
+  "workstream": "Ultrastability"
+}

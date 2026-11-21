@@ -5,6 +5,8 @@
 // the credential only it holds. Modules are flattened from the repository at GITHUB_SHA by the same code the tick's handoff loop uses.
 //   node deploy/deploy-oidc.mjs [worker,worker]   (in GitHub Actions with permissions id-token: write, contents: read)
 import { readFileSync, appendFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 import { makeDeployer } from "../seed/worker/src/handoff.js";
 const SITE = process.env.TARGET_SITE || "https://ultrastable-site.ultrastable.workers.dev";
 const sha = process.env.GITHUB_SHA, repo = process.env.GITHUB_REPOSITORY || "ultrastable/ultrastable", gh = process.env.GITHUB_TOKEN;
@@ -35,5 +37,11 @@ for (const id of ids) {
 // The live probe: the tick in the target account answers and names its controller state.
 const h = await fetch(SITE.replace("ultrastable-site", "ultrastable-tick") + "/health").then(r => r.json()).catch(() => null);
 console.log("tick health:", h ? JSON.stringify(h.cutover) : "unreachable");
-for (const x of results) appendFileSync(new URL("../ops/deploys.jsonl", import.meta.url), JSON.stringify({ at: new Date().toISOString(), worker: x.worker, uploaded: x.ok, live_matches_commit: !!(x.ok && x.version && h), version: x.version || "", route: "oidc", account: topo.account_id, sha }) + "\n");
+// DEPLOY-ORIGIN-2: who originated what this deploy put live, judged over every substantive commit it carried since the previous deployed commit
+// (a deploy usually starts on a bookkeeping commit, so the commit message alone called executor work outside or unknown). `main_sha` is the checkout.
+let carried = { origin: "unknown" };
+try { carried = JSON.parse(execFileSync("python3", ["-m", "foundation", "criticality", "--deploy-origin", sha, "--json"], { cwd: fileURLToPath(new URL("..", import.meta.url)), encoding: "utf8" })); }
+catch (e) { console.error("origin lookup failed, recorded as unknown:", e.message); }
+console.log("origin:", carried.origin, "carried", (carried.carried || []).length, "commit(s)");
+for (const x of results) appendFileSync(new URL("../ops/deploys.jsonl", import.meta.url), JSON.stringify({ at: new Date().toISOString(), worker: x.worker, uploaded: x.ok, live_matches_commit: !!(x.ok && x.version && h), version: x.version || "", route: "oidc", account: topo.account_id, sha, main_sha: carried.sha || "", origin: carried.origin, carried: (carried.carried || []).map(c => c.sha + ":" + c.origin).slice(0, 20) }) + "\n");
 process.exit(results.every(r => r.ok) ? 0 : 1);
