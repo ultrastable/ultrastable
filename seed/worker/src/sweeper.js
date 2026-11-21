@@ -12,8 +12,11 @@ const CLIENT_PREFIX = ['claude/', 'agent/', 'worker/', 'dependabot/'];  // DEP-L
 async function gh(f, token, method, path, body) {
   const r = await f(API + path, { method, headers: { authorization: 'Bearer ' + token, accept: 'application/vnd.github+json', 'user-agent': 'ultrastable-sweeper', 'content-type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
   const t = await r.text();
-  if (!r.ok) throw new Error(`GH ${method} ${r.status} ${path}: ${t}`);
-  return { ok: true, json: t ? JSON.parse(t) : null };
+  // Every caller reads ok and status: a 410 (issues disabled), 405 (merge refused) or 409 is a branch, not an abort, and a non-ok
+  // status that matters is recorded in out.errors by the caller. Throwing here (PR 1851) aborted the whole repo's sweep on one 410.
+  let json = null;
+  try { json = t ? JSON.parse(t) : null; } catch { json = { raw: t.slice(0, 200) }; }
+  return { ok: r.ok, status: r.status, json };
 }
 const hours = (iso, now) => Math.max(0, (now - Date.parse(iso)) / 36e5);
 
