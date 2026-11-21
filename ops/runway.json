@@ -16,9 +16,11 @@
   },
   "failures": {
    "days": null,
-   "why": "no open failure item",
-   "open": 0
+   "why": "1 open, oldest 0 days",
+   "open": 1
   }
  },
- "failure_first_seen": {}
+ "failure_first_seen": {
+  "Q-CIFAIL-mergeaudit-1813": "2026-11-21"
+ }
 }
