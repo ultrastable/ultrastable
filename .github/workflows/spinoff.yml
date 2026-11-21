@@ -52,7 +52,7 @@ jobs:
             gh pr create --base main --head "$b" --title "spinoff: portfolio tick" --body "Metrics, decisions and launches recorded by the SPINOFF-1 loop. Evidence: ops/spinoff/ledger.jsonl."
           fi
       - name: Deploy the spinoffs Worker from the rebuilt bundle and probe every app (SPINOFF-DEPLOY-1)
-        # The ultrastable.app zone and the ultrastable-spinoffs Worker live in the quniverse account until the zone transfer (deploy/transfer/plan.json).
+        # The ultrastable.app zone and the ultrastable-spinoffs Worker live in the ultrastable account (SINGLE-ACCOUNT-1, moved 2026-11-21).
         # Without this step a launched app was recorded live but never served (numbers-board and portfolio-board answered 404).
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}

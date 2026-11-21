@@ -6,6 +6,7 @@
     {"id": "quniverse-account-id", "pattern": "edb167b78c9fb901ea5bca3ce58ccc4b"},
     {"id": "quniverse-workers-subdomain", "pattern": "q08\\.workers\\.dev"},
     {"id": "quniverse-d1-org", "pattern": "7468898a-b515-495f-9910-e91cb80f5810"},
+    {"id": "quniverse-d1-spinoffs", "pattern": "9e05f27a-4445-45c3-998a-0d4d4595a33d"},
     {"id": "quniverse-d1-ops", "pattern": "1d5ff0a9-04b6-40e4-b9c1-bc9820b789cd"},
     {"id": "quniverse-d1-tenant0", "pattern": "a0227f92-04a7-4640-ae39-bb6a47fc9488"},
     {"id": "quniverse-d1-demo-child", "pattern": "22acdb27-a988-4c1e-b4a1-5ede7cee6fc1"},

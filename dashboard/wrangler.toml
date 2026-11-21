@@ -30,7 +30,7 @@ name = "SEND_EMAIL"
 allowed_destination_addresses = ["REPLACED_AT_DEPLOY"]
 
 [vars]
-MAIL_FROM = "owner@ultrastable.io"
+MAIL_FROM = "owner@ultrastable.org"  # SINGLE-ACCOUNT-LIVE-1: ultrastable.org has Email Sending in the ultrastable account; no relay in another account
 GITHUB_REPO = "ultrastable/ultrastable"
 # Secrets (never in git): OWNER_EMAIL (set as a var at deploy), GITHUB_TOKEN (optional), FLEET_TOKEN (optional).
 

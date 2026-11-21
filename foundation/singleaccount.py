@@ -124,6 +124,21 @@ def live(root=REPO, get=_get, token=None) -> dict:
                             problems.append(f"account {a.get('name') or aid}: {kind} {n}")
         except Exception as e:
             notes.append(f"accounts: unmeasured ({str(e)[:120]})")
+        # Route 3 (Rowan 2026-11-21: "assume the Quniverse doesn't even exist anymore"): no Worker in the ultrastable account depends on
+        # the retired account through a plain variable or a binding (a secret's value cannot be read; secrets are named in the record instead).
+        try:
+            full = load(root)
+            pats = [(f["id"], re.compile(f["pattern"])) for f in full["forbidden"]]
+            rid = full["required_account"]["id"]
+            for w in _cf_list(get, token, f"/accounts/{rid}/workers/scripts"):
+                st = get(f"{CF}/accounts/{rid}/workers/scripts/{w['id']}/settings", token).get("result") or {}
+                for b in st.get("bindings") or []:
+                    blob = json.dumps(b)
+                    for pid, prx in pats:
+                        if prx.search(blob):
+                            problems.append(f"worker {w['id']} binding {b.get('name')}: {pid}")
+        except Exception as e:
+            notes.append(f"dependencies: unmeasured ({str(e)[:120]})")
     return {"ok": not problems, "problems": problems, "notes": notes}
 
 
