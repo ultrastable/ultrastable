@@ -14,9 +14,9 @@ import argparse, datetime, json, os, pathlib, re, sys, urllib.request
 
 ROOT = pathlib.Path(os.environ.get("OUTREACH_ROOT") or pathlib.Path(__file__).resolve().parent.parent)
 OUT = ROOT / "outreach"
-REG = ROOT / "business" / "funding" / "registry.json"
-if not REG.exists():  # a seeded org keeps its registry at funding/registry.json
-    REG = ROOT / "funding" / "registry.json"
+REG = ROOT / "funding" / "registry.json"  # a seeded org keeps its registry at funding/registry.json
+if not REG.exists():  # an instance repo keeps it under instances/<slug>/funding/ (TEMPLATE-CODE-ONLY-1)
+    REG = next(iter(sorted(ROOT.glob("instances/*/funding/registry.json"))), REG)
 STATES = ["discovered", "packet-ready", "guard-failed", "queued", "awaiting-owner", "sent", "replied", "accepted", "rejected", "suppressed", "expired", "closed"]
 REPLY_KINDS = {"ack", "question", "accepted", "rejected", "opt-out", "bounce"}
 

@@ -31,4 +31,4 @@ jobs:
           python3 -m foundation balance --gate --apply  # FLOW-BALANCE-1: the one filing gate before any item lands
           if [ -f ops/balance-held.jsonl ]; then git add ops/balance-held.jsonl; fi
           git add docs/issues
-          git diff --cached --quiet || { git commit -m "issueloop: file Q-ISSUE items for unprobed or failing issues" && for i in 1 2 3; do git pull --rebase -q && python3 tools/push_main.py && break; sleep 5; done; }
+          bash tools/record_main.sh "issueloop: file Q-ISSUE items for unprobed or failing issues"

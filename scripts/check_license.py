@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-REQUIRED_FILES = ["LICENSE", "LICENSING.md", "COMMERCIAL-TERMS.md", "NOTICE", "docs/legal/LICENSE-DECISIONS.md", "specs/README.md"]
+REQUIRED_FILES = ["LICENSE", "LICENSING.md", "COMMERCIAL-TERMS.md", "NOTICE", "licensing/LICENSE-DECISIONS.md", "specs/README.md"]
 REQUIRED_CLAUSES = ["LicenseRef-Ultrastable-USL-1.0", "COMMERCIAL USE REQUIRES A COMMERCIAL LICENSE", "UNLICENSED COMMERCIAL USE",
                     "GOVERNING LAW AND DISPUTES", "THE SPECIFICATION AND IMPLEMENTATIONS", "SOURCE-AVAILABLE, NOT OPEN SOURCE"]
 FORBIDDEN = ["Proprietary and confidential", "No licence is granted"]

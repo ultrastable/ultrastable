@@ -39,7 +39,7 @@
   ],
   "stale_terms": [
     {
-      "pattern": "^(?!.*(?i:retired|archived|moved)).*github\\.com/ultrastable/(workers|spec|license|seed)\\b",
+      "pattern": "^(?!.*(?i:retired|archived|moved)).*github\\.com/ultrastable/(workers|spec|license)\\b",
       "why": "links a retired repository as if it were live; its contents are in ultrastable/ultrastable"
     },
     {

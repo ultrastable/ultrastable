@@ -8,4 +8,4 @@ Ultrastable is the foundation for any autonomous system. Work here is done by pe
 4. Code is the only memory. All project state lives in this repository (docs/PROJECT-MEMORY.md and data files). No agent relies on chat, tool or platform memory; a thread is never the only record.
 5. Contributions are licensed under the [Ultrastable License v1.0 (USL-1.0)](https://github.com/ultrastable/ultrastable/blob/main/LICENSE), section 11 (DCO-style certification, licensed to everyone under the License, and to the Licensor for Commercial Licenses).
 
-Other repositories: [ultrastable](https://github.com/ultrastable/ultrastable) · [workers](https://github.com/ultrastable/workers) · [spec](https://github.com/ultrastable/spec) · [license](https://github.com/ultrastable/license) · [ops](https://github.com/ultrastable/ops) · [seed](https://github.com/ultrastable/seed) · **.github**.
+Other repositories: [ultrastable](https://github.com/ultrastable/ultrastable) · [ops](https://github.com/ultrastable/ops) · [seed](https://github.com/ultrastable/seed) · **.github**.

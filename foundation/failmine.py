@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """FAILMINE-1 (Rowan, 2026-11-21): "The Ultrastable system shall always audit and remediate all failure modes and their root causes automatically."
 
 failure_audit.py runs the detectors of failure modes somebody registered. This module finds the failures nobody registered, from what the loops
@@ -93,22 +95,53 @@ def _git(root, *a) -> str:
     return r.stdout if r.returncode == 0 else ""
 
 
+def _shallow_boundary(root) -> set:
+    """Commits at the edge of a shallow clone. git reports every file they hold as added there, so their time is the clone
+    depth, not when an event happened (root cause of Q-RECUR probes that never go quiet in CI checkouts)."""
+    p = _git(root, "rev-parse", "--git-path", "shallow").strip()
+    if not p:
+        return set()
+    f = Path(p) if Path(p).is_absolute() else Path(root) / p
+    try:
+        return {line.strip() for line in f.read_text(encoding="utf-8").splitlines() if line.strip()}
+    except OSError:
+        return set()
+
+
 def _git_times(root) -> tuple[dict, dict]:
-    """First-added and last-changed commit time per docs/issues file, from two git passes."""
+    """First-added and last-changed commit time per docs/issues file, from two git passes. Commits at a shallow-clone
+    boundary are skipped, so a file whose history is cut off has no git time rather than the boundary's time."""
+    boundary = _shallow_boundary(root)
     first, last = {}, {}
-    for out, keep in ((_git(root, "log", "--diff-filter=A", "--format=@%cI", "--name-only", "--", "docs/issues"), first),
-                      (_git(root, "log", "--format=@%cI", "--name-only", "--", "docs/issues"), last)):
+    for out, keep in ((_git(root, "log", "--diff-filter=A", "--format=@%H %cI", "--name-only", "--", "docs/issues"), first),
+                      (_git(root, "log", "--format=@%H %cI", "--name-only", "--", "docs/issues"), last)):
         at = ""
         for line in out.splitlines():
             if line.startswith("@"):
-                at = line[1:]
+                sha, _, when = line[1:].partition(" ")
+                at = "" if sha in boundary else when
             elif line.strip():
                 n = Path(line.strip()).name
+                if not at:
+                    continue
                 if keep is first:
                     keep[n] = at          # log is newest first; the last write is the oldest add
                 else:
                     keep.setdefault(n, at)
     return first, last
+
+
+_ID_TIME = re.compile(r"(\d{4}-\d\d-\d\d)(?:T(\d\d))?")
+
+
+def _event_time(stem: str, body: str, git_first: str) -> str:
+    """When an issue event happened: the git add time, else a date the id or body carries (shallow clones cut history)."""
+    if git_first:
+        return git_first
+    m = _ID_TIME.search(stem) or _ID_TIME.search(body)
+    if m:
+        return f"{m.group(1)}T{m.group(2) or '00'}:00:00+00:00"
+    return ""
 
 
 def _ts(s: str):
@@ -146,7 +179,8 @@ def mine(root=REPO) -> list[dict]:
         m = re.search(r"\*\*(?:Evidence|Disposition)[^\n]*?(\d{4}-\d\d-\d\dT[\d:]+Z)", body)
         text = (j.get("title", "") + " " + body[:600])
         ev.append({"source": "issue", "id": p.stem, "text": j.get("title", "") or p.stem, "class": classify(p.stem + " " + text),
-                   "opened": first.get(p.name, ""), "closed": (m.group(1) if m else last.get(p.name, "")) if closed else ""})
+                   "opened": _event_time(p.stem, body, first.get(p.name, "")),
+                   "closed": (m.group(1) if m else (last.get(p.name, "") or "unknown")) if closed else ""})
     for r in _jsonl(root / "ops/ciwatch.jsonl"):
         if r.get("conclusion") in ("failure", "timed_out", "startup_failure"):
             t = f"{r.get('workflow', '')} workflow failure {r.get('conclusion')}"

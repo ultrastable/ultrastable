@@ -15,7 +15,7 @@ class T(unittest.TestCase):
         self.d = Path(scratch())
         (self.d / "doctrine").mkdir()
         (self.d / "docs/issues").mkdir(parents=True)
-        for f in ("doctrine/ultrastability.json", "doctrine/clocks.json"):
+        for f in ("doctrine/ultrastability.json", "doctrine/clocks.json", "doctrine/spinoff.json", "doctrine/priorities.json"):
             shutil.copy(REPO / f, self.d / f)
         (self.d / "ops").mkdir()
 
@@ -66,7 +66,7 @@ class T(unittest.TestCase):
         self.assertTrue((self.d / "docs/issues/Q-ULTRA-spend-REDESIGN.json").is_file())
 
     def test_search_keeps_the_field_that_holds(self):
-        for _ in range(9):  # patience, ladder step reverted, restructure item, then the first search step
+        for _ in range(40):  # patience, ladder step reverted, restructure item (waits item_settle_ticks), then the first search step
             r = u.tick(self.d, True, read=BAD)
             if any(x.get("search") for x in r["steps"]):
                 break
@@ -124,7 +124,37 @@ class Tenants(T):
         for _ in range(2):
             r = u.tick(self.d, True, read=GOOD, fetch=lambda url: 0.0)
         self.assertEqual([s["var"] for s in r["steps"]], ["demo:uptime"])
-        self.assertTrue((self.d / "docs/issues/Q-ULTRA-demo-uptime-1.json").is_file())
+        self.assertEqual(r["steps"][0]["kind"], "param")  # Ashby: a step-function (a parameter of the first loop) before a restructure
+        self.assertEqual(json.loads((self.d / "doctrine/spinoff.json").read_text())["budget"]["max_live"], 10)
+        for _ in range(3):
+            r = u.tick(self.d, True, read=GOOD, fetch=lambda url: 0.0)
+        self.assertTrue((self.d / "docs/issues/Q-ULTRA-demo-uptime-2.json").is_file())
+
+    def test_item_step_waits_for_its_item(self):
+        """SECOND-LOOP-SETTLE-1: an item step is not undone after 3 readings (that reverted 14 of 14); it waits for the item or item_settle_ticks."""
+        bad = {"claims.drift": 2}
+        for _ in range(2):
+            r = u.tick(self.d, True, read={**GOOD, **bad})
+        self.assertEqual(r["steps"][0]["kind"], "param")
+        self.assertEqual(u._jget(json.loads((self.d / "doctrine/priorities.json").read_text()), "goals.#repair-claims.weight"), 70)
+        for _ in range(3):
+            r = u.tick(self.d, True, read={**GOOD, **bad})
+        item = next(s for s in r["steps"] if s["kind"] == "item")["item"]
+        for _ in range(5):
+            r = u.tick(self.d, True, read={**GOOD, **bad})
+            self.assertEqual(r["verdicts"], [], "an open item is not judged after settle_ticks")
+        p = self.d / "docs/issues" / (item + ".json")
+        j = json.loads(p.read_text()); j["body"] = j["body"].replace("**Status:** open", "**Status:** closed"); p.write_text(json.dumps(j))
+        r = u.tick(self.d, True, read={**GOOD, **bad})
+        self.assertEqual(r["verdicts"][0]["verdict"], "reverted")  # the work was done and the variable is still out: next rung
+        self.assertTrue(any(s.get("search") for s in r["steps"]))  # ladder spent: the search over the knob's untried values starts at once
+        r = u.tick(self.d, True, read=GOOD)
+        self.assertEqual(r["verdicts"][0]["verdict"], "kept")
+
+    def test_knob_path_by_id(self):
+        d = {"goals": [{"id": "a", "weight": 1}, {"id": "b", "weight": 2}]}
+        u._jset(d, "goals.#b.weight", 5)
+        self.assertEqual(u._jget(d, "goals.#b.weight"), 5)
 
 
 class Write(T):
@@ -150,3 +180,21 @@ class Consult(T):
             r = u.tick(self.d, True, read=BAD)
         self.assertIn("spend", r["unregistered"]); self.assertEqual(r["steps"], [])
         self.assertTrue((self.d / "docs/issues/Q-ULTRA-spend-UNREGISTERED.json").is_file())
+
+
+class UptimeUserAgent(unittest.TestCase):
+    """UPTIME-UA-1: the uptime probe sends a named user agent (Cloudflare blocks Python-urllib with 403)."""
+    def test_named_agent(self):
+        from unittest import mock
+        from foundation import ultrastability as U
+        seen = {}
+        class R:
+            status = 200
+            def __enter__(self): return self
+            def __exit__(self, *a): return False
+        def fake(req, timeout=0):
+            seen["ua"] = req.get_header("User-agent"); return R()
+        with mock.patch.object(U.urllib.request, "urlopen", fake):
+            self.assertEqual(U._get("https://x.example/health"), 1.0)
+        self.assertTrue(seen["ua"] and "urllib" not in seen["ua"].lower())
+

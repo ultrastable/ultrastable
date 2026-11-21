@@ -164,7 +164,7 @@
         "seed/outreach",
         "scripts/outreach.py",
         "scripts/funding_verify.py",
-        "business/funding"
+        "instances/ultrastable/funding"
       ],
       "tools": [
         "system",

@@ -18,7 +18,7 @@ def main(path):
     for f in report["findings"]:
         title = f"[funding] {f['id']}: {f['kind']}"
         existing = json.loads(gh("issue", "list", "--label", LABEL, "--state", "open", "--search", f"\"{title}\" in:title", "--json", "number,title"))
-        body = (f"{f['detail']}\n\nRegistry: business/funding/registry.json\nProcedure: business/funding/MAINTENANCE.md\n"
+        body = (f"{f['detail']}\n\nRegistry: funding/registry.json\nProcedure: funding/MAINTENANCE.md\n"
                 f"Closing probe: funding/verify.py shows no `{f['kind']}` finding for {f['id']}.\nChecked: {report['checked']}")
         match = [i for i in existing if i["title"] == title]
         if match:

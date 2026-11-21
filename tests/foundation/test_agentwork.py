@@ -25,7 +25,7 @@ class AgentWork(unittest.TestCase):
         (self.d / "ops/agent-kill").write_text("x"); self.assertFalse(agentwork.gate(self.d, {}, lambda *a: (0, "0"))["go"])
 
     def test_caps_stop_it_and_unreadable_input_fails_closed(self):
-        self.assertFalse(agentwork.gate(self.d, {}, lambda *a: (0, "3"), repo="o/r")["go"])
+        self.assertFalse(agentwork.gate(self.d, {}, lambda *a: (0, "6"), repo="o/r")["go"])
         self.assertFalse(agentwork.gate(self.d, {}, lambda *a: (1, "err"), repo="o/r")["go"])
         (self.d / "ops/agent-cost.jsonl").write_text(json.dumps({"at": __import__("datetime").datetime.now(__import__("datetime").timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "usd": 5}) + "\n")
         self.assertIn("spend", agentwork.gate(self.d, {}, lambda *a: (0, "0"), repo="o/r")["why"])

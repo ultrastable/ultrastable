@@ -8,7 +8,7 @@ The model rules come from the QNFO fleet's review gate (platform/cloudflare-refe
 Transport is injected (default: urllib) so every adapter is invoked in tests with a recorded request and response. Data: doctrine/code-agents.json.
 """
 from __future__ import annotations
-import json, os, re, sys, urllib.request
+import json, os, re, sys, time, urllib.error, urllib.request
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
@@ -177,12 +177,47 @@ def apply_edit(text: str, find: str, replace: str, path: str = "file") -> str:
     return text[:start] + body + ("\n" if body and not body.endswith("\n") else "") + text[end:]
 
 
+def heal(a: dict, root=REPO) -> dict | None:
+    """MODEL-HEAL-1 (YEAR-SIM-1 finding model-retirement): when Workers AI answers 410 for an adapter's model, the same rung runs the successor
+    doctrine/models.json names (same vendor first, then fallback_order), and the retirement is appended to ops/models-observed.jsonl so
+    `modelwatch --observed --apply` rewrites source without a Workers AI credential. None when the catalog has no other available model."""
+    from . import modelwatch
+    try:
+        d = modelwatch.load(root)
+    except (OSError, ValueError):
+        return None
+    left = [m for m in d.get("available", []) if m != a["model"]]
+    if not left:
+        return None
+    succ = (d.get("retired", {}).get(a["model"], {}) or {}).get("successor") or modelwatch.successor(a["model"], {**d, "available": left})
+    if not succ or succ == a["model"]:
+        return None
+    try:
+        p = Path(root) / "ops/models-observed.jsonl"
+        p.parent.mkdir(parents=True, exist_ok=True)
+        with p.open("a", encoding="utf-8") as f:
+            f.write(json.dumps({"at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "model": a["model"], "status": 410, "successor": succ, "adapter": a["id"]}) + "\n")
+    except OSError as e:
+        print(f"MODEL-HEAL-1: could not record the retirement of {a['model']}: {e}", file=sys.stderr)
+    return {**a, "model": succ, "id": a["id"] + "@" + succ.rsplit("/", 1)[-1]}
+
+
 def complete(prompt: str, env=None, transport=http, root=REPO) -> tuple[dict, str]:
     """The executor's model call: authors in routed order; a failure moves to the next (same failure twice mutates the route). Returns (json, adapter id)."""
     errs = []
     for a in route_authors(env, root):
         try:
             return parse_json(invoke(a, prompt, env, transport)), a["id"]
+        except urllib.error.HTTPError as e:
+            if e.code == 410 and a["route"] == "workers-ai":  # MODEL-HEAL-1: a retired model keeps its rung; the call moves to the catalog's successor
+                alt = heal(a, root)
+                if alt:
+                    try:
+                        return parse_json(invoke(alt, prompt, env, transport)), alt["id"]
+                    except Exception as e2:  # recorded, then the next adapter
+                        errs.append(f"{alt['id']}: {type(e2).__name__}: {str(e2)[:120]}")
+                        continue
+            errs.append(f"{a['id']}: {type(e).__name__}: {str(e)[:120]}")
         except Exception as e:  # recorded, then the next adapter
             errs.append(f"{a['id']}: {type(e).__name__}: {str(e)[:120]}")
     raise RuntimeError("no code agent produced a change: " + " | ".join(errs) if errs else "no code agent adapter is available on this host")

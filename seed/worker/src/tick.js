@@ -484,6 +484,8 @@ export function stepPlan(name, { lean = false, degrade = false, spend = null, no
   return 'run';
 }
 
+export const isSchemaError = (e) => /no such table|no such column|has no column named/i.test(String(e && e.message));
+
 export async function runTick(db, { config, env = {}, now = Date.now(), wake = null, ai = null, budget = null } = {}) {
   const startedIso = iso(new Date(now));
   const ins = await run(db, `INSERT INTO tick_runs (started_at, steps_total) VALUES (?, ?)`, startedIso, STEP_ORDER.length);
@@ -512,7 +514,16 @@ export async function runTick(db, { config, env = {}, now = Date.now(), wake = n
     }
     if (stepPlan(name, { lean, degrade, spend: ctx.spend, now }) === 'defer') { completed++; continue; }
     try {
-      await STEPS[name](db, ctx);
+      try {
+        await STEPS[name](db, ctx);
+      } catch (e0) {
+        // SCHEMA-HEAL-1 (Q-RECUR-9ead069526, Q-RECUR-b680afd12d): measure and criticality threw on a table their migration never created and
+        // filed TICKFAIL every hour. A missing table or column is healed here: migrate runs again and the step is retried once in the same tick.
+        if (name === 'migrate' || !isSchemaError(e0)) throw e0;
+        await STEPS.migrate(db, ctx);
+        await STEPS[name](db, ctx);
+        ctx.notes.push(`${name}: healed missing schema by re-running migrate`);
+      }
       completed++;
     } catch (e) {
       ctx.errors.push(`${name}: ${e.message}`);

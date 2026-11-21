@@ -11,7 +11,7 @@ Retired: the specifications, SCOPE and license text now live in ultrastable/ultr
 
 ![visibility](https://img.shields.io/badge/repo-public-12342A) ![license](https://img.shields.io/badge/license-USL--1.0%20source--available-FFC857) [![site](https://img.shields.io/badge/site-ultrastable.io-FF5B1F)](https://ultrastable.io)
 
-**The organization:** [ultrastable](https://github.com/ultrastable/ultrastable) · [workers](https://github.com/ultrastable/workers) · **spec** · [license](https://github.com/ultrastable/license) · [ops](https://github.com/ultrastable/ops) · [seed](https://github.com/ultrastable/seed) · [.github](https://github.com/ultrastable/.github) · [ultrastable.io](https://ultrastable.io)
+**The organization:** [ultrastable](https://github.com/ultrastable/ultrastable) · [ops](https://github.com/ultrastable/ops) · [seed](https://github.com/ultrastable/seed) · [.github](https://github.com/ultrastable/.github) · [ultrastable.io](https://ultrastable.io)
 
 ## What it is
 Retired: the specifications, SCOPE and license text now live in ultrastable/ultrastable (specs/, SCOPE.md, licensing/). Kept public so existing links resolve. Ultrastable is an autonomous development platform: an organization of virtual managers and staff that runs projects, scores its own decisions, earns wider autonomy from its track record, and interrupts a person only for steps that cannot be undone.
@@ -37,11 +37,12 @@ One main repository holds what Ultrastable is. A separate repository exists only
 
 | Repository | Visibility | What it holds |
 |---|---|---|
-| [ultrastable](https://github.com/ultrastable/ultrastable) | public | Everything you run or read: platform code, ultrastable.io, dashboard, doctrine, docs, the core code (workers/), the specifications (specs/), the license text (licensing/), and seed/ (the starting kit for a new system). It is a GitHub template, so "Use this template" copies it. |
-| [ops](https://github.com/ultrastable/ops) | private | The few steps only the owner can take (accounts, money, signatures), one card each. Private on purpose. |
+| [ultrastable](https://github.com/ultrastable/ultrastable) | public | Everything you run or read: platform code, ultrastable.io, dashboard, doctrine, docs, the core code (workers/), the specifications (specs/), the license text (licensing/), and seed/ (the starting kit for a new system). The starting kit is published on its own as ultrastable/seed, the template new systems copy. |
+| [ops](https://github.com/ultrastable/ops) | private | The few steps only the owner can take (accounts, money, signatures), one card each, and the company's own papers kept out of the template (admin/). Private on purpose. |
+| [seed](https://github.com/ultrastable/seed) | private | Only the starting kit (seed/ of the main repository): code and agent instructions, no company papers. It is the GitHub template new systems copy (TEMPLATE-CODE-ONLY-1). |
 | [practical-solutions](https://github.com/ultrastable/practical-solutions) | public | An autonomous bright-spot finder that runs on Ultrastable. The first system built on it, in its own repository. |
 
-The organization's profile page is [.github](https://github.com/ultrastable/.github). Retired, kept only so old links work: [`workers`](https://github.com/ultrastable/workers) is now in `ultrastable`; [`spec`](https://github.com/ultrastable/spec) is now in `ultrastable`; [`license`](https://github.com/ultrastable/license) is now in `ultrastable`; [`seed`](https://github.com/ultrastable/seed) is now in `ultrastable`. Every code, specification and license repository is folded into the main one. The target set is `ultrastable`, `ops`, `practical-solutions`.
+The organization's profile page is [.github](https://github.com/ultrastable/.github). Retired, kept only so old links work: [`workers`](https://github.com/ultrastable/workers) is now in `ultrastable`; [`spec`](https://github.com/ultrastable/spec) is now in `ultrastable`; [`license`](https://github.com/ultrastable/license) is now in `ultrastable`. Every code, specification and license repository is folded into the main one. The target set is `ultrastable`, `ops`, `seed`, `practical-solutions`.
 
 ## License
 Source-available. Free for non-commercial use: read it, run it, study it, change it, share it. Any commercial use needs a Commercial License with revenue share. Full terms: [Ultrastable License v1.0 (USL-1.0)](https://github.com/ultrastable/ultrastable/blob/main/LICENSING.md). Commercial licensing: pilot@ultrastable.io.

@@ -413,7 +413,7 @@
       "outflows": [
         {
           "signal": "funding.registry",
-          "via": "file:business/funding/registry.json"
+          "via": "file:instances/ultrastable/funding/registry.json"
         },
         {
           "signal": "issue.filed",
@@ -429,7 +429,7 @@
       "inflows": [
         {
           "signal": "funding.registry",
-          "via": "file:business/funding/registry.json"
+          "via": "file:instances/ultrastable/funding/registry.json"
         },
         {
           "signal": "outreach.replies",
@@ -1582,13 +1582,13 @@
         },
         {
           "signal": "funding.registry",
-          "via": "file:business/funding/registry.json"
+          "via": "file:instances/ultrastable/funding/registry.json"
         }
       ],
       "outflows": [
         {
           "signal": "funding.registry",
-          "via": "file:business/funding/registry.json"
+          "via": "file:instances/ultrastable/funding/registry.json"
         },
         {
           "signal": "issue.filed",
@@ -1606,7 +1606,7 @@
         },
         {
           "signal": "funding.registry",
-          "via": "file:business/funding/registry.json"
+          "via": "file:instances/ultrastable/funding/registry.json"
         }
       ],
       "outflows": [

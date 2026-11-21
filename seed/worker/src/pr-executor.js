@@ -24,6 +24,8 @@ export function checkEdits(files) {
     total += (f.content || '').length + (f.edits || []).reduce((a, e) => a + (e.find || '').length + (e.replace || '').length, 0);
   }
   if (total > MAX_BYTES) throw new Error('change is larger than the executor limit');
+  // SAY-DO-1: a change that touches only the item file, ledgers and write-backs closes the item without doing it (PR 836 changed no code)
+  if (files.every(f => /^(docs\/issues\/|ops\/|doctrine\/writeback\/)/.test(f.path))) throw new Error('SAY-DO-1: the change touches only its item file and ledgers; it must change the files that do what the item says');
 }
 
 const names = i => (i.labels || []).map(l => (typeof l === 'string' ? l : l.name));

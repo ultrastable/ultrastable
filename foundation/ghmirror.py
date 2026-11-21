@@ -29,6 +29,8 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[1]
 THIS = "ultrastable/ultrastable"
 SYNC = "queue"
+CATCHUP_ROUNDS = 10
+CATCHUP_SECONDS = 480
 MARK = re.compile(r"<!-- us-item:([A-Za-z0-9._-]+) -->")
 FIELD = lambda body, name: (re.search(rf"^\*\*{name}:\*\*\s*(.+)$", body or "", re.M) or [None, ""])[1].strip()
 CLOSED = ("closed", "done", "fixed", "superseded", "cancelled", "canceled", "live")
@@ -115,11 +117,15 @@ def plan(want: list[dict], have: list[dict], labels: set, milestones: dict) -> l
     need_labels = sorted({l for w in want for l in w["labels"]} - labels)
     acts += [("label", l) for l in need_labels]
     acts += [("milestone", m) for m in sorted({w["milestone"] for w in want} - set(milestones))]
-    by_id = {}
-    for h in have:
+    by_id, dupes = {}, []
+    # MIRROR-DEDUPE-1 (2026-11-21): overlapping runs created a second issue for the same item (Q-RECUR-*, Q-LIFT-*: 7 pairs). The lowest
+    # open number is the mirror; every other open issue carrying the same marker is closed as an orphan.
+    for h in sorted(have, key=lambda h: (h.get("state") != "open", h.get("number", 0))):
         m = MARK.search(h.get("body") or "")
         if m and m.group(1) not in by_id:
             by_id[m.group(1)] = h
+        elif m and h.get("state") == "open":
+            dupes.append(h["number"])
     # open items first (they are the board), then closed ones newest id last so the most recent history lands first after them
     for w in sorted(want, key=lambda w: (w["state"] != "open", w["id"])):
         h = by_id.get(w["id"])
@@ -132,7 +138,7 @@ def plan(want: list[dict], have: list[dict], labels: set, milestones: dict) -> l
                 or cur_ms != w["milestone"] or h.get("state") != w["state"]):
             acts.append(("update", w, h["number"]))
     gone = [h for k, h in by_id.items() if k not in {w["id"] for w in want} and h.get("state") == "open"]
-    acts += [("orphan", h["number"]) for h in gone]
+    acts += [("orphan", h["number"]) for h in gone] + [("orphan", n) for n in dupes]
     return acts
 
 
@@ -228,6 +234,14 @@ def main(argv) -> int:
         return 1 if errs else 0
     mx = int(argv[argv.index("--max") + 1]) if "--max" in argv else 120
     res = run(do_apply="--apply" in argv, max_writes=mx)
+    # MIRROR-CATCHUP-1: the per-run cap paces GitHub's secondary limit, it is not a backlog limit. A run that defers writes plans again and
+    # continues (bounded by rounds and wall clock), so a backlog cannot silently rebuild: on 2026-11-21 a capped mirror left 252 issues open
+    # for items the repository had already closed.
+    rounds, t0 = 1, time.time()
+    while "--apply" in argv and res.get("status") == "partial" and rounds < CATCHUP_ROUNDS and time.time() - t0 < CATCHUP_SECONDS:
+        rounds += 1
+        res = run(do_apply=True, max_writes=mx)
+    res["rounds"] = rounds
     print(json.dumps(res, indent=1))
     # a missing token or Issues off is a recorded state, not a crash; a failed read or write errors fail the step so ciwatch files it
     if res.get("status") in ("read-failed",) or str(res.get("status", "")).startswith("repo-read"):

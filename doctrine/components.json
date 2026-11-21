@@ -158,7 +158,7 @@
    "impl": [
     "file:scripts/outreach.py",
     "file:outreach/gate.json",
-    "file:business/funding/registry.json"
+    "file:instances/ultrastable/funding/registry.json"
    ],
    "proof": [
     "file:scripts/test_outreach.py"
@@ -169,7 +169,7 @@
    "impl": [
     "file:foundation/filing.py",
     "file:foundation/data/jurisdictions.json",
-    "file:ip/evidence-log.md"
+    "file:licensing/LICENSE-DECISIONS.md"
    ],
    "proof": [
     "file:tests/foundation/test_foundation.py"

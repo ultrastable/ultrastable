@@ -4,9 +4,9 @@
   "external/overview.md",
   "external/one-pager.md",
   "external/customer-story.md",
-  "business/briefing/elevator-pitches.md",
-  "business/briefing/faq.md",
-  "business/briefing/pitch-deck.md"
+  "instances/ultrastable/briefing/elevator-pitches.md",
+  "instances/ultrastable/briefing/faq.md",
+  "instances/ultrastable/briefing/pitch-deck.md"
  ],
  "blocked_patterns": [
   "qnfo",

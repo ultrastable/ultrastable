@@ -47,4 +47,4 @@ jobs:
           git config user.name "ultrastable-bot"; git config user.email "bot@users.noreply.github.com"
           python3 -m foundation claims --fix --apply
           git add ops/deploys.jsonl README.md platform/adapters/README.md site/claims-data.js
-          git diff --cached --quiet || { git commit -m "deploy-ultrastable: record live-verified deploy" && for i in 1 2 3; do git pull --rebase -q && python3 tools/push_main.py && break; sleep 5; done; }
+          bash tools/record_main.sh "deploy-ultrastable: record live-verified deploy"

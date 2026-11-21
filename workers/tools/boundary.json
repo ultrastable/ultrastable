@@ -249,6 +249,10 @@
       "class": "core",
       "role": "Is a change real: classifies a diff as behaviour, literal, comment, format, import, generated or record, so trivial merges never count as progress (SUBSTANCE-1)"
     },
+    "core/flowbalance": {
+      "class": "core",
+      "role": "Issue inflow against closures and SLA ages; supersedes duplicates and batches floods (FLOW-BALANCE-1)"
+    },
     "core/plus": {
       "class": "core",
       "role": "the plus loop"

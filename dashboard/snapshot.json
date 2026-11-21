@@ -121,8 +121,8 @@
      "warn"
     ],
     [
-     "Submit funding applications (Google Cloud Start packet ready to paste: `business/funding/applications/google-for-startups/OWNER-CARD.md`; ne",
-     "default: Applications prepared, not sent | probe: Submission confirmation filed in `business/funding/applications/<name>/confirmations/`",
+     "Submit funding applications (Google Cloud Start packet ready to paste: `instances/ultrastable/funding/applications/google-for-startups/OWNER-CARD.md`; ne",
+     "default: Applications prepared, not sent | probe: Submission confirmation filed in `instances/ultrastable/funding/applications/<name>/confirmations/`",
      "warn"
     ],
     [

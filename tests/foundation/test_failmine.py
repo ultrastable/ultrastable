@@ -22,6 +22,30 @@ class FailMine(unittest.TestCase):
         self.assertEqual(failmine.signature("PR #596 merged without a green checks run on b492f08"),
                          failmine.signature("PR #1461 merged without a green checks run on 0a1b2c3"))
 
+    def test_shallow_clone_boundary_is_not_an_event_time(self):
+        # SHALLOW-TIME-1: in a shallow checkout the boundary commit "adds" every issue file, which made every recurring signature look
+        # seen today, so no Q-RECUR probe could ever go quiet. Boundary commits give no time; the id's own date stands in.
+        import subprocess, tempfile
+        with tempfile.TemporaryDirectory() as d:
+            src, clone = Path(d) / "src", Path(d) / "clone"
+            (src / "docs/issues").mkdir(parents=True)
+            g = lambda *a, cwd=src, env=None: subprocess.run(["git", *a], cwd=cwd, check=True, capture_output=True, env=env)
+            g("init", "-q")
+            import os
+            env = dict(os.environ, GIT_AUTHOR_NAME="t", GIT_AUTHOR_EMAIL="t@t", GIT_COMMITTER_NAME="t", GIT_COMMITTER_EMAIL="t@t")
+            (src / "docs/issues/NC-PLUS-TICKFAIL-measure-2026-11-13T09.json").write_text("{}")
+            env1 = dict(env, GIT_COMMITTER_DATE="2026-11-13T09:00:00Z", GIT_AUTHOR_DATE="2026-11-13T09:00:00Z")
+            g("add", "."); g("commit", "-qm", "a", env=env1)
+            (src / "x").write_text("1")
+            env2 = dict(env, GIT_COMMITTER_DATE="2026-11-21T16:00:00Z", GIT_AUTHOR_DATE="2026-11-21T16:00:00Z")
+            g("add", "."); g("commit", "-qm", "b", env=env2)
+            g("clone", "-q", "--depth", "1", f"file://{src}", str(clone), cwd=d)
+            first, _ = failmine._git_times(clone)
+            self.assertNotIn("NC-PLUS-TICKFAIL-measure-2026-11-13T09.json", first)
+            self.assertTrue(failmine._event_time("NC-PLUS-TICKFAIL-measure-2026-11-13T09", "", "").startswith("2026-11-13T09"))
+            full, _ = failmine._git_times(src)
+            self.assertTrue(full["NC-PLUS-TICKFAIL-measure-2026-11-13T09.json"].startswith("2026-11-13T09"))
+
     def test_classify(self):
         self.assertEqual(failmine.classify("model @cf/x was retired"), "model-retired")
         self.assertEqual(failmine.classify("ImportError: module incorrectly imported"), "test-host")

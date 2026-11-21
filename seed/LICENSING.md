@@ -1,15 +1,5 @@
-# Licensing in plain English
+# Licensing
 
-Status: draft (2026-11-11). The binding text is [`LICENSE`](LICENSE) and must be reviewed by a lawyer before anything is made public.
+The license is the **Ultrastable License v1.0 (USL-1.0)**, `SPDX LicenseRef-Ultrastable-USL-1.0`, canonical in `ultrastable/license` and identical in `ultrastable/workers` and `ultrastable/spec`. Free for non-commercial use; commercial use needs a Commercial License with a revenue share (price list: [COMMERCIAL-TERMS.md](https://github.com/ultrastable/ultrastable/blob/main/COMMERCIAL-TERMS.md)). Source-available, not open source. The project is open and the license itself protects the work; no patent is pursued.
 
-| You are | Allowed? |
-|---|---|
-| An individual learning, researching, tinkering or evaluating | Yes, free |
-| A non-profit using it internally | Yes, free |
-| A business, even a one-person one, running it or selling anything built on it | Needs a commercial license first |
-| A consultant or host offering it to clients for a fee | Needs a commercial license first |
-| Unsure | Treat it as commercial and ask |
-
-Why this shape: the code is public so anyone can read, learn from and trust it, and the project makes money only when someone else does. This replaces the earlier patent plan (see `docs/strategy/licensing-and-ip-pivot.md` in the docs repo). The license is the protection; the architecture specifications are published, dated documentation of the design.
-
-Governing law and venue, the commercial terms and contributor terms are set in the license and `COMMERCIAL-TERMS.md`.
+Decisions, sources and enforceability reasoning: [licensing/LICENSE-DECISIONS.md](https://github.com/ultrastable/ultrastable/blob/main/licensing/LICENSE-DECISIONS.md). The repositories are open. Repo map: `ultrastable/workers` `docs/REPO-MAP.md`.

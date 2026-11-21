@@ -1,0 +1,12 @@
+{
+  "id": "Q-SAYDO-loops-second-loop-kept",
+  "title": "Q-SAYDO-loops-second-loop-kept: says second-loop-kept, does not do it",
+  "body": "**Owner:** executor\n**Trigger:** say-do check (SAY-DO-1) on the watchdog run\n**Done check:** cmd:python3 -m foundation saydo --probe loops:second-loop-kept\n**Status:** open\n\nThe system states `second-loop-kept` (loops) and its code does not do it: 0 of 14 second-order steps kept in 14 days\n\nChange the code to do what the statement says, or change the statement to what the code does; never weaken the probe.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation saydo --probe loops:second-loop-kept` exits 0.\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "say-do"
+  ],
+  "milestone": "Now",
+  "workstream": "Ultrastability"
+}

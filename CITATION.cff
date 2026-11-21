@@ -6,3 +6,5 @@ authors:
   - family-names: Quni-Gudzinas
     given-names: Rowan Brad
 url: "https://ultrastable.io"
+repository-code: "https://github.com/ultrastable/ultrastable"
+license: "LicenseRef-Ultrastable-USL-1.0"

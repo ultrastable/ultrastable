@@ -10,7 +10,7 @@ REPO = Path(__file__).resolve().parents[2]
 class Blindspots(unittest.TestCase):
     def setUp(self):
         self.tmp = _repo.scratch()
-        for p in ["doctrine/blindspots.json", "ops/blindspots", "site/legalpages.js", "site/worker.js", "scripts/outreach_intro.py", "outreach/intro-profile.json", "doctrine/cost.json", "docs/issues", "doctrine/backup.json", "doctrine/dependency-licences.json", "ip", "seed/worker/src/freetier.js"]:
+        for p in ["doctrine/blindspots.json", "ops/blindspots", "site/legalpages.js", "site/worker.js", "scripts/outreach_intro.py", "outreach/intro-profile.json", "doctrine/cost.json", "docs/issues", "doctrine/backup.json", "doctrine/dependency-licences.json", "instances/ultrastable/name-clearance.json", "seed/worker/src/freetier.js"]:
             s, d = REPO / p, self.tmp / p
             d.parent.mkdir(parents=True, exist_ok=True)
             shutil.copytree(s, d) if s.is_dir() else shutil.copy(s, d)

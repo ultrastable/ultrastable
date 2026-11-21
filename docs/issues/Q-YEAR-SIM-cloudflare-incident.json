@@ -1,0 +1,12 @@
+{
+  "id": "Q-YEAR-SIM-cloudflare-incident",
+  "title": "Q-YEAR-SIM-cloudflare-incident: its recovery is declared but no drill exercises code",
+  "body": "**Owner:** executor\n**Trigger:** the year simulation (YEAR-SIM-1) on the watchdog run\n**Done check:** cmd:python3 -m foundation yearsim --probe cloudflare-incident\n**Status:** open\n\nFault class `cloudflare-incident`: its recovery is declared but no drill exercises code. Drill evidence: Cloudflare-hosted loops and deploys pause; claude-routine, github-actions keeps the checks and merges going (declared)\n\nBuild the mechanism that recovers from it without a person, then the drill in foundation/yearsim.py must exercise it.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation yearsim --probe cloudflare-incident` exits 0.\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "unattended"
+  ],
+  "milestone": "Now",
+  "workstream": "Ultrastability"
+}

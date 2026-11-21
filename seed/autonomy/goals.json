@@ -101,6 +101,24 @@
       "unit": "tenants",
       "op": ">=",
       "target": 1
+    },
+    {
+      "id": "core.year",
+      "parent_id": "core.mission",
+      "level": "objective",
+      "statement": "Every system proves in code that it can run a year unattended: failure modes are simulated, found and fixed ahead of time (YEAR-SIM-1)."
+    },
+    {
+      "id": "core.year.unattended",
+      "deadline": "2026-12-31",
+      "parent_id": "core.year",
+      "level": "target",
+      "statement": "Simulated unattended horizon, 10th percentile, in days (scripts/yearsim.py).",
+      "source": "metric",
+      "spec": "unattended_horizon_p10",
+      "unit": "days",
+      "op": ">=",
+      "target": 365
     }
   ],
   "knobs": [
@@ -127,6 +145,18 @@
       "max": 8,
       "step": 1,
       "effect": -1,
+      "cooldown_h": 24,
+      "review_h": 24
+    },
+    {
+      "id": "core.year.headroom",
+      "goal_id": "core.year.unattended",
+      "what": "Share of each free allowance held back as headroom for incident days (raising it softly throttles normal work so quota and cost faults stop sooner; a soft throttle, nothing halts). A system reads it from its knobs feed.",
+      "value": 0.2,
+      "min": 0.1,
+      "max": 0.5,
+      "step": 0.05,
+      "effect": 1,
       "cooldown_h": 24,
       "review_h": 24
     }

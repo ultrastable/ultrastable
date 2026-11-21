@@ -81,3 +81,13 @@ test('SLA-1: a conflicting claude/ PR past the hard limit and idle is superseded
   assert.deepEqual(r.superseded, ['o/r#21']); assert.deepEqual(r.sla_ported, [{ repo: 'o/r', number: 21, branch: 'claude/old' }]);
   assert.ok(calls.includes('PATCH /repos/o/r/pulls/21'));
 });
+
+test('BRANCH-ROOT-CAUSE-1: a blocked PR with no check run is closed and reopened once; a worker/ branch is swept; one with runs is not touched', async () => {
+  const w = { number: 8, head: { ref: 'worker/roadmap-x' }, updated_at: '2026-11-13T00:00:00Z' };
+  const a = fake({ prs: [w], detail: { ...w, head: { ref: 'worker/roadmap-x', sha: 'abc' }, mergeable_state: 'blocked' }, runs: 0 });
+  const r = await sweepOpenLoops({ token: 't', repos: ['o/r'], fetch: a.f, now: NOW });
+  assert.deepEqual(r.retriggered, ['o/r#8']); assert.equal(a.calls.filter(c => c === 'PATCH /repos/o/r/pulls/8').length, 2);
+  const b = fake({ prs: [w], detail: { ...w, head: { ref: 'worker/roadmap-x', sha: 'abc' }, mergeable_state: 'blocked' }, runs: 2 });
+  const r2 = await sweepOpenLoops({ token: 't', repos: ['o/r'], fetch: b.f, now: NOW });
+  assert.equal(r2.retriggered, undefined);
+});

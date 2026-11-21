@@ -2,28 +2,28 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 export const FAILMINE = {
  "schema": "ultrastable-failmine/1",
- "at": "2026-11-21T16:36:38Z",
- "events": 173,
- "open": 47,
- "signatures": 50,
- "recurrence_rate": 0.711,
- "mttr_hours_mean": 37.7,
- "mttr_hours_median": 35.5,
- "remediated": 126,
+ "at": "2026-11-21T18:51:18Z",
+ "events": 194,
+ "open": 20,
+ "signatures": 58,
+ "recurrence_rate": 0.701,
+ "mttr_hours_mean": 31.1,
+ "mttr_hours_median": 24.6,
+ "remediated": 174,
  "classes": [
   {
    "class": "merge-conflict",
-   "events": 55,
-   "open": 11,
-   "signatures": 2,
+   "events": 60,
+   "open": 2,
+   "signatures": 3,
    "root_cause": "two writers change one generated or append-only file and the second PR cannot apply",
    "owner": "scripts/resolve_generated.py, scripts/no_markers.py",
    "failure_mode": "fm-lane-rebase-wedge"
   },
   {
    "class": "pr-stuck",
-   "events": 50,
-   "open": 9,
+   "events": 53,
+   "open": 0,
    "signatures": 2,
    "root_cause": "nothing server-side owns the PR after the session that opened it ends",
    "owner": "seed/worker/src/sweeper.js lane",
@@ -31,17 +31,17 @@ export const FAILMINE = {
   },
   {
    "class": "ci-red",
-   "events": 37,
-   "open": 11,
-   "signatures": 37,
+   "events": 44,
+   "open": 13,
+   "signatures": 42,
    "root_cause": "a change merged or main moved while a check was red",
    "owner": "foundation/redmain.py",
    "failure_mode": "fm-tests-red"
   },
   {
    "class": "gate-skipped",
-   "events": 13,
-   "open": 2,
+   "events": 16,
+   "open": 1,
    "signatures": 1,
    "root_cause": "a merge path reads mergeable_state instead of a green full checks run",
    "owner": "foundation/mergeaudit.py, green guard",
@@ -50,11 +50,20 @@ export const FAILMINE = {
   {
    "class": "tick-step-failed",
    "events": 12,
-   "open": 12,
+   "open": 0,
    "signatures": 2,
    "root_cause": "a tick step throws on a table or binding whose migration did not run",
    "owner": "seed/worker/src/tick.js",
    "failure_mode": "fm-clock-silent"
+  },
+  {
+   "class": "other",
+   "events": 4,
+   "open": 3,
+   "signatures": 3,
+   "root_cause": "unclassified: register a class in foundation/failmine.py ROOT_CAUSES",
+   "owner": "foundation/failmine.py",
+   "failure_mode": null
   },
   {
    "class": "credential",
@@ -66,24 +75,6 @@ export const FAILMINE = {
    "failure_mode": null
   },
   {
-   "class": "other",
-   "events": 1,
-   "open": 1,
-   "signatures": 1,
-   "root_cause": "unclassified: register a class in foundation/failmine.py ROOT_CAUSES",
-   "owner": "foundation/failmine.py",
-   "failure_mode": null
-  },
-  {
-   "class": "test-host",
-   "events": 1,
-   "open": 1,
-   "signatures": 1,
-   "root_cause": "a test depends on import order or on the host it runs on",
-   "owner": "tests/foundation/test_layout.py",
-   "failure_mode": "fm-tests-red"
-  },
-  {
    "class": "quota-governor",
    "events": 1,
    "open": 0,
@@ -91,6 +82,15 @@ export const FAILMINE = {
    "root_cause": "a fixed cap refuses work instead of throttling against measured spend",
    "owner": "seed/worker/src/budget.js soft throttle",
    "failure_mode": null
+  },
+  {
+   "class": "loop-stalled",
+   "events": 1,
+   "open": 1,
+   "signatures": 1,
+   "root_cause": "a loop has one trigger and that trigger did not fire",
+   "owner": "foundation/resilience.py, seed/worker/src/pulse.js",
+   "failure_mode": "fm-clock-silent"
   }
  ],
  "recurring": [
@@ -98,16 +98,16 @@ export const FAILMINE = {
    "sig": "0f61587b9e",
    "class": "merge-conflict",
    "signature": "ol-pr land or supersede pull request conflict",
-   "count": 54,
-   "open": 11,
-   "last": "2026-11-21T11:25:56+00:00",
+   "count": 58,
+   "open": 2,
+   "last": "2026-11-21T18:41:39Z",
    "ids": [
-    "OL-PR-936",
-    "OL-PR-937",
-    "OL-PR-1092",
-    "OL-PR-1094",
     "OL-PR-1099",
-    "OL-PR-1188"
+    "OL-PR-1188",
+    "OL-PR-1765",
+    "OL-PR-1784",
+    "OL-PR-1786",
+    "OL-PR-1808"
    ],
    "disposition": "incident"
   },
@@ -115,16 +115,16 @@ export const FAILMINE = {
    "sig": "5f8b2445f4",
    "class": "pr-stuck",
    "signature": "ol-pr land or supersede pull request ci",
-   "count": 40,
-   "open": 7,
-   "last": "2026-11-21T12:12:03+00:00",
+   "count": 43,
+   "open": 0,
+   "last": "2026-11-21T16:48:39Z",
    "ids": [
-    "OL-PR-930",
-    "OL-PR-1096",
-    "OL-PR-1380",
     "OL-PR-1345",
     "OL-PR-1459",
-    "OL-PR-1462"
+    "OL-PR-1462",
+    "OL-PR-1760",
+    "OL-PR-1762",
+    "OL-PR-1764"
    ],
    "disposition": "incident"
   },
@@ -132,16 +132,16 @@ export const FAILMINE = {
    "sig": "7f3c1db956",
    "class": "gate-skipped",
    "signature": "q-cifail-mergeaudit pr merged without a green checks",
-   "count": 13,
-   "open": 2,
-   "last": "2026-11-21T12:12:03+00:00",
+   "count": 16,
+   "open": 1,
+   "last": "2026-11-21T18:43:33Z",
    "ids": [
-    "Q-CIFAIL-mergeaudit-617",
-    "Q-CIFAIL-mergeaudit-619",
-    "Q-CIFAIL-mergeaudit-719",
     "Q-CIFAIL-mergeaudit-934",
     "Q-CIFAIL-mergeaudit-1268",
-    "Q-CIFAIL-mergeaudit-1461"
+    "Q-CIFAIL-mergeaudit-1461",
+    "Q-CIFAIL-mergeaudit-1750",
+    "Q-CIFAIL-mergeaudit-1759",
+    "Q-CIFAIL-mergeaudit-1813"
    ],
    "disposition": "incident"
   },
@@ -150,8 +150,8 @@ export const FAILMINE = {
    "class": "pr-stuck",
    "signature": "ol-pr land or supersede pull request needs",
    "count": 10,
-   "open": 2,
-   "last": "2026-11-21T08:19:47+00:00",
+   "open": 0,
+   "last": "2026-11-21T08:19:47Z",
    "ids": [
     "OL-PR-694",
     "OL-PR-709",
@@ -167,8 +167,8 @@ export const FAILMINE = {
    "class": "tick-step-failed",
    "signature": "nc-plus-tickfail-measure",
    "count": 7,
-   "open": 7,
-   "last": "2026-11-20T16:06:25+00:00",
+   "open": 0,
+   "last": "2026-11-20T16:06:25Z",
    "ids": [
     "NC-PLUS-TICKFAIL-measure-2026-11-13T09",
     "NC-PLUS-TICKFAIL-measure-2026-11-13T11",
@@ -184,8 +184,8 @@ export const FAILMINE = {
    "class": "tick-step-failed",
    "signature": "nc-plus-tickfail-criticality",
    "count": 5,
-   "open": 5,
-   "last": "2026-11-20T16:06:25+00:00",
+   "open": 0,
+   "last": "2026-11-20T16:06:25Z",
    "ids": [
     "NC-PLUS-TICKFAIL-criticality-2026-11-13T12",
     "NC-PLUS-TICKFAIL-criticality-2026-11-13T14",
@@ -194,6 +194,33 @@ export const FAILMINE = {
     "NC-PLUS-TICKFAIL-criticality-2026-11-13T18"
    ],
    "disposition": "incident"
+  },
+  {
+   "sig": "b08a9507fd",
+   "class": "ci-red",
+   "signature": "foundation tests site roadmap py site pins problem s ran tests in s failed",
+   "count": 3,
+   "open": 3,
+   "last": "2026-11-20T14:27:52Z",
+   "ids": [
+    "audit-foundation-tests-2026-11-16T13:59:38Z",
+    "audit-foundation-tests-2026-11-18T14:38:16Z",
+    "audit-foundation-tests-2026-11-20T14:27:52Z"
+   ],
+   "disposition": "incident"
+  },
+  {
+   "sig": "8aa89f1370",
+   "class": "other",
+   "signature": "site claims ins baseline json issue is on the roadmap with no probe the",
+   "count": 2,
+   "open": 2,
+   "last": "2026-11-17T15:24:49Z",
+   "ids": [
+    "audit-site-claims-2026-11-16T13:59:39Z",
+    "audit-site-claims-2026-11-17T15:24:49Z"
+   ],
+   "disposition": "mutate"
   }
  ],
  "discovered": [],
@@ -203,6 +230,8 @@ export const FAILMINE = {
   "Q-RECUR-7f3c1db956",
   "Q-RECUR-39caaf9374",
   "Q-RECUR-9ead069526",
-  "Q-RECUR-b680afd12d"
+  "Q-RECUR-b680afd12d",
+  "Q-RECUR-b08a9507fd",
+  "Q-RECUR-8aa89f1370"
  ]
 };
