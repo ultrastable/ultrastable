@@ -101,6 +101,14 @@
       "workflow": "watchdog",
       "expected_interval_s": 43200,
       "periodic": false
+    },
+    {
+      "id": "yearsim",
+      "what": "the weekly simulated year with zero input",
+      "source": "workflow",
+      "workflow": "yearsim",
+      "expected_interval_s": 604800,
+      "periodic": true
     }
   ],
   "chain": {

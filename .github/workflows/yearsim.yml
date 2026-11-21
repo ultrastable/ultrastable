@@ -1,0 +1,23 @@
+name: yearsim
+# budget: ~1 min x 4/month
+# trigger: weekly; a year of simulated months re-checks detectors that change only when code changes, so a faster event buys nothing; dispatch on demand
+# free-alternative: a cloud-hosted agent session runs `python3 -m foundation yearsim --apply`
+on:
+  schedule: [{cron: "41 5 * * 3"}]
+  workflow_dispatch: {}
+permissions: {id-token: write, contents: write}
+concurrency: {group: yearsim, cancel-in-progress: false}
+jobs:
+  yearsim:
+    if: ${{ vars.HALT != '1' }}  # HALT-1: the owner's halt (repository variable HALT=1) stops every job
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with: {ref: main, fetch-depth: 0}
+      - name: Twelve simulated months, one injected failure each (YEARSIM-1)
+        run: python3 -m foundation yearsim --apply
+        continue-on-error: true  # a failing month is a result: it files Q-YEARSIM-<area> and the data below is still committed
+      - name: Land the result on main
+        env: {GH_TOKEN: "${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}"}
+        run: python3 scripts/land_data.py "yearsim weekly simulated-year result" ops/yearsim.json site/yearsim-data.js docs/issues
