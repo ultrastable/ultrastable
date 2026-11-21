@@ -62,6 +62,6 @@ export async function connectionsRoute(request, env, { subject = currentSubject,
     }
     return page("<h1>Not found</h1>", 404);
   }
-  if (wk || p === "/connect" || p.startsWith("/connect/")) return env.TICK ? env.TICK.fetch(gatedForward(request, u, env))  /* REACH-1: the consent flow builds redirect_uri and client_id from the request origin; behind the gateway that is a workers.dev host, so it always sees the canonical one */ : page("<h1>Connections are not available on this deployment</h1>", 503);  // the consent flow itself lives in the tick Worker
+  if (wk || p === "/connect" || p.startsWith("/connect/")) return env.TICK ? env.TICK.fetch(gatedForward(request, u, env))  /* REACH-1: the consent flow builds redirect_uri and client_id from the request origin; behind the gateway that is a workers.dev host, so it sees the canonical one */ : page("<h1>Connections are not available on this deployment</h1>", 503);  // the consent flow itself lives in the tick Worker
   return null;
 }
