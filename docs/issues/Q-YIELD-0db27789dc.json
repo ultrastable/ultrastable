@@ -1,0 +1,12 @@
+{
+  "id": "Q-YIELD-0db27789dc",
+  "title": "Q-YIELD-0db27789dc: directive FAILURE-RESOLVE-1 is not holding",
+  "body": "**Owner:** operations\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -m foundation failure_audit --check\n**Status:** open\n\nIntent Yield: the owner's directive FAILURE-RESOLVE-1 (Every failure mode is audited and every finding is taken by the queue, 2026-11-21, agents/AGENTS.md:52) is not holding: its own probe `python3 -m foundation failure_audit --check` fails (temporal-drift: recorded as fail with no open Q-AUDIT-temporal-drift in docs/issues).\n\nThe owner said it once; the system makes it true again so it is never said twice. Fix the cause, not the probe. Prediction: the probe passes within 168 h.\n\nsize: M\n\n**Closing probe:** cmd:python3 -m foundation failure_audit --check.",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "intent-yield"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

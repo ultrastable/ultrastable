@@ -411,6 +411,18 @@
    "probe": "grep:tests/foundation/test_saydo.py::def test_probe_closes_on_match"
   },
   {
+   "id": "fm-intent-yield-stale",
+   "trigger": "the daily intent-yield run stops, errors, or its parser stops finding the owner's directives because their format changed",
+   "symptom": "/yield shows an old date or a falling count of directives while the directives themselves keep changing",
+   "blast_radius": "the yield page and the Q-YIELD items; directives that stopped holding go unnoticed",
+   "detection": "python3 -m foundation intentyield --probe (state older than stale_hours, an error recorded, fewer than min_intents parsed, or no probe run)",
+   "root_cause": "a loop whose only proof of life is its own output stops without anything reading that output",
+   "remediation": "the failure audit files Q-AUDIT-intent-yield-fresh for the executor; the watchdog restarts the intent-yield clock; the parser refuses a run that loses more than half the directives",
+   "status": "controlled",
+   "cadence_ticks": 144,
+   "probe": "grep:foundation/intentyield.py::def probe"
+  },
+  {
    "id": "fm-seed-unadmitted",
    "trigger": "a seed or generated system is deployed that cannot run a year unattended, or the template rots so the next generated system cannot",
    "symptom": "a new system's worker fails to start, a loop is missing, or a drill fails on its first week",
