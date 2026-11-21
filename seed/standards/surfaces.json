@@ -379,6 +379,19 @@
       "reason": "called only by tools/push_main.py inside this repository's workflows with a per-run token; nothing for an agent to discover"
     },
     {
+      "id": "lane-merge",
+      "path": "/api/lane/merge",
+      "methods": [
+        "POST"
+      ],
+      "kind": "rest",
+      "audience": "machine",
+      "standards": [],
+      "discoverable": false,
+      "description": "LANE-WORKER-MERGE-1: squash-merges a same-repository pull request that changes workflows with the org's GitHub App, after verifying the run's OIDC token, the exact head commit and the green guard",
+      "reason": "called only by tools/lane_worker_merge.py inside this repository's lane with a per-run token; nothing for an agent to discover"
+    },
+    {
       "id": "ops-backup",
       "path": "/api/ops/backup",
       "methods": [

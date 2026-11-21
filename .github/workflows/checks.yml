@@ -52,6 +52,8 @@ jobs:
           node --test test/plan-limits.test.mjs
           node --test --no-warnings dashboard/test/*.test.mjs
           bash scripts/site_tests.sh  # GATE-PARITY-1: runs site/*.test.mjs, the gate deploy-site runs before it deploys
+      - name: No committed merge-conflict markers (MARKER-ROOT-1)
+        run: python3 scripts/no_markers.py
       - name: Secret and key scan
         run: |
           if grep -rEIl --exclude-dir=.git -e '-----BEGIN [A-Z ]*PRIVATE KEY-----' -e 'gh[pousr]_[A-Za-z0-9]{36,}' -e 'AKIA[0-9A-Z]{16}' -e 'sk-ant-[A-Za-z0-9_-]{20,}' .; then echo "secret-like content found"; exit 1; fi
