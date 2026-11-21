@@ -9,10 +9,13 @@ import { prTier, portItemId } from './sla.js';  // SLA-1
 const API = 'https://api.github.com';
 // BRANCH-ROOT-CAUSE-1: `worker/` branches (the Worker executor's own PRs) were never swept, so they sat blocked; every automation prefix is swept.
 const CLIENT_PREFIX = ['claude/', 'agent/', 'worker/', 'dependabot/'];  // DEP-LOOP-1: dependency updates merge on green like any client PR (GREEN-GUARD-1 applies)
-async function gh(f, token, method, path, body) {
+export async function gh(f, token, method, path, body) {
   const r = await f(API + path, { method, headers: { authorization: 'Bearer ' + token, accept: 'application/vnd.github+json', 'user-agent': 'ultrastable-sweeper', 'content-type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
   const t = await r.text();
-  return { ok: r.ok, status: r.status, json: t ? JSON.parse(t) : null };  // callers branch on ok/status (issues off is a 410, not a crash); every non-ok is recorded in out.errors
+  // Not a throw: every caller reads ok/status and records a failure in out.errors (sweeper_runs.errors), so nothing is silent,
+  // and a 410 (issues off) or 405 (merge refused) is an expected answer that must not abort the rest of the sweep.
+  let json = null; try { json = t ? JSON.parse(t) : null; } catch { json = { raw: t.slice(0, 200) }; }
+  return { ok: r.ok, status: r.status, json };
 }
 const hours = (iso, now) => Math.max(0, (now - Date.parse(iso)) / 36e5);
 
