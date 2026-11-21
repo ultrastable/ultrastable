@@ -3073,7 +3073,7 @@ export default {
    "surface": "seed/AGENTS.md"
   },
   {
-   "claim": "seed-tests: 45 Python and 398 Worker tests",
+   "claim": "seed-tests: 45 Python and 399 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3082,7 +3082,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 398 Worker tests",
+   "claim": "seed-worker-tests: 399 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",

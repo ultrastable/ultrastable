@@ -1,0 +1,12 @@
+{
+  "id": "Q-SUBST-self-shipping",
+  "title": "Q-SUBST-self-shipping: the system itself ships a change that alters behaviour at least every 48 h, with zero trivial merges",
+  "body": "**Owner:** product-manager\n**Trigger:** SUBSTANCE-1 audit 2026-11-21\n**Done check:** cmd:python3 -m foundation substance --check-targets\n**Status:** open\n\nSUBSTANCE-1 (Rowan, 2026-11-21). Measured 2026-11-14..21 by `python3 -m foundation substance --report`: of 192 changes the system made itself, 21 altered executable behaviour, 7 were trivial (unused imports, a bumped counter) and 164 were records; 73 of 145 deploy rounds carried no behaviour change. The executor now refuses trivial PRs and the deploy gate skips data-only pushes. This item closes when the 7-day window shows the system's own substantive share rising, zero trivial system merges, and a substantive self change inside 48 h (state `shipping`). Until then the executor takes growth and repair items that change code (EFFECT-1) before records.",
+  "labels": [
+    "role:product-manager",
+    "raises-self",
+    "growth"
+  ],
+  "milestone": "Now",
+  "workstream": "Reliability"
+}

@@ -120,5 +120,11 @@ if __name__ == "__main__":
         b = check()
         print("dashboard ok" if not b else "\n".join(b))
         sys.exit(1 if b else 0)
-    (ROOT / OUT).write_text(render(build()), encoding="utf-8", newline="\n")
-    print(f"wrote {OUT}")
+    new = render(build())
+    cur = ROOT / OUT
+    strip = lambda t: "\n".join(l for l in t.replace("\r\n", "\n").splitlines() if '"asof"' not in l and '"asof_at"' not in l)
+    if cur.is_file() and strip(cur.read_text(encoding="utf-8")) == strip(new):
+        print(f"{OUT} unchanged apart from its commit stamp; not rewritten (SUBSTANCE-1: no hash-only churn)")
+    else:
+        cur.write_text(new, encoding="utf-8", newline="\n")
+        print(f"wrote {OUT}")
