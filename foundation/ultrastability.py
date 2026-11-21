@@ -460,6 +460,11 @@ def _followers() -> dict:
     watchdog tick, through the tick the watchdog already runs. A failure is returned, never swallowed."""
     import importlib
     res = {}
+    try:
+        from . import modelwatch
+        res["modelwatch"] = "changed %d" % len(modelwatch.observed(REPO, apply=True).get("changed", []))  # MODEL-HEAL-1
+    except Exception as e:  # reported in the tick output; the other followers still run
+        res["modelwatch"] = "failed: " + repr(e)
     for name in ("yearsim", "saydo", "trajectory"):
         try:
             r = importlib.import_module("foundation." + name).run(REPO, apply=True)

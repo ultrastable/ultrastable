@@ -86,7 +86,9 @@ def drill_model_ladder(root, today):
             except RuntimeError as e:
                 failed.append(f"{v}: {str(e)[:80]}")
         obs = modelwatch.observed(tmp, apply=True)
-        wired = "modelwatch --observed --apply" in (Path(root) / ".github/workflows/watchdog.yml").read_text(encoding="utf-8")
+        wd = (Path(root) / ".github/workflows/watchdog.yml").read_text(encoding="utf-8")
+        us = (Path(root) / "foundation/ultrastability.py").read_text(encoding="utf-8")  # WATCHDOG-FOLLOW-1: the tick the watchdog runs also runs it
+        wired = "modelwatch --observed --apply" in wd or '"modelwatch"' in us
         ev = (f"{len(vendors)} vendor-wide retirements through agents.complete: {len(vendors) - len(failed)} still produced a change, {healed} on a healed rung; "
               f"modelwatch.observed turned {len(obs['changed'])} recorded 410s into catalog retirements; watchdog runs it: {wired}") + (f"; failed: {'; '.join(failed)}" if failed else "")
         if failed:
