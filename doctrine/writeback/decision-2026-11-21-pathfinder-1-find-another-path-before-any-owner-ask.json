@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-21-pathfinder-1-find-another-path-before-any-owner-ask",
+  "kind": "decision",
+  "date": "2026-11-21",
+  "title": "PATHFINDER-1: find another path before any owner ask",
+  "body": "Owner 2026-11-21: multiple paths always exist and the information is already held. foundation/pathfinder.py resolves routes per surface class, records attempts, diffs regressed integrations, and fails openloops --check on an owner ask without exhaustion proof.",
+  "probe": "file:foundation/pathfinder.py",
+  "session": "session_0156nqDsmZTfHS1uunx9hyu7"
+ },
+ "kind": "decision",
+ "title": "PATHFINDER-1: find another path before any owner ask",
+ "session": "session_0156nqDsmZTfHS1uunx9hyu7"
+}
