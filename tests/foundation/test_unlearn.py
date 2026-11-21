@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """Unlearn tenant: a real manifest and an IDEA.md that passes the bootstrap system test (doctrine/VISION.md)."""
 import json
 import pathlib
@@ -49,6 +51,26 @@ class Unlearn(unittest.TestCase):
         for need in ("dpia_complete", "parental_consent_flow", "retention_policy_published", "no_companion_persona"):
             self.assertIn(need, kids["prerequisites"])
         self.assertIn("default_in_effect", kids["identity_bound_gate"])
+
+    def test_runway_probes_hold(self):
+        d = json.loads((INST / "runway.json").read_text())
+        self.assertGreaterEqual(d["target_days"], 365)
+        tests = (INST / "worker/worker.test.mjs").read_text()
+        for r in d["risks"]:
+            kind, _, rest = r["probe"].partition(":")
+            if kind == "test":
+                self.assertIn("test('" + rest + "'", tests, r["id"])
+            elif kind == "file":
+                self.assertTrue((ROOT / rest).exists(), r["id"])
+            elif kind == "grep":
+                path, _, needle = rest.partition("::")
+                self.assertIn(needle, (ROOT / path).read_text(), r["id"])
+            else:
+                self.fail("unknown probe kind " + kind)
+        topo = json.loads((ROOT / "doctrine/topology.json").read_text())
+        w = [x for x in topo["workers"] if x["id"] == "ultrastable-unlearn"][0]
+        self.assertEqual(w["state"], "live")
+        self.assertFalse(w["bindings"].get("secrets"), "the Worker holds no secret")
 
 
 if __name__ == "__main__":

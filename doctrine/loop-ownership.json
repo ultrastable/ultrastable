@@ -5,7 +5,8 @@
   "server_owners": [
     "ultrastable-tick",
     "github-actions",
-    "cloud-routine"
+    "cloud-routine",
+    "ultrastable-unlearn"
   ],
   "server_path_classes": [
     "free",

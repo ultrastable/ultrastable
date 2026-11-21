@@ -109,6 +109,26 @@
       "workflow": "temporal",
       "expected_interval_s": 86400,
       "periodic": true
+    },
+    {
+      "id": "unlearn-beat",
+      "what": "Unlearn tenant beat (cron 41 * * * * on ultrastable-unlearn; a visit catches up a silent cron): re-learn move weights, measure, open the next phase, prune",
+      "source": "d1",
+      "d1_id": "ef788db7-0a0c-4c5d-921d-18a596a15945",
+      "table": "beats",
+      "column": "started_at",
+      "expected_interval_s": 3600,
+      "periodic": true,
+      "replicas": [
+        {
+          "account_id": "81e3a4efb4eb66e613529b87682911bb",
+          "d1_id": "ef788db7-0a0c-4c5d-921d-18a596a15945",
+          "why": "ultrastable account, the only copy"
+        }
+      ],
+      "health_urls": [
+        "https://ultrastable-unlearn.ultrastable.workers.dev/health"
+      ]
     }
   ],
   "chain": {

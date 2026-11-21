@@ -43,12 +43,12 @@ The research behind this ([Homo Ludens, self-directed learning, and AI-facilitat
 
 **Privacy floor.** The UK Children's Code has 15 standards (best interests, DPIA, data minimisation, default settings, profiling, nudge techniques, parental controls among them). The amended COPPA Rule had a compliance date of 22 April 2026: a published retention policy, a written security program, named third parties, and voice recordings counted as personal information. The Dutch age of digital consent is 16. Phase 3 does not open until each is met, and the controller entity is the one owner-only step (default in effect: phase 3 closed, phases 1 and 2 run).
 
-## Phase 1 build steps (each a queue item with a closing probe)
+## Phase 1: built
 
-1. **Manifest, idea, phases** (this change). Probe: `python3 -m unittest tests.foundation.test_unlearn`.
-2. **Tenant runtime.** One Durable Object per tenant in `ultrastable-tenants` (TENANT-STORAGE-1); tables `curiosities`, `moves`, `followups`, `move_weights`. Probe: tenant `/health` self-test.
-3. **Pill ask bar** (INTERVIEW-1): "What is the child curious about?" with mic, then two either/or taps. Probe: render test.
-4. **Move generator.** Workers AI, forbidden from explaining; a guard rejects any move that states the answer. Probe: 50 fixture curiosities, `move_answer_leaks == 0`.
-5. **Follow-up clock** at 7 and 14 days, one-tap yes/no. Probe: `continuation_14d` leaves `declared`.
-6. **Telling detector** for coach notes. Probe: `telling_share` measured.
-7. **Public page** of measured numbers only (FRONT-BACKED-1, CLAIMS-1).
+`worker/` is the app: one Worker (`ultrastable-unlearn` in `doctrine/topology.json`), one D1 database, one hourly cron, no secrets and no npm dependencies. Tests: `node --test instances/unlearn/worker/*.test.mjs`.
+
+- **Ask bar** with a mic and age chips; the adult's curiosities stay in their own browser as tokens.
+- **Coaching moves**: 23 library moves in four kinds (ask, try, connect, wait), picked by Beta sampling over 14-day outcomes. A Workers AI model may re-word one inside a daily cap, behind the answer guard; any failure keeps the library text.
+- **Follow-ups** at 7 and 14 days, one tap. **Coach notes** are classed as telling or asking.
+- **The hourly beat** re-learns weights, measures (`/api/metrics`), opens phase 2 when its gates hold (the school-group UI lights by itself), and applies retention. A visit runs the beat if the cron has been silent for 2 hours.
+- **Year safeguards**: `runway.json` lists 12 ways it could stop and the safeguard and probe for each (`tests/foundation/test_unlearn.py` checks every probe). Clock `unlearn-beat` in `doctrine/clocks.json`; loop `unlearn-beat` in the loop registry.
