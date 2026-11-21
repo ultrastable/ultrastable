@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
 // SEED-DEPLOY-1: deploys every seed listed in doctrine/seed-deploys.json to the Ultrastable Cloudflare account, from this repository alone.
 //   node deploy/deploy-seed.mjs            generate and admit each seed, create its D1, migrate, deploy, probe /health, record the row
 //   node deploy/deploy-seed.mjs --verify   probe only (no deploy)
