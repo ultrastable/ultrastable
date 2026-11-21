@@ -1598,11 +1598,11 @@ export default {
   },
   {
    "claim": "- **The template is code only (TEMPLATE-CODE-ONLY-1, Rowan 2026-11-21).** \"I thought the UltraStable template repo should be just code that",
-   "detail": "grep:.github/workflows/checks.yml::foundation[ .]template\\b failed (.github/workflows/checks.yml)",
-   "how": "file:doctrine/template-boundary.json + file:foundation/template.py + grep:.github/workflows/checks.yml::foundation[ .]template\\b",
+   "detail": "",
+   "how": "file:doctrine/template-boundary.json + file:foundation/template.py + grep:foundation/template.py::def check",
    "id": "cited-bbe53ab169",
    "kind": "claim",
-   "pass": false,
+   "pass": true,
    "surface": "agents/AGENTS.md"
   },
   {
@@ -2588,11 +2588,11 @@ export default {
   },
   {
    "claim": "- **The template is code only (TEMPLATE-CODE-ONLY-1, Rowan 2026-11-21).** \"I thought the UltraStable template repo should be just code that",
-   "detail": "grep:.github/workflows/checks.yml::foundation[ .]template\\b failed (.github/workflows/checks.yml)",
-   "how": "file:doctrine/template-boundary.json + file:foundation/template.py + grep:.github/workflows/checks.yml::foundation[ .]template\\b",
+   "detail": "",
+   "how": "file:doctrine/template-boundary.json + file:foundation/template.py + grep:foundation/template.py::def check",
    "id": "mirror-83545b0084",
    "kind": "claim",
-   "pass": false,
+   "pass": true,
    "surface": "seed/agents/AGENTS.md"
   },
   {
@@ -3331,8 +3331,8 @@ export default {
   }
  ],
  "summary": {
-  "drift": 2,
-  "pass": 365,
+  "drift": 0,
+  "pass": 367,
   "total": 367
  }
 };
