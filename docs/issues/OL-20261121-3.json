@@ -1,7 +1,7 @@
 {
   "id": "OL-20261121-3",
   "title": "OL-20261121-3: Seed e2e cannot reach the ultrastable Cloudflare account from Actions",
-  "body": "**Owner:** operations\n**Trigger:** weekly seed-launch.yml run\n**Done check:** grep:ops/seed-launches.jsonl::\"passed\": true\n**Status:** open\n\nEvidence: seed-launch run 44957007056 (2026-11-21) passed the year gate (p10 730 days, target 365), then wrangler d1 list against account 81e3a4efb4eb66e613529b87682911bb failed with Authentication error 10000. The repo secret CLOUDFLARE_API_TOKEN belongs to the retired account, which is also where run 44955545446 deployed before the account was pinned. Next route: deploy seeds through the site worker's internal deploy endpoint (site/deployer.js), which already holds the ultrastable credential server-side. Closing probe: seedlaunch --check passes.",
+  "body": "**Owner:** operations\n**Trigger:** weekly seed-launch.yml run\n**Done check:** grep:ops/seed-launches.jsonl::\"passed\": true\n**Status:** closed\n\nEvidence: seed-launch run 44957007056 (2026-11-21) passed the year gate (p10 730 days, target 365), then wrangler d1 list against account 81e3a4efb4eb66e613529b87682911bb failed with Authentication error 10000. The repo secret CLOUDFLARE_API_TOKEN belongs to the retired account, which is also where run 44955545446 deployed before the account was pinned. Next route: deploy seeds through the site worker's internal deploy endpoint (site/deployer.js), which already holds the ultrastable credential server-side. Closing probe: seedlaunch --check passes.\n\n**Evidence:** closing probe passed (2 consecutive passes after a recorded failure): grep:ops/seed-launches.jsonl::\"passed\": true\n",
   "labels": [
     "role:operations",
     "open-loop"
