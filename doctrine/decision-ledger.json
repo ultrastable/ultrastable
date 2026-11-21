@@ -3515,6 +3515,66 @@
    "title": "PATCH-EDIT-1: the executor shows the named files and takes find-and-replace edits",
    "body": "Measured 2026-11-20: three runs on Q-CLAIM-reply-promise rewrote site/worker.js from about 1,150 lines to 45, 32 and 51 lines and failed the ELISION-1 shrink guard each time. Cause: the prompt held file names only and the reply format asked for whole files. Fixed in code: foundation/executor.py file_context puts the named files in the prompt (whole under 9,000 characters, an excerpt otherwise) and foundation/agents.py apply_edit places EDIT blocks exactly or unambiguously; tests/foundation/test_dispose.py PatchEdit passes 6 tests.",
    "probe": "grep:foundation/agents.py::def apply_edit"
+  },
+  {
+   "id": "decision-2026-11-20-dispose-1-verified-live-first-fleet-pass-disposed-items-on-m",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "DISPOSE-1 verified live: first fleet pass disposed items on main",
+   "body": "Fleet run 44814064150 succeeded; dispose --report on main shows 23 gate, 4 shelved, 281 open, oldest 10.5 days, ttl 14.",
+   "probe": "grep:foundation/dispose.py::def revive",
+   "session": "session_0156nqDu4yypYCxGuFsjcqA3"
+  },
+  {
+   "id": "lesson-2026-11-20-dispose-1-first-live-pass-broke-the-pins-check-dispositions-",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "DISPOSE-1 first live pass broke the pins check; dispositions now prune the baseline",
+   "body": "The first fleet pass closed 11 gated roadmap rows that doctrine/pins-baseline.json still listed, so main failed pins --check. foundation/dispose.py now removes a disposed item from that baseline in the same pass, using pins.unprobed as the reading; test_dispose.py covers it.",
+   "probe": "grep:foundation/dispose.py::_prune_pins",
+   "session": "session_0156nqDu4yypYCxGuFsjcqA3"
+  },
+  {
+   "id": "decision-2026-11-20-attention-1-argue-the-claim-do-not-target-people",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "ATTENTION-1: argue the claim, do not target people",
+   "body": "Public attention for the autonomy case is an argued thesis page (/left-alone) with a live ledger from the progress record; it names no individuals and states its limits. Social channels are awaiting an account (ops/reach/status.json), so no posting is claimed until one connects.",
+   "probe": "file:site/leftalone.js",
+   "session": "session_0156nqDscDsruQvtqznPjudy"
+  },
+  {
+   "id": "decision-2026-11-20-attention-1-attention-on-evidence-credential-free-channels-s",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "ATTENTION-1: attention on evidence, credential-free channels, server-side reach measurement",
+   "body": "Attention for Ultrastable is earned on evidence: weekly deploy-record post, respectful evergreen framing of the autonomy debate, no person ever named or mentioned. WebSub, Internet Archive snapshots and IndexNow run from the site Worker tick; reach is measured by the site Worker and served at /api/reach.",
+   "probe": "grep:site/promote.js::ATTENTION-1",
+   "session": "session_0156nqDtiVSQH4gv74byYXxR"
+  },
+  {
+   "id": "lesson-2026-11-20-connect-1-connection-engine",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "CONNECT-1 connection engine",
+   "body": "Evidence: core/connect tests pass 14 of 14 and a real catalogue run ranked 1282 leads over 814 items. Cutoffs come from each run's own background because fixed thresholds fail across embedding models; a restated indicator is not a novel link; the lexical route does not seed discovery. Verified live in the next connect workflow run.",
+   "probe": "file:workers/core/connect/index.js"
+  },
+  {
+   "id": "lesson-2026-11-20-credwatch-reads-account-owned-tokens",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "credwatch reads account-owned tokens",
+   "body": "Account-owned Cloudflare tokens are verified through their own account verify route, not the user route, so credwatch no longer reports them invalid.",
+   "probe": "grep:foundation/credwatch.py::verify"
+  },
+  {
+   "id": "lesson-2026-11-20-credwatch-session-record",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "credwatch session record",
+   "body": "Session: session_0156nqDrFvUVn55Vaqm9Uyt2 made the credwatch account-token change; recorded here.",
+   "probe": "grep:foundation/credwatch.py::verify"
   }
  ]
 }

@@ -16,7 +16,9 @@ export function textOf(out) {
 // A reasoning model can spend its whole budget thinking and return no answer; such a reply is retried once with a larger budget.
 const truncated = out => (out?.choices?.[0]?.finish_reason === 'length') || (out?.usage && !textOf(out));
 
-export function createModelService({ audience, repository, allow = [], defaultModel, path = '/llm', maxPrompt = 40000, maxTokens = 4000, verify = verifyOidc }) {
+// CONNECT-1: the same route also embeds text ({ embed: [texts], model? } -> { vectors, model }) for the connection engine (core/connect).
+export const EMBED_ALLOW = ['@cf/baai/bge-base-en-v1.5', '@cf/baai/bge-small-en-v1.5', '@cf/baai/bge-large-en-v1.5', '@cf/baai/bge-m3'];
+export function createModelService({ audience, repository, allow = [], defaultModel, path = '/llm', maxPrompt = 40000, maxTokens = 4000, verify = verifyOidc, embedAllow = EMBED_ALLOW, maxEmbed = 100, maxEmbedChars = 4000 }) {
   if (!audience || !repository || !defaultModel) throw new Error('modelservice needs audience, repository and defaultModel');
   return {
     async fetch(request, env) {
@@ -28,6 +30,15 @@ export function createModelService({ audience, repository, allow = [], defaultMo
       const v = await verify((request.headers.get('authorization') || '').replace(/^Bearer /, ''), { audience, repository });
       if (!v.ok) return Response.json({ error: 'forbidden', reason: v.reason }, { status: 403 });
       const b = await request.json().catch(() => null);
+      if (b && Array.isArray(b.embed)) {
+        if (!b.embed.length || b.embed.length > maxEmbed || !b.embed.every(t => typeof t === 'string' && t.length && t.length <= maxEmbedChars)) return Response.json({ error: 'bad_request', reason: `embed takes 1-${maxEmbed} non-empty strings of at most ${maxEmbedChars} characters` }, { status: 400 });
+        const model = embedAllow.includes(b.model) ? b.model : embedAllow[0];
+        try {
+          const out = await env.AI.run(model, { text: b.embed });
+          if (!out || !Array.isArray(out.data) || out.data.length !== b.embed.length) return Response.json({ error: 'model_error', model, detail: 'embedding reply had the wrong shape' }, { status: 502 });
+          return Response.json({ vectors: out.data, model });
+        } catch (e) { return Response.json({ error: 'model_error', model, detail: String(e?.message || e).slice(0, 300) }, { status: 502 }); }
+      }
       if (!b || typeof b.prompt !== 'string' || b.prompt.length > maxPrompt) return Response.json({ error: 'bad_request' }, { status: 400 });
       const model = allow.includes(b.model) ? b.model : defaultModel;
       const want = Math.min(Number(b.max_tokens) || 600, maxTokens);

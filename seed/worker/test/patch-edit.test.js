@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
 // PATCH-EDIT-1 (worker side): EDIT blocks are parsed and placed exactly or unambiguously; the prompt shows the files an item names.
 import test from 'node:test';
 import assert from 'node:assert/strict';

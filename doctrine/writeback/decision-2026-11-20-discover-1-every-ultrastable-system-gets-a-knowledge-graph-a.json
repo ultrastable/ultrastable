@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-20-discover-1-every-ultrastable-system-gets-a-knowledge-graph-a",
+  "kind": "decision",
+  "date": "2026-11-20",
+  "title": "DISCOVER-1: every Ultrastable system gets a knowledge graph and vector index that keeps finding connections",
+  "body": "Rowan 2026-11-20: a vector database and knowledge graph are a hallmark of every system; QNFO's research graph worked and its table-scan cost did not. core/discover embeds changed items only (content hash), keeps int8 vectors in a packed index searched exactly in memory (Vectorize port above 20,000 vectors, because Vectorize bills (stored+1) x dimensions per query and the free allocation is 30M queried dimensions a month), builds a kNN graph with communities, proposes transfer, combination, bridge and frontier leads, screens novelty, settles each lead against what the system later adopts, and tunes one knob with a scored prediction. core/modelservice serves /embed behind OIDC, core/ask takes a semantic hook. Practical Solutions runs it daily (connections.yml) and shows it at /connections.",
+  "probe": "file:workers/core/discover/discover.test.js",
+  "session": "session_0156nqDuQg9XGRLvX61Z8ZaX"
+ },
+ "kind": "decision",
+ "title": "DISCOVER-1: every Ultrastable system gets a knowledge graph and vector index that keeps finding connections",
+ "session": "session_0156nqDuQg9XGRLvX61Z8ZaX"
+}

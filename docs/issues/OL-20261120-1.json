@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261120-1",
+  "title": "OL-20261120-1: CONNECT-1 live run and PS revendor",
+  "body": "**Owner:** product-manager\n**Trigger:** core PR 825 merged\n**Done check:** file:workers/core/connect/index.js\n**Status:** open\n\nRevendor practical-solutions from core and run the connect workflow on a model route; closing probe is the /connections page showing a non-lexical route.\n\n**Vacuous:** 2026-11-21T00:02:44Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n",
+  "labels": [
+    "role:product-manager",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

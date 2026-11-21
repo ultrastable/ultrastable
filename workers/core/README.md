@@ -36,7 +36,9 @@ Each directory here is one module of the Ultrastable core, written to the specif
 | `elicit` | needs register, Ask cards, defaults with assumption log, read-back, readiness score, four-sweep ignorance audit, US-SPEC-16 | BUILT as a module (see `elicit/elicit.test.js`); wired into core/org as an opt-in tick step and token-guarded routes (`config.elicit.enabled`) |
 | `console-l3` | operator console L3: fleet state, health, digest from one state, report cards with evidence and limits, objective-function guard, step budgets, US-SPEC-13 (L3 requirements R01-R06, R11) | BUILT as a module and served at `/api/console/fleet/*`; R12, R13 and the L2 service-level rows are NOT COVERED |
 | `org` | composition root: one tick runs every loop, one handle serves every route; the Worker and Cloud Run call it | BUILT (see its README) |
+| `connect` | the connection engine: a knowledge graph (`kgraph`) plus vectors (Workers AI bge, GitHub Models, or a lexical route needing no credential) finds novel connections, close in meaning and far in the graph, ranks them and learns from downstream outcomes (CONNECT-1) | BUILT (see its README) |
 | `ask`, `i18n` | grounded natural-language questions over a tenant's pages (retrieval, verified answers, rate limit and budget); serving a server-rendered site in many languages (segments, hreflang, sitemaps, checked machine translation) | BUILT (see their READMEs) |
+| `discover` | knowledge graph plus vector index that keeps proposing new connections, screens them for novelty and scores itself (DISCOVER-1) | BUILT (see its README) |
 | `codeloop`, `graph`, `tasks`, `router/calibration` | merge gate, blast radius, task runner, model probes | BUILT (see their READMEs) |
 | rest | see [extraction/INVENTORY.md](../extraction/INVENTORY.md) | PLANNED |
 | `ignorance/` | registry of known unknowns, red-team, inversion and pre-mortem passes, frontier of new questions | BUILT (see its README); org-tick step and model route BUILT |
