@@ -4089,6 +4089,15 @@
    "body": "The Buffer connect error logged no reason; the failure status and body now go to credential_events and a smoke probe POSTs the registration from a runner.",
    "probe": "file:seed/worker/src/auth/social.js",
    "session": "session_0156nqDtycGejegSYjhFJ1MF"
+  },
+  {
+   "id": "decision-2026-11-21-probe-format-1-malformed-closing-probes-fail-the-pr-and-beco",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "PROBE-FORMAT-1: malformed closing probes fail the PR and become a REDMAIN gate",
+   "body": "Main went red twice on 2026-11-21 from a grep probe with one colon. writeback check now validates every ledger and write-back probe (format, path exists, regex compiles); record refuses a bad probe; the probe-format gate in doctrine/redmain.json lets ciwatch open a repair when main still turns red.",
+   "probe": "file:foundation/writeback.py",
+   "session": "session_0156nqDtycGejegSYjhFJ1MF"
   }
  ]
 }
