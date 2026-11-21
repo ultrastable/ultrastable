@@ -22,7 +22,7 @@ Can an AI system close its own loops?. Ultrastable R&D, Ultrastable; own R&D que
 - SERVER-OWNS-LOOPS-1 (`foundation/loopowner.py`): a loop with no server-side owner fails the build
 - CLOCKWORK-1 (`instances/ultrastable/loop-registry.json`): each loop row carries its trigger, closing probe and owner
 
-**Measured here:** share of registered loops that declare a closing probe and a server-side owner: 1.0 (n = 108). Target >= 1.0. Verdict: **met**.
+**Measured here:** share of registered loops that declare a closing probe and a server-side owner: 1.0 (n = 109). Target >= 1.0. Verdict: **met**.
 Source: instances/ultrastable/loop-registry.json (declared).
 
 ### O2. Merging needs no person (oversight)
@@ -91,14 +91,13 @@ Source: ops/criticality.jsonl at 2026-11-21T14:37:02Z.
 
 ## Proposed further links (leads, not findings)
 
-Found by core/connect on the lexical-512-1sj6dkf route; each is a proposal until a study file adopts it.
+Found by core/connect on the lexical-512-1p16xad route; each is a proposal until a study file adopts it.
 
-- O1 may also relate to FLOW-DIRECTIVE-1 (similarity 0.149)
+- O1 may also relate to FLOW-DIRECTIVE-1 (similarity 0.148)
 - O2 may also relate to CLOCKWORK-1 (similarity 0.13)
-- O5 may also relate to UNKNOWNS-1 (similarity 0.171)
+- O5 may also relate to UNKNOWNS-1 (similarity 0.17)
 - O5 may also relate to DRAIN-ZERO-1 (similarity 0.155)
-- O6 may also relate to INTERVIEW-1 (similarity 0.118)
-- O6 may also relate to FLOW-DIRECTIVE-1 (similarity 0.118)
+- O6 may also relate to INTERVIEW-1 (similarity 0.117)
 
 ## Method
 

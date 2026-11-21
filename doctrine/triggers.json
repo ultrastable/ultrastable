@@ -299,6 +299,14 @@
     "17 6 * * 1"
    ]
   },
+  "intent-yield.yml": {
+   "events": [
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "29 7 * * *"
+   ]
+  },
   "issueloop.yml": {
    "events": [
     "workflow_dispatch"
