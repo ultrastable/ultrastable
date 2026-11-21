@@ -289,6 +289,18 @@
    "status": "controlled",
    "cadence_ticks": 1,
    "probe": "grep:foundation/failure_audit.py::def coverage"
+  },
+  {
+   "id": "fm-waiting-on-person",
+   "trigger": "any item, PR, report or loop whose next step is a person reading, approving, merging or deciding (owner directive 2026-11-21: a thread showing as waiting on the owner is itself a failure)",
+   "symptom": "a PR, issue or report sits or ends as 'waiting on' or 'leaving to' a person",
+   "blast_radius": "every loop that takes input from a code agent or a person",
+   "detection": "python3 -m foundation closedloop --check (human_wait_states) and the lane's held list",
+   "root_cause": "an input was treated as needing a reply instead of being taken as given: drafts left unready, merges left to approval, results phrased as hand-backs",
+   "remediation": "every input is incorporated by the server-side loop: the lane marks a finished draft ready and merges it on green, the sweeper carries a stuck PR, and only an identity-bound act becomes one gate with a default in effect",
+   "status": "controlled",
+   "cadence_ticks": 1,
+   "probe": "grep:seed/worker/src/lane.js::a draft with finished work is marked ready by the lane"
   }
  ],
  "controls": [

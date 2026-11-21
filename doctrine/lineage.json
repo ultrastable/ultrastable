@@ -1,0 +1,18 @@
+{
+ "_doc": "LINEAGE-1: the narrative graph behind the promotion (owner, 2026-11-21). Nodes are the owner's work in order; edges say what carried over. Consumed by the social queue drafts below; the site and knowledge graph read nodes and edges.",
+ "nodes": [
+  {"id": "empowering-change", "label": "Empowering Change", "what": "the nonprofit the owner started"},
+  {"id": "data-for-good", "label": "Data for good", "what": "using data to serve the common good"},
+  {"id": "qnfo", "label": "QNFO", "what": "research, now complete"},
+  {"id": "ai-for-good", "label": "AI for good", "what": "AI as a contribution to the common good"},
+  {"id": "ultrastable", "label": "Ultrastable", "what": "the autonomous platform that runs its own loops"},
+  {"id": "practical-solutions", "label": "Practical Solutions", "what": "a tenant on Ultrastable that finds evidence-backed solutions to pressing problems"}
+ ],
+ "edges": [
+  ["empowering-change", "data-for-good"], ["data-for-good", "qnfo"], ["qnfo", "ai-for-good"], ["ai-for-good", "ultrastable"], ["ultrastable", "practical-solutions"]
+ ],
+ "channels": ["bluesky", "mastodon", "mstdn.science", "linkedin", "x", "substack", "facebook", "instagram"],
+ "drafts": [
+  {"id": "lineage-1", "text": "A few years ago I started a nonprofit, Empowering Change, to ask a simple question: how do we use data for good? Practical Solutions is the latest answer: an AI that looks for bright spots, places where something works, and shows people how to do it too. ultrastable.org", "long": "A few years ago I started a nonprofit, Empowering Change, around one question: how can data serve the common good? That led to years of research at QNFO, then to AI for good. Now it runs for real. Ultrastable is a platform that keeps its own loops going, and Practical Solutions on top of it looks for bright spots, evidence-backed solutions to pressing problems that people can actually implement. If you work on a problem like that, I'd love to hear which one. ultrastable.org"}
+ ]
+}

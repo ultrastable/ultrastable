@@ -219,3 +219,13 @@ test('THOUGHT-1: a paper post reaches LinkedIn with its own long text; an event 
   const env3 = mk(); await store.put(env3.DB, env3, 't', 'oauth:linkedin', { secret: {}, meta: {}, access: 'li', expiresAt: NOW - 1, status: 'ok' });
   assert.deepEqual(await runSocial({ db: env3.DB, env: env3, fetch: f, now: NOW, tenant: 't' }), { skipped: 'no channel connected' });
 });
+
+test('SOCIAL-BUFFER-1: every connected Buffer channel gets the post; X is cut to 280, LinkedIn queued', async () => {
+  const { postBuffer } = await import('../src/social.js'); const sent = [];
+  const f = async (u, init) => { const q = JSON.parse(init.body).query;
+    if (q.includes('organizations')) return J({ data: { account: { organizations: [{ id: 'o1' }] } } });
+    if (q.includes('channels(')) return J({ data: { channels: [{ id: 'l', service: 'linkedin' }, { id: 'x', service: 'twitter' }, { id: 'd', service: 'facebook', isDisconnected: true }] } });
+    sent.push(q); return J({ data: { createPost: { post: { id: 'p' + sent.length, status: 'x' } } } }); };
+  const r = await postBuffer('tok', 'L'.repeat(900), f, 'S'.repeat(400));
+  assert.deepEqual(Object.keys(r), ['linkedin', 'twitter']); assert.match(sent[0], /addToQueue/); assert.match(sent[1], /shareNow/); assert.ok(!sent[1].includes('S'.repeat(281)));
+});
