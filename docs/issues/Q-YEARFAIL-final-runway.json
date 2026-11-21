@@ -1,12 +1,12 @@
 {
- "id": "Q-YEARFAIL-final-runway",
- "title": "Q-YEARFAIL-final-runway: year simulation month 13 failed (after twelve months the runway still meets the target)",
- "body": "**Owner:** staff\n**Trigger:** every yearfail run\n**Done check:** cmd:python3 -m foundation yearfail --probe final-runway\n**Status:** open\n\nYEARFAIL-1: simulated runway None days (target 365, below []); live cost ledger last reading 2026-11-20: UNMEASURED ([{\"kind\": \"ai-neurons\", \"error\": \"graphql errors: [{\\\"message\\\":\\\"not authorized for that account\\\",\\\"path\\\":[\\\"viewer\\\")\n",
- "labels": [
-  "role:staff",
-  "raises-self",
-  "runway"
- ],
- "milestone": "Now",
- "workstream": "Reliability"
+  "id": "Q-YEARFAIL-final-runway",
+  "title": "Q-YEARFAIL-final-runway: year simulation month 13 failed (after twelve months the runway still meets the target)",
+  "body": "**Owner:** staff\n**Trigger:** every yearfail run\n**Done check:** cmd:python3 -m foundation yearfail --probe final-runway\n**Status:** closed\n\nYEARFAIL-1: simulated runway None days (target 365, below []); live cost ledger last reading 2026-11-20: UNMEASURED ([{\"kind\": \"ai-neurons\", \"error\": \"graphql errors: [{\\\"message\\\":\\\"not authorized for that account\\\",\\\"path\\\":[\\\"viewer\\\")\n\n\n**Evidence:** closing probe passed (2 consecutive passes after a recorded failure): final-runway: PASS\n",
+  "labels": [
+    "role:staff",
+    "raises-self",
+    "runway"
+  ],
+  "milestone": "Now",
+  "workstream": "Reliability"
 }
