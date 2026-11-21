@@ -1,5 +1,5 @@
 {
- "at": "2026-11-21T11:10:28Z",
+ "at": "2026-11-21T11:16:53Z",
  "gaps": 3,
  "match_share": 0.993,
  "sources": {
@@ -90,7 +90,7 @@
     "drift": 0,
     "id": "claims-total",
     "ok": true,
-    "total": 368
+    "total": 370
    }
   ],
   "loops": [
@@ -461,6 +461,15 @@
     "unmeasured": []
    },
    {
+    "checks": 2,
+    "external": [],
+    "failing": [],
+    "id": "YEAR-SIM-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
     "checks": 1,
     "external": [],
     "failing": [],
@@ -642,7 +651,7 @@
   },
   "claims": {
    "gaps": 0,
-   "total": 368
+   "total": 370
   },
   "loops": {
    "gaps": 1,
@@ -650,12 +659,12 @@
   },
   "rules": {
    "gaps": 0,
-   "total": 56
+   "total": 57
   },
   "year": {
    "gaps": 1,
    "total": 2
   }
  },
- "total": 436
+ "total": 439
 }

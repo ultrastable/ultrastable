@@ -154,6 +154,15 @@
         "file": ".github/workflows/watchdog.yml",
         "contains": "python3 -m foundation saydo --run --apply"
       }
+    },
+    {
+      "id": "yearsim-saydo-every-watchdog",
+      "source": "agents/AGENTS.md",
+      "quote": "Both run on every watchdog pass",
+      "probe": {
+        "file": ".github/workflows/watchdog.yml",
+        "contains": "python3 -m foundation yearsim --run --apply"
+      }
     }
   ],
   "baseline": [

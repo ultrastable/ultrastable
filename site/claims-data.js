@@ -1867,6 +1867,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **A year unattended is simulated, not asserted; the system does what it says (YEAR-SIM-1, SAY-DO-1, Rowan 2026-11-21).** \"Have you really",
+   "detail": "",
+   "how": "file:doctrine/yearsim.json + file:foundation/yearsim.py + file:doctrine/ultrastability.json + file:foundation/saydo.py + file:doctrine/detectors.json + file:tests/foundation/test_yearsim.py",
+   "id": "cited-158bd3c207",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
@@ -2465,6 +2474,15 @@ export default {
    "detail": "",
    "how": "file:foundation/ultrastability.py + file:foundation/research.py + file:doctrine/research.json + file:site/research.js + file:tests/foundation/test_research.py + file:tests/foundation/test_ultrastability.py",
    "id": "mirror-289b3b8589",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **A year unattended is simulated, not asserted; the system does what it says (YEAR-SIM-1, SAY-DO-1, Rowan 2026-11-21).** \"Have you really",
+   "detail": "",
+   "how": "file:doctrine/yearsim.json + file:foundation/yearsim.py + file:doctrine/ultrastability.json + file:foundation/saydo.py + file:doctrine/detectors.json + file:tests/foundation/test_yearsim.py",
+   "id": "mirror-c8f6471ad1",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3341,7 +3359,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 368,
-  "total": 368
+  "pass": 370,
+  "total": 370
  }
 };
