@@ -21,7 +21,7 @@ Is human approval of every step what keeps AI safe?. Ultrastable R&D, Ultrastabl
 
 - ASHBY-1 (`foundation/ultrastability.py`): an essential variable with no limits fails the check
 
-**Measured here:** share of declared essential variables that have limits (doctrine/ultrastability.json): 1.0 (n = 13). Target >= 1.0. Verdict: **met**.
+**Measured here:** share of declared essential variables that have limits (doctrine/ultrastability.json): 1.0 (n = 11). Target >= 1.0. Verdict: **met**.
 Source: doctrine/ultrastability.json.
 
 ### S2. Unreviewed changes are not reverted more (quality)
@@ -55,7 +55,7 @@ Source: ops/deploys.jsonl (same window).
 
 - ASHBY-SEARCH-1 (`foundation/ultrastability.py`): the second loop keeps changing a parameter until the variable holds, and reverts a step that did not help
 
-**Measured here:** share of second-order steps that brought the variable back inside its limits and were kept: 0.0 (n = 19). Target >= 0.25. Verdict: **not-met**. Open item: `Q-RES-safety-by-limits-2026-S4`.
+**Measured here:** share of second-order steps that brought the variable back inside its limits and were kept: 0.0 (n = 18). Target >= 0.25. Verdict: **not-met**. Open item: `Q-RES-safety-by-limits-2026-S4`.
 Source: ops/ultrastability.jsonl verdicts.
 
 ### S5. Little work is thrown away (quality)
@@ -90,18 +90,18 @@ Source: instances/ultrastable/loop-registry.json (declared).
 
 ## Proposed further links (leads, not findings)
 
-Found by core/connect on the lexical-512-w8ajc8 route; each is a proposal until a study file adopts it.
+Found by core/connect on the lexical-512-15gqveo route; each is a proposal until a study file adopts it.
 
-- S1 may also relate to DISPOSE-1 (similarity 0.135)
-- S1 may also relate to THOUGHT-1 (similarity 0.116)
+- S1 may also relate to DISPOSE-1 (similarity 0.133)
+- S1 may also relate to THOUGHT-1 (similarity 0.115)
 - S2 may also relate to TENANT-SYNC-1 (similarity 0.153)
-- S2 may also relate to DRAIN-ZERO-1 (similarity 0.131)
-- S3 may also relate to RUNWAY-1 (similarity 0.117)
-- S4 may also relate to DISPOSE-1 (similarity 0.115)
-- S5 may also relate to COMPLETE-1 (similarity 0.115)
+- S2 may also relate to DRAIN-ZERO-1 (similarity 0.13)
+- S3 may also relate to RUNWAY-1 (similarity 0.116)
+- S4 may also relate to DISPOSE-1 (similarity 0.114)
+- S5 may also relate to COMPLETE-1 (similarity 0.114)
 - S5 may also relate to DRAIN-ZERO-1 (similarity 0.108)
-- S6 may also relate to IGNORANCE-1 (similarity 0.131)
-- S6 may also relate to TEMPORAL-1 (similarity 0.116)
+- S6 may also relate to IGNORANCE-1 (similarity 0.133)
+- S6 may also relate to TEMPORAL-1 (similarity 0.117)
 
 ## Method
 
