@@ -20,7 +20,7 @@ def gh(*args) -> tuple[int, str]:
 
 
 def merged(run=gh, now=None, window_h=WINDOW_H) -> list[dict]:
-    code, o = run("api", f"repos/{SLUG}/pulls?state=closed&base=main&sort=updated&direction=desc&per_page=30")
+    code, o = run("api", f"repos/{SLUG}/pulls?state=closed&base=main&sort=updated&direction=desc&per_page=30&check_suite_filter=all")
     if code:
         raise RuntimeError("pulls unreadable: " + o[:120])
     now = now or dt.datetime.now(dt.timezone.utc)
@@ -52,7 +52,7 @@ def scan(root=REPO, apply=False, run=gh, now=None) -> list[dict]:
     root, rows = Path(root), []
     for p in merged(run, now):
         state = gate(p["sha"], run)
-        if state == "success":
+        if state in ["success", "skipped"]:
             continue
         f = root / "docs/issues" / f"Q-CIFAIL-mergeaudit-{p['n']}.json"
         new = not f.exists()
