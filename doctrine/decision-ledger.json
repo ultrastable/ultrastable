@@ -3781,6 +3781,42 @@
    "body": "Markers merged by #834 sat inside the README status table; every deploy record rewrites the live-deploys claim on that line (several times an hour), so any PR touching README.md conflicted within minutes and the claim-only resolver could not help because the conflicting region also held marker lines. Removed the markers; tests pass on this branch. The tick sweeper also ran out of its subrequest share on most passes (sweeper_runs 682-684), so the webhook route in seed/worker/src/mergenow.js is the primary merge path and the sweeper is the fallback.",
    "probe": "grep:seed/worker/src/mergenow.js::MERGE-NOW-1",
    "session": "session_0156nqDtycGejegSYjhFJ1MF"
+  },
+  {
+   "id": "decision-2026-11-21-plan-1-the-ultrastable-account-is-on-workers-paid-governors-",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "PLAN-1: the ultrastable account is on Workers Paid; governors read paid allowances",
+   "body": "Rowan bought Workers Paid on 2026-11-21 (5 USD a month base). instances/ultrastable/instance.json budget.plan is paid and budget.usd_per_month is 30 (AI beyond the free 10,000 neurons a day gets about 0.8 USD a day; the soft 5 USD a day target still throttles everything). budget.js planOf reads CF_PLAN, else the manifest. freetier.js limitsFor('paid') uses daily slices of the monthly inclusions, so the measured day that shed on the free plan now runs at full speed. subreq.js capsFor('paid') plans 1,000 subrequests per invocation and lifts the four-phase loop rotation. The plan is declared in the manifest. Surfaces tested for a live plan reading: accounts subscriptions API (HTTP 403, needs Billing Read), workers account-settings and account details (no plan field).",
+   "probe": "grep:seed/worker/src/subreq.js::PLAN-1",
+   "session": "session_0156nqDu9w9828E3wYy42EBd"
+  },
+  {
+   "id": "decision-2026-11-21-roi-self-1-api-roi-makes-the-pay-or-stay-call-itself-time-vs",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "ROI-SELF-1: /api/roi makes the pay-or-stay call itself (time vs cost, quality unchanged)",
+   "body": "roi.js analyze returns time_vs_cost (throttled hours, projected paid bill per day against the soft target) and system_decision. Paid is worth it when the free plan throttled for 2 shed days or 12 h in the window and the projected bill fits inside half the soft daily target. The tick files one gate item ROI-PAY-<month> (kind gate, owner billing) with the default in effect (free plan, soft throttling); it closes once CF_PLAN=paid.",
+   "probe": "grep:seed/worker/src/roi.js::ROI-SELF-1",
+   "session": "session_0156nqDu9w9828E3wYy42EBd"
+  },
+  {
+   "id": "decision-2026-11-21-spend-soft-1-5-usd-a-day-is-a-soft-target-with-graduated-thr",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "SPEND-SOFT-1: 5 USD a day is a soft target with graduated throttling, never a hard stop",
+   "body": "Rowan 2026-11-21: Workers Paid only with cost controls, no more than 5 USD a day, and caps must be soft like a phone plan; a system never grinds to a halt. seed/worker/src/spend.js estimates today's bill from one Cloudflare GraphQL reading (requests, CPU, D1, KV, R2, Durable Objects, account-wide AI neurons) at list prices and sets a band by threshold share of the target: full under 0.5, ease under 0.7 (idle loops x1.5, cheapest model first), throttle under 0.9 (AI inside the free allocation, wide reads hourly, loops x3), crawl above (essential steps and dispatch/execute every tick, the rest every 3 h, AI one call per tick from the free allocation). The AI governor has no frozen mode: past its allowance it crawls at one call an hour. Lean and degrade no longer skip steps for good (tick.js stepPlan). Per-tenant shares in instances/ultrastable/instance.json spend.tenants. Cloudflare billing email alerts at 75 and 150 USD a month were added beside the auto-created 10 USD one; the native Workers spending limit is deliberately not set because it blocks every Worker.",
+   "probe": "grep:seed/worker/src/spend.js::SPEND-SOFT-1",
+   "session": "session_0156nqDu9w9828E3wYy42EBd"
+  },
+  {
+   "id": "lesson-2026-11-21-ai-gov-account-1-static-per-worker-ai-shares-refused-calls-w",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "AI-GOV-ACCOUNT-1: static per-worker AI shares refused calls with half the account's neurons unused",
+   "body": "Each worker planned against a static share of the day in its own ledger while the console and site shares sat idle. The tick now sizes its allowance from Cloudflare's account-wide neuron count (aiInferenceAdaptiveGroups, sampled every tick) minus its own use; the static share is only the fallback. Measured 2026-11-21 over 24 h: 9,645 neurons account-wide, KV reads 116k (free 100k a day), D1 reads 5.7M (free 5M a day), requests 98.6k (free 100k a day): the free plan binds on four meters at once.",
+   "probe": "grep:seed/worker/src/budget.js::AI-GOV-ACCOUNT-1",
+   "session": "session_0156nqDu9w9828E3wYy42EBd"
   }
  ]
 }
