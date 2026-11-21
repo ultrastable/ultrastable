@@ -5,7 +5,8 @@
 // For each issue still labelled claimed/dispatched past maxAgeH: release the claim so the executor re-takes it. Returns open_loop_age_hours, the probe value (target 0).
 import { notGreen } from './greenguard.js';
 const API = 'https://api.github.com';
-const CLIENT_PREFIX = ['claude/', 'agent/'];
+// BRANCH-ROOT-CAUSE-1: `worker/` branches (the Worker executor's own PRs) were never swept, so they sat blocked; every automation prefix is swept.
+const CLIENT_PREFIX = ['claude/', 'agent/', 'worker/'];
 async function gh(f, token, method, path, body) {
   const r = await f(API + path, { method, headers: { authorization: 'Bearer ' + token, accept: 'application/vnd.github+json', 'user-agent': 'ultrastable-sweeper', 'content-type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
   const t = await r.text();
@@ -25,6 +26,16 @@ export async function sweepOpenLoops({ token, repos = [], fetch: f = fetch, now 
         let d = (await gh(f, token, 'GET', `/repos/${repo}/pulls/${p.number}`)).json || p;
         if (d.draft) { const r = await gh(f, token, 'POST', `/repos/${repo}/pulls/${p.number}/ready_for_review`); if (r.ok) d = (await gh(f, token, 'GET', `/repos/${repo}/pulls/${p.number}`)).json || d; }
         if (d.mergeable_state === 'behind') { const u = await gh(f, token, 'PUT', `/repos/${repo}/pulls/${p.number}/update-branch`); if (u.ok) out.refreshed.push(tag); }
+        // BRANCH-ROOT-CAUSE-1: a PR opened with the built-in token never fires `pull_request`, so the required `checks` never reports and the PR sits BLOCKED forever.
+        // Close and reopen it once (the `reopened` trigger runs checks) when its head has no check run at all; never when a run exists, so a real failure is not looped.
+        if (['blocked', 'unknown'].includes(d.mergeable_state) && d.head && d.head.sha && hours(p.updated_at || p.created_at, now) > 0.1) {
+          const cr = await gh(f, token, 'GET', `/repos/${repo}/commits/${d.head.sha}/check-runs?per_page=1`);
+          if (cr.ok && cr.json && cr.json.total_count === 0) {
+            const c1 = await gh(f, token, 'PATCH', `/repos/${repo}/pulls/${p.number}`, { state: 'closed' });
+            const c2 = c1.ok ? await gh(f, token, 'PATCH', `/repos/${repo}/pulls/${p.number}`, { state: 'open' }) : c1;
+            (c2.ok ? (out.retriggered ||= []) : out.errors).push(c2.ok ? tag : `${tag} retrigger ${c2.status}`);
+          }
+        }
         const hold = d.mergeable_state === 'clean' ? await notGreen(f, token, repo, d.head && d.head.sha, (ff, t, m, path) => gh(ff, t, m, path)) : null;  // GREEN-GUARD-1
         if (hold) out.held = [...(out.held || []), `${tag} ${hold}`];
         if (d.mergeable_state === 'clean' && !hold) {
