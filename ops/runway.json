@@ -47,6 +47,12 @@
     "url": "https://ultrastable.io/health",
     "status": 200,
     "ok": true
+   },
+   {
+    "at": "2026-11-21T22:46:47Z",
+    "url": "https://ultrastable.io/health",
+    "status": 200,
+    "ok": true
    }
   ],
   "unlearn": [
@@ -64,6 +70,12 @@
    },
    {
     "at": "2026-11-21T22:36:42Z",
+    "url": "https://unlearn.ultrastable.org/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-21T22:46:47Z",
     "url": "https://unlearn.ultrastable.org/health",
     "status": 200,
     "ok": true
