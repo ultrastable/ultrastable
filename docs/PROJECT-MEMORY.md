@@ -10,6 +10,7 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-21
 
+- 2026-11-21: SEED-LAUNCH-1: every seed is built, deployed, year-gated (horizon p10 >= 365) and probed live by the system; seed-launch.yml runs a fresh-seed e2e and every seeded repo weekly on the ultrastable account; standalone seed made self-contained (#1855)
 - 2026-11-21: regen-generated: refresh generated data after merge (REGEN-GENERATED-1) [skip ci] (#1822)
 - 2026-11-21: queue: closing-probe verdicts for 7 item(s) (QUEUE-PERSIST-1) [skip ci]
 - 2026-11-21: PROBE-REAL-1: real probes for scope items; QNFO fleet inventory; scout sources (#1821)
