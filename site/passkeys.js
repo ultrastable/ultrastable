@@ -132,7 +132,8 @@ async function registerVerify(request, env, now) {
 }
 async function loginOptions(request, env, now) {
   const rp = rpOf(request, env); const challenge = await newChallenge(env, "login", now);
-  return json({ publicKey: { rpId: rp.id, challenge, timeout: 60000, userVerification: "required", allowCredentials: [] } });
+  const registered = (await env.DB.prepare("SELECT COUNT(*) c FROM passkeys").first()).c;  // SIGNIN-PATHS-1: the page says plainly when no passkey was ever added, instead of a prompt that cannot succeed
+  return json({ registered, publicKey: { rpId: rp.id, challenge, timeout: 60000, userVerification: "required", allowCredentials: [] } });
 }
 async function loginVerify(request, env, now) {
   const rp = rpOf(request, env); const b = await request.json(); const cdj = unb64u(b.response.clientDataJSON);
@@ -153,10 +154,12 @@ async function loginVerify(request, env, now) {
 const PAGE = (title, body) => new Response("<!doctype html><html lang=en><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><title>" + title + "</title><style>body{font:16px system-ui;max-width:26rem;margin:5rem auto;padding:0 1rem;text-align:center}button{font:inherit;padding:.8rem 1.4rem;border-radius:.6rem;border:0;background:#111;color:#fff;cursor:pointer;width:100%}a{color:inherit}#m{min-height:1.5em;margin-top:1rem}</style><body>" + body, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store", "content-security-policy": "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'self'; base-uri 'none'; form-action 'none'" } });
 const CLIENT = "const B=s=>Uint8Array.from(atob(s.replace(/-/g,'+').replace(/_/g,'/')+'='.repeat((4-s.length%4)%4)),c=>c.charCodeAt(0));const U=b=>btoa(String.fromCharCode(...new Uint8Array(b))).replace(/\\+/g,'-').replace(/\\//g,'_').replace(/=+$/,'');const $=i=>document.getElementById(i);const say=t=>$('m').textContent=t;const post=async(p,b)=>{const r=await fetch(p,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(b||{})});return{s:r.status,j:await r.json().catch(()=>({}))}};";
 function signinPage(next) {
-  return PAGE("Sign in", "<h1>Sign in</h1><button id=go>Sign in with a passkey</button><p id=m></p><p><a href=\"/owner?next=" + encodeURIComponent(safeNext(next)) + "\">Use an emailed code instead</a></p><script>" + CLIENT + "const NEXT=" + JSON.stringify(safeNext(next)) +
-    ";async function go(cond){say('');try{const o=await post('/auth/passkey/login/options');if(o.s!=200)return say(o.j.error||'Try again.');const p=o.j.publicKey;const c=await navigator.credentials.get({publicKey:{...p,challenge:B(p.challenge)},mediation:cond?'conditional':'optional'});" +
-    "const r=await post('/auth/passkey/login/verify',{id:c.id,next:NEXT,response:{clientDataJSON:U(c.response.clientDataJSON),authenticatorData:U(c.response.authenticatorData),signature:U(c.response.signature)}});if(r.s==200)location.href=r.j.next;else say(r.j.error||'That did not work.')}catch(e){if(!cond)say('Cancelled. You can use an emailed code instead.')}}" +
-    "$('go').onclick=()=>go(false);if(!window.PublicKeyCredential){$('go').hidden=true;say('This browser has no passkey support. Use an emailed code.')}</script>");
+  const n = safeNext(next), q = n === "/owner" ? "" : "?next=" + encodeURIComponent(n);
+  return PAGE("Sign in", "<h1>Sign in</h1><button id=mail>Email me a sign-in link</button><p id=mm></p><p id=pk><button id=go style='background:transparent;color:inherit;border:1px solid #8886'>Use a passkey instead</button></p><p id=m></p><p><a href=\"/owner" + q + "\">Type an emailed code</a></p><script>" + CLIENT + "const NEXT=" + JSON.stringify(n) +
+    ";$('mail').onclick=async()=>{$('mm').textContent='Sending...';const r=await fetch('/api/owner/code',{method:'POST',headers:{'content-type':'application/json','x-us-ui':'1'},body:JSON.stringify({next:NEXT})});const j=await r.json().catch(()=>({}));$('mm').textContent=r.status==200?'Sent. Open the email and tap the link; you will land where you were going.':(j.error||'Could not send. Try again.')};" +
+    "async function go(){say('');try{const o=await post('/auth/passkey/login/options');if(o.s!=200)return say(o.j.error||'Try again.');if(!o.j.registered)return say('No passkey has been added yet. Use the emailed link, then add one from the owner page.');const p=o.j.publicKey;const c=await navigator.credentials.get({publicKey:{...p,challenge:B(p.challenge)}});" +
+    "const r=await post('/auth/passkey/login/verify',{id:c.id,next:NEXT,response:{clientDataJSON:U(c.response.clientDataJSON),authenticatorData:U(c.response.authenticatorData),signature:U(c.response.signature)}});if(r.s==200)location.href=r.j.next;else say(r.j.error||'That did not work. Use the emailed link.')}catch(e){say('No passkey was used. Use the emailed link instead.')}}" +
+    "$('go').onclick=go;if(!window.PublicKeyCredential){$('pk').hidden=true}</script>");
 }
 function addPage() {
   return PAGE("Add a passkey", "<h1>Add this device</h1><p>Next time, one tap signs you in.</p><button id=go>Create a passkey</button><p id=m></p><p><a href=/owner>Back</a></p><script>" + CLIENT +

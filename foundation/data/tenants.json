@@ -9,7 +9,7 @@
       "web": null,
       "url": null,
       "status": "pending",
-      "note": "Moving out of QNFO. The empty database exists; the data copy is scheduled for 00:10 UTC on 2026-11-17, after the free D1 daily limit resets (rwnq8/jobs-agent PR 15).",
+      "note": "Moving out of QNFO. Not running on the Ultrastable account yet; it has no live probe, so its status is unmeasured here until it has a URL.",
       "next": "Data copy, then the tenant web Worker."
     },
     {
