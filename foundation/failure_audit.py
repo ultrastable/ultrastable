@@ -87,7 +87,9 @@ def check(root=REPO) -> list[str]:
     for did, st in _state(root).items():  # a recorded failure nothing can take is the open half of the loop this module exists to close
         if st.get("status") != "pass":
             ip = root / ISSUES / f"{item_id(did)}.json"
-            if not ip.exists() or "**Status:** open" not in json.loads(ip.read_text(encoding="utf-8")).get("body", ""):
+            body = json.loads(ip.read_text(encoding="utf-8")).get("body", "") if ip.exists() else ""
+            # DISPOSE-1: an item closed as shelved or gate keeps its closing probe running on every fleet pass, so it is a recorded disposition, not an open loop
+            if "**Status:** open" not in body and "**Disposition:** shelved" not in body and "**Disposition:** gate" not in body:
                 problems.append(f"{did}: recorded as {st.get('status')} with no open {item_id(did)} in {ISSUES}")
     wf = root / ".github/workflows" / d.get("workflow", "")
     if not wf.exists():
