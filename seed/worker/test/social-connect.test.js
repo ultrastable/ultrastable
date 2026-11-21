@@ -110,11 +110,12 @@ test('publisher: nothing linked means no network call; linked Mastodon posts the
   const f = async (u, init = {}) => { calls++; u = String(u);
     if (u.endsWith('/gate.json')) return J(gate); if (u.endsWith('/calendar.json')) return J(cal);
     if (u === 'https://mastodon.social/api/v1/statuses') { seen.push(JSON.parse(init.body).status); return J({ url: 'https://mastodon.social/@u/1' }); }
+    if (u === 'https://mastodon.social/api/v1/statuses/1') return J({ id: '1' });
     return NF; };
   assert.deepEqual(await runSocial({ db: env.DB, env, fetch: f, now: NOW, tenant: 't' }), { skipped: 'no channel connected' }); assert.equal(calls, 0);
   await store.put(env.DB, env, 't', 'oauth:mastodon', { secret: {}, meta: { instance: 'mastodon.social' }, access: 'tok', status: 'ok' });
   const r = await runSocial({ db: env.DB, env, fetch: f, now: NOW, tenant: 't' });
-  assert.equal(r.id, 'ev:1'); assert.equal(r.results.mastodon, 'posted');
+  assert.equal(r.id, 'ev:1'); assert.equal(r.results.mastodon, 'verified', 'posted only once the public URL reads back');
   const r2 = await runSocial({ db: env.DB, env, fetch: f, now: NOW + 3600e3, tenant: 't' });
   assert.equal(seen[0], 'Shipped by the system itself: a thing.', 'events go first'); assert.equal(r2.id, 'old', 'the next due item goes out, the posted one never repeats');
   const r3 = await runSocial({ db: env.DB, env, fetch: f, now: NOW + 7200e3, tenant: 't' }); assert.equal(r3.skipped, 'rate limit', JSON.stringify(r3));
@@ -176,4 +177,23 @@ import { priority } from '../src/social.js';
 test('SOCIAL-TENANTS-1: meta-story first, tenant changes, tenant backlog, then platform events', () => {
   const o = [{ arm: 'shipped', kind: 'event' }, { arm: 'ps-solution', kind: 'backlog' }, { arm: 'ps-problem', kind: 'event' }, { arm: 'meta-story' }, { arm: 'proof' }].sort((a, b) => priority(a) - priority(b)).map(p => p.arm);
   assert.deepEqual(o, ['meta-story', 'ps-problem', 'ps-solution', 'shipped', 'proof']);
+});
+
+test('SOCIAL-BUFFER-1: every connected Buffer channel gets the post; X is cut to 280, LinkedIn queued', async () => {
+  const { postBuffer } = await import('../src/social.js'); const sent = [];
+  const f = async (u, init) => { const q = JSON.parse(init.body).query;
+    if (q.includes('organizations')) return J({ data: { account: { organizations: [{ id: 'o1' }] } } });
+    if (q.includes('channels(')) return J({ data: { channels: [{ id: 'l', service: 'linkedin' }, { id: 'x', service: 'twitter' }, { id: 'd', service: 'facebook', isDisconnected: true }] } });
+    sent.push(q); return J({ data: { createPost: { post: { id: 'p' + sent.length, status: 'x' } } } }); };
+  const r = await postBuffer('tok', 'L'.repeat(900), f, 'S'.repeat(400));
+  assert.deepEqual(Object.keys(r), ['linkedin', 'twitter']); assert.match(sent[0], /addToQueue/); assert.match(sent[1], /shareNow/); assert.ok(!sent[1].includes('S'.repeat(281)));
+});
+
+// POST-READBACK-1 (2026-11-21): the relay said scheduled/sent/no-channel and the old code stored "posted" for all of it; the owner saw X only.
+test('relay results are recorded as read back, queued, unverified or failed, never as posted', async () => {
+  const { classifyRelay } = await import('../src/social.js');
+  const f = async u => String(u).endsWith('/api/v1/statuses/9') ? J({ id: '9' }) : NF;
+  const r = await classifyRelay({ mastodon: { status: 'ok', url: 'https://mstdn.science/@Q/9' }, linkedin: { status: 'scheduled', id: 'a' }, substack: { status: 'scheduled', id: 'b' }, twitter: { status: 'sent', id: 'c' }, facebook: { status: 'no-channel' }, instagram: { status: 'error', error: 'x' } }, f);
+  assert.deepEqual(Object.fromEntries(Object.entries(r).map(([k, v]) => [k, v.status])), { mastodon: 'verified', linkedin: 'queued', substack: 'queued', twitter: 'unverified', facebook: 'failed', instagram: 'failed' });
+  const g = async () => NF; assert.equal((await classifyRelay({ mastodon: { status: 'ok', url: 'https://mstdn.science/@Q/9' } }, g)).mastodon.status, 'unverified');
 });

@@ -53,3 +53,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
       - name: Closed-loop check
         run: python3 -m foundation closedloop --check
+      - name: Mirror the queue onto GitHub Issues, labels and milestones (GH-MIRROR-1)
+        if: ${{ !cancelled() }}
+        run: python3 -m foundation ghmirror --apply --max 150
+        env:
+          GH_TOKEN: ${{ github.token }}

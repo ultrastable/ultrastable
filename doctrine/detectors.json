@@ -283,6 +283,22 @@
    "root_cause": "a failure mode lost its detector, or a recorded failure has no open Q-AUDIT item in the queue",
    "owner": "operations",
    "remedy": "Add the detector to doctrine/detectors.json, or run python3 -m foundation failure_audit --run so the finding is filed."
+  },
+  {
+   "id": "waiting-on-person",
+   "failure_mode": "fm-waiting-on-person",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "closedloop",
+    "--check"
+   ],
+   "timeout": 60,
+   "root_cause": "a wait on a person entered the system as a document, card, report or unmerged PR",
+   "owner": "operations",
+   "remedy": "Take the input as given: build the consumer, let the lane merge and deploy, or reduce it to one identity-bound gate with a default in effect."
   }
  ]
 }

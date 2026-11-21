@@ -23,6 +23,7 @@
   python3 -m foundation progress [--check|--live]                          PROGRESS-1: every system shows substantive progress at every visit; the cadence monitor is wired
   python3 -m foundation cost [--check|--probe|--guard [--apply]]          D1 rows read and AI neurons against budgets (COST-GUARD-1)
   python3 -m foundation issueloop [--apply|--json]                       ISSUE-LOOP-1: every open issue's probe is run; a passing probe closes it
+  python3 -m foundation ghmirror [--plan|--apply [--max N]|--check]       GH-MIRROR-1: the docs/issues queue mirrored one way onto GitHub Issues, labels, milestones and the board
   python3 -m foundation claims [--check|--fix|--apply|--file|--live]     CLAIMS-1: every claim on a surface is probed against code, both directions; /claims
   python3 -m foundation goalscheck [--check]                              GOALS-1: every goal has a measured variable, a deadline and a knob
   python3 -m foundation singleaccount [--check|--scan]                    SINGLE-ACCOUNT-1: nothing references the retired quniverse Cloudflare account
@@ -328,6 +329,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["liveness"]:
         from . import liveness
         return liveness.main(_av[1:])
+    if _av[:1] == ["ghmirror"]:
+        from . import ghmirror
+        return ghmirror.main(_av[1:])
     if _av[:1] == ["issueloop"]:
         from . import issueloop
         return issueloop.main(_av[1:])

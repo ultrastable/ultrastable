@@ -14,7 +14,9 @@ here="$(dirname "$0")"
 wf_source=$(python3 "$here/lane_credential.py" source) || wf_source=none
 wf_token=""; wf_waiting=0; wf_merged=0
 echo "lane: workflow credential: $wf_source"
+# LANE-FAST-1: LANE_ONLY_PR restricts the pass to the PR whose checks run is merging it (the checks workflow's lane job); the lane workflow sweeps all.
 for n in $(gh pr list -R "$repo" --state open --base main --json number --jq '.[].number'); do
+  if [ -n "${LANE_ONLY_PR:-}" ] && [ "$n" != "$LANE_ONLY_PR" ]; then continue; fi
   v=$(gh pr view "$n" -R "$repo" --json isDraft,headRefName,headRefOid,labels,mergeable,updatedAt,files)
   draft=$(jq -r .isDraft <<<"$v"); sha=$(jq -r .headRefOid <<<"$v"); br=$(jq -r .headRefName <<<"$v")
   labels=",$(jq -r '[.labels[].name]|join(",")' <<<"$v"),"; mg=$(jq -r .mergeable <<<"$v")
@@ -78,6 +80,10 @@ for n in $(gh pr list -R "$repo" --state open --base main --json number --jq '.[
   esac
   merge_token="${GH_TOKEN:-}"
   if [ "$wf" = true ]; then
+    if [ "$wf_source" = none ] && [ "${GITHUB_EVENT_NAME:-}" != pull_request ] && python3 "$here/../tools/lane_worker_merge.py" "$n" "$sha"; then
+      # LANE-WORKER-MERGE-1: only from the lane workflow (its OIDC token names refs/heads/main; a pull_request run's token does not). No stored credential, but the tick Worker holds the org GitHub App (workflows: write) and merged it on the exact head.
+      wf_merged=$((wf_merged+1)); echo "#$n merged (needs-pat, by the tick Worker app, head ${sha:0:7})"; continue
+    fi
     if [ "$wf_source" = none ]; then
       case "$labels" in *,needs-pat,*) ;; *) gh pr edit "$n" -R "$repo" --add-label needs-pat >/dev/null 2>&1;; esac
       wf_waiting=$((wf_waiting+1))

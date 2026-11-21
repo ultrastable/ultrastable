@@ -9,6 +9,7 @@ function fake(state) {
     const R = (j, ok = true, status = 200) => ({ ok, status, text: async () => JSON.stringify(j) });
     if (m === 'GET' && path.startsWith('/repos/o/r/pulls?')) return R(state.prs);
     if (m === 'GET' && /pulls\/\d+$/.test(path)) return R(state.detail);
+    if (m === 'GET' && path.includes('/files')) return R([]);  // MERGE-NOW-1 reconcile: no generated files in the PR
     if (m === 'PUT' && path.endsWith('/merge')) return R({}, state.mergeOk !== false, state.mergeOk === false ? 405 : 200);
     if (state.issuesOff && path.includes('/issues')) return R({ message: 'Issues has been disabled in this repository.' }, false, 410);
     if (m === 'GET' && path.includes('labels=open-loop')) return R(state.filed || []);
