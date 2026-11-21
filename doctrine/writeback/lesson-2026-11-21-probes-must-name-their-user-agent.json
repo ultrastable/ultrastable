@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-21-probes-must-name-their-user-agent",
+  "kind": "lesson",
+  "date": "2026-11-21",
+  "title": "Probes must name their user agent",
+  "body": "Session: session_0156nqDte8FeqRLjvGRAAb6w. Cloudflare returns 403 to Python-urllib, so every spinoff read uptime 0.0 while live (route, DNS and worker verified in the ultrastable account). The uptime probe now sends a named agent (a package-wide opener changed other tests, so it stays local); Q-ULTRA-loop-ledger-uptime-* close when the next tick reads 1.0.",
+  "probe": "grep:foundation/ultrastability.py::UPTIME-UA-1"
+ },
+ "kind": "lesson",
+ "title": "Probes must name their user agent",
+ "session": ""
+}

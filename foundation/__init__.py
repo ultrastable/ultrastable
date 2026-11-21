@@ -10,3 +10,4 @@ __version__ = "0.1.0"
 import json as _json
 from pathlib import Path as _P
 TAGLINE = _json.loads((_P(__file__).resolve().parent.parent / "doctrine" / "positioning.json").read_text(encoding="utf-8"))["tagline"]  # source of truth: doctrine/positioning.json
+
