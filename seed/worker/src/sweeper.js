@@ -12,7 +12,8 @@ const CLIENT_PREFIX = ['claude/', 'agent/', 'worker/', 'dependabot/'];  // DEP-L
 async function gh(f, token, method, path, body) {
   const r = await f(API + path, { method, headers: { authorization: 'Bearer ' + token, accept: 'application/vnd.github+json', 'user-agent': 'ultrastable-sweeper', 'content-type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
   const t = await r.text();
-  return { ok: r.ok, status: r.status, json: t ? JSON.parse(t) : null };
+  if (!r.ok) throw new Error(`GH ${method} ${r.status} ${path}: ${t}`);
+  return { ok: true, json: t ? JSON.parse(t) : null };
 }
 const hours = (iso, now) => Math.max(0, (now - Date.parse(iso)) / 36e5);
 
