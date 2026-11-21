@@ -21,7 +21,8 @@ for n in $(gh issue list -R "$repo" --state open --limit 300 --json number --jq 
   esac
   gh issue edit "$n" -R "$repo" --add-label "$add" >/dev/null 2>&1
   gh issue comment "$n" -R "$repo" --body "triage: priority ${p:-set by label}. SLA: p0 4h, p1 24h, p2 72h, p3 7d from creation. A breach escalates one level (docs/AUTOMATION.md)." >/dev/null 2>&1
-  case "$add" in *agent-ready*) gh api -X POST "repos/$repo/issues/$n/assignees" -f 'assignees[]=copilot-swe-agent[bot]' >/dev/null 2>&1 || true;; esac
+  # Best effort: the Copilot agent is assignable only where the org enabled it. A refusal is noted, not counted as a failed run.
+  case "$add" in *agent-ready*) timeout "${GH_TIMEOUT:-60}" "$_GH_BIN" api -X POST "repos/$repo/issues/$n/assignees" -f 'assignees[]=copilot-swe-agent[bot]' >/dev/null || echo "#$n copilot agent not assignable here (optional)";; esac
   echo "#$n triaged $add"
 done
 
