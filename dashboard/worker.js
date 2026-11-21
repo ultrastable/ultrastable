@@ -1,5 +1,5 @@
 // ultrastable-dashboard: the owner's single pane of glass for Ultrastable (DASH-1, 2026-11-10).
-// Public side: a generic holding page only (project rule PF-1: nothing public about the mechanisms until the provisional is filed).
+// Public side: a generic holding page only (the disclosure gate PF-1 is retired, NO-PATENT-1; the work is source-available under the Ultrastable License).
 // Owner side (/owner): email-me-a-code login, at-a-glance status, owner task queue with one-tap Done/Snooze/Not doing/Fix/Hand to fleet,
 // a command line that runs registered commands, step-up codes for changes, an audit log with undo, and owner email notifications.
 // Portable core: every platform touch goes through env.DB (SQL), env.SEND_EMAIL (mail) and fetch, so a Google Cloud adapter only
@@ -31,8 +31,6 @@ const HOSTS = ["ultrastable.io", "ultrastable.app", "ultrastable.net"];
 // OWNER-LINKS-1: links the owner is handed use the public domain the request came in on (x-forwarded-host from the site's forwarder, trusted only for HOSTS), never a workers.dev name.
 export function publicOrigin(req, u) { const h = (req.headers.get("x-forwarded-host") || "").toLowerCase(); return HOSTS.includes(h) ? "https://" + h : u.origin; }
 export const OWNER_LINKS = ["https://ultrastable.io/owner", "https://ultrastable.io/connect/github-signin"];
-// Words that must never appear on the public pages before filing (disclosure guard, checked by the cron probe).
-const GUARD_WORDS = ["probe", "revert", "prediction", "trust ledger", "plussing", "work claim", "virtual manager", "self-governing"];
 
 const enc = new TextEncoder();
 export async function sha256(s) { const b = await crypto.subtle.digest("SHA-256", enc.encode(s)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join(""); }
@@ -191,11 +189,6 @@ export async function runProbes(env) {
       try { const r = await fetch("https://" + h + "/health", { signal: AbortSignal.timeout(5000) }); const j = await r.json(); await rec("site:" + h, r.status === 200 && j.ok === true, "HTTP " + r.status + (j.version ? " v" + j.version : "")); }
       catch (e) { await rec("site:" + h, false, String(e.message || e)); }
     }
-    try {
-      const r = await fetch("https://" + HOSTS[0] + "/", { signal: AbortSignal.timeout(5000) }); const t = (await r.text()).toLowerCase();
-      const hit = GUARD_WORDS.filter(w => t.includes(w));
-      await rec("disclosure_guard", hit.length === 0, hit.length ? "public page contains: " + hit.join(", ") : "public page carries no mechanism words");
-    } catch (e) { await rec("disclosure_guard", false, String(e.message || e)); }
     for (const t of TENANTS.tenants.filter(x => x.url)) {
       try { const r = await fetch(t.url, { signal: AbortSignal.timeout(5000) }); await rec("tenant:" + t.id, r.status >= 200 && r.status < 400, "HTTP " + r.status); }
       catch (e) { await rec("tenant:" + t.id, false, String(e.message || e)); }
