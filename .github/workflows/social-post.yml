@@ -30,6 +30,8 @@ jobs:
       - name: Refill calendar
         working-directory: scripts
         run: python3 social_generate.py
+      - name: Thought leadership (white papers to posts with the Ultrastable hook, THOUGHT-1)
+        run: python3 -m foundation thought --run --apply
       - name: Reach loop (events to posts, metrics, weights)
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -45,12 +47,14 @@ jobs:
           BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
           MASTODON_INSTANCE: ${{ secrets.MASTODON_INSTANCE }}
           MASTODON_TOKEN: ${{ secrets.MASTODON_TOKEN }}
+          LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
         run: python3 social_post.py
       - name: Record state
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
         run: |
           git add social/calendar.json ops/reach docs/issues
+          if [ -d ops/thought ]; then git add ops/thought; fi
           if [ -f social/state.json ]; then git add social/state.json; fi
           if git diff --cached --quiet; then echo "no state change"; exit 0; fi
           git config user.name "ultrastable-social"; git config user.email "social@ultrastable.io"

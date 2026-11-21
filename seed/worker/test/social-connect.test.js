@@ -179,6 +179,48 @@ test('SOCIAL-TENANTS-1: meta-story first, tenant changes, tenant backlog, then p
   assert.deepEqual(o, ['meta-story', 'ps-problem', 'ps-solution', 'shipped', 'proof']);
 });
 
+// THOUGHT-1: white papers go to LinkedIn as well; other posts never do. Bluesky links are clickable. A failed send waits a day.
+test('THOUGHT-1: a paper post reaches LinkedIn with its own long text; an event never goes to LinkedIn; failures back off a day', async () => {
+  const { liEscape, liVersions, linkFacets } = await import('../src/social.js');
+  assert.equal(liEscape('a (b) @c #d_e'), 'a \\(b\\) \\@c \\#d\\_e');
+  assert.deepEqual(liVersions(NOW, null), ['202610', '202609', '202608', '202607']);
+  assert.deepEqual(linkFacets('é https://u.io/x y')[0].index, { byteStart: 3, byteEnd: 17 });
+  const env = mk(); const sent = [];
+  const gate = { kill: false, mode: 'live', max_posts_per_day: 5, max_posts_per_week: 20, paused_channels: [] };
+  const cal = { posts: [
+    { id: 'ev:1', date: '2026-11-17', text: 'Shipped by the system itself: a thing.', kind: 'event', arm: 'shipped' },
+    { id: 'paper:x:1of2:2026-11-17', date: '2026-11-17', kind: 'paper', arm: 'paper', text: 'short https://ultrastable.io/research/x', url: 'https://ultrastable.io/research/x',
+      texts: { mastodon: 'medium text', linkedin: 'long (text) for LinkedIn' }, channels: ['bluesky', 'mastodon', 'linkedin'] }] };
+  let liFail = false, versions = [];
+  const f = async (u, init = {}) => { u = String(u);
+    if (u.endsWith('/gate.json')) return J(gate); if (u.endsWith('/calendar.json')) return J(cal);
+    if (u === 'https://mastodon.social/api/v1/statuses') { sent.push(['mastodon', JSON.parse(init.body).status]); return J({ url: 'm' }); }
+    if (u === 'https://api.linkedin.com/v2/userinfo') return J({ sub: 'abc' });
+    if (u === 'https://api.linkedin.com/rest/posts') { versions.push(init.headers['linkedin-version']); if (liFail) return J({}, 500); if (versions.length === 1) return J({}, 426); const b = JSON.parse(init.body); sent.push(['linkedin', b.commentary, b.author, b.content.article.source]); return J({}, 201, { 'x-restli-id': 'urn:li:share:1' }); }
+    return NF; };
+  await store.put(env.DB, env, 't', 'oauth:mastodon', { secret: {}, meta: { instance: 'mastodon.social' }, access: 'tok', status: 'ok' });
+  await store.put(env.DB, env, 't', 'oauth:linkedin', { secret: {}, meta: {}, access: 'li', expiresAt: NOW + 864e5 * 30, status: 'ok' });
+  const r1 = await runSocial({ db: env.DB, env, fetch: f, now: NOW, tenant: 't' });
+  assert.equal(r1.id, 'paper:x:1of2:2026-11-17', 'a paper goes before events');
+  assert.deepEqual(r1.results, { mastodon: 'unverified', linkedin: 'unverified' }, 'POST-READBACK-1: sent but not read back');
+  assert.deepEqual(sent[0], ['mastodon', 'medium text']);
+  assert.deepEqual(sent[1], ['linkedin', 'long \\(text\\) for LinkedIn', 'urn:li:person:abc', 'https://ultrastable.io/research/x']);
+  assert.deepEqual(versions, ['202610', '202609'], 'a month LinkedIn does not serve falls back to the previous one');
+  const r2 = await runSocial({ db: env.DB, env, fetch: f, now: NOW + 3600e3, tenant: 't' });
+  assert.equal(r2.id, 'ev:1'); assert.deepEqual(Object.keys(r2.results), ['mastodon'], 'an event is never sent to LinkedIn');
+  // a paper not yet on LinkedIn is retried at most once a day
+  const env2 = mk(); liFail = true; versions = [];
+  await store.put(env2.DB, env2, 't', 'oauth:linkedin', { secret: {}, meta: { sub: 'abc' }, access: 'li', expiresAt: NOW + 864e5 * 30, status: 'ok' });
+  const a = await runSocial({ db: env2.DB, env: env2, fetch: f, now: NOW, tenant: 't' });
+  assert.match(a.results.linkedin, /failed: linkedin HTTP 500/);
+  assert.equal((await runSocial({ db: env2.DB, env: env2, fetch: f, now: NOW + 3600e3, tenant: 't' })).skipped, 'nothing due');
+  liFail = false;
+  const c = await runSocial({ db: env2.DB, env: env2, fetch: f, now: NOW + 25 * 3600e3, tenant: 't' }); assert.equal(c.results && c.results.linkedin, 'unverified', JSON.stringify(c));
+  // an expired LinkedIn token is not a channel
+  const env3 = mk(); await store.put(env3.DB, env3, 't', 'oauth:linkedin', { secret: {}, meta: {}, access: 'li', expiresAt: NOW - 1, status: 'ok' });
+  assert.deepEqual(await runSocial({ db: env3.DB, env: env3, fetch: f, now: NOW, tenant: 't' }), { skipped: 'no channel connected' });
+});
+
 test('SOCIAL-BUFFER-1: every connected Buffer channel gets the post; X is cut to 280, LinkedIn queued', async () => {
   const { postBuffer } = await import('../src/social.js'); const sent = [];
   const f = async (u, init) => { const q = JSON.parse(init.body).query;

@@ -18,6 +18,36 @@ export async function postMastodon(m, text, id, f) {
   return (await r.json()).url || 'ok';
 }
 
+// THOUGHT-1: LinkedIn, posting as the member who connected at /connect/linkedin (scope w_member_social). Commentary uses LinkedIn's "little text"
+// format, where these characters are markup and must be escaped. The API is versioned by month; a version LinkedIn no longer serves (or does not
+// serve yet) answers 426 or 400, so the next older month is tried, at most four in all.
+export const liEscape = t => String(t).replace(/[\\|{}@\[\]()<>#*_~]/g, c => '\\' + c);
+export const liVersions = (now, pinned) => { const out = pinned ? [String(pinned)] : []; const d = new Date(now); for (let i = 1; out.length < 4; i++) { const x = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() - i, 1)); const v = `${x.getUTCFullYear()}${String(x.getUTCMonth() + 1).padStart(2, '0')}`; if (!out.includes(v)) out.push(v); } return out; };
+export async function postLinkedIn(m, text, url, f, now = Date.now(), pinned = null) {
+  let sub = m.meta && m.meta.sub;
+  if (!sub) { const u = await f('https://api.linkedin.com/v2/userinfo', { headers: { authorization: 'Bearer ' + m.access } }); if (!u.ok) throw new Error('linkedin userinfo HTTP ' + u.status); sub = (await u.json()).sub; }
+  if (!sub) throw new Error('linkedin: no member id');
+  const body = { author: 'urn:li:person:' + sub, commentary: liEscape(text), visibility: 'PUBLIC', distribution: { feedDistribution: 'MAIN_FEED', targetEntities: [], thirdPartyDistributionChannels: [] }, lifecycleState: 'PUBLISHED', isReshareDisabledByAuthor: false };
+  if (url) body.content = { article: { source: url, title: String(text).split('\n')[0].slice(0, 200) } };
+  let last = 0;
+  for (const v of liVersions(now, pinned)) {
+    const r = await f('https://api.linkedin.com/rest/posts', { method: 'POST', headers: { authorization: 'Bearer ' + m.access, 'content-type': 'application/json', 'linkedin-version': v, 'x-restli-protocol-version': '2.0.0' }, body: JSON.stringify(body) });
+    if (r.ok) return (r.headers && r.headers.get && r.headers.get('x-restli-id')) || 'ok';
+    last = r.status; if (r.status !== 426 && r.status !== 400) break;
+  }
+  throw new Error('linkedin HTTP ' + last);
+}
+
+// Bluesky shows a URL as plain text unless the post carries a link facet with its UTF-8 byte range.
+export function linkFacets(text) {
+  const enc = new TextEncoder(), out = [];
+  for (const mt of String(text).matchAll(/https?:\/\/[^\s]+/g)) {
+    const start = enc.encode(text.slice(0, mt.index)).length;
+    out.push({ index: { byteStart: start, byteEnd: start + enc.encode(mt[0]).length }, features: [{ $type: 'app.bsky.richtext.facet#link', uri: mt[0] }] });
+  }
+  return out;
+}
+
 // Refreshes the DPoP-bound access token when it is within a minute of expiry; the new refresh token and nonce are sealed back.
 export async function blueskyAccess(db, env, tenant, m, f, now) {
   if (m.access && m.expiresAt && Date.parse(m.expiresAt) - now > 60e3) return m;
@@ -31,7 +61,7 @@ export async function blueskyAccess(db, env, tenant, m, f, now) {
 }
 export async function postBluesky(db, env, tenant, m0, text, f, now) {
   const m = await blueskyAccess(db, env, tenant, m0, f, now);
-  const body = JSON.stringify({ repo: m.meta.did, collection: 'app.bsky.feed.post', record: { $type: 'app.bsky.feed.post', text, langs: ['en'], createdAt: new Date(now).toISOString() } });
+  const body = JSON.stringify({ repo: m.meta.did, collection: 'app.bsky.feed.post', record: { $type: 'app.bsky.feed.post', text, langs: ['en'], createdAt: new Date(now).toISOString(), ...(linkFacets(text).length ? { facets: linkFacets(text) } : {}) } });
   const r = await dpopFetch(f, m.meta.pds + '/xrpc/com.atproto.repo.createRecord', { headers: { 'content-type': 'application/json' }, body, jwk: m.secret.dpop_jwk, nonce: m.secret.nonce, access: m.access });
   if (!r.res.ok) throw new Error('bluesky HTTP ' + r.res.status);
   if (r.nonce && r.nonce !== m.secret.nonce) await store.put(db, env, tenant, 'oauth:bluesky', { secret: { ...m.secret, nonce: r.nonce } });
@@ -109,14 +139,17 @@ export async function verifyRelay(db, env, f, now = Date.now()) {
 }
 
 // Order of what posts next: the weekly meta-story, then a tenant's changed items, then a tenant's backlog in hierarchy order, then platform events, then evergreen.
-export const priority = p => (p.arm === 'meta-story' ? 0 : String(p.arm || '').startsWith('ps-') ? (p.kind === 'event' ? 1 : 2) : p.kind === 'event' ? 3 : 4);
+// THOUGHT-1: a white paper piece goes right after the weekly meta-story.
+export const priority = p => (p.arm === 'meta-story' ? 0 : p.kind === 'paper' ? 0.5 : String(p.arm || '').startsWith('ps-') ? (p.kind === 'event' ? 1 : 2) : p.kind === 'event' ? 3 : 4);
 
 export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), tenant = 'default', repo = 'ultrastable/ultrastable' }) {
   await store.ensureSchema(db); await db.prepare(DDL).run();
   for (const q of MIGRATE) { try { await db.prepare(q).run(); } catch (e) { /* allow-silent: the column already exists */ } }
   const channels = {};
-  for (const [ch, key] of [['bluesky', 'oauth:bluesky'], ['mastodon', 'oauth:mastodon'], ['buffer', 'oauth:buffer']]) {
-    const m = await store.material(db, env, tenant, key); if (m && m.status !== 'pending' && (ch === 'bluesky' ? m.secret && m.secret.refresh_token : m.access)) channels[ch] = m;  // an unfinished sign-in (no token) is not a channel: it would only spend calls
+  for (const [ch, key] of [['bluesky', 'oauth:bluesky'], ['mastodon', 'oauth:mastodon'], ['linkedin', 'oauth:linkedin'], ['buffer', 'oauth:buffer']]) {
+    const m = await store.material(db, env, tenant, key);
+    const live = ch === 'bluesky' ? m && m.secret && m.secret.refresh_token : ch === 'linkedin' ? m && m.access && (!m.expiresAt || Date.parse(m.expiresAt) > now) : m && m.access;  // LinkedIn tokens expire after 60 days with no refresh
+    if (m && m.status !== 'pending' && live) channels[ch] = m;  // an unfinished sign-in (no token) is not a channel: it would only spend calls
   }
   if (env.SOCIAL_RELAY_TOKEN && env.SOCIAL_RELAY_URL) channels.relay = { relay: true };  // SOCIAL-RELAY-1: the owner's existing Buffer and Mastodon logins, reached through a token-gated relay that never exposes them
   if (channels.relay) { try { await verifyRelay(db, env, f, now); } catch (e) { await store.event(db, tenant, 'oauth:relay', 'verify-error', String(e && e.message || e).slice(0, 120)); } }  // runs every tick, before any skip
@@ -136,11 +169,19 @@ export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), t
   const d = new Date(now), today = d.toISOString().slice(0, 10), rows = (await db.prepare('SELECT id, channel, at, status, attempts FROM social_posted').all()).results || [];
   const days = new Set(rows.filter(r => r.at.slice(0, 10) === today).map(r => r.id)), wk = new Set(rows.filter(r => weekKey(new Date(r.at)) === weekKey(d)).map(r => r.id));
   if (days.size >= gate.max_posts_per_day || wk.size >= gate.max_posts_per_week) return { skipped: 'rate limit' };
-  const done = (id, ch) => rows.some(r => r.id === id && r.channel === ch && (r.status == null || r.status !== 'failed' || r.attempts >= 3));  // a failed channel is retried up to 3 times; queued, unverified and verified rows are not re-sent
-  const relayDone = id => { const rr = rows.filter(r => r.id === id && r.channel.startsWith('relay:')); return rr.length > 0 ? rr.every(r => r.status !== 'failed' || r.attempts >= 3) : done(id, 'relay'); };  // per-service rows override a legacy channel='relay' row, which only said the relay was called
-  const bufferDone = id => { const rr = rows.filter(r => r.id === id && r.channel.startsWith('buffer:')); return rr.length > 0 && rr.every(r => r.status !== 'failed' || r.attempts >= 3); };  // SOCIAL-MODULE-1: one row per Buffer service, so each is verified and retried on its own
-  const posted = new Set((cal.posts || []).map(x => x.id).filter(id => Object.keys(channels).every(ch => ch === 'relay' ? relayDone(id) : ch === 'buffer' ? bufferDone(id) : done(id, ch))));
-  const due = (cal.posts || []).filter(p => !posted.has(p.id) && p.date <= today).sort((a, b) => priority(a) - priority(b));
+  // POST-READBACK-1: a failed channel is retried up to 3 times; queued, unverified and verified rows are not re-sent.
+  // THOUGHT-1: a failed send waits a day before its retry, so a refused account is not hit every tick.
+  const recent = r => now - Date.parse(r.at) < 864e5;
+  const done = (id, ch) => rows.some(r => r.id === id && r.channel === ch && (r.status == null || r.status !== 'failed' || r.attempts >= 3 || recent(r)));
+  const relayDone = id => { const rr = rows.filter(r => r.id === id && r.channel.startsWith('relay:')); return rr.length > 0 ? rr.every(r => r.status !== 'failed' || r.attempts >= 3 || recent(r)) : done(id, 'relay'); };  // POST-READBACK-2: per-service rows override a legacy channel='relay' row
+  const bufferDone = id => { const rr = rows.filter(r => r.id === id && r.channel.startsWith('buffer:')); return rr.length > 0 && rr.every(r => r.status !== 'failed' || r.attempts >= 3 || recent(r)); };  // SOCIAL-MODULE-1: one row per Buffer service, so each is verified and retried on its own
+  // THOUGHT-1: a post may name its channels and carry a text per channel. A post with no list goes to Bluesky and Mastodon (and the Buffer and relay
+  // fan-outs), so LinkedIn direct gets the white papers and nothing else. A paper is due on a channel it has not reached yet, so a channel linked later
+  // still gets the current pieces; any other post is not re-sent to a channel linked after it went out.
+  const targets = p => { const l = p.channels || ['bluesky', 'mastodon']; return [...l, 'buffer', 'relay'].filter((ch, i, a) => a.indexOf(ch) === i && channels[ch]); };
+  const missing = p => targets(p).filter(ch => ch === 'relay' ? !relayDone(p.id) : ch === 'buffer' ? !bufferDone(p.id) : !done(p.id, ch));
+  const seen = id => rows.filter(r => r.id === id), retry = id => seen(id).some(r => r.status === 'failed');
+  const due = (cal.posts || []).filter(p => p.date <= today && missing(p).length && (!seen(p.id).length || p.kind === 'paper' || retry(p.id))).sort((a, b) => priority(a) - priority(b));
   if (!due.length) return { skipped: 'nothing due' };
   const p = due[0], out = {};
   const rec = async (ch, ref, status, ex) => {
@@ -149,24 +190,25 @@ export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), t
     out[ch] = status + (status === 'failed' ? ': ' + String(ref).slice(0, 100) : '');
     if (status !== 'verified') await store.event(db, tenant, 'oauth:' + ch, status, String(ref).slice(0, 120));
   };
-  for (const [ch, m] of Object.entries(channels)) {
-    if (ch === 'buffer' ? bufferDone(p.id) : ch !== 'relay' && done(p.id, ch)) continue;
+  const long = (p.texts && p.texts.linkedin) || p.long || p.text, short = (p.texts && p.texts.bluesky) || p.text;
+  for (const ch of missing(p)) {
+    const m = channels[ch], text = (p.texts && p.texts[ch]) || p.text;
     try {
       if (ch === 'buffer') {
         const failed = rows.filter(r => r.id === p.id && r.channel.startsWith('buffer:') && r.status === 'failed').map(r => r.channel.slice(7));
         const bt = await getToken(db, env, tenant, 'oauth:buffer', { fetch: f, now }); if (!bt.ok) throw new Error('buffer: ' + bt.error);  // the access token lives about an hour; it is renewed here
-        for (const [svc, id] of Object.entries(await postBuffer(bt.token, p.long || p.text, f, p.text, failed))) await rec('buffer:' + svc, id, /^failed/.test(id) ? 'failed' : 'queued');  // queued until reconcileBuffer reads the public post back
+        for (const [svc, id] of Object.entries(await postBuffer(bt.token, long, f, short, failed))) await rec('buffer:' + svc, id, /^failed/.test(id) ? 'failed' : 'queued');  // queued until reconcileBuffer reads the public post back
         continue;
       }
       if (ch === 'relay') {
         const failed = rows.filter(r => r.id === p.id && r.channel.startsWith('relay:') && r.status === 'failed').map(r => r.channel.slice(6));
         const stale = rows.filter(r => r.id === p.id && r.channel.startsWith('relay:') && r.status === 'failed').map(r => (/queued ([0-9a-f]{24})/.exec(String(r.ref)) || [])[1]).filter(Boolean);
         if (stale.length) { try { await f(env.SOCIAL_RELAY_URL + '/relay/cancel', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + env.SOCIAL_RELAY_TOKEN }, body: JSON.stringify({ ids: stale }) }); } catch (e) { /* allow-silent: a failed cancel only risks a duplicate post; the retry below still goes out and the miss shows in the relay response */ } }  // POST-READBACK-2: a queued Buffer entry that never published is cancelled before its replacement shares now
-        const res = await classifyRelay(await postRelay(env, p, f, failed), f);  // a retry re-sends only the services that failed
+        const res = await classifyRelay(await postRelay(env, { ...p, long, text: short }, f, failed), f);  // a retry re-sends only the services that failed
         for (const [svc, v] of Object.entries(res)) await rec('relay:' + svc, v.ref, v.status);
         continue;
       }
-      const ref = ch === 'mastodon' ? await postMastodon(m, p.text, p.id, f) : await postBluesky(db, env, tenant, m, p.text, f, now);
+      const ref = ch === 'mastodon' ? await postMastodon(m, text, p.id, f) : ch === 'linkedin' ? await postLinkedIn(m, text, p.url || null, f, now, env.LINKEDIN_VERSION || null) : await postBluesky(db, env, tenant, m, text, f, now);
       await rec(ch, ref, (await readBack(ch, ref, f)) ? 'verified' : 'unverified');
     } catch (e) { await rec(ch, String(e && e.message || e), 'failed'); }
   }
