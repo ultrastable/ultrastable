@@ -18,6 +18,7 @@ import { connectAgentPage } from "./connectagent.js";
 import { agentic, withLinks, CONTENT_SIGNAL, TOOLS, LIVE_TOOLS, WRITE_TOOLS } from "./agentic.js";
 import VERIFIED from "./claims-data.js";
 import ULTRA from "./ultrastability-data.js";
+import { verificationBody, verificationJson } from "./verification.js";
 import { experimentFor, slotText, exposureName } from "./uiux.js"; // UIUX-1: A/B experiments on path steps
 import SELF from "./self-data.js";
 import { passkeys } from "./passkeys.js";
@@ -1101,6 +1102,8 @@ const handler = {
         if (ux && ux.record && env && env.DB) { const w = record(env, request, { host: CANON, path: "/", ref: request.headers.get("referer"), name: exposureName(ux) }).catch(e => console.error("analytics", e && e.message)); if (ctx && ctx.waitUntil) ctx.waitUntil(w); }
         return new Response(home(ux), { headers: ux ? { ...HTML, "Cache-Control": "private, no-cache", "X-Experiment": ux.id + ":" + ux.arm } : HTML }); }
       case "/how": return new Response(how(), { headers: HTML });
+      case "/verification": return new Response(shell({ path: "/verification", title: "Verified invariants - Ultrastable", description: "Guarantees model-checked and tied to the deployed code" }, verificationBody()), { headers: HTML });
+      case "/api/verification": return new Response(JSON.stringify(verificationJson()), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } });
       case "/showcase": return new Response(showcase(), { headers: HTML });
       case "/family.json": return new Response(JSON.stringify({ family: SH.domains, nav: [["Find your path", "/for"], ["Test cases", "/showcase"], ["Product", "/product"], ["How it works", "/how"], ["Live proof", "/live"], ["Contact", "/contact"]], tokens: { accent_light: "#b83800", accent_dark: "#ff7f4d", base: "https://" + CANON + "/" } }), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } });
       case "/for": return new Response(forIndex(), { headers: HTML });
