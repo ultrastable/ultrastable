@@ -3940,6 +3940,15 @@
    "body": "Rowan, 2026-11-21: no patent and no IP filing; the work is source-available under the Ultrastable License, non-commercial use free, commercial use needs a paid license. The disclosure rule, the dashboard disclosure_guard probe (which failed hourly) and its word list are removed; nothing is held back from public view.",
    "probe": "grep:dashboard/worker.js::NO-PATENT-1",
    "session": "session_0156nqDvcJffVKenzBcawrYF"
+  },
+  {
+   "id": "lesson-2026-11-21-removing-a-check-leaves-its-last-failing-row-the-probe-purge",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "Removing a check leaves its last failing row; the probe purges retired checks",
+   "body": "Deleting the disclosure_guard probe left its failing row in the checks table, so the failure stayed visible. runProbes now deletes retired check names each run.",
+   "probe": "grep:dashboard/worker.js::retired checks",
+   "session": "session_0156nqDvcJffVKenzBcawrYF"
   }
  ]
 }

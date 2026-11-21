@@ -151,6 +151,7 @@ async function setCheck(env, name, ok, detail) {
 }
 export async function runProbes(env) {
   const out = [];
+  try { await env.DB.prepare("DELETE FROM checks WHERE name IN ('disclosure_guard')").run(); } catch (e) { /* retired checks (NO-PATENT-1) leave the table; a down database reports itself below */ }
   const rec = async (n, ok, d) => { try { await setCheck(env, n, ok, d); } catch (e) { /* a down database must still report itself */ } out.push({ name: n, ok, detail: d }); };
   try { await env.DB.prepare("SELECT 1").first(); await rec("database", true, "D1 answers"); } catch (e) { await rec("database", false, String(e.message || e)); }
   await rec("owner_email", !!(env.OWNER_EMAIL && (env.SEND_EMAIL || env.MAILER)), env.OWNER_EMAIL ? "owner address and sender configured" : "OWNER_EMAIL missing");
