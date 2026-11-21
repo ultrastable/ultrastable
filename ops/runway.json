@@ -21,11 +21,11 @@
   }
  },
  "failure_first_seen": {
-  "Q-CIFAIL-mergeaudit-1461": "2026-11-21",
   "Q-CIFAIL-mergeaudit-1750": "2026-11-21",
   "Q-CIFAIL-mergeaudit-1759": "2026-11-21",
   "Q-CIFAIL-mergeaudit-1763": "2026-11-21",
   "Q-CIFAIL-practical-solutions-deploy-llm": "2026-11-21",
+  "Q-CIFAIL-ultrastable-deploy-workers": "2026-11-21",
   "Q-CIFAIL-ultrastable-issues": "2026-11-21",
   "Q-CIFAIL-ultrastable-owner-links-audit": "2026-11-21",
   "Q-RULE-license-notice-license-fleet": "2026-11-20",
