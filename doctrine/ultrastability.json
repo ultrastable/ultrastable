@@ -1,5 +1,5 @@
 {
- "_doc": "ULTRASTABILITY-1 (Rowan, 2026-11-17): the platform's name is a design rule from W. Ross Ashby (Design for a Brain, 1952). A system is ultrastable when two loops keep its essential variables inside bounds: a fast first-order loop that corrects ordinary disturbance without changing the system, and a slow second-order loop that, when a variable stays out of bounds, makes a discrete step change to the system's own parameters or structure and keeps the change only if the variable returns. Read by foundation/ultrastability.py; checked by `python3 -m foundation ultrastability --check`; rendered on /how from site/ultrastability-data.js (generated). Never edit a bound to clear a breach: bounds are the viability limits, changed only by a PR with a lineage note.",
+ "_doc": "ULTRASTABILITY-1 (Rowan, 2026-11-17): the platform's name is a design rule from W. Ross Ashby (Design for a Brain, 1952). A system is ultrastable when two loops keep its essential variables inside bounds: a fast first-order loop that corrects ordinary disturbance without changing the system, and a slow second-order loop that, when a variable stays out of bounds, makes a discrete step change to the system's own parameters or structure and keeps the change only if the variable returns; after the ladder it keeps searching untried parameter values until one holds the variable (ASHBY-SEARCH-1). Every variable has limits (ASHBY-1). Read by foundation/ultrastability.py; checked by `python3 -m foundation ultrastability --check`; rendered on /how from site/ultrastability-data.js (generated). Never edit a bound to clear a breach: bounds are the viability limits, changed only by a PR with a lineage note.",
  "id": "ultrastability",
  "version": "1.0.0",
  "marker": "ULTRASTABILITY-1",
@@ -288,15 +288,15 @@
     {
      "id": "value",
      "name": "The tenant's own declared value metric",
-     "reading": "tenant.declared_metric",
-     "min": null,
+     "reading": "tenant.declared_metric_vs_target",
+     "min": 1.0,
      "max": null,
      "unit": "per its objective",
      "first_order": [
       "spinoff",
       "predict-verify"
      ],
-     "why": "A system with no measure that can be wrong cannot be improved.",
+     "why": "A system with no measure that can be wrong cannot be improved. Read as the tenant's declared metric divided by its own declared target (ops/tenants/<slug>.json declared_metric, declared_target); 1.0 is on target.",
      "ladder": [
       {
        "kind": "spinoff",

@@ -412,9 +412,9 @@ export default {
     {
      "id": "value",
      "max": null,
-     "min": null,
+     "min": 1.0,
      "name": "The tenant's own declared value metric",
-     "reading": "tenant.declared_metric",
+     "reading": "tenant.declared_metric_vs_target",
      "regulators": [
       "spinoff",
       "predict-verify"
@@ -432,7 +432,7 @@ export default {
       }
      ],
      "unit": "per its objective",
-     "why": "A system with no measure that can be wrong cannot be improved."
+     "why": "A system with no measure that can be wrong cannot be improved. Read as the tenant's declared metric divided by its own declared target (ops/tenants/<slug>.json declared_metric, declared_target); 1.0 is on target."
     }
    ],
    "what": "Every system built on Ultrastable declares the same four variables at bootstrap; the platform loop runs them for tenant 0 only"
@@ -525,6 +525,7 @@ export default {
   "qnfo-sauce",
   "recognition-lint",
   "regen-generated",
+  "research",
   "resilience",
   "retriage",
   "role-customer-success",
@@ -1585,7 +1586,7 @@ export default {
     "owner": "operations",
     "server_owner": "ultrastable-tick",
     "sla": "24h",
-    "summary": "Ashby's second loop: every tick reads each essential variable against its bounds; one out of bounds for two ticks takes one discrete step (a parameter change within limits, or a restructure item), kept only if the variable returns, otherwise undone and the next step taken; an exhausted ladder files a redesign item.",
+    "summary": "Ashby's second loop: every tick reads each essential variable against its bounds; one out of bounds for two ticks takes one discrete step (a parameter change within limits, or a restructure item), kept only if the variable returns, otherwise undone and the next step taken; once the ladder is spent it keeps drawing untried parameter values until one holds (ASHBY-SEARCH-1), and files a redesign item only when the range is spent.",
     "trigger": "daily cost-guard workflow and the criticality tick",
     "workflows": []
    },
@@ -1815,6 +1816,19 @@ export default {
     "trigger": "automatic: weekly schedule",
     "workflows": [
      "backup-drill"
+    ]
+   },
+   {
+    "closing_probe": "grep:foundation/research.py::def experiments",
+    "id": "research",
+    "kind": "governance",
+    "owner": "product-manager",
+    "server_owner": "github-actions",
+    "sla": "7d",
+    "summary": "RESEARCH-1: Ultrastable's own R&D department: outside studies are ingested as findings mapped to mechanisms and metrics, each finding is measured from the system's ledgers, a finding not met files a Q-RES item whose closing probe is the measurement, experiments settle and reopen, and the white papers at /research are regenerated from the measurements.",
+    "trigger": "weekly (scout.yml), after every merge for the papers (regen-generated.yml), and on demand",
+    "workflows": [
+     "scout"
     ]
    }
   ],
@@ -2061,7 +2075,8 @@ export default {
    {
     "id": "scout",
     "loops": [
-     "scout"
+     "scout",
+     "research"
     ]
    },
    {

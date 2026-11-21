@@ -1,0 +1,16 @@
+{"key": "ashby-1952:A1", "opened_at": "2026-11-21T09:33:27Z", "metric": "essential_bounded_share", "op": ">=", "value": 1.0, "window_h": 24, "baseline": 1.0}
+{"key": "ashby-1952:A2", "opened_at": "2026-11-21T09:33:27Z", "metric": "second_loop_steps_30d", "op": ">=", "value": 1.0, "window_h": 168, "baseline": 17}
+{"key": "ashby-1952:A3", "opened_at": "2026-11-21T09:33:27Z", "metric": "step_function_share", "op": ">=", "value": 0.5, "window_h": 336, "baseline": 0.273}
+{"key": "ashby-1952:A4", "opened_at": "2026-11-21T09:33:27Z", "metric": "second_loop_kept_share", "op": ">=", "value": 0.25, "window_h": 336, "baseline": 0.0}
+{"key": "ashby-1952:A5", "opened_at": "2026-11-21T09:33:27Z", "metric": "loops_closing_probe_share", "op": ">=", "value": 1.0, "window_h": 168, "baseline": 1.0}
+{"key": "chen-stratton-2026:F1", "opened_at": "2026-11-21T09:33:27Z", "metric": "verified_deploys_per_merged_pr", "op": ">=", "value": 0.5, "window_h": 168, "baseline": 0.547}
+{"key": "chen-stratton-2026:F2", "opened_at": "2026-11-21T09:33:27Z", "metric": "pr_merge_hours_median", "op": "<=", "value": 1.0, "window_h": 168, "baseline": 0.15}
+{"key": "chen-stratton-2026:F3", "opened_at": "2026-11-21T09:33:27Z", "metric": "pr_merge_hours_median_system", "op": "<=", "value": 2.0, "window_h": 336, "baseline": 0.49}
+{"key": "chen-stratton-2026:F4", "opened_at": "2026-11-21T09:33:27Z", "metric": "revert_share", "op": "<=", "value": 0.05, "window_h": 336, "baseline": 0.0}
+{"key": "chen-stratton-2026:F5", "opened_at": "2026-11-21T09:33:27Z", "metric": "deploy_verified_share", "op": ">=", "value": 0.95, "window_h": 168, "baseline": 1.0}
+{"key": "chen-stratton-2026:F6", "opened_at": "2026-11-21T09:33:27Z", "metric": "system_authored_share", "op": ">=", "value": 0.5, "window_h": 336, "baseline": 0.203}
+{"key": "chen-stratton-2026:F7", "opened_at": "2026-11-21T09:33:27Z", "metric": "self_deploys", "op": ">=", "value": 1.0, "window_h": 336, "baseline": 0}
+{"key": "question:Q1", "opened_at": "2026-11-21T09:33:27Z", "metric": "revert_share", "op": "<=", "value": 0.05, "window_h": 336, "baseline": 0.0}
+{"key": "question:Q2", "opened_at": "2026-11-21T09:33:27Z", "metric": "pr_merge_hours_median_system", "op": "<=", "value": 2.0, "window_h": 336, "baseline": 0.49}
+{"key": "question:Q3", "opened_at": "2026-11-21T09:33:27Z", "metric": "deploy_verified_share", "op": ">=", "value": 0.95, "window_h": 168, "baseline": 1.0}
+{"key": "question:Q4", "opened_at": "2026-11-21T09:33:27Z", "metric": "pr_closed_unmerged_share", "op": "<=", "value": 0.2, "window_h": 336, "baseline": 0.36}
