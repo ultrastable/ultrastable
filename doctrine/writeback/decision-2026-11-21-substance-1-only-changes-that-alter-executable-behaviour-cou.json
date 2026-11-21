@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-21-substance-1-only-changes-that-alter-executable-behaviour-cou",
+  "kind": "decision",
+  "date": "2026-11-21",
+  "title": "SUBSTANCE-1: only changes that alter executable behaviour count, open a PR or redeploy",
+  "body": "Measured 2026-11-14..21 (substance --report): 21 of 192 system-made changes altered behaviour, 7 trivial, 164 records; 73 of 145 deploy rounds carried no behaviour change. Executor refuses non-substantive PRs, checks backstop for executor and bot PRs, deploy-ultrastable skips data-only pushes (max_age_hours 20), generators stop stamp-only rewrites, tick classifies merged PRs and /progress pulse plus /pulse.json count only behaviour changes; unused_import self-code kind switched off; lane comment dedupe (PR 826 got 5 identical comments).",
+  "probe": "grep:foundation/executor.py::rejected-trivial"
+ },
+ "kind": "decision",
+ "title": "SUBSTANCE-1: only changes that alter executable behaviour count, open a PR or redeploy",
+ "session": ""
+}

@@ -34,6 +34,19 @@ jobs:
             git config user.name ultrastable-regen; git config user.email regen@users.noreply.github.com
             git add -A && git commit -m "REGEN-1: regenerate generated files" && git push "https://x-access-token:${LANE_PAT}@github.com/${{ github.repository }}.git" "HEAD:refs/heads/${HEAD_REF}"
           fi
+      - name: An executor PR must change executable behaviour (SUBSTANCE-1)
+        # backstop for foundation/executor.py, which already refuses to open such a PR: a bumped number, a hash, an unused import or records only is not a change
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          EVENT: ${{ github.event_name }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          python3 -m foundation substance --check
+          if [ -n "${BASE_SHA:-}" ]; then python3 -m foundation substance --gate --executor --range "${BASE_SHA}...HEAD"
+          elif [ "${EVENT:-}" = "workflow_dispatch" ] && [[ "${REF_NAME:-}" == agent/* ]]; then  # the executor dispatches checks on its own agent/ branch
+            git fetch -q origin main && PR_BODY="Executor run (dispatched checks)" python3 -m foundation substance --gate --executor --range "origin/main...HEAD"; fi
       - name: Workflow minute-budget lint (cheap, runs first)
         run: python3 scripts/lint_workflows.py
       - name: Workflow YAML parses
