@@ -26,6 +26,7 @@
   python3 -m foundation failmine [--run [--apply]|--report|--probe HASH|--check]   FAILMINE-1: mine every failure record, classify root causes, register new modes, escalate recurrence
   python3 -m foundation intentyield [--run [--apply]|--probe|--check|--report]   INTENT-YIELD-1: owner directives kept per unit of attention; no counts, no person scored
   python3 -m foundation temporal [--run [--apply]|--settled ID|--probe|--check|--report]   TEMPORAL-1: series per area, loop and entry; hotspots, neglect and stopped loops feed the failure-mode machinery
+  python3 -m foundation seedlaunch [--e2e [--keep]|--fleet|--check]   SEED-LAUNCH-1: every seed built, deployed, year-gated and probed live by the system
   python3 -m foundation progress [--check|--live]                          PROGRESS-1: every system shows substantive progress at every visit; the cadence monitor is wired
   python3 -m foundation cost [--check|--probe|--guard [--apply]]          D1 rows read and AI neurons against budgets (COST-GUARD-1)
   python3 -m foundation issueloop [--apply|--json]                       ISSUE-LOOP-1: every open issue's probe is run; a passing probe closes it
@@ -277,6 +278,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["openloops"]:
         from . import openloops
         return openloops.main(_av[1:])
+    if _av[:1] == ["seedlaunch"]:
+        from . import seedlaunch
+        return seedlaunch.main(_av[1:])
     if _av[:1] == ["intentyield"]:
         from . import intentyield
         return intentyield.main(_av[1:])

@@ -1,35 +1,26 @@
-// SEED-DEPLOY-1: deploys every seed listed in doctrine/seed-deploys.json into the Ultrastable Cloudflare account through the same OIDC route as the platform
-// workers (deploy-oidc.mjs): no stored Cloudflare credential. Each seed is generated and admitted by SEED-ADMIT-1 first; a held seed is never deployed.
-//   node deploy/deploy-seed.mjs            generate, create its database and migrate (site /__internal/seed-d1), upload, probe /health, record the row
-//   node deploy/deploy-seed.mjs --verify   probe only
-// Worker and database are named ultrastable-seed-<slug>; the database call can reach nothing else (site/deployer.js seedD1). Rows go to ops/deploys.jsonl; detector `seed-live` reads them.
-import { readFileSync, appendFileSync, mkdirSync, rmSync, readdirSync } from "node:fs";
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
+// SEED-DEPLOY-1: deploys every seed listed in doctrine/seed-deploys.json to the Ultrastable Cloudflare account, from this repository alone.
+//   node deploy/deploy-seed.mjs            generate and admit each seed, create its D1, migrate, deploy, probe /health, record the row
+//   node deploy/deploy-seed.mjs --verify   probe only (no deploy)
+// A seed deploys only when SEED-ADMIT-1 admits it (python3 -m foundation seedadmit --onboard). Needs CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID
+// (the secrets deploy-workers already uses); no credential is minted. Rows go to ops/deploys.jsonl; the detector `seed-live` reads them.
+import { readFileSync, writeFileSync, appendFileSync, mkdirSync, rmSync } from "node:fs";
 import { execFileSync } from "node:child_process";
-import { createHash } from "node:crypto";
 import { fileURLToPath } from "node:url";
-import { collectModules } from "../seed/worker/src/handoff.js";
-const SITE = process.env.TARGET_SITE || "https://ultrastable-site.ultrastable.workers.dev";
+const T = process.env.CLOUDFLARE_API_TOKEN, A = process.env.CLOUDFLARE_ACCOUNT_ID;
+if (!T || !A) { console.error("set CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID"); process.exit(1); }
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const verifyOnly = process.argv.includes("--verify");
 const cfg = JSON.parse(readFileSync(new URL("../doctrine/seed-deploys.json", import.meta.url), "utf8"));
-const sh = (cmd, args, opts = {}) => execFileSync(cmd, args, { stdio: ["ignore", "pipe", "inherit"], encoding: "utf8", ...opts });
-async function oidc() {
-  const u = process.env.ACTIONS_ID_TOKEN_REQUEST_URL, t = process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
-  if (!u || !t) throw new Error("no OIDC request URL: the job needs permissions id-token: write");
-  const r = await fetch(u + "&audience=ultrastable-deploy", { headers: { authorization: "bearer " + t } });
-  const j = await r.json(); if (!j.value) throw new Error("OIDC token request HTTP " + r.status); return j.value;
-}
-async function site(path, body) {
-  let err;
-  for (let a = 1; a <= 4; a++) {  // the site worker may have just replaced itself: retry with backoff
-    try {
-      const r = await fetch(SITE + path, { method: "POST", headers: { authorization: "Bearer " + await oidc(), "content-type": "application/json" }, body: JSON.stringify(body) });
-      const j = await r.json().catch(() => ({})); if (r.ok && j.ok) return j;
-      err = new Error(`${path}: ${j.error || "HTTP " + r.status}`); if (r.status < 500 && r.status !== 404) break;
-    } catch (e) { err = e; }
-    await new Promise(z => setTimeout(z, 8000 * a));
-  }
-  throw err;
+const sh = (cmd, args, opts = {}) => execFileSync(cmd, args, { stdio: ["ignore", "pipe", "inherit"], encoding: "utf8", env: { ...process.env }, ...opts });
+async function cf(method, path, body) {
+  const r = await fetch(`https://api.cloudflare.com/client/v4/accounts/${A}${path}`, { method, headers: { authorization: "Bearer " + T, "content-type": "application/json" }, body: body ? JSON.stringify(body) : undefined });
+  const j = await r.json().catch(() => ({})); if (!j.success) throw new Error(`${method} ${path}: ${JSON.stringify(j.errors || r.status)}`); return j.result;
 }
 async function probe(url) {
   for (let i = 0; i < 12; i++) {
@@ -38,10 +29,11 @@ async function probe(url) {
   }
   return { ok: false };
 }
+const sub = (await cf("GET", "/workers/subdomain")).subdomain;
 const gitsha = process.env.GITHUB_SHA || sh("git", ["rev-parse", "HEAD"], { cwd: ROOT }).trim();
 const rows = [];
 for (const slug of cfg.seeds) {
-  const name = `ultrastable-seed-${slug}`, url = SITE.replace("ultrastable-site", name);
+  const name = `${slug}-ultrastable`, url = `https://${name}.${sub}.workers.dev`;
   let row = { at: new Date().toISOString(), kind: "seed", worker: name, slug, url, sha: gitsha };
   try {
     if (!verifyOnly) {
@@ -50,18 +42,18 @@ for (const slug of cfg.seeds) {
       const rep = JSON.parse(raw.slice(raw.indexOf("{")));
       if (rep.admission !== "admitted") throw new Error(`not admitted: ${(rep.reasons || []).join("; ")}`);
       row.admission = rep.admission; row.year_p10 = rep.year && rep.year.p10;
-      const dir = `${out}/worker/migrations`;
-      const migrations = readdirSync(dir).filter(f => f.endsWith(".sql")).sort().map(f => { const sql = readFileSync(`${dir}/${f}`, "utf8"); return { file: f, sha256: createHash("sha256").update(sql).digest("hex"), sql }; });
-      const db = await site("/__internal/seed-d1", { name, migrations });
-      const mods = await collectModules(async p => readFileSync(`${out}/${p}`, "utf8"), "worker/src/index.js");
-      const up = await site("/__internal/deploy", {
-        name, main: mods[0].name, modules: mods.map(({ name: n, src, type }) => ({ name: n, src, type })), compatibility_date: "2026-11-12", workers_dev: true, crons: ["*/10 * * * *"],
-        bindings: [{ type: "d1", name: "DB", id: db.uuid }, { type: "plain_text", name: "PUBLIC_HEALTH_ONLY", text: "1" }],
-      });
-      row.version = up.version || ""; row.migrations_applied = db.applied.length;
+      const wdir = `${out}/worker`, dbName = name;
+      const dbs = await cf("GET", `/d1/database?name=${dbName}`);
+      const db = dbs.find(d => d.name === dbName) || await cf("POST", "/d1/database", { name: dbName });
+      const wr = `${wdir}/wrangler.jsonc`;
+      let txt = readFileSync(wr, "utf8").replace(/"name":\s*"[^"]*"/, `"name": "${name}"`).replace(/"database_name":\s*"[^"]*"/, `"database_name": "${dbName}"`)
+        .replace("{d1_database_id}", db.uuid).replace(/"workers_dev":\s*(false|true)/, '"workers_dev": true').replace(/"PUBLIC_HEALTH_ONLY":\s*"[01]"/, '"PUBLIC_HEALTH_ONLY": "1"');
+      writeFileSync(wr, txt);
+      sh("npx", ["-y", "wrangler@4", "d1", "migrations", "apply", dbName, "--remote"], { cwd: wdir });
+      sh("npx", ["-y", "wrangler@4", "deploy", "--tag", gitsha.slice(0, 12), "--message", "deploy-seed-" + gitsha], { cwd: wdir });
     }
     const p = await probe(url);
-    row = { ...row, uploaded: !verifyOnly, live_ok: p.ok, live_matches_commit: !verifyOnly && p.ok, status: p.status || 0 };
+    row = { ...row, uploaded: !verifyOnly, live_ok: p.ok, status: p.status || 0 };
   } catch (e) { row = { ...row, live_ok: false, error: String(e.message).slice(0, 300) }; }
   console.log(row.live_ok ? "OK    " : "FAIL  ", name, row.live_ok ? url + "/health" : row.error || "no health");
   rows.push(row);
