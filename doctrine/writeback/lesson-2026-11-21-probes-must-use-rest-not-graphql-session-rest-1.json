@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-21-probes-must-use-rest-not-graphql-session-rest-1",
+  "kind": "lesson",
+  "date": "2026-11-21",
+  "title": "Probes must use REST, not GraphQL (SESSION-REST-1)",
+  "body": "Agent sessions get HTTP 403 on GitHub GraphQL, so gh pr view and gh issue list probes can never pass there. Probes use gh api REST paths. The GH mirror is capped at 120 writes per run and fell 252 issues behind: a mirror backlog is itself a drift to measure. Pins baseline and tests that assert state of live items (test_prioritize) must tolerate the item closing.",
+  "probe": "grep:foundation/loopowner.py::SESSION-REST-1",
+  "session": "session_0156nqDvGnRC9rS81Jjp9V7n"
+ },
+ "kind": "lesson",
+ "title": "Probes must use REST, not GraphQL (SESSION-REST-1)",
+ "session": "session_0156nqDvGnRC9rS81Jjp9V7n"
+}
