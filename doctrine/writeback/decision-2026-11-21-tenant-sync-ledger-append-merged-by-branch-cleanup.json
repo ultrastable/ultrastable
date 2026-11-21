@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-21-tenant-sync-ledger-append-merged-by-branch-cleanup",
+  "kind": "decision",
+  "date": "2026-11-21",
+  "title": "tenant-sync ledger append merged by branch cleanup",
+  "body": "Appended tenant-sync ledger rows kept; merged during repository branch cleanup.",
+  "probe": "file:workers/tools/tenant_sync.py"
+ },
+ "kind": "decision",
+ "title": "tenant-sync ledger append merged by branch cleanup",
+ "session": ""
+}
