@@ -4218,52 +4218,12 @@
    "probe": "grep:foundation/pins.py::SHELVED-NOT-DONE-1"
   },
   {
-   "id": "lesson-2026-11-21-market-disposed-gap",
-   "kind": "lesson",
-   "date": "2026-11-21",
-   "title": "A gap whose queue item was shelved with a disposition still has an item",
-   "body": "DISPOSE-1 shelves items at their ttl with a recorded disposition and keeps probing; market --check treated that as no open item and turned main red.",
-   "probe": "grep:foundation/market.py::Disposition"
-  },
-  {
-   "id": "lesson-2026-11-21-modelwatch-follower",
-   "kind": "lesson",
-   "date": "2026-11-21",
-   "title": "The watchdog tick runs modelwatch observed as a follower",
-   "body": "The year simulation checks the watchdog runs the model-retirement route; with workflow edits gated, the route runs inside the ultrastability tick and the check reads either wiring.",
-   "probe": "grep:foundation/ultrastability.py::MODEL-HEAL-1"
-  },
-  {
-   "id": "lesson-2026-11-21-pins-baseline-shrink",
-   "kind": "lesson",
-   "date": "2026-11-21",
-   "title": "Roadmap items need a file: or grep: probe; the pins baseline only shrinks",
-   "body": "Main failed pins --check because 25 baseline entries now have a probe or are closed; removed them. A new roadmap issue must carry a file: or grep: closing probe, never cmd:.",
-   "probe": "file:foundation/pins.py"
-  },
-  {
-   "id": "lesson-2026-11-21-prioritize-pins-closed",
-   "kind": "lesson",
-   "date": "2026-11-21",
-   "title": "The pin-leads-queue test only binds pins that are open",
-   "body": "Every pinned item had been closed, so no pin was in the ranked queue and the test failed on main; it now requires the open pins to lead and passes when none is open.",
-   "probe": "grep:tests/foundation/test_prioritize.py::open_pins"
-  },
-  {
    "id": "lesson-2026-11-21-shelved-is-not-done",
    "kind": "lesson",
    "date": "2026-11-21",
    "title": "Shelved is not done",
    "body": "DISPOSE-1 shelving closes items without fixing them; any reader that treats closed as done must also require the done check to pass, or a timeout reads as a fix (main went red on two roadmap gaps).",
    "probe": "grep:scripts/build_site_roadmap.py::SHELVED-NOT-DONE-1"
-  },
-  {
-   "id": "lesson-2026-11-21-template-carry-shim",
-   "kind": "lesson",
-   "date": "2026-11-21",
-   "title": "A carry that cannot edit workflows keeps every script they call",
-   "body": "Removing business/ also removed scripts/check_business_index.py that the rest job still calls; it is now a shim that passes without business/ and fails if it returns.",
-   "probe": "file:scripts/check_business_index.py"
   }
  ]
 }
