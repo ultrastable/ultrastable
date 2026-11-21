@@ -20,7 +20,7 @@ export default {
     "data": "Theory, with worked machines (the homeostat). Chapter 7 is Step-functions, chapter 8 The Ultrastable System.",
     "summary": "An adaptive system keeps its essential variables within limits through two feedbacks: a first loop that reacts to the environment, and a second loop that changes the first loop's parameters (step-functions) only when an essential variable leaves its limits, and keeps changing them until a configuration holds the variables in bounds."
    },
-   "abstract": "W. Ross Ashby (John Wiley & Sons, New York): An adaptive system keeps its essential variables within limits through two feedbacks: a first loop that reacts to the environment, and a second loop that changes the first loop's parameters (step-functions) only when an essential variable leaves its limits, and keeps changing them until a configuration holds the variables in bounds. Ultrastable takes its name from Ashby's ultrastable system. Most current AI systems answer and stop: nothing checks the result against limits and changes the system when it fails, so their loops stay open. We state Ashby's mechanism as a set of testable properties, check each against this system's code and records, and show where the code falls short. 4 of 5 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.",
+   "abstract": "W. Ross Ashby (John Wiley & Sons, New York): An adaptive system keeps its essential variables within limits through two feedbacks: a first loop that reacts to the environment, and a second loop that changes the first loop's parameters (step-functions) only when an essential variable leaves its limits, and keeps changing them until a configuration holds the variables in bounds. Ultrastable takes its name from Ashby's ultrastable system. Most current AI systems answer and stop: nothing checks the result against limits and changes the system when it fails, so their loops stay open. We state Ashby's mechanism as a set of testable properties, check each against this system's code and records, and show where the code falls short. 3 of 5 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.",
    "window": {
     "start": "2026-11-20T15:16:32Z",
     "end": "2026-11-21T09:10:55Z",
@@ -59,7 +59,7 @@ export default {
      "metric_label": "share of declared essential variables that have limits (doctrine/ultrastability.json)",
      "measured": 1.0,
      "status": "met",
-     "n": 13,
+     "n": 11,
      "source": "doctrine/ultrastability.json",
      "item": null
     },
@@ -114,11 +114,11 @@ export default {
      },
      "prediction": "step_function_share >= 0.5 within 336 h",
      "metric_label": "share of essential variables whose second loop can change a parameter of the first loop",
-     "measured": 1.0,
-     "status": "met",
-     "n": 13,
+     "measured": 0.273,
+     "status": "not-met",
+     "n": 11,
      "source": "doctrine/ultrastability.json",
-     "item": null
+     "item": "Q-RES-ashby-1952-A3"
     },
     {
      "id": "A4",
@@ -183,7 +183,7 @@ export default {
      "item": null
     }
    ],
-   "met": 4,
+   "met": 3,
    "total": 5,
    "limits": [
     "Reading. Chapters 7 and 8 were not machine-read for this paper: the archive.org text the research loop could reach ends in chapter 2. Ashby's mechanism is stated here in our own words from the book's contents and preface; the only verbatim quotation is from the preface (page v).",
@@ -200,17 +200,17 @@ export default {
     {
      "finding": "A1",
      "rule": "IGNORANCE-1",
-     "score": 0.106
+     "score": 0.105
     },
     {
      "finding": "A2",
      "rule": "DESIGN-LANGUAGE-1",
-     "score": 0.122
+     "score": 0.123
     },
     {
      "finding": "A2",
      "rule": "VISION-1",
-     "score": 0.112
+     "score": 0.111
     },
     {
      "finding": "A5",
@@ -223,7 +223,7 @@ export default {
      "score": 0.105
     }
    ],
-   "leads_route": "lexical-512-gtrjun",
+   "leads_route": "lexical-512-kwr5ky",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -494,11 +494,6 @@ export default {
    ],
    "leads": [
     {
-     "finding": "F1",
-     "rule": "COMPLETE-1",
-     "score": 0.113
-    },
-    {
      "finding": "F3",
      "rule": "WORDS-MATCH-CODE-1",
      "score": 0.141
@@ -506,7 +501,7 @@ export default {
     {
      "finding": "F3",
      "rule": "UNATTENDED-365",
-     "score": 0.135
+     "score": 0.136
     },
     {
      "finding": "F4",
@@ -524,7 +519,7 @@ export default {
      "score": 0.14
     }
    ],
-   "leads_route": "lexical-512-1w6yg10",
+   "leads_route": "lexical-512-akme7j",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -745,20 +740,15 @@ export default {
     {
      "finding": "O5",
      "rule": "UNKNOWNS-1",
-     "score": 0.171
+     "score": 0.172
     },
     {
      "finding": "O5",
      "rule": "DRAIN-ZERO-1",
-     "score": 0.156
-    },
-    {
-     "finding": "O6",
-     "rule": "INTERVIEW-1",
-     "score": 0.119
+     "score": 0.155
     }
    ],
-   "leads_route": "lexical-512-ou2eco",
+   "leads_route": "lexical-512-k7dc2r",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -811,7 +801,7 @@ export default {
      "metric_label": "share of declared essential variables that have limits (doctrine/ultrastability.json)",
      "measured": 1.0,
      "status": "met",
-     "n": 13,
+     "n": 11,
      "source": "doctrine/ultrastability.json",
      "item": null
     },
@@ -964,7 +954,7 @@ export default {
     {
      "finding": "S1",
      "rule": "DISPOSE-1",
-     "score": 0.135
+     "score": 0.133
     },
     {
      "finding": "S1",
@@ -979,17 +969,17 @@ export default {
     {
      "finding": "S2",
      "rule": "DRAIN-ZERO-1",
-     "score": 0.132
+     "score": 0.131
     },
     {
      "finding": "S3",
      "rule": "RUNWAY-1",
-     "score": 0.116
+     "score": 0.115
     },
     {
      "finding": "S4",
      "rule": "DISPOSE-1",
-     "score": 0.115
+     "score": 0.114
     },
     {
      "finding": "S5",
@@ -1004,7 +994,7 @@ export default {
     {
      "finding": "S6",
      "rule": "IGNORANCE-1",
-     "score": 0.131
+     "score": 0.133
     },
     {
      "finding": "S6",
@@ -1012,7 +1002,7 @@ export default {
      "score": 0.117
     }
    ],
-   "leads_route": "lexical-512-13yhp61",
+   "leads_route": "lexical-512-3i2vzc",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   }
  ],

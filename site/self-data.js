@@ -190,15 +190,6 @@ export default {
      ],
      "steps": [
       {
-       "delta": 20,
-       "file": "doctrine/priorities.json",
-       "kind": "param",
-       "max": 150,
-       "min": 30,
-       "path": "goals.#repair-deploys.weight",
-       "what": "shift executor capacity to deploy repairs (raise the repair-deploys weight)"
-      },
-      {
        "kind": "item",
        "labels": [
         "p0",
@@ -222,15 +213,6 @@ export default {
       "claims-conformance"
      ],
      "steps": [
-      {
-       "delta": 20,
-       "file": "doctrine/priorities.json",
-       "kind": "param",
-       "max": 150,
-       "min": 30,
-       "path": "goals.#repair-claims.weight",
-       "what": "shift executor capacity to say-do fixes (raise the repair-claims weight)"
-      },
       {
        "kind": "item",
        "labels": [
@@ -324,15 +306,6 @@ export default {
      ],
      "steps": [
       {
-       "delta": 20,
-       "file": "doctrine/priorities.json",
-       "kind": "param",
-       "max": 150,
-       "min": 30,
-       "path": "goals.#repair-ui.weight",
-       "what": "shift executor capacity to front-end fixes (raise the repair-ui weight)"
-      },
-      {
        "kind": "item",
        "labels": [
         "p1",
@@ -356,15 +329,6 @@ export default {
      ],
      "steps": [
       {
-       "delta": 20,
-       "file": "doctrine/priorities.json",
-       "kind": "param",
-       "max": 150,
-       "min": 30,
-       "path": "goals.#repair-ui.weight",
-       "what": "shift executor capacity to broken user paths (raise the repair-ui weight)"
-      },
-      {
        "kind": "item",
        "labels": [
         "p0",
@@ -376,83 +340,6 @@ export default {
      ],
      "unit": "of paths",
      "why": "A path in doctrine/stakeholders.json that no longer clicks through is a user who cannot get from entry to the next step; every audience path must walk, and the UI/UX loop runs each as a browser flow."
-    },
-    {
-     "id": "unattended_horizon",
-     "max": null,
-     "min": 365,
-     "name": "Unattended horizon",
-     "reading": "yearsim.horizon_p10",
-     "regulators": [
-      "watchdog",
-      "executor"
-     ],
-     "steps": [
-      {
-       "delta": 20,
-       "file": "doctrine/priorities.json",
-       "kind": "param",
-       "max": 150,
-       "min": 30,
-       "path": "goals.#unattended-year.weight",
-       "what": "shift executor capacity to whatever ends the simulated year (raise the unattended-year weight)"
-      },
-      {
-       "kind": "item",
-       "labels": [
-        "p0",
-        "agent-ready"
-       ],
-       "what": "restructure: build the recovery mechanism for the fault class that ends the simulated year first",
-       "workstream": "Ultrastability"
-      }
-     ],
-     "unit": "days (10th percentile of simulated years)",
-     "why": "A year with no person is the design target (UNATTENDED-365). foundation/yearsim.py injects a year of faults into the real recovery code; when the 10th percentile of simulated years ends before 365 days, something the system needs is not repairing itself."
-    },
-    {
-     "id": "self_shipping",
-     "max": null,
-     "min": 1.0,
-     "name": "Self-originated releases",
-     "reading": "yearsim.self_rate",
-     "regulators": [
-      "executor",
-      "merge-lane",
-      "deploy-workers"
-     ],
-     "steps": [
-      {
-       "delta": 1,
-       "file": "doctrine/clocks.json",
-       "kind": "param",
-       "max": 8,
-       "min": 1,
-       "path": "chain.max_runs_per_day",
-       "what": "wake the executor more often"
-      },
-      {
-       "delta": 20,
-       "file": "doctrine/priorities.json",
-       "kind": "param",
-       "max": 150,
-       "min": 30,
-       "path": "goals.#self-shipping.weight",
-       "what": "shift executor capacity to its own repair (raise the self-shipping weight)"
-      },
-      {
-       "kind": "item",
-       "labels": [
-        "p0",
-        "agent-ready",
-        "raises-self"
-       ],
-       "what": "restructure: find why the executor's items fail and change its route (model rung, patch format, item size)",
-       "workstream": "Ultrastability"
-      }
-     ],
-     "unit": "substantive server-originated changes a day (14-day mean, at least 10 changed code lines each)",
-     "why": "Rowan's biggest goal: the server itself originates and ships substantive changes daily (SELF-REFERENCE-1). Counted from git by foundation/yearsim.py self_commits: executor or own-agent commits on main with at least 10 changed lines of code outside ledgers and generated data. A one-line import removal is upkeep, not a release (NO-TRIVIAL-COMMITS)."
     }
    ],
    "what": "Ultrastable running on itself (tenant 0)"
@@ -471,15 +358,6 @@ export default {
       "liveness"
      ],
      "steps": [
-      {
-       "delta": -2,
-       "file": "doctrine/spinoff.json",
-       "kind": "param",
-       "max": 12,
-       "min": 4,
-       "path": "budget.max_live",
-       "what": "run fewer live apps, so each one gets more of the free-tier capacity"
-      },
       {
        "kind": "spinoff",
        "verb": "iterate",
@@ -505,15 +383,6 @@ export default {
      ],
      "steps": [
       {
-       "delta": -4000,
-       "file": "doctrine/spinoff.json",
-       "kind": "param",
-       "max": 20000,
-       "min": 4000,
-       "path": "budget.max_requests_per_app_per_day",
-       "what": "lower the per-app daily request cap (a soft throttle)"
-      },
-      {
        "kind": "spinoff",
        "verb": "iterate",
        "what": "iterate: cut the spend source"
@@ -538,15 +407,6 @@ export default {
      ],
      "steps": [
       {
-       "delta": -1,
-       "file": "doctrine/spinoff.json",
-       "kind": "param",
-       "max": 3,
-       "min": 1,
-       "path": "budget.max_launches_per_day",
-       "what": "launch fewer new apps a day, leaving capacity for upkeep"
-      },
-      {
        "kind": "spinoff",
        "verb": "iterate",
        "what": "iterate: regenerate the statements from code"
@@ -566,15 +426,6 @@ export default {
       "predict-verify"
      ],
      "steps": [
-      {
-       "delta": 1,
-       "file": "doctrine/spinoff.json",
-       "kind": "param",
-       "max": 12,
-       "min": 6,
-       "path": "score.min_score",
-       "what": "launch only higher-scoring ideas"
-      },
       {
        "kind": "spinoff",
        "verb": "iterate",
@@ -601,9 +452,7 @@ export default {
    "cost-guard",
    "criticality-loop",
    "deploy-workers",
-   "executor",
    "liveness",
-   "merge-lane",
    "predict-verify",
    "resilience",
    "site-deploy",
@@ -2354,235 +2203,235 @@ export default {
  },
  "readings": {
   "access-check:claims_drift": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "access-check:spend": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "access-check:uptime": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "access-check:value": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "air-quality:claims_drift": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "air-quality:spend": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "air-quality:uptime": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "air-quality:value": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "blindspot:claims_drift": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "blindspot:spend": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "blindspot:uptime": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "blindspot:value": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "claims_drift": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0
   },
   "country-snapshot:claims_drift": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "country-snapshot:spend": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "country-snapshot:uptime": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "country-snapshot:value": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "deploy_health": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "free-tier-meter:claims_drift": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "free-tier-meter:spend": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "free-tier-meter:uptime": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "free-tier-meter:value": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "happy_paths": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "loop-ledger:claims_drift": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "loop-ledger:spend": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "loop-ledger:uptime": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "loop-ledger:value": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "numbers-board:claims_drift": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "numbers-board:spend": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "numbers-board:uptime": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "numbers-board:value": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "portfolio-board:claims_drift": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "portfolio-board:spend": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "portfolio-board:uptime": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "portfolio-board:value": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "spend": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
   },
   "stalled_clocks": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0
   },
   "ui_findings": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0
   },
   "value": {
-   "at": "2026-11-21T16:16:09Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 800.0
@@ -2618,16 +2467,7 @@ export default {
   "ledger": "ops/ultrastability.jsonl",
   "parameters": [
    "doctrine/clocks.json:chain.max_runs_per_day",
-   "doctrine/priorities.json:goals.#repair-claims.weight",
-   "doctrine/priorities.json:goals.#repair-deploys.weight",
-   "doctrine/priorities.json:goals.#repair-ui.weight",
-   "doctrine/priorities.json:goals.#self-shipping.weight",
-   "doctrine/priorities.json:goals.#unattended-year.weight",
-   "doctrine/resilience.json:stalled_after_intervals",
-   "doctrine/spinoff.json:budget.max_launches_per_day",
-   "doctrine/spinoff.json:budget.max_live",
-   "doctrine/spinoff.json:budget.max_requests_per_app_per_day",
-   "doctrine/spinoff.json:score.min_score"
+   "doctrine/resilience.json:stalled_after_intervals"
   ],
   "patience_ticks": 2,
   "settle_ticks": 3,

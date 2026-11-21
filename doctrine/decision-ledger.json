@@ -4046,40 +4046,13 @@
    "probe": "file:foundation/pm.py"
   },
   {
-   "id": "decision-2026-11-21-trajectory-1-model-time-not-snapshots-the-simulator-iterates",
-   "kind": "decision",
-   "date": "2026-11-21",
-   "title": "TRAJECTORY-1: model time, not snapshots; the simulator iterates from observed trajectories",
-   "body": "seed/scripts/trajectory.py keeps per-day series per area, loop ledger and issue stream from git and ops ledgers; reads hotspot, neglect and drift; observed event rates and trends replace assumed fault rates in the year simulation (rate_from, growth thinning). History is 12 days deep today, so only series with at least 3 events are used; the rest keep stated rates. Shown at /year.",
-   "probe": "file:seed/scripts/trajectory.py",
-   "session": "https://claude.ai/code/session_0156nqDrPUtodrmF2tkLT6LP"
-  },
-  {
-   "id": "decision-2026-11-21-year-sim-1-and-say-do-1-a-year-unattended-is-simulated-again",
-   "kind": "decision",
-   "date": "2026-11-21",
-   "title": "YEAR-SIM-1 and SAY-DO-1: a year unattended is simulated against the real recovery code; words are probed against code",
-   "body": "Measured 2026-11-21: horizon p10 730 days (99.5% of 200 simulated years pass 365) after MODEL-HEAL-1 and DEP-LOOP-1; strict p10 50 days, killers token-revoked and domain-renewal (identity gates). Self rate 0.214 substantive server-originated changes a day against 1, the largest remaining gap. Say-do match 0.993. Fix items close themselves when their probe passes.",
-   "probe": "file:foundation/yearsim.py",
-   "session": "https://claude.ai/code/session_0156nqDrPUtodrmF2tkLT6LP"
-  },
-  {
-   "id": "decision-2026-11-21-year-simulation-is-core-the-engine-and-sensitivity-analysis-",
-   "kind": "decision",
-   "date": "2026-11-21",
-   "title": "Year simulation is core: the engine and sensitivity analysis ship in the seed for every system",
-   "body": "seed/scripts/yearsim.py is the single engine (foundation/yearsim.py imports it); seed/autonomy/yearsim.json carries seven generic faults with drills that run seed tests; goal core.year.unattended (p10 >= 365) is standing for every system. Sensitivity doubles and halves each fault rate and ranks by swing in survival share.",
-   "probe": "file:seed/scripts/yearsim.py",
-   "session": "https://claude.ai/code/session_0156nqDrPUtodrmF2tkLT6LP"
-  },
-  {
-   "id": "lesson-2026-11-21-a-drill-that-never-reaches-the-code-it-tests-is-a-false-pass",
+   "id": "lesson-2026-11-21-stall-act-1-one-reconcile-slot-per-sweep-let-a-single-failin",
    "kind": "lesson",
    "date": "2026-11-21",
-   "title": "A drill that never reaches the code it tests is a false pass",
-   "body": "The model-retirement drill retired one vendor at a time with every credential bound; GitHub Models rungs sit first, so the Workers AI heal route never ran (0 healed). A second pass with only the Workers AI rungs exercised it. Drills must report what they exercised.",
-   "probe": "grep:tests/foundation/test_yearsim.py::def test_model_heal_exercised",
-   "session": "https://claude.ai/code/session_0156nqDrPUtodrmF2tkLT6LP"
+   "title": "STALL-ACT-1: one reconcile slot per sweep let a single failing PR starve the rest for 6 hours",
+   "body": "Sweeper runs 712-717: PR 1746 (code-conflict / ref 422) took the only reconcile slot every pass, so 7 PRs stalled up to 381 min while the 15-minute alarm only reported. Fix: each dirty PR gets its own try (4 per pass); an unreconcilable agent/ PR past the stall limit is closed as superseded and the executor refiles it.",
+   "probe": "grep:seed/worker/src/sweeper.js:STALL-ACT-1",
+   "session": "session_0156nqDtycGejegSYjhFJ1MF"
   }
  ]
 }
