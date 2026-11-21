@@ -37,6 +37,11 @@ def load(root=ROOT):
         d = json.loads(f.read_text(encoding="utf-8"))
         r = {"id": iid, "title": d["title"].split(": ", 1)[-1], "owner": field(d["body"], "Owner"), "trigger": field(d["body"], "Trigger"),
              "done": field(d["body"], "Done check"), "status": field(d["body"], "Status"), "milestone": d.get("milestone", "")}
+        # SHELVED-NOT-DONE-1 (2026-11-21): DISPOSE-1 closes an item that timed out as `shelved`; that is a disposition, not a fix, so a pin or
+        # gap backed by it stays as it is unless its done check passes (main went red when 6-hour shelving made two open gaps read as done).
+        # A shelved item whose done check passes was fixed after all and counts as done.
+        if (field(d["body"], "Disposition") or "").lower().startswith("shelved") and not probe_ok(root, r["done"]):
+            r["status"] = "shelved"
         for k in ("owner", "trigger", "done", "status"):
             if not r[k]:
                 bad.append(f"{ctx}: issue {iid} lacks {k}")

@@ -43,7 +43,7 @@ export default {
    "id": "PIN-fresh-account-bootstrap",
    "milestone": "Next",
    "owner": "operations",
-   "status": "closed",
+   "status": "shelved",
    "title": "First real --apply on an empty Cloudflare account",
    "trigger": "trigger: an empty Cloudflare account bound to the fleet"
   },
@@ -61,7 +61,7 @@ export default {
    "id": "PIN-outside-audit",
    "milestone": "Later",
    "owner": "reviewer",
-   "status": "closed",
+   "status": "shelved",
    "title": "Outside audit of prediction scoring",
    "trigger": "trigger: pilot milestone 2; first step is Q-GAP-cross-model-rescoring"
   },
@@ -133,7 +133,7 @@ export default {
    "id": "Q-GAP-other-cloud-proof",
    "milestone": "Next",
    "owner": "operations",
-   "status": "closed",
+   "status": "shelved",
    "title": "Prove one non-Cloudflare cloud end to end",
    "trigger": "every executor run"
   },
@@ -142,7 +142,7 @@ export default {
    "id": "Q-GAP-second-installation",
    "milestone": "Next",
    "owner": "operations",
-   "status": "closed",
+   "status": "shelved",
    "title": "A second independent installation",
    "trigger": "every executor run"
   },
