@@ -2011,15 +2011,6 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
-   "claim": "- **Find another path before asking; the information is already held (PATHFINDER-1, Rowan 2026-11-21).** \"There are always multiple paths,",
-   "detail": "",
-   "how": "file:doctrine/pathfinder.json + file:ops/paths/attempts.jsonl + file:foundation/pathfinder.py + file:tests/foundation/test_pathfinder.py",
-   "id": "cited-d77a994a9e",
-   "kind": "claim",
-   "pass": true,
-   "surface": "agents/AGENTS.md"
-  },
-  {
    "claim": "Engine: `demos/public/engine.js`, deterministic, shared by browser and tests. Tests: `node --test demos/test/*.test.mjs` (16 tests:",
    "detail": "",
    "how": "file:demos/public/engine.js + file:demos/publish.json",
@@ -3100,7 +3091,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 45 Python and 415 Worker tests",
+   "claim": "seed-tests: 45 Python and 427 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3109,7 +3100,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 415 Worker tests",
+   "claim": "seed-worker-tests: 427 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3145,7 +3136,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 730",
+   "claim": "live-deploys: 735",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",
@@ -3350,7 +3341,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 369,
-  "total": 369
+  "pass": 368,
+  "total": 368
  }
 };
