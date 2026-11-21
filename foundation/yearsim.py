@@ -2,7 +2,7 @@
 # Copyright (c) Ultrastable
 """YEARSIM-1: a time-compressed year with zero input, run against a scratch copy of this repository. Ultrastable is the foundation for any autonomous system.
 
-  python3 -m foundation yearsim [--apply] [--keep]   run twelve simulated months; --apply writes ops/yearsim.json and site/yearsim-data.js
+  python3 -m foundation yearsim [--apply] [--keep]   run a simulated year, one failure per month; --apply writes ops/yearsim.json and site/yearsim-data.js
   python3 -m foundation yearsim --check              the scenario table is well formed and every uncovered area has a filed item
 
 Each month injects one failure into a scratch copy, advances the clock (the real components take `today`), and asks the real detector whether it
@@ -192,6 +192,31 @@ def s_tenant(root, today):
     return True, not bad, f"{len(t['checks'])} loop checks, unexpected failures {t['unexpected_fails']}, cadence defects {t['cadence_defects']}; C9 (real model) expected to fail offline"
 
 
+def s_social(root, today):
+    """The social loop for a simulated year: thought.run steps day by day, so posts must follow the cadence; then a post that loses the hook or carries an
+    invented number must be refused by the guard (the honesty rule), and the repaired text must pass. Publishing itself (network) is not exercised."""
+    from . import thought
+    cfg = thought.load(root)
+    start = dt.datetime(today.year, 1, 1, 12, tzinfo=dt.timezone.utc)
+    sched = 0
+    for d in range(365):
+        r = thought.run(root, apply=True, now=start + dt.timedelta(days=d))
+        if r.get("blocked"):
+            return False, False, f"day {d}: a scheduled paper post failed its own guard: {json.dumps(r['blocked'])[:160]}"
+        sched += 1 if r.get("scheduled") else 0
+    cal = _r(root / thought.CAL)["posts"]
+    paper_posts = [p for p in cal if p.get("kind") == "paper"]
+    if not paper_posts:
+        return False, False, "no paper post was scheduled in a simulated year"
+    st = thought.studies(root)[next(p for p in thought.research_data(root)["papers"] if p["slug"] == paper_posts[-1]["paper"])["study_id"]]
+    paper = next(p for p in thought.research_data(root)["papers"] if p["slug"] == paper_posts[-1]["paper"])
+    good = paper_posts[-1]["texts"]["bluesky"]
+    bad = good.replace("runs on Ultrastable", "runs on a thing").replace("Ultrastable", "it") + " 99999 tests"
+    refused = thought.guard(bad, "bluesky", paper, cfg, st)
+    passes = not thought.guard(good, "bluesky", paper, cfg, st)
+    return bool(refused), passes and sched >= 1, f"{sched} paper posts scheduled in 365 simulated days; a post without the hook or with an invented number was refused: {refused[:2]}"
+
+
 def s_deprot(root, today):
     """Dependency rot: a new manifest with no update bot watching it must be caught by the detector, then covered."""
     m = root / "newservice/package.json"
@@ -223,7 +248,7 @@ def run(root=REPO, keep=False) -> dict:
     rows = []
     try:
         for i, m in enumerate(c["months"]):
-            today = START + dt.timedelta(days=30 * i)
+            today = START + dt.timedelta(days=365 * i // len(c["months"]))
             if m.get("scenario") is None:
                 rows.append({"month": i + 1, "date": today.isoformat(), "area": m["area"], "result": "UNCOVERED", "why": m["why"], "item": m.get("item")})
                 continue
@@ -242,7 +267,7 @@ def run(root=REPO, keep=False) -> dict:
         if not keep:
             shutil.rmtree(sc, ignore_errors=True)
     n = lambda k: sum(1 for r in rows if r["result"] == k)
-    return {"version": c["version"], "simulated_start": START.isoformat(), "months": rows, "pass": n("PASS"), "fail": n("FAIL"), "uncovered": n("UNCOVERED"),
+    return {"version": c["version"], "simulated_start": START.isoformat(), "months": rows, "months_total": len(rows), "pass": n("PASS"), "fail": n("FAIL"), "uncovered": n("UNCOVERED"),
             "ok": n("FAIL") == 0, "honesty": "Detection and verification ran the repository's own code on a scratch copy. Repairs were applied by the harness, not by the live executor. UNCOVERED areas were not simulated and count against the claim."}
 
 
@@ -252,8 +277,8 @@ def render(res: dict) -> str:
 
 def check(root=REPO) -> list[str]:
     c, bad = cfg(root), []
-    if len(c["months"]) != 12:
-        bad.append("the year has twelve months")
+    if len(c["months"]) < 12:
+        bad.append("the year has at least twelve months")
     for m in c["months"]:
         if m.get("scenario") is None and not m.get("item"):
             bad.append(f"{m['area']}: an uncovered area needs a Q-YEARSIM item id")

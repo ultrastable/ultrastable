@@ -21,13 +21,13 @@ export const YEARSIM = {
   },
   {
    "month": 2,
-   "date": "2027-01-31",
+   "date": "2027-01-29",
    "area": "token-expiry",
    "failure": "deploy token expires in 20 days",
    "detected": true,
    "repaired_and_verified": true,
    "result": "PASS",
-   "evidence": "CF_DEPLOY_TOKEN is ok, expires 2027-02-20",
+   "evidence": "CF_DEPLOY_TOKEN is ok, expires 2027-02-18",
    "labels": {
     "detect": "REAL",
     "repair": "SIMULATED",
@@ -36,13 +36,13 @@ export const YEARSIM = {
   },
   {
    "month": 3,
-   "date": "2027-03-02",
+   "date": "2027-02-26",
    "area": "domain-expiry",
    "failure": "a domain without auto-renew is 10 days from lapsing",
    "detected": true,
    "repaired_and_verified": true,
    "result": "PASS",
-   "evidence": "domain-ultrastable.net is ok, expires 2027-03-12",
+   "evidence": "domain-ultrastable.net is ok, expires 2027-03-08",
    "labels": {
     "detect": "REAL",
     "repair": "SIMULATED",
@@ -51,7 +51,7 @@ export const YEARSIM = {
   },
   {
    "month": 4,
-   "date": "2027-04-01",
+   "date": "2027-03-26",
    "area": "model-quota",
    "failure": "free model quota exhausted",
    "detected": true,
@@ -66,7 +66,7 @@ export const YEARSIM = {
   },
   {
    "month": 5,
-   "date": "2027-05-01",
+   "date": "2027-04-23",
    "area": "cost-cap",
    "failure": "usage grows toward the free-plan cap",
    "detected": true,
@@ -81,7 +81,7 @@ export const YEARSIM = {
   },
   {
    "month": 6,
-   "date": "2027-05-31",
+   "date": "2027-05-21",
    "area": "ci-breakage",
    "failure": "the lane loses its rebase guard",
    "detected": true,
@@ -96,7 +96,7 @@ export const YEARSIM = {
   },
   {
    "month": 7,
-   "date": "2027-06-30",
+   "date": "2027-06-18",
    "area": "stuck-failure",
    "failure": "a failure item nobody repairs for nine days",
    "detected": true,
@@ -111,7 +111,7 @@ export const YEARSIM = {
   },
   {
    "month": 8,
-   "date": "2027-07-30",
+   "date": "2027-07-16",
    "area": "silent-drop",
    "failure": "a queue item closed with no evidence",
    "detected": true,
@@ -126,7 +126,7 @@ export const YEARSIM = {
   },
   {
    "month": 9,
-   "date": "2027-08-29",
+   "date": "2027-08-13",
    "area": "dependency-rot",
    "failure": "a new dependency manifest has no update bot watching it",
    "detected": true,
@@ -141,15 +141,22 @@ export const YEARSIM = {
   },
   {
    "month": 10,
-   "date": "2027-09-28",
+   "date": "2027-09-10",
    "area": "tenant-loops",
-   "result": "UNCOVERED",
-   "why": "tenant result not readable (HTTPError); the tenant's own yearsim workflow has not published ops/yearsim.json yet",
-   "item": "Q-YEARSIM-tenant-loops"
+   "failure": "the Practical Solutions loops (scan, pipeline, advocates, deploys) run a year; its scheduled workflows fire and honour the halt",
+   "detected": true,
+   "repaired_and_verified": false,
+   "result": "FAIL",
+   "evidence": "10 loop checks, unexpected failures ['C5'], cadence defects []; C9 (real model) expected to fail offline",
+   "labels": {
+    "detect": "REAL",
+    "repair": "SIMULATED",
+    "verify": "REAL"
+   }
   },
   {
    "month": 11,
-   "date": "2027-10-28",
+   "date": "2027-10-08",
    "area": "github-apps",
    "result": "UNCOVERED",
    "why": "GitHub offers no API to delete a keyless app or its installation; reuse is tested in seed/worker/test/auth.test.js, not in this run",
@@ -157,7 +164,22 @@ export const YEARSIM = {
   },
   {
    "month": 12,
-   "date": "2027-11-27",
+   "date": "2027-11-05",
+   "area": "social-loop",
+   "failure": "a year of scheduled posts; a post loses the hook or invents a number",
+   "detected": true,
+   "repaired_and_verified": true,
+   "result": "PASS",
+   "evidence": "71 paper posts scheduled in 365 simulated days; a post without the hook or with an invented number was refused: ['hook missing: Ultrastable runs on Ultrastable', \"number 99999 is not in the paper's data\"]",
+   "labels": {
+    "detect": "REAL",
+    "repair": "SIMULATED",
+    "verify": "REAL"
+   }
+  },
+  {
+   "month": 13,
+   "date": "2027-12-03",
    "area": "final-runway",
    "failure": "after twelve months the runway still meets the target",
    "detected": true,
@@ -171,9 +193,10 @@ export const YEARSIM = {
    }
   }
  ],
- "pass": 9,
- "fail": 1,
- "uncovered": 2,
+ "months_total": 13,
+ "pass": 10,
+ "fail": 2,
+ "uncovered": 1,
  "ok": false,
  "honesty": "Detection and verification ran the repository's own code on a scratch copy. Repairs were applied by the harness, not by the live executor. UNCOVERED areas were not simulated and count against the claim."
 };
