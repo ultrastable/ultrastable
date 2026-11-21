@@ -1,9 +1,10 @@
 # SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 # Copyright (c) Ultrastable
 """SEED-LIFECYCLE-1: a seed cannot be reported done while it is undeployed, and is autonomous only with every one-year survival class answered."""
-import datetime as dt, json, shutil, tempfile, unittest
+import datetime as dt, json, shutil, unittest
 from pathlib import Path
 
+import _repo
 from foundation import seedlife
 
 REPO = Path(__file__).resolve().parents[2]
@@ -19,8 +20,7 @@ def w(root, rel, obj):
 
 class Fixture(unittest.TestCase):
     def setUp(self):
-        self.root = Path(tempfile.mkdtemp())
-        self.addCleanup(shutil.rmtree, self.root)
+        self.root = _repo.scratch()
         shutil.copytree(REPO / "seed/scripts", self.root / "seed/scripts")
         w(self.root, "doctrine/seed-lifecycle.json", (REPO / "doctrine/seed-lifecycle.json").read_text(encoding="utf-8"))
         c = json.loads((self.root / "doctrine/seed-lifecycle.json").read_text(encoding="utf-8"))

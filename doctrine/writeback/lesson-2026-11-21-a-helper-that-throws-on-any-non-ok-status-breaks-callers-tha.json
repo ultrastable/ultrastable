@@ -5,7 +5,7 @@
   "date": "2026-11-21",
   "title": "A helper that throws on any non-ok status breaks callers that branch on status",
   "body": "PR 1851 made the sweeper's gh() throw on non-ok; every caller branched on 410/405/409, so one disabled-issues 410 aborted a repo's sweep. gh() returns status again; callers record errors.",
-  "probe": "grep:seed/worker/src/sweeper.js::Every caller reads ok and status"
+  "probe": "grep:seed/worker/src/sweeper.js::Not a throw: every caller reads ok/status"
  },
  "kind": "lesson",
  "title": "A helper that throws on any non-ok status breaks callers that branch on status",
