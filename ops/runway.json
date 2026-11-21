@@ -16,8 +16,8 @@
   },
   "failures": {
    "days": null,
-   "why": "7 open, oldest 1 days",
-   "open": 7
+   "why": "8 open, oldest 1 days",
+   "open": 8
   }
  },
  "failure_first_seen": {
@@ -27,6 +27,7 @@
   "Q-CIFAIL-ultrastable-issues": "2026-11-21",
   "Q-CIFAIL-ultrastable-owner-links-audit": "2026-11-21",
   "Q-CIFAIL-ultrastable-spinoff": "2026-11-21",
-  "Q-RULE-license-notice-license-fleet": "2026-11-20"
+  "Q-RULE-license-notice-license-fleet": "2026-11-20",
+  "Q-RULE-no-merge-over-red-mergeaudit": "2026-11-21"
  }
 }
