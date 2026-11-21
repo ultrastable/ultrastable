@@ -7,6 +7,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from foundation import temporal as T, pathfinder as P  # noqa: E402
+from tests.foundation import _repo  # noqa: E402
 
 NOW = 1_800_000_000.0 + 40 * 86400
 D = 86400
@@ -94,7 +95,7 @@ class World(unittest.TestCase):
 
     def test_quiet_series_files_nothing(self):
         quiet = {**CFG, "areas": [], "ledgers": [], "entries": []}
-        r = Path(tempfile.mkdtemp())
+        r = _repo.scratch()
         subprocess.run(["git", "init", "-q", str(r)], check=True)
         for d in range(30, 1, -1):
             commit(r, "a/x.txt", d)
@@ -103,7 +104,7 @@ class World(unittest.TestCase):
     def test_lifecycle_items_and_settling(self):
         st = T.advance({"findings": {}, "settled": []}, self.found, NOW)
         self.assertTrue(all(s["status"] == "open" and s["runs"] == 1 for s in st["findings"].values()))
-        out = Path(tempfile.mkdtemp())
+        out = _repo.scratch()
         (out / "docs/issues").mkdir(parents=True)
         filed = T.file_items(out, CFG, st, NOW)
         self.assertEqual(len(filed), 5)                             # act findings first, capped
