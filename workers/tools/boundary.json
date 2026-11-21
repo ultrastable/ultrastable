@@ -177,6 +177,10 @@
       "class": "core",
       "role": "the L2 managerial layer"
     },
+    "core/discover": {
+      "class": "core",
+      "role": "Knowledge graph plus int8 vector index that proposes new connections (transfer, combination, bridge, frontier), screens them for novelty and scores itself against what the system adopts; tenant-agnostic (DISCOVER-1)"
+    },
     "core/kgraph": {
       "class": "core",
       "role": "Knowledge graph with provenance whose gaps generate the next questions; tenant-agnostic"

@@ -3575,6 +3575,32 @@
    "title": "credwatch session record",
    "body": "Session: session_0156nqDrFvUVn55Vaqm9Uyt2 made the credwatch account-token change; recorded here.",
    "probe": "grep:foundation/credwatch.py::verify"
+  },
+  {
+   "id": "decision-2026-11-20-discover-1-every-ultrastable-system-gets-a-knowledge-graph-a",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "DISCOVER-1: every Ultrastable system gets a knowledge graph and vector index that keeps finding connections",
+   "body": "Rowan 2026-11-20: a vector database and knowledge graph are a hallmark of every system; QNFO's research graph worked and its table-scan cost did not. core/discover embeds changed items only (content hash), keeps int8 vectors in a packed index searched exactly in memory (Vectorize port above 20,000 vectors, because Vectorize bills (stored+1) x dimensions per query and the free allocation is 30M queried dimensions a month), builds a kNN graph with communities, proposes transfer, combination, bridge and frontier leads, screens novelty, settles each lead against what the system later adopts, and tunes one knob with a scored prediction. core/modelservice serves /embed behind OIDC, core/ask takes a semantic hook. Practical Solutions runs it daily (connections.yml) and shows it at /connections.",
+   "probe": "file:workers/core/discover/discover.test.js",
+   "session": "session_0156nqDuQg9XGRLvX61Z8ZaX"
+  },
+  {
+   "id": "lesson-2026-11-20-a-pipe-to-tee-hid-a-failed-embedding-step-and-an-empty-run-w",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "A pipe to tee hid a failed embedding step and an empty run was committed",
+   "body": "Observed live in https://github.com/ultrastable/practical-solutions/actions/runs/44813063061: the run raced the model-route deploy, embedding failed in 3 seconds, the step still ended success because the GitHub default shell has no pipefail, and an empty run tuned the threshold. Fixed and merged in practical-solutions#173 (a run with no vectors records nothing and exits 2; the step uses shell: bash). Verified: node tools/connections.mjs --offline exits 2 and writes nothing. Any workflow that pipes a step that matters to tee needs pipefail.",
+   "probe": "file:workers/core/discover/index.js",
+   "session": "session_0156nqDuQg9XGRLvX61Z8ZaX"
+  },
+  {
+   "id": "decision-2026-11-21-executor-closed-q-patch-edit-worker-port-edit-blocks-and-fil",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Executor closed Q-PATCH-EDIT-WORKER: Port EDIT blocks and file context to the Worker executor",
+   "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: seed/worker/src/pr-executor.js.",
+   "probe": "file:seed/worker/src/pr-executor.js"
   }
  ]
 }
