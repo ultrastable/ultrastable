@@ -55,7 +55,7 @@ Source: ops/deploys.jsonl (same window).
 
 - ASHBY-SEARCH-1 (`foundation/ultrastability.py`): the second loop keeps changing a parameter until the variable holds, and reverts a step that did not help
 
-**Measured here:** share of second-order steps that brought the variable back inside its limits and were kept: 0.0 (n = 17). Target >= 0.25. Verdict: **not-met**. Open item: `Q-RES-safety-by-limits-2026-S4`.
+**Measured here:** share of second-order steps that brought the variable back inside its limits and were kept: 0.0 (n = 14). Target >= 0.25. Verdict: **not-met**. Open item: `Q-RES-safety-by-limits-2026-S4`.
 Source: ops/ultrastability.jsonl verdicts.
 
 ### S5. Little work is thrown away (quality)
@@ -90,10 +90,10 @@ Source: instances/ultrastable/loop-registry.json (declared).
 
 ## Proposed further links (leads, not findings)
 
-Found by core/connect on the lexical-512-8x4kv1 route; each is a proposal until a study file adopts it.
+Found by core/connect on the lexical-512-168cjwe route; each is a proposal until a study file adopts it.
 
 - S1 may also relate to DISPOSE-1 (similarity 0.133)
-- S1 may also relate to THOUGHT-1 (similarity 0.117)
+- S1 may also relate to THOUGHT-1 (similarity 0.116)
 - S2 may also relate to TENANT-SYNC-1 (similarity 0.153)
 - S2 may also relate to DRAIN-ZERO-1 (similarity 0.131)
 - S3 may also relate to RUNWAY-1 (similarity 0.115)
