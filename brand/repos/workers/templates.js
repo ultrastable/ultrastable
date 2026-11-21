@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
 export const TemplateGenerator = {
   generate(archetype, params) {
     // Router for the archetype

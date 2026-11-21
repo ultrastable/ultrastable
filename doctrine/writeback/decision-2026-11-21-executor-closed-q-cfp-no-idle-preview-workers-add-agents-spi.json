@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-21-executor-closed-q-cfp-no-idle-preview-workers-add-agents-spi",
+  "kind": "decision",
+  "date": "2026-11-21",
+  "title": "Executor closed Q-CFP-no-idle-preview-workers: Add `agents/spinoff_sweep.py` to implement automated deletion of idle idea preview Workers us",
+  "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: agents/spinoff_sweep.py.",
+  "probe": "file:agents/spinoff_sweep.py"
+ },
+ "kind": "decision",
+ "title": "Executor closed Q-CFP-no-idle-preview-workers: Add `agents/spinoff_sweep.py` to implement automated deletion of idle idea preview Workers us",
+ "session": ""
+}
