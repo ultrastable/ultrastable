@@ -1,0 +1,17 @@
+{
+ "_doc": "SLA-1 (Rowan, 2026-11-21: 'every Ultrastable system shall resolve its own issues and PRs automatically within a predefined service level agreement, with no intervention'). One table, read by the tick Worker sweeper (seed/worker/src/sla.js, enforcement every tick) and by foundation/slawatch.py (the detector, failure mode fm-sla-breach). Minutes unless the key says hours or days. Root cause found 2026-11-21: foundation/lanewatch.py only watches green mergeable PRs, so a conflicting, red, unchecked or draft PR on a claude/ branch (PRs 1188, 1094, 847, 1765 and practical-solutions 183) had no clock at all; the lane only commented 'the server repairs or supersedes it on this pass' and nothing did, and STALL-ACT-1 superseded only agent/ branches.",
+ "version": "1.0.0",
+ "pr": {
+  "green_merge_min": 3,
+  "act_min": 15,
+  "hard_min": 60,
+  "idle_min": 30,
+  "_doc": "green_merge_min: a green mergeable PR merges within this (LANE-LATENCY-1). act_min: reconcile, retrigger or ready it. hard_min: a PR still open past this and idle for idle_min is superseded by the sweeper (the branch is kept; one PORT-BRANCH item carries it onto main, so no work is lost)."
+ },
+ "issue": {
+  "p0_days": 2,
+  "p1_days": 7,
+  "default_days": 14,
+  "_doc": "Same table as FLOW-BALANCE-1 (foundation/balance.py). An item past its limit is escalated to the executor at p0 by foundation/slawatch.py; a breach fails the detector."
+ }
+}
