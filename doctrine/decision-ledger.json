@@ -765,7 +765,7 @@
    "date": "2026-11-13",
    "title": "Free org plan blocks branch protection; bundles restore",
    "body": "GH-4 branch protection returns 403 on free private repos (needs paid plan). All 7 archived-repo bundles clone from main (restore test 2026-11-13). IP-6 calendar needs the filing date.",
-   "probe": "file:ip/calendar/deadlines.py"
+   "probe": "file:github/org-settings.json"
   },
   {
    "id": "decision-2026-11-13-front-door-2-idea-consumer-deploys-a-worker-per-idea-archive",
@@ -1037,7 +1037,7 @@
    "date": "2026-11-15",
    "title": "NO-PATENT-1 wording sweep: business, brand, agents, outreach",
    "body": "Removed patent, provisional filing, counsel, private-repo and disclosure-gate wording from business/, brand/, agents/ roles and outreach copy; legal-ip-manager role is now licence and compliance stewardship.",
-   "probe": "grep:business/plan/README.md::Public by default",
+   "probe": "file:agents/roles/legal-ip-manager.md",
    "session": "session_0156nqDuVY71gtRtDvjPaAgK"
   },
   {
@@ -4264,6 +4264,14 @@
    "title": "A carry that cannot edit workflows keeps every script they call",
    "body": "Removing business/ also removed scripts/check_business_index.py that the rest job still calls; it is now a shim that passes without business/ and fails if it returns.",
    "probe": "file:scripts/check_business_index.py"
+  },
+  {
+   "id": "decision-2026-11-21-redmain-lane-built",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "REDMAIN-LANE-1: the tick Worker reverts a main that stays red",
+   "body": "A main whose required checks gate failed and stayed red 15 minutes gets a revert PR (parent tree, Handoff block) opened through the git data API by the tick Worker; no workflow edit. One per commit, never a revert of a revert.",
+   "probe": "file:seed/worker/src/redmain.js"
   }
  ]
 }

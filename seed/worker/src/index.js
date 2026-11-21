@@ -32,6 +32,7 @@ import { runHandoffs, makeDeployer, makeRollback, makeVersionReader } from './ha
 import { syncIssues } from './issuesync.js';
 import { mergeForLane } from './lanemerge.js';  // LANE-WORKER-MERGE-1
 import { sweepOpenLoops, recordSweep, lastSweep, alarmStalls } from './sweeper.js';
+import { revertRedMain } from './redmain.js';  // REDMAIN-LANE-1
 import { mergeNow, prsForEvent } from './mergenow.js';
 import { refreshLiveChanges, readLiveChanges, refreshFleetChanges, classifyPending } from './livechanges.js'; // LIVE-FRESH-1, SUBSTANCE-1
 import { progressStep, readProgress } from './progress.js'; // PROGRESS-1
@@ -152,6 +153,7 @@ export default {
       step('social', () => runSocial({ db: env.DB, env, tenant }));  // REACH-1: posts the due calendar item to the channels linked at /connect
       step('humans', async () => ({ seeded: await seedLinkRows(env.DB, env, tenant), buffer: await reconcileBuffer({ db: env.DB, env, tenant }), inbox: new Date().getUTCMinutes() < 10 ? await intakeInbox({ db: env.DB, env, tenant, blueskyAccess }) : 'hourly' }));  // SOCIAL-MODULE-1: read-back of Buffer posts; replies and mentions become inbox rows, hourly
       step('sweeper', async () => { const sw = await sweepOpenLoops({ token, repos }); await recordSweep(env.DB, sw); sw.stall_items = await alarmStalls(env.DB, sw, ensureItem); return sw; });  // PR-LATENCY-1  // SERVER-OWNS-LOOPS-1
+      step('redmain', () => revertRedMain({ token, repo: repos.find(r => r.endsWith('/ultrastable')) || main }));  // REDMAIN-LANE-1: a main red past 15 minutes gets a revert PR the lane merges
       step('app-audit', () => auditApps(env.DB, env, tenant));  // APP-INVENTORY-1: live app inventory, extra installations of our own apps removed, daily
       step('deploy-evidence', () => ingestDeploys(env.DB, { token, repo: repos.find(r => r.endsWith('/ultrastable')) }));  // SELFAUDIT-1: independent deploy evidence feeds k_eff
       step('host-hooks', async () => reconcileHooks({ db: env.DB, token, repos, origin: env.PUBLIC_ORIGIN || 'https://ultrastable.io', secret: await hookSecret(env, 'github') }));  // HOSTS-1: the server creates, repairs and re-checks its own repo webhook; nothing is set up by hand
