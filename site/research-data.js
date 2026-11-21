@@ -88,9 +88,9 @@ export default {
      },
      "prediction": "second_loop_steps_30d >= 1 within 168 h",
      "metric_label": "second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl)",
-     "measured": 20,
+     "measured": 22,
      "status": "met",
-     "n": 1294,
+     "n": 1337,
      "source": "ops/ultrastability.jsonl",
      "item": null
     },
