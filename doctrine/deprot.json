@@ -1,0 +1,37 @@
+{
+  "_doc": "DEPROT-1 baseline, shrink-only: manifests that have no Dependabot entry yet. The entries belong in .github/dependabot.yml, a protected path that a model branch cannot edit (worker-gate); the ready file is in Q-DEPROT-dependabot. Each entry leaves this list in the same change that adds its Dependabot entry; the check fails on a baseline entry that is already covered, and on a new manifest that is in neither place.",
+  "baseline": [
+    {
+      "ecosystem": "npm",
+      "directory": "/seed/worker"
+    },
+    {
+      "ecosystem": "npm",
+      "directory": "/workers"
+    },
+    {
+      "ecosystem": "npm",
+      "directory": "/workers/adapters/cloudflare"
+    },
+    {
+      "ecosystem": "npm",
+      "directory": "/workers/core"
+    },
+    {
+      "ecosystem": "pip",
+      "directory": "/platform/core"
+    },
+    {
+      "ecosystem": "pip",
+      "directory": "/products/gaplint"
+    },
+    {
+      "ecosystem": "pip",
+      "directory": "/workers/products/gaplint"
+    },
+    {
+      "ecosystem": "pip",
+      "directory": "/workers/runtimes/python"
+    }
+  ]
+}

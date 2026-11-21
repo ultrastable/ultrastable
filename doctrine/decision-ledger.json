@@ -3958,6 +3958,128 @@
    "body": "2026-11-21: ultrastable.org gave DNS errors after the four zones moved to the ultrastable account (old zones in the quniverse account are moved; resolvers kept the old nameservers). Zones, records and custom domains were already correct. One real defect: www.ultrastable.app returned 404 because the wildcard route of ultrastable-spinoffs won; site/wrangler.toml now declares the specific route. Worker ultrastable-uptime probes 9 hostnames every 5 minutes over two DoH resolvers plus HTTPS, retries once, and repairs through the tick Worker /api/uptime/repair (org GitHub App dispatches deploy-site.yml).",
    "probe": "file:uptime/probe.js",
    "session": "session_0156nqDtUruC6pAn6o7mpii6"
+  },
+  {
+   "id": "decision-2026-11-21-temporal-1-time-series-per-area-loop-entry-and-tenant-feed-f",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "TEMPORAL-1: time series per area, loop, entry and tenant feed failure modes, pathfinder and queue attention",
+   "body": "Snapshots hide churn and neglect; the loop reads history and ledgers daily, files findings with predictions, settles them by recomputing",
+   "probe": "grep:foundation/temporal.py::def diagnose",
+   "session": "session_0156nqDtnQ5gPHumEXvZkjYN"
+  },
+  {
+   "id": "decision-2026-11-21-executor-closed-q-cfp-no-idle-preview-workers-add-agents-spi",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Executor closed Q-CFP-no-idle-preview-workers: Add `agents/spinoff_sweep.py` to implement automated deletion of idle idea preview Workers us",
+   "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: agents/spinoff_sweep.py.",
+   "probe": "file:agents/spinoff_sweep.py"
+  },
+  {
+   "id": "decision-2026-11-21-executor-closed-q-spin-scope-implement-template-generator-im",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Executor closed Q-SPIN-SCOPE-IMPLEMENT-TEMPLATE-GENERATOR: Implement the TemplateGenerator archetype to unblock queued writers.",
+   "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: brand/repos/workers/templates.js.",
+   "probe": "file:brand/repos/workers/templates.js"
+  },
+  {
+   "id": "decision-2026-11-21-workers-builds-is-not-adopted-for-deploys-the-oidc-path-stay",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Workers Builds is not adopted for deploys; the OIDC path stays the one deploy route",
+   "body": "Reviewed 2026-11-21. Merges to main already deploy the touched Workers within minutes through deploy-ultrastable (OIDC into the site Worker's deploy endpoint, no stored Cloudflare credential), each deploy read back live (live_matches_commit true in ops/deploys.jsonl) with rollback in the handoff closer. Workers Builds would add a second deploy per merge from a separate build with no read-back or rollback record, race the first for the same Worker version, and needs a Cloudflare to GitHub consent in the dashboard before it can run. Its preview URLs for branches are the one gain; they are not worth a second production route. Default in effect: one deploy route; revisit when previews are wanted by a measured need.",
+   "probe": "file:.github/workflows/deploy-ultrastable.yml",
+   "session": "session_0156nqDtycGejegSYjhFJ1MF"
+  },
+  {
+   "id": "lesson-2026-11-21-cost-route-1-and-deprot-1",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "COST-ROUTE-1 and DEPROT-1",
+   "body": "Cost analytics are read through the site Worker route /__internal/cf-graphql (OIDC). Every package manifest needs a Dependabot entry (foundation/deprot.py, detector dependency-watch). The year simulation repairs CI breakage with the real redmain code.",
+   "probe": "file:deploy/cost-probe.mjs",
+   "session": "session_0156nqDvJdN4U5rU7HaEu3jd"
+  },
+  {
+   "id": "lesson-2026-11-21-yearfail-1-first-run-findings",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "YEARFAIL-1 first run findings",
+   "body": "The simulated year found the live cost ledger UNMEASURED (CLOUDFLARE_API_TOKEN lacks analytics authz; deploy/cost-probe.mjs does not use the Worker OIDC route). GitHub has no API to delete a keyless app (OL-20261121-1). Dependency rot and the practical-solutions loops are UNCOVERED.",
+   "probe": "file:foundation/yearfail.py",
+   "session": "session_0156nqDvJdN4U5rU7HaEu3jd"
+  },
+  {
+   "id": "lesson-2026-11-21-yearfail-1-protected-paths-cannot-ride-a-model-branch",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "YEARFAIL-1: protected paths cannot ride a model branch",
+   "body": "worker-gate refuses edits to .github/workflows and .github/dependabot.yml from claude/* branches, so the weekly yearfail workflow and the full Dependabot config are staged as data in doctrine/protected/ with items Q-YEARFAIL-workflow and Q-DEPROT-dependabot; the dependency detector holds a shrink-only baseline until they land. Never route around the gate by renaming the branch.",
+   "probe": "file:doctrine/protected/yearfail.workflow.yml",
+   "session": "session_0156nqDvDmbGTAVRujXE2ZjL"
+  },
+  {
+   "id": "lesson-2026-11-21-yearfail-1-renamed-to-avoid-the-year-sim-1-collision",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "YEARFAIL-1 renamed to avoid the YEAR-SIM-1 collision",
+   "body": "PR 1188 (YEAR-SIM-1) owns foundation/yearsim.py, doctrine/yearsim.json, ops/yearsim.json and /year: a Monte Carlo of recovery code. The monthly failure-injection test is foundation/yearfail.py, doctrine/yearfail.json, ops/yearfail.json and /year/failures. The tenant's ops/yearsim.json is unchanged.",
+   "probe": "file:foundation/yearfail.py",
+   "session": "session_0156nqDvJdN4U5rU7HaEu3jd"
+  },
+  {
+   "id": "decision-2026-11-21-executor-closed-q-cfp-no-idle-preview-workers-add-functional",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Executor closed Q-CFP-no-idle-preview-workers: Add functionality to agents/spinoff_sweep.py to detect and delete idle us-idea-* Workers when",
+   "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: agents/spinoff_sweep.py.",
+   "probe": "file:agents/spinoff_sweep.py"
+  },
+  {
+   "id": "decision-2026-11-21-product-manager-pass-2026112115-0-item-s-filed",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Product manager pass 2026112115: 0 item(s) filed",
+   "body": "Growth and repair items, experiment verdicts and knob review recorded in ops/growth/pm-report.json by foundation/pm.py; tests pass.",
+   "probe": "file:foundation/pm.py"
+  },
+  {
+   "id": "decision-2026-11-21-trajectory-1-model-time-not-snapshots-the-simulator-iterates",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "TRAJECTORY-1: model time, not snapshots; the simulator iterates from observed trajectories",
+   "body": "seed/scripts/trajectory.py keeps per-day series per area, loop ledger and issue stream from git and ops ledgers; reads hotspot, neglect and drift; observed event rates and trends replace assumed fault rates in the year simulation (rate_from, growth thinning). History is 12 days deep today, so only series with at least 3 events are used; the rest keep stated rates. Shown at /year.",
+   "probe": "file:seed/scripts/trajectory.py",
+   "session": "https://claude.ai/code/session_0156nqDrPUtodrmF2tkLT6LP"
+  },
+  {
+   "id": "decision-2026-11-21-year-sim-1-and-say-do-1-a-year-unattended-is-simulated-again",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "YEAR-SIM-1 and SAY-DO-1: a year unattended is simulated against the real recovery code; words are probed against code",
+   "body": "Measured 2026-11-21: horizon p10 730 days (99.5% of 200 simulated years pass 365) after MODEL-HEAL-1 and DEP-LOOP-1; strict p10 50 days, killers token-revoked and domain-renewal (identity gates). Self rate 0.214 substantive server-originated changes a day against 1, the largest remaining gap. Say-do match 0.993. Fix items close themselves when their probe passes.",
+   "probe": "file:foundation/yearsim.py",
+   "session": "https://claude.ai/code/session_0156nqDrPUtodrmF2tkLT6LP"
+  },
+  {
+   "id": "decision-2026-11-21-year-simulation-is-core-the-engine-and-sensitivity-analysis-",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Year simulation is core: the engine and sensitivity analysis ship in the seed for every system",
+   "body": "seed/scripts/yearsim.py is the single engine (foundation/yearsim.py imports it); seed/autonomy/yearsim.json carries seven generic faults with drills that run seed tests; goal core.year.unattended (p10 >= 365) is standing for every system. Sensitivity doubles and halves each fault rate and ranks by swing in survival share.",
+   "probe": "file:seed/scripts/yearsim.py",
+   "session": "https://claude.ai/code/session_0156nqDrPUtodrmF2tkLT6LP"
+  },
+  {
+   "id": "lesson-2026-11-21-a-drill-that-never-reaches-the-code-it-tests-is-a-false-pass",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "A drill that never reaches the code it tests is a false pass",
+   "body": "The model-retirement drill retired one vendor at a time with every credential bound; GitHub Models rungs sit first, so the Workers AI heal route never ran (0 healed). A second pass with only the Workers AI rungs exercised it. Drills must report what they exercised.",
+   "probe": "grep:tests/foundation/test_yearsim.py::def test_model_heal_exercised",
+   "session": "https://claude.ai/code/session_0156nqDrPUtodrmF2tkLT6LP"
   }
  ]
 }
