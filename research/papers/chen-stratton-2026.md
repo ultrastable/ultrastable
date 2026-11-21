@@ -96,8 +96,8 @@ Source: GitHub REST pulls?state=closed, last 100 closed pull requests, fetched 2
 - GUIDING-DIRECTIVE section 12 (`doctrine/registers.json`): every single point of failure, approvals included, is registered and remediated
 - NO-SINGLE-ROUTE (`foundation/failover.py`): every merge and deploy path has a second route needing no person's credential
 
-**Measured here:** verified deploys the system originated and executed itself (latest criticality tick): 0 (n = 45). Target >= 1. Verdict: **not-met**. Open item: `Q-RES-chen-stratton-2026-F7`.
-Source: ops/criticality.jsonl at 2026-11-20T20:12:51Z.
+**Measured here:** verified deploys the system originated and executed itself (latest criticality tick): 0 (n = 95). Target >= 1. Verdict: **not-met**. Open item: `Q-RES-chen-stratton-2026-F7`.
+Source: ops/criticality.jsonl at 2026-11-21T14:37:02Z.
 
 ## Limits
 
@@ -109,13 +109,13 @@ Source: ops/criticality.jsonl at 2026-11-20T20:12:51Z.
 
 ## Proposed further links (leads, not findings)
 
-Found by core/connect on the lexical-512-qsho7j route; each is a proposal until a study file adopts it.
+Found by core/connect on the lexical-512-akme7j route; each is a proposal until a study file adopts it.
 
-- F3 may also relate to WORDS-MATCH-CODE-1 (similarity 0.14)
+- F3 may also relate to WORDS-MATCH-CODE-1 (similarity 0.141)
 - F3 may also relate to UNATTENDED-365 (similarity 0.136)
 - F4 may also relate to CONNECT-1 (similarity 0.135)
-- F5 may also relate to AUTO-SHIP-CLEAN-1 (similarity 0.133)
-- F7 may also relate to OUTREACH-INTRO-1 (similarity 0.141)
+- F5 may also relate to AUTO-SHIP-CLEAN-1 (similarity 0.132)
+- F7 may also relate to OUTREACH-INTRO-1 (similarity 0.14)
 
 ## Method
 

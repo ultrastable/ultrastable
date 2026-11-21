@@ -10,6 +10,10 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-21
 
+- 2026-11-21: queue: closing-probe verdicts for 3 item(s) (QUEUE-PERSIST-1) [skip ci]
+- 2026-11-21: UPTIME-1: self-repair through the tick Worker, retry before dead, www.ultrastable.app route (#1492)
+- 2026-11-21: UPTIME-1: server-side DNS and HTTP probe for every ultrastable hostname (#1461)
+- 2026-11-21: Purge the retired disclosure_guard check row (#1460)
 - 2026-11-21: Retire the disclosure gate (PF-1): no patent, source-available (#1381)
 - 2026-11-21: Audit every owner link daily in headless Chromium on production (#1360)
 - 2026-11-21: Fix owner sign-in: no new GitHub apps, honor ?next, emailed link, live plan panel (#1302)
@@ -623,3 +627,9 @@ Six GitHub Apps had been registered for two roles because every visit to /connec
 - Rowan: trivial commits (hashes, 70 to 71, hard-coded values, metadata) fake productivity and burn the free tier. Measured 2026-11-14..21 with `python3 -m foundation substance --report`: 21 of 192 changes the system made itself altered executable behaviour (7 trivial, 164 records); 73 of 145 deploy rounds redeployed five Workers for regenerated data only.
 - Now: the executor opens no PR for a non-substantive change; `checks` refuses one (executor PRs, and trivial bot PRs); deploy-ultrastable skips pushes with no deployed behaviour change unless the live deploy is 20 h old; build_dashboard.py and selfmodel stop stamp-only rewrites; the tick classifies merged PRs from their diff (`live_changes.substance`) so /progress, the cadence monitor and STALL-* count only behaviour changes; pulse on /progress and /pulse.json (503 when stalled). Self-code kind unused_import is off. Lane comment dedupe (LANE-DEDUPE-1).
 - Open: Q-SUBST-self-shipping, Q-SUBST-live-readings, Q-SUBST-red-pr-latency.
+- Simulated year (YEARFAIL-1, 2026-11-21, Rowan: prove a year with zero input): `python3 -m foundation yearfail [--apply]` runs 12 months against a scratch copy, one injected failure each (token and domain expiry, quota, cost cap, CI breakage, stuck failure, silent drop, final runway); detect and verify are real code, repair is simulated. Weekly in `.github/workflows/yearfail.yml`, shown at /year (`site/yearfail.js`, data `site/yearfail-data.js`). Months: bootstrap, token and domain expiry, quota, cost cap, CI breakage (repaired by the real `foundation/redmain.py`), stuck failure, silent drop, dependency rot (detector `dependency-watch`, `foundation/deprot.py`, Dependabot covers every manifest), tenant loops (read from practical-solutions `ops/yearfail.json`), final runway. Live cost reads go through the site Worker route `/__internal/cf-graphql` (COST-ROUTE-1). GitHub app deletion has no API (uncovered).
+
+## 2026-11-21: TEMPORAL-1, time and iteration are part of the system (Session: session_0156nqDtnQ5gPHumEXvZkjYN)
+- Rowan: the system was built as snapshots; how things evolve over time (hotspots, neglect, loops that stopped) is how failure modes are found before they bite, and a loop is understood only by running it.
+- Now: `foundation/temporal.py` reads git history and ledgers into daily series per area, loop, entry and tenant (`doctrine/temporal.json`), files findings into the queue (`Q-TEMPORAL-*`, owner = the area's advocate), the failure-mode detector `temporal-drift`, the pathfinder (`temporal:` routes) and executor attention weights (`ops/temporal/attention.json`); `/trends` and the owner dashboard show it. Practical Solutions is the first tenant (findings become issues in its repo). It reuses `ops/yearsim.json` (YEARSIM-1) when present.
+- Open: tune thresholds from settled findings after a week of runs (Q-TEMPORAL items carry predictions).

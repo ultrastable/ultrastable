@@ -1,0 +1,199 @@
+{
+ "findings": {
+  "94167fdea6": {
+   "id": "94167fdea6",
+   "kind": "neglect",
+   "subject": "area:business",
+   "area": "business",
+   "advocate": "funding-manager",
+   "severity": "act",
+   "evidence": "decay: 2 commits in 3 days after 37 in the 8 days before (4.6 a day)",
+   "prediction": "area business gets at least 7 commits in 3 days within 7 days",
+   "files": [],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-21T11:56:24Z",
+   "last_seen": "2026-11-21T12:19:03Z",
+   "runs": 3,
+   "item": "Q-TEMPORAL-94167fdea6",
+   "reopened": 0
+  },
+  "69713c50e8": {
+   "id": "69713c50e8",
+   "kind": "neglect",
+   "subject": "area:docs",
+   "area": "docs",
+   "advocate": "project-manager",
+   "severity": "act",
+   "evidence": "decay: 5 commits in 3 days after 98 in the 8 days before (12.2 a day)",
+   "prediction": "area docs gets at least 18 commits in 3 days within 7 days",
+   "files": [],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-21T11:56:24Z",
+   "last_seen": "2026-11-21T12:19:03Z",
+   "runs": 3,
+   "item": "Q-TEMPORAL-69713c50e8",
+   "reopened": 0
+  },
+  "e5ddf8e610": {
+   "id": "e5ddf8e610",
+   "kind": "repeated_failure",
+   "subject": "ledger:executor:pr-outcome",
+   "area": "foundation",
+   "advocate": "operations",
+   "severity": "act",
+   "evidence": "pr-outcome: 1 failures in a row, 5 in the last 3 days against 0 in the 8 before",
+   "prediction": "ledger:executor:pr-outcome has no failure in its next 3 events within 7 days",
+   "files": [
+    "foundation/executor.py"
+   ],
+   "last_good": "d02d20a4dbe3",
+   "status": "open",
+   "first_seen": "2026-11-21T11:56:24Z",
+   "last_seen": "2026-11-21T12:19:03Z",
+   "runs": 3,
+   "item": "Q-TEMPORAL-e5ddf8e610",
+   "reopened": 0
+  },
+  "e0c6ffc24a": {
+   "id": "e0c6ffc24a",
+   "kind": "hotspot",
+   "subject": "area:root",
+   "area": "root",
+   "advocate": "operations",
+   "severity": "watch",
+   "evidence": "154 commits in 3 days against a baseline of 11.4 a day (4.5x)",
+   "prediction": "area root recent_rate returns below 3.0x baseline within 7 days",
+   "files": [],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-21T11:56:24Z",
+   "last_seen": "2026-11-21T12:19:03Z",
+   "runs": 3,
+   "item": "Q-TEMPORAL-e0c6ffc24a",
+   "reopened": 0
+  },
+  "c200e5281e": {
+   "id": "c200e5281e",
+   "kind": "hotspot",
+   "subject": "file:README.md",
+   "area": "root",
+   "advocate": "operations",
+   "severity": "watch",
+   "evidence": "README.md edited 147 times in 3 days (outside generated and ledger paths)",
+   "prediction": "README.md is edited at most 5 times in 3 days within 7 days",
+   "files": [
+    "README.md"
+   ],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-21T11:56:24Z",
+   "last_seen": "2026-11-21T12:19:03Z",
+   "runs": 3,
+   "item": "Q-TEMPORAL-c200e5281e",
+   "reopened": 0
+  },
+  "1b91492bbf": {
+   "id": "1b91492bbf",
+   "kind": "hotspot",
+   "subject": "file:doctrine/decision-ledger.json",
+   "area": "doctrine",
+   "advocate": "portfolio-manager",
+   "severity": "watch",
+   "evidence": "doctrine/decision-ledger.json edited 81 times in 3 days (outside generated and ledger paths)",
+   "prediction": "doctrine/decision-ledger.json is edited at most 5 times in 3 days within 7 days",
+   "files": [
+    "doctrine/decision-ledger.json"
+   ],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-21T11:56:24Z",
+   "last_seen": "2026-11-21T12:19:03Z",
+   "runs": 3,
+   "item": "Q-TEMPORAL-1b91492bbf",
+   "reopened": 0
+  },
+  "67dd9b9dee": {
+   "id": "67dd9b9dee",
+   "kind": "hotspot",
+   "subject": "file:platform/adapters/README.md",
+   "area": "platform",
+   "advocate": "operations",
+   "severity": "watch",
+   "evidence": "platform/adapters/README.md edited 37 times in 3 days (outside generated and ledger paths)",
+   "prediction": "platform/adapters/README.md is edited at most 5 times in 3 days within 7 days",
+   "files": [
+    "platform/adapters/README.md"
+   ],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-21T11:56:24Z",
+   "last_seen": "2026-11-21T12:19:03Z",
+   "runs": 3,
+   "item": null,
+   "reopened": 0
+  },
+  "593c3b95f2": {
+   "id": "593c3b95f2",
+   "kind": "hotspot",
+   "subject": "file:seed/worker/src/index.js",
+   "area": "seed",
+   "advocate": "operations",
+   "severity": "watch",
+   "evidence": "seed/worker/src/index.js edited 21 times in 3 days (outside generated and ledger paths)",
+   "prediction": "seed/worker/src/index.js is edited at most 5 times in 3 days within 7 days",
+   "files": [
+    "seed/worker/src/index.js"
+   ],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-21T11:56:24Z",
+   "last_seen": "2026-11-21T12:19:03Z",
+   "runs": 3,
+   "item": null,
+   "reopened": 0
+  },
+  "6420af06fe": {
+   "id": "6420af06fe",
+   "kind": "hotspot",
+   "subject": "file:site/decisions-data.js",
+   "area": "site",
+   "advocate": "uiux-manager",
+   "severity": "watch",
+   "evidence": "site/decisions-data.js edited 57 times in 3 days (outside generated and ledger paths)",
+   "prediction": "site/decisions-data.js is edited at most 5 times in 3 days within 7 days",
+   "files": [
+    "site/decisions-data.js"
+   ],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-21T11:56:24Z",
+   "last_seen": "2026-11-21T12:19:03Z",
+   "runs": 3,
+   "item": null,
+   "reopened": 0
+  },
+  "54854bf10b": {
+   "id": "54854bf10b",
+   "kind": "hotspot",
+   "subject": "file:site/worker.js",
+   "area": "site",
+   "advocate": "uiux-manager",
+   "severity": "watch",
+   "evidence": "site/worker.js edited 28 times in 3 days (outside generated and ledger paths)",
+   "prediction": "site/worker.js is edited at most 5 times in 3 days within 7 days",
+   "files": [
+    "site/worker.js"
+   ],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-21T11:56:24Z",
+   "last_seen": "2026-11-21T12:19:03Z",
+   "runs": 3,
+   "item": null,
+   "reopened": 0
+  }
+ },
+ "settled": []
+}

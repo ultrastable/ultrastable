@@ -1,0 +1,377 @@
+{
+ "_doc": "TEMPORAL-1 (Rowan, 2026-11-21): time and iteration are part of the system. Thresholds and sources for foundation/temporal.py. Windows are complete days and shrink to the history that exists. A tenant ships its own copy of this file (areas, ledgers, entries); anything it leaves out falls back to this one's values. Consumers: foundation/temporal.py, .github/workflows/temporal.yml, site/temporal.js, dashboard/worker.js, doctrine/detectors.json (temporal-drift), foundation/pathfinder.py (temporal: routes), foundation/rnd.py (boost).",
+ "version": "1.0.0",
+ "tenant": "ultrastable",
+ "history_days": 90,
+ "recent_days": 3,
+ "baseline_days": 14,
+ "min_baseline_days": 5,
+ "spark_days": 28,
+ "publish_areas": 14,
+ "history_rows": 400,
+ "hot_ratio": 3.0,
+ "hot_floor_rate": 1.0,
+ "hot_min_recent": 30,
+ "file_churn_min": 10,
+ "decay_ratio": 0.2,
+ "neglect_min_base": 30,
+ "revive_ratio": 0.5,
+ "stop_factor": 4,
+ "stop_min_events": 4,
+ "min_gap_s": 3600,
+ "fail_streak": 3,
+ "fail_min": 3,
+ "settle_days": 7,
+ "escalate_runs": 3,
+ "max_items_per_run": 3,
+ "attention_step": 0.25,
+ "attention_min": 0.5,
+ "attention_max": 2.0,
+ "default_advocate": "operations",
+ "auto_areas": true,
+ "simulation": "ops/yearsim.json",
+ "noise": [
+  "ops/",
+  "docs/issues/",
+  "docs/PROJECT-MEMORY.md",
+  "docs/handoff/",
+  "site/roadmap-data.js",
+  "site/pins.js",
+  "site/dashboard-data.js",
+  "site/temporal-data.js",
+  "dashboard/temporal-data.js",
+  "site/yearsim-data.js",
+  "site/claims-data.js",
+  "site/self-data.js",
+  "site/research-data.js",
+  "site/spinoff-roadmap-data.js"
+ ],
+ "areas": [
+  {
+   "id": "foundation",
+   "paths": [
+    "foundation/"
+   ],
+   "advocate": "operations"
+  },
+  {
+   "id": "seed",
+   "paths": [
+    "seed/"
+   ],
+   "advocate": "operations"
+  },
+  {
+   "id": "site",
+   "paths": [
+    "site/"
+   ],
+   "advocate": "uiux-manager"
+  },
+  {
+   "id": "dashboard",
+   "paths": [
+    "dashboard/"
+   ],
+   "advocate": "operations"
+  },
+  {
+   "id": "workers-core",
+   "paths": [
+    "workers/"
+   ],
+   "advocate": "infrastructure-manager"
+  },
+  {
+   "id": "doctrine",
+   "paths": [
+    "doctrine/",
+    "docs/doctrine/"
+   ],
+   "advocate": "portfolio-manager"
+  },
+  {
+   "id": "agents",
+   "paths": [
+    "agents/"
+   ],
+   "advocate": "org-designer"
+  },
+  {
+   "id": "workflows",
+   "paths": [
+    ".github/"
+   ],
+   "advocate": "infrastructure-manager"
+  },
+  {
+   "id": "research",
+   "paths": [
+    "research/"
+   ],
+   "advocate": "research-publisher"
+  },
+  {
+   "id": "outreach",
+   "paths": [
+    "outreach/",
+    "social/"
+   ],
+   "advocate": "outreach-manager"
+  },
+  {
+   "id": "brand",
+   "paths": [
+    "brand/",
+    "assets/"
+   ],
+   "advocate": "design-manager"
+  },
+  {
+   "id": "business",
+   "paths": [
+    "business/",
+    "licensing/",
+    "ip/"
+   ],
+   "advocate": "funding-manager"
+  },
+  {
+   "id": "tests",
+   "paths": [
+    "tests/",
+    "test/"
+   ],
+   "advocate": "operations"
+  },
+  {
+   "id": "docs",
+   "paths": [
+    "docs/",
+    "specs/"
+   ],
+   "advocate": "project-manager"
+  }
+ ],
+ "ledgers": [
+  {
+   "id": "ci",
+   "file": "ops/ciwatch.jsonl",
+   "time": "at",
+   "key": [
+    "repo",
+    "workflow"
+   ],
+   "ok_field": "conclusion",
+   "ok_values": [
+    "success"
+   ],
+   "area": "workflows",
+   "advocate": "infrastructure-manager",
+   "files": [
+    ".github/workflows/ci.yml"
+   ]
+  },
+  {
+   "id": "deploys",
+   "file": "ops/deploys.jsonl",
+   "time": "at",
+   "key": [
+    "worker"
+   ],
+   "ok_field": "live_matches_commit",
+   "ok_values": [
+    true
+   ],
+   "area": "workflows",
+   "advocate": "infrastructure-manager",
+   "files": [
+    "deploy/deploy-workers.mjs"
+   ]
+  },
+  {
+   "id": "executor",
+   "file": "ops/executor-log.jsonl",
+   "time": "at",
+   "key": [
+    "host"
+   ],
+   "ok_field": "result",
+   "ok_values": [
+    "pr-merged",
+    "verified-no-change",
+    "pr-opened"
+   ],
+   "area": "foundation",
+   "advocate": "operations",
+   "files": [
+    "foundation/executor.py"
+   ]
+  },
+  {
+   "id": "clocks",
+   "file": "ops/resilience.jsonl",
+   "time": "at",
+   "key": [],
+   "where": {
+    "kind": "beat"
+   },
+   "ok_field": "stalled",
+   "ok_values": [
+    0
+   ],
+   "area": "foundation",
+   "advocate": "operations",
+   "files": [
+    "foundation/clock.py"
+   ]
+  },
+  {
+   "id": "audit",
+   "file": "ops/failure-audit.jsonl",
+   "time": "at",
+   "key": [
+    "id"
+   ],
+   "ok_field": "status",
+   "ok_values": [
+    "pass"
+   ],
+   "area": "foundation",
+   "advocate": "operations",
+   "files": [
+    "foundation/failure_audit.py"
+   ]
+  }
+ ],
+ "entries": [
+  {
+   "id": "open-items",
+   "glob": "docs/issues/Q-*.json",
+   "open_only": "**Status:** open",
+   "stale_days": 10,
+   "min_count": 3,
+   "batch": 3,
+   "area": "docs",
+   "advocate": "project-manager"
+  }
+ ],
+ "max_file_hotspots": 6,
+ "tenants": [
+  {
+   "id": "practical-solutions",
+   "repo": "ultrastable/practical-solutions",
+   "advocate": "product-manager",
+   "config": {
+    "noise": [
+     "ops/",
+     "docs/issues/",
+     "docs/PROJECT-MEMORY.md",
+     "docs/handoff/",
+     "site/roadmap-data.js",
+     "site/pins.js",
+     "site/dashboard-data.js",
+     "site/temporal-data.js",
+     "dashboard/temporal-data.js",
+     "site/yearsim-data.js",
+     "site/claims-data.js",
+     "site/self-data.js",
+     "site/research-data.js",
+     "site/spinoff-roadmap-data.js",
+     "vendor/",
+     "ledger/ps.sqlite",
+     "ledger/i18n/",
+     "ledger/audit-anchors.jsonl",
+     "ledger/cycles.jsonl"
+    ],
+    "areas": [
+     {
+      "id": "worker",
+      "paths": [
+       "worker/",
+       "worker-llm/",
+       "worker-mail/"
+      ],
+      "advocate": "operations"
+     },
+     {
+      "id": "ledger",
+      "paths": [
+       "ledger/"
+      ],
+      "advocate": "research-publisher"
+     },
+     {
+      "id": "workflows",
+      "paths": [
+       ".github/"
+      ],
+      "advocate": "infrastructure-manager"
+     },
+     {
+      "id": "ux",
+      "paths": [
+       "ux/",
+       "ps/"
+      ],
+      "advocate": "uiux-manager"
+     },
+     {
+      "id": "tools",
+      "paths": [
+       "tools/",
+       "bin/",
+       "test/"
+      ],
+      "advocate": "operations"
+     }
+    ],
+    "default_advocate": "product-manager",
+    "ledgers": [
+     {
+      "id": "cycles",
+      "file": "ledger/cycles.jsonl",
+      "time": "at",
+      "key": [],
+      "area": "ledger",
+      "advocate": "operations",
+      "files": [
+       ".github/workflows/cycle.yml"
+      ]
+     },
+     {
+      "id": "releases",
+      "file": "ledger/audit-anchors.jsonl",
+      "time": "at",
+      "key": [],
+      "area": "ledger",
+      "advocate": "operations",
+      "files": [
+       "worker/src/audit.js"
+      ]
+     }
+    ],
+    "entries": [
+     {
+      "id": "briefs",
+      "glob": "ledger/briefs/*.md",
+      "stale_days": 7,
+      "min_count": 1,
+      "batch": 3,
+      "area": "ledger",
+      "advocate": "research-publisher"
+     },
+     {
+      "id": "candidate-problems",
+      "glob": "ledger/problem-bank.json",
+      "stale_days": 7,
+      "min_count": 1,
+      "batch": 1,
+      "area": "ledger",
+      "advocate": "research-publisher"
+     }
+    ]
+   }
+  }
+ ]
+}

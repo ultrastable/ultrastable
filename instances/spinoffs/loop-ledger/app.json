@@ -1,0 +1,52 @@
+{
+ "slug": "loop-ledger",
+ "name": "Loop Ledger",
+ "tagline": "How many closed loops keep this system running, and which ones are on a clock.",
+ "archetype": "status-board",
+ "status": "live",
+ "launched": "2026-11-21T14:55:00Z",
+ "need_ids": [],
+ "reach": 3,
+ "impact": 3,
+ "score": 11.74,
+ "checks": [],
+ "idea": "loop-ledger",
+ "fact": {
+  "path": "instances/ultrastable/loop-registry.json",
+  "kind": "json",
+  "rows": [
+   {
+    "label": "Registered loops",
+    "ptr": "loops#len"
+   },
+   {
+    "label": "Credentials with a probe",
+    "ptr": "credentials#len"
+   }
+  ]
+ },
+ "live": null,
+ "showcase": true,
+ "cost": {
+  "d1_rows_read": 0,
+  "d1_rows_written": 0,
+  "workers_requests": 1500,
+  "ai_neurons": 0
+ },
+ "metrics": {
+  "reach": [
+   "board_age_hours"
+  ],
+  "impact": [],
+  "guard": [
+   "error_share"
+  ],
+  "targets": {
+   "board_age_hours": 30
+  },
+  "showcase": true,
+  "value": "a showcase board is kept while its facts stay fresh and its cost inside the headroom",
+  "prediction": "board_age_hours <= 30 within 48 h",
+  "input": "none"
+ }
+}

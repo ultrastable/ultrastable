@@ -5,7 +5,7 @@
 
 ## Abstract
 
-Ultrastable R&D (Ultrastable): A common belief holds that AI agents can draft code but a person must still merge it, deploy it and check that it works. Ultrastable is built to close those loops itself: a server-side lane merges green changes, every deploy is proven live against its commit, and every loop names its closing probe. We state the common belief as properties that can fail, and test each against the records of a system that merges, deploys and checks its own work. Where it still depends on outside sessions, the paper says so with the number. 3 of 6 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.
+Ultrastable R&D (Ultrastable): A common belief holds that AI agents can draft code but a person must still merge it, deploy it and check that it works. Ultrastable is built to close those loops itself: a server-side lane merges green changes, every deploy is proven live against its commit, and every loop names its closing probe. We state the common belief as properties that can fail, and test each against the records of a system that merges, deploys and checks its own work. Where it still depends on outside sessions, the paper says so with the number. 4 of 6 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.
 
 ## The study
 
@@ -22,7 +22,7 @@ Can an AI system close its own loops?. Ultrastable R&D, Ultrastable; own R&D que
 - SERVER-OWNS-LOOPS-1 (`foundation/loopowner.py`): a loop with no server-side owner fails the build
 - CLOCKWORK-1 (`instances/ultrastable/loop-registry.json`): each loop row carries its trigger, closing probe and owner
 
-**Measured here:** share of registered loops that declare a closing probe and a server-side owner: 1.0 (n = 105). Target >= 1.0. Verdict: **met**.
+**Measured here:** share of registered loops that declare a closing probe and a server-side owner: 1.0 (n = 107). Target >= 1.0. Verdict: **met**.
 Source: instances/ultrastable/loop-registry.json (declared).
 
 ### O2. Merging needs no person (oversight)
@@ -56,8 +56,8 @@ Source: ops/deploys.jsonl (same window).
 
 - CRITICALITY-1 (`foundation/criticality.py`): human touches are counted in the denominator of the system's own score
 
-**Measured here:** human touches counted by the latest criticality tick: 10 (n = 45). Target <= 0. Verdict: **not-met**. Open item: `Q-RES-open-loops-2026-O4`.
-Source: ops/criticality.jsonl at 2026-11-20T20:12:51Z.
+**Measured here:** human touches counted by the latest criticality tick: 0 (n = 95). Target <= 0. Verdict: **met**.
+Source: ops/criticality.jsonl at 2026-11-21T14:37:02Z.
 
 ### O5. The system starts its own work (systems)
 
@@ -78,8 +78,8 @@ Source: GitHub REST pulls?state=closed, last 100 closed pull requests, fetched 2
 
 - SELF-REFERENCE-1 (`seed/worker/src/executor.js`): the tick wakes the executor, whose merged change deploys from the merge commit
 
-**Measured here:** verified deploys the system originated and executed itself (latest criticality tick): 0 (n = 45). Target >= 1. Verdict: **not-met**. Open item: `Q-RES-open-loops-2026-O6`.
-Source: ops/criticality.jsonl at 2026-11-20T20:12:51Z.
+**Measured here:** verified deploys the system originated and executed itself (latest criticality tick): 0 (n = 95). Target >= 1. Verdict: **not-met**. Open item: `Q-RES-open-loops-2026-O6`.
+Source: ops/criticality.jsonl at 2026-11-21T14:37:02Z.
 
 ## Limits
 
@@ -91,10 +91,10 @@ Source: ops/criticality.jsonl at 2026-11-20T20:12:51Z.
 
 ## Proposed further links (leads, not findings)
 
-Found by core/connect on the lexical-512-1595jx7 route; each is a proposal until a study file adopts it.
+Found by core/connect on the lexical-512-k7dc2r route; each is a proposal until a study file adopts it.
 
 - O1 may also relate to FLOW-DIRECTIVE-1 (similarity 0.148)
-- O2 may also relate to CLOCKWORK-1 (similarity 0.129)
+- O2 may also relate to CLOCKWORK-1 (similarity 0.13)
 - O5 may also relate to UNKNOWNS-1 (similarity 0.172)
 - O5 may also relate to DRAIN-ZERO-1 (similarity 0.155)
 
