@@ -69,7 +69,7 @@ Source: ops/ultrastability.jsonl verdicts.
 - CLOSED-LOOP-1 (`foundation/closedloop.py`): an output with no code consumer fails the build
 - SERVER-OWNS-LOOPS-1 (`foundation/loopowner.py`): every loop has a server-side owner; a client session never closes one
 
-**Measured here:** share of registered loops that declare a closing probe and a server-side owner: 1.0 (n = 108). Target >= 1.0. Verdict: **met**.
+**Measured here:** share of registered loops that declare a closing probe and a server-side owner: 1.0 (n = 109). Target >= 1.0. Verdict: **met**.
 Source: instances/ultrastable/loop-registry.json (declared).
 
 ## Limits

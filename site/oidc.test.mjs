@@ -25,6 +25,12 @@ const req = (headers) => new Request("https://site/__internal/deploy", { method:
 assert.equal((await internalDeploy(req({ authorization: "Bearer " + await jwt({}) }), env, fetcher)).status, 200, "a valid OIDC token deploys");
 assert.equal((await internalDeploy(req({ authorization: "Bearer " + await jwt({ ref: "refs/heads/x" }) }), env, fetcher)).status, 404, "a token for another branch is refused");
 assert.equal((await internalDeploy(req({}), env, fetcher)).status, 404, "no credential is refused");
+// WORKERS-DEV-1: a non-public worker gets its workers.dev route turned on after the upload
+{ _resetJwks(); const seen = []; const f = async (url, init) => { seen.push([String(url), init && init.method]); return String(url).endsWith("/.well-known/jwks") ? new Response(JSON.stringify({ keys: [jwk] })) : new Response(JSON.stringify({ success: true, result: String(url).includes("/zones?") ? [{ name: "ultrastable.app", id: "z1" }] : {} }), { status: 200 }); };
+  const b2 = JSON.stringify({ name: "ultrastable-unlearn", main: "worker.js", modules: [{ name: "worker.js", src: "export default {}" }], workers_dev: true, domains: ["unlearn.ultrastable.app"] });
+  const r2 = await internalDeploy(new Request("https://site/__internal/deploy", { method: "POST", headers: { authorization: "Bearer " + await jwt({}) }, body: b2 }), env, f);
+  assert.equal(r2.status, 200); assert.ok(seen.some(c => c[0].endsWith("/workers/scripts/ultrastable-unlearn/subdomain") && c[1] === "POST"), "workers.dev turned on");
+  assert.ok(seen.some(c => c[0].endsWith("/workers/domains") && c[1] === "PUT"), "custom domain attached"); }
 // CF-ROUTE-1: the read-and-backup route forwards only allow-listed requests and never a write outside the backup prefix
 const cf = async (method, path, b, h = {}) => { const seen = []; const f = async (url, init) => { seen.push([String(url), init && init.method]); return String(url).endsWith("/.well-known/jwks") ? new Response(JSON.stringify({ keys: [jwk] })) : new Response(JSON.stringify({ success: true }), { status: 200 }); }; const r = await internalDeploy(new Request("https://site/__internal/cf", { method: "POST", headers: { authorization: "Bearer " + await jwt({}), "x-cf-method": method, "x-cf-path": path, ...h }, body: b }), env, f); return { r, seen }; };
 let x = await cf("GET", "d1/database?per_page=100"); assert.equal(x.r.status, 200); assert.ok(x.seen.some(c => c[0] === "https://api.cloudflare.com/client/v4/accounts/acct/d1/database?per_page=100" && c[1] === "GET"), "a read is forwarded to the pinned account");

@@ -416,6 +416,14 @@
     "23 6 * * 2"
    ]
   },
+  "seed-launch.yml": {
+   "events": [
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "23 7 * * 1"
+   ]
+  },
   "sessions.yml": {
    "events": [
     "workflow_dispatch"

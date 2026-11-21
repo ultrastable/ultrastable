@@ -18,6 +18,13 @@
         "state": "live",
         "what": "site analytics, dashboard state, the published transparency snapshot",
         "key": "ops"
+      },
+      {
+        "name": "ultrastable-unlearn",
+        "id": "ef788db7-0a0c-4c5d-921d-18a596a15945",
+        "state": "live",
+        "what": "Unlearn tenant: explorations, coach notes, move weights, beats (instances/unlearn); created 2026-11-21",
+        "key": "unlearn"
       }
     ],
     "kv": [
@@ -248,6 +255,28 @@
           "TENANT_BUDGETS": "{\"selftest\":{\"day\":{\"requests\":2000,\"reads\":100000,\"writes\":2000}}}"
         }
       }
+    },
+    {
+      "id": "ultrastable-unlearn",
+      "state": "live",
+      "role": "Unlearn tenant app (instances/unlearn): coaching moves for the adult beside a curious child; hourly beat re-learns move weights, measures, opens the next phase when its gates hold, prunes by retention",
+      "main": "instances/unlearn/worker/index.js",
+      "compatibility_date": "2026-11-12",
+      "crons": [
+        "41 * * * *"
+      ],
+      "public": false,
+      "bindings": {
+        "d1": {
+          "DB": "ultrastable-unlearn"
+        },
+        "ai": [
+          "AI"
+        ]
+      },
+      "routes": [
+        "unlearn.ultrastable.app"
+      ]
     }
   ],
   "edit_path": [

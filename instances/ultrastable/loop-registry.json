@@ -3954,6 +3954,42 @@
    "server_owner": "github-actions"
   },
   {
+   "id": "unlearn-beat",
+   "kind": "tick",
+   "summary": "Unlearn tenant loop: curiosity logged, coaching move chosen by learned weights, follow-up at 7 and 14 days, weights re-learned, metrics measured, next phase opened when its gates hold (instances/unlearn/phases.json).",
+   "trigger": "cron 41 * * * * on ultrastable-unlearn; a page visit runs the beat when the cron has been silent for 2 hours",
+   "owner": "product-manager",
+   "closes_by": "system",
+   "sla": "2h",
+   "done": "GET /health on ultrastable-unlearn answers clock ticking and the unlearn-beat clock in doctrine/clocks.json is not late",
+   "paths": [
+    {
+     "id": "cron",
+     "how": "instances/unlearn/worker/index.js scheduled() on the Cloudflare cron",
+     "class": "free"
+    },
+    {
+     "id": "visit",
+     "how": "catchUp() in instances/unlearn/worker/index.js runs the beat on the next visit when the cron is silent",
+     "class": "degraded"
+    }
+   ],
+   "closing_probe": "grep:instances/unlearn/worker/index.js::export async function beat",
+   "writeback": [
+    "instances/unlearn/runway.json"
+   ],
+   "system_path": [
+    "instances/unlearn/worker/index.js",
+    "instances/unlearn/worker/logic.js",
+    "instances/unlearn/phases.json"
+   ],
+   "area": "tenants",
+   "workflows": [
+    "deploy-ultrastable.yml"
+   ],
+   "server_owner": "ultrastable-unlearn"
+  },
+  {
    "id": "seed-launch",
    "kind": "governance",
    "summary": "SEED-LAUNCH-1: every seed is built, deployed, year-gated and probed live by the system. A fresh seed from seed/ and every repository made from the seed template are launched on Ultrastable's own Cloudflare account; the year-unattended gate and a live /health probe are required.",

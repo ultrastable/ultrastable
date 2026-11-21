@@ -4379,7 +4379,50 @@
    "date": "2026-11-21",
    "title": "Executor closed Q-RECUR-7f3c1db956: Fix the root cause of recurring gate-skipped failures by changing the merge audit to read the full check",
    "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: tests/test_mergeaudit.py, foundation/mergeaudit.py.",
-   "probe": "file:tests/test_mergeaudit.py"
+   "probe": "file:tests/test_mergeaudit_offline.py"
+  },
+  {
+   "id": "decision-2026-11-21-unlearn-phase-1-runs-as-its-own-worker-with-no-secrets",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Unlearn phase 1 runs as its own Worker with no secrets",
+   "body": "ultrastable-unlearn: one Worker, one D1, one hourly cron, zero dependencies, library-first moves so no model or credential can stop it; a visit catches up a silent cron; runway.json maps 12 year-long risks to tested safeguards.",
+   "probe": "file:instances/unlearn/worker/worker.test.mjs",
+   "session": "session_0156nqDtYB5VwjCzYcyHVqNp"
+  },
+  {
+   "id": "decision-2026-11-21-unlearn-phased-rollout-to-all-three-audiences",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Unlearn phased rollout to all three audiences",
+   "body": "Rowan 2026-11-21: all three audiences, phased. Phase 1 coaches and parents (no child data), phase 2 Agora-style schools (school is controller), phase 3 kids directly behind consent, DPIA, retention, security and controller-entity gates. Coach before build; measure learning that holds without the AI.",
+   "probe": "file:tests/foundation/test_unlearn.py",
+   "session": "session_0156nqDtYB5VwjCzYcyHVqNp"
+  },
+  {
+   "id": "decision-2026-11-21-unlearn-tenant-manifest-and-idea",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Unlearn tenant: manifest and idea",
+   "body": "Unlearn (curiosity-led learning, Agora model from Bregman's Humankind) is a level-1 tenant: instances/unlearn/{IDEA.md,instance.json,README.md}. Default in effect: the adult (coach or parent) is the user, no child accounts or child data. Measures continuation_14d >= 0.5 and telling_share <= 0.3, both declared until probes exist (README build plan steps 5 and 6).",
+   "probe": "file:tests/foundation/test_unlearn.py",
+   "session": "session_0156nqDtYB5VwjCzYcyHVqNp"
+  },
+  {
+   "id": "lesson-2026-11-21-shelved-q-audit-items-count-as-accounted-no-duplicate-test-b",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "Shelved Q-AUDIT items count as accounted; no duplicate test basenames",
+   "body": "failure_audit --check and DISPOSE-1 disagreed: dispose shelves an open Q-AUDIT item after its TTL while the audit demanded an open one, so main failed test_failure_audit. A shelved or gate disposition now counts (its probe keeps running). The executor-added tests/test_mergeaudit.py duplicated a basename and called gh live; replaced by tests/test_mergeaudit_offline.py.",
+   "probe": "file:tests/test_mergeaudit_offline.py"
+  },
+  {
+   "id": "lesson-2026-11-21-sweeper-gh-helper-returns-status-never-throws",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "Sweeper gh helper returns status, never throws",
+   "body": "Executor PR 1851 made the sweeper gh helper throw on any non-2xx answer. Every caller reads ok and status and records failures in out.errors, so the throw only aborted the sweep on expected answers (410 when issues are off, 405 on a merge GitHub declines) and broke seed/worker sweeper.test.js on main. The status return is restored; tests/test_sweeper.js is now a node test run in checks.",
+   "probe": "file:tests/test_sweeper.js"
   }
  ]
 }

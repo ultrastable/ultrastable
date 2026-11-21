@@ -77,7 +77,7 @@ Source: GitHub REST pulls?state=closed, last 100 closed pull requests, fetched 2
 
 - HALT-1 (`seed/worker/src/budget.js`): one worker variable or committed file stops every cron, webhook and workflow job
 
-**Measured here:** share of registered loops that declare a closing probe and a server-side owner: 1.0 (n = 108). Target >= 1.0. Verdict: **met**.
+**Measured here:** share of registered loops that declare a closing probe and a server-side owner: 1.0 (n = 109). Target >= 1.0. Verdict: **met**.
 Source: instances/ultrastable/loop-registry.json (declared).
 
 ## Limits
