@@ -4053,6 +4053,42 @@
    "body": "Sweeper runs 712-717: PR 1746 (code-conflict / ref 422) took the only reconcile slot every pass, so 7 PRs stalled up to 381 min while the 15-minute alarm only reported. Fix: each dirty PR gets its own try (4 per pass); an unreconcilable agent/ PR past the stall limit is closed as superseded and the executor refiles it.",
    "probe": "file:seed/worker/src/sweeper.js",
    "session": "session_0156nqDtycGejegSYjhFJ1MF"
+  },
+  {
+   "id": "decision-2026-11-21-rootcause-1-every-finding-is-classified-to-a-root-cause-recu",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "ROOTCAUSE-1: every finding is classified to a root cause; recurrence escalates to the root",
+   "body": "doctrine/rootcauses.json holds root-cause classes with a guard probe; foundation/rootcause.py records occurrences, escalates a class seen on two days (or occurring with no guard) to Q-ROOT-<class>, and closes it only when the guard passes and the class stays quiet two days. Runs in the daily failure_audit pass. Staged workflow change (land ops/rootcause) is in protected/failure-audit.yml. Fixed foundation-tests: duplicate test_outreach basename renamed.",
+   "probe": "file:foundation/rootcause.py",
+   "session": "session_0156nqDtYAq14Vfh9JwJD5D7"
+  },
+  {
+   "id": "lesson-2026-11-21-ledger-probes-use-file-or-grep-path-text",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "Ledger probes use file: or grep:path::text",
+   "body": "A grep probe written path:text instead of path::text failed on main after merge; use file: for a code consumer.",
+   "probe": "file:foundation/writeback.py",
+   "session": "session_0156nqDtycGejegSYjhFJ1MF"
+  },
+  {
+   "id": "lesson-2026-11-21-social-module-1-buffer-registration-diagnostics-author-sessi",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "SOCIAL-MODULE-1: Buffer registration diagnostics (author session)",
+   "body": "Author session of the Buffer registration logging change; see the sibling record.",
+   "probe": "file:seed/worker/src/auth/social.js",
+   "session": "session_0156nqDvG8EF1bx4LXrvu9rj"
+  },
+  {
+   "id": "lesson-2026-11-21-social-module-1-buffer-registration-failure-is-now-logged-an",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "SOCIAL-MODULE-1: Buffer registration failure is now logged and probed",
+   "body": "The Buffer connect error logged no reason; the failure status and body now go to credential_events and a smoke probe POSTs the registration from a runner.",
+   "probe": "file:seed/worker/src/auth/social.js",
+   "session": "session_0156nqDtycGejegSYjhFJ1MF"
   }
  ]
 }
