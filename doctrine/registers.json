@@ -409,6 +409,18 @@
    "status": "controlled",
    "cadence_ticks": 1,
    "probe": "grep:tests/foundation/test_saydo.py::def test_probe_closes_on_match"
+  },
+  {
+   "id": "fm-seed-not-shipped",
+   "trigger": "a seed (tenant app) is proposed or designed but never built, deployed or made autonomous",
+   "symptom": "a seed sits as an IDEA.md, README or draft PR; nothing runs",
+   "blast_radius": "every seed on the platform and the claim that ideas become running systems",
+   "detection": "python3 -m foundation seedship --check",
+   "root_cause": "the platform let a seed stop at a design proposal",
+   "remediation": "SEED-SHIP-1: every seed carries instances/<id>/ship.json, its stage is computed from the repository, and a Q-SEED item (p0 past ship_within_days) drives it to built, deployed and every one-year readiness check met",
+   "status": "controlled",
+   "cadence_ticks": 1,
+   "probe": "grep:tests/foundation/test_seedship.py::def test_proposal_alone_fails_the_check"
   }
  ],
  "controls": [

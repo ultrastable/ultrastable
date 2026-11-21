@@ -480,6 +480,22 @@
    "root_cause": "the say-do module, its data or its executor guard is missing or stale",
    "owner": "operations",
    "remedy": "Run python3 -m foundation saydo --run --apply, then --check; restore the SAY-DO-1 guard in foundation/executor.py if it is gone."
+  },
+  {
+   "id": "seed-ship",
+   "failure_mode": "fm-seed-not-shipped",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "seedship",
+    "--check"
+   ],
+   "timeout": 120,
+   "root_cause": "a seed landed as a proposal with no ship.json, or a seed short of autonomous has no Q-SEED item driving it",
+   "owner": "operations",
+   "remedy": "Run python3 -m foundation seedship --run --apply to file the Q-SEED items, then build and deploy each seed until seedship --probe passes."
   }
  ]
 }

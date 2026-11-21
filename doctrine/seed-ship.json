@@ -1,0 +1,32 @@
+{
+ "_doc": "SEED-SHIP-1 (Rowan, 2026-11-21): \"For any seed based on the ultrastable platform, the system actually has to build and deploy it and make it fully autonomous with a design goal of being completely unsupervised and unattended for a minimum of 1 year.\" A seed is any system started on the platform: a directory under instances/ (IDEA.md or instance.json) or a tenant row in instances/ultrastable/progress.json. A design proposal is not a seed that shipped. Each seed declares in instances/<id>/ship.json what is built (paths and tests), where it is deployed (Worker id, URL, health URL) and how it runs a year unattended (heartbeat, progress row, credentials watched for expiry, monthly budget, dependency updates, self-repair workflows). foundation/seedship.py computes each seed's stage from the repository (proposed, built, deployed, autonomous), never from a declared status, files one Q-SEED-<id> item for every seed short of autonomous (p0 once it is older than ship_within_days) and closes it when its probe passes. Consumers: foundation/seedship.py (--check in .github/workflows/checks.yml, --run --apply in .github/workflows/watchdog.yml), seed/bootstrap/bootstrap.py (stage unattended writes the same readiness for a booted system), doctrine/detectors.json detector seed-ship, tests/foundation/test_seedship.py.",
+ "marker": "SEED-SHIP-1",
+ "version": "1.0.0",
+ "target": {
+  "statement": "Every seed is built, deployed and runs unattended for at least one year (Rowan, 2026-11-21).",
+  "stage": "autonomous",
+  "unattended_days": 365
+ },
+ "ship_within_days": 7,
+ "max_heartbeat_hours": 24,
+ "max_progress_hours": 168,
+ "stages": ["proposed", "built", "deployed", "autonomous"],
+ "readiness": [
+  {"id": "heartbeat", "what": "a health URL over https and a heartbeat at most max_heartbeat_hours apart, so a silent seed is noticed"},
+  {"id": "staleness", "what": "a row in instances/ultrastable/progress.json with expect_hours at most max_progress_hours, so the cadence monitor dispatches repairs and files STALL items"},
+  {"id": "credentials", "what": "every credential the seed uses is in doctrine/credwatch.json, probed for expiry before it lapses (an empty list is best)"},
+  {"id": "cost", "what": "a stated monthly budget, and the Worker declared in doctrine/topology.json so the cost probe and free-plan guard cover it"},
+  {"id": "dependencies", "what": "every package directory of the seed is in .github/dependabot.yml, so dependency drift is updated and merged by the sweeper"},
+  {"id": "self_repair", "what": "heal workflows that exist and are named on the progress row, so a stalled seed is restarted with no person"},
+  {"id": "year_model", "what": "the seed inherits seed/autonomy/yearsim.json and the standing goal core.year.unattended in seed/autonomy/goals.json"}
+ ],
+ "exempt": {
+  "ultrastable": "tenant 0: the platform itself, judged by unattended, runway and yearsim directly",
+  "spinoffs": "apps launched by the spinoff loop, each judged by foundation/spinoff.py and the progress-apps rule",
+  "qnfo": "an existing fleet adopted onto the foundation in its own account and repositories; it was built and deployed before it became a seed"
+ },
+ "baseline": {
+  "_doc": "Shrink-only: seeds that predate SEED-SHIP-1 and have no ship.json yet. Each still gets its Q-SEED item; an entry leaves when its ship.json lands. A new seed may not be added here.",
+  "seeds": ["demo-child", "second-tenant", "practical-solutions"]
+ }
+}

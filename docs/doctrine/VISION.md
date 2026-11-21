@@ -82,6 +82,7 @@ the commitment is stating the loop, the measure, the upkeep and the budget.
 | `seed/IDEA.md` | the founder's one file carries a `# System test` section |
 | `seed/bootstrap/bootstrap.py` | stage `qualify` stops the boot with a not-a-fit card before any role is hired or anything is provisioned |
 | `tests/test_vision.py` | fails the build if any of the above drifts |
+| `foundation/seedship.py`, bootstrap stage `unattended` | SEED-SHIP-1: a seed is done only when built, deployed and ready to run a year unattended; a proposal alone fails `seedship --check` |
 | Site front door | headline, hint, suggestions and the "What it is not for" section say the same thing |
 
 ## Known drift (owner: product-manager; closing probe: `tests/test_vision.py`, `site/site.test.mjs`)

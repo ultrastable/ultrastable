@@ -229,6 +229,15 @@
     "file": "foundation/ultrastability.py",
     "contains": "importlib.import_module(\"foundation.\" + name).run(REPO, apply=True)"
    }
+  },
+  {
+   "id": "seed-ship-heartbeat",
+   "source": "agents/AGENTS.md",
+   "quote": "heartbeat at most 24 hours apart",
+   "probe": {
+    "file": "doctrine/seed-ship.json",
+    "contains": "\"max_heartbeat_hours\": 24"
+   }
   }
  ],
  "baseline": [

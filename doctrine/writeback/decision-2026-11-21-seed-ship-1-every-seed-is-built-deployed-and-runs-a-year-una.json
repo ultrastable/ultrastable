@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-21-seed-ship-1-every-seed-is-built-deployed-and-runs-a-year-una",
+  "kind": "decision",
+  "date": "2026-11-21",
+  "title": "SEED-SHIP-1: every seed is built, deployed and runs a year unattended",
+  "body": "A seed is done only at stage autonomous: built, deployed (live-verified) and every one-year readiness check met; a proposal alone fails seedship --check and every seed short of autonomous has a Q-SEED item.",
+  "probe": "grep:foundation/seedship.py::def check"
+ },
+ "kind": "decision",
+ "title": "SEED-SHIP-1: every seed is built, deployed and runs a year unattended",
+ "session": ""
+}

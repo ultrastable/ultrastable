@@ -1,0 +1,14 @@
+# SEED-SHIP-1 / DEP-LOOP-1: every seeded system keeps its dependencies current with no person; the sweeper merges the green branches.
+# Read by seed/bootstrap/bootstrap.py (stage unattended, check dependencies) and foundation/scaffold.py (copied into every new system).
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /worker
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5

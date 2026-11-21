@@ -12,6 +12,7 @@ Stages (the AIOS boot chain, moved from a laptop to a server):
   write     org/ files, worker config, D1 seed SQL             (AIOS: extract tarball)
   provision D1 create, migrations, seed rows, deploy           (AIOS: switch_root)
   start     first tick observed via /health                    (AIOS: orchestrator up)
+  unattended one-year readiness (SEED-SHIP-1): built, deployed, heartbeat, credentials watched, budget, dependency updates, self-repair, year model
   report    boot log + four-line report                        (AIOS: [AIOS] > prompt)
 
 Rules carried over from AIOS:
@@ -517,6 +518,51 @@ class Boot:
             return "degraded", "dry run: the first tick runs on the Worker's cron after --apply"
         return "ok", "Worker cron armed; KIT-3 closes when six complete ticks are observed in one hour (prediction P-KIT-3)"
 
+    # SEED-SHIP-1 (Rowan, 2026-11-21): a seed is not done at a plan or a proposal. The boot is finished only when the system is built, deployed and
+    # ready to run a year unattended; every check that fails becomes a backlog item with a closing probe, so the system's own loops finish the job.
+    READINESS = (
+        ("built", "the Worker source and its tests exist", "worker/src/tick.js and worker/test exist"),
+        ("deployed", "provision applied: D1 migrated and the Worker deployed", "org/boot-log.json stage provision status ok"),
+        ("heartbeat", "the Worker cron ticks and /health reports the last tick", "metric M-tick-heartbeat not in breach"),
+        ("credentials", "every credential the loops use is reached by connector, never pasted, and probed before it lapses", "org/unattended.json check credentials true"),
+        ("cost", "a stated monthly budget that the budget governor enforces", "IDEA.md states Budget per month above 0"),
+        ("dependencies", "Dependabot keeps the Worker and Actions dependencies current", ".github/dependabot.yml lists /worker"),
+        ("self_repair", "the Worker repairs itself: red main reverted, stalled loops restarted, uptime repaired", "worker/src/redmain.js, watchdog.js and uptimerepair.js exist"),
+        ("year_model", "the year simulation and the standing goal core.year.unattended are in place", "autonomy/yearsim.json and goal core.year.unattended exist"),
+    )
+
+    def unattended(self):
+        r = self.root
+        stages = {s["stage"]: s["status"] for s in self.log}
+        goals = r / "autonomy" / "goals.json"
+        dep = r / ".github" / "dependabot.yml"
+        checks = {
+            "built": (r / "worker" / "src" / "tick.js").exists() and (r / "worker" / "test").is_dir(),
+            "deployed": self.apply and stages.get("provision") == "ok",
+            "heartbeat": self.apply and stages.get("start") == "ok",
+            "credentials": not ({"cloudflare", "cloudflare_account"} - getattr(self, "connectors_present", set())),
+            "cost": getattr(self, "budget", 0) > 0,
+            "dependencies": dep.exists() and "/worker" in dep.read_text(),
+            "self_repair": all((r / "worker" / "src" / f).exists() for f in ("redmain.js", "watchdog.js", "uptimerepair.js")),
+            "year_model": (r / "autonomy" / "yearsim.json").exists() and goals.exists() and "core.year.unattended" in goals.read_text(),
+        }
+        self.state["unattended"] = {"marker": "SEED-SHIP-1", "target_days": 365, "checks": checks,
+                                    "ready": all(checks.values()), "at": now_iso()}
+        self.out.mkdir(parents=True, exist_ok=True)
+        (self.out / "unattended.json").write_text(json.dumps(self.state["unattended"], indent=2) + "\n")
+        have = {i["id"] for i in self.state["blocked_items"]}
+        for key, what, probe in self.READINESS:
+            iid = f"SHIP-{key.upper().replace('_', '-')}"
+            if not checks[key] and iid not in have:
+                self.state["blocked_items"].append({
+                    "id": iid, "title": f"Seed not yet ready to run a year unattended: {what}"[:300], "owner_role": "operations",
+                    "done_check": probe, "closing_probe": f"org/unattended.json check {key} true", "priority": 0})
+        failed = [k for k, v in checks.items() if not v]
+        if not failed:
+            return "ok", "built, deployed and ready to run a year unattended (org/unattended.json)"
+        return ("degraded" if not self.apply else "blocked"), \
+            "not yet autonomous, " + ", ".join(failed) + " open as SHIP-* backlog items" + ("" if self.apply else "; a dry run is a plan, not a shipped seed")
+
     def run(self, cmd, cwd) -> str:
         exe = shutil.which(cmd[0])  # Windows: npx and wrangler are .cmd shims that CreateProcess cannot find by bare name
         p = subprocess.run([exe or cmd[0]] + list(cmd[1:]), cwd=cwd, capture_output=True, text=True, timeout=600)
@@ -547,8 +593,8 @@ class Boot:
             f"Happened: seed {VERSION} booted '{getattr(self, 'org_name', '?')}' ({'apply' if self.apply else 'dry run'}): "
             f"{ok}/{len(self.log)} stages ok" + (f", blocked: {', '.join(blocked)}" if blocked else "") + ".",
             f"Decided: {len(getattr(self, 'roles', []))} role instances on models {getattr(self, 'models', {})}.",
-            "Next: " + ("the Worker cron runs the tick every 10 minutes." if self.apply and not blocked
-                        else "run with --apply once the gate cards below are closed."),
+            "Next: " + ("the Worker cron runs the tick every 10 minutes and the system runs unattended (org/unattended.json)." if self.apply and not blocked
+                        else "the bootstrap workflow re-runs with --apply when the gate cards below close; the SHIP-* items finish the build and deploy."),
             f"Open: {len(getattr(self, 'items', []))} backlog item(s), {len(self.state['gate_cards'])} gate card(s): "
             + "; ".join(c["what"] for c in self.state["gate_cards"]) + ".",
         ]
@@ -626,7 +672,7 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
     root = a.root.resolve()
     boot = Boot(root, (a.out or root / "org").resolve(), apply=a.apply)
-    for name in ("read", "qualify", "instrument", "detect", "select", "cases", "plan", "write", "surfaces", "org", "provision", "start"):
+    for name in ("read", "qualify", "instrument", "detect", "select", "cases", "plan", "write", "surfaces", "org", "provision", "start", "unattended"):
         st = boot.guard(name, getattr(boot, name))
         if name == "read" and st == "blocked" and not hasattr(boot, "idea"):
             break  # nothing to plan from; the report says why

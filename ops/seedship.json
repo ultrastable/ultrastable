@@ -1,0 +1,44 @@
+{
+ "autonomous": [],
+ "marker": "SEED-SHIP-1",
+ "seeds": {
+  "demo-child": {
+   "added": null,
+   "id": "demo-child",
+   "missing": [
+    "instances/demo-child/ship.json (what is built, where it is deployed, how it runs a year unattended)"
+   ],
+   "overdue": false,
+   "readiness": {},
+   "ship": false,
+   "stage": "proposed"
+  },
+  "practical-solutions": {
+   "added": null,
+   "id": "practical-solutions",
+   "missing": [
+    "instances/practical-solutions/ship.json (what is built, where it is deployed, how it runs a year unattended)"
+   ],
+   "overdue": false,
+   "readiness": {},
+   "ship": false,
+   "stage": "proposed"
+  },
+  "second-tenant": {
+   "added": null,
+   "id": "second-tenant",
+   "missing": [
+    "instances/second-tenant/ship.json (what is built, where it is deployed, how it runs a year unattended)"
+   ],
+   "overdue": false,
+   "readiness": {},
+   "ship": false,
+   "stage": "proposed"
+  }
+ },
+ "short": [
+  "demo-child",
+  "practical-solutions",
+  "second-tenant"
+ ]
+}

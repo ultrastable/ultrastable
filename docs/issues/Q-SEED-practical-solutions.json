@@ -1,0 +1,13 @@
+{
+  "id": "Q-SEED-practical-solutions",
+  "title": "Q-SEED-practical-solutions: seed practical-solutions is proposed, not yet built, deployed and running a year unattended",
+  "body": "**Owner:** staff\n**Trigger:** every watchdog run\n**Done check:** cmd:python3 -m foundation seedship --probe practical-solutions\n**Status:** open\n\nSEED-SHIP-1: a seed on the platform is built, deployed and made fully autonomous, designed to run unattended for at least one year. Seed `practical-solutions` is at stage `proposed`. Still missing: instances/practical-solutions/ship.json (what is built, where it is deployed, how it runs a year unattended). Build and deploy it on a branch through the normal lane; do not close this by editing the stage, a check or the baseline.\n",
+  "labels": [
+    "role:staff",
+    "raises-self",
+    "seed-ship",
+    "p1"
+  ],
+  "milestone": "Now",
+  "workstream": "Reliability"
+}
