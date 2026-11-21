@@ -128,7 +128,7 @@
       ],
       "health_urls": [
         "https://ultrastable-unlearn.ultrastable.workers.dev/health",
-        "https://unlearn.ultrastable.app/health"
+        "https://unlearn.ultrastable.org/health"
       ]
     },
     {

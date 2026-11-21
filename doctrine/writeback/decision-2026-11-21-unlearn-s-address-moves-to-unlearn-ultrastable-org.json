@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-21-unlearn-s-address-moves-to-unlearn-ultrastable-org",
+  "kind": "decision",
+  "date": "2026-11-21",
+  "title": "Unlearn's address moves to unlearn.ultrastable.org",
+  "body": "The deploy credential has no access to zone routes on ultrastable.app (deploy log: routes ultrastable.app unreadable, No access to the specified resource), so the spinoffs wildcard *.ultrastable.app/* keeps unlearn.ultrastable.app. ultrastable.org carries no worker routes, so its custom domain is served by the worker itself. Topology, clocks, resilience restart routes and the seed lifecycle probe now name unlearn.ultrastable.org.",
+  "probe": "file:doctrine/topology.json",
+  "session": "session_0156nqDtYB5VwjCzYcyHVqNp"
+ },
+ "kind": "decision",
+ "title": "Unlearn's address moves to unlearn.ultrastable.org",
+ "session": "session_0156nqDtYB5VwjCzYcyHVqNp"
+}
