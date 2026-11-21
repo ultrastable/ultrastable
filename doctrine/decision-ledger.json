@@ -3906,6 +3906,31 @@
    "body": "The daily smoke run now follows both connect links to the provider's sign-in without completing it, so a broken link is a failing check.",
    "probe": "grep:scripts/smoke_live.py::connect-buffer-link",
    "session": "session_0156nqDvG8EF1bx4LXrvu9rj"
+  },
+  {
+   "id": "decision-2026-11-21-generated-files-follow-main-in-unstick-practical-solutions-s",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Generated files follow main in unstick; practical-solutions settings as code; auto-merge on",
+   "body": "UNSTICK-1 regenerated generated files into PR branches after merging main, which made them diverge from main again and conflict on the next bot commit (#935). scripts/unstick_prs.sh now sets every file in seed/worker/src/generated.js to main's copy; main regenerates after merge. Allow auto-merge was off on both repos although github/org-settings.json declared it; set on both through the owner's signed-in browser and verified through the API (allow_auto_merge true). practical-solutions added to github/org-settings.json so the applier and platformaudit keep it. Tests pass.",
+   "probe": "grep:scripts/unstick_prs.sh::MERGE-NOW-1",
+   "session": "session_0156nqDtycGejegSYjhFJ1MF"
+  },
+  {
+   "id": "lesson-2026-11-21-owner-links-audited-daily-in-headless-chromium-on-production",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "Owner links audited daily in headless Chromium on production",
+   "body": "OWNER-LINKS-3: scripts/owner_links_audit.mjs and owner-links-audit.yml walk every signed-out owner link; session session_0156nqDu7Qq4YrmkKMFxfB9D",
+   "probe": "file:scripts/owner_links_audit.mjs"
+  },
+  {
+   "id": "lesson-2026-11-21-owner-sign-in-never-creates-github-apps-next-honored-plan-re",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "Owner sign-in never creates GitHub apps; next honored; plan read live",
+   "body": "NO-NEW-APP-1, SIGNIN-NEXT-2, MAGIC-LINK-1, LIVE-PLAN-1",
+   "probe": "grep:dashboard/worker.js::NO-NEW-APP-1|magicSignin"
   }
  ]
 }
