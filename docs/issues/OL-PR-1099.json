@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-1099",
+  "title": "OL-PR-1099: land or supersede pull request #1099 (conflict)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #1099 is conflict\n**Done check:** cmd:python3 -m foundation loopowner --closed 1099\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #1099 (`claude/relay-verify` at 6dd2b833e5, opened by rwnq8): Publisher reads relay posts back from Buffer every tick. The session that opened it is not its closer and is never asked to act. The branch conflicts with main. Merge main into the branch and resolve it, or redo the change from main in a new pull request and close this one as superseded. Files (3): doctrine/writeback/lesson-2026-11-21-relay-posts-are-read-back-from-buffer-every-tick.json, seed/worker/src/social.js, seed/worker/test/social-connect.test.js. Closing probe: pull request #1099 is merged or closed.",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
