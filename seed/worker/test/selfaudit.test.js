@@ -6,7 +6,8 @@ import { runTick, ensureItem } from '../src/tick.js';
 import { selfAuditStep, loopBreak, ingestDeploys, probeMode } from '../src/selfaudit.js';
 
 const read = p => JSON.parse(readFileSync(new URL(p, import.meta.url), 'utf8'));
-const policy = read('../../autonomy/policy.json'), crit = read('../../autonomy/criticality.json'), reg0 = read('../../autonomy/failure-modes.json'), reg = { ...reg0, modes: [...reg0.modes, ...read('../../../instances/ultrastable/failure-modes.json').modes] };
+const platformModes = () => { try { return read('../../../instances/ultrastable/failure-modes.json').modes; } catch (e) { if (e.code === 'ENOENT') return []; throw e; } };  // SEED-ADMIT-1: a generated system has no platform instance directory; its probe must pass on the seed's own register
+const policy = read('../../autonomy/policy.json'), crit = read('../../autonomy/criticality.json'), reg0 = read('../../autonomy/failure-modes.json'), reg = { ...reg0, modes: [...reg0.modes, ...platformModes()] };
 const config = { org_slug: 't', claim_ttl_minutes: 120, max_wip_per_role: 3, plus_share: 0.2, policy, criticality: crit, failure_modes: reg };
 const ctx = () => ({ nowIso: '2026-11-13 21:00:00', notes: [] });
 
