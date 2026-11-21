@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-21T12:04:30Z",
- "commit": "d2ddb8c2",
+ "generated": "2026-11-21T12:13:09Z",
+ "commit": "c62f1b78",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 104,
@@ -100,21 +100,21 @@
    },
    "latest": {
     "conclusion": "success",
-    "createdAt": "2026-11-21T11:55:50Z",
+    "createdAt": "2026-11-21T12:11:00Z",
     "event": "push",
-    "headSha": "653e4f9be764a6d3f145bc8efa9f036a09b23820"
+    "headSha": "d47aa19a7dd2800c87b5e29f3c825571f04dcb5f"
    },
    "per_day_success": {
-    "2026-11-20": 38,
-    "2026-11-21": 11
+    "2026-11-20": 37,
+    "2026-11-21": 12
    }
   },
   "executor": {
    "runs": 30,
    "by_conclusion": {
     "": 1,
-    "failure": 1,
-    "success": 28
+    "success": 27,
+    "failure": 2
    },
    "prs_opened_unattended": 0,
    "prs_merged_unattended": 0,
@@ -172,7 +172,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 53.3,
+   "age_s": -1.2,
    "status": "fresh",
    "missed": 0
   },
@@ -196,15 +196,16 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 252.3,
+   "age_s": 65.8,
    "status": "fresh",
-   "missed": 0
+   "missed": 0,
+   "lag_s": 278.0
   },
   {
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 78941.3,
+   "age_s": 79459.8,
    "status": "fresh",
    "missed": 0
   }
@@ -303,7 +304,7 @@
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-21T12:03:58Z",
+  "generated": "2026-11-21T12:12:36Z",
   "blindspots": {
    "backup": {
     "skipped": "last drill is fresh"
@@ -378,7 +379,7 @@
     "metric": "agent_hits_7d",
     "baseline": null,
     "predicted_pct": 10,
-    "started": "2026-11-21T12:03:58Z",
+    "started": "2026-11-21T12:12:36Z",
     "check_after_days": 7,
     "verdict": null
    },
@@ -387,7 +388,7 @@
     "metric": "pilot_page_views_7d",
     "baseline": null,
     "predicted_pct": 10,
-    "started": "2026-11-21T12:03:58Z",
+    "started": "2026-11-21T12:12:36Z",
     "check_after_days": 7,
     "verdict": null
    },
@@ -396,7 +397,7 @@
     "metric": "agent_hits_7d",
     "baseline": null,
     "predicted_pct": 15,
-    "started": "2026-11-21T12:03:58Z",
+    "started": "2026-11-21T12:12:36Z",
     "check_after_days": 7,
     "verdict": null
    },
@@ -405,7 +406,7 @@
     "metric": "pilot_page_views_7d",
     "baseline": null,
     "predicted_pct": 10,
-    "started": "2026-11-21T12:03:58Z",
+    "started": "2026-11-21T12:12:36Z",
     "check_after_days": 7,
     "verdict": null
    },
@@ -414,7 +415,7 @@
     "metric": "pilot_page_views_7d",
     "baseline": null,
     "predicted_pct": 15,
-    "started": "2026-11-21T12:03:58Z",
+    "started": "2026-11-21T12:12:36Z",
     "check_after_days": 7,
     "verdict": null
    }
@@ -558,7 +559,7 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 94.2,
+   "last_beat_age_s": 21.1,
    "expected_interval_s": 21600,
    "beats_24h": 60,
    "expected_24h": 4.0,
@@ -569,7 +570,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 78982.2,
+   "last_beat_age_s": 79500.1,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -580,9 +581,9 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 511.2,
+   "last_beat_age_s": 119.1,
    "expected_interval_s": 86400,
-   "beats_24h": 57,
+   "beats_24h": 58,
    "expected_24h": 1.0,
    "median_jitter_s": null,
    "status": "ticking"
@@ -591,7 +592,7 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 330543.2,
+   "last_beat_age_s": 331061.1,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -602,7 +603,7 @@
    "id": "a11y",
    "what": "A11Y-LOOP-1: the weekly accessibility and layout audit of every public page",
    "source": "workflow",
-   "last_beat_age_s": 210200.2,
+   "last_beat_age_s": 210718.1,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -620,7 +621,7 @@
    "id": "claims",
    "what": "words checked against code and the deployed site",
    "source": "workflow",
-   "last_beat_age_s": 73125.2,
+   "last_beat_age_s": 73643.1,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -631,7 +632,7 @@
    "id": "watchdog",
    "what": "RESILIENCE-1: the GitHub watchdog that probes every clock and restarts the stopped ones; the tick Worker dispatches it again when it is older than 12 hours",
    "source": "workflow",
-   "last_beat_age_s": 69.2,
+   "last_beat_age_s": -1.9,
    "expected_interval_s": 43200,
    "beats_24h": 60,
    "expected_24h": 2.0,
@@ -2610,6 +2611,15 @@
  "changes": {
   "commits": [
    {
+    "sha": "c62f1b78",
+    "at": "2026-11-21T12:06:35+00:00",
+    "author": "Claude",
+    "subject": "TRAJECTORY-1: keep other tenants' names off the public series",
+    "pr": null,
+    "item": "TRAJECTORY-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/c62f1b7827d76c71de28db278a4c1da419625054"
+   },
+   {
     "sha": "d2ddb8c2",
     "at": "2026-11-21T11:59:28+00:00",
     "author": "Claude",
@@ -2959,15 +2969,6 @@
     "pr": 935,
     "item": "SPEND-SOFT-1",
     "url": "https://github.com/ultrastable/ultrastable/commit/c6dbc64def3181800a14dfa20bf84ef082fb10e2"
-   },
-   {
-    "sha": "7d94906e",
-    "at": "2026-11-21T11:12:44+00:00",
-    "author": "Claude",
-    "subject": "YEAR-SIM-1, SAY-DO-1: a year unattended simulated against the real recovery code; every statement probed against code",
-    "pr": null,
-    "item": "YEAR-SIM-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/7d94906e706fb6e2a8a7c6907fb4f67b816e39e4"
    }
   ],
   "pull_requests": []
