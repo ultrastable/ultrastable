@@ -145,12 +145,13 @@ export async function recordSpend(db, { meters, error = null, config = {}, env =
 
 // The state as last recorded; older than 2 h counts as unmeasured (level full: the other governors still apply). One indexed read.
 export async function readSpend(db, now = Date.now()) {
+  let readError = '';
   try {
     const r = await db.prepare("SELECT value FROM org WHERE key='spend_state'").first();
     const s = r && r.value ? JSON.parse(r.value) : null;
     if (s && now - Date.parse(s.at) <= 7200e3) return s;
-  } catch (e) { console.error('spend read:', String(e && e.message).slice(0, 120)); }
-  return { level: 'full', measured: false, knobs: { pace: 1, ai: 'any', wide_every_h: 0, extra_every_h: 0 } };
+  } catch (e) { readError = String(e && e.message).slice(0, 120); console.error('spend read:', readError); }
+  return { level: 'full', measured: false, ...(readError ? { read_error: readError } : {}), knobs: { pace: 1, ai: 'any', wide_every_h: 0, extra_every_h: 0 } };
 }
 
 // Pure. Whether a deferred step runs on this tick: every `everyH` hours, on the first tick of the hour. 0 = deferred steps run normally.
