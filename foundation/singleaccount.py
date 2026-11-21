@@ -142,7 +142,46 @@ def live(root=REPO, get=_get, token=None) -> dict:
     return {"ok": not problems, "problems": problems, "notes": notes}
 
 
+def _cf(method, path, token, body=None):
+    req = urllib.request.Request(CF + path, method=method, data=None if body is None else json.dumps(body).encode(),
+                                 headers={"authorization": "Bearer " + token, "content-type": "application/json"})
+    with urllib.request.urlopen(req, timeout=30) as r:
+        return json.loads(r.read().decode("utf-8") or "{}")
+
+
+def retire(root=REPO, get=_get, call=_cf, token=None) -> dict:
+    """SINGLE-ACCOUNT-RETIRE-1 (2026-11-21): the server-side loop that closes the move. Each daily cost-guard run, after `--live`:
+    every Ultrastable domain whose zone is active in the ultrastable account has its copy in any other account the token can see
+    removed: the Workers bound to that zone's hostnames, then the zone itself. A zone that is not yet active in the ultrastable account
+    is left alone (it still serves traffic). A refusal is recorded and retried next run; `--live` is the closing probe."""
+    token = token if token is not None else os.environ.get("CLOUDFLARE_API_TOKEN")
+    if not token:
+        return {"ok": False, "done": [], "notes": ["retire: unmeasured (no CLOUDFLARE_API_TOKEN)"]}
+    full = load(root); rid = full["required_account"]["id"]; rx = re.compile(full["live"]["asset_patterns"])
+    done, notes = [], []
+    active = {z["name"] for z in _cf_list(get, token, f"/zones?account.id={rid}") if z.get("status") == "active"}
+    for a in [a for a in _cf_list(get, token, "/accounts") if a.get("id") != rid]:
+        aid = a["id"]
+        zones = [z for z in _cf_list(get, token, f"/zones?account.id={aid}") if z["name"] in full["live"]["domains"]]
+        if any(z["name"] not in active for z in zones):
+            notes.append(f"retire {aid}: waiting, {[z['name'] for z in zones if z['name'] not in active]} not active in the ultrastable account yet")
+            continue
+        for w in _cf_list(get, token, f"/accounts/{aid}/workers/scripts"):
+            if rx.search(w["id"]):
+                try: call("DELETE", f"/accounts/{aid}/workers/scripts/{w['id']}?force=true", token); done.append("worker " + w["id"])
+                except Exception as e: notes.append(f"retire worker {w['id']}: {str(e)[:100]}")
+        for z in zones:
+            try: call("DELETE", f"/zones/{z['id']}", token); done.append("zone " + z["name"])
+            except Exception as e: notes.append(f"retire zone {z['name']}: {str(e)[:100]} (retried next run)")
+    return {"ok": not notes, "done": done, "notes": notes}
+
+
 def main(argv) -> int:
+    if argv[:1] == ["--retire"]:
+        r = retire()
+        for x in r["done"]: print("retired " + x)
+        for n in r["notes"]: print("note " + n)
+        return 0
     if argv[:1] == ["--live"]:
         r = live()
         for p in r["problems"]:

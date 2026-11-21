@@ -80,3 +80,28 @@ class Live(unittest.TestCase):
     def test_no_token_is_unmeasured_not_clean(self):
         r = sa.live(ROOT, get=self.fake([]), token="")
         self.assertTrue(any("unmeasured" in n for n in r["notes"]))
+
+
+class Retire(unittest.TestCase):
+    def run_with(self, io_status):
+        calls = []
+        def get(url, token=None):
+            if url.split("?")[0].endswith("/accounts"):
+                return {"result": [{"id": "81e3a4efb4eb66e613529b87682911bb"}, {"id": "old"}]}
+            if "account.id=81e3" in url:
+                return {"result": [{"name": "ultrastable.io", "status": io_status, "id": "n"}]}
+            if "account.id=old" in url:
+                return {"result": [{"name": "ultrastable.io", "status": "active", "id": "o"}]}
+            if "/accounts/old/workers/scripts" in url:
+                return {"result": [{"id": "ultrastable-site"}, {"id": "qnfo-ops"}]}
+            return {"result": []}
+        r = sa.retire(ROOT, get=get, call=lambda m, p, t, b=None: calls.append(m + " " + p), token="t")
+        return r, calls
+
+    def test_waits_while_zone_is_pending_here(self):
+        r, calls = self.run_with("pending")
+        self.assertEqual(calls, []); self.assertTrue(any("waiting" in n for n in r["notes"]))
+
+    def test_deletes_only_ultrastable_assets_once_active(self):
+        r, calls = self.run_with("active")
+        self.assertEqual(calls, ["DELETE /accounts/old/workers/scripts/ultrastable-site?force=true", "DELETE /zones/o"])

@@ -48,4 +48,6 @@ jobs:
         if: ${{ !cancelled() }}  # last step, so a failure never skips the record step above; fails the run when any Ultrastable asset or domain sits outside the ultrastable account
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        run: python3 -m foundation singleaccount --live
+        run: |
+          python3 -m foundation singleaccount --retire  # SINGLE-ACCOUNT-RETIRE-1: removes copies elsewhere once their zone is active here
+          python3 -m foundation singleaccount --live
