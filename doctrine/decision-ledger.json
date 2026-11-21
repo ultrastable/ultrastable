@@ -4208,6 +4208,14 @@
    "body": "PR 1762 conflicted with main on doctrine/claim-code.json (both sides kept) and stale generated files (regen_generated.sh). Issue SLA table matches doctrine/sla.json.",
    "probe": "file:foundation/balance.py",
    "session": "session_0156nqDtuzVqX3uUGd7Q9vKC"
+  },
+  {
+   "id": "open-loop-2026-11-21-redmain-revert-lane",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Red-main revert lane is a queue item for the executor (workflow edits are gated)",
+   "body": "Revert or repair of a red main belongs in the tick Worker sweeper, not a workflow; filed as Q-REDMAIN-revert-lane with owner executor, trigger every lane pass and a sweeper test as probe.",
+   "probe": "file:docs/issues/Q-REDMAIN-revert-lane.json"
   }
  ]
 }

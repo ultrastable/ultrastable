@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-21-roadmap-disposed-not-done",
+  "kind": "lesson",
+  "date": "2026-11-21",
+  "title": "A disposed issue is closed, not done: only a passing check promotes a pin or removes a gap",
+  "body": "DISPOSE-1 closes items whose probe still fails; the roadmap builder treated closed as done and turned main red on four pins and two gaps. It now requires the done check to pass.",
+  "probe": "grep:scripts/build_site_roadmap.py::only a passing check promotes a pin"
+ },
+ "kind": "lesson",
+ "title": "A disposed issue is closed, not done: only a passing check promotes a pin or removes a gap",
+ "session": "session_0156nqDtycGejegSYjhFJ1MF"
+}
