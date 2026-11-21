@@ -1,0 +1,150 @@
+{
+ "marker": "VERIFY-1",
+ "ok": true,
+ "results": {
+  "spend-conformance": {
+   "bands": [
+    {
+     "level": "full",
+     "below": 0.5,
+     "pace": 1
+    },
+    {
+     "level": "ease",
+     "below": 0.7,
+     "pace": 1.5
+    },
+    {
+     "level": "throttle",
+     "below": 0.9,
+     "pace": 3
+    },
+    {
+     "level": "crawl",
+     "below": null,
+     "pace": 6
+    }
+   ],
+   "samples": 2013,
+   "ok": true
+  },
+  "governor": {
+   "ok": true,
+   "states": 21,
+   "violations": []
+  },
+  "merge-lane": {
+   "ok": true,
+   "states": 26,
+   "violations": []
+  },
+  "second-loop": {
+   "ok": true,
+   "ladders": [
+    1,
+    2
+   ],
+   "states": 13,
+   "violations": []
+  },
+  "halt": {
+   "ok": true,
+   "states": 3,
+   "violations": []
+  }
+ },
+ "invariants": [
+  {
+   "id": "soft-cap-never-halts",
+   "model_checked": true,
+   "code_conformance": true,
+   "runtime_monitor": null,
+   "source": [
+    "tla-aws",
+    "quickcheck"
+   ]
+  },
+  {
+   "id": "throttle-springs-back",
+   "model_checked": true,
+   "code_conformance": true,
+   "runtime_monitor": null,
+   "source": [
+    "tla-aws"
+   ]
+  },
+  {
+   "id": "merge-only-from-green",
+   "model_checked": true,
+   "code_conformance": false,
+   "runtime_monitor": "python3 -m foundation mergeaudit --check",
+   "source": [
+    "tla-aws",
+    "do-178c"
+   ]
+  },
+  {
+   "id": "no-pr-stalls",
+   "model_checked": true,
+   "code_conformance": false,
+   "runtime_monitor": "python3 -m foundation lanewatch --check",
+   "source": [
+    "tla-aws"
+   ]
+  },
+  {
+   "id": "lane-retries-bounded",
+   "model_checked": true,
+   "code_conformance": false,
+   "runtime_monitor": null,
+   "source": [
+    "power-of-ten"
+   ]
+  },
+  {
+   "id": "second-loop-never-gives-up",
+   "model_checked": true,
+   "code_conformance": false,
+   "runtime_monitor": "python3 -m foundation ultrastability --check",
+   "source": [
+    "ashby",
+    "tla-aws"
+   ]
+  },
+  {
+   "id": "bounds-never-edited-to-clear",
+   "model_checked": true,
+   "code_conformance": false,
+   "runtime_monitor": "python3 -m foundation ultrastability --check",
+   "source": [
+    "ashby"
+   ]
+  },
+  {
+   "id": "one-halt-stops-everything",
+   "model_checked": true,
+   "code_conformance": false,
+   "runtime_monitor": "node --test seed/worker/test/budget.test.js",
+   "source": [
+    "power-of-ten",
+    "do-178c"
+   ]
+  },
+  {
+   "id": "essential-steps-every-tick",
+   "model_checked": true,
+   "code_conformance": false,
+   "runtime_monitor": null,
+   "source": [
+    "tla-aws"
+   ]
+  }
+ ],
+ "coverage": {
+  "invariants": 9,
+  "model_checked": 9,
+  "tied_to_code": 7,
+  "share": 0.778
+ },
+ "generated": "2026-11-21T16:24:18Z"
+}

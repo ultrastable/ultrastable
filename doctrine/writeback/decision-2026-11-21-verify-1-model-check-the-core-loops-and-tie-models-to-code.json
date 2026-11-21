@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-21-verify-1-model-check-the-core-loops-and-tie-models-to-code",
+  "kind": "decision",
+  "date": "2026-11-21",
+  "title": "VERIFY-1: model-check the core loops and tie models to code",
+  "body": "Explicit-state checker over governor, merge lane, second loop and halt; constants read from real source; spend.js level() property-swept. Next: Q-VERIFY-monitors.",
+  "probe": "file:foundation/verify.py"
+ },
+ "kind": "decision",
+ "title": "VERIFY-1: model-check the core loops and tie models to code",
+ "session": ""
+}

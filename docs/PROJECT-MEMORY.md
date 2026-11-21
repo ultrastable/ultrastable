@@ -10,6 +10,7 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-21
 
+- 2026-11-21: VERIFY-1: formal-methods lessons applied (TLA+-style model checking of governor, merge lane, second loop, halt; seL4-style conformance by reading constants from code and property-sweeping spend.js level(); Power of Ten bounded state space; DO-178C traceability register doctrine/verification.json). `python3 -m foundation verify --check` in checks; coverage 7/9 invariants tied to code (ops/verification.json). Gaps: lane-retries-bounded and essential-steps-every-tick have no runtime monitor yet (Q-VERIFY-monitors).
 - 2026-11-21: queue: closing-probe verdicts for 3 item(s) (QUEUE-PERSIST-1) [skip ci]
 - 2026-11-21: UPTIME-1: self-repair through the tick Worker, retry before dead, www.ultrastable.app route (#1492)
 - 2026-11-21: UPTIME-1: server-side DNS and HTTP probe for every ultrastable hostname (#1461)
