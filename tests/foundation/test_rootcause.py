@@ -74,5 +74,45 @@ class RootCause(unittest.TestCase):
         self.assertEqual(r["state"]["unclassified"]["mode"], "classify")
 
 
+class Persistence(unittest.TestCase):
+    def fake(self, store):
+        def api(method, path, body=None, raw=False):
+            if method == "PUT":
+                store["b"] = body
+                return b""
+            if "b" not in store:
+                raise OSError("GET x: HTTP 404")
+            return store["b"]
+        return api
+
+    def test_recurrence_survives_a_fresh_checkout_through_the_store(self):
+        store = {}
+        a = sandbox()
+        rootcause.record("edit-hotspot", "README hot", "2026-11-21", a)
+        rootcause.run(a, now="2026-11-21T10:00:00Z")
+        self.assertEqual(rootcause.push(a, api=self.fake(store), env={}), "stored and read back")
+        b = sandbox()  # next day's run starts from a clean checkout
+        rootcause.record("edit-hotspot", "README hot again", "2026-11-22", b)
+        self.assertIn("pulled 1", rootcause.sync(b, api=self.fake(store), env={}))
+        r = rootcause.run(b, now="2026-11-22T10:00:00Z")
+        self.assertEqual(r["state"]["edit-hotspot"]["status"], "escalated")
+
+    def test_unreachable_store_is_reported_not_fatal(self):
+        def boom(*a, **k):
+            raise OSError("HTTP 500")
+        self.assertIn("unreachable", rootcause.sync(sandbox(), api=boom, env={}))
+
+
+class Calibration(unittest.TestCase):
+    def test_worse_than_a_coin_is_pulled_toward_the_hit_rate(self):
+        from foundation import decisions
+        bad = [{"predicted": 1.0, "hit": i % 4 == 0} for i in range(12)]  # confident, right a quarter of the time
+        self.assertGreater(decisions.brier(bad), decisions.COIN_BRIER)
+        self.assertLess(decisions.recalibrate(1.0, bad), 0.6)
+        good = [{"predicted": 1.0, "hit": True}] * 12
+        self.assertEqual(decisions.recalibrate(1.0, good), 1.0)
+        self.assertEqual(decisions.recalibrate(1.0, bad[:3]), 1.0)  # too few settled outcomes to judge
+
+
 if __name__ == "__main__":
     unittest.main()

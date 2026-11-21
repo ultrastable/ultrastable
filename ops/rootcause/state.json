@@ -15,12 +15,9 @@
   "status": "watching"
  },
  "estimate-miscalibrated": {
-  "days": [
-   "2026-11-21"
-  ],
-  "guard": false,
-  "mode": "build-guard",
-  "status": "escalated"
+  "guard": true,
+  "last": "2026-11-21",
+  "status": "watching"
  },
  "pr-left-open": {
   "guard": true,

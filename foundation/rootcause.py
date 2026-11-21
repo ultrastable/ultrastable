@@ -193,6 +193,62 @@ def run(root=REPO, issues=True, now=None) -> dict:
     return {"new_occurrences": len(new), "actions": actions, "state": state}
 
 
+KEY = "backups/rootcause/ledger.json"  # inside the prefix the site Worker's /__internal/cf route already allows for R2 reads and writes (no Worker or workflow change)
+
+
+def _union(rows, extra, keyf):
+    seen = {keyf(r) for r in rows}
+    return rows + [r for r in extra if keyf(r) not in seen]
+
+
+def sync(root=REPO, api=None, env=None) -> str:
+    """Persist recurrence across runs with nothing under .github/ changed: pull the ledger the last run stored in R2 (through the site Worker, which holds the
+    credential; the run presents only its own OIDC token), merge it with this checkout's rows, and return the merged text for push(). An unreachable store is
+    reported, never fatal: the committed ledger still holds."""
+    import os, urllib.parse
+    from . import workerroute
+    env = os.environ if env is None else env
+    root = Path(root)
+    if api is None:
+        if not workerroute.available(env):
+            return "no route (not running in Actions): local ledger only"
+        api = workerroute.make_api(env)
+    try:
+        bucket = "ultrastable-git"
+        try:
+            remote = json.loads(api("GET", f"r2/buckets/{bucket}/objects/{urllib.parse.quote(KEY, safe='/')}", raw=True) or b"{}")
+        except OSError as e:
+            if "HTTP 404" not in str(e):
+                raise
+            remote = {}
+        occ = _union(_rows(root, OCC), remote.get("occurrences", []), lambda r: (r["class"], r["key"], r["date"]))
+        inbox = _union(_rows(root, INBOX), remote.get("inbox", []), lambda r: (r["class"], r["key"], r["date"]))
+        for rel, rows in ((OCC, occ), (INBOX, inbox)):
+            (root / rel).parent.mkdir(parents=True, exist_ok=True)
+            (root / rel).write_text("".join(json.dumps(r) + "\n" for r in rows), encoding="utf-8")
+        return f"pulled {len(remote.get('occurrences', []))} stored rows"
+    except Exception as e:
+        return f"store unreachable: {type(e).__name__} {str(e)[:80]}"
+
+
+def push(root=REPO, api=None, env=None) -> str:
+    import os, urllib.parse
+    from . import workerroute
+    env = os.environ if env is None else env
+    root = Path(root)
+    if api is None:
+        if not workerroute.available(env):
+            return "no route"
+        api = workerroute.make_api(env)
+    body = json.dumps({"occurrences": _rows(root, OCC), "inbox": _rows(root, INBOX)}).encode()
+    try:
+        api("PUT", f"r2/buckets/ultrastable-git/objects/{urllib.parse.quote(KEY, safe='/')}", body, raw=True)
+        back = api("GET", f"r2/buckets/ultrastable-git/objects/{urllib.parse.quote(KEY, safe='/')}", raw=True)  # read back: stored means read, not sent
+        return "stored and read back" if back == body else "stored but read-back differs"
+    except Exception as e:
+        return f"push failed: {type(e).__name__} {str(e)[:80]}"
+
+
 def probe(cid: str, root=REPO, now=None) -> tuple[bool, str]:
     root = Path(root)
     pol = policy(root)
