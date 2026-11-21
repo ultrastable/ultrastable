@@ -160,6 +160,15 @@
    "consumer": "tests/foundation/test_unlearn.py",
    "needle": "instances/unlearn",
    "how": "the test boots the seed on this IDEA.md and asserts the system test passes and the objectives are seeded"
+  },
+  {
+   "id": "intent-yield-idea",
+   "paths": [
+    "instances/intent-yield/IDEA.md"
+   ],
+   "consumer": "tests/test_intent_yield.py",
+   "needle": "instances/intent-yield/IDEA.md",
+   "how": "the test boots the idea through the seed's qualify stage and asserts the anti-gaming rules"
   }
  ],
  "verified": {

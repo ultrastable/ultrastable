@@ -33,6 +33,7 @@ import { leftAloneRoutes } from "./leftalone.js";  // ATTENTION-1
 import { yearFailRoutes } from "./yearfail.js";  // YEARFAIL-1
 import { failMineRoutes } from "./failmine.js";  // FAILMINE-1
 import { trendsRoutes } from "./temporal.js";  // TEMPORAL-1: how the system changes over time
+import { yieldRoutes } from "./intentyield.js";  // INTENT-YIELD-1: owner directives kept per unit of attention
 import { balanceRoutes } from "./balance.js";  // FLOW-BALANCE-1: issue inflow against closures and SLA
 import { progressRoutes } from "./progress.js";  // PROGRESS-1: what every system shipped, daily, weekly and monthly
 import { yearRoutes } from "./year.js";  // YEAR-SIM-1, SAY-DO-1: measured unattended horizon and say-do gaps
@@ -1080,6 +1081,7 @@ const handler = {
     { const pr = await progressRoutes(u, env, shell, HTML, CANON); if (pr) return pr; } // PROGRESS-1
     { const ys = yearRoutes(u, shell, HTML); if (ys) return ys; } // YEAR-SIM-1: /year, /year.json
     { const tr = await trendsRoutes(u, env, shell, HTML); if (tr) return tr; } // TEMPORAL-1
+    { const yr = await yieldRoutes(u, env, shell, HTML); if (yr) return yr; } // INTENT-YIELD-1
     { const br = await balanceRoutes(u, env, shell, HTML); if (br) return br; } // FLOW-BALANCE-1
     { const rs = researchRoutes(u, shell, HTML); if (rs) return rs; } // RESEARCH-1: /research, /research/<id>, /api/research
     { const fm = await failMineRoutes(u, env, shell, HTML); if (fm) return fm; } // FAILMINE-1: /failures, recurrence and time to remediation

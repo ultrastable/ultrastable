@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-21-intent-yield-runs-as-its-own-daily-loop-with-a-freshness-det",
+  "kind": "decision",
+  "date": "2026-11-21",
+  "title": "Intent Yield runs as its own daily loop with a freshness detector",
+  "body": "Owner (2026-11-21): build it, and make it run unattended for a year. intent-yield.yml runs foundation intentyield daily on the built-in token, no model calls, stdlib only; clock intent-yield lets the watchdog restart it; detector intent-yield-fresh files Q-AUDIT when it is stale, errored, ran no probe or lost the directives. Probe exit codes other than 0 or 1 are unmeasured, never broken.",
+  "probe": "file:foundation/intentyield.py",
+  "session": "session_0156nqDvLpkp2emebWrZnSnu"
+ },
+ "kind": "decision",
+ "title": "Intent Yield runs as its own daily loop with a freshness detector",
+ "session": "session_0156nqDvLpkp2emebWrZnSnu"
+}

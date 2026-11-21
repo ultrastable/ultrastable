@@ -1,0 +1,23 @@
+{
+ "_doc": "Intent Yield (instances/intent-yield): for a given unit of human input, what is the best unit of output. One intent is one owner directive in its own words; one kept outcome is that directive's own probe passing, unrestated, after the settle window. No count of hours, commits, PRs or deploys enters the measure and no person is scored. Consumer: foundation/intentyield.py (python3 -m foundation intentyield --run --apply daily in .github/workflows/temporal.yml; --probe is detector intent-yield-fresh in doctrine/detectors.json).",
+ "rule": "INTENT-YIELD-1",
+ "sources": ["agents/AGENTS.md"],
+ "owner_names": ["Rowan", "owner"],
+ "probe_pattern": "python3 -m foundation [a-z_]+ --(?:check|verify|probe)(?![\\w-])",
+ "probe_timeout_s": 90,
+ "run_budget_s": 420,
+ "settle_days": 30,
+ "stale_hours": 50,
+ "min_intents": 20,
+ "max_drop_share": 0.5,
+ "words_per_second": 2.5,
+ "restatement_jaccard": 0.6,
+ "restatement_min_words": 8,
+ "max_items_per_run": 3,
+ "target_kept_share": 0.8,
+ "prediction_floor": 0.6,
+ "history_keep": 400,
+ "state": "ops/intent-yield/state.json",
+ "history": "ops/intent-yield/history.jsonl",
+ "site_data": "site/intent-yield-data.js"
+}
