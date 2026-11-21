@@ -53,6 +53,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
         run: |
+          python3 -m foundation balance --gate --apply  # FLOW-BALANCE-1: the one filing gate before any item lands
+          if [ -f ops/balance-held.jsonl ]; then git add ops/balance-held.jsonl; fi
           git add social/calendar.json ops/reach docs/issues
           if [ -d ops/thought ]; then git add ops/thought; fi
           if [ -f social/state.json ]; then git add social/state.json; fi

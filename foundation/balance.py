@@ -20,6 +20,7 @@ Second loop (this module), on every fleet pass (foundation/queue.py run), server
   python3 -m foundation balance --run [--apply]   measure, correct (with --apply writes items, ops/balance.json, site/balance-data.js)
   python3 -m foundation balance --report [--publish] the measurement as JSON; --publish writes ops/balance.json and the page data only
   python3 -m foundation balance --probe           exit 0 when balanced and inside SLA (closing probe of Q-BALANCE-*)
+  python3 -m foundation balance --gate [--apply]   the filing gate every workflow runs before it commits docs/issues
   python3 -m foundation balance --check           the rules are well formed (exit 1 otherwise)
 Stdlib only and free of other foundation imports, so seed/scripts/balance.py is this file and every system inherits it.
 """
@@ -285,11 +286,95 @@ def run(root=REPO, apply=False, now=None, b=None, cl=None, publish=False) -> dic
     return m
 
 
+HELD = "ops/balance-held.jsonl"
+
+
+def _untracked(root) -> list[Path]:
+    r = subprocess.run(["git", "-C", str(root), "status", "--porcelain", "--untracked-files=all", "--", ISSUES], capture_output=True, text=True, encoding="utf-8")
+    if r.returncode != 0:
+        print(f"balance gate: git status failed: {r.stderr.strip()[:200]}", file=sys.stderr)
+        return []
+    return [Path(root) / l[3:].strip() for l in r.stdout.splitlines() if l.startswith("?? ") and l.strip().endswith(".json")]
+
+
+def _rank(j: dict) -> int:
+    labs = [str(x) for x in j.get("labels", [])]
+    return next((n for n, p in enumerate(("p0", "p1", "p2", "p3")) if p in labs), 4)
+
+
+# DECISION-METRIC: issue-flow-balance (which newly filed items enter the queue this pass while the balance is tipped)
+def gate(root=REPO, apply=False, now=None, m=None) -> dict:
+    """The one filing gate every source passes through (FLOW-BALANCE-1). Runs before a workflow commits docs/issues: new item files (not yet in
+    git) above today's quota, while the balance is tipped, are held, not filed. A held item is kept whole in ops/balance-held.jsonl and is filed
+    on a later pass when the balance has room, highest priority first; a source that files it again while it is held is just held again. Held
+    items are not inflow and are never counted as closed."""
+    root, now = Path(root), now or datetime.now(timezone.utc)
+    m = m or run(root, now=now)
+    new = sorted(_untracked(root), key=lambda p: (_rank(_load(p)), p.name))
+    room = ((m.get("throttle") or {}).get("quota_left") or 0) if m.get("tipped") else 10 ** 6  # unmeasured (shallow clone) admits everything
+    held_rows = _held(root)
+    held_ids = {r["id"] for r in held_rows if not r.get("released")}
+    hold, keep = [], []
+    for p in new:
+        (keep if room > 0 else hold).append(p)
+        room -= 1 if p in keep else 0
+    out = {"at": _iso(now), "tipped": m.get("tipped"), "admitted": [p.stem for p in keep], "held": [p.stem for p in hold], "released": []}
+    rel = []
+    if room > 0:
+        for r in sorted((r for r in held_rows if not r.get("released")), key=lambda r: (_rank(r["json"]), r["at"])):
+            if room <= 0:
+                break
+            if not (root / ISSUES / f"{r['id']}.json").exists():
+                rel.append(r); room -= 1
+    out["released"] = [r["id"] for r in rel]
+    if apply:
+        rows = []
+        for p in hold:
+            j = _load(p)
+            if p.stem not in held_ids:
+                rows.append({"at": out["at"], "id": p.stem, "json": j})
+            p.unlink()
+        for r in rel:
+            (root / ISSUES / f"{r['id']}.json").write_text(json.dumps(r["json"], indent=2) + "\n", encoding="utf-8")
+            rows.append({"at": out["at"], "id": r["id"], "released": True})
+        if rows:
+            (root / "ops").mkdir(exist_ok=True)
+            with (root / HELD).open("a", encoding="utf-8") as f:
+                for r in rows:
+                    f.write(json.dumps(r) + "\n")
+    return out
+
+
+def _load(p: Path) -> dict:
+    try:
+        return json.loads(p.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+
+
+def _held(root) -> list[dict]:
+    """Latest row per id: a hold, or a release that ends it."""
+    last = {}
+    f = Path(root) / HELD
+    for line in (f.read_text(encoding="utf-8").splitlines() if f.is_file() else []):
+        try:
+            r = json.loads(line)
+        except ValueError:
+            continue
+        last[r["id"]] = {**last.get(r["id"], {}), **r} if r.get("released") else r
+    return list(last.values())
+
+
 def check(root=REPO) -> list[str]:
     c, bad = cfg(root), []
     for k in ("sla_days", "windows", "family", "batch_threshold", "throttle", "boost", "final_statuses", "never_closure"):
         if k not in c:
             bad.append(f"doctrine/balance.json: missing {k}")
+    import glob as _g
+    for wf in sorted(_g.glob(str(Path(root) / ".github/workflows/*.yml"))):  # every workflow that lands items passes the one filing gate first
+        t = Path(wf).read_text(encoding="utf-8")
+        if re.search(r"git add\b[^\n]*\bdocs/issues\b", t) and "balance --gate" not in t:
+            bad.append(f"{Path(wf).name}: commits docs/issues without `python3 -m foundation balance --gate --apply` first (FLOW-BALANCE-1)")
     if "superseded" in c.get("counts_as_closure", []):
         bad.append("doctrine/balance.json: superseded may never count as a closure")
     try:
@@ -301,6 +386,8 @@ def check(root=REPO) -> list[str]:
 
 def main(argv: list[str]) -> int:
     root = Path(argv[argv.index("--root") + 1]) if "--root" in argv else REPO
+    if "--gate" in argv:
+        print(json.dumps(gate(root, apply="--apply" in argv), indent=1)); return 0
     if "--batch-probe" in argv:
         ok, why = batch_probe(root, argv[argv.index("--batch-probe") + 1])
         print(why); return 0 if ok else 1

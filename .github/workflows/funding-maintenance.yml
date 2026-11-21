@@ -40,7 +40,8 @@ jobs:
         run: |
           git status --porcelain docs/issues | grep -q . || { echo "no queued findings"; exit 0; }
           br="agent/funding-findings-$(date -u +%Y%m%d)"
-          git checkout -B "$br"; git add docs/issues
+          python3 -m foundation balance --gate --apply  # FLOW-BALANCE-1: the one filing gate before any item lands
+          git checkout -B "$br"; if [ -f ops/balance-held.jsonl ]; then git add ops/balance-held.jsonl; fi; git add docs/issues
           git -c user.name=ultrastable-ops -c user.email=actions@users.noreply.github.com commit -m "Funding findings queued"
           git push -f -u origin "$br"
           { echo "Queue items from funding_verify.py. Closed by the executor."; echo; echo "## Self-audit"; echo "Real output: $(git diff --stat HEAD~1 | tail -1)"; echo "Not thinking about: findings that clear on their own leave a stale item until the executor closes it."; echo "Fix: closed by the executor with evidence."; } > pr-body.md

@@ -76,6 +76,20 @@ class Balance(unittest.TestCase):
         (self.root / B.STATE).write_text(json.dumps({"throttle": {"on": False}}))
         self.assertTrue(B.admit(self.root))
 
+    def test_gate_holds_new_files_over_quota_and_releases_later(self):
+        import subprocess
+        subprocess.run(["git", "init", "-q", str(self.root)], check=True)
+        for n, lab in ((1, "p2"), (2, "p0"), (3, "p2")):
+            mk(self.root, f"Q-N-{n}", labels=[lab])
+        tipped = {"tipped": True, "throttle": {"quota_left": 1}}
+        out = B.gate(self.root, apply=True, now=NOW, m=tipped)
+        self.assertEqual((out["admitted"], sorted(out["held"])), (["Q-N-2"], ["Q-N-1", "Q-N-3"]))
+        self.assertFalse((self.root / "docs/issues/Q-N-1.json").exists())
+        out = B.gate(self.root, apply=True, now=NOW, m={"tipped": False})
+        self.assertEqual(sorted(out["released"]), ["Q-N-1", "Q-N-3"])
+        self.assertTrue((self.root / "docs/issues/Q-N-3.json").exists())
+        self.assertEqual(B.gate(self.root, apply=True, now=NOW, m={"tipped": False})["released"], [])
+
     def test_rules(self):
         self.assertEqual(B.check(), [])
 
