@@ -3675,6 +3675,51 @@
    "body": "Switching bluesky.json to private_key_jwt broke refresh of the live public-client session (HTTP 400 every tick from 2026-11-20 19:11). bluesky.json stays public; new sign-ins use bluesky-c.json. Never change a live atproto client's auth method; add a new client id.",
    "probe": "grep:seed/worker/src/auth/atproto.js::LEGACY-CLIENT-1",
    "session": "session_0156nqDsNi2d4FXDawgCY8Sh"
+  },
+  {
+   "id": "decision-2026-11-21-a-wait-on-a-person-is-a-failure-mode",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "A wait on a person is a failure mode",
+   "body": "Owner 2026-11-21: nothing may wait on the owner; every input from a code agent or person is taken as given and carried through implement, merge, deploy by server-side loops. Registered as fm-waiting-on-person with detector waiting-on-person. Session: session_0156nqDv6NMcEmv9wqYJK3XS",
+   "probe": "file:doctrine/detectors.json",
+   "session": "session_0156nqDv6NMcEmv9wqYJK3XS"
+  },
+  {
+   "id": "decision-2026-11-21-social-relay-1-post-to-owner-s-accounts-via-token-gated-rela",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "SOCIAL-RELAY-1: post to owner's accounts via token-gated relay",
+   "body": "Buffer (LinkedIn, X, Substack) and Mastodon posting reuse the saved logins through a relay route added to the qnfo-social Worker (owner approved 2026-11-21); the publisher reads SOCIAL_RELAY_URL and SOCIAL_RELAY_TOKEN from the tick Worker. No QNFO paper posts: the Worker has no schedule.",
+   "probe": "grep:seed/worker/src/social.js::postRelay",
+   "session": "session_0156nqDunV4z85Mh7KvGu2gW"
+  },
+  {
+   "id": "decision-2026-11-21-thought-1-every-white-paper-becomes-per-channel-posts-that-c",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "THOUGHT-1: every white paper becomes per-channel posts that carry the Ultrastable hook",
+   "body": "Papers test common beliefs about AI limits against the system's own records; posts carry belief, measured record and the hook (Ultrastable runs on Ultrastable; Practical Solutions is one system it runs). LinkedIn gets papers only.",
+   "probe": "grep:foundation/thought.py::def guard",
+   "session": "session_0156nqDrGjLASvqbuu6oXJk5"
+  },
+  {
+   "id": "lesson-2026-11-21-thought-1-the-tick-publisher-retried-a-refused-bluesky-send-",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "THOUGHT-1: the tick publisher retried a refused Bluesky send every tick and posted links as plain text",
+   "body": "A failed send is now retried once a day (social_failed table) and Bluesky posts carry link facets.",
+   "probe": "grep:seed/worker/src/social.js::social_failed",
+   "session": "session_0156nqDrGjLASvqbuu6oXJk5"
+  },
+  {
+   "id": "lesson-2026-11-21-triage-counted-an-optional-copilot-assign-as-a-failed-run",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "Triage counted an optional Copilot assign as a failed run",
+   "body": "With Issues on, scripts/triage.sh failed every run because the best-effort copilot-swe-agent assign went through the counting gh wrapper; safe_exit turned it red and skipped SLA, Scoreboard and orphan sync. Optional calls bypass the counter and log a note.",
+   "probe": "grep:scripts/triage.sh::copilot agent not assignable here",
+   "session": "session_0156nqDshJE91voaBzhvqTUL"
   }
  ]
 }
