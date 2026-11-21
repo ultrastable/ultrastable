@@ -65,15 +65,15 @@ test('every call is metered in the ledger; past the day cap calls are refused wi
   for (let i = 0; i < fit + 5; i++) { try { await g.ai.run('m', {}); } catch (e) { refused = e; break; } }
   assert.ok(refused instanceof BudgetExhausted, 'refused once the allowance is used');
   assert.ok(ai.calls.length <= fit, 'never more calls than the allowance holds');
-  const row = raw.prepare("SELECT units, calls, refused FROM budget_ledger WHERE day='2026-11-16'").get();
+  const row = raw.prepare("SELECT units, calls, refused FROM budget_ledger WHERE day='2026-11-16' AND kind='ai_neurons'").get();
   assert.equal(row.calls, ai.calls.length); assert.ok(row.units >= g.state.allowance.ai_neurons_day); assert.equal(row.refused, 1);
   const next = await governedAI(db, ai, { config: { budget: { usd_per_month: 0 } }, now: NOW });
   assert.equal(next.state.mode, 'crawl', 'never frozen: the system keeps one model call an hour');
-  const minute = new Date(NOW).getUTCMinutes();
-  if (minute < 10) { await next.ai.run('m', {}); await assert.rejects(() => next.ai.run('m', {}), BudgetExhausted); }
-  else await assert.rejects(() => next.ai.run('m', {}), BudgetExhausted);
-  const onHour = await governedAI(db, ai, { config: { budget: { usd_per_month: 0 } }, now: NOW - (minute * 60e3) + 60e3 });
-  assert.equal(onHour.state.mode, 'crawl'); await onHour.ai.run('m', {}); await assert.rejects(() => onHour.ai.run('m', {}), BudgetExhausted);
+  await next.ai.run('m', {}); await assert.rejects(() => next.ai.run('m', {}), BudgetExhausted);
+  const sameHour = await governedAI(db, ai, { config: { budget: { usd_per_month: 0 } }, now: NOW + 1000 });
+  await assert.rejects(() => sameHour.ai.run('m', {}), BudgetExhausted, 'CRAWL-SHARED-1: the hour\'s one call is shared by every surface');
+  const nextHour = await governedAI(db, ai, { config: { budget: { usd_per_month: 0 } }, now: (Math.floor(NOW / 36e5) + 1) * 36e5 + 6e5 * 3 });
+  if (nextHour.state.mode === 'crawl') { await nextHour.ai.run('m', {}); await assert.rejects(() => nextHour.ai.run('m', {}), BudgetExhausted); }
   const tomorrow = await governedAI(db, ai, { config: { budget: { usd_per_month: 0 } }, now: NOW + 864e5 });
   assert.equal(tomorrow.state.mode, 'normal', 'a new day starts a new allowance');
 });

@@ -162,12 +162,20 @@ export async function governedAI(db, ai, { config = {}, env = {}, now = Date.now
   let d = decide(a, u);
   if (lean && d.mode === 'normal') d = { mode: 'lean', why: `spend ${spend.level}: one model call per tick from the free allocation`, calls_per_tick: 1 };
   const state = { budget: b.usd_per_month, plan: b.plan, allowance: a, usage: u, spend_level: spend ? spend.level : null, ...d };
-  const hourOpen = new Date(now).getUTCMinutes() < 10;   // crawl: the first tick of each hour gets its one call
+  // crawl: one call an hour for the whole org, claimed in the ledger so every surface (tick, console, site) shares the one call (CRAWL-SHARED-1).
+  const hourKey = Math.floor(now / 3600000);
+  const claimHour = async () => {
+    await ensureLedger(db);
+    const row = await db.prepare("SELECT units FROM budget_ledger WHERE day=?1 AND kind='ai_crawl'").bind(dayOf(now)).first();
+    if (row && Number(row.units) === hourKey) return false;
+    await db.prepare("INSERT INTO budget_ledger (day, kind, units, calls, refused) VALUES (?1,'ai_crawl',?2,1,0) ON CONFLICT(day, kind) DO UPDATE SET units=excluded.units, calls=calls+1").bind(dayOf(now), hourKey).run();
+    return true;
+  };
   let used = u.ai_neurons_today, callsThisTick = 0;
   const wrapped = {
     async run(model, input, opts) {
       const capped = d.calls_per_tick !== null && callsThisTick >= d.calls_per_tick;
-      if (capped || (d.hourly && !hourOpen) || (!d.hourly && used >= a.ai_neurons_day)) {
+      if (capped || (!d.hourly && used >= a.ai_neurons_day) || (d.hourly && !(await claimHour()))) {
         await bump(db, dayOf(now), 0, 0, 1).catch(e => console.error('budget ledger', e && e.message));
         throw new BudgetExhausted(`AI budget: ${d.mode === 'crawl' ? 'crawl mode allows one model call an hour' : d.mode === 'lean' ? 'lean mode allows one model call per tick' : "today's allowance is used"}`);
       }
