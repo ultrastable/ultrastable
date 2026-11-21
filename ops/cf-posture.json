@@ -1,5 +1,5 @@
 {
- "at": "2026-11-20T20:12:49Z",
+ "at": "2026-11-21T12:35:45Z",
  "account_id": "81e3a4efb4eb66e613529b87682911bb",
  "rules": [
   {
@@ -7,17 +7,24 @@
    "kind": "auto",
    "status": "fail",
    "detail": [
-    "tenant-ps-core",
     "tenant-ps-edge",
-    "tenant-ps-web",
-    "ultrastable-spinoffs"
+    "tenant-ps-mail",
+    "ultrastable-mail-in",
+    "ultrastable-mail-relay",
+    "ultrastable-spinoffs",
+    "ultrastable-uptime"
    ]
   },
   {
    "id": "no-idle-preview-workers",
    "kind": "auto",
-   "status": "pass",
-   "detail": []
+   "status": "fail",
+   "detail": [
+    "us-idea-16438b610e",
+    "us-idea-9fcb2077cc",
+    "us-idea-df25e6aced",
+    "us-idea-efb6b23d9c"
+   ]
   },
   {
    "id": "alerts-reach-code",
