@@ -10,6 +10,8 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-21
 
+- 2026-11-21: SEED-DEPLOY-2 + SINGLE-ACCOUNT-2: seeds go live through OIDC; nothing acts on the retired account (#1895)
+- 2026-11-21: SEED-DEPLOY-1: write the generated worker config before deploying a seed (#1890)
 - 2026-11-21: Intent Yield: bring the seed under SEED-LIFECYCLE-1 (#1891)
 - 2026-11-21: ZERO-MINUTES-1: worker merged #1894
 - 2026-11-21: SEED-LAUNCH-1: record the token open loop (#1894)
