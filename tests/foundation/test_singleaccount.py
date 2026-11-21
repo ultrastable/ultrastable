@@ -37,3 +37,15 @@ class Moved(unittest.TestCase):
             self.assertEqual(sa.moved(t), ["a"])
             (Path(t) / "ops/account-move.json").write_text(json.dumps({"items": {"a": "moved"}}))
             self.assertEqual(sa.moved(t), [])
+
+
+class Runtime(unittest.TestCase):
+    def test_runtime_clean_and_catches(self):
+        self.assertEqual(sa.runtime_scan(ROOT), [])
+        with tempfile.TemporaryDirectory() as t:
+            r = Path(t); (r / "doctrine").mkdir(); (r / "site").mkdir()
+            d = json.loads((ROOT / PATHS).read_text()); (r / PATHS).write_text(json.dumps(d))
+            (r / "site/a.js").write_text('fetch("https://qnfo-social.q08.workers.dev/x")')
+            self.assertEqual(len(sa.runtime_scan(r)), 1)
+            (r / "site/a.js").write_text('fetch("https://ultrastable.io/x")')
+            self.assertEqual(sa.runtime_scan(r), [])
