@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "open-loop-2026-11-21-redmain-revert-lane",
+  "kind": "decision",
+  "date": "2026-11-21",
+  "title": "Red-main revert lane is a queue item for the executor (workflow edits are gated)",
+  "body": "Revert or repair of a red main belongs in the tick Worker sweeper, not a workflow; filed as Q-REDMAIN-revert-lane with owner executor, trigger every lane pass and a sweeper test as probe.",
+  "probe": "file:docs/issues/Q-REDMAIN-revert-lane.json"
+ },
+ "kind": "decision",
+ "title": "Red-main revert lane is a queue item for the executor (workflow edits are gated)",
+ "session": "session_0156nqDtycGejegSYjhFJ1MF"
+}

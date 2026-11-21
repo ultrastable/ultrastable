@@ -1,0 +1,12 @@
+{
+  "id": "Q-REDMAIN-revert-lane",
+  "title": "Q-REDMAIN-revert-lane: the lane reverts or repairs a red main without a workflow edit",
+  "body": "**Owner:** executor\n**Trigger:** every lane pass\n**Done check:** cmd:node --test seed/worker/test/sweeper.test.js\n**Status:** open\n\nRed main today is gated only by the deploy-site REDMAIN-1 check. Add to the tick Worker sweeper (seed/worker/src/sweeper.js) a pass that reads the latest main commit status, and when the gate is red for more than 15 minutes opens a revert PR of the offending squash commit through the git data API and merges it on green (regenerating generated files). Also wire the watchdog git-add list for ops/yearsim*, ops/saydo*, ops/trajectory* (workflow path, needs the executor surface).\n\nsize: M\n\n**Closing probe:** `node --test seed/worker/test/sweeper.test.js` exits 0.\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "resilience"
+  ],
+  "milestone": "Now",
+  "workstream": "Resilience"
+}
