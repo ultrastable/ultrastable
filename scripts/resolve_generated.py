@@ -18,6 +18,28 @@ for f in list(conf):
     else:
         continue
     subprocess.run(["git", "add", f]); conf.remove(f); print("resolved", f)
+# MERGE-NOW-1: in any other file, a hunk whose two sides are equal, or differ only inside `<!-- claim:ID -->` values (computed by claims --fix, never
+# typed), is resolved: identical -> one copy, claim-only -> main's side. A hunk that differs in written text stays a conflict.
+CLAIM = re.compile(r"(<!-- claim:[\w.-]+ -->)(.*?)(<!-- /claim -->)", re.S)
+HUNK = re.compile(r"^<<<<<<< [^\n]*\n(.*?)^(?:\|\|\|\|\|\|\| [^\n]*\n.*?)?^=======\n(.*?)^>>>>>>> [^\n]*\n", re.S | re.M)
+def soft(path):
+    try:
+        t = open(path, encoding="utf-8").read()
+    except (UnicodeDecodeError, FileNotFoundError):
+        return False
+    hard = []
+    def pick(m):
+        ours, theirs = m.group(1), m.group(2)
+        if ours == theirs or CLAIM.sub(r"\1\3", ours) == CLAIM.sub(r"\1\3", theirs):
+            return theirs
+        hard.append(1); return m.group(0)
+    new = HUNK.sub(pick, t)
+    if hard:
+        return False
+    open(path, "w", encoding="utf-8").write(new); return True
+for f in list(conf):
+    if soft(f):
+        subprocess.run(["git", "add", f]); conf.remove(f); print("resolved (identical or claim-only)", f)
 if "doctrine/claims.json" not in conf:   # the registry merged cleanly: its served copy is regenerated, never merged by hand
     subprocess.run([sys.executable, "-m", "foundation", "claims", "--fix", "--apply"], capture_output=True)
     subprocess.run(["git", "add", "site/claims-data.js"])
