@@ -120,6 +120,12 @@ export default {
     "what": "the daily trend read: series per component, loop and entry, and what they show"
    },
    {
+    "expected_interval_s": 3600,
+    "id": "unlearn-beat",
+    "source": "d1",
+    "what": "Unlearn tenant beat (cron 41 * * * * on ultrastable-unlearn; a visit catches up a silent cron): re-learn move weights, measure, open the next phase, prune"
+   },
+   {
     "expected_interval_s": 86400,
     "id": "intent-yield",
     "source": "workflow",
@@ -734,7 +740,9 @@ export default {
   "ultrastable-site",
   "ultrastable-tenants",
   "ultrastable-tick",
+  "ultrastable-unlearn",
   "unknowns",
+  "unlearn-beat",
   "watchdog",
   "workers-tests",
   "write-back",
@@ -2037,6 +2045,19 @@ export default {
     "workflows": []
    },
    {
+    "closing_probe": "grep:instances/unlearn/worker/index.js::export async function beat",
+    "id": "unlearn-beat",
+    "kind": "tick",
+    "owner": "product-manager",
+    "server_owner": "ultrastable-unlearn",
+    "sla": "2h",
+    "summary": "Unlearn tenant loop: curiosity logged, coaching move chosen by learned weights, follow-up at 7 and 14 days, weights re-learned, metrics measured, next phase opened when its gates hold (instances/unlearn/phases.json).",
+    "trigger": "cron 41 * * * * on ultrastable-unlearn; a page visit runs the beat when the cron has been silent for 2 hours",
+    "workflows": [
+     "deploy-ultrastable"
+    ]
+   },
+   {
     "closing_probe": "grep:foundation/intentyield.py::def probe",
     "id": "intent-yield",
     "kind": "governance",
@@ -2069,6 +2090,10 @@ export default {
    },
    {
     "id": "ultrastable-tenants",
+    "state": "live"
+   },
+   {
+    "id": "ultrastable-unlearn",
     "state": "live"
    }
   ],
@@ -2155,7 +2180,8 @@ export default {
    {
     "id": "deploy-ultrastable",
     "loops": [
-     "deploy-workers"
+     "deploy-workers",
+     "unlearn-beat"
     ]
    },
    {

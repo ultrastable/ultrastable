@@ -3954,6 +3954,42 @@
    "server_owner": "github-actions"
   },
   {
+   "id": "unlearn-beat",
+   "kind": "tick",
+   "summary": "Unlearn tenant loop: curiosity logged, coaching move chosen by learned weights, follow-up at 7 and 14 days, weights re-learned, metrics measured, next phase opened when its gates hold (instances/unlearn/phases.json).",
+   "trigger": "cron 41 * * * * on ultrastable-unlearn; a page visit runs the beat when the cron has been silent for 2 hours",
+   "owner": "product-manager",
+   "closes_by": "system",
+   "sla": "2h",
+   "done": "GET /health on ultrastable-unlearn answers clock ticking and the unlearn-beat clock in doctrine/clocks.json is not late",
+   "paths": [
+    {
+     "id": "cron",
+     "how": "instances/unlearn/worker/index.js scheduled() on the Cloudflare cron",
+     "class": "free"
+    },
+    {
+     "id": "visit",
+     "how": "catchUp() in instances/unlearn/worker/index.js runs the beat on the next visit when the cron is silent",
+     "class": "degraded"
+    }
+   ],
+   "closing_probe": "grep:instances/unlearn/worker/index.js::export async function beat",
+   "writeback": [
+    "instances/unlearn/runway.json"
+   ],
+   "system_path": [
+    "instances/unlearn/worker/index.js",
+    "instances/unlearn/worker/logic.js",
+    "instances/unlearn/phases.json"
+   ],
+   "area": "tenants",
+   "workflows": [
+    "deploy-ultrastable.yml"
+   ],
+   "server_owner": "ultrastable-unlearn"
+  },
+  {
    "id": "intent-yield",
    "kind": "governance",
    "summary": "INTENT-YIELD-1: for a given unit of human input, what is the best unit of output. Each owner directive is one intent; its own probe passing, unrestated, after 30 days is one kept outcome. Restatements are charged to the original, a directive that is not holding becomes a Q-YIELD item closed by its own probe, and /yield publishes the verdicts. No counts, no person scored.",

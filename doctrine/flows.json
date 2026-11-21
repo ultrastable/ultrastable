@@ -11,7 +11,8 @@
     "ext.outreach_replies": "funding programmes and recipients answering outreach (recorded by scripts/outreach.py reply)",
     "ext.actions_quota": "GitHub Actions minutes used against the monthly quota",
     "ext.frontier": "releases and posts of the leading agent platforms, coding agents and standards (doctrine/scout.json sources)",
-    "ext.cf_analytics": "Cloudflare GraphQL analytics: D1 rows read and Workers AI neurons per day (doctrine/cost.json budgets)"
+    "ext.cf_analytics": "Cloudflare GraphQL analytics: D1 rows read and Workers AI neurons per day (doctrine/cost.json budgets)",
+    "ext.unlearn_adults": "coaches and parents using Unlearn: they log curiosities and answer the 7 and 14 day follow-ups (instances/unlearn; no child data in phase 1)"
   },
   "flows": {
     "qnfo-sauce": {
@@ -2377,6 +2378,26 @@
       "feedback": "a failing or uncovered month becomes a Q-YEARFAIL item the executor fixes and merges, and the next weekly run must turn that month green; the result is published at /year",
       "bindings": []
     },
+    "unlearn-beat": {
+      "inflows": [
+        {
+          "signal": "unlearn.followups",
+          "via": "d1:ultrastable-unlearn"
+        },
+        {
+          "signal": "unlearn.weights",
+          "via": "d1:ultrastable-unlearn"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "unlearn.weights",
+          "via": "d1:ultrastable-unlearn"
+        }
+      ],
+      "feedback": "each 14-day answer (did the child keep going on their own) re-weights the move that was given, so the next adult is offered moves that kept children exploring; the measured gates open the next phase",
+      "bindings": []
+    },
     "intent-yield": {
       "inflows": [
         {
@@ -2403,7 +2424,8 @@
     "frontier.releases": "ext.frontier",
     "cf.analytics": "ext.cf_analytics",
     "site.hits": "ext.site_visits",
-    "loop.registry": "ext.loop_registry"
+    "loop.registry": "ext.loop_registry",
+    "unlearn.followups": "ext.unlearn_adults"
   },
   "pending": []
 }

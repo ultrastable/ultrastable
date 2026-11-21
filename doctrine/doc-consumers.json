@@ -153,6 +153,15 @@
    "how": "the paste-in prompt is read and asserted by the agent-setup test (path relative to the folded workers tree, so the exact-path tier missed it after REPOS-1)"
   },
   {
+   "id": "unlearn-idea",
+   "paths": [
+    "instances/unlearn/IDEA.md"
+   ],
+   "consumer": "tests/foundation/test_unlearn.py",
+   "needle": "instances/unlearn",
+   "how": "the test boots the seed on this IDEA.md and asserts the system test passes and the objectives are seeded"
+  },
+  {
    "id": "intent-yield-idea",
    "paths": [
     "instances/intent-yield/IDEA.md"
