@@ -1,7 +1,7 @@
 {
   "id": "INTERVIEW-2",
   "title": "INTERVIEW-2: Adaptive interview: model picks the next question",
-  "body": "**Owner:** Product manager\n**Trigger:** see below\n**Done check:** grep:site/worker.js::adaptiveQuestion\n**Status:** open\n\nReplace the static question bank with a small model choosing the next either/or question from answers so far; record which questions narrowed the solution space most. Trigger: model credential bound and 20 stored profile:* rows. Closing probe: median questions-to-build below 4 in the stored profiles.",
+  "body": "**Owner:** Product manager\n**Trigger:** see below\n**Done check:** grep:site/worker.js::adaptiveQuestion\n**Status:** closed\n\nReplace the static question bank with a small model choosing the next either/or question from answers so far; record which questions narrowed the solution space most. Trigger: model credential bound and 20 stored profile:* rows. Closing probe: median questions-to-build below 4 in the stored profiles.\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 221.7 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
   "labels": [
     "role:product",
     "ws:front-door",

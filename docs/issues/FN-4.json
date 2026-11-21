@@ -1,7 +1,7 @@
 {
   "id": "FN-4",
   "title": "FN-4: Other credit programs (Anthropic, AWS Activate, Microsoft for Startups, NVIDIA Inception)",
-  "body": "**Owner:** Staff (research)\n**Trigger:** FN-1\n**Done check:** Ranked list with eligibility\n**Status:** open\n\nSource of truth: `docs/roadmap.md` (item FN-4). Every closed item proposes a plus: file it as a new issue labeled `plus`.",
+  "body": "**Owner:** Staff (research)\n**Trigger:** FN-1\n**Done check:** Ranked list with eligibility\n**Status:** closed\n\nSource of truth: `docs/roadmap.md` (item FN-4). Every closed item proposes a plus: file it as a new issue labeled `plus`.\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 273.0 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
   "labels": [
     "role:staff",
     "ws:funding"
