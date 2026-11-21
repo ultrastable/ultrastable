@@ -340,7 +340,7 @@ export function makeDeployer({ token, fetch: f = fetch, site, key, oidc, generat
       const r = await site.fetch('https://internal/__internal/deploy', { method: 'POST', headers: { ...(oidc ? { authorization: 'Bearer ' + oidc } : { 'x-internal-key': key }), 'content-type': 'application/json' },
         body: JSON.stringify({ name: id, modules: modules.map(({ name, src, type }) => ({ name, src, type })), main: modules[0].name, compatibility_date: tb.worker.compatibility_date || topo.compatibility_date, bindings: tb.bindings, crons: tb.worker.crons || null, workers_dev: !tb.worker.public, domains: String(tb.worker.main).startsWith('instances/') ? (tb.worker.routes || []) : [], tag: String(sha).slice(0, 12) }) });
       const j = await r.json().catch(() => ({}));
-      return r.ok && j.ok ? { ok: true, version: j.version || '', detail: 'uploaded' } : { ok: false, detail: j.error || ('site deploy ' + r.status) };
+      return r.ok && j.ok ? { ok: true, version: j.version || '', detail: j.warnings && j.warnings.length ? 'uploaded; ' + j.warnings.join('; ') : 'uploaded' } : { ok: false, detail: j.error || ('site deploy ' + r.status) };
     } catch (e) { return { ok: false, detail: String(e && e.message || e) }; }
   };
 }
