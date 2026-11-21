@@ -5,7 +5,7 @@
   "date": "2026-11-21",
   "title": "DISCLOSURE-RETIRED-1: the disclosure gate (PF-1) is retired",
   "body": "Rowan, 2026-11-21: no patent and no IP filing; the work is source-available under the Ultrastable License, non-commercial use free, commercial use needs a paid license. The disclosure rule, the dashboard disclosure_guard probe (which failed hourly) and its word list are removed; nothing is held back from public view.",
-  "probe": "grep:README.md::Source-available",
+  "probe": "grep:dashboard/worker.js::NO-PATENT-1",
   "session": "session_0156nqDvcJffVKenzBcawrYF"
  },
  "kind": "decision",
