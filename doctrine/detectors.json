@@ -482,6 +482,22 @@
    "remedy": "Run python3 -m foundation saydo --run --apply, then --check; restore the SAY-DO-1 guard in foundation/executor.py if it is gone."
   },
   {
+   "id": "intent-yield-fresh",
+   "failure_mode": "fm-intent-yield-stale",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "intentyield",
+    "--probe"
+   ],
+   "timeout": 60,
+   "root_cause": "the daily intent-yield run stopped, errored, or its parser lost the owner's directives",
+   "owner": "operations",
+   "remedy": "Read the last run's error in ops/intent-yield/state.json; dispatch .github/workflows/intent-yield.yml, or fix the parser in foundation/intentyield.py when the directive format changed, with a test."
+  },
+  {
    "id": "seed-ship",
    "failure_mode": "fm-seed-not-shipped",
    "kind": "command",

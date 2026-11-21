@@ -1,0 +1,20 @@
+{
+ "_doc": "SEED-SHIP-1: what Intent Yield builds, where it is served and how it runs a year unattended. Read by foundation/seedship.py; the stage is computed, never declared. It has no Worker of its own: the daily intent-yield workflow writes site/intent-yield-data.js and the site Worker serves /yield.",
+ "seed": "intent-yield",
+ "build": {
+  "paths": ["foundation/intentyield.py", "site/intentyield.js", "doctrine/intent-yield.json"],
+  "tests": ["tests/foundation/test_intentyield.py", "site/intentyield.test.mjs"]
+ },
+ "deploy": {
+  "worker": "ultrastable-site",
+  "url": "https://ultrastable.io/yield",
+  "health": "https://ultrastable.io/yield.json"
+ },
+ "unattended": {
+  "heartbeat_hours": 24,
+  "credentials": [],
+  "budget_usd_month": 0,
+  "dependencies": [],
+  "heal": ["intent-yield.yml"]
+ }
+}

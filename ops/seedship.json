@@ -13,6 +13,25 @@
    "ship": false,
    "stage": "proposed"
   },
+  "intent-yield": {
+   "added": null,
+   "id": "intent-yield",
+   "missing": [
+    "readiness staleness"
+   ],
+   "overdue": false,
+   "readiness": {
+    "cost": true,
+    "credentials": true,
+    "dependencies": true,
+    "heartbeat": true,
+    "self_repair": true,
+    "staleness": false,
+    "year_model": true
+   },
+   "ship": true,
+   "stage": "deployed"
+  },
   "practical-solutions": {
    "added": null,
    "id": "practical-solutions",
@@ -39,16 +58,25 @@
    "added": null,
    "id": "unlearn",
    "missing": [
-    "a live-verified deploy of ultrastable-unlearn at an https URL"
+    "readiness staleness"
    ],
    "overdue": false,
-   "readiness": {},
+   "readiness": {
+    "cost": true,
+    "credentials": true,
+    "dependencies": true,
+    "heartbeat": true,
+    "self_repair": true,
+    "staleness": false,
+    "year_model": true
+   },
    "ship": true,
-   "stage": "built"
+   "stage": "deployed"
   }
  },
  "short": [
   "demo-child",
+  "intent-yield",
   "practical-solutions",
   "second-tenant",
   "unlearn"
