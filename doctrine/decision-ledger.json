@@ -3755,15 +3755,6 @@
    "title": "MERGE-NOW-1: PRs merge on the webhook, not on a clock",
    "body": "Rowan 2026-11-21: no PR sits in GitHub. Root causes: the Actions lane wakes only when checks finish, so a conflicting PR waited for the 10-minute tick or the daily sweep; the tick sweeper refreshed only 'behind' PRs and left 'dirty' ones; workflow-touching conflicting PRs had no owner that could merge them; site/dashboard-data.js carried HEAD's sha so every merge changed it; README claim counts churned on every deploy; merges left conflict markers in README.md and platform/adapters/README.md. Change: seed/worker/src/mergenow.js runs inside the /hook/github request on pull_request, check_suite (now subscribed) and push to main with the org App token: ready, approve waiting runs, update-branch, reconcile conflicts on generated files (seed/worker/src/generated.js equals regen_generated OUTPUTS, tested) and claim values through the git data API then POST /merges, squash-merge on green at the exact head. The sweeper reconciles one dirty PR per tick and records merge_p50/p95, oldest open PR and stalled PRs (migration 0029, self-applied DDL); a PR open over 15 minutes files Q-PR-STALL-*. build_dashboard asof is the last commit of its sources; resolve_generated takes identical and claim-only hunks in any file. 410 Worker tests pass.",
    "probe": "grep:seed/worker/src/mergenow.js::MERGE-NOW-1"
-  },
-  {
-   "id": "lesson-2026-11-21-markers-on-main-1-committed-conflict-markers-on-main-made-ev",
-   "kind": "lesson",
-   "date": "2026-11-21",
-   "title": "MARKERS-ON-MAIN-1: committed conflict markers on main made every PR conflict forever",
-   "body": "README.md and platform/adapters/README.md sat on main with both sides of a conflict (since #832). Every PR touching claim lines conflicted there and the resolver could not match a hunk inside a hunk, so PRs waited on a session. resolve_generated.py now resolves hunks innermost first, heals committed markers, and tests/foundation/test_conflict_markers.py fails the build on any marker.",
-   "probe": "grep:scripts/resolve_generated.py::def flatten",
-   "session": "session_0156nqDrGjLASvqbuu6oXJk5"
   }
  ]
 }
