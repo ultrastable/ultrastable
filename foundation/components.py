@@ -9,7 +9,7 @@ Every gap becomes an OL-GAP-* item whose closing probe is this module, so the ga
   python3 -m foundation components --check          problems with the data itself (unknown ids, missing probes)
   python3 -m foundation components --report         the computed picture as JSON
   python3 -m foundation components --file-gaps       one OL-GAP item per gap (idempotent)
-  python3 -m foundation components --evidence        write business/investor/evidence.json (the funding packet's evidence, generated)
+  python3 -m foundation components --evidence        write instances/ultrastable/funding/evidence.json (the funding packet's evidence, generated)
   python3 -m foundation components --probe KIND:ID   exit 0 iff that component / edge / story / objection is healthy now
 """
 from __future__ import annotations
@@ -19,7 +19,7 @@ from pathlib import Path
 from . import selfhost
 
 REPO = Path(__file__).resolve().parents[1]
-PATH, MARKET, EVIDENCE = "doctrine/components.json", "doctrine/market-evidence.json", "business/investor/evidence.json"
+PATH, MARKET, EVIDENCE = "doctrine/components.json", "doctrine/market-evidence.json", "instances/ultrastable/funding/evidence.json"
 
 
 def load(root=REPO) -> dict:

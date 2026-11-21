@@ -316,25 +316,7 @@ export default {
    "id": "curated-21ec008fbc",
    "kind": "claim",
    "pass": true,
-   "surface": "business/funding/applications/README.md"
-  },
-  {
-   "claim": "every claim must still trace to a source in the repository, and no number is invented.",
-   "detail": "",
-   "how": "file:outreach/facts.json + file:foundation/promote.py + file:scripts/check_business_index.py + file:scripts/check_license.py",
-   "id": "curated-6e8a8e6518",
-   "kind": "claim",
-   "pass": true,
-   "surface": "business/investor/README.md"
-  },
-  {
-   "claim": "provided every claim traces to a source in the repository and no number is invented.",
-   "detail": "",
-   "how": "file:outreach/facts.json + file:foundation/promote.py + file:scripts/check_business_index.py + file:scripts/check_license.py",
-   "id": "curated-43a588e27d",
-   "kind": "claim",
-   "pass": true,
-   "surface": "business/plan/README.md"
+   "surface": "instances/ultrastable/funding/applications/README.md"
   },
   {
    "claim": "- **Plain-English console agent (CONSOLE-AGENT-1)**: a line that is not a registered command goes to `agent.js`, a short tool loop on the",
@@ -380,15 +362,6 @@ export default {
    "kind": "claim",
    "pass": true,
    "surface": "docs/runbooks/any-tools/README.md"
-  },
-  {
-   "claim": "Historical working files for a patent application that was never filed.",
-   "detail": "",
-   "how": "grep:scripts/test_social.py::patent pending + file:scripts/social_lib.py + grep:.github/workflows/checks.yml::patent track dropped",
-   "id": "curated-292e0dbf60",
-   "kind": "claim",
-   "pass": true,
-   "surface": "ip/README.md"
   },
   {
    "claim": "Target: four repos. `ultrastable` (system of record), `workers` (all code), `spec` (specifications, docs, license), `.github` (org",
@@ -998,15 +971,6 @@ export default {
    "detail": "",
    "how": "file:scripts/check_memory.py + grep:.github/workflows/checks.yml::check_memory.py + grep:products/gaplint/gaplint/rules.py::GL009",
    "id": "curated-58cac28bb2",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/docs/PROJECT-MEMORY.template.md"
-  },
-  {
-   "claim": "Never describe the system as patent pending.",
-   "detail": "",
-   "how": "grep:scripts/test_social.py::patent pending + file:scripts/social_lib.py + grep:.github/workflows/checks.yml::patent track dropped",
-   "id": "curated-ea9b25fae8",
    "kind": "claim",
    "pass": true,
    "surface": "seed/docs/PROJECT-MEMORY.template.md"
@@ -1633,6 +1597,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **The template is code only (TEMPLATE-CODE-ONLY-1, Rowan 2026-11-21).** \"I thought the UltraStable template repo should be just code that",
+   "detail": "grep:.github/workflows/checks.yml::foundation[ .]template\\b failed (.github/workflows/checks.yml)",
+   "how": "file:doctrine/template-boundary.json + file:foundation/template.py + grep:.github/workflows/checks.yml::foundation[ .]template\\b",
+   "id": "cited-bbe53ab169",
+   "kind": "claim",
+   "pass": false,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **No single route.** Every loop, deploy and start path has at least two routes, one needing no credential a person would have to mint (a",
    "detail": "",
    "how": "file:foundation/failover.py + file:scripts/check_routes.py",
@@ -2083,15 +2056,6 @@ export default {
    "surface": "seed/.github/copilot-instructions.md"
   },
   {
-   "claim": "1. Read `business/funding/registry.json`. Every row has a status (verified, secondary, unverified). Read unverified and stale rows at their",
-   "detail": "",
-   "how": "file:business/funding/registry.json",
-   "id": "cited-7bbdfa5fa2",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/agents/roles/funding-manager.md"
-  },
-  {
    "claim": "Each tick run `python3 -m foundation blindspots --scan --apply`; answer due sweeps with sources via `blindspots --answer DOMAIN --text",
    "detail": "",
    "how": "file:foundation/blindspots.py + grep:.github/workflows/checks.yml::foundation[ .]blindspots\\b",
@@ -2126,24 +2090,6 @@ export default {
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/roles/product-manager.md"
-  },
-  {
-   "claim": "- Main repo `ultrastable/ultrastable` (private) holds the unified layout, archived patent drafts (`ip/`, superseded, never filed), business",
-   "detail": "",
-   "how": "file:agents/SELF-AWARENESS.md + file:docs/BOOTSTRAP-GAPS.md",
-   "id": "cited-3e0accfbbd",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/docs/PROJECT-MEMORY.template.md"
-  },
-  {
-   "claim": "- Funding: unfunded; dual track (open source vs commercial) in `docs/funding/` and `business/plan/05-funding.md`. Big credit tiers need an",
-   "detail": "",
-   "how": "file:business/plan/05-funding.md",
-   "id": "cited-a76490ac1d",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/docs/PROJECT-MEMORY.template.md"
   },
   {
    "claim": "CLOSED-LOOP-AXIOM (owner, 2026-11-12): every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing",
@@ -2638,6 +2584,15 @@ export default {
    "id": "mirror-5fbac9d618",
    "kind": "claim",
    "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **The template is code only (TEMPLATE-CODE-ONLY-1, Rowan 2026-11-21).** \"I thought the UltraStable template repo should be just code that",
+   "detail": "grep:.github/workflows/checks.yml::foundation[ .]template\\b failed (.github/workflows/checks.yml)",
+   "how": "file:doctrine/template-boundary.json + file:foundation/template.py + grep:.github/workflows/checks.yml::foundation[ .]template\\b",
+   "id": "mirror-83545b0084",
+   "kind": "claim",
+   "pass": false,
    "surface": "seed/agents/AGENTS.md"
   },
   {
@@ -3376,8 +3331,8 @@ export default {
   }
  ],
  "summary": {
-  "drift": 0,
-  "pass": 372,
-  "total": 372
+  "drift": 2,
+  "pass": 365,
+  "total": 367
  }
 };

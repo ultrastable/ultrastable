@@ -147,6 +147,15 @@
       }
     },
     {
+      "id": "template-code-only",
+      "source": "agents/AGENTS.md",
+      "quote": "fails a change that brings admin material back",
+      "probe": {
+        "file": "foundation/template.py",
+        "contains": "admin material is back in the template"
+      }
+    },
+    {
       "id": "pathfinder-exhaustion",
       "source": "agents/AGENTS.md",
       "quote": "An ask without an exhaustion proof fails `python3 -m foundation pathfinder --check`",

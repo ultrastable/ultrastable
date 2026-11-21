@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check business/funding/registry.json for stale, expiring, passed or unreachable entries.
+"""Check instances/ultrastable/funding/registry.json for stale, expiring, passed or unreachable entries.
 
 Usage: funding_verify.py [--fetch] [--today YYYY-MM-DD] [--out report.json]
 Exit code is 0 when the check ran; findings are in the report. Failures to fetch are findings, never swallowed.

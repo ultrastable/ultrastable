@@ -97,10 +97,6 @@
    "reason": "bytecode caches, never committed"
   },
   {
-   "path": "ip",
-   "reason": "archived patent drafts kept verbatim as a record; nothing runs from them"
-  },
-  {
    "path": "repo-backups",
    "reason": "backup bundles of other repositories, not this system's code"
   },

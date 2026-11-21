@@ -1,0 +1,59 @@
+{
+  "_doc": "TEMPLATE-CODE-ONLY-1 (Rowan, 2026-11-21): the template a new system clones carries deployable code and agent instructions only. The company's own IP, legal, business and strategy papers live in the private ops repository (admin/). Consumer: foundation/template.py (python3 -m foundation template --check, a step in checks.yml).",
+  "rule": "TEMPLATE-CODE-ONLY-1",
+  "quote": "I thought the UltraStable template repo should be just code that can be deployed for any project. Instructions are fine, but does the IP need to be in the template?",
+  "admin_repo": "ultrastable/ops",
+  "moved": {
+    "ip/": "admin/ip/",
+    "business/": "admin/business/",
+    "docs/ip/": "admin/docs/ip/",
+    "docs/legal/": "admin/docs/legal/",
+    "docs/strategy/": "admin/docs/strategy/"
+  },
+  "instance_data": {
+    "_doc": "Live data Ultrastable's own loops read stays with its instance manifest, never at the template root.",
+    "instances/ultrastable/funding/": "funding registry, procedure, application packets, investor evidence (was business/funding/, business/investor/evidence.json)",
+    "instances/ultrastable/briefing/": "pitch and FAQ sources the social calendar quotes (was business/briefing/)",
+    "instances/ultrastable/name-clearance.json": "trademark clearance record the name-clearance blind-spot probe reads (was ip/name-clearance.json)"
+  },
+  "banned_names": [
+    "provisional-specification*",
+    "CLAIM-STRATEGY.md",
+    "FILING-CHECKLIST.md",
+    "invention-disclosure.md",
+    "prior-art.md",
+    "evidence-log.md",
+    "investor-one-pager.md",
+    "financial-model.md",
+    "data-room-index.md"
+  ],
+  "skip_dirs": [
+    ".git",
+    "node_modules",
+    "__pycache__",
+    ".selfhost",
+    ".wrangler"
+  ],
+  "seed_generic": {
+    "_doc": "Files the seed renders for every new system. They carry placeholders, never one instance's facts.",
+    "files": [
+      "seed/docs/PROJECT-MEMORY.template.md"
+    ],
+    "banned_tokens": [
+      "QNFO User License",
+      "ultrastable.org",
+      "patent drafts",
+      "business/plan",
+      "ORG_ADMIN_TOKEN",
+      "Rowan"
+    ]
+  },
+  "agent_files": [
+    "agents/AGENTS.md",
+    "seed/agents/AGENTS.md"
+  ],
+  "same_bytes": {
+    "_doc": "The kit a new system clones carries the canonical license, byte for byte.",
+    "seed/LICENSE": "LICENSE"
+  }
+}

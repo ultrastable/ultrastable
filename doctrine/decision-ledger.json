@@ -4208,6 +4208,15 @@
    "body": "PR 1762 conflicted with main on doctrine/claim-code.json (both sides kept) and stale generated files (regen_generated.sh). Issue SLA table matches doctrine/sla.json.",
    "probe": "file:foundation/balance.py",
    "session": "session_0156nqDtuzVqX3uUGd7Q9vKC"
+  },
+  {
+   "id": "decision-2026-11-21-template-code-only-1-template-repo-carries-code-and-agent-in",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "TEMPLATE-CODE-ONLY-1: template repo carries code and agent instructions only",
+   "body": "ip/, business/, docs/ip, docs/legal, docs/strategy moved to private ultrastable/ops admin/ (ops#39); live loop data moved to instances/ultrastable/; seed memory template made generic; foundation template --check guards it in checks.",
+   "probe": "grep:.github/workflows/checks.yml::foundation template --check",
+   "session": "https://claude.ai/code/session_0156nqDspXJUG7Zn1gEZQR5f"
   }
  ]
 }

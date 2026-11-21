@@ -32,6 +32,7 @@
   python3 -m foundation claims [--check|--fix|--apply|--file|--live]     CLAIMS-1: every claim on a surface is probed against code, both directions; /claims
   python3 -m foundation goalscheck [--check]                              GOALS-1: every goal has a measured variable, a deadline and a knob
   python3 -m foundation singleaccount [--check|--scan]                    SINGLE-ACCOUNT-1: nothing references the retired quniverse Cloudflare account
+  python3 -m foundation template [--check|--list]                         the template carries code and agent instructions only (TEMPLATE-CODE-ONLY-1)
   python3 -m foundation serverside [--check|--scan]                       server-side only: no host, scheduler, agent or route on a person's computer
   python3 -m foundation selfhost [--verify|--gaps|--no-node] [--db PATH]   Ultrastable boots its own organization from this repo
   python3 -m foundation glossary [--check|--apply|--show [ID]]            the owner's keywords, with tests, code and lineage
@@ -377,6 +378,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["singleaccount"]:
         from . import singleaccount
         return singleaccount.main(_av[1:])
+    if _av[:1] == ["template"]:
+        from . import template
+        return template.main(_av[1:])
     if _av[:1] == ["serverside"]:
         from . import serverside
         return serverside.main(_av[1:])

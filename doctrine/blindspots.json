@@ -80,9 +80,9 @@
    "id": "name-clearance",
    "domain": "ip",
    "why": "Another party may hold a trademark on the name; discovering that after launch forces a costly rename.",
-   "probe": "fresh:ip/name-clearance.json::at::120::clear",
+   "probe": "fresh:instances/ultrastable/name-clearance.json::at::120::clear",
    "class": "system",
-   "action": "ip/name-clearance.json: register and web searches with sources and a verdict, re-run every 120 days"
+   "action": "instances/ultrastable/name-clearance.json: register and web searches with sources and a verdict, re-run every 120 days"
   },
   {
    "id": "dependency-licences",
@@ -326,10 +326,10 @@
    "paths": [
     "LICENSE",
     "doctrine/dependency-licences.json",
-    "ip"
+    "instances/ultrastable/name-clearance.json"
    ],
    "data": [
-    "ip/name-clearance.json",
+    "instances/ultrastable/name-clearance.json",
     "doctrine/dependency-licences.json"
    ]
   }

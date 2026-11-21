@@ -424,6 +424,39 @@
    "owner_decision": "Rowan, 2026-11-20: 'Complete all work autonomously ... I'm going to put this down for months ... Resolve it, close it. I don't care ... I will do nothing.' The default below is adopted permanently; the connect link stays as an optional reopen route and the probe proves the default holds.",
    "reopen": "https://console.cloud.google.com/apis/credentials",
    "closed": "2026-11-20"
+  },
+  {
+   "id": "seed-public-visibility",
+   "surfaces": [
+    {
+     "s": "GitHub web settings in the owner's signed-in browser, 2026-11-21",
+     "result": "seed unarchived, kit merged (seed#7), Template repository checked; Make public stopped at GitHub sudo mode, which asks for the owner's passkey",
+     "class": "alternate-channel"
+    },
+    {
+     "s": "GitHub REST PATCH repos/ultrastable/seed from the cloud session",
+     "result": "refused by the session proxy (repository settings are admin-only; no ORG_ADMIN_TOKEN in org-settings)",
+     "class": "existing-credentials"
+    },
+    {
+     "s": "prior working configuration",
+     "class": "prior-working-config",
+     "na": "the repository has never been public; there is no earlier setting to restore"
+    },
+    {
+     "s": "sibling Workers and agents",
+     "class": "sibling-workers",
+     "na": "no Worker or agent in the org holds the owner's passkey; the org App has no administration scope for visibility"
+    },
+    {
+     "s": "construct the capability",
+     "class": "construct",
+     "na": "sudo mode is a passkey challenge GitHub issues to the owner's authenticator and cannot be built around; the default below is in effect"
+    }
+   ],
+   "reason": "changing a repository's visibility needs GitHub sudo mode, which only the owner's passkey or authenticator code opens",
+   "default": "ultrastable/seed is a private template usable by org members; ultrastable/ultrastable stays a public template too, so the /setup Make my copy link keeps working; nothing waits",
+   "probe": "cmd:python3 scripts/check_org_repos.py"
   }
  ]
 }
