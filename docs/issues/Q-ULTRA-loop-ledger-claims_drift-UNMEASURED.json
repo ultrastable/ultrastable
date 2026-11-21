@@ -1,7 +1,7 @@
 {
   "id": "Q-ULTRA-loop-ledger-claims_drift-UNMEASURED",
   "title": "Q-ULTRA-loop-ledger-claims_drift-UNMEASURED: essential variable loop-ledger:claims_drift cannot be read",
-  "body": "**Owner:** executor\n**Trigger:** `loop-ledger:claims_drift` has no fresh reading (source tenant.claims_drift)\n**Done check:** cmd:python3 -m foundation ultrastability --status\n**Status:** open\n\nAn unmeasured variable is never in bounds and never a reason to change the system. Make the reading (probe, writer or fresh ledger row) so the loop can judge it.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation ultrastability --status` shows `loop-ledger:claims_drift` with a value.\n",
+  "body": "**Owner:** executor\n**Trigger:** `loop-ledger:claims_drift` has no fresh reading (source tenant.claims_drift)\n**Done check:** cmd:python3 -m foundation ultrastability --status\n**Status:** open\n\nAn unmeasured variable is never in bounds and never a reason to change the system. Make the reading (probe, writer or fresh ledger row) so the loop can judge it.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation ultrastability --status` shows `loop-ledger:claims_drift` with a value.\n\n\n**Vacuous:** 2026-11-21T15:31:14Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n",
   "labels": [
     "p1",
     "agent-ready"
