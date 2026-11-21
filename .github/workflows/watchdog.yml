@@ -50,8 +50,6 @@ jobs:
         run: python3 -m foundation pathfinder --resolve-all
       - name: Projected unattended runway against the one-year target (RUNWAY-1)
         run: python3 -m foundation runway --run --apply --changed-file "$RUNNER_TEMP/changed"
-      - name: Every seed built, deployed and running a year unattended (SEED-SHIP-1)
-        run: python3 -m foundation seedship --run --apply --changed-file "$RUNNER_TEMP/changed"
       - name: Ultrastability tick (a stall is a second-order event)
         run: python3 -m foundation ultrastability --tick --apply
       - name: Record
@@ -63,5 +61,5 @@ jobs:
           git config user.name "ultrastable-watchdog"; git config user.email "actions@users.noreply.github.com"
           python3 -m foundation balance --gate --apply  # FLOW-BALANCE-1: the one filing gate before any item lands
           if [ -f ops/balance-held.jsonl ]; then git add ops/balance-held.jsonl; fi
-          git add ops/resilience.jsonl ops/ultrastability.jsonl ops/credwatch.json ops/runway.json ops/seedship.json ops/paths/attempts.jsonl docs/issues NEEDS-YOU.md foundation/data/needs-you.json doctrine/point-and-click.json
-          python3 scripts/land_data.py "watchdog: clock probe (RESILIENCE-1)" ops/resilience.jsonl ops/ultrastability.jsonl ops/credwatch.json ops/runway.json ops/seedship.json ops/paths/attempts.jsonl docs/issues NEEDS-YOU.md foundation/data/needs-you.json doctrine/point-and-click.json  # MAINWRITER-FALLBACK-1: main writer first, then a pull request
+          git add ops/resilience.jsonl ops/ultrastability.jsonl ops/credwatch.json ops/runway.json ops/paths/attempts.jsonl docs/issues NEEDS-YOU.md foundation/data/needs-you.json doctrine/point-and-click.json
+          python3 scripts/land_data.py "watchdog: clock probe (RESILIENCE-1)" ops/resilience.jsonl ops/ultrastability.jsonl ops/credwatch.json ops/runway.json ops/paths/attempts.jsonl docs/issues NEEDS-YOU.md foundation/data/needs-you.json doctrine/point-and-click.json  # MAINWRITER-FALLBACK-1: main writer first, then a pull request

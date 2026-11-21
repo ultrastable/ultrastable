@@ -143,6 +143,9 @@ def run(root=REPO, apply=False, today=None) -> dict:
             p = root / "docs/issues" / f"Q-RUNWAY-{name}.json"
             if not p.exists():
                 p.write_text(json.dumps(item(name, m["components"][name], m["target_days"]), indent=2) + "\n", encoding="utf-8"); changed = True
+        # SEED-SHIP-1: every seed is part of the year; the watchdog's runway pass files and closes the Q-SEED items too.
+        from . import seedship
+        changed = seedship.run(root, apply=True)["changed"] or changed
     return {**m, "changed": changed}
 
 

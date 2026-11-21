@@ -14,7 +14,7 @@ A seed that stops at a design proposal has shipped nothing. This module computes
   python3 -m foundation seedship --probe ID         exit 0 when that seed is autonomous (the done check of its Q-SEED item)
   python3 -m foundation seedship --report           one line per seed
 
-Data: doctrine/seed-ship.json, instances/<id>/ship.json. Consumers: .github/workflows/checks.yml, .github/workflows/watchdog.yml,
+Data: doctrine/seed-ship.json, instances/<id>/ship.json. Consumers: foundation/progress.py check (in checks), foundation/runway.py run (watchdog),
 doctrine/detectors.json (seed-ship), seed/bootstrap/bootstrap.py (stage unattended), tests/foundation/test_seedship.py."""
 from __future__ import annotations
 

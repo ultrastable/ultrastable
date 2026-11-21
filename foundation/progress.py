@@ -73,6 +73,10 @@ def check(root=REPO) -> list[str]:
             bad.append(f"{rel}: missing")
             continue
         bad += [f"{rel}: no longer carries `{n}`" for n in needles if n not in t]
+    # SEED-SHIP-1: a seed that was never built, deployed and made autonomous cannot show progress; the seed gate runs with this check.
+    from . import seedship
+    if (Path(root) / seedship.DATA).exists():  # a scratch tree without the seed doctrine; the repository's own copy is held by tests/foundation/test_seedship.py
+        bad += [f"SEED-SHIP-1: {b}" for b in seedship.check(root)]
     return bad
 
 
