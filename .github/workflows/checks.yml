@@ -126,7 +126,6 @@ jobs:
           python3 -m foundation openloops --check
           python3 -m foundation strays --check
           python3 -m foundation progress --check
-          python3 -m foundation seedlife --check
           python3 -m foundation cfposture --check
           python3 -m foundation standingorder --check
           python3 -m foundation rules --check

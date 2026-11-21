@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-21-agent-branches-never-edit-workflows-wire-new-loops-through-s",
+  "kind": "lesson",
+  "date": "2026-11-21",
+  "title": "Agent branches never edit workflows; wire new loops through steps that already run",
+  "body": "worker-gate refuses any .github/ path on a claude/* or agent/* branch. SEED-LIFECYCLE-1 runs inside the watchdog runway step and openloops --check instead of new workflow steps.",
+  "probe": "grep:foundation/runway.py::seedlife"
+ },
+ "kind": "lesson",
+ "title": "Agent branches never edit workflows; wire new loops through steps that already run",
+ "session": ""
+}

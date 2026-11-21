@@ -50,6 +50,29 @@ def _iso(s: str):
         return None
 
 
+def verify_rows(root: Path, cfg: dict, slug: str) -> list[dict]:
+    """Readings live in a JSON store under a key per seed (verify_store, verify_key) or in one JSONL ledger per seed (verify_ledger)."""
+    if cfg.get("verify_store"):
+        return ((_load(root / cfg["verify_store"], {}) or {}).get(cfg.get("verify_key", "seed_verify")) or {}).get(slug) or []
+    return _rows(root / cfg["verify_ledger"].format(slug=slug))
+
+
+def record_verify(root: Path, cfg: dict, slug: str, row: dict, keep: int = 30) -> None:
+    if cfg.get("verify_store"):
+        p = root / cfg["verify_store"]
+        d = _load(p, {}) or {}
+        k = cfg.get("verify_key", "seed_verify")
+        d.setdefault(k, {})
+        d[k][slug] = (d[k].get(slug) or [])[-(keep - 1):] + [row]
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(json.dumps(d, indent=1) + "\n", encoding="utf-8")
+        return
+    p = root / cfg["verify_ledger"].format(slug=slug)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    with p.open("a", encoding="utf-8", newline="\n") as f:
+        f.write(json.dumps(row, separators=(",", ":")) + "\n")
+
+
 def resolves(root: Path, probe) -> bool:
     """file:PATH exists, or cmd:python3 -m foundation MOD ... / cmd:python3 scripts/X.py ... names a module that exists."""
     kind, _, arg = str(probe or "").partition(":")
@@ -133,7 +156,7 @@ def evaluate(root, seed_dir, lc_path, cfg: dict, core: dict, now=None) -> dict:
         return done(stage, "deployed")
     stage = "deployed"
     v = lc.get("verify") or {}
-    ok = [r for r in _rows(root / cfg["verify_ledger"].format(slug=slug)) if r.get("ok")]
+    ok = [r for r in verify_rows(root, cfg, slug) if r.get("ok")]
     fresh = ok and (_iso(ok[-1].get("at")) or now) >= now - dt.timedelta(hours=cfg["verify_max_age_hours"])
     if not (v.get("url", "").startswith("https://") and v.get("expect")) or not fresh:
         need.append(f"live: a passing verify of {v.get('url') or '(no https url)'} expecting {v.get('expect')!r} inside {cfg['verify_max_age_hours']} h")

@@ -5,7 +5,7 @@ Ultrastable is the foundation for any autonomous system.
 
   python3 -m foundation seedlife --check            every lifecycle is well formed and no seed is reported further along than its evidence
   python3 -m foundation seedlife --status [SLUG]    computed stage, next stage, what it needs, the gates it runs on, the open survival classes
-  python3 -m foundation seedlife --verify [--apply] fetch each seed's verify URL and append the reading to ops/seeds/<slug>.jsonl
+  python3 -m foundation seedlife --verify [--apply] fetch each seed's verify URL and append the reading to ops/runway.json (key seed_verify, carried over by the runway loop)
   python3 -m foundation seedlife --run [--apply] [--no-verify]  verify, scaffold a missing lifecycle.json, and file or refresh one Q-SEED-<slug> item per seed
                                                     that is not autonomous (closing probe: --probe SLUG); runs on every watchdog pass
   python3 -m foundation seedlife --probe SLUG       exit 0 only when the seed is autonomous
@@ -139,10 +139,7 @@ def verify(root=REPO, apply=False, fetch=None, now=None) -> list[dict]:
             row = {"at": now.strftime("%Y-%m-%dT%H:%M:%SZ"), "url": v["url"], "status": None, "ok": False, "error": str(e)[:200]}
         out.append({"slug": s, **row})
         if apply:
-            p = root / c["verify_ledger"].format(slug=s)
-            p.parent.mkdir(parents=True, exist_ok=True)
-            with p.open("a", encoding="utf-8", newline="\n") as f:
-                f.write(json.dumps(row, separators=(",", ":")) + "\n")
+            core_engine.record_verify(root, c, s, row)
     return out
 
 
