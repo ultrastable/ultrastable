@@ -112,12 +112,6 @@ export default {
     "id": "watchdog",
     "source": "workflow",
     "what": "RESILIENCE-1: the GitHub watchdog that probes every clock and restarts the stopped ones; the tick Worker dispatches it again when it is older than 12 hours"
-   },
-   {
-    "expected_interval_s": 86400,
-    "id": "temporal",
-    "source": "workflow",
-    "what": "the daily trend read: series per component, loop and entry, and what they show"
    }
   ],
   "watchdog_escalation": [
@@ -561,7 +555,6 @@ export default {
   "social-post",
   "spinoff",
   "strange-loop-hygiene",
-  "temporal",
   "tenant-sync",
   "terms-crosswalk",
   "thought",
@@ -1810,7 +1803,8 @@ export default {
     "summary": "Check every public claim against the deployed sites and file a repair item per failure.",
     "trigger": "automatic: daily schedule",
     "workflows": [
-     "smoke-live"
+     "smoke-live",
+     "owner-links-audit"
     ]
    },
    {
@@ -1850,19 +1844,6 @@ export default {
     "trigger": "daily (social-post.yml), one piece per cadence_days; a changed measured result goes first",
     "workflows": [
      "social-post"
-    ]
-   },
-   {
-    "closing_probe": "grep:foundation/temporal.py::def diagnose",
-    "id": "temporal",
-    "kind": "governance",
-    "owner": "operations",
-    "server_owner": "github-actions",
-    "sla": "1d",
-    "summary": "TEMPORAL-1: time and iteration are part of the system. The loop reads the history of this repository and of each tenant into daily series per component, loop and entry, finds hotspots, neglect, stale entries, stopped loops and repeated failures from the trends, and files each into the queue that fixes it, the failure-mode audit, the pathfinder and the executor's attention weights.",
-    "trigger": "daily workflow and on demand",
-    "workflows": [
-     "temporal"
     ]
    }
   ],
@@ -2080,6 +2061,12 @@ export default {
     ]
    },
    {
+    "id": "owner-links-audit",
+    "loops": [
+     "smoke-live"
+    ]
+   },
+   {
     "id": "platform-core",
     "loops": [
      "platform-core-tests"
@@ -2136,12 +2123,6 @@ export default {
     "id": "spinoff",
     "loops": [
      "spinoff"
-    ]
-   },
-   {
-    "id": "temporal",
-    "loops": [
-     "temporal"
     ]
    },
    {
