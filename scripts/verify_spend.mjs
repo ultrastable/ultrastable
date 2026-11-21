@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
 // VERIFY-1: property-based conformance of the real spend governor (seed/worker/src/spend.js) to the model in foundation/verify.py.
 // Prints one JSON line: the BANDS the model reads and the result of each property over a seeded random and boundary sample.
-import { BANDS, level } from '../seed/worker/src/spend.js';
+const { BANDS, level } = await import(process.argv[2] || new URL('../seed/worker/src/spend.js', import.meta.url).href);
 let seed = 20261121; const rnd = () => ((seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648);
 const shares = [0, 0.4999, 0.5, 0.6999, 0.7, 0.8999, 0.9, 1, 10, 1e9, -1, NaN, Infinity];
 for (let i = 0; i < 2000; i++) shares.push(rnd() * 3);

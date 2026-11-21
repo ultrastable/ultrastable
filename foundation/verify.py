@@ -20,12 +20,21 @@ deadlock), and from every reachable state a goal state is reachable (AG EF goal:
   python3 -m foundation verify --report    the same, and write ops/verification.json (coverage of verified invariants)
 """
 from __future__ import annotations
-import json, subprocess, sys
+import json, re, subprocess, sys
 from collections import deque
 from datetime import datetime, timezone
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
+# The same file runs in ultrastable/ultrastable (foundation/verify.py) and in the seed (scripts/verify.py), so every new system inherits it.
+# A model whose source is absent in a system is reported as not applicable, never as a pass.
+
+
+def worker_src(root=REPO):
+    for c in ("seed/worker/src", "worker/src"):
+        if (root / c / "tick.js").exists():
+            return root / c
+    return None
 REGISTER = "doctrine/verification.json"
 
 
@@ -96,8 +105,7 @@ def governor_model(bands):
 
 
 # ---- model 2: merge lane (DRAIN-ALL-1, AUTO-SHIP-CLEAN-1). PR phase and retry counter (bounded: Power of Ten rule 2).
-MAX_RETRY = 3
-def merge_lane_model():
+def merge_lane_model(MAX_RETRY=3):
     T = {"merged", "superseded"}
     def succ(s):
         ph, n = s
@@ -139,8 +147,8 @@ def second_loop_model(ladder_len, k=4):
 
 
 # ---- model 4: halt and tick (HALT-1). One halt stops every step; without it the essential steps run every tick.
-STEPS = ("measure", "reconcile", "dispatch", "merge", "deploy")
-def halt_model():
+def halt_model(STEPS=("migrate", "reconcile", "measure", "criticality")):
+    STEPS = tuple(STEPS)
     def succ(s):
         halted, ran = s
         yield ("tick", (halted, frozenset() if halted else frozenset(STEPS)))
@@ -151,12 +159,61 @@ def halt_model():
 
 
 def spend_conformance(root=REPO) -> dict:
-    p = subprocess.run(["node", str(root / "scripts/verify_spend.mjs")], capture_output=True, text=True, timeout=120)
+    return _node(root, "scripts/verify_spend.mjs", "spend.js")
+
+
+NA = {"ok": True, "na": True, "states": 0, "violations": []}
+
+
+def _node(root, script, needs) -> dict:
+    w = worker_src(root)
+    if w is None or not (w / needs).exists():
+        return dict(NA, fail={})
+    p = subprocess.run(["node", str(root / script), (w / needs).as_uri()], capture_output=True, text=True, timeout=120)
     if p.returncode != 0:
         return {"ok": False, "error": (p.stderr or p.stdout)[-800:]}
-    d = json.loads(p.stdout.strip().splitlines()[-1])
-    d["ok"] = not any(d["fail"].values())
+    d = json.loads(p.stdout.strip().splitlines()[-1]); d["ok"] = not any(d["fail"].values())
     return d
+
+
+def lane_conformance(root=REPO) -> dict:
+    """Runtime-path monitor for lane-retries-bounded: the handoff closer's retry constants are finite and exhausting them blocks the item
+    (seed/worker/src/handoff.js), so the model's bound is the deployed bound."""
+    w = worker_src(root)
+    if w is None or not (w / "handoff.js").exists():
+        return dict(NA, fail={})
+    src = (w / "handoff.js").read_text(encoding="utf-8")
+    m = re.search(r"const MAX_ATTEMPTS = (\d+);", src); v = re.search(r"const VERIFY_TRIES = (\d+);", src)
+    fail = {"max_attempts_missing": [] if m else ["MAX_ATTEMPTS"], "verify_tries_missing": [] if v else ["VERIFY_TRIES"],
+            "exhaustion_does_not_block": [] if re.search(r"n >= MAX_ATTEMPTS\)\s*\{[^}]*'blocked'", src) else ["blocked branch"]}
+    return {"ok": not any(fail.values()), "max_attempts": int(m.group(1)) if m else None, "fail": fail}
+
+
+def tick_conformance(root=REPO) -> dict:
+    """Read the step lists from seed/worker/src/tick.js as source (the module imports shared core paths a seed checkout may not have, so it is
+    parsed, not imported): every essential step is in the step order and is kept at every spend level."""
+    w = worker_src(root)
+    if w is None:
+        return dict(NA, fail={})
+    src = (w / "tick.js").read_text(encoding="utf-8")
+    def arr(name):
+        m = re.search(r"export const " + name + r" = \[([^\]]*)\]", src)
+        if not m:
+            return None
+        out = []
+        for part in m.group(1).split(","):
+            part = part.strip()
+            if part.startswith("..."):
+                out += arr(part[3:]) or []
+            elif part:
+                out.append(part.strip("'\""))
+        return out
+    order, ess, keep = arr("STEP_ORDER"), arr("COST_ESSENTIAL_STEPS"), arr("SPEND_KEEP_STEPS")
+    if not (order and ess):
+        return {"ok": False, "error": "STEP_ORDER or COST_ESSENTIAL_STEPS not found in tick.js", "fail": {"parse": ["tick.js"]}}
+    keep = order if keep is None else keep  # a tick with no spend governor (older seed copies) throttles nothing
+    fail = {"missing_in_order": [x for x in ess if x not in order], "dropped_when_throttled": [x for x in ess if x not in keep]}
+    return {"ok": not any(fail.values()), "essential": ess, "fail": fail}
 
 
 def run(root=REPO) -> dict:
@@ -165,10 +222,14 @@ def run(root=REPO) -> dict:
     results = {"spend-conformance": conf}
     if conf.get("bands"):
         results["governor"] = governor_model(conf["bands"])
+    elif conf.get("na"):
+        results["governor"] = dict(NA)
     else:
         results["governor"] = {"ok": False, "violations": [{"kind": "input", "name": "bands-unreadable", "trace": []}]}
-    results["merge-lane"] = merge_lane_model()
-    ultra = json.loads((root / "doctrine/ultrastability.json").read_text(encoding="utf-8"))
+    lane = lane_conformance(root); results["lane-conformance"] = lane
+    results["merge-lane"] = merge_lane_model(lane.get("max_attempts") or 3)
+    up = root / "doctrine/ultrastability.json"
+    ultra = json.loads(up.read_text(encoding="utf-8")) if up.exists() else {"scopes": {}}
     lens = sorted({len(v.get("ladder", [])) for sc in ultra["scopes"].values() for v in sc.get("variables", [])})
     results["second-loop"] = {"ok": True, "ladders": lens, "states": 0, "violations": []}
     for n in lens:
@@ -176,10 +237,13 @@ def run(root=REPO) -> dict:
         results["second-loop"]["states"] += r["states"]
         if not r["ok"]:
             results["second-loop"]["ok"] = False; results["second-loop"]["violations"] += r["violations"]
-    results["halt"] = halt_model()
+    tick = tick_conformance(root); results["tick-conformance"] = tick
+    results["halt"] = halt_model(tick["essential"]) if tick.get("essential") else dict(NA)
     inv = []
     for i in reg["invariants"]:
         m = results.get(i["model"], {}); c = results.get(i.get("conformance") or "", {})
+        if m.get("na"):
+            continue
         mc = bool(m.get("ok")) and not any(v["name"] == i["property"] for v in m.get("violations", []))
         inv.append({"id": i["id"], "model_checked": mc, "code_conformance": bool(i.get("conformance")) and bool(c.get("ok")),
                     "runtime_monitor": i.get("monitor"), "source": i["source"]})
@@ -189,16 +253,36 @@ def run(root=REPO) -> dict:
                          "share": round(full / len(inv), 3) if inv else 0.0}}
 
 
+DATA = "site/verification-data.js"
+
+
+def data_text(out) -> str:
+    """Front-end module (no timestamp, so it changes only when a result changes: SUBSTANCE-1)."""
+    reg = json.loads((REPO / REGISTER).read_text(encoding="utf-8"))
+    d = {"marker": "VERIFY-1", "ok": out["ok"], "coverage": out["coverage"], "sources": reg["sources"],
+         "models": {k: {"ok": bool(v.get("ok")), "states": v.get("states", v.get("samples"))} for k, v in out["results"].items()},
+         "invariants": out["invariants"]}
+    return ("// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0\n// GENERATED by python3 -m foundation verify --data --apply from "
+            "doctrine/verification.json and the model checks. Do not edit; verify --check fails when stale.\nexport default "
+            + json.dumps(d, indent=1, sort_keys=True) + ";\n")
+
+
 def main(argv=None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
     out = run()
     for k, r in out["results"].items():
-        print(f"{'ok  ' if r.get('ok') else 'FAIL'} {k}: states={r.get('states', r.get('samples', '-'))}")
+        print(f"{'n/a ' if r.get('na') else 'ok  ' if r.get('ok') else 'FAIL'} {k}: states={r.get('states', r.get('samples', '-'))}")
         for v in r.get("violations", []) or []:
             print(f"     {v['kind']} {v['name']}: " + " -> ".join(f"{t['via']}:{t['state']}" for t in v["trace"][-6:]))
         if r.get("error"): print("     " + r["error"])
     c = out["coverage"]
     print(f"VERIFY-1 coverage: {c['tied_to_code']}/{c['invariants']} invariants model-checked and tied to code ({c['share']:.0%})")
+    if ("--data" in argv or "--check" in argv) and (REPO / "site").is_dir():
+        want = data_text(out); p = REPO / DATA
+        if "--apply" in argv:
+            p.write_text(want, encoding="utf-8")
+        elif not p.exists() or p.read_text(encoding="utf-8") != want:
+            print(f"FAIL {DATA} is stale: run python3 -m foundation verify --data --apply"); return 1
     if "--report" in argv:
         rep = {**out, "generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")}
         rep["results"] = {k: {kk: vv for kk, vv in v.items() if kk != "fail"} for k, v in out["results"].items()}

@@ -11,14 +11,99 @@
   "ashby": "W. R. Ashby, Design for a Brain, 1952"
  },
  "invariants": [
-  {"id": "soft-cap-never-halts", "model": "governor", "property": "essential-loops-run-in-every-band", "conformance": "spend-conformance", "monitor": null, "source": ["tla-aws", "quickcheck"]},
-  {"id": "throttle-springs-back", "model": "governor", "property": "goal-always-reachable", "conformance": "spend-conformance", "monitor": null, "source": ["tla-aws"]},
-  {"id": "merge-only-from-green", "model": "merge-lane", "property": "merge-only-from-green", "conformance": null, "monitor": "python3 -m foundation mergeaudit --check", "source": ["tla-aws", "do-178c"]},
-  {"id": "no-pr-stalls", "model": "merge-lane", "property": "goal-always-reachable", "conformance": null, "monitor": "python3 -m foundation lanewatch --check", "source": ["tla-aws"]},
-  {"id": "lane-retries-bounded", "model": "merge-lane", "property": "retry-bounded", "conformance": null, "monitor": null, "source": ["power-of-ten"]},
-  {"id": "second-loop-never-gives-up", "model": "second-loop", "property": "goal-always-reachable", "conformance": null, "monitor": "python3 -m foundation ultrastability --check", "source": ["ashby", "tla-aws"]},
-  {"id": "bounds-never-edited-to-clear", "model": "second-loop", "property": "bounds-never-edited", "conformance": null, "monitor": "python3 -m foundation ultrastability --check", "source": ["ashby"]},
-  {"id": "one-halt-stops-everything", "model": "halt", "property": "halt-stops-everything", "conformance": null, "monitor": "node --test seed/worker/test/budget.test.js", "source": ["power-of-ten", "do-178c"]},
-  {"id": "essential-steps-every-tick", "model": "halt", "property": "no-halt-runs-every-essential-step", "conformance": null, "monitor": null, "source": ["tla-aws"]}
+  {
+   "id": "soft-cap-never-halts",
+   "model": "governor",
+   "property": "essential-loops-run-in-every-band",
+   "conformance": "spend-conformance",
+   "monitor": null,
+   "source": [
+    "tla-aws",
+    "quickcheck"
+   ]
+  },
+  {
+   "id": "throttle-springs-back",
+   "model": "governor",
+   "property": "goal-always-reachable",
+   "conformance": "spend-conformance",
+   "monitor": null,
+   "source": [
+    "tla-aws"
+   ]
+  },
+  {
+   "id": "merge-only-from-green",
+   "model": "merge-lane",
+   "property": "merge-only-from-green",
+   "conformance": null,
+   "monitor": "python3 -m foundation mergeaudit --check",
+   "source": [
+    "tla-aws",
+    "do-178c"
+   ]
+  },
+  {
+   "id": "no-pr-stalls",
+   "model": "merge-lane",
+   "property": "goal-always-reachable",
+   "conformance": null,
+   "monitor": "python3 -m foundation lanewatch --check",
+   "source": [
+    "tla-aws"
+   ]
+  },
+  {
+   "id": "lane-retries-bounded",
+   "model": "merge-lane",
+   "property": "retry-bounded",
+   "conformance": "lane-conformance",
+   "monitor": null,
+   "source": [
+    "power-of-ten"
+   ]
+  },
+  {
+   "id": "second-loop-never-gives-up",
+   "model": "second-loop",
+   "property": "goal-always-reachable",
+   "conformance": null,
+   "monitor": "python3 -m foundation ultrastability --check",
+   "source": [
+    "ashby",
+    "tla-aws"
+   ]
+  },
+  {
+   "id": "bounds-never-edited-to-clear",
+   "model": "second-loop",
+   "property": "bounds-never-edited",
+   "conformance": null,
+   "monitor": "python3 -m foundation ultrastability --check",
+   "source": [
+    "ashby"
+   ]
+  },
+  {
+   "id": "one-halt-stops-everything",
+   "model": "halt",
+   "property": "halt-stops-everything",
+   "conformance": "tick-conformance",
+   "monitor": "node --test seed/worker/test/budget.test.js",
+   "source": [
+    "power-of-ten",
+    "do-178c"
+   ]
+  },
+  {
+   "id": "essential-steps-every-tick",
+   "model": "halt",
+   "property": "no-halt-runs-every-essential-step",
+   "conformance": "tick-conformance",
+   "monitor": null,
+   "source": [
+    "tla-aws"
+   ]
+  }
  ]
 }

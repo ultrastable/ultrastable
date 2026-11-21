@@ -33,6 +33,10 @@
    "states": 21,
    "violations": []
   },
+  "lane-conformance": {
+   "ok": true,
+   "max_attempts": 3
+  },
   "merge-lane": {
    "ok": true,
    "states": 26,
@@ -46,6 +50,15 @@
    ],
    "states": 13,
    "violations": []
+  },
+  "tick-conformance": {
+   "ok": true,
+   "essential": [
+    "migrate",
+    "reconcile",
+    "measure",
+    "criticality"
+   ]
   },
   "halt": {
    "ok": true,
@@ -95,7 +108,7 @@
   {
    "id": "lane-retries-bounded",
    "model_checked": true,
-   "code_conformance": false,
+   "code_conformance": true,
    "runtime_monitor": null,
    "source": [
     "power-of-ten"
@@ -123,7 +136,7 @@
   {
    "id": "one-halt-stops-everything",
    "model_checked": true,
-   "code_conformance": false,
+   "code_conformance": true,
    "runtime_monitor": "node --test seed/worker/test/budget.test.js",
    "source": [
     "power-of-ten",
@@ -133,7 +146,7 @@
   {
    "id": "essential-steps-every-tick",
    "model_checked": true,
-   "code_conformance": false,
+   "code_conformance": true,
    "runtime_monitor": null,
    "source": [
     "tla-aws"
@@ -143,8 +156,8 @@
  "coverage": {
   "invariants": 9,
   "model_checked": 9,
-  "tied_to_code": 7,
-  "share": 0.778
+  "tied_to_code": 9,
+  "share": 1.0
  },
- "generated": "2026-11-21T16:24:18Z"
+ "generated": "2026-11-21T16:30:05Z"
 }
