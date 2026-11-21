@@ -38,11 +38,26 @@ test("an active zone gets its domains, routes and email routing; existing ones a
   const { f, calls } = fake({ "ultrastable.io": "active" }, { domains: ["www.ultrastable.io"] });
   const r = await zoneCutover(env, f, io);
   assert.equal(r.status, "ok");
-  assert.deepEqual(r.zones["ultrastable.io"].attached, ["ultrastable.io", "*.ultrastable.io/*"]);
+  assert.deepEqual(r.zones["ultrastable.io"].attached, ["ultrastable.io", "*.ultrastable.io/*", "mail:hello@ultrastable.io", "mail:pilot@ultrastable.io", "mail:catch-all"]);
   assert.deepEqual(r.zones["ultrastable.io"].kept, ["www.ultrastable.io"]);
   assert.equal(r.zones["ultrastable.io"].email, "enabled");
-  assert.equal(calls.filter(c => c.startsWith("PUT")).length, 1);
+  assert.equal(calls.filter(c => c.startsWith("PUT")).length, 2);  // one custom domain, the catch-all rule
   assert.ok(!calls.some(c => c.startsWith("DELETE")));
+});
+
+test("mail rules that already exist are kept, not duplicated (MAIL-RULES-1)", async () => {
+  const io = PLAN.filter(p => p.zone === "ultrastable.io");
+  const { f, calls } = fake({ "ultrastable.io": "active" }, { domains: ["ultrastable.io", "www.ultrastable.io"], routes: ["*.ultrastable.io/*"], email: true });
+  const f2 = async (url, init) => {
+    const p = new URL(url).pathname;
+    if (init.method === "GET" && p.endsWith("/email/routing/rules")) return { ok: true, status: 200, json: async () => ({ success: true, result: [{ matchers: [{ type: "literal", value: "hello@ultrastable.io" }, ] }, { matchers: [{ type: "literal", value: "pilot@ultrastable.io" }] }] }) };
+    if (init.method === "GET" && p.endsWith("/catch_all")) return { ok: true, status: 200, json: async () => ({ success: true, result: { enabled: true, actions: [{ type: "worker", value: ["ultrastable-mail-in"] }] } }) };
+    return f(url, init);
+  };
+  const r = await zoneCutover(env, f2, io);
+  assert.equal(r.status, "ok");
+  assert.deepEqual(r.zones["ultrastable.io"].attached, []);
+  assert.ok(!calls.some(c => c.startsWith("POST") || c.startsWith("PUT")));
 });
 
 test("a refused step is reported as error and stays error", async () => {

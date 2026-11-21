@@ -3,8 +3,8 @@
   "target": {
     "id": "81e3a4efb4eb66e613529b87682911bb",
     "named_by": "Rowan 2026-11-11",
-    "state": "running",
-    "gate": "IC-GATE-001 identity-bound, narrowed 2026-11-14: the connector reaches the account, but no API token for it exists, so GitHub (secrets CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID) and the site worker (CF_DEPLOY_TOKEN) still deploy to the old account. Minting a token is creating a credential in the owner's account. Default in effect: the old account keeps running everything. Closing probe: `python3 scripts/cf_account.py probe` with DST_CLOUDFLARE_API_TOKEN bound reports target_reachable true.",
+    "state": "primary: every Worker, D1, KV, R2, registration and the app, net and org zones (2026-11-21)",
+    "gate": "closed 2026-11-21: deploys use the OIDC route and CLOUDFLARE_API_TOKEN bound to this account (ops/deploys.jsonl).",
     "move": "see deploy/transfer/plan.json assets",
     "name": "ultrastable",
     "workers_dev": "ultrastable.workers.dev",
@@ -14,7 +14,7 @@
   "current": {
     "id": "edb167b78c9fb901ea5bca3ce58ccc4b",
     "name": "quniverse",
-    "state": "retired for deploys (retired_account_ids); still holds the zones and the assets listed by python3 -m foundation singleaccount --moved"
+    "state": "retired. Holds nothing of Ultrastable or Practical Solutions except, until ultrastable.io's delegation lands, a stateless forwarder and two mail relays on the ultrastable.io zone (ops/account-move.json zone:ultrastable.io); probe: python3 -m foundation singleaccount --live"
   },
   "retired_account_ids": [
     "edb167b78c9fb901ea5bca3ce58ccc4b"

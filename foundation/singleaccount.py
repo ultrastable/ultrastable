@@ -5,12 +5,13 @@
   python3 -m foundation singleaccount --check    no file names the quniverse account or one of its Ultrastable assets
   python3 -m foundation singleaccount --scan     one line per match
   python3 -m foundation singleaccount --moved    exit 1 while an item in ops/account-move.json is not moved (ops/account-move.json)
+  python3 -m foundation singleaccount --live     exit 1 when a live Ultrastable asset sits outside the ultrastable account (SINGLE-ACCOUNT-LIVE-1)
 
 Rule and patterns: doctrine/single-account.json. Consumers: .github/workflows/checks.yml, doctrine/rules.json (single-account),
 tests/foundation/test_singleaccount.py. The move records (deploy/transfer, the retired-account list) are the only allowed mentions.
 """
 from __future__ import annotations
-import fnmatch, json, os, re, sys
+import fnmatch, json, os, re, sys, urllib.request, urllib.parse
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
@@ -57,7 +58,84 @@ def moved(root=REPO) -> list[str]:
     return [k for k, v in d["items"].items() if v != "moved"]
 
 
+CF = "https://api.cloudflare.com/client/v4"
+DOH = "https://cloudflare-dns.com/dns-query"
+
+
+def _get(url, token=None):
+    req = urllib.request.Request(url, headers={"accept": "application/dns-json" if url.startswith(DOH) else "application/json",
+                                               **({"authorization": "Bearer " + token} if token else {})})
+    with urllib.request.urlopen(req, timeout=20) as r:
+        return json.loads(r.read().decode("utf-8"))
+
+
+def _cf_list(get, token, path):
+    out, page = [], 1
+    while True:
+        j = get(f"{CF}{path}{'&' if '?' in path else '?'}per_page=50&page={page}", token)
+        res = j.get("result") or []
+        out += res if isinstance(res, list) else (res.get("buckets") or [])
+        info = j.get("result_info") or {}
+        if not isinstance(res, list) or page >= int(info.get("total_pages") or 1):
+            return out
+        page += 1
+
+
+def live(root=REPO, get=_get, token=None) -> dict:
+    """SINGLE-ACCOUNT-LIVE-1 (Rowan 2026-11-21: zero Ultrastable assets, records or anything else in quniverse).
+    Route 1, no credential: every Ultrastable domain answers with the ultrastable account's name servers (public DNS over HTTPS).
+    Route 2, CLOUDFLARE_API_TOKEN: every account the token can read other than the ultrastable account holds no zone, Worker, D1, KV
+    namespace, R2 bucket or registration whose name matches doctrine/single-account.json `live.asset_patterns`. An account the token
+    cannot see is reported as unmeasured, never as clean."""
+    d = load(root)["live"]
+    rx = re.compile(d["asset_patterns"])
+    problems, notes = [], []
+    want = set(d["expected_ns"])
+    for dom in d["domains"]:
+        try:
+            ans = get(f"{DOH}?name={urllib.parse.quote(dom)}&type=NS").get("Answer") or []
+            got = {a["data"].rstrip(".").lower() for a in ans if a.get("type") == 2}
+            if got != want:
+                problems.append(f"dns {dom}: name servers {sorted(got)} are not the ultrastable account's {sorted(want)}")
+        except Exception as e:  # unreadable is a failure here: the domains are public
+            problems.append(f"dns {dom}: unreadable ({str(e)[:80]})")
+    token = token if token is not None else os.environ.get("CLOUDFLARE_API_TOKEN")
+    if not token:
+        notes.append("accounts: unmeasured (no CLOUDFLARE_API_TOKEN)")
+    else:
+        try:
+            accts = _cf_list(get, token, "/accounts")
+            others = [a for a in accts if a.get("id") != load(root)["required_account"]["id"]]
+            if not others:
+                notes.append("accounts: only the ultrastable account is visible to this token; other accounts unmeasured")
+            for a in others:
+                aid = a["id"]
+                lists = {
+                    "zone": [z["name"] + (f" (status {z['status']})" if z.get("status") not in (None, "active") else "") for z in _cf_list(get, token, f"/zones?account.id={aid}")],  # a moved zone shell still counts until it is gone
+                    "worker": [w["id"] for w in _cf_list(get, token, f"/accounts/{aid}/workers/scripts")],
+                    "d1": [x["name"] for x in _cf_list(get, token, f"/accounts/{aid}/d1/database")],
+                    "kv": [x["title"] for x in _cf_list(get, token, f"/accounts/{aid}/storage/kv/namespaces")],
+                    "r2": [x["name"] for x in _cf_list(get, token, f"/accounts/{aid}/r2/buckets")],
+                    "registration": [x["name"] for x in _cf_list(get, token, f"/accounts/{aid}/registrar/domains")],
+                }
+                for kind, names in lists.items():
+                    for n in names:
+                        if rx.search(n):
+                            problems.append(f"account {a.get('name') or aid}: {kind} {n}")
+        except Exception as e:
+            notes.append(f"accounts: unmeasured ({str(e)[:120]})")
+    return {"ok": not problems, "problems": problems, "notes": notes}
+
+
 def main(argv) -> int:
+    if argv[:1] == ["--live"]:
+        r = live()
+        for p in r["problems"]:
+            print("FAIL " + p)
+        for n in r["notes"]:
+            print("note " + n)
+        print("single-account live: " + ("ok" if r["ok"] else f"{len(r['problems'])} Ultrastable asset(s) outside the ultrastable account"))
+        return 0 if r["ok"] else 1
     if argv[:1] == ["--moved"]:
         left = moved()
         print("\n".join("pending: " + k for k in left) or "account move complete")

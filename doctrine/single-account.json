@@ -12,6 +12,12 @@
     {"id": "quniverse-kv-assets", "pattern": "c6ca64dddec5489cbcee896113949eba"},
     {"id": "quniverse-kv-private", "pattern": "f41303a09abc473faf41f9685ebb1a72"}
   ],
+  "live": {
+    "_doc": "SINGLE-ACCOUNT-LIVE-1 (Rowan 2026-11-21): no Ultrastable or Practical Solutions asset may exist in any Cloudflare account other than ultrastable. Read by `python3 -m foundation singleaccount --live` (daily in cost-guard.yml).",
+    "domains": ["ultrastable.io", "ultrastable.app", "ultrastable.net", "ultrastable.org"],
+    "expected_ns": ["grace.ns.cloudflare.com", "leonidas.ns.cloudflare.com"],
+    "asset_patterns": "(?i)(ultrastable|^tenant-ps-|^ps-(llm|web|practical-solutions)$|^us-idea-|^demo-child-ultrastable$|practical-solutions)"
+  },
   "skip_dirs": [".git", "node_modules"],
   "allow": [
     {"path": "doctrine/single-account.json", "reason": "this rule names the patterns"},

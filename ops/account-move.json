@@ -1,15 +1,16 @@
 {
  "_doc": "SINGLE-ACCOUNT-1 move state, read by `python3 -m foundation singleaccount --moved` (closing probe of OL-20261118-1: exit 1 while any item is not moved). The nameserver retry (Rowan approved 2026-11-19) and each worker move set an item to 'moved' only after a live check.",
  "items": {
-  "zone:ultrastable.net": "pending",
+  "zone:ultrastable.net": "moved",
   "zone:ultrastable.io": "pending",
-  "zone:ultrastable.app": "pending",
-  "zone:ultrastable.org": "pending",
+  "zone:ultrastable.app": "moved",
+  "zone:ultrastable.org": "moved",
   "kv:39-keys": "moved",
-  "worker:ultrastable-spinoffs": "staged",
-  "worker:ultrastable-mail-relay": "pending",
-  "worker:tenant-ps-edge": "staged",
-  "worker:tenant-ps-mail": "pending"
+  "worker:ultrastable-spinoffs": "moved",
+  "worker:ultrastable-mail-relay": "moved",
+  "worker:tenant-ps-edge": "moved",
+  "worker:tenant-ps-mail": "moved"
  },
- "_staged_doc": "2026-11-20: 'staged' = the Worker (and for spinoffs its D1 ultrastable-spinoffs, id 7daf8b68-8516-42a8-b7c4-68fd00d10e24, 3 and 7 rows equal to the source) exists in the ultrastable account with no route and no workers.dev; it counts as moved only when its zone's routes or custom domains are served from the ultrastable account. kv:39-keys: every key of both source namespaces is present by name in the ultrastable namespaces (80 of 80 and 4 of 4; the target holds 28 newer keys)."
+ "_staged_doc": "2026-11-20: 'staged' = the Worker (and for spinoffs its D1 ultrastable-spinoffs, id 7daf8b68-8516-42a8-b7c4-68fd00d10e24, 3 and 7 rows equal to the source) exists in the ultrastable account with no route and no workers.dev; it counts as moved only when its zone's routes or custom domains are served from the ultrastable account. kv:39-keys: every key of both source namespaces is present by name in the ultrastable namespaces (80 of 80 and 4 of 4; the target holds 28 newer keys).",
+ "_moved_2026_11_21": "2026-11-21: all four registrations sit in the ultrastable account; app, net and org zones are active there and serve; org mail routing (replies@ to tenant-ps-mail, catch-all to ultrastable-mail-in) and Email Sending for outreach.ultrastable.org and ultrastable.org are set up there; tenant-ps-core relays through tenant-ps-mail.ultrastable.workers.dev. Every quniverse Worker, D1, KV and R2 copy was backed up (ultrastable/ops backups/quniverse-retired/2026-11-21, PR 41) and deleted. zone:ultrastable.io stays pending until the .io registry serves grace/leonidas: until then the quniverse zone holds only a stateless forwarder (ultrastable-site, secret UPSTREAM_ORIGIN), ultrastable-mail-in and ultrastable-mail-relay. The three empty 'moved' zone shells in quniverse cannot be deleted (Cloudflare error 1315 while registrar metadata lingers); singleaccount --live reports them until Cloudflare purges them."
 }
