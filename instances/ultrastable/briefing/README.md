@@ -5,12 +5,10 @@ Everything needed to talk about Ultrastable to investors, grant reviewers, partn
 | File | Audience | Use |
 |---|---|---|
 | [pitch-deck.md](pitch-deck.md) | Investors, programs (slide-by-slide text) | Public |
-| [one-pager.md](one-pager.md) | Anyone | Public (mirrors [external/one-pager.md](../../external/one-pager.md)) |
 | [elevator-pitches.md](elevator-pitches.md) | Anyone, 10s / 30s / 2min, per audience | Public |
 | [faq.md](faq.md) | Anyone | Public |
-| [qa-investors-and-reviewers.md](qa-investors-and-reviewers.md) | Investors, grant reviewers | Public answers; prep notes marked INTERNAL |
-| [competitor-map.md](competitor-map.md) | Prep; public facts only | Public |
-| [objection-handling.md](objection-handling.md) | Prep | Public |
+
+The prep notes (one-pager, investor Q&A, competitor map, objection handling) live in the private `ultrastable/ops` repository under `admin/business/briefing/` (TEMPLATE-CODE-ONLY-1). Only the sources the social calendar quotes stay here.
 
 **Rule for every file here:** every claim cites a source in the repository; no invented number, no QNFO figure without its label, no financial figure about Ultrastable that is not measured. Mechanism language ("trust ledger", scored predictions, capacity rules) may be used and is explained in `docs/`.
 

@@ -1979,6 +1979,17 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-bbe53ab169",
+      "surface": "agents/AGENTS.md",
+      "text": "- **The template is code only (TEMPLATE-CODE-ONLY-1, Rowan 2026-11-21).** \"I thought the UltraStable template repo should be just code that",
+      "probe": [
+        "file:doctrine/template-boundary.json",
+        "file:foundation/template.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]template\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-b5a689086d",
       "surface": "agents/AGENTS.md",
       "text": "- **No single route.** Every loop, deploy and start path has at least two routes, one needing no credential a person would have to mint (a",
@@ -2493,15 +2504,6 @@
       "bound_by": "cited"
     },
     {
-      "id": "cited-7bbdfa5fa2",
-      "surface": "seed/agents/roles/funding-manager.md",
-      "text": "1. Read `funding/registry.json`. Every row has a status (verified, secondary, unverified). Read unverified and stale rows at their",
-      "probe": [
-        "file:seed/funding/registry.template.json"
-      ],
-      "bound_by": "cited"
-    },
-    {
       "id": "cited-02bb535f7a",
       "surface": "seed/agents/roles/legal-ip-manager.md",
       "text": "Each tick run `python3 -m foundation blindspots --scan --apply`; answer due sweeps with sources via `blindspots --answer DOMAIN --text",
@@ -2602,6 +2604,52 @@
     {
       "id": "mirror-e2b2f71815",
       "surface": "seed/.github/copilot-instructions.md",
+      "text": "> CODE-ONLY-ORDER (Rowan, 2026-11-16): chat threads, sessions and reports are temporary and are never storage. Every decision, instruction",
+      "probe": [
+        "file:foundation/standingorder.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]standingorder\\b"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-e7cebff4c4"
+    },
+    {
+      "id": "mirror-e2b7cb0275",
+      "surface": "seed/AGENTS.md",
+      "text": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
+      "probe": [
+        "file:foundation/closedloop.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-09973d0254"
+    },
+    {
+      "id": "mirror-3433c99596",
+      "surface": "seed/AGENTS.md",
+      "text": "> BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository",
+      "probe": [
+        "file:foundation/boundary.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]boundary\\b",
+        "grep:.github/workflows/checks.yml::foundation[ .]boundary\\b"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-f46e34e2a9"
+    },
+    {
+      "id": "mirror-b9ff555df6",
+      "surface": "seed/AGENTS.md",
+      "text": "> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or",
+      "probe": [
+        "file:foundation/lanewatch.py",
+        "file:foundation/crosswalk.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]crosswalk\\b"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-5d0567ad32"
+    },
+    {
+      "id": "mirror-0b772f20ba",
+      "surface": "seed/AGENTS.md",
       "text": "> CODE-ONLY-ORDER (Rowan, 2026-11-16): chat threads, sessions and reports are temporary and are never storage. Every decision, instruction",
       "probe": [
         "file:foundation/standingorder.py",
@@ -3147,6 +3195,18 @@
       ],
       "bound_by": "mirror",
       "of": "cited-cd0900561e"
+    },
+    {
+      "id": "mirror-83545b0084",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **The template is code only (TEMPLATE-CODE-ONLY-1, Rowan 2026-11-21).** \"I thought the UltraStable template repo should be just code that",
+      "probe": [
+        "file:doctrine/template-boundary.json",
+        "file:foundation/template.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]template\\b"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-bbe53ab169"
     },
     {
       "id": "mirror-cfa2c29d4e",
@@ -3777,52 +3837,6 @@
       ],
       "bound_by": "mirror",
       "of": "cited-5d0567ad32"
-    },
-    {
-      "id": "mirror-e2b7cb0275",
-      "surface": "seed/AGENTS.md",
-      "text": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
-      "probe": [
-        "file:foundation/closedloop.py",
-        "grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b"
-      ],
-      "bound_by": "mirror",
-      "of": "cited-09973d0254"
-    },
-    {
-      "id": "mirror-3433c99596",
-      "surface": "seed/AGENTS.md",
-      "text": "> BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository",
-      "probe": [
-        "file:foundation/boundary.py",
-        "grep:.github/workflows/checks.yml::foundation[ .]boundary\\b",
-        "grep:.github/workflows/checks.yml::foundation[ .]boundary\\b"
-      ],
-      "bound_by": "mirror",
-      "of": "cited-f46e34e2a9"
-    },
-    {
-      "id": "mirror-b9ff555df6",
-      "surface": "seed/AGENTS.md",
-      "text": "> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or",
-      "probe": [
-        "file:foundation/lanewatch.py",
-        "file:foundation/crosswalk.py",
-        "grep:.github/workflows/checks.yml::foundation[ .]crosswalk\\b"
-      ],
-      "bound_by": "mirror",
-      "of": "cited-5d0567ad32"
-    },
-    {
-      "id": "mirror-0b772f20ba",
-      "surface": "seed/AGENTS.md",
-      "text": "> CODE-ONLY-ORDER (Rowan, 2026-11-16): chat threads, sessions and reports are temporary and are never storage. Every decision, instruction",
-      "probe": [
-        "file:foundation/standingorder.py",
-        "grep:.github/workflows/checks.yml::foundation[ .]standingorder\\b"
-      ],
-      "bound_by": "mirror",
-      "of": "cited-e7cebff4c4"
     }
   ],
   "generated": [
