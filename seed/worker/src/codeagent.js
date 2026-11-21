@@ -88,6 +88,7 @@ export async function runExecutor(env) {
   const token = await appToken(env);
   const patch = await aiPatch(env, item);
   if (!patch.files?.length) return { skipped: "agent produced no files" };
+  if (patch.files.every(f => /^(docs\/issues\/|ops\/|doctrine\/writeback\/)/.test(f.path || ''))) return { skipped: "SAY-DO-1: the change touches only its item file and ledgers" };
   const branch = `worker-exec/${item.id}`;
   await writeFiles(env, token, item.repo, branch, patch.files);
   const pr = await fetch(`https://api.github.com/repos/${item.repo}/pulls`, {

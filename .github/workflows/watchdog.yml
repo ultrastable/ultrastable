@@ -1,5 +1,5 @@
 name: watchdog
-# budget: ~1 min per run, one scheduled run a day (~30 min per month), plus one per failed lane, deploy-site or executor run (bounded by the concurrency group)
+# budget: ~2 min per run (the say-do check runs every stated --check, about a minute), one scheduled run a day (~30 min per month), plus one per failed lane, deploy-site or executor run (bounded by the concurrency group)
 # trigger: daily (never faster), plus a failed lane, deploy-site or executor run, so any failure is another independent wake; the Cloudflare tick (free) also dispatches this workflow whenever it is older than 12 h, which is the frequent path (watchdog-of-watchdogs)
 # free-alternative: the Cloudflare cron worker already runs the tick watchdog loop (seed/worker/src/watchdog.js) at zero Actions minutes; this workflow is the credential-free second route
 # Probes every clock (doctrine/clocks.json and every scheduled workflow), restarts the stopped ones (workflow dispatch, or POST /pulse/watch on each Cloudflare account),
@@ -23,7 +23,7 @@ jobs:
   watchdog:
     if: ${{ vars.HALT != '1' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'failure') }}  # HALT-1; a finished run wakes the watchdog only when it failed (a busy main would otherwise wake it dozens of times a day)
     runs-on: ubuntu-24.04
-    timeout-minutes: 6
+    timeout-minutes: 9
     steps:
       - uses: actions/checkout@v7
         with:
@@ -50,6 +50,14 @@ jobs:
         run: python3 -m foundation pathfinder --resolve-all
       - name: Projected unattended runway against the one-year target (RUNWAY-1)
         run: python3 -m foundation runway --run --apply --changed-file "$RUNNER_TEMP/changed"
+      - name: Retirements the executor met become catalog changes (MODEL-HEAL-1, no Workers AI credential needed)
+        run: python3 -m foundation modelwatch --observed --apply
+      - name: How the system evolves over time, from its own history (TRAJECTORY-1)
+        run: python3 -m foundation trajectory --run --apply
+      - name: A year of faults injected into the real recovery code (YEAR-SIM-1)
+        run: python3 -m foundation yearsim --run --apply --changed-file "$RUNNER_TEMP/changed"
+      - name: Say-do, every stated rule and claim against the code (SAY-DO-1)
+        run: python3 -m foundation saydo --run --apply --changed-file "$RUNNER_TEMP/changed"
       - name: Ultrastability tick (a stall is a second-order event)
         run: python3 -m foundation ultrastability --tick --apply
       - name: Record
@@ -59,5 +67,5 @@ jobs:
         run: |
           [ "$(cat "$RUNNER_TEMP/changed")" = "1" ] || { echo "nothing changed; ledger not committed"; exit 0; }
           git config user.name "ultrastable-watchdog"; git config user.email "actions@users.noreply.github.com"
-          git add ops/resilience.jsonl ops/ultrastability.jsonl ops/credwatch.json ops/runway.json ops/paths/attempts.jsonl docs/issues NEEDS-YOU.md foundation/data/needs-you.json doctrine/point-and-click.json
-          python3 scripts/land_data.py "watchdog: clock probe (RESILIENCE-1)" ops/resilience.jsonl ops/ultrastability.jsonl ops/credwatch.json ops/runway.json ops/paths/attempts.jsonl docs/issues NEEDS-YOU.md foundation/data/needs-you.json doctrine/point-and-click.json  # MAINWRITER-FALLBACK-1: main writer first, then a pull request
+          git add ops/resilience.jsonl ops/ultrastability.jsonl ops/credwatch.json ops/runway.json ops/paths/attempts.jsonl docs/issues NEEDS-YOU.md foundation/data/needs-you.json doctrine/point-and-click.json ops/trajectory.json ops/trajectory.jsonl site/trajectory-data.js ops/yearsim.json ops/yearsim.jsonl ops/saydo.json ops/saydo.jsonl site/yearsim-data.js site/saydo-data.js site/ultrastability-data.js doctrine/models.json doctrine/priorities.json doctrine/clocks.json doctrine/spinoff.json
+          python3 scripts/land_data.py "watchdog: clock probe (RESILIENCE-1)" ops/resilience.jsonl ops/ultrastability.jsonl ops/credwatch.json ops/runway.json ops/paths/attempts.jsonl docs/issues NEEDS-YOU.md foundation/data/needs-you.json doctrine/point-and-click.json  # MAINWRITER-FALLBACK-1: main writer first, then a pull request ops/trajectory.json ops/trajectory.jsonl site/trajectory-data.js ops/yearsim.json ops/yearsim.jsonl ops/saydo.json ops/saydo.jsonl site/yearsim-data.js site/saydo-data.js site/ultrastability-data.js doctrine/models.json doctrine/priorities.json doctrine/clocks.json doctrine/spinoff.json

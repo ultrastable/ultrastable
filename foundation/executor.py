@@ -530,6 +530,18 @@ def supersede_pr(repo: str, old: int, new: str, root=REPO) -> str | None:
     return o[-160:] if code else None
 
 
+BOOKKEEPING = ("docs/issues/", "ops/", "doctrine/writeback/")
+
+
+def saydo_gap(files) -> str | None:
+    """SAY-DO-1: a change that touches only the item file, ledgers and write-backs would close the item without doing it (2026-11-21: PR 836
+    'Port EDIT blocks and file context to the Worker executor' changed no code, only its own issue and ledgers). Such a reply is a failed
+    attempt, never a pull request; an item that is already done closes through its own closing probe (foundation/dispose.py), not a PR."""
+    if files and all(str(f).startswith(BOOKKEEPING) for f in files):
+        return "SAY-DO-1: the change touches only " + ", ".join(sorted(files))[:300] + "; it must change the files that do what the item says"
+    return None
+
+
 def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=None, checks=None, remote: bool = False) -> dict:
     """Returns the provenance row. Never raises for a failed step; the failure is the row (and an `executor-failed` label)."""
     root = Path(root)
@@ -613,7 +625,7 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
                 if attempt < REPAIRS:
                     prompt = base_prompt() + chr(10) * 2 + "YOUR PREVIOUS REPLY COULD NOT BE USED (" + failed[0] + "). Do NOT reply with JSON this time. Reply in exactly this format instead:" + chr(10) + agents_block_format()
                 continue
-            gap = (consumer_gap(files, root) if checks is None and not port else None) or elision_gap(files, root)
+            gap = (consumer_gap(files, root) if checks is None and not port else None) or elision_gap(files, root) or saydo_gap(files)
             if gap:
                 failed.append(gap)
             if checks is None and not gap:

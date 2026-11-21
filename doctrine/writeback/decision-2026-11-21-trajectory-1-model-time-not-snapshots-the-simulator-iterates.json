@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-21-trajectory-1-model-time-not-snapshots-the-simulator-iterates",
+  "kind": "decision",
+  "date": "2026-11-21",
+  "title": "TRAJECTORY-1: model time, not snapshots; the simulator iterates from observed trajectories",
+  "body": "seed/scripts/trajectory.py keeps per-day series per area, loop ledger and issue stream from git and ops ledgers; reads hotspot, neglect and drift; observed event rates and trends replace assumed fault rates in the year simulation (rate_from, growth thinning). History is 12 days deep today, so only series with at least 3 events are used; the rest keep stated rates. Shown at /year.",
+  "probe": "file:seed/scripts/trajectory.py",
+  "session": "https://claude.ai/code/session_0156nqDrPUtodrmF2tkLT6LP"
+ },
+ "kind": "decision",
+ "title": "TRAJECTORY-1: model time, not snapshots; the simulator iterates from observed trajectories",
+ "session": "https://claude.ai/code/session_0156nqDrPUtodrmF2tkLT6LP"
+}

@@ -7,7 +7,7 @@ import { notGreen } from './greenguard.js';
 import { reconcile, makeGh, latency } from './mergenow.js';
 const API = 'https://api.github.com';
 // BRANCH-ROOT-CAUSE-1: `worker/` branches (the Worker executor's own PRs) were never swept, so they sat blocked; every automation prefix is swept.
-const CLIENT_PREFIX = ['claude/', 'agent/', 'worker/'];
+const CLIENT_PREFIX = ['claude/', 'agent/', 'worker/', 'dependabot/'];  // DEP-LOOP-1: dependency updates merge on green like any client PR (GREEN-GUARD-1 applies)
 async function gh(f, token, method, path, body) {
   const r = await f(API + path, { method, headers: { authorization: 'Bearer ' + token, accept: 'application/vnd.github+json', 'user-agent': 'ultrastable-sweeper', 'content-type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
   const t = await r.text();

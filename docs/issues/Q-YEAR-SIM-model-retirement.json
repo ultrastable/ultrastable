@@ -1,0 +1,12 @@
+{
+  "id": "Q-YEAR-SIM-model-retirement",
+  "title": "Q-YEAR-SIM-model-retirement: capacity stays at 0.85 after it, for good",
+  "body": "**Owner:** executor\n**Trigger:** the year simulation (YEAR-SIM-1) on the watchdog run\n**Done check:** cmd:python3 -m foundation yearsim --probe model-retirement\n**Status:** closed\n\nFault class `model-retirement`: capacity stays at 0.85 after it, for good. Drill evidence: 5 vendor-wide retirements through agents.complete: 5 still produced a change; model-refresh-host is open: source keeps naming the retired id, one rung lost per batch\n\nBuild the mechanism that recovers from it without a person, then the drill in foundation/yearsim.py must exercise it.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation yearsim --probe model-retirement` exits 0.\n\n**Evidence:** year simulation at 2026-11-21T11:09:16Z: 8 vendor-wide retirements through agents.complete: 8 still produced a change, 1 on a healed rung; modelwatch.observed turned 1 recorded 410s into catalog retirements; watchdog runs it: True\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "unattended"
+  ],
+  "milestone": "Now",
+  "workstream": "Ultrastability"
+}

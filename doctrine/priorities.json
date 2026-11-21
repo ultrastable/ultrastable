@@ -68,6 +68,61 @@
         "social",
         "WEB-"
       ]
+    },
+    {
+      "id": "repair-deploys",
+      "weight": 50,
+      "why": "ULTRASTABILITY-1 knob for deploy_health: the second loop raises it when verified deploys fall out of bounds, so the executor takes deploy repairs first",
+      "match": [
+        "Q-ULTRA-deploy_health",
+        "raises-deploys",
+        "DEPLOY-",
+        "deploy path"
+      ]
+    },
+    {
+      "id": "repair-claims",
+      "weight": 50,
+      "why": "ULTRASTABILITY-1 knob for claims_drift: raised when a claim stops matching the code (say-do), so the executor takes the fix first",
+      "match": [
+        "Q-ULTRA-claims_drift",
+        "Q-CLAIM",
+        "Q-SAYDO",
+        "claims drift"
+      ]
+    },
+    {
+      "id": "repair-ui",
+      "weight": 50,
+      "why": "ULTRASTABILITY-1 knob for ui_findings and happy_paths: raised when the front end drifts",
+      "match": [
+        "Q-ULTRA-ui_findings",
+        "Q-ULTRA-happy_paths",
+        "Q-UIUX"
+      ]
+    },
+    {
+      "id": "unattended-year",
+      "weight": 70,
+      "why": "ULTRASTABILITY-1 knob for unattended_horizon: raised when the year simulation projects less than a year unattended",
+      "match": [
+        "Q-ULTRA-unattended_horizon",
+        "Q-YEAR",
+        "Q-RUNWAY",
+        "Q-CRED"
+      ]
+    },
+    {
+      "id": "self-shipping",
+      "weight": 70,
+      "why": "ULTRASTABILITY-1 knob for self_shipping: raised when the server is not originating and shipping its own deploys",
+      "match": [
+        "Q-ULTRA-self_shipping",
+        "Q-SELF",
+        "Q-EXEC",
+        "EXEC-",
+        "raises-self"
+      ]
     }
   ],
   "owner_held_pattern": "ROWAN|identity-bound|IDENTITY-BOUND",

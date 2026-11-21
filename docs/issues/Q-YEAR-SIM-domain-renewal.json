@@ -1,0 +1,12 @@
+{
+  "id": "Q-YEAR-SIM-domain-renewal",
+  "title": "Q-YEAR-SIM-domain-renewal: its recovery is declared but no drill exercises code",
+  "body": "**Owner:** executor\n**Trigger:** the year simulation (YEAR-SIM-1) on the watchdog run\n**Done check:** cmd:python3 -m foundation yearsim --probe domain-renewal\n**Status:** open\n\nFault class `domain-renewal`: its recovery is declared but no drill exercises code. Drill evidence: domains renew auto, expire 2027-11-10; payment method: gate (identity)\n\nBuild the mechanism that recovers from it without a person, then the drill in foundation/yearsim.py must exercise it.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation yearsim --probe domain-renewal` exits 0.\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "unattended"
+  ],
+  "milestone": "Now",
+  "workstream": "Ultrastability"
+}
