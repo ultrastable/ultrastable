@@ -4,7 +4,7 @@
  "integration": {
   "edges_wired": 19,
   "edges": 19,
-  "components_live": 24,
+  "components_live": 23,
   "components": 24
  },
  "components": {
@@ -74,7 +74,7 @@
   },
   "ip-legal": {
    "what": "filing route planner and disclosure gate",
-   "status": "live"
+   "status": "partial"
   },
   "research-publishing": {
    "what": "research as a pipeline to published versions",
@@ -331,7 +331,7 @@
    "LangGraph (LangSmith Deployment)": "no"
   },
   "ip-legal": {
-   "ultrastable": "live",
+   "ultrastable": "partial",
    "Claude Code": "no",
    "GitHub Copilot coding agent": "no",
    "OpenAI Codex": "no",
@@ -495,7 +495,7 @@
     {
      "id": "promotion-and-funding",
      "story": "Funding applications and outreach run within caps, consent and suppression, with the disclosure gate before anything goes public.",
-     "passes": true
+     "passes": false
     }
    ]
   },
