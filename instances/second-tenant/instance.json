@@ -14,5 +14,6 @@
   "disclosure": {"public_allowed": true, "gate": "none", "safe_now_only": false},
   "ip": {"has_invention": false, "priority_filed": false, "has_practitioner": false},
   "budget": {"usd_per_month": 5, "actions_minutes_monthly": 100},
-  "facts": {"has_institution": false}
+  "facts": {"has_institution": false},
+  "system_test": {"loop": "its own cron deploys and probes its health, and a failed probe files its own repair, with no person in the middle", "measure": "health probe failures, target 0", "upkeep": "runtime, dependency and model changes keep arriving every month", "run_cost": "5 USD a month for the back end"}
 }

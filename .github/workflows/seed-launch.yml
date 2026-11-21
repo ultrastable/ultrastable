@@ -1,6 +1,6 @@
 name: seed-launch
 # SEED-LAUNCH-1 (Rowan, 2026-11-21): every seed is built, deployed, gated on a year unattended and probed live by the system itself.
-# budget: ~6 min x 8 per month (weekly e2e plus fleet, and dispatch)
+# budget: ~15 min x 5 per month (weekly e2e plus fleet, and dispatch)
 # trigger: weekly and dispatch; a seed changes the kit at most daily (kit-sync), and the e2e record is fresh for 8 days
 # free-alternative: a cloud-hosted agent session runs `python3 -m foundation seedlaunch --e2e --fleet` with the same Cloudflare binding
 on:
@@ -28,12 +28,9 @@ jobs:
       - run: python3 scripts/actions_guard.py seed-launch
         env:
           GH_TOKEN: ${{ github.token }}
-      - name: A fresh seed and every seeded repository, launched on Ultrastable's own account and verified live
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: 81e3a4efb4eb66e613529b87682911bb  # SINGLE-ACCOUNT-1: pinned, never the repo secret (the first run landed in the retired account)
-          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
-        run: python3 -m foundation seedlaunch --e2e --fleet
+      - name: A fresh seed built from the kernel, deployed into the Ultrastable account through the site worker's OIDC route, verified live
+        # SEED-DEPLOY-2: no stored Cloudflare credential; the repo secret pointed at the retired account (SINGLE-ACCOUNT-1)
+        run: python3 -m foundation seedlaunch --e2e-oidc
       - name: Land the launch records on main
         if: always()
         env:

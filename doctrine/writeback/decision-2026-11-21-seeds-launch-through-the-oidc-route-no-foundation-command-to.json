@@ -1,0 +1,14 @@
+{
+  "row": {
+    "id": "decision-2026-11-21-seeds-launch-through-the-oidc-route-no-foundation-command-to",
+    "kind": "decision",
+    "date": "2026-11-21",
+    "title": "Seeds launch through the OIDC route; no foundation command touches a retired account",
+    "body": "Evidence: seed-launch runs 44955545446 and 44957007056 showed that the repo Cloudflare secrets name the retired account. The seed e2e now runs deploy/deploy-seed.mjs (generated seed, D1 and Worker created through the site worker's OIDC endpoint in the ultrastable account) and verifies /health after one cron interval. deploy-seed.mjs now runs the bootstrap dry run first, which fixes the ENOENT on worker/src/config.js, and scaffold writes the System test section from the manifest. foundation.cfaccount.scrub() runs before every CLI command and drops a retired account's credential. deploy/*.mjs scripts that read the account id carry the retired guard, and singleaccount --check fails one that does not. Minting a new token stays the identity-bound gate already recorded in deploy/cloudflare-accounts.json.",
+    "probe": "grep:foundation/__main__.py::cfaccount.scrub",
+    "session": "session_0156nqDsRjMQDqTmVCf3TxQg"
+  },
+  "kind": "decision",
+  "title": "Seeds launch through the OIDC route; no foundation command touches a retired account",
+  "session": "session_0156nqDsRjMQDqTmVCf3TxQg"
+}

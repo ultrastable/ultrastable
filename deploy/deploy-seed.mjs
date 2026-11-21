@@ -52,8 +52,12 @@ for (const slug of cfg.seeds) {
       const rep = JSON.parse(raw.slice(raw.indexOf("{")));
       if (rep.admission !== "admitted") throw new Error(`not admitted: ${(rep.reasons || []).join("; ")}`);
       row.admission = rep.admission; row.year_p10 = rep.year && rep.year.p10;
+      // SEED-DEPLOY-2: the bootstrap's own dry run writes worker/src/config.js and org/seed.sql (the first live run failed ENOENT on config.js)
+      sh("python3", ["bootstrap/bootstrap.py", "--dry-run"], { cwd: out });
       const dir = `${out}/worker/migrations`;
-      const migrations = readdirSync(dir).filter(f => f.endsWith(".sql")).sort().map(f => { const sql = readFileSync(`${dir}/${f}`, "utf8"); return { file: f, sha256: createHash("sha256").update(sql).digest("hex"), sql }; });
+      const sqlRow = (file, sql) => ({ file, sha256: createHash("sha256").update(sql).digest("hex"), sql });
+      const migrations = readdirSync(dir).filter(f => f.endsWith(".sql")).sort().map(f => sqlRow(f, readFileSync(`${dir}/${f}`, "utf8")));
+      migrations.push(sqlRow("zz-seed.sql", readFileSync(`${out}/org/seed.sql`, "utf8")));  // org, roles and metrics rows (INSERT OR IGNORE)
       const db = await site("/__internal/seed-d1", { name, migrations });
       const mods = await collectModules(async p => readFileSync(`${out}/${p}`, "utf8"), "worker/src/index.js");
       const up = await site("/__internal/deploy", {

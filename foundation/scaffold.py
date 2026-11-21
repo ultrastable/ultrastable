@@ -33,6 +33,9 @@ def _idea_md(m: dict) -> str:
     lines += ["---", "", "# Idea", "", m["idea"] or m["name"], "", "# Who it is for", "", f"- {m['kind']} programme owner and its stakeholders", "", "# First outcomes", ""]
     lines += [f"- {g}" for g in m["goals"]]
     lines += ["", "# Constraints", "", f"- Budget per month: {c} USD"]
+    st = m.get("system_test") or {}  # SEED-DEPLOY-2: bootstrap stage qualify reads this section; without it a generated seed never writes its worker config
+    if st:
+        lines += ["", "# System test", "", f"- Loop: {st['loop']}", f"- Measure: {st['measure']}", f"- Upkeep: {st['upkeep']}", f"- Run cost: {st.get('run_cost') or f'{c} USD a month for the back end'}"]
     if not m["disclosure"]["public_allowed"]:
         lines.append("- Nothing public until the owner says so")
     return "\n".join(lines) + "\n"

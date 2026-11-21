@@ -1,6 +1,7 @@
 // Manual deploy of the public demos (no workflow on purpose: Actions minutes are capped, see BG-35).
 //   CLOUDFLARE_API_TOKEN=... CLOUDFLARE_ACCOUNT_ID=... node deploy/deploy-demos.mjs
 import { build } from "../demos/build-worker.mjs";
+{ const __acc = JSON.parse((await import("node:fs")).readFileSync(new URL("./cloudflare-accounts.json", import.meta.url), "utf8")); if ((__acc.retired_account_ids || []).includes(process.env.CLOUDFLARE_ACCOUNT_ID)) { console.log("skip: account " + process.env.CLOUDFLARE_ACCOUNT_ID + " is retired (SINGLE-ACCOUNT-2)"); process.exit(0); } }
 const T = process.env.CLOUDFLARE_API_TOKEN, A = process.env.CLOUDFLARE_ACCOUNT_ID;
 if (!T || !A) { console.error("set CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID"); process.exit(1); }
 const api = (m, p, b, h = {}) => fetch("https://api.cloudflare.com/client/v4" + p, { method: m, headers: { authorization: "Bearer " + T, ...h }, body: b }).then(r => r.json());
