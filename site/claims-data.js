@@ -1867,15 +1867,6 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
-   "claim": "- **A seed is built, deployed and runs a year unattended; a proposal is not a seed (SEED-SHIP-1, Rowan 2026-11-21).** \"For any seed based",
-   "detail": "",
-   "how": "file:instances/ultrastable/progress.json + file:ops/deploys.jsonl + file:doctrine/credwatch.json + file:doctrine/topology.json + file:seed/autonomy/yearsim.json + file:foundation/seedship.py",
-   "id": "cited-e1c4f04c40",
-   "kind": "claim",
-   "pass": true,
-   "surface": "agents/AGENTS.md"
-  },
-  {
    "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
@@ -2038,6 +2029,15 @@ export default {
    "surface": "demos/README.md"
   },
   {
+   "claim": "The research behind this ([Homo Ludens, self-directed learning, and AI-facilitated",
+   "detail": "",
+   "how": "file:tests/foundation/test_unlearn.py",
+   "id": "cited-210d0b9de4",
+   "kind": "claim",
+   "pass": true,
+   "surface": "instances/unlearn/README.md"
+  },
+  {
    "claim": "| [`plugins/`](plugins/SCOPE.json) | Optional plugin tier (email, mailing list, social, YouTube, GCP, self-description, guided",
    "detail": "",
    "how": "file:docs/architecture/plugins.md",
@@ -2072,15 +2072,6 @@ export default {
    "kind": "claim",
    "pass": true,
    "surface": "seed/.github/copilot-instructions.md"
-  },
-  {
-   "claim": "- **This system is built, deployed and runs a year unattended; a plan is not a shipped system (SEED-SHIP-1, Rowan 2026-11-21).** \"For any",
-   "detail": "",
-   "how": "file:.github/dependabot.yml",
-   "id": "cited-0bb551f88c",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/agents/AGENTS.md"
   },
   {
    "claim": "Each tick run `python3 -m foundation blindspots --scan --apply`; answer due sweeps with sources via `blindspots --answer DOMAIN --text",
@@ -3368,7 +3359,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 371,
-  "total": 371
+  "pass": 370,
+  "total": 370
  }
 };
