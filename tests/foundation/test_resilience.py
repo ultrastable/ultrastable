@@ -77,7 +77,8 @@ class T(unittest.TestCase):
         r = R.run(self.d, True, NOW, lambda c: None, lambda u: 200, lambda w, root=None: (True, ""))
         self.assertEqual(self.runs, [])
         self.assertTrue(all(c["status"] == "unmeasured" for c in r["clocks"]))
-        self.assertEqual(len([x for x in r["restarts"] if x["clock"] not in ("tick-heartbeat", "criticality-loop")]), 0)  # idempotent tick wakes only
+        idem = {k for k, v in json.loads((self.d / "doctrine/resilience.json").read_text())["restart_routes"].items() if v.get("kind") == "http" and v.get("idempotent")}
+        self.assertEqual(len([x for x in r["restarts"] if x["clock"] not in idem]), 0)  # idempotent http wakes only (each runs only when its clock is stale)
 
     def test_halt_stops_restarts(self):
         (self.d / "ops/halt.json").write_text('{"halt": true}')

@@ -2546,6 +2546,15 @@
    "bound_by": "cited"
   },
   {
+   "id": "cited-210d0b9de4",
+   "surface": "instances/unlearn/README.md",
+   "text": "The research behind this ([Homo Ludens, self-directed learning, and AI-facilitated",
+   "probe": [
+    "file:tests/foundation/test_unlearn.py"
+   ],
+   "bound_by": "cited"
+  },
+  {
    "id": "cited-1936df88a5",
    "surface": "seed/README.md",
    "text": "| [`plugins/`](plugins/SCOPE.json) | Optional plugin tier (email, mailing list, social, YouTube, GCP, self-description, guided",

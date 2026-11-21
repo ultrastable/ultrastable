@@ -178,7 +178,7 @@ export default {
      "metric_label": "share of registered loops that declare a closing probe and a server-side owner",
      "measured": 1.0,
      "status": "met",
-     "n": 107,
+     "n": 108,
      "source": "instances/ultrastable/loop-registry.json (declared)",
      "item": null
     }
@@ -577,7 +577,7 @@ export default {
      "metric_label": "share of registered loops that declare a closing probe and a server-side owner",
      "measured": 1.0,
      "status": "met",
-     "n": 107,
+     "n": 108,
      "source": "instances/ultrastable/loop-registry.json (declared)",
      "item": null
     },
@@ -946,7 +946,7 @@ export default {
      "metric_label": "share of registered loops that declare a closing probe and a server-side owner",
      "measured": 1.0,
      "status": "met",
-     "n": 107,
+     "n": 108,
      "source": "instances/ultrastable/loop-registry.json (declared)",
      "item": null
     }
