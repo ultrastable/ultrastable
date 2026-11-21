@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """Seed launch: every seed is built, deployed, gated on a year unattended and probed live by the system itself (SEED-LAUNCH-1, Rowan 2026-11-21).
 
 "For any seed based on the ultrastable platform, the system actually has to build and deploy it and make it fully autonomous with a design goal

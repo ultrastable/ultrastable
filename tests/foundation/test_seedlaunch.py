@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """SEED-LAUNCH-1: every seed is built, deployed, year-gated and probed live by the system; a standalone seed is self-contained."""
 import datetime as dt, json, re, tempfile, unittest
 from pathlib import Path

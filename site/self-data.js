@@ -2284,6 +2284,10 @@ export default {
     ]
    },
    {
+    "id": "seed-launch",
+    "loops": []
+   },
+   {
     "id": "sessions",
     "loops": [
      "branch-reaper"
