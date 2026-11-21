@@ -74,6 +74,17 @@ class NoHandBackAndAdoption(unittest.TestCase):
             self.assertEqual(len(calls), n, "a second pass neither comments nor labels again")
             self.assertFalse(any(r.get("filed") for r in again))
 
+    def test_a_racing_lane_run_does_not_comment_twice(self):  # LANE-DEDUPE-1: PR 826 got the same comment five times
+        d = loopowner.load(REPO)
+        calls = []
+        def gh(root, *a, **k):
+            calls.append(a)
+            return (0, "1\n") if a[:2] == ("pr", "view") else (0, "")
+        with tempfile.TemporaryDirectory() as t:
+            rows = loopowner.adopt([pr(2, statusCheckRollup=[{"name": "checks", "conclusion": "FAILURE"}])], t, apply=True, d=d, gh=gh)
+            self.assertEqual(rows[0]["commented"], "already")
+            self.assertFalse(any(c[:2] == ("pr", "comment") for c in calls))
+
     def test_closing_probe(self):
         self.assertEqual(loopowner.closed(5, REPO, gh=lambda *a, **k: (0, "MERGED\n")), (True, "MERGED"))
         self.assertFalse(loopowner.closed(5, REPO, gh=lambda *a, **k: (0, "OPEN\n"))[0])

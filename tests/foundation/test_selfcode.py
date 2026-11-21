@@ -42,7 +42,7 @@ class Sensors(unittest.TestCase):
 
 
 class Rails(unittest.TestCase):
-    def f(self, kind="unused_import", key="foundation/a.py", count=1):
+    def f(self, kind="bare_except", key="foundation/a.py", count=1):
         return {"kind": kind, "key": key, "count": count, "detail": ["d"]}
 
     def test_scope_blocks_protected_paths(self):
@@ -55,16 +55,16 @@ class Rails(unittest.TestCase):
         self.assertEqual(len(selfcode.pick_findings(found, [], set(), d)), 1)  # max_new_per_run
         self.assertEqual(selfcode.pick_findings(found, [], {"a", "b", "c"}, d), [])  # max_open
         iid = selfcode.item_for(found[0])["id"]
-        settled = [{"id": iid, "kind": "unused_import", "status": "kept", "at": selfcode.stamp()}]
+        settled = [{"id": iid, "kind": "bare_except", "status": "kept", "at": selfcode.stamp()}]
         self.assertNotIn(found[0], selfcode.pick_findings(found[:1], settled, set(), d))  # cooldown after a settled change
-        only_filed = [{"id": iid, "kind": "unused_import", "status": "filed", "at": selfcode.stamp()}]
+        only_filed = [{"id": iid, "kind": "bare_except", "status": "filed", "at": selfcode.stamp()}]
         self.assertIn(found[0], selfcode.pick_findings(found[:1], only_filed, set(), d))  # filed but never worked: the next run files it again (its file is not in the checkout)
         self.assertEqual(selfcode.pick_findings(found[:1], [], {iid}, d), [])  # already open
 
     def test_daily_cap_limits_new_items_not_an_unworked_one(self):
         d = tree({})
         found = [self.f(key=f"foundation/{i}.py") for i in range(10)]
-        rows = [{"id": selfcode.item_for(f)["id"], "kind": "unused_import", "status": "filed", "at": selfcode.stamp()} for f in found[:8]]  # the cap (8) is spent
+        rows = [{"id": selfcode.item_for(f)["id"], "kind": "bare_except", "status": "filed", "at": selfcode.stamp()} for f in found[:8]]  # the cap (8) is spent
         got = selfcode.pick_findings(found, rows, set(), d)
         self.assertEqual(len(got), 1)
         self.assertIn(got[0], found[:8])  # an item filed before and never worked is taken again, ahead of any new one
@@ -82,7 +82,7 @@ class Rails(unittest.TestCase):
     def test_an_item_parked_by_the_executor_gives_way_to_the_next_finding(self):
         import unittest.mock as m
         from foundation import queue as qmod
-        d = tree({"foundation/a.py": "import os\n", "foundation/b.py": "import re\n"})
+        d = tree({"foundation/a.py": "try:\n    f()\nexcept:\n    pass\n", "foundation/b.py": "try:\n    g()\nexcept:\n    pass\n"})  # SUBSTANCE-1: unused_import is switched off, so the rails are shown on a kind that changes behaviour
         first = selfcode.run_sense(d, apply=False, ci=False)["filed"]
         self.assertEqual(len(first), 1)
         with m.patch.object(qmod, "fail_counts", return_value={first[0]: 3}):
