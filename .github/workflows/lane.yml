@@ -46,6 +46,10 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
         run: python3 -m foundation lanewatch --check
+      - name: pr_open_to_merge latency probe, 3 min target (PR-LATENCY-1; files Q-PRLAT on breach)
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+        run: python3 -m foundation lanewatch --latency
       - name: Completion sweep (daily sweep and manual only; COMPLETE-1)
         if: github.event_name != 'workflow_run'
         env:

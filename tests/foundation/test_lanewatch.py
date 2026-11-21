@@ -26,3 +26,12 @@ class LaneWatch(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class LatencyProbe(unittest.TestCase):
+    def test_median_over_target_breaches(self):
+        from foundation import lanewatch
+        prs = [{"createdAt": "2026-11-21T10:00:00Z", "mergedAt": "2026-11-21T10:0%d:00Z" % m} for m in (5, 6, 7)]
+        self.assertTrue(lanewatch.latency(prs)["breach"])
+        prs = [{"createdAt": "2026-11-21T10:00:00Z", "mergedAt": "2026-11-21T10:0%d:00Z" % m} for m in (1, 2, 2)]
+        self.assertFalse(lanewatch.latency(prs)["breach"])

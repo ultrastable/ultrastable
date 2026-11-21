@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-21-pr-latency-1-checks-split-to-five-parallel-jobs-3-minute-ope",
+  "kind": "decision",
+  "date": "2026-11-21",
+  "title": "PR-LATENCY-1: checks split to five parallel jobs, 3-minute open-to-merge probe, 10-minute idle TTL",
+  "body": "checks.yml foundation job split into foundation, foundation2, foundation3; lanewatch --latency files Q-PRLAT when median pr_open_to_merge exceeds 3 min; sessions idle_ttl_hours 0.17; practical-solutions ci.yml gets an in-run lane job.",
+  "probe": "file:foundation/lanewatch.py",
+  "session": "session_0156nqDsFRz5bTkgg5zkrs7g"
+ },
+ "kind": "decision",
+ "title": "PR-LATENCY-1: checks split to five parallel jobs, 3-minute open-to-merge probe, 10-minute idle TTL",
+ "session": "session_0156nqDsFRz5bTkgg5zkrs7g"
+}

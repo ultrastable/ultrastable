@@ -28,7 +28,41 @@ def classify(prs: list[dict], now: datetime, minutes: int = 30) -> list[dict]:
     return out
 
 
+def _t(x: str) -> datetime:
+    return datetime.fromisoformat(x.replace("Z", "+00:00"))
+
+
+def latency(prs: list[dict], target_min: float = 3.0) -> dict:
+    """PR-LATENCY-1: pr_open_to_merge in minutes over merged non-draft-origin PRs; breach when the median exceeds the target."""
+    xs = sorted((_t(p["mergedAt"]) - _t(p["createdAt"])).total_seconds() / 60 for p in prs if p.get("mergedAt"))
+    if not xs:
+        return {"n": 0, "median": 0.0, "p90": 0.0, "breach": False, "target": target_min}
+    med, p90 = xs[len(xs) // 2], xs[min(len(xs) - 1, int(len(xs) * 0.9))]
+    return {"n": len(xs), "median": round(med, 1), "p90": round(p90, 1), "breach": med > target_min, "target": target_min}
+
+
+def latency_main(argv) -> int:
+    """pr_open_to_merge <= 3 min (median, last 30 merged PRs). A breach files one Q-PRLAT issue (the executor's queue) and fails the run."""
+    raw = subprocess.run(["gh", "pr", "list", "--state", "merged", "--limit", "30", "--json", "number,createdAt,mergedAt"], capture_output=True, text=True)
+    if raw.returncode:
+        print("lanewatch latency: gh failed: " + raw.stderr[-300:]); return 2
+    r = latency(json.loads(raw.stdout))
+    print(f"pr_open_to_merge median {r['median']} min, p90 {r['p90']} min over {r['n']} PRs (target {r['target']})")
+    if not r["breach"]:
+        return 0
+    title = "Q-PRLAT: pr_open_to_merge above 3 minutes"
+    have = subprocess.run(["gh", "issue", "list", "--state", "open", "--search", "Q-PRLAT in:title", "--json", "number"], capture_output=True, text=True)
+    if have.returncode == 0 and not json.loads(have.stdout or "[]"):
+        body = (f"**Owner:** operations\n**Trigger:** pr_open_to_merge median {r['median']} min (p90 {r['p90']}) over {r['n']} merged PRs\n"
+                "**Fix:** find the slowest checks job or queue wait and split, cache or remove it\n"
+                "**Closing probe:** `python3 -m foundation lanewatch --latency` exits 0\n**Status:** open")
+        subprocess.run(["gh", "issue", "create", "--title", title, "--body", body], capture_output=True, text=True)
+    return 1
+
+
 def main(argv) -> int:
+    if "--latency" in argv:
+        return latency_main(argv)
     minutes = int(argv[argv.index("--minutes") + 1]) if "--minutes" in argv else 30
     raw = subprocess.run(["gh", "pr", "list", "--state", "open", "--limit", "100", "--json", "number,isDraft,mergeable,labels,updatedAt,statusCheckRollup"], capture_output=True, text=True)
     if raw.returncode:

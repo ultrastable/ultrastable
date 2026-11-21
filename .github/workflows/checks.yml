@@ -126,6 +126,20 @@ jobs:
           python3 -m foundation userbackend --check
           python3 -m foundation standingorder --lint HANDOFF.md
           printf '%s' "$PR_BODY" | python3 -m foundation standingorder --lint-stdin
+  foundation2:
+    if: ${{ vars.HALT != '1' && (github.event.pull_request.draft != true) }}  # HALT-1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Regenerate generated files locally (REGEN-1; the push is done by the fast job only)
+        run: ./scripts/regen_generated.sh
+      - name: Loops, glossary, kernel and write-back (second half)
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
           python3 -m foundation selfimprove --check
           python3 -m foundation boundary --check
           python3 -m foundation market --check
@@ -160,6 +174,16 @@ jobs:
           python3 -m foundation orphans --check
           python3 -m foundation docs_audit --check
           python3 -m foundation publication --check
+  foundation3:
+    if: ${{ vars.HALT != '1' && (github.event.pull_request.draft != true) }}  # HALT-1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Regenerate generated files locally (REGEN-1; the push is done by the fast job only)
+        run: ./scripts/regen_generated.sh
       - name: Core and instances (contract is current, kernel has no instance-specific values)
         run: |
           python3 -m foundation upstream contract --check
@@ -213,13 +237,13 @@ jobs:
   checks:
     if: ${{ vars.HALT != '1' && always() && github.event.pull_request.draft != true }}  # HALT-1
     # LANE-FAST-1: the one required status. It stays named `checks`; the three jobs above run in parallel so wall time is the slowest one, not the sum.
-    needs: [fast, foundation, rest]
+    needs: [fast, foundation, foundation2, foundation3, rest]
     runs-on: ubuntu-24.04
     timeout-minutes: 2
     steps:
       - name: Every parallel job passed
         run: |
-          [ "${{ needs.fast.result }}" = success ] && [ "${{ needs.foundation.result }}" = success ] && [ "${{ needs.rest.result }}" = success ] || { echo "::error::a parallel checks job did not pass"; exit 1; }
+          [ "${{ needs.fast.result }}" = success ] && [ "${{ needs.foundation.result }}" = success ] && [ "${{ needs.foundation2.result }}" = success ] && [ "${{ needs.foundation3.result }}" = success ] && [ "${{ needs.rest.result }}" = success ] || { echo "::error::a parallel checks job did not pass"; exit 1; }
   lane:
     needs: [checks]
     if: ${{ vars.HALT != '1' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}  # HALT-1
