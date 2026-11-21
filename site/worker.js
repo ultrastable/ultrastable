@@ -31,6 +31,7 @@ import DEC from "./decisions-data.js";  // DECISIONS-1: generated from ops/decis
 import { leftAloneRoutes } from "./leftalone.js";  // ATTENTION-1
 import { yearFailRoutes } from "./yearfail.js";  // YEARFAIL-1
 import { trendsRoutes } from "./temporal.js";  // TEMPORAL-1: how the system changes over time
+import { balanceRoutes } from "./balance.js";  // FLOW-BALANCE-1: issue inflow against closures and SLA
 import { progressRoutes } from "./progress.js";  // PROGRESS-1: what every system shipped, daily, weekly and monthly
 import { researchRoutes } from "./research.js";  // RESEARCH-1: own R&D and white papers, generated from the system's ledgers
 import SPIN from "./spinoff-roadmap-data.js";  // SPINOFF-IDEAS-1: generated from the idea queue and the free-tier headroom
@@ -1075,6 +1076,7 @@ const handler = {
     if (u.pathname === "/api/reach") { const v = await jget(env, "promote:reach"); return Response.json(v || { rows: null, error: "not measured yet" }, { status: v ? 200 : 503, headers: { "cache-control": "public, max-age=600", "access-control-allow-origin": "*" } }); } // ATTENTION-1: aggregate counts only
     { const pr = await progressRoutes(u, env, shell, HTML, CANON); if (pr) return pr; } // PROGRESS-1
     { const tr = await trendsRoutes(u, env, shell, HTML); if (tr) return tr; } // TEMPORAL-1
+    { const br = await balanceRoutes(u, env, shell, HTML); if (br) return br; } // FLOW-BALANCE-1
     { const rs = researchRoutes(u, shell, HTML); if (rs) return rs; } // RESEARCH-1: /research, /research/<id>, /api/research
     { const yr = await yearFailRoutes(u, env, shell, HTML); if (yr) return yr; } // YEARFAIL-1: /year, the simulated year with no input
     { const la = await leftAloneRoutes(u, env, shell, HTML); if (la) return la; } // ATTENTION-1: the argued case and its live ledger

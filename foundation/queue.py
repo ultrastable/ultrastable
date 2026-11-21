@@ -165,6 +165,14 @@ def run(root=REPO, apply=False) -> list[dict]:
     except Exception as e:  # noqa: BLE001
         import sys
         print(f"dispose failed: {type(e).__name__}: {e}", file=sys.stderr)
+    # FLOW-BALANCE-1: the second loop measures inflow against closures and SLA, and consolidates and throttles filing when the balance tips.
+    try:
+        from . import balance
+        m = balance.run(root, apply=apply)
+        out.append({"id": "FLOW-BALANCE-1", "probe": "balance --probe", "passed": not m["tipped"], "evidence": json.dumps({"windows": m["windows"], "sla": {k: m["sla"][k] for k in ("within", "breached", "compliance")}, "actions": m["actions"]}), "action": "measure"})
+    except Exception as e:  # noqa: BLE001
+        import sys
+        print(f"balance failed: {type(e).__name__}: {e}", file=sys.stderr)
     return out
 
 
@@ -175,7 +183,7 @@ def main(argv: list[str]) -> int:
         if "--publish" in argv and "--apply" in argv:  # QUEUE-PERSIST-1: this pass's verdicts survive the runner, so streaks can reach a close
             from . import contracts, ledger
             from . import dispose
-            res = ledger.publish(REPO, [contracts.LEDGER, dispose.LEDGER], "queue: closing-probe verdicts (QUEUE-PERSIST-1)")
+            res = ledger.publish(REPO, [contracts.LEDGER, dispose.LEDGER, "ops/balance.jsonl"], "queue: closing-probe verdicts (QUEUE-PERSIST-1)")
             print(json.dumps({"publish": res}))
             return 0 if res.get("ok") else 1
         return 0

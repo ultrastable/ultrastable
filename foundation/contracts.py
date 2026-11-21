@@ -160,7 +160,7 @@ def tick(root=REPO, apply=False, now=None, probe=None) -> dict:
         iid = str(it["id"])
         s = dict(st.get(iid) or FRESH)
         is_closed = it["status"] in CLOSED
-        disposed = bool(re.search(r"^\*\*Disposition:\*\*\s*(gate|shelved)\b", it["json"].get("body", ""), re.M))
+        disposed = bool(re.search(r"^\*\*Disposition:\*\*\s*(gate|shelved|superseded)\b", it["json"].get("body", ""), re.M))
         if is_closed and it["probe"].startswith("cmd:"):
             if cmd_budget <= 0:
                 continue

@@ -1876,6 +1876,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **Issue inflow never exceeds closures; every issue inside its SLA (FLOW-BALANCE-1, Rowan 2026-11-21).** \"All UltraStable issues must be",
+   "detail": "",
+   "how": "file:seed/worker/src/flowbalance.js + file:doctrine/balance.json + file:tests/foundation/test_balance.py + file:foundation/balance.py",
+   "id": "cited-574da783c3",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
@@ -3118,7 +3127,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 45 Python and 434 Worker tests",
+   "claim": "seed-tests: 45 Python and 439 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3127,7 +3136,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 434 Worker tests",
+   "claim": "seed-worker-tests: 439 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3368,7 +3377,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 371,
-  "total": 371
+  "pass": 372,
+  "total": 372
  }
 };

@@ -213,7 +213,7 @@ def main(argv=None) -> int:
     if _av[:1] == ["flows"]:
         from . import flows
         return flows.main(_av[1:])
-    if _av[:1] and _av[0] in ("sauce", "contracts", "metricloop", "throughput", "metafold", "dispose"):
+    if _av[:1] and _av[0] in ("sauce", "contracts", "metricloop", "throughput", "metafold", "dispose", "balance"):
         import importlib
         return importlib.import_module("foundation." + _av[0]).main(_av[1:])
     if _av[:1] == ["unknowns"]:

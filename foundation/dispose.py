@@ -28,7 +28,7 @@ DATA = "doctrine/dispose.json"
 LEDGER = "ops/dispose.jsonl"
 ISSUES = "docs/issues"
 STATUS = re.compile(r"^\*\*Status:\*\*\s*(\S+)", re.M)
-DISPOSITION = re.compile(r"^\*\*Disposition:\*\*\s*(gate|shelved|fixed)\b", re.M)
+DISPOSITION = re.compile(r"^\*\*Disposition:\*\*\s*(gate|shelved|superseded|fixed)\b", re.M)
 FIELD = lambda body, name: (re.search(rf"^\*\*{name}:\*\*\s*(.+)$", body, re.M) or [None, ""])[1].strip()
 
 
