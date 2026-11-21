@@ -14,8 +14,7 @@ from foundation import thought as T  # noqa: E402
 
 class Thought(unittest.TestCase):
     def setUp(self):
-        self.tmp = Path(tempfile.mkdtemp(prefix="ultrastable-test-thought-"))
-        self.addCleanup(shutil.rmtree, self.tmp, True)
+        self.tmp = Path(tempfile.mkdtemp(prefix="ultrastable-test-thought-")); self.addCleanup(shutil.rmtree, self.tmp, True)
         for rel in ("doctrine/thought.json", "site/research-data.js"):
             (self.tmp / rel).parent.mkdir(parents=True, exist_ok=True)
             shutil.copy(ROOT / rel, self.tmp / rel)
