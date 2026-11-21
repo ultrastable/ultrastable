@@ -373,7 +373,7 @@ def check(root=REPO) -> list[str]:
     import glob as _g
     for wf in sorted(_g.glob(str(Path(root) / ".github/workflows/*.yml"))):  # every workflow that lands items passes the one filing gate first
         t = Path(wf).read_text(encoding="utf-8")
-        if re.search(r"git add\b[^\n]*\bdocs/issues\b", t) and "balance --gate" not in t:
+        if re.search(r"git add\b[^\n]*\bdocs/issues\b", t) and not re.search(r"balance(\.py)? --gate", t):
             bad.append(f"{Path(wf).name}: commits docs/issues without `python3 -m foundation balance --gate --apply` first (FLOW-BALANCE-1)")
     if "superseded" in c.get("counts_as_closure", []):
         bad.append("doctrine/balance.json: superseded may never count as a closure")
