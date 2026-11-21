@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-21-lane-fast-1-parallel-checks-and-in-run-merge",
+  "kind": "decision",
+  "date": "2026-11-21",
+  "title": "LANE-FAST-1: parallel checks and in-run merge",
+  "body": "checks runs as three parallel jobs plus an aggregate job named checks, and a lane job merges the PR in the same run, so a PR waits for the slowest job instead of the sum plus a workflow_run hop.",
+  "probe": "file:scripts/lane.sh",
+  "session": "session_0156nqDbJMBWbgRLkSeaAxF"
+ },
+ "kind": "decision",
+ "title": "LANE-FAST-1: parallel checks and in-run merge",
+ "session": "session_0156nqDbJMBWbgRLkSeaAxF"
+}
