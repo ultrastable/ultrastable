@@ -120,10 +120,10 @@ export default {
     "what": "the daily trend read: series per component, loop and entry, and what they show"
    },
    {
-    "expected_interval_s": 86400,
-    "id": "intent-yield",
-    "source": "workflow",
-    "what": "the daily intent yield: every owner directive's own probe, restatements charged to the original, /yield"
+    "expected_interval_s": 3600,
+    "id": "unlearn-beat",
+    "source": "d1",
+    "what": "Unlearn tenant beat (cron 41 * * * * on ultrastable-unlearn; a visit catches up a silent cron): re-learn move weights, measure, open the next phase, prune"
    }
   ],
   "watchdog_escalation": [
@@ -662,7 +662,6 @@ export default {
   "ignition-ladder",
   "index-refresh",
   "insight-loop",
-  "intent-yield",
   "issue-loop",
   "issue-triage",
   "launch",
@@ -734,7 +733,9 @@ export default {
   "ultrastable-site",
   "ultrastable-tenants",
   "ultrastable-tick",
+  "ultrastable-unlearn",
   "unknowns",
+  "unlearn-beat",
   "watchdog",
   "workers-tests",
   "write-back",
@@ -2037,16 +2038,16 @@ export default {
     "workflows": []
    },
    {
-    "closing_probe": "grep:foundation/intentyield.py::def probe",
-    "id": "intent-yield",
-    "kind": "governance",
-    "owner": "operations",
-    "server_owner": "github-actions",
-    "sla": "1d",
-    "summary": "INTENT-YIELD-1: for a given unit of human input, what is the best unit of output. Each owner directive is one intent; its own probe passing, unrestated, after 30 days is one kept outcome. Restatements are charged to the original, a directive that is not holding becomes a Q-YIELD item closed by its own probe, and /yield publishes the verdicts. No counts, no person scored.",
-    "trigger": "daily workflow and on demand",
+    "closing_probe": "grep:instances/unlearn/worker/index.js::export async function beat",
+    "id": "unlearn-beat",
+    "kind": "tick",
+    "owner": "product-manager",
+    "server_owner": "ultrastable-unlearn",
+    "sla": "2h",
+    "summary": "Unlearn tenant loop: curiosity logged, coaching move chosen by learned weights, follow-up at 7 and 14 days, weights re-learned, metrics measured, next phase opened when its gates hold (instances/unlearn/phases.json).",
+    "trigger": "cron 41 * * * * on ultrastable-unlearn; a page visit runs the beat when the cron has been silent for 2 hours",
     "workflows": [
-     "intent-yield"
+     "deploy-ultrastable"
     ]
    }
   ],
@@ -2069,6 +2070,10 @@ export default {
    },
    {
     "id": "ultrastable-tenants",
+    "state": "live"
+   },
+   {
+    "id": "ultrastable-unlearn",
     "state": "live"
    }
   ],
@@ -2155,7 +2160,8 @@ export default {
    {
     "id": "deploy-ultrastable",
     "loops": [
-     "deploy-workers"
+     "deploy-workers",
+     "unlearn-beat"
     ]
    },
    {
@@ -2207,12 +2213,6 @@ export default {
     "id": "index",
     "loops": [
      "index-refresh"
-    ]
-   },
-   {
-    "id": "intent-yield",
-    "loops": [
-     "intent-yield"
     ]
    },
    {
