@@ -6,6 +6,7 @@ export default {
  "target": [
   "ultrastable",
   "ops",
+  "seed",
   "practical-solutions"
  ],
  "pending": [],
@@ -13,12 +14,17 @@ export default {
   {
    "name": "ultrastable",
    "visibility": "public",
-   "holds": "Everything you run or read: platform code, ultrastable.io, dashboard, doctrine, docs, the core code (workers/), the specifications (specs/), the license text (licensing/), and seed/ (the starting kit for a new system). It is a GitHub template, so \"Use this template\" copies it."
+   "holds": "Everything you run or read: platform code, ultrastable.io, dashboard, doctrine, docs, the core code (workers/), the specifications (specs/), the license text (licensing/), and seed/ (the starting kit for a new system). The starting kit is published on its own as ultrastable/seed, the template new systems copy."
   },
   {
    "name": "ops",
    "visibility": "private",
-   "holds": "The few steps only the owner can take (accounts, money, signatures), one card each. Private on purpose."
+   "holds": "The few steps only the owner can take (accounts, money, signatures), one card each, and the company's own papers kept out of the template (admin/). Private on purpose."
+  },
+  {
+   "name": "seed",
+   "visibility": "private",
+   "holds": "Only the starting kit (seed/ of the main repository): code and agent instructions, no company papers. It is the GitHub template new systems copy (TEMPLATE-CODE-ONLY-1)."
   },
   {
    "name": "practical-solutions",
@@ -37,10 +43,6 @@ export default {
   },
   {
    "name": "license",
-   "moved_to": "ultrastable"
-  },
-  {
-   "name": "seed",
    "moved_to": "ultrastable"
   }
  ]

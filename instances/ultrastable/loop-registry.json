@@ -343,7 +343,7 @@
    ],
    "closing_probe": "file:agents/roles/funding-manager.md",
    "writeback": [
-    "business/funding/registry.json",
+    "instances/ultrastable/funding/registry.json",
     "outreach/STATUS.md"
    ],
    "system_path": [
@@ -821,7 +821,7 @@
    ],
    "closing_probe": "file:scripts/funding_verify.py",
    "writeback": [
-    "business/funding/registry.json",
+    "instances/ultrastable/funding/registry.json",
     "docs/issues"
    ],
    "system_path": [

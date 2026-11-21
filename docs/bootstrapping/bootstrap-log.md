@@ -92,8 +92,8 @@ Next verification (owner or the operations role): once `tick_runs` shows six com
 
 ## 2026-11-10: funding and briefing package thread
 
-- Built business/funding/ (tracks A and B, decision memo, agent-execution view, registry) and business/briefing/ (deck text, elevator pitches, FAQ, Q&A, competitor map, objection handling).
-- Self-maintenance: `scripts/funding_verify.py`, `scripts/funding_file_issues.py`, `.github/workflows/funding-maintenance.yml` (weekly), checklist in business/funding/MAINTENANCE.md.
+- Built business/funding/ (tracks A and B, decision memo, agent-execution view, registry) and instances/ultrastable/briefing/ (deck text, elevator pitches, FAQ, Q&A, competitor map, objection handling).
+- Self-maintenance: `scripts/funding_verify.py`, `scripts/funding_file_issues.py`, `.github/workflows/funding-maintenance.yml` (weekly), checklist in instances/ultrastable/funding/MAINTENANCE.md.
 - Failures and gaps: BG-15 to BG-19 in docs/BOOTSTRAP-GAPS.md. Fetch failures on nsf.gov and sloan.org left four rows unverified; a research pass with a browser surface is issue FUND-6.
 - Open loops all filed as docs/issues/FUND-*.json (owner cards OC-1 to OC-5 as FUND-1 to FUND-5).
 ## Project memory in a platform store (2026-11-10)

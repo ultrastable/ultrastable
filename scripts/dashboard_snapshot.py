@@ -35,7 +35,7 @@ def build(today):
     panels = []
 
     # ---- funding and outreach
-    reg = jload("business/funding/registry.json", problems) or {"items": []}
+    reg = jload("instances/ultrastable/funding/registry.json", problems) or {"items": []}
     st = jload("outreach/status.json", problems) or {"metrics": {}, "owner_cards": [], "targets": [], "trust": {}}
     by_track = collections.Counter(i["track"] for i in reg["items"])
     by_status = collections.Counter(i["status"] for i in reg["items"])
@@ -45,7 +45,7 @@ def build(today):
             ["Outreach mode", f"{st.get('mode', '?')}; kill switch {'ON' if st.get('kill') else 'off'}; sender identity {'registered' if st.get('sender_registered') else 'not registered'}", "warn" if st.get("mode") != "live" else "ok"],
             ["Targets", f"{m.get('targets', 0)} in pipeline: queued {m.get('state_queued', 0)}, awaiting owner {m.get('state_awaiting-owner', 0)}, sent {m.get('outreach_sent_total', 0)}, replies {m.get('outreach_replies_total', 0)}", "info"],
             ["Waiting on source verification", str(m.get("blocked_source_unverified", 0)), "warn" if m.get("blocked_source_unverified") else "ok"]]
-    ap = ROOT / "business/funding/applications"
+    ap = ROOT / "instances/ultrastable/funding/applications"
     for pj in sorted(ap.glob("*/packet.json")):
         if pj.parent.name.startswith("_"):
             continue

@@ -2,7 +2,7 @@ name: funding-maintenance
 # budget: ~5 min x 4/month
 # trigger: weekly registry re-check (needs open network)
 # free-alternative: Cloudflare cron worker with fetch
-# Weekly re-verification of business/funding/registry.json. See business/funding/MAINTENANCE.md.
+# Weekly re-verification of instances/ultrastable/funding/registry.json. See instances/ultrastable/funding/MAINTENANCE.md.
 on:
   schedule:
     - cron: "0 7 * * 1"
