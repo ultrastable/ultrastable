@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
 // SPDX-License-Identifier: LicenseRef-Ultrastable-1.0
 // Copyright (c) Ultrastable
 // REDMAIN-LANE-1: when the newest commit on main fails the required `checks` gate and stays red for redMin minutes, the tick Worker opens a
