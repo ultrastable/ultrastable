@@ -1,0 +1,11 @@
+{
+ "id": "OL-20261121-2",
+ "title": "OL-20261121-2: ultrastable.io delegation and quniverse residue",
+ "body": "**Owner:** platform-manager\n**Trigger:** cost-guard daily run\n**Done check:** cmd:python3 -m foundation singleaccount --live\n**Status:** open\n\nultrastable.io's registrar nameservers are grace/leonidas but the .io registry still serves the quniverse pair; the quniverse io zone holds a stateless forwarder (ultrastable-site with UPSTREAM_ORIGIN), ultrastable-mail-in and ultrastable-mail-relay. When the zone activates in the ultrastable account, site/zonecutover.js attaches io domains, routes and mail rules; then the quniverse io zone and its three workers are deleted and ultrastable-dashboard drops MAIL_RELAY_URL. Three empty moved zone shells (app, net, org) in quniverse cannot be deleted while registrar metadata lingers (error 1315). Closed by the server-side loop SINGLE-ACCOUNT-RETIRE-1: cost-guard runs `singleaccount --retire` daily, which deletes the other account's Ultrastable Workers and zone once ultrastable.io is active in the ultrastable account, then `--live` probes. If the deploy token cannot see the retired account, --live reports it unmeasured.",
+ "labels": [
+  "role:platform-manager",
+  "open-loop"
+ ],
+ "milestone": "Now",
+ "workstream": "Open loops"
+}

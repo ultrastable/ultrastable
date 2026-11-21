@@ -53,11 +53,11 @@ export function ownerAddresses(env) {
 }
 export function maskAddr(a) { const p = String(a).split("@"); return p[0].slice(0, 2) + "\u2026@" + (p[1] || ""); }
 async function sendOne(env, to, subject, text) {
-  const from = env.MAIL_FROM || "owner@ultrastable.io";
+  const from = env.MAIL_FROM || "owner@ultrastable.org";
   if (env.MAILER) return env.MAILER({ from, to, subject, text });
   if (!env.SEND_EMAIL) throw new Error("SEND_EMAIL binding is missing");
   const { EmailMessage } = await import("cloudflare:email");
-  const raw = ["From: Ultrastable <" + from + ">", "To: " + to, "Subject: " + subject, "Message-ID: <" + hex(12) + "@ultrastable.io>", "Date: " + new Date().toUTCString(), "MIME-Version: 1.0", "Content-Type: text/plain; charset=utf-8", "", text].join("\r\n");
+  const raw = ["From: Ultrastable <" + from + ">", "To: " + to, "Subject: " + subject, "Message-ID: <" + hex(12) + "@" + from.split("@")[1] + ">", "Date: " + new Date().toUTCString(), "MIME-Version: 1.0", "Content-Type: text/plain; charset=utf-8", "", text].join("\r\n");
   await env.SEND_EMAIL.send(new EmailMessage(from, to, raw));
 }
 // MAIL-RELAY-1 (2026-11-17): Cloudflare Email Sending only lets a worker send as a domain that its own account owns. ultrastable.io lives in one

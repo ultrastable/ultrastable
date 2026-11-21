@@ -10,6 +10,7 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-21
 
+- 2026-11-21: SINGLE-ACCOUNT-LIVE-1 (Rowan: zero Ultrastable or Practical Solutions assets in the quniverse account). All four registrations sit in the ultrastable account; app, net and org zones are active there and serve; org mail routing and Email Sending (outreach.ultrastable.org, ultrastable.org) set up there; tenant-ps-core relays via tenant-ps-mail.ultrastable.workers.dev. Every quniverse Worker, D1, KV and R2 copy was backed up (ops repo backups/quniverse-retired/2026-11-21) and deleted; the tick's cross-account secrets (CUTOVER_PEER, SOURCE_*) are removed. Left in quniverse: the ultrastable.io zone with a stateless forwarder and two mail relays until the .io registry serves grace/leonidas (zonecutover then attaches io mail in the ultrastable account), and three empty 'moved' zone shells Cloudflare refuses to delete (error 1315). `python3 -m foundation singleaccount --live` (last step of cost-guard) fails while any of it remains.
 - 2026-11-21: Remove leftover conflict markers from two READMEs (#1092)
 - 2026-11-21: MERGE-NOW-1: PRs merge on the webhook in seconds; server reconciles generated-file conflicts; time-to-merge metric (#931)
 - 2026-11-21: LANE-WORKER-MERGE-1: call the Worker merge only from the lane workflow (#1091)

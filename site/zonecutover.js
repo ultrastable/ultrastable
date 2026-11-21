@@ -9,10 +9,12 @@
 // the originating fleet (on ultrastable.app and .net) are not carried: the custom domains below serve those hostnames.
 // Consumers: site/worker.js tick (out.zones), test site/zonecutover.test.mjs, ops/account-move.json (items move to 'moved' on evidence).
 export const PLAN = [
-  { zone: "ultrastable.io", domains: [["ultrastable.io", "ultrastable-site"], ["www.ultrastable.io", "ultrastable-site"]], routes: [["*.ultrastable.io/*", "ultrastable-site"]], email: true },
+  { zone: "ultrastable.io", domains: [["ultrastable.io", "ultrastable-site"], ["www.ultrastable.io", "ultrastable-site"]], routes: [["*.ultrastable.io/*", "ultrastable-site"]], email: true,
+    mail: { rules: [["hello@ultrastable.io", "ultrastable-mail-in"], ["pilot@ultrastable.io", "ultrastable-mail-in"]], catchAll: "ultrastable-mail-in" } },
   { zone: "ultrastable.app", domains: [["ultrastable.app", "ultrastable-site"], ["www.ultrastable.app", "ultrastable-site"]], routes: [["*.ultrastable.app/*", "ultrastable-spinoffs"]], email: false },
   { zone: "ultrastable.net", domains: [["ultrastable.net", "ultrastable-site"], ["www.ultrastable.net", "ultrastable-site"]], routes: [], email: false },
-  { zone: "ultrastable.org", domains: [["ultrastable.org", "tenant-ps-edge"], ["www.ultrastable.org", "tenant-ps-edge"], ["solutions.ultrastable.org", "tenant-ps-edge"]], routes: [], email: true },
+  { zone: "ultrastable.org", domains: [["ultrastable.org", "tenant-ps-edge"], ["www.ultrastable.org", "tenant-ps-edge"], ["solutions.ultrastable.org", "tenant-ps-edge"]], routes: [], email: true,
+    mail: { rules: [["replies@ultrastable.org", "tenant-ps-mail"]], catchAll: "ultrastable-mail-in" } },
 ];
 const CF = "https://api.cloudflare.com/client/v4";
 
@@ -53,6 +55,19 @@ export async function zoneCutover(env, f = fetch, plan = PLAN) {
       if (p.email) {
         const er = await api(f, tok, "GET", `/zones/${zone.id}/email/routing`);
         if (!er || !er.enabled) { await api(f, tok, "POST", `/zones/${zone.id}/email/routing/enable`, {}); z.email = "enabled"; } else z.email = "kept";
+        // MAIL-RULES-1 (2026-11-21): the rules the old account served are recreated here, each address to the Worker that read it there.
+        if (p.mail) {
+          const listed = await api(f, tok, "GET", `/zones/${zone.id}/email/routing/rules`);
+          const have = new Set((Array.isArray(listed) ? listed : []).flatMap(r => (r.matchers || []).filter(m => m.type === "literal").map(m => m.value)));
+          for (const [to, worker] of p.mail.rules) {
+            if (have.has(to)) continue;
+            await api(f, tok, "POST", `/zones/${zone.id}/email/routing/rules`, { name: to + " to " + worker, enabled: true, matchers: [{ type: "literal", field: "to", value: to }], actions: [{ type: "worker", value: [worker] }] });
+            z.attached.push("mail:" + to);
+          }
+          const ca = await api(f, tok, "GET", `/zones/${zone.id}/email/routing/rules/catch_all`).catch(() => null);
+          const caW = ca && ca.enabled && (ca.actions || []).some(a => a.type === "worker" && (a.value || []).includes(p.mail.catchAll));
+          if (!caW) { await api(f, tok, "PUT", `/zones/${zone.id}/email/routing/rules/catch_all`, { name: "every other address to " + p.mail.catchAll, enabled: true, matchers: [{ type: "all" }], actions: [{ type: "worker", value: [p.mail.catchAll] }] }); z.attached.push("mail:catch-all"); }
+        }
       }
     } catch (e) { z.state = "error"; z.error = String(e && e.message || e).slice(0, 200); out.status = "error"; }
   }
