@@ -49,8 +49,9 @@
       "weight": 4
     },
     "unused_import": {
-      "enabled": true,
-      "weight": 3
+      "enabled": false,
+      "weight": 3,
+      "why": "SUBSTANCE-1 (Rowan, 2026-11-21): removing an unused import changes no executable behaviour, so it is not worth a PR, a CI run and a deploy round; measured 2026-11-14..21, 4 of the 7 trivial merges the system made itself were these. The finding stays measurable (selfcode --sense) and is folded into the next substantive change to that file."
     },
     "todo": {
       "enabled": true,

@@ -19,7 +19,7 @@ export async function load(env) {
 
 // LIVE-FRESH-1: the daily snapshot is only the base. Merged changes come live from the tick Worker (refreshed every pass) and are merged in by PR number;
 // `freshness` states the age of each source against its cadence so a stale page says so and the probe (/api/freshness) can fail.
-export const CADENCE_S = { snapshot: 26 * 3600, changes: 30 * 60 };
+export const CADENCE_S = { snapshot: 26 * 3600, changes: 30 * 60, pages: 26 * 3600 };
 const ageS = (iso, now) => { const t = Date.parse(String(iso || "").replace(" ", "T") + (/[zZ]|[+-]\d\d:?\d\d$/.test(String(iso || "")) ? "" : "Z")); return isNaN(t) ? null : Math.max(0, Math.round((now - t) / 1000)); };
 // Q-CRIT-PUBLIC-STAGE: the stage the tick Worker reads for itself (ignition) and its heartbeat (pulse), fetched through the TICK service binding at
 // request time and stamped with the time of the reading. A reading older than two tick intervals is stale: a stopped tick cannot show its last stage.
@@ -58,9 +58,12 @@ export async function overlay(d, env, generated, now = Date.now(), bundleAt = nu
   }
   // PAGES-FRESH-1: every page served from a bundled generated file (roadmap, claims, self, ultrastability, spinoffs, dashboard preview, feed) is only as new as the
   // deploy that carried it. The bundle states the commit time it was built at; a merged change newer than that by more than an hour has not reached those pages.
-  const newest = live && live.changes && live.changes.length ? Math.max(...live.changes.map(c => Date.parse(c.merged_at)).filter(t => !isNaN(t))) : null;
+  // SUBSTANCE-1: only a merge that altered behaviour obliges a redeploy; trivial and record-keeping merges no longer redeploy the Workers, and regenerated
+  // data reaches the bundle at most once per doctrine/substance.json deploy.max_age_hours (20 h), so the bundle may lag by up to a day (cadence 26 h).
+  const counted = live && live.changes ? live.changes.filter(c => c.substance !== "trivial" && c.substance !== "record") : [];
+  const newest = counted.length ? Math.max(...counted.map(c => Date.parse(c.merged_at)).filter(t => !isNaN(t))) : null;
   const bt = Date.parse(bundleAt || "");
-  f.pages = { at: bundleAt || null, behind_s: newest != null && !isNaN(bt) ? Math.max(0, Math.round((newest - bt) / 1000)) : null, cadence_s: 3600 };
+  f.pages = { at: bundleAt || null, behind_s: newest != null && !isNaN(bt) ? Math.max(0, Math.round((newest - bt) / 1000)) : null, cadence_s: CADENCE_S.pages };
   for (const k of ["snapshot", "changes"]) f[k].stale = f[k].age_s == null || f[k].age_s > f[k].cadence_s;
   f.pages.stale = isNaN(bt) || (f.pages.behind_s != null && f.pages.behind_s > f.pages.cadence_s);
   d.ignition = await ignitionReading(env, now);
