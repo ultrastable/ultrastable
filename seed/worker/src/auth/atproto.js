@@ -69,8 +69,12 @@ export async function clientAssertion(jwk, { clientId, aud }) {
 }
 export const assertionFields = async (jwk, clientId, aud) => jwk ? { client_assertion_type: 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer', client_assertion: await clientAssertion(jwk, { clientId, aud }) } : {};
 
-export const clientMetadata = (origin, jwk) => ({ client_id: origin + '/.well-known/oauth-client/bluesky.json', client_name: 'Ultrastable', client_uri: origin, application_type: 'web',
+// LEGACY-CLIENT-1 (2026-11-21): a session is bound to the client id it was issued to, and the auth server re-reads that client's metadata on every refresh. When
+// bluesky.json was switched to private_key_jwt, the live public-client session could no longer refresh (HTTP 400 every hour since 19:11 on 2026-11-20) and posting stopped.
+// bluesky.json therefore stays the public client it was when those sessions began; new sign-ins use bluesky-c.json (confidential, 180-day refresh tokens).
+export const CLIENT_PATH = { public: '/.well-known/oauth-client/bluesky.json', confidential: '/.well-known/oauth-client/bluesky-c.json' };
+export const clientMetadata = (origin, jwk, confidential = false) => ({ client_id: origin + (confidential ? CLIENT_PATH.confidential : CLIENT_PATH.public), client_name: 'Ultrastable', client_uri: origin, application_type: 'web',
   redirect_uris: [origin + '/connect/bluesky/callback'], grant_types: ['authorization_code', 'refresh_token'], response_types: ['code'], scope: 'atproto transition:generic',
-  ...(jwk ? { token_endpoint_auth_method: 'private_key_jwt', token_endpoint_auth_signing_alg: 'ES256', jwks_uri: origin + '/.well-known/oauth-client/bluesky-jwks.json' } : { token_endpoint_auth_method: 'none' }), dpop_bound_access_tokens: true });
+  ...(confidential && jwk ? { token_endpoint_auth_method: 'private_key_jwt', token_endpoint_auth_signing_alg: 'ES256', jwks_uri: origin + '/.well-known/oauth-client/bluesky-jwks.json' } : { token_endpoint_auth_method: 'none' }), dpop_bound_access_tokens: true });
 
 export const refreshForm = (refresh, clientId) => new URLSearchParams({ grant_type: 'refresh_token', refresh_token: refresh, client_id: clientId }).toString();
