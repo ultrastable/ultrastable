@@ -203,6 +203,7 @@
         "BLUESKY_HANDLE",
         "CLOUDFLARE_API_TOKEN",
         "LANE_PAT",
+        "LINKEDIN_ACCESS_TOKEN",
         "MASTODON_INSTANCE",
         "MASTODON_TOKEN"
       ]
@@ -2311,6 +2312,32 @@
       ],
       "feedback": "each finding's measurement is re-read every pass: a finding not met files a Q-RES item that the executor works and whose closing probe is the same measurement, experiments settle against their predictions and reopen, and the papers at /research are regenerated from the new numbers",
       "bindings": []
+    },
+    "thought": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "social.post",
+          "via": "api:social",
+          "to": "ext.post_engagement",
+          "returns": "post.engagement"
+        }
+      ],
+      "feedback": "every paper regenerates from the measurements after a merge; a changed result is posted first, and referrals from the posts to /research return through the reach loop's paper arm, which moves the arm weights",
+      "bindings": [
+        "BLUESKY_APP_PASSWORD",
+        "BLUESKY_HANDLE",
+        "CLOUDFLARE_API_TOKEN",
+        "LANE_PAT",
+        "LINKEDIN_ACCESS_TOKEN",
+        "MASTODON_INSTANCE",
+        "MASTODON_TOKEN"
+      ]
     }
   },
   "implicit_producers": {

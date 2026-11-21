@@ -22,7 +22,7 @@ Artificial Intelligence in the Firm: Bottlenecks in Software Production. Fiona C
 - CRITICALITY-1 (`foundation/criticality.py`): the system's own score counts verified live deploys, never commits or lines
 - PROGRESS-1 (`site/progress.js`): the public progress page lists merged and shipped work only; record-keeping merges are excluded
 
-**Measured here:** verified live deploys per merged pull request in the same window: 0.547 (n = 64). Target >= 0.5. Verdict: **met**.
+**Measured here:** verified live deploys per merged pull request in the same window: 0.625 (n = 64). Target >= 0.5. Verdict: **met**.
 Source: ops/deploys.jsonl and the pull request snapshot.
 
 ### F2. Review becomes the bottleneck (economics)
@@ -72,7 +72,7 @@ Source: git log of main, subjects starting with Revert.
 - HANDOFF-1 (`seed/worker/src/handoff.js`): every deploy runs a verify line against production and rolls back on failure
 - FRONT-BACKED-1 (`site/live.js`): freshness of each live source is served and probed
 
-**Measured here:** share of uploaded deploys proven live against their commit: 1.0 (n = 35). Target >= 0.95. Verdict: **met**.
+**Measured here:** share of uploaded deploys proven live against their commit: 1.0 (n = 40). Target >= 0.95. Verdict: **met**.
 Source: ops/deploys.jsonl (same window).
 
 ### F6. AI review tools leave humans in the loop (oversight)
@@ -109,7 +109,7 @@ Source: ops/criticality.jsonl at 2026-11-20T20:12:51Z.
 
 ## Proposed further links (leads, not findings)
 
-Found by core/connect on the lexical-512-10pod5 route; each is a proposal until a study file adopts it.
+Found by core/connect on the lexical-512-1wueg0t route; each is a proposal until a study file adopts it.
 
 - F3 may also relate to WORDS-MATCH-CODE-1 (similarity 0.14)
 - F3 may also relate to UNATTENDED-365 (similarity 0.136)

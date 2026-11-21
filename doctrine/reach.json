@@ -75,6 +75,10 @@
   "evidence": {
    "path": "/progress",
    "what": "what the system deployed and checked live in the last week, counted from its own deploy record (ATTENTION-1)"
+  },
+  "paper": {
+   "path": "/research",
+   "what": "a white paper that tests a common belief about AI limits against this system's own records, with the hook that Ultrastable runs on Ultrastable (THOUGHT-1)"
   }
  },
  "evergreen": [

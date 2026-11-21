@@ -19,6 +19,8 @@ export const REGISTRY = {
   microsoft: { title: 'Microsoft', type: 'oauth', authorize: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize', token: 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
     scopes: ['offline_access', 'openid', 'email', 'User.Read', 'Files.ReadWrite', 'Calendars.ReadWrite'], extra: {}, env: 'OAUTH_MICROSOFT' },
   buffer: { title: 'Buffer', type: 'oauth', authorize: 'https://buffer.com/oauth2/authorize', token: 'https://api.bufferapp.com/1/oauth2/token.json', scopes: [], extra: {}, env: 'OAUTH_BUFFER' },
+  linkedin: { title: 'LinkedIn', type: 'oauth', authorize: 'https://www.linkedin.com/oauth/v2/authorization', token: 'https://www.linkedin.com/oauth/v2/accessToken',
+    scopes: ['openid', 'profile', 'w_member_social'], extra: {}, env: 'OAUTH_LINKEDIN' },  // THOUGHT-1: posts white papers on the owner's own LinkedIn; tokens last 60 days with no refresh, so getToken reports expiry
   bluesky: { title: 'Bluesky', type: 'social', connect: '/connect/bluesky' },  // REACH-1: atproto OAuth in social.js
   mastodon: { title: 'Mastodon', type: 'social', connect: '/connect/mastodon' },  // REACH-1: app registration + OAuth in social.js
   github: { title: 'GitHub', type: 'github-app', connect: '/connect/github' },  // the GitHub App manifest flow in routes.js
