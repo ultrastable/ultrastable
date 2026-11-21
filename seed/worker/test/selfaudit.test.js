@@ -78,7 +78,7 @@ test('the tick runs the selfaudit step and files FM items for red probes', async
 test('COSTGUARD-1: a red budget probe files the next fix, an over-budget sample stays red, a green sample closes fix and mode', async () => {
   const { sampleCosts } = await import('../src/costsample.js');
   const db = makeDb();
-  const m = JSON.parse(JSON.stringify(read('../../../instances/ultrastable/failure-modes.json').modes[0]).split('qn' + 'fo-audit').join('ext-db'));
+  const m = {"id": "ext-db-d1-budget", "failure": "An external D1 reads more than 15M rows per hour (or the sampler cannot measure it).", "root_cause": "Full-table scans.", "spof": false, "owner_role": "operations", "trigger": "every tick (hourly sample)", "probe": "SELECT CASE WHEN (SELECT rows_read_1h FROM cost_samples WHERE target='ext-db' AND rows_read_1h IS NOT NULL AND at >= datetime('now','-3 hours') ORDER BY id DESC LIMIT 1) < 15000000 THEN 1 ELSE 0 END", "remedy": "index or LIMIT the heaviest scans.", "fixes": [{"id": "ext-db-fix-top-scan", "title": "Find the heaviest queries and add indexes or LIMITs to them."}, {"id": "ext-db-fix-debounce", "title": "Widen the debounce on the readers."}, {"id": "ext-db-fix-sampler", "title": "Bind CF_ANALYTICS_TOKEN to the tick Worker and set database_id, so the sampler can measure."}]};
   const one = { modes: [m] };
   // no token: the sampler records an error sample, the probe is red, the first fix is filed
   await sampleCosts(db, { token: '', budgets: [{ id: 'ext-db', account_id: 'a', database_id: 'd' }] });
