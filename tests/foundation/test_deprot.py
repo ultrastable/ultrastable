@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """DEPROT-1: every manifest has a Dependabot entry, and the check notices a new one."""
 import sys, tempfile, unittest
 from pathlib import Path
