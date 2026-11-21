@@ -3757,6 +3757,32 @@
    "probe": "grep:seed/worker/src/mergenow.js::MERGE-NOW-1"
   },
   {
+   "id": "decision-2026-11-21-substance-1-only-changes-that-alter-executable-behaviour-cou",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "SUBSTANCE-1: only changes that alter executable behaviour count, open a PR or redeploy",
+   "body": "Measured 2026-11-14..21 (substance --report): 21 of 192 system-made changes altered behaviour, 7 trivial, 164 records; 73 of 145 deploy rounds carried no behaviour change. Executor refuses non-substantive PRs, checks backstop for executor and bot PRs, deploy-ultrastable skips data-only pushes (max_age_hours 20), generators stop stamp-only rewrites, tick classifies merged PRs and /progress pulse plus /pulse.json count only behaviour changes; unused_import self-code kind switched off; lane comment dedupe (PR 826 got 5 identical comments).",
+   "probe": "grep:foundation/executor.py::rejected-trivial"
+  },
+  {
+   "id": "lesson-2026-11-21-a-relay-result-is-read-back-per-channel-never-stored-as-post",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "A relay result is read back per channel, never stored as posted",
+   "body": "Relay returned linkedin/substack scheduled and facebook/instagram no-channel; publisher stored posted. Rows are now per service with status verified, queued, unverified or failed; failed services retry up to 3 times; per-service rows override a legacy relay row. Live relay qnfo-social patched to share now; its source is not in QNFO/qnfo-workers (open loop: put it there, add a cancel route for stale Buffer queue entries).",
+   "probe": "grep:seed/worker/src/social.js::relayDone",
+   "session": "session_0156nqDrz7VJCnauouR6AgUS"
+  },
+  {
+   "id": "lesson-2026-11-21-conflict-markers-on-main-plus-per-deploy-claim-rewrites-keep",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "Conflict markers on main plus per-deploy claim rewrites keep every README PR in conflict",
+   "body": "Markers merged by #834 sat inside the README status table; every deploy record rewrites the live-deploys claim on that line (several times an hour), so any PR touching README.md conflicted within minutes and the claim-only resolver could not help because the conflicting region also held marker lines. Removed the markers; tests pass on this branch. The tick sweeper also ran out of its subrequest share on most passes (sweeper_runs 682-684), so the webhook route in seed/worker/src/mergenow.js is the primary merge path and the sweeper is the fallback.",
+   "probe": "grep:seed/worker/src/mergenow.js::MERGE-NOW-1",
+   "session": "session_0156nqDtycGejegSYjhFJ1MF"
+  },
+  {
    "id": "decision-2026-11-21-plan-1-the-ultrastable-account-is-on-workers-paid-governors-",
    "kind": "decision",
    "date": "2026-11-21",

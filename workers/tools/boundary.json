@@ -245,6 +245,10 @@
       "class": "core",
       "role": "Visible progress from shipped changes only: digests, release cadence judgement, Atom feed and a last-visit marker kept in the reader's browser (PROGRESS-1)"
     },
+    "core/substance": {
+      "class": "core",
+      "role": "Is a change real: classifies a diff as behaviour, literal, comment, format, import, generated or record, so trivial merges never count as progress (SUBSTANCE-1)"
+    },
     "core/plus": {
       "class": "core",
       "role": "the plus loop"
