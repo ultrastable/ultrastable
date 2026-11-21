@@ -1,7 +1,7 @@
 {
   "id": "Q-AGENT-MERGED-PR",
   "title": "Q-AGENT-MERGED-PR: a merged PR authored through the code-agent ladder, with a rising deploy count",
-  "body": "**Owner:** operations\n**Trigger:** every executor run\n**Done check:** grep:ops/executor-log.jsonl::\"author_path\": \"ladder\"\n**Status:** open\n\nProve the executor on the Workers AI adapters edits the repo end to end: pick issue, agent edits, PR, checks, merge, deploy, dashboard shows it. Probe passes when an executor-log row records the ladder as author and the PR is merged. Filed at thread close; the executor works it in driver order.",
+  "body": "**Owner:** operations\n**Trigger:** every executor run\n**Done check:** grep:ops/executor-log.jsonl::\"author_path\": \"ladder\"\n**Status:** closed\n\nProve the executor on the Workers AI adapters edits the repo end to end: pick issue, agent edits, PR, checks, merge, deploy, dashboard shows it. Probe passes when an executor-log row records the ladder as author and the PR is merged. Filed at thread close; the executor works it in driver order.\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 218.8 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
   "labels": [
     "role:operations",
     "growth"

@@ -1,8 +1,11 @@
 {
   "id": "BND-1",
   "title": "BND-1: Package the containment boundary as a container or sandbox (the selling point)",
-  "body": "**Owner:** Staff (platform)\n**Trigger:** boundary --drill green on main\n**Done check:** grep:Dockerfile::boundary --drill\n**Status:** open\n\nUltrastable instances run inside a container or Cloudflare sandbox so agents create and destroy at will; egress (credentials, money, owner accounts, public publishing, third-party systems) stays gated. Doctrine: doctrine/boundary.json. Drill: python3 -m foundation boundary --drill.",
-  "labels": ["role:staff", "ws:platform"],
+  "body": "**Owner:** Staff (platform)\n**Trigger:** boundary --drill green on main\n**Done check:** grep:Dockerfile::boundary --drill\n**Status:** closed\n\nUltrastable instances run inside a container or Cloudflare sandbox so agents create and destroy at will; egress (credentials, money, owner accounts, public publishing, third-party systems) stays gated. Doctrine: doctrine/boundary.json. Drill: python3 -m foundation boundary --drill.\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 221.9 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "labels": [
+    "role:staff",
+    "ws:platform"
+  ],
   "milestone": "Next",
   "workstream": "Platform"
 }

@@ -1,7 +1,7 @@
 {
   "id": "OL-20261118-3",
   "title": "OL-20261118-3: After 00:00 UTC confirm watchdog lands via main-writer",
-  "body": "**Owner:** operations\n**Trigger:** 00:00 UTC D1 reset\n**Done check:** cmd:python3 -m foundation drainwatch\n**Status:** open\n\nConfirm the next watchdog run succeeds and open PRs trend to 0 after the D1 reset.",
+  "body": "**Owner:** operations\n**Trigger:** 00:00 UTC D1 reset\n**Done check:** cmd:python3 -m foundation drainwatch\n**Status:** closed\n\nConfirm the next watchdog run succeeds and open PRs trend to 0 after the D1 reset.\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 70.7 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
   "labels": [
     "role:operations",
     "open-loop"

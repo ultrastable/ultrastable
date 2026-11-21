@@ -156,6 +156,24 @@
       }
     },
     {
+      "id": "flow-balance-site",
+      "source": "site/balance.js",
+      "quote": "a merged duplicate lowers new issues and never counts as closed",
+      "probe": {
+        "file": "foundation/balance.py",
+        "contains": "never_closure"
+      }
+    },
+    {
+      "id": "flow-balance-rule",
+      "source": "agents/AGENTS.md",
+      "quote": "Superseded items lower net inflow and never count as closures",
+      "probe": {
+        "file": "foundation/balance.py",
+        "contains": "never_closure"
+      }
+    },
+    {
       "id": "verify-page-coverage",
       "source": "site/verification.js",
       "quote": "guarantees are model-checked and tied to the deployed code",

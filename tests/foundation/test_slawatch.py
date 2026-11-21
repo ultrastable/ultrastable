@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """SLA-1: a PR or issue past its written limit is reported in every state; inside the limit is not."""
 import json, unittest
 from datetime import datetime, timezone

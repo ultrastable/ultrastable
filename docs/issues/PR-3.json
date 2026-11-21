@@ -1,7 +1,7 @@
 {
   "id": "PR-3",
   "title": "PR-3: QNFO case study: autonomy rate, trust ledger, plus share, with real numbers",
-  "body": "**Owner:** Product mgr\n**Trigger:** IP-5, PL-1\n**Done check:** Page on the site\n**Status:** open\n\nSource of truth: `docs/roadmap.md` (item PR-3). Every closed item proposes a plus: file it as a new issue labeled `plus`.",
+  "body": "**Owner:** Product mgr\n**Trigger:** IP-5, PL-1\n**Done check:** Page on the site\n**Status:** closed\n\nSource of truth: `docs/roadmap.md` (item PR-3). Every closed item proposes a plus: file it as a new issue labeled `plus`.\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 273.0 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
   "labels": [
     "role:product-mgr",
     "ws:product-and-marketing",

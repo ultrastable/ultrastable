@@ -1,7 +1,7 @@
 {
   "id": "Q-SEED-2",
   "title": "Q-SEED-2: fork and collapse: a direction change opens a fork with a charter delta and a prediction, closes it on the metric, logs the choice",
-  "body": "**Owner:** product-manager\n**Trigger:** after Q-SEED-1\n**Done check:** file:foundation/fork.py\n**Status:** open\n\ncode-task: repo=ultrastable path=foundation/fork.py\nSee docs/doctrine/SEED.md rule 5. Reuse pm.py experiments and decision_log; do not build a parallel store.\n\nsize: M\n",
+  "body": "**Owner:** product-manager\n**Trigger:** after Q-SEED-1\n**Done check:** file:foundation/fork.py\n**Status:** closed\n\ncode-task: repo=ultrastable path=foundation/fork.py\nSee docs/doctrine/SEED.md rule 5. Reuse pm.py experiments and decision_log; do not build a parallel store.\n\nsize: M\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 175.2 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
   "labels": [
     "role:product-manager",
     "open-loop"

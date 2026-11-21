@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """SLA-1: every open PR and issue is inside its written service level (doctrine/sla.json). Ultrastable is the foundation for any autonomous system.
 
   python3 -m foundation slawatch --check [--repo OWNER/NAME ...]    reads open PRs and issues with `gh`; fails loudly when any is past its limit, whatever its state

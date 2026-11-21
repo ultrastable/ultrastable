@@ -1,7 +1,7 @@
 {
   "id": "Q-GAP-external-audit",
   "title": "Q-GAP-external-audit: An independent audit of prediction scoring",
-  "body": "**Owner:** product-manager\n**Trigger:** every executor run\n**Done check:** file:docs/audit/external-scoring-audit.json\n**Status:** open\n\nGap in component `metrics-triggers`: the prediction match rate is scored by the system itself. Have a party outside the system re-score a sample and record the result in docs/audit/external-scoring-audit.json.",
+  "body": "**Owner:** product-manager\n**Trigger:** every executor run\n**Done check:** file:docs/audit/external-scoring-audit.json\n**Status:** closed\n\nGap in component `metrics-triggers`: the prediction match rate is scored by the system itself. Have a party outside the system re-score a sample and record the result in docs/audit/external-scoring-audit.json.\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 220.7 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
   "labels": [
     "role:product-manager",
     "gap"

@@ -1,7 +1,7 @@
 {
   "id": "OL-20261112-14",
   "title": "OL-20261112-14: external dependencies X-1 and X-3",
-  "body": "**Owner:** project-manager\n**Trigger:** every executor run\n**Done check:** cmd:python3 scripts/fleet_probe.py ext-x1-x3\n**Status:** open\n**Residual:** ext-deps-x1-x3\n\nTrack the external dependency items X-1 and X-3; replace the probe with the items' own closing probes when read from the dependency-unification record.",
+  "body": "**Owner:** project-manager\n**Trigger:** every executor run\n**Done check:** cmd:python3 scripts/fleet_probe.py ext-x1-x3\n**Status:** closed\n**Residual:** ext-deps-x1-x3\n\nTrack the external dependency items X-1 and X-3; replace the probe with the items' own closing probes when read from the dependency-unification record.\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 224.2 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
   "labels": [
     "role:project-manager",
     "open-loop"

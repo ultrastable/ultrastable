@@ -1,7 +1,7 @@
 {
   "id": "STD-3",
   "title": "STD-3: Web Bot Auth: verify inbound and sign outbound agent requests",
-  "body": "**Owner:** **staff**\n**Trigger:** none\n**Done check:** register entry `web-bot-auth` moves from planned to supported with a passing test\n**Status:** open\n\nEdge verification adapter; no port change.",
+  "body": "**Owner:** **staff**\n**Trigger:** none\n**Done check:** register entry `web-bot-auth` moves from planned to supported with a passing test\n**Status:** closed\n\nEdge verification adapter; no port change.\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 248.3 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
   "labels": [
     "role:staff",
     "ws:platform"

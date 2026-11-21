@@ -1,0 +1,14 @@
+{
+  "id": "Q-RECUR-39caaf9374",
+  "title": "Q-RECUR-39caaf9374: pr-stuck recurred 10x: ol-pr land or supersede pull request needs",
+  "body": "**Owner:** executor\n**Trigger:** the failure miner files it after every merge and daily\n**Done check:** cmd:python3 -m foundation failmine --probe 39caaf9374\n**Status:** open\n\nRecurring failure, class `pr-stuck`, seen 10 times (open 2, last 2026-11-21T08:19:47+00:00).\nSignature: ol-pr land or supersede pull request needs\nEvents: OL-PR-694, OL-PR-709, OL-PR-710, OL-PR-737, OL-PR-812, OL-PR-841\nRoot cause (5 whys): nothing server-side owns the PR after the session that opened it ends\nOwning mechanism: seed/worker/src/sweeper.js lane\nSeen three or more times: incident. Redesign the owning mechanism so this class cannot recur; a fourth attempt of the same fix is not allowed.\n\n**Closing probe:** cmd:python3 -m foundation failmine --probe 39caaf9374\n",
+  "labels": [
+    "audit",
+    "incident",
+    "agent-ready",
+    "p1",
+    "raises-self"
+  ],
+  "milestone": "Now",
+  "workstream": "Failure modes"
+}

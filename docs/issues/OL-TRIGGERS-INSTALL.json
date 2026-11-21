@@ -1,7 +1,7 @@
 {
   "id": "OL-TRIGGERS-INSTALL",
   "title": "OL-TRIGGERS-INSTALL: register the signed GitHub webhook on the live worker",
-  "body": "**Owner:** operations\n**Trigger:** the worker URL is known (deploy of ultrastable-tick) and gh and wrangler are authenticated; checked every heartbeat\n**Done check:** file:ops/loop-evidence/webhook-installed.json\n**Status:** open\n\nRun `python3 -m foundation triggers --install ultrastable/ultrastable <worker-url> --apply`: mints the webhook secret in memory, registers the GitHub webhook and stores GITHUB_WEBHOOK_SECRET on the worker. Writes the marker file on success. Until then events fall back to the cron heartbeat.",
+  "body": "**Owner:** operations\n**Trigger:** the worker URL is known (deploy of ultrastable-tick) and gh and wrangler are authenticated; checked every heartbeat\n**Done check:** file:ops/loop-evidence/webhook-installed.json\n**Status:** closed\n\nRun `python3 -m foundation triggers --install ultrastable/ultrastable <worker-url> --apply`: mints the webhook secret in memory, registers the GitHub webhook and stores GITHUB_WEBHOOK_SECRET on the worker. Writes the marker file on success. Until then events fall back to the cron heartbeat.\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 221.2 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
   "labels": [
     "role:operations",
     "open-loop",

@@ -1,0 +1,5 @@
+{
+  "_doc": "Tests that read files only the ultrastable/ultrastable monorepo holds. test/run.mjs skips them in a standalone seed checkout and runs them in the monorepo.",
+  "files": ["bind.test.js", "migrations.test.js", "selfaudit.test.js", "tenant-isolation.test.js", "unknowns.test.js"],
+  "tests": ["REPOS-1: the admin install archives", "DIRECT-MERGE-GATE-1: the admin install upserts", "every Workers AI call site in the workers goes through the governor", "adapters mirror doctrine/code-agents.json"]
+}

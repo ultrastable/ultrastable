@@ -22,10 +22,12 @@
   python3 -m foundation runway [--run [--apply]|--probe C|--check]         RUNWAY-1: projected days of unattended running against the one-year target
   python3 -m foundation credwatch [--run [--apply]|--check]                TOKEN-EXPIRY-1: every credential the loops use is probed for expiry before it lapses
   python3 -m foundation openloops [--check]                                NO-OPEN-ITEMS-1: no "needs you"; every leftover is closed or a recorded gate
+  python3 -m foundation failmine [--run [--apply]|--report|--probe HASH|--check]   FAILMINE-1: mine every failure record, classify root causes, register new modes, escalate recurrence
   python3 -m foundation temporal [--run [--apply]|--settled ID|--probe|--check|--report]   TEMPORAL-1: series per area, loop and entry; hotspots, neglect and stopped loops feed the failure-mode machinery
   python3 -m foundation progress [--check|--live]                          PROGRESS-1: every system shows substantive progress at every visit; the cadence monitor is wired
   python3 -m foundation cost [--check|--probe|--guard [--apply]]          D1 rows read and AI neurons against budgets (COST-GUARD-1)
   python3 -m foundation issueloop [--apply|--json]                       ISSUE-LOOP-1: every open issue's probe is run; a passing probe closes it
+  python3 -m foundation agewatch [--check]                                 SLA-8H-1: oldest open issue and PR per org repository; fails past 8 hours
   python3 -m foundation ghmirror [--plan|--apply [--max N]|--check]       GH-MIRROR-1: the docs/issues queue mirrored one way onto GitHub Issues, labels, milestones and the board
   python3 -m foundation claims [--check|--fix|--apply|--file|--live]     CLAIMS-1: every claim on a surface is probed against code, both directions; /claims
   python3 -m foundation goalscheck [--check]                              GOALS-1: every goal has a measured variable, a deadline and a knob
@@ -92,6 +94,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["deprot"]:
         from . import deprot
         return deprot.main(_av[1:])
+    if _av[:1] == ["failmine"]:
+        from . import failmine
+        return failmine.main(_av[1:])
     if _av[:1] == ["yearfail"]:
         from . import yearfail
         return yearfail.main(_av[1:])
@@ -218,7 +223,7 @@ def main(argv=None) -> int:
     if _av[:1] == ["flows"]:
         from . import flows
         return flows.main(_av[1:])
-    if _av[:1] and _av[0] in ("sauce", "contracts", "metricloop", "throughput", "metafold", "dispose"):
+    if _av[:1] and _av[0] in ("sauce", "contracts", "metricloop", "throughput", "metafold", "dispose", "balance"):
         import importlib
         return importlib.import_module("foundation." + _av[0]).main(_av[1:])
     if _av[:1] == ["unknowns"]:
@@ -354,6 +359,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["liveness"]:
         from . import liveness
         return liveness.main(_av[1:])
+    if _av[:1] == ["agewatch"]:
+        from . import agewatch
+        return agewatch.main(_av[1:])
     if _av[:1] == ["ghmirror"]:
         from . import ghmirror
         return ghmirror.main(_av[1:])

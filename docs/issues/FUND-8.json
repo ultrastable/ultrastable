@@ -1,7 +1,7 @@
 {
   "id": "FUND-8",
   "title": "FUND-8: Trademark search and registration plan for Ultrastable",
-  "body": "**Owner:** IP manager\n**Trigger:** FUND-2\n**Done check:** Search report committed in ip/\n**Status:** open\n**Default in effect:** Default: no public use of mark beyond holding page.\n\nSource: business/funding/decision-memo.md. Closing probe is the done check.",
+  "body": "**Owner:** IP manager\n**Trigger:** FUND-2\n**Done check:** Search report committed in ip/\n**Status:** closed\n**Default in effect:** Default: no public use of mark beyond holding page.\n\nSource: business/funding/decision-memo.md. Closing probe is the done check.\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 272.4 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
   "labels": [
     "role:ip",
     "ws:business"

@@ -2336,6 +2336,18 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-574da783c3",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Issue inflow never exceeds closures; every issue inside its SLA (FLOW-BALANCE-1, Rowan 2026-11-21).** \"All UltraStable issues must be",
+      "probe": [
+        "file:seed/worker/src/flowbalance.js",
+        "file:doctrine/balance.json",
+        "file:tests/foundation/test_balance.py",
+        "file:foundation/balance.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-95432168bf",
       "surface": "agents/AGENTS.md",
       "text": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",

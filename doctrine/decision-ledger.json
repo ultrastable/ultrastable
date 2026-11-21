@@ -4150,6 +4150,64 @@
    "title": "Executor closed Q-CIFAIL-mergeaudit-1750: Implement mergeaudit probe script to verify PR merging commits pass checks and enforce consistent",
    "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: foundation/probes/mergeaudit.py.",
    "probe": "file:foundation/probes/mergeaudit.py"
+  },
+  {
+   "id": "decision-2026-11-21-sla-8h-1-nothing-open-past-8-hours",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "SLA-8H-1: nothing open past 8 hours",
+   "body": "Root causes: dispose ttl_days 14 let queue items (mirrored as GitHub issues) sit for days; the sweeper superseded only agent/* dirty PRs, never claude/* or ci-failed PRs; ghmirror kept 'done:' items open. Fix: dispose ttl_hours 6 on the 10-minute fleet pass, sweeper ladder closes any client PR past 6 h (branch kept), agewatch --check on every fleet pass.",
+   "probe": "grep:foundation/agewatch.py::SLA_HOURS = 8"
+  },
+  {
+   "id": "lesson-2026-11-21-sla-1-stuck-non-green-prs-had-no-clock",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "SLA-1: stuck non-green PRs had no clock",
+   "body": "lanewatch ignored every non-green PR and STALL-ACT-1 closed agent/ branches only, so claude/ PRs aged with only a comment. Fix: doctrine/sla.json, sweeper supersede tier plus PORT-BRANCH item, slawatch detector fm-sla-breach.",
+   "probe": "file:seed/worker/src/sla.js",
+   "session": "session_0156nqDtuzVqX3uUGd7Q9vKC"
+  },
+  {
+   "id": "lesson-2026-11-21-failmine-1-mine-classify-register-escalate-and-measure-every",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "FAILMINE-1: mine, classify, register, escalate and measure every failure",
+   "body": "Failures nobody registered are mined from issues, CI, executor and audit ledgers, classified by root cause, registered as fm-discovered-* with a detector when unregistered and seen 3x, escalated as Q-RECUR-* (2x mutate, 3x incident), measured at /failures. First reading 173 failures, 71% recurrence, 35.5 h median remediation; top classes merge-conflict 54 and stuck PRs 50. fm-tests-red root cause: tests/foundation/test_outreach.py shadowed by scripts/test_outreach.py (renamed, guard test). Seed worker imported ../../../workers/core so a seed checkout failed 28 tests; vendored with identity test, monorepo-only tests listed.",
+   "probe": "grep:foundation/failmine.py::def discover"
+  },
+  {
+   "id": "lesson-2026-11-21-failmine-session-cite",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "A write-back must cite every session that committed",
+   "body": "Carried PR checks fail when a session id is missing from the range's write-back files; cite the session in the row.",
+   "probe": "grep:foundation/writeback.py::def check"
+  },
+  {
+   "id": "decision-2026-11-21-flow-balance-1-issue-inflow-never-exceeds-closures",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "FLOW-BALANCE-1: issue inflow never exceeds closures",
+   "body": "foundation/balance.py, run in every fleet queue pass, measures net issue inflow vs closures per day/week and SLA age; when tipped it supersedes duplicates, batches family floods into BATCH-* items, throttles filers via admit(), boosts the executor daily cap and files Q-BALANCE-flow. Superseded never counts as a closure. Twins: seed scripts/balance.py, workers core/flowbalance. Page /balance.",
+   "probe": "file:foundation/balance.py"
+  },
+  {
+   "id": "lesson-2026-11-21-claims-seed-copy",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "seed/scripts/claims.py must equal foundation/claims.py",
+   "body": "Editing the claims checker without copying it to the seed fails test_checker_is_the_platform_copy; copy in the same change.",
+   "probe": "file:seed/scripts/claims.py"
+  },
+  {
+   "id": "lesson-2026-11-21-flow-balance-1-pr-carried-to-green-by-sla-1-session",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "FLOW-BALANCE-1 PR carried to green by SLA-1 session",
+   "body": "PR 1762 conflicted with main on doctrine/claim-code.json (both sides kept) and stale generated files (regen_generated.sh). Issue SLA table matches doctrine/sla.json.",
+   "probe": "file:foundation/balance.py",
+   "session": "session_0156nqDtuzVqX3uUGd7Q9vKC"
   }
  ]
 }

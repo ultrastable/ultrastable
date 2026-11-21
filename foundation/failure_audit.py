@@ -257,6 +257,12 @@ def run(root=REPO, only=None, issues=True, now=None) -> list[dict]:
     return results
 
 
+def discover(root=REPO, apply=False) -> list[str]:
+    """Q-FM-DISCOVER: failure modes nobody registered, found in the ledgers by foundation/failmine.py and registered with a live detector."""
+    from . import failmine
+    return failmine.discover(failmine.mine(root), root, apply)
+
+
 def probe(did: str, root=REPO) -> tuple[bool, str]:
     """Closing probe of Q-AUDIT-<did>. A detector that fits in the queue's probe time is run now; a slower one is answered from the state
     its last full run wrote, so a fix is confirmed by the next audit and never by a guess."""
@@ -286,6 +292,9 @@ def main(argv=None) -> int:
         ok, why = probe(a[a.index("--probe") + 1])
         print(why)
         return 0 if ok else 1
+    if "--discover" in a:
+        print(json.dumps(discover(apply="--apply" in a)))
+        return 0
     if "--run" in a:
         only = set(a[a.index("--only") + 1].split(",")) if "--only" in a else None
         rs = run(only=only, issues="--no-issues" not in a)

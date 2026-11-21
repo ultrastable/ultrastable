@@ -1,7 +1,7 @@
 {
   "id": "OL-20261115-3",
   "title": "OL-20261115-3: SETUP-2 (ops#30): copy starts itself, live step detection, OAuth connections",
-  "body": "**Owner:** executor\n**Trigger:** driver order\n**Done check:** grep:doctrine/user-path.json::first-run\n**Status:** open\n\nMoved from ultrastable/ops#30. 1 first-run workflow in the template copy, autopilot step removed; 2 step detection from public state; 3 Google and Buffer by OAuth consent (gated on NEEDS-YOU oauth-apps); 4 same wizard for later tasks. code-task: repo=ultrastable path=doctrine/user-path.json code-anchor: USER-PATH-1",
+  "body": "**Owner:** executor\n**Trigger:** driver order\n**Done check:** grep:doctrine/user-path.json::first-run\n**Status:** closed\n\nMoved from ultrastable/ops#30. 1 first-run workflow in the template copy, autopilot step removed; 2 step detection from public state; 3 Google and Buffer by OAuth consent (gated on NEEDS-YOU oauth-apps); 4 same wizard for later tasks. code-task: repo=ultrastable path=doctrine/user-path.json code-anchor: USER-PATH-1\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 156.8 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
   "labels": [
     "role:executor",
     "open-loop"

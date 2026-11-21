@@ -1,7 +1,7 @@
 {
   "id": "Q-ORDER-2026-11-15-no-patent-1-public-copy-cleanup-docs-site-roadmap",
   "title": "CODE-ONLY-ORDER: give decision decision-2026-11-15-no-patent-1-public-copy-cleanu a code consumer",
-  "body": "**Owner:** product-manager\n**Trigger:** ledger row has no code consumer\n**Done check:** grep:doctrine/decision-ledger.json::decision-2026-11-15-no-patent-1-public-copy-cleanup-docs-site-roadmap ; its probe names an existing code or data file that enforces the decision, and the id leaves doctrine/standing-order-baseline.json\n**Status:** open\n\nTurn the decision into a check, policy value or loop, repoint the probe, then run `python3 -m foundation standingorder --baseline`.",
+  "body": "**Owner:** product-manager\n**Trigger:** ledger row has no code consumer\n**Done check:** grep:doctrine/decision-ledger.json::decision-2026-11-15-no-patent-1-public-copy-cleanup-docs-site-roadmap ; its probe names an existing code or data file that enforces the decision, and the id leaves doctrine/standing-order-baseline.json\n**Status:** closed\n\nTurn the decision into a check, policy value or loop, repoint the probe, then run `python3 -m foundation standingorder --baseline`.\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 93.5 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
   "labels": [
     "role:product-manager",
     "code-only-order"

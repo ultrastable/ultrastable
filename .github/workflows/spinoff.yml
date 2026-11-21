@@ -46,6 +46,8 @@ jobs:
           git config user.email "actions@users.noreply.github.com"
           if [ -n "$(git status --porcelain ops instances spinoffs site docs)" ]; then
             b="agent/spinoff-${GITHUB_RUN_ID}"
+            python3 -m foundation balance --gate --apply  # FLOW-BALANCE-1: the one filing gate before any item lands
+            if [ -f ops/balance-held.jsonl ]; then git add ops/balance-held.jsonl; fi
             git checkout -q -b "$b"; git add ops instances spinoffs site/spinoff-roadmap-data.js docs/issues
             git commit -q -m "spinoff: metrics, portfolio decisions and launches (SPINOFF-1)"
             git push -q origin "$b"
