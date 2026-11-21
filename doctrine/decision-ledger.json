@@ -4516,6 +4516,15 @@
    "title": "SEED-LAUNCH-1: seeds are launched, year-gated and probed live by the system",
    "body": "A standalone seed was broken (livechanges.js imported workers/core/substance outside seed/; two tests read platform files) and its year gate failed (yearsim.py main block ran before apply_observed existed; #1851 made the sweeper throw on non-2xx so the silent-drop drill failed). Fixed in seed/; bootstrap runs year_gate and verify_live; seedlaunch.py and seed-launch.yml launch a fresh seed and every seeded repo weekly on the ultrastable account; detector seed-launch.",
    "probe": "grep:foundation/seedlaunch.py::SEED-LAUNCH-1"
+  },
+  {
+   "id": "lesson-2026-11-21-seed-deploy-1-seeds-deploy-over-the-oidc-route-a-merged-step",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "SEED-DEPLOY-1: seeds deploy over the OIDC route; a merged step in a skipped job proves nothing",
+   "body": "Lesson: the first seed deploy was hooked into deploy-workers, whose job is skipped on the current account, so merging it deployed nothing; verified by listing the account's Workers and finding no seed Worker. Decision: seeds deploy through deploy-oidc.mjs to the site deployer, with one OIDC-gated database call limited to ultrastable-seed-<slug> names. Probe: python3 -m foundation seedadmit --live exits 0 only when each seed's /health answers; node site/seedd1.test.mjs proves the scope.",
+   "probe": "grep:site/seedd1.test.mjs::seed d1: ok",
+   "session": "session_0156nqDth3dDYAsL8hsm79sa"
   }
  ]
 }

@@ -10,6 +10,8 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-21
 
+- 2026-11-21: SEED-DEPLOY-1: deploy seeds over the OIDC route with a seed-scoped D1 create-and-migrate (#1879)
+- 2026-11-21: seed launch records (SEED-LAUNCH-1) [skip ci]
 - 2026-11-21: Deploy: print deploy warnings; an unreadable zone route list is a warning (#1875)
 - 2026-11-21: SEED-ADMIT-1: admit every seed through the year simulation before it counts as launched (#1856)
 - 2026-11-21: Deployer: tenant host route wins over a wildcard zone route (TENANT-ROUTE-1) (#1859)
