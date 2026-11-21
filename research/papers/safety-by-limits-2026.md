@@ -55,7 +55,7 @@ Source: ops/deploys.jsonl (same window).
 
 - ASHBY-SEARCH-1 (`foundation/ultrastability.py`): the second loop keeps changing a parameter until the variable holds, and reverts a step that did not help
 
-**Measured here:** share of second-order steps that brought the variable back inside its limits and were kept: 0.0 (n = 14). Target >= 0.25. Verdict: **not-met**. Open item: `Q-RES-safety-by-limits-2026-S4`.
+**Measured here:** share of second-order steps that brought the variable back inside its limits and were kept: 0.0 (n = 17). Target >= 0.25. Verdict: **not-met**. Open item: `Q-RES-safety-by-limits-2026-S4`.
 Source: ops/ultrastability.jsonl verdicts.
 
 ### S5. Little work is thrown away (quality)
@@ -77,7 +77,7 @@ Source: GitHub REST pulls?state=closed, last 100 closed pull requests, fetched 2
 
 - HALT-1 (`seed/worker/src/budget.js`): one worker variable or committed file stops every cron, webhook and workflow job
 
-**Measured here:** share of registered loops that declare a closing probe and a server-side owner: 1.0 (n = 105). Target >= 1.0. Verdict: **met**.
+**Measured here:** share of registered loops that declare a closing probe and a server-side owner: 1.0 (n = 106). Target >= 1.0. Verdict: **met**.
 Source: instances/ultrastable/loop-registry.json (declared).
 
 ## Limits
@@ -90,7 +90,7 @@ Source: instances/ultrastable/loop-registry.json (declared).
 
 ## Proposed further links (leads, not findings)
 
-Found by core/connect on the lexical-512-168cjwe route; each is a proposal until a study file adopts it.
+Found by core/connect on the lexical-512-3i2vzc route; each is a proposal until a study file adopts it.
 
 - S1 may also relate to DISPOSE-1 (similarity 0.133)
 - S1 may also relate to THOUGHT-1 (similarity 0.116)
@@ -101,6 +101,7 @@ Found by core/connect on the lexical-512-168cjwe route; each is a proposal until
 - S5 may also relate to COMPLETE-1 (similarity 0.116)
 - S5 may also relate to DRAIN-ZERO-1 (similarity 0.109)
 - S6 may also relate to IGNORANCE-1 (similarity 0.133)
+- S6 may also relate to TEMPORAL-1 (similarity 0.117)
 
 ## Method
 

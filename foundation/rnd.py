@@ -272,10 +272,12 @@ def priorities(root, cfg, cov) -> dict:
 def boost(issues: list[dict], root=REPO) -> list[dict]:
     """Executor hook: stable-sort takeable issues by their R&D priority (default 1)."""
     p = _read(root, "priorities.json", {})
+    att = _read(root, "../temporal/attention.json", {})  # TEMPORAL-1: weight by the advocate role that owns the item: neglected areas rise, hot ones fall
     def key(i):
         t = i.get("title", "")
         iid = t.split(":", 1)[0]
-        return -p.get(iid, 1.0)
+        own = re.search(r"\*\*Owner:\*\*\s*([\w-]+)", i.get("body", "") or "")
+        return -p.get(iid, 1.0) * att.get(own.group(1) if own else "", 1.0)
     return sorted(issues, key=key)
 
 

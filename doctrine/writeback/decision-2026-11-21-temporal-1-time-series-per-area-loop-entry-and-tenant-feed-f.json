@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-21-temporal-1-time-series-per-area-loop-entry-and-tenant-feed-f",
+  "kind": "decision",
+  "date": "2026-11-21",
+  "title": "TEMPORAL-1: time series per area, loop, entry and tenant feed failure modes, pathfinder and queue attention",
+  "body": "Snapshots hide churn and neglect; the loop reads history and ledgers daily, files findings with predictions, settles them by recomputing",
+  "probe": "grep:foundation/temporal.py::def diagnose",
+  "session": "session_0156nqDtnQ5gPHumEXvZkjYN"
+ },
+ "kind": "decision",
+ "title": "TEMPORAL-1: time series per area, loop, entry and tenant feed failure modes, pathfinder and queue attention",
+ "session": "session_0156nqDtnQ5gPHumEXvZkjYN"
+}
