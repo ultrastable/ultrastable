@@ -99,7 +99,8 @@ def check(root=REPO) -> list[str]:
     state = gap_state(root, d)
     for g in d["gaps"]:
         it = have.get(GAP_ID(g))
-        if state[g["id"]] == "open" and (not it or it["status"] != "open"):
+        disposed = bool(it) and "**Disposition:**" in str(it["json"].get("body", ""))  # DISPOSE-1: shelved with a recorded disposition, its probe keeps running
+        if state[g["id"]] == "open" and (not it or (it["status"] != "open" and not disposed)):
             bad.append(f"gap {g['id']}: open with no open queue item {GAP_ID(g)} (run market --sync)")
         if it and it["probe"] != g["closing_probe"]:
             bad.append(f"gap {g['id']}: queue probe differs from the gap's closing probe")
