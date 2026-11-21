@@ -4339,23 +4339,6 @@
    "title": "Probes must name their user agent",
    "body": "Session: session_0156nqDte8FeqRLjvGRAAb6w. Cloudflare returns 403 to Python-urllib, so every spinoff read uptime 0.0 while live (route, DNS and worker verified in the ultrastable account). The uptime probe now sends a named agent (a package-wide opener changed other tests, so it stays local); Q-ULTRA-loop-ledger-uptime-* close when the next tick reads 1.0.",
    "probe": "grep:foundation/ultrastability.py::UPTIME-UA-1"
-  },
-  {
-   "id": "lesson-2026-11-21-a-closing-probe-that-greps-its-own-issue-file-proves-nothing",
-   "kind": "lesson",
-   "date": "2026-11-21",
-   "title": "A closing probe that greps its own issue file proves nothing",
-   "body": "Session: session_0156nqDte8FeqRLjvGRAAb6w. foundation/ideas.py brainstorm filed Q-SPIN-* scope items with probe grep:docs/issues/<id>.json::Status:** closed, which passes as soon as the item is marked closed; four were closed that way with no work done. Fix (PROBE-REAL-1): every scope template in doctrine/spinoff-ideas.json carries a probe on code, ideas.scope_probe refuses a missing probe or one under docs/issues/, the four falsely closed items were reopened on their real probes, and Q-35/38/48/50 were re-probed on code (QNFO fleet inventory doctrine/qnfo-fleet.json read from the Cloudflare API, checked by sauce.fleet_check). Test: tests/foundation/test_ideas.py, tests/foundation/test_sauce.py.",
-   "probe": "file:foundation/ideas.py"
-  },
-  {
-   "id": "lesson-2026-11-21-fleet-drift-issues-close-on-a-token-free-probe-fleet-probe-1",
-   "kind": "lesson",
-   "date": "2026-11-21",
-   "title": "Fleet drift issues close on a token-free probe (FLEET-PROBE-1)",
-   "body": "Drift issues were filed without a probe line, so the issue loop could not close them although CITATION.cff already carried the license. fleet --probe COPY@REPO reads this repository from the working tree and any other repository through the fleet token, and an unreadable copy is not a pass. The three publication-files items now use it. Evidence: tests/foundation/test_fleet.py passes.",
-   "probe": "grep:foundation/fleet.py::FLEET-PROBE-1",
-   "session": "session_0156nqDvGnRC9rS81Jjp9V7n"
   }
  ]
 }
