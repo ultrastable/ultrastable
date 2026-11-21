@@ -10,6 +10,9 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-21
 
+- 2026-11-21: Cut Quniverse/QNFO runtime dependencies; add runtime probe (#1097)
+- 2026-11-21: PATHFINDER-1: find another path before any owner ask (#936)
+- 2026-11-21: SOCIAL-MODULE-1: native human interface layer in core (#1095)
 - 2026-11-21: Remove leftover conflict markers from two READMEs (#1092)
 - 2026-11-21: MERGE-NOW-1: PRs merge on the webhook in seconds; server reconciles generated-file conflicts; time-to-merge metric (#931)
 - 2026-11-21: LANE-WORKER-MERGE-1: call the Worker merge only from the lane workflow (#1091)
