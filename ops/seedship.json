@@ -34,11 +34,23 @@
    "readiness": {},
    "ship": false,
    "stage": "proposed"
+  },
+  "unlearn": {
+   "added": null,
+   "id": "unlearn",
+   "missing": [
+    "a live-verified deploy of ultrastable-unlearn at an https URL"
+   ],
+   "overdue": false,
+   "readiness": {},
+   "ship": true,
+   "stage": "built"
   }
  },
  "short": [
   "demo-child",
   "practical-solutions",
-  "second-tenant"
+  "second-tenant",
+  "unlearn"
  ]
 }

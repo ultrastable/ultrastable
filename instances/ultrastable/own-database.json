@@ -27,6 +27,15 @@
     "instances/ultrastable/system/ultrastable-site.wrangler.jsonc",
     "site/wrangler.toml"
    ]
+  },
+  {
+   "name": "ultrastable-unlearn",
+   "id": "ef788db7-0a0c-4c5d-921d-18a596a15945",
+   "binding": "DB on the ultrastable-unlearn Worker only",
+   "holds": "the Unlearn tenant app (instances/unlearn): explorations, coach notes, move weights, beats; no child personal data in phases 1 and 2",
+   "bound_by": [
+    "instances/ultrastable/system/ultrastable-unlearn.wrangler.jsonc"
+   ]
   }
  ],
  "tenant": [
@@ -80,6 +89,13 @@
    {
     "name": "example-co-ultrastable",
     "id": "7d442530-44c7-4cfc-a58d-98a17f0f6c81"
+   },
+   {
+    "name": "ultrastable-unlearn",
+    "id": "ef788db7-0a0c-4c5d-921d-18a596a15945",
+    "tables": 0,
+    "read_at": "2026-11-21T20:50:36Z",
+    "note": "created that minute through the Cloudflare API from the cloud session; tables are created by the Worker on first request"
    }
   ],
   "finding": "the account holds five databases; the two core databases are bound only by core Workers, each tenant has its own database, and no database of the originating fleet is in the account"

@@ -1,0 +1,20 @@
+{
+ "_doc": "SEED-SHIP-1: what Unlearn builds, where it deploys and how it runs a year unattended. Read by foundation/seedship.py; the stage is computed, never declared. Risks and safeguards: instances/unlearn/runway.json.",
+ "seed": "unlearn",
+ "build": {
+  "paths": ["instances/unlearn/worker/index.js", "instances/unlearn/worker/logic.js", "instances/unlearn/worker/moves.js", "instances/unlearn/worker/page.js"],
+  "tests": ["instances/unlearn/worker/worker.test.mjs", "tests/foundation/test_unlearn.py"]
+ },
+ "deploy": {
+  "worker": "ultrastable-unlearn",
+  "url": "https://unlearn.ultrastable.app",
+  "health": "https://unlearn.ultrastable.app/health"
+ },
+ "unattended": {
+  "heartbeat_hours": 1,
+  "credentials": [],
+  "budget_usd_month": 0,
+  "dependencies": [],
+  "heal": ["deploy-ultrastable.yml"]
+ }
+}

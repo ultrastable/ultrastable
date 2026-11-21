@@ -2038,6 +2038,15 @@ export default {
    "surface": "demos/README.md"
   },
   {
+   "claim": "The research behind this ([Homo Ludens, self-directed learning, and AI-facilitated",
+   "detail": "",
+   "how": "file:tests/foundation/test_unlearn.py",
+   "id": "cited-210d0b9de4",
+   "kind": "claim",
+   "pass": true,
+   "surface": "instances/unlearn/README.md"
+  },
+  {
    "claim": "| [`plugins/`](plugins/SCOPE.json) | Optional plugin tier (email, mailing list, social, YouTube, GCP, self-description, guided",
    "detail": "",
    "how": "file:docs/architecture/plugins.md",
@@ -3368,7 +3377,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 371,
-  "total": 371
+  "pass": 372,
+  "total": 372
  }
 };
