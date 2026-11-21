@@ -3633,6 +3633,14 @@
    "title": "FAILURE-RESOLVE-1: an audit that files where no loop reads is detection without resolution",
    "body": "The failure audit wrote AUDIT-<id>.json to branch audit-evidence with done check detector:<id>: outside foundation/queue.items, no probe kind, never on main. Two detectors failed five daily runs untaken. Findings now land on main as Q-AUDIT-<id> with a cmd: closing probe and root-cause suspects; failure_audit --check fails on an unwatched mode or an unfiled finding. Detectors must run on main's own files: overlaying docs/issues from an evidence branch produced false failures.",
    "probe": "grep:foundation/failure_audit.py::def coverage"
+  },
+  {
+   "id": "decision-2026-11-21-executor-closed-q-self-unused-import-scripts-smoke-probe-py-",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Executor closed Q-SELF-unused-import-scripts-smoke-probe-py: Q-SELF-unused-import-scripts-smoke-probe-py: remove unused import json from scr",
+   "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: scripts/smoke_probe.py.",
+   "probe": "file:scripts/smoke_probe.py"
   }
  ]
 }
