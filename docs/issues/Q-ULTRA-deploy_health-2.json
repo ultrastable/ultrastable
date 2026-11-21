@@ -1,0 +1,12 @@
+{
+  "id": "Q-ULTRA-deploy_health-2",
+  "title": "Q-ULTRA-deploy_health-2: Verified deploys out of bounds: restructure: repair the deploy path that failed verification",
+  "body": "**Owner:** executor\n**Trigger:** essential variable `deploy_health` out of bounds (reading 0.986; limits 1.0 to 1.0)\n**Done check:** cmd:python3 -m foundation ultrastability --check\n**Status:** open\n\nULTRASTABILITY-1 second-order step: restructure: repair the deploy path that failed verification. A deploy whose live code differs from its commit means the loop that ships is not closing.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation ultrastability --tick` reads `deploy_health` inside its bounds.\n\n\n**Vacuous:** 2026-11-21T23:11:19Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n",
+  "labels": [
+    "p0",
+    "agent-ready",
+    "raises-deploys"
+  ],
+  "milestone": "Now",
+  "workstream": "deploys"
+}

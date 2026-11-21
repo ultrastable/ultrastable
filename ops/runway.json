@@ -26,7 +26,7 @@
   "Q-CIFAIL-mergeaudit-1851": "2026-11-21",
   "Q-CIFAIL-mergeaudit-1876": "2026-11-21",
   "Q-CIFAIL-mergeaudit-1885": "2026-11-21",
-  "Q-CIFAIL-ultrastable-seed-launch": "2026-11-21"
+  "Q-CIFAIL-mergeaudit-1894": "2026-11-21"
  },
  "seed_verify": {
   "ultrastable": [
@@ -50,6 +50,30 @@
    },
    {
     "at": "2026-11-21T22:46:47Z",
+    "url": "https://ultrastable.io/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-21T22:59:07Z",
+    "url": "https://ultrastable.io/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-21T23:07:12Z",
+    "url": "https://ultrastable.io/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-21T23:17:47Z",
+    "url": "https://ultrastable.io/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-21T23:30:09Z",
     "url": "https://ultrastable.io/health",
     "status": 200,
     "ok": true
@@ -77,6 +101,56 @@
    {
     "at": "2026-11-21T22:46:47Z",
     "url": "https://unlearn.ultrastable.org/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-21T22:59:07Z",
+    "url": "https://unlearn.ultrastable.org/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-21T23:07:12Z",
+    "url": "https://unlearn.ultrastable.org/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-21T23:17:47Z",
+    "url": "https://unlearn.ultrastable.org/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-21T23:30:09Z",
+    "url": "https://unlearn.ultrastable.org/health",
+    "status": 200,
+    "ok": true
+   }
+  ],
+  "intent-yield": [
+   {
+    "at": "2026-11-21T22:59:07Z",
+    "url": "https://ultrastable.io/yield.json",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-21T23:07:12Z",
+    "url": "https://ultrastable.io/yield.json",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-21T23:17:47Z",
+    "url": "https://ultrastable.io/yield.json",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-21T23:30:09Z",
+    "url": "https://ultrastable.io/yield.json",
     "status": 200,
     "ok": true
    }

@@ -55,3 +55,7 @@
 {"at": "2026-11-21T22:25:35Z", "clocks": 37, "kind": "beat", "seq": 54, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
 {"at": "2026-11-21T22:36:11Z", "clocks": 37, "kind": "beat", "seq": 55, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
 {"at": "2026-11-21T22:46:15Z", "clocks": 37, "kind": "beat", "seq": 56, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
+{"at": "2026-11-21T22:58:36Z", "clocks": 37, "kind": "beat", "seq": 57, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
+{"at": "2026-11-21T23:06:41Z", "clocks": 37, "kind": "beat", "seq": 58, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
+{"at": "2026-11-21T23:17:12Z", "clocks": 37, "kind": "beat", "seq": 59, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
+{"at": "2026-11-21T23:29:33Z", "clocks": 37, "kind": "beat", "seq": 60, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}

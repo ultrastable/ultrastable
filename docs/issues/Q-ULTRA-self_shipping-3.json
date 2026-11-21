@@ -1,0 +1,12 @@
+{
+  "id": "Q-ULTRA-self_shipping-3",
+  "title": "Q-ULTRA-self_shipping-3: Self-originated releases out of bounds: restructure: find why the executor's items fail and change its route (model rung, patch format, item size)",
+  "body": "**Owner:** executor\n**Trigger:** essential variable `self_shipping` out of bounds (reading 0.214; limits 1.0 to None)\n**Done check:** cmd:python3 -m foundation ultrastability --check\n**Status:** open\n\nULTRASTABILITY-1 second-order step: restructure: find why the executor's items fail and change its route (model rung, patch format, item size). Rowan's biggest goal: the server itself originates and ships substantive changes daily (SELF-REFERENCE-1). Counted from git by foundation/yearsim.py self_commits: executor or own-agent commits on main with at least 10 changed lines of code outside ledgers and generated data. A one-line import removal is upkeep, not a release (NO-TRIVIAL-COMMITS).\n\nsize: M\n\n**Closing probe:** `python3 -m foundation ultrastability --tick` reads `self_shipping` inside its bounds.\n\n\n**Vacuous:** 2026-11-21T23:11:19Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n",
+  "labels": [
+    "p0",
+    "agent-ready",
+    "raises-self"
+  ],
+  "milestone": "Now",
+  "workstream": "Ultrastability"
+}
