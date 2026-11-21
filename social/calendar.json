@@ -311,6 +311,42 @@
    "state": "3of5",
    "source": "site/research-data.js",
    "url": "https://ultrastable.io/research/ashby-1952"
+  },
+  {
+   "id": "ev:evd-2026-w47",
+   "date": "2026-11-21",
+   "text": "In the last 7 days Ultrastable put 164 new versions live (794 deploys across 5 services) and checked each deploy against its code. 5 of them it started itself. https://ultrastable.io/progress",
+   "source": "doctrine/reach.json",
+   "arm": "evidence",
+   "kind": "event",
+   "tag": "EVENT"
+  },
+  {
+   "id": "ev:ev-thesis-1",
+   "date": "2026-11-21",
+   "text": "An autonomous system left running on its own does not have to be a threat. This one ships, checks and repairs its own work in public, and the record is open: https://ultrastable.io/live https://ultrastable.io/live",
+   "source": "doctrine/reach.json",
+   "arm": "thesis",
+   "kind": "event",
+   "tag": "EVENT"
+  },
+  {
+   "id": "ev:ev-thesis-2",
+   "date": "2026-11-21",
+   "text": "Claim: autonomy works when every loop has a measure that can be wrong and a way to roll back. Check it yourself against the live record: https://ultrastable.io/live https://ultrastable.io/live",
+   "source": "doctrine/reach.json",
+   "arm": "thesis",
+   "kind": "event",
+   "tag": "EVENT"
+  },
+  {
+   "id": "ev:ev-thesis-3",
+   "date": "2026-11-21",
+   "text": "Worried about AI running without supervision? Fair. So the system keeps its own audit trail, its own halt switch and its own probes, all public: https://ultrastable.io/live https://ultrastable.io/live",
+   "source": "doctrine/reach.json",
+   "arm": "thesis",
+   "kind": "event",
+   "tag": "EVENT"
   }
  ]
 }
