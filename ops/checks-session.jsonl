@@ -93,3 +93,5 @@
 {"at": "2026-11-21T10:40:15+00:00", "sha": "a58508a8dc601acefe9636098e2a1071c42eedb1", "steps": 34, "failed": ["Foundation tests, new-system end-to-end (one job, no matrix)"]}
 {"at": "2026-11-21T16:38:38+00:00", "sha": "d262761d785082eccc718085f5fcf2c967c2f687", "steps": 43, "failed": ["Business index (BIZ-3)", "Every parallel job passed", "Merge this PR now"]}
 {"at": "2026-11-21T16:44:35+00:00", "sha": "b09261bc4907c0d597cbdf4ff72ef81b0e4b5589", "steps": 43, "failed": ["Project memory is current", "Every parallel job passed", "Merge this PR now"]}
+{"at": "2026-11-21T21:38:14+00:00", "sha": "63c605dbb9201e66f5fe0da2a43f395a4ef98e04", "steps": 45, "failed": ["Loops, glossary, kernel and write-back (the system reads its own loops; code with no write-back fails)", "Foundation tests, half 1 of 2 (LANE-FAST-1)", "Foundation tests, half 2 of 2 (LANE-FAST-1)", "Project memory is current", "Every parallel job passed", "Merge this PR now"]}
+{"at": "2026-11-21T21:50:14+00:00", "sha": "b49b05e817adc9a74576f711aca921755a3d119b", "steps": 45, "failed": ["Foundation tests, half 1 of 2 (LANE-FAST-1)", "Every parallel job passed", "Merge this PR now"]}

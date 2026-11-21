@@ -718,6 +718,7 @@ export default {
   "role-uiux-manager",
   "running-system",
   "scout",
+  "seed-launch",
   "server-side-only",
   "session-reaper",
   "site-deploy",
@@ -2069,6 +2070,19 @@ export default {
     "workflows": [
      "intent-yield"
     ]
+   },
+   {
+    "closing_probe": "grep:foundation/seedlaunch.py::def check",
+    "id": "seed-launch",
+    "kind": "governance",
+    "owner": "operations",
+    "server_owner": "github-actions",
+    "sla": "8d",
+    "summary": "SEED-LAUNCH-1: every seed is built, deployed, year-gated and probed live by the system. A fresh seed from seed/ and every repository made from the seed template are launched on Ultrastable's own Cloudflare account; the year-unattended gate and a live /health probe are required.",
+    "trigger": "weekly workflow and on demand",
+    "workflows": [
+     "seed-launch"
+    ]
    }
   ],
   "workers": [
@@ -2333,6 +2347,12 @@ export default {
     "loops": [
      "scout",
      "research"
+    ]
+   },
+   {
+    "id": "seed-launch",
+    "loops": [
+     "seed-launch"
     ]
    },
    {
