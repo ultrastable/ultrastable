@@ -180,7 +180,7 @@ export async function verifyAny(verify, secrets, body, header) { for (const s of
 // FREE-TIER-1: workflow_run is not subscribed. Every workflow run sends three deliveries, each one a request on the site Worker and one on the tick Worker;
 // with the repository's own workflows starting each other that was about 130 deliveries a minute (9,000 requests an hour against 100,000 a day, 00:31 UTC 2026-11-18).
 // A failed run still reaches operations through ciwatch and the tick's lane; onWorkflowRun stays for hosts that post it themselves.
-export const HOOK_EVENTS = ['push', 'pull_request', 'issues', 'issue_comment', 'release'];
+export const HOOK_EVENTS = ['push', 'pull_request', 'issues', 'issue_comment', 'release', 'check_suite'];  // MERGE-NOW-1: a finished check suite merges its PR at once (workflow_run stays off: FREE-TIER-1 delivery storm)
 const HOOKS_TAG = 'ev:' + HOOK_EVENTS.join(',') + ' ';  // a change of the event list is reconciled on the next tick, not after the hourly freshness window
 // create the repository webhook when missing, repair it when GitHub says its last delivery failed or its url/events drifted; a token without hook rights is recorded plainly
 export async function reconcileHooks({ db = null, token, repos, origin = 'https://ultrastable.io', secret, fetch: f = fetch, now = Date.now, everyMs = 3600e3 }) {
