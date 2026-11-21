@@ -765,7 +765,7 @@
    "date": "2026-11-13",
    "title": "Free org plan blocks branch protection; bundles restore",
    "body": "GH-4 branch protection returns 403 on free private repos (needs paid plan). All 7 archived-repo bundles clone from main (restore test 2026-11-13). IP-6 calendar needs the filing date.",
-   "probe": "file:github/org-settings.json"
+   "probe": "file:ip/calendar/deadlines.py"
   },
   {
    "id": "decision-2026-11-13-front-door-2-idea-consumer-deploys-a-worker-per-idea-archive",
@@ -1037,7 +1037,7 @@
    "date": "2026-11-15",
    "title": "NO-PATENT-1 wording sweep: business, brand, agents, outreach",
    "body": "Removed patent, provisional filing, counsel, private-repo and disclosure-gate wording from business/, brand/, agents/ roles and outreach copy; legal-ip-manager role is now licence and compliance stewardship.",
-   "probe": "file:agents/roles/legal-ip-manager.md",
+   "probe": "grep:business/plan/README.md::Public by default",
    "session": "session_0156nqDuVY71gtRtDvjPaAgK"
   },
   {
@@ -4250,6 +4250,14 @@
    "probe": "grep:doctrine/agent-budget.json::\"max_runs_per_day\": 48"
   },
   {
+   "id": "decision-2026-11-21-session-note-mirrordedupe",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Session note mirrordedupe",
+   "body": "Session: session_0156nqDte8FeqRLjvGRAAb6w (thread: resolve open issues at full speed), change set mirrordedupe.",
+   "probe": "file:foundation/ghmirror.py"
+  },
+  {
    "id": "decision-2026-11-21-session-note-prprobe",
    "kind": "decision",
    "date": "2026-11-21",
@@ -4264,6 +4272,14 @@
    "title": "Session note recordfix",
    "body": "Session: session_0156nqDte8FeqRLjvGRAAb6w (thread: resolve open issues at full speed), change set recordfix.",
    "probe": "file:tools/record_main.sh"
+  },
+  {
+   "id": "lesson-2026-11-21-mirror-closes-duplicate-issues-for-one-item",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "Mirror closes duplicate issues for one item",
+   "body": "Overlapping ghmirror runs made two GitHub issues per queue item; plan() now keeps the lowest open one and closes the rest as orphans.",
+   "probe": "grep:foundation/ghmirror.py::MIRROR-DEDUPE-1"
   },
   {
    "id": "lesson-2026-11-21-record-on-main-by-merge-never-rebase",
