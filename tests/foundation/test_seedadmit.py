@@ -3,7 +3,7 @@
 import json, shutil, sys, tempfile, unittest
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _repo import scratch  # noqa: F401  (puts the repository on sys.path)
+from _repo import scratch
 from foundation import manifest as mf, seedadmit
 
 REPO = Path(__file__).resolve().parents[2]
@@ -13,7 +13,7 @@ MANIFEST = REPO / "instances/second-tenant/instance.json"
 class T(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.tmp = Path(tempfile.mkdtemp(prefix="seedadmit-test-")); cls.addClassCleanup(shutil.rmtree, cls.tmp, True)  # removal registered on the same line
+        cls.tmp = scratch()  # removed when the class ends (_repo.scratch)
         cls.out = cls.tmp / "sys"
         cls.res = seedadmit.onboard(mf.load(str(MANIFEST)), cls.out, apply=False, root=cls.tmp)
 
