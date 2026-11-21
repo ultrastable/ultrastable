@@ -118,6 +118,12 @@ export default {
     "id": "temporal",
     "source": "workflow",
     "what": "the daily trend read: series per component, loop and entry, and what they show"
+   },
+   {
+    "expected_interval_s": 3600,
+    "id": "unlearn-beat",
+    "source": "d1",
+    "what": "Unlearn tenant beat (cron 41 * * * * on ultrastable-unlearn; a visit catches up a silent cron): re-learn move weights, measure, open the next phase, prune"
    }
   ],
   "watchdog_escalation": [
@@ -727,7 +733,9 @@ export default {
   "ultrastable-site",
   "ultrastable-tenants",
   "ultrastable-tick",
+  "ultrastable-unlearn",
   "unknowns",
+  "unlearn-beat",
   "watchdog",
   "workers-tests",
   "write-back",
@@ -2028,6 +2036,19 @@ export default {
     "summary": "YEARFAIL-1: twelve simulated months of zero input run against a scratch copy weekly; each injected failure must be detected by the system's own detectors and the fix verified; a failing month files Q-YEARFAIL-<area>.",
     "trigger": "on demand (python3 -m foundation yearfail --apply) until the weekly workflow lands (Q-YEARFAIL-workflow)",
     "workflows": []
+   },
+   {
+    "closing_probe": "grep:instances/unlearn/worker/index.js::export async function beat",
+    "id": "unlearn-beat",
+    "kind": "tick",
+    "owner": "product-manager",
+    "server_owner": "ultrastable-unlearn",
+    "sla": "2h",
+    "summary": "Unlearn tenant loop: curiosity logged, coaching move chosen by learned weights, follow-up at 7 and 14 days, weights re-learned, metrics measured, next phase opened when its gates hold (instances/unlearn/phases.json).",
+    "trigger": "cron 41 * * * * on ultrastable-unlearn; a page visit runs the beat when the cron has been silent for 2 hours",
+    "workflows": [
+     "deploy-ultrastable"
+    ]
    }
   ],
   "workers": [
@@ -2049,6 +2070,10 @@ export default {
    },
    {
     "id": "ultrastable-tenants",
+    "state": "live"
+   },
+   {
+    "id": "ultrastable-unlearn",
     "state": "live"
    }
   ],
@@ -2135,7 +2160,8 @@ export default {
    {
     "id": "deploy-ultrastable",
     "loops": [
-     "deploy-workers"
+     "deploy-workers",
+     "unlearn-beat"
     ]
    },
    {

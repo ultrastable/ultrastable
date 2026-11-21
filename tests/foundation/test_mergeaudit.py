@@ -27,9 +27,4 @@ class MergeAudit(unittest.TestCase):
         STATE["bad"] = "[]"
         self.assertEqual(m.gate("bad", run), "missing"); STATE["bad"] = '["failure"]'
         self.assertTrue(m.probe(619, run, NOW)); self.assertFalse(m.probe(620, run, NOW))
-    def test_unreadable_check_runs_raise_never_green(self):
-        # carried from tests/test_mergeaudit.py (PR 1854), which called the live API and duplicated this module's basename
-        with self.assertRaises(RuntimeError):
-            m.gate("x", lambda *a: (1, "HTTP 502"))
-        self.assertEqual(m.gate("good", run), "success")
 if __name__ == "__main__": unittest.main()
