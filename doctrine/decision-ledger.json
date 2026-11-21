@@ -3593,6 +3593,14 @@
    "body": "Observed live in https://github.com/ultrastable/practical-solutions/actions/runs/44813063061: the run raced the model-route deploy, embedding failed in 3 seconds, the step still ended success because the GitHub default shell has no pipefail, and an empty run tuned the threshold. Fixed and merged in practical-solutions#173 (a run with no vectors records nothing and exits 2; the step uses shell: bash). Verified: node tools/connections.mjs --offline exits 2 and writes nothing. Any workflow that pipes a step that matters to tee needs pipefail.",
    "probe": "file:workers/core/discover/index.js",
    "session": "session_0156nqDuQg9XGRLvX61Z8ZaX"
+  },
+  {
+   "id": "decision-2026-11-21-executor-closed-q-patch-edit-worker-port-edit-blocks-and-fil",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Executor closed Q-PATCH-EDIT-WORKER: Port EDIT blocks and file context to the Worker executor",
+   "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: seed/worker/src/pr-executor.js.",
+   "probe": "file:seed/worker/src/pr-executor.js"
   }
  ]
 }
