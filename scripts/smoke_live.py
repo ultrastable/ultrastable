@@ -212,6 +212,19 @@ def _():
     except urllib.error.HTTPError as e: s = e.code
     return s == 422, f"unknown code -> HTTP {s} (want 422)"
 
+@check("connect-buffer-link", "/connect/buffer registers its own app and sends the owner to Buffer's sign-in with PKCE (SOCIAL-MODULE-1)")
+def _():
+    r, b = page(IO + "/connect/buffer")
+    s = get(IO + "/connect/buffer/start", follow=False); loc = s.get("location", "")
+    q = urllib.parse.parse_qs(urllib.parse.urlparse(loc).query)
+    ok = r["status"] == 200 and s["status"] == 302 and loc.startswith("https://auth.buffer.com/auth") and bool(q.get("client_id")) and q.get("code_challenge_method") == ["S256"] and "posts:write" in (q.get("scope") or [""])[0]
+    return ok, f"consent HTTP {r['status']}, start HTTP {s['status']} -> {loc[:60]}, client_id {'yes' if q.get('client_id') else 'no'}"
+
+@check("connect-mastodon-link", "the Mastodon link is one click to the owner's server sign-in (SOCIAL-MODULE-1)")
+def _():
+    s = get(IO + "/connect/mastodon/start?instance=mstdn.science", follow=False); loc = s.get("location", "")
+    return s["status"] == 302 and loc.startswith("https://mstdn.science/oauth/authorize"), f"HTTP {s['status']} -> {loc[:70]}"
+
 if "--cap" in sys.argv:
     @check("meta-ingest-cap", "/api/meta/ingest caps one client at 20 writes per hour")
     def _():
