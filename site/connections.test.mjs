@@ -78,3 +78,11 @@ console.log("connections ok");
 // SIGNIN-NEXT-1: an anonymous visit to a connect page signs in and comes back to that page, not to /connections or the dashboard
 r = await connectionsRoute(R("/connect/bluesky"), env, { subject: anon, now: NOW });
 assert.equal(r.status, 302); assert.equal(new URL(r.headers.get("location")).searchParams.get("next"), "/connect/bluesky");
+
+// OWNER-LINKS-4: what the site Worker forwards to the tick carries the internal key, and a client-sent copy never survives.
+{ const { gatedForward } = await import("./connections.js");
+  const r = gatedForward(new Request("https://ultrastable.io/connect/buffer", { headers: { "x-internal-key": "forged" } }), new URL("https://ultrastable.io/connect/buffer"), { INTERNAL_DEPLOY_KEY: "real" });
+  if (r.headers.get("x-internal-key") !== "real") throw new Error("forwarded key must be the Worker's own");
+  const r2 = gatedForward(new Request("https://ultrastable.io/connect/buffer", { headers: { "x-internal-key": "forged" } }), new URL("https://ultrastable.io/connect/buffer"), {});
+  if (r2.headers.get("x-internal-key")) throw new Error("a forged key must be dropped when none is bound");
+  console.log("gated forward ok"); }
