@@ -90,7 +90,7 @@ export default {
      "metric_label": "second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl)",
      "measured": 19,
      "status": "met",
-     "n": 1095,
+     "n": 1017,
      "source": "ops/ultrastability.jsonl",
      "item": null
     },
@@ -200,7 +200,7 @@ export default {
     {
      "finding": "A1",
      "rule": "IGNORANCE-1",
-     "score": 0.106
+     "score": 0.105
     },
     {
      "finding": "A2",
@@ -220,10 +220,10 @@ export default {
     {
      "finding": "A5",
      "rule": "FLOW-DIRECTIVE-1",
-     "score": 0.106
+     "score": 0.105
     }
    ],
-   "leads_route": "lexical-512-47l6ta",
+   "leads_route": "lexical-512-kwr5ky",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -501,12 +501,12 @@ export default {
     {
      "finding": "F3",
      "rule": "UNATTENDED-365",
-     "score": 0.135
+     "score": 0.136
     },
     {
      "finding": "F4",
      "rule": "CONNECT-1",
-     "score": 0.134
+     "score": 0.135
     },
     {
      "finding": "F5",
@@ -519,7 +519,7 @@ export default {
      "score": 0.14
     }
    ],
-   "leads_route": "lexical-512-8w4zmp",
+   "leads_route": "lexical-512-akme7j",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -745,15 +745,10 @@ export default {
     {
      "finding": "O5",
      "rule": "DRAIN-ZERO-1",
-     "score": 0.153
-    },
-    {
-     "finding": "O6",
-     "rule": "INTERVIEW-1",
-     "score": 0.118
+     "score": 0.155
     }
    ],
-   "leads_route": "lexical-512-1347sm5",
+   "leads_route": "lexical-512-k7dc2r",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -964,7 +959,7 @@ export default {
     {
      "finding": "S1",
      "rule": "THOUGHT-1",
-     "score": 0.115
+     "score": 0.116
     },
     {
      "finding": "S2",
@@ -974,12 +969,12 @@ export default {
     {
      "finding": "S2",
      "rule": "DRAIN-ZERO-1",
-     "score": 0.13
+     "score": 0.131
     },
     {
      "finding": "S3",
      "rule": "RUNWAY-1",
-     "score": 0.116
+     "score": 0.115
     },
     {
      "finding": "S4",
@@ -989,12 +984,12 @@ export default {
     {
      "finding": "S5",
      "rule": "COMPLETE-1",
-     "score": 0.114
+     "score": 0.116
     },
     {
      "finding": "S5",
      "rule": "DRAIN-ZERO-1",
-     "score": 0.108
+     "score": 0.109
     },
     {
      "finding": "S6",
@@ -1007,7 +1002,7 @@ export default {
      "score": 0.117
     }
    ],
-   "leads_route": "lexical-512-15gqveo",
+   "leads_route": "lexical-512-3i2vzc",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   }
  ],
