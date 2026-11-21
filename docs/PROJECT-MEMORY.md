@@ -10,6 +10,9 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-21
 
+- 2026-11-21: Publisher reads relay posts back from Buffer every tick (#1099)
+- 2026-11-21: SOCIAL-MODULE-1: one-click Buffer connect and Mastodon link (#1100)
+- 2026-11-21: SOCIAL-MODULE-1: a native credential retires the relay (#1098)
 - 2026-11-21: Cut Quniverse/QNFO runtime dependencies; add runtime probe (#1097)
 - 2026-11-21: PATHFINDER-1: find another path before any owner ask (#936)
 - 2026-11-21: SOCIAL-MODULE-1: native human interface layer in core (#1095)
