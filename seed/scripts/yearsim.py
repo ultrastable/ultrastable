@@ -191,6 +191,7 @@ def apply_observed(c, observed, min_events=3):
         out.append(f)
     return {**c, "faults": out}, used
 
+
 if __name__ == "__main__":
     a = sys.argv[1:]
     if "--check" in a:

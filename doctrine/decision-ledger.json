@@ -4423,6 +4423,41 @@
    "title": "Sweeper gh helper returns status, never throws",
    "body": "Executor PR 1851 made the sweeper gh helper throw on any non-2xx answer. Every caller reads ok and status and records failures in out.errors, so the throw only aborted the sweep on expected answers (410 when issues are off, 405 on a merge GitHub declines) and broke seed/worker sweeper.test.js on main. The status return is restored; tests/test_sweeper.js is now a node test run in checks.",
    "probe": "file:tests/test_sweeper.js"
+  },
+  {
+   "id": "decision-2026-11-21-intent-yield-runs-as-its-own-daily-loop-with-a-freshness-det",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Intent Yield runs as its own daily loop with a freshness detector",
+   "body": "Owner (2026-11-21): build it, and make it run unattended for a year. intent-yield.yml runs foundation intentyield daily on the built-in token, no model calls, stdlib only; clock intent-yield lets the watchdog restart it; detector intent-yield-fresh files Q-AUDIT when it is stale, errored, ran no probe or lost the directives. Probe exit codes other than 0 or 1 are unmeasured, never broken.",
+   "probe": "file:foundation/intentyield.py",
+   "session": "session_0156nqDvLpkp2emebWrZnSnu"
+  },
+  {
+   "id": "decision-2026-11-21-intent-yield-tenant-the-unit-of-input-is-an-intent-the-unit-",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Intent Yield tenant: the unit of input is an intent, the unit of output is a kept outcome",
+   "body": "Proposed tenant instances/intent-yield: output counts only when the intent's outcome passes an independent probe, survives 30 days and is not restated. No count enters the measure and no person is scored. v1 dogfoods on the owner directives in agents/AGENTS.md.",
+   "probe": "file:tests/test_intent_yield.py",
+   "session": "session_0156nqDvLpkp2emebWrZnSnu"
+  },
+  {
+   "id": "decision-2026-11-21-seed-admit-1-seeds-are-admitted-by-the-year-simulation-befor",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "SEED-ADMIT-1: seeds are admitted by the year simulation before they count as launched",
+   "body": "Added foundation/seedadmit.py, seed/scripts/seedadmit.py, seed/autonomy/kit.json and seed/autonomy-kit/autonomy.workflow.yml. The generator wires the kit and runs the year simulation on the new system; held seeds are not launched. Onboarding the reference manifest found and fixed four seed defects (sweeper gh helper regression, seed yearsim crash, missing analytics and standards kernel paths, platform-coupled imports); verified by the onboarding probe: instances/second-tenant admitted, p10 730 days, strict p10 730, 452 worker tests pass. Residual risk: the live Cloudflare deploy of a generated system is done by its own bootstrap.yml on first push and is not yet observed from this session.",
+   "probe": "grep:tests/foundation/test_seedadmit.py::def test_onboard_admits",
+   "session": "session_0156nqDth3dDYAsL8hsm79sa"
+  },
+  {
+   "id": "lesson-2026-11-21-a-wildcard-zone-route-shadows-a-tenant-custom-domain",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "A wildcard zone route shadows a tenant custom domain",
+   "body": "unlearn.ultrastable.app answered Not found from ultrastable-spinoffs because the zone route *.ultrastable.app/* catches the hostname before the Workers custom domain. The deployer (TENANT-ROUTE-1 in site/deployer.js) now adds a host route for the tenant worker whenever another worker's wildcard route covers its domain; a failure lands as a warning in the deploy detail.",
+   "probe": "file:site/oidc.test.mjs"
   }
  ]
 }

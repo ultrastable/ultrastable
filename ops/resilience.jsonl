@@ -46,3 +46,5 @@
 {"at": "2026-11-21T18:41:29Z", "clocks": 34, "kind": "beat", "seq": 45, "stalled": 0, "stalled_ids": [], "unmeasured": 0}
 {"at": "2026-11-21T18:51:25Z", "clocks": 34, "kind": "beat", "seq": 46, "stalled": 0, "stalled_ids": [], "unmeasured": 0}
 {"at": "2026-11-21T19:02:18Z", "clocks": 34, "kind": "beat", "seq": 47, "stalled": 0, "stalled_ids": [], "unmeasured": 0}
+{"age_s": null, "at": "2026-11-21T21:48:22Z", "clock": "unlearn-beat", "detail": "ultrastable-unlearn.ultrastable.workers.dev=200", "kind": "restart", "ok": true, "route": "http", "seq": 48}
+{"at": "2026-11-21T21:48:22Z", "clocks": 36, "kind": "beat", "seq": 49, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}

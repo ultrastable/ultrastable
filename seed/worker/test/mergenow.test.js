@@ -2,7 +2,7 @@
 // Copyright (c) Ultrastable
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { mergeNow, prsForEvent, adoptClaims, latency, reconcile, makeGh } from '../src/mergenow.js';
 import { GENERATED } from '../src/generated.js';
 
@@ -87,7 +87,7 @@ test('time to merge and the oldest open PR are measured', () => {
   const L = latency([{ created_at: '2026-11-21T11:00:00Z', merged_at: '2026-11-21T11:02:00Z' }, { created_at: '2026-11-21T10:00:00Z', merged_at: '2026-11-21T11:00:00Z' }, { created_at: '2026-11-21T10:00:00Z', merged_at: null }], [{ created_at: '2026-11-21T11:30:00Z' }], now);
   assert.equal(L.merged_sample, 2); assert.equal(L.merge_p50_min, 60); assert.equal(L.oldest_open_pr_min, 30);
 });
-test('the generated list matches the files the post-merge generators write', { skip: !existsSync(new URL('../../../scripts/regen_generated.py', import.meta.url)) && 'standalone seed checkout (SEED-SELFCONTAINED-1)' }, () => {
+test('the generated list matches the files the post-merge generators write', { skip: !existsSync(new URL('../../../scripts/regen_generated.py', import.meta.url)) && 'platform-only: a generated system has no post-merge generators (SEED-ADMIT-1)' }, () => {
   const py = readFileSync(new URL('../../../scripts/regen_generated.py', import.meta.url), 'utf8');
   const outs = JSON.parse(py.match(/^OUTPUTS = (\[[\s\S]*?\])$/m)[1]).filter(p => !/README\.md$/.test(p) && p !== 'social/calendar.json');  // the calendar also holds hand-queued posts, so a PR's copy can matter
   assert.deepEqual([...GENERATED].sort(), outs.sort());

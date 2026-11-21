@@ -8,6 +8,8 @@
   "autonomy",
   "bootstrap",
   "worker",
+  "analytics",
+  "standards",
   ".claude",
   ".github/copilot-instructions.md",
   "AGENTS.md",
