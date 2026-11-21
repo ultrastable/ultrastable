@@ -32,5 +32,40 @@
     "/for/",
     "/showcase/",
     "/digest/"
+  ],
+  "stale_globs": [
+    "README.md",
+    "site/*.js"
+  ],
+  "stale_terms": [
+    {
+      "pattern": "^(?!.*(?i:retired|archived|moved)).*github\\.com/ultrastable/(workers|spec|license|seed)\\b",
+      "why": "links a retired repository as if it were live; its contents are in ultrastable/ultrastable"
+    },
+    {
+      "pattern": "(?i)three simple screens",
+      "why": "old product framing replaced by the interview front door"
+    },
+    {
+      "pattern": "(?i)file (the|a) provisional",
+      "why": "no patent filing: the license is the only protection"
+    }
+  ],
+  "archived_pointers": [
+    {
+      "repo": "ultrastable/license",
+      "must_point_to": "github.com/ultrastable/ultrastable",
+      "must_not_point_to": [
+        "# Moved: ultrastable/spec"
+      ]
+    },
+    {
+      "repo": "ultrastable/spec",
+      "must_point_to": "github.com/ultrastable/ultrastable"
+    },
+    {
+      "repo": "ultrastable/workers",
+      "must_point_to": "github.com/ultrastable/ultrastable"
+    }
   ]
 }

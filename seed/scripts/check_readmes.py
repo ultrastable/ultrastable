@@ -65,6 +65,15 @@ def check(root, live=False):
             for cid in CLAIM.findall(text):
                 if cid not in claim_ids:
                     bad.append(f"{doc['path']}: claim block '{cid}' is not registered in doctrine/claims.json")
+    # 6. outdated wording: phrases that describe a past state of the system (retired repos as live, dropped plans) may not appear on public surfaces
+    for term in cfg.get("stale_terms", []):
+        for g in cfg.get("stale_globs", []):
+            for f in glob.glob(str(root / g), recursive=True):
+                if ".test." in f:
+                    continue
+                for n, line in enumerate(pathlib.Path(f).read_text(errors="ignore").splitlines(), 1):
+                    if re.search(term["pattern"], line):
+                        bad.append(f"{pathlib.Path(f).relative_to(root)}:{n}: outdated wording ({term['why']})")
     # 5. the site's own pages: every internal href the site code renders must be a path the site code routes (no dead links in the front end)
     srcs = [pathlib.Path(f) for g in globs for f in glob.glob(str(root / g)) if ".test." not in f]
     allsrc = "\n".join(s.read_text(errors="ignore") for s in srcs)
@@ -77,12 +86,29 @@ def check(root, live=False):
     return bad
 
 
+def archived(root):
+    """Retired repositories must point straight at the repository that holds their contents (one hop, no chain)."""
+    cfg = json.loads((root / "doctrine/readmes.json").read_text())
+    bad = []
+    for a in cfg.get("archived_pointers", []):
+        url = f"https://raw.githubusercontent.com/{a['repo']}/HEAD/README.md"
+        try:
+            text = urllib.request.urlopen(url, timeout=20).read().decode()
+        except Exception as e:  # unmeasured is a finding, never a pass
+            bad.append(f"{a['repo']}: README unreadable: {e}"); continue
+        if a["must_point_to"] not in text or any(x in text for x in a.get("must_not_point_to", [])):
+            bad.append(f"{a['repo']}: README does not point straight at {a['must_point_to']}")
+    return bad
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--root", default=".")
     ap.add_argument("--live", action="store_true")
+    ap.add_argument("--archived", action="store_true", help="check retired repositories' pointer READMEs (network)")
     a = ap.parse_args()
-    bad = check(pathlib.Path(a.root).resolve(), a.live)
+    root = pathlib.Path(a.root).resolve()
+    bad = archived(root) if a.archived else check(root, a.live)
     for b in bad:
         print("DOCS-SYNC:", b)
     print(f"docs-sync: {len(bad)} finding(s)")
