@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { measureDay, discoverResources, appendRecord } from '../deploy/cost-probe.mjs';
+import { measureDay, discoverResources, appendRecord, routedFetch } from '../deploy/cost-probe.mjs';
 
 function gqlFetchFactory(data) {
   return async () => ({ ok: true, status: 200, json: async () => ({ data, errors: null }) });
@@ -74,5 +74,17 @@ describe('cost probe', () => {
     appendRecord({ date: '2026-11-13', d1: [] }, join(dir, 'cost.jsonl'));
     assert.ok(existsSync(join(dir, 'cost.jsonl')));
     assert.equal(JSON.parse(readFileSync(join(dir, 'cost.jsonl'), 'utf8')).date, '2026-11-13');
+  });
+});
+
+describe('cost route (COST-ROUTE-1)', () => {
+  it('sends the GraphQL read to the Worker with the run OIDC token and maps REST paths', async () => {
+    const calls = [];
+    const f = async (url, init = {}) => { calls.push([String(url), init.method, init.headers]); return String(url).includes('token.example') ? { json: async () => ({ value: 'jwt' }) } : { ok: true }; };
+    const r = routedFetch({ site: 'https://site', account: 'A', env: { ACTIONS_ID_TOKEN_REQUEST_URL: 'https://token.example/?x=1', ACTIONS_ID_TOKEN_REQUEST_TOKEN: 't' }, fetchFn: f });
+    await r('https://api.cloudflare.com/client/v4/graphql', { method: 'POST', body: '{}' });
+    await r('https://api.cloudflare.com/client/v4/accounts/A/d1/database?per_page=1000', {});
+    assert.equal(calls.find(c => c[0] === 'https://site/__internal/cf-graphql')[2].authorization, 'Bearer jwt');
+    assert.equal(calls.find(c => c[0] === 'https://site/__internal/cf')[2]['x-cf-path'], 'd1/database?per_page=1000');
   });
 });

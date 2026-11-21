@@ -1,0 +1,12 @@
+{
+  "id": "Q-TEMPORAL-e0c6ffc24a",
+  "title": "Q-TEMPORAL-e0c6ffc24a: hotspot: area:root",
+  "body": "**Owner:** operations\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -m foundation temporal --settled e0c6ffc24a\n**Status:** open\n\nTemporal loop finding (hotspot) in root: 154 commits in 3 days against a baseline of 11.4 a day (4.5x). Seen in 3 runs since 2026-11-21T11:56:24Z. Advocate: operations.\n\nFind why this keeps being edited (a flaky generator, an unstable spec, a loop that rewrites its own output) and fix the cause with a test or guard. Do not slow the work down; stop the churn.\n\nPrediction: area root recent_rate returns below 3.0x baseline within 7 days.\n\nThis item closes when the finding no longer holds (`python3 -m foundation temporal --settled e0c6ffc24a` recomputes it from the repository's own history).\n\nsize: M\n\n**Closing probe:** cmd:python3 -m foundation temporal --settled e0c6ffc24a.",
+  "labels": [
+    "p2",
+    "agent-ready",
+    "temporal"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}
