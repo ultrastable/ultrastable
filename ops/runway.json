@@ -16,12 +16,14 @@
   },
   "failures": {
    "days": null,
-   "why": "2 open, oldest 0 days",
-   "open": 2
+   "why": "4 open, oldest 0 days",
+   "open": 4
   }
  },
  "failure_first_seen": {
   "Q-CIFAIL-mergeaudit-1813": "2026-11-21",
-  "Q-CIFAIL-mergeaudit-1817": "2026-11-21"
+  "Q-CIFAIL-mergeaudit-1817": "2026-11-21",
+  "Q-CIFAIL-mergeaudit-1851": "2026-11-21",
+  "Q-CIFAIL-mergeaudit-1854": "2026-11-21"
  }
 }

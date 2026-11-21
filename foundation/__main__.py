@@ -24,6 +24,7 @@
   python3 -m foundation credwatch [--run [--apply]|--check]                TOKEN-EXPIRY-1: every credential the loops use is probed for expiry before it lapses
   python3 -m foundation openloops [--check]                                NO-OPEN-ITEMS-1: no "needs you"; every leftover is closed or a recorded gate
   python3 -m foundation failmine [--run [--apply]|--report|--probe HASH|--check]   FAILMINE-1: mine every failure record, classify root causes, register new modes, escalate recurrence
+  python3 -m foundation intentyield [--run [--apply]|--probe|--check|--report]   INTENT-YIELD-1: owner directives kept per unit of attention; no counts, no person scored
   python3 -m foundation temporal [--run [--apply]|--settled ID|--probe|--check|--report]   TEMPORAL-1: series per area, loop and entry; hotspots, neglect and stopped loops feed the failure-mode machinery
   python3 -m foundation progress [--check|--live]                          PROGRESS-1: every system shows substantive progress at every visit; the cadence monitor is wired
   python3 -m foundation cost [--check|--probe|--guard [--apply]]          D1 rows read and AI neurons against budgets (COST-GUARD-1)
@@ -228,7 +229,7 @@ def main(argv=None) -> int:
     if _av[:1] == ["flows"]:
         from . import flows
         return flows.main(_av[1:])
-    if _av[:1] and _av[0] in ("sauce", "contracts", "metricloop", "throughput", "metafold", "dispose", "balance", "yearsim", "saydo", "trajectory"):
+    if _av[:1] and _av[0] in ("sauce", "contracts", "metricloop", "throughput", "metafold", "dispose", "balance", "yearsim", "saydo", "trajectory", "seedadmit"):
         import importlib
         return importlib.import_module("foundation." + _av[0]).main(_av[1:])
     if _av[:1] == ["unknowns"]:
@@ -276,6 +277,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["openloops"]:
         from . import openloops
         return openloops.main(_av[1:])
+    if _av[:1] == ["intentyield"]:
+        from . import intentyield
+        return intentyield.main(_av[1:])
     if _av[:1] == ["temporal"]:
         from . import temporal
         return temporal.main(_av[1:])
