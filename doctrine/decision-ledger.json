@@ -3731,24 +3731,6 @@
    "session": "session_0156nqDsFRz5bTkgg5zkrs7g"
   },
   {
-   "id": "decision-2026-11-21-thought-1-every-white-paper-becomes-per-channel-posts-that-c",
-   "kind": "decision",
-   "date": "2026-11-21",
-   "title": "THOUGHT-1: every white paper becomes per-channel posts that carry the Ultrastable hook",
-   "body": "Papers test common beliefs about AI limits against the system's own records; posts carry belief, measured record and the hook (Ultrastable runs on Ultrastable; Practical Solutions is one system it runs). LinkedIn gets papers only.",
-   "probe": "grep:foundation/thought.py::def guard",
-   "session": "session_0156nqDrGjLASvqbuu6oXJk5"
-  },
-  {
-   "id": "lesson-2026-11-21-thought-1-the-tick-publisher-retried-a-refused-bluesky-send-",
-   "kind": "lesson",
-   "date": "2026-11-21",
-   "title": "THOUGHT-1: the tick publisher retried a refused Bluesky send every tick and posted links as plain text",
-   "body": "A failed send is now retried once a day (a failed status row waits 864e5 ms before its retry, POST-READBACK-1 rows) and Bluesky posts carry link facets.",
-   "probe": "grep:seed/worker/src/social.js::const recent",
-   "session": "session_0156nqDrGjLASvqbuu6oXJk5"
-  },
-  {
    "id": "lesson-2026-11-21-lane-worker-merge-1-probe-pr-workflow-file-comment-to-prove-",
    "kind": "lesson",
    "date": "2026-11-21",
@@ -3756,6 +3738,23 @@
    "body": "Trivial comment in lane.yml. If this PR merges with no hand merge, the route works end to end.",
    "probe": "file:scripts/lane.sh",
    "session": "session_0156nqDsFRz5bTkgg5zkrs7g"
+  },
+  {
+   "id": "lesson-2026-11-21-lane-worker-merge-1-proven-workflow-pr-merged-by-the-app-in-",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "LANE-WORKER-MERGE-1 proven: workflow PR merged by the app in 2.9 min",
+   "body": "PR 1090, a workflow comment, was merged by the org app bot from the lane workflow_run in 2.9 minutes. The Worker route accepts an OIDC token for refs/heads/main, so the lane workflow calls it and the in-run pull_request job skips it.",
+   "probe": "file:tools/lane_worker_merge.py",
+   "session": "session_0156nqDsFRz5bTkgg5zkrs7g"
+  },
+  {
+   "id": "decision-2026-11-21-merge-now-1-prs-merge-on-the-webhook-not-on-a-clock",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "MERGE-NOW-1: PRs merge on the webhook, not on a clock",
+   "body": "Rowan 2026-11-21: no PR sits in GitHub. Root causes: the Actions lane wakes only when checks finish, so a conflicting PR waited for the 10-minute tick or the daily sweep; the tick sweeper refreshed only 'behind' PRs and left 'dirty' ones; workflow-touching conflicting PRs had no owner that could merge them; site/dashboard-data.js carried HEAD's sha so every merge changed it; README claim counts churned on every deploy; merges left conflict markers in README.md and platform/adapters/README.md. Change: seed/worker/src/mergenow.js runs inside the /hook/github request on pull_request, check_suite (now subscribed) and push to main with the org App token: ready, approve waiting runs, update-branch, reconcile conflicts on generated files (seed/worker/src/generated.js equals regen_generated OUTPUTS, tested) and claim values through the git data API then POST /merges, squash-merge on green at the exact head. The sweeper reconciles one dirty PR per tick and records merge_p50/p95, oldest open PR and stalled PRs (migration 0029, self-applied DDL); a PR open over 15 minutes files Q-PR-STALL-*. build_dashboard asof is the last commit of its sources; resolve_generated takes identical and claim-only hunks in any file. 410 Worker tests pass.",
+   "probe": "grep:seed/worker/src/mergenow.js::MERGE-NOW-1"
   }
  ]
 }
