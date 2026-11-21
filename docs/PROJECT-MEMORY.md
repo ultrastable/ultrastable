@@ -10,6 +10,10 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-21
 
+- 2026-11-21: BRANCH-ROOT-CAUSE-1: stop PRs and branches stranding (#839)
+- 2026-11-21: queue: closing-probe verdicts for 6 item(s) (QUEUE-PERSIST-1) [skip ci]
+- 2026-11-21: ROADMAP-AGENT-AGENT-SCOREBOARD: QNFO.OPS #AGENT-SCOREBOARD: Per-agent and per-harness quality scoreboard from intake attri (#837)
+- 2026-11-21: tenant-sync: ledger [skip ci] (#838)
 - 2026-11-21: ciwatch: file failing-workflow items (CIWATCH-1) (#833)
 - 2026-11-21: ciwatch: file failing-workflow items (CIWATCH-1) (#828)
 - 2026-11-20: DISPOSE-1 and PATCH-EDIT-1 verified live on main (PRs 823 and 827 merged; fleet run 44814064150 succeeded and landed verdicts for 31 items). `dispose --report` after that pass: 469 closed, 23 gate, 4 shelved, 281 open, oldest open 10.5 days; the oldest cohort (filed 2026-11-10) reaches the 14 day limit on 2026-11-24, so the open count falls on each daily pass. Not yet measured: whether free models now land roadmap edits (read `ops/executor-log.jsonl` `pr-merged` rows after the next executor runs).
