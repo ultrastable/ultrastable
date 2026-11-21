@@ -3729,6 +3729,15 @@
    "body": "No LANE_PAT or app secret is bound, so PRs changing .github/workflows waited for a hand merge. The lane now asks the tick Worker (/api/lane/merge, OIDC proof, exact head, green guard) to merge with the org app, which holds workflows: write.",
    "probe": "file:seed/worker/src/lanemerge.js",
    "session": "session_0156nqDsFRz5bTkgg5zkrs7g"
+  },
+  {
+   "id": "lesson-2026-11-21-lane-worker-merge-1-probe-pr-workflow-file-comment-to-prove-",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "LANE-WORKER-MERGE-1 probe PR: workflow-file comment to prove the Worker-app merge route",
+   "body": "Trivial comment in lane.yml. If this PR merges with no hand merge, the route works end to end.",
+   "probe": "file:scripts/lane.sh",
+   "session": "session_0156nqDsFRz5bTkgg5zkrs7g"
   }
  ]
 }
