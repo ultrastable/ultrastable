@@ -82,6 +82,19 @@ export async function answer(question, config) {
     } catch { /* retrieval falls back to the original words */ }
   }
   hits = hits.filter(h => h.score >= minScore);
+  // DISCOVER-1: optional vector retrieval. `semantic(text)` returns [{ id, score }] over the same docs (cosine); hits at or above
+  // `semanticMin` join the keyword hits by reciprocal rank fusion, so a question worded unlike the page still finds it.
+  if (typeof config.semantic === 'function') {
+    try {
+      const sem = (await config.semantic(english)).filter(x => x.score >= (config.semanticMin ?? 0.62));
+      if (sem.length) {
+        const byId = new Map(index.docs.map(d => [d.id, d])), lists = [hits.map(h => h.id), sem.map(x => x.id)], fused = new Map(), rank = (l, id) => l.indexOf(id);
+        for (const l of lists) l.forEach((id, r) => fused.set(id, (fused.get(id) || 0) + 1 / (60 + r + 1)));
+        const have = new Map(hits.map(h => [h.id, h]));
+        hits = [...fused].sort((a, b) => b[1] - a[1]).map(([id]) => have.get(id) || (byId.get(id) && { ...byId.get(id), score: 0, semantic: sem[rank(lists[1], id)].score })).filter(Boolean).slice(0, k);
+      }
+    } catch { /* vector retrieval is an extra; keyword hits stand on their own */ }
+  }
   const sources = hits.map((h, i) => ({ n: i + 1, id: h.id, url: h.url, title: h.title, type: h.type, text: h.text }));
   const pub = s => s.map(({ n, id, url, title, type }) => ({ n, id, url, title, type }));
   if (!sources.length) return { ok: true, mode: 'none', lang, question: q, answer: '', sources: [], reason: 'no page matches' };

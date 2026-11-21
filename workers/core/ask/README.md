@@ -11,6 +11,6 @@ A tenant passes documents `{ id, url, title, text }`; `buildIndex` makes a plain
 | Grounding check (citations, numbers, wording) | BUILT |
 | Extractive and no-answer modes; never fabricates | BUILT |
 | Rate limit, daily model budget | BUILT |
-| Vector retrieval | NOT COVERED (BM25 plus query translation is enough at this size and costs nothing) |
+| Vector retrieval (optional `semantic` hook, fused with BM25 by reciprocal rank; vectors from `core/discover`) | BUILT |
 
 Tests: `ask.test.js`.
