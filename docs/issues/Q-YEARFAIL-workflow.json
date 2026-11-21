@@ -1,7 +1,7 @@
 {
   "id": "Q-YEARFAIL-workflow",
   "title": "Q-YEARFAIL-workflow: land the weekly yearfail workflow (protected path)",
-  "body": "**Owner:** operations\n**Trigger:** every checks run (probe)\n**Done check:** file:.github/workflows/yearfail.yml\n**Status:** open\n\nYEARFAIL-1: the weekly run is the file `doctrine/protected/yearfail.workflow.yml`, to be installed as `.github/workflows/yearfail.yml`. A model branch cannot edit workflows (worker-gate deny list: claude/* and agent/* are refused, never bypassed), so this is a Protected-change: the reason is that the simulated year must run on a clock with no person. Until it lands the loop runs on demand and the clock is not declared.\n",
+  "body": "**Owner:** operations\n**Trigger:** every checks run (probe)\n**Done check:** file:.github/workflows/yearfail.yml\n**Status:** closed\n\nYEARFAIL-1: the weekly run is the file `doctrine/protected/yearfail.workflow.yml`, to be installed as `.github/workflows/yearfail.yml`. A model branch cannot edit workflows (worker-gate deny list: claude/* and agent/* are refused, never bypassed), so this is a Protected-change: the reason is that the simulated year must run on a clock with no person. Until it lands the loop runs on demand and the clock is not declared.\n\n**Disposition:** shelved (ttl, 2026-11-21T18:31:14Z, DISPOSE-1)\n\n**Evidence:** open 6.0 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
   "labels": [
     "role:operations",
     "protected-change",

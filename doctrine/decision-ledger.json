@@ -4208,6 +4208,22 @@
    "body": "PR 1762 conflicted with main on doctrine/claim-code.json (both sides kept) and stale generated files (regen_generated.sh). Issue SLA table matches doctrine/sla.json.",
    "probe": "file:foundation/balance.py",
    "session": "session_0156nqDtuzVqX3uUGd7Q9vKC"
+  },
+  {
+   "id": "decision-2026-11-21-thread-resolve-open-issues-fixes",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Thread resolve-open-issues fixes",
+   "body": "Session: session_0156nqDte8FeqRLjvGRAAb6w. Shelved (timed-out) items are not done in the roadmap and pins readers; record_main.sh; REST PR probe; mirror dedupe; SPDX headers.",
+   "probe": "grep:foundation/pins.py::SHELVED-NOT-DONE-1"
+  },
+  {
+   "id": "lesson-2026-11-21-shelved-is-not-done",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "Shelved is not done",
+   "body": "DISPOSE-1 shelving closes items without fixing them; any reader that treats closed as done must also require the done check to pass, or a timeout reads as a fix (main went red on two roadmap gaps).",
+   "probe": "grep:scripts/build_site_roadmap.py::SHELVED-NOT-DONE-1"
   }
  ]
 }

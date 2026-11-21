@@ -12,7 +12,6 @@ export default {
  ],
  "issues": {
   "PIN-core-db-separation": {
-   "disposition": "shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)",
    "done": "file:docs/migrations/core-db-split.json",
    "id": "PIN-core-db-separation",
    "milestone": "Done",
@@ -22,7 +21,6 @@ export default {
    "trigger": "trigger: pilot milestone 1"
   },
   "PIN-default-policy-pack": {
-   "disposition": "shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)",
    "done": "file:seed/autonomy/default-policy-pack.json",
    "id": "PIN-default-policy-pack",
    "milestone": "Done",
@@ -32,7 +30,6 @@ export default {
    "trigger": "pilot milestone 1"
   },
   "PIN-earned-trust": {
-   "disposition": "shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)",
    "done": "file:instances/ultrastable/trust-ledger.json",
    "id": "PIN-earned-trust",
    "milestone": "Done",
@@ -42,17 +39,15 @@ export default {
    "trigger": "every site deploy (pins check)"
   },
   "PIN-fresh-account-bootstrap": {
-   "disposition": "shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)",
    "done": "file:docs/bootstrapping/fresh-account-apply.json",
    "id": "PIN-fresh-account-bootstrap",
    "milestone": "Next",
    "owner": "operations",
-   "status": "closed",
+   "status": "shelved",
    "title": "First real --apply on an empty Cloudflare account",
    "trigger": "trigger: an empty Cloudflare account bound to the fleet"
   },
   "PIN-heartbeat-loop": {
-   "disposition": "shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)",
    "done": "file:seed/worker/src/tick.js",
    "id": "PIN-heartbeat-loop",
    "milestone": "Done",
@@ -62,17 +57,15 @@ export default {
    "trigger": "every site deploy (pins check)"
   },
   "PIN-outside-audit": {
-   "disposition": "shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)",
    "done": "file:docs/audits/prediction-scoring-audit.json",
    "id": "PIN-outside-audit",
    "milestone": "Later",
    "owner": "reviewer",
-   "status": "closed",
+   "status": "shelved",
    "title": "Outside audit of prediction scoring",
    "trigger": "trigger: pilot milestone 2; first step is Q-GAP-cross-model-rescoring"
   },
   "PIN-plussing": {
-   "disposition": "shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)",
    "done": "grep:seed/ultrastable.json::plus_share",
    "id": "PIN-plussing",
    "milestone": "Done",
@@ -82,7 +75,6 @@ export default {
    "trigger": "every site deploy (pins check)"
   },
   "PIN-probe-revert": {
-   "disposition": "shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)",
    "done": "file:site/probes.json",
    "id": "PIN-probe-revert",
    "milestone": "Done",
@@ -92,7 +84,6 @@ export default {
    "trigger": "every site deploy (pins check)"
   },
   "PIN-runs-on-itself": {
-   "disposition": "shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)",
    "done": "file:foundation/selfhost.py",
    "id": "PIN-runs-on-itself",
    "milestone": "Done",
@@ -102,7 +93,6 @@ export default {
    "trigger": "every site deploy (pins check)"
   },
   "PIN-virtual-managers": {
-   "disposition": "shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)",
    "done": "file:agents/roles/portfolio-manager.md",
    "id": "PIN-virtual-managers",
    "milestone": "Done",
@@ -112,7 +102,6 @@ export default {
    "trigger": "every site deploy (pins check)"
   },
   "Q-GAP-adaptive-interview": {
-   "disposition": "",
    "done": "grep:site/worker.js::adaptiveQuestion",
    "id": "Q-GAP-adaptive-interview",
    "milestone": "Next",
@@ -122,7 +111,6 @@ export default {
    "trigger": "every executor run"
   },
   "Q-GAP-executor-merged-pr": {
-   "disposition": "",
    "done": "grep:ops/executor-log.jsonl::\"result\": \"pr-merged\"",
    "id": "Q-GAP-executor-merged-pr",
    "milestone": "Next",
@@ -132,7 +120,6 @@ export default {
    "trigger": "every executor run"
   },
   "Q-GAP-front-door-qualify": {
-   "disposition": "",
    "done": "grep:site/worker.js::systemTest",
    "id": "Q-GAP-front-door-qualify",
    "milestone": "Next",
@@ -142,27 +129,24 @@ export default {
    "trigger": "every executor run"
   },
   "Q-GAP-other-cloud-proof": {
-   "disposition": "shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)",
    "done": "file:docs/bootstrapping/other-cloud-proof.json",
    "id": "Q-GAP-other-cloud-proof",
    "milestone": "Next",
    "owner": "operations",
-   "status": "closed",
+   "status": "shelved",
    "title": "Prove one non-Cloudflare cloud end to end",
    "trigger": "every executor run"
   },
   "Q-GAP-second-installation": {
-   "disposition": "shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)",
    "done": "file:instances/pilot-1/instance.json",
    "id": "Q-GAP-second-installation",
    "milestone": "Next",
    "owner": "operations",
-   "status": "closed",
+   "status": "shelved",
    "title": "A second independent installation",
    "trigger": "every executor run"
   },
   "Q-LAYER-child-reporting": {
-   "disposition": "",
    "done": "file:instances/ultrastable/child-link.json",
    "id": "Q-LAYER-child-reporting",
    "milestone": "Done",
@@ -172,7 +156,6 @@ export default {
    "trigger": "every executor run"
   },
   "Q-LOOP-live-clock": {
-   "disposition": "",
    "done": "file:instances/ultrastable/live-runtime.json",
    "id": "Q-LOOP-live-clock",
    "milestone": "Next",
@@ -182,7 +165,6 @@ export default {
    "trigger": "every executor run"
   },
   "Q-TENANT-row-isolation": {
-   "disposition": "",
    "done": "file:seed/worker/migrations/0026_tenant_core.sql",
    "id": "Q-TENANT-row-isolation",
    "milestone": "Now",

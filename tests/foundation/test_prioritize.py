@@ -50,13 +50,11 @@ class Rank(unittest.TestCase):
     def test_live_config_and_repo_rank(self):
         rows = P.rank()
         self.assertTrue(rows and all("score" in r for r in rows))
-        # Only pinned items that are still open can lead the queue: a pin whose item has closed leaves the ranking (the item closing is the intended outcome, not a regression).
-        live = {r["id"] for r in rows}
-        pins = [i for i in P.load()["pins"]["ids"] if i in live]
-        if not pins:
-            return
-        top = [r["id"] for r in rows if not r["held"]][:len(pins)]
-        self.assertTrue(set(top) <= set(pins) or set(pins) & set(top), "pinned critical-path items lead the queue")
+        pins = P.load()["pins"]["ids"]
+        live = [r["id"] for r in rows if not r["held"]]
+        open_pins = [p for p in pins if p in live]  # a pinned item that closed (or was shelved) is no longer in the queue to lead it
+        top = live[:len(open_pins)]
+        self.assertTrue(not open_pins or set(open_pins) & set(top), "pinned critical-path items lead the queue")
 
 
 if __name__ == "__main__":

@@ -99,9 +99,9 @@ def check(root=REPO) -> list[str]:
     state = gap_state(root, d)
     for g in d["gaps"]:
         it = have.get(GAP_ID(g))
-        # DISPOSE-1 closes an over-limit item as shelved or gate: the gap is still open and the item still stands for it, so that is not a missing item.
-        held = bool(it) and re.search(r"^\*\*Disposition:\*\*\s*(shelved|gate)\b", it["json"].get("body", ""), re.M)
-        if state[g["id"]] == "open" and (not it or (it["status"] != "open" and not held)):
+        # SHELVED-NOT-DONE-1: an item DISPOSE-1 shelved still tracks its gap (its probe runs every fleet pass), so it is not a missing item.
+        shelved = bool(it) and re.search(r"^\*\*Disposition:\*\*\s*shelved", it["json"].get("body", ""), re.M)
+        if state[g["id"]] == "open" and (not it or (it["status"] != "open" and not shelved)):
             bad.append(f"gap {g['id']}: open with no open queue item {GAP_ID(g)} (run market --sync)")
         if it and it["probe"] != g["closing_probe"]:
             bad.append(f"gap {g['id']}: queue probe differs from the gap's closing probe")
