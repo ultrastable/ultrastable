@@ -169,7 +169,7 @@
    "impl": [
     "file:foundation/filing.py",
     "file:foundation/data/jurisdictions.json",
-    "file:ip/evidence-log.md"
+    "file:licensing/LICENSE-DECISIONS.md"
    ],
    "proof": [
     "file:tests/foundation/test_foundation.py"
