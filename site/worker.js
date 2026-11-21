@@ -953,7 +953,7 @@ function goalsPage(d) {
     const tone = g.value == null ? "warn" : g.met ? "ok" : "warn";
     return "<tr><td style=\"padding-left:" + (depth * 16) + "px\">" + esc(g.statement) + "<br><small><code>" + esc(g.id) + "</code>" + (g.tenant !== "core" ? " (tenant " + esc(g.tenant) + ")" : "") + (g.origin === "system" ? ", set by the system" : "") + (g.deadline ? ", by " + esc(g.deadline) : "") + "</small></td>"
       + "<td class=\"" + tone + "\"><strong>" + esc(f(g.value)) + "</strong> " + esc(g.unit || "") + "<br><small>" + (g.value == null ? "not reported yet" : g.met ? "target met" : "off target") + "</small></td>"
-      + "<td><code>" + esc(g.op) + " " + esc(g.target) + "</code></td><td>" + spark(g.spark) + "<br><small>" + esc(g.trend) + "</small></td>"
+      + "<td><code>" + esc(g.op) + " " + esc(g.target) + "</code></td><td>" + spark(g.spark) + "<br><small>" + esc(g.trend) + (g.error_budget ? "; error budget " + esc(g.error_budget.state) + (g.error_budget.budget_remaining != null ? " (" + Math.round(g.error_budget.budget_remaining * 100) + "% left)" : "") : "") + "</small></td>"
       + "<td>" + ((byGoal[g.id] || []).length ? "<ul>" + byGoal[g.id].map(kview).join("") + "</ul>" : "<small>no knob; an unmet goal files a backlog item</small>") + "</td></tr>";
   };
   const tree = function (parent, depth) { return goals.filter(function (g) { return (g.parent_id || null) === parent; }).map(function (g) { return row(g, depth) + tree(g.id, depth + 1); }).join(""); };

@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-21-control-1-knob-damping-and-goal-error-budgets",
+  "kind": "decision",
+  "date": "2026-11-21",
+  "title": "CONTROL-1 knob damping and goal error budgets",
+  "body": "Goal knobs damp after direction reversals (cooldown doubles per reversal past one, cap 16x). Every goal carries an SRE error budget with multiwindow burn-rate state on /goals and /api/goals. Sources in CREDITS.md.",
+  "probe": "file:seed/worker/src/control.js"
+ },
+ "kind": "decision",
+ "title": "CONTROL-1 knob damping and goal error budgets",
+ "session": ""
+}
