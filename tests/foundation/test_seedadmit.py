@@ -87,5 +87,22 @@ class T(unittest.TestCase):
         self.assertTrue(ok, why)
 
 
+    def test_live_needs_a_verified_deploy_row_and_an_answering_health(self):
+        root = scratch()
+        (root / "doctrine").mkdir(); (root / "ops").mkdir()
+        (root / "doctrine/seed-deploys.json").write_text('{"seeds": ["a"]}')
+        (root / "ops/deploys.jsonl").write_text("")
+        self.assertTrue(seedadmit.live(root, fetch=lambda u: {}))
+        (root / "ops/deploys.jsonl").write_text('{"kind": "seed", "slug": "a", "live_ok": true, "url": "https://x"}\n')
+        self.assertEqual(seedadmit.live(root, fetch=lambda u: {"ok": True}), [])
+        def down(u):
+            raise OSError("refused")
+        self.assertTrue(seedadmit.live(root, fetch=down))
+
+    def test_the_seed_deploy_step_is_wired_into_the_platform_deploy(self):
+        self.assertIn("deploy-seed.mjs", (REPO / "deploy/deploy-workers.mjs").read_text(encoding="utf-8"))
+        self.assertIn("second-tenant", (REPO / "doctrine/seed-deploys.json").read_text(encoding="utf-8"))
+
+
 if __name__ == "__main__":
     unittest.main()

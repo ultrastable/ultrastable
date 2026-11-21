@@ -109,10 +109,10 @@ Source: ops/criticality.jsonl at 2026-11-21T14:37:02Z.
 
 ## Proposed further links (leads, not findings)
 
-Found by core/connect on the lexical-512-ht1jj5 route; each is a proposal until a study file adopts it.
+Found by core/connect on the lexical-512-5m1s8v route; each is a proposal until a study file adopts it.
 
-- F3 may also relate to WORDS-MATCH-CODE-1 (similarity 0.141)
-- F3 may also relate to UNATTENDED-365 (similarity 0.134)
+- F3 may also relate to WORDS-MATCH-CODE-1 (similarity 0.142)
+- F3 may also relate to DRAIN-ZERO-1 (similarity 0.134)
 - F4 may also relate to CONNECT-1 (similarity 0.134)
 - F5 may also relate to AUTO-SHIP-CLEAN-1 (similarity 0.13)
 - F7 may also relate to OUTREACH-INTRO-1 (similarity 0.14)
