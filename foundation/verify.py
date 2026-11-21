@@ -195,7 +195,7 @@ def tick_conformance(root=REPO) -> dict:
     w = worker_src(root)
     if w is None:
         return dict(NA, fail={})
-    src = (w / "tick.js").read_text(encoding="utf-8")
+    src = "\n".join((w / f).read_text(encoding="utf-8") for f in ("tick.js", "stepplan.js") if (w / f).exists())
     def arr(name):
         m = re.search(r"export const " + name + r" = \[([^\]]*)\]", src)
         if not m:
@@ -231,7 +231,7 @@ def run(root=REPO) -> dict:
     up = root / "doctrine/ultrastability.json"
     ultra = json.loads(up.read_text(encoding="utf-8")) if up.exists() else {"scopes": {}}
     lens = sorted({len(v.get("ladder", [])) for sc in ultra["scopes"].values() for v in sc.get("variables", [])})
-    results["second-loop"] = {"ok": True, "ladders": lens, "states": 0, "violations": []}
+    results["second-loop"] = {"ok": True, "ladders": lens, "states": 0, "violations": []} if lens else dict(NA)
     for n in lens:
         r = second_loop_model(n)
         results["second-loop"]["states"] += r["states"]
