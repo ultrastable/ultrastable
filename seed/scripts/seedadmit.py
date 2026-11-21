@@ -42,6 +42,7 @@ def _probe(cmd, root, timeout=180) -> tuple[bool, str]:
         return False, f"{type(e).__name__}: {str(e)[:120]}"
 
 
+GENERATED = {"worker/src/config.js"}  # written by the bootstrap `write` stage on the system itself, never carried in the seed
 IMPORT = re.compile(r"""(?:from\s+|import\s*\(\s*|import\s+)['"](\.{1,2}/[^'"]+)['"]""")
 
 
@@ -54,6 +55,8 @@ def escapes(root) -> list[str]:
             continue
         for rel in IMPORT.findall(p.read_text(encoding="utf-8")):
             t = (p.parent / rel).resolve()
+            if t.relative_to(root).as_posix() in GENERATED:
+                continue
             if not t.is_file() and not t.with_suffix(".js").is_file():
                 out.append(f"{p.relative_to(root).as_posix()} imports {rel}, which is not in the system")
     return out
