@@ -100,7 +100,7 @@ class T(unittest.TestCase):
         self.assertTrue(seedadmit.live(root, fetch=down))
 
     def test_the_seed_deploy_step_is_wired_into_the_platform_deploy(self):
-        self.assertIn("deploy-seed.mjs", (REPO / "deploy/deploy-workers.mjs").read_text(encoding="utf-8"))
+        self.assertIn("deploy-seed.mjs", (REPO / "deploy/deploy-oidc.mjs").read_text(encoding="utf-8"))
         self.assertIn("second-tenant", (REPO / "doctrine/seed-deploys.json").read_text(encoding="utf-8"))
 
 
