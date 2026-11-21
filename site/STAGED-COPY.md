@@ -37,6 +37,3 @@ Not offered: financial operations (accounting, payments). Out of scope for now.
 4. Everything around the code (branding, business plan, search visibility).
 5. Proof (the test case).
 6. Pilot sign-up.
-
-## Words to avoid on the public home page
-probe, revert, prediction, trust ledger, plussing, work claim, virtual manager, self-governing. The dashboard's `disclosure_guard` check fails if the public home page contains any of them. The home page says "software that keeps improving itself"; the managers are described on the team page.
