@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-21-roi-self-1-api-roi-makes-the-pay-or-stay-call-itself-time-vs",
+  "kind": "decision",
+  "date": "2026-11-21",
+  "title": "ROI-SELF-1: /api/roi makes the pay-or-stay call itself (time vs cost, quality unchanged)",
+  "body": "roi.js analyze returns time_vs_cost (throttled hours, projected paid bill per day against the soft target) and system_decision. Paid is worth it when the free plan throttled for 2 shed days or 12 h in the window and the projected bill fits inside half the soft daily target. The tick files one gate item ROI-PAY-<month> (kind gate, owner billing) with the default in effect (free plan, soft throttling); it closes once CF_PLAN=paid.",
+  "probe": "grep:seed/worker/src/roi.js::ROI-SELF-1",
+  "session": "session_0156nqDu9w9828E3wYy42EBd"
+ },
+ "kind": "decision",
+ "title": "ROI-SELF-1: /api/roi makes the pay-or-stay call itself (time vs cost, quality unchanged)",
+ "session": "session_0156nqDu9w9828E3wYy42EBd"
+}

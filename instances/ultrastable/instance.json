@@ -13,5 +13,6 @@
   "repos": {"org": "ultrastable", "names": ["ultrastable"], "canonical": "ultrastable/ultrastable"},
   "disclosure": {"public_allowed": true, "gate": "none", "safe_now_only": false},
   "ip": {"has_invention": false, "priority_filed": false, "has_practitioner": false},
-  "budget": {"usd_per_month": 0, "actions_minutes_monthly": 2000}
+  "budget": {"usd_per_month": 0, "actions_minutes_monthly": 2000},
+  "spend": {"target_usd_day": 5, "soft": true, "tenants": [{"id": "ultrastable", "share": 0.6, "scripts": ["ultrastable-*"]}, {"id": "practical-solutions", "share": 0.4, "scripts": ["tenant-ps-*"]}]}
 }

@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-21-ai-gov-account-1-static-per-worker-ai-shares-refused-calls-w",
+  "kind": "lesson",
+  "date": "2026-11-21",
+  "title": "AI-GOV-ACCOUNT-1: static per-worker AI shares refused calls with half the account's neurons unused",
+  "body": "Each worker planned against a static share of the day in its own ledger while the console and site shares sat idle. The tick now sizes its allowance from Cloudflare's account-wide neuron count (aiInferenceAdaptiveGroups, sampled every tick) minus its own use; the static share is only the fallback. Measured 2026-11-21 over 24 h: 9,645 neurons account-wide, KV reads 116k (free 100k a day), D1 reads 5.7M (free 5M a day), requests 98.6k (free 100k a day): the free plan binds on four meters at once.",
+  "probe": "grep:seed/worker/src/budget.js::AI-GOV-ACCOUNT-1",
+  "session": "session_0156nqDu9w9828E3wYy42EBd"
+ },
+ "kind": "lesson",
+ "title": "AI-GOV-ACCOUNT-1: static per-worker AI shares refused calls with half the account's neurons unused",
+ "session": "session_0156nqDu9w9828E3wYy42EBd"
+}

@@ -5,6 +5,7 @@
 // (cost_budgets) are advisory: one 50k-row analytics refresh is 1% of the day and must never pause the work queue (OPS-QUEUE-1).
 // DECISION-METRIC: free-tier-governor (the level set here is logged and scored by src/decisions.js recordGovernor)
 // Levels: ok < degrade (80% of the day, or projected to pass 100%) < shed (95%). Degrade and shed skip non-essential steps; the clock never stops.
+import { usageQuery, metersFrom } from './spend.js';  // SPEND-SOFT-1
 const API = 'https://api.cloudflare.com/client/v4/graphql';
 export const FREE_LIMITS = {
   d1_rows_read: { per_day: 5_000_000, label: 'D1 rows read (account)' },
@@ -33,29 +34,31 @@ export function evaluate(usage, now = new Date(), limits = FREE_LIMITS) {
 
 export async function sampleFreeTier(db, { token, account_id, fetch: f = fetch, now = new Date() }) {
   const at = now.toISOString().replace('T', ' ').slice(0, 19), from = dayStart(now).toISOString(), to = now.toISOString();
-  const used = {}; let error = null;
+  const used = {}; let error = null, meters = null;
   if (!token) error = 'no Cloudflare analytics token bound (CF_ANALYTICS_TOKEN)';
   else try {
-    const q = `{viewer{accounts(filter:{accountTag:"${account_id}"}){d1:d1AnalyticsAdaptiveGroups(limit:1000,filter:{datetime_geq:"${from}",datetime_leq:"${to}"}){sum{rowsRead rowsWritten}} w:workersInvocationsAdaptive(limit:1000,filter:{datetime_geq:"${from}",datetime_leq:"${to}"}){sum{requests}}}}}`;
-    const r = await f(API, { method: 'POST', headers: { authorization: 'Bearer ' + token, 'content-type': 'application/json' }, body: JSON.stringify({ query: q }) });
+    // SPEND-SOFT-1: one query reads every meter the spend estimate needs too (spend.js), so the two governors share one subrequest.
+    const r = await f(API, { method: 'POST', headers: { authorization: 'Bearer ' + token, 'content-type': 'application/json' }, body: JSON.stringify({ query: usageQuery(account_id, from, to) }) });
     const j = await r.json();
     if (!r.ok || (j.errors && j.errors.length)) error = `graphql ${r.status} ${JSON.stringify(j.errors || []).slice(0, 150)}`;
     else {
-      const a = j.data.viewer.accounts[0] || {};
-      used.d1_rows_read = (a.d1 || []).reduce((s, g) => s + Number(g.sum.rowsRead || 0), 0);
-      used.d1_rows_written = (a.d1 || []).reduce((s, g) => s + Number(g.sum.rowsWritten || 0), 0);
-      used.workers_requests = (a.w || []).reduce((s, g) => s + Number(g.sum.requests || 0), 0);
+      meters = metersFrom(j.data.viewer.accounts[0] || {});
+      used.d1_rows_read = meters.used.d1_rows_read ?? 0;
+      used.d1_rows_written = meters.used.d1_rows_written ?? 0;
+      used.workers_requests = meters.used.requests ?? 0;
     }
   } catch (e) { error = String(e.message).slice(0, 150); }
   if (token && error) error = error.split(token).join('***');
-  // Neurons are metered in-process (budget_ledger), so they need no token.
-  try {
+  // AI-GOV-ACCOUNT-1: neurons are the account-wide figure from Cloudflare when the reading has it (every worker's calls, not one ledger); the
+  // in-process ledger is the fallback that needs no token.
+  if (meters && meters.used.ai_neurons != null) used.ai_neurons = meters.used.ai_neurons;
+  else try {
     const n = await db.prepare("SELECT COALESCE(SUM(units),0) u FROM budget_ledger WHERE day=?1 AND kind='ai_neurons'").bind(at.slice(0, 10)).first();
     used.ai_neurons = Number((n && n.u) || 0);
   } catch (e) { /* ledger absent until the first model call */ used.ai_neurons = 0; }
   const keys = Object.keys(FREE_LIMITS);
   for (const k of keys) await db.prepare('INSERT INTO free_tier_samples (at, resource, used_today, error) VALUES (?,?,?,?)').bind(at, k, used[k] ?? null, used[k] == null ? error : null).run();
-  return { at, used, error, ...evaluate(used, now) };
+  return { at, used, error, meters, ...evaluate(used, now) };
 }
 
 // Latest sample per resource from the last 2 h (older is unmeasured). A failed or missing sample is never a breach.

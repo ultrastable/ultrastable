@@ -5,7 +5,7 @@
 //
 // Lesson from an earlier fleet (frozen 2026-11-16 because its bill became unaffordable): its budget rule only steered work to cheaper models
 // and never stopped it, so 37 workers on 2-to-30-minute crons spent ~12 million Workers AI neurons a week with no ceiling.
-// Here the ceiling is hard: past the day's allowance the tick gets no model at all (frozen). It still measures, files and serves pages; rule-based
+// The ceiling holds without a stop (SPEND-SOFT-1): past the day's allowance the tick crawls at one model call an hour. It still measures, files and serves pages; rule-based
 // steps keep running. Allowances come from Cloudflare's published prices, so a budget of 0 keeps the account inside the free tier.
 //
 // Metering needs no analytics token: every model call is counted in the D1 ledger budget_ledger, estimated from the token usage the model reports
@@ -113,29 +113,56 @@ export async function usage(db, now = Date.now()) {
     ai_usd_month_to_date: +(((Number(mtd.paid) || 0) / 1000) * PRICES.ai_usd_per_1k_neurons).toFixed(4) };
 }
 
-// normal: model calls allowed; lean: one per tick; frozen: none until tomorrow (day cap) or next month (month's variable money spent).
+// normal: model calls allowed; lean: one per tick; crawl: one per hour. SPEND-SOFT-1 (Rowan, 2026-11-21: "Never a hard stop"): there is no frozen
+// mode any more. Past the day's allowance, or with the month's variable money spent, model calls trickle at one an hour so a loop that needs a
+// model still advances; on the free plan Cloudflare itself refuses past 10,000 neurons, so the trickle costs nothing there.
 export function decide(a, u) {
-  if (u.ai_usd_month_to_date >= a.variable_usd_month && a.variable_usd_month > 0) return { mode: 'frozen', why: 'month variable budget spent', calls_per_tick: 0 };
-  if (u.ai_neurons_today >= a.ai_neurons_day) return { mode: 'frozen', why: `today's AI allowance used (${Math.round(u.ai_neurons_today)} of ${a.ai_neurons_day} neurons)`, calls_per_tick: 0 };
+  if (u.ai_usd_month_to_date >= a.variable_usd_month && a.variable_usd_month > 0) return { mode: 'crawl', why: 'month variable budget spent: one model call an hour', calls_per_tick: 1, hourly: true };
+  if (u.ai_neurons_today >= a.ai_neurons_day) return { mode: 'crawl', why: `today's AI allowance used (${Math.round(u.ai_neurons_today)} of ${a.ai_neurons_day} neurons): one model call an hour`, calls_per_tick: 1, hourly: true };
   if (u.ai_neurons_today >= a.ai_neurons_day * LEAN_AT) return { mode: 'lean', why: `over ${LEAN_AT * 100}% of today's AI allowance`, calls_per_tick: 1 };
   return { mode: 'normal', why: 'within budget', calls_per_tick: null };
 }
 
+// SPEND-SOFT-1: the spend throttle (spend.js) turns one knob here. At throttle and crawl the day's allowance is the free allocation only
+// (no neuron is bought), and crawl also means one call per tick.
+export function applySpend(a, spend) {
+  const ai = spend && spend.knobs && spend.knobs.ai;
+  if (ai !== 'free-allocation' && ai !== 'free-allocation-lean') return { a, lean: false };
+  const free = Math.floor(PRICES.ai_free_neurons_day * SAFETY_FREE * (a.share || 1));
+  return { a: { ...a, ai_neurons_day: Math.min(a.ai_neurons_day, free), spend_level: spend.level }, lean: ai === 'free-allocation-lean' };
+}
+
+// AI-GOV-ACCOUNT-1 (2026-11-21): the governor still refused calls with about half of the account's free neurons unused, because each worker
+// planned against a fixed share (tick 70%) of the day while the console and site shares sat idle in other ledgers. With an account-wide
+// reading (Cloudflare's own neuron count, sampled every tick into org.spend_state) the tick may use whatever the others have not: the whole
+// allowance minus what the rest of the account actually used today. The fixed share stays the fallback when no reading is fresh.
+export function accountAllowance(full, shared, ownToday, accountToday) {
+  if (!Number.isFinite(accountToday)) return shared;
+  const others = Math.max(0, accountToday - ownToday);
+  return { ...shared, share: 1, ai_neurons_day: Math.max(0, Math.floor(full.ai_neurons_day - others)), sized_by: 'account reading' };
+}
+
 export class BudgetExhausted extends Error { constructor(msg) { super(msg); this.name = 'BudgetExhausted'; this.code = 'budget_exhausted'; } }
 
-// The AI handle every loop receives. Returns null when frozen, so callers take their existing "no model" path; otherwise a metered wrapper that
+// The AI handle every loop receives: a metered wrapper (null only when no AI binding exists) that
 // refuses a call (BudgetExhausted) once the per-tick or per-day allowance is reached and records every call in the ledger.
-export async function governedAI(db, ai, { config = {}, env = {}, now = Date.now(), share = 1 } = {}) {
+export async function governedAI(db, ai, { config = {}, env = {}, now = Date.now(), share = 1, spend = null } = {}) {
   if (!ai) return { ai: null, state: null };
-  const b = budgetConfig(config, env), a = withShare(allowance(b, now), share), u = await usage(db, now), d = decide(a, u);
-  const state = { budget: b.usd_per_month, plan: b.plan, allowance: a, usage: u, ...d };
-  if (d.mode === 'frozen') { await bump(db, dayOf(now), 0, 0, 1).catch(e => console.error('budget ledger', e && e.message)); return { ai: null, state }; }
+  const b = budgetConfig(config, env), full = allowance(b, now), u = await usage(db, now);
+  const acct = spend && spend.measured && spend.used ? Number(spend.used.ai_neurons) : NaN;
+  const sized = accountAllowance(full, withShare(full, share), u.ai_neurons_today, acct);
+  const { a, lean } = applySpend(sized, spend);
+  let d = decide(a, u);
+  if (lean && d.mode === 'normal') d = { mode: 'lean', why: `spend ${spend.level}: one model call per tick from the free allocation`, calls_per_tick: 1 };
+  const state = { budget: b.usd_per_month, plan: b.plan, allowance: a, usage: u, spend_level: spend ? spend.level : null, ...d };
+  const hourOpen = new Date(now).getUTCMinutes() < 10;   // crawl: the first tick of each hour gets its one call
   let used = u.ai_neurons_today, callsThisTick = 0;
   const wrapped = {
     async run(model, input, opts) {
-      if ((d.calls_per_tick !== null && callsThisTick >= d.calls_per_tick) || used >= a.ai_neurons_day) {
+      const capped = d.calls_per_tick !== null && callsThisTick >= d.calls_per_tick;
+      if (capped || (d.hourly && !hourOpen) || (!d.hourly && used >= a.ai_neurons_day)) {
         await bump(db, dayOf(now), 0, 0, 1).catch(e => console.error('budget ledger', e && e.message));
-        throw new BudgetExhausted(`AI budget: ${d.mode === 'lean' ? 'lean mode allows one model call per tick' : "today's allowance is used"}`);
+        throw new BudgetExhausted(`AI budget: ${d.mode === 'crawl' ? 'crawl mode allows one model call an hour' : d.mode === 'lean' ? 'lean mode allows one model call per tick' : "today's allowance is used"}`);
       }
       callsThisTick++;
       const res = await ai.run(model, input, opts);
@@ -156,8 +183,10 @@ async function bump(db, day, units, calls, refused) {
 }
 
 // Read-only view for the dashboard and agents: the knob, what it buys, what was used, the mode, and the plain-words reason.
-export async function budgetView(db, { config = {}, env = {}, now = Date.now() } = {}) {
-  const b = budgetConfig(config, env), a = allowance(b, now), u = await usage(db, now), d = decide(a, u);
+export async function budgetView(db, { config = {}, env = {}, now = Date.now(), spend = null } = {}) {
+  const b = budgetConfig(config, env), full = allowance(b, now), u = await usage(db, now);
+  const acct = spend && spend.measured && spend.used ? Number(spend.used.ai_neurons) : NaN;
+  const a = applySpend(accountAllowance(full, full, u.ai_neurons_today, acct), spend).a, d = decide(a, u);
   return { knob: { usd_per_month: b.usd_per_month, set_by: env.BUDGET_USD_PER_MONTH !== undefined && String(env.BUDGET_USD_PER_MONTH).trim() !== '' ? 'BUDGET_USD_PER_MONTH' : 'instance manifest', plan: b.plan },
-    allowance: a, usage: u, mode: d.mode, why: d.why, prices: PRICES, as_of: new Date(now).toISOString() };
+    allowance: a, usage: u, mode: d.mode, why: d.why, spend_level: spend ? spend.level : null, prices: PRICES, as_of: new Date(now).toISOString() };
 }
