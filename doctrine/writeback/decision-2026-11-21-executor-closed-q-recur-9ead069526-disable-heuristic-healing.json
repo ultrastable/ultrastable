@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-21-executor-closed-q-recur-9ead069526-disable-heuristic-healing",
+  "kind": "decision",
+  "date": "2026-11-21",
+  "title": "Executor closed Q-RECUR-9ead069526: Disable heuristic healing for schema errors in critical tick steps to prevent infinite retry loops cause",
+  "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: seed/worker/tests/tick.rollback.test.mjs, seed/worker/src/tick.js.",
+  "probe": "file:seed/worker/tests/tick.rollback.test.mjs"
+ },
+ "kind": "decision",
+ "title": "Executor closed Q-RECUR-9ead069526: Disable heuristic healing for schema errors in critical tick steps to prevent infinite retry loops cause",
+ "session": ""
+}
