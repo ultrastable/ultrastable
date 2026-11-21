@@ -8,3 +8,5 @@
 {"at": "2026-11-20T18:53:04Z", "decided_at": "2026-11-19T16:00:12Z", "hit": true, "id": "d-55cb589b1c4f", "measured": 1.0, "point": "idea-loop", "predicted": 1.0}
 {"at": "2026-11-21T16:21:19Z", "decided_at": "2026-11-20T15:36:49Z", "hit": true, "id": "d-2f1e260b2d61", "measured": 1.0, "point": "work-queue-priority", "predicted": 1.0}
 {"at": "2026-11-21T16:21:19Z", "decided_at": "2026-11-20T15:43:15Z", "hit": true, "id": "d-9dad329ccac6", "measured": 1.0, "point": "idea-loop", "predicted": 1.0}
+{"at": "2026-11-21T16:21:43Z", "decided_at": "2026-11-20T15:36:49Z", "hit": true, "id": "d-2f1e260b2d61", "measured": 1.0, "point": "work-queue-priority", "predicted": 1.0}
+{"at": "2026-11-21T16:21:43Z", "decided_at": "2026-11-20T15:43:15Z", "hit": true, "id": "d-9dad329ccac6", "measured": 1.0, "point": "idea-loop", "predicted": 1.0}
