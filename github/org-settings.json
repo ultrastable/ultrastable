@@ -1,309 +1,337 @@
 {
-  "_doc": "Desired GitHub state for the ultrastable org and its canonical repo. Applied by scripts/apply_github_settings.sh via the org-settings workflow. Everything public here is SAFE NOW (generic). Edit this file, not the GitHub UI.",
-  "org": {
-    "name": "Ultrastable",
-    "description": "Ultrastable is the foundation for any autonomous system. Runs on itself.",
-    "blog": "https://ultrastable.io",
-    "email": "pilot@ultrastable.io",
-    "default_repository_permission": "read",
-    "has_organization_projects": true,
-    "has_repository_projects": true,
-    "web_commit_signoff_required": false
-  },
-  "repos": {
-    "ultrastable/ultrastable": {
-      "description": "The main repository: the platform, the website, the owner dashboard, the doctrine, the docs and the seed template that new systems start from. Ultrastable is the foundation for any autonomous system.",
-      "homepage": "https://ultrastable.io",
-      "topics": [
-        "autonomous-agents",
-        "ai-agents",
-        "agent-orchestration",
-        "developer-tools",
-        "automation",
-        "bootstrapping",
-        "self-hosting",
-        "cloudflare-workers"
-      ],
-      "settings": {
-        "has_issues": true,
-        "has_projects": true,
-        "has_wiki": false,
-        "has_discussions": false,
-        "allow_squash_merge": true,
-        "allow_merge_commit": false,
-        "allow_rebase_merge": false,
-        "allow_auto_merge": true,
-        "allow_update_branch": true,
-        "delete_branch_on_merge": true,
-        "squash_merge_commit_title": "PR_TITLE",
-        "squash_merge_commit_message": "PR_BODY"
-      },
-      "security": {
-        "vulnerability_alerts": true,
-        "automated_security_fixes": true,
-        "secret_scanning": "enabled",
-        "secret_scanning_push_protection": "enabled"
-      },
-      "branch_protection": {
-        "branch": "main",
-        "allow_force_pushes": false,
-        "allow_deletions": false,
-        "required_linear_history": true
-      },
-      "rulesets": [
-        {
-          "name": "main-requires-checks",
-          "target": "branch",
-          "enforcement": "active",
-          "_doc": "DIRECT-MERGE-GATE-1: #619 was merged by a direct merge call 30 s before its checks run failed; the lane and sweeper gates cannot see that route. GitHub itself refuses a merge to main without a green `checks` run. GitHub refuses the Actions app (15368) as a bypass actor, so the fleet's data commits to main go through the tick Worker (MAIN-WRITER-1, tools/push_main.py, POST /api/main/commit), which writes with the org's own GitHub App; the applier adds that app as the only bypass actor.",
-          "conditions": {
-            "ref_name": {
-              "include": [
-                "~DEFAULT_BRANCH"
-              ],
-              "exclude": []
-            }
-          },
-          "rules": [
-            {
-              "type": "pull_request",
-              "parameters": {
-                "required_approving_review_count": 0,
-                "dismiss_stale_reviews_on_push": false,
-                "require_code_owner_review": false,
-                "require_last_push_approval": false,
-                "required_review_thread_resolution": false
-              }
-            },
-            {
-              "type": "required_status_checks",
-              "parameters": {
-                "strict_required_status_checks_policy": false,
-                "required_status_checks": [
-                  {
-                    "context": "checks"
-                  }
-                ]
-              }
-            }
-          ],
-          "bypass_actors": []
-        }
-      ]
-    },
-    "ultrastable/workers": {
-      "description": "Retired: the core code now lives in ultrastable/ultrastable under workers/. Kept public so existing links resolve. Ultrastable is the foundation for any autonomous system.",
-      "homepage": "https://ultrastable.io",
-      "topics": [
-        "agent-orchestration",
-        "cloudflare-workers",
-        "autonomous-agents",
-        "runtime"
-      ],
-      "settings": {
-        "has_issues": true,
-        "has_wiki": false,
-        "delete_branch_on_merge": true,
-        "allow_squash_merge": true,
-        "allow_merge_commit": false,
-        "allow_rebase_merge": false,
-        "allow_auto_merge": true,
-        "allow_update_branch": true
-      },
-      "security": {
-        "vulnerability_alerts": true,
-        "automated_security_fixes": false,
-        "secret_scanning": "enabled",
-        "secret_scanning_push_protection": "enabled"
-      },
-      "branch_protection": {
-        "branch": "main",
-        "allow_force_pushes": false,
-        "allow_deletions": false,
-        "required_linear_history": true
+ "_doc": "Desired GitHub state for the ultrastable org and its canonical repo. Applied by scripts/apply_github_settings.sh via the org-settings workflow. Everything public here is SAFE NOW (generic). Edit this file, not the GitHub UI.",
+ "org": {
+  "name": "Ultrastable",
+  "description": "Ultrastable is the foundation for any autonomous system. Runs on itself.",
+  "blog": "https://ultrastable.io",
+  "email": "pilot@ultrastable.io",
+  "default_repository_permission": "read",
+  "has_organization_projects": true,
+  "has_repository_projects": true,
+  "web_commit_signoff_required": false
+ },
+ "repos": {
+  "ultrastable/ultrastable": {
+   "description": "The main repository: the platform, the website, the owner dashboard, the doctrine, the docs and the seed template that new systems start from. Ultrastable is the foundation for any autonomous system.",
+   "homepage": "https://ultrastable.io",
+   "topics": [
+    "autonomous-agents",
+    "ai-agents",
+    "agent-orchestration",
+    "developer-tools",
+    "automation",
+    "bootstrapping",
+    "self-hosting",
+    "cloudflare-workers"
+   ],
+   "settings": {
+    "has_issues": true,
+    "has_projects": true,
+    "has_wiki": false,
+    "has_discussions": false,
+    "allow_squash_merge": true,
+    "allow_merge_commit": false,
+    "allow_rebase_merge": false,
+    "allow_auto_merge": true,
+    "allow_update_branch": true,
+    "delete_branch_on_merge": true,
+    "squash_merge_commit_title": "PR_TITLE",
+    "squash_merge_commit_message": "PR_BODY"
+   },
+   "security": {
+    "vulnerability_alerts": true,
+    "automated_security_fixes": true,
+    "secret_scanning": "enabled",
+    "secret_scanning_push_protection": "enabled"
+   },
+   "branch_protection": {
+    "branch": "main",
+    "allow_force_pushes": false,
+    "allow_deletions": false,
+    "required_linear_history": true
+   },
+   "rulesets": [
+    {
+     "name": "main-requires-checks",
+     "target": "branch",
+     "enforcement": "active",
+     "_doc": "DIRECT-MERGE-GATE-1: #619 was merged by a direct merge call 30 s before its checks run failed; the lane and sweeper gates cannot see that route. GitHub itself refuses a merge to main without a green `checks` run. GitHub refuses the Actions app (15368) as a bypass actor, so the fleet's data commits to main go through the tick Worker (MAIN-WRITER-1, tools/push_main.py, POST /api/main/commit), which writes with the org's own GitHub App; the applier adds that app as the only bypass actor.",
+     "conditions": {
+      "ref_name": {
+       "include": [
+        "~DEFAULT_BRANCH"
+       ],
+       "exclude": []
       }
-    },
-    "ultrastable/spec": {
-      "description": "Retired: the specifications, SCOPE and license text now live in ultrastable/ultrastable (specs/, SCOPE.md, licensing/). Kept public so existing links resolve. Ultrastable is the foundation for any autonomous system.",
-      "homepage": "https://ultrastable.io",
-      "topics": [
-        "specifications",
-        "architecture",
-        "autonomous-agents",
-        "documentation"
-      ],
-      "settings": {
-        "has_issues": true,
-        "has_wiki": false,
-        "delete_branch_on_merge": true,
-        "allow_squash_merge": true,
-        "allow_merge_commit": false,
-        "allow_rebase_merge": false,
-        "allow_auto_merge": true,
-        "allow_update_branch": true
+     },
+     "rules": [
+      {
+       "type": "pull_request",
+       "parameters": {
+        "required_approving_review_count": 0,
+        "dismiss_stale_reviews_on_push": false,
+        "require_code_owner_review": false,
+        "require_last_push_approval": false,
+        "required_review_thread_resolution": false
+       }
       },
-      "security": {
-        "vulnerability_alerts": true,
-        "automated_security_fixes": false,
-        "secret_scanning": "enabled",
-        "secret_scanning_push_protection": "enabled"
-      },
-      "branch_protection": {
-        "branch": "main",
-        "allow_force_pushes": false,
-        "allow_deletions": false,
-        "required_linear_history": true
+      {
+       "type": "required_status_checks",
+       "parameters": {
+        "strict_required_status_checks_policy": false,
+        "required_status_checks": [
+         {
+          "context": "checks"
+         }
+        ]
+       }
       }
-    },
-    "ultrastable/license": {
-      "description": "Retired: the Ultrastable License and commercial terms live in ultrastable/ultrastable (LICENSE, licensing/). Kept public so existing links resolve. Ultrastable is the foundation for any autonomous system.",
-      "homepage": "https://ultrastable.io",
-      "topics": [
-        "license"
-      ],
-      "settings": {
-        "has_issues": true,
-        "has_wiki": false,
-        "delete_branch_on_merge": true,
-        "allow_squash_merge": true,
-        "allow_merge_commit": false,
-        "allow_rebase_merge": false,
-        "allow_auto_merge": true,
-        "allow_update_branch": true
-      },
-      "security": {
-        "vulnerability_alerts": true,
-        "automated_security_fixes": false,
-        "secret_scanning": "enabled",
-        "secret_scanning_push_protection": "enabled"
-      },
-      "branch_protection": {
-        "branch": "main",
-        "allow_force_pushes": false,
-        "allow_deletions": false,
-        "required_linear_history": true
-      }
-    },
-    "ultrastable/ops": {
-      "description": "Administration: owner cards, funding, legal and bootstrap gaps. Not code. Private. Ultrastable is the foundation for any autonomous system.",
-      "homepage": "https://ultrastable.io",
-      "topics": [
-        "administration"
-      ],
-      "settings": {
-        "has_issues": true,
-        "has_wiki": false,
-        "delete_branch_on_merge": true,
-        "allow_squash_merge": true,
-        "allow_merge_commit": false,
-        "allow_rebase_merge": false,
-        "allow_auto_merge": true,
-        "allow_update_branch": true
-      },
-      "security": {
-        "vulnerability_alerts": true,
-        "automated_security_fixes": false,
-        "secret_scanning": "enabled",
-        "secret_scanning_push_protection": "enabled"
-      },
-      "branch_protection": {
-        "branch": "main",
-        "allow_force_pushes": false,
-        "allow_deletions": false,
-        "required_linear_history": true
-      }
-    },
-    "ultrastable/seed": {
-      "description": "Retired: the seed template now lives in ultrastable/ultrastable under seed/. Kept public with the Ultrastable License so old links resolve. Ultrastable is the foundation for any autonomous system.",
-      "homepage": "https://ultrastable.io",
-      "topics": [
-        "bootstrapping",
-        "ai-agents",
-        "cloudflare-workers",
-        "autonomous-agents",
-        "idea-to-organization"
-      ],
-      "settings": {
-        "has_issues": true,
-        "has_wiki": false,
-        "delete_branch_on_merge": true,
-        "allow_squash_merge": true,
-        "allow_merge_commit": false,
-        "allow_rebase_merge": false,
-        "allow_auto_merge": true,
-        "allow_update_branch": true
-      },
-      "security": {
-        "vulnerability_alerts": true,
-        "automated_security_fixes": false,
-        "secret_scanning": "enabled",
-        "secret_scanning_push_protection": "enabled"
-      },
-      "branch_protection": {
-        "branch": "main",
-        "allow_force_pushes": false,
-        "allow_deletions": false,
-        "required_linear_history": true
-      }
-    },
-    "ultrastable/.github": {
-      "description": "Organization profile and community health defaults. Ultrastable is the foundation for any autonomous system.",
-      "homepage": "https://ultrastable.io",
-      "topics": [
-        "community-health"
-      ],
-      "settings": {
-        "has_issues": true,
-        "has_wiki": false,
-        "delete_branch_on_merge": true,
-        "allow_squash_merge": true,
-        "allow_merge_commit": false,
-        "allow_rebase_merge": false,
-        "allow_auto_merge": true,
-        "allow_update_branch": true
-      },
-      "security": {
-        "vulnerability_alerts": true,
-        "automated_security_fixes": false,
-        "secret_scanning": "enabled",
-        "secret_scanning_push_protection": "enabled"
-      },
-      "branch_protection": {
-        "branch": "main",
-        "allow_force_pushes": false,
-        "allow_deletions": false,
-        "required_linear_history": true
-      }
+     ],
+     "bypass_actors": []
     }
+   ]
   },
-  "manual_ui_only": [
-    {
-      "item": "Org avatar",
-      "file": "brand/logo/ultrastable-icon-512.png",
-      "where": "github.com/organizations/ultrastable/settings/profile",
-      "probe": "avatar URL differs from the identicon"
-    },
-    {
-      "item": "Repo social preview",
-      "file": "brand/social/social-card.png",
-      "where": "repo Settings > General > Social preview (no API exists)",
-      "probe": "opengraph.githubassets.com card shows the custom image"
-    },
-    {
-      "item": "Pinned repositories on the org page",
-      "where": "org page > Customize pins (no REST API)",
-      "probe": "org page lists the pinned repo"
-    },
-    {
-      "item": "Verified domains ultrastable.io, .app, .net",
-      "where": "org Settings > Verified and approved domains (TXT record, then verify)",
-      "probe": "domains show Verified"
-    },
-    {
-      "item": "Org-wide 2FA requirement",
-      "where": "org Settings > Authentication security (no API)",
-      "probe": "setting shows required"
-    }
-  ],
-  "_plan_gated": "members_can_create_public_repositories=false, secret scanning on private repos and branch protection on private repos need a paid GitHub plan (or a public repo); the merge lane's required checks enforce the rule instead. Upgrading is a money step: owner card."
+  "ultrastable/workers": {
+   "description": "Retired: the core code now lives in ultrastable/ultrastable under workers/. Kept public so existing links resolve. Ultrastable is the foundation for any autonomous system.",
+   "homepage": "https://ultrastable.io",
+   "topics": [
+    "agent-orchestration",
+    "cloudflare-workers",
+    "autonomous-agents",
+    "runtime"
+   ],
+   "settings": {
+    "has_issues": true,
+    "has_wiki": false,
+    "delete_branch_on_merge": true,
+    "allow_squash_merge": true,
+    "allow_merge_commit": false,
+    "allow_rebase_merge": false,
+    "allow_auto_merge": true,
+    "allow_update_branch": true
+   },
+   "security": {
+    "vulnerability_alerts": true,
+    "automated_security_fixes": false,
+    "secret_scanning": "enabled",
+    "secret_scanning_push_protection": "enabled"
+   },
+   "branch_protection": {
+    "branch": "main",
+    "allow_force_pushes": false,
+    "allow_deletions": false,
+    "required_linear_history": true
+   }
+  },
+  "ultrastable/spec": {
+   "description": "Retired: the specifications, SCOPE and license text now live in ultrastable/ultrastable (specs/, SCOPE.md, licensing/). Kept public so existing links resolve. Ultrastable is the foundation for any autonomous system.",
+   "homepage": "https://ultrastable.io",
+   "topics": [
+    "specifications",
+    "architecture",
+    "autonomous-agents",
+    "documentation"
+   ],
+   "settings": {
+    "has_issues": true,
+    "has_wiki": false,
+    "delete_branch_on_merge": true,
+    "allow_squash_merge": true,
+    "allow_merge_commit": false,
+    "allow_rebase_merge": false,
+    "allow_auto_merge": true,
+    "allow_update_branch": true
+   },
+   "security": {
+    "vulnerability_alerts": true,
+    "automated_security_fixes": false,
+    "secret_scanning": "enabled",
+    "secret_scanning_push_protection": "enabled"
+   },
+   "branch_protection": {
+    "branch": "main",
+    "allow_force_pushes": false,
+    "allow_deletions": false,
+    "required_linear_history": true
+   }
+  },
+  "ultrastable/license": {
+   "description": "Retired: the Ultrastable License and commercial terms live in ultrastable/ultrastable (LICENSE, licensing/). Kept public so existing links resolve. Ultrastable is the foundation for any autonomous system.",
+   "homepage": "https://ultrastable.io",
+   "topics": [
+    "license"
+   ],
+   "settings": {
+    "has_issues": true,
+    "has_wiki": false,
+    "delete_branch_on_merge": true,
+    "allow_squash_merge": true,
+    "allow_merge_commit": false,
+    "allow_rebase_merge": false,
+    "allow_auto_merge": true,
+    "allow_update_branch": true
+   },
+   "security": {
+    "vulnerability_alerts": true,
+    "automated_security_fixes": false,
+    "secret_scanning": "enabled",
+    "secret_scanning_push_protection": "enabled"
+   },
+   "branch_protection": {
+    "branch": "main",
+    "allow_force_pushes": false,
+    "allow_deletions": false,
+    "required_linear_history": true
+   }
+  },
+  "ultrastable/ops": {
+   "description": "Administration: owner cards, funding, legal and bootstrap gaps. Not code. Private. Ultrastable is the foundation for any autonomous system.",
+   "homepage": "https://ultrastable.io",
+   "topics": [
+    "administration"
+   ],
+   "settings": {
+    "has_issues": true,
+    "has_wiki": false,
+    "delete_branch_on_merge": true,
+    "allow_squash_merge": true,
+    "allow_merge_commit": false,
+    "allow_rebase_merge": false,
+    "allow_auto_merge": true,
+    "allow_update_branch": true
+   },
+   "security": {
+    "vulnerability_alerts": true,
+    "automated_security_fixes": false,
+    "secret_scanning": "enabled",
+    "secret_scanning_push_protection": "enabled"
+   },
+   "branch_protection": {
+    "branch": "main",
+    "allow_force_pushes": false,
+    "allow_deletions": false,
+    "required_linear_history": true
+   }
+  },
+  "ultrastable/seed": {
+   "description": "Retired: the seed template now lives in ultrastable/ultrastable under seed/. Kept public with the Ultrastable License so old links resolve. Ultrastable is the foundation for any autonomous system.",
+   "homepage": "https://ultrastable.io",
+   "topics": [
+    "bootstrapping",
+    "ai-agents",
+    "cloudflare-workers",
+    "autonomous-agents",
+    "idea-to-organization"
+   ],
+   "settings": {
+    "has_issues": true,
+    "has_wiki": false,
+    "delete_branch_on_merge": true,
+    "allow_squash_merge": true,
+    "allow_merge_commit": false,
+    "allow_rebase_merge": false,
+    "allow_auto_merge": true,
+    "allow_update_branch": true
+   },
+   "security": {
+    "vulnerability_alerts": true,
+    "automated_security_fixes": false,
+    "secret_scanning": "enabled",
+    "secret_scanning_push_protection": "enabled"
+   },
+   "branch_protection": {
+    "branch": "main",
+    "allow_force_pushes": false,
+    "allow_deletions": false,
+    "required_linear_history": true
+   }
+  },
+  "ultrastable/.github": {
+   "description": "Organization profile and community health defaults. Ultrastable is the foundation for any autonomous system.",
+   "homepage": "https://ultrastable.io",
+   "topics": [
+    "community-health"
+   ],
+   "settings": {
+    "has_issues": true,
+    "has_wiki": false,
+    "delete_branch_on_merge": true,
+    "allow_squash_merge": true,
+    "allow_merge_commit": false,
+    "allow_rebase_merge": false,
+    "allow_auto_merge": true,
+    "allow_update_branch": true
+   },
+   "security": {
+    "vulnerability_alerts": true,
+    "automated_security_fixes": false,
+    "secret_scanning": "enabled",
+    "secret_scanning_push_protection": "enabled"
+   },
+   "branch_protection": {
+    "branch": "main",
+    "allow_force_pushes": false,
+    "allow_deletions": false,
+    "required_linear_history": true
+   }
+  },
+  "ultrastable/practical-solutions": {
+   "description": null,
+   "homepage": null,
+   "topics": [],
+   "settings": {
+    "has_wiki": false,
+    "allow_squash_merge": true,
+    "allow_merge_commit": false,
+    "allow_rebase_merge": false,
+    "allow_auto_merge": true,
+    "allow_update_branch": true,
+    "delete_branch_on_merge": true,
+    "squash_merge_commit_title": "PR_TITLE",
+    "squash_merge_commit_message": "PR_BODY"
+   },
+   "security": {
+    "vulnerability_alerts": true,
+    "automated_security_fixes": true,
+    "secret_scanning": "enabled",
+    "secret_scanning_push_protection": "enabled"
+   },
+   "branch_protection": {
+    "branch": "main",
+    "allow_force_pushes": false,
+    "allow_deletions": false,
+    "required_linear_history": true
+   }
+  }
+ },
+ "manual_ui_only": [
+  {
+   "item": "Org avatar",
+   "file": "brand/logo/ultrastable-icon-512.png",
+   "where": "github.com/organizations/ultrastable/settings/profile",
+   "probe": "avatar URL differs from the identicon"
+  },
+  {
+   "item": "Repo social preview",
+   "file": "brand/social/social-card.png",
+   "where": "repo Settings > General > Social preview (no API exists)",
+   "probe": "opengraph.githubassets.com card shows the custom image"
+  },
+  {
+   "item": "Pinned repositories on the org page",
+   "where": "org page > Customize pins (no REST API)",
+   "probe": "org page lists the pinned repo"
+  },
+  {
+   "item": "Verified domains ultrastable.io, .app, .net",
+   "where": "org Settings > Verified and approved domains (TXT record, then verify)",
+   "probe": "domains show Verified"
+  },
+  {
+   "item": "Org-wide 2FA requirement",
+   "where": "org Settings > Authentication security (no API)",
+   "probe": "setting shows required"
+  }
+ ],
+ "_plan_gated": "members_can_create_public_repositories=false, secret scanning on private repos and branch protection on private repos need a paid GitHub plan (or a public repo); the merge lane's required checks enforce the rule instead. Upgrading is a money step: owner card."
 }
