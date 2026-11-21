@@ -22,9 +22,9 @@ class ConflictMarkers(unittest.TestCase):
         exec(src[src.index("CLAIM = re.compile"):src.index("def soft(path):")], ns)
         c = lambda n: f"| x <!-- claim:n -->{n}<!-- /claim --> |\n"
         nested = "a\n<<<<<<< HEAD\n" + c(1) + "=======\n<<<<<<< HEAD\n" + c(2) + "=======\n" + c(3) + ">>>>>>> origin/main\n>>>>>>> origin/main\nb\n"
-        out, hard = ns["flatten"](nested)
+        out, hard = ns["flatten_text"](nested)
         self.assertEqual((out, hard), ("a\n" + c(3) + "b\n", 0))
-        out, hard = ns["flatten"]("<<<<<<< HEAD\nmine\n=======\ntheirs\n>>>>>>> origin/main\n")
+        out, hard = ns["flatten_text"]("<<<<<<< HEAD\nmine\n=======\ntheirs\n>>>>>>> origin/main\n")
         self.assertEqual(hard, 1); self.assertIn("<<<<<<< HEAD", out)
 
 

@@ -25,7 +25,7 @@ CLAIM = re.compile(r"(<!-- claim:[\w.-]+ -->)(.*?)(<!-- /claim -->)", re.S)
 # another hunk and no pattern matched: every PR conflicted there and none could be reconciled. Hunks are now resolved innermost first, to a fixed point.
 _M = r"(?:(?!<<<<<<< |=======$|>>>>>>> |\|\|\|\|\|\|\| )[^\n]*\n)*?"
 HUNK = re.compile(r"^<<<<<<< [^\n]*\n(" + _M + r")(?:^\|\|\|\|\|\|\| [^\n]*\n" + _M + r")?^=======\n(" + _M + r")^>>>>>>> [^\n]*\n", re.M)
-def flatten(t):
+def flatten_text(t):
     """(text, hard): every hunk whose sides are equal or differ only in claim values is resolved to main's side, innermost first."""
     hard = []
     def pick(m):
@@ -43,7 +43,7 @@ def soft(path):
         t = open(path, encoding="utf-8").read()
     except (UnicodeDecodeError, FileNotFoundError):
         return False
-    new, hard = flatten(t)
+    new, hard = flatten_text(t)
     if hard or re.search(r"^(<<<<<<< |>>>>>>> )", new, re.M):
         return False
     open(path, "w", encoding="utf-8").write(new); return True

@@ -146,26 +146,19 @@ export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), t
   const d = new Date(now), today = d.toISOString().slice(0, 10), rows = (await db.prepare('SELECT id, channel, at, status, attempts FROM social_posted').all()).results || [];
   const days = new Set(rows.filter(r => r.at.slice(0, 10) === today).map(r => r.id)), wk = new Set(rows.filter(r => weekKey(new Date(r.at)) === weekKey(d)).map(r => r.id));
   if (days.size >= gate.max_posts_per_day || wk.size >= gate.max_posts_per_week) return { skipped: 'rate limit' };
-<<<<<<< HEAD
   // POST-READBACK-1: a failed channel is retried up to 3 times; queued, unverified and verified rows are not re-sent.
   // THOUGHT-1: a failed send waits a day before its retry, so a refused account is not hit every tick.
   const recent = r => now - Date.parse(r.at) < 864e5;
   const done = (id, ch) => rows.some(r => r.id === id && r.channel === ch && (r.status == null || r.status !== 'failed' || r.attempts >= 3 || recent(r)));
   const relayDone = id => { const rr = rows.filter(r => r.id === id && r.channel.startsWith('relay:')); return rr.length > 0 ? rr.every(r => r.status !== 'failed' || r.attempts >= 3 || recent(r)) : done(id, 'relay'); };  // POST-READBACK-2: per-service rows override a legacy channel='relay' row
+  const bufferDone = id => { const rr = rows.filter(r => r.id === id && r.channel.startsWith('buffer:')); return rr.length > 0 && rr.every(r => r.status !== 'failed' || r.attempts >= 3 || recent(r)); };  // SOCIAL-MODULE-1: one row per Buffer service, so each is verified and retried on its own
   // THOUGHT-1: a post may name its channels and carry a text per channel. A post with no list goes to Bluesky and Mastodon (and the Buffer and relay
   // fan-outs), so LinkedIn direct gets the white papers and nothing else. A paper is due on a channel it has not reached yet, so a channel linked later
   // still gets the current pieces; any other post is not re-sent to a channel linked after it went out.
   const targets = p => { const l = p.channels || ['bluesky', 'mastodon']; return [...l, 'buffer', 'relay'].filter((ch, i, a) => a.indexOf(ch) === i && channels[ch]); };
-  const missing = p => targets(p).filter(ch => ch === 'relay' ? !relayDone(p.id) : !done(p.id, ch));
+  const missing = p => targets(p).filter(ch => ch === 'relay' ? !relayDone(p.id) : ch === 'buffer' ? !bufferDone(p.id) : !done(p.id, ch));
   const seen = id => rows.filter(r => r.id === id), retry = id => seen(id).some(r => r.status === 'failed');
   const due = (cal.posts || []).filter(p => p.date <= today && missing(p).length && (!seen(p.id).length || p.kind === 'paper' || retry(p.id))).sort((a, b) => priority(a) - priority(b));
-=======
-  const done = (id, ch) => rows.some(r => r.id === id && r.channel === ch && (r.status == null || r.status !== 'failed' || r.attempts >= 3));  // a failed channel is retried up to 3 times; queued, unverified and verified rows are not re-sent
-  const relayDone = id => { const rr = rows.filter(r => r.id === id && r.channel.startsWith('relay:')); return rr.length > 0 ? rr.every(r => r.status !== 'failed' || r.attempts >= 3) : done(id, 'relay'); };  // per-service rows override a legacy channel='relay' row, which only said the relay was called
-  const bufferDone = id => { const rr = rows.filter(r => r.id === id && r.channel.startsWith('buffer:')); return rr.length > 0 && rr.every(r => r.status !== 'failed' || r.attempts >= 3); };  // SOCIAL-MODULE-1: one row per Buffer service, so each is verified and retried on its own
-  const posted = new Set((cal.posts || []).map(x => x.id).filter(id => Object.keys(channels).every(ch => ch === 'relay' ? relayDone(id) : ch === 'buffer' ? bufferDone(id) : done(id, ch))));
-  const due = (cal.posts || []).filter(p => !posted.has(p.id) && p.date <= today).sort((a, b) => priority(a) - priority(b));
->>>>>>> origin/main
   if (!due.length) return { skipped: 'nothing due' };
   const p = due[0], out = {};
   const rec = async (ch, ref, status, ex) => {
@@ -174,18 +167,13 @@ export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), t
     out[ch] = status + (status === 'failed' ? ': ' + String(ref).slice(0, 100) : '');
     if (status !== 'verified') await store.event(db, tenant, 'oauth:' + ch, status, String(ref).slice(0, 120));
   };
-<<<<<<< HEAD
   const long = (p.texts && p.texts.linkedin) || p.long || p.text, short = (p.texts && p.texts.bluesky) || p.text;
   for (const ch of missing(p)) {
     const m = channels[ch], text = (p.texts && p.texts[ch]) || p.text;
-=======
-  for (const [ch, m] of Object.entries(channels)) {
-    if (ch === 'buffer' ? bufferDone(p.id) : ch !== 'relay' && done(p.id, ch)) continue;
->>>>>>> origin/main
     try {
       if (ch === 'buffer') {
         const failed = rows.filter(r => r.id === p.id && r.channel.startsWith('buffer:') && r.status === 'failed').map(r => r.channel.slice(7));
-        for (const [svc, id] of Object.entries(await postBuffer(m.access, p.long || p.text, f, p.text, failed))) await rec('buffer:' + svc, id, /^failed/.test(id) ? 'failed' : 'queued');  // queued until reconcileBuffer reads the public post back
+        for (const [svc, id] of Object.entries(await postBuffer(m.access, long, f, short, failed))) await rec('buffer:' + svc, id, /^failed/.test(id) ? 'failed' : 'queued');  // queued until reconcileBuffer reads the public post back
         continue;
       }
       if (ch === 'relay') {
@@ -196,13 +184,8 @@ export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), t
         for (const [svc, v] of Object.entries(res)) await rec('relay:' + svc, v.ref, v.status);
         continue;
       }
-<<<<<<< HEAD
-      const ref = ch === 'mastodon' ? await postMastodon(m, text, p.id, f) : ch === 'linkedin' ? await postLinkedIn(m, text, p.url || null, f, now, env.LINKEDIN_VERSION || null) : ch === 'buffer' ? JSON.stringify(await postBuffer(m.access, long, f, short)) : await postBluesky(db, env, tenant, m, text, f, now);
-      await rec(ch, ref, ch === 'buffer' ? 'queued' : (await readBack(ch, ref, f)) ? 'verified' : 'unverified');
-=======
-      const ref = ch === 'mastodon' ? await postMastodon(m, p.text, p.id, f) : await postBluesky(db, env, tenant, m, p.text, f, now);
+      const ref = ch === 'mastodon' ? await postMastodon(m, text, p.id, f) : ch === 'linkedin' ? await postLinkedIn(m, text, p.url || null, f, now, env.LINKEDIN_VERSION || null) : await postBluesky(db, env, tenant, m, text, f, now);
       await rec(ch, ref, (await readBack(ch, ref, f)) ? 'verified' : 'unverified');
->>>>>>> origin/main
     } catch (e) { await rec(ch, String(e && e.message || e), 'failed'); }
   }
   return { id: p.id, results: out };
