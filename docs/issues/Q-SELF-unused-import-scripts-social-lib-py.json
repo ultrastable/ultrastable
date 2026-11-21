@@ -1,7 +1,7 @@
 {
   "id": "Q-SELF-unused-import-scripts-social-lib-py",
   "title": "Q-SELF-unused-import-scripts-social-lib-py: unused import in scripts/social_lib.py",
-  "body": "**Owner:** code-agent\n**Trigger:** signal unused_import fires for scripts/social_lib.py\n**Done check:** cmd:python3 -m foundation selfcode --probe unused_import scripts/social_lib.py\n**Status:** open\n\nSELFCODE-1 signal `unused_import` on `scripts/social_lib.py` (1 finding(s)).\n\nRemove the unused imports in the file; change nothing else.\n\nFindings:\n- line 2: unused import dt\n\nScope: only foundation/, scripts/, tests/, products/, site/, seed/ and docs/issues/. A change that does not make the done check pass is reverted.",
+  "body": "**Owner:** code-agent\n**Trigger:** signal unused_import fires for scripts/social_lib.py\n**Done check:** cmd:python3 -m foundation selfcode --probe unused_import scripts/social_lib.py\n**Status:** closed\n\nSELFCODE-1 signal `unused_import` on `scripts/social_lib.py` (1 finding(s)).\n\nRemove the unused imports in the file; change nothing else.\n\nFindings:\n- line 2: unused import dt\n\nScope: only foundation/, scripts/, tests/, products/, site/, seed/ and docs/issues/. A change that does not make the done check pass is reverted.\n\n**Disposition:** shelved (executor-failed, 2026-11-21T09:21:26Z, DISPOSE-1)\n\n**Evidence:** the executor failed 3 consecutive runs on this item; last reason: _Stall: . Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
   "labels": [
     "role:code-agent",
     "ws:self",
