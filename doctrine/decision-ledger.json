@@ -4150,6 +4150,23 @@
    "title": "Executor closed Q-CIFAIL-mergeaudit-1750: Implement mergeaudit probe script to verify PR merging commits pass checks and enforce consistent",
    "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: foundation/probes/mergeaudit.py.",
    "probe": "file:foundation/probes/mergeaudit.py"
+  },
+  {
+   "id": "decision-2026-11-21-sla-8h-1-nothing-open-past-8-hours",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "SLA-8H-1: nothing open past 8 hours",
+   "body": "Root causes: dispose ttl_days 14 let queue items (mirrored as GitHub issues) sit for days; the sweeper superseded only agent/* dirty PRs, never claude/* or ci-failed PRs; ghmirror kept 'done:' items open. Fix: dispose ttl_hours 6 on the 10-minute fleet pass, sweeper ladder closes any client PR past 6 h (branch kept), agewatch --check on every fleet pass.",
+   "probe": "grep:foundation/agewatch.py::SLA_HOURS = 8"
+  },
+  {
+   "id": "lesson-2026-11-21-sla-1-stuck-non-green-prs-had-no-clock",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "SLA-1: stuck non-green PRs had no clock",
+   "body": "lanewatch ignored every non-green PR and STALL-ACT-1 closed agent/ branches only, so claude/ PRs aged with only a comment. Fix: doctrine/sla.json, sweeper supersede tier plus PORT-BRANCH item, slawatch detector fm-sla-breach.",
+   "probe": "file:seed/worker/src/sla.js",
+   "session": "session_0156nqDtuzVqX3uUGd7Q9vKC"
   }
  ]
 }
