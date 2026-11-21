@@ -1,5 +1,5 @@
 // ultrastable-dashboard: the owner's single pane of glass for Ultrastable (DASH-1, 2026-11-10).
-// Public side: a generic holding page only (project rule PF-1: nothing public about the mechanisms until the provisional is filed).
+// Public side: a generic holding page only (the disclosure gate PF-1 is retired, NO-PATENT-1; the work is source-available under the Ultrastable License).
 // Owner side (/owner): email-me-a-code login, at-a-glance status, owner task queue with one-tap Done/Snooze/Not doing/Fix/Hand to fleet,
 // a command line that runs registered commands, step-up codes for changes, an audit log with undo, and owner email notifications.
 // Portable core: every platform touch goes through env.DB (SQL), env.SEND_EMAIL (mail) and fetch, so a Google Cloud adapter only
@@ -31,8 +31,6 @@ const HOSTS = ["ultrastable.io", "ultrastable.app", "ultrastable.net"];
 // OWNER-LINKS-1: links the owner is handed use the public domain the request came in on (x-forwarded-host from the site's forwarder, trusted only for HOSTS), never a workers.dev name.
 export function publicOrigin(req, u) { const h = (req.headers.get("x-forwarded-host") || "").toLowerCase(); return HOSTS.includes(h) ? "https://" + h : u.origin; }
 export const OWNER_LINKS = ["https://ultrastable.io/owner", "https://ultrastable.io/connect/github-signin"];
-// Words that must never appear on the public pages before filing (disclosure guard, checked by the cron probe).
-const GUARD_WORDS = ["probe", "revert", "prediction", "trust ledger", "plussing", "work claim", "virtual manager", "self-governing"];
 
 const enc = new TextEncoder();
 export async function sha256(s) { const b = await crypto.subtle.digest("SHA-256", enc.encode(s)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join(""); }
@@ -153,6 +151,7 @@ async function setCheck(env, name, ok, detail) {
 }
 export async function runProbes(env) {
   const out = [];
+  try { await env.DB.prepare("DELETE FROM checks WHERE name IN ('disclosure_guard')").run(); } catch (e) { /* retired checks (NO-PATENT-1) leave the table; a down database reports itself below */ }
   const rec = async (n, ok, d) => { try { await setCheck(env, n, ok, d); } catch (e) { /* a down database must still report itself */ } out.push({ name: n, ok, detail: d }); };
   try { await env.DB.prepare("SELECT 1").first(); await rec("database", true, "D1 answers"); } catch (e) { await rec("database", false, String(e.message || e)); }
   await rec("owner_email", !!(env.OWNER_EMAIL && (env.SEND_EMAIL || env.MAILER)), env.OWNER_EMAIL ? "owner address and sender configured" : "OWNER_EMAIL missing");
@@ -191,11 +190,6 @@ export async function runProbes(env) {
       try { const r = await fetch("https://" + h + "/health", { signal: AbortSignal.timeout(5000) }); const j = await r.json(); await rec("site:" + h, r.status === 200 && j.ok === true, "HTTP " + r.status + (j.version ? " v" + j.version : "")); }
       catch (e) { await rec("site:" + h, false, String(e.message || e)); }
     }
-    try {
-      const t = (await (await route(new Request("https://" + HOSTS[0] + "/"), { ...env, NO_NET: 1 })).text()).toLowerCase();  // DISCLOSURE-SCOPE-1 (owner delegated 2026-11-21): the guard covers the holding page THIS Worker serves, which is what rule PF-1 was written for; ultrastable.io is now the product site served by the site Worker, whose public copy is governed by the claims checks
-      const hit = GUARD_WORDS.filter(w => t.includes(w));
-      await rec("disclosure_guard", hit.length === 0, hit.length ? "holding page contains: " + hit.join(", ") : "holding page carries no mechanism words");
-    } catch (e) { await rec("disclosure_guard", false, String(e.message || e)); }
     for (const t of TENANTS.tenants.filter(x => x.url)) {
       try { const r = await fetch(t.url, { signal: AbortSignal.timeout(5000) }); await rec("tenant:" + t.id, r.status >= 200 && r.status < 400, "HTTP " + r.status); }
       catch (e) { await rec("tenant:" + t.id, false, String(e.message || e)); }

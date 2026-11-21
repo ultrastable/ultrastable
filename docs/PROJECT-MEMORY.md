@@ -10,6 +10,11 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-21
 
+- 2026-11-21: UPTIME-1: self-repair through the tick Worker, retry before dead, www.ultrastable.app route (#1492)
+- 2026-11-21: UPTIME-1: server-side DNS and HTTP probe for every ultrastable hostname (#1461)
+- 2026-11-21: Purge the retired disclosure_guard check row (#1460)
+- 2026-11-21: Retire the disclosure gate (PF-1): no patent, source-available (#1381)
+- 2026-11-21: Audit every owner link daily in headless Chromium on production (#1360)
 - 2026-11-21: Fix owner sign-in: no new GitHub apps, honor ?next, emailed link, live plan panel (#1302)
 - 2026-11-21: SMOKE-LIVE-1: connect links may pass through owner sign-in (#1268)
 - 2026-11-21: Unstick keeps generated files on main's copy; practical-solutions settings as code (#1096)
