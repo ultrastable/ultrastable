@@ -4322,6 +4322,23 @@
    "title": "Shallow clones made every recurring failure look seen today; skipped checks merged via legacy /status; schema errors now heal in-tick",
    "body": "Session: session_0156nqDte8FeqRLjvGRAAb6w. (1) SHALLOW-TIME-1: failmine dated issue events by git --diff-filter=A; in a shallow checkout the boundary commit adds every file, so every Q-RECUR signature read 'last seen' at the boundary and no probe could go quiet. Boundary commits are now skipped and the id/body date stands in. (2) GATE-SKIP-1: foundation/fleet.py merge_lane read the combined /status (no Actions check-runs, so pending/0) and merged PRs whose checks run was skipped; it now mirrors seed/worker/src/greenguard.js on check-runs and needs checks=success. (3) SCHEMA-HEAL-1: a tick step that throws no such table/column re-runs migrate and retries once before filing TICKFAIL.",
    "probe": "file:foundation/failmine.py"
+  },
+  {
+   "id": "lesson-2026-11-21-gh-mirror-catches-up-in-rounds-mirror-catchup-1",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "GH mirror catches up in rounds (MIRROR-CATCHUP-1)",
+   "body": "The mirror write count paces GitHub's secondary rate. When a run defers writes, foundation/ghmirror.py now plans again and continues for up to 10 rounds or 8 minutes. Evidence: tests/foundation/test_ghmirror.py passes, and a manual apply run closed 252 issues (336 to 41 open) in one session. Rule: close an item in docs/issues first with queue.close and evidence, because the mirror follows the file.",
+   "probe": "grep:foundation/ghmirror.py::MIRROR-CATCHUP-1",
+   "session": "session_0156nqDvGnRC9rS81Jjp9V7n"
+  },
+  {
+   "id": "lesson-2026-11-21-probes-must-name-their-user-agent",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "Probes must name their user agent",
+   "body": "Session: session_0156nqDte8FeqRLjvGRAAb6w. Cloudflare returns 403 to Python-urllib, so every spinoff read uptime 0.0 while live (route, DNS and worker verified in the ultrastable account). The uptime probe now sends a named agent (a package-wide opener changed other tests, so it stays local); Q-ULTRA-loop-ledger-uptime-* close when the next tick reads 1.0.",
+   "probe": "grep:foundation/ultrastability.py::UPTIME-UA-1"
   }
  ]
 }
