@@ -35,13 +35,34 @@ export async function postBluesky(db, env, tenant, m0, text, f, now) {
   return (await r.res.json()).uri || 'ok';
 }
 
+// SOCIAL-BUFFER-1: LinkedIn, X and Substack have no open posting API; Buffer's GraphQL API (api.buffer.com) fronts them. One linked Buffer account carries every channel
+// it holds. LinkedIn and Substack go to the queue, X shares now (the cadence QNFO's own Buffer layer used). Text is plain; the 280-character fit applies to X only.
+const bgql = async (f, token, query) => { const r = await f('https://api.buffer.com', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + token }, body: JSON.stringify({ query }) }); if (!r.ok) throw new Error('buffer HTTP ' + r.status); return r.json(); };
+export async function bufferChannels(token, f) {
+  const o = await bgql(f, token, '{ account { organizations { id } } }'); const org = (((o.data || {}).account || {}).organizations || [])[0];
+  if (!org) return [];
+  const c = await bgql(f, token, '{ channels(input: { organizationId: ' + JSON.stringify(org.id) + ' }) { id service isDisconnected } }');
+  return ((c.data || {}).channels || []).filter(x => !x.isDisconnected);
+}
+export async function postBuffer(token, text, f, short) {
+  const out = {};
+  for (const ch of await bufferChannels(token, f)) {
+    const svc = /substack/i.test(ch.service) ? 'substack' : ch.service, t = svc === 'twitter' ? String(short || text).slice(0, 280) : text;
+    const mode = svc === 'twitter' ? 'shareNow' : 'addToQueue';
+    const r = await bgql(f, token, 'mutation { createPost(input: { text: ' + JSON.stringify(t) + ', channelId: ' + JSON.stringify(ch.id) + ', schedulingType: automatic, mode: ' + mode + ' }) { ... on PostActionSuccess { post { id status } } ... on MutationError { message } } }');
+    const cp = (r.data || {}).createPost;
+    out[svc] = cp && cp.post ? cp.post.id : 'failed: ' + String((cp && cp.message) || 'no post').slice(0, 100);
+  }
+  return out;
+}
+
 // Order of what posts next: the weekly meta-story, then a tenant's changed items, then a tenant's backlog in hierarchy order, then platform events, then evergreen.
 export const priority = p => (p.arm === 'meta-story' ? 0 : String(p.arm || '').startsWith('ps-') ? (p.kind === 'event' ? 1 : 2) : p.kind === 'event' ? 3 : 4);
 
 export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), tenant = 'default', repo = 'ultrastable/ultrastable' }) {
   await store.ensureSchema(db); await db.prepare(DDL).run();
   const channels = {};
-  for (const [ch, key] of [['bluesky', 'oauth:bluesky'], ['mastodon', 'oauth:mastodon']]) {
+  for (const [ch, key] of [['bluesky', 'oauth:bluesky'], ['mastodon', 'oauth:mastodon'], ['buffer', 'oauth:buffer']]) {
     const m = await store.material(db, env, tenant, key); if (m && m.status !== 'pending' && (ch === 'bluesky' ? m.secret && m.secret.refresh_token : m.access)) channels[ch] = m;  // an unfinished sign-in (no token) is not a channel: it would only spend calls
   }
   if (!Object.keys(channels).length) return { skipped: 'no channel connected' };  // no network call until an account is linked
@@ -65,7 +86,7 @@ export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), t
   const p = due[0], out = {};
   for (const [ch, m] of Object.entries(channels)) {
     try {
-      const ref = ch === 'mastodon' ? await postMastodon(m, p.text, p.id, f) : await postBluesky(db, env, tenant, m, p.text, f, now);
+      const ref = ch === 'mastodon' ? await postMastodon(m, p.text, p.id, f) : ch === 'buffer' ? JSON.stringify(await postBuffer(m.access, p.long || p.text, f, p.text)) : await postBluesky(db, env, tenant, m, p.text, f, now);
       await db.prepare('INSERT OR IGNORE INTO social_posted (id, channel, at, ref, arm) VALUES (?,?,?,?,?)').bind(p.id, ch, new Date(now).toISOString(), ref, p.arm || null).run();
       out[ch] = 'posted';
     } catch (e) { out[ch] = 'failed: ' + String(e && e.message || e).slice(0, 120); await store.event(db, tenant, 'oauth:' + ch, 'failed', out[ch]); }
