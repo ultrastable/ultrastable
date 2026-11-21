@@ -55,7 +55,7 @@ def escapes(root) -> list[str]:
             continue
         for rel in IMPORT.findall(p.read_text(encoding="utf-8")):
             t = (p.parent / rel).resolve()
-            if t.relative_to(root).as_posix() in GENERATED:
+            if t.is_relative_to(root) and t.relative_to(root).as_posix() in GENERATED:
                 continue
             if not t.is_file() and not t.with_suffix(".js").is_file():
                 out.append(f"{p.relative_to(root).as_posix()} imports {rel}, which is not in the system")
