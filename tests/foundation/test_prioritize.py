@@ -51,8 +51,11 @@ class Rank(unittest.TestCase):
         rows = P.rank()
         self.assertTrue(rows and all("score" in r for r in rows))
         pins = P.load()["pins"]["ids"]
-        top = [r["id"] for r in rows if not r["held"]][:len(pins)]
-        self.assertTrue(set(top) <= set(pins) or set(pins) & set(top), "pinned critical-path items lead the queue")
+        ranked = [r["id"] for r in rows if not r["held"]]
+        open_pins = [p for p in pins if p in ranked]  # a pin whose item is closed or disposed is not in the queue and cannot lead it
+        top = ranked[:len(open_pins)]
+        if open_pins:
+            self.assertTrue(set(top) <= set(open_pins) or set(open_pins) & set(top), "pinned critical-path items lead the queue")
 
 
 if __name__ == "__main__":

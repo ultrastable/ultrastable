@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-21-prioritize-pins-closed",
+  "kind": "lesson",
+  "date": "2026-11-21",
+  "title": "The pin-leads-queue test only binds pins that are open",
+  "body": "Every pinned item had been closed, so no pin was in the ranked queue and the test failed on main; it now requires the open pins to lead and passes when none is open.",
+  "probe": "grep:tests/foundation/test_prioritize.py::open_pins"
+ },
+ "kind": "lesson",
+ "title": "The pin-leads-queue test only binds pins that are open",
+ "session": "session_0156nqDtycGejegSYjhFJ1MF"
+}
