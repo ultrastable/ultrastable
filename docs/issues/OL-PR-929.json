@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-929",
+  "title": "OL-PR-929: land or supersede pull request #929 (conflict)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #929 is conflict\n**Done check:** cmd:python3 -m foundation loopowner --closed 929\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #929 (`claude/project-thread-jf6ql5` at df0a7de1e3, opened by rwnq8): LANE-FAST-1: parallel checks jobs and in-run merge. The session that opened it is not its closer and is never asked to act. The branch conflicts with main. Merge main into the branch and resolve it, or redo the change from main in a new pull request and close this one as superseded. Files (6): .github/workflows/checks.yml, doctrine/flows.json, doctrine/writeback/decision-2026-11-21-lane-fast-1-parallel-checks-and-in-run-merge.json, scripts/lane.sh, seed/worker/src/appaudit.js, site/dashboard-data.js. Closing probe: pull request #929 is merged or closed.",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
