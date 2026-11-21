@@ -126,10 +126,13 @@ export async function recordSpend(db, { meters, error = null, config = {}, env =
   const spend = spendConfig(config, env), plan = env && env.CF_PLAN === 'paid' ? 'paid' : 'free';
   const used = (meters && meters.used) || {};
   const est = estimateDay(used, { plan, now: now.getTime() });
-  const lv = level(est, spend.target_usd_day, now);
-  const tenants = tenantSpend(spend, (meters && meters.byScript) || {}, (meters && meters.byDb) || {}, { plan, now: now.getTime() });
+  // PLAN-SAFE-1: the throttle reads the paid-plan price of today's usage whatever CF_PLAN says, so buying Workers Paid without telling the worker can
+  // never leave the throttle blind. On the free plan the paid price of capped usage is the base-fee share (every free cap sits under the paid daily
+  // slice), so this never throttles a free account.
+  const lv = level({ ...est, plan: 'paid', usd_today: est.paid_equivalent_usd }, spend.target_usd_day, now);
+  const tenants = tenantSpend(spend, (meters && meters.byScript) || {}, (meters && meters.byDb) || {}, { plan: 'paid', now: now.getTime() });
   const measured = Object.keys(used).length > 0;
-  const state = { at: now.toISOString(), measured, error, plan, ...lv, paid_equivalent_usd: est.paid_equivalent_usd, by_meter: est.by_meter, used, tenants };
+  const state = { at: now.toISOString(), measured, error, plan, ...lv, usd_today: est.usd_today, paid_equivalent_usd: est.paid_equivalent_usd, by_meter: est.by_meter, used, tenants };
   if (!measured) { state.level = 'full'; state.knobs = { pace: 1, ai: 'any', wide_every_h: 0, extra_every_h: 0 }; state.text = 'No usage reading: the free-tier governor and the AI ledger still limit the day.'; }
   try {
     const at = now.toISOString().replace('T', ' ').slice(0, 19);

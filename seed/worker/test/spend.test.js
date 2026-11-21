@@ -55,6 +55,9 @@ test('record and read: state in org.spend_state, extra meters as samples; stale 
   assert.equal(s.level, 'crawl'); assert.ok(rows.some(r => r[1] === 'spend_usd'));
   assert.equal((await readSpend(db, noon.getTime() + 60e3)).level, 'crawl');
   assert.equal((await readSpend(db, noon.getTime() + 3 * 3600e3)).level, 'full', 'a stale reading never throttles');
+  const blind = await recordSpend(db, { meters: { used: { ...today, ai_neurons: 400_000 } }, env: {}, now: noon });
+  assert.equal(blind.level, 'crawl', 'PLAN-SAFE-1: paid usage throttles even when CF_PLAN was never set'); assert.equal(blind.usd_today, 0);
+  assert.equal((await recordSpend(db, { meters: { used: today }, env: {}, now: noon })).level, 'full', 'free-plan-sized usage never throttles');
   const none = await recordSpend(db, { meters: null, error: 'no token', now: noon });
   assert.equal(none.measured, false); assert.equal(none.level, 'full');
 });
