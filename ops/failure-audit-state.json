@@ -11,6 +11,12 @@
   "streak": 0,
   "since": ""
  },
+ "dependency-watch": {
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
+ },
  "durable-facts": {
   "status": "pass",
   "signature": "",
@@ -22,6 +28,12 @@
   "signature": "",
   "streak": 0,
   "since": ""
+ },
+ "foundation-tests": {
+  "status": "fail",
+  "signature": "aa5b966ecd3a",
+  "streak": 1,
+  "since": "2026-11-21T13:41:13Z"
  },
  "green-guard": {
   "status": "pass",
@@ -42,6 +54,12 @@
   "since": ""
  },
  "owner-handback": {
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
+ },
+ "pathfinder-exhaustion": {
   "status": "pass",
   "signature": "",
   "streak": 0,
@@ -95,7 +113,19 @@
   "streak": 0,
   "since": ""
  },
+ "temporal-drift": {
+  "status": "fail",
+  "signature": "7c559a9af5a4",
+  "streak": 1,
+  "since": "2026-11-21T13:41:18Z"
+ },
  "vision": {
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
+ },
+ "waiting-on-person": {
   "status": "pass",
   "signature": "",
   "streak": 0,
