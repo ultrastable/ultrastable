@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-21-pins-baseline-shrink",
+  "kind": "lesson",
+  "date": "2026-11-21",
+  "title": "Roadmap items need a file: or grep: probe; the pins baseline only shrinks",
+  "body": "Main failed pins --check because 25 baseline entries now have a probe or are closed; removed them. A new roadmap issue must carry a file: or grep: closing probe, never cmd:.",
+  "probe": "file:foundation/pins.py"
+ },
+ "kind": "lesson",
+ "title": "Roadmap items need a file: or grep: probe; the pins baseline only shrinks",
+ "session": "session_0156nqDtycGejegSYjhFJ1MF"
+}
