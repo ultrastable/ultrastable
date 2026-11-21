@@ -81,12 +81,12 @@ Source: instances/ultrastable/loop-registry.json (declared).
 
 ## Proposed further links (leads, not findings)
 
-Found by core/connect on the lexical-512-1i675mk route; each is a proposal until a study file adopts it.
+Found by core/connect on the lexical-512-11id492 route; each is a proposal until a study file adopts it.
 
 - A1 may also relate to AUTO-IMPROVE-1 (similarity 0.124)
 - A2 may also relate to DESIGN-LANGUAGE-1 (similarity 0.125)
-- A2 may also relate to VISION-1 (similarity 0.11)
-- A5 may also relate to UIUX-1 (similarity 0.113)
+- A2 may also relate to VISION-1 (similarity 0.111)
+- A5 may also relate to UIUX-1 (similarity 0.114)
 - A5 may also relate to FLOW-DIRECTIVE-1 (similarity 0.106)
 
 ## Method
