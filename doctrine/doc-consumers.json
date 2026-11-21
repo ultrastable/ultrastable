@@ -151,6 +151,15 @@
    "consumer": "workers/core/test/agent-setup.test.js",
    "needle": "agent-setup/PROMPT.txt",
    "how": "the paste-in prompt is read and asserted by the agent-setup test (path relative to the folded workers tree, so the exact-path tier missed it after REPOS-1)"
+  },
+  {
+   "id": "intent-yield-idea",
+   "paths": [
+    "instances/intent-yield/IDEA.md"
+   ],
+   "consumer": "tests/test_intent_yield.py",
+   "needle": "instances/intent-yield/IDEA.md",
+   "how": "the test boots the idea through the seed's qualify stage and asserts the anti-gaming rules"
   }
  ],
  "verified": {
