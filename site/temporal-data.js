@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 export const TEMPORAL = {
  "marker": "TEMPORAL-1",
- "at": "2026-11-21T11:56:31Z",
+ "at": "2026-11-21T12:19:03Z",
  "tenant": "ultrastable",
  "history_from": "2026-11-10",
  "window": {
@@ -19,7 +19,7 @@ export const TEMPORAL = {
    "recent_rate": 60.67,
    "baseline_rate": 32.0,
    "last_active": "2026-11-21",
-   "total": 490,
+   "total": 500,
    "spark": [
     0,
     0,
@@ -59,7 +59,7 @@ export const TEMPORAL = {
    "recent_rate": 51.33,
    "baseline_rate": 11.38,
    "last_active": "2026-11-21",
-   "total": 267,
+   "total": 272,
    "spark": [
     0,
     0,
@@ -92,46 +92,6 @@ export const TEMPORAL = {
    ]
   },
   {
-   "id": "seed",
-   "recent": 58,
-   "baseline": 159,
-   "baseline_days": 8,
-   "recent_rate": 19.33,
-   "baseline_rate": 19.88,
-   "last_active": "2026-11-21",
-   "total": 238,
-   "spark": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    18,
-    8,
-    35,
-    14,
-    11,
-    29,
-    9,
-    35,
-    33,
-    2,
-    23
-   ]
-  },
-  {
    "id": "site",
    "recent": 99,
    "baseline": 107,
@@ -139,7 +99,7 @@ export const TEMPORAL = {
    "recent_rate": 33.0,
    "baseline_rate": 13.38,
    "last_active": "2026-11-21",
-   "total": 234,
+   "total": 242,
    "spark": [
     0,
     0,
@@ -172,6 +132,46 @@ export const TEMPORAL = {
    ]
   },
   {
+   "id": "seed",
+   "recent": 58,
+   "baseline": 159,
+   "baseline_days": 8,
+   "recent_rate": 19.33,
+   "baseline_rate": 19.88,
+   "last_active": "2026-11-21",
+   "total": 240,
+   "spark": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    18,
+    8,
+    35,
+    14,
+    11,
+    29,
+    9,
+    35,
+    33,
+    2,
+    23
+   ]
+  },
+  {
    "id": "foundation",
    "recent": 57,
    "baseline": 156,
@@ -179,7 +179,7 @@ export const TEMPORAL = {
    "recent_rate": 19.0,
    "baseline_rate": 19.5,
    "last_active": "2026-11-21",
-   "total": 222,
+   "total": 223,
    "spark": [
     0,
     0,
@@ -219,7 +219,7 @@ export const TEMPORAL = {
    "recent_rate": 18.67,
    "baseline_rate": 18.38,
    "last_active": "2026-11-21",
-   "total": 211,
+   "total": 212,
    "spark": [
     0,
     0,
@@ -259,7 +259,7 @@ export const TEMPORAL = {
    "recent_rate": 10.67,
    "baseline_rate": 17.75,
    "last_active": "2026-11-21",
-   "total": 186,
+   "total": 188,
    "spark": [
     0,
     0,
@@ -299,7 +299,7 @@ export const TEMPORAL = {
    "recent_rate": 9.67,
    "baseline_rate": 10.62,
    "last_active": "2026-11-21",
-   "total": 129,
+   "total": 131,
    "spark": [
     0,
     0,
@@ -379,7 +379,7 @@ export const TEMPORAL = {
    "recent_rate": 4.33,
    "baseline_rate": 9.38,
    "last_active": "2026-11-21",
-   "total": 93,
+   "total": 95,
    "spark": [
     0,
     0,
@@ -419,7 +419,7 @@ export const TEMPORAL = {
    "recent_rate": 13.0,
    "baseline_rate": 4.62,
    "last_active": "2026-11-21",
-   "total": 90,
+   "total": 91,
    "spark": [
     0,
     0,
@@ -459,7 +459,7 @@ export const TEMPORAL = {
    "recent_rate": 3.33,
    "baseline_rate": 8.5,
    "last_active": "2026-11-21",
-   "total": 87,
+   "total": 88,
    "spark": [
     0,
     0,
@@ -539,7 +539,7 @@ export const TEMPORAL = {
    "recent_rate": 3.0,
    "baseline_rate": 4.75,
    "last_active": "2026-11-21",
-   "total": 49,
+   "total": 53,
    "spark": [
     0,
     0,
@@ -2159,7 +2159,7 @@ export const TEMPORAL = {
   },
   {
    "id": "ledger:clocks:all",
-   "events": 22,
+   "events": 24,
    "fails": 10,
    "spark": [
     0,
@@ -2225,7 +2225,7 @@ export const TEMPORAL = {
   },
   {
    "id": "ledger:deploys:ultrastable-agents",
-   "events": 142,
+   "events": 146,
    "fails": 0,
    "spark": [
     0,
@@ -2291,7 +2291,7 @@ export const TEMPORAL = {
   },
   {
    "id": "ledger:deploys:ultrastable-dashboard",
-   "events": 158,
+   "events": 162,
    "fails": 0,
    "spark": [
     0,
@@ -2357,7 +2357,7 @@ export const TEMPORAL = {
   },
   {
    "id": "ledger:deploys:ultrastable-site",
-   "events": 142,
+   "events": 146,
    "fails": 0,
    "spark": [
     0,
@@ -2423,7 +2423,7 @@ export const TEMPORAL = {
   },
   {
    "id": "ledger:deploys:ultrastable-tenants",
-   "events": 140,
+   "events": 144,
    "fails": 0,
    "spark": [
     0,
@@ -2489,7 +2489,7 @@ export const TEMPORAL = {
   },
   {
    "id": "ledger:deploys:ultrastable-tick",
-   "events": 158,
+   "events": 162,
    "fails": 0,
    "spark": [
     0,
@@ -2703,8 +2703,8 @@ export const TEMPORAL = {
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-21T11:56:31Z",
-   "runs": 2,
+   "last_seen": "2026-11-21T12:19:03Z",
+   "runs": 3,
    "item": "Q-TEMPORAL-94167fdea6",
    "reopened": 0
   },
@@ -2721,8 +2721,8 @@ export const TEMPORAL = {
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-21T11:56:31Z",
-   "runs": 2,
+   "last_seen": "2026-11-21T12:19:03Z",
+   "runs": 3,
    "item": "Q-TEMPORAL-69713c50e8",
    "reopened": 0
   },
@@ -2741,8 +2741,8 @@ export const TEMPORAL = {
    "last_good": "d02d20a4dbe3",
    "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-21T11:56:31Z",
-   "runs": 2,
+   "last_seen": "2026-11-21T12:19:03Z",
+   "runs": 3,
    "item": "Q-TEMPORAL-e5ddf8e610",
    "reopened": 0
   },
@@ -2759,9 +2759,9 @@ export const TEMPORAL = {
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-21T11:56:31Z",
-   "runs": 2,
-   "item": null,
+   "last_seen": "2026-11-21T12:19:03Z",
+   "runs": 3,
+   "item": "Q-TEMPORAL-e0c6ffc24a",
    "reopened": 0
   },
   {
@@ -2779,9 +2779,9 @@ export const TEMPORAL = {
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-21T11:56:31Z",
-   "runs": 2,
-   "item": null,
+   "last_seen": "2026-11-21T12:19:03Z",
+   "runs": 3,
+   "item": "Q-TEMPORAL-c200e5281e",
    "reopened": 0
   },
   {
@@ -2799,9 +2799,9 @@ export const TEMPORAL = {
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-21T11:56:31Z",
-   "runs": 2,
-   "item": null,
+   "last_seen": "2026-11-21T12:19:03Z",
+   "runs": 3,
+   "item": "Q-TEMPORAL-1b91492bbf",
    "reopened": 0
   },
   {
@@ -2819,8 +2819,8 @@ export const TEMPORAL = {
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-21T11:56:31Z",
-   "runs": 2,
+   "last_seen": "2026-11-21T12:19:03Z",
+   "runs": 3,
    "item": null,
    "reopened": 0
   },
@@ -2839,8 +2839,8 @@ export const TEMPORAL = {
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-21T11:56:31Z",
-   "runs": 2,
+   "last_seen": "2026-11-21T12:19:03Z",
+   "runs": 3,
    "item": null,
    "reopened": 0
   },
@@ -2859,8 +2859,8 @@ export const TEMPORAL = {
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-21T11:56:31Z",
-   "runs": 2,
+   "last_seen": "2026-11-21T12:19:03Z",
+   "runs": 3,
    "item": null,
    "reopened": 0
   },
@@ -2879,14 +2879,18 @@ export const TEMPORAL = {
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-21T11:56:31Z",
-   "runs": 2,
+   "last_seen": "2026-11-21T12:19:03Z",
+   "runs": 3,
    "item": null,
    "reopened": 0
   }
  ],
  "settled": [],
- "filed": [],
+ "filed": [
+  "Q-TEMPORAL-e0c6ffc24a",
+  "Q-TEMPORAL-c200e5281e",
+  "Q-TEMPORAL-1b91492bbf"
+ ],
  "attention": {
   "funding-manager": 1.25,
   "operations": 0.75,
@@ -2908,7 +2912,7 @@ export const TEMPORAL = {
  "tenants": [
   {
    "tenant": "practical-solutions",
-   "at": "2026-11-21T11:56:24Z",
+   "at": "2026-11-21T12:19:03Z",
    "history_from": "2026-11-13",
    "window": {
     "recent_days": 3,
@@ -2964,7 +2968,7 @@ export const TEMPORAL = {
      "recent_rate": 16.67,
      "baseline_rate": 13.8,
      "last_active": "2026-11-21",
-     "total": 126,
+     "total": 127,
      "spark": [
       0,
       0,
@@ -3004,7 +3008,7 @@ export const TEMPORAL = {
      "recent_rate": 7.67,
      "baseline_rate": 7.4,
      "last_active": "2026-11-21",
-     "total": 65,
+     "total": 66,
      "spark": [
       0,
       0,
@@ -3124,7 +3128,7 @@ export const TEMPORAL = {
      "recent_rate": 5.67,
      "baseline_rate": 1.4,
      "last_active": "2026-11-21",
-     "total": 27,
+     "total": 28,
      "spark": [
       0,
       0,
@@ -3469,8 +3473,8 @@ export const TEMPORAL = {
      "last_good": null,
      "status": "open",
      "first_seen": "2026-11-21T11:56:24Z",
-     "last_seen": "2026-11-21T11:56:24Z",
-     "runs": 1,
+     "last_seen": "2026-11-21T12:19:03Z",
+     "runs": 2,
      "item": null,
      "reopened": 0
     },
@@ -3489,8 +3493,8 @@ export const TEMPORAL = {
      "last_good": null,
      "status": "open",
      "first_seen": "2026-11-21T11:56:24Z",
-     "last_seen": "2026-11-21T11:56:24Z",
-     "runs": 1,
+     "last_seen": "2026-11-21T12:19:03Z",
+     "runs": 2,
      "item": null,
      "reopened": 0
     },
@@ -3509,8 +3513,8 @@ export const TEMPORAL = {
      "last_good": null,
      "status": "open",
      "first_seen": "2026-11-21T11:56:24Z",
-     "last_seen": "2026-11-21T11:56:24Z",
-     "runs": 1,
+     "last_seen": "2026-11-21T12:19:03Z",
+     "runs": 2,
      "item": null,
      "reopened": 0
     },
@@ -3529,8 +3533,8 @@ export const TEMPORAL = {
      "last_good": null,
      "status": "open",
      "first_seen": "2026-11-21T11:56:24Z",
-     "last_seen": "2026-11-21T11:56:24Z",
-     "runs": 1,
+     "last_seen": "2026-11-21T12:19:03Z",
+     "runs": 2,
      "item": null,
      "reopened": 0
     },
@@ -3549,8 +3553,8 @@ export const TEMPORAL = {
      "last_good": null,
      "status": "open",
      "first_seen": "2026-11-21T11:56:24Z",
-     "last_seen": "2026-11-21T11:56:24Z",
-     "runs": 1,
+     "last_seen": "2026-11-21T12:19:03Z",
+     "runs": 2,
      "item": null,
      "reopened": 0
     },
@@ -3569,8 +3573,8 @@ export const TEMPORAL = {
      "last_good": null,
      "status": "open",
      "first_seen": "2026-11-21T11:56:24Z",
-     "last_seen": "2026-11-21T11:56:24Z",
-     "runs": 1,
+     "last_seen": "2026-11-21T12:19:03Z",
+     "runs": 2,
      "item": null,
      "reopened": 0
     },
@@ -3589,8 +3593,8 @@ export const TEMPORAL = {
      "last_good": null,
      "status": "open",
      "first_seen": "2026-11-21T11:56:24Z",
-     "last_seen": "2026-11-21T11:56:24Z",
-     "runs": 1,
+     "last_seen": "2026-11-21T12:19:03Z",
+     "runs": 2,
      "item": null,
      "reopened": 0
     }

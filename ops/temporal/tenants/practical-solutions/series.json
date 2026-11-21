@@ -1,5 +1,5 @@
 {
- "at": "2026-11-21T11:56:24Z",
+ "at": "2026-11-21T12:19:03Z",
  "areas": [
   {
    "id": "worker",
@@ -49,7 +49,7 @@
    "recent_rate": 16.67,
    "baseline_rate": 13.8,
    "last_active": "2026-11-21",
-   "total": 126,
+   "total": 127,
    "spark": [
     0,
     0,
@@ -89,7 +89,7 @@
    "recent_rate": 7.67,
    "baseline_rate": 7.4,
    "last_active": "2026-11-21",
-   "total": 65,
+   "total": 66,
    "spark": [
     0,
     0,
@@ -209,7 +209,7 @@
    "recent_rate": 5.67,
    "baseline_rate": 1.4,
    "last_active": "2026-11-21",
-   "total": 27,
+   "total": 28,
    "spark": [
     0,
     0,

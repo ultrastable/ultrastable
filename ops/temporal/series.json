@@ -1,5 +1,5 @@
 {
- "at": "2026-11-21T11:56:31Z",
+ "at": "2026-11-21T12:19:03Z",
  "areas": [
   {
    "id": "doctrine",
@@ -9,7 +9,7 @@
    "recent_rate": 60.67,
    "baseline_rate": 32.0,
    "last_active": "2026-11-21",
-   "total": 490,
+   "total": 500,
    "spark": [
     0,
     0,
@@ -49,7 +49,7 @@
    "recent_rate": 51.33,
    "baseline_rate": 11.38,
    "last_active": "2026-11-21",
-   "total": 267,
+   "total": 272,
    "spark": [
     0,
     0,
@@ -82,46 +82,6 @@
    ]
   },
   {
-   "id": "seed",
-   "recent": 58,
-   "baseline": 159,
-   "baseline_days": 8,
-   "recent_rate": 19.33,
-   "baseline_rate": 19.88,
-   "last_active": "2026-11-21",
-   "total": 238,
-   "spark": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    18,
-    8,
-    35,
-    14,
-    11,
-    29,
-    9,
-    35,
-    33,
-    2,
-    23
-   ]
-  },
-  {
    "id": "site",
    "recent": 99,
    "baseline": 107,
@@ -129,7 +89,7 @@
    "recent_rate": 33.0,
    "baseline_rate": 13.38,
    "last_active": "2026-11-21",
-   "total": 234,
+   "total": 242,
    "spark": [
     0,
     0,
@@ -162,6 +122,46 @@
    ]
   },
   {
+   "id": "seed",
+   "recent": 58,
+   "baseline": 159,
+   "baseline_days": 8,
+   "recent_rate": 19.33,
+   "baseline_rate": 19.88,
+   "last_active": "2026-11-21",
+   "total": 240,
+   "spark": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    18,
+    8,
+    35,
+    14,
+    11,
+    29,
+    9,
+    35,
+    33,
+    2,
+    23
+   ]
+  },
+  {
    "id": "foundation",
    "recent": 57,
    "baseline": 156,
@@ -169,7 +169,7 @@
    "recent_rate": 19.0,
    "baseline_rate": 19.5,
    "last_active": "2026-11-21",
-   "total": 222,
+   "total": 223,
    "spark": [
     0,
     0,
@@ -209,7 +209,7 @@
    "recent_rate": 18.67,
    "baseline_rate": 18.38,
    "last_active": "2026-11-21",
-   "total": 211,
+   "total": 212,
    "spark": [
     0,
     0,
@@ -249,7 +249,7 @@
    "recent_rate": 10.67,
    "baseline_rate": 17.75,
    "last_active": "2026-11-21",
-   "total": 186,
+   "total": 188,
    "spark": [
     0,
     0,
@@ -289,7 +289,7 @@
    "recent_rate": 9.67,
    "baseline_rate": 10.62,
    "last_active": "2026-11-21",
-   "total": 129,
+   "total": 131,
    "spark": [
     0,
     0,
@@ -369,7 +369,7 @@
    "recent_rate": 4.33,
    "baseline_rate": 9.38,
    "last_active": "2026-11-21",
-   "total": 93,
+   "total": 95,
    "spark": [
     0,
     0,
@@ -409,7 +409,7 @@
    "recent_rate": 13.0,
    "baseline_rate": 4.62,
    "last_active": "2026-11-21",
-   "total": 90,
+   "total": 91,
    "spark": [
     0,
     0,
@@ -449,7 +449,7 @@
    "recent_rate": 3.33,
    "baseline_rate": 8.5,
    "last_active": "2026-11-21",
-   "total": 87,
+   "total": 88,
    "spark": [
     0,
     0,
@@ -529,7 +529,7 @@
    "recent_rate": 3.0,
    "baseline_rate": 4.75,
    "last_active": "2026-11-21",
-   "total": 49,
+   "total": 53,
    "spark": [
     0,
     0,
@@ -2149,7 +2149,7 @@
   },
   {
    "id": "ledger:clocks:all",
-   "events": 22,
+   "events": 24,
    "fails": 10,
    "spark": [
     0,
@@ -2215,7 +2215,7 @@
   },
   {
    "id": "ledger:deploys:ultrastable-agents",
-   "events": 142,
+   "events": 146,
    "fails": 0,
    "spark": [
     0,
@@ -2281,7 +2281,7 @@
   },
   {
    "id": "ledger:deploys:ultrastable-dashboard",
-   "events": 158,
+   "events": 162,
    "fails": 0,
    "spark": [
     0,
@@ -2347,7 +2347,7 @@
   },
   {
    "id": "ledger:deploys:ultrastable-site",
-   "events": 142,
+   "events": 146,
    "fails": 0,
    "spark": [
     0,
@@ -2413,7 +2413,7 @@
   },
   {
    "id": "ledger:deploys:ultrastable-tenants",
-   "events": 140,
+   "events": 144,
    "fails": 0,
    "spark": [
     0,
@@ -2479,7 +2479,7 @@
   },
   {
    "id": "ledger:deploys:ultrastable-tick",
-   "events": 158,
+   "events": 162,
    "fails": 0,
    "spark": [
     0,
