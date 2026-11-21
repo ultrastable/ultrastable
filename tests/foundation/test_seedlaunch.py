@@ -11,8 +11,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 class SeedLaunch(unittest.TestCase):
     def _ledger(self, rows):
-        d = Path(tempfile.mkdtemp())
-        self.addCleanup(shutil.rmtree, d, ignore_errors=True)
+        d = Path(tempfile.mkdtemp()); self.addCleanup(shutil.rmtree, d, ignore_errors=True)
         (d / "ops").mkdir()
         (d / seedlaunch.LEDGER).write_text("".join(json.dumps(r) + "\n" for r in rows))
         return d
