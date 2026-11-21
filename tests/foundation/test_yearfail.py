@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """YEARFAIL-1: the simulated year runs, labels what is real, never calls an uncovered area a pass, and files a failing month."""
 import json, sys, unittest
 from pathlib import Path
