@@ -29,6 +29,10 @@ jobs:
       - name: Budget kill switch
         env: {GH_TOKEN: "${{ github.token }}"}
         run: python3 scripts/actions_guard.py issues
+      - name: Mirror the queue onto GitHub Issues, labels and milestones (GH-MIRROR-1)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 -m foundation ghmirror --apply --max 150
       - name: Triage
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}

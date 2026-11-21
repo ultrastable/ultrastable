@@ -65,7 +65,8 @@ def gh_issues(repo):
     for chunk in p.stdout.replace("][", "]\n[").splitlines():
         if chunk.strip():
             out += json.loads(chunk)
-    return [i for i in out if "pull_request" not in i]
+    # GH-MIRROR-1: issues carrying the sync label `queue` mirror docs/issues files; the queue loop closes the file and the mirror follows, so they are not probed here
+    return [i for i in out if "pull_request" not in i and "queue" not in {l.get("name") for l in i.get("labels") or []}]
 
 
 def close(repo, number, evidence):
