@@ -1,0 +1,14 @@
+{
+  "id": "Q-RECUR-b680afd12d",
+  "title": "Q-RECUR-b680afd12d: tick-step-failed recurred 5x: nc-plus-tickfail-criticality",
+  "body": "**Owner:** executor\n**Trigger:** the failure miner files it after every merge and daily\n**Done check:** cmd:python3 -m foundation failmine --probe b680afd12d\n**Status:** open\n\nRecurring failure, class `tick-step-failed`, seen 5 times (open 5, last 2026-11-20T16:06:25+00:00).\nSignature: nc-plus-tickfail-criticality\nEvents: NC-PLUS-TICKFAIL-criticality-2026-11-13T12, NC-PLUS-TICKFAIL-criticality-2026-11-13T14, NC-PLUS-TICKFAIL-criticality-2026-11-13T15, NC-PLUS-TICKFAIL-criticality-2026-11-13T16, NC-PLUS-TICKFAIL-criticality-2026-11-13T18\nRoot cause (5 whys): a tick step throws on a schema or binding its migration never created\nOwning mechanism: seed/worker/src/tick.js\nSeen three or more times: incident. Redesign the owning mechanism so this class cannot recur; a fourth attempt of the same fix is not allowed.\n\n**Closing probe:** cmd:python3 -m foundation failmine --probe b680afd12d\n",
+  "labels": [
+    "audit",
+    "incident",
+    "agent-ready",
+    "p1",
+    "raises-self"
+  ],
+  "milestone": "Now",
+  "workstream": "Failure modes"
+}
