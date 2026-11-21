@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-21-a-wildcard-zone-route-shadows-a-tenant-custom-domain",
+  "kind": "lesson",
+  "date": "2026-11-21",
+  "title": "A wildcard zone route shadows a tenant custom domain",
+  "body": "unlearn.ultrastable.app answered Not found from ultrastable-spinoffs because the zone route *.ultrastable.app/* catches the hostname before the Workers custom domain. The deployer (TENANT-ROUTE-1 in site/deployer.js) now adds a host route for the tenant worker whenever another worker's wildcard route covers its domain; a failure lands as a warning in the deploy detail.",
+  "probe": "file:site/oidc.test.mjs"
+ },
+ "kind": "lesson",
+ "title": "A wildcard zone route shadows a tenant custom domain",
+ "session": ""
+}
