@@ -35,7 +35,7 @@ const sameOrigin = (request, u) => { const o = request.headers.get("origin"); re
 
 export async function connectionsRoute(request, env, { subject = currentSubject, now = Date.now() } = {}) {
   const u = new URL(request.url), p = u.pathname.replace(/\/$/, "");
-  const wk = p === "/.well-known/oauth-client/bluesky.json" || p === "/.well-known/oauth-client/bluesky-jwks.json"; /* REACH-1: atproto client metadata, public */
+  const wk = p === "/.well-known/oauth-client/bluesky.json" || p === "/.well-known/oauth-client/bluesky-c.json" || p === "/.well-known/oauth-client/bluesky-jwks.json"; /* REACH-1: atproto client metadata, public */
   const mine = wk || p === "/connections" || p.startsWith("/connections/") || p === "/connect" || p.startsWith("/connect/");
   if (!mine || !HOSTS(u.hostname)) return null;
   const isCallback = wk || /^\/connect\/[a-z0-9-]+\/callback$/.test(p);

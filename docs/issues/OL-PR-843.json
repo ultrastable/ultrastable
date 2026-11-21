@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-843",
+  "title": "OL-PR-843: land or supersede pull request #843 (conflict)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #843 is conflict\n**Done check:** cmd:python3 -m foundation loopowner --closed 843\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #843 (`claude/project-thread-1g166p` at 7c030210ac, opened by rwnq8): GH-MIRROR-1: mirror the work queue onto GitHub Issues, milestones and the org board. The session that opened it is not its closer and is never asked to act. The branch conflicts with main. Merge main into the branch and resolve it, or redo the change from main in a new pull request and close this one as superseded. Files (17): .github/workflows/checks.yml, .github/workflows/fleet.yml, .github/workflows/issues.yml, ROADMAP.md, docs/PROJECT-MEMORY.md, doctrine/decisions.json, doctrine/writeback/decision-2026-11-21-gh-mirror-1-the-queue-is-visible-on-github.json, foundation/__main__.py, foundation/ghmirror.py, foundation/issueloop.py, github/org-settings.json, scripts/sla.sh, scripts/triage.sh, seed/worker/src/sweeper.js, site/dashboard-data.js, site/worker.js, tests/foundation/test_ghmirror.py. Closing probe: pull request #843 is merged or closed.",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
