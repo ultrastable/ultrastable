@@ -10,6 +10,10 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-21
 
+- 2026-11-21: ghmirror closes duplicate issues per item (#1810)
+- 2026-11-21: Record deploys by merge, not rebase; SPDX and CITATION fixes (#1804)
+- 2026-11-21: OL-PR closing probe reads REST first (#1806)
+- 2026-11-21: Raise executor closing throughput within budgets (THROUGHPUT-1) (#1803)
 - 2026-11-21: ZERO-MINUTES-1: worker merged #1813
 - 2026-11-21: Queue: close 5 items whose probes pass (#1813)
 - 2026-11-21: Fix red main: shelved items are not done (#1811)
