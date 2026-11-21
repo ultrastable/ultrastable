@@ -34,7 +34,21 @@ export async function sweepOpenLoops({ token, repos = [], fetch: f = fetch, now 
         if (d.draft) { const r = await gh(f, token, 'POST', `/repos/${repo}/pulls/${p.number}/ready_for_review`); if (r.ok) d = (await gh(f, token, 'GET', `/repos/${repo}/pulls/${p.number}`)).json || d; }
         if (d.mergeable_state === 'behind') { const u = await gh(f, token, 'PUT', `/repos/${repo}/pulls/${p.number}/update-branch`); if (u.ok) out.refreshed.push(tag); }
         // MERGE-NOW-1: a conflict on generated files or claim values is reconciled here too (one per pass), not left for a person or the daily lane
-        if (d.mergeable_state === 'dirty' && reconciles < 1) { reconciles++; const r = await reconcile(makeGh(f, token, 20), repo, d); (r.result === 'resolved' ? out.reconciled : out.errors).push(r.result === 'resolved' ? tag : `${tag} ${r.result}${r.why ? ' ' + r.why : ''}`); }
+        // STALL-ACT-1 (Rowan 2026-11-21, six-hour PRs): the one reconcile slot per pass was taken every pass by the same failing PR (#1746: code-conflict / ref 422),
+        // so every other dirty PR starved for hours. Now each dirty PR gets its own try (up to 4 per pass); one that cannot be reconciled and is a bot-made
+        // `agent/*` branch is closed as superseded after the stall limit (the executor refiles its item from current main) instead of only being reported.
+        if (d.mergeable_state === 'dirty' && reconciles < 4) {
+          reconciles++; const r = await reconcile(makeGh(f, token, 20), repo, d);
+          if (r.result === 'resolved') out.reconciled.push(tag);
+          else {
+            out.errors.push(`${tag} ${r.result}${r.why ? ' ' + r.why : ''}`);
+            if ((d.head && d.head.ref || '').startsWith('agent/') && hours(p.created_at || p.updated_at, now) * 60 > stallMin) {
+              await gh(f, token, 'POST', `/repos/${repo}/issues/${p.number}/comments`, { body: 'STALL-ACT-1: conflicts with main that the server cannot reconcile after the stall limit. Superseded: the executor refiles the item from current main.' });
+              const c = await gh(f, token, 'PATCH', `/repos/${repo}/pulls/${p.number}`, { state: 'closed' });
+              if (c.ok) (out.superseded ||= []).push(tag);
+            }
+          }
+        }
         if (hours(p.created_at || p.updated_at, now) * 60 > stallMin) out.stalled.push({ tag, repo, number: p.number, state: d.mergeable_state, minutes: Math.round(hours(p.created_at || p.updated_at, now) * 60) });
         // BRANCH-ROOT-CAUSE-1: a PR opened with the built-in token never fires `pull_request`, so the required `checks` never reports and the PR sits BLOCKED forever.
         // Close and reopen it once (the `reopened` trigger runs checks) when its head has no check run at all; never when a run exists, so a real failure is not looped.
