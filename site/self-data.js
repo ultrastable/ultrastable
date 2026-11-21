@@ -1803,7 +1803,8 @@ export default {
     "summary": "Check every public claim against the deployed sites and file a repair item per failure.",
     "trigger": "automatic: daily schedule",
     "workflows": [
-     "smoke-live"
+     "smoke-live",
+     "owner-links-audit"
     ]
    },
    {
@@ -2061,7 +2062,9 @@ export default {
    },
    {
     "id": "owner-links-audit",
-    "loops": []
+    "loops": [
+     "smoke-live"
+    ]
    },
    {
     "id": "platform-core",
