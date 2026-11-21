@@ -3875,6 +3875,47 @@
     "social-post.yml"
    ],
    "server_owner": "github-actions"
+  },
+  {
+   "id": "temporal",
+   "kind": "governance",
+   "summary": "TEMPORAL-1: time and iteration are part of the system. The loop reads the history of this repository and of each tenant into daily series per component, loop and entry, finds hotspots, neglect, stale entries, stopped loops and repeated failures from the trends, and files each into the queue that fixes it, the failure-mode audit, the pathfinder and the executor's attention weights.",
+   "trigger": "daily workflow and on demand",
+   "owner": "operations",
+   "closes_by": "system",
+   "sla": "1d",
+   "done": "ops/temporal/findings.json is under 2 days old, every open act finding has a Q-TEMPORAL item the executor takes, and /trends shows the same series",
+   "paths": [
+    {
+     "id": "github",
+     "how": ".github/workflows/temporal.yml runs python3 -m foundation temporal --run --apply",
+     "class": "free"
+    },
+    {
+     "id": "session",
+     "how": "python3 -m foundation temporal --run --apply from a cloud-hosted agent session",
+     "class": "session"
+    }
+   ],
+   "closing_probe": "grep:foundation/temporal.py::def diagnose",
+   "writeback": [
+    "ops/temporal",
+    "site/temporal-data.js",
+    "dashboard/temporal-data.js",
+    "docs/issues"
+   ],
+   "system_path": [
+    "foundation/temporal.py",
+    "doctrine/temporal.json",
+    "site/temporal.js",
+    "tests/foundation/test_temporal.py",
+    ".github/workflows/temporal.yml"
+   ],
+   "workflows": [
+    "temporal.yml"
+   ],
+   "area": "managers",
+   "server_owner": "github-actions"
   }
  ],
  "launch_registry": "instances/ultrastable/loops.json"

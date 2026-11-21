@@ -279,6 +279,24 @@
       ],
       "feedback": "scope widens or narrows from verified outcomes"
     },
+    "temporal": {
+      "inflows": [
+        {
+          "signal": "metric.readings",
+          "via": "d1:ultrastable-org"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "feedback": "a finding that persists escalates to the failure-mode audit and the pathfinder, and one that settles is recorded with how long it stood; a threshold that files items nobody settles is itself read as drift in the next run",
+      "bindings": [
+        "LANE_PAT"
+      ]
+    },
     "failure-audit": {
       "inflows": [
         {

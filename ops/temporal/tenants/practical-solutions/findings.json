@@ -1,0 +1,143 @@
+{
+ "findings": {
+  "efc9062f94": {
+   "id": "efc9062f94",
+   "kind": "hotspot",
+   "subject": "area:ledger",
+   "area": "ledger",
+   "advocate": "research-publisher",
+   "severity": "watch",
+   "evidence": "42 commits in 3 days against a baseline of 2.6 a day (5.4x)",
+   "prediction": "area ledger recent_rate returns below 3.0x baseline within 7 days",
+   "files": [],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-21T11:56:24Z",
+   "last_seen": "2026-11-21T11:56:24Z",
+   "runs": 1,
+   "item": null,
+   "reopened": 0
+  },
+  "f12a6c2fd8": {
+   "id": "f12a6c2fd8",
+   "kind": "hotspot",
+   "subject": "file:ledger/synth-discovered.json",
+   "area": "ledger",
+   "advocate": "research-publisher",
+   "severity": "watch",
+   "evidence": "ledger/synth-discovered.json edited 12 times in 3 days (outside generated and ledger paths)",
+   "prediction": "ledger/synth-discovered.json is edited at most 5 times in 3 days within 7 days",
+   "files": [
+    "ledger/synth-discovered.json"
+   ],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-21T11:56:24Z",
+   "last_seen": "2026-11-21T11:56:24Z",
+   "runs": 1,
+   "item": null,
+   "reopened": 0
+  },
+  "6a29fbb59d": {
+   "id": "6a29fbb59d",
+   "kind": "hotspot",
+   "subject": "file:ledger/syntheses-verified.json",
+   "area": "ledger",
+   "advocate": "research-publisher",
+   "severity": "watch",
+   "evidence": "ledger/syntheses-verified.json edited 21 times in 3 days (outside generated and ledger paths)",
+   "prediction": "ledger/syntheses-verified.json is edited at most 5 times in 3 days within 7 days",
+   "files": [
+    "ledger/syntheses-verified.json"
+   ],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-21T11:56:24Z",
+   "last_seen": "2026-11-21T11:56:24Z",
+   "runs": 1,
+   "item": null,
+   "reopened": 0
+  },
+  "73e9f6599f": {
+   "id": "73e9f6599f",
+   "kind": "hotspot",
+   "subject": "file:upstream.json",
+   "area": "root",
+   "advocate": "product-manager",
+   "severity": "watch",
+   "evidence": "upstream.json edited 17 times in 3 days (outside generated and ledger paths)",
+   "prediction": "upstream.json is edited at most 5 times in 3 days within 7 days",
+   "files": [
+    "upstream.json"
+   ],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-21T11:56:24Z",
+   "last_seen": "2026-11-21T11:56:24Z",
+   "runs": 1,
+   "item": null,
+   "reopened": 0
+  },
+  "5f09f22b3f": {
+   "id": "5f09f22b3f",
+   "kind": "hotspot",
+   "subject": "file:worker/src/pages.js",
+   "area": "worker",
+   "advocate": "operations",
+   "severity": "watch",
+   "evidence": "worker/src/pages.js edited 12 times in 3 days (outside generated and ledger paths)",
+   "prediction": "worker/src/pages.js is edited at most 5 times in 3 days within 7 days",
+   "files": [
+    "worker/src/pages.js"
+   ],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-21T11:56:24Z",
+   "last_seen": "2026-11-21T11:56:24Z",
+   "runs": 1,
+   "item": null,
+   "reopened": 0
+  },
+  "2822daa6f2": {
+   "id": "2822daa6f2",
+   "kind": "hotspot",
+   "subject": "file:worker/src/site.js",
+   "area": "worker",
+   "advocate": "operations",
+   "severity": "watch",
+   "evidence": "worker/src/site.js edited 11 times in 3 days (outside generated and ledger paths)",
+   "prediction": "worker/src/site.js is edited at most 5 times in 3 days within 7 days",
+   "files": [
+    "worker/src/site.js"
+   ],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-21T11:56:24Z",
+   "last_seen": "2026-11-21T11:56:24Z",
+   "runs": 1,
+   "item": null,
+   "reopened": 0
+  },
+  "4d73e107a5": {
+   "id": "4d73e107a5",
+   "kind": "hotspot",
+   "subject": "file:worker/src/syntheses.gen.js",
+   "area": "worker",
+   "advocate": "operations",
+   "severity": "watch",
+   "evidence": "worker/src/syntheses.gen.js edited 22 times in 3 days (outside generated and ledger paths)",
+   "prediction": "worker/src/syntheses.gen.js is edited at most 5 times in 3 days within 7 days",
+   "files": [
+    "worker/src/syntheses.gen.js"
+   ],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-21T11:56:24Z",
+   "last_seen": "2026-11-21T11:56:24Z",
+   "runs": 1,
+   "item": null,
+   "reopened": 0
+  }
+ },
+ "settled": []
+}

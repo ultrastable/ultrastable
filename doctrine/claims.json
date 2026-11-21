@@ -4181,7 +4181,8 @@
       "/test/",
       "STAGED",
       "node_modules",
-      "^workers/"
+      "^workers/",
+      "temporal-data\\.js"
     ],
     "skip_reasons": {
       "^workers/": "REPOS-1: the folded-in workers core keeps its standalone layout and its own statements module (core/statements) with a probe per statement; scanning it here would count prose the root claims registry does not own"
