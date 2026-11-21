@@ -46,10 +46,12 @@ export async function bufferChannels(token, f) {
   const c = await bgql(f, token, '{ channels(input: { organizationId: ' + JSON.stringify(org.id) + ' }) { id service isDisconnected } }');
   return ((c.data || {}).channels || []).filter(x => !x.isDisconnected);
 }
-export async function postBuffer(token, text, f, short) {
+export async function postBuffer(token, text, f, short, only) {
   const out = {};
   for (const ch of await bufferChannels(token, f)) {
-    const svc = /substack/i.test(ch.service) ? 'substack' : ch.service, t = svc === 'twitter' ? String(short || text).slice(0, 280) : text;
+    const svc = /substack/i.test(ch.service) ? 'substack' : ch.service;
+    if (only && only.length && !only.includes(svc)) continue;  // a retry re-sends only the services that failed
+    const t = svc === 'twitter' ? String(short || text).slice(0, 280) : text;
     const mode = svc === 'twitter' ? 'shareNow' : 'addToQueue';
     const r = await bgql(f, token, 'mutation { createPost(input: { text: ' + JSON.stringify(t) + ', channelId: ' + JSON.stringify(ch.id) + ', schedulingType: automatic, mode: ' + mode + ' }) { ... on PostActionSuccess { post { id status } } ... on MutationError { message } } }');
     const cp = (r.data || {}).createPost;
@@ -113,7 +115,8 @@ export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), t
   if (days.size >= gate.max_posts_per_day || wk.size >= gate.max_posts_per_week) return { skipped: 'rate limit' };
   const done = (id, ch) => rows.some(r => r.id === id && r.channel === ch && (r.status == null || r.status !== 'failed' || r.attempts >= 3));  // a failed channel is retried up to 3 times; queued, unverified and verified rows are not re-sent
   const relayDone = id => { const rr = rows.filter(r => r.id === id && r.channel.startsWith('relay:')); return rr.length > 0 ? rr.every(r => r.status !== 'failed' || r.attempts >= 3) : done(id, 'relay'); };  // per-service rows override a legacy channel='relay' row, which only said the relay was called
-  const posted = new Set((cal.posts || []).map(x => x.id).filter(id => Object.keys(channels).every(ch => ch === 'relay' ? relayDone(id) : done(id, ch))));
+  const bufferDone = id => { const rr = rows.filter(r => r.id === id && r.channel.startsWith('buffer:')); return rr.length > 0 && rr.every(r => r.status !== 'failed' || r.attempts >= 3); };  // SOCIAL-MODULE-1: one row per Buffer service, so each is verified and retried on its own
+  const posted = new Set((cal.posts || []).map(x => x.id).filter(id => Object.keys(channels).every(ch => ch === 'relay' ? relayDone(id) : ch === 'buffer' ? bufferDone(id) : done(id, ch))));
   const due = (cal.posts || []).filter(p => !posted.has(p.id) && p.date <= today).sort((a, b) => priority(a) - priority(b));
   if (!due.length) return { skipped: 'nothing due' };
   const p = due[0], out = {};
@@ -124,8 +127,13 @@ export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), t
     if (status !== 'verified') await store.event(db, tenant, 'oauth:' + ch, status, String(ref).slice(0, 120));
   };
   for (const [ch, m] of Object.entries(channels)) {
-    if (ch !== 'relay' && done(p.id, ch)) continue;
+    if (ch === 'buffer' ? bufferDone(p.id) : ch !== 'relay' && done(p.id, ch)) continue;
     try {
+      if (ch === 'buffer') {
+        const failed = rows.filter(r => r.id === p.id && r.channel.startsWith('buffer:') && r.status === 'failed').map(r => r.channel.slice(7));
+        for (const [svc, id] of Object.entries(await postBuffer(m.access, p.long || p.text, f, p.text, failed))) await rec('buffer:' + svc, id, /^failed/.test(id) ? 'failed' : 'queued');  // queued until reconcileBuffer reads the public post back
+        continue;
+      }
       if (ch === 'relay') {
         const failed = rows.filter(r => r.id === p.id && r.channel.startsWith('relay:') && r.status === 'failed').map(r => r.channel.slice(6));
         const stale = rows.filter(r => r.id === p.id && r.channel.startsWith('relay:') && r.status === 'failed').map(r => (/queued ([0-9a-f]{24})/.exec(String(r.ref)) || [])[1]).filter(Boolean);
@@ -134,8 +142,8 @@ export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), t
         for (const [svc, v] of Object.entries(res)) await rec('relay:' + svc, v.ref, v.status);
         continue;
       }
-      const ref = ch === 'mastodon' ? await postMastodon(m, p.text, p.id, f) : ch === 'buffer' ? JSON.stringify(await postBuffer(m.access, p.long || p.text, f, p.text)) : await postBluesky(db, env, tenant, m, p.text, f, now);
-      await rec(ch, ref, ch === 'buffer' ? 'queued' : (await readBack(ch, ref, f)) ? 'verified' : 'unverified');
+      const ref = ch === 'mastodon' ? await postMastodon(m, p.text, p.id, f) : await postBluesky(db, env, tenant, m, p.text, f, now);
+      await rec(ch, ref, (await readBack(ch, ref, f)) ? 'verified' : 'unverified');
     } catch (e) { await rec(ch, String(e && e.message || e), 'failed'); }
   }
   return { id: p.id, results: out };
