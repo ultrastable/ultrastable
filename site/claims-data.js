@@ -1867,6 +1867,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **Thought leadership is a loop: every paper becomes posts that carry the hook (THOUGHT-1, Rowan 2026-11-21).** \"I want white papers that",
+   "detail": "",
+   "how": "file:seed/worker/src/social.js + file:doctrine/thought.json + file:foundation/thought.py + file:site/research.js + file:tests/foundation/test_thought.py + file:site/research.test.mjs",
+   "id": "cited-282274856e",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
@@ -2006,6 +2015,15 @@ export default {
    "detail": "",
    "how": "file:doctrine/unattended.json + file:foundation/unattended.py + file:foundation/modelwatch.py + file:tests/foundation/test_unattended.py",
    "id": "cited-cd0900561e",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Find another path before asking; the information is already held (PATHFINDER-1, Rowan 2026-11-21).** \"There are always multiple paths,",
+   "detail": "",
+   "how": "file:doctrine/pathfinder.json + file:ops/paths/attempts.jsonl + file:foundation/pathfinder.py + file:tests/foundation/test_pathfinder.py",
+   "id": "cited-d77a994a9e",
    "kind": "claim",
    "pass": true,
    "surface": "agents/AGENTS.md"
@@ -2465,6 +2483,15 @@ export default {
    "detail": "",
    "how": "file:foundation/ultrastability.py + file:foundation/research.py + file:doctrine/research.json + file:site/research.js + file:tests/foundation/test_research.py + file:tests/foundation/test_ultrastability.py",
    "id": "mirror-289b3b8589",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Thought leadership is a loop: every paper becomes posts that carry the hook (THOUGHT-1, Rowan 2026-11-21).** \"I want white papers that",
+   "detail": "",
+   "how": "file:seed/worker/src/social.js + file:doctrine/thought.json + file:foundation/thought.py + file:site/research.js + file:tests/foundation/test_thought.py + file:site/research.test.mjs",
+   "id": "mirror-49f57fdb9b",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3091,7 +3118,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 45 Python and 427 Worker tests",
+   "claim": "seed-tests: 45 Python and 430 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3100,7 +3127,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 427 Worker tests",
+   "claim": "seed-worker-tests: 430 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3341,7 +3368,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 368,
-  "total": 368
+  "pass": 371,
+  "total": 371
  }
 };
