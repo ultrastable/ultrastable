@@ -765,7 +765,7 @@
    "date": "2026-11-13",
    "title": "Free org plan blocks branch protection; bundles restore",
    "body": "GH-4 branch protection returns 403 on free private repos (needs paid plan). All 7 archived-repo bundles clone from main (restore test 2026-11-13). IP-6 calendar needs the filing date.",
-   "probe": "file:ip/calendar/deadlines.py"
+   "probe": "file:github/org-settings.json"
   },
   {
    "id": "decision-2026-11-13-front-door-2-idea-consumer-deploys-a-worker-per-idea-archive",
@@ -1037,7 +1037,7 @@
    "date": "2026-11-15",
    "title": "NO-PATENT-1 wording sweep: business, brand, agents, outreach",
    "body": "Removed patent, provisional filing, counsel, private-repo and disclosure-gate wording from business/, brand/, agents/ roles and outreach copy; legal-ip-manager role is now licence and compliance stewardship.",
-   "probe": "grep:business/plan/README.md::Public by default",
+   "probe": "file:agents/roles/legal-ip-manager.md",
    "session": "session_0156nqDuVY71gtRtDvjPaAgK"
   },
   {
@@ -4232,6 +4232,46 @@
    "title": "Session note probes3",
    "body": "Session: session_0156nqDte8FeqRLjvGRAAb6w (thread: resolve open issues at full speed).",
    "probe": "file:foundation/queue.py"
+  },
+  {
+   "id": "decision-2026-11-21-session-note-throughput",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Session note throughput",
+   "body": "Session: session_0156nqDte8FeqRLjvGRAAb6w (thread: resolve open issues at full speed).",
+   "probe": "file:doctrine/agent-budget.json"
+  },
+  {
+   "id": "decision-2026-11-21-throughput-1-executor-and-doer-limits-raised",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "THROUGHPUT-1: executor and doer limits raised",
+   "body": "Executor gate doctrine/agent-budget.json max_runs_per_day 24->48 (matches chain max_runs_per_day_public on the public repo, where Actions minutes are free), max_open_agent_prs 3->6, doctrine/clocks.json max_wakes_per_hour 6->8, seed doer MAX_ITEMS 8->16 and MAX_AI 3->5 per tick. max_usd_per_day, private-repo chain cap 5, the Workers AI neuron allowance and HALT unchanged.",
+   "probe": "grep:doctrine/agent-budget.json::\"max_runs_per_day\": 48"
+  },
+  {
+   "id": "decision-2026-11-21-session-note-prprobe",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Session note prprobe",
+   "body": "Session: session_0156nqDte8FeqRLjvGRAAb6w (thread: resolve open issues at full speed).",
+   "probe": "file:foundation/queue.py"
+  },
+  {
+   "id": "decision-2026-11-21-session-note-recordfix",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Session note recordfix",
+   "body": "Session: session_0156nqDte8FeqRLjvGRAAb6w (thread: resolve open issues at full speed), change set recordfix.",
+   "probe": "file:tools/record_main.sh"
+  },
+  {
+   "id": "lesson-2026-11-21-record-on-main-by-merge-never-rebase",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "Record on main by merge, never rebase",
+   "body": "Workflows that record data on main must not git pull --rebase (it stops on generated claim blocks in README.md, deploy-workers run 44927206546); use tools/record_main.sh: merge main, resolve_generated, claims --fix, push_main. Guarded by tests/foundation/test_record_main.py. New source files need the SPDX header (failmine.py and probes/mergeaudit.py lacked it and turned the foundation tests red).",
+   "probe": "file:tools/record_main.sh"
   }
  ]
 }
