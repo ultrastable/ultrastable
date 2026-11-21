@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
 import { prExecutor } from '../src/pr-executor.js';
 import { runCodeAgent } from '../src/codeagent.js';
 
