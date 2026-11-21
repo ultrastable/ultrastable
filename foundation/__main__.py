@@ -240,6 +240,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["credwatch"]:
         from . import credwatch
         return credwatch.main(_av[1:])
+    if _av[:1] == ["pathfinder"]:
+        from . import pathfinder
+        return pathfinder.main(_av[1:])
     if _av[:1] == ["openloops"]:
         from . import openloops
         return openloops.main(_av[1:])
