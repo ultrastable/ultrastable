@@ -1,0 +1,11 @@
+{
+  "id": "Q-MTC-isolation",
+  "title": "Q-MTC-isolation: tenant isolation proven by test (no query or binding crosses tenants)",
+  "body": "**Owner:** operations\n**Trigger:** every executor run\n**Done check:** cmd:python3 -m foundation owndb --check\n**Status:** open\n\nMulti-tenant control `isolation` is unproven: tenant isolation proven by test (no query or binding crosses tenants). Needed: make the failing probe pass. The hosted tier stays closed until this is proven. Source: doctrine/tenant-controls.json (TENANT-CONTROLS-1).",
+  "labels": [
+    "role:operations",
+    "gap"
+  ],
+  "milestone": "Next",
+  "workstream": "Gaps"
+}

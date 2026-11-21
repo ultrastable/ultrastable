@@ -1,16 +1,89 @@
 {
-  "_doc": "Registry of every @ultrastable.* address named anywhere in the repo: how it is routed, where the owner reads it, and what is not yet true. Checked by foundation/brandcheck.py: an address in the repo that is missing here fails the check. Routing state was read from the Cloudflare Email Routing API for zone ultrastable.io on 2026-11-11. No mailbox address is stored here (destinations are named by provider only).",
-  "checked": "2026-11-11",
-  "probe": "Cloudflare API GET /zones/{zone}/email/routing/rules (needs Email Routing read); expect the rules named below enabled",
-  "addresses": [
-    {"address": "pilot@ultrastable.io", "kind": "inbox", "route": "Cloudflare Email Routing rule 'pilot inbox' (enabled), forward", "read_at": "the owner's Gmail", "used_for": "public contact: pilots, partnerships, commercial licensing, security reports (interim), org profile", "status": "live"},
-    {"address": "hello@ultrastable.io", "kind": "inbox", "route": "Cloudflare Email Routing rule 'hello@ultrastable.io to owner' (enabled), forward", "read_at": "the owner's Outlook", "used_for": "general inbound, funding programme forms", "status": "live"},
-    {"address": "security@ultrastable.io", "kind": "inbox", "route": "none yet; mail is dropped (catch-all is disabled)", "read_at": "n/a", "used_for": "planned security reports address (platform/core/docs/security.md)", "status": "not routed", "next": "Add a forward rule to the same destination as pilot@. A session attempt on 2026-11-11 was refused by the permission check (account routing change); until a rule exists, SECURITY.md in every repo names pilot@."},
-    {"address": "owner@ultrastable.io", "kind": "sender", "route": "outbound only: dashboard MAIL_FROM through the Email Sending binding, destination restricted to the owner address", "read_at": "n/a (the owner receives the digests and sign-in codes it sends)", "used_for": "owner dashboard sign-in codes, check failures, daily digest", "status": "live"},
-    {"address": "outreach@ultrastable.io", "kind": "sender", "route": "outbound only: git identity of the outreach workflow; sender not registered, so outreach runs dry-run", "read_at": "n/a", "used_for": "funding and partner outreach once the gate allows live sends", "status": "dry-run"},
-    {"address": "founder@ultrastable.io", "kind": "sender", "route": "none; named in the Google for Startups kit as a future sending-capable address", "read_at": "n/a", "used_for": "application contact (future)", "status": "not routed"},
-    {"address": "social@ultrastable.io", "kind": "sender", "route": "none; planned registration email for social accounts", "read_at": "n/a", "used_for": "social account sign-up (future)", "status": "not routed"},
-    {"address": "budget@ultrastable.io", "kind": "sender", "route": "none; planned billing contact", "read_at": "n/a", "used_for": "cloud billing contact (future)", "status": "not routed"}
-  ],
-  "catch_all": "disabled (drop)"
+ "_doc": "Registry of every @ultrastable.* address named anywhere in the repo: how it is routed, where the owner reads it, and what is not yet true. Checked by foundation/brandcheck.py: an address in the repo that is missing here fails the check. Routing state was read from the Cloudflare Email Routing API for zone ultrastable.io on 2026-11-11. No mailbox address is stored here (destinations are named by provider only).",
+ "checked": "2026-11-11",
+ "probe": "Cloudflare API GET /zones/{zone}/email/routing/rules (needs Email Routing read); expect the rules named below enabled",
+ "addresses": [
+  {
+   "address": "pilot@ultrastable.io",
+   "kind": "inbox",
+   "route": "Cloudflare Email Routing rule 'pilot inbox' (enabled), forward",
+   "read_at": "the owner's Gmail",
+   "used_for": "public contact: pilots, partnerships, commercial licensing, security reports (interim), org profile",
+   "status": "live"
+  },
+  {
+   "address": "hello@ultrastable.io",
+   "kind": "inbox",
+   "route": "Cloudflare Email Routing rule 'hello@ultrastable.io to owner' (enabled), forward",
+   "read_at": "the owner's Outlook",
+   "used_for": "general inbound, funding programme forms",
+   "status": "live"
+  },
+  {
+   "address": "security@ultrastable.io",
+   "kind": "inbox",
+   "route": "none yet; mail is dropped (catch-all is disabled)",
+   "read_at": "n/a",
+   "used_for": "planned security reports address (platform/core/docs/security.md)",
+   "status": "not routed",
+   "next": "Add a forward rule to the same destination as pilot@. A session attempt on 2026-11-11 was refused by the permission check (account routing change); until a rule exists, SECURITY.md in every repo names pilot@."
+  },
+  {
+   "address": "owner@ultrastable.io",
+   "kind": "sender",
+   "route": "outbound only: dashboard MAIL_FROM through the Email Sending binding, destination restricted to the owner address",
+   "read_at": "n/a (the owner receives the digests and sign-in codes it sends)",
+   "used_for": "owner dashboard sign-in codes, check failures, daily digest",
+   "status": "live"
+  },
+  {
+   "address": "outreach@ultrastable.io",
+   "kind": "sender",
+   "route": "outbound only: git identity of the outreach workflow; sender not registered, so outreach runs dry-run",
+   "read_at": "n/a",
+   "used_for": "funding and partner outreach once the gate allows live sends",
+   "status": "dry-run"
+  },
+  {
+   "address": "founder@ultrastable.io",
+   "kind": "sender",
+   "route": "none; named in the Google for Startups kit as a future sending-capable address",
+   "read_at": "n/a",
+   "used_for": "application contact (future)",
+   "status": "not routed"
+  },
+  {
+   "address": "social@ultrastable.io",
+   "kind": "sender",
+   "route": "none; planned registration email for social accounts",
+   "read_at": "n/a",
+   "used_for": "social account sign-up (future)",
+   "status": "not routed"
+  },
+  {
+   "address": "budget@ultrastable.io",
+   "kind": "sender",
+   "route": "none; planned billing contact",
+   "read_at": "n/a",
+   "used_for": "cloud billing contact (future)",
+   "status": "not routed"
+  },
+  {
+   "address": "owner@ultrastable.org",
+   "kind": "sender",
+   "route": "outbound only: Email Sending on ultrastable.org from the dashboard Worker (owner sign-in codes)",
+   "read_at": "not read (no inbox)",
+   "used_for": "sign-in codes sent to the owner",
+   "status": "live"
+  },
+  {
+   "address": "replies@ultrastable.org",
+   "kind": "inbox",
+   "route": "Cloudflare Email Routing rule on the ultrastable.org zone, forward to the tenant-ps-mail Worker",
+   "read_at": "the tenant mail Worker, then the human inbox table",
+   "used_for": "replies to Practical Solutions and outreach mail",
+   "status": "live"
+  }
+ ],
+ "catch_all": "disabled (drop)"
 }

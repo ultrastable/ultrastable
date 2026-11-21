@@ -4044,6 +4044,14 @@
    "title": "Product manager pass 2026112115: 0 item(s) filed",
    "body": "Growth and repair items, experiment verdicts and knob review recorded in ops/growth/pm-report.json by foundation/pm.py; tests pass.",
    "probe": "file:foundation/pm.py"
+  },
+  {
+   "id": "lesson-2026-11-21-a-moved-cloudflare-zone-shell-cannot-be-deleted-right-after-",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "A moved Cloudflare zone shell cannot be deleted right after a registrar move",
+   "body": "After an inter-account registrar move, the losing account's zone goes to status moved and DELETE /zones returns code 1315, from the API and the dashboard alike. Empty its DNS records (email sending subdomains and routing DNS first, they lock MX/TXT records) and let the probe report the shell until it is purged.",
+   "probe": "file:foundation/singleaccount.py"
   }
  ]
 }
