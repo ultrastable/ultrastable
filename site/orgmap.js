@@ -18,7 +18,7 @@ export default {
   {
    "name": "ops",
    "visibility": "private",
-   "holds": "The few steps only the owner can take (accounts, money, signatures), one card each. Private on purpose."
+   "holds": "The few steps only the owner can take (accounts, money, signatures), one card each, and the company's own papers kept out of the template (admin/). Private on purpose."
   },
   {
    "name": "practical-solutions",

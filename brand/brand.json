@@ -92,7 +92,7 @@
   {
    "name": "ops",
    "role": "Owner tracker",
-   "line": "Administration: owner cards, funding, legal and bootstrap gaps. Not code. Private.",
+   "line": "Administration: owner cards, the company's IP, legal, business and funding papers (admin/), and bootstrap gaps. Not code. Private.",
    "audience": "The owner.",
    "quickstart": [
     "Open the issues"
@@ -102,7 +102,7 @@
    ],
    "status": "live",
    "visibility": "private",
-   "holds": "The few steps only the owner can take (accounts, money, signatures), one card each. Private on purpose."
+   "holds": "The few steps only the owner can take (accounts, money, signatures), one card each, and the company's own papers kept out of the template (admin/). Private on purpose."
   },
   {
    "name": "seed",

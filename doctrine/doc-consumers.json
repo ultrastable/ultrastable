@@ -79,7 +79,7 @@
   {
    "id": "funding-status",
    "paths": [
-    "business/funding/applications/STATUS.md"
+    "instances/ultrastable/funding/applications/STATUS.md"
    ],
    "consumer": "scripts/funding_packet.py",
    "needle": "STATUS.md",
@@ -611,10 +611,10 @@
   {
    "path": "artifacts/funding-options.md",
    "sha256": "c55b84e60ab0da61bfff9ab2e88473ae1f72bdc04ac19c14e16f2b7049fb4848",
-   "reason": "Library snapshot; funding is data in business/funding/registry.json",
+   "reason": "Library snapshot; funding is data in instances/ultrastable/funding/registry.json",
    "date": "2026-11-12",
    "recover": "59a285d92572890115015950609dbe82bb321bdf",
-   "superseded_by": "business/funding/registry.json"
+   "superseded_by": "instances/ultrastable/funding/registry.json"
   },
   {
    "path": "artifacts/library-readme.md",

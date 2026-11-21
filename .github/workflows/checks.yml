@@ -185,5 +185,5 @@ jobs:
         run: python3 scripts/check_memory.py
       - name: Org repo registry (every repo declares a purpose)
         run: python3 scripts/check_org_repos.py
-      - name: Business index (BIZ-3)
-        run: python3 scripts/check_business_index.py
+      - name: Template is code only (TEMPLATE-CODE-ONLY-1)
+        run: python3 -m foundation template --check

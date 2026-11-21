@@ -7,14 +7,14 @@
 
 A system is autonomous if it has self-referential loops and the ability to close them.
 
-Administration: owner cards, funding, legal and bootstrap gaps. Not code. Private.
+Administration: owner cards, the company's IP, legal, business and funding papers (admin/), and bootstrap gaps. Not code. Private.
 
 ![visibility](https://img.shields.io/badge/repo-public-12342A) ![license](https://img.shields.io/badge/license-USL--1.0%20source--available-FFC857) [![site](https://img.shields.io/badge/site-ultrastable.io-FF5B1F)](https://ultrastable.io)
 
 **The organization:** [ultrastable](https://github.com/ultrastable/ultrastable) · [workers](https://github.com/ultrastable/workers) · [spec](https://github.com/ultrastable/spec) · [license](https://github.com/ultrastable/license) · **ops** · [seed](https://github.com/ultrastable/seed) · [.github](https://github.com/ultrastable/.github) · [ultrastable.io](https://ultrastable.io)
 
 ## What it is
-Administration: owner cards, funding, legal and bootstrap gaps. Not code. Private. Ultrastable is an autonomous development platform: an organization of virtual managers and staff that runs projects, scores its own decisions, earns wider autonomy from its track record, and interrupts a person only for steps that cannot be undone.
+Administration: owner cards, the company's IP, legal, business and funding papers (admin/), and bootstrap gaps. Not code. Private. Ultrastable is an autonomous development platform: an organization of virtual managers and staff that runs projects, scores its own decisions, earns wider autonomy from its track record, and interrupts a person only for steps that cannot be undone.
 
 <p align="center"><img src="assets/brand/loop.png" alt="The loop every manager runs: predict, execute, verify, score, plus" width="90%"></p>
 
@@ -38,7 +38,7 @@ One main repository holds what Ultrastable is. A separate repository exists only
 | Repository | Visibility | What it holds |
 |---|---|---|
 | [ultrastable](https://github.com/ultrastable/ultrastable) | public | Everything you run or read: platform code, ultrastable.io, dashboard, doctrine, docs, the core code (workers/), the specifications (specs/), the license text (licensing/), and seed/ (the starting kit for a new system). It is a GitHub template, so "Use this template" copies it. |
-| [ops](https://github.com/ultrastable/ops) | private | The few steps only the owner can take (accounts, money, signatures), one card each. Private on purpose. |
+| [ops](https://github.com/ultrastable/ops) | private | The few steps only the owner can take (accounts, money, signatures), one card each, and the company's own papers kept out of the template (admin/). Private on purpose. |
 | [practical-solutions](https://github.com/ultrastable/practical-solutions) | public | An autonomous bright-spot finder that runs on Ultrastable. The first system built on it, in its own repository. |
 
 The organization's profile page is [.github](https://github.com/ultrastable/.github). Retired, kept only so old links work: [`workers`](https://github.com/ultrastable/workers) is now in `ultrastable`; [`spec`](https://github.com/ultrastable/spec) is now in `ultrastable`; [`license`](https://github.com/ultrastable/license) is now in `ultrastable`; [`seed`](https://github.com/ultrastable/seed) is now in `ultrastable`. Every code, specification and license repository is folded into the main one. The target set is `ultrastable`, `ops`, `practical-solutions`.

@@ -47,7 +47,7 @@ def check(root=REPO) -> list[str]:
     seen = {}
     ls = subprocess.run(["git", "-C", str(root), "ls-files"], capture_output=True, text=True)
     for f in ls.stdout.splitlines() if ls.returncode == 0 else []:
-        if f.startswith(("ip/", "research/", "kit/", "qnfo-platform-thread/", "outreach/", "business/funding/applications/")) or not f.endswith((".md", ".json", ".js", ".py", ".yml", ".toml", ".html")):
+        if f.startswith(("ip/", "research/", "kit/", "qnfo-platform-thread/", "outreach/", "instances/ultrastable/funding/applications/")) or not f.endswith((".md", ".json", ".js", ".py", ".yml", ".toml", ".html")):
             continue
         for a in re.findall(r"[A-Za-z0-9._-]+@ultrastable\.(?:io|app|net|org)", (root / f).read_text(encoding="utf-8", errors="replace")):
             seen.setdefault(a.lower(), f)

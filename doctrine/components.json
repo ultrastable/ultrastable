@@ -158,7 +158,7 @@
    "impl": [
     "file:scripts/outreach.py",
     "file:outreach/gate.json",
-    "file:business/funding/registry.json"
+    "file:instances/ultrastable/funding/registry.json"
    ],
    "proof": [
     "file:scripts/test_outreach.py"

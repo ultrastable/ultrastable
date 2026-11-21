@@ -12,7 +12,7 @@ class Base(unittest.TestCase):
     def setUp(self):
         self.tmp = pathlib.Path(tempfile.mkdtemp())
         (self.tmp / "outreach").mkdir()
-        (self.tmp / "business/funding").mkdir(parents=True)
+        (self.tmp / "funding").mkdir(parents=True)
         for f in ("gate.json", "profiles.json", "suppression.json"):
             shutil.copy(REPO / "outreach" / f, self.tmp / "outreach" / f)
         reg = {"max_age_days": 30, "deadline_warn_days": 45, "items": [
@@ -22,8 +22,8 @@ class Base(unittest.TestCase):
             {"id": "A-MAIL", "track": "A", "name": "Mail fund", "url": "https://mail.example.org/", "amount": "n/a", "deadline": None, "status": "verified", "last_verified": "2026-11-10", "notes": "x", "route": {"kind": "email", "email": "grants@mail.example.org"}},
             {"id": "A-NOFIT", "track": "A", "outreach": False, "name": "Not yet", "url": "https://nofit.example.org/", "amount": "n/a", "deadline": None, "status": "verified", "last_verified": "2026-11-10", "notes": "x"},
         ]}
-        (self.tmp / "business/funding/registry.json").write_text(json.dumps(reg))
-        o.ROOT, o.OUT, o.REG = self.tmp, self.tmp / "outreach", self.tmp / "business/funding/registry.json"
+        (self.tmp / "funding/registry.json").write_text(json.dumps(reg))
+        o.ROOT, o.OUT, o.REG = self.tmp, self.tmp / "outreach", self.tmp / "funding/registry.json"
         (o.OUT / "packets").mkdir()
         self.today = D(2026, 11, 10)
 

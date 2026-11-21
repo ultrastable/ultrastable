@@ -386,35 +386,11 @@
     },
     {
       "id": "curated-21ec008fbc",
-      "surface": "business/funding/applications/README.md",
+      "surface": "instances/ultrastable/funding/applications/README.md",
       "text": "Applicant identity (entity, email, signature, attestations, sign-in) is never invented; it comes from `applicant.json`, which the owner card fills.",
       "probe": [
         "grep:scripts/funding_packet.py::applicant.json",
         "file:scripts/test_funding_packet.py"
-      ],
-      "bound_by": "curated"
-    },
-    {
-      "id": "curated-6e8a8e6518",
-      "surface": "business/investor/README.md",
-      "text": "every claim must still trace to a source in the repository, and no number is invented.",
-      "probe": [
-        "file:outreach/facts.json",
-        "file:foundation/promote.py",
-        "file:scripts/check_business_index.py",
-        "file:scripts/check_license.py"
-      ],
-      "bound_by": "curated"
-    },
-    {
-      "id": "curated-43a588e27d",
-      "surface": "business/plan/README.md",
-      "text": "provided every claim traces to a source in the repository and no number is invented.",
-      "probe": [
-        "file:outreach/facts.json",
-        "file:foundation/promote.py",
-        "file:scripts/check_business_index.py",
-        "file:scripts/check_license.py"
       ],
       "bound_by": "curated"
     },
@@ -472,17 +448,6 @@
         "file:foundation/needsyou.py",
         "file:foundation/data/needs-you.json",
         "grep:products/gaplint/gaplint/rules.py::GL004"
-      ],
-      "bound_by": "curated"
-    },
-    {
-      "id": "curated-292e0dbf60",
-      "surface": "ip/README.md",
-      "text": "Historical working files for a patent application that was never filed.",
-      "probe": [
-        "grep:scripts/test_social.py::patent pending",
-        "file:scripts/social_lib.py",
-        "grep:.github/workflows/checks.yml::patent track dropped"
       ],
       "bound_by": "curated"
     },
@@ -1241,17 +1206,6 @@
         "file:scripts/check_memory.py",
         "grep:.github/workflows/checks.yml::check_memory.py",
         "grep:products/gaplint/gaplint/rules.py::GL009"
-      ],
-      "bound_by": "curated"
-    },
-    {
-      "id": "curated-ea9b25fae8",
-      "surface": "seed/docs/PROJECT-MEMORY.template.md",
-      "text": "Never describe the system as patent pending.",
-      "probe": [
-        "grep:scripts/test_social.py::patent pending",
-        "file:scripts/social_lib.py",
-        "grep:.github/workflows/checks.yml::patent track dropped"
       ],
       "bound_by": "curated"
     },
@@ -2541,9 +2495,9 @@
     {
       "id": "cited-7bbdfa5fa2",
       "surface": "seed/agents/roles/funding-manager.md",
-      "text": "1. Read `business/funding/registry.json`. Every row has a status (verified, secondary, unverified). Read unverified and stale rows at their",
+      "text": "1. Read `funding/registry.json`. Every row has a status (verified, secondary, unverified). Read unverified and stale rows at their",
       "probe": [
-        "file:business/funding/registry.json"
+        "file:seed/funding/registry.template.json"
       ],
       "bound_by": "cited"
     },
@@ -2586,25 +2540,6 @@
         "file:foundation/growth.py",
         "grep:.github/workflows/checks.yml::foundation[ .]growth\\b",
         "grep:.github/workflows/checks.yml::foundation[ .]growth\\b"
-      ],
-      "bound_by": "cited"
-    },
-    {
-      "id": "cited-3e0accfbbd",
-      "surface": "seed/docs/PROJECT-MEMORY.template.md",
-      "text": "- Main repo `ultrastable/ultrastable` (private) holds the unified layout, archived patent drafts (`ip/`, superseded, never filed), business",
-      "probe": [
-        "file:agents/SELF-AWARENESS.md",
-        "file:docs/BOOTSTRAP-GAPS.md"
-      ],
-      "bound_by": "cited"
-    },
-    {
-      "id": "cited-a76490ac1d",
-      "surface": "seed/docs/PROJECT-MEMORY.template.md",
-      "text": "- Funding: unfunded; dual track (open source vs commercial) in `docs/funding/` and `business/plan/05-funding.md`. Big credit tiers need an",
-      "probe": [
-        "file:business/plan/05-funding.md"
       ],
       "bound_by": "cited"
     },
