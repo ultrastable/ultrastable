@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-21-a-wait-on-a-person-is-a-failure-mode",
+  "kind": "decision",
+  "date": "2026-11-21",
+  "title": "A wait on a person is a failure mode",
+  "body": "Owner 2026-11-21: nothing may wait on the owner; every input from a code agent or person is taken as given and carried through implement, merge, deploy by server-side loops. Registered as fm-waiting-on-person with detector waiting-on-person. Session: session_0156nqDv6NMcEmv9wqYJK3XS",
+  "probe": "file:doctrine/detectors.json",
+  "session": "session_0156nqDv6NMcEmv9wqYJK3XS"
+ },
+ "kind": "decision",
+ "title": "A wait on a person is a failure mode",
+ "session": "session_0156nqDv6NMcEmv9wqYJK3XS"
+}
