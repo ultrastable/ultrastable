@@ -1,0 +1,190 @@
+{
+ "at": "2026-11-21T11:09:16Z",
+ "days": 730,
+ "drills": {
+  "actions-billing": {
+   "capacity": 0.5,
+   "evidence": "second route present: foundation/checksrun.py, seed/worker/src/sweeper.js, seed/worker/src/handoff.js; checksrun steps: 41",
+   "exercised": false,
+   "mode": "degrades",
+   "recover": true
+  },
+  "actions-outage": {
+   "capacity": 0.6,
+   "evidence": "silent 3.5h: claude-routine takes over; silent 12.5h: claude-routine, github-actions takes over; independent second clock: open",
+   "exercised": true,
+   "mode": "recovers",
+   "recover": true
+  },
+  "ai-quota": {
+   "capacity": 0.6,
+   "evidence": "over allowance: frozen (0 calls a tick); near it: lean; next day: normal",
+   "exercised": true,
+   "mode": "recovers",
+   "recover": true,
+   "soft": false
+  },
+  "cloudflare-incident": {
+   "capacity": 0.3,
+   "evidence": "Cloudflare-hosted loops and deploys pause; claude-routine, github-actions keeps the checks and merges going (declared)",
+   "exercised": false,
+   "mode": "recovers",
+   "recover": true
+  },
+  "cost-spike": {
+   "capacity": 0.6,
+   "evidence": "over allowance: frozen (0 calls a tick); near it: lean; next day: normal",
+   "exercised": true,
+   "mode": "recovers",
+   "recover": true,
+   "soft": false
+  },
+  "dependency-break": {
+   "capacity": 0.9,
+   "evidence": "every ecosystem is advanced by Dependabot: github-actions 1, npm 4",
+   "exercised": true,
+   "mode": "recovers",
+   "recover": true
+  },
+  "domain-renewal": {
+   "capacity": 0.95,
+   "date": "2027-11-10",
+   "evidence": "domains renew auto, expire 2027-11-10; payment method: gate (identity)",
+   "exercised": false,
+   "gate": true,
+   "mode": "recovers",
+   "recover": true
+  },
+  "github-down": {
+   "capacity": 0.0,
+   "evidence": "while GitHub is down nothing merges anywhere; the loops resume from the repository when it returns (declared, not exercised)",
+   "exercised": false,
+   "mode": "recovers",
+   "recover": true
+  },
+  "merge-conflict": {
+   "capacity": 0.95,
+   "evidence": "resolver exit 0; both sides kept: True",
+   "exercised": true,
+   "mode": "recovers",
+   "recover": true
+  },
+  "model-retirement": {
+   "capacity": 0.9,
+   "evidence": "8 vendor-wide retirements through agents.complete: 8 still produced a change, 1 on a healed rung; modelwatch.observed turned 1 recorded 410s into catalog retirements; watchdog runs it: True",
+   "exercised": true,
+   "mode": "recovers",
+   "recover": true
+  },
+  "node-eol": {
+   "capacity": 0.95,
+   "date": "2028-04-30",
+   "evidence": "pins: 24 x11; earliest end of maintenance 2028-04-30; automatic rewrite to 24 works: True",
+   "exercised": true,
+   "mode": "recovers",
+   "recover": true
+  },
+  "scheduler-silent": {
+   "capacity": 0.6,
+   "evidence": "silent 3.5h: claude-routine takes over; silent 12.5h: claude-routine, github-actions takes over; independent second clock: open",
+   "exercised": true,
+   "mode": "recovers",
+   "recover": true
+  },
+  "token-revoked": {
+   "capacity": 0.6,
+   "evidence": "expiring detected: expiring; revoked detected: invalid; renewal of the credentials the loops use: ['auto', 'auto']; revocation needs one sign-in through /connect, the per-run Actions token keeps merging meanwhile",
+   "exercised": true,
+   "gate": true,
+   "mode": "degrades",
+   "recover": false
+  }
+ },
+ "findings": [
+  {
+   "evidence": "while GitHub is down nothing merges anywhere; the loops resume from the repository when it returns (declared, not exercised)",
+   "id": "github-down",
+   "why": "its recovery is declared but no drill exercises code"
+  },
+  {
+   "evidence": "Cloudflare-hosted loops and deploys pause; claude-routine, github-actions keeps the checks and merges going (declared)",
+   "id": "cloudflare-incident",
+   "why": "its recovery is declared but no drill exercises code"
+  },
+  {
+   "evidence": "second route present: foundation/checksrun.py, seed/worker/src/sweeper.js, seed/worker/src/handoff.js; checksrun steps: 41",
+   "id": "actions-billing",
+   "why": "its recovery is declared but no drill exercises code"
+  },
+  {
+   "evidence": "expiring detected: expiring; revoked detected: invalid; renewal of the credentials the loops use: ['auto', 'auto']; revocation needs one sign-in through /connect, the per-run Actions token keeps merging meanwhile",
+   "id": "token-revoked",
+   "why": "capacity stays at 0.6 after it, for good"
+  },
+  {
+   "evidence": "domains renew auto, expire 2027-11-10; payment method: gate (identity)",
+   "id": "domain-renewal",
+   "why": "its recovery is declared but no drill exercises code"
+  }
+ ],
+ "horizon": {
+  "capacity_year_p50": 0.683,
+  "killers": {
+   "token-revoked": 19
+  },
+  "p10": 730,
+  "p50": 730,
+  "p90": 730,
+  "survive_year": 0.995
+ },
+ "marker": "YEAR-SIM-1",
+ "meets_target": true,
+ "release_horizon_p10": 730,
+ "runs": 200,
+ "self_commits": {
+  "all": 9,
+  "latest": [
+   {
+    "lines": 4,
+    "sha": "d02d20a4dbe3",
+    "title": "Q-SELF-unused-import-scripts-smoke-probe-py: remove unused import json from scripts/smoke_probe.py ("
+   },
+   {
+    "lines": 0,
+    "sha": "c94a91abbb26",
+    "title": "Port EDIT blocks and file context to the Worker executor (#Q-PATCH-EDIT-WORKER) (#836)"
+   },
+   {
+    "lines": 2,
+    "sha": "a1adf87224ae",
+    "title": "Q-SELF-unused-import-scripts-smoke-issues-py: remove unused import os, subprocess from scripts/smoke"
+   },
+   {
+    "lines": 1,
+    "sha": "cd2e26a9658a",
+    "title": "Q-SELF-unused-import-foundation-clockwork-py: remove unused import Path from foundation/clockwork.py"
+   },
+   {
+    "lines": 2,
+    "sha": "970134c47d88",
+    "title": "Q-SELF-unused-import-foundation-doctrine-py: remove unused import fnmatch from foundation/doctrine.p"
+   }
+  ],
+  "substantive": 3,
+  "window_days": 14
+ },
+ "self_rate_per_day": 0.214,
+ "self_releases_year_p50": 53.3,
+ "strict": {
+  "capacity_year_p50": 0.479,
+  "killers": {
+   "domain-renewal": 74,
+   "token-revoked": 126
+  },
+  "p10": 50,
+  "p50": 233,
+  "p90": 354,
+  "survive_year": 0.0
+ },
+ "target_days": 365
+}

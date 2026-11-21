@@ -299,6 +299,107 @@
    "root_cause": "a wait on a person entered the system as a document, card, report or unmerged PR",
    "owner": "operations",
    "remedy": "Take the input as given: build the consumer, let the lane merge and deploy, or reduce it to one identity-bound gate with a default in effect."
+  },
+  {
+   "id": "yearsim-model-retirement",
+   "failure_mode": "fm-model-retired",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "yearsim",
+    "--probe",
+    "model-retirement"
+   ],
+   "timeout": 120,
+   "root_cause": "source names a model id after the provider retired it",
+   "owner": "operations",
+   "remedy": "Run python3 -m foundation yearsim --probe model-retirement, read the drill evidence, fix the recovery code it exercises (YEAR-SIM-1), add a regression test."
+  },
+  {
+   "id": "yearsim-merge-conflict",
+   "failure_mode": "fm-merge-conflict-stuck",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "yearsim",
+    "--probe",
+    "merge-conflict"
+   ],
+   "timeout": 120,
+   "root_cause": "generated and append-only files edited on both sides",
+   "owner": "operations",
+   "remedy": "Run python3 -m foundation yearsim --probe merge-conflict, read the drill evidence, fix the recovery code it exercises (YEAR-SIM-1), add a regression test."
+  },
+  {
+   "id": "yearsim-ai-quota",
+   "failure_mode": "fm-ai-quota-halt",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "yearsim",
+    "--probe",
+    "ai-quota"
+   ],
+   "timeout": 120,
+   "root_cause": "a hard cap instead of a soft throttle",
+   "owner": "operations",
+   "remedy": "Run python3 -m foundation yearsim --probe ai-quota, read the drill evidence, fix the recovery code it exercises (YEAR-SIM-1), add a regression test."
+  },
+  {
+   "id": "yearsim-dependency-break",
+   "failure_mode": "fm-dependency-rot",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "yearsim",
+    "--probe",
+    "dependency-break"
+   ],
+   "timeout": 120,
+   "root_cause": "no loop updates dependencies",
+   "owner": "operations",
+   "remedy": "Run python3 -m foundation yearsim --probe dependency-break, read the drill evidence, fix the recovery code it exercises (YEAR-SIM-1), add a regression test."
+  },
+  {
+   "id": "yearsim-scheduler-silent",
+   "failure_mode": "fm-scheduler-skips",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "yearsim",
+    "--probe",
+    "scheduler-silent"
+   ],
+   "timeout": 120,
+   "root_cause": "one clock with no second host",
+   "owner": "operations",
+   "remedy": "Run python3 -m foundation yearsim --probe scheduler-silent, read the drill evidence, fix the recovery code it exercises (YEAR-SIM-1), add a regression test."
+  },
+  {
+   "id": "saydo-wellformed",
+   "failure_mode": "fm-say-do-gap",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "saydo",
+    "--check"
+   ],
+   "timeout": 120,
+   "root_cause": "the say-do module, its data or its executor guard is missing or stale",
+   "owner": "operations",
+   "remedy": "Run python3 -m foundation saydo --run --apply, then --check; restore the SAY-DO-1 guard in foundation/executor.py if it is gone."
   }
  ]
 }

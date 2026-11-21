@@ -123,7 +123,7 @@ export default {
   {
    "claim": "The slow loop reads the same variables every tick, and when one has been out of bounds for two ticks in a row it takes one discrete step on that variable's ladder, keeps the step only if the variable comes back, and otherwise undoes it and takes the next.",
    "detail": "",
-   "how": "json:doctrine/ultrastability.json::patience_ticks==2 + grep:foundation/ultrastability.py::revert_to=pending + grep:foundation/ultrastability.py::verdict = \"kept\"",
+   "how": "json:doctrine/ultrastability.json::patience_ticks==2 + grep:foundation/ultrastability.py::revert_to=pending + grep:foundation/ultrastability.py::return \"kept\"",
    "id": "how-ultrastable-second-order",
    "kind": "claim",
    "pass": true,

@@ -23,7 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
-        with: {node-version: 22}
+        with: {node-version: 24}
       - name: Site tests
         run: bash scripts/site_tests.sh  # GATE-PARITY-1: the same gate runs in checks
       - name: Require credentials

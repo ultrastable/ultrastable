@@ -48,7 +48,7 @@ def readings(root=REPO) -> dict:
         drift = None
     cost = fresh_cost(root, c["cost"])
     from . import resilience, uiux
-    return {"yearsim.horizon_p10": yearsim_reading(root), "criticality.self_share": c.get("self_share"),
+    return {"yearsim.horizon_p10": yearsim_reading(root), "yearsim.self_rate": yearsim_field(root, "self_rate_per_day"),
             "criticality.cost": cost, "criticality.verified_share": round(verified, 3), "claims.drift": drift, "criticality.k": c["k"], "resilience.stalled": resilience.stalled_reading(root),
             "uiux.findings": uiux.status_reading(root, "findings_blocking"), "uiux.happy_paths": uiux.status_reading(root, "happy_path_pass_share")}
 
@@ -64,6 +64,16 @@ def yearsim_reading(root, now=None, max_age_days=3):
     if ((now or datetime.now(timezone.utc)) - at).total_seconds() > max_age_days * 86400:
         return None
     return j.get("horizon", {}).get("p10")
+
+
+def yearsim_field(root, key, now=None, max_age_days=3):
+    p = Path(root) / "ops/yearsim.json"
+    try:
+        j = json.loads(p.read_text(encoding="utf-8"))
+        at = datetime.fromisoformat(j["at"].replace("Z", "+00:00"))
+    except (OSError, ValueError, KeyError):
+        return None
+    return j.get(key) if ((now or datetime.now(timezone.utc)) - at).total_seconds() <= max_age_days * 86400 else None
 
 
 def fresh_cost(root, value, now=None, max_age_days=3):
@@ -427,7 +437,7 @@ def check(root=REPO) -> list[str]:
 
 
 def readings_keys():
-    return ("yearsim.horizon_p10", "criticality.self_share", "criticality.cost", "criticality.verified_share", "claims.drift", "criticality.k", "resilience.stalled", "uiux.findings", "uiux.happy_paths")
+    return ("yearsim.horizon_p10", "yearsim.self_rate", "criticality.cost", "criticality.verified_share", "claims.drift", "criticality.k", "resilience.stalled", "uiux.findings", "uiux.happy_paths")
 
 
 def data(root=REPO) -> dict:

@@ -21,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 22 }
+        with: { node-version: 24 }
       - run: node --test workers/core/deploygate/index.test.js
       - name: build
         run: npx --yes esbuild@0.24.0 workers/core/deploygate/worker.js --bundle --format=esm --platform=neutral --minify --outfile=.build-gateway.js

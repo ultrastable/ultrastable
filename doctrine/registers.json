@@ -301,6 +301,78 @@
    "status": "controlled",
    "cadence_ticks": 1,
    "probe": "grep:seed/worker/src/lane.js::a draft with finished work is marked ready by the lane"
+  },
+  {
+   "id": "fm-model-retired",
+   "trigger": "the hosted provider retires the models a rung names",
+   "symptom": "the executor's author ladder answers 410 and loses rungs",
+   "blast_radius": "code-agent capacity",
+   "detection": "python3 -m foundation yearsim --probe model-retirement",
+   "root_cause": "source names a model id after the provider retired it",
+   "remediation": "MODEL-HEAL-1: the rung runs the catalog successor and records the 410; modelwatch --observed --apply rewrites source",
+   "status": "controlled",
+   "cadence_ticks": 1,
+   "probe": "grep:tests/foundation/test_yearsim.py::def test_exercised_drills_recover"
+  },
+  {
+   "id": "fm-merge-conflict-stuck",
+   "trigger": "two changes collide in a generated or append-only file",
+   "symptom": "a green PR cannot merge",
+   "blast_radius": "merge lane throughput",
+   "detection": "python3 -m foundation yearsim --probe merge-conflict",
+   "root_cause": "generated and append-only files edited on both sides",
+   "remediation": "scripts/resolve_generated.py keeps both sides and regenerates from main",
+   "status": "controlled",
+   "cadence_ticks": 1,
+   "probe": "grep:tests/foundation/test_yearsim.py::def test_exercised_drills_recover"
+  },
+  {
+   "id": "fm-ai-quota-halt",
+   "trigger": "the day's AI allowance or a cost spike is reached",
+   "symptom": "model calls stop for the rest of the day",
+   "blast_radius": "every loop that calls a model",
+   "detection": "python3 -m foundation yearsim --probe ai-quota",
+   "root_cause": "a hard cap instead of a soft throttle",
+   "remediation": "the budget governor steps normal, lean, frozen and back the next day",
+   "status": "controlled",
+   "cadence_ticks": 1,
+   "probe": "grep:tests/foundation/test_yearsim.py::def test_exercised_drills_recover"
+  },
+  {
+   "id": "fm-dependency-rot",
+   "trigger": "an action, npm or pip dependency is deprecated or breaks",
+   "symptom": "CI or a deploy fails on an old version",
+   "blast_radius": "every workflow and worker",
+   "detection": "python3 -m foundation yearsim --probe dependency-break",
+   "root_cause": "no loop updates dependencies",
+   "remediation": "Dependabot on every ecosystem plus the sweeper merging green dependabot/ branches (DEP-LOOP-1)",
+   "status": "controlled",
+   "cadence_ticks": 1,
+   "probe": "grep:tests/foundation/test_yearsim.py::def test_exercised_drills_recover"
+  },
+  {
+   "id": "fm-scheduler-skips",
+   "trigger": "GitHub's scheduler or Actions skips runs",
+   "symptom": "a clock goes silent",
+   "blast_radius": "every scheduled loop",
+   "detection": "python3 -m foundation yearsim --probe scheduler-silent",
+   "root_cause": "one clock with no second host",
+   "remediation": "foundation/failover.decide hands the loops to another host past its takeover threshold",
+   "status": "controlled",
+   "cadence_ticks": 1,
+   "probe": "grep:tests/foundation/test_yearsim.py::def test_exercised_drills_recover"
+  },
+  {
+   "id": "fm-say-do-gap",
+   "trigger": "a rule, claim, change or target the system states is not what its code does",
+   "symptom": "words and code drift apart",
+   "blast_radius": "trust in every surface",
+   "detection": "python3 -m foundation saydo --run",
+   "root_cause": "a statement added or changed without the code or probe that makes it true",
+   "remediation": "SAY-DO-1 files one Q-SAYDO item per gap, closed only by its probe; the executor refuses a change that names an item and touches no code",
+   "status": "controlled",
+   "cadence_ticks": 1,
+   "probe": "grep:tests/foundation/test_saydo.py::def test_probe_closes_on_match"
   }
  ],
  "controls": [

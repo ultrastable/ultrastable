@@ -81,7 +81,10 @@ def origin_of(text: str | None, c: dict | None = None) -> str:
         return "unknown"
     sr = (c or cfg()).get("self_reference", {})
     mk = sr.get("markers", {})
-    if mk.get("executor") and mk["executor"] in text:
+    if mk.get("executor_re"):  # ORIGIN-MARKER-1: the executor writes the marker at the start of a line with its run time; prose that mentions it is not a run
+        if re.search(mk["executor_re"], text):
+            return "executor"
+    elif mk.get("executor") and mk["executor"] in text:
         return "executor"
     m = re.search(mk.get("handoff_agent", r"(?m)^agent:\s*(\S+)"), text)
     if m and m.group(1).lower().startswith(tuple(sr.get("self_agents_prefixes", []))):

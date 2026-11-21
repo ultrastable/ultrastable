@@ -4,7 +4,7 @@
 // Copyright (c) Ultrastable
 // LIVE-FRESH-1: the public changelog is read from merged pull requests refreshed by the tick (one GitHub call per pass), not from a daily snapshot.
 const API = 'https://api.github.com';
-const origin = p => String((p.body || '')).includes('Executor run') ? 'unattended executor' : /^(dependabot|ultrastable-)/.test(p.head && p.head.ref || '') ? 'bot' : /^(agent|claude)\//.test(p.head && p.head.ref || '') ? 'agent session' : 'other';
+const origin = p => /^Executor run \d{4}-\d{2}-\d{2}T/m.test(String(p.body || '')) ? 'unattended executor' : /^(dependabot|ultrastable-)/.test(p.head && p.head.ref || '') ? 'bot' : /^(agent|claude)\//.test(p.head && p.head.ref || '') ? 'agent session' : 'other';
 
 export async function refreshLiveChanges({ db, token, repo, fetch: f = fetch, now = Date.now() }) {
   if (!token || !repo) return { status: 'no-token' };

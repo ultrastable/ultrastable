@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261121-2",
+  "title": "OL-20261121-2: Server ships 0.214 substantive changes a day against 1",
+  "body": "**Owner:** executor\n**Trigger:** watchdog run\n**Done check:** cmd:python3 -m foundation saydo --probe year:ships-daily\n**Status:** open\n\nQ-SAYDO-year-ships-daily stays open; essential variable self_shipping steps chain.max_runs_per_day then the self-shipping priority knob.",
+  "labels": [
+    "role:executor",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

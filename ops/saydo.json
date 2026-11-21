@@ -1,0 +1,661 @@
+{
+ "at": "2026-11-21T11:10:28Z",
+ "gaps": 3,
+ "match_share": 0.993,
+ "sources": {
+  "changes": [
+   {
+    "did": [
+     "agents/scoreboard.py",
+     "scripts/smoke_probe.py"
+    ],
+    "id": "d02d20a4dbe3",
+    "ok": true,
+    "said": "Q-SELF-unused-import-scripts-smoke-probe-py: remove unused import json from scripts/smoke_probe.py (MECH-FIX-1, computed"
+   },
+   {
+    "did": [],
+    "id": "c94a91abbb26",
+    "ok": false,
+    "said": "Port EDIT blocks and file context to the Worker executor (#Q-PATCH-EDIT-WORKER) (#836)"
+   },
+   {
+    "did": [
+     "scripts/smoke_issues.py"
+    ],
+    "id": "a1adf87224ae",
+    "ok": true,
+    "said": "Q-SELF-unused-import-scripts-smoke-issues-py: remove unused import os, subprocess from scripts/smoke_issues.py (MECH-FIX"
+   },
+   {
+    "did": [
+     "foundation/clockwork.py"
+    ],
+    "id": "cd2e26a9658a",
+    "ok": true,
+    "said": "Q-SELF-unused-import-foundation-clockwork-py: remove unused import Path from foundation/clockwork.py (MECH-FIX-1, comput"
+   },
+   {
+    "did": [
+     "foundation/doctrine.py"
+    ],
+    "id": "970134c47d88",
+    "ok": true,
+    "said": "Q-SELF-unused-import-foundation-doctrine-py: remove unused import fnmatch from foundation/doctrine.py (MECH-FIX-1, compu"
+   },
+   {
+    "did": [
+     "doctrine/decision-ledger.json",
+     "ultrastable/practical-solutions/css/style.css",
+     "ultrastable/practical-solutions/js/main.js",
+     "ultrastable/practical-solutions/js/main.test.js"
+    ],
+    "id": "263f815b6417",
+    "ok": true,
+    "said": "Add a CSS consumer in style.css and update a JS file to consume it (#Q-CIFAIL-practical-solutions-deploy-tenant) (#595)"
+   },
+   {
+    "did": [
+     "doctrine/decision-ledger.json",
+     "doctrine/flows-external.json"
+    ],
+    "id": "d4bb368da0cf",
+    "ok": true,
+    "said": "add flows-external.json to declare loops for the resume and job-search system (#Q-FLOW-RESUME-JOBS) (#527)"
+   },
+   {
+    "did": [
+     "doctrine/decision-ledger.json",
+     "foundation/doers/__init__.py",
+     "foundation/doers/q_tick.py",
+     "tests/test_q_tick_doer.py"
+    ],
+    "id": "5e5b31e4740d",
+    "ok": true,
+    "said": "Add a self-contained Q-TICK doer module that closes Q-TICK items from their own tick records, registered shape for confi"
+   },
+   {
+    "did": [
+     "brand/public-profile/profile/proof.js",
+     "doctrine/decision-ledger.json",
+     "tests/proof.test.js"
+    ],
+    "id": "476b12d061c2",
+    "ok": true,
+    "said": "Update ultrastable.io/proof to serve a product-side feed (#Q-10) (#268)"
+   }
+  ],
+  "claims": [
+   {
+    "drift": 0,
+    "id": "claims-total",
+    "ok": true,
+    "total": 368
+   }
+  ],
+  "loops": [
+   {
+    "detail": "0 of 14 second-order steps kept in 14 days",
+    "id": "second-loop-kept",
+    "judged": 14,
+    "kept": 0,
+    "ok": false
+   }
+  ],
+  "rules": [
+   {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "VISION-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "DRAIN-ZERO-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": [
+     "python3 -m foundation lanewatch --check: lanewatch: gh failed: OST /repos/{owner}/{repo}/pulls/{n}/ccr/comments/{comment_id}/resolve (or /unresolve), PUT or DELETE /repos/{owner}/{repo}/pulls/{n}/ccr/auto_merge, POST /repos/{owner}/{repo}/pu"
+    ]
+   },
+   {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "INTERVIEW-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "SESSION-CLOSE-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "COMPLETE-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "AUTO-SHIP-CLEAN-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "DRAIN-ALL-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "STRANGE-LOOP-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "CLOCKWORK-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [
+     "_shared/flow-registry.js"
+    ],
+    "failing": [],
+    "id": "FLOW-DIRECTIVE-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "GROWTH-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "INSIGHT-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "CONSOLE-AGENT-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "SCOUT-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "RND-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "AUTO-IMPROVE-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "FAILURE-RESOLVE-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "CRITICALITY-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "SELF-REFERENCE-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "IGNORANCE-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "SERVER-OWNS-LOOPS-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "CODE-AGENT-SOP-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "POINT-AND-CLICK-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "CONNECT-LINK-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "META-SIGNAL-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "DESIGN-LANGUAGE-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "HALT-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "PROVENANCE-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "USER-BACKEND-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "CLAIMS-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "WORDS-MATCH-CODE-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "UIUX-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "TENANT-SYNC-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "AUDIT-CHAIN-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "FRONT-BACKED-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "DECISIONS-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "GOALS-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 0,
+    "external": [
+     "tools/connect.mjs"
+    ],
+    "failing": [],
+    "id": "CONNECT-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "RESEARCH-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "DOC-CONSUMED-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "CLOSED-LOOP-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "OUTREACH-INTRO-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "PROMOTE-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "BLINDSPOT-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "UNKNOWNS-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 0,
+    "external": [
+     "docs/DECISIONS.json",
+     "docs/INGEST-LOG.json",
+     "scripts/check_decisions.py",
+     "docs/SURFACES.json",
+     "scripts/audit_surfaces.py"
+    ],
+    "failing": [],
+    "id": "INFO-USEFUL-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "CLOSED-LOOP-AXIOM",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "BOUNDARY-AXIOM",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "AGENT-CONSUMPTION",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 2,
+    "external": [],
+    "failing": [],
+    "id": "TERMS-CROSSWALK",
+    "missing": [],
+    "ok": true,
+    "unmeasured": [
+     "python3 -m foundation lanewatch --check: lanewatch: gh failed: OST /repos/{owner}/{repo}/pulls/{n}/ccr/comments/{comment_id}/resolve (or /unresolve), PUT or DELETE /repos/{owner}/{repo}/pulls/{n}/ccr/auto_merge, POST /repos/{owner}/{repo}/pu"
+    ]
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "CODE-ONLY-ORDER",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "PROGRESS-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "RUNWAY-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "DISPOSE-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "NO-OPEN-ITEMS-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "UNATTENDED-365",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   }
+  ],
+  "year": [
+   {
+    "detail": "simulated horizon p10 730 days against 365",
+    "id": "unattended-year",
+    "ok": true
+   },
+   {
+    "detail": "0.214 substantive server-originated changes a day (target 1)",
+    "id": "ships-daily",
+    "ok": false
+   }
+  ]
+ },
+ "summary": {
+  "changes": {
+   "gaps": 1,
+   "total": 9
+  },
+  "claims": {
+   "gaps": 0,
+   "total": 368
+  },
+  "loops": {
+   "gaps": 1,
+   "total": 1
+  },
+  "rules": {
+   "gaps": 0,
+   "total": 56
+  },
+  "year": {
+   "gaps": 1,
+   "total": 2
+  }
+ },
+ "total": 436
+}

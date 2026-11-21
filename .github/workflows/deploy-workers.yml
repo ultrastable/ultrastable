@@ -30,7 +30,7 @@ jobs:
       - uses: actions/checkout@v7
         with: {fetch-depth: 200}  # DEPLOY-ORIGIN-2: the origin of a deploy is read over the commits it carried
       - uses: actions/setup-node@v7
-        with: {node-version: 22}
+        with: {node-version: 24}
       - name: Worker tests
         run: node --test --no-warnings seed/worker/test/*.test.js
       - name: Require credentials

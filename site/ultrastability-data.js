@@ -141,15 +141,15 @@ export default {
      ],
      "id": "self_shipping",
      "max": null,
-     "min": 0.2,
+     "min": 1.0,
      "name": "Self-originated releases",
      "steps": [
       "wake the executor more often",
       "shift executor capacity to its own repair (raise the self-shipping weight)",
       "restructure: find why the executor's items fail and change its route (model rung, patch format, item size)"
      ],
-     "unit": "share of verified deploys the server originated",
-     "why": "The system is autonomous only if the server itself originates and ships substantive changes (SELF-REFERENCE-1). Deploys driven by an outside session raise k, never this."
+     "unit": "substantive server-originated changes a day (14-day mean, at least 10 changed code lines each)",
+     "why": "Rowan's biggest goal: the server itself originates and ships substantive changes daily (SELF-REFERENCE-1). Counted from git by foundation/yearsim.py self_commits: executor or own-agent commits on main with at least 10 changed lines of code outside ledgers and generated data. A one-line import removal is upkeep, not a release (NO-TRIVIAL-COMMITS)."
     }
    ],
    "what": "Ultrastable running on itself (tenant 0)"
@@ -183,7 +183,7 @@ export default {
      "min": 0,
      "name": "Spend against the declared monthly budget",
      "steps": [
-      "lower the per-app daily request cap (soft throttle, never a stop)",
+      "lower the per-app daily request cap (a soft throttle)",
       "iterate: cut the spend source",
       "retire: stop spending"
      ],

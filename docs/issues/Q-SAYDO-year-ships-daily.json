@@ -1,0 +1,12 @@
+{
+  "id": "Q-SAYDO-year-ships-daily",
+  "title": "Q-SAYDO-year-ships-daily: says ships-daily, does not do it",
+  "body": "**Owner:** executor\n**Trigger:** say-do check (SAY-DO-1) on the watchdog run\n**Done check:** cmd:python3 -m foundation saydo --probe year:ships-daily\n**Status:** open\n\nThe system states `ships-daily` (year) and its code does not do it: 0.214 substantive server-originated changes a day (target 1)\n\nChange the code to do what the statement says, or change the statement to what the code does; never weaken the probe.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation saydo --probe year:ships-daily` exits 0.\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "say-do"
+  ],
+  "milestone": "Now",
+  "workstream": "Ultrastability"
+}
