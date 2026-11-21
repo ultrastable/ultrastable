@@ -49,6 +49,8 @@ jobs:
             git fetch -q origin main && PR_BODY="Executor run (dispatched checks)" python3 -m foundation substance --gate --executor --range "origin/main...HEAD"; fi
       - name: Workflow minute-budget lint (cheap, runs first)
         run: python3 scripts/lint_workflows.py
+      - name: Public docs complete and in sync with the code (DOCS-SYNC-1)
+        run: python3 scripts/check_readmes.py && python3 scripts/check_readmes.py --root seed
       - name: Workflow YAML parses
         run: python3 -c "import yaml,glob; [yaml.safe_load(open(f)) for f in glob.glob('.github/workflows/*.yml')]"
       - name: Outreach engine tests

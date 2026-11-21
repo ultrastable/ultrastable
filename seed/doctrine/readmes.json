@@ -1,0 +1,6 @@
+{
+  "_doc": "DOCS-SYNC-1 (Rowan, 2026-11-21): every public document of this system is complete and matches its code. Consumer: scripts/check_readmes.py. Add each public page or README with its required sections; set site_host and site_globs to your site.",
+  "site_host": "",
+  "site_globs": [],
+  "documents": [{"path": "README.md", "sections": []}]
+}

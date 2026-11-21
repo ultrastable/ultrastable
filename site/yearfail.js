@@ -16,6 +16,7 @@ export function yearFailPage(shell, Y = YEARFAIL) {
 
 export async function yearFailRoutes(u, env, shell, HTML) {
   const p = u.pathname.replace(/\/$/, "");
+  if (p === "/year") return Response.redirect(u.origin + "/year/failures", 301);  // DOCS-SYNC-1: /trends and docs link /year; it was a 404
   if (p !== "/year/failures" && p !== "/year/failures.json") return null;
   if (p === "/year/failures.json") return new Response(JSON.stringify(YEARFAIL), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } });
   return new Response(yearFailPage(shell), { headers: { ...HTML, "Cache-Control": "public, max-age=300" } });

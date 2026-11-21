@@ -1,0 +1,36 @@
+{
+  "_doc": "DOCS-SYNC-1 (Rowan, 2026-11-21): every public document is complete and matches the code; front end matches back end in every system and tenant. Consumer: scripts/check_readmes.py (checks workflow; seed/scripts/check_readmes.py in every seeded system).",
+  "site_host": "ultrastable.io",
+  "site_globs": [
+    "site/*.js"
+  ],
+  "documents": [
+    {
+      "path": "README.md",
+      "sections": [
+        "Why Ultrastable exists",
+        "Vision",
+        "The name: Ashby's ultrastable system",
+        "How it works",
+        "Architecture",
+        "See it live",
+        "Getting started",
+        "Repository map",
+        "Status",
+        "Ultrastable License",
+        "Contributing and security"
+      ]
+    },
+    {
+      "path": "seed/README.md",
+      "sections": []
+    }
+  ],
+  "dynamic_prefixes": [
+    "/assets",
+    "/s/",
+    "/for/",
+    "/showcase/",
+    "/digest/"
+  ]
+}

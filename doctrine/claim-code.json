@@ -172,6 +172,15 @@
         "file": "foundation/verify.py",
         "contains": "tied_to_code"
       }
+    },
+    {
+      "id": "readme-plus-share",
+      "source": "README.md",
+      "quote": "A protected share of capacity (20% by default)",
+      "probe": {
+        "file": "seed/ultrastable.json",
+        "contains": "\"plus_share\": 0.2"
+      }
     }
   ],
   "baseline": [
