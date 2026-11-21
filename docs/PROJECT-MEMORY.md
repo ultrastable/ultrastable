@@ -10,6 +10,9 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-21
 
+- 2026-11-21: Deploy: print deploy warnings; an unreadable zone route list is a warning (#1875)
+- 2026-11-21: SEED-ADMIT-1: admit every seed through the year simulation before it counts as launched (#1856)
+- 2026-11-21: Deployer: tenant host route wins over a wildcard zone route (TENANT-ROUTE-1) (#1859)
 - 2026-11-21: SEED-LAUNCH-1: every seed is built, deployed, year-gated (horizon p10 >= 365) and probed live by the system; seed-launch.yml runs a fresh-seed e2e and every seeded repo weekly on the ultrastable account; standalone seed made self-contained (#1855)
 - 2026-11-21: intent yield, directives probed (INTENT-YIELD-1) [skip ci]
 - 2026-11-21: Intent Yield: owner directives kept per unit of attention, daily and unattended (#1853)
