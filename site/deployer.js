@@ -111,6 +111,14 @@ export async function internalDeploy(request, env, fetcher) {
     if (!up.success) return J({ ok: false, error: "upload: " + JSON.stringify(up.errors || []).slice(0, 400) }, 502);
     // WORKERS-DEV-1: a new script uploaded by API has no workers.dev route until it is turned on; a non-public topology worker is served there.
     if (b.workers_dev === true) { const sd = await api("POST", `/accounts/${A}/workers/scripts/${b.name}/subdomain`, JSON.stringify({ enabled: true, previews_enabled: false }), { "content-type": "application/json" }); if (!sd.success) return J({ ok: false, error: "workers.dev: " + JSON.stringify(sd.errors || []).slice(0, 300) }, 502); }
+    // TENANT-DOMAIN-1: a tenant app's custom domains (topology `routes`) are attached on every deploy; idempotent, zone found from the hostname.
+    for (const host of Array.isArray(b.domains) ? b.domains : []) {
+      const zones = await api("GET", `/zones?account.id=${A}&per_page=50`);
+      const zone = ((zones && zones.result) || []).find(z => host === z.name || host.endsWith("." + z.name));
+      if (!zone) return J({ ok: false, error: "custom domain: no zone in this account for " + host }, 502);
+      const dm = await api("PUT", `/accounts/${A}/workers/domains`, JSON.stringify({ hostname: host, service: b.name, zone_id: zone.id, environment: "production" }), { "content-type": "application/json" });
+      if (!dm.success) return J({ ok: false, error: "custom domain " + host + ": " + JSON.stringify(dm.errors || []).slice(0, 300) }, 502);
+    }
     if (Array.isArray(b.crons)) { const cr = await api("PUT", `/accounts/${A}/workers/scripts/${b.name}/schedules`, JSON.stringify(b.crons.map(cron => ({ cron }))), { "content-type": "application/json" }); if (!cr.success) return J({ ok: false, error: "schedules: " + JSON.stringify(cr.errors || []).slice(0, 300) }, 502); }
     return J({ ok: true, version: (up.result && (up.result.deployment_id || up.result.etag || up.result.id)) || "" });
   }

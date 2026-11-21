@@ -126,3 +126,9 @@ test('a silent cron is caught up by the next visit (second route for the clock)'
   await handle(get('/'), e, t + 3 * 3600000);
   assert.equal(e.DB.raw.prepare('SELECT COUNT(*) n FROM beats').get().n, 2);
 });
+
+test('the restart route runs a stale beat once and is idempotent', async () => {
+  const e = env(), t = Date.UTC(2026, 10, 22);
+  assert.equal((await (await handle(post('/pulse/watch', {}), e, t)).json()).ran, true);
+  assert.equal((await (await handle(post('/pulse/watch', {}), e, t + 60000)).json()).ran, false);
+});

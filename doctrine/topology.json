@@ -273,7 +273,10 @@
         "ai": [
           "AI"
         ]
-      }
+      },
+      "routes": [
+        "unlearn.ultrastable.app"
+      ]
     }
   ],
   "edit_path": [

@@ -135,6 +135,9 @@ export async function handle(req, env, now = Date.now(), ctx = null) {
   const u = new URL(req.url), db = env.DB;
   if (req.method === "OPTIONS") return new Response(null, { headers: { "access-control-allow-origin": "*", "access-control-allow-methods": "GET,POST", "access-control-allow-headers": "content-type" } });
   await ensure(db);
+  if (u.pathname === "/pulse/watch" && req.method === "POST") {  // RESILIENCE-1 restart route: runs the beat only when it is stale; safe for anyone to call
+    const ran = await catchUp(env, null, now); return J({ ok: true, ran });
+  }
   if (u.pathname === "/health") { const h = await health(env, now); return J(h, h.ok ? 200 : 503); }
   if (u.pathname === "/" || u.pathname === "/index.html") {
     await catchUp(env, ctx, now);
