@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-21-social-module-1-buffer-registration-diagnostics-author-sessi",
+  "kind": "lesson",
+  "date": "2026-11-21",
+  "title": "SOCIAL-MODULE-1: Buffer registration diagnostics (author session)",
+  "body": "Author session of the Buffer registration logging change; see the sibling record.",
+  "probe": "file:seed/worker/src/auth/social.js",
+  "session": "session_0156nqDvG8EF1bx4LXrvu9rj"
+ },
+ "kind": "lesson",
+ "title": "SOCIAL-MODULE-1: Buffer registration diagnostics (author session)",
+ "session": "session_0156nqDvG8EF1bx4LXrvu9rj"
+}
