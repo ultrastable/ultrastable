@@ -178,7 +178,7 @@ export default {
      "metric_label": "share of registered loops that declare a closing probe and a server-side owner",
      "measured": 1.0,
      "status": "met",
-     "n": 103,
+     "n": 104,
      "source": "instances/ultrastable/loop-registry.json (declared)",
      "item": null
     }
@@ -210,7 +210,7 @@ export default {
     {
      "finding": "A5",
      "rule": "UIUX-1",
-     "score": 0.112
+     "score": 0.113
     },
     {
      "finding": "A5",
@@ -218,7 +218,7 @@ export default {
      "score": 0.106
     }
    ],
-   "leads_route": "lexical-512-t4bmfn",
+   "leads_route": "lexical-512-1i675mk",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -496,25 +496,25 @@ export default {
     {
      "finding": "F3",
      "rule": "UNATTENDED-365",
-     "score": 0.137
+     "score": 0.136
     },
     {
      "finding": "F4",
      "rule": "CONNECT-1",
-     "score": 0.134
+     "score": 0.135
     },
     {
      "finding": "F5",
      "rule": "AUTO-SHIP-CLEAN-1",
-     "score": 0.133
+     "score": 0.134
     },
     {
      "finding": "F7",
      "rule": "OUTREACH-INTRO-1",
-     "score": 0.14
+     "score": 0.141
     }
    ],
-   "leads_route": "lexical-512-229c80",
+   "leads_route": "lexical-512-10pod5",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   }
  ],
