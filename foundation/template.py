@@ -55,6 +55,11 @@ def check(root=REPO, d: dict | None = None) -> list[str]:
         a, b = root / kit, root / canon
         if a.exists() and b.exists() and a.read_bytes() != b.read_bytes():
             bad.append(f"{kit}: differs from {canon}; the kit must carry the canonical license")
+    for wf in sorted((root / "seed/.github/workflows").glob("*.yml")):
+        import yaml
+        for job, spec in (yaml.safe_load(wf.read_text(encoding="utf-8")) or {}).get("jobs", {}).items():
+            if "is_template" not in str(spec.get("if", "")):
+                bad.append(f"{wf.relative_to(root).as_posix()}: job {job} would run in the template repository itself (add the is_template guard)")
     for f in d["agent_files"]:
         p = root / f
         if p.exists() and d["rule"] not in p.read_text(encoding="utf-8"):

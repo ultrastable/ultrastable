@@ -12,6 +12,7 @@ permissions:
 concurrency: {group: org-profile-probe, cancel-in-progress: true}
 jobs:
   probe:
+    if: ${{ !github.event.repository.is_template && github.repository != 'ultrastable/seed' }}  # TEMPLATE-CODE-ONLY-1: the template itself never runs a system's loops
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
