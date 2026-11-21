@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
       - name: Deploy only when behaviour changed (SUBSTANCE-1)
@@ -33,7 +33,7 @@ jobs:
           if [ "${{ github.event_name }}" != "push" ]; then echo "deploy=true" >> "$GITHUB_OUTPUT"; exit 0; fi
           python3 -m foundation substance --deploy-gate --range "${{ github.event.before }}..${{ github.sha }}" \
             --paths 'seed/worker/**' 'site/**' 'dashboard/**' 'doctrine/topology.json' 'seed/autonomy/**' 'seed/analytics/**' 'deploy/deploy-oidc.mjs' '.github/workflows/deploy-ultrastable.yml'
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         if: steps.gate.outputs.deploy == 'true'
         with: {node-version: 22}
       - name: Deploy through the ultrastable-site OIDC endpoint

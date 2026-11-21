@@ -31,6 +31,11 @@ export function renderConnections(status, agents) {
 const tickJson = async (env, path) => {
   try { const r = await env.TICK.fetch(new Request("https://ultrastable.io" + path)); return r.ok ? await r.json() : { linked: [], available: [] }; } catch (e) { return { linked: [], available: [] }; }
 };
+// OWNER-LINKS-4: the tick Worker serves /connect/<provider> only to requests that passed this Worker's owner sign-in. This Worker proves it with the shared internal key (a client-sent copy is overwritten), so a direct hit that skipped the gate gets the sign-in page from the tick.
+export function gatedForward(request, u, env) {
+  const h = new Headers(request.headers); h.delete("x-internal-key"); if (env.INTERNAL_DEPLOY_KEY) h.set("x-internal-key", env.INTERNAL_DEPLOY_KEY);
+  return new Request("https://ultrastable.io" + u.pathname + u.search, { method: request.method, headers: h, body: ["GET", "HEAD"].includes(request.method) ? undefined : request.body, redirect: "manual" });
+}
 const sameOrigin = (request, u) => { const o = request.headers.get("origin"); return !o || o === u.origin; };
 
 export async function connectionsRoute(request, env, { subject = currentSubject, now = Date.now() } = {}) {
@@ -57,6 +62,6 @@ export async function connectionsRoute(request, env, { subject = currentSubject,
     }
     return page("<h1>Not found</h1>", 404);
   }
-  if (wk || p === "/connect" || p.startsWith("/connect/")) return env.TICK ? env.TICK.fetch(new Request("https://ultrastable.io" + u.pathname + u.search, request))  /* REACH-1: the consent flow builds redirect_uri and client_id from the request origin; behind the gateway that is a workers.dev host, so it always sees the canonical one */ : page("<h1>Connections are not available on this deployment</h1>", 503);  // the consent flow itself lives in the tick Worker
+  if (wk || p === "/connect" || p.startsWith("/connect/")) return env.TICK ? env.TICK.fetch(gatedForward(request, u, env))  /* REACH-1: the consent flow builds redirect_uri and client_id from the request origin; behind the gateway that is a workers.dev host, so it sees the canonical one */ : page("<h1>Connections are not available on this deployment</h1>", 503);  // the consent flow itself lives in the tick Worker
   return null;
 }

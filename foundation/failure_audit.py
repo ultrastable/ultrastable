@@ -289,6 +289,11 @@ def main(argv=None) -> int:
     if "--run" in a:
         only = set(a[a.index("--only") + 1].split(",")) if "--only" in a else None
         rs = run(only=only, issues="--no-issues" not in a)
+        if "--no-issues" not in a and only is None:  # ROOTCAUSE-1: the same daily pass names the root cause of what the detectors found and escalates recurrence
+            from . import rootcause
+            print("rootcause store:", rootcause.sync())
+            print("rootcause", json.dumps(rootcause.run()["actions"]))
+            print("rootcause store:", rootcause.push())
         for r in rs:
             print(f"{r['status']:<11} {r['id']:<22} {r.get('disposition', '')} {r['evidence'][:90]!r}")
         return 1 if any(r["status"] != "pass" for r in rs) else 0

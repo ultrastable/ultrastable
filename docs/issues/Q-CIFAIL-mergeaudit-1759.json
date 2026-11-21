@@ -1,0 +1,11 @@
+{
+  "id": "Q-CIFAIL-mergeaudit-1759",
+  "title": "Q-CIFAIL-mergeaudit-1759: PR #1759 merged without a green checks run",
+  "body": "**Owner:** staff\n**Trigger:** every lane pass\n**Done check:** cmd:python3 -m foundation mergeaudit --probe 1759\n**Status:** closed\n\nMERGE-AUDIT-1: PR #1759 (STATEFUL-MIGRATE-1: test D1 migrations against a populated database) merged at 2026-11-21T16:21:05Z with its `checks` run at `failure` on head d5aa8bb. Some merge path skipped the green gate.\n\nFix what that run caught on main (run the failed step from .github/workflows/checks.yml locally), then confirm a later merged PR passed `checks`. Do not weaken a check.\n\n**Vacuous:** 2026-11-21T16:51:20Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n\n**Disposition:** shelved (executor-failed, 2026-11-21T17:52:49Z, DISPOSE-1)\n\n**Evidence:** the executor failed 3 consecutive runs on this item; last reason: RuntimeError: checks failed after 2 attempts: the reply was not valid JSON with a files list: ValueError: need 1..8 files, got 11. Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "labels": [
+    "role:staff",
+    "ci-failure"
+  ],
+  "milestone": "Now",
+  "workstream": "Reliability"
+}

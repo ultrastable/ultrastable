@@ -4044,6 +4044,112 @@
    "title": "Product manager pass 2026112115: 0 item(s) filed",
    "body": "Growth and repair items, experiment verdicts and knob review recorded in ops/growth/pm-report.json by foundation/pm.py; tests pass.",
    "probe": "file:foundation/pm.py"
+  },
+  {
+   "id": "lesson-2026-11-21-stall-act-1-one-reconcile-slot-per-sweep-let-a-single-failin",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "STALL-ACT-1: one reconcile slot per sweep let a single failing PR starve the rest for 6 hours",
+   "body": "Sweeper runs 712-717: PR 1746 (code-conflict / ref 422) took the only reconcile slot every pass, so 7 PRs stalled up to 381 min while the 15-minute alarm only reported. Fix: each dirty PR gets its own try (4 per pass); an unreconcilable agent/ PR past the stall limit is closed as superseded and the executor refiles it.",
+   "probe": "file:seed/worker/src/sweeper.js",
+   "session": "session_0156nqDtycGejegSYjhFJ1MF"
+  },
+  {
+   "id": "decision-2026-11-21-rootcause-1-every-finding-is-classified-to-a-root-cause-recu",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "ROOTCAUSE-1: every finding is classified to a root cause; recurrence escalates to the root",
+   "body": "doctrine/rootcauses.json holds root-cause classes with a guard probe; foundation/rootcause.py records occurrences, escalates a class seen on two days (or occurring with no guard) to Q-ROOT-<class>, and closes it only when the guard passes and the class stays quiet two days. Runs in the daily failure_audit pass. Staged workflow change (land ops/rootcause) is in protected/failure-audit.yml. Fixed foundation-tests: duplicate test_outreach basename renamed.",
+   "probe": "file:foundation/rootcause.py",
+   "session": "session_0156nqDtYAq14Vfh9JwJD5D7"
+  },
+  {
+   "id": "lesson-2026-11-21-ledger-probes-use-file-or-grep-path-text",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "Ledger probes use file: or grep:path::text",
+   "body": "A grep probe written path:text instead of path::text failed on main after merge; use file: for a code consumer.",
+   "probe": "file:foundation/writeback.py",
+   "session": "session_0156nqDtycGejegSYjhFJ1MF"
+  },
+  {
+   "id": "lesson-2026-11-21-social-module-1-buffer-registration-diagnostics-author-sessi",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "SOCIAL-MODULE-1: Buffer registration diagnostics (author session)",
+   "body": "Author session of the Buffer registration logging change; see the sibling record.",
+   "probe": "file:seed/worker/src/auth/social.js",
+   "session": "session_0156nqDvG8EF1bx4LXrvu9rj"
+  },
+  {
+   "id": "lesson-2026-11-21-social-module-1-buffer-registration-failure-is-now-logged-an",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "SOCIAL-MODULE-1: Buffer registration failure is now logged and probed",
+   "body": "The Buffer connect error logged no reason; the failure status and body now go to credential_events and a smoke probe POSTs the registration from a runner.",
+   "probe": "file:seed/worker/src/auth/social.js",
+   "session": "session_0156nqDtycGejegSYjhFJ1MF"
+  },
+  {
+   "id": "decision-2026-11-21-probe-format-1-malformed-closing-probes-fail-the-pr-and-beco",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "PROBE-FORMAT-1: malformed closing probes fail the PR and become a REDMAIN gate",
+   "body": "Main went red twice on 2026-11-21 from a grep probe with one colon. writeback check now validates every ledger and write-back probe (format, path exists, regex compiles); record refuses a bad probe; the probe-format gate in doctrine/redmain.json lets ciwatch open a repair when main still turns red.",
+   "probe": "file:foundation/writeback.py",
+   "session": "session_0156nqDtycGejegSYjhFJ1MF"
+  },
+  {
+   "id": "decision-2026-11-21-verify-1-model-check-the-core-loops-and-tie-models-to-code",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "VERIFY-1: model-check the core loops and tie models to code",
+   "body": "Explicit-state checker over governor, merge lane, second loop and halt; constants read from real source; spend.js level() property-swept; 9/9 invariants; seed carries scripts/verify.py and the spend governor.",
+   "probe": "file:foundation/verify.py",
+   "session": "session_0156nqDujMohxC6TJjB4QLtx"
+  },
+  {
+   "id": "lesson-2026-11-21-pins-1-name-collision-action-pin-ratchet-lives-in-foundation",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "PINS-1 name collision: action-pin ratchet lives in foundation/actionpins.py",
+   "body": "The action-pin ratchet (CONTROL-1, EVAL-1, PINS-1 session) overwrote main's roadmap-pins module foundation/pins.py. Moved to actionpins.py; read origin/main for the module name before adding one.",
+   "probe": "file:foundation/actionpins.py",
+   "session": "session_0156nqDszfkEMcZXbKcMTEsM"
+  },
+  {
+   "id": "lesson-2026-11-21-pr-1459-carried-onto-main-checks-fixed-in-place",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "PR 1459 carried onto main: checks fixed in place",
+   "body": "Carried PR 1459 onto current main; fixes applied in place instead of reopening the work.",
+   "probe": "file:foundation/writeback.py",
+   "session": "session_0156nqDtycGejegSYjhFJ1MF"
+  },
+  {
+   "id": "lesson-2026-11-21-pr-1760-carried-onto-main-checks-fixed-in-place",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "PR 1760 carried onto main: checks fixed in place",
+   "body": "Carried PR 1760 onto current main; fixes applied in place instead of reopening the work.",
+   "probe": "file:foundation/writeback.py",
+   "session": "session_0156nqDtycGejegSYjhFJ1MF"
+  },
+  {
+   "id": "lesson-2026-11-21-provider-connect-pages-are-gated-in-the-tick-by-the-site-wor",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "Provider connect pages are gated in the tick by the site Worker's internal key",
+   "body": "OWNER-LINKS-4: site/worker.js is over the model-edit limit (worker-gate), so the gate lives in site/connections.js gatedForward and seed/worker/src/auth/routes.js; session session_0156nqDu7Qq4YrmkKMFxfB9D",
+   "probe": "grep:seed/worker/src/auth/routes.js::OWNER-LINKS-4"
+  },
+  {
+   "id": "decision-2026-11-21-executor-closed-q-cifail-mergeaudit-1750-implement-mergeaudi",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Executor closed Q-CIFAIL-mergeaudit-1750: Implement mergeaudit probe script to verify PR merging commits pass checks and enforce consistent",
+   "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: foundation/probes/mergeaudit.py.",
+   "probe": "file:foundation/probes/mergeaudit.py"
   }
  ]
 }

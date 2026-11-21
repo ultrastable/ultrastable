@@ -198,7 +198,7 @@ export async function runProbes(env) {
     if (env.GITHUB_TOKEN) {
       try { const r = await gh(env, "GET", ""); await rec("github", r.ok, "repo API HTTP " + r.status); } catch (e) { await rec("github", false, String(e.message || e)); }
     } else if (!env.NO_NET) {  // GH-APP-CHECK-1: no token to paste; the org's existing GitHub App is read through its own public credential probe (no secrets in it)
-      try { const r = await fetch("https://" + HOSTS[0] + "/auth/health", { signal: AbortSignal.timeout(5000) }); const j = await r.json(); await rec("github", j.github_connected === true && j.ok === true, j.github_connected ? "GitHub App connected and minting (" + j.credentials + " credentials)" : "GitHub App not connected: " + (j.connect || "see /auth/health")); }
+      try { const r = await fetch("https://" + HOSTS[0] + "/auth/health", { signal: AbortSignal.timeout(5000) }); const j = await r.json(); await rec("github", j.github_connected === true, j.github_connected ? "GitHub App connected and minting (" + j.credentials + " credentials" + ((j.bad || []).length ? ", " + j.bad.length + " other need sign-in: " + j.bad.join(", ") : "") + ")" : "GitHub App not connected: " + (j.connect || "see /auth/health")); }
       catch (e) { await rec("github", false, "GitHub App probe: " + String(e.message || e)); }
     } else await rec("github", false, "GitHub App probe skipped (no network)");
   }

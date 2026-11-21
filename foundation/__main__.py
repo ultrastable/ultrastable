@@ -8,6 +8,7 @@
   python3 -m foundation launch [--commit --push | --probe | --export-d1 F | --install SURFACE | --failover [--decide]]   start the loops on this repo (server-side hosts only)
   python3 -m foundation liveness [--json|--check|--file-items|--static|--probe ID]   are the autonomous loops actually running (evidence, not files)
   python3 -m foundation resilience [--run [--apply]|--report|--check|--probe ID]   every clock keeps ticking; stalled ones are restarted (RESILIENCE-1)
+  python3 -m foundation verify [--check|--report]                          VERIFY-1: model-check the core loops and tie the models to the code
   python3 -m foundation ultrastability [--tick [--apply]|--check|--data [--apply]]  Ashby's two loops over essential variables (ULTRASTABILITY-1)
   python3 -m foundation criticality [--tick [--apply]|--check|--gate]     the mantra as a computed invariant (CRITICALITY-1)
   python3 -m foundation claimcode [--check|--baseline|--list]                words match code: every number, cadence or guarantee on a public surface is bound to a probe (WORDS-MATCH-CODE-1)
@@ -58,6 +59,7 @@
   python3 -m foundation rules [--check|--run [--apply] [--due]|--probe NAME|--status|--panel]  RULES-1: every standing rule maps to a CI check and a runtime probe; violations file and fix themselves
   python3 -m foundation mergeaudit [--run [--apply]|--probe N|--check]  MERGE-AUDIT-1: a PR merged without a green `checks` run becomes a queue item
   python3 -m foundation ciwatch [--run [--apply]|--probe REPO WORKFLOW|--check]  CIWATCH-1: red X's on any watched repo are rerun or filed as queue items
+  python3 -m foundation rootcause [--run|--check|--report]               ROOTCAUSE-1: every finding traced to its root cause; recurrence escalates to the root
   python3 -m foundation failure_audit [--run|--check]                    FAILURE-AUDIT-1: live detectors for every failure mode; failures file their own issues
   python3 -m foundation flows [--check|--map]                             FLOW-DIRECTIVE-1: every loop declares inflows, outflows and its feedback path
   python3 -m foundation outreach [--rank|--selftest|--check]              OUTREACH-1: replies reward a segment; UCB1 orders the next intro queue
@@ -174,6 +176,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["ciwatch"]:
         from . import ciwatch
         return ciwatch.main(_av[1:])
+    if _av[:1] == ["rootcause"]:
+        from . import rootcause
+        return rootcause.main(_av[1:])
     if _av[:1] == ["failure_audit"]:
         from . import failure_audit
         return failure_audit.main(_av[1:])
@@ -228,6 +233,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["selfmodel"]:
         from . import selfmodel
         return selfmodel.main(_av[1:])
+    if _av[:1] == ["verify"]:
+        from . import verify
+        return verify.main(_av[1:])
     if _av[:1] == ["ultrastability"]:
         from . import ultrastability
         return ultrastability.main(_av[1:])

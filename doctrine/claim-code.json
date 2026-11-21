@@ -172,6 +172,24 @@
         "file": "foundation/balance.py",
         "contains": "never_closure"
       }
+    },
+    {
+      "id": "verify-page-coverage",
+      "source": "site/verification.js",
+      "quote": "guarantees are model-checked and tied to the deployed code",
+      "probe": {
+        "file": "foundation/verify.py",
+        "contains": "def check(init, succ, invariants, goal"
+      }
+    },
+    {
+      "id": "verify-route-description",
+      "source": "site/worker.js",
+      "quote": "Guarantees model-checked and tied to the deployed code",
+      "probe": {
+        "file": "foundation/verify.py",
+        "contains": "tied_to_code"
+      }
     }
   ],
   "baseline": [

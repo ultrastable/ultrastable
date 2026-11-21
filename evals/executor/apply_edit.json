@@ -1,0 +1,12 @@
+{
+  "about": "EVAL-1: regression evals for the executor's patch step (foundation/agents.py apply_edit). Each case is a reply shape small models really produce. Practice: golden-set regression evals for LLM systems (OpenAI Evals, 2023; Chen et al., 'Evaluating Large Language Models Trained on Code', HumanEval, 2021). Runner: foundation/evals.py; see CREDITS.md.",
+  "cases": [
+    {"id": "exact", "text": "a = 1\nb = 2\n", "find": "b = 2", "replace": "b = 3", "want": "a = 1\nb = 3\n"},
+    {"id": "dropped-indent", "text": "def f():\n    x = 1\n    return x\n", "find": "x = 1\nreturn x", "replace": "x = 2\nreturn x", "want": "def f():\n    x = 2\n    return x\n"},
+    {"id": "trailing-spaces", "text": "def f():\n    y = 1\n", "find": "    y = 1   ", "replace": "    y = 5", "want": "def f():\n    y = 5\n"},
+    {"id": "new-file", "text": "", "find": "", "replace": "hello", "want": "hello\n"},
+    {"id": "ambiguous", "text": "x\nx\n", "find": "x", "replace": "y", "error": "occurs 2 times"},
+    {"id": "missing", "text": "a\n", "find": "zzz", "replace": "y", "error": "not in the file"},
+    {"id": "empty-find-existing", "text": "a\n", "find": "", "replace": "b", "error": "FIND is empty"}
+  ]
+}
