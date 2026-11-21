@@ -3296,12 +3296,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-<<<<<<< HEAD
-  "pass": 360,
-  "total": 360
-=======
-  "pass": 368,
-  "total": 368
->>>>>>> origin/main
+  "pass": 363,
+  "total": 363
  }
 };
