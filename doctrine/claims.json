@@ -156,7 +156,7 @@
       "probe": [
         "json:doctrine/ultrastability.json::patience_ticks==2",
         "grep:foundation/ultrastability.py::revert_to=pending",
-        "grep:foundation/ultrastability.py::return \"kept\""
+        "grep:foundation/ultrastability.py::verdict = \"kept\""
       ]
     },
     {
@@ -2322,6 +2322,20 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-282274856e",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Thought leadership is a loop: every paper becomes posts that carry the hook (THOUGHT-1, Rowan 2026-11-21).** \"I want white papers that",
+      "probe": [
+        "file:seed/worker/src/social.js",
+        "file:doctrine/thought.json",
+        "file:foundation/thought.py",
+        "file:site/research.js",
+        "file:tests/foundation/test_thought.py",
+        "file:site/research.test.mjs"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-158bd3c207",
       "surface": "agents/AGENTS.md",
       "text": "- **A year unattended is simulated, not asserted; the system does what it says (YEAR-SIM-1, SAY-DO-1, Rowan 2026-11-21).** \"Have you really",
@@ -3123,6 +3137,21 @@
       ],
       "bound_by": "mirror",
       "of": "cited-0b86697d1d"
+    },
+    {
+      "id": "mirror-49f57fdb9b",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Thought leadership is a loop: every paper becomes posts that carry the hook (THOUGHT-1, Rowan 2026-11-21).** \"I want white papers that",
+      "probe": [
+        "file:seed/worker/src/social.js",
+        "file:doctrine/thought.json",
+        "file:foundation/thought.py",
+        "file:site/research.js",
+        "file:tests/foundation/test_thought.py",
+        "file:site/research.test.mjs"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-282274856e"
     },
     {
       "id": "mirror-c8f6471ad1",

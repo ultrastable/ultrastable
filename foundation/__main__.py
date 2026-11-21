@@ -14,6 +14,7 @@
   python3 -m foundation pointclick [--check|--baseline]                    no surface asks a person to handle a token, secret or setting (POINT-AND-CLICK-1)
   python3 -m foundation loopowner [--check|--sync]                        every loop has a server-side owner and path (SERVER-OWNS-LOOPS-1)
   python3 -m foundation research [--check|--run [--apply]|--probe S:F|--intake [--apply]|--report]  RESEARCH-1: own R&D loop and white papers at /research
+  python3 -m foundation thought [--check|--preview|--run [--apply]]  THOUGHT-1: each white paper becomes posts (belief, measured record, the Ultrastable hook) for every channel
   python3 -m foundation unattended [--check|--horizon|--probe ID]           UNATTENDED-365: one year with zero external input; every remaining input is closed, a gate or an item
   python3 -m foundation modelwatch [--check|--status|--refresh [--apply]]  MODEL-WATCH-1: no retired hosted model id in source
   python3 -m foundation redmain [--run [--apply]|--check]                  REDMAIN-1: a red deploy gate on main is repaired by reverting the smallest change that broke it
@@ -127,6 +128,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["promote"]:
         from . import promote
         return promote.main(_av[1:])
+    if _av[:1] == ["thought"]:
+        from . import thought
+        return thought.main(_av[1:])
     if _av[:1] == ["research"]:
         from . import research
         return research.main(_av[1:])

@@ -708,6 +708,7 @@ export default {
   "strange-loop-hygiene",
   "tenant-sync",
   "terms-crosswalk",
+  "thought",
   "tick-heartbeat",
   "transparency",
   "triggers",
@@ -1953,7 +1954,8 @@ export default {
     "summary": "Check every public claim against the deployed sites and file a repair item per failure.",
     "trigger": "automatic: daily schedule",
     "workflows": [
-     "smoke-live"
+     "smoke-live",
+     "owner-links-audit"
     ]
    },
    {
@@ -1980,6 +1982,19 @@ export default {
     "trigger": "weekly (scout.yml), after every merge for the papers (regen-generated.yml), and on demand",
     "workflows": [
      "scout"
+    ]
+   },
+   {
+    "closing_probe": "grep:foundation/thought.py::def guard",
+    "id": "thought",
+    "kind": "governance",
+    "owner": "marketing-manager",
+    "server_owner": "github-actions",
+    "sla": "3d",
+    "summary": "THOUGHT-1: thought leadership as a closed loop. Every white paper the research loop writes becomes posts for Bluesky, Mastodon and LinkedIn that state a common belief about AI limits, what this system's own records show (numbers read from the paper) and the hook: Ultrastable runs on Ultrastable, and Practical Solutions is one system it runs. Posts land in social/calendar.json; the tick Worker's publisher and the social-post workflow drain them within social/gate.json; referrals to /research come back through the reach loop's 'paper' arm.",
+    "trigger": "daily (social-post.yml), one piece per cadence_days; a changed measured result goes first",
+    "workflows": [
+     "social-post"
     ]
    }
   ],
@@ -2197,6 +2212,12 @@ export default {
     ]
    },
    {
+    "id": "owner-links-audit",
+    "loops": [
+     "smoke-live"
+    ]
+   },
+   {
     "id": "platform-core",
     "loops": [
      "platform-core-tests"
@@ -2245,7 +2266,8 @@ export default {
    {
     "id": "social-post",
     "loops": [
-     "social-post"
+     "social-post",
+     "thought"
     ]
    },
    {
@@ -2294,214 +2316,214 @@ export default {
  },
  "readings": {
   "access-check:claims_drift": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T12:01:47Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "access-check:spend": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T12:01:47Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "access-check:uptime": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T12:01:47Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "access-check:value": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T12:01:47Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "air-quality:claims_drift": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T12:01:47Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "air-quality:spend": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T12:01:47Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "air-quality:uptime": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T12:01:47Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "air-quality:value": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T12:01:47Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "blindspot:claims_drift": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T12:01:47Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "blindspot:spend": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T12:01:47Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "blindspot:uptime": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T12:01:47Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "blindspot:value": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T12:01:47Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "claims_drift": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T12:01:47Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0
   },
   "country-snapshot:claims_drift": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T12:01:47Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "country-snapshot:spend": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T12:01:47Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "country-snapshot:uptime": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T12:01:47Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "country-snapshot:value": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T12:01:47Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "deploy_health": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T12:01:47Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "free-tier-meter:claims_drift": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T12:01:47Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "free-tier-meter:spend": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T12:01:47Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "free-tier-meter:uptime": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T12:01:47Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "free-tier-meter:value": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T12:01:47Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "happy_paths": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T12:01:47Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "numbers-board:claims_drift": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T12:01:47Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "numbers-board:spend": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T12:01:47Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "numbers-board:uptime": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T12:01:47Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "numbers-board:value": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T12:01:47Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "portfolio-board:claims_drift": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T12:01:47Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "portfolio-board:spend": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T12:01:47Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "portfolio-board:uptime": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T12:01:47Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "portfolio-board:value": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T12:01:47Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "spend": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T12:01:47Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "stalled_clocks": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T12:01:47Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0
   },
   "ui_findings": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T12:01:47Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0
   },
   "value": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T12:01:47Z",
    "in_bounds": true,
    "unmeasured": false,
-   "value": 750.0
+   "value": 950.0
   }
  },
  "self": {

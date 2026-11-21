@@ -198,6 +198,20 @@
    "needs_you": "social"
   },
   {
+   "id": "linkedin-signin",
+   "class": "credential",
+   "what": "LinkedIn posting on the owner's own profile (THOUGHT-1): the publisher, the guard and the per-channel pieces are live; posting needs a LinkedIn app registration (OAUTH_LINKEDIN, accepted in the owner's name under the owner-oauth-apps gate) and one sign-in, which LinkedIn expires after 60 days with no refresh token",
+   "status": "gate",
+   "renewal": "identity",
+   "expires": null,
+   "evidence": "seed/worker/src/social.js postLinkedIn and seed/worker/src/auth/connectors.js REGISTRY.linkedin; tests in seed/worker/test/social-connect.test.js (THOUGHT-1)",
+   "measured": "2026-11-21",
+   "probe": "file:seed/worker/src/social.js",
+   "default": "paper pieces go to every connected channel and to /research.atom; each paper page carries a one-tap LinkedIn share link; LinkedIn posts start on the first tick after the sign-in",
+   "connect": "https://ultrastable.io/connect/linkedin",
+   "needs_you": "social"
+  },
+  {
    "id": "owner-account-root",
    "class": "account",
    "what": "The GitHub organization, the Cloudflare account and the agent subscription all hang off one person's sign-ins",

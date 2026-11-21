@@ -134,7 +134,8 @@ test("OWNER-DASH-2: state carries needs, tenants and paid options with costs; fr
   assert.ok(Array.isArray(s.needs) && s.needs.every(n => n.url.startsWith("https://")));  // NO-OPEN-ITEMS-1: an empty list is the target
   assert.ok(s.tenants.some(t => t.id === "jobs" && t.status === "pending"));
   assert.ok(s.options.length > 0 && s.options.every(o => o.cost && o.default));
-  assert.match(s.plan_note, /free tiers/);
+  assert.doesNotMatch(s.plan_note, /free tiers|stay free/);  // LIVE-PLAN-1: never a hand-written plan claim
+  assert.ok(s.generated_at && s.plan && s.plan.measured_at);
 });
 test("OWNER-DASH-2: at the D1 free read cap the page still answers from the bundle", async () => {
   const e = env(); const ck = await login(e);
@@ -210,14 +211,9 @@ test("OWNER-IDENTITY-1: GitHub sign-in checks org ownership, links verified emai
   assert.ok((await ok.DB.prepare("SELECT COUNT(*) c FROM owner_audit WHERE event='github_signin'").first()).c === 1);
   const bad = mk("stranger"); const r2 = await run(bad);
   assert.equal(r2.status, 401); assert.doesNotMatch(await r2.text(), /stranger|owner/i);
-  const none = { ...mkdb(), NO_NET: 1, MAIL_RELAY_TOKEN: "k" }; const r3 = await w.fetch(new Request("https://d.example/api/owner/github"), none); assert.equal(r3.status, 302); assert.match(r3.headers.get("location"), /connect\/github-signin$/);
-  const pg = await (await w.fetch(new Request("https://d.example/connect/github-signin"), none)).text(); assert.match(pg, /Approve on GitHub/);
-  const stt = /state=([0-9a-f]{32})/.exec(pg)[1];
-  none.FETCH = async () => Response.json({ client_id: "cid", client_secret: "sec", slug: "app" }, { status: 201 });
-  const cb = await w.fetch(new Request("https://d.example/auth/github-signin/callback?code=c&state=" + stt), none);
-  assert.equal(cb.status, 302);
-  const row = await none.DB.prepare("SELECT secret_sealed FROM owner_oauth_app WHERE id=1").first(); assert.ok(row && !row.secret_sealed.includes("sec"));
-  const again = await w.fetch(new Request("https://d.example/api/owner/github"), none); assert.match(again.headers.get("location"), /github\.com\/login\/oauth\/authorize\?client_id=cid/);
+  const none = { ...mkdb(), NO_NET: 1, MAIL_RELAY_TOKEN: "k" }; const r3 = await w.fetch(new Request("https://d.example/api/owner/github"), none); assert.equal(r3.status, 302); assert.match(r3.headers.get("location"), /\/owner$/);
+  const pg = await w.fetch(new Request("https://d.example/connect/github-signin"), none); assert.equal(pg.status, 302); assert.match(pg.headers.get("location"), /\/owner$/);  // NO-NEW-APP-1: no manifest form
+  assert.equal((await none.DB.prepare("SELECT COUNT(*) c FROM owner_oauth_app").first()).c, 0);
 });
 
 test("SELF-FIX-1: a failing check is queued as a fleet task and logged, never mailed", async () => {
@@ -244,4 +240,41 @@ test("GATE-SETTLE-3: the Worker settles a gate on its live page, with no Actions
   const pages = { "https://x.test/connect/github": "<h1>GitHub is connected</h1>" };
   const f = async u => { if (u === "https://x.test/b") throw new Error("down"); return new Response(pages[u] || "", { status: pages[u] ? 200 : 404 }); };
   assert.deepEqual([...(await settledLive({}, items, f))], ["gh"]);
+});
+
+test("NO-NEW-APP-1: no owner route can register a GitHub app", async () => {
+  const { default: w } = await import("../worker.js");
+  const { readFileSync, readdirSync } = await import("node:fs");
+  for (const f of ["../worker.js", "../ownerid.js", "../../site/passkeys.js", "../../site/connections.js"]) { const src = readFileSync(new URL(f, import.meta.url), "utf8"); assert.doesNotMatch(src, /settings\/apps\/new|app-manifests/, f); }
+  const e = { ...mkdb(), NO_NET: 1, MAIL_RELAY_TOKEN: "k" };
+  for (const p of ["/owner", "/connect/github-signin", "/auth/github-signin/callback?code=c&state=s", "/api/owner/github", "/api/owner/signin-options", "/owner?next=/connect/buffer/start"]) {
+    const r = await w.fetch(new Request("https://ultrastable.io" + p, { redirect: "manual" }), e); const t = await r.text();
+    assert.doesNotMatch(t + (r.headers.get("location") || ""), /settings\/apps\/new|manifest/i, p);
+  }
+});
+test("SIGNIN-NEXT-2: emailed link signs in and lands on ?next, for connect start paths with query strings", async () => {
+  const { safeOwnerNext } = await import("../worker.js");
+  for (const n of ["/connect/buffer/start", "/connect/mastodon/start?instance=mstdn.science", "/connections"]) assert.equal(safeOwnerNext(n), n);
+  for (const n of ["//evil.example", "https://evil.example", "/\\evil", "/api/owner/state", "", null, "connect/x"]) assert.equal(safeOwnerNext(n), null, String(n));
+  const e = env(); sent.length = 0;
+  const nx = "/connect/mastodon/start?instance=mstdn.science";
+  assert.equal((await call(e, "/api/owner/code", { next: nx })).status, 200);
+  const link = /(https:\/\/ultrastable\.io\/api\/owner\/magic\?[^\s]+)/.exec(sent[0].text)[1];
+  const u = new URL(link); assert.equal(u.searchParams.get("next"), nx);
+  const get = await route(new Request(link), e); assert.equal(get.status, 200); assert.match(await get.text(), /<form method=post/);  // a GET (mail scanner) signs nobody in
+  assert.equal((await e.DB.prepare("SELECT used FROM otp ORDER BY created_at DESC LIMIT 1").first()).used, 0);
+  const post = await route(new Request(link, { method: "POST" }), e); assert.equal(post.status, 303);
+  assert.equal(post.headers.get("location"), nx); assert.match(post.headers.get("set-cookie"), /us_owner=/);
+  assert.equal((await route(new Request(link, { method: "POST" }), e)).status, 401);  // single use
+});
+test("LIVE-PLAN-1: the plan is read from Cloudflare, and a paid account is not offered Workers Paid", async () => {
+  const { planState, optionsFor, livePanels } = await import("../worker.js");
+  const ok = j => async () => Response.json({ success: true, result: j });
+  const paid = await planState({ CF_ACCOUNT_ID: "a", CF_API_TOKEN: "t" }, ok([{ rate_plan: { id: "workers_paid", public_name: "Workers Paid" }, state: "Paid" }]));
+  assert.equal(paid.plan, "paid"); assert.equal(paid.source, "cloudflare-subscriptions");
+  assert.equal((await planState({ CF_ACCOUNT_ID: "a", CF_API_TOKEN: "t" }, ok([{ rate_plan: { id: "free" } }]))).plan, "free");
+  assert.equal((await planState({}, ok([]))).plan, "unknown");
+  assert.ok(!optionsFor("paid").some(o => o.id === "cf-workers-paid")); assert.ok(optionsFor("free").some(o => o.id === "cf-workers-paid"));
+  const lp = await livePanels({ CF_ACCOUNT_ID: "a", CF_API_TOKEN: "t", NO_NET: 1 }, ok([{ rate_plan: { id: "workers_paid" } }]));
+  assert.match(lp.plan_note, /Workers Paid is active/); assert.ok(lp.generated_at);
 });

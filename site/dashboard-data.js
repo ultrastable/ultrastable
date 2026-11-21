@@ -174,7 +174,7 @@ export default {
      "id": "loops",
      "title": "Closed loops",
      "source": "instances/ultrastable/loop-registry.json",
-     "headline": "104 registered loops",
+     "headline": "105 registered loops",
      "rows": [
       [
        "funding-outreach",
@@ -182,7 +182,7 @@ export default {
       ],
       [
        "governance",
-       16
+       17
       ],
       [
        "issue-tracking",
@@ -474,15 +474,15 @@ export default {
      "id": "roadmap",
      "title": "Roadmap",
      "source": "docs/issues",
-     "headline": "839 issue files, 30 without a runnable probe (shrink-only)",
+     "headline": "857 issue files, 29 without a runnable probe (shrink-only)",
      "rows": [
       [
        "open issues without a probe",
-       30
+       29
       ],
       [
        "issue files",
-       839
+       857
       ]
      ],
      "note": "Every open item carries an owner, a trigger and a done check the system runs."

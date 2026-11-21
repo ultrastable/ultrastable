@@ -206,5 +206,11 @@
       },
       "prediction": "self_deploys >= 1 within 336 h"
     }
-  ]
+  ],
+  "misperception": {
+    "belief": "AI writes more code, so a team must review more code, and review becomes the bottleneck.",
+    "short": "More AI code means a bigger human review queue.",
+    "counter": "Review is a bottleneck only when a person is the gate. Replace the queue with checks that can fail, live verification and automatic revert, and measure quality instead of waiting."
+  },
+  "scale_compare": "a study of 655 firms over more than five years"
 }

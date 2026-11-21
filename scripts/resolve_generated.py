@@ -13,7 +13,7 @@ for f in list(conf):
         open(f, "w").write(json.dumps(b, indent=1, ensure_ascii=False) + "\n")
     elif f.endswith(".jsonl") or f == "docs/PROJECT-MEMORY.md":  # append-only: keep both sides
         t = open(f).read(); open(f, "w").write("\n".join(l for l in t.splitlines() if not re.match(r"^(<<<<<<<|=======|>>>>>>>)", l)) + "\n")
-    elif f in ("ops/transparency.json", "site/dashboard-data.js", "site/claims-data.js"):   # claims-data.js is rewritten below from the merged doctrine/claims.json
+    elif f in ("ops/transparency.json", "site/dashboard-data.js", "site/claims-data.js", "site/research-data.js") or f.startswith("research/papers/"):  # papers are rebuilt by `research --page --apply` below   # claims-data.js is rewritten below from the merged doctrine/claims.json
         subprocess.run(["git", "checkout", "--theirs", f])
     else:
         continue
@@ -21,20 +21,30 @@ for f in list(conf):
 # MERGE-NOW-1: in any other file, a hunk whose two sides are equal, or differ only inside `<!-- claim:ID -->` values (computed by claims --fix, never
 # typed), is resolved: identical -> one copy, claim-only -> main's side. A hunk that differs in written text stays a conflict.
 CLAIM = re.compile(r"(<!-- claim:[\w.-]+ -->)(.*?)(<!-- /claim -->)", re.S)
-HUNK = re.compile(r"^<<<<<<< [^\n]*\n(.*?)^(?:\|\|\|\|\|\|\| [^\n]*\n.*?)?^=======\n(.*?)^>>>>>>> [^\n]*\n", re.S | re.M)
-def soft(path):
-    try:
-        t = open(path, encoding="utf-8").read()
-    except (UnicodeDecodeError, FileNotFoundError):
-        return False
+# MARKERS-ON-MAIN-1 (2026-11-21): main itself carried committed conflict markers in README.md and platform/adapters/README.md, so a hunk's side held
+# another hunk and no pattern matched: every PR conflicted there and none could be reconciled. Hunks are now resolved innermost first, to a fixed point.
+_M = r"(?:(?!<<<<<<< |=======$|>>>>>>> |\|\|\|\|\|\|\| )[^\n]*\n)*?"
+HUNK = re.compile(r"^<<<<<<< [^\n]*\n(" + _M + r")(?:^\|\|\|\|\|\|\| [^\n]*\n" + _M + r")?^=======\n(" + _M + r")^>>>>>>> [^\n]*\n", re.M)
+def flatten_text(t):
+    """(text, hard): every hunk whose sides are equal or differ only in claim values is resolved to main's side, innermost first."""
     hard = []
     def pick(m):
         ours, theirs = m.group(1), m.group(2)
         if ours == theirs or CLAIM.sub(r"\1\3", ours) == CLAIM.sub(r"\1\3", theirs):
             return theirs
         hard.append(1); return m.group(0)
-    new = HUNK.sub(pick, t)
-    if hard:
+    while True:
+        hard.clear(); new = HUNK.sub(pick, t)
+        if new == t:
+            return t, len(hard)
+        t = new
+def soft(path):
+    try:
+        t = open(path, encoding="utf-8").read()
+    except (UnicodeDecodeError, FileNotFoundError):
+        return False
+    new, hard = flatten_text(t)
+    if hard or re.search(r"^(<<<<<<< |>>>>>>> )", new, re.M):
         return False
     open(path, "w", encoding="utf-8").write(new); return True
 # MARKER-ROOT-1 (2026-11-21): main itself once carried committed conflict markers in README.md, so every later merge nested a new hunk around the old
@@ -69,9 +79,15 @@ def flatten(path):
 for f in list(conf):
     if soft(f) or flatten(f):
         subprocess.run(["git", "add", f]); conf.remove(f); print("resolved (identical or claim-only)", f)
+# A file that is not in conflict but carries committed markers (it reached main that way) is healed the same way, so the next PR does not inherit it.
+for f in sh("git", "grep", "-l", "-E", "^(<<<<<<< |>>>>>>> )", "--", "*.md").split():
+    if f not in conf and soft(f):
+        subprocess.run(["git", "add", f]); print("healed committed markers", f)
 if "doctrine/claims.json" not in conf:   # the registry merged cleanly: its served copy is regenerated, never merged by hand
     subprocess.run([sys.executable, "-m", "foundation", "claims", "--fix", "--apply"], capture_output=True)
     subprocess.run(["git", "add", "site/claims-data.js"])
+subprocess.run([sys.executable, "-m", "foundation", "research", "--page", "--apply"], capture_output=True)  # REGEN-RESEARCH-1: papers follow the merged studies
+subprocess.run(["git", "add", "research", "site/research-data.js"])
 subprocess.run([sys.executable, "scripts/build_dashboard.py"], capture_output=True)
 subprocess.run(["git", "add", "site/dashboard-data.js"])
 print("still conflicting:", conf)

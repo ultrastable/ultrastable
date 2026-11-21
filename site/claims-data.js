@@ -122,11 +122,11 @@ export default {
   },
   {
    "claim": "The slow loop reads the same variables every tick, and when one has been out of bounds for two ticks in a row it takes one discrete step on that variable's ladder, keeps the step only if the variable comes back, and otherwise undoes it and takes the next.",
-   "detail": "",
-   "how": "json:doctrine/ultrastability.json::patience_ticks==2 + grep:foundation/ultrastability.py::revert_to=pending + grep:foundation/ultrastability.py::return \"kept\"",
+   "detail": "grep:foundation/ultrastability.py::verdict = \"kept\" failed (foundation/ultrastability.py)",
+   "how": "json:doctrine/ultrastability.json::patience_ticks==2 + grep:foundation/ultrastability.py::revert_to=pending + grep:foundation/ultrastability.py::verdict = \"kept\"",
    "id": "how-ultrastable-second-order",
    "kind": "claim",
-   "pass": true,
+   "pass": false,
    "surface": "site/worker.js"
   },
   {
@@ -1867,10 +1867,10 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
-   "claim": "- **A year unattended is simulated, not asserted; the system does what it says (YEAR-SIM-1, SAY-DO-1, Rowan 2026-11-21).** \"Have you really",
+   "claim": "- **Thought leadership is a loop: every paper becomes posts that carry the hook (THOUGHT-1, Rowan 2026-11-21).** \"I want white papers that",
    "detail": "",
-   "how": "file:doctrine/yearsim.json + file:foundation/yearsim.py + file:doctrine/ultrastability.json + file:foundation/saydo.py + file:doctrine/detectors.json + file:seed/scripts/yearsim.py",
-   "id": "cited-158bd3c207",
+   "how": "file:seed/worker/src/social.js + file:doctrine/thought.json + file:foundation/thought.py + file:site/research.js + file:tests/foundation/test_thought.py + file:site/research.test.mjs",
+   "id": "cited-282274856e",
    "kind": "claim",
    "pass": true,
    "surface": "agents/AGENTS.md"
@@ -2488,10 +2488,10 @@ export default {
    "surface": "seed/agents/AGENTS.md"
   },
   {
-   "claim": "- **A year unattended is simulated, not asserted; the system does what it says (YEAR-SIM-1, SAY-DO-1, Rowan 2026-11-21).** \"Have you really",
+   "claim": "- **Thought leadership is a loop: every paper becomes posts that carry the hook (THOUGHT-1, Rowan 2026-11-21).** \"I want white papers that",
    "detail": "",
-   "how": "file:doctrine/yearsim.json + file:foundation/yearsim.py + file:doctrine/ultrastability.json + file:foundation/saydo.py + file:doctrine/detectors.json + file:seed/scripts/yearsim.py",
-   "id": "mirror-c8f6471ad1",
+   "how": "file:seed/worker/src/social.js + file:doctrine/thought.json + file:foundation/thought.py + file:site/research.js + file:tests/foundation/test_thought.py + file:site/research.test.mjs",
+   "id": "mirror-49f57fdb9b",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3118,7 +3118,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 59 Python and 431 Worker tests",
+   "claim": "seed-tests: 59 Python and 434 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3127,7 +3127,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 431 Worker tests",
+   "claim": "seed-worker-tests: 434 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3163,7 +3163,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 735",
+   "claim": "live-deploys: 760",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",
@@ -3367,8 +3367,8 @@ export default {
   }
  ],
  "summary": {
-  "drift": 0,
-  "pass": 371,
+  "drift": 1,
+  "pass": 370,
   "total": 371
  }
 };

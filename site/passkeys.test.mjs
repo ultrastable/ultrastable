@@ -47,7 +47,7 @@ db.exec("CREATE TABLE sessions(hash TEXT PRIMARY KEY, created_at INTEGER NOT NUL
 const ownerCookie = async (stepupAgeMs = 0) => { const tok = "t" + Math.random().toString(16).slice(2).padEnd(30, "0"); db.prepare("INSERT INTO sessions VALUES (?,?,?,0)").run(await hex(tok), Date.now(), Date.now() - stepupAgeMs); return "us_owner=" + tok; };
 
 // 1. no session: sign-in page loads, credential routes refuse
-let r = await call("/auth/signin"); assert.equal(r.status, 200); assert.match(await r.text(), /Sign in with a passkey/);
+let r = await call("/auth/signin"); assert.equal(r.status, 200); assert.match(await r.text(), /Email me a sign-in link[\s\S]*Use a passkey instead/);
 assert.equal((await J(await call("/auth/passkey/register/options", {}))).s, 401, "enrolment needs the email-code session");
 assert.equal((await J(await call("/auth/passkey/list"))).s, 401);
 assert.equal(await pk.currentSubject(new Request(ORIGIN + "/x"), ENV), null);

@@ -14,3 +14,15 @@
 {"key": "question:Q2", "opened_at": "2026-11-21T09:33:27Z", "metric": "pr_merge_hours_median_system", "op": "<=", "value": 2.0, "window_h": 336, "baseline": 0.49}
 {"key": "question:Q3", "opened_at": "2026-11-21T09:33:27Z", "metric": "deploy_verified_share", "op": ">=", "value": 0.95, "window_h": 168, "baseline": 1.0}
 {"key": "question:Q4", "opened_at": "2026-11-21T09:33:27Z", "metric": "pr_closed_unmerged_share", "op": "<=", "value": 0.2, "window_h": 336, "baseline": 0.36}
+{"key": "open-loops-2026:O1", "opened_at": "2026-11-21T10:23:15Z", "metric": "loops_closing_probe_share", "op": ">=", "value": 1.0, "window_h": 168, "baseline": 1.0}
+{"key": "open-loops-2026:O2", "opened_at": "2026-11-21T10:23:15Z", "metric": "pr_merge_hours_median", "op": "<=", "value": 1.0, "window_h": 168, "baseline": 0.15}
+{"key": "open-loops-2026:O3", "opened_at": "2026-11-21T10:23:15Z", "metric": "deploy_verified_share", "op": ">=", "value": 0.95, "window_h": 168, "baseline": 1.0}
+{"key": "open-loops-2026:O4", "opened_at": "2026-11-21T10:23:15Z", "metric": "human_touches", "op": "<=", "value": 0.0, "window_h": 168, "baseline": 10}
+{"key": "open-loops-2026:O5", "opened_at": "2026-11-21T10:23:15Z", "metric": "system_authored_share", "op": ">=", "value": 0.5, "window_h": 336, "baseline": 0.203}
+{"key": "open-loops-2026:O6", "opened_at": "2026-11-21T10:23:15Z", "metric": "self_deploys", "op": ">=", "value": 1.0, "window_h": 336, "baseline": 0}
+{"key": "safety-by-limits-2026:S1", "opened_at": "2026-11-21T10:23:15Z", "metric": "essential_bounded_share", "op": ">=", "value": 1.0, "window_h": 168, "baseline": 1.0}
+{"key": "safety-by-limits-2026:S2", "opened_at": "2026-11-21T10:23:15Z", "metric": "revert_share", "op": "<=", "value": 0.05, "window_h": 336, "baseline": 0.0}
+{"key": "safety-by-limits-2026:S3", "opened_at": "2026-11-21T10:23:15Z", "metric": "deploy_verified_share", "op": ">=", "value": 0.95, "window_h": 168, "baseline": 1.0}
+{"key": "safety-by-limits-2026:S4", "opened_at": "2026-11-21T10:23:15Z", "metric": "second_loop_kept_share", "op": ">=", "value": 0.25, "window_h": 336, "baseline": 0.0}
+{"key": "safety-by-limits-2026:S5", "opened_at": "2026-11-21T10:23:15Z", "metric": "pr_closed_unmerged_share", "op": "<=", "value": 0.2, "window_h": 336, "baseline": 0.36}
+{"key": "safety-by-limits-2026:S6", "opened_at": "2026-11-21T10:23:15Z", "metric": "loops_closing_probe_share", "op": ">=", "value": 1.0, "window_h": 168, "baseline": 1.0}
