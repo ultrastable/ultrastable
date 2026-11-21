@@ -232,7 +232,7 @@
   },
   {
    "id": "seedadmit-year-target",
-   "source": "agents/AGENTS.md",
+   "source": "agents/PROJECT-INSTRUCTIONS.md",
    "quote": "the seeded year reaches 365 days at the 10th percentile in normal and strict mode",
    "probe": {
     "file": "seed/autonomy/kit.json",
@@ -241,7 +241,7 @@
   },
   {
    "id": "seedadmit-expiry",
-   "source": "agents/AGENTS.md",
+   "source": "agents/PROJECT-INSTRUCTIONS.md",
    "quote": "expires after 8 days",
    "probe": {
     "file": "seed/autonomy/kit.json",
