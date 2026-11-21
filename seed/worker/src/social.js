@@ -57,7 +57,7 @@ export async function postBuffer(token, text, f, short) {
 }
 
 export async function postRelay(env, p, f) {
-  const r = await f((env.SOCIAL_RELAY_URL || 'https://qnfo-social.q08.workers.dev') + '/relay/post', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + env.SOCIAL_RELAY_TOKEN }, body: JSON.stringify({ text: p.long || p.text, short: p.text, channels: ['mastodon', 'linkedin', 'twitter', 'substack'] }) });
+  const r = await f(env.SOCIAL_RELAY_URL + '/relay/post', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + env.SOCIAL_RELAY_TOKEN }, body: JSON.stringify({ text: p.long || p.text, short: p.text, channels: ['mastodon', 'linkedin', 'twitter', 'substack'] }) });
   if (!r.ok) throw new Error('relay HTTP ' + r.status);
   return JSON.stringify((await r.json()).results || {});
 }
@@ -71,7 +71,7 @@ export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), t
   for (const [ch, key] of [['bluesky', 'oauth:bluesky'], ['mastodon', 'oauth:mastodon'], ['buffer', 'oauth:buffer']]) {
     const m = await store.material(db, env, tenant, key); if (m && m.status !== 'pending' && (ch === 'bluesky' ? m.secret && m.secret.refresh_token : m.access)) channels[ch] = m;  // an unfinished sign-in (no token) is not a channel: it would only spend calls
   }
-  if (env.SOCIAL_RELAY_TOKEN) channels.relay = { relay: true };  // SOCIAL-RELAY-1: the owner's existing Buffer and Mastodon logins, reached through a token-gated relay that never exposes them
+  if (env.SOCIAL_RELAY_TOKEN && env.SOCIAL_RELAY_URL) channels.relay = { relay: true };  // SOCIAL-RELAY-1: the owner's existing Buffer and Mastodon logins, reached through a token-gated relay that never exposes them
   if (!Object.keys(channels).length) return { skipped: 'no channel connected' };  // no network call until an account is linked
   const base = RAW(env.SOCIAL_REPO || repo), get = async n => { const r = await f(base + n); if (!r.ok) throw new Error(n + ' HTTP ' + r.status); return r.json(); };
   const [gate, cal] = await Promise.all([get('gate.json'), get('calendar.json')]);
