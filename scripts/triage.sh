@@ -6,7 +6,7 @@ issues_or_exit
 repo="${GITHUB_REPOSITORY:?}"
 for n in $(gh issue list -R "$repo" --state open --limit 300 --json number --jq '.[].number'); do
   l=",$(gh issue view "$n" -R "$repo" --json labels --jq '[.labels[].name]|join(",")'),"
-  case "$l" in *,sla:set,*) continue;; esac
+  case "$l" in *,sla:set,*|*,queue,*) continue;; esac  # GH-MIRROR-1: `queue` issues mirror docs/issues; the queue loops own them
   p=p2
   case "$l" in
     *,p0,*|*,p1,*|*,p2,*|*,p3,*) p="";;

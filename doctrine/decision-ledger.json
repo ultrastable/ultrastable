@@ -3657,6 +3657,24 @@
    "title": "ASHBY-1, ASHBY-SEARCH-1: code did not match Ashby's ultrastable system",
    "body": "Two mismatches in foundation/ultrastability.py, changed in this PR: tenant.value had no limits so it could never trigger the second loop (now the declared metric over the declared target, min 1.0; the check refuses an unbounded essential variable), and the second loop stopped searching after a 1-2 step ladder (now it draws untried parameter values, seeded, until one holds or the range is spent; tests/foundation/test_ultrastability.py 34 pass). Measured before the change: 14 second-order verdicts, 0 kept. Next measurement: second_loop_kept_share in research paper ashby-1952.",
    "probe": "grep:foundation/ultrastability.py::def _search"
+  },
+  {
+   "id": "decision-2026-11-21-gh-mirror-1-the-queue-is-visible-on-github",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "GH-MIRROR-1: the queue is visible on GitHub",
+   "body": "docs/issues stays canonical; foundation/ghmirror.py mirrors it one way onto GitHub Issues, labels, milestones and org project 1 (built-in auto-add) on every fleet run and the daily issues run.",
+   "probe": "grep:.github/workflows/fleet.yml::foundation ghmirror --apply",
+   "session": "session_0156nqDshJE91voaBzhvqTUL"
+  },
+  {
+   "id": "lesson-2026-11-21-legacy-client-1-a-bluesky-session-is-bound-to-its-client-met",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "LEGACY-CLIENT-1: a Bluesky session is bound to its client metadata",
+   "body": "Switching bluesky.json to private_key_jwt broke refresh of the live public-client session (HTTP 400 every tick from 2026-11-20 19:11). bluesky.json stays public; new sign-ins use bluesky-c.json. Never change a live atproto client's auth method; add a new client id.",
+   "probe": "grep:seed/worker/src/auth/atproto.js::LEGACY-CLIENT-1",
+   "session": "session_0156nqDsNi2d4FXDawgCY8Sh"
   }
  ]
 }

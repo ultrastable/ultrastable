@@ -14,7 +14,9 @@ async function gh(f, token, method, path, body) {
 }
 const hours = (iso, now) => Math.max(0, (now - Date.parse(iso)) / 36e5);
 
-export async function sweepOpenLoops({ token, repos = [], fetch: f = fetch, now = Date.now(), maxAgeH = 24 }) {
+// GH-MIRROR-1: `laneOwned` repositories keep their work in docs/issues (the merge lane files OL-PR-<n> for a stuck PR) and mirror it onto GitHub Issues;
+// the sweeper never files a second, unmirrored issue there.
+export async function sweepOpenLoops({ token, repos = [], fetch: f = fetch, now = Date.now(), maxAgeH = 24, laneOwned = ['ultrastable/ultrastable'] }) {
   const out = { status: 'ok', merged: [], refreshed: [], filed: [], lane_owned: [], released: [], errors: [], open_loop_age_hours: 0 };
   if (!token) return { ...out, status: 'no-token' };
   for (const repo of repos) {
@@ -45,6 +47,7 @@ export async function sweepOpenLoops({ token, repos = [], fetch: f = fetch, now 
         const age = hours(p.updated_at || p.created_at, now);
         out.open_loop_age_hours = Math.max(out.open_loop_age_hours, Math.round(age * 10) / 10);
         if (age < maxAgeH) continue;
+        if (laneOwned.includes(repo)) { out.lane_owned.push(tag); continue; }
         const title = `Q-OPENLOOP-${repo.replace('/', '-')}-${p.number}: close the open client loop on #${p.number}`;
         const have = await gh(f, token, 'GET', `/repos/${repo}/issues?state=open&labels=open-loop&per_page=100`);
         // Issues can be off on a repository (items are then docs/issues files): GitHub answers 410 with an object, not a list. That loop is not an
