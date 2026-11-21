@@ -79,3 +79,13 @@ def test_queue_reads_repo_data_when_issues_off(tmp_path):
     cfg = {"org": "ultrastable", "repos": ["ultrastable"]}
     q = fleet.queue(cfg, lambda m, p, b=None: (410, {}), None, tmp_path)
     assert [i["number"] for i in q] == ["Q-1"] and q[0]["repo"] == "ultrastable"
+
+
+class ProbeDrift(unittest.TestCase):
+    def test_probe_reads_this_repository_from_the_tree_and_unreadable_is_not_a_pass(self):
+        from foundation import fleet
+        ok, _ = fleet.probe_drift("publication-files@ultrastable")
+        self.assertTrue(ok)
+        ok, why = fleet.probe_drift("publication-files@spec")  # no remote reader: unreadable, so not a pass
+        self.assertFalse(ok)
+        self.assertFalse(fleet.probe_drift("no-such-copy@ultrastable")[0])
