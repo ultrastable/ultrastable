@@ -18,7 +18,7 @@ test('keeps the stored installation, removes extras, reports an app with no key'
   const calls = [];
   const f = async (u, o = {}) => { calls.push((o.method || 'GET') + ' ' + u.replace('https://api.github.com', ''));
     if (u.endsWith('/app')) return J(200, { id: 1, slug: 'a' });
-    if (u.includes('/app/installations?')) return J(200, [{ id: 10, account: { login: 'ultrastable' } }, { id: 11, account: { login: 'qnfo' } }]);
+    if (u.includes('/app/installations?')) return J(200, [{ id: 10, account: { login: 'ultrastable' } }, { id: 11, account: { login: 'other-org' } }]);
     return J(204, {}); };
   const r = await auditApps(db, env, 't', { fetch: f });
   assert.deepEqual(calls.filter(c => c.startsWith('DELETE')), ['DELETE /app/installations/11']);
