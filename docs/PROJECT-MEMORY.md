@@ -10,6 +10,21 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-21
 
+- 2026-11-21: Repair main: STALL-ACT-1 ledger probe and ultrastability data (#1766)
+- 2026-11-21: ZERO-MINUTES-1: worker merged #1763
+- 2026-11-21: STALL-ACT-1: stall alarm acts; dirty PRs no longer starve (#1763)
+- 2026-11-21: ZERO-MINUTES-1: worker merged #1759
+- 2026-11-21: STATEFUL-MIGRATE-1: test D1 migrations against a populated database (#1759)
+- 2026-11-21: ZERO-MINUTES-1: worker merged #1750
+- 2026-11-21: Product manager pass: 0 growth and repair item(s) filed (#1750)
+- 2026-11-21: spinoff: portfolio tick (#1747)
+- 2026-11-21: ZERO-MINUTES-1: worker merged #1745
+- 2026-11-21: Add functionality to agents/spinoff_sweep.py to detect and delete idle us-idea-* Workers when their associated idea is closed, merging this cleanup into the existing sweep loop. (#Q-CFP-no-idle-preview-workers) (#1745)
+- 2026-11-21: ZERO-MINUTES-1: worker merged #1744
+- 2026-11-21: Add `agents/spinoff_sweep.py` to implement automated deletion of idle idea preview Workers using a rule implemented as a Worker class (#Q-CFP-no-idle-preview-workers) (#1744)
+- 2026-11-21: branchsweep: merge the branches main lacks (#1740)
+- 2026-11-21: failure-audit: file and close failure-mode items (FAILURE-RESOLVE-1) [skip ci]
+- 2026-11-21: Implement the TemplateGenerator archetype to unblock queued writers. (#Q-SPIN-SCOPE-IMPLEMENT-TEMPLATE-GENERATOR) (#1739)
 - 2026-11-21: queue: closing-probe verdicts for 3 item(s) (QUEUE-PERSIST-1) [skip ci]
 - 2026-11-21: UPTIME-1: self-repair through the tick Worker, retry before dead, www.ultrastable.app route (#1492)
 - 2026-11-21: UPTIME-1: server-side DNS and HTTP probe for every ultrastable hostname (#1461)
