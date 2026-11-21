@@ -31,7 +31,8 @@ test('a green client PR is merged by the server', async () => {
 test('a stuck old client PR gets one tracked item and a probe age; a non-client branch is left alone', async () => {
   const { f, calls } = fake({ prs: [pr, { number: 6, head: { ref: 'feature/y' }, updated_at: '2020-01-01T00:00:00Z' }], detail: { ...pr, mergeable_state: 'dirty' } });
   const r = await sweepOpenLoops({ token: 't', repos: ['o/r'], fetch: f, now: NOW });
-  assert.deepEqual(r.filed, ['o/r#5']); assert.ok(r.open_loop_age_hours > 70); assert.ok(!calls.some(c => c.includes('/pulls/6')));
+  assert.deepEqual(r.filed, []); assert.deepEqual(r.superseded, ['o/r#5']);  // SLA-1: old and conflicting is superseded, not filed
+  assert.ok(!calls.some(c => c.includes('/pulls/6')));
 });
 test('an already-filed item is not filed twice; stale claims are released; no token reports no-token', async () => {
   const { f } = fake({ prs: [pr], detail: { ...pr, mergeable_state: 'dirty' }, filed: [{ title: 'Q-OPENLOOP-o-r-5: x' }], claimed: [{ number: 3, updated_at: '2026-11-01T00:00:00Z' }] });
@@ -44,7 +45,7 @@ test('with issues off the sweep does not abort: the stuck PR is left to the lane
   const { f, calls } = fake({ prs: two, detail: { ...pr, mergeable_state: 'dirty' }, issuesOff: true });
   const r = await sweepOpenLoops({ token: 't', repos: ['o/r'], fetch: f, now: NOW });
   assert.equal(r.status, 'ok'); assert.deepEqual(r.errors, []); assert.deepEqual(r.filed, []);
-  assert.deepEqual(r.lane_owned, ['o/r#5', 'o/r#7']); assert.ok(calls.includes('GET /repos/o/r/pulls/7'));
+  assert.deepEqual(r.superseded, ['o/r#5', 'o/r#7']); assert.deepEqual(r.lane_owned, []); assert.ok(calls.includes('GET /repos/o/r/pulls/7'));  // SLA-1
 });
 
 test('BRANCH-ROOT-CAUSE-1: a blocked PR with no check run is closed and reopened once; a worker/ branch is swept; one with runs is not touched', async () => {
@@ -65,4 +66,18 @@ test('STALL-ACT-1: a failing dirty PR no longer starves the next one; an unrecon
   assert.ok(calls.some(c => c.startsWith('GET /repos/o/r/pulls/12/files')) || calls.filter(c => c.includes('/files')).length >= 2);
   assert.ok(calls.includes('PATCH /repos/o/r/pulls/11') || calls.some(c => c.startsWith('PATCH /repos/o/r/pulls/')));
   assert.ok(Array.isArray(r.superseded));
+});
+
+test('SLA-1: a conflicting claude/ PR past the hard limit and idle is superseded with a PORT-BRANCH item; a young or recently pushed one is not', async () => {
+  const { prTier, portItemId } = await import('../src/sla.js');
+  assert.equal(prTier({ ageMin: 400, idleMin: 300, state: 'dirty', branch: 'claude/project-thread-x' }), 'supersede');
+  assert.equal(prTier({ ageMin: 400, idleMin: 5, state: 'dirty', branch: 'claude/x' }), 'act');
+  assert.equal(prTier({ ageMin: 400, idleMin: 300, state: 'clean', branch: 'claude/x' }), 'ok');
+  assert.equal(prTier({ ageMin: 400, idleMin: 300, state: 'dirty', branch: 'feature/x' }), 'ok');
+  assert.equal(portItemId('claude/project-thread-x'), 'PORT-BRANCH-claude-project-thread-x');
+  const c = { number: 21, head: { ref: 'claude/old', sha: 'c1' }, created_at: '2026-11-13T00:00:00Z', updated_at: '2026-11-13T06:00:00Z' };
+  const { f, calls } = fake({ prs: [c], detail: { ...c, mergeable_state: 'dirty' }, files: [{ filename: 'src/a.js' }], mergesStatus: 409 });
+  const r = await sweepOpenLoops({ token: 't', repos: ['o/r'], fetch: f, now: NOW });
+  assert.deepEqual(r.superseded, ['o/r#21']); assert.deepEqual(r.sla_ported, [{ repo: 'o/r', number: 21, branch: 'claude/old' }]);
+  assert.ok(calls.includes('PATCH /repos/o/r/pulls/21'));
 });

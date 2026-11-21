@@ -363,6 +363,22 @@
    "root_cause": "a root-cause class is malformed, or one escalated with no open Q-ROOT item",
    "owner": "operations",
    "remedy": "Fix doctrine/rootcauses.json or let python3 -m foundation rootcause --run file the item."
+  },
+  {
+   "id": "sla-breach",
+   "failure_mode": "fm-sla-breach",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "slawatch",
+    "--check"
+   ],
+   "timeout": 120,
+   "root_cause": "an item outlived its written SLA because no loop owned its state",
+   "owner": "operations",
+   "remedy": "Read the breach list; the sweeper supersedes PRs, the executor takes the issue at p0. Fix the loop that left it, never raise the limit."
   }
  ]
 }

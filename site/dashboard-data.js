@@ -280,7 +280,7 @@ export default {
      "id": "failures",
      "title": "Failure modes under audit",
      "source": "doctrine/detectors.json",
-     "headline": "21 failure modes, 23 live detectors",
+     "headline": "22 failure modes, 24 live detectors",
      "rows": [
       [
        "selfhost-tick",
@@ -373,6 +373,10 @@ export default {
       [
        "root-cause",
        "fm-recurring-root-cause"
+      ],
+      [
+       "sla-breach",
+       "fm-sla-breach"
       ]
      ],
      "note": "A failing detector files one issue; the same failure twice means change the approach, three times an incident."

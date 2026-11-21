@@ -326,18 +326,30 @@
    "cadence_ticks": 1,
    "probe": "grep:foundation/deprot.py::def check"
   },
-    {
-      "id": "fm-recurring-root-cause",
-      "trigger": "a finding is fixed at its symptom and the same root cause produces it again",
-      "symptom": "the same class of failure returns on a later day under a new name",
-      "blast_radius": "every loop the root cause reaches; repeated effort with no capability gain",
-      "detection": "python3 -m foundation rootcause --check",
-      "root_cause": "no root-cause class owns the finding, or its guard is absent or ineffective",
-      "remediation": "rootcause escalates a class seen on two days to Q-ROOT-<class>: build the guard, or redesign the one that failed",
-      "status": "controlled",
-      "cadence_ticks": 1,
-      "probe": "grep:foundation/rootcause.py::def run"
-    }
+  {
+   "id": "fm-recurring-root-cause",
+   "trigger": "a finding is fixed at its symptom and the same root cause produces it again",
+   "symptom": "the same class of failure returns on a later day under a new name",
+   "blast_radius": "every loop the root cause reaches; repeated effort with no capability gain",
+   "detection": "python3 -m foundation rootcause --check",
+   "root_cause": "no root-cause class owns the finding, or its guard is absent or ineffective",
+   "remediation": "rootcause escalates a class seen on two days to Q-ROOT-<class>: build the guard, or redesign the one that failed",
+   "status": "controlled",
+   "cadence_ticks": 1,
+   "probe": "grep:foundation/rootcause.py::def run"
+  },
+  {
+   "id": "fm-sla-breach",
+   "trigger": "a PR or issue stays open past its written limit in doctrine/sla.json",
+   "symptom": "a conflicting, red, unchecked or draft PR (or an old issue) sits for hours with only a comment",
+   "blast_radius": "every loop that waits on the item; the drain-to-zero target",
+   "detection": "python3 -m foundation slawatch --check",
+   "root_cause": "the green-PR watcher ignores every non-green class and the sweeper superseded agent/ branches only",
+   "remediation": "the tick Worker sweeper supersedes a non-merge-ready PR past hard_min and files one PORT-BRANCH item; slawatch fails loudly on any breach",
+   "status": "controlled",
+   "cadence_ticks": 1,
+   "probe": "grep:seed/worker/src/sla.js::export function prTier"
+  }
  ],
  "controls": [
   {
