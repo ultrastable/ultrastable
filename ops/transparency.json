@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-21T11:53:01Z",
- "commit": "361ffa34",
+ "generated": "2026-11-21T12:04:30Z",
+ "commit": "d2ddb8c2",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 104,
@@ -18,8 +18,8 @@
   "merged_prs_listed": 0,
   "prs_merged_total": 0,
   "prs_merged_unattended": 0,
-  "backlog_open": 199,
-  "backlog_items": 681
+  "backlog_open": 206,
+  "backlog_items": 688
  },
  "unknowns": {
   "units": 126,
@@ -56,13 +56,13 @@
  },
  "throughput": {
   "queue": {
-   "items": 681,
+   "items": 688,
    "by_status": {
     "closed": 474,
-    "open": 199,
+    "open": 206,
     "done": 8
    },
-   "takeable_now": 198
+   "takeable_now": 205
   },
   "merged": {
    "total": 0,
@@ -95,27 +95,26 @@
   "deploys": {
    "site_runs": 50,
    "by_conclusion": {
-    "success": 47,
-    "cancelled": 1,
-    "failure": 2
+    "success": 49,
+    "cancelled": 1
    },
    "latest": {
     "conclusion": "success",
-    "createdAt": "2026-11-21T11:43:58Z",
-    "event": "workflow_dispatch",
-    "headSha": "4dd76bdc76ee8cd3eff7b09c7e43fd2b18474b02"
+    "createdAt": "2026-11-21T11:55:50Z",
+    "event": "push",
+    "headSha": "653e4f9be764a6d3f145bc8efa9f036a09b23820"
    },
    "per_day_success": {
     "2026-11-20": 38,
-    "2026-11-21": 9
+    "2026-11-21": 11
    }
   },
   "executor": {
    "runs": 30,
    "by_conclusion": {
     "": 1,
-    "success": 27,
-    "failure": 2
+    "failure": 1,
+    "success": 28
    },
    "prs_opened_unattended": 0,
    "prs_merged_unattended": 0,
@@ -173,7 +172,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": -0.8,
+   "age_s": 53.3,
    "status": "fresh",
    "missed": 0
   },
@@ -197,16 +196,15 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 467.2,
+   "age_s": 252.3,
    "status": "fresh",
-   "missed": 0,
-   "lag_s": 967.0
+   "missed": 0
   },
   {
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 78247.2,
+   "age_s": 78941.3,
    "status": "fresh",
    "missed": 0
   }
@@ -305,7 +303,7 @@
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-21T11:52:26Z",
+  "generated": "2026-11-21T12:03:58Z",
   "blindspots": {
    "backup": {
     "skipped": "last drill is fresh"
@@ -332,7 +330,7 @@
     "id": "pageviews_7d",
     "baseline": 1310,
     "target": 1500,
-    "expected_today": 1374.4,
+    "expected_today": 1374.5,
     "value": null,
     "behind": null,
     "progress": null
@@ -380,7 +378,7 @@
     "metric": "agent_hits_7d",
     "baseline": null,
     "predicted_pct": 10,
-    "started": "2026-11-21T11:52:26Z",
+    "started": "2026-11-21T12:03:58Z",
     "check_after_days": 7,
     "verdict": null
    },
@@ -389,7 +387,7 @@
     "metric": "pilot_page_views_7d",
     "baseline": null,
     "predicted_pct": 10,
-    "started": "2026-11-21T11:52:26Z",
+    "started": "2026-11-21T12:03:58Z",
     "check_after_days": 7,
     "verdict": null
    },
@@ -398,7 +396,7 @@
     "metric": "agent_hits_7d",
     "baseline": null,
     "predicted_pct": 15,
-    "started": "2026-11-21T11:52:26Z",
+    "started": "2026-11-21T12:03:58Z",
     "check_after_days": 7,
     "verdict": null
    },
@@ -407,7 +405,7 @@
     "metric": "pilot_page_views_7d",
     "baseline": null,
     "predicted_pct": 10,
-    "started": "2026-11-21T11:52:26Z",
+    "started": "2026-11-21T12:03:58Z",
     "check_after_days": 7,
     "verdict": null
    },
@@ -416,7 +414,7 @@
     "metric": "pilot_page_views_7d",
     "baseline": null,
     "predicted_pct": 15,
-    "started": "2026-11-21T11:52:26Z",
+    "started": "2026-11-21T12:03:58Z",
     "check_after_days": 7,
     "verdict": null
    }
@@ -506,16 +504,16 @@
  },
  "growth": {
   "mix": {
-   "growth": 1,
+   "growth": 2,
    "fix": 1,
-   "maintenance": 18,
+   "maintenance": 17,
    "total": 20,
-   "growth_share": 0.05,
+   "growth_share": 0.1,
    "target": 0.4
   },
   "target_growth_share": 0.4,
   "growth_items_takeable": 19,
-  "items_takeable": 198,
+  "items_takeable": 205,
   "metrics": [
    {
     "id": "pageviews_7d",
@@ -560,7 +558,7 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 14.4,
+   "last_beat_age_s": 94.2,
    "expected_interval_s": 21600,
    "beats_24h": 60,
    "expected_24h": 4.0,
@@ -571,7 +569,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 78292.4,
+   "last_beat_age_s": 78982.2,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -582,9 +580,9 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 30.4,
+   "last_beat_age_s": 511.2,
    "expected_interval_s": 86400,
-   "beats_24h": 56,
+   "beats_24h": 57,
    "expected_24h": 1.0,
    "median_jitter_s": null,
    "status": "ticking"
@@ -593,7 +591,7 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 329853.4,
+   "last_beat_age_s": 330543.2,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -604,7 +602,7 @@
    "id": "a11y",
    "what": "A11Y-LOOP-1: the weekly accessibility and layout audit of every public page",
    "source": "workflow",
-   "last_beat_age_s": 209510.4,
+   "last_beat_age_s": 210200.2,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -622,7 +620,7 @@
    "id": "claims",
    "what": "words checked against code and the deployed site",
    "source": "workflow",
-   "last_beat_age_s": 72435.4,
+   "last_beat_age_s": 73125.2,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -633,7 +631,7 @@
    "id": "watchdog",
    "what": "RESILIENCE-1: the GitHub watchdog that probes every clock and restarts the stopped ones; the tick Worker dispatches it again when it is older than 12 hours",
    "source": "workflow",
-   "last_beat_age_s": -3.6,
+   "last_beat_age_s": 69.2,
    "expected_interval_s": 43200,
    "beats_24h": 60,
    "expected_24h": 2.0,
@@ -2612,6 +2610,15 @@
  "changes": {
   "commits": [
    {
+    "sha": "d2ddb8c2",
+    "at": "2026-11-21T11:59:28+00:00",
+    "author": "Claude",
+    "subject": "TRAJECTORY-1 and core year simulation: time series of attention and change; observed rates feed the simulator; engine and goal ship in the seed",
+    "pr": null,
+    "item": "TRAJECTORY-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/d2ddb8c29a19081e0bbae161eafc775295ebe350"
+   },
+   {
     "sha": "361ffa34",
     "at": "2026-11-21T11:28:12+00:00",
     "author": "Claude",
@@ -2961,15 +2968,6 @@
     "pr": null,
     "item": "YEAR-SIM-1",
     "url": "https://github.com/ultrastable/ultrastable/commit/7d94906e706fb6e2a8a7c6907fb4f67b816e39e4"
-   },
-   {
-    "sha": "f5a2fd2d",
-    "at": "2026-11-21T11:09:12+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1) [skip ci]",
-    "pr": null,
-    "item": "REGEN-GENERATED-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/f5a2fd2db0c6318656837eeb37cfd66a34cdb810"
    }
   ],
   "pull_requests": []

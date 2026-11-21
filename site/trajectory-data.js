@@ -5,7 +5,7 @@ export default {
   {
    "area": "doctrine",
    "quiet_days": 0,
-   "recent7": 52002,
+   "recent7": 52202,
    "series": [
     0,
     0,
@@ -36,11 +36,11 @@ export default {
     7281,
     434,
     8395,
-    1871
+    2071
    ],
-   "share_recent": 0.229,
-   "share_trend": 0.186,
-   "total": 76184
+   "share_recent": 0.228,
+   "share_trend": 0.185,
+   "total": 76384
   },
   {
    "area": "workers",
@@ -78,54 +78,14 @@ export default {
     1771,
     209
    ],
-   "share_recent": 0.322,
+   "share_recent": 0.319,
    "share_trend": 0.178,
    "total": 73173
   },
   {
-   "area": "qnfo-platform-thread",
-   "quiet_days": 6,
-   "recent7": 19412,
-   "series": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    19412,
-    0,
-    0,
-    0,
-    0,
-    19412,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-   ],
-   "share_recent": 0.085,
-   "share_trend": 0.095,
-   "total": 38824
-  },
-  {
    "area": "foundation",
    "quiet_days": 0,
-   "recent7": 16734,
+   "recent7": 16942,
    "series": [
     0,
     0,
@@ -156,16 +116,16 @@ export default {
     1244,
     487,
     4064,
-    2713
+    2921
    ],
    "share_recent": 0.074,
    "share_trend": 0.072,
-   "total": 29399
+   "total": 29607
   },
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 16733,
+   "recent7": 17744,
    "series": [
     0,
     0,
@@ -196,11 +156,11 @@ export default {
     1799,
     575,
     6177,
-    2742
+    3753
    ],
-   "share_recent": 0.074,
-   "share_trend": 0.058,
-   "total": 23753
+   "share_recent": 0.077,
+   "share_trend": 0.06,
+   "total": 24764
   },
   {
    "area": "instances",
@@ -321,9 +281,49 @@ export default {
    "share_recent": 0.045,
    "share_trend": 0.036,
    "total": 14876
+  },
+  {
+   "area": "platform",
+   "quiet_days": 0,
+   "recent7": 219,
+   "series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    14007,
+    183,
+    23,
+    0,
+    0,
+    23,
+    0,
+    24,
+    80,
+    8,
+    44,
+    40
+   ],
+   "share_recent": 0.001,
+   "share_trend": 0.035,
+   "total": 14432
   }
  ],
- "at": "2026-11-21T11:58:11Z",
+ "at": "2026-11-21T12:06:32Z",
  "days": 30,
  "findings": [
   {
@@ -345,16 +345,10 @@ export default {
    "why": "workers's share of attention moved 18 points between the first and second half of the window"
   },
   {
-   "evidence": "quiet_days 8; system change in the last 7 days 227214",
+   "evidence": "quiet_days 8; system change in the last 7 days 229376",
    "id": "docs/runbooks",
    "kind": "neglected",
    "why": "docs/runbooks had 134 lines of change, then nothing for 8 days while the rest of the system moved"
-  },
-  {
-   "evidence": "days with changes: 12",
-   "id": "seed/worker/src/index.js",
-   "kind": "hotspot",
-   "why": "seed/worker/src/index.js was rewritten on 12 of 30 days"
   },
   {
    "evidence": "days with changes: 12",
@@ -376,15 +370,21 @@ export default {
   },
   {
    "evidence": "days with changes: 12",
+   "id": "seed/worker/src/index.js",
+   "kind": "hotspot",
+   "why": "seed/worker/src/index.js was rewritten on 12 of 30 days"
+  },
+  {
+   "evidence": "days with changes: 12",
    "id": ".github/workflows/checks.yml",
    "kind": "hotspot",
    "why": ".github/workflows/checks.yml was rewritten on 12 of 30 days"
   },
   {
-   "evidence": "opened 840, closed 502",
+   "evidence": "opened 847, closed 502",
    "id": "issues",
    "kind": "drift",
-   "why": "issues are opening faster than they close: backlog grew by 338 over 30 days"
+   "why": "issues are opening faster than they close: backlog grew by 345 over 30 days"
   }
  ],
  "history_days": 12,
@@ -419,16 +419,16 @@ export default {
    509,
    461,
    298,
-   338
+   345
   ],
   "closed": 502,
-  "opened": 840
+  "opened": 847
  },
  "loops": [
   {
    "loop": "improvements",
    "quiet_days": 0,
-   "rows": 800,
+   "rows": 805,
    "series": [
     0,
     0,
@@ -459,7 +459,7 @@ export default {
     100,
     0,
     70,
-    25
+    30
    ]
   },
   {
@@ -650,7 +650,7 @@ export default {
   {
    "loop": "checks-session",
    "quiet_days": 0,
-   "rows": 81,
+   "rows": 82,
    "series": [
     0,
     0,
@@ -681,7 +681,7 @@ export default {
     3,
     0,
     14,
-    8
+    9
    ]
   },
   {
@@ -726,10 +726,10 @@ export default {
  "observed": {
   "ci_unavailable": {
    "days": 12,
-   "events": 81,
-   "rate_year": 2463.8,
-   "recent_year": 2281.2,
-   "trend": -0.11
+   "events": 82,
+   "rate_year": 2494.2,
+   "recent_year": 2372.5,
+   "trend": -0.07
   },
   "conflict_merges": {
    "days": 12,

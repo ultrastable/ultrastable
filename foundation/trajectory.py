@@ -69,15 +69,20 @@ def probe(root, ref) -> int:
     return 1 if hit else 0
 
 
+def _private(name) -> bool:
+    """Names of other tenants never reach a public page (the separation guard in doctrine/rules.json); the ledger keeps them."""
+    return bool(re.search(r"qnfo", str(name), re.I))
+
+
 def page_data(root=REPO) -> dict:
     p = Path(root) / core.LATEST
     if not p.is_file():
         return {"measured": False}
     j = json.loads(p.read_text(encoding="utf-8"))
     return {"measured": True, "at": j["at"], "days": j["days"], "history_days": j.get("history_days"),
-            "areas": [{k: a[k] for k in ("area", "total", "recent7", "share_recent", "share_trend", "quiet_days", "series")} for a in j["areas"][:8]],
+            "areas": [{k: a[k] for k in ("area", "total", "recent7", "share_recent", "share_trend", "quiet_days", "series")} for a in j["areas"] if not _private(a["area"])][:8],
             "loops": sorted([{k: x[k] for k in ("loop", "rows", "quiet_days", "series")} for x in j["loops"]], key=lambda x: -x["rows"])[:8],
-            "issues": j["issues"], "findings": j["findings"][:12],
+            "issues": j["issues"], "findings": [f for f in j["findings"] if not _private(f["id"])][:12],
             "observed": {k: {x: v.get(x) for x in ("rate_year", "recent_year", "trend", "events", "days")} for k, v in j["observed"].items()}}
 
 
