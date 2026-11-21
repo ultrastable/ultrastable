@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
 // SPDX-License-Identifier: LicenseRef-Ultrastable-1.0
 // Copyright (c) Ultrastable
 // LANE-WORKER-MERGE-1: the merge lane's workflow-capable route. A PR that changes .github/workflows/** cannot be merged with the Actions token, and no
