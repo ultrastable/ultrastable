@@ -89,9 +89,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["deprot"]:
         from . import deprot
         return deprot.main(_av[1:])
-    if _av[:1] == ["yearsim"]:
-        from . import yearsim
-        return yearsim.main(_av[1:])
+    if _av[:1] == ["yearfail"]:
+        from . import yearfail
+        return yearfail.main(_av[1:])
     if _av[:1] == ["unattended"]:
         from . import unattended
         return unattended.main(_av[1:])

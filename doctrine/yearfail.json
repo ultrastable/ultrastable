@@ -1,5 +1,5 @@
 {
- "_doc": "YEARSIM-1 (Rowan, 2026-11-21): 'How is this going to run for a year unattended and keep improving itself with absolutely zero external input? That's a key test.' Twelve simulated months, one injected failure each, run by foundation/yearsim.py against a scratch copy. A month with scenario null is an area the simulation cannot reach yet: it is reported UNCOVERED and carries the id of the queue item that closes the gap. Consumers: foundation/yearsim.py, .github/workflows/yearsim.yml, site/yearsim.js, tests/foundation/test_yearsim.py.",
+ "_doc": "YEARFAIL-1 (Rowan, 2026-11-21): 'How is this going to run for a year unattended and keep improving itself with absolutely zero external input? That's a key test.' Twelve simulated months, one injected failure each, run by foundation/yearfail.py against a scratch copy. A month with scenario null is an area the simulation cannot reach yet: it is reported UNCOVERED and carries the id of the queue item that closes the gap. Consumers: foundation/yearfail.py, .github/workflows/yearfail.yml, site/yearfail.js, tests/foundation/test_yearfail.py.",
  "version": "1.0.0",
  "months": [
   {"area": "bootstrap", "failure": "fresh copy of the repository must boot its own heartbeat", "scenario": "boot"},
@@ -11,7 +11,7 @@
   {"area": "stuck-failure", "failure": "a failure item nobody repairs for nine days", "scenario": "stuck"},
   {"area": "silent-drop", "failure": "a queue item closed with no evidence", "scenario": "silent"},
   {"area": "dependency-rot", "failure": "a new dependency manifest has no update bot watching it", "scenario": "deprot"},
-  {"area": "tenant-loops", "failure": "the Practical Solutions loops (scan, pipeline, advocates, deploys) run a year; its scheduled workflows fire and honour the halt", "scenario": "tenant", "item": "Q-YEARSIM-tenant-loops"},
+  {"area": "tenant-loops", "failure": "the Practical Solutions loops (scan, pipeline, advocates, deploys) run a year; its scheduled workflows fire and honour the halt", "scenario": "tenant", "item": "Q-YEARFAIL-tenant-loops"},
   {"area": "github-apps", "failure": "a fresh setup must register one app, never more", "scenario": null, "why": "GitHub offers no API to delete a keyless app or its installation; reuse is tested in seed/worker/test/auth.test.js, not in this run", "item": "OL-20261121-1"},
   {"area": "social-loop", "failure": "a year of scheduled posts; a post loses the hook or invents a number", "scenario": "social"},
   {"area": "final-runway", "failure": "after twelve months the runway still meets the target", "scenario": "final"}

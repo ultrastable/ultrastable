@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-21-yearfail-1-renamed-to-avoid-the-year-sim-1-collision",
+  "kind": "lesson",
+  "date": "2026-11-21",
+  "title": "YEARFAIL-1 renamed to avoid the YEAR-SIM-1 collision",
+  "body": "PR 1188 (YEAR-SIM-1) owns foundation/yearsim.py, doctrine/yearsim.json, ops/yearsim.json and /year: a Monte Carlo of recovery code. The monthly failure-injection test is foundation/yearfail.py, doctrine/yearfail.json, ops/yearfail.json and /year/failures. The tenant's ops/yearsim.json is unchanged.",
+  "probe": "file:foundation/yearfail.py",
+  "session": "session_0156nqDvJdN4U5rU7HaEu3jd"
+ },
+ "kind": "lesson",
+ "title": "YEARFAIL-1 renamed to avoid the YEAR-SIM-1 collision",
+ "session": "session_0156nqDvJdN4U5rU7HaEu3jd"
+}

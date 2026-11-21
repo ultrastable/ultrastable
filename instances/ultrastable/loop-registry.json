@@ -3877,40 +3877,40 @@
    "server_owner": "github-actions"
   },
   {
-   "id": "yearsim",
+   "id": "yearfail",
    "kind": "governance",
-   "summary": "YEARSIM-1: twelve simulated months of zero input run against a scratch copy weekly; each injected failure must be detected by the system's own detectors and the fix verified; a failing month files Q-YEARSIM-<area>.",
-   "trigger": "weekly (yearsim.yml) and on demand",
+   "summary": "YEARFAIL-1: twelve simulated months of zero input run against a scratch copy weekly; each injected failure must be detected by the system's own detectors and the fix verified; a failing month files Q-YEARFAIL-<area>.",
+   "trigger": "weekly (yearfail.yml) and on demand",
    "owner": "operations",
    "closes_by": "system",
    "sla": "7d",
-   "done": "python3 -m foundation yearsim --check reports ok and ops/yearsim.json is under 8 days old",
+   "done": "python3 -m foundation yearfail --check reports ok and ops/yearfail.json is under 8 days old",
    "paths": [
     {
      "id": "ci",
-     "how": "python3 -m foundation yearsim --apply",
+     "how": "python3 -m foundation yearfail --apply",
      "class": "free"
     },
     {
      "id": "session",
-     "how": "python3 -m foundation yearsim --apply from a cloud-hosted agent session",
+     "how": "python3 -m foundation yearfail --apply from a cloud-hosted agent session",
      "class": "session"
     }
    ],
-   "closing_probe": "grep:foundation/yearsim.py::def run",
+   "closing_probe": "grep:foundation/yearfail.py::def run",
    "writeback": [
-    "ops/yearsim.json",
-    "site/yearsim-data.js",
+    "ops/yearfail.json",
+    "site/yearfail-data.js",
     "docs/issues"
    ],
    "system_path": [
-    "doctrine/yearsim.json",
-    "foundation/yearsim.py",
-    "site/yearsim.js"
+    "doctrine/yearfail.json",
+    "foundation/yearfail.py",
+    "site/yearfail.js"
    ],
    "area": "governance",
    "workflows": [
-    "yearsim.yml"
+    "yearfail.yml"
    ],
    "server_owner": "github-actions"
   }

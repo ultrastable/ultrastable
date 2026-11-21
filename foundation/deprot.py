@@ -5,8 +5,8 @@
   python3 -m foundation deprot --check   every package.json and pyproject.toml directory, and the workflows, has a Dependabot entry for its ecosystem
 
 Dependabot opens the update pull requests on its own schedule; the lane merges a green one (no person). This check is the detector: a manifest added
-without an entry is a failure (failure mode fm-dependency-rot, detector `dependency-watch`, yearsim month `dependency-rot`).
-Consumers: doctrine/detectors.json, foundation/yearsim.py, tests/foundation/test_deprot.py."""
+without an entry is a failure (failure mode fm-dependency-rot, detector `dependency-watch`, yearfail month `dependency-rot`).
+Consumers: doctrine/detectors.json, foundation/yearfail.py, tests/foundation/test_deprot.py."""
 from __future__ import annotations
 import re, sys
 from pathlib import Path

@@ -2343,7 +2343,7 @@
         "MASTODON_TOKEN"
       ]
     },
-    "yearsim": {
+    "yearfail": {
       "inflows": [
         {
           "signal": "main.merged",
@@ -2356,7 +2356,7 @@
           "via": "github:issues"
         }
       ],
-      "feedback": "a failing or uncovered month becomes a Q-YEARSIM item the executor fixes and merges, and the next weekly run must turn that month green; the result is published at /year",
+      "feedback": "a failing or uncovered month becomes a Q-YEARFAIL item the executor fixes and merges, and the next weekly run must turn that month green; the result is published at /year",
       "bindings": [
         "LANE_PAT"
       ]

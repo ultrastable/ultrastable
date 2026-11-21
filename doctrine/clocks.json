@@ -103,10 +103,10 @@
       "periodic": false
     },
     {
-      "id": "yearsim",
+      "id": "yearfail",
       "what": "the weekly simulated year with zero input",
       "source": "workflow",
-      "workflow": "yearsim",
+      "workflow": "yearfail",
       "expected_interval_s": 604800,
       "periodic": true
     }
