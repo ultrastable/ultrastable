@@ -4044,6 +4044,30 @@
    "title": "Product manager pass 2026112115: 0 item(s) filed",
    "body": "Growth and repair items, experiment verdicts and knob review recorded in ops/growth/pm-report.json by foundation/pm.py; tests pass.",
    "probe": "file:foundation/pm.py"
+  },
+  {
+   "id": "decision-2026-11-21-control-1-knob-damping-and-goal-error-budgets",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "CONTROL-1 knob damping and goal error budgets",
+   "body": "Goal knobs damp after direction reversals (cooldown doubles per reversal past one, cap 16x). Every goal carries an SRE error budget with multiwindow burn-rate state on /goals and /api/goals. Sources in CREDITS.md.",
+   "probe": "file:seed/worker/src/control.js"
+  },
+  {
+   "id": "decision-2026-11-21-eval-1-executor-regression-evals",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "EVAL-1 executor regression evals",
+   "body": "Golden-set evals for apply_edit; pass rate must stay 1.0 (tests/foundation/test_evals.py).",
+   "probe": "file:foundation/evals.py"
+  },
+  {
+   "id": "decision-2026-11-21-pins-1-action-pin-baseline",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "PINS-1 action pin baseline",
+   "body": "Unpinned GitHub Actions refs counted against a shrink-only baseline of 0 (all 64 pinned) in doctrine/supply-chain.json.",
+   "probe": "file:foundation/actionpins.py"
   }
  ]
 }

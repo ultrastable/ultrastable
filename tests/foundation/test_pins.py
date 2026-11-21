@@ -1,17 +1,30 @@
-# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
-# Copyright (c) Ultrastable
-import json, unittest
-from foundation import pins
+"""PINS-1 ratchet: a roadmap issue without a runnable probe cannot be added; the baseline only shrinks."""
+import atexit, json, shutil, sys, tempfile, unittest
+from pathlib import Path
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
+from foundation import pins  # noqa: E402
 
 
-class Pins(unittest.TestCase):
-    def test_unpinned_never_grows(self):
-        base = json.loads((pins.ROOT / "doctrine/supply-chain.json").read_text())["unpinned_baseline"]
-        self.assertLessEqual(len(pins.unpinned()), base)
+def sandbox(issues, baseline):
+    d = Path(tempfile.mkdtemp()); atexit.register(shutil.rmtree, d, True); (d / "docs/issues").mkdir(parents=True); (d / "doctrine").mkdir()
+    (d / pins.BASELINE).write_text(json.dumps({"unprobed": baseline}))
+    for i, done, status in issues:
+        (d / f"docs/issues/{i}.json").write_text(json.dumps({"body": f"**Owner:** ops\n**Done check:** {done}\n**Status:** {status}"}))
+    return d
 
-    def test_sha_counts_as_pinned(self):
-        self.assertTrue(pins.SHA.search("actions/checkout@" + "a" * 40))
-        self.assertFalse(pins.SHA.search("actions/checkout@v7"))
+
+class Ratchet(unittest.TestCase):
+    def test_repository_holds(self):
+        self.assertEqual(pins.check(ROOT), [])
+
+    def test_new_prose_check_fails_and_probe_passes(self):
+        d = sandbox([("A", "file:x", "open"), ("B", "reviewed by a person", "open")], [])
+        self.assertEqual([p.split()[1] for p in pins.check(d)], ["B"])
+
+    def test_baseline_only_shrinks(self):
+        d = sandbox([("A", "file:x", "open"), ("C", "prose", "done")], ["A", "C"])
+        self.assertEqual(len(pins.check(d)), 2)
 
 
 if __name__ == "__main__":
