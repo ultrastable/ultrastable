@@ -89,6 +89,10 @@
       "class": "core",
       "role": "container executor (US-SPEC-11)"
     },
+    "core/connect": {
+      "class": "core",
+      "role": "Connection engine: knowledge graph plus vectors find novel links (close in meaning, far in the graph), ranked and calibrated by downstream outcomes; tenant-agnostic"
+    },
     "core/criticality": {
       "class": "core",
       "role": "core/criticality: a deployment must reach the point where it builds itself with nobody prompting it. Two tick steps"
@@ -256,6 +260,10 @@
     "core/audit": {
       "class": "core",
       "role": "Hash-chained, Merkle-rolled, tamper-evident log of autonomous actions: hot events in D1, one compressed batch per day, verify and proof; tenant-agnostic (AUDIT-1)"
+    },
+    "core/discover": {
+      "class": "core",
+      "role": "Knowledge graph and vector index that keeps proposing connections nobody has drawn (transfer, combination, bridge, frontier); tenant-agnostic (DISCOVER-1)"
     },
     "core/promote": {
       "class": "core",

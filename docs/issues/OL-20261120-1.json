@@ -1,9 +1,9 @@
 {
   "id": "OL-20261120-1",
-  "title": "OL-20261120-1: Seed core/discover into every tenant and verify the first live run",
-  "body": "**Owner:** executor\n**Trigger:** connections workflow daily 05:17 UTC and on catalogue change\n**Done check:** file:ledger/connections.json\n**Status:** open\n\npractical-solutions is wired; the seed kit and other tenants inherit core/discover by revendoring and adding the connections workflow. Overlaps CONNECT-1 (core PR 825, practical-solutions PR 171) filed by another session; unique parts there (Swanson closure, restatement detection, lexical no-credential embedding route) are to be re-filed against core/discover.",
+  "title": "OL-20261120-1: CONNECT-1 live run and PS revendor",
+  "body": "**Owner:** product-manager\n**Trigger:** core PR 825 merged\n**Done check:** file:workers/core/connect/index.js\n**Status:** open\n\nRevendor practical-solutions from core and run the connect workflow on a model route; closing probe is the /connections page showing a non-lexical route.\n\n**Vacuous:** 2026-11-21T00:02:44Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n",
   "labels": [
-    "role:executor",
+    "role:product-manager",
     "open-loop"
   ],
   "milestone": "Now",

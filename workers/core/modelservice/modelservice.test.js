@@ -44,16 +44,18 @@ test('health reports the binding; no binding is a clear 503', async () => {
   assert.equal((await s.fetch(req({ prompt: 'p' }), {})).status, 503);
 });
 
-test('DISCOVER-1: /embed returns vectors for allow-listed embedding models only, behind the same OIDC check', async () => {
+test('CONNECT-1: a verified caller can embed text with an allow-listed model; bad input and other callers are refused', async () => {
   const seen = [];
+  const env = { AI: { run: async (m, o) => { seen.push(m); return { shape: [o.text.length, 3], data: o.text.map((_, i) => [i, 1, 0]) }; } } };
   const s = createModelService(cfg);
-  const env = { AI: { run: async (m, inp) => { seen.push(m); return { shape: [inp.text.length, 3], data: inp.text.map((_, i) => [i, 1, 0]) }; } } };
-  assert.equal((await s.fetch(req({ texts: ['a'] }, 'bad', '/llm/embed'), env)).status, 403);
-  const r = await (await s.fetch(req({ texts: ['a', 'b'] }, 'good', '/llm/embed'), env)).json();
-  assert.equal(r.dim, 3); assert.equal(r.vectors.length, 2);
-  await s.fetch(req({ texts: ['a'], model: 'evil/x' }, 'good', '/llm/embed'), env);
-  assert.deepEqual(seen, ['@cf/baai/bge-small-en-v1.5', '@cf/baai/bge-small-en-v1.5']);
-  assert.equal((await s.fetch(req({ texts: [] }, 'good', '/llm/embed'), env)).status, 400);
+  assert.equal((await s.fetch(req({ embed: ['a'] }, 'bad'), env)).status, 403);
+  const r = await (await s.fetch(req({ embed: ['a', 'b'], model: '@cf/baai/bge-m3' }), env)).json();
+  assert.deepEqual(r, { vectors: [[0, 1, 0], [1, 1, 0]], model: '@cf/baai/bge-m3' });
+  await s.fetch(req({ embed: ['a'], model: 'evil/x' }), env);
+  assert.deepEqual(seen, ['@cf/baai/bge-m3', '@cf/baai/bge-base-en-v1.5']);
+  assert.equal((await s.fetch(req({ embed: [] }), env)).status, 400);
+  assert.equal((await s.fetch(req({ embed: [''] }), env)).status, 400);
+  assert.equal((await s.fetch(req({ embed: Array(101).fill('x') }), env)).status, 400);
   const bad = { AI: { run: async () => ({ data: [] }) } };
-  assert.equal((await s.fetch(req({ texts: ['a'] }, 'good', '/llm/embed'), bad)).status, 502);
+  assert.equal((await s.fetch(req({ embed: ['a'] }), bad)).status, 502);
 });
