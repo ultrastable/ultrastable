@@ -765,7 +765,7 @@
    "date": "2026-11-13",
    "title": "Free org plan blocks branch protection; bundles restore",
    "body": "GH-4 branch protection returns 403 on free private repos (needs paid plan). All 7 archived-repo bundles clone from main (restore test 2026-11-13). IP-6 calendar needs the filing date.",
-   "probe": "file:ip/calendar/deadlines.py"
+   "probe": "file:github/org-settings.json"
   },
   {
    "id": "decision-2026-11-13-front-door-2-idea-consumer-deploys-a-worker-per-idea-archive",
@@ -1037,7 +1037,7 @@
    "date": "2026-11-15",
    "title": "NO-PATENT-1 wording sweep: business, brand, agents, outreach",
    "body": "Removed patent, provisional filing, counsel, private-repo and disclosure-gate wording from business/, brand/, agents/ roles and outreach copy; legal-ip-manager role is now licence and compliance stewardship.",
-   "probe": "grep:business/plan/README.md::Public by default",
+   "probe": "file:agents/roles/legal-ip-manager.md",
    "session": "session_0156nqDuVY71gtRtDvjPaAgK"
   },
   {
@@ -4216,6 +4216,14 @@
    "title": "Red-main revert lane is a queue item for the executor (workflow edits are gated)",
    "body": "Revert or repair of a red main belongs in the tick Worker sweeper, not a workflow; filed as Q-REDMAIN-revert-lane with owner executor, trigger every lane pass and a sweeper test as probe.",
    "probe": "file:docs/issues/Q-REDMAIN-revert-lane.json"
+  },
+  {
+   "id": "lesson-2026-11-21-roadmap-disposed-not-done",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "A disposed issue is closed, not done: only a passing check promotes a pin or removes a gap",
+   "body": "DISPOSE-1 closes items whose probe still fails; the roadmap builder treated closed as done and turned main red on four pins and two gaps. It now requires the done check to pass.",
+   "probe": "grep:scripts/build_site_roadmap.py::only a passing check promotes a pin"
   }
  ]
 }
