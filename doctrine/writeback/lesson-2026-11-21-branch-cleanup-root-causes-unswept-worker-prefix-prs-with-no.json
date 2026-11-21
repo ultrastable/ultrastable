@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-21-branch-cleanup-root-causes-unswept-worker-prefix-prs-with-no",
+  "kind": "lesson",
+  "date": "2026-11-21",
+  "title": "Branch cleanup root causes: unswept worker/ prefix, PRs with no required check, evidence branches outside KEEP",
+  "body": "Measured: node --test seed/worker/test/sweeper.test.js pass 5 fail 0; open PR count went 4 to 0 after retriggering checks by hand. Built-in-token PRs never fire pull_request so required checks never report; worker/ branches were never swept; audit-evidence and ciwatch-evidence were missing from the sweep KEEP list. Fixed in sweeper.js and completion_sweep.sh. Open loop: Q-BRANCH-EVIDENCE-OFF-REFS moves evidence branches off git refs so main is the only branch; owner sweeper, trigger every tick, probe branch count equals 1.",
+  "probe": "file:seed/worker/src/sweeper.js"
+ },
+ "kind": "lesson",
+ "title": "Branch cleanup root causes: unswept worker/ prefix, PRs with no required check, evidence branches outside KEEP",
+ "session": ""
+}
