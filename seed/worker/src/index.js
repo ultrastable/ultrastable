@@ -19,6 +19,7 @@ import { sampleFreeTier, freeTierLevel, alertFreeTier } from './freetier.js';  /
 import { runGate, gateCard } from './worker-gate.js';
 import { runHandoffs, makeDeployer, makeRollback, makeVersionReader } from './handoff.js';
 import { syncIssues } from './issuesync.js';
+import { mergeForLane } from './lanemerge.js';  // LANE-WORKER-MERGE-1
 import { sweepOpenLoops, recordSweep, lastSweep, alarmStalls } from './sweeper.js';
 import { mergeNow, prsForEvent } from './mergenow.js';
 import { refreshLiveChanges, readLiveChanges, refreshFleetChanges } from './livechanges.js'; // LIVE-FRESH-1
@@ -193,6 +194,17 @@ export default {
       if (!who.ok) return new Response('Not found', { status: 404 });
       const t = await getToken(env.DB, env, env.TENANT || config.org_slug || 'default', 'github-app').catch(() => null);
       return opsBackup(request, { token: (t && t.ok && t.token) || '', repo: env.OPS_REPO || 'ultrastable/ops' });
+    }
+    if (url.pathname === '/api/lane/merge' && request.method === 'POST') {  // LANE-WORKER-MERGE-1: the lane's merge for a PR that changes workflows, done with the org's own GitHub App
+      if (halted(config, env)) return Response.json({ halted: true }, { status: 202 });  // HALT-1
+      const repo = env.MAIN_REPO || env.OIDC_REPO || 'ultrastable/ultrastable';
+      const bearer = /^Bearer (.+)$/.exec(request.headers.get('authorization') || '');
+      const who = bearer ? await verifyOidc(bearer[1], { repo }).catch(e => ({ ok: false, why: String(e && e.message) })) : { ok: false, why: 'no bearer' };
+      if (!who.ok) return new Response('Not found', { status: 404 });
+      let body; try { body = await request.json(); } catch { return Response.json({ ok: false, error: 'bad json' }, { status: 400 }); }
+      const t = await getToken(env.DB, env, env.TENANT || config.org_slug || 'default', 'github-app').catch(() => null);
+      const r = await mergeForLane({ token: (t && t.ok && t.token) || '', repo, pr: body.pr, sha: body.sha });
+      return Response.json(r, { status: r.status });
     }
     if (url.pathname === '/api/main/commit' && request.method === 'POST') {  // MAIN-WRITER-1: workflow data commits to main, written with the org's own GitHub App (exempt from the main ruleset)
       if (halted(config, env)) return Response.json({ halted: true }, { status: 202 });  // HALT-1
