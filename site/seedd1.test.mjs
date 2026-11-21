@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
 // SEED-DEPLOY-1: the OIDC deploy route may create and migrate only a database named ultrastable-seed-<slug>.
 import assert from "node:assert/strict";
 import { internalDeploy, seedD1, SEED_DB } from "./deployer.js";
