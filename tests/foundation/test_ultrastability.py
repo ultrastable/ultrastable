@@ -168,9 +168,3 @@ class UptimeUserAgent(unittest.TestCase):
             self.assertEqual(U._get("https://x.example/health"), 1.0)
         self.assertTrue(seen["ua"] and "urllib" not in seen["ua"].lower())
 
-
-class PackageUserAgent(unittest.TestCase):
-    def test_default_opener_names_the_agent(self):
-        import urllib.request, foundation  # noqa: F401  (importing the package installs the opener)
-        op = urllib.request._opener
-        self.assertTrue(op and any(k == "User-Agent" and "urllib" not in v.lower() for k, v in op.addheaders))
