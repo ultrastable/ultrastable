@@ -258,6 +258,7 @@ jobs:
       issues: write
       checks: read
       actions: write
+      id-token: write  # LANE-WORKER-MERGE-1
     concurrency:
       group: lane-fast
       cancel-in-progress: false
