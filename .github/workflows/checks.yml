@@ -66,6 +66,7 @@ jobs:
           node --test test/cost-probe.test.mjs
           node --test test/plan-limits.test.mjs
           node --test --no-warnings instances/unlearn/worker/*.test.mjs
+          node --test --no-warnings tests/test_sweeper.js
           node --test --no-warnings dashboard/test/*.test.mjs
           bash scripts/site_tests.sh  # GATE-PARITY-1: runs site/*.test.mjs, the gate deploy-site runs before it deploys
       - name: No committed merge-conflict markers (MARKER-ROOT-1)
