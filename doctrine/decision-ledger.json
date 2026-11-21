@@ -4142,6 +4142,14 @@
    "title": "Provider connect pages are gated in the tick by the site Worker's internal key",
    "body": "OWNER-LINKS-4: site/worker.js is over the model-edit limit (worker-gate), so the gate lives in site/connections.js gatedForward and seed/worker/src/auth/routes.js; session session_0156nqDu7Qq4YrmkKMFxfB9D",
    "probe": "grep:seed/worker/src/auth/routes.js::OWNER-LINKS-4"
+  },
+  {
+   "id": "decision-2026-11-21-executor-closed-q-cifail-mergeaudit-1750-implement-mergeaudi",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Executor closed Q-CIFAIL-mergeaudit-1750: Implement mergeaudit probe script to verify PR merging commits pass checks and enforce consistent",
+   "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: foundation/probes/mergeaudit.py.",
+   "probe": "file:foundation/probes/mergeaudit.py"
   }
  ]
 }
