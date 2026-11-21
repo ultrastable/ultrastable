@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-21-seed-lifecycle-1-seeds-are-judged-by-computed-stage-never-by",
+  "kind": "decision",
+  "date": "2026-11-21",
+  "title": "SEED-LIFECYCLE-1: seeds are judged by computed stage, never by claim",
+  "body": "Every seed under instances/ (and every seeded repo) is built, deployed, verified live and answers 13 one-year survival classes before it counts as done; seedlife --check fails a false claim and seedlife --run keeps one Q-SEED item per seed.",
+  "probe": "file:foundation/seedlife.py"
+ },
+ "kind": "decision",
+ "title": "SEED-LIFECYCLE-1: seeds are judged by computed stage, never by claim",
+ "session": ""
+}

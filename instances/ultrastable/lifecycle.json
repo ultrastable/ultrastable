@@ -1,0 +1,73 @@
+{
+ "_doc": "SEED-LIFECYCLE-1 answers for tenant 0: Ultrastable judged by the same lifecycle as every seed it runs. Read by foundation/seedlife.py.",
+ "slug": "ultrastable",
+ "build": {
+  "paths": [
+   "seed/worker/src/index.js",
+   "site/worker.js",
+   "dashboard/worker.js"
+  ],
+  "tests": [
+   "seed/worker/test/handoff.test.js",
+   "site/site.test.mjs"
+  ]
+ },
+ "deploy": {
+  "worker": "ultrastable-site"
+ },
+ "verify": {
+  "url": "https://ultrastable.io/health",
+  "expect": "\"ok\":true"
+ },
+ "loops": [
+  "tick-heartbeat",
+  "executor",
+  "deploy-site",
+  "watchdog"
+ ],
+ "survival": {
+  "credentials": {
+   "inherit": "cloudflare-api-tokens"
+  },
+  "source-control": {
+   "inherit": "github-app-token"
+  },
+  "budget": {
+   "inherit": "workers-free-tier"
+  },
+  "cost-alerts": {
+   "inherit": "cloudflare-alerts"
+  },
+  "payment": {
+   "inherit": "payment-method"
+  },
+  "dependencies": {
+   "inherit": "dependency-drift"
+  },
+  "runtime": {
+   "inherit": "node-runtime"
+  },
+  "models": {
+   "inherit": "workers-ai-models"
+  },
+  "health": {
+   "status": "closed",
+   "probe": "cmd:python3 -m foundation seedlife --verify",
+   "how": "the watchdog fetches the verify URL every pass; a failing reading reopens Q-SEED and the handoff closer rolls back"
+  },
+  "backups": {
+   "inherit": "offsite-backup"
+  },
+  "renewal": {
+   "inherit": "domain-renewal"
+  },
+  "improvement": {
+   "inherit": "self-coder"
+  },
+  "privacy": {
+   "status": "closed",
+   "probe": "file:site/legalpages.js",
+   "how": "privacy notice served from code; first-party cookieless analytics only"
+  }
+ }
+}

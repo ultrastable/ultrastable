@@ -31,6 +31,8 @@ def check(root=REPO) -> list[str]:
     bad += [f"pathfinder: {b}" for b in pathfinder.check(root)] if (root / pathfinder.CFG).is_file() else []
     from . import modelwatch, unattended  # UNATTENDED-365, MODEL-WATCH-1: an external input that lapses is an open loop
     bad += [f"unattended: {b}" for b in unattended.check(root)] if (root / unattended.DATA).is_file() else []
+    from . import seedlife  # SEED-LIFECYCLE-1: a seed reported further along than its evidence is an open loop
+    bad += [f"seedlife: {b}" for b in seedlife.check(root)] if (root / seedlife.RULES).is_file() else []
     bad += [f"modelwatch: {b}" for b in modelwatch.check(root)] if (root / modelwatch.DATA).is_file() else []
     return bad
 
