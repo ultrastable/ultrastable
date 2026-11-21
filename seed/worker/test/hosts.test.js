@@ -69,7 +69,7 @@ test('webhook secrets are derived inside the Worker, stable and distinct', async
 });
 test('the reconciler creates a missing hook, repairs a failing one, and leaves a healthy one', async () => {
   calls = []; let r = await reconcileHooks({ token: 't', repos: ['o/r'], secret: 's', fetch: HJ([]) }); assert.equal(r.repos['o/r'], 'created');
-  const hook = { id: 1, active: true, events: ['push', 'pull_request', 'issues', 'issue_comment', 'release'], config: { url: 'https://ultrastable.io/hook/github' } };
+  const hook = { id: 1, active: true, events: ['push', 'pull_request', 'issues', 'issue_comment', 'release', 'check_suite'], config: { url: 'https://ultrastable.io/hook/github' } };
   calls = []; r = await reconcileHooks({ token: 't', repos: ['o/r'], secret: 's', fetch: HJ([{ ...hook, last_response: { code: 401 } }]) }); assert.match(r.repos['o/r'], /repaired.*401/); assert.ok(calls.includes('PATCH'));
   calls = []; r = await reconcileHooks({ token: 't', repos: ['o/r'], secret: 's', fetch: HJ([hook]) }); assert.equal(r.repos['o/r'], 'present'); assert.ok(!calls.includes('PATCH'));
   // FREE-TIER-1: a hook still subscribed to workflow_run is narrowed, so the delivery storm stops without a person editing the hook

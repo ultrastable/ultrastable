@@ -19,7 +19,9 @@ import { sampleFreeTier, freeTierLevel, alertFreeTier } from './freetier.js';  /
 import { runGate, gateCard } from './worker-gate.js';
 import { runHandoffs, makeDeployer, makeRollback, makeVersionReader } from './handoff.js';
 import { syncIssues } from './issuesync.js';
-import { sweepOpenLoops, recordSweep, lastSweep } from './sweeper.js';
+import { mergeForLane } from './lanemerge.js';  // LANE-WORKER-MERGE-1
+import { sweepOpenLoops, recordSweep, lastSweep, alarmStalls } from './sweeper.js';
+import { mergeNow, prsForEvent } from './mergenow.js';
 import { refreshLiveChanges, readLiveChanges, refreshFleetChanges } from './livechanges.js'; // LIVE-FRESH-1
 import { progressStep, readProgress } from './progress.js'; // PROGRESS-1
 import { watchFreshness } from './freshness.js'; // LIVE-FRESH-2
@@ -129,7 +131,7 @@ export default {
       step('issuesync', () => syncIssues({ db: env.DB, token, repo: main }));  // ISSUESYNC-1: filed roadmap items reach the queue on the server, no Actions needed
       step('repo-access', () => checkRepoAccess(env.DB, env, tenant, repos, { token, origin: env.PUBLIC_ORIGIN || '' }));  // REPO-ACCESS-1
       step('social', () => runSocial({ db: env.DB, env, tenant }));  // REACH-1: posts the due calendar item to the channels linked at /connect
-      step('sweeper', async () => { const sw = await sweepOpenLoops({ token, repos }); await recordSweep(env.DB, sw); return sw; });  // SERVER-OWNS-LOOPS-1
+      step('sweeper', async () => { const sw = await sweepOpenLoops({ token, repos }); await recordSweep(env.DB, sw); sw.stall_items = await alarmStalls(env.DB, sw, ensureItem); return sw; });  // PR-LATENCY-1  // SERVER-OWNS-LOOPS-1
       step('app-audit', () => auditApps(env.DB, env, tenant));  // APP-INVENTORY-1: live app inventory, extra installations of our own apps removed, daily
       step('deploy-evidence', () => ingestDeploys(env.DB, { token, repo: repos.find(r => r.endsWith('/ultrastable')) }));  // SELFAUDIT-1: independent deploy evidence feeds k_eff
       step('host-hooks', async () => reconcileHooks({ db: env.DB, token, repos, origin: env.PUBLIC_ORIGIN || 'https://ultrastable.io', secret: await hookSecret(env, 'github') }));  // HOSTS-1: the server creates, repairs and re-checks its own repo webhook; nothing is set up by hand
@@ -163,8 +165,15 @@ export default {
           : onWorkflowRun({ token: tok, payload });
         if (ctx && ctx.waitUntil) ctx.waitUntil(job.catch(e => console.error('hosts hook', e && e.message))); else await job;
       }
+      const mn = prsForEvent(ev, payload);  // MERGE-NOW-1: a PR event, a finished check suite or a move of main is acted on in this request, not on the next tick
+      if (mn) {
+        const job = getToken(env.DB, env, env.TENANT || config.org_slug || 'default', 'github-app').catch(() => null)
+          .then(t => mergeNow({ token: (t && t.ok && t.token) || env.GITHUB_TOKEN || '', repo: mn.repo, numbers: mn.numbers }))
+          .then(r => { console.log('merge-now', JSON.stringify(r)); return r; });
+        if (ctx && ctx.waitUntil) ctx.waitUntil(job.catch(e => console.error('merge-now', e && e.message))); else await job;
+      }
       const hit = routeEvent(ev, payload, EVENT_TABLE);
-      if (!hit) return Response.json({ routed: false }, { status: 202 });
+      if (!hit) return Response.json({ routed: false, merge_now: Boolean(mn) }, { status: 202 });
       const ft = await freeTierLevel(env.DB).catch(() => null);  // FREE-TIER-1: an event never wakes an extra tick (model calls, D1 reads) once the day's free allowance is at risk; the 10-minute tick still takes the item
       if (ft && ft.level !== 'ok') return Response.json({ routed: false, throttled: ft.level, ...hit }, { status: 202 });
       const work = aiFor(env).then(g => runTick(env.DB, { config, env: presence(env), wake: hit.role, ai: g.ai, budget: g.state }));
@@ -185,6 +194,17 @@ export default {
       if (!who.ok) return new Response('Not found', { status: 404 });
       const t = await getToken(env.DB, env, env.TENANT || config.org_slug || 'default', 'github-app').catch(() => null);
       return opsBackup(request, { token: (t && t.ok && t.token) || '', repo: env.OPS_REPO || 'ultrastable/ops' });
+    }
+    if (url.pathname === '/api/lane/merge' && request.method === 'POST') {  // LANE-WORKER-MERGE-1: the lane's merge for a PR that changes workflows, done with the org's own GitHub App
+      if (halted(config, env)) return Response.json({ halted: true }, { status: 202 });  // HALT-1
+      const repo = env.MAIN_REPO || env.OIDC_REPO || 'ultrastable/ultrastable';
+      const bearer = /^Bearer (.+)$/.exec(request.headers.get('authorization') || '');
+      const who = bearer ? await verifyOidc(bearer[1], { repo }).catch(e => ({ ok: false, why: String(e && e.message) })) : { ok: false, why: 'no bearer' };
+      if (!who.ok) return new Response('Not found', { status: 404 });
+      let body; try { body = await request.json(); } catch { return Response.json({ ok: false, error: 'bad json' }, { status: 400 }); }
+      const t = await getToken(env.DB, env, env.TENANT || config.org_slug || 'default', 'github-app').catch(() => null);
+      const r = await mergeForLane({ token: (t && t.ok && t.token) || '', repo, pr: body.pr, sha: body.sha });
+      return Response.json(r, { status: r.status });
     }
     if (url.pathname === '/api/main/commit' && request.method === 'POST') {  // MAIN-WRITER-1: workflow data commits to main, written with the org's own GitHub App (exempt from the main ruleset)
       if (halted(config, env)) return Response.json({ halted: true }, { status: 202 });  // HALT-1
