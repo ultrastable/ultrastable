@@ -16,3 +16,8 @@ test('DNS fine but HTTP 404 is an http verdict', async () => {
   const f = async (u) => String(u).includes('dns') ? doh(0, '::1') : new Response('', { status: 404 });
   assert.equal((await checkHost('www.ultrastable.app', { fetchImpl: f })).verdict, 'http');
 });
+test('a blip is retried before a host is called dead', async () => {
+  const { checkAll } = await import('./probe.js'); let n = 0;
+  const f = async (u) => String(u).includes('dns') ? doh(0, '::1') : (++n === 1 ? new Response('', { status: 503 }) : new Response('', { status: 200 }));
+  assert.equal((await checkAll(['ultrastable.org'], { fetchImpl: f }))[0].verdict, 'ok');
+});
