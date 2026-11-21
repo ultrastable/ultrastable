@@ -27,4 +27,10 @@ class MergeAudit(unittest.TestCase):
         STATE["bad"] = "[]"
         self.assertEqual(m.gate("bad", run), "missing"); STATE["bad"] = '["failure"]'
         self.assertTrue(m.probe(619, run, NOW)); self.assertFalse(m.probe(620, run, NOW))
+    def test_gate_reads_the_checks_run_and_unreadable_is_not_green(self):
+        # Q-RECUR-7f3c1db956: the gate reads the full `checks` run on the head commit, not mergeable_state (moved here from a duplicate tests/test_mergeaudit.py that called GitHub live)
+        self.assertEqual(m.gate("good", run), "success")
+        self.assertEqual(m.gate("bad", run), "failure")
+        with self.assertRaises(RuntimeError):
+            m.gate("x", lambda *a: (1, "rate limited"))
 if __name__ == "__main__": unittest.main()

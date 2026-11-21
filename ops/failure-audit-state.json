@@ -126,10 +126,10 @@
   "since": "2026-11-21T18:56:59Z"
  },
  "temporal-drift": {
-  "status": "fail",
-  "signature": "7c559a9af5a4",
-  "streak": 4,
-  "since": "2026-11-21T13:41:18Z"
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
  },
  "vision": {
   "status": "pass",

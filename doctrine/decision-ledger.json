@@ -4371,7 +4371,7 @@
    "date": "2026-11-21",
    "title": "Executor closed Q-RECUR-5f8b2445f4: Raise hard error in GH helper on bad status to prevent silent failures and stuck loops",
    "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: tests/test_sweeper.js, seed/worker/src/sweeper.js.",
-   "probe": "file:tests/test_sweeper.js"
+   "probe": "grep:seed/worker/src/sweeper.js::out.errors.length\\) out.status = 'errors'"
   },
   {
    "id": "decision-2026-11-21-executor-closed-q-recur-7f3c1db956-fix-the-root-cause-of-rec",
@@ -4379,7 +4379,7 @@
    "date": "2026-11-21",
    "title": "Executor closed Q-RECUR-7f3c1db956: Fix the root cause of recurring gate-skipped failures by changing the merge audit to read the full check",
    "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: tests/test_mergeaudit.py, foundation/mergeaudit.py.",
-   "probe": "file:tests/test_mergeaudit.py"
+   "probe": "grep:tests/foundation/test_mergeaudit.py::def test_gate_reads_the_checks_run"
   }
  ]
 }
