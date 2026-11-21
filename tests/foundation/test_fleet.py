@@ -8,8 +8,8 @@ CFG = fleet.load(ROOT)
 
 def fake(pulls=None, issues=None, push=True, files=None):
     def api(method, path, body=None):
-        if path.endswith("/status"):
-            return 200, {"state": "success", "total_count": 1}
+        if "/check-runs" in path:
+            return 200, {"check_runs": [{"name": "checks", "status": "completed", "conclusion": "success"}]}
         if "/pulls?" in path:
             return 200, (pulls or {}).get(path.split("/")[3], [])
         if "/pulls/" in path and method == "PUT":
@@ -36,6 +36,17 @@ class Fleet(unittest.TestCase):
         rows = fleet.merge_lane(CFG, fake(pulls=prs), apply=True, repos=["workers"])
         self.assertEqual([(r["pr"], r["action"]) for r in rows], [(1, "merge"), (2, "skip"), (3, "skip")])
         self.assertTrue(rows[0]["merged"])
+
+    def test_skipped_or_missing_checks_never_merge(self):
+        # GATE-SKIP-1: a skipped `checks` run, a running one, or none at all holds the PR in the home repo.
+        pr = {"number": 1, "draft": False, "labels": [], "head": {"sha": "abcdef1"}}
+        for runs, why in (([{"name": "checks", "status": "completed", "conclusion": "skipped"}], "checks has not passed"),
+                          ([{"name": "checks", "status": "in_progress", "conclusion": None}], "still running"),
+                          ([], "checks has not passed"), (None, "unreadable")):
+            ok, got = fleet.mergeable(CFG, pr, runs, "ultrastable")
+            self.assertFalse(ok)
+            self.assertIn(why, got)
+        self.assertTrue(fleet.mergeable(CFG, pr, [{"name": "checks", "status": "completed", "conclusion": "success"}], "ultrastable")[0])
 
     def test_drift_and_dependent_issue(self):
         files = {("spec", "LICENSE"): "B"}

@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-21-shallow-clones-made-every-recurring-failure-look-seen-today-",
+  "kind": "lesson",
+  "date": "2026-11-21",
+  "title": "Shallow clones made every recurring failure look seen today; skipped checks merged via legacy /status; schema errors now heal in-tick",
+  "body": "Session: session_0156nqDte8FeqRLjvGRAAb6w. (1) SHALLOW-TIME-1: failmine dated issue events by git --diff-filter=A; in a shallow checkout the boundary commit adds every file, so every Q-RECUR signature read 'last seen' at the boundary and no probe could go quiet. Boundary commits are now skipped and the id/body date stands in. (2) GATE-SKIP-1: foundation/fleet.py merge_lane read the combined /status (no Actions check-runs, so pending/0) and merged PRs whose checks run was skipped; it now mirrors seed/worker/src/greenguard.js on check-runs and needs checks=success. (3) SCHEMA-HEAL-1: a tick step that throws no such table/column re-runs migrate and retries once before filing TICKFAIL.",
+  "probe": "file:foundation/failmine.py"
+ },
+ "kind": "lesson",
+ "title": "Shallow clones made every recurring failure look seen today; skipped checks merged via legacy /status; schema errors now heal in-tick",
+ "session": ""
+}
