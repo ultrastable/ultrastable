@@ -1,0 +1,210 @@
+{
+  "schema": "research-study/1",
+  "id": "chen-stratton-2026",
+  "order": 2,
+  "paper_title": "Review without a queue: what Chen and Stratton (2026) mean for an autonomous system",
+  "paper_frame": "We map each of their findings to the mechanisms Ultrastable uses instead of a human review queue, and test each mapping against this system's own records.",
+  "title": "Artificial Intelligence in the Firm: Bottlenecks in Software Production",
+  "authors": [
+    "Fiona Chen",
+    "James Stratton"
+  ],
+  "institution": "Harvard University",
+  "kind": "job market paper (working paper, not peer reviewed)",
+  "version": "2026-11-19 (first version 2026-01-07)",
+  "seeded_by": "owner, 2026-11-21",
+  "data": "445M work events (GitHub, Jira, Google Calendar) for 720,542 workers at 655 firms, January 2021 to August 2026, from an engineering analytics platform; staggered difference-in-differences on AI tool adoption timing",
+  "summary": "AI coding tools raise code output substantially but final software output only a little, with no detectable employment effect. Code review becomes the bottleneck: code waits longer for a reviewer, spends longer in review and draws more requested changes.",
+  "perspectives": [
+    "economics",
+    "quality",
+    "oversight"
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "concern": "More code is not more shipped work",
+      "claim": "After AI agent adoption, pull requests opened rise 35.7% while resolved issues (work deployed to production) rise only 13.7%; increases above 30.7% are ruled out.",
+      "where": "Introduction; conclusion",
+      "perspective": "economics",
+      "mechanisms": [
+        {
+          "rule": "CRITICALITY-1",
+          "path": "foundation/criticality.py",
+          "how": "the system's own score counts verified live deploys, never commits or lines"
+        },
+        {
+          "rule": "PROGRESS-1",
+          "path": "site/progress.js",
+          "how": "the public progress page lists merged and shipped work only; record-keeping merges are excluded"
+        }
+      ],
+      "metric": "verified_deploys_per_merged_pr",
+      "target": {
+        "op": ">=",
+        "value": 0.5
+      },
+      "prediction": "verified_deploys_per_merged_pr >= 0.5 within 168 h"
+    },
+    {
+      "id": "F2",
+      "concern": "Review becomes the bottleneck",
+      "claim": "After AI agent adoption, the time from a pull request's submission to its merge rises 56.1%: waiting for a reviewer rises 59.9% and time in active review 58.5%.",
+      "where": "Introduction; section on review",
+      "perspective": "economics",
+      "mechanisms": [
+        {
+          "rule": "AUTO-SHIP-CLEAN-1",
+          "path": "seed/worker/src/sweeper.js",
+          "how": "a server-side lane merges a green pull request without waiting for a person"
+        },
+        {
+          "rule": "HANDOFF-1",
+          "path": "seed/worker/src/handoff.js",
+          "how": "the tick Worker owns merge, deploy and live verification after a pull request opens"
+        },
+        {
+          "rule": "DRAIN-ZERO-1",
+          "path": "foundation/lanewatch.py",
+          "how": "a green pull request left open fails a check"
+        }
+      ],
+      "metric": "pr_merge_hours_median",
+      "target": {
+        "op": "<=",
+        "value": 1.0
+      },
+      "prediction": "pr_merge_hours_median <= 1 within 168 h"
+    },
+    {
+      "id": "F3",
+      "concern": "System-made changes wait longer than session-made ones",
+      "claim": "The study's model predicts that when review capacity is fixed, the waiting time grows with the volume of submitted code. A system that writes its own changes must not let its own pull requests queue behind human-driven ones.",
+      "where": "Model, propositions on backlog and wait time",
+      "perspective": "economics",
+      "mechanisms": [
+        {
+          "rule": "DRAIN-ALL-1",
+          "path": ".github/workflows/lane.yml",
+          "how": "the lane takes every open pull request until none is left"
+        },
+        {
+          "rule": "SELF-REFERENCE-1",
+          "path": "foundation/criticality.py",
+          "how": "work the system originates on itself is ranked first when the regime is driven"
+        }
+      ],
+      "metric": "pr_merge_hours_median_system",
+      "target": {
+        "op": "<=",
+        "value": 2.0
+      },
+      "prediction": "pr_merge_hours_median_system <= 2 within 336 h"
+    },
+    {
+      "id": "F4",
+      "concern": "Lower code quality raises review effort and risk",
+      "claim": "After agent adoption the share of changes receiving a review comment rises 13.1% and comments per change rise 38.6%; interviewees report outages caused by AI-generated commits.",
+      "where": "Introduction; interviews",
+      "perspective": "quality",
+      "mechanisms": [
+        {
+          "rule": "ELISION-1",
+          "path": "foundation/executor.py",
+          "how": "a model change that elides or stubs code is refused before it becomes a pull request"
+        },
+        {
+          "rule": "REDMAIN-1",
+          "path": "foundation/redmain.py",
+          "how": "a red main is repaired by reverting the smallest change that broke it"
+        },
+        {
+          "rule": "FAILURE-RESOLVE-1",
+          "path": "foundation/failure_audit.py",
+          "how": "every failure mode has a live detector and a queue item"
+        }
+      ],
+      "metric": "revert_share",
+      "target": {
+        "op": "<=",
+        "value": 0.05
+      },
+      "prediction": "revert_share <= 0.05 within 336 h"
+    },
+    {
+      "id": "F5",
+      "concern": "Unverified deploys reach production",
+      "claim": "Code must be reviewed and tested before it can be deployed; the study treats review as the quality gate that AI-written code strains.",
+      "where": "Introduction",
+      "perspective": "quality",
+      "mechanisms": [
+        {
+          "rule": "HANDOFF-1",
+          "path": "seed/worker/src/handoff.js",
+          "how": "every deploy runs a verify line against production and rolls back on failure"
+        },
+        {
+          "rule": "FRONT-BACKED-1",
+          "path": "site/live.js",
+          "how": "freshness of each live source is served and probed"
+        }
+      ],
+      "metric": "deploy_verified_share",
+      "target": {
+        "op": ">=",
+        "value": 0.95
+      },
+      "prediction": "deploy_verified_share >= 0.95 within 168 h"
+    },
+    {
+      "id": "F6",
+      "concern": "AI review tools leave humans in the loop",
+      "claim": "79.1% of firms adopted AI code review tools, but the overwhelming majority of reviews and comments are still written by people, so the bottleneck persists.",
+      "where": "Introduction",
+      "perspective": "oversight",
+      "mechanisms": [
+        {
+          "rule": "CLOSED-LOOP-1",
+          "path": "foundation/closedloop.py",
+          "how": "no step waits on a person reading, reviewing or approving"
+        },
+        {
+          "rule": "CRITICALITY-1",
+          "path": "foundation/criticality.py",
+          "how": "human touches are counted every tick and lower the score"
+        }
+      ],
+      "metric": "system_authored_share",
+      "target": {
+        "op": ">=",
+        "value": 0.5
+      },
+      "prediction": "system_authored_share >= 0.5 within 336 h"
+    },
+    {
+      "id": "F7",
+      "concern": "One approver is a single point of failure",
+      "claim": "Reviewers mostly review code they already know (82.8% versus 17.2% at random); an interviewee describes one senior engineer as the only approver, reviewing once a week.",
+      "where": "Introduction; interviews",
+      "perspective": "oversight",
+      "mechanisms": [
+        {
+          "rule": "GUIDING-DIRECTIVE section 12",
+          "path": "doctrine/registers.json",
+          "how": "every single point of failure, approvals included, is registered and remediated"
+        },
+        {
+          "rule": "NO-SINGLE-ROUTE",
+          "path": "foundation/failover.py",
+          "how": "every merge and deploy path has a second route needing no person's credential"
+        }
+      ],
+      "metric": "self_deploys",
+      "target": {
+        "op": ">=",
+        "value": 1
+      },
+      "prediction": "self_deploys >= 1 within 336 h"
+    }
+  ]
+}

@@ -2291,6 +2291,26 @@
         "CLOUDFLARE_API_TOKEN",
         "LANE_PAT"
       ]
+    },
+    "research": {
+      "inflows": [
+        {
+          "signal": "frontier.releases",
+          "via": "http:feeds"
+        },
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "feedback": "each finding's measurement is re-read every pass: a finding not met files a Q-RES item that the executor works and whose closing probe is the same measurement, experiments settle against their predictions and reopen, and the papers at /research are regenerated from the new numbers",
+      "bindings": []
     }
   },
   "implicit_producers": {

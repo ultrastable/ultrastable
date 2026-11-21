@@ -119,6 +119,7 @@ jobs:
           python3 -m foundation market --check
           python3 -m foundation scout --check
           python3 -m foundation rnd --check
+          python3 -m foundation research --check
           python3 -m foundation promote --check
           python3 -m foundation blindspots --check
           python3 -m foundation unknowns --check

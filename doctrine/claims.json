@@ -2273,6 +2273,20 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-0b86697d1d",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Ultrastable runs its own R&D and publishes its own white papers; Ashby's mechanism is code (RESEARCH-1, ASHBY-1, Rowan 2026-11-21).**",
+      "probe": [
+        "file:foundation/ultrastability.py",
+        "file:foundation/research.py",
+        "file:doctrine/research.json",
+        "file:site/research.js",
+        "file:tests/foundation/test_research.py",
+        "file:tests/foundation/test_ultrastability.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-95432168bf",
       "surface": "agents/AGENTS.md",
       "text": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
@@ -3005,6 +3019,21 @@
       ],
       "bound_by": "mirror",
       "of": "cited-d3be926b7b"
+    },
+    {
+      "id": "mirror-289b3b8589",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Ultrastable runs its own R&D and publishes its own white papers; Ashby's mechanism is code (RESEARCH-1, ASHBY-1, Rowan 2026-11-21).**",
+      "probe": [
+        "file:foundation/ultrastability.py",
+        "file:foundation/research.py",
+        "file:doctrine/research.json",
+        "file:site/research.js",
+        "file:tests/foundation/test_research.py",
+        "file:tests/foundation/test_ultrastability.py"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-0b86697d1d"
     },
     {
       "id": "mirror-be5af6748b",
@@ -4226,6 +4255,26 @@
       "probe": [
         "grep:.github/workflows/social-post.yml::foundation reach --run --apply",
         "file:tests/foundation/test_reach.py"
+      ]
+    },
+    {
+      "id": "research-data",
+      "surface": "site/research-data.js",
+      "header": "foundation/research.py (RESEARCH-1)",
+      "generator": "foundation/research.py",
+      "source": [
+        "research/studies",
+        "doctrine/research.json"
+      ],
+      "check": [
+        "python3",
+        "-m",
+        "foundation",
+        "research",
+        "--check"
+      ],
+      "probe": [
+        "grep:.github/workflows/checks.yml::foundation research --check"
       ]
     }
   ]

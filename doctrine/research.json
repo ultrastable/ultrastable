@@ -1,0 +1,125 @@
+{
+  "_doc": "RESEARCH-1 (Rowan, 2026-11-21): Ultrastable runs its own R&D department as code. An external study is ingested as data (research/studies/<id>.json): each finding names the concern, the Ultrastable mechanisms that answer it, the metric of this system that tests the answer, a target and a prediction. `python3 -m foundation research --run --apply` measures every metric from the system's own ledgers, files a Q-RES item for every finding the system does not yet meet (closing probe: the same measurement), opens and settles experiments, proposes further rule links through core/connect, and regenerates the white papers (research/papers/<id>.md, site/research-data.js, served at /research). Intake (`--intake --apply`) reads public paper feeds and files at most max_intake_items candidates a pass, perspectives with no study first. Papers state limits computed from the same data; no number in a paper is typed by hand.",
+  "version": 1,
+  "studies_dir": "research/studies",
+  "papers_dir": "research/papers",
+  "state_dir": "ops/research",
+  "page_module": "site/research-data.js",
+  "perspectives": {
+    "economics": [
+      "productivity",
+      "bottleneck",
+      "output",
+      "labor",
+      "employment",
+      "firm"
+    ],
+    "quality": [
+      "code quality",
+      "bug",
+      "defect",
+      "regression",
+      "review",
+      "outage"
+    ],
+    "oversight": [
+      "human oversight",
+      "human in the loop",
+      "accountability",
+      "approval",
+      "control"
+    ],
+    "safety": [
+      "ai safety",
+      "misalignment",
+      "reward hacking",
+      "deception",
+      "agent failure"
+    ],
+    "security": [
+      "prompt injection",
+      "supply chain",
+      "vulnerability",
+      "secret",
+      "attack"
+    ],
+    "cost": [
+      "inference cost",
+      "energy",
+      "compute cost",
+      "spend"
+    ],
+    "reliability": [
+      "reliability",
+      "incident",
+      "drift",
+      "monitoring",
+      "rollback"
+    ],
+    "systems": [
+      "cybernetic",
+      "feedback loop",
+      "closed loop",
+      "homeostasis",
+      "self-regulat",
+      "adaptive control"
+    ]
+  },
+  "intake": {
+    "feed": "https://export.arxiv.org/api/query?search_query={query}&sortBy=submittedDate&sortOrder=descending&max_results=15",
+    "queries": {
+      "economics": "abs:%22AI%22+AND+abs:%22software%22+AND+abs:%22productivity%22",
+      "quality": "abs:%22LLM%22+AND+abs:%22code+review%22",
+      "oversight": "abs:%22AI+agents%22+AND+abs:%22human+oversight%22",
+      "safety": "abs:%22autonomous+agents%22+AND+abs:%22failure%22",
+      "security": "abs:%22coding+agents%22+AND+abs:%22prompt+injection%22",
+      "cost": "abs:%22LLM%22+AND+abs:%22inference+cost%22",
+      "reliability": "abs:%22LLM+agents%22+AND+abs:%22reliability%22",
+      "systems": "abs:%22LLM+agents%22+AND+abs:%22feedback+loop%22"
+    },
+    "max_intake_items": 2,
+    "min_score": 2
+  },
+  "questions": [
+    {
+      "id": "Q1",
+      "question": "Does merging without a human review step raise the share of changes that are later reverted?",
+      "metric": "revert_share",
+      "target": {
+        "op": "<=",
+        "value": 0.05
+      },
+      "prediction": "revert_share <= 0.05 within 336 h"
+    },
+    {
+      "id": "Q2",
+      "question": "Does a change the system opens on itself reach main as fast as one a code agent session opens?",
+      "metric": "pr_merge_hours_median_system",
+      "target": {
+        "op": "<=",
+        "value": 2.0
+      },
+      "prediction": "pr_merge_hours_median_system <= 2 within 336 h"
+    },
+    {
+      "id": "Q3",
+      "question": "Is every deploy proven live against its own commit?",
+      "metric": "deploy_verified_share",
+      "target": {
+        "op": ">=",
+        "value": 0.95
+      },
+      "prediction": "deploy_verified_share >= 0.95 within 168 h"
+    },
+    {
+      "id": "Q4",
+      "question": "How much of the work opened is thrown away? A pull request closed without merging is rework the study would count as requested changes.",
+      "metric": "pr_closed_unmerged_share",
+      "target": {
+        "op": "<=",
+        "value": 0.2
+      },
+      "prediction": "pr_closed_unmerged_share <= 0.2 within 336 h"
+    }
+  ]
+}

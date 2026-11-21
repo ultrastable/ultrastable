@@ -9,7 +9,11 @@ FIRST ORDER          the existing loops (probe-and-revert, cost probe, claims ch
 SECOND ORDER         when a variable has been out of bounds for `patience_ticks` consecutive ticks, one discrete step from its ladder is taken: a parameter
                      change within declared limits, or a restructure item with a closing probe. The step is logged with its provenance row and kept only if the
                      variable is back inside its bounds within `settle_ticks`; otherwise a parameter is restored and the next step on the ladder is taken.
-                     A ladder that is exhausted files an incident item for redesign (the same failure three times).
+                     When the ladder is spent and the variable is still out, the search continues as in Ashby's ultrastable system (Design for a
+                     Brain, 1952, chapters 7 and 8; ASHBY-SEARCH-1): an untried value for one of the variable's parameters is drawn at random (seeded,
+                     so a run replays) from its declared range, kept if the variable returns, undone if not. Only when every value has been tried,
+                     or the variable has no parameter to change, is an incident item filed for redesign. `ashby()` measures how far the declaration
+                     matches the mechanism (limits on every variable, share with a step-function); research paper ashby-1952 reports it.
 Every reading, step and verdict is a row in ops/ultrastability.jsonl. Tests: tests/foundation/test_ultrastability.py.
 """
 from __future__ import annotations
@@ -80,8 +84,16 @@ def tenant_readings(root=REPO, fetch=None) -> dict:
                 continue
             own = root / "ops/tenants" / (slug + ".json")
             have = json.loads(own.read_text(encoding="utf-8")) if own.is_file() else {}
-            out[slug] = {"uptime": get(a["url"]), "spend": have.get("spend_vs_budget"), "claims_drift": have.get("claims_drift"), "value": have.get("declared_metric")}
+            out[slug] = {"uptime": get(a["url"]), "spend": have.get("spend_vs_budget"), "claims_drift": have.get("claims_drift"), "value": _ratio(have.get("declared_metric"), have.get("declared_target"))}
     return out
+
+
+def _ratio(value, target):
+    """A tenant's declared metric against its own declared target: 1.0 means on target. Without both numbers it is unmeasured, never in bounds."""
+    try:
+        return round(float(value) / float(target), 3) if value is not None and target not in (None, 0) else None
+    except (TypeError, ValueError):
+        return None
 
 
 def write_tenants(root=REPO, fetch=None, now=None) -> list[str]:
@@ -134,11 +146,11 @@ def _jset(d, path, val):
     d[ks[-1]] = val
 
 
-def _param(root, step, revert_to=None):
+def _param(root, step, revert_to=None, set_to=None):
     p = Path(root) / step["file"]
     doc = json.loads(p.read_text(encoding="utf-8"))
     cur = _jget(doc, step["path"])
-    new = revert_to if revert_to is not None else max(step["min"], min(step["max"], cur + step["delta"]))
+    new = revert_to if revert_to is not None else set_to if set_to is not None else max(step["min"], min(step["max"], cur + step["delta"]))
     if new == cur:
         return cur, cur
     _jset(doc, step["path"], new)
@@ -228,7 +240,18 @@ def tick(root=REPO, apply=False, now=None, read=None, tenants=True, fetch=None) 
                 pending = None if verdict else pending
         if not ok and not pending and consecutive >= c["patience_ticks"]:
             idx = next((i for i in range(len(v["ladder"])) if not _taken(episode, i)), None)
-            if idx is None:
+            draw = _search(root, key, v, episode) if idx is None else None
+            if draw:  # ASHBY-SEARCH-1: the ladder is spent and the variable is still out; keep changing step-functions to a field not yet tried
+                sidx, val = draw
+                step = v["ladder"][sidx]
+                row = {"at": now, "ev": "step", "var": key, "idx": sidx, "kind": "param", "search": True, "value": value, "what": f"search: {step['path']} = {val} (untried in this episode)",
+                       "id": f"{key}-s{len(episode)}-{now}", "n": len(hist) + 1, "consulted": v["first_order"], "prediction": f"{v['reading']} within bounds within {c['settle_ticks']} ticks"}
+                if apply:
+                    row["before"], row["after"] = _param(root, step, set_to=val)
+                    _append(root, c, row)
+                    _provenance(root, row, v, key)
+                out["steps"].append(row)
+            elif idx is None:
                 inc = f"{c['item_prefix']}-{_slug(key)}-REDESIGN"
                 entry["exhausted"] = inc
                 if apply:
@@ -254,7 +277,41 @@ def tick(root=REPO, apply=False, now=None, read=None, tenants=True, fetch=None) 
 
 
 def _taken(episode, idx) -> bool:
-    return any(s["idx"] == idx for s in episode)
+    return any(s["idx"] == idx and not s.get("search") for s in episode)
+
+
+def _search(root, key, v, episode):
+    """Ashby's step-function search after the ladder: a value for one of the variable's parameters, drawn at random (seeded by the variable and the
+    episode, so a run is reproducible) from its declared range, never one this episode already tried. None when every value has been tried, or the
+    variable has no parameter to change: only then does the loop file a redesign item."""
+    import random
+    cands = []
+    for i, st in enumerate(v["ladder"]):
+        if st.get("kind") != "param":
+            continue
+        try:
+            cur = _jget(json.loads((Path(root) / st["file"]).read_text(encoding="utf-8")), st["path"])
+        except (OSError, ValueError, KeyError, TypeError):
+            continue
+        tried = {cur} | {s.get("after") for s in episode if s["idx"] == i} | {s.get("before") for s in episode if s["idx"] == i}
+        step = abs(st.get("delta") or 1)
+        n = int(round((st["max"] - st["min"]) / step))
+        cands += [(i, st["min"] + k * step) for k in range(n + 1) if st["min"] + k * step not in tried]
+    if not cands:
+        return None
+    return random.Random(f"{key}|{len(episode)}").choice(cands)
+
+
+def ashby(root=REPO) -> dict:
+    """ASHBY-1: how far the declared system matches Ashby's ultrastable system (Design for a Brain, 1952: chapter 7 Step-functions, chapter 8 The Ultrastable System), computed from the declaration.
+    Essential variables with limits; a second feedback that acts only when a variable leaves its limits; step-functions (parameters of the first
+    loop) it can change; a search that continues past the ladder until a field holds the variables or the space is spent."""
+    c = load(root)
+    vs = [(s, v) for s in ("platform", "tenant") for v in c["scopes"][s]["variables"]]
+    bounded = [v for _, v in vs if v.get("min") is not None or v.get("max") is not None]
+    stepfn = [v for _, v in vs if any(st.get("kind") == "param" for st in v.get("ladder", []))]
+    return {"variables": len(vs), "bounded": len(bounded), "with_step_function": len(stepfn), "patience_ticks": c["patience_ticks"], "settle_ticks": c["settle_ticks"],
+            "search_after_ladder": True, "step_function_share": round(len(stepfn) / len(vs), 3) if vs else None, "bounded_share": round(len(bounded) / len(vs), 3) if vs else None}
 
 
 def _unmeasured(root, c, key, v):
@@ -306,6 +363,8 @@ def check(root=REPO) -> list[str]:
                 errs.append(f"{scope}.{v['id']} min above max")
             if not v.get("ladder"):
                 errs.append(f"{scope}.{v['id']} has no second-order step: a variable with no step cannot be kept in bounds")
+            if v.get("min") is None and v.get("max") is None:
+                errs.append(f"{scope}.{v['id']} has no limits: an essential variable without limits can never trigger the second loop (Ashby, Design for a Brain, 1952, chapter 8)")
             if scope == "platform" and v.get("reading") not in known:
                 errs.append(f"platform.{v['id']} reads {v.get('reading')!r}, which nothing computes")
             for st in v.get("ladder", []):

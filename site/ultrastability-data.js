@@ -171,14 +171,14 @@ export default {
      ],
      "id": "value",
      "max": null,
-     "min": null,
+     "min": 1.0,
      "name": "The tenant's own declared value metric",
      "steps": [
       "iterate: change what the app does",
       "retire: the measured value does not justify the cost"
      ],
      "unit": "per its objective",
-     "why": "A system with no measure that can be wrong cannot be improved."
+     "why": "A system with no measure that can be wrong cannot be improved. Read as the tenant's declared metric divided by its own declared target (ops/tenants/<slug>.json declared_metric, declared_target); 1.0 is on target."
     }
    ],
    "what": "Every system built on Ultrastable declares the same four variables at bootstrap; the platform loop runs them for tenant 0 only"

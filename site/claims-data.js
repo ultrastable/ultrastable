@@ -1831,6 +1831,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **Ultrastable runs its own R&D and publishes its own white papers; Ashby's mechanism is code (RESEARCH-1, ASHBY-1, Rowan 2026-11-21).**",
+   "detail": "",
+   "how": "file:foundation/ultrastability.py + file:foundation/research.py + file:doctrine/research.json + file:site/research.js + file:tests/foundation/test_research.py + file:tests/foundation/test_ultrastability.py",
+   "id": "cited-0b86697d1d",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
@@ -2393,6 +2402,15 @@ export default {
    "detail": "",
    "how": "file:seed/worker/src/livechanges.js + file:site/live.js + file:seed/worker/test/livechanges.test.js + file:site/site.test.mjs",
    "id": "mirror-b9c4dda8e0",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Ultrastable runs its own R&D and publishes its own white papers; Ashby's mechanism is code (RESEARCH-1, ASHBY-1, Rowan 2026-11-21).**",
+   "detail": "",
+   "how": "file:foundation/ultrastability.py + file:foundation/research.py + file:doctrine/research.json + file:site/research.js + file:tests/foundation/test_research.py + file:tests/foundation/test_ultrastability.py",
+   "id": "mirror-289b3b8589",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3073,7 +3091,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 715",
+   "claim": "live-deploys: 720",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",
@@ -3190,6 +3208,15 @@ export default {
    "surface": "site/feed-data.js"
   },
   {
+   "claim": "module: site/research-data.js is written by foundation/research.py from research/studies, doctrine/research.json",
+   "detail": "",
+   "how": "header names the generator + file:foundation/research.py + grep:.github/workflows/checks.yml::foundation research --check",
+   "id": "module-research-data",
+   "kind": "module",
+   "pass": true,
+   "surface": "site/research-data.js"
+  },
+  {
    "claim": "ledger: work claims",
    "detail": "seed/worker/migrations/0001_init.sql",
    "how": "grep:seed/worker/migrations/0001_init.sql::CREATE TABLE IF NOT EXISTS claims",
@@ -3269,7 +3296,12 @@ export default {
  ],
  "summary": {
   "drift": 0,
+<<<<<<< HEAD
   "pass": 360,
   "total": 360
+=======
+  "pass": 368,
+  "total": 368
+>>>>>>> origin/main
  }
 };
