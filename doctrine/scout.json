@@ -17,6 +17,11 @@
     {"id": "langgraph", "kind": "atom", "url": "https://github.com/langchain-ai/langgraph/releases.atom", "topic": "agent orchestration"},
     {"id": "google-adk", "kind": "atom", "url": "https://github.com/google/adk-python/releases.atom", "topic": "agent orchestration"},
     {"id": "mcp-spec", "kind": "atom", "url": "https://github.com/modelcontextprotocol/modelcontextprotocol/releases.atom", "topic": "agent standards"},
-    {"id": "cloudflare-blog", "kind": "rss", "url": "https://blog.cloudflare.com/rss/", "topic": "agent platform"}
+    {"id": "cloudflare-blog", "kind": "rss", "url": "https://blog.cloudflare.com/rss/", "topic": "agent platform"},
+    {"id": "gemini-cli", "kind": "atom", "url": "https://github.com/google-gemini/gemini-cli/releases.atom", "topic": "coding agents"},
+    {"id": "aider", "kind": "atom", "url": "https://github.com/Aider-AI/aider/releases.atom", "topic": "coding agents"},
+    {"id": "cline", "kind": "atom", "url": "https://github.com/cline/cline/releases.atom", "topic": "coding agents"},
+    {"id": "crewai", "kind": "atom", "url": "https://github.com/crewAIInc/crewAI/releases.atom", "topic": "agent orchestration"},
+    {"id": "autogen", "kind": "atom", "url": "https://github.com/microsoft/autogen/releases.atom", "topic": "agent orchestration"}
   ]
 }

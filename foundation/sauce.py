@@ -140,6 +140,30 @@ def check(root=REPO) -> list[str]:
                 errs.append(f"{p.parent.name}: declares unknown foundation loop {l.get('foundation_loop')}")
             if not l.get("impl"):
                 errs.append(f"{p.parent.name}: loop {l.get('foundation_loop')} names no implementation")
+    return errs + fleet_check(root)
+
+
+FLEET = "doctrine/qnfo-fleet.json"
+FLEET_DISPOSITIONS = ("twin", "owner-personal", "not-ported", "ultrastable")
+
+
+def fleet_check(root=REPO) -> list[str]:
+    """PL-1 / WEB-6: every QNFO worker and D1 database is accounted for, and every twin it names exists in this repository."""
+    p = Path(root) / FLEET
+    if not p.is_file():
+        return [f"{FLEET} missing: the QNFO fleet inventory is not accounted for"]
+    errs, seen = [], set()
+    for r in json.loads(p.read_text(encoding="utf-8")).get("rows", []):
+        key = (r.get("kind"), r.get("name"))
+        if key in seen:
+            errs.append(f"{FLEET}: duplicate row {key}")
+        seen.add(key)
+        if r.get("kind") not in ("worker", "d1") or not r.get("name"):
+            errs.append(f"{FLEET}: row {key} lacks kind or name")
+        if r.get("disposition") not in FLEET_DISPOSITIONS:
+            errs.append(f"{FLEET}: {r.get('name')} has no disposition from {FLEET_DISPOSITIONS}")
+        if r.get("disposition") == "twin" and not (r.get("twin") and (Path(root) / r["twin"]).exists()):
+            errs.append(f"{FLEET}: {r.get('name')} names twin {r.get('twin')} that does not exist")
     return errs
 
 

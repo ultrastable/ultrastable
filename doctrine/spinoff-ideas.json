@@ -376,6 +376,7 @@
  "scope_templates": [
   {
    "id": "scope-implement-template-generator",
+   "probe": "grep:spinoffs/worker.js::archetype === \"template-generator\"",
    "title": "Implement the template-generator archetype in the spinoff Worker so the queued writers (security.txt, SPF/DMARC, privacy page) can launch",
    "resource": "workers_requests",
    "cost": {
@@ -385,6 +386,7 @@
   },
   {
    "id": "scope-collect-cadence",
+   "probe": "grep:spinoffs/worker.js::SCOPE-COLLECT-CADENCE",
    "title": "Collect every live app's metrics twice a day instead of once",
    "resource": "workers_requests",
    "cost": {
@@ -394,6 +396,7 @@
   },
   {
    "id": "scope-recheck-boards",
+   "probe": "grep:spinoffs/worker.js::SCOPE-RECHECK-BOARDS",
    "title": "Refresh every status board's facts on each loop run, not only on launch",
    "resource": "workers_requests",
    "cost": {
@@ -403,6 +406,7 @@
   },
   {
    "id": "scope-claims-live-daily",
+   "probe": "grep:spinoffs/worker.js::SCOPE-CLAIMS-LIVE-DAILY",
    "title": "Check every live app against its own claims once a day",
    "resource": "workers_requests",
    "cost": {
@@ -412,6 +416,7 @@
   },
   {
    "id": "scope-scout-more-sources",
+   "probe": "grep:doctrine/scout.json::\"id\": \"autogen\"",
    "title": "Add scout sources while neurons sit under the reserve",
    "resource": "ai_neurons",
    "cost": {
