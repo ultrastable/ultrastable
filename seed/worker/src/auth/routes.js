@@ -31,7 +31,12 @@ export async function reuseApp(env, tenant, provider, title, now) {
   const row = await store.get(env.DB, tenant, provider);
   if (!row) return null;
   const meta = JSON.parse(row.meta || '{}');
-  if (!meta.app_id || !meta.slug || row.status === 'failed') return null;
+  if (!meta.app_id || !meta.slug) return null;
+  if (row.status === 'failed' && !meta.installation_id) return null;  // an app that was never installed has nothing to protect; an installed one is never replaced (NO-NEW-APP-1)
+  if (meta.installation_id && row.status === 'failed') {  // NO-NEW-APP-1: a failing installed app is repaired by re-minting, never by registering another app
+    await store.event(env.DB, tenant, provider, 'reused', 'installed app ' + meta.slug + ' is failing; kept, the tick re-mints; no new app');
+    return doneScreen(title, 'Connected. The system is re-checking the connection by itself; nothing more is needed.');
+  }
   if (meta.installation_id) {  // installed: the admin app rests at 'pending' between uses, which is still connected
     await store.event(env.DB, tenant, provider, 'reused', 'already connected as ' + meta.slug + '; no new app');
     return doneScreen(title, 'Already connected. Nothing more is needed.');
