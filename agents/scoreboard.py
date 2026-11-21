@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 # -*- coding: utf-8 -*-
 """
 Per-agent and per-harness quality scoreboard from intake attribution.

@@ -3,7 +3,7 @@
 # Copyright (c) Ultrastable
 # SPDX-License-Identifier: Apache-2.0
 # SMOKE-LIVE-1: fetch public URLs from production and print status, type, size, an excerpt. Read-only.
-import json, sys, time, urllib.request, urllib.error
+import sys, time, urllib.request, urllib.error
 
 class _NoRedirect(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, *a, **k): return None
