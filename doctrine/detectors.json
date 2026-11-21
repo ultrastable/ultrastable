@@ -512,6 +512,22 @@
    "root_cause": "the template cannot admit a system: a probe, import or kernel path regressed",
    "owner": "operations",
    "remedy": "Run python3 -m foundation seedadmit --probe, read the failing component, fix the seed (never the kit's bar), add a regression test (SEED-ADMIT-1)."
+  },
+  {
+   "id": "seed-live",
+   "failure_mode": "fm-seed-undeployed",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "seedadmit",
+    "--live"
+   ],
+   "timeout": 120,
+   "root_cause": "an admitted seed was never deployed, or its Worker stopped answering /health",
+   "owner": "operations",
+   "remedy": "Dispatch .github/workflows/deploy-workers.yml (it runs deploy/deploy-seed.mjs); read the failing row in ops/deploys.jsonl; fix the seed, never the probe (SEED-DEPLOY-1)."
   }
  ]
 }

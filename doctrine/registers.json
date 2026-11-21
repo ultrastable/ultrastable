@@ -433,6 +433,18 @@
    "status": "controlled",
    "cadence_ticks": 1,
    "probe": "grep:tests/foundation/test_seedadmit.py::def test_onboard_admits"
+  },
+  {
+   "id": "fm-seed-undeployed",
+   "trigger": "a seed is admitted but no Worker for it runs on the Ultrastable account, or its /health stops answering",
+   "symptom": "the system exists in the simulation only",
+   "blast_radius": "every seed built on the platform",
+   "detection": "python3 -m foundation seedadmit --live",
+   "root_cause": "core had no server-side step that deploys a generated system",
+   "remediation": "SEED-DEPLOY-1: deploy/deploy-seed.mjs deploys each seed in doctrine/seed-deploys.json after the platform workers and probes /health; the detector fetches it live",
+   "status": "controlled",
+   "cadence_ticks": 1,
+   "probe": "grep:deploy/deploy-seed.mjs::SEED-DEPLOY-1"
   }
  ],
  "controls": [
