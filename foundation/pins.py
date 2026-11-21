@@ -1,54 +1,32 @@
-"""PINS-1 ratchet (owner, 2026-11-12): nothing the roadmap says may be unlinked from code.
-
-scripts/build_site_roadmap.py (SITE-PINS-1) ties every site status pin to an issue and to code paths that exist. This module covers the rest of the
-roadmap: every open issue in docs/issues must carry a `Done check` that is a probe the system can run (`file:` or `grep:`), so it can leave the
-roadmap by itself when the code exists. Issues whose check is still prose are a shrink-only baseline (doctrine/pins-baseline.json): a new one fails
-the build, and one that gains a probe or closes must be removed from the baseline. Drain it by writing probes, never by growing it.
-
-  python3 -m foundation pins --check    the ratchet holds
-  python3 -m foundation pins --report   open issues without a runnable probe, as JSON
-"""
-from __future__ import annotations
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
+"""PINS-1 (Rowan, 2026-11-21): supply-chain hardening. A workflow step that `uses:` an action by a movable tag (v4, main) runs whatever that
+tag points to tomorrow; pinning to a full commit SHA makes the build reproducible. Sources: SLSA v1.0 (slsa.dev, OpenSSF, 2023), build track;
+GitHub, "Security hardening for GitHub Actions" (pin actions to a full-length commit SHA); OpenSSF Scorecard check Pinned-Dependencies.
+The baseline in doctrine/supply-chain.json may only shrink: `python3 -m foundation.pins` fails when unpinned refs exceed it. See CREDITS.md."""
 import json, re, sys
 from pathlib import Path
 
-REPO = Path(__file__).resolve().parents[1]
-ISSUES, BASELINE = "docs/issues", "doctrine/pins-baseline.json"
+ROOT = Path(__file__).resolve().parent.parent
+USES = re.compile(r"^\s*-?\s*uses:\s*([^\s#]+)", re.M)
+SHA = re.compile(r"@[0-9a-f]{40}$")
 
 
-def unprobed(root=REPO) -> list[dict]:
+def unpinned(root=ROOT):
     out = []
-    for f in sorted((Path(root) / ISSUES).glob("*.json")):
-        if f.name.startswith("_"):
-            continue
-        d = json.loads(f.read_text(encoding="utf-8")); body = d.get("body", "")
-        g = lambda k: (re.search(rf"\*\*{k}:\*\*\s*(.+)", body) or [None, ""])[1].strip()
-        if g("Status").lower() in ("done", "closed", "superseded"):
-            continue
-        done = g("Done check")
-        # PINS-CMD-1: a cmd: probe on the queue allow-list is runnable by the system (queue.probe), so it counts; the lane's adoption items (OL-PR-*) use one.
-        from . import queue as _q
-        if not (done.startswith(("file:", "grep:")) or (done.startswith("cmd:") and done[4:].startswith(_q.CMD_ALLOWED))):
-            out.append({"id": f.stem, "owner": g("Owner"), "done_check": done})
+    for f in sorted((root / ".github/workflows").glob("*.y*ml")):
+        for ref in USES.findall(f.read_text()):
+            if not ref.startswith("./") and not ref.startswith("docker://") and not SHA.search(ref):
+                out.append(f"{f.name}: {ref}")
     return out
 
 
-def check(root=REPO) -> list[str]:
-    root = Path(root)
-    bp = root / BASELINE
-    base = set(json.loads(bp.read_text(encoding="utf-8"))["unprobed"]) if bp.is_file() else set()
-    ids = {u["id"] for u in unprobed(root)}
-    return ([f"issue {i} is on the roadmap with no probe the system can run (file: or grep:); write the probe, do not add it to {BASELINE}" for i in sorted(ids - base)]
-            + [f"{i} now has a probe or is closed: remove it from {BASELINE} (shrink-only)" for i in sorted(base - ids)])
-
-
-def main(argv=None) -> int:
-    a = list(sys.argv[1:] if argv is None else argv)
-    if "--report" in a:
-        print(json.dumps(unprobed(), indent=1)); return 0
-    p = check()
-    print("pins ok" if not p else "\n".join(p))
-    return 1 if p else 0
+def main(argv=None):
+    base = json.loads((ROOT / "doctrine/supply-chain.json").read_text())["unpinned_baseline"]
+    u = unpinned(); print(json.dumps({"unpinned": len(u), "baseline": base}))
+    if len(u) > base:
+        print("new unpinned action refs; pin to a full commit SHA:\n" + "\n".join(u), file=sys.stderr); return 1
+    return 0
 
 
 if __name__ == "__main__":

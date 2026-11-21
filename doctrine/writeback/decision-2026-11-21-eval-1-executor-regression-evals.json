@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-21-eval-1-executor-regression-evals",
+  "kind": "decision",
+  "date": "2026-11-21",
+  "title": "EVAL-1 executor regression evals",
+  "body": "Golden-set evals for apply_edit; pass rate must stay 1.0 (tests/foundation/test_evals.py).",
+  "probe": "file:foundation/evals.py"
+ },
+ "kind": "decision",
+ "title": "EVAL-1 executor regression evals",
+ "session": ""
+}

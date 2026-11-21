@@ -1,0 +1,1 @@
+{"rule": "PINS-1", "about": "Shrink-only count of GitHub Actions refs not pinned to a full commit SHA. Lower it as actions are pinned; never raise it. Checked by foundation/pins.py.", "unpinned_baseline": 64}
