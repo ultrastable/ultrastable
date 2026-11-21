@@ -4028,6 +4028,14 @@
    "body": "PR 1188 (YEAR-SIM-1) owns foundation/yearsim.py, doctrine/yearsim.json, ops/yearsim.json and /year: a Monte Carlo of recovery code. The monthly failure-injection test is foundation/yearfail.py, doctrine/yearfail.json, ops/yearfail.json and /year/failures. The tenant's ops/yearsim.json is unchanged.",
    "probe": "file:foundation/yearfail.py",
    "session": "session_0156nqDvJdN4U5rU7HaEu3jd"
+  },
+  {
+   "id": "decision-2026-11-21-executor-closed-q-cfp-no-idle-preview-workers-add-functional",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Executor closed Q-CFP-no-idle-preview-workers: Add functionality to agents/spinoff_sweep.py to detect and delete idle us-idea-* Workers when",
+   "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: agents/spinoff_sweep.py.",
+   "probe": "file:agents/spinoff_sweep.py"
   }
  ]
 }

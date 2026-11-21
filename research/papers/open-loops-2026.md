@@ -56,8 +56,8 @@ Source: ops/deploys.jsonl (same window).
 
 - CRITICALITY-1 (`foundation/criticality.py`): human touches are counted in the denominator of the system's own score
 
-**Measured here:** human touches counted by the latest criticality tick: 0 (n = 110). Target <= 0. Verdict: **met**.
-Source: ops/criticality.jsonl at 2026-11-21T12:35:47Z.
+**Measured here:** human touches counted by the latest criticality tick: 0 (n = 95). Target <= 0. Verdict: **met**.
+Source: ops/criticality.jsonl at 2026-11-21T14:37:02Z.
 
 ### O5. The system starts its own work (systems)
 
@@ -78,8 +78,8 @@ Source: GitHub REST pulls?state=closed, last 100 closed pull requests, fetched 2
 
 - SELF-REFERENCE-1 (`seed/worker/src/executor.js`): the tick wakes the executor, whose merged change deploys from the merge commit
 
-**Measured here:** verified deploys the system originated and executed itself (latest criticality tick): 0 (n = 110). Target >= 1. Verdict: **not-met**. Open item: `Q-RES-open-loops-2026-O6`.
-Source: ops/criticality.jsonl at 2026-11-21T12:35:47Z.
+**Measured here:** verified deploys the system originated and executed itself (latest criticality tick): 0 (n = 95). Target >= 1. Verdict: **not-met**. Open item: `Q-RES-open-loops-2026-O6`.
+Source: ops/criticality.jsonl at 2026-11-21T14:37:02Z.
 
 ## Limits
 
