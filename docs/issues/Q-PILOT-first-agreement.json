@@ -1,7 +1,7 @@
 {
   "id": "Q-PILOT-first-agreement",
   "title": "Q-PILOT-first-agreement: First pilot agreement on the bring-your-own-account model",
-  "body": "**Owner:** product-manager\n**Trigger:** every executor run\n**Done check:** file:business/pilots/pilot-1-agreement.md\n**Status:** open\n\nTest hypothesis H1 in doctrine/pilot-model.json: a fixed-fee pilot in the customer's own account with a guaranteed first measured improvement. Record the agreement (terms, fee, success measure) in business/pilots/pilot-1-agreement.md. Signing is the owner's act; the fleet prepares the draft and the success probes.",
+  "body": "**Owner:** product-manager\n**Trigger:** every executor run\n**Done check:** file:business/pilots/pilot-1-agreement.md\n**Status:** closed\n\nTest hypothesis H1 in doctrine/pilot-model.json: a fixed-fee pilot in the customer's own account with a guaranteed first measured improvement. Record the agreement (terms, fee, success measure) in business/pilots/pilot-1-agreement.md. Signing is the owner's act; the fleet prepares the draft and the success probes.\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 220.6 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
   "labels": [
     "role:product-manager",
     "gap"

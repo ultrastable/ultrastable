@@ -1,7 +1,7 @@
 {
   "id": "Q-QNFO-WATCH",
   "title": "Q-QNFO-WATCH: QNFO-side monitor that Ultrastable deploys code unattended",
-  "body": "**Owner:** operations\n**Trigger:** every QNFO fleet run\n**Done check:** grep:instances/qnfo/ultrastable_watch.py::def check\n**Status:** open\n\nFrom the QNFO fleet (independent of Ultrastable's tick) read releases, changelog, merged-PR and deploy counts and /live; pass or fail against a threshold (at least N merged PRs and one deploy in 24h); show on the QNFO dashboard; open an item in Ultrastable's queue on a miss. Deploy count, releases and changelog are first-class metrics on both sides. Filed at thread close; the executor works it in driver order.",
+  "body": "**Owner:** operations\n**Trigger:** every QNFO fleet run\n**Done check:** grep:instances/qnfo/ultrastable_watch.py::def check\n**Status:** closed\n\nFrom the QNFO fleet (independent of Ultrastable's tick) read releases, changelog, merged-PR and deploy counts and /live; pass or fail against a threshold (at least N merged PRs and one deploy in 24h); show on the QNFO dashboard; open an item in Ultrastable's queue on a miss. Deploy count, releases and changelog are first-class metrics on both sides. Filed at thread close; the executor works it in driver order.\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 218.8 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
   "labels": [
     "role:operations",
     "growth"
