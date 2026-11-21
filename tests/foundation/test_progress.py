@@ -15,7 +15,8 @@ class Progress(unittest.TestCase):
     def test_a_system_without_a_repair_or_with_a_longer_than_weekly_cadence_fails(self):
         with tempfile.TemporaryDirectory() as t:
             t = Path(t)
-            for rel in list(progress.WIRED) + [progress.CONFIG, ".github/workflows/executor.yml", ".github/workflows/product-manager.yml"]:
+            heals = {".github/workflows/" + w for s in json.loads((ROOT / progress.CONFIG).read_text())["systems"] for w in s.get("heal", [])}
+            for rel in list(progress.WIRED) + [progress.CONFIG] + sorted(h for h in heals if (ROOT / h).exists()):
                 (t / rel).parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy(ROOT / rel, t / rel)
             self.assertEqual(progress.check(t), [])
