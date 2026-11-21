@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-21-port-branch-items-check-whether-main-already-carries-the-cod",
+  "kind": "lesson",
+  "date": "2026-11-21",
+  "title": "PORT-BRANCH items: check whether main already carries the code before porting",
+  "body": "Session: session_0156nqDte8FeqRLjvGRAAb6w. claude/branch-root-cause-1 conflicted only because main already held its sweeper code; only the test was missing. branchsweep --carried needs full history (unshallow) or it reports unmeasured.",
+  "probe": "file:seed/worker/test/sweeper.test.js"
+ },
+ "kind": "lesson",
+ "title": "PORT-BRANCH items: check whether main already carries the code before porting",
+ "session": ""
+}
