@@ -11,8 +11,8 @@
   },
   "cost": {
    "days": null,
-   "why": "largest share of a free-plan limit 10%, not growing",
-   "share": 0.099
+   "why": "largest share of a free-plan limit 15%, not growing",
+   "share": 0.145
   },
   "failures": {
    "days": null,
