@@ -32,6 +32,12 @@ def _idea_md(m: dict) -> str:
             lines.append(f"{k}: {'true' if v else 'false'}")
     lines += ["---", "", "# Idea", "", m["idea"] or m["name"], "", "# Who it is for", "", f"- {m['kind']} programme owner and its stakeholders", "", "# First outcomes", ""]
     lines += [f"- {g}" for g in m["goals"]]
+    g = m["goals"] or [m["name"]]
+    lines += ["", "# System test", "", "All four are required (doctrine/VISION.md). They are written from the manifest so a generated system can bootstrap itself.", "",
+              f"- Loop: {g[0]}, observed, acted on and observed again with no person in the middle",
+              f"- Measure: {g[1] if len(g) > 1 else g[0]}, a named probe that can breach",
+              "- Upkeep: failures, drift and new rules keep arriving, and the managers file the next improvement from the measures",
+              f"- Run cost: {c} USD a month for the back end"]
     lines += ["", "# Constraints", "", f"- Budget per month: {c} USD"]
     if not m["disclosure"]["public_allowed"]:
         lines.append("- Nothing public until the owner says so")

@@ -104,5 +104,26 @@ class T(unittest.TestCase):
         self.assertIn("second-tenant", (REPO / "doctrine/seed-deploys.json").read_text(encoding="utf-8"))
 
 
+    def test_a_clean_generated_copy_bootstraps_and_bundles(self):
+        """SEED-DEPLOY-1: the deploy builds only from what the generated system writes itself. A stale generated file in the checkout (seed/worker/src/config.js) once hid a gap."""
+        import os, subprocess
+        out = scratch()
+        r = subprocess.run(["node", str(REPO / "deploy/deploy-seed.mjs"), "--dry-run"], cwd=REPO, capture_output=True, text=True, timeout=600,
+                           env={**os.environ, "SEED_DEPLOY_OUT": str(out), "GITHUB_SHA": "0" * 40})
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        self.assertRegex(r.stdout, r"PREPARED second-tenant: \d+ modules, \d+ migrations")
+        cfg = out / "second-tenant/worker/src/config.js"
+        self.assertTrue(cfg.is_file(), "the system's own bootstrap writes worker/src/config.js")
+        self.assertIn("org_slug", cfg.read_text(encoding="utf-8"))
+
+    def test_the_generated_idea_passes_the_system_test(self):
+        out = scratch() / "s"
+        seedadmit.onboard(mf.load(str(MANIFEST)), out, apply=False, root=REPO)
+        idea = (out / "IDEA.md").read_text(encoding="utf-8")
+        self.assertIn("# System test", idea)
+        for k in ("Loop:", "Measure:", "Upkeep:", "Run cost:"):
+            self.assertIn("- " + k, idea)
+
+
 if __name__ == "__main__":
     unittest.main()

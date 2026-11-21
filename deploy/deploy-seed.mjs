@@ -5,14 +5,15 @@
 //   node deploy/deploy-seed.mjs            generate, create its database and migrate (site /__internal/seed-d1), upload, probe /health, record the row
 //   node deploy/deploy-seed.mjs --verify   probe only
 // Worker and database are named ultrastable-seed-<slug>; the database call can reach nothing else (site/deployer.js seedD1). Rows go to ops/deploys.jsonl; detector `seed-live` reads them.
-import { readFileSync, appendFileSync, mkdirSync, rmSync, readdirSync } from "node:fs";
+import { readFileSync, writeFileSync, appendFileSync, mkdirSync, rmSync, readdirSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { collectModules } from "../seed/worker/src/handoff.js";
 const SITE = process.env.TARGET_SITE || "https://ultrastable-site.ultrastable.workers.dev";
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
-const verifyOnly = process.argv.includes("--verify");
+const verifyOnly = process.argv.includes("--verify"), dryRun = process.argv.includes("--dry-run");  // --dry-run: generate, bootstrap and bundle, never call the site
+const OUT = process.env.SEED_DEPLOY_OUT || "/tmp/seed-deploy";
 const cfg = JSON.parse(readFileSync(new URL("../doctrine/seed-deploys.json", import.meta.url), "utf8"));
 const sh = (cmd, args, opts = {}) => execFileSync(cmd, args, { stdio: ["ignore", "pipe", "inherit"], encoding: "utf8", ...opts });
 async function oidc() {
@@ -47,15 +48,20 @@ for (const slug of cfg.seeds) {
   let row = { at: new Date().toISOString(), kind: "seed", worker: name, slug, url, sha: gitsha };
   try {
     if (!verifyOnly) {
-      const out = `/tmp/seed-deploy/${slug}`; rmSync(out, { recursive: true, force: true }); mkdirSync(out, { recursive: true });
+      const out = `${OUT}/${slug}`; rmSync(out, { recursive: true, force: true }); mkdirSync(out, { recursive: true });
       const raw = sh("python3", ["-m", "foundation", "seedadmit", "--onboard", `instances/${slug}/instance.json`, "--out", out], { cwd: ROOT });
       const rep = JSON.parse(raw.slice(raw.indexOf("{")));
       if (rep.admission !== "admitted") throw new Error(`not admitted: ${(rep.reasons || []).join("; ")}`);
       row.admission = rep.admission; row.year_p10 = rep.year && rep.year.p10;
       const dir = `${out}/worker/migrations`;
       const migrations = readdirSync(dir).filter(f => f.endsWith(".sql")).sort().map(f => { const sql = readFileSync(`${dir}/${f}`, "utf8"); return { file: f, sha256: createHash("sha256").update(sql).digest("hex"), sql }; });
-      const db = await site("/__internal/seed-d1", { name, migrations });
+      // The generated system writes its own worker/src/config.js when its bootstrap runs. Drop any copy the kernel copy carried in (a stale generated file in a checkout hid this gap once)
+      // so the Worker is built only from what the system itself generates.
+      rmSync(`${out}/worker/src/config.js`, { force: true });
+      sh("python3", ["bootstrap/bootstrap.py", "--root", ".", "--dry-run"], { cwd: out });
       const mods = await collectModules(async p => readFileSync(`${out}/${p}`, "utf8"), "worker/src/index.js");
+      if (dryRun) { console.log(`PREPARED ${slug}: ${mods.length} modules, ${migrations.length} migrations`); continue; }
+      const db = await site("/__internal/seed-d1", { name, migrations });
       const up = await site("/__internal/deploy", {
         name, main: mods[0].name, modules: mods.map(({ name: n, src, type }) => ({ name: n, src, type })), compatibility_date: "2026-11-12", workers_dev: true, crons: ["*/10 * * * *"],
         bindings: [{ type: "d1", name: "DB", id: db.uuid }, { type: "plain_text", name: "PUBLIC_HEALTH_ONLY", text: "1" }],
