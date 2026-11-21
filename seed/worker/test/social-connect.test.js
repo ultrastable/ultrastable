@@ -58,8 +58,10 @@ test('Bluesky: atproto OAuth with PAR, PKCE and DPoP; account bound to its issue
     if (u === 'https://pds.example.net/.well-known/oauth-protected-resource') return J({ authorization_servers: ['https://bsky.social'] });
     return NF;
   };
-  const meta = await handleAuth(new Request(ORIGIN + '/.well-known/oauth-client/bluesky.json'), env, { tenant: 't', fetch: f });
-  const md = await meta.json(); assert.equal(md.dpop_bound_access_tokens, true); assert.equal(md.redirect_uris[0], ORIGIN + '/connect/bluesky/callback'); assert.equal(md.client_id, ORIGIN + '/.well-known/oauth-client/bluesky.json'); assert.equal(md.token_endpoint_auth_method, 'private_key_jwt', 'a confidential client: its refresh tokens last 180 days, a public one 2 weeks'); assert.equal(md.jwks_uri, ORIGIN + '/.well-known/oauth-client/bluesky-jwks.json');
+  const legacy = await (await handleAuth(new Request(ORIGIN + '/.well-known/oauth-client/bluesky.json'), env, { tenant: 't', fetch: f })).json();
+  assert.equal(legacy.token_endpoint_auth_method, 'none', 'LEGACY-CLIENT-1: sessions issued to the public client keep refreshing'); assert.equal(legacy.client_id, ORIGIN + '/.well-known/oauth-client/bluesky.json');
+  const meta = await handleAuth(new Request(ORIGIN + '/.well-known/oauth-client/bluesky-c.json'), env, { tenant: 't', fetch: f });
+  const md = await meta.json(); assert.equal(md.dpop_bound_access_tokens, true); assert.equal(md.redirect_uris[0], ORIGIN + '/connect/bluesky/callback'); assert.equal(md.client_id, ORIGIN + '/.well-known/oauth-client/bluesky-c.json'); assert.equal(md.token_endpoint_auth_method, 'private_key_jwt', 'a confidential client: its refresh tokens last 180 days, a public one 2 weeks'); assert.equal(md.jwks_uri, ORIGIN + '/.well-known/oauth-client/bluesky-jwks.json');
   const ks = await (await handleAuth(new Request(md.jwks_uri), env, { tenant: 't', fetch: f })).json(); assert.equal(ks.keys.length, 1); assert.equal(ks.keys[0].d, undefined, 'only the public half is served');
   const r = await get(env, '/connect/bluesky/start', f); assert.equal(r.status, 302);
   const loc = new URL(r.headers.get('location')); assert.equal(loc.searchParams.get('request_uri'), 'urn:par:1');
