@@ -8,9 +8,14 @@ def sh(*a): return subprocess.run(a, capture_output=True, text=True).stdout
 conf = sh("git", "diff", "--name-only", "--diff-filter=U").split()
 for f in list(conf):
     if f == "doctrine/decision-ledger.json":
-        a = json.loads(sh("git", "show", "HEAD:" + f)); b = json.loads(sh("git", "show", "origin/main:" + f))
-        ids = {r["id"] for r in b["rows"]}; b["rows"] += [r for r in a["rows"] if r["id"] not in ids]
-        open(f, "w").write(json.dumps(b, indent=1, ensure_ascii=False) + "\n")
+        lock_file = f + ".lock"
+        with open(lock_file, 'w') as lock:
+            import fcntl
+            fcntl.flock(lock, fcntl.LOCK_EX)
+            a = json.loads(sh("git", "show", "HEAD:" + f)); b = json.loads(sh("git", "show", "origin/main:" + f))
+            ids = {r["id"] for r in b["rows"]}; b["rows"] += [r for r in a["rows"] if r["id"] not in ids]
+            open(f, "w").write(json.dumps(b, indent=1, ensure_ascii=False) + "\n")
+            fcntl.flock(lock, fcntl.LOCK_UN)
     elif f.endswith(".jsonl") or f == "docs/PROJECT-MEMORY.md":  # append-only: keep both sides
         t = open(f).read(); open(f, "w").write("\n".join(l for l in t.splitlines() if not re.match(r"^(<<<<<<<|=======|>>>>>>>)", l)) + "\n")
     elif f in ("ops/transparency.json", "site/dashboard-data.js", "site/claims-data.js", "site/research-data.js") or f.startswith("research/papers/"):  # papers are rebuilt by `research --page --apply` below   # claims-data.js is rewritten below from the merged doctrine/claims.json

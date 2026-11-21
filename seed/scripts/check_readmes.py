@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """DOCS-SYNC-1: public docs must be complete and must match the code (front end = back end).
 
 Reads doctrine/readmes.json. For every listed document it checks:
