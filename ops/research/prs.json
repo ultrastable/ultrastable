@@ -1,0 +1,708 @@
+{
+"schema": "research-prs/1",
+"source": "GitHub REST pulls?state=closed, last 100 closed pull requests",
+"fetched_at": "2026-11-21T09:30:00Z",
+"note": "author: session = a code agent session under the owner's account (outside input); system-actions / system-app = opened by the system's own workflows or GitHub App",
+"prs": [
+{
+"repo": "ultrastable/ultrastable",
+"number": 841,
+"created_at": "2026-11-21T08:03:06Z",
+"merged_at": "2026-11-21T08:30:48Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 840,
+"created_at": "2026-11-21T08:01:32Z",
+"merged_at": "2026-11-21T09:10:55Z",
+"author": "system-actions"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 839,
+"created_at": "2026-11-21T07:52:44Z",
+"merged_at": "2026-11-21T08:01:42Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 838,
+"created_at": "2026-11-21T07:29:32Z",
+"merged_at": "2026-11-21T07:47:36Z",
+"author": "system-app"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 837,
+"created_at": "2026-11-21T07:24:55Z",
+"merged_at": "2026-11-21T07:51:22Z",
+"author": "system-app"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 836,
+"created_at": "2026-11-21T02:02:07Z",
+"merged_at": "2026-11-21T07:41:28Z",
+"author": "system-actions"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 835,
+"created_at": "2026-11-20T21:09:40Z",
+"merged_at": "2026-11-20T21:09:58Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 834,
+"created_at": "2026-11-20T21:00:29Z",
+"merged_at": "2026-11-20T21:06:59Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 833,
+"created_at": "2026-11-20T20:49:54Z",
+"merged_at": "2026-11-21T07:33:33Z",
+"author": "system-actions"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 832,
+"created_at": "2026-11-20T20:49:18Z",
+"merged_at": "2026-11-20T20:54:47Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 831,
+"created_at": "2026-11-20T20:48:34Z",
+"merged_at": "2026-11-20T20:54:27Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 830,
+"created_at": "2026-11-20T20:47:42Z",
+"merged_at": "2026-11-20T21:13:13Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 829,
+"created_at": "2026-11-20T20:47:02Z",
+"merged_at": "2026-11-21T01:31:53Z",
+"author": "system-actions"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 828,
+"created_at": "2026-11-20T20:42:11Z",
+"merged_at": "2026-11-21T07:33:27Z",
+"author": "system-actions"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 827,
+"created_at": "2026-11-20T20:38:18Z",
+"merged_at": "2026-11-20T20:44:20Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 826,
+"created_at": "2026-11-20T20:37:25Z",
+"merged_at": "2026-11-21T07:29:08Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 825,
+"created_at": "2026-11-20T20:36:56Z",
+"merged_at": "2026-11-20T21:13:43Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 824,
+"created_at": "2026-11-20T20:34:20Z",
+"merged_at": "2026-11-20T20:41:16Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 823,
+"created_at": "2026-11-20T20:27:28Z",
+"merged_at": "2026-11-20T20:37:19Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 822,
+"created_at": "2026-11-20T20:15:44Z",
+"merged_at": "2026-11-20T20:20:59Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 821,
+"created_at": "2026-11-20T20:10:13Z",
+"merged_at": "2026-11-20T20:14:46Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 820,
+"created_at": "2026-11-20T20:08:03Z",
+"merged_at": "2026-11-20T20:18:40Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 819,
+"created_at": "2026-11-20T20:06:27Z",
+"merged_at": "2026-11-20T20:12:19Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 818,
+"created_at": "2026-11-20T20:01:24Z",
+"merged_at": "2026-11-20T20:30:55Z",
+"author": "system-actions"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 817,
+"created_at": "2026-11-20T20:01:18Z",
+"merged_at": "2026-11-20T20:39:58Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 816,
+"created_at": "2026-11-20T19:56:26Z",
+"merged_at": "2026-11-20T20:02:26Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 815,
+"created_at": "2026-11-20T19:52:40Z",
+"merged_at": "2026-11-20T20:01:20Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 814,
+"created_at": "2026-11-20T19:48:22Z",
+"merged_at": "2026-11-20T19:52:41Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 813,
+"created_at": "2026-11-20T19:47:13Z",
+"merged_at": "2026-11-20T19:57:46Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 812,
+"created_at": "2026-11-20T19:42:36Z",
+"merged_at": "2026-11-20T19:46:55Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 811,
+"created_at": "2026-11-20T19:32:53Z",
+"merged_at": null,
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 810,
+"created_at": "2026-11-20T19:24:02Z",
+"merged_at": "2026-11-20T19:29:57Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 809,
+"created_at": "2026-11-20T18:56:58Z",
+"merged_at": null,
+"author": "system-actions"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 808,
+"created_at": "2026-11-20T18:56:00Z",
+"merged_at": "2026-11-20T19:16:33Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 807,
+"created_at": "2026-11-20T18:37:35Z",
+"merged_at": null,
+"author": "system-app"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 806,
+"created_at": "2026-11-20T18:36:24Z",
+"merged_at": null,
+"author": "system-app"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 805,
+"created_at": "2026-11-20T18:34:40Z",
+"merged_at": null,
+"author": "system-app"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 804,
+"created_at": "2026-11-20T18:33:23Z",
+"merged_at": null,
+"author": "system-app"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 803,
+"created_at": "2026-11-20T18:29:54Z",
+"merged_at": null,
+"author": "system-app"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 802,
+"created_at": "2026-11-20T18:29:41Z",
+"merged_at": null,
+"author": "system-app"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 801,
+"created_at": "2026-11-20T18:29:34Z",
+"merged_at": null,
+"author": "system-app"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 800,
+"created_at": "2026-11-20T18:29:29Z",
+"merged_at": null,
+"author": "system-app"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 799,
+"created_at": "2026-11-20T18:26:26Z",
+"merged_at": "2026-11-20T18:41:16Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 798,
+"created_at": "2026-11-20T18:25:58Z",
+"merged_at": null,
+"author": "system-app"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 797,
+"created_at": "2026-11-20T18:25:47Z",
+"merged_at": null,
+"author": "system-app"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 796,
+"created_at": "2026-11-20T18:25:24Z",
+"merged_at": null,
+"author": "system-app"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 795,
+"created_at": "2026-11-20T18:24:01Z",
+"merged_at": "2026-11-20T18:34:23Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 794,
+"created_at": "2026-11-20T18:24:00Z",
+"merged_at": null,
+"author": "system-app"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 793,
+"created_at": "2026-11-20T18:22:36Z",
+"merged_at": null,
+"author": "system-app"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 792,
+"created_at": "2026-11-20T18:22:13Z",
+"merged_at": null,
+"author": "system-app"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 791,
+"created_at": "2026-11-20T18:21:53Z",
+"merged_at": null,
+"author": "system-app"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 790,
+"created_at": "2026-11-20T18:20:48Z",
+"merged_at": null,
+"author": "system-app"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 789,
+"created_at": "2026-11-20T18:20:32Z",
+"merged_at": null,
+"author": "system-app"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 788,
+"created_at": "2026-11-20T18:20:27Z",
+"merged_at": null,
+"author": "system-app"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 787,
+"created_at": "2026-11-20T18:20:20Z",
+"merged_at": null,
+"author": "system-app"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 786,
+"created_at": "2026-11-20T18:18:03Z",
+"merged_at": null,
+"author": "system-app"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 785,
+"created_at": "2026-11-20T18:17:36Z",
+"merged_at": null,
+"author": "system-app"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 784,
+"created_at": "2026-11-20T18:16:46Z",
+"merged_at": null,
+"author": "system-app"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 783,
+"created_at": "2026-11-20T18:16:28Z",
+"merged_at": null,
+"author": "system-actions"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 782,
+"created_at": "2026-11-20T18:16:22Z",
+"merged_at": null,
+"author": "system-app"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 781,
+"created_at": "2026-11-20T18:16:15Z",
+"merged_at": null,
+"author": "system-app"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 780,
+"created_at": "2026-11-20T18:15:02Z",
+"merged_at": null,
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 779,
+"created_at": "2026-11-20T18:14:58Z",
+"merged_at": "2026-11-20T18:20:00Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 778,
+"created_at": "2026-11-20T18:13:47Z",
+"merged_at": "2026-11-20T18:18:42Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 777,
+"created_at": "2026-11-20T18:13:07Z",
+"merged_at": "2026-11-20T21:06:31Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 776,
+"created_at": "2026-11-20T18:12:18Z",
+"merged_at": "2026-11-20T18:19:02Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 775,
+"created_at": "2026-11-20T18:11:18Z",
+"merged_at": "2026-11-20T18:15:51Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 774,
+"created_at": "2026-11-20T18:08:54Z",
+"merged_at": null,
+"author": "system-actions"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 773,
+"created_at": "2026-11-20T18:06:32Z",
+"merged_at": null,
+"author": "system-actions"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 772,
+"created_at": "2026-11-20T18:02:08Z",
+"merged_at": null,
+"author": "system-actions"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 771,
+"created_at": "2026-11-20T17:57:46Z",
+"merged_at": "2026-11-20T18:04:46Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 770,
+"created_at": "2026-11-20T17:57:44Z",
+"merged_at": "2026-11-20T18:02:25Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 769,
+"created_at": "2026-11-20T17:52:49Z",
+"merged_at": "2026-11-20T17:57:12Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 768,
+"created_at": "2026-11-20T17:51:30Z",
+"merged_at": null,
+"author": "system-actions"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 767,
+"created_at": "2026-11-20T17:47:09Z",
+"merged_at": null,
+"author": "system-actions"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 766,
+"created_at": "2026-11-20T17:46:55Z",
+"merged_at": null,
+"author": "system-actions"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 765,
+"created_at": "2026-11-20T17:44:52Z",
+"merged_at": "2026-11-20T17:52:12Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 764,
+"created_at": "2026-11-20T17:27:05Z",
+"merged_at": null,
+"author": "system-actions"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 763,
+"created_at": "2026-11-20T17:18:09Z",
+"merged_at": "2026-11-20T17:43:10Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 762,
+"created_at": "2026-11-20T16:41:53Z",
+"merged_at": "2026-11-20T18:00:12Z",
+"author": "system-actions"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 761,
+"created_at": "2026-11-20T16:15:33Z",
+"merged_at": "2026-11-20T16:19:56Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 760,
+"created_at": "2026-11-20T16:10:35Z",
+"merged_at": "2026-11-20T16:18:35Z",
+"author": "system-actions"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 759,
+"created_at": "2026-11-20T16:10:08Z",
+"merged_at": "2026-11-20T16:14:22Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 758,
+"created_at": "2026-11-20T16:08:37Z",
+"merged_at": "2026-11-20T16:15:24Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 757,
+"created_at": "2026-11-20T16:06:33Z",
+"merged_at": "2026-11-20T16:15:39Z",
+"author": "system-actions"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 756,
+"created_at": "2026-11-20T16:06:27Z",
+"merged_at": "2026-11-20T16:13:57Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 755,
+"created_at": "2026-11-20T16:05:07Z",
+"merged_at": "2026-11-20T16:20:08Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 754,
+"created_at": "2026-11-20T16:02:00Z",
+"merged_at": "2026-11-20T16:07:54Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 753,
+"created_at": "2026-11-20T15:50:35Z",
+"merged_at": "2026-11-20T15:57:06Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 752,
+"created_at": "2026-11-20T15:49:38Z",
+"merged_at": "2026-11-20T16:12:48Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 751,
+"created_at": "2026-11-20T15:43:27Z",
+"merged_at": "2026-11-20T15:58:19Z",
+"author": "system-actions"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 750,
+"created_at": "2026-11-20T15:40:36Z",
+"merged_at": null,
+"author": "system-actions"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 749,
+"created_at": "2026-11-20T15:37:57Z",
+"merged_at": "2026-11-20T16:06:25Z",
+"author": "system-actions"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 748,
+"created_at": "2026-11-20T15:37:03Z",
+"merged_at": "2026-11-20T17:25:15Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 747,
+"created_at": "2026-11-20T15:27:23Z",
+"merged_at": "2026-11-20T15:33:20Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 746,
+"created_at": "2026-11-20T15:24:34Z",
+"merged_at": "2026-11-20T15:50:31Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 745,
+"created_at": "2026-11-20T15:23:43Z",
+"merged_at": "2026-11-20T15:29:40Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 744,
+"created_at": "2026-11-20T15:23:33Z",
+"merged_at": "2026-11-20T15:31:30Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 743,
+"created_at": "2026-11-20T15:19:16Z",
+"merged_at": "2026-11-20T15:36:44Z",
+"author": "session"
+},
+{
+"repo": "ultrastable/ultrastable",
+"number": 742,
+"created_at": "2026-11-20T15:16:32Z",
+"merged_at": "2026-11-20T15:43:38Z",
+"author": "session"
+}
+]
+}

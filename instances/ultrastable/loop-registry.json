@@ -3079,7 +3079,7 @@
   {
    "id": "ultrastability-loop",
    "kind": "governance",
-   "summary": "Ashby's second loop: every tick reads each essential variable against its bounds; one out of bounds for two ticks takes one discrete step (a parameter change within limits, or a restructure item), kept only if the variable returns, otherwise undone and the next step taken; an exhausted ladder files a redesign item.",
+   "summary": "Ashby's second loop: every tick reads each essential variable against its bounds; one out of bounds for two ticks takes one discrete step (a parameter change within limits, or a restructure item), kept only if the variable returns, otherwise undone and the next step taken; once the ladder is spent it keeps drawing untried parameter values until one holds (ASHBY-SEARCH-1), and files a redesign item only when the range is spent.",
    "trigger": "daily cost-guard workflow and the criticality tick",
    "owner": "operations",
    "closes_by": "system",
@@ -3794,6 +3794,47 @@
    "default_in_effect": "a failed drill is recorded with its errors in ops/backup/last-restore.json and the smoke test fails backup-drill",
    "server_owner": "github-actions",
    "area": "managers"
+  },
+  {
+   "id": "research",
+   "kind": "governance",
+   "summary": "RESEARCH-1: Ultrastable's own R&D department: outside studies are ingested as findings mapped to mechanisms and metrics, each finding is measured from the system's ledgers, a finding not met files a Q-RES item whose closing probe is the measurement, experiments settle and reopen, and the white papers at /research are regenerated from the measurements.",
+   "trigger": "weekly (scout.yml), after every merge for the papers (regen-generated.yml), and on demand",
+   "owner": "product-manager",
+   "closes_by": "system",
+   "sla": "7d",
+   "done": "python3 -m foundation research --check reports ok",
+   "paths": [
+    {
+     "id": "ci",
+     "how": "python3 -m foundation research --run --apply",
+     "class": "free"
+    },
+    {
+     "id": "session",
+     "how": "python3 -m foundation research --run --apply from a cloud-hosted agent session",
+     "class": "session"
+    }
+   ],
+   "closing_probe": "grep:foundation/research.py::def experiments",
+   "writeback": [
+    "ops/research/log.jsonl",
+    "ops/research/experiments.jsonl",
+    "ops/research/outcomes.jsonl",
+    "research/papers",
+    "site/research-data.js",
+    "docs/issues"
+   ],
+   "system_path": [
+    "doctrine/research.json",
+    "foundation/research.py",
+    "research/studies"
+   ],
+   "area": "governance",
+   "workflows": [
+    "scout.yml"
+   ],
+   "server_owner": "github-actions"
   }
  ],
  "launch_registry": "instances/ultrastable/loops.json"

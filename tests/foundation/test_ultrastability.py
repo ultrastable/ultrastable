@@ -52,11 +52,41 @@ class T(unittest.TestCase):
         self.assertEqual(self.runs(), before)  # the failed parameter step was undone
         self.assertEqual(steps[0]["kind"], "item")  # and the next rung, a restructure, is taken in the same tick
         self.assertTrue((self.d / "docs/issues/Q-ULTRA-spend-2.json").is_file())
-        r = u.tick(self.d, True, read=BAD)
-        for _ in range(4):
+        # ASHBY-SEARCH-1: the ladder is spent but the second loop keeps changing the step-function to values not yet tried in this episode
+        search = []
+        for _ in range(80):
             r = u.tick(self.d, True, read=BAD)
-        self.assertIn("exhausted", r["variables"]["spend"])  # ladder spent: redesign item
+            search += [x for x in r["steps"] if x.get("search")]
+            if "exhausted" in r["variables"]["spend"]:
+                break
+        tried = [x["what"].split("= ")[1].split(" ")[0] for x in search if x["var"] == "spend"]
+        self.assertGreaterEqual(len(tried), 5)
+        self.assertEqual(len(tried), len(set(tried)), "no value is tried twice in one episode")
+        self.assertIn("exhausted", r["variables"]["spend"])  # search space spent: only now a redesign item
         self.assertTrue((self.d / "docs/issues/Q-ULTRA-spend-REDESIGN.json").is_file())
+
+    def test_search_keeps_the_field_that_holds(self):
+        for _ in range(9):  # patience, ladder step reverted, restructure item, then the first search step
+            r = u.tick(self.d, True, read=BAD)
+            if any(x.get("search") for x in r["steps"]):
+                break
+        self.assertTrue(any(x.get("search") for x in r["steps"]))
+        held = self.runs()
+        r = u.tick(self.d, True, read=GOOD)
+        self.assertEqual(r["verdicts"][0]["verdict"], "kept")
+        self.assertEqual(self.runs(), held, "a terminal field is kept: no further change while the variable is inside its limits")
+        self.assertEqual(u.tick(self.d, True, read=GOOD)["steps"], [])
+
+    def test_unbounded_variable_fails_check_and_ashby_counts(self):
+        a = u.ashby(REPO)
+        self.assertEqual(a["bounded"], a["variables"])
+        self.assertGreater(a["with_step_function"], 0)
+        doc = json.loads((self.d / "doctrine/ultrastability.json").read_text())
+        doc["scopes"]["platform"]["variables"][0].update(min=None, max=None)
+        (self.d / "doctrine/ultrastability.json").write_text(json.dumps(doc))
+        (self.d / "foundation").mkdir(exist_ok=True)
+        shutil.copy(REPO / "foundation/spinoff.py", self.d / "foundation/spinoff.py")
+        self.assertTrue(any("has no limits" in e for e in u.check(self.d)))
 
     def test_dry_run_writes_nothing(self):
         u.tick(self.d, False, read=BAD); u.tick(self.d, False, read=BAD)

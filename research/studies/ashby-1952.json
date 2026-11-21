@@ -1,0 +1,93 @@
+{
+  "schema": "research-study/1",
+  "id": "ashby-1952",
+  "order": 1,
+  "paper_title": "Closing the loop: Ashby's ultrastable system and why today's AI systems disappoint",
+  "paper_frame": "Ultrastable takes its name from Ashby's ultrastable system. Most current AI systems answer and stop: nothing checks the result against limits and changes the system when it fails, so their loops stay open. We state Ashby's mechanism as a set of testable properties, check each against this system's code and records, and show where the code falls short.",
+  "title": "Design for a Brain: The Origin of Adaptive Behaviour",
+  "authors": ["W. Ross Ashby"],
+  "institution": "John Wiley & Sons, New York",
+  "kind": "book",
+  "version": "1952, reprinted with corrections 1954",
+  "seeded_by": "owner, 2026-11-21",
+  "source_url": "https://archive.org/details/designforbrain00ashb",
+  "data": "Theory, with worked machines (the homeostat). Chapter 7 is Step-functions, chapter 8 The Ultrastable System.",
+  "summary": "An adaptive system keeps its essential variables within limits through two feedbacks: a first loop that reacts to the environment, and a second loop that changes the first loop's parameters (step-functions) only when an essential variable leaves its limits, and keeps changing them until a configuration holds the variables in bounds.",
+  "perspectives": ["systems", "reliability", "oversight"],
+  "limits": [
+    "Reading. Chapters 7 and 8 were not machine-read for this paper: the archive.org text the research loop could reach ends in chapter 2. Ashby's mechanism is stated here in our own words from the book's contents and preface; the only verbatim quotation is from the preface (page v).",
+    "Search. Ashby's step-functions take new values at random. Ultrastable first takes a fixed ladder of steps, then draws untried values at random (seeded, so a run can be replayed) from each parameter's declared range. A restructure step is a work item for the executor, not a step-function, and depends on the executor completing it.",
+    "Declared versus observed. The closed-loop share counts loops that declare a closing probe and a server-side owner; it does not show that each probe passes today."
+  ],
+  "findings": [
+    {
+      "id": "A1",
+      "concern": "An essential variable without limits",
+      "claim": "In Ashby's account, adaptation is defined by keeping certain essential variables within limits. A variable with no limits can never trigger the second loop, so a system that declares one without limits is not ultrastable in that variable.",
+      "where": "Chapters 7 and 8 (our statement)",
+      "perspective": "systems",
+      "mechanisms": [
+        {"rule": "ULTRASTABILITY-1", "path": "doctrine/ultrastability.json", "how": "every essential variable is declared with its limits, per scope (platform, tenant)"},
+        {"rule": "ASHBY-1", "path": "foundation/ultrastability.py", "how": "the check fails when an essential variable has neither a lower nor an upper limit"}
+      ],
+      "metric": "essential_bounded_share",
+      "target": {"op": ">=", "value": 1.0},
+      "prediction": "essential_bounded_share >= 1 within 24 h"
+    },
+    {
+      "id": "A2",
+      "concern": "A second loop that never acts",
+      "claim": "The second feedback runs through the essential variables: when one leaves its limits, the system changes itself. A second loop that is declared but never steps is a diagram, not a mechanism.",
+      "where": "Chapter 8 (our statement)",
+      "perspective": "systems",
+      "mechanisms": [
+        {"rule": "ULTRASTABILITY-1", "path": "foundation/ultrastability.py", "how": "after patience_ticks readings out of limits, one step is taken and logged with a prediction"},
+        {"rule": "CLOCKWORK-1", "path": ".github/workflows/watchdog.yml", "how": "the second loop runs on the watchdog clock and on the cost guard, server-side"}
+      ],
+      "metric": "second_loop_steps_30d",
+      "target": {"op": ">=", "value": 1},
+      "prediction": "second_loop_steps_30d >= 1 within 168 h"
+    },
+    {
+      "id": "A3",
+      "concern": "Nothing the second loop can change",
+      "claim": "Ashby's preface: \"any system which shows adaptation must (1) contain many variables that behave as step-functions\". The second loop changes the first loop's parameters; where it can only file a work item, the change waits on another loop.",
+      "where": "Summary and Preface, p. v; chapter 7",
+      "perspective": "systems",
+      "mechanisms": [
+        {"rule": "ULTRASTABILITY-1", "path": "doctrine/ultrastability.json", "how": "a ladder step of kind param changes a declared value the first loop reads, inside declared limits"}
+      ],
+      "metric": "step_function_share",
+      "target": {"op": ">=", "value": 0.5},
+      "prediction": "step_function_share >= 0.5 within 336 h"
+    },
+    {
+      "id": "A4",
+      "concern": "A search that stops before anything holds",
+      "claim": "The ultrastable system keeps changing its step-functions until it reaches a configuration that holds the essential variables within limits, and then keeps it. A loop that gives up after a fixed list of tries, or never finds a configuration that holds, has not adapted.",
+      "where": "Chapter 8 (our statement)",
+      "perspective": "reliability",
+      "mechanisms": [
+        {"rule": "ASHBY-SEARCH-1", "path": "foundation/ultrastability.py", "how": "after the ladder, untried parameter values are drawn until one holds or the declared range is spent; only then a redesign item"},
+        {"rule": "ULTRASTABILITY-1", "path": "foundation/ultrastability.py", "how": "a step is kept only when the variable is back inside its limits within settle_ticks; otherwise it is undone"}
+      ],
+      "metric": "second_loop_kept_share",
+      "target": {"op": ">=", "value": 0.25},
+      "prediction": "second_loop_kept_share >= 0.25 within 336 h"
+    },
+    {
+      "id": "A5",
+      "concern": "AI systems leave their loops open",
+      "claim": "Ultrastable's reading, not Ashby's words: a chat model or coding agent produces an answer and stops. Nothing checks the result against limits and changes the system when it fails, so the loop is open, and disappointment follows. Every loop Ultrastable runs is meant to carry its own closing check.",
+      "where": "Ultrastable thesis, building on chapter 8",
+      "perspective": "oversight",
+      "mechanisms": [
+        {"rule": "CLOSED-LOOP-1", "path": "foundation/closedloop.py", "how": "an output with no code consumer fails the build"},
+        {"rule": "SERVER-OWNS-LOOPS-1", "path": "foundation/loopowner.py", "how": "every loop has a server-side owner; a client session never closes one"}
+      ],
+      "metric": "loops_closing_probe_share",
+      "target": {"op": ">=", "value": 1.0},
+      "prediction": "loops_closing_probe_share >= 1 within 168 h"
+    }
+  ]
+}

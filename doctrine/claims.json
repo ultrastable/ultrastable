@@ -2308,6 +2308,20 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-0b86697d1d",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Ultrastable runs its own R&D and publishes its own white papers; Ashby's mechanism is code (RESEARCH-1, ASHBY-1, Rowan 2026-11-21).**",
+      "probe": [
+        "file:foundation/ultrastability.py",
+        "file:foundation/research.py",
+        "file:doctrine/research.json",
+        "file:site/research.js",
+        "file:tests/foundation/test_research.py",
+        "file:tests/foundation/test_ultrastability.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-95432168bf",
       "surface": "agents/AGENTS.md",
       "text": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
@@ -2676,6 +2690,52 @@
       "of": "cited-e7cebff4c4"
     },
     {
+      "id": "mirror-e2b7cb0275",
+      "surface": "seed/AGENTS.md",
+      "text": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
+      "probe": [
+        "file:foundation/closedloop.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-09973d0254"
+    },
+    {
+      "id": "mirror-3433c99596",
+      "surface": "seed/AGENTS.md",
+      "text": "> BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository",
+      "probe": [
+        "file:foundation/boundary.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]boundary\\b",
+        "grep:.github/workflows/checks.yml::foundation[ .]boundary\\b"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-f46e34e2a9"
+    },
+    {
+      "id": "mirror-b9ff555df6",
+      "surface": "seed/AGENTS.md",
+      "text": "> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or",
+      "probe": [
+        "file:foundation/lanewatch.py",
+        "file:foundation/crosswalk.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]crosswalk\\b"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-5d0567ad32"
+    },
+    {
+      "id": "mirror-0b772f20ba",
+      "surface": "seed/AGENTS.md",
+      "text": "> CODE-ONLY-ORDER (Rowan, 2026-11-16): chat threads, sessions and reports are temporary and are never storage. Every decision, instruction",
+      "probe": [
+        "file:foundation/standingorder.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]standingorder\\b"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-e7cebff4c4"
+    },
+    {
       "id": "mirror-961fe87d91",
       "surface": "seed/agents/AGENTS.md",
       "text": "Words match code (CLAIMS-1, Rowan 2026-11-17)",
@@ -3022,6 +3082,21 @@
       ],
       "bound_by": "mirror",
       "of": "cited-d3be926b7b"
+    },
+    {
+      "id": "mirror-289b3b8589",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Ultrastable runs its own R&D and publishes its own white papers; Ashby's mechanism is code (RESEARCH-1, ASHBY-1, Rowan 2026-11-21).**",
+      "probe": [
+        "file:foundation/ultrastability.py",
+        "file:foundation/research.py",
+        "file:doctrine/research.json",
+        "file:site/research.js",
+        "file:tests/foundation/test_research.py",
+        "file:tests/foundation/test_ultrastability.py"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-0b86697d1d"
     },
     {
       "id": "mirror-be5af6748b",
@@ -3842,52 +3917,6 @@
       ],
       "bound_by": "mirror",
       "of": "cited-5d0567ad32"
-    },
-    {
-      "id": "mirror-e2b7cb0275",
-      "surface": "seed/AGENTS.md",
-      "text": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
-      "probe": [
-        "file:foundation/closedloop.py",
-        "grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b"
-      ],
-      "bound_by": "mirror",
-      "of": "cited-09973d0254"
-    },
-    {
-      "id": "mirror-3433c99596",
-      "surface": "seed/AGENTS.md",
-      "text": "> BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository",
-      "probe": [
-        "file:foundation/boundary.py",
-        "grep:.github/workflows/checks.yml::foundation[ .]boundary\\b",
-        "grep:.github/workflows/checks.yml::foundation[ .]boundary\\b"
-      ],
-      "bound_by": "mirror",
-      "of": "cited-f46e34e2a9"
-    },
-    {
-      "id": "mirror-b9ff555df6",
-      "surface": "seed/AGENTS.md",
-      "text": "> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or",
-      "probe": [
-        "file:foundation/lanewatch.py",
-        "file:foundation/crosswalk.py",
-        "grep:.github/workflows/checks.yml::foundation[ .]crosswalk\\b"
-      ],
-      "bound_by": "mirror",
-      "of": "cited-5d0567ad32"
-    },
-    {
-      "id": "mirror-0b772f20ba",
-      "surface": "seed/AGENTS.md",
-      "text": "> CODE-ONLY-ORDER (Rowan, 2026-11-16): chat threads, sessions and reports are temporary and are never storage. Every decision, instruction",
-      "probe": [
-        "file:foundation/standingorder.py",
-        "grep:.github/workflows/checks.yml::foundation[ .]standingorder\\b"
-      ],
-      "bound_by": "mirror",
-      "of": "cited-e7cebff4c4"
     }
   ],
   "generated": [
@@ -4277,6 +4306,26 @@
       "probe": [
         "grep:.github/workflows/social-post.yml::foundation reach --run --apply",
         "file:tests/foundation/test_reach.py"
+      ]
+    },
+    {
+      "id": "research-data",
+      "surface": "site/research-data.js",
+      "header": "foundation/research.py (RESEARCH-1)",
+      "generator": "foundation/research.py",
+      "source": [
+        "research/studies",
+        "doctrine/research.json"
+      ],
+      "check": [
+        "python3",
+        "-m",
+        "foundation",
+        "research",
+        "--check"
+      ],
+      "probe": [
+        "grep:.github/workflows/checks.yml::foundation research --check"
       ]
     }
   ]
