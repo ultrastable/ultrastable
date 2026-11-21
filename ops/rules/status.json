@@ -1,5 +1,5 @@
 {
- "at": "2026-11-21T07:35:08Z",
+ "at": "2026-11-21T16:48:07Z",
  "probes": {
   "closed-loops/closedloop": {
    "status": "ok",
@@ -33,7 +33,7 @@
   },
   "front-end-matches-back-end/claims": {
    "status": "ok",
-   "detail": "claims: 363 verified of 363; 0 drift",
+   "detail": "claims: 371 verified of 371; 0 drift",
    "fixed": false,
    "item": null
   },
@@ -56,10 +56,10 @@
    "item": null
   },
   "no-merge-over-red/mergeaudit": {
-   "status": "ok",
-   "detail": "every recent merge had a green checks run",
+   "status": "violated",
+   "detail": "merged without green checks: #1268, #1461, #1750, #1759, #1763",
    "fixed": false,
-   "item": null
+   "item": "Q-RULE-no-merge-over-red-mergeaudit"
   },
   "no-merge-over-red/ciwatch": {
    "status": "ok",
@@ -129,7 +129,7 @@
   },
   "clock-never-stops/clock": {
    "status": "ok",
-   "detail": "clock ok: tick-heartbeat, executor, transparency, deploy-site, scout, a11y, criticality-loop, claims, watchdog",
+   "detail": "clock ok: tick-heartbeat, executor, transparency, deploy-site, scout, a11y, criticality-loop, claims, watchdog, temporal",
    "fixed": false,
    "item": null
   },
@@ -244,7 +244,7 @@
    "statement": "Words match code: every public statement is bound to a probe of the running code (CLAIMS-1, WORDS-MATCH-CODE-1)."
   },
   "no-merge-over-red": {
-   "status": "enforced",
+   "status": "violated",
    "ci": 2,
    "probes": 2,
    "gaps": [],

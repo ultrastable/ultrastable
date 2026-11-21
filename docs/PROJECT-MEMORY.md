@@ -11,6 +11,21 @@ This file is the single source of truth for project memory. Chat memory, tool me
 Last updated: 2026-11-21
 
 - 2026-11-21: SINGLE-ACCOUNT-LIVE-1 (Rowan: zero Ultrastable or Practical Solutions assets in the quniverse account). All four registrations sit in the ultrastable account; app, net and org zones are active there and serve; org mail routing and Email Sending (outreach.ultrastable.org, ultrastable.org) set up there; tenant-ps-core relays via tenant-ps-mail.ultrastable.workers.dev. Every quniverse Worker, D1, KV and R2 copy was backed up (ops repo backups/quniverse-retired/2026-11-21) and deleted; the tick's cross-account secrets (CUTOVER_PEER, SOURCE_*) are removed. Left in quniverse: the ultrastable.io zone with a stateless forwarder and two mail relays until the .io registry serves grace/leonidas (zonecutover then attaches io mail in the ultrastable account), and three empty 'moved' zone shells Cloudflare refuses to delete (error 1315). `python3 -m foundation singleaccount --live` (last step of cost-guard) fails while any of it remains.
+- 2026-11-21: Repair main: STALL-ACT-1 ledger probe and ultrastability data (#1766)
+- 2026-11-21: ZERO-MINUTES-1: worker merged #1763
+- 2026-11-21: STALL-ACT-1: stall alarm acts; dirty PRs no longer starve (#1763)
+- 2026-11-21: ZERO-MINUTES-1: worker merged #1759
+- 2026-11-21: STATEFUL-MIGRATE-1: test D1 migrations against a populated database (#1759)
+- 2026-11-21: ZERO-MINUTES-1: worker merged #1750
+- 2026-11-21: Product manager pass: 0 growth and repair item(s) filed (#1750)
+- 2026-11-21: spinoff: portfolio tick (#1747)
+- 2026-11-21: ZERO-MINUTES-1: worker merged #1745
+- 2026-11-21: Add functionality to agents/spinoff_sweep.py to detect and delete idle us-idea-* Workers when their associated idea is closed, merging this cleanup into the existing sweep loop. (#Q-CFP-no-idle-preview-workers) (#1745)
+- 2026-11-21: ZERO-MINUTES-1: worker merged #1744
+- 2026-11-21: Add `agents/spinoff_sweep.py` to implement automated deletion of idle idea preview Workers using a rule implemented as a Worker class (#Q-CFP-no-idle-preview-workers) (#1744)
+- 2026-11-21: branchsweep: merge the branches main lacks (#1740)
+- 2026-11-21: failure-audit: file and close failure-mode items (FAILURE-RESOLVE-1) [skip ci]
+- 2026-11-21: Implement the TemplateGenerator archetype to unblock queued writers. (#Q-SPIN-SCOPE-IMPLEMENT-TEMPLATE-GENERATOR) (#1739)
 - 2026-11-21: queue: closing-probe verdicts for 3 item(s) (QUEUE-PERSIST-1) [skip ci]
 - 2026-11-21: UPTIME-1: self-repair through the tick Worker, retry before dead, www.ultrastable.app route (#1492)
 - 2026-11-21: UPTIME-1: server-side DNS and HTTP probe for every ultrastable hostname (#1461)
