@@ -339,3 +339,5 @@
 {"at":"2026-11-21T15:54:17Z","role":"author","ok":true,"adapter":"workers-ai-glm","model":"@cf/zai-org/glm-4.7-flash","family":"glm","usd":0.002955,"priced":true}
 {"at":"2026-11-21T15:54:54Z","role":"author","ok":true,"adapter":"workers-ai-llama","model":"@cf/meta/llama-3.3-70b-instruct-fp8-fast","family":"llama","usd":0.008125,"priced":true}
 {"at":"2026-11-21T15:54:58Z","role":"author","ok":true,"adapter":"workers-ai-qwen-coder","model":"@cf/qwen/qwen2.5-coder-32b-instruct","family":"qwen","usd":0.0,"priced":false}
+{"at":"2026-11-21T16:03:55Z","role":"author","ok":true,"adapter":"workers-ai-llama","model":"@cf/meta/llama-3.3-70b-instruct-fp8-fast","family":"llama","usd":0.002441,"priced":true}
+{"at":"2026-11-21T16:04:00Z","role":"author","ok":true,"adapter":"workers-ai-qwen-coder","model":"@cf/qwen/qwen2.5-coder-32b-instruct","family":"qwen","usd":0.0,"priced":false}
