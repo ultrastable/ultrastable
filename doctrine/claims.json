@@ -156,7 +156,7 @@
       "probe": [
         "json:doctrine/ultrastability.json::patience_ticks==2",
         "grep:foundation/ultrastability.py::revert_to=pending",
-        "grep:foundation/ultrastability.py::verdict = \"kept\""
+        "grep:foundation/ultrastability.py::return \"kept\""
       ]
     },
     {
