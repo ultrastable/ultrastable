@@ -3720,6 +3720,15 @@
    "body": "lanewatch default threshold 30 to 3 minutes and --remediate merges a green stuck PR on its exact head; checks tests split in two halves; session reaper idle TTL 0.17 hours.",
    "probe": "file:foundation/lanewatch.py",
    "session": "session_0156nqDbJMBWbgRLkSeaAxF"
+  },
+  {
+   "id": "decision-2026-11-21-lane-worker-merge-1-workflow-changing-prs-merge-through-the-",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "LANE-WORKER-MERGE-1: workflow-changing PRs merge through the tick Worker's GitHub App",
+   "body": "No LANE_PAT or app secret is bound, so PRs changing .github/workflows waited for a hand merge. The lane now asks the tick Worker (/api/lane/merge, OIDC proof, exact head, green guard) to merge with the org app, which holds workflows: write.",
+   "probe": "file:seed/worker/src/lanemerge.js",
+   "session": "session_0156nqDsFRz5bTkgg5zkrs7g"
   }
  ]
 }
