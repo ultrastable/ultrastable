@@ -10,6 +10,9 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-21
 
+- 2026-11-21: SEED-LAUNCH-1: pin the ultrastable account for seed launches (#1886)
+- 2026-11-21: ZERO-MINUTES-1: worker merged #1885
+- 2026-11-21: SEED-LAUNCH-1: live probe waits through the first cron tick (#1885)
 - 2026-11-21: SEED-DEPLOY-1: deploy seeds over the OIDC route with a seed-scoped D1 create-and-migrate (#1879)
 - 2026-11-21: seed launch records (SEED-LAUNCH-1) [skip ci]
 - 2026-11-21: Deploy: print deploy warnings; an unreadable zone route list is a warning (#1875)
