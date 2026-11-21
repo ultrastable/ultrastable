@@ -1,21 +1,18 @@
 {
  "target_days": 365,
  "runway_days": null,
- "meets_target": false,
- "below": [
-  "cost"
- ],
- "unmeasured": [
-  "cost"
- ],
+ "meets_target": true,
+ "below": [],
+ "unmeasured": [],
  "components": {
   "credentials": {
    "days": null,
    "why": "nothing that lapses"
   },
   "cost": {
-   "days": "unmeasured",
-   "why": "last measured cost reading is 2026-11-17"
+   "days": null,
+   "why": "largest share of a free-plan limit 10%, not growing",
+   "share": 0.099
   },
   "failures": {
    "days": null,
