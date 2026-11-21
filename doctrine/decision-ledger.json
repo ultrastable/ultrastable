@@ -3446,6 +3446,135 @@
    "body": "Deploys refused by subreq.js ('subrequest budget N/46 used') were counted as attempts and blocked forever, because CAPACITY and unblockCapacity matched only 'Too many subrequests'. Both texts are now capacity: deferred without an attempt, and old blocks requeued or closed on their probe.",
    "probe": "grep:seed/worker/src/handoff.js::subrequest budget",
    "session": "owner-tasks-autonomous-b09f90"
+  },
+  {
+   "id": "decision-2026-11-20-dispose-1-every-open-item-gets-a-coded-disposition-inside-14",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "DISPOSE-1: every open item gets a coded disposition inside 14 days on the fleet pass",
+   "body": "Rowan, 2026-11-20: nothing sits in the queue for months and no client-side code agent is assumed. Measured that day: 304 open item files (168 in the executor queue), 58 of 74 executor runs failed. foundation/dispose.py closes an open item as gate (owner-bound) or shelved (three failed executor runs, or open ttl_days) from foundation/queue.py run(); foundation/contracts.py records fixed when a disposed item's probe passes and does not reopen it; queue.takeable retries shelved items when the open queue is empty.",
+   "probe": "grep:foundation/queue.py::dispose.run"
+  },
+  {
+   "id": "decision-2026-11-20-no-open-items-1-the-five-identity-bound-owner-gates-are-clos",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "NO-OPEN-ITEMS-1: the five identity-bound owner gates are closed with their defaults permanent",
+   "body": "Rowan 2026-11-20: 'Resolve it, close it ... I will do nothing.' funding, domains-move, org-brand, social and oauth-apps leave the owner queue; each is a gate owner-<id> in doctrine/open-loops.json with surfaces tried, the default in effect, an optional reopen link and a probe. The /owner page shows nothing waiting. No agent submitted, signed in, accepted terms or moved a domain in the owner's name.",
+   "probe": "grep:doctrine/open-loops.json::owner-oauth-apps",
+   "session": "owner-tasks-autonomous-b09f90"
+  },
+  {
+   "id": "decision-2026-11-20-patch-edit-1-reaches-the-tick-worker-s-code-agent",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "PATCH-EDIT-1 reaches the tick Worker's code agent",
+   "body": "seed/worker/src/codeagent.js parses EDIT and FILE blocks and applyEdit places them exactly or by indentation-loose match; seed/worker/src/pr-executor.js shows the named files and resolves edits against the branch file. seed/worker/test/patch-edit.test.js passes 4 tests.",
+   "probe": "grep:seed/worker/src/codeagent.js::export function applyEdit",
+   "session": "session_0156nqDu4yypYCxGuFsjcqA3"
+  },
+  {
+   "id": "decision-2026-11-20-server-side-only-gates-settle-in-the-worker-desktop-session-",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "Server-side only: gates settle in the Worker; desktop session-sweeper paused",
+   "body": "Rowan 2026-11-20 restated server-side only: no path may assume a client-side code agent. Measured: serverside --check ok, loopowner --check ok, executor runs in GitHub Actions (6 of 6 recent runs success). The desktop-app task session-sweeper (every 20 min on a personal computer) is paused; session-reaper keeps its server route (boundary --reap in CI). Gate settling gains a Worker route (dashboard settledLive, http evidence, 1 h Cache API) beside watchdog.yml.",
+   "probe": "grep:dashboard/worker.js::export async function settledLive",
+   "session": "owner-tasks-autonomous-b09f90"
+  },
+  {
+   "id": "decision-2026-11-20-session-close-dispose-1-and-patch-edit-1-shipped-worker-port",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "Session close: DISPOSE-1 and PATCH-EDIT-1 shipped; Worker port filed",
+   "body": "Shipped foundation/dispose.py, doctrine/dispose.json, patch-style EDIT blocks and file context in the executor, tests/foundation/test_dispose.py (14 tests). Open loop Q-PATCH-EDIT-WORKER carries the port to the tick Worker's code agent with a grep probe.",
+   "probe": "grep:foundation/dispose.py::def revive",
+   "session": "session_0156nqDu4yypYCxGuFsjcqA3"
+  },
+  {
+   "id": "lesson-2026-11-20-clean-branches-1-closed-unmerged-branches",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "CLEAN-BRANCHES-1 closed-unmerged branches",
+   "body": "A PR closed unmerged left its branch forever because remote_prune only deleted merged heads; the sweep now archives the sha at refs/archive/<name> and deletes it, and covers worker/.",
+   "probe": "grep:foundation/branchsweep.py::CLEAN-BRANCHES-1"
+  },
+  {
+   "id": "lesson-2026-11-20-gate-settle-2-owner-gates-settle-on-live-evidence-the-owner-",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "GATE-SETTLE-2: owner gates settle on live evidence; the owner page filters closed gates",
+   "body": "The /owner page asked the owner to connect GitHub and allow repository settings after both were done. Causes: needsyou --settle only knew env: secrets in Actions, which cannot see credentials the Worker seals itself; the dashboard read needs-you.json raw instead of the unattended.json closed-dependency rule; the OWNER-LINKS-1 probe called NEEDS.map on an object and threw. Fix: resolved_when accepts a list and http:URL ~ TEXT live evidence; dashboard openNeeds() applies the unattended rule.",
+   "probe": "grep:dashboard/worker.js::export const openNeeds",
+   "session": "owner-tasks-autonomous-b09f90"
+  },
+  {
+   "id": "lesson-2026-11-20-patch-edit-1-the-executor-shows-the-named-files-and-takes-fi",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "PATCH-EDIT-1: the executor shows the named files and takes find-and-replace edits",
+   "body": "Measured 2026-11-20: three runs on Q-CLAIM-reply-promise rewrote site/worker.js from about 1,150 lines to 45, 32 and 51 lines and failed the ELISION-1 shrink guard each time. Cause: the prompt held file names only and the reply format asked for whole files. Fixed in code: foundation/executor.py file_context puts the named files in the prompt (whole under 9,000 characters, an excerpt otherwise) and foundation/agents.py apply_edit places EDIT blocks exactly or unambiguously; tests/foundation/test_dispose.py PatchEdit passes 6 tests.",
+   "probe": "grep:foundation/agents.py::def apply_edit"
+  },
+  {
+   "id": "decision-2026-11-20-dispose-1-verified-live-first-fleet-pass-disposed-items-on-m",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "DISPOSE-1 verified live: first fleet pass disposed items on main",
+   "body": "Fleet run 44814064150 succeeded; dispose --report on main shows 23 gate, 4 shelved, 281 open, oldest 10.5 days, ttl 14.",
+   "probe": "grep:foundation/dispose.py::def revive",
+   "session": "session_0156nqDu4yypYCxGuFsjcqA3"
+  },
+  {
+   "id": "lesson-2026-11-20-dispose-1-first-live-pass-broke-the-pins-check-dispositions-",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "DISPOSE-1 first live pass broke the pins check; dispositions now prune the baseline",
+   "body": "The first fleet pass closed 11 gated roadmap rows that doctrine/pins-baseline.json still listed, so main failed pins --check. foundation/dispose.py now removes a disposed item from that baseline in the same pass, using pins.unprobed as the reading; test_dispose.py covers it.",
+   "probe": "grep:foundation/dispose.py::_prune_pins",
+   "session": "session_0156nqDu4yypYCxGuFsjcqA3"
+  },
+  {
+   "id": "decision-2026-11-20-attention-1-argue-the-claim-do-not-target-people",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "ATTENTION-1: argue the claim, do not target people",
+   "body": "Public attention for the autonomy case is an argued thesis page (/left-alone) with a live ledger from the progress record; it names no individuals and states its limits. Social channels are awaiting an account (ops/reach/status.json), so no posting is claimed until one connects.",
+   "probe": "file:site/leftalone.js",
+   "session": "session_0156nqDscDsruQvtqznPjudy"
+  },
+  {
+   "id": "decision-2026-11-20-attention-1-attention-on-evidence-credential-free-channels-s",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "ATTENTION-1: attention on evidence, credential-free channels, server-side reach measurement",
+   "body": "Attention for Ultrastable is earned on evidence: weekly deploy-record post, respectful evergreen framing of the autonomy debate, no person ever named or mentioned. WebSub, Internet Archive snapshots and IndexNow run from the site Worker tick; reach is measured by the site Worker and served at /api/reach.",
+   "probe": "grep:site/promote.js::ATTENTION-1",
+   "session": "session_0156nqDtiVSQH4gv74byYXxR"
+  },
+  {
+   "id": "lesson-2026-11-20-connect-1-connection-engine",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "CONNECT-1 connection engine",
+   "body": "Evidence: core/connect tests pass 14 of 14 and a real catalogue run ranked 1282 leads over 814 items. Cutoffs come from each run's own background because fixed thresholds fail across embedding models; a restated indicator is not a novel link; the lexical route does not seed discovery. Verified live in the next connect workflow run.",
+   "probe": "file:workers/core/connect/index.js"
+  },
+  {
+   "id": "lesson-2026-11-20-credwatch-reads-account-owned-tokens",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "credwatch reads account-owned tokens",
+   "body": "Account-owned Cloudflare tokens are verified through their own account verify route, not the user route, so credwatch no longer reports them invalid.",
+   "probe": "grep:foundation/credwatch.py::verify"
+  },
+  {
+   "id": "lesson-2026-11-20-credwatch-session-record",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "credwatch session record",
+   "body": "Session: session_0156nqDrFvUVn55Vaqm9Uyt2 made the credwatch account-token change; recorded here.",
+   "probe": "grep:foundation/credwatch.py::verify"
   }
  ]
 }

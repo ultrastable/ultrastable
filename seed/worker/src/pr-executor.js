@@ -1,7 +1,7 @@
 // ZERO-MINUTES-1: the executor's work step inside the Worker. Picks the top open issue (driver order, same skip labels as foundation/executor.py),
 // asks the Workers AI code agent for a change, applies it under the same path guard through the GitHub REST API and opens the PR. No Actions minute is used.
 // Provider interface matches executor.js: { id, available(env), dispatch(env, fetchImpl) } -> { ok, detail }.
-import { runCodeAgent } from './codeagent.js';
+import { runCodeAgent, applyEdit, BLOCK_FORMAT } from './codeagent.js';
 
 export const SKIP_LABELS = ['hold', 'blocked', 'owner', 'gate', 'identity-bound', 'wontfix', 'in-progress', 'executor-failed', 'claimed', 'dispatched'];
 export const DENY_PREFIXES = ['.git/', '.github/', 'autonomy/', 'ops/executor-log'];
@@ -20,8 +20,8 @@ export function checkEdits(files) {
   for (const f of files) {
     const why = safePath(f && f.path);
     if (why) throw new Error(`${f && f.path}: ${why}`);
-    if (typeof f.content !== 'string') throw new Error(`${f.path}: content must be a string`);
-    total += f.content.length;
+    if (typeof f.content !== 'string' && !(Array.isArray(f.edits) && f.edits.length)) throw new Error(`${f.path}: content or edits required`);
+    total += (f.content || '').length + (f.edits || []).reduce((a, e) => a + (e.find || '').length + (e.replace || '').length, 0);
   }
   if (total > MAX_BYTES) throw new Error('change is larger than the executor limit');
 }
@@ -39,11 +39,25 @@ export function pick(issues) {
 
 const b64 = s => { const u = new TextEncoder().encode(s); let t = ''; for (const c of u) t += String.fromCharCode(c); return btoa(t); };
 
-export function buildPrompt(issue, tree) {
+const PATH_RE = /(?<![\w/.-])((?:[\w.-]+\/)+[\w.-]+\.(?:py|js|mjs|json|md|sh|sql|html|css|toml|yml))(?![\w/-])/g;
+export const namedFiles = (issue, listing) => {
+  const have = new Set(listing.split('\n')), out = [];
+  for (const m of `${issue.title}\n${issue.body || ''}`.matchAll(PATH_RE)) {
+    const p = m[1].replace(/^\.\//, '');
+    if (!out.includes(p) && have.has(p) && !p.startsWith('docs/issues/') && !p.startsWith('ops/') && !safePath(p)) out.push(p);
+  }
+  return out.slice(0, 4);
+};
+
+// PATCH-EDIT-1: the model is shown the files the item names (whole when small, head and tail when long) and replies in EDIT blocks.
+export function buildPrompt(issue, tree, files = {}) {
+  const ctx = Object.entries(files).map(([p, t]) => `--- ${p} (${t.split('\n').length} lines${t.length > 9000 ? ', head and tail only: use EDIT blocks, never a FILE block' : ', complete'}) ---\n` + (t.length > 9000 ? t.slice(0, 4500) + '\n[... middle not shown ...]\n' + t.slice(-2500) : t)).join('\n');
   return 'You are the work step of an autonomous software organization. Resolve this issue with the smallest correct change to the repository. '
-    + 'Reply with ONLY JSON: {"summary":"one line","files":[{"path":"relative/path","content":"full new file content"}]}. '
+    + 'Reply in exactly this format and nothing else:\n' + BLOCK_FORMAT + '\n'
+    + 'Never rewrite a whole existing file: change it with EDIT blocks whose FIND lines are copied exactly from CURRENT FILES. '
     + 'Never touch .github/, autonomy/, secrets or git files. Write tests where the change is code. Server-side only: never reference localhost or a listening port.\n\n'
-    + `ISSUE #${issue.number}: ${issue.title}\n${(issue.body || '').slice(0, 6000)}\n\nREPOSITORY FILES (partial):\n${tree.slice(0, 6000)}\n`;
+    + `ISSUE #${issue.number}: ${issue.title}\n${(issue.body || '').slice(0, 6000)}\n\nREPOSITORY FILES (partial):\n${tree.slice(0, 6000)}\n`
+    + (ctx ? `\nCURRENT FILES (lines not shown still exist and stay unchanged):\n${ctx}\n` : '');
 }
 
 export const prExecutor = {
@@ -74,14 +88,25 @@ export const prExecutor = {
       const sha = ref.json.object.sha;
       const tree = await gh('GET', `/repos/${repo}/git/trees/${sha}?recursive=1`);
       const listing = (tree.json.tree || []).filter(t => t.type === 'blob').map(t => t.path).join('\n');
-      const out = await agent(env, buildPrompt(issue, listing));
+      const files = {};
+      for (const p of namedFiles(issue, listing)) {
+        const c = await gh('GET', `/repos/${repo}/contents/${encodeURI(p)}?ref=${encodeURIComponent(base)}`);
+        if (c.ok && c.json.content) files[p] = new TextDecoder().decode(Uint8Array.from(atob(c.json.content.replace(/\n/g, '')), ch => ch.charCodeAt(0)));
+      }
+      const out = await agent(env, buildPrompt(issue, listing, files));
       checkEdits(out.files);
       const branch = `agent/${n}-${issue.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 40).replace(/^-|-$/g, '')}`;
       const mk = await gh('POST', `/repos/${repo}/git/refs`, { ref: `refs/heads/${branch}`, sha });
       if (!mk.ok && mk.status !== 422) throw new Error(`branch ${mk.status}`);
       for (const f of out.files) {
         const cur = await gh('GET', `/repos/${repo}/contents/${encodeURI(f.path)}?ref=${encodeURIComponent(branch)}`);
-        const put = await gh('PUT', `/repos/${repo}/contents/${encodeURI(f.path)}`, { message: `${out.summary || issue.title} (#${n})`.slice(0, 200), content: b64(f.content), branch, ...(cur.ok && cur.json.sha ? { sha: cur.json.sha } : {}) });
+        let content = f.content;
+        if (typeof content !== 'string') {  // edits resolve against the file as it stands on the branch; a missed place fails the item rather than guessing
+          if (!cur.ok || !cur.json.content) throw new Error(`${f.path}: edits need an existing file`);
+          content = new TextDecoder().decode(Uint8Array.from(atob(cur.json.content.replace(/\n/g, '')), ch => ch.charCodeAt(0)));
+          for (const ed of f.edits) content = applyEdit(content, String(ed.find || ''), String(ed.replace || ''), f.path);
+        }
+        const put = await gh('PUT', `/repos/${repo}/contents/${encodeURI(f.path)}`, { message: `${out.summary || issue.title} (#${n})`.slice(0, 200), content: b64(content), branch, ...(cur.ok && cur.json.sha ? { sha: cur.json.sha } : {}) });
         if (!put.ok) throw new Error(`write ${f.path} HTTP ${put.status}`);
       }
       const pr = await gh('POST', `/repos/${repo}/pulls`, { title: `${out.summary || issue.title} (#${n})`.slice(0, 200), head: branch, base, body: `Closes #${n}\n\nOpened by the Worker executor (${out.adapter}); zero Actions minutes. The Worker gate checks it and the lane merges on green.` });

@@ -66,6 +66,12 @@ class Dispose(unittest.TestCase):
         self.assertEqual(self.run_pass(d, born_=b), [])  # idempotent: a disposed item is not disposed again
         self.assertEqual(len((d / "ops/dispose.jsonl").read_text(encoding="utf-8").splitlines()), 2)
 
+    def test_a_disposed_item_leaves_the_pins_baseline(self):
+        d = repo(); item(d, "OL-1", owner="ROWAN (identity-bound)"); item(d, "WEB-9", owner="Ops")
+        (d / "doctrine/pins-baseline.json").write_text(json.dumps({"_doc": "x", "unprobed": ["OL-1", "WEB-9"]}), encoding="utf-8")
+        self.run_pass(d)
+        self.assertEqual(json.loads((d / "doctrine/pins-baseline.json").read_text(encoding="utf-8"))["unprobed"], ["WEB-9"])
+
     def test_an_undated_item_is_never_shelved_by_age(self):
         d = repo(); item(d, "Q-1")
         self.assertEqual(self.run_pass(d), [])

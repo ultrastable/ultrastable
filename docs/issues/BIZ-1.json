@@ -1,7 +1,7 @@
 {
   "id": "BIZ-1",
   "title": "BIZ-1: Choose owning entity",
-  "body": "**Owner:** **ROWAN**\n**Trigger:** none\n**Done check:** Entity named in project memory\n**Status:** open\n\nSource of truth: `docs/roadmap.md` (item BIZ-1). Every closed item proposes a plus: file it as a new issue labeled `plus`.",
+  "body": "**Owner:** **ROWAN**\n**Trigger:** none\n**Done check:** Entity named in project memory\n**Status:** closed\n\nSource of truth: `docs/roadmap.md` (item BIZ-1). Every closed item proposes a plus: file it as a new issue labeled `plus`.\n\n**Disposition:** gate (owner-bound, 2026-11-20T20:46:50Z, DISPOSE-1)\n\n**Evidence:** owner field '**ROWAN**' binds this to the owner's own account, money or signature, which no server-side loop holds. Default in effect: the system runs without this step; nothing waits on it. Its closing probe still runs on every fleet pass and records `fixed` when it passes.\n",
   "labels": [
     "role:staff",
     "ws:business"

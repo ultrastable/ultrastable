@@ -67,6 +67,14 @@
   "systems": {
    "path": "/for/founders",
    "what": "what kind of system it runs and what it is not for"
+  },
+  "thesis": {
+   "path": "/live",
+   "what": "the standing claim that an autonomous system left alone can do useful work, backed by its public record"
+  },
+  "evidence": {
+   "path": "/progress",
+   "what": "what the system deployed and checked live in the last week, counted from its own deploy record (ATTENTION-1)"
   }
  },
  "evergreen": [
@@ -89,6 +97,31 @@
    "id": "ev-proof-1",
    "arm": "proof",
    "text": "Every claim on ultrastable.io is re-checked against the system's own records, and the checks are public."
+  },
+  {
+   "id": "ev-thesis-1",
+   "arm": "thesis",
+   "text": "An autonomous system left running on its own does not have to be a threat. This one ships, checks and repairs its own work in public, and the record is open: https://ultrastable.io/live"
+  },
+  {
+   "id": "ev-thesis-2",
+   "arm": "thesis",
+   "text": "Claim: autonomy works when every loop has a measure that can be wrong and a way to roll back. Check it yourself against the live record: https://ultrastable.io/live"
+  },
+  {
+   "id": "ev-thesis-3",
+   "arm": "thesis",
+   "text": "Worried about AI running without supervision? Fair. So the system keeps its own audit trail, its own halt switch and its own probes, all public: https://ultrastable.io/live"
+  },
+  {
+   "id": "ev-thesis-4",
+   "arm": "thesis",
+   "text": "An argument is cheap. A running system that keeps improving itself, with every change logged, is evidence. Read the log: https://ultrastable.io/live"
+  },
+  {
+   "id": "ev-auto-3",
+   "arm": "ps",
+   "text": "Can a system left alone help with real problems? Practical Solutions is where Ultrastable tries: routine work for small teams, run and improved by the system itself."
   }
  ],
  "targets": [
@@ -161,5 +194,21 @@
    "note": "one click at the connect link; the tick Worker posts as soon as the account is linked",
    "connect": "https://ultrastable.io/connect/mastodon"
   }
- ]
+ ],
+ "attention": {
+  "_doc": "ATTENTION-1 (Rowan, 2026-11-20): get attention for the claim that a system left to run on its own can help solve problems, on evidence only. Posts never name, mention, reply to or quote a person, never mock anyone, and never claim more than the record shows (self-originated deploys are claimed only when ops/deploys.jsonl marks them executor or self-agent). Read by foundation/reach.py evidence_candidates and check(). The thesis arm (REACH-THESIS-1) carries the framing; the evidence arm carries the weekly numbers.",
+  "no_mentions": true,
+  "evidence_window_days": 7,
+  "self_origins": [
+   "executor",
+   "self-agent"
+  ],
+  "credential_free": [
+   "/feed.xml and /progress.atom declare a WebSub hub and the site tick pings it daily (site/promote.js webSub)",
+   "one public page a day is snapshotted by the Internet Archive (archiveEvidence)",
+   "IndexNow daily (indexNow)",
+   "reach counts measured inside the site Worker and served at /api/reach (reachRows)"
+  ],
+  "reach_url": "https://ultrastable.io/api/reach"
+ }
 }
