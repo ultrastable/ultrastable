@@ -375,3 +375,5 @@
 {"age_days": 0.3, "at": "2026-11-21T18:21:05Z", "disposition": "shelved", "evidence": "open 6.0 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-TEMPORAL-69713c50e8", "rule": "ttl", "status_before": "open"}
 {"age_days": 0.3, "at": "2026-11-21T18:21:05Z", "disposition": "shelved", "evidence": "open 6.0 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-TEMPORAL-94167fdea6", "rule": "ttl", "status_before": "open"}
 {"age_days": 0.3, "at": "2026-11-21T18:21:05Z", "disposition": "shelved", "evidence": "open 6.0 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-TEMPORAL-e5ddf8e610", "rule": "ttl", "status_before": "open"}
+{"age_days": 0.3, "at": "2026-11-21T18:31:14Z", "disposition": "shelved", "evidence": "open 6.0 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-DEPROT-dependabot", "rule": "ttl", "status_before": "open"}
+{"age_days": 0.3, "at": "2026-11-21T18:31:14Z", "disposition": "shelved", "evidence": "open 6.0 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-YEARFAIL-workflow", "rule": "ttl", "status_before": "open"}
