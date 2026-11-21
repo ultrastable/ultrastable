@@ -100,7 +100,8 @@ def check(root=REPO) -> list[str]:
     for f in y["faults"]:
         if f.get("rate_from") and f["rate_from"] not in known:
             errs.append(f"{f['id']}: rate_from {f['rate_from']} is not an observed series")
-    if "trajectory" not in (root / ".github/workflows/watchdog.yml").read_text(encoding="utf-8"):
+    # the watchdog runs it directly or through the ultrastability tick it already runs (WATCHDOG-FOLLOW-1)
+    if not any("trajectory" in (root / p).read_text(encoding="utf-8") for p in (".github/workflows/watchdog.yml", "foundation/ultrastability.py")):
         errs.append("the watchdog does not run trajectory")
     return errs
 
