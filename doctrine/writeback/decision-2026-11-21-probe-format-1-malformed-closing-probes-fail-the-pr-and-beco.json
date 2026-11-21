@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-21-probe-format-1-malformed-closing-probes-fail-the-pr-and-beco",
+  "kind": "decision",
+  "date": "2026-11-21",
+  "title": "PROBE-FORMAT-1: malformed closing probes fail the PR and become a REDMAIN gate",
+  "body": "Main went red twice on 2026-11-21 from a grep probe with one colon. writeback check now validates every ledger and write-back probe (format, path exists, regex compiles); record refuses a bad probe; the probe-format gate in doctrine/redmain.json lets ciwatch open a repair when main still turns red.",
+  "probe": "file:foundation/writeback.py",
+  "session": "session_0156nqDtycGejegSYjhFJ1MF"
+ },
+ "kind": "decision",
+ "title": "PROBE-FORMAT-1: malformed closing probes fail the PR and become a REDMAIN gate",
+ "session": "session_0156nqDtycGejegSYjhFJ1MF"
+}
