@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-21-generated-files-follow-main-in-unstick-practical-solutions-s",
+  "kind": "decision",
+  "date": "2026-11-21",
+  "title": "Generated files follow main in unstick; practical-solutions settings as code; auto-merge on",
+  "body": "UNSTICK-1 regenerated generated files into PR branches after merging main, which made them diverge from main again and conflict on the next bot commit (#935). scripts/unstick_prs.sh now sets every file in seed/worker/src/generated.js to main's copy; main regenerates after merge. Allow auto-merge was off on both repos although github/org-settings.json declared it; set on both through the owner's signed-in browser and verified through the API (allow_auto_merge true). practical-solutions added to github/org-settings.json so the applier and platformaudit keep it. Tests pass.",
+  "probe": "grep:scripts/unstick_prs.sh::MERGE-NOW-1",
+  "session": "session_0156nqDtycGejegSYjhFJ1MF"
+ },
+ "kind": "decision",
+ "title": "Generated files follow main in unstick; practical-solutions settings as code; auto-merge on",
+ "session": "session_0156nqDtycGejegSYjhFJ1MF"
+}
