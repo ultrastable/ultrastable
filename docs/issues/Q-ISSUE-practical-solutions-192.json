@@ -1,7 +1,7 @@
 {
   "id": "Q-ISSUE-practical-solutions-192",
   "title": "Q-ISSUE-practical-solutions-192: Q-YEARSIM-calibration: predictions score worse than a coin (Brier 0.278 over 8)",
-  "body": "**Owner:** executor\n**Trigger:** issueloop, daily\n**Done check:** cmd:python3 -m foundation issueloop --closed ultrastable/practical-solutions#192\n**Status:** open\n\nISSUE-LOOP-1: ultrastable/practical-solutions#192 (Q-YEARSIM-calibration: predictions score worse than a coin (Brier 0.278 over 8)) is unprobed: no probe line in the body. Fix it in code and close it, or add a `Closing probe:` line the loop can run (file, grep, allow-listed cmd, or GET url expect \"text\").\n\nsize: S\n",
+  "body": "**Owner:** executor\n**Trigger:** issueloop, daily\n**Done check:** cmd:python3 -m foundation issueloop --closed ultrastable/practical-solutions#192\n**Status:** closed\n\nISSUE-LOOP-1: ultrastable/practical-solutions#192 (Q-YEARSIM-calibration: predictions score worse than a coin (Brier 0.278 over 8)) is unprobed: no probe line in the body. Fix it in code and close it, or add a `Closing probe:` line the loop can run (file, grep, allow-listed cmd, or GET url expect \"text\").\n\nsize: S\n\n\n**Evidence:** 2026-11-21 closing probe passes (cmd:python3 -m foundation issueloop --closed ultrastable/practical-solutions#192): practical-solutions PR #196 merged: class prior for brief predictions, yearsim C5 pass (Brier 0.219 over 8), unexpected_fails []; GH issue #192 closed (session_0156nqDte8FeqRLjvGRAAb6w)\n",
   "labels": [
     "p2",
     "agent-ready"

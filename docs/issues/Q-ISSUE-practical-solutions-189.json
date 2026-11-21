@@ -1,7 +1,7 @@
 {
   "id": "Q-ISSUE-practical-solutions-189",
   "title": "Q-ISSUE-practical-solutions-189: PIPELINE-1: connect intake, evidence, solutions and connections into one measured pipeline",
-  "body": "**Owner:** executor\n**Trigger:** issueloop, daily\n**Done check:** cmd:python3 -m foundation issueloop --closed ultrastable/practical-solutions#189\n**Status:** open\n\nISSUE-LOOP-1: ultrastable/practical-solutions#189 (PIPELINE-1: connect intake, evidence, solutions and connections into one measured pipeline) is unprobed: no probe line in the body. Fix it in code and close it, or add a `Closing probe:` line the loop can run (file, grep, allow-listed cmd, or GET url expect \"text\").\n\nsize: S\n",
+  "body": "**Owner:** executor\n**Trigger:** issueloop, daily\n**Done check:** cmd:python3 -m foundation issueloop --closed ultrastable/practical-solutions#189\n**Status:** closed\n\nISSUE-LOOP-1: ultrastable/practical-solutions#189 (PIPELINE-1: connect intake, evidence, solutions and connections into one measured pipeline) is unprobed: no probe line in the body. Fix it in code and close it, or add a `Closing probe:` line the loop can run (file, grep, allow-listed cmd, or GET url expect \"text\").\n\nsize: S\n\n\n**Evidence:** 2026-11-21 closing probe passes (cmd:python3 -m foundation issueloop --closed ultrastable/practical-solutions#189): node tools/pipeline.mjs --check exits 0 with health ok and test/pipeline.test.js passes 13/13 on practical-solutions main; GH issue #189 closed (live /pipeline.json not reachable from the session proxy) (session_0156nqDte8FeqRLjvGRAAb6w)\n",
   "labels": [
     "p2",
     "agent-ready"

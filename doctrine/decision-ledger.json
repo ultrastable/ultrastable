@@ -765,7 +765,7 @@
    "date": "2026-11-13",
    "title": "Free org plan blocks branch protection; bundles restore",
    "body": "GH-4 branch protection returns 403 on free private repos (needs paid plan). All 7 archived-repo bundles clone from main (restore test 2026-11-13). IP-6 calendar needs the filing date.",
-   "probe": "file:ip/calendar/deadlines.py"
+   "probe": "file:github/org-settings.json"
   },
   {
    "id": "decision-2026-11-13-front-door-2-idea-consumer-deploys-a-worker-per-idea-archive",
@@ -1037,7 +1037,7 @@
    "date": "2026-11-15",
    "title": "NO-PATENT-1 wording sweep: business, brand, agents, outreach",
    "body": "Removed patent, provisional filing, counsel, private-repo and disclosure-gate wording from business/, brand/, agents/ roles and outreach copy; legal-ip-manager role is now licence and compliance stewardship.",
-   "probe": "grep:business/plan/README.md::Public by default",
+   "probe": "file:agents/roles/legal-ip-manager.md",
    "session": "session_0156nqDuVY71gtRtDvjPaAgK"
   },
   {
@@ -4296,6 +4296,57 @@
    "title": "PORT-BRANCH items: check whether main already carries the code before porting",
    "body": "Session: session_0156nqDte8FeqRLjvGRAAb6w. claude/branch-root-cause-1 conflicted only because main already held its sweeper code; only the test was missing. branchsweep --carried needs full history (unshallow) or it reports unmeasured.",
    "probe": "file:seed/worker/test/sweeper.test.js"
+  },
+  {
+   "id": "lesson-2026-11-21-a-shelved-or-gated-item-is-not-a-done-item-dispose-1-vs-chec",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "A shelved or gated item is not a done item (DISPOSE-1 vs checks)",
+   "body": "DISPOSE-1 closes an over-limit item as Status closed, Disposition shelved or gate. Checks that read Status alone (build_site_roadmap pins and gaps, market --check) then treated open gaps as finished and failed main. Any check reading item status must also read Disposition; finished means closed and (not shelved or gate, or its own probe passes). Fixed in scripts/build_site_roadmap.py and foundation/market.py.",
+   "probe": "grep:foundation/market.py::shelved|gate",
+   "session": "session_0156nqDvGnRC9rS81Jjp9V7n"
+  },
+  {
+   "id": "lesson-2026-11-21-probes-must-use-rest-not-graphql-session-rest-1",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "Probes must use REST, not GraphQL (SESSION-REST-1)",
+   "body": "Agent sessions get HTTP 403 on GitHub GraphQL, so gh pr view and gh issue list probes can never pass there. Probes use gh api REST paths. The GH mirror is capped at 120 writes per run and fell 252 issues behind: a mirror backlog is itself a drift to measure. Pins baseline and tests that assert state of live items (test_prioritize) must tolerate the item closing.",
+   "probe": "grep:foundation/loopowner.py::api",
+   "session": "session_0156nqDvGnRC9rS81Jjp9V7n"
+  },
+  {
+   "id": "lesson-2026-11-21-shallow-clones-made-every-recurring-failure-look-seen-today-",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "Shallow clones made every recurring failure look seen today; skipped checks merged via legacy /status; schema errors now heal in-tick",
+   "body": "Session: session_0156nqDte8FeqRLjvGRAAb6w. (1) SHALLOW-TIME-1: failmine dated issue events by git --diff-filter=A; in a shallow checkout the boundary commit adds every file, so every Q-RECUR signature read 'last seen' at the boundary and no probe could go quiet. Boundary commits are now skipped and the id/body date stands in. (2) GATE-SKIP-1: foundation/fleet.py merge_lane read the combined /status (no Actions check-runs, so pending/0) and merged PRs whose checks run was skipped; it now mirrors seed/worker/src/greenguard.js on check-runs and needs checks=success. (3) SCHEMA-HEAL-1: a tick step that throws no such table/column re-runs migrate and retries once before filing TICKFAIL.",
+   "probe": "file:foundation/failmine.py"
+  },
+  {
+   "id": "lesson-2026-11-21-gh-mirror-catches-up-in-rounds-mirror-catchup-1",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "GH mirror catches up in rounds (MIRROR-CATCHUP-1)",
+   "body": "The mirror write count paces GitHub's secondary rate. When a run defers writes, foundation/ghmirror.py now plans again and continues for up to 10 rounds or 8 minutes. Evidence: tests/foundation/test_ghmirror.py passes, and a manual apply run closed 252 issues (336 to 41 open) in one session. Rule: close an item in docs/issues first with queue.close and evidence, because the mirror follows the file.",
+   "probe": "grep:foundation/ghmirror.py::MIRROR-CATCHUP-1",
+   "session": "session_0156nqDvGnRC9rS81Jjp9V7n"
+  },
+  {
+   "id": "lesson-2026-11-21-probes-must-name-their-user-agent",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "Probes must name their user agent",
+   "body": "Session: session_0156nqDte8FeqRLjvGRAAb6w. Cloudflare returns 403 to Python-urllib, so every spinoff read uptime 0.0 while live (route, DNS and worker verified in the ultrastable account). The uptime probe now sends a named agent (a package-wide opener changed other tests, so it stays local); Q-ULTRA-loop-ledger-uptime-* close when the next tick reads 1.0.",
+   "probe": "grep:foundation/ultrastability.py::UPTIME-UA-1"
+  },
+  {
+   "id": "lesson-2026-11-21-template-carry-ledger-probes",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "Ledger probes that named removed admin files are repointed at code that remains",
+   "body": "Moving admin papers out of the template removed files two ledger rows probed; regen keeps ledger probes, so the ledger itself must carry the new probe.",
+   "probe": "file:github/org-settings.json"
   }
  ]
 }

@@ -29,6 +29,8 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[1]
 THIS = "ultrastable/ultrastable"
 SYNC = "queue"
+CATCHUP_ROUNDS = 10
+CATCHUP_SECONDS = 480
 MARK = re.compile(r"<!-- us-item:([A-Za-z0-9._-]+) -->")
 FIELD = lambda body, name: (re.search(rf"^\*\*{name}:\*\*\s*(.+)$", body or "", re.M) or [None, ""])[1].strip()
 CLOSED = ("closed", "done", "fixed", "superseded", "cancelled", "canceled", "live")
@@ -232,6 +234,14 @@ def main(argv) -> int:
         return 1 if errs else 0
     mx = int(argv[argv.index("--max") + 1]) if "--max" in argv else 120
     res = run(do_apply="--apply" in argv, max_writes=mx)
+    # MIRROR-CATCHUP-1: the per-run cap paces GitHub's secondary limit, it is not a backlog limit. A run that defers writes plans again and
+    # continues (bounded by rounds and wall clock), so a backlog cannot silently rebuild: on 2026-11-21 a capped mirror left 252 issues open
+    # for items the repository had already closed.
+    rounds, t0 = 1, time.time()
+    while "--apply" in argv and res.get("status") == "partial" and rounds < CATCHUP_ROUNDS and time.time() - t0 < CATCHUP_SECONDS:
+        rounds += 1
+        res = run(do_apply=True, max_writes=mx)
+    res["rounds"] = rounds
     print(json.dumps(res, indent=1))
     # a missing token or Issues off is a recorded state, not a crash; a failed read or write errors fail the step so ciwatch files it
     if res.get("status") in ("read-failed",) or str(res.get("status", "")).startswith("repo-read"):

@@ -135,8 +135,11 @@ def write_tenants(root=REPO, fetch=None, now=None) -> list[str]:
 
 
 def _get(url):
+    # UPTIME-UA-1 (2026-11-21): every spinoff read uptime 0.0 while serving 200. Cloudflare answers the default Python-urllib agent with
+    # 403 (error 1010, the same block push_main.py works around), so the probe measured its own user agent, not the app. Send a named agent.
+    req = urllib.request.Request(url, headers={"user-agent": "ultrastable-ultrastability/1 (+https://ultrastable.io)"})
     try:
-        with urllib.request.urlopen(url, timeout=15) as r:
+        with urllib.request.urlopen(req, timeout=15) as r:
             return 1.0 if r.status < 400 else 0.0
     except urllib.error.HTTPError:
         return 0.0

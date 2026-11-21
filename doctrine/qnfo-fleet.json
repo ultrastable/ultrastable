@@ -1,0 +1,402 @@
+{
+ "_doc": "PL-1 / WEB-6 (Q-35, Q-50): the QNFO fleet as it runs on its Cloudflare account, read from the Cloudflare API on 2026-11-21 (workers, their cron schedules, D1 databases), one row each, mapped to the Ultrastable architecture. disposition: twin = the Ultrastable path that does the same job; owner-personal = the owner's own system, outside SCOPE.md, not platform; not-ported = no twin yet; ultrastable = Ultrastable's own worker hosted on that account. `python3 -m foundation sauce --check` fails a row with no disposition or a twin path that does not exist.",
+ "read_at": "2026-11-21",
+ "rows": [
+  {
+   "name": "idea-hub",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "twin",
+   "twin": "foundation/ideas.py"
+  },
+  {
+   "name": "personal-api",
+   "kind": "worker",
+   "crons": [
+    "5 * * * *"
+   ],
+   "disposition": "owner-personal"
+  },
+  {
+   "name": "personal-career-engine",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "owner-personal"
+  },
+  {
+   "name": "personal-career-watchdog",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "owner-personal"
+  },
+  {
+   "name": "personal-companion",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "owner-personal"
+  },
+  {
+   "name": "personal-job-matcher",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "owner-personal"
+  },
+  {
+   "name": "personal-watch",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "owner-personal"
+  },
+  {
+   "name": "q08-mind",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "owner-personal"
+  },
+  {
+   "name": "q08-prediction-markets",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "owner-personal"
+  },
+  {
+   "name": "q08-signal-engine",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "owner-personal"
+  },
+  {
+   "name": "qnfo-agents",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "twin",
+   "twin": "seed/worker/src/codeagent.js"
+  },
+  {
+   "name": "qnfo-ai",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "twin",
+   "twin": "seed/worker/src/airouter.js"
+  },
+  {
+   "name": "qnfo-ai-calibration",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "twin",
+   "twin": "foundation/contracts.py"
+  },
+  {
+   "name": "qnfo-ai-search",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "not-ported"
+  },
+  {
+   "name": "qnfo-ai-yield",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "twin",
+   "twin": "seed/worker/src/roi.js"
+  },
+  {
+   "name": "qnfo-cloud-ops",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "twin",
+   "twin": "seed/worker/src/opsbackup.js"
+  },
+  {
+   "name": "qnfo-code-orchestrator",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "twin",
+   "twin": "seed/worker/src/executor.js"
+  },
+  {
+   "name": "qnfo-companion-guard",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "owner-personal"
+  },
+  {
+   "name": "qnfo-containers-pilot",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "not-ported"
+  },
+  {
+   "name": "qnfo-deploy-guard",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "twin",
+   "twin": "seed/worker/src/greenguard.js"
+  },
+  {
+   "name": "qnfo-doc-gate",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "twin",
+   "twin": "foundation/docs_audit.py"
+  },
+  {
+   "name": "qnfo-email",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "twin",
+   "twin": "seed/worker/src/humans.js"
+  },
+  {
+   "name": "qnfo-fleet-control",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "twin",
+   "twin": "seed/worker/src/control.js"
+  },
+  {
+   "name": "qnfo-fleet-dashboard",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "twin",
+   "twin": "dashboard/worker.js"
+  },
+  {
+   "name": "qnfo-gateway",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "twin",
+   "twin": "seed/worker/src/worker-gate.js"
+  },
+  {
+   "name": "qnfo-github-steward",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "twin",
+   "twin": "seed/worker/src/sweeper.js"
+  },
+  {
+   "name": "qnfo-infra",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "twin",
+   "twin": "seed/worker/src/hosts.js"
+  },
+  {
+   "name": "qnfo-intent-orchestrator",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "twin",
+   "twin": "seed/worker/src/interview.js"
+  },
+  {
+   "name": "qnfo-ipatent",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "owner-personal"
+  },
+  {
+   "name": "qnfo-jobsearch",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "owner-personal"
+  },
+  {
+   "name": "qnfo-lifecycle",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "twin",
+   "twin": "seed/worker/src/retention.js"
+  },
+  {
+   "name": "qnfo-memory-mcp",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "not-ported"
+  },
+  {
+   "name": "qnfo-model-eval",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "twin",
+   "twin": "foundation/modelwatch.py"
+  },
+  {
+   "name": "qnfo-observability",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "twin",
+   "twin": "seed/worker/src/watchdog.js"
+  },
+  {
+   "name": "qnfo-ops",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "twin",
+   "twin": "seed/worker/src/tick.js"
+  },
+  {
+   "name": "qnfo-pdf",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "not-ported"
+  },
+  {
+   "name": "qnfo-profile-loop",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "owner-personal"
+  },
+  {
+   "name": "qnfo-research-exec",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "twin",
+   "twin": "foundation/research.py"
+  },
+  {
+   "name": "qnfo-social",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "twin",
+   "twin": "seed/worker/src/social.js"
+  },
+  {
+   "name": "qnfo-subscribers",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "not-ported"
+  },
+  {
+   "name": "qnfo-tools-mcp",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "twin",
+   "twin": "site/agentic.js"
+  },
+  {
+   "name": "qnfo-waste-agent",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "twin",
+   "twin": "seed/worker/src/spend.js"
+  },
+  {
+   "name": "qnfo-workers",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "twin",
+   "twin": "seed/worker/src/index.js"
+  },
+  {
+   "name": "qnfo-youtube-shorts",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "owner-personal"
+  },
+  {
+   "name": "radar-hub",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "twin",
+   "twin": "foundation/scout.py"
+  },
+  {
+   "name": "ultrastable-mail-in",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "ultrastable"
+  },
+  {
+   "name": "ultrastable-mail-relay",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "ultrastable"
+  },
+  {
+   "name": "ultrastable-site",
+   "kind": "worker",
+   "crons": [],
+   "disposition": "ultrastable"
+  },
+  {
+   "name": "me-companion",
+   "kind": "d1",
+   "disposition": "owner-personal"
+  },
+  {
+   "name": "personal-career",
+   "kind": "d1",
+   "disposition": "owner-personal"
+  },
+  {
+   "name": "q08-trades",
+   "kind": "d1",
+   "disposition": "owner-personal"
+  },
+  {
+   "name": "q08-market-signals",
+   "kind": "d1",
+   "disposition": "owner-personal"
+  },
+  {
+   "name": "personal-prefs",
+   "kind": "d1",
+   "disposition": "owner-personal"
+  },
+  {
+   "name": "qnfo-identity",
+   "kind": "d1",
+   "disposition": "twin",
+   "twin": "seed/worker/src/auth"
+  },
+  {
+   "name": "q08-signal",
+   "kind": "d1",
+   "disposition": "owner-personal"
+  },
+  {
+   "name": "qnfo-outreach",
+   "kind": "d1",
+   "disposition": "twin",
+   "twin": "scripts/outreach.py"
+  },
+  {
+   "name": "personal-life",
+   "kind": "d1",
+   "disposition": "owner-personal"
+  },
+  {
+   "name": "ipatent-db",
+   "kind": "d1",
+   "disposition": "owner-personal"
+  },
+  {
+   "name": "qnfo-cms",
+   "kind": "d1",
+   "disposition": "not-ported"
+  },
+  {
+   "name": "living-paper",
+   "kind": "d1",
+   "disposition": "twin",
+   "twin": "foundation/research.py"
+  },
+  {
+   "name": "portfolio-state",
+   "kind": "d1",
+   "disposition": "twin",
+   "twin": "dashboard/schema.sql"
+  },
+  {
+   "name": "qnfo-graph",
+   "kind": "d1",
+   "disposition": "not-ported"
+  },
+  {
+   "name": "qnfo-audit",
+   "kind": "d1",
+   "disposition": "twin",
+   "twin": "seed/worker/src/auditchain.js"
+  }
+ ]
+}

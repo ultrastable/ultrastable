@@ -10,6 +10,16 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-21
 
+- 2026-11-21: regen-generated: refresh generated data after merge (REGEN-GENERATED-1) [skip ci] (#1822)
+- 2026-11-21: queue: closing-probe verdicts for 7 item(s) (QUEUE-PERSIST-1) [skip ci]
+- 2026-11-21: PROBE-REAL-1: real probes for scope items; QNFO fleet inventory; scout sources (#1821)
+- 2026-11-21: fleet: token-free drift probe (FLEET-PROBE-1) (#1818)
+- 2026-11-21: Uptime probes send a named user agent (#1815)
+- 2026-11-21: ZERO-MINUTES-1: worker merged #1817
+- 2026-11-21: ghmirror: self-catch-up rounds; close probe-passing queue items (#1817)
+- 2026-11-21: Fix root causes of recurring failures: shallow-clone times, skipped-checks merge gate, in-tick schema heal (#1816)
+- 2026-11-21: loopowner: closed-PR probe uses REST (SESSION-REST-1) (#1807)
+- 2026-11-21: PORT-BRANCH-claude-branch-root-cause-1: carry sweeper retrigger test; close item (#1814)
 - 2026-11-21: ghmirror closes duplicate issues per item (#1810)
 - 2026-11-21: Record deploys by merge, not rebase; SPDX and CITATION fixes (#1804)
 - 2026-11-21: OL-PR closing probe reads REST first (#1806)

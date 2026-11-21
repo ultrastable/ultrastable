@@ -72,15 +72,37 @@ def queue(cfg: dict, api, repos: list[str] | None = None, root=REPO) -> list[dic
     return sorted(items, key=lambda i: (priority(i), i["repo"]))
 
 
-def mergeable(cfg: dict, pr: dict, checks: dict) -> tuple[bool, str]:
+# GATE-SKIP-1 (Q-RECUR-7f3c1db956): the lane read the legacy combined /status, which never carries Actions check-runs, so it answered
+# "pending, 0 statuses" and merged PRs whose `checks` run was skipped or still running (MERGE-AUDIT-1 caught #617 .. #1461). The gate is now the
+# same as seed/worker/src/greenguard.js: every check-run finished and green, and REQUIRED runs concluded `success` (skipped is not green).
+REQUIRED = {"ultrastable": ["checks"]}
+
+
+def not_green(repo: str, sha: str, runs: list | None) -> str | None:
+    if runs is None:
+        return "check-runs unreadable"
+    runs = [c for c in runs if c.get("name") != "lane"]
+    for c in runs:
+        if c.get("status") != "completed":
+            return f"{c.get('name')} still running"
+    for c in runs:
+        if c.get("conclusion") not in ("success", "neutral", "skipped"):
+            return f"{c.get('name')} {c.get('conclusion')}"
+    for need in REQUIRED.get(repo, []):
+        if not any(c.get("name") == need and c.get("conclusion") == "success" for c in runs):
+            return f"{need} has not passed on {str(sha)[:7]}"
+    return None
+
+
+def mergeable(cfg: dict, pr: dict, runs: list | None, repo: str = "") -> tuple[bool, str]:
     names = {(l["name"] if isinstance(l, dict) else l).lower() for l in pr.get("labels", [])}
     if pr.get("draft"):
         return False, "draft"
     if names & set(cfg["merge"]["skip_labels"]):
         return False, "held by label"
-    if checks.get("state") not in ("success", "pending") or checks.get("state") == "pending" and checks.get("total_count", 0):
-        if not (checks.get("state") == "pending" and checks.get("total_count", 0) == 0):
-            return False, f"checks {checks.get('state')}"
+    why = not_green(repo, pr.get("head", {}).get("sha", ""), runs)
+    if why:
+        return False, why
     return True, "green"
 
 
@@ -92,8 +114,8 @@ def merge_lane(cfg: dict, api, apply=False, repos=None) -> list[dict]:
             _, detail = api("GET", f"/repos/{cfg['org']}/{r}/pulls/{pr['number']}")
             if (detail or {}).get("mergeable") is False:
                 rows.append({"repo": r, "pr": pr["number"], "action": "skip", "why": "conflicts"}); continue
-            _, checks = api("GET", f"/repos/{cfg['org']}/{r}/commits/{pr['head']['sha']}/status")
-            ok, why = mergeable(cfg, pr, checks or {})
+            st3, cr = api("GET", f"/repos/{cfg['org']}/{r}/commits/{pr['head']['sha']}/check-runs?per_page=100")
+            ok, why = mergeable(cfg, pr, (cr or {}).get("check_runs", []) if st3 == 200 else None, r)
             row = {"repo": r, "pr": pr["number"], "action": "merge" if ok else "skip", "why": why}
             if ok and apply:
                 s2, j2 = api("PUT", f"/repos/{cfg['org']}/{r}/pulls/{pr['number']}/merge", {"merge_method": cfg["merge"]["method"]})
@@ -165,8 +187,30 @@ def _log(root, rec):
     return rec
 
 
+def probe_drift(spec: str, root=REPO, read_remote=None) -> tuple[bool, str]:
+    """`COPY@REPO`: true when the named copy shows no drift in that repository. This repository is read from the working tree, so the probe
+    needs no token; another repository is read through `read_remote(repo, path)` (the fleet token) and an unreadable copy is not a pass."""
+    copy, _, repo = spec.partition("@")
+    cfg = load(root)
+    repo = repo or REPO.name
+    def read(r, path):
+        if r == REPO.name or r == "ultrastable":
+            f = Path(root) / path
+            return f.read_text(encoding="utf-8", errors="replace") if f.is_file() else None
+        return read_remote(r, path) if read_remote else None
+    cfg = dict(cfg, copies=[c for c in cfg["copies"] if c["id"] == copy and repo in c["repos"]])
+    if not cfg["copies"]:
+        return False, f"no copy {copy} lists repository {repo}"
+    mine = [d for d in drift(cfg, read) if d["repo"] == repo]
+    return not mine, json.dumps(mine) if mine else f"{copy} has no drift in {repo}"
+
+
 def main(argv=None) -> int:
     import argparse
+    if argv and argv[0] == "--probe":  # FLEET-PROBE-1: a drift issue closes on this reading, with no token and no person
+        ok, why = probe_drift(argv[1])
+        print(why)
+        return 0 if ok else 1
     ap = argparse.ArgumentParser(); ap.add_argument("--apply", action="store_true"); ap.add_argument("--repo", action="append")
     a = ap.parse_args(argv)
     rec = run(apply=a.apply, repos=[x.split("/")[-1] for x in a.repo] if a.repo else None)

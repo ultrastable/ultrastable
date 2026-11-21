@@ -22,6 +22,15 @@ class Sauce(unittest.TestCase):
         self.assertTrue(ported <= declared, "QNFO declares which of its loops satisfies every ported mechanism")
         self.assertEqual(sorted(m["priority"] for m in inv), list(range(1, len(inv) + 1)), "priorities are a strict order")
 
+    def test_qnfo_fleet_inventory_accounts_for_every_row(self):
+        self.assertEqual(S.fleet_check(ROOT), [])
+        d = scratch(); (d / "doctrine").mkdir()
+        self.assertTrue(any("missing" in e for e in S.fleet_check(d)))
+        (d / S.FLEET).write_text(json.dumps({"rows": [{"kind": "worker", "name": "a"}, {"kind": "d1", "name": "b", "disposition": "twin", "twin": "nope.js"}]}))
+        errs = S.fleet_check(d)
+        self.assertTrue(any("a has no disposition" in e for e in errs))
+        self.assertTrue(any("twin nope.js that does not exist" in e for e in errs))
+
     def test_a_port_without_module_test_or_wiring_fails(self):
         d = scratch(); (d / "doctrine").mkdir(); (d / "instances").mkdir()
         inv = copy.deepcopy(S.inventory(ROOT))
