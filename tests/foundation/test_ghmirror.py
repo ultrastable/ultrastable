@@ -133,3 +133,15 @@ class GhMirrorTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class MirrorDedupe(unittest.TestCase):
+    def test_second_open_issue_for_one_item_is_closed(self):
+        from foundation import ghmirror
+        body = "x\n<!-- us-item:A -->"
+        want = [{"id": "A", "title": "A", "body": body, "labels": [], "milestone": "Now", "state": "open"}]
+        have = [{"number": 9, "title": "A", "body": body, "labels": [], "milestone": {"title": "Now"}, "state": "open"},
+                {"number": 4, "title": "A", "body": body, "labels": [], "milestone": {"title": "Now"}, "state": "open"}]
+        acts = ghmirror.plan(want, have, set(), {"Now": 1})
+        self.assertIn(("orphan", 9), acts)
+        self.assertNotIn(("orphan", 4), acts)
