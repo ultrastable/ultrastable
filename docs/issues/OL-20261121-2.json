@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261121-2",
+  "title": "OL-20261121-2: Buffer app registration: the connect flow cannot self-register",
+  "body": "**Owner:** social-module\n**Trigger:** smoke-live run\n**Done check:** grep:scripts/smoke_live.py::buffer-registration\n**Status:** open\n\nBuffer documents app clients created in its settings and no open registration endpoint; the connect flow's self-registration failed in production. The smoke check buffer-registration records the live answer each run and the connect flow logs the reason to credential_events. Default in effect: Bluesky posts natively, the relay carries X, LinkedIn, Substack and Mastodon. Next route when registration stays refused: native LinkedIn and Mastodon credentials, then an owner-created Buffer client stored through the credential store.",
+  "labels": [
+    "role:social-module",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
