@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261121-1",
+  "title": "OL-20261121-1: Four keyless superseded GitHub Apps stay installed",
+  "body": "**Owner:** tick-worker\n**Trigger:** daily app-audit row\n**Done check:** file:ops/connections/github-apps.json\n**Status:** open\n\nAPP-INVENTORY-1: the tick step app-audit prunes extra installations of the two active apps and records credential_events app-audit. The four superseded apps hold no key, so only the owning account's GitHub settings can remove them (identity-bound); default in effect: installed and inert. Session: session_0156nqDv6NMcEmv9wqYJK3XS",
+  "labels": [
+    "role:tick-worker",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

@@ -47,5 +47,6 @@
    "state": "active"
   }
  ],
- "superseded_default": "the four superseded apps stay installed and unused: their keys were overwritten in the credentials table, so nothing can act as them. Deleting an app is an owner-account settings action with no API for an app that has lost its key."
+ "superseded_default": "The four superseded apps hold no stored key (overwritten when the active apps registered), so the Worker cannot act as them: the app-audit step (seed/worker/src/appaudit.js, APP-INVENTORY-1) reads and prunes only the active apps, and records the live result as a credential_events row 'app-audit'. Removing a keyless app's installation or deleting the app itself is possible only from the owning account's GitHub settings and is an identity-bound step; the default in effect is that they stay installed and inert (a webhook from them fails signature verification).",
+ "live_check": "credential_events event 'app-audit' (daily, tick step app-audit); test seed/worker/test/appaudit.test.js"
 }

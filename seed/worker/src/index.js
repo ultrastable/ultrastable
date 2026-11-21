@@ -12,6 +12,7 @@ import { verifyOidc, commitToMain } from './maincommit.js';  // MAIN-WRITER-1
 import { opsBackup } from './opsbackup.js';  // BACKUP-SINK-1
 import { createMeter, guarded, readDeferred, writeDeferred } from './subreq.js';  // SUBREQUEST-METER-1
 import { ingestDeploys } from './selfaudit.js';
+import { auditApps } from './appaudit.js';  // APP-INVENTORY-1
 import { sampleCosts } from './costsample.js';
 import { readRoi } from './roi.js';  // ROI-1
 import { sampleFreeTier, freeTierLevel, alertFreeTier } from './freetier.js';  // FREE-TIER-1
@@ -129,6 +130,7 @@ export default {
       step('repo-access', () => checkRepoAccess(env.DB, env, tenant, repos, { token, origin: env.PUBLIC_ORIGIN || '' }));  // REPO-ACCESS-1
       step('social', () => runSocial({ db: env.DB, env, tenant }));  // REACH-1: posts the due calendar item to the channels linked at /connect
       step('sweeper', async () => { const sw = await sweepOpenLoops({ token, repos }); await recordSweep(env.DB, sw); return sw; });  // SERVER-OWNS-LOOPS-1
+      step('app-audit', () => auditApps(env.DB, env, tenant));  // APP-INVENTORY-1: live app inventory, extra installations of our own apps removed, daily
       step('deploy-evidence', () => ingestDeploys(env.DB, { token, repo: repos.find(r => r.endsWith('/ultrastable')) }));  // SELFAUDIT-1: independent deploy evidence feeds k_eff
       step('host-hooks', async () => reconcileHooks({ db: env.DB, token, repos, origin: env.PUBLIC_ORIGIN || 'https://ultrastable.io', secret: await hookSecret(env, 'github') }));  // HOSTS-1: the server creates, repairs and re-checks its own repo webhook; nothing is set up by hand
       step('hosts', () => watchHosts({ db: env.DB, registry: hostRegistry(env, token, main), token, repo: main }));  // HOSTS-1: health probe of every host, stall detection, failover redispatch
