@@ -2397,6 +2397,30 @@
       ],
       "feedback": "each 14-day answer (did the child keep going on their own) re-weights the move that was given, so the next adult is offered moves that kept children exploring; the measured gates open the next phase",
       "bindings": []
+    },
+    "seed-launch": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "deploys.record",
+          "via": "repo:ops/seed-launches.jsonl"
+        },
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "feedback": "a failed seed stage fails seedlaunch --check, the failure-audit detector seed-launch files Q-AUDIT-seed-launch, the executor fixes seed/ and the next weekly run re-launches against the merged fix",
+      "bindings": [
+        "CLOUDFLARE_ACCOUNT_ID",
+        "CLOUDFLARE_API_TOKEN",
+        "LANE_PAT"
+      ]
     }
   },
   "implicit_producers": {

@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 # Copyright (c) Ultrastable
 """SEED-LAUNCH-1: every seed is built, deployed, year-gated and probed live by the system; a standalone seed is self-contained."""
-import datetime as dt, json, re, tempfile, unittest
+import datetime as dt, json, re, shutil, tempfile, unittest
 from pathlib import Path
 
 from foundation import seedlaunch
@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[2]
 class SeedLaunch(unittest.TestCase):
     def _ledger(self, rows):
         d = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, d, ignore_errors=True)
         (d / "ops").mkdir()
         (d / seedlaunch.LEDGER).write_text("".join(json.dumps(r) + "\n" for r in rows))
         return d
