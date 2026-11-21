@@ -188,5 +188,7 @@ jobs:
         run: python3 scripts/check_memory.py
       - name: Org repo registry (every repo declares a purpose)
         run: python3 scripts/check_org_repos.py
+      - name: No merge-conflict markers (NO-MARKERS-1)
+        run: python3 scripts/check_conflict_markers.py
       - name: Template is code only (TEMPLATE-CODE-ONLY-1)
         run: python3 -m foundation template --check
