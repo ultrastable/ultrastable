@@ -15,7 +15,7 @@
   {
    "name": "ultrastable",
    "role": "The main repository",
-   "line": "The main repository: the platform, the website, the owner dashboard, the doctrine, the docs and the seed template that new systems start from.",
+   "line": "The main repository: the platform, the website, the owner dashboard, the doctrine, the docs and the seed/ kit that ultrastable/seed publishes.",
    "audience": "Anyone who wants the whole picture, and the agents that run it.",
    "quickstart": [
     "python3 -m foundation selfhost --verify",
@@ -33,7 +33,7 @@
    ],
    "status": "live",
    "visibility": "public",
-   "holds": "Everything you run or read: platform code, ultrastable.io, dashboard, doctrine, docs, the core code (workers/), the specifications (specs/), the license text (licensing/), and seed/ (the starting kit for a new system). It is a GitHub template, so \"Use this template\" copies it."
+   "holds": "Everything you run or read: platform code, ultrastable.io, dashboard, doctrine, docs, the core code (workers/), the specifications (specs/), the license text (licensing/), and seed/ (the starting kit for a new system). The starting kit is published on its own as ultrastable/seed, the template new systems copy."
   },
   {
    "name": "workers",
@@ -106,11 +106,12 @@
   },
   {
    "name": "seed",
-   "role": "Retired",
-   "line": "Retired: the seed template now lives in ultrastable/ultrastable under seed/. Kept public with the Ultrastable License so old links resolve.",
-   "audience": "Anyone following an old link.",
+   "role": "Starting kit",
+   "line": "The code-only starting kit a new system copies: bootstrapper, Worker, roles and agent instructions. A GitHub template, synced daily from seed/ in ultrastable/ultrastable.",
+   "audience": "Anyone starting a new system.",
    "quickstart": [
-    "Go to ultrastable/ultrastable, folder seed/"
+    "Use this template",
+    "python3 bootstrap/bootstrap.py --dry-run"
    ],
    "topics": [
     "bootstrapping",
@@ -119,10 +120,9 @@
     "autonomous-agents",
     "idea-to-organization"
    ],
-   "status": "retired",
-   "visibility": "public",
-   "moved_to": "ultrastable",
-   "holds": "Nothing. A pointer to the seed/ folder of the main repository."
+   "status": "live",
+   "visibility": "private",
+   "holds": "Only the starting kit (seed/ of the main repository): code and agent instructions, no company papers. It is the GitHub template new systems copy (TEMPLATE-CODE-ONLY-1)."
   },
   {
    "name": ".github",
@@ -153,6 +153,7 @@
   "target": [
    "ultrastable",
    "ops",
+   "seed",
    "practical-solutions"
   ],
   "pending": []

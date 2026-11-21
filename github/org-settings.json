@@ -12,7 +12,7 @@
   },
   "repos": {
     "ultrastable/ultrastable": {
-      "description": "The main repository: the platform, the website, the owner dashboard, the doctrine, the docs and the seed template that new systems start from. Ultrastable is the foundation for any autonomous system.",
+      "description": "The main repository: the platform, the website, the owner dashboard, the doctrine, the docs and the seed/ kit that ultrastable/seed publishes. Ultrastable is the foundation for any autonomous system.",
       "homepage": "https://ultrastable.io",
       "topics": [
         "autonomous-agents",
@@ -214,7 +214,7 @@
       }
     },
     "ultrastable/seed": {
-      "description": "Retired: the seed template now lives in ultrastable/ultrastable under seed/. Kept public with the Ultrastable License so old links resolve. Ultrastable is the foundation for any autonomous system.",
+      "description": "The code-only starting kit a new system copies: bootstrapper, Worker, roles and agent instructions. A GitHub template, synced daily from seed/ in ultrastable/ultrastable. Ultrastable is the foundation for any autonomous system.",
       "homepage": "https://ultrastable.io",
       "topics": [
         "bootstrapping",
@@ -231,7 +231,8 @@
         "allow_merge_commit": false,
         "allow_rebase_merge": false,
         "allow_auto_merge": true,
-        "allow_update_branch": true
+        "allow_update_branch": true,
+        "is_template": true
       },
       "security": {
         "vulnerability_alerts": true,
@@ -244,7 +245,8 @@
         "allow_force_pushes": false,
         "allow_deletions": false,
         "required_linear_history": true
-      }
+      },
+      "_template": "TEMPLATE-CODE-ONLY-1: the code-only kit is the template new systems copy (set 2026-11-21). Visibility public is gate seed-public-visibility in doctrine/open-loops.json."
     },
     "ultrastable/.github": {
       "description": "Organization profile and community health defaults. Ultrastable is the foundation for any autonomous system.",
