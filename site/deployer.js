@@ -109,6 +109,8 @@ export async function internalDeploy(request, env, fetcher) {
     for (const m of b.modules) form.append(m.name, new Blob([m.src], { type: m.type || "application/javascript+module" }), m.name);
     const up = await api("PUT", `/accounts/${A}/workers/scripts/${b.name}`, form);
     if (!up.success) return J({ ok: false, error: "upload: " + JSON.stringify(up.errors || []).slice(0, 400) }, 502);
+    // WORKERS-DEV-1: a new script uploaded by API has no workers.dev route until it is turned on; a non-public topology worker is served there.
+    if (b.workers_dev === true) { const sd = await api("POST", `/accounts/${A}/workers/scripts/${b.name}/subdomain`, JSON.stringify({ enabled: true, previews_enabled: false }), { "content-type": "application/json" }); if (!sd.success) return J({ ok: false, error: "workers.dev: " + JSON.stringify(sd.errors || []).slice(0, 300) }, 502); }
     if (Array.isArray(b.crons)) { const cr = await api("PUT", `/accounts/${A}/workers/scripts/${b.name}/schedules`, JSON.stringify(b.crons.map(cron => ({ cron }))), { "content-type": "application/json" }); if (!cr.success) return J({ ok: false, error: "schedules: " + JSON.stringify(cr.errors || []).slice(0, 300) }, 502); }
     return J({ ok: true, version: (up.result && (up.result.deployment_id || up.result.etag || up.result.id)) || "" });
   }

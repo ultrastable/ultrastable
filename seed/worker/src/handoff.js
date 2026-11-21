@@ -338,7 +338,7 @@ export function makeDeployer({ token, fetch: f = fetch, site, key, oidc, generat
       const gen = { 'seed/worker/src/config.js': () => tickConfigSource(read), ...Object.fromEntries(Object.entries(generated).map(([k, v]) => [k, () => v])) };
       const modules = await collectModules(p => (p in gen ? Promise.resolve(gen[p]()) : read(p)), tb.worker.main, ps => br.prefetch(ps.filter(p => !(p in gen))));
       const r = await site.fetch('https://internal/__internal/deploy', { method: 'POST', headers: { ...(oidc ? { authorization: 'Bearer ' + oidc } : { 'x-internal-key': key }), 'content-type': 'application/json' },
-        body: JSON.stringify({ name: id, modules: modules.map(({ name, src, type }) => ({ name, src, type })), main: modules[0].name, compatibility_date: tb.worker.compatibility_date || topo.compatibility_date, bindings: tb.bindings, crons: tb.worker.crons || null, tag: String(sha).slice(0, 12) }) });
+        body: JSON.stringify({ name: id, modules: modules.map(({ name, src, type }) => ({ name, src, type })), main: modules[0].name, compatibility_date: tb.worker.compatibility_date || topo.compatibility_date, bindings: tb.bindings, crons: tb.worker.crons || null, workers_dev: !tb.worker.public, tag: String(sha).slice(0, 12) }) });
       const j = await r.json().catch(() => ({}));
       return r.ok && j.ok ? { ok: true, version: j.version || '', detail: 'uploaded' } : { ok: false, detail: j.error || ('site deploy ' + r.status) };
     } catch (e) { return { ok: false, detail: String(e && e.message || e) }; }
