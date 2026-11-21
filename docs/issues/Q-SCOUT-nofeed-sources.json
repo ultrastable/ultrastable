@@ -1,8 +1,12 @@
 {
   "id": "Q-SCOUT-nofeed-sources",
   "title": "Q-SCOUT-nofeed-sources: scout sources that publish no Atom/RSS feed",
-  "body": "**Owner:** product-manager\n**Trigger:** every executor run\n**Done check:** grep:doctrine/scout.json::\"kind\": \"page\"\n**Status:** open\n\nfoundation/scout.py (SCOUT-1, #292) reads Atom/RSS only. Competitors and best-practice bodies with no feed are unwatched: Copilot coding-agent docs, Cursor docs, Devin docs, Factory, OWASP LLM Top 10, Anthropic building-effective-agents. Add a `page` source kind: fetch, strip markup, hash lines, score only lines new since the last pass with the existing scorer, same weights and adoption feedback. Test with recorded pages. Source: closed PR #293 (page-diff prototype, history kept there).",
-  "labels": ["role:product-manager", "growth", "research"],
+  "body": "**Owner:** product-manager\n**Trigger:** every executor run\n**Done check:** grep:doctrine/scout.json::\"kind\": \"page\"\n**Status:** closed\n\nfoundation/scout.py (SCOUT-1, #292) reads Atom/RSS only. Competitors and best-practice bodies with no feed are unwatched: Copilot coding-agent docs, Cursor docs, Devin docs, Factory, OWASP LLM Top 10, Anthropic building-effective-agents. Add a `page` source kind: fetch, strip markup, hash lines, score only lines new since the last pass with the existing scorer, same weights and adoption feedback. Test with recorded pages. Source: closed PR #293 (page-diff prototype, history kept there).\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 214.1 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "labels": [
+    "role:product-manager",
+    "growth",
+    "research"
+  ],
   "milestone": "Next",
   "workstream": "Research"
 }
