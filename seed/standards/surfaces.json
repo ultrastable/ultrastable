@@ -515,6 +515,19 @@
       "reason": "internal feed read by the owner dashboard and the site worker proxy; it recommends only and enables nothing"
     },
     {
+      "id": "spend",
+      "path": "/api/spend",
+      "methods": [
+        "GET"
+      ],
+      "kind": "rest",
+      "audience": "public",
+      "standards": [],
+      "discoverable": false,
+      "description": "Today's estimated Cloudflare bill, the soft daily spend target, the throttle level (full, ease, throttle, crawl) and its knobs; ?tenant= gives one tenant's share (SPEND-SOFT-1).",
+      "reason": "read by tenant workers and the site worker proxy; it reports state and enables nothing"
+    },
+    {
       "id": "goals",
       "path": "/api/goals",
       "methods": [
@@ -578,6 +591,19 @@
       "discoverable": false,
       "reason": "Read by foundation code and the owner page; to be exposed as an MCP tool in a later contract version.",
       "description": "OWNER-ACTS-1: sign-ins a provider refused and open gate cards, read live from the credential rows; JSON, no secret values."
+    },
+    {
+      "id": "social-import",
+      "path": "/internal/social/import",
+      "methods": [
+        "POST"
+      ],
+      "kind": "rest",
+      "audience": "owner",
+      "standards": [],
+      "discoverable": false,
+      "description": "SOCIAL-MODULE-1: token-gated hand-over of a channel token into the sealed credential store; answers names only, never values.",
+      "reason": "Machine-to-machine bearer route for moving a channel login into the system; not a capability for callers."
     }
   ]
 }

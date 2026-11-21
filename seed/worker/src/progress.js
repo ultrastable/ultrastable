@@ -6,7 +6,8 @@
 // (cached by livechanges.js), judges the cadence with workers/core/progress (bookkeeping merges never count), writes the judgement to
 // progress_cadence, and repairs a slow or stalled system: it dispatches the workflows that produce that system's work (at most once per
 // cooldown) and, when stalled, files STALL-<system>, which only the same reading can close. Nothing is ever reported as shipped that did not merge.
-import { cadence, normalize } from '../../../workers/core/progress/index.js';
+import { cadence, normalize, pulse } from '../../../workers/core/progress/index.js';
+import { ensureSubstance } from './livechanges.js';  // SUBSTANCE-1
 
 const run = (db, sql, ...a) => db.prepare(sql).bind(...a).run();
 const all = async (db, sql, ...a) => (await db.prepare(sql).bind(...a).all()).results || [];
@@ -16,10 +17,10 @@ export const PROGRESS_DDL = [
   `CREATE TABLE IF NOT EXISTS progress_cadence (system TEXT PRIMARY KEY, name TEXT NOT NULL, repo TEXT NOT NULL, url TEXT, state TEXT NOT NULL, last_at TEXT, hours_since REAL, expect_hours REAL NOT NULL, shipped_24h INTEGER NOT NULL DEFAULT 0, shipped_7d INTEGER NOT NULL DEFAULT 0, refreshed_at TEXT, heal TEXT, healed_at TEXT, checked_at TEXT NOT NULL)`,
 ];
 let ready = false;
-async function ensure(db) { if (ready) return; for (const s of PROGRESS_DDL) await db.prepare(s).run(); ready = true; }
+async function ensure(db) { if (ready) return; for (const s of PROGRESS_DDL) await db.prepare(s).run(); await ensureSubstance(db); ready = true; }
 export const _reset = () => { ready = false; };
 
-const eventOf = (sys, x) => ({ id: sys.id + '#' + x.n, at: x.merged_at, system: sys.id, system_name: sys.name, title: x.title, url: x.url, kind: 'change', by: x.by_origin });
+const eventOf = (sys, x) => ({ id: sys.id + '#' + x.n, at: x.merged_at, system: sys.id, system_name: sys.name, title: x.title, url: x.url, kind: 'change', by: x.by_origin, substance: x.substance || null });
 
 async function dispatch({ token, repo, workflow, fetchImpl }) {
   try {
@@ -36,7 +37,7 @@ export async function progressStep({ db, config, token, ensureItem, fetchImpl = 
   const nowIso = new Date(now).toISOString(), cooldown = (cfg.cooldown_hours || 6) * 3600e3, out = { systems: {}, healed: [], filed: [], closed: [] };
   const prev = Object.fromEntries((await all(db, `SELECT system, healed_at FROM progress_cadence`)).map(r => [r.system, r.healed_at]));
   for (const sys of cfg.systems) {
-    const rows = await all(db, `SELECT n, title, by_origin, merged_at, url FROM live_changes WHERE repo = ? ORDER BY merged_at DESC LIMIT 200`, sys.repo);
+    const rows = await all(db, `SELECT n, title, by_origin, merged_at, url, substance FROM live_changes WHERE repo = ? ORDER BY merged_at DESC LIMIT 200`, sys.repo);
     const meta = await db.prepare(`SELECT refreshed_at FROM live_changes_meta WHERE repo = ?`).bind(sys.repo).first();
     const c = cadence(rows.map(x => eventOf(sys, x)), { now, expect_hours: sys.expect_hours || cfg.expect_hours || 24, stall: cfg.stall || 2 });
     let heal = null, healedAt = prev[sys.id] || null;
@@ -75,10 +76,13 @@ export async function readProgress(db, config, { days = 35, limit = 400 } = {}) 
   await ensure(db);
   const cad = Object.fromEntries((await all(db, `SELECT * FROM progress_cadence`)).map(r => [r.system, r]));
   const from = new Date(Date.now() - days * 86400e3).toISOString(), events = [];
-  for (const sys of cfg.systems || []) for (const x of await all(db, `SELECT n, title, by_origin, merged_at, url FROM live_changes WHERE repo = ? AND merged_at >= ? ORDER BY merged_at DESC LIMIT ?`, sys.repo, from, limit)) events.push(eventOf(sys, x));
+  for (const sys of cfg.systems || []) for (const x of await all(db, `SELECT n, title, by_origin, merged_at, url, substance FROM live_changes WHERE repo = ? AND merged_at >= ? ORDER BY merged_at DESC LIMIT ?`, sys.repo, from, limit)) events.push(eventOf(sys, x));
   const systems = (cfg.systems || []).map(s => { const c = cad[s.id]; return { id: s.id, name: s.name, url: s.url || null, feed: s.feed || null, releases: s.releases || null, repo: s.repo, expect_hours: s.expect_hours || cfg.expect_hours || 24,
     state: c ? c.state : 'unmeasured', last_at: c ? c.last_at : null, hours_since: c ? c.hours_since : null, shipped_24h: c ? c.shipped_24h : 0, shipped_7d: c ? c.shipped_7d : 0, refreshed_at: c ? c.refreshed_at : null, heal: c ? c.heal : null, healed_at: c ? c.healed_at : null, checked_at: c ? c.checked_at : null }; });
-  return { marker: 'PROGRESS-1', checked_at: systems.map(s => s.checked_at).filter(Boolean).sort().pop() || null, window_days: days, systems, events: normalize(events) };
+  const evs = normalize(events), first = (cfg.systems || [])[0];
+  // SUBSTANCE-1: the pulse of the first system (Ultrastable itself): is it ticking, shipping only trivia, or stalled; read from classified merges
+  const pl = first ? pulse(evs.filter(e => e.system === first.id), { max_hours: cfg.pulse_hours || 48 }) : null;
+  return { marker: 'PROGRESS-1', checked_at: systems.map(s => s.checked_at).filter(Boolean).sort().pop() || null, window_days: days, systems, pulse: pl, events: evs };
 }
 
 export async function stalledSystems(db) {

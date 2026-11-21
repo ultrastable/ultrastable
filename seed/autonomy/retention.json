@@ -35,6 +35,11 @@
       "reason": "REACH-1: one row per post and channel; the publisher reads this week, the reach loop reads a year",
       "archive": true
     },
+    "human_inbox": {
+      "column": "at",
+      "keep_days": 90,
+      "reason": "SOCIAL-MODULE-1: public replies and mentions with the author hashed; read while they are new, never needed after a quarter"
+    },
     "_migrations": {
       "keep": "state",
       "reason": "which migrations have been applied; a record of schema state, never history to prune"

@@ -3852,6 +3852,60 @@
    "title": "SOCIAL-MODULE-1: the social module is the human interface layer, native in core",
    "body": "Rowan 2026-11-21: interfacing with humans (social, outreach, replies, newsletters) is a core module every system has; tenants supply config and content only; no channel runs through another account. Buffer channels verified per service; replies and mentions land in human_inbox.",
    "probe": "grep:seed/worker/src/humans.js::SOCIAL-MODULE-1"
+  },
+  {
+   "id": "decision-2026-11-21-quniverse-cut-1-no-runtime-dependency-on-the-quniverse-accou",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "QUNIVERSE-CUT-1: no runtime dependency on the Quniverse account",
+   "body": "Quniverse account assumed gone (Rowan 2026-11-21). All four zones, mail relay and the PS backend URL now live in the ultrastable account. singleaccount --check scans runtime code for Quniverse/QNFO hosts, repos and resources. Social relay on qnfo-social is moved by the social-module thread.",
+   "probe": "grep:doctrine/single-account.json::QUNIVERSE-CUT-1",
+   "session": "session_0156nqDrrT7TjGvkih9nT217"
+  },
+  {
+   "id": "decision-2026-11-21-social-module-1-a-native-credential-retires-the-relay",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "SOCIAL-MODULE-1: a native credential retires the relay",
+   "body": "The publisher drops the relay channel once a native buffer or mastodon credential is sealed. Buffer and Mastodon are linked through the connect flow, with the credential import route live as a second route.",
+   "probe": "grep:seed/worker/src/social.js::retires the relay",
+   "session": "session_0156nqDvG8EF1bx4LXrvu9rj"
+  },
+  {
+   "id": "decision-2026-11-21-social-module-1-one-click-buffer-and-mastodon-links",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "SOCIAL-MODULE-1: one-click Buffer and Mastodon links",
+   "body": "Buffer registers its own OAuth app at its registration endpoint and uses authorization code with PKCE as a public client, so the connect link needs no key from a person. Mastodon uses one link with the instance in it. Never-linked channels appear in the owner-acts list.",
+   "probe": "grep:seed/worker/src/auth/connectors.js::dynamicClient",
+   "session": "session_0156nqDvG8EF1bx4LXrvu9rj"
+  },
+  {
+   "id": "lesson-2026-11-21-relay-posts-are-read-back-from-buffer-every-tick",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "Relay posts are read back from Buffer every tick",
+   "body": "verifyRelay in seed/worker/src/social.js calls the relay /relay/status for queued or unverified relay rows each tick; verified needs status sent plus the service link, an error becomes failed and is retried.",
+   "probe": "grep:seed/worker/src/social.js::verifyRelay",
+   "session": "session_0156nqDrz7VJCnauouR6AgUS"
+  },
+  {
+   "id": "lesson-2026-11-21-regen-research-1-the-lane-took-main-s-research-data-and-noth",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "REGEN-RESEARCH-1: the lane took main's research data and nothing rebuilt the PR's papers",
+   "body": "MERGE-NOW-1 resolves generated files to main's side; REGEN-1 in checks did not run research --page, so a PR adding a study went red after every server reconcile and waited on a session. regen_generated.sh now rebuilds the papers.",
+   "probe": "grep:scripts/regen_generated.sh::research --page --apply",
+   "session": "session_0156nqDrGjLASvqbuu6oXJk5"
+  },
+  {
+   "id": "lesson-2026-11-21-social-module-1-live-probes-for-the-two-connect-links",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "SOCIAL-MODULE-1: live probes for the two connect links",
+   "body": "The daily smoke run now follows both connect links to the provider's sign-in without completing it, so a broken link is a failing check.",
+   "probe": "grep:scripts/smoke_live.py::connect-buffer-link",
+   "session": "session_0156nqDvG8EF1bx4LXrvu9rj"
   }
  ]
 }

@@ -231,7 +231,7 @@ def limits(study, ms) -> list[str]:
     out = list(study.get("limits", []))
     if not uses_prs:
         return out + [f"Source. {study['kind'].capitalize()}, version {study['version']}."]
-    out += [f"Scale. One organization: {w['prs']} closed pull requests ({w['merged']} merged) over {w['days']} days, against a study of 655 firms over more than five years. "
+    out += [f"Scale. One organization: {w['prs']} closed pull requests ({w['merged']} merged) over {w['days']} days" + (f", against {study['scale_compare']}" if study.get("scale_compare") else "") + ". "
            "Our numbers describe this system; they are not a causal estimate and are not compared with the study's effect sizes as if they were."]
     s = ms["system_authored_share"]["value"]
     if s is not None:

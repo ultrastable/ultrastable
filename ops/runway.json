@@ -19,14 +19,12 @@
   },
   "failures": {
    "days": null,
-   "why": "7 open, oldest 1 days",
-   "open": 7
+   "why": "5 open, oldest 1 days",
+   "open": 5
   }
  },
  "failure_first_seen": {
-  "Q-CIFAIL-mergeaudit-934": "2026-11-21",
   "Q-CIFAIL-practical-solutions-deploy-llm": "2026-11-21",
-  "Q-CIFAIL-practical-solutions-references": "2026-11-21",
   "Q-CIFAIL-ultrastable-ciwatch": "2026-11-21",
   "Q-CIFAIL-ultrastable-issues": "2026-11-21",
   "Q-CIFAIL-ultrastable-smoke-live": "2026-11-21",

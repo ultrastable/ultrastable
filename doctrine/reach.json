@@ -16,10 +16,6 @@
   "ultrastable.net",
   "ultrastable.org",
   "dashboard.ultrastable.io",
-  "fleet.qnfo.org",
-  "qnfo.org",
-  "q08.org",
-  "markets.q08.org",
   "rwnq8.github.io"
  ],
  "social_hosts": [
@@ -75,6 +71,10 @@
   "evidence": {
    "path": "/progress",
    "what": "what the system deployed and checked live in the last week, counted from its own deploy record (ATTENTION-1)"
+  },
+  "paper": {
+   "path": "/research",
+   "what": "a white paper that tests a common belief about AI limits against this system's own records, with the hook that Ultrastable runs on Ultrastable (THOUGHT-1)"
   }
  },
  "evergreen": [

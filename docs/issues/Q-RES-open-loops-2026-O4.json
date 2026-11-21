@@ -1,0 +1,12 @@
+{
+  "id": "Q-RES-open-loops-2026-O4",
+  "title": "Q-RES-open-loops-2026-O4: No person in the path (measured 10, target <= 0)",
+  "body": "**Owner:** product-manager\n**Trigger:** research pass: open-loops-2026 finding O4 is not-met (measured 10)\n**Done check:** cmd:python3 -m foundation research --probe open-loops-2026:O4\n**Prediction:** human_touches <= 0 within 168 h\n**Status:** open\n\nConcern: No person in the path. The study: Belief: automation still needs a hand on the wheel. Test: human touches counted by the latest criticality tick.\n\nMechanisms that should answer it: CRITICALITY-1 (foundation/criticality.py).\n\nMetric: human touches counted by the latest criticality tick, target <= 0. Improve the mechanism (or add one) until the probe passes; the white paper at /research updates itself from the same measurement.",
+  "labels": [
+    "role:product-manager",
+    "research",
+    "plus"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}

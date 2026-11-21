@@ -2287,6 +2287,20 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-282274856e",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Thought leadership is a loop: every paper becomes posts that carry the hook (THOUGHT-1, Rowan 2026-11-21).** \"I want white papers that",
+      "probe": [
+        "file:seed/worker/src/social.js",
+        "file:doctrine/thought.json",
+        "file:foundation/thought.py",
+        "file:site/research.js",
+        "file:tests/foundation/test_thought.py",
+        "file:site/research.test.mjs"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-95432168bf",
       "surface": "agents/AGENTS.md",
       "text": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
@@ -2467,6 +2481,18 @@
         "file:foundation/unattended.py",
         "file:foundation/modelwatch.py",
         "file:tests/foundation/test_unattended.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-d77a994a9e",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Find another path before asking; the information is already held (PATHFINDER-1, Rowan 2026-11-21).** \"There are always multiple paths,",
+      "probe": [
+        "file:doctrine/pathfinder.json",
+        "file:ops/paths/attempts.jsonl",
+        "file:foundation/pathfinder.py",
+        "file:tests/foundation/test_pathfinder.py"
       ],
       "bound_by": "cited"
     },
@@ -3034,6 +3060,21 @@
       ],
       "bound_by": "mirror",
       "of": "cited-0b86697d1d"
+    },
+    {
+      "id": "mirror-49f57fdb9b",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Thought leadership is a loop: every paper becomes posts that carry the hook (THOUGHT-1, Rowan 2026-11-21).** \"I want white papers that",
+      "probe": [
+        "file:seed/worker/src/social.js",
+        "file:doctrine/thought.json",
+        "file:foundation/thought.py",
+        "file:site/research.js",
+        "file:tests/foundation/test_thought.py",
+        "file:site/research.test.mjs"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-282274856e"
     },
     {
       "id": "mirror-be5af6748b",

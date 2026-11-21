@@ -152,8 +152,9 @@
         "file": "foundation/template.py",
         "contains": "admin material is back in the template"
       }
-    }
-  ],
+    },
+  {"id": "pathfinder-exhaustion", "source": "agents/AGENTS.md", "quote": "An ask without an exhaustion proof fails `python3 -m foundation pathfinder --check`", "probe": {"file": "foundation/pathfinder.py", "contains": "owner ask without exhaustion proof"}}
+ ],
   "baseline": [
     "README.md::09912c6536f8",
     "README.md::141aa984ab48",

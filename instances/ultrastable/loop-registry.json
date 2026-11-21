@@ -3835,6 +3835,44 @@
     "scout.yml"
    ],
    "server_owner": "github-actions"
+  },
+  {
+   "id": "thought",
+   "kind": "governance",
+   "summary": "THOUGHT-1: thought leadership as a closed loop. Every white paper the research loop writes becomes posts for Bluesky, Mastodon and LinkedIn that state a common belief about AI limits, what this system's own records show (numbers read from the paper) and the hook: Ultrastable runs on Ultrastable, and Practical Solutions is one system it runs. Posts land in social/calendar.json; the tick Worker's publisher and the social-post workflow drain them within social/gate.json; referrals to /research come back through the reach loop's 'paper' arm.",
+   "trigger": "daily (social-post.yml), one piece per cadence_days; a changed measured result goes first",
+   "owner": "marketing-manager",
+   "closes_by": "system",
+   "sla": "3d",
+   "done": "python3 -m foundation thought --check reports ok",
+   "paths": [
+    {
+     "id": "ci",
+     "how": "python3 -m foundation thought --run --apply",
+     "class": "free"
+    },
+    {
+     "id": "session",
+     "how": "python3 -m foundation thought --run --apply from a cloud-hosted agent session",
+     "class": "session"
+    }
+   ],
+   "closing_probe": "grep:foundation/thought.py::def guard",
+   "writeback": [
+    "social/calendar.json",
+    "ops/thought/log.jsonl"
+   ],
+   "system_path": [
+    "doctrine/thought.json",
+    "foundation/thought.py",
+    "seed/worker/src/social.js",
+    "site/research.js"
+   ],
+   "area": "governance",
+   "workflows": [
+    "social-post.yml"
+   ],
+   "server_owner": "github-actions"
   }
  ],
  "launch_registry": "instances/ultrastable/loops.json"

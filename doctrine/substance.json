@@ -1,0 +1,23 @@
+{
+  "_doc": "SUBSTANCE-1 (Rowan, 2026-11-21): \"Code changes end up being totally trivial. They change a hash or they change a number that should be dynamic anyway ... the illusion of productivity that absolutely must be stopped because it uses up tokens.\" A change is substantive only when it alters executable behaviour: after comments, whitespace, numbers and volatile strings (hashes, timestamps, dates, versions) are normalized away and import-only lines are set aside, the code tokens still differ. Consumers: foundation/substance.py (executor gate before any PR, checks backstop for executor PRs, deploy gate, 7-day report in ops/substance.json), workers/core/substance/index.js (the tick Worker classifies every merged PR so /progress and the stall alarm count only substantive changes). Both implementations pass doctrine/substance-vectors.json. Tests: tests/foundation/test_substance.py, workers/core/substance/substance.test.js.",
+  "code_ext": [".py", ".js", ".mjs", ".cjs", ".ts", ".sql", ".sh", ".toml", ".yml", ".yaml"],
+  "config_globs": ["doctrine/*.json", "autonomy/*.json", "seed/autonomy/*.json", "seed/worker/*.json", "actions-budget.json", "spark.json"],
+  "generated_globs": [
+    "site/*-data.js", "site/pins.json", "site/probes.json", "core-contract.json", "doctrine/triggers.json", "doctrine/decision-ledger.json",
+    "instances/ultrastable/own-database.json", "docs/security/multi-tenant-controls.json", "seed/self/*", "README.md", "platform/adapters/README.md"
+  ],
+  "record_globs": ["*.jsonl", "*.md", "*.txt", "docs/*", "ops/*", "ledger/*", "doctrine/writeback/*", "outreach/applications/*", "*.svg", "*.png", "*.pdf"],
+  "doc_keys": ["_doc", "why", "note", "_comment", "description", "_why", "reason"],
+  "executor_markers": ["Executor run "],
+  "deploy": {
+    "_doc": "A push whose deployable change is not substantive (only regenerated data modules, ledgers or literal churn) does not redeploy the Workers unless the newest live deploy is older than max_age_hours, so regenerated counts reach the pages at most once a day instead of after every merge.",
+    "max_age_hours": 20
+  },
+  "targets": {
+    "_doc": "Measured by `python3 -m foundation substance --report` over window_days; a target out of bounds is reported by --check-targets and read by the watchdog.",
+    "window_days": 7,
+    "executor_trivial_prs": 0,
+    "min_substantive_share": 0.5,
+    "max_hours_without_substantive_self_change": 48
+  }
+}

@@ -117,3 +117,24 @@ test('CONNECTIONS-1: one screen lists what is linked, offers one-click connect a
   const e2 = mk({ OAUTH_GOOGLE_CLIENT_ID: 'gid', OAUTH_GOOGLE_CLIENT_SECRET: 'gsec' }); await store.ensureSchema(e2.DB);
   t = await (await get(e2, '/connections')).text(); assert.match(t, /href="\/connect\/google"/);
 });
+
+test('Buffer registers its own app (RFC 7591), then runs authorization code with PKCE and stores a renewable login (SOCIAL-MODULE-1)', async () => {
+  const env = mk(); const seen = { reg: [], token: [] };
+  const f = async (url, init = {}) => {
+    const u = String(url);
+    if (u === 'https://auth.buffer.com/reg') { seen.reg.push(JSON.parse(init.body)); return J({ client_id: 'cid-1' }); }
+    if (u === 'https://auth.buffer.com/token') { seen.token.push(Object.fromEntries(new URLSearchParams(init.body))); return J({ access_token: 'bat', refresh_token: 'brt', expires_in: 3600 }); }
+    return NF;
+  };
+  const consent = await get(env, '/connect/buffer', f); assert.equal(consent.status, 200);  // no owner registration card is shown
+  const start = await get(env, '/connect/buffer/start', f); assert.equal(start.status, 302);
+  const loc = new URL(start.headers.get('location'));
+  assert.equal(loc.origin + loc.pathname, 'https://auth.buffer.com/auth');
+  assert.equal(loc.searchParams.get('client_id'), 'cid-1'); assert.equal(loc.searchParams.get('code_challenge_method'), 'S256');
+  assert.match(loc.searchParams.get('scope'), /posts:write/); assert.match(loc.searchParams.get('scope'), /offline_access/);
+  assert.deepEqual(seen.reg[0].redirect_uris, [ORIGIN + '/connect/buffer/callback']); assert.equal(seen.reg[0].token_endpoint_auth_method, 'none');
+  const cb = await get(env, '/connect/buffer/callback?code=abc&state=' + encodeURIComponent(loc.searchParams.get('state')), f); assert.equal(cb.status, 200);
+  assert.equal(seen.token[0].client_id, 'cid-1'); assert.ok(seen.token[0].code_verifier); assert.equal('client_secret' in seen.token[0], false);
+  const m = await store.material(env.DB, env, 't', 'oauth:buffer'); assert.equal(m.access, 'bat'); assert.equal(m.secret.refresh_token, 'brt'); assert.equal(m.status, 'ok');
+  await get(env, '/connect/buffer/start', f); assert.equal(seen.reg.length, 1, 'the registered client is reused, not registered again');
+});

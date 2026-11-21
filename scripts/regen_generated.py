@@ -10,7 +10,7 @@ the result when anything changed. Every generator is a command whose failure fai
   python3 scripts/regen_generated.py --list     print the generators
 """
 from __future__ import annotations
-import subprocess, sys
+import os, subprocess, sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -23,6 +23,7 @@ GENERATORS = [
     (["python3", "-m", "foundation", "decisions", "--settle", "--apply"], "."),
     (["python3", "-m", "foundation", "decisions", "--page", "--apply"], "."),
     (["python3", "-m", "foundation", "research", "--page", "--apply"], "."),  # RESEARCH-1: white papers from the ledgers this merge changed
+    (["python3", "-m", "foundation", "thought", "--run", "--apply"], "."),  # THOUGHT-1: second route (besides social-post) that schedules the next paper piece; cadence-guarded, so most runs add nothing
     (["python3", "-m", "foundation", "rescore", "--run", "--apply"], "."),  # RESCORE-1: held-out graders re-score what settle just scored
     (["python3", "-m", "foundation", "executor", "--fold", "--apply"], "."),  # PR-OUTCOME-1: what became of each pull request the executor opened
     (["python3", "-m", "foundation", "owndb", "--write"], "."),  # OWN-DB-1
@@ -33,7 +34,7 @@ GENERATORS = [
 ]
 # Files the generators write; the workflow ignores pushes that touch only these, so the bot's own commit cannot retrigger it.
 OUTPUTS = ["doctrine/decision-ledger.json", "ops/provenance.jsonl", "README.md", "platform/adapters/README.md", "site/claims-data.js", "site/dashboard-data.js", "site/self-data.js",
-           "site/ultrastability-data.js", "site/decisions-data.js", "site/research-data.js", "research/papers/chen-stratton-2026.md", "research/papers/ashby-1952.md", "ops/decisions/outcomes.jsonl", "ops/decisions/rescore.jsonl", "ops/executor-log.jsonl", "instances/ultrastable/own-database.json", "docs/security/multi-tenant-controls.json", "core-contract.json", "doctrine/triggers.json", "seed/self/SELF.md", "seed/self/self.json"]
+           "site/ultrastability-data.js", "site/decisions-data.js", "site/research-data.js", "research/papers/chen-stratton-2026.md", "research/papers/ashby-1952.md", "research/papers/open-loops-2026.md", "research/papers/safety-by-limits-2026.md", "social/calendar.json", "ops/thought/log.jsonl", "ops/decisions/outcomes.jsonl", "ops/decisions/rescore.jsonl", "ops/executor-log.jsonl", "instances/ultrastable/own-database.json", "docs/security/multi-tenant-controls.json", "core-contract.json", "doctrine/triggers.json", "seed/self/SELF.md", "seed/self/self.json"]
 
 
 def run_all(root: Path = ROOT) -> list[str]:
@@ -48,6 +49,9 @@ def run_all(root: Path = ROOT) -> list[str]:
 def main(argv=None) -> int:
     if "--list" in (argv or sys.argv[1:]):
         print("\n".join(" ".join(c) for c, _ in GENERATORS)); return 0
+    # MARKER-ROOT-1: conflict markers that reached main are flattened before the generators run, so no PR inherits a conflict from main itself.
+    m = subprocess.run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), "no_markers.py"), "--fix"], capture_output=True, text=True)
+    if m.stdout.strip(): print(m.stdout.strip())
     bad = run_all()
     print("\n".join(bad) if bad else f"regenerated with {len(GENERATORS)} generators")
     return 1 if bad else 0

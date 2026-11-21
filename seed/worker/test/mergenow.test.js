@@ -89,6 +89,6 @@ test('time to merge and the oldest open PR are measured', () => {
 });
 test('the generated list matches the files the post-merge generators write', () => {
   const py = readFileSync(new URL('../../../scripts/regen_generated.py', import.meta.url), 'utf8');
-  const outs = JSON.parse(py.match(/^OUTPUTS = (\[[\s\S]*?\])$/m)[1]).filter(p => !/README\.md$/.test(p));
+  const outs = JSON.parse(py.match(/^OUTPUTS = (\[[\s\S]*?\])$/m)[1]).filter(p => !/README\.md$/.test(p) && p !== 'social/calendar.json');  // the calendar also holds hand-queued posts, so a PR's copy can matter
   assert.deepEqual([...GENERATED].sort(), outs.sort());
 });
