@@ -2011,15 +2011,6 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
-   "claim": "- **A seed is not done until it runs a year unattended (SEED-LIFECYCLE-1, Rowan 2026-11-21).** \"Update the core of ultrastable that for any",
-   "detail": "",
-   "how": "file:doctrine/unattended.json + file:seed/scripts/seedlife.py + file:seed/autonomy/seed-lifecycle.json + file:doctrine/seed-lifecycle.json + file:foundation/seedlife.py + file:tests/foundation/test_seedlife.py",
-   "id": "cited-5e7af4a8d7",
-   "kind": "claim",
-   "pass": true,
-   "surface": "agents/AGENTS.md"
-  },
-  {
    "claim": "- **Find another path before asking; the information is already held (PATHFINDER-1, Rowan 2026-11-21).** \"There are always multiple paths,",
    "detail": "",
    "how": "file:doctrine/pathfinder.json + file:ops/paths/attempts.jsonl + file:foundation/pathfinder.py + file:tests/foundation/test_pathfinder.py",
@@ -2036,6 +2027,15 @@ export default {
    "kind": "claim",
    "pass": true,
    "surface": "demos/README.md"
+  },
+  {
+   "claim": "The research behind this ([Homo Ludens, self-directed learning, and AI-facilitated",
+   "detail": "",
+   "how": "file:tests/foundation/test_unlearn.py",
+   "id": "cited-210d0b9de4",
+   "kind": "claim",
+   "pass": true,
+   "surface": "instances/unlearn/README.md"
   },
   {
    "claim": "| [`plugins/`](plugins/SCOPE.json) | Optional plugin tier (email, mailing list, social, YouTube, GCP, self-description, guided",
@@ -2609,15 +2609,6 @@ export default {
    "detail": "",
    "how": "file:doctrine/unattended.json + file:foundation/unattended.py + file:foundation/modelwatch.py + file:tests/foundation/test_unattended.py",
    "id": "mirror-5fbac9d618",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/agents/AGENTS.md"
-  },
-  {
-   "claim": "- **A seed is not done until it runs a year unattended (SEED-LIFECYCLE-1, Rowan 2026-11-21).** \"Update the core of ultrastable that for any",
-   "detail": "",
-   "how": "file:doctrine/unattended.json + file:seed/scripts/seedlife.py + file:seed/autonomy/seed-lifecycle.json + file:doctrine/seed-lifecycle.json + file:foundation/seedlife.py + file:tests/foundation/test_seedlife.py",
-   "id": "mirror-b41d221301",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3368,7 +3359,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 371,
-  "total": 371
+  "pass": 370,
+  "total": 370
  }
 };
