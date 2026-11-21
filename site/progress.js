@@ -35,7 +35,7 @@ export async function progressData(env, { fetchImpl = fetch, now = Date.now(), s
   for (const a of apps) events.push({ id: "apps#" + a.slug, at: a.launched, system: "apps", system_name: "New apps", kind: "launch", title: "Launched " + a.name + ": " + a.tagline, url: a.url });
   const all = normalize(events), d = {};
   for (const p of Object.keys(PERIODS)) d[p] = digest(all, { now, period: p });
-  return { marker: "PROGRESS-1", at: new Date(now).toISOString(), systems: base.systems, apps: { live: apps.length, newest: apps.map(a => a.launched).sort().pop() || null, as_of: (spin && spin.as_of) || null },
+  return { marker: "PROGRESS-1", at: new Date(now).toISOString(), systems: base.systems, pulse: base.pulse || null, apps: { live: apps.length, newest: apps.map(a => a.launched).sort().pop() || null, as_of: (spin && spin.as_of) || null },
     sources, digests: Object.fromEntries(Object.entries(d).map(([k, v]) => [k, { from: v.from, to: v.to, count: v.count, substantive: v.substantive, by_system: v.by_system, by_kind: v.by_kind }])), events: all };
 }
 
@@ -52,6 +52,24 @@ function listOf(d, now, cap) {
     + (rest ? "<p class=\"meta\">Plus " + rest + " record-keeping " + (rest === 1 ? "merge" : "merges") + " (ledgers, deploy records, regenerated files), which are not counted as progress.</p>" : "");
 }
 
+// SUBSTANCE-1 (Rowan, 2026-11-21): "How would I know if I check in on it that the system hasn't ground to a halt or stopped, or that it's just working
+// on trivial issues?" The pulse answers that first: every merged change is classified from its diff, and only a change that altered executable
+// behaviour counts. A bumped number, a hash, an unused import or a ledger merge is shown as not progress.
+const PULSE = { shipping: ["ok", "Shipping real code on its own"], "sessions-only": ["warn", "Real code is coming only from agent sessions, not from the system itself"],
+  "trivial-only": ["warn", "Only trivial or record-keeping changes; nothing that changes how it runs"], stalled: ["warn", "Stalled: nothing merged recently"] };
+export function pulseCard(pl, now = Date.now()) {
+  if (!pl) return "<section class=\"card\" id=\"pulse\"><h2>Is it running?</h2><p>The pulse could not be read just now. It is read again on the next request.</p></section>";
+  const t = PULSE[pl.state] || PULSE.stalled, w = pl.week || {};
+  const line = (label, x) => "<li>" + esc(label) + ": " + (x ? "<a href=\"" + esc(x.url || "#") + "\" rel=\"noopener\">" + esc(x.title) + "</a> <small>" + esc(ago(x.at, now)) + "</small>" : "<strong>none in the window</strong>") + "</li>";
+  return "<section class=\"card\" id=\"pulse\"><h2>Is it running?</h2><p class=\"" + t[0] + "\"><strong>" + esc(t[1]) + "</strong></p><ul>"
+    + line("Last change the system made itself that altered how it runs", pl.last_substantive_by_system)
+    + line("Last change from anyone that altered how it runs", pl.last_substantive)
+    + "<li>Last merge of any kind: " + (pl.last_merge ? esc(ago(pl.last_merge.at, now)) : "none") + "</li></ul>"
+    + "<p class=\"meta\">Last " + esc(pl.window_days) + " days: " + esc(w.merged || 0) + " merges, " + esc(w.substantive || 0) + " changed behaviour (" + esc(w.substantive_by_system || 0) + " by the system itself), "
+    + esc(w.trivial || 0) + " trivial (numbers, hashes, comments, imports) and " + esc(w.record || 0) + " record-keeping, which are not counted as progress" + (w.unclassified ? "; " + esc(w.unclassified) + " not classified yet" : "") + ". "
+    + "When the system itself goes " + esc(pl.max_hours) + " hours without a change that alters behaviour, its producers are restarted and a repair item is opened. <a href=\"/pulse.json\">pulse.json</a></p></section>";
+}
+
 export function progressPage(shell, d, { now = Date.now(), period = null } = {}) {
   const meta = { path: period ? "/digest/" + period : "/progress", title: (period ? period[0].toUpperCase() + period.slice(1) + " digest" : "Progress") + " - Ultrastable", description: "What every Ultrastable system shipped today, this week and this month, read from merged changes, published releases and launched apps." };
   if (!d) return shell(meta, "<div class=\"head\"><h1>Progress</h1><p>The live record could not be read just now. The page reads it again on the next request; the machine-readable feed is <a href=\"/progress.atom\">/progress.atom</a>.</p></div>");
@@ -63,7 +81,7 @@ export function progressPage(shell, d, { now = Date.now(), period = null } = {})
   const body = CSS + "<div class=\"head\"><h1>" + (period ? esc(meta.title.split(" - ")[0]) : "Progress") + "</h1><p>What every system shipped, read from merged changes, published releases and launched apps. Nothing here is typed by hand; a quiet day shows as a quiet day.</p>"
     + "<p id=\"since\" class=\"meta\" role=\"status\"></p><p><a class=\"btn btn-quiet\" href=\"/progress.atom\">Subscribe (Atom)</a> <a class=\"btn btn-quiet\" href=\"/progress.json\">JSON</a> <a class=\"btn btn-quiet\" href=\"/digest/daily\">Daily</a> <a class=\"btn btn-quiet\" href=\"/digest/weekly\">Weekly</a> <a class=\"btn btn-quiet\" href=\"/digest/monthly\">Monthly</a></p></div>"
     + (period ? section(period) + "<p><a href=\"/progress\">All systems and periods</a></p>"
-      : "<section class=\"card\"><h2>Every system</h2><p class=\"meta\">Each system declares how often it ships. When one falls behind, the platform starts that system's own producers and, if it stays quiet, opens a repair item that closes when it ships again.</p><div class=\"us-wrap\"><table class=\"us-table\"><tr><th>System</th><th>Cadence</th><th>24 h</th><th>7 days</th><th>Subscribe</th></tr>" + sys + "</table></div></section>"
+      : pulseCard(d.pulse, now) + "<section class=\"card\"><h2>Every system</h2><p class=\"meta\">Each system declares how often it ships. When one falls behind, the platform starts that system's own producers and, if it stays quiet, opens a repair item that closes when it ships again.</p><div class=\"us-wrap\"><table class=\"us-table\"><tr><th>System</th><th>Cadence</th><th>24 h</th><th>7 days</th><th>Subscribe</th></tr>" + sys + "</table></div></section>"
         + section("daily") + section("weekly") + section("monthly"))
     + "<p class=\"meta\">Read at " + esc(d.at.slice(0, 16).replace("T", " ")) + " UTC. Your last visit is kept only in this browser and is never sent anywhere.</p>"
     + "<script>" + sinceVisitScript({ key: "us-progress-visit", into: "since" }) + "</script>";
@@ -73,8 +91,9 @@ export function progressPage(shell, d, { now = Date.now(), period = null } = {})
 // Routes: /progress, /progress.json, /progress.atom, /digest/<daily|weekly|monthly>[.json]. Returns null for any other path.
 export async function progressRoutes(u, env, shell, HTML, canon, opts = {}) {
   const p = u.pathname.replace(/\/$/, ""), m = /^\/digest\/(daily|weekly|monthly)(\.json)?$/.exec(p);
-  if (p !== "/progress" && p !== "/progress.json" && p !== "/progress.atom" && !m) return null;
+  if (p !== "/progress" && p !== "/progress.json" && p !== "/progress.atom" && p !== "/pulse.json" && !m) return null;
   const now = opts.now || Date.now(), d = await progressData(env, { ...opts, now }), J = { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=60" };
+  if (p === "/pulse.json") return new Response(JSON.stringify(d && d.pulse ? { marker: "SUBSTANCE-1", at: d.at, ...d.pulse } : { error: "pulse unavailable", code: "pulse_unavailable" }), { status: d && d.pulse ? (d.pulse.state === "stalled" ? 503 : 200) : 503, headers: J });  // SUBSTANCE-1: 503 when stalled, so an outside probe can alarm
   if (p === "/progress.json") return new Response(JSON.stringify(d || { error: "progress unavailable", code: "progress_unavailable" }), { status: d ? 200 : 503, headers: J });
   if (p === "/progress.atom") return d ? new Response(toAtom({ title: "Ultrastable: what every system shipped", link: "https://" + canon + "/progress", feedUrl: "https://" + canon + "/progress.atom", hub: "https://pubsubhubbub.appspot.com/", items: d.events.filter(substantive).slice(0, 100) }), { headers: { "content-type": "application/atom+xml; charset=utf-8", "cache-control": "public, max-age=300", "access-control-allow-origin": "*" } })
     : new Response("progress unavailable", { status: 503, headers: { "retry-after": "60" } });

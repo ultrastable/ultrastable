@@ -200,6 +200,13 @@ def adopt(prs: list[dict], root=REPO, apply=False, d: dict | None = None, gh=_gh
                     gh(root, "label", "create", d["adopt"]["label"], "--color", "0e8a16", "--description", "A server-side owner holds this loop")
                     rc, out = gh(root, "pr", "edit", str(pr["number"]), "--add-label", d["adopt"]["label"])
                 row["labelled"] = rc == 0
+                # LANE-DEDUPE-1 (measured on PR 826, 2026-11-20: the same comment five times in four minutes): lane runs overlap before the item file
+                # reaches main, so the file check alone races. The PR's own comments are the second, race-free record.
+                vc, vout = gh(root, "pr", "view", str(pr["number"]), "--json", "comments", "--jq", f'[.comments[].body | select(contains("queue item `{it["id"]}`"))] | length')
+                if vc == 0 and vout.strip() not in ("", "0"):
+                    row["commented"] = "already"
+                    rows.append(row)
+                    continue
                 rc, out = gh(root, "pr", "comment", str(pr["number"]), "--body",
                              f"{d['marker']}: this pull request is {st} and the server owns it now: queue item `{it['id']}` (owner {d['adopt']['owner']}, "
                              f"closing probe: merged or closed). The executor lands or supersedes it; nothing is asked of the session that opened it.")

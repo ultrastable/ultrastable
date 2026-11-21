@@ -8,7 +8,7 @@ ACT     at most max_actions_per_day growth items for rising and external_pull pa
 VERIFY  settle_after_days later each finding is compared with what the page really got: held when the prediction came true, missed otherwise (ops/insight/findings.json is the ledger).
 WRITE-BACK the knob rise_min_views goes up when under raise_below of the last settled rising findings held and down when over lower_above did, bounded, once per new settled finding.
 
-Doctrine and thresholds: doctrine/insight.json. Run by foundation/pm.py inside the product manager pass. Twin: QNFO/qnfo-workers migrations/2026-11-14-analytics-loop.sql.
+Doctrine and thresholds: doctrine/insight.json. Run by foundation/pm.py inside the product manager pass.
 """
 from __future__ import annotations
 import hashlib, json, os, re, sys, time

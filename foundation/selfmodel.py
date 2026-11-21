@@ -126,7 +126,11 @@ def main(argv=None) -> int:
     if "--check" in a:
         e = check(); print("\n".join(e) or "selfmodel ok: every regulator resolves, every part is registered, the served model matches the code"); return 1 if e else 0
     if "--apply" in a:
-        (REPO / DATA).write_text(render(), encoding="utf-8"); print("wrote", DATA); return 0
+        new, cur = render(), REPO / DATA
+        stamp = re.compile(r'^\s*"at": "[^"]*",?$', re.M)  # SUBSTANCE-1: a reading whose value and bounds did not change is not rewritten for its timestamp alone
+        if cur.is_file() and stamp.sub("", cur.read_text(encoding="utf-8")) == stamp.sub("", new):
+            print(DATA, "unchanged apart from reading timestamps; not rewritten"); return 0
+        cur.write_text(new, encoding="utf-8"); print("wrote", DATA); return 0
     if "--print" in a:
         print(json.dumps(build(), indent=1)); return 0
     print(__doc__); return 2

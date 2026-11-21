@@ -10,6 +10,18 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-21
 
+- 2026-11-21: Cut Quniverse/QNFO runtime dependencies; add runtime probe (#1097)
+- 2026-11-21: PATHFINDER-1: find another path before any owner ask (#936)
+- 2026-11-21: SOCIAL-MODULE-1: native human interface layer in core (#1095)
+- 2026-11-21: Remove leftover conflict markers from two READMEs (#1092)
+- 2026-11-21: MERGE-NOW-1: PRs merge on the webhook in seconds; server reconciles generated-file conflicts; time-to-merge metric (#931)
+- 2026-11-21: LANE-WORKER-MERGE-1: call the Worker merge only from the lane workflow (#1091)
+- 2026-11-21: LANE-WORKER-MERGE-1: probe PR (workflow comment) (#1090)
+- 2026-11-21: LANE-WORKER-MERGE-1: merge workflow-changing PRs through the Worker's GitHub App (#984)
+- 2026-11-21: POST-READBACK-1: count a post as published only when read back (#934)
+- 2026-11-21: LANE-LATENCY-1: split foundation tests, 3 min latency probe, 10 min session TTL (#932)
+- 2026-11-21: LANE-FAST-1: parallel checks jobs and in-run merge (#929)
+- 2026-11-21: Triage: an optional Copilot assign no longer fails the issues run (#930)
 - 2026-11-21: fm-waiting-on-person: a wait on a person is a failure mode (#850)
 - 2026-11-21: SOCIAL-BUFFER-1: Buffer adapter for LinkedIn, X, Substack; LINEAGE-1 graph (#848)
 - 2026-11-21: GH-MIRROR-1 (Rowan: the managers' collateral is invisible on GitHub; no issues board, no project board, no visible roadmap). The queue stays canonical in `docs/issues/*.json`; `foundation/ghmirror.py` mirrors it one way onto GitHub Issues on every `fleet` run and the daily `issues` run (built-in token, at most 150 writes a run, open items first): one issue per item found by the body marker `<!-- us-item:ID -->`, the item's labels plus sync label `queue`, milestones Now/Next/Later/After filing/Done, closed when the file is closed, a hand edit put back. Issues were turned on for ultrastable/ultrastable (were off since QUEUE-1; `github/org-settings.json` now says has_issues true). Org project #1 "Ultrastable roadmap" gets every `label:queue` issue through GitHub's built-in Auto-add workflow (filter `is:issue label:queue`, repo ultrastable) and has a Board view; Item reopened is on. Loops that act on GitHub issues skip `queue` issues so they never fight the file: `scripts/triage.sh`, `scripts/sla.sh`, `foundation/issueloop.py`; the sweeper never files Q-OPENLOOP issues in ultrastable/ultrastable (`laneOwned`, the lane files OL-PR items). ROADMAP.md points at the live views instead of dead issue numbers. Check `python3 -m foundation ghmirror --check`; reading `--plan`.
@@ -17,6 +29,9 @@ Last updated: 2026-11-21
 - 2026-11-21: BRANCH-ROOT-CAUSE-1: stop PRs and branches stranding (#839)
 - 2026-11-21: queue: closing-probe verdicts for 6 item(s) (QUEUE-PERSIST-1) [skip ci]
 - 2026-11-21: ROADMAP-AGENT-AGENT-SCOREBOARD: QNFO.OPS #AGENT-SCOREBOARD: Per-agent and per-harness quality scoreboard from intake attri (#837)
+- 2026-11-21: MARKER-ROOT-1 (Rowan: an open thread is a failure mode; find the root cause system-wide). Main carried committed merge-conflict markers in two READMEs, so every PR conflicted and waited. `scripts/no_markers.py` (step in `checks`; `--fix` inside `scripts/regen_generated.py` after every merge) and `flatten()` in `scripts/resolve_generated.py` close it.
+- 2026-11-21: PLAN-1: Rowan bought Workers Paid on the ultrastable account. Manifest `budget.plan` paid, `budget.usd_per_month` 30 (AI past the free allocation, about 0.8 USD a day); free-tier governor reads paid allowances (`limitsFor`), subrequest cap 1,000 and no loop rotation (`capsFor`). The soft 5 USD a day spend throttle stays the guard. Rowan: if costs spiral he stops the whole thing, so cost discipline is existential.
+- 2026-11-21: SPEND-SOFT-1, AI-GOV-ACCOUNT-1, ROI-SELF-1 (Rowan: Workers Paid only with cost controls, no more than 5 USD a day, and caps must be soft like a phone plan; the system never stops). `seed/worker/src/spend.js` estimates today's bill from one Cloudflare GraphQL reading (requests, CPU, D1, KV, R2, Durable Objects, account-wide AI neurons) and sets a band (full, ease, throttle, crawl) that only turns knobs: loop pace, model choice, AI inside the free allocation, how often non-essential steps run. No frozen mode anywhere: the AI governor crawls at one call an hour past its allowance and `tick.js` `stepPlan` defers steps to every 1 to 3 h, never for good. Target knob `instance.json` `spend.target_usd_day` (env `SPEND_TARGET_USD_DAY`), tenant shares `spend.tenants`, view `GET /api/spend` (`?tenant=`). AI allowance sized from the account-wide neuron count, not a static 70% share. `/api/roi` returns `time_vs_cost` and `system_decision`; a pay verdict on the free plan files one `ROI-PAY-<month>` gate. Cloudflare billing email alerts at 75 and 150 USD a month (plus the auto-created 10 USD); the native Workers spending limit is not set (it blocks every Worker). Measured 24 h to 10:30 UTC: requests 98.6k, D1 reads 5.7M, KV reads 116k, KV writes 2.2k, neurons 9.6k: free limits bind on four meters; on Workers Paid the same day costs the 5 USD a month base and about 0 overage (estimate).
 - 2026-11-21: tenant-sync: ledger [skip ci] (#838)
 - 2026-11-21: ciwatch: file failing-workflow items (CIWATCH-1) (#833)
 - 2026-11-21: ciwatch: file failing-workflow items (CIWATCH-1) (#828)
@@ -593,6 +608,10 @@ Six GitHub Apps had been registered for two roles because every visit to /connec
 
 - 2026-11-20 DISCOVER-1: every system gets a knowledge graph and vector index (`workers/core/discover`, `/embed` on core/modelservice, `semantic` hook in core/ask). Practical Solutions runs it daily (`connections.yml`, `tools/connections.mjs`) and shows `/connections`. Vectors are int8 in a packed index searched in memory (no table scans, no metered vector queries below 20,000 items); a Vectorize port takes over above that. Leads are never facts: a lead is confirmed only when the catalogue later adopts it. Overlaps CONNECT-1 (#825, practical-solutions#171) from another session; reconcile by porting its unique parts into core/discover.
 
+## 2026-11-21: SUBSTANCE-1, no illusion of productivity (Session: session_0156nqDsLyMjzZ4272x22HVy)
+- Rowan: trivial commits (hashes, 70 to 71, hard-coded values, metadata) fake productivity and burn the free tier. Measured 2026-11-14..21 with `python3 -m foundation substance --report`: 21 of 192 changes the system made itself altered executable behaviour (7 trivial, 164 records); 73 of 145 deploy rounds redeployed five Workers for regenerated data only.
+- Now: the executor opens no PR for a non-substantive change; `checks` refuses one (executor PRs, and trivial bot PRs); deploy-ultrastable skips pushes with no deployed behaviour change unless the live deploy is 20 h old; build_dashboard.py and selfmodel stop stamp-only rewrites; the tick classifies merged PRs from their diff (`live_changes.substance`) so /progress, the cadence monitor and STALL-* count only behaviour changes; pulse on /progress and /pulse.json (503 when stalled). Self-code kind unused_import is off. Lane comment dedupe (LANE-DEDUPE-1).
+- Open: Q-SUBST-self-shipping, Q-SUBST-live-readings, Q-SUBST-red-pr-latency.
 ## 2026-11-21: YEAR-SIM-1, SAY-DO-1, ultrastable core (Session: session_0156nqDrPUtodrmF2tkLT6LP)
 - Every essential variable in `doctrine/ultrastability.json` (13) has bounds, a reading and a second-loop step ladder with param knobs first; steps are judged only after their work lands (SECOND-LOOP-SETTLE-1); knobs address list items by id (KNOB-PATH-1).
 - Deploys are credited to the substantive commits they carried since the previous deployed sha (DEPLOY-ORIGIN-2); the executor marker is a regex, not a substring.

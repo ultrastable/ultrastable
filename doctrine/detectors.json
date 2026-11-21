@@ -285,6 +285,16 @@
    "remedy": "Add the detector to doctrine/detectors.json, or run python3 -m foundation failure_audit --run so the finding is filed."
   },
   {
+   "id": "pathfinder-exhaustion",
+   "failure_mode": "fm-waiting-on-person",
+   "kind": "command",
+   "run": ["python3", "-m", "foundation", "pathfinder", "--check"],
+   "timeout": 60,
+   "root_cause": "an owner ask (gate, needs-you item, /owner link) was emitted without an attempt in every surface class",
+   "owner": "operations",
+   "remedy": "Run python3 -m foundation pathfinder --resolve ASK_ID; the first working route closes the ask, otherwise the recorded attempts are the exhaustion proof."
+  },
+  {
    "id": "waiting-on-person",
    "failure_mode": "fm-waiting-on-person",
    "kind": "command",

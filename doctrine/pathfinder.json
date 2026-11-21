@@ -1,0 +1,97 @@
+{
+ "_doc": "PATHFINDER-1 (Rowan, 2026-11-21): there are always several paths and the information is usually already held. An owner ask (needs-you item, open-loops gate, /owner link, 'needs Rowan' message) is allowed only with an exhaustion proof: at least one recorded attempt in every surface class below, or a stated reason that class does not apply. Lesson: a Bluesky post sat 'blocked' for a day on an owner click while reverting a client-type change restored the existing session, and an idle sibling Worker already held working logins. Consumers: foundation/pathfinder.py (--check in checks.yml via openloops, --resolve, --regress), detector pathfinder-exhaustion, tests/foundation/test_pathfinder.py.",
+ "version": "1.0.0",
+ "surface_classes": {
+  "existing-credentials": "a token, session or secret already bound anywhere in Ultrastable, the quniverse account, GitHub secrets or a sibling Worker",
+  "prior-working-config": "git history or a recorded deploy in which the integration worked; revert or diff the change that broke it",
+  "sibling-workers": "another Worker, repository or agent that already does the same job or holds the same authority",
+  "alternate-channel": "a different route to the same outcome (another API, protocol, account, relay or workflow)",
+  "construct": "build the missing capability from primitives"
+ },
+ "route_kinds": [
+  "env:NAME|NAME",
+  "file:PATH",
+  "http:URL ~ TEXT",
+  "git:PATH (a commit touched PATH, so a prior config exists)"
+ ],
+ "asks": {},
+ "integrations": [],
+ "grandfathered_gates": [
+  "net-nameserver-switch",
+  "actions-approval-api",
+  "zero-minutes-app-install",
+  "mtc-processor-terms",
+  "gap-external-audit",
+  "gap-fresh-account-bootstrap",
+  "gap-second-installation",
+  "gap-other-cloud-proof",
+  "own-domain-edge",
+  "ol-phase2-roles",
+  "ol-market-evidence",
+  "ol-workers-repo-records",
+  "ol-legal-and-visibility",
+  "ol-out-of-reach-repos-and-credentials",
+  "owner-funding",
+  "owner-org-brand"
+ ],
+ "derive": {
+  "_doc": "asks and integrations are built from code at run time: every credential in foundation/data/credential-routes.json becomes an ask whose existing-credentials routes are its env routes; every channel in social/accounts.json becomes an integration probed by its secrets. `surfaces` adds the other classes per credential; `gate_asks` maps an owner gate or needs-you id to the credential it waits on.",
+  "surfaces": {
+   "social_accounts": {
+    "prior-working-config": [
+     "git:workers/packs/social/channels/bluesky.js",
+     "git:seed/worker/src/auth/atproto.js",
+     "git:scripts/social_post.py"
+    ],
+    "sibling-workers": [
+     "file:workers/packs/social/channels/bluesky.js",
+     "file:workers/core/ownerlink/mastodon.js",
+     "file:seed/worker/src/social.js"
+    ],
+    "alternate-channel": [
+     "file:seed/worker/src/auth/connectors.js",
+     "file:.github/workflows/social-post.yml"
+    ],
+    "construct": [
+     "file:seed/worker/src/auth/oauth.js"
+    ]
+   },
+   "cloudflare": {
+    "prior-working-config": [
+     "git:seed/worker/src/auth/cloudflare.js"
+    ],
+    "sibling-workers": [
+     "file:seed/worker/src/auth/cloudflare.js"
+    ],
+    "alternate-channel": [
+     "file:deploy/deploy-workers.mjs"
+    ],
+    "construct": [
+     "file:foundation/credwatch.py"
+    ]
+   },
+   "org_admin": {
+    "prior-working-config": [
+     "git:seed/worker/src/auth/github-app.js"
+    ],
+    "sibling-workers": [
+     "file:seed/worker/src/auth/github-app.js"
+    ],
+    "alternate-channel": [
+     "file:seed/worker/src/auth/rulesets.js"
+    ],
+    "construct": [
+     "file:seed/worker/src/auth/consent.js"
+    ]
+   }
+  },
+  "gate_asks": {
+   "owner-social": "social_accounts",
+   "owner-oauth-apps": "org_admin",
+   "owner-domains-move": "cloudflare",
+   "SOC-ACCOUNTS": "social_accounts",
+   "CF-TOKEN": "cloudflare",
+   "ORG-TOKEN": "org_admin"
+  }
+ }
+}

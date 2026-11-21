@@ -655,6 +655,13 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
             prompt = base_prompt() + chr(10) * 2 + "YOUR PREVIOUS ATTEMPT FAILED THESE CHECKS; fix exactly these problems and reply in the same EDIT and FILE block format again:" + chr(10) + chr(10).join(failed)[:5000]
         if failed:
             raise RuntimeError("checks failed after " + str(len(row.get("attempts", [])) or REPAIRS + 1) + " attempts: " + " | ".join(failed))
+        if not repair:  # SUBSTANCE-1 (Rowan, 2026-11-21): a change that alters no executable behaviour (a bumped number, a hash, an unused import, records only) opens no PR, runs no CI and deploys nothing
+            from . import substance
+            sub = substance.classify_range(None, root)
+            row["substance"] = sub["verdict"]
+            if sub["verdict"] != "substantive":
+                raise RuntimeError("rejected-trivial (SUBSTANCE-1): the change alters no executable behaviour (" + sub["verdict"] + ": "
+                                   + ", ".join(f"{x['path']}={x['kind']}" for x in sub["files"][:8]) + "); no PR is opened for it")
         row.update(files=files, summary=out.get("summary", ""))
         # WRITEBACK-1: the `checks` write-back gate fails any change that has code and no write-back (the first live executor PR failed on it), so
         # the executor records its own decision in the same commit: what it did, the evidence (checks that passed) and a file probe.

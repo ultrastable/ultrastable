@@ -2520,6 +2520,18 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-d77a994a9e",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Find another path before asking; the information is already held (PATHFINDER-1, Rowan 2026-11-21).** \"There are always multiple paths,",
+      "probe": [
+        "file:doctrine/pathfinder.json",
+        "file:ops/paths/attempts.jsonl",
+        "file:foundation/pathfinder.py",
+        "file:tests/foundation/test_pathfinder.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-0c620161e8",
       "surface": "demos/README.md",
       "text": "Engine: `demos/public/engine.js`, deterministic, shared by browser and tests. Tests: `node --test demos/test/*.test.mjs` (16 tests:",

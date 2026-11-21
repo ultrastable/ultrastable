@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-1.0
 // Copyright (c) Ultrastable
 // LIVE-FRESH-1: the public changelog is read from merged pull requests refreshed by the tick (one GitHub call per pass), not from a daily snapshot.
+import { classifyPrFiles } from '../../../workers/core/substance/index.js';  // SUBSTANCE-1
 const API = 'https://api.github.com';
 const origin = p => /^Executor run \d{4}-\d{2}-\d{2}T/m.test(String(p.body || '')) ? 'unattended executor' : /^(dependabot|ultrastable-)/.test(p.head && p.head.ref || '') ? 'bot' : /^(agent|claude)\//.test(p.head && p.head.ref || '') ? 'agent session' : 'other';
 
@@ -11,7 +12,8 @@ export async function refreshLiveChanges({ db, token, repo, fetch: f = fetch, no
   const r = await f(`${API}/repos/${repo}/pulls?state=closed&sort=updated&direction=desc&per_page=100`, { headers: { authorization: 'Bearer ' + token, accept: 'application/vnd.github+json', 'user-agent': 'ultrastable-livechanges' } });
   if (!r.ok) return { status: 'error', http: r.status };
   const prs = (JSON.parse(await r.text()) || []).filter(p => p.merged_at);
-  const stmts = prs.map(p => db.prepare('INSERT OR REPLACE INTO live_changes (n, repo, title, by_origin, merged_at, url) VALUES (?,?,?,?,?,?)').bind(p.number, repo, String(p.title).slice(0, 300), origin(p), p.merged_at, p.html_url));
+  // SUBSTANCE-1: an upsert, not INSERT OR REPLACE, so the substance verdict a later pass wrote is kept when the PR is seen again
+  const stmts = prs.map(p => db.prepare('INSERT INTO live_changes (n, repo, title, by_origin, merged_at, url) VALUES (?,?,?,?,?,?) ON CONFLICT(repo, n) DO UPDATE SET title=excluded.title, by_origin=excluded.by_origin, merged_at=excluded.merged_at, url=excluded.url').bind(p.number, repo, String(p.title).slice(0, 300), origin(p), p.merged_at, p.html_url));
   stmts.push(db.prepare('INSERT OR REPLACE INTO live_changes_meta (repo, refreshed_at) VALUES (?,?)').bind(repo, new Date(now).toISOString()));
   stmts.push(db.prepare('DELETE FROM live_changes WHERE repo = ? AND rowid NOT IN (SELECT rowid FROM live_changes WHERE repo = ? ORDER BY merged_at DESC LIMIT 400)').bind(repo, repo));  // PROGRESS-1: the cap is per repository, so one busy repository never evicts another's history
   await db.batch(stmts);
@@ -31,10 +33,42 @@ export async function refreshFleetChanges({ db, token, repos = [], everyMs = 55 
   return out;
 }
 
+// SUBSTANCE-1 (Rowan, 2026-11-21): "the illusion of productivity ... must be stopped." Each merged PR is classified from its diff (one GitHub call
+// per PR, at most `max` per pass, newest first) as substantive (executable behaviour changed), trivial (numbers, hashes, comments, imports) or record
+// (ledgers, generated data, docs). /progress, the cadence monitor and its stall alarm count only substantive changes; an unclassified PR falls back
+// to the title rule until a pass reaches it.
+const substanceReady = new WeakSet();  // per database binding, so a fresh database (a test, a new tenant) gets its columns
+export async function ensureSubstance(db) {
+  if (substanceReady.has(db)) return;
+  for (const c of ['substance TEXT', 'substance_files INTEGER']) {
+    try { await db.prepare(`ALTER TABLE live_changes ADD COLUMN ${c}`).run(); }
+    catch (e) { const m = String(e && e.message); if (/no such table/i.test(m)) return; if (!/duplicate column/i.test(m)) throw e; }  // no table yet: the next pass, after the migration, adds the columns
+  }
+  substanceReady.add(db);
+}
+
+export async function classifyPending({ db, token, max = 2, fetch: f = fetch }) {
+  if (!token) return { status: 'no-token' };
+  await ensureSubstance(db);
+  const rows = (await db.prepare('SELECT n, repo FROM live_changes WHERE substance IS NULL ORDER BY merged_at DESC LIMIT ?').bind(max).all()).results || [];
+  const out = {};
+  for (const r of rows) {
+    const res = await f(`${API}/repos/${r.repo}/pulls/${r.n}/files?per_page=100`, { headers: { authorization: 'Bearer ' + token, accept: 'application/vnd.github+json', 'user-agent': 'ultrastable-substance' } });
+    if (!res.ok) { out[`${r.repo}#${r.n}`] = 'HTTP ' + res.status; if (res.status === 404) await db.prepare('UPDATE live_changes SET substance = ? WHERE repo = ? AND n = ?').bind('unknown', r.repo, r.n).run(); continue; }
+    const files = JSON.parse(await res.text()) || [];
+    const c = classifyPrFiles(files);
+    const v = files.length >= 100 && c.verdict !== 'substantive' ? 'unknown' : c.verdict;  // a truncated file list is never called trivial
+    await db.prepare('UPDATE live_changes SET substance = ?, substance_files = ? WHERE repo = ? AND n = ?').bind(v, files.length, r.repo, r.n).run();
+    out[`${r.repo}#${r.n}`] = v;
+  }
+  return { status: 'ok', classified: out };
+}
+
 // repo: the one repository /live shows. Without it, every cached repository is returned (the first deploys cached only one).
 export async function readLiveChanges(db, repo = null) {
   const meta = repo ? await db.prepare('SELECT MAX(refreshed_at) AS at FROM live_changes_meta WHERE repo = ?').bind(repo).first() : await db.prepare('SELECT MAX(refreshed_at) AS at FROM live_changes_meta').first();
-  const q = repo ? db.prepare('SELECT n, title, by_origin, merged_at, url FROM live_changes WHERE repo = ? ORDER BY merged_at DESC LIMIT 400').bind(repo) : db.prepare('SELECT n, title, by_origin, merged_at, url FROM live_changes ORDER BY merged_at DESC LIMIT 400');
+  await ensureSubstance(db);
+  const q = repo ? db.prepare('SELECT n, title, by_origin, merged_at, url, substance FROM live_changes WHERE repo = ? ORDER BY merged_at DESC LIMIT 400').bind(repo) : db.prepare('SELECT n, title, by_origin, merged_at, url, substance FROM live_changes ORDER BY merged_at DESC LIMIT 400');
   const rows = (await q.all()).results || [];
-  return { refreshed_at: (meta && meta.at) || null, changes: rows.map(x => ({ n: x.n, title: x.title, by: x.by_origin, merged_at: x.merged_at, url: x.url })) };
+  return { refreshed_at: (meta && meta.at) || null, changes: rows.map(x => ({ n: x.n, title: x.title, by: x.by_origin, merged_at: x.merged_at, url: x.url, substance: x.substance || null })) };
 }

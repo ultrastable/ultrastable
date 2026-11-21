@@ -2,6 +2,7 @@ name: lane
 # budget: ~1.5 min per checks completion (lane pass about 1 min, heal pass about 20 s, capped at 4 min)
 # trigger: merge lane after checks succeed; no cron
 # free-alternative: Cloudflare cron worker or enable-auto-merge on each PR
+# LANE-WORKER-MERGE-1 probe: a workflow-file change merges through the tick Worker app with no stored credential.
 # One job: review and merge every PR with no human. Events: checks completing, plus one daily fallback sweep.
 # NEEDS-PAT-1 (server-side only): PRs that change .github/workflows/** are merged here too, on green, when a workflow-capable credential
 # is bound: secret LANE_PAT, or a GitHub App (secrets LANE_APP_ID and LANE_APP_PRIVATE_KEY). With neither, they stay open and labeled needs-pat.

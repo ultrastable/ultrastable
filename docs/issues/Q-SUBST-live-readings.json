@@ -1,0 +1,11 @@
+{
+  "id": "Q-SUBST-live-readings",
+  "title": "Q-SUBST-live-readings: serve /self readings and dashboard counts at request time instead of bundling them in generated data modules",
+  "body": "**Owner:** staff\n**Trigger:** SUBSTANCE-1 audit 2026-11-21\n**Done check:** grep:site/self-data.js::\"readings\": \\{\\}\n**Status:** open\n\nSUBSTANCE-1. site/self-data.js carries every essential-variable reading with its timestamp and site/dashboard-data.js carries counts such as the number of issue files; both are regenerated after every merge, which made main churn with hash, count and timestamp commits. This change stops rewriting them for a stamp alone (selfmodel --apply, build_dashboard.py) and stops redeploying for them; the remaining step is to read the readings and counts from the tick Worker at request time (as /progress and /pulse.json do), remove them from the generated modules, and drop those modules from regen-generated.",
+  "labels": [
+    "role:staff",
+    "raises-self"
+  ],
+  "milestone": "Now",
+  "workstream": "Reliability"
+}
