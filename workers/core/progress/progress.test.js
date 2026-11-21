@@ -48,3 +48,19 @@ test('atom feed escapes titles and the visit script stores nothing but two times
   assert.doesNotMatch(s, /cookie|fetch\(|XMLHttpRequest/);
   new Function('document', 'localStorage', s);  // parses
 });
+
+// SUBSTANCE-1: a classified change counts by its diff, not its title; the pulse says whether the system itself is shipping.
+import { pulse } from './index.js';
+test('a trivial merge is never progress, whatever its title; the pulse separates the system from sessions', () => {
+  assert.equal(substantive({ kind: 'change', title: 'Add a page', substance: 'trivial' }), false);
+  assert.equal(substantive({ kind: 'change', title: 'lane: record', substance: 'substantive' }), true);
+  assert.equal(substantive({ kind: 'change', title: 'Add a page', substance: 'unknown' }), true, 'unknown falls back to the title');
+  const e = (id, h, by, substance) => ({ ...ev(id, h), by, substance });
+  const p = pulse([e('1', 2, 'unattended executor', 'trivial'), e('2', 5, 'agent session', 'substantive'), e('3', 80, 'unattended executor', 'substantive')], { now: NOW });
+  assert.equal(p.state, 'sessions-only');
+  assert.equal(p.week.trivial, 1);
+  assert.equal(p.last_substantive_by_system.hours_ago, 80);
+  assert.equal(pulse([e('1', 2, 'unattended executor', 'trivial')], { now: NOW }).state, 'trivial-only');
+  assert.equal(pulse([e('1', 3, 'bot', 'substantive')], { now: NOW }).state, 'shipping');
+  assert.equal(pulse([e('1', 90, 'bot', 'substantive')], { now: NOW }).state, 'stalled');
+});

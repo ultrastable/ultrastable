@@ -11,7 +11,29 @@ export const PERIODS = { daily: 24, weekly: 24 * 7, monthly: 24 * 30 };
 // A merge that only records state (a ledger row, a regenerated file, a deploy record) happened, and is listed, but it is not what a
 // returning reader came for: it never counts toward cadence and digests list it after the substantive changes.
 const BOOKKEEPING = /^(lane|host-sync|hostsync|loop-evidence|regen|ledger|evidence|record|write-?back|branchsweep|sessions?|spinoff: portfolio tick|deploy-workers: record|chore\(deps\)|merge )\b|\[skip ci\]/i;
-export const substantive = e => e.kind !== 'change' || !BOOKKEEPING.test(String(e.title || ''));
+// SUBSTANCE-1 (Rowan, 2026-11-21): a change whose diff was classified (workers/core/substance) counts only when it altered executable behaviour, so a
+// bumped number, a hash, an unused import or a ledger merge is never progress whatever its title says; an unclassified change falls back to the title.
+export const substantive = e => e.kind !== 'change' || (e.substance && e.substance !== 'unknown' ? e.substance === 'substantive' : !BOOKKEEPING.test(String(e.title || '')));
+const SYSTEM_ORIGINS = ['unattended executor', 'bot'];
+
+// Is the system itself moving? state: shipping (a substantive change the system made itself inside max_hours), sessions-only (substantive work
+// came only from people or agent sessions), trivial-only (the system merged changes, none substantive), stalled (nothing merged in max_hours).
+export function pulse(events, { now = Date.now(), max_hours = 48, window_days = 7 } = {}) {
+  const ch = normalize(events).filter(e => e.kind === 'change'), from = now - window_days * 86400e3, recent = ch.filter(e => Date.parse(e.at) >= from);
+  const sys = e => SYSTEM_ORIGINS.includes(e.by), hrs = e => e ? Math.round((now - Date.parse(e.at)) / 360e3) / 10 : null;
+  const lastSub = ch.find(substantive), lastSysSub = ch.find(e => sys(e) && substantive(e)), lastAny = ch[0] || null, lastSys = ch.find(sys);
+  const within = e => e && (now - Date.parse(e.at)) <= max_hours * 3600e3;
+  const state = within(lastSysSub) ? 'shipping' : within(lastSub) ? 'sessions-only' : within(lastSys) ? 'trivial-only' : within(lastAny) ? 'trivial-only' : 'stalled';
+  const count = (pred) => recent.filter(pred).length;
+  const cls = e => e.substance || (substantive(e) ? 'substantive?' : 'record?');
+  return { state, max_hours, window_days,
+    last_substantive: lastSub ? { at: lastSub.at, title: lastSub.title, url: lastSub.url, by: lastSub.by, hours_ago: hrs(lastSub) } : null,
+    last_substantive_by_system: lastSysSub ? { at: lastSysSub.at, title: lastSysSub.title, url: lastSysSub.url, hours_ago: hrs(lastSysSub) } : null,
+    last_merge: lastAny ? { at: lastAny.at, title: lastAny.title, hours_ago: hrs(lastAny) } : null,
+    week: { merged: recent.length, substantive: count(substantive), not_substantive: count(e => !substantive(e)), by_system: count(sys), substantive_by_system: count(e => sys(e) && substantive(e)),
+      trivial: count(e => e.substance === 'trivial'), record: count(e => e.substance === 'record'), unclassified: count(e => !e.substance) },
+    classes: Object.fromEntries(['substantive', 'trivial', 'record', 'unknown', 'substantive?', 'record?'].map(k => [k, count(e => cls(e) === k)])) };
+}
 
 // Sort newest first, drop events without a parseable time, and drop duplicates by id.
 export function normalize(events) {
