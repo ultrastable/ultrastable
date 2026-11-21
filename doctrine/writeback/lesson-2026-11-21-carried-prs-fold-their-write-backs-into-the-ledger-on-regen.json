@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-21-carried-prs-fold-their-write-backs-into-the-ledger-on-regen",
+  "kind": "lesson",
+  "date": "2026-11-21",
+  "title": "Carried PRs fold their write-backs into the ledger on regen",
+  "body": "After regen folds write-back files, a session that made commits needs a fresh record citing it; add one per carried PR.",
+  "probe": "file:foundation/writeback.py",
+  "session": "session_0156nqDtycGejegSYjhFJ1MF"
+ },
+ "kind": "lesson",
+ "title": "Carried PRs fold their write-backs into the ledger on regen",
+ "session": "session_0156nqDtycGejegSYjhFJ1MF"
+}
