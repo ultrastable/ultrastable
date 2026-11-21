@@ -66,6 +66,27 @@ def point(cfg: dict, pid: str) -> dict:
     raise KeyError(f"decision point {pid} is not in {REG}")
 
 
+# ---- calibration: a forecast that scores worse than a coin is pulled toward the observed hit rate -------------------------
+COIN_BRIER = 0.25  # always predicting 0.5 scores 0.25; a forecaster above it is worse than a coin
+MIN_SETTLED = 8
+
+
+def brier(outs: list[dict]) -> float | None:
+    """Mean squared error between each predicted probability and what happened (1 hit, 0 miss). None when nothing is scored."""
+    return round(sum((min(1.0, max(0.0, o["predicted"])) - (1 if o["hit"] else 0)) ** 2 for o in outs) / len(outs), 4) if outs else None
+
+
+def recalibrate(predicted: float, outs: list[dict]) -> float:
+    """RECALIBRATE (ROOTCAUSE-1, class estimate-miscalibrated): with enough settled outcomes and a Brier score worse than a coin, shrink the
+    prediction toward the point's own hit rate by the share of the error the score shows; otherwise return it unchanged."""
+    b = brier(outs)
+    if b is None or len(outs) < MIN_SETTLED or b <= COIN_BRIER:
+        return predicted
+    rate = sum(1 for o in outs if o["hit"]) / len(outs)
+    w = min(1.0, (b - COIN_BRIER) / COIN_BRIER + 0.5)
+    return round(predicted * (1 - w) + rate * w, 4)
+
+
 # ---- record ------------------------------------------------------------------------------------------------------------
 def record(root, pid: str, chosen: str, ref: str, predicted: float, basis: str, alternatives: int = 0, now=None, backfill: bool = False) -> dict | None:
     """Log one decision of a registered point: what was chosen, the metric it optimizes, the predicted effect and why. Idempotent per (point, ref, chosen)."""
@@ -73,6 +94,9 @@ def record(root, pid: str, chosen: str, ref: str, predicted: float, basis: str, 
     cfg = load(root)
     p = point(cfg, pid)
     did = "d-" + hashlib.sha256(f"{pid}|{ref}|{chosen}".encode()).hexdigest()[:12]
+    if not backfill:
+        done = {o["id"]: o for o in _lines(root / cfg["outcomes"])}
+        predicted = recalibrate(predicted, [done[r["id"]] for r in _lines(root / cfg["ledger"]) if r["point"] == pid and r["id"] in done])
     if any(r["id"] == did for r in _lines(root / cfg["ledger"])):
         return None
     row = {"id": did, "at": _iso(t), "point": pid, "chosen": chosen, "ref": ref, "metric": p["metric"], "op": p["op"], "target": p["target"],
@@ -179,7 +203,7 @@ def status(root=REPO, now=None, d1: dict | None = None) -> dict:
         mine = [r for r in rows if r["point"] == p["id"]]
         sc = [byid[r["id"]] for r in mine if r["id"] in byid]
         entry = {"id": p["id"], "name": p["name"], "store": p["store"], "metric": p["metric"], "metric_says": p["metric_says"], "target": f"{p['op']} {p['target']}",
-                 "predict": p["predict"], "why": p["why"], "window_h": p["window_h"], "decisions": len(mine), "scored": len(sc),
+                 "predict": p["predict"], "why": p["why"], "window_h": p["window_h"], "decisions": len(mine), "scored": len(sc), "brier": brier(sc),
                  "overdue": sum(1 for r in mine if r["id"] not in byid and t >= _parse(r["at"]) + dt.timedelta(hours=r["window_h"]))}
         if p["store"] == "d1":
             live = ((d1 or {}).get("points") or {}).get(p["id"])

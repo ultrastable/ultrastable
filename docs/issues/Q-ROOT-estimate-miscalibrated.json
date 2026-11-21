@@ -1,0 +1,15 @@
+{
+  "id": "Q-ROOT-estimate-miscalibrated",
+  "title": "Q-ROOT-estimate-miscalibrated: estimate-miscalibrated keeps recurring: Recalibrate the forecaster from settled outcomes until its Brier score beats a coin.",
+  "body": "**Owner:** operations\n**Trigger:** the daily failure audit files it when a root cause recurs; the executor takes it in driver order\n**Done check:** cmd:python3 -m foundation rootcause --probe estimate-miscalibrated\n**Status:** open\n\nRoot cause class `estimate-miscalibrated` recurred on 1 days (2026-11-21); the guard does not exist yet: build it, because the guard is the fix.\nRoot cause: predictions were scored against outcomes without feeding the score back into the forecaster\nGuard: `grep:foundation/decisions.py::recalibrat`\nRemedy: Recalibrate the forecaster from settled outcomes until its Brier score beats a coin.\nSymptoms seen:\n- inbox:yearfail-brier-score-worse-than-a-coin-p: Yearfail Brier score worse than a coin (practical-solutions#192)\nFix the root, not the symptom: the item closes when the guard passes and the class stays quiet for 2 days.\n\n**Closing probe:** cmd:python3 -m foundation rootcause --probe estimate-miscalibrated\n",
+  "labels": [
+    "role:operations",
+    "audit",
+    "root-cause",
+    "build-guard",
+    "agent-ready",
+    "p1"
+  ],
+  "milestone": "Now",
+  "workstream": "Failure modes"
+}
