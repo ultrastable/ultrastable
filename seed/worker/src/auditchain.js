@@ -8,7 +8,7 @@
 export const HOT_DAYS = 7, SEAL_MAX_ROWS = 5000, GENESIS = '0'.repeat(64);
 
 // One hash and Merkle implementation for every audit log (Q-AUDIT-CONVERGE-1): the core module owns it.
-import { sha256 as coreSha256, merkleLevels } from '../../../workers/core/audit/index.js';
+import { sha256 as coreSha256, merkleLevels } from './vendor/core/audit.js';
 export const sha256 = coreSha256;
 const first = async (db, sql, ...a) => (await db.prepare(sql).bind(...a).first()) || null;
 const all = async (db, sql, ...a) => (await db.prepare(sql).bind(...a).all()).results || [];
