@@ -44,6 +44,11 @@ def _cfg(root) -> dict:
         for ch, v in json.loads(sa.read_text(encoding="utf-8"))["channels"].items():
             sib = [f[5:] for f in d.get("surfaces", {}).get("social_accounts", {}).get("sibling-workers", []) if ch in f]
             ints.append({"id": ch, "files": sib or ["social/accounts.json"], "probe": "env_all:" + "&".join(v["secrets"]), "last_good": None})
+    tf = root / "ops/temporal/findings.json"  # TEMPORAL-1: a loop that stopped firing or keeps failing is an integration that regressed; its last good commit is where the diff starts
+    if d and tf.is_file():
+        for f in json.loads(tf.read_text(encoding="utf-8"))["findings"].values():
+            if f["status"] == "open" and f["kind"] in ("stopped_loop", "repeated_failure") and f.get("files"):
+                ints.append({"id": f["subject"], "files": f["files"], "probe": "temporal:" + f["id"], "last_good": f.get("last_good")})
     cfg["asks"], cfg["integrations"] = asks, ints
     return cfg
 
@@ -78,6 +83,10 @@ def try_route(route: str, root=ROOT, env=None, fetch=None, git=None) -> tuple[bo
         from . import needsyou
         url, text = (s.strip() for s in arg.split("~", 1))
         return needsyou._http_says(url, text, fetch), url
+    if kind == "temporal":  # holds while the finding no longer reproduces from the repository's own history
+        from . import temporal
+        ok, why = temporal.settled(root, arg)
+        return ok, why
     if kind == "git":
         out = (git or _git_log)(root, arg)
         return bool(out), f"{len(out)} commits" if out else "no history"

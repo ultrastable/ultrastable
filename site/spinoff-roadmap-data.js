@@ -70,6 +70,14 @@ export default {
   },
   {
    "archetype": "status-board",
+   "launched": "2026-11-21T14:55:00Z",
+   "name": "Loop Ledger",
+   "slug": "loop-ledger",
+   "tagline": "How many closed loops keep this system running, and which ones are on a clock.",
+   "url": "https://loop-ledger.ultrastable.app"
+  },
+  {
+   "archetype": "status-board",
    "launched": "2026-11-17T21:21:28Z",
    "name": "Ultrastable by the Numbers",
    "slug": "numbers-board",
@@ -86,16 +94,6 @@ export default {
   }
  ],
  "queue": [
-  {
-   "archetype": "status-board",
-   "cost_share": 0.015,
-   "fits": true,
-   "id": "loop-ledger",
-   "implemented": true,
-   "kind": "spinoff",
-   "name": "Loop Ledger",
-   "score": 11.74
-  },
   {
    "archetype": "status-board",
    "cost_share": 0.015,
@@ -154,6 +152,16 @@ export default {
    "implemented": true,
    "kind": "spinoff",
    "name": "Deploys Board",
+   "score": 8.33
+  },
+  {
+   "archetype": "status-board",
+   "cost_share": 0.008,
+   "fits": true,
+   "id": "board-executor-log",
+   "implemented": true,
+   "kind": "spinoff",
+   "name": "Executor Log Board",
    "score": 8.33
   },
   {
@@ -240,23 +248,28 @@ export default {
  "scope": [
   {
    "id": "Q-SPIN-SCOPE-CLAIMS-LIVE-DAILY",
-   "status": "open",
+   "status": "closed",
    "title": "Check every live app against its own claims once a day"
   },
   {
    "id": "Q-SPIN-SCOPE-COLLECT-CADENCE",
-   "status": "open",
+   "status": "closed",
    "title": "Collect every live app's metrics twice a day instead of once"
   },
   {
    "id": "Q-SPIN-SCOPE-IMPLEMENT-TEMPLATE-GENERATOR",
-   "status": "open",
+   "status": "closed",
    "title": "Implement the template-generator archetype in the spinoff Worker so the queued writers (security.txt, SPF/DMARC, privacy page) can launch"
   },
   {
    "id": "Q-SPIN-SCOPE-RECHECK-BOARDS",
-   "status": "open",
+   "status": "closed",
    "title": "Refresh every status board's facts on each loop run, not only on launch"
+  },
+  {
+   "id": "Q-SPIN-SCOPE-SCOUT-MORE-SOURCES",
+   "status": "open",
+   "title": "Add scout sources while neurons sit under the reserve"
   }
  ]
 };

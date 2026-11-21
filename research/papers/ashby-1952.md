@@ -34,7 +34,7 @@ Source: doctrine/ultrastability.json.
 - ULTRASTABILITY-1 (`foundation/ultrastability.py`): after patience_ticks readings out of limits, one step is taken and logged with a prediction
 - CLOCKWORK-1 (`.github/workflows/watchdog.yml`): the second loop runs on the watchdog clock and on the cost guard, server-side
 
-**Measured here:** second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl): 17 (n = 574). Target >= 1. Verdict: **met**.
+**Measured here:** second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl): 18 (n = 898). Target >= 1. Verdict: **met**.
 Source: ops/ultrastability.jsonl.
 
 ### A3. Nothing the second loop can change (systems)
@@ -69,7 +69,7 @@ Source: ops/ultrastability.jsonl verdicts.
 - CLOSED-LOOP-1 (`foundation/closedloop.py`): an output with no code consumer fails the build
 - SERVER-OWNS-LOOPS-1 (`foundation/loopowner.py`): every loop has a server-side owner; a client session never closes one
 
-**Measured here:** share of registered loops that declare a closing probe and a server-side owner: 1.0 (n = 105). Target >= 1.0. Verdict: **met**.
+**Measured here:** share of registered loops that declare a closing probe and a server-side owner: 1.0 (n = 107). Target >= 1.0. Verdict: **met**.
 Source: instances/ultrastable/loop-registry.json (declared).
 
 ## Limits
@@ -81,14 +81,14 @@ Source: instances/ultrastable/loop-registry.json (declared).
 
 ## Proposed further links (leads, not findings)
 
-Found by core/connect on the lexical-512-59lohc route; each is a proposal until a study file adopts it.
+Found by core/connect on the lexical-512-kwr5ky route; each is a proposal until a study file adopts it.
 
-- A1 may also relate to AUTO-IMPROVE-1 (similarity 0.122)
-- A1 may also relate to IGNORANCE-1 (similarity 0.104)
-- A2 may also relate to DESIGN-LANGUAGE-1 (similarity 0.124)
+- A1 may also relate to AUTO-IMPROVE-1 (similarity 0.12)
+- A1 may also relate to IGNORANCE-1 (similarity 0.105)
+- A2 may also relate to DESIGN-LANGUAGE-1 (similarity 0.123)
 - A2 may also relate to VISION-1 (similarity 0.111)
-- A5 may also relate to UIUX-1 (similarity 0.113)
-- A5 may also relate to FLOW-DIRECTIVE-1 (similarity 0.106)
+- A5 may also relate to UIUX-1 (similarity 0.112)
+- A5 may also relate to FLOW-DIRECTIVE-1 (similarity 0.105)
 
 ## Method
 

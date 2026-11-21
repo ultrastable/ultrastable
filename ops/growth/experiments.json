@@ -8,6 +8,51 @@
    "started": "2026-11-17T16:52:10Z",
    "check_after_days": 7,
    "verdict": null
+  },
+  {
+   "item": "Q-GROW-AGENT-DIRECTORIES",
+   "metric": "agent_hits_7d",
+   "baseline": null,
+   "predicted_pct": 10,
+   "started": "2026-11-21T15:19:17Z",
+   "check_after_days": 7,
+   "verdict": null
+  },
+  {
+   "item": "Q-GROW-CASE-STUDY",
+   "metric": "pilot_page_views_7d",
+   "baseline": null,
+   "predicted_pct": 10,
+   "started": "2026-11-21T15:19:17Z",
+   "check_after_days": 7,
+   "verdict": null
+  },
+  {
+   "item": "Q-GROW-CHANGELOG-FEED",
+   "metric": "agent_hits_7d",
+   "baseline": null,
+   "predicted_pct": 15,
+   "started": "2026-11-21T15:19:17Z",
+   "check_after_days": 7,
+   "verdict": null
+  },
+  {
+   "item": "Q-GROW-DEMO-DASHBOARD",
+   "metric": "pilot_page_views_7d",
+   "baseline": null,
+   "predicted_pct": 10,
+   "started": "2026-11-21T15:19:17Z",
+   "check_after_days": 7,
+   "verdict": null
+  },
+  {
+   "item": "Q-GROW-front-door-example-systems",
+   "metric": "pilot_page_views_7d",
+   "baseline": null,
+   "predicted_pct": 15,
+   "started": "2026-11-21T15:19:17Z",
+   "check_after_days": 7,
+   "verdict": null
   }
  ]
 }
