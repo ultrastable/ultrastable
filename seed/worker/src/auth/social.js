@@ -53,7 +53,8 @@ const other = (name, ph) => `<details><summary class="mut">Use a different serve
 export async function handleSocial(request, env, { tenant = 'default', fetch: f = fetch, now = Date.now(), allowInsecure = false } = {}) {
   const url = new URL(request.url), origin = url.origin, path = url.pathname.replace(/\/$/, '');
   if (path === '/.well-known/oauth-client/bluesky-jwks.json') return Response.json({ keys: [publicJwk(await clientJwk(env, tenant))] }, { headers: { 'cache-control': 'public, max-age=300', 'access-control-allow-origin': '*' } });
-  if (path === '/.well-known/oauth-client/bluesky.json') return Response.json(clientMetadata(origin, await clientJwk(env, tenant)), { headers: { 'cache-control': 'public, max-age=3600', 'access-control-allow-origin': '*' } });
+  if (path === '/.well-known/oauth-client/bluesky.json') return Response.json(clientMetadata(origin, null, false), { headers: { 'cache-control': 'public, max-age=3600', 'access-control-allow-origin': '*' } });  // LEGACY-CLIENT-1
+  if (path === '/.well-known/oauth-client/bluesky-c.json') return Response.json(clientMetadata(origin, await clientJwk(env, tenant), true), { headers: { 'cache-control': 'public, max-age=3600', 'access-control-allow-origin': '*' } });
   if (path === '/connect') return connectionsScreen(await connectorStatus(env.DB, env, tenant));
   const m = /^\/connect\/(bluesky|mastodon)(?:\/(start|callback))?$/.exec(path); if (!m) return null;
   const id = m[1], step = m[2] || 'consent', title = id === 'bluesky' ? 'Bluesky' : 'Mastodon', retry = '/connect/' + id;
@@ -108,7 +109,7 @@ async function mastodon(step, url, origin, env, tenant, f, now, insecure, retry)
 }
 
 async function bluesky(step, url, origin, env, tenant, f, now, insecure, retry) {
-  const key = KEY.bluesky, cid = origin + '/.well-known/oauth-client/bluesky.json', redirect = origin + '/connect/bluesky/callback';
+  const key = KEY.bluesky, cid = origin + '/.well-known/oauth-client/bluesky-c.json', redirect = origin + '/connect/bluesky/callback';
   if (step === 'start') {
     const srv = host(url.searchParams.get('server')) || 'bsky.social', issuer = 'https://' + srv;
     if (!safeUrl(issuer, insecure)) return failScreen('Connect Bluesky', 'That does not look like a public server address.', retry);
