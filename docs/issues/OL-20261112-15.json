@@ -1,7 +1,7 @@
 {
   "id": "OL-20261112-15",
   "title": "OL-20261112-15: Replace ctl-workers-codeowners-human-approval",
-  "body": "**Owner:** operations\n**Trigger:** every executor run\n**Done check:** cmd:python3 scripts/fleet_probe.py codeowners-removed\n**Status:** open\n**Residual:** workers-codeowners-replacement\n\nReplacement is the automated protected-path gate in workers (selfhost_check.py plus canary_revert.py). A permission-classifier refusal blocked the first attempt; the next path is a workers change authored by the executor lane.",
+  "body": "**Owner:** operations\n**Trigger:** every executor run\n**Done check:** cmd:python3 scripts/fleet_probe.py codeowners-removed\n**Status:** closed\n**Residual:** workers-codeowners-replacement\n\nReplacement is the automated protected-path gate in workers (selfhost_check.py plus canary_revert.py). A permission-classifier refusal blocked the first attempt; the next path is a workers change authored by the executor lane.\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 224.2 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
   "labels": [
     "role:operations",
     "open-loop"

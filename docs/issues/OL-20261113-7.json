@@ -1,7 +1,7 @@
 {
   "id": "OL-20261113-7",
   "title": "OL-20261113-7: WORKERS-1 repo inventory and server-side code-agent loop on workers",
-  "body": "**Owner:** portfolio-manager\n**Trigger:** daily\n**Done check:** file:docs/ROADMAP.md\n**Status:** open\n\nSurvey ultrastable/workers vs ultrastable, archive redundant repos with disposition, run the code-agent loop server-side on workers.",
+  "body": "**Owner:** portfolio-manager\n**Trigger:** daily\n**Done check:** file:docs/ROADMAP.md\n**Status:** closed\n\nSurvey ultrastable/workers vs ultrastable, archive redundant repos with disposition, run the code-agent loop server-side on workers.\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 196.4 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
   "labels": [
     "role:portfolio-manager",
     "open-loop"
