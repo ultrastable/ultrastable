@@ -480,6 +480,22 @@
    "root_cause": "the say-do module, its data or its executor guard is missing or stale",
    "owner": "operations",
    "remedy": "Run python3 -m foundation saydo --run --apply, then --check; restore the SAY-DO-1 guard in foundation/executor.py if it is gone."
+  },
+  {
+   "id": "seedadmit-probe",
+   "failure_mode": "fm-seed-unadmitted",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "seedadmit",
+    "--probe"
+   ],
+   "timeout": 120,
+   "root_cause": "the template cannot admit a system: a probe, import or kernel path regressed",
+   "owner": "operations",
+   "remedy": "Run python3 -m foundation seedadmit --probe, read the failing component, fix the seed (never the kit's bar), add a regression test (SEED-ADMIT-1)."
   }
  ]
 }
