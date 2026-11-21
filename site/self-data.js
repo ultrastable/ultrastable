@@ -557,7 +557,6 @@ export default {
   "strange-loop-hygiene",
   "tenant-sync",
   "terms-crosswalk",
-  "thought",
   "tick-heartbeat",
   "transparency",
   "triggers",
@@ -1831,19 +1830,6 @@ export default {
     "workflows": [
      "scout"
     ]
-   },
-   {
-    "closing_probe": "grep:foundation/thought.py::def guard",
-    "id": "thought",
-    "kind": "governance",
-    "owner": "marketing-manager",
-    "server_owner": "github-actions",
-    "sla": "3d",
-    "summary": "THOUGHT-1: thought leadership as a closed loop. Every white paper the research loop writes becomes posts for Bluesky, Mastodon and LinkedIn that state a common belief about AI limits, what this system's own records show (numbers read from the paper) and the hook: Ultrastable runs on Ultrastable, and Practical Solutions is one system it runs. Posts land in social/calendar.json; the tick Worker's publisher and the social-post workflow drain them within social/gate.json; referrals to /research come back through the reach loop's 'paper' arm.",
-    "trigger": "daily (social-post.yml), one piece per cadence_days; a changed measured result goes first",
-    "workflows": [
-     "social-post"
-    ]
    }
   ],
   "workers": [
@@ -2108,8 +2094,7 @@ export default {
    {
     "id": "social-post",
     "loops": [
-     "social-post",
-     "thought"
+     "social-post"
     ]
    },
    {
