@@ -4,10 +4,11 @@
   "kind": "decision",
   "date": "2026-11-21",
   "title": "VERIFY-1: model-check the core loops and tie models to code",
-  "body": "Explicit-state checker over governor, merge lane, second loop and halt; constants read from real source; spend.js level() property-swept. Next: Q-VERIFY-monitors.",
-  "probe": "file:foundation/verify.py"
+  "body": "Explicit-state checker over governor, merge lane, second loop and halt; constants read from real source; spend.js level() property-swept; 9/9 invariants; seed carries scripts/verify.py and the spend governor.",
+  "probe": "file:foundation/verify.py",
+  "session": "session_0156nqDujMohxC6TJjB4QLtx"
  },
  "kind": "decision",
  "title": "VERIFY-1: model-check the core loops and tie models to code",
- "session": ""
+ "session": "session_0156nqDujMohxC6TJjB4QLtx"
 }

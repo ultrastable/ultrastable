@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 """VERIFY-1: the model checker finds seeded defects (mutation-style), and the real models pass. Ultrastable is the foundation for any autonomous system."""
 import unittest
 from foundation import verify as V
