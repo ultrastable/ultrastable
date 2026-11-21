@@ -14,6 +14,7 @@ function fake(state) {
     if (m === 'GET' && path.includes('labels=open-loop')) return R(state.filed || []);
     if (m === 'POST' && path.endsWith('/issues')) return R({ number: 9 });
     if (m === 'GET' && path.includes('labels=claimed')) return R(state.claimed || []);
+    if (m === 'GET' && path.includes('/check-runs')) return R({ total_count: state.runs ?? 1 });
     if (m === 'DELETE') return R({});
     return R({});
   };
@@ -42,4 +43,14 @@ test('with issues off the sweep does not abort: the stuck PR is left to the lane
   const r = await sweepOpenLoops({ token: 't', repos: ['o/r'], fetch: f, now: NOW });
   assert.equal(r.status, 'ok'); assert.deepEqual(r.errors, []); assert.deepEqual(r.filed, []);
   assert.deepEqual(r.lane_owned, ['o/r#5', 'o/r#7']); assert.ok(calls.includes('GET /repos/o/r/pulls/7'));
+});
+
+test('BRANCH-ROOT-CAUSE-1: a blocked PR with no check run is closed and reopened once; a worker/ branch is swept; one with runs is not touched', async () => {
+  const w = { number: 8, head: { ref: 'worker/roadmap-x' }, updated_at: '2026-11-13T00:00:00Z' };
+  const a = fake({ prs: [w], detail: { ...w, head: { ref: 'worker/roadmap-x', sha: 'abc' }, mergeable_state: 'blocked' }, runs: 0 });
+  const r = await sweepOpenLoops({ token: 't', repos: ['o/r'], fetch: a.f, now: NOW });
+  assert.deepEqual(r.retriggered, ['o/r#8']); assert.equal(a.calls.filter(c => c === 'PATCH /repos/o/r/pulls/8').length, 2);
+  const b = fake({ prs: [w], detail: { ...w, head: { ref: 'worker/roadmap-x', sha: 'abc' }, mergeable_state: 'blocked' }, runs: 2 });
+  const r2 = await sweepOpenLoops({ token: 't', repos: ['o/r'], fetch: b.f, now: NOW });
+  assert.equal(r2.retriggered, undefined);
 });

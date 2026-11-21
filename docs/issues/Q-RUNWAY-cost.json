@@ -1,0 +1,12 @@
+{
+  "id": "Q-RUNWAY-cost",
+  "title": "Q-RUNWAY-cost: unattended runway is unmeasured days on cost (target 365)",
+  "body": "**Owner:** staff\n**Trigger:** every watchdog run\n**Done check:** cmd:python3 -m foundation runway --probe cost\n**Status:** open\n\nRUNWAY-1: the system is to run 365 days with no person. Component `cost`: last measured cost reading is 2026-11-17. Remove the limit (a route that needs no expiring credential, a cheaper read path, a repair loop for the failure) or make the measurement work; do not change the target.\n",
+  "labels": [
+    "role:staff",
+    "raises-self",
+    "runway"
+  ],
+  "milestone": "Now",
+  "workstream": "Reliability"
+}

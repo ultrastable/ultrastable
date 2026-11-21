@@ -6,7 +6,7 @@
 # Branches in KEEP are infrastructure (loop evidence). Nothing with unmerged commits is ever deleted.
 set -uo pipefail
 . "$(dirname "$0")/lib-safe.sh"
-repo="${GITHUB_REPOSITORY:?}"; KEEP="main loop-evidence session-evidence"
+repo="${GITHUB_REPOSITORY:?}"; KEEP="main loop-evidence session-evidence audit-evidence ciwatch-evidence"
 # QUEUE-1: work items are repository data (docs/issues), so GitHub Issues are off on this repository. Every `gh issue` call then fails, and
 # the daily lane sweep was red on each run for that reason alone (found by the liveness probe, 2026-11-12). Ask once; skip the issue steps when off.
 issues_on=$(timeout 30 "$_GH_BIN" api "repos/$repo" --jq .has_issues 2>/dev/null || echo true)
