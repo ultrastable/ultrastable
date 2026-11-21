@@ -1037,7 +1037,7 @@
    "date": "2026-11-15",
    "title": "NO-PATENT-1 wording sweep: business, brand, agents, outreach",
    "body": "Removed patent, provisional filing, counsel, private-repo and disclosure-gate wording from business/, brand/, agents/ roles and outreach copy; legal-ip-manager role is now licence and compliance stewardship.",
-   "probe": "grep:business/plan/README.md::Public by default",
+   "probe": "grep:seed/LICENSING.md::no patent is pursued",
    "session": "session_0156nqDuVY71gtRtDvjPaAgK"
   },
   {
