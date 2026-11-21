@@ -765,7 +765,7 @@
    "date": "2026-11-13",
    "title": "Free org plan blocks branch protection; bundles restore",
    "body": "GH-4 branch protection returns 403 on free private repos (needs paid plan). All 7 archived-repo bundles clone from main (restore test 2026-11-13). IP-6 calendar needs the filing date.",
-   "probe": "grep:scripts/mirror_then_delete.sh::bundle create"
+   "probe": "file:ip/calendar/deadlines.py"
   },
   {
    "id": "decision-2026-11-13-front-door-2-idea-consumer-deploys-a-worker-per-idea-archive",
@@ -1037,7 +1037,7 @@
    "date": "2026-11-15",
    "title": "NO-PATENT-1 wording sweep: business, brand, agents, outreach",
    "body": "Removed patent, provisional filing, counsel, private-repo and disclosure-gate wording from business/, brand/, agents/ roles and outreach copy; legal-ip-manager role is now licence and compliance stewardship.",
-   "probe": "grep:seed/LICENSING.md::no patent is pursued",
+   "probe": "grep:business/plan/README.md::Public by default",
    "session": "session_0156nqDuVY71gtRtDvjPaAgK"
   },
   {
@@ -3931,6 +3931,24 @@
    "title": "Owner sign-in never creates GitHub apps; next honored; plan read live",
    "body": "NO-NEW-APP-1, SIGNIN-NEXT-2, MAGIC-LINK-1, LIVE-PLAN-1",
    "probe": "grep:dashboard/worker.js::NO-NEW-APP-1|magicSignin"
+  },
+  {
+   "id": "decision-2026-11-21-disclosure-retired-1-the-disclosure-gate-pf-1-is-retired",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "DISCLOSURE-RETIRED-1: the disclosure gate (PF-1) is retired",
+   "body": "Rowan, 2026-11-21: no patent and no IP filing; the work is source-available under the Ultrastable License, non-commercial use free, commercial use needs a paid license. The disclosure rule, the dashboard disclosure_guard probe (which failed hourly) and its word list are removed; nothing is held back from public view.",
+   "probe": "grep:dashboard/worker.js::NO-PATENT-1",
+   "session": "session_0156nqDvcJffVKenzBcawrYF"
+  },
+  {
+   "id": "lesson-2026-11-21-removing-a-check-leaves-its-last-failing-row-the-probe-purge",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "Removing a check leaves its last failing row; the probe purges retired checks",
+   "body": "Deleting the disclosure_guard probe left its failing row in the checks table, so the failure stayed visible. runProbes now deletes retired check names each run.",
+   "probe": "grep:dashboard/worker.js::retired checks",
+   "session": "session_0156nqDvcJffVKenzBcawrYF"
   }
  ]
 }
