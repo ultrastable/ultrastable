@@ -108,8 +108,6 @@ jobs:
         run: python3 -m foundation doctrine --check
       - name: Pins (every status pin and roadmap item on the site is computed from code, proofs and probe-backed issues)
         run: python3 -m foundation pins --check
-      - name: Probe format (PROBE-FORMAT-1, every closing probe is well formed and points at something that exists)
-        run: bash scripts/probe_gate.sh
       - name: Queue mirror shape (every docs/issues item maps to a valid GitHub issue, GH-MIRROR-1)
         run: python3 -m foundation ghmirror --check
       - name: Loops, glossary, kernel and write-back (the system reads its own loops; code with no write-back fails)

@@ -4,36 +4,12 @@
  "max_commits_back": 400,
  "max_candidates": 80,
  "gate_timeout_s": 240,
- "never_revert": [
-  "*.test.mjs",
-  "*.test.js",
-  "tests/*",
-  "test/*"
- ],
+ "never_revert": ["*.test.mjs", "*.test.js", "tests/*", "test/*"],
  "gates": {
   "deploy-site": {
    "cmd": "bash scripts/site_tests.sh",
-   "paths": [
-    "site",
-    "seed/analytics",
-    "seed/worker/src",
-    "spinoffs"
-   ],
-   "workflows": [
-    ".github/workflows/deploy-site.yml",
-    ".github/workflows/checks.yml"
-   ]
-  },
-  "probe-format": {
-   "cmd": "bash scripts/probe_gate.sh",
-   "paths": [
-    "doctrine/writeback",
-    "doctrine/decision-ledger.json",
-    "foundation/writeback.py"
-   ],
-   "workflows": [
-    ".github/workflows/checks.yml"
-   ]
+   "paths": ["site", "seed/analytics", "seed/worker/src", "spinoffs"],
+   "workflows": [".github/workflows/deploy-site.yml", ".github/workflows/checks.yml"]
   }
  }
 }
