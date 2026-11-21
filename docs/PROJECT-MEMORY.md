@@ -10,6 +10,8 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-21
 
+- 2026-11-21: LANE-WORKER-MERGE-1: probe PR (workflow comment) (#1090)
+- 2026-11-21: LANE-WORKER-MERGE-1: merge workflow-changing PRs through the Worker's GitHub App (#984)
 - 2026-11-21: POST-READBACK-1: count a post as published only when read back (#934)
 - 2026-11-21: LANE-LATENCY-1: split foundation tests, 3 min latency probe, 10 min session TTL (#932)
 - 2026-11-21: LANE-FAST-1: parallel checks jobs and in-run merge (#929)
