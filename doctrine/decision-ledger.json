@@ -3617,6 +3617,22 @@
    "title": "tenant-sync ledger append merged by branch cleanup",
    "body": "Appended tenant-sync ledger rows kept; merged during repository branch cleanup.",
    "probe": "file:workers/tools/tenant_sync.py"
+  },
+  {
+   "id": "lesson-2026-11-21-branch-cleanup-root-causes-unswept-worker-prefix-prs-with-no",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "Branch cleanup root causes: unswept worker/ prefix, PRs with no required check, evidence branches outside KEEP",
+   "body": "Measured: node --test seed/worker/test/sweeper.test.js pass 5 fail 0; open PR count went 4 to 0 after retriggering checks by hand. Built-in-token PRs never fire pull_request so required checks never report; worker/ branches were never swept; audit-evidence and ciwatch-evidence were missing from the sweep KEEP list. Fixed in sweeper.js and completion_sweep.sh. Open loop: Q-BRANCH-EVIDENCE-OFF-REFS moves evidence branches off git refs so main is the only branch; owner sweeper, trigger every tick, probe branch count equals 1.",
+   "probe": "file:seed/worker/src/sweeper.js"
+  },
+  {
+   "id": "lesson-2026-11-21-failure-resolve-1-an-audit-that-files-where-no-loop-reads-is",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "FAILURE-RESOLVE-1: an audit that files where no loop reads is detection without resolution",
+   "body": "The failure audit wrote AUDIT-<id>.json to branch audit-evidence with done check detector:<id>: outside foundation/queue.items, no probe kind, never on main. Two detectors failed five daily runs untaken. Findings now land on main as Q-AUDIT-<id> with a cmd: closing probe and root-cause suspects; failure_audit --check fails on an unwatched mode or an unfiled finding. Detectors must run on main's own files: overlaying docs/issues from an evidence branch produced false failures.",
+   "probe": "grep:foundation/failure_audit.py::def coverage"
   }
  ]
 }

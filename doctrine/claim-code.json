@@ -133,6 +133,15 @@
         "file": "foundation/outreach.py",
         "contains": "top[\"mean_reward\"] if top[\"mean_reward\"] is not None else 0.0"
       }
+    },
+    {
+      "id": "failure-resolve-coverage",
+      "source": "agents/AGENTS.md",
+      "quote": "a mode nothing watches, or a recorded failure with no open queue item, fails `python3 -m foundation failure_audit --check`",
+      "probe": {
+        "file": "foundation/failure_audit.py",
+        "contains": "no live detector in"
+      }
     }
   ],
   "baseline": [

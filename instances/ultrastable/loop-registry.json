@@ -2220,7 +2220,7 @@
    "owner": "operations",
    "closes_by": "system",
    "sla": "1d",
-   "done": "every detector in doctrine/detectors.json has a ledger line from the last day and every failing one has an open AUDIT issue",
+   "done": "every failure mode in doctrine/registers.json has a live detector, every detector has a ledger line from the last day, and every failing one has an open Q-AUDIT item on main that the executor takes and the detector itself closes",
    "paths": [
     {
      "id": "github",
@@ -2233,9 +2233,10 @@
      "class": "session"
     }
    ],
-   "closing_probe": "grep:foundation/failure_audit.py::def run_detector",
+   "closing_probe": "grep:foundation/failure_audit.py::def coverage",
    "writeback": [
-    "docs/issues"
+    "docs/issues",
+    "ops/failure-audit-state.json"
    ],
    "system_path": [
     "foundation/failure_audit.py",

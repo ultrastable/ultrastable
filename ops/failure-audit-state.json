@@ -1,0 +1,104 @@
+{
+ "audit-loop": {
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
+ },
+ "blocker-unproven": {
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
+ },
+ "durable-facts": {
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
+ },
+ "foreign-ci-item": {
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
+ },
+ "green-guard": {
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
+ },
+ "lane-rebase": {
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
+ },
+ "merge-bypass": {
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
+ },
+ "owner-handback": {
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
+ },
+ "regen-push": {
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
+ },
+ "retry-spin": {
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
+ },
+ "runtime-tenant0": {
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
+ },
+ "seed-tests": {
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
+ },
+ "selfhost-tick": {
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
+ },
+ "silent-drop": {
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
+ },
+ "site-claims": {
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
+ },
+ "site-health": {
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
+ },
+ "vision": {
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
+ }
+}

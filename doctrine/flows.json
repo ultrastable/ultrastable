@@ -290,7 +290,9 @@
         }
       ],
       "feedback": "a detector that keeps firing escalates and files its own redesign",
-      "bindings": []
+      "bindings": [
+        "LANE_PAT"
+      ]
     },
     "product-manager-pass": {
       "inflows": [

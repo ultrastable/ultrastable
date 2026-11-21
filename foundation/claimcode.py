@@ -30,7 +30,7 @@ def scan(root=REPO, extra_globs=()) -> list[tuple[str, int, str, str]]:
     out = []
     for g in list(pol["scan_globs"]) + list(extra_globs):
         for f in sorted(root.glob(g)):
-            rel = str(f.relative_to(root))
+            rel = f.relative_to(root).as_posix()
             if not f.is_file() or rel in ignored or any(re.search(x, rel) for x in pol["skip"]):
                 continue
             for n, line in enumerate(f.read_text("utf-8", errors="replace").splitlines(), 1):

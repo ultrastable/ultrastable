@@ -65,7 +65,7 @@
       "ultrastable_module": ["foundation/failure_audit.py", "doctrine/detectors.json", "seed/worker/src/selfaudit.js"],
       "test": ["tests/foundation/test_failure_audit.py", "seed/worker/test/selfaudit.test.js"],
       "wired_into": ["seed/worker/src/tick.js::selfaudit", ".github/workflows/failure-audit.yml::failure_audit --run"],
-      "feeds_criticality": "none yet: AUDIT-* items live outside foundation/queue.items, so the contracts loop does not see them",
+      "feeds_criticality": "FAILURE-RESOLVE-1: a failing detector files Q-AUDIT-<id> on main, inside foundation/queue.items, with a cmd: closing probe; the executor takes it and the contracts loop closes it",
       "priority": 9
     },
     {
