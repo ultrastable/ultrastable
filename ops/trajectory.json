@@ -167,7 +167,7 @@
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 25670,
+   "recent7": 25725,
    "series": [
     0,
     0,
@@ -198,12 +198,12 @@
     575,
     6177,
     12277,
-    304
+    359
    ],
    "share_recent": 0.114,
    "share_trend": 0.072,
-   "slope": 159.2512,
-   "total": 33592
+   "slope": 159.606,
+   "total": 33647
   },
   {
    "area": "ip",
@@ -1026,7 +1026,7 @@
    "total": 2248
   }
  ],
- "at": "2026-11-22T01:23:48Z",
+ "at": "2026-11-22T01:34:08Z",
  "days": 30,
  "files": [
   {
@@ -1090,13 +1090,13 @@
    "why": "workers's share of attention moved 16 points between the first and second half of the window"
   },
   {
-   "evidence": "quiet_days 7; system change in the last 7 days 225889",
+   "evidence": "quiet_days 7; system change in the last 7 days 225944",
    "id": "seed/outreach",
    "kind": "neglected",
    "why": "seed/outreach had 139 lines of change, then nothing for 7 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 9; system change in the last 7 days 225889",
+   "evidence": "quiet_days 9; system change in the last 7 days 225944",
    "id": "docs/runbooks",
    "kind": "neglected",
    "why": "docs/runbooks had 134 lines of change, then nothing for 9 days while the rest of the system moved"
@@ -1156,10 +1156,10 @@
    "why": "the metric-loop ledger had 10 rows, then none for 7 days: the loop that writes it has gone quiet"
   },
   {
-   "evidence": "opened 953, closed 971",
+   "evidence": "opened 954, closed 971",
    "id": "issues",
    "kind": "drift",
-   "why": "issues are opening faster than they close: backlog grew by -18 over 30 days"
+   "why": "issues are opening faster than they close: backlog grew by -17 over 30 days"
   }
  ],
  "history_days": 13,
@@ -1194,10 +1194,10 @@
    461,
    298,
    -10,
-   -18
+   -17
   ],
   "closed": 971,
-  "opened": 953
+  "opened": 954
  },
  "loops": [
   {
@@ -1697,7 +1697,7 @@
   {
    "loop": "provenance",
    "quiet_days": 0,
-   "rows": 41,
+   "rows": 40,
    "series": [
     0,
     0,
@@ -1728,14 +1728,14 @@
     0,
     0,
     27,
-    14
+    13
    ],
-   "slope": 0.2525
+   "slope": 0.2461
   },
   {
    "loop": "resilience",
    "quiet_days": 0,
-   "rows": 73,
+   "rows": 74,
    "series": [
     0,
     0,
@@ -1766,14 +1766,14 @@
     1,
     4,
     37,
-    9
+    10
    ],
-   "slope": 0.402
+   "slope": 0.4085
   },
   {
    "loop": "saydo",
    "quiet_days": 0,
-   "rows": 10,
+   "rows": 11,
    "series": [
     0,
     0,
@@ -1804,9 +1804,9 @@
     0,
     0,
     8,
-    2
+    3
    ],
-   "slope": 0.061
+   "slope": 0.0674
   },
   {
    "loop": "seed-launches",
@@ -1887,7 +1887,7 @@
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 6,
+   "rows": 7,
    "series": [
     0,
     0,
@@ -1918,14 +1918,14 @@
     0,
     0,
     5,
-    1
+    2
    ],
-   "slope": 0.0365
+   "slope": 0.0429
   },
   {
    "loop": "ultrastability",
    "quiet_days": 0,
-   "rows": 2177,
+   "rows": 2218,
    "series": [
     0,
     0,
@@ -1956,9 +1956,9 @@
     65,
     171,
     1411,
-    377
+    418
    ],
-   "slope": 12.8558
+   "slope": 13.1204
   },
   {
    "loop": "worker-merge-evidence",
@@ -2001,7 +2001,7 @@
   {
    "loop": "yearsim",
    "quiet_days": 0,
-   "rows": 11,
+   "rows": 12,
    "series": [
     0,
     0,
@@ -2032,9 +2032,9 @@
     0,
     0,
     9,
-    2
+    3
    ],
-   "slope": 0.067
+   "slope": 0.0734
   }
  ],
  "observed": {
