@@ -249,6 +249,10 @@
       "class": "core",
       "role": "Is a change real: classifies a diff as behaviour, literal, comment, format, import, generated or record, so trivial merges never count as progress (SUBSTANCE-1)"
     },
+    "core/stickiness": {
+      "class": "core",
+      "role": "A reason to come back: freshness, breadth, depth and diversity of content measured per system, a plan to fix a stale or thin one, feeds, a what's-new page and a social queue (STICKY-1)"
+    },
     "core/flowbalance": {
       "class": "core",
       "role": "Issue inflow against closures and SLA ages; supersedes duplicates and batches floods (FLOW-BALANCE-1)"

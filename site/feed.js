@@ -12,3 +12,10 @@ export function atom(entries, host) {
 export function feedResponse(host, entries = FEED_ENTRIES) {
   return new Response(atom(entries, host), { headers: { "content-type": "application/atom+xml; charset=utf-8", "cache-control": "public, max-age=900", "access-control-allow-origin": "*" } });
 }
+
+// STICKY-1: the same entries as JSON Feed 1.1, which the tick step `stickiness` reads to judge whether the platform gives a reader a reason to return.
+export function jsonFeedResponse(host, entries = FEED_ENTRIES) {
+  const body = { version: "https://jsonfeed.org/version/1.1", title: "Ultrastable: what the system shipped", home_page_url: "https://" + host + "/live", feed_url: "https://" + host + "/feed.json",
+    items: entries.map(e => ({ id: e.id, url: "https://" + host + "/live", title: e.title, content_text: e.summary || "", date_published: e.at, tags: ["platform"], _domain: "platform", _kind: "update" })) };
+  return new Response(JSON.stringify(body), { headers: { "content-type": "application/feed+json; charset=utf-8", "cache-control": "public, max-age=900", "access-control-allow-origin": "*" } });
+}

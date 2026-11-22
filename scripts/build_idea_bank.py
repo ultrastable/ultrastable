@@ -5,6 +5,8 @@
 
   python3 scripts/build_idea_bank.py           regenerate site/idea-bank-data.js
   python3 scripts/build_idea_bank.py --check   fail when an idea does not boot, the bank is not diverse, or the file is stale
+  python3 scripts/build_idea_bank.py --live    WORLDWIDE-1: fetch every data probe; retire an idea whose sources all stopped answering
+  python3 scripts/build_idea_bank.py --grow    GROW-1: ask the model route for one new idea, admit it only through every gate
 
 Each idea in doctrine/idea-bank.json is written as an IDEA.md and run through the seed bootstrap's own stages
 (read, qualify, instrument) with the seed's real ultrastable.json and autonomy policy. An idea that the seed would refuse
@@ -53,6 +55,16 @@ def validate(bank):
         for k in ("id", "domain", "reach", "text", "keywords", "loop", "measure", "upkeep", "budget"):
             if not i.get(k):
                 errs.append(f"{i.get('id')}: missing {k}")
+        for k in bank.get("depth_fields", []):
+            if len(str((i.get("depth") or {}).get(k, ""))) < 20:
+                errs.append(f"{i.get('id')}: depth.{k} missing (DEPTH-1: a one-trick idea has no corpus)")
+        if len(str(i.get("empowers", ""))) < 20:
+            errs.append(f"{i.get('id')}: empowers missing (PUBLIC-GOOD-1: name the change it empowers)")
+        if i.get("domain") in bank.get("refused_domains", []):
+            errs.append(f"{i.get('id')}: domain {i['domain']} is refused (PUBLIC-GOOD-1: not e-commerce)")
+        data = i.get("data") or []
+        if not data or not all(d.get("name") and (d.get("probe", "").startswith("https://") or (d["name"] == "own" and d.get("note"))) for d in data):
+            errs.append(f"{i.get('id')}: data missing (WORLDWIDE-1: name the worldwide open source with an https probe, or own records)")
         if len(i.get("text", "")) > 120:
             errs.append(f"{i['id']}: text over 120 characters")
     dom = Counter(i["domain"] for i in ideas)
@@ -66,6 +78,68 @@ def validate(bank):
         if not ok:
             errs.append(f"{i['id']} does not boot: {detail}")
     return errs
+
+
+def probe(url, timeout=15):
+    import urllib.request
+    req = urllib.request.Request(url, headers={"User-Agent": "ultrastable-idea-bank/1"})
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            return 200 <= r.status < 400
+    except Exception as e:  # recorded by the caller as a dead source
+        print(f"probe failed {url}: {type(e).__name__}: {e}")
+        return False
+
+
+def live(bank):
+    """WORLDWIDE-1: an idea with probed sources keeps its place only while at least one still answers."""
+    keep, changed = [], False
+    for i in bank["ideas"]:
+        urls = [d["probe"] for d in i.get("data", []) if d.get("probe")]
+        if urls and not any(probe(u) for u in urls):
+            bank["retired"].append({"id": i["id"], "why": "no data source answered", "idea": i}); changed = True
+            print(f"retired {i['id']}: no data source answered")
+        else:
+            keep.append(i)
+    bank["ideas"] = keep
+    return changed
+
+
+GROW_PROMPT = """You propose ONE new idea for the Ultrastable front door. Ultrastable runs ongoing autonomous systems for public good,
+at the depth of an evidence encyclopedia (Unlearn) or a practical-solutions atlas: a corpus that keeps growing, a method that makes it
+trustworthy, a reason to come back. Never commerce, shops, orders, sales or cost cutting. It must work worldwide on open data that
+exists today (give real https URLs of public APIs or datasets that answer without a key) or on the user's own records ("own").
+It must be surprising and interesting, different from every existing idea and domain listed below.
+Reply with only a JSON object with keys: id (kebab-case), domain, reach ("global"), text (under 120 characters, plain words),
+keywords, loop, measure, upkeep, budget (USD per month, number), depth {corpus, method, returns}, empowers,
+data [{name, probe}] (or {name: "own", note}).
+Existing ideas:
+"""
+
+
+def grow(bank, complete=None):
+    """GROW-1: one new idea per pass, admitted only through every gate (schema, depth, public good, data, seed boot, live probes)."""
+    if complete is None:
+        sys.path.insert(0, str(ROOT))
+        from foundation import agents
+        complete = lambda p: agents.complete(p)[0]
+    have = "\n".join(f"- [{i['domain']}] {i['text']}" for i in bank["ideas"] + [r["idea"] for r in bank["retired"][-20:]])
+    cand = complete(GROW_PROMPT + have)
+    if not isinstance(cand, dict) or any(cand.get("id") == i["id"] for i in bank["ideas"]):
+        return False, "no new idea returned"
+    cand["added"] = __import__("datetime").date.today().isoformat()
+    trial = dict(bank, ideas=bank["ideas"] + [cand])
+    errs = [e for e in validate(trial) if cand.get("id", "?") in e or "domain" in e]
+    if errs:
+        return False, "; ".join(errs)
+    urls = [d["probe"] for d in cand.get("data", []) if d.get("probe")]
+    if urls and not all(probe(u) for u in urls):
+        return False, "a data source did not answer"
+    bank["ideas"].append(cand)
+    while len(bank["ideas"]) > bank.get("max_active", 24):
+        old = min(bank["ideas"], key=lambda i: i.get("added", ""))
+        bank["ideas"].remove(old); bank["retired"].append({"id": old["id"], "why": "rotated out by a newer idea", "idea": old})
+    return True, cand["id"]
 
 
 def render(bank):
@@ -84,6 +158,17 @@ def render(bank):
 
 def main():
     bank = json.loads(BANK.read_text())
+    if "--live" in sys.argv or "--grow" in sys.argv:
+        changed = live(bank) if "--live" in sys.argv else False
+        if "--grow" in sys.argv:
+            try:
+                ok, detail = grow(bank)
+            except Exception as e:  # recorded; the bank stays as it was
+                ok, detail = False, f"{type(e).__name__}: {e}"
+            print(("grew: " if ok else "no growth: ") + detail)
+            changed = changed or ok
+        if changed:
+            BANK.write_text(json.dumps(bank, indent=1, ensure_ascii=False) + "\n")
     errs = validate(bank)
     if errs:
         print("idea bank refused:\n  " + "\n  ".join(errs)); return 1
