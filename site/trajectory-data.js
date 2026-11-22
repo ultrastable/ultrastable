@@ -5,7 +5,7 @@ export default {
   {
    "area": "doctrine",
    "quiet_days": 0,
-   "recent7": 37759,
+   "recent7": 37860,
    "series": [
     0,
     0,
@@ -36,16 +36,16 @@ export default {
     434,
     8395,
     16515,
-    152
+    253
    ],
-   "share_recent": 0.167,
+   "share_recent": 0.166,
    "share_trend": 0.194,
-   "total": 90980
+   "total": 91081
   },
   {
    "area": "workers",
-   "quiet_days": 1,
-   "recent7": 73287,
+   "quiet_days": 0,
+   "recent7": 73289,
    "series": [
     0,
     0,
@@ -76,56 +76,16 @@ export default {
     379,
     1771,
     323,
-    0
+    2
    ],
-   "share_recent": 0.324,
-   "share_trend": 0.157,
-   "total": 73287
-  },
-  {
-   "area": "foundation",
-   "quiet_days": 0,
-   "recent7": 19259,
-   "series": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    816,
-    1830,
-    7830,
-    840,
-    1349,
-    2457,
-    361,
-    5408,
-    1244,
-    487,
-    4064,
-    7155,
-    540
-   ],
-   "share_recent": 0.085,
-   "share_trend": 0.073,
-   "total": 34381
+   "share_recent": 0.321,
+   "share_trend": 0.156,
+   "total": 73289
   },
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 25670,
+   "recent7": 26567,
    "series": [
     0,
     0,
@@ -156,11 +116,51 @@ export default {
     575,
     6177,
     12277,
-    304
+    1201
    ],
-   "share_recent": 0.114,
-   "share_trend": 0.072,
-   "total": 33592
+   "share_recent": 0.116,
+   "share_trend": 0.073,
+   "total": 34489
+  },
+  {
+   "area": "foundation",
+   "quiet_days": 0,
+   "recent7": 19298,
+   "series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    816,
+    1830,
+    7830,
+    840,
+    1349,
+    2457,
+    361,
+    5408,
+    1244,
+    487,
+    4064,
+    7155,
+    579
+   ],
+   "share_recent": 0.084,
+   "share_trend": 0.073,
+   "total": 34420
   },
   {
    "area": "ip",
@@ -199,13 +199,13 @@ export default {
     0
    ],
    "share_recent": 0.063,
-   "share_trend": 0.067,
+   "share_trend": 0.066,
    "total": 31241
   },
   {
    "area": "instances",
    "quiet_days": 0,
-   "recent7": 10135,
+   "recent7": 11650,
    "series": [
     0,
     0,
@@ -236,11 +236,11 @@ export default {
     41,
     353,
     1621,
-    147
+    1662
    ],
-   "share_recent": 0.045,
-   "share_trend": 0.041,
-   "total": 19271
+   "share_recent": 0.051,
+   "share_trend": 0.044,
+   "total": 20786
   },
   {
    "area": "seed/worker",
@@ -279,7 +279,7 @@ export default {
     257
    ],
    "share_recent": 0.043,
-   "share_trend": 0.035,
+   "share_trend": 0.034,
    "total": 16232
   },
   {
@@ -323,7 +323,7 @@ export default {
    "total": 14456
   }
  ],
- "at": "2026-11-22T01:23:48Z",
+ "at": "2026-11-22T10:53:49Z",
  "days": 30,
  "findings": [
   {
@@ -333,10 +333,10 @@ export default {
    "why": "doctrine's share of attention moved 19 points between the first and second half of the window"
   },
   {
-   "evidence": "recent7 73287 lines, prior weekly mean 0.0",
+   "evidence": "recent7 73289 lines, prior weekly mean 0.0",
    "id": "workers",
    "kind": "hotspot",
-   "why": "workers drew 32% of the last week's change, 73287.0x its earlier weekly pace"
+   "why": "workers drew 32% of the last week's change, 73289.0x its earlier weekly pace"
   },
   {
    "evidence": "share 0% then 16%",
@@ -345,13 +345,13 @@ export default {
    "why": "workers's share of attention moved 16 points between the first and second half of the window"
   },
   {
-   "evidence": "quiet_days 7; system change in the last 7 days 225889",
+   "evidence": "quiet_days 7; system change in the last 7 days 228572",
    "id": "seed/outreach",
    "kind": "neglected",
    "why": "seed/outreach had 139 lines of change, then nothing for 7 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 9; system change in the last 7 days 225889",
+   "evidence": "quiet_days 9; system change in the last 7 days 228572",
    "id": "docs/runbooks",
    "kind": "neglected",
    "why": "docs/runbooks had 134 lines of change, then nothing for 9 days while the rest of the system moved"
@@ -431,16 +431,16 @@ export default {
    461,
    298,
    -10,
-   -18
+   -224
   ],
-  "closed": 971,
-  "opened": 953
+  "closed": 1183,
+  "opened": 959
  },
  "loops": [
   {
    "loop": "ultrastability",
    "quiet_days": 0,
-   "rows": 2177,
+   "rows": 4014,
    "series": [
     0,
     0,
@@ -471,13 +471,13 @@ export default {
     65,
     171,
     1411,
-    377
+    2214
    ]
   },
   {
    "loop": "deploys",
    "quiet_days": 0,
-   "rows": 871,
+   "rows": 873,
    "series": [
     0,
     0,
@@ -508,13 +508,13 @@ export default {
     15,
     50,
     145,
-    21
+    23
    ]
   },
   {
    "loop": "improvements",
    "quiet_days": 0,
-   "rows": 855,
+   "rows": 860,
    "series": [
     0,
     0,
@@ -545,7 +545,7 @@ export default {
     0,
     70,
     70,
-    10
+    15
    ]
   },
   {
@@ -623,6 +623,43 @@ export default {
    ]
   },
   {
+   "loop": "resilience",
+   "quiet_days": 0,
+   "rows": 117,
+   "series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    19,
+    3,
+    1,
+    4,
+    37,
+    53
+   ]
+  },
+  {
    "loop": "checks-session",
    "quiet_days": 0,
    "rows": 98,
@@ -660,9 +697,9 @@ export default {
    ]
   },
   {
-   "loop": "resilience",
+   "loop": "yearsim",
    "quiet_days": 0,
-   "rows": 73,
+   "rows": 55,
    "series": [
     0,
     0,
@@ -688,49 +725,12 @@ export default {
     0,
     0,
     0,
-    19,
-    3,
-    1,
-    4,
-    37,
-    9
-   ]
-  },
-  {
-   "loop": "agent-cost",
-   "quiet_days": 1,
-   "rows": 53,
-   "series": [
     0,
     0,
     0,
     0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    2,
-    0,
-    4,
-    0,
-    0,
-    0,
-    47,
-    0
+    9,
+    46
    ]
   }
  ],
