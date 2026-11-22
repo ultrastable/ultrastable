@@ -1,5 +1,5 @@
 {
- "at": "2026-11-21T22:53:13Z",
+ "at": "2026-11-22T09:12:13Z",
  "probes": {
   "closed-loops/closedloop": {
    "status": "ok",
@@ -56,10 +56,10 @@
    "item": null
   },
   "no-merge-over-red/mergeaudit": {
-   "status": "violated",
-   "detail": "merged without green checks: #1851, #1854, #1876, #1885, #1894",
+   "status": "ok",
+   "detail": "every recent merge had a green checks run",
    "fixed": false,
-   "item": "Q-RULE-no-merge-over-red-mergeaudit"
+   "item": null
   },
   "no-merge-over-red/ciwatch": {
    "status": "ok",
@@ -244,7 +244,7 @@
    "statement": "Words match code: every public statement is bound to a probe of the running code (CLAIMS-1, WORDS-MATCH-CODE-1)."
   },
   "no-merge-over-red": {
-   "status": "violated",
+   "status": "enforced",
    "ci": 2,
    "probes": 2,
    "gaps": [],
