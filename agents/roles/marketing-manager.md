@@ -17,6 +17,7 @@
 4. Keep the demo video current: edit `video/storyboard.json` (live pages plus guard-clean narration) by PR; `.github/workflows/demo-video.yml` rebuilds it server-side and publishes `releases/download/demo-video/demo.mp4`.
 5. Measure last cycle's items (pageviews, referrals, signups) and keep, change or drop each channel on the numbers.
 6. Open site changes as pull requests; never edit the live site directly.
+7. Promotion is every tenant's job too (TENANT-PROMO-1): each system in `instances/ultrastable/progress.json` serves a social queue built with `seed/worker/src/promoqueue.js`, is listed in `social/gate.json` `tenant_queues`, is a live showcase in `doctrine/stakeholders.json` and links its siblings; `python3 -m foundation tenantpromo --check` fails until it does.
 
 ## Never
 - Post anything the claim guards have not cleared, or any claim that cannot be checked at a source.

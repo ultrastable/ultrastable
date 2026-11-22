@@ -2381,6 +2381,20 @@
    "bound_by": "cited"
   },
   {
+   "id": "cited-48bc37edfc",
+   "surface": "agents/AGENTS.md",
+   "text": "- **Promotion is part of every app's and tenant's role (TENANT-PROMO-1, Rowan 2026-11-22).** \"Make sure to keep this in the Ultrastable",
+   "probe": [
+    "file:seed/worker/src/promoqueue.js",
+    "file:social/gate.json",
+    "file:seed/worker/src/social.js",
+    "file:doctrine/stakeholders.json",
+    "file:instances/ultrastable/progress.json",
+    "file:doctrine/tenant-promotion.json"
+   ],
+   "bound_by": "cited"
+  },
+  {
    "id": "cited-181b9ac692",
    "surface": "agents/AGENTS.md",
    "text": "- **The system knows what the owner does not (BLINDSPOT-1, Rowan 2026-11-14).** \"I don't know what I don't know. The system needs to know",
@@ -3188,6 +3202,21 @@
    ],
    "bound_by": "mirror",
    "of": "cited-23253f39ac"
+  },
+  {
+   "id": "mirror-9b307fb83e",
+   "surface": "seed/agents/AGENTS.md",
+   "text": "- **Promotion is part of every app's and tenant's role (TENANT-PROMO-1, Rowan 2026-11-22).** \"Make sure to keep this in the Ultrastable",
+   "probe": [
+    "file:seed/worker/src/promoqueue.js",
+    "file:social/gate.json",
+    "file:seed/worker/src/social.js",
+    "file:doctrine/stakeholders.json",
+    "file:instances/ultrastable/progress.json",
+    "file:doctrine/tenant-promotion.json"
+   ],
+   "bound_by": "mirror",
+   "of": "cited-48bc37edfc"
   },
   {
    "id": "mirror-5d4658a60b",
