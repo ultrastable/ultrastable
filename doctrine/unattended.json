@@ -371,13 +371,12 @@
    "id": "offsite-backup",
    "class": "dependency",
    "what": "D1 holds the org state with only Cloudflare's own point-in-time restore; the audit chain's R2 sink is not bound on the tick Worker",
-   "status": "open",
+   "status": "closed",
    "renewal": "none",
    "expires": null,
-   "evidence": "Cloudflare API: R2 buckets = [ultrastable-git]; ultrastable-tick has no r2_bucket binding; 5 D1 databases, 15.6 MB",
-   "measured": "2026-11-20",
-   "probe": "cmd:python3 -m foundation unattended --probe offsite-backup",
-   "item": "Q-YEAR-offsite-backup"
+   "evidence": "Two homes, both exercised: the tick (binding AUDIT, deployed 2026-11-22 01:11) wrote backups/d1/ultrastable-org/2026-11-22.ndjson.gz (1095514 bytes) to R2 ultrastable-audit at 01:11:32 and counts it only after a readback with the same hash and row count (seed/worker/src/d1snapshot.js, daily, 14 kept); the weekly restore drill dumps D1 to the ops repository (foundation/backup.py, ops/backup/last-restore.json)",
+   "measured": "2026-11-22",
+   "probe": "cmd:python3 -m foundation unattended --probe offsite-backup"
   },
   {
    "id": "visible-progress",
