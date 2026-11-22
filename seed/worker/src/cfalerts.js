@@ -8,8 +8,8 @@
 export const QUIET_HOURS = 24;
 export const POLICIES = [
   { alert_type: 'incident_alert', name: 'Ultrastable: Cloudflare incidents (CF-ALERTS-1)', filters: { incident_impact: ['INCIDENT_IMPACT_MAJOR', 'INCIDENT_IMPACT_CRITICAL'] } },
-  { alert_type: 'workers_observability_alert', name: 'Ultrastable: Worker error rate (CF-ALERTS-1)', filters: {} },
-  { alert_type: 'billing_usage_alert', name: 'Ultrastable: usage-based billing (CF-ALERTS-1)', filters: {} },
+  { alert_type: 'workers_observability_alert', name: 'Ultrastable: Worker error rate (CF-ALERTS-1)', filters: { status: ['FIRING_FAILED'] } },  // the API refuses an empty filter (17103)
+  { alert_type: 'billing_budget_alert', name: 'Ultrastable: month bill reached 10 USD (CF-ALERTS-1)', filters: { total_spend_dollars: ['10'] } },  // spend, not per-product usage: billing_usage_alert needs a product and limit
   { alert_type: 'universal_ssl_event_type', name: 'Ultrastable: certificate events (CF-ALERTS-1)', filters: {} },
 ];
 const TYPE = /^[a-z0-9_]{1,64}$/;
