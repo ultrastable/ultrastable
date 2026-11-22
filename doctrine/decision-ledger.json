@@ -4808,6 +4808,42 @@
    "body": "build_idea_bank.py calls foundation/ideas.py depth() so front-door ideas and self-chosen apps share DEPTH-1 (thesis, corpus, loop, returns, hook, public_good, horizon).",
    "probe": "grep:scripts/build_idea_bank.py::_ideas.depth",
    "session": "session_0156nqDriyeVtn3erZ59DmMT"
+  },
+  {
+   "id": "decision-2026-11-22-owner-console-shows-only-what-is-true-the-system-closes-its-",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "Owner console shows only what is true; the system closes its own fix tasks",
+   "body": "Session: session_0156nqDuBwwRB8fWQWzUbU4L. Rowan 2026-11-22: /owner and the digest were noise. OWNER-LINKS-3, SELF-FIX-2, LEGACY-TASKS-1, DIGEST-QUIET-1, PLAN-FACT-1, SELFCHECK-FRESH-1 in dashboard/worker.js and seed/analytics/analytics.js; fleet tasks read-only, no owner buttons.",
+   "probe": "grep:dashboard/worker.js::LEGACY-TASKS-1",
+   "session": "session_0156nqDuBwwRB8fWQWzUbU4L"
+  },
+  {
+   "id": "decision-2026-11-22-post-feedback-1-engagement-read-back-and-scored-per-arm",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "POST-FEEDBACK-1: engagement read back and scored per arm",
+   "body": "Public like, repost and reply counts for Bluesky and Mastodon posts are read a day after posting, stored on social_posted and used to break ties between equally ranked posts. The relay's AI-generated marker (qnfo-social, Quniverse account, Art. 50) is left as is: its source is not in these repos and a redeploy without it risks losing bindings.",
+   "probe": "file:seed/worker/src/postfeedback.js",
+   "session": "session_0156nqDvwemVbNQXnbPtTWSr"
+  },
+  {
+   "id": "decision-2026-11-22-promotion-is-part-of-every-tenant-s-role-unlearn-promotes-it",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "Promotion is part of every tenant's role; Unlearn promotes itself",
+   "body": "TENANT-PROMO-1 (Rowan 2026-11-22). Unlearn serves /social-queue.json (one belief every 2 days from 2026-11-23, built by the shared seed/worker/src/promoqueue.js), listed in social/gate.json tenant_queues and drained by the core publisher, which now takes tenants in turn (fairOrder). Unlearn is a live showcase on ultrastable.io and every Unlearn page links its live siblings from doctrine/stakeholders.json. foundation/tenantpromo.py --check (in checks) fails any system in progress.json that does not promote itself. Practical Solutions linking Unlearn from its own pages is a change in ultrastable/practical-solutions; it is cross-promoted from ultrastable.io and from Unlearn meanwhile.",
+   "probe": "file:foundation/tenantpromo.py",
+   "session": "session_0156nqDs5nJM2H2Skg8FBBcb"
+  },
+  {
+   "id": "decision-2026-11-22-sticky-1-the-stickiness-step-files-its-item-with-a-small-res",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "STICKY-1: the stickiness step files its item with a small reserve above the daily item limit",
+   "body": "The stickiness step now passes cap = ORIGINATE_MAX_PER_DAY + STICKY_RESERVE (5) to ensureItem. Item ids are fixed per system, so a refile is a no-op. Evidence: live D1 had stickiness_state rows but no STICKY items while budget_ledger showed 20 of 20 used. Verified by seed/worker/test/stickiness.test.js.",
+   "probe": "file:seed/worker/src/stickiness.js",
+   "session": "session_0156nqDtwtLqnATRJwnaK1EC"
   }
  ]
 }
