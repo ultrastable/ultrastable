@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-22-unlearn-research-principles-carried-in-code",
+  "kind": "decision",
+  "date": "2026-11-22",
+  "title": "Unlearn research principles carried in code",
+  "body": "Each principle in instances/unlearn/phases.json names a probe; phase 1 ships the help ladder, who-led measure and wide-walls measure; phase 3 principles (fade support, sandbox) wait for phase 3 gates.",
+  "probe": "grep:tests/foundation/test_unlearn.py::test_principles_are_in_code"
+ },
+ "kind": "decision",
+ "title": "Unlearn research principles carried in code",
+ "session": ""
+}
