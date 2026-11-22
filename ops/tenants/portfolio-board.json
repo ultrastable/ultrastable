@@ -1,8 +1,9 @@
 {
- "at": "2026-11-21T14:37:03Z",
+ "at": "2026-11-22T14:31:41Z",
  "claims_drift": null,
  "declared_metric": null,
+ "declared_target": null,
  "slug": "portfolio-board",
- "spend_vs_budget": null,
- "uptime": 0.0
+ "spend_vs_budget": 0.0,
+ "uptime": 1.0
 }
