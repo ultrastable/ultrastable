@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-22-seed-deploy-1-a-fresh-seed-answers-health-503-until-its-firs",
+  "kind": "lesson",
+  "date": "2026-11-22",
+  "title": "SEED-DEPLOY-1: a fresh seed answers /health 503 until its first tick",
+  "body": "A freshly deployed seed answers /health with 503 until its first cron tick completes, so a strict 200 probe read a running worker as dead. The seed deploy now starts the first tick through /pulse/watch and accepts a JSON answer naming the org; a failed probe records status and body in its ops/deploys.jsonl row. session_0156nqDth3dDYAsL8hsm79sa",
+  "probe": "grep:deploy/deploy-seed.mjs::pulse/watch"
+ },
+ "kind": "lesson",
+ "title": "SEED-DEPLOY-1: a fresh seed answers /health 503 until its first tick",
+ "session": ""
+}
