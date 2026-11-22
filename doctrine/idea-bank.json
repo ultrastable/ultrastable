@@ -1,5 +1,5 @@
 {
- "_doc": "IDEA-BANK-1 (Rowan, 2026-11-22: the front-door examples must be diverse and actually buildable). Every idea the front door suggests lives here with its domain, reach and the four system-test answers. scripts/build_idea_bank.py runs each one through the seed's own bootstrap stages (read, qualify, instrument) on a generated IDEA.md, refuses the bank when one fails or when the domains are not diverse, and writes site/idea-bank-data.js, which site/suggest.js and site/interview.js read. DEPTH-1 (Rowan, 2026-11-22: 'the depth of idea, the depth of concept of Unlearn and Practical Solutions'): every idea also names its depth: the corpus it keeps growing, the method that makes it trustworthy, and why a reader comes back. A one-trick idea (a single feed, a single alert) has no corpus and is refused. Edit this file, never the generated one. PUBLIC-GOOD-1 (Rowan, 2026-11-22: 'This is about some kind of bigger good, some kind of public good, something that empowers change ... Go get Squarespace if you want e-commerce'): every idea names the change it empowers (`empowers`); domains in `refused_domains` (selling, shops, orders, cost cutting) are refused. WORLDWIDE-1 (Rowan, 2026-11-22: 'these ideas have to work worldwide ... if you don't have the data to back them up, they're not going to work ... point and click and get running'): every idea lists `data`, the worldwide open sources it runs on (or `own`, the user's own records, which exist anywhere); a source with a probe URL is fetched by `build_idea_bank.py --live` (weekly in scout.yml) and an idea whose sources stop answering is retired. GROW-1: `build_idea_bank.py --grow` asks the model route for a new idea each pass, admits it only through the same gates, and retires the oldest beyond `max_active`, so the set never goes static.",
+ "_doc": "IDEA-BANK-1 (Rowan, 2026-11-22: the front-door examples must be diverse and actually buildable). Every idea the front door suggests lives here with its domain, reach and the four system-test answers. scripts/build_idea_bank.py runs each one through the seed's own bootstrap stages (read, qualify, instrument) on a generated IDEA.md, refuses the bank when one fails or when the domains are not diverse, and writes site/idea-bank-data.js, which site/suggest.js and site/interview.js read. DEPTH-1 (Rowan, 2026-11-22: 'the depth of idea, the depth of concept of Unlearn and Practical Solutions'): every idea also names its depth: the corpus it keeps growing, the method that makes it trustworthy, and why a reader comes back. A one-trick idea (a single feed, a single alert) has no corpus and is refused. Edit this file, never the generated one. PUBLIC-GOOD-1 (Rowan, 2026-11-22: 'This is about some kind of bigger good, some kind of public good, something that empowers change ... Go get Squarespace if you want e-commerce'): every idea names the change it empowers (`empowers`); domains in `refused_domains` (selling, shops, orders, cost cutting) are refused. WORLDWIDE-1 (Rowan, 2026-11-22: 'these ideas have to work worldwide ... if you don't have the data to back them up, they're not going to work ... point and click and get running'): every idea lists `data`, the worldwide open sources it runs on (or `own`, the user's own records, which exist anywhere); a source with a probe URL is fetched by `build_idea_bank.py --live` (weekly in scout.yml) and an idea whose sources stop answering is retired. GROW-1: `build_idea_bank.py --grow` asks the model route for a new idea each pass, admits it only through the same gates, and retires the oldest beyond `max_active`, so the set never goes static. One rule with DEPTH-1 for apps: build_idea_bank.py calls foundation/ideas.py depth() on every idea (thesis, corpus, loop, returns, hook, public_good, horizon), mapping depth.method to loop and empowers to public_good.",
  "min_domains": 8,
  "max_per_domain": 3,
  "ideas": [
@@ -29,7 +29,14 @@
      "probe": "https://www.campbellcollaboration.org/"
     }
    ],
-   "added": "2026-11-22"
+   "added": "2026-11-22",
+   "thesis": "Many popular public programmes do not do what people believe, and the trials can say which ones do",
+   "hook": "Guess whether a famous programme worked, then see what its trials found",
+   "horizon": [
+    "Grade the best-known programmes in one policy area",
+    "Cover every major area and re-grade as trials land",
+    "Let any city compare its own programmes against the evidence"
+   ]
   },
   {
    "id": "food-system-map",
@@ -57,7 +64,14 @@
      "probe": "https://www.fao.org/faostat/en/"
     }
    ],
-   "added": "2026-11-22"
+   "added": "2026-11-22",
+   "thesis": "Food goes to waste a few miles from people who are short of it because nobody can see both at once",
+   "hook": "See on a map where surplus sits today and which pantry nearby is running short",
+   "horizon": [
+    "Map farms and food banks in one region",
+    "Match surplus offers to shortfalls every week",
+    "Publish the routing so any region can run it on open map data"
+   ]
   },
   {
    "id": "claim-tracker",
@@ -85,7 +99,14 @@
      "probe": "https://api.openalex.org/works?per-page=1"
     }
    ],
-   "added": "2026-11-22"
+   "added": "2026-11-22",
+   "thesis": "Viral claims outrun their corrections because nobody tracks a claim across all its variants",
+   "hook": "Paste something you saw shared and see its whole history and the evidence on it",
+   "horizon": [
+    "Track claims already checked by fact-checkers worldwide",
+    "Link variants into one graph and follow re-sharing",
+    "Warn readers when a claim they checked comes back changed"
+   ]
   },
   {
    "id": "adaptation-atlas",
@@ -100,7 +121,7 @@
    "depth": {
     "corpus": "measures from cities worldwide with their costs and measured results",
     "method": "results graded by evaluation design; untested claims are marked as such",
-    "returns": "each season's extremes add evidence"
+    "returns": "each season's floods and heatwaves add evidence, so councils check again before every budget"
    },
    "empowers": "helps towns spend scarce money on measures that protect people",
    "data": [
@@ -117,7 +138,14 @@
      "probe": "https://api.openalex.org/works?search=climate%20adaptation%20evaluation&per-page=1"
     }
    ],
-   "added": "2026-11-22"
+   "added": "2026-11-22",
+   "thesis": "Towns copy flood and heat measures that sound good without knowing which ones actually protected people",
+   "hook": "Pick your town's risk and see which measures elsewhere really cut the damage",
+   "horizon": [
+    "Gather evaluated measures for floods",
+    "Add heat and drought, graded by outcome",
+    "Help any council shortlist measures by cost and evidence"
+   ]
   },
   {
    "id": "replication-ledger",
@@ -145,7 +173,14 @@
      "probe": "https://api.openalex.org/works?per-page=1"
     }
    ],
-   "added": "2026-11-22"
+   "added": "2026-11-22",
+   "thesis": "A large share of famous findings did not hold up when repeated, yet they are still taught and cited",
+   "hook": "Guess whether a textbook finding survived replication, then see the record",
+   "horizon": [
+    "Ledger the landmark findings of one field",
+    "Flag papers and courses that still cite fallen findings",
+    "Extend to every field with replication data"
+   ]
   },
   {
    "id": "model-evals",
@@ -160,7 +195,7 @@
    "depth": {
     "corpus": "a growing suite of tests and every score every model has had",
     "method": "fixed tests, repeated runs and published variance",
-    "returns": "every new release is a new comparison"
+    "returns": "every new model release is a new comparison against the whole history of scores"
    },
    "empowers": "gives the public an independent record of how AI models really behave",
    "data": [
@@ -169,7 +204,14 @@
      "probe": "https://huggingface.co/api/models?limit=1"
     }
    ],
-   "added": "2026-11-22"
+   "added": "2026-11-22",
+   "thesis": "Claims about AI models drift from what the models actually do from release to release",
+   "hook": "Pick two models and see how they really compare on the same tests over time",
+   "horizon": [
+    "Run a fixed public test suite on each release",
+    "Track regressions and publish variance",
+    "Let anyone add a test that runs on every future release"
+   ]
   },
   {
    "id": "open-curriculum",
@@ -197,7 +239,14 @@
      "probe": "https://www.wikidata.org/w/api.php?action=query&format=json"
     }
    ],
-   "added": "2026-11-22"
+   "added": "2026-11-22",
+   "thesis": "Courses stay the same while learners keep getting stuck at the same places year after year",
+   "hook": "Take a two-minute check and see the lesson rewritten for exactly where you got stuck",
+   "horizon": [
+    "Publish one full course with a stuck-point record",
+    "Rewrite lessons from each cohort's results",
+    "Open the method so any teacher can run it on their own course"
+   ]
   },
   {
    "id": "club-hub",
@@ -221,7 +270,14 @@
      "note": "the club's own first-party, cookieless site analytics"
     }
    ],
-   "added": "2026-11-22"
+   "added": "2026-11-22",
+   "thesis": "Volunteer-run groups fade because nobody can see what actually brings members back",
+   "hook": "See this month's turnout and which change last month brought people back",
+   "horizon": [
+    "Run the club's site with turnout tracking",
+    "Test one change a month and keep what works",
+    "Share what works across clubs of the same kind"
+   ]
   },
   {
    "id": "impact-ledger",
@@ -249,7 +305,14 @@
      "probe": "https://iatistandard.org/en/"
     }
    ],
-   "added": "2026-11-22"
+   "added": "2026-11-22",
+   "thesis": "Donations follow stories more than outcomes because outcomes are rarely shown plainly",
+   "hook": "See what a single donation changed, in numbers, for a real programme",
+   "horizon": [
+    "Link one charity's programmes to outcomes",
+    "Compare against similar charities' published results",
+    "Give funders a live view of outcomes instead of annual reports"
+   ]
   },
   {
    "id": "grants-atlas",
@@ -264,7 +327,7 @@
    "depth": {
     "corpus": "every funder and call, with past awards and what won",
     "method": "fit scored from past awards; drafts reuse answers that succeeded",
-    "returns": "new calls open every week"
+    "returns": "new calls open every week, and each charity's past wins sharpen its next match"
    },
    "empowers": "gets funding to small charities that cannot afford a fundraiser",
    "data": [
@@ -277,7 +340,14 @@
      "probe": "https://api.openalex.org/funders?per-page=1"
     }
    ],
-   "added": "2026-11-22"
+   "added": "2026-11-22",
+   "thesis": "Small charities miss funding they qualify for because finding and answering calls takes staff they do not have",
+   "hook": "See the open calls your charity fits today, each with a drafted answer",
+   "horizon": [
+    "Index every open call in one country",
+    "Score fit from past awards and draft answers",
+    "Cover funders worldwide that publish open data"
+   ]
   },
   {
    "id": "decision-journal",
@@ -301,7 +371,14 @@
      "note": "the person's own decisions and predictions"
     }
    ],
-   "added": "2026-11-22"
+   "added": "2026-11-22",
+   "thesis": "People repeat the same misjudgements because they never score their past predictions",
+   "hook": "Write down one decision and a prediction, and get asked how it turned out later",
+   "horizon": [
+    "Log decisions with predictions",
+    "Score them as they resolve",
+    "Show the person their own patterns of misjudgement"
+   ]
   },
   {
    "id": "self-experiments",
@@ -316,7 +393,7 @@
    "depth": {
     "corpus": "every habit I have tried, with its before-and-after numbers",
     "method": "baseline, one change at a time, a fixed test window",
-    "returns": "there is always a next test"
+    "returns": "there is always a next test, and the person's own record of what worked keeps growing"
    },
    "empowers": "helps a person find what really improves their life, by evidence instead of hype",
    "data": [
@@ -325,7 +402,14 @@
      "note": "the person's own habit and health measurements"
     }
    ],
-   "added": "2026-11-22"
+   "added": "2026-11-22",
+   "thesis": "Most habit advice is untested for the person following it, and only a personal test can tell",
+   "hook": "Pick one habit and see your two-week before-and-after numbers",
+   "horizon": [
+    "Run one habit test at a time",
+    "Keep only what measurably helped",
+    "Suggest the next test from what helped people with similar patterns"
+   ]
   },
   {
    "id": "city-history",
@@ -357,7 +441,14 @@
      "probe": "https://commons.wikimedia.org/w/api.php?action=query&format=json"
     }
    ],
-   "added": "2026-11-22"
+   "added": "2026-11-22",
+   "thesis": "A city's popular history drifts from its archives, and the record can be corrected source by source",
+   "hook": "Pick a street and see what the archives say happened there, with the documents",
+   "horizon": [
+    "Tell the stories of one neighbourhood from sources",
+    "Correct the record as new documents surface",
+    "Let residents add sources that are checked before they appear"
+   ]
   },
   {
    "id": "dependency-watch",
@@ -372,7 +463,7 @@
    "depth": {
     "corpus": "a map of packages, maintainers and the projects that depend on them",
     "method": "risk scored from maintenance, security history and reach",
-    "returns": "the graph changes with every release"
+    "returns": "the dependency graph changes with every release, and new risks appear every day"
    },
    "empowers": "protects the open-source commons that public services run on",
    "data": [
@@ -385,7 +476,14 @@
      "probe": "https://deps.dev/"
     }
    ],
-   "added": "2026-11-22"
+   "added": "2026-11-22",
+   "thesis": "Public services rest on open-source packages kept alive by a handful of unpaid people nobody can see",
+   "hook": "Enter a project and see the fragile packages its users depend on without knowing",
+   "horizon": [
+    "Map dependencies and risks for one ecosystem",
+    "Propose fixes upstream for the riskiest packages",
+    "Cover every major ecosystem and alert the projects affected"
+   ]
   },
   {
    "id": "contracts-watch",
@@ -409,7 +507,14 @@
      "probe": "https://data.open-contracting.org/"
     }
    ],
-   "added": "2026-11-22"
+   "added": "2026-11-22",
+   "thesis": "Rigged public tenders leave patterns in open data that citizens can see if someone looks",
+   "hook": "See which contracts near you show red flags, and why",
+   "horizon": [
+    "Score red flags on one country's open contracts",
+    "Follow flagged contracts to delivery and re-score",
+    "Cover every country that publishes open contracting data"
+   ]
   }
  ],
  "depth_fields": [

@@ -14,6 +14,7 @@ const MIGRATE = ['ALTER TABLE social_posted ADD COLUMN status TEXT', 'ALTER TABL
 const weekKey = d => { const t = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate())); const day = t.getUTCDay() || 7; t.setUTCDate(t.getUTCDate() + 4 - day); return t.getUTCFullYear() + '-' + Math.ceil(((t - Date.UTC(t.getUTCFullYear(), 0, 1)) / 864e5 + 1) / 7); };
 
 import { lintPost } from './postquality.js';
+import { migrate as FEEDBACK_MIGRATE, reconcileEngagement, armScores } from './postfeedback.js';
 export async function postMastodon(m, text, id, f) {
   const r = await f('https://' + m.meta.instance + '/api/v1/statuses', { method: 'POST', headers: { authorization: 'Bearer ' + m.access, 'content-type': 'application/json', 'idempotency-key': id }, body: JSON.stringify({ status: text, visibility: 'public' }) });
   if (!r.ok) throw new Error('mastodon HTTP ' + r.status);
@@ -146,16 +147,16 @@ export async function verifyRelay(db, env, f, now = Date.now()) {
 // and inside a rung the tenant posted least in the last 7 days goes first, so no tenant's backlog starves another.
 export const priority = p => (p.arm === 'meta-story' ? 0 : p.kind === 'paper' ? 0.5 : tenantOf(p) ? (p.kind === 'event' ? 1 : 2) : p.kind === 'event' ? 3 : 4);
 const armTenant = arm => { const a = String(arm || ''); return a.startsWith('ps-') ? 'practical-solutions' : a.split('-')[0]; };
-export function fairOrder(posts, rows = [], now = Date.now()) {
+export function fairOrder(posts, rows = [], now = Date.now(), scores = {}) {
   const share = {};
   for (const r of rows) if (now - Date.parse(r.at) < 7 * 864e5) { const t = armTenant(r.arm); share[t] = (share[t] || 0) + 1; }
   const key = p => (tenantOf(p) ? share[tenantOf(p)] || 0 : 0);
-  return posts.slice().sort((a, b) => priority(a) - priority(b) || key(a) - key(b) || String(a.date).localeCompare(String(b.date)));
+  return posts.slice().sort((a, b) => priority(a) - priority(b) || key(a) - key(b) || (scores[b.arm] || 0) - (scores[a.arm] || 0) || String(a.date).localeCompare(String(b.date)));
 }
 
 export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), tenant = 'default', repo = 'ultrastable/ultrastable' }) {
   await store.ensureSchema(db); await db.prepare(DDL).run();
-  for (const q of MIGRATE) { try { await db.prepare(q).run(); } catch (e) { /* allow-silent: the column already exists */ } }
+  for (const q of [...MIGRATE, ...FEEDBACK_MIGRATE]) { try { await db.prepare(q).run(); } catch (e) { /* allow-silent: the column already exists */ } }
   const channels = {};
   for (const [ch, key] of [['bluesky', 'oauth:bluesky'], ['mastodon', 'oauth:mastodon'], ['linkedin', 'oauth:linkedin'], ['buffer', 'oauth:buffer']]) {
     const m = await store.material(db, env, tenant, key);
@@ -178,6 +179,9 @@ export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), t
   for (const ch of gate.paused_channels || []) delete channels[ch];
   if (!Object.keys(channels).length) return { skipped: 'all channels paused' };
   const d = new Date(now), today = d.toISOString().slice(0, 10), rows = (await db.prepare('SELECT id, channel, at, status, attempts, arm FROM social_posted').all()).results || [];
+  // POST-FEEDBACK-1: read back engagement for yesterday's posts, then break ties between equally ranked posts toward the arm that earns more.
+  let fb = { measured: 0, of: 0 }, scores = {};
+  try { fb = await reconcileEngagement(db, f, now); scores = armScores((await db.prepare('SELECT arm, likes, reposts, replies, measured_at FROM social_posted').all()).results || []); } catch (e) { await store.event(db, tenant, 'social', 'feedback-error', String(e && e.message || e).slice(0, 120)); }
   const days = new Set(rows.filter(r => r.at.slice(0, 10) === today).map(r => r.id)), wk = new Set(rows.filter(r => weekKey(new Date(r.at)) === weekKey(d)).map(r => r.id));
   if (days.size >= gate.max_posts_per_day || wk.size >= gate.max_posts_per_week) return { skipped: 'rate limit' };
   // POST-READBACK-1: a failed channel is retried up to 3 times; queued, unverified and verified rows are not re-sent.
@@ -193,7 +197,7 @@ export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), t
   const missing = p => targets(p).filter(ch => ch === 'relay' ? !relayDone(p.id) : ch === 'buffer' ? !bufferDone(p.id) : !done(p.id, ch));
   const seen = id => rows.filter(r => r.id === id), retry = id => seen(id).some(r => r.status === 'failed');
   const due = (cal.posts || []).filter(p => p.date <= today && missing(p).length && (!seen(p.id).length || p.kind === 'paper' || retry(p.id)));
-  const dueOrdered = fairOrder(due, rows, now);
+  const dueOrdered = fairOrder(due, rows, now, scores);  // TENANT-PROMO-1 tenant turn, then POST-FEEDBACK-1 engagement breaks ties
   if (!due.length) return { skipped: 'nothing due' };
   const p = dueOrdered[0], out = {};
   const rec = async (ch, ref, status, ex) => {

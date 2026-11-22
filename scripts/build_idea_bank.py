@@ -26,6 +26,20 @@ sys.path.insert(0, str(SEED / "bootstrap"))
 import bootstrap  # noqa: E402
 
 
+sys.path.insert(0, str(ROOT))
+from foundation import ideas as _ideas  # noqa: E402  DEPTH-1: one depth rule for the front door and for self-chosen apps
+_CFG = _ideas.load()
+DEPTH = lambda a: _ideas.depth(_CFG, a)
+
+
+def as_app(i):
+    """Map a front-door idea onto the fields foundation/ideas.py depth() reads."""
+    d = i.get("depth") or {}
+    return {"name": i.get("text"), "tagline": i.get("text"), "thesis": i.get("thesis"), "corpus": d.get("corpus"),
+            "loop": i.get("loop") or d.get("method"), "returns": d.get("returns"), "hook": i.get("hook"),
+            "public_good": i.get("empowers"), "horizon": i.get("horizon")}
+
+
 def idea_md(i):
     return (f"---\norg_name: {i['id']}\nslug: {i['id']}\nowner: Example\n---\n\n# Idea\n\n{i['text']}.\n\n# System test\n\n"
             f"- Loop: {i['loop']}\n- Measure: {i['measure']}\n- Upkeep: {i['upkeep']}\n- Run cost: {i['budget']} USD a month for the back end\n\n"
@@ -55,9 +69,9 @@ def validate(bank):
         for k in ("id", "domain", "reach", "text", "keywords", "loop", "measure", "upkeep", "budget"):
             if not i.get(k):
                 errs.append(f"{i.get('id')}: missing {k}")
-        for k in bank.get("depth_fields", []):
-            if len(str((i.get("depth") or {}).get(k, ""))) < 20:
-                errs.append(f"{i.get('id')}: depth.{k} missing (DEPTH-1: a one-trick idea has no corpus)")
+        d = DEPTH(as_app(i))
+        if not d["ok"]:
+            errs.append(f"{i.get('id')}: fails DEPTH-1 (foundation/ideas.py depth): missing {d['missing']}, commerce {d['commerce']}")
         if len(str(i.get("empowers", ""))) < 20:
             errs.append(f"{i.get('id')}: empowers missing (PUBLIC-GOOD-1: name the change it empowers)")
         if i.get("domain") in bank.get("refused_domains", []):
@@ -111,7 +125,7 @@ trustworthy, a reason to come back. Never commerce, shops, orders, sales or cost
 exists today (give real https URLs of public APIs or datasets that answer without a key) or on the user's own records ("own").
 It must be surprising and interesting, different from every existing idea and domain listed below.
 Reply with only a JSON object with keys: id (kebab-case), domain, reach ("global"), text (under 120 characters, plain words),
-keywords, loop, measure, upkeep, budget (USD per month, number), depth {corpus, method, returns}, empowers,
+keywords, thesis, hook, horizon (list of 3 phases), loop, measure, upkeep, budget (USD per month, number), depth {corpus, method, returns}, empowers (every text field at least 40 characters),
 data [{name, probe}] (or {name: "own", note}).
 Existing ideas:
 """

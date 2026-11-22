@@ -29,6 +29,16 @@ What science honestly does not know yet: the big open questions, where the evide
 
 - Honest public knowledge of what is not known protects people from false certainty and points students and funders at questions worth answering.
 
+# From evidence to change (CHANGE-1)
+
+- guess-first: ask the person to predict before the reveal, so the gap between guess and fact is felt (prediction error) (Pan, S.C. and Rickard, T.C. (2018), Transfer of test-enhanced learning, Psychological Bulletin; Kornell, Hays and Bjork (2009) on pretesting)
+- graded-uncertainty: grade every source by study design and show the grade, including where the evidence is weak (GRADE Working Group, Guyatt et al. (2008), BMJ)
+- prebunking: warn of a misleading technique and show a weakened example before the person meets it (inoculation) (van der Linden et al. (2017), Inoculating the public against misinformation about climate change, Global Challenges; Roozenbeek et al. (2022), Science Advances)
+- consider-the-opposite: prompt the person to argue the other side or list reasons they could be wrong (Lord, Lepper and Preston (1984), Considering the opposite: a corrective strategy for social judgment, JPSP)
+- calibration-feedback: keep the person's own record of guesses against outcomes, so updating becomes a habit (Tetlock and Gardner (2015), Superforecasting; Mellers et al. (2014), Psychological Science)
+- implementation-intention: turn the insight into an if-then plan: when situation X happens, I will do Y (Gollwitzer, P.M. and Sheeran, P. (2006), Implementation intentions and goal achievement: a meta-analysis, Advances in Experimental Social Psychology)
+- spaced-follow-up: come back at spaced intervals (for example 7 and 14 days) to retrieve the idea and check the action (Cepeda et al. (2006), Distributed practice in verbal recall tasks, Psychological Bulletin)
+
 # Why people return
 
 - Readers record their own lean and see questions move toward an answer; a question that closes becomes an Unlearn or Practical Solutions entry.
