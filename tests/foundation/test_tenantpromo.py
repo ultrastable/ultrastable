@@ -1,7 +1,8 @@
 # SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 """TENANT-PROMO-1: every tenant promotes itself; a new tenant without promotion fails the check."""
-import json, shutil, tempfile, unittest
+import json, shutil, unittest
 from pathlib import Path
+import _repo  # noqa: E402  (tests/foundation is on sys.path under discover)
 from foundation import tenantpromo
 
 REPO = Path(__file__).resolve().parents[2]
@@ -10,14 +11,11 @@ FILES = ["doctrine/tenant-promotion.json", "instances/ultrastable/progress.json"
 
 class TenantPromo(unittest.TestCase):
     def setUp(self):
-        self.tmp = Path(tempfile.mkdtemp())
+        self.tmp = _repo.scratch()
         for f in FILES:
             (self.tmp / f).parent.mkdir(parents=True, exist_ok=True)
             shutil.copy(REPO / f, self.tmp / f)
         shutil.copytree(REPO / "instances/unlearn/worker", self.tmp / "instances/unlearn/worker")
-
-    def tearDown(self):
-        shutil.rmtree(self.tmp)
 
     def edit(self, rel, fn):
         p = self.tmp / rel
