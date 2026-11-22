@@ -371,6 +371,66 @@
     "d1_rows_written": 0,
     "ai_neurons": 0
    }
+  },
+  {
+   "id": "base-rates",
+   "kind": "seed",
+   "name": "Base Rates",
+   "need": 5,
+   "regions": "global",
+   "need_evidence": "Kahneman and Tversky's planning fallacy and Flyvbjerg's reference-class forecasting: people judge from the inside view and ignore how such things usually go. Need is a stated judgment.",
+   "tagline": "Before you decide, see what usually happens: graded base rates for life, work and policy choices, and your own forecasting record.",
+   "thesis": "People and institutions predict from the story in front of them and ignore how often such things usually go; showing the reference class first makes forecasts better.",
+   "corpus": "An encyclopedia of reference classes (new businesses surviving five years, megaprojects on budget, diets kept after a year, reforms delivering their stated aim), each with its base rate, source and grade.",
+   "loop": "An hourly beat re-reads each entry's source series for new releases and surfaces newer studies; readers' guesses before the reveal measure which base rates surprise most and order the site.",
+   "returns": "A reader keeps a private forecasting record in their own browser, sees how calibrated they are, and comes back when a base rate they followed moves.",
+   "horizon": [
+    "encyclopedia of 50 graded base rates with guess-first entries",
+    "personal calibration record and follow-ups",
+    "decision companion: name a plan, get its reference class and a pre-mortem"
+   ],
+   "hook": "Guess first: how often do new restaurants survive five years? Then the base rate, and how far off you were. Every person misses some, and the miss is the hook.",
+   "public_good": "People and governments make better decisions about money, health and policy when they see how such things usually go; it counters overconfident plans that waste public money."
+  },
+  {
+   "id": "did-it-work",
+   "kind": "seed",
+   "name": "Did It Work?",
+   "need": 5,
+   "regions": "global",
+   "need_evidence": "Most public programmes are announced with stated aims and rarely judged against them; evaluations arrive years later and few people see them. Need is a stated judgment.",
+   "tagline": "Every big policy promised something. See what it promised, what the evaluations found since, and how the verdict moved.",
+   "thesis": "Policies are judged by their announcements, not their results; holding each one to its own stated aim, as evaluations arrive, changes how people argue about the next one.",
+   "corpus": "A casebook of policies and programmes worldwide, each with its stated aim in its own words, the evaluations published since, graded by design, and a running verdict.",
+   "loop": "A daily beat searches open evaluation and trial registries for each case, adds new evaluations, re-grades the verdict when evidence piles up, and logs every change of verdict with its reason.",
+   "returns": "Readers follow cases and see what changed since their last visit; a verdict that moved is the reason to come back.",
+   "horizon": [
+    "casebook of 40 policies with stated aims and graded evaluations",
+    "verdict history and follow on any case",
+    "prediction market of the system's own: forecast the next evaluation, scored when it lands"
+   ],
+   "hook": "Guess the verdict: did this famous policy deliver what it promised? Then the evaluations. The surprise, either way, is the hook.",
+   "public_good": "Citizens, journalists and staff can hold policy to its own promises, so public money moves to what works; it empowers voters with evidence."
+  },
+  {
+   "id": "open-questions",
+   "kind": "seed",
+   "name": "Open Questions",
+   "need": 4,
+   "regions": "global",
+   "need_evidence": "Public writing presents settled science and open questions in the same voice; readers cannot tell what is still unknown. Need is a stated judgment.",
+   "tagline": "What science honestly does not know yet: the big open questions, where the evidence leans today, and how that lean has moved.",
+   "thesis": "Knowing what is not yet known is as useful as knowing what is; a map of open questions, with where the evidence leans and how fast it moves, is missing from public knowledge.",
+   "corpus": "An atlas of open questions by field, each with the competing answers, the best evidence for each, a graded lean and a history of how the lean moved.",
+   "loop": "A weekly beat watches review and preprint feeds for each question, files new evidence on the entry and moves the lean only when graded evidence moves it, recording why.",
+   "returns": "Readers record their own lean and see questions move toward an answer; a question that closes becomes an Unlearn or Practical Solutions entry.",
+   "horizon": [
+    "atlas of 30 open questions with graded leans",
+    "lean history and reader leans",
+    "links into Unlearn and Practical Solutions when a question settles"
+   ],
+   "hook": "Pick your lean on a live question, then see where the evidence leans and how it moved. Knowing you hold a minority view, or that nobody knows yet, is the hook.",
+   "public_good": "Honest public knowledge of what is not known protects people from false certainty and points students and funders at questions worth answering."
   }
  ],
  "scope_templates": [
@@ -450,5 +510,38 @@
    "unmeasured": 1.0,
    "uses_for_ceiling": 1000
   }
+ },
+ "depth": {
+  "_doc": "DEPTH-1 (Rowan, 2026-11-22: 'Where do you go with an air quality app? ... I want new apps that have the depth of idea, the depth of concept of Unlearn and Practical Solutions.'). What makes Unlearn and Practical Solutions deep, as fields an idea must carry before it may launch: a thesis about the world it keeps testing, a corpus that grows, a loop that keeps changing it, a reason a person returns, and a horizon of at least three phases. A single lookup, board or template is a cheap thrill: it scores nothing on depth, is refused at launch and is retired if live. Read by foundation/ideas.py depth(); checked by `ideas --check`; applied by `ideas --retire-shallow --apply`. Rowan, 2026-11-22: 'what's the hook ... what keeps people interested and engaged and sticky' and 'this is about some kind of public good, something that empowers change ... go get Squarespace if you want e-commerce': hook and public_good are required, and commerce is refused outright.",
+  "marker": "DEPTH-1",
+  "min_text": 40,
+  "min_horizon": 3,
+  "fields": {
+   "thesis": "the substantive claim or question about the world the app keeps testing (Unlearn: popular beliefs the evidence contradicts)",
+   "corpus": "the body of knowledge that grows entry by entry (Practical Solutions: solutions that worked, by problem)",
+   "loop": "what changes the corpus every week without a person: new evidence, new cases, new data, and how it is re-graded",
+   "returns": "why a person comes back: their own record, a verdict that moved, a follow-up, something new since the last visit",
+   "horizon": "at least three phases with a direction, so the app has somewhere to go",
+   "hook": "the first moment that pulls a person in and makes them care, like the Unlearn quiz: guess first, then the reveal (an app that tells people what they already know has no hook)",
+   "public_good": "the public good it serves and the change it empowers, in the spirit of QNFO's mission; never commerce"
+  },
+  "shallow_archetypes": [
+   "live-lookup",
+   "status-board",
+   "template-generator",
+   "live-feed",
+   "domain-check"
+  ],
+  "commerce_words": [
+   "e-commerce",
+   "ecommerce",
+   "storefront",
+   "checkout",
+   "shopping cart",
+   "bakery",
+   "order online",
+   "sell products",
+   "online shop"
+  ]
  }
 }

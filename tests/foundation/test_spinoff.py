@@ -19,6 +19,7 @@ def sandbox():
     (d / "ops").mkdir()
     shutil.copy(REPO / "ops/free-tier.json", d / "ops/free-tier.json")
     ic = json.loads((REPO / "doctrine/spinoff-ideas.json").read_text())
+    ic.pop("depth", None)  # launch mechanics only; DEPTH-1 refusal of these shallow candidates is tested in test_ideas.py
     ic["bank"] = []  # these tests are about the blind-spot candidates; the idea bank has its own tests in test_ideas.py
     (d / "doctrine/spinoff-ideas.json").write_text(json.dumps(ic))
     return d

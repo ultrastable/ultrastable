@@ -1,0 +1,60 @@
+{
+ "_doc": "SEED-LIFECYCLE-1 answers for base-rates; scaffolded by foundation/seedlife.py, completed by the executor through Q-SEED-base-rates.",
+ "slug": "base-rates",
+ "build": {
+  "paths": [],
+  "tests": []
+ },
+ "deploy": {
+  "worker": ""
+ },
+ "verify": {
+  "url": "",
+  "expect": ""
+ },
+ "loops": [],
+ "survival": {
+  "credentials": {
+   "inherit": "cloudflare-api-tokens"
+  },
+  "source-control": {
+   "inherit": "github-app-token"
+  },
+  "budget": {
+   "inherit": "workers-free-tier"
+  },
+  "cost-alerts": {
+   "inherit": "cloudflare-alerts"
+  },
+  "payment": {
+   "inherit": "payment-method"
+  },
+  "dependencies": {
+   "inherit": "dependency-drift"
+  },
+  "runtime": {
+   "inherit": "node-runtime"
+  },
+  "models": {
+   "inherit": "workers-ai-models"
+  },
+  "health": {
+   "status": "closed",
+   "probe": "cmd:python3 -m foundation seedlife --verify",
+   "how": "the watchdog fetches the verify URL every pass; a failing reading reopens Q-SEED and the handoff closer rolls back"
+  },
+  "backups": {
+   "inherit": "offsite-backup"
+  },
+  "renewal": {
+   "inherit": "domain-renewal"
+  },
+  "improvement": {
+   "inherit": "self-coder"
+  },
+  "privacy": {
+   "status": "open",
+   "item": "Q-SEED-base-rates"
+  }
+ }
+}
