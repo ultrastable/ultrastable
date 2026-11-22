@@ -1,6 +1,6 @@
 name = "ultrastable-uptime"
 main = "worker.js"
-compatibility_date = "2025-01-01"
+compatibility_date = "2026-11-08"
 [triggers]
 crons = ["*/5 * * * *"]
 [[kv_namespaces]]

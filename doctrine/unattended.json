@@ -240,13 +240,12 @@
    "id": "self-coder",
    "class": "session",
    "what": "The system's own coder must ship releases without any outside session",
-   "status": "open",
+   "status": "closed",
    "renewal": "none",
    "expires": null,
-   "evidence": "executor log 2026-11-20: llama-3.3-70b failed an unused-import item 3 times; both reviewer routes were down (GitHub Models non-JSON, glm 410) and the change was approved with the reviewers skipped",
-   "measured": "2026-11-20",
-   "probe": "cmd:python3 -m foundation unattended --probe self-coder",
-   "item": "Q-YEAR-self-coder"
+   "evidence": "criticality --tick on 2026-11-22: 31 of 145 verified deploys in the window carried commits the executor or the self-agent originated (origin read from the deployed commit, DEPLOY-ORIGIN-2), k_self 310, regime self-sustaining; logged to ops/criticality.jsonl",
+   "measured": "2026-11-22",
+   "probe": "cmd:python3 -m foundation unattended --probe self-coder"
   },
   {
    "id": "github-models-route",
@@ -299,14 +298,13 @@
   {
    "id": "dependency-drift",
    "class": "dependency",
-   "what": "Action versions, npm and pip packages and Worker compatibility dates have no loop that advances them",
-   "status": "open",
+   "what": "Action versions, npm packages and Worker compatibility dates advance by themselves",
+   "status": "closed",
    "renewal": "none",
    "expires": null,
-   "evidence": "one wrangler.toml still has compatibility_date 2024-01-01; no updater workflow or Worker step exists",
-   "measured": "2026-11-20",
-   "probe": "cmd:python3 -m foundation unattended --probe dependency-drift",
-   "item": "Q-YEAR-dependency-drift"
+   "evidence": ".github/dependabot.yml advances github-actions and every npm directory and the sweeper merges the green branches (DEP-LOOP-1); foundation/compatdate.py advances any compatibility_date older than 180 days on every watchdog runway pass (COMPAT-DATE-1); the repository has no pip requirements to pin; the dead root wrangler.toml (2024-01-01, pointing at a missing src/worker.ts) was removed",
+   "measured": "2026-11-22",
+   "probe": "cmd:python3 -m foundation compatdate --check"
   },
   {
    "id": "mail-relay-token",

@@ -11,6 +11,8 @@ import { runLane, githubBudget } from './lane.js';
 import { verifyOidc, commitToMain } from './maincommit.js';  // MAIN-WRITER-1
 import { repairSites } from './uptimerepair.js';  // UPTIME-1
 import { opsBackup } from './opsbackup.js';  // BACKUP-SINK-1
+import { snapshotD1 } from './d1snapshot.js';  // D1-SNAPSHOT-1
+import { onCloudflareAlert, settleCloudflareAlerts } from './cfalerts.js';  // CF-ALERTS-1
 import { createMeter, guarded, readDeferred, writeDeferred, capsFor, LOOP_MIN_COST } from './subreq.js';  // SUBREQUEST-METER-1
 import { ingestDeploys } from './selfaudit.js';
 import { auditApps } from './appaudit.js';  // APP-INVENTORY-1
@@ -160,7 +162,7 @@ export default {
       step('hosts', () => watchHosts({ db: env.DB, registry: hostRegistry(env, token, main), token, repo: main }));  // HOSTS-1: health probe of every host, stall detection, failover redispatch
       step('watchdog-gh', () => watchGithub({ token, repo: main }));  // RESILIENCE-1: the Worker restarts the GitHub watchdog when it stalls; the GitHub watchdog restarts this tick
       for (const [loop, fn] of [...steps].sort((a, z) => carried.has(z[0]) - carried.has(a[0]))) await b(loop, fn);  // SUBREQUEST-METER-1: deferred loops first, then the phase's own
-      await b('cost-samples', async () => ({ free_tier: freeTier, samples: await sampleCosts(env.DB, { token: env.CF_ANALYTICS_TOKEN, budgets: config.cost_budgets }), retention: await pruneAll(env.DB, { rules: config.retention, archive: (table, rows) => archiveRows(env.DB, table)(rows) }), audit: await seal(env.DB, auditSinks(env, token, repos)) }));  // AUDIT-CHAIN-1: aged rows are chained, then sealed to the archive  // RETENTION-1: the daily prune rides the hourly cost beat (once a day by its own gate)  // COSTGUARD-1: hourly D1 rows-read sample feeds the D1 budget failure modes
+      await b('cost-samples', async () => ({ free_tier: freeTier, samples: await sampleCosts(env.DB, { token: env.CF_ANALYTICS_TOKEN, budgets: config.cost_budgets }), retention: await pruneAll(env.DB, { rules: config.retention, archive: (table, rows) => archiveRows(env.DB, table)(rows) }), audit: await seal(env.DB, auditSinks(env, token, repos)), snapshot: await snapshotD1(env.DB, env.AUDIT).catch(e => ({ error: String(e && e.message).slice(0, 160) })), cf_alerts: await settleCloudflareAlerts(env.DB).catch(e => ({ error: String(e && e.message).slice(0, 160) })) }));  // D1-SNAPSHOT-1: the daily copy of D1 into the AUDIT bucket, read back before it counts  // AUDIT-CHAIN-1: aged rows are chained, then sealed to the archive  // RETENTION-1: the daily prune rides the hourly cost beat (once a day by its own gate)  // COSTGUARD-1: hourly D1 rows-read sample feeds the D1 budget failure modes
       const wd = await writeDeferred(env.DB, deferred); if (wd && wd.error) console.error(wd.error);
     })().catch(e => console.error('lane', e && e.message));
     ctx.waitUntil(loopsDone);
@@ -175,7 +177,8 @@ export default {
     if (hiddenByHealthOnly(env, request.method, url.pathname)) return new Response('Not found', { status: 404 });
     const au = await handleAuth(request, env, { tenant: env.TENANT || config.org_slug || 'default', name: config.org_slug, repos: config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []) });
     if (au) return au;
-    if (halted(config, env) && (url.pathname === '/hook/github' || url.pathname === '/hook/host' || url.pathname === '/pulse/watch')) return Response.json({ halted: true }, { status: 202 });  // HALT-1
+    if (halted(config, env) && (url.pathname === '/hook/github' || url.pathname === '/hook/host' || url.pathname === '/hook/cloudflare' || url.pathname === '/pulse/watch')) return Response.json({ halted: true }, { status: 202 });  // HALT-1
+    if (url.pathname === '/hook/cloudflare' && request.method === 'POST') return onCloudflareAlert(request, { db: env.DB, secret: env.CF_ALERT_SECRET, fileItem: (it) => ensureItem(env.DB, it) });  // CF-ALERTS-1: Cloudflare's own alerts become queue items
     if (url.pathname === '/hook/github' && request.method === 'POST') {  // event-driven trigger: signed GitHub webhook wakes a role now
       const body = await request.text();
       if (!(await verifyAny(verifySignature, await githubHookSecrets(env, () => credMaterial(env.DB, env, env.TENANT || config.org_slug || 'default', 'github-app')), body, request.headers.get('x-hub-signature-256')))) return Response.json({ error: 'bad signature' }, { status: 401 });

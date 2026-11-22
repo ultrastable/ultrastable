@@ -146,6 +146,8 @@ def run(root=REPO, apply=False, today=None, seeds=False) -> dict:
             p = root / "docs/issues" / f"Q-RUNWAY-{name}.json"
             if not p.exists():
                 p.write_text(json.dumps(item(name, m["components"][name], m["target_days"]), indent=2) + "\n", encoding="utf-8"); changed = True
+        from . import compatdate  # COMPAT-DATE-1: the pin Dependabot does not advance moves on the same watchdog pass
+        changed = compatdate.run(root, apply=True)["changed"] or changed
     if seeds:  # SEED-LIFECYCLE-1: every seed is verified live and its Q-SEED item kept current on the same watchdog pass
         from . import seedlife
         changed = seedlife.run(root, apply)["changed"] or changed
