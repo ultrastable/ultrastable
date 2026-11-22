@@ -1,5 +1,5 @@
 {
- "at": "2026-11-22T07:42:21Z",
+ "at": "2026-11-22T09:22:22Z",
  "days": 730,
  "drills": {
   "actions-billing": {
@@ -78,8 +78,8 @@
   },
   "node-eol": {
    "capacity": 0.95,
-   "date": "2027-04-30",
-   "evidence": "pins: 22 x11, 24 x1; earliest end of maintenance 2027-04-30; automatic rewrite to 24 works: True",
+   "date": "2028-04-30",
+   "evidence": "pins: 24 x12; earliest end of maintenance 2028-04-30; automatic rewrite to 24 works: True",
    "exercised": true,
    "mode": "recovers",
    "recover": true
@@ -128,7 +128,7 @@
   }
  ],
  "horizon": {
-  "capacity_year_p50": 0.678,
+  "capacity_year_p50": 0.681,
   "killers": {
    "token-revoked": 20
   },
@@ -177,7 +177,7 @@
   "window_days": 14
  },
  "self_rate_per_day": 0.714,
- "self_releases_year_p50": 176.7,
+ "self_releases_year_p50": 177.5,
  "sensitivity": {
   "base": {
    "p10": 730,
@@ -289,23 +289,6 @@
    {
     "effect": {
      "0.5": {
-      "d_survive": -0.017,
-      "p10": 709,
-      "survive_year": 0.983
-     },
-     "2.0": {
-      "d_survive": 0.0,
-      "p10": 604,
-      "survive_year": 1.0
-     }
-    },
-    "id": "scheduler-silent",
-    "rate": 52,
-    "swing": 0.017
-   },
-   {
-    "effect": {
-     "0.5": {
       "d_survive": 0.0,
       "p10": 730,
       "survive_year": 1.0
@@ -329,7 +312,7 @@
      },
      "2.0": {
       "d_survive": 0.0,
-      "p10": 730,
+      "p10": 689,
       "survive_year": 1.0
      }
     },
@@ -370,12 +353,29 @@
     "id": "model-retirement",
     "rate": 6,
     "swing": 0.0
+   },
+   {
+    "effect": {
+     "0.5": {
+      "d_survive": 0.0,
+      "p10": 730,
+      "survive_year": 1.0
+     },
+     "2.0": {
+      "d_survive": 0.0,
+      "p10": 604,
+      "survive_year": 1.0
+     }
+    },
+    "id": "scheduler-silent",
+    "rate": 52,
+    "swing": 0.0
    }
   ],
   "runs": 60
  },
  "strict": {
-  "capacity_year_p50": 0.526,
+  "capacity_year_p50": 0.528,
   "killers": {
    "domain-renewal": 74,
    "token-revoked": 126
