@@ -77,7 +77,17 @@
    "prediction market of the system's own: forecast the next evaluation, scored when it lands"
   ],
   "hook": "Guess the verdict: did this famous policy deliver what it promised? Then the evaluations. The surprise, either way, is the hook.",
-  "public_good": "Citizens, journalists and staff can hold policy to its own promises, so public money moves to what works; it empowers voters with evidence."
+  "public_good": "Citizens, journalists and staff can hold policy to its own promises, so public money moves to what works; it empowers voters with evidence.",
+  "change": [
+   "guess-first",
+   "why-it-feels-true",
+   "fact-myth-fallacy",
+   "graded-uncertainty",
+   "self-affirmation",
+   "implementation-intention",
+   "change-management",
+   "spaced-follow-up"
+  ]
  },
  "origin": "DEPTH-1 idea bank, doctrine/spinoff-ideas.json"
 }

@@ -77,7 +77,16 @@
    "decision companion: name a plan, get its reference class and a pre-mortem"
   ],
   "hook": "Guess first: how often do new restaurants survive five years? Then the base rate, and how far off you were. Every person misses some, and the miss is the hook.",
-  "public_good": "People and governments make better decisions about money, health and policy when they see how such things usually go; it counters overconfident plans that waste public money."
+  "public_good": "People and governments make better decisions about money, health and policy when they see how such things usually go; it counters overconfident plans that waste public money.",
+  "change": [
+   "guess-first",
+   "why-it-feels-true",
+   "outside-view",
+   "consider-the-opposite",
+   "implementation-intention",
+   "calibration-feedback",
+   "spaced-follow-up"
+  ]
  },
  "origin": "DEPTH-1 idea bank, doctrine/spinoff-ideas.json"
 }

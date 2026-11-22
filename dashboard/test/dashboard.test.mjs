@@ -267,13 +267,21 @@ test("SIGNIN-NEXT-2: emailed link signs in and lands on ?next, for connect start
   assert.equal(post.headers.get("location"), nx); assert.match(post.headers.get("set-cookie"), /us_owner=/);
   assert.equal((await route(new Request(link, { method: "POST" }), e)).status, 401);  // single use
 });
+test("LEGACY-TASKS-1, SELF-FIX-2, DIGEST-QUIET-1: seeded tasks retire, fixed checks close, a clean day sends no digest", async () => {
+  const { LEGACY_TASK, digestBody } = await import("../worker.js");
+  for (const id of ["gh-26", "own-file", "own-google"]) assert.ok(LEGACY_TASK.test(id), id);
+  assert.ok(!LEGACY_TASK.test("fix-owner_links"));
+  assert.equal(digestBody({ checks: [{ name: "x", ok: 1 }], analytics: { metrics: [{ name: "m", hit: 0 }] } }), "");
+  assert.match(digestBody({ checks: [{ name: "owner_links", ok: 0, detail: "dead" }] }), /owner_links: dead/);
+});
 test("LIVE-PLAN-1: the plan is read from Cloudflare, and a paid account is not offered Workers Paid", async () => {
   const { planState, optionsFor, livePanels } = await import("../worker.js");
   const ok = j => async () => Response.json({ success: true, result: j });
   const paid = await planState({ CF_ACCOUNT_ID: "a", CF_API_TOKEN: "t" }, ok([{ rate_plan: { id: "workers_paid", public_name: "Workers Paid" }, state: "Paid" }]));
   assert.equal(paid.plan, "paid"); assert.equal(paid.source, "cloudflare-subscriptions");
   assert.equal((await planState({ CF_ACCOUNT_ID: "a", CF_API_TOKEN: "t" }, ok([{ rate_plan: { id: "free" } }]))).plan, "free");
-  assert.equal((await planState({}, ok([]))).plan, "unknown");
+  { const rec = await planState({}, ok([])); assert.equal(rec.plan, "paid"); assert.match(rec.source, /^recorded /); }  // PLAN-FACT-1: unreadable falls back to the recorded plan, labelled
+  { const lp2 = await livePanels({ NO_NET: 1 }, ok([])); assert.match(lp2.plan_note, /recorded on/); assert.ok(!lp2.options.some(o => o.id === "cf-workers-paid")); }
   assert.ok(!optionsFor("paid").some(o => o.id === "cf-workers-paid")); assert.ok(optionsFor("free").some(o => o.id === "cf-workers-paid"));
   const lp = await livePanels({ CF_ACCOUNT_ID: "a", CF_API_TOKEN: "t", NO_NET: 1 }, ok([{ rate_plan: { id: "workers_paid" } }]));
   assert.match(lp.plan_note, /Workers Paid is active/); assert.ok(lp.generated_at);

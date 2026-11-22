@@ -201,9 +201,18 @@ def depth(cfg: dict, i: dict) -> dict:
     d = cfg.get("depth") or {}
     if not d:
         return {"met": [], "missing": [], "ok": True}
+    if isinstance(i.get("depth"), dict):  # IDEA-BANK-1 shape: one rule for front-door ideas and self-chosen apps
+        i = {**{d.get("aliases", {}).get(k, k): v for k, v in i["depth"].items()}, **{k: v for k, v in i.items() if k != "depth"}}
     met = [f for f in ("thesis", "corpus", "loop", "returns", "hook", "public_good") if len(str(i.get(f) or "").strip()) >= d["min_text"]]
     if isinstance(i.get("horizon"), list) and len([h for h in i["horizon"] if str(h).strip()]) >= d["min_horizon"]:
         met.append("horizon")
+    lib = d.get("change_library")
+    if lib:
+        cm = json.loads((REPO / lib).read_text(encoding="utf-8"))
+        ch = [c for c in (i.get("change") or []) if c in cm["methods"]]
+        stages = {cm["methods"][c]["stage"] for c in ch}
+        if len(ch) >= cm["min_per_idea"] and {"notice", "update", "act"} <= stages and len(ch) == len(i.get("change") or []):
+            met.append("change")
     missing = [f for f in d["fields"] if f not in met]
     shallow = i.get("archetype") in d["shallow_archetypes"]
     text = " ".join(str(i.get(k) or "") for k in ("name", "tagline", "thesis", "corpus", "public_good")).lower()
