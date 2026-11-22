@@ -8,6 +8,10 @@
 // same reading passes, and keeps a social queue of entries not yet promoted that the core social module drains (gate.tenant_queues lists
 // /api/stickiness/queue/<id>.json). A system with no declaration is reported `undeclared`, never fresh. Nothing is invented: only entries the feed holds.
 import { measure, plan, record, trend, fromJsonFeed, queue } from './vendor/core/stickiness.js';
+import { ORIGINATE_MAX_PER_DAY } from './tick.js';
+// The daily originate cap is spent early by other filers (16075 refusals on 2026-11-21), which would starve these items for good. A system has at most one
+// STICKY item (its id is fixed, so a refile is a no-op), so a small reserve above the cap keeps the finding from being starved without raising the flood.
+export const STICKY_RESERVE = 5;
 
 const run = (db, sql, ...a) => db.prepare(sql).bind(...a).run();
 const all = async (db, sql, ...a) => (await db.prepare(sql).bind(...a).all()).results || [];
@@ -71,7 +75,7 @@ export async function stickinessStep({ db, config, ensureItem, fetchImpl = fetch
       const a = acts[0];
       const made = await ensureItem(db, { id, kind: 'growth', owner_role: 'product-manager', priority: m.state === 'stale' || m.state === 'unmeasured' ? -1 : 0,
         title: `${sys.name} is ${m.state} as a reason to come back: ${a ? a.kind + (a.domain ? ' in ' + a.domain : '') + ', ' + a.why : 'no plan'}. Prediction: ${a ? a.prediction : 'n/a'}.`.slice(0, 400),
-        done_check: `stickiness_state.state of ${sys.id} is fresh`, closing_probe: `stickiness:${sys.id}` });
+        done_check: `stickiness_state.state of ${sys.id} is fresh`, closing_probe: `stickiness:${sys.id}` }, { cap: ORIGINATE_MAX_PER_DAY + STICKY_RESERVE, now });
       if (made) out.filed.push(id);
       else { const r = await run(db, `UPDATE items SET status='ready', disposition=NULL, updated_at=? WHERE id=? AND status IN ('done','superseded','cancelled')`, nowIso, id).catch(() => null); if (r && r.meta && r.meta.changes) out.filed.push(id); }
     } else if (m.state === 'fresh') {

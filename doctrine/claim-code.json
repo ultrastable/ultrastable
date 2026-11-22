@@ -248,6 +248,15 @@
     "file": "seed/autonomy/kit.json",
     "contains": "\"max_age_days\": 8"
    }
+  },
+  {
+   "id": "tenant-promo-no-cold",
+   "source": "agents/AGENTS.md",
+   "quote": "a tenant never creates an account, never posts from the owner's personal account and never sends a cold message to a person",
+   "probe": {
+    "file": "seed/worker/src/promoqueue.js",
+    "contains": "@[a-z0-9_]"
+   }
   }
  ],
  "baseline": [

@@ -191,6 +191,19 @@
    "cost": 1,
    "signal": "reach metric feed_hits_7d",
    "consumer": "foundation/reach.py"
+  },
+  {
+   "id": "tenant-queues",
+   "kind": "social",
+   "needs": "none",
+   "reach": 2,
+   "cost": 1,
+   "requires": [
+    "live_product"
+   ],
+   "route": "each tenant serves /social-queue.json (seed/worker/src/promoqueue.js); social/gate.json tenant_queues lists them and seed/worker/src/social.js drains them tenant-fair",
+   "signal": "social referrals in first-party hits per tenant (reach metric social_referrals_7d)",
+   "consumer": "foundation/tenantpromo.py"
   }
  ]
 }

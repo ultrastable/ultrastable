@@ -207,7 +207,7 @@ function domLabel(k) { const x = SH.domains[k]; return x ? x.host : ""; }
 function caseCard(c) { return "<a class=\"card us-case\" href=\"/showcase/" + esc(c.id) + "\"><span class=\"us-tag\">" + esc(c.tag) + "</span> <span class=\"us-tag\">" + esc(domLabel(c.domain)) + "</span><h3 class=\"card-title\">" + esc(c.name) + "</h3><p class=\"meta\">" + esc(c.summary) + "</p><span class=\"us-more\">Read the case</span></a>"; }
 
 function showcase() {
-  return shell({ path: "/showcase", title: "Test cases: QNFO and Practical Solutions", description: "Ultrastable develops its own platform and the products on it with one closed loop. QNFO was the testbed; Practical Solutions is the next system built on it." },
+  return shell({ path: "/showcase", title: "Test cases: " + SH.showcases.map(function (c) { return c.name; }).join(", "), description: "Ultrastable develops its own platform and the products on it with one closed loop. QNFO was the testbed; " + SH.showcases.filter(function (c) { return c.status === "live"; }).map(function (c) { return c.name; }).join(" and ") + " run on it now." },
     crumbs([["Home", "/"], ["Test cases", "/showcase"]])
     + "<div class=\"head\"><h1>Test cases</h1><p>Ultrastable is an autonomous development platform. What it develops (code, practical solutions) and how it develops itself are one loop.</p></div>"
     + "<div class=\"us-grid c2\">" + SH.showcases.map(caseCard).join("") + "</div>"

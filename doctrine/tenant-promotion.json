@@ -1,0 +1,22 @@
+{
+  "_doc": "TENANT-PROMO-1 (Rowan, 2026-11-22): \"Make sure to keep this in the Ultrastable loop and cross promote it and put it on social. That's part of the role for an app or tenant is promotion.\" Every system Ultrastable runs (each row of instances/ultrastable/progress.json systems except the platform itself) promotes itself and its siblings by code: (1) it serves a social queue in its own voice, listed in social/gate.json tenant_queues and drained by the core publisher (seed/worker/src/social.js) within the gate's kill switch, caps and paused channels, tenants taken in turn; (2) it is a live showcase in doctrine/stakeholders.json, which renders it on ultrastable.io (home and /showcase) and in every in-repository tenant's footer; (3) a tenant whose code lives in this repository links back to Ultrastable and to its live siblings from its pages and builds its queue with the shared seed/worker/src/promoqueue.js. Posting uses only the accounts already connected to the platform (social/accounts.json, /connect); a tenant never creates an account, never posts from the owner's personal account and never sends a cold message to a person (the guard refuses @-mentions). Read by foundation/tenantpromo.py (python3 -m foundation tenantpromo --check, a step in checks).",
+  "version": 1,
+  "consent": {
+    "at": "2026-11-22",
+    "by": "Rowan",
+    "source": "project thread 'Promote Unlearn across Ultrastable and social'",
+    "scope": "tenant posts on the platform's connected social accounts under social/gate.json; cross-links between systems that run on Ultrastable; no new accounts, no cold messages to individuals"
+  },
+  "platform": "ultrastable",
+  "in_repo": {
+    "ultrastable/ultrastable": {
+      "shared_module": "seed/worker/src/promoqueue.js",
+      "route": "/social-queue.json",
+      "backlink": "https://ultrastable.io"
+    }
+  },
+  "tenants": {
+    "practical-solutions": {"queue": "https://ultrastable.org/social-queue.json", "showcase": "practical-solutions"},
+    "unlearn": {"queue": "https://unlearn.ultrastable.org/social-queue.json", "showcase": "unlearn", "worker_dir": "instances/unlearn/worker"}
+  }
+}

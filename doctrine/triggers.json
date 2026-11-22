@@ -472,6 +472,15 @@
     "17 6 * * *"
    ]
   },
+  "tenant-repos.yml": {
+   "events": [
+    "push",
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "23 5 * * *"
+   ]
+  },
   "tenant-sync.yml": {
    "events": [
     "push",
