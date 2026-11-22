@@ -9,7 +9,7 @@ import SH from "./stakeholders.js"; // STAKEHOLDERS-1
 import BRIEF from "./platformbrief.js";
 import IV from "./interview.js";
 import { liveResponse, ignitionResponse } from "./live.js";
-import { feedResponse } from "./feed.js"; // REACH-1
+import { feedResponse, jsonFeedResponse } from "./feed.js"; // REACH-1, STICKY-1
 import { demoResponse } from "./demo.js"; // DEMO-DASHBOARD-1
 import { caseResponse } from "./casestudy.js"; // CASE-STUDY-1
 import { examplesSection } from "./examples.js"; // EXAMPLE-SYSTEMS-1
@@ -1076,7 +1076,8 @@ const handler = {
     { const wh = await webhooksRoute(request, env, ctx, authIntegration); if (wh) return wh; } // WEBHOOKS-1: /hooks/<provider>, /api/v1/webhooks, /api/v1/hooks
     if (u.pathname === "/agents/scoreboard") return Response.redirect("https://" + CANON + "/api/v1/agents/scoreboard", 302);  // AGENT-SCOREBOARD-1: agent_scoreboard per agent and harness (site/controlplane.js agentScoreboard)
     { const cp = await controlPlane(request, env, ctx); if (cp) return cp; } // CONTROL-PLANE-1: /api/v1
-    if (u.pathname === "/feed.xml") return feedResponse(CANON); // REACH-1
+    if (u.pathname === "/feed.xml" || u.pathname === "/feed.json") { if (env && env.DB) { try { ctx.waitUntil(record(env, request, { host: CANON, path: u.pathname, ref: "", name: "feed" })); } catch (e) { console.error("feed hit", String(e && e.message)); } } return u.pathname === "/feed.xml" ? feedResponse(CANON) : jsonFeedResponse(CANON); } // REACH-1; STICKY-1: a feed request is counted server-side (name "feed", daily-rotating id, no cookie), so the number of daily feed readers is measured
+    if (u.pathname === "/api/stickiness" || /^\/api\/stickiness\/queue\/[a-z0-9-]{1,60}\.json$/.test(u.pathname)) { let j = { error: "tick worker not reachable" }, st = 503; try { if (env && env.TICK) { const r = await env.TICK.fetch(new Request("https://tick.internal" + u.pathname)); j = await r.json(); st = r.status; } } catch (e) { console.error("api/stickiness", String(e && e.message)); } return new Response(JSON.stringify(j), { status: st, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } }); } // STICKY-1: the judged content state and the social queue the core social module drains
     if (u.pathname === "/api/reach") { const v = await jget(env, "promote:reach"); return Response.json(v || { rows: null, error: "not measured yet" }, { status: v ? 200 : 503, headers: { "cache-control": "public, max-age=600", "access-control-allow-origin": "*" } }); } // ATTENTION-1: aggregate counts only
     { const pr = await progressRoutes(u, env, shell, HTML, CANON); if (pr) return pr; } // PROGRESS-1
     { const ys = yearRoutes(u, shell, HTML); if (ys) return ys; } // YEAR-SIM-1: /year, /year.json
