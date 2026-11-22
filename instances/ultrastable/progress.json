@@ -23,7 +23,8 @@
     ],
     "expect_days": 2,
     "min_depth": 0,
-    "reveal": ""
+    "reveal": "",
+    "analytics_host": "ultrastable.io"
    }
   },
   {
@@ -39,7 +40,7 @@
     "discover.yml"
    ],
    "stickiness": {
-    "content_feed": "https://tenant-ps-web.ultrastable.workers.dev/feed.json",
+    "content_feed": "https://tenant-ps-web.ultrastable.workers.dev/content.json",
     "domains": [],
     "expect_days": 2,
     "min_depth": 3,

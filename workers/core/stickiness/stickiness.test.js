@@ -68,3 +68,7 @@ test('a post is never cut mid-sentence: whole sentence, else the title alone, el
   assert.equal(q.posts.length, 1); assert.ok(!q.posts[0].text.includes('SSS')); assert.ok(!q.posts[0].text.includes('…'));
   assert.deepEqual(q.skipped, ['m']);
 });
+
+test('visits without a returning count give no return rate', () => {
+  assert.equal(measure([e('a', 1)], { now: NOW, audience: { visits_7d: 200 } }).audience.return_rate, null);
+});

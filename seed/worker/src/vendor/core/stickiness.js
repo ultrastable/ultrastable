@@ -49,8 +49,9 @@ export function measure(entries, { now = Date.now(), audience = null, ...cfg } =
 }
 // Return rate is null (unmeasured) unless the caller supplied visits: a missing count is never read as zero or as good.
 function audienceOf(a) {
-  if (!a || !(a.visits_7d > 0)) return { return_rate: null, subscribers: a && a.subscribers != null ? a.subscribers : null, feed_hits_7d: a && a.feed_hits_7d != null ? a.feed_hits_7d : null };
-  return { return_rate: round((a.returning_7d || 0) / a.visits_7d), subscribers: a.subscribers ?? null, feed_hits_7d: a.feed_hits_7d ?? null };
+  const sub = a && a.subscribers != null ? a.subscribers : null, fh = a && a.feed_hits_7d != null ? a.feed_hits_7d : null;
+  if (!a || !(a.visits_7d > 0) || typeof a.returning_7d !== 'number') return { return_rate: null, subscribers: sub, feed_hits_7d: fh };  // no count of returning visitors: unmeasured
+  return { return_rate: round(a.returning_7d / a.visits_7d), subscribers: sub, feed_hits_7d: fh };
 }
 
 // What to do about it. Every action names the metric it should move and a checkable prediction; a fresh system with no gap plans nothing but promotion.

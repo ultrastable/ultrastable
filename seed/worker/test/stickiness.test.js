@@ -56,3 +56,12 @@ test('admission: every system in the instance progress file declares its content
   const missing = JSON.parse(readFileSync(f, 'utf8')).systems.filter(s => !(s.stickiness && s.stickiness.content_feed) && !baseline.has(s.id)).map(s => s.id);
   assert.deepEqual(missing, []);
 });
+
+test('the audience counts visitor-days and daily feed readers from first-party hits, and never invents a return rate', async () => {
+  _reset(); const db = makeDb();
+  const cfg = { progress: { systems: [{ id: 'a', name: 'A', repo: 'o/a', stickiness: { content_feed: 'https://t/feed.json', analytics_host: 'a.example' } }] } };
+  for (const [v, n, bot] of [['v1', 'pageview', 0], ['v2', 'pageview', 0], ['v3', 'pageview', 1], ['f1', 'feed', 1], ['f2', 'feed', 1]]) await db.prepare(`INSERT INTO hits(at,host,path,vid,name,bot) VALUES(?,?,?,?,?,?)`).bind(NOW - 3600e3, 'a.example', '/', v, n, bot).run();
+  await stickinessStep({ db, config: cfg, ensureItem, fetchImpl: fetchOf([ent('x', 2)]), now: NOW });
+  const a = JSON.parse((await db.prepare(`SELECT measure FROM stickiness_state WHERE system='a'`).first()).measure).audience;
+  assert.deepEqual(a, { return_rate: null, subscribers: null, feed_hits_7d: 2 });
+});

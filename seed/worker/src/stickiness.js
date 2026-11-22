@@ -21,6 +21,22 @@ async function ensure(db) { if (ready) return; for (const s of STICKINESS_DDL) a
 export const _reset = () => { ready = false; };
 const BAD = new Set(['stale', 'aging', 'thin', 'narrow', 'unmeasured']);
 
+// The audience, from the system's own first-party counts. The analytics beacon stores nothing in the browser and its visitor id rotates daily, so a
+// returning visitor cannot be told from a new one there (a privacy guard, not to be weakened). What is measurable without it: visitor-days from the hits
+// table for a host this deployment counts (analytics_host) and distinct daily readers of its feeds (name 'feed', recorded server-side by the site worker).
+// A system may also serve { visits_7d, returning_7d, subscribers } at audience_url. A return rate is computed only from a real returning count.
+async function audienceOf(db, st, f, now) {
+  let out = null;
+  if (st.analytics_host) {
+    try {
+      const w = now - 7 * 864e5, q = (name, bot) => `SELECT COUNT(*) c FROM (SELECT DISTINCT vid, substr(datetime(at/1000,'unixepoch'),1,10) d FROM hits WHERE at>=? AND host=? AND name='${name}'${bot ? ' AND bot=0' : ''})`;
+      const v = (await db.prepare(q('pageview', true)).bind(w, st.analytics_host).first()) || {}, fd = (await db.prepare(q('feed', false)).bind(w, st.analytics_host).first()) || {};
+      out = { visits_7d: v.c || 0, feed_hits_7d: fd.c || 0 };
+    } catch (e) { /* allow-silent: no hits table here, so the audience stays unmeasured */ }
+  }
+  if (st.audience_url) { try { const r = await f(st.audience_url); if (r.ok) out = { ...(out || {}), ...(await r.json()) }; } catch (e) { /* allow-silent: an unreadable count stays unmeasured */ } }
+  return out;
+}
 async function promoted(db) { try { return (await all(db, `SELECT DISTINCT id FROM social_posted`)).map(r => r.id.replace(/^sticky:/, '')); } catch (e) { return []; } }  // no social table yet: nothing promoted
 
 export async function stickinessStep({ db, config, ensureItem, fetchImpl = fetch, now = Date.now() }) {
@@ -42,7 +58,7 @@ export async function stickinessStep({ db, config, ensureItem, fetchImpl = fetch
       await run(db, `INSERT INTO stickiness_state (system, name, state, error, checked_at) VALUES (?,?,?,?,?) ON CONFLICT(system) DO UPDATE SET state=excluded.state, error=excluded.error, checked_at=excluded.checked_at`, sys.id, sys.name, 'unreadable', error, nowIso);
       out.systems[sys.id] = 'unreadable'; continue;
     }
-    const mc = { now, domains: st.domains || [], expect_days: st.expect_days || 2, min_depth: st.min_depth || 3 };
+    const mc = { now, audience: await audienceOf(db, st, fetchImpl, now), domains: st.domains || [], expect_days: st.expect_days || 2, min_depth: st.min_depth || 3 };
     const m = measure(entries, mc), acts = plan(m, mc), q = queue(entries, { now, posted: done, reveal: st.reveal || '', max_per_day: st.max_per_day || 2, since_days: st.since_days || 14, arm: 'sticky' });
     const series = record([], m, { now })[0];
     await run(db, `INSERT INTO stickiness_series (system, day, row) VALUES (?,?,?) ON CONFLICT(system, day) DO UPDATE SET row=excluded.row`, sys.id, series.day, JSON.stringify(series));
