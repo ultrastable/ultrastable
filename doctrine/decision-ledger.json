@@ -4584,6 +4584,22 @@
    "title": "SEED-DEPLOY-1: a fresh seed answers /health 503 until its first tick",
    "body": "A freshly deployed seed answers /health with 503 until its first cron tick completes, so a strict 200 probe read a running worker as dead. The seed deploy now starts the first tick through /pulse/watch and accepts a JSON answer naming the org; a failed probe records status and body in its ops/deploys.jsonl row. session_0156nqDth3dDYAsL8hsm79sa",
    "probe": "grep:deploy/deploy-seed.mjs::pulse/watch"
+  },
+  {
+   "id": "decision-2026-11-22-one-year-survival-cloudflare-alerts-daily-d1-copy-compatibil",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "One-year survival: Cloudflare alerts, daily D1 copy, compatibility dates",
+   "body": "CF-ALERTS-1, D1-SNAPSHOT-1, COMPAT-DATE-1: Cloudflare alerts post to the tick's /hook/cloudflare and become CF-ALERT items that close after 24 quiet hours (deploy/cf-alerts.mjs registers the destination and policies); the tick copies its D1 into the new R2 bucket ultrastable-audit daily and reads it back (seed/worker/src/d1snapshot.js); compatibility dates older than 180 days advance on the watchdog runway pass (foundation/compatdate.py). dependency-drift and self-coder closed in doctrine/unattended.json with evidence; node-runtime stays open because workflow files are on the model-branch deny list.",
+   "probe": "file:seed/worker/src/cfalerts.js"
+  },
+  {
+   "id": "decision-2026-11-22-unlearn-research-principles-carried-in-code",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "Unlearn research principles carried in code",
+   "body": "Each principle in instances/unlearn/phases.json names a probe; phase 1 ships the help ladder, who-led measure and wide-walls measure; phase 3 principles (fade support, sandbox) wait for phase 3 gates.",
+   "probe": "grep:tests/foundation/test_unlearn.py::test_principles_are_in_code"
   }
  ]
 }

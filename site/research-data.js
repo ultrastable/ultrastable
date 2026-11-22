@@ -27,8 +27,8 @@ export default {
     "days": 0.75,
     "prs": 100,
     "merged": 64,
-    "regime": "driven",
-    "k_self": 0.0,
+    "regime": "self-sustaining",
+    "k_self": 310.0,
     "as_of": "2026-11-22T00:47:49.265Z"
    },
    "findings": [
@@ -90,7 +90,7 @@ export default {
      "metric_label": "second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl)",
      "measured": 30,
      "status": "met",
-     "n": 2009,
+     "n": 2050,
      "source": "ops/ultrastability.jsonl",
      "item": null
     },
@@ -243,15 +243,15 @@ export default {
     "data": "445M work events (GitHub, Jira, Google Calendar) for 720,542 workers at 655 firms, January 2021 to August 2026, from an engineering analytics platform; staggered difference-in-differences on AI tool adoption timing",
     "summary": "AI coding tools raise code output substantially but final software output only a little, with no detectable employment effect. Code review becomes the bottleneck: code waits longer for a reviewer, spends longer in review and draws more requested changes."
    },
-   "abstract": "Fiona Chen, James Stratton (Harvard University): AI coding tools raise code output substantially but final software output only a little, with no detectable employment effect. Code review becomes the bottleneck: code waits longer for a reviewer, spends longer in review and draws more requested changes. We map each of their findings to the mechanisms Ultrastable uses instead of a human review queue, and test each mapping against this system's own records. 5 of 7 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.",
+   "abstract": "Fiona Chen, James Stratton (Harvard University): AI coding tools raise code output substantially but final software output only a little, with no detectable employment effect. Code review becomes the bottleneck: code waits longer for a reviewer, spends longer in review and draws more requested changes. We map each of their findings to the mechanisms Ultrastable uses instead of a human review queue, and test each mapping against this system's own records. 6 of 7 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.",
    "window": {
     "start": "2026-11-20T15:16:32Z",
     "end": "2026-11-21T09:10:55Z",
     "days": 0.75,
     "prs": 100,
     "merged": 64,
-    "regime": "driven",
-    "k_self": 0.0,
+    "regime": "self-sustaining",
+    "k_self": 310.0,
     "as_of": "2026-11-22T00:47:49.265Z"
    },
    "findings": [
@@ -476,18 +476,18 @@ export default {
      },
      "prediction": "self_deploys >= 1 within 336 h",
      "metric_label": "verified deploys the system originated and executed itself (latest criticality tick)",
-     "measured": 0,
-     "status": "not-met",
-     "n": 95,
-     "source": "ops/criticality.jsonl at 2026-11-21T14:37:02Z",
-     "item": "Q-RES-chen-stratton-2026-F7"
+     "measured": 31,
+     "status": "met",
+     "n": 143,
+     "source": "ops/criticality.jsonl at 2026-11-22T00:44:29Z",
+     "item": null
     }
    ],
-   "met": 5,
+   "met": 6,
    "total": 7,
    "limits": [
     "Scale. One organization: 100 closed pull requests (64 merged) over 0.75 days, against a study of 655 firms over more than five years. Our numbers describe this system; they are not a causal estimate and are not compared with the study's effect sizes as if they were.",
-    "Who wrote the changes. 80% of merged pull requests in the window were opened by code agent sessions run under the owner's account, not by the system's own loops. The latest criticality tick puts the system in the driven regime with 0 self-originated deploys, so most of the work measured here was started from outside.",
+    "Who wrote the changes. 80% of merged pull requests in the window were opened by code agent sessions run under the owner's account, not by the system's own loops. The latest criticality tick puts the system in the self-sustaining regime with 31 self-originated deploys, so most of the work measured here was started from outside.",
     "Review by construction. Ultrastable has no human review step, so a short open-to-merge time is partly a consequence of the design. The real test of the design is quality: the revert and deploy-verification findings, which can fail.",
     "Revert share counts commits whose subject starts with Revert; a fix that undoes a change without that word is not counted, so the figure is a lower bound.",
     "Source. Job market paper (working paper, not peer reviewed), version 2026-11-19 (first version 2026-01-07); its findings may change in later versions."
@@ -538,15 +538,15 @@ export default {
     "data": "This system's own ledgers: closed pull requests read from GitHub, the deploy record, the criticality ticks, the ultrastability ledger and the loop registry",
     "summary": "A common belief holds that AI agents can draft code but a person must still merge it, deploy it and check that it works. Ultrastable is built to close those loops itself: a server-side lane merges green changes, every deploy is proven live against its commit, and every loop names its closing probe."
    },
-   "abstract": "Ultrastable R&D (Ultrastable): A common belief holds that AI agents can draft code but a person must still merge it, deploy it and check that it works. Ultrastable is built to close those loops itself: a server-side lane merges green changes, every deploy is proven live against its commit, and every loop names its closing probe. We state the common belief as properties that can fail, and test each against the records of a system that merges, deploys and checks its own work. Where it still depends on outside sessions, the paper says so with the number. 4 of 6 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.",
+   "abstract": "Ultrastable R&D (Ultrastable): A common belief holds that AI agents can draft code but a person must still merge it, deploy it and check that it works. Ultrastable is built to close those loops itself: a server-side lane merges green changes, every deploy is proven live against its commit, and every loop names its closing probe. We state the common belief as properties that can fail, and test each against the records of a system that merges, deploys and checks its own work. Where it still depends on outside sessions, the paper says so with the number. 5 of 6 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.",
    "window": {
     "start": "2026-11-20T15:16:32Z",
     "end": "2026-11-21T09:10:55Z",
     "days": 0.75,
     "prs": 100,
     "merged": 64,
-    "regime": "driven",
-    "k_self": 0.0,
+    "regime": "self-sustaining",
+    "k_self": 310.0,
     "as_of": "2026-11-22T00:47:49.265Z"
    },
    "findings": [
@@ -660,8 +660,8 @@ export default {
      "metric_label": "human touches counted by the latest criticality tick",
      "measured": 0,
      "status": "met",
-     "n": 95,
-     "source": "ops/criticality.jsonl at 2026-11-21T14:37:02Z",
+     "n": 145,
+     "source": "ops/criticality.jsonl at 2026-11-22T00:44:29Z",
      "item": null
     },
     {
@@ -710,18 +710,18 @@ export default {
      },
      "prediction": "self_deploys >= 1 within 336 h",
      "metric_label": "verified deploys the system originated and executed itself (latest criticality tick)",
-     "measured": 0,
-     "status": "not-met",
-     "n": 95,
-     "source": "ops/criticality.jsonl at 2026-11-21T14:37:02Z",
-     "item": "Q-RES-open-loops-2026-O6"
+     "measured": 31,
+     "status": "met",
+     "n": 143,
+     "source": "ops/criticality.jsonl at 2026-11-22T00:44:29Z",
+     "item": null
     }
    ],
-   "met": 4,
+   "met": 5,
    "total": 6,
    "limits": [
     "Scale. One organization: 100 closed pull requests (64 merged) over 0.75 days. Our numbers describe this system; they are not a causal estimate and are not compared with the study's effect sizes as if they were.",
-    "Who wrote the changes. 80% of merged pull requests in the window were opened by code agent sessions run under the owner's account, not by the system's own loops. The latest criticality tick puts the system in the driven regime with 0 self-originated deploys, so most of the work measured here was started from outside.",
+    "Who wrote the changes. 80% of merged pull requests in the window were opened by code agent sessions run under the owner's account, not by the system's own loops. The latest criticality tick puts the system in the self-sustaining regime with 31 self-originated deploys, so most of the work measured here was started from outside.",
     "Review by construction. Ultrastable has no human review step, so a short open-to-merge time is partly a consequence of the design. The real test of the design is quality: the revert and deploy-verification findings, which can fail.",
     "Revert share counts commits whose subject starts with Revert; a fix that undoes a change without that word is not counted, so the figure is a lower bound.",
     "Source. Own r&d question set, regenerated from this system's records, version 2026-11-21; its findings may change in later versions."
@@ -779,8 +779,8 @@ export default {
     "days": 0.75,
     "prs": 100,
     "merged": 64,
-    "regime": "driven",
-    "k_self": 0.0,
+    "regime": "self-sustaining",
+    "k_self": 310.0,
     "as_of": "2026-11-22T00:47:49.265Z"
    },
    "findings": [
@@ -950,7 +950,7 @@ export default {
    "total": 6,
    "limits": [
     "Scale. One organization: 100 closed pull requests (64 merged) over 0.75 days. Our numbers describe this system; they are not a causal estimate and are not compared with the study's effect sizes as if they were.",
-    "Who wrote the changes. 80% of merged pull requests in the window were opened by code agent sessions run under the owner's account, not by the system's own loops. The latest criticality tick puts the system in the driven regime with 0 self-originated deploys, so most of the work measured here was started from outside.",
+    "Who wrote the changes. 80% of merged pull requests in the window were opened by code agent sessions run under the owner's account, not by the system's own loops. The latest criticality tick puts the system in the self-sustaining regime with 31 self-originated deploys, so most of the work measured here was started from outside.",
     "Review by construction. Ultrastable has no human review step, so a short open-to-merge time is partly a consequence of the design. The real test of the design is quality: the revert and deploy-verification findings, which can fail.",
     "Revert share counts commits whose subject starts with Revert; a fix that undoes a change without that word is not counted, so the figure is a lower bound.",
     "Source. Own r&d question set, regenerated from this system's records, version 2026-11-21; its findings may change in later versions."
