@@ -12,3 +12,5 @@
 {"at": "2026-11-21T16:21:43Z", "decided_at": "2026-11-20T15:43:15Z", "hit": true, "id": "d-9dad329ccac6", "measured": 1.0, "point": "idea-loop", "predicted": 1.0}
 {"at": "2026-11-21T16:54:13Z", "decided_at": "2026-11-20T16:41:39Z", "hit": true, "id": "d-db91eb0c447c", "measured": 1.0, "point": "work-queue-priority", "predicted": 1.0}
 {"at": "2026-11-21T20:31:10Z", "decided_at": "2026-11-20T20:01:11Z", "hit": true, "id": "d-e37812b48f25", "measured": 1.0, "point": "work-queue-priority", "predicted": 1.0}
+{"at": "2026-11-22T09:11:51Z", "decided_at": "2026-11-21T02:01:34Z", "hit": true, "id": "d-dd149ebbda67", "measured": 1.0, "point": "work-queue-priority", "predicted": 1.0}
+{"at": "2026-11-22T09:11:51Z", "decided_at": "2026-11-21T08:01:15Z", "hit": true, "id": "d-0dedd967d8be", "measured": 1.0, "point": "work-queue-priority", "predicted": 1.0}

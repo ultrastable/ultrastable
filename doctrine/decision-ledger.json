@@ -4661,6 +4661,38 @@
    "body": "The runway step wrote ops/yearsim*, ops/saydo*, ops/trajectory* and their site data, but the watchdog Record step never added them, so each run lost its own history. It now adds whichever exist (Q-REDMAIN-revert-lane second half; revertRedMain was already live).",
    "probe": "grep:.github/workflows/watchdog.yml::ops/yearsim.jsonl",
    "session": "session_0156nqDrazgRH7yMoAUMyYoy"
+  },
+  {
+   "id": "decision-2026-11-22-node-24-in-workflows-node-maintenance-horizon-check",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "Node 24 in workflows; Node maintenance horizon check",
+   "body": "Workflow Node pins moved from 22 to 24 (maintenance to 2028-04-30) on a protected branch Rowan approved; compatdate --check now fails any pin whose Node major leaves maintenance within 365 days, closing node-runtime in the unattended register so all three seeds reach autonomous.",
+   "probe": "grep:foundation/compatdate.py::def node_problems"
+  },
+  {
+   "id": "decision-2026-11-22-node-24-on-every-workflow-closes-node-runtime",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "Node 24 on every workflow closes node-runtime",
+   "body": "All workflow and seed node-version pins moved from 22 to 24 (Node 22 leaves maintenance 2027-04-30); Unlearn, seed/worker, site and dashboard suites passed on Node 24.22.3 before the bump; node-runtime is closed in doctrine/unattended.json, which lifts the Unlearn seed to autonomous.",
+   "probe": "grep:doctrine/unattended.json::Every workflow and seed workflow now pins node-version 24"
+  },
+  {
+   "id": "decision-2026-11-22-offsite-backup-closed-first-daily-d1-copy-in-r2",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "offsite-backup closed: first daily D1 copy in R2",
+   "body": "After #1911 the tick carries AUDIT (deploy 01:11 UTC) and wrote backups/d1/ultrastable-org/2026-11-22.ndjson.gz, 1095514 bytes, at 01:11:32; the weekly drill to the ops repository stays as the second home.",
+   "probe": "grep:doctrine/unattended.json::backups/d1/ultrastable-org"
+  },
+  {
+   "id": "lesson-2026-11-22-the-trajectory-page-goes-stale-whenever-the-watchdog-commits",
+   "kind": "lesson",
+   "date": "2026-11-22",
+   "title": "The trajectory page goes stale whenever the watchdog commits its ledger",
+   "body": "The watchdog commits ops/trajectory.json but not site/trajectory-data.js, so test_trajectory went red on main and on every PR. REGEN-1 now runs trajectory --page, which renders the page from the committed ledger before the tests.",
+   "probe": "grep:scripts/regen_generated.sh::trajectory --page"
   }
  ]
 }
