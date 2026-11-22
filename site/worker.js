@@ -1,7 +1,8 @@
 // ultrastable-site: the public presence of Ultrastable, the self-governing development platform (ULTRASTABLE-SITE-1, 2026-11-10).
 // Canonical host ultrastable.io; ultrastable.app and ultrastable.net redirect to it (/pilot and /live). Live proof (/live) shows only
 // Ultrastable's own records; /proof is a 301 to /live (PROOF-OWN-1). Positioning: docs/PRODUCT-ULTRASTABLE.md and product/boundary.json.
-import { handleAnalytics, record } from "../seed/analytics/analytics.js";
+import { handleAnalytics, record, recordFeed } from "../seed/analytics/analytics.js";
+const FEEDS = /^\/(?:research\.atom|progress\.atom|changelog\.xml|feed\.xml|left-alone\.atom|s\/[a-z0-9-]+\/feed\.xml)$/; // AUDIENCE-1: every feed request is counted (seed/analytics recordFeed)
 import { routeChat } from "../seed/worker/src/airoute.js"; // AI-ROUTER-1: cache, dedupe, free-first, learned routing for every site model call
 import { budgetEnv, SHARES, halted } from "../seed/worker/src/budget.js";  // SPEND-GOVERNOR-1: site model calls spend from the owner's budget
 import USER_PATH from "./userpath.js";
@@ -1069,6 +1070,7 @@ const handler = {
     if (host === "ultrastable.net") return Response.redirect("https://" + CANON + "/live", 301);
     if (u.hostname === "www." + CANON) return Response.redirect("https://" + CANON + u.pathname, 301);
     const an = env && env.DB ? await handleAnalytics(request, env, { hosts: [CANON] }) : null; if (an) return an;
+    if (env && env.DB && request.method === "GET" && FEEDS.test(new URL(request.url).pathname) && ctx && ctx.waitUntil) ctx.waitUntil(recordFeed(env, request, new URL(request.url).pathname));
     if (request.method === "POST" && u.pathname === "/api/meta/ingest") return metaIngest(request, env); // META-SIGNAL-1
     if (request.method === "GET" && u.pathname === "/api/suggest") return suggestions(u, env);
     { const cn = await connectionsRoute(request, env); if (cn) return cn; } // CONNECTIONS-1: /connections and the owner-only /connect/* consent flow

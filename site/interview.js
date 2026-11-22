@@ -147,6 +147,7 @@ export const JS = String.raw`(function () {
   function nextQ() {
     var left = pending(); if (!left.length) return plan();
     var q = left[0]; S.cur = q; say('bot', q.q);
+    try { if (navigator.sendBeacon && !(navigator.doNotTrack == '1' || navigator.globalPrivacyControl)) navigator.sendBeacon('/a/e', new Blob([JSON.stringify({ h: location.hostname, p: location.pathname, n: 'interview-step' })], { type: 'text/plain' })); } catch (e) {} /* AUDIENCE-1 hook event */
     var items = q.o.map(function (o) { return { label: o[1], fn: function () { answer(q, o[0], o[1]); } }; });
     items.push({ label: 'Not sure', cls: 'quiet', fn: function () { answer(q, '?', 'Not sure'); } });
     items.push({ label: 'That is enough, build it', cls: 'quiet', fn: function () { plan(); } });

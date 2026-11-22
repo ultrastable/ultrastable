@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-22-audience-1-every-system-builds-a-returning-audience",
+  "kind": "decision",
+  "date": "2026-11-22",
+  "title": "AUDIENCE-1: every system builds a returning audience",
+  "body": "Shared engine seed/scripts/audience.py measures supply, promotion, hook, attention and return daily; feed requests and aggregator subscriber counts are recorded by recordFeed; hook events via window.ultrastableEvent; breaches file Q-AUD items, stale sections run their producer, targets ratchet.",
+  "probe": "grep:seed/scripts/audience.py::AUDIENCE-1"
+ },
+ "kind": "decision",
+ "title": "AUDIENCE-1: every system builds a returning audience",
+ "session": ""
+}

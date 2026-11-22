@@ -1849,6 +1849,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **Every system builds and holds a returning audience (AUDIENCE-1, Rowan 2026-11-22).** \"Every ultra-stable app, every tenant, every",
+   "detail": "",
+   "how": "file:seed/scripts/audience.py + file:doctrine/audience.json + file:CREDITS.md + file:foundation/audience.py + file:seed/analytics/analytics.js + file:tests/foundation/test_audience.py",
+   "id": "cited-8cec499d82",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Issue inflow never exceeds closures; every issue inside its SLA (FLOW-BALANCE-1, Rowan 2026-11-21).** \"All UltraStable issues must be",
    "detail": "",
    "how": "file:seed/worker/src/flowbalance.js + file:doctrine/balance.json + file:tests/foundation/test_balance.py + file:foundation/balance.py",
@@ -2474,6 +2483,15 @@ export default {
    "detail": "",
    "how": "file:seed/worker/src/social.js + file:doctrine/thought.json + file:foundation/thought.py + file:site/research.js + file:tests/foundation/test_thought.py + file:site/research.test.mjs",
    "id": "mirror-49f57fdb9b",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Every system builds and holds a returning audience (AUDIENCE-1, Rowan 2026-11-22).** \"Every ultra-stable app, every tenant, every",
+   "detail": "",
+   "how": "file:seed/scripts/audience.py + file:doctrine/audience.json + file:CREDITS.md + file:foundation/audience.py + file:seed/analytics/analytics.js + file:tests/foundation/test_audience.py",
+   "id": "mirror-4d677d8b58",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3127,7 +3145,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 62 Python and 463 Worker tests",
+   "claim": "seed-tests: 64 Python and 465 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3136,7 +3154,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 463 Worker tests",
+   "claim": "seed-worker-tests: 465 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3377,7 +3395,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 372,
-  "total": 372
+  "pass": 374,
+  "total": 374
  }
 };

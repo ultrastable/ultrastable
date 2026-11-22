@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-22T10:22:14Z",
- "commit": "5b26db12",
+ "generated": "2026-11-22T13:26:34Z",
+ "commit": "0694d13",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 110,
@@ -18,7 +18,7 @@
   "merged_prs_listed": 0,
   "prs_merged_total": 0,
   "prs_merged_unattended": 0,
-  "backlog_open": 1,
+  "backlog_open": null,
   "backlog_items": 796
  },
  "unknowns": {
@@ -58,11 +58,10 @@
   "queue": {
    "items": 796,
    "by_status": {
-    "closed": 786,
-    "open": 1,
+    "closed": 787,
     "done": 9
    },
-   "takeable_now": 1
+   "takeable_now": 0
   },
   "merged": {
    "total": 0,
@@ -100,21 +99,21 @@
    },
    "latest": {
     "conclusion": "success",
-    "createdAt": "2026-11-22T09:11:45Z",
+    "createdAt": "2026-11-22T13:20:40Z",
     "event": "push",
-    "headSha": "39fcc5b58561bb73fd9e8eb99c8030dfab55f9ac"
+    "headSha": "bb337dff4fdcd2c261ea9ef1f0723f474f518708"
    },
    "per_day_success": {
-    "2026-11-20": 9,
+    "2026-11-20": 6,
     "2026-11-21": 37,
-    "2026-11-22": 2
+    "2026-11-22": 5
    }
   },
   "executor": {
    "runs": 30,
    "by_conclusion": {
-    "success": 20,
-    "failure": 10
+    "failure": 1,
+    "success": 29
    },
    "prs_opened_unattended": 0,
    "prs_merged_unattended": 0,
@@ -172,8 +171,8 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 507.7,
-   "status": "fresh",
+   "age_s": 77.1,
+   "status": "idle",
    "missed": 0
   },
   {
@@ -181,30 +180,31 @@
    "what": "an unattended pull request was opened",
    "sla_s": 172800,
    "age_s": null,
-   "status": "missing",
-   "missed": 1
+   "status": "idle",
+   "missed": 0
   },
   {
    "id": "merge",
    "what": "an unattended pull request merged to main",
    "sla_s": 259200,
    "age_s": null,
-   "status": "missing",
-   "missed": 1
+   "status": "idle",
+   "missed": 0
   },
   {
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 2164.7,
-   "status": "stale",
-   "missed": 2
+   "age_s": 274.1,
+   "status": "fresh",
+   "missed": 0,
+   "lag_s": 546.0
   },
   {
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 74752.7,
+   "age_s": 85924.1,
    "status": "fresh",
    "missed": 0
   }
@@ -213,22 +213,12 @@
   "counts": {
    "merged": 0,
    "closed": 0,
-   "parked": 51,
+   "parked": 53,
    "failed": 0,
    "expired": 0,
    "open": 0
   },
   "names": [
-   {
-    "name": "Q-SELF-unused-import-foundation-glossary-py",
-    "state": "parked",
-    "failures": 3
-   },
-   {
-    "name": "Q-SELF-unused-import-foundation-scaffold-py",
-    "state": "parked",
-    "failures": 3
-   },
    {
     "name": "Q-SELF-unused-import-foundation-fleet-py",
     "state": "parked",
@@ -418,12 +408,22 @@
     "name": "Q-RESCORE-d-dd149ebbda67",
     "state": "parked",
     "failures": 3
+   },
+   {
+    "name": "OL-20261122-2",
+    "state": "parked",
+    "failures": 3
+   },
+   {
+    "name": "OL-PR-1926",
+    "state": "parked",
+    "failures": 1
    }
   ],
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-22T10:20:21Z",
+  "generated": "2026-11-22T13:25:50Z",
   "blindspots": {
    "backup": {
     "skipped": "last drill is fresh"
@@ -448,7 +448,7 @@
     "id": "pageviews_7d",
     "baseline": 1310,
     "target": 1500,
-    "expected_today": 1380.8,
+    "expected_today": 1381.7,
     "value": null,
     "behind": null,
     "progress": null
@@ -457,7 +457,7 @@
     "id": "visitors_7d",
     "baseline": 564,
     "target": 650,
-    "expected_today": 596.0,
+    "expected_today": 596.4,
     "value": null,
     "behind": null,
     "progress": null
@@ -466,7 +466,7 @@
     "id": "agent_hits_7d",
     "baseline": 817,
     "target": 1000,
-    "expected_today": 885.2,
+    "expected_today": 886.0,
     "value": null,
     "behind": null,
     "progress": null
@@ -475,7 +475,7 @@
     "id": "pilot_page_views_7d",
     "baseline": 326,
     "target": 400,
-    "expected_today": 353.6,
+    "expected_today": 353.9,
     "value": null,
     "behind": null,
     "progress": null
@@ -541,7 +541,7 @@
     "metric": "visitors_7d",
     "baseline": null,
     "predicted_pct": 15,
-    "started": "2026-11-22T10:20:21Z",
+    "started": "2026-11-22T13:25:50Z",
     "check_after_days": 7,
     "verdict": null
    },
@@ -550,7 +550,7 @@
     "metric": "pilot_page_views_7d",
     "baseline": null,
     "predicted_pct": 15,
-    "started": "2026-11-22T10:20:21Z",
+    "started": "2026-11-22T13:25:50Z",
     "check_after_days": 7,
     "verdict": null
    }
@@ -595,23 +595,23 @@
    },
    {
     "id": "author",
-    "status": "fresh",
+    "status": "idle",
     "missed": 0
    },
    {
     "id": "pr",
-    "status": "missing",
-    "missed": 1
+    "status": "idle",
+    "missed": 0
    },
    {
     "id": "merge",
-    "status": "missing",
-    "missed": 1
+    "status": "idle",
+    "missed": 0
    },
    {
     "id": "deploy",
-    "status": "stale",
-    "missed": 2
+    "status": "fresh",
+    "missed": 0
    },
    {
     "id": "publish",
@@ -649,7 +649,7 @@
   },
   "target_growth_share": 0.4,
   "growth_items_takeable": 0,
-  "items_takeable": 1,
+  "items_takeable": 0,
   "metrics": [
    {
     "id": "pageviews_7d",
@@ -694,18 +694,18 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 53.0,
+   "last_beat_age_s": 132.9,
    "expected_interval_s": 21600,
    "beats_24h": 60,
    "expected_24h": 4.0,
    "median_jitter_s": null,
-   "status": "ticking"
+   "status": "idle"
   },
   {
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 74905.0,
+   "last_beat_age_s": 85979.9,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -716,9 +716,9 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 4202.0,
+   "last_beat_age_s": -4.1,
    "expected_interval_s": 86400,
-   "beats_24h": 37,
+   "beats_24h": 31,
    "expected_24h": 1.0,
    "median_jitter_s": null,
    "status": "ticking"
@@ -727,7 +727,7 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 410789.0,
+   "last_beat_age_s": 421863.9,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -738,7 +738,7 @@
    "id": "a11y",
    "what": "A11Y-LOOP-1: the weekly accessibility and layout audit of every public page",
    "source": "workflow",
-   "last_beat_age_s": 290446.0,
+   "last_beat_age_s": 301520.9,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -756,7 +756,7 @@
    "id": "claims",
    "what": "words checked against code and the deployed site",
    "source": "workflow",
-   "last_beat_age_s": 69968.0,
+   "last_beat_age_s": 81042.9,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -767,7 +767,7 @@
    "id": "watchdog",
    "what": "RESILIENCE-1: the GitHub watchdog that probes every clock and restarts the stopped ones; the tick Worker dispatches it again when it is older than 12 hours",
    "source": "workflow",
-   "last_beat_age_s": -2.0,
+   "last_beat_age_s": 118.9,
    "expected_interval_s": 43200,
    "beats_24h": 60,
    "expected_24h": 2.0,
@@ -778,9 +778,9 @@
    "id": "temporal",
    "what": "the daily trend read: series per component, loop and entry, and what they show",
    "source": "workflow",
-   "last_beat_age_s": 79376.0,
+   "last_beat_age_s": 90450.9,
    "expected_interval_s": 86400,
-   "beats_24h": 1,
+   "beats_24h": 0,
    "expected_24h": 1.0,
    "median_jitter_s": null,
    "status": "ticking"
@@ -796,7 +796,7 @@
    "id": "intent-yield",
    "what": "the daily intent yield: every owner directive's own probe, restatements charged to the original, /yield",
    "source": "workflow",
-   "last_beat_age_s": 45659.0,
+   "last_beat_age_s": 56733.9,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -2412,7 +2412,7 @@
   {
    "loop": "unlearn-beat",
    "kind": "tick",
-   "summary": "Unlearn tenant loop: the encyclopedia's evidence step resolves cited sources to DOIs (Crossref, title and year must match) and watches Europe PMC for new reviews per entry, surfacing them and queueing entries for re-grading; reader guesses and shift answers are measured. The coaching tool's curiosity, move, 7 and 14 day follow-up and weight re-learning run in the same beat, and its next phase opens when its gates hold (instances/unlearn/phases.json).",
+   "summary": "Unlearn tenant loop: the encyclopedia's evidence step resolves cited sources to DOIs (Crossref, title and year must match) and watches Europe PMC for new reviews per entry, surfacing them; the lab step labels each new review with a quote that must be in its abstract, re-grades entries from those labels, drafts candidate beliefs for /lab from new myth reviews, and runs wording trials decided by readers' shift answers; reader guesses and shift answers are measured. The coaching tool's curiosity, move, 7 and 14 day follow-up and weight re-learning run in the same beat, and its next phase opens when its gates hold (instances/unlearn/phases.json).",
    "owner": "product-manager",
    "trigger": "cron 41 * * * * on ultrastable-unlearn; a page visit runs the beat when the cron has been silent for 2 hours",
    "sla": "2h",
@@ -2852,7 +2852,106 @@
  "changes": {
   "commits": [
    {
-    "sha": "5b26db12",
+    "sha": "0694d13",
+    "at": "2026-11-22T14:11:46+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "IDEA-BANK-1: diverse front-door ideas, each proven to boot through the seed (#1925)",
+    "pr": 1925,
+    "item": "IDEA-BANK-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/0694d13b582f61af91b743991a0948699f418f08"
+   },
+   {
+    "sha": "e771944",
+    "at": "2026-11-22T12:21:05+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "deploy-ultrastable: record live-verified deploy [skip ci]",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/e771944b2863281e0aa4023d0b819a8a9f524e35"
+   },
+   {
+    "sha": "00fced4",
+    "at": "2026-11-22T13:20:11+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "Unlearn: 52 entries and loops that improve the encyclopedia by themselves (#1924)",
+    "pr": 1924,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/00fced4fd9b8abd7a97e0b5a8149d7cba97fa65b"
+   },
+   {
+    "sha": "4162668",
+    "at": "2026-11-22T11:51:30+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "queue: closing-probe verdicts for 2 item(s) (QUEUE-PERSIST-1) [skip ci]",
+    "pr": null,
+    "item": "QUEUE-PERSIST-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/41626684d303c7465b67a72e65c3c1205856e359"
+   },
+   {
+    "sha": "536a492",
+    "at": "2026-11-22T11:21:13+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "queue: closing-probe verdicts for 1 item(s) (QUEUE-PERSIST-1) [skip ci]",
+    "pr": null,
+    "item": "QUEUE-PERSIST-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/536a492fbd1db979e823467f7d1e5198cf2481d6"
+   },
+   {
+    "sha": "fa8d5d4",
+    "at": "2026-11-22T11:01:17+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "queue: closing-probe verdicts for 1 item(s) (QUEUE-PERSIST-1) [skip ci]",
+    "pr": null,
+    "item": "QUEUE-PERSIST-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/fa8d5d45a885931291175cdc4f40de5c47ac5769"
+   },
+   {
+    "sha": "ffc55cb",
+    "at": "2026-11-22T10:53:58+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "watchdog: clock probe (RESILIENCE-1) [skip ci]",
+    "pr": null,
+    "item": "RESILIENCE-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/ffc55cb9ab88bf0a88dd67341c55d1fcc8fa3aac"
+   },
+   {
+    "sha": "979baa6",
+    "at": "2026-11-22T10:43:55+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "watchdog: clock probe (RESILIENCE-1) [skip ci]",
+    "pr": null,
+    "item": "RESILIENCE-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/979baa62915468e1a205c118735335582b0e2399"
+   },
+   {
+    "sha": "f03f1d4",
+    "at": "2026-11-22T10:35:25+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "deploy-ultrastable: record live-verified deploy [skip ci]",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/f03f1d4dd5501a8b395f19ada6db41b8559dcb8f"
+   },
+   {
+    "sha": "baa4753",
+    "at": "2026-11-22T10:33:57+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "watchdog: clock probe (RESILIENCE-1) [skip ci]",
+    "pr": null,
+    "item": "RESILIENCE-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/baa475387b3e87547b08e6d8b597d0ae056aad9e"
+   },
+   {
+    "sha": "e8338e3",
+    "at": "2026-11-22T11:29:24+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "Unlearn: rebuild as a clickable evidence encyclopedia of beliefs to unlearn (#1922)",
+    "pr": 1922,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/e8338e3415657d2f841a4add1d8664c8db48e73a"
+   },
+   {
+    "sha": "5b26db1",
     "at": "2026-11-22T09:51:06+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "queue: closing-probe verdicts for 1 item(s) (QUEUE-PERSIST-1) [skip ci]",
@@ -2861,7 +2960,7 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/5b26db12af8a3f60ba852f502a9637b84690bb77"
    },
    {
-    "sha": "154fdfed",
+    "sha": "154fdfe",
     "at": "2026-11-22T09:43:10+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "watchdog: clock probe (RESILIENCE-1) [skip ci]",
@@ -2870,7 +2969,7 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/154fdfed9f7c0dfd64d77f7626a1e0a1d2ec86d0"
    },
    {
-    "sha": "b2bb90b9",
+    "sha": "b2bb90b",
     "at": "2026-11-22T09:34:01+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "watchdog: clock probe (RESILIENCE-1) [skip ci]",
@@ -2879,7 +2978,7 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/b2bb90b9914a3207e9b9486ad1f3cdb29d56e683"
    },
    {
-    "sha": "f512a54c",
+    "sha": "f512a54",
     "at": "2026-11-22T09:23:34+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "watchdog: clock probe (RESILIENCE-1) [skip ci]",
@@ -2888,7 +2987,7 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/f512a54ca934ace5c05141ba5c9ff753ca743f5a"
    },
    {
-    "sha": "eacb6f1f",
+    "sha": "eacb6f1",
     "at": "2026-11-22T10:17:59+01:00",
     "author": "Rowan Brad Quni-Gudzinas",
     "subject": "Fold Intent Yield into the core; close it out as a separate project (#1920)",
@@ -2897,7 +2996,7 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/eacb6f1f0f15b254f5d50c8e47876b451b73da49"
    },
    {
-    "sha": "a48e97d1",
+    "sha": "a48e97d",
     "at": "2026-11-22T09:12:47+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1) [skip ci]",
@@ -2906,7 +3005,7 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/a48e97d1a48794581fa27f50b12e01269aa197a0"
    },
    {
-    "sha": "568712bd",
+    "sha": "568712b",
     "at": "2026-11-22T09:12:29+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "lane: server-owned loops (SERVER-OWNS-LOOPS-1) [skip ci]",
@@ -2915,7 +3014,7 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/568712bd3a03289a3757c4989c7a02ed87f5acf7"
    },
    {
-    "sha": "526dfd5b",
+    "sha": "526dfd5",
     "at": "2026-11-22T09:12:13+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "host-sync - runtime state of the host (HOSTSYNC-1) [skip ci]",
@@ -2924,7 +3023,7 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/526dfd5b5725ed15980f5bdd51ffe93ce502f785"
    },
    {
-    "sha": "9cb4b50f",
+    "sha": "9cb4b50",
     "at": "2026-11-22T09:12:01+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "tenant-sync: ledger [skip ci]",
@@ -2933,7 +3032,7 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/9cb4b50f9a1e955fbd35c20cb84583822925390a"
    },
    {
-    "sha": "9be416eb",
+    "sha": "9be416e",
     "at": "2026-11-22T09:11:55+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "host-sync - record deployed gateway module [skip ci]",
@@ -2942,7 +3041,7 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/9be416eb13be4d6a8b217aeffd3949e185161d44"
    },
    {
-    "sha": "39fcc5b5",
+    "sha": "39fcc5b",
     "at": "2026-11-22T10:11:41+01:00",
     "author": "Rowan Brad Quni-Gudzinas",
     "subject": "Node 24 on every workflow, plus a Node maintenance horizon check (carries #1918) (#1919)",
@@ -2951,7 +3050,7 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/39fcc5b58561bb73fd9e8eb99c8030dfab55f9ac"
    },
    {
-    "sha": "546dc309",
+    "sha": "546dc30",
     "at": "2026-11-22T07:51:24+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "queue: closing-probe verdicts for 3 item(s) (QUEUE-PERSIST-1) [skip ci]",
@@ -2960,7 +3059,7 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/546dc309e92033029a75fc927ba857fff85ea527"
    },
    {
-    "sha": "9997ce82",
+    "sha": "9997ce8",
     "at": "2026-11-22T07:43:58+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "watchdog: clock probe (RESILIENCE-1) [skip ci]",
@@ -2969,7 +3068,7 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/9997ce8270753465831e88ab87e394bf0c750084"
    },
    {
-    "sha": "42a71b62",
+    "sha": "42a71b6",
     "at": "2026-11-22T07:41:08+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "queue: closing-probe verdicts for 3 item(s) (QUEUE-PERSIST-1) [skip ci]",
@@ -2978,7 +3077,7 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/42a71b62b0d03e8d6b26536ca7cebd902ec271eb"
    },
    {
-    "sha": "36f23f7e",
+    "sha": "36f23f7",
     "at": "2026-11-22T07:33:48+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "watchdog: clock probe (RESILIENCE-1) [skip ci]",
@@ -2987,7 +3086,7 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/36f23f7ede9f5e1a3fd58139fd25c6e9da49a35b"
    },
    {
-    "sha": "b0b8078b",
+    "sha": "b0b8078",
     "at": "2026-11-22T07:31:12+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "queue: closing-probe verdicts for 3 item(s) (QUEUE-PERSIST-1) [skip ci]",
@@ -2996,7 +3095,7 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/b0b8078b4fca166480f5b2fc881d9002f140d065"
    },
    {
-    "sha": "3128db13",
+    "sha": "3128db1",
     "at": "2026-11-22T07:23:48+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "watchdog: clock probe (RESILIENCE-1) [skip ci]",
@@ -3005,7 +3104,7 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/3128db139162b017b8c9d34f1f70b07b6465d550"
    },
    {
-    "sha": "d7c1c7d7",
+    "sha": "d7c1c7d",
     "at": "2026-11-22T07:21:05+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "queue: closing-probe verdicts for 3 item(s) (QUEUE-PERSIST-1) [skip ci]",
@@ -3014,7 +3113,7 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/d7c1c7d72ab21d23263dcfb7e95bb1c73b495a15"
    },
    {
-    "sha": "e5d28b23",
+    "sha": "e5d28b2",
     "at": "2026-11-22T07:14:06+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "watchdog: clock probe (RESILIENCE-1) [skip ci]",
@@ -3023,7 +3122,7 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/e5d28b2359fb8f92f81913cdf640a1ca0af1644c"
    },
    {
-    "sha": "f6cf4c0b",
+    "sha": "f6cf4c0",
     "at": "2026-11-22T07:11:18+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "queue: closing-probe verdicts for 7 item(s) (QUEUE-PERSIST-1) [skip ci]",
@@ -3032,7 +3131,7 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/f6cf4c0b4f4ee083fea0674e5847babbc2369f3d"
    },
    {
-    "sha": "59344350",
+    "sha": "5934435",
     "at": "2026-11-22T07:03:43+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "watchdog: clock probe (RESILIENCE-1) [skip ci]",
@@ -3041,7 +3140,7 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/593443508119abe7b6fab99b5558c5e6bb1c9bb3"
    },
    {
-    "sha": "3d84315b",
+    "sha": "3d84315",
     "at": "2026-11-22T07:01:06+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "queue: closing-probe verdicts for 4 item(s) (QUEUE-PERSIST-1) [skip ci]",
@@ -3050,7 +3149,7 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/3d84315b469ce9c31eb26ffaf1ee5d08297c3da7"
    },
    {
-    "sha": "58da94c5",
+    "sha": "58da94c",
     "at": "2026-11-22T06:53:59+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "watchdog: clock probe (RESILIENCE-1) [skip ci]",
@@ -3059,7 +3158,7 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/58da94c56a3c9b9a64efef847193a74bc04761c7"
    },
    {
-    "sha": "0f6cee55",
+    "sha": "0f6cee5",
     "at": "2026-11-22T06:52:16+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "queue: closing-probe verdicts for 3 item(s) (QUEUE-PERSIST-1) [skip ci]",
@@ -3068,7 +3167,7 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/0f6cee55fbf1f015841299c36e54956b9ddd1567"
    },
    {
-    "sha": "ebde3c0f",
+    "sha": "ebde3c0",
     "at": "2026-11-22T06:44:20+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "watchdog: clock probe (RESILIENCE-1) [skip ci]",
@@ -3077,7 +3176,7 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/ebde3c0f37afcc270ed77985cd4d8fdd2367388a"
    },
    {
-    "sha": "4e45c115",
+    "sha": "4e45c11",
     "at": "2026-11-22T06:42:40+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "queue: closing-probe verdicts for 8 item(s) (QUEUE-PERSIST-1) [skip ci]",
@@ -3086,7 +3185,7 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/4e45c1153370e76dcb577b11af3c5bcf2e1624bf"
    },
    {
-    "sha": "dd33be00",
+    "sha": "dd33be0",
     "at": "2026-11-22T06:33:36+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "watchdog: clock probe (RESILIENCE-1) [skip ci]",
@@ -3095,7 +3194,7 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/dd33be002204100e8648b033f7c9748193d2eeb0"
    },
    {
-    "sha": "86b31790",
+    "sha": "86b3179",
     "at": "2026-11-22T06:32:08+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "queue: closing-probe verdicts for 5 item(s) (QUEUE-PERSIST-1) [skip ci]",
@@ -3104,112 +3203,13 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/86b31790897c2a88d68c3beeae2610caceb5f651"
    },
    {
-    "sha": "219c5e5f",
+    "sha": "219c5e5",
     "at": "2026-11-22T06:23:41+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "watchdog: clock probe (RESILIENCE-1) [skip ci]",
     "pr": null,
     "item": "RESILIENCE-1",
     "url": "https://github.com/ultrastable/ultrastable/commit/219c5e5f45c188f58dcfa537632af593e66d83ae"
-   },
-   {
-    "sha": "34270b12",
-    "at": "2026-11-22T06:22:11+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "queue: closing-probe verdicts for 7 item(s) (QUEUE-PERSIST-1) [skip ci]",
-    "pr": null,
-    "item": "QUEUE-PERSIST-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/34270b12b444e0bf471b52be65af6d9cca369981"
-   },
-   {
-    "sha": "37a1913e",
-    "at": "2026-11-22T06:13:51+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "watchdog: clock probe (RESILIENCE-1) [skip ci]",
-    "pr": null,
-    "item": "RESILIENCE-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/37a1913ebe32eda0447e47b4e44024fba6bef2df"
-   },
-   {
-    "sha": "eb260f1f",
-    "at": "2026-11-22T06:11:07+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "queue: closing-probe verdicts for 8 item(s) (QUEUE-PERSIST-1) [skip ci]",
-    "pr": null,
-    "item": "QUEUE-PERSIST-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/eb260f1fbb9fb4b1cab652bc8d0f78c76d63ee14"
-   },
-   {
-    "sha": "3d71c3bc",
-    "at": "2026-11-22T06:04:04+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "watchdog: clock probe (RESILIENCE-1) [skip ci]",
-    "pr": null,
-    "item": "RESILIENCE-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/3d71c3bce9c474ec634c919bd36addf96505dbdd"
-   },
-   {
-    "sha": "cc9ffa01",
-    "at": "2026-11-22T06:01:20+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "queue: closing-probe verdicts for 7 item(s) (QUEUE-PERSIST-1) [skip ci]",
-    "pr": null,
-    "item": "QUEUE-PERSIST-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/cc9ffa010992cf8a7741e0940a627ce27670afbf"
-   },
-   {
-    "sha": "74cbbcc0",
-    "at": "2026-11-22T05:54:02+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "watchdog: clock probe (RESILIENCE-1) [skip ci]",
-    "pr": null,
-    "item": "RESILIENCE-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/74cbbcc0c65be5d96696f31bfa168852b8ef60f9"
-   },
-   {
-    "sha": "859b90f5",
-    "at": "2026-11-22T05:51:38+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "queue: closing-probe verdicts for 5 item(s) (QUEUE-PERSIST-1) [skip ci]",
-    "pr": null,
-    "item": "QUEUE-PERSIST-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/859b90f51a9ecafee9cf777408efcece16fc6e5b"
-   },
-   {
-    "sha": "a98c2971",
-    "at": "2026-11-22T05:43:37+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "watchdog: clock probe (RESILIENCE-1) [skip ci]",
-    "pr": null,
-    "item": "RESILIENCE-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/a98c2971f725e2680ce40f5cddd73317900d74e8"
-   },
-   {
-    "sha": "6cce9568",
-    "at": "2026-11-22T05:40:57+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "queue: closing-probe verdicts for 5 item(s) (QUEUE-PERSIST-1) [skip ci]",
-    "pr": null,
-    "item": "QUEUE-PERSIST-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/6cce956899239d42b550fe5245943180cd3005be"
-   },
-   {
-    "sha": "527b5a75",
-    "at": "2026-11-22T05:33:54+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "watchdog: clock probe (RESILIENCE-1) [skip ci]",
-    "pr": null,
-    "item": "RESILIENCE-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/527b5a759711e34234f0484ce337236ce1698076"
-   },
-   {
-    "sha": "7f96bacf",
-    "at": "2026-11-22T05:31:13+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "queue: closing-probe verdicts for 5 item(s) (QUEUE-PERSIST-1) [skip ci]",
-    "pr": null,
-    "item": "QUEUE-PERSIST-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/7f96bacf1fd9098ace8e00e75798184e295654b9"
    }
   ],
   "pull_requests": []

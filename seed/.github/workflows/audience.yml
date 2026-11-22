@@ -1,0 +1,35 @@
+name: audience
+# budget: ~1 min per day
+# trigger: daily schedule; AUDIENCE-1 measures supply, promotion, attention and return once a day, which is the slowest any of them moves
+# free-alternative: `python3 scripts/audience.py --run --apply` from the tick Worker's executor or a cloud-hosted agent routine
+on:
+  schedule:
+    - cron: "29 6 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: audience
+  cancel-in-progress: false
+jobs:
+  audience:
+    if: ${{ vars.HALT != '1' && !github.event.repository.is_template && github.repository != 'ultrastable/seed' }}  # HALT-1; TEMPLATE-CODE-ONLY-1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # content dates come from git history
+      - name: Measure the audience loop (breadth, depth, diversity, freshness, promotion, return)
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          ANALYTICS_D1_ID: ${{ vars.ANALYTICS_D1_ID }}
+        run: python3 scripts/audience.py --run --apply
+      - name: Land the result
+        run: |
+          git config user.name ultrastable-audience; git config user.email audience@users.noreply.github.com
+          git add ops/audience
+          if git diff --cached --quiet; then echo "nothing changed"; exit 0; fi
+          git commit -qm "audience: daily reading (AUDIENCE-1)"
+          git push

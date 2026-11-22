@@ -1,0 +1,118 @@
+{
+  "_doc": "AUDIENCE-1: every system builds and holds a returning audience. Engine: scripts/audience.py (python3 scripts/audience.py --run --apply, daily in .github/workflows/audience.yml). A section is any content this system publishes; give each the producer that keeps it fresh. Promotion goes only to accounts this system owns, within its social gate; opt-outs and platform rules always win. Follower handles are public profiles, read without a credential.",
+  "version": 1,
+  "window_days": 28,
+  "ratchet_days": 14,
+  "sections": [
+    {
+      "id": "changes",
+      "kind": "json",
+      "path": "ops/changelog.json",
+      "list": "entries",
+      "date": "at",
+      "text": [
+        "summary"
+      ],
+      "url_field": "url",
+      "max_fresh_days": 7,
+      "producer": "the merge lane (every merged change is an entry)"
+    },
+    {
+      "id": "pages",
+      "kind": "glob",
+      "glob": "content/**/*.md",
+      "url": "",
+      "max_fresh_days": 30,
+      "producer": "the product manager's growth items (GROWTH-1)"
+    }
+  ],
+  "promotion": {
+    "calendar": "social/calendar.json"
+  },
+  "followers": [],
+  "metrics": [
+    {
+      "id": "breadth",
+      "stage": "supply",
+      "op": ">=",
+      "target": 0.5,
+      "remedy": "a section published nothing in the window: run its producer"
+    },
+    {
+      "id": "content_diversity",
+      "stage": "supply",
+      "op": ">=",
+      "target": 0.2,
+      "remedy": "one section carries nearly everything: publish in the quiet ones"
+    },
+    {
+      "id": "cadence_per_week",
+      "stage": "supply",
+      "op": ">=",
+      "target": 1,
+      "ratchet": 1.1,
+      "step": 1,
+      "cap": 30,
+      "remedy": "too little new content: run the producers on their clocks"
+    },
+    {
+      "id": "fresh_days",
+      "stage": "supply",
+      "op": "<=",
+      "target": 7,
+      "remedy": "nothing new recently: run the stale section's producer"
+    },
+    {
+      "id": "promoted_share",
+      "stage": "promote",
+      "op": ">=",
+      "target": 0.3,
+      "ratchet": 1.1,
+      "cap": 0.9,
+      "remedy": "new items with no post: queue one per item on the social calendar"
+    },
+    {
+      "id": "engagement_7d",
+      "stage": "hook",
+      "op": ">=",
+      "target": 0.1,
+      "ratchet": 1.1,
+      "cap": 2,
+      "remedy": "readers look but do not act: put the hook (quiz, tool, live result) on the pages they land on and make finishing it rewarding"
+    },
+    {
+      "id": "depth_7d",
+      "stage": "attention",
+      "op": ">=",
+      "target": 1.2,
+      "ratchet": 1.05,
+      "cap": 4,
+      "remedy": "readers leave after one page: link pages to related ones"
+    },
+    {
+      "id": "feed_fetches_7d",
+      "stage": "return",
+      "op": ">=",
+      "target": 1,
+      "ratchet": 1.25,
+      "step": 5,
+      "cap": 100000,
+      "remedy": "no one polls the feed: link it from every page"
+    },
+    {
+      "id": "followers",
+      "stage": "return",
+      "op": "grows",
+      "over_days": 7,
+      "remedy": "followers fell: check the posting loop ran"
+    }
+  ],
+  "hooks": [
+    {
+      "id": "primary",
+      "event": "primary-action",
+      "page": "/",
+      "why": "the one thing this system lets a reader do and see the result of; rename it to the system's own hook"
+    }
+  ]
+}

@@ -105,10 +105,36 @@ test('prune runs once a day and drops old self-check rows but keeps real pagevie
 test('the windowed counts come from one aggregate scan, with the same values as before', async () => {
   const src = readFileSync(new URL('../../analytics/analytics.js', import.meta.url), 'utf8');
   const m = src.slice(src.indexOf('export async function measure'), src.indexOf('export function evaluate'));
-  assert.equal((m.match(/FROM hits/g) || []).length, 3, 'aggregate pass, distinct visitors, self-check lookup');
+  assert.equal((m.match(/FROM hits/g) || []).length, 4, 'aggregate pass, distinct visitors, per-path spread (AUDIENCE-1), self-check lookup');
   const e = mk(); const now = Date.now();
   const add = (daysAgo, ref, bot, name = 'pageview') => e.raw.prepare("INSERT INTO hits(at,host,path,ref,bot,vid,name) VALUES(?,?,?,?,?,?,?)").run(now - daysAgo * 864e5, 'site.test', '/', ref, bot, 'v' + daysAgo, name);
   add(1, '', 0); add(2, 'a.test', 0); add(3, '', 1); add(10, 'b.test', 0); add(20, '', 0); add(40, '', 0);
   const v = (await measure(e, now)).values;
   assert.equal(v.pageviews_7d, 2); assert.equal(v.pageviews_30d, 4); assert.equal(v.referral_30d, 2); assert.equal(v.referral_share_7d, 0.5); assert.equal(v.bot_share_7d, 0.333);
+});
+test('AUDIENCE-1: feed requests and aggregator subscriber counts are recorded; depth and diversity are measured', async () => {
+  const { subscribersOf, recordFeed } = await import('../../analytics/analytics.js');
+  assert.deepEqual(subscribersOf('Feedly/1.0 (+http://www.feedly.com/fetcher.html; 42 subscribers; like FeedFetcher-Google)'), { agg: 'feedly', n: 42 });
+  assert.equal(subscribersOf('Mozilla/5.0'), null);
+  const e = mk();
+  const fr = ua => new Request('https://site.test/research.atom', { headers: { 'user-agent': ua } });
+  await recordFeed(e, fr('Feedly/1.0 (12 subscribers)'), '/research.atom');
+  await recordFeed(e, fr('Feedly/1.0 (15 subscribers)'), '/research.atom');
+  await recordFeed(e, fr('Inoreader/1.0 (3 subscribers)'), '/research.atom');
+  for (const p of ['/', '/research', '/research/a', '/progress']) await handleAnalytics(beacon({ h: 'site.test', p }), e, opts);
+  const m = await measure(e);
+  assert.equal(m.values.feed_fetches_7d, 3);
+  assert.equal(m.values.feed_subscribers, 18);
+  assert.equal(m.values.depth_7d, 4);
+  assert.equal(m.values.diversity_7d, 0.75);
+  assert.equal(m.values.direct_deep_share_7d, 0.75);
+  assert.equal(m.values.pageviews_7d, 4);
+});
+test('AUDIENCE-1 hooks: a named engagement event is stored as ev:<name>, odd names fall back to a pageview', async () => {
+  const e = mk();
+  await handleAnalytics(beacon({ h: 'site.test', p: '/unlearn', n: 'quiz-complete' }), e, opts);
+  await handleAnalytics(beacon({ h: 'site.test', p: '/unlearn', n: 'DROP TABLE' }), e, opts);
+  assert.deepEqual(e.raw.prepare('SELECT name FROM hits ORDER BY id').all().map(r => r.name), ['ev:quiz-complete', 'pageview']);
+  const m = await measure(e); assert.equal(m.values.engagement_7d, 1);
+  assert.match(BEACON_JS, /ultrastableEvent/);
 });

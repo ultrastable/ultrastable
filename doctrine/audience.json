@@ -1,0 +1,172 @@
+{
+  "_doc": "AUDIENCE-1 (Rowan, 2026-11-22): every Ultrastable system builds and holds a returning audience: breadth, depth and diversity of content, fresh content on a clock, promotion of that content, and measured return. Read by seed/scripts/audience.py (the engine every system carries) through foundation/audience.py (python3 -m foundation audience --check|--run [--apply]|--probe METRIC). A breach files Q-AUD-<metric> with the metric as closing probe; a freshness breach also runs the section's producer once a day (fresh-content loop). Sources: CREDITS.md, rows marked AUDIENCE-1.",
+  "version": 1,
+  "window_days": 28,
+  "ratchet_days": 14,
+  "consent": "Promotion goes only to the owner's and the project's own accounts through social/gate.json and the THOUGHT-1 consent record; no cold messages to individuals; opt-outs and platform rules always win (outreach/gate.json).",
+  "hook": "Ultrastable runs on Ultrastable; Practical Solutions is an example",
+  "sections": [
+    {
+      "id": "research",
+      "kind": "glob",
+      "glob": "research/papers/[!R]*.md",
+      "url": "https://ultrastable.io/research/{slug}",
+      "max_fresh_days": 14,
+      "producer": "research --run --apply"
+    },
+    {
+      "id": "changes",
+      "kind": "json",
+      "path": "ops/changelog.json",
+      "list": "entries",
+      "date": "at",
+      "text": [
+        "summary"
+      ],
+      "url_field": "url",
+      "max_fresh_days": 3,
+      "producer": "reach --run --apply"
+    },
+    {
+      "id": "posts",
+      "kind": "json",
+      "path": "social/calendar.json",
+      "list": "posts",
+      "date": "date",
+      "text": [
+        "text"
+      ],
+      "url_field": "url",
+      "max_fresh_days": 7,
+      "producer": "thought --run --apply"
+    }
+  ],
+  "promotion": {
+    "calendar": "social/calendar.json"
+  },
+  "followers": [
+    {
+      "channel": "bluesky",
+      "handle": "ultrastable.bsky.social"
+    }
+  ],
+  "metrics": [
+    {
+      "id": "breadth",
+      "stage": "supply",
+      "op": ">=",
+      "target": 0.67,
+      "remedy": "a section that published nothing in the window: run its producer, or give it one"
+    },
+    {
+      "id": "content_diversity",
+      "stage": "supply",
+      "op": ">=",
+      "target": 0.3,
+      "remedy": "one section carries nearly everything: publish in the quiet sections (papers, posts) before adding to the loud one"
+    },
+    {
+      "id": "depth_words",
+      "stage": "supply",
+      "op": ">=",
+      "target": 12,
+      "remedy": "new items are thin: lead each with what changed and why it matters, from the record that produced it"
+    },
+    {
+      "id": "cadence_per_week",
+      "stage": "supply",
+      "op": ">=",
+      "target": 3,
+      "ratchet": 1.1,
+      "step": 1,
+      "cap": 30,
+      "remedy": "too little new content: run the producers on their clocks (research weekly, thought every 3 days, reach daily)"
+    },
+    {
+      "id": "fresh_days",
+      "stage": "supply",
+      "op": "<=",
+      "target": 3,
+      "remedy": "nothing new recently: the fresh-content loop runs the stale section's producer"
+    },
+    {
+      "id": "promoted_share",
+      "stage": "promote",
+      "op": ">=",
+      "target": 0.5,
+      "ratchet": 1.1,
+      "cap": 0.9,
+      "remedy": "new items with no post: thought and reach queue a post per new paper and change within the gate's caps"
+    },
+    {
+      "id": "engagement_7d",
+      "stage": "hook",
+      "op": ">=",
+      "target": 0.1,
+      "ratchet": 1.1,
+      "cap": 2,
+      "remedy": "readers look but do not act: put the hook (quiz, tool, live result) on the pages they land on and make finishing it rewarding"
+    },
+    {
+      "id": "depth_7d",
+      "stage": "attention",
+      "op": ">=",
+      "target": 1.2,
+      "ratchet": 1.05,
+      "cap": 4,
+      "remedy": "readers leave after one page: link each page to the next related one (related papers, the live record behind a claim)"
+    },
+    {
+      "id": "diversity_7d",
+      "stage": "attention",
+      "op": ">=",
+      "target": 0.3,
+      "remedy": "one page takes all the views: surface the other sections from it"
+    },
+    {
+      "id": "feed_fetches_7d",
+      "stage": "return",
+      "op": ">=",
+      "target": 1,
+      "ratchet": 1.25,
+      "step": 5,
+      "cap": 100000,
+      "remedy": "no one polls the feeds: advertise /research.atom and /progress.atom on every page and post, and ping hubs on publish"
+    },
+    {
+      "id": "feed_subscribers",
+      "stage": "return",
+      "op": "grows",
+      "over_days": 7,
+      "remedy": "aggregator subscribers fell: check the feeds still validate and still carry fresh entries"
+    },
+    {
+      "id": "followers",
+      "stage": "return",
+      "op": "grows",
+      "over_days": 7,
+      "remedy": "followers fell: check the posting loop ran, the posts carried the hook and no guard blocked them"
+    },
+    {
+      "id": "direct_deep_share_7d",
+      "stage": "return",
+      "op": ">=",
+      "target": 0.05,
+      "remedy": "few readers come back to inner pages on their own: give each page a stable link worth keeping and a feed for what changes on it"
+    }
+  ],
+  "hooks": [
+    {
+      "id": "unlearn-quiz",
+      "event": "quiz-complete",
+      "page": "https://ultrastable.org/unlearn",
+      "why": "a reader tests what they believe and sees their own result; finishing it is the engagement"
+    },
+    {
+      "id": "idea-interview",
+      "event": "interview-step",
+      "page": "https://ultrastable.io/",
+      "why": "the reader's own idea is turned into a system plan question by question"
+    }
+  ]
+}
