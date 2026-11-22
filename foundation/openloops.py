@@ -33,6 +33,8 @@ def check(root=REPO) -> list[str]:
     bad += [f"unattended: {b}" for b in unattended.check(root)] if (root / unattended.DATA).is_file() else []
     from . import seedlife  # SEED-LIFECYCLE-1: a seed reported further along than its evidence is an open loop
     bad += [f"seedlife: {b}" for b in seedlife.check(root)] if (root / seedlife.RULES).is_file() else []
+    from . import compatdate  # COMPAT-DATE-1: a compatibility date past max_age_days means the advancing loop stopped
+    bad += [f"compatdate: {b}" for b in compatdate.check(root)] if (root / compatdate.RULES).is_file() else []
     bad += [f"modelwatch: {b}" for b in modelwatch.check(root)] if (root / modelwatch.DATA).is_file() else []
     return bad
 
