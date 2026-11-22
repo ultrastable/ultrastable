@@ -36,7 +36,7 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       - name: Provenance settle and public changelog
-        run: python3 -m foundation provenance --settle-due && python3 -m foundation provenance --changelog --apply
+        run: python3 -m foundation provenance --ingest-new --apply && python3 -m foundation provenance --settle-due && python3 -m foundation provenance --changelog --apply
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
       - name: Product manager pass

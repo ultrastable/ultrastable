@@ -173,12 +173,27 @@ def classify(subject: str, body: str, branch: str, cfg: dict) -> tuple:
     return "agent", "commit", ""
 
 
-def ingest_git(root=REPO, since="", apply=False) -> list:
+# CHANGELOG-FRESH-1: record-keeping commits (data refreshes, anchors, probes) are not public changes.
+_NOISE = re.compile(r"\[skip ci\]|^(host-sync|audit anchor|watchdog|auto: merge|loop-evidence)\b", re.I)
+
+
+def ingest_new(root=REPO, apply=False) -> list:
+    """Every daily pass: commits newer than the newest public change row become public change rows, so the changelog cannot fall silent."""
+    pub = [r["at"] for r in entries(root) if r.get("public") and r["kind"] == "change"]
+    since = max(pub) if pub else ""
+    rows = [r for r in ingest_git(root, "", apply=False, after=since) if not _NOISE.search(r["summary"])]
+    if apply:
+        for r in rows:
+            record(root, r)
+    return rows
+
+
+def ingest_git(root=REPO, since="", apply=False, after="") -> list:
     """Seed history: every commit becomes a change row (public, summary = subject). Class from trailers; unknown commits are agent work."""
     cfg = load(root)
     rng = [f"{since}..HEAD"] if since else []
     try:
-        out = subprocess.run(["git", "-C", str(root), "log", *rng, "--pretty=%H%x1f%cI%x1f%s%x1f%b%x1e", "-n", "400"], capture_output=True, text=True, encoding="utf-8", timeout=60, check=True).stdout
+        out = subprocess.run(["git", "-C", str(root), "log", *rng, "--pretty=%H%x1f%cI%x1f%s%x1f%b%x1e", "-n", "400", *(["--since=" + after] if after else [])], capture_output=True, text=True, encoding="utf-8", timeout=60, check=True).stdout
     except (OSError, subprocess.SubprocessError) as e:
         raise RuntimeError(f"git log failed: {e}") from e
     rows = []
@@ -262,6 +277,8 @@ def main(argv) -> int:
         i = a.index("--settle"); print(json.dumps(settle(root, a[i + 1], a[i + 2], " ".join(a[i + 3:])), indent=1)); return 0
     if flag("--ingest-git"):
         rows = ingest_git(root, val("--since") or "", apply=flag("--apply")); print(f"{len(rows)} rows" + (" written" if flag("--apply") else " (dry run)")); return 0
+    if flag("--ingest-new"):
+        rows = ingest_new(root, apply=flag("--apply")); print(f"{len(rows)} new public change rows" + (" written" if flag("--apply") else " (dry run)")); return 0
     if flag("--timeline"):
         print(json.dumps(timeline(root, val("--tenant"), val("--origin")), indent=1)); return 0
     if flag("--changelog"):
