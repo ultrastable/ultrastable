@@ -10,6 +10,7 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-22
 
+- 2026-11-22: core/ui: mobile header, slim family bar, mobile spacing (#1976)
 - 2026-11-22: temporal series, findings and queue items (TEMPORAL-1) [skip ci]
 - 2026-11-22: ZERO-MINUTES-1: worker merged #1968
 - 2026-11-22: Record Unlearn's repository as a gate with a probe (TENANT-REPO-1) (#1968)
