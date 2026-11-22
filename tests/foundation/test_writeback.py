@@ -77,6 +77,13 @@ class Check(unittest.TestCase):
         d = self.branch({"site/dashboard-data.js": "x\n", "ops/branchsweep-ledger.jsonl": "{}\nSession: session_0abc\n"})
         self.assertFalse(any("no write-back" in p for p in writeback.check(d, "main", "HEAD")))
 
+    def test_bot_only_dependency_bump_needs_no_writeback(self):
+        """DEP-LOOP-1: Dependabot PRs carry no session knowledge; they must not be refused for a missing write-back."""
+        d = tiny_repo()
+        git(d, "checkout", "-q", "-b", "dep"); (d / "wf.yml").write_text("uses: x@v5\n")
+        git(d, "add", "."); git(d, "-c", "user.email=49699333+dependabot[bot]@users.noreply.github.com", "-c", "user.name=dependabot[bot]", "commit", "-q", "-m", "Bump x")
+        self.assertEqual(writeback.check(d, "main", "HEAD"), [])
+
     def test_docs_only_change_needs_no_writeback(self):
         d = self.branch({"notes.md": "x\n"})
         self.assertTrue(all("session" in p for p in writeback.check(d, "main", "HEAD")))

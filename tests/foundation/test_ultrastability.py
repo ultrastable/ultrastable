@@ -118,6 +118,20 @@ class Tenants(T):
         self.assertIn("spend", r["unmeasured"]); self.assertEqual(r["steps"], [])
         self.assertTrue((self.d / "docs/issues/Q-ULTRA-spend-UNMEASURED.json").is_file())
 
+    def test_spinoff_loop_writes_value_and_spend_readings(self):
+        """TENANT-READINGS-1: value and spend come from the spinoff ledger, so a live app is no longer unmeasured on both."""
+        (self.d / "ops/spinoff").mkdir(exist_ok=True)
+        (self.d / "doctrine/spinoff.json").write_text(json.dumps({"portfolio": {"kill_below_value": 0.15}}))
+        (self.d / "ops/spinoff/ledger.jsonl").write_text("\n".join(json.dumps(r) for r in [
+            {"slug": "demo", "url": "https://demo.example", "event": "launch"},
+            {"slug": "demo", "event": "decision", "value": 0.3, "budget_share": 0.05}]) + "\n")
+        r = u.spinoff_readings(self.d, 0.01)["demo"]
+        self.assertEqual(r["spend_vs_budget"], 0.2)
+        self.assertIsNone(u.spinoff_readings(self.d, None)["demo"]["spend_vs_budget"])
+        u.write_tenants(self.d, fetch=lambda url: 1.0)
+        t = u.tenant_readings(self.d, fetch=lambda url: 1.0)["demo"]
+        self.assertEqual(t["value"], 2.0)
+
     def test_tenant_down_takes_a_spinoff_step(self):
         (self.d / "ops/spinoff").mkdir()
         (self.d / "ops/spinoff/ledger.jsonl").write_text(json.dumps({"slug": "demo", "url": "https://demo.example", "event": "launch"}) + "\n")

@@ -12,6 +12,9 @@ for n in $(gh api "repos/$repo/pulls?state=open&per_page=50" --jq '.[]|select(.h
   [ "$m" = "false" ] || continue
   ref=$(gh api "repos/$repo/pulls/$n" --jq '.head.ref')
   echo "PR #$n ($ref) conflicts with main: reconciling"
+  # UNSTICK-CLEAN-1: a PR left half-reconciled (resolve_generated wrote README.md, then the merge was aborted) made every later PR fail with
+  # "Entry 'README.md' not uptodate. Cannot merge." (ciwatch run 44968652106). Each PR starts from a clean tree.
+  git merge --abort >/dev/null 2>&1 || echo "no merge in progress"; git reset -q --hard; git clean -fdq
   git fetch -q origin "$ref" && git checkout -q -B unstick FETCH_HEAD || { echo "::warning::UNSTICK-1 #$n: cannot fetch $ref"; continue; }
   if ! git merge -q --no-edit origin/main >/dev/null 2>&1; then
     if ! python3 scripts/resolve_generated.py; then

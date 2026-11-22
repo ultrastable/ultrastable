@@ -40,8 +40,8 @@ def rules(root=REPO, run_checks=True) -> list[dict]:
         missing, external, failing, checks, unmeasured = [], [], [], [], []
         for tok in re.findall(r"`([^`]+)`", b):
             if re.fullmatch(r"[\w.-]+(/[\w.-]+)+\.(py|js|mjs|json|jsonl|md|yml|sh|toml)", tok):
-                if any((Path(root) / base / tok).exists() for base in ("", "seed")):
-                    continue  # AGENTS.md is the seed's text too (Rules live everywhere): a path resolves in this repository or in the seed kit
+                if any((Path(root) / base / tok).exists() for base in ("", "seed", "workers")):
+                    continue  # AGENTS.md is the seed's text too: a path resolves here, in the seed kit, or in workers/ (core, merged from the archived workers repo)
                 (external if ext else missing).append(tok)
             cm = re.fullmatch(r"python3 -m (foundation[ .][\w]+)(?: [\w.]+)? --check", tok) or re.fullmatch(r"python3 -m (foundation \w+) --check", tok)
             if cm:
