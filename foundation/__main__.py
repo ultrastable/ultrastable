@@ -19,6 +19,7 @@
   python3 -m foundation unattended [--check|--horizon|--probe ID]           UNATTENDED-365: one year with zero external input; every remaining input is closed, a gate or an item
   python3 -m foundation modelwatch [--check|--status|--refresh [--apply]]  MODEL-WATCH-1: no retired hosted model id in source
   python3 -m foundation redmain [--run [--apply]|--check]                  REDMAIN-1: a red deploy gate on main is repaired by reverting the smallest change that broke it
+  python3 -m foundation tenantrepos [--check|--missing|--prepare DIR --slug S|--behind]   TENANT-REPO-1: every tenant app lives in its own repository
   python3 -m foundation seedlife [--check|--status [SLUG]|--verify [--apply]|--run [--apply]|--probe SLUG]   SEED-LIFECYCLE-1: every seed is built, deployed, live and a year unattended
   python3 -m foundation compatdate [--check|--run [--apply]]   COMPAT-DATE-1: Worker compatibility dates advance by a loop
   python3 -m foundation runway [--run [--apply]|--probe C|--check]         RUNWAY-1: projected days of unattended running against the one-year target
@@ -111,6 +112,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["compatdate"]:
         from . import compatdate
         return compatdate.main(_av[1:])
+    if _av[:1] == ["tenantrepos"]:
+        from . import tenantrepos
+        return tenantrepos.main(_av[1:])
     if _av[:1] == ["seedlife"]:
         from . import seedlife
         return seedlife.main(_av[1:])

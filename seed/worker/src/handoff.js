@@ -236,6 +236,13 @@ async function raw(f, token, repo, sha, path) {
   if (!r.ok) throw new Error(`read ${path}@${String(sha).slice(0, 7)}: ${r.status}`);
   return r.text();
 }
+// The commit a branch of another repository points to now (a tenant repository's main), so a deploy reads one consistent tree and records it.
+async function headSha(f, token, repo, ref) {
+  const r = await f(`${API}/repos/${repo}/commits/${encodeURIComponent(ref)}`, { headers: { authorization: 'Bearer ' + token, accept: 'application/vnd.github.sha', 'user-agent': 'ultrastable-handoff' } });
+  if (!r.ok) throw new Error(`read ${repo}@${ref}: ${r.status}`);
+  const t = (await r.text()).trim(); if (!/^[0-9a-f]{40}$/.test(t)) throw new Error(`read ${repo}@${ref}: no commit sha`);
+  return t;
+}
 const norm = (p) => { const out = []; for (const s of p.split('/')) { if (s === '..') out.pop(); else if (s && s !== '.') out.push(s); } return out.join('/'); };
 // HANDOFF-SUBREQ-1: a deploy read every module of the tick Worker one request at a time (about 60 files), which alone passes the Free plan's 50
 // subrequests per invocation ("Too many subrequests", ultrastable-tick and ultrastable-tenants handoffs blocked from 20:21 UTC on 2026-11-17).
@@ -327,7 +334,10 @@ export function makeDeployer({ token, fetch: f = fetch, site, key, oidc, generat
       const topo = JSON.parse(await raw(f, token, repo, sha, 'doctrine/topology.json'));
       const tb = topologyBindings(topo, id); if (!tb) return { ok: false, detail: `${id} is not in doctrine/topology.json` };
       if (tb.worker.state !== 'live') return { ok: false, detail: `${id} is ${tb.worker.state}, not live` };
-      const br = batchedReader(p => raw(f, token, repo, sha, p), ps => rawMany(f, token, repo, sha, ps)), read = br.read;
+      // TENANT-REPO-1: a tenant worker is built from its own repository (topology `source`), at the commit its main branch points to now
+      const src = tb.worker.source && tb.worker.source.repo ? tb.worker.source : null;
+      const fromRepo = src ? src.repo : repo, fromSha = src ? await headSha(f, token, src.repo, src.ref || 'main') : sha;
+      const br = batchedReader(p => raw(f, token, fromRepo, fromSha, p), ps => rawMany(f, token, fromRepo, fromSha, ps)), read = br.read;
       if (String(tb.worker.main).startsWith('seed/worker/')) {  // the tick Worker: its generated config.js reads these files (and every migration), so they come in two requests, not about thirty
         await br.prefetch([tb.worker.main, 'seed/autonomy/policy.json', 'seed/autonomy/failure-modes.json', 'instances/ultrastable/failure-modes.json', 'seed/autonomy/criticality.json', 'doctrine/unknowns.json', 'instances/ultrastable/cost-budgets.json', 'instances/ultrastable/instance.json', 'instances/ultrastable/objectives.json', 'ops/halt.json', 'seed/autonomy/retention.json', 'seed/worker/migrations/index.json']);
         const idx = await read('seed/worker/migrations/index.json').then(JSON.parse, () => []);
@@ -339,9 +349,10 @@ export function makeDeployer({ token, fetch: f = fetch, site, key, oidc, generat
       const gen = { 'seed/worker/src/config.js': () => tickConfigSource(read), ...Object.fromEntries(Object.entries(generated).map(([k, v]) => [k, () => v])) };
       const modules = await collectModules(p => (p in gen ? Promise.resolve(gen[p]()) : read(p)), tb.worker.main, ps => br.prefetch(ps.filter(p => !(p in gen))));
       const r = await site.fetch('https://internal/__internal/deploy', { method: 'POST', headers: { ...(oidc ? { authorization: 'Bearer ' + oidc } : { 'x-internal-key': key }), 'content-type': 'application/json' },
-        body: JSON.stringify({ name: id, modules: modules.map(({ name, src, type }) => ({ name, src, type })), main: modules[0].name, compatibility_date: tb.worker.compatibility_date || topo.compatibility_date, bindings: tb.bindings, crons: tb.worker.crons || null, workers_dev: !tb.worker.public, domains: String(tb.worker.main).startsWith('instances/') ? (tb.worker.routes || []) : [], tag: String(sha).slice(0, 12) }) });
+        body: JSON.stringify({ name: id, modules: modules.map(({ name, src, type }) => ({ name, src, type })), main: modules[0].name, compatibility_date: tb.worker.compatibility_date || topo.compatibility_date, bindings: tb.bindings, crons: tb.worker.crons || null, workers_dev: !tb.worker.public, domains: (src || String(tb.worker.main).startsWith('instances/')) ? (tb.worker.routes || []) : [], tag: String(sha).slice(0, 12) }) });
       const j = await r.json().catch(() => ({}));
-      return r.ok && j.ok ? { ok: true, version: j.version || '', detail: j.warnings && j.warnings.length ? 'uploaded; ' + j.warnings.join('; ') : 'uploaded' } : { ok: false, detail: j.error || ('site deploy ' + r.status) };
+      const extra = src ? { source_repo: fromRepo, source_sha: fromSha } : {};
+      return r.ok && j.ok ? { ok: true, version: j.version || '', detail: j.warnings && j.warnings.length ? 'uploaded; ' + j.warnings.join('; ') : 'uploaded', ...extra } : { ok: false, detail: j.error || ('site deploy ' + r.status), ...extra };
     } catch (e) { return { ok: false, detail: String(e && e.message || e) }; }
   };
 }

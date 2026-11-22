@@ -2455,6 +2455,33 @@
       "bindings": [
         "LANE_PAT"
       ]
+    },
+    "tenant-repos": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        },
+        {
+          "signal": "deploy.recorded",
+          "via": "file:ops/deploys.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "deploy.recorded",
+          "via": "file:ops/deploys.jsonl"
+        },
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "feedback": "each daily run compares every moved tenant's main with the source_sha its last live-verified deploy recorded, so a deploy that failed or never ran is dispatched again the next day",
+      "bindings": [
+        "LANE_PAT",
+        "ORG_ADMIN_TOKEN"
+      ]
     }
   },
   "implicit_producers": {
