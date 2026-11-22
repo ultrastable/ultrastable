@@ -128,3 +128,11 @@ class ProbeFormat(unittest.TestCase):
         from foundation import writeback as w
         from pathlib import Path
         self.assertEqual(w.probe_problems(Path(__file__).resolve().parent.parent.parent), [])
+
+
+class DependabotExempt(unittest.TestCase):
+    """DEPENDABOT-WB-1: bot bumps need no write-back; a mixed range still does."""
+    def test_authors(self):
+        self.assertTrue(writeback.dependabot_only("dependabot[bot]\ndependabot[bot]\n"))
+        self.assertFalse(writeback.dependabot_only("dependabot[bot]\nRowan\n"))
+        self.assertFalse(writeback.dependabot_only(""))

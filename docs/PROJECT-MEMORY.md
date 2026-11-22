@@ -8,8 +8,9 @@
 
 This file is the single source of truth for project memory. Chat memory, tool memory and platform memory stores are read-only pointers to this file and are never edited as a record. Every session starts by reading this file and ends by updating it. Nothing is done until it is deployed end to end; every open item is an issue or an owner card with a default in effect and a closing probe.
 
-Last updated: 2026-11-21
+Last updated: 2026-11-22
 
+- 2026-11-22: Exempt dependabot-only ranges from the write-back check (#1901)
 - 2026-11-21: SEED-DEPLOY-2 + SINGLE-ACCOUNT-2: seeds go live through OIDC; nothing acts on the retired account (#1895)
 - 2026-11-21: SEED-DEPLOY-1: write the generated worker config before deploying a seed (#1890)
 - 2026-11-21: Intent Yield: bring the seed under SEED-LIFECYCLE-1 (#1891)

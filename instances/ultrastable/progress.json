@@ -41,6 +41,17 @@
     "intent-yield.yml",
     "executor.yml"
    ]
+  },
+  {
+   "id": "unlearn",
+   "name": "Unlearn",
+   "repo": "ultrastable/ultrastable",
+   "url": "https://unlearn.ultrastable.org/",
+   "feed": "https://ultrastable.io/feed.xml",
+   "expect_hours": 168,
+   "heal": [
+    "executor.yml"
+   ]
   }
  ],
  "apps": {

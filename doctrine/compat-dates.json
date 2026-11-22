@@ -1,0 +1,7 @@
+{
+ "_doc": "COMPAT-DATE-1 (Q-YEAR-dependency-drift): Worker compatibility dates advance by a loop, not by hand. foundation/compatdate.py moves every date in doctrine/topology.json (each worker and system_compatibility_date) and in every tracked wrangler.toml to today minus lag_days, when it is at least min_step_days behind that target. It runs on every watchdog pass inside the runway step, so the change merges and deploys through the lane, whose probe rolls a bad date back. check fails when any date is older than max_age_days, which means the loop stopped.",
+ "lag_days": 30,
+ "min_step_days": 28,
+ "max_age_days": 120,
+ "topology": "doctrine/topology.json"
+}
