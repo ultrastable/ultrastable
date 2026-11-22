@@ -1,5 +1,5 @@
 {
- "at": "2026-11-22T13:43:31Z",
+ "at": "2026-11-22T13:53:53Z",
  "gaps": 4,
  "match_share": 0.991,
  "sources": {
@@ -156,7 +156,7 @@
     "drift": 0,
     "id": "claims-total",
     "ok": true,
-    "total": 374
+    "total": 376
    }
   ],
   "loops": [
@@ -640,6 +640,15 @@
     "checks": 1,
     "external": [],
     "failing": [],
+    "id": "TENANT-PROMO-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
     "id": "BLINDSPOT-1",
     "missing": [],
     "ok": true,
@@ -809,7 +818,7 @@
   },
   "claims": {
    "gaps": 0,
-   "total": 374
+   "total": 376
   },
   "loops": {
    "gaps": 1,
@@ -817,12 +826,12 @@
   },
   "rules": {
    "gaps": 1,
-   "total": 67
+   "total": 68
   },
   "year": {
    "gaps": 1,
    "total": 2
   }
  },
- "total": 460
+ "total": 463
 }
