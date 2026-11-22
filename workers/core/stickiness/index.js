@@ -96,12 +96,15 @@ export function whatsNew({ title, link, items, graceMin = 30, key = 'us-last-vis
 // and the tenant's `reveal` line. No hashtags, no emoji, no claim the entry does not make. `voice` is the tenant's: an array of openers.
 export function queue(entries, { now = Date.now(), posted = [], max_per_day = 2, since_days = 14, reveal = '', voice = ['New:', 'Just added:', 'Worth a read:', 'Fresh this week:'], arm = 'sticky', limit = 300 } = {}) {
   const done = new Set(posted), h = s => { let x = 0; for (const ch of String(s)) x = (x * 31 + ch.charCodeAt(0)) >>> 0; return x; };
-  const due = normalize(entries).filter(e => !done.has(e.id) && e.url && now - Date.parse(e.at) <= since_days * D).reverse(), posts = [];
+  const due = normalize(entries).filter(e => !done.has(e.id) && e.url && now - Date.parse(e.at) <= since_days * D).reverse(), posts = [], skipped = [];
   due.forEach((e, i) => {
     const day = new Date(now + Math.floor(i / max_per_day) * D).toISOString().slice(0, 10), open = voice[h(e.id) % voice.length];
     const line = String(e.summary || '').replace(/\s+/g, ' ').trim().split(/(?<=[.!?])\s/)[0] || '', tail = [e.url, reveal].filter(Boolean).join('\n');
-    const fit = body => { const room = limit - tail.length - 2; return (body.length > room ? body.slice(0, room - 1).replace(/\s+\S*$/, '') + '…' : body) + '\n' + tail; };
-    posts.push({ id: `${arm}:${e.id}`, date: day, kind: 'entry', arm, text: fit(`${open} ${e.title}${line && line !== e.title ? '. ' + line : ''}`), entry: e.id });
+    const room = limit - tail.length - 1, full = `${open} ${e.title}${line && line !== e.title ? '. ' + line : ''}`, bare = `${open} ${e.title}`;
+    // A post is never cut: it uses the title and one whole sentence if they fit, the title alone if not, and is left out (and counted) if even that does not fit.
+    const body = full.length <= room ? full : bare.length <= room ? bare : null;
+    if (body == null) { skipped.push(e.id); return; }
+    posts.push({ id: `${arm}:${e.id}`, date: day, kind: 'entry', arm, text: body + '\n' + tail, entry: e.id });
   });
-  return { posts };
+  return { posts, skipped };
 }

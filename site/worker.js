@@ -1078,6 +1078,7 @@ const handler = {
     { const cp = await controlPlane(request, env, ctx); if (cp) return cp; } // CONTROL-PLANE-1: /api/v1
     if (u.pathname === "/feed.xml") return feedResponse(CANON); // REACH-1
     if (u.pathname === "/feed.json") return jsonFeedResponse(CANON); // STICKY-1
+    if (u.pathname === "/api/stickiness" || /^\/api\/stickiness\/queue\/[a-z0-9-]{1,60}\.json$/.test(u.pathname)) { let j = { error: "tick worker not reachable" }, st = 503; try { if (env && env.TICK) { const r = await env.TICK.fetch(new Request("https://tick.internal" + u.pathname)); j = await r.json(); st = r.status; } } catch (e) { console.error("api/stickiness", String(e && e.message)); } return new Response(JSON.stringify(j), { status: st, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } }); } // STICKY-1: the judged content state and the social queue the core social module drains
     if (u.pathname === "/api/reach") { const v = await jget(env, "promote:reach"); return Response.json(v || { rows: null, error: "not measured yet" }, { status: v ? 200 : 503, headers: { "cache-control": "public, max-age=600", "access-control-allow-origin": "*" } }); } // ATTENTION-1: aggregate counts only
     { const pr = await progressRoutes(u, env, shell, HTML, CANON); if (pr) return pr; } // PROGRESS-1
     { const ys = yearRoutes(u, shell, HTML); if (ys) return ys; } // YEAR-SIM-1: /year, /year.json

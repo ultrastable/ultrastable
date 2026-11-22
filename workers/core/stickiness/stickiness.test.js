@@ -61,3 +61,10 @@ test('the social queue skips promoted entries, caps per day, stays inside the li
   assert.deepEqual(q.posts.map(p => p.date), ['2026-11-22', '2026-11-23']);
   for (const p of q.posts) { assert.ok(p.text.length <= 140); assert.ok(p.text.endsWith('Runs on Ultrastable.')); assert.ok(!/#|[\u{1F300}-\u{1FAFF}]/u.test(p.text)); }
 });
+
+test('a post is never cut mid-sentence: whole sentence, else the title alone, else the entry is left out and counted', () => {
+  const long = e('l', 2, { title: 'T'.repeat(60), summary: 'S'.repeat(80) + '.' });
+  const q = queue([long, e('m', 3, { title: 'T'.repeat(300) })], { now: NOW, limit: 130, reveal: 'R' });
+  assert.equal(q.posts.length, 1); assert.ok(!q.posts[0].text.includes('SSS')); assert.ok(!q.posts[0].text.includes('…'));
+  assert.deepEqual(q.skipped, ['m']);
+});
