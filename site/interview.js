@@ -4,6 +4,7 @@
 // who writes code can skip ahead at any time. With no JavaScript it is a plain pill form that posts to /api/idea (the server-side questions run).
 // Consumers: site/worker.js (renders askBar + CSS into / , /start and /setup; /api/suggest, /api/idea?json, /s/<id>/status feed it);
 // tests in site/site.test.mjs.
+import IB from "./idea-bank-data.js";
 export const CSS = [
   ".us-iv [hidden]{display:none!important}",
   ".us-iv{max-width:720px;margin:18px 0 8px}",
@@ -80,7 +81,7 @@ export const JS = String.raw`(function () {
   }
 
   // ---- suggestions: rotate by themselves, and re-rank as the person types ----
-  var FALL = ['A booking page for my small business', 'A sign-up list for our next event', 'A reminder that tells me when bills are due', 'A portfolio that shows my work', 'A recipe collection I can search', 'A website for my club or community group'];
+  var FALL = ${JSON.stringify(IB.FALLBACK)};
   function recent() { try { return JSON.parse(localStorage.getItem('us.recent') || '[]'); } catch (e) { return []; } }
   function remember(t) { try { var r = recent().filter(function (x) { return x !== t; }); r.unshift(t); localStorage.setItem('us.recent', JSON.stringify(r.slice(0, 5))); } catch (e) { } }
   function fetchSug(q, cb) {
