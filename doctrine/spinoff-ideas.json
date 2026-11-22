@@ -390,7 +390,16 @@
     "decision companion: name a plan, get its reference class and a pre-mortem"
    ],
    "hook": "Guess first: how often do new restaurants survive five years? Then the base rate, and how far off you were. Every person misses some, and the miss is the hook.",
-   "public_good": "People and governments make better decisions about money, health and policy when they see how such things usually go; it counters overconfident plans that waste public money."
+   "public_good": "People and governments make better decisions about money, health and policy when they see how such things usually go; it counters overconfident plans that waste public money.",
+   "change": [
+    "guess-first",
+    "why-it-feels-true",
+    "outside-view",
+    "consider-the-opposite",
+    "implementation-intention",
+    "calibration-feedback",
+    "spaced-follow-up"
+   ]
   },
   {
    "id": "did-it-work",
@@ -410,7 +419,17 @@
     "prediction market of the system's own: forecast the next evaluation, scored when it lands"
    ],
    "hook": "Guess the verdict: did this famous policy deliver what it promised? Then the evaluations. The surprise, either way, is the hook.",
-   "public_good": "Citizens, journalists and staff can hold policy to its own promises, so public money moves to what works; it empowers voters with evidence."
+   "public_good": "Citizens, journalists and staff can hold policy to its own promises, so public money moves to what works; it empowers voters with evidence.",
+   "change": [
+    "guess-first",
+    "why-it-feels-true",
+    "fact-myth-fallacy",
+    "graded-uncertainty",
+    "self-affirmation",
+    "implementation-intention",
+    "change-management",
+    "spaced-follow-up"
+   ]
   },
   {
    "id": "open-questions",
@@ -430,7 +449,16 @@
     "links into Unlearn and Practical Solutions when a question settles"
    ],
    "hook": "Pick your lean on a live question, then see where the evidence leans and how it moved. Knowing you hold a minority view, or that nobody knows yet, is the hook.",
-   "public_good": "Honest public knowledge of what is not known protects people from false certainty and points students and funders at questions worth answering."
+   "public_good": "Honest public knowledge of what is not known protects people from false certainty and points students and funders at questions worth answering.",
+   "change": [
+    "guess-first",
+    "graded-uncertainty",
+    "prebunking",
+    "consider-the-opposite",
+    "calibration-feedback",
+    "implementation-intention",
+    "spaced-follow-up"
+   ]
   }
  ],
  "scope_templates": [
@@ -523,7 +551,8 @@
    "returns": "why a person comes back: their own record, a verdict that moved, a follow-up, something new since the last visit",
    "horizon": "at least three phases with a direction, so the app has somewhere to go",
    "hook": "the first moment that pulls a person in and makes them care, like the Unlearn quiz: guess first, then the reveal (an app that tells people what they already know has no hook)",
-   "public_good": "the public good it serves and the change it empowers, in the spirit of QNFO's mission; never commerce"
+   "public_good": "the public good it serves and the change it empowers, in the spirit of QNFO's mission; never commerce",
+   "change": "the evidence-based moves (at least 3 from doctrine/change-methods.json, covering notice, update and act) that carry a person from the fact to a changed belief to an action, because humans are the weak link"
   },
   "shallow_archetypes": [
    "live-lookup",
@@ -542,6 +571,11 @@
    "order online",
    "sell products",
    "online shop"
-  ]
+  ],
+  "change_library": "doctrine/change-methods.json",
+  "aliases": {
+   "_doc": "IDEA-BANK-1 shape (doctrine/idea-bank.json depth.corpus, depth.method, depth.returns) reads through the same rule",
+   "method": "loop"
+  }
  }
 }

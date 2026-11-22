@@ -29,6 +29,16 @@ Before you decide, see what usually happens: graded base rates for life, work an
 
 - People and governments make better decisions about money, health and policy when they see how such things usually go; it counters overconfident plans that waste public money.
 
+# From evidence to change (CHANGE-1)
+
+- guess-first: ask the person to predict before the reveal, so the gap between guess and fact is felt (prediction error) (Pan, S.C. and Rickard, T.C. (2018), Transfer of test-enhanced learning, Psychological Bulletin; Kornell, Hays and Bjork (2009) on pretesting)
+- why-it-feels-true: start from why the intuition is reasonable before correcting it, so the reader is not put on the defensive (Lewandowsky, Ecker et al. (2020), The Debunking Handbook 2020)
+- outside-view: show the reference class and its base rate before the specific case (Kahneman and Lovallo (1993), Timid choices and bold forecasts; Flyvbjerg (2006), From Nobel Prize to project management)
+- consider-the-opposite: prompt the person to argue the other side or list reasons they could be wrong (Lord, Lepper and Preston (1984), Considering the opposite: a corrective strategy for social judgment, JPSP)
+- implementation-intention: turn the insight into an if-then plan: when situation X happens, I will do Y (Gollwitzer, P.M. and Sheeran, P. (2006), Implementation intentions and goal achievement: a meta-analysis, Advances in Experimental Social Psychology)
+- calibration-feedback: keep the person's own record of guesses against outcomes, so updating becomes a habit (Tetlock and Gardner (2015), Superforecasting; Mellers et al. (2014), Psychological Science)
+- spaced-follow-up: come back at spaced intervals (for example 7 and 14 days) to retrieve the idea and check the action (Cepeda et al. (2006), Distributed practice in verbal recall tasks, Psychological Bulletin)
+
 # Why people return
 
 - A reader keeps a private forecasting record in their own browser, sees how calibrated they are, and comes back when a base rate they followed moves.

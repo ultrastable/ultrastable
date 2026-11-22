@@ -143,13 +143,16 @@ class Depth(unittest.TestCase):
     def test_lookup_is_refused_and_seed_clears_the_bar(self):
         from foundation import ideas as I
         cfg = I.load()
-        shallow = {"id": "x", "archetype": "live-lookup", "thesis": "t" * 60, "corpus": "c" * 60, "loop": "l" * 60, "returns": "r" * 60, "hook": "h" * 60, "public_good": "p" * 60, "horizon": ["a", "b", "c"]}
+        shallow = {"id": "x", "archetype": "live-lookup", "thesis": "t" * 60, "corpus": "c" * 60, "loop": "l" * 60, "returns": "r" * 60, "hook": "h" * 60, "public_good": "p" * 60, "horizon": ["a", "b", "c"], "change": ["guess-first", "outside-view", "implementation-intention"]}
         self.assertFalse(I.depth(cfg, shallow)["ok"])
         self.assertFalse(I.depth(cfg, {"id": "y", "kind": "seed", "thesis": "too short"})["ok"])
         shop = {**shallow, "archetype": None, "tagline": "A bakery and ordering site with checkout"}
         self.assertTrue(I.depth(cfg, shop)["commerce"])
         self.assertFalse(I.depth(cfg, shop)["ok"])
         self.assertFalse(I.depth(cfg, {**shallow, "archetype": None, "hook": ""})["ok"])
+        self.assertTrue(I.depth(cfg, {**shallow, "archetype": None})["ok"])
+        self.assertIn("change", I.depth(cfg, {**shallow, "archetype": None, "change": ["guess-first", "outside-view"]})["missing"])  # CHANGE-1: no act step
+        self.assertIn("change", I.depth(cfg, {**shallow, "archetype": None, "change": ["guess-first", "outside-view", "made-up"]})["missing"])
         seeds = [i for i in I.ideas() if i.get("kind") == "seed"]
         self.assertGreaterEqual(len(seeds), 3)
         for i in seeds:

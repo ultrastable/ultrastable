@@ -29,6 +29,17 @@ Every big policy promised something. See what it promised, what the evaluations 
 
 - Citizens, journalists and staff can hold policy to its own promises, so public money moves to what works; it empowers voters with evidence.
 
+# From evidence to change (CHANGE-1)
+
+- guess-first: ask the person to predict before the reveal, so the gap between guess and fact is felt (prediction error) (Pan, S.C. and Rickard, T.C. (2018), Transfer of test-enhanced learning, Psychological Bulletin; Kornell, Hays and Bjork (2009) on pretesting)
+- why-it-feels-true: start from why the intuition is reasonable before correcting it, so the reader is not put on the defensive (Lewandowsky, Ecker et al. (2020), The Debunking Handbook 2020)
+- fact-myth-fallacy: lead with the fact, name the myth once, explain the fallacy, repeat the fact (the truth sandwich) (Lewandowsky, Ecker et al. (2020), The Debunking Handbook 2020)
+- graded-uncertainty: grade every source by study design and show the grade, including where the evidence is weak (GRADE Working Group, Guyatt et al. (2008), BMJ)
+- self-affirmation: let the person affirm a value they hold before meeting threatening evidence, which lowers defensive rejection (Cohen, G.L. and Sherman, D.K. (2014), The psychology of change: self-affirmation and social psychological intervention, Annual Review of Psychology)
+- implementation-intention: turn the insight into an if-then plan: when situation X happens, I will do Y (Gollwitzer, P.M. and Sheeran, P. (2006), Implementation intentions and goal achievement: a meta-analysis, Advances in Experimental Social Psychology)
+- change-management: for someone carrying the change into a team or institution: name the people affected, a small first win, and how to reinforce it (Kotter (1996), Leading Change; Michie et al. (2011) for the behavioural layer)
+- spaced-follow-up: come back at spaced intervals (for example 7 and 14 days) to retrieve the idea and check the action (Cepeda et al. (2006), Distributed practice in verbal recall tasks, Psychological Bulletin)
+
 # Why people return
 
 - Readers follow cases and see what changed since their last visit; a verdict that moved is the reason to come back.
