@@ -112,7 +112,7 @@
     },
     {
       "id": "unlearn-beat",
-      "what": "Unlearn tenant beat (cron 41 * * * * on ultrastable-unlearn; a visit catches up a silent cron): re-learn move weights, measure, open the next phase, prune",
+      "what": "Unlearn tenant beat (cron 41 * * * * on ultrastable-unlearn; a visit catches up a silent cron): check a batch of encyclopedia entries against Crossref and Europe PMC, re-learn coaching move weights, measure, open the next phase, prune",
       "source": "d1",
       "d1_id": "ef788db7-0a0c-4c5d-921d-18a596a15945",
       "table": "beats",

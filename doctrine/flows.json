@@ -12,7 +12,9 @@
     "ext.actions_quota": "GitHub Actions minutes used against the monthly quota",
     "ext.frontier": "releases and posts of the leading agent platforms, coding agents and standards (doctrine/scout.json sources)",
     "ext.cf_analytics": "Cloudflare GraphQL analytics: D1 rows read and Workers AI neurons per day (doctrine/cost.json budgets)",
-    "ext.unlearn_adults": "coaches and parents using Unlearn: they log curiosities and answer the 7 and 14 day follow-ups (instances/unlearn; no child data in phase 1)"
+    "ext.unlearn_adults": "coaches and parents using Unlearn: they log curiosities and answer the 7 and 14 day follow-ups (instances/unlearn; no child data in phase 1)",
+    "ext.unlearn_readers": "readers of the Unlearn encyclopedia: their anonymous guesses and 'did this change your view' taps per entry (no identifier stored)",
+    "ext.unlearn_literature": "new systematic reviews and DOI records published on Europe PMC and Crossref, read by the Unlearn evidence step"
   },
   "flows": {
     "qnfo-sauce": {
@@ -2387,15 +2389,31 @@
         {
           "signal": "unlearn.weights",
           "via": "d1:ultrastable-unlearn"
+        },
+        {
+          "signal": "unlearn.reader_taps",
+          "via": "d1:ultrastable-unlearn"
+        },
+        {
+          "signal": "unlearn.literature",
+          "via": "https:europepmc+crossref"
+        },
+        {
+          "signal": "unlearn.evidence",
+          "via": "d1:ultrastable-unlearn"
         }
       ],
       "outflows": [
         {
           "signal": "unlearn.weights",
           "via": "d1:ultrastable-unlearn"
+        },
+        {
+          "signal": "unlearn.evidence",
+          "via": "d1:ultrastable-unlearn"
         }
       ],
-      "feedback": "each 14-day answer (did the child keep going on their own) re-weights the move that was given, so the next adult is offered moves that kept children exploring; the measured gates open the next phase",
+      "feedback": "each 14-day answer (did the child keep going on their own) re-weights the move that was given, so the next adult is offered moves that kept children exploring; the measured gates open the next phase; for the encyclopedia, each beat's evidence check (resolved DOIs, new reviews) is read by the next beat to pick the stalest entries and skip resolved sources, new reviews queue an entry for re-grading, and reader surprise counts re-order the home page",
       "bindings": []
     },
     "intent-yield": {
@@ -2447,7 +2465,9 @@
     "cf.analytics": "ext.cf_analytics",
     "site.hits": "ext.site_visits",
     "loop.registry": "ext.loop_registry",
-    "unlearn.followups": "ext.unlearn_adults"
+    "unlearn.followups": "ext.unlearn_adults",
+    "unlearn.reader_taps": "ext.unlearn_readers",
+    "unlearn.literature": "ext.unlearn_literature"
   },
   "pending": []
 }

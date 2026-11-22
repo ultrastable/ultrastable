@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261122-2",
+  "title": "OL-20261122-2: Re-grade Unlearn entries when new reviews pile up",
+  "body": "**Owner:** product-manager\n**Trigger:** GET https://unlearn.ultrastable.org/api/review-queue.json returns a non-empty queue\n**Done check:** grep:instances/unlearn/worker/evidence.js::export async function regrade\n**Status:** open\n\nThe evidence loop flags entries with 3 or more unreviewed new reviews at /api/review-queue.json; re-grading an entry (reading the new reviews into its grade and marking leads reviewed) is not yet automated.",
+  "labels": [
+    "role:product-manager",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
