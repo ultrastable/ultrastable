@@ -16,22 +16,15 @@
   },
   "failures": {
    "days": null,
-   "why": "2 open, oldest 0 days",
-   "open": 2
+   "why": "1 open, oldest 0 days",
+   "open": 1
   }
  },
  "failure_first_seen": {
-  "Q-CIFAIL-mergeaudit-1936": "2026-11-22",
   "Q-CIFAIL-ultrastable-tenant-repos": "2026-11-22"
  },
  "seed_verify": {
   "ultrastable": [
-   {
-    "at": "2026-11-22T05:02:40Z",
-    "url": "https://ultrastable.io/health",
-    "status": 200,
-    "ok": true
-   },
    {
     "at": "2026-11-22T05:12:51Z",
     "url": "https://ultrastable.io/health",
@@ -202,6 +195,12 @@
    },
    {
     "at": "2026-11-22T14:23:19Z",
+    "url": "https://ultrastable.io/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-22T14:32:36Z",
     "url": "https://ultrastable.io/health",
     "status": 200,
     "ok": true
@@ -209,12 +208,6 @@
   ],
   "unlearn": [
    {
-    "at": "2026-11-22T05:02:40Z",
-    "url": "https://unlearn.ultrastable.org/health",
-    "status": 200,
-    "ok": true
-   },
-   {
     "at": "2026-11-22T05:12:51Z",
     "url": "https://unlearn.ultrastable.org/health",
     "status": 200,
@@ -384,6 +377,12 @@
    },
    {
     "at": "2026-11-22T14:23:19Z",
+    "url": "https://unlearn.ultrastable.org/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-22T14:32:36Z",
     "url": "https://unlearn.ultrastable.org/health",
     "status": 200,
     "ok": true
