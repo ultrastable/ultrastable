@@ -254,6 +254,14 @@
       "keep": "state",
       "reason": "GOALS-1: one row per knob with its current value; bounded by the tenant limit of 80"
     },
+    "stickiness_state": {
+      "keep": "state",
+      "reason": "STICKY-1: one row per system, rewritten every pass by the tick step stickiness"
+    },
+    "stickiness_series": {
+      "keep": "state",
+      "reason": "STICKY-1: one row per system per day; the step itself deletes rows older than 400 days"
+    },
     "progress_cadence": {
       "keep": "state",
       "reason": "PROGRESS-1: one row per system, rewritten every pass by the tick step progress"

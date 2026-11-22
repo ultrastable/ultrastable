@@ -18,6 +18,9 @@ def sandbox():
         shutil.copy(REPO / f, d / f)
     (d / "instances/ultrastable").mkdir(parents=True)
     shutil.copy(REPO / "instances/ultrastable/loop-registry.json", d / "instances/ultrastable/loop-registry.json")
+    for s in ("base-rates", "did-it-work", "open-questions"):  # DEPTH-1 seeds
+        (d / "instances" / s).mkdir(parents=True)
+        shutil.copy(REPO / "instances" / s / "IDEA.md", d / "instances" / s / "IDEA.md")
     (d / "docs/issues").mkdir(parents=True)
     return d
 
@@ -46,22 +49,19 @@ class Ideas(unittest.TestCase):
         s["resources"]["workers_requests"]["used"] = 74_000  # 75% of the day is the planning ceiling (25% reserve)
         (d / "ops/free-tier.json").write_text(json.dumps(s))
         r = ideas.rank(d, T)
-        self.assertTrue(r and not any(i["fits"] for i in r))  # queued, never dropped
+        self.assertTrue(r and not any(i["fits"] for i in r if i.get("kind") == "spinoff"))  # queued, never dropped
 
     def test_ranked_ideas_are_scored_by_value_over_cost(self):
         r = {i["id"]: i for i in ideas.rank(sandbox(), T)}
-        self.assertTrue(r["free-tier-meter"]["fits"])
+        self.assertFalse(r["free-tier-meter"]["fits"])  # DEPTH-1: a board is a cheap thrill and never launches
+        self.assertIn("thesis", r["free-tier-meter"]["depth"]["missing"])
         self.assertFalse(r["security-txt-writer"]["implemented"])  # high impact, blocked by its archetype: the loop files that as scope
         self.assertGreater(r["numbers-board"]["score"], r["security-txt-writer"]["score"])
 
-    def test_launches_boards_up_to_the_daily_cap_with_facts(self):
+    def test_no_shallow_board_or_lookup_launches(self):
         d = sandbox()
-        got = [spinoff.launch(d, True, T)["launched"] for _ in range(3)]
-        self.assertTrue(all(g and g["archetype"] in ("status-board", "live-feed", "live-lookup") for g in got))  # SPINOFF-GOOD-1: live apps rank among boards
-        self.assertIn("daily launch cap 3", spinoff.launch(d, True, T)["why"])
-        b = json.loads((d / "spinoffs/registry.json").read_text())
-        self.assertEqual(len(b["boards"]), sum(1 for g in got if g["archetype"] == "status-board"))  # a live app has no bundled board: it reads its source at request time
-        self.assertTrue(all(v["rows"] for v in b["boards"].values()))
+        got = [spinoff.launch(d, True, T).get("launched") for _ in range(3)]
+        self.assertFalse(any(got))  # DEPTH-1: lookups and boards stay queued; deep ideas go through the seed pipeline
         self.assertEqual(spinoff.check(d), [])
 
     def test_brainstorm_adds_ledger_boards_and_one_scope_item_and_is_idempotent(self):
@@ -135,3 +135,30 @@ def test_public_benefit_score_prefers_global_reach_and_treats_unmeasured_use_as_
     two = ideas.benefit(REPO, cfg, {"id": "zz-c", "regions": ["US", "CA"], "need": 4})
     assert g == 20.0 and one == 8.0 and two == 14.0
     assert ideas.benefit(REPO, cfg, {"id": "old", "reach": 3}) is None
+
+
+class Depth(unittest.TestCase):
+    """DEPTH-1 (Rowan, 2026-11-22): a self-chosen app needs the depth of Unlearn and Practical Solutions."""
+
+    def test_lookup_is_refused_and_seed_clears_the_bar(self):
+        from foundation import ideas as I
+        cfg = I.load()
+        shallow = {"id": "x", "archetype": "live-lookup", "thesis": "t" * 60, "corpus": "c" * 60, "loop": "l" * 60, "returns": "r" * 60, "hook": "h" * 60, "public_good": "p" * 60, "horizon": ["a", "b", "c"], "change": ["guess-first", "outside-view", "implementation-intention"]}
+        self.assertFalse(I.depth(cfg, shallow)["ok"])
+        self.assertFalse(I.depth(cfg, {"id": "y", "kind": "seed", "thesis": "too short"})["ok"])
+        shop = {**shallow, "archetype": None, "tagline": "A bakery and ordering site with checkout"}
+        self.assertTrue(I.depth(cfg, shop)["commerce"])
+        self.assertFalse(I.depth(cfg, shop)["ok"])
+        self.assertFalse(I.depth(cfg, {**shallow, "archetype": None, "hook": ""})["ok"])
+        self.assertTrue(I.depth(cfg, {**shallow, "archetype": None})["ok"])
+        self.assertIn("change", I.depth(cfg, {**shallow, "archetype": None, "change": ["guess-first", "outside-view"]})["missing"])  # CHANGE-1: no act step
+        self.assertIn("change", I.depth(cfg, {**shallow, "archetype": None, "change": ["guess-first", "outside-view", "made-up"]})["missing"])
+        seeds = [i for i in I.ideas() if i.get("kind") == "seed"]
+        self.assertGreaterEqual(len(seeds), 3)
+        for i in seeds:
+            self.assertTrue(I.depth(cfg, i)["ok"], i["id"])
+
+    def test_no_shallow_app_stays_live_and_none_launches(self):
+        from foundation import ideas as I
+        self.assertEqual(I.shallow_live(), [])
+        self.assertTrue(all(i["depth"]["ok"] for i in I.rank() if i["fits"]))

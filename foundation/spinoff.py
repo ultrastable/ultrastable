@@ -165,7 +165,8 @@ def launch(root=REPO, apply=False, now=None) -> dict:
         return {"launched": None, "why": f"weekly launch cap {cfg['budget']['max_launches_per_week']} reached"}
     if len(day) >= day_cap:
         return {"launched": None, "why": f"daily launch cap {day_cap} reached (free-tier level sets it)"}
-    ranked = sorted(candidates(root) + ideas.candidates(root, t), key=lambda c: (-int(c["gate"]["ok"]), -c["score"], c["slug"]))
+    dcfg = ideas.load(root)  # DEPTH-1: a candidate with no thesis, corpus, loop, reason to return and horizon is a cheap thrill and never launches
+    ranked = sorted([c for c in candidates(root) + ideas.candidates(root, t) if ideas.depth(dcfg, c)["ok"]], key=lambda c: (-int(c["gate"]["ok"]), -c["score"], c["slug"]))
     for c in ranked:
         floor = 0 if c.get("idea") else cfg["score"]["min_score"]  # idea scores are already floored and headroom-checked by ideas.rank
         if not cfg["archetypes"][c["archetype"]]["implemented"] or c["score"] < floor or c["novelty"] == 0:
