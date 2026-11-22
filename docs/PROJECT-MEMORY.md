@@ -10,6 +10,10 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-22
 
+- 2026-11-22: ZERO-MINUTES-1: worker merged #1907
+- 2026-11-22: Close dependency drift with a compatibility-date loop; list Unlearn in the progress monitor; second-tenant is a fixture (#1907)
+- 2026-11-22: Record disposition of the closed dependabot actions bump (#1904)
+- 2026-11-22: SEED-DEPLOY-1: start a seed's first tick and accept its 503-until-ticked health (#1903)
 - 2026-11-22: Exempt dependabot-only ranges from the write-back check (#1901)
 - 2026-11-21: SEED-DEPLOY-2 + SINGLE-ACCOUNT-2: seeds go live through OIDC; nothing acts on the retired account (#1895)
 - 2026-11-21: SEED-DEPLOY-1: write the generated worker config before deploying a seed (#1890)
