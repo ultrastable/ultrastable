@@ -31,18 +31,6 @@
    ]
   },
   {
-   "id": "intent-yield",
-   "name": "Intent Yield",
-   "repo": "ultrastable/ultrastable",
-   "url": "https://ultrastable.io/yield",
-   "feed": "https://ultrastable.io/feed.xml",
-   "expect_hours": 24,
-   "heal": [
-    "intent-yield.yml",
-    "executor.yml"
-   ]
-  },
-  {
    "id": "unlearn",
    "name": "Unlearn",
    "repo": "ultrastable/ultrastable",

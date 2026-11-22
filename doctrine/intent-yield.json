@@ -1,5 +1,5 @@
 {
- "_doc": "Intent Yield (instances/intent-yield): for a given unit of human input, what is the best unit of output. One intent is one owner directive in its own words; one kept outcome is that directive's own probe passing, unrestated, after the settle window. No count of hours, commits, PRs or deploys enters the measure and no person is scored. Consumer: foundation/intentyield.py (python3 -m foundation intentyield --run --apply daily in .github/workflows/temporal.yml; --probe is detector intent-yield-fresh in doctrine/detectors.json).",
+ "_doc": "Intent Yield (core feature; design docs/intent-yield-design.md): for a given unit of human input, what is the best unit of output. One intent is one owner directive in its own words; one kept outcome is that directive's own probe passing, unrestated, after the settle window. No count of hours, commits, PRs or deploys enters the measure and no person is scored. Consumer: foundation/intentyield.py (python3 -m foundation intentyield --run --apply daily in .github/workflows/temporal.yml; --probe is detector intent-yield-fresh in doctrine/detectors.json).",
  "rule": "INTENT-YIELD-1",
  "sources": ["agents/AGENTS.md"],
  "owner_names": ["Rowan", "owner"],

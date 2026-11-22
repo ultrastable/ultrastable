@@ -44,7 +44,9 @@ def fold(root=REPO) -> dict:
     for f in shards:
         s = json.loads(f.read_text(encoding="utf-8"))
         r = s["row"]
-        if r["id"] not in have:
+        if s.get("replace") and r["id"] in have:  # a decision that was superseded (its code moved into the core) restates its own row with the new probe
+            doc["rows"] = [r if x["id"] == r["id"] else x for x in doc["rows"]]
+        elif r["id"] not in have:
             doc["rows"].append(r)
             _prov(root, s.get("kind", r["kind"]), s.get("title", r["title"]), s.get("session", ""), f"{LEDGER} ({r['id']})")
     led.write_text(json.dumps(doc, indent=1, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
@@ -155,7 +157,8 @@ def probe_problems(root) -> list[str]:
     led = root / "doctrine/decision-ledger.json"
     if led.is_file():
         d = json.loads(led.read_text(encoding="utf-8"))
-        rows += [("decision-ledger:" + str(r.get("id")), r) for r in (d.get("rows") if isinstance(d, dict) else d) or [] if isinstance(r, dict)]
+        shard_ids = {r.get("id") for _, r in rows}  # a pending shard that replaces a row supersedes its folded copy
+        rows += [("decision-ledger:" + str(r.get("id")), r) for r in (d.get("rows") if isinstance(d, dict) else d) or [] if isinstance(r, dict) and r.get("id") not in shard_ids]
     for name, r in rows:
         if r.get("kind") in ("lesson", "decision") and r.get("probe") is not None:
             e = validate_probe(root, r["probe"], allow_cmd=True)

@@ -92,6 +92,11 @@ class Stages(Fixture):
         w(self.root, "docs/issues/Q-SEED-s1.json", it)
         self.assertTrue(any("closed while the seed is planned" in b for b in seedlife.check(self.root, NOW)))
 
+    def test_closed_item_with_a_recorded_disposition_is_a_final_record(self):
+        it = seedlife.item(self.stage()); it["body"] = it["body"].replace("**Status:** open", "**Status:** closed") + "\n\n**Disposition:** shelved (ttl, 2026-11-22T00:00:00Z, DISPOSE-1)\n"
+        w(self.root, "docs/issues/Q-SEED-s1.json", it)
+        self.assertFalse(any("closed while the seed" in b for b in seedlife.check(self.root, NOW)))
+
     def test_stages_advance_only_with_evidence(self):
         self.deployed(); self.assertEqual(self.stage()["stage"], "deployed")
         self.live(); self.assertEqual(self.stage()["stage"], "live")

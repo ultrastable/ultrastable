@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-22-intent-yield-is-a-core-feature-not-a-seed",
+  "kind": "decision",
+  "date": "2026-11-22",
+  "title": "Intent Yield is a core feature, not a seed",
+  "body": "Owner (2026-11-22): merge it completely and do not count it as a separate app or tenant. The seed manifest, lifecycle file, progress row and Q-SEED item are removed; the yield engine, /yield page and daily loop run under the core's own checks, design in docs/intent-yield-design.md.",
+  "probe": "file:tests/test_intent_yield.py",
+  "session": "session_0156nqDtFn6P2DrsR9UbyzkV"
+ },
+ "kind": "decision",
+ "title": "Intent Yield is a core feature, not a seed",
+ "session": "session_0156nqDtFn6P2DrsR9UbyzkV"
+}
