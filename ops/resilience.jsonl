@@ -46,3 +46,23 @@
 {"at": "2026-11-21T18:41:29Z", "clocks": 34, "kind": "beat", "seq": 45, "stalled": 0, "stalled_ids": [], "unmeasured": 0}
 {"at": "2026-11-21T18:51:25Z", "clocks": 34, "kind": "beat", "seq": 46, "stalled": 0, "stalled_ids": [], "unmeasured": 0}
 {"at": "2026-11-21T19:02:18Z", "clocks": 34, "kind": "beat", "seq": 47, "stalled": 0, "stalled_ids": [], "unmeasured": 0}
+{"age_s": null, "at": "2026-11-21T21:48:22Z", "clock": "unlearn-beat", "detail": "ultrastable-unlearn.ultrastable.workers.dev=200", "kind": "restart", "ok": true, "route": "http", "seq": 48}
+{"at": "2026-11-21T21:48:22Z", "clocks": 36, "kind": "beat", "seq": 49, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
+{"age_s": null, "at": "2026-11-21T21:57:11Z", "clock": "unlearn-beat", "detail": "ultrastable-unlearn.ultrastable.workers.dev=200", "kind": "restart", "ok": true, "route": "http", "seq": 50}
+{"at": "2026-11-21T21:57:11Z", "clocks": 36, "kind": "beat", "seq": 51, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
+{"age_s": null, "at": "2026-11-21T22:17:44Z", "clock": "unlearn-beat", "detail": "ultrastable-unlearn.ultrastable.workers.dev=200", "kind": "restart", "ok": true, "route": "http", "seq": 52}
+{"at": "2026-11-21T22:17:44Z", "clocks": 37, "kind": "beat", "seq": 53, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
+{"at": "2026-11-21T22:25:35Z", "clocks": 37, "kind": "beat", "seq": 54, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
+{"at": "2026-11-21T22:36:11Z", "clocks": 37, "kind": "beat", "seq": 55, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
+{"at": "2026-11-21T22:46:15Z", "clocks": 37, "kind": "beat", "seq": 56, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
+{"at": "2026-11-21T22:58:36Z", "clocks": 37, "kind": "beat", "seq": 57, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
+{"at": "2026-11-21T23:06:41Z", "clocks": 37, "kind": "beat", "seq": 58, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
+{"at": "2026-11-21T23:17:12Z", "clocks": 37, "kind": "beat", "seq": 59, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
+{"at": "2026-11-21T23:29:33Z", "clocks": 37, "kind": "beat", "seq": 60, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
+{"at": "2026-11-21T23:41:36Z", "clocks": 37, "kind": "beat", "seq": 61, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
+{"at": "2026-11-21T23:43:38Z", "clocks": 37, "kind": "beat", "seq": 62, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
+{"at": "2026-11-21T23:52:02Z", "clocks": 37, "kind": "beat", "seq": 63, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
+{"at": "2026-11-22T00:05:33Z", "clocks": 37, "kind": "beat", "seq": 64, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
+{"at": "2026-11-22T00:14:04Z", "clocks": 37, "kind": "beat", "seq": 65, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
+{"at": "2026-11-22T00:27:32Z", "clocks": 37, "kind": "beat", "seq": 66, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
+{"at": "2026-11-22T00:38:04Z", "clocks": 37, "kind": "beat", "seq": 67, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}

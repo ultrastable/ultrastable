@@ -133,8 +133,11 @@ def item(name: str, comp: dict, target: int) -> dict:
             "labels": ["role:staff", "raises-self", "runway"], "milestone": "Now", "workstream": "Reliability"}
 
 
-def run(root=REPO, apply=False, today=None) -> dict:
+def run(root=REPO, apply=False, today=None, seeds=False) -> dict:
     root = Path(root); m = measure(root, today); changed = False
+    keep = _load(root / "ops/runway.json", {}).get("seed_verify")  # SEED-LIFECYCLE-1: seed verify readings live here and survive each rewrite
+    if keep:
+        m["seed_verify"] = keep
     if apply:
         out, new = root / "ops/runway.json", json.dumps(m, indent=1) + "\n"
         if not out.exists() or out.read_text(encoding="utf-8") != new:
@@ -143,6 +146,9 @@ def run(root=REPO, apply=False, today=None) -> dict:
             p = root / "docs/issues" / f"Q-RUNWAY-{name}.json"
             if not p.exists():
                 p.write_text(json.dumps(item(name, m["components"][name], m["target_days"]), indent=2) + "\n", encoding="utf-8"); changed = True
+    if seeds:  # SEED-LIFECYCLE-1: every seed is verified live and its Q-SEED item kept current on the same watchdog pass
+        from . import seedlife
+        changed = seedlife.run(root, apply)["changed"] or changed
     return {**m, "changed": changed}
 
 
@@ -171,10 +177,10 @@ def main(argv=None) -> int:
         return 1 if bad else 0
     if "--probe" in argv:
         return probe(argv[argv.index("--probe") + 1])
-    r = run(REPO, "--apply" in argv)
+    r = run(REPO, "--apply" in argv, seeds=True)
     if "--changed-file" in argv and r["changed"]:
         Path(argv[argv.index("--changed-file") + 1]).write_text("1", encoding="utf-8")
-    print(json.dumps({k: v for k, v in r.items() if k != "failure_first_seen"}, indent=1))
+    print(json.dumps({k: v for k, v in r.items() if k not in ("failure_first_seen", "seed_verify")}, indent=1))
     return 0
 
 

@@ -30,7 +30,7 @@ for (const id of ids) {
     if (r.ok || !/fetch failed|ECONNRESET|ETIMEDOUT|HTTP 5\d\d|timeout/i.test(String(r.detail))) break;
     console.log("RETRY ", id, a, r.detail); await new Promise(z => setTimeout(z, 5000 * a));
   }
-  console.log(r.ok ? "OK    " : "FAIL  ", id, r.ok ? (r.version || "uploaded") : r.detail);
+  console.log(r.ok ? "OK    " : "FAIL  ", id, r.ok ? (r.version || "uploaded") + (r.detail && r.detail !== "uploaded" ? " (" + r.detail + ")" : "") : r.detail);
   results.push({ worker: id, ...r });
 }
 // DEPLOY-RECORD-1: live_matches_commit is true only when Cloudflare returned the deployment id of this upload (built from this commit) and the deployed tick then answered /health; the workflow commits the rows.
@@ -44,4 +44,7 @@ try { carried = JSON.parse(execFileSync("python3", ["-m", "foundation", "critica
 catch (e) { console.error("origin lookup failed, recorded as unknown:", e.message); }
 console.log("origin:", carried.origin, "carried", (carried.carried || []).length, "commit(s)");
 for (const x of results) appendFileSync(new URL("../ops/deploys.jsonl", import.meta.url), JSON.stringify({ at: new Date().toISOString(), worker: x.worker, uploaded: x.ok, live_matches_commit: !!(x.ok && x.version && h), version: x.version || "", route: "oidc", account: topo.account_id, sha, main_sha: carried.sha || "", origin: carried.origin, carried: (carried.carried || []).map(c => c.sha + ":" + c.origin).slice(0, 20) }) + "\n");
+// SEED-DEPLOY-1: admitted seeds (doctrine/seed-deploys.json) deploy through the same OIDC route after the platform workers. A seed failure is a row in ops/deploys.jsonl
+// that the `seed-live` detector files; it never fails the platform deploy or blocks its record step.
+try { execFileSync("node", ["deploy/deploy-seed.mjs"], { cwd: fileURLToPath(new URL("..", import.meta.url)), stdio: "inherit" }); } catch (e) { console.error("seed deploy did not finish live:", e.message); }
 process.exit(results.every(r => r.ok) ? 0 : 1);

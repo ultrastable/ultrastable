@@ -1,0 +1,38 @@
+name: seed-launch
+# SEED-LAUNCH-1 (Rowan, 2026-11-21): every seed is built, deployed, gated on a year unattended and probed live by the system itself.
+# budget: ~15 min x 5 per month (weekly e2e plus fleet, and dispatch)
+# trigger: weekly and dispatch; a seed changes the kit at most daily (kit-sync), and the e2e record is fresh for 8 days
+# free-alternative: a cloud-hosted agent session runs `python3 -m foundation seedlaunch --e2e --fleet` with the same Cloudflare binding
+on:
+  schedule:
+    - cron: "23 7 * * 1"
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write  # scripts/land_data.py falls back to a pull request when the main writer is refused
+  id-token: write  # MAIN-WRITER-1
+concurrency:
+  group: seed-launch
+  cancel-in-progress: false
+jobs:
+  launch:
+    if: ${{ vars.HALT != '1' }}  # HALT-1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: main
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with: { node-version: 22 }
+      - run: python3 scripts/actions_guard.py seed-launch
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: A fresh seed built from the kernel, deployed into the Ultrastable account through the site worker's OIDC route, verified live
+        # SEED-DEPLOY-2: no stored Cloudflare credential; the repo secret pointed at the retired account (SINGLE-ACCOUNT-1)
+        run: python3 -m foundation seedlaunch --e2e-oidc
+      - name: Land the launch records on main
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+        run: python3 scripts/land_data.py "seed launch records (SEED-LAUNCH-1)" ops/seed-launches.jsonl

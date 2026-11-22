@@ -19,11 +19,14 @@
   python3 -m foundation unattended [--check|--horizon|--probe ID]           UNATTENDED-365: one year with zero external input; every remaining input is closed, a gate or an item
   python3 -m foundation modelwatch [--check|--status|--refresh [--apply]]  MODEL-WATCH-1: no retired hosted model id in source
   python3 -m foundation redmain [--run [--apply]|--check]                  REDMAIN-1: a red deploy gate on main is repaired by reverting the smallest change that broke it
+  python3 -m foundation seedlife [--check|--status [SLUG]|--verify [--apply]|--run [--apply]|--probe SLUG]   SEED-LIFECYCLE-1: every seed is built, deployed, live and a year unattended
   python3 -m foundation runway [--run [--apply]|--probe C|--check]         RUNWAY-1: projected days of unattended running against the one-year target
   python3 -m foundation credwatch [--run [--apply]|--check]                TOKEN-EXPIRY-1: every credential the loops use is probed for expiry before it lapses
   python3 -m foundation openloops [--check]                                NO-OPEN-ITEMS-1: no "needs you"; every leftover is closed or a recorded gate
   python3 -m foundation failmine [--run [--apply]|--report|--probe HASH|--check]   FAILMINE-1: mine every failure record, classify root causes, register new modes, escalate recurrence
+  python3 -m foundation intentyield [--run [--apply]|--probe|--check|--report]   INTENT-YIELD-1: owner directives kept per unit of attention; no counts, no person scored
   python3 -m foundation temporal [--run [--apply]|--settled ID|--probe|--check|--report]   TEMPORAL-1: series per area, loop and entry; hotspots, neglect and stopped loops feed the failure-mode machinery
+  python3 -m foundation seedlaunch [--e2e [--keep]|--fleet|--check]   SEED-LAUNCH-1: every seed built, deployed, year-gated and probed live by the system
   python3 -m foundation progress [--check|--live]                          PROGRESS-1: every system shows substantive progress at every visit; the cadence monitor is wired
   python3 -m foundation cost [--check|--probe|--guard [--apply]]          D1 rows read and AI neurons against budgets (COST-GUARD-1)
   python3 -m foundation issueloop [--apply|--json]                       ISSUE-LOOP-1: every open issue's probe is run; a passing probe closes it
@@ -90,6 +93,8 @@ from . import boundary, closedloop, standards, doctrine, directive, filing, glos
 
 
 def main(argv=None) -> int:
+    from . import cfaccount
+    cfaccount.scrub()  # SINGLE-ACCOUNT-2: never act on a retired Cloudflare account
     import sys as _s
     _av = _s.argv[1:] if argv is None else list(argv)
     if _av[:1] == ["deprot"]:
@@ -101,6 +106,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["yearfail"]:
         from . import yearfail
         return yearfail.main(_av[1:])
+    if _av[:1] == ["seedlife"]:
+        from . import seedlife
+        return seedlife.main(_av[1:])
     if _av[:1] == ["unattended"]:
         from . import unattended
         return unattended.main(_av[1:])
@@ -224,7 +232,7 @@ def main(argv=None) -> int:
     if _av[:1] == ["flows"]:
         from . import flows
         return flows.main(_av[1:])
-    if _av[:1] and _av[0] in ("sauce", "contracts", "metricloop", "throughput", "metafold", "dispose", "balance", "yearsim", "saydo", "trajectory"):
+    if _av[:1] and _av[0] in ("sauce", "contracts", "metricloop", "throughput", "metafold", "dispose", "balance", "yearsim", "saydo", "trajectory", "seedadmit"):
         import importlib
         return importlib.import_module("foundation." + _av[0]).main(_av[1:])
     if _av[:1] == ["unknowns"]:
@@ -272,6 +280,12 @@ def main(argv=None) -> int:
     if _av[:1] == ["openloops"]:
         from . import openloops
         return openloops.main(_av[1:])
+    if _av[:1] == ["seedlaunch"]:
+        from . import seedlaunch
+        return seedlaunch.main(_av[1:])
+    if _av[:1] == ["intentyield"]:
+        from . import intentyield
+        return intentyield.main(_av[1:])
     if _av[:1] == ["temporal"]:
         from . import temporal
         return temporal.main(_av[1:])

@@ -2397,6 +2397,46 @@
       ],
       "feedback": "each 14-day answer (did the child keep going on their own) re-weights the move that was given, so the next adult is offered moves that kept children exploring; the measured gates open the next phase",
       "bindings": []
+    },
+    "intent-yield": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "a directive that is not holding becomes a Q-YIELD item closed by its own probe; a restatement is charged to the directive it repeats, so the next run reads whether the system made it true without being told twice; each run's prediction of the kept share is scored after the settle window",
+      "bindings": [
+        "LANE_PAT"
+      ]
+    },
+    "seed-launch": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "deploys.record",
+          "via": "repo:ops/seed-launches.jsonl"
+        },
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "feedback": "a failed seed stage fails seedlaunch --check, the failure-audit detector seed-launch files Q-AUDIT-seed-launch, the executor fixes seed/ and the next weekly run re-launches against the merged fix",
+      "bindings": [
+        "LANE_PAT"
+      ]
     }
   },
   "implicit_producers": {

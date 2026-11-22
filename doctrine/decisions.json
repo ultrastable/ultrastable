@@ -215,11 +215,13 @@
   "foundation/design.py": "select matches the idea's words to a personality by keyword score, deterministically, and design experiments score the looks themselves",
   "foundation/filing.py": "plan fills a filing manifest from a fixed table, a mechanical transform whose result is identical on every run",
   "foundation/ghmirror.py": "plan is a pure diff between the docs/issues files and their GitHub mirror issues; the file always wins, so there is no alternative to weigh",
+  "foundation/seedadmit.py": "The admission verdict is computed from probes and the year simulation against fixed thresholds in the kit; it chooses nothing among alternatives and has no outcome to score later.",
+  "foundation/seedlaunch.py": "verdict and check compare boot-log stage statuses and ledger age against fixed required stages and a fixed age, a deterministic gate with one answer",
+  "foundation/thought.py": "choose is a fixed rotation rule (a paper whose measured result changed goes first, else the one posted longest ago once repost_days have passed), with nothing weighed; what readers act on is learned by the reach loop's paper arm",
   "foundation/triggers.py": "plan lists each role's tick period from the heartbeat cron and role files, derived arithmetic with no choice",
   "seed/worker/src/airouter.js": "vendored copy of core/airouter; the routing decisions are logged and scored under ai-router by src/airoute.js and decisions.js",
   "seed/worker/src/critloop.js": "pickForRole takes the first role-matching item from the rank computed by foundation/prioritize.py, which carries the work-queue-priority metric",
   "seed/worker/src/events.js": "routeEvent looks an event name up in EVENT_TABLE generated from doctrine, a table lookup with no ranking",
-  "seed/worker/src/pace.js": "rankRows sorts rows by the rank list already chosen by foundation/prioritize.py, which is the instrumented decision",
-  "foundation/thought.py": "choose is a fixed rotation rule (a paper whose measured result changed goes first, else the one posted longest ago once repost_days have passed), with nothing weighed; what readers act on is learned by the reach loop's paper arm"
+  "seed/worker/src/pace.js": "rankRows sorts rows by the rank list already chosen by foundation/prioritize.py, which is the instrumented decision"
  }
 }

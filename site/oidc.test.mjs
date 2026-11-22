@@ -31,6 +31,14 @@ assert.equal((await internalDeploy(req({}), env, fetcher)).status, 404, "no cred
   const r2 = await internalDeploy(new Request("https://site/__internal/deploy", { method: "POST", headers: { authorization: "Bearer " + await jwt({}) }, body: b2 }), env, f);
   assert.equal(r2.status, 200); assert.ok(seen.some(c => c[0].endsWith("/workers/scripts/ultrastable-unlearn/subdomain") && c[1] === "POST"), "workers.dev turned on");
   assert.ok(seen.some(c => c[0].endsWith("/workers/domains") && c[1] === "PUT"), "custom domain attached"); }
+// TENANT-ROUTE-1: when a wildcard zone route of another worker covers the host, a host route for this worker is created; with no wildcard, none
+for (const [routes, want] of [[[{ id: "r1", pattern: "*.ultrastable.app/*", script: "ultrastable-spinoffs" }], true], [[], false], [[{ id: "r1", pattern: "*.ultrastable.app/*", script: "ultrastable-spinoffs" }, { id: "r2", pattern: "unlearn.ultrastable.app/*", script: "ultrastable-unlearn" }], false]]) {
+  _resetJwks(); const seen = [];
+  const f = async (url, init) => { const u = String(url); seen.push([u, init && init.method]); if (u.endsWith("/.well-known/jwks")) return new Response(JSON.stringify({ keys: [jwk] }));
+    const result = u.includes("/zones?") ? [{ name: "ultrastable.app", id: "z1" }] : u.endsWith("/workers/routes") && (!init || init.method === "GET") ? routes : {}; return new Response(JSON.stringify({ success: true, result })); };
+  const b3 = JSON.stringify({ name: "ultrastable-unlearn", main: "worker.js", modules: [{ name: "worker.js", src: "export default {}" }], domains: ["unlearn.ultrastable.app"] });
+  assert.equal((await internalDeploy(new Request("https://site/__internal/deploy", { method: "POST", headers: { authorization: "Bearer " + await jwt({}) }, body: b3 }), env, f)).status, 200);
+  assert.equal(seen.some(c => c[0].endsWith("/zones/z1/workers/routes") && c[1] === "POST"), want, "host route created: " + want); }
 // CF-ROUTE-1: the read-and-backup route forwards only allow-listed requests and never a write outside the backup prefix
 const cf = async (method, path, b, h = {}) => { const seen = []; const f = async (url, init) => { seen.push([String(url), init && init.method]); return String(url).endsWith("/.well-known/jwks") ? new Response(JSON.stringify({ keys: [jwk] })) : new Response(JSON.stringify({ success: true }), { status: 200 }); }; const r = await internalDeploy(new Request("https://site/__internal/cf", { method: "POST", headers: { authorization: "Bearer " + await jwt({}), "x-cf-method": method, "x-cf-path": path, ...h }, body: b }), env, f); return { r, seen }; };
 let x = await cf("GET", "d1/database?per_page=100"); assert.equal(x.r.status, 200); assert.ok(x.seen.some(c => c[0] === "https://api.cloudflare.com/client/v4/accounts/acct/d1/database?per_page=100" && c[1] === "GET"), "a read is forwarded to the pinned account");

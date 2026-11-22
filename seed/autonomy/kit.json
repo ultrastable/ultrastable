@@ -1,0 +1,27 @@
+{
+ "_doc": "SEED-ADMIT-1 (Rowan, 2026-11-21: 'for any seed based on the ultrastable platform, the system actually has to build and deploy it and make it fully autonomous with a design goal of being completely unsupervised and unattended for a minimum of 1 year'). The autonomy kit every seed carries, as data. Each component names the files a system must hold, the probe (a command run in the system's own root, exit 0 = works) and the year-simulation faults it answers (`covers`). Read by scripts/seedadmit.py (portable: a system re-admits itself on its own clock) and by foundation/seedadmit.py (core: the launch gate). A seed counts as launched only when every component is present and probes green AND the year simulation, run on the seed's own recovery code, reaches target_days at the 10th percentile in normal and strict mode with every drill exercised. Nothing here names a tenant: a seed adds faults and probes of its own in autonomy/yearsim.json and autonomy/failure-modes.json, never by editing core. No new credential: every route is the repository's built-in token and the existing GitHub App.",
+ "version": "1.0.0",
+ "target_days": 365,
+ "max_age_days": 8,
+ "required_faults": ["scheduler-silent", "host-outage", "ai-quota", "cost-spike", "merge-conflict", "stuck-handoff", "silent-drop"],
+ "components": [
+  {"id": "year-sim", "what": "the year simulation and its drills (13 replayed months of injected failure, seeded Monte Carlo)",
+   "files": ["autonomy/yearsim.json", "scripts/yearsim.py"], "probe": ["python3", "scripts/yearsim.py", "--check"], "covers": []},
+  {"id": "failure-audit", "what": "the probed failure-mode register the tick Worker runs itself; a red probe files its own repair item",
+   "files": ["autonomy/failure-modes.json", "worker/src/selfaudit.js"], "probe": ["node", "--test", "worker/test/selfaudit.test.js"], "covers": ["silent-drop"]},
+  {"id": "sla-sweeper", "what": "every open PR and issue inside its service level; stuck loops filed, stale claims released",
+   "files": ["worker/src/sla.js", "worker/src/sweeper.js"], "probe": ["node", "--test", "worker/test/sweeper.test.js"], "covers": ["silent-drop", "stuck-handoff"]},
+  {"id": "merge-monitor", "what": "a green PR merges within minutes, a conflicting one is reconciled with main",
+   "files": ["worker/src/mergenow.js", "worker/src/lanemerge.js"], "probe": ["node", "--test", "worker/test/mergenow.test.js", "worker/test/lanemerge.test.js"], "covers": ["merge-conflict"]},
+  {"id": "site-liveness", "what": "a dead site is noticed and redeployed; a silent scheduler is replaced by the next host",
+   "files": ["worker/src/uptimerepair.js", "worker/src/hosts.js"], "probe": ["node", "--test", "worker/test/uptimerepair.test.js", "worker/test/hosts.test.js"], "covers": ["scheduler-silent", "host-outage"]},
+  {"id": "budget-guard", "what": "AI allowance and spend stay inside the stated budget; a spike degrades, never halts",
+   "files": ["worker/src/budget.js", "worker/src/spend.js"], "probe": ["node", "--test", "worker/test/budget.test.js", "worker/test/spend.test.js"], "covers": ["ai-quota", "cost-spike"]},
+  {"id": "temporal-drift", "what": "per-day series of change per area and loop; hotspots, neglect and drift read before they hurt",
+   "files": ["scripts/trajectory.py"], "probe": ["python3", "-c", "import sys; sys.path.insert(0, 'scripts'); import trajectory; assert callable(trajectory.analyze)"], "covers": []},
+  {"id": "deploy-loop", "what": "the system builds and deploys itself from its repository on every push, on the server",
+   "files": [".github/workflows/bootstrap.yml", "bootstrap/bootstrap.py"], "template": {"from": ".github/workflows/bootstrap.yml"}, "probe": ["python3", "bootstrap/bootstrap.py", "--dry-run"], "covers": []},
+  {"id": "autonomy-clock", "what": "weekly re-admission (the year simulation re-run on the seed's own code) and daily drift read, on the built-in token",
+   "files": [".github/workflows/autonomy.yml"], "template": {"from": "autonomy-kit/autonomy.workflow.yml"}, "probe": ["python3", "scripts/seedadmit.py", "--workflow-check"], "covers": []}
+ ]
+}

@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-1.0
 // Copyright (c) Ultrastable
 // LIVE-FRESH-1: the public changelog is read from merged pull requests refreshed by the tick (one GitHub call per pass), not from a daily snapshot.
-import { classifyPrFiles } from '../../../workers/core/substance/index.js';  // SUBSTANCE-1
+import { classifyPrFiles } from './vendor/core/substance.js';  // SUBSTANCE-1
 const API = 'https://api.github.com';
 const origin = p => /^Executor run \d{4}-\d{2}-\d{2}T/m.test(String(p.body || '')) ? 'unattended executor' : /^(dependabot|ultrastable-)/.test(p.head && p.head.ref || '') ? 'bot' : /^(agent|claude)\//.test(p.head && p.head.ref || '') ? 'agent session' : 'other';
 

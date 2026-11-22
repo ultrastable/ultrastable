@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-1879",
+  "title": "OL-PR-1879: land or supersede pull request #1879 (conflict)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #1879 is conflict\n**Done check:** cmd:python3 -m foundation loopowner --closed 1879\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #1879 (`claude/project-thread-dwlfc5` at 0cad31ad01, opened by rwnq8): SEED-DEPLOY-1: deploy seeds over the OIDC route with a seed-scoped D1 create-and-migrate. The session that opened it is not its closer and is never asked to act. The branch conflicts with main. Merge main into the branch and resolve it, or redo the change from main in a new pull request and close this one as superseded. Files (6): deploy/deploy-oidc.mjs, deploy/deploy-seed.mjs, deploy/deploy-workers.mjs, site/deployer.js, site/seedd1.test.mjs, tests/foundation/test_seedadmit.py. Closing probe: pull request #1879 is merged or closed.\n\n**Vacuous:** 2026-11-21T22:21:05Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

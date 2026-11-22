@@ -5,6 +5,7 @@
 import { readFileSync } from "node:fs";
 import { randomBytes } from "node:crypto";
 import { makeDeployer } from "../seed/worker/src/handoff.js";
+{ const __acc = JSON.parse(readFileSync(new URL("./cloudflare-accounts.json", import.meta.url), "utf8")); if ((__acc.retired_account_ids || []).includes(process.env.CLOUDFLARE_ACCOUNT_ID)) { console.log("skip: account " + process.env.CLOUDFLARE_ACCOUNT_ID + " is retired (SINGLE-ACCOUNT-2)"); process.exit(0); } }
 const [id, shaArg] = process.argv.slice(2);
 const T = process.env.CLOUDFLARE_API_TOKEN, A = process.env.CLOUDFLARE_ACCOUNT_ID, G = process.env.GH_TOKEN || process.env.GITHUB_TOKEN, REPO = process.env.REPO || "ultrastable/ultrastable";
 if (!id || !T || !A || !G) { console.error("usage: CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID, GH_TOKEN set; node deploy/handoff-deploy.mjs <worker-id> [sha]"); process.exit(1); }

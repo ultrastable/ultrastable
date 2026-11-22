@@ -4423,6 +4423,142 @@
    "title": "Sweeper gh helper returns status, never throws",
    "body": "Executor PR 1851 made the sweeper gh helper throw on any non-2xx answer. Every caller reads ok and status and records failures in out.errors, so the throw only aborted the sweep on expected answers (410 when issues are off, 405 on a merge GitHub declines) and broke seed/worker sweeper.test.js on main. The status return is restored; tests/test_sweeper.js is now a node test run in checks.",
    "probe": "file:tests/test_sweeper.js"
+  },
+  {
+   "id": "decision-2026-11-21-intent-yield-runs-as-its-own-daily-loop-with-a-freshness-det",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Intent Yield runs as its own daily loop with a freshness detector",
+   "body": "Owner (2026-11-21): build it, and make it run unattended for a year. intent-yield.yml runs foundation intentyield daily on the built-in token, no model calls, stdlib only; clock intent-yield lets the watchdog restart it; detector intent-yield-fresh files Q-AUDIT when it is stale, errored, ran no probe or lost the directives. Probe exit codes other than 0 or 1 are unmeasured, never broken.",
+   "probe": "file:foundation/intentyield.py",
+   "session": "session_0156nqDvLpkp2emebWrZnSnu"
+  },
+  {
+   "id": "decision-2026-11-21-intent-yield-tenant-the-unit-of-input-is-an-intent-the-unit-",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Intent Yield tenant: the unit of input is an intent, the unit of output is a kept outcome",
+   "body": "Proposed tenant instances/intent-yield: output counts only when the intent's outcome passes an independent probe, survives 30 days and is not restated. No count enters the measure and no person is scored. v1 dogfoods on the owner directives in agents/AGENTS.md.",
+   "probe": "file:tests/test_intent_yield.py",
+   "session": "session_0156nqDvLpkp2emebWrZnSnu"
+  },
+  {
+   "id": "decision-2026-11-21-seed-admit-1-seeds-are-admitted-by-the-year-simulation-befor",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "SEED-ADMIT-1: seeds are admitted by the year simulation before they count as launched",
+   "body": "Added foundation/seedadmit.py, seed/scripts/seedadmit.py, seed/autonomy/kit.json and seed/autonomy-kit/autonomy.workflow.yml. The generator wires the kit and runs the year simulation on the new system; held seeds are not launched. Onboarding the reference manifest found and fixed four seed defects (sweeper gh helper regression, seed yearsim crash, missing analytics and standards kernel paths, platform-coupled imports); verified by the onboarding probe: instances/second-tenant admitted, p10 730 days, strict p10 730, 452 worker tests pass. Residual risk: the live Cloudflare deploy of a generated system is done by its own bootstrap.yml on first push and is not yet observed from this session.",
+   "probe": "grep:tests/foundation/test_seedadmit.py::def test_onboard_admits",
+   "session": "session_0156nqDth3dDYAsL8hsm79sa"
+  },
+  {
+   "id": "lesson-2026-11-21-a-wildcard-zone-route-shadows-a-tenant-custom-domain",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "A wildcard zone route shadows a tenant custom domain",
+   "body": "unlearn.ultrastable.app answered Not found from ultrastable-spinoffs because the zone route *.ultrastable.app/* catches the hostname before the Workers custom domain. The deployer (TENANT-ROUTE-1 in site/deployer.js) now adds a host route for the tenant worker whenever another worker's wildcard route covers its domain; a failure lands as a warning in the deploy detail.",
+   "probe": "file:site/oidc.test.mjs"
+  },
+  {
+   "id": "decision-2026-11-21-seed-lifecycle-1-seeds-are-judged-by-computed-stage-never-by",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "SEED-LIFECYCLE-1: seeds are judged by computed stage, never by claim",
+   "body": "Every seed under instances/ (and every seeded repo) is built, deployed, verified live and answers 13 one-year survival classes before it counts as done; seedlife --check fails a false claim and seedlife --run keeps one Q-SEED item per seed.",
+   "probe": "file:foundation/seedlife.py"
+  },
+  {
+   "id": "lesson-2026-11-21-a-helper-that-throws-on-any-non-ok-status-breaks-callers-tha",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "A helper that throws on any non-ok status breaks callers that branch on status",
+   "body": "PR 1851 made the sweeper's gh() throw on non-ok; every caller branched on 410/405/409, so one disabled-issues 410 aborted a repo's sweep. gh() returns status again; callers record errors.",
+   "probe": "grep:seed/worker/src/sweeper.js::Not a throw: every caller reads ok/status"
+  },
+  {
+   "id": "lesson-2026-11-21-a-status-file-is-not-a-deploy",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "A status file is not a deploy",
+   "body": "second-tenant's deploy-loop.sh wrote deploying_unattended with no deploy behind it; stages now come from ops/deploys.jsonl rows whose live version matched the commit and from live verify readings.",
+   "probe": "grep:seed/scripts/seedlife.py::live_matches_commit"
+  },
+  {
+   "id": "lesson-2026-11-21-agent-branches-never-edit-workflows-wire-new-loops-through-s",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "Agent branches never edit workflows; wire new loops through steps that already run",
+   "body": "worker-gate refuses any .github/ path on a claude/* or agent/* branch. SEED-LIFECYCLE-1 runs inside the watchdog runway step and openloops --check instead of new workflow steps.",
+   "probe": "grep:foundation/runway.py::seedlife"
+  },
+  {
+   "id": "lesson-2026-11-21-deploy-warnings-are-printed-an-unreadable-route-list-is-a-wa",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "Deploy warnings are printed; an unreadable route list is a warning",
+   "body": "Two runs of the unlearn upload created no host route and the run log said nothing, because it showed only the version and an unreadable route list read as no wildcard. The site deployer now warns when the zone route list cannot be read, and deploy-oidc prints the detail beside the version (test: site/oidc.test.mjs).",
+   "probe": "file:site/oidc.test.mjs",
+   "session": "session_0156nqDtYB5VwjCzYcyHVqNp"
+  },
+  {
+   "id": "decision-2026-11-21-unlearn-s-address-moves-to-unlearn-ultrastable-org",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Unlearn's address moves to unlearn.ultrastable.org",
+   "body": "The deploy credential has no access to zone routes on ultrastable.app (deploy log: routes ultrastable.app unreadable, No access to the specified resource), so the spinoffs wildcard *.ultrastable.app/* keeps unlearn.ultrastable.app. ultrastable.org carries no worker routes, so its custom domain is served by the worker itself. Topology, clocks, resilience restart routes and the seed lifecycle probe now name unlearn.ultrastable.org.",
+   "probe": "file:doctrine/topology.json",
+   "session": "session_0156nqDtYB5VwjCzYcyHVqNp"
+  },
+  {
+   "id": "lesson-2026-11-21-seed-launch-1-seeds-are-launched-year-gated-and-probed-live-",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "SEED-LAUNCH-1: seeds are launched, year-gated and probed live by the system",
+   "body": "A standalone seed was broken (livechanges.js imported workers/core/substance outside seed/; two tests read platform files) and its year gate failed (yearsim.py main block ran before apply_observed existed; #1851 made the sweeper throw on non-2xx so the silent-drop drill failed). Fixed in seed/; bootstrap runs year_gate and verify_live; seedlaunch.py and seed-launch.yml launch a fresh seed and every seeded repo weekly on the ultrastable account; detector seed-launch.",
+   "probe": "grep:foundation/seedlaunch.py::SEED-LAUNCH-1"
+  },
+  {
+   "id": "lesson-2026-11-21-seed-deploy-1-seeds-deploy-over-the-oidc-route-a-merged-step",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "SEED-DEPLOY-1: seeds deploy over the OIDC route; a merged step in a skipped job proves nothing",
+   "body": "Lesson: the first seed deploy was hooked into deploy-workers, whose job is skipped on the current account, so merging it deployed nothing; verified by listing the account's Workers and finding no seed Worker. Decision: seeds deploy through deploy-oidc.mjs to the site deployer, with one OIDC-gated database call limited to ultrastable-seed-<slug> names. Probe: python3 -m foundation seedadmit --live exits 0 only when each seed's /health answers; node site/seedd1.test.mjs proves the scope.",
+   "probe": "grep:site/seedd1.test.mjs::seed d1: ok",
+   "session": "session_0156nqDth3dDYAsL8hsm79sa"
+  },
+  {
+   "id": "lesson-2026-11-21-seed-launch-pins-the-cloudflare-account-and-waits-for-the-fi",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "Seed launch pins the Cloudflare account and waits for the first tick",
+   "body": "Evidence: actions run 44955545446 deployed the seed into the retired account because CLOUDFLARE_ACCOUNT_ID came from the repo secret, and its health probe saw 503 before the first cron tick. Fixed in code: the account id is pinned in seed-launch.yml, the _account_guard in foundation/seedlaunch.py refuses other accounts (test AccountGuard), and the probe waits through one 10-minute cron interval. Session: session_0156nqDsRjMQDqTmVCf3TxQg",
+   "probe": "grep:foundation/seedlaunch.py::_account_guard"
+  },
+  {
+   "id": "decision-2026-11-21-intent-yield-enters-seed-lifecycle-1",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Intent Yield enters SEED-LIFECYCLE-1",
+   "body": "instance.json and lifecycle.json added (served by ultrastable-site, verify https://ultrastable.io/yield.json for INTENT-YIELD-1); progress row healed by intent-yield.yml and executor.yml. Stage is deployed; the watchdog's seedlife verify takes it to live. Q-SEED-intent-yield closes on seedlife --probe once the core-inherited survival classes (cost-alerts, dependencies, runtime, backups, improvement) close platform-wide.",
+   "probe": "file:instances/intent-yield/lifecycle.json"
+  },
+  {
+   "id": "decision-2026-11-21-seeds-launch-through-the-oidc-route-no-foundation-command-to",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Seeds launch through the OIDC route; no foundation command touches a retired account",
+   "body": "Evidence: seed-launch runs 44955545446 and 44957007056 showed that the repo Cloudflare secrets name the retired account. The seed e2e now runs deploy/deploy-seed.mjs (generated seed, D1 and Worker created through the site worker's OIDC endpoint in the ultrastable account) and verifies /health after one cron interval. deploy-seed.mjs now runs the bootstrap dry run first, which fixes the ENOENT on worker/src/config.js, and scaffold writes the System test section from the manifest. foundation.cfaccount.scrub() runs before every CLI command and drops a retired account's credential. deploy/*.mjs scripts that read the account id carry the retired guard, and singleaccount --check fails one that does not. Minting a new token stays the identity-bound gate already recorded in deploy/cloudflare-accounts.json.",
+   "probe": "grep:foundation/__main__.py::cfaccount.scrub",
+   "session": "session_0156nqDsRjMQDqTmVCf3TxQg"
+  },
+  {
+   "id": "lesson-2026-11-21-seed-deploy-1-a-generated-system-has-no-src-config-js-until-",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "SEED-DEPLOY-1: a generated system has no src/config.js until its bootstrap writes it",
+   "body": "Lesson: the first OIDC seed deploy failed with ENOENT on worker/src/config.js because that file is generated by bootstrap and untracked, and it passed locally only because of a stale generated copy in the checkout. Fix: deploy/deploy-seed.mjs writes it from the system's own autonomy files before collecting modules. Observed: a clean out directory collects 90 modules. Probe: python3 -m foundation seedadmit --live exits 0 once the Worker answers /health. Open defect: the generated IDEA.md fails the bootstrap system test (bootstrap reports not a fit), so the system's own bootstrap cannot write config.js either.",
+   "probe": "grep:deploy/deploy-seed.mjs::src/config.js",
+   "session": "session_0156nqDth3dDYAsL8hsm79sa"
   }
  ]
 }

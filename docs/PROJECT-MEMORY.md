@@ -10,6 +10,22 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-21
 
+- 2026-11-21: SEED-DEPLOY-2 + SINGLE-ACCOUNT-2: seeds go live through OIDC; nothing acts on the retired account (#1895)
+- 2026-11-21: SEED-DEPLOY-1: write the generated worker config before deploying a seed (#1890)
+- 2026-11-21: Intent Yield: bring the seed under SEED-LIFECYCLE-1 (#1891)
+- 2026-11-21: ZERO-MINUTES-1: worker merged #1894
+- 2026-11-21: SEED-LAUNCH-1: record the token open loop (#1894)
+- 2026-11-21: SEED-LAUNCH-1: pin the ultrastable account for seed launches (#1886)
+- 2026-11-21: ZERO-MINUTES-1: worker merged #1885
+- 2026-11-21: SEED-LAUNCH-1: live probe waits through the first cron tick (#1885)
+- 2026-11-21: SEED-DEPLOY-1: deploy seeds over the OIDC route with a seed-scoped D1 create-and-migrate (#1879)
+- 2026-11-21: seed launch records (SEED-LAUNCH-1) [skip ci]
+- 2026-11-21: Deploy: print deploy warnings; an unreadable zone route list is a warning (#1875)
+- 2026-11-21: SEED-ADMIT-1: admit every seed through the year simulation before it counts as launched (#1856)
+- 2026-11-21: Deployer: tenant host route wins over a wildcard zone route (TENANT-ROUTE-1) (#1859)
+- 2026-11-21: SEED-LAUNCH-1: every seed is built, deployed, year-gated (horizon p10 >= 365) and probed live by the system; seed-launch.yml runs a fresh-seed e2e and every seeded repo weekly on the ultrastable account; standalone seed made self-contained (#1855)
+- 2026-11-21: intent yield, directives probed (INTENT-YIELD-1) [skip ci]
+- 2026-11-21: Intent Yield: owner directives kept per unit of attention, daily and unattended (#1853)
 - 2026-11-21: UNLEARN-1 (Rowan: "Most of what kids want to learn, you can't teach them"; build it and run it unattended for a year). Tenant `instances/unlearn/` (IDEA.md, instance.json, phases.json, runway.json) and Worker `ultrastable-unlearn` (instances/unlearn/worker, D1 `ultrastable-unlearn` ef788db7, cron 41 * * * *, no secrets, no npm deps). Phase 1 coaches and parents (no child data); phase 2 schools opens by itself when its gates hold; phase 3 kids directly needs consent, DPIA, retention, security and the controller-entity owner gate. Moves come from a 23-move library picked by Beta sampling on 14-day outcomes; a model may re-word inside AI_DAILY_CAP behind the answer guard (models from doctrine/models.json). Clock `unlearn-beat`, loop `unlearn-beat` (server_owner ultrastable-unlearn), flows declared. Deployed by deploy-ultrastable.yml (paths include instances/unlearn/worker). Tests `node --test instances/unlearn/worker/*.test.mjs`, `python3 -m unittest tests.foundation.test_unlearn`.
 - 2026-11-21: regen-generated: refresh generated data after merge (REGEN-GENERATED-1) [skip ci] (#1822)
 - 2026-11-21: queue: closing-probe verdicts for 7 item(s) (QUEUE-PERSIST-1) [skip ci]
@@ -697,3 +713,9 @@ Six GitHub Apps had been registered for two roles because every visit to /connec
 
 ## 2026-11-21: FLOW-BALANCE-1, issue inflow never exceeds closures (Session: session_0156nqDsae8DJdErcZpTegAW)
 Rowan: "All UltraStable issues must be resolved within their SLAs and daily/weekly inflow of new issues shall never exceed merged/closed issues for any Ultrastable system." Built as the queue's second loop: `foundation/balance.py` (called from `foundation/queue.py` run on every fleet pass), rules in `doctrine/balance.json`, page `/balance` (`site/balance.js`, data `site/balance-data.js`), executor cap boost in `foundation/clock.py` chain, throttle hook in `foundation/claims.py`. Seed: `scripts/balance.py` + daily `balance.yml`. Workers: `core/flowbalance`. Superseded and batched items lower net inflow and never count as closures. First reading: week 645 filed vs 519 closed (tipped), 11 of 334 open past SLA; first pass will batch Q-ULTRA (25), Q-YEAR (10), Q-RES (9), Q-CIFAIL (6), Q-TEMPORAL (6).
+
+## 2026-11-21: SEED-LIFECYCLE-1, a seed is not done until it runs a year unattended (Session: session_0156nqDtcHP4PMPYMRfqbypd)
+- Rowan: every seed on the platform must actually be built, deployed and made fully autonomous, with a design goal of one year unsupervised. Prompted by a tenant (Unlearn) that came out as a plan only.
+- Now: `foundation/seedlife.py` (engine `seed/scripts/seedlife.py`, carried by every system) computes each seed's stage from evidence (seeded, planned, built, deployed, live, autonomous) and judges 13 one-year survival classes per seed; classes inherit core inputs from `doctrine/unattended.json`, so open core gaps (offsite backup, cost alerts, dependency drift, Node runtime, self-coder) hold every seed below autonomous. The watchdog runway step runs the seed pass (`runway --run --apply` calls `seedlife.run`), and `openloops --check` in `checks` runs `seedlife --check`, which fails any seed reported further along than its evidence.
+- First readings: tenant 0 (`instances/ultrastable`) is deployed, next live (first verify reading comes from the watchdog), runway bounded at 160 days by node-runtime; second-tenant has no IDEA.md and its "deploy loop" writes a status file with no deploy behind it, so it is below seeded with Q-SEED-second-tenant open. demo-child is a test fixture, spinoffs and qnfo are not seeds (reasons in `doctrine/seed-lifecycle.json`).
+- Open: Q-SEED-ultrastable, Q-SEED-second-tenant; Unlearn joins through its own lifecycle.json (scaffolded by the watchdog if its PR lands without one).

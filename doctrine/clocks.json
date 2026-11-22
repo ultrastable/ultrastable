@@ -128,8 +128,16 @@
       ],
       "health_urls": [
         "https://ultrastable-unlearn.ultrastable.workers.dev/health",
-        "https://unlearn.ultrastable.app/health"
+        "https://unlearn.ultrastable.org/health"
       ]
+    },
+    {
+      "id": "intent-yield",
+      "what": "the daily intent yield: every owner directive's own probe, restatements charged to the original, /yield",
+      "source": "workflow",
+      "workflow": "intent-yield",
+      "expected_interval_s": 86400,
+      "periodic": true
     }
   ],
   "chain": {

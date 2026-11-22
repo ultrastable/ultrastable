@@ -1,0 +1,12 @@
+{
+  "id": "Q-YEAR-SIM-node-eol-upgrade",
+  "title": "Q-YEAR-SIM-node-eol-upgrade: the pinned Node release leaves maintenance on 2027-04-30",
+  "body": "**Owner:** executor\n**Trigger:** the year simulation (YEAR-SIM-1) on the watchdog run\n**Done check:** cmd:python3 -m foundation yearsim --probe node-eol-upgrade\n**Status:** open\n\nFault class `node-eol-upgrade`: the pinned Node release leaves maintenance on 2027-04-30. Drill evidence: pins: 22 x10, 24 x1; earliest end of maintenance 2027-04-30; automatic rewrite to 24 works: True. Fix: python3 -m foundation yearsim --fix-node --apply (bump node_eol and node_lts in doctrine/yearsim.json first when a newer LTS exists)\n\nBuild the mechanism that recovers from it without a person, then the drill in foundation/yearsim.py must exercise it.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation yearsim --probe node-eol-upgrade` exits 0.\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "unattended"
+  ],
+  "milestone": "Now",
+  "workstream": "Ultrastability"
+}

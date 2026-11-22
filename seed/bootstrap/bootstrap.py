@@ -517,6 +517,57 @@ class Boot:
             return "degraded", "dry run: the first tick runs on the Worker's cron after --apply"
         return "ok", "Worker cron armed; KIT-3 closes when six complete ticks are observed in one hour (prediction P-KIT-3)"
 
+    def year_gate(self):
+        """SEED-LAUNCH-1: the year-unattended gate is a required acceptance check for every seed. The seed's own drills run against its real
+        recovery code (scripts/yearsim.py, autonomy/yearsim.json); the boot is accepted only when the simulated horizon p10 reaches target_days."""
+        sys.path.insert(0, str(self.root / "scripts"))
+        try:
+            import yearsim  # noqa: E402  (the seed's portable runner)
+        finally:
+            sys.path.pop(0)
+        errs = yearsim.check(self.root)
+        if errs:
+            return "blocked", "autonomy/yearsim.json invalid: " + "; ".join(errs)
+        rec = yearsim.run(self.root, apply=True)
+        self.out.mkdir(parents=True, exist_ok=True)
+        (self.out / "yearsim.json").write_text(json.dumps({k: rec[k] for k in ("at", "target_days", "runs", "horizon", "strict", "meets_target", "drills")}, indent=1, sort_keys=True) + "\n")
+        self.state["year"] = {"p10": rec["horizon"]["p10"], "target_days": rec["target_days"], "meets_target": rec["meets_target"]}
+        failed = sorted(k for k, d in rec["drills"].items() if d.get("exercised") and not d.get("recover"))
+        if not rec["meets_target"]:
+            return "blocked", f"year gate: horizon p10 {rec['horizon']['p10']} < {rec['target_days']} days; failing drills: {failed or 'none'}"
+        return "ok", f"year gate: horizon p10 {rec['horizon']['p10']} >= {rec['target_days']} days ({rec['runs']} simulated years)"
+
+    def verify_live(self):
+        """SEED-LAUNCH-1: a boot is done only when the deployed Worker answers /health live with 200. /health answers 503 until the first
+        complete tick, so the probe waits through one full cron interval (tick_cron, every 10 minutes) plus propagation: a 200 proves the
+        Worker serves and its own loop ran. The URL comes from the account's workers.dev subdomain (Cloudflare API), never typed by hand."""
+        if not self.apply:
+            return "degraded", "dry run: nothing deployed to probe"
+        if self.runtime.get("workers_dev") != "true":
+            return "degraded", "workers_dev off in IDEA.md: no public route to probe; the cron tick is the proof (KIT-3)"
+        import urllib.error
+        import urllib.request
+        acct, tok = os.environ.get("CLOUDFLARE_ACCOUNT_ID", ""), os.environ.get("CLOUDFLARE_API_TOKEN", "")
+        req = urllib.request.Request(f"https://api.cloudflare.com/client/v4/accounts/{acct}/workers/subdomain", headers={"authorization": "Bearer " + tok})
+        sub = json.loads(urllib.request.urlopen(req, timeout=30).read())["result"]["subdomain"]
+        url = f"https://{self.runtime['worker_name']}.{sub}.workers.dev/health"
+        self.state["live_url"] = url
+        last = ""
+        for attempt in range(78):  # 13 minutes: one 10-minute cron interval, propagation and the tick's own run time
+            try:
+                with urllib.request.urlopen(urllib.request.Request(url, headers={"user-agent": "ultrastable-seed-launch"}), timeout=30) as r:
+                    body = r.read().decode("utf-8", "replace")
+                    if r.status == 200:
+                        return "ok", f"live: {url} answered 200 ({len(body)} bytes)"
+                    last = f"HTTP {r.status}"
+            except urllib.error.HTTPError as e:  # 503 before the first complete tick: serving, loop not yet proven
+                last = f"HTTP {e.code} (serving; no complete tick yet)" if e.code == 503 else f"HTTP {e.code}"
+            except Exception as e:  # recorded below if every attempt fails
+                last = f"{type(e).__name__}: {e}"[:200]
+            import time
+            time.sleep(10)
+        return "blocked", f"live probe failed: {url}: {last}"
+
     def run(self, cmd, cwd) -> str:
         exe = shutil.which(cmd[0])  # Windows: npx and wrangler are .cmd shims that CreateProcess cannot find by bare name
         p = subprocess.run([exe or cmd[0]] + list(cmd[1:]), cwd=cwd, capture_output=True, text=True, timeout=600)
@@ -626,7 +677,7 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
     root = a.root.resolve()
     boot = Boot(root, (a.out or root / "org").resolve(), apply=a.apply)
-    for name in ("read", "qualify", "instrument", "detect", "select", "cases", "plan", "write", "surfaces", "org", "provision", "start"):
+    for name in ("read", "qualify", "instrument", "detect", "select", "cases", "plan", "write", "surfaces", "org", "provision", "start", "year_gate", "verify_live"):
         st = boot.guard(name, getattr(boot, name))
         if name == "read" and st == "blocked" and not hasattr(boot, "idea"):
             break  # nothing to plan from; the report says why
@@ -638,7 +689,8 @@ def main(argv=None) -> int:
     (boot.out / "boot-log.json").write_text(json.dumps(
         {"seed_version": VERSION, "mode": "apply" if a.apply else "dry-run", "stages": boot.log,
          "provision_plan": boot.state.get("provision_plan", []),
-         "surfaces": boot.state.get("surfaces", {}), "org_plan": boot.state.get("org_plan", [])}, indent=2) + "\n")
+         "surfaces": boot.state.get("surfaces", {}), "org_plan": boot.state.get("org_plan", []),
+         "year": boot.state.get("year"), "live_url": boot.state.get("live_url")}, indent=2) + "\n")
     (boot.out / "boot-report.md").write_text(rep + "\n")
     gc = boot.out / "gate-cards.json"
     if not gc.exists():  # stages after qualify may not have run; the cards still must land

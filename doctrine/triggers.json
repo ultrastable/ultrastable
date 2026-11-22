@@ -299,6 +299,14 @@
     "17 6 * * 1"
    ]
   },
+  "intent-yield.yml": {
+   "events": [
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "29 7 * * *"
+   ]
+  },
   "issueloop.yml": {
    "events": [
     "workflow_dispatch"
@@ -414,6 +422,14 @@
    ],
    "crons": [
     "23 6 * * 2"
+   ]
+  },
+  "seed-launch.yml": {
+   "events": [
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "23 7 * * 1"
    ]
   },
   "sessions.yml": {

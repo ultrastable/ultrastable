@@ -8,11 +8,11 @@ from __future__ import annotations
 import json, re, shutil
 from pathlib import Path
 
-from . import TAGLINE, __version__, filing, genesis, manifest as mf, minutes, ownersteps, preflight, ladder
+from . import TAGLINE, __version__, filing, genesis, manifest as mf, minutes, ownersteps, preflight, ladder, seedadmit
 
 REPO = Path(__file__).resolve().parent.parent
 KERNEL = REPO / "seed"
-KERNEL_PATHS = ["agents", "autonomy", "bootstrap", "worker", ".claude", ".github/copilot-instructions.md", "AGENTS.md", "CLAUDE.md", "scripts", "funding", "outreach", "docs/aios-lessons.md", "docs/bootstrapping.md"]
+KERNEL_PATHS = ["agents", "autonomy", "bootstrap", "worker", "analytics", "standards", ".claude", ".github/copilot-instructions.md", "AGENTS.md", "CLAUDE.md", "scripts", "funding", "outreach", "docs/aios-lessons.md", "docs/bootstrapping.md"]
 SKIP = shutil.ignore_patterns("__pycache__", "node_modules", "*.pyc", ".wrangler")
 
 
@@ -32,7 +32,16 @@ def _idea_md(m: dict) -> str:
             lines.append(f"{k}: {'true' if v else 'false'}")
     lines += ["---", "", "# Idea", "", m["idea"] or m["name"], "", "# Who it is for", "", f"- {m['kind']} programme owner and its stakeholders", "", "# First outcomes", ""]
     lines += [f"- {g}" for g in m["goals"]]
+    g = m["goals"] or [m["name"]]
+    lines += ["", "# System test", "", "All four are required (doctrine/VISION.md). They are written from the manifest so a generated system can bootstrap itself.", "",
+              f"- Loop: {g[0]}, observed, acted on and observed again with no person in the middle",
+              f"- Measure: {g[1] if len(g) > 1 else g[0]}, a named probe that can breach",
+              "- Upkeep: failures, drift and new rules keep arriving, and the managers file the next improvement from the measures",
+              f"- Run cost: {c} USD a month for the back end"]
     lines += ["", "# Constraints", "", f"- Budget per month: {c} USD"]
+    st = m.get("system_test") or {}  # SEED-DEPLOY-2: bootstrap stage qualify reads this section; without it a generated seed never writes its worker config
+    if st:
+        lines += ["", "# System test", "", f"- Loop: {st['loop']}", f"- Measure: {st['measure']}", f"- Upkeep: {st['upkeep']}", f"- Run cost: {st.get('run_cost') or f'{c} USD a month for the back end'}"]
     if not m["disclosure"]["public_allowed"]:
         lines.append("- Nothing public until the owner says so")
     return "\n".join(lines) + "\n"
@@ -128,8 +137,21 @@ def generate(raw: dict, out, date: str, ctx: ownersteps.StepCtx | None = None, a
         (out / "org" / "bootstrap-cases.json").write_text(json.dumps(plan, indent=2) + "\n")
         return plan
 
+    def autonomy():
+        """SEED-ADMIT-1: the system builds and deploys the seed and makes it autonomous. Wire the kit (deploy loop, year simulation, failure audit, SLA sweeper,
+        merge monitor, site liveness, temporal drift, weekly re-admission), then admit it: the year simulation runs on the new system's own recovery code."""
+        e = seedadmit._engine()
+        wired = e.wire(out, KERNEL)
+        rec = e.admit(out, slug=m["slug"], apply=True, src=KERNEL)
+        (out / "org").mkdir(exist_ok=True)
+        (out / "org" / "launch.json").write_text(json.dumps({"slug": m["slug"], "launched": rec["status"] == "admitted", "admission": rec["status"], "wired": wired["added"],
+                                                            "reasons": rec["reasons"], "expires": rec["expires"]}, indent=2) + "\n")
+        if rec["status"] != "admitted":
+            raise RuntimeError("seed held at admission: " + "; ".join(rec["reasons"])[:240])
+
     step("kernel", copy_kernel)
     step("instance", write_instance)
+    step("autonomy", autonomy)
     step("genesis", lambda: genesis.write(m, out))
     cases_plan = step("cases", cases_and_plans) or {"applicable": [], "cards": []}
     c = ctx or ownersteps.StepCtx()

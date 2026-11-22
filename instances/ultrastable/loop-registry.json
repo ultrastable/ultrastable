@@ -3988,6 +3988,83 @@
     "deploy-ultrastable.yml"
    ],
    "server_owner": "ultrastable-unlearn"
+  },
+  {
+   "id": "intent-yield",
+   "kind": "governance",
+   "summary": "INTENT-YIELD-1: for a given unit of human input, what is the best unit of output. Each owner directive is one intent; its own probe passing, unrestated, after 30 days is one kept outcome. Restatements are charged to the original, a directive that is not holding becomes a Q-YIELD item closed by its own probe, and /yield publishes the verdicts. No counts, no person scored.",
+   "trigger": "daily workflow and on demand",
+   "owner": "operations",
+   "closes_by": "system",
+   "sla": "1d",
+   "done": "ops/intent-yield/state.json is under 50 hours old with no error, every broken directive has a Q-YIELD item, and /yield shows the same verdicts",
+   "paths": [
+    {
+     "id": "github",
+     "how": ".github/workflows/intent-yield.yml runs python3 -m foundation intentyield --run --apply",
+     "class": "free"
+    },
+    {
+     "id": "session",
+     "how": "python3 -m foundation intentyield --run --apply from a cloud-hosted agent session",
+     "class": "session"
+    }
+   ],
+   "closing_probe": "grep:foundation/intentyield.py::def probe",
+   "writeback": [
+    "ops/intent-yield",
+    "site/intent-yield-data.js",
+    "docs/issues"
+   ],
+   "system_path": [
+    "foundation/intentyield.py",
+    "doctrine/intent-yield.json",
+    "site/intentyield.js",
+    "tests/foundation/test_intentyield.py",
+    ".github/workflows/intent-yield.yml"
+   ],
+   "workflows": [
+    "intent-yield.yml"
+   ],
+   "area": "managers",
+   "server_owner": "github-actions"
+  },
+  {
+   "id": "seed-launch",
+   "kind": "governance",
+   "summary": "SEED-LAUNCH-1: every seed is built, deployed, year-gated and probed live by the system. A fresh seed from seed/ and every repository made from the seed template are launched on Ultrastable's own Cloudflare account; the year-unattended gate and a live /health probe are required.",
+   "trigger": "weekly workflow and on demand",
+   "owner": "operations",
+   "closes_by": "system",
+   "sla": "8d",
+   "done": "the latest e2e row in ops/seed-launches.jsonl passed and is under 8 days old, and no seeded repository's latest launch failed",
+   "paths": [
+    {
+     "id": "github",
+     "how": ".github/workflows/seed-launch.yml runs python3 -m foundation seedlaunch --e2e --fleet",
+     "class": "free"
+    },
+    {
+     "id": "session",
+     "how": "python3 -m foundation seedlaunch --e2e --fleet from a cloud-hosted agent session with the Cloudflare binding",
+     "class": "session"
+    }
+   ],
+   "closing_probe": "grep:foundation/seedlaunch.py::def check",
+   "writeback": [
+    "ops/seed-launches.jsonl"
+   ],
+   "system_path": [
+    "foundation/seedlaunch.py",
+    "seed/bootstrap/bootstrap.py",
+    "tests/foundation/test_seedlaunch.py",
+    ".github/workflows/seed-launch.yml"
+   ],
+   "workflows": [
+    "seed-launch.yml"
+   ],
+   "area": "managers",
+   "server_owner": "github-actions"
   }
  ],
  "launch_registry": "instances/ultrastable/loops.json"

@@ -87,6 +87,31 @@ export async function cfGraphql(request, env, f) {
   return new Response(up.body, { status: up.status, headers: { "content-type": "application/json" } });
 }
 
+// SEED-DEPLOY-1: the one database write the OIDC route may make. A generated seed (SEED-ADMIT-1) needs its own D1 database before its Worker can start. This creates
+// a database only under the name prefix ultrastable-seed- (never a platform database such as ultrastable-org) and applies the given migration files to it once each,
+// through a ledger table. The caller is the same main-branch OIDC token as a deploy; nothing outside a seed database is reachable.
+export const SEED_DB = /^ultrastable-seed-[a-z0-9]+(-[a-z0-9]+){0,8}$/;
+export async function seedD1(b, api, A) {
+  const name = String(b.name || ""), ms = Array.isArray(b.migrations) ? b.migrations : [];
+  if (!SEED_DB.test(name)) return J({ ok: false, error: "a seed database name must be ultrastable-seed-<slug>" }, 400);
+  if (ms.length > 80 || ms.some(m => !m || !/^[\w.-]{1,80}\.sql$/.test(String(m.file)) || !/^[0-9a-f]{64}$/.test(String(m.sha256)) || typeof m.sql !== "string" || m.sql.length > 200000)) return J({ ok: false, error: "migrations must be {file, sha256, sql} (at most 80 files of 200 KB)" }, 400);
+  const found = ((await api("GET", `/accounts/${A}/d1/database?name=${encodeURIComponent(name)}&per_page=100`)).result || []).find(d => d.name === name);
+  const made = found ? null : await api("POST", `/accounts/${A}/d1/database`, JSON.stringify({ name }), { "content-type": "application/json" });
+  const id = found ? found.uuid : made && made.success && made.result && made.result.uuid;
+  if (!id) return J({ ok: false, error: "create database: " + JSON.stringify((made && made.errors) || []).slice(0, 300) }, 502);
+  const q = (sql) => api("POST", `/accounts/${A}/d1/database/${id}/query`, JSON.stringify({ sql }), { "content-type": "application/json" });
+  const mk = await q("CREATE TABLE IF NOT EXISTS _migrations (file TEXT PRIMARY KEY, sha256 TEXT NOT NULL, at TEXT NOT NULL DEFAULT (datetime('now')))");
+  if (!mk.success) return J({ ok: false, error: "ledger: " + JSON.stringify(mk.errors || []).slice(0, 300) }, 502);
+  const done = new Set(((((await q("SELECT file FROM _migrations")).result || [])[0] || {}).results || []).map(r => r.file)), applied = [];
+  for (const m of ms) {
+    if (done.has(m.file)) continue;
+    const r = await q(m.sql);
+    if (!r.success) return J({ ok: false, error: "migration " + m.file + ": " + JSON.stringify(r.errors || []).slice(0, 300), applied }, 502);
+    await q(`INSERT INTO _migrations (file, sha256) VALUES ('${m.file}', '${m.sha256}')`); applied.push(m.file);
+  }
+  return J({ ok: true, uuid: id, created: !found, applied });
+}
+
 export async function internalDeploy(request, env, fetcher) {
   const u = new URL(request.url);
   if (!u.pathname.startsWith("/__internal/")) return null;
@@ -102,6 +127,7 @@ export async function internalDeploy(request, env, fetcher) {
   const api = (m, p, body, h) => f("https://api.cloudflare.com/client/v4" + p, { method: m, headers: { authorization: "Bearer " + T, ...(h || {}) }, body }).then(r => r.json());
   let b; try { b = await request.json(); } catch (e) { return J({ ok: false, error: "bad json" }, 400); }
   if (!ALLOWED.test(String(b.name || ""))) return J({ ok: false, error: "worker name not allowed: " + b.name }, 400);
+  if (u.pathname === "/__internal/seed-d1") return seedD1(b, api, A);  // SEED-DEPLOY-1
   if (u.pathname === "/__internal/deploy") {
     if (!Array.isArray(b.modules) || !b.modules.length || !b.main) return J({ ok: false, error: "modules and main are required" }, 400);
     const form = new FormData();
@@ -112,15 +138,28 @@ export async function internalDeploy(request, env, fetcher) {
     // WORKERS-DEV-1: a new script uploaded by API has no workers.dev route until it is turned on; a non-public topology worker is served there.
     if (b.workers_dev === true) { const sd = await api("POST", `/accounts/${A}/workers/scripts/${b.name}/subdomain`, JSON.stringify({ enabled: true, previews_enabled: false }), { "content-type": "application/json" }); if (!sd.success) return J({ ok: false, error: "workers.dev: " + JSON.stringify(sd.errors || []).slice(0, 300) }, 502); }
     // TENANT-DOMAIN-1: a tenant app's custom domains (topology `routes`) are attached on every deploy; idempotent, zone found from the hostname.
+    const warnings = [];
     for (const host of Array.isArray(b.domains) ? b.domains : []) {
       const zones = await api("GET", `/zones?account.id=${A}&per_page=50`);
       const zone = ((zones && zones.result) || []).find(z => host === z.name || host.endsWith("." + z.name));
       if (!zone) return J({ ok: false, error: "custom domain: no zone in this account for " + host }, 502);
       const dm = await api("PUT", `/accounts/${A}/workers/domains`, JSON.stringify({ hostname: host, service: b.name, zone_id: zone.id, environment: "production" }), { "content-type": "application/json" });
       if (!dm.success) return J({ ok: false, error: "custom domain " + host + ": " + JSON.stringify(dm.errors || []).slice(0, 300) }, 502);
+      // TENANT-ROUTE-1: a zone route such as *.ultrastable.app/* (the spinoffs worker) catches the hostname ahead of the custom domain,
+      // so the live host answered "Not found" from another worker. A route for exactly this host is more specific than the wildcard and wins.
+      const rl = await api("GET", `/zones/${zone.id}/workers/routes`);
+      if (!rl || !rl.success) warnings.push("routes " + zone.name + " unreadable: " + JSON.stringify((rl && rl.errors) || []).slice(0, 200));  // an unknown route list is reported as a warning, not read as "no wildcard"
+      const routes = rl && Array.isArray(rl.result) ? rl.result : [];
+      const covered = routes.some(r => r.script !== b.name && r.pattern.startsWith("*.") && host.endsWith(r.pattern.slice(1).replace(/\/\*$/, "")));
+      const own = routes.find(r => r.pattern === host + "/*");
+      if (covered && (!own || own.script !== b.name)) {
+        const rr = own ? await api("PUT", `/zones/${zone.id}/workers/routes/${own.id}`, JSON.stringify({ pattern: host + "/*", script: b.name }), { "content-type": "application/json" })
+                       : await api("POST", `/zones/${zone.id}/workers/routes`, JSON.stringify({ pattern: host + "/*", script: b.name }), { "content-type": "application/json" });
+        if (!rr.success) warnings.push("route " + host + "/*: " + JSON.stringify(rr.errors || []).slice(0, 300));  // the upload stands; the deploy log records the warning
+      }
     }
     if (Array.isArray(b.crons)) { const cr = await api("PUT", `/accounts/${A}/workers/scripts/${b.name}/schedules`, JSON.stringify(b.crons.map(cron => ({ cron }))), { "content-type": "application/json" }); if (!cr.success) return J({ ok: false, error: "schedules: " + JSON.stringify(cr.errors || []).slice(0, 300) }, 502); }
-    return J({ ok: true, version: (up.result && (up.result.deployment_id || up.result.etag || up.result.id)) || "" });
+    return J({ ok: true, version: (up.result && (up.result.deployment_id || up.result.etag || up.result.id)) || "", ...(warnings.length ? { warnings } : {}) });
   }
   if (u.pathname === "/__internal/version") {  // DEPLOY-VERSION-1: the live deployment of a worker, read after a handoff deploy to prove the code changed
     const d = await api("GET", `/accounts/${A}/workers/scripts/${b.name}/deployments`);

@@ -1,0 +1,44 @@
+name: intent-yield
+# INTENT-YIELD-1 (Rowan, 2026-11-21): "For a given unit of human input, what's the best unit of output?" Runs each owner directive's own probe,
+# charges restatements to the original directive, files Q-YIELD items for directives that are not holding, and publishes /yield.
+# budget: ~3 min x 30 per month (the probes are time-boxed by run_budget_s in doctrine/intent-yield.json)
+# trigger: daily and dispatch; a directive is kept or broken over days and the settle window is 30 days, so a faster event adds no information
+# free-alternative: a cloud-hosted agent session runs `python3 -m foundation intentyield --run --apply`; the watchdog restarts this clock when it stops
+on:
+  schedule:
+    - cron: "29 7 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write  # scripts/land_data.py falls back to a pull request when the main writer is refused
+  id-token: write  # MAIN-WRITER-1: tools/push_main.py presents the run's OIDC token
+concurrency:
+  group: intent-yield
+  cancel-in-progress: false
+jobs:
+  yield:
+    if: ${{ vars.HALT != '1' }}  # HALT-1: the owner's halt (repository variable HALT=1) stops every job
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: main
+      - run: python3 scripts/actions_guard.py intent-yield
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Run every directive's own probe and score the yield
+        id: run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        # a run that reports an error (format drift, nothing probed) still lands its state, so the detector intent-yield-fresh sees the error and files it
+        run: python3 -m foundation intentyield --run --apply || echo "failed=1" >> "$GITHUB_OUTPUT"
+      - name: Land the state, history, page data and queue items on main
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+        run: python3 scripts/land_data.py "intent yield, directives probed (INTENT-YIELD-1)" ops/intent-yield site/intent-yield-data.js docs/issues
+      - name: Fail loudly when the run reported an error
+        if: steps.run.outputs.failed == '1'
+        run: |
+          python3 -m foundation intentyield --probe
+          exit 1
