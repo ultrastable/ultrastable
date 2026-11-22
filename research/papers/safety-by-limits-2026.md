@@ -77,7 +77,7 @@ Source: GitHub REST pulls?state=closed, last 100 closed pull requests, fetched 2
 
 - HALT-1 (`seed/worker/src/budget.js`): one worker variable or committed file stops every cron, webhook and workflow job
 
-**Measured here:** share of registered loops that declare a closing probe and a server-side owner: 1.0 (n = 110). Target >= 1.0. Verdict: **met**.
+**Measured here:** share of registered loops that declare a closing probe and a server-side owner: 1.0 (n = 111). Target >= 1.0. Verdict: **met**.
 Source: instances/ultrastable/loop-registry.json (declared).
 
 ## Limits
@@ -90,16 +90,16 @@ Source: instances/ultrastable/loop-registry.json (declared).
 
 ## Proposed further links (leads, not findings)
 
-Found by core/connect on the lexical-512-1joaqry route; each is a proposal until a study file adopts it.
+Found by core/connect on the lexical-512-lyrunq route; each is a proposal until a study file adopts it.
 
 - S1 may also relate to DISPOSE-1 (similarity 0.135)
 - S1 may also relate to PROMOTE-1 (similarity 0.117)
-- S2 may also relate to TENANT-SYNC-1 (similarity 0.153)
+- S2 may also relate to TENANT-SYNC-1 (similarity 0.154)
 - S2 may also relate to DRAIN-ZERO-1 (similarity 0.132)
 - S3 may also relate to RUNWAY-1 (similarity 0.117)
 - S4 may also relate to DISPOSE-1 (similarity 0.114)
 - S5 may also relate to COMPLETE-1 (similarity 0.114)
-- S5 may also relate to DRAIN-ZERO-1 (similarity 0.109)
+- S5 may also relate to DRAIN-ZERO-1 (similarity 0.11)
 - S6 may also relate to IGNORANCE-1 (similarity 0.131)
 - S6 may also relate to TEMPORAL-1 (similarity 0.116)
 

@@ -52,7 +52,9 @@ jobs:
               echo "::warning::this credential could not create $repo; trying the next route"
             done
             [ -n "$tok" ] || { echo "::error::no credential could create $repo (ORG_ADMIN_TOKEN, LANE_PAT)"; exit 1; }
-            if [ -n "$(GH_TOKEN="$tok" gh api "repos/$repo/commits?per_page=1" --jq '.[0].sha' 2>/dev/null || true)" ]; then echo "$repo already has history; left as it is"; continue; fi
+            # an empty repository answers 409 here; that answer is logged, not hidden, and means "push the split"
+            if head_sha="$(GH_TOKEN="$tok" gh api "repos/$repo/commits?per_page=1" --jq '.[0].sha' 2>/tmp/commits.err)" && [ -n "$head_sha" ]; then echo "$repo already has history; left as it is"; continue; fi
+            echo "no commits yet in $repo: $(cat /tmp/commits.err)"
             git subtree split --prefix "$src" -b "split-$slug"
             git worktree add "/tmp/$slug" "split-$slug"
             python3 -m foundation tenantrepos --prepare "/tmp/$slug" --slug "$slug"
