@@ -10,6 +10,8 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-22
 
+- 2026-11-22: Close offsite-backup: the tick's first daily D1 copy is in R2 (#1913)
+- 2026-11-22: queue: closing-probe verdicts for 12 item(s) (QUEUE-PERSIST-1) [skip ci]
 - 2026-11-22: Sweep: CLAIM-BLIND-MERGE-1, Dependabot writeback, seed balance engine, watchdog ledgers (#1902)
 - 2026-11-22: Handoff deploys bind live R2 buckets (tick gets AUDIT); close cloudflare-alerts (#1911)
 - 2026-11-22: ZERO-MINUTES-1: worker merged #1906
