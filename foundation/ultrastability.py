@@ -120,15 +120,53 @@ def _ratio(value, target):
         return None
 
 
+def spinoff_readings(root=REPO, platform_cost=None) -> dict:
+    """TENANT-READINGS-1: the spend and value readings a spinoff's own loop already makes, as the tenant variables expect them. Value is the latest
+    measured value from the portfolio decision rows (ops/spinoff/ledger.jsonl) against doctrine/spinoff.json portfolio.kill_below_value, so 1.0 is the keep line.
+    Spend is an upper bound: an app cannot spend more than the whole account, so (account spend as a share of budget) / (the app's budget_share)
+    bounds its spend against its own allocation. No per-app meter exists yet; an unmeasured account cost leaves spend unmeasured, never 0."""
+    root, out = Path(root), {}
+    led = root / "ops/spinoff/ledger.jsonl"
+    try:
+        target = json.loads((root / "doctrine/spinoff.json").read_text(encoding="utf-8")).get("portfolio", {}).get("kill_below_value")
+    except (OSError, ValueError):
+        target = None
+    if not led.is_file():
+        return out
+    for ln in led.read_text(encoding="utf-8").splitlines():
+        if not ln.strip():
+            continue
+        r = json.loads(ln)
+        if r.get("event") != "decision" or not r.get("slug"):
+            continue
+        o = out.setdefault(r["slug"], {})
+        if r.get("value") is not None:
+            o["declared_metric"], o["declared_target"] = r["value"], target
+        if r.get("budget_share"):
+            o["budget_share"] = r["budget_share"]
+    for o in out.values():
+        share = o.get("budget_share")
+        o["spend_vs_budget"] = round(platform_cost / share, 3) if platform_cost is not None and share else None
+    return out
+
+
 def write_tenants(root=REPO, fetch=None, now=None) -> list[str]:
     """Write ops/tenants/<slug>.json for every live tenant: the uptime probe now, and the other readings kept from the tenant's own loop (null until it writes them)."""
     root, now = Path(root), (now or datetime.now(timezone.utc)).strftime("%Y-%m-%dT%H:%M:%SZ")
     done = []
+    try:
+        cost = readings(root).get("criticality.cost")
+    except (OSError, ValueError, KeyError) as e:  # no criticality inputs in this root: spend stays unmeasured, never 0
+        print(f"tenant spend unmeasured: {e}", file=sys.stderr); cost = None
+    own = spinoff_readings(root, cost)
     for slug, r in tenant_readings(root, fetch).items():
         p = root / "ops/tenants" / (slug + ".json")
         have = json.loads(p.read_text(encoding="utf-8")) if p.is_file() else {}
         p.parent.mkdir(parents=True, exist_ok=True)
-        doc = {"slug": slug, "at": now, "uptime": r["uptime"], "spend_vs_budget": have.get("spend_vs_budget"), "claims_drift": have.get("claims_drift"), "declared_metric": have.get("declared_metric")}
+        mine = own.get(slug, {})
+        pick = lambda k: mine.get(k) if mine.get(k) is not None else have.get(k)  # a fresh reading from the spinoff loop wins; the tenant's own write is kept otherwise
+        doc = {"slug": slug, "at": now, "uptime": r["uptime"], "spend_vs_budget": pick("spend_vs_budget"), "claims_drift": have.get("claims_drift"),
+               "declared_metric": pick("declared_metric"), "declared_target": pick("declared_target")}
         p.write_text(json.dumps(doc, indent=1, sort_keys=True) + "\n", encoding="utf-8")
         done.append(slug)
     return done

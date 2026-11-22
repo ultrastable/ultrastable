@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-22-tenant-readings-1-spinoff-value-and-spend-readings-are-writt",
+  "kind": "decision",
+  "date": "2026-11-22",
+  "title": "TENANT-READINGS-1: spinoff value and spend readings are written from the spinoff ledger",
+  "body": "Every live spinoff read value and spend as unmeasured, so the second loop could never judge them. write_tenants now fills declared_metric/declared_target (latest decision value against portfolio.kill_below_value) and an upper-bound spend_vs_budget (account spend share / app budget_share), and keeps declared_target, which it used to drop. saydo now resolves paths under workers/ because ultrastable/workers is archived and core lives in workers/ here.",
+  "probe": "grep:foundation/ultrastability.py::def spinoff_readings",
+  "session": "session_0156nqDrazgRH7yMoAUMyYoy"
+ },
+ "kind": "decision",
+ "title": "TENANT-READINGS-1: spinoff value and spend readings are written from the spinoff ledger",
+ "session": "session_0156nqDrazgRH7yMoAUMyYoy"
+}

@@ -1,11 +1,12 @@
 {
   "id": "OL-20261122-1",
   "title": "OL-20261122-1: core/flowbalance cannot be pushed to ultrastable/workers from code sessions",
-  "body": "**Owner:** executor\n**Trigger:** tenant-sync lane pass\n**Done check:** cmd:python3 -m foundation saydo --probe rules:FLOW-BALANCE-1\n**Status:** open\n\nThis session's GitHub integration gets 403 on writes to ultrastable/workers (git push and git refs API). The module is a copy of seed/worker/src/flowbalance.js with its test (5 pass). The seed/scripts/balance.py half of FLOW-BALANCE-1 landed.",
+  "body": "**Owner:** executor\n**Trigger:** tenant-sync lane pass\n**Done check:** cmd:python3 -m foundation saydo --probe rules:FLOW-BALANCE-1\n**Status:** closed\n\nThis session's GitHub integration gets 403 on writes to ultrastable/workers (git push and git refs API). The module is a copy of seed/worker/src/flowbalance.js with its test (5 pass). The seed/scripts/balance.py half of FLOW-BALANCE-1 landed.\n\n**Disposition:** fixed. ultrastable/workers is archived; core lives in workers/ in this repository, where core/flowbalance already exists. foundation/saydo.py now resolves paths under workers/, and `saydo --probe rules:FLOW-BALANCE-1` passes.",
   "labels": [
     "role:executor",
     "open-loop"
   ],
   "milestone": "Now",
-  "workstream": "Open loops"
+  "workstream": "Open loops",
+  "status": "closed"
 }
