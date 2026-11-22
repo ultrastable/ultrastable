@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261122-1",
+  "title": "OL-20261122-1: Actions group bump (was PR 1829): checkout v7 and setup-node v7 in deploy-gateway and host-sync",
+  "body": "**Owner:** operations\n**Trigger:** dependabot opens the next actions bump\n**Done check:** file:foundation/writeback.py\n**Status:** open\n\nClosed PR 1829 unmerged: it touches two protected workflows only, an unproven major version jump, and no defect needs it. Dependabot reopens it as needed; the executor takes any bump that lands through the lane with a Protected-change line. Session session_0156nqDuuzmUZaF6SvhePqLF.",
+  "labels": [
+    "role:operations",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

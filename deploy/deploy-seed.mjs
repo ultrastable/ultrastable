@@ -35,11 +35,14 @@ async function site(path, body) {
   throw err;
 }
 async function probe(url) {
+  // A fresh seed answers /health with 503 until its first cron tick completes; start that tick (the route runs one only when none is recent), then accept a JSON answer that names the org: the worker is up and running its own code.
+  try { await fetch(url + "/pulse/watch", { method: "POST" }); } catch { /* not up yet */ }
+  let last = "no response";  // keep what the worker answered so a failed launch says why
   for (let i = 0; i < 12; i++) {
-    try { const r = await fetch(url + "/health"); const t = await r.text(); if (r.ok) { try { JSON.parse(t); return { ok: true, status: r.status }; } catch { /* not JSON yet */ } } } catch { /* not up yet */ }
+    try { const r = await fetch(url + "/health"); const t = await r.text(); last = `${r.status} ${t.slice(0, 200)}`; try { const j = JSON.parse(t); if (r.ok || (j && j.org && r.status === 503)) return { ok: true, status: r.status }; } catch { /* not JSON yet */ } } catch (e) { last = String(e.message || e).slice(0, 200); }
     await new Promise(r => setTimeout(r, 5000));
   }
-  return { ok: false };
+  return { ok: false, last };
 }
 const gitsha = process.env.GITHUB_SHA || sh("git", ["rev-parse", "HEAD"], { cwd: ROOT }).trim();
 const rows = [];
@@ -71,7 +74,7 @@ for (const slug of cfg.seeds) {
       row.version = up.version || ""; row.migrations_applied = db.applied.length;
     }
     const p = await probe(url);
-    row = { ...row, uploaded: !verifyOnly, live_ok: p.ok, live_matches_commit: !verifyOnly && p.ok, status: p.status || 0 };
+    row = { ...row, uploaded: !verifyOnly, live_ok: p.ok, live_matches_commit: !verifyOnly && p.ok, status: p.status || 0, ...(p.ok ? {} : { error: "health: " + p.last }) };
   } catch (e) { row = { ...row, live_ok: false, error: String(e.message).slice(0, 300) }; }
   console.log(row.live_ok ? "OK    " : "FAIL  ", name, row.live_ok ? url + "/health" : row.error || "no health");
   rows.push(row);
