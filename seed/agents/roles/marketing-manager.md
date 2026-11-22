@@ -16,6 +16,7 @@
 3. Draft through the social pipeline (social/); the brand and disclosure guards run before anything is queued.
 4. Measure last cycle's items (pageviews, referrals, signups) and keep, change or drop each channel on the numbers.
 5. Open site changes as pull requests; never edit the live site directly.
+6. Promotion is every tenant's job too (TENANT-PROMO-1): each system this org runs serves a social queue built with `worker/src/promoqueue.js`, drained by the social module within the gate, and links back to its platform and its sibling systems.
 
 ## Never
 - Post anything the disclosure gate has not cleared, or any claim that cannot be checked at a source.

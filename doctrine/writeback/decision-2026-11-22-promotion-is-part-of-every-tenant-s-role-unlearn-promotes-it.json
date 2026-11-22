@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-22-promotion-is-part-of-every-tenant-s-role-unlearn-promotes-it",
+  "kind": "decision",
+  "date": "2026-11-22",
+  "title": "Promotion is part of every tenant's role; Unlearn promotes itself",
+  "body": "TENANT-PROMO-1 (Rowan 2026-11-22). Unlearn serves /social-queue.json (one belief every 2 days from 2026-11-23, built by the shared seed/worker/src/promoqueue.js), listed in social/gate.json tenant_queues and drained by the core publisher, which now takes tenants in turn (fairOrder). Unlearn is a live showcase on ultrastable.io and every Unlearn page links its live siblings from doctrine/stakeholders.json. foundation/tenantpromo.py --check (in checks) fails any system in progress.json that does not promote itself. Practical Solutions linking Unlearn from its own pages is a change in ultrastable/practical-solutions; it is cross-promoted from ultrastable.io and from Unlearn meanwhile.",
+  "probe": "file:foundation/tenantpromo.py",
+  "session": "session_0156nqDs5nJM2H2Skg8FBBcb"
+ },
+ "kind": "decision",
+ "title": "Promotion is part of every tenant's role; Unlearn promotes itself",
+ "session": "session_0156nqDs5nJM2H2Skg8FBBcb"
+}

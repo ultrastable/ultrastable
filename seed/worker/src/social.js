@@ -5,6 +5,7 @@
 import * as store from './auth/store.js';
 import { getToken } from './auth/index.js';
 import { dpopFetch, refreshForm, assertionFields } from './auth/atproto.js';
+import { tenantOf } from './promoqueue.js';
 
 const RAW = repo => `https://raw.githubusercontent.com/${repo}/main/social/`;
 const DDL = "CREATE TABLE IF NOT EXISTS social_posted (id TEXT NOT NULL, channel TEXT NOT NULL, at TEXT NOT NULL, ref TEXT, arm TEXT, PRIMARY KEY (id, channel))";
@@ -142,7 +143,16 @@ export async function verifyRelay(db, env, f, now = Date.now()) {
 
 // Order of what posts next: the weekly meta-story, then a tenant's changed items, then a tenant's backlog in hierarchy order, then platform events, then evergreen.
 // THOUGHT-1: a white paper piece goes right after the weekly meta-story.
-export const priority = p => (p.arm === 'meta-story' ? 0 : p.kind === 'paper' ? 0.5 : String(p.arm || '').startsWith('ps-') ? (p.kind === 'event' ? 1 : 2) : p.kind === 'event' ? 3 : 4);
+// TENANT-PROMO-1: every tenant's queue (Practical Solutions' ps-* arms, Unlearn and any later tenant built with promoqueue.js) shares the tenant rung,
+// and inside a rung the tenant posted least in the last 7 days goes first, so no tenant's backlog starves another.
+export const priority = p => (p.arm === 'meta-story' ? 0 : p.kind === 'paper' ? 0.5 : tenantOf(p) ? (p.kind === 'event' ? 1 : 2) : p.kind === 'event' ? 3 : 4);
+const armTenant = arm => { const a = String(arm || ''); return a.startsWith('ps-') ? 'practical-solutions' : a.split('-')[0]; };
+export function fairOrder(posts, rows = [], now = Date.now(), scores = {}) {
+  const share = {};
+  for (const r of rows) if (now - Date.parse(r.at) < 7 * 864e5) { const t = armTenant(r.arm); share[t] = (share[t] || 0) + 1; }
+  const key = p => (tenantOf(p) ? share[tenantOf(p)] || 0 : 0);
+  return posts.slice().sort((a, b) => priority(a) - priority(b) || key(a) - key(b) || (scores[b.arm] || 0) - (scores[a.arm] || 0) || String(a.date).localeCompare(String(b.date)));
+}
 
 export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), tenant = 'default', repo = 'ultrastable/ultrastable' }) {
   await store.ensureSchema(db); await db.prepare(DDL).run();
@@ -168,7 +178,7 @@ export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), t
   if (gate.mode !== 'live') return { skipped: 'gate mode ' + gate.mode };
   for (const ch of gate.paused_channels || []) delete channels[ch];
   if (!Object.keys(channels).length) return { skipped: 'all channels paused' };
-  const d = new Date(now), today = d.toISOString().slice(0, 10), rows = (await db.prepare('SELECT id, channel, at, status, attempts FROM social_posted').all()).results || [];
+  const d = new Date(now), today = d.toISOString().slice(0, 10), rows = (await db.prepare('SELECT id, channel, at, status, attempts, arm FROM social_posted').all()).results || [];
   // POST-FEEDBACK-1: read back engagement for yesterday's posts, then break ties between equally ranked posts toward the arm that earns more.
   let fb = { measured: 0, of: 0 }, scores = {};
   try { fb = await reconcileEngagement(db, f, now); scores = armScores((await db.prepare('SELECT arm, likes, reposts, replies, measured_at FROM social_posted').all()).results || []); } catch (e) { await store.event(db, tenant, 'social', 'feedback-error', String(e && e.message || e).slice(0, 120)); }
@@ -186,9 +196,10 @@ export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), t
   const targets = p => { const l = p.channels || ['bluesky', 'mastodon']; return [...l, 'buffer', 'relay'].filter((ch, i, a) => a.indexOf(ch) === i && channels[ch]); };
   const missing = p => targets(p).filter(ch => ch === 'relay' ? !relayDone(p.id) : ch === 'buffer' ? !bufferDone(p.id) : !done(p.id, ch));
   const seen = id => rows.filter(r => r.id === id), retry = id => seen(id).some(r => r.status === 'failed');
-  const due = (cal.posts || []).filter(p => p.date <= today && missing(p).length && (!seen(p.id).length || p.kind === 'paper' || retry(p.id))).sort((a, b) => priority(a) - priority(b) || (scores[b.arm] || 0) - (scores[a.arm] || 0));
+  const due = (cal.posts || []).filter(p => p.date <= today && missing(p).length && (!seen(p.id).length || p.kind === 'paper' || retry(p.id)));
+  const dueOrdered = fairOrder(due, rows, now, scores);  // TENANT-PROMO-1 tenant turn, then POST-FEEDBACK-1 engagement breaks ties
   if (!due.length) return { skipped: 'nothing due' };
-  const p = due[0], out = {};
+  const p = dueOrdered[0], out = {};
   const rec = async (ch, ref, status, ex) => {
     const n = ((rows.find(r => r.id === p.id && r.channel === ch) || {}).attempts || 0) + 1;
     await db.prepare('INSERT INTO social_posted (id, channel, at, ref, arm, status, attempts) VALUES (?,?,?,?,?,?,?) ON CONFLICT(id, channel) DO UPDATE SET at=excluded.at, ref=excluded.ref, status=excluded.status, attempts=excluded.attempts').bind(p.id, ch, new Date(now).toISOString(), String(ref || '').slice(0, 400), p.arm || null, status, n).run();
