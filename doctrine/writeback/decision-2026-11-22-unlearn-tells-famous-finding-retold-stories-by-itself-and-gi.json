@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-22-unlearn-tells-famous-finding-retold-stories-by-itself-and-gi",
+  "kind": "decision",
+  "date": "2026-11-22",
+  "title": "Unlearn tells famous-finding-retold stories by itself and gives readers a reason to come back daily",
+  "body": "Rowan wants far more narrative-vs-later-evidence entries, automated, and a sticky site that runs a year unattended. Decision: a retold topic with then/now timelines graded honestly; a second daily discovery search for replications and re-analyses; drafts reach their own page only after reader votes and only with an index citation, always labelled a draft from one paper; a myth of the day cycle, an Atom feed and a browser-only streak bring readers back without accounts or cookies.",
+  "probe": "grep:instances/unlearn/worker/lab.js::export const RETOLD_QUERY",
+  "session": "session_0156nqDvj2EuthJ3xYxicfND"
+ },
+ "kind": "decision",
+ "title": "Unlearn tells famous-finding-retold stories by itself and gives readers a reason to come back daily",
+ "session": "session_0156nqDvj2EuthJ3xYxicfND"
+}
