@@ -1,0 +1,15 @@
+{
+ "row": {
+  "id": "decision-2026-11-21-intent-yield-enters-seed-lifecycle-1",
+  "kind": "decision",
+  "date": "2026-11-21",
+  "title": "Intent Yield enters SEED-LIFECYCLE-1",
+  "body": "instance.json and lifecycle.json added (served by ultrastable-site, verify https://ultrastable.io/yield.json for INTENT-YIELD-1); progress row healed by intent-yield.yml and executor.yml. Stage is deployed; the watchdog's seedlife verify takes it to live. Q-SEED-intent-yield closes on seedlife --probe once the core-inherited survival classes (cost-alerts, dependencies, runtime, backups, improvement) close platform-wide. Superseded 2026-11-22: Intent Yield is a core feature, not a seed; the manifest and lifecycle file were removed and this row now points at the design doc.",
+  "probe": "file:docs/intent-yield-design.md",
+  "session": "session_0156nqDtFn6P2DrsR9UbyzkV"
+ },
+ "kind": "decision",
+ "title": "Intent Yield enters SEED-LIFECYCLE-1",
+ "session": "session_0156nqDtFn6P2DrsR9UbyzkV",
+ "replace": true
+}

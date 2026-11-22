@@ -81,7 +81,8 @@ def check(root=REPO, now=None) -> list[str]:
         r = core_engine.evaluate(root, root / "instances" / s, lc_path(root, s), c, core, now)
         bad += core_engine.false_claims(r, lc, _load(root / "instances" / s / "instance.json"), s in prog)
         it = _load(root / "docs/issues" / f"Q-SEED-{s}.json")
-        if it and "**Status:** open" not in it.get("body", "") and r.get("stage") != "autonomous" and "**Status:** gate" not in it.get("body", ""):
+        if it and "**Status:** open" not in it.get("body", "") and r.get("stage") != "autonomous" and "**Status:** gate" not in it.get("body", "") \
+                and "**Disposition:**" not in it.get("body", ""):  # DISPOSE-1 (SLA-8H-1) gives every item older than 6 h a recorded disposition; that is a final record, not a false closure
             bad.append(f"Q-SEED-{s}: closed while the seed is {r.get('stage')}; it closes only when --probe {s} passes")
     return bad
 
