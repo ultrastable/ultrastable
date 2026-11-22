@@ -1,7 +1,7 @@
 {
- "at": "2026-11-22T14:03:50Z",
- "gaps": 4,
- "match_share": 0.991,
+ "at": "2026-11-22T14:14:26Z",
+ "gaps": 3,
+ "match_share": 0.994,
  "sources": {
   "changes": [
    {
@@ -498,6 +498,15 @@
     "unmeasured": []
    },
    {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "TENANT-REPO-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
     "checks": 0,
     "external": [],
     "failing": [],
@@ -583,12 +592,10 @@
    {
     "checks": 3,
     "external": [],
-    "failing": [
-     "python3 -m foundation trajectory --check: site/trajectory-data.js is stale: run trajectory --run --apply"
-    ],
+    "failing": [],
     "id": "YEAR-SIM-1",
     "missing": [],
-    "ok": false,
+    "ok": true,
     "unmeasured": []
    },
    {
@@ -825,13 +832,13 @@
    "total": 1
   },
   "rules": {
-   "gaps": 1,
-   "total": 68
+   "gaps": 0,
+   "total": 69
   },
   "year": {
    "gaps": 1,
    "total": 2
   }
  },
- "total": 463
+ "total": 464
 }
