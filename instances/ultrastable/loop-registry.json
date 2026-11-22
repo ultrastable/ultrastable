@@ -3956,7 +3956,7 @@
   {
    "id": "unlearn-beat",
    "kind": "tick",
-   "summary": "Unlearn tenant loop: the encyclopedia's evidence step resolves cited sources to DOIs (Crossref, title and year must match) and watches Europe PMC for new reviews per entry, surfacing them and queueing entries for re-grading; reader guesses and shift answers are measured. The coaching tool's curiosity, move, 7 and 14 day follow-up and weight re-learning run in the same beat, and its next phase opens when its gates hold (instances/unlearn/phases.json).",
+   "summary": "Unlearn tenant loop: the encyclopedia's evidence step resolves cited sources to DOIs (Crossref, title and year must match) and watches Europe PMC for new reviews per entry, surfacing them; the lab step labels each new review with a quote that must be in its abstract, re-grades entries from those labels, drafts candidate beliefs for /lab from new myth reviews, and runs wording trials decided by readers' shift answers; reader guesses and shift answers are measured. The coaching tool's curiosity, move, 7 and 14 day follow-up and weight re-learning run in the same beat, and its next phase opens when its gates hold (instances/unlearn/phases.json).",
    "trigger": "cron 41 * * * * on ultrastable-unlearn; a page visit runs the beat when the cron has been silent for 2 hours",
    "owner": "product-manager",
    "closes_by": "system",

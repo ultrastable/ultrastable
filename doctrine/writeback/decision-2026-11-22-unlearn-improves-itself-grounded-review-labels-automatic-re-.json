@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-22-unlearn-improves-itself-grounded-review-labels-automatic-re-",
+  "kind": "decision",
+  "date": "2026-11-22",
+  "title": "Unlearn improves itself: grounded review labels, automatic re-grading, Lab discovery, wording trials",
+  "body": "Rowan asked to grow Unlearn and make it run and improve automatically. Decision: a model may only label or re-word, never add facts; every label or draft must quote a sentence present in the abstract it read, re-words may add no number or name, entries' cited sources are never changed by a model, drafts live on /lab and are never published as entries, and wording trials need 40 answers per arm and a two-proportion z of 1.96 to replace the original.",
+  "probe": "grep:instances/unlearn/worker/lab.js::export function grounded",
+  "session": "session_0156nqDvj2EuthJ3xYxicfND"
+ },
+ "kind": "decision",
+ "title": "Unlearn improves itself: grounded review labels, automatic re-grading, Lab discovery, wording trials",
+ "session": "session_0156nqDvj2EuthJ3xYxicfND"
+}
