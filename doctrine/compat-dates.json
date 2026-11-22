@@ -1,7 +1,14 @@
 {
- "_doc": "COMPAT-DATE-1 (Q-YEAR-dependency-drift): Worker compatibility dates advance by a loop, not by hand. foundation/compatdate.py moves every date in doctrine/topology.json (each worker and system_compatibility_date) and in every tracked wrangler.toml to today minus lag_days, when it is at least min_step_days behind that target. It runs on every watchdog pass inside the runway step, so the change merges and deploys through the lane, whose probe rolls a bad date back. check fails when any date is older than max_age_days, which means the loop stopped.",
+ "_doc": "COMPAT-DATE-1 (Q-YEAR-dependency-drift): Worker compatibility dates advance by a loop, not by hand. foundation/compatdate.py moves every date in doctrine/topology.json (each worker and system_compatibility_date) and in every tracked wrangler.toml to today minus lag_days, when it is at least min_step_days behind that target. It runs on every watchdog pass inside the runway step, so the change merges and deploys through the lane, whose probe rolls a bad date back. check fails when any date is older than max_age_days, which means the loop stopped. It also reads every node-version pin in .github/workflows: a pin whose Node major leaves maintenance (node_eol, the Node.js release schedule) within node_min_days, or a major missing from the table, fails check, so the move to the next LTS starts a year ahead.",
  "lag_days": 30,
  "min_step_days": 28,
  "max_age_days": 120,
- "topology": "doctrine/topology.json"
+ "topology": "doctrine/topology.json",
+ "node_eol": {
+  "20": "2026-04-30",
+  "22": "2027-04-30",
+  "24": "2028-04-30",
+  "26": "2029-04-30"
+ },
+ "node_min_days": 365
 }
