@@ -175,3 +175,4 @@
 {"at": "2026-11-22T22:12:17Z", "clocks": 38, "kind": "beat", "seq": 174, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
 {"age_s": null, "at": "2026-11-22T22:22:24Z", "clock": "unlearn-beat", "detail": "ultrastable-unlearn.ultrastable.workers.dev=200", "kind": "restart", "ok": true, "route": "http", "seq": 175}
 {"at": "2026-11-22T22:22:24Z", "clocks": 38, "kind": "beat", "seq": 176, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
+{"at": "2026-11-22T22:32:36Z", "clocks": 38, "kind": "beat", "seq": 177, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
