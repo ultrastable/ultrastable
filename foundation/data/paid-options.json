@@ -12,7 +12,7 @@
     {
       "id": "cf-workers-ai",
       "title": "Workers AI beyond the free daily allowance",
-      "cost": "Usage-billed past 10,000 neurons a day (about 0.011 USD per 1,000 neurons); needs the paid plan above",
+      "cost": "Usage-billed past 10,000 neurons a day (about 0.011 USD per 1,000 neurons) on the Workers Paid plan",
       "unlocks": "More console-agent and tenant model calls per day.",
       "default": "Stay free. Calls past the allowance fail; the cheapest model is used first."
     },
@@ -20,8 +20,8 @@
       "id": "gh-actions",
       "title": "GitHub Actions minutes for ultrastable",
       "cost": "0 USD while within the included private-repo minutes; anything past that is billed to the spending limit you set",
-      "unlocks": "Hosted checks, lane merges and deploys. They are refused now because of a failed payment or a zero spending limit.",
-      "default": "No Actions jobs run. Worker loops and the cloud routine carry the work (ZERO-MINUTES-1)."
+      "unlocks": "Hosted checks, lane merges and deploys. When a payment fails or the spending limit is zero, GitHub refuses hosted jobs.",
+      "default": "Worker loops and the cloud routine carry the work whenever hosted jobs are refused (ZERO-MINUTES-1)."
     },
     {
       "id": "domain-renewal",
@@ -30,5 +30,10 @@
       "unlocks": "Keeps ultrastable.io, .app, .net and .org.",
       "default": "Domains lapse on 2027-11-10 unless renewed. Nothing is charged before then."
     }
-  ]
+  ],
+  "known_plan": {
+    "plan": "paid",
+    "since": "2026-11-21",
+    "source": "owner: Workers Paid turned on for the ultrastable account"
+  }
 }
