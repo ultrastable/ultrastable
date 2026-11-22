@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-22-sticky-1-the-stickiness-step-files-its-item-with-a-small-res",
+  "kind": "decision",
+  "date": "2026-11-22",
+  "title": "STICKY-1: the stickiness step files its item with a small reserve above the daily item limit",
+  "body": "The stickiness step now passes cap = ORIGINATE_MAX_PER_DAY + STICKY_RESERVE (5) to ensureItem. Item ids are fixed per system, so a refile is a no-op. Evidence: live D1 had stickiness_state rows but no STICKY items while budget_ledger showed 20 of 20 used. Verified by seed/worker/test/stickiness.test.js.",
+  "probe": "file:seed/worker/src/stickiness.js",
+  "session": "session_0156nqDtwtLqnATRJwnaK1EC"
+ },
+ "kind": "decision",
+ "title": "STICKY-1: the stickiness step files its item with a small reserve above the daily item limit",
+ "session": "session_0156nqDtwtLqnATRJwnaK1EC"
+}

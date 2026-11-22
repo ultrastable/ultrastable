@@ -65,3 +65,11 @@ test('the audience counts visitor-days and daily feed readers from first-party h
   const a = JSON.parse((await db.prepare(`SELECT measure FROM stickiness_state WHERE system='a'`).first()).measure).audience;
   assert.deepEqual(a, { return_rate: null, subscribers: null, feed_hits_7d: 2 });
 });
+
+test('the finding is filed even when other filers have spent the daily originate cap', async () => {
+  _reset(); const db = makeDb();
+  await db.prepare('CREATE TABLE IF NOT EXISTS budget_ledger (day TEXT NOT NULL, kind TEXT NOT NULL, units REAL NOT NULL DEFAULT 0, calls INTEGER NOT NULL DEFAULT 0, refused INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (day, kind))').run();
+  await db.prepare(`INSERT INTO budget_ledger (day, kind, units, calls, refused) VALUES (?, 'originated', 0, 20, 0)`).bind(new Date(NOW).toISOString().slice(0, 10)).run();
+  const r = await stickinessStep({ db, config, ensureItem, fetchImpl: fetchOf([ent('old', 24 * 9)]), now: NOW });
+  assert.deepEqual(r.filed, ['STICKY-a']);
+});
