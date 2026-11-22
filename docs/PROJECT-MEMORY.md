@@ -10,6 +10,10 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-22
 
+- 2026-11-22: Sweep: CLAIM-BLIND-MERGE-1, Dependabot writeback, seed balance engine, watchdog ledgers (#1902)
+- 2026-11-22: Handoff deploys bind live R2 buckets (tick gets AUDIT); close cloudflare-alerts (#1911)
+- 2026-11-22: ZERO-MINUTES-1: worker merged #1906
+- 2026-11-22: One-year survival: Cloudflare alerts reach a loop, daily D1 copy to R2, compatibility dates advance (#1906)
 - 2026-11-22: ZERO-MINUTES-1: worker merged #1907
 - 2026-11-22: Close dependency drift with a compatibility-date loop; list Unlearn in the progress monitor; second-tenant is a fixture (#1907)
 - 2026-11-22: Record disposition of the closed dependabot actions bump (#1904)
