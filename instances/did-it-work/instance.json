@@ -1,0 +1,83 @@
+{
+ "name": "Did It Work?",
+ "slug": "did-it-work",
+ "kind": "community",
+ "owner": {
+  "name": "Rowan",
+  "jurisdiction": "NL",
+  "contact_binding": "OWNER_CONTACT",
+  "contact_binding_backup": "OWNER_CONTACT_BACKUP"
+ },
+ "brand": {
+  "public_name": "Did It Work?",
+  "tagline": "Every big policy promised something. See what it promised, what the evaluations found since, and how the verdict moved. Run on Ultrastable, the foundation for any autonomous system.",
+  "separate_from": [
+   "Ultrastable",
+   "QNFO",
+   "Practical Solutions",
+   "Unlearn"
+  ]
+ },
+ "idea": "A casebook of policies and programmes worldwide, each with its stated aim in its own words, the evaluations published since, graded by design, and a running verdict. A daily beat searches open evaluation and trial registries for each case, adds new evaluations, re-grades the verdict when evidence piles up, and logs every change of verdict with its reason.",
+ "goals": [
+  "casebook of 40 policies with stated aims and graded evaluations",
+  "verdict history and follow on any case",
+  "prediction market of the system's own: forecast the next evaluation, scored when it lands"
+ ],
+ "positioning": "Policies are judged by their announcements, not their results; holding each one to its own stated aim, as evaluations arrive, changes how people argue about the next one. Same shape as Unlearn and Practical Solutions: guess first, graded evidence, a loop that keeps checking, no accounts or trackers.",
+ "funding": {
+  "routes": [],
+  "individual_eligible_only": true
+ },
+ "social": {
+  "channels": [],
+  "mode": "dry-run"
+ },
+ "runtime": {
+  "provider": "cloudflare"
+ },
+ "repos": {
+  "org": "ultrastable",
+  "names": [
+   "ultrastable"
+  ],
+  "canonical": "ultrastable/ultrastable"
+ },
+ "disclosure": {
+  "public_allowed": true,
+  "gate": "none",
+  "safe_now_only": false
+ },
+ "ip": {
+  "has_invention": false,
+  "priority_filed": false,
+  "has_practitioner": false
+ },
+ "budget": {
+  "usd_per_month": 5,
+  "actions_minutes_monthly": 100
+ },
+ "facts": {
+  "has_institution": false
+ },
+ "system_test": {
+  "loop": "A daily beat searches open evaluation and trial registries for each case, adds new evaluations, re-grades the verdict when evidence piles up, and logs every change of verdict with its reason.",
+  "measure": "share of cases whose evaluations were searched within 7 days, target 1.0; verdict changes logged with a reason, never silent",
+  "upkeep": "new studies, data releases and evaluations arrive every week, sources rot and entries must be re-graded",
+  "run_cost": "5 USD a month for the back end"
+ },
+ "depth": {
+  "thesis": "Policies are judged by their announcements, not their results; holding each one to its own stated aim, as evaluations arrive, changes how people argue about the next one.",
+  "corpus": "A casebook of policies and programmes worldwide, each with its stated aim in its own words, the evaluations published since, graded by design, and a running verdict.",
+  "loop": "A daily beat searches open evaluation and trial registries for each case, adds new evaluations, re-grades the verdict when evidence piles up, and logs every change of verdict with its reason.",
+  "returns": "Readers follow cases and see what changed since their last visit; a verdict that moved is the reason to come back.",
+  "horizon": [
+   "casebook of 40 policies with stated aims and graded evaluations",
+   "verdict history and follow on any case",
+   "prediction market of the system's own: forecast the next evaluation, scored when it lands"
+  ],
+  "hook": "Guess the verdict: did this famous policy deliver what it promised? Then the evaluations. The surprise, either way, is the hook.",
+  "public_good": "Citizens, journalists and staff can hold policy to its own promises, so public money moves to what works; it empowers voters with evidence."
+ },
+ "origin": "DEPTH-1 idea bank, doctrine/spinoff-ideas.json"
+}

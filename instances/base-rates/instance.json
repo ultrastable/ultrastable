@@ -1,0 +1,83 @@
+{
+ "name": "Base Rates",
+ "slug": "base-rates",
+ "kind": "community",
+ "owner": {
+  "name": "Rowan",
+  "jurisdiction": "NL",
+  "contact_binding": "OWNER_CONTACT",
+  "contact_binding_backup": "OWNER_CONTACT_BACKUP"
+ },
+ "brand": {
+  "public_name": "Base Rates",
+  "tagline": "Before you decide, see what usually happens: graded base rates for life, work and policy choices, and your own forecasting record. Run on Ultrastable, the foundation for any autonomous system.",
+  "separate_from": [
+   "Ultrastable",
+   "QNFO",
+   "Practical Solutions",
+   "Unlearn"
+  ]
+ },
+ "idea": "An encyclopedia of reference classes (new businesses surviving five years, megaprojects on budget, diets kept after a year, reforms delivering their stated aim), each with its base rate, source and grade. An hourly beat re-reads each entry's source series for new releases and surfaces newer studies; readers' guesses before the reveal measure which base rates surprise most and order the site.",
+ "goals": [
+  "encyclopedia of 50 graded base rates with guess-first entries",
+  "personal calibration record and follow-ups",
+  "decision companion: name a plan, get its reference class and a pre-mortem"
+ ],
+ "positioning": "People and institutions predict from the story in front of them and ignore how often such things usually go; showing the reference class first makes forecasts better. Same shape as Unlearn and Practical Solutions: guess first, graded evidence, a loop that keeps checking, no accounts or trackers.",
+ "funding": {
+  "routes": [],
+  "individual_eligible_only": true
+ },
+ "social": {
+  "channels": [],
+  "mode": "dry-run"
+ },
+ "runtime": {
+  "provider": "cloudflare"
+ },
+ "repos": {
+  "org": "ultrastable",
+  "names": [
+   "ultrastable"
+  ],
+  "canonical": "ultrastable/ultrastable"
+ },
+ "disclosure": {
+  "public_allowed": true,
+  "gate": "none",
+  "safe_now_only": false
+ },
+ "ip": {
+  "has_invention": false,
+  "priority_filed": false,
+  "has_practitioner": false
+ },
+ "budget": {
+  "usd_per_month": 5,
+  "actions_minutes_monthly": 100
+ },
+ "facts": {
+  "has_institution": false
+ },
+ "system_test": {
+  "loop": "An hourly beat re-reads each entry's source series for new releases and surfaces newer studies; readers' guesses before the reveal measure which base rates surprise most and order the site.",
+  "measure": "share of entries whose source series was re-read within 7 days, target 1.0; share of readers whose guess missed the base rate by more than half, published per entry",
+  "upkeep": "new studies, data releases and evaluations arrive every week, sources rot and entries must be re-graded",
+  "run_cost": "5 USD a month for the back end"
+ },
+ "depth": {
+  "thesis": "People and institutions predict from the story in front of them and ignore how often such things usually go; showing the reference class first makes forecasts better.",
+  "corpus": "An encyclopedia of reference classes (new businesses surviving five years, megaprojects on budget, diets kept after a year, reforms delivering their stated aim), each with its base rate, source and grade.",
+  "loop": "An hourly beat re-reads each entry's source series for new releases and surfaces newer studies; readers' guesses before the reveal measure which base rates surprise most and order the site.",
+  "returns": "A reader keeps a private forecasting record in their own browser, sees how calibrated they are, and comes back when a base rate they followed moves.",
+  "horizon": [
+   "encyclopedia of 50 graded base rates with guess-first entries",
+   "personal calibration record and follow-ups",
+   "decision companion: name a plan, get its reference class and a pre-mortem"
+  ],
+  "hook": "Guess first: how often do new restaurants survive five years? Then the base rate, and how far off you were. Every person misses some, and the miss is the hook.",
+  "public_good": "People and governments make better decisions about money, health and policy when they see how such things usually go; it counters overconfident plans that waste public money."
+ },
+ "origin": "DEPTH-1 idea bank, doctrine/spinoff-ideas.json"
+}

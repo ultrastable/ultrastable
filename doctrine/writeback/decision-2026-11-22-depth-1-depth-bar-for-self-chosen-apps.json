@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-22-depth-1-depth-bar-for-self-chosen-apps",
+  "kind": "decision",
+  "date": "2026-11-22",
+  "title": "DEPTH-1 depth bar for self-chosen apps",
+  "body": "Rowan 2026-11-22: self-chosen apps must carry thesis, growing corpus, loop, hook, reason to return, public good and a 3-phase horizon; lookups, boards, templates and commerce never launch. Retired 8 shallow spinoffs; seeded base-rates, did-it-work, open-questions for the seed pipeline.",
+  "probe": "grep:doctrine/spinoff-ideas.json::DEPTH-1",
+  "session": "session_0156nqDrdw3p8opYtKRRrh6D"
+ },
+ "kind": "decision",
+ "title": "DEPTH-1 depth bar for self-chosen apps",
+ "session": "session_0156nqDrdw3p8opYtKRRrh6D"
+}
