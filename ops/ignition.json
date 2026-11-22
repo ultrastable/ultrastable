@@ -1,39 +1,27 @@
 {
- "at": "2026-11-21T13:42:50Z",
- "open_ignition_gaps": 10,
+ "at": "2026-11-22T13:37:17Z",
+ "open_ignition_gaps": 6,
  "gaps": [
   {
-   "link": "item PORT-BRANCH-passkeys-1 relapsed after it closed",
+   "link": "item Q-CIFAIL-practical-solutions-ci relapsed after it closed",
    "owner": "executor",
-   "closing_probe": "contracts: PORT-BRANCH-passkeys-1 passes over the hold",
+   "closing_probe": "contracts: Q-CIFAIL-practical-solutions-ci passes over the hold",
    "source": "contracts"
   },
   {
-   "link": "item PORT-BRANCH-worker-roadmap-agent-agent-scoreboard-2026111903 relapsed after it closed",
+   "link": "item Q-TRAJ-hotspot-seed-worker-src-index-js relapsed after it closed",
    "owner": "executor",
-   "closing_probe": "contracts: PORT-BRANCH-worker-roadmap-agent-agent-scoreboard-2026111903 passes over the hold",
+   "closing_probe": "contracts: Q-TRAJ-hotspot-seed-worker-src-index-js passes over the hold",
    "source": "contracts"
   },
   {
-   "link": "item PORT-BRANCH-worker-roadmap-agent-connector-health-2026111902 relapsed after it closed",
+   "link": "item Q-TRAJ-hotspot-workers relapsed after it closed",
    "owner": "executor",
-   "closing_probe": "contracts: PORT-BRANCH-worker-roadmap-agent-connector-health-2026111902 passes over the hold",
+   "closing_probe": "contracts: Q-TRAJ-hotspot-workers passes over the hold",
    "source": "contracts"
   },
   {
-   "link": "item PORT-BRANCH-worker-roadmap-agent-connector-health-2026111903 relapsed after it closed",
-   "owner": "executor",
-   "closing_probe": "contracts: PORT-BRANCH-worker-roadmap-agent-connector-health-2026111903 passes over the hold",
-   "source": "contracts"
-  },
-  {
-   "link": "item Q-CIFAIL-practical-solutions-deploy-tenant relapsed after it closed",
-   "owner": "executor",
-   "closing_probe": "contracts: Q-CIFAIL-practical-solutions-deploy-tenant passes over the hold",
-   "source": "contracts"
-  },
-  {
-   "link": "1 open item(s) vanished without a disposition",
+   "link": "4 open item(s) vanished without a disposition",
    "owner": "operations",
    "closing_probe": "throughput: silent_drops 0 in the window",
    "source": "throughput"
@@ -46,18 +34,6 @@
   },
   {
    "link": "guard relapse_rate_7d worsened while open_items improved",
-   "owner": "operations",
-   "closing_probe": "metricloop: no guard regression on the next pass",
-   "source": "metricloop"
-  },
-  {
-   "link": "guard relapse_rate_7d worsened while families_without_doer improved",
-   "owner": "operations",
-   "closing_probe": "metricloop: no guard regression on the next pass",
-   "source": "metricloop"
-  },
-  {
-   "link": "guard relapse_rate_7d worsened while executor_success_share_7d improved",
    "owner": "operations",
    "closing_probe": "metricloop: no guard regression on the next pass",
    "source": "metricloop"

@@ -33,3 +33,14 @@
 {"at": "2026-11-21T13:42:50Z", "event": "guard-regression", "guard": "relapse_rate_7d", "target": "open_items"}
 {"at": "2026-11-21T13:42:50Z", "event": "guard-regression", "guard": "relapse_rate_7d", "target": "families_without_doer"}
 {"at": "2026-11-21T13:42:50Z", "event": "guard-regression", "guard": "relapse_rate_7d", "target": "executor_success_share_7d"}
+{"at": "2026-11-22T13:37:17Z", "event": "reading", "hit": false, "metric": "k", "value": 1170.0}
+{"at": "2026-11-22T13:37:17Z", "event": "reading", "hit": false, "metric": "normalized_cost", "value": 0.0}
+{"at": "2026-11-22T13:37:17Z", "event": "reading", "hit": false, "metric": "open_items", "value": 11}
+{"at": "2026-11-22T13:37:17Z", "baseline": 127, "event": "remedy-verdict", "lever": "probe-closable", "metric": "open_items", "value": 11, "verdict": "recovered"}
+{"at": "2026-11-22T13:37:17Z", "event": "reading", "hit": false, "metric": "relapse_rate_7d", "value": 0.02}
+{"at": "2026-11-22T13:37:17Z", "event": "reading", "hit": false, "metric": "families_without_doer", "value": 0}
+{"at": "2026-11-22T13:37:17Z", "event": "reading", "hit": true, "metric": "executor_success_share_7d", "value": 0.101}
+{"at": "2026-11-22T13:37:17Z", "baseline": 0.2, "event": "remedy-verdict", "lever": "park-failing", "metric": "executor_success_share_7d", "value": 0.101, "verdict": "not-moved"}
+{"at": "2026-11-22T13:37:17Z", "baseline": 0.101, "event": "remedy-start", "lever": "smaller-items", "metric": "executor_success_share_7d", "replaces": "park-failing"}
+{"at": "2026-11-22T13:37:17Z", "event": "guard-regression", "guard": "relapse_rate_7d", "target": "k"}
+{"at": "2026-11-22T13:37:17Z", "event": "guard-regression", "guard": "relapse_rate_7d", "target": "open_items"}
