@@ -6,6 +6,7 @@
  "verify_store": "ops/runway.json",
  "verify_key": "seed_verify",
  "topology": "doctrine/topology.json",
+ "seed_deploys": "doctrine/seed-deploys.json",
  "clocks": "doctrine/clocks.json",
  "progress": "instances/ultrastable/progress.json",
  "core_inputs": "doctrine/unattended.json",

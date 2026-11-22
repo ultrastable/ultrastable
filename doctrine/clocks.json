@@ -138,6 +138,26 @@
       "workflow": "intent-yield",
       "expected_interval_s": 86400,
       "periodic": true
+    },
+    {
+      "id": "seed-second-tenant-tick",
+      "what": "Second Tenant's own heartbeat (cron every 10 minutes on ultrastable-seed-second-tenant, deployed by deploy/deploy-seed.mjs): reconcile, measure, file breaches",
+      "source": "d1",
+      "d1_id": "c7461ff8-55ca-4694-9af4-5db9bb1524d9",
+      "table": "tick_runs",
+      "column": "started_at",
+      "expected_interval_s": 600,
+      "periodic": true,
+      "replicas": [
+        {
+          "account_id": "81e3a4efb4eb66e613529b87682911bb",
+          "d1_id": "c7461ff8-55ca-4694-9af4-5db9bb1524d9",
+          "why": "ultrastable account, the seed's own database"
+        }
+      ],
+      "health_urls": [
+        "https://ultrastable-seed-second-tenant.ultrastable.workers.dev/health"
+      ]
     }
   ],
   "chain": {

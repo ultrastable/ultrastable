@@ -41,6 +41,17 @@
     "intent-yield.yml",
     "executor.yml"
    ]
+  },
+  {
+   "id": "second-tenant",
+   "name": "Second Tenant",
+   "repo": "ultrastable/ultrastable",
+   "url": "https://ultrastable-seed-second-tenant.ultrastable.workers.dev/health",
+   "feed": "https://ultrastable.io/feed.xml",
+   "expect_hours": 24,
+   "heal": [
+    "executor.yml"
+   ]
   }
  ],
  "apps": {
