@@ -526,3 +526,7 @@
 {"age_days": 0.3, "at": "2026-11-22T19:51:29Z", "disposition": "shelved", "evidence": "open 6.3 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-SEED-base-rates", "rule": "ttl", "status_before": "open"}
 {"age_days": 0.3, "at": "2026-11-22T19:51:29Z", "disposition": "shelved", "evidence": "open 6.3 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-SEED-did-it-work", "rule": "ttl", "status_before": "open"}
 {"age_days": 0.3, "at": "2026-11-22T19:51:29Z", "disposition": "shelved", "evidence": "open 6.3 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-SEED-open-questions", "rule": "ttl", "status_before": "open"}
+{"age_days": 0.3, "at": "2026-11-22T20:01:48Z", "disposition": "shelved", "evidence": "open 6.5 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-SEED-base-rates", "rule": "ttl", "status_before": "open"}
+{"age_days": 0.3, "at": "2026-11-22T20:01:48Z", "disposition": "shelved", "evidence": "open 6.5 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-SEED-did-it-work", "rule": "ttl", "status_before": "open"}
+{"age_days": 0.3, "at": "2026-11-22T20:01:48Z", "disposition": "shelved", "evidence": "open 6.5 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-SEED-open-questions", "rule": "ttl", "status_before": "open"}
+{"age_days": 0.3, "at": "2026-11-22T20:01:48Z", "disposition": "shelved", "evidence": "open 6.1 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-TRAJ-neglected-loop-bindings", "rule": "ttl", "status_before": "open"}
