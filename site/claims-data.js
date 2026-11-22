@@ -1867,15 +1867,6 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
-   "claim": "- **Every system gives people a reason to come back (STICKY-1, Rowan 2026-11-22).** \"Every ultra-stable app, every tenant, every platform",
-   "detail": "",
-   "how": "file:seed/worker/src/vendor/core/stickiness.js + file:seed/worker/src/stickiness.js + file:instances/ultrastable/progress.json + file:seed/worker/test/stickiness.test.js + file:workers/core/stickiness/stickiness.test.js",
-   "id": "cited-be4db6262d",
-   "kind": "claim",
-   "pass": true,
-   "surface": "agents/AGENTS.md"
-  },
-  {
    "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
@@ -2492,15 +2483,6 @@ export default {
    "detail": "",
    "how": "file:doctrine/yearsim.json + file:foundation/yearsim.py + file:doctrine/ultrastability.json + file:foundation/saydo.py + file:doctrine/detectors.json + file:seed/scripts/yearsim.py",
    "id": "mirror-c8f6471ad1",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/agents/AGENTS.md"
-  },
-  {
-   "claim": "- **Every system gives people a reason to come back (STICKY-1, Rowan 2026-11-22).** \"Every ultra-stable app, every tenant, every platform",
-   "detail": "",
-   "how": "file:seed/worker/src/vendor/core/stickiness.js + file:seed/worker/src/stickiness.js + file:instances/ultrastable/progress.json + file:seed/worker/test/stickiness.test.js + file:workers/core/stickiness/stickiness.test.js",
-   "id": "mirror-9111f7c2d8",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3145,7 +3127,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 62 Python and 473 Worker tests",
+   "claim": "seed-tests: 62 Python and 467 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3154,7 +3136,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 473 Worker tests",
+   "claim": "seed-worker-tests: 467 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3190,7 +3172,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 875",
+   "claim": "live-deploys: 882",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",
@@ -3395,7 +3377,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 374,
-  "total": 374
+  "pass": 372,
+  "total": 372
  }
 };
