@@ -13,6 +13,11 @@ class T(unittest.TestCase):
     def test_check(self):
         self.assertEqual(tr.check(REPO), [])
 
+    def test_regen_renders_the_page_from_the_committed_ledger(self):
+        self.assertIn("trajectory --page", (REPO / "scripts/regen_generated.sh").read_text(encoding="utf-8"))
+        self.assertEqual(tr.main(["--page"]), 0)
+        self.assertEqual(tr.check(REPO), [])
+
     def test_item_then_close_when_cleared(self):
         d = Path(scratch())
         (d / "docs/issues").mkdir(parents=True)

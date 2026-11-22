@@ -114,6 +114,10 @@ def main(argv=None) -> int:
         return 1 if e else 0
     if "--probe" in a:
         return probe(REPO, a[a.index("--probe") + 1])
+    if "--page" in a:  # REGEN-1: re-render the page from the committed ops/trajectory.json (the watchdog commits the ledger, not the page)
+        (REPO / DATA).write_text(render(REPO), encoding="utf-8")
+        print(f"{DATA} rendered")
+        return 0
     r = run(REPO, apply="--apply" in a)
     print(json.dumps({"findings": [f"{x['kind']}:{x['id']}" for x in r["findings"]], "filed": r.get("filed"), "closed": r.get("closed")}, indent=1))
     return 0
