@@ -170,7 +170,7 @@
    "name": "Work-queue second loop: whether to consolidate, throttle filing and boost closures this pass",
    "store": "repo",
    "files": [
-    "foundation/balance.py"
+    "seed/scripts/balance.py"
    ],
    "metric": "week_balance",
    "metric_says": "closed minus net filed over the last 7 days, read on the pass after the decision",

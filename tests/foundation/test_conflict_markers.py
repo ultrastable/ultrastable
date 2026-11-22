@@ -37,7 +37,7 @@ class ClaimBlindMerge(unittest.TestCase):
 
     def _repo(self, main_edit):
         import tempfile
-        d = Path(tempfile.mkdtemp())
+        import shutil; d = Path(tempfile.mkdtemp()); self.addCleanup(shutil.rmtree, d, True)  # removed when the test ends
         g = lambda *a: subprocess.run(["git", "-C", str(d), *a], capture_output=True, text=True)
         g("init", "-q"); g("config", "user.email", "t@t"); g("config", "user.name", "t")
         (d / "README.md").write_text("Intro\nStatus <!-- claim:d -->775<!-- /claim --> deploys.\nEnd\n"); g("add", "."); g("commit", "-qm", "b"); g("branch", "-M", "main")

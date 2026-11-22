@@ -1,10 +1,10 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-21T21:50:05Z",
- "commit": "b49b05e",
+ "generated": "2026-11-22T01:07:07Z",
+ "commit": "8d5e4cbb",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
-  "managers_and_loops": 109,
+  "managers_and_loops": 110,
   "loops_with_evidence": 2,
   "components": {
    "live": 24
@@ -18,11 +18,11 @@
   "merged_prs_listed": 0,
   "prs_merged_total": 0,
   "prs_merged_unattended": 0,
-  "backlog_open": 31,
-  "backlog_items": 766
+  "backlog_open": 36,
+  "backlog_items": 790
  },
  "unknowns": {
-  "units": 131,
+  "units": 132,
   "units_questioned": 3,
   "coverage": 0.023,
   "asked": 3,
@@ -56,13 +56,13 @@
  },
  "throughput": {
   "queue": {
-   "items": 766,
+   "items": 790,
    "by_status": {
-    "closed": 726,
-    "open": 31,
+    "closed": 745,
+    "open": 36,
     "done": 9
    },
-   "takeable_now": 31
+   "takeable_now": 36
   },
   "merged": {
    "total": 0,
@@ -100,25 +100,25 @@
    },
    "latest": {
     "conclusion": "success",
-    "createdAt": "2026-11-21T21:44:34Z",
-    "event": "workflow_dispatch",
-    "headSha": "17ff5963d264414fb2f97ef63178733f6d6fa48b"
+    "createdAt": "2026-11-21T22:29:17Z",
+    "event": "push",
+    "headSha": "e884a8c201bc1d734c067d7917dc4c27f00e3334"
    },
    "per_day_success": {
-    "2026-11-20": 17,
-    "2026-11-21": 31
+    "2026-11-20": 11,
+    "2026-11-21": 37
    }
   },
   "executor": {
    "runs": 30,
    "by_conclusion": {
-    "success": 29,
-    "failure": 1
+    "success": 22,
+    "failure": 8
    },
    "prs_opened_unattended": 0,
    "prs_merged_unattended": 0,
    "attempts": {},
-   "log_rows": 20
+   "log_rows": 21
   },
   "model_cost": {
    "calls": 53,
@@ -171,7 +171,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 96.4,
+   "age_s": -6.6,
    "status": "fresh",
    "missed": 0
   },
@@ -195,16 +195,15 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 245.4,
+   "age_s": 716.4,
    "status": "fresh",
-   "missed": 0,
-   "lag_s": 326.0
+   "missed": 0
   },
   {
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 29731.4,
+   "age_s": 41497.4,
    "status": "fresh",
    "missed": 0
   }
@@ -213,8 +212,8 @@
   "counts": {
    "merged": 0,
    "closed": 0,
-   "parked": 31,
-   "failed": 0,
+   "parked": 35,
+   "failed": 1,
    "expired": 0,
    "open": 0
   },
@@ -373,12 +372,37 @@
     "name": "Q-RECUR-8aa89f1370",
     "state": "parked",
     "failures": 3
+   },
+   {
+    "name": "Q-RECUR-b08a9507fd",
+    "state": "parked",
+    "failures": 3
+   },
+   {
+    "name": "Q-ULTRA-self_shipping-3",
+    "state": "parked",
+    "failures": 3
+   },
+   {
+    "name": "Q-CIFAIL-mergeaudit-1813",
+    "state": "parked",
+    "failures": 3
+   },
+   {
+    "name": "Q-CIFAIL-mergeaudit-1817",
+    "state": "parked",
+    "failures": 3
+   },
+   {
+    "name": "Q-CIFAIL-mergeaudit-1851",
+    "state": "failed",
+    "failures": 2
    }
   ],
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-21T21:49:19Z",
+  "generated": "2026-11-22T01:05:46Z",
   "blindspots": {
    "backup": {
     "skipped": "last drill is fresh"
@@ -403,7 +427,7 @@
     "id": "pageviews_7d",
     "baseline": 1310,
     "target": 1500,
-    "expected_today": 1377.2,
+    "expected_today": 1378.2,
     "value": null,
     "behind": null,
     "progress": null
@@ -412,7 +436,7 @@
     "id": "visitors_7d",
     "baseline": 564,
     "target": 650,
-    "expected_today": 594.4,
+    "expected_today": 594.9,
     "value": null,
     "behind": null,
     "progress": null
@@ -421,7 +445,7 @@
     "id": "agent_hits_7d",
     "baseline": 817,
     "target": 1000,
-    "expected_today": 881.8,
+    "expected_today": 882.7,
     "value": null,
     "behind": null,
     "progress": null
@@ -430,7 +454,7 @@
     "id": "pilot_page_views_7d",
     "baseline": 326,
     "target": 400,
-    "expected_today": 352.2,
+    "expected_today": 352.5,
     "value": null,
     "behind": null,
     "progress": null
@@ -496,7 +520,7 @@
     "metric": "visitors_7d",
     "baseline": null,
     "predicted_pct": 15,
-    "started": "2026-11-21T21:49:19Z",
+    "started": "2026-11-22T01:05:46Z",
     "check_after_days": 7,
     "verdict": null
    },
@@ -505,7 +529,7 @@
     "metric": "pilot_page_views_7d",
     "baseline": null,
     "predicted_pct": 15,
-    "started": "2026-11-21T21:49:19Z",
+    "started": "2026-11-22T01:05:46Z",
     "check_after_days": 7,
     "verdict": null
    }
@@ -529,7 +553,7 @@
    "order": []
   },
   "insight": {
-   "generated": "2026-11-21",
+   "generated": "2026-11-22",
    "measured": false,
    "why": "no hits source (no CLOUDFLARE_API_TOKEN and no rows)",
    "filed": []
@@ -595,16 +619,16 @@
  },
  "growth": {
   "mix": {
-   "growth": 5,
-   "fix": 0,
-   "maintenance": 15,
+   "growth": 0,
+   "fix": 1,
+   "maintenance": 19,
    "total": 20,
-   "growth_share": 0.25,
+   "growth_share": 0.0,
    "target": 0.4
   },
   "target_growth_share": 0.4,
   "growth_items_takeable": 0,
-  "items_takeable": 31,
+  "items_takeable": 36,
   "metrics": [
    {
     "id": "pageviews_7d",
@@ -649,7 +673,7 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 155.1,
+   "last_beat_age_s": 100.8,
    "expected_interval_s": 21600,
    "beats_24h": 60,
    "expected_24h": 4.0,
@@ -660,7 +684,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 29790.1,
+   "last_beat_age_s": 41604.8,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -671,9 +695,9 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 1.1,
+   "last_beat_age_s": 9449.8,
    "expected_interval_s": 86400,
-   "beats_24h": 34,
+   "beats_24h": 39,
    "expected_24h": 1.0,
    "median_jitter_s": null,
    "status": "ticking"
@@ -682,7 +706,7 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 365674.1,
+   "last_beat_age_s": 377488.8,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -693,7 +717,7 @@
    "id": "a11y",
    "what": "A11Y-LOOP-1: the weekly accessibility and layout audit of every public page",
    "source": "workflow",
-   "last_beat_age_s": 245331.1,
+   "last_beat_age_s": 257145.8,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -711,7 +735,7 @@
    "id": "claims",
    "what": "words checked against code and the deployed site",
    "source": "workflow",
-   "last_beat_age_s": 24853.1,
+   "last_beat_age_s": 36667.8,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -722,7 +746,7 @@
    "id": "watchdog",
    "what": "RESILIENCE-1: the GitHub watchdog that probes every clock and restarts the stopped ones; the tick Worker dispatches it again when it is older than 12 hours",
    "source": "workflow",
-   "last_beat_age_s": 98.1,
+   "last_beat_age_s": 78.8,
    "expected_interval_s": 43200,
    "beats_24h": 60,
    "expected_24h": 2.0,
@@ -733,7 +757,7 @@
    "id": "temporal",
    "what": "the daily trend read: series per component, loop and entry, and what they show",
    "source": "workflow",
-   "last_beat_age_s": 34261.1,
+   "last_beat_age_s": 46075.8,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -746,6 +770,17 @@
    "source": "d1",
    "status": "unmeasured",
    "why": "no CLOUDFLARE_API_TOKEN on this host"
+  },
+  {
+   "id": "intent-yield",
+   "what": "the daily intent yield: every owner directive's own probe, restatements charged to the original, /yield",
+   "source": "workflow",
+   "last_beat_age_s": 12358.8,
+   "expected_interval_s": 86400,
+   "beats_24h": 1,
+   "expected_24h": 1.0,
+   "median_jitter_s": null,
+   "status": "ticking"
   }
  ],
  "topology": {
@@ -2367,6 +2402,18 @@
    "last_run": null
   },
   {
+   "loop": "intent-yield",
+   "kind": "governance",
+   "summary": "INTENT-YIELD-1: for a given unit of human input, what is the best unit of output. Each owner directive is one intent; its own probe passing, unrestated, after 30 days is one kept outcome. Restatements are charged to the original, a directive that is not holding becomes a Q-YIELD item closed by its own probe, and /yield publishes the verdicts. No counts, no person scored.",
+   "owner": "operations",
+   "trigger": "daily workflow and on demand",
+   "sla": "1d",
+   "closing_probe": "grep:foundation/intentyield.py::def probe",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
    "loop": "seed-launch",
    "kind": "governance",
    "summary": "SEED-LAUNCH-1: every seed is built, deployed, year-gated and probed live by the system. A fresh seed from seed/ and every repository made from the seed template are launched on Ultrastable's own Cloudflare account; the year-unattended gate and a live /health probe are required.",
@@ -2785,364 +2832,364 @@
  "changes": {
   "commits": [
    {
-    "sha": "b49b05e",
-    "at": "2026-11-21T21:39:33+00:00",
+    "sha": "8d5e4cbb",
+    "at": "2026-11-22T00:55:18+00:00",
     "author": "Claude",
-    "subject": "Merge branch 'claude/project-thread-vwhca8' of https://github.com/ultrastable/ultrastable into claude/project-thread-vwhca8",
+    "subject": "UNSTICK-CLEAN-1 write-back",
+    "pr": null,
+    "item": "UNSTICK-CLEAN-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/8d5e4cbb43c8186c6d5557abcf4e04200f843ff9"
+   },
+   {
+    "sha": "462abfdf",
+    "at": "2026-11-22T00:55:10+00:00",
+    "author": "Claude",
+    "subject": "Merge remote-tracking branch 'origin/main' into claude/project-thread-p6c0vf",
     "pr": null,
     "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/b49b05e817adc9a74576f711aca921755a3d119b"
+    "url": "https://github.com/ultrastable/ultrastable/commit/462abfdf1db618629a9ed2f2b35f97b27590de1a"
    },
    {
-    "sha": "f28ddd1",
-    "at": "2026-11-21T21:39:28+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
-    "pr": null,
-    "item": "MERGE-NOW-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/f28ddd11ebb70ddd78feac3f97e59e271fbe7104"
-   },
-   {
-    "sha": "94920a0",
-    "at": "2026-11-21T21:39:22+00:00",
+    "sha": "edf043de",
+    "at": "2026-11-22T00:55:10+00:00",
     "author": "Claude",
-    "subject": "Merge main into SEED-LAUNCH-1",
+    "subject": "UNSTICK-CLEAN-1: reconcile each conflicting PR from a clean tree",
     "pr": null,
-    "item": "SEED-LAUNCH-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/94920a0afd9e1298f88a5b8116ba59bb5705f663"
+    "item": "UNSTICK-CLEAN-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/edf043de131eaa438f4d6457656ab280e027024b"
    },
    {
-    "sha": "faef341",
-    "at": "2026-11-21T21:39:20+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
-    "pr": null,
-    "item": "MERGE-NOW-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/faef341f42c83b603eee5d54a6b4f291cece4d69"
-   },
-   {
-    "sha": "e914f19",
-    "at": "2026-11-21T21:39:11+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
-    "pr": null,
-    "item": "MERGE-NOW-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/e914f19d96fe7b3ce123258421d6b89b2b5d2907"
-   },
-   {
-    "sha": "7b39f0e",
-    "at": "2026-11-21T21:39:02+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
-    "pr": null,
-    "item": "MERGE-NOW-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/7b39f0e7721733841c0f3d70e8ace50cc4e31e8e"
-   },
-   {
-    "sha": "a4ea85e",
-    "at": "2026-11-21T21:38:53+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
-    "pr": null,
-    "item": "MERGE-NOW-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/a4ea85e710e012c831e17e396640c6bbb5539a3a"
-   },
-   {
-    "sha": "1d94c7e",
-    "at": "2026-11-21T21:38:40+00:00",
-    "author": "Claude",
-    "subject": "Merge branch 'claude/project-thread-vwhca8' of https://github.com/ultrastable/ultrastable into claude/project-thread-vwhca8",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/1d94c7e6cdc12fcd2678d55350d4f42001ffcc35"
-   },
-   {
-    "sha": "9fb1933",
-    "at": "2026-11-21T21:38:35+00:00",
-    "author": "Claude",
-    "subject": "SEED-LAUNCH-1: decisions registry, write-back session, project memory",
-    "pr": null,
-    "item": "SEED-LAUNCH-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/9fb1933395eda8001c20d9415ef387664d63300e"
-   },
-   {
-    "sha": "388d2dc",
-    "at": "2026-11-21T21:37:25+00:00",
+    "sha": "fa1b8a2d",
+    "at": "2026-11-22T00:54:48+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "lane: server-owned loops (SERVER-OWNS-LOOPS-1) [skip ci]",
     "pr": null,
     "item": "SERVER-OWNS-LOOPS-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/388d2dceb2f31cdc06430c9127b0f7f5cf1cbddd"
+    "url": "https://github.com/ultrastable/ultrastable/commit/fa1b8a2d88c8f49fd81eb78fb1f21158d146642e"
    },
    {
-    "sha": "e8a688d",
-    "at": "2026-11-21T21:37:21+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
-    "pr": null,
-    "item": "MERGE-NOW-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/e8a688d357b9b1c2d06706675cdafcfdf61d080a"
-   },
-   {
-    "sha": "67e3f53",
-    "at": "2026-11-21T21:37:16+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
-    "pr": null,
-    "item": "MERGE-NOW-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/67e3f537fe0724ae90cd67208e59301acba5e51d"
-   },
-   {
-    "sha": "3e86a9f",
-    "at": "2026-11-21T21:37:07+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
-    "pr": null,
-    "item": "MERGE-NOW-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/3e86a9ffc5c3341b42749c5e11ac667caa28ee85"
-   },
-   {
-    "sha": "028e7fb",
-    "at": "2026-11-21T21:36:58+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
-    "pr": null,
-    "item": "MERGE-NOW-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/028e7fb863bd9a00368d9b710fc7a35e443f2d5c"
-   },
-   {
-    "sha": "df7ac40",
-    "at": "2026-11-21T21:36:49+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
-    "pr": null,
-    "item": "MERGE-NOW-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/df7ac40b6ee98a5499acb79dc352988a28c49f49"
-   },
-   {
-    "sha": "329a475",
-    "at": "2026-11-21T21:36:40+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
-    "pr": null,
-    "item": "MERGE-NOW-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/329a475f7998c913964ba7af1e2d752ed9a12452"
-   },
-   {
-    "sha": "09044e4",
-    "at": "2026-11-21T21:36:32+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
-    "pr": null,
-    "item": "MERGE-NOW-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/09044e49357dbdb88f27c7300a23aaef661d2c47"
-   },
-   {
-    "sha": "57a2e9a",
-    "at": "2026-11-21T21:36:29+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "deploy-ultrastable: record live-verified deploy [skip ci]",
+    "sha": "03f07732",
+    "at": "2026-11-22T00:54:31+00:00",
+    "author": "Claude",
+    "subject": "Merge branches 'claude/project-thread-p6c0vf' and 'main' of https://github.com/ultrastable/ultrastable into claude/project-thread-p6c0vf",
     "pr": null,
     "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/57a2e9a778915d0625c2b5b79b92994a372c501b"
+    "url": "https://github.com/ultrastable/ultrastable/commit/03f077323ec93e79f901e739959d85a9f1dde19d"
    },
    {
-    "sha": "32aac4b",
-    "at": "2026-11-21T21:36:23+00:00",
+    "sha": "da930662",
+    "at": "2026-11-22T00:54:27+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
     "pr": null,
     "item": "MERGE-NOW-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/32aac4b69c64beae984e3fbd2a2e04c0f8ab3d28"
+    "url": "https://github.com/ultrastable/ultrastable/commit/da9306629649863ad0f97ad4a44a0c4596baa0d0"
    },
    {
-    "sha": "966ccc6",
-    "at": "2026-11-21T21:36:14+00:00",
+    "sha": "39fda74c",
+    "at": "2026-11-22T00:54:19+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
     "pr": null,
     "item": "MERGE-NOW-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/966ccc6d76d1f74624102387c34033cb8cf899b0"
+    "url": "https://github.com/ultrastable/ultrastable/commit/39fda74c5fd93977390fdaed59deb6b1360093a5"
    },
    {
-    "sha": "b0a98c9",
-    "at": "2026-11-21T21:36:05+00:00",
+    "sha": "4cccc9a5",
+    "at": "2026-11-22T00:54:11+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
     "pr": null,
     "item": "MERGE-NOW-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/b0a98c94c9d9b7b3e43f6cb42e0a4785c3dd2313"
+    "url": "https://github.com/ultrastable/ultrastable/commit/4cccc9a57ecf671c7c7359b7298d9e40ef782852"
    },
    {
-    "sha": "d60a5bd",
-    "at": "2026-11-21T21:35:56+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "lane: server-owned loops (SERVER-OWNS-LOOPS-1) [skip ci]",
-    "pr": null,
-    "item": "SERVER-OWNS-LOOPS-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/d60a5bdb5826253baee15793fe6e303faab06fe8"
-   },
-   {
-    "sha": "6da7a95",
-    "at": "2026-11-21T21:35:56+00:00",
+    "sha": "41514b83",
+    "at": "2026-11-22T00:54:03+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
     "pr": null,
     "item": "MERGE-NOW-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/6da7a9582f7e8ec53ae4739f1382ed053da331ed"
+    "url": "https://github.com/ultrastable/ultrastable/commit/41514b83438bffadaed15ebc4a81fbe0bcaa4c84"
    },
    {
-    "sha": "1f6aee2",
-    "at": "2026-11-21T21:35:48+00:00",
+    "sha": "90d0aa22",
+    "at": "2026-11-22T00:54:01+00:00",
+    "author": "Claude",
+    "subject": "Merge branch 'claude/project-thread-p6c0vf' of https://github.com/ultrastable/ultrastable into claude/project-thread-p6c0vf",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/90d0aa228182de2191d5972d8ad93290c21f05f5"
+   },
+   {
+    "sha": "9d2afffd",
+    "at": "2026-11-22T00:53:55+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
     "pr": null,
     "item": "MERGE-NOW-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/1f6aee29fcc54f4a5ebc6557432f2fb3556f5d66"
+    "url": "https://github.com/ultrastable/ultrastable/commit/9d2afffd6f62339c2db764f57ef7354d1137736c"
    },
    {
-    "sha": "d8a1c84",
-    "at": "2026-11-21T21:35:11+00:00",
+    "sha": "866f6a79",
+    "at": "2026-11-22T00:53:54+00:00",
+    "author": "Claude",
+    "subject": "drop duplicate bot write-back exemption (main has DEPENDABOT-WB-1)",
+    "pr": null,
+    "item": "DEPENDABOT-WB-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/866f6a7959ba56592e626965985c95da2cb112b0"
+   },
+   {
+    "sha": "8fc2744b",
+    "at": "2026-11-22T00:53:50+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
+    "pr": null,
+    "item": "MERGE-NOW-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/8fc2744b7a7f3d86f8a6279747a2037ee0910b64"
+   },
+   {
+    "sha": "e9ad0249",
+    "at": "2026-11-22T00:53:42+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
+    "pr": null,
+    "item": "MERGE-NOW-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/e9ad02491d49e179519b4f24efc101e2548a52b2"
+   },
+   {
+    "sha": "dfa5c63e",
+    "at": "2026-11-22T00:53:41+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "watchdog: clock probe (RESILIENCE-1) [skip ci]",
+    "pr": null,
+    "item": "RESILIENCE-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/dfa5c63eae33c05c5a6a4da9c1b2af2ef0354968"
+   },
+   {
+    "sha": "a40d4ca5",
+    "at": "2026-11-22T00:53:35+00:00",
+    "author": "Claude",
+    "subject": "Merge remote-tracking branch 'origin/main' into claude/project-thread-p6c0vf",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/a40d4ca5d9c2abccb742776dec6656cbb11e295d"
+   },
+   {
+    "sha": "6eeda35d",
+    "at": "2026-11-22T00:53:34+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
+    "pr": null,
+    "item": "MERGE-NOW-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/6eeda35d9947b63bc1779cbf191f5a76e6399e01"
+   },
+   {
+    "sha": "1046bf59",
+    "at": "2026-11-22T00:53:25+00:00",
+    "author": "Claude",
+    "subject": "Merge branch 'claude/project-thread-p6c0vf' of https://github.com/ultrastable/ultrastable into claude/project-thread-p6c0vf",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/1046bf596c1b4d33d00abf2419e50171c6e9ab8f"
+   },
+   {
+    "sha": "9dc3edee",
+    "at": "2026-11-22T00:53:24+00:00",
+    "author": "Claude",
+    "subject": "TENANT-READINGS-1: write spinoff value and spend readings; saydo resolves workers/",
+    "pr": null,
+    "item": "TENANT-READINGS-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/9dc3edee3012e906cffd0681f749a3387b9b5879"
+   },
+   {
+    "sha": "cce81038",
+    "at": "2026-11-22T00:53:19+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
+    "pr": null,
+    "item": "MERGE-NOW-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/cce81038d80e1c3d2b9bf2bbeb440fd6d55892ec"
+   },
+   {
+    "sha": "c9470c61",
+    "at": "2026-11-22T00:53:12+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
+    "pr": null,
+    "item": "MERGE-NOW-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/c9470c6152216a0f065ac03040ffddec6a74c24c"
+   },
+   {
+    "sha": "dfda4103",
+    "at": "2026-11-22T00:53:04+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
+    "pr": null,
+    "item": "MERGE-NOW-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/dfda4103144e22c7e4547e287a38f31452f3a19a"
+   },
+   {
+    "sha": "78a7716a",
+    "at": "2026-11-22T00:53:03+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1) [skip ci]",
     "pr": null,
     "item": "REGEN-GENERATED-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/d8a1c84532db73f59964960928e5f7976800bd2c"
+    "url": "https://github.com/ultrastable/ultrastable/commit/78a7716a1859e1a11658844db96bb63223e672c4"
    },
    {
-    "sha": "9c4d5ed",
-    "at": "2026-11-21T22:34:49+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "Unlearn: tenant app, phase 1 Worker, hourly loop and year safeguards (#1852)",
-    "pr": 1852,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/9c4d5ed1b68dda23e0eeb66de438816045b36846"
-   },
-   {
-    "sha": "63c605d",
-    "at": "2026-11-21T21:30:49+00:00",
-    "author": "Claude",
-    "subject": "SEED-LAUNCH-1: register the seed-launch loop and its ledger",
-    "pr": null,
-    "item": "SEED-LAUNCH-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/63c605dbb9201e66f5fe0da2a43f395a4ef98e04"
-   },
-   {
-    "sha": "25de667",
-    "at": "2026-11-21T21:29:17+00:00",
-    "author": "Claude",
-    "subject": "REGEN-1: regenerate generated files",
-    "pr": null,
-    "item": "REGEN-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/25de66711aa4dea3e8c2bb232cbd4a223e78577a"
-   },
-   {
-    "sha": "caad0be",
-    "at": "2026-11-21T21:29:05+00:00",
-    "author": "Claude",
-    "subject": "Merge remote-tracking branch 'origin/main' into claude/project-thread-vwhca8",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/caad0bef65a6ffeecb549baf40e08f105429e045"
-   },
-   {
-    "sha": "3ee1894",
-    "at": "2026-11-21T21:21:37+00:00",
+    "sha": "90988ac9",
+    "at": "2026-11-22T00:52:58+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "queue: closing-probe verdicts for 1 item(s) (QUEUE-PERSIST-1) [skip ci]",
     "pr": null,
     "item": "QUEUE-PERSIST-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/3ee1894d0dbb8c9232f385bd8e0b7ef01eff8b4e"
+    "url": "https://github.com/ultrastable/ultrastable/commit/90988ac9043b38d957139510b3b2262ad7acb0cb"
    },
    {
-    "sha": "66db024",
-    "at": "2026-11-21T20:56:28+00:00",
-    "author": "Claude",
-    "subject": "writeback: SEED-LAUNCH-1 lesson",
-    "pr": null,
-    "item": "SEED-LAUNCH-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/66db024e943eba7c8bfcac464a4ee9561f0a5e7e"
-   },
-   {
-    "sha": "8c8e139",
-    "at": "2026-11-21T20:56:20+00:00",
-    "author": "Claude",
-    "subject": "SEED-LAUNCH-1: every seed is built, deployed, year-gated and probed live by the system",
-    "pr": null,
-    "item": "SEED-LAUNCH-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/8c8e1391447f2247db231ba7716c63090154e6ed"
-   },
-   {
-    "sha": "66c579e",
-    "at": "2026-11-21T20:54:33+00:00",
+    "sha": "18f95483",
+    "at": "2026-11-22T00:52:56+00:00",
     "author": "ultrastable-209646[bot]",
-    "subject": "social: record post state [skip ci]",
+    "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
     "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/66c579e0e5a91e55eb4d6728218beabb0de954b8"
+    "item": "MERGE-NOW-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/18f95483741dfdab67e875869b61260d641cc0a9"
    },
    {
-    "sha": "75763c6",
-    "at": "2026-11-21T20:52:54+00:00",
+    "sha": "ba9b2163",
+    "at": "2026-11-22T00:52:48+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
+    "pr": null,
+    "item": "MERGE-NOW-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/ba9b21633359237a8fcee5d70b10777800c253ce"
+   },
+   {
+    "sha": "85d3fc6f",
+    "at": "2026-11-22T00:52:39+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
+    "pr": null,
+    "item": "MERGE-NOW-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/85d3fc6f925898198985cccaa20054f633f04681"
+   },
+   {
+    "sha": "1f85d751",
+    "at": "2026-11-22T00:52:31+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
+    "pr": null,
+    "item": "MERGE-NOW-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/1f85d7514fb77e014995e487b8e38282464ceae0"
+   },
+   {
+    "sha": "473298ad",
+    "at": "2026-11-22T00:52:23+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
+    "pr": null,
+    "item": "MERGE-NOW-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/473298ad1ce483111cac4e31873e7ec2d7597175"
+   },
+   {
+    "sha": "103eb517",
+    "at": "2026-11-22T00:52:16+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
+    "pr": null,
+    "item": "MERGE-NOW-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/103eb5173062182422b5235164e7ae372aee7e30"
+   },
+   {
+    "sha": "e087b0ae",
+    "at": "2026-11-22T00:52:08+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
+    "pr": null,
+    "item": "MERGE-NOW-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/e087b0aef39ad5c305fb9b8737bc17f3c7ac514d"
+   },
+   {
+    "sha": "7ec3b896",
+    "at": "2026-11-22T00:52:00+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
+    "pr": null,
+    "item": "MERGE-NOW-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/7ec3b896f24adfe8d24881f6c259bb9ea060f367"
+   },
+   {
+    "sha": "84e3635f",
+    "at": "2026-11-22T00:51:52+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
+    "pr": null,
+    "item": "MERGE-NOW-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/84e3635fcb87a2e0684816f5fd036f97ace93fac"
+   },
+   {
+    "sha": "aa728881",
+    "at": "2026-11-22T00:51:44+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
+    "pr": null,
+    "item": "MERGE-NOW-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/aa728881cef3d18448802c5a90d6baec6fb375f0"
+   },
+   {
+    "sha": "1e2705ba",
+    "at": "2026-11-22T00:51:39+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1) [skip ci]",
     "pr": null,
     "item": "REGEN-GENERATED-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/75763c6e765883c6efd723e57c89c5688058751a"
+    "url": "https://github.com/ultrastable/ultrastable/commit/1e2705ba62afcad6cb41c2272677640c3eac1f61"
    },
    {
-    "sha": "d87ae5a",
-    "at": "2026-11-21T20:51:25+00:00",
+    "sha": "559ab6a8",
+    "at": "2026-11-22T00:51:37+00:00",
     "author": "ultrastable-209646[bot]",
-    "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1) [skip ci]",
+    "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
     "pr": null,
-    "item": "REGEN-GENERATED-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/d87ae5a107216b7533c3da4ff9bf0c4d72d3cfca"
+    "item": "MERGE-NOW-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/559ab6a8442679aef39f6ad39a49b5f0cef09617"
    },
    {
-    "sha": "88d0d09",
-    "at": "2026-11-21T20:50:58+00:00",
+    "sha": "59597764",
+    "at": "2026-11-22T00:51:32+00:00",
     "author": "ultrastable-209646[bot]",
-    "subject": "ZERO-MINUTES-1: worker merged #1854",
+    "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
+    "pr": null,
+    "item": "MERGE-NOW-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/5959776441f81a143f44d74d82c7221ca8513fe8"
+   },
+   {
+    "sha": "aa5237fa",
+    "at": "2026-11-22T00:51:25+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
+    "pr": null,
+    "item": "MERGE-NOW-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/aa5237fa47294c0cad2b5ce4d268ffa679aebd2f"
+   },
+   {
+    "sha": "9e923404",
+    "at": "2026-11-22T00:51:20+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
+    "pr": null,
+    "item": "MERGE-NOW-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/9e92340462458252fabf8baccceb0f2b6e296429"
+   },
+   {
+    "sha": "fb3d8e0c",
+    "at": "2026-11-22T00:51:15+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "ZERO-MINUTES-1: worker merged #1907",
     "pr": null,
     "item": "ZERO-MINUTES-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/88d0d09047269a4433ded9ec997daade01bbdd3d"
-   },
-   {
-    "sha": "96e38e8",
-    "at": "2026-11-21T20:50:56+00:00",
-    "author": "github-actions[bot]",
-    "subject": "Fix the root cause of recurring gate-skipped failures by changing the merge audit to read the full checks run status instead of mergeable_state. (#Q-RECUR-7f3c1db956) (#1854)",
-    "pr": 1854,
-    "item": "Q-RECUR-",
-    "url": "https://github.com/ultrastable/ultrastable/commit/96e38e8c0ab10e17b3297c74dd284edfbb58d783"
-   },
-   {
-    "sha": "4a2d3f3",
-    "at": "2026-11-21T20:33:01+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1) [skip ci]",
-    "pr": null,
-    "item": "REGEN-GENERATED-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/4a2d3f30f1e05f7369db7c82b52bc0467f7c7130"
-   },
-   {
-    "sha": "f99fe83",
-    "at": "2026-11-21T20:31:47+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "deploy-ultrastable: record live-verified deploy [skip ci]",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/f99fe8347c0600c96450461a4ea6974327eb2c32"
-   },
-   {
-    "sha": "fbb28f6",
-    "at": "2026-11-21T20:31:26+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1) [skip ci]",
-    "pr": null,
-    "item": "REGEN-GENERATED-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/fbb28f6e44d338b4eb6b002d60dd299dd8a34556"
+    "url": "https://github.com/ultrastable/ultrastable/commit/fb3d8e0cb2a2c4d1558192749cbf51430a092072"
    }
   ],
   "pull_requests": []
