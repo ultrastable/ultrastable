@@ -1,5 +1,5 @@
 {
- "at": "2026-11-22T01:12:37Z",
+ "at": "2026-11-22T01:22:44Z",
  "days": 730,
  "drills": {
   "actions-billing": {
@@ -128,21 +128,21 @@
   }
  ],
  "horizon": {
-  "capacity_year_p50": 0.648,
+  "capacity_year_p50": 0.678,
   "killers": {
-   "token-revoked": 15
+   "token-revoked": 20
   },
-  "p10": 730,
+  "p10": 714,
   "p50": 730,
   "p90": 730,
-  "survive_year": 0.995
+  "survive_year": 0.99
  },
  "marker": "YEAR-SIM-1",
  "meets_target": true,
  "rates_observed": [
   "merge-conflict"
  ],
- "release_horizon_p10": 730,
+ "release_horizon_p10": 714,
  "runs": 200,
  "self_commits": {
   "all": 16,
@@ -177,58 +177,75 @@
   "window_days": 14
  },
  "self_rate_per_day": 0.714,
- "self_releases_year_p50": 168.9,
+ "self_releases_year_p50": 176.7,
  "sensitivity": {
   "base": {
    "p10": 730,
-   "survive_year": 0.983
+   "survive_year": 1.0
   },
   "ranked": [
    {
     "effect": {
      "0.5": {
-      "d_survive": 0.017,
+      "d_survive": 0.0,
       "p10": 730,
       "survive_year": 1.0
      },
      "2.0": {
-      "d_survive": -0.05,
-      "p10": 388,
+      "d_survive": -0.067,
+      "p10": 414,
       "survive_year": 0.933
      }
     },
     "id": "token-revoked",
     "rate": 1,
-    "swing": 0.05
+    "swing": 0.067
    },
    {
     "effect": {
      "0.5": {
-      "d_survive": 0.017,
+      "d_survive": -0.033,
       "p10": 730,
-      "survive_year": 1.0
+      "survive_year": 0.967
      },
      "2.0": {
-      "d_survive": 0.017,
-      "p10": 722,
+      "d_survive": 0.0,
+      "p10": 730,
       "survive_year": 1.0
      }
     },
-    "id": "actions-billing",
-    "rate": 4,
-    "swing": 0.017
+    "id": "actions-outage",
+    "rate": 24,
+    "swing": 0.033
    },
    {
     "effect": {
      "0.5": {
-      "d_survive": 0.017,
+      "d_survive": 0.0,
       "p10": 730,
       "survive_year": 1.0
      },
      "2.0": {
-      "d_survive": 0.017,
+      "d_survive": -0.033,
+      "p10": 674,
+      "survive_year": 0.967
+     }
+    },
+    "id": "merge-conflict",
+    "rate": 196.5,
+    "swing": 0.033
+   },
+   {
+    "effect": {
+     "0.5": {
+      "d_survive": 0.0,
       "p10": 730,
       "survive_year": 1.0
+     },
+     "2.0": {
+      "d_survive": -0.017,
+      "p10": 730,
+      "survive_year": 0.983
      }
     },
     "id": "cloudflare-incident",
@@ -238,14 +255,14 @@
    {
     "effect": {
      "0.5": {
-      "d_survive": 0.017,
+      "d_survive": 0.0,
       "p10": 730,
       "survive_year": 1.0
      },
      "2.0": {
-      "d_survive": 0.017,
-      "p10": 688,
-      "survive_year": 1.0
+      "d_survive": -0.017,
+      "p10": 730,
+      "survive_year": 0.983
      }
     },
     "id": "cost-spike",
@@ -255,14 +272,14 @@
    {
     "effect": {
      "0.5": {
-      "d_survive": 0.017,
+      "d_survive": 0.0,
       "p10": 730,
       "survive_year": 1.0
      },
      "2.0": {
-      "d_survive": -0.016,
-      "p10": 647,
-      "survive_year": 0.967
+      "d_survive": -0.017,
+      "p10": 730,
+      "survive_year": 0.983
      }
     },
     "id": "github-down",
@@ -272,48 +289,14 @@
    {
     "effect": {
      "0.5": {
-      "d_survive": 0.017,
-      "p10": 730,
-      "survive_year": 1.0
+      "d_survive": -0.017,
+      "p10": 709,
+      "survive_year": 0.983
      },
      "2.0": {
-      "d_survive": 0.017,
-      "p10": 730,
+      "d_survive": 0.0,
+      "p10": 604,
       "survive_year": 1.0
-     }
-    },
-    "id": "merge-conflict",
-    "rate": 456.2,
-    "swing": 0.017
-   },
-   {
-    "effect": {
-     "0.5": {
-      "d_survive": 0.017,
-      "p10": 730,
-      "survive_year": 1.0
-     },
-     "2.0": {
-      "d_survive": -0.016,
-      "p10": 540,
-      "survive_year": 0.967
-     }
-    },
-    "id": "model-retirement",
-    "rate": 6,
-    "swing": 0.017
-   },
-   {
-    "effect": {
-     "0.5": {
-      "d_survive": 0.017,
-      "p10": 730,
-      "survive_year": 1.0
-     },
-     "2.0": {
-      "d_survive": -0.016,
-      "p10": 580,
-      "survive_year": 0.967
      }
     },
     "id": "scheduler-silent",
@@ -324,30 +307,30 @@
     "effect": {
      "0.5": {
       "d_survive": 0.0,
-      "p10": 695,
-      "survive_year": 0.983
+      "p10": 730,
+      "survive_year": 1.0
      },
      "2.0": {
       "d_survive": 0.0,
       "p10": 730,
-      "survive_year": 0.983
+      "survive_year": 1.0
      }
     },
-    "id": "actions-outage",
-    "rate": 24,
+    "id": "actions-billing",
+    "rate": 4,
     "swing": 0.0
    },
    {
     "effect": {
      "0.5": {
       "d_survive": 0.0,
-      "p10": 603,
-      "survive_year": 0.983
+      "p10": 662,
+      "survive_year": 1.0
      },
      "2.0": {
       "d_survive": 0.0,
-      "p10": 649,
-      "survive_year": 0.983
+      "p10": 730,
+      "survive_year": 1.0
      }
     },
     "id": "ai-quota",
@@ -359,15 +342,32 @@
      "0.5": {
       "d_survive": 0.0,
       "p10": 730,
-      "survive_year": 0.983
+      "survive_year": 1.0
      },
      "2.0": {
       "d_survive": 0.0,
       "p10": 730,
-      "survive_year": 0.983
+      "survive_year": 1.0
      }
     },
     "id": "dependency-break",
+    "rate": 6,
+    "swing": 0.0
+   },
+   {
+    "effect": {
+     "0.5": {
+      "d_survive": 0.0,
+      "p10": 730,
+      "survive_year": 1.0
+     },
+     "2.0": {
+      "d_survive": 0.0,
+      "p10": 730,
+      "survive_year": 1.0
+     }
+    },
+    "id": "model-retirement",
     "rate": 6,
     "swing": 0.0
    }
@@ -375,13 +375,13 @@
   "runs": 60
  },
  "strict": {
-  "capacity_year_p50": 0.532,
+  "capacity_year_p50": 0.526,
   "killers": {
-   "domain-renewal": 81,
-   "token-revoked": 119
+   "domain-renewal": 74,
+   "token-revoked": 126
   },
-  "p10": 39,
-  "p50": 265,
+  "p10": 45,
+  "p50": 244,
   "p90": 353,
   "survive_year": 0.0
  },

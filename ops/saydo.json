@@ -1,7 +1,7 @@
 {
- "at": "2026-11-22T01:13:40Z",
- "gaps": 3,
- "match_share": 0.993,
+ "at": "2026-11-22T01:23:46Z",
+ "gaps": 4,
+ "match_share": 0.991,
  "sources": {
   "changes": [
    {
@@ -161,9 +161,9 @@
   ],
   "loops": [
    {
-    "detail": "0 of 28 second-order steps kept in 14 days",
+    "detail": "0 of 29 second-order steps kept in 14 days",
     "id": "second-loop-kept",
-    "judged": 28,
+    "judged": 29,
     "kept": 0,
     "ok": false
    }
@@ -583,10 +583,12 @@
    {
     "checks": 3,
     "external": [],
-    "failing": [],
+    "failing": [
+     "python3 -m foundation trajectory --check: site/trajectory-data.js is stale: run trajectory --run --apply"
+    ],
     "id": "YEAR-SIM-1",
     "missing": [],
-    "ok": true,
+    "ok": false,
     "unmeasured": []
    },
    {
@@ -780,7 +782,7 @@
   ],
   "year": [
    {
-    "detail": "simulated horizon p10 730 days against 365",
+    "detail": "simulated horizon p10 714 days against 365",
     "id": "unattended-year",
     "ok": true
    },
@@ -805,7 +807,7 @@
    "total": 1
   },
   "rules": {
-   "gaps": 0,
+   "gaps": 1,
    "total": 66
   },
   "year": {
