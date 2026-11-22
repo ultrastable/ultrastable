@@ -81,8 +81,33 @@ def flatten(path):
     if inside or block:
         return False
     open(path, "w", encoding="utf-8").write("\n".join(out)); return True
+def claim_blind(path):
+    """CLAIM-BLIND-MERGE-1: main rewrites claim values (deploy count, test counts) after every deploy. A PR that rewrites prose near such a value
+    conflicted on every merge although nothing written collided. Re-merge the three stages with every claim value blanked; if that merge is clean,
+    keep it: the values are recomputed by `claims --fix --apply` below, never chosen by hand. Anything else stays a conflict."""
+    import os, tempfile
+    stages, raw = [], {}
+    for n in (2, 1, 3):  # ours, base, theirs, as git merge-file wants them
+        r = subprocess.run(["git", "show", f":{n}:{path}"], capture_output=True, text=True)
+        if r.returncode:
+            return False  # added or deleted on one side: not this rule's case
+        raw[n] = r.stdout
+        stages.append(CLAIM.sub(r"\1\3", r.stdout))
+    with tempfile.TemporaryDirectory() as d:
+        names = []
+        for i, s in enumerate(stages):
+            p = os.path.join(d, str(i)); open(p, "w", encoding="utf-8").write(s); names.append(p)
+        r = subprocess.run(["git", "merge-file", "-p", *names], capture_output=True, text=True)
+    if r.returncode != 0:
+        return False      # written text collides: a real conflict, left for the caller
+    vals = {}
+    for n in (2, 3):  # main's (stage 3) value wins; ours fills a claim only the PR has
+        vals.update({m.group(1): m.group(2) for m in CLAIM.finditer(raw[n])})
+    out = CLAIM.sub(lambda m: m.group(1) + vals.get(m.group(1), "") + m.group(3), r.stdout)
+    open(path, "w", encoding="utf-8").write(out); CLAIM_BLINDED.append(path); return True
+CLAIM_BLINDED = []
 for f in list(conf):
-    if soft(f) or flatten(f):
+    if soft(f) or flatten(f) or claim_blind(f):
         subprocess.run(["git", "add", f]); conf.remove(f); print("resolved (identical or claim-only)", f)
 # A file that is not in conflict but carries committed markers (it reached main that way) is healed the same way, so the next PR does not inherit it.
 for f in sh("git", "grep", "-l", "-E", "^(<<<<<<< |>>>>>>> )", "--", "*.md").split():
@@ -90,7 +115,7 @@ for f in sh("git", "grep", "-l", "-E", "^(<<<<<<< |>>>>>>> )", "--", "*.md").spl
         subprocess.run(["git", "add", f]); print("healed committed markers", f)
 if "doctrine/claims.json" not in conf:   # the registry merged cleanly: its served copy is regenerated, never merged by hand
     subprocess.run([sys.executable, "-m", "foundation", "claims", "--fix", "--apply"], capture_output=True)
-    subprocess.run(["git", "add", "site/claims-data.js"])
+    subprocess.run(["git", "add", "site/claims-data.js", *CLAIM_BLINDED])
 subprocess.run([sys.executable, "-m", "foundation", "research", "--page", "--apply"], capture_output=True)  # REGEN-RESEARCH-1: papers follow the merged studies
 subprocess.run(["git", "add", "research", "site/research-data.js"])
 subprocess.run([sys.executable, "scripts/build_dashboard.py"], capture_output=True)
