@@ -1,13 +1,13 @@
 {
- "row": {
-  "id": "decision-2026-11-22-idea-bank-1-front-door-ideas",
+  "row": {
+    "id": "decision-2026-11-22-idea-bank-1-front-door-ideas",
+    "kind": "decision",
+    "date": "2026-11-22",
+    "title": "IDEA-BANK-1 front-door ideas",
+    "body": "Front-door idea chips come from doctrine/idea-bank.json (19 ideas, 10 domains); scripts/build_idea_bank.py boots each through seed read/qualify/instrument before it can be shown; suggest.js spreads unrelated chips across domains.",
+    "probe": "file:doctrine/idea-bank.json"
+  },
   "kind": "decision",
-  "date": "2026-11-22",
   "title": "IDEA-BANK-1 front-door ideas",
-  "body": "Front-door idea chips come from doctrine/idea-bank.json (19 ideas, 10 domains); scripts/build_idea_bank.py boots each through seed read/qualify/instrument before it can be shown; suggest.js spreads unrelated chips across domains.",
-  "probe": "file:doctrine/idea-bank.json"
- },
- "kind": "decision",
- "title": "IDEA-BANK-1 front-door ideas",
- "session": ""
+  "session": "session_0156nqDriyeVtn3erZ59DmMT"
 }
