@@ -50,6 +50,8 @@ class TenantRepos(unittest.TestCase):
         self.assertIn('"../vendor/ultrastable/models.json"', src)
         self.assertNotIn("doctrine/models.json", src)
         self.assertTrue(any(line.startswith("rewrote import") for line in out))
+        self.assertIn('"type": "module"', (d / "package.json").read_text())
+        self.assertIn("Unlearn", (d / "AGENTS.md").read_text())
 
     def test_behind_compares_tenant_main_with_the_last_deployed_commit(self):
         reg = {"org": "o", "tenants": {"a": {"repo": "o/a", "state": "moved", "worker": "w-a"}}}
