@@ -10,6 +10,9 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-22
 
+- 2026-11-22: ZERO-MINUTES-1: worker merged #1940
+- 2026-11-22: DEPTH-1: idea bank uses foundation/ideas.py depth(), one rule (#1940)
+- 2026-11-22: CHANGE-1: behaviour-change library required by the depth bar (#1939)
 - 2026-11-22: STICKY-1: every system measured and promoted for freshness, breadth, depth, diversity (#1926)
 - 2026-11-22: ZERO-MINUTES-1: worker merged #1936
 - 2026-11-22: DEPTH-1: front-door ideas at Unlearn depth (#1928)
