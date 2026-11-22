@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@v4
         with: {ref: main, fetch-depth: 0}
       - uses: actions/setup-node@v4
-        with: {node-version: 22}
+        with: {node-version: 24}
       - name: Year simulation on this system's own recovery code; admission re-issued (SEED-ADMIT-1)
         id: admit
         run: python3 scripts/seedadmit.py --admit --apply

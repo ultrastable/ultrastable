@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-        with: { node-version: 22 }
+        with: { node-version: 24 }
       - run: node --test workers/core/hostsync/hostsync.test.js
       - name: reconcile the host with the repository
         env: { GITHUB_TOKEN: "${{ github.token }}" }

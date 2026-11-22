@@ -286,12 +286,12 @@
   {
    "id": "node-runtime",
    "class": "dependency",
-   "what": "Workflows pin Node 22, which leaves maintenance on 2027-04-30",
-   "status": "open",
+   "what": "Workflows pinned Node 22, which leaves maintenance on 2027-04-30",
+   "status": "closed",
    "renewal": "none",
-   "expires": "2027-04-30",
-   "evidence": "grep node-version .github/workflows: 10 pins of 22, 1 of 24",
-   "measured": "2026-11-20",
+   "expires": null,
+   "evidence": "Every workflow and seed workflow now pins node-version 24 (grep node-version .github seed: no 22 left); on Node 24.22.3 the Unlearn worker suite (19), seed/worker suite (463), site suite (45) and dashboard suite (46) pass with 0 failures, run before the bump",
+   "measured": "2026-11-22",
    "probe": "cmd:python3 -m foundation unattended --probe node-runtime",
    "item": "Q-YEAR-node-runtime"
   },

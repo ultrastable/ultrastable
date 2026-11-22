@@ -16,9 +16,28 @@ class Unattended(unittest.TestCase):
     def test_target_is_one_year_and_the_horizon_is_measured(self):
         h = unattended.horizon(today=date(2026, 11, 20))
         self.assertEqual(h["target"], 365)
-        self.assertEqual(h["horizon_days"], 161)          # node-runtime 2027-04-30 is the first dated input
-        self.assertEqual(h["bounded_by"], ["node-runtime"])  # the domains renew by themselves (measured)
-        self.assertFalse(h["met"])
+        self.assertNotIn("node-runtime", h["open"])        # closed 2026-11-22: every workflow pins Node 24
+        with self._with_open_node_runtime() as t:          # a dated open input still bounds the horizon at its expiry
+            h = unattended.horizon(t, today=date(2026, 11, 20))
+            self.assertEqual(h["horizon_days"], 161)
+            self.assertEqual(h["bounded_by"], ["node-runtime"])
+            self.assertFalse(h["met"])
+
+    def _with_open_node_runtime(self):
+        """A copy of the register with node-runtime open and dated 2027-04-30, as it was before it was closed."""
+        import contextlib
+
+        @contextlib.contextmanager
+        def cm():
+            with tempfile.TemporaryDirectory() as t:
+                t = Path(t); (t / "doctrine").mkdir(); (t / "ops").mkdir()
+                d = json.loads((ROOT / "doctrine/unattended.json").read_text())
+                for x in d["dependencies"]:
+                    if x["id"] == "node-runtime":
+                        x.update(status="open", expires="2027-04-30")
+                (t / "doctrine/unattended.json").write_text(json.dumps(d))
+                yield t
+        return cm()
 
     def test_cost_repair_and_improvement_are_read_from_the_ledgers(self):
         ps = {p["id"]: p for p in unattended.pillars()}
@@ -33,7 +52,8 @@ class Unattended(unittest.TestCase):
             self.assertEqual(got, {"cost": "met", "repair": "unmeasured", "improve": "met", "untouched": "unmet"})
 
     def test_an_open_input_about_to_lapse_fails(self):
-        bad = unattended.check(today=date(2027, 3, 15))
+        with self._with_open_node_runtime() as t:
+            bad = unattended.check(t, today=date(2027, 3, 15))
         self.assertTrue(any(b.startswith("node-runtime: lapses in") for b in bad), bad)
 
     def test_a_gate_without_a_default_or_link_fails(self):
