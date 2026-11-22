@@ -10,6 +10,10 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-22
 
+- 2026-11-22: STICKY-1: every system measured and promoted for freshness, breadth, depth, diversity (#1926)
+- 2026-11-22: ZERO-MINUTES-1: worker merged #1936
+- 2026-11-22: DEPTH-1: front-door ideas at Unlearn depth (#1928)
+- 2026-11-22: POST-QUALITY-1: quality gate for social posts (#1929)
 - 2026-11-22: Close offsite-backup: the tick's first daily D1 copy is in R2 (#1913)
 - 2026-11-22: queue: closing-probe verdicts for 12 item(s) (QUEUE-PERSIST-1) [skip ci]
 - 2026-11-22: Sweep: CLAIM-BLIND-MERGE-1, Dependabot writeback, seed balance engine, watchdog ledgers (#1902)
