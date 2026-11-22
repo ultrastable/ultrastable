@@ -4764,6 +4764,32 @@
    "body": "Front-door ideas list worldwide open data sources probed weekly (dead sources retire the idea); a weekly scout step asks the model route for one new idea admitted through every gate and rotates the oldest out beyond max_active.",
    "probe": "grep:scripts/build_idea_bank.py::GROW-1",
    "session": "session_0156nqDriyeVtn3erZ59DmMT"
+  },
+  {
+   "id": "decision-2026-11-22-depth-1-depth-bar-for-self-chosen-apps",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "DEPTH-1 depth bar for self-chosen apps",
+   "body": "Rowan 2026-11-22: self-chosen apps must carry thesis, growing corpus, loop, hook, reason to return, public good and a 3-phase horizon; lookups, boards, templates and commerce never launch. Retired 8 shallow spinoffs; seeded base-rates, did-it-work, open-questions for the seed pipeline.",
+   "probe": "grep:doctrine/spinoff-ideas.json::DEPTH-1",
+   "session": "session_0156nqDrdw3p8opYtKRRrh6D"
+  },
+  {
+   "id": "decision-2026-11-22-sticky-1-every-system-is-judged-on-freshness-breadth-depth-a",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "STICKY-1: every system is judged on freshness, breadth, depth and diversity of content and promotes it",
+   "body": "Core module workers/core/stickiness (vendored in the seed) and tick step stickiness measure each system's JSON Feed, record a daily series, file STICKY-<id> while stale/thin/narrow, and serve unpromoted entries as a social queue. Admission is a stickiness block in instances/ultrastable/progress.json. Unlearn is a shrink-only baseline with no feed of its own; the ultrastable.io feed is the changelog, last updated 2026-11-17, so the loop will file STICKY-ultrastable.",
+   "probe": "file:seed/worker/src/stickiness.js"
+  },
+  {
+   "id": "lesson-2026-11-22-sticky-1-audience-is-measured-as-visitor-days-and-daily-feed",
+   "kind": "lesson",
+   "date": "2026-11-22",
+   "title": "STICKY-1: audience is measured as visitor-days and daily feed readers",
+   "body": "The analytics beacon keeps nothing in the browser and visitor ids rotate daily (guard in seed/worker/test/analytics.test.js), so the step counts visitor-days from hits and daily feed readers (hits name feed, recorded server-side by the site worker). return_rate is computed only from a real returning count a system serves at audience_url, otherwise it reads unmeasured. Verified by seed/worker/test/stickiness.test.js.",
+   "probe": "file:seed/worker/src/stickiness.js",
+   "session": "session_0156nqDtwtLqnATRJwnaK1EC"
   }
  ]
 }
