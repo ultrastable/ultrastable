@@ -77,7 +77,16 @@
    "links into Unlearn and Practical Solutions when a question settles"
   ],
   "hook": "Pick your lean on a live question, then see where the evidence leans and how it moved. Knowing you hold a minority view, or that nobody knows yet, is the hook.",
-  "public_good": "Honest public knowledge of what is not known protects people from false certainty and points students and funders at questions worth answering."
+  "public_good": "Honest public knowledge of what is not known protects people from false certainty and points students and funders at questions worth answering.",
+  "change": [
+   "guess-first",
+   "graded-uncertainty",
+   "prebunking",
+   "consider-the-opposite",
+   "calibration-feedback",
+   "implementation-intention",
+   "spaced-follow-up"
+  ]
  },
  "origin": "DEPTH-1 idea bank, doctrine/spinoff-ideas.json"
 }
