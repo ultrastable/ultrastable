@@ -1,9 +1,75 @@
 {
- "at": "2026-11-21T11:59:18Z",
+ "at": "2026-11-22T01:13:40Z",
  "gaps": 3,
  "match_share": 0.993,
  "sources": {
   "changes": [
+   {
+    "did": [
+     "foundation/mergeaudit.py",
+     "tests/test_mergeaudit.py",
+     "tests/test_sweeper.js"
+    ],
+    "id": "96e38e8c0ab1",
+    "ok": true,
+    "said": "Fix the root cause of recurring gate-skipped failures by changing the merge audit to read the full checks run status ins"
+   },
+   {
+    "did": [
+     "seed/worker/src/sweeper.js",
+     "tests/test_sweeper.js"
+    ],
+    "id": "611a809fdc5a",
+    "ok": true,
+    "said": "Raise hard error in GH helper on bad status to prevent silent failures and stuck loops (#Q-RECUR-5f8b2445f4) (#1851)"
+   },
+   {
+    "did": [
+     "scripts/check_readmes.py",
+     "scripts/resolve_generated.py",
+     "seed/scripts/check_readmes.py",
+     "seed/worker/src/redmain.js",
+     "seed/worker/test/redmain.test.js"
+    ],
+    "id": "a085f5107c39",
+    "ok": true,
+    "said": "Modify resolve_generated.py to handle concurrent writes to generated files by using a locking mechanism. (#Q-RECUR-0f615"
+   },
+   {
+    "did": [
+     "foundation/probes/mergeaudit.py"
+    ],
+    "id": "1380548609e6",
+    "ok": true,
+    "said": "Implement mergeaudit probe script to verify PR merging commits pass checks and enforce consistent merge gates. (#Q-CIFAI"
+   },
+   {
+    "did": [
+     "agents/spinoff_sweep.py"
+    ],
+    "id": "490ddca85a1f",
+    "ok": true,
+    "said": "Add functionality to agents/spinoff_sweep.py to detect and delete idle us-idea-* Workers when their associated idea is c"
+   },
+   {
+    "did": [
+     "agents/spinoff_sweep.py",
+     "brand/repos/workers/templates.js"
+    ],
+    "id": "712104d29f16",
+    "ok": true,
+    "said": "Add `agents/spinoff_sweep.py` to implement automated deletion of idle idea preview Workers using a rule implemented as a"
+   },
+   {
+    "did": [
+     "brand/repos/workers/templates.js",
+     "tests/foundation/test_deprot.py",
+     "tests/foundation/test_yearfail.py"
+    ],
+    "id": "7f67aedd41ab",
+    "ok": true,
+    "said": "Implement the TemplateGenerator archetype to unblock queued writers. (#Q-SPIN-SCOPE-IMPLEMENT-TEMPLATE-GENERATOR) (#1739"
+   },
    {
     "did": [
      "agents/scoreboard.py",
@@ -90,19 +156,28 @@
     "drift": 0,
     "id": "claims-total",
     "ok": true,
-    "total": 371
+    "total": 372
    }
   ],
   "loops": [
    {
-    "detail": "0 of 14 second-order steps kept in 14 days",
+    "detail": "0 of 28 second-order steps kept in 14 days",
     "id": "second-loop-kept",
-    "judged": 14,
+    "judged": 28,
     "kept": 0,
     "ok": false
    }
   ],
   "rules": [
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "TEMPLATE-CODE-ONLY-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
    {
     "checks": 0,
     "external": [],
@@ -120,7 +195,7 @@
     "missing": [],
     "ok": true,
     "unmeasured": [
-     "python3 -m foundation lanewatch --check: lanewatch: gh failed: OST /repos/{owner}/{repo}/pulls/{n}/ccr/comments/{comment_id}/resolve (or /unresolve), PUT or DELETE /repos/{owner}/{repo}/pulls/{n}/ccr/auto_merge, POST /repos/{owner}/{repo}/pu"
+     "python3 -m foundation lanewatch --check:     GH_TOKEN: ${{ github.token }}"
     ]
    },
    {
@@ -211,6 +286,24 @@
     "external": [],
     "failing": [],
     "id": "INSIGHT-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "TEMPORAL-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "INTENT-YIELD-1",
     "missing": [],
     "ok": true,
     "unmeasured": []
@@ -461,10 +554,28 @@
     "unmeasured": []
    },
    {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "THOUGHT-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
     "checks": 0,
     "external": [],
     "failing": [],
     "id": "SOCIAL-MODULE-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "FLOW-BALANCE-1",
     "missing": [],
     "ok": true,
     "unmeasured": []
@@ -582,7 +693,7 @@
     "missing": [],
     "ok": true,
     "unmeasured": [
-     "python3 -m foundation lanewatch --check: lanewatch: gh failed: OST /repos/{owner}/{repo}/pulls/{n}/ccr/comments/{comment_id}/resolve (or /unresolve), PUT or DELETE /repos/{owner}/{repo}/pulls/{n}/ccr/auto_merge, POST /repos/{owner}/{repo}/pu"
+     "python3 -m foundation lanewatch --check:     GH_TOKEN: ${{ github.token }}"
     ]
    },
    {
@@ -649,6 +760,15 @@
     "unmeasured": []
    },
    {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "SEED-LIFECYCLE-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
     "checks": 1,
     "external": [],
     "failing": [],
@@ -665,7 +785,7 @@
     "ok": true
    },
    {
-    "detail": "0.214 substantive server-originated changes a day (target 1)",
+    "detail": "0.714 substantive server-originated changes a day (target 1)",
     "id": "ships-daily",
     "ok": false
    }
@@ -674,11 +794,11 @@
  "summary": {
   "changes": {
    "gaps": 1,
-   "total": 9
+   "total": 16
   },
   "claims": {
    "gaps": 0,
-   "total": 371
+   "total": 372
   },
   "loops": {
    "gaps": 1,
@@ -686,12 +806,12 @@
   },
   "rules": {
    "gaps": 0,
-   "total": 60
+   "total": 66
   },
   "year": {
    "gaps": 1,
    "total": 2
   }
  },
- "total": 443
+ "total": 457
 }

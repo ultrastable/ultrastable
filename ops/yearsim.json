@@ -1,10 +1,10 @@
 {
- "at": "2026-11-21T11:58:11Z",
+ "at": "2026-11-22T01:12:37Z",
  "days": 730,
  "drills": {
   "actions-billing": {
    "capacity": 0.5,
-   "evidence": "second route present: foundation/checksrun.py, seed/worker/src/sweeper.js, seed/worker/src/handoff.js; checksrun steps: 43",
+   "evidence": "second route present: foundation/checksrun.py, seed/worker/src/sweeper.js, seed/worker/src/handoff.js; checksrun steps: 45",
    "exercised": false,
    "mode": "degrades",
    "recover": true
@@ -78,8 +78,8 @@
   },
   "node-eol": {
    "capacity": 0.95,
-   "date": "2028-04-30",
-   "evidence": "pins: 24 x11; earliest end of maintenance 2028-04-30; automatic rewrite to 24 works: True",
+   "date": "2027-04-30",
+   "evidence": "pins: 22 x11, 24 x1; earliest end of maintenance 2027-04-30; automatic rewrite to 24 works: True",
    "exercised": true,
    "mode": "recovers",
    "recover": true
@@ -112,7 +112,7 @@
    "why": "its recovery is declared but no drill exercises code"
   },
   {
-   "evidence": "second route present: foundation/checksrun.py, seed/worker/src/sweeper.js, seed/worker/src/handoff.js; checksrun steps: 43",
+   "evidence": "second route present: foundation/checksrun.py, seed/worker/src/sweeper.js, seed/worker/src/handoff.js; checksrun steps: 45",
    "id": "actions-billing",
    "why": "its recovery is declared but no drill exercises code"
   },
@@ -128,7 +128,7 @@
   }
  ],
  "horizon": {
-  "capacity_year_p50": 0.651,
+  "capacity_year_p50": 0.648,
   "killers": {
    "token-revoked": 15
   },
@@ -145,39 +145,39 @@
  "release_horizon_p10": 730,
  "runs": 200,
  "self_commits": {
-  "all": 9,
+  "all": 16,
   "latest": [
    {
-    "lines": 4,
-    "sha": "d02d20a4dbe3",
-    "title": "Q-SELF-unused-import-scripts-smoke-probe-py: remove unused import json from scripts/smoke_probe.py ("
+    "lines": 18,
+    "sha": "96e38e8c0ab1",
+    "title": "Fix the root cause of recurring gate-skipped failures by changing the merge audit to read the full c"
    },
    {
-    "lines": 0,
-    "sha": "c94a91abbb26",
-    "title": "Port EDIT blocks and file context to the Worker executor (#Q-PATCH-EDIT-WORKER) (#836)"
+    "lines": 34,
+    "sha": "611a809fdc5a",
+    "title": "Raise hard error in GH helper on bad status to prevent silent failures and stuck loops (#Q-RECUR-5f8"
    },
    {
-    "lines": 2,
-    "sha": "a1adf87224ae",
-    "title": "Q-SELF-unused-import-scripts-smoke-issues-py: remove unused import os, subprocess from scripts/smoke"
+    "lines": 19,
+    "sha": "a085f5107c39",
+    "title": "Modify resolve_generated.py to handle concurrent writes to generated files by using a locking mechan"
    },
    {
-    "lines": 1,
-    "sha": "cd2e26a9658a",
-    "title": "Q-SELF-unused-import-foundation-clockwork-py: remove unused import Path from foundation/clockwork.py"
+    "lines": 97,
+    "sha": "1380548609e6",
+    "title": "Implement mergeaudit probe script to verify PR merging commits pass checks and enforce consistent me"
    },
    {
-    "lines": 2,
-    "sha": "970134c47d88",
-    "title": "Q-SELF-unused-import-foundation-doctrine-py: remove unused import fnmatch from foundation/doctrine.p"
+    "lines": 138,
+    "sha": "490ddca85a1f",
+    "title": "Add functionality to agents/spinoff_sweep.py to detect and delete idle us-idea-* Workers when their "
    }
   ],
-  "substantive": 3,
+  "substantive": 10,
   "window_days": 14
  },
- "self_rate_per_day": 0.214,
- "self_releases_year_p50": 50.8,
+ "self_rate_per_day": 0.714,
+ "self_releases_year_p50": 168.9,
  "sensitivity": {
   "base": {
    "p10": 730,
@@ -261,7 +261,7 @@
      },
      "2.0": {
       "d_survive": -0.016,
-      "p10": 613,
+      "p10": 647,
       "survive_year": 0.967
      }
     },
@@ -375,14 +375,14 @@
   "runs": 60
  },
  "strict": {
-  "capacity_year_p50": 0.534,
+  "capacity_year_p50": 0.532,
   "killers": {
-   "domain-renewal": 82,
-   "token-revoked": 118
+   "domain-renewal": 81,
+   "token-revoked": 119
   },
   "p10": 39,
   "p50": 265,
-  "p90": 354,
+  "p90": 353,
   "survive_year": 0.0
  },
  "target_days": 365
