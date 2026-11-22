@@ -123,3 +123,4 @@
 {"at": "2026-11-22T14:12:28Z", "clocks": 38, "kind": "beat", "seq": 122, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
 {"at": "2026-11-22T14:22:37Z", "clocks": 38, "kind": "beat", "seq": 123, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
 {"at": "2026-11-22T14:31:59Z", "clocks": 38, "kind": "beat", "seq": 124, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
+{"at": "2026-11-22T14:42:05Z", "clocks": 38, "kind": "beat", "seq": 125, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}

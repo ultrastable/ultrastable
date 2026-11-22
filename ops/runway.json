@@ -11,8 +11,8 @@
   },
   "cost": {
    "days": null,
-   "why": "largest share of a free-plan limit 15%, not growing",
-   "share": 0.145
+   "why": "largest share of a free-plan limit 12%, not growing",
+   "share": 0.119
   },
   "failures": {
    "days": null,
@@ -26,12 +26,6 @@
  "seed_verify": {
   "ultrastable": [
    {
-    "at": "2026-11-22T05:12:51Z",
-    "url": "https://ultrastable.io/health",
-    "status": 200,
-    "ok": true
-   },
-   {
     "at": "2026-11-22T05:22:12Z",
     "url": "https://ultrastable.io/health",
     "status": 200,
@@ -201,6 +195,12 @@
    },
    {
     "at": "2026-11-22T14:32:36Z",
+    "url": "https://ultrastable.io/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-22T14:42:43Z",
     "url": "https://ultrastable.io/health",
     "status": 200,
     "ok": true
@@ -208,12 +208,6 @@
   ],
   "unlearn": [
    {
-    "at": "2026-11-22T05:12:51Z",
-    "url": "https://unlearn.ultrastable.org/health",
-    "status": 200,
-    "ok": true
-   },
-   {
     "at": "2026-11-22T05:22:12Z",
     "url": "https://unlearn.ultrastable.org/health",
     "status": 200,
@@ -383,6 +377,12 @@
    },
    {
     "at": "2026-11-22T14:32:36Z",
+    "url": "https://unlearn.ultrastable.org/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-22T14:42:43Z",
     "url": "https://unlearn.ultrastable.org/health",
     "status": 200,
     "ok": true
