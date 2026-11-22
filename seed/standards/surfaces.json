@@ -515,6 +515,32 @@
       "reason": "internal feed read by the site worker over a service binding, not a capability for callers"
     },
     {
+      "id": "stickiness",
+      "path": "/api/stickiness",
+      "methods": [
+        "GET"
+      ],
+      "kind": "rest",
+      "audience": "public",
+      "standards": [],
+      "discoverable": false,
+      "description": "The judged freshness, breadth, depth and diversity of every system's content, its plan and its daily series (STICKY-1).",
+      "reason": "internal feed read by the site worker over a service binding; the site serves it publicly at /api/stickiness"
+    },
+    {
+      "id": "stickiness-queue",
+      "path": "/api/stickiness/queue/{system}.json",
+      "methods": [
+        "GET"
+      ],
+      "kind": "rest",
+      "audience": "public",
+      "standards": [],
+      "discoverable": false,
+      "description": "The social queue of one system's entries not yet promoted, drained by the core social module through gate.tenant_queues (STICKY-1).",
+      "reason": "internal feed read by the site worker over a service binding and drained by the social module, not a capability for callers"
+    },
+    {
       "id": "decisions",
       "path": "/api/decisions",
       "methods": [
