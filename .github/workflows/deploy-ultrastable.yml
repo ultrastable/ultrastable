@@ -35,7 +35,7 @@ jobs:
             --paths 'seed/worker/**' 'site/**' 'dashboard/**' 'instances/unlearn/worker/**' 'instances/unlearn/phases.json' 'doctrine/topology.json' 'seed/autonomy/**' 'seed/analytics/**' 'deploy/deploy-oidc.mjs' '.github/workflows/deploy-ultrastable.yml'
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         if: steps.gate.outputs.deploy == 'true'
-        with: {node-version: 22}
+        with: {node-version: 24}
       - name: Deploy through the ultrastable-site OIDC endpoint
         if: steps.gate.outputs.deploy == 'true'
         env:

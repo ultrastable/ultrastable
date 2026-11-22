@@ -462,7 +462,7 @@ class Boot:
         if not cmd:
             return "degraded", "idea has repos but no cycle_command; workflows not generated"
         if runtime == "node":
-            setup = ["      - uses: actions/setup-node@v4", "        with: { node-version: 22 }", "      - run: npm ci || npm install"]
+            setup = ["      - uses: actions/setup-node@v4", "        with: { node-version: 24 }", "      - run: npm ci || npm install"]
             test = "npm test"
         else:
             setup = ["      - uses: actions/setup-python@v5", '        with: { python-version: "3.12" }', "      - run: pip install -e ."]

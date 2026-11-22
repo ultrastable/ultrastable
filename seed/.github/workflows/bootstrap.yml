@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 22 }
+        with: { node-version: 24 }
       - run: python3 -m unittest discover tests
       - run: python3 bootstrap/bootstrap.py --dry-run
       - run: cd worker && npm test
@@ -30,7 +30,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 22 }
+        with: { node-version: 24 }
       - run: python3 bootstrap/bootstrap.py --apply
       - name: Commit the org record
         run: |

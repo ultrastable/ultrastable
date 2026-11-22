@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-22-node-24-in-workflows-node-maintenance-horizon-check",
+  "kind": "decision",
+  "date": "2026-11-22",
+  "title": "Node 24 in workflows; Node maintenance horizon check",
+  "body": "Workflow Node pins moved from 22 to 24 (maintenance to 2028-04-30) on a protected branch Rowan approved; compatdate --check now fails any pin whose Node major leaves maintenance within 365 days, closing node-runtime in the unattended register so all three seeds reach autonomous.",
+  "probe": "grep:foundation/compatdate.py::def node_problems"
+ },
+ "kind": "decision",
+ "title": "Node 24 in workflows; Node maintenance horizon check",
+ "session": "session_0156nqDtcHP4PMPYMRfqbypd"
+}
