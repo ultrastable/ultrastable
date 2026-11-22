@@ -1,5 +1,5 @@
 {
- "_doc": "PROGRESS-1 (Rowan, 2026-11-20): every system Ultrastable runs must show noticeable, substantive progress at every visit (daily, weekly, monthly) for at least six months with no input. This file lists the systems the release cadence monitor judges. Read by deploy/deploy-workers.mjs and seed/worker/src/handoff.js into config.progress; consumed by seed/worker/src/progress.js (tick step progress) and served at /api/progress and /progress. expect_hours is the longest gap between two substantive merged changes the system declares; past it the tick dispatches the heal workflows (at most once per cooldown_hours), past stall times it the tick files STALL-<id>. A new tenant with its own repository is one row here; spun-off apps on ultrastable.app ship from the core repository and appear on /progress from spinoffs/registry.json.",
+ "_doc": "PROGRESS-1 (Rowan, 2026-11-20): every system Ultrastable runs must show noticeable, substantive progress at every visit (daily, weekly, monthly) for at least six months with no input. This file lists the systems the release cadence monitor judges. Read by deploy/deploy-workers.mjs and seed/worker/src/handoff.js into config.progress; consumed by seed/worker/src/progress.js (tick step progress) and served at /api/progress and /progress. expect_hours is the longest gap between two substantive merged changes the system declares; past it the tick dispatches the heal workflows (at most once per cooldown_hours), past stall times it the tick files STALL-<id>. A new tenant with its own repository is one row here; spun-off apps on ultrastable.app ship from the core repository and appear on /progress from spinoffs/registry.json. STICKY-1 (Rowan, 2026-11-22): a system row may carry `stickiness` ({ content_feed (JSON Feed 1.1 URL), domains, expect_days, min_depth, reveal }); the tick step stickiness judges its content freshness, breadth, depth and diversity (/api/stickiness) and a system without the block is reported undeclared.",
  "marker": "PROGRESS-1",
  "expect_hours": 24,
  "stall": 2,
@@ -15,7 +15,17 @@
    "heal": [
     "executor.yml",
     "product-manager.yml"
-   ]
+   ],
+   "stickiness": {
+    "content_feed": "https://ultrastable.io/feed.json",
+    "domains": [
+     "platform"
+    ],
+    "expect_days": 2,
+    "min_depth": 0,
+    "reveal": "",
+    "analytics_host": "ultrastable.io"
+   }
   },
   {
    "id": "practical-solutions",
@@ -28,7 +38,14 @@
    "heal": [
     "agent.yml",
     "discover.yml"
-   ]
+   ],
+   "stickiness": {
+    "content_feed": "https://tenant-ps-web.ultrastable.workers.dev/content.json",
+    "domains": [],
+    "expect_days": 2,
+    "min_depth": 3,
+    "reveal": "Runs on Ultrastable."
+   }
   },
   {
    "id": "unlearn",

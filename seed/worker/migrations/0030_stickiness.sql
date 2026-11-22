@@ -1,0 +1,3 @@
+-- STICKY-1: the judged freshness, breadth, depth and diversity of every system's content, one row per system, and its daily series; written by the tick step `stickiness`.
+CREATE TABLE IF NOT EXISTS stickiness_state (system TEXT PRIMARY KEY, name TEXT NOT NULL, state TEXT NOT NULL, score REAL, last_at TEXT, hours_since REAL, n_7d INTEGER NOT NULL DEFAULT 0, n_30d INTEGER NOT NULL DEFAULT 0, measure TEXT, plan TEXT, queue TEXT, error TEXT, checked_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS stickiness_series (system TEXT NOT NULL, day TEXT NOT NULL, row TEXT NOT NULL, PRIMARY KEY (system, day));
