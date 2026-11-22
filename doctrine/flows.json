@@ -2479,6 +2479,8 @@
       ],
       "feedback": "each daily run compares every moved tenant's main with the source_sha its last live-verified deploy recorded, so a deploy that failed or never ran is dispatched again the next day",
       "bindings": [
+        "LANE_APP_ID",
+        "LANE_APP_PRIVATE_KEY",
         "LANE_PAT",
         "ORG_ADMIN_TOKEN"
       ]

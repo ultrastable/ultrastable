@@ -169,6 +169,12 @@ class Credential(unittest.TestCase):
             self.assertEqual(seen[1], ("POST", "/app/installations/77/access_tokens", {"repositories": ["ultrastable"], "permissions": {"contents": "write", "pull_requests": "write", "workflows": "write"}}))
             with self.assertRaises(RuntimeError):
                 lane_credential.token(env, lambda *a, **k: (404, {"message": "Not Found"}))
+            # TENANT-REPO-1: the org token asks for administration and contents over the whole installation, and a refusal raises
+            seen.clear()
+            self.assertEqual(lane_credential.org_token(env, http), "installation-token")
+            self.assertEqual(seen[1], ("POST", "/app/installations/77/access_tokens", {"permissions": {"administration": "write", "contents": "write"}}))
+            with self.assertRaises(RuntimeError):
+                lane_credential.org_token(env, lambda m, *a, **k: (200, {"id": 77}) if m == "GET" else (403, {"message": "denied"}))
 
     def test_the_owner_step_is_recorded_once_with_a_default(self):
         d = json.loads((ROOT / "foundation/data/needs-you.json").read_text(encoding="utf-8"))
