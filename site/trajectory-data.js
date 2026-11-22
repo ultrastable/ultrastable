@@ -5,7 +5,7 @@ export default {
   {
    "area": "doctrine",
    "quiet_days": 0,
-   "recent7": 56701,
+   "recent7": 56710,
    "series": [
     0,
     0,
@@ -36,11 +36,11 @@ export default {
     434,
     8395,
     16515,
-    19094
+    19103
    ],
    "share_recent": 0.223,
-   "share_trend": 0.222,
-   "total": 109922
+   "share_trend": 0.221,
+   "total": 109931
   },
   {
    "area": "workers",
@@ -85,7 +85,7 @@ export default {
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 28046,
+   "recent7": 28177,
    "series": [
     0,
     0,
@@ -116,16 +116,16 @@ export default {
     575,
     6177,
     12277,
-    2680
+    2811
    ],
-   "share_recent": 0.11,
-   "share_trend": 0.072,
-   "total": 35968
+   "share_recent": 0.111,
+   "share_trend": 0.073,
+   "total": 36099
   },
   {
    "area": "foundation",
    "quiet_days": 0,
-   "recent7": 19650,
+   "recent7": 19673,
    "series": [
     0,
     0,
@@ -156,11 +156,11 @@ export default {
     487,
     4064,
     7155,
-    931
+    954
    ],
    "share_recent": 0.077,
    "share_trend": 0.07,
-   "total": 34772
+   "total": 34795
   },
   {
    "area": "ip",
@@ -323,7 +323,7 @@ export default {
    "total": 14466
   }
  ],
- "at": "2026-11-22T14:14:29Z",
+ "at": "2026-11-22T14:24:37Z",
  "days": 30,
  "findings": [
   {
@@ -333,13 +333,13 @@ export default {
    "why": "doctrine's share of attention moved 22 points between the first and second half of the window"
   },
   {
-   "evidence": "quiet_days 7; system change in the last 7 days 254255",
+   "evidence": "quiet_days 7; system change in the last 7 days 254430",
    "id": "seed/outreach",
    "kind": "neglected",
    "why": "seed/outreach had 139 lines of change, then nothing for 7 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 9; system change in the last 7 days 254255",
+   "evidence": "quiet_days 9; system change in the last 7 days 254430",
    "id": "docs/runbooks",
    "kind": "neglected",
    "why": "docs/runbooks had 134 lines of change, then nothing for 9 days while the rest of the system moved"
@@ -431,16 +431,16 @@ export default {
    461,
    298,
    -10,
-   -229
+   -230
   ],
-  "closed": 1210,
-  "opened": 981
+  "closed": 1212,
+  "opened": 982
  },
  "loops": [
   {
    "loop": "ultrastability",
    "quiet_days": 0,
-   "rows": 4260,
+   "rows": 4301,
    "series": [
     0,
     0,
@@ -471,13 +471,13 @@ export default {
     65,
     171,
     1411,
-    2460
+    2501
    ]
   },
   {
    "loop": "deploys",
    "quiet_days": 0,
-   "rows": 898,
+   "rows": 900,
    "series": [
     0,
     0,
@@ -508,7 +508,7 @@ export default {
     15,
     50,
     145,
-    48
+    50
    ]
   },
   {
@@ -625,7 +625,7 @@ export default {
   {
    "loop": "resilience",
    "quiet_days": 0,
-   "rows": 123,
+   "rows": 124,
    "series": [
     0,
     0,
@@ -656,7 +656,7 @@ export default {
     1,
     4,
     37,
-    59
+    60
    ]
   },
   {
@@ -699,7 +699,7 @@ export default {
   {
    "loop": "provenance",
    "quiet_days": 0,
-   "rows": 64,
+   "rows": 65,
    "series": [
     0,
     0,
@@ -730,7 +730,7 @@ export default {
     0,
     0,
     27,
-    37
+    38
    ]
   }
  ],

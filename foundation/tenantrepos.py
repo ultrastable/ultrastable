@@ -153,7 +153,16 @@ def main(argv=None) -> int:
     ap.add_argument("--behind", action="store_true", help="print the comma-separated workers whose tenant main moved past the last deploy")
     ap.add_argument("--prepare")
     ap.add_argument("--slug")
+    ap.add_argument("--probe", metavar="SLUG", help="pass when the tenant's own repository exists with a main branch (closes its gate)")
     a = ap.parse_args(argv)
+    if a.probe:
+        t = load().get("tenants", {}).get(a.probe)
+        if not t:
+            print(f"tenantrepos: no tenant {a.probe} in the registry", file=sys.stderr)
+            return 1
+        sha = _gh_head(t["repo"])
+        print(f"{t['repo']} main {sha[:12]}" if sha else f"{t['repo']} has no main branch yet")
+        return 0 if sha else 1
     if a.behind:
         print(",".join(behind(head=_gh_head)))
         return 0
