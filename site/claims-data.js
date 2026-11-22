@@ -1912,15 +1912,6 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
-   "claim": "- **Promotion is part of every app's and tenant's role (TENANT-PROMO-1, Rowan 2026-11-22).** \"Make sure to keep this in the Ultrastable",
-   "detail": "",
-   "how": "file:seed/worker/src/promoqueue.js + file:social/gate.json + file:seed/worker/src/social.js + file:doctrine/stakeholders.json + file:instances/ultrastable/progress.json + file:doctrine/tenant-promotion.json",
-   "id": "cited-48bc37edfc",
-   "kind": "claim",
-   "pass": true,
-   "surface": "agents/AGENTS.md"
-  },
-  {
    "claim": "- **The system knows what the owner does not (BLINDSPOT-1, Rowan 2026-11-14).** \"I don't know what I don't know. The system needs to know",
    "detail": "",
    "how": "file:doctrine/blindspots.json + file:foundation/blindspots.py + file:tests/foundation/test_blindspots.py + grep:.github/workflows/checks.yml::foundation[ .]blindspots\\b + grep:.github/workflows/checks.yml::foundation[ .]blindspots\\b",
@@ -2533,15 +2524,6 @@ export default {
    "surface": "seed/agents/AGENTS.md"
   },
   {
-   "claim": "- **Promotion is part of every app's and tenant's role (TENANT-PROMO-1, Rowan 2026-11-22).** \"Make sure to keep this in the Ultrastable",
-   "detail": "",
-   "how": "file:seed/worker/src/promoqueue.js + file:social/gate.json + file:seed/worker/src/social.js + file:doctrine/stakeholders.json + file:instances/ultrastable/progress.json + file:doctrine/tenant-promotion.json",
-   "id": "mirror-9b307fb83e",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/agents/AGENTS.md"
-  },
-  {
    "claim": "- **The system knows what the owner does not (BLINDSPOT-1, Rowan 2026-11-14).** \"I don't know what I don't know. The system needs to know",
    "detail": "",
    "how": "file:doctrine/blindspots.json + file:foundation/blindspots.py + file:tests/foundation/test_blindspots.py + grep:.github/workflows/checks.yml::foundation[ .]blindspots\\b + grep:.github/workflows/checks.yml::foundation[ .]blindspots\\b",
@@ -3145,7 +3127,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 62 Python and 467 Worker tests",
+   "claim": "seed-tests: 62 Python and 463 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3154,7 +3136,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 467 Worker tests",
+   "claim": "seed-worker-tests: 463 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3395,7 +3377,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 374,
-  "total": 374
+  "pass": 372,
+  "total": 372
  }
 };
