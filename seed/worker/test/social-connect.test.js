@@ -189,8 +189,8 @@ test('THOUGHT-1: a paper post reaches LinkedIn with its own long text; an event 
   const gate = { kill: false, mode: 'live', max_posts_per_day: 5, max_posts_per_week: 20, paused_channels: [] };
   const cal = { posts: [
     { id: 'ev:1', date: '2026-11-17', text: 'Shipped by the system itself: a thing.', kind: 'event', arm: 'shipped' },
-    { id: 'paper:x:1of2:2026-11-17', date: '2026-11-17', kind: 'paper', arm: 'paper', text: 'short https://ultrastable.io/research/x', url: 'https://ultrastable.io/research/x',
-      texts: { mastodon: 'medium text', linkedin: 'long (text) for LinkedIn' }, channels: ['bluesky', 'mastodon', 'linkedin'] }] };
+    { id: 'paper:x:1of2:2026-11-17', date: '2026-11-17', kind: 'paper', arm: 'paper', text: 'A short paper summary. https://ultrastable.io/research/x', url: 'https://ultrastable.io/research/x',
+      texts: { mastodon: 'Medium text.', linkedin: 'Long (text) for LinkedIn.' }, channels: ['bluesky', 'mastodon', 'linkedin'] }] };
   let liFail = false, versions = [];
   const f = async (u, init = {}) => { u = String(u);
     if (u.endsWith('/gate.json')) return J(gate); if (u.endsWith('/calendar.json')) return J(cal);
@@ -203,8 +203,8 @@ test('THOUGHT-1: a paper post reaches LinkedIn with its own long text; an event 
   const r1 = await runSocial({ db: env.DB, env, fetch: f, now: NOW, tenant: 't' });
   assert.equal(r1.id, 'paper:x:1of2:2026-11-17', 'a paper goes before events');
   assert.deepEqual(r1.results, { mastodon: 'unverified', linkedin: 'unverified' }, 'POST-READBACK-1: sent but not read back');
-  assert.deepEqual(sent[0], ['mastodon', 'medium text']);
-  assert.deepEqual(sent[1], ['linkedin', 'long \\(text\\) for LinkedIn', 'urn:li:person:abc', 'https://ultrastable.io/research/x']);
+  assert.deepEqual(sent[0], ['mastodon', 'Medium text.']);
+  assert.deepEqual(sent[1], ['linkedin', 'Long \\(text\\) for LinkedIn.', 'urn:li:person:abc', 'https://ultrastable.io/research/x']);
   assert.deepEqual(versions, ['202610', '202609'], 'a month LinkedIn does not serve falls back to the previous one');
   const r2 = await runSocial({ db: env.DB, env, fetch: f, now: NOW + 3600e3, tenant: 't' });
   assert.equal(r2.id, 'ev:1'); assert.deepEqual(Object.keys(r2.results), ['mastodon'], 'an event is never sent to LinkedIn');
@@ -242,7 +242,7 @@ test('relay results are recorded as read back, queued, unverified or failed, nev
 
 test('per-service relay rows override a legacy relay row, so a failed service is retried', async () => {
   const env = mk(); const gate = { kill: false, mode: 'live', max_posts_per_day: 3, max_posts_per_week: 14, paused_channels: [] };
-  const cal = { posts: [{ id: 'p1', date: '2026-11-17', text: 'hello', kind: 'event', arm: 'x' }] }; const sent = [];
+  const cal = { posts: [{ id: 'p1', date: '2026-11-17', text: 'Hello there.', kind: 'event', arm: 'x' }] }; const sent = [];
   const f = async (u, init = {}) => { u = String(u); if (u.endsWith('/gate.json')) return J(gate); if (u.endsWith('/calendar.json')) return J(cal);
     if (u === 'https://relay.test/relay/post') { sent.push(JSON.parse(init.body).channels); return J({ results: { linkedin: { status: 'sent', id: 'z' } } }); } return NF; };
   env.SOCIAL_RELAY_URL = 'https://relay.test'; env.SOCIAL_RELAY_TOKEN = 't';
