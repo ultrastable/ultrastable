@@ -1,45 +1,284 @@
 {
-  "_doc": "IDEA-BANK-1 (Rowan, 2026-11-22: the front-door examples must be diverse and actually buildable). Every idea the front door suggests lives here with its domain, reach and the four system-test answers. scripts/build_idea_bank.py runs each one through the seed's own bootstrap stages (read, qualify, instrument) on a generated IDEA.md, refuses the bank when one fails or when the domains are not diverse, and writes site/idea-bank-data.js, which site/suggest.js and site/interview.js read. Edit this file, never the generated one.",
-  "min_domains": 8,
-  "max_per_domain": 2,
-  "ideas": [
-    {"id": "town-weather-alerts", "domain": "civic", "reach": "global", "text": "A flood and heat alert page for our town that checks open weather data every hour and learns to warn earlier", "keywords": "flood heat weather alert town city storm warning climate safety",
-     "loop": "open forecast and river data read hourly, alert issued or withdrawn, next reading compared with what happened", "measure": "hours of warning before each real event, and false alarms, target fewer each month", "upkeep": "weather sources, thresholds and local risks keep changing", "budget": 10},
-    {"id": "council-tracker", "domain": "civic", "reach": "global", "text": "A council-meeting tracker that summarises every agenda and tells residents about decisions near them", "keywords": "council government meeting agenda local residents planning decisions civic",
-     "loop": "each new agenda read, summarised and matched to subscribers, then corrected when minutes are published", "measure": "agendas summarised within a day and corrections needed after minutes, target 0", "upkeep": "councils publish new agendas every week and change their formats", "budget": 10},
-    {"id": "air-quality-watch", "domain": "environment", "reach": "global", "text": "An air-quality watch for my neighbourhood that reads open sensor data and flags bad days before they happen", "keywords": "air quality pollution sensor environment health neighbourhood smoke asthma",
-     "loop": "open sensor readings pulled hourly, forecast of bad days published, forecast scored against the next day", "measure": "share of bad-air days flagged a day ahead", "upkeep": "sensors go offline and new data sources appear", "budget": 5},
-    {"id": "citizen-science", "domain": "environment", "reach": "global", "text": "A citizen-science site where volunteers' bird or water readings are checked, cleaned and charted every day", "keywords": "citizen science volunteers birds water readings data wildlife nature survey",
-     "loop": "new readings arrive, outliers are checked and flagged, charts are rebuilt and flagged rows re-checked", "measure": "readings that fail validation and days since the charts were current, target 0", "upkeep": "volunteers submit new readings every day", "budget": 10},
-    {"id": "food-bank-directory", "domain": "public benefit", "reach": "global", "text": "A food-bank and free-clinic directory that re-checks every listing's hours each week and fixes what changed", "keywords": "food bank clinic directory charity free help listings hours community support",
-     "loop": "every listing's own page re-checked weekly, changes applied, a listing that cannot be confirmed is marked unverified", "measure": "listings confirmed in the last 7 days, target all", "upkeep": "opening hours, addresses and services change all the time", "budget": 5},
-    {"id": "accessibility-audit", "domain": "public benefit", "reach": "global", "text": "An accessibility checker that audits our website every week and fixes what fails", "keywords": "accessibility a11y website audit disabled screen reader contrast wcag",
-     "loop": "every page audited weekly, failures filed and fixed, the audit run again to prove each fix", "measure": "accessibility failures open, target 0", "upkeep": "pages and content change every week", "budget": 5},
-    {"id": "bakery-orders", "domain": "small business", "reach": "local", "text": "An ordering site for a bakery or cafe that learns what sells out and adjusts the menu and prep list", "keywords": "bakery cafe restaurant orders menu food shop small business stock",
-     "loop": "orders read daily, the next day's prep list and menu adjusted, sell-outs and waste compared the day after", "measure": "items sold out early and items wasted per week", "upkeep": "seasons, prices and customer habits keep changing", "budget": 15},
-    {"id": "club-site", "domain": "small business", "reach": "local", "text": "A website for our club that keeps improving its search ranking and member features", "keywords": "club association website members community seo society group sports",
-     "loop": "visits, searches and sign-ups read weekly, the weakest page improved, the numbers read again", "measure": "search ranking, page speed and new members", "upkeep": "events, content and security patches keep arriving", "budget": 10},
-    {"id": "volunteer-roster", "domain": "nonprofit", "reach": "global", "text": "A volunteer roster for our charity that fills shifts, reminds people and learns who says yes", "keywords": "volunteer charity nonprofit shifts rota roster reminders community",
-     "loop": "open shifts offered, reminders sent, who accepts is recorded and the next offer adjusted", "measure": "shifts left unfilled 48 hours before they start, target 0", "upkeep": "volunteers and shifts change every week", "budget": 10},
-    {"id": "grants-desk", "domain": "nonprofit", "reach": "global", "text": "A grants desk for a small charity that finds new calls, drafts answers and tracks deadlines", "keywords": "grants funding proposals deadlines nonprofit fundraiser charity",
-     "loop": "funder pages read weekly, matching calls filed with a draft, deadlines tracked to submission", "measure": "matching calls missed before their deadline, target 0", "upkeep": "funders open and close calls all year", "budget": 15},
-    {"id": "literature-watch", "domain": "research", "reach": "global", "text": "A literature watch that reads new papers in my field each day and keeps a living summary with working citations", "keywords": "research papers literature science academic review citations study field",
-     "loop": "new papers read daily, the summary revised, every citation re-checked so a dead one is replaced", "measure": "citations that no longer resolve, target 0, and days since the summary was revised", "upkeep": "new papers are published every day", "budget": 20},
-    {"id": "model-evals", "domain": "research", "reach": "global", "text": "A model evaluation harness that re-tests every new AI model release against its own history", "keywords": "model evaluation benchmark regression ai release llm",
-     "loop": "each release run through the same tests, scores compared with history, regressions filed", "measure": "regressions found before a release is adopted", "upkeep": "models and providers release new versions every month", "budget": 25},
-    {"id": "language-tutor", "domain": "education", "reach": "global", "text": "A language-practice tutor that adjusts each learner's drills to what they keep getting wrong", "keywords": "language learning tutor education students practice school course drills",
-     "loop": "answers scored after each session, the next drills chosen from the misses, progress re-measured weekly", "measure": "repeat mistakes per learner per week, target falling", "upkeep": "learners and lessons keep changing", "budget": 15},
-    {"id": "money-tracker", "domain": "personal", "reach": "global", "text": "A household money tracker that sorts every bill, flags price rises and finds a cheaper plan", "keywords": "personal money budget bills household finance subscriptions savings prices",
-     "loop": "each bill sorted as it arrives, rises flagged, cheaper plans checked monthly and the saving measured", "measure": "money saved per month and bills paid late, target 0", "upkeep": "prices, plans and providers change every month", "budget": 5},
-    {"id": "commute-planner", "domain": "personal", "reach": "global", "text": "A commute helper that reads live transit data and learns which routes really get me there on time", "keywords": "commute transit train bus travel route delays personal journey",
-     "loop": "live departures read each morning, a route suggested, the actual arrival compared with the suggestion", "measure": "share of days the suggested route arrived on time", "upkeep": "timetables, works and delays change every week", "budget": 5},
-    {"id": "creator-newsletter", "domain": "creative", "reach": "global", "text": "A newsletter for my art or music that drafts each issue from what I made and learns what readers open", "keywords": "newsletter artist music art creative writing fans blog publish",
-     "loop": "new work collected, an issue drafted and sent, opens and replies read to shape the next issue", "measure": "open rate and unsubscribes per issue", "upkeep": "new work and new readers every month", "budget": 10},
-    {"id": "oss-triage", "domain": "software", "reach": "global", "text": "An open-source project's triage desk that labels new issues, finds duplicates and keeps docs in step with releases", "keywords": "open source maintainer project issues triage docs releases github developers",
-     "loop": "new issues labelled and linked to duplicates, docs checked against each release and fixed", "measure": "issues without a label after a day and doc pages behind the release, target 0", "upkeep": "issues and releases keep arriving", "budget": 10},
-    {"id": "cloud-costs", "domain": "operations", "reach": "global", "text": "A cost controller that watches our cloud spend and trims waste every week", "keywords": "cloud cost spend budget finops waste operations",
-     "loop": "spend read daily, waste found and trimmed, the next bill compared with the forecast", "measure": "spend against budget and waste found per week", "upkeep": "usage and prices change every week", "budget": 10},
-    {"id": "service-fleet", "domain": "operations", "reach": "global", "text": "A fleet of services that finds its own failures, fixes them and proves each fix", "keywords": "services monitor failures fix incident reliability fleet uptime",
-     "loop": "probes find a failure, a fix ships, a probe that turns red reverts it", "measure": "uptime and time to repair", "upkeep": "failures and drift keep coming", "budget": 20}
-  ]
+ "_doc": "IDEA-BANK-1 (Rowan, 2026-11-22: the front-door examples must be diverse and actually buildable). Every idea the front door suggests lives here with its domain, reach and the four system-test answers. scripts/build_idea_bank.py runs each one through the seed's own bootstrap stages (read, qualify, instrument) on a generated IDEA.md, refuses the bank when one fails or when the domains are not diverse, and writes site/idea-bank-data.js, which site/suggest.js and site/interview.js read. DEPTH-1 (Rowan, 2026-11-22: 'the depth of idea, the depth of concept of Unlearn and Practical Solutions'): every idea also names its depth: the corpus it keeps growing, the method that makes it trustworthy, and why a reader comes back. A one-trick idea (a single feed, a single alert) has no corpus and is refused. Edit this file, never the generated one.",
+ "min_domains": 8,
+ "max_per_domain": 2,
+ "ideas": [
+  {
+   "id": "what-works-policy",
+   "domain": "public benefit",
+   "reach": "global",
+   "text": "A living atlas of what works in public policy: every programme graded by its trials and re-graded as evidence lands",
+   "keywords": "policy government programme evidence trials what works social public research",
+   "loop": "new trials and reviews found weekly, each programme's grade revised, readers' questions turned into new entries",
+   "measure": "programmes whose evidence was checked in the last 30 days, target all",
+   "upkeep": "trials publish every week and programmes are renamed, scaled up or cut",
+   "budget": 10,
+   "depth": {
+    "corpus": "hundreds of programmes across housing, health, justice and education, each with its trials",
+    "method": "grades by study design, shown honestly, with where the evidence is thin",
+    "returns": "grades move as evidence lands, so a policy reader checks before each decision"
+   }
+  },
+  {
+   "id": "food-system-map",
+   "domain": "public benefit",
+   "reach": "local",
+   "text": "A regional food-system map: farms, food banks, prices and gaps, used every week to route surplus to where it is short",
+   "keywords": "food bank farms surplus hunger prices region supply charity community",
+   "loop": "listings and prices refreshed weekly, gaps computed, surplus offers matched to shortfalls and the match followed up",
+   "measure": "surplus offered that reached a food bank within 48 hours",
+   "upkeep": "farms, prices and needs change every week",
+   "budget": 10,
+   "depth": {
+    "corpus": "every farm, food bank and pantry in a region with stock, hours and needs",
+    "method": "each listing confirmed at its source on a schedule; unconfirmed rows are marked",
+    "returns": "new surplus and new shortfalls every week"
+   }
+  },
+  {
+   "id": "rights-navigator",
+   "domain": "civic",
+   "reach": "global",
+   "text": "A rights-and-benefits navigator that keeps every eligibility rule current and walks people through what they can claim",
+   "keywords": "benefits rights welfare eligibility claim tenants housing law civic help",
+   "loop": "rule changes read from official sources, affected answers rewritten, reader outcomes recorded and the weakest guide improved",
+   "measure": "guides checked against their official source in the last 14 days, target all",
+   "upkeep": "rules, thresholds and forms change every budget cycle",
+   "budget": 15,
+   "depth": {
+    "corpus": "every benefit and tenant right in a jurisdiction, as step-by-step guides",
+    "method": "each step cites the official rule it rests on; changes are diffed, never guessed",
+    "returns": "circumstances change, so people return at each life event"
+   }
+  },
+  {
+   "id": "claim-tracker",
+   "domain": "civic",
+   "reach": "global",
+   "text": "A claim tracker that follows viral claims, links each to its evidence and updates the verdict when evidence moves",
+   "keywords": "misinformation fact check claims news viral evidence media truth",
+   "loop": "new claims picked up daily, matched to existing entries or opened, verdicts revised when new evidence appears",
+   "measure": "verdicts revised within 7 days of new evidence",
+   "upkeep": "new claims appear every day and old ones resurface",
+   "budget": 15,
+   "depth": {
+    "corpus": "a growing graph of claims, their variants and the evidence on each",
+    "method": "verdicts graded by evidence strength, with what would change them",
+    "returns": "the same claims come back in new forms, and the record follows them"
+   }
+  },
+  {
+   "id": "adaptation-atlas",
+   "domain": "environment",
+   "reach": "global",
+   "text": "An atlas of climate adaptation: which flood, heat and drought measures worked where, graded by what happened after",
+   "keywords": "climate adaptation flood heat drought resilience city environment evidence",
+   "loop": "case studies and evaluations gathered monthly, each measure re-graded, cities' questions answered from the atlas",
+   "measure": "measures with an outcome evaluation attached",
+   "upkeep": "new projects and evaluations every month",
+   "budget": 10,
+   "depth": {
+    "corpus": "measures from cities worldwide with their costs and measured results",
+    "method": "results graded by evaluation design; untested claims are marked as such",
+    "returns": "each season's extremes add evidence"
+   }
+  },
+  {
+   "id": "replication-ledger",
+   "domain": "research",
+   "reach": "global",
+   "text": "A replication ledger for a field: which landmark findings held up and which failed, updated as replications publish",
+   "keywords": "research replication science psychology findings papers evidence academic",
+   "loop": "new replications found weekly, each finding's standing updated, citing papers flagged when a finding falls",
+   "measure": "findings whose standing was checked in the last 30 days",
+   "upkeep": "replications and reanalyses publish every week",
+   "budget": 15,
+   "depth": {
+    "corpus": "the field's landmark findings, each with every replication attempt",
+    "method": "standing set by replication size and quality, with the reasoning shown",
+    "returns": "textbooks and talks keep citing findings whose standing has moved"
+   }
+  },
+  {
+   "id": "model-evals",
+   "domain": "research",
+   "reach": "global",
+   "text": "A model evaluation harness that re-tests every new AI model release against its own history",
+   "keywords": "model evaluation benchmark regression ai release llm",
+   "loop": "each release run through the same tests, scores compared with history, regressions filed",
+   "measure": "regressions found before a release is adopted",
+   "upkeep": "models and providers release new versions every month",
+   "budget": 25,
+   "depth": {
+    "corpus": "a growing suite of tests and every score every model has had",
+    "method": "fixed tests, repeated runs and published variance",
+    "returns": "every new release is a new comparison"
+   }
+  },
+  {
+   "id": "open-curriculum",
+   "domain": "education",
+   "reach": "global",
+   "text": "A free open curriculum that rewrites each lesson from where learners actually get stuck",
+   "keywords": "curriculum education learning lessons school students teachers course open",
+   "loop": "learner answers read after each unit, the lesson with the most stuck points rewritten, the change measured on the next cohort",
+   "measure": "share of learners who pass each unit's check, target rising per cohort",
+   "upkeep": "every cohort shows new stuck points",
+   "budget": 15,
+   "depth": {
+    "corpus": "a full course of lessons, exercises and the record of where people stumbled",
+    "method": "each rewrite is an experiment kept only if the next cohort does better",
+    "returns": "learners move unit by unit, and teachers reuse it every term"
+   }
+  },
+  {
+   "id": "shop-playbook",
+   "domain": "small business",
+   "reach": "local",
+   "text": "A playbook for independent shops that turns what works for similar shops into weekly experiments and keeps the winners",
+   "keywords": "shop retail small business independent sales customers experiments playbook",
+   "loop": "one experiment chosen each week from the playbook, run, measured against the week before, kept or dropped",
+   "measure": "experiments that raised sales or repeat visits, per month",
+   "upkeep": "seasons, prices and competitors change",
+   "budget": 15,
+   "depth": {
+    "corpus": "a growing library of tactics with the results they had in comparable shops",
+    "method": "each tactic is tested and its effect measured before it is kept",
+    "returns": "there is always a next experiment"
+   }
+  },
+  {
+   "id": "club-hub",
+   "domain": "community",
+   "reach": "local",
+   "text": "A website for our club or association that learns what brings members back and grows the features they use",
+   "keywords": "club association website members community society group sports events",
+   "loop": "visits, sign-ups and event turnout read weekly, the feature or page members use least improved, turnout read again",
+   "measure": "members who return each month and event turnout",
+   "upkeep": "events, members and season plans change all year",
+   "budget": 10,
+   "depth": {
+    "corpus": "years of events, members' turnout and what each change to the site did",
+    "method": "each change is predicted and kept only if return visits or turnout rose",
+    "returns": "members come back for every event, and the club's record keeps growing"
+   }
+  },
+  {
+   "id": "impact-ledger",
+   "domain": "nonprofit",
+   "reach": "global",
+   "text": "An impact ledger for a charity that links every programme to its outcomes and shows funders what each donation changed",
+   "keywords": "charity nonprofit impact outcomes funders donors programme evaluation",
+   "loop": "programme data read monthly, outcomes recomputed, the weakest programme flagged with what similar charities do",
+   "measure": "programmes with a measured outcome, target all",
+   "upkeep": "programmes, people served and funders change every year",
+   "budget": 10,
+   "depth": {
+    "corpus": "every programme, its spend and the outcomes it produced over the years",
+    "method": "outcomes compared with a baseline, uncertainty stated",
+    "returns": "each reporting cycle and funding round draws on it"
+   }
+  },
+  {
+   "id": "grants-atlas",
+   "domain": "nonprofit",
+   "reach": "global",
+   "text": "A funding atlas for small charities: every open call, how well it fits and a drafted answer, kept current",
+   "keywords": "grants funding proposals deadlines nonprofit fundraiser charity",
+   "loop": "funder pages read weekly, matching calls filed with a draft, outcomes recorded to sharpen the fit score",
+   "measure": "matching calls missed before their deadline, target 0",
+   "upkeep": "funders open and close calls all year",
+   "budget": 15,
+   "depth": {
+    "corpus": "every funder and call, with past awards and what won",
+    "method": "fit scored from past awards; drafts reuse answers that succeeded",
+    "returns": "new calls open every week"
+   }
+  },
+  {
+   "id": "decision-journal",
+   "domain": "personal",
+   "reach": "global",
+   "text": "A decision journal that records each big choice, its reasons and how it turned out, and learns what I misjudge",
+   "keywords": "decisions journal personal reflection choices life habits memory",
+   "loop": "each decision logged with a prediction, revisited when it resolves, my blind spots summarised quarterly",
+   "measure": "share of predictions that came true, per quarter",
+   "upkeep": "new decisions keep coming",
+   "budget": 5,
+   "depth": {
+    "corpus": "years of my own decisions, predictions and outcomes",
+    "method": "every decision carries a prediction that is scored later",
+    "returns": "every new choice is checked against my own track record"
+   }
+  },
+  {
+   "id": "self-experiments",
+   "domain": "personal",
+   "reach": "global",
+   "text": "A personal experiments log that turns my habits into small tests and keeps only what measurably helps",
+   "keywords": "habits sleep fitness personal experiments health log routine",
+   "loop": "one change tried for two weeks, the measure compared with the baseline, kept or dropped, the next test chosen",
+   "measure": "experiments that measurably helped, per quarter",
+   "upkeep": "life, seasons and goals change",
+   "budget": 5,
+   "depth": {
+    "corpus": "every habit I have tried, with its before-and-after numbers",
+    "method": "baseline, one change at a time, a fixed test window",
+    "returns": "there is always a next test"
+   }
+  },
+  {
+   "id": "city-history",
+   "domain": "creative",
+   "reach": "local",
+   "text": "A living history of a city told from its archives, adding sources and correcting the record as documents surface",
+   "keywords": "history city archives local heritage stories writing creative museum",
+   "loop": "archives searched monthly, new sources attached, stories revised where a document changes the account",
+   "measure": "claims in each story tied to a cited source, target all",
+   "upkeep": "archives digitise new material every month",
+   "budget": 10,
+   "depth": {
+    "corpus": "a growing set of stories, places and people, each tied to sources",
+    "method": "every claim cites its document; disputed points show both sides",
+    "returns": "new stories and corrections arrive every month"
+   }
+  },
+  {
+   "id": "dependency-watch",
+   "domain": "software",
+   "reach": "global",
+   "text": "An open-source dependency watch that maps who relies on what, flags risky packages and proposes fixes upstream",
+   "keywords": "open source dependencies packages security maintainers supply chain software",
+   "loop": "the dependency graph rebuilt weekly, risks scored, fixes proposed to the projects that can make them",
+   "measure": "high-risk dependencies with a proposed fix",
+   "upkeep": "new releases and new risks every day",
+   "budget": 15,
+   "depth": {
+    "corpus": "a map of packages, maintainers and the projects that depend on them",
+    "method": "risk scored from maintenance, security history and reach",
+    "returns": "the graph changes with every release"
+   }
+  },
+  {
+   "id": "cloud-costs",
+   "domain": "operations",
+   "reach": "global",
+   "text": "A cost controller that learns how our systems spend and trims waste every week",
+   "keywords": "cloud cost spend budget finops waste operations",
+   "loop": "spend read daily, waste found and trimmed, the next bill compared with the forecast",
+   "measure": "spend against budget and waste found per week",
+   "upkeep": "usage and prices change every week",
+   "budget": 10,
+   "depth": {
+    "corpus": "the full history of spend by service with every change and its effect",
+    "method": "each trim is predicted, then checked against the next bill",
+    "returns": "every bill is a new reading"
+   }
+  }
+ ],
+ "depth_fields": [
+  "corpus",
+  "method",
+  "returns"
+ ]
 }

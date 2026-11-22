@@ -53,6 +53,9 @@ def validate(bank):
         for k in ("id", "domain", "reach", "text", "keywords", "loop", "measure", "upkeep", "budget"):
             if not i.get(k):
                 errs.append(f"{i.get('id')}: missing {k}")
+        for k in bank.get("depth_fields", []):
+            if len(str((i.get("depth") or {}).get(k, ""))) < 20:
+                errs.append(f"{i.get('id')}: depth.{k} missing (DEPTH-1: a one-trick idea has no corpus)")
         if len(i.get("text", "")) > 120:
             errs.append(f"{i['id']}: text over 120 characters")
     dom = Counter(i["domain"] for i in ideas)

@@ -29,5 +29,11 @@ class IdeaBank(unittest.TestCase):
         self.assertTrue(any("domains" in e for e in B.validate(bank)))
 
 
+    def test_depth_rule_bites(self):
+        bank = json.loads(B.BANK.read_text())
+        bank["ideas"] = [dict(bank["ideas"][0], depth={})]
+        self.assertTrue(any("depth" in e for e in B.validate(bank)))
+
+
 if __name__ == "__main__":
     unittest.main()
