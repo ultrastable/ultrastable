@@ -282,6 +282,8 @@ def main(argv) -> int:
     if flag("--timeline"):
         print(json.dumps(timeline(root, val("--tenant"), val("--origin")), indent=1)); return 0
     if flag("--changelog"):
+        if flag("--apply"):
+            ingest_new(root, apply=True)  # CHANGELOG-FRESH-1: the workflow step that already builds the changelog also ingests new commits
         c = changelog(root); text = json.dumps(c, indent=1, ensure_ascii=False) + "\n"
         if flag("--apply"):
             (root / load(root)["public_view"]).write_text(text, encoding="utf-8", newline="\n")
