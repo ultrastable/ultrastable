@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-22-unstick-clean-1-unstick-starts-every-pr-from-a-clean-tree",
+  "kind": "lesson",
+  "date": "2026-11-22",
+  "title": "UNSTICK-CLEAN-1: unstick starts every PR from a clean tree",
+  "body": "In ciwatch run 44968652106 an aborted reconcile left README.md modified, so the next PR's merge stopped with 'Entry README.md not uptodate'. unstick_prs.sh now aborts, hard-resets and cleans before each PR; test_unstick_clean proves the tree ends clean.",
+  "probe": "grep:scripts/unstick_prs.sh::UNSTICK-CLEAN-1",
+  "session": "session_0156nqDrazgRH7yMoAUMyYoy"
+ },
+ "kind": "lesson",
+ "title": "UNSTICK-CLEAN-1: unstick starts every PR from a clean tree",
+ "session": "session_0156nqDrazgRH7yMoAUMyYoy"
+}
