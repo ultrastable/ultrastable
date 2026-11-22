@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-22-worker-compatibility-dates-advance-by-a-loop-compat-date-1",
+  "kind": "decision",
+  "date": "2026-11-22",
+  "title": "Worker compatibility dates advance by a loop (COMPAT-DATE-1)",
+  "body": "foundation/compatdate.py moves every compatibility date in doctrine/topology.json and tracked wrangler.toml files to today minus 30 days when it is 28 or more days behind, on every watchdog pass inside the runway step; openloops --check fails when a date passes 120 days. With Dependabot on every ecosystem, this closes the core input dependency-drift. second-tenant is declared a seed-lifecycle fixture: its idea names no product or user.",
+  "probe": "file:foundation/compatdate.py"
+ },
+ "kind": "decision",
+ "title": "Worker compatibility dates advance by a loop (COMPAT-DATE-1)",
+ "session": "session_0156nqDtcHP4PMPYMRfqbypd"
+}

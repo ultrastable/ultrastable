@@ -300,12 +300,12 @@
    "id": "dependency-drift",
    "class": "dependency",
    "what": "Action versions, npm and pip packages and Worker compatibility dates have no loop that advances them",
-   "status": "open",
+   "status": "closed",
    "renewal": "none",
    "expires": null,
-   "evidence": "one wrangler.toml still has compatibility_date 2024-01-01; no updater workflow or Worker step exists",
-   "measured": "2026-11-20",
-   "probe": "cmd:python3 -m foundation unattended --probe dependency-drift",
+   "evidence": "Dependabot advances every ecosystem the repository has (.github/dependabot.yml: github-actions weekly, npm in seed/worker, workers, workers/core and workers/adapters/cloudflare monthly; no pip manifest exists) and the merge lane merges green updates (DEP-LOOP-1); Worker compatibility dates advance by foundation/compatdate.py on every watchdog pass (COMPAT-DATE-1), which moved the two stale ones (wrangler.toml 2024-01-01, uptime/wrangler.toml 2025-01-01) to 2026-10-23 on 2026-11-22",
+   "measured": "2026-11-22",
+   "probe": "cmd:python3 -m foundation compatdate --check",
    "item": "Q-YEAR-dependency-drift"
   },
   {
