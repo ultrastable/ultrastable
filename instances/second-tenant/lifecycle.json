@@ -1,27 +1,18 @@
 {
- "_doc": "SEED-LIFECYCLE-1 answers for second-tenant. The system is generated from the seed kernel (seedadmit --onboard) and deployed by deploy/deploy-seed.mjs after every platform deploy (doctrine/seed-deploys.json); read by foundation/seedlife.py.",
+ "_doc": "SEED-LIFECYCLE-1 answers for second-tenant; scaffolded by foundation/seedlife.py, completed by the executor through Q-SEED-second-tenant.",
  "slug": "second-tenant",
  "build": {
-  "paths": [
-   "seed/worker/src/index.js",
-   "seed/worker/src/tick.js",
-   "deploy/deploy-seed.mjs"
-  ],
-  "tests": [
-   "seed/worker/test/run.mjs",
-   "tests/foundation/test_seedlife.py"
-  ]
+  "paths": [],
+  "tests": []
  },
  "deploy": {
-  "worker": "ultrastable-seed-second-tenant"
+  "worker": ""
  },
  "verify": {
-  "url": "https://ultrastable-seed-second-tenant.ultrastable.workers.dev/health",
-  "expect": "\"org\""
+  "url": "",
+  "expect": ""
  },
- "loops": [
-  "seed-second-tenant-tick"
- ],
+ "loops": [],
  "survival": {
   "credentials": {
    "inherit": "cloudflare-api-tokens"
@@ -62,8 +53,8 @@
    "inherit": "self-coder"
   },
   "privacy": {
-   "status": "n/a",
-   "why": "the seed holds no personal data: it runs with PUBLIC_HEALTH_ONLY=1, takes no visitor input and stores only its own ticks, items and metrics"
+   "status": "open",
+   "item": "Q-SEED-second-tenant"
   }
  }
 }

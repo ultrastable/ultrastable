@@ -82,6 +82,7 @@
   "qnfo": "the adoption case of an external fleet run from QNFO repositories outside this org; judged there (instances/qnfo/README.md)"
  },
  "fixtures": {
-  "demo-child": "a bootstrap input that tests/test_vision.py (LayerTests) reads to prove a child reports to its parent; its IDEA.md says it exists to prove that, not to run"
+  "demo-child": "a bootstrap input that tests/test_vision.py (LayerTests) reads to prove a child reports to its parent; its IDEA.md says it exists to prove that, not to run",
+  "second-tenant": "the multi-tenant proof manifest that tests/foundation/test_second_tenant.py and foundation/validate read; its idea names no product or user and its deploy loop only writes ops/second-tenant/latest.json, so building a Worker for it would ship nothing anyone uses (SUBSTANCE-1). Declared a fixture 2026-11-22; a real second tenant joins as its own seed"
  }
 }

@@ -10,6 +10,10 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-22
 
+- 2026-11-22: ZERO-MINUTES-1: worker merged #1907
+- 2026-11-22: Close dependency drift with a compatibility-date loop; list Unlearn in the progress monitor; second-tenant is a fixture (#1907)
+- 2026-11-22: Record disposition of the closed dependabot actions bump (#1904)
+- 2026-11-22: SEED-DEPLOY-1: start a seed's first tick and accept its 503-until-ticked health (#1903)
 - 2026-11-22: Exempt dependabot-only ranges from the write-back check (#1901)
 - 2026-11-21: SEED-DEPLOY-2 + SINGLE-ACCOUNT-2: seeds go live through OIDC; nothing acts on the retired account (#1895)
 - 2026-11-21: SEED-DEPLOY-1: write the generated worker config before deploying a seed (#1890)
@@ -28,6 +32,7 @@ Last updated: 2026-11-22
 - 2026-11-21: intent yield, directives probed (INTENT-YIELD-1) [skip ci]
 - 2026-11-21: Intent Yield: owner directives kept per unit of attention, daily and unattended (#1853)
 - 2026-11-21: UNLEARN-1 (Rowan: "Most of what kids want to learn, you can't teach them"; build it and run it unattended for a year). Tenant `instances/unlearn/` (IDEA.md, instance.json, phases.json, runway.json) and Worker `ultrastable-unlearn` (instances/unlearn/worker, D1 `ultrastable-unlearn` ef788db7, cron 41 * * * *, no secrets, no npm deps). Phase 1 coaches and parents (no child data); phase 2 schools opens by itself when its gates hold; phase 3 kids directly needs consent, DPIA, retention, security and the controller-entity owner gate. Moves come from a 23-move library picked by Beta sampling on 14-day outcomes; a model may re-word inside AI_DAILY_CAP behind the answer guard (models from doctrine/models.json). Clock `unlearn-beat`, loop `unlearn-beat` (server_owner ultrastable-unlearn), flows declared. Deployed by deploy-ultrastable.yml (paths include instances/unlearn/worker). Tests `node --test instances/unlearn/worker/*.test.mjs`, `python3 -m unittest tests.foundation.test_unlearn`.
+- 2026-11-22: UNLEARN-PRINCIPLES-1 (Rowan: "Complete and deploy all work", after the play and self-directed learning research). The 11 research principles in instances/unlearn/phases.json each carry `phase` and `probe` (test:, grep:, phase3:), checked by tests/foundation/test_unlearn.py `test_principles_are_in_code`. Phase 1 code: help ladder (first move asks or waits, `/api/another` climbs to try, then connect; never explain), who-led at the 14-day follow-up (column `led`, metric `child_led_14d`), wide walls metric `move_kind_variety_8w`, two moves for AI-built projects (`try-ai-rules`, `wait-guess-first`; library now 25), page test against scores, streaks and badges.
 - 2026-11-21: regen-generated: refresh generated data after merge (REGEN-GENERATED-1) [skip ci] (#1822)
 - 2026-11-21: queue: closing-probe verdicts for 7 item(s) (QUEUE-PERSIST-1) [skip ci]
 - 2026-11-21: PROBE-REAL-1: real probes for scope items; QNFO fleet inventory; scout sources (#1821)

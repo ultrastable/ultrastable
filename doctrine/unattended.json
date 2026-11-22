@@ -298,13 +298,14 @@
   {
    "id": "dependency-drift",
    "class": "dependency",
-   "what": "Action versions, npm packages and Worker compatibility dates advance by themselves",
+   "what": "Action versions, npm and pip packages and Worker compatibility dates have no loop that advances them",
    "status": "closed",
    "renewal": "none",
    "expires": null,
-   "evidence": ".github/dependabot.yml advances github-actions and every npm directory and the sweeper merges the green branches (DEP-LOOP-1); foundation/compatdate.py advances any compatibility_date older than 180 days on every watchdog runway pass (COMPAT-DATE-1); the repository has no pip requirements to pin; the dead root wrangler.toml (2024-01-01, pointing at a missing src/worker.ts) was removed",
+   "evidence": "Dependabot advances every ecosystem the repository has (.github/dependabot.yml: github-actions weekly, npm in seed/worker, workers, workers/core and workers/adapters/cloudflare monthly; no pip manifest exists) and the merge lane merges green updates (DEP-LOOP-1); Worker compatibility dates advance by foundation/compatdate.py on every watchdog pass (COMPAT-DATE-1), which moved the two stale ones (wrangler.toml 2024-01-01, uptime/wrangler.toml 2025-01-01) to 2026-10-23 on 2026-11-22",
    "measured": "2026-11-22",
-   "probe": "cmd:python3 -m foundation compatdate --check"
+   "probe": "cmd:python3 -m foundation compatdate --check",
+   "item": "Q-YEAR-dependency-drift"
   },
   {
    "id": "mail-relay-token",

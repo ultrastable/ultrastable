@@ -43,12 +43,12 @@
    ]
   },
   {
-   "id": "second-tenant",
-   "name": "Second Tenant",
+   "id": "unlearn",
+   "name": "Unlearn",
    "repo": "ultrastable/ultrastable",
-   "url": "https://ultrastable-seed-second-tenant.ultrastable.workers.dev/health",
+   "url": "https://unlearn.ultrastable.org/",
    "feed": "https://ultrastable.io/feed.xml",
-   "expect_hours": 24,
+   "expect_hours": 168,
    "heal": [
     "executor.yml"
    ]
