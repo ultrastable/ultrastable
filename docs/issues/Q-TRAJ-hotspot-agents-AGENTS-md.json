@@ -1,7 +1,7 @@
 {
   "id": "Q-TRAJ-hotspot-agents-AGENTS-md",
   "title": "Q-TRAJ-hotspot-agents-AGENTS-md: agents/AGENTS.md was rewritten on 12 of 30 days",
-  "body": "**Owner:** executor\n**Trigger:** trajectory pass (TRAJECTORY-1) on the watchdog run\n**Done check:** cmd:python3 -m foundation trajectory --probe hotspot:agents/AGENTS.md\n**Status:** open\n\nagents/AGENTS.md was rewritten on 12 of 30 days. Evidence: days with changes: 12.\n\nFind why this keeps changing; make the part that churns computed, split it, or add the test that pins it, so it stops being rewritten.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation trajectory --probe hotspot:agents/AGENTS.md` exits 0.\n",
+  "body": "**Owner:** executor\n**Trigger:** trajectory pass (TRAJECTORY-1) on the watchdog run\n**Done check:** cmd:python3 -m foundation trajectory --probe hotspot:agents/AGENTS.md\n**Status:** closed\n\nagents/AGENTS.md was rewritten on 12 of 30 days. Evidence: days with changes: 12.\n\nFind why this keeps changing; make the part that churns computed, split it, or add the test that pins it, so it stops being rewritten.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation trajectory --probe hotspot:agents/AGENTS.md` exits 0.\n\n**Disposition:** shelved (ttl, 2026-11-22T01:33:12Z, DISPOSE-1)\n\n**Evidence:** open 6.2 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
   "labels": [
     "p2",
     "agent-ready",

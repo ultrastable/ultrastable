@@ -1,7 +1,7 @@
 {
   "id": "Q-YEAR-SIM-actions-billing",
   "title": "Q-YEAR-SIM-actions-billing: its recovery is declared but no drill exercises code",
-  "body": "**Owner:** executor\n**Trigger:** the year simulation (YEAR-SIM-1) on the watchdog run\n**Done check:** cmd:python3 -m foundation yearsim --probe actions-billing\n**Status:** open\n\nFault class `actions-billing`: its recovery is declared but no drill exercises code. Drill evidence: second route present: foundation/checksrun.py, seed/worker/src/sweeper.js, seed/worker/src/handoff.js; checksrun steps: 41\n\nBuild the mechanism that recovers from it without a person, then the drill in foundation/yearsim.py must exercise it.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation yearsim --probe actions-billing` exits 0.\n",
+  "body": "**Owner:** executor\n**Trigger:** the year simulation (YEAR-SIM-1) on the watchdog run\n**Done check:** cmd:python3 -m foundation yearsim --probe actions-billing\n**Status:** closed\n\nFault class `actions-billing`: its recovery is declared but no drill exercises code. Drill evidence: second route present: foundation/checksrun.py, seed/worker/src/sweeper.js, seed/worker/src/handoff.js; checksrun steps: 41\n\nBuild the mechanism that recovers from it without a person, then the drill in foundation/yearsim.py must exercise it.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation yearsim --probe actions-billing` exits 0.\n\n**Disposition:** shelved (ttl, 2026-11-22T01:33:12Z, DISPOSE-1)\n\n**Evidence:** open 6.2 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
   "labels": [
     "p1",
     "agent-ready",

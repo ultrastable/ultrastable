@@ -1,7 +1,7 @@
 {
   "id": "Q-YEAR-SIM-github-down",
   "title": "Q-YEAR-SIM-github-down: its recovery is declared but no drill exercises code",
-  "body": "**Owner:** executor\n**Trigger:** the year simulation (YEAR-SIM-1) on the watchdog run\n**Done check:** cmd:python3 -m foundation yearsim --probe github-down\n**Status:** open\n\nFault class `github-down`: its recovery is declared but no drill exercises code. Drill evidence: while GitHub is down nothing merges anywhere; the loops resume from the repository when it returns (declared, not exercised)\n\nBuild the mechanism that recovers from it without a person, then the drill in foundation/yearsim.py must exercise it.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation yearsim --probe github-down` exits 0.\n",
+  "body": "**Owner:** executor\n**Trigger:** the year simulation (YEAR-SIM-1) on the watchdog run\n**Done check:** cmd:python3 -m foundation yearsim --probe github-down\n**Status:** closed\n\nFault class `github-down`: its recovery is declared but no drill exercises code. Drill evidence: while GitHub is down nothing merges anywhere; the loops resume from the repository when it returns (declared, not exercised)\n\nBuild the mechanism that recovers from it without a person, then the drill in foundation/yearsim.py must exercise it.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation yearsim --probe github-down` exits 0.\n\n**Disposition:** shelved (ttl, 2026-11-22T01:33:12Z, DISPOSE-1)\n\n**Evidence:** open 6.2 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
   "labels": [
     "p1",
     "agent-ready",
