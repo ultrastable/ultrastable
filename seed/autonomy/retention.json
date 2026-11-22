@@ -265,6 +265,11 @@
     "trust_ledger_v2": {
       "keep": "state",
       "reason": "OL-20261118-4: exists only inside migration 0027's batch and is renamed to trust_ledger before the batch ends"
+    },
+    "cf_alerts": {
+      "column": "at",
+      "keep_days": 30,
+      "reason": "CF-ALERTS-1: one row per Cloudflare alert; settling reads the last day per type, so 30 days is ample"
     }
   }
 }

@@ -299,6 +299,19 @@
       "reason": "machine-to-machine callback authenticated by HMAC; nothing for an agent to discover"
     },
     {
+      "id": "cloudflare-alert-webhook",
+      "path": "/hook/cloudflare",
+      "methods": [
+        "POST"
+      ],
+      "kind": "rest",
+      "audience": "machine",
+      "standards": [],
+      "discoverable": false,
+      "description": "CF-ALERTS-1: Cloudflare posts an account alert with the destination secret in cf-webhook-auth; it becomes a CF-ALERT queue item; 401 on a bad secret.",
+      "reason": "machine-to-machine callback authenticated by a shared secret; nothing for an agent to discover"
+    },
+    {
       "id": "agents-probe",
       "path": "/agents/probe",
       "methods": [

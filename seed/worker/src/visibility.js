@@ -4,6 +4,7 @@ export function hiddenByHealthOnly(env, method, pathname) {
   if (!env || env.PUBLIC_HEALTH_ONLY !== '1') return false;
   if (pathname === '/health' && method === 'GET') return false;
   if (pathname === '/hook/github' && method === 'POST') return false;
+  if (pathname === '/hook/cloudflare' && method === 'POST') return false;  // CF-ALERTS-1: Cloudflare's alert webhook, verified by its own secret
   if (pathname === '/pulse/watch' && method === 'POST') return false;  // LOOPPROOF-1: the second producer; it only runs a tick when the newest one is stale
   return true;
 }

@@ -166,8 +166,9 @@ def evaluate(root, seed_dir, lc_path, cfg: dict, core: dict, now=None) -> dict:
     clocks = {c.get("id") for c in (_load(root / cfg["clocks"], {}) or {}).get("clocks", [])}
     prog = {s.get("id") for s in (_load(root / cfg["progress"], {}) or {}).get("systems", [])}
     loops = lc.get("loops") or []
-    if (topo.get(worker) or {}).get("state") != "live":
-        need.append(f"autonomous: {cfg['topology']} lists {worker} as live, so the deploy lane redeploys it on every merge")
+    seeds = set(((_load(root / cfg["seed_deploys"], {}) or {}).get("seeds") or []) if cfg.get("seed_deploys") else [])  # SEED-DEPLOY-1: the lane deploys these after the platform workers
+    if (topo.get(worker) or {}).get("state") != "live" and slug not in seeds:
+        need.append(f"autonomous: {cfg['topology']} lists {worker} as live (or {cfg.get('seed_deploys') or 'the seed deploy list'} names {slug}), so the deploy lane redeploys it on every merge")
     if not loops or any(l not in clocks for l in loops):
         need.append(f"autonomous: every loop is a clock in {cfg['clocks']} (missing: {', '.join(l for l in loops if l not in clocks) or 'none named'})")
     if slug not in prog:
