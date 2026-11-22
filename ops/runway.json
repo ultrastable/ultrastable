@@ -190,6 +190,12 @@
     "url": "https://ultrastable.io/health",
     "status": 200,
     "ok": true
+   },
+   {
+    "at": "2026-11-22T02:52:28Z",
+    "url": "https://ultrastable.io/health",
+    "status": 200,
+    "ok": true
    }
   ],
   "unlearn": [
@@ -360,6 +366,12 @@
     "url": "https://unlearn.ultrastable.org/health",
     "status": 200,
     "ok": true
+   },
+   {
+    "at": "2026-11-22T02:52:28Z",
+    "url": "https://unlearn.ultrastable.org/health",
+    "status": 200,
+    "ok": true
    }
   ],
   "intent-yield": [
@@ -503,6 +515,12 @@
    },
    {
     "at": "2026-11-22T02:42:31Z",
+    "url": "https://ultrastable.io/yield.json",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-22T02:52:28Z",
     "url": "https://ultrastable.io/yield.json",
     "status": 200,
     "ok": true
