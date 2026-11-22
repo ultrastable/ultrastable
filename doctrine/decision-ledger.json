@@ -4600,6 +4600,67 @@
    "title": "Unlearn research principles carried in code",
    "body": "Each principle in instances/unlearn/phases.json names a probe; phase 1 ships the help ladder, who-led measure and wide-walls measure; phase 3 principles (fade support, sandbox) wait for phase 3 gates.",
    "probe": "grep:tests/foundation/test_unlearn.py::test_principles_are_in_code"
+  },
+  {
+   "id": "decision-2026-11-22-cloudflare-alerts-reach-the-tick-cloudflare-alerts-closed",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "Cloudflare alerts reach the tick: cloudflare-alerts closed",
+   "body": "The webhook destination for /hook/cloudflare passed Cloudflare's delivery test on 2026-11-22 (after a 30 s wait for the new CF_ALERT_SECRET to take effect; the first attempt got 503). Policies: incident_alert, workers_observability_alert (status FIRING_FAILED, the API refuses an empty filter), billing_budget_alert at 10 USD (billing_usage_alert needs a product and limit), universal_ssl_event_type. POLICIES in cfalerts.js now match what the account accepted.",
+   "probe": "grep:seed/worker/src/cfalerts.js::billing_budget_alert"
+  },
+  {
+   "id": "decision-2026-11-22-flow-balance-1-seed-scripts-balance-py-is-the-one-balance-en",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "FLOW-BALANCE-1: seed/scripts/balance.py is the one balance engine",
+   "body": "foundation/balance.py now loads seed/scripts/balance.py (the yearsim pattern), so every seeded system runs the same balance; config falls back to autonomy/balance.json.",
+   "probe": "grep:foundation/balance.py::seed/scripts/balance.py",
+   "session": "session_0156nqDrazgRH7yMoAUMyYoy"
+  },
+  {
+   "id": "decision-2026-11-22-tenant-readings-1-spinoff-value-and-spend-readings-are-writt",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "TENANT-READINGS-1: spinoff value and spend readings are written from the spinoff ledger",
+   "body": "Every live spinoff read value and spend as unmeasured, so the second loop could never judge them. write_tenants now fills declared_metric/declared_target (latest decision value against portfolio.kill_below_value) and an upper-bound spend_vs_budget (account spend share / app budget_share), and keeps declared_target, which it used to drop. saydo now resolves paths under workers/ because ultrastable/workers is archived and core lives in workers/ here.",
+   "probe": "grep:foundation/ultrastability.py::def spinoff_readings",
+   "session": "session_0156nqDrazgRH7yMoAUMyYoy"
+  },
+  {
+   "id": "lesson-2026-11-21-claim-blind-merge-1-claim-values-main-bumps-no-longer-confli",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "CLAIM-BLIND-MERGE-1: claim values main bumps no longer conflict with prose rewrites",
+   "body": "PR 1786 conflicted three times because every deploy on main rewrote the deploy count next to lines the PR rewrote. scripts/resolve_generated.py (and the seed copy) now re-merges the three stages with claim values blanked; a clean merge is kept with main's values, a prose clash stays a conflict. Verified: tests/foundation/test_conflict_markers.py ClaimBlindMerge passes both cases.",
+   "probe": "grep:scripts/resolve_generated.py::CLAIM-BLIND-MERGE-1",
+   "session": "session_0156nqDuTKewT2SaKm63XEuw"
+  },
+  {
+   "id": "lesson-2026-11-22-handoff-deploys-dropped-r2-bindings",
+   "kind": "lesson",
+   "date": "2026-11-22",
+   "title": "Handoff deploys dropped R2 bindings",
+   "body": "The tick redeployed from merge 97ce763 at 01:01 without the AUDIT binding although doctrine/topology.json marks ultrastable-audit live: topologyBindings in seed/worker/src/handoff.js rendered d1, kv, ai, services, email, durable objects and vars but no r2. It now binds every live r2 store, with a test.",
+   "probe": "grep:seed/worker/src/handoff.js::r2_bucket"
+  },
+  {
+   "id": "lesson-2026-11-22-unstick-clean-1-unstick-starts-every-pr-from-a-clean-tree",
+   "kind": "lesson",
+   "date": "2026-11-22",
+   "title": "UNSTICK-CLEAN-1: unstick starts every PR from a clean tree",
+   "body": "In ciwatch run 44968652106 an aborted reconcile left README.md modified, so the next PR's merge stopped with 'Entry README.md not uptodate'. unstick_prs.sh now aborts, hard-resets and cleans before each PR; test_unstick_clean proves the tree ends clean.",
+   "probe": "grep:scripts/unstick_prs.sh::UNSTICK-CLEAN-1",
+   "session": "session_0156nqDrazgRH7yMoAUMyYoy"
+  },
+  {
+   "id": "lesson-2026-11-22-watchdog-lands-the-year-simulation-say-do-and-trajectory-led",
+   "kind": "lesson",
+   "date": "2026-11-22",
+   "title": "Watchdog lands the year-simulation, say-do and trajectory ledgers",
+   "body": "The runway step wrote ops/yearsim*, ops/saydo*, ops/trajectory* and their site data, but the watchdog Record step never added them, so each run lost its own history. It now adds whichever exist (Q-REDMAIN-revert-lane second half; revertRedMain was already live).",
+   "probe": "grep:.github/workflows/watchdog.yml::ops/yearsim.jsonl",
+   "session": "session_0156nqDrazgRH7yMoAUMyYoy"
   }
  ]
 }
