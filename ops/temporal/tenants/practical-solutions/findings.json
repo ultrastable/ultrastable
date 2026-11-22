@@ -7,15 +7,15 @@
    "area": "ledger",
    "advocate": "research-publisher",
    "severity": "watch",
-   "evidence": "42 commits in 3 days against a baseline of 2.6 a day (5.4x)",
+   "evidence": "42 commits in 3 days against a baseline of 3.8 a day (3.7x)",
    "prediction": "area ledger recent_rate returns below 3.0x baseline within 7 days",
    "files": [],
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-21T12:19:03Z",
-   "runs": 2,
-   "item": null,
+   "last_seen": "2026-11-22T14:30:59Z",
+   "runs": 3,
+   "item": "Q-TEMPORAL-efc9062f94",
    "reopened": 0
   },
   "f12a6c2fd8": {
@@ -25,7 +25,7 @@
    "area": "ledger",
    "advocate": "research-publisher",
    "severity": "watch",
-   "evidence": "ledger/synth-discovered.json edited 12 times in 3 days (outside generated and ledger paths)",
+   "evidence": "ledger/synth-discovered.json edited 11 times in 3 days (outside generated and ledger paths)",
    "prediction": "ledger/synth-discovered.json is edited at most 5 times in 3 days within 7 days",
    "files": [
     "ledger/synth-discovered.json"
@@ -33,9 +33,9 @@
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-21T12:19:03Z",
-   "runs": 2,
-   "item": null,
+   "last_seen": "2026-11-22T14:30:59Z",
+   "runs": 3,
+   "item": "Q-TEMPORAL-f12a6c2fd8",
    "reopened": 0
   },
   "6a29fbb59d": {
@@ -45,7 +45,7 @@
    "area": "ledger",
    "advocate": "research-publisher",
    "severity": "watch",
-   "evidence": "ledger/syntheses-verified.json edited 21 times in 3 days (outside generated and ledger paths)",
+   "evidence": "ledger/syntheses-verified.json edited 16 times in 3 days (outside generated and ledger paths)",
    "prediction": "ledger/syntheses-verified.json is edited at most 5 times in 3 days within 7 days",
    "files": [
     "ledger/syntheses-verified.json"
@@ -53,9 +53,9 @@
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-21T12:19:03Z",
-   "runs": 2,
-   "item": null,
+   "last_seen": "2026-11-22T14:30:59Z",
+   "runs": 3,
+   "item": "Q-TEMPORAL-6a29fbb59d",
    "reopened": 0
   },
   "73e9f6599f": {
@@ -65,7 +65,7 @@
    "area": "root",
    "advocate": "product-manager",
    "severity": "watch",
-   "evidence": "upstream.json edited 17 times in 3 days (outside generated and ledger paths)",
+   "evidence": "upstream.json edited 13 times in 3 days (outside generated and ledger paths)",
    "prediction": "upstream.json is edited at most 5 times in 3 days within 7 days",
    "files": [
     "upstream.json"
@@ -73,8 +73,8 @@
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-21T12:19:03Z",
-   "runs": 2,
+   "last_seen": "2026-11-22T14:30:59Z",
+   "runs": 3,
    "item": null,
    "reopened": 0
   },
@@ -85,7 +85,7 @@
    "area": "worker",
    "advocate": "operations",
    "severity": "watch",
-   "evidence": "worker/src/pages.js edited 12 times in 3 days (outside generated and ledger paths)",
+   "evidence": "worker/src/pages.js edited 13 times in 3 days (outside generated and ledger paths)",
    "prediction": "worker/src/pages.js is edited at most 5 times in 3 days within 7 days",
    "files": [
     "worker/src/pages.js"
@@ -93,8 +93,8 @@
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-21T12:19:03Z",
-   "runs": 2,
+   "last_seen": "2026-11-22T14:30:59Z",
+   "runs": 3,
    "item": null,
    "reopened": 0
   },
@@ -105,7 +105,7 @@
    "area": "worker",
    "advocate": "operations",
    "severity": "watch",
-   "evidence": "worker/src/site.js edited 11 times in 3 days (outside generated and ledger paths)",
+   "evidence": "worker/src/site.js edited 13 times in 3 days (outside generated and ledger paths)",
    "prediction": "worker/src/site.js is edited at most 5 times in 3 days within 7 days",
    "files": [
     "worker/src/site.js"
@@ -113,8 +113,8 @@
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-21T12:19:03Z",
-   "runs": 2,
+   "last_seen": "2026-11-22T14:30:59Z",
+   "runs": 3,
    "item": null,
    "reopened": 0
   },
@@ -125,7 +125,7 @@
    "area": "worker",
    "advocate": "operations",
    "severity": "watch",
-   "evidence": "worker/src/syntheses.gen.js edited 22 times in 3 days (outside generated and ledger paths)",
+   "evidence": "worker/src/syntheses.gen.js edited 16 times in 3 days (outside generated and ledger paths)",
    "prediction": "worker/src/syntheses.gen.js is edited at most 5 times in 3 days within 7 days",
    "files": [
     "worker/src/syntheses.gen.js"
@@ -133,8 +133,8 @@
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-21T12:19:03Z",
-   "runs": 2,
+   "last_seen": "2026-11-22T14:30:59Z",
+   "runs": 3,
    "item": null,
    "reopened": 0
   }

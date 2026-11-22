@@ -1,0 +1,12 @@
+{
+  "id": "Q-TEMPORAL-4f9b20023a",
+  "title": "Q-TEMPORAL-4f9b20023a: stopped loop: ledger:executor:pr-outcome",
+  "body": "**Owner:** operations\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -m foundation temporal --settled 4f9b20023a\n**Status:** open\n\nTemporal loop finding (stopped_loop) in foundation: pr-outcome: last event 16 h ago, it used to arrive every 1.6 h (10.0 intervals). Seen in 1 runs since 2026-11-22T14:31:06Z. Advocate: operations.\n\nRun the loop by hand, read why it stopped, fix the cause and make it fire again. `python3 -m foundation pathfinder --regress` lists the commits since it last worked.\n\nFiles: foundation/executor.py.\n\nPrediction: ledger:executor:pr-outcome records an event within 7 days.\n\nThis item closes when the finding no longer holds (`python3 -m foundation temporal --settled 4f9b20023a` recomputes it from the repository's own history).\n\nsize: M\n\n**Closing probe:** cmd:python3 -m foundation temporal --settled 4f9b20023a.",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "temporal"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}
