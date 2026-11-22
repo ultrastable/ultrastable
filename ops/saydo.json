@@ -1,5 +1,5 @@
 {
- "at": "2026-11-22T04:04:05Z",
+ "at": "2026-11-22T04:13:35Z",
  "gaps": 4,
  "match_share": 0.991,
  "sources": {
@@ -161,9 +161,9 @@
   ],
   "loops": [
    {
-    "detail": "0 of 42 second-order steps kept in 14 days",
+    "detail": "0 of 43 second-order steps kept in 14 days",
     "id": "second-loop-kept",
-    "judged": 42,
+    "judged": 43,
     "kept": 0,
     "ok": false
    }
