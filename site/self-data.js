@@ -727,6 +727,7 @@ export default {
   "spinoff",
   "strange-loop-hygiene",
   "temporal",
+  "tenant-repos",
   "tenant-sync",
   "terms-crosswalk",
   "thought",
@@ -1932,6 +1933,19 @@ export default {
     ]
    },
    {
+    "closing_probe": "grep:foundation/tenantrepos.py::def check",
+    "id": "tenant-repos",
+    "kind": "governance",
+    "owner": "operations",
+    "server_owner": "github-actions",
+    "sla": "1d",
+    "summary": "Every tenant app lives in its own repository (TENANT-REPO-1): a tenant registered as moving gets its repository created from its folder's history with vendored core files, and every moved tenant's worker is rebuilt from its repository's main whenever that main moves past the last deployed commit.",
+    "trigger": "daily workflow, every push to doctrine/tenant-repos.json, and dispatch",
+    "workflows": [
+     "tenant-repos"
+    ]
+   },
+   {
     "closing_probe": "grep:scripts/regen_generated.py::def run_all",
     "id": "regen-generated",
     "kind": "governance",
@@ -2384,6 +2398,12 @@ export default {
     "id": "temporal",
     "loops": [
      "temporal"
+    ]
+   },
+   {
+    "id": "tenant-repos",
+    "loops": [
+     "tenant-repos"
     ]
    },
    {

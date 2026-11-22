@@ -174,6 +174,7 @@ jobs:
           python3 -m foundation selfmodel --check
           python3 -m foundation cost --check
           python3 -m foundation loopowner --check
+          python3 -m foundation tenantrepos --check  # TENANT-REPO-1: tenant code lives in its own repository
           python3 -m foundation pointclick --check
           python3 -m foundation claimcode --check
           python3 -m foundation directive --lint HANDOFF.md docs/lessons/*.md

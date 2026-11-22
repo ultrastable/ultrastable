@@ -1,0 +1,30 @@
+{
+  "_doc": "TENANT-REPO-1 (Rowan, 2026-11-22: \"This is an app, a tenant, so it needs its own repo.\"): every tenant app lives in its own repository of the org; this repository keeps only its manifest (IDEA.md, instance.json, lifecycle.json, runway.json, README pointer). Read by foundation/tenantrepos.py (--check in checks) and by .github/workflows/tenant-repos.yml, which creates a missing repository from the tenant's folder with its history. The tenant's Worker is deployed by deploy-ultrastable, which builds it from the tenant repository named as `source` in doctrine/topology.json.",
+  "org": "ultrastable",
+  "tenants": {
+    "practical-solutions": {
+      "repo": "ultrastable/practical-solutions",
+      "state": "own-repo",
+      "why": "created as its own repository from the start"
+    },
+    "unlearn": {
+      "repo": "ultrastable/unlearn",
+      "state": "moving",
+      "source": "instances/unlearn",
+      "keep_in_core": [
+        "IDEA.md",
+        "instance.json",
+        "lifecycle.json",
+        "runway.json",
+        "README.md"
+      ],
+      "vendor": {
+        "doctrine/models.json": "vendor/ultrastable/models.json"
+      },
+      "worker": "ultrastable-unlearn",
+      "ai": true,
+      "visibility": "public",
+      "description": "Unlearn: popular beliefs and famous findings set against the evidence. A tenant system running on Ultrastable."
+    }
+  }
+}
