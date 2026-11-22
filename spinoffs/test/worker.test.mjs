@@ -4,6 +4,13 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import bundle from "../registry.js";
 import { handle, cleanDomain, runChecks } from "../worker.js";
+import { readFileSync } from "node:fs";
+
+// DEPTH-1 retired every shallow app from the live bundle; the serving mechanics are still tested against those apps as fixtures.
+const fixture = JSON.parse(readFileSync(new URL("./fixture-apps.json", import.meta.url), "utf8"));
+Object.assign(bundle.apps, fixture.apps);
+Object.assign(bundle.boards, fixture.boards);
+bundle.retired.splice(0, bundle.retired.length, "retired-fixture");
 
 const fakeFetch = async (url, o = {}) => {
   const u = String(url);

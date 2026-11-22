@@ -13,6 +13,7 @@ const MIGRATE = ['ALTER TABLE social_posted ADD COLUMN status TEXT', 'ALTER TABL
 
 const weekKey = d => { const t = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate())); const day = t.getUTCDay() || 7; t.setUTCDate(t.getUTCDate() + 4 - day); return t.getUTCFullYear() + '-' + Math.ceil(((t - Date.UTC(t.getUTCFullYear(), 0, 1)) / 864e5 + 1) / 7); };
 
+import { lintPost } from './postquality.js';
 export async function postMastodon(m, text, id, f) {
   const r = await f('https://' + m.meta.instance + '/api/v1/statuses', { method: 'POST', headers: { authorization: 'Bearer ' + m.access, 'content-type': 'application/json', 'idempotency-key': id }, body: JSON.stringify({ status: text, visibility: 'public' }) });
   if (!r.ok) throw new Error('mastodon HTTP ' + r.status);
@@ -204,6 +205,9 @@ export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), t
   const long = (p.texts && p.texts.linkedin) || p.long || p.text, short = (p.texts && p.texts.bluesky) || p.text;
   for (const ch of missing(p)) {
     const m = channels[ch], text = (p.texts && p.texts[ch]) || p.text;
+    // POST-QUALITY-1: a post that fails the gate is recorded as blocked with its reasons (a done state, so it is not re-picked) and never sent.
+    const bad = [text, ...(ch === 'buffer' || ch === 'relay' ? [p.long] : [])].filter(Boolean).flatMap((x, i) => lintPost(x, { limit: ch === 'linkedin' || i ? 3000 : 300, grade: p.grade }));
+    if (bad.length) { await rec(ch, 'quality: ' + bad.join('; '), 'blocked'); continue; }
     try {
       if (ch === 'buffer') {
         const failed = rows.filter(r => r.id === p.id && r.channel.startsWith('buffer:') && r.status === 'failed').map(r => r.channel.slice(7));

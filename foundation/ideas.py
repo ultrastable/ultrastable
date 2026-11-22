@@ -195,6 +195,49 @@ def benefit(root, cfg: dict, i: dict):
     return round(b["scale"] * region * i["need"] * use_factor(root, i["id"], cfg), 2)
 
 
+def depth(cfg: dict, i: dict) -> dict:
+    """DEPTH-1: which of the depth fields (thesis, corpus, loop, returns, horizon) an idea carries, and whether it clears the bar.
+    A shallow archetype (a lookup, a board, a template) never clears it: a cheap thrill has nowhere to go."""
+    d = cfg.get("depth") or {}
+    if not d:
+        return {"met": [], "missing": [], "ok": True}
+    met = [f for f in ("thesis", "corpus", "loop", "returns", "hook", "public_good") if len(str(i.get(f) or "").strip()) >= d["min_text"]]
+    if isinstance(i.get("horizon"), list) and len([h for h in i["horizon"] if str(h).strip()]) >= d["min_horizon"]:
+        met.append("horizon")
+    missing = [f for f in d["fields"] if f not in met]
+    shallow = i.get("archetype") in d["shallow_archetypes"]
+    text = " ".join(str(i.get(k) or "") for k in ("name", "tagline", "thesis", "corpus", "public_good")).lower()
+    commerce = [w for w in d.get("commerce_words", []) if w in text]
+    return {"met": met, "missing": missing, "shallow_archetype": shallow, "commerce": commerce, "ok": not missing and not shallow and not commerce}
+
+
+def shallow_live(root=REPO) -> list[str]:
+    """Live (not retired) spinoff apps whose idea fails DEPTH-1."""
+    cfg, root = load(root), Path(root)
+    by = {i["id"]: i for i in ideas(root)}
+    out = []
+    for p in sorted((root / "instances/spinoffs").glob("*/app.json")):
+        a = json.loads(p.read_text(encoding="utf-8"))
+        if a.get("status") != "retired" and not depth(cfg, by.get(a.get("idea") or p.parent.name, a))["ok"]:
+            out.append(p.parent.name)
+    return out
+
+
+def retire_shallow(root=REPO, apply=False, now=None) -> list[str]:
+    """Retire every live app under the DEPTH-1 bar: app.json status retired with the reason, a queue row, and the registry regenerated."""
+    root, t, gone = Path(root), _iso(_now(now)), shallow_live(root)
+    if apply and gone:
+        for s in gone:
+            p = root / "instances/spinoffs" / s / "app.json"
+            a = json.loads(p.read_text(encoding="utf-8"))
+            a.update({"status": "retired", "retired": t, "retired_why": "DEPTH-1: a single lookup or board with no thesis, growing corpus, loop or reason to return"})
+            p.write_text(json.dumps(a, indent=1) + "\n", encoding="utf-8")
+            _append(root / load(root)["queue"], {"at": t, "event": "retire", "slug": s, "rule": "DEPTH-1"})
+        from . import spinoff
+        spinoff.rebuild_bundle(root, now)
+    return gone
+
+
 def ideas(root=REPO) -> list[dict]:
     """The bank plus every brainstormed idea in the queue ledger, deduplicated by id (the latest row wins)."""
     cfg, root = load(root), Path(root)
@@ -238,11 +281,12 @@ def rank(root=REPO, now=None) -> list[dict]:
         share = max([cost[k] / r["limit"] for k, r in head["resources"].items() if k in cost] or [0])
         ben = benefit(root, cfg, i)
         value = (ben * feas) if ben is not None else i.get("reach", 1) * i.get("impact", 1) * feas * (cfg["weights"]["showcase_bonus"] if i.get("showcase") else 1.0)
-        out.append({**i, "benefit": ben, "feasibility": feas, "implemented": bool(arch.get("implemented")), "cost": cost, "cost_share": round(share, 4),
+        dep = depth(cfg, i)
+        out.append({**i, "depth": dep, "benefit": ben, "feasibility": feas, "implemented": bool(arch.get("implemented")), "cost": cost, "cost_share": round(share, 4),
                     "score": round(value / (1 + cfg["weights"]["cost_penalty"] * share), 2)})
     out.sort(key=lambda x: (-x["score"], x["id"]))
     for i in out:
-        ok = all(i["cost"][k] <= left.get(k, 0) for k in RES) and i["score"] >= cfg["min_score"]
+        ok = all(i["cost"][k] <= left.get(k, 0) for k in RES) and i["score"] >= cfg["min_score"] and i["depth"]["ok"]
         i["fits"] = ok
         if ok:
             for k in RES:
@@ -361,7 +405,16 @@ def check(root=REPO) -> list[str]:
     if len(ids) != len(set(ids)):
         bad.append("duplicate idea ids")
     scfg = spinoff.load(root)
+    for s in shallow_live(root):
+        bad.append(f"{s}: live app under the depth bar; run `python3 -m foundation ideas --retire-shallow --apply` (DEPTH-1)")
     for i in ideas(root):
+        if i.get("kind") == "seed":  # DEPTH-1 seeds go through the seed pipeline (instances/<id>/), not a spinoff archetype
+            dep = depth(cfg, i)
+            if not dep["ok"]:
+                bad.append(f"{i['id']}: seed idea misses depth fields {dep['missing']} (DEPTH-1)")
+            if not (root / "instances" / i["id"] / "IDEA.md").is_file():
+                bad.append(f"{i['id']}: seed idea has no instances/{i['id']}/IDEA.md, so the seed pipeline never builds it (DEPTH-1)")
+            continue
         if i.get("archetype") not in scfg["archetypes"]:
             bad.append(f"{i['id']}: unknown archetype")
         g = spinoff.gate({"slug": i["id"], "archetype": i.get("archetype", ""), "why": i["tagline"], "domains": [], "need_ids": [], "collects": [], "input": scfg["archetypes"].get(i.get("archetype", ""), {}).get("input", "none")}, scfg)
@@ -396,6 +449,9 @@ def main(argv=None) -> int:
     if "--headroom" in a:
         r = refresh_headroom(apply=apply)
         print(json.dumps({k: r[k] for k in r if k != "headroom"} | {"level": r["headroom"]["level"], "stale": r["headroom"]["stale"]}))
+        return 0
+    if "--retire-shallow" in a:
+        print(json.dumps({"retired" if apply else "would_retire": retire_shallow(apply=apply)}))
         return 0
     if "--brainstorm" in a:
         print(json.dumps(brainstorm(apply=apply)))

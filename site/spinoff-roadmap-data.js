@@ -27,77 +27,12 @@ export default {
   }
  },
  "level": "ok",
- "live": [
-  {
-   "archetype": "live-lookup",
-   "launched": "2026-11-19T16:00:14Z",
-   "name": "Access Check",
-   "slug": "access-check",
-   "tagline": "Name any website, get a plain read of basic accessibility signals on its home page: language, alt text, labels, zoom.",
-   "url": "https://access-check.ultrastable.app"
-  },
-  {
-   "archetype": "live-lookup",
-   "launched": "2026-11-18T15:56:55Z",
-   "name": "Air Quality Check",
-   "slug": "air-quality",
-   "tagline": "Type a city anywhere, see its air quality right now and the current particle levels, from open forecast data.",
-   "url": "https://air-quality.ultrastable.app"
-  },
-  {
-   "archetype": "domain-check",
-   "launched": "2026-11-17T15:45:58Z",
-   "name": "Blindspot Check",
-   "slug": "blindspot",
-   "tagline": "What does your website not tell people? Type a domain, see the gaps in a minute.",
-   "url": "https://blindspot.ultrastable.app"
-  },
-  {
-   "archetype": "live-lookup",
-   "launched": "2026-11-19T16:00:14Z",
-   "name": "Country Snapshot",
-   "slug": "country-snapshot",
-   "tagline": "Type a country code, see its latest World Bank figures for electricity, drinking water, internet use and literacy.",
-   "url": "https://country-snapshot.ultrastable.app"
-  },
-  {
-   "archetype": "status-board",
-   "launched": "2026-11-19T16:00:14Z",
-   "name": "Free-Tier Meter",
-   "slug": "free-tier-meter",
-   "tagline": "How much of Cloudflare's free plan does a whole autonomous system use today? Live, from the loop that spends it.",
-   "url": "https://free-tier-meter.ultrastable.app"
-  },
-  {
-   "archetype": "status-board",
-   "launched": "2026-11-21T14:55:00Z",
-   "name": "Loop Ledger",
-   "slug": "loop-ledger",
-   "tagline": "How many closed loops keep this system running, and which ones are on a clock.",
-   "url": "https://loop-ledger.ultrastable.app"
-  },
-  {
-   "archetype": "status-board",
-   "launched": "2026-11-17T21:21:28Z",
-   "name": "Ultrastable by the Numbers",
-   "slug": "numbers-board",
-   "tagline": "Loops running, edges wired, stories passing and what the system does not know yet, straight from its own ledger.",
-   "url": "https://numbers-board.ultrastable.app"
-  },
-  {
-   "archetype": "status-board",
-   "launched": "2026-11-17T21:21:28Z",
-   "name": "Spinoff Portfolio",
-   "slug": "portfolio-board",
-   "tagline": "The apps Ultrastable launched on its own, what they cost and how many it retired.",
-   "url": "https://portfolio-board.ultrastable.app"
-  }
- ],
+ "live": [],
  "queue": [
   {
    "archetype": "status-board",
    "cost_share": 0.015,
-   "fits": true,
+   "fits": false,
    "id": "what-changed",
    "implemented": true,
    "kind": "spinoff",
@@ -107,7 +42,7 @@ export default {
   {
    "archetype": "live-feed",
    "cost_share": 0.03,
-   "fits": true,
+   "fits": false,
    "id": "quake-watch",
    "implemented": true,
    "kind": "spinoff",
@@ -117,7 +52,7 @@ export default {
   {
    "archetype": "status-board",
    "cost_share": 0.008,
-   "fits": true,
+   "fits": false,
    "id": "board-branchsweep-ledger",
    "implemented": true,
    "kind": "spinoff",
@@ -127,7 +62,7 @@ export default {
   {
    "archetype": "status-board",
    "cost_share": 0.008,
-   "fits": true,
+   "fits": false,
    "id": "board-checks-session",
    "implemented": true,
    "kind": "spinoff",
@@ -137,7 +72,7 @@ export default {
   {
    "archetype": "status-board",
    "cost_share": 0.008,
-   "fits": true,
+   "fits": false,
    "id": "board-ciwatch",
    "implemented": true,
    "kind": "spinoff",
@@ -147,7 +82,7 @@ export default {
   {
    "archetype": "status-board",
    "cost_share": 0.008,
-   "fits": true,
+   "fits": false,
    "id": "board-deploys",
    "implemented": true,
    "kind": "spinoff",
@@ -157,7 +92,7 @@ export default {
   {
    "archetype": "status-board",
    "cost_share": 0.008,
-   "fits": true,
+   "fits": false,
    "id": "board-executor-log",
    "implemented": true,
    "kind": "spinoff",
@@ -167,7 +102,7 @@ export default {
   {
    "archetype": "status-board",
    "cost_share": 0.008,
-   "fits": true,
+   "fits": false,
    "id": "board-improvements",
    "implemented": true,
    "kind": "spinoff",
@@ -177,7 +112,7 @@ export default {
   {
    "archetype": "status-board",
    "cost_share": 0.008,
-   "fits": true,
+   "fits": false,
    "id": "board-issue-lifecycle",
    "implemented": true,
    "kind": "spinoff",
@@ -187,7 +122,7 @@ export default {
   {
    "archetype": "status-board",
    "cost_share": 0.008,
-   "fits": true,
+   "fits": false,
    "id": "board-metric-loop",
    "implemented": true,
    "kind": "spinoff",
@@ -197,7 +132,7 @@ export default {
   {
    "archetype": "status-board",
    "cost_share": 0.008,
-   "fits": true,
+   "fits": false,
    "id": "board-resilience",
    "implemented": true,
    "kind": "spinoff",
@@ -207,7 +142,7 @@ export default {
   {
    "archetype": "status-board",
    "cost_share": 0.008,
-   "fits": true,
+   "fits": false,
    "id": "board-ultrastability",
    "implemented": true,
    "kind": "spinoff",
@@ -215,55 +150,55 @@ export default {
    "score": 8.33
   },
   {
-   "archetype": "template-generator",
-   "cost_share": 0.02,
-   "fits": false,
-   "id": "email-auth-writer",
+   "archetype": null,
+   "cost_share": 0.0,
+   "fits": true,
+   "id": "base-rates",
    "implemented": false,
-   "kind": "spinoff",
-   "name": "SPF and DMARC Writer",
-   "score": 4.0
+   "kind": "seed",
+   "name": "Base Rates",
+   "score": 7.5
   },
   {
-   "archetype": "template-generator",
-   "cost_share": 0.02,
-   "fits": false,
-   "id": "security-txt-writer",
+   "archetype": null,
+   "cost_share": 0.0,
+   "fits": true,
+   "id": "did-it-work",
    "implemented": false,
-   "kind": "spinoff",
-   "name": "security.txt Writer",
-   "score": 4.0
+   "kind": "seed",
+   "name": "Did It Work?",
+   "score": 7.5
   },
   {
-   "archetype": "template-generator",
-   "cost_share": 0.025,
-   "fits": false,
-   "id": "privacy-notice-draft",
+   "archetype": null,
+   "cost_share": 0.0,
+   "fits": true,
+   "id": "open-questions",
    "implemented": false,
-   "kind": "spinoff",
-   "name": "Plain Privacy Page Draft",
-   "score": 3.6
+   "kind": "seed",
+   "name": "Open Questions",
+   "score": 6.0
   }
  ],
  "scope": [
   {
    "id": "Q-SPIN-SCOPE-CLAIMS-LIVE-DAILY",
-   "status": "open",
+   "status": "closed",
    "title": "Check every live app against its own claims once a day"
   },
   {
    "id": "Q-SPIN-SCOPE-COLLECT-CADENCE",
-   "status": "open",
+   "status": "closed",
    "title": "Collect every live app's metrics twice a day instead of once"
   },
   {
    "id": "Q-SPIN-SCOPE-IMPLEMENT-TEMPLATE-GENERATOR",
-   "status": "open",
+   "status": "closed",
    "title": "Implement the template-generator archetype in the spinoff Worker so the queued writers (security.txt, SPF/DMARC, privacy page) can launch"
   },
   {
    "id": "Q-SPIN-SCOPE-RECHECK-BOARDS",
-   "status": "open",
+   "status": "closed",
    "title": "Refresh every status board's facts on each loop run, not only on launch"
   },
   {

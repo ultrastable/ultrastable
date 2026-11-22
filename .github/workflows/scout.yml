@@ -5,7 +5,7 @@ name: scout
 on:
   schedule: [{cron: "23 6 * * 2"}]
   workflow_dispatch: {}
-permissions: {id-token: write, contents: write, actions: write}
+permissions: {id-token: write, contents: write, actions: write, models: read}
 concurrency: {group: scout, cancel-in-progress: false}
 jobs:
   scout:
@@ -27,10 +27,13 @@ jobs:
           python3 -m foundation research --refresh-prs
           python3 -m foundation research --intake --apply
           python3 -m foundation research --run --apply
+      - name: Idea bank (WORLDWIDE-1 probes every data source; GROW-1 adds one new idea through every gate)
+        env: {GITHUB_TOKEN: "${{ github.token }}"}
+        run: python3 scripts/build_idea_bank.py --live --grow
       - name: Commit findings, state and the pass log
         run: |
           git config user.name "ultrastable-scout"; git config user.email "actions@users.noreply.github.com"
           python3 -m foundation balance --gate --apply  # FLOW-BALANCE-1: the one filing gate before any item lands
           if [ -f ops/balance-held.jsonl ]; then git add ops/balance-held.jsonl; fi
-          git add docs/issues ops/scout ops/rnd ops/research research/papers site/research-data.js
+          git add doctrine/idea-bank.json site/idea-bank-data.js docs/issues ops/scout ops/rnd ops/research research/papers site/research-data.js
           git diff --cached --quiet || { git commit -m "scout and rnd: weekly pass, findings filed, profiles refreshed, sources re-weighted"; python3 tools/push_main.py; }

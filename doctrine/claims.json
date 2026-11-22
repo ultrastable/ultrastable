@@ -2326,6 +2326,19 @@
    "bound_by": "cited"
   },
   {
+   "id": "cited-be4db6262d",
+   "surface": "agents/AGENTS.md",
+   "text": "- **Every system gives people a reason to come back (STICKY-1, Rowan 2026-11-22).** \"Every ultra-stable app, every tenant, every platform",
+   "probe": [
+    "file:seed/worker/src/vendor/core/stickiness.js",
+    "file:seed/worker/src/stickiness.js",
+    "file:instances/ultrastable/progress.json",
+    "file:seed/worker/test/stickiness.test.js",
+    "file:workers/core/stickiness/stickiness.test.js"
+   ],
+   "bound_by": "cited"
+  },
+  {
    "id": "cited-95432168bf",
    "surface": "agents/AGENTS.md",
    "text": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
@@ -3152,6 +3165,20 @@
    ],
    "bound_by": "mirror",
    "of": "cited-158bd3c207"
+  },
+  {
+   "id": "mirror-9111f7c2d8",
+   "surface": "seed/agents/AGENTS.md",
+   "text": "- **Every system gives people a reason to come back (STICKY-1, Rowan 2026-11-22).** \"Every ultra-stable app, every tenant, every platform",
+   "probe": [
+    "file:seed/worker/src/vendor/core/stickiness.js",
+    "file:seed/worker/src/stickiness.js",
+    "file:instances/ultrastable/progress.json",
+    "file:seed/worker/test/stickiness.test.js",
+    "file:workers/core/stickiness/stickiness.test.js"
+   ],
+   "bound_by": "mirror",
+   "of": "cited-be4db6262d"
   },
   {
    "id": "mirror-be5af6748b",

@@ -4539,8 +4539,9 @@
    "kind": "decision",
    "date": "2026-11-21",
    "title": "Intent Yield enters SEED-LIFECYCLE-1",
-   "body": "instance.json and lifecycle.json added (served by ultrastable-site, verify https://ultrastable.io/yield.json for INTENT-YIELD-1); progress row healed by intent-yield.yml and executor.yml. Stage is deployed; the watchdog's seedlife verify takes it to live. Q-SEED-intent-yield closes on seedlife --probe once the core-inherited survival classes (cost-alerts, dependencies, runtime, backups, improvement) close platform-wide.",
-   "probe": "file:instances/intent-yield/lifecycle.json"
+   "body": "instance.json and lifecycle.json added (served by ultrastable-site, verify https://ultrastable.io/yield.json for INTENT-YIELD-1); progress row healed by intent-yield.yml and executor.yml. Stage is deployed; the watchdog's seedlife verify takes it to live. Q-SEED-intent-yield closes on seedlife --probe once the core-inherited survival classes (cost-alerts, dependencies, runtime, backups, improvement) close platform-wide. Superseded 2026-11-22: Intent Yield is a core feature, not a seed; the manifest and lifecycle file were removed and this row now points at the design doc.",
+   "probe": "file:tests/test_intent_yield.py",
+   "session": "session_0156nqDtFn6P2DrsR9UbyzkV"
   },
   {
    "id": "decision-2026-11-21-seeds-launch-through-the-oidc-route-no-foundation-command-to",
@@ -4693,6 +4694,76 @@
    "title": "The trajectory page goes stale whenever the watchdog commits its ledger",
    "body": "The watchdog commits ops/trajectory.json but not site/trajectory-data.js, so test_trajectory went red on main and on every PR. REGEN-1 now runs trajectory --page, which renders the page from the committed ledger before the tests.",
    "probe": "grep:scripts/regen_generated.sh::trajectory --page"
+  },
+  {
+   "id": "decision-2026-11-22-idea-bank-1-front-door-ideas",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "IDEA-BANK-1 front-door ideas",
+   "body": "Front-door idea chips come from doctrine/idea-bank.json (19 ideas, 10 domains); scripts/build_idea_bank.py boots each through seed read/qualify/instrument before it can be shown; suggest.js spreads unrelated chips across domains.",
+   "probe": "file:doctrine/idea-bank.json"
+  },
+  {
+   "id": "decision-2026-11-22-intent-yield-is-a-core-feature-not-a-seed",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "Intent Yield is a core feature, not a seed",
+   "body": "Owner (2026-11-22): merge it completely and do not count it as a separate app or tenant. The seed manifest, lifecycle file, progress row and Q-SEED item are removed; the yield engine, /yield page and daily loop run under the core's own checks, design in docs/intent-yield-design.md.",
+   "probe": "file:tests/test_intent_yield.py",
+   "session": "session_0156nqDtFn6P2DrsR9UbyzkV"
+  },
+  {
+   "id": "decision-2026-11-22-post-quality-1-social-posts-are-gated-before-send",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "POST-QUALITY-1: social posts are gated before send",
+   "body": "Core publisher blocks truncated, templated, multi-link or evidence-overclaiming posts. Authors fix text, never the gate. Open: engagement feedback loop, graceful relay disclosure, lift tenant voice into core.",
+   "probe": "file:seed/worker/src/postquality.js",
+   "session": "session_0156nqDvwemVbNQXnbPtTWSr"
+  },
+  {
+   "id": "decision-2026-11-22-unlearn-becomes-an-evidence-encyclopedia-of-beliefs-to-unlea",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "Unlearn becomes an evidence encyclopedia of beliefs to unlearn",
+   "body": "Rowan found the coaching-only Unlearn too unstructured. The tenant is now a clickable, encyclopedic site of popular beliefs the evidence contradicts, modelled on Practical Solutions, with each entry in a guided debunking order and an hourly evidence loop (Crossref DOIs, Europe PMC new reviews, freshness, review queue). The coaching tool stays at /coach.",
+   "probe": "grep:instances/unlearn/worker/entries.js::export const FORMAT"
+  },
+  {
+   "id": "decision-2026-11-22-unlearn-improves-itself-grounded-review-labels-automatic-re-",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "Unlearn improves itself: grounded review labels, automatic re-grading, Lab discovery, wording trials",
+   "body": "Rowan asked to grow Unlearn and make it run and improve automatically. Decision: a model may only label or re-word, never add facts; every label or draft must quote a sentence present in the abstract it read, re-words may add no number or name, entries' cited sources are never changed by a model, drafts live on /lab and are never published as entries, and wording trials need 40 answers per arm and a two-proportion z of 1.96 to replace the original.",
+   "probe": "grep:instances/unlearn/worker/lab.js::export function grounded",
+   "session": "session_0156nqDvj2EuthJ3xYxicfND"
+  },
+  {
+   "id": "decision-2026-11-22-unlearn-tells-famous-finding-retold-stories-by-itself-and-gi",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "Unlearn tells famous-finding-retold stories by itself and gives readers a reason to come back daily",
+   "body": "Rowan wants far more narrative-vs-later-evidence entries, automated, and a sticky site that runs a year unattended. Decision: a retold topic with then/now timelines graded honestly; a second daily discovery search for replications and re-analyses; drafts reach their own page only after reader votes and only with an index citation, always labelled a draft from one paper; a myth of the day cycle, an Atom feed and a browser-only streak bring readers back without accounts or cookies.",
+   "probe": "grep:instances/unlearn/worker/lab.js::export const RETOLD_QUERY",
+   "session": "session_0156nqDvj2EuthJ3xYxicfND"
+  },
+  {
+   "id": "decision-2026-11-22-depth-1-front-door-ideas",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "DEPTH-1 front-door ideas",
+   "body": "Front-door ideas must name a corpus, a method and a reason to return (Unlearn / Practical Solutions depth); one-trick ideas such as a single air-quality feed are refused by scripts/build_idea_bank.py.",
+   "probe": "grep:scripts/build_idea_bank.py::DEPTH-1",
+   "session": "session_0156nqDriyeVtn3erZ59DmMT"
+  },
+  {
+   "id": "decision-2026-11-22-worldwide-1-and-grow-1-idea-bank",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "WORLDWIDE-1 and GROW-1 idea bank",
+   "body": "Front-door ideas list worldwide open data sources probed weekly (dead sources retire the idea); a weekly scout step asks the model route for one new idea admitted through every gate and rotates the oldest out beyond max_active.",
+   "probe": "grep:scripts/build_idea_bank.py::GROW-1",
+   "session": "session_0156nqDriyeVtn3erZ59DmMT"
   }
  ]
 }
