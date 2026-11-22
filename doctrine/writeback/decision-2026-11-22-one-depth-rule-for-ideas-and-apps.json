@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-22-one-depth-rule-for-ideas-and-apps",
+  "kind": "decision",
+  "date": "2026-11-22",
+  "title": "One depth rule for ideas and apps",
+  "body": "build_idea_bank.py calls foundation/ideas.py depth() so front-door ideas and self-chosen apps share DEPTH-1 (thesis, corpus, loop, returns, hook, public_good, horizon).",
+  "probe": "grep:scripts/build_idea_bank.py::_ideas.depth",
+  "session": "session_0156nqDriyeVtn3erZ59DmMT"
+ },
+ "kind": "decision",
+ "title": "One depth rule for ideas and apps",
+ "session": "session_0156nqDriyeVtn3erZ59DmMT"
+}
