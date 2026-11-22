@@ -64,3 +64,17 @@ class TenantRepos(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TenantRepoProbe(unittest.TestCase):
+    """The gate tenant-repo-unlearn closes on `tenantrepos --probe unlearn`: it passes only when the tenant's own repository has a main."""
+    def test_probe_follows_the_tenant_repository_head(self):
+        real = tr._gh_head
+        try:
+            tr._gh_head = lambda repo: ""
+            self.assertEqual(tr.main(["--probe", "unlearn"]), 1)
+            tr._gh_head = lambda repo: "a" * 40
+            self.assertEqual(tr.main(["--probe", "unlearn"]), 0)
+            self.assertEqual(tr.main(["--probe", "no-such-tenant"]), 1)
+        finally:
+            tr._gh_head = real
