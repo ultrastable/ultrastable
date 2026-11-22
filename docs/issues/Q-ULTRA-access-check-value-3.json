@@ -1,0 +1,11 @@
+{
+  "id": "Q-ULTRA-access-check-value-3",
+  "title": "Q-ULTRA-access-check-value-3: The tenant's own declared value metric out of bounds: retire: the measured value does not justify the cost (access-check; verb retire)",
+  "body": "**Owner:** executor\n**Trigger:** essential variable `access-check:value` out of bounds (reading 0.0; limits 1.0 to None)\n**Done check:** cmd:python3 -m foundation ultrastability --check\n**Status:** open\n\nULTRASTABILITY-1 second-order step: retire: the measured value does not justify the cost (access-check; verb retire). A system with no measure that can be wrong cannot be improved. Read as the tenant's declared metric divided by its own declared target (ops/tenants/<slug>.json declared_metric, declared_target); 1.0 is on target.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation ultrastability --tick` reads `value` inside its bounds.\n",
+  "labels": [
+    "p1",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Ultrastability"
+}
