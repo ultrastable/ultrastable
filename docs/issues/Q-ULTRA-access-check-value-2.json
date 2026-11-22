@@ -1,7 +1,7 @@
 {
   "id": "Q-ULTRA-access-check-value-2",
   "title": "Q-ULTRA-access-check-value-2: The tenant's own declared value metric out of bounds: iterate: change what the app does (access-check; verb iterate)",
-  "body": "**Owner:** executor\n**Trigger:** essential variable `access-check:value` out of bounds (reading 0.0; limits 1.0 to None)\n**Done check:** cmd:python3 -m foundation ultrastability --check\n**Status:** open\n\nULTRASTABILITY-1 second-order step: iterate: change what the app does (access-check; verb iterate). A system with no measure that can be wrong cannot be improved. Read as the tenant's declared metric divided by its own declared target (ops/tenants/<slug>.json declared_metric, declared_target); 1.0 is on target.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation ultrastability --tick` reads `value` inside its bounds.\n",
+  "body": "**Owner:** executor\n**Trigger:** essential variable `access-check:value` out of bounds (reading 0.0; limits 1.0 to None)\n**Done check:** cmd:python3 -m foundation ultrastability --check\n**Status:** open\n\nULTRASTABILITY-1 second-order step: iterate: change what the app does (access-check; verb iterate). A system with no measure that can be wrong cannot be improved. Read as the tenant's declared metric divided by its own declared target (ops/tenants/<slug>.json declared_metric, declared_target); 1.0 is on target.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation ultrastability --tick` reads `value` inside its bounds.\n\n\n**Vacuous:** 2026-11-22T15:01:22Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n",
   "labels": [
     "p1",
     "agent-ready"
