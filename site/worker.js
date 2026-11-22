@@ -9,7 +9,7 @@ import SH from "./stakeholders.js"; // STAKEHOLDERS-1
 import BRIEF from "./platformbrief.js";
 import IV from "./interview.js";
 import { liveResponse, ignitionResponse } from "./live.js";
-import { feedResponse } from "./feed.js"; // REACH-1
+import { feedResponse, jsonFeedResponse } from "./feed.js"; // REACH-1, STICKY-1
 import { demoResponse } from "./demo.js"; // DEMO-DASHBOARD-1
 import { caseResponse } from "./casestudy.js"; // CASE-STUDY-1
 import { examplesSection } from "./examples.js"; // EXAMPLE-SYSTEMS-1
@@ -1077,6 +1077,7 @@ const handler = {
     if (u.pathname === "/agents/scoreboard") return Response.redirect("https://" + CANON + "/api/v1/agents/scoreboard", 302);  // AGENT-SCOREBOARD-1: agent_scoreboard per agent and harness (site/controlplane.js agentScoreboard)
     { const cp = await controlPlane(request, env, ctx); if (cp) return cp; } // CONTROL-PLANE-1: /api/v1
     if (u.pathname === "/feed.xml") return feedResponse(CANON); // REACH-1
+    if (u.pathname === "/feed.json") return jsonFeedResponse(CANON); // STICKY-1
     if (u.pathname === "/api/reach") { const v = await jget(env, "promote:reach"); return Response.json(v || { rows: null, error: "not measured yet" }, { status: v ? 200 : 503, headers: { "cache-control": "public, max-age=600", "access-control-allow-origin": "*" } }); } // ATTENTION-1: aggregate counts only
     { const pr = await progressRoutes(u, env, shell, HTML, CANON); if (pr) return pr; } // PROGRESS-1
     { const ys = yearRoutes(u, shell, HTML); if (ys) return ys; } // YEAR-SIM-1: /year, /year.json
