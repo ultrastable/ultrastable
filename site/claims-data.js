@@ -1849,15 +1849,6 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
-   "claim": "- **Every system builds and holds a returning audience (AUDIENCE-1, Rowan 2026-11-22).** \"Every ultra-stable app, every tenant, every",
-   "detail": "",
-   "how": "file:seed/scripts/audience.py + file:doctrine/audience.json + file:CREDITS.md + file:foundation/audience.py + file:seed/analytics/analytics.js + file:tests/foundation/test_audience.py",
-   "id": "cited-8cec499d82",
-   "kind": "claim",
-   "pass": true,
-   "surface": "agents/AGENTS.md"
-  },
-  {
    "claim": "- **Issue inflow never exceeds closures; every issue inside its SLA (FLOW-BALANCE-1, Rowan 2026-11-21).** \"All UltraStable issues must be",
    "detail": "",
    "how": "file:seed/worker/src/flowbalance.js + file:doctrine/balance.json + file:tests/foundation/test_balance.py + file:foundation/balance.py",
@@ -1871,6 +1862,15 @@ export default {
    "detail": "",
    "how": "file:doctrine/yearsim.json + file:foundation/yearsim.py + file:doctrine/ultrastability.json + file:foundation/saydo.py + file:doctrine/detectors.json + file:seed/scripts/yearsim.py",
    "id": "cited-158bd3c207",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Every system gives people a reason to come back (STICKY-1, Rowan 2026-11-22).** \"Every ultra-stable app, every tenant, every platform",
+   "detail": "",
+   "how": "file:seed/worker/src/vendor/core/stickiness.js + file:seed/worker/src/stickiness.js + file:instances/ultrastable/progress.json + file:seed/worker/test/stickiness.test.js + file:workers/core/stickiness/stickiness.test.js",
+   "id": "cited-be4db6262d",
    "kind": "claim",
    "pass": true,
    "surface": "agents/AGENTS.md"
@@ -2488,19 +2488,19 @@ export default {
    "surface": "seed/agents/AGENTS.md"
   },
   {
-   "claim": "- **Every system builds and holds a returning audience (AUDIENCE-1, Rowan 2026-11-22).** \"Every ultra-stable app, every tenant, every",
+   "claim": "- **A year unattended is simulated, not asserted; the system does what it says (YEAR-SIM-1, SAY-DO-1, Rowan 2026-11-21).** \"Have you really",
    "detail": "",
-   "how": "file:seed/scripts/audience.py + file:doctrine/audience.json + file:CREDITS.md + file:foundation/audience.py + file:seed/analytics/analytics.js + file:tests/foundation/test_audience.py",
-   "id": "mirror-4d677d8b58",
+   "how": "file:doctrine/yearsim.json + file:foundation/yearsim.py + file:doctrine/ultrastability.json + file:foundation/saydo.py + file:doctrine/detectors.json + file:seed/scripts/yearsim.py",
+   "id": "mirror-c8f6471ad1",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
   },
   {
-   "claim": "- **A year unattended is simulated, not asserted; the system does what it says (YEAR-SIM-1, SAY-DO-1, Rowan 2026-11-21).** \"Have you really",
+   "claim": "- **Every system gives people a reason to come back (STICKY-1, Rowan 2026-11-22).** \"Every ultra-stable app, every tenant, every platform",
    "detail": "",
-   "how": "file:doctrine/yearsim.json + file:foundation/yearsim.py + file:doctrine/ultrastability.json + file:foundation/saydo.py + file:doctrine/detectors.json + file:seed/scripts/yearsim.py",
-   "id": "mirror-c8f6471ad1",
+   "how": "file:seed/worker/src/vendor/core/stickiness.js + file:seed/worker/src/stickiness.js + file:instances/ultrastable/progress.json + file:seed/worker/test/stickiness.test.js + file:workers/core/stickiness/stickiness.test.js",
+   "id": "mirror-9111f7c2d8",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3145,7 +3145,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 64 Python and 465 Worker tests",
+   "claim": "seed-tests: 62 Python and 473 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3154,7 +3154,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 465 Worker tests",
+   "claim": "seed-worker-tests: 473 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3190,7 +3190,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 873",
+   "claim": "live-deploys: 882",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",
