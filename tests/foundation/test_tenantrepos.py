@@ -2,17 +2,20 @@
 """TENANT-REPO-1: every tenant app lives in its own repository; the core keeps the manifest and builds the worker from the tenant repository."""
 import json
 import shutil
-import tempfile
 import unittest
 from pathlib import Path
 
 from foundation import tenantrepos as tr
 
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import _repo  # noqa: E402
+
 ROOT = Path(__file__).resolve().parents[2]
 
 
 def scratch(reg, topo, dirs=()):
-    d = Path(tempfile.mkdtemp())
+    d = _repo.scratch()
     (d / "doctrine").mkdir()
     (d / "doctrine/tenant-repos.json").write_text(json.dumps(reg))
     (d / "doctrine/topology.json").write_text(json.dumps(topo))
@@ -39,7 +42,7 @@ class TenantRepos(unittest.TestCase):
         self.assertEqual(tr.check(d2), [])
 
     def test_prepare_vendors_core_files_and_rewrites_imports(self):
-        d = Path(tempfile.mkdtemp())
+        d = _repo.scratch()
         shutil.copytree(ROOT / "instances/unlearn/worker", d / "worker")
         out = tr.prepare(d, "unlearn", ROOT)
         self.assertTrue((d / "vendor/ultrastable/models.json").exists())
