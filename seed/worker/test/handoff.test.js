@@ -212,6 +212,11 @@ test('topologyBindings keeps a Durable Object namespace so a handoff upload neve
   assert.deepEqual(topologyBindings(topo, 'ultrastable-tenants').bindings, [{ type: 'durable_object_namespace', name: 'TENANT', class_name: 'TenantDO' }, { type: 'plain_text', name: 'A', text: '1' }]);
 });
 
+test('topologyBindings binds a live R2 bucket and skips one not yet live', () => {
+  const topo = { workers: [{ id: 'ultrastable-tick', state: 'live', bindings: { r2: { AUDIT: 'ultrastable-audit', LATER: 'not-made' } } }], stores: { r2: [{ name: 'ultrastable-audit', state: 'live' }, { name: 'not-made', state: 'planned' }] } };
+  assert.deepEqual(topologyBindings(topo, 'ultrastable-tick').bindings, [{ type: 'r2_bucket', name: 'AUDIT', bucket_name: 'ultrastable-audit' }]);
+});
+
 test('HANDOFF-SUBREQ-1: a deploy reads each import level in one request, not one request per file', async () => {
   const { batchedReader, rawMany } = await import('../src/handoff.js');
   const files = { 'w/a.js': "import './b.js';\nimport './c.js';\n", 'w/b.js': "import './d.js';\n", 'w/c.js': "export const c = 1;\n", 'w/d.js': "export const d = 1;\n" };

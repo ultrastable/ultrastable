@@ -284,6 +284,7 @@ export function topologyBindings(topo, id) {
   const b = w.bindings || {}, st = (kind, n) => ((topo.stores || {})[kind] || []).find(s => s.name === n), live = (kind, n) => (st(kind, n) || {}).state === 'live', out = [];
   for (const [bn, t] of Object.entries(b.d1 || {})) if (live('d1', t)) out.push({ type: 'd1', name: bn, id: st('d1', t).id });
   for (const [bn, t] of Object.entries(b.kv || {})) if (live('kv', t) && st('kv', t).id) out.push({ type: 'kv_namespace', name: bn, namespace_id: st('kv', t).id });
+  for (const [bn, t] of Object.entries(b.r2 || {})) if (live('r2', t)) out.push({ type: 'r2_bucket', name: bn, bucket_name: t });  // AUDIT on the tick: without it the audit chain's R2 sink and the daily D1 copy have no bucket
   for (const bn of b.ai || []) out.push({ type: 'ai', name: bn });
   for (const [bn, t] of Object.entries(b.services || {})) if (((topo.workers || []).find(x => x.id === t) || {}).state === 'live') out.push({ type: 'service', name: bn, service: t });
   for (const bn of b.send_email || []) out.push({ type: 'send_email', name: bn });  // the dashboard's sign-in mail; dropping it on deploy broke sign-in
