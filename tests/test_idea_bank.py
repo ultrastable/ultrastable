@@ -34,6 +34,11 @@ class IdeaBank(unittest.TestCase):
         bank["ideas"] = [dict(bank["ideas"][0], depth={})]
         self.assertTrue(any("depth" in e for e in B.validate(bank)))
 
+    def test_commerce_is_refused(self):
+        bank = json.loads(B.BANK.read_text())
+        bank["ideas"] = [dict(bank["ideas"][0], domain="e-commerce")]
+        self.assertTrue(any("refused" in e for e in B.validate(bank)))
+
 
 if __name__ == "__main__":
     unittest.main()

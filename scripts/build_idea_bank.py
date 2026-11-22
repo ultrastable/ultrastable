@@ -56,6 +56,10 @@ def validate(bank):
         for k in bank.get("depth_fields", []):
             if len(str((i.get("depth") or {}).get(k, ""))) < 20:
                 errs.append(f"{i.get('id')}: depth.{k} missing (DEPTH-1: a one-trick idea has no corpus)")
+        if len(str(i.get("empowers", ""))) < 20:
+            errs.append(f"{i.get('id')}: empowers missing (PUBLIC-GOOD-1: name the change it empowers)")
+        if i.get("domain") in bank.get("refused_domains", []):
+            errs.append(f"{i.get('id')}: domain {i['domain']} is refused (PUBLIC-GOOD-1: not e-commerce)")
         if len(i.get("text", "")) > 120:
             errs.append(f"{i['id']}: text over 120 characters")
     dom = Counter(i["domain"] for i in ideas)
