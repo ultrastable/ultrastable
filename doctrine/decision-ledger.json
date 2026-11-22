@@ -4746,6 +4746,24 @@
    "body": "Rowan wants far more narrative-vs-later-evidence entries, automated, and a sticky site that runs a year unattended. Decision: a retold topic with then/now timelines graded honestly; a second daily discovery search for replications and re-analyses; drafts reach their own page only after reader votes and only with an index citation, always labelled a draft from one paper; a myth of the day cycle, an Atom feed and a browser-only streak bring readers back without accounts or cookies.",
    "probe": "grep:instances/unlearn/worker/lab.js::export const RETOLD_QUERY",
    "session": "session_0156nqDvj2EuthJ3xYxicfND"
+  },
+  {
+   "id": "decision-2026-11-22-depth-1-front-door-ideas",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "DEPTH-1 front-door ideas",
+   "body": "Front-door ideas must name a corpus, a method and a reason to return (Unlearn / Practical Solutions depth); one-trick ideas such as a single air-quality feed are refused by scripts/build_idea_bank.py.",
+   "probe": "grep:scripts/build_idea_bank.py::DEPTH-1",
+   "session": "session_0156nqDriyeVtn3erZ59DmMT"
+  },
+  {
+   "id": "decision-2026-11-22-worldwide-1-and-grow-1-idea-bank",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "WORLDWIDE-1 and GROW-1 idea bank",
+   "body": "Front-door ideas list worldwide open data sources probed weekly (dead sources retire the idea); a weekly scout step asks the model route for one new idea admitted through every gate and rotates the oldest out beyond max_active.",
+   "probe": "grep:scripts/build_idea_bank.py::GROW-1",
+   "session": "session_0156nqDriyeVtn3erZ59DmMT"
   }
  ]
 }
