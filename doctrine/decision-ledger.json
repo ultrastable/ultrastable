@@ -4844,6 +4844,24 @@
    "body": "The stickiness step now passes cap = ORIGINATE_MAX_PER_DAY + STICKY_RESERVE (5) to ensureItem. Item ids are fixed per system, so a refile is a no-op. Evidence: live D1 had stickiness_state rows but no STICKY items while budget_ledger showed 20 of 20 used. Verified by seed/worker/test/stickiness.test.js.",
    "probe": "file:seed/worker/src/stickiness.js",
    "session": "session_0156nqDtwtLqnATRJwnaK1EC"
+  },
+  {
+   "id": "decision-2026-11-22-every-tenant-app-lives-in-its-own-repository-unlearn-moves-t",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "Every tenant app lives in its own repository; Unlearn moves to ultrastable/unlearn",
+   "body": "Rowan: a tenant app needs its own repo. Decision: a registry (doctrine/tenant-repos.json), a workflow that creates the repo from the tenant folder's history with vendored core files, and a core deploy route that builds a topology worker from its tenant repository's main (source.repo), redeployed daily when that main moves. A check fails new tenant code in the core. Deploys go through the core's OIDC deployer, so the tenant repository holds no credential and the deploy gateway's rules stay as they are.",
+   "probe": "grep:foundation/tenantrepos.py::def check",
+   "session": "session_0156nqDvj2EuthJ3xYxicfND"
+  },
+  {
+   "id": "decision-2026-11-22-unlearn-change-layer-graded-practices-with-private-trials",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "Unlearn change layer: graded practices with private trials",
+   "body": "Rowan asked for evidence-based change, not only debunking. Practices are full graded entries with a trial kit; all personal trial data stays in the reader's browser; the server counts anonymous events per practice and re-orders suggested if-then plans by keep rate; oversold claims (power posing, ego depletion, growth mindset) get no kit; the Lab drafts candidate practices from intervention reviews under the same grounding guards.",
+   "probe": "file:instances/unlearn/worker/change.js",
+   "session": "session_0156nqDvj2EuthJ3xYxicfND"
   }
  ]
 }
