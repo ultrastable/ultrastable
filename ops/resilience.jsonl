@@ -65,3 +65,5 @@
 {"at": "2026-11-22T00:05:33Z", "clocks": 37, "kind": "beat", "seq": 64, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
 {"at": "2026-11-22T00:14:04Z", "clocks": 37, "kind": "beat", "seq": 65, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
 {"at": "2026-11-22T00:27:32Z", "clocks": 37, "kind": "beat", "seq": 66, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
+{"at": "2026-11-22T00:38:04Z", "clocks": 37, "kind": "beat", "seq": 67, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
+{"at": "2026-11-22T00:45:35Z", "clocks": 37, "kind": "beat", "seq": 68, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}

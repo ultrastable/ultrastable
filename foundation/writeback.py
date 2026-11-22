@@ -164,6 +164,12 @@ def probe_problems(root) -> list[str]:
     return out
 
 
+def dependabot_only(authors: str) -> bool:
+    """True when every commit author name in the log output is dependabot."""
+    names = [a.strip().lower() for a in authors.splitlines() if a.strip()]
+    return bool(names) and all(n.startswith("dependabot") for n in names)
+
+
 def check(root=REPO, base="origin/main", head="HEAD") -> list[str]:
     from . import doctrine
     root, bad = Path(root), []
@@ -175,6 +181,9 @@ def check(root=REPO, base="origin/main", head="HEAD") -> list[str]:
     commits = [c for c in _git(root, "log", "--no-merges", "--format=%H", f"{mb}..{head}").split() if c]
     if not commits:
         return []
+    # DEPENDABOT-WB-1: a dependency bump written by dependabot has no session to learn from; it is exempt (PR 1829 failed this check on 2026-11-21).
+    if dependabot_only(_git(root, "log", "--no-merges", "--format=%an", f"{mb}..{head}")):
+        return bad
     files = [f for f in _git(root, "diff", "--name-only", mb, head).splitlines() if f]
     code = [f for f in files if not DOC_ONLY.match(f) and not f.startswith("tests/")]
     if code and not any(f.startswith(WB_PREFIXES) for f in files):
