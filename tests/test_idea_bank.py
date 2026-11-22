@@ -39,6 +39,18 @@ class IdeaBank(unittest.TestCase):
         bank["ideas"] = [dict(bank["ideas"][0], domain="e-commerce")]
         self.assertTrue(any("refused" in e for e in B.validate(bank)))
 
+    def test_data_required(self):
+        bank = json.loads(B.BANK.read_text())
+        bank["ideas"] = [dict(bank["ideas"][0], data=[])]
+        self.assertTrue(any("data" in e for e in B.validate(bank)))
+
+    def test_grow_admits_only_through_the_gates(self):
+        bank = json.loads(B.BANK.read_text())
+        good = dict(bank["ideas"][0], id="new-one", domain="health", data=[{"name": "own", "note": "own records"}])
+        self.assertEqual(B.grow(json.loads(json.dumps(bank)), complete=lambda p: good), (True, "new-one"))
+        bad = dict(good, domain="e-commerce")
+        self.assertFalse(B.grow(json.loads(json.dumps(bank)), complete=lambda p: bad)[0])
+
 
 if __name__ == "__main__":
     unittest.main()

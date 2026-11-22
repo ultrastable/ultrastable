@@ -1,7 +1,7 @@
 {
- "_doc": "IDEA-BANK-1 (Rowan, 2026-11-22: the front-door examples must be diverse and actually buildable). Every idea the front door suggests lives here with its domain, reach and the four system-test answers. scripts/build_idea_bank.py runs each one through the seed's own bootstrap stages (read, qualify, instrument) on a generated IDEA.md, refuses the bank when one fails or when the domains are not diverse, and writes site/idea-bank-data.js, which site/suggest.js and site/interview.js read. DEPTH-1 (Rowan, 2026-11-22: 'the depth of idea, the depth of concept of Unlearn and Practical Solutions'): every idea also names its depth: the corpus it keeps growing, the method that makes it trustworthy, and why a reader comes back. A one-trick idea (a single feed, a single alert) has no corpus and is refused. Edit this file, never the generated one. PUBLIC-GOOD-1 (Rowan, 2026-11-22: 'This is about some kind of bigger good, some kind of public good, something that empowers change ... Go get Squarespace if you want e-commerce'): every idea names the change it empowers (`empowers`); domains in `refused_domains` (selling, shops, orders, cost cutting) are refused.",
+ "_doc": "IDEA-BANK-1 (Rowan, 2026-11-22: the front-door examples must be diverse and actually buildable). Every idea the front door suggests lives here with its domain, reach and the four system-test answers. scripts/build_idea_bank.py runs each one through the seed's own bootstrap stages (read, qualify, instrument) on a generated IDEA.md, refuses the bank when one fails or when the domains are not diverse, and writes site/idea-bank-data.js, which site/suggest.js and site/interview.js read. DEPTH-1 (Rowan, 2026-11-22: 'the depth of idea, the depth of concept of Unlearn and Practical Solutions'): every idea also names its depth: the corpus it keeps growing, the method that makes it trustworthy, and why a reader comes back. A one-trick idea (a single feed, a single alert) has no corpus and is refused. Edit this file, never the generated one. PUBLIC-GOOD-1 (Rowan, 2026-11-22: 'This is about some kind of bigger good, some kind of public good, something that empowers change ... Go get Squarespace if you want e-commerce'): every idea names the change it empowers (`empowers`); domains in `refused_domains` (selling, shops, orders, cost cutting) are refused. WORLDWIDE-1 (Rowan, 2026-11-22: 'these ideas have to work worldwide ... if you don't have the data to back them up, they're not going to work ... point and click and get running'): every idea lists `data`, the worldwide open sources it runs on (or `own`, the user's own records, which exist anywhere); a source with a probe URL is fetched by `build_idea_bank.py --live` (weekly in scout.yml) and an idea whose sources stop answering is retired. GROW-1: `build_idea_bank.py --grow` asks the model route for a new idea each pass, admits it only through the same gates, and retires the oldest beyond `max_active`, so the set never goes static.",
  "min_domains": 8,
- "max_per_domain": 2,
+ "max_per_domain": 3,
  "ideas": [
   {
    "id": "what-works-policy",
@@ -18,7 +18,18 @@
     "method": "grades by study design, shown honestly, with where the evidence is thin",
     "returns": "grades move as evidence lands, so a policy reader checks before each decision"
    },
-   "empowers": "lets voters, staff and journalists hold programmes to what the evidence shows"
+   "empowers": "lets voters, staff and journalists hold programmes to what the evidence shows",
+   "data": [
+    {
+     "name": "OpenAlex scholarly index",
+     "probe": "https://api.openalex.org/works?search=randomized%20trial&per-page=1"
+    },
+    {
+     "name": "Campbell Collaboration systematic reviews",
+     "probe": "https://www.campbellcollaboration.org/"
+    }
+   ],
+   "added": "2026-11-22"
   },
   {
    "id": "food-system-map",
@@ -35,24 +46,18 @@
     "method": "each listing confirmed at its source on a schedule; unconfirmed rows are marked",
     "returns": "new surplus and new shortfalls every week"
    },
-   "empowers": "gets surplus food to people who are short of it"
-  },
-  {
-   "id": "rights-navigator",
-   "domain": "civic",
-   "reach": "global",
-   "text": "A rights-and-benefits navigator that keeps every eligibility rule current and walks people through what they can claim",
-   "keywords": "benefits rights welfare eligibility claim tenants housing law civic help",
-   "loop": "rule changes read from official sources, affected answers rewritten, reader outcomes recorded and the weakest guide improved",
-   "measure": "guides checked against their official source in the last 14 days, target all",
-   "upkeep": "rules, thresholds and forms change every budget cycle",
-   "budget": 15,
-   "depth": {
-    "corpus": "every benefit and tenant right in a jurisdiction, as step-by-step guides",
-    "method": "each step cites the official rule it rests on; changes are diffed, never guessed",
-    "returns": "circumstances change, so people return at each life event"
-   },
-   "empowers": "helps people claim what they are already entitled to"
+   "empowers": "gets surplus food to people who are short of it",
+   "data": [
+    {
+     "name": "OpenStreetMap food banks (amenity=food_bank)",
+     "probe": "https://overpass-api.de/api/status"
+    },
+    {
+     "name": "FAOSTAT food prices",
+     "probe": "https://www.fao.org/faostat/en/"
+    }
+   ],
+   "added": "2026-11-22"
   },
   {
    "id": "claim-tracker",
@@ -69,7 +74,18 @@
     "method": "verdicts graded by evidence strength, with what would change them",
     "returns": "the same claims come back in new forms, and the record follows them"
    },
-   "empowers": "lets anyone check a claim before passing it on"
+   "empowers": "lets anyone check a claim before passing it on",
+   "data": [
+    {
+     "name": "Google Fact Check Tools (ClaimReview, worldwide fact-checkers)",
+     "probe": "https://toolbox.google.com/factcheck/explorer"
+    },
+    {
+     "name": "OpenAlex scholarly index",
+     "probe": "https://api.openalex.org/works?per-page=1"
+    }
+   ],
+   "added": "2026-11-22"
   },
   {
    "id": "adaptation-atlas",
@@ -86,7 +102,22 @@
     "method": "results graded by evaluation design; untested claims are marked as such",
     "returns": "each season's extremes add evidence"
    },
-   "empowers": "helps towns spend scarce money on measures that protect people"
+   "empowers": "helps towns spend scarce money on measures that protect people",
+   "data": [
+    {
+     "name": "ReliefWeb disasters and evaluations",
+     "probe": "https://api.reliefweb.int/v1/reports?limit=1"
+    },
+    {
+     "name": "Copernicus Climate Data Store",
+     "probe": "https://cds.climate.copernicus.eu/"
+    },
+    {
+     "name": "OpenAlex evaluations",
+     "probe": "https://api.openalex.org/works?search=climate%20adaptation%20evaluation&per-page=1"
+    }
+   ],
+   "added": "2026-11-22"
   },
   {
    "id": "replication-ledger",
@@ -103,7 +134,18 @@
     "method": "standing set by replication size and quality, with the reasoning shown",
     "returns": "textbooks and talks keep citing findings whose standing has moved"
    },
-   "empowers": "stops shaky findings from steering policy and teaching"
+   "empowers": "stops shaky findings from steering policy and teaching",
+   "data": [
+    {
+     "name": "Crossref (includes retractions and updates)",
+     "probe": "https://api.crossref.org/works?rows=1"
+    },
+    {
+     "name": "OpenAlex scholarly index",
+     "probe": "https://api.openalex.org/works?per-page=1"
+    }
+   ],
+   "added": "2026-11-22"
   },
   {
    "id": "model-evals",
@@ -120,7 +162,14 @@
     "method": "fixed tests, repeated runs and published variance",
     "returns": "every new release is a new comparison"
    },
-   "empowers": "gives the public an independent record of how AI models really behave"
+   "empowers": "gives the public an independent record of how AI models really behave",
+   "data": [
+    {
+     "name": "Hugging Face model hub",
+     "probe": "https://huggingface.co/api/models?limit=1"
+    }
+   ],
+   "added": "2026-11-22"
   },
   {
    "id": "open-curriculum",
@@ -137,7 +186,18 @@
     "method": "each rewrite is an experiment kept only if the next cohort does better",
     "returns": "learners move unit by unit, and teachers reuse it every term"
    },
-   "empowers": "gives any learner a free course that keeps getting better"
+   "empowers": "gives any learner a free course that keeps getting better",
+   "data": [
+    {
+     "name": "own",
+     "note": "learners' own answers"
+    },
+    {
+     "name": "Wikidata (concepts and prerequisites)",
+     "probe": "https://www.wikidata.org/w/api.php?action=query&format=json"
+    }
+   ],
+   "added": "2026-11-22"
   },
   {
    "id": "club-hub",
@@ -154,7 +214,14 @@
     "method": "each change is predicted and kept only if return visits or turnout rose",
     "returns": "members come back for every event, and the club's record keeps growing"
    },
-   "empowers": "keeps volunteer-run community groups alive and growing"
+   "empowers": "keeps volunteer-run community groups alive and growing",
+   "data": [
+    {
+     "name": "own",
+     "note": "the club's own first-party, cookieless site analytics"
+    }
+   ],
+   "added": "2026-11-22"
   },
   {
    "id": "impact-ledger",
@@ -171,7 +238,18 @@
     "method": "outcomes compared with a baseline, uncertainty stated",
     "returns": "each reporting cycle and funding round draws on it"
    },
-   "empowers": "moves donations toward what actually helps people"
+   "empowers": "moves donations toward what actually helps people",
+   "data": [
+    {
+     "name": "own",
+     "note": "the charity's own programme records"
+    },
+    {
+     "name": "IATI aid activity data",
+     "probe": "https://iatistandard.org/en/"
+    }
+   ],
+   "added": "2026-11-22"
   },
   {
    "id": "grants-atlas",
@@ -188,7 +266,18 @@
     "method": "fit scored from past awards; drafts reuse answers that succeeded",
     "returns": "new calls open every week"
    },
-   "empowers": "gets funding to small charities that cannot afford a fundraiser"
+   "empowers": "gets funding to small charities that cannot afford a fundraiser",
+   "data": [
+    {
+     "name": "IATI funders and activities",
+     "probe": "https://iatistandard.org/en/"
+    },
+    {
+     "name": "OpenAlex funders",
+     "probe": "https://api.openalex.org/funders?per-page=1"
+    }
+   ],
+   "added": "2026-11-22"
   },
   {
    "id": "decision-journal",
@@ -205,7 +294,14 @@
     "method": "every decision carries a prediction that is scored later",
     "returns": "every new choice is checked against my own track record"
    },
-   "empowers": "helps a person learn from their own choices instead of repeating mistakes"
+   "empowers": "helps a person learn from their own choices instead of repeating mistakes",
+   "data": [
+    {
+     "name": "own",
+     "note": "the person's own decisions and predictions"
+    }
+   ],
+   "added": "2026-11-22"
   },
   {
    "id": "self-experiments",
@@ -222,7 +318,14 @@
     "method": "baseline, one change at a time, a fixed test window",
     "returns": "there is always a next test"
    },
-   "empowers": "helps a person find what really improves their life, by evidence instead of hype"
+   "empowers": "helps a person find what really improves their life, by evidence instead of hype",
+   "data": [
+    {
+     "name": "own",
+     "note": "the person's own habit and health measurements"
+    }
+   ],
+   "added": "2026-11-22"
   },
   {
    "id": "city-history",
@@ -239,7 +342,22 @@
     "method": "every claim cites its document; disputed points show both sides",
     "returns": "new stories and corrections arrive every month"
    },
-   "empowers": "gives a community an accurate, shared record of its own past"
+   "empowers": "gives a community an accurate, shared record of its own past",
+   "data": [
+    {
+     "name": "Europeana cultural heritage",
+     "probe": "https://www.europeana.eu/"
+    },
+    {
+     "name": "Internet Archive",
+     "probe": "https://archive.org/advancedsearch.php?q=city&rows=1&output=json"
+    },
+    {
+     "name": "Wikimedia Commons",
+     "probe": "https://commons.wikimedia.org/w/api.php?action=query&format=json"
+    }
+   ],
+   "added": "2026-11-22"
   },
   {
    "id": "dependency-watch",
@@ -256,24 +374,42 @@
     "method": "risk scored from maintenance, security history and reach",
     "returns": "the graph changes with every release"
    },
-   "empowers": "protects the open-source commons that public services run on"
+   "empowers": "protects the open-source commons that public services run on",
+   "data": [
+    {
+     "name": "OSV vulnerability database",
+     "probe": "https://api.osv.dev/v1/vulns/GHSA-jfh8-c2jp-5v3q"
+    },
+    {
+     "name": "deps.dev dependency graph",
+     "probe": "https://deps.dev/"
+    }
+   ],
+   "added": "2026-11-22"
   },
   {
-   "id": "civic-promises",
+   "id": "contracts-watch",
    "domain": "civic",
    "reach": "global",
-   "text": "A promise tracker that records what elected officials committed to and follows each pledge to what actually happened",
-   "keywords": "politics promises pledges government accountability elections officials civic",
-   "loop": "new pledges and official records read weekly, each pledge's status revised with its source, readers' reports checked and added",
-   "measure": "pledges whose status was checked against a source in the last 30 days, target all",
-   "upkeep": "officials make new pledges and act on old ones every week",
+   "text": "A public-contracts watch that follows government tenders and awards and flags the ones that look rigged",
+   "keywords": "government contracts procurement tenders corruption spending accountability civic",
+   "loop": "new tenders and awards read daily, red flags scored, flagged contracts followed to delivery and the flags re-scored",
+   "measure": "flagged contracts later confirmed as problems, against false flags",
+   "upkeep": "governments publish new tenders every day",
    "budget": 10,
    "depth": {
-    "corpus": "every pledge by every official in a jurisdiction with its record of action",
-    "method": "each status cites the vote, budget line or document it rests on",
-    "returns": "every election and every budget brings readers back"
+    "corpus": "every published tender, bidder and award in the jurisdictions with open data",
+    "method": "red flags from published procurement-risk indicators, each shown with its evidence",
+    "returns": "new contracts every day and a growing record of who won what"
    },
-   "empowers": "lets voters judge officials by what they did, not what they said"
+   "empowers": "lets citizens and journalists see where public money goes and who gets it",
+   "data": [
+    {
+     "name": "Open Contracting data registry (OCDS, 50+ countries)",
+     "probe": "https://data.open-contracting.org/"
+    }
+   ],
+   "added": "2026-11-22"
   }
  ],
  "depth_fields": [
@@ -288,5 +424,7 @@
   "operations",
   "marketing",
   "sales"
- ]
+ ],
+ "max_active": 24,
+ "retired": []
 }
