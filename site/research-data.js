@@ -90,7 +90,7 @@ export default {
      "metric_label": "second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl)",
      "measured": 47,
      "status": "met",
-     "n": 4096,
+     "n": 4055,
      "source": "ops/ultrastability.jsonl",
      "item": null
     },
@@ -178,7 +178,7 @@ export default {
      "metric_label": "share of registered loops that declare a closing probe and a server-side owner",
      "measured": 1.0,
      "status": "met",
-     "n": 111,
+     "n": 110,
      "source": "instances/ultrastable/loop-registry.json (declared)",
      "item": null
     }
@@ -215,7 +215,7 @@ export default {
     {
      "finding": "A5",
      "rule": "UIUX-1",
-     "score": 0.111
+     "score": 0.112
     },
     {
      "finding": "A5",
@@ -223,7 +223,7 @@ export default {
      "score": 0.105
     }
    ],
-   "leads_route": "lexical-512-1441cpo",
+   "leads_route": "lexical-512-1uunlgw",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -516,7 +516,7 @@ export default {
     {
      "finding": "F5",
      "rule": "AUTO-SHIP-CLEAN-1",
-     "score": 0.129
+     "score": 0.13
     },
     {
      "finding": "F7",
@@ -524,7 +524,7 @@ export default {
      "score": 0.14
     }
    ],
-   "leads_route": "lexical-512-11fwco5",
+   "leads_route": "lexical-512-v1q3hn",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -582,7 +582,7 @@ export default {
      "metric_label": "share of registered loops that declare a closing probe and a server-side owner",
      "measured": 1.0,
      "status": "met",
-     "n": 111,
+     "n": 110,
      "source": "instances/ultrastable/loop-registry.json (declared)",
      "item": null
     },
@@ -755,10 +755,10 @@ export default {
     {
      "finding": "O6",
      "rule": "FLOW-DIRECTIVE-1",
-     "score": 0.116
+     "score": 0.117
     }
    ],
-   "leads_route": "lexical-512-1owd3vd",
+   "leads_route": "lexical-512-1lus9dj",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -946,7 +946,7 @@ export default {
      "metric_label": "share of registered loops that declare a closing probe and a server-side owner",
      "measured": 1.0,
      "status": "met",
-     "n": 111,
+     "n": 110,
      "source": "instances/ultrastable/loop-registry.json (declared)",
      "item": null
     }
@@ -974,7 +974,7 @@ export default {
     {
      "finding": "S2",
      "rule": "TENANT-SYNC-1",
-     "score": 0.154
+     "score": 0.153
     },
     {
      "finding": "S2",
@@ -999,7 +999,7 @@ export default {
     {
      "finding": "S5",
      "rule": "DRAIN-ZERO-1",
-     "score": 0.11
+     "score": 0.109
     },
     {
      "finding": "S6",
@@ -1012,7 +1012,7 @@ export default {
      "score": 0.116
     }
    ],
-   "leads_route": "lexical-512-lyrunq",
+   "leads_route": "lexical-512-1joaqry",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   }
  ],
