@@ -72,3 +72,8 @@ test('a post is never cut mid-sentence: whole sentence, else the title alone, el
 test('visits without a returning count give no return rate', () => {
   assert.equal(measure([e('a', 1)], { now: NOW, audience: { visits_7d: 200 } }).audience.return_rate, null);
 });
+
+test('an entry grade travels with its post so the quality gate can hold an overclaim', () => {
+  assert.equal(queue([e('g', 1, { grade: 'D' })], { now: NOW }).posts[0].grade, 'D');
+  assert.ok(!('grade' in queue([e('h', 1)], { now: NOW }).posts[0]));
+});

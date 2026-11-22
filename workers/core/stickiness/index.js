@@ -105,7 +105,7 @@ export function queue(entries, { now = Date.now(), posted = [], max_per_day = 2,
     // A post is never cut: it uses the title and one whole sentence if they fit, the title alone if not, and is left out (and counted) if even that does not fit.
     const body = full.length <= room ? full : bare.length <= room ? bare : null;
     if (body == null) { skipped.push(e.id); return; }
-    posts.push({ id: `${arm}:${e.id}`, date: day, kind: 'entry', arm, text: body + '\n' + tail, entry: e.id });
+    posts.push({ id: `${arm}:${e.id}`, date: day, kind: 'entry', arm, text: body + '\n' + tail, entry: e.id, ...(e.grade ? { grade: e.grade } : {}) });  // the entry's evidence grade travels with the post so the social quality gate (POST-QUALITY-1) can hold an overclaim
   });
   return { posts, skipped };
 }
