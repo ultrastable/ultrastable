@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-22-changelog-fresh-1-ingest-new-commits",
+  "kind": "lesson",
+  "date": "2026-11-22",
+  "title": "CHANGELOG-FRESH-1 ingest new commits",
+  "body": "The public changelog only grew when a row was recorded by hand; commits now become public change rows on every product-manager pass (provenance --ingest-new). Never run --changelog --apply from a session: the local ledger is thin and it shrinks the file.",
+  "probe": "file:foundation/provenance.py",
+  "session": "session_0156nqDsuEKqAuktLCYtMyqQ"
+ },
+ "kind": "lesson",
+ "title": "CHANGELOG-FRESH-1 ingest new commits",
+ "session": "session_0156nqDsuEKqAuktLCYtMyqQ"
+}

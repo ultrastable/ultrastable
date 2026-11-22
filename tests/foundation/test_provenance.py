@@ -71,3 +71,11 @@ class Prov(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class IngestNewTests(unittest.TestCase):
+    def test_record_keeping_commits_are_not_public_changes(self):
+        from foundation import provenance as p
+        for s in ("host-sync - record deployed x", "watchdog: clock probe [skip ci]", "audit anchor", "auto: merge claude/x (#1)"):
+            self.assertTrue(p._NOISE.search(s), s)
+        self.assertFalse(p._NOISE.search("RELEASE-1: cut a release (#10)"))
