@@ -52,6 +52,25 @@ class Unlearn(unittest.TestCase):
             self.assertIn(need, kids["prerequisites"])
         self.assertIn("default_in_effect", kids["identity_bound_gate"])
 
+    def test_principles_are_in_code(self):
+        """Each research principle names the code that carries it; phase 3 principles name a phase 3 ship (not built before its gates)."""
+        d = json.loads((INST / "phases.json").read_text())
+        tests = (INST / "worker/worker.test.mjs").read_text()
+        kids = d["phases"][2]["ships"]
+        for p in d["principles"]:
+            kind, _, rest = p["probe"].partition(":")
+            if kind == "test":
+                self.assertEqual(p["phase"], 1, p["id"])
+                self.assertIn("test('" + rest + "'", tests, p["id"])
+            elif kind == "grep":
+                path, _, needle = rest.partition("::")
+                self.assertIn(needle, (ROOT / path).read_text(), p["id"])
+            elif kind == "phase3":
+                self.assertEqual(p["phase"], 3, p["id"])
+                self.assertIn(rest, kids, p["id"])
+            else:
+                self.fail("unknown probe kind " + kind)
+
     def test_runway_probes_hold(self):
         d = json.loads((INST / "runway.json").read_text())
         self.assertGreaterEqual(d["target_days"], 365)

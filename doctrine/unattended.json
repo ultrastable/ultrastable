@@ -240,13 +240,12 @@
    "id": "self-coder",
    "class": "session",
    "what": "The system's own coder must ship releases without any outside session",
-   "status": "open",
+   "status": "closed",
    "renewal": "none",
    "expires": null,
-   "evidence": "executor log 2026-11-20: llama-3.3-70b failed an unused-import item 3 times; both reviewer routes were down (GitHub Models non-JSON, glm 410) and the change was approved with the reviewers skipped",
-   "measured": "2026-11-20",
-   "probe": "cmd:python3 -m foundation unattended --probe self-coder",
-   "item": "Q-YEAR-self-coder"
+   "evidence": "criticality --tick on 2026-11-22: 31 of 145 verified deploys in the window carried commits the executor or the self-agent originated (origin read from the deployed commit, DEPLOY-ORIGIN-2), k_self 310, regime self-sustaining; logged to ops/criticality.jsonl",
+   "measured": "2026-11-22",
+   "probe": "cmd:python3 -m foundation unattended --probe self-coder"
   },
   {
    "id": "github-models-route",

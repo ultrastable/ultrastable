@@ -57,8 +57,8 @@
       },
       {
         "name": "ultrastable-audit",
-        "state": "planned",
-        "what": "AUDIT-CHAIN-1: sealed, hash-chained audit segments (R2 needs enabling on the account; until then the same segments go to the ops repository under ledger/)"
+        "state": "live",
+        "what": "AUDIT-CHAIN-1 sealed audit segments, and D1-SNAPSHOT-1 daily copies of ultrastable-org under backups/d1/ (seed/worker/src/d1snapshot.js); created 2026-11-22"
       }
     ],
     "queues": [
@@ -121,7 +121,8 @@
           "GITHUB_DISPATCH_TOKEN",
           "GITHUB_WEBHOOK_SECRET",
           "ANALYTICS_TOKEN",
-          "INTERNAL_DEPLOY_KEY"
+          "INTERNAL_DEPLOY_KEY",
+          "CF_ALERT_SECRET"
         ],
         "vars": {
           "ZERO_ACTIONS": "1"

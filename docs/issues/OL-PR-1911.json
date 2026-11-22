@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-1911",
+  "title": "OL-PR-1911: land or supersede pull request #1911 (conflict)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #1911 is conflict\n**Done check:** cmd:python3 -m foundation loopowner --closed 1911\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #1911 (`claude/project-thread-2vlrui` at 5cc2edb537, opened by rwnq8): Handoff deploys bind live R2 buckets, so the tick gets AUDIT. The session that opened it is not its closer and is never asked to act. The branch conflicts with main. Merge main into the branch and resolve it, or redo the change from main in a new pull request and close this one as superseded. Files (7): README.md, doctrine/writeback/lesson-2026-11-22-handoff-deploys-dropped-r2-bindings.json, platform/adapters/README.md, seed/worker/src/handoff.js, seed/worker/test/handoff.test.js, site/dashboard-data.js, site/self-data.js. Closing probe: pull request #1911 is merged or closed.",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

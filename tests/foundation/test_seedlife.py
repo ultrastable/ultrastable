@@ -99,6 +99,13 @@ class Stages(Fixture):
         self.assertEqual(r["stage"], "autonomous", r["need"])
         self.assertEqual(seedlife.probe("s1", self.root), 0)
 
+    def test_seed_deploy_list_counts_as_the_lane_owning_the_worker(self):
+        self.autonomous()
+        w(self.root, "doctrine/topology.json", {"workers": []})
+        self.assertEqual(self.stage()["stage"], "live")
+        w(self.root, "doctrine/seed-deploys.json", {"seeds": ["s1"]})
+        self.assertEqual(self.stage()["stage"], "autonomous", self.stage()["need"])
+
     def test_failed_or_stale_verify_is_not_live(self):
         self.deployed()
         self.lc["verify"] = {"url": "https://s1.example/health", "expect": "ok"}; self.save()
