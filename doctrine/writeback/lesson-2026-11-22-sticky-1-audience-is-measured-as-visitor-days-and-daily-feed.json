@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-22-sticky-1-audience-is-measured-as-visitor-days-and-daily-feed",
+  "kind": "lesson",
+  "date": "2026-11-22",
+  "title": "STICKY-1: audience is measured as visitor-days and daily feed readers",
+  "body": "The analytics beacon keeps nothing in the browser and visitor ids rotate daily (guard in seed/worker/test/analytics.test.js), so the step counts visitor-days from hits and daily feed readers (hits name feed, recorded server-side by the site worker). return_rate is computed only from a real returning count a system serves at audience_url, otherwise it reads unmeasured. Verified by seed/worker/test/stickiness.test.js.",
+  "probe": "file:seed/worker/src/stickiness.js",
+  "session": "session_0156nqDtwtLqnATRJwnaK1EC"
+ },
+ "kind": "lesson",
+ "title": "STICKY-1: audience is measured as visitor-days and daily feed readers",
+ "session": "session_0156nqDtwtLqnATRJwnaK1EC"
+}
