@@ -10,6 +10,10 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-22
 
+- 2026-11-22: temporal series, findings and queue items (TEMPORAL-1) [skip ci]
+- 2026-11-22: ZERO-MINUTES-1: worker merged #1968
+- 2026-11-22: Record Unlearn's repository as a gate with a probe (TENANT-REPO-1) (#1968)
+- 2026-11-22: Tenant repos: third credential route through the lane App (TENANT-REPO-1) (#1966)
 - 2026-11-22: ZERO-MINUTES-1: worker merged #1963
 - 2026-11-22: CHANGELOG-FRESH-1: public changelog ingests new commits every daily pass (#1963)
 - 2026-11-22: ZERO-MINUTES-1: worker merged #1940
