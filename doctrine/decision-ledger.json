@@ -4799,6 +4799,15 @@
    "body": "Rowan 2026-11-22: humans are the weak link from evidence to action. Every deep idea names at least 3 evidence-based moves from doctrine/change-methods.json covering notice, update and act; ideas.depth() enforces it and the idea bank inherits it.",
    "probe": "grep:doctrine/change-methods.json::CHANGE-1",
    "session": "session_0156nqDrdw3p8opYtKRRrh6D"
+  },
+  {
+   "id": "decision-2026-11-22-one-depth-rule-for-ideas-and-apps",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "One depth rule for ideas and apps",
+   "body": "build_idea_bank.py calls foundation/ideas.py depth() so front-door ideas and self-chosen apps share DEPTH-1 (thesis, corpus, loop, returns, hook, public_good, horizon).",
+   "probe": "grep:scripts/build_idea_bank.py::_ideas.depth",
+   "session": "session_0156nqDriyeVtn3erZ59DmMT"
   }
  ]
 }
