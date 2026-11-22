@@ -565,3 +565,7 @@
 {"age_days": 0.3, "at": "2026-11-22T21:21:23Z", "disposition": "shelved", "evidence": "open 7.8 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-SEED-base-rates", "rule": "ttl", "status_before": "open"}
 {"age_days": 0.3, "at": "2026-11-22T21:21:23Z", "disposition": "shelved", "evidence": "open 7.8 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-SEED-did-it-work", "rule": "ttl", "status_before": "open"}
 {"age_days": 0.3, "at": "2026-11-22T21:21:23Z", "disposition": "shelved", "evidence": "open 7.8 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-SEED-open-questions", "rule": "ttl", "status_before": "open"}
+{"age_days": 0.3, "at": "2026-11-22T21:31:07Z", "disposition": "shelved", "evidence": "open 7.9 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-SEED-base-rates", "rule": "ttl", "status_before": "open"}
+{"age_days": 0.3, "at": "2026-11-22T21:31:07Z", "disposition": "shelved", "evidence": "open 7.9 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-SEED-did-it-work", "rule": "ttl", "status_before": "open"}
+{"age_days": 0.3, "at": "2026-11-22T21:31:07Z", "disposition": "shelved", "evidence": "open 7.9 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-SEED-open-questions", "rule": "ttl", "status_before": "open"}
+{"age_days": 0.3, "at": "2026-11-22T21:31:07Z", "disposition": "shelved", "evidence": "open 6.0 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-YIELD-7f00974fc9", "rule": "ttl", "status_before": "open"}
