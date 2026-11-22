@@ -55,7 +55,7 @@ Source: ops/deploys.jsonl (same window).
 
 - ASHBY-SEARCH-1 (`foundation/ultrastability.py`): the second loop keeps changing a parameter until the variable holds, and reverts a step that did not help
 
-**Measured here:** share of second-order steps that brought the variable back inside its limits and were kept: 0.0 (n = 26). Target >= 0.25. Verdict: **not-met**. Open item: `Q-RES-safety-by-limits-2026-S4`.
+**Measured here:** share of second-order steps that brought the variable back inside its limits and were kept: 0.0 (n = 24). Target >= 0.25. Verdict: **not-met**. Open item: `Q-RES-safety-by-limits-2026-S4`.
 Source: ops/ultrastability.jsonl verdicts.
 
 ### S5. Little work is thrown away (quality)
@@ -83,7 +83,7 @@ Source: instances/ultrastable/loop-registry.json (declared).
 ## Limits
 
 - Scale. One organization: 100 closed pull requests (64 merged) over 0.75 days. Our numbers describe this system; they are not a causal estimate and are not compared with the study's effect sizes as if they were.
-- Who wrote the changes. 80% of merged pull requests in the window were opened by code agent sessions run under the owner's account, not by the system's own loops. The latest criticality tick puts the system in the self-sustaining regime with 31 self-originated deploys, so most of the work measured here was started from outside.
+- Who wrote the changes. 80% of merged pull requests in the window were opened by code agent sessions run under the owner's account, not by the system's own loops. The latest criticality tick puts the system in the driven regime with 0 self-originated deploys, so most of the work measured here was started from outside.
 - Review by construction. Ultrastable has no human review step, so a short open-to-merge time is partly a consequence of the design. The real test of the design is quality: the revert and deploy-verification findings, which can fail.
 - Revert share counts commits whose subject starts with Revert; a fix that undoes a change without that word is not counted, so the figure is a lower bound.
 - Source. Own r&d question set, regenerated from this system's records, version 2026-11-21; its findings may change in later versions.
