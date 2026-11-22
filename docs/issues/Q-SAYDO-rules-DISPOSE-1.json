@@ -1,0 +1,12 @@
+{
+  "id": "Q-SAYDO-rules-DISPOSE-1",
+  "title": "Q-SAYDO-rules-DISPOSE-1: says DISPOSE-1, does not do it",
+  "body": "**Owner:** executor\n**Trigger:** say-do check (SAY-DO-1) on the watchdog run\n**Done check:** cmd:python3 -m foundation saydo --probe rules:DISPOSE-1\n**Status:** open\n\nThe system states `DISPOSE-1` (rules) and its code does not do it: python3 -m foundation dispose --check: an open item is 8.2 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)\n\nChange the code to do what the statement says, or change the statement to what the code does; never weaken the probe.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation saydo --probe rules:DISPOSE-1` exits 0.\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "say-do"
+  ],
+  "milestone": "Now",
+  "workstream": "Ultrastability"
+}
