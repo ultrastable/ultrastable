@@ -186,10 +186,7 @@ def check(root=REPO, base="origin/main", head="HEAD") -> list[str]:
         return bad
     files = [f for f in _git(root, "diff", "--name-only", mb, head).splitlines() if f]
     code = [f for f in files if not DOC_ONLY.match(f) and not f.startswith("tests/")]
-    # DEP-LOOP-1: a dependency bump made only by a bot carries no session knowledge to write back.
-    authors = {a for a in _git(root, "log", "--no-merges", "--format=%ae", f"{mb}..{head}").split() if a}
-    bot_only = bool(authors) and all(a.endswith("[bot]@users.noreply.github.com") for a in authors)
-    if code and not bot_only and not any(f.startswith(WB_PREFIXES) for f in files):
+    if code and not any(f.startswith(WB_PREFIXES) for f in files):
         bad.append("code changed (" + ", ".join(code[:3]) + (" ..." if len(code) > 3 else "") + ") with no write-back: add a lesson, decision, handoff, open loop or memory update (python3 -m foundation writeback record)")
     msgs = _git(root, "log", "--no-merges", "--format=%H%x1f%B%x1e", f"{mb}..{head}").split("\x1e")
     sessions = set()
