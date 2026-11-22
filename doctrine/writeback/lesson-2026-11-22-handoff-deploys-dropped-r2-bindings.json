@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-22-handoff-deploys-dropped-r2-bindings",
+  "kind": "lesson",
+  "date": "2026-11-22",
+  "title": "Handoff deploys dropped R2 bindings",
+  "body": "The tick redeployed from merge 97ce763 at 01:01 without the AUDIT binding although doctrine/topology.json marks ultrastable-audit live: topologyBindings in seed/worker/src/handoff.js rendered d1, kv, ai, services, email, durable objects and vars but no r2. It now binds every live r2 store, with a test.",
+  "probe": "grep:seed/worker/src/handoff.js::r2_bucket"
+ },
+ "kind": "lesson",
+ "title": "Handoff deploys dropped R2 bindings",
+ "session": "session_0156nqDtFn6P2DrsR9UbyzkV"
+}

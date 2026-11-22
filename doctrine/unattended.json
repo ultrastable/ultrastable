@@ -348,13 +348,12 @@
    "id": "cloudflare-alerts",
    "class": "account",
    "what": "Cloudflare's own alerts (incidents, Worker error rate, usage, certificates) reach no loop: one budget alert exists and it mails a person",
-   "status": "open",
+   "status": "closed",
    "renewal": "none",
    "expires": null,
-   "evidence": "Cloudflare API alerting/v3/policies: 1 policy, mechanism email; destinations/webhooks: none",
-   "measured": "2026-11-20",
-   "probe": "cmd:python3 -m foundation unattended --probe cloudflare-alerts",
-   "item": "Q-YEAR-cloudflare-alerts"
+   "evidence": "Cloudflare API on 2026-11-22: webhook destination 'ultrastable-tick alerts (CF-ALERTS-1)' (id 45cb55fc80b643ba8ca4d2d60f493f3a) passed Cloudflare's delivery test against the deployed /hook/cloudflare; policies for incident_alert, workers_observability_alert, billing_budget_alert (10 USD) and universal_ssl_event_type post to it. Each alert becomes a CF-ALERT item that closes after 24 quiet hours (seed/worker/src/cfalerts.js); deploy/cf-alerts.mjs re-creates the setup idempotently",
+   "measured": "2026-11-22",
+   "probe": "cmd:python3 -m foundation unattended --probe cloudflare-alerts"
   },
   {
    "id": "second-clock",
