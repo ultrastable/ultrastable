@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-22-change-1-behaviour-change-library-required-by-the-depth-bar",
+  "kind": "decision",
+  "date": "2026-11-22",
+  "title": "CHANGE-1 behaviour-change library required by the depth bar",
+  "body": "Rowan 2026-11-22: humans are the weak link from evidence to action. Every deep idea names at least 3 evidence-based moves from doctrine/change-methods.json covering notice, update and act; ideas.depth() enforces it and the idea bank inherits it.",
+  "probe": "grep:doctrine/change-methods.json::CHANGE-1",
+  "session": "session_0156nqDrdw3p8opYtKRRrh6D"
+ },
+ "kind": "decision",
+ "title": "CHANGE-1 behaviour-change library required by the depth bar",
+ "session": "session_0156nqDrdw3p8opYtKRRrh6D"
+}
