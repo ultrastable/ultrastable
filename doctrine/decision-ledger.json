@@ -4862,6 +4862,15 @@
    "body": "Rowan asked for evidence-based change, not only debunking. Practices are full graded entries with a trial kit; all personal trial data stays in the reader's browser; the server counts anonymous events per practice and re-orders suggested if-then plans by keep rate; oversold claims (power posing, ego depletion, growth mindset) get no kit; the Lab drafts candidate practices from intervention reviews under the same grounding guards.",
    "probe": "file:instances/unlearn/worker/change.js",
    "session": "session_0156nqDvj2EuthJ3xYxicfND"
+  },
+  {
+   "id": "lesson-2026-11-22-changelog-fresh-1-ingest-new-commits",
+   "kind": "lesson",
+   "date": "2026-11-22",
+   "title": "CHANGELOG-FRESH-1 ingest new commits",
+   "body": "The public changelog only grew when a row was recorded by hand; commits now become public change rows on every product-manager pass (provenance --ingest-new). Never run --changelog --apply from a session: the local ledger is thin and it shrinks the file.",
+   "probe": "file:foundation/provenance.py",
+   "session": "session_0156nqDsuEKqAuktLCYtMyqQ"
   }
  ]
 }
