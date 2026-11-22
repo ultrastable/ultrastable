@@ -1,0 +1,14 @@
+{
+  "id": "Q-AUDIT-seed-live",
+  "title": "Q-AUDIT-seed-live: fm-seed-undeployed failing (fail): Dispatch .github/workflows/deploy-workers.yml (it runs deploy/deploy-seed.mjs); read the failing row in ops/deploys.jsonl; fix the seed, never the probe (SEED-DEPLOY-1).",
+  "body": "**Owner:** operations\n**Trigger:** the daily failure audit files it; the executor takes it in driver order\n**Done check:** cmd:python3 -m foundation failure_audit --probe seed-live\n**Status:** open\n\nFailure mode `fm-seed-undeployed` detected by `seed-live`, failing since 2026-11-22T13:43:03Z.\nEvidence: second-tenant: https://ultrastable-seed-second-tenant.ultrastable.workers.dev/health did not answer: HTTP Error 403: Forbidden\n\nSignature: bc302b7f5f2c (disposition: fix).\nSuspected root cause: an admitted seed was never deployed, or its Worker stopped answering /health\nRemedy: Dispatch .github/workflows/deploy-workers.yml (it runs deploy/deploy-seed.mjs); read the failing row in ops/deploys.jsonl; fix the seed, never the probe (SEED-DEPLOY-1).\nFix the earliest cause, so the detector passes; do not weaken or remove the detector.\n\n**Closing probe:** cmd:python3 -m foundation failure_audit --probe seed-live\n",
+  "labels": [
+    "role:operations",
+    "audit",
+    "fix",
+    "agent-ready",
+    "p1"
+  ],
+  "milestone": "Now",
+  "workstream": "Failure modes"
+}
