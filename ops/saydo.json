@@ -1,5 +1,5 @@
 {
- "at": "2026-11-22T13:24:37Z",
+ "at": "2026-11-22T13:34:33Z",
  "gaps": 4,
  "match_share": 0.991,
  "sources": {
@@ -156,7 +156,7 @@
     "drift": 0,
     "id": "claims-total",
     "ok": true,
-    "total": 372
+    "total": 374
    }
   ],
   "loops": [
@@ -592,6 +592,15 @@
     "unmeasured": []
    },
    {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "STICKY-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
     "checks": 1,
     "external": [],
     "failing": [],
@@ -800,7 +809,7 @@
   },
   "claims": {
    "gaps": 0,
-   "total": 372
+   "total": 374
   },
   "loops": {
    "gaps": 1,
@@ -808,12 +817,12 @@
   },
   "rules": {
    "gaps": 1,
-   "total": 66
+   "total": 67
   },
   "year": {
    "gaps": 1,
    "total": 2
   }
  },
- "total": 457
+ "total": 460
 }

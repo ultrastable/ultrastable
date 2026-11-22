@@ -112,10 +112,19 @@ export async function report(env, now, opts) {
   const ttl = opts && opts.cacheMinutes ? opts.cacheMinutes * 60e3 : 0;
   if (ttl) {
     const c = await env.DB.prepare("SELECT value v FROM analytics_meta WHERE key='report_cache'").first();
-    if (c) { try { const o = JSON.parse(c.v); if (Date.now() - o.at < ttl) return Object.assign(o.body, { cached_at: new Date(o.at).toISOString() }); } catch (e) { console.error("analytics report cache unreadable", e && e.message); } }
+    if (c) { try { const o = JSON.parse(c.v); if (Date.now() - o.at < ttl) return await freshSelfcheck(env, Object.assign(o.body, { cached_at: new Date(o.at).toISOString() })); } catch (e) { console.error("analytics report cache unreadable", e && e.message); } }
   }
   const body = await compute(env, now);
   if (ttl) await env.DB.prepare("INSERT INTO analytics_meta(key,value) VALUES('report_cache',?1) ON CONFLICT(key) DO UPDATE SET value=excluded.value").bind(JSON.stringify({ at: Date.now(), body })).run();
+  return body;
+}
+// SELFCHECK-FRESH-1: a cached report (up to a day old) froze collector_selfcheck at its compute time and mailed a breach every tick that read it.
+// The guard is re-read live on every call with one indexed lookup, so it reflects the last 30 minutes, not the cache's age.
+async function freshSelfcheck(env, body) {
+  const r = (await env.DB.prepare("SELECT MAX(at) t FROM hits WHERE name='selfcheck'").first()) || {};
+  const v = Date.now() - (r.t || 0) < 30 * 60e3 ? 1 : 0;
+  body.metrics = (body.metrics || []).map(m => m.name !== "collector_selfcheck" ? m : { ...m, value: v, hit: v < 1 ? 1 : 0, why: v < 1 ? "below 1" : "within bounds" });
+  body.breaches = body.metrics.filter(m => m.hit).length;
   return body;
 }
 async function compute(env, now) {

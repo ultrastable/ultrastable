@@ -22,7 +22,7 @@ Can an AI system close its own loops?. Ultrastable R&D, Ultrastable; own R&D que
 - SERVER-OWNS-LOOPS-1 (`foundation/loopowner.py`): a loop with no server-side owner fails the build
 - CLOCKWORK-1 (`instances/ultrastable/loop-registry.json`): each loop row carries its trigger, closing probe and owner
 
-**Measured here:** share of registered loops that declare a closing probe and a server-side owner: 1.0 (n = 111). Target >= 1.0. Verdict: **met**.
+**Measured here:** share of registered loops that declare a closing probe and a server-side owner: 1.0 (n = 110). Target >= 1.0. Verdict: **met**.
 Source: instances/ultrastable/loop-registry.json (declared).
 
 ### O2. Merging needs no person (oversight)
@@ -91,13 +91,13 @@ Source: ops/criticality.jsonl at 2026-11-22T00:44:29Z.
 
 ## Proposed further links (leads, not findings)
 
-Found by core/connect on the lexical-512-1owd3vd route; each is a proposal until a study file adopts it.
+Found by core/connect on the lexical-512-1lus9dj route; each is a proposal until a study file adopts it.
 
 - O1 may also relate to FLOW-DIRECTIVE-1 (similarity 0.147)
 - O2 may also relate to CLOCKWORK-1 (similarity 0.131)
 - O5 may also relate to UNKNOWNS-1 (similarity 0.169)
 - O5 may also relate to DRAIN-ZERO-1 (similarity 0.156)
-- O6 may also relate to FLOW-DIRECTIVE-1 (similarity 0.116)
+- O6 may also relate to FLOW-DIRECTIVE-1 (similarity 0.117)
 
 ## Method
 

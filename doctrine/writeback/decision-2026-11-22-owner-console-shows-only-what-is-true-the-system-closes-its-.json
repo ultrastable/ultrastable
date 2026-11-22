@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-22-owner-console-shows-only-what-is-true-the-system-closes-its-",
+  "kind": "decision",
+  "date": "2026-11-22",
+  "title": "Owner console shows only what is true; the system closes its own fix tasks",
+  "body": "Session: session_0156nqDuBwwRB8fWQWzUbU4L. Rowan 2026-11-22: /owner and the digest were noise. OWNER-LINKS-3, SELF-FIX-2, LEGACY-TASKS-1, DIGEST-QUIET-1, PLAN-FACT-1, SELFCHECK-FRESH-1 in dashboard/worker.js and seed/analytics/analytics.js; fleet tasks read-only, no owner buttons.",
+  "probe": "grep:dashboard/worker.js::LEGACY-TASKS-1",
+  "session": "session_0156nqDuBwwRB8fWQWzUbU4L"
+ },
+ "kind": "decision",
+ "title": "Owner console shows only what is true; the system closes its own fix tasks",
+ "session": "session_0156nqDuBwwRB8fWQWzUbU4L"
+}

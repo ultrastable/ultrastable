@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-22-post-feedback-1-engagement-read-back-and-scored-per-arm",
+  "kind": "decision",
+  "date": "2026-11-22",
+  "title": "POST-FEEDBACK-1: engagement read back and scored per arm",
+  "body": "Public like, repost and reply counts for Bluesky and Mastodon posts are read a day after posting, stored on social_posted and used to break ties between equally ranked posts. The relay's AI-generated marker (qnfo-social, Quniverse account, Art. 50) is left as is: its source is not in these repos and a redeploy without it risks losing bindings.",
+  "probe": "file:seed/worker/src/postfeedback.js",
+  "session": "session_0156nqDvwemVbNQXnbPtTWSr"
+ },
+ "kind": "decision",
+ "title": "POST-FEEDBACK-1: engagement read back and scored per arm",
+ "session": "session_0156nqDvwemVbNQXnbPtTWSr"
+}
