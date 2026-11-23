@@ -1,5 +1,5 @@
 {
- "at": "2026-11-22T23:52:38Z",
+ "at": "2026-11-23T00:08:04Z",
  "days": 730,
  "drills": {
   "actions-billing": {
@@ -377,12 +377,12 @@
  "strict": {
   "capacity_year_p50": 0.528,
   "killers": {
-   "domain-renewal": 74,
-   "token-revoked": 126
+   "domain-renewal": 75,
+   "token-revoked": 125
   },
   "p10": 45,
   "p50": 244,
-  "p90": 353,
+  "p90": 352,
   "survive_year": 0.0
  },
  "target_days": 365
