@@ -2,19 +2,19 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 export const FAILMINE = {
  "schema": "ultrastable-failmine/1",
- "at": "2026-11-22T13:34:39Z",
- "events": 223,
- "open": 24,
- "signatures": 61,
- "recurrence_rate": 0.726,
- "mttr_hours_mean": 27.8,
- "mttr_hours_median": 24.0,
- "remediated": 199,
+ "at": "2026-11-23T16:26:34Z",
+ "events": 233,
+ "open": 22,
+ "signatures": 68,
+ "recurrence_rate": 0.708,
+ "mttr_hours_mean": 27.2,
+ "mttr_hours_median": 21.3,
+ "remediated": 211,
  "classes": [
   {
    "class": "merge-conflict",
    "events": 70,
-   "open": 4,
+   "open": 0,
    "signatures": 3,
    "root_cause": "two writers change one generated or append-only file and the second PR cannot apply",
    "owner": "scripts/resolve_generated.py, scripts/no_markers.py",
@@ -22,8 +22,8 @@ export const FAILMINE = {
   },
   {
    "class": "pr-stuck",
-   "events": 62,
-   "open": 3,
+   "events": 65,
+   "open": 2,
    "signatures": 2,
    "root_cause": "nothing server-side owns the PR after the session that opened it ends",
    "owner": "seed/worker/src/sweeper.js lane",
@@ -31,9 +31,9 @@ export const FAILMINE = {
   },
   {
    "class": "ci-red",
-   "events": 46,
-   "open": 11,
-   "signatures": 44,
+   "events": 51,
+   "open": 14,
+   "signatures": 49,
    "root_cause": "a change merged or main moved while a check was red",
    "owner": "foundation/redmain.py",
    "failure_mode": "fm-tests-red"
@@ -41,7 +41,7 @@ export const FAILMINE = {
   {
    "class": "gate-skipped",
    "events": 23,
-   "open": 1,
+   "open": 0,
    "signatures": 1,
    "root_cause": "a merge path reads mergeable_state instead of a green full checks run",
    "owner": "foundation/mergeaudit.py, green guard",
@@ -67,12 +67,21 @@ export const FAILMINE = {
   },
   {
    "class": "credential",
-   "events": 3,
-   "open": 0,
-   "signatures": 3,
+   "events": 4,
+   "open": 1,
+   "signatures": 4,
    "root_cause": "a credential lapses with no renewal probe ahead of expiry",
    "owner": "foundation/credwatch.py, seed/worker/src/auth/",
    "failure_mode": null
+  },
+  {
+   "class": "loop-stalled",
+   "events": 2,
+   "open": 1,
+   "signatures": 2,
+   "root_cause": "a loop has one trigger and that trigger did not fire",
+   "owner": "foundation/resilience.py, seed/worker/src/pulse.js",
+   "failure_mode": "fm-clock-silent"
   },
   {
    "class": "quota-governor",
@@ -82,15 +91,6 @@ export const FAILMINE = {
    "root_cause": "a fixed cap refuses work instead of throttling against measured spend",
    "owner": "seed/worker/src/budget.js soft throttle",
    "failure_mode": null
-  },
-  {
-   "class": "loop-stalled",
-   "events": 1,
-   "open": 1,
-   "signatures": 1,
-   "root_cause": "a loop has one trigger and that trigger did not fire",
-   "owner": "foundation/resilience.py, seed/worker/src/pulse.js",
-   "failure_mode": "fm-clock-silent"
   }
  ],
  "recurring": [
@@ -99,7 +99,7 @@ export const FAILMINE = {
    "class": "merge-conflict",
    "signature": "ol-pr land or supersede pull request conflict",
    "count": 68,
-   "open": 4,
+   "open": 0,
    "last": "2026-11-22T13:26:40Z",
    "ids": [
     "OL-PR-1879",
@@ -115,16 +115,16 @@ export const FAILMINE = {
    "sig": "5f8b2445f4",
    "class": "pr-stuck",
    "signature": "ol-pr land or supersede pull request ci",
-   "count": 52,
-   "open": 3,
-   "last": "2026-11-22T13:32:42Z",
+   "count": 55,
+   "open": 2,
+   "last": "2026-11-23T15:56:17Z",
    "ids": [
-    "OL-PR-1877",
-    "OL-PR-1902",
-    "OL-PR-1906",
     "OL-PR-1926",
     "OL-PR-1935",
-    "OL-PR-1938"
+    "OL-PR-1938",
+    "OL-PR-1963",
+    "OL-PR-2007",
+    "OL-PR-2008"
    ],
    "disposition": "incident"
   },
@@ -133,7 +133,7 @@ export const FAILMINE = {
    "class": "gate-skipped",
    "signature": "q-cifail-mergeaudit pr merged without a green checks",
    "count": 23,
-   "open": 1,
+   "open": 0,
    "last": "2026-11-22T13:26:40Z",
    "ids": [
     "Q-CIFAIL-mergeaudit-1851",
