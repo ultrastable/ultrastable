@@ -1,6 +1,6 @@
 {
  "tenant": "practical-solutions",
- "at": "2026-11-22T14:30:59Z",
+ "at": "2026-11-23T18:00:39Z",
  "history_from": "2026-11-13",
  "window": {
   "recent_days": 3,
@@ -10,15 +10,14 @@
  "areas": [
   {
    "id": "worker",
-   "recent": 57,
-   "baseline": 76,
-   "baseline_days": 6,
-   "recent_rate": 19.0,
-   "baseline_rate": 12.67,
-   "last_active": "2026-11-22",
-   "total": 146,
+   "recent": 59,
+   "baseline": 89,
+   "baseline_days": 7,
+   "recent_rate": 19.67,
+   "baseline_rate": 12.71,
+   "last_active": "2026-11-23",
+   "total": 154,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -45,20 +44,20 @@
     19,
     13,
     28,
-    16
+    16,
+    15
    ]
   },
   {
    "id": "tools",
-   "recent": 44,
-   "baseline": 84,
-   "baseline_days": 6,
-   "recent_rate": 14.67,
-   "baseline_rate": 14.0,
+   "recent": 48,
+   "baseline": 90,
+   "baseline_days": 7,
+   "recent_rate": 16.0,
+   "baseline_rate": 12.86,
    "last_active": "2026-11-22",
-   "total": 137,
+   "total": 138,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -85,20 +84,20 @@
     15,
     6,
     29,
-    9
+    9,
+    10
    ]
   },
   {
    "id": "ledger",
-   "recent": 42,
-   "baseline": 23,
-   "baseline_days": 6,
-   "recent_rate": 14.0,
-   "baseline_rate": 3.83,
-   "last_active": "2026-11-22",
-   "total": 76,
+   "recent": 39,
+   "baseline": 38,
+   "baseline_days": 7,
+   "recent_rate": 13.0,
+   "baseline_rate": 5.43,
+   "last_active": "2026-11-23",
+   "total": 83,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -125,20 +124,20 @@
     10,
     15,
     17,
-    10
+    10,
+    12
    ]
   },
   {
    "id": "workflows",
-   "recent": 22,
-   "baseline": 45,
-   "baseline_days": 6,
-   "recent_rate": 7.33,
-   "baseline_rate": 7.5,
+   "recent": 25,
+   "baseline": 46,
+   "baseline_days": 7,
+   "recent_rate": 8.33,
+   "baseline_rate": 6.57,
    "last_active": "2026-11-22",
-   "total": 70,
+   "total": 71,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -165,20 +164,20 @@
     8,
     1,
     14,
-    7
+    7,
+    4
    ]
   },
   {
    "id": "ux",
    "recent": 18,
-   "baseline": 37,
-   "baseline_days": 6,
+   "baseline": 38,
+   "baseline_days": 7,
    "recent_rate": 6.0,
-   "baseline_rate": 6.17,
+   "baseline_rate": 5.43,
    "last_active": "2026-11-22",
    "total": 56,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -205,20 +204,20 @@
     4,
     1,
     12,
-    5
+    5,
+    1
    ]
   },
   {
    "id": "root",
-   "recent": 14,
-   "baseline": 15,
-   "baseline_days": 6,
-   "recent_rate": 4.67,
-   "baseline_rate": 2.5,
+   "recent": 17,
+   "baseline": 16,
+   "baseline_days": 7,
+   "recent_rate": 5.67,
+   "baseline_rate": 2.29,
    "last_active": "2026-11-22",
-   "total": 32,
+   "total": 33,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -245,20 +244,20 @@
     8,
     1,
     8,
-    5
+    5,
+    4
    ]
   },
   {
    "id": "data",
    "recent": 3,
-   "baseline": 8,
-   "baseline_days": 6,
+   "baseline": 9,
+   "baseline_days": 7,
    "recent_rate": 1.0,
-   "baseline_rate": 1.33,
-   "last_active": "2026-11-22",
-   "total": 12,
+   "baseline_rate": 1.29,
+   "last_active": "2026-11-23",
+   "total": 13,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -285,20 +284,20 @@
     1,
     1,
     1,
+    1,
     1
    ]
   },
   {
    "id": "org",
-   "recent": 7,
-   "baseline": 5,
-   "baseline_days": 6,
-   "recent_rate": 2.33,
-   "baseline_rate": 0.83,
+   "recent": 6,
+   "baseline": 6,
+   "baseline_days": 7,
+   "recent_rate": 2.0,
+   "baseline_rate": 0.86,
    "last_active": "2026-11-21",
    "total": 12,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -325,20 +324,20 @@
     0,
     1,
     5,
-    1
+    1,
+    0
    ]
   },
   {
    "id": "platform",
    "recent": 0,
    "baseline": 2,
-   "baseline_days": 6,
+   "baseline_days": 7,
    "recent_rate": 0.0,
-   "baseline_rate": 0.33,
+   "baseline_rate": 0.29,
    "last_active": "2026-11-16",
    "total": 2,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -365,6 +364,7 @@
     0,
     0,
     0,
+    0,
     0
    ]
   },
@@ -372,7 +372,7 @@
    "id": "doctrine",
    "recent": 1,
    "baseline": 0,
-   "baseline_days": 6,
+   "baseline_days": 7,
    "recent_rate": 0.33,
    "baseline_rate": 0.0,
    "last_active": "2026-11-21",
@@ -404,21 +404,20 @@
     0,
     0,
     0,
-    0,
-    1
+    1,
+    0
    ]
   },
   {
    "id": "reference",
    "recent": 0,
    "baseline": 1,
-   "baseline_days": 6,
+   "baseline_days": 7,
    "recent_rate": 0.0,
-   "baseline_rate": 0.17,
+   "baseline_rate": 0.14,
    "last_active": "2026-11-13",
    "total": 1,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -445,6 +444,7 @@
     0,
     0,
     0,
+    0,
     0
    ]
   }
@@ -452,10 +452,9 @@
  "ledgers": [
   {
    "id": "ledger:cycles:all",
-   "events": 17,
+   "events": 18,
    "fails": 0,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -482,7 +481,8 @@
     2,
     1,
     1,
-    1
+    1,
+    0
    ],
    "fail_spark": [
     0,
@@ -514,14 +514,13 @@
     0,
     0
    ],
-   "last": "2026-11-21"
+   "last": "2026-11-23"
   },
   {
    "id": "ledger:releases:all",
-   "events": 5,
+   "events": 6,
    "fails": 0,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -548,6 +547,7 @@
     2,
     1,
     1,
+    1,
     1
    ],
    "fail_spark": [
@@ -580,7 +580,7 @@
     0,
     0
    ],
-   "last": "2026-11-21"
+   "last": "2026-11-22"
   }
  ],
  "entries": {
@@ -589,71 +589,13 @@
  },
  "findings": [
   {
-   "id": "efc9062f94",
-   "kind": "hotspot",
-   "subject": "area:ledger",
-   "area": "ledger",
-   "advocate": "research-publisher",
-   "severity": "watch",
-   "evidence": "42 commits in 3 days against a baseline of 3.8 a day (3.7x)",
-   "prediction": "area ledger recent_rate returns below 3.0x baseline within 7 days",
-   "files": [],
-   "last_good": null,
-   "status": "open",
-   "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-22T14:30:59Z",
-   "runs": 3,
-   "item": "Q-TEMPORAL-efc9062f94",
-   "reopened": 0
-  },
-  {
-   "id": "f12a6c2fd8",
-   "kind": "hotspot",
-   "subject": "file:ledger/synth-discovered.json",
-   "area": "ledger",
-   "advocate": "research-publisher",
-   "severity": "watch",
-   "evidence": "ledger/synth-discovered.json edited 11 times in 3 days (outside generated and ledger paths)",
-   "prediction": "ledger/synth-discovered.json is edited at most 5 times in 3 days within 7 days",
-   "files": [
-    "ledger/synth-discovered.json"
-   ],
-   "last_good": null,
-   "status": "open",
-   "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-22T14:30:59Z",
-   "runs": 3,
-   "item": "Q-TEMPORAL-f12a6c2fd8",
-   "reopened": 0
-  },
-  {
-   "id": "6a29fbb59d",
-   "kind": "hotspot",
-   "subject": "file:ledger/syntheses-verified.json",
-   "area": "ledger",
-   "advocate": "research-publisher",
-   "severity": "watch",
-   "evidence": "ledger/syntheses-verified.json edited 16 times in 3 days (outside generated and ledger paths)",
-   "prediction": "ledger/syntheses-verified.json is edited at most 5 times in 3 days within 7 days",
-   "files": [
-    "ledger/syntheses-verified.json"
-   ],
-   "last_good": null,
-   "status": "open",
-   "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-22T14:30:59Z",
-   "runs": 3,
-   "item": "Q-TEMPORAL-6a29fbb59d",
-   "reopened": 0
-  },
-  {
    "id": "73e9f6599f",
    "kind": "hotspot",
    "subject": "file:upstream.json",
    "area": "root",
    "advocate": "product-manager",
    "severity": "watch",
-   "evidence": "upstream.json edited 13 times in 3 days (outside generated and ledger paths)",
+   "evidence": "upstream.json edited 16 times in 3 days (outside generated and ledger paths)",
    "prediction": "upstream.json is edited at most 5 times in 3 days within 7 days",
    "files": [
     "upstream.json"
@@ -661,9 +603,9 @@
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-22T14:30:59Z",
-   "runs": 3,
-   "item": null,
+   "last_seen": "2026-11-23T18:00:39Z",
+   "runs": 4,
+   "item": "Q-TEMPORAL-73e9f6599f",
    "reopened": 0
   },
   {
@@ -673,7 +615,7 @@
    "area": "worker",
    "advocate": "operations",
    "severity": "watch",
-   "evidence": "worker/src/pages.js edited 13 times in 3 days (outside generated and ledger paths)",
+   "evidence": "worker/src/pages.js edited 15 times in 3 days (outside generated and ledger paths)",
    "prediction": "worker/src/pages.js is edited at most 5 times in 3 days within 7 days",
    "files": [
     "worker/src/pages.js"
@@ -681,9 +623,9 @@
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-22T14:30:59Z",
-   "runs": 3,
-   "item": null,
+   "last_seen": "2026-11-23T18:00:39Z",
+   "runs": 4,
+   "item": "Q-TEMPORAL-5f09f22b3f",
    "reopened": 0
   },
   {
@@ -693,7 +635,7 @@
    "area": "worker",
    "advocate": "operations",
    "severity": "watch",
-   "evidence": "worker/src/site.js edited 13 times in 3 days (outside generated and ledger paths)",
+   "evidence": "worker/src/site.js edited 15 times in 3 days (outside generated and ledger paths)",
    "prediction": "worker/src/site.js is edited at most 5 times in 3 days within 7 days",
    "files": [
     "worker/src/site.js"
@@ -701,33 +643,66 @@
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-22T14:30:59Z",
-   "runs": 3,
+   "last_seen": "2026-11-23T18:00:39Z",
+   "runs": 4,
+   "item": "Q-TEMPORAL-2822daa6f2",
+   "reopened": 0
+  },
+  {
+   "id": "babd96078f",
+   "kind": "hotspot",
+   "subject": "file:ux/stories.js",
+   "area": "ux",
+   "advocate": "uiux-manager",
+   "severity": "watch",
+   "evidence": "ux/stories.js edited 11 times in 3 days (outside generated and ledger paths)",
+   "prediction": "ux/stories.js is edited at most 5 times in 3 days within 7 days",
+   "files": [
+    "ux/stories.js"
+   ],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-23T18:00:39Z",
+   "last_seen": "2026-11-23T18:00:39Z",
+   "runs": 1,
    "item": null,
    "reopened": 0
+  }
+ ],
+ "settled": [
+  {
+   "id": "efc9062f94",
+   "kind": "hotspot",
+   "subject": "area:ledger",
+   "first_seen": "2026-11-21T11:56:24Z",
+   "settled_at": "2026-11-23T18:00:39Z",
+   "runs": 3
+  },
+  {
+   "id": "f12a6c2fd8",
+   "kind": "hotspot",
+   "subject": "file:ledger/synth-discovered.json",
+   "first_seen": "2026-11-21T11:56:24Z",
+   "settled_at": "2026-11-23T18:00:39Z",
+   "runs": 3
+  },
+  {
+   "id": "6a29fbb59d",
+   "kind": "hotspot",
+   "subject": "file:ledger/syntheses-verified.json",
+   "first_seen": "2026-11-21T11:56:24Z",
+   "settled_at": "2026-11-23T18:00:39Z",
+   "runs": 3
   },
   {
    "id": "4d73e107a5",
    "kind": "hotspot",
    "subject": "file:worker/src/syntheses.gen.js",
-   "area": "worker",
-   "advocate": "operations",
-   "severity": "watch",
-   "evidence": "worker/src/syntheses.gen.js edited 16 times in 3 days (outside generated and ledger paths)",
-   "prediction": "worker/src/syntheses.gen.js is edited at most 5 times in 3 days within 7 days",
-   "files": [
-    "worker/src/syntheses.gen.js"
-   ],
-   "last_good": null,
-   "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-22T14:30:59Z",
-   "runs": 3,
-   "item": null,
-   "reopened": 0
+   "settled_at": "2026-11-23T18:00:39Z",
+   "runs": 3
   }
  ],
- "settled": [],
  "history": [
   {
    "day": "2026-11-21",
@@ -744,6 +719,16 @@
    "open": 7,
    "settled": 0,
    "hotspot": 7,
+   "neglect": 0,
+   "stale_entry": 0,
+   "stopped_loop": 0,
+   "repeated_failure": 0
+  },
+  {
+   "day": "2026-11-23",
+   "open": 4,
+   "settled": 4,
+   "hotspot": 4,
    "neglect": 0,
    "stale_entry": 0,
    "stopped_loop": 0,

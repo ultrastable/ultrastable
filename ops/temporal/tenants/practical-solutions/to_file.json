@@ -1,26 +1,26 @@
 [
  {
-  "id": "Q-TEMPORAL-efc9062f94",
-  "title": "Q-TEMPORAL-efc9062f94: hotspot: area:ledger",
-  "body": "Temporal loop finding (hotspot) in ledger: 42 commits in 3 days against a baseline of 3.8 a day (3.7x). Seen in 3 runs since 2026-11-21T11:56:24Z. Advocate: research-publisher.\n\nFind why this keeps being edited (a flaky generator, an unstable spec, a loop that rewrites its own output) and fix the cause with a test or guard. Do not slow the work down; stop the churn.\n\nPrediction: area ledger recent_rate returns below 3.0x baseline within 7 days.\n\nThis item closes when the finding no longer holds (`python3 -m foundation temporal --settled efc9062f94` recomputes it from the repository's own history).",
+  "id": "Q-TEMPORAL-73e9f6599f",
+  "title": "Q-TEMPORAL-73e9f6599f: hotspot: file:upstream.json",
+  "body": "Temporal loop finding (hotspot) in root: upstream.json edited 16 times in 3 days (outside generated and ledger paths). Seen in 4 runs since 2026-11-21T11:56:24Z. Advocate: product-manager.\n\nFind why this keeps being edited (a flaky generator, an unstable spec, a loop that rewrites its own output) and fix the cause with a test or guard. Do not slow the work down; stop the churn.\n\nFiles: upstream.json.\n\nPrediction: upstream.json is edited at most 5 times in 3 days within 7 days.\n\nThis item closes when the finding no longer holds (`python3 -m foundation temporal --settled 73e9f6599f` recomputes it from the repository's own history).",
   "labels": [
    "temporal",
    "agent-task"
   ]
  },
  {
-  "id": "Q-TEMPORAL-f12a6c2fd8",
-  "title": "Q-TEMPORAL-f12a6c2fd8: hotspot: file:ledger/synth-discovered.json",
-  "body": "Temporal loop finding (hotspot) in ledger: ledger/synth-discovered.json edited 11 times in 3 days (outside generated and ledger paths). Seen in 3 runs since 2026-11-21T11:56:24Z. Advocate: research-publisher.\n\nFind why this keeps being edited (a flaky generator, an unstable spec, a loop that rewrites its own output) and fix the cause with a test or guard. Do not slow the work down; stop the churn.\n\nFiles: ledger/synth-discovered.json.\n\nPrediction: ledger/synth-discovered.json is edited at most 5 times in 3 days within 7 days.\n\nThis item closes when the finding no longer holds (`python3 -m foundation temporal --settled f12a6c2fd8` recomputes it from the repository's own history).",
+  "id": "Q-TEMPORAL-5f09f22b3f",
+  "title": "Q-TEMPORAL-5f09f22b3f: hotspot: file:worker/src/pages.js",
+  "body": "Temporal loop finding (hotspot) in worker: worker/src/pages.js edited 15 times in 3 days (outside generated and ledger paths). Seen in 4 runs since 2026-11-21T11:56:24Z. Advocate: operations.\n\nFind why this keeps being edited (a flaky generator, an unstable spec, a loop that rewrites its own output) and fix the cause with a test or guard. Do not slow the work down; stop the churn.\n\nFiles: worker/src/pages.js.\n\nPrediction: worker/src/pages.js is edited at most 5 times in 3 days within 7 days.\n\nThis item closes when the finding no longer holds (`python3 -m foundation temporal --settled 5f09f22b3f` recomputes it from the repository's own history).",
   "labels": [
    "temporal",
    "agent-task"
   ]
  },
  {
-  "id": "Q-TEMPORAL-6a29fbb59d",
-  "title": "Q-TEMPORAL-6a29fbb59d: hotspot: file:ledger/syntheses-verified.json",
-  "body": "Temporal loop finding (hotspot) in ledger: ledger/syntheses-verified.json edited 16 times in 3 days (outside generated and ledger paths). Seen in 3 runs since 2026-11-21T11:56:24Z. Advocate: research-publisher.\n\nFind why this keeps being edited (a flaky generator, an unstable spec, a loop that rewrites its own output) and fix the cause with a test or guard. Do not slow the work down; stop the churn.\n\nFiles: ledger/syntheses-verified.json.\n\nPrediction: ledger/syntheses-verified.json is edited at most 5 times in 3 days within 7 days.\n\nThis item closes when the finding no longer holds (`python3 -m foundation temporal --settled 6a29fbb59d` recomputes it from the repository's own history).",
+  "id": "Q-TEMPORAL-2822daa6f2",
+  "title": "Q-TEMPORAL-2822daa6f2: hotspot: file:worker/src/site.js",
+  "body": "Temporal loop finding (hotspot) in worker: worker/src/site.js edited 15 times in 3 days (outside generated and ledger paths). Seen in 4 runs since 2026-11-21T11:56:24Z. Advocate: operations.\n\nFind why this keeps being edited (a flaky generator, an unstable spec, a loop that rewrites its own output) and fix the cause with a test or guard. Do not slow the work down; stop the churn.\n\nFiles: worker/src/site.js.\n\nPrediction: worker/src/site.js is edited at most 5 times in 3 days within 7 days.\n\nThis item closes when the finding no longer holds (`python3 -m foundation temporal --settled 2822daa6f2` recomputes it from the repository's own history).",
   "labels": [
    "temporal",
    "agent-task"

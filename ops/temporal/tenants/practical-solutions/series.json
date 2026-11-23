@@ -1,17 +1,16 @@
 {
- "at": "2026-11-22T14:30:59Z",
+ "at": "2026-11-23T18:00:39Z",
  "areas": [
   {
    "id": "worker",
-   "recent": 57,
-   "baseline": 76,
-   "baseline_days": 6,
-   "recent_rate": 19.0,
-   "baseline_rate": 12.67,
-   "last_active": "2026-11-22",
-   "total": 146,
+   "recent": 59,
+   "baseline": 89,
+   "baseline_days": 7,
+   "recent_rate": 19.67,
+   "baseline_rate": 12.71,
+   "last_active": "2026-11-23",
+   "total": 154,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -38,20 +37,20 @@
     19,
     13,
     28,
-    16
+    16,
+    15
    ]
   },
   {
    "id": "tools",
-   "recent": 44,
-   "baseline": 84,
-   "baseline_days": 6,
-   "recent_rate": 14.67,
-   "baseline_rate": 14.0,
+   "recent": 48,
+   "baseline": 90,
+   "baseline_days": 7,
+   "recent_rate": 16.0,
+   "baseline_rate": 12.86,
    "last_active": "2026-11-22",
-   "total": 137,
+   "total": 138,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -78,20 +77,20 @@
     15,
     6,
     29,
-    9
+    9,
+    10
    ]
   },
   {
    "id": "ledger",
-   "recent": 42,
-   "baseline": 23,
-   "baseline_days": 6,
-   "recent_rate": 14.0,
-   "baseline_rate": 3.83,
-   "last_active": "2026-11-22",
-   "total": 76,
+   "recent": 39,
+   "baseline": 38,
+   "baseline_days": 7,
+   "recent_rate": 13.0,
+   "baseline_rate": 5.43,
+   "last_active": "2026-11-23",
+   "total": 83,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -118,20 +117,20 @@
     10,
     15,
     17,
-    10
+    10,
+    12
    ]
   },
   {
    "id": "workflows",
-   "recent": 22,
-   "baseline": 45,
-   "baseline_days": 6,
-   "recent_rate": 7.33,
-   "baseline_rate": 7.5,
+   "recent": 25,
+   "baseline": 46,
+   "baseline_days": 7,
+   "recent_rate": 8.33,
+   "baseline_rate": 6.57,
    "last_active": "2026-11-22",
-   "total": 70,
+   "total": 71,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -158,20 +157,20 @@
     8,
     1,
     14,
-    7
+    7,
+    4
    ]
   },
   {
    "id": "ux",
    "recent": 18,
-   "baseline": 37,
-   "baseline_days": 6,
+   "baseline": 38,
+   "baseline_days": 7,
    "recent_rate": 6.0,
-   "baseline_rate": 6.17,
+   "baseline_rate": 5.43,
    "last_active": "2026-11-22",
    "total": 56,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -198,20 +197,20 @@
     4,
     1,
     12,
-    5
+    5,
+    1
    ]
   },
   {
    "id": "root",
-   "recent": 14,
-   "baseline": 15,
-   "baseline_days": 6,
-   "recent_rate": 4.67,
-   "baseline_rate": 2.5,
+   "recent": 17,
+   "baseline": 16,
+   "baseline_days": 7,
+   "recent_rate": 5.67,
+   "baseline_rate": 2.29,
    "last_active": "2026-11-22",
-   "total": 32,
+   "total": 33,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -238,20 +237,20 @@
     8,
     1,
     8,
-    5
+    5,
+    4
    ]
   },
   {
    "id": "data",
    "recent": 3,
-   "baseline": 8,
-   "baseline_days": 6,
+   "baseline": 9,
+   "baseline_days": 7,
    "recent_rate": 1.0,
-   "baseline_rate": 1.33,
-   "last_active": "2026-11-22",
-   "total": 12,
+   "baseline_rate": 1.29,
+   "last_active": "2026-11-23",
+   "total": 13,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -278,20 +277,20 @@
     1,
     1,
     1,
+    1,
     1
    ]
   },
   {
    "id": "org",
-   "recent": 7,
-   "baseline": 5,
-   "baseline_days": 6,
-   "recent_rate": 2.33,
-   "baseline_rate": 0.83,
+   "recent": 6,
+   "baseline": 6,
+   "baseline_days": 7,
+   "recent_rate": 2.0,
+   "baseline_rate": 0.86,
    "last_active": "2026-11-21",
    "total": 12,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -318,20 +317,20 @@
     0,
     1,
     5,
-    1
+    1,
+    0
    ]
   },
   {
    "id": "platform",
    "recent": 0,
    "baseline": 2,
-   "baseline_days": 6,
+   "baseline_days": 7,
    "recent_rate": 0.0,
-   "baseline_rate": 0.33,
+   "baseline_rate": 0.29,
    "last_active": "2026-11-16",
    "total": 2,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -358,6 +357,7 @@
     0,
     0,
     0,
+    0,
     0
    ]
   },
@@ -365,7 +365,7 @@
    "id": "doctrine",
    "recent": 1,
    "baseline": 0,
-   "baseline_days": 6,
+   "baseline_days": 7,
    "recent_rate": 0.33,
    "baseline_rate": 0.0,
    "last_active": "2026-11-21",
@@ -397,21 +397,20 @@
     0,
     0,
     0,
-    0,
-    1
+    1,
+    0
    ]
   },
   {
    "id": "reference",
    "recent": 0,
    "baseline": 1,
-   "baseline_days": 6,
+   "baseline_days": 7,
    "recent_rate": 0.0,
-   "baseline_rate": 0.17,
+   "baseline_rate": 0.14,
    "last_active": "2026-11-13",
    "total": 1,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -438,6 +437,7 @@
     0,
     0,
     0,
+    0,
     0
    ]
   }
@@ -445,10 +445,9 @@
  "ledgers": [
   {
    "id": "ledger:cycles:all",
-   "events": 17,
+   "events": 18,
    "fails": 0,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -475,7 +474,8 @@
     2,
     1,
     1,
-    1
+    1,
+    0
    ],
    "fail_spark": [
     0,
@@ -507,14 +507,13 @@
     0,
     0
    ],
-   "last": "2026-11-21"
+   "last": "2026-11-23"
   },
   {
    "id": "ledger:releases:all",
-   "events": 5,
+   "events": 6,
    "fails": 0,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -541,6 +540,7 @@
     2,
     1,
     1,
+    1,
     1
    ],
    "fail_spark": [
@@ -573,7 +573,7 @@
     0,
     0
    ],
-   "last": "2026-11-21"
+   "last": "2026-11-22"
   }
  ]
 }

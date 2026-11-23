@@ -11,12 +11,13 @@
    "prediction": "area ledger recent_rate returns below 3.0x baseline within 7 days",
    "files": [],
    "last_good": null,
-   "status": "open",
+   "status": "settled",
    "first_seen": "2026-11-21T11:56:24Z",
    "last_seen": "2026-11-22T14:30:59Z",
    "runs": 3,
    "item": "Q-TEMPORAL-efc9062f94",
-   "reopened": 0
+   "reopened": 0,
+   "settled_at": "2026-11-23T18:00:39Z"
   },
   "f12a6c2fd8": {
    "id": "f12a6c2fd8",
@@ -31,12 +32,13 @@
     "ledger/synth-discovered.json"
    ],
    "last_good": null,
-   "status": "open",
+   "status": "settled",
    "first_seen": "2026-11-21T11:56:24Z",
    "last_seen": "2026-11-22T14:30:59Z",
    "runs": 3,
    "item": "Q-TEMPORAL-f12a6c2fd8",
-   "reopened": 0
+   "reopened": 0,
+   "settled_at": "2026-11-23T18:00:39Z"
   },
   "6a29fbb59d": {
    "id": "6a29fbb59d",
@@ -51,12 +53,13 @@
     "ledger/syntheses-verified.json"
    ],
    "last_good": null,
-   "status": "open",
+   "status": "settled",
    "first_seen": "2026-11-21T11:56:24Z",
    "last_seen": "2026-11-22T14:30:59Z",
    "runs": 3,
    "item": "Q-TEMPORAL-6a29fbb59d",
-   "reopened": 0
+   "reopened": 0,
+   "settled_at": "2026-11-23T18:00:39Z"
   },
   "73e9f6599f": {
    "id": "73e9f6599f",
@@ -65,7 +68,7 @@
    "area": "root",
    "advocate": "product-manager",
    "severity": "watch",
-   "evidence": "upstream.json edited 13 times in 3 days (outside generated and ledger paths)",
+   "evidence": "upstream.json edited 16 times in 3 days (outside generated and ledger paths)",
    "prediction": "upstream.json is edited at most 5 times in 3 days within 7 days",
    "files": [
     "upstream.json"
@@ -73,9 +76,9 @@
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-22T14:30:59Z",
-   "runs": 3,
-   "item": null,
+   "last_seen": "2026-11-23T18:00:39Z",
+   "runs": 4,
+   "item": "Q-TEMPORAL-73e9f6599f",
    "reopened": 0
   },
   "5f09f22b3f": {
@@ -85,7 +88,7 @@
    "area": "worker",
    "advocate": "operations",
    "severity": "watch",
-   "evidence": "worker/src/pages.js edited 13 times in 3 days (outside generated and ledger paths)",
+   "evidence": "worker/src/pages.js edited 15 times in 3 days (outside generated and ledger paths)",
    "prediction": "worker/src/pages.js is edited at most 5 times in 3 days within 7 days",
    "files": [
     "worker/src/pages.js"
@@ -93,9 +96,9 @@
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-22T14:30:59Z",
-   "runs": 3,
-   "item": null,
+   "last_seen": "2026-11-23T18:00:39Z",
+   "runs": 4,
+   "item": "Q-TEMPORAL-5f09f22b3f",
    "reopened": 0
   },
   "2822daa6f2": {
@@ -105,7 +108,7 @@
    "area": "worker",
    "advocate": "operations",
    "severity": "watch",
-   "evidence": "worker/src/site.js edited 13 times in 3 days (outside generated and ledger paths)",
+   "evidence": "worker/src/site.js edited 15 times in 3 days (outside generated and ledger paths)",
    "prediction": "worker/src/site.js is edited at most 5 times in 3 days within 7 days",
    "files": [
     "worker/src/site.js"
@@ -113,9 +116,9 @@
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-22T14:30:59Z",
-   "runs": 3,
-   "item": null,
+   "last_seen": "2026-11-23T18:00:39Z",
+   "runs": 4,
+   "item": "Q-TEMPORAL-2822daa6f2",
    "reopened": 0
   },
   "4d73e107a5": {
@@ -131,13 +134,67 @@
     "worker/src/syntheses.gen.js"
    ],
    "last_good": null,
-   "status": "open",
+   "status": "settled",
    "first_seen": "2026-11-21T11:56:24Z",
    "last_seen": "2026-11-22T14:30:59Z",
    "runs": 3,
    "item": null,
+   "reopened": 0,
+   "settled_at": "2026-11-23T18:00:39Z"
+  },
+  "babd96078f": {
+   "id": "babd96078f",
+   "kind": "hotspot",
+   "subject": "file:ux/stories.js",
+   "area": "ux",
+   "advocate": "uiux-manager",
+   "severity": "watch",
+   "evidence": "ux/stories.js edited 11 times in 3 days (outside generated and ledger paths)",
+   "prediction": "ux/stories.js is edited at most 5 times in 3 days within 7 days",
+   "files": [
+    "ux/stories.js"
+   ],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-23T18:00:39Z",
+   "last_seen": "2026-11-23T18:00:39Z",
+   "runs": 1,
+   "item": null,
    "reopened": 0
   }
  },
- "settled": []
+ "settled": [
+  {
+   "id": "efc9062f94",
+   "kind": "hotspot",
+   "subject": "area:ledger",
+   "first_seen": "2026-11-21T11:56:24Z",
+   "settled_at": "2026-11-23T18:00:39Z",
+   "runs": 3
+  },
+  {
+   "id": "f12a6c2fd8",
+   "kind": "hotspot",
+   "subject": "file:ledger/synth-discovered.json",
+   "first_seen": "2026-11-21T11:56:24Z",
+   "settled_at": "2026-11-23T18:00:39Z",
+   "runs": 3
+  },
+  {
+   "id": "6a29fbb59d",
+   "kind": "hotspot",
+   "subject": "file:ledger/syntheses-verified.json",
+   "first_seen": "2026-11-21T11:56:24Z",
+   "settled_at": "2026-11-23T18:00:39Z",
+   "runs": 3
+  },
+  {
+   "id": "4d73e107a5",
+   "kind": "hotspot",
+   "subject": "file:worker/src/syntheses.gen.js",
+   "first_seen": "2026-11-21T11:56:24Z",
+   "settled_at": "2026-11-23T18:00:39Z",
+   "runs": 3
+  }
+ ]
 }
