@@ -2551,6 +2551,20 @@
    "bound_by": "cited"
   },
   {
+   "id": "cited-36843a8c7f",
+   "surface": "agents/AGENTS.md",
+   "text": "- **A seed that answers is not yet a seed that runs itself (SEED-AUTONOMY-1, Rowan 2026-11-23).** \"Audit and remediate all issues, failure",
+   "probe": [
+    "file:seed/worker/src/index.js",
+    "file:doctrine/seed-deploys.json",
+    "file:seed/bootstrap/bootstrap.py",
+    "file:tests/foundation/test_seedadmit.py",
+    "file:seed/tests/test_seed.py",
+    "file:seed/worker/test/health-ignition.test.js"
+   ],
+   "bound_by": "cited"
+  },
+  {
    "id": "cited-d77a994a9e",
    "surface": "agents/AGENTS.md",
    "text": "- **Find another path before asking; the information is already held (PATHFINDER-1, Rowan 2026-11-21).** \"There are always multiple paths,",
@@ -3399,6 +3413,21 @@
    ],
    "bound_by": "mirror",
    "of": "cited-5e7af4a8d7"
+  },
+  {
+   "id": "mirror-d01d8e87e3",
+   "surface": "seed/agents/AGENTS.md",
+   "text": "- **A seed that answers is not yet a seed that runs itself (SEED-AUTONOMY-1, Rowan 2026-11-23).** \"Audit and remediate all issues, failure",
+   "probe": [
+    "file:seed/worker/src/index.js",
+    "file:doctrine/seed-deploys.json",
+    "file:seed/bootstrap/bootstrap.py",
+    "file:tests/foundation/test_seedadmit.py",
+    "file:seed/tests/test_seed.py",
+    "file:seed/worker/test/health-ignition.test.js"
+   ],
+   "bound_by": "mirror",
+   "of": "cited-36843a8c7f"
   },
   {
    "id": "mirror-83545b0084",

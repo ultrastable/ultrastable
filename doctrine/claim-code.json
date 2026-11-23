@@ -257,6 +257,15 @@
     "file": "seed/worker/src/promoqueue.js",
     "contains": "@[a-z0-9_]"
    }
+  },
+  {
+   "id": "seed-autonomy-stage",
+   "source": "agents/AGENTS.md",
+   "quote": "that is below `looping` 48 hours after its first live deploy",
+   "probe": {
+    "file": "tests/foundation/test_seedadmit.py",
+    "contains": "def test_autonomy_is_read_from_the_seed"
+   }
   }
  ],
  "baseline": [

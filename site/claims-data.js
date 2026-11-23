@@ -2038,6 +2038,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **A seed that answers is not yet a seed that runs itself (SEED-AUTONOMY-1, Rowan 2026-11-23).** \"Audit and remediate all issues, failure",
+   "detail": "",
+   "how": "file:seed/worker/src/index.js + file:doctrine/seed-deploys.json + file:seed/bootstrap/bootstrap.py + file:tests/foundation/test_seedadmit.py + file:seed/tests/test_seed.py + file:seed/worker/test/health-ignition.test.js",
+   "id": "cited-36843a8c7f",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Find another path before asking; the information is already held (PATHFINDER-1, Rowan 2026-11-21).** \"There are always multiple paths,",
    "detail": "",
    "how": "file:doctrine/pathfinder.json + file:ops/paths/attempts.jsonl + file:foundation/pathfinder.py + file:tests/foundation/test_pathfinder.py",
@@ -2663,6 +2672,15 @@ export default {
    "detail": "",
    "how": "file:doctrine/unattended.json + file:seed/scripts/seedlife.py + file:seed/autonomy/seed-lifecycle.json + file:doctrine/seed-lifecycle.json + file:foundation/seedlife.py + file:tests/foundation/test_seedlife.py",
    "id": "mirror-b41d221301",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **A seed that answers is not yet a seed that runs itself (SEED-AUTONOMY-1, Rowan 2026-11-23).** \"Audit and remediate all issues, failure",
+   "detail": "",
+   "how": "file:seed/worker/src/index.js + file:doctrine/seed-deploys.json + file:seed/bootstrap/bootstrap.py + file:tests/foundation/test_seedadmit.py + file:seed/tests/test_seed.py + file:seed/worker/test/health-ignition.test.js",
+   "id": "mirror-d01d8e87e3",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3413,7 +3431,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 376,
-  "total": 376
+  "pass": 378,
+  "total": 378
  }
 };
