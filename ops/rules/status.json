@@ -1,5 +1,5 @@
 {
- "at": "2026-11-22T09:12:13Z",
+ "at": "2026-11-23T09:58:51Z",
  "probes": {
   "closed-loops/closedloop": {
    "status": "ok",
@@ -33,7 +33,7 @@
   },
   "front-end-matches-back-end/claims": {
    "status": "ok",
-   "detail": "claims: 372 verified of 372; 0 drift",
+   "detail": "claims: 378 verified of 378; 0 drift",
    "fixed": false,
    "item": null
   },
@@ -51,7 +51,7 @@
   },
   "front-end-matches-back-end/spinoff-live": {
    "status": "unmeasured",
-   "detail": "unreachable: access-check, air-quality, country-snapshot",
+   "detail": "no live public-benefit app is launched yet",
    "fixed": false,
    "item": null
   },
