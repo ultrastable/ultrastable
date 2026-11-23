@@ -1,7 +1,7 @@
 {
   "id": "Q-RESCORE-d-54c00f8e5aa6",
   "title": "Q-RESCORE-d-54c00f8e5aa6: held-out grader disagrees with the self-score",
-  "body": "**Owner:** reviewer\n**Trigger:** every executor run\n**Done check:** cmd:python3 -m foundation rescore --probe d-54c00f8e5aa6\n**Status:** open\n\nHeld-out grading disagrees with the system's own score for decision d-54c00f8e5aa6 (point `work-queue-priority`): self True, strict rule False (done check fails now: Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_mo), second model None (unavailable). Correct the scorer or the evidence; the done check re-grades it. Source: foundation/rescore.py (RESCORE-1).",
+  "body": "**Owner:** reviewer\n**Trigger:** every executor run\n**Done check:** cmd:python3 -m foundation rescore --probe d-54c00f8e5aa6\n**Status:** open\n\nHeld-out grading disagrees with the system's own score for decision d-54c00f8e5aa6 (point `work-queue-priority`): self True, strict rule False (done check fails now: Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_mo), second model None (unavailable). Correct the scorer or the evidence; the done check re-grades it. Source: foundation/rescore.py (RESCORE-1).\n\n**Vacuous:** 2026-11-23T00:37:17Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n",
   "labels": [
     "role:reviewer",
     "rescore"
