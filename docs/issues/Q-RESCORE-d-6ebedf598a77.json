@@ -1,0 +1,11 @@
+{
+  "id": "Q-RESCORE-d-6ebedf598a77",
+  "title": "Q-RESCORE-d-6ebedf598a77: held-out grader disagrees with the self-score",
+  "body": "**Owner:** reviewer\n**Trigger:** every executor run\n**Done check:** cmd:python3 -m foundation rescore --probe d-6ebedf598a77\n**Status:** open\n\nHeld-out grading disagrees with the system's own score for decision d-6ebedf598a77 (point `work-queue-priority`): self True, strict rule False (done check fails now: 5f8b2445f4: 0 open, last seen 2026-11-22T00:00:00+00:00 (quiet means 0 open and ), second model None (unavailable). Correct the scorer or the evidence; the done check re-grades it. Source: foundation/rescore.py (RESCORE-1).",
+  "labels": [
+    "role:reviewer",
+    "rescore"
+  ],
+  "milestone": "Now",
+  "workstream": "Scoring"
+}

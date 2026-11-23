@@ -4880,6 +4880,15 @@
    "body": "TENANT-REPO-1: tenant-repos.yml had only ORG_ADMIN_TOKEN and LANE_PAT (both unbound), so ultrastable/unlearn was never created; it also word-split jq rows with a for-loop. Third route added: the lane GitHub App minting an installation-wide token with administration and contents write (lane_credential.py org-token); rows are read with while-read.",
    "probe": "file:scripts/lane_credential.py",
    "session": "session_0156nqDvj2EuthJ3xYxicfND"
+  },
+  {
+   "id": "decision-2026-11-22-mobile-layout-1-phone-header-budget-lives-in-core-ui",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "MOBILE-LAYOUT-1: phone header budget lives in core/ui",
+   "body": "core/ui siteHeader keeps items flagged primary in the bar and puts the rest under a script-free More disclosure; familyBar shows its text before the colon on phones. Tenants enforce a 390px budget (chrome <=170px, h1 inside first screen, no sideways scroll, 44px header targets) with a browser check in CI.",
+   "probe": "grep:workers/core/ui/components.js::class=\"more\"",
+   "session": "session_0156nqDsXvfiYKkDzaZaSPmg"
   }
  ]
 }

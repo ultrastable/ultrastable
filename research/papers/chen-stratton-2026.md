@@ -96,13 +96,13 @@ Source: GitHub REST pulls?state=closed, last 100 closed pull requests, fetched 2
 - GUIDING-DIRECTIVE section 12 (`doctrine/registers.json`): every single point of failure, approvals included, is registered and remediated
 - NO-SINGLE-ROUTE (`foundation/failover.py`): every merge and deploy path has a second route needing no person's credential
 
-**Measured here:** verified deploys the system originated and executed itself (latest criticality tick): 31 (n = 143). Target >= 1. Verdict: **met**.
-Source: ops/criticality.jsonl at 2026-11-22T00:44:29Z.
+**Measured here:** verified deploys the system originated and executed itself (latest criticality tick): 11 (n = 133). Target >= 1. Verdict: **met**.
+Source: ops/criticality.jsonl at 2026-11-22T14:31:40Z.
 
 ## Limits
 
 - Scale. One organization: 100 closed pull requests (64 merged) over 0.75 days, against a study of 655 firms over more than five years. Our numbers describe this system; they are not a causal estimate and are not compared with the study's effect sizes as if they were.
-- Who wrote the changes. 80% of merged pull requests in the window were opened by code agent sessions run under the owner's account, not by the system's own loops. The latest criticality tick puts the system in the self-sustaining regime with 31 self-originated deploys, so most of the work measured here was started from outside.
+- Who wrote the changes. 80% of merged pull requests in the window were opened by code agent sessions run under the owner's account, not by the system's own loops. The latest criticality tick puts the system in the self-sustaining regime with 11 self-originated deploys, so most of the work measured here was started from outside.
 - Review by construction. Ultrastable has no human review step, so a short open-to-merge time is partly a consequence of the design. The real test of the design is quality: the revert and deploy-verification findings, which can fail.
 - Revert share counts commits whose subject starts with Revert; a fix that undoes a change without that word is not counted, so the figure is a lower bound.
 - Source. Job market paper (working paper, not peer reviewed), version 2026-11-19 (first version 2026-01-07); its findings may change in later versions.
