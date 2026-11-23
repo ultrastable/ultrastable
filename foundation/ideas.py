@@ -11,6 +11,7 @@ The FREE-TIER-1 governor measures the day's free-plan use (seed/worker/src/freet
   python3 -m foundation ideas --brainstorm [--apply] generate new ideas and scope increases from the repo's own data, queue what fits
   python3 -m foundation ideas --queue                ranked ideas with cost share and whether each fits the headroom
   python3 -m foundation ideas --roadmap [--apply]    regenerate site/spinoff-roadmap-data.js (served at /roadmap and /roadmap.json)
+  python3 -m foundation ideas --context [--apply]    CONTEXT-FIT-1 verdict per public-benefit idea; --apply logs each verdict to provenance
   python3 -m foundation ideas --check                doctrine, snapshot and generated roadmap agree
 """
 from __future__ import annotations
@@ -195,6 +196,54 @@ def benefit(root, cfg: dict, i: dict):
     return round(b["scale"] * region * i["need"] * use_factor(root, i["id"], cfg), 2)
 
 
+def context_fit(cfg: dict, i: dict) -> dict | None:
+    """CONTEXT-FIT-1 (Rowan, 2026-11-23, from John Mauriello's talk on aid designs that failed: NeoNurture, PlayPump, bed nets, OLPC).
+    Six questions every public-benefit idea answers in its own `context` block before it ranks: who decides or pays (not only who uses it),
+    whether it solves the stated problem, whether it works on the reader's own power, bandwidth, device and budget, how it will be adapted or
+    misused and the harm, the small pilot with feedback before scale, and what people already use that it builds on. A missing or thin answer
+    lowers the score; a failed hold check keeps the idea out of launch until it carries a pilot-first plan. None when the idea makes no
+    public-benefit claim (no regions)."""
+    c = cfg.get("context_fit")
+    if not c or "regions" not in i:
+        return None
+    ans, failed = i.get("context") or {}, []
+    for q in c["checks"]:
+        a = ans.get(q["id"])
+        if q["id"] == "pilot":
+            ok = isinstance(a, dict) and all(len(str(a.get(k) or "").strip()) >= c["min_text"] for k in c["pilot_fields"])
+        else:
+            ok = len(str(a or "").strip()) >= c["min_text"]
+        if not ok:
+            failed.append(q["id"])
+    passed = len(c["checks"]) - len(failed)
+    factor = round(c["floor"] + (1 - c["floor"]) * passed / len(c["checks"]), 3)
+    held = [f for f in failed if f in c["hold_on"]]
+    return {"passed": passed, "failed": failed, "factor": factor, "held": held, "ok": not failed}
+
+
+def context_audit(root=REPO, apply=False) -> list[dict]:
+    """Every public-benefit idea's CONTEXT-FIT-1 verdict. With apply, each verdict is a provenance row (identical rows are not written twice)."""
+    cfg, out = load(root), []
+    for i in ideas(root):
+        v = context_fit(cfg, i)
+        if v is None:
+            continue
+        out.append({"id": i["id"], **v})
+        if apply:
+            from . import provenance
+            why = "all six checks answered" if v["ok"] else "unanswered: " + ", ".join(v["failed"]) + ("; held for a pilot-first plan" if v["held"] else "")
+            provenance.record(root, {"class": "loop", "actor": "spinoff-ideas", "channel": "loop-run"}, "decision",
+                              f"CONTEXT-FIT-1 {i['id']}: factor {v['factor']}, {why}", ref=i["id"], affected=["doctrine/spinoff-ideas.json"],
+                              effect={"status": "kept" if v["ok"] else "pending", "metric": "context_fit_share"})
+    return out
+
+
+def context_fit_share(root=REPO) -> float:
+    """Metric context_fit_share: public-benefit ideas answering all six checks / all public-benefit ideas. Target 1.0."""
+    a = context_audit(root)
+    return round(sum(1 for r in a if r["ok"]) / len(a), 3) if a else 1.0
+
+
 def depth(cfg: dict, i: dict) -> dict:
     """DEPTH-1: which of the depth fields (thesis, corpus, loop, returns, horizon) an idea carries, and whether it clears the bar.
     A shallow archetype (a lookup, a board, a template) never clears it: a cheap thrill has nowhere to go."""
@@ -290,12 +339,15 @@ def rank(root=REPO, now=None) -> list[dict]:
         share = max([cost[k] / r["limit"] for k, r in head["resources"].items() if k in cost] or [0])
         ben = benefit(root, cfg, i)
         value = (ben * feas) if ben is not None else i.get("reach", 1) * i.get("impact", 1) * feas * (cfg["weights"]["showcase_bonus"] if i.get("showcase") else 1.0)
+        ctx = context_fit(cfg, i)
+        if ctx is not None:
+            value *= ctx["factor"]
         dep = depth(cfg, i)
-        out.append({**i, "depth": dep, "benefit": ben, "feasibility": feas, "implemented": bool(arch.get("implemented")), "cost": cost, "cost_share": round(share, 4),
+        out.append({**i, "depth": dep, "context_fit": ctx, "benefit": ben, "feasibility": feas, "implemented": bool(arch.get("implemented")), "cost": cost, "cost_share": round(share, 4),
                     "score": round(value / (1 + cfg["weights"]["cost_penalty"] * share), 2)})
     out.sort(key=lambda x: (-x["score"], x["id"]))
     for i in out:
-        ok = all(i["cost"][k] <= left.get(k, 0) for k in RES) and i["score"] >= cfg["min_score"] and i["depth"]["ok"]
+        ok = all(i["cost"][k] <= left.get(k, 0) for k in RES) and i["score"] >= cfg["min_score"] and i["depth"]["ok"] and not (i["context_fit"] or {}).get("held")
         i["fits"] = ok
         if ok:
             for k in RES:
@@ -423,6 +475,9 @@ def check(root=REPO) -> list[str]:
                 bad.append(f"{i['id']}: seed idea misses depth fields {dep['missing']} (DEPTH-1)")
             if not (root / "instances" / i["id"] / "IDEA.md").is_file():
                 bad.append(f"{i['id']}: seed idea has no instances/{i['id']}/IDEA.md, so the seed pipeline never builds it (DEPTH-1)")
+            v = context_fit(cfg, i)
+            if v is not None and not v["ok"]:
+                bad.append(f"{i['id']}: public-benefit idea leaves context checks unanswered {v['failed']} (CONTEXT-FIT-1)")
             continue
         if i.get("archetype") not in scfg["archetypes"]:
             bad.append(f"{i['id']}: unknown archetype")
@@ -434,6 +489,9 @@ def check(root=REPO) -> list[str]:
                 bad.append(f"{i['id']}: live app has no source entry in spinoffs/live.js")
         if i.get("live") and not (i.get("regions") and i.get("need") and i.get("need_evidence")):
             bad.append(f"{i['id']}: a live public-benefit idea needs regions, need and need_evidence (BENEFIT-1)")
+        v = context_fit(cfg, i)
+        if v is not None and not v["ok"] and (i.get("live") or i.get("kind") == "seed"):
+            bad.append(f"{i['id']}: public-benefit idea leaves context checks unanswered {v['failed']} (CONTEXT-FIT-1)")
         if i.get("fact") and not (root / i["fact"]["path"]).is_file():
             bad.append(f"{i['id']}: fact source {i['fact']['path']} missing")
     if not (root / cfg["headroom"]).is_file():
@@ -458,6 +516,10 @@ def main(argv=None) -> int:
     if "--headroom" in a:
         r = refresh_headroom(apply=apply)
         print(json.dumps({k: r[k] for k in r if k != "headroom"} | {"level": r["headroom"]["level"], "stale": r["headroom"]["stale"]}))
+        return 0
+    if "--context" in a:
+        rows = context_audit(apply=apply)
+        print(json.dumps({"context_fit_share": context_fit_share(), "ideas": rows}, indent=1))
         return 0
     if "--retire-shallow" in a:
         print(json.dumps({"retired" if apply else "would_retire": retire_shallow(apply=apply)}))

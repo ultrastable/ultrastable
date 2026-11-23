@@ -162,3 +162,32 @@ class Depth(unittest.TestCase):
         from foundation import ideas as I
         self.assertEqual(I.shallow_live(), [])
         self.assertTrue(all(i["depth"]["ok"] for i in I.rank() if i["fits"]))
+
+
+class ContextFit(unittest.TestCase):
+    """CONTEXT-FIT-1: public-benefit ideas answer six context checks; gaps lower the score and missing pilot or misuse holds launch."""
+
+    def test_every_public_benefit_idea_answers_all_checks(self):
+        self.assertEqual(ideas.context_fit_share(REPO), 1.0)
+
+    def test_gaps_lower_score_and_hold(self):
+        cfg = ideas.load(REPO)
+        full = next(i for i in cfg["bank"] if i["id"] == "did-it-work")
+        self.assertTrue(ideas.context_fit(cfg, full)["ok"])
+        bare = {k: v for k, v in full.items() if k != "context"}
+        v = ideas.context_fit(cfg, bare)
+        self.assertEqual(v["factor"], cfg["context_fit"]["floor"])
+        self.assertEqual(set(v["held"]), {"pilot", "misuse"})
+        thin = {**full, "context": {**full["context"], "pilot": {"size": "big"}}}
+        self.assertEqual(ideas.context_fit(cfg, thin)["failed"], ["pilot"])
+        self.assertIsNone(ideas.context_fit(cfg, {"id": "x"}))
+
+    def test_check_fails_a_live_idea_without_answers(self):
+        d = sandbox()
+        p = d / "doctrine/spinoff-ideas.json"
+        doc = json.loads(p.read_text(encoding="utf-8"))
+        for i in doc["bank"]:
+            if i["id"] == "air-quality":
+                i.pop("context")
+        p.write_text(json.dumps(doc), encoding="utf-8")
+        self.assertTrue(any("air-quality" in b and "CONTEXT-FIT-1" in b for b in ideas.check(d)))

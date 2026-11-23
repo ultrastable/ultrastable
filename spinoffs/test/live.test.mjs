@@ -70,3 +70,11 @@ test("use is counted as one aggregate row per app per day and reported as uses_7
   assert.equal(m.uses_7d, 2);
   assert.equal((await handleLive("quake-watch", app("quake-watch"), new URL("https://x/"), f, {})).status, 200);
 });
+
+test("CONTEXT-FIT-1: lookup and feed answers are in the page itself, so they show with scripts off", async () => {
+  const f = async () => ok([{ page: 1 }, [{ country: { value: "Kenya" }, date: "2022", value: 76.54 }]]);
+  const html = await (await get("country-snapshot", "/?q=ke", f)).text();
+  assert.match(html, /<form id="f" method="get" action="\/">/); assert.match(html, /<h2>Kenya<\/h2>/); assert.match(html, /76\.5%/);
+  const feedf = async () => ok({ features: [{ properties: { place: "Somewhere", mag: 5.1, time: 1000, url: "u1" } }] });
+  assert.match(await (await get("quake-watch", "/", feedf)).text(), /<td><a href='u1'>Somewhere<\/a><\/td>/);
+});
