@@ -1,5 +1,5 @@
 {
- "at": "2026-11-22T14:31:38Z",
+ "at": "2026-11-23T18:02:21Z",
  "account_id": "81e3a4efb4eb66e613529b87682911bb",
  "rules": [
   {
@@ -9,6 +9,7 @@
    "detail": [
     "tenant-ps-edge",
     "tenant-ps-mail",
+    "ultrastable-did-it-work",
     "ultrastable-mail-in",
     "ultrastable-mail-relay",
     "ultrastable-spinoffs",
@@ -21,7 +22,11 @@
    "status": "fail",
    "detail": [
     "us-idea-16438b610e",
+    "us-idea-3b145446e4",
+    "us-idea-4bc6af0cea",
+    "us-idea-7f16de273d",
     "us-idea-9fcb2077cc",
+    "us-idea-b7adf8fd63",
     "us-idea-df25e6aced",
     "us-idea-efb6b23d9c"
    ]
