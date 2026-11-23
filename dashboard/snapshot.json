@@ -1,6 +1,6 @@
 {
- "generated": "2026-11-17",
- "commit": "eed92ee",
+ "generated": "2026-11-23",
+ "commit": "8f9c421",
  "problems": [],
  "panels": [
   {
@@ -96,7 +96,7 @@
      "warn"
     ],
     [
-     "Publish `workers`, `spec` and `license` (decisions recorded in `docs/legal/LICENSE-DECISIONS.md`)",
+     "Publish `workers`, `spec` and `license` (decisions recorded in `licensing/LICENSE-DECISIONS.md`)",
      "default: Visibility flip | probe: `gh api repos/ultrastable/workers --jq .private` is `false`",
      "warn"
     ],
@@ -121,7 +121,7 @@
      "warn"
     ],
     [
-     "Submit funding applications (Google Cloud Start packet ready to paste: `instances/ultrastable/funding/applications/google-for-startups/OWNER-CARD.md`; ne",
+     "Submit funding applications (Google Cloud Start packet ready to paste: `instances/ultrastable/funding/applications/google-for-startups/OWNER",
      "default: Applications prepared, not sent | probe: Submission confirmation filed in `instances/ultrastable/funding/applications/<name>/confirmations/`",
      "warn"
     ],
@@ -466,6 +466,21 @@
      "Self-reference v1.0.0",
      "Ultrastable runs on Ultrastable, and that self-reference is what bootstrapping and criticality rest on.",
      "info"
+    ],
+    [
+     "Ultrastability v1.0.0",
+     "A system is ultrastable when it keeps its essential variables inside limits by changing its own structure: when a variable leaves its limits the system destroys and rebuilds parts of itself until the variable returns (Ashby, 1952).",
+     "info"
+    ],
+    [
+     "Creation and destruction v1.0.0",
+     "Ultrastable creates and destroys its own parts to stay stable.",
+     "info"
+    ],
+    [
+     "Containment boundary v1.0.0",
+     "The line between what is the system's own (inside: working trees, sandbox instances, derived data, sessions) and everything else (egress: credentials, money, owner accounts, public publishing, third-party systems).",
+     "info"
     ]
    ]
   },
@@ -475,13 +490,150 @@
    "rows": [
     [
      "Loops registered",
-     "85; 85 close by the system, 0 by an owner card",
+     "111; 111 close by the system, 0 by an owner card",
      "ok"
     ],
     [
      "Open loops",
      "0 finding(s) from python3 -m foundation loops --verify",
      "ok"
+    ]
+   ]
+  },
+  {
+   "id": "unknowns",
+   "title": "What we do not know (UNKNOWNS-1)",
+   "rows": [
+    [
+     "Loops and needs questioned",
+     "3 of 133 (2%)",
+     "info"
+    ],
+    [
+     "Questions asked / answered / open",
+     "3 / 0 / 3",
+     "warn"
+    ],
+    [
+     "Surprise rate (answers that found a gap)",
+     "0%",
+     "info"
+    ],
+    [
+     "Objective candidates / seeds for the next pass",
+     "0 / 0",
+     "info"
+    ],
+    [
+     "Answered with 'we cannot know'",
+     "0",
+     "info"
+    ]
+   ]
+  },
+  {
+   "id": "rules",
+   "title": "Standing rules enforced in code (RULES-1, from ops/rules/status.json)",
+   "rows": [
+    [
+     "closed-loops",
+     "enforced; 3 CI check(s), 3 runtime probe(s)",
+     "ok"
+    ],
+    [
+     "autonomy-first",
+     "enforced; 2 CI check(s), 2 runtime probe(s)",
+     "ok"
+    ],
+    [
+     "front-end-matches-back-end",
+     "unmeasured; 2 CI check(s), 4 runtime probe(s); gap: Practical Solutions *.gen.js bundles do not yet report freshness",
+     "warn"
+    ],
+    [
+     "no-merge-over-red",
+     "enforced; 2 CI check(s), 2 runtime probe(s)",
+     "ok"
+    ],
+    [
+     "free-tier",
+     "enforced; 2 CI check(s), 3 runtime probe(s)",
+     "ok"
+    ],
+    [
+     "no-qnfo-on-pages",
+     "unmeasured; 1 CI check(s), 2 runtime probe(s)",
+     "warn"
+    ],
+    [
+     "license-notice",
+     "unmeasured; 2 CI check(s), 2 runtime probe(s)",
+     "warn"
+    ],
+    [
+     "no-secrets-in-logs",
+     "enforced; 1 CI check(s), 1 runtime probe(s)",
+     "ok"
+    ],
+    [
+     "server-side-only",
+     "enforced; 1 CI check(s), 1 runtime probe(s)",
+     "ok"
+    ],
+    [
+     "clock-never-stops",
+     "enforced; 2 CI check(s), 2 runtime probe(s)",
+     "ok"
+    ],
+    [
+     "user-backend-boundary",
+     "enforced; 2 CI check(s), 2 runtime probe(s)",
+     "ok"
+    ],
+    [
+     "every-decision-measured",
+     "unmeasured; 1 CI check(s), 1 runtime probe(s)",
+     "warn"
+    ],
+    [
+     "single-account",
+     "enforced; 1 CI check(s), 1 runtime probe(s)",
+     "ok"
+    ],
+    [
+     "every-goal-has-knob",
+     "enforced; 1 CI check(s), 1 runtime probe(s)",
+     "ok"
+    ],
+    [
+     "no-open-items",
+     "enforced; 1 CI check(s), 3 runtime probe(s)",
+     "ok"
+    ],
+    [
+     "held-out-rescoring",
+     "enforced; 1 CI check(s), 1 runtime probe(s)",
+     "ok"
+    ],
+    [
+     "own-database",
+     "unmeasured; 1 CI check(s), 1 runtime probe(s)",
+     "warn"
+    ],
+    [
+     "hosted-tier-closed-until-proven",
+     "enforced; 1 CI check(s), 1 runtime probe(s)",
+     "ok"
+    ],
+    [
+     "visible-progress",
+     "enforced; 1 CI check(s), 3 runtime probe(s)",
+     "ok"
+    ],
+    [
+     "last run",
+     "2026-11-23T09:58:51Z",
+     "info"
     ]
    ]
   }

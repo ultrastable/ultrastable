@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-16",
+ "generated": "2026-11-23",
  "mode": "dry-run",
  "kill": false,
  "live_blockers": [
@@ -13,9 +13,9 @@
   "intro_state_no-public-route": 2,
   "intro_state_form-only": 7,
   "intro_state_verified": 0,
-  "intro_state_packet-ready": 1,
+  "intro_state_packet-ready": 0,
   "intro_state_guard-failed": 0,
-  "intro_state_queued": 5,
+  "intro_state_queued": 6,
   "intro_state_sent": 0,
   "intro_state_replied": 0,
   "intro_state_accepted": 0,
@@ -96,8 +96,8 @@
    "key": "intro:P-GOVAI",
    "name": "Centre for the Governance of AI",
    "segment": "research-institute",
-   "state": "packet-ready",
-   "last_event": "packet-ready"
+   "state": "queued",
+   "last_event": "dry-run-send"
   },
   {
    "key": "intro:P-MOZILLA",

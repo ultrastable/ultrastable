@@ -31,10 +31,15 @@
      "at": "2026-11-16",
      "event": "dry-run-send",
      "detail": "would email info@allenai.org"
+    },
+    {
+     "at": "2026-11-23",
+     "event": "dry-run-send",
+     "detail": "would email info@allenai.org"
     }
    ],
    "guard": [],
-   "dry_run_at": "2026-11-16"
+   "dry_run_at": "2026-11-23"
   },
   "intro:P-ADALOVELACE": {
    "registry_id": "P-ADALOVELACE",
@@ -55,6 +60,11 @@
     },
     {
      "at": "2026-11-16",
+     "event": "form-only",
+     "detail": "no published role mailbox; contact page https://www.adalovelaceinstitute.org/contact. Forms are not submitted by the system"
+    },
+    {
+     "at": "2026-11-23",
      "event": "form-only",
      "detail": "no published role mailbox; contact page https://www.adalovelaceinstitute.org/contact. Forms are not submitted by the system"
     }
@@ -81,6 +91,11 @@
      "at": "2026-11-16",
      "event": "no-public-route",
      "detail": "no contact page or role mailbox found"
+    },
+    {
+     "at": "2026-11-23",
+     "event": "no-public-route",
+     "detail": "no contact page or role mailbox found"
     }
    ]
   },
@@ -103,6 +118,11 @@
     },
     {
      "at": "2026-11-16",
+     "event": "form-only",
+     "detail": "no published role mailbox; contact page https://ainowinstitute.org/contact-us. Forms are not submitted by the system"
+    },
+    {
+     "at": "2026-11-23",
      "event": "form-only",
      "detail": "no published role mailbox; contact page https://ainowinstitute.org/contact-us. Forms are not submitted by the system"
     }
@@ -129,6 +149,11 @@
      "at": "2026-11-16",
      "event": "form-only",
      "detail": "no published role mailbox; contact page https://datasociety.net/contact. Forms are not submitted by the system"
+    },
+    {
+     "at": "2026-11-23",
+     "event": "form-only",
+     "detail": "no published role mailbox; contact page https://datasociety.net/contact. Forms are not submitted by the system"
     }
    ]
   },
@@ -151,6 +176,11 @@
     },
     {
      "at": "2026-11-16",
+     "event": "form-only",
+     "detail": "no published role mailbox; contact page https://partnershiponai.org/contact. Forms are not submitted by the system"
+    },
+    {
+     "at": "2026-11-23",
      "event": "form-only",
      "detail": "no published role mailbox; contact page https://partnershiponai.org/contact. Forms are not submitted by the system"
     }
@@ -187,10 +217,15 @@
      "at": "2026-11-16",
      "event": "dry-run-send",
      "detail": "would email hello@humanetech.com"
+    },
+    {
+     "at": "2026-11-23",
+     "event": "dry-run-send",
+     "detail": "would email hello@humanetech.com"
     }
    ],
    "guard": [],
-   "dry_run_at": "2026-11-16"
+   "dry_run_at": "2026-11-23"
   },
   "intro:P-MOZILLA": {
    "registry_id": "P-MOZILLA",
@@ -211,6 +246,11 @@
     },
     {
      "at": "2026-11-16",
+     "event": "no-public-route",
+     "detail": "no contact page or role mailbox found"
+    },
+    {
+     "at": "2026-11-23",
      "event": "no-public-route",
      "detail": "no contact page or role mailbox found"
     }
@@ -247,10 +287,15 @@
      "at": "2026-11-16",
      "event": "dry-run-send",
      "detail": "would email info@astera.org"
+    },
+    {
+     "at": "2026-11-23",
+     "event": "dry-run-send",
+     "detail": "would email info@astera.org"
     }
    ],
    "guard": [],
-   "dry_run_at": "2026-11-16"
+   "dry_run_at": "2026-11-23"
   },
   "intro:P-FORESIGHT": {
    "registry_id": "P-FORESIGHT",
@@ -271,6 +316,11 @@
     },
     {
      "at": "2026-11-16",
+     "event": "form-only",
+     "detail": "no published role mailbox; contact page https://foresight.org/contact. Forms are not submitted by the system"
+    },
+    {
+     "at": "2026-11-23",
      "event": "form-only",
      "detail": "no published role mailbox; contact page https://foresight.org/contact. Forms are not submitted by the system"
     }
@@ -307,16 +357,21 @@
      "at": "2026-11-16",
      "event": "dry-run-send",
      "detail": "would email contact@eleuther.ai"
+    },
+    {
+     "at": "2026-11-23",
+     "event": "dry-run-send",
+     "detail": "would email contact@eleuther.ai"
     }
    ],
    "guard": [],
-   "dry_run_at": "2026-11-16"
+   "dry_run_at": "2026-11-23"
   },
   "intro:P-GOVAI": {
    "registry_id": "P-GOVAI",
    "name": "Centre for the Governance of AI",
    "segment": "research-institute",
-   "state": "packet-ready",
+   "state": "queued",
    "first_seen": "2026-11-14",
    "events": [
     {
@@ -333,9 +388,20 @@
      "at": "2026-11-16",
      "event": "packet-ready",
      "detail": "outreach/packets/intro/P-GOVAI.md"
+    },
+    {
+     "at": "2026-11-23",
+     "event": "queued",
+     "detail": "guard clean, role mailbox verified at source"
+    },
+    {
+     "at": "2026-11-23",
+     "event": "dry-run-send",
+     "detail": "would email contact@governance.ai"
     }
    ],
-   "guard": []
+   "guard": [],
+   "dry_run_at": "2026-11-23"
   },
   "intro:P-CAIS": {
    "registry_id": "P-CAIS",
@@ -368,10 +434,15 @@
      "at": "2026-11-16",
      "event": "dry-run-send",
      "detail": "would email contact@safe.ai"
+    },
+    {
+     "at": "2026-11-23",
+     "event": "dry-run-send",
+     "detail": "would email contact@safe.ai"
     }
    ],
    "guard": [],
-   "dry_run_at": "2026-11-16"
+   "dry_run_at": "2026-11-23"
   },
   "intro:P-OPENPHIL": {
    "registry_id": "P-OPENPHIL",
@@ -392,6 +463,11 @@
     },
     {
      "at": "2026-11-16",
+     "event": "form-only",
+     "detail": "no published role mailbox; contact page https://www.openphilanthropy.org/contact. Forms are not submitted by the system"
+    },
+    {
+     "at": "2026-11-23",
      "event": "form-only",
      "detail": "no published role mailbox; contact page https://www.openphilanthropy.org/contact. Forms are not submitted by the system"
     }
@@ -416,6 +492,11 @@
     },
     {
      "at": "2026-11-16",
+     "event": "form-only",
+     "detail": "no published role mailbox; contact page https://www.schmidtsciences.org/contact. Forms are not submitted by the system"
+    },
+    {
+     "at": "2026-11-23",
      "event": "form-only",
      "detail": "no published role mailbox; contact page https://www.schmidtsciences.org/contact. Forms are not submitted by the system"
     }

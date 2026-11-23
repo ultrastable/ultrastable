@@ -145,3 +145,19 @@
 {"at": "2026-11-16", "key": "intro:P-ASTERA", "event": "dry-run-send", "detail": "would email info@astera.org"}
 {"at": "2026-11-16", "key": "intro:P-EAI", "event": "dry-run-send", "detail": "would email contact@eleuther.ai"}
 {"at": "2026-11-16", "key": "intro:P-CAIS", "event": "dry-run-send", "detail": "would email contact@safe.ai"}
+{"at": "2026-11-23", "key": "intro:P-ADALOVELACE", "event": "form-only", "detail": "no published role mailbox; contact page https://www.adalovelaceinstitute.org/contact. Forms are not submitted by the system"}
+{"at": "2026-11-23", "key": "intro:P-TURING", "event": "no-public-route", "detail": "no contact page or role mailbox found"}
+{"at": "2026-11-23", "key": "intro:P-AINOW", "event": "form-only", "detail": "no published role mailbox; contact page https://ainowinstitute.org/contact-us. Forms are not submitted by the system"}
+{"at": "2026-11-23", "key": "intro:P-DATASOCIETY", "event": "form-only", "detail": "no published role mailbox; contact page https://datasociety.net/contact. Forms are not submitted by the system"}
+{"at": "2026-11-23", "key": "intro:P-PAI", "event": "form-only", "detail": "no published role mailbox; contact page https://partnershiponai.org/contact. Forms are not submitted by the system"}
+{"at": "2026-11-23", "key": "intro:P-MOZILLA", "event": "no-public-route", "detail": "no contact page or role mailbox found"}
+{"at": "2026-11-23", "key": "intro:P-FORESIGHT", "event": "form-only", "detail": "no published role mailbox; contact page https://foresight.org/contact. Forms are not submitted by the system"}
+{"at": "2026-11-23", "key": "intro:P-OPENPHIL", "event": "form-only", "detail": "no published role mailbox; contact page https://www.openphilanthropy.org/contact. Forms are not submitted by the system"}
+{"at": "2026-11-23", "key": "intro:P-SCHMIDT", "event": "form-only", "detail": "no published role mailbox; contact page https://www.schmidtsciences.org/contact. Forms are not submitted by the system"}
+{"at": "2026-11-23", "key": "intro:P-GOVAI", "event": "queued", "detail": "guard clean, role mailbox verified at source"}
+{"at": "2026-11-23", "key": "intro:P-ALLENAI", "event": "dry-run-send", "detail": "would email info@allenai.org"}
+{"at": "2026-11-23", "key": "intro:P-CHT", "event": "dry-run-send", "detail": "would email hello@humanetech.com"}
+{"at": "2026-11-23", "key": "intro:P-ASTERA", "event": "dry-run-send", "detail": "would email info@astera.org"}
+{"at": "2026-11-23", "key": "intro:P-EAI", "event": "dry-run-send", "detail": "would email contact@eleuther.ai"}
+{"at": "2026-11-23", "key": "intro:P-GOVAI", "event": "dry-run-send", "detail": "would email contact@governance.ai"}
+{"at": "2026-11-23", "key": "intro:P-CAIS", "event": "dry-run-send", "detail": "would email contact@safe.ai"}

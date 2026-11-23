@@ -1,6 +1,6 @@
 # Outreach status
 
-Generated 2026-11-16. Mode **dry-run**, kill switch **off**, sender identity not registered.
+Generated 2026-11-23. Mode **dry-run**, kill switch **off**, sender identity not registered.
 
 | State | Count |
 |---|---|
