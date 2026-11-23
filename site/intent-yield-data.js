@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 export const INTENT_YIELD = {
  "marker": "INTENT-YIELD-1",
- "at": "2026-11-22T15:29:32Z",
+ "at": "2026-11-23T19:23:00Z",
  "settle_days": 30,
  "target_kept_share": 0.8,
  "summary": {
-  "intents": 66,
+  "intents": 67,
   "measured": 39,
   "settled": 0,
   "kept_share": null,
@@ -17,7 +17,7 @@ export const INTENT_YIELD = {
    "broken": 1,
    "holding": 36,
    "restated": 2,
-   "unmeasured": 27
+   "unmeasured": 28
   }
  },
  "probes_run": 40,
@@ -724,7 +724,7 @@ export const INTENT_YIELD = {
    "id": "PATHFINDER-1",
    "title": "Find another path before asking; the information is already held",
    "date": "2026-11-21",
-   "source": "agents/AGENTS.md:176",
+   "source": "agents/AGENTS.md:177",
    "verdict": "holding",
    "attention_s": 9.6,
    "probes": [
@@ -790,7 +790,7 @@ export const INTENT_YIELD = {
    "id": "T-waiting-on-the-owner-is-a-failure-mode",
    "title": "Waiting on the owner is a failure mode",
    "date": "2026-11-21",
-   "source": "agents/AGENTS.md:175",
+   "source": "agents/AGENTS.md:176",
    "verdict": "unmeasured",
    "attention_s": 3.2,
    "probes": [],
@@ -895,6 +895,18 @@ export const INTENT_YIELD = {
    "restatements": 0,
    "restates": null,
    "item": null
+  },
+  {
+   "id": "SEED-AUTONOMY-1",
+   "title": "A seed that answers is not yet a seed that runs itself",
+   "date": "2026-11-23",
+   "source": "agents/AGENTS.md:175",
+   "verdict": "unmeasured",
+   "attention_s": 4.4,
+   "probes": [],
+   "restatements": 0,
+   "restates": null,
+   "item": null
   }
  ],
  "history": [
@@ -915,6 +927,11 @@ export const INTENT_YIELD = {
   },
   {
    "at": "2026-11-22T15:29:32Z",
+   "holding_share": 0.923,
+   "kept_share": null
+  },
+  {
+   "at": "2026-11-23T19:23:00Z",
    "holding_share": 0.923,
    "kept_share": null
   }
