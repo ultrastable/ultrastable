@@ -44,3 +44,10 @@
 {"at": "2026-11-22T13:37:17Z", "baseline": 0.101, "event": "remedy-start", "lever": "smaller-items", "metric": "executor_success_share_7d", "replaces": "park-failing"}
 {"at": "2026-11-22T13:37:17Z", "event": "guard-regression", "guard": "relapse_rate_7d", "target": "k"}
 {"at": "2026-11-22T13:37:17Z", "event": "guard-regression", "guard": "relapse_rate_7d", "target": "open_items"}
+{"at": "2026-11-23T16:29:33Z", "event": "reading", "hit": false, "metric": "k", "value": 140.0}
+{"at": "2026-11-23T16:29:33Z", "event": "reading", "hit": false, "metric": "normalized_cost", "value": 0.0}
+{"at": "2026-11-23T16:29:33Z", "event": "reading", "hit": false, "metric": "open_items", "value": 6}
+{"at": "2026-11-23T16:29:33Z", "event": "reading", "hit": false, "metric": "relapse_rate_7d", "value": 0.024}
+{"at": "2026-11-23T16:29:33Z", "event": "reading", "hit": false, "metric": "families_without_doer", "value": 0}
+{"at": "2026-11-23T16:29:33Z", "event": "reading", "hit": true, "metric": "executor_success_share_7d", "value": 0.068}
+{"at": "2026-11-23T16:29:33Z", "event": "guard-regression", "guard": "relapse_rate_7d", "target": "open_items"}

@@ -1,23 +1,17 @@
 {
- "at": "2026-11-22T13:37:17Z",
- "open_ignition_gaps": 6,
+ "at": "2026-11-23T16:29:33Z",
+ "open_ignition_gaps": 4,
  "gaps": [
   {
-   "link": "item Q-CIFAIL-practical-solutions-ci relapsed after it closed",
+   "link": "item Q-CIFAIL-ultrastable-executor relapsed after it closed",
    "owner": "executor",
-   "closing_probe": "contracts: Q-CIFAIL-practical-solutions-ci passes over the hold",
+   "closing_probe": "contracts: Q-CIFAIL-ultrastable-executor passes over the hold",
    "source": "contracts"
   },
   {
-   "link": "item Q-TRAJ-hotspot-seed-worker-src-index-js relapsed after it closed",
+   "link": "item Q-CIFAIL-ultrastable-fleet relapsed after it closed",
    "owner": "executor",
-   "closing_probe": "contracts: Q-TRAJ-hotspot-seed-worker-src-index-js passes over the hold",
-   "source": "contracts"
-  },
-  {
-   "link": "item Q-TRAJ-hotspot-workers relapsed after it closed",
-   "owner": "executor",
-   "closing_probe": "contracts: Q-TRAJ-hotspot-workers passes over the hold",
+   "closing_probe": "contracts: Q-CIFAIL-ultrastable-fleet passes over the hold",
    "source": "contracts"
   },
   {
@@ -25,12 +19,6 @@
    "owner": "operations",
    "closing_probe": "throughput: silent_drops 0 in the window",
    "source": "throughput"
-  },
-  {
-   "link": "guard relapse_rate_7d worsened while k improved",
-   "owner": "operations",
-   "closing_probe": "metricloop: no guard regression on the next pass",
-   "source": "metricloop"
   },
   {
    "link": "guard relapse_rate_7d worsened while open_items improved",
