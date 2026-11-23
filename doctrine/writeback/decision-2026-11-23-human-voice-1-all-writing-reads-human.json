@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-23-human-voice-1-all-writing-reads-human",
+  "kind": "decision",
+  "date": "2026-11-23",
+  "title": "HUMAN-VOICE-1: all writing reads human",
+  "body": "One shared voice module goes into every prose routeChat call with a one-shot rewrite, and is enforced in the social publisher, thought posts and CI with a shrink-only baseline. Session: session_0156nqDsScBR3ZAEMKjqZoJh",
+  "probe": "file:seed/worker/src/humanvoice.js"
+ },
+ "kind": "decision",
+ "title": "HUMAN-VOICE-1: all writing reads human",
+ "session": ""
+}
