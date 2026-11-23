@@ -274,6 +274,34 @@ export default {
    "domain": "org",
    "home": "https://ultrastable.org/",
    "homeLabel": "Open the live catalogue"
+  },
+  {
+   "id": "unlearn",
+   "name": "Unlearn",
+   "tag": "Public-benefit demo, live",
+   "status": "live",
+   "summary": "A clickable encyclopedia of popular beliefs the evidence contradicts. Each entry starts from why the belief feels true, asks the reader to guess, then shows graded evidence with named sources.",
+   "problem": "Popular beliefs about crime, learning, health, money and policy often run against the research, and being told so rarely changes a mind.",
+   "loop": "Every hour the loop resolves each cited study to a DOI through Crossref and searches Europe PMC for new systematic reviews on each entry. New reviews appear on the entry and send it to the re-grading queue. Readers' anonymous guesses and 'did this change your view' taps measure which beliefs surprise and which explanations work, and wording trials keep the explanations that work.",
+   "results": [
+    "Live public site with topics, a play mode, a Lab for candidate beliefs and a machine-readable index.",
+    "Every entry cites its sources and is graded by the strength and direction of the evidence; a mixed body of evidence is shown as mixed.",
+    "Evidence freshness and the reader shift share are published live at /api/freshness and /api/metrics on the site."
+   ],
+   "learned": "A third system, unrelated to the first two, runs on the same loop and promotes itself through the same social module as every other tenant.",
+   "links": [
+    {
+     "label": "Operations dashboard",
+     "href": "/ops"
+    },
+    {
+     "label": "Get in touch",
+     "href": "/contact"
+    }
+   ],
+   "domain": "org",
+   "home": "https://unlearn.ultrastable.org/",
+   "homeLabel": "Open the encyclopedia"
   }
  ],
  "domains": {

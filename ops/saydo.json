@@ -1,5 +1,5 @@
 {
- "at": "2026-11-22T07:43:42Z",
+ "at": "2026-11-23T11:44:26Z",
  "gaps": 5,
  "match_share": 0.989,
  "sources": {
@@ -156,14 +156,14 @@
     "drift": 0,
     "id": "claims-total",
     "ok": true,
-    "total": 372
+    "total": 378
    }
   ],
   "loops": [
    {
-    "detail": "0 of 47 second-order steps kept in 14 days",
+    "detail": "0 of 69 second-order steps kept in 14 days",
     "id": "second-loop-kept",
-    "judged": 47,
+    "judged": 69,
     "kept": 0,
     "ok": false
    }
@@ -498,6 +498,15 @@
     "unmeasured": []
    },
    {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "TENANT-REPO-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
     "checks": 0,
     "external": [],
     "failing": [],
@@ -592,6 +601,15 @@
     "unmeasured": []
    },
    {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "STICKY-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
     "checks": 1,
     "external": [],
     "failing": [],
@@ -623,6 +641,15 @@
     "external": [],
     "failing": [],
     "id": "PROMOTE-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "TENANT-PROMO-1",
     "missing": [],
     "ok": true,
     "unmeasured": []
@@ -738,7 +765,7 @@
     "checks": 1,
     "external": [],
     "failing": [
-     "python3 -m foundation dispose --check: an open item is 9.7 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+     "python3 -m foundation dispose --check: an open item is 22.2 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
     ],
     "id": "DISPOSE-1",
     "missing": [],
@@ -773,6 +800,15 @@
     "unmeasured": []
    },
    {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "SEED-AUTONOMY-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
     "checks": 1,
     "external": [],
     "failing": [],
@@ -784,7 +820,7 @@
   ],
   "year": [
    {
-    "detail": "simulated horizon p10 714 days against 365",
+    "detail": "simulated horizon p10 730 days against 365",
     "id": "unattended-year",
     "ok": true
    },
@@ -802,7 +838,7 @@
   },
   "claims": {
    "gaps": 0,
-   "total": 372
+   "total": 378
   },
   "loops": {
    "gaps": 1,
@@ -810,12 +846,12 @@
   },
   "rules": {
    "gaps": 2,
-   "total": 66
+   "total": 70
   },
   "year": {
    "gaps": 1,
    "total": 2
   }
  },
- "total": 457
+ "total": 467
 }

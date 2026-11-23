@@ -1,0 +1,12 @@
+{
+  "id": "Q-TEMPORAL-67d6a95a40",
+  "title": "Q-TEMPORAL-67d6a95a40: repeated failure: ledger:clocks:all",
+  "body": "**Owner:** operations\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -m foundation temporal --settled 67d6a95a40\n**Status:** closed\n\nTemporal loop finding (repeated_failure) in foundation: all: 73 failures in a row, 13 in the last 3 days against 10 in the 9 before. Seen in 1 runs since 2026-11-22T14:31:06Z. Advocate: operations.\n\nFind the root cause of the repeated failure, not the symptom. `python3 -m foundation pathfinder --regress` lists the commits since it last worked; fix, add a regression test, and let the ledger show a pass.\n\nFiles: foundation/clock.py.\n\nPrediction: ledger:clocks:all has no failure in its next 3 events within 7 days.\n\nThis item closes when the finding no longer holds (`python3 -m foundation temporal --settled 67d6a95a40` recomputes it from the repository's own history).\n\nsize: M\n\n**Closing probe:** cmd:python3 -m foundation temporal --settled 67d6a95a40.\n\n**Disposition:** shelved (ttl, 2026-11-22T20:31:22Z, DISPOSE-1)\n\n**Evidence:** open 6.0 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "temporal"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

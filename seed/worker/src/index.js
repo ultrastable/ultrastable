@@ -38,6 +38,7 @@ import { revertRedMain } from './redmain.js';  // REDMAIN-LANE-1
 import { mergeNow, prsForEvent } from './mergenow.js';
 import { refreshLiveChanges, readLiveChanges, refreshFleetChanges, classifyPending } from './livechanges.js'; // LIVE-FRESH-1, SUBSTANCE-1
 import { progressStep, readProgress } from './progress.js'; // PROGRESS-1
+import { stickinessStep, readStickiness, readQueue } from './stickiness.js'; // STICKY-1
 import { watchFreshness } from './freshness.js'; // LIVE-FRESH-2
 import { recordGovernor, readDecisions, safely as decisionSafely } from './decisions.js'; // DECISIONS-1
 import { runSocial, blueskyAccess } from './social.js';
@@ -142,6 +143,7 @@ export default {
       await b('live-changes', () => refreshLiveChanges({ db: env.DB, token, repo: main }));  // LIVE-FRESH-2: own early step; inside the sweeper it ran after 32 of 46 subrequests were spent and never wrote, so /live froze
       await b('fleet-changes', () => refreshFleetChanges({ db: env.DB, token, repos: ((config.progress || {}).systems || []).map(x => x.repo).filter(r => r && r !== main) }));  // PROGRESS-1: the other repositories, at most hourly each
       await b('substance', () => classifyPending({ db: env.DB, token, max: 2 }));  // SUBSTANCE-1: two merged PRs per pass are classified from their diff, so trivial merges never count as progress
+      await b('stickiness', () => stickinessStep({ db: env.DB, config, ensureItem }));  // STICKY-1: freshness, breadth, depth and diversity of every system's content; a stale or thin one files STICKY-<system>, and its unpromoted entries become the social queue
       await b('progress', () => progressStep({ db: env.DB, config, token, ensureItem }));  // PROGRESS-1: release cadence monitor; a slow system has its producers dispatched, a stalled one files STALL-<system>
       await b('freshness', () => watchFreshness({ token, repo: main, siteUrl: env.PUBLIC_ORIGIN || 'https://ultrastable.io' }));  // LIVE-FRESH-2: a stale published snapshot re-dispatches its own publisher
       step('executor', async () => { const r = await runExecutor({ ...env, TENANT: env.TENANT || config.org_slug, AI: gov.ai || undefined, GITHUB_DISPATCH_TOKEN: token || env.GITHUB_DISPATCH_TOKEN, GITHUB_REPO: env.GITHUB_REPO || repos[0] }); await noteExecutor(env.DB, r); return r; });
@@ -267,6 +269,8 @@ export default {
         return Response.json(r, { headers: { 'cache-control': 'no-store' } });
       } catch (e) { return d1Unavailable(e); }
     }
+    if (url.pathname === '/api/stickiness') { try { return Response.json(await readStickiness(env.DB), { headers: { 'cache-control': 'public, max-age=60', 'access-control-allow-origin': '*' } }); } catch (e) { return d1Unavailable(e); } }  // STICKY-1
+    { const qm = /^\/api\/stickiness\/queue\/([a-z0-9-]{1,60})\.json$/.exec(url.pathname); if (qm) { try { return Response.json(await readQueue(env.DB, qm[1]), { headers: { 'cache-control': 'public, max-age=300' } }); } catch (e) { return d1Unavailable(e); } } }  // STICKY-1: the queue the core social module drains for this system
     if (url.pathname === '/api/progress') { try { return Response.json(await readProgress(env.DB, config), { headers: { 'cache-control': 'public, max-age=60', 'access-control-allow-origin': '*' } }); } catch (e) { return d1Unavailable(e); } }  // PROGRESS-1
     if (url.pathname === '/api/live/changes') { try { const rs = config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []); return Response.json(await readLiveChanges(env.DB, rs.find(r => r.endsWith('/ultrastable')) || rs[0] || null), { headers: { 'cache-control': 'public, max-age=60' } }); } catch (e) { return d1Unavailable(e); } }  // LIVE-FRESH-1
     if (url.pathname === '/api/roi') { try { return Response.json(await readRoi(env.DB, { env, config }), { headers: { 'cache-control': 'public, max-age=300', 'access-control-allow-origin': '*' } }); } catch (e) { return d1Unavailable(e); } }  // ROI-1
@@ -308,7 +312,8 @@ export default {
       const ok = Boolean(last && last.steps_completed === last.steps_total);
       const released = await claimsReleasedUnworked24h(env.DB, Date.now()).catch(() => null);  // workers#173 closing probe, target 0
       const cutover = await healthView(env.DB, env).catch(() => null);  // ACCOUNT-SPLIT-2: read by the peer account's tick every beat
-      return Response.json({ ok, org: config.org_slug, last_tick: last || null, claims_released_unworked_24h: released, cutover }, { status: ok || (cutover && cutover.slot !== 'primary') ? 200 : 503 });
+      const ign = await readIgnition(env.DB).catch(() => null);  // SEED-AUTONOMY-1: the stage this system read for itself, so the launcher can tell ticking from autonomous without another route
+      return Response.json({ ok, org: config.org_slug, last_tick: last || null, claims_released_unworked_24h: released, cutover, ignition: ign ? { stage: ign.stage, since: ign.since, at: ign.at, blocking: ign.blocking ? { stage: ign.blocking.stage, why: String(ign.blocking.why || '').slice(0, 400) } : null } : null }, { status: ok || (cutover && cutover.slot !== 'primary') ? 200 : 503 });
     }
     if (url.pathname === '/live' || url.pathname === '/metrics/criticality.json') {  // CRITICALITY-1: k_eff of the last tick
       const c = await readCriticality(env.DB);

@@ -2,25 +2,26 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 export const INTENT_YIELD = {
  "marker": "INTENT-YIELD-1",
- "at": "2026-11-21T21:41:13Z",
+ "at": "2026-11-22T15:29:32Z",
  "settle_days": 30,
  "target_kept_share": 0.8,
  "summary": {
-  "intents": 62,
-  "measured": 37,
+  "intents": 66,
+  "measured": 39,
   "settled": 0,
   "kept_share": null,
-  "holding_share": 0.946,
-  "restated_share": 0.048,
+  "holding_share": 0.923,
+  "restated_share": 0.045,
   "attention_s_per_kept": 11.2,
   "verdicts": {
-   "holding": 35,
+   "broken": 1,
+   "holding": 36,
    "restated": 2,
-   "unmeasured": 25
+   "unmeasured": 27
   }
  },
- "probes_run": 38,
- "probes_total": 38,
+ "probes_run": 40,
+ "probes_total": 40,
  "error": null,
  "intents": [
   {
@@ -39,7 +40,7 @@ export const INTENT_YIELD = {
    "id": "CLOSED-LOOP-1",
    "title": "Closed loops only; nobody reads, reviews or decides",
    "date": "2026-11-12",
-   "source": "agents/AGENTS.md:84",
+   "source": "agents/AGENTS.md:86",
    "verdict": "holding",
    "attention_s": 3.2,
    "probes": [
@@ -65,7 +66,7 @@ export const INTENT_YIELD = {
    "id": "DOC-CONSUMED-1",
    "title": "Every document is consumed by code",
    "date": "2026-11-12",
-   "source": "agents/AGENTS.md:81",
+   "source": "agents/AGENTS.md:83",
    "verdict": "holding",
    "attention_s": 2.4,
    "probes": [
@@ -275,7 +276,7 @@ export const INTENT_YIELD = {
    "id": "BLINDSPOT-1",
    "title": "The system knows what the owner does not",
    "date": "2026-11-14",
-   "source": "agents/AGENTS.md:96",
+   "source": "agents/AGENTS.md:99",
    "verdict": "holding",
    "attention_s": 12.0,
    "probes": [
@@ -367,7 +368,7 @@ export const INTENT_YIELD = {
    "id": "OUTREACH-INTRO-1",
    "title": "Introduce the work; do not wait to be found",
    "date": "2026-11-14",
-   "source": "agents/AGENTS.md:94",
+   "source": "agents/AGENTS.md:96",
    "verdict": "unmeasured",
    "attention_s": 15.6,
    "probes": [],
@@ -379,7 +380,7 @@ export const INTENT_YIELD = {
    "id": "PROMOTE-1",
    "title": "Strategy and promotion are the system's job",
    "date": "2026-11-14",
-   "source": "agents/AGENTS.md:95",
+   "source": "agents/AGENTS.md:97",
    "verdict": "holding",
    "attention_s": 10.4,
    "probes": [
@@ -443,7 +444,7 @@ export const INTENT_YIELD = {
    "id": "AUDIT-CHAIN-1",
    "title": "Everything is traceable, and the database stays small",
    "date": "2026-11-17",
-   "source": "agents/AGENTS.md:70",
+   "source": "agents/AGENTS.md:71",
    "verdict": "unmeasured",
    "attention_s": 9.2,
    "probes": [],
@@ -523,7 +524,7 @@ export const INTENT_YIELD = {
    "id": "UNKNOWNS-1",
    "title": "Question what the system does not know; the solution space must keep growing",
    "date": "2026-11-17",
-   "source": "agents/AGENTS.md:97",
+   "source": "agents/AGENTS.md:100",
    "verdict": "holding",
    "attention_s": 14.0,
    "probes": [
@@ -565,7 +566,7 @@ export const INTENT_YIELD = {
    "id": "DECISIONS-1",
    "title": "Every decision is measured",
    "date": "2026-11-18",
-   "source": "agents/AGENTS.md:72",
+   "source": "agents/AGENTS.md:73",
    "verdict": "holding",
    "attention_s": 3.6,
    "probes": [
@@ -579,7 +580,7 @@ export const INTENT_YIELD = {
    "id": "FRONT-BACKED-1",
    "title": "The front end is always backed by the back end",
    "date": "2026-11-18",
-   "source": "agents/AGENTS.md:71",
+   "source": "agents/AGENTS.md:72",
    "verdict": "unmeasured",
    "attention_s": 7.2,
    "probes": [],
@@ -591,7 +592,7 @@ export const INTENT_YIELD = {
    "id": "GOALS-1",
    "title": "The system sets its own goals and turns its own knobs",
    "date": "2026-11-18",
-   "source": "agents/AGENTS.md:73",
+   "source": "agents/AGENTS.md:74",
    "verdict": "unmeasured",
    "attention_s": 11.6,
    "probes": [],
@@ -603,7 +604,7 @@ export const INTENT_YIELD = {
    "id": "NO-OPEN-ITEMS-1",
    "title": "No open items, ever",
    "date": "2026-11-19",
-   "source": "agents/AGENTS.md:169",
+   "source": "agents/AGENTS.md:172",
    "verdict": "holding",
    "attention_s": 14.4,
    "probes": [
@@ -617,7 +618,7 @@ export const INTENT_YIELD = {
    "id": "CONNECT-1",
    "title": "A vector space and a knowledge graph in every system; novel connections are generated, not waited for",
    "date": "2026-11-20",
-   "source": "agents/AGENTS.md:74",
+   "source": "agents/AGENTS.md:75",
    "verdict": "unmeasured",
    "attention_s": 10.0,
    "probes": [],
@@ -629,7 +630,7 @@ export const INTENT_YIELD = {
    "id": "DISPOSE-1",
    "title": "Nothing sits in the queue; every item gets a coded disposition",
    "date": "2026-11-20",
-   "source": "agents/AGENTS.md:168",
+   "source": "agents/AGENTS.md:171",
    "verdict": "holding",
    "attention_s": 14.4,
    "probes": [
@@ -643,7 +644,7 @@ export const INTENT_YIELD = {
    "id": "PROGRESS-1",
    "title": "Visible progress at every visit, for six months with no input",
    "date": "2026-11-20",
-   "source": "agents/AGENTS.md:166",
+   "source": "agents/AGENTS.md:169",
    "verdict": "holding",
    "attention_s": 22.0,
    "probes": [
@@ -657,7 +658,7 @@ export const INTENT_YIELD = {
    "id": "RUNWAY-1",
    "title": "A year unattended, measured",
    "date": "2026-11-20",
-   "source": "agents/AGENTS.md:167",
+   "source": "agents/AGENTS.md:170",
    "verdict": "unmeasured",
    "attention_s": 18.4,
    "probes": [],
@@ -669,7 +670,7 @@ export const INTENT_YIELD = {
    "id": "UNATTENDED-365",
    "title": "One year unattended, server-side only",
    "date": "2026-11-20",
-   "source": "agents/AGENTS.md:170",
+   "source": "agents/AGENTS.md:173",
    "verdict": "holding",
    "attention_s": 12.4,
    "probes": [
@@ -697,7 +698,7 @@ export const INTENT_YIELD = {
    "id": "FLOW-BALANCE-1",
    "title": "Issue inflow never exceeds closures; every issue inside its SLA",
    "date": "2026-11-21",
-   "source": "agents/AGENTS.md:78",
+   "source": "agents/AGENTS.md:79",
    "verdict": "unmeasured",
    "attention_s": 10.4,
    "probes": [],
@@ -723,7 +724,7 @@ export const INTENT_YIELD = {
    "id": "PATHFINDER-1",
    "title": "Find another path before asking; the information is already held",
    "date": "2026-11-21",
-   "source": "agents/AGENTS.md:172",
+   "source": "agents/AGENTS.md:176",
    "verdict": "holding",
    "attention_s": 9.6,
    "probes": [
@@ -737,7 +738,7 @@ export const INTENT_YIELD = {
    "id": "RESEARCH-1",
    "title": "Ultrastable runs its own R&D and publishes its own white papers; Ashby's mechanism is code",
    "date": "2026-11-21",
-   "source": "agents/AGENTS.md:75",
+   "source": "agents/AGENTS.md:76",
    "verdict": "holding",
    "attention_s": 11.2,
    "probes": [
@@ -748,10 +749,22 @@ export const INTENT_YIELD = {
    "item": null
   },
   {
+   "id": "SEED-LIFECYCLE-1",
+   "title": "A seed is not done until it runs a year unattended",
+   "date": "2026-11-21",
+   "source": "agents/AGENTS.md:174",
+   "verdict": "unmeasured",
+   "attention_s": 17.6,
+   "probes": [],
+   "restatements": 0,
+   "restates": null,
+   "item": null
+  },
+  {
    "id": "SOCIAL-MODULE-1",
    "title": "The social module is how a system faces humans",
    "date": "2026-11-21",
-   "source": "agents/AGENTS.md:77",
+   "source": "agents/AGENTS.md:78",
    "verdict": "unmeasured",
    "attention_s": 3.6,
    "probes": [],
@@ -763,7 +776,7 @@ export const INTENT_YIELD = {
    "id": "SUBSTANCE-1",
    "title": "Only behaviour counts; no illusion of productivity",
    "date": "2026-11-21",
-   "source": "agents/AGENTS.md:165",
+   "source": "agents/AGENTS.md:168",
    "verdict": "holding",
    "attention_s": 14.8,
    "probes": [
@@ -777,7 +790,7 @@ export const INTENT_YIELD = {
    "id": "T-waiting-on-the-owner-is-a-failure-mode",
    "title": "Waiting on the owner is a failure mode",
    "date": "2026-11-21",
-   "source": "agents/AGENTS.md:171",
+   "source": "agents/AGENTS.md:175",
    "verdict": "unmeasured",
    "attention_s": 3.2,
    "probes": [],
@@ -817,7 +830,7 @@ export const INTENT_YIELD = {
    "id": "THOUGHT-1",
    "title": "Thought leadership is a loop: every paper becomes posts that carry the hook",
    "date": "2026-11-21",
-   "source": "agents/AGENTS.md:76",
+   "source": "agents/AGENTS.md:77",
    "verdict": "holding",
    "attention_s": 26.0,
    "probes": [
@@ -831,13 +844,53 @@ export const INTENT_YIELD = {
    "id": "YEAR-SIM-1",
    "title": "A year unattended is simulated, not asserted; the system does what it says",
    "date": "2026-11-21",
-   "source": "agents/AGENTS.md:79",
-   "verdict": "holding",
+   "source": "agents/AGENTS.md:80",
+   "verdict": "broken",
    "attention_s": 16.8,
    "probes": [
     "python3 -m foundation saydo --check",
     "python3 -m foundation trajectory --check",
     "python3 -m foundation yearsim --check"
+   ],
+   "restatements": 0,
+   "restates": null,
+   "item": "Q-YIELD-7f00974fc9"
+  },
+  {
+   "id": "STICKY-1",
+   "title": "Every system gives people a reason to come back",
+   "date": "2026-11-22",
+   "source": "agents/AGENTS.md:81",
+   "verdict": "unmeasured",
+   "attention_s": 10.4,
+   "probes": [],
+   "restatements": 0,
+   "restates": null,
+   "item": null
+  },
+  {
+   "id": "TENANT-PROMO-1",
+   "title": "Promotion is part of every app's and tenant's role",
+   "date": "2026-11-22",
+   "source": "agents/AGENTS.md:98",
+   "verdict": "holding",
+   "attention_s": 12.0,
+   "probes": [
+    "python3 -m foundation tenantpromo --check"
+   ],
+   "restatements": 0,
+   "restates": null,
+   "item": null
+  },
+  {
+   "id": "TENANT-REPO-1",
+   "title": "Every tenant app lives in its own repository",
+   "date": "2026-11-22",
+   "source": "agents/AGENTS.md:70",
+   "verdict": "holding",
+   "attention_s": 4.8,
+   "probes": [
+    "python3 -m foundation tenantrepos --check"
    ],
    "restatements": 0,
    "restates": null,
@@ -858,6 +911,11 @@ export const INTENT_YIELD = {
   {
    "at": "2026-11-21T21:41:13Z",
    "holding_share": 0.946,
+   "kept_share": null
+  },
+  {
+   "at": "2026-11-22T15:29:32Z",
+   "holding_share": 0.923,
    "kept_share": null
   }
  ],

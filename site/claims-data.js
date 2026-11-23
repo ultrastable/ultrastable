@@ -1867,6 +1867,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **Every system gives people a reason to come back (STICKY-1, Rowan 2026-11-22).** \"Every ultra-stable app, every tenant, every platform",
+   "detail": "",
+   "how": "file:seed/worker/src/vendor/core/stickiness.js + file:seed/worker/src/stickiness.js + file:instances/ultrastable/progress.json + file:seed/worker/test/stickiness.test.js + file:workers/core/stickiness/stickiness.test.js",
+   "id": "cited-be4db6262d",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
@@ -1907,6 +1916,15 @@ export default {
    "detail": "",
    "how": "file:doctrine/promotion.json + file:outreach/facts.json + file:.github/workflows/mcp-registry.yml + file:site/promote.js + file:foundation/promote.py + file:tests/foundation/test_promote.py",
    "id": "cited-23253f39ac",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Promotion is part of every app's and tenant's role (TENANT-PROMO-1, Rowan 2026-11-22).** \"Make sure to keep this in the Ultrastable",
+   "detail": "",
+   "how": "file:seed/worker/src/promoqueue.js + file:social/gate.json + file:seed/worker/src/social.js + file:doctrine/stakeholders.json + file:instances/ultrastable/progress.json + file:doctrine/tenant-promotion.json",
+   "id": "cited-48bc37edfc",
    "kind": "claim",
    "pass": true,
    "surface": "agents/AGENTS.md"
@@ -2015,6 +2033,15 @@ export default {
    "detail": "",
    "how": "file:doctrine/unattended.json + file:seed/scripts/seedlife.py + file:seed/autonomy/seed-lifecycle.json + file:doctrine/seed-lifecycle.json + file:foundation/seedlife.py + file:tests/foundation/test_seedlife.py",
    "id": "cited-5e7af4a8d7",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **A seed that answers is not yet a seed that runs itself (SEED-AUTONOMY-1, Rowan 2026-11-23).** \"Audit and remediate all issues, failure",
+   "detail": "",
+   "how": "file:seed/worker/src/index.js + file:doctrine/seed-deploys.json + file:seed/bootstrap/bootstrap.py + file:tests/foundation/test_seedadmit.py + file:seed/tests/test_seed.py + file:seed/worker/test/health-ignition.test.js",
+   "id": "cited-36843a8c7f",
    "kind": "claim",
    "pass": true,
    "surface": "agents/AGENTS.md"
@@ -2488,6 +2515,15 @@ export default {
    "surface": "seed/agents/AGENTS.md"
   },
   {
+   "claim": "- **Every system gives people a reason to come back (STICKY-1, Rowan 2026-11-22).** \"Every ultra-stable app, every tenant, every platform",
+   "detail": "",
+   "how": "file:seed/worker/src/vendor/core/stickiness.js + file:seed/worker/src/stickiness.js + file:instances/ultrastable/progress.json + file:seed/worker/test/stickiness.test.js + file:workers/core/stickiness/stickiness.test.js",
+   "id": "mirror-9111f7c2d8",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
    "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
@@ -2519,6 +2555,15 @@ export default {
    "detail": "",
    "how": "file:doctrine/promotion.json + file:outreach/facts.json + file:.github/workflows/mcp-registry.yml + file:site/promote.js + file:foundation/promote.py + file:tests/foundation/test_promote.py",
    "id": "mirror-b6efc98788",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Promotion is part of every app's and tenant's role (TENANT-PROMO-1, Rowan 2026-11-22).** \"Make sure to keep this in the Ultrastable",
+   "detail": "",
+   "how": "file:seed/worker/src/promoqueue.js + file:social/gate.json + file:seed/worker/src/social.js + file:doctrine/stakeholders.json + file:instances/ultrastable/progress.json + file:doctrine/tenant-promotion.json",
+   "id": "mirror-9b307fb83e",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -2627,6 +2672,15 @@ export default {
    "detail": "",
    "how": "file:doctrine/unattended.json + file:seed/scripts/seedlife.py + file:seed/autonomy/seed-lifecycle.json + file:doctrine/seed-lifecycle.json + file:foundation/seedlife.py + file:tests/foundation/test_seedlife.py",
    "id": "mirror-b41d221301",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **A seed that answers is not yet a seed that runs itself (SEED-AUTONOMY-1, Rowan 2026-11-23).** \"Audit and remediate all issues, failure",
+   "detail": "",
+   "how": "file:seed/worker/src/index.js + file:doctrine/seed-deploys.json + file:seed/bootstrap/bootstrap.py + file:tests/foundation/test_seedadmit.py + file:seed/tests/test_seed.py + file:seed/worker/test/health-ignition.test.js",
+   "id": "mirror-d01d8e87e3",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3127,7 +3181,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 62 Python and 463 Worker tests",
+   "claim": "seed-tests: 63 Python and 482 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3136,7 +3190,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 463 Worker tests",
+   "claim": "seed-worker-tests: 482 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3172,7 +3226,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 869",
+   "claim": "live-deploys: 912",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",
@@ -3377,7 +3431,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 372,
-  "total": 372
+  "pass": 378,
+  "total": 378
  }
 };

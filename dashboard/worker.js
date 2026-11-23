@@ -169,7 +169,8 @@ export async function runProbes(env) {
     const links = [...OWNER_LINKS, ...openNeeds().map(n => n.url || n.connect).filter(x => /^https:\/\//.test(String(x || "")))].filter((x, i, a) => a.indexOf(x) === i).slice(0, 20);
     const dead = [];
     // OWNER-LINKS-2: status alone passed a blank placeholder page. Each link must answer with the content it promises, never a worker placeholder.
-    const EXPECT = { "https://ultrastable.io/connect/github-signin": /sign-in|signin|github/i, "https://ultrastable.io/owner": /owner|sign in|code/i };
+    const EXPECT = { "https://ultrastable.io/connect/github-signin": /sign-in|signin|github|\/owner$/i,  // OWNER-LINKS-3: unconfigured GitHub sign-in hands over to the owner sign-in page (emailed code, passkey)
+      "https://ultrastable.io/owner": /owner|sign in|code/i };
     for (const l of links) {
       try {
         const r = await fetch(l, { redirect: "manual", signal: AbortSignal.timeout(5000) });
@@ -370,6 +371,8 @@ export async function planState(env, fetchFn = fetch, now = Date.now()) {
     if (A && T) { const r = await fetchFn("https://api.cloudflare.com/client/v4/accounts/" + A + "/subscriptions", { headers: { authorization: "Bearer " + T } }); const p = read(await r.json().catch(() => null)); if (p !== "unknown") return { ...out, plan: p, source: "cloudflare-subscriptions" }; }
     if (env.INTERNAL_DEPLOY_KEY) { const r = await fetchFn("https://ultrastable.io/__internal/cf", { method: "POST", headers: { "x-internal-key": env.INTERNAL_DEPLOY_KEY, "x-cf-method": "GET", "x-cf-path": "subscriptions" } }); const p = read(await r.json().catch(() => null)); if (p !== "unknown") return { ...out, plan: p, source: "site-cf-route" }; }
   } catch (e) { console.error("plan state", e && e.message); }
+  // PLAN-FACT-1: when Cloudflare cannot be read, the last recorded plan is used and labelled as recorded, never shown as unknown beside a contradicting panel.
+  if (PAID.known_plan && PAID.known_plan.plan) return { ...out, plan: PAID.known_plan.plan, source: "recorded " + PAID.known_plan.since };
   return out;
 }
 export function optionsFor(plan, options = PAID.options) {  // an option the account already has is not an option
@@ -377,7 +380,7 @@ export function optionsFor(plan, options = PAID.options) {  // an option the acc
 }
 export async function livePanels(env, fetchFn = fetch, now = Date.now()) {
   const base = staticPanels(), done = await settledLive(env, openNeeds(), fetchFn), pl = await planState(env, fetchFn, now);
-  const note = pl.plan === "paid" ? "Cloudflare Workers Paid is active on the Ultrastable account (read from Cloudflare " + pl.measured_at.slice(0, 16).replace("T", " ") + " UTC). Options below are the ones not yet taken." : pl.plan === "free" ? "The Ultrastable account is on the free Cloudflare plan (read from Cloudflare " + pl.measured_at.slice(0, 16).replace("T", " ") + " UTC). Nothing here upgrades a plan on its own." : "The plan could not be read from Cloudflare just now, so it is not stated here. The system re-reads it on every load.";
+  const note = pl.plan === "paid" ? "Cloudflare Workers Paid is active on the Ultrastable account (" + (String(pl.source || "").startsWith("recorded") ? pl.source.replace("recorded", "recorded on") + "; Cloudflare was not readable just now" : "read from Cloudflare " + pl.measured_at.slice(0, 16).replace("T", " ") + " UTC") + "). Options below are the ones not yet taken." : pl.plan === "free" ? "The Ultrastable account is on the free Cloudflare plan (read from Cloudflare " + pl.measured_at.slice(0, 16).replace("T", " ") + " UTC). Nothing here upgrades a plan on its own." : "The plan could not be read from Cloudflare just now, so it is not stated here. The system re-reads it on every load.";
   const o = { ...base, plan: pl, plan_note: note, options: optionsFor(pl.plan), generated_at: new Date(now).toISOString() };
   return done.size ? { ...o, needs: base.needs.filter(n => !done.has(n.id)), settled_live: [...done] } : o;
 }
@@ -411,7 +414,7 @@ async function stateFromDb(env, base) {
   const queued = (await env.DB.prepare("SELECT COUNT(*) c FROM fleet_queue WHERE status='queued'").first()).c;
   const done = (await env.DB.prepare("SELECT COUNT(*) c FROM tasks WHERE state='done'").first()).c;
   const audit = await q("SELECT id,at,cmd,ok FROM audit ORDER BY id DESC LIMIT 8");
-  const notes = await q("SELECT at,subject,sent,error FROM notifications ORDER BY at DESC LIMIT 6");
+  const notes = await q("SELECT at,subject,sent,error FROM notifications WHERE key NOT LIKE 'selffix:%' AND subject<>'(grouped)' ORDER BY at DESC LIMIT 6");
   await ensureSnapshots(env);
   const sn = await env.DB.prepare("SELECT body,at FROM snapshots WHERE key='repo'").first();
   let snapshot = null; if (sn) { try { snapshot = { ...JSON.parse(sn.body), received: sn.at }; } catch (e) { snapshot = { error: "stored snapshot is not valid JSON" }; } }
@@ -443,6 +446,34 @@ export async function selfFix(env, r, day) {
   if (!q) await env.DB.prepare("INSERT INTO fleet_queue(task_id,status,queued_at) VALUES(?1,'queued',?2)").bind(id, Date.now()).run();
   return true;
 }
+// SELF-FIX-2: a fix task closes itself the moment its check passes again, so the owner never taps Done for the system's own work.
+export async function closeFixed(env, res) {
+  const ids = res.filter(x => x.ok).map(x => "fix-" + String(x.name).replace(/[^a-z0-9_:-]/gi, "-").slice(0, 60));
+  for (const id of ids) {
+    const r = await env.DB.prepare("UPDATE tasks SET state='done',why='closed by probe: check passes again',updated_at=?2 WHERE id=?1 AND state IN ('open','delegated')").bind(id, Date.now()).run();
+    if (r.meta && r.meta.changes) await env.DB.prepare("UPDATE fleet_queue SET status='done' WHERE task_id=?1 AND status='queued'").bind(id).run();
+  }
+}
+// LEGACY-TASKS-1 (Rowan 2026-11-22: "No clue what a user is expected to do with this"): the dashboard was seeded on 2026-11-10 with the first
+// roadmap as tasks. That roadmap moved into docs/issues and the server loops, patent work was dropped (license-only, 2026-11-17) and the
+// identity-bound steps live in foundation/data/needs-you.json with a default in effect. The seeded rows are closed as superseded, with the reason.
+export const LEGACY_TASK = /^(gh-\d+|own-file|own-gh-token|own-google)$/;
+export async function retireLegacy(env) {
+  const rows = (await env.DB.prepare("SELECT id FROM tasks WHERE state IN ('open','delegated','snoozed')").all()).results || [];
+  const ids = rows.map(r => r.id).filter(id => LEGACY_TASK.test(id));
+  for (const id of ids) {
+    await env.DB.prepare("UPDATE tasks SET state='superseded',why='superseded: seeded roadmap moved to docs/issues and server loops; identity-bound steps are in needs-you with a default in effect (LEGACY-TASKS-1)',updated_at=?2 WHERE id=?1").bind(id, Date.now()).run();
+    await env.DB.prepare("UPDATE fleet_queue SET status='superseded' WHERE task_id=?1 AND status='queued'").bind(id).run();
+  }
+  return ids.length;
+}
+// DIGEST-QUIET-1: the digest says only what is wrong and that the system is fixing it; when nothing is wrong, nothing is sent.
+export function digestBody(s) {
+  const bad = (s.checks || []).filter(k => !k.ok), br = ((s.analytics && s.analytics.metrics) || []).filter(m => m.hit);
+  if (!bad.length && !br.length) return "";
+  return ["The system has queued its own fix for each item below and closes it when the check passes. Nothing is needed from you.", "",
+    ...bad.map(k => "- " + k.name + ": " + k.detail), ...br.map(m => "- " + m.name + " = " + m.value + " (" + m.why + ")"), "", "https://ultrastable.io/owner"].join("\n");
+}
 export async function tick(env, cron) {
   try { await watchTick(env); } catch (e) { console.error("watchTick", e && e.message); }
   try { await ensureSnapshots(env); } catch (e) { console.error("ensureSnapshots", e && e.message); }
@@ -453,13 +484,15 @@ export async function tick(env, cron) {
   // SELF-FIX-1 (Rowan 2026-11-17: backend work stays invisible to the owner): a failing check is never mailed. It is written to the owner-only
   // provenance ledger as an incident and queued once per day as a fleet task, which the fleet takes from /api/fleet/queue and closes by the probe.
   for (const r of res.filter(x => !x.ok && x.name !== "github")) { try { await selfFix(env, r, day); } catch (e) { console.error("selfFix", r.name, e && e.message); } }
+  try { await closeFixed(env, res); } catch (e) { console.error("closeFixed", e && e.message); }
+  try { await retireLegacy(env); } catch (e) { console.error("retireLegacy", e && e.message); }
   try { const a = await report(env, undefined, { cacheMinutes: REPORT_CACHE_MINUTES }); for (const m of a.metrics.filter(x => x.hit)) await notify(env, "metric:" + m.name + ":" + day, "Ultrastable metric breach: " + m.name, m.name + " = " + m.value + " (" + m.why + ")\n" + m.label + "\nOpen https://ultrastable.io/owner"); } catch (e) { console.error("metrics", e && e.message); }
   const fresh = (await env.DB.prepare("SELECT id,title FROM tasks WHERE kind='owner' AND state='open' AND id NOT IN (SELECT substr(key,6) FROM notifications WHERE key LIKE 'task:%') ORDER BY priority LIMIT 50").all()).results;
   if (fresh.length) {
     const sent = await notify(env, "task:" + fresh[0].id, fresh.length + " new item(s) in your Ultrastable queue", fresh.map(t => "- " + t.title).join("\n") + "\nOpen https://ultrastable.io/owner and tap Done, Snooze or Hand to fleet.");
     if (sent) for (const t of fresh.slice(1)) await env.DB.prepare("INSERT OR IGNORE INTO notifications(key,at,subject,sent) VALUES(?1,?2,'(grouped)',1)").bind("task:" + t.id, Date.now()).run();
   }
-  if (digestDue(cron)) { const s = await stateOf(env); await notify(env, "digest:" + day, "Ultrastable daily digest", s.checks.map(k => (k.ok ? "ok   " : "FAIL ") + k.name + " - " + k.detail).join("\n") + "\n\nAnalytics:\n" + (s.analytics && s.analytics.metrics ? summary(s.analytics) : "unavailable") + "\n\nOwner queue: " + s.counts.owner + " open. Fleet: " + s.counts.fleet + " open, " + s.counts.queued + " queued, " + s.counts.done + " done.\nhttps://ultrastable.io/owner"); }
+  if (digestDue(cron)) { const s = await stateOf(env); const body = digestBody(s); if (body) await notify(env, "digest:" + day, "Ultrastable daily digest", body); }
 }
 
 // ---------- pages ----------
@@ -522,13 +555,13 @@ if(r.s!=200||!r.j||!r.j.checks){$('#app').hidden=false;$('#pill').textContent='R
 $('#app').hidden=false;const s=r.j;const bad=s.checks.filter(c=>!c.ok).length;
 $('#pill').textContent=bad?bad+' check'+(bad>1?'s':'')+' failing':'All checks passing';$('#pill').className='pill '+(bad?'bad':'ok');
 $('#checks').innerHTML=s.checks.map(c=>'<div class="card"><span class="'+(c.ok?'ok':'bad')+'">'+(c.ok?'OK':'FAIL')+'</span> <b>'+E(c.name)+'</b><div class="meta">'+E(c.detail)+'</div></div>').join('')||'<p class="meta">No checks yet. Type probe.</p>';
-const sn=s.snapshot;$('#snapmeta').textContent=sn&&sn.panels?('Snapshot of the repo, generated '+sn.generated+(sn.commit?' at '+sn.commit:'')+(sn.problems&&sn.problems.length?'. Problems: '+sn.problems.join('; '):'')):'No snapshot received yet. The dashboard-snapshot workflow posts one after each outreach run.';
+const sn=s.snapshot;$('#snapmeta').textContent=sn&&sn.panels?('Snapshot of the repo, generated '+sn.generated+(sn.commit?' at '+sn.commit:'')+(sn.problems&&sn.problems.length?'. Problems: '+sn.problems.join('; '):'')):'';$('#snapmeta').previousElementSibling.hidden=!(sn&&sn.panels);
 $('#snap').innerHTML=sn&&sn.panels?sn.panels.map(p=>'<div class="card"><h3>'+E(p.title)+'</h3>'+p.rows.map(r=>'<div class="meta"><span class="'+(r[2]=='ok'?'ok':r[2]=='warn'?'bad':'')+'">'+(r[2]=='ok'?'OK ':r[2]=='warn'?'OPEN ':'')+'</span><b>'+E(r[0])+'</b> '+E(r[1])+'</div>').join('')+'</div>').join(''):'';
 const an=s.analytics;$('#an').innerHTML=an&&an.metrics?'<p class="meta">Collecting for '+an.age_days+' days. '+an.breaches+' breach(es).</p><div class="grid">'+an.metrics.map(m=>'<div class="card"><span class="'+(m.hit?'bad':'ok')+'">'+(m.hit?'BREACH':'OK')+'</span> <b>'+E(m.name)+'</b> '+E(m.value)+'<div class="meta">'+E(m.label)+' ('+E(m.kind)+'; '+E(m.why)+')</div></div>').join('')+'</div><div class="meta">Top pages, 7 days: '+(an.top.map(t=>E(t.host+t.path)+' '+t.views).join(', ')||'none yet')+'</div><div class="meta">Referrers: '+(an.refs.map(t=>E(t.ref)+' '+t.views).join(', ')||'none yet')+'</div><div class="meta">Daily views: '+(an.daily.map(d=>E(d.day.slice(5))+' '+d.views).join(' · ')||'none yet')+'</div>':'<p class="meta">Analytics unavailable.</p>';
 $('#counts').textContent='Your queue: '+s.counts.owner+' open. Fleet: '+s.counts.fleet+' open, '+s.counts.queued+' queued, '+s.counts.done+' done.';
 paintStatic(s);
-$('#owner').innerHTML=s.owner.map(t=>task(t,1)).join('')||'<p class="meta">Nothing waiting on you.</p>';
-$('#fleet').innerHTML=s.fleet.map(t=>'<div class="card"><b>'+E(t.title)+'</b> <span class="meta">'+E(t.area||'')+(t.state=='delegated'?' · with the fleet':'')+'</span><div class="row">'+(t.state=='delegated'?'':'<button data-c="fix '+E(t.id)+'">'+(t.fix_cmd?'Fix it':'Hand to fleet')+'</button>')+'<button data-c="done '+E(t.id)+'">Done</button><button data-c="dismiss '+E(t.id)+'">Not doing</button>'+(t.url?'<a class="btn" href="'+E(t.url)+'" rel="noopener">Open</a>':'')+'</div></div>').join('')||'<p class="meta">No fleet tasks.</p>';
+$('#owner').innerHTML=s.owner.map(t=>task(t,1)).join('');
+$('#fleet').innerHTML=s.fleet.map(t=>'<div class="card"><b>'+E(t.title)+'</b> <span class="meta">'+E(t.area||'')+' · the system is fixing this and closes it when the check passes</span></div>').join('')||'<p class="meta">Nothing in progress.</p>';
 fetch('https://ultrastable.io/api/roi').then(r=>r.json()).then(j=>{if(!j.recommendation){$('#roi').innerHTML='<p class="meta">Live usage not reachable right now. Default in effect: stay free.</p>';return}const rc=j.recommendation;$('#roi').innerHTML='<h3>'+E(rc.action==='pay'?'Pay: '+rc.for:'Stay free')+'</h3><div class="meta">'+E(rc.text)+'</div><div class="meta"><b>Plan:</b> '+E(j.plan)+'. <b>Tuning:</b> '+E(j.tuning.text)+'</div><div class="meta"><b>Mode:</b> '+E(j.mode)+' (default). <b>Days measured:</b> '+j.days_measured+' of '+j.need_days+' needed.</div>'+Object.values(j.resources).map(x=>'<div class="meta">'+E(x.label)+': peak '+(x.peak_share==null?'unmeasured':Math.round(x.peak_share*100)+'% of free day')+', '+x.days_over_80+' day(s) over 80%, '+x.days_over_95+' over 95%</div>').join('')+j.options.map(o=>'<div class="meta"><b>'+E(o.title)+':</b> '+E(o.verdict)+', projected '+o.projected_usd_month+' USD a month. '+E(o.unlocks)+' '+E(o.gain)+'</div>').join('')+'<div class="meta">'+E(j.hard_cap.note)+' Prices checked '+E(j.prices.checked)+'.</div>'}).catch(()=>{$('#roi').innerHTML='<p class="meta">Could not load. Default in effect: stay free.</p>'});
 fetch('/api/owner/trends').then(r=>r.json()).then(j=>{$('#trends').textContent=(j.findings||[]).map(f=>'['+f.severity+'] '+f.kind+' '+f.subject+': '+f.evidence+' ('+f.advocate+', '+f.runs+' runs'+(f.item?', '+f.item:'')+')').join('\\n')||'No open findings.'}).catch(()=>{$('#trends').textContent='Could not load.'});
 fetch('/api/owner/provenance').then(r=>r.json()).then(j=>{$('#prov').textContent=(j.entries||[]).slice(0,40).map(x=>new Date(x.at).toISOString().slice(0,16)+' '+x.tenant+' '+x.class+'/'+x.actor+' '+x.kind+' '+x.effect+' '+x.summary).join('\\n')||'Nothing recorded yet.'}).catch(()=>{$('#prov').textContent='Could not load.'});

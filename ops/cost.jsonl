@@ -5,3 +5,4 @@
 {"ts":"2026-11-20T20:12:48.727Z","date":"2026-11-20","d1":[],"neurons":null,"breaches":[],"unmeasured":[{"kind":"ai-neurons","error":"graphql errors: [{\"message\":\"not authorized for that account\",\"path\":[\"viewer\",\"accounts\",\"0\",\"aiInferenceAdaptiveGroups\"],\"extensions\":{\"code\":\"authz\",\"timestamp\":\"2026-11-20T20:12:48.693990725Z\",\"ra"}]}
 {"ts":"2026-11-21T12:35:44.367Z","date":"2026-11-21","d1":[],"neurons":6942.852588989353,"breaches":[]}
 {"ts":"2026-11-21T14:36:59.461Z","date":"2026-11-21","d1":[],"neurons":10180.267055847262,"breaches":[]}
+{"ts":"2026-11-22T14:31:37.707Z","date":"2026-11-22","d1":[],"neurons":8322.548341358366,"breaches":[]}

@@ -1,0 +1,77 @@
+name: tenant-repos
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# TENANT-REPO-1: every tenant app lives in its own repository. For each tenant doctrine/tenant-repos.json marks "moving", this creates the
+# repository when it is missing (with the tenant folder's history, split from this repository, core files vendored). The tenant's Worker is
+# deployed by this repository's deploy-ultrastable from the tenant repository (doctrine/topology.json `source`).
+# Daily it also redeploys any moved tenant whose repository's main moved past the last deployed commit (deploy-ultrastable builds from it).
+# budget: ~1 min per run; once a day, plus when the registry changes on main, or by dispatch
+# trigger: daily (a tenant repository's push cannot start this repository's deploy without a stored credential), push to the registry, dispatch
+# free-alternative: `python3 -m foundation tenantrepos --missing` and the same git and API steps from a cloud-hosted agent session
+on:
+  schedule:
+    - cron: "23 5 * * *"
+  push:
+    branches: [main]
+    paths: ["doctrine/tenant-repos.json", ".github/workflows/tenant-repos.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: write  # dispatches deploy-ultrastable for a tenant whose repository moved
+concurrency:
+  group: tenant-repos
+  cancel-in-progress: false
+jobs:
+  repos:
+    if: ${{ vars.HALT != '1' }}  # HALT-1: the owner's halt stops every job
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with: {node-version: 24}
+      - name: Create each missing tenant repository from its folder's history
+        env:
+          ORG_ADMIN_TOKEN: ${{ secrets.ORG_ADMIN_TOKEN }}
+          LANE_PAT: ${{ secrets.LANE_PAT }}
+          LANE_APP_ID: ${{ secrets.LANE_APP_ID }}
+          LANE_APP_PRIVATE_KEY: ${{ secrets.LANE_APP_PRIVATE_KEY }}
+        run: |
+          set -euo pipefail
+          python3 -m foundation tenantrepos --check
+          git config --global user.name "ultrastable-bot"; git config --global user.email "bot@users.noreply.github.com"
+          python3 -m foundation tenantrepos --missing > missing.json
+          # third route: the lane's GitHub App, as an installation token over the whole installation (logged refusal, never hidden)
+          APP_TOKEN=""
+          if [ -n "$LANE_APP_ID" ] && [ -n "$LANE_APP_PRIVATE_KEY" ]; then
+            if APP_TOKEN="$(python3 scripts/lane_credential.py org-token)"; then echo "::add-mask::$APP_TOKEN"; else APP_TOKEN=""; echo "::warning::the lane App gave no org token"; fi
+          fi
+          jq -c '.[]' missing.json | while read -r row; do
+            slug=$(jq -r .slug <<<"$row"); repo=$(jq -r .repo <<<"$row"); src=$(jq -r .source <<<"$row")
+            name=${repo#*/}; org=${repo%%/*}
+            # three routes to an org-scoped credential; the first that can see or create the repository is used
+            tok=""; for t in "$ORG_ADMIN_TOKEN" "$LANE_PAT" "$APP_TOKEN"; do
+              [ -n "$t" ] || continue
+              if GH_TOKEN="$t" gh api "repos/$repo" >/dev/null 2>&1; then tok="$t"; break; fi
+              if GH_TOKEN="$t" gh api "orgs/$org/repos" -f name="$name" -f visibility="$(jq -r '.visibility // "public"' <<<"$row")" \
+                   -f description="$(jq -r '.description // ""' <<<"$row")" -F has_wiki=false >/dev/null; then echo "created $repo"; tok="$t"; break; fi
+              echo "::warning::this credential could not create $repo; trying the next route"
+            done
+            [ -n "$tok" ] || { echo "::error::no credential could create $repo (ORG_ADMIN_TOKEN, LANE_PAT, lane App)"; exit 1; }
+            # an empty repository answers 409 here; that answer is logged, not hidden, and means "push the split"
+            if head_sha="$(GH_TOKEN="$tok" gh api "repos/$repo/commits?per_page=1" --jq '.[0].sha' 2>/tmp/commits.err)" && [ -n "$head_sha" ]; then echo "$repo already has history; left as it is"; continue; fi
+            echo "no commits yet in $repo: $(cat /tmp/commits.err)"
+            git subtree split --prefix "$src" -b "split-$slug"
+            git worktree add "/tmp/$slug" "split-$slug"
+            python3 -m foundation tenantrepos --prepare "/tmp/$slug" --slug "$slug"
+            (cd "/tmp/$slug" && git add -A && { git diff --cached --quiet || git commit -q -m "Stand alone: vendor the core files Unlearn reads (TENANT-REPO-1)"; } \
+              && git push "https://x-access-token:${tok}@github.com/${repo}.git" "HEAD:refs/heads/main")
+            echo "pushed $src with its history to $repo"
+          done
+      - name: Redeploy tenants whose repository moved past the last deploy
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          w=$(python3 -m foundation tenantrepos --behind)
+          if [ -n "$w" ]; then gh workflow run deploy-ultrastable.yml --ref main -f workers="$w"; echo "dispatched deploy of $w"; else echo "every moved tenant is deployed at its main"; fi

@@ -1,6 +1,6 @@
 # Instance: Unlearn
 
-**Ultrastable is the foundation for any autonomous system.** Unlearn is a tenant system on it (level 1, parent `ultrastable`). Idea and system test: `IDEA.md`; manifest: `instance.json`.
+**Ultrastable is the foundation for any autonomous system.** Unlearn, an evidence encyclopedia of beliefs to unlearn, is a tenant system on it (level 1, parent `ultrastable`). Idea and system test: `IDEA.md`; manifest: `instance.json`.
 
 A system is autonomous if it has self-referential loops and the ability to close them (`python3 -m foundation loops --verify`).
 
@@ -8,7 +8,27 @@ Ultrastable runs on itself (`python3 -m foundation selfhost`).
 
 > "Most of what kids want to learn, you can't teach them." (Rob, a coach at Agora, in Rutger Bregman, *Humankind*, chapter "Homo Ludens".) The coaches there "nurture and challenge, encourage and guide", and "have to unlearn much of their training as teachers."
 
-## Concept
+## The encyclopedia (unlearn.ultrastable.org)
+
+Unlearn is an evidence encyclopedia of popular beliefs the evidence contradicts, in six topics: crime and justice, children and learning, how minds mislead, health and safety, money and work, society and policy. It is point and click in the shape of Practical Solutions: topic tiles, entry cards with an evidence meter, a play mode (`/play`), search, and a method page (`/how`).
+
+Telling people they are wrong rarely changes a mind, so every entry follows the same guided order, taken from the debunking research (Lewandowsky et al. 2020, Ecker et al. 2022, Wood and Porter 2019): why the belief feels true, the reader's guess, what the evidence shows, where the intuition slips, what works instead, where the belief may still hold, and the sources. Evidence is graded twice: strength (strong, moderate, mixed, limited) and direction (contradicts, mostly contradicts, unsupported, complicates, split).
+
+| Piece | Code |
+|---|---|
+| Entries, grades, topics, method | `worker/entries.js` |
+| Pages (server-rendered, readable without script) | `worker/site.js` |
+| Evidence loop: Crossref DOI resolution (title and year must match), Europe PMC watch for new reviews, freshness, review queue | `worker/evidence.js`, step 5 of the hourly beat in `worker/index.js` |
+| Improvement loops (step 6 of the beat): a model labels each new review's abstract against the belief, kept only with a quote that is in the abstract; entries are re-graded automatically (reinforced: one step up; challenged: flagged on the page and queued); daily discovery drafts candidate beliefs from new myth and misconception reviews for `/lab`, where readers vote; wording trials test a re-worded "where the intuition slips" against the original on the shift answers (two-proportion test) and keep the winner | `worker/lab.js`, `labBeat` in `worker/index.js`, `/lab`, `/api/candidates.json`, `/api/grades.json`, `POST /api/candidate-vote` |
+| Famous findings, retold: a topic of landmark studies and stories that later evidence overturned or recast (Stanford prison, Milgram, Kitty Genovese, Lord of the Flies, Easter Island, marshmallow test, Hawthorne, and more), each with a then-and-now timeline (`classic`); daily discovery also searches for replications and re-analyses of famous studies and drafts them for `/lab` with the same timeline | `worker/entries.js`, `RETOLD_QUERY` in `worker/lab.js` |
+| Return visits: a myth of the day in a fixed order that covers every entry before repeating (`/today`), an Atom feed of the last 30 days and voted-up Lab drafts (`/feed.xml`), a daily streak kept only in the reader's browser, and voted-up drafts with their own pages (`/d/<id>`, labelled a draft from one paper; citation from the index) | `mythOfDay`, `publishable` in `worker/lab.js`; `feed`, `draftPage` in `worker/site.js` |
+| Reader measures: anonymous guess and "did this change your view" counts per entry; surprise and shift shares | `POST /api/guess`, `POST /api/shift`, `/api/metrics` |
+| Data and probes | `/api/entries.json`, `/api/freshness` (503 when an entry is unchecked for 7 days), `/api/leads`, `/api/review-queue.json`, `/sitemap.xml` |
+| Tests | `node --test instances/unlearn/worker/*.test.mjs` |
+
+## The coaching tool (/coach)
+
+### Concept
 
 Play and exploration are learning. Unlearn is not a lesson app. It serves the adult beside a curious child (coach, parent, mentor), because that adult is the one who has to unlearn the reflex to teach.
 
@@ -19,7 +39,7 @@ Play and exploration are learning. Unlearn is not a lesson app. It serves the ad
 
 What it refuses: curricula, grades, streaks, leaderboards, mastery levels. Anything that turns play back into instruction is a defect.
 
-## The loop and its measures (Ultrastable system test)
+### The coaching loop and its measures
 
 | | |
 |---|---|
@@ -31,7 +51,7 @@ What it refuses: curricula, grades, streaks, leaderboards, mastery levels. Anyth
 
 `seed/bootstrap/bootstrap.py --dry-run` on this `IDEA.md` passes stage `qualify` and seeds 3 objectives and 12 metrics (8 liveness, 4 declared awaiting probes).
 
-## Phases: all three audiences, in order
+### Coaching phases: all three audiences, in order
 
 The research behind this ([Homo Ludens, self-directed learning, and AI-facilitated play](https://claude.ai/artifact/9tSXs9RsEVf4xi3Hr4v9kW)) points one way: guided play beats both lecturing and leaving children alone, and unrestricted AI help can hurt. In Bastani et al. 2024 (about 1,000 students), plain GPT-4 raised practice scores 48% and cut unaided exam scores 17%; a hint-only tutor removed the harm. So Unlearn coaches before it builds, and it measures learning that holds without the AI. Data: `phases.json` (11 principles, 3 phases, exit gates), checked by `tests/foundation/test_unlearn.py`.
 
@@ -43,7 +63,7 @@ The research behind this ([Homo Ludens, self-directed learning, and AI-facilitat
 
 **Privacy floor.** The UK Children's Code has 15 standards (best interests, DPIA, data minimisation, default settings, profiling, nudge techniques, parental controls among them). The amended COPPA Rule had a compliance date of 22 April 2026: a published retention policy, a written security program, named third parties, and voice recordings counted as personal information. The Dutch age of digital consent is 16. Phase 3 does not open until each is met, and the controller entity is the one owner-only step (default in effect: phase 3 closed, phases 1 and 2 run).
 
-## Phase 1: built
+### Coaching phase 1: built
 
 `worker/` is the app: one Worker (`ultrastable-unlearn` in `doctrine/topology.json`), one D1 database, one hourly cron, no secrets and no npm dependencies. Tests: `node --test instances/unlearn/worker/*.test.mjs`.
 
@@ -52,3 +72,12 @@ The research behind this ([Homo Ludens, self-directed learning, and AI-facilitat
 - **Follow-ups** at 7 and 14 days, one tap. **Coach notes** are classed as telling or asking.
 - **The hourly beat** re-learns weights, measures (`/api/metrics`), opens phase 2 when its gates hold (the school-group UI lights by itself), and applies retention. A visit runs the beat if the cron has been silent for 2 hours.
 - **Year safeguards**: `runway.json` lists 12 ways it could stop and the safeguard and probe for each (`tests/foundation/test_unlearn.py` checks every probe). Clock `unlearn-beat` in `doctrine/clocks.json`; loop `unlearn-beat` in the loop registry.
+
+## Change layer (UNLEARN-CHANGE-1)
+
+Beyond debunking: `worker/practices.js` holds evidence-graded practices that run against common advice (if-then plans over willpower,
+self-compassion over self-criticism, retrieval and spacing over rereading and cramming, and more), each a full entry with a trial kit.
+`/change` lists them with the oversold claims to skip; `/plan` runs the reader's trials entirely in their browser (daily check-ins,
+spaced reflections, keep/change/stop, calendar reminder, a message to a friend). The server counts anonymous trial events per practice
+(`/api/plan`) and re-orders suggested plans by how often readers kept going (`worker/change.js`). The Lab's daily discovery also drafts
+candidate practices from new intervention reviews. Tests: `worker/change.test.mjs`.

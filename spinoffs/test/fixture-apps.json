@@ -1,0 +1,224 @@
+{
+ "apps": {
+  "access-check": {
+   "archetype": "live-lookup",
+   "checks": [],
+   "live": "access-check",
+   "name": "Access Check",
+   "showcase": false,
+   "slug": "access-check",
+   "tagline": "Name any website, get a plain read of basic accessibility signals on its home page: language, alt text, labels, zoom."
+  },
+  "air-quality": {
+   "archetype": "live-lookup",
+   "checks": [],
+   "live": "air-quality",
+   "name": "Air Quality Check",
+   "showcase": false,
+   "slug": "air-quality",
+   "tagline": "Type a city anywhere, see its air quality right now and the current particle levels, from open forecast data."
+  },
+  "blindspot": {
+   "archetype": "domain-check",
+   "checks": [
+    {
+     "fix": "Redirect http to https and serve a valid certificate.",
+     "id": "https",
+     "title": "Serves over HTTPS"
+    },
+    {
+     "fix": "Add the header Strict-Transport-Security: max-age=31536000.",
+     "id": "hsts",
+     "title": "Sends Strict-Transport-Security"
+    },
+    {
+     "fix": "Publish a security.txt with a Contact line so researchers can report a flaw privately.",
+     "id": "security-txt",
+     "title": "Publishes /.well-known/security.txt (RFC 9116)"
+    },
+    {
+     "fix": "Add a TXT record starting v=spf1 that lists who may send mail for the domain.",
+     "id": "spf",
+     "title": "Has an SPF record"
+    },
+    {
+     "fix": "Add a TXT record at _dmarc with at least v=DMARC1; p=none; rua=mailto:you@yourdomain.",
+     "id": "dmarc",
+     "title": "Has a DMARC record"
+    },
+    {
+     "fix": "Say what you keep and link it in the footer.",
+     "id": "privacy",
+     "title": "Links a privacy notice from the home page"
+    },
+    {
+     "fix": "Publish terms and link them in the footer.",
+     "id": "terms",
+     "title": "Links terms of use from the home page"
+    },
+    {
+     "fix": "Publish an accessibility statement and link it in the footer.",
+     "id": "accessibility",
+     "title": "Links an accessibility statement from the home page"
+    }
+   ],
+   "name": "Blindspot Check",
+   "slug": "blindspot",
+   "tagline": "What does your website not tell people? Type a domain, see the gaps in a minute."
+  },
+  "country-snapshot": {
+   "archetype": "live-lookup",
+   "checks": [],
+   "live": "country-snapshot",
+   "name": "Country Snapshot",
+   "showcase": false,
+   "slug": "country-snapshot",
+   "tagline": "Type a country code, see its latest World Bank figures for electricity, drinking water, internet use and literacy."
+  },
+  "free-tier-meter": {
+   "archetype": "status-board",
+   "checks": [],
+   "live": null,
+   "name": "Free-Tier Meter",
+   "showcase": true,
+   "slug": "free-tier-meter",
+   "tagline": "How much of Cloudflare's free plan does a whole autonomous system use today? Live, from the loop that spends it."
+  },
+  "loop-ledger": {
+   "archetype": "status-board",
+   "checks": [],
+   "live": null,
+   "name": "Loop Ledger",
+   "showcase": true,
+   "slug": "loop-ledger",
+   "tagline": "How many closed loops keep this system running, and which ones are on a clock."
+  },
+  "numbers-board": {
+   "archetype": "status-board",
+   "checks": [],
+   "name": "Ultrastable by the Numbers",
+   "showcase": true,
+   "slug": "numbers-board",
+   "tagline": "Loops running, edges wired, stories passing and what the system does not know yet, straight from its own ledger."
+  },
+  "portfolio-board": {
+   "archetype": "status-board",
+   "checks": [],
+   "name": "Spinoff Portfolio",
+   "showcase": true,
+   "slug": "portfolio-board",
+   "tagline": "The apps Ultrastable launched on its own, what they cost and how many it retired."
+  }
+ },
+ "boards": {
+  "free-tier-meter": {
+   "as_of": "2026-11-21T14:54:58Z",
+   "rows": [
+    {
+     "label": "Governor level",
+     "of": null,
+     "value": "ok"
+    },
+    {
+     "label": "D1 rows read today",
+     "of": 5000000,
+     "value": 3000000
+    },
+    {
+     "label": "D1 rows written today",
+     "of": 100000,
+     "value": 20000
+    },
+    {
+     "label": "Workers requests today",
+     "of": 100000,
+     "value": 30000
+    },
+    {
+     "label": "AI neurons today",
+     "of": 10000,
+     "value": 1150
+    }
+   ],
+   "source": "ops/free-tier.json"
+  },
+  "loop-ledger": {
+   "as_of": "2026-11-21T14:54:58Z",
+   "rows": [
+    {
+     "label": "Registered loops",
+     "of": null,
+     "value": 107
+    },
+    {
+     "label": "Credentials with a probe",
+     "of": null,
+     "value": 6
+    }
+   ],
+   "source": "instances/ultrastable/loop-registry.json"
+  },
+  "numbers-board": {
+   "as_of": "2026-11-21T14:54:58Z",
+   "rows": [
+    {
+     "label": "Managers and loops",
+     "of": null,
+     "value": 104
+    },
+    {
+     "label": "Loops with evidence",
+     "of": null,
+     "value": 2
+    },
+    {
+     "label": "Edges wired",
+     "of": 19,
+     "value": 19
+    },
+    {
+     "label": "Stories passing",
+     "of": 9,
+     "value": 9
+    },
+    {
+     "label": "Open gaps",
+     "of": null,
+     "value": 2
+    },
+    {
+     "label": "Unknowns questioned",
+     "of": 126,
+     "value": 3
+    }
+   ],
+   "source": "ops/transparency.json"
+  },
+  "portfolio-board": {
+   "as_of": "2026-11-21T14:55:00Z",
+   "rows": [
+    {
+     "label": "Live apps",
+     "of": null,
+     "value": 8
+    },
+    {
+     "label": "Retired apps",
+     "of": null,
+     "value": 0
+    },
+    {
+     "label": "Live cap",
+     "of": null,
+     "value": 12
+    },
+    {
+     "label": "Launches per day cap",
+     "of": null,
+     "value": 3
+    }
+   ],
+   "source": "spinoffs/registry.json"
+  }
+ }
+}

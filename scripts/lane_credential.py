@@ -11,6 +11,8 @@ the first one that is bound as a repository secret:
   python3 scripts/lane_credential.py source   prints lane-pat, github-app or none. Never prints a secret.
   python3 scripts/lane_credential.py token    prints the token, for command substitution only: scripts/lane.sh captures it in a shell
                                               variable and passes it to one `gh pr merge` call. Never run this as a bare log step.
+  python3 scripts/lane_credential.py org-token  the App's installation token without a repository restriction (administration and
+                                              contents write), captured the same way by tenant-repos.yml to create a tenant repository.
 
 With neither bound the answer is `none`: the lane leaves such pull requests open, green and labeled `needs-pat`, says so on every pass,
 and nothing works around it. Binding one is the owner step `lane-credential` in foundation/data/needs-you.json. Server-side only (owner,
@@ -78,6 +80,25 @@ def installation_token(env=None, http=_http, now: int | None = None) -> str:
     return tok["token"]
 
 
+ORG_PERMISSIONS = {"administration": "write", "contents": "write"}
+
+
+def org_token(env=None, http=_http, now: int | None = None) -> str:
+    """TENANT-REPO-1: an installation token over the whole installation (no repository restriction), asking for administration and
+    contents write, so the tenant-repos workflow can create a tenant repository in the org and push its first history. GitHub refuses it
+    when the App was not granted those permissions; the refusal is raised with its status, never hidden."""
+    env = os.environ if env is None else env
+    repo = env["GITHUB_REPOSITORY"]
+    jwt = app_jwt(env["LANE_APP_ID"], env["LANE_APP_PRIVATE_KEY"], now)
+    st, inst = http("GET", f"/repos/{repo}/installation", jwt)
+    if st != 200:
+        raise RuntimeError(f"the GitHub App is not installed on {repo} (HTTP {st})")
+    st, tok = http("POST", f"/app/installations/{inst['id']}/access_tokens", jwt, {"permissions": ORG_PERMISSIONS})
+    if st != 201 or not tok.get("token"):
+        raise RuntimeError(f"GitHub did not issue an org installation token (HTTP {st}); the App needs administration and contents write")
+    return tok["token"]
+
+
 def token(env=None, http=_http) -> str:
     env = os.environ if env is None else env
     src = source(env)
@@ -96,6 +117,15 @@ def main(argv) -> int:
     if cmd == "token":
         try:
             sys.stdout.write(token())
+        except (RuntimeError, KeyError, OSError, subprocess.TimeoutExpired) as e:
+            print(f"lane-credential: {e}", file=sys.stderr)
+            return 1
+        return 0
+    if cmd == "org-token":
+        try:
+            if source() != "github-app" and not (os.environ.get("LANE_APP_ID") and os.environ.get("LANE_APP_PRIVATE_KEY")):
+                raise RuntimeError("LANE_APP_ID and LANE_APP_PRIVATE_KEY are not bound")
+            sys.stdout.write(org_token())
         except (RuntimeError, KeyError, OSError, subprocess.TimeoutExpired) as e:
             print(f"lane-credential: {e}", file=sys.stderr)
             return 1

@@ -3,7 +3,7 @@
  "name": "Access Check",
  "tagline": "Name any website, get a plain read of basic accessibility signals on its home page: language, alt text, labels, zoom.",
  "archetype": "live-lookup",
- "status": "live",
+ "status": "retired",
  "launched": "2026-11-19T16:00:14Z",
  "need_ids": [],
  "reach": 4,
@@ -35,5 +35,7 @@
   "value": "a showcase board is kept while its facts stay fresh and its cost inside the headroom",
   "prediction": "board_age_hours <= 30 within 48 h",
   "input": "a public domain name or a public country code or place name"
- }
+ },
+ "retired": "2026-11-22T13:12:43Z",
+ "retired_why": "DEPTH-1: a single lookup or board with no thesis, growing corpus, loop or reason to return"
 }

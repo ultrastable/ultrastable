@@ -1,0 +1,12 @@
+{
+  "id": "Q-TEMPORAL-54854bf10b",
+  "title": "Q-TEMPORAL-54854bf10b: hotspot: file:site/worker.js",
+  "body": "**Owner:** uiux-manager\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -m foundation temporal --settled 54854bf10b\n**Status:** closed\n\nTemporal loop finding (hotspot) in site: site/worker.js edited 29 times in 3 days (outside generated and ledger paths). Seen in 4 runs since 2026-11-21T11:56:24Z. Advocate: uiux-manager.\n\nFind why this keeps being edited (a flaky generator, an unstable spec, a loop that rewrites its own output) and fix the cause with a test or guard. Do not slow the work down; stop the churn.\n\nFiles: site/worker.js.\n\nPrediction: site/worker.js is edited at most 5 times in 3 days within 7 days.\n\nThis item closes when the finding no longer holds (`python3 -m foundation temporal --settled 54854bf10b` recomputes it from the repository's own history).\n\nsize: M\n\n**Closing probe:** cmd:python3 -m foundation temporal --settled 54854bf10b.\n\n**Disposition:** shelved (ttl, 2026-11-22T20:31:22Z, DISPOSE-1)\n\n**Evidence:** open 6.0 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "labels": [
+    "p2",
+    "agent-ready",
+    "temporal"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

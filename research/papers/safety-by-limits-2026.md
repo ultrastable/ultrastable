@@ -55,7 +55,7 @@ Source: ops/deploys.jsonl (same window).
 
 - ASHBY-SEARCH-1 (`foundation/ultrastability.py`): the second loop keeps changing a parameter until the variable holds, and reverts a step that did not help
 
-**Measured here:** share of second-order steps that brought the variable back inside its limits and were kept: 0.0 (n = 27). Target >= 0.25. Verdict: **not-met**. Open item: `Q-RES-safety-by-limits-2026-S4`.
+**Measured here:** share of second-order steps that brought the variable back inside its limits and were kept: 0.0 (n = 69). Target >= 0.25. Verdict: **not-met**. Open item: `Q-RES-safety-by-limits-2026-S4`.
 Source: ops/ultrastability.jsonl verdicts.
 
 ### S5. Little work is thrown away (quality)
@@ -77,31 +77,31 @@ Source: GitHub REST pulls?state=closed, last 100 closed pull requests, fetched 2
 
 - HALT-1 (`seed/worker/src/budget.js`): one worker variable or committed file stops every cron, webhook and workflow job
 
-**Measured here:** share of registered loops that declare a closing probe and a server-side owner: 1.0 (n = 110). Target >= 1.0. Verdict: **met**.
+**Measured here:** share of registered loops that declare a closing probe and a server-side owner: 1.0 (n = 111). Target >= 1.0. Verdict: **met**.
 Source: instances/ultrastable/loop-registry.json (declared).
 
 ## Limits
 
 - Scale. One organization: 100 closed pull requests (64 merged) over 0.75 days. Our numbers describe this system; they are not a causal estimate and are not compared with the study's effect sizes as if they were.
-- Who wrote the changes. 80% of merged pull requests in the window were opened by code agent sessions run under the owner's account, not by the system's own loops. The latest criticality tick puts the system in the self-sustaining regime with 31 self-originated deploys, so most of the work measured here was started from outside.
+- Who wrote the changes. 80% of merged pull requests in the window were opened by code agent sessions run under the owner's account, not by the system's own loops. The latest criticality tick puts the system in the self-sustaining regime with 11 self-originated deploys, so most of the work measured here was started from outside.
 - Review by construction. Ultrastable has no human review step, so a short open-to-merge time is partly a consequence of the design. The real test of the design is quality: the revert and deploy-verification findings, which can fail.
 - Revert share counts commits whose subject starts with Revert; a fix that undoes a change without that word is not counted, so the figure is a lower bound.
 - Source. Own r&d question set, regenerated from this system's records, version 2026-11-21; its findings may change in later versions.
 
 ## Proposed further links (leads, not findings)
 
-Found by core/connect on the lexical-512-tnv6rs route; each is a proposal until a study file adopts it.
+Found by core/connect on the lexical-512-rkn4ng route; each is a proposal until a study file adopts it.
 
-- S1 may also relate to DISPOSE-1 (similarity 0.135)
-- S1 may also relate to PROMOTE-1 (similarity 0.117)
+- S1 may also relate to DISPOSE-1 (similarity 0.134)
+- S1 may also relate to PROMOTE-1 (similarity 0.116)
 - S2 may also relate to TENANT-SYNC-1 (similarity 0.153)
-- S2 may also relate to DRAIN-ZERO-1 (similarity 0.131)
-- S3 may also relate to RUNWAY-1 (similarity 0.117)
+- S2 may also relate to DRAIN-ZERO-1 (similarity 0.132)
+- S3 may also relate to RUNWAY-1 (similarity 0.118)
 - S4 may also relate to DISPOSE-1 (similarity 0.114)
-- S5 may also relate to COMPLETE-1 (similarity 0.114)
-- S5 may also relate to DRAIN-ZERO-1 (similarity 0.109)
+- S5 may also relate to COMPLETE-1 (similarity 0.115)
+- S5 may also relate to DRAIN-ZERO-1 (similarity 0.111)
 - S6 may also relate to IGNORANCE-1 (similarity 0.13)
-- S6 may also relate to TEMPORAL-1 (similarity 0.115)
+- S6 may also relate to TEMPORAL-1 (similarity 0.116)
 
 ## Method
 

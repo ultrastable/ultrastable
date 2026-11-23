@@ -1,0 +1,11 @@
+{
+  "id": "Q-RESCORE-d-6ebedf598a77",
+  "title": "Q-RESCORE-d-6ebedf598a77: held-out grader disagrees with the self-score",
+  "body": "**Owner:** reviewer\n**Trigger:** every executor run\n**Done check:** cmd:python3 -m foundation rescore --probe d-6ebedf598a77\n**Status:** closed\n\nHeld-out grading disagrees with the system's own score for decision d-6ebedf598a77 (point `work-queue-priority`): self True, strict rule False (done check fails now: 5f8b2445f4: 0 open, last seen 2026-11-22T00:00:00+00:00 (quiet means 0 open and ), second model None (unavailable). Correct the scorer or the evidence; the done check re-grades it. Source: foundation/rescore.py (RESCORE-1).\n\n**Disposition:** shelved (executor-failed, 2026-11-23T05:02:37Z, DISPOSE-1)\n\n**Evidence:** the executor failed 3 consecutive runs on this item; last reason: RuntimeError: checks failed after 3 attempts: the reply was not valid JSON with a files list: RuntimeError: every code agent rung failed: github-models-llama: RuntimeError: non-JSON response (HTTP 200, text/plain) from https://models.github. Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "labels": [
+    "role:reviewer",
+    "rescore"
+  ],
+  "milestone": "Now",
+  "workstream": "Scoring"
+}

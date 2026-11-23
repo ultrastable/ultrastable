@@ -3,7 +3,8 @@
 """COMPAT-DATE-1: Worker compatibility dates advance by a loop (Q-YEAR-dependency-drift). Ultrastable is the foundation for any autonomous system.
 
   python3 -m foundation compatdate --run [--apply]   move every stale date to today minus lag_days (runs on every watchdog pass, inside the runway step)
-  python3 -m foundation compatdate --check           every date is younger than max_age_days, so the loop is turning
+  python3 -m foundation compatdate --check           every date is younger than max_age_days, so the loop is turning, and every workflow Node pin
+                                                    stays in maintenance for at least node_min_days
 
 Dates live in doctrine/topology.json (each worker and system_compatibility_date, read by the deploy lane) and in every tracked wrangler.toml.
 A date moves only when it is at least min_step_days behind the target, so the loop changes behaviour at most about once a month and the lag
@@ -73,12 +74,32 @@ def run(root=REPO, apply=False, today=None) -> dict:
     return {"target": tgt.isoformat(), "moved": [{"where": w, "from": d} for w, d in moved], "changed": bool(apply and moved)}
 
 
+NODE_RE = re.compile(r'node-version:\s*"?(\d+)')
+
+
+def node_pins(root=REPO) -> list[tuple[str, str]]:
+    wf = Path(root) / ".github/workflows"
+    return [(str(p.relative_to(root)), m.group(1)) for p in sorted(wf.glob("*.y*ml")) for m in NODE_RE.finditer(p.read_text(encoding="utf-8"))] if wf.is_dir() else []
+
+
+def node_problems(root=REPO, today=None) -> list[str]:
+    c, today, bad = cfg(root), today or dt.date.today(), []
+    eol, need = c.get("node_eol") or {}, c.get("node_min_days", 365)
+    for where, major in node_pins(root):
+        if major not in eol:
+            bad.append(f"{where}: Node {major} has no end-of-maintenance date in {RULES} node_eol"); continue
+        left = (dt.date.fromisoformat(eol[major]) - today).days
+        if left < need:
+            bad.append(f"{where}: Node {major} leaves maintenance on {eol[major]} ({left} days), inside the {need}-day horizon; move the pin to the next LTS")
+    return bad
+
+
 def check(root=REPO, today=None) -> list[str]:
     root, c, today = Path(root), cfg(root), today or dt.date.today()
     bad = [f"{RULES}: {k} must be a positive integer" for k in ("lag_days", "min_step_days", "max_age_days") if not (isinstance(c.get(k), int) and c[k] > 0)]
     if bad:
         return bad
-    return [f"{w}: compatibility_date {d} is {(today - dt.date.fromisoformat(d)).days} days old (limit {c['max_age_days']}); the compatdate loop has stopped"
+    return node_problems(root, today) + [f"{w}: compatibility_date {d} is {(today - dt.date.fromisoformat(d)).days} days old (limit {c['max_age_days']}); the compatdate loop has stopped"
             for w, d in dates(root) if (today - dt.date.fromisoformat(d)).days > c["max_age_days"]]
 
 

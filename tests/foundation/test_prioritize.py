@@ -49,7 +49,7 @@ class Rank(unittest.TestCase):
 
     def test_live_config_and_repo_rank(self):
         rows = P.rank()
-        self.assertTrue(rows and all("score" in r for r in rows))
+        self.assertTrue(all("score" in r for r in rows))  # an empty queue is the drain target (DRAIN-ZERO-1), not a failure; scoring itself is covered above
         pins = P.load()["pins"]["ids"]
         live = [r["id"] for r in rows if not r["held"]]
         open_pins = [p for p in pins if p in live]  # a pinned item that closed (or was shelved) is no longer in the queue to lead it

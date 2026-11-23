@@ -4539,8 +4539,9 @@
    "kind": "decision",
    "date": "2026-11-21",
    "title": "Intent Yield enters SEED-LIFECYCLE-1",
-   "body": "instance.json and lifecycle.json added (served by ultrastable-site, verify https://ultrastable.io/yield.json for INTENT-YIELD-1); progress row healed by intent-yield.yml and executor.yml. Stage is deployed; the watchdog's seedlife verify takes it to live. Q-SEED-intent-yield closes on seedlife --probe once the core-inherited survival classes (cost-alerts, dependencies, runtime, backups, improvement) close platform-wide.",
-   "probe": "file:instances/intent-yield/lifecycle.json"
+   "body": "instance.json and lifecycle.json added (served by ultrastable-site, verify https://ultrastable.io/yield.json for INTENT-YIELD-1); progress row healed by intent-yield.yml and executor.yml. Stage is deployed; the watchdog's seedlife verify takes it to live. Q-SEED-intent-yield closes on seedlife --probe once the core-inherited survival classes (cost-alerts, dependencies, runtime, backups, improvement) close platform-wide. Superseded 2026-11-22: Intent Yield is a core feature, not a seed; the manifest and lifecycle file were removed and this row now points at the design doc.",
+   "probe": "file:tests/test_intent_yield.py",
+   "session": "session_0156nqDtFn6P2DrsR9UbyzkV"
   },
   {
    "id": "decision-2026-11-21-seeds-launch-through-the-oidc-route-no-foundation-command-to",
@@ -4661,6 +4662,233 @@
    "body": "The runway step wrote ops/yearsim*, ops/saydo*, ops/trajectory* and their site data, but the watchdog Record step never added them, so each run lost its own history. It now adds whichever exist (Q-REDMAIN-revert-lane second half; revertRedMain was already live).",
    "probe": "grep:.github/workflows/watchdog.yml::ops/yearsim.jsonl",
    "session": "session_0156nqDrazgRH7yMoAUMyYoy"
+  },
+  {
+   "id": "decision-2026-11-22-node-24-in-workflows-node-maintenance-horizon-check",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "Node 24 in workflows; Node maintenance horizon check",
+   "body": "Workflow Node pins moved from 22 to 24 (maintenance to 2028-04-30) on a protected branch Rowan approved; compatdate --check now fails any pin whose Node major leaves maintenance within 365 days, closing node-runtime in the unattended register so all three seeds reach autonomous.",
+   "probe": "grep:foundation/compatdate.py::def node_problems"
+  },
+  {
+   "id": "decision-2026-11-22-node-24-on-every-workflow-closes-node-runtime",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "Node 24 on every workflow closes node-runtime",
+   "body": "All workflow and seed node-version pins moved from 22 to 24 (Node 22 leaves maintenance 2027-04-30); Unlearn, seed/worker, site and dashboard suites passed on Node 24.22.3 before the bump; node-runtime is closed in doctrine/unattended.json, which lifts the Unlearn seed to autonomous.",
+   "probe": "grep:doctrine/unattended.json::Every workflow and seed workflow now pins node-version 24"
+  },
+  {
+   "id": "decision-2026-11-22-offsite-backup-closed-first-daily-d1-copy-in-r2",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "offsite-backup closed: first daily D1 copy in R2",
+   "body": "After #1911 the tick carries AUDIT (deploy 01:11 UTC) and wrote backups/d1/ultrastable-org/2026-11-22.ndjson.gz, 1095514 bytes, at 01:11:32; the weekly drill to the ops repository stays as the second home.",
+   "probe": "grep:doctrine/unattended.json::backups/d1/ultrastable-org"
+  },
+  {
+   "id": "lesson-2026-11-22-the-trajectory-page-goes-stale-whenever-the-watchdog-commits",
+   "kind": "lesson",
+   "date": "2026-11-22",
+   "title": "The trajectory page goes stale whenever the watchdog commits its ledger",
+   "body": "The watchdog commits ops/trajectory.json but not site/trajectory-data.js, so test_trajectory went red on main and on every PR. REGEN-1 now runs trajectory --page, which renders the page from the committed ledger before the tests.",
+   "probe": "grep:scripts/regen_generated.sh::trajectory --page"
+  },
+  {
+   "id": "decision-2026-11-22-idea-bank-1-front-door-ideas",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "IDEA-BANK-1 front-door ideas",
+   "body": "Front-door idea chips come from doctrine/idea-bank.json (19 ideas, 10 domains); scripts/build_idea_bank.py boots each through seed read/qualify/instrument before it can be shown; suggest.js spreads unrelated chips across domains.",
+   "probe": "file:doctrine/idea-bank.json"
+  },
+  {
+   "id": "decision-2026-11-22-intent-yield-is-a-core-feature-not-a-seed",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "Intent Yield is a core feature, not a seed",
+   "body": "Owner (2026-11-22): merge it completely and do not count it as a separate app or tenant. The seed manifest, lifecycle file, progress row and Q-SEED item are removed; the yield engine, /yield page and daily loop run under the core's own checks, design in docs/intent-yield-design.md.",
+   "probe": "file:tests/test_intent_yield.py",
+   "session": "session_0156nqDtFn6P2DrsR9UbyzkV"
+  },
+  {
+   "id": "decision-2026-11-22-post-quality-1-social-posts-are-gated-before-send",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "POST-QUALITY-1: social posts are gated before send",
+   "body": "Core publisher blocks truncated, templated, multi-link or evidence-overclaiming posts. Authors fix text, never the gate. Open: engagement feedback loop, graceful relay disclosure, lift tenant voice into core.",
+   "probe": "file:seed/worker/src/postquality.js",
+   "session": "session_0156nqDvwemVbNQXnbPtTWSr"
+  },
+  {
+   "id": "decision-2026-11-22-unlearn-becomes-an-evidence-encyclopedia-of-beliefs-to-unlea",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "Unlearn becomes an evidence encyclopedia of beliefs to unlearn",
+   "body": "Rowan found the coaching-only Unlearn too unstructured. The tenant is now a clickable, encyclopedic site of popular beliefs the evidence contradicts, modelled on Practical Solutions, with each entry in a guided debunking order and an hourly evidence loop (Crossref DOIs, Europe PMC new reviews, freshness, review queue). The coaching tool stays at /coach.",
+   "probe": "grep:instances/unlearn/worker/entries.js::export const FORMAT"
+  },
+  {
+   "id": "decision-2026-11-22-unlearn-improves-itself-grounded-review-labels-automatic-re-",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "Unlearn improves itself: grounded review labels, automatic re-grading, Lab discovery, wording trials",
+   "body": "Rowan asked to grow Unlearn and make it run and improve automatically. Decision: a model may only label or re-word, never add facts; every label or draft must quote a sentence present in the abstract it read, re-words may add no number or name, entries' cited sources are never changed by a model, drafts live on /lab and are never published as entries, and wording trials need 40 answers per arm and a two-proportion z of 1.96 to replace the original.",
+   "probe": "grep:instances/unlearn/worker/lab.js::export function grounded",
+   "session": "session_0156nqDvj2EuthJ3xYxicfND"
+  },
+  {
+   "id": "decision-2026-11-22-unlearn-tells-famous-finding-retold-stories-by-itself-and-gi",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "Unlearn tells famous-finding-retold stories by itself and gives readers a reason to come back daily",
+   "body": "Rowan wants far more narrative-vs-later-evidence entries, automated, and a sticky site that runs a year unattended. Decision: a retold topic with then/now timelines graded honestly; a second daily discovery search for replications and re-analyses; drafts reach their own page only after reader votes and only with an index citation, always labelled a draft from one paper; a myth of the day cycle, an Atom feed and a browser-only streak bring readers back without accounts or cookies.",
+   "probe": "grep:instances/unlearn/worker/lab.js::export const RETOLD_QUERY",
+   "session": "session_0156nqDvj2EuthJ3xYxicfND"
+  },
+  {
+   "id": "decision-2026-11-22-depth-1-front-door-ideas",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "DEPTH-1 front-door ideas",
+   "body": "Front-door ideas must name a corpus, a method and a reason to return (Unlearn / Practical Solutions depth); one-trick ideas such as a single air-quality feed are refused by scripts/build_idea_bank.py.",
+   "probe": "grep:scripts/build_idea_bank.py::DEPTH-1",
+   "session": "session_0156nqDriyeVtn3erZ59DmMT"
+  },
+  {
+   "id": "decision-2026-11-22-worldwide-1-and-grow-1-idea-bank",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "WORLDWIDE-1 and GROW-1 idea bank",
+   "body": "Front-door ideas list worldwide open data sources probed weekly (dead sources retire the idea); a weekly scout step asks the model route for one new idea admitted through every gate and rotates the oldest out beyond max_active.",
+   "probe": "grep:scripts/build_idea_bank.py::GROW-1",
+   "session": "session_0156nqDriyeVtn3erZ59DmMT"
+  },
+  {
+   "id": "decision-2026-11-22-depth-1-depth-bar-for-self-chosen-apps",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "DEPTH-1 depth bar for self-chosen apps",
+   "body": "Rowan 2026-11-22: self-chosen apps must carry thesis, growing corpus, loop, hook, reason to return, public good and a 3-phase horizon; lookups, boards, templates and commerce never launch. Retired 8 shallow spinoffs; seeded base-rates, did-it-work, open-questions for the seed pipeline.",
+   "probe": "grep:doctrine/spinoff-ideas.json::DEPTH-1",
+   "session": "session_0156nqDrdw3p8opYtKRRrh6D"
+  },
+  {
+   "id": "decision-2026-11-22-sticky-1-every-system-is-judged-on-freshness-breadth-depth-a",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "STICKY-1: every system is judged on freshness, breadth, depth and diversity of content and promotes it",
+   "body": "Core module workers/core/stickiness (vendored in the seed) and tick step stickiness measure each system's JSON Feed, record a daily series, file STICKY-<id> while stale/thin/narrow, and serve unpromoted entries as a social queue. Admission is a stickiness block in instances/ultrastable/progress.json. Unlearn is a shrink-only baseline with no feed of its own; the ultrastable.io feed is the changelog, last updated 2026-11-17, so the loop will file STICKY-ultrastable.",
+   "probe": "file:seed/worker/src/stickiness.js"
+  },
+  {
+   "id": "lesson-2026-11-22-sticky-1-audience-is-measured-as-visitor-days-and-daily-feed",
+   "kind": "lesson",
+   "date": "2026-11-22",
+   "title": "STICKY-1: audience is measured as visitor-days and daily feed readers",
+   "body": "The analytics beacon keeps nothing in the browser and visitor ids rotate daily (guard in seed/worker/test/analytics.test.js), so the step counts visitor-days from hits and daily feed readers (hits name feed, recorded server-side by the site worker). return_rate is computed only from a real returning count a system serves at audience_url, otherwise it reads unmeasured. Verified by seed/worker/test/stickiness.test.js.",
+   "probe": "file:seed/worker/src/stickiness.js",
+   "session": "session_0156nqDtwtLqnATRJwnaK1EC"
+  },
+  {
+   "id": "decision-2026-11-22-change-1-behaviour-change-library-required-by-the-depth-bar",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "CHANGE-1 behaviour-change library required by the depth bar",
+   "body": "Rowan 2026-11-22: humans are the weak link from evidence to action. Every deep idea names at least 3 evidence-based moves from doctrine/change-methods.json covering notice, update and act; ideas.depth() enforces it and the idea bank inherits it.",
+   "probe": "grep:doctrine/change-methods.json::CHANGE-1",
+   "session": "session_0156nqDrdw3p8opYtKRRrh6D"
+  },
+  {
+   "id": "decision-2026-11-22-one-depth-rule-for-ideas-and-apps",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "One depth rule for ideas and apps",
+   "body": "build_idea_bank.py calls foundation/ideas.py depth() so front-door ideas and self-chosen apps share DEPTH-1 (thesis, corpus, loop, returns, hook, public_good, horizon).",
+   "probe": "grep:scripts/build_idea_bank.py::_ideas.depth",
+   "session": "session_0156nqDriyeVtn3erZ59DmMT"
+  },
+  {
+   "id": "decision-2026-11-22-owner-console-shows-only-what-is-true-the-system-closes-its-",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "Owner console shows only what is true; the system closes its own fix tasks",
+   "body": "Session: session_0156nqDuBwwRB8fWQWzUbU4L. Rowan 2026-11-22: /owner and the digest were noise. OWNER-LINKS-3, SELF-FIX-2, LEGACY-TASKS-1, DIGEST-QUIET-1, PLAN-FACT-1, SELFCHECK-FRESH-1 in dashboard/worker.js and seed/analytics/analytics.js; fleet tasks read-only, no owner buttons.",
+   "probe": "grep:dashboard/worker.js::LEGACY-TASKS-1",
+   "session": "session_0156nqDuBwwRB8fWQWzUbU4L"
+  },
+  {
+   "id": "decision-2026-11-22-post-feedback-1-engagement-read-back-and-scored-per-arm",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "POST-FEEDBACK-1: engagement read back and scored per arm",
+   "body": "Public like, repost and reply counts for Bluesky and Mastodon posts are read a day after posting, stored on social_posted and used to break ties between equally ranked posts. The relay's AI-generated marker (qnfo-social, Quniverse account, Art. 50) is left as is: its source is not in these repos and a redeploy without it risks losing bindings.",
+   "probe": "file:seed/worker/src/postfeedback.js",
+   "session": "session_0156nqDvwemVbNQXnbPtTWSr"
+  },
+  {
+   "id": "decision-2026-11-22-promotion-is-part-of-every-tenant-s-role-unlearn-promotes-it",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "Promotion is part of every tenant's role; Unlearn promotes itself",
+   "body": "TENANT-PROMO-1 (Rowan 2026-11-22). Unlearn serves /social-queue.json (one belief every 2 days from 2026-11-23, built by the shared seed/worker/src/promoqueue.js), listed in social/gate.json tenant_queues and drained by the core publisher, which now takes tenants in turn (fairOrder). Unlearn is a live showcase on ultrastable.io and every Unlearn page links its live siblings from doctrine/stakeholders.json. foundation/tenantpromo.py --check (in checks) fails any system in progress.json that does not promote itself. Practical Solutions linking Unlearn from its own pages is a change in ultrastable/practical-solutions; it is cross-promoted from ultrastable.io and from Unlearn meanwhile.",
+   "probe": "file:foundation/tenantpromo.py",
+   "session": "session_0156nqDs5nJM2H2Skg8FBBcb"
+  },
+  {
+   "id": "decision-2026-11-22-sticky-1-the-stickiness-step-files-its-item-with-a-small-res",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "STICKY-1: the stickiness step files its item with a small reserve above the daily item limit",
+   "body": "The stickiness step now passes cap = ORIGINATE_MAX_PER_DAY + STICKY_RESERVE (5) to ensureItem. Item ids are fixed per system, so a refile is a no-op. Evidence: live D1 had stickiness_state rows but no STICKY items while budget_ledger showed 20 of 20 used. Verified by seed/worker/test/stickiness.test.js.",
+   "probe": "file:seed/worker/src/stickiness.js",
+   "session": "session_0156nqDtwtLqnATRJwnaK1EC"
+  },
+  {
+   "id": "decision-2026-11-22-every-tenant-app-lives-in-its-own-repository-unlearn-moves-t",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "Every tenant app lives in its own repository; Unlearn moves to ultrastable/unlearn",
+   "body": "Rowan: a tenant app needs its own repo. Decision: a registry (doctrine/tenant-repos.json), a workflow that creates the repo from the tenant folder's history with vendored core files, and a core deploy route that builds a topology worker from its tenant repository's main (source.repo), redeployed daily when that main moves. A check fails new tenant code in the core. Deploys go through the core's OIDC deployer, so the tenant repository holds no credential and the deploy gateway's rules stay as they are.",
+   "probe": "grep:foundation/tenantrepos.py::def check",
+   "session": "session_0156nqDvj2EuthJ3xYxicfND"
+  },
+  {
+   "id": "decision-2026-11-22-unlearn-change-layer-graded-practices-with-private-trials",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "Unlearn change layer: graded practices with private trials",
+   "body": "Rowan asked for evidence-based change, not only debunking. Practices are full graded entries with a trial kit; all personal trial data stays in the reader's browser; the server counts anonymous events per practice and re-orders suggested if-then plans by keep rate; oversold claims (power posing, ego depletion, growth mindset) get no kit; the Lab drafts candidate practices from intervention reviews under the same grounding guards.",
+   "probe": "file:instances/unlearn/worker/change.js",
+   "session": "session_0156nqDvj2EuthJ3xYxicfND"
+  },
+  {
+   "id": "lesson-2026-11-22-changelog-fresh-1-ingest-new-commits",
+   "kind": "lesson",
+   "date": "2026-11-22",
+   "title": "CHANGELOG-FRESH-1 ingest new commits",
+   "body": "The public changelog only grew when a row was recorded by hand; commits now become public change rows on every product-manager pass (provenance --ingest-new). Never run --changelog --apply from a session: the local ledger is thin and it shrinks the file.",
+   "probe": "file:foundation/provenance.py",
+   "session": "session_0156nqDsuEKqAuktLCYtMyqQ"
+  },
+  {
+   "id": "lesson-2026-11-22-tenant-repo-creation-needs-a-credential-the-workflow-actuall",
+   "kind": "lesson",
+   "date": "2026-11-22",
+   "title": "Tenant repo creation needs a credential the workflow actually holds",
+   "body": "TENANT-REPO-1: tenant-repos.yml had only ORG_ADMIN_TOKEN and LANE_PAT (both unbound), so ultrastable/unlearn was never created; it also word-split jq rows with a for-loop. Third route added: the lane GitHub App minting an installation-wide token with administration and contents write (lane_credential.py org-token); rows are read with while-read.",
+   "probe": "file:scripts/lane_credential.py",
+   "session": "session_0156nqDvj2EuthJ3xYxicfND"
+  },
+  {
+   "id": "decision-2026-11-22-mobile-layout-1-phone-header-budget-lives-in-core-ui",
+   "kind": "decision",
+   "date": "2026-11-22",
+   "title": "MOBILE-LAYOUT-1: phone header budget lives in core/ui",
+   "body": "core/ui siteHeader keeps items flagged primary in the bar and puts the rest under a script-free More disclosure; familyBar shows its text before the colon on phones. Tenants enforce a 390px budget (chrome <=170px, h1 inside first screen, no sideways scroll, 44px header targets) with a browser check in CI.",
+   "probe": "grep:workers/core/ui/components.js::class=\"more\"",
+   "session": "session_0156nqDsXvfiYKkDzaZaSPmg"
   }
  ]
 }

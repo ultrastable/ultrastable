@@ -1,5 +1,5 @@
 {
- "at": "2026-11-21T22:53:13Z",
+ "at": "2026-11-23T09:58:51Z",
  "probes": {
   "closed-loops/closedloop": {
    "status": "ok",
@@ -33,7 +33,7 @@
   },
   "front-end-matches-back-end/claims": {
    "status": "ok",
-   "detail": "claims: 372 verified of 372; 0 drift",
+   "detail": "claims: 378 verified of 378; 0 drift",
    "fixed": false,
    "item": null
   },
@@ -51,15 +51,15 @@
   },
   "front-end-matches-back-end/spinoff-live": {
    "status": "unmeasured",
-   "detail": "unreachable: access-check, air-quality, country-snapshot",
+   "detail": "no live public-benefit app is launched yet",
    "fixed": false,
    "item": null
   },
   "no-merge-over-red/mergeaudit": {
-   "status": "violated",
-   "detail": "merged without green checks: #1851, #1854, #1876, #1885, #1894",
+   "status": "ok",
+   "detail": "every recent merge had a green checks run",
    "fixed": false,
-   "item": "Q-RULE-no-merge-over-red-mergeaudit"
+   "item": null
   },
   "no-merge-over-red/ciwatch": {
    "status": "ok",
@@ -244,7 +244,7 @@
    "statement": "Words match code: every public statement is bound to a probe of the running code (CLAIMS-1, WORDS-MATCH-CODE-1)."
   },
   "no-merge-over-red": {
-   "status": "violated",
+   "status": "enforced",
    "ci": 2,
    "probes": 2,
    "gaps": [],

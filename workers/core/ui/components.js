@@ -8,13 +8,22 @@ import { esc, safeHref } from './html.js';
 export const skipLink = (target = 'main', text = 'Skip to main content') => `<a class="skip" href="#${esc(target)}">${esc(text)}</a>`;
 
 // familyBar: the slim strip that ties a product to the Ultrastable family (FAMILY-1): two homes, one design language, always one tap apart.
-export const familyBar = ({ label, links = [] }) => `<aside class="fam" aria-label="${esc(label)}"><div class="wrap"><span>${esc(label)}</span><ul>${links.map(l => `<li><a href="${esc(safeHref(l.href))}">${esc(l.label)}</a></li>`).join('')}</ul></div></aside>`;
+export const familyBar = ({ label, links = [] }) => {
+  // MOBILE-LAYOUT-1: the visible text is the part before the colon; the rest shows from tablet width up. The aria-label keeps the whole label.
+  const i = label.indexOf(':'), head = i > 0 ? label.slice(0, i) : label, tail = i > 0 ? label.slice(i) : '';
+  return `<aside class="fam" aria-label="${esc(label)}"><div class="wrap"><span>${esc(head)}${tail ? `<span class="fam-x">${esc(tail)}</span>` : ''}</span><ul>${links.map(l => `<li><a href="${esc(safeHref(l.href))}">${esc(l.label)}</a></li>`).join('')}</ul></div></aside>`;
+};
 
-export function siteHeader({ brand, nav = [], current = '', search = null }) {
+// siteHeader: items flagged `primary` stay in the bar; the rest go under a "More" disclosure (a plain <details>, no script). If no item is
+// flagged, every item stays in the bar. The search button is an icon on phones and a word from tablet width up.
+export function siteHeader({ brand, nav = [], current = '', search = null, moreLabel = 'More' }) {
   const cur = n => n.match ? n.match.test(current) : n.href === current;
+  const link = n => `<li><a href="${esc(safeHref(n.href))}"${cur(n) ? ' aria-current="page"' : ''}>${esc(n.label)}</a></li>`;
+  const prim = nav.some(n => n.primary) ? nav.filter(n => n.primary) : nav, rest = nav.filter(n => !prim.includes(n));
+  const more = rest.length ? `<li class="more"><details${rest.some(cur) ? ' data-current' : ''}><summary>${esc(moreLabel)}</summary><ul>${rest.map(link).join('')}</ul></details></li>` : '';
   return `<header class="site-h"><div class="wrap"><a class="brand" href="${esc(safeHref(brand.href || '/'))}">${esc(brand.name)}${brand.tag ? `<small>${esc(brand.tag)}</small>` : ''}</a>
-<nav aria-label="Main"><ul class="nav">${nav.map(n => `<li><a href="${esc(safeHref(n.href))}"${cur(n) ? ' aria-current="page"' : ''}>${esc(n.label)}</a></li>`).join('')}</ul></nav>
-${search ? `<form class="srch" role="search" action="${esc(search.action)}" method="get"><label class="vh" for="q-h">${esc(search.label || 'Search')}</label><input id="q-h" type="search" name="${esc(search.name || 'q')}" placeholder="${esc(search.placeholder || 'Search')}" autocomplete="off"><button type="submit">${esc(search.button || 'Search')}</button></form>` : ''}</div></header>`;
+<nav aria-label="Main"><ul class="nav">${prim.map(link).join('')}${more}</ul></nav>
+${search ? `<form class="srch" role="search" action="${esc(search.action)}" method="get"><label class="vh" for="q-h">${esc(search.label || 'Search')}</label><input id="q-h" type="search" name="${esc(search.name || 'q')}" placeholder="${esc(search.placeholder || 'Search')}" autocomplete="off"><button type="submit"><span aria-hidden="true" class="ico">&#9906;</span><span class="lbl">${esc(search.button || 'Search')}</span></button></form>` : ''}</div></header>`;
 }
 
 export const breadcrumbs = items => `<nav class="crumbs" aria-label="Breadcrumb"><ol>${items.map((x, i) => i === items.length - 1 ? `<li><span aria-current="page">${esc(x.label)}</span></li>` : `<li><a href="${esc(safeHref(x.href))}">${esc(x.label)}</a></li>`).join('')}</ol></nav>`;

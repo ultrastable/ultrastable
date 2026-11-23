@@ -132,6 +132,20 @@ class BootTests(unittest.TestCase):
             self.assertTrue((Path(d) / "org/boot-log.json").exists())
 
 
+    def test_year_gate_refuses_a_fault_with_no_exercised_drill(self):
+        # SEED-AUTONOMY-1: a declared recovery nothing ran is not a pass, whatever the simulated horizon says
+        with tempfile.TemporaryDirectory() as d:
+            copy_seed(Path(d))
+            y = Path(d) / "autonomy" / "yearsim.json"
+            c = json.loads(y.read_text())
+            c["faults"] = [{"id": "undrilled", "what": "w", "rate_per_year": 1, "duration_days": [1, 1], "basis": "assumed: test"}]
+            y.write_text(json.dumps(c))
+            b = bs.Boot(Path(d), Path(d) / "org", apply=False)
+            status, detail = b.year_gate()
+            self.assertEqual(status, "blocked")
+            self.assertIn("undrilled", detail)
+
+
 if __name__ == "__main__":
     unittest.main()
 

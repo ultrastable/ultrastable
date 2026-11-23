@@ -123,7 +123,7 @@ export default {
     "expected_interval_s": 3600,
     "id": "unlearn-beat",
     "source": "d1",
-    "what": "Unlearn tenant beat (cron 41 * * * * on ultrastable-unlearn; a visit catches up a silent cron): re-learn move weights, measure, open the next phase, prune"
+    "what": "Unlearn tenant beat (cron 41 * * * * on ultrastable-unlearn; a visit catches up a silent cron): check a batch of encyclopedia entries against Crossref and Europe PMC, re-learn coaching move weights, measure, open the next phase, prune"
    },
    {
     "expected_interval_s": 86400,
@@ -727,6 +727,7 @@ export default {
   "spinoff",
   "strange-loop-hygiene",
   "temporal",
+  "tenant-repos",
   "tenant-sync",
   "terms-crosswalk",
   "thought",
@@ -1932,6 +1933,19 @@ export default {
     ]
    },
    {
+    "closing_probe": "grep:foundation/tenantrepos.py::def check",
+    "id": "tenant-repos",
+    "kind": "governance",
+    "owner": "operations",
+    "server_owner": "github-actions",
+    "sla": "1d",
+    "summary": "Every tenant app lives in its own repository (TENANT-REPO-1): a tenant registered as moving gets its repository created from its folder's history with vendored core files, and every moved tenant's worker is rebuilt from its repository's main whenever that main moves past the last deployed commit.",
+    "trigger": "daily workflow, every push to doctrine/tenant-repos.json, and dispatch",
+    "workflows": [
+     "tenant-repos"
+    ]
+   },
+   {
     "closing_probe": "grep:scripts/regen_generated.py::def run_all",
     "id": "regen-generated",
     "kind": "governance",
@@ -2052,7 +2066,7 @@ export default {
     "owner": "product-manager",
     "server_owner": "ultrastable-unlearn",
     "sla": "2h",
-    "summary": "Unlearn tenant loop: curiosity logged, coaching move chosen by learned weights, follow-up at 7 and 14 days, weights re-learned, metrics measured, next phase opened when its gates hold (instances/unlearn/phases.json).",
+    "summary": "Unlearn tenant loop: the encyclopedia's evidence step resolves cited sources to DOIs (Crossref, title and year must match) and watches Europe PMC for new reviews per entry, surfacing them; the lab step labels each new review with a quote that must be in its abstract, re-grades entries from those labels, drafts candidate beliefs for /lab from new myth reviews, and runs wording trials decided by readers' shift answers; reader guesses and shift answers are measured. The coaching tool's curiosity, move, 7 and 14 day follow-up and weight re-learning run in the same beat, and its next phase opens when its gates hold (instances/unlearn/phases.json).",
     "trigger": "cron 41 * * * * on ultrastable-unlearn; a page visit runs the beat when the cron has been silent for 2 hours",
     "workflows": [
      "deploy-ultrastable"
@@ -2387,6 +2401,12 @@ export default {
     ]
    },
    {
+    "id": "tenant-repos",
+    "loops": [
+     "tenant-repos"
+    ]
+   },
+   {
     "id": "tenant-sync",
     "loops": [
      "tenant-sync"
@@ -2426,250 +2446,250 @@ export default {
  },
  "readings": {
   "access-check:claims_drift": {
-   "at": "2026-11-22T00:52:30Z",
+   "at": "2026-11-23T08:42:36Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "access-check:spend": {
-   "at": "2026-11-22T00:52:30Z",
-   "in_bounds": false,
-   "unmeasured": true,
-   "value": null
+   "at": "2026-11-23T08:42:36Z",
+   "in_bounds": true,
+   "unmeasured": false,
+   "value": 0.0
   },
   "access-check:uptime": {
-   "at": "2026-11-22T00:52:30Z",
+   "at": "2026-11-23T08:42:36Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "access-check:value": {
-   "at": "2026-11-22T00:52:30Z",
+   "at": "2026-11-23T08:42:36Z",
    "in_bounds": false,
-   "unmeasured": true,
-   "value": null
+   "unmeasured": false,
+   "value": 0.0
   },
   "air-quality:claims_drift": {
-   "at": "2026-11-22T00:52:30Z",
+   "at": "2026-11-23T08:42:36Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "air-quality:spend": {
-   "at": "2026-11-22T00:52:30Z",
-   "in_bounds": false,
-   "unmeasured": true,
-   "value": null
+   "at": "2026-11-23T08:42:36Z",
+   "in_bounds": true,
+   "unmeasured": false,
+   "value": 0.0
   },
   "air-quality:uptime": {
-   "at": "2026-11-22T00:52:30Z",
+   "at": "2026-11-23T08:42:36Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "air-quality:value": {
-   "at": "2026-11-22T00:52:30Z",
+   "at": "2026-11-23T08:42:36Z",
    "in_bounds": false,
-   "unmeasured": true,
-   "value": null
+   "unmeasured": false,
+   "value": 0.0
   },
   "blindspot:claims_drift": {
-   "at": "2026-11-22T00:52:30Z",
+   "at": "2026-11-23T08:42:36Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "blindspot:spend": {
-   "at": "2026-11-22T00:52:30Z",
-   "in_bounds": false,
-   "unmeasured": true,
-   "value": null
+   "at": "2026-11-23T08:42:36Z",
+   "in_bounds": true,
+   "unmeasured": false,
+   "value": 0.0
   },
   "blindspot:uptime": {
-   "at": "2026-11-22T00:52:30Z",
+   "at": "2026-11-23T08:42:36Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "blindspot:value": {
-   "at": "2026-11-22T00:52:30Z",
-   "in_bounds": false,
-   "unmeasured": true,
-   "value": null
+   "at": "2026-11-23T08:42:36Z",
+   "in_bounds": true,
+   "unmeasured": false,
+   "value": 2.02
   },
   "claims_drift": {
-   "at": "2026-11-22T00:52:30Z",
+   "at": "2026-11-23T08:42:36Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0
   },
   "country-snapshot:claims_drift": {
-   "at": "2026-11-22T00:52:30Z",
+   "at": "2026-11-23T08:42:36Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "country-snapshot:spend": {
-   "at": "2026-11-22T00:52:30Z",
-   "in_bounds": false,
-   "unmeasured": true,
-   "value": null
+   "at": "2026-11-23T08:42:36Z",
+   "in_bounds": true,
+   "unmeasured": false,
+   "value": 0.0
   },
   "country-snapshot:uptime": {
-   "at": "2026-11-22T00:52:30Z",
+   "at": "2026-11-23T08:42:36Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "country-snapshot:value": {
-   "at": "2026-11-22T00:52:30Z",
-   "in_bounds": false,
-   "unmeasured": true,
-   "value": null
-  },
-  "deploy_health": {
-   "at": "2026-11-22T00:52:30Z",
+   "at": "2026-11-23T08:42:36Z",
    "in_bounds": false,
    "unmeasured": false,
-   "value": 0.987
+   "value": 0.0
+  },
+  "deploy_health": {
+   "at": "2026-11-23T08:42:36Z",
+   "in_bounds": true,
+   "unmeasured": false,
+   "value": 1.0
   },
   "free-tier-meter:claims_drift": {
-   "at": "2026-11-22T00:52:30Z",
+   "at": "2026-11-23T08:42:36Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "free-tier-meter:spend": {
-   "at": "2026-11-22T00:52:30Z",
-   "in_bounds": false,
-   "unmeasured": true,
-   "value": null
+   "at": "2026-11-23T08:42:36Z",
+   "in_bounds": true,
+   "unmeasured": false,
+   "value": 0.0
   },
   "free-tier-meter:uptime": {
-   "at": "2026-11-22T00:52:30Z",
+   "at": "2026-11-23T08:42:36Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "free-tier-meter:value": {
-   "at": "2026-11-22T00:52:30Z",
+   "at": "2026-11-23T08:42:36Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "happy_paths": {
-   "at": "2026-11-22T00:52:30Z",
+   "at": "2026-11-23T08:42:36Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "loop-ledger:claims_drift": {
-   "at": "2026-11-22T00:52:30Z",
+   "at": "2026-11-23T08:42:36Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "loop-ledger:spend": {
-   "at": "2026-11-22T00:52:30Z",
+   "at": "2026-11-23T08:42:36Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "loop-ledger:uptime": {
-   "at": "2026-11-22T00:52:30Z",
+   "at": "2026-11-23T08:42:36Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "loop-ledger:value": {
-   "at": "2026-11-22T00:52:30Z",
+   "at": "2026-11-23T08:42:36Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "numbers-board:claims_drift": {
-   "at": "2026-11-22T00:52:30Z",
+   "at": "2026-11-23T08:42:36Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "numbers-board:spend": {
-   "at": "2026-11-22T00:52:30Z",
-   "in_bounds": false,
-   "unmeasured": true,
-   "value": null
+   "at": "2026-11-23T08:42:36Z",
+   "in_bounds": true,
+   "unmeasured": false,
+   "value": 0.0
   },
   "numbers-board:uptime": {
-   "at": "2026-11-22T00:52:30Z",
+   "at": "2026-11-23T08:42:36Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "numbers-board:value": {
-   "at": "2026-11-22T00:52:30Z",
+   "at": "2026-11-23T08:42:36Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "portfolio-board:claims_drift": {
-   "at": "2026-11-22T00:52:30Z",
+   "at": "2026-11-23T08:42:36Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "portfolio-board:spend": {
-   "at": "2026-11-22T00:52:30Z",
-   "in_bounds": false,
-   "unmeasured": true,
-   "value": null
+   "at": "2026-11-23T08:42:36Z",
+   "in_bounds": true,
+   "unmeasured": false,
+   "value": 0.0
   },
   "portfolio-board:uptime": {
-   "at": "2026-11-22T00:52:30Z",
+   "at": "2026-11-23T08:42:36Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "portfolio-board:value": {
-   "at": "2026-11-22T00:52:30Z",
+   "at": "2026-11-23T08:42:36Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "self_shipping": {
-   "at": "2026-11-22T00:52:30Z",
+   "at": "2026-11-23T08:42:36Z",
    "in_bounds": false,
    "unmeasured": false,
-   "value": 0.214
+   "value": 0.714
   },
   "spend": {
-   "at": "2026-11-22T00:52:30Z",
+   "at": "2026-11-23T08:42:36Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
   },
   "stalled_clocks": {
-   "at": "2026-11-22T00:52:30Z",
+   "at": "2026-11-23T08:42:36Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 1
   },
   "ui_findings": {
-   "at": "2026-11-22T00:52:30Z",
+   "at": "2026-11-23T08:42:36Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0
   },
   "unattended_horizon": {
-   "at": "2026-11-22T00:52:30Z",
+   "at": "2026-11-23T08:42:36Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 730
   },
   "value": {
-   "at": "2026-11-22T00:52:30Z",
+   "at": "2026-11-23T08:42:36Z",
    "in_bounds": true,
    "unmeasured": false,
-   "value": 1500.0
+   "value": 360.0
   }
  },
  "self": {

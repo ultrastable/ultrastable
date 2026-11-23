@@ -457,6 +457,44 @@
    "reason": "changing a repository's visibility needs GitHub sudo mode, which only the owner's passkey or authenticator code opens",
    "default": "ultrastable/seed is a private template usable by org members; ultrastable/ultrastable stays a public template too, so the /setup Make my copy link keeps working; nothing waits",
    "probe": "cmd:python3 scripts/check_org_repos.py"
+  },
+  {
+   "id": "tenant-repo-unlearn",
+   "surfaces": [
+    {
+     "s": "tenant-repos.yml with ORG_ADMIN_TOKEN and LANE_PAT (run 45031255087, 2026-11-22)",
+     "result": "both secrets are unbound; no credential could create ultrastable/unlearn",
+     "class": "existing-credentials"
+    },
+    {
+     "s": "built a third route: the lane GitHub App mints an org installation token (scripts/lane_credential.py org-token, PR #1966), used by run 45032792103",
+     "result": "the App secrets are unbound too, so no installation token was minted; the job stopped with 'no credential could create ultrastable/unlearn'",
+     "class": "construct"
+    },
+    {
+     "s": "GITHUB_TOKEN of the workflow",
+     "result": "scoped to this repository only; GitHub does not let it create a repository in the org",
+     "class": "alternate-channel"
+    },
+    {
+     "s": "GitHub MCP create_repository from a code session",
+     "result": "excluded for this session by its harness rules; not used",
+     "class": "alternate-channel"
+    },
+    {
+     "class": "sibling-workers",
+     "s": "tick Worker GitHub App (credential store read by seed/worker/src/appaudit.js and lanemerge.js)",
+     "result": "not tried: its installation token is scoped to merging in this repository and no Worker route creates an org repository; building one waits on the App being granted administration write, which is the same owner act"
+    },
+    {
+     "class": "prior-working-config",
+     "s": "git history of tenant-repos.yml and doctrine/tenant-repos.json",
+     "na": "no tenant repository has ever been created by this workflow, so no working configuration exists to restore"
+    }
+   ],
+   "reason": "creating a repository in the org needs an org-scoped credential (a token or an App with administration write) that only an org owner can bind",
+   "default": "Unlearn keeps its code under instances/unlearn and deploy-ultrastable builds and deploys it from this repository; tenant-repos.yml retries daily and creates the repository with its history the first time any of the three routes is bound",
+   "probe": "cmd:python3 -m foundation tenantrepos --probe unlearn"
   }
  ]
 }

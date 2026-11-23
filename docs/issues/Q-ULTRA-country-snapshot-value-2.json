@@ -1,0 +1,11 @@
+{
+  "id": "Q-ULTRA-country-snapshot-value-2",
+  "title": "Q-ULTRA-country-snapshot-value-2: The tenant's own declared value metric out of bounds: iterate: change what the app does (country-snapshot; verb iterate)",
+  "body": "**Owner:** executor\n**Trigger:** essential variable `country-snapshot:value` out of bounds (reading 0.0; limits 1.0 to None)\n**Done check:** cmd:python3 -m foundation ultrastability --check\n**Status:** closed\n\nULTRASTABILITY-1 second-order step: iterate: change what the app does (country-snapshot; verb iterate). A system with no measure that can be wrong cannot be improved. Read as the tenant's declared metric divided by its own declared target (ops/tenants/<slug>.json declared_metric, declared_target); 1.0 is on target.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation ultrastability --tick` reads `value` inside its bounds.\n\n\n**Vacuous:** 2026-11-22T15:01:22Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n\n**Disposition:** fixed (ttl, 2026-11-22T21:01:02Z, DISPOSE-1)\n\n**Evidence:** open 6.1 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n\n**Evidence:** 2026-11-23T14:11:19Z closing probe passed after the item was disposed: ultrastability ok: two loops, every variable has a bound and a second-order step\n",
+  "labels": [
+    "p1",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Ultrastability"
+}

@@ -347,6 +347,42 @@
    "arm": "thesis",
    "kind": "event",
    "tag": "EVENT"
+  },
+  {
+   "id": "ev:ev-auto-3",
+   "date": "2026-11-22",
+   "text": "Can a system left alone help with real problems? Practical Solutions is where Ultrastable tries: routine work for small teams, run and improved by the system itself. https://ultrastable.io/showcase/practical-solutions",
+   "source": "doctrine/reach.json",
+   "arm": "ps",
+   "kind": "event",
+   "tag": "EVENT"
+  },
+  {
+   "id": "ev:ev-thesis-4",
+   "date": "2026-11-22",
+   "text": "An argument is cheap. A running system that keeps improving itself, with every change logged, is evidence. Read the log: https://ultrastable.io/live https://ultrastable.io/live",
+   "source": "doctrine/reach.json",
+   "arm": "thesis",
+   "kind": "event",
+   "tag": "EVENT"
+  },
+  {
+   "id": "ev:pv-c60c45a25bbc",
+   "date": "2026-11-22",
+   "text": "Shipped by the system itself: open loop for the tick Worker's heavy D1 reads. https://ultrastable.io/live",
+   "source": "ops/changelog.json",
+   "arm": "shipped",
+   "kind": "event",
+   "tag": "EVENT"
+  },
+  {
+   "id": "ev:pv-fe7dd8fa2061",
+   "date": "2026-11-22",
+   "text": "Shipped by the system itself: Doer: accept object model replies, skip plan-blocked models. https://ultrastable.io/live",
+   "source": "ops/changelog.json",
+   "arm": "shipped",
+   "kind": "event",
+   "tag": "EVENT"
   }
  ]
 }

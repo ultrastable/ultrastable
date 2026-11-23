@@ -11,12 +11,13 @@
    "prediction": "area business gets at least 7 commits in 3 days within 7 days",
    "files": [],
    "last_good": null,
-   "status": "open",
+   "status": "settled",
    "first_seen": "2026-11-21T11:56:24Z",
    "last_seen": "2026-11-21T12:19:03Z",
    "runs": 3,
    "item": "Q-TEMPORAL-94167fdea6",
-   "reopened": 0
+   "reopened": 0,
+   "settled_at": "2026-11-22T14:31:06Z"
   },
   "69713c50e8": {
    "id": "69713c50e8",
@@ -25,14 +26,14 @@
    "area": "docs",
    "advocate": "project-manager",
    "severity": "act",
-   "evidence": "decay: 5 commits in 3 days after 98 in the 8 days before (12.2 a day)",
-   "prediction": "area docs gets at least 18 commits in 3 days within 7 days",
+   "evidence": "decay: 4 commits in 3 days after 99 in the 9 days before (11.0 a day)",
+   "prediction": "area docs gets at least 16 commits in 3 days within 7 days",
    "files": [],
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-21T12:19:03Z",
-   "runs": 3,
+   "last_seen": "2026-11-22T14:31:06Z",
+   "runs": 4,
    "item": "Q-TEMPORAL-69713c50e8",
    "reopened": 0
   },
@@ -43,16 +44,16 @@
    "area": "foundation",
    "advocate": "operations",
    "severity": "act",
-   "evidence": "pr-outcome: 1 failures in a row, 5 in the last 3 days against 0 in the 8 before",
+   "evidence": "pr-outcome: 1 failures in a row, 8 in the last 3 days against 0 in the 9 before",
    "prediction": "ledger:executor:pr-outcome has no failure in its next 3 events within 7 days",
    "files": [
     "foundation/executor.py"
    ],
-   "last_good": "d02d20a4dbe3",
+   "last_good": "96e38e8c0ab1",
    "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-21T12:19:03Z",
-   "runs": 3,
+   "last_seen": "2026-11-22T14:31:06Z",
+   "runs": 4,
    "item": "Q-TEMPORAL-e5ddf8e610",
    "reopened": 0
   },
@@ -67,12 +68,13 @@
    "prediction": "area root recent_rate returns below 3.0x baseline within 7 days",
    "files": [],
    "last_good": null,
-   "status": "open",
+   "status": "settled",
    "first_seen": "2026-11-21T11:56:24Z",
    "last_seen": "2026-11-21T12:19:03Z",
    "runs": 3,
    "item": "Q-TEMPORAL-e0c6ffc24a",
-   "reopened": 0
+   "reopened": 0,
+   "settled_at": "2026-11-22T14:31:06Z"
   },
   "c200e5281e": {
    "id": "c200e5281e",
@@ -87,12 +89,13 @@
     "README.md"
    ],
    "last_good": null,
-   "status": "open",
+   "status": "settled",
    "first_seen": "2026-11-21T11:56:24Z",
    "last_seen": "2026-11-21T12:19:03Z",
    "runs": 3,
    "item": "Q-TEMPORAL-c200e5281e",
-   "reopened": 0
+   "reopened": 0,
+   "settled_at": "2026-11-22T14:31:06Z"
   },
   "1b91492bbf": {
    "id": "1b91492bbf",
@@ -107,12 +110,13 @@
     "doctrine/decision-ledger.json"
    ],
    "last_good": null,
-   "status": "open",
+   "status": "settled",
    "first_seen": "2026-11-21T11:56:24Z",
    "last_seen": "2026-11-21T12:19:03Z",
    "runs": 3,
    "item": "Q-TEMPORAL-1b91492bbf",
-   "reopened": 0
+   "reopened": 0,
+   "settled_at": "2026-11-22T14:31:06Z"
   },
   "67dd9b9dee": {
    "id": "67dd9b9dee",
@@ -127,12 +131,13 @@
     "platform/adapters/README.md"
    ],
    "last_good": null,
-   "status": "open",
+   "status": "settled",
    "first_seen": "2026-11-21T11:56:24Z",
    "last_seen": "2026-11-21T12:19:03Z",
    "runs": 3,
    "item": null,
-   "reopened": 0
+   "reopened": 0,
+   "settled_at": "2026-11-22T14:31:06Z"
   },
   "593c3b95f2": {
    "id": "593c3b95f2",
@@ -147,12 +152,13 @@
     "seed/worker/src/index.js"
    ],
    "last_good": null,
-   "status": "open",
+   "status": "settled",
    "first_seen": "2026-11-21T11:56:24Z",
    "last_seen": "2026-11-21T12:19:03Z",
    "runs": 3,
    "item": null,
-   "reopened": 0
+   "reopened": 0,
+   "settled_at": "2026-11-22T14:31:06Z"
   },
   "6420af06fe": {
    "id": "6420af06fe",
@@ -167,12 +173,13 @@
     "site/decisions-data.js"
    ],
    "last_good": null,
-   "status": "open",
+   "status": "settled",
    "first_seen": "2026-11-21T11:56:24Z",
    "last_seen": "2026-11-21T12:19:03Z",
    "runs": 3,
    "item": null,
-   "reopened": 0
+   "reopened": 0,
+   "settled_at": "2026-11-22T14:31:06Z"
   },
   "54854bf10b": {
    "id": "54854bf10b",
@@ -181,7 +188,7 @@
    "area": "site",
    "advocate": "uiux-manager",
    "severity": "watch",
-   "evidence": "site/worker.js edited 28 times in 3 days (outside generated and ledger paths)",
+   "evidence": "site/worker.js edited 29 times in 3 days (outside generated and ledger paths)",
    "prediction": "site/worker.js is edited at most 5 times in 3 days within 7 days",
    "files": [
     "site/worker.js"
@@ -189,11 +196,226 @@
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-21T12:19:03Z",
-   "runs": 3,
+   "last_seen": "2026-11-22T14:31:06Z",
+   "runs": 4,
+   "item": "Q-TEMPORAL-54854bf10b",
+   "reopened": 0
+  },
+  "67d6a95a40": {
+   "id": "67d6a95a40",
+   "kind": "repeated_failure",
+   "subject": "ledger:clocks:all",
+   "area": "foundation",
+   "advocate": "operations",
+   "severity": "act",
+   "evidence": "all: 73 failures in a row, 13 in the last 3 days against 10 in the 9 before",
+   "prediction": "ledger:clocks:all has no failure in its next 3 events within 7 days",
+   "files": [
+    "foundation/clock.py"
+   ],
+   "last_good": "add800e814fc",
+   "status": "open",
+   "first_seen": "2026-11-22T14:31:06Z",
+   "last_seen": "2026-11-22T14:31:06Z",
+   "runs": 1,
+   "item": "Q-TEMPORAL-67d6a95a40",
+   "reopened": 0
+  },
+  "4f9b20023a": {
+   "id": "4f9b20023a",
+   "kind": "stopped_loop",
+   "subject": "ledger:executor:pr-outcome",
+   "area": "foundation",
+   "advocate": "operations",
+   "severity": "act",
+   "evidence": "pr-outcome: last event 16 h ago, it used to arrive every 1.6 h (10.0 intervals)",
+   "prediction": "ledger:executor:pr-outcome records an event within 7 days",
+   "files": [
+    "foundation/executor.py"
+   ],
+   "last_good": "61808a25d06d",
+   "status": "open",
+   "first_seen": "2026-11-22T14:31:06Z",
+   "last_seen": "2026-11-22T14:31:06Z",
+   "runs": 1,
+   "item": "Q-TEMPORAL-4f9b20023a",
+   "reopened": 0
+  },
+  "f057071659": {
+   "id": "f057071659",
+   "kind": "hotspot",
+   "subject": "area:doctrine",
+   "area": "doctrine",
+   "advocate": "portfolio-manager",
+   "severity": "watch",
+   "evidence": "276 commits in 3 days against a baseline of 18.1 a day (5.1x)",
+   "prediction": "area doctrine recent_rate returns below 3.0x baseline within 7 days",
+   "files": [],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-22T14:31:06Z",
+   "last_seen": "2026-11-22T14:31:06Z",
+   "runs": 1,
+   "item": null,
+   "reopened": 0
+  },
+  "bac71f01a8": {
+   "id": "bac71f01a8",
+   "kind": "hotspot",
+   "subject": "file:.github/workflows/checks.yml",
+   "area": "workflows",
+   "advocate": "infrastructure-manager",
+   "severity": "watch",
+   "evidence": ".github/workflows/checks.yml edited 19 times in 3 days (outside generated and ledger paths)",
+   "prediction": ".github/workflows/checks.yml is edited at most 5 times in 3 days within 7 days",
+   "files": [
+    ".github/workflows/checks.yml"
+   ],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-22T14:31:06Z",
+   "last_seen": "2026-11-22T14:31:06Z",
+   "runs": 1,
+   "item": null,
+   "reopened": 0
+  },
+  "d01db32c1b": {
+   "id": "d01db32c1b",
+   "kind": "hotspot",
+   "subject": "file:agents/AGENTS.md",
+   "area": "agents",
+   "advocate": "org-designer",
+   "severity": "watch",
+   "evidence": "agents/AGENTS.md edited 18 times in 3 days (outside generated and ledger paths)",
+   "prediction": "agents/AGENTS.md is edited at most 5 times in 3 days within 7 days",
+   "files": [
+    "agents/AGENTS.md"
+   ],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-22T14:31:06Z",
+   "last_seen": "2026-11-22T14:31:06Z",
+   "runs": 1,
+   "item": null,
+   "reopened": 0
+  },
+  "cb14699baf": {
+   "id": "cb14699baf",
+   "kind": "hotspot",
+   "subject": "file:doctrine/claims.json",
+   "area": "doctrine",
+   "advocate": "portfolio-manager",
+   "severity": "watch",
+   "evidence": "doctrine/claims.json edited 16 times in 3 days (outside generated and ledger paths)",
+   "prediction": "doctrine/claims.json is edited at most 5 times in 3 days within 7 days",
+   "files": [
+    "doctrine/claims.json"
+   ],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-22T14:31:06Z",
+   "last_seen": "2026-11-22T14:31:06Z",
+   "runs": 1,
+   "item": null,
+   "reopened": 0
+  },
+  "b5792f9a73": {
+   "id": "b5792f9a73",
+   "kind": "hotspot",
+   "subject": "file:doctrine/flows.json",
+   "area": "doctrine",
+   "advocate": "portfolio-manager",
+   "severity": "watch",
+   "evidence": "doctrine/flows.json edited 16 times in 3 days (outside generated and ledger paths)",
+   "prediction": "doctrine/flows.json is edited at most 5 times in 3 days within 7 days",
+   "files": [
+    "doctrine/flows.json"
+   ],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-22T14:31:06Z",
+   "last_seen": "2026-11-22T14:31:06Z",
+   "runs": 1,
+   "item": null,
+   "reopened": 0
+  },
+  "e32a734d41": {
+   "id": "e32a734d41",
+   "kind": "hotspot",
+   "subject": "file:foundation/__main__.py",
+   "area": "foundation",
+   "advocate": "operations",
+   "severity": "watch",
+   "evidence": "foundation/__main__.py edited 30 times in 3 days (outside generated and ledger paths)",
+   "prediction": "foundation/__main__.py is edited at most 5 times in 3 days within 7 days",
+   "files": [
+    "foundation/__main__.py"
+   ],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-22T14:31:06Z",
+   "last_seen": "2026-11-22T14:31:06Z",
+   "runs": 1,
    "item": null,
    "reopened": 0
   }
  },
- "settled": []
+ "settled": [
+  {
+   "id": "94167fdea6",
+   "kind": "neglect",
+   "subject": "area:business",
+   "first_seen": "2026-11-21T11:56:24Z",
+   "settled_at": "2026-11-22T14:31:06Z",
+   "runs": 3
+  },
+  {
+   "id": "e0c6ffc24a",
+   "kind": "hotspot",
+   "subject": "area:root",
+   "first_seen": "2026-11-21T11:56:24Z",
+   "settled_at": "2026-11-22T14:31:06Z",
+   "runs": 3
+  },
+  {
+   "id": "c200e5281e",
+   "kind": "hotspot",
+   "subject": "file:README.md",
+   "first_seen": "2026-11-21T11:56:24Z",
+   "settled_at": "2026-11-22T14:31:06Z",
+   "runs": 3
+  },
+  {
+   "id": "1b91492bbf",
+   "kind": "hotspot",
+   "subject": "file:doctrine/decision-ledger.json",
+   "first_seen": "2026-11-21T11:56:24Z",
+   "settled_at": "2026-11-22T14:31:06Z",
+   "runs": 3
+  },
+  {
+   "id": "67dd9b9dee",
+   "kind": "hotspot",
+   "subject": "file:platform/adapters/README.md",
+   "first_seen": "2026-11-21T11:56:24Z",
+   "settled_at": "2026-11-22T14:31:06Z",
+   "runs": 3
+  },
+  {
+   "id": "593c3b95f2",
+   "kind": "hotspot",
+   "subject": "file:seed/worker/src/index.js",
+   "first_seen": "2026-11-21T11:56:24Z",
+   "settled_at": "2026-11-22T14:31:06Z",
+   "runs": 3
+  },
+  {
+   "id": "6420af06fe",
+   "kind": "hotspot",
+   "subject": "file:site/decisions-data.js",
+   "first_seen": "2026-11-21T11:56:24Z",
+   "settled_at": "2026-11-22T14:31:06Z",
+   "runs": 3
+  }
+ ]
 }

@@ -46,6 +46,20 @@ class Loop(unittest.TestCase):
         self.assertEqual((self.root / "a/wrangler.toml").read_text(encoding="utf-8"), before)
 
 
+class NodePins(unittest.TestCase):
+    def setUp(self):
+        self.root = _repo.scratch()
+        w(self.root, compatdate.RULES, json.loads((REPO / compatdate.RULES).read_text(encoding="utf-8")))
+
+    def test_a_pin_leaving_maintenance_within_a_year_fails_and_the_next_lts_passes(self):
+        w(self.root, ".github/workflows/a.yml", "steps:\n  - uses: actions/setup-node@v4\n    with: {node-version: 22}\n")
+        self.assertTrue(any("Node 22 leaves maintenance" in b for b in compatdate.node_problems(self.root, TODAY)))
+        w(self.root, ".github/workflows/a.yml", 'steps:\n  - uses: actions/setup-node@v4\n    with:\n      node-version: "24"\n')
+        self.assertEqual(compatdate.node_problems(self.root, TODAY), [])
+        w(self.root, ".github/workflows/a.yml", "with: {node-version: 99}\n")
+        self.assertTrue(any("no end-of-maintenance date" in b for b in compatdate.node_problems(self.root, TODAY)))
+
+
 class Repo(unittest.TestCase):
     def test_repository_dates_are_fresh(self):
         self.assertEqual(compatdate.check(), [])

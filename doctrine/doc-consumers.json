@@ -162,13 +162,15 @@
    "how": "the test boots the seed on this IDEA.md and asserts the system test passes and the objectives are seeded"
   },
   {
-   "id": "intent-yield-idea",
+   "id": "depth-seed-ideas",
    "paths": [
-    "instances/intent-yield/IDEA.md"
+    "instances/base-rates/IDEA.md",
+    "instances/did-it-work/IDEA.md",
+    "instances/open-questions/IDEA.md"
    ],
-   "consumer": "tests/test_intent_yield.py",
-   "needle": "instances/intent-yield/IDEA.md",
-   "how": "the test boots the idea through the seed's qualify stage and asserts the anti-gaming rules"
+   "consumer": "foundation/seedlife.py",
+   "needle": "IDEA.md",
+   "how": "DEPTH-1 seeds: seedlife lists every instances/<slug> with an IDEA.md as a seed and keeps a Q-SEED item until it is built, deployed and autonomous; ideas --check fails if a seed idea's IDEA.md is missing"
   }
  ],
  "verified": {

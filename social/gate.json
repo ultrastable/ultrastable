@@ -6,6 +6,8 @@
   "max_posts_per_week": 14,
   "paused_channels": [],
   "tenant_queues": [
-    "https://ultrastable.org/social-queue.json"
+    "https://ultrastable.org/social-queue.json",
+    "https://unlearn.ultrastable.org/social-queue.json",
+    "https://ultrastable.io/api/stickiness/queue/practical-solutions.json"
   ]
 }

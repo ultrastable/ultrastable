@@ -2326,6 +2326,19 @@
    "bound_by": "cited"
   },
   {
+   "id": "cited-be4db6262d",
+   "surface": "agents/AGENTS.md",
+   "text": "- **Every system gives people a reason to come back (STICKY-1, Rowan 2026-11-22).** \"Every ultra-stable app, every tenant, every platform",
+   "probe": [
+    "file:seed/worker/src/vendor/core/stickiness.js",
+    "file:seed/worker/src/stickiness.js",
+    "file:instances/ultrastable/progress.json",
+    "file:seed/worker/test/stickiness.test.js",
+    "file:workers/core/stickiness/stickiness.test.js"
+   ],
+   "bound_by": "cited"
+  },
+  {
    "id": "cited-95432168bf",
    "surface": "agents/AGENTS.md",
    "text": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
@@ -2377,6 +2390,20 @@
     "file:site/promote.js",
     "file:foundation/promote.py",
     "file:tests/foundation/test_promote.py"
+   ],
+   "bound_by": "cited"
+  },
+  {
+   "id": "cited-48bc37edfc",
+   "surface": "agents/AGENTS.md",
+   "text": "- **Promotion is part of every app's and tenant's role (TENANT-PROMO-1, Rowan 2026-11-22).** \"Make sure to keep this in the Ultrastable",
+   "probe": [
+    "file:seed/worker/src/promoqueue.js",
+    "file:social/gate.json",
+    "file:seed/worker/src/social.js",
+    "file:doctrine/stakeholders.json",
+    "file:instances/ultrastable/progress.json",
+    "file:doctrine/tenant-promotion.json"
    ],
    "bound_by": "cited"
   },
@@ -2520,6 +2547,20 @@
     "file:doctrine/seed-lifecycle.json",
     "file:foundation/seedlife.py",
     "file:tests/foundation/test_seedlife.py"
+   ],
+   "bound_by": "cited"
+  },
+  {
+   "id": "cited-36843a8c7f",
+   "surface": "agents/AGENTS.md",
+   "text": "- **A seed that answers is not yet a seed that runs itself (SEED-AUTONOMY-1, Rowan 2026-11-23).** \"Audit and remediate all issues, failure",
+   "probe": [
+    "file:seed/worker/src/index.js",
+    "file:doctrine/seed-deploys.json",
+    "file:seed/bootstrap/bootstrap.py",
+    "file:tests/foundation/test_seedadmit.py",
+    "file:seed/tests/test_seed.py",
+    "file:seed/worker/test/health-ignition.test.js"
    ],
    "bound_by": "cited"
   },
@@ -3140,6 +3181,20 @@
    "of": "cited-158bd3c207"
   },
   {
+   "id": "mirror-9111f7c2d8",
+   "surface": "seed/agents/AGENTS.md",
+   "text": "- **Every system gives people a reason to come back (STICKY-1, Rowan 2026-11-22).** \"Every ultra-stable app, every tenant, every platform",
+   "probe": [
+    "file:seed/worker/src/vendor/core/stickiness.js",
+    "file:seed/worker/src/stickiness.js",
+    "file:instances/ultrastable/progress.json",
+    "file:seed/worker/test/stickiness.test.js",
+    "file:workers/core/stickiness/stickiness.test.js"
+   ],
+   "bound_by": "mirror",
+   "of": "cited-be4db6262d"
+  },
+  {
    "id": "mirror-be5af6748b",
    "surface": "seed/agents/AGENTS.md",
    "text": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
@@ -3188,6 +3243,21 @@
    ],
    "bound_by": "mirror",
    "of": "cited-23253f39ac"
+  },
+  {
+   "id": "mirror-9b307fb83e",
+   "surface": "seed/agents/AGENTS.md",
+   "text": "- **Promotion is part of every app's and tenant's role (TENANT-PROMO-1, Rowan 2026-11-22).** \"Make sure to keep this in the Ultrastable",
+   "probe": [
+    "file:seed/worker/src/promoqueue.js",
+    "file:social/gate.json",
+    "file:seed/worker/src/social.js",
+    "file:doctrine/stakeholders.json",
+    "file:instances/ultrastable/progress.json",
+    "file:doctrine/tenant-promotion.json"
+   ],
+   "bound_by": "mirror",
+   "of": "cited-48bc37edfc"
   },
   {
    "id": "mirror-5d4658a60b",
@@ -3343,6 +3413,21 @@
    ],
    "bound_by": "mirror",
    "of": "cited-5e7af4a8d7"
+  },
+  {
+   "id": "mirror-d01d8e87e3",
+   "surface": "seed/agents/AGENTS.md",
+   "text": "- **A seed that answers is not yet a seed that runs itself (SEED-AUTONOMY-1, Rowan 2026-11-23).** \"Audit and remediate all issues, failure",
+   "probe": [
+    "file:seed/worker/src/index.js",
+    "file:doctrine/seed-deploys.json",
+    "file:seed/bootstrap/bootstrap.py",
+    "file:tests/foundation/test_seedadmit.py",
+    "file:seed/tests/test_seed.py",
+    "file:seed/worker/test/health-ignition.test.js"
+   ],
+   "bound_by": "mirror",
+   "of": "cited-36843a8c7f"
   },
   {
    "id": "mirror-83545b0084",

@@ -1,0 +1,14 @@
+{
+  "id": "Q-AUDIT-seed-live",
+  "title": "Q-AUDIT-seed-live: fm-seed-undeployed failing (fail): Dispatch .github/workflows/deploy-workers.yml (it runs deploy/deploy-seed.mjs); read the failing row in ops/deploys.jsonl; fix the seed, never the probe (SEED-DEPLOY-1).",
+  "body": "**Owner:** operations\n**Trigger:** the daily failure audit files it; the executor takes it in driver order\n**Done check:** cmd:python3 -m foundation failure_audit --probe seed-live\n**Status:** closed\n\nFailure mode `fm-seed-undeployed` detected by `seed-live`, failing since 2026-11-22T13:43:03Z.\nEvidence: second-tenant: https://ultrastable-seed-second-tenant.ultrastable.workers.dev/health did not answer: HTTP Error 403: Forbidden\n\nSignature: bc302b7f5f2c (disposition: fix).\nSuspected root cause: an admitted seed was never deployed, or its Worker stopped answering /health\nRemedy: Dispatch .github/workflows/deploy-workers.yml (it runs deploy/deploy-seed.mjs); read the failing row in ops/deploys.jsonl; fix the seed, never the probe (SEED-DEPLOY-1).\nFix the earliest cause, so the detector passes; do not weaken or remove the detector.\n\n**Closing probe:** cmd:python3 -m foundation failure_audit --probe seed-live\n\n**Disposition:** shelved (executor-failed, 2026-11-22T16:01:18Z, DISPOSE-1)\n\n**Evidence:** the executor failed 3 consecutive runs on this item; last reason: RuntimeError: checks failed after 3 attempts: the reply was not valid JSON with a files list: RuntimeError: every code agent rung failed: github-models-llama: RuntimeError: non-JSON response (HTTP 200, text/plain) from https://models.github. Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "labels": [
+    "role:operations",
+    "audit",
+    "fix",
+    "agent-ready",
+    "p1"
+  ],
+  "milestone": "Now",
+  "workstream": "Failure modes"
+}
