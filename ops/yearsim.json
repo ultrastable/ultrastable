@@ -1,5 +1,5 @@
 {
- "at": "2026-11-22T15:13:19Z",
+ "at": "2026-11-23T11:43:11Z",
  "days": 730,
  "drills": {
   "actions-billing": {
@@ -128,11 +128,11 @@
   }
  ],
  "horizon": {
-  "capacity_year_p50": 0.681,
+  "capacity_year_p50": 0.717,
   "killers": {
-   "token-revoked": 20
+   "token-revoked": 18
   },
-  "p10": 714,
+  "p10": 730,
   "p50": 730,
   "p90": 730,
   "survive_year": 0.99
@@ -142,7 +142,7 @@
  "rates_observed": [
   "merge-conflict"
  ],
- "release_horizon_p10": 714,
+ "release_horizon_p10": 730,
  "runs": 200,
  "self_commits": {
   "all": 16,
@@ -177,7 +177,7 @@
   "window_days": 14
  },
  "self_rate_per_day": 0.714,
- "self_releases_year_p50": 177.5,
+ "self_releases_year_p50": 186.9,
  "sensitivity": {
   "base": {
    "p10": 730,
@@ -192,81 +192,30 @@
       "survive_year": 1.0
      },
      "2.0": {
-      "d_survive": -0.067,
-      "p10": 414,
-      "survive_year": 0.933
-     }
-    },
-    "id": "token-revoked",
-    "rate": 1,
-    "swing": 0.067
-   },
-   {
-    "effect": {
-     "0.5": {
-      "d_survive": -0.033,
-      "p10": 730,
-      "survive_year": 0.967
-     },
-     "2.0": {
-      "d_survive": 0.0,
-      "p10": 730,
-      "survive_year": 1.0
-     }
-    },
-    "id": "actions-outage",
-    "rate": 24,
-    "swing": 0.033
-   },
-   {
-    "effect": {
-     "0.5": {
-      "d_survive": 0.0,
-      "p10": 730,
-      "survive_year": 1.0
-     },
-     "2.0": {
-      "d_survive": -0.033,
-      "p10": 674,
-      "survive_year": 0.967
-     }
-    },
-    "id": "merge-conflict",
-    "rate": 196.5,
-    "swing": 0.033
-   },
-   {
-    "effect": {
-     "0.5": {
-      "d_survive": 0.0,
-      "p10": 730,
-      "survive_year": 1.0
-     },
-     "2.0": {
       "d_survive": -0.017,
-      "p10": 730,
+      "p10": 578,
       "survive_year": 0.983
      }
     },
-    "id": "cloudflare-incident",
+    "id": "actions-billing",
     "rate": 4,
     "swing": 0.017
    },
    {
     "effect": {
      "0.5": {
-      "d_survive": 0.0,
-      "p10": 730,
-      "survive_year": 1.0
+      "d_survive": -0.017,
+      "p10": 672,
+      "survive_year": 0.983
      },
      "2.0": {
-      "d_survive": -0.017,
-      "p10": 730,
-      "survive_year": 0.983
+      "d_survive": 0.0,
+      "p10": 650,
+      "survive_year": 1.0
      }
     },
-    "id": "cost-spike",
-    "rate": 6,
+    "id": "actions-outage",
+    "rate": 24,
     "swing": 0.017
    },
    {
@@ -278,7 +227,7 @@
      },
      "2.0": {
       "d_survive": -0.017,
-      "p10": 730,
+      "p10": 714,
       "survive_year": 0.983
      }
     },
@@ -289,6 +238,74 @@
    {
     "effect": {
      "0.5": {
+      "d_survive": -0.017,
+      "p10": 730,
+      "survive_year": 0.983
+     },
+     "2.0": {
+      "d_survive": 0.0,
+      "p10": 730,
+      "survive_year": 1.0
+     }
+    },
+    "id": "merge-conflict",
+    "rate": 182.5,
+    "swing": 0.017
+   },
+   {
+    "effect": {
+     "0.5": {
+      "d_survive": -0.017,
+      "p10": 730,
+      "survive_year": 0.983
+     },
+     "2.0": {
+      "d_survive": -0.017,
+      "p10": 547,
+      "survive_year": 0.983
+     }
+    },
+    "id": "scheduler-silent",
+    "rate": 52,
+    "swing": 0.017
+   },
+   {
+    "effect": {
+     "0.5": {
+      "d_survive": 0.0,
+      "p10": 730,
+      "survive_year": 1.0
+     },
+     "2.0": {
+      "d_survive": -0.017,
+      "p10": 411,
+      "survive_year": 0.983
+     }
+    },
+    "id": "token-revoked",
+    "rate": 1,
+    "swing": 0.017
+   },
+   {
+    "effect": {
+     "0.5": {
+      "d_survive": 0.0,
+      "p10": 730,
+      "survive_year": 1.0
+     },
+     "2.0": {
+      "d_survive": 0.0,
+      "p10": 648,
+      "survive_year": 1.0
+     }
+    },
+    "id": "ai-quota",
+    "rate": 60,
+    "swing": 0.0
+   },
+   {
+    "effect": {
+     "0.5": {
       "d_survive": 0.0,
       "p10": 730,
       "survive_year": 1.0
@@ -299,7 +316,7 @@
       "survive_year": 1.0
      }
     },
-    "id": "actions-billing",
+    "id": "cloudflare-incident",
     "rate": 4,
     "swing": 0.0
    },
@@ -307,17 +324,17 @@
     "effect": {
      "0.5": {
       "d_survive": 0.0,
-      "p10": 662,
+      "p10": 688,
       "survive_year": 1.0
      },
      "2.0": {
       "d_survive": 0.0,
-      "p10": 689,
+      "p10": 650,
       "survive_year": 1.0
      }
     },
-    "id": "ai-quota",
-    "rate": 60,
+    "id": "cost-spike",
+    "rate": 6,
     "swing": 0.0
    },
    {
@@ -353,36 +370,19 @@
     "id": "model-retirement",
     "rate": 6,
     "swing": 0.0
-   },
-   {
-    "effect": {
-     "0.5": {
-      "d_survive": 0.0,
-      "p10": 730,
-      "survive_year": 1.0
-     },
-     "2.0": {
-      "d_survive": 0.0,
-      "p10": 604,
-      "survive_year": 1.0
-     }
-    },
-    "id": "scheduler-silent",
-    "rate": 52,
-    "swing": 0.0
    }
   ],
   "runs": 60
  },
  "strict": {
-  "capacity_year_p50": 0.528,
+  "capacity_year_p50": 0.575,
   "killers": {
-   "domain-renewal": 74,
-   "token-revoked": 126
+   "domain-renewal": 73,
+   "token-revoked": 127
   },
   "p10": 45,
-  "p50": 244,
-  "p90": 353,
+  "p50": 272,
+  "p90": 352,
   "survive_year": 0.0
  },
  "target_days": 365

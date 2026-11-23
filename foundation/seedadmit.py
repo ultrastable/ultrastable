@@ -15,7 +15,7 @@ Everything is data and files: nothing here is a workflow edit, a credential or a
 seed/autonomy-kit/autonomy.workflow.yml, installed into the new system's own repository by the generator, which is how the guard on this repository's
 .github/workflows is routed around without weakening it."""
 from __future__ import annotations
-import datetime as dt, importlib.util, json, shutil, sys, tempfile
+import datetime as dt, importlib.util, json, re, shutil, sys, tempfile
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
@@ -79,6 +79,21 @@ def probe(root=REPO) -> tuple[bool, str]:
     return r["admission"] == "admitted", "; ".join(r["reasons"])[:300] or f"admitted, year p10 {r['year'].get('p10')} days"
 
 
+def _health(url: str, allow_503=False) -> dict:
+    """GET <url>/health as JSON. The request names its client: the default Python user agent is refused with 403 at the edge, which read as a seed
+    that was down. With allow_503, a 503 with a JSON body is returned as a reading (the Worker serves; its last tick was incomplete)."""
+    import urllib.error
+    import urllib.request
+    req = urllib.request.Request(url + "/health", headers={"user-agent": "ultrastable-seedadmit"})
+    try:
+        with urllib.request.urlopen(req, timeout=20) as f:
+            return json.loads(f.read().decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        if e.code != 503 or not allow_503:
+            raise
+        return json.loads(e.read().decode("utf-8"))
+
+
 def live(root=REPO, fetch=None) -> list[str]:
     """SEED-DEPLOY-1: every seed in doctrine/seed-deploys.json has a recorded deploy and its /health answers JSON now."""
     import urllib.request
@@ -95,8 +110,7 @@ def live(root=REPO, fetch=None) -> list[str]:
     errs = []
 
     def get(url):
-        with urllib.request.urlopen(url + "/health", timeout=20) as f:
-            return json.loads(f.read().decode("utf-8"))
+        return _health(url)
     for slug in seeds:
         r = last.get(slug)
         if not r or not r.get("live_ok"):
@@ -106,6 +120,60 @@ def live(root=REPO, fetch=None) -> list[str]:
             (fetch or get)(r["url"])
         except Exception as e:  # recorded as a failure, never swallowed
             errs.append(f"{slug}: {r['url']}/health did not answer: {e}")
+    return errs
+
+
+STAGES = ("unseeded", "seeded", "ticking", "looping", "closing", "instrumented", "critical", "self-sustaining")  # seed/worker/src/ignition.js STAGES
+AUTONOMY_MIN_STAGE, AUTONOMY_GRACE_HOURS = "looping", 48
+
+
+def stage_of(health: dict):
+    """The ignition stage a deployed seed read for itself: the structured /health field, or the same reading in its last tick report (a Worker
+    deployed before the field existed). None means unmeasured, which is never read as autonomous."""
+    ign = health.get("ignition") or {}
+    if ign.get("stage") in STAGES:
+        return ign["stage"], ((ign.get("blocking") or {}).get("why") or "")
+    rep = str((health.get("last_tick") or {}).get("report") or "")
+    m = re.search(r"ignition: stage ([a-z-]+)(?:; next ([a-z-]+) blocked: ([^\n]*))?", rep)
+    if m and m.group(1) in STAGES:
+        return m.group(1), (m.group(3) or "")[:400]
+    return None, "no ignition reading in /health"
+
+
+def autonomy(root=REPO, fetch=None, now=None) -> list[str]:
+    """SEED-AUTONOMY-1: a deployed seed is not autonomous because it answers /health. Past the grace window after its first live deploy, every seed in
+    doctrine/seed-deploys.json must read its own ignition stage at `looping` or above (every loop ticking, watched by a second producer). A seed
+    that only ticks, or gives no reading, is an error that names what blocks it, so the failure audit files it for the executor."""
+    import urllib.request
+    root = Path(root)
+    now = now or dt.datetime.now(dt.timezone.utc)
+    seeds = json.loads((root / "doctrine" / "seed-deploys.json").read_text(encoding="utf-8"))["seeds"]
+    first = {}
+    for ln in (root / "ops" / "deploys.jsonl").read_text(encoding="utf-8").splitlines():
+        try:
+            r = json.loads(ln)
+        except ValueError:
+            continue
+        if r.get("kind") == "seed" and r.get("live_ok") and r.get("slug") not in first:
+            first[r["slug"]] = r
+
+    def get(url):
+        return _health(url, allow_503=True)
+    errs = []
+    for slug in seeds:
+        r = first.get(slug)
+        if not r:
+            continue  # never deployed: `seed-live` reports that
+        age_h = (now - dt.datetime.fromisoformat(str(r["at"]).replace("Z", "+00:00"))).total_seconds() / 3600
+        if age_h < AUTONOMY_GRACE_HOURS:
+            continue  # looping needs 24 hours of measured slots; a new seed is judged once it had the time
+        try:
+            stage, why = stage_of((fetch or get)(r["url"]))
+        except Exception as e:  # recorded as a failure, never swallowed
+            errs.append(f"{slug}: {r['url']}/health did not answer: {e}")
+            continue
+        if stage is None or STAGES.index(stage) < STAGES.index(AUTONOMY_MIN_STAGE):
+            errs.append(f"{slug}: deployed {int(age_h)} h ago and at stage {stage or 'unmeasured'}, below {AUTONOMY_MIN_STAGE}: {why}")
     return errs
 
 
@@ -122,6 +190,10 @@ def main(argv=None) -> int:
     if "--live" in a:
         e = live()
         print("seedadmit live ok" if not e else "\n".join(e))
+        return 1 if e else 0
+    if "--autonomy" in a:
+        e = autonomy()
+        print("seedadmit autonomy ok" if not e else "\n".join(e))
         return 1 if e else 0
     if "--onboard" in a:
         from . import manifest as mf
