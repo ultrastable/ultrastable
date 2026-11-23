@@ -52,9 +52,9 @@ export async function verifyRequest(request, getDirectory, now = Date.now()) {
   const h = n => request.headers.get(n);
   const input = h("signature-input"), sigH = h("signature"), agent = h("signature-agent");
   if (!input || !sigH || !agent) return { ok: false, reason: "unsigned" };
-  const m = /^sig1=(\(([^)]*)\)((?:;[^;]+)*))$/.exec(input.trim()); if (!m) return { ok: false, reason: "bad signature-input" };
+  const m = /^sig1=(\(([^)]*)\))((?:;[^;]+)*)$/.exec(input.trim()); if (!m) return { ok: false, reason: "bad signature-input" };
   const params = m[1], comps = m[2].split(" ").filter(Boolean).map(s => s.replace(/"/g, ""));
-  const meta = Object.fromEntries(m[3].split(";").filter(Boolean).map(p => { const i = p.indexOf("="); return [p.slice(0, i), p.slice(i + 1).replace(/^"|"$/g, "")]; }));
+  const meta = Object.fromEntries(m[3].split(";").filter(Boolean).map(p => { const i = p.indexOf(""); return [p.slice(0, i), p.slice(i + 1).replace(/^"|"$/g, "")]; }));
   if (meta.tag !== "web-bot-auth" || meta.alg !== "ed25519") return { ok: false, reason: "not a web-bot-auth ed25519 signature" };
   if (!comps.includes("@authority") || !comps.includes("signature-agent")) return { ok: false, reason: "components must cover @authority and signature-agent" };
   const t = Math.floor(now / 1000); if (!(Number(meta.created) <= t + 30) || !(Number(meta.expires) > t)) return { ok: false, reason: "signature outside its validity window" };
