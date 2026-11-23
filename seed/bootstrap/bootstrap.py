@@ -533,6 +533,9 @@ class Boot:
         (self.out / "yearsim.json").write_text(json.dumps({k: rec[k] for k in ("at", "target_days", "runs", "horizon", "strict", "meets_target", "drills")}, indent=1, sort_keys=True) + "\n")
         self.state["year"] = {"p10": rec["horizon"]["p10"], "target_days": rec["target_days"], "meets_target": rec["meets_target"]}
         failed = sorted(k for k, d in rec["drills"].items() if d.get("exercised") and not d.get("recover"))
+        undrilled = sorted(k for k, d in rec["drills"].items() if not d.get("exercised"))
+        if undrilled:  # a declared recovery nothing ran is not a pass, whatever the simulated horizon says
+            return "blocked", f"year gate: fault(s) with no exercised drill: {', '.join(undrilled)} (autonomy/yearsim.json `drill`)"
         if not rec["meets_target"]:
             return "blocked", f"year gate: horizon p10 {rec['horizon']['p10']} < {rec['target_days']} days; failing drills: {failed or 'none'}"
         return "ok", f"year gate: horizon p10 {rec['horizon']['p10']} >= {rec['target_days']} days ({rec['runs']} simulated years)"

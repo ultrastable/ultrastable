@@ -127,3 +127,39 @@ class T(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Autonomy(unittest.TestCase):
+    """SEED-AUTONOMY-1: answering /health is not autonomy; the seed's own ignition stage is."""
+
+    def root(self, at):
+        root = scratch()
+        (root / "doctrine").mkdir(); (root / "ops").mkdir()
+        (root / "doctrine/seed-deploys.json").write_text('{"seeds": ["a"]}')
+        (root / "ops/deploys.jsonl").write_text(json.dumps({"kind": "seed", "slug": "a", "live_ok": True, "url": "https://x", "at": at}) + "\n")
+        return root
+
+    def test_autonomy_is_read_from_the_seed(self):
+        import datetime as dt
+        now = dt.datetime(2026, 11, 30, tzinfo=dt.timezone.utc)
+        root = self.root("2026-11-21T00:00:00Z")
+        ticking = {"ok": True, "ignition": {"stage": "ticking", "blocking": {"stage": "looping", "why": "not ticking: executor (failing)"}}}
+        errs = seedadmit.autonomy(root, fetch=lambda u: ticking, now=now)
+        self.assertEqual(len(errs), 1)
+        self.assertIn("executor (failing)", errs[0])
+        self.assertEqual(seedadmit.autonomy(root, fetch=lambda u: {"ok": True, "ignition": {"stage": "closing"}}, now=now), [])
+        self.assertTrue(seedadmit.autonomy(root, fetch=lambda u: {"ok": True}, now=now))  # no reading is unmeasured, never a pass
+
+    def test_a_worker_without_the_field_is_read_from_its_tick_report(self):
+        rep = "Happened: tick 2 ran; stalled; ignition: stage ticking; next looping blocked: not ticking: lane (failing)."
+        self.assertEqual(seedadmit.stage_of({"last_tick": {"report": rep}})[0], "ticking")
+
+    def test_a_new_seed_is_judged_after_the_grace_window(self):
+        import datetime as dt
+        root = self.root("2026-11-29T12:00:00Z")
+        self.assertEqual(seedadmit.autonomy(root, fetch=lambda u: {"ok": True}, now=dt.datetime(2026, 11, 30, tzinfo=dt.timezone.utc)), [])
+
+    def test_stages_match_the_worker(self):
+        src = (REPO / "seed/worker/src/ignition.js").read_text()
+        for st in seedadmit.STAGES:
+            self.assertIn(f"'{st}'", src)

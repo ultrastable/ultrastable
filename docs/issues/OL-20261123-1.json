@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261123-1",
+  "title": "OL-20261123-1: Q-SEED-CRED: a deployed seed has no repository or source-control credential, so its repository loops cannot run",
+  "body": "**Owner:** executor\n**Trigger:** detector seed-autonomous fails (failure-audit pass)\n**Done check:** cmd:python3 -m foundation seedadmit --autonomy\n**Status:** open\n\nRoot cause of fm-seed-not-autonomous. deploy/deploy-seed.mjs uploads a generated seed with a D1 binding and a cron only. Needed: one repository per seed, and a GitHub App installation token minted for that repository only and handed to the seed Worker by the platform (never the App key, never a token that reaches ultrastable/ultrastable). Closes when the seed reads ignition stage looping.",
+  "labels": [
+    "role:executor",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

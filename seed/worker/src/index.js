@@ -312,7 +312,8 @@ export default {
       const ok = Boolean(last && last.steps_completed === last.steps_total);
       const released = await claimsReleasedUnworked24h(env.DB, Date.now()).catch(() => null);  // workers#173 closing probe, target 0
       const cutover = await healthView(env.DB, env).catch(() => null);  // ACCOUNT-SPLIT-2: read by the peer account's tick every beat
-      return Response.json({ ok, org: config.org_slug, last_tick: last || null, claims_released_unworked_24h: released, cutover }, { status: ok || (cutover && cutover.slot !== 'primary') ? 200 : 503 });
+      const ign = await readIgnition(env.DB).catch(() => null);  // SEED-AUTONOMY-1: the stage this system read for itself, so the launcher can tell ticking from autonomous without another route
+      return Response.json({ ok, org: config.org_slug, last_tick: last || null, claims_released_unworked_24h: released, cutover, ignition: ign ? { stage: ign.stage, since: ign.since, at: ign.at, blocking: ign.blocking ? { stage: ign.blocking.stage, why: String(ign.blocking.why || '').slice(0, 400) } : null } : null }, { status: ok || (cutover && cutover.slot !== 'primary') ? 200 : 503 });
     }
     if (url.pathname === '/live' || url.pathname === '/metrics/criticality.json') {  // CRITICALITY-1: k_eff of the last tick
       const c = await readCriticality(env.DB);

@@ -2038,6 +2038,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **A seed that answers is not yet a seed that runs itself (SEED-AUTONOMY-1, Rowan 2026-11-23).** \"Audit and remediate all issues, failure",
+   "detail": "",
+   "how": "file:seed/worker/src/index.js + file:doctrine/seed-deploys.json + file:seed/bootstrap/bootstrap.py + file:tests/foundation/test_seedadmit.py + file:seed/tests/test_seed.py + file:seed/worker/test/health-ignition.test.js",
+   "id": "cited-36843a8c7f",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Find another path before asking; the information is already held (PATHFINDER-1, Rowan 2026-11-21).** \"There are always multiple paths,",
    "detail": "",
    "how": "file:doctrine/pathfinder.json + file:ops/paths/attempts.jsonl + file:foundation/pathfinder.py + file:tests/foundation/test_pathfinder.py",
@@ -2668,6 +2677,15 @@ export default {
    "surface": "seed/agents/AGENTS.md"
   },
   {
+   "claim": "- **A seed that answers is not yet a seed that runs itself (SEED-AUTONOMY-1, Rowan 2026-11-23).** \"Audit and remediate all issues, failure",
+   "detail": "",
+   "how": "file:seed/worker/src/index.js + file:doctrine/seed-deploys.json + file:seed/bootstrap/bootstrap.py + file:tests/foundation/test_seedadmit.py + file:seed/tests/test_seed.py + file:seed/worker/test/health-ignition.test.js",
+   "id": "mirror-d01d8e87e3",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
    "claim": "- **The template is code only (TEMPLATE-CODE-ONLY-1, Rowan 2026-11-21).** \"I thought the UltraStable template repo should be just code that",
    "detail": "",
    "how": "file:doctrine/template-boundary.json + file:foundation/template.py",
@@ -3163,7 +3181,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 62 Python and 481 Worker tests",
+   "claim": "seed-tests: 63 Python and 482 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3172,7 +3190,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 481 Worker tests",
+   "claim": "seed-worker-tests: 482 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3413,7 +3431,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 376,
-  "total": 376
+  "pass": 378,
+  "total": 378
  }
 };

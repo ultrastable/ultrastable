@@ -457,6 +457,18 @@
       "status": "controlled",
       "cadence_ticks": 1,
       "probe": "grep:tests/foundation/test_seedlaunch.py::def test_check_fails_on_failed_e2e"
+    },
+    {
+      "id": "fm-seed-not-autonomous",
+      "trigger": "a seed is deployed and answers /health, but its own loops fail or never record a run",
+      "symptom": "the launch record says passed while the seed's tick reports stalled, at ignition stage ticking",
+      "blast_radius": "every seed built on the platform: each would count as launched without being able to change or repair itself",
+      "detection": "python3 -m foundation seedadmit --autonomy",
+      "root_cause": "the launch gate judged a seed on /health alone, and the deploy step binds no source-control credential, so repository loops cannot run",
+      "remediation": "SEED-AUTONOMY-1: /health carries the seed's own ignition stage; past 48 hours a seed below looping fails the detector, which files Q-AUDIT-seed-autonomous for the executor",
+      "status": "open",
+      "cadence_ticks": 1,
+      "probe": "grep:tests/foundation/test_seedadmit.py::def test_autonomy_is_read_from_the_seed"
     }
   ],
   "controls": [
