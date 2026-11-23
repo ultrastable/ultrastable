@@ -16,21 +16,13 @@
   },
   "failures": {
    "days": null,
-   "why": "1 open, oldest 0 days",
-   "open": 1
+   "why": "no open failure item",
+   "open": 0
   }
  },
- "failure_first_seen": {
-  "Q-CIFAIL-practical-solutions-gapscan": "2026-11-23"
- },
+ "failure_first_seen": {},
  "seed_verify": {
   "ultrastable": [
-   {
-    "at": "2026-11-23T17:03:26Z",
-    "url": "https://ultrastable.io/health",
-    "status": 200,
-    "ok": true
-   },
    {
     "at": "2026-11-23T17:13:48Z",
     "url": "https://ultrastable.io/health",
@@ -201,6 +193,12 @@
    },
    {
     "at": "2026-11-23T22:13:29Z",
+    "url": "https://ultrastable.io/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-23T23:43:11Z",
     "url": "https://ultrastable.io/health",
     "status": 200,
     "ok": true
@@ -208,12 +206,6 @@
   ],
   "unlearn": [
    {
-    "at": "2026-11-23T17:03:26Z",
-    "url": "https://unlearn.ultrastable.org/health",
-    "status": 200,
-    "ok": true
-   },
-   {
     "at": "2026-11-23T17:13:48Z",
     "url": "https://unlearn.ultrastable.org/health",
     "status": 200,
@@ -383,6 +375,12 @@
    },
    {
     "at": "2026-11-23T22:13:29Z",
+    "url": "https://unlearn.ultrastable.org/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-23T23:43:11Z",
     "url": "https://unlearn.ultrastable.org/health",
     "status": 200,
     "ok": true
