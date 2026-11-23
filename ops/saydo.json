@@ -1,7 +1,7 @@
 {
- "at": "2026-11-23T10:04:31Z",
- "gaps": 4,
- "match_share": 0.991,
+ "at": "2026-11-23T10:14:44Z",
+ "gaps": 5,
+ "match_share": 0.989,
  "sources": {
   "changes": [
    {
@@ -592,10 +592,12 @@
    {
     "checks": 3,
     "external": [],
-    "failing": [],
+    "failing": [
+     "python3 -m foundation trajectory --check: site/trajectory-data.js is stale: run trajectory --run --apply"
+    ],
     "id": "YEAR-SIM-1",
     "missing": [],
-    "ok": true,
+    "ok": false,
     "unmeasured": []
    },
    {
@@ -763,7 +765,7 @@
     "checks": 1,
     "external": [],
     "failing": [
-     "python3 -m foundation dispose --check: an open item is 20.5 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+     "python3 -m foundation dispose --check: an open item is 20.7 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
     ],
     "id": "DISPOSE-1",
     "missing": [],
@@ -843,7 +845,7 @@
    "total": 1
   },
   "rules": {
-   "gaps": 1,
+   "gaps": 2,
    "total": 70
   },
   "year": {
