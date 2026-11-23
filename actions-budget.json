@@ -1,6 +1,6 @@
 {
   "_doc": "Actions minute budget and kill switch. See docs/ops/ACTIONS-BUDGET.md. Private-repo minutes bill 1x for Linux; public repos are free. Public repositories are exempt in scripts/actions_guard.py (free minutes).",
-  "paused": false,
+  "paused": true,
   "paused_workflows": [],
   "essential": [
     "checks",
