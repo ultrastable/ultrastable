@@ -3,7 +3,7 @@
   {
    "area": "doctrine",
    "quiet_days": 0,
-   "recent7": 56567,
+   "recent7": 56575,
    "series": [
     0,
     0,
@@ -34,12 +34,12 @@
     8395,
     16515,
     19152,
-    75
+    83
    ],
    "share_recent": 0.222,
    "share_trend": 0.22,
-   "slope": 426.1582,
-   "total": 110055
+   "slope": 426.2098,
+   "total": 110063
   },
   {
    "area": "workers",
@@ -85,7 +85,7 @@
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 31220,
+   "recent7": 31332,
    "series": [
     0,
     0,
@@ -116,12 +116,12 @@
     6177,
     12277,
     5013,
-    925
+    1037
    ],
-   "share_recent": 0.122,
-   "share_trend": 0.078,
-   "slope": 178.558,
-   "total": 39226
+   "share_recent": 0.123,
+   "share_trend": 0.079,
+   "slope": 179.2805,
+   "total": 39338
   },
   {
    "area": "qnfo-platform-thread",
@@ -1026,7 +1026,7 @@
    "total": 2274
   }
  ],
- "at": "2026-11-23T15:59:47Z",
+ "at": "2026-11-23T16:05:11Z",
  "days": 30,
  "files": [
   {
@@ -1059,11 +1059,11 @@
   },
   {
    "days": 12,
-   "file": "README.md"
+   "file": "doctrine/decision-ledger.json"
   },
   {
    "days": 12,
-   "file": "doctrine/decision-ledger.json"
+   "file": "README.md"
   },
   {
    "days": 11,
@@ -1078,25 +1078,25 @@
    "why": "doctrine's share of attention moved 22 points between the first and second half of the window"
   },
   {
-   "evidence": "quiet_days 7; system change in the last 7 days 255178",
+   "evidence": "quiet_days 7; system change in the last 7 days 255300",
    "id": "docs/doctrine",
    "kind": "neglected",
    "why": "docs/doctrine had 414 lines of change, then nothing for 7 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 7; system change in the last 7 days 255178",
+   "evidence": "quiet_days 7; system change in the last 7 days 255300",
    "id": "docs/architecture",
    "kind": "neglected",
    "why": "docs/architecture had 192 lines of change, then nothing for 7 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 8; system change in the last 7 days 255178",
+   "evidence": "quiet_days 8; system change in the last 7 days 255300",
    "id": "seed/outreach",
    "kind": "neglected",
    "why": "seed/outreach had 139 lines of change, then nothing for 8 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 10; system change in the last 7 days 255178",
+   "evidence": "quiet_days 10; system change in the last 7 days 255300",
    "id": "docs/runbooks",
    "kind": "neglected",
    "why": "docs/runbooks had 134 lines of change, then nothing for 10 days while the rest of the system moved"
@@ -1156,10 +1156,10 @@
    "why": "the metric-loop ledger had 10 rows, then none for 8 days: the loop that writes it has gone quiet"
   },
   {
-   "evidence": "opened 1011, closed 1675",
+   "evidence": "opened 1012, closed 1682",
    "id": "issues",
    "kind": "drift",
-   "why": "issues are opening faster than they close: backlog grew by -664 over 30 days"
+   "why": "issues are opening faster than they close: backlog grew by -670 over 30 days"
   }
  ],
  "history_days": 14,
@@ -1194,10 +1194,10 @@
    298,
    -10,
    -416,
-   -664
+   -670
   ],
-  "closed": 1675,
-  "opened": 1011
+  "closed": 1682,
+  "opened": 1012
  },
  "loops": [
   {
@@ -1697,7 +1697,7 @@
   {
    "loop": "provenance",
    "quiet_days": 0,
-   "rows": 69,
+   "rows": 70,
    "series": [
     0,
     0,
@@ -1728,14 +1728,14 @@
     0,
     27,
     40,
-    2
+    3
    ],
-   "slope": 0.4033
+   "slope": 0.4098
   },
   {
    "loop": "resilience",
    "quiet_days": 0,
-   "rows": 229,
+   "rows": 230,
    "series": [
     0,
     0,
@@ -1766,14 +1766,14 @@
     4,
     37,
     122,
-    43
+    44
    ],
-   "slope": 1.3257
+   "slope": 1.3321
   },
   {
    "loop": "saydo",
    "quiet_days": 0,
-   "rows": 163,
+   "rows": 164,
    "series": [
     0,
     0,
@@ -1804,9 +1804,9 @@
     0,
     8,
     112,
-    43
+    44
    ],
-   "slope": 0.9947
+   "slope": 1.0011
   },
   {
    "loop": "seed-launches",
@@ -1887,7 +1887,7 @@
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 159,
+   "rows": 160,
    "series": [
     0,
     0,
@@ -1918,14 +1918,14 @@
     0,
     5,
     112,
-    42
+    43
    ],
-   "slope": 0.9715
+   "slope": 0.978
   },
   {
    "loop": "ultrastability",
    "quiet_days": 0,
-   "rows": 8568,
+   "rows": 8609,
    "series": [
     0,
     0,
@@ -1956,14 +1956,14 @@
     171,
     1411,
     5004,
-    1764
+    1805
    ],
-   "slope": 51.0607
+   "slope": 51.3253
   },
   {
    "loop": "worker-merge-evidence",
    "quiet_days": 0,
-   "rows": 22,
+   "rows": 23,
    "series": [
     0,
     0,
@@ -1994,14 +1994,14 @@
     0,
     14,
     6,
-    1
+    2
    ],
-   "slope": 0.1232
+   "slope": 0.1297
   },
   {
    "loop": "yearsim",
    "quiet_days": 0,
-   "rows": 164,
+   "rows": 165,
    "series": [
     0,
     0,
@@ -2032,9 +2032,9 @@
     0,
     9,
     112,
-    43
+    44
    ],
-   "slope": 1.0002
+   "slope": 1.0067
   }
  ],
  "observed": {
