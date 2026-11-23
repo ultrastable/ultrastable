@@ -85,7 +85,7 @@
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 31151,
+   "recent7": 31170,
    "series": [
     0,
     0,
@@ -116,12 +116,12 @@
     6177,
     12277,
     5013,
-    856
+    875
    ],
    "share_recent": 0.122,
    "share_trend": 0.078,
-   "slope": 178.1128,
-   "total": 39157
+   "slope": 178.2354,
+   "total": 39176
   },
   {
    "area": "qnfo-platform-thread",
@@ -1026,7 +1026,7 @@
    "total": 2274
   }
  ],
- "at": "2026-11-23T10:14:48Z",
+ "at": "2026-11-23T10:23:45Z",
  "days": 30,
  "files": [
   {
@@ -1078,25 +1078,25 @@
    "why": "doctrine's share of attention moved 22 points between the first and second half of the window"
   },
   {
-   "evidence": "quiet_days 7; system change in the last 7 days 255107",
+   "evidence": "quiet_days 7; system change in the last 7 days 255128",
    "id": "docs/doctrine",
    "kind": "neglected",
    "why": "docs/doctrine had 414 lines of change, then nothing for 7 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 7; system change in the last 7 days 255107",
+   "evidence": "quiet_days 7; system change in the last 7 days 255128",
    "id": "docs/architecture",
    "kind": "neglected",
    "why": "docs/architecture had 192 lines of change, then nothing for 7 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 8; system change in the last 7 days 255107",
+   "evidence": "quiet_days 8; system change in the last 7 days 255128",
    "id": "seed/outreach",
    "kind": "neglected",
    "why": "seed/outreach had 139 lines of change, then nothing for 8 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 10; system change in the last 7 days 255107",
+   "evidence": "quiet_days 10; system change in the last 7 days 255128",
    "id": "docs/runbooks",
    "kind": "neglected",
    "why": "docs/runbooks had 134 lines of change, then nothing for 10 days while the rest of the system moved"
@@ -1156,10 +1156,10 @@
    "why": "the metric-loop ledger had 10 rows, then none for 8 days: the loop that writes it has gone quiet"
   },
   {
-   "evidence": "opened 1009, closed 1621",
+   "evidence": "opened 1009, closed 1627",
    "id": "issues",
    "kind": "drift",
-   "why": "issues are opening faster than they close: backlog grew by -612 over 30 days"
+   "why": "issues are opening faster than they close: backlog grew by -618 over 30 days"
   }
  ],
  "history_days": 14,
@@ -1194,9 +1194,9 @@
    298,
    -10,
    -416,
-   -612
+   -618
   ],
-  "closed": 1621,
+  "closed": 1627,
   "opened": 1009
  },
  "loops": [
@@ -1507,7 +1507,7 @@
   {
    "loop": "deploys",
    "quiet_days": 0,
-   "rows": 907,
+   "rows": 914,
    "series": [
     0,
     0,
@@ -1538,9 +1538,9 @@
     50,
     145,
     50,
-    7
+    14
    ],
-   "slope": 4.0647
+   "slope": 4.1099
   },
   {
    "loop": "executor-log",
@@ -1735,7 +1735,7 @@
   {
    "loop": "resilience",
    "quiet_days": 0,
-   "rows": 221,
+   "rows": 222,
    "series": [
     0,
     0,
@@ -1766,14 +1766,14 @@
     4,
     37,
     122,
-    35
+    36
    ],
-   "slope": 1.2741
+   "slope": 1.2805
   },
   {
    "loop": "saydo",
    "quiet_days": 0,
-   "rows": 155,
+   "rows": 156,
    "series": [
     0,
     0,
@@ -1804,9 +1804,9 @@
     0,
     8,
     112,
-    35
+    36
    ],
-   "slope": 0.943
+   "slope": 0.9495
   },
   {
    "loop": "seed-launches",
@@ -1887,7 +1887,7 @@
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 151,
+   "rows": 152,
    "series": [
     0,
     0,
@@ -1918,14 +1918,14 @@
     0,
     5,
     112,
-    34
+    35
    ],
-   "slope": 0.9199
+   "slope": 0.9264
   },
   {
    "loop": "ultrastability",
    "quiet_days": 0,
-   "rows": 8240,
+   "rows": 8281,
    "series": [
     0,
     0,
@@ -1956,9 +1956,9 @@
     171,
     1411,
     5004,
-    1436
+    1477
    ],
-   "slope": 48.9446
+   "slope": 49.2091
   },
   {
    "loop": "worker-merge-evidence",
@@ -2001,7 +2001,7 @@
   {
    "loop": "yearsim",
    "quiet_days": 0,
-   "rows": 156,
+   "rows": 157,
    "series": [
     0,
     0,
@@ -2032,9 +2032,9 @@
     0,
     9,
     112,
-    35
+    36
    ],
-   "slope": 0.9486
+   "slope": 0.9551
   }
  ],
  "observed": {
