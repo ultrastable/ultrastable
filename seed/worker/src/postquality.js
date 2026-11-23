@@ -4,6 +4,7 @@
 // "something that works" reads as AI slop and costs trust. This gate runs in the core publisher (social.js) before any send, for every tenant.
 // Hard failures block the post (recorded as 'blocked' with the reasons, never truncated into shape); the author fixes the text, not the gate.
 // Pure functions, no I/O. `grade` is the evidence grade a post states: 'strong' | 'mixed' | 'weak' | undefined (no evidence claim).
+import { lintVoice } from './humanvoice.js';
 const URL_RE = /https?:\/\/[^\s)]+/g;
 const OPENERS = /^\s*(something that works|exciting news|excited to|big news|did you know|unlock|discover|in today'?s|we'?re thrilled)/i;
 const SLOP = /\b(delve|leverag(e|ing)|game[- ]chang\w*|revolutioni[sz]\w*|tapestry|landscape of|cutting[- ]edge|seamless\w*|it'?s not just)\b/i;
@@ -20,6 +21,7 @@ export function lintPost(text, { limit = 280, grade } = {}) {
   if (new Set(urlsOf(t)).size > 1) fails.push('more than one link');
   if (OPENERS.test(body)) fails.push('templated opener');
   if (SLOP.test(body)) fails.push('stock AI phrasing');
+  for (const r of lintVoice(body)) if (!fails.includes(r) && !(r.startsWith('stock AI') && fails.includes('stock AI phrasing'))) fails.push(r);
   if (grade === 'mixed' || grade === 'weak') {
     if (OVERCLAIM.test(body.replace(/\b(does|did|may|might) not work\b/gi, ''))) fails.push(`overclaims for ${grade} evidence`);
     if (!HEDGE.test(body)) fails.push(`does not say the evidence is ${grade}`);

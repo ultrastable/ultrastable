@@ -44,6 +44,7 @@
   python3 -m foundation glossary [--check|--apply|--show [ID]]            the owner's keywords, with tests, code and lineage
   python3 -m foundation loops [--verify|--list]                           the loop registry and its closing verifier
   python3 -m foundation kernel [--check|--lint FILE...|--metrics FILE...] the doctrine kernel as code
+  python3 -m foundation humanvoice [--check|--report|--lint|--baseline]   HUMAN-VOICE-1: text for people reads like a person wrote it (shrink-only baseline)
   python3 -m foundation userbackend [--check|--scan]                      USER-BACKEND-1: no raw backend error reaches a user; one shared module per fix, every Worker consumes it
   python3 -m foundation standingorder [--check|--lint FILE...|--file-items|--baseline]  CODE-ONLY-ORDER: decisions live in code the system consumes; no report hands a decision to the owner
   python3 -m foundation directive [--check|--lint FILE...|--ledger|--probe|--bootstrap] the guiding directive as code
@@ -136,6 +137,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["tenantcontrols"]:
         from . import tenantcontrols
         return tenantcontrols.main(_av[1:])
+    if _av[:1] == ["humanvoice"]:
+        from . import humanvoice
+        return humanvoice.main(_av[1:])
     if _av[:1] == ["userbackend"]:
         from . import userbackend
         return userbackend.main(_av[1:])

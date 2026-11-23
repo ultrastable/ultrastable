@@ -421,6 +421,23 @@
      "needs_network": true
     }
    ]
+  },
+  {
+   "id": "human-voice",
+   "statement": "Everything written for people reads like a person wrote it: every prose model call carries the shared voice and is rewritten when it reads as AI, the social publisher and thought posts block AI-sounding text, and public surfaces may only get better (HUMAN-VOICE-1).",
+   "source": "agents/AGENTS.md; doctrine/human-voice.json; seed/worker/src/humanvoice.js",
+   "ci": [
+    {
+     "cmd": "python3 -m foundation humanvoice --check"
+    }
+   ],
+   "runtime": [
+    {
+     "id": "human-voice",
+     "cmd": "python3 -m foundation humanvoice --check",
+     "fix": "python3 -m foundation humanvoice --report --apply"
+    }
+   ]
   }
  ],
  "repos": [

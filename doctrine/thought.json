@@ -12,8 +12,8 @@
   "hook": {
     "required": "Ultrastable runs on Ultrastable",
     "short": "Ultrastable runs on Ultrastable and writes these papers itself.",
-    "medium": "Ultrastable runs on Ultrastable: it writes, measures and republishes these papers from its own records. Practical Solutions is one system it runs.",
-    "long": "Why this is on my feed: Ultrastable runs on Ultrastable. Its fixes, deploys and these white papers are produced and checked by the system itself, from its own records. Practical Solutions is one example of a system it runs: {ps_what}. The subject is the example; the point is what a self-running system can do for your own work."
+    "medium": "Ultrastable runs on Ultrastable: it writes these papers from its own records and keeps them current. Practical Solutions is one system it runs.",
+    "long": "Why this is on my feed: Ultrastable runs on Ultrastable. The system wrote this paper from its own records and checks it itself. Practical Solutions is one example of a system it runs: {ps_what}. A system that keeps itself running could do the same for your work."
   },
   "channels": {
     "bluesky": {"limit": 300},
