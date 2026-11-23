@@ -1,0 +1,12 @@
+{
+  "id": "Q-TRAJ-hotspot-agents-PROJECT-INSTRUCTIONS-md",
+  "title": "Q-TRAJ-hotspot-agents-PROJECT-INSTRUCTIONS-md: agents/PROJECT-INSTRUCTIONS.md was rewritten on 13 of 30 days",
+  "body": "**Owner:** executor\n**Trigger:** trajectory pass (TRAJECTORY-1) on the watchdog run\n**Done check:** cmd:python3 -m foundation trajectory --probe hotspot:agents/PROJECT-INSTRUCTIONS.md\n**Status:** open\n\nagents/PROJECT-INSTRUCTIONS.md was rewritten on 13 of 30 days. Evidence: days with changes: 13.\n\nFind why this keeps changing; make the part that churns computed, split it, or add the test that pins it, so it stops being rewritten.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation trajectory --probe hotspot:agents/PROJECT-INSTRUCTIONS.md` exits 0.\n",
+  "labels": [
+    "p2",
+    "agent-ready",
+    "trajectory"
+  ],
+  "milestone": "Now",
+  "workstream": "Ultrastability"
+}
