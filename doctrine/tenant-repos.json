@@ -37,6 +37,32 @@
     },
     "AGENTS.md": "# Unlearn: agent instructions\n\n> Ultrastable is the foundation for any autonomous system.\n\nUnlearn is a tenant system on Ultrastable. This repository holds its code: the evidence encyclopedia and its loops (`worker/`), the coaching\ntool's phases (`phases.json`), and core files it reads, vendored under `vendor/ultrastable/`. Its manifest (IDEA.md, instance.json,\nlifecycle.json, runway.json) and the platform rules every agent follows live in the core repository, `ultrastable/ultrastable`\n(`agents/AGENTS.md`, `instances/unlearn/`, `doctrine/tenant-repos.json`).\n\n- Test: `node --test worker/*.test.mjs` (CI runs it on every pull request).\n- Deploy: the platform builds this repository's `main` into the `ultrastable-unlearn` Worker (D1 `ultrastable-unlearn`, Workers AI, hourly\n  cron, `unlearn.ultrastable.org`). Nothing here holds a credential.\n- Honest grading: nothing publishes on an unverified citation; a model may only label or re-word, never add a number, a name or a source.\n- No child accounts and no child data; no cookies; reader taps are anonymous counts.\n"
    }
+  },
+  "did-it-work": {
+   "repo": "ultrastable/did-it-work",
+   "state": "moving",
+   "source": "instances/did-it-work",
+   "keep_in_core": [
+    "IDEA.md",
+    "instance.json",
+    "lifecycle.json"
+   ],
+   "vendor": {},
+   "worker": "ultrastable-did-it-work",
+   "ai": false,
+   "visibility": "public",
+   "description": "Did It Work? Famous policies held to their own promises, with graded evidence. A tenant system running on Ultrastable.",
+   "write": {
+    "package.json": {
+     "name": "did-it-work",
+     "private": true,
+     "type": "module",
+     "scripts": {
+      "test": "node --test --no-warnings worker/*.test.mjs"
+     }
+    },
+    "AGENTS.md": "# Did It Work?: agent instructions\n\n> Ultrastable is the foundation for any autonomous system.\n\nA tenant system on Ultrastable. Code is in `worker/` (casebook in `cases.js`). Its manifest and the platform rules live in `ultrastable/ultrastable` (`instances/did-it-work/`, `agents/AGENTS.md`).\n\n- Test: `node --test worker/*.test.mjs`.\n- Every case cites its source and grades it by study design; no number without a source.\n- No accounts, cookies or trackers.\n"
+   }
   }
  }
 }

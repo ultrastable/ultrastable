@@ -2,17 +2,24 @@
  "_doc": "SEED-LIFECYCLE-1 answers for did-it-work; scaffolded by foundation/seedlife.py, completed by the executor through Q-SEED-did-it-work.",
  "slug": "did-it-work",
  "build": {
-  "paths": [],
-  "tests": []
+  "paths": [
+   "instances/did-it-work/worker/index.js",
+   "instances/did-it-work/worker/cases.js"
+  ],
+  "tests": [
+   "instances/did-it-work/worker/worker.test.mjs"
+  ]
  },
  "deploy": {
-  "worker": ""
+  "worker": "ultrastable-did-it-work"
  },
  "verify": {
-  "url": "",
-  "expect": ""
+  "url": "https://did-it-work.ultrastable.org/health",
+  "expect": "\"app\":\"did-it-work\""
  },
- "loops": [],
+ "loops": [
+  "daily source check (cron 17 6 * * *)"
+ ],
  "survival": {
   "credentials": {
    "inherit": "cloudflare-api-tokens"
@@ -53,8 +60,9 @@
    "inherit": "self-coder"
   },
   "privacy": {
-   "status": "open",
-   "item": "Q-SEED-did-it-work"
+   "status": "closed",
+   "probe": "file:instances/did-it-work/worker/index.js",
+   "how": "no accounts, cookies or trackers; guesses are stored as per-case counts only"
   }
  }
 }
