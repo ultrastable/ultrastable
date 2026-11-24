@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-2012",
+  "title": "OL-PR-2012: land or supersede pull request #2012 (conflict)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #2012 is conflict\n**Done check:** cmd:python3 -m foundation loopowner --closed 2012\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #2012 (`parked/agent/Q-CFP-no-idle-preview-workers-q-cfp-no-idle-preview-workers-preview-wo` at 7ac35e9f14, opened by app/github-actions): automerge: parked/agent/Q-CFP-no-idle-preview-workers-q-cfp-no-idle-preview-workers-preview-wo. The session that opened it is not its closer and is never asked to act. The branch conflicts with main. Merge main into the branch and resolve it, or redo the change from main in a new pull request and close this one as superseded. Files (6): agents/spinoff_sweep.py, docs/issues/Q-CFP-no-idle-preview-workers.json, doctrine/writeback/decision-2026-11-21-executor-closed-q-cfp-no-idle-preview-workers-spinoff-sweep-.json, ops/agent-cost.jsonl, ops/agentwork.jsonl, site/dashboard-data.js. Closing probe: pull request #2012 is merged or closed.",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

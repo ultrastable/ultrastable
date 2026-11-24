@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-2013",
+  "title": "OL-PR-2013: land or supersede pull request #2013 (conflict)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #2013 is conflict\n**Done check:** cmd:python3 -m foundation loopowner --closed 2013\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #2013 (`parked/agent/Q-RECUR-9ead069526-q-recur-9ead069526-tick-step-failed-recu` at 94c62933ab, opened by app/github-actions): automerge: parked/agent/Q-RECUR-9ead069526-q-recur-9ead069526-tick-step-failed-recu. The session that opened it is not its closer and is never asked to act. The branch conflicts with main. Merge main into the branch and resolve it, or redo the change from main in a new pull request and close this one as superseded. Failed checks: checks, foundation. Files (7): docs/issues/Q-RECUR-9ead069526.json, doctrine/writeback/decision-2026-11-21-executor-closed-q-recur-9ead069526-disable-heuristic-healing.json, ops/agent-cost.jsonl, ops/agentwork.jsonl, ops/decisions/ledger.jsonl, seed/worker/src/tick.js, seed/worker/tests/tick.rollback.test.mjs. Closing probe: pull request #2013 is merged or closed.",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

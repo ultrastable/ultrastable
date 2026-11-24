@@ -8,8 +8,14 @@
 
 This file is the single source of truth for project memory. Chat memory, tool memory and platform memory stores are read-only pointers to this file and are never edited as a record. Every session starts by reading this file and ends by updating it. Nothing is done until it is deployed end to end; every open item is an issue or an owner card with a default in effect and a closing probe.
 
-Last updated: 2026-11-23
+Last updated: 2026-11-24
 
+- 2026-11-23: ZERO-MINUTES-1: worker merged #2037
+- 2026-11-23: ciwatch: file failing-workflow items (CIWATCH-1) (#2037)
+- 2026-11-23: actions-budget: pause non-essential workflows (projected minutes near the free quota) [skip ci]
+- 2026-11-23: outreach: record run state [skip ci]
+- 2026-11-23: ZERO-MINUTES-1: worker merged #2021
+- 2026-11-23: automerge: parked/claude/project-thread-wvp65d (#2021)
 - 2026-11-23: SEED-AUTONOMY-1: a deployed seed is judged on its own ignition stage, not on /health answering; detector seed-autonomous; year gate refuses undrilled faults; seed-live detector names its client (403 fix). Root cause open as OL-20261123-1 (a seed has no repository or source-control credential)
 - 2026-11-22: core/ui: mobile header, slim family bar, mobile spacing (#1976)
 - 2026-11-22: temporal series, findings and queue items (TEMPORAL-1) [skip ci]
