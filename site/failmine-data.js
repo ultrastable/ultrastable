@@ -2,19 +2,19 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 export const FAILMINE = {
  "schema": "ultrastable-failmine/1",
- "at": "2026-11-23T16:26:34Z",
- "events": 233,
- "open": 22,
- "signatures": 68,
- "recurrence_rate": 0.708,
- "mttr_hours_mean": 27.2,
- "mttr_hours_median": 21.3,
- "remediated": 211,
+ "at": "2026-11-24T16:20:26Z",
+ "events": 249,
+ "open": 30,
+ "signatures": 72,
+ "recurrence_rate": 0.711,
+ "mttr_hours_mean": 27.6,
+ "mttr_hours_median": 20.5,
+ "remediated": 219,
  "classes": [
   {
    "class": "merge-conflict",
-   "events": 70,
-   "open": 0,
+   "events": 79,
+   "open": 8,
    "signatures": 3,
    "root_cause": "two writers change one generated or append-only file and the second PR cannot apply",
    "owner": "scripts/resolve_generated.py, scripts/no_markers.py",
@@ -22,7 +22,7 @@ export const FAILMINE = {
   },
   {
    "class": "pr-stuck",
-   "events": 65,
+   "events": 67,
    "open": 2,
    "signatures": 2,
    "root_cause": "nothing server-side owns the PR after the session that opened it ends",
@@ -31,9 +31,9 @@ export const FAILMINE = {
   },
   {
    "class": "ci-red",
-   "events": 51,
-   "open": 14,
-   "signatures": 49,
+   "events": 55,
+   "open": 13,
+   "signatures": 52,
    "root_cause": "a change merged or main moved while a check was red",
    "owner": "foundation/redmain.py",
    "failure_mode": "fm-tests-red"
@@ -58,9 +58,9 @@ export const FAILMINE = {
   },
   {
    "class": "other",
-   "events": 5,
-   "open": 4,
-   "signatures": 4,
+   "events": 6,
+   "open": 5,
+   "signatures": 5,
    "root_cause": "unclassified: register a class in foundation/failmine.py ROOT_CAUSES",
    "owner": "foundation/failmine.py",
    "failure_mode": null
@@ -98,16 +98,16 @@ export const FAILMINE = {
    "sig": "0f61587b9e",
    "class": "merge-conflict",
    "signature": "ol-pr land or supersede pull request conflict",
-   "count": 68,
-   "open": 0,
-   "last": "2026-11-22T13:26:40Z",
+   "count": 77,
+   "open": 8,
+   "last": "2026-11-24T15:52:59Z",
    "ids": [
-    "OL-PR-1879",
-    "OL-PR-1911",
-    "OL-PR-1932",
-    "OL-PR-1933",
-    "OL-PR-1930",
-    "OL-PR-1931"
+    "OL-PR-2015",
+    "OL-PR-2016",
+    "OL-PR-2018",
+    "OL-PR-2019",
+    "OL-PR-2020",
+    "OL-PR-2022"
    ],
    "disposition": "incident"
   },
@@ -115,16 +115,16 @@ export const FAILMINE = {
    "sig": "5f8b2445f4",
    "class": "pr-stuck",
    "signature": "ol-pr land or supersede pull request ci",
-   "count": 55,
+   "count": 57,
    "open": 2,
-   "last": "2026-11-23T15:56:17Z",
+   "last": "2026-11-24T15:52:59Z",
    "ids": [
-    "OL-PR-1926",
-    "OL-PR-1935",
     "OL-PR-1938",
     "OL-PR-1963",
     "OL-PR-2007",
-    "OL-PR-2008"
+    "OL-PR-2008",
+    "OL-PR-2017",
+    "OL-PR-2045"
    ],
    "disposition": "incident"
   },
@@ -210,6 +210,19 @@ export const FAILMINE = {
    "disposition": "incident"
   },
   {
+   "sig": "50e3c5515c",
+   "class": "ci-red",
+   "signature": "foundation tests le run trajectory run apply ran tests in s failed failures",
+   "count": 2,
+   "open": 2,
+   "last": "2026-11-23T16:36:53Z",
+   "ids": [
+    "audit-foundation-tests-2026-11-22T13:42:48Z",
+    "audit-foundation-tests-2026-11-23T16:36:53Z"
+   ],
+   "disposition": "mutate"
+  },
+  {
    "sig": "8aa89f1370",
    "class": "other",
    "signature": "site claims ins baseline json issue is on the roadmap with no probe the",
@@ -232,6 +245,7 @@ export const FAILMINE = {
   "Q-RECUR-9ead069526",
   "Q-RECUR-b680afd12d",
   "Q-RECUR-b08a9507fd",
+  "Q-RECUR-50e3c5515c",
   "Q-RECUR-8aa89f1370"
  ]
 };

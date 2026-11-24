@@ -1,0 +1,12 @@
+{
+  "id": "Q-TEMPORAL-b5792f9a73",
+  "title": "Q-TEMPORAL-b5792f9a73: hotspot: file:doctrine/flows.json",
+  "body": "**Owner:** portfolio-manager\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -m foundation temporal --settled b5792f9a73\n**Status:** open\n\nTemporal loop finding (hotspot) in doctrine: doctrine/flows.json edited 16 times in 3 days (outside generated and ledger paths). Seen in 3 runs since 2026-11-22T14:31:06Z. Advocate: portfolio-manager.\n\nFind why this keeps being edited (a flaky generator, an unstable spec, a loop that rewrites its own output) and fix the cause with a test or guard. Do not slow the work down; stop the churn.\n\nFiles: doctrine/flows.json.\n\nPrediction: doctrine/flows.json is edited at most 5 times in 3 days within 7 days.\n\nThis item closes when the finding no longer holds (`python3 -m foundation temporal --settled b5792f9a73` recomputes it from the repository's own history).\n\nsize: M\n\n**Closing probe:** cmd:python3 -m foundation temporal --settled b5792f9a73.",
+  "labels": [
+    "p2",
+    "agent-ready",
+    "temporal"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

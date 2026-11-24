@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 export const TEMPORAL = {
  "marker": "TEMPORAL-1",
- "at": "2026-11-23T18:00:44Z",
+ "at": "2026-11-24T17:38:51Z",
  "tenant": "ultrastable",
  "history_from": "2026-11-10",
  "window": {
@@ -13,15 +13,14 @@ export const TEMPORAL = {
  "areas": [
   {
    "id": "doctrine",
-   "recent": 276,
-   "baseline": 205,
-   "baseline_days": 10,
-   "recent_rate": 92.0,
-   "baseline_rate": 20.5,
+   "recent": 193,
+   "baseline": 292,
+   "baseline_days": 11,
+   "recent_rate": 64.33,
+   "baseline_rate": 26.55,
    "last_active": "2026-11-23",
    "total": 485,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -48,20 +47,20 @@ export const TEMPORAL = {
     42,
     87,
     147,
-    42
+    42,
+    4
    ]
   },
   {
    "id": "site",
-   "recent": 171,
-   "baseline": 126,
-   "baseline_days": 10,
-   "recent_rate": 57.0,
-   "baseline_rate": 12.6,
-   "last_active": "2026-11-23",
-   "total": 351,
+   "recent": 233,
+   "baseline": 148,
+   "baseline_days": 11,
+   "recent_rate": 77.67,
+   "baseline_rate": 13.45,
+   "last_active": "2026-11-24",
+   "total": 408,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -88,20 +87,20 @@ export const TEMPORAL = {
     2,
     22,
     26,
-    123
+    123,
+    84
    ]
   },
   {
    "id": "seed",
-   "recent": 78,
-   "baseline": 192,
-   "baseline_days": 10,
-   "recent_rate": 26.0,
-   "baseline_rate": 19.2,
+   "recent": 56,
+   "baseline": 215,
+   "baseline_days": 11,
+   "recent_rate": 18.67,
+   "baseline_rate": 19.55,
    "last_active": "2026-11-23",
    "total": 271,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -128,20 +127,20 @@ export const TEMPORAL = {
     2,
     23,
     44,
-    11
+    11,
+    1
    ]
   },
   {
    "id": "foundation",
-   "recent": 85,
-   "baseline": 182,
-   "baseline_days": 10,
-   "recent_rate": 28.33,
-   "baseline_rate": 18.2,
+   "recent": 55,
+   "baseline": 213,
+   "baseline_days": 11,
+   "recent_rate": 18.33,
+   "baseline_rate": 19.36,
    "last_active": "2026-11-23",
    "total": 268,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -168,20 +167,20 @@ export const TEMPORAL = {
     12,
     31,
     41,
-    13
+    13,
+    1
    ]
   },
   {
    "id": "tests",
-   "recent": 89,
-   "baseline": 175,
-   "baseline_days": 10,
-   "recent_rate": 29.67,
-   "baseline_rate": 17.5,
+   "recent": 62,
+   "baseline": 203,
+   "baseline_days": 11,
+   "recent_rate": 20.67,
+   "baseline_rate": 18.45,
    "last_active": "2026-11-23",
    "total": 265,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -208,20 +207,20 @@ export const TEMPORAL = {
     16,
     28,
     43,
-    18
+    18,
+    1
    ]
   },
   {
    "id": "workflows",
-   "recent": 44,
-   "baseline": 163,
-   "baseline_days": 10,
-   "recent_rate": 14.67,
-   "baseline_rate": 16.3,
+   "recent": 33,
+   "baseline": 174,
+   "baseline_days": 11,
+   "recent_rate": 11.0,
+   "baseline_rate": 15.82,
    "last_active": "2026-11-22",
    "total": 207,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -248,20 +247,20 @@ export const TEMPORAL = {
     7,
     11,
     27,
-    6
+    6,
+    0
    ]
   },
   {
    "id": "scripts",
-   "recent": 45,
-   "baseline": 98,
-   "baseline_days": 10,
-   "recent_rate": 15.0,
-   "baseline_rate": 9.8,
+   "recent": 29,
+   "baseline": 114,
+   "baseline_days": 11,
+   "recent_rate": 9.67,
+   "baseline_rate": 10.36,
    "last_active": "2026-11-22",
    "total": 143,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -288,20 +287,20 @@ export const TEMPORAL = {
     5,
     16,
     23,
-    6
+    6,
+    0
    ]
   },
   {
    "id": "instances",
-   "recent": 32,
-   "baseline": 83,
-   "baseline_days": 10,
-   "recent_rate": 10.67,
-   "baseline_rate": 8.3,
+   "recent": 28,
+   "baseline": 87,
+   "baseline_days": 11,
+   "recent_rate": 9.33,
+   "baseline_rate": 7.91,
    "last_active": "2026-11-22",
    "total": 115,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -328,20 +327,20 @@ export const TEMPORAL = {
     2,
     4,
     17,
-    11
+    11,
+    0
    ]
   },
   {
    "id": "docs",
-   "recent": 4,
-   "baseline": 100,
-   "baseline_days": 10,
-   "recent_rate": 1.33,
-   "baseline_rate": 10.0,
+   "recent": 2,
+   "baseline": 102,
+   "baseline_days": 11,
+   "recent_rate": 0.67,
+   "baseline_rate": 9.27,
    "last_active": "2026-11-22",
    "total": 104,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -368,20 +367,20 @@ export const TEMPORAL = {
     1,
     2,
     1,
-    1
+    1,
+    0
    ]
   },
   {
    "id": "agents",
-   "recent": 25,
-   "baseline": 73,
-   "baseline_days": 10,
-   "recent_rate": 8.33,
-   "baseline_rate": 7.3,
+   "recent": 21,
+   "baseline": 78,
+   "baseline_days": 11,
+   "recent_rate": 7.0,
+   "baseline_rate": 7.09,
    "last_active": "2026-11-23",
    "total": 99,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -408,20 +407,20 @@ export const TEMPORAL = {
     1,
     5,
     17,
-    3
+    3,
+    1
    ]
   },
   {
    "id": "deploy",
-   "recent": 20,
-   "baseline": 56,
-   "baseline_days": 10,
-   "recent_rate": 6.67,
-   "baseline_rate": 5.6,
+   "recent": 12,
+   "baseline": 64,
+   "baseline_days": 11,
+   "recent_rate": 4.0,
+   "baseline_rate": 5.82,
    "last_active": "2026-11-22",
    "total": 76,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -448,20 +447,20 @@ export const TEMPORAL = {
     0,
     8,
     9,
-    3
+    3,
+    0
    ]
   },
   {
    "id": "root",
-   "recent": 11,
-   "baseline": 59,
-   "baseline_days": 10,
-   "recent_rate": 3.67,
-   "baseline_rate": 5.9,
-   "last_active": "2026-11-22",
-   "total": 70,
+   "recent": 7,
+   "baseline": 64,
+   "baseline_days": 11,
+   "recent_rate": 2.33,
+   "baseline_rate": 5.82,
+   "last_active": "2026-11-23",
+   "total": 71,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -488,20 +487,20 @@ export const TEMPORAL = {
     2,
     5,
     5,
+    1,
     1
    ]
   },
   {
    "id": "dashboard",
-   "recent": 14,
-   "baseline": 42,
-   "baseline_days": 10,
-   "recent_rate": 4.67,
-   "baseline_rate": 4.2,
-   "last_active": "2026-11-22",
-   "total": 56,
+   "recent": 10,
+   "baseline": 47,
+   "baseline_days": 11,
+   "recent_rate": 3.33,
+   "baseline_rate": 4.27,
+   "last_active": "2026-11-23",
+   "total": 57,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -528,20 +527,20 @@ export const TEMPORAL = {
     0,
     5,
     8,
+    1,
     1
    ]
   },
   {
    "id": "business",
-   "recent": 3,
-   "baseline": 37,
-   "baseline_days": 10,
-   "recent_rate": 1.0,
-   "baseline_rate": 3.7,
+   "recent": 1,
+   "baseline": 39,
+   "baseline_days": 11,
+   "recent_rate": 0.33,
+   "baseline_rate": 3.55,
    "last_active": "2026-11-21",
    "total": 40,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -568,6 +567,7 @@ export const TEMPORAL = {
     0,
     2,
     1,
+    0,
     0
    ]
   }
@@ -599,8 +599,8 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -665,8 +665,8 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -731,8 +731,8 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -761,8 +761,8 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -797,8 +797,8 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -863,8 +863,8 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -929,8 +929,8 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -995,8 +995,8 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -1025,8 +1025,8 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -1061,8 +1061,8 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -1127,8 +1127,8 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -1157,8 +1157,8 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -1193,8 +1193,8 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -1259,8 +1259,8 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -1325,8 +1325,8 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -1391,8 +1391,8 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -1421,8 +1421,8 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -1457,8 +1457,8 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -1487,8 +1487,8 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -1523,8 +1523,8 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -1553,8 +1553,8 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -1589,8 +1589,8 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -1619,8 +1619,8 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -1655,8 +1655,8 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -1685,8 +1685,8 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -1721,8 +1721,8 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -1751,8 +1751,8 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -1787,8 +1787,8 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -1817,8 +1817,8 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -1853,8 +1853,8 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -1919,8 +1919,8 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -1985,8 +1985,8 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -2051,8 +2051,8 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -2117,8 +2117,8 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -2159,10 +2159,9 @@ export const TEMPORAL = {
   },
   {
    "id": "ledger:clocks:all",
-   "events": 222,
-   "fails": 193,
+   "events": 277,
+   "fails": 248,
    "spark": [
-    0,
     0,
     0,
     0,
@@ -2189,10 +2188,10 @@ export const TEMPORAL = {
     1,
     4,
     34,
-    119
+    119,
+    80
    ],
    "fail_spark": [
-    0,
     0,
     0,
     0,
@@ -2219,9 +2218,10 @@ export const TEMPORAL = {
     0,
     0,
     13,
-    119
+    119,
+    80
    ],
-   "last": "2026-11-23"
+   "last": "2026-11-24"
   },
   {
    "id": "ledger:deploys:ultrastable-agents",
@@ -2249,13 +2249,13 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     28,
     94,
     3,
     10,
     27,
-    6
+    6,
+    2
    ],
    "fail_spark": [
     0,
@@ -2311,7 +2311,6 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     8,
     0,
     8,
@@ -2321,7 +2320,8 @@ export const TEMPORAL = {
     3,
     10,
     27,
-    6
+    6,
+    2
    ],
    "fail_spark": [
     0,
@@ -2385,9 +2385,9 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     2,
-    10
+    10,
+    2
    ],
    "fail_spark": [
     0,
@@ -2415,8 +2415,8 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     2,
+    0,
     0
    ],
    "last": "2026-11-23"
@@ -2447,13 +2447,13 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     28,
     94,
     3,
     10,
     27,
-    6
+    6,
+    2
    ],
    "fail_spark": [
     0,
@@ -2513,13 +2513,13 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     26,
     94,
     3,
     10,
     27,
-    6
+    6,
+    2
    ],
    "fail_spark": [
     0,
@@ -2575,7 +2575,6 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     8,
     0,
     8,
@@ -2585,7 +2584,8 @@ export const TEMPORAL = {
     3,
     10,
     27,
-    6
+    6,
+    2
    ],
    "fail_spark": [
     0,
@@ -2649,9 +2649,9 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     8,
-    10
+    10,
+    2
    ],
    "fail_spark": [
     0,
@@ -2706,8 +2706,8 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -2780,9 +2780,9 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     8,
     12,
+    0,
     0
    ],
    "fail_spark": [
@@ -2810,16 +2810,16 @@ export const TEMPORAL = {
     0,
     0,
     0,
-    0,
     5,
     3,
+    0,
     0
    ],
    "last": "2026-11-21"
   }
  ],
  "entries": {
-  "open-items": 1
+  "open-items": 5
  },
  "findings": [
   {
@@ -2829,14 +2829,14 @@ export const TEMPORAL = {
    "area": "docs",
    "advocate": "project-manager",
    "severity": "act",
-   "evidence": "decay: 4 commits in 3 days after 100 in the 10 days before (10.0 a day)",
-   "prediction": "area docs gets at least 15 commits in 3 days within 7 days",
+   "evidence": "decay: 2 commits in 3 days after 102 in the 11 days before (9.3 a day)",
+   "prediction": "area docs gets at least 14 commits in 3 days within 7 days",
    "files": [],
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-23T18:00:44Z",
-   "runs": 5,
+   "last_seen": "2026-11-24T17:38:51Z",
+   "runs": 6,
    "item": "Q-TEMPORAL-69713c50e8",
    "reopened": 0
   },
@@ -2847,7 +2847,7 @@ export const TEMPORAL = {
    "area": "foundation",
    "advocate": "operations",
    "severity": "act",
-   "evidence": "pr-outcome: 1 failures in a row, 8 in the last 3 days against 0 in the 10 before",
+   "evidence": "pr-outcome: 1 failures in a row, 3 in the last 3 days against 5 in the 11 before",
    "prediction": "ledger:executor:pr-outcome has no failure in its next 3 events within 7 days",
    "files": [
     "foundation/executor.py"
@@ -2855,8 +2855,8 @@ export const TEMPORAL = {
    "last_good": "96e38e8c0ab1",
    "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-23T18:00:44Z",
-   "runs": 5,
+   "last_seen": "2026-11-24T17:38:51Z",
+   "runs": 6,
    "item": "Q-TEMPORAL-e5ddf8e610",
    "reopened": 0
   },
@@ -2867,7 +2867,7 @@ export const TEMPORAL = {
    "area": "foundation",
    "advocate": "operations",
    "severity": "act",
-   "evidence": "all: 183 failures in a row, 132 in the last 3 days against 10 in the 10 before",
+   "evidence": "all: 238 failures in a row, 212 in the last 3 days against 10 in the 11 before",
    "prediction": "ledger:clocks:all has no failure in its next 3 events within 7 days",
    "files": [
     "foundation/clock.py"
@@ -2875,8 +2875,8 @@ export const TEMPORAL = {
    "last_good": "add800e814fc",
    "status": "open",
    "first_seen": "2026-11-22T14:31:06Z",
-   "last_seen": "2026-11-23T18:00:44Z",
-   "runs": 2,
+   "last_seen": "2026-11-24T17:38:51Z",
+   "runs": 3,
    "item": "Q-TEMPORAL-67d6a95a40",
    "reopened": 0
   },
@@ -2887,7 +2887,7 @@ export const TEMPORAL = {
    "area": "foundation",
    "advocate": "operations",
    "severity": "act",
-   "evidence": "pr-outcome: last event 43 h ago, it used to arrive every 1.6 h (27.7 intervals)",
+   "evidence": "pr-outcome: last event 67 h ago, it used to arrive every 1.6 h (42.8 intervals)",
    "prediction": "ledger:executor:pr-outcome records an event within 7 days",
    "files": [
     "foundation/executor.py"
@@ -2895,8 +2895,8 @@ export const TEMPORAL = {
    "last_good": "61808a25d06d",
    "status": "open",
    "first_seen": "2026-11-22T14:31:06Z",
-   "last_seen": "2026-11-23T18:00:44Z",
-   "runs": 2,
+   "last_seen": "2026-11-24T17:38:51Z",
+   "runs": 3,
    "item": "Q-TEMPORAL-4f9b20023a",
    "reopened": 0
   },
@@ -2907,7 +2907,7 @@ export const TEMPORAL = {
    "area": "workflows",
    "advocate": "infrastructure-manager",
    "severity": "act",
-   "evidence": "ultrastable-agents: last event 8 h ago, it used to arrive every 1.0 h (7.7 intervals)",
+   "evidence": "ultrastable-agents: last event 31 h ago, it used to arrive every 1.0 h (31.4 intervals)",
    "prediction": "ledger:deploys:ultrastable-agents records an event within 7 days",
    "files": [
     "deploy/deploy-workers.mjs"
@@ -2915,8 +2915,8 @@ export const TEMPORAL = {
    "last_good": "f3f4a67ff158",
    "status": "open",
    "first_seen": "2026-11-23T18:00:44Z",
-   "last_seen": "2026-11-23T18:00:44Z",
-   "runs": 1,
+   "last_seen": "2026-11-24T17:38:51Z",
+   "runs": 2,
    "item": "Q-TEMPORAL-bfbb87dc25",
    "reopened": 0
   },
@@ -2927,7 +2927,7 @@ export const TEMPORAL = {
    "area": "workflows",
    "advocate": "infrastructure-manager",
    "severity": "act",
-   "evidence": "ultrastable-dashboard: last event 8 h ago, it used to arrive every 1.0 h (7.7 intervals)",
+   "evidence": "ultrastable-dashboard: last event 31 h ago, it used to arrive every 1.0 h (31.4 intervals)",
    "prediction": "ledger:deploys:ultrastable-dashboard records an event within 7 days",
    "files": [
     "deploy/deploy-workers.mjs"
@@ -2935,8 +2935,8 @@ export const TEMPORAL = {
    "last_good": "f3f4a67ff158",
    "status": "open",
    "first_seen": "2026-11-23T18:00:44Z",
-   "last_seen": "2026-11-23T18:00:44Z",
-   "runs": 1,
+   "last_seen": "2026-11-24T17:38:51Z",
+   "runs": 2,
    "item": "Q-TEMPORAL-381e97ef1d",
    "reopened": 0
   },
@@ -2947,7 +2947,7 @@ export const TEMPORAL = {
    "area": "workflows",
    "advocate": "infrastructure-manager",
    "severity": "act",
-   "evidence": "ultrastable-seed-second-tenant: last event 8 h ago, it used to arrive every 1.0 h (7.7 intervals)",
+   "evidence": "ultrastable-seed-second-tenant: last event 31 h ago, it used to arrive every 1.0 h (31.4 intervals)",
    "prediction": "ledger:deploys:ultrastable-seed-second-tenant records an event within 7 days",
    "files": [
     "deploy/deploy-workers.mjs"
@@ -2955,8 +2955,8 @@ export const TEMPORAL = {
    "last_good": "f3f4a67ff158",
    "status": "open",
    "first_seen": "2026-11-23T18:00:44Z",
-   "last_seen": "2026-11-23T18:00:44Z",
-   "runs": 1,
+   "last_seen": "2026-11-24T17:38:51Z",
+   "runs": 2,
    "item": "Q-TEMPORAL-458cb625ba",
    "reopened": 0
   },
@@ -2967,7 +2967,7 @@ export const TEMPORAL = {
    "area": "workflows",
    "advocate": "infrastructure-manager",
    "severity": "act",
-   "evidence": "ultrastable-site: last event 8 h ago, it used to arrive every 1.0 h (7.7 intervals)",
+   "evidence": "ultrastable-site: last event 31 h ago, it used to arrive every 1.0 h (31.4 intervals)",
    "prediction": "ledger:deploys:ultrastable-site records an event within 7 days",
    "files": [
     "deploy/deploy-workers.mjs"
@@ -2975,8 +2975,8 @@ export const TEMPORAL = {
    "last_good": "f3f4a67ff158",
    "status": "open",
    "first_seen": "2026-11-23T18:00:44Z",
-   "last_seen": "2026-11-23T18:00:44Z",
-   "runs": 1,
+   "last_seen": "2026-11-24T17:38:51Z",
+   "runs": 2,
    "item": null,
    "reopened": 0
   },
@@ -2987,7 +2987,7 @@ export const TEMPORAL = {
    "area": "workflows",
    "advocate": "infrastructure-manager",
    "severity": "act",
-   "evidence": "ultrastable-tenants: last event 8 h ago, it used to arrive every 1.0 h (7.7 intervals)",
+   "evidence": "ultrastable-tenants: last event 31 h ago, it used to arrive every 1.0 h (31.4 intervals)",
    "prediction": "ledger:deploys:ultrastable-tenants records an event within 7 days",
    "files": [
     "deploy/deploy-workers.mjs"
@@ -2995,8 +2995,8 @@ export const TEMPORAL = {
    "last_good": "f3f4a67ff158",
    "status": "open",
    "first_seen": "2026-11-23T18:00:44Z",
-   "last_seen": "2026-11-23T18:00:44Z",
-   "runs": 1,
+   "last_seen": "2026-11-24T17:38:51Z",
+   "runs": 2,
    "item": null,
    "reopened": 0
   },
@@ -3007,7 +3007,7 @@ export const TEMPORAL = {
    "area": "workflows",
    "advocate": "infrastructure-manager",
    "severity": "act",
-   "evidence": "ultrastable-tick: last event 8 h ago, it used to arrive every 1.0 h (7.7 intervals)",
+   "evidence": "ultrastable-tick: last event 31 h ago, it used to arrive every 1.0 h (31.4 intervals)",
    "prediction": "ledger:deploys:ultrastable-tick records an event within 7 days",
    "files": [
     "deploy/deploy-workers.mjs"
@@ -3015,8 +3015,8 @@ export const TEMPORAL = {
    "last_good": "f3f4a67ff158",
    "status": "open",
    "first_seen": "2026-11-23T18:00:44Z",
-   "last_seen": "2026-11-23T18:00:44Z",
-   "runs": 1,
+   "last_seen": "2026-11-24T17:38:51Z",
+   "runs": 2,
    "item": null,
    "reopened": 0
   },
@@ -3027,7 +3027,7 @@ export const TEMPORAL = {
    "area": "workflows",
    "advocate": "infrastructure-manager",
    "severity": "act",
-   "evidence": "ultrastable-unlearn: last event 8 h ago, it used to arrive every 1.0 h (7.7 intervals)",
+   "evidence": "ultrastable-unlearn: last event 31 h ago, it used to arrive every 1.0 h (31.4 intervals)",
    "prediction": "ledger:deploys:ultrastable-unlearn records an event within 7 days",
    "files": [
     "deploy/deploy-workers.mjs"
@@ -3035,7 +3035,43 @@ export const TEMPORAL = {
    "last_good": "f3f4a67ff158",
    "status": "open",
    "first_seen": "2026-11-23T18:00:44Z",
-   "last_seen": "2026-11-23T18:00:44Z",
+   "last_seen": "2026-11-24T17:38:51Z",
+   "runs": 2,
+   "item": null,
+   "reopened": 0
+  },
+  {
+   "id": "94167fdea6",
+   "kind": "neglect",
+   "subject": "area:business",
+   "area": "business",
+   "advocate": "funding-manager",
+   "severity": "act",
+   "evidence": "decay: 1 commits in 3 days after 39 in the 11 days before (3.5 a day)",
+   "prediction": "area business gets at least 5 commits in 3 days within 7 days",
+   "files": [],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-24T17:38:51Z",
+   "last_seen": "2026-11-24T17:38:51Z",
+   "runs": 1,
+   "item": "Q-TEMPORAL-94167fdea6",
+   "reopened": 1
+  },
+  {
+   "id": "43e2427dcb",
+   "kind": "neglect",
+   "subject": "area:platform",
+   "area": "platform",
+   "advocate": "operations",
+   "severity": "act",
+   "evidence": "untouched: 0 commits in 3 days after 32 in the 11 days before (2.9 a day)",
+   "prediction": "area platform gets at least 4 commits in 3 days within 7 days",
+   "files": [],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-24T17:38:51Z",
+   "last_seen": "2026-11-24T17:38:51Z",
    "runs": 1,
    "item": null,
    "reopened": 0
@@ -3047,7 +3083,7 @@ export const TEMPORAL = {
    "area": "site",
    "advocate": "uiux-manager",
    "severity": "watch",
-   "evidence": "site/worker.js edited 30 times in 3 days (outside generated and ledger paths)",
+   "evidence": "site/worker.js edited 14 times in 3 days (outside generated and ledger paths)",
    "prediction": "site/worker.js is edited at most 5 times in 3 days within 7 days",
    "files": [
     "site/worker.js"
@@ -3055,47 +3091,9 @@ export const TEMPORAL = {
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-23T18:00:44Z",
-   "runs": 5,
+   "last_seen": "2026-11-24T17:38:51Z",
+   "runs": 6,
    "item": "Q-TEMPORAL-54854bf10b",
-   "reopened": 0
-  },
-  {
-   "id": "f057071659",
-   "kind": "hotspot",
-   "subject": "area:doctrine",
-   "area": "doctrine",
-   "advocate": "portfolio-manager",
-   "severity": "watch",
-   "evidence": "276 commits in 3 days against a baseline of 20.5 a day (4.5x)",
-   "prediction": "area doctrine recent_rate returns below 3.0x baseline within 7 days",
-   "files": [],
-   "last_good": null,
-   "status": "open",
-   "first_seen": "2026-11-22T14:31:06Z",
-   "last_seen": "2026-11-23T18:00:44Z",
-   "runs": 2,
-   "item": null,
-   "reopened": 0
-  },
-  {
-   "id": "bac71f01a8",
-   "kind": "hotspot",
-   "subject": "file:.github/workflows/checks.yml",
-   "area": "workflows",
-   "advocate": "infrastructure-manager",
-   "severity": "watch",
-   "evidence": ".github/workflows/checks.yml edited 20 times in 3 days (outside generated and ledger paths)",
-   "prediction": ".github/workflows/checks.yml is edited at most 5 times in 3 days within 7 days",
-   "files": [
-    ".github/workflows/checks.yml"
-   ],
-   "last_good": null,
-   "status": "open",
-   "first_seen": "2026-11-22T14:31:06Z",
-   "last_seen": "2026-11-23T18:00:44Z",
-   "runs": 2,
-   "item": null,
    "reopened": 0
   },
   {
@@ -3105,7 +3103,7 @@ export const TEMPORAL = {
    "area": "agents",
    "advocate": "org-designer",
    "severity": "watch",
-   "evidence": "agents/AGENTS.md edited 20 times in 3 days (outside generated and ledger paths)",
+   "evidence": "agents/AGENTS.md edited 16 times in 3 days (outside generated and ledger paths)",
    "prediction": "agents/AGENTS.md is edited at most 5 times in 3 days within 7 days",
    "files": [
     "agents/AGENTS.md"
@@ -3113,9 +3111,9 @@ export const TEMPORAL = {
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-22T14:31:06Z",
-   "last_seen": "2026-11-23T18:00:44Z",
-   "runs": 2,
-   "item": null,
+   "last_seen": "2026-11-24T17:38:51Z",
+   "runs": 3,
+   "item": "Q-TEMPORAL-d01db32c1b",
    "reopened": 0
   },
   {
@@ -3125,7 +3123,7 @@ export const TEMPORAL = {
    "area": "doctrine",
    "advocate": "portfolio-manager",
    "severity": "watch",
-   "evidence": "doctrine/flows.json edited 19 times in 3 days (outside generated and ledger paths)",
+   "evidence": "doctrine/flows.json edited 16 times in 3 days (outside generated and ledger paths)",
    "prediction": "doctrine/flows.json is edited at most 5 times in 3 days within 7 days",
    "files": [
     "doctrine/flows.json"
@@ -3133,9 +3131,9 @@ export const TEMPORAL = {
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-22T14:31:06Z",
-   "last_seen": "2026-11-23T18:00:44Z",
-   "runs": 2,
-   "item": null,
+   "last_seen": "2026-11-24T17:38:51Z",
+   "runs": 3,
+   "item": "Q-TEMPORAL-b5792f9a73",
    "reopened": 0
   },
   {
@@ -3145,7 +3143,7 @@ export const TEMPORAL = {
    "area": "foundation",
    "advocate": "operations",
    "severity": "watch",
-   "evidence": "foundation/__main__.py edited 32 times in 3 days (outside generated and ledger paths)",
+   "evidence": "foundation/__main__.py edited 21 times in 3 days (outside generated and ledger paths)",
    "prediction": "foundation/__main__.py is edited at most 5 times in 3 days within 7 days",
    "files": [
     "foundation/__main__.py"
@@ -3153,9 +3151,9 @@ export const TEMPORAL = {
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-22T14:31:06Z",
-   "last_seen": "2026-11-23T18:00:44Z",
-   "runs": 2,
-   "item": null,
+   "last_seen": "2026-11-24T17:38:51Z",
+   "runs": 3,
+   "item": "Q-TEMPORAL-e32a734d41",
    "reopened": 0
   },
   {
@@ -3165,14 +3163,14 @@ export const TEMPORAL = {
    "area": "site",
    "advocate": "uiux-manager",
    "severity": "watch",
-   "evidence": "171 commits in 3 days against a baseline of 12.6 a day (4.5x)",
+   "evidence": "233 commits in 3 days against a baseline of 13.5 a day (5.8x)",
    "prediction": "area site recent_rate returns below 3.0x baseline within 7 days",
    "files": [],
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-23T18:00:44Z",
-   "last_seen": "2026-11-23T18:00:44Z",
-   "runs": 1,
+   "last_seen": "2026-11-24T17:38:51Z",
+   "runs": 2,
    "item": null,
    "reopened": 0
   },
@@ -3183,7 +3181,7 @@ export const TEMPORAL = {
    "area": "site",
    "advocate": "uiux-manager",
    "severity": "watch",
-   "evidence": "site/saydo-data.js edited 113 times in 3 days (outside generated and ledger paths)",
+   "evidence": "site/saydo-data.js edited 193 times in 3 days (outside generated and ledger paths)",
    "prediction": "site/saydo-data.js is edited at most 5 times in 3 days within 7 days",
    "files": [
     "site/saydo-data.js"
@@ -3191,7 +3189,27 @@ export const TEMPORAL = {
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-23T18:00:44Z",
-   "last_seen": "2026-11-23T18:00:44Z",
+   "last_seen": "2026-11-24T17:38:51Z",
+   "runs": 2,
+   "item": null,
+   "reopened": 0
+  },
+  {
+   "id": "99ee9c3bfb",
+   "kind": "hotspot",
+   "subject": "file:doctrine/claim-code.json",
+   "area": "doctrine",
+   "advocate": "portfolio-manager",
+   "severity": "watch",
+   "evidence": "doctrine/claim-code.json edited 14 times in 3 days (outside generated and ledger paths)",
+   "prediction": "doctrine/claim-code.json is edited at most 5 times in 3 days within 7 days",
+   "files": [
+    "doctrine/claim-code.json"
+   ],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-24T17:38:51Z",
+   "last_seen": "2026-11-24T17:38:51Z",
    "runs": 1,
    "item": null,
    "reopened": 0
@@ -3261,15 +3279,32 @@ export const TEMPORAL = {
    "first_seen": "2026-11-22T14:31:06Z",
    "settled_at": "2026-11-23T18:00:44Z",
    "runs": 1
+  },
+  {
+   "id": "f057071659",
+   "kind": "hotspot",
+   "subject": "area:doctrine",
+   "first_seen": "2026-11-22T14:31:06Z",
+   "settled_at": "2026-11-24T17:38:51Z",
+   "runs": 2
+  },
+  {
+   "id": "bac71f01a8",
+   "kind": "hotspot",
+   "subject": "file:.github/workflows/checks.yml",
+   "first_seen": "2026-11-22T14:31:06Z",
+   "settled_at": "2026-11-24T17:38:51Z",
+   "runs": 2
   }
  ],
  "filed": [
-  "Q-TEMPORAL-bfbb87dc25",
-  "Q-TEMPORAL-381e97ef1d",
-  "Q-TEMPORAL-458cb625ba"
+  "Q-TEMPORAL-d01db32c1b",
+  "Q-TEMPORAL-b5792f9a73",
+  "Q-TEMPORAL-e32a734d41"
  ],
  "attention": {
-  "portfolio-manager": 0.75,
+  "funding-manager": 1.25,
+  "operations": 1.25,
   "project-manager": 1.25,
   "uiux-manager": 0.75
  },
@@ -3303,13 +3338,23 @@ export const TEMPORAL = {
    "stale_entry": 0,
    "stopped_loop": 8,
    "repeated_failure": 2
+  },
+  {
+   "day": "2026-11-24",
+   "open": 20,
+   "settled": 10,
+   "hotspot": 7,
+   "neglect": 3,
+   "stale_entry": 0,
+   "stopped_loop": 8,
+   "repeated_failure": 2
   }
  ],
  "simulation": null,
  "tenants": [
   {
    "tenant": "practical-solutions",
-   "at": "2026-11-23T18:00:39Z",
+   "at": "2026-11-24T17:38:47Z",
    "history_from": "2026-11-13",
    "window": {
     "recent_days": 3,
@@ -3319,15 +3364,14 @@ export const TEMPORAL = {
    "areas": [
     {
      "id": "worker",
-     "recent": 59,
-     "baseline": 89,
-     "baseline_days": 7,
-     "recent_rate": 19.67,
-     "baseline_rate": 12.71,
-     "last_active": "2026-11-23",
-     "total": 154,
+     "recent": 40,
+     "baseline": 117,
+     "baseline_days": 8,
+     "recent_rate": 13.33,
+     "baseline_rate": 14.62,
+     "last_active": "2026-11-24",
+     "total": 163,
      "spark": [
-      0,
       0,
       0,
       0,
@@ -3354,20 +3398,20 @@ export const TEMPORAL = {
       13,
       28,
       16,
-      15
+      15,
+      9
      ]
     },
     {
      "id": "tools",
-     "recent": 48,
-     "baseline": 90,
-     "baseline_days": 7,
-     "recent_rate": 16.0,
-     "baseline_rate": 12.86,
+     "recent": 19,
+     "baseline": 119,
+     "baseline_days": 8,
+     "recent_rate": 6.33,
+     "baseline_rate": 14.88,
      "last_active": "2026-11-22",
      "total": 138,
      "spark": [
-      0,
       0,
       0,
       0,
@@ -3394,20 +3438,20 @@ export const TEMPORAL = {
       6,
       29,
       9,
-      10
+      10,
+      0
      ]
     },
     {
      "id": "ledger",
-     "recent": 39,
-     "baseline": 38,
-     "baseline_days": 7,
-     "recent_rate": 13.0,
-     "baseline_rate": 5.43,
-     "last_active": "2026-11-23",
-     "total": 83,
+     "recent": 31,
+     "baseline": 55,
+     "baseline_days": 8,
+     "recent_rate": 10.33,
+     "baseline_rate": 6.88,
+     "last_active": "2026-11-24",
+     "total": 93,
      "spark": [
-      0,
       0,
       0,
       0,
@@ -3434,20 +3478,20 @@ export const TEMPORAL = {
       15,
       17,
       10,
-      12
+      12,
+      9
      ]
     },
     {
      "id": "workflows",
-     "recent": 25,
-     "baseline": 46,
-     "baseline_days": 7,
-     "recent_rate": 8.33,
-     "baseline_rate": 6.57,
+     "recent": 11,
+     "baseline": 60,
+     "baseline_days": 8,
+     "recent_rate": 3.67,
+     "baseline_rate": 7.5,
      "last_active": "2026-11-22",
      "total": 71,
      "spark": [
-      0,
       0,
       0,
       0,
@@ -3474,20 +3518,20 @@ export const TEMPORAL = {
       1,
       14,
       7,
-      4
+      4,
+      0
      ]
     },
     {
      "id": "ux",
-     "recent": 18,
-     "baseline": 38,
-     "baseline_days": 7,
-     "recent_rate": 6.0,
-     "baseline_rate": 5.43,
+     "recent": 6,
+     "baseline": 50,
+     "baseline_days": 8,
+     "recent_rate": 2.0,
+     "baseline_rate": 6.25,
      "last_active": "2026-11-22",
      "total": 56,
      "spark": [
-      0,
       0,
       0,
       0,
@@ -3514,20 +3558,20 @@ export const TEMPORAL = {
       1,
       12,
       5,
-      1
+      1,
+      0
      ]
     },
     {
      "id": "root",
-     "recent": 17,
-     "baseline": 16,
-     "baseline_days": 7,
-     "recent_rate": 5.67,
-     "baseline_rate": 2.29,
+     "recent": 9,
+     "baseline": 24,
+     "baseline_days": 8,
+     "recent_rate": 3.0,
+     "baseline_rate": 3.0,
      "last_active": "2026-11-22",
      "total": 33,
      "spark": [
-      0,
       0,
       0,
       0,
@@ -3554,20 +3598,20 @@ export const TEMPORAL = {
       1,
       8,
       5,
-      4
+      4,
+      0
      ]
     },
     {
      "id": "data",
      "recent": 3,
-     "baseline": 9,
-     "baseline_days": 7,
+     "baseline": 10,
+     "baseline_days": 8,
      "recent_rate": 1.0,
-     "baseline_rate": 1.29,
-     "last_active": "2026-11-23",
-     "total": 13,
+     "baseline_rate": 1.25,
+     "last_active": "2026-11-24",
+     "total": 14,
      "spark": [
-      0,
       0,
       0,
       0,
@@ -3594,20 +3638,20 @@ export const TEMPORAL = {
       1,
       1,
       1,
+      1,
       1
      ]
     },
     {
      "id": "org",
-     "recent": 6,
-     "baseline": 6,
-     "baseline_days": 7,
-     "recent_rate": 2.0,
-     "baseline_rate": 0.86,
+     "recent": 1,
+     "baseline": 11,
+     "baseline_days": 8,
+     "recent_rate": 0.33,
+     "baseline_rate": 1.38,
      "last_active": "2026-11-21",
      "total": 12,
      "spark": [
-      0,
       0,
       0,
       0,
@@ -3634,6 +3678,7 @@ export const TEMPORAL = {
       1,
       5,
       1,
+      0,
       0
      ]
     },
@@ -3641,13 +3686,12 @@ export const TEMPORAL = {
      "id": "platform",
      "recent": 0,
      "baseline": 2,
-     "baseline_days": 7,
+     "baseline_days": 8,
      "recent_rate": 0.0,
-     "baseline_rate": 0.29,
+     "baseline_rate": 0.25,
      "last_active": "2026-11-16",
      "total": 2,
      "spark": [
-      0,
       0,
       0,
       0,
@@ -3674,6 +3718,7 @@ export const TEMPORAL = {
       0,
       0,
       0,
+      0,
       0
      ]
     },
@@ -3681,7 +3726,7 @@ export const TEMPORAL = {
      "id": "doctrine",
      "recent": 1,
      "baseline": 0,
-     "baseline_days": 7,
+     "baseline_days": 8,
      "recent_rate": 0.33,
      "baseline_rate": 0.0,
      "last_active": "2026-11-21",
@@ -3712,8 +3757,8 @@ export const TEMPORAL = {
       0,
       0,
       0,
-      0,
       1,
+      0,
       0
      ]
     },
@@ -3721,9 +3766,9 @@ export const TEMPORAL = {
      "id": "reference",
      "recent": 0,
      "baseline": 1,
-     "baseline_days": 7,
+     "baseline_days": 8,
      "recent_rate": 0.0,
-     "baseline_rate": 0.14,
+     "baseline_rate": 0.12,
      "last_active": "2026-11-13",
      "total": 1,
      "spark": [
@@ -3744,8 +3789,8 @@ export const TEMPORAL = {
       0,
       0,
       0,
-      0,
       1,
+      0,
       0,
       0,
       0,
@@ -3761,10 +3806,9 @@ export const TEMPORAL = {
    "ledgers": [
     {
      "id": "ledger:cycles:all",
-     "events": 18,
+     "events": 19,
      "fails": 0,
      "spark": [
-      0,
       0,
       0,
       0,
@@ -3791,7 +3835,74 @@ export const TEMPORAL = {
       1,
       1,
       1,
+      0,
+      1
+     ],
+     "fail_spark": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
       0
+     ],
+     "last": "2026-11-24"
+    },
+    {
+     "id": "ledger:releases:all",
+     "events": 7,
+     "fails": 0,
+     "spark": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      1,
+      1,
+      1,
+      1,
+      1
      ],
      "fail_spark": [
       0,
@@ -3824,160 +3935,13 @@ export const TEMPORAL = {
       0
      ],
      "last": "2026-11-23"
-    },
-    {
-     "id": "ledger:releases:all",
-     "events": 6,
-     "fails": 0,
-     "spark": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      2,
-      1,
-      1,
-      1,
-      1
-     ],
-     "fail_spark": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "last": "2026-11-22"
     }
    ],
    "entries": {
     "briefs": 4,
     "candidate-problems": 1
    },
-   "findings": [
-    {
-     "id": "73e9f6599f",
-     "kind": "hotspot",
-     "subject": "file:upstream.json",
-     "area": "root",
-     "advocate": "product-manager",
-     "severity": "watch",
-     "evidence": "upstream.json edited 16 times in 3 days (outside generated and ledger paths)",
-     "prediction": "upstream.json is edited at most 5 times in 3 days within 7 days",
-     "files": [
-      "upstream.json"
-     ],
-     "last_good": null,
-     "status": "open",
-     "first_seen": "2026-11-21T11:56:24Z",
-     "last_seen": "2026-11-23T18:00:39Z",
-     "runs": 4,
-     "item": "Q-TEMPORAL-73e9f6599f",
-     "reopened": 0
-    },
-    {
-     "id": "5f09f22b3f",
-     "kind": "hotspot",
-     "subject": "file:worker/src/pages.js",
-     "area": "worker",
-     "advocate": "operations",
-     "severity": "watch",
-     "evidence": "worker/src/pages.js edited 15 times in 3 days (outside generated and ledger paths)",
-     "prediction": "worker/src/pages.js is edited at most 5 times in 3 days within 7 days",
-     "files": [
-      "worker/src/pages.js"
-     ],
-     "last_good": null,
-     "status": "open",
-     "first_seen": "2026-11-21T11:56:24Z",
-     "last_seen": "2026-11-23T18:00:39Z",
-     "runs": 4,
-     "item": "Q-TEMPORAL-5f09f22b3f",
-     "reopened": 0
-    },
-    {
-     "id": "2822daa6f2",
-     "kind": "hotspot",
-     "subject": "file:worker/src/site.js",
-     "area": "worker",
-     "advocate": "operations",
-     "severity": "watch",
-     "evidence": "worker/src/site.js edited 15 times in 3 days (outside generated and ledger paths)",
-     "prediction": "worker/src/site.js is edited at most 5 times in 3 days within 7 days",
-     "files": [
-      "worker/src/site.js"
-     ],
-     "last_good": null,
-     "status": "open",
-     "first_seen": "2026-11-21T11:56:24Z",
-     "last_seen": "2026-11-23T18:00:39Z",
-     "runs": 4,
-     "item": "Q-TEMPORAL-2822daa6f2",
-     "reopened": 0
-    },
-    {
-     "id": "babd96078f",
-     "kind": "hotspot",
-     "subject": "file:ux/stories.js",
-     "area": "ux",
-     "advocate": "uiux-manager",
-     "severity": "watch",
-     "evidence": "ux/stories.js edited 11 times in 3 days (outside generated and ledger paths)",
-     "prediction": "ux/stories.js is edited at most 5 times in 3 days within 7 days",
-     "files": [
-      "ux/stories.js"
-     ],
-     "last_good": null,
-     "status": "open",
-     "first_seen": "2026-11-23T18:00:39Z",
-     "last_seen": "2026-11-23T18:00:39Z",
-     "runs": 1,
-     "item": null,
-     "reopened": 0
-    }
-   ],
+   "findings": [],
    "settled": [
     {
      "id": "efc9062f94",
@@ -4010,6 +3974,38 @@ export const TEMPORAL = {
      "first_seen": "2026-11-21T11:56:24Z",
      "settled_at": "2026-11-23T18:00:39Z",
      "runs": 3
+    },
+    {
+     "id": "73e9f6599f",
+     "kind": "hotspot",
+     "subject": "file:upstream.json",
+     "first_seen": "2026-11-21T11:56:24Z",
+     "settled_at": "2026-11-24T17:38:47Z",
+     "runs": 4
+    },
+    {
+     "id": "5f09f22b3f",
+     "kind": "hotspot",
+     "subject": "file:worker/src/pages.js",
+     "first_seen": "2026-11-21T11:56:24Z",
+     "settled_at": "2026-11-24T17:38:47Z",
+     "runs": 4
+    },
+    {
+     "id": "2822daa6f2",
+     "kind": "hotspot",
+     "subject": "file:worker/src/site.js",
+     "first_seen": "2026-11-21T11:56:24Z",
+     "settled_at": "2026-11-24T17:38:47Z",
+     "runs": 4
+    },
+    {
+     "id": "babd96078f",
+     "kind": "hotspot",
+     "subject": "file:ux/stories.js",
+     "first_seen": "2026-11-23T18:00:39Z",
+     "settled_at": "2026-11-24T17:38:47Z",
+     "runs": 1
     }
    ],
    "history": [
@@ -4038,6 +4034,16 @@ export const TEMPORAL = {
      "open": 4,
      "settled": 4,
      "hotspot": 4,
+     "neglect": 0,
+     "stale_entry": 0,
+     "stopped_loop": 0,
+     "repeated_failure": 0
+    },
+    {
+     "day": "2026-11-24",
+     "open": 0,
+     "settled": 8,
+     "hotspot": 0,
      "neglect": 0,
      "stale_entry": 0,
      "stopped_loop": 0,

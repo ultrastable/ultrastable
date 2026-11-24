@@ -74,12 +74,13 @@
     "upstream.json"
    ],
    "last_good": null,
-   "status": "open",
+   "status": "settled",
    "first_seen": "2026-11-21T11:56:24Z",
    "last_seen": "2026-11-23T18:00:39Z",
    "runs": 4,
    "item": "Q-TEMPORAL-73e9f6599f",
-   "reopened": 0
+   "reopened": 0,
+   "settled_at": "2026-11-24T17:38:47Z"
   },
   "5f09f22b3f": {
    "id": "5f09f22b3f",
@@ -94,12 +95,13 @@
     "worker/src/pages.js"
    ],
    "last_good": null,
-   "status": "open",
+   "status": "settled",
    "first_seen": "2026-11-21T11:56:24Z",
    "last_seen": "2026-11-23T18:00:39Z",
    "runs": 4,
    "item": "Q-TEMPORAL-5f09f22b3f",
-   "reopened": 0
+   "reopened": 0,
+   "settled_at": "2026-11-24T17:38:47Z"
   },
   "2822daa6f2": {
    "id": "2822daa6f2",
@@ -114,12 +116,13 @@
     "worker/src/site.js"
    ],
    "last_good": null,
-   "status": "open",
+   "status": "settled",
    "first_seen": "2026-11-21T11:56:24Z",
    "last_seen": "2026-11-23T18:00:39Z",
    "runs": 4,
    "item": "Q-TEMPORAL-2822daa6f2",
-   "reopened": 0
+   "reopened": 0,
+   "settled_at": "2026-11-24T17:38:47Z"
   },
   "4d73e107a5": {
    "id": "4d73e107a5",
@@ -155,12 +158,13 @@
     "ux/stories.js"
    ],
    "last_good": null,
-   "status": "open",
+   "status": "settled",
    "first_seen": "2026-11-23T18:00:39Z",
    "last_seen": "2026-11-23T18:00:39Z",
    "runs": 1,
    "item": null,
-   "reopened": 0
+   "reopened": 0,
+   "settled_at": "2026-11-24T17:38:47Z"
   }
  },
  "settled": [
@@ -195,6 +199,38 @@
    "first_seen": "2026-11-21T11:56:24Z",
    "settled_at": "2026-11-23T18:00:39Z",
    "runs": 3
+  },
+  {
+   "id": "73e9f6599f",
+   "kind": "hotspot",
+   "subject": "file:upstream.json",
+   "first_seen": "2026-11-21T11:56:24Z",
+   "settled_at": "2026-11-24T17:38:47Z",
+   "runs": 4
+  },
+  {
+   "id": "5f09f22b3f",
+   "kind": "hotspot",
+   "subject": "file:worker/src/pages.js",
+   "first_seen": "2026-11-21T11:56:24Z",
+   "settled_at": "2026-11-24T17:38:47Z",
+   "runs": 4
+  },
+  {
+   "id": "2822daa6f2",
+   "kind": "hotspot",
+   "subject": "file:worker/src/site.js",
+   "first_seen": "2026-11-21T11:56:24Z",
+   "settled_at": "2026-11-24T17:38:47Z",
+   "runs": 4
+  },
+  {
+   "id": "babd96078f",
+   "kind": "hotspot",
+   "subject": "file:ux/stories.js",
+   "first_seen": "2026-11-23T18:00:39Z",
+   "settled_at": "2026-11-24T17:38:47Z",
+   "runs": 1
   }
  ]
 }
