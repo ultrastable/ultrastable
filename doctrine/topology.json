@@ -25,6 +25,13 @@
         "state": "live",
         "what": "Unlearn tenant: explorations, coach notes, move weights, beats (instances/unlearn); created 2026-11-21",
         "key": "unlearn"
+      },
+      {
+        "name": "ultrastable-did-it-work",
+        "id": "a489a33a-9bd2-4f78-a2d1-3b5b6d833d15",
+        "state": "live",
+        "what": "Did It Work? tenant: source checks, beats, anonymous guess counts (instances/did-it-work); created 2026-11-23",
+        "key": "did-it-work"
       }
     ],
     "kv": [
@@ -277,6 +284,25 @@
       },
       "routes": [
         "unlearn.ultrastable.org"
+      ]
+    },
+    {
+      "id": "ultrastable-did-it-work",
+      "state": "live",
+      "role": "Did It Work? tenant app (instances/did-it-work): guess-first policy casebook; daily beat re-checks every cited source and logs it",
+      "main": "instances/did-it-work/worker/index.js",
+      "compatibility_date": "2026-11-12",
+      "crons": [
+        "17 6 * * *"
+      ],
+      "public": true,
+      "bindings": {
+        "d1": {
+          "DB": "ultrastable-did-it-work"
+        }
+      },
+      "routes": [
+        "did-it-work.ultrastable.org"
       ]
     }
   ],
