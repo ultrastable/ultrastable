@@ -1,0 +1,14 @@
+{
+  "id": "Q-AUDIT-seed-autonomous",
+  "title": "Q-AUDIT-seed-autonomous: fm-seed-not-autonomous failing (fail): Read the blocking loops in the seed's /health ignition field. Give the generated seed its own repository and a token scoped to that repository only, bound by deploy/deploy-seed",
+  "body": "**Owner:** operations\n**Trigger:** the daily failure audit files it; the executor takes it in driver order\n**Done check:** cmd:python3 -m foundation failure_audit --probe seed-autonomous\n**Status:** open\n\nFailure mode `fm-seed-not-autonomous` detected by `seed-autonomous`, failing since 2026-11-24T16:27:15Z.\nEvidence: ng, below looping: not ticking: executor (failing), gate (failing), lane (failing), handoffs (failing), issuesync (failing), repo-access (failing), sweeper (failing), deploy-evidence (failing), watchdog-gh (failing), watchdog (stopped), live-changes (failing), substance (failing), redmain (failing)\n\nSignature: 194b5041856d (disposition: fix).\nSuspected root cause: a seed was deployed with a database and a cron only: no source-control credential and no repository of its own, so every loop that reads or writes a repository fails and the seed stays at ticking\nChanged since the last passing commit 3258edffce: `actions-budget.json`, `dashboard/snapshot.json`, `dashboard/temporal-data.js`, `docs/PROJECT-MEMORY.md`, `outreach/STATUS.md`, `outreach/intro-state.json`, `outreach/intro-status.json`, `outreach/log.jsonl`, `outreach/status.json`, `research/papers/ashby-1952.md`, `research/papers/chen-stratton-2026.md`, `research/papers/open-loops-2026.md` (and 10 more)\nRemedy: Read the blocking loops in the seed's /health ignition field. Give the generated seed its own repository and a token scoped to that repository only, bound by deploy/deploy-seed.mjs, then let its loops record beats; never accept /health 200 as autonomy and never lower the stage (SEED-AUTONOMY-1).\nFix the earliest cause, so the detector passes; do not weaken or remove the detector.\n\n**Closing probe:** cmd:python3 -m foundation failure_audit --probe seed-autonomous\n",
+  "labels": [
+    "role:operations",
+    "audit",
+    "fix",
+    "agent-ready",
+    "p1"
+  ],
+  "milestone": "Now",
+  "workstream": "Failure modes"
+}
