@@ -1,7 +1,7 @@
 {
   "id": "Q-ULTRA-value-2",
   "title": "Q-ULTRA-value-2: Verified deploys per unit of cost and human touch (k) out of bounds: restructure: remove what keeps deploys from shipping",
-  "body": "**Owner:** executor\n**Trigger:** essential variable `value` out of bounds (reading 0.0; limits 1.0 to None)\n**Done check:** cmd:python3 -m foundation ultrastability --check\n**Status:** open\n\nULTRASTABILITY-1 second-order step: restructure: remove what keeps deploys from shipping. Below the floor the system ships less than it costs to run, so the work stops compounding.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation ultrastability --tick` reads `value` inside its bounds.\n",
+  "body": "**Owner:** executor\n**Trigger:** essential variable `value` out of bounds (reading 0.0; limits 1.0 to None)\n**Done check:** cmd:python3 -m foundation ultrastability --check\n**Status:** open\n\nULTRASTABILITY-1 second-order step: restructure: remove what keeps deploys from shipping. Below the floor the system ships less than it costs to run, so the work stops compounding.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation ultrastability --tick` reads `value` inside its bounds.\n\n\n**Vacuous:** 2026-11-24T16:11:33Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n",
   "labels": [
     "p0",
     "agent-ready",
