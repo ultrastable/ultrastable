@@ -4,42 +4,42 @@
   "ps_page_views_7d": 62
  },
  "met_runs": {
-  "external_referrals_7d": 0,
+  "external_referrals_7d": 1,
   "social_referrals_7d": 0,
   "search_referrals_7d": 0,
   "feed_hits_7d": 0,
-  "ps_page_views_7d": 0,
+  "ps_page_views_7d": 1,
   "posts_published_7d": 0
  },
  "last": {
   "feed_entries": 40,
-  "at": "2026-11-22T21:04:15.019827+00:00",
+  "at": "2026-11-24T02:13:54.756840+00:00",
   "added": [
    {
-    "id": "ev:ev-auto-3",
-    "arm": "ps"
+    "id": "ev:evd-2026-w48",
+    "arm": "evidence"
    },
    {
-    "id": "ev:ev-thesis-4",
-    "arm": "thesis"
-   },
-   {
-    "id": "ev:pv-c60c45a25bbc",
+    "id": "ev:pv-c8347b76357d",
     "arm": "shipped"
    },
    {
-    "id": "ev:pv-fe7dd8fa2061",
+    "id": "ev:pv-815ca42cf610",
+    "arm": "shipped"
+   },
+   {
+    "id": "ev:pv-0675e0ab23f4",
     "arm": "shipped"
    }
   ],
   "metrics_error": "HTTPError: HTTP Error 403: Forbidden",
   "metrics_route": "site",
   "metrics": {
-   "external_referrals_7d": 77,
+   "external_referrals_7d": 78,
    "social_referrals_7d": 0,
-   "search_referrals_7d": 32,
-   "feed_hits_7d": 0,
-   "ps_page_views_7d": 128,
+   "search_referrals_7d": 33,
+   "feed_hits_7d": 5,
+   "ps_page_views_7d": 142,
    "posts_published_7d": 0,
    "suggestions_7d": null
   },
