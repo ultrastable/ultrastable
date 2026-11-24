@@ -85,7 +85,7 @@
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 28379,
+   "recent7": 28385,
    "series": [
     0,
     0,
@@ -116,12 +116,12 @@
     12277,
     5013,
     2446,
-    92
+    98
    ],
    "share_recent": 0.187,
    "share_trend": 0.081,
-   "slope": 170.8345,
-   "total": 40839
+   "slope": 170.8732,
+   "total": 40845
   },
   {
    "area": "qnfo-platform-thread",
@@ -1026,7 +1026,7 @@
    "total": 2274
   }
  ],
- "at": "2026-11-24T05:14:27Z",
+ "at": "2026-11-24T11:04:48Z",
  "days": 30,
  "files": [
   {
@@ -1084,31 +1084,31 @@
    "why": "doctrine's share of attention moved 22 points between the first and second half of the window"
   },
   {
-   "evidence": "quiet_days 8; system change in the last 7 days 151633",
+   "evidence": "quiet_days 8; system change in the last 7 days 151639",
    "id": "docs/doctrine",
    "kind": "neglected",
    "why": "docs/doctrine had 414 lines of change, then nothing for 8 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 8; system change in the last 7 days 151633",
+   "evidence": "quiet_days 8; system change in the last 7 days 151639",
    "id": "docs/architecture",
    "kind": "neglected",
    "why": "docs/architecture had 192 lines of change, then nothing for 8 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 7; system change in the last 7 days 151633",
+   "evidence": "quiet_days 7; system change in the last 7 days 151639",
    "id": "seed/self",
    "kind": "neglected",
    "why": "seed/self had 151 lines of change, then nothing for 7 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 9; system change in the last 7 days 151633",
+   "evidence": "quiet_days 9; system change in the last 7 days 151639",
    "id": "seed/outreach",
    "kind": "neglected",
    "why": "seed/outreach had 139 lines of change, then nothing for 9 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 11; system change in the last 7 days 151633",
+   "evidence": "quiet_days 11; system change in the last 7 days 151639",
    "id": "docs/runbooks",
    "kind": "neglected",
    "why": "docs/runbooks had 134 lines of change, then nothing for 11 days while the rest of the system moved"
@@ -1206,9 +1206,9 @@
    -10,
    -416,
    -907,
-   -958
+   -970
   ],
-  "closed": 1981,
+  "closed": 1993,
   "opened": 1023
  },
  "loops": [
@@ -1747,7 +1747,7 @@
   {
    "loop": "resilience",
    "quiet_days": 0,
-   "rows": 276,
+   "rows": 277,
    "series": [
     0,
     0,
@@ -1778,14 +1778,14 @@
     37,
     122,
     80,
-    10
+    11
    ],
-   "slope": 1.5106
+   "slope": 1.517
   },
   {
    "loop": "saydo",
    "quiet_days": 0,
-   "rows": 210,
+   "rows": 211,
    "series": [
     0,
     0,
@@ -1816,9 +1816,9 @@
     8,
     112,
     80,
-    10
+    11
    ],
-   "slope": 1.2089
+   "slope": 1.2154
   },
   {
    "loop": "seed-launches",
@@ -1899,7 +1899,7 @@
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 206,
+   "rows": 207,
    "series": [
     0,
     0,
@@ -1930,14 +1930,14 @@
     5,
     112,
     80,
-    9
+    10
    ],
-   "slope": 1.1871
+   "slope": 1.1935
   },
   {
    "loop": "ultrastability",
    "quiet_days": 0,
-   "rows": 10536,
+   "rows": 10577,
    "series": [
     0,
     0,
@@ -1968,9 +1968,9 @@
     1411,
     5004,
     3322,
-    410
+    451
    ],
-   "slope": 59.2521
+   "slope": 59.5166
   },
   {
    "loop": "worker-merge-evidence",
@@ -2013,7 +2013,7 @@
   {
    "loop": "yearsim",
    "quiet_days": 0,
-   "rows": 211,
+   "rows": 212,
    "series": [
     0,
     0,
@@ -2044,9 +2044,9 @@
     9,
     112,
     80,
-    10
+    11
    ],
-   "slope": 1.214
+   "slope": 1.2205
   }
  ],
  "observed": {
