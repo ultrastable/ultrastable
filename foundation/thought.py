@@ -87,7 +87,7 @@ def pieces(paper: dict, study: dict, cfg: dict) -> dict:
         f"What the system's own records show (window of {w['days']} days, {w['merged']} merged changes):\n" + "\n".join(rows),
         f"{score} The paper regenerates itself from the records after every change, limits included.",
         hk["long"].format(ps_what=ps["what"]) + f" {ps['url']}",
-        f"Full paper, method and limits: {url}",
+        f"The full paper, with its method and limits: {url}",
     ])
     out["linkedin"] = long
     return out
@@ -108,6 +108,8 @@ def guard(text: str, channel: str, paper: dict, cfg: dict, study: dict | None = 
     for n in NUM.findall(URL.sub(" ", text)):
         if n not in allowed:
             bad.append(f"number {n} is not in the paper's data")
+    from . import humanvoice  # HUMAN-VOICE-1: a post that reads as AI does not publish
+    bad += ["voice: " + r for r in humanvoice.lint(text)]
     lim = cfg["channels"][channel]["limit"]
     if len(text) > lim:
         bad.append(f"too long for {channel}: {len(text)} > {lim}")
