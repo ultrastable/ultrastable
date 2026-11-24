@@ -1,7 +1,7 @@
 {
   "id": "OL-20261115-24",
   "title": "OL-20261115-24: site/*.test.mjs are not run by the checks workflow",
-  "body": "**Owner:** operations\n**Trigger:** next change to .github/workflows/checks.yml\n**Done check:** grep:.github/workflows/checks.yml::site/.*test.mjs\n**Status:** closed\n\nchecks.yml only runs node --check over site/*.js; site tests (controlplane, forward, connections, oauth...) run only in sessions. Add a step running them (protected path: workflow change). Session: session_0156nqDt4ontnhzSFvT4PTB8\n\n**Evidence:** .github/workflows/checks.yml runs the site/*.test.mjs suites; the done check passes on main.\n",
+  "body": "**Owner:** operations\n**Trigger:** next change to .github/workflows/checks.yml\n**Done check:** grep:.github/workflows/checks.yml::site/.*test.mjs\n**Status:** open\n\nchecks.yml only runs node --check over site/*.js; site tests (controlplane, forward, connections, oauth...) run only in sessions. Add a step running them (protected path: workflow change). Session: session_0156nqDt4ontnhzSFvT4PTB8",
   "labels": [
     "role:operations",
     "open-loop"

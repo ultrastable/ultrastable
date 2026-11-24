@@ -1,7 +1,7 @@
 {
   "id": "OL-20261114-4",
   "title": "OL-20261114-4: test_autorun: no gate card opens because the test depends on live owner-only items",
-  "body": "**Owner:** operations\n**Trigger:** foundation tests red on main at 1202e5d (found 2026-11-14 while landing SELF-REFERENCE-1)\n**Done check:** grep:tests/foundation/test_autorun.py::owner:rowan\n**Status:** closed\n\ntest_owner_only_items_open_gate_cards_with_default_and_probe asserts gate_cards is non-empty, which only holds while the live queue has an open owner:rowan item within 8 ticks. Give the test its own owner-only fixture item so it checks the gate-card path, not the state of the backlog.\n\nsize: S\n\n**Closing probe:** grep:tests/foundation/test_autorun.py::owner:rowan\n\n**Evidence:** tests/foundation/test_autorun.py OwnerOnlyFixture builds its own owner-only item, so the gate-card path is tested without depending on the live backlog; 14 tests pass.\n",
+  "body": "**Owner:** operations\n**Trigger:** foundation tests red on main at 1202e5d (found 2026-11-14 while landing SELF-REFERENCE-1)\n**Done check:** grep:tests/foundation/test_autorun.py::owner:rowan\n**Status:** open\n\ntest_owner_only_items_open_gate_cards_with_default_and_probe asserts gate_cards is non-empty, which only holds while the live queue has an open owner:rowan item within 8 ticks. Give the test its own owner-only fixture item so it checks the gate-card path, not the state of the backlog.\n\nsize: S\n\n**Closing probe:** grep:tests/foundation/test_autorun.py::owner:rowan",
   "labels": [
     "role:operations",
     "open-loop"

@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-claude-lesson-c",
+  "title": "ZOMBIE-claude-lesson-c: finish or retire claude/lesson-c",
+  "body": "**Owner:** operations\n**Trigger:** session idle 6.4 h (ttl 2.0 h)\n**Status:** open\n\nBranch `claude/lesson-c` at af4b6eaab0 has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/claude/lesson-c` is 0 or the work is merged. The reaper parked the branch as parked/claude/lesson-c; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

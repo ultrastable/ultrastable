@@ -1,7 +1,7 @@
 {
   "id": "PORT-BRANCH-parked-agent-pm-2026111215",
   "title": "PORT-BRANCH-parked-agent-pm-2026111215: carry parked/agent/pm-2026111215 onto main",
-  "body": "**Owner:** operations\n**Trigger:** branch `parked/agent/pm-2026111215` at 645618c841 holds work main lacks and cannot merge as is (conflicts in code: ops/growth/pm-report.json)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/agent/pm-2026111215\n**Status:** closed\n\nPort the change by hand onto current main (it is 1 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/agent/pm-2026111215\n\n**Evidence:** python3 -m foundation branchsweep --carried -> parked/agent/pm-2026111215: archived at 645618c841 (refs/archive/parked/agent/pm-2026111215): superseded: main holds 0 of the 0 code lines it added (BRANCH-SWEEP-4)\n",
+  "body": "**Owner:** operations\n**Trigger:** branch `parked/agent/pm-2026111215` at 645618c841 holds work main lacks and cannot merge as is (conflicts in code: ops/growth/pm-report.json)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/agent/pm-2026111215\n**Status:** open\n\nPort the change by hand onto current main (it is 1 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/agent/pm-2026111215",
   "labels": [
     "role:operations",
     "agent-ready",

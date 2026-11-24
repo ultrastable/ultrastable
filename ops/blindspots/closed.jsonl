@@ -12,10 +12,3 @@
 {"id": "d1-free-tier-hard-stop", "at": "2026-11-20", "probe": "grep:seed/worker/src/freetier.js::d1_rows_read"}
 {"id": "ai-output-marking", "at": "2026-11-20", "probe": "grep:site/worker.js::const us = aiMark \\+ usClient"}
 {"id": "meta-signal-write-cap", "at": "2026-11-20", "probe": "grep:site/worker.js::META_PER_IP_HOUR \\|\\| Number\\(d \\|\\| 0\\) >= META_PER_DAY"}
-{"id": "backup-restore", "at": "2026-11-21", "probe": "fresh:ops/backup/last-restore.json::at::10::ok"}
-{"id": "credential-expiry-watch", "at": "2026-11-21", "probe": "grep:.github/workflows/watchdog.yml::foundation credwatch --run --apply"}
-{"id": "unattended-runway", "at": "2026-11-21", "probe": "grep:.github/workflows/watchdog.yml::foundation runway --run --apply"}
-{"id": "red-main-self-repair", "at": "2026-11-21", "probe": "grep:.github/workflows/ciwatch.yml::foundation redmain --run --apply"}
-{"id": "owner-gates-settle", "at": "2026-11-21", "probe": "grep:.github/workflows/watchdog.yml::foundation needsyou --settle"}
-{"id": "worker-logs-kept", "at": "2026-11-21", "probe": "grep:deploy/deploy-site.mjs::observability"}
-{"id": "action-version-rot", "at": "2026-11-21", "probe": "file:.github/dependabot.yml"}

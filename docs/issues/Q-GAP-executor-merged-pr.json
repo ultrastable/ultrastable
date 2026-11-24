@@ -1,7 +1,7 @@
 {
   "id": "Q-GAP-executor-merged-pr",
   "title": "Q-GAP-executor-merged-pr: Executor opens and merges its own pull request",
-  "body": "**Owner:** operations\n**Trigger:** every executor run\n**Done check:** grep:ops/executor-log.jsonl::\"result\": \"pr-merged\"\n**Status:** closed\n**Evidence:** ops/executor-log.jsonl has pr-merged rows for pull requests 749 (merge commit 970134c) and 762 (merge commit cd2e26a), both opened by the executor on 2026-11-20; both are mechanical fixes.\n\nGap in component `code-repo`: Executor opens and merges its own pull request. The executor opens pull requests with real models (five by 2026-11-20: four closed without merging, one open); none has merged yet. The log on main records each outcome (`python3 -m foundation executor --fold`, PR-OUTCOME-1), and this item closes itself on the first `pr-merged` row. Source: doctrine/market.json (MARKET-1).",
+  "body": "**Owner:** operations\n**Trigger:** every executor run\n**Done check:** grep:ops/executor-log.jsonl::\"result\": \"pr-opened\"\n**Status:** open\n\nGap in component `code-repo`: Executor opens and merges its own pull request. Built and tested with a fake model only. Source: doctrine/market.json (MARKET-1).",
   "labels": [
     "role:operations",
     "gap"

@@ -1,58 +1,57 @@
 {
- "targets": {
-  "external_referrals_7d": 75,
-  "ps_page_views_7d": 62
- },
+ "targets": {},
  "met_runs": {
-  "external_referrals_7d": 1,
+  "external_referrals_7d": 0,
   "social_referrals_7d": 0,
   "search_referrals_7d": 0,
   "feed_hits_7d": 0,
-  "ps_page_views_7d": 1,
+  "ps_page_views_7d": 0,
   "posts_published_7d": 0
  },
  "last": {
   "feed_entries": 40,
-  "at": "2026-11-24T02:13:54.756840+00:00",
+  "at": "2026-11-17T15:44:07.777790+00:00",
   "added": [
    {
-    "id": "ev:evd-2026-w48",
-    "arm": "evidence"
+    "id": "ev:ev-ps-1",
+    "arm": "ps"
    },
    {
-    "id": "ev:pv-c8347b76357d",
-    "arm": "shipped"
+    "id": "ev:ev-sys-1",
+    "arm": "systems"
    },
    {
-    "id": "ev:pv-815ca42cf610",
-    "arm": "shipped"
+    "id": "ev:ev-proof-1",
+    "arm": "proof"
    },
    {
-    "id": "ev:pv-0675e0ab23f4",
+    "id": "ev:pv-61fed64d577f",
     "arm": "shipped"
    }
   ],
-  "metrics_error": "HTTPError: HTTP Error 403: Forbidden",
-  "metrics_route": "site",
   "metrics": {
-   "external_referrals_7d": 78,
+   "external_referrals_7d": 25,
    "social_referrals_7d": 0,
-   "search_referrals_7d": 33,
-   "feed_hits_7d": 5,
-   "ps_page_views_7d": 142,
+   "search_referrals_7d": 10,
+   "feed_hits_7d": 0,
+   "ps_page_views_7d": 0,
    "posts_published_7d": 0,
    "suggestions_7d": null
   },
   "breaches": [
+   "external_referrals_7d",
    "social_referrals_7d",
    "search_referrals_7d",
    "feed_hits_7d",
+   "ps_page_views_7d",
    "posts_published_7d"
   ],
   "filed": [
+   "Q-REACH-external_referrals_7d",
    "Q-REACH-social_referrals_7d",
    "Q-REACH-search_referrals_7d",
    "Q-REACH-feed_hits_7d",
+   "Q-REACH-ps_page_views_7d",
    "Q-REACH-posts_published_7d"
   ],
   "channels": {

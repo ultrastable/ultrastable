@@ -1,7 +1,7 @@
 {
   "id": "OL-20261112-91",
   "title": "OL-20261112-91: Burn down the human-action document baseline to zero",
-  "body": "**Owner:** portfolio-manager\n**Trigger:** every PR that touches a document, and weekly via the loop breaker\n**Done check:** grep:doctrine/doc-consumers.json::\"human_action_baseline\": \\{\\}\n**Status:** closed\n\n12 documents still hold lines that tell a person to act (doctrine/doc-consumers.json human_action_baseline; python3 -m foundation docs_audit --humans). For each: convert the instruction into an automatic backlog item or a data-driven check and delete the sentence; lower the baseline in the same PR.\n\n**Evidence:** Five documents reworded so none tells a person to act; human_action_baseline is empty and python3 -m foundation docs_audit --check passes.\n",
+  "body": "**Owner:** portfolio-manager\n**Trigger:** every PR that touches a document, and weekly via the loop breaker\n**Done check:** grep:doctrine/doc-consumers.json::\"human_action_baseline\": \\{\\}\n**Status:** open\n\n12 documents still hold lines that tell a person to act (doctrine/doc-consumers.json human_action_baseline; python3 -m foundation docs_audit --humans). For each: convert the instruction into an automatic backlog item or a data-driven check and delete the sentence; lower the baseline in the same PR.",
   "labels": [
     "role:portfolio-manager",
     "open-loop"

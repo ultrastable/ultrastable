@@ -1,7 +1,7 @@
 {
   "id": "Q-METRIC-declared-probes",
   "title": "Q-METRIC-declared-probes: Give the declared metrics M-generator and M-outreach real probes",
-  "body": "**Owner:** product-manager\n**Trigger:** every executor run\n**Done check:** grep:instances/ultrastable/objectives.json::\"source\": \"sql\"\n**Status:** closed\n\nGap in component `objectives`: M-generator and M-outreach are declared, so they breach by design until probed (OBJECTIVES-1). Expose test results and the outreach ledger send count as sql or http probes and change their source from declared.\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 220.9 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "body": "**Owner:** product-manager\n**Trigger:** every executor run\n**Done check:** grep:instances/ultrastable/objectives.json::\"source\": \"sql\"\n**Status:** open\n\nGap in component `objectives`: M-generator and M-outreach are declared, so they breach by design until probed (OBJECTIVES-1). Expose test results and the outreach ledger send count as sql or http probes and change their source from declared.",
   "labels": [
     "role:product-manager",
     "gap"

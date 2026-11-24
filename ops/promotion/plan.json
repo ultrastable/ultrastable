@@ -2,16 +2,6 @@
  "generated_by": "python3 -m foundation promote --plan",
  "channels": [
   {
-   "id": "show-hn",
-   "kind": "launch-venue",
-   "score": 5.0,
-   "state": "kit-ready-identity-gate",
-   "blocked_by": [],
-   "gate": "owner-account",
-   "signal": "news.ycombinator.com referrals in first-party hits",
-   "route": null
-  },
-  {
    "id": "mcp-registry",
    "kind": "registry",
    "score": 3.0,
@@ -20,36 +10,6 @@
    "gate": null,
    "signal": "registry search returns io.github.ultrastable/ultrastable; agent hits on /mcp",
    "route": ".github/workflows/mcp-registry.yml"
-  },
-  {
-   "id": "ps-civic-tech",
-   "kind": "outreach-audience",
-   "score": 3.0,
-   "state": "kit-ready-identity-gate",
-   "blocked_by": [],
-   "gate": "owner-account",
-   "signal": "referrals and replies from those forums in first-party hits",
-   "route": "a post or Show-and-tell in their public forums, drafted by the system and posted only after the owner consents in the owner's own account"
-  },
-  {
-   "id": "ps-community-orgs",
-   "kind": "outreach-audience",
-   "score": 3.0,
-   "state": "kit-ready-identity-gate",
-   "blocked_by": [],
-   "gate": "owner-account",
-   "signal": "replies recorded with scripts/outreach_intro.py reply",
-   "route": "intro-email segment third-sector, role mailboxes published on each organization's own pages"
-  },
-  {
-   "id": "ps-funders-for-good",
-   "kind": "outreach-audience",
-   "score": 3.0,
-   "state": "kit-ready-identity-gate",
-   "blocked_by": [],
-   "gate": "owner-account",
-   "signal": "programme replies recorded with scripts/outreach.py reply",
-   "route": "applications through the existing funding kits (outreach/applications), submitted only with the owner's consent"
   },
   {
    "id": "yc",
@@ -72,16 +32,6 @@
    "route": null
   },
   {
-   "id": "feed",
-   "kind": "feed",
-   "score": 2.0,
-   "state": "system-runs",
-   "blocked_by": [],
-   "gate": null,
-   "signal": "reach metric feed_hits_7d",
-   "route": "site/worker.js /feed.xml (Atom of the public changelog)"
-  },
-  {
    "id": "indexnow",
    "kind": "search-ping",
    "score": 2.0,
@@ -102,24 +52,14 @@
    "route": "scripts/outreach_intro.py"
   },
   {
-   "id": "ps-social-good",
-   "kind": "outreach-audience",
-   "score": 2.0,
-   "state": "system-runs",
-   "blocked_by": [],
-   "gate": null,
-   "signal": "social referrals in first-party hits (reach metric social_referrals_7d)",
-   "route": "scripts/social_post.py fed by foundation/reach.py (events to posts); posts when the account bindings exist"
-  },
-  {
    "id": "social",
    "kind": "social",
    "score": 2.0,
-   "state": "system-runs",
+   "state": "kit-ready-identity-gate",
    "blocked_by": [],
-   "gate": null,
-   "signal": "social referrals in first-party hits (reach metric social_referrals_7d)",
-   "route": "scripts/social_post.py fed by foundation/reach.py (events to posts); posts when the account bindings exist"
+   "gate": "owner-account",
+   "signal": "referrals from bsky.app in first-party hits",
+   "route": "scripts/social_post.py"
   },
   {
    "id": "nlnet",
@@ -127,11 +67,24 @@
    "score": 0.0,
    "state": "not-a-fit-now",
    "blocked_by": [
-    "open_source_licence"
+    "open_source_licence",
+    "public_repo"
    ],
    "gate": "statement-in-owners-name",
    "signal": "NLnet reply, recorded with scripts/outreach.py reply ultrastable:A-NLNET",
    "route": "outreach/forms/nlnet.json"
+  },
+  {
+   "id": "show-hn",
+   "kind": "launch-venue",
+   "score": 0.0,
+   "state": "not-a-fit-now",
+   "blocked_by": [
+    "public_repo"
+   ],
+   "gate": "owner-account",
+   "signal": "news.ycombinator.com referrals in first-party hits",
+   "route": null
   }
  ]
 }

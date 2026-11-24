@@ -1,7 +1,7 @@
 {
   "id": "Q-7",
   "title": "Q-7: Recruit 3 design partners",
-  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** grep:docs/issues/Q-7.json::Status:\\*\\* closed\n**Status:** closed\n\nMigrated from GitHub issue 7 (Issues are off on the code repository; this file is the record).\n\nOutreach list, pilot terms, and a success metric (agent-opened PRs merged, probe reverts, scored predictions). Measure: signed pilots.\n\nsize: M\n\n**Disposition:** fixed (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 222.1 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n\n**Evidence:** 2026-11-21T18:20:52Z closing probe passed after the item was disposed: grep:docs/issues/Q-7.json::Status:\\*\\* closed\n",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** grep:docs/issues/Q-7.json::Status:\\*\\* closed\n**Status:** open\n\nMigrated from GitHub issue 7 (Issues are off on the code repository; this file is the record).\n\nOutreach list, pilot terms, and a success metric (agent-opened PRs merged, probe reverts, scored predictions). Measure: signed pilots.\n\nsize: M",
   "labels": [
     "p2",
     "agent-ready"

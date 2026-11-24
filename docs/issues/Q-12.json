@@ -1,7 +1,7 @@
 {
   "id": "Q-12",
   "title": "Q-12: Analytics and measurement",
-  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** grep:docs/issues/Q-12.json::Status:\\*\\* closed\n**Status:** closed\n\nMigrated from GitHub issue 12 (Issues are off on the code repository; this file is the record).\n\nTrack visits to /proof from outside, pilot emails and claims passing; produce a weekly digest.\n\nsize: S\n\n**Closing probe:** weekly digest issue exists for 2 consecutive weeks and lists /proof visits, pilot emails and passing claims.\n\n**Disposition:** fixed (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 222.1 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n\n**Evidence:** 2026-11-21T18:20:52Z closing probe passed after the item was disposed: grep:docs/issues/Q-12.json::Status:\\*\\* closed\n",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** grep:docs/issues/Q-12.json::Status:\\*\\* closed\n**Status:** open\n\nMigrated from GitHub issue 12 (Issues are off on the code repository; this file is the record).\n\nTrack visits to /proof from outside, pilot emails and claims passing; produce a weekly digest.\n\nsize: S\n\n**Closing probe:** weekly digest issue exists for 2 consecutive weeks and lists /proof visits, pilot emails and passing claims.",
   "labels": [
     "p2",
     "agent-ready"

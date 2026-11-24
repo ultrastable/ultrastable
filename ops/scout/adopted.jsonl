@@ -5,7 +5,3 @@
 {"at": "2026-11-12T19:57:40Z", "id": "Q-SCOUT-google-adk-7a45defe", "outcome": "declined", "reason": "the release adds workflow approvals and finer tool-execution control; this system has no approval waits by doctrine (closed loops), and the performance item concerns a runtime we do not use"}
 {"at": "2026-11-12T19:57:40Z", "id": "Q-SCOUT-claude-code-reviewer", "outcome": "adopted", "reason": "Q-ADOPT-fable-reviewer shipped"}
 {"at": "2026-11-12T19:57:40Z", "id": "Q-SCOUT-claude-code-tainment", "outcome": "adopted", "reason": "Q-ADOPT-write-containment shipped"}
-{"at": "2026-11-17T16:15:27Z", "id": "Q-SCOUT-claude-code-03df320b", "outcome": "declined", "reason": "no open gap shares three or more terms with this release note"}
-{"at": "2026-11-17T16:15:27Z", "id": "Q-SCOUT-claude-code-f8d9f498", "outcome": "declined", "reason": "no open gap shares three or more terms with this release note"}
-{"at": "2026-11-17T16:15:27Z", "id": "Q-SCOUT-langgraph-fdca3915", "outcome": "declined", "reason": "no open gap shares three or more terms with this release note"}
-{"at": "2026-11-17T16:15:27Z", "id": "Q-SCOUT-nofeed-sources", "outcome": "declined", "reason": "no open gap shares three or more terms with this release note"}

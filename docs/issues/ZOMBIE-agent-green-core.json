@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-agent-green-core",
+  "title": "ZOMBIE-agent-green-core: finish or retire agent/green-core",
+  "body": "**Owner:** operations\n**Trigger:** session idle 20.9 h (ttl 4 h)\n**Status:** open\n\nBranch `agent/green-core` at 2d85ede20c has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/agent/green-core` is 0 or the work is merged. The reaper parked the branch as parked/agent/green-core; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

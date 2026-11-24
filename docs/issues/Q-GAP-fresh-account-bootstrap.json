@@ -1,7 +1,7 @@
 {
   "id": "Q-GAP-fresh-account-bootstrap",
   "title": "Q-GAP-fresh-account-bootstrap: First real --apply of a brand-new organization on an empty Cloudflare account",
-  "body": "**Owner:** operations\n**Trigger:** every executor run\n**Done check:** file:docs/bootstrapping/fresh-account-proof.json\n**Status:** closed\n\nGap in component `bootstrap-from-idea`: the bootstrapper is built and tested against fixtures, but its first real provisioning run on an empty account has not happened. Record the run (stages, ids, first tick) in docs/bootstrapping/fresh-account-proof.json.\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 220.7 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "body": "**Owner:** operations\n**Trigger:** every executor run\n**Done check:** file:docs/bootstrapping/fresh-account-proof.json\n**Status:** open\n\nGap in component `bootstrap-from-idea`: the bootstrapper is built and tested against fixtures, but its first real provisioning run on an empty account has not happened. Record the run (stages, ids, first tick) in docs/bootstrapping/fresh-account-proof.json.",
   "labels": [
     "role:operations",
     "gap"

@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-claude-public-release-split",
+  "title": "ZOMBIE-claude-public-release-split: finish or retire claude/public-release-split",
+  "body": "**Owner:** operations\n**Trigger:** session idle 27.5 h (ttl 4 h)\n**Status:** open\n\nBranch `claude/public-release-split` at 7e9844e0a3 has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/claude/public-release-split` is 0 or the work is merged. The reaper parked the branch as parked/claude/public-release-split; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

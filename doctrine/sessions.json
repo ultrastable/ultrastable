@@ -1,8 +1,19 @@
 {
  "_doc": "SESSION-CLOSE-1 / STRANGE-LOOP-1 policy (owner, 2026-11-12). foundation/sessions.py reads and, through its own graded meta step, rewrites idle_ttl_hours. Every change carries a prediction and is kept or reverted by the next scan; reverted values go to blocked_values and are never retried.",
- "idle_ttl_hours": 0.17,
- "ttl_floor_hours": 0.1,
+ "idle_ttl_hours": 4,
+ "ttl_floor_hours": 1,
  "backlog_owner": "operations",
- "history": [],
- "blocked_values": []
+ "history": [
+  {
+   "at": 1794581016,
+   "from": 4,
+   "to": 2.0,
+   "prediction": "zombies == 0 on the next scan",
+   "scans_at_change": 2,
+   "grade": "reverted"
+  }
+ ],
+ "blocked_values": [
+  2.0
+ ]
 }

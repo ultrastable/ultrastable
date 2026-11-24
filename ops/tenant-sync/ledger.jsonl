@@ -12,29 +12,3 @@
 {"action": "tenant-pr", "at": "2026-11-18T01:05:59+00:00", "result": "pull request create failed: GraphQL: Resource not accessible by integration (createPullRequest)", "tenant": "practical-solutions"}
 {"at": "2026-11-18T11:44:23+00:00", "check": "ok", "findings": 0, "revendor": {"changed": 5, "files": 849, "removed": [], "settled": []}, "send_up": [], "status": "needs-pr", "tenant": "practical-solutions"}
 {"action": "tenant-pr", "at": "2026-11-18T11:44:27+00:00", "result": "pull request create failed: GraphQL: Resource not accessible by integration (createPullRequest)", "tenant": "practical-solutions"}
-{"at": "2026-11-18T15:50:38+00:00", "check": "ok", "findings": 0, "revendor": {"changed": 16, "files": 849, "removed": [], "settled": []}, "send_up": [], "status": "needs-pr", "tenant": "practical-solutions"}
-{"action": "tenant-pr", "at": "2026-11-18T15:50:42+00:00", "result": "pull request create failed: GraphQL: Resource not accessible by integration (createPullRequest)", "tenant": "practical-solutions"}
-{"at": "2026-11-18T15:51:56+00:00", "check": "ok", "findings": 0, "revendor": {"changed": 16, "files": 849, "removed": [], "settled": []}, "send_up": [], "status": "needs-pr", "tenant": "practical-solutions"}
-{"action": "tenant-pr", "at": "2026-11-18T15:52:01+00:00", "result": "pull request create failed: GraphQL: Resource not accessible by integration (createPullRequest)", "tenant": "practical-solutions"}
-{"at": "2026-11-19T15:55:36+00:00", "check": "ok", "findings": 0, "revendor": {"changed": 30, "files": 851, "removed": [], "settled": []}, "send_up": [], "status": "needs-pr", "tenant": "practical-solutions"}
-{"action": "tenant-pr", "at": "2026-11-19T15:55:40+00:00", "result": "pull request create failed: GraphQL: Resource not accessible by integration (createPullRequest)", "tenant": "practical-solutions"}
-{"at": "2026-11-20T19:16:49+00:00", "check": "ok", "findings": 0, "revendor": {"changed": 6, "files": 863, "removed": [], "settled": []}, "send_up": [], "status": "needs-pr", "tenant": "practical-solutions"}
-{"action": "tenant-pr", "at": "2026-11-20T19:16:52+00:00", "result": "pull request create failed: GraphQL: Resource not accessible by integration (createPullRequest)", "tenant": "practical-solutions"}
-{"at": "2026-11-20T19:47:05+00:00", "check": "ok", "findings": 0, "revendor": {"changed": 9, "files": 863, "removed": [], "settled": []}, "send_up": [], "status": "needs-pr", "tenant": "practical-solutions"}
-{"action": "tenant-pr", "at": "2026-11-20T19:47:06+00:00", "result": "pull request create failed: GraphQL: Resource not accessible by integration (createPullRequest)", "tenant": "practical-solutions"}
-{"at": "2026-11-20T20:02:36+00:00", "check": "ok", "findings": 0, "revendor": {"changed": 9, "files": 863, "removed": [], "settled": []}, "send_up": [], "status": "needs-pr", "tenant": "practical-solutions"}
-{"action": "tenant-pr", "at": "2026-11-20T20:02:38+00:00", "result": "pull request create failed: GraphQL: Resource not accessible by integration (createPullRequest)", "tenant": "practical-solutions"}
-{"at": "2026-11-21T07:29:23+00:00", "check": "ok", "findings": 0, "revendor": {"changed": 10, "files": 869, "removed": [], "settled": []}, "send_up": [], "status": "needs-pr", "tenant": "practical-solutions"}
-{"action": "tenant-pr", "at": "2026-11-21T07:29:27+00:00", "result": "pull request create failed: GraphQL: Resource not accessible by integration (createPullRequest)", "tenant": "practical-solutions"}
-{"at": "2026-11-21T11:08:45+00:00", "check": "ok", "findings": 0, "revendor": {"changed": 15, "files": 872, "removed": [], "settled": []}, "send_up": [], "status": "needs-pr", "tenant": "practical-solutions"}
-{"action": "tenant-pr", "at": "2026-11-21T11:08:47+00:00", "result": "pull request create failed: GraphQL: Resource not accessible by integration (createPullRequest)", "tenant": "practical-solutions"}
-{"at": "2026-11-21T14:49:12+00:00", "check": "ok", "findings": 0, "revendor": {"changed": 15, "files": 872, "removed": [], "settled": []}, "send_up": [], "status": "needs-pr", "tenant": "practical-solutions"}
-{"action": "tenant-pr", "at": "2026-11-21T14:49:13+00:00", "result": "pull request create failed: GraphQL: Resource not accessible by integration (createPullRequest)", "tenant": "practical-solutions"}
-{"at": "2026-11-21T19:01:08+00:00", "check": "fail", "findings": 1, "revendor": {"changed": 17, "files": 874, "removed": [], "settled": []}, "send_up": [], "status": "needs-pr", "tenant": "practical-solutions"}
-{"action": "tenant-pr", "at": "2026-11-21T19:01:11+00:00", "result": "pull request create failed: GraphQL: Resource not accessible by integration (createPullRequest)", "tenant": "practical-solutions"}
-{"at": "2026-11-22T09:11:55+00:00", "check": "fail", "findings": 1, "revendor": {"changed": 18, "files": 874, "removed": [], "settled": []}, "send_up": [], "status": "needs-pr", "tenant": "practical-solutions"}
-{"action": "tenant-pr", "at": "2026-11-22T09:11:59+00:00", "result": "pull request create failed: GraphQL: Resource not accessible by integration (createPullRequest)", "tenant": "practical-solutions"}
-{"at": "2026-11-22T14:45:13+00:00", "check": "ok", "findings": 0, "revendor": {"changed": 21, "files": 877, "removed": [], "settled": []}, "send_up": [], "status": "needs-pr", "tenant": "practical-solutions"}
-{"action": "tenant-pr", "at": "2026-11-22T14:45:15+00:00", "result": "pull request create failed: GraphQL: Resource not accessible by integration (createPullRequest)", "tenant": "practical-solutions"}
-{"at": "2026-11-23T18:32:31+00:00", "check": "ok", "findings": 0, "revendor": {"changed": 21, "files": 877, "removed": [], "settled": []}, "send_up": [], "status": "needs-pr", "tenant": "practical-solutions"}
-{"action": "tenant-pr", "at": "2026-11-23T18:32:36+00:00", "result": "pull request create failed: GraphQL: Resource not accessible by integration (createPullRequest)", "tenant": "practical-solutions"}

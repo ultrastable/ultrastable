@@ -1,7 +1,7 @@
 {
   "id": "OL-20261114-7",
   "title": "OL-20261114-7: test_pins: META-SIGNAL-2 is on the roadmap with no probe the system can run",
-  "body": "**Owner:** product-manager\n**Trigger:** foundation tests red on main at 1202e5d (found 2026-11-14 while landing SELF-REFERENCE-1)\n**Done check:** grep:docs/issues/META-SIGNAL-2.json::Closing probe:\\*\\* (file|grep):\n**Status:** closed\n\ndocs/issues/META-SIGNAL-2.json ends with a prose closing probe. Give it a file: or grep: probe on the code that carries the meta-signal drain (seed/worker/src), so python3 -m foundation pins --check and test_pins pass without touching doctrine/pins-baseline.json.\n\nsize: S\n\n**Closing probe:** grep:docs/issues/META-SIGNAL-2.json::Closing probe:\\*\\* (file|grep):\n\n**Evidence:** docs/issues/META-SIGNAL-2.json now carries a closing probe (grep:seed/worker/src/tick.js::metaDrain); python3 -m foundation pins --check passes.\n",
+  "body": "**Owner:** product-manager\n**Trigger:** foundation tests red on main at 1202e5d (found 2026-11-14 while landing SELF-REFERENCE-1)\n**Done check:** grep:docs/issues/META-SIGNAL-2.json::Closing probe:\\*\\* (file|grep):\n**Status:** open\n\ndocs/issues/META-SIGNAL-2.json ends with a prose closing probe. Give it a file: or grep: probe on the code that carries the meta-signal drain (seed/worker/src), so python3 -m foundation pins --check and test_pins pass without touching doctrine/pins-baseline.json.\n\nsize: S\n\n**Closing probe:** grep:docs/issues/META-SIGNAL-2.json::Closing probe:\\*\\* (file|grep):",
   "labels": [
     "role:product-manager",
     "open-loop"

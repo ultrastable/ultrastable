@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-claude-creation-destruction-doctrine",
+  "title": "ZOMBIE-claude-creation-destruction-doctrine: finish or retire claude/creation-destruction-doctrine",
+  "body": "**Owner:** operations\n**Trigger:** session idle 20.7 h (ttl 2.0 h)\n**Status:** open\n\nBranch `claude/creation-destruction-doctrine` at f546d5f2a4 has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/claude/creation-destruction-doctrine` is 0 or the work is merged. The reaper parked the branch as parked/claude/creation-destruction-doctrine; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

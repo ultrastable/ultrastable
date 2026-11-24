@@ -1,7 +1,7 @@
 {
   "id": "Q-RESCORE-d-cbd27063c832",
   "title": "Q-RESCORE-d-cbd27063c832: held-out grader disagrees with the self-score",
-  "body": "**Owner:** reviewer\n**Trigger:** every executor run\n**Done check:** cmd:python3 -m foundation rescore --probe d-cbd27063c832\n**Status:** closed\n\nHeld-out grading disagrees with the system's own score for decision d-cbd27063c832 (point `work-queue-priority`): self True, strict rule False (done check fails now: cfposture no-idle-preview-workers: fail), second model None (unavailable). Correct the scorer or the evidence; the done check re-grades it. Source: foundation/rescore.py (RESCORE-1).\n\n**Disposition:** shelved (ttl, 2026-11-22T20:11:45Z, DISPOSE-1)\n\n**Evidence:** open 6.0 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "body": "**Owner:** reviewer\n**Trigger:** every executor run\n**Done check:** cmd:python3 -m foundation rescore --probe d-cbd27063c832\n**Status:** open\n\nHeld-out grading disagrees with the system's own score for decision d-cbd27063c832 (point `work-queue-priority`): self True, strict rule False (done check fails now: cfposture no-idle-preview-workers: fail), second model None (unavailable). Correct the scorer or the evidence; the done check re-grades it. Source: foundation/rescore.py (RESCORE-1).",
   "labels": [
     "role:reviewer",
     "rescore"

@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-agent-disclosure-ultrastable",
+  "title": "ZOMBIE-agent-disclosure-ultrastable: finish or retire agent/disclosure-ultrastable",
+  "body": "**Owner:** operations\n**Trigger:** session idle 20.6 h (ttl 2.0 h)\n**Status:** open\n\nBranch `agent/disclosure-ultrastable` at fe24be458f has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/agent/disclosure-ultrastable` is 0 or the work is merged. The reaper parked the branch as parked/agent/disclosure-ultrastable; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

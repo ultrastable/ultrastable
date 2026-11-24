@@ -1,11 +1,11 @@
 {
   "id": "PIN-core-db-separation",
-  "title": "PIN-core-db-separation: Core is separated from QNFO's research database",
-  "body": "**Owner:** staff\n**Trigger:** trigger: pilot milestone 1\n**Done check:** file:docs/migrations/core-db-split.json\n**Status:** closed live; verified by the done check on every build\n\nThe core's databases (ultrastable-org, ultrastable-ops) are its own, in its own account, with no database of QNFO's research applications bound. Record: docs/migrations/core-db-split.json.\n\nSource: site/pins.json (SITE-PINS-1); the public /engineers and /roadmap pages render this item, and scripts/build_site_roadmap.py --check fails when the claim and the item drift.\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 220.8 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "title": "PIN-core-db-separation: Separate the core from QNFO's research database",
+  "body": "**Owner:** staff\n**Trigger:** trigger: pilot milestone 1\n**Done check:** file:docs/migrations/core-db-split.json\n**Status:** open\n\nThe core still shares a database with QNFO's research applications. Done when the split migration and its verification record are committed.\n\nSource: site/pins.json (SITE-PINS-1); the public /engineers and /roadmap pages render this item, and scripts/build_site_roadmap.py --check fails when the claim and the item drift.",
   "labels": [
     "role:staff",
     "pin"
   ],
-  "milestone": "Done",
+  "milestone": "Next",
   "workstream": "Site pins"
 }

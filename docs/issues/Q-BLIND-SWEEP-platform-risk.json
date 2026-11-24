@@ -1,7 +1,7 @@
 {
   "id": "Q-BLIND-SWEEP-platform-risk",
   "title": "Q-BLIND-SWEEP-platform-risk: answer the platform-risk sweep",
-  "body": "**Owner:** product-manager\n**Trigger:** sweep older than 30 days\n**Done check:** cmd:python3 -m foundation blindspots --swept platform-risk\n**Status:** closed\n\nQuestion: Which platform, API or policy the system depends on changed terms or pricing?\nResearch it with sources, record the answer, and for each new gap run `blindspots --learn`.\n\n**Evidence:** closing probe passed (6 consecutive passes after a recorded failure): platform-risk: answered\n",
+  "body": "**Owner:** product-manager\n**Trigger:** sweep older than 30 days\n**Done check:** grep:ops/blindspots/answers.jsonl::\"domain\": \"platform-risk\" ; recorded with `python3 -m foundation blindspots --answer platform-risk --text <answer with evidence>`\n**Status:** open\n\nQuestion: Which platform, API or policy the system depends on changed terms or pricing?\nResearch it with sources, record the answer, and for each new gap run `blindspots --learn`.",
   "labels": [
     "role:product-manager",
     "blindspot"

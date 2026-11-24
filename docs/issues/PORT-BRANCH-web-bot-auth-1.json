@@ -1,7 +1,7 @@
 {
   "id": "PORT-BRANCH-web-bot-auth-1",
   "title": "PORT-BRANCH-web-bot-auth-1: carry web-bot-auth-1 onto main",
-  "body": "**Owner:** operations\n**Trigger:** branch `web-bot-auth-1` at 00991c9294 holds work main lacks and cannot merge as is (conflicts in code: .github/workflows/deploy-site.yml, site/agentic.js, site/webbotauth.js, site/webbotauth.test.mjs)\n**Done check:** cmd:python3 -m foundation branchsweep --carried web-bot-auth-1\n**Status:** closed\n\nPort the change by hand onto current main (it is 4 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried web-bot-auth-1\n\n**Evidence:** Superseded: main holds site/webbotauth.js (outbound signing, inbound verify, key directory, peer directory cache), site/webbotauth.test.mjs and docs/issues/ROADMAP-AGENT-WBA-OUTBOUND.json.",
+  "body": "**Owner:** operations\n**Trigger:** branch `web-bot-auth-1` at 00991c9294 holds work main lacks and cannot merge as is (conflicts in code: .github/workflows/deploy-site.yml, site/agentic.js, site/webbotauth.js, site/webbotauth.test.mjs)\n**Done check:** cmd:python3 -m foundation branchsweep --carried web-bot-auth-1\n**Status:** open\n\nPort the change by hand onto current main (it is 4 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried web-bot-auth-1",
   "labels": [
     "role:operations",
     "agent-ready",

@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-agent-gitignore-wrangler",
+  "title": "ZOMBIE-agent-gitignore-wrangler: finish or retire agent/gitignore-wrangler",
+  "body": "**Owner:** operations\n**Trigger:** session idle 42.7 h (ttl 4 h)\n**Status:** open\n\nBranch `agent/gitignore-wrangler` at 65aaeceecb has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/agent/gitignore-wrangler` is 0 or the work is merged. The reaper parked the branch as parked/agent/gitignore-wrangler; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

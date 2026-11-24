@@ -1,11 +1,8 @@
 {
   "id": "Q-SELFIMPROVE-SENSE",
   "title": "Q-SELFIMPROVE-SENSE: sensing adapters and weekly driver for SELF-IMPROVE-1",
-  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** grep:foundation/selfimprove.py::def sense\n**Status:** closed\n\nSELF-IMPROVE-1 (doctrine/self-improvement.json) has the ranker and verdict rule. Build `sense(root)` in foundation/selfimprove.py: one reader per signal row that turns its source into a value, then a weekly `--run` that ranks, picks one lever, writes ev=predict to ops/improvements.jsonl and queues a Q-IMPROVE item; after window_days it writes ev=verdict via verdict() and files OL-REVERT on a breach. Register the run as a loop in instances/ultrastable/loop-registry.json so it is scored by lifecycle.improve (the improver improves itself).\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 175.2 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
-  "labels": [
-    "p1",
-    "closed-loop"
-  ],
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** grep:foundation/selfimprove.py::def sense\n**Status:** open\n\nSELF-IMPROVE-1 (doctrine/self-improvement.json) has the ranker and verdict rule. Build `sense(root)` in foundation/selfimprove.py: one reader per signal row that turns its source into a value, then a weekly `--run` that ranks, picks one lever, writes ev=predict to ops/improvements.jsonl and queues a Q-IMPROVE item; after window_days it writes ev=verdict via verdict() and files OL-REVERT on a breach. Register the run as a loop in instances/ultrastable/loop-registry.json so it is scored by lifecycle.improve (the improver improves itself).",
+  "labels": ["p1", "closed-loop"],
   "milestone": "Now",
   "workstream": "Executor queue"
 }

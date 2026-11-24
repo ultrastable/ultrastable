@@ -1,7 +1,7 @@
 {
   "id": "Q-SYS-FAILURE-REGISTRY",
   "title": "Q-SYS-FAILURE-REGISTRY: bootstrap failure registry including natural-language-to-code bridge failures",
-  "body": "**Owner:** operations\n**Trigger:** every bootstrap run\n**Done check:** grep:foundation/bootstrap_failures.py::def register\n**Status:** closed\n\nEvery bootstrap failure becomes a registry row (stage, cause, fix attempted, probe); bridge failures from idea text to code are a named class. Filed at thread close; the executor works it in driver order.\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 219.8 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "body": "**Owner:** operations\n**Trigger:** every bootstrap run\n**Done check:** grep:foundation/bootstrap_failures.py::def register\n**Status:** open\n\nEvery bootstrap failure becomes a registry row (stage, cause, fix attempted, probe); bridge failures from idea text to code are a named class. Filed at thread close; the executor works it in driver order.",
   "labels": [
     "role:operations",
     "repair"

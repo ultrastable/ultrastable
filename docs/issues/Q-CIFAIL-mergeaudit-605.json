@@ -1,7 +1,7 @@
 {
   "id": "Q-CIFAIL-mergeaudit-605",
   "title": "Q-CIFAIL-mergeaudit-605: PR #605 merged without a green checks run",
-  "body": "**Owner:** staff\n**Trigger:** every lane pass\n**Done check:** cmd:python3 -m foundation mergeaudit --probe 605\n**Status:** closed\n\nMERGE-AUDIT-1: PR #605 (ROADMAP-AGENT-PORTABILITY-RESTORE: QNFO.REACH #PORTABILITY-RESTORE: follow-up filed with a closing probe) merged at 2026-11-18T00:43:07Z with its `checks` run at `failure` on head df3c9e4. Some merge path skipped the green gate.\n\nFix what that run caught on main (run the failed step from .github/workflows/checks.yml locally), then confirm a later merged PR passed `checks`. Do not weaken a check.\n\n**Vacuous:** 2026-11-19T08:34:23Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n\n\n**Evidence:** closing probe passed (already built: the probe passed from filing and held for 35 passes over 1507 minutes (VACUOUS-CLOSE-1)): green since\n",
+  "body": "**Owner:** staff\n**Trigger:** every lane pass\n**Done check:** cmd:python3 -m foundation mergeaudit --probe 605\n**Status:** open\n\nMERGE-AUDIT-1: PR #605 (ROADMAP-AGENT-PORTABILITY-RESTORE: QNFO.REACH #PORTABILITY-RESTORE: follow-up filed with a closing probe) merged at 2026-11-18T00:43:07Z with its `checks` run at `failure` on head df3c9e4. Some merge path skipped the green gate.\n\nFix what that run caught on main (run the failed step from .github/workflows/checks.yml locally), then confirm a later merged PR passed `checks`. Do not weaken a check.",
   "labels": [
     "role:staff",
     "ci-failure"

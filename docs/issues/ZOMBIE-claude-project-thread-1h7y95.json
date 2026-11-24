@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-claude-project-thread-1h7y95",
+  "title": "ZOMBIE-claude-project-thread-1h7y95: finish or retire claude/project-thread-1h7y95",
+  "body": "**Owner:** operations\n**Trigger:** session idle 23.1 h (ttl 4 h)\n**Status:** open\n\nBranch `claude/project-thread-1h7y95` at e97d72c97d has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/claude/project-thread-1h7y95` is 0 or the work is merged. The reaper parked the branch as parked/claude/project-thread-1h7y95; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

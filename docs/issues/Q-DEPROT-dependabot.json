@@ -1,7 +1,7 @@
 {
   "id": "Q-DEPROT-dependabot",
   "title": "Q-DEPROT-dependabot: add the Dependabot entries for every npm and pip manifest (protected path)",
-  "body": "**Owner:** operations\n**Trigger:** every checks run (probe)\n**Done check:** cmd:python3 -m foundation deprot --strict\n**Status:** closed\n\nDEPROT-1: `doctrine/protected/dependabot.yml` is the full `.github/dependabot.yml` that covers every manifest in `doctrine/deprot.json`. A model branch cannot edit `.github/dependabot.yml` (worker-gate deny list). Protected-change reason: dependency rot is watched by a bot only if every manifest has an entry. When it lands, empty `doctrine/deprot.json` baseline in the same change.\n\n**Disposition:** shelved (ttl, 2026-11-21T18:31:14Z, DISPOSE-1)\n\n**Evidence:** open 6.0 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "body": "**Owner:** operations\n**Trigger:** every checks run (probe)\n**Done check:** cmd:python3 -m foundation deprot --strict\n**Status:** open\n\nDEPROT-1: `doctrine/protected/dependabot.yml` is the full `.github/dependabot.yml` that covers every manifest in `doctrine/deprot.json`. A model branch cannot edit `.github/dependabot.yml` (worker-gate deny list). Protected-change reason: dependency rot is watched by a bot only if every manifest has an entry. When it lands, empty `doctrine/deprot.json` baseline in the same change.\n",
   "labels": [
     "role:operations",
     "protected-change",

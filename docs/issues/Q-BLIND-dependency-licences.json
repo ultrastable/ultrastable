@@ -1,7 +1,7 @@
 {
   "id": "Q-BLIND-dependency-licences",
   "title": "Q-BLIND-dependency-licences: close the ip blind spot dependency-licences",
-  "body": "**Owner:** product-manager\n**Trigger:** every blindspots scan\n**Done check:** cmd:python3 -m foundation blindspots --closed dependency-licences\n**Prediction:** blindspots_open <= 7 within 168 h\n**Status:** closed\n\nWhy the owner would not know to ask: A dependency licence can forbid the commercial terms the product sells under.\nAction: inventory dependencies and their licences and check against USL-1.0 commercial use. The probe in doctrine/blindspots.json passes when it is done.\n\n**Evidence:** closing probe passed (6 consecutive passes after a recorded failure): dependency-licences: ok\n",
+  "body": "**Owner:** product-manager\n**Trigger:** every blindspots scan\n**Done check:** grep:ops/blindspots/closed.jsonl::\"id\": \"dependency-licences\"\n**Prediction:** blindspots_open <= 7 within 168 h\n**Status:** open\n\nWhy the owner would not know to ask: A dependency licence can forbid the commercial terms the product sells under.\nAction: inventory dependencies and their licences and check against USL-1.0 commercial use. The probe in doctrine/blindspots.json passes when it is done.",
   "labels": [
     "role:product-manager",
     "blindspot"

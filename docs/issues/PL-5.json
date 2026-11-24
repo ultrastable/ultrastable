@@ -1,7 +1,7 @@
 {
   "id": "PL-5",
   "title": "PL-5: GCP embodiment sketch (Cloud Run, Cloud Scheduler, Firestore or Cloud SQL, Vertex AI Agent Engine) for the pitch and the patent's \"other runtimes\"",
-  "body": "**Owner:** Staff (platform)\n**Trigger:** see roadmap\n**Done check:** see roadmap\n**Status:** closed\n\nSource of truth: `docs/roadmap.md` (item PL-5). Every closed item proposes a plus: file it as a new issue labeled `plus`.\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 273.0 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "body": "**Owner:** Staff (platform)\n**Trigger:** see roadmap\n**Done check:** see roadmap\n**Status:** open\n\nSource of truth: `docs/roadmap.md` (item PL-5). Every closed item proposes a plus: file it as a new issue labeled `plus`.",
   "labels": [
     "role:staff",
     "ws:platform"

@@ -1,7 +1,7 @@
 {
   "id": "Q-GAP-other-cloud-proof",
   "title": "Q-GAP-other-cloud-proof: Prove one non-Cloudflare cloud end to end",
-  "body": "**Owner:** operations\n**Trigger:** every executor run\n**Done check:** file:docs/bootstrapping/other-cloud-proof.json\n**Status:** closed\n\nGap in component `portability`: Prove one non-Cloudflare cloud end to end. Briefs exist; nothing is proven off Cloudflare. Source: doctrine/market.json (MARKET-1).\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 221.4 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "body": "**Owner:** operations\n**Trigger:** every executor run\n**Done check:** file:docs/bootstrapping/other-cloud-proof.json\n**Status:** open\n\nGap in component `portability`: Prove one non-Cloudflare cloud end to end. Briefs exist; nothing is proven off Cloudflare. Source: doctrine/market.json (MARKET-1).",
   "labels": [
     "role:operations",
     "gap"

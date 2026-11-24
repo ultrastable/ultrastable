@@ -1,7 +1,7 @@
 {
   "id": "Q-YEAR-offsite-backup",
   "title": "Q-YEAR-offsite-backup: export D1 to R2 daily and bind the audit sink",
-  "body": "**Owner:** staff\n**Trigger:** UNATTENDED-365 register, dependency `offsite-backup` is open\n**Done check:** cmd:python3 -m foundation unattended --probe offsite-backup\n**Status:** closed\n\nCreate an R2 bucket for backups, bind it on the tick Worker in doctrine/topology.json, export each D1 database daily with a restore drill once a week, and bind the AUDIT sink so sealed audit segments have two homes.\nWhen it holds, set the dependency's status to closed in doctrine/unattended.json with the evidence and a probe that resolves.\n\n**Disposition:** fixed (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 23.7 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n\n**Evidence:** 2026-11-22T07:00:55Z closing probe passed after the item was disposed: offsite-backup: closed\n",
+  "body": "**Owner:** staff\n**Trigger:** UNATTENDED-365 register, dependency `offsite-backup` is open\n**Done check:** cmd:python3 -m foundation unattended --probe offsite-backup\n**Status:** open\n\nCreate an R2 bucket for backups, bind it on the tick Worker in doctrine/topology.json, export each D1 database daily with a restore drill once a week, and bind the AUDIT sink so sealed audit segments have two homes.\nWhen it holds, set the dependency's status to closed in doctrine/unattended.json with the evidence and a probe that resolves.",
   "labels": [
     "role:staff",
     "raises-self"

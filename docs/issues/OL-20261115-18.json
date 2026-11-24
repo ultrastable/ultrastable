@@ -1,7 +1,7 @@
 {
   "id": "OL-20261115-18",
   "title": "OL-20261115-18: workers#73 Self-start loop: org/started.json",
-  "body": "**Owner:** executor\n**Trigger:** self-start schedule\n**Done check:** file:org/started.json\n**Status:** closed\n\nMoved from ultrastable/workers#73. The self-start workflow re-checks every 6 hours and stays in dry run until a door in workers#75 exists, then records org/started.json. Probe file_exists:org/started.json.\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 156.4 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "body": "**Owner:** executor\n**Trigger:** self-start schedule\n**Done check:** file:org/started.json\n**Status:** open\n\nMoved from ultrastable/workers#73. The self-start workflow re-checks every 6 hours and stays in dry run until a door in workers#75 exists, then records org/started.json. Probe file_exists:org/started.json.",
   "labels": [
     "role:executor",
     "open-loop"

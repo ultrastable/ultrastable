@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-claude-strange-loop-hygiene",
+  "title": "ZOMBIE-claude-strange-loop-hygiene: finish or retire claude/strange-loop-hygiene",
+  "body": "**Owner:** operations\n**Trigger:** session idle 25.9 h (ttl 4 h)\n**Status:** open\n\nBranch `claude/strange-loop-hygiene` at 4f7c597448 has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/claude/strange-loop-hygiene` is 0 or the work is merged. The reaper parked the branch as parked/claude/strange-loop-hygiene; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

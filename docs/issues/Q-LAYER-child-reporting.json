@@ -1,11 +1,11 @@
 {
   "id": "Q-LAYER-child-reporting",
   "title": "Q-LAYER-child-reporting: A child system reports its liveness to its parent",
-  "body": "**Owner:** operations\n**Trigger:** every executor run\n**Done check:** file:instances/ultrastable/child-link.json\n**Status:** closed\n**Evidence:** instances/ultrastable/child-link.json: blindspot and numbers-board answer /health with parent ultrastable, level 1, live after PR 673 (spinoff deploy run 44387493494); parent probe M-child-blindspot-link\n\nLayers (doctrine/pilot-model.json `layers`): the bootstrapper now records parent and level. Build the reporting path: the child's /health metrics are read by the parent's http probe, and a silent child breaches M-parent-link. Record the first working link in instances/ultrastable/child-link.json.",
+  "body": "**Owner:** operations\n**Trigger:** every executor run\n**Done check:** file:instances/ultrastable/child-link.json\n**Status:** open\n\nLayers (doctrine/pilot-model.json `layers`): the bootstrapper now records parent and level. Build the reporting path: the child's /health metrics are read by the parent's http probe, and a silent child breaches M-parent-link. Record the first working link in instances/ultrastable/child-link.json.",
   "labels": [
     "role:operations",
     "gap"
   ],
-  "milestone": "Done",
+  "milestone": "Next",
   "workstream": "Gaps"
 }

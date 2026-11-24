@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-agent-q-cifail-practical-solutions-deploy-tenant",
+  "title": "ZOMBIE-agent-q-cifail-practical-solutions-deploy-tenant: finish or retire agent/Q-CIFAIL-practical-solutions-deploy-tenant-q-cifail-practical-solutions-deploy-tena",
+  "body": "**Owner:** operations\n**Trigger:** session idle 16.4 h (ttl 4 h)\n**Status:** open\n\nBranch `agent/Q-CIFAIL-practical-solutions-deploy-tenant-q-cifail-practical-solutions-deploy-tena` at 5cc5dc5edc has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/agent/Q-CIFAIL-practical-solutions-deploy-tenant-q-cifail-practical-solutions-deploy-tena` is 0 or the work is merged. The reaper parked the branch as parked/agent/Q-CIFAIL-practical-solutions-deploy-tenant-q-cifail-practical-solutions-deploy-tena; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

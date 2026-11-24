@@ -1,7 +1,7 @@
 {
   "id": "OL-GAP-verify-workflow-tools-exist",
   "title": "OL-GAP-verify-workflow-tools-exist: objection workflow-tools-exist rests on 5 unverified market cells",
-  "body": "**Owner:** portfolio-manager\n**Trigger:** every loop pass\n**Done check:** cmd:python3 -m foundation components --probe objection-verified:workflow-tools-exist\n**Status:** closed\n\nRead the primary vendor page for each unknown cell in doctrine/market-evidence.json and set native to yes, partial or no with a source. An unknown cell never counts as support.\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 221.2 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "body": "**Owner:** portfolio-manager\n**Trigger:** every loop pass\n**Done check:** cmd:python3 -m foundation components --probe objection-verified:workflow-tools-exist\n**Status:** open\n\nRead the primary vendor page for each unknown cell in doctrine/market-evidence.json and set native to yes, partial or no with a source. An unknown cell never counts as support.",
   "labels": [
     "role:portfolio-manager",
     "open-loop",

@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-agent-demo-quality",
+  "title": "ZOMBIE-agent-demo-quality: finish or retire agent/demo-quality",
+  "body": "**Owner:** operations\n**Trigger:** session idle 20.7 h (ttl 2.0 h)\n**Status:** open\n\nBranch `agent/demo-quality` at 0eea00b42d has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/agent/demo-quality` is 0 or the work is merged. The reaper parked the branch as parked/agent/demo-quality; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

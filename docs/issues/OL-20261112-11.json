@@ -1,7 +1,7 @@
 {
   "id": "OL-20261112-11",
   "title": "OL-20261112-11: Cloudflare account 81e3 transfer",
-  "body": "**Owner:** operations\n**Trigger:** every executor run\n**Done check:** cmd:python3 scripts/fleet_probe.py cf-account\n**Status:** closed\n**Residual:** cf-account-transfer\n\nThe staged account transfer (cf-account.yml). Closes when the connector lists the account.\n\n**Evidence:** closing probe passed (first pass): ok 8ccc4b\",\n      \"name\": \"quniverse\"\n    }\n  ],\n  \"target\": \"81e3a4efb4eb66e613529b87682911bb\",\n  \"target_reachable\": false,\n  \"source\": \"edb167b78c9fb901ea5bc\n",
+  "body": "**Owner:** operations\n**Trigger:** every executor run\n**Done check:** cmd:python3 scripts/fleet_probe.py cf-account\n**Status:** open\n**Residual:** cf-account-transfer\n\nThe staged account transfer (cf-account.yml). Closes when the connector lists the account.",
   "labels": [
     "role:operations",
     "open-loop"

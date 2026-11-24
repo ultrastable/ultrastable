@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-claude-vigilant-carson-9dhl1z",
+  "title": "ZOMBIE-claude-vigilant-carson-9dhl1z: finish or retire claude/vigilant-carson-9dhl1z",
+  "body": "**Owner:** operations\n**Trigger:** session idle 20.4 h (ttl 2.0 h)\n**Status:** open\n\nBranch `claude/vigilant-carson-9dhl1z` at 36c6f8fcb9 has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/claude/vigilant-carson-9dhl1z` is 0 or the work is merged. The reaper parked the branch as parked/claude/vigilant-carson-9dhl1z; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

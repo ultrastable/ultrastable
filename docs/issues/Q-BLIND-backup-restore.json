@@ -1,7 +1,7 @@
 {
   "id": "Q-BLIND-backup-restore",
   "title": "Q-BLIND-backup-restore: close the continuity blind spot backup-restore",
-  "body": "**Owner:** product-manager\n**Trigger:** every blindspots scan\n**Done check:** cmd:python3 -m foundation blindspots --closed backup-restore\n**Prediction:** blindspots_open <= 6 within 168 h\n**Status:** closed\n\nWhy the owner would not know to ask: A backup never restored is a hope; the founder is one person.\nAction: foundation/backup.py: weekly export of every D1 database and KV namespace, restore into a scratch SQLite database, row counts compared, dumps stored in R2 and read back. The probe in doctrine/blindspots.json passes when it is done.\n\n**Evidence:** closing probe passed (2 consecutive passes after a recorded failure): backup-restore: ok\n",
+  "body": "**Owner:** product-manager\n**Trigger:** every blindspots scan\n**Done check:** grep:ops/blindspots/closed.jsonl::\"id\": \"backup-restore\"\n**Prediction:** blindspots_open <= 7 within 168 h\n**Status:** open\n\nWhy the owner would not know to ask: A backup never restored is a hope; the founder is one person.\nAction: export D1 and KV to R2 on a clock and restore into a scratch database, recording the result. The probe in doctrine/blindspots.json passes when it is done.",
   "labels": [
     "role:product-manager",
     "blindspot"

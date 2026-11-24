@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-agent-spinoff-45035051626",
+  "title": "ZOMBIE-agent-spinoff-45035051626: finish or retire agent/spinoff-45035051626",
+  "body": "**Owner:** operations\n**Trigger:** session idle 27.6 h (ttl 4 h)\n**Status:** open\n\nBranch `agent/spinoff-45035051626` at a4e9a6b623 has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/agent/spinoff-45035051626` is 0 or the work is merged. The reaper parked the branch as parked/agent/spinoff-45035051626; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

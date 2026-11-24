@@ -1,7 +1,7 @@
 {
   "id": "PIN-virtual-managers",
   "title": "PIN-virtual-managers: Virtual managers and staff are live",
-  "body": "**Owner:** operations\n**Trigger:** every site deploy (pins check)\n**Done check:** file:agents/roles/portfolio-manager.md\n**Status:** closed live; verified by the done check on every build\n\nPortfolio, project and product managers plus operations, reviewer and staff roles are plain files in agents/roles.\n\nSource: site/pins.json (SITE-PINS-1); the public /engineers and /roadmap pages render this item, and scripts/build_site_roadmap.py --check fails when the claim and the item drift.\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 220.8 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "body": "**Owner:** operations\n**Trigger:** every site deploy (pins check)\n**Done check:** file:agents/roles/portfolio-manager.md\n**Status:** done: live; verified by the done check on every build\n\nPortfolio, project and product managers plus operations, reviewer and staff roles are plain files in agents/roles.\n\nSource: site/pins.json (SITE-PINS-1); the public /engineers and /roadmap pages render this item, and scripts/build_site_roadmap.py --check fails when the claim and the item drift.",
   "labels": [
     "role:operations",
     "pin"

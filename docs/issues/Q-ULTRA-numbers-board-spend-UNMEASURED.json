@@ -1,7 +1,7 @@
 {
   "id": "Q-ULTRA-numbers-board-spend-UNMEASURED",
   "title": "Q-ULTRA-numbers-board-spend-UNMEASURED: essential variable numbers-board:spend cannot be read",
-  "body": "**Owner:** executor\n**Trigger:** `numbers-board:spend` has no fresh reading (source tenant.spend_vs_budget)\n**Done check:** cmd:python3 -m foundation ultrastability --status\n**Status:** closed\n\nAn unmeasured variable is never in bounds and never a reason to change the system. Make the reading (probe, writer or fresh ledger row) so the loop can judge it.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation ultrastability --status` shows `numbers-board:spend` with a value.\n\n\n**Vacuous:** 2026-11-19T08:34:23Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n\n\n**Evidence:** closing probe passed (already built: the probe passed from filing and held for 35 passes over 1507 minutes (VACUOUS-CLOSE-1)): {\n  \"at\": \"2026-11-20T04:45:48Z\",\n  \"variables\": {\n    \"spend\": {\n      \"value\": null,\n      \"ok\": false,\n      \"unmeasured\": true\n    },\n    \"deploy_health\": {\n",
+  "body": "**Owner:** executor\n**Trigger:** `numbers-board:spend` has no fresh reading (source tenant.spend_vs_budget)\n**Done check:** cmd:python3 -m foundation ultrastability --status\n**Status:** open\n\nAn unmeasured variable is never in bounds and never a reason to change the system. Make the reading (probe, writer or fresh ledger row) so the loop can judge it.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation ultrastability --status` shows `numbers-board:spend` with a value.\n",
   "labels": [
     "p1",
     "agent-ready"

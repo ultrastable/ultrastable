@@ -31,17 +31,11 @@
  },
  "foundation-tests": {
   "status": "fail",
-  "signature": "8fe5b5d78a2d",
-  "streak": 2,
+  "signature": "aa5b966ecd3a",
+  "streak": 1,
   "since": "2026-11-21T13:41:13Z"
  },
  "green-guard": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
- "intent-yield-fresh": {
   "status": "pass",
   "signature": "",
   "streak": 0,
@@ -83,49 +77,13 @@
   "streak": 0,
   "since": ""
  },
- "root-cause": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
  "runtime-tenant0": {
   "status": "pass",
   "signature": "",
   "streak": 0,
   "since": ""
  },
- "saydo-wellformed": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
- "seed-autonomous": {
-  "status": "fail",
-  "signature": "194b5041856d",
-  "streak": 1,
-  "since": "2026-11-24T16:27:15Z"
- },
- "seed-launch": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
- "seed-live": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
  "seed-tests": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
- "seedadmit-probe": {
   "status": "pass",
   "signature": "",
   "streak": 0,
@@ -155,15 +113,9 @@
   "streak": 0,
   "since": ""
  },
- "sla-breach": {
-  "status": "fail",
-  "signature": "05e04c30c8c9",
-  "streak": 4,
-  "since": "2026-11-21T18:56:59Z"
- },
  "temporal-drift": {
   "status": "fail",
-  "signature": "f0f382958521",
+  "signature": "7c559a9af5a4",
   "streak": 1,
   "since": "2026-11-21T13:41:18Z"
  },
@@ -174,36 +126,6 @@
   "since": ""
  },
  "waiting-on-person": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
- "yearsim-ai-quota": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
- "yearsim-dependency-break": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
- "yearsim-merge-conflict": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
- "yearsim-model-retirement": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
- "yearsim-scheduler-silent": {
   "status": "pass",
   "signature": "",
   "streak": 0,

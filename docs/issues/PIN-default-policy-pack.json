@@ -1,11 +1,11 @@
 {
   "id": "PIN-default-policy-pack",
   "title": "PIN-default-policy-pack: Short default policy pack for a buyer",
-  "body": "**Owner:** product-manager\n**Trigger:** pilot milestone 1\n**Done check:** file:seed/autonomy/default-policy-pack.json\n**Status:** closed live; verified by the done check on every build\n\nToday's policy is long and written as owner directives; a buyer needs a short default pack. Done when the pack is committed and the seed loads it.\n\nSource: site/pins.json (SITE-PINS-1); the public /engineers, /how and /roadmap pages render this item, and scripts/build_site_roadmap.py --check fails when the claim and the item drift.\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 220.8 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "body": "**Owner:** product-manager\n**Trigger:** pilot milestone 1\n**Done check:** file:seed/autonomy/default-policy-pack.json\n**Status:** open\n\nToday's policy is long and written as owner directives; a buyer needs a short default pack. Done when the pack is committed and the seed loads it.\n\nSource: site/pins.json (SITE-PINS-1); the public /engineers, /how and /roadmap pages render this item, and scripts/build_site_roadmap.py --check fails when the claim and the item drift.",
   "labels": [
     "role:product-manager",
     "pin"
   ],
-  "milestone": "Done",
+  "milestone": "Next",
   "workstream": "Site pins"
 }

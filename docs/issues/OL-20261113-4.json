@@ -1,7 +1,7 @@
 {
   "id": "OL-20261113-4",
   "title": "OL-20261113-4: VIDEO-2 post demo video",
-  "body": "**Owner:** outreach-coordinator\n**Trigger:** demo-video release updated\n**Done check:** grep:scripts/social_post.py::demo.mp4\n**Status:** closed\n\nscripts/social_post.py attaches releases/download/demo-video/demo.mp4; channel accounts acquired via /connect consent, never a pasted token.\n\n**Evidence:** scripts/social_post.py video_release and video_post queue the demo video from the latest release; scripts/test_social.py, 11 tests pass.\n",
+  "body": "**Owner:** outreach-coordinator\n**Trigger:** demo-video release updated\n**Done check:** grep:scripts/social_post.py::demo.mp4\n**Status:** open\n\nscripts/social_post.py attaches releases/download/demo-video/demo.mp4; channel accounts acquired via /connect consent, never a pasted token.",
   "labels": [
     "role:outreach-coordinator",
     "open-loop"

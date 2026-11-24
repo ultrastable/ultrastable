@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-agent-redmain-45088760971",
+  "title": "ZOMBIE-agent-redmain-45088760971: finish or retire agent/redmain-45088760971",
+  "body": "**Owner:** operations\n**Trigger:** session idle 18.0 h (ttl 4 h)\n**Status:** open\n\nBranch `agent/redmain-45088760971` at 0175552f9b has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/agent/redmain-45088760971` is 0 or the work is merged. The reaper parked the branch as parked/agent/redmain-45088760971; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

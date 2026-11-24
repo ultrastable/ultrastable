@@ -1,7 +1,7 @@
 {
   "id": "PL-1",
   "title": "PL-1: Inventory the QNFO fleet: workers, crons, D1 tables, views, metrics; map each to [architecture](../platform/docs/architecture.md)",
-  "body": "**Owner:** Staff (platform)\n**Trigger:** CONN-1\n**Done check:** Mapping table, nothing unaccounted\n**Status:** closed\n\nSource of truth: `docs/roadmap.md` (item PL-1). Every closed item proposes a plus: file it as a new issue labeled `plus`.\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 273.0 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "body": "**Owner:** Staff (platform)\n**Trigger:** CONN-1\n**Done check:** Mapping table, nothing unaccounted\n**Status:** open\n\nSource of truth: `docs/roadmap.md` (item PL-1). Every closed item proposes a plus: file it as a new issue labeled `plus`.",
   "labels": [
     "role:staff",
     "ws:platform"

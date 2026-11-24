@@ -1,7 +1,7 @@
 {
   "id": "OL-20261118-4",
   "title": "OL-20261118-4: Q-TENANT-trust-pk-rebuild: widen trust_ledger primary key to include tenant_id",
-  "body": "**Owner:** operations\n**Trigger:** first second tenant sharing a runtime database\n**Done check:** grep:seed/worker/migrations/0027_trust_ledger_tenant_pk.sql::tenant_id\n**Status:** closed\n\n0026 adds tenant_id additively, but trust_ledger keeps PRIMARY KEY (surface, action_class); a foreign-tenant row at the same key blocks own trust accrual. Rebuild the table (export to R2 first) with a (tenant_id, surface, action_class) key.\n\n**Evidence:** seed/worker/migrations/0027_trust_ledger_tenant_pk.sql rebuilds trust_ledger with a tenant-wide unique key inside one batch (migrate.js atomic marker) and keeps a backup table; seed/worker/test/tenant-isolation.test.js.\n",
+  "body": "**Owner:** operations\n**Trigger:** first second tenant sharing a runtime database\n**Done check:** grep:seed/worker/migrations/0027_trust_ledger_tenant_pk.sql::tenant_id\n**Status:** open\n\n0026 adds tenant_id additively, but trust_ledger keeps PRIMARY KEY (surface, action_class); a foreign-tenant row at the same key blocks own trust accrual. Rebuild the table (export to R2 first) with a (tenant_id, surface, action_class) key.",
   "labels": [
     "role:operations",
     "open-loop"

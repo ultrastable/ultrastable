@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-agent-q-cost-proof-1-q-cost-proof-1-record-quniv",
+  "title": "ZOMBIE-agent-q-cost-proof-1-q-cost-proof-1-record-quniv: finish or retire agent/Q-COST-PROOF-1-q-cost-proof-1-record-quniverse-d1-rows",
+  "body": "**Owner:** operations\n**Trigger:** session idle 34.8 h (ttl 2.0 h)\n**Status:** open\n\nBranch `agent/Q-COST-PROOF-1-q-cost-proof-1-record-quniverse-d1-rows` at 9083836d61 has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/agent/Q-COST-PROOF-1-q-cost-proof-1-record-quniverse-d1-rows` is 0 or the work is merged. The reaper parked the branch as parked/agent/Q-COST-PROOF-1-q-cost-proof-1-record-quniverse-d1-rows; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

@@ -1,7 +1,7 @@
 {
- "at": "2026-11-24T17:55:04Z",
- "gaps": 5,
- "match_share": 0.989,
+ "at": "2026-11-22T14:33:25Z",
+ "gaps": 3,
+ "match_share": 0.994,
  "sources": {
   "changes": [
    {
@@ -156,14 +156,14 @@
     "drift": 0,
     "id": "claims-total",
     "ok": true,
-    "total": 378
+    "total": 376
    }
   ],
   "loops": [
    {
-    "detail": "0 of 72 second-order steps kept in 14 days",
+    "detail": "0 of 47 second-order steps kept in 14 days",
     "id": "second-loop-kept",
-    "judged": 72,
+    "judged": 47,
     "kept": 0,
     "ok": false
    }
@@ -592,12 +592,10 @@
    {
     "checks": 3,
     "external": [],
-    "failing": [
-     "python3 -m foundation trajectory --check: site/trajectory-data.js is stale: run trajectory --run --apply"
-    ],
+    "failing": [],
     "id": "YEAR-SIM-1",
     "missing": [],
-    "ok": false,
+    "ok": true,
     "unmeasured": []
    },
    {
@@ -764,12 +762,10 @@
    {
     "checks": 1,
     "external": [],
-    "failing": [
-     "python3 -m foundation dispose --check: an open item is 52.3 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
-    ],
+    "failing": [],
     "id": "DISPOSE-1",
     "missing": [],
-    "ok": false,
+    "ok": true,
     "unmeasured": []
    },
    {
@@ -800,15 +796,6 @@
     "unmeasured": []
    },
    {
-    "checks": 0,
-    "external": [],
-    "failing": [],
-    "id": "SEED-AUTONOMY-1",
-    "missing": [],
-    "ok": true,
-    "unmeasured": []
-   },
-   {
     "checks": 1,
     "external": [],
     "failing": [],
@@ -820,7 +807,7 @@
   ],
   "year": [
    {
-    "detail": "simulated horizon p10 730 days against 365",
+    "detail": "simulated horizon p10 714 days against 365",
     "id": "unattended-year",
     "ok": true
    },
@@ -838,20 +825,20 @@
   },
   "claims": {
    "gaps": 0,
-   "total": 378
+   "total": 376
   },
   "loops": {
    "gaps": 1,
    "total": 1
   },
   "rules": {
-   "gaps": 2,
-   "total": 70
+   "gaps": 0,
+   "total": 69
   },
   "year": {
    "gaps": 1,
    "total": 2
   }
  },
- "total": 467
+ "total": 464
 }

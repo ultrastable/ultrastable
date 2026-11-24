@@ -1,7 +1,7 @@
 {
   "id": "OL-20261115-7",
   "title": "OL-20261115-7: OPS-1 (ops#11): archived duplicate repos and scratch",
-  "body": "**Owner:** ROWAN (identity-bound)\n**Trigger:** owner deletes\n**Done check:** grep:docs/PROJECT-MEMORY.md::archived duplicates deleted\n**Status:** closed\n\nMoved from ultrastable/ops#11. Seven archived duplicates under the org. IDENTITY-BOUND and irreversible: deletion. Default in effect: they stay archived with a SUPERSEDED description.\n\n**Disposition:** gate (owner-bound, 2026-11-20T20:46:50Z, DISPOSE-1)\n\n**Evidence:** owner field 'ROWAN (identity-bound)' binds this to the owner's own account, money or signature, which no server-side loop holds. Default in effect: the system runs without this step; nothing waits on it. Its closing probe still runs on every fleet pass and records `fixed` when it passes.\n",
+  "body": "**Owner:** ROWAN (identity-bound)\n**Trigger:** owner deletes\n**Done check:** grep:docs/PROJECT-MEMORY.md::archived duplicates deleted\n**Status:** open\n\nMoved from ultrastable/ops#11. Seven archived duplicates under the org. IDENTITY-BOUND and irreversible: deletion. Default in effect: they stay archived with a SUPERSEDED description.",
   "labels": [
     "role:ROWAN (identity-bound)",
     "open-loop"

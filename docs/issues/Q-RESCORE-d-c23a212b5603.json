@@ -1,7 +1,7 @@
 {
   "id": "Q-RESCORE-d-c23a212b5603",
   "title": "Q-RESCORE-d-c23a212b5603: held-out grader disagrees with the self-score",
-  "body": "**Owner:** reviewer\n**Trigger:** every executor run\n**Done check:** cmd:python3 -m foundation rescore --probe d-c23a212b5603\n**Status:** closed\n\nHeld-out grading disagrees with the system's own score for decision d-c23a212b5603 (point `work-queue-priority`): self True, strict rule False (done check fails now: grep:spinoffs/worker.js::archetype === \"template-generator\"), second model None (unavailable). Correct the scorer or the evidence; the done check re-grades it. Source: foundation/rescore.py (RESCORE-1).\n\n**Disposition:** shelved (ttl, 2026-11-22T19:32:08Z, DISPOSE-1)\n\n**Evidence:** open 6.2 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "body": "**Owner:** reviewer\n**Trigger:** every executor run\n**Done check:** cmd:python3 -m foundation rescore --probe d-c23a212b5603\n**Status:** open\n\nHeld-out grading disagrees with the system's own score for decision d-c23a212b5603 (point `work-queue-priority`): self True, strict rule False (done check fails now: grep:spinoffs/worker.js::archetype === \"template-generator\"), second model None (unavailable). Correct the scorer or the evidence; the done check re-grades it. Source: foundation/rescore.py (RESCORE-1).",
   "labels": [
     "role:reviewer",
     "rescore"

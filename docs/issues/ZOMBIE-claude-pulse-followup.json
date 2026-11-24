@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-claude-pulse-followup",
+  "title": "ZOMBIE-claude-pulse-followup: finish or retire claude/pulse-followup",
+  "body": "**Owner:** operations\n**Trigger:** session idle 20.3 h (ttl 2.0 h)\n**Status:** open\n\nBranch `claude/pulse-followup` at 901e472e0c has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/claude/pulse-followup` is 0 or the work is merged. The reaper parked the branch as parked/claude/pulse-followup; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

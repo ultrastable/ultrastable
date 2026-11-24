@@ -1,5 +1,5 @@
 {
- "at": "2026-11-24T15:51:48Z",
+ "at": "2026-11-18T13:00:29Z",
  "probes": {
   "closed-loops/closedloop": {
    "status": "ok",
@@ -33,7 +33,7 @@
   },
   "front-end-matches-back-end/claims": {
    "status": "ok",
-   "detail": "claims: 378 verified of 378; 0 drift",
+   "detail": "claims: 28 verified of 28; 0 drift",
    "fixed": false,
    "item": null
   },
@@ -45,13 +45,7 @@
   },
   "front-end-matches-back-end/pages-live": {
    "status": "unmeasured",
-   "detail": "not measured: https://ultrastable.io/api/freshness (403), https://tenant-ps-web.ultrastable.workers.dev/api/freshness (403)",
-   "fixed": false,
-   "item": null
-  },
-  "front-end-matches-back-end/spinoff-live": {
-   "status": "unmeasured",
-   "detail": "no live public-benefit app is launched yet",
+   "detail": "/api/freshness unreachable: URLError",
    "fixed": false,
    "item": null
   },
@@ -91,12 +85,6 @@
    "fixed": false,
    "item": null
   },
-  "no-qnfo-on-pages/qnfo-live": {
-   "status": "unmeasured",
-   "detail": "pages not fetched: / (HTTPError), /live (HTTPError), /how (HTTPError), /roadmap (HTTPError), /claims (HTTPError)",
-   "fixed": false,
-   "item": null
-  },
   "license-notice/license-local": {
    "status": "ok",
    "detail": "OK: license files consistent",
@@ -104,10 +92,10 @@
    "item": null
   },
   "license-notice/license-fleet": {
-   "status": "unmeasured",
-   "detail": "seed: GitHub unreadable",
+   "status": "violated",
+   "detail": "practical-solutions: README lacks the license notice; .github: README lacks the license notice",
    "fixed": false,
-   "item": null
+   "item": "Q-RULE-license-notice-license-fleet"
   },
   "no-secrets-in-logs/no-secrets": {
    "status": "ok",
@@ -129,7 +117,7 @@
   },
   "clock-never-stops/clock": {
    "status": "ok",
-   "detail": "clock ok: tick-heartbeat, executor, transparency, deploy-site, scout, a11y, criticality-loop, claims, watchdog, temporal, unlearn-beat, intent-yield",
+   "detail": "clock ok: tick-heartbeat, executor, transparency, deploy-site, scout, a11y, criticality-loop, claims, watchdog",
    "fixed": false,
    "item": null
   },
@@ -142,78 +130,6 @@
   "user-backend-boundary/pointclick": {
    "status": "ok",
    "detail": "pointclick ok",
-   "fixed": false,
-   "item": null
-  },
-  "every-decision-measured/decisions-scored": {
-   "status": "unmeasured",
-   "detail": "unmeasured: ai-router: https://ultrastable.io/api/decisions unreachable; plussing: no decision logged yet; free-tier-governor: https://ultrastable.io/api/decisi",
-   "fixed": false,
-   "item": null
-  },
-  "single-account/singleaccount": {
-   "status": "ok",
-   "detail": "single-account: ok",
-   "fixed": false,
-   "item": null
-  },
-  "every-goal-has-knob/goalscheck": {
-   "status": "ok",
-   "detail": "goalscheck ok",
-   "fixed": false,
-   "item": null
-  },
-  "no-open-items/openloops": {
-   "status": "ok",
-   "detail": "openloops ok",
-   "fixed": false,
-   "item": null
-  },
-  "no-open-items/modelwatch": {
-   "status": "ok",
-   "detail": "modelwatch ok",
-   "fixed": false,
-   "item": null
-  },
-  "no-open-items/unattended": {
-   "status": "ok",
-   "detail": "unattended ok",
-   "fixed": false,
-   "item": null
-  },
-  "held-out-rescoring/rescored": {
-   "status": "ok",
-   "detail": "rescore ok",
-   "fixed": false,
-   "item": null
-  },
-  "own-database/owndb-live": {
-   "status": "unmeasured",
-   "detail": "unmeasured: no CLOUDFLARE_API_TOKEN on this host",
-   "fixed": false,
-   "item": null
-  },
-  "hosted-tier-closed-until-proven/tenantcontrols": {
-   "status": "ok",
-   "detail": "tenantcontrols ok",
-   "fixed": false,
-   "item": null
-  },
-  "visible-progress/progress": {
-   "status": "ok",
-   "detail": "progress: check ok",
-   "fixed": false,
-   "item": null
-  },
-  "visible-progress/progress-apps": {
-   "status": "ok",
-   "detail": "progress: apps ok",
-   "fixed": false,
-   "item": null
-  },
-  "visible-progress/progress-live": {
-   "status": "ok",
-   "detail": "progress: live reading ok",
    "fixed": false,
    "item": null
   }
@@ -237,9 +153,9 @@
   "front-end-matches-back-end": {
    "status": "unmeasured",
    "ci": 2,
-   "probes": 4,
+   "probes": 3,
    "gaps": [
-    "Practical Solutions *.gen.js bundles do not yet report freshness"
+    "only /live reports its freshness; other generated pages are not yet registered in /api/freshness"
    ],
    "statement": "Words match code: every public statement is bound to a probe of the running code (CLAIMS-1, WORDS-MATCH-CODE-1)."
   },
@@ -258,14 +174,16 @@
    "statement": "Ultrastable stays inside the free plans; every workflow declares a minute budget; spend is measured (FREE-TIER-1, cost, actions budget)."
   },
   "no-qnfo-on-pages": {
-   "status": "unmeasured",
+   "status": "partial",
    "ci": 1,
-   "probes": 2,
-   "gaps": [],
+   "probes": 1,
+   "gaps": [
+    "rendered live pages are not yet scanned, only their source"
+   ],
    "statement": "No QNFO data on Ultrastable pages: the brand and its data stay separate (shrink-only baseline per page source)."
   },
   "license-notice": {
-   "status": "unmeasured",
+   "status": "violated",
    "ci": 2,
    "probes": 2,
    "gaps": [],
@@ -298,62 +216,6 @@
    "probes": 2,
    "gaps": [],
    "statement": "Users see their idea and front end; backend work stays invisible, audited and in shared code (USER-BACKEND-1, POINT-AND-CLICK-1)."
-  },
-  "every-decision-measured": {
-   "status": "unmeasured",
-   "ci": 1,
-   "probes": 1,
-   "gaps": [],
-   "statement": "Every autonomous decision records the metric it optimizes, its predicted effect and the measured outcome, and the outcomes are scored (DECISIONS-1: measure what we improve, improve what we measure)."
-  },
-  "single-account": {
-   "status": "enforced",
-   "ci": 1,
-   "probes": 1,
-   "gaps": [],
-   "statement": "Ultrastable runs only in the Cloudflare account `ultrastable`; nothing in the repositories references the retired quniverse account or its Ultrastable assets (SINGLE-ACCOUNT-1)."
-  },
-  "every-goal-has-knob": {
-   "status": "enforced",
-   "ci": 1,
-   "probes": 1,
-   "gaps": [],
-   "statement": "Every goal Ultrastable works toward has a measured variable, a target, a deadline and at least one knob the controller may turn; a goal with no knob is listed in a shrink-only baseline and filed as a backlog item (GOALS-1)."
-  },
-  "no-open-items": {
-   "status": "enforced",
-   "ci": 1,
-   "probes": 3,
-   "gaps": [],
-   "statement": "The system never reports 'needs you' or leaves an item open: every leftover is closed by evidence or recorded as a gate with surfaces tried, a default in effect and a closing probe (NO-OPEN-ITEMS-1)."
-  },
-  "held-out-rescoring": {
-   "status": "enforced",
-   "ci": 1,
-   "probes": 1,
-   "gaps": [],
-   "statement": "Every settled prediction is re-scored by graders that share no code with the scorer (a strict rule and a second model family); a disagreement files its own item (RESCORE-1)."
-  },
-  "own-database": {
-   "status": "unmeasured",
-   "ci": 1,
-   "probes": 1,
-   "gaps": [],
-   "statement": "The core's databases are its own: no core Worker binds a tenant's database or a database of the originating fleet, and the declared core databases exist in the core's account (OWN-DB-1)."
-  },
-  "hosted-tier-closed-until-proven": {
-   "status": "enforced",
-   "ci": 1,
-   "probes": 1,
-   "gaps": [],
-   "statement": "The multi-tenant hosted tier is not offered while any of its controls is unproven; each control's status is the result of its probes (TENANT-CONTROLS-1)."
-  },
-  "visible-progress": {
-   "status": "enforced",
-   "ci": 1,
-   "probes": 3,
-   "gaps": [],
-   "statement": "Every system shows noticeable, substantive progress at every visit for at least six months with no input: what shipped is published from merged changes, releases and launches only, and a system that falls behind its declared cadence has its producers started and a repair item filed (PROGRESS-1)."
   }
  }
 }

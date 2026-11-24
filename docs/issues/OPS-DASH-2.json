@@ -1,7 +1,7 @@
 {
   "id": "OPS-DASH-2",
   "title": "OPS-DASH-2: /ops shows cost, criticality k and clocks beside the agents",
-  "body": "**Owner:** Product manager\n**Trigger:** CONTROL-PLANE-1 live\n**Done check:** grep:seed/worker/src/controlplane.js::k_eff\n**Status:** closed\n\nThe operations dashboard shows agents, in-progress, waiting, on-deck and findings from D1. It does not yet show the money side or the clocks: criticality_samples (k_eff), cost_samples against instances/ultrastable/cost-budgets.json, and the sweeper open-loop age. Add them as tiles and findings (k below floor, cost over budget, open_loop_age_hours over 0) and to GET /api/v1/status. Closing probe: /api/v1/status has k_eff and cost fields and /ops renders them.\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 156.9 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "body": "**Owner:** Product manager\n**Trigger:** CONTROL-PLANE-1 live\n**Done check:** grep:seed/worker/src/controlplane.js::k_eff\n**Status:** open\n\nThe operations dashboard shows agents, in-progress, waiting, on-deck and findings from D1. It does not yet show the money side or the clocks: criticality_samples (k_eff), cost_samples against instances/ultrastable/cost-budgets.json, and the sweeper open-loop age. Add them as tiles and findings (k below floor, cost over budget, open_loop_age_hours over 0) and to GET /api/v1/status. Closing probe: /api/v1/status has k_eff and cost fields and /ops renders them.",
   "labels": [
     "role:staff",
     "ws:dashboard"

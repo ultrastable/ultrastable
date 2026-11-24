@@ -1,7 +1,7 @@
 {
   "id": "Q-YEAR-node-runtime",
   "title": "Q-YEAR-node-runtime: move workflows to the current Node LTS",
-  "body": "**Owner:** staff\n**Trigger:** UNATTENDED-365 register, dependency `node-runtime` is open\n**Done check:** cmd:python3 -m foundation unattended --probe node-runtime\n**Status:** closed\n\nReplace node-version 22 with 24 in every workflow and run the suites.\nWhen it holds, set the dependency's status to closed in doctrine/unattended.json with the evidence and a probe that proves it.\n\n**Disposition:** fixed (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 23.7 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n\n**Evidence:** 2026-11-22T22:31:26Z closing probe passed after the item was disposed: node-runtime: closed\n",
+  "body": "**Owner:** staff\n**Trigger:** UNATTENDED-365 register, dependency `node-runtime` is open\n**Done check:** cmd:python3 -m foundation unattended --probe node-runtime\n**Status:** open\n\nReplace node-version 22 with 24 in every workflow and run the suites.\nWhen it holds, set the dependency's status to closed in doctrine/unattended.json with the evidence and a probe that proves it.",
   "labels": [
     "role:staff",
     "raises-self"

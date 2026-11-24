@@ -1,7 +1,7 @@
 {
   "id": "PORT-BRANCH-ccr-571ca6f9-3g5jv9",
   "title": "PORT-BRANCH-ccr-571ca6f9-3g5jv9: carry ccr-571ca6f9-3g5jv9 onto main",
-  "body": "**Owner:** operations\n**Trigger:** branch `ccr-571ca6f9-3g5jv9` at 7e74bf5b6b holds work main lacks and cannot merge as is (conflicts in code: .github/workflows/checks.yml, agents/roles/product-manager.md, dashboard/agent.js, dashboard/worker.js, doctrine/flows.json, foundation/__main__.py)\n**Done check:** cmd:python3 -m foundation branchsweep --carried ccr-571ca6f9-3g5jv9\n**Status:** closed\n\nPort the change by hand onto current main (it is 5 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried ccr-571ca6f9-3g5jv9\n\n**Evidence:** Superseded: INSIGHT-1 (foundation/insight.py, doctrine/insight.json, foundation/pm.py) and CONSOLE-AGENT-1 (dashboard/agent.js, dashboard/wrangler.toml AI binding, dashboard/test/agent.test.mjs) are on main, and docs/issues/Q-CONSOLE-SESSION-1.json queues the propose_change tool.",
+  "body": "**Owner:** operations\n**Trigger:** branch `ccr-571ca6f9-3g5jv9` at 7e74bf5b6b holds work main lacks and cannot merge as is (conflicts in code: .github/workflows/checks.yml, agents/roles/product-manager.md, dashboard/agent.js, dashboard/worker.js, doctrine/flows.json, foundation/__main__.py)\n**Done check:** cmd:python3 -m foundation branchsweep --carried ccr-571ca6f9-3g5jv9\n**Status:** open\n\nPort the change by hand onto current main (it is 5 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried ccr-571ca6f9-3g5jv9",
   "labels": [
     "role:operations",
     "agent-ready",

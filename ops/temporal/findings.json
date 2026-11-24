@@ -7,16 +7,16 @@
    "area": "business",
    "advocate": "funding-manager",
    "severity": "act",
-   "evidence": "decay: 1 commits in 3 days after 39 in the 11 days before (3.5 a day)",
-   "prediction": "area business gets at least 5 commits in 3 days within 7 days",
+   "evidence": "decay: 2 commits in 3 days after 37 in the 8 days before (4.6 a day)",
+   "prediction": "area business gets at least 7 commits in 3 days within 7 days",
    "files": [],
    "last_good": null,
    "status": "open",
-   "first_seen": "2026-11-24T17:38:51Z",
-   "last_seen": "2026-11-24T17:38:51Z",
-   "runs": 1,
+   "first_seen": "2026-11-21T11:56:24Z",
+   "last_seen": "2026-11-21T12:19:03Z",
+   "runs": 3,
    "item": "Q-TEMPORAL-94167fdea6",
-   "reopened": 1
+   "reopened": 0
   },
   "69713c50e8": {
    "id": "69713c50e8",
@@ -25,14 +25,14 @@
    "area": "docs",
    "advocate": "project-manager",
    "severity": "act",
-   "evidence": "decay: 2 commits in 3 days after 102 in the 11 days before (9.3 a day)",
-   "prediction": "area docs gets at least 14 commits in 3 days within 7 days",
+   "evidence": "decay: 5 commits in 3 days after 98 in the 8 days before (12.2 a day)",
+   "prediction": "area docs gets at least 18 commits in 3 days within 7 days",
    "files": [],
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-24T17:38:51Z",
-   "runs": 6,
+   "last_seen": "2026-11-21T12:19:03Z",
+   "runs": 3,
    "item": "Q-TEMPORAL-69713c50e8",
    "reopened": 0
   },
@@ -43,16 +43,16 @@
    "area": "foundation",
    "advocate": "operations",
    "severity": "act",
-   "evidence": "pr-outcome: 1 failures in a row, 3 in the last 3 days against 5 in the 11 before",
+   "evidence": "pr-outcome: 1 failures in a row, 5 in the last 3 days against 0 in the 8 before",
    "prediction": "ledger:executor:pr-outcome has no failure in its next 3 events within 7 days",
    "files": [
     "foundation/executor.py"
    ],
-   "last_good": "96e38e8c0ab1",
+   "last_good": "d02d20a4dbe3",
    "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-24T17:38:51Z",
-   "runs": 6,
+   "last_seen": "2026-11-21T12:19:03Z",
+   "runs": 3,
    "item": "Q-TEMPORAL-e5ddf8e610",
    "reopened": 0
   },
@@ -67,13 +67,12 @@
    "prediction": "area root recent_rate returns below 3.0x baseline within 7 days",
    "files": [],
    "last_good": null,
-   "status": "settled",
+   "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
    "last_seen": "2026-11-21T12:19:03Z",
    "runs": 3,
    "item": "Q-TEMPORAL-e0c6ffc24a",
-   "reopened": 0,
-   "settled_at": "2026-11-22T14:31:06Z"
+   "reopened": 0
   },
   "c200e5281e": {
    "id": "c200e5281e",
@@ -88,13 +87,12 @@
     "README.md"
    ],
    "last_good": null,
-   "status": "settled",
+   "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
    "last_seen": "2026-11-21T12:19:03Z",
    "runs": 3,
    "item": "Q-TEMPORAL-c200e5281e",
-   "reopened": 0,
-   "settled_at": "2026-11-22T14:31:06Z"
+   "reopened": 0
   },
   "1b91492bbf": {
    "id": "1b91492bbf",
@@ -109,13 +107,12 @@
     "doctrine/decision-ledger.json"
    ],
    "last_good": null,
-   "status": "settled",
+   "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
    "last_seen": "2026-11-21T12:19:03Z",
    "runs": 3,
    "item": "Q-TEMPORAL-1b91492bbf",
-   "reopened": 0,
-   "settled_at": "2026-11-22T14:31:06Z"
+   "reopened": 0
   },
   "67dd9b9dee": {
    "id": "67dd9b9dee",
@@ -130,13 +127,12 @@
     "platform/adapters/README.md"
    ],
    "last_good": null,
-   "status": "settled",
+   "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
    "last_seen": "2026-11-21T12:19:03Z",
    "runs": 3,
    "item": null,
-   "reopened": 0,
-   "settled_at": "2026-11-22T14:31:06Z"
+   "reopened": 0
   },
   "593c3b95f2": {
    "id": "593c3b95f2",
@@ -151,13 +147,12 @@
     "seed/worker/src/index.js"
    ],
    "last_good": null,
-   "status": "settled",
+   "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
    "last_seen": "2026-11-21T12:19:03Z",
    "runs": 3,
    "item": null,
-   "reopened": 0,
-   "settled_at": "2026-11-22T14:31:06Z"
+   "reopened": 0
   },
   "6420af06fe": {
    "id": "6420af06fe",
@@ -172,13 +167,12 @@
     "site/decisions-data.js"
    ],
    "last_good": null,
-   "status": "settled",
+   "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
    "last_seen": "2026-11-21T12:19:03Z",
    "runs": 3,
    "item": null,
-   "reopened": 0,
-   "settled_at": "2026-11-22T14:31:06Z"
+   "reopened": 0
   },
   "54854bf10b": {
    "id": "54854bf10b",
@@ -187,7 +181,7 @@
    "area": "site",
    "advocate": "uiux-manager",
    "severity": "watch",
-   "evidence": "site/worker.js edited 14 times in 3 days (outside generated and ledger paths)",
+   "evidence": "site/worker.js edited 28 times in 3 days (outside generated and ledger paths)",
    "prediction": "site/worker.js is edited at most 5 times in 3 days within 7 days",
    "files": [
     "site/worker.js"
@@ -195,469 +189,11 @@
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-24T17:38:51Z",
-   "runs": 6,
-   "item": "Q-TEMPORAL-54854bf10b",
-   "reopened": 0
-  },
-  "67d6a95a40": {
-   "id": "67d6a95a40",
-   "kind": "repeated_failure",
-   "subject": "ledger:clocks:all",
-   "area": "foundation",
-   "advocate": "operations",
-   "severity": "act",
-   "evidence": "all: 238 failures in a row, 212 in the last 3 days against 10 in the 11 before",
-   "prediction": "ledger:clocks:all has no failure in its next 3 events within 7 days",
-   "files": [
-    "foundation/clock.py"
-   ],
-   "last_good": "add800e814fc",
-   "status": "open",
-   "first_seen": "2026-11-22T14:31:06Z",
-   "last_seen": "2026-11-24T17:38:51Z",
+   "last_seen": "2026-11-21T12:19:03Z",
    "runs": 3,
-   "item": "Q-TEMPORAL-67d6a95a40",
-   "reopened": 0
-  },
-  "4f9b20023a": {
-   "id": "4f9b20023a",
-   "kind": "stopped_loop",
-   "subject": "ledger:executor:pr-outcome",
-   "area": "foundation",
-   "advocate": "operations",
-   "severity": "act",
-   "evidence": "pr-outcome: last event 67 h ago, it used to arrive every 1.6 h (42.8 intervals)",
-   "prediction": "ledger:executor:pr-outcome records an event within 7 days",
-   "files": [
-    "foundation/executor.py"
-   ],
-   "last_good": "61808a25d06d",
-   "status": "open",
-   "first_seen": "2026-11-22T14:31:06Z",
-   "last_seen": "2026-11-24T17:38:51Z",
-   "runs": 3,
-   "item": "Q-TEMPORAL-4f9b20023a",
-   "reopened": 0
-  },
-  "f057071659": {
-   "id": "f057071659",
-   "kind": "hotspot",
-   "subject": "area:doctrine",
-   "area": "doctrine",
-   "advocate": "portfolio-manager",
-   "severity": "watch",
-   "evidence": "276 commits in 3 days against a baseline of 20.5 a day (4.5x)",
-   "prediction": "area doctrine recent_rate returns below 3.0x baseline within 7 days",
-   "files": [],
-   "last_good": null,
-   "status": "settled",
-   "first_seen": "2026-11-22T14:31:06Z",
-   "last_seen": "2026-11-23T18:00:44Z",
-   "runs": 2,
-   "item": null,
-   "reopened": 0,
-   "settled_at": "2026-11-24T17:38:51Z"
-  },
-  "bac71f01a8": {
-   "id": "bac71f01a8",
-   "kind": "hotspot",
-   "subject": "file:.github/workflows/checks.yml",
-   "area": "workflows",
-   "advocate": "infrastructure-manager",
-   "severity": "watch",
-   "evidence": ".github/workflows/checks.yml edited 20 times in 3 days (outside generated and ledger paths)",
-   "prediction": ".github/workflows/checks.yml is edited at most 5 times in 3 days within 7 days",
-   "files": [
-    ".github/workflows/checks.yml"
-   ],
-   "last_good": null,
-   "status": "settled",
-   "first_seen": "2026-11-22T14:31:06Z",
-   "last_seen": "2026-11-23T18:00:44Z",
-   "runs": 2,
-   "item": null,
-   "reopened": 0,
-   "settled_at": "2026-11-24T17:38:51Z"
-  },
-  "d01db32c1b": {
-   "id": "d01db32c1b",
-   "kind": "hotspot",
-   "subject": "file:agents/AGENTS.md",
-   "area": "agents",
-   "advocate": "org-designer",
-   "severity": "watch",
-   "evidence": "agents/AGENTS.md edited 16 times in 3 days (outside generated and ledger paths)",
-   "prediction": "agents/AGENTS.md is edited at most 5 times in 3 days within 7 days",
-   "files": [
-    "agents/AGENTS.md"
-   ],
-   "last_good": null,
-   "status": "open",
-   "first_seen": "2026-11-22T14:31:06Z",
-   "last_seen": "2026-11-24T17:38:51Z",
-   "runs": 3,
-   "item": "Q-TEMPORAL-d01db32c1b",
-   "reopened": 0
-  },
-  "cb14699baf": {
-   "id": "cb14699baf",
-   "kind": "hotspot",
-   "subject": "file:doctrine/claims.json",
-   "area": "doctrine",
-   "advocate": "portfolio-manager",
-   "severity": "watch",
-   "evidence": "doctrine/claims.json edited 16 times in 3 days (outside generated and ledger paths)",
-   "prediction": "doctrine/claims.json is edited at most 5 times in 3 days within 7 days",
-   "files": [
-    "doctrine/claims.json"
-   ],
-   "last_good": null,
-   "status": "settled",
-   "first_seen": "2026-11-22T14:31:06Z",
-   "last_seen": "2026-11-22T14:31:06Z",
-   "runs": 1,
-   "item": null,
-   "reopened": 0,
-   "settled_at": "2026-11-23T18:00:44Z"
-  },
-  "b5792f9a73": {
-   "id": "b5792f9a73",
-   "kind": "hotspot",
-   "subject": "file:doctrine/flows.json",
-   "area": "doctrine",
-   "advocate": "portfolio-manager",
-   "severity": "watch",
-   "evidence": "doctrine/flows.json edited 16 times in 3 days (outside generated and ledger paths)",
-   "prediction": "doctrine/flows.json is edited at most 5 times in 3 days within 7 days",
-   "files": [
-    "doctrine/flows.json"
-   ],
-   "last_good": null,
-   "status": "open",
-   "first_seen": "2026-11-22T14:31:06Z",
-   "last_seen": "2026-11-24T17:38:51Z",
-   "runs": 3,
-   "item": "Q-TEMPORAL-b5792f9a73",
-   "reopened": 0
-  },
-  "e32a734d41": {
-   "id": "e32a734d41",
-   "kind": "hotspot",
-   "subject": "file:foundation/__main__.py",
-   "area": "foundation",
-   "advocate": "operations",
-   "severity": "watch",
-   "evidence": "foundation/__main__.py edited 21 times in 3 days (outside generated and ledger paths)",
-   "prediction": "foundation/__main__.py is edited at most 5 times in 3 days within 7 days",
-   "files": [
-    "foundation/__main__.py"
-   ],
-   "last_good": null,
-   "status": "open",
-   "first_seen": "2026-11-22T14:31:06Z",
-   "last_seen": "2026-11-24T17:38:51Z",
-   "runs": 3,
-   "item": "Q-TEMPORAL-e32a734d41",
-   "reopened": 0
-  },
-  "bfbb87dc25": {
-   "id": "bfbb87dc25",
-   "kind": "stopped_loop",
-   "subject": "ledger:deploys:ultrastable-agents",
-   "area": "workflows",
-   "advocate": "infrastructure-manager",
-   "severity": "act",
-   "evidence": "ultrastable-agents: last event 31 h ago, it used to arrive every 1.0 h (31.4 intervals)",
-   "prediction": "ledger:deploys:ultrastable-agents records an event within 7 days",
-   "files": [
-    "deploy/deploy-workers.mjs"
-   ],
-   "last_good": "f3f4a67ff158",
-   "status": "open",
-   "first_seen": "2026-11-23T18:00:44Z",
-   "last_seen": "2026-11-24T17:38:51Z",
-   "runs": 2,
-   "item": "Q-TEMPORAL-bfbb87dc25",
-   "reopened": 0
-  },
-  "381e97ef1d": {
-   "id": "381e97ef1d",
-   "kind": "stopped_loop",
-   "subject": "ledger:deploys:ultrastable-dashboard",
-   "area": "workflows",
-   "advocate": "infrastructure-manager",
-   "severity": "act",
-   "evidence": "ultrastable-dashboard: last event 31 h ago, it used to arrive every 1.0 h (31.4 intervals)",
-   "prediction": "ledger:deploys:ultrastable-dashboard records an event within 7 days",
-   "files": [
-    "deploy/deploy-workers.mjs"
-   ],
-   "last_good": "f3f4a67ff158",
-   "status": "open",
-   "first_seen": "2026-11-23T18:00:44Z",
-   "last_seen": "2026-11-24T17:38:51Z",
-   "runs": 2,
-   "item": "Q-TEMPORAL-381e97ef1d",
-   "reopened": 0
-  },
-  "458cb625ba": {
-   "id": "458cb625ba",
-   "kind": "stopped_loop",
-   "subject": "ledger:deploys:ultrastable-seed-second-tenant",
-   "area": "workflows",
-   "advocate": "infrastructure-manager",
-   "severity": "act",
-   "evidence": "ultrastable-seed-second-tenant: last event 31 h ago, it used to arrive every 1.0 h (31.4 intervals)",
-   "prediction": "ledger:deploys:ultrastable-seed-second-tenant records an event within 7 days",
-   "files": [
-    "deploy/deploy-workers.mjs"
-   ],
-   "last_good": "f3f4a67ff158",
-   "status": "open",
-   "first_seen": "2026-11-23T18:00:44Z",
-   "last_seen": "2026-11-24T17:38:51Z",
-   "runs": 2,
-   "item": "Q-TEMPORAL-458cb625ba",
-   "reopened": 0
-  },
-  "b2caf01433": {
-   "id": "b2caf01433",
-   "kind": "stopped_loop",
-   "subject": "ledger:deploys:ultrastable-site",
-   "area": "workflows",
-   "advocate": "infrastructure-manager",
-   "severity": "act",
-   "evidence": "ultrastable-site: last event 31 h ago, it used to arrive every 1.0 h (31.4 intervals)",
-   "prediction": "ledger:deploys:ultrastable-site records an event within 7 days",
-   "files": [
-    "deploy/deploy-workers.mjs"
-   ],
-   "last_good": "f3f4a67ff158",
-   "status": "open",
-   "first_seen": "2026-11-23T18:00:44Z",
-   "last_seen": "2026-11-24T17:38:51Z",
-   "runs": 2,
-   "item": null,
-   "reopened": 0
-  },
-  "e127ef84b4": {
-   "id": "e127ef84b4",
-   "kind": "stopped_loop",
-   "subject": "ledger:deploys:ultrastable-tenants",
-   "area": "workflows",
-   "advocate": "infrastructure-manager",
-   "severity": "act",
-   "evidence": "ultrastable-tenants: last event 31 h ago, it used to arrive every 1.0 h (31.4 intervals)",
-   "prediction": "ledger:deploys:ultrastable-tenants records an event within 7 days",
-   "files": [
-    "deploy/deploy-workers.mjs"
-   ],
-   "last_good": "f3f4a67ff158",
-   "status": "open",
-   "first_seen": "2026-11-23T18:00:44Z",
-   "last_seen": "2026-11-24T17:38:51Z",
-   "runs": 2,
-   "item": null,
-   "reopened": 0
-  },
-  "9a81e17b01": {
-   "id": "9a81e17b01",
-   "kind": "stopped_loop",
-   "subject": "ledger:deploys:ultrastable-tick",
-   "area": "workflows",
-   "advocate": "infrastructure-manager",
-   "severity": "act",
-   "evidence": "ultrastable-tick: last event 31 h ago, it used to arrive every 1.0 h (31.4 intervals)",
-   "prediction": "ledger:deploys:ultrastable-tick records an event within 7 days",
-   "files": [
-    "deploy/deploy-workers.mjs"
-   ],
-   "last_good": "f3f4a67ff158",
-   "status": "open",
-   "first_seen": "2026-11-23T18:00:44Z",
-   "last_seen": "2026-11-24T17:38:51Z",
-   "runs": 2,
-   "item": null,
-   "reopened": 0
-  },
-  "c9d655385f": {
-   "id": "c9d655385f",
-   "kind": "stopped_loop",
-   "subject": "ledger:deploys:ultrastable-unlearn",
-   "area": "workflows",
-   "advocate": "infrastructure-manager",
-   "severity": "act",
-   "evidence": "ultrastable-unlearn: last event 31 h ago, it used to arrive every 1.0 h (31.4 intervals)",
-   "prediction": "ledger:deploys:ultrastable-unlearn records an event within 7 days",
-   "files": [
-    "deploy/deploy-workers.mjs"
-   ],
-   "last_good": "f3f4a67ff158",
-   "status": "open",
-   "first_seen": "2026-11-23T18:00:44Z",
-   "last_seen": "2026-11-24T17:38:51Z",
-   "runs": 2,
-   "item": null,
-   "reopened": 0
-  },
-  "8fd50318d7": {
-   "id": "8fd50318d7",
-   "kind": "hotspot",
-   "subject": "area:site",
-   "area": "site",
-   "advocate": "uiux-manager",
-   "severity": "watch",
-   "evidence": "233 commits in 3 days against a baseline of 13.5 a day (5.8x)",
-   "prediction": "area site recent_rate returns below 3.0x baseline within 7 days",
-   "files": [],
-   "last_good": null,
-   "status": "open",
-   "first_seen": "2026-11-23T18:00:44Z",
-   "last_seen": "2026-11-24T17:38:51Z",
-   "runs": 2,
-   "item": null,
-   "reopened": 0
-  },
-  "2ce384e48d": {
-   "id": "2ce384e48d",
-   "kind": "hotspot",
-   "subject": "file:site/saydo-data.js",
-   "area": "site",
-   "advocate": "uiux-manager",
-   "severity": "watch",
-   "evidence": "site/saydo-data.js edited 193 times in 3 days (outside generated and ledger paths)",
-   "prediction": "site/saydo-data.js is edited at most 5 times in 3 days within 7 days",
-   "files": [
-    "site/saydo-data.js"
-   ],
-   "last_good": null,
-   "status": "open",
-   "first_seen": "2026-11-23T18:00:44Z",
-   "last_seen": "2026-11-24T17:38:51Z",
-   "runs": 2,
-   "item": null,
-   "reopened": 0
-  },
-  "43e2427dcb": {
-   "id": "43e2427dcb",
-   "kind": "neglect",
-   "subject": "area:platform",
-   "area": "platform",
-   "advocate": "operations",
-   "severity": "act",
-   "evidence": "untouched: 0 commits in 3 days after 32 in the 11 days before (2.9 a day)",
-   "prediction": "area platform gets at least 4 commits in 3 days within 7 days",
-   "files": [],
-   "last_good": null,
-   "status": "open",
-   "first_seen": "2026-11-24T17:38:51Z",
-   "last_seen": "2026-11-24T17:38:51Z",
-   "runs": 1,
-   "item": null,
-   "reopened": 0
-  },
-  "99ee9c3bfb": {
-   "id": "99ee9c3bfb",
-   "kind": "hotspot",
-   "subject": "file:doctrine/claim-code.json",
-   "area": "doctrine",
-   "advocate": "portfolio-manager",
-   "severity": "watch",
-   "evidence": "doctrine/claim-code.json edited 14 times in 3 days (outside generated and ledger paths)",
-   "prediction": "doctrine/claim-code.json is edited at most 5 times in 3 days within 7 days",
-   "files": [
-    "doctrine/claim-code.json"
-   ],
-   "last_good": null,
-   "status": "open",
-   "first_seen": "2026-11-24T17:38:51Z",
-   "last_seen": "2026-11-24T17:38:51Z",
-   "runs": 1,
    "item": null,
    "reopened": 0
   }
  },
- "settled": [
-  {
-   "id": "94167fdea6",
-   "kind": "neglect",
-   "subject": "area:business",
-   "first_seen": "2026-11-21T11:56:24Z",
-   "settled_at": "2026-11-22T14:31:06Z",
-   "runs": 3
-  },
-  {
-   "id": "e0c6ffc24a",
-   "kind": "hotspot",
-   "subject": "area:root",
-   "first_seen": "2026-11-21T11:56:24Z",
-   "settled_at": "2026-11-22T14:31:06Z",
-   "runs": 3
-  },
-  {
-   "id": "c200e5281e",
-   "kind": "hotspot",
-   "subject": "file:README.md",
-   "first_seen": "2026-11-21T11:56:24Z",
-   "settled_at": "2026-11-22T14:31:06Z",
-   "runs": 3
-  },
-  {
-   "id": "1b91492bbf",
-   "kind": "hotspot",
-   "subject": "file:doctrine/decision-ledger.json",
-   "first_seen": "2026-11-21T11:56:24Z",
-   "settled_at": "2026-11-22T14:31:06Z",
-   "runs": 3
-  },
-  {
-   "id": "67dd9b9dee",
-   "kind": "hotspot",
-   "subject": "file:platform/adapters/README.md",
-   "first_seen": "2026-11-21T11:56:24Z",
-   "settled_at": "2026-11-22T14:31:06Z",
-   "runs": 3
-  },
-  {
-   "id": "593c3b95f2",
-   "kind": "hotspot",
-   "subject": "file:seed/worker/src/index.js",
-   "first_seen": "2026-11-21T11:56:24Z",
-   "settled_at": "2026-11-22T14:31:06Z",
-   "runs": 3
-  },
-  {
-   "id": "6420af06fe",
-   "kind": "hotspot",
-   "subject": "file:site/decisions-data.js",
-   "first_seen": "2026-11-21T11:56:24Z",
-   "settled_at": "2026-11-22T14:31:06Z",
-   "runs": 3
-  },
-  {
-   "id": "cb14699baf",
-   "kind": "hotspot",
-   "subject": "file:doctrine/claims.json",
-   "first_seen": "2026-11-22T14:31:06Z",
-   "settled_at": "2026-11-23T18:00:44Z",
-   "runs": 1
-  },
-  {
-   "id": "f057071659",
-   "kind": "hotspot",
-   "subject": "area:doctrine",
-   "first_seen": "2026-11-22T14:31:06Z",
-   "settled_at": "2026-11-24T17:38:51Z",
-   "runs": 2
-  },
-  {
-   "id": "bac71f01a8",
-   "kind": "hotspot",
-   "subject": "file:.github/workflows/checks.yml",
-   "first_seen": "2026-11-22T14:31:06Z",
-   "settled_at": "2026-11-24T17:38:51Z",
-   "runs": 2
-  }
- ]
+ "settled": []
 }

@@ -1,7 +1,7 @@
 {
   "id": "Q-PROMO-indexnow",
   "title": "Q-PROMO-indexnow: keep the indexnow promotion channel live",
-  "body": "**Owner:** marketing-manager\n**Trigger:** every promote --plan pass\n**Done check:** grep:ops/promotion/outcomes.jsonl::\"channel\": \"indexnow\"\n**Prediction:** promotion_outcomes_recorded >= 1 within 336 h\n**Status:** closed\n\nRoute: site/worker.js /api/v1/promote/indexnow (tick and deploy). Signal back: search referrals in first-party hits. Record the result with `python3 -m foundation promote --outcome indexnow --kind listed|silent`; the outcome re-weights the channel.\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 169.6 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "body": "**Owner:** marketing-manager\n**Trigger:** every promote --plan pass\n**Done check:** grep:ops/promotion/outcomes.jsonl::\"channel\": \"indexnow\"\n**Prediction:** promotion_outcomes_recorded >= 1 within 336 h\n**Status:** open\n\nRoute: site/worker.js /api/v1/promote/indexnow (tick and deploy). Signal back: search referrals in first-party hits. Record the result with `python3 -m foundation promote --outcome indexnow --kind listed|silent`; the outcome re-weights the channel.",
   "labels": [
     "role:marketing-manager",
     "growth",

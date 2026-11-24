@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-claude-repos-spec",
+  "title": "ZOMBIE-claude-repos-spec: finish or retire claude/repos-spec",
+  "body": "**Owner:** operations\n**Trigger:** session idle 23.0 h (ttl 4 h)\n**Status:** open\n\nBranch `claude/repos-spec` at 3b6caafd5a has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/claude/repos-spec` is 0 or the work is merged. The reaper parked the branch as parked/claude/repos-spec; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

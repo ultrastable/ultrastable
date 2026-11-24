@@ -1,7 +1,7 @@
 {
   "id": "INTERVIEW-3",
   "title": "INTERVIEW-3: Feed the interview profile into the build prompt and seed repo",
-  "body": "**Owner:** Product manager\n**Trigger:** see below\n**Done check:** grep:site/worker.js::profileBrief\n**Status:** closed\n\naiHtml and the seed IDEA.md generator should read profile:<id> (who, money, depth) instead of only the sentence. Trigger: INTERVIEW-1 live. Closing probe: a build for a profile with money=Y contains a pricing or checkout element.\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 221.7 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "body": "**Owner:** Product manager\n**Trigger:** see below\n**Status:** open\n\naiHtml and the seed IDEA.md generator should read profile:<id> (who, money, depth) instead of only the sentence. Trigger: INTERVIEW-1 live. Closing probe: a build for a profile with money=Y contains a pricing or checkout element.",
   "labels": [
     "role:product",
     "ws:front-door",

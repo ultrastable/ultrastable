@@ -1,7 +1,7 @@
 {
   "id": "PORT-BRANCH-claude-lesson-c",
   "title": "PORT-BRANCH-claude-lesson-c: carry claude/lesson-c onto main",
-  "body": "**Owner:** operations\n**Trigger:** branch `claude/lesson-c` at af4b6eaab0 holds work main lacks and cannot merge as is (conflicts in code: deploy/migration-plan.mjs, seed/worker/test/migrations.test.js)\n**Done check:** cmd:python3 -m foundation branchsweep --carried claude/lesson-c\n**Status:** closed\n\nPort the change by hand onto current main (it is 1 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried claude/lesson-c\n\n**Evidence:** python3 -m foundation branchsweep --carried -> claude/lesson-c: no such remote branch and no archive ref\n",
+  "body": "**Owner:** operations\n**Trigger:** branch `claude/lesson-c` at af4b6eaab0 holds work main lacks and cannot merge as is (conflicts in code: deploy/migration-plan.mjs, seed/worker/test/migrations.test.js)\n**Done check:** cmd:python3 -m foundation branchsweep --carried claude/lesson-c\n**Status:** open\n\nPort the change by hand onto current main (it is 1 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried claude/lesson-c",
   "labels": [
     "role:operations",
     "agent-ready",

@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-claude-second-tenant-2a21ae",
+  "title": "ZOMBIE-claude-second-tenant-2a21ae: finish or retire claude/second-tenant-2a21ae",
+  "body": "**Owner:** operations\n**Trigger:** session idle 21.2 h (ttl 2.0 h)\n**Status:** open\n\nBranch `claude/second-tenant-2a21ae` at 133a0b69eb has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/claude/second-tenant-2a21ae` is 0 or the work is merged. The reaper parked the branch as parked/claude/second-tenant-2a21ae; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}
