@@ -1,0 +1,12 @@
+{
+  "id": "PORT-BRANCH-parked-claude-project-thread-gdkvl9",
+  "title": "PORT-BRANCH-parked-claude-project-thread-gdkvl9: carry parked/claude/project-thread-gdkvl9 onto main",
+  "body": "**Owner:** operations\n**Trigger:** branch `parked/claude/project-thread-gdkvl9` at dc5a9b2652 holds work main lacks and cannot merge as is (conflicts in code: .github/workflows/branchsweep.yml, .github/workflows/cost-guard.yml, .github/workflows/deploy-gateway.yml, .github/workflows/deploy-site.yml, .github/workflows/deploy-system.yml, .github/workflows/deploy-workers.yml)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/claude/project-thread-gdkvl9\n**Status:** open\n\nPort the change by hand onto current main (it is 1282 commit(s) ahead), keeping tests green; then the sweep deletes the branch. Once idle the branch moves to `refs/archive/parked/claude/project-thread-gdkvl9` (`git fetch origin refs/archive/parked/claude/project-thread-gdkvl9`).\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/claude/project-thread-gdkvl9",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "ws:branches"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

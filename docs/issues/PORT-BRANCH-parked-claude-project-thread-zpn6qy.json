@@ -1,0 +1,12 @@
+{
+  "id": "PORT-BRANCH-parked-claude-project-thread-zpn6qy",
+  "title": "PORT-BRANCH-parked-claude-project-thread-zpn6qy: carry parked/claude/project-thread-zpn6qy onto main",
+  "body": "**Owner:** operations\n**Trigger:** branch `parked/claude/project-thread-zpn6qy` at b3faf4474b holds work main lacks and cannot merge as is (conflicts in code: README.md, dashboard/snapshot.json, doctrine/claim-code.json, doctrine/claims.json, doctrine/open-loops.json, scripts/check_business_index.py)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/claude/project-thread-zpn6qy\n**Status:** open\n\nPort the change by hand onto current main (it is 72 commit(s) ahead), keeping tests green; then the sweep deletes the branch. Once idle the branch moves to `refs/archive/parked/claude/project-thread-zpn6qy` (`git fetch origin refs/archive/parked/claude/project-thread-zpn6qy`).\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/claude/project-thread-zpn6qy",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "ws:branches"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

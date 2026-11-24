@@ -1,0 +1,12 @@
+{
+  "id": "PORT-BRANCH-agent-pm-2026112215",
+  "title": "PORT-BRANCH-agent-pm-2026112215: carry agent/pm-2026112215 onto main",
+  "body": "**Owner:** operations\n**Trigger:** branch `agent/pm-2026112215` at e3eaa9427c holds work main lacks and cannot merge as is (merge breaks the gate: merge deletes 637 lines of ops/changelog.json (cap 80): a stale rewrite)\n**Done check:** cmd:python3 -m foundation branchsweep --carried agent/pm-2026112215\n**Status:** open\n\nPort the change by hand onto current main (it is 3 commit(s) ahead), keeping tests green; then the sweep deletes the branch. Once idle the branch moves to `refs/archive/agent/pm-2026112215` (`git fetch origin refs/archive/agent/pm-2026112215`).\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried agent/pm-2026112215",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "ws:branches"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

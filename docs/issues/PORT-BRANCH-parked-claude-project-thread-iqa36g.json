@@ -1,0 +1,12 @@
+{
+  "id": "PORT-BRANCH-parked-claude-project-thread-iqa36g",
+  "title": "PORT-BRANCH-parked-claude-project-thread-iqa36g: carry parked/claude/project-thread-iqa36g onto main",
+  "body": "**Owner:** operations\n**Trigger:** branch `parked/claude/project-thread-iqa36g` at f498b4f0d7 holds work main lacks and cannot merge as is (conflicts in code: seed/scripts/resolve_generated.py, tests/foundation/test_conflict_markers.py)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/claude/project-thread-iqa36g\n**Status:** open\n\nPort the change by hand onto current main (it is 1 commit(s) ahead), keeping tests green; then the sweep deletes the branch. Once idle the branch moves to `refs/archive/parked/claude/project-thread-iqa36g` (`git fetch origin refs/archive/parked/claude/project-thread-iqa36g`).\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/claude/project-thread-iqa36g",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "ws:branches"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

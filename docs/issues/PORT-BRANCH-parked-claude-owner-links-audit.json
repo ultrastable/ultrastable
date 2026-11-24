@@ -1,0 +1,12 @@
+{
+  "id": "PORT-BRANCH-parked-claude-owner-links-audit",
+  "title": "PORT-BRANCH-parked-claude-owner-links-audit: carry parked/claude/owner-links-audit onto main",
+  "body": "**Owner:** operations\n**Trigger:** branch `parked/claude/owner-links-audit` at b6e9b84e4e holds work main lacks and cannot merge as is (conflicts in code: .github/workflows/owner-links-audit.yml)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/claude/owner-links-audit\n**Status:** open\n\nPort the change by hand onto current main (it is 1 commit(s) ahead), keeping tests green; then the sweep deletes the branch. Once idle the branch moves to `refs/archive/parked/claude/owner-links-audit` (`git fetch origin refs/archive/parked/claude/owner-links-audit`).\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/claude/owner-links-audit",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "ws:branches"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}
