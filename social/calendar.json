@@ -440,6 +440,42 @@
    "arm": "shipped",
    "kind": "event",
    "tag": "EVENT"
+  },
+  {
+   "id": "ev:pv-de5f5e28f454",
+   "date": "2026-11-24",
+   "text": "Shipped by the system itself: branchsweep: merge the branches main lacks. https://ultrastable.io/live",
+   "source": "ops/changelog.json",
+   "arm": "shipped",
+   "kind": "event",
+   "tag": "EVENT"
+  },
+  {
+   "id": "ev:pv-3369d298fea7",
+   "date": "2026-11-24",
+   "text": "Shipped by the system itself: Regenerate stale dashboard data (red on main). https://ultrastable.io/live",
+   "source": "ops/changelog.json",
+   "arm": "shipped",
+   "kind": "event",
+   "tag": "EVENT"
+  },
+  {
+   "id": "ev:pv-9c60f27632e6",
+   "date": "2026-11-24",
+   "text": "Shipped by the system itself: cover agent prompts and PR bodies; fix docs_audit and SPDX failures. https://ultrastable.io/live",
+   "source": "ops/changelog.json",
+   "arm": "shipped",
+   "kind": "event",
+   "tag": "EVENT"
+  },
+  {
+   "id": "ev:pv-cdf66ea71c99",
+   "date": "2026-11-24",
+   "text": "Shipped by the system itself: Tenant store: docs-audit fix, deployment record, topology follow-up. https://ultrastable.io/live",
+   "source": "ops/changelog.json",
+   "arm": "shipped",
+   "kind": "event",
+   "tag": "EVENT"
   }
  ]
 }
