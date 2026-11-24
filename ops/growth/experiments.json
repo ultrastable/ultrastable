@@ -53,6 +53,24 @@
    "started": "2026-11-21T15:19:17Z",
    "check_after_days": 7,
    "verdict": null
+  },
+  {
+   "item": "Q-GROW-adaptive-follow-ups",
+   "metric": "visitors_7d",
+   "baseline": null,
+   "predicted_pct": 15,
+   "started": "2026-11-24T10:01:30Z",
+   "check_after_days": 7,
+   "verdict": null
+  },
+  {
+   "item": "Q-GROW-shorter-pilot-form",
+   "metric": "pilot_page_views_7d",
+   "baseline": null,
+   "predicted_pct": 15,
+   "started": "2026-11-24T10:01:30Z",
+   "check_after_days": 7,
+   "verdict": null
   }
  ]
 }
