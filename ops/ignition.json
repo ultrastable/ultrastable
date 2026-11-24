@@ -1,30 +1,36 @@
 {
- "at": "2026-11-23T16:29:33Z",
- "open_ignition_gaps": 4,
+ "at": "2026-11-24T16:26:00Z",
+ "open_ignition_gaps": 5,
  "gaps": [
   {
-   "link": "item Q-CIFAIL-ultrastable-executor relapsed after it closed",
+   "link": "item Q-METRIC-K relapsed after it closed",
    "owner": "executor",
-   "closing_probe": "contracts: Q-CIFAIL-ultrastable-executor passes over the hold",
+   "closing_probe": "contracts: Q-METRIC-K passes over the hold",
    "source": "contracts"
   },
   {
-   "link": "item Q-CIFAIL-ultrastable-fleet relapsed after it closed",
+   "link": "item Q-RES-chen-stratton-2026-F7 relapsed after it closed",
    "owner": "executor",
-   "closing_probe": "contracts: Q-CIFAIL-ultrastable-fleet passes over the hold",
+   "closing_probe": "contracts: Q-RES-chen-stratton-2026-F7 passes over the hold",
    "source": "contracts"
   },
   {
-   "link": "4 open item(s) vanished without a disposition",
+   "link": "item Q-RES-open-loops-2026-O6 relapsed after it closed",
+   "owner": "executor",
+   "closing_probe": "contracts: Q-RES-open-loops-2026-O6 passes over the hold",
+   "source": "contracts"
+  },
+  {
+   "link": "item Q-TEMPORAL-94167fdea6 relapsed after it closed",
+   "owner": "executor",
+   "closing_probe": "contracts: Q-TEMPORAL-94167fdea6 passes over the hold",
+   "source": "contracts"
+  },
+  {
+   "link": "6 open item(s) vanished without a disposition",
    "owner": "operations",
    "closing_probe": "throughput: silent_drops 0 in the window",
    "source": "throughput"
-  },
-  {
-   "link": "guard relapse_rate_7d worsened while open_items improved",
-   "owner": "operations",
-   "closing_probe": "metricloop: no guard regression on the next pass",
-   "source": "metricloop"
   }
  ]
 }

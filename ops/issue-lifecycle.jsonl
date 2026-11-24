@@ -1342,3 +1342,30 @@
 {"at": "2026-11-23T16:29:33Z", "event": "closed", "family": "Q-ULTRA", "id": "Q-ULTRA-country-snapshot-value-3", "source": "tick"}
 {"at": "2026-11-23T16:29:33Z", "event": "closed", "family": "Q-ULTRA", "id": "Q-ULTRA-country-snapshot-value-REDESIGN", "source": "tick"}
 {"at": "2026-11-23T16:29:33Z", "event": "closed", "family": "Q-YIELD", "id": "Q-YIELD-7f00974fc9", "source": "tick"}
+{"at": "2026-11-24T16:26:00Z", "event": "closed", "family": "OL-PR", "id": "OL-PR-2007", "source": "tick"}
+{"at": "2026-11-24T16:26:00Z", "event": "closed", "family": "OL-PR", "id": "OL-PR-2008", "source": "tick"}
+{"at": "2026-11-24T16:26:00Z", "event": "closed", "family": "OL-PR", "id": "OL-PR-2012", "source": "tick"}
+{"at": "2026-11-24T16:26:00Z", "event": "opened", "family": "OL-PR", "id": "OL-PR-2013", "source": "tick"}
+{"at": "2026-11-24T16:26:00Z", "event": "opened", "family": "OL-PR", "id": "OL-PR-2014", "source": "tick"}
+{"at": "2026-11-24T16:26:00Z", "event": "opened", "family": "OL-PR", "id": "OL-PR-2015", "source": "tick"}
+{"at": "2026-11-24T16:26:00Z", "event": "opened", "family": "OL-PR", "id": "OL-PR-2016", "source": "tick"}
+{"at": "2026-11-24T16:26:00Z", "event": "opened", "family": "OL-PR", "id": "OL-PR-2017", "source": "tick"}
+{"at": "2026-11-24T16:26:00Z", "event": "opened", "family": "OL-PR", "id": "OL-PR-2018", "source": "tick"}
+{"at": "2026-11-24T16:26:00Z", "event": "opened", "family": "OL-PR", "id": "OL-PR-2019", "source": "tick"}
+{"at": "2026-11-24T16:26:00Z", "event": "opened", "family": "OL-PR", "id": "OL-PR-2020", "source": "tick"}
+{"at": "2026-11-24T16:26:00Z", "event": "opened", "family": "OL-PR", "id": "OL-PR-2022", "source": "tick"}
+{"at": "2026-11-24T16:26:00Z", "event": "opened", "family": "OL-PR", "id": "OL-PR-2045", "source": "tick"}
+{"at": "2026-11-24T16:26:00Z", "event": "closed", "family": "Q-CIFAIL", "id": "Q-CIFAIL-practical-solutions-gapscan", "source": "tick"}
+{"at": "2026-11-24T16:26:00Z", "event": "closed", "family": "Q-CIFAIL", "id": "Q-CIFAIL-ultrastable-funding-maintenance", "source": "tick"}
+{"at": "2026-11-24T16:26:00Z", "event": "closed", "family": "Q-CIFAIL", "id": "Q-CIFAIL-ultrastable-index", "source": "tick"}
+{"at": "2026-11-24T16:26:00Z", "event": "closed", "family": "Q-CIFAIL", "id": "Q-CIFAIL-ultrastable-org-profile-probe", "source": "tick"}
+{"at": "2026-11-24T16:26:00Z", "event": "closed", "family": "Q-ISSUE", "id": "Q-ISSUE-ultrastable-2032", "source": "tick"}
+{"at": "2026-11-24T16:26:00Z", "event": "closed", "family": "Q-ISSUE", "id": "Q-ISSUE-ultrastable-2033", "source": "tick"}
+{"at": "2026-11-24T16:26:00Z", "event": "closed", "family": "Q-TEMPORAL", "id": "Q-TEMPORAL-381e97ef1d", "source": "tick"}
+{"at": "2026-11-24T16:26:00Z", "event": "closed", "family": "Q-TEMPORAL", "id": "Q-TEMPORAL-458cb625ba", "source": "tick"}
+{"at": "2026-11-24T16:26:00Z", "event": "closed", "family": "Q-TEMPORAL", "id": "Q-TEMPORAL-bfbb87dc25", "source": "tick"}
+{"at": "2026-11-24T16:26:00Z", "event": "closed", "family": "Q-TRAJ", "id": "Q-TRAJ-hotspot-doctrine", "source": "tick"}
+{"at": "2026-11-24T16:26:00Z", "event": "closed", "family": "Q-TRAJ", "id": "Q-TRAJ-neglected-seed-self", "source": "tick"}
+{"at": "2026-11-24T16:26:00Z", "event": "opened", "family": "Q-ULTRA", "id": "Q-ULTRA-value-2", "source": "tick"}
+{"at": "2026-11-24T16:26:00Z", "event": "deleted", "family": "Q-LIVE", "id": "Q-LIVE-launch-loops", "source": "tick", "was": "open"}
+{"at": "2026-11-24T16:26:00Z", "event": "deleted", "family": "Q-LIVE", "id": "Q-LIVE-merge-lane", "source": "tick", "was": "open"}

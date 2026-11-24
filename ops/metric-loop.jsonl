@@ -51,3 +51,10 @@
 {"at": "2026-11-23T16:29:33Z", "event": "reading", "hit": false, "metric": "families_without_doer", "value": 0}
 {"at": "2026-11-23T16:29:33Z", "event": "reading", "hit": true, "metric": "executor_success_share_7d", "value": 0.068}
 {"at": "2026-11-23T16:29:33Z", "event": "guard-regression", "guard": "relapse_rate_7d", "target": "open_items"}
+{"at": "2026-11-24T16:26:00Z", "event": "reading", "hit": true, "metric": "k", "value": 0.0}
+{"at": "2026-11-24T16:26:00Z", "baseline": 0.0, "event": "remedy-start", "lever": "ship-verified-deploy", "metric": "k"}
+{"at": "2026-11-24T16:26:00Z", "event": "reading", "hit": false, "metric": "normalized_cost", "value": 0.0}
+{"at": "2026-11-24T16:26:00Z", "event": "reading", "hit": false, "metric": "open_items", "value": 12}
+{"at": "2026-11-24T16:26:00Z", "event": "reading", "hit": false, "metric": "relapse_rate_7d", "value": 0.034}
+{"at": "2026-11-24T16:26:00Z", "event": "reading", "hit": false, "metric": "families_without_doer", "value": 0}
+{"at": "2026-11-24T16:26:00Z", "event": "reading", "hit": true, "metric": "executor_success_share_7d", "value": 0.06}
