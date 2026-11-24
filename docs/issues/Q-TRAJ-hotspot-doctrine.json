@@ -1,0 +1,12 @@
+{
+  "id": "Q-TRAJ-hotspot-doctrine",
+  "title": "Q-TRAJ-hotspot-doctrine: doctrine drew 34% of the last week's change, 2.9x its earlier weekly pace",
+  "body": "**Owner:** executor\n**Trigger:** trajectory pass (TRAJECTORY-1) on the watchdog run\n**Done check:** cmd:python3 -m foundation trajectory --probe hotspot:doctrine\n**Status:** open\n\ndoctrine drew 34% of the last week's change, 2.9x its earlier weekly pace. Evidence: recent7 51860 lines, prior weekly mean 17714.0.\n\nFind why this keeps changing; make the part that churns computed, split it, or add the test that pins it, so it stops being rewritten.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation trajectory --probe hotspot:doctrine` exits 0.\n",
+  "labels": [
+    "p2",
+    "agent-ready",
+    "trajectory"
+  ],
+  "milestone": "Now",
+  "workstream": "Ultrastability"
+}
