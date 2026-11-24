@@ -46,6 +46,7 @@ Every big policy promised something. See what it promised, what the evaluations 
 
 # First outcomes
 
+- Pilot first (CONTEXT-FIT-1): eight cases, at least half from outside the US and Europe, each with a 'this verdict looks wrong' tap; grow only after a month of reader guesses and every tap re-checked
 - Phase 1: casebook of 40 policies with stated aims and graded evaluations
 - Phase 2: verdict history and follow on any case
 - Phase 3: prediction market of the system's own: forecast the next evaluation, scored when it lands

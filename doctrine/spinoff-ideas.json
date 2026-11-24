@@ -307,6 +307,18 @@
     "d1_rows_read": 0,
     "d1_rows_written": 0,
     "ai_neurons": 0
+   },
+   "context": {
+    "decider": "Nobody pays: readers choose it themselves. The people it describes (residents of each country) are mostly not its readers, so it must not be pitched as a service to them.",
+    "problem": "The stated problem is finding a country's latest basic-service figures quickly; it shows the World Bank numbers and links the source, and claims nothing about fixing the gaps.",
+    "infrastructure": "Pages are plain HTML under 30 KB with no script needed to read the answer, so they load on a cheap phone over a slow 2G or 3G link; free to use, with no account, app or data plan beyond one page.",
+    "misuse": "Figures can be quoted without their year or used to rank countries unfairly; each number shows its year and source link, and the page states that gaps are measures, not judgments.",
+    "pilot": {
+     "size": "One page with four indicators, live since launch, with use counted per lookup and no identity stored.",
+     "feedback": "Uses per week and lookups that return no data are read by the spinoff loop each day.",
+     "scale_when": "More indicators only after uses_7d holds above zero for four weeks and empty-lookup rate stays under ten percent."
+    },
+    "builds_on": "Builds on the World Bank open data people and journalists already cite, instead of a new dataset of our own."
    }
   },
   {
@@ -328,6 +340,18 @@
     "d1_rows_read": 0,
     "d1_rows_written": 0,
     "ai_neurons": 0
+   },
+   "context": {
+    "decider": "Readers choose it themselves and nobody pays; people with asthma, parents and outdoor workers are the people served and the readers at once.",
+    "problem": "The stated problem is knowing whether the air is bad right now; it answers that and does not claim to clean the air or replace official alerts.",
+    "infrastructure": "Pages are plain HTML under 30 KB with no script needed to read the answer, so they load on a cheap phone over a slow 2G or 3G link; free to use, with no account, app or data plan beyond one page.",
+    "misuse": "A forecast model can be wrong locally, and a reader could skip an official alert because this page looked fine; the page names the model source and tells readers to follow local official alerts first.",
+    "pilot": {
+     "size": "One lookup page for any city, live, with use counted per lookup and no identity stored.",
+     "feedback": "Uses per week and failed city lookups are read daily by the spinoff loop.",
+     "scale_when": "Alerts or history are added only after four weeks of steady use and failed lookups under ten percent."
+    },
+    "builds_on": "Builds on open forecast data and the air quality index scale people already see in weather apps and news."
    }
   },
   {
@@ -349,6 +373,18 @@
     "d1_rows_read": 0,
     "d1_rows_written": 0,
     "ai_neurons": 0
+   },
+   "context": {
+    "decider": "Readers choose it themselves and nobody pays; it serves people curious or worried about recent quakes.",
+    "problem": "The stated problem is seeing this week's significant quakes in one list; it shows the USGS feed and links each event, and is not an early warning.",
+    "infrastructure": "Pages are plain HTML under 30 KB with no script needed to read the answer, so they load on a cheap phone over a slow 2G or 3G link; free to use, with no account, app or data plan beyond one page.",
+    "misuse": "Someone could read it as a warning system or spread fear after a quake; the page says plainly it lists past events only and links national agencies for warnings.",
+    "pilot": {
+     "size": "One feed page, live, use counted per load with no identity stored.",
+     "feedback": "Uses per week are read daily by the spinoff loop.",
+     "scale_when": "Regional filters come only after four weeks of steady use."
+    },
+    "builds_on": "Builds on the USGS feed that news desks and agencies already use and trust."
    }
   },
   {
@@ -370,6 +406,18 @@
     "d1_rows_read": 0,
     "d1_rows_written": 0,
     "ai_neurons": 0
+   },
+   "context": {
+    "decider": "Site owners and developers decide to fix a site; the people served are disabled visitors, who are not the ones running the check.",
+    "problem": "The stated problem is a quick read of basic accessibility signals; it reports those few signals and says a full audit needs real users and assistive technology.",
+    "infrastructure": "Pages are plain HTML under 30 KB with no script needed to read the answer, so they load on a cheap phone over a slow 2G or 3G link; free to use, with no account, app or data plan beyond one page.",
+    "misuse": "A pass on four signals could be used to claim a site is accessible; the result says it checks only four basics and is not a compliance verdict.",
+    "pilot": {
+     "size": "Four checks on a home page, live, use counted per check with no identity stored.",
+     "feedback": "Uses per week and fetch failures are read daily by the spinoff loop.",
+     "scale_when": "More checks only after four weeks of steady use and fetch failures under ten percent."
+    },
+    "builds_on": "Builds on WCAG, the standard site owners already work to, rather than a new scoring scheme."
    }
   },
   {
@@ -399,7 +447,19 @@
     "implementation-intention",
     "calibration-feedback",
     "spaced-follow-up"
-   ]
+   ],
+   "context": {
+    "decider": "Readers choose it themselves; teachers or newsrooms may point others to it, so entries must hold up for a skeptical editor, not only a curious reader.",
+    "problem": "The stated problem is deciding from the inside view; each entry shows the reference class and its rate before any advice, and does not tell people what to choose.",
+    "infrastructure": "Pages are plain HTML under 30 KB with no script needed to read the answer, so they load on a cheap phone over a slow 2G or 3G link; free to use, with no account, app or data plan beyond one page.",
+    "misuse": "A base rate can be used to talk someone out of a sound plan or to stereotype a group; entries say a rate is a starting point, show its range and source, and never rate people by group.",
+    "pilot": {
+     "size": "Start with ten entries, at least four drawn from sources outside the US and Europe.",
+     "feedback": "Each entry records guesses before the reveal and a 'this looks wrong' tap, with nothing that identifies the reader.",
+     "scale_when": "Grow toward fifty entries only after the first ten have a month of guesses and every 'looks wrong' tap is answered by a re-check."
+    },
+    "builds_on": "Builds on published reference-class studies and official statistics people already trust, and on the habit of asking 'how often does this work?'."
+   }
   },
   {
    "id": "did-it-work",
@@ -429,7 +489,19 @@
     "implementation-intention",
     "change-management",
     "spaced-follow-up"
-   ]
+   ],
+   "context": {
+    "decider": "Readers choose it themselves; journalists and public staff are likely heavy users, and governments whose policies are graded may push back, so every verdict cites its evaluations.",
+    "problem": "The stated problem is that policies are judged by announcements; each case shows the stated aim and the evaluations, and does not argue for or against the policy itself.",
+    "infrastructure": "Pages are plain HTML under 30 KB with no script needed to read the answer, so they load on a cheap phone over a slow 2G or 3G link; free to use, with no account, app or data plan beyond one page.",
+    "misuse": "A verdict can be cherry-picked to attack or defend a government; each case shows every graded evaluation found, the grade, and the date the verdict last moved, and says when evidence is thin.",
+    "pilot": {
+     "size": "Start with eight cases, at least half from outside the US and Europe, before the casebook grows.",
+     "feedback": "Each case carries a 'this verdict looks wrong' tap and the guess-first count, with nothing that identifies the reader; every tap queues a re-check of that case.",
+     "scale_when": "Grow toward forty cases only after the first eight have a month of reader guesses and every 'looks wrong' tap has been re-checked."
+    },
+    "builds_on": "Builds on evaluations governments and researchers already publish (3ie, J-PAL, national audit offices) instead of our own judgments."
+   }
   },
   {
    "id": "open-questions",
@@ -458,7 +530,19 @@
     "calibration-feedback",
     "implementation-intention",
     "spaced-follow-up"
-   ]
+   ],
+   "context": {
+    "decider": "Readers choose it themselves; students and funders may use it to pick topics, so leans must be graded and dated.",
+    "problem": "The stated problem is that open and settled science read the same; it marks what is open and where evidence leans, without claiming to settle it.",
+    "infrastructure": "Pages are plain HTML under 30 KB with no script needed to read the answer, so they load on a cheap phone over a slow 2G or 3G link; free to use, with no account, app or data plan beyond one page.",
+    "misuse": "A lean could be quoted as settled fact or used to cast doubt on settled science; each entry shows its grade, the competing answers and a plain line on what is not in question.",
+    "pilot": {
+     "size": "Start with six questions across different fields.",
+     "feedback": "Readers record their own lean and can tap 'this lean looks wrong', with nothing that identifies them; each tap queues a re-check.",
+     "scale_when": "Grow toward thirty only after the first six have a month of reader leans and every tap has been re-checked."
+    },
+    "builds_on": "Builds on review articles and preprint servers researchers already read, not a new source of claims."
+   }
   }
  ],
  "scope_templates": [
@@ -577,5 +661,45 @@
    "_doc": "IDEA-BANK-1 shape (doctrine/idea-bank.json depth.corpus, depth.method, depth.returns) reads through the same rule",
    "method": "loop"
   }
+ },
+ "context_fit": {
+  "_doc": "CONTEXT-FIT-1 (Rowan, 2026-11-23). Lessons from designs made far from the people they were for (John Mauriello's talk, as summarized by Rowan; the talk's figures are his input, not checked here): NeoNurture failed because the buyers were health ministries, not the mechanics it was built for; PlayPump solved pumping when the problem was water; free bed nets became fishing nets; OLPC dropped the hand crank where schools had no power and refused pilots; Liter of Light worked because it used bottles, water and roofs people already had. Every public-benefit idea (one with regions) answers each check in its own `context` block. Score is multiplied by floor + (1 - floor) * answered/6. A failed check in hold_on keeps the idea out of launch. ideas --check fails a live or seed idea with any check unanswered. Metric context_fit_share, target 1.0.",
+  "min_text": 40,
+  "floor": 0.4,
+  "hold_on": [
+   "pilot",
+   "misuse"
+  ],
+  "pilot_fields": [
+   "size",
+   "feedback",
+   "scale_when"
+  ],
+  "checks": [
+   {
+    "id": "decider",
+    "question": "Who decides to use or pay for it, and is that a different person from the one it serves?"
+   },
+   {
+    "id": "problem",
+    "question": "Does it solve the problem people state, not a more interesting neighbour of it?"
+   },
+   {
+    "id": "infrastructure",
+    "question": "Does it work on the power, bandwidth, devices, skills and budget the people it serves really have, and is it cheaper than what they use now?"
+   },
+   {
+    "id": "misuse",
+    "question": "How will people adapt or misuse it, and what harm follows?"
+   },
+   {
+    "id": "pilot",
+    "question": "What small pilot with feedback from the people served comes before scale? (size, feedback, scale_when)"
+   },
+   {
+    "id": "builds_on",
+    "question": "What do people already use and trust that it builds on, instead of replacing it with an import?"
+   }
+  ]
  }
 }

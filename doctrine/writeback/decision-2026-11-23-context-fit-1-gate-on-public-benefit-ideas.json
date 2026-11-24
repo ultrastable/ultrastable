@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-23-context-fit-1-gate-on-public-benefit-ideas",
+  "kind": "decision",
+  "date": "2026-11-23",
+  "title": "CONTEXT-FIT-1 gate on public-benefit ideas",
+  "body": "Six context checks (decider, problem, infrastructure, misuse, pilot, builds_on) cut the BENEFIT-1 score when unanswered; missing pilot or misuse holds launch; verdicts go to provenance. First audit: live lookup pages needed JavaScript; now server-rendered. Did It Work? pilots eight cases first.",
+  "probe": "grep:foundation/ideas.py::def context_fit"
+ },
+ "kind": "decision",
+ "title": "CONTEXT-FIT-1 gate on public-benefit ideas",
+ "session": ""
+}

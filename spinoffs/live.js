@@ -132,25 +132,39 @@ export async function lookup(src, q, f) {
   } catch (e) { return { status: 502, body: { ok: false, code: "upstream", error: "The public source did not answer. Try again in a minute." } }; }
 }
 
-const PAGE = (app, src) => `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(app.name)}</title><meta name="description" content="${esc(app.tagline)}">
+// CONTEXT-FIT-1: the answer is rendered on the server, so a reader on a cheap phone, an old browser or with scripts off still gets it.
+// The script below only saves a page load for readers who have it.
+const cell = (r, c, i) => `<td${c === "pass" ? " class='pass'" : c === "look at this" ? " class='look'" : ""}>${i === 0 && r.url ? `<a href='${esc(r.url)}'>${esc(c)}</a>` : esc(c)}</td>`;
+export const render = j => !j ? "" : !j.ok ? esc(j.error) : (j.title ? `<h2>${esc(j.title)}</h2><p class='m'>${esc(j.sub)}</p>` : "") +
+  (j.rows && j.rows.length ? `<table><thead><tr>${j.columns.map(c => `<th scope='col'>${esc(c)}</th>`).join("")}</tr></thead><tbody>${j.rows.map(r => `<tr>${r.cells.map((c, i) => cell(r, c, i)).join("")}</tr>`).join("")}</tbody></table>` : `<p>${esc(j.empty || "Nothing to show.")}</p>`) +
+  `<p class='m'>Fetched live ${esc(j.fetched_at)}</p>`;
+
+const PAGE = (app, src, pre = null, q = "") => `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(app.name)}</title><meta name="description" content="${esc(app.tagline)}">
 <style>:root{--bg:#fff;--fg:#14181f;--mute:#566;--line:#d5dae1;--ok:#0b6b3a;--bad:#a1260f;--acc:#1f4fd8}@media(prefers-color-scheme:dark){:root{--bg:#10141a;--fg:#e8ecf2;--mute:#9aa6b6;--line:#2a323d;--ok:#5ad08a;--bad:#ff8a73;--acc:#8fb0ff}}
 body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,sans-serif}main{max-width:760px;margin:0 auto;padding:24px 16px}h1{font-size:28px;margin:0 0 8px}p.s{color:var(--mute);margin:0 0 20px}
 form{display:flex;flex-direction:column;gap:12px;margin-bottom:16px}input,button{font:inherit;min-height:44px;border-radius:10px;border:1px solid var(--line);padding:0 14px;background:var(--bg);color:var(--fg)}button{background:var(--acc);color:#fff;border:0;font-weight:600;cursor:pointer}
 @media(min-width:560px){form{flex-direction:row}input{flex:1}}table{width:100%;border-collapse:collapse;margin:16px 0}th,td{text-align:left;padding:10px 8px 10px 0;border-top:1px solid var(--line);vertical-align:top}a{color:var(--acc)}.m{color:var(--mute);font-size:14px}.pass{color:var(--ok)}.look{color:var(--bad)}</style></head>
 <body><main><h1>${esc(app.name)}</h1><p class="s">${esc(app.tagline)}</p>
-${src.kind === "lookup" ? `<form id="f"><input id="q" inputmode="${src.clean === cleanDomain ? "url" : "text"}" autocomplete="off" placeholder="${esc(src.placeholder)}" aria-label="${esc(src.label)}" required><button>Look up</button></form>` : ""}
-<div id="o" aria-live="polite">Loading live data…</div>
+${src.kind === "lookup" ? `<form id="f" method="get" action="/"><input id="q" name="q" value="${esc(q)}" inputmode="${src.clean === cleanDomain ? "url" : "text"}" autocomplete="off" placeholder="${esc(src.placeholder)}" aria-label="${esc(src.label)}" required><button>Look up</button></form>` : ""}
+<div id="o" aria-live="polite">${pre ? render(pre) : src.kind === "feed" ? "The public source is not answering right now. Try again in a minute." : "Type above to look something up."}</div>
 <p class="m">Source: ${src.home ? `<a href="${esc(src.home)}">${esc(src.name)}</a>` : esc(src.name)}, read live when you open this page; nothing is stored about you. Information only, not legal, financial or professional advice. <a href="/api/freshness">Freshness</a> · <a href="/llms.txt">For agents</a></p></main>
 <script>const o=document.getElementById("o"),E=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const T=(cols,rows)=>"<table><thead><tr>"+cols.map(c=>"<th scope='col'>"+E(c)+"</th>").join("")+"</tr></thead><tbody>"+rows.map(r=>"<tr>"+r.cells.map((c,i)=>"<td"+(c==="pass"?" class='pass'":c==="look at this"?" class='look'":"")+">"+(i===0&&r.url?"<a href='"+E(r.url)+"'>"+E(c)+"</a>":E(c))+"</td>").join("")+"</tr>").join("")+"</tbody></table>";
 const show=j=>{if(!j.ok){o.textContent=j.error;return}o.innerHTML=(j.title?"<h2>"+E(j.title)+"</h2><p class='m'>"+E(j.sub)+"</p>":"")+(j.rows.length?T(j.columns,j.rows):"<p>"+E(j.empty||"Nothing to show.")+"</p>")+"<p class='m'>Fetched live "+E(j.fetched_at)+"</p>"};
-${src.kind === "feed" ? `fetch("/api/data").then(r=>r.json()).then(show).catch(()=>{o.textContent="The public source is not answering right now. Try again in a minute."});` : `o.textContent="Type above to look something up.";document.getElementById("f").onsubmit=e=>{e.preventDefault();o.textContent="Looking up…";fetch("/api/lookup?q="+encodeURIComponent(document.getElementById("q").value)).then(r=>r.json()).then(show).catch(()=>{o.textContent="The public source is not answering right now. Try again in a minute."})}`}</script></body></html>`;
+${src.kind === "feed" ? "" : `document.getElementById("f").onsubmit=e=>{e.preventDefault();o.textContent="Looking up…";fetch("/api/lookup?q="+encodeURIComponent(document.getElementById("q").value)).then(r=>r.json()).then(show).catch(()=>{o.textContent="The public source is not answering right now. Try again in a minute."})}`}</script></body></html>`;
 
 export async function handleLive(sub, app, u, f = fetch, env = {}) {
   const src = SOURCES[app.live];
   if (!src) return new Response("Not found", { status: 404 });
   const p = u.pathname;
-  if (p === "/") { await countUse(env, sub); return new Response(PAGE(app, src), { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=300" } }); }
+  if (p === "/") {
+    await countUse(env, sub);
+    const q = src.kind === "lookup" ? (u.searchParams.get("q") || "").slice(0, 200) : "";
+    let pre = null;
+    if (src.kind === "feed") { try { pre = { ok: true, columns: src.columns, empty: src.empty, ...(await feed(src, f)) }; } catch (e) { console.error("feed render failed", sub, String(e).slice(0, 120)); } }
+    else if (q) pre = (await lookup(src, q, f)).body;
+    return new Response(PAGE(app, src, pre, q), { headers: { "content-type": "text/html; charset=utf-8", "cache-control": q ? "no-store" : "public, max-age=300" } });
+  }
   if (p === "/llms.txt") return new Response(`# ${app.name}\n${app.tagline}\n${src.kind === "feed" ? "GET /api/data returns the current rows as JSON." : "GET /api/lookup?q=... returns the result as JSON."}\nGET /api/freshness states the age of the live source. Source: ${src.name}. Nothing about any person is stored.\n`, { headers: { "content-type": "text/plain; charset=utf-8" } });
   if (p === "/api/freshness" || p === "/api/metrics") {
     try {

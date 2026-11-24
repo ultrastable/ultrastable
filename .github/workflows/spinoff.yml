@@ -30,6 +30,7 @@ jobs:
         run: |
           python3 -m foundation ideas --headroom --apply
           python3 -m foundation ideas --brainstorm --apply
+          python3 -m foundation ideas --context --apply
       - run: python3 -m foundation spinoff --collect --apply
       - run: python3 -m foundation spinoff --tick --apply
       - name: Launch up to the governor's daily count
