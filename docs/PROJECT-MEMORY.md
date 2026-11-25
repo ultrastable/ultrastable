@@ -10,6 +10,7 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-25
 
+- 2026-11-25: Replication Ledger discovers with no OpenAlex key (LEDGER-KEYLESS-1): beat routes OpenAlex mirror (ledger-openalex.yml lands data/openalex.json from a GitHub runner), Europe PMC, Crossref, Semantic Scholar; /api/citations reports total/checked/unchecked and answers 503 after 24 beats (fm-unverified-citations)
 - 2026-11-25: ZERO-MINUTES-1: worker merged #2213
 - 2026-11-25: Replication Ledger: Europe PMC most-cited first, name search, OpenAlex key support (#2213)
 - 2026-11-25: watchdog: clock probe (RESILIENCE-1) (part 2/2) [skip ci]
