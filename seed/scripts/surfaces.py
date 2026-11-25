@@ -227,10 +227,6 @@ def catalog(i: dict, st: str) -> str:
     parent = i.get("parent")
     if parent:
         lines += ["  dependsOn:", f"    - {q('component:default/' + parent.split('/', 1)[1])}"]
-    if i.get("layer") == "platform":  # the platform's own repository also declares the System every other repository's Component names
-        lines += ["---", "apiVersion: backstage.io/v1alpha1", "kind: System", "metadata:", "  name: ultrastable", f"  title: {q(i['name'])}",
-                  "  description: \"Ultrastable is the foundation for any autonomous system.\"", "  links:", f"    - url: {q(PLATFORM + '/directory')}", "      title: \"Every system running on it\"",
-                  "      icon: catalog", "spec:", f"  owner: {q('group:default/' + org)}"]
     return "\n".join(lines) + "\n"
 
 
@@ -261,11 +257,13 @@ def surfaces(root=HERE) -> dict:
     st = stage(root)
     rd = root / "README.md"
     ci = root / "CITATION.cff"
-    return {"README.md": render_readme(rd.read_text(encoding="utf-8") if rd.is_file() else "", i, st),
+    out = {"README.md": render_readme(rd.read_text(encoding="utf-8") if rd.is_file() else "", i, st),
             "publiccode.yml": publiccode(i, st),
-            "catalog-info.yaml": catalog(i, st),
             "CITATION.cff": citation(ci.read_text(encoding="utf-8") if ci.is_file() else None, i),
             GITHUB_PLAN: json.dumps(plan(i, "github")["github"], indent=1, ensure_ascii=False) + "\n"}
+    if i.get("layer") != "platform":  # the platform repository's catalog-info.yaml lists every Worker, store and tenant and is generated there (foundation/stdgen.py)
+        out["catalog-info.yaml"] = catalog(i, st)
+    return out
 
 
 def check(root=HERE) -> list[str]:

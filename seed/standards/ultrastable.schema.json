@@ -1,6 +1,6 @@
 {
  "$schema": "https://json-schema.org/draft/2020-12/schema",
- "$id": "https://ultrastable.io/schemas/org-config.schema.json",
+ "$id": "https://ultrastable.io/schemas/ultrastable.schema.json",
  "title": "Organisation config half of ultrastable.json (runtime, roles, model ladder, connectors, capacity); the identity half is system.schema.json",
  "type": "object",
  "required": [
@@ -155,6 +155,10 @@
      },
      "optional": {
       "type": "boolean"
+     },
+     "note": {
+      "type": "string",
+      "minLength": 1
      }
     },
     "additionalProperties": false,

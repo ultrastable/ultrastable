@@ -10,14 +10,25 @@
     "site/**/*.html",
     "docs/BOOTSTRAP*.md",
     "foundation/data/needs-you.json",
-    "NEEDS-YOU.md"
+    "NEEDS-YOU.md",
+    "seed/README.md",
+    "seed/docs/*.md",
+    "seed/.github/ISSUE_TEMPLATE/*.yml",
+    "seed/bootstrap/*.json",
+    "seed/.github/workflows/bootstrap.yml",
+    "seed/.github/workflows/org-init.yml"
   ],
   "patterns": [
     "\\b(create|generate|mint|make) (a|an|your|the) [\\w -]{0,30}(token|secret|api key|password)\\b",
     "\\b(copy|paste|save|put|add|set) (it|the|your|this) [\\w -]{0,30}(token|secret|api key|env(ironment)? var\\w*)\\b",
     "\\bwrangler (secret put|login)\\b",
     "\\bgh secret set\\b",
-    "\\bexport [A-Z_]{4,}="
+    "\\bexport [A-Z_]{4,}=",
+    "\\bset the [\\w{}\\[\\]'\\\" -]{0,40}secret\\b",
+    "\\bmint (the |an? |your )?[\\w -]{0,30}token\\b",
+    "\\binstall node(\\.js)?\\b",
+    "\\brun with --apply once\\b",
+    "\\bstore (its |the |your )?[\\w -]{0,40}as secrets\\b"
   ],
   "baseline": [],
   "closing_probe": "python3 -m foundation pointclick --check",

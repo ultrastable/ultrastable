@@ -1,0 +1,196 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/reach.schema.json",
+  "title": "reach (doctrine/reach.json)",
+  "description": "Contract for doctrine/reach.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "consent": {
+      "type": "object",
+      "properties": {
+        "at": {
+          "type": "string"
+        },
+        "by": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "scope": {
+          "type": "string"
+        }
+      }
+    },
+    "site": {
+      "type": "string"
+    },
+    "lookback_days": {
+      "type": "number"
+    },
+    "max_new_per_run": {
+      "type": "number"
+    },
+    "owned_domains": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "social_hosts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "search_hosts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "ps_path_prefixes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "arms": {
+      "type": "object",
+      "properties": {
+        "shipped": {
+          "type": "object"
+        },
+        "proof": {
+          "type": "object"
+        },
+        "ps": {
+          "type": "object"
+        },
+        "systems": {
+          "type": "object"
+        },
+        "thesis": {
+          "type": "object"
+        },
+        "evidence": {
+          "type": "object"
+        },
+        "paper": {
+          "type": "object"
+        }
+      }
+    },
+    "evergreen": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "arm": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "targets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "direction": {
+            "type": "string"
+          },
+          "floor": {
+            "type": "number"
+          },
+          "id": {
+            "type": "string"
+          },
+          "what": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "raise_when_met_runs": {
+      "type": "number"
+    },
+    "raise_factor": {
+      "type": "number"
+    },
+    "weight_bounds": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "revert_if_total_below": {
+      "type": "number"
+    },
+    "acquisition": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "attention": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": "string"
+        },
+        "no_mentions": {
+          "type": "boolean"
+        },
+        "evidence_window_days": {
+          "type": "number"
+        },
+        "self_origins": {
+          "type": "array"
+        },
+        "credential_free": {
+          "type": "array"
+        },
+        "reach_url": {
+          "type": "string"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "acquisition",
+    "arms",
+    "attention",
+    "consent",
+    "evergreen",
+    "lookback_days",
+    "max_new_per_run",
+    "owned_domains",
+    "ps_path_prefixes",
+    "raise_factor",
+    "raise_when_met_runs",
+    "revert_if_total_below",
+    "search_hosts",
+    "site",
+    "social_hosts",
+    "targets",
+    "version",
+    "weight_bounds"
+  ]
+}

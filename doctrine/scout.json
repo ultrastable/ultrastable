@@ -30,6 +30,6 @@
     {"id": "schemaorg", "kind": "atom", "url": "https://github.com/schemaorg/schemaorg/releases.atom", "topic": "adopted standards", "standard": "schema-org-jsonld"},
     {"id": "publiccode-spec", "kind": "atom", "url": "https://github.com/publiccodeyml/publiccode.yml/releases.atom", "topic": "adopted standards", "standard": "publiccode-yml"},
     {"id": "cff-spec", "kind": "atom", "url": "https://github.com/citation-file-format/citation-file-format/releases.atom", "topic": "adopted standards", "standard": "citation-cff"},
-    {"id": "conventional-commits-spec", "kind": "atom", "url": "https://github.com/conventional-commits/conventionalcommits.org/releases.atom", "topic": "adopted standards", "standard": "conventional-commits"}
+    {"id": "conventional-commits-spec", "kind": "atom", "url": "https://github.com/conventional-commits/conventionalcommits.org/releases.atom", "topic": "adopted standards", "standard": "conventional-commits-semver"}
   ]
 }

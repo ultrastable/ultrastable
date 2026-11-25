@@ -1,73 +1,52 @@
 {
- "$schema": "https://json-schema.org/draft/2020-12/schema",
- "$id": "https://ultrastable.io/schemas/runway.schema.json",
- "title": "Seed runway: instances/<slug>/runway.json (RUNWAY-1)",
- "type": "object",
- "required": [
-  "target_days",
-  "risks",
-  "owner_only"
- ],
- "properties": {
-  "target_days": {
-   "type": "integer",
-   "minimum": 365
-  },
-  "risks": {
-   "type": "array",
-   "items": {
-    "type": "object",
-    "required": [
-     "id",
-     "what",
-     "safeguard",
-     "probe"
-    ],
-    "properties": {
-     "id": {
-      "type": "string",
-      "pattern": "^[a-z0-9][a-z0-9-]*$"
-     },
-     "what": {
-      "type": "string",
-      "minLength": 1
-     },
-     "safeguard": {
-      "type": "string",
-      "minLength": 1
-     },
-     "probe": {
-      "type": "string",
-      "minLength": 1
-     }
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/runway.schema.json",
+  "title": "runway (doctrine/runway.json)",
+  "description": "Contract for doctrine/runway.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "target_days": {
+      "type": "number"
+    },
+    "cost_max_age_days": {
+      "type": "number"
+    },
+    "cost_trend_days": {
+      "type": "number"
+    },
+    "max_failure_open_days": {
+      "type": "number"
+    },
+    "failure_labels": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "failure_prefixes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "$schema": {
+      "type": "string"
     }
-   },
-   "minItems": 1
   },
-  "owner_only": {
-   "type": "array",
-   "items": {
-    "type": "object",
-    "required": [
-     "id",
-     "what",
-     "default_in_effect"
-    ],
-    "properties": {
-     "what": {
-      "type": "string",
-      "minLength": 1
-     },
-     "default_in_effect": {
-      "type": "string",
-      "minLength": 1
-     },
-     "id": {
-      "type": "string",
-      "pattern": "^[a-z0-9][a-z0-9-]*$"
-     }
-    }
-   }
-  }
- }
+  "required": [
+    "_doc",
+    "cost_max_age_days",
+    "cost_trend_days",
+    "failure_labels",
+    "failure_prefixes",
+    "max_failure_open_days",
+    "target_days",
+    "version"
+  ]
 }

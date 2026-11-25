@@ -1,7 +1,11 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """STANDARDS-FIRST-1: the CloudEvents 1.0 envelope (foundation/cloudevents.py) and its use on the provenance path."""
-import json, tempfile, unittest
+import json, sys, unittest
 from pathlib import Path
 from foundation import cloudevents as CE, ledger, provenance as PV
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _repo import scratch  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[2]
 VEC = json.loads((REPO / "seed/standards/cloudevents-vectors.json").read_text(encoding="utf-8"))
@@ -37,13 +41,10 @@ class Envelope(unittest.TestCase):
 
 class ProvenancePath(unittest.TestCase):
     def setUp(self):
-        self.tmp = tempfile.TemporaryDirectory(); self.root = Path(self.tmp.name)
+        self.root = Path(scratch())
         (self.root / "doctrine").mkdir()
         (self.root / "doctrine/provenance.json").write_text((REPO / "doctrine/provenance.json").read_text(encoding="utf-8"), encoding="utf-8")
         self.cfg = PV.load(self.root)
-
-    def tearDown(self):
-        self.tmp.cleanup()
 
     def _origin(self):
         return {"class": self.cfg["origin_classes"][0] if isinstance(self.cfg["origin_classes"], list) else sorted(self.cfg["origin_classes"])[0], "actor": "test loop", "channel": self.cfg["channels"][0]}

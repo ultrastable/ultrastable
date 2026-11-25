@@ -1,4 +1,10 @@
 {
+ "actions-stuck": {
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
+ },
  "audit-loop": {
   "status": "pass",
   "signature": "",
@@ -11,11 +17,71 @@
   "streak": 0,
   "since": ""
  },
+ "classes-complete": {
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
+ },
  "dependency-watch": {
   "status": "pass",
   "signature": "",
   "streak": 0,
   "since": ""
+ },
+ "dg-accounts": {
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
+ },
+ "dg-baseline-roll": {
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
+ },
+ "dg-built-live": {
+  "status": "fail",
+  "signature": "d25f28dd36b5",
+  "streak": 1,
+  "since": "2026-11-25T21:07:45Z"
+ },
+ "dg-crons": {
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
+ },
+ "dg-empty-commits": {
+  "status": "fail",
+  "signature": "96f48bc7994d",
+  "streak": 1,
+  "since": "2026-11-25T21:07:40Z"
+ },
+ "dg-handoff-lint": {
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
+ },
+ "dg-lane-closed": {
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
+ },
+ "dg-triggers": {
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
+ },
+ "dg-visibility": {
+  "status": "fail",
+  "signature": "c12868ece903",
+  "streak": 1,
+  "since": "2026-11-25T21:07:20Z"
  },
  "durable-facts": {
   "status": "pass",
@@ -31,7 +97,7 @@
  },
  "foundation-tests": {
   "status": "fail",
-  "signature": "93c9aaba2be8",
+  "signature": "a62ff9af4a02",
   "streak": 1,
   "since": "2026-11-21T13:41:13Z"
  },
@@ -53,7 +119,31 @@
   "streak": 0,
   "since": ""
  },
+ "ledger-stale": {
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
+ },
+ "live-verify": {
+  "status": "fail",
+  "signature": "3a77af090a37",
+  "streak": 1,
+  "since": "2026-11-25T21:07:16Z"
+ },
  "merge-bypass": {
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
+ },
+ "model-routes": {
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
+ },
+ "module-overlap": {
   "status": "pass",
   "signature": "",
   "streak": 0,
@@ -72,6 +162,12 @@
   "since": ""
  },
  "regen-push": {
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
+ },
+ "replication-ledger-citations": {
   "status": "pass",
   "signature": "",
   "streak": 0,
@@ -103,7 +199,7 @@
  },
  "seed-autonomous": {
   "status": "fail",
-  "signature": "bffae65cc559",
+  "signature": "53e8997851fc",
   "streak": 1,
   "since": "2026-11-24T16:27:15Z"
  },
@@ -137,6 +233,18 @@
   "streak": 0,
   "since": ""
  },
+ "selftest-data": {
+  "status": "fail",
+  "signature": "7abc8a3c83c3",
+  "streak": 1,
+  "since": "2026-11-25T21:05:50Z"
+ },
+ "selftest-workflows": {
+  "status": "fail",
+  "signature": "353d56ec869e",
+  "streak": 1,
+  "since": "2026-11-25T21:07:12Z"
+ },
  "silent-drop": {
   "status": "pass",
   "signature": "",
@@ -157,15 +265,27 @@
  },
  "sla-breach": {
   "status": "fail",
-  "signature": "05e04c30c8c9",
+  "signature": "390c7f5a3e49",
   "streak": 1,
   "since": "2026-11-21T18:56:59Z"
+ },
+ "static-content": {
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
  },
  "temporal-drift": {
   "status": "fail",
   "signature": "f5fb09925e0b",
-  "streak": 1,
+  "streak": 2,
   "since": "2026-11-21T13:41:18Z"
+ },
+ "tenant-health": {
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
  },
  "vision": {
   "status": "pass",
@@ -174,6 +294,12 @@
   "since": ""
  },
  "waiting-on-person": {
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
+ },
+ "worker-bundle": {
   "status": "pass",
   "signature": "",
   "streak": 0,

@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/scout.schema.json",
+  "title": "scout (doctrine/scout.json)",
+  "description": "Contract for doctrine/scout.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "threshold": {
+      "type": "number"
+    },
+    "max_per_run": {
+      "type": "number"
+    },
+    "window_days": {
+      "type": "number"
+    },
+    "weight": {
+      "type": "object",
+      "properties": {
+        "initial": {
+          "type": "number"
+        },
+        "floor": {
+          "type": "number"
+        },
+        "ceiling": {
+          "type": "number"
+        },
+        "decay": {
+          "type": "number"
+        },
+        "boost": {
+          "type": "number"
+        },
+        "quiet_passes": {
+          "type": "number"
+        }
+      }
+    },
+    "needs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "topic": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "max_per_run",
+    "needs",
+    "sources",
+    "threshold",
+    "weight",
+    "window_days"
+  ]
+}

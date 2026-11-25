@@ -40,6 +40,12 @@ class ClaimCode(unittest.TestCase):
         (d / "site/page.js").write_text('const t = "The loop runs every 5 minutes and always fixes what it finds.";\n')
         self.assertTrue(any("quote no longer" in e for e in claimcode.check(d)))
 
+    def test_a_layout_width_is_not_a_statement_and_a_stated_share_still_is(self):
+        d = _tree()
+        (d / "site/page.js").write_text('const a = "<p>The loop every manager runs <img alt=\\"loop\\" width=\\"90%\\"></p><textarea style=\\"width:100%\\">";\n'
+                                        'const b = "<p style=\\"width:100%\\">The loop keeps 20% of its capacity for improvements here.</p>";\n')
+        errs = claimcode.check(d); self.assertEqual(len(errs), 1, errs); self.assertIn("site/page.js:2", errs[0])
+
     def test_a_claim_whose_probe_is_missing_fails(self):
         d = _tree([{"id": "x", "source": "site/page.js", "quote": "runs every 10 minutes", "probe": {"file": "t/none.test.js", "contains": "z"}}])
         

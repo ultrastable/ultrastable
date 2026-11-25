@@ -1,9 +1,0 @@
-{
-  "id": "Q-STD-slsa",
-  "title": "Q-STD-slsa: attest each Worker deploy with SLSA build provenance",
-  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -m foundation standards --adopted slsa\n**Status:** open\n\nEach deploy row in ops/deploys.jsonl already names the commit and the live version, and actions are pinned by commit (foundation/actionpins.py). Add the signed form: the site Worker's deploy endpoint (site/deployer.js) returns the SHA-256 of the bundle it uploaded; the deploying workflow writes a build-provenance attestation for that digest with GitHub's attestation service on the run's own OIDC token (permissions `id-token: write`, `attestations: write`; the action pinned by commit SHA); the deploy row records the attestation id. No stored credential and nothing added to any Worker. Detector: a deploy row from Actions without an attestation id.\n\nSTANDARDS-FIRST-1 (Rowan, 2026-11-25): \"Standards, don't reinvent the wheel. Apply standards.\" The row is `slsa` in seed/standards/standards.json; this item closes when that row reads `\"adoption\": \"adopted\"` and every probe on it passes. Change the row in the same change that makes it true, never before.",
-  "labels": [
-    "standards",
-    "agent-ready"
-  ]
-}

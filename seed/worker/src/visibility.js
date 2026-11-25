@@ -1,8 +1,9 @@
-// LIVE-1: with PUBLIC_HEALTH_ONLY=1 a runtime answers GET /health (the last tick's report) , a public page at / (FULLSTACK-1) and the signed GitHub webhook, and nothing else,
+// LIVE-1: with PUBLIC_HEALTH_ONLY=1 a runtime answers GET /health (the last tick's report), a public page at / (FULLSTACK-1), the public reads below (COLDSTART-1) and the signed GitHub webhook, and nothing else,
 // so its liveness can be read by a dashboard or a parent system while its backlog, screens and agent surfaces stay private.
 export const PUBLIC_CONTRACT = ['/.well-known/ultrastable.json', '/claims.json', '/social-queue.json', '/api/graph'];
 export function hiddenByHealthOnly(env, method, pathname) {
   if (!env || env.PUBLIC_HEALTH_ONLY !== '1') return false;
+  if (method === 'GET' && (PUBLIC_READS.includes(pathname) || STICKY_QUEUE.test(pathname))) return false;
   if (pathname === '/health' && method === 'GET') return false;
   if (pathname === '/' && method === 'GET') return false;  // FULLSTACK-1: the public page below; it shows nothing the health report does not
   if (method === 'GET' && PUBLIC_CONTRACT.includes(pathname)) return false;  // FLEET-CONTRACT-1, DISCOVER-1: the manifest, the statements, the (empty until it has content) social queue and the graph's public view (counts only without the owner's bearer)

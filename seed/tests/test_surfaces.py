@@ -85,8 +85,8 @@ class Render(unittest.TestCase):
         self.assertNotIn("kind: System", c)
         keys = [l.split(":")[0] for l in c.splitlines() if l and not l.startswith((" ", "#", "-"))]
         self.assertEqual(keys, ["apiVersion", "kind", "metadata", "spec"])
-        plat = S.catalog({**IDENT, "layer": "platform", "slug": "ultrastable", "repo": "ultrastable/ultrastable"}, "live")
-        self.assertIn("---\napiVersion: backstage.io/v1alpha1\nkind: System\nmetadata:\n  name: ultrastable\n", plat)
+        dp = world({**IDENT, "layer": "platform"})
+        self.assertNotIn("catalog-info.yaml", S.surfaces(dp))  # the platform's catalog is generated from its registers, not from one manifest
         self.assertIn("lifecycle: experimental", S.catalog({**IDENT, "status": "planned"}, "planned"))
         m = json.loads((d / "ultrastable.json").read_text()); m["identity"]["summary"] = "A different summary, long enough for the schema to accept it."
         (d / "ultrastable.json").write_text(json.dumps(m))

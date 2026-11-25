@@ -3,20 +3,18 @@
 """STANDARDS-FIRST-1 (Rowan, 2026-11-25): "Standards, don't reinvent the wheel. Apply standards." JSON Schema (draft 2020-12) for every
 config and manifest. Ultrastable is the foundation for any autonomous system.
 
-  python3 -m foundation standards --schemas                 every JSON config in scope validates against its schema, or is on the shrink-only baseline
-  python3 -m foundation standards --schemas --repo PATH     another repository's ultrastable.json against the same schema the seed carries
-
-The map of file to schema, the scope and the baseline are data: doctrine/schemas/index.json. The validator below is the standard's own
+This module is the validator only. Which config has which schema, and the check that every config has one, is foundation/configschema.py
+(CONFIG-SCHEMA-1, `python3 -m foundation configschema --check`), which validates through `validate` below when the `jsonschema` package is not
+installed, so a hand-tightened schema is held to all of its keywords either way. The validator is the standard's own
 keyword vocabulary on the standard library (no dependency): type, required, properties, patternProperties, additionalProperties, items,
 minItems, maxItems, uniqueItems, enum, const, pattern, minLength, maxLength, minimum, maximum, oneOf, anyOf, allOf, not, $ref inside the file.
 A keyword outside that list in a schema is an error, never ignored, so a schema cannot claim a check nothing runs.
 Tests: tests/foundation/test_schemas.py."""
 from __future__ import annotations
-import fnmatch, json, re
+import json, re
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
-INDEX = "doctrine/schemas/index.json"
 DIALECT = "https://json-schema.org/draft/2020-12/schema"
 ANNOTATIONS = {"$schema", "$id", "$defs", "$comment", "title", "description", "default", "examples", "deprecated"}
 KEYWORDS = {"type", "required", "properties", "patternProperties", "additionalProperties", "items", "minItems", "maxItems", "uniqueItems", "enum", "const",
@@ -124,79 +122,3 @@ def validate(schema, value, path="$", root_schema=None) -> list[str]:
     if "not" in schema and not validate(schema["not"], value, path, root_schema):
         bad.append(f"{path}: matches a schema it must not")
     return bad
-
-
-def _json(p: Path):
-    return json.loads(p.read_text(encoding="utf-8"))
-
-
-def in_scope(root: Path, idx: dict) -> list[str]:
-    out = set()
-    for g in idx["scope"]:
-        out |= {p.relative_to(root).as_posix() for p in root.glob(g) if p.is_file()}
-    return sorted(f for f in out if not any(fnmatch.fnmatch(f, x) for x in idx.get("not_config", {})))
-
-
-def mapping(root: Path, idx: dict) -> dict[str, list[str]]:
-    """file -> its schemas, from the index's map (a `files` entry may be a glob; a file may be held by more than one schema)."""
-    out = {}
-    for row in idx["map"]:
-        for g in row["files"]:
-            for p in ([root / g] if not any(c in g for c in "*?[") else sorted(root.glob(g))):
-                out.setdefault(p.relative_to(root).as_posix(), []).append(row["schema"])
-    return out
-
-
-def check(root=REPO, limit=6) -> list[str]:
-    root, bad = Path(root), []
-    idx = _json(root / INDEX)
-    files, m = in_scope(root, idx), mapping(root, idx)
-    baseline = idx.get("baseline", [])
-    if len(baseline) > idx["baseline_ceiling"]:
-        bad.append(f"{INDEX}: baseline holds {len(baseline)} files, above its ceiling {idx['baseline_ceiling']} (the baseline only shrinks: write the schema)")
-    if len(set(baseline)) != len(baseline) or baseline != sorted(baseline):
-        bad.append(f"{INDEX}: baseline must be sorted with no repeats")
-    schemas = {}
-    for s in sorted({x for v in m.values() for x in v}):
-        p = root / s
-        if not p.is_file():
-            bad.append(f"{s}: schema file missing")
-            continue
-        sc = _json(p)
-        if sc.get("$schema") != DIALECT:
-            bad.append(f"{s}: $schema must be {DIALECT}")
-        bad += [f"{s} {x}" for x in lint(sc)]
-        schemas[s] = sc
-    for f in sorted(m):
-        if not (root / f).is_file():
-            bad.append(f"{INDEX}: maps {f}, which does not exist")
-        else:
-            doc = _json(root / f)
-            for sname in m[f]:
-                errs = validate(schemas[sname], doc) if sname in schemas else []
-                bad += [f"{f} {x}" for x in errs[:limit]] + ([f"{f}: and {len(errs) - limit} more"] if len(errs) > limit else [])
-    for f in files:
-        if f not in m and f not in baseline:
-            bad.append(f"{f}: no JSON Schema and not on the baseline; add doctrine/schemas/<name>.schema.json and a map row in {INDEX}")
-    for f in baseline:
-        if f in m:
-            bad.append(f"{INDEX}: {f} has a schema now; remove it from the baseline")
-        elif f not in files:
-            bad.append(f"{INDEX}: baseline names {f}, which is not a config in scope; remove it")
-    return bad
-
-
-def check_repo(repo, root=REPO) -> list[str]:
-    """Another repository's manifest against the schema every repository shares."""
-    idx = _json(Path(root) / INDEX)
-    p = Path(repo) / "ultrastable.json"
-    if not p.is_file():
-        return [f"{repo}: no ultrastable.json"]
-    return [f"{repo}/ultrastable.json {x}" for x in validate(_json(Path(root) / idx["repo_manifest_schema"]), _json(p))]
-
-
-def coverage(root=REPO) -> dict:
-    root = Path(root)
-    idx = _json(root / INDEX)
-    files, m = in_scope(root, idx), mapping(root, idx)
-    return {"in_scope": len(files), "with_schema": sum(1 for f in files if f in m), "baseline": len(idx.get("baseline", [])), "schemas": len({x for v in m.values() for x in v})}

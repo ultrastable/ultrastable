@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/sla.schema.json",
+  "title": "sla (doctrine/sla.json)",
+  "description": "Contract for doctrine/sla.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "pr": {
+      "type": "object",
+      "properties": {
+        "green_merge_min": {
+          "type": "number"
+        },
+        "act_min": {
+          "type": "number"
+        },
+        "hard_min": {
+          "type": "number"
+        },
+        "idle_min": {
+          "type": "number"
+        },
+        "_doc": {
+          "type": "string"
+        }
+      }
+    },
+    "issue": {
+      "type": "object",
+      "properties": {
+        "p0_days": {
+          "type": "number"
+        },
+        "p1_days": {
+          "type": "number"
+        },
+        "default_days": {
+          "type": "number"
+        },
+        "_doc": {
+          "type": "string"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "issue",
+    "pr",
+    "version"
+  ]
+}

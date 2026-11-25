@@ -61,6 +61,24 @@ const BASE = ":root{color-scheme:light dark;--bg:#f6f1e7;--sf:#fffdf8;--sf2:#efe
 + ".main{max-width:960px;margin:0 auto;padding:20px 16px 64px}.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:44px;padding:10px 18px;border-radius:6px;border:1px solid var(--line);background:var(--sf);color:var(--ink);font:600 16px system-ui;text-decoration:none}.btn-primary{background:var(--ac);border-color:var(--ac);color:var(--on)}.btn-quiet{border-color:transparent;background:transparent;color:var(--ac)}"
 + ".skip-link{position:absolute;left:-9999px}.skip-link:focus{left:16px;top:8px;background:var(--sf);padding:8px}:focus-visible{outline:3px solid var(--ac);outline-offset:2px}.card{background:var(--sf);border:1px solid var(--line);border-radius:8px;padding:16px;margin:0 0 12px}.meta,small{color:var(--ink2);font-size:14px}.head p{color:var(--ink2)}"
 + "@media(max-width:640px){.hide-sm{display:none!important}h1{font-size:24px}}";
+// REDTEAM-1: the public text of a claim. The register keeps the exact quote for binding; a quote cut from code keeps only its prose, tags dropped,
+// and a quote that starts mid-sentence is marked with an ellipsis.
+export function publicText(q) {
+  let t = String(q || "");
+  if (/" ?\+|\+ ?"|^\s*(const|return|let|if|card)\b|\bcard\(|\bsec\(|\.push\(|^\s*\+/.test(t)) {
+    const out = [];
+    for (const seg of t.replace(/\\"/g, '"').split(/["']/)) {
+      if (/^\s*\+[^\n]*\+\s*$/.test(seg)) out.push("\u2026");
+      else if ((/[A-Za-z]{2,}[ ,.][A-Za-z ]/.test(seg) || (out.length && out[out.length - 1] === "\u2026" && /[A-Za-z]{3,}/.test(seg))) && !/^[\w-]+ c?\d+$/.test(seg.trim()) && !/[{};=]|\b(const|return|function)\b|^\s*[\w.]+\(/.test(seg))
+        out.push(seg.replace(/<[^>]*>/g, " ").replace(/^[\s,(]+|[\s,(]+$/g, ""));
+    }
+    while (out.length && out[out.length - 1] === "\u2026") out.pop();
+    t = out.filter(Boolean).join(" ") || "(generated from code; see the probe)";
+  }
+  t = t.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim();
+  return /^[a-z]/.test(t) ? "\u2026" + t : t;
+}
+function atCommit() { const c = String(VERIFIED.commit || ""); return /^[0-9a-f]{7,40}$/.test(c) ? " at commit " + esc(c) : " on every merge"; }
 function dsEsc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
 function dsHead(title, description, extraCss) {
   return "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>" + dsEsc(title) + "</title><meta name=\"description\" content=\"" + dsEsc(description) + "\"><style>" + BASE + "\n" + (extraCss || "") + "</style>";
@@ -97,7 +115,7 @@ function shell(opts, body) {
 function statusLine() {
   // Own records only (PROOF-OWN-1): the count comes from Ultrastable's verified-claims register, never from another system.
   const t = VERIFIED.summary;
-  return t.pass + " of " + t.total + " claims verified against code at commit " + esc(VERIFIED.commit) + ".";
+  return t.pass + " of " + t.total + " claims verified against code" + atCommit() + ".";
 }
 
 function home(ux) {
@@ -106,7 +124,7 @@ function home(ux) {
     + IV.askBar("Tell me what is on your mind…")
     + "<div class=\"us-actions\"><a class=\"btn\" href=\"/setup\">" + esc(slotText("home.setup_label", "primary_label", "Set up my own", ux)) + "</a><a class=\"btn\" href=\"/live\">See the live proof</a><a class=\"btn btn-quiet\" href=\"/research\">Read the white papers</a></div>"
     + "<div class=\"us-status\" role=\"status\">" + statusLine() + "</div></section>"
-    + "<div class=\"us-lane\"><h2>Already comfortable with code?</h2><p class=\"us-tagline\">A system is autonomous if it has self-referential loops and the ability to close them. Coding agents write code. Ultrastable runs the system. Ultrastable runs on itself.</p><p class=\"us-lede\">It finds its own work in your metrics and failures, hands each task to the coding agent that fits, proves every change live with an automatic revert, and keeps score of how often its decisions were right.</p><p>You do not have to answer questions. The loops, virtual managers, agents and plussing budget are all there to use, with an honest list of what is live, in testing, and not built yet.</p><div class=\"us-actions\"><a class=\"btn\" href=\"/engineers\">Go straight to the engine</a></div></div>"
+    + "<div class=\"us-lane\"><h2>Already comfortable with code?</h2><p class=\"us-tagline\">A system is autonomous if it has self-referential loops and the ability to close them. Coding agents write code. Ultrastable runs the system. Ultrastable runs on itself.</p><p class=\"us-lede\">It finds its own work in your metrics and failures, hands each task to the coding agent that fits, proves each handed-off change live and rolls it back when the proof fails, and keeps score of how often its decisions were right.</p><p>You do not have to answer questions. The loops, virtual managers, agents and plussing budget are all there to use, with an honest list of what is live, in testing, and not built yet.</p><div class=\"us-actions\"><a class=\"btn\" href=\"/engineers\">Go straight to the engine</a></div></div>"
     + examplesSection()
     + "<h2>Who are you?</h2><div class=\"us-grid c3\">" + SH.audiences.map(audienceCard).join("") + "</div>"
     + "<h2>Test cases</h2><div class=\"us-grid c2\">" + SH.showcases.filter(function (c) { return c.status !== "sunsetting"; }).map(caseCard).join("") + "</div><p><a href=\"/showcase\">All test cases, including the earlier testbed</a></p>"
@@ -117,7 +135,7 @@ function home(ux) {
     + "</div>"
     + "<h2>What is different</h2><div class=\"us-grid c3\">"
     + card("It chooses the work", "Metrics breach, a trigger files an issue, a coding agent opens the pull request. A person sets direction and reads reports.")
-    + card("It proves every change", "Each deploy declares probes. A probe that passed before and fails after reverts the push on its own.")
+    + card("It proves every change", "Each handed-off change declares a live check. When the check fails after the deploy, the deploy is rolled back on its own and the work item goes back to the queue.")
     + card("It keeps score", "Every decision logs a prediction first. The outcome is scored later, so you can see how often the system was right.")
     + "</div>"
     + "<h2>It questions what it does not know</h2><p>Improving only what is known makes the solution space smaller each time. So the managers also audit their own ignorance: every loop is asked inverted questions (what if the opposite were true, what would a world look like where this was false, what are we pretending not to know) drawn from the Universal Ignorance Audit, pre-mortems and red teaming. Each answer, including 'we cannot know', is recorded, and a gap found becomes a new objective. Coverage and findings are on the <a href=\"/live\">live page</a>.</p>"
@@ -189,7 +207,7 @@ function ultrastability() {
 
 function claimsPage() {
   const rows = VERIFIED.claims.map(function (c) { return "<tr><td class=\"" + (c.pass ? "us-pass" : "us-fail") + "\">" + (c.pass ? "Verified" : "Drift") + "</td><td>" + esc(c.claim) + "<br><small>" + esc(c.surface) + " · " + esc(c.how) + (c.detail ? " · " + esc(c.detail) : "") + "</small></td></tr>"; }).join("");
-  return shell({ path: "/claims", title: "Verified claims: Ultrastable words matched to code", description: "Every statement on the Ultrastable surfaces is bound to a probe in the code, checked on every change and daily against the live site." },
+  return shell({ path: "/claims", title: "Verified claims: Ultrastable words matched to code", description: "Statements on the Ultrastable surfaces are bound to probes in the code, checked on every change and daily against the live site; the share bound is measured and the rest is listed." },
     "<div class=\"head\"><h1>Verified claims</h1><p id=\"st\" role=\"status\">" + VERIFIED.summary.pass + " of " + VERIFIED.summary.total + " claims verified against code at commit " + esc(VERIFIED.commit) + ". Words must match code; a claim that stops matching fails the build and files its own fix item.</p></div>"
     + "<div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Status</th><th>Claim, surface and probe</th></tr></thead><tbody>" + rows + "</tbody></table></div>"
     + platformStatements()
@@ -210,7 +228,7 @@ function pilot() {
     + "<h2 id=\"apply\">Apply</h2><form id=\"pf\" class=\"card\" method=\"post\" action=\"/api/pilot\">" + [["system", g.apply_fields[0]], ["keeps_doing", g.apply_fields[1]], ["measure", g.apply_fields[2]], ["budget", g.apply_fields[3]], ["runs_on", g.apply_fields[4]], ["contact", "How we reach you (email)"]].map(function (x) { return "<p><label>" + esc(x[1]) + "<br><textarea name=\"" + x[0] + "\" rows=\"2\" maxlength=\"1500\" style=\"width:100%\"" + (x[0] === "contact" ? "" : " required") + "></textarea></label></p>"; }).join("") + "<p><button class=\"btn btn-primary\" type=\"submit\">Send application</button></p><p id=\"pr\" class=\"meta\" role=\"status\"></p></form>"
     + "<script>document.getElementById('pf').addEventListener('submit',function(e){e.preventDefault();var f=e.target;fetch('/api/pilot',{method:'POST',body:new FormData(f),headers:{accept:'application/json'}}).then(function(r){return r.json()}).then(function(j){document.getElementById('pr').textContent=j.message||j.error||'Something went wrong.'}).catch(function(){document.getElementById('pr').textContent='Could not send; use the email link.'})})</script>"
     + "<div class=\"us-actions\"><a class=\"btn\" href=\"" + href + "\">Or apply by email</a><a class=\"btn\" href=\"/dashboard\">See the dashboard</a></div>"
-    + "<p class=\"meta\">Replies come from a person within two working days. The form above is the interview: it scores your answers against the four system-test questions.</p>");
+    + "<p class=\"meta\">Your answers are scored and stored when you apply; to reach a person, email the pilot team. The form above is the interview: it scores your answers against the four system-test questions.</p>");
 }
 
 function lis(a) { return "<ul>" + a.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>"; }
@@ -236,7 +254,7 @@ function showcase() {
     + "<div class=\"head\"><h1>Test cases</h1><p>Ultrastable is an autonomous development platform. What it develops (code, practical solutions) and how it develops itself are one loop.</p></div>"
     + "<div class=\"us-grid c2\">" + SH.showcases.map(caseCard).join("") + "</div>"
     + "<h2>One loop, not two</h2><p>The loop that finds a failing probe in a product, files the work, hands it to an agent, proves the change live and scores its own prediction is the same loop that improves Ultrastable. Each fix to the loop improves every system, and each system's problems improve the loop. It keeps closing its own loops, including the loop that watches the loops (a strange loop, in Hofstadter's sense).</p>"
-    + "<h2>How we test it</h2>" + lis(["Every claim on this site is a query against a live record: see Live proof.", "Each decision logs a prediction first (metric, comparison, number, hours) and is scored later.", "Changes are proven live after deploy and revert on regression.", "The same checks run on the platform and on each product, so a pass means the same thing everywhere."])
+    + "<h2>How we test it</h2>" + lis(["Claims on this site are bound to probes in the code and re-checked on every change: see the claims page.", "Each decision logs a prediction first (metric, comparison, number, hours) and is scored later.", "Handed-off changes are proven live after deploy and rolled back when the proof fails.", "The same checks run on the platform and on each product, so a pass means the same thing everywhere."])
     + "<p class=\"meta\">Early stage. Estimates are labelled as estimates. The code is source-available under the Ultrastable License: free for non-commercial use, a commercial licence for commercial use. <a href=\"/how#gaps\">Read the gaps.</a></p>"
     + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/for\">Find your path</a><a class=\"btn\" href=\"/how\">How it works</a></div>");
 }
@@ -284,10 +302,10 @@ function product() {
     + "<h2>What it does</h2><div class=\"us-grid c3\">"
     + card("Chooses the work", "Reads your metrics and failures, files the issues, and orders them so the most valuable work goes first.")
     + card("Hands it to an agent", "Gives each task to one coding agent at a time, so two agents never work the same item.")
-    + card("Checks the result", "Every change is checked after it ships and rolled back automatically if something that worked before now fails.")
+    + card("Checks the result", "A handed-off change is checked live after it ships and rolled back automatically if the check fails.")
     + "</div>"
     + "<h2>Who it is for</h2><p>Small engineering teams that run many services and want problems found and fixed without a person choosing every task. Teams that need an audit trail of what their agents changed and why.</p>"
-    + "<h2>What a pilot includes</h2><ul><li>The loop installed on one repository of yours.</li><li>Issues filed from your own metrics, with a check that proves each fix.</li><li>A written record of every decision and how it turned out.</li><li>A named contact who replies within two working days.</li></ul>"
+    + "<h2>What a pilot includes</h2><ul><li>The loop installed on one repository of yours.</li><li>Issues filed from your own metrics, with a check that proves each fix.</li><li>A written record of every decision and how it turned out.</li><li>A named contact you can email.</li></ul>"
     + "<h2>Status</h2><p>Early stage. The loop runs in production today on one installation; a second, independent installation and a packaged installer are the next milestones. Pricing is not set; pilots are free. <a href=\"/how#gaps\">Read the honest gaps.</a></p>"
     + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/pilot\">Join the pilot</a><a class=\"btn\" href=\"/faq\">Read the FAQ</a></div>");
 }
@@ -302,7 +320,7 @@ function team() {
     + card("Product manager", "Owns the product pages, customer conversations and the pilot programme.")
     + card("Operations and reviewers", "Run deploys and monitoring, and review each change independently of the agent that wrote it.")
     + "</div>"
-    + "<h2>How we work</h2><p>Plans, decisions and results are written down in version control, not in chat. Work is claimed before it starts, checked after it ships, and every claim on this site can be traced to a record.</p>"
+    + "<h2>How we work</h2><p>Plans, decisions and results are written down in version control, not in chat. Work is claimed before it starts and checked after it ships, and the claims on this site are bound to probes in the code.</p>"
     + "<h2>Open roles</h2><p>We are looking for an operator or co-founder with commercial and go-to-market experience, and for design partners. <a href=\"/contact\">Get in touch.</a></p>");
 }
 
@@ -322,7 +340,7 @@ function faq() {
     ["Is Ultrastable another coding agent?", "No. It is the layer around the agents you already use. It decides what to work on, assigns it, checks the result and keeps score."],
     ["Which agents and platforms does it work with?", "Open models, GitHub Copilot and Claude Code take work through the same ledger. It runs on Cloudflare today and is designed to run on other clouds."],
     ["Who decides what gets built?", "The system proposes work from your metrics and failures. A person sets direction and reads reports, and approves only steps that cannot be undone."],
-    ["What if a change breaks something?", "Each change declares checks that must keep passing. If one that passed before now fails, the change is rolled back automatically and an issue is filed."],
+    ["What if a change breaks something?", "A handed-off change declares a live check. If the check fails after the deploy, the deploy is rolled back automatically and the work item goes back to the queue."],
     ["Do I have to give it access to everything?", "No. A pilot covers one repository, with the permissions you grant. Secrets are never stored in the repository."],
     ["What does it cost?", "Pilots are free. Pricing is not set yet and will be published here before any paid plan starts."],
     ["Is it production ready?", "It runs in production on one installation today. It is early-stage: there is no packaged installer yet and a second independent installation is the next milestone."],
@@ -654,7 +672,7 @@ async function pilotApplication(request, env) {
   const lim = await limited(request, env); if (lim) return lim;
   const id = newId();
   await env.ASSETS.put("pilot:" + new Date().toISOString() + ":" + id, JSON.stringify({ a: a, fit: r.fit, checks: r.checks }), { expirationTtl: 31536000 });
-  return json({ id: id, fit: r.fit, checks: r.checks, message: r.fit ? "Thank you. This reads as a fit for the system test; a person replies within two working days." : "Thank you. As written this does not yet pass the system test (a loop to close, a measure that can be wrong, upkeep that never ends, a monthly budget). Tell us more and apply again." }, 201);
+  return json({ id: id, fit: r.fit, checks: r.checks, message: r.fit ? "Thank you. This reads as a fit for the system test; your answers are scored and stored. Email the pilot team to start the conversation." : "Thank you. As written this does not yet pass the system test (a loop to close, a measure that can be wrong, upkeep that never ends, a monthly budget). Tell us more and apply again." }, 201);
 }
 
 async function takeIdea(request, env, ctx) {
@@ -706,6 +724,7 @@ async function siteRoutes(u, env, ctx, request, own) {
   const id = m[1]; let st = await env.ASSETS.get("state:" + id); const page = (t, b) => new Response(shell({ path: u.pathname, title: t + " - Ultrastable", description: t }, b), { headers: HTML });
   if (!st) return new Response(start("That site was not found."), { status: 404, headers: HTML });
   if (st === "building" && Date.now() - Number(await env.ASSETS.get("since:" + id) || 0) > 150000) { st = "failed"; await env.ASSETS.put("state:" + id, "failed"); }
+  if (st === "failed" && await GRAD.requeueBuild(env, id)) st = "building";  // LAUNCH-PATH-1: a failed build is queued again from the kept idea (graduate.js requeueBuild)
   if (st === "ready" && (!m[2] || m[2] === "/review")) await ensureAudit(env, ctx, id);
   if (m[2] === "/own" || m[2] === "/launch") {  // LAUNCH-PATH-1: where the app is, what was asked for, and taking it over; /launch is the same record as JSON with no idea text
     const rec = (await GRAD.getLaunch(env, id)) || await GRAD.enqueue(env, id, ((await jget(env, "brief:" + id)) || {}).brief || "");  // an app made before this path existed joins it on first visit
@@ -744,7 +763,7 @@ async function siteRoutes(u, env, ctx, request, own) {
     let cur = st;
     if (cur === "building") cur = await resume(env, id);
     if (cur === "ready") return Response.redirect("https://" + CANON + "/s/" + id, 302);
-    const msg = cur === "failed" ? "<p>That did not work this time. <a href=\"/start\">Try again</a>.</p>" : "<p>Building your site. This takes about half a minute. This page updates by itself.</p><meta http-equiv=\"refresh\" content=\"4\">";
+    const msg = cur === "failed" ? "<p>Building it did not work this time. Your idea is saved and we try again by ourselves in a few minutes. This page updates when it is ready; you do not need to do anything.</p><meta http-equiv=\"refresh\" content=\"120\">" : "<p>Building your site. This takes about half a minute. This page updates by itself.</p><meta http-equiv=\"refresh\" content=\"4\">";
     return page("Building", "<div class=\"head\"><h1>" + (cur === "failed" ? "Something went wrong" : "Building...") + "</h1></div>" + msg);
   }
   if (st === "asking") return Response.redirect("https://" + CANON + "/s/" + id + "/ask", 302);
@@ -1037,7 +1056,7 @@ async function dashboard(tenantId) {
 }
 function contact() {
   return shell({ path: "/contact", title: "Contact Ultrastable", description: "How to reach the Ultrastable team about pilots, partnerships and press." },
-    "<div class=\"head\"><h1>Contact</h1><p>One address; a person replies within two working days.</p></div>"
+    "<div class=\"head\"><h1>Contact</h1><p>One address for everything.</p></div>"
     + "<div class=\"card\"><h3 class=\"card-title\">Pilots, partnerships and press</h3><p class=\"meta\"><a href=\"mailto:" + PILOT_MAIL + "\">" + PILOT_MAIL + "</a></p></div>"
     + "<div class=\"card\"><h3 class=\"card-title\">Online</h3><p class=\"meta\">ultrastable.io. The source is open; the Ultrastable License governs use.</p></div>"
     + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/pilot\">Join the pilot</a></div>");
@@ -1204,7 +1223,7 @@ const handler = {
       case "/claims": return new Response(claimsPage(), { headers: HTML });
       case "/changelog": case "/api/changelog": if (u.hostname === "dashboard.ultrastable.io") return new Response("changelog unavailable", { status: 503, headers: { "retry-after": "60" } }); /* CHANGELOG-LOOP-1: this host is served by this worker, so a redirect to itself looped; OWNER_PATH forwards to the dashboard worker first */ return Response.redirect("https://dashboard.ultrastable.io" + pth + u.search, 302); // PROVENANCE-1: the public changelog is served by the dashboard worker
       case "/self": case "/.well-known/ultrastable": return new Response(JSON.stringify(SELF, null, 1), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300", "Link": "</self>; rel=\"describedby\"" } });
-      case "/api/claims": return new Response(JSON.stringify(VERIFIED), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } });
+      case "/api/claims": return new Response(JSON.stringify({ ...VERIFIED, claims: VERIFIED.claims.map(function (c) { return { ...c, claim: publicText(c.claim), quote: c.claim }; }) }), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } });
       case "/product": return new Response(product(), { headers: HTML });
       case "/team": return new Response(team(), { headers: HTML });
       case "/org": return new Response(org(), { headers: HTML });

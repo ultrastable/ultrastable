@@ -1,7 +1,7 @@
 {
   "id": "Q-LESSON-no-template-leaks",
   "title": "Q-LESSON-no-template-leaks: enforce the lesson in code",
-  "body": "**Owner:** executor\n**Trigger:** lesson `no-template-leaks` in doctrine/lessons.json has no enforcing code\n**Done check:** cmd:python3 -m foundation lessons --check\n**Status:** open\n\nLESSONS-1: add a check that fails when a live page or generated module contains seed placeholders such as {org_name}. Then add the binding to the lesson in doctrine/lessons.json and close this item.\n\n**Prediction:** template_leaks <= 0 within 168 h\n**Out of scope:** rewriting seed templates that are meant to hold placeholders.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation lessons --report` lists `no-template-leaks` as enforced.\n",
+  "body": "**Owner:** executor\n**Trigger:** lesson `no-template-leaks` in doctrine/lessons.json has no enforcing code\n**Done check:** cmd:python3 -m foundation lessons --check\n**Status:** open\n\nLESSONS-1: add a check that fails when a live page or generated module contains seed placeholders such as {org_name}. Then add the binding to the lesson in doctrine/lessons.json and close this item.\n\n**Prediction:** template_leaks <= 0 within 168 h\n**Out of scope:** rewriting seed templates that are meant to hold placeholders.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation lessons --report` lists `no-template-leaks` as enforced.\n\n\n**Vacuous:** 2026-11-25T21:02:14Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n",
   "labels": [
     "p1",
     "agent-ready",

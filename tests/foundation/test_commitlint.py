@@ -1,7 +1,11 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """STANDARDS-FIRST-1: the commit titles the system generates follow the Conventional Commits 1.0.0 header grammar."""
-import json, shutil, tempfile, unittest
+import json, sys, unittest
 from pathlib import Path
 from foundation import commitlint as C
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _repo import scratch  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[2]
 
@@ -21,14 +25,11 @@ class Header(unittest.TestCase):
 
 class Generators(unittest.TestCase):
     def setUp(self):
-        self.d = Path(tempfile.mkdtemp())
+        self.d = Path(scratch())
         (self.d / "doctrine").mkdir(); (self.d / ".github/workflows").mkdir(parents=True); (self.d / "scripts").mkdir()
         self.cfg = {"generators": [".github/workflows/*.yml", "scripts/*.sh"], "baseline_ceiling": 0, "baseline": []}
         (self.d / ".github/workflows/a.yml").write_text('      run: git commit -q -m "watchdog: clock probe [skip ci]"\n      run: python3 scripts/land_data.py "cost-guard: daily reading" ops/cost.jsonl\n')
         self._write()
-
-    def tearDown(self):
-        shutil.rmtree(self.d)
 
     def _write(self):
         (self.d / C.PATH).write_text(json.dumps(self.cfg))

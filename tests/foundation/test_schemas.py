@@ -1,7 +1,9 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """STANDARDS-FIRST-1: JSON Schema for every config (foundation/schemas.py) and the measured standards register (foundation/standards.py)."""
-import copy, json, shutil, tempfile, unittest
+import copy, json, unittest
 from pathlib import Path
-from foundation import schemas as S, standards as ST
+from foundation import configschema as CS, schemas as S, standards as ST
 
 REPO = Path(__file__).resolve().parents[2]
 J = lambda rel: json.loads((REPO / rel).read_text(encoding="utf-8"))  # noqa: E731
@@ -32,20 +34,23 @@ class Validator(unittest.TestCase):
 
 
 class Coverage(unittest.TestCase):
-    def test_every_config_in_scope_validates_or_is_on_the_baseline(self):
-        self.assertEqual(S.check(REPO), [])
-        c = S.coverage(REPO)
-        self.assertGreaterEqual(c["with_schema"], 35)
-        self.assertEqual(c["in_scope"], c["with_schema"] + c["baseline"])
+    def test_the_load_bearing_files_have_hand_tightened_contracts_in_the_one_coverage_check(self):
+        """Coverage is CONFIG-SCHEMA-1's (foundation/configschema.py). This adds the manifests outside doctrine/ and contracts tighter than a generated floor."""
+        self.assertEqual(CS.check(REPO), [])
+        held = {rel: sch for rel, sch, _ in CS.configs(REPO)}
+        for f in ("instances/ultrastable/loop-registry.json", "instances/ultrastable/progress.json", "instances/ultrastable/instance.json", "instances/unlearn/lifecycle.json",
+                  "instances/unlearn/runway.json", "seed/ultrastable.json", "seed/standards/standards.json", "seed/standards/surfaces.json", "doctrine/commit-convention.json"):
+            self.assertIn(f, held)
+        for sch in ("doctrine/schemas/tenant-repos.schema.json", "doctrine/schemas/topology.schema.json", "doctrine/schemas/detectors.schema.json", "doctrine/schemas/registers.schema.json",
+                    "doctrine/schemas/claims.schema.json", "doctrine/schemas/clocks.schema.json", "instances/schemas/loop-registry.schema.json", "instances/schemas/lifecycle.schema.json"):
+            text = (REPO / sch).read_text(encoding="utf-8")
+            self.assertTrue(('"enum"' in text or '"const"' in text) and '"pattern"' in text, sch)
+            self.assertEqual(S.lint(J(sch)), [], sch)
 
-    def test_the_load_bearing_files_have_schemas(self):
-        m = S.mapping(REPO, J(S.INDEX))
-        for f in ("doctrine/tenant-repos.json", "doctrine/topology.json", "doctrine/fleet-contract.json", "doctrine/tenant-standard.json", "doctrine/detectors.json", "doctrine/registers.json",
-                  "doctrine/claims.json", "doctrine/claim-code.json", "doctrine/clocks.json", "instances/ultrastable/loop-registry.json", "instances/ultrastable/progress.json",
-                  "seed/ultrastable.json", "ultrastable.json", "seed/standards/standards.json", "seed/standards/surfaces.json", "instances/ultrastable/instance.json"):
-            self.assertIn(f, m)
-        for s in {x for v in m.values() for x in v}:
-            self.assertEqual(J(s)["$schema"], S.DIALECT, s)
+    def test_the_built_in_validator_of_the_coverage_check_is_this_one(self):
+        sc = {"oneOf": [{"type": "string"}, {"type": "integer"}], "$defs": {}}
+        self.assertEqual(CS.validate_subset(sc, 1), [])
+        self.assertTrue(CS.validate_subset(sc, 1.5))
 
     def test_a_detector_owned_by_a_role_that_does_not_exist_is_refused(self):
         """The defect the detectors schema caught on 2026-11-25: three detectors were owned by `product` and `design`, roles with no role file,
@@ -68,49 +73,12 @@ class Coverage(unittest.TestCase):
         self.assertTrue(any("unknown key 'typo_key'" in b for b in S.validate(sc, d)))
 
     def test_a_lifecycle_answer_that_is_neither_closed_open_gate_nor_inherited_is_refused(self):
-        sc, d = J("doctrine/schemas/lifecycle.schema.json"), copy.deepcopy(J("instances/unlearn/lifecycle.json"))
+        sc, d = J("instances/schemas/lifecycle.schema.json"), copy.deepcopy(J("instances/unlearn/lifecycle.json"))
         self.assertEqual(S.validate(sc, d), [])
         d["survival"]["budget"] = {"status": "done"}
         self.assertTrue(S.validate(sc, d))
         del d["survival"]["privacy"]
         self.assertTrue(any("missing privacy" in b for b in S.validate(sc, d)))
-
-    def _world(self):
-        d = Path(tempfile.mkdtemp()); self.addCleanup(shutil.rmtree, d)
-        (d / "doctrine/schemas").mkdir(parents=True)
-        (d / "doctrine/schemas/a.schema.json").write_text(json.dumps({"$schema": S.DIALECT, "type": "object", "required": ["id"]}))
-        (d / "doctrine/a.json").write_text('{"id": 1}')
-        self.idx = {"scope": ["doctrine/*.json"], "map": [{"schema": "doctrine/schemas/a.schema.json", "files": ["doctrine/a.json"]}], "baseline_ceiling": 0, "baseline": [], "repo_manifest_schema": "doctrine/schemas/a.schema.json"}
-        self.put = lambda: (d / S.INDEX).write_text(json.dumps(self.idx))
-        self.put()
-        return d
-
-    def test_a_new_config_without_a_schema_fails_and_the_baseline_only_shrinks(self):
-        d = self._world()
-        self.assertEqual(S.check(d), [])
-        (d / "doctrine/new.json").write_text("{}")
-        self.assertTrue(any("doctrine/new.json: no JSON Schema" in b for b in S.check(d)))
-        self.idx["baseline"] = ["doctrine/new.json"]; self.put()
-        self.assertTrue(any("above its ceiling" in b for b in S.check(d)))
-        self.idx["baseline_ceiling"] = 1; self.put()
-        self.assertEqual(S.check(d), [])
-        self.idx["map"].append({"schema": "doctrine/schemas/a.schema.json", "files": ["doctrine/new.json"]}); self.put()
-        self.assertTrue(any("has a schema now; remove it from the baseline" in b for b in S.check(d)))
-
-    def test_an_invalid_config_and_a_wrong_dialect_fail(self):
-        d = self._world()
-        (d / "doctrine/a.json").write_text("{}")
-        self.assertIn("doctrine/a.json $: missing id", S.check(d))
-        (d / "doctrine/schemas/a.schema.json").write_text(json.dumps({"$schema": "http://json-schema.org/draft-07/schema#", "type": "object"}))
-        self.assertTrue(any("$schema must be" in b for b in S.check(d)))
-
-    def test_another_repository_manifest_is_read_against_the_shared_schema(self):
-        d = Path(tempfile.mkdtemp()); self.addCleanup(shutil.rmtree, d)
-        self.assertTrue(S.check_repo(d))
-        (d / "ultrastable.json").write_text((REPO / "ultrastable.json").read_text())
-        self.assertEqual(S.check_repo(d), [])
-        (d / "ultrastable.json").write_text(json.dumps({"identity": {"name": "x"}}))
-        self.assertTrue(any("missing slug" in b for b in S.check_repo(d)))
 
 
 class Register(unittest.TestCase):
@@ -120,9 +88,9 @@ class Register(unittest.TestCase):
     def test_the_register_passes_and_every_named_standard_has_a_measured_decision(self):
         self.assertEqual(ST.audit(REPO, self.reg), [])
         ids = {e["id"]: e for e in self.reg["entries"]}
-        for i in ("json-schema", "agents-md", "mcp", "openapi", "asyncapi", "cloudevents", "opentelemetry", "otel-genai", "openslo", "schema-org-jsonld", "w3c-prov", "conventional-commits", "semver",
-                  "dependabot", "slsa", "terraform-opentofu", "opa-rego", "backstage-catalog", "publiccode-yml", "citation-cff", "spdx-reuse", "security-txt", "well-known", "rfc9457-problem",
-                  "openssf-scorecard", "sbom", "wcag", "feeds", "robots-sitemaps", "llms-txt", "a2a", "oidc"):
+        for i in ("json-schema-config", "agents-md", "mcp", "openapi", "asyncapi", "cloudevents", "cloudevents-webhooks", "opentelemetry", "otel-genai", "openslo", "schema-org-jsonld", "w3c-prov",
+                  "conventional-commits-semver", "dependabot", "slsa-provenance", "terraform-opentofu", "opa-rego", "backstage-catalog", "publiccode-yml", "citation-cff", "spdx-reuse", "security-txt",
+                  "well-known", "rfc9457-problem", "openssf-scorecard", "cyclonedx-sbom", "devcontainer", "openfeature", "wcag", "feeds", "robots-sitemaps", "llms-txt", "a2a", "oidc"):
             self.assertIn(ids[i]["decision"], ("adopt-now", "adopt-later", "decline"), i)
             self.assertIn(ids[i]["adoption"], ("adopted", "partial", "homegrown", "not-applicable"), i)
             self.assertTrue(ids[i]["probes"] and ids[i]["conformance"] and ids[i]["cost"], i)
@@ -141,7 +109,7 @@ class Register(unittest.TestCase):
 
     def test_decisions_are_held_to_their_evidence(self):
         self.assertTrue(any("adopt-later needs" in b for b in self._one(decision="adopt-later", adoption="homegrown", homegrown=["LICENSE"], support="planned", tracked_by="Q-NOT-FILED")))
-        self.assertEqual(self._one(decision="adopt-later", adoption="homegrown", homegrown=["LICENSE"], support="planned", tracked_by="Q-STD-slsa"), [])
+        self.assertEqual(self._one(decision="adopt-later", adoption="homegrown", homegrown=["LICENSE"], support="planned", tracked_by="Q-STD-SLSA"), [])
         self.assertTrue(any("declined row needs" in b for b in self._one(decision="decline", adoption="homegrown", homegrown=["LICENSE"], support="not_applicable", reason="r")))
         self.assertEqual(self._one(decision="decline", adoption="homegrown", homegrown=["LICENSE"], support="not_applicable", reason="r", revisit="when"), [])
         self.assertTrue(any("adopt-now means" in b for b in self._one(adoption="homegrown", homegrown=["LICENSE"])))
@@ -160,20 +128,12 @@ class Register(unittest.TestCase):
         self.assertEqual(feeds, watched)
         self.assertGreaterEqual(len(watched), 8)
 
-    def test_the_platform_catalog_file_is_what_its_manifest_renders(self):
-        self.assertEqual(ST.probe(REPO, "rendered:catalog-info.yaml"), "")
-        text = (REPO / "catalog-info.yaml").read_text(encoding="utf-8")
-        self.assertIn("kind: Component", text); self.assertIn("kind: System", text); self.assertIn("github.com/project-slug: ultrastable/ultrastable", text)
-        d = Path(tempfile.mkdtemp()); self.addCleanup(shutil.rmtree, d)
-        (d / "ultrastable.json").write_text((REPO / "ultrastable.json").read_text()); (d / "catalog-info.yaml").write_text(text.replace("Ultrastable", "Hand edit"))
-        self.assertIn("differs from what", ST.probe(d, "rendered:catalog-info.yaml"))
-
     def test_the_closing_probe_of_an_item_needs_adopted_and_passing_probes(self):
         self.assertEqual(ST.adopted(REPO, "citation-cff"), [])
         self.assertTrue(any("not adopted" in b for b in ST.adopted(REPO, "cloudevents")))
         self.assertTrue(ST.adopted(REPO, "no-such-row"))
         for e in self.reg["entries"]:
-            if e.get("decision") == "adopt-later" or (e.get("tracked_by") or "").startswith("Q-STD-"):
+            if "decision" in e and (e.get("tracked_by") or "").startswith("Q-STD-") and e["tracked_by"] not in ("Q-STD-SLSA", "Q-STD-OPENFEATURE"):  # those two are STANDARDS-1's, closed by `standards --probe`
                 it = J(f"docs/issues/{e['tracked_by']}.json")
                 self.assertIn(f"cmd:python3 -m foundation standards --adopted {e['id']}", it["body"])
 

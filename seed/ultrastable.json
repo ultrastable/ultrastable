@@ -194,7 +194,9 @@
       "env": "ANTHROPIC_API_KEY",
       "required_for": [
         "agents"
-      ]
+      ],
+      "optional": true,
+      "note": "the runtime binds the account's own models (worker/wrangler.template.jsonc `ai`), so no model key is asked of anyone; a key in the environment is used when one exists"
     },
     "chat": {
       "env": "CHAT_WEBHOOK_URL",

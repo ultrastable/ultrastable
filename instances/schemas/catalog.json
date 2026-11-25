@@ -1,0 +1,182 @@
+{
+  "$schema": "https://json.schemastore.org/schema-catalog.json",
+  "version": 1,
+  "schemas": [
+    {
+      "name": "instance.json",
+      "description": "Contract for instances/base-rates/instance.json",
+      "fileMatch": [
+        "instances/base-rates/instance.json"
+      ],
+      "url": "instance.schema.json"
+    },
+    {
+      "name": "instance.json",
+      "description": "Contract for instances/did-it-work/instance.json",
+      "fileMatch": [
+        "instances/did-it-work/instance.json"
+      ],
+      "url": "instance.schema.json"
+    },
+    {
+      "name": "instance.json",
+      "description": "Contract for instances/open-questions/instance.json",
+      "fileMatch": [
+        "instances/open-questions/instance.json"
+      ],
+      "url": "instance.schema.json"
+    },
+    {
+      "name": "instance.json",
+      "description": "Contract for instances/qnfo/instance.json",
+      "fileMatch": [
+        "instances/qnfo/instance.json"
+      ],
+      "url": "instance.schema.json"
+    },
+    {
+      "name": "instance.json",
+      "description": "Contract for instances/replication-ledger/instance.json",
+      "fileMatch": [
+        "instances/replication-ledger/instance.json"
+      ],
+      "url": "instance.schema.json"
+    },
+    {
+      "name": "instance.json",
+      "description": "Contract for instances/second-tenant/instance.json",
+      "fileMatch": [
+        "instances/second-tenant/instance.json"
+      ],
+      "url": "instance.schema.json"
+    },
+    {
+      "name": "instance.json",
+      "description": "Contract for instances/ultrastable/instance.json",
+      "fileMatch": [
+        "instances/ultrastable/instance.json"
+      ],
+      "url": "instance.schema.json"
+    },
+    {
+      "name": "instance.json",
+      "description": "Contract for instances/unlearn/instance.json",
+      "fileMatch": [
+        "instances/unlearn/instance.json"
+      ],
+      "url": "instance.schema.json"
+    },
+    {
+      "name": "instance.json",
+      "description": "Contract for instances/what-works/instance.json",
+      "fileMatch": [
+        "instances/what-works/instance.json"
+      ],
+      "url": "instance.schema.json"
+    },
+    {
+      "name": "lifecycle.json",
+      "description": "Contract for instances/base-rates/lifecycle.json",
+      "fileMatch": [
+        "instances/base-rates/lifecycle.json"
+      ],
+      "url": "lifecycle.schema.json"
+    },
+    {
+      "name": "lifecycle.json",
+      "description": "Contract for instances/did-it-work/lifecycle.json",
+      "fileMatch": [
+        "instances/did-it-work/lifecycle.json"
+      ],
+      "url": "lifecycle.schema.json"
+    },
+    {
+      "name": "lifecycle.json",
+      "description": "Contract for instances/open-questions/lifecycle.json",
+      "fileMatch": [
+        "instances/open-questions/lifecycle.json"
+      ],
+      "url": "lifecycle.schema.json"
+    },
+    {
+      "name": "lifecycle.json",
+      "description": "Contract for instances/replication-ledger/lifecycle.json",
+      "fileMatch": [
+        "instances/replication-ledger/lifecycle.json"
+      ],
+      "url": "lifecycle.schema.json"
+    },
+    {
+      "name": "lifecycle.json",
+      "description": "Contract for instances/second-tenant/lifecycle.json",
+      "fileMatch": [
+        "instances/second-tenant/lifecycle.json"
+      ],
+      "url": "lifecycle.schema.json"
+    },
+    {
+      "name": "lifecycle.json",
+      "description": "Contract for instances/ultrastable/lifecycle.json",
+      "fileMatch": [
+        "instances/ultrastable/lifecycle.json"
+      ],
+      "url": "lifecycle.schema.json"
+    },
+    {
+      "name": "lifecycle.json",
+      "description": "Contract for instances/unlearn/lifecycle.json",
+      "fileMatch": [
+        "instances/unlearn/lifecycle.json"
+      ],
+      "url": "lifecycle.schema.json"
+    },
+    {
+      "name": "lifecycle.json",
+      "description": "Contract for instances/what-works/lifecycle.json",
+      "fileMatch": [
+        "instances/what-works/lifecycle.json"
+      ],
+      "url": "lifecycle.schema.json"
+    },
+    {
+      "name": "runway.json",
+      "description": "Contract for instances/replication-ledger/runway.json",
+      "fileMatch": [
+        "instances/replication-ledger/runway.json"
+      ],
+      "url": "runway.schema.json"
+    },
+    {
+      "name": "runway.json",
+      "description": "Contract for instances/unlearn/runway.json",
+      "fileMatch": [
+        "instances/unlearn/runway.json"
+      ],
+      "url": "runway.schema.json"
+    },
+    {
+      "name": "runway.json",
+      "description": "Contract for instances/what-works/runway.json",
+      "fileMatch": [
+        "instances/what-works/runway.json"
+      ],
+      "url": "runway.schema.json"
+    },
+    {
+      "name": "loop-registry.json",
+      "description": "Contract for instances/ultrastable/loop-registry.json",
+      "fileMatch": [
+        "instances/ultrastable/loop-registry.json"
+      ],
+      "url": "loop-registry.schema.json"
+    },
+    {
+      "name": "progress.json",
+      "description": "Contract for instances/ultrastable/progress.json",
+      "fileMatch": [
+        "instances/ultrastable/progress.json"
+      ],
+      "url": "progress.schema.json"
+    }
+  ]
+}

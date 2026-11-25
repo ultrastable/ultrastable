@@ -6,7 +6,7 @@ set -u
 rc=0
 for g in "python3 -m foundation publication --fix" "python3 -m foundation claims --fix --apply" "python3 scripts/build_dashboard.py" \
          "python3 scripts/build_site_roadmap.py" "python3 -m foundation doctrine --apply" "python3 -m foundation glossary --apply" \
-         "python3 -m foundation standards --apply" "python3 -m foundation selfmodel --apply" "python3 -m foundation needsyou" "python3 -m foundation triggers --sync" \
+         "python3 -m foundation standards --apply" "python3 scripts/build_site_agentdata.py" "python3 -m foundation configschema --gen" "python3 -m foundation stdgen --gen" "python3 -m foundation selfmodel --apply" "python3 -m foundation needsyou" "python3 -m foundation triggers --sync" \
          "python3 -m foundation research --page --apply" "python3 -m foundation trajectory --page" "python3 -m foundation verify --data --apply"; do  # REGEN-RESEARCH-1: the lane resolves site/research-data.js to main's side, so a PR that adds a study must get its papers rebuilt here
   if ! out=$($g 2>&1); then echo "::warning::REGEN-1 generator failed: $g: ${out: -300}"; rc=1; fi
 done

@@ -3,7 +3,9 @@
   python3 -m foundation new-system --manifest instances/<slug>/instance.json --out ../<slug> [--apply]
   python3 -m foundation validate --manifest FILE
   python3 -m foundation ladder            # credential ladder against the host it runs on
-  python3 -m foundation standards [--check|--apply|--schemas [--repo DIR]|--commits|--live|--render|--audit|--adopted ID]   STANDARDS-FIRST-1: standards register with measured decisions, surfaces, JSON Schema coverage, commit-title lint
+  python3 -m foundation standards [--check|--apply|--probe ID|--commits|--live|--audit|--adopted ID]   standards register with measured decisions (STANDARDS-FIRST-1), surfaces, conformance lint, commit-title lint
+  python3 -m foundation configschema [--check|--gen]   CONFIG-SCHEMA-1: every JSON config has a JSON Schema 2020-12 contract in a Schema Store catalog
+  python3 -m foundation stdgen [--check|--gen]         STANDARDS-1: catalog-info.yaml (Backstage) and sbom.cdx.json (CycloneDX) from the registers
   python3 -m foundation filing --manifest FILE
   python3 -m foundation launch [--commit --push | --probe | --export-d1 F | --install SURFACE | --failover [--decide]]   start the loops on this repo (server-side hosts only)
   python3 -m foundation liveness [--json|--check|--file-items|--static|--probe ID]   are the autonomous loops actually running (evidence, not files)
@@ -43,6 +45,7 @@
   python3 -m foundation managers [--check|--report [--with-live]|--live]   MANAGERS-1: every manager role is a running loop that owns code; the seed carries every manager
   python3 -m foundation fleetmap [--check|--drift [--apply]|--probe REPO|--list]   FLEET-MAP-1: one map of every repository; a copy that differs from its source is never ok
   python3 -m foundation surfaces [--check|--render|--plan [github|wellknown|publiccode]] [--root DIR]   SYSTEM-MANIFEST-1: one manifest per system; every surface rendered from it
+  python3 -m foundation rulerefs [--check|--list|--reverse|--seed|--exec|--live]             RULE-REFS-1: every path, command, test, workflow and endpoint a rule names resolves; code nothing names is listed
   python3 -m foundation tenantpromo [--check|--list]                      TENANT-PROMO-1: every tenant promotes itself (social queue, showcase, cross-links)
   python3 -m foundation progress [--check|--live]                          PROGRESS-1: every system shows substantive progress at every visit; the cadence monitor is wired
   python3 -m foundation cost [--check|--probe|--guard [--apply]]          D1 rows read and AI neurons against budgets (COST-GUARD-1)
@@ -108,6 +111,21 @@
 import argparse, datetime as dt, json, os, sys
 
 from . import boundary, closedloop, standards, doctrine, directive, filing, glossary, kernel, ladder, loops, manifest as mf, scaffold, selfhost, trust, writeback
+
+
+# Commands parsed by the argparse block at the end of main(); every other name resolves to a module (COLDSTART-1).
+ARGPARSE_COMMANDS = frozenset({"new-system", "validate", "ladder", "doctrine", "selfhost", "glossary", "loops", "kernel", "closedloop", "directive",
+                               "trust", "docs_audit", "needsyou", "executor", "upstream", "writeback", "standards", "filing", "autorun", "cockpit", "launch"})
+
+
+def resolve(name: str):
+    """The foundation module that answers `python3 -m foundation <name>`, or None. A module answers when foundation/<name>.py exists and defines main."""
+    import importlib, re as _re
+    from pathlib import Path as _P
+    if not _re.fullmatch(r"[a-z][a-z0-9_]*", name or "") or not (_P(__file__).resolve().parent / f"{name}.py").exists():
+        return None
+    m = importlib.import_module("foundation." + name)
+    return m if callable(getattr(m, "main", None)) else None
 
 
 def main(argv=None) -> int:
@@ -280,7 +298,10 @@ def main(argv=None) -> int:
     if _av[:1] == ["flows"]:
         from . import flows
         return flows.main(_av[1:])
-    if _av[:1] and _av[0] in ("sauce", "contracts", "metricloop", "throughput", "metafold", "dispose", "balance", "yearsim", "saydo", "trajectory", "seedadmit"):
+    if _av[:1] and _av[0] in ("sauce", "redteam", "contracts", "metricloop", "throughput", "metafold", "dispose", "balance", "yearsim", "saydo", "trajectory", "seedadmit"):
+        import importlib
+        return importlib.import_module("foundation." + _av[0]).main(_av[1:])
+    if _av[:1] and _av[0] in ("configschema", "stdgen"):  # STANDARDS-1
         import importlib
         return importlib.import_module("foundation." + _av[0]).main(_av[1:])
     if _av[:1] == ["unknowns"]:
@@ -376,6 +397,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["fleetmap"]:
         from . import fleetmap
         return fleetmap.main(_av[1:])
+    if _av[:1] == ["rulerefs"]:
+        from . import rulerefs
+        return rulerefs.main(_av[1:])
     if _av[:1] == ["datagraph"]:
         from . import datagraph
         return datagraph.main(_av[1:])
@@ -510,6 +534,9 @@ def main(argv=None) -> int:
     if args0[:1] == ["upstream"]:
         from . import upstream
         return upstream.main(args0[1:])
+    mod = resolve(args0[0]) if args0 and args0[0] not in ARGPARSE_COMMANDS else None
+    if mod is not None:  # COLDSTART-1: every foundation module with main() is a command from birth; no hand-kept dispatch list
+        return mod.main(args0[1:])
     ap = argparse.ArgumentParser(prog="foundation", description=__doc__.split("\n")[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
     n = sub.add_parser("new-system"); n.add_argument("--manifest", required=True); n.add_argument("--out", required=True); n.add_argument("--apply", action="store_true"); n.add_argument("--date")
@@ -533,9 +560,8 @@ def main(argv=None) -> int:
         rc.add_argument("--" + opt, default="")
     ck = ws.add_parser("check"); ck.add_argument("--base", default="origin/main"); ck.add_argument("--head", default="HEAD")
     ou = ws.add_parser("outputs"); ou.add_argument("dirs", nargs="+"); ou.add_argument("--ignore", action="append", default=[])
-    st = sub.add_parser("standards"); sg = st.add_mutually_exclusive_group(required=True); sg.add_argument("--apply", action="store_true"); sg.add_argument("--check", action="store_true")
-    sg.add_argument("--schemas", action="store_true"); sg.add_argument("--commits", action="store_true"); sg.add_argument("--live", action="store_true"); sg.add_argument("--render", action="store_true"); sg.add_argument("--audit", action="store_true")
-    sg.add_argument("--adopted", default=None, metavar="ID"); st.add_argument("--repo", default=None)
+    st = sub.add_parser("standards"); sg = st.add_mutually_exclusive_group(required=True); sg.add_argument("--apply", action="store_true"); sg.add_argument("--check", action="store_true"); sg.add_argument("--probe", metavar="ID")
+    sg.add_argument("--commits", action="store_true"); sg.add_argument("--live", action="store_true"); sg.add_argument("--audit", action="store_true"); sg.add_argument("--adopted", default=None, metavar="ID")
     f = sub.add_parser("filing"); f.add_argument("--manifest", required=True)
     r = sub.add_parser("autorun"); r.add_argument("--ticks", type=int, default=10); r.add_argument("--out", default=".selfhost/autorun"); r.add_argument("--public", action="store_true"); r.add_argument("--no-node", action="store_true")
     c = sub.add_parser("cockpit"); c.add_argument("--out", default=".selfhost/cockpit"); c.add_argument("--ticks", type=int, default=10); c.add_argument("--no-node", action="store_true")
@@ -656,18 +682,18 @@ def main(argv=None) -> int:
         except ValueError as e:
             print("refused:", e); return 1
         print("\n".join(bad) or "writeback ok"); return 1 if bad else 0
-    if a.cmd == "standards" and a.adopted:  # the closing probe of a Q-STD-<id> item
+    if a.cmd == "standards" and a.adopted:  # STANDARDS-FIRST-1: the closing probe of an item that brings a row to adopted
         bad = standards.adopted(standards.REPO, a.adopted); print("\n".join(bad) or f"{a.adopted}: adopted, every probe passes"); return 1 if bad else 0
-    if a.cmd == "standards" and (a.schemas or a.commits or a.live or a.render or a.audit):  # STANDARDS-FIRST-1
-        from . import schemas, commitlint
-        if a.render:
-            w = standards.render(); print("written: " + ", ".join(w) if w else "rendered surfaces already current"); return 0
+    if a.cmd == "standards" and (a.commits or a.live or a.audit):
+        from . import commitlint
         if a.audit:
             print(standards.audit_table()); return 0
-        bad = (schemas.check_repo(a.repo) if a.repo else schemas.check()) if a.schemas else commitlint.check() if a.commits else standards.live()
-        ok = (json.dumps(schemas.coverage()) if a.schemas and not a.repo else "ok")
-        print("\n".join(bad) or f"standards {'schemas' if a.schemas else 'commits' if a.commits else 'live'}: {ok}"); return 1 if bad else 0
+        bad = commitlint.check() if a.commits else standards.live()
+        print("\n".join(bad) or f"standards {'commits' if a.commits else 'live'}: ok"); return 1 if bad else 0
     if a.cmd == "standards":
+        if a.probe:  # STANDARDS-1 closing probe: passes when the register marks the standard supported
+            sup = {e["id"]: e["support"] for e in standards._load(standards.REPO, standards.REG)["entries"]}.get(a.probe)
+            print(f"{a.probe}: {sup or 'not in the register'}"); return 0 if sup == "supported" else 1
         if a.apply:
             print("docs/standards table updated" if standards.apply() else "docs/standards table already current")
         bad = standards.check()

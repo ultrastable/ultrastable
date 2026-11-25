@@ -31,7 +31,7 @@ def _validate(schema, value, path="$"):
 def probe(root, spec: str) -> str:
     """One measured reading of a register row. '' when it holds, else why not.
     file:PATH | grep:PATH::REGEX | absent:GLOB (a homegrown or foreign artefact must not exist) | glob:GLOB (at least one match)
-    | rendered:PATH (the file equals what the manifest reconciler renders for this repository) | schemas | commits (the two lints below)."""
+    | schemas (python3 -m foundation configschema --check) | commits (python3 -m foundation standards --commits)."""
     root = Path(root)
     kind, _, arg = spec.partition(":")
     if kind == "file":
@@ -47,18 +47,9 @@ def probe(root, spec: str) -> str:
     if kind == "absent":
         hit = sorted(p.relative_to(root).as_posix() for p in root.glob(arg))
         return f"{hit[0]} exists" if hit else ""
-    if kind == "rendered":
-        from . import surfaces
-        eng = surfaces.engine()
-        if not (root / eng.MANIFEST).is_file():
-            return f"{eng.MANIFEST} is missing"
-        want, f = eng.surfaces(root).get(arg), root / arg
-        if want is None:
-            return f"the reconciler renders no {arg}"
-        return "" if f.is_file() and f.read_text(encoding="utf-8") == want else f"{arg} differs from what {eng.MANIFEST} renders; run python3 -m foundation standards --render"
     if kind == "schemas":
-        from . import schemas
-        bad = schemas.check(root)
+        from . import configschema
+        bad = configschema.check(root)
         return f"{len(bad)} schema finding(s), first: {bad[0]}" if bad else ""
     if kind == "commits":
         from . import commitlint
@@ -139,20 +130,6 @@ def live(root=REPO, fetch=None) -> list[str]:
                 except ValueError:
                     bad.append(f"{e['id']}: {lv['url']} is not JSON")
     return bad
-
-
-def render(root=REPO) -> list[str]:
-    """Write the surfaces this repository's own manifest renders that the register's `rendered:` probes read (today catalog-info.yaml)."""
-    from . import surfaces
-    root, eng, wrote = Path(root), surfaces.engine(), []
-    want = eng.surfaces(root)
-    for e in _load(root, REG)["entries"]:
-        for spec in e.get("probes", []):
-            if spec.startswith("rendered:") and spec[9:] in want:
-                f = root / spec[9:]
-                if not f.is_file() or f.read_text(encoding="utf-8") != want[spec[9:]]:
-                    f.write_text(want[spec[9:]], encoding="utf-8"); wrote.append(spec[9:])
-    return wrote
 
 
 def adopted(root, sid: str) -> list[str]:

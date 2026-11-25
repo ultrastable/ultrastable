@@ -148,7 +148,9 @@ jobs:
           python3 -m foundation surfaces --check  # SYSTEM-MANIFEST-1: the kernel manifest is valid and every surface equals what it renders
           python3 -m foundation livelinks --check  # LIVE-LINKS-1: the README names where the platform and every system run
           python3 -m foundation managers --check  # MANAGERS-1: every role is a loop with code, a clock, a probe and a settler; every loop has a manager; the seed carries every manager
+          python3 -m foundation rulerefs --check  # RULE-REFS-1: every path, command, test, workflow and route the rule files name resolves
           python3 -m foundation datagraph --check
+          python3 -m foundation coldstart --check  # COLDSTART-1: the seed carries every capability a system owes from birth; named commands resolve; agent files agree
           python3 -m foundation cfposture --check
           python3 -m foundation standingorder --check
           python3 -m foundation rules --check
@@ -216,9 +218,11 @@ jobs:
         run: |
           python3 -m foundation upstream contract --check
           python3 -m foundation upstream leaks
-      - name: Agentic standards (register, surfaces, discovery lint; Worker conformance and contract tests)
+      - name: Standards (register, surfaces, discovery lint, config schemas, catalog and SBOM; Worker conformance and contract tests)
         run: |
           python3 -m foundation standards --check
+          python3 -m foundation configschema --check  # CONFIG-SCHEMA-1: every config validates against its JSON Schema contract
+          python3 -m foundation stdgen --check        # STANDARDS-1: Backstage catalog and CycloneDX SBOM match the registers
           (cd seed/worker && node --test --no-warnings test/*.test.js)
   tests-a:
     if: ${{ vars.HALT != '1' && (github.event.pull_request.draft != true) }}  # HALT-1

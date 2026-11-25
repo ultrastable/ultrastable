@@ -1,0 +1,11 @@
+{
+  "id": "Q-REDTEAM-live-needs-js",
+  "title": "Q-REDTEAM-live-needs-js: /live serves only 'Loading...' without JavaScript, so crawlers, AI readers and no-JS visitors see no figures",
+  "body": "**Owner:** product-manager\n**Trigger:** red-team pass (REDTEAM-1), daily\n**Done check:** cmd:python3 -m foundation redteam --probe\n**Prediction:** redteam_found_30d <= 10 within 72 h\n**Out of scope:** weakening the red-team check or editing page text by hand; fix the producer.\n**Closing probe:** `python3 -m foundation redteam --probe`\n**Status:** open\n\nFound by reading production as a stranger on 2026-11-25. Root cause: client-only rendering. Fix the producer, not the page text. Closing probe: GET /live HTML contains at least one figure and its timestamp.",
+  "status": "open",
+  "labels": [
+    "role:product-manager",
+    "raises-self"
+  ],
+  "milestone": "Now"
+}

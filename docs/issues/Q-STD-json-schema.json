@@ -1,9 +1,0 @@
-{
-  "id": "Q-STD-json-schema",
-  "title": "Q-STD-json-schema: write a JSON Schema for every config still on the baseline",
-  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -m foundation standards --adopted json-schema\n**Status:** open\n\n`python3 -m foundation standards --schemas` validates 35 of 177 configs and manifests against a JSON Schema (draft 2020-12); 142 are on the shrink-only baseline in doctrine/schemas/index.json. Take them in this order: seed/autonomy/*.json (every system carries these), then the doctrine files a `foundation ... --check` loads, then the rest. For each: infer the shape from the data, tighten by hand (required keys, enums for closed vocabularies, patterns for ids, paths and probes, `additionalProperties: false` on row objects), add doctrine/schemas/<name>.schema.json (seed/standards/ for a file under seed/), add the map row, remove the file from the baseline and lower `baseline_ceiling`. A finding the new schema raises in the data is fixed in the data or filed, never hidden by loosening the schema. Only keywords foundation/schemas.py runs may be used (it refuses the rest). When the baseline is empty set the register row's adoption to adopted.\n\nSTANDARDS-FIRST-1 (Rowan, 2026-11-25): \"Standards, don't reinvent the wheel. Apply standards.\" The row is `json-schema` in seed/standards/standards.json; this item closes when that row reads `\"adoption\": \"adopted\"` and every probe on it passes. Change the row in the same change that makes it true, never before.",
-  "labels": [
-    "standards",
-    "agent-ready"
-  ]
-}

@@ -29,6 +29,11 @@
       "role": "WebMCP and browser agent work; watch, do not depend."
     },
     {
+      "id": "delivery",
+      "name": "Delivery, data and supply-chain standards bodies",
+      "role": "JSON Schema org, CNCF (CloudEvents, OpenTelemetry, Backstage, OpenFeature), OWASP/Ecma (CycloneDX), OpenSSF (SLSA), Development Containers spec, W3C (DCAT, PROV-O)."
+    },
+    {
       "id": "cncf",
       "name": "Cloud Native Computing Foundation",
       "role": "CloudEvents, OpenTelemetry, Open Policy Agent, Backstage: the envelope, telemetry, policy and catalog formats other tools read."
@@ -537,13 +542,10 @@
       "status": "stable",
       "tracked": "2020-12",
       "why": "Tool inputs (MCP), the standards register and the surface registry are all JSON Schema, so any validator or model can read them.",
-      "support": "partial",
+      "support": "supported",
       "how": [
         "seed/worker/src/agentic/core/tools.js",
-        "seed/standards/standards.schema.json",
-        "foundation/schemas.py",
-        "doctrine/schemas/index.json",
-        "seed/standards/system.schema.json"
+        "seed/standards/standards.schema.json"
       ],
       "tests": [
         {
@@ -553,14 +555,6 @@
         {
           "file": "seed/worker/test/agentic.discovery.test.js",
           "name": "discovery: well-known paths and json schema register"
-        },
-        {
-          "file": "tests/foundation/test_schemas.py",
-          "name": "test_every_config_in_scope_validates_or_is_on_the_baseline"
-        },
-        {
-          "file": "tests/foundation/test_schemas.py",
-          "name": "test_a_detector_owned_by_a_role_that_does_not_exist_is_refused"
         }
       ],
       "sources": [
@@ -570,23 +564,7 @@
           "published": "2020-12-08",
           "accessed": "2026-11-11"
         }
-      ],
-      "gap": "35 of 177 configs and manifests validate against a schema (the load-bearing ones: tenant repositories, topology, fleet contract, tenant standard, detectors, registers, claims, claim-code, clocks, loop registry, progress, every instance, lifecycle and runway file, both ultrastable.json files, this register and the surface registry). 142 are on the shrink-only baseline in doctrine/schemas/index.json; Q-STD-json-schema drains it.",
-      "tracked_by": "Q-STD-json-schema",
-      "decision": "adopt-now",
-      "adoption": "partial",
-      "homegrown": [
-        "foundation/tenantstd.py",
-        "foundation/failure_audit.py",
-        "foundation/loops.py"
-      ],
-      "conformance": "Each config's shape is declared once as a schema any validator reads, instead of key checks spread through the module that loads it; a new config arrives with its schema.",
-      "cost": "M to drain the baseline (about 140 schemas, inferred then tightened)",
-      "probes": [
-        "schemas",
-        "file:doctrine/schemas/index.json"
-      ],
-      "audited": "2026-11-25"
+      ]
     },
     {
       "id": "toml",
@@ -1126,8 +1104,398 @@
       ]
     },
     {
+      "id": "json-schema-config",
+      "name": "JSON Schema 2020-12 contracts for every config, listed in a Schema Store catalog",
+      "body": "JSON Schema organisation; SchemaStore catalog format",
+      "status": "stable",
+      "tracked": "draft 2020-12; schema-catalog.json version 1",
+      "why": "Every doctrine, seed doctrine and seed autonomy config has a contract any editor, provider or agent can validate without reading the Python that consumes it; a new config gets its contract in the same change (REGEN-1).",
+      "support": "supported",
+      "how": [
+        "foundation/configschema.py",
+        "doctrine/schemas/catalog.json",
+        "seed/doctrine/schemas/catalog.json",
+        "seed/autonomy/schemas/catalog.json",
+        "foundation/schemas.py",
+        "instances/schemas/catalog.json",
+        "seed/standards/catalog.json"
+      ],
+      "tests": [
+        {
+          "file": "tests/foundation/test_configschema.py",
+          "name": "test_every_config_has_a_schema_and_validates"
+        },
+        {
+          "file": "tests/foundation/test_configschema.py",
+          "name": "test_catalog_is_schema_store_format"
+        },
+        {
+          "file": "tests/foundation/test_schemas.py",
+          "name": "test_a_detector_owned_by_a_role_that_does_not_exist_is_refused"
+        },
+        {
+          "file": "tests/foundation/test_schemas.py",
+          "name": "test_a_schema_using_a_keyword_the_validator_does_not_run_is_refused"
+        }
+      ],
+      "sources": [
+        {
+          "title": "JSON Schema 2020-12 Core",
+          "url": "https://json-schema.org/draft/2020-12/json-schema-core",
+          "published": "2022-06-16",
+          "accessed": "2026-11-25"
+        },
+        {
+          "title": "JSON Schema Store catalog",
+          "url": "https://www.schemastore.org/json/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "adopt-now",
+      "adoption": "adopted",
+      "homegrown": [
+        "foundation/tenantstd.py",
+        "foundation/failure_audit.py",
+        "foundation/loops.py"
+      ],
+      "conformance": "Every config has a contract (CONFIG-SCHEMA-1 generates a floor for each). STANDARDS-FIRST-1 adds hand-tightened contracts for the load-bearing files (tenant repositories, topology, fleet contract, tenant standard, detectors, registers, claims, claim-code, clocks, loop registry, progress, every instance, lifecycle and runway file, the seed's ultrastable.json, this register and the surface registry): closed vocabularies as enums, ids and probes as patterns, unknown keys refused on row objects. The key checks spread through the loading modules can be retired file by file as each contract is tightened.",
+      "cost": "S per file to tighten a generated floor",
+      "probes": [
+        "schemas",
+        "file:doctrine/schemas/catalog.json",
+        "file:instances/schemas/catalog.json",
+        "file:seed/standards/catalog.json"
+      ],
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "backstage-catalog",
+      "name": "Backstage Software Catalog descriptor (catalog-info.yaml)",
+      "body": "CNCF (Backstage)",
+      "status": "de-facto",
+      "tracked": "backstage.io/v1alpha1: Group, Domain, System, Component, Resource, API",
+      "why": "Service identity, ownership and dependencies in the format developer portals and agents read, generated from doctrine/topology.json and doctrine/tenant-repos.json so it cannot drift.",
+      "support": "supported",
+      "how": [
+        "catalog-info.yaml",
+        "foundation/stdgen.py",
+        "seed/scripts/surfaces.py",
+        "seed/catalog-info.yaml"
+      ],
+      "acl": "foundation/stdgen.py",
+      "tests": [
+        {
+          "file": "tests/foundation/test_stdgen.py",
+          "name": "test_backstage_catalog_names_every_worker_store_and_tenant"
+        },
+        {
+          "file": "seed/tests/test_surfaces.py",
+          "name": "test_catalog_info_is_a_backstage_component_built_from_the_manifest"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Backstage descriptor format",
+          "url": "https://backstage.io/docs/features/software-catalog/descriptor-format",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "adopt-now",
+      "adoption": "adopted",
+      "homegrown": [
+        "foundation/livelinks.py",
+        "doctrine/fleet-map.json"
+      ],
+      "conformance": "The platform repository's catalog (every Worker, store and tenant) is generated from the registers by foundation/stdgen.py (STANDARDS-1). STANDARDS-FIRST-1 adds the per-repository descriptor: the manifest reconciler every system carries renders a Component for its own repository from its ultrastable.json identity, beside publiccode.yml and CITATION.cff; each tenant repository gets the file the first time the reconciler renders there (Q-FLEETMAP items). No Backstage instance is run: the file is the adoption.",
+      "cost": "S",
+      "probes": [
+        "file:catalog-info.yaml",
+        "grep:seed/catalog-info.yaml::kind: Component",
+        "grep:seed/scripts/surfaces.py::out\\[\"catalog-info.yaml\"\\] = catalog\\(i, st\\)"
+      ],
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "cyclonedx-sbom",
+      "name": "CycloneDX 1.6 SBOM with package URLs",
+      "body": "OWASP CycloneDX; Ecma TC54 (ECMA-424); purl",
+      "status": "stable",
+      "tracked": "CycloneDX 1.6 JSON; pkg:npm and pkg:github purls",
+      "why": "The supply chain (first-party packages and every GitHub Action by pinned commit) is machine-readable for any scanner; no timestamp, so it changes only when the supply chain does.",
+      "support": "supported",
+      "how": [
+        "sbom.cdx.json",
+        "foundation/stdgen.py"
+      ],
+      "tests": [
+        {
+          "file": "tests/foundation/test_stdgen.py",
+          "name": "test_cyclonedx_sbom_lists_pinned_actions_and_packages"
+        }
+      ],
+      "sources": [
+        {
+          "title": "CycloneDX 1.6 JSON reference",
+          "url": "https://cyclonedx.org/docs/1.6/json/",
+          "published": "2024-04-09",
+          "accessed": "2026-11-25"
+        },
+        {
+          "title": "Package URL specification",
+          "url": "https://github.com/package-url/purl-spec",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "adopt-now",
+      "adoption": "adopted",
+      "conformance": "Nothing: generated from the pinned actions and package manifests (STANDARDS-1).",
+      "cost": "none",
+      "probes": [
+        "file:sbom.cdx.json",
+        "grep:foundation/stdgen.py::def sbom"
+      ],
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "devcontainer",
+      "name": "Development Containers (devcontainer.json)",
+      "body": "Development Containers specification",
+      "status": "stable",
+      "tracked": "devcontainer.json with image and features",
+      "why": "Any cloud agent or Codespace gets the same Python 3.12 and Node 24 the checks run on, from one standard file, with no setup steps.",
+      "support": "supported",
+      "how": [
+        ".devcontainer/devcontainer.json"
+      ],
+      "tests": [
+        {
+          "file": "tests/foundation/test_stdgen.py",
+          "name": "test_devcontainer_matches_ci_runtimes"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Development Container Specification",
+          "url": "https://containers.dev/implementors/spec/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "adopt-now",
+      "adoption": "adopted",
+      "conformance": "Nothing.",
+      "cost": "none",
+      "probes": [
+        "file:.devcontainer/devcontainer.json"
+      ],
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "cloudevents-webhooks",
+      "name": "CloudEvents 1.0 envelopes signed per Standard Webhooks",
+      "body": "CNCF (CloudEvents); Standard Webhooks",
+      "status": "stable",
+      "tracked": "CloudEvents 1.0 structured JSON; Standard Webhooks v1 HMAC-SHA256",
+      "why": "Every outbound callback is a CloudEvent any consumer can route, and every signature is verifiable with off-the-shelf libraries.",
+      "support": "supported",
+      "how": [
+        "site/webhooks.js",
+        "seed/worker/src/cloudevents.js"
+      ],
+      "tests": [
+        {
+          "file": "site/webhooks.test.mjs",
+          "name": "application/cloudevents+json"
+        }
+      ],
+      "sources": [
+        {
+          "title": "CloudEvents 1.0.2",
+          "url": "https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/spec.md",
+          "published": "2022-02-05",
+          "accessed": "2026-11-25"
+        },
+        {
+          "title": "Standard Webhooks",
+          "url": "https://www.standardwebhooks.com/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "adopt-now",
+      "adoption": "adopted",
+      "conformance": "Nothing for outbound callbacks; they now build their envelope with the shared helper. Events between loops are row cloudevents.",
+      "cost": "none",
+      "probes": [
+        "grep:site/webhooks.js::import \\{ cloudEvent as envelope"
+      ],
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "conventional-commits-semver",
+      "name": "Conventional Commits and SemVer",
+      "body": "conventionalcommits.org; semver.org",
+      "status": "stable",
+      "tracked": "Conventional Commits 1.0.0; SemVer 2.0.0",
+      "why": "Release notes and version bumps derived from commit types.",
+      "support": "partial",
+      "sources": [
+        {
+          "title": "Conventional Commits 1.0.0",
+          "url": "https://www.conventionalcommits.org/en/v1.0.0/",
+          "published": null,
+          "accessed": "2026-11-25"
+        },
+        {
+          "title": "Semantic Versioning 2.0.0",
+          "url": "https://semver.org/spec/v2.0.0.html",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "how": [
+        "foundation/commitlint.py",
+        "doctrine/commit-convention.json",
+        "seed/standards/surfaces.json",
+        "foundation/standards.py"
+      ],
+      "tests": [
+        {
+          "file": "tests/foundation/test_commitlint.py",
+          "name": "test_the_repository_passes_and_reads_real_generators"
+        },
+        {
+          "file": "tests/foundation/test_commitlint.py",
+          "name": "test_the_baseline_only_shrinks"
+        },
+        {
+          "file": "seed/worker/test/agentic.contract.test.js",
+          "name": "contract: tools match v1 snapshot"
+        }
+      ],
+      "gap": "Measured on 2026-11-25: 0 of the last 200 commits in any of the 11 repositories use the feat/fix vocabulary. The commits the system writes itself already have the header shape `<loop>: <description>` (watchdog:, queue:, lane:, deploy-ultrastable:), and the lint now holds every generator a workflow or script contains to it; 8 generator titles are on the shrink-only baseline because another program or record matches their text (Q-STD-conventional-commits). Titles written by people and code agents for a pull request lead with the rule or item id, which the queue and write-back loops key on, and stay that way: the public changelog is built from provenance rows, not from commit types. SemVer is in force where a version is a promise to a consumer (the HTTP and MCP contract_version, whose major is compared by standards --check); repository releases are not numbered because no package is published, tenants pin the core by commit hash and the seed's one tag is a calendar date.",
+      "tracked_by": "Q-STD-conventional-commits",
+      "decision": "adopt-now",
+      "adoption": "partial",
+      "homegrown": [
+        "foundation/provenance.py",
+        "workers/tools/tenant_sync.py"
+      ],
+      "conformance": "Every title a generator writes parses as `<type>[(scope)][!]: <description>`, the type being the loop. Requiring feat/fix on pull requests, or a SemVer release train, would produce types and numbers nothing reads; revisit when a package is published.",
+      "cost": "S (lint and five generator titles, done); S more for the eight baseline titles and their readers",
+      "probes": [
+        "commits",
+        "file:doctrine/commit-convention.json",
+        "grep:seed/standards/surfaces.json::\"contract_version\": \"\\d+\\.\\d+\\.\\d+\""
+      ],
+      "watch": "conventional-commits-spec",
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "opa-rego",
+      "name": "Open Policy Agent (Rego) policy-as-code",
+      "body": "CNCF (Open Policy Agent)",
+      "status": "stable",
+      "tracked": "Rego v1",
+      "why": "Policy as code for standing rules and access decisions.",
+      "support": "not_applicable",
+      "reason": "Evaluated for real. OPA is a Go binary or a WebAssembly bundle that the same binary must compile in CI; either way a third-party runtime enters the seed, which carries none. The policies here are already code and data with tests, evaluated where the decision is made: seed/autonomy/policy.json and seed/autonomy/default-policy-pack.json (limits and protected paths), the Worker's diff gate, and about a hundred `python3 -m foundation <rule> --check` rules in CI; request authorization uses OpenID AuthZEN (entry authzen). They are path globs, thresholds and file probes, not the cross-service authorization logic Rego is for. A Rego export of the policy files was weighed: nothing would evaluate it, so it would restate rules in a second language that could drift from the one that runs.",
+      "sources": [
+        {
+          "title": "OPA policy language",
+          "url": "https://www.openpolicyagent.org/docs/latest/policy-language/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "decline",
+      "adoption": "homegrown",
+      "homegrown": [
+        "seed/autonomy/policy.json",
+        "seed/autonomy/default-policy-pack.json",
+        "seed/worker/src/sweeper.js"
+      ],
+      "revisit": "When a customer requires their organisation's OPA to approve agent actions, or the same policy must be enforced outside Ultrastable's own code (another company's CI or gateway). The decision point is already one function per gate, so an OPA call can be added there.",
+      "conformance": "Full: Rego bundles evaluated by OPA (WASM in the Worker, binary in CI). Export: the policy files rendered as a Rego data bundle.",
+      "cost": "L for full adoption (new runtime in the seed); S for an export nothing reads",
+      "probes": [
+        "file:seed/autonomy/policy.json",
+        "file:seed/autonomy/default-policy-pack.json",
+        "absent:**/*.rego"
+      ],
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "openfeature",
+      "name": "OpenFeature flag evaluation for the goal knobs",
+      "body": "CNCF (OpenFeature)",
+      "status": "draft",
+      "tracked": "OpenFeature specification",
+      "why": "The goals loop's knobs (seed/autonomy/goals.json) are feature flags in all but name; exposing them through an OpenFeature provider lets any SDK read them.",
+      "support": "planned",
+      "tracked_by": "Q-STD-OPENFEATURE",
+      "acl": "seed/worker/src/goals.js",
+      "sources": [
+        {
+          "title": "OpenFeature specification",
+          "url": "https://openfeature.dev/specification/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "adopt-later",
+      "adoption": "homegrown",
+      "homegrown": [
+        "seed/worker/src/goals.js",
+        "seed/autonomy/goals.json"
+      ],
+      "conformance": "The goal knobs are read through an OpenFeature provider (Q-STD-OPENFEATURE).",
+      "cost": "M",
+      "probes": [
+        "file:seed/worker/src/goals.js"
+      ],
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "slsa-provenance",
+      "name": "SLSA v1 build provenance for deploys",
+      "body": "OpenSSF (SLSA)",
+      "status": "stable",
+      "tracked": "SLSA v1.0 provenance (in-toto)",
+      "why": "Each Worker deploy carries a verifiable record of the commit and workflow that built it.",
+      "support": "planned",
+      "tracked_by": "Q-STD-SLSA",
+      "acl": "deploy/deploy-workers.mjs",
+      "sources": [
+        {
+          "title": "SLSA v1.0",
+          "url": "https://slsa.dev/spec/v1.0/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "adopt-later",
+      "adoption": "homegrown",
+      "homegrown": [
+        "foundation/actionpins.py",
+        "doctrine/supply-chain.json",
+        "ops/deploys.jsonl",
+        "seed/worker/src/auditchain.js"
+      ],
+      "conformance": "Each Worker deploy also writes a signed build-provenance attestation for the uploaded bundle (Q-STD-SLSA). Today the same facts are recorded unsigned: every deploy row names its commit and the live version, actions are pinned by commit, and the audit chain hashes each row.",
+      "cost": "M (deploys go through the site Worker's deploy endpoint, so the bundle digest has to be returned to the workflow that attests it)",
+      "probes": [
+        "file:foundation/actionpins.py",
+        "file:ops/deploys.jsonl"
+      ],
+      "audited": "2026-11-25"
+    },
+    {
       "id": "cloudevents",
-      "name": "CloudEvents 1.0",
+      "name": "CloudEvents 1.0 for events between loops",
       "body": "Cloud Native Computing Foundation",
       "status": "stable",
       "tracked": "1.0.2",
@@ -1158,13 +1526,9 @@
         {
           "file": "tests/foundation/test_cloudevents.py",
           "name": "test_old_rows_and_new_envelopes_read_as_one_ledger"
-        },
-        {
-          "file": "site/webhooks.test.mjs",
-          "name": "application/cloudevents+json"
         }
       ],
-      "gap": "New handoff events (audit chain), new provenance rows and outbound webhooks are envelopes. The other ops/*.jsonl ledgers, the D1 handoff_events and provenance tables and the dashboard's POST /api/fleet/provenance body keep their own row shapes; Q-STD-cloudevents moves them as each is next changed. History is not rewritten: foundation/ledger.py reads both.",
+      "gap": "New handoff events (audit chain) and new provenance rows are envelopes built by one shared helper (outbound webhooks, row cloudevents-webhooks, use the same helper). The other ops/*.jsonl ledgers, the D1 handoff_events and provenance tables and the dashboard's POST /api/fleet/provenance body keep their own row shapes; Q-STD-cloudevents moves them as each is next changed. History is not rewritten: foundation/ledger.py reads both.",
       "tracked_by": "Q-STD-cloudevents",
       "sources": [
         {
@@ -1300,54 +1664,6 @@
       "audited": "2026-11-25"
     },
     {
-      "id": "backstage-catalog",
-      "name": "Backstage descriptor format (catalog-info.yaml)",
-      "body": "Cloud Native Computing Foundation",
-      "status": "stable",
-      "tracked": "backstage.io/v1alpha1",
-      "why": "One small file at the root of a repository says what the system is, who owns it, where it runs and what it depends on, in the format software catalogs already index.",
-      "support": "partial",
-      "how": [
-        "seed/scripts/surfaces.py",
-        "foundation/surfaces.py",
-        "seed/catalog-info.yaml",
-        "catalog-info.yaml"
-      ],
-      "tests": [
-        {
-          "file": "seed/tests/test_surfaces.py",
-          "name": "test_catalog_info_is_a_backstage_component_built_from_the_manifest"
-        },
-        {
-          "file": "tests/foundation/test_schemas.py",
-          "name": "test_the_platform_catalog_file_is_what_its_manifest_renders"
-        }
-      ],
-      "gap": "Rendered for the platform repository and the seed template. Each other repository gets its file the first time the manifest reconciler renders there (python3 scripts/surfaces.py --render), which the fleet-map loop does through its Q-FLEETMAP items. No Backstage instance is run: the file is the adoption.",
-      "sources": [
-        {
-          "title": "Backstage: descriptor format of catalog entities",
-          "url": "https://backstage.io/docs/features/software-catalog/descriptor-format",
-          "published": null,
-          "accessed": "2026-11-25"
-        }
-      ],
-      "decision": "adopt-now",
-      "adoption": "partial",
-      "homegrown": [
-        "foundation/livelinks.py",
-        "doctrine/fleet-map.json"
-      ],
-      "conformance": "The identity each README Live block is built from is also emitted as a Component (and, in the platform repository, the System) by the same reconciler; a changed manifest is drift until rendered.",
-      "cost": "S (one emitter in the reconciler that already renders publiccode.yml and CITATION.cff)",
-      "probes": [
-        "rendered:catalog-info.yaml",
-        "grep:seed/catalog-info.yaml::kind: Component",
-        "grep:seed/scripts/surfaces.py::\"catalog-info.yaml\": catalog\\(i, st\\)"
-      ],
-      "audited": "2026-11-25"
-    },
-    {
       "id": "publiccode-yml",
       "name": "publiccode.yml",
       "body": "publiccode.yml working group (Team Digitale, Italy; Foundation for Public Code)",
@@ -1423,94 +1739,6 @@
         "grep:seed/CITATION.cff::cff-version"
       ],
       "watch": "cff-spec",
-      "audited": "2026-11-25"
-    },
-    {
-      "id": "conventional-commits",
-      "name": "Conventional Commits 1.0.0",
-      "body": "Conventional Commits community",
-      "status": "stable",
-      "tracked": "1.0.0",
-      "why": "A commit title any tool can split into who or what made the change and what it did.",
-      "support": "partial",
-      "how": [
-        "foundation/commitlint.py",
-        "doctrine/commit-convention.json",
-        "scripts/land_data.py"
-      ],
-      "tests": [
-        {
-          "file": "tests/foundation/test_commitlint.py",
-          "name": "test_the_repository_passes_and_reads_real_generators"
-        },
-        {
-          "file": "tests/foundation/test_commitlint.py",
-          "name": "test_the_baseline_only_shrinks"
-        }
-      ],
-      "gap": "Measured on 2026-11-25: 0 of the last 200 commits in any of the 11 repositories use the feat/fix vocabulary. The commits the system writes itself already have the header shape `<loop>: <description>` (watchdog:, queue:, lane:, deploy-ultrastable:), and the lint now holds every generator to it; 8 generator titles are on the shrink-only baseline because another program or record matches their text (Q-STD-conventional-commits). Titles written by people and code agents for a pull request stay plain sentences: the public changelog is built from provenance rows, not from commit types, and no version number is derived from a title.",
-      "tracked_by": "Q-STD-conventional-commits",
-      "sources": [
-        {
-          "title": "Conventional Commits 1.0.0",
-          "url": "https://www.conventionalcommits.org/en/v1.0.0/",
-          "published": null,
-          "accessed": "2026-11-25"
-        }
-      ],
-      "decision": "adopt-now",
-      "adoption": "partial",
-      "homegrown": [
-        "foundation/provenance.py"
-      ],
-      "conformance": "Every title a generator writes parses as `<type>[(scope)][!]: <description>`, the type being the loop. Requiring feat/fix on pull requests would change how people and agents title work for no reader: nothing consumes those types here.",
-      "cost": "S (lint and five generator titles, done); S more for the eight baseline titles and their readers",
-      "probes": [
-        "commits",
-        "file:doctrine/commit-convention.json"
-      ],
-      "watch": "conventional-commits-spec",
-      "audited": "2026-11-25"
-    },
-    {
-      "id": "semver",
-      "name": "Semantic Versioning 2.0.0",
-      "body": "semver.org",
-      "status": "stable",
-      "tracked": "2.0.0",
-      "why": "A version number that says whether a change breaks its consumers.",
-      "support": "partial",
-      "how": [
-        "seed/standards/surfaces.json",
-        "seed/worker/contract/mcp-tools.v1.json",
-        "foundation/standards.py"
-      ],
-      "tests": [
-        {
-          "file": "seed/worker/test/agentic.contract.test.js",
-          "name": "contract: tools match v1 snapshot"
-        }
-      ],
-      "gap": "In force where a version is a promise to a consumer: the HTTP and MCP contract (contract_version, major compared by standards --check) and each doctrine file's `version`. Repository releases are not SemVer: Workers deploy continuously from main, tenants pin the core by commit hash (vendor/ultrastable/VENDORED_FROM) and the seed's one tag is a calendar date (v2026.11.25). No consumer installs a versioned package, so a SemVer release train would be a number nothing reads.",
-      "sources": [
-        {
-          "title": "Semantic Versioning 2.0.0",
-          "url": "https://semver.org/spec/v2.0.0.html",
-          "published": null,
-          "accessed": "2026-11-25"
-        }
-      ],
-      "decision": "adopt-now",
-      "adoption": "partial",
-      "homegrown": [
-        "workers/tools/tenant_sync.py"
-      ],
-      "conformance": "Nothing for the contract. Tagging SemVer releases becomes worth it when something outside the org installs the seed or core by version.",
-      "cost": "none now",
-      "probes": [
-        "grep:seed/standards/surfaces.json::\"contract_version\": \"\\d+\\.\\d+\\.\\d+\"",
-        "grep:foundation/standards.py::disagree on the major version"
-      ],
       "audited": "2026-11-25"
     },
     {
@@ -1881,39 +2109,6 @@
       "audited": "2026-11-25"
     },
     {
-      "id": "slsa",
-      "name": "SLSA build provenance",
-      "body": "Open Source Security Foundation",
-      "status": "stable",
-      "tracked": "SLSA 1.0 build track",
-      "why": "Proof of which source commit and which build produced the code that is running.",
-      "support": "planned",
-      "tracked_by": "Q-STD-slsa",
-      "sources": [
-        {
-          "title": "SLSA 1.0: security levels",
-          "url": "https://slsa.dev/spec/v1.0/levels",
-          "published": null,
-          "accessed": "2026-11-25"
-        }
-      ],
-      "decision": "adopt-later",
-      "adoption": "homegrown",
-      "homegrown": [
-        "foundation/actionpins.py",
-        "doctrine/supply-chain.json",
-        "ops/deploys.jsonl",
-        "seed/worker/src/auditchain.js"
-      ],
-      "conformance": "Each Worker deploy from GitHub Actions also writes a signed build-provenance attestation for the uploaded bundle (GitHub's attestation service, on the run's own OIDC token). Today the same facts are recorded unsigned: every deploy row names its commit and the live version, actions are pinned by commit, and the audit chain hashes each row.",
-      "cost": "M (deploys go through the site Worker's deploy endpoint, so the bundle digest has to be returned to the workflow that attests it)",
-      "probes": [
-        "file:foundation/actionpins.py",
-        "file:ops/deploys.jsonl"
-      ],
-      "audited": "2026-11-25"
-    },
-    {
       "id": "openssf-scorecard",
       "name": "OpenSSF Scorecard",
       "body": "Open Source Security Foundation",
@@ -2079,72 +2274,7 @@
         "absent:**/*.tf.json"
       ],
       "audited": "2026-11-25"
-    },
-    {
-      "id": "opa-rego",
-      "name": "Open Policy Agent (Rego policy as code)",
-      "body": "Cloud Native Computing Foundation",
-      "status": "stable",
-      "tracked": "OPA 1.x",
-      "why": "Policy decisions written once in a policy language and evaluated the same way at every enforcement point.",
-      "support": "not_applicable",
-      "reason": "Evaluated for real. OPA is a Go binary or a WebAssembly bundle that the same binary must compile in CI; either way a third-party runtime enters the seed, which carries none. The policies here are already code and data with tests, evaluated where the decision is made: seed/autonomy/policy.json and seed/autonomy/default-policy-pack.json (limits and protected paths), the Worker's diff gate, and about a hundred `foundation ... --check` rules in CI. They are path globs, thresholds and file probes, not the cross-service authorization logic Rego is for. A Rego export of policy.json was weighed: nothing would evaluate it, so it would restate rules in a second language that could drift from the one that runs.",
-      "revisit": "When a customer requires their organisation's OPA to approve agent actions, or the same policy must be enforced outside Ultrastable's own code (another company's CI or gateway). The decision point is already one function per gate, so an OPA call (AuthZEN, row authzen) can be added there.",
-      "sources": [
-        {
-          "title": "Open Policy Agent documentation",
-          "url": "https://www.openpolicyagent.org/docs/latest/",
-          "published": null,
-          "accessed": "2026-11-25"
-        }
-      ],
-      "decision": "decline",
-      "adoption": "homegrown",
-      "homegrown": [
-        "seed/autonomy/policy.json",
-        "seed/autonomy/default-policy-pack.json",
-        "seed/worker/src/sweeper.js"
-      ],
-      "conformance": "Full: Rego bundles evaluated by OPA (WASM in the Worker, binary in CI). Export: the policy files rendered as a Rego data bundle.",
-      "cost": "L for full adoption (new runtime in the seed); S for an export nothing reads",
-      "probes": [
-        "file:seed/autonomy/policy.json",
-        "file:seed/autonomy/default-policy-pack.json",
-        "absent:**/*.rego"
-      ],
-      "audited": "2026-11-25"
-    },
-    {
-      "id": "sbom",
-      "name": "Software bill of materials (CycloneDX / SPDX)",
-      "body": "OWASP (CycloneDX); Linux Foundation (SPDX)",
-      "status": "stable",
-      "tracked": "CycloneDX 1.6; SPDX 2.3",
-      "why": "A list of every component shipped, for vulnerability matching.",
-      "support": "not_applicable",
-      "reason": "The Workers ship with no third-party runtime packages: the tenant standard sets package dependencies to none and the seed vendors its own modules, so a bill of materials would list the system's own files. GitHub already produces an SPDX SBOM for any repository on request from its dependency graph, with nothing to maintain.",
-      "revisit": "When a runtime dependency is added to a deployed Worker, or a customer or funder asks for an SBOM with a release.",
-      "sources": [
-        {
-          "title": "CycloneDX specification overview",
-          "url": "https://cyclonedx.org/specification/overview/",
-          "published": null,
-          "accessed": "2026-11-25"
-        }
-      ],
-      "decision": "decline",
-      "adoption": "not-applicable",
-      "homegrown": [
-        "doctrine/tenant-standard.json"
-      ],
-      "conformance": "Generate and publish an SBOM per deploy.",
-      "cost": "S",
-      "probes": [
-        "grep:doctrine/tenant-standard.json::\"dependencies\"",
-        "absent:**/bom.json"
-      ],
-      "audited": "2026-11-25"
     }
   ],
-  "undecided_ceiling": 27
+  "undecided_ceiling": 28
 }

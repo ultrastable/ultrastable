@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/seed/autonomy/pace.schema.json",
+  "title": "pace (seed/autonomy/pace.json)",
+  "description": "Contract for seed/autonomy/pace.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "idle_runs": {
+      "type": "number"
+    },
+    "max_stride": {
+      "type": "number"
+    },
+    "gauges": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "never_pace": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "rank": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "cost": {
+            "type": "number"
+          },
+          "prefix": {
+            "type": "string"
+          },
+          "reach": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "gauges",
+    "idle_runs",
+    "max_stride",
+    "never_pace",
+    "rank"
+  ]
+}

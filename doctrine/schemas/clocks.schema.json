@@ -4,6 +4,7 @@
  "title": "Loop clocks (CLOCKWORK-1)",
  "type": "object",
  "required": [
+  "_doc",
   "version",
   "account_id",
   "clocks",
@@ -14,6 +15,10 @@
   "settlement"
  ],
  "properties": {
+  "_doc": {
+   "type": "string",
+   "minLength": 1
+  },
   "version": {
    "type": "string",
    "pattern": "^\\d+\\.\\d+\\.\\d+$"

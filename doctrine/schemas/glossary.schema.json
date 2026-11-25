@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/glossary.schema.json",
+  "title": "glossary (doctrine/glossary.json)",
+  "description": "Contract for doctrine/glossary.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "owner_note": {
+      "type": "string"
+    },
+    "terms": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "aliases": {
+            "type": "array"
+          },
+          "definition": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "implemented_by": {
+            "type": "array"
+          },
+          "lineage": {
+            "type": "array"
+          },
+          "not": {
+            "type": "string"
+          },
+          "related": {
+            "type": "array"
+          },
+          "term": {
+            "type": "string"
+          },
+          "tested_by": {
+            "type": "array"
+          },
+          "version": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "id",
+    "owner_note",
+    "terms",
+    "version"
+  ]
+}
