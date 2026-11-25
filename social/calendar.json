@@ -497,6 +497,42 @@
    "state": "5of7",
    "source": "site/research-data.js",
    "url": "https://ultrastable.io/research/chen-stratton-2026"
+  },
+  {
+   "id": "ev:pv-324cba6ff2ba",
+   "date": "2026-11-25",
+   "text": "Shipped by the system itself: Daily self-test for silent loops and frozen pages; unfreeze /balance and /changelog (SELFTEST-1). https://ultrastable.io/live",
+   "source": "ops/changelog.json",
+   "arm": "shipped",
+   "kind": "event",
+   "tag": "EVENT"
+  },
+  {
+   "id": "ev:pv-23eb90d7f036",
+   "date": "2026-11-25",
+   "text": "Shipped by the system itself: a public page and its own repository for every seed. https://ultrastable.io/live",
+   "source": "ops/changelog.json",
+   "arm": "shipped",
+   "kind": "event",
+   "tag": "EVENT"
+  },
+  {
+   "id": "ev:pv-bc71cc2d84f1",
+   "date": "2026-11-25",
+   "text": "Shipped by the system itself: Create tenant repositories with the platform's own administration app; read Practical Solutions' real back end (TENANT-REPO-2). https://ultrastable.io/live",
+   "source": "ops/changelog.json",
+   "arm": "shipped",
+   "kind": "event",
+   "tag": "EVENT"
+  },
+  {
+   "id": "ev:pv-3433f1a3b69b",
+   "date": "2026-11-25",
+   "text": "Shipped by the system itself: Sandbox every deployment as a tenant with its own repo. https://ultrastable.io/live",
+   "source": "ops/changelog.json",
+   "arm": "shipped",
+   "kind": "event",
+   "tag": "EVENT"
   }
  ]
 }
