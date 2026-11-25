@@ -188,6 +188,12 @@ def prepare(dirpath: Path, slug: str, root: Path = ROOT) -> list[str]:
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(body if isinstance(body, str) else json.dumps(body, indent=2) + "\n")
         done.append(f"wrote {name}")
+    # REPO-STANDARD-1: every repository is born with the branch cleanup (the same workflow and script the seed kit carries), never added later by hand
+    for src, dst in (("seed/.github/workflows/branch-cleanup.yml", ".github/workflows/branch-cleanup.yml"), ("scripts/branch_cleanup.py", "scripts/branch_cleanup.py")):
+        if (root / src).exists():
+            (dirpath / dst).parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(root / src, dirpath / dst)
+            done.append(f"standard {dst}")
     return done
 
 
