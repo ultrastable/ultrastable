@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-2205",
+  "title": "OL-PR-2205: land or supersede pull request #2205 (conflict)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #2205 is conflict\n**Done check:** cmd:python3 -m foundation loopowner --closed 2205\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #2205 (`claude/project-thread-0h3qu9` at d4aa6f56ad, opened by rwnq8): tenant-repos: push new tenant repositories with the route's token, not the checkout's. The session that opened it is not its closer and is never asked to act. The branch conflicts with main. Merge main into the branch and resolve it, or redo the change from main in a new pull request and close this one as superseded. Files (3): .github/workflows/tenant-repos.yml, doctrine/writeback/lesson-2026-11-25-a-checkout-s-stored-token-wins-over-the-token-in-a-push-url.json, tests/foundation/test_fullstack.py. Closing probe: pull request #2205 is merged or closed.",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
