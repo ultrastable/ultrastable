@@ -113,9 +113,59 @@ def check_instructions(c: dict, root=ROOT) -> list[str]:
     return bad
 
 
+def check_schema(c: dict, root=ROOT) -> list[str]:
+    """The contract validates against its JSON Schema (draft 2020-12). Without the jsonschema package the required keys are still checked."""
+    ref = c.get("$schema", "")
+    sp = (Path(root) / CONTRACT).parent / ref
+    if not ref.startswith("./") or not sp.exists():
+        return [f"{CONTRACT}: $schema must point at ./schemas/coldstart.schema.json"]
+    schema = json.loads(sp.read_text(encoding="utf-8"))
+    try:
+        import jsonschema
+    except ImportError:
+        return [f"{CONTRACT}: missing required key {k}" for k in schema["required"] if k not in c]
+    v = jsonschema.Draft202012Validator(schema)
+    return [f"{CONTRACT}: {'/'.join(map(str, e.absolute_path)) or '(root)'}: {e.message}" for e in v.iter_errors(c)]
+
+
+def ignition_stages(root=ROOT) -> list[str]:
+    src = (Path(root) / load(root)["definition"]["stages_from"]).read_text(encoding="utf-8")
+    m = re.search(r"export const STAGES = \[(.*?)\]", src)
+    return re.findall(r"'([^']+)'", m.group(1)) if m else []
+
+
+def check_definition(c: dict, root=ROOT) -> list[str]:
+    """The canonical definition: one text, the same in platform and seed, imported by both CLAUDE.md files, naming every part of the contract."""
+    root, d, bad = Path(root), c["definition"], []
+    plat, seed = root / d["platform"], root / d["seed"]
+    if not plat.exists() or not seed.exists():
+        return [f"the canonical definition is missing: {d['platform'] if not plat.exists() else d['seed']}"]
+    text = plat.read_text(encoding="utf-8")
+    if seed.read_text(encoding="utf-8") != text:
+        bad.append(f"{d['seed']} differs from {d['platform']}: a new system would be born with a different definition")
+    for f, want in (("CLAUDE.md", d["platform"]), ("seed/CLAUDE.md", str(Path(d["seed"]).relative_to("seed")))):
+        if want not in _imports(root / f):
+            bad.append(f"{f}: does not import {want}, so an agent starting there never loads the definition")
+    stages = ignition_stages(root)
+    if not stages:
+        bad.append(f"{d['stages_from']}: no STAGES list found")
+    from .seedlaunch import REQUIRED
+    if list(REQUIRED) != d["bootstrap_stages"]:
+        bad.append(f"bootstrap_stages {d['bootstrap_stages']} differ from foundation/seedlaunch.py REQUIRED {list(REQUIRED)}")
+    for kind, names in (("capability", [x["id"] for x in c["capabilities"]]), ("ignition stage", stages), ("criticality regime", d["regimes"]),
+                        ("bootstrap stage", d["bootstrap_stages"])):
+        for n in names:
+            if f"`{n}`" not in text:
+                bad.append(f"{d['platform']}: does not name the {kind} `{n}`")
+    return bad
+
+
 def check(root=ROOT) -> list[str]:
     c = load(root)
-    return check_capabilities(c, root) + check_commands(c, root) + check_instructions(c, root)
+    bad = check_schema(c, root)
+    if bad:
+        return bad
+    return check_capabilities(c, root) + check_definition(c, root) + check_commands(c, root) + check_instructions(c, root)
 
 
 def _get(url: str, timeout=20):

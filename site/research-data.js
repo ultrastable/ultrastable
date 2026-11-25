@@ -293,7 +293,7 @@ export default {
      "score": 0.102
     }
    ],
-   "leads_route": "lexical-512-l4l55n",
+   "leads_route": "lexical-512-wk2xjr",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -653,12 +653,12 @@ export default {
     {
      "finding": "F3",
      "rule": "WORDS-MATCH-CODE-1",
-     "score": 0.143
+     "score": 0.144
     },
     {
      "finding": "F3",
      "rule": "DRAIN-ZERO-1",
-     "score": 0.133
+     "score": 0.134
     },
     {
      "finding": "F4",
@@ -673,10 +673,10 @@ export default {
     {
      "finding": "F7",
      "rule": "OUTREACH-INTRO-1",
-     "score": 0.138
+     "score": 0.137
     }
    ],
-   "leads_route": "lexical-512-1mnsgns",
+   "leads_route": "lexical-512-3g45da",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -994,7 +994,7 @@ export default {
      "score": 0.113
     }
    ],
-   "leads_route": "lexical-512-19kzywk",
+   "leads_route": "lexical-512-t86snm",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -1274,17 +1274,17 @@ export default {
     {
      "finding": "S1",
      "rule": "DISPOSE-1",
-     "score": 0.135
+     "score": 0.134
     },
     {
      "finding": "S1",
      "rule": "THOUGHT-1",
-     "score": 0.114
+     "score": 0.115
     },
     {
      "finding": "S2",
      "rule": "TENANT-SYNC-1",
-     "score": 0.154
+     "score": 0.155
     },
     {
      "finding": "S2",
@@ -1304,7 +1304,7 @@ export default {
     {
      "finding": "S5",
      "rule": "COMPLETE-1",
-     "score": 0.115
+     "score": 0.114
     },
     {
      "finding": "S5",
@@ -1322,7 +1322,7 @@ export default {
      "score": 0.114
     }
    ],
-   "leads_route": "lexical-512-171mmtp",
+   "leads_route": "lexical-512-dfl4cd",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -1459,15 +1459,15 @@ export default {
     {
      "finding": "K1",
      "rule": "DATAGRAPH-1",
-     "score": 0.162
+     "score": 0.154
     },
     {
      "finding": "K1",
      "rule": "POINT-AND-CLICK-1",
-     "score": 0.149
+     "score": 0.147
     }
    ],
-   "leads_route": "lexical-512-e85xro",
+   "leads_route": "lexical-512-m7w2tu",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   }
  ],
