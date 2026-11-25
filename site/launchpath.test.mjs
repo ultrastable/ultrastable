@@ -67,6 +67,16 @@ test("story: a second, wider idea in the owner's raw words launches the same way
   assert.equal(L.PROBE_IDEAS.length, 2); assert.notEqual(L.probeIdea(0), L.probeIdea(864e5), "the daily walk takes the ideas in turn");
   for (const p of L.PROBE_IDEAS) assert.ok(p.startsWith("[launch-path probe] "));
 });
+// FULL-STACK-1: every launched app ends as a public front end, a live back end and a repository; the run goes red when one is still missing after two days.
+test("story: a launched app has all three parts, and one stuck without a repository is flagged once it is overdue", async () => {
+  const w = await world(), { id } = await submit(w, IDEA), out = await w.pass(), r = out.find((x) => x.id === id);
+  assert.deepEqual(r.stack, { frontend: true, backend: true, repo: true }); assert.deepEqual(r.missing, []); assert.equal(r.overdue, false);
+  const cfg = { full_stack_hours: 48 }, stuck = { at: "2026-11-01T00:00:00Z", built: true, system: "https://x", state: "waiting" };
+  assert.deepEqual(L.stackOf(stuck, cfg, Date.parse("2026-11-01T12:00:00Z")).overdue, false, "inside two days it is still being worked on");
+  const late = L.stackOf(stuck, cfg, Date.parse("2026-11-04T00:00:00Z"));
+  assert.deepEqual(late.missing, ["repo"]); assert.equal(late.overdue, true);
+  assert.equal(L.stackOf({ ...stuck, synthetic: true }, cfg, Date.parse("2026-11-04T00:00:00Z")).overdue, false, "a test idea is never deployed, so it is never overdue");
+});
 test("story: a person types the atlas idea and gets a live, managed app with its own repository, doing nothing else", async () => {
   const w = await world(), { id } = await submit(w, IDEA);
   assert.equal((await w.call("/s/" + id)).status, 200, "the app is live straight away");

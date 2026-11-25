@@ -82,6 +82,7 @@
   "base_manifest": "instances/second-tenant/instance.json",
   "usd_per_month": 5,
   "max_apps": 20,
-  "max_deploys_per_run": 2
+  "max_deploys_per_run": 2,
+  "full_stack_hours": 48
  }
 }

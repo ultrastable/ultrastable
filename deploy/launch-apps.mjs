@@ -52,13 +52,13 @@ export function steerItem(launch, s) {
   return { path: "docs/issues/" + id + ".json", json: { id, title: id + ": " + s.text.slice(0, 80), body: "**Owner:** product-manager\n**Trigger:** the owner asked for this at ultrastable.io/s/" + launch.id + "/change on " + s.at + "\n**Done check:** the live app does what was asked\n**Status:** open\n\nIn the owner's words:\n\n> " + s.text + "\n\nsize: S\n\n**Closing probe:** GET the live app and confirm the change; then set Status to closed in this file.\n", labels: ["p1", "agent-ready", "owner-asked"], milestone: "Now", workstream: "Owner requests" } };
 }
 // One pass. Everything that touches the outside is injected, so the stories in site/launchpath.test.mjs run it against fakes.
-export async function run({ site, deploySeed, cfg, base, log = console.log }) {
+export async function run({ site, deploySeed, cfg, base, log = console.log, now = () => Date.now() }) {
   const { launches } = await site({ op: "list" }), out = [], running = launches.filter((l) => l.system && !l.synthetic).length;
   let deploys = 0;
   for (const l of launches) {
     const r = { id: l.id, synthetic: Boolean(l.synthetic), steps: [], visitor_steps: 0 }, mark = { op: "mark", id: l.id, filed: [] };
     out.push(r);
-    if (!l.built) { r.steps.push("page not built yet (" + l.site_state + ")"); continue; }
+    if (!l.built) { r.steps.push("page not built yet (" + l.site_state + ")"); Object.assign(r, stackOf(l, cfg, now())); continue; }
     const m = manifestOf(l, base, cfg), short = "app-" + l.id;
     try {
       // 1. its own system
@@ -90,8 +90,15 @@ export async function run({ site, deploySeed, cfg, base, log = console.log }) {
       }
     } catch (e) { r.error = String(e && e.message || e).slice(0, 300); mark.waiting_on = "a step failed on our side and is retried on the next run"; log("::error::launch " + l.id + ": " + r.error); }
     await site(mark);
+    Object.assign(r, stackOf({ ...l, system: mark.system || l.system, state: mark.state || l.state }, cfg, now()));
   }
   return out;
+}
+// FULL-STACK-1: every app is three things, a public front end, a live back end and a repository. What a launch still lacks, and whether it is overdue.
+export function stackOf(l, cfg, now = Date.now()) {
+  const stack = { frontend: Boolean(l.built), backend: Boolean(l.system), repo: l.state === "repo" || l.state === "handed-over" };
+  const missing = Object.keys(stack).filter((k) => !stack[k]), age = (now - Date.parse(l.at || 0)) / 36e5;
+  return { stack, missing, overdue: !l.synthetic && missing.length > 0 && age > (cfg.full_stack_hours || 48) };
 }
 
 // ---- the real hands -------------------------------------------------------------------------------------------------------------------
@@ -137,6 +144,10 @@ async function main() {
   if (probe && !fail) { const mine = out.find((r) => r.id === probeId); if (!mine) fail = "the test idea never reached the launch queue"; else if (mine.error) fail = mine.error; else if (mine.gate) console.log("::warning::gate " + mine.gate + ": apps are live and managed; their repositories wait on " + mine.steps.join("; ")); }
   for (const r of out.filter((x) => x.synthetic)) await site({ op: "drop", id: r.id });
   const rec = { at: new Date().toISOString(), probe, passed: !fail && !out.some((r) => r.error), fail, launches: out.filter((r) => !r.synthetic).length, gate: out.some((r) => r.gate) ? "visitor-app-repos" : null, visitor_steps: 0 };
+    const late = out.filter((r) => r.overdue);
+  for (const r of late) console.log("::error::FULL-STACK-1: app " + r.id + " still has no " + r.missing.join(", no ") + " after " + (cfg.full_stack_hours || 48) + " hours");
+  if (late.length) { rec.passed = false; fail = fail || late.length + " app(s) are missing part of their stack"; }
+  rec.fail = fail; rec.full_stack = { apps: out.filter((r) => !r.synthetic).length, complete: out.filter((r) => !r.synthetic && !r.missing.length).length, overdue: late.length };
   if (process.env.LAUNCH_RESULT) writeFileSync(process.env.LAUNCH_RESULT, JSON.stringify(rec) + "\n");
   console.log(JSON.stringify(rec));
   if (!rec.passed) { console.log("::error::launch path: " + (fail || "a launch step failed")); process.exit(1); }
