@@ -104,6 +104,9 @@ def main(argv=None) -> int:
     cfaccount.scrub()  # SINGLE-ACCOUNT-2: never act on a retired Cloudflare account
     import sys as _s
     _av = _s.argv[1:] if argv is None else list(argv)
+    if _av[:1] == ["findable"]:
+        from . import findable
+        return findable.main(_av[1:])
     if _av[:1] == ["deprot"]:
         from . import deprot
         return deprot.main(_av[1:])
@@ -209,6 +212,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["selftest"]:  # SELFTEST-1
         from . import selftest
         return selftest.main(_av[1:])
+    if _av[:1] == ["silentfail"]:  # SILENT-FAIL-1
+        from . import silentfail
+        return silentfail.main(_av[1:])
     if _av[:1] == ["failure_audit"]:
         from . import failure_audit
         return failure_audit.main(_av[1:])

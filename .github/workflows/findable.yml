@@ -1,0 +1,34 @@
+name: findable
+# FINDABLE-1 (Rowan, 2026-11-25): every fleet property is read for search and AI discoverability (robots, sitemap, llms.txt, meta, Open Graph, JSON-LD, feed); gaps become Q-FIND items the executor takes, and every feed is pinged to the open WebSub hub.
+# budget: ~2 min x 30 per month
+# trigger: daily and dispatch; crawlers revisit on a scale of days, so a faster reading adds no information
+# free-alternative: a cloud-hosted agent session runs `python3 -m foundation findable --apply --ping`
+on:
+  schedule:
+    - cron: "41 7 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write  # scripts/land_data.py falls back to a pull request when the main writer is refused
+  id-token: write  # MAIN-WRITER-1: tools/push_main.py presents the run's OIDC token
+concurrency:
+  group: findable
+  cancel-in-progress: false
+jobs:
+  findable:
+    if: ${{ vars.HALT != '1' }}  # HALT-1: the owner's halt (repository variable HALT=1) stops every job
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: main
+      - run: python3 scripts/actions_guard.py findable
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Read every property, file or close its item, ping its feeds
+        run: python3 -m foundation findable --apply --ping
+      - name: Land the reading and the queue items on main
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+        run: python3 scripts/land_data.py "findable reading and queue items (FINDABLE-1)" ops/findable.json docs/issues

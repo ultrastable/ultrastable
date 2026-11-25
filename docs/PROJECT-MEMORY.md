@@ -10,6 +10,10 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-25
 
+- 2026-11-25: Write the papers as white papers, link them everywhere, and check fleet discoverability (#2224)
+- 2026-11-25: ZERO-MINUTES-1: worker merged #2222
+- 2026-11-25: Make the white papers findable and posted in turn (#2222)
+- 2026-11-25: core/impact: split items that failed twice into smaller children (#2221)
 - 2026-11-25: ZERO-MINUTES-1: worker merged #2213
 - 2026-11-25: Replication Ledger: Europe PMC most-cited first, name search, OpenAlex key support (#2213)
 - 2026-11-25: watchdog: clock probe (RESILIENCE-1) (part 2/2) [skip ci]
