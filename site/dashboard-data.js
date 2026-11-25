@@ -514,7 +514,7 @@ export default {
      "id": "roadmap",
      "title": "Roadmap",
      "source": "docs/issues",
-     "headline": "1047 issue files, 29 without a runnable probe (shrink-only)",
+     "headline": "1050 issue files, 29 without a runnable probe (shrink-only)",
      "rows": [
       [
        "open issues without a probe",
@@ -522,7 +522,7 @@ export default {
       ],
       [
        "issue files",
-       1047
+       1050
       ]
      ],
      "note": "Every open item carries an owner, a trigger and a done check the system runs."

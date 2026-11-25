@@ -4387,7 +4387,7 @@
    "date": "2026-11-21",
    "title": "Unlearn phase 1 runs as its own Worker with no secrets",
    "body": "ultrastable-unlearn: one Worker, one D1, one hourly cron, zero dependencies, library-first moves so no model or credential can stop it; a visit catches up a silent cron; runway.json maps 12 year-long risks to tested safeguards.",
-   "probe": "file:instances/unlearn/worker/worker.test.mjs",
+   "probe": "grep:doctrine/tenant-repos.json::\"state\": \"moved\"",
    "session": "session_0156nqDtYB5VwjCzYcyHVqNp"
   },
   {
@@ -4600,7 +4600,7 @@
    "date": "2026-11-22",
    "title": "Unlearn research principles carried in code",
    "body": "Each principle in instances/unlearn/phases.json names a probe; phase 1 ships the help ladder, who-led measure and wide-walls measure; phase 3 principles (fade support, sandbox) wait for phase 3 gates.",
-   "probe": "grep:tests/foundation/test_unlearn.py::test_principles_are_in_code"
+   "probe": "grep:doctrine/tenant-repos.json::\"state\": \"moved\""
   },
   {
    "id": "decision-2026-11-22-cloudflare-alerts-reach-the-tick-cloudflare-alerts-closed",
@@ -4727,7 +4727,7 @@
    "date": "2026-11-22",
    "title": "Unlearn becomes an evidence encyclopedia of beliefs to unlearn",
    "body": "Rowan found the coaching-only Unlearn too unstructured. The tenant is now a clickable, encyclopedic site of popular beliefs the evidence contradicts, modelled on Practical Solutions, with each entry in a guided debunking order and an hourly evidence loop (Crossref DOIs, Europe PMC new reviews, freshness, review queue). The coaching tool stays at /coach.",
-   "probe": "grep:instances/unlearn/worker/entries.js::export const FORMAT"
+   "probe": "grep:doctrine/tenant-repos.json::\"state\": \"moved\""
   },
   {
    "id": "decision-2026-11-22-unlearn-improves-itself-grounded-review-labels-automatic-re-",
@@ -4735,7 +4735,7 @@
    "date": "2026-11-22",
    "title": "Unlearn improves itself: grounded review labels, automatic re-grading, Lab discovery, wording trials",
    "body": "Rowan asked to grow Unlearn and make it run and improve automatically. Decision: a model may only label or re-word, never add facts; every label or draft must quote a sentence present in the abstract it read, re-words may add no number or name, entries' cited sources are never changed by a model, drafts live on /lab and are never published as entries, and wording trials need 40 answers per arm and a two-proportion z of 1.96 to replace the original.",
-   "probe": "grep:instances/unlearn/worker/lab.js::export function grounded",
+   "probe": "grep:doctrine/tenant-repos.json::\"state\": \"moved\"",
    "session": "session_0156nqDvj2EuthJ3xYxicfND"
   },
   {
@@ -4744,7 +4744,7 @@
    "date": "2026-11-22",
    "title": "Unlearn tells famous-finding-retold stories by itself and gives readers a reason to come back daily",
    "body": "Rowan wants far more narrative-vs-later-evidence entries, automated, and a sticky site that runs a year unattended. Decision: a retold topic with then/now timelines graded honestly; a second daily discovery search for replications and re-analyses; drafts reach their own page only after reader votes and only with an index citation, always labelled a draft from one paper; a myth of the day cycle, an Atom feed and a browser-only streak bring readers back without accounts or cookies.",
-   "probe": "grep:instances/unlearn/worker/lab.js::export const RETOLD_QUERY",
+   "probe": "grep:doctrine/tenant-repos.json::\"state\": \"moved\"",
    "session": "session_0156nqDvj2EuthJ3xYxicfND"
   },
   {
@@ -4860,7 +4860,7 @@
    "date": "2026-11-22",
    "title": "Unlearn change layer: graded practices with private trials",
    "body": "Rowan asked for evidence-based change, not only debunking. Practices are full graded entries with a trial kit; all personal trial data stays in the reader's browser; the server counts anonymous events per practice and re-orders suggested if-then plans by keep rate; oversold claims (power posing, ego depletion, growth mindset) get no kit; the Lab drafts candidate practices from intervention reviews under the same grounding guards.",
-   "probe": "file:instances/unlearn/worker/change.js",
+   "probe": "grep:doctrine/tenant-repos.json::\"state\": \"moved\"",
    "session": "session_0156nqDvj2EuthJ3xYxicfND"
   },
   {
@@ -4957,6 +4957,67 @@
    "body": "scripts/retriage.sh was documented as every 3 h but its cron is weekly (budget), so the rolling Retriage gaps issue (#2032) never refreshed; org-profile-probe is weekly, never closes its own issue and grepped for 'runs itself', a phrase absent from the profile README (#2033). Both now run from the 10-minute fleet clock; scripts/org_profile_probe.sh closes its issue on pass and checks the README headline.",
    "probe": "file:scripts/org_profile_probe.sh",
    "session": "session_0156nqDvX8P4Z5wfkTJvFwh9"
+  },
+  {
+   "id": "decision-2026-11-25-branch-cleanup-1",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "BRANCH-CLEANUP-1",
+   "body": "No branch outlives its PR. branchsweep --remote runs scripts/branch_cleanup.py daily: enforces delete_branch_on_merge and deletes merged or closed PR branches in every fleet repo.",
+   "probe": "file:scripts/branch_cleanup.py",
+   "session": "session_0156nqDsM82hJafZbpixiZx9"
+  },
+  {
+   "id": "decision-2026-11-25-unlearn-now-lives-in-ultrastable-unlearn",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Unlearn now lives in ultrastable/unlearn",
+   "body": "Rowan created the empty repo on 2026-11-25. A code session split instances/unlearn with its history, vendored promoqueue.js, stakeholders.json and models.json, and pushed it. The core keeps only the manifest; topology and system.json name source repo ultrastable/unlearn; seedlife reads build paths from build.repo; the system renderer writes a repo-root wrangler config for tenant workers. The tenant-repos workflow still has no org credential, so future tenant moves need the repo created first.",
+   "probe": "grep:doctrine/topology.json::ultrastable/unlearn"
+  },
+  {
+   "id": "lesson-2026-11-25-a-tenant-move-touches-more-than-the-folder",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "A tenant move touches more than the folder",
+   "body": "Moving Unlearn out broke the decision ledger, the topology main check, system.json, seedlife build paths and a core test that read the tenant's phases. Tenant checks now live in the tenant repo next to the code; core checks read source repos from topology.",
+   "probe": "grep:doctrine/topology.json::ultrastable/unlearn",
+   "session": "session_0156nqDtv3xZHzUu11Sy1geK"
+  },
+  {
+   "id": "lesson-2026-11-25-gh-issue-search-read-a-title-prefix-as-a-qualifier",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "gh issue search read a title prefix as a qualifier",
+   "body": "org_profile_probe.sh found its issue with --search 'org-profile-probe: ... in:title'; the leading org-profile-probe: is parsed as a search qualifier, so a passing probe never closed issue 2107 and failing runs could file duplicates. It now matches the exact title over the open list.",
+   "probe": "grep:scripts/org_profile_probe.sh::select\\(.title",
+   "session": "session_0156nqDvX8P4Z5wfkTJvFwh9"
+  },
+  {
+   "id": "lesson-2026-11-25-branchsweep-modify-delete-conflict",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "branchsweep modify/delete conflict",
+   "body": "branchsweep failed daily on a modify/delete conflict (checkout --ours had no ours stage), so its remote cleanup step never ran. Main's deletion now wins.",
+   "probe": "grep:foundation/branchsweep.py::modify/delete",
+   "session": "session_0156nqDsM82hJafZbpixiZx9"
+  },
+  {
+   "id": "decision-2026-11-25-branch-cleanup-runs-in-the-lane",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "branch cleanup runs in the lane",
+   "body": "scripts/branch_cleanup.py runs from the lane's completion sweep on every scheduled lane pass, as a second route beside branchsweep --remote.",
+   "probe": "grep:scripts/completion_sweep.sh::BRANCH-CLEANUP-1",
+   "session": "session_0156nqDsM82hJafZbpixiZx9"
+  },
+  {
+   "id": "decision-2026-11-25-what-works-tenant-grades-computed-deploy-after-owner-go-ahea",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "What Works tenant: grades computed, deploy after owner go-ahead",
+   "body": "New tenant what-works (policy evidence atlas). Grades come only from worker/grade.js over curated and read-in trials; a model may only label design and direction with verbatim abstract quotes. Code registered to move to ultrastable/what-works. Worker, D1 and route are added to doctrine/topology.json once the owner confirms the production deploy.",
+   "probe": "grep:doctrine/tenant-repos.json::ultrastable/what-works"
   }
  ]
 }
