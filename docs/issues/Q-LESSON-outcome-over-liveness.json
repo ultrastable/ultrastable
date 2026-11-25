@@ -1,7 +1,7 @@
 {
   "id": "Q-LESSON-outcome-over-liveness",
   "title": "Q-LESSON-outcome-over-liveness: enforce the lesson in code",
-  "body": "**Owner:** executor\n**Trigger:** lesson `outcome-over-liveness` in doctrine/lessons.json has no enforcing code\n**Done check:** cmd:python3 -m foundation lessons --check\n**Status:** open\n\nLESSONS-1: add an outcome probe per public front end that checks what a visitor sees (content present, not just a 200) and wire it into checks. Then add the binding to the lesson in doctrine/lessons.json and close this item.\n\n**Prediction:** outcome_probe_share >= 1 within 168 h\n**Out of scope:** liveness-only probes that already exist; keep them.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation lessons --report` lists `outcome-over-liveness` as enforced.\n",
+  "body": "**Owner:** executor\n**Trigger:** lesson `outcome-over-liveness` in doctrine/lessons.json has no enforcing code\n**Done check:** cmd:python3 -m foundation lessons --check\n**Status:** open\n\nLESSONS-1: add an outcome probe per public front end that checks what a visitor sees (content present, not just a 200) and wire it into checks. Then add the binding to the lesson in doctrine/lessons.json and close this item.\n\n**Prediction:** outcome_probe_share >= 1 within 168 h\n**Out of scope:** liveness-only probes that already exist; keep them.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation lessons --report` lists `outcome-over-liveness` as enforced.\n\n\n**Vacuous:** 2026-11-25T21:02:14Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n",
   "labels": [
     "p1",
     "agent-ready",
