@@ -1,16 +1,17 @@
 # SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 # Copyright (c) Ultrastable
 """FULLSTACK-1: every system has a repository, a back end and a public front end, or an open item for the part it lacks."""
-import json, shutil, tempfile, unittest
+import json, shutil, unittest
 from pathlib import Path
 from foundation import fullstack as F
+from _repo import scratch
 
 REPO = Path(__file__).resolve().parents[2]
 FILES = ["doctrine/full-stack.json", "instances/ultrastable/progress.json", "doctrine/seed-deploys.json", "docs/issues/Q-FULLSTACK-second-tenant.json"] + F.RULE_FILES
 
 
 def copy():
-    d = Path(tempfile.mkdtemp())
+    d = scratch()
     for f in FILES:
         (d / f).parent.mkdir(parents=True, exist_ok=True)
         shutil.copy(REPO / f, d / f)
