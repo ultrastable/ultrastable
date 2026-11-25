@@ -5562,6 +5562,23 @@
    "body": "DRIFT-GUARD-1 (foundation/driftguard.py, doctrine/driftguard.json): declared-vs-live drift (repo visibility reset hourly by the tick, seed/worker/src/declared.js; stale visual baselines roll forward), single-route schedules (tick pulses every tenant /pulse/watch hourly; crons counted against the plan limit), missed push triggers (dispatched by dg-triggers), empty-commit loops, account drift (retired account by sha256 only), built-without-evidence (graph rows read live; checks refuse a deploy verified only by the tick /health), and hand-kept repo lists (selftest reads org/repos.json and tenant-repos.json).",
    "probe": "grep:foundation/driftguard.py::DRIFT-GUARD-1",
    "session": "session_0156nqDtpVMPp6pQZ9ny5wAS"
+  },
+  {
+   "id": "lesson-2026-11-25-an-empty-check-run-list-is-not-green",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "An empty check-run list is not green",
+   "body": "what-works#8 was merged by the lane 7 s after opening, before its ci and citations runs existed; citations then failed. greenguard.notGreen now holds when a suite is queued or a fresh head has no suite (NO-RUNS-NOT-GREEN-1).",
+   "probe": "file:seed/worker/src/greenguard.js",
+   "session": "session_0156nqDtbnNSagT7p6jpUTuY"
+  },
+  {
+   "id": "lesson-2026-11-25-launch-day-failures-are-root-caused-in-code-work-not-pulse-d",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Launch-day failures are root-caused in code: work not pulse, duplicate PRs, ledger deferrals, word claims",
+   "body": "Audit 2026-11-25: the What Works reader had read nothing (gpt-oss spent its 400-token cap reasoning, every reply empty, logged not JSON) while /health said ticking; four sessions built knowledge-graph engines in parallel; a decision row deferred a pre-approved deploy to the owner; showcase copy said five policy areas (code: twelve). Guards: duplicate PRs are COLLISION-1 (foundation/collisions.py, built in parallel by another session; this session's overlap.py was dropped for it), standingorder ledger lint, claimcode word-number patterns, what-works rootcause tests and work-based /health.",
+   "probe": "file:foundation/standingorder.py"
   }
  ]
 }
