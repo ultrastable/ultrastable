@@ -293,8 +293,12 @@
     {
       "id": "ultrastable-what-works",
       "state": "live",
-      "role": "What Works tenant app (instances/what-works): a living atlas of what works in public policy; hourly beat resolves citations, searches OpenAlex and Europe PMC, reads new trials in under a verbatim-quote guard, re-grades every programme and logs each move",
-      "main": "instances/what-works/worker/index.js",
+      "role": "What Works tenant app (ultrastable/what-works): a living atlas of what works in public policy; hourly beat resolves citations, searches OpenAlex and Europe PMC, reads new trials in under a verbatim-quote guard, re-grades every programme and logs each move",
+      "main": "worker/index.js",
+      "source": {
+        "repo": "ultrastable/what-works",
+        "ref": "main"
+      },
       "compatibility_date": "2026-11-12",
       "crons": [
         "17 * * * *"

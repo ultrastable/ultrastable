@@ -14,9 +14,7 @@
     "ext.cf_analytics": "Cloudflare GraphQL analytics: D1 rows read and Workers AI neurons per day (doctrine/cost.json budgets)",
     "ext.unlearn_adults": "coaches and parents using Unlearn: they log curiosities and answer the 7 and 14 day follow-ups (instances/unlearn; no child data in phase 1)",
     "ext.unlearn_readers": "readers of the Unlearn encyclopedia: their anonymous guesses and 'did this change your view' taps per entry (no identifier stored)",
-    "ext.unlearn_literature": "new systematic reviews and DOI records published on Europe PMC and Crossref, read by the Unlearn evidence step",
-    "ext.what_works_readers": "readers of the What Works atlas: their anonymous guesses of a programme's verdict (no identifier stored)",
-    "ext.what_works_literature": "new trials and reviews indexed by OpenAlex and Europe PMC and DOI records on Crossref, read by the What Works evidence step"
+    "ext.unlearn_literature": "new systematic reviews and DOI records published on Europe PMC and Crossref, read by the Unlearn evidence step"
   },
   "flows": {
     "qnfo-sauce": {
@@ -2486,38 +2484,6 @@
         "LANE_PAT",
         "ORG_ADMIN_TOKEN"
       ]
-    },
-    "what-works-beat": {
-      "inflows": [
-        {
-          "signal": "what_works.literature",
-          "via": "https:openalex+europepmc+crossref"
-        },
-        {
-          "signal": "what_works.reader_guesses",
-          "via": "d1:ultrastable-what-works"
-        },
-        {
-          "signal": "what_works.evidence",
-          "via": "d1:ultrastable-what-works"
-        },
-        {
-          "signal": "what_works.grades",
-          "via": "d1:ultrastable-what-works"
-        }
-      ],
-      "outflows": [
-        {
-          "signal": "what_works.evidence",
-          "via": "d1:ultrastable-what-works"
-        },
-        {
-          "signal": "what_works.grades",
-          "via": "d1:ultrastable-what-works"
-        }
-      ],
-      "feedback": "each beat's checks and read-in trials are read by the next beat to pick the stalest programmes and skip resolved citations; every grade is compared with the stored one so a move is logged with its reason; reader guesses against the current verdict measure which grades surprise",
-      "bindings": []
     }
   },
   "implicit_producers": {
@@ -2530,9 +2496,7 @@
     "loop.registry": "ext.loop_registry",
     "unlearn.followups": "ext.unlearn_adults",
     "unlearn.reader_taps": "ext.unlearn_readers",
-    "unlearn.literature": "ext.unlearn_literature",
-    "what_works.literature": "ext.what_works_literature",
-    "what_works.reader_guesses": "ext.what_works_readers"
+    "unlearn.literature": "ext.unlearn_literature"
   },
   "pending": []
 }

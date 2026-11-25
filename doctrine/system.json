@@ -160,8 +160,12 @@
       }
     },
     "ultrastable-what-works": {
-      "main": "instances/what-works/worker/index.js",
-      "role": "What Works tenant app (instances/what-works): a living atlas of what works in public policy; hourly beat resolves citations, searches OpenAlex and Europe PMC, reads new trials in under a verbatim-quote guard, re-grades every programme and logs each move",
+      "main": "worker/index.js",
+      "source": {
+        "repo": "ultrastable/what-works",
+        "ref": "main"
+      },
+      "role": "What Works tenant app (ultrastable/what-works): a living atlas of what works in public policy; hourly beat resolves citations, searches OpenAlex and Europe PMC, reads new trials in under a verbatim-quote guard, re-grades every programme and logs each move",
       "crons": [
         "17 * * * *"
       ],

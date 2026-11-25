@@ -2105,19 +2105,6 @@ export default {
     "workflows": [
      "seed-launch"
     ]
-   },
-   {
-    "closing_probe": "grep:doctrine/topology.json::ultrastable-what-works",
-    "id": "what-works-beat",
-    "kind": "tick",
-    "owner": "product-manager",
-    "server_owner": "ultrastable-what-works",
-    "sla": "2h",
-    "summary": "What Works tenant loop: each beat takes the programmes checked longest ago, resolves their cited trials to DOIs (Crossref, title and year must match), searches OpenAlex and Europe PMC for trials and reviews published since, reads new ones in only when design and direction are each backed by a verbatim quote from the abstract, recomputes every grade with worker/grade.js and logs every change of verdict or strength with the study that moved it; reader guesses measure surprise.",
-    "trigger": "cron 17 * * * * on ultrastable-what-works; a page visit runs the beat when the cron has been silent for 2 hours",
-    "workflows": [
-     "deploy-ultrastable"
-    ]
    }
   ],
   "workers": [
@@ -2234,8 +2221,7 @@ export default {
     "id": "deploy-ultrastable",
     "loops": [
      "deploy-workers",
-     "unlearn-beat",
-     "what-works-beat"
+     "unlearn-beat"
     ]
    },
    {
