@@ -3,18 +3,59 @@
  "contract": 1,
  "module": "seed/worker/src/contract.js",
  "surfaces": [
-  {"id": "home", "path": "/", "kind": "html"},
-  {"id": "manifest", "path": "/.well-known/ultrastable.json", "kind": "json"},
-  {"id": "claims", "path": "/claims.json", "kind": "json"},
-  {"id": "health", "path": "/health", "kind": "json"},
-  {"id": "social", "path": "/social-queue.json", "kind": "json"},
-  {"id": "graph", "path": "/api/graph", "kind": "json"}
+  {
+   "id": "home",
+   "path": "/",
+   "kind": "html"
+  },
+  {
+   "id": "manifest",
+   "path": "/.well-known/ultrastable.json",
+   "kind": "json"
+  },
+  {
+   "id": "claims",
+   "path": "/claims.json",
+   "kind": "json"
+  },
+  {
+   "id": "health",
+   "path": "/health",
+   "kind": "json"
+  },
+  {
+   "id": "social",
+   "path": "/social-queue.json",
+   "kind": "json"
+  },
+  {
+   "id": "graph",
+   "path": "/api/graph",
+   "kind": "json"
+  }
  ],
  "systems": {
-  "ultrastable": {"origin": "https://ultrastable.io", "module": "site/contract.js"},
-  "second-tenant": {"origin": "https://ultrastable-seed-second-tenant.ultrastable.workers.dev", "module": "seed/worker/src/discover.js"}
+  "ultrastable": {
+   "origin": "https://ultrastable.io",
+   "module": "site/contract.js"
+  },
+  "second-tenant": {
+   "origin": "https://ultrastable-seed-second-tenant.ultrastable.workers.dev",
+   "module": "seed/worker/src/discover.js"
+  }
  },
  "platform_link": "https://ultrastable.io",
  "user_agent": "ultrastable-fleet-contract/1",
- "max_statements": 80
+ "max_statements": 80,
+ "runs_as": {
+  "_doc": "LIVE-LINKS-1: how each system runs, for the Live block of its README (foundation/livelinks.py). A tenant with a `worker` in doctrine/tenant-repos.json needs no row: its block names that Worker and the platform deploy.",
+  "ultrastable": "Cloudflare Workers `ultrastable-site` (this site) and `ultrastable-tick` (the clock and every loop), deployed from this repository's `main` on every merge that changes them",
+  "second-tenant": "Cloudflare Worker `ultrastable-seed-second-tenant`, built from the Ultrastable seed and deployed by the platform's seed deploy",
+  "practical-solutions": "Cloudflare Workers `tenant-ps-web` (front end) and `tenant-ps-core` (back end), deployed from this repository's `main` by its own workflows"
+ },
+ "repos": {
+  "_doc": "The repository of each system the registries do not already name.",
+  "ultrastable": "ultrastable/ultrastable",
+  "second-tenant": "ultrastable/second-tenant"
+ }
 }
