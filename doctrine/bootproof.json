@@ -1,0 +1,44 @@
+{
+  "_": "BOOTPROOF-1: every secret a seed workflow reads, with how it degrades and how code acquires it.",
+  "secrets": {
+    "CLOUDFLARE_ACCOUNT_ID": {
+      "degrade": "seed runs without it: deploys route through the platform OIDC endpoint",
+      "acquire": "bootstrap stage provision reads it from the platform connect flow"
+    },
+    "CLOUDFLARE_API_TOKEN": {
+      "degrade": "deploy goes through the platform site worker OIDC route",
+      "acquire": "connect flow mints a scoped token (POINT-AND-CLICK-1)"
+    },
+    "DASHBOARD_URL": {
+      "degrade": "workflow skips the dashboard push",
+      "acquire": "set by the bootstrap org stage from the deployed Worker url"
+    },
+    "FLEET_TOKEN": {
+      "degrade": "workflow falls back to GITHUB_TOKEN",
+      "acquire": "tick Worker GitHub App mints a repo token"
+    },
+    "LANE_PAT": {
+      "degrade": "workflow falls back to GITHUB_TOKEN",
+      "acquire": "tick Worker GitHub App main writer"
+    },
+    "ORG_ADMIN_TOKEN": {
+      "degrade": "repo-settings route through the administration App",
+      "acquire": "tick Worker administration App"
+    },
+    "OUTREACH_SEND_TOKEN": {
+      "degrade": "outreach stays in dry-run (gate default)",
+      "acquire": "outreach gate registered sender handover"
+    },
+    "OUTREACH_SEND_URL": {
+      "degrade": "outreach stays in dry-run (gate default)",
+      "acquire": "outreach gate registered sender handover"
+    }
+  },
+  "wrangler_filled_elsewhere": [
+    "d1_database_id"
+  ],
+  "migration_duplicates_grandfathered": [
+    10
+  ],
+  "_grandfather": "shrink-only: 0010 was applied twice-named in live seed databases, renaming would re-run it"
+}
