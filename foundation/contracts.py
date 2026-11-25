@@ -105,6 +105,13 @@ def hold_minutes(reopens: int, c: dict) -> int:
     return h
 
 
+def filed_on_failure(it: dict) -> bool:
+    """LANE-FILED-FAIL-1: an OL-PR-<n> item exists only because the merge lane saw pull request n open and unable to merge, which is exactly what
+    its probe (`loopowner --closed n`) tests. When the PR closes before any queue pass ran, the item was otherwise marked vacuous and stayed open
+    for a day after its PR merged (10 such items on 2026-11-25)."""
+    return bool(re.match(r"^OL-PR-\d+$", str(it["id"]))) and "loopowner --closed" in str(it.get("probe", ""))
+
+
 def may_close(s: dict, now: datetime, c: dict) -> tuple[bool, str]:
     """No close without a recorded failure first (vacuous) and `passes_to_close` consecutive passes; a reopened item also needs the
     hold (RELAPSE-HOLD-1). The first element is True (close), False (hold) or "vacuous"."""
@@ -159,6 +166,8 @@ def tick(root=REPO, apply=False, now=None, probe=None) -> dict:
     for it in [i for i in its if i["status"] == "open"] + closed:
         iid = str(it["id"])
         s = dict(st.get(iid) or FRESH)
+        if filed_on_failure(it):  # LANE-FILED-FAIL-1: the lane files OL-PR-<n> because it saw PR n stuck open; that filing is the recorded failure
+            s["seen_fail"] = True
         is_closed = it["status"] in CLOSED
         disposed = bool(re.search(r"^\*\*Disposition:\*\*\s*(gate|shelved|superseded)\b", it["json"].get("body", ""), re.M))
         if is_closed and it["probe"].startswith("cmd:"):

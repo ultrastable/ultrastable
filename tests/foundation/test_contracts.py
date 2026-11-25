@@ -68,6 +68,24 @@ class Contracts(unittest.TestCase):
         C.tick(d, apply=True, now=T0 + timedelta(minutes=40)); C.tick(d, apply=True, now=T0 + timedelta(minutes=50))
         self.assertEqual(status(d, "OL-1"), "closed", "once the probe is seen failing, two passes close it")
 
+    def test_lane_filed_pr_item_closes_once_its_pr_closes(self):
+        # LANE-FILED-FAIL-1: the lane filed OL-PR-<n> on seeing PR n stuck, so two passes of `loopowner --closed n` close it without the vacuous hold
+        d = repo(); item(d, "OL-PR-7", probe="cmd:python3 -m foundation loopowner --closed 7"); item(d, "OL-9", probe="cmd:python3 -m foundation loopowner --closed 9")
+        p = lambda spec: ("pass", "pull request is merged")
+        C.tick(d, apply=True, now=T0, probe=p); r = C.tick(d, apply=True, now=T0 + timedelta(minutes=10), probe=p)
+        self.assertEqual(status(d, "OL-PR-7"), "closed")
+        self.assertEqual(status(d, "OL-9"), "open", "only the lane's own PR items carry a recorded failure from filing")
+
+    def test_queue_run_survives_an_unmeasured_balance(self):
+        # a shallow checkout leaves balance unmeasured (empty sla); the pass reports it, never crashes and never reads it as balanced
+        from unittest import mock
+        from foundation import balance
+        d = repo(); item(d, "OL-1")
+        with mock.patch.object(balance, "run", return_value={"unmeasured": "shallow", "tipped": False, "windows": {}, "sla": {}, "actions": {}}):
+            rows = queue.run(d)
+        b = next(r for r in rows if r["id"] == "FLOW-BALANCE-1")
+        self.assertFalse(b["passed"]); self.assertIn("shallow", b["evidence"])
+
     def test_single_pass_after_failure_holds(self):
         d = repo(); item(d, "OL-1")
         C.tick(d, apply=True, now=T0)
