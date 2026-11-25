@@ -60,6 +60,18 @@ jobs:
         run: python3 -m foundation ghmirror --apply --max 150
         env:
           GH_TOKEN: ${{ github.token }}
+      - name: Retriage gaps on the fleet clock (SLA-ISSUE-1; its own cron is weekly, so the rolling gap issue sat open for days)
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        run: bash scripts/retriage.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Org profile probe on the fleet clock (SLA-ISSUE-1; closes its own issue when the page shows the profile)
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        run: bash scripts/org_profile_probe.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
       - name: Oldest open issue and PR inside 8 hours (SLA-8H-1)
         if: ${{ !cancelled() }}
         run: python3 -m foundation agewatch --check
