@@ -1,5 +1,5 @@
 {
- "at": "2026-11-24T16:26:00Z",
+ "at": "2026-11-25T16:05:09Z",
  "open_ignition_gaps": 5,
  "gaps": [
   {
@@ -9,28 +9,28 @@
    "source": "contracts"
   },
   {
-   "link": "item Q-RES-chen-stratton-2026-F7 relapsed after it closed",
+   "link": "item Q-RULE-no-merge-over-red-mergeaudit relapsed after it closed",
    "owner": "executor",
-   "closing_probe": "contracts: Q-RES-chen-stratton-2026-F7 passes over the hold",
+   "closing_probe": "contracts: Q-RULE-no-merge-over-red-mergeaudit passes over the hold",
    "source": "contracts"
   },
   {
-   "link": "item Q-RES-open-loops-2026-O6 relapsed after it closed",
+   "link": "item Q-SUBST-red-pr-latency relapsed after it closed",
    "owner": "executor",
-   "closing_probe": "contracts: Q-RES-open-loops-2026-O6 passes over the hold",
+   "closing_probe": "contracts: Q-SUBST-red-pr-latency passes over the hold",
    "source": "contracts"
   },
   {
-   "link": "item Q-TEMPORAL-94167fdea6 relapsed after it closed",
-   "owner": "executor",
-   "closing_probe": "contracts: Q-TEMPORAL-94167fdea6 passes over the hold",
-   "source": "contracts"
-  },
-  {
-   "link": "6 open item(s) vanished without a disposition",
+   "link": "7 open item(s) vanished without a disposition",
    "owner": "operations",
    "closing_probe": "throughput: silent_drops 0 in the window",
    "source": "throughput"
+  },
+  {
+   "link": "guard relapse_rate_7d worsened while k improved",
+   "owner": "operations",
+   "closing_probe": "metricloop: no guard regression on the next pass",
+   "source": "metricloop"
   }
  ]
 }

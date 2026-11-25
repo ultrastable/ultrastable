@@ -46,3 +46,5 @@
 {"at": "2026-11-21T13:42:50Z", "body_sha256": "102a384500e4d2539f3217ba10c62d0d5cadcd4d7e16a0f3fbeac768f34cf0c6", "id": "OL-PR-930", "reason": "moot: pull request #930 merged", "refs": ["pr:930"]}
 {"at": "2026-11-21T13:42:50Z", "body_sha256": "16b2af582e99f5291385c71386a61136337768cb50e2b44c246b0f61b28c32f8", "id": "OL-PR-935", "reason": "moot: pull request #935 merged", "refs": ["pr:935"]}
 {"at": "2026-11-21T13:42:50Z", "body_sha256": "d25218b828ac01cc177da2b849ada758ca9818da85570a6cc59634457a78a476", "id": "OL-PR-936", "reason": "moot: pull request #936 merged", "refs": ["pr:936"]}
+{"at": "2026-11-25T16:05:09Z", "body_sha256": "48648fb7130dfdd3a85b411f671a4495e9dded54de33ffa836a2b4161b50c605", "id": "OL-PR-2112", "reason": "moot: pull request #2112 closed", "refs": ["pr:2112"]}
+{"at": "2026-11-25T16:05:09Z", "body_sha256": "ee7c4caae642daf7253770bcd355127a1024a7efaeeb1a7a9ec7aa4d2c77a95e", "id": "OL-PR-2113", "reason": "moot: pull request #2113 merged", "refs": ["pr:2113"]}
