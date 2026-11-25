@@ -710,6 +710,7 @@ export default {
   "recognition-lint",
   "regen-generated",
   "replication-ledger-beat",
+  "replication-ledger-openalex",
   "research",
   "resilience",
   "retriage",
@@ -2140,6 +2141,19 @@ export default {
     "workflows": [
      "findable"
     ]
+   },
+   {
+    "closing_probe": "grep:instances/replication-ledger/worker/keyless.test.mjs::the OpenAlex mirror a runner landed answers first",
+    "id": "replication-ledger-openalex",
+    "kind": "tick",
+    "owner": "product-manager",
+    "server_owner": "github-actions",
+    "sla": "1d",
+    "summary": "LEDGER-KEYLESS-1: OpenAlex refuses the Replication Ledger Worker (Cloudflare egress, no API key). A GitHub runner asks OpenAlex the beat's own questions for every finding and its discovery searches, lands the answers as instances/replication-ledger/worker/data/openalex.json, and redeploys the Worker, whose beat reads them as a route through the same verbatim-quote guard; in between, the beat's keyless routes (Europe PMC, Crossref, Semantic Scholar) answer.",
+    "trigger": "daily workflow ledger-openalex.yml and on demand",
+    "workflows": [
+     "ledger-openalex"
+    ]
    }
   ],
   "workers": [
@@ -2346,6 +2360,12 @@ export default {
     "id": "lane",
     "loops": [
      "merge-lane"
+    ]
+   },
+   {
+    "id": "ledger-openalex",
+    "loops": [
+     "replication-ledger-openalex"
     ]
    },
    {
