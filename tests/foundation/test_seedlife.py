@@ -142,6 +142,7 @@ class Stages(Fixture):
         self.autonomous()
         seedlife.run(self.root, apply=True, now=NOW, live=False)
         self.assertIn("**Status:** closed", json.loads((self.root / "docs/issues/Q-SEED-s1.json").read_text(encoding="utf-8"))["body"])
+        self.assertIn("**Evidence:**", json.loads((self.root / "docs/issues/Q-SEED-s1.json").read_text(encoding="utf-8"))["body"])  # the queue check calls a close with no evidence a silent drop
         self.assertEqual(seedlife.check(self.root, NOW), [])
 
     def test_malformed_answers_fail(self):
