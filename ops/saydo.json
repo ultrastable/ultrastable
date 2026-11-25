@@ -1,5 +1,5 @@
 {
- "at": "2026-11-25T21:17:50Z",
+ "at": "2026-11-25T21:27:24Z",
  "gaps": 5,
  "match_share": 0.99,
  "sources": {
@@ -156,7 +156,7 @@
     "drift": 0,
     "id": "claims-total",
     "ok": true,
-    "total": 392
+    "total": 399
    }
   ],
   "loops": [
@@ -700,6 +700,15 @@
     "unmeasured": []
    },
    {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "COLDSTART-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
     "checks": 0,
     "external": [],
     "failing": [],
@@ -882,7 +891,7 @@
     "checks": 1,
     "external": [],
     "failing": [
-     "python3 -m foundation dispose --check: an open item is 103.6 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+     "python3 -m foundation dispose --check: an open item is 79.9 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
     ],
     "id": "DISPOSE-1",
     "missing": [],
@@ -955,7 +964,7 @@
   },
   "claims": {
    "gaps": 0,
-   "total": 392
+   "total": 399
   },
   "loops": {
    "gaps": 1,
@@ -963,12 +972,12 @@
   },
   "rules": {
    "gaps": 2,
-   "total": 83
+   "total": 84
   },
   "year": {
    "gaps": 1,
    "total": 2
   }
  },
- "total": 494
+ "total": 502
 }
