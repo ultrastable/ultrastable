@@ -51,7 +51,7 @@ jobs:
       - name: Red-team the system's own blind spots against production (REDTEAM-1); Sundays also shift the clock to find date bombs
         env:
           REDTEAM_LIVE: "1"
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.LANE_PAT || github.token }}  # the lane's token reads the private ops repository; the run's own token reads only this one
         run: |
           if [ "$(date -u +%u)" = "7" ]; then python3 -m foundation redteam --run --apply --chaos; else python3 -m foundation redteam --run --apply; fi
       - run: python3 -m foundation failure_audit --run
@@ -72,4 +72,4 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
         run: |
-          python3 scripts/land_data.py "failure-audit: file and close failure-mode items (FAILURE-RESOLVE-1)" docs/issues ops/failure-audit-state.json ops/failmine.json site/failmine-data.js doctrine/registers.json doctrine/detectors.json ops/redteam/findings.jsonl
+          python3 scripts/land_data.py "failure-audit: file and close failure-mode items (FAILURE-RESOLVE-1)" docs/issues ops/failure-audit-state.json ops/failmine.json site/failmine-data.js doctrine/registers.json doctrine/detectors.json ops/redteam/findings.jsonl ops/redteam/heads.json

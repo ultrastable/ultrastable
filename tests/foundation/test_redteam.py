@@ -38,6 +38,8 @@ class Live(unittest.TestCase):
         pages = {"/": home, "/api/claims": claims, "/progress.json": json.dumps({"apps": {"as_of": apps_at}, "digests": {"weekly": {"substantive": weekly}}}),
                  "/pulse.json": json.dumps({"week": {"substantive": 249}})}
         def get(url, token=None):
+            if "/commits/main" in url:
+                return '{"sha": "x"}'
             if "rulesets" in url:
                 return '[{"name": "main-no-rewrite"}]'
             if "api.github.com" in url:
@@ -59,6 +61,20 @@ class Live(unittest.TestCase):
             return base(url, token)
         ids = {b["id"] for b in redteam.check_live(".", get=get, at=AT)}
         self.assertEqual(ids, {"rewrite:ultrastable/workers", "rewrite:unprotected:ultrastable/spec"})
+
+    def test_head_that_no_longer_descends_is_a_rewrite(self):
+        base = self.page("2026-11-25T10:00:00Z", 250)
+        def get(url, token=None):
+            if "/commits/main" in url:
+                return '{"sha": "bbbb"}'
+            if "/compare/" in url:
+                return '{"status": "ahead"}' if "seed" in url else '{"status": "diverged"}' if "ops" in url else '{"status": "ahead"}'
+            return base(url, token)
+        with tempfile.TemporaryDirectory() as t:
+            (Path(t) / "ops/redteam").mkdir(parents=True)
+            (Path(t) / redteam.HEADS).write_text(json.dumps({"ultrastable/ops": "aaaa", "ultrastable/seed": "aaaa"}))
+            ids = {b["id"] for b in redteam.check_live(t, get=get, at=AT)}
+        self.assertEqual(ids, {"rewrite:history:ultrastable/ops"})
 
     def test_clean(self):
         self.assertEqual(redteam.check_live(".", get=self.page("2026-11-25T10:00:00Z", 250), at=AT), [])

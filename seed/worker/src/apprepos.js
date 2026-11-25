@@ -112,6 +112,7 @@ export async function ensureTenantRepo(db, env, tenant, spec, { fetch: f = fetch
 // Actions and branch cleanup and org-settings stayed red. The administration app this Worker already holds sets exactly these two settings, on any
 // repository of the org and nothing else; every other setting stays with org-settings.yml and its gate.
 export const REPO_SETTINGS = Object.freeze({ delete_branch_on_merge: true, allow_auto_merge: true });
+export const KEEP_PRIVATE = Object.freeze(['ultrastable/ops']);
 export const ORG_REPO = /^ultrastable\/[A-Za-z0-9._-]{1,100}$/;
 export async function ensureRepoSettings(db, env, tenant, spec, { fetch: f = fetch, now = Date.now() } = {}) {
   const repo = String(spec.repo || ''), out = { repo };
@@ -122,12 +123,15 @@ export async function ensureRepoSettings(db, env, tenant, spec, { fetch: f = fet
   const seen = await A('GET', `/repos/${repo}`);
   if (seen.status !== 200) return { ...out, ok: false, waiting_on: 'admin-app-scope', error: `read ${repo}: HTTP ${seen.status}` };
   const drift = Object.fromEntries(Object.entries(REPO_SETTINGS).filter(([k, v]) => seen.json[k] !== v));
+  // DISCOVER-1: a repository declared public in github/org-settings.json is made public; never the private ops repository, and never the other way
+  if (spec.public === true && seen.json.private === true && !KEEP_PRIVATE.includes(repo)) drift.private = false;
   const guard = await ensureNoRewrite(A, db, tenant, repo);
   if (!Object.keys(drift).length) return { ...out, ok: true, changed: guard.added ? [NO_REWRITE.name] : [], protect: guard.state };
   const p = await A('PATCH', `/repos/${repo}`, drift);
   if (p.status !== 200) { await store.event(db, tenant, 'github-admin', 'failed', `repo settings ${repo} HTTP ${p.status}`); return { ...out, ok: false, waiting_on: 'admin-app-scope', error: `set ${Object.keys(drift).join(', ')} on ${repo}: HTTP ${p.status} ${p.json.message || ''}`.slice(0, 200) }; }
   await store.event(db, tenant, 'github-admin', 'repo-settings', `${repo}: ${Object.keys(drift).join(', ')} on`);
-  return { ...out, ok: true, changed: [...Object.keys(drift), ...(guard.added ? [NO_REWRITE.name] : [])], protect: guard.state };
+  const g2 = guard.state === 'plan' && drift.private === false ? await ensureNoRewrite(A, db, tenant, repo) : guard;  // public now, so the ruleset is allowed
+  return { ...out, ok: true, changed: [...Object.keys(drift), ...(g2.added ? [NO_REWRITE.name] : [])], protect: g2.state };
 }
 // REDTEAM-1 (2026-11-25): org-settings.json said allow_force_pushes false on every main, but nothing applied it (no ORG_ADMIN_TOKEN), so a
 // force-push or deletion of main was possible on every repository. The admin app adds one ruleset with exactly those two rules. A private repository

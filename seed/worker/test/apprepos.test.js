@@ -183,3 +183,25 @@ test('the admin app adds the no-rewrite ruleset once and reads a free-plan refus
   assert.deepEqual(NO_REWRITE.bypass_actors, []);
   assert.equal((await ensureNoRewrite(A, w.db, T, 'ultrastable/private')).state, 'plan');
 });
+
+test('a repository declared public is made public and then protected; ops never', async () => {
+  const { ensureRepoSettings } = await import('../src/apprepos.js');
+  const w = await world();
+  const calls = [];
+  let priv = true;
+  const f = async (url, init = {}) => {
+    const u = new URL(url), m = init.method || 'GET';
+    if (/^\/repos\/ultrastable\/(seed|ops)$/.test(u.pathname) && m === 'GET') return new Response(JSON.stringify({ private: priv, delete_branch_on_merge: true, allow_auto_merge: true }), { status: 200 });
+    if (u.pathname.endsWith('/rulesets') && m === 'GET') return new Response(priv ? '{}' : '[]', { status: priv ? 403 : 200 });
+    calls.push(m + ' ' + u.pathname + ' ' + (init.body || ''));
+    if (m === 'PATCH') { priv = JSON.parse(init.body).private === false ? false : priv; return new Response('{}', { status: 200 }); }
+    if (m === 'POST') return new Response('{}', { status: 201 });
+    return w.f(url, init);
+  };
+  const r = await ensureRepoSettings(w.db, w.env, T, { repo: 'ultrastable/seed', public: true }, { fetch: f });
+  assert.equal(r.ok, true); assert.equal(r.protect, 'protected');
+  assert.ok(r.changed.includes('private') && r.changed.includes('main-no-rewrite'));
+  priv = true; calls.length = 0;
+  const o = await ensureRepoSettings(w.db, w.env, T, { repo: 'ultrastable/ops', public: true }, { fetch: f });
+  assert.equal(o.protect, 'plan'); assert.equal(calls.filter(c => c.startsWith('PATCH')).length, 0);
+});

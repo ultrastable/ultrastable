@@ -30,6 +30,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 LEDGER = "ops/redteam/findings.jsonl"
+HEADS = "ops/redteam/heads.json"
 REPOS = ("ultrastable/ultrastable", "ultrastable/seed", "ultrastable/workers", "ultrastable/spec", "ultrastable/license", "ultrastable/ops", "ultrastable/practical-solutions", "ultrastable/.github", "ultrastable/unlearn")
 CLASSES = ("rewrite", "vacuous", "stale", "unscored", "phantom", "timebomb", "undetected", "unsourced", "credential", "starved")
 STALE_DAYS = 3
@@ -186,6 +187,11 @@ def _get(url, token=None):
         return r.read().decode("utf-8", "replace")
 
 
+def _heads(root) -> dict:
+    p = Path(root) / HEADS
+    return json.loads(p.read_text(encoding="utf-8")) if p.is_file() else {}
+
+
 def check_live(root=REPO, get=_get, at=None) -> list[dict]:
     """Read production as a stranger would. Runs only where REDTEAM_LIVE=1 (the scheduled workflow); a page that cannot be read is a finding."""
     at, out, site = at or now(), [], "https://ultrastable.io"
@@ -217,6 +223,23 @@ def check_live(root=REPO, get=_get, at=None) -> list[dict]:
                 f(f"stale:prs:{repo}", "stale", f"{repo} has {len(old)} open PRs idle over a day", old[:10])
         except Exception as e:
             f(f"vacuous:github:{repo}", "vacuous", f"{repo} pull requests could not be read", repr(e))
+    heads = _heads(root)
+    for repo in REPOS:  # every main head is recorded; the next head must descend from it (works on private repos, where rulesets are plan-gated)
+        try:
+            new = json.loads(get(f"https://api.github.com/repos/{repo}/commits/main", tok)).get("sha")
+            old = heads.get(repo)
+            if old and new and old != new:
+                st = json.loads(get(f"https://api.github.com/repos/{repo}/compare/{old}...{new}", tok)).get("status")
+                if st not in ("ahead", "identical"):
+                    f(f"rewrite:history:{repo}", "rewrite", f"main of {repo} no longer contains its last recorded head {old[:8]} ({st}); that head is kept in {HEADS}", {"old": old, "new": new})
+                    continue  # keep the old head on record until the finding is handled, so the lost commits stay findable
+            if new:
+                heads[repo] = new
+        except Exception as e:
+            f(f"vacuous:head:{repo}", "vacuous", f"{repo} main head could not be read", repr(e))
+    if os.environ.get("REDTEAM_APPLY") == "1":
+        (Path(root) / HEADS).parent.mkdir(parents=True, exist_ok=True)
+        (Path(root) / HEADS).write_text(json.dumps(heads, indent=1, sort_keys=True) + "\n", encoding="utf-8")
     for repo in REPOS:  # history rewrites: a force-push or deletion of main loses merged work without any check noticing
         try:
             fp = json.loads(get(f"https://api.github.com/repos/{repo}/activity?ref=refs/heads/main&activity_type=force_push&time_period=week", tok))
@@ -242,6 +265,8 @@ def run(root=REPO, apply=False, chaos=False) -> dict:
     for name, fn in CHECKS.items():
         found += fn(root)
     if os.environ.get("REDTEAM_LIVE") == "1":
+        if apply:
+            os.environ["REDTEAM_APPLY"] = "1"
         found += check_live(root)
     if chaos:
         found += check_timebomb(root)
