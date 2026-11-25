@@ -121,9 +121,9 @@ export default {
    "surface": "site/worker.js"
   },
   {
-   "claim": "The slow loop reads the same variables every tick, and when one has been out of bounds for its patience, a run of ticks set in doctrine/ultrastability.json, it takes one discrete step on that variable's ladder, keeps the step only if the variable comes back, and otherwise undoes it and takes the next.",
+   "claim": "The slow loop reads the same variables every tick, and when one has stayed out of bounds for as many ticks in a row as its patience setting (patience_ticks, which the loop tunes itself) it takes one discrete step on that variable's ladder, keeps the step only if the variable comes back, and otherwise undoes it and takes the next.",
    "detail": "",
-   "how": "grep:foundation/ultrastability.py::consecutive >= c\\[\"patience_ticks\"\\] + grep:foundation/ultrastability.py::revert_to=pending + grep:foundation/ultrastability.py::return \"kept\"",
+   "how": "grep:doctrine/ultrastability.json::\"patience_ticks\" + grep:foundation/ultrastability.py::revert_to=pending + grep:foundation/ultrastability.py::return \"kept\"",
    "id": "how-ultrastable-second-order",
    "kind": "claim",
    "pass": true,
@@ -3406,7 +3406,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 74 Python and 548 Worker tests",
+   "claim": "seed-tests: 74 Python and 547 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3415,7 +3415,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 548 Worker tests",
+   "claim": "seed-worker-tests: 547 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
