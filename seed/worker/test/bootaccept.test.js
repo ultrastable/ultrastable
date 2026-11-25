@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
 // BOOT-ACCEPT-1 (Rowan, 2026-11-25): every surface a rule requires is served together by a launched system, from its first deploy.
 // The LIVE-1 health-only gate once hid DISCOVER-1's manifest and DATAGRAPH-1's graph on every seed and visitor app; nothing proved them together.
 import { test } from 'node:test';

@@ -1,6 +1,9 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """BOOT-ACCEPT-1: every layer of a launched system is read live, together, and a missing one fails."""
 import datetime as dt
 import json
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
@@ -62,7 +65,7 @@ class Probe(unittest.TestCase):
 
 class Check(unittest.TestCase):
     def _root(self, rows):
-        d = Path(tempfile.mkdtemp())
+        d = Path(tempfile.mkdtemp()); self.addCleanup(shutil.rmtree, d, True)
         (d / "doctrine").mkdir()
         (d / "ops").mkdir()
         (d / "doctrine" / "seed-deploys.json").write_text(json.dumps({"seeds": ["x"]}))

@@ -1921,6 +1921,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **Every surface works together from the first deploy; one command proves it (BOOT-ACCEPT-1, Rowan 2026-11-25).** \"All surfaces, all",
+   "detail": "",
+   "how": "file:seed/worker/src/visibility.js + file:doctrine/open-loops.json + file:tests/foundation/test_bootaccept.py + file:seed/worker/test/bootaccept.test.js + file:foundation/bootaccept.py",
+   "id": "cited-c2464a2c9f",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
@@ -2614,6 +2623,15 @@ export default {
    "surface": "seed/agents/AGENTS.md"
   },
   {
+   "claim": "- **Every surface works together from the first deploy; one command proves it (BOOT-ACCEPT-1, Rowan 2026-11-25).** \"All surfaces, all",
+   "detail": "",
+   "how": "file:seed/worker/src/visibility.js + file:doctrine/open-loops.json + file:tests/foundation/test_bootaccept.py + file:seed/worker/test/bootaccept.test.js + file:foundation/bootaccept.py",
+   "id": "mirror-bda521b8b7",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
    "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
@@ -3271,7 +3289,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 64 Python and 535 Worker tests",
+   "claim": "seed-tests: 64 Python and 539 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3280,7 +3298,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 535 Worker tests",
+   "claim": "seed-worker-tests: 539 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3521,7 +3539,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 388,
-  "total": 388
+  "pass": 390,
+  "total": 390
  }
 };

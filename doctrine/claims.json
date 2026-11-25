@@ -2407,6 +2407,19 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-c2464a2c9f",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Every surface works together from the first deploy; one command proves it (BOOT-ACCEPT-1, Rowan 2026-11-25).** \"All surfaces, all",
+      "probe": [
+        "file:seed/worker/src/visibility.js",
+        "file:doctrine/open-loops.json",
+        "file:tests/foundation/test_bootaccept.py",
+        "file:seed/worker/test/bootaccept.test.js",
+        "file:foundation/bootaccept.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-95432168bf",
       "surface": "agents/AGENTS.md",
       "text": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
@@ -3334,6 +3347,20 @@
       ],
       "bound_by": "mirror",
       "of": "cited-0e153ff129"
+    },
+    {
+      "id": "mirror-bda521b8b7",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Every surface works together from the first deploy; one command proves it (BOOT-ACCEPT-1, Rowan 2026-11-25).** \"All surfaces, all",
+      "probe": [
+        "file:seed/worker/src/visibility.js",
+        "file:doctrine/open-loops.json",
+        "file:tests/foundation/test_bootaccept.py",
+        "file:seed/worker/test/bootaccept.test.js",
+        "file:foundation/bootaccept.py"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-c2464a2c9f"
     },
     {
       "id": "mirror-be5af6748b",
