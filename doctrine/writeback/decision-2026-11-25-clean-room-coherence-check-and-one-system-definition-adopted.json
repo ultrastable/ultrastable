@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-25-clean-room-coherence-check-and-one-system-definition-adopted",
+  "kind": "decision",
+  "date": "2026-11-25",
+  "title": "Clean room, coherence check and one system definition adopted",
+  "body": "Evidence: cleanroom --run passed 144 of 144 ticks with the sandbox deleted; coherence --check ok; seed tests 86 passed. Code: foundation/cleanroom.py, foundation/coherence.py, seed/doctrine/system.json.",
+  "probe": "file:foundation/cleanroom.py",
+  "session": "session_0156nqDt45sgCvTN3QJuDs8V"
+ },
+ "kind": "decision",
+ "title": "Clean room, coherence check and one system definition adopted",
+ "session": "session_0156nqDt45sgCvTN3QJuDs8V"
+}
