@@ -1,0 +1,79 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/detectors.schema.json",
+ "title": "detectors.json",
+ "description": "Inferred from detectors.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "detectors": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "cwd": {
+      "type": "string"
+     },
+     "failure_mode": {
+      "type": "string"
+     },
+     "id": {
+      "type": "string"
+     },
+     "json_ok": {
+      "type": "boolean"
+     },
+     "kind": {
+      "type": "string"
+     },
+     "owner": {
+      "type": "string"
+     },
+     "remedy": {
+      "type": "string"
+     },
+     "root_cause": {
+      "type": "string"
+     },
+     "run": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "spec": {
+      "type": "string"
+     },
+     "timeout": {
+      "type": "integer"
+     },
+     "url": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "failure_mode",
+     "id",
+     "kind",
+     "owner",
+     "remedy",
+     "root_cause"
+    ]
+   }
+  },
+  "version": {
+   "type": "string"
+  },
+  "workflow": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "_doc",
+  "detectors",
+  "version",
+  "workflow"
+ ]
+}

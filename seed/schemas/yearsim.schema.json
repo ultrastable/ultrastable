@@ -1,0 +1,87 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/seed/yearsim.schema.json",
+ "title": "yearsim.json",
+ "description": "Inferred from yearsim.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "days": {
+   "type": "integer"
+  },
+  "fatal_after_days": {
+   "type": "integer"
+  },
+  "fatal_floor": {
+   "type": "number"
+  },
+  "faults": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "basis": {
+      "type": "string"
+     },
+     "drill": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "duration_days": {
+      "type": "array",
+      "items": {
+       "type": "number"
+      }
+     },
+     "id": {
+      "type": "string"
+     },
+     "rate_from": {
+      "type": "string"
+     },
+     "rate_per_year": {
+      "type": "integer"
+     },
+     "what": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "basis",
+     "drill",
+     "duration_days",
+     "id",
+     "rate_per_year",
+     "what"
+    ]
+   }
+  },
+  "runs": {
+   "type": "integer"
+  },
+  "scheduled": {
+   "type": "array"
+  },
+  "seed": {
+   "type": "string"
+  },
+  "target_days": {
+   "type": "integer"
+  }
+ },
+ "required": [
+  "_doc",
+  "days",
+  "fatal_after_days",
+  "fatal_floor",
+  "faults",
+  "runs",
+  "scheduled",
+  "seed",
+  "target_days"
+ ]
+}

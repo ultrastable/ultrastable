@@ -1,0 +1,23 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/supply-chain.schema.json",
+ "title": "supply-chain.json",
+ "description": "Inferred from supply-chain.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "about": {
+   "type": "string"
+  },
+  "rule": {
+   "type": "string"
+  },
+  "unpinned_baseline": {
+   "type": "integer"
+  }
+ },
+ "required": [
+  "about",
+  "rule",
+  "unpinned_baseline"
+ ]
+}

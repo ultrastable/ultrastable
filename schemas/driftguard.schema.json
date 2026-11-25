@@ -1,0 +1,171 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/driftguard.schema.json",
+ "title": "driftguard.json",
+ "description": "Inferred from driftguard.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "account_drift": {
+   "type": "object",
+   "properties": {
+    "retired_account_sha256": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "cron_budget": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "external": {
+     "type": "object",
+     "properties": {
+      "tenant-ps-web": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "ultrastable-did-it-work": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "ultrastable-seed-second-tenant": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "ultrastable-uptime": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      }
+     }
+    },
+    "headroom": {
+     "type": "number"
+    },
+    "limits": {
+     "type": "object",
+     "properties": {
+      "free": {
+       "type": "integer"
+      },
+      "paid": {
+       "type": "integer"
+      }
+     }
+    },
+    "pulse_external": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "_why": {
+        "type": "string"
+       },
+       "id": {
+        "type": "string"
+       },
+       "url": {
+        "type": "string"
+       }
+      }
+     }
+    }
+   }
+  },
+  "empty_loop": {
+   "type": "object",
+   "properties": {
+    "max_empty_per_branch": {
+     "type": "integer"
+    }
+   }
+  },
+  "incidents": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "check": {
+      "type": "string"
+     },
+     "class": {
+      "type": "string"
+     },
+     "code": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "detector": {
+      "type": "string"
+     },
+     "failure_mode": {
+      "type": "string"
+     },
+     "fix": {
+      "type": "string"
+     },
+     "id": {
+      "type": "string"
+     },
+     "root_cause": {
+      "type": "string"
+     },
+     "what": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "check",
+     "class",
+     "code",
+     "detector",
+     "failure_mode",
+     "fix",
+     "id",
+     "root_cause",
+     "what"
+    ]
+   }
+  },
+  "missed_trigger": {
+   "type": "object",
+   "properties": {
+    "grace_minutes": {
+     "type": "integer"
+    },
+    "window_hours": {
+     "type": "integer"
+    }
+   }
+  },
+  "version": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "_doc",
+  "account_drift",
+  "cron_budget",
+  "empty_loop",
+  "incidents",
+  "missed_trigger",
+  "version"
+ ]
+}

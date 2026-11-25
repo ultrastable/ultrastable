@@ -1,0 +1,95 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/promotion.schema.json",
+ "title": "promotion.json",
+ "description": "Inferred from promotion.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "channels": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "audience": {
+      "type": "string"
+     },
+     "consumer": {
+      "type": "string"
+     },
+     "cost": {
+      "type": "integer"
+     },
+     "form": {
+      "type": "string"
+     },
+     "gate": {
+      "type": "string"
+     },
+     "id": {
+      "type": "string"
+     },
+     "kind": {
+      "type": "string"
+     },
+     "needs": {
+      "type": "string"
+     },
+     "probe": {
+      "type": "string"
+     },
+     "reach": {
+      "type": "integer"
+     },
+     "requires": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "route": {
+      "type": "string"
+     },
+     "signal": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "consumer",
+     "cost",
+     "id",
+     "kind",
+     "needs",
+     "reach",
+     "requires",
+     "signal"
+    ]
+   }
+  },
+  "gates_allowed": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "outcomes_file": {
+   "type": "string"
+  },
+  "plan_file": {
+   "type": "string"
+  },
+  "weights_file": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "_doc",
+  "channels",
+  "gates_allowed",
+  "outcomes_file",
+  "plan_file",
+  "weights_file"
+ ]
+}

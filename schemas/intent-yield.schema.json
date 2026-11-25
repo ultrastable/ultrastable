@@ -1,0 +1,101 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/intent-yield.schema.json",
+ "title": "intent-yield.json",
+ "description": "Inferred from intent-yield.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "history": {
+   "type": "string"
+  },
+  "history_keep": {
+   "type": "integer"
+  },
+  "max_drop_share": {
+   "type": "number"
+  },
+  "max_items_per_run": {
+   "type": "integer"
+  },
+  "min_intents": {
+   "type": "integer"
+  },
+  "owner_names": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "prediction_floor": {
+   "type": "number"
+  },
+  "probe_pattern": {
+   "type": "string"
+  },
+  "probe_timeout_s": {
+   "type": "integer"
+  },
+  "restatement_jaccard": {
+   "type": "number"
+  },
+  "restatement_min_words": {
+   "type": "integer"
+  },
+  "rule": {
+   "type": "string"
+  },
+  "run_budget_s": {
+   "type": "integer"
+  },
+  "settle_days": {
+   "type": "integer"
+  },
+  "site_data": {
+   "type": "string"
+  },
+  "sources": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "stale_hours": {
+   "type": "integer"
+  },
+  "state": {
+   "type": "string"
+  },
+  "target_kept_share": {
+   "type": "number"
+  },
+  "words_per_second": {
+   "type": "number"
+  }
+ },
+ "required": [
+  "_doc",
+  "history",
+  "history_keep",
+  "max_drop_share",
+  "max_items_per_run",
+  "min_intents",
+  "owner_names",
+  "prediction_floor",
+  "probe_pattern",
+  "probe_timeout_s",
+  "restatement_jaccard",
+  "restatement_min_words",
+  "rule",
+  "run_budget_s",
+  "settle_days",
+  "site_data",
+  "sources",
+  "stale_hours",
+  "state",
+  "target_kept_share",
+  "words_per_second"
+ ]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "Q-STD-changelog-semver",
+  "title": "Q-STD-changelog-semver: Generate CHANGELOG.md (Keep a Changelog) and SemVer releases from Conventional Commits",
+  "body": "**Owner:** executor\n**Trigger:** OPEN-STANDARDS-1 register entry `keep-a-changelog-semver` is planned or partial in seed/standards/standards.json\n**Done check:** cmd:python3 -m foundation openstd --probe keep-a-changelog-semver\n**Status:** open\n\nRender CHANGELOG.md from ops/changelog.json public rows grouped by Added/Changed/Fixed using the Conventional Commits type (seed/scripts/openstd.py conventional), and derive the next SemVer from feat/fix/! markers; have the lane title its own PRs as `type(scope): subject`.\n\n**Prediction:** conventional_commit_share >= 0.9 within 336 h\n\n**Out of scope:** Rewriting old commit messages.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation openstd --probe keep-a-changelog-semver` exits 0.\n",
+  "labels": [
+    "p2",
+    "agent-ready",
+    "standards"
+  ],
+  "milestone": "Now",
+  "workstream": "Open standards"
+}

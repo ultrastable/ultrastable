@@ -1,0 +1,142 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/thought.schema.json",
+ "title": "thought.json",
+ "description": "Inferred from thought.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "arm": {
+   "type": "string"
+  },
+  "cadence_days": {
+   "type": "integer"
+  },
+  "channels": {
+   "type": "object",
+   "properties": {
+    "bluesky": {
+     "type": "object",
+     "properties": {
+      "limit": {
+       "type": "integer"
+      }
+     }
+    },
+    "linkedin": {
+     "type": "object",
+     "properties": {
+      "limit": {
+       "type": "integer"
+      }
+     }
+    },
+    "mastodon": {
+     "type": "object",
+     "properties": {
+      "limit": {
+       "type": "integer"
+      }
+     }
+    }
+   }
+  },
+  "consent": {
+   "type": "object",
+   "properties": {
+    "at": {
+     "type": "string"
+    },
+    "by": {
+     "type": "string"
+    },
+    "scope": {
+     "type": "string"
+    },
+    "source": {
+     "type": "string"
+    }
+   }
+  },
+  "guard": {
+   "type": "object",
+   "properties": {
+    "blocked_patterns": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "required_any_link": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "hook": {
+   "type": "object",
+   "properties": {
+    "long": {
+     "type": "string"
+    },
+    "medium": {
+     "type": "string"
+    },
+    "required": {
+     "type": "string"
+    },
+    "short": {
+     "type": "string"
+    }
+   }
+  },
+  "log": {
+   "type": "string"
+  },
+  "max_findings_long": {
+   "type": "integer"
+  },
+  "ps": {
+   "type": "object",
+   "properties": {
+    "name": {
+     "type": "string"
+    },
+    "url": {
+     "type": "string"
+    },
+    "what": {
+     "type": "string"
+    }
+   }
+  },
+  "repost_days": {
+   "type": "integer"
+  },
+  "site": {
+   "type": "string"
+  },
+  "version": {
+   "type": "integer"
+  }
+ },
+ "required": [
+  "_doc",
+  "arm",
+  "cadence_days",
+  "channels",
+  "consent",
+  "guard",
+  "hook",
+  "log",
+  "max_findings_long",
+  "ps",
+  "repost_days",
+  "site",
+  "version"
+ ]
+}

@@ -1,0 +1,222 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/resilience.schema.json",
+ "title": "resilience.json",
+ "description": "Inferred from resilience.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "beat_fresh_s": {
+   "type": "integer"
+  },
+  "escalate_after_failed_restarts": {
+   "type": "integer"
+  },
+  "item_prefix": {
+   "type": "string"
+  },
+  "ledger": {
+   "type": "string"
+  },
+  "marker": {
+   "type": "string"
+  },
+  "max_restarts_per_clock_per_day": {
+   "type": "integer"
+  },
+  "max_restarts_per_run": {
+   "type": "integer"
+  },
+  "restart_routes": {
+   "type": "object",
+   "properties": {
+    "criticality-loop": {
+     "type": "object",
+     "properties": {
+      "idempotent": {
+       "type": "boolean"
+      },
+      "kind": {
+       "type": "string"
+      },
+      "urls": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "why": {
+       "type": "string"
+      }
+     }
+    },
+    "replication-ledger-beat": {
+     "type": "object",
+     "properties": {
+      "idempotent": {
+       "type": "boolean"
+      },
+      "kind": {
+       "type": "string"
+      },
+      "urls": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "why": {
+       "type": "string"
+      }
+     }
+    },
+    "tick-heartbeat": {
+     "type": "object",
+     "properties": {
+      "idempotent": {
+       "type": "boolean"
+      },
+      "kind": {
+       "type": "string"
+      },
+      "urls": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "why": {
+       "type": "string"
+      }
+     }
+    },
+    "unlearn-beat": {
+     "type": "object",
+     "properties": {
+      "idempotent": {
+       "type": "boolean"
+      },
+      "kind": {
+       "type": "string"
+      },
+      "urls": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "why": {
+       "type": "string"
+      }
+     }
+    },
+    "what-works-beat": {
+     "type": "object",
+     "properties": {
+      "idempotent": {
+       "type": "boolean"
+      },
+      "kind": {
+       "type": "string"
+      },
+      "urls": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "why": {
+       "type": "string"
+      }
+     }
+    }
+   }
+  },
+  "site_probes": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "string"
+     },
+     "repo": {
+      "type": "string"
+     },
+     "url": {
+      "type": "string"
+     },
+     "why": {
+      "type": "string"
+     },
+     "workflow": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "stalled_after_intervals": {
+   "type": "integer"
+  },
+  "version": {
+   "type": "string"
+  },
+  "watchers": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "expected_interval_s": {
+      "type": "integer"
+     },
+     "host": {
+      "type": "string"
+     },
+     "id": {
+      "type": "string"
+     },
+     "loop": {
+      "type": "string"
+     },
+     "restarted_by": {
+      "type": "string"
+     },
+     "watched_by": {
+      "type": "string"
+     },
+     "what": {
+      "type": "string"
+     },
+     "workflow": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "expected_interval_s",
+     "host",
+     "id",
+     "restarted_by",
+     "watched_by",
+     "what"
+    ]
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "beat_fresh_s",
+  "escalate_after_failed_restarts",
+  "item_prefix",
+  "ledger",
+  "marker",
+  "max_restarts_per_clock_per_day",
+  "max_restarts_per_run",
+  "restart_routes",
+  "site_probes",
+  "stalled_after_intervals",
+  "version",
+  "watchers"
+ ]
+}

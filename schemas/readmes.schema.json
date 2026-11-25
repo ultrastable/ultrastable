@@ -1,0 +1,106 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/readmes.schema.json",
+ "title": "readmes.json",
+ "description": "Inferred from readmes.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "archived_pointers": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "must_not_point_to": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "must_point_to": {
+      "type": "string"
+     },
+     "repo": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "must_point_to",
+     "repo"
+    ]
+   }
+  },
+  "documents": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "path": {
+      "type": "string"
+     },
+     "sections": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     }
+    },
+    "required": [
+     "path",
+     "sections"
+    ]
+   }
+  },
+  "dynamic_prefixes": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "site_globs": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "site_host": {
+   "type": "string"
+  },
+  "stale_globs": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "stale_terms": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "pattern": {
+      "type": "string"
+     },
+     "why": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "pattern",
+     "why"
+    ]
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "archived_pointers",
+  "documents",
+  "dynamic_prefixes",
+  "site_globs",
+  "site_host",
+  "stale_globs",
+  "stale_terms"
+ ]
+}

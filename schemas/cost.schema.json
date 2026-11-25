@@ -1,0 +1,159 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/cost.schema.json",
+ "title": "cost.json",
+ "description": "Inferred from cost.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "account_id": {
+   "type": "string"
+  },
+  "baseline_2026-11-13": {
+   "type": "object",
+   "properties": {
+    "ai_neurons_by_model": {
+     "type": "object",
+     "properties": {
+      "@cf/deepseek-ai/deepseek-v4.1-flash-1017": {
+       "type": "integer"
+      },
+      "@cf/moonshotai/kimi-k2.6": {
+       "type": "integer"
+      },
+      "@cf/moonshotai/kimi-k2.7-code": {
+       "type": "integer"
+      },
+      "@cf/openai/gpt-oss-120b": {
+       "type": "integer"
+      },
+      "@cf/zai-org/glm-5.3": {
+       "type": "integer"
+      },
+      "@cf/zai-org/glm-5.3-flash": {
+       "type": "integer"
+      }
+     }
+    },
+    "d1_rows_read": {
+     "type": "object",
+     "properties": {
+      "living-paper": {
+       "type": "integer"
+      },
+      "personal-life": {
+       "type": "integer"
+      },
+      "q08-signal": {
+       "type": "integer"
+      },
+      "q08-trades": {
+       "type": "integer"
+      },
+      "qnfo-audit": {
+       "type": "integer"
+      },
+      "qnfo-graph": {
+       "type": "integer"
+      }
+     }
+    },
+    "qnfo_audit_rows_per_read_query": {
+     "type": "integer"
+    },
+    "window": {
+     "type": "string"
+    }
+   }
+  },
+  "budgets": {
+   "type": "object",
+   "properties": {
+    "note": {
+     "type": "string"
+    },
+    "source": {
+     "type": "string"
+    }
+   }
+  },
+  "closing_probe": {
+   "type": "string"
+  },
+  "findings": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "ai": {
+      "type": "string"
+     },
+     "cause": {
+      "type": "string"
+     },
+     "db": {
+      "type": "string"
+     },
+     "id": {
+      "type": "string"
+     },
+     "migration": {
+      "type": "string"
+     },
+     "owner": {
+      "type": "string"
+     },
+     "remedy": {
+      "type": "string"
+     },
+     "status": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "remedy",
+     "status"
+    ]
+   }
+  },
+  "standing_goal": {
+   "type": "object",
+   "properties": {
+    "id": {
+     "type": "string"
+    },
+    "measures": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "north_star": {
+     "type": "string"
+    },
+    "priority_order": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "version": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "_doc",
+  "account_id",
+  "baseline_2026-11-13",
+  "budgets",
+  "closing_probe",
+  "findings",
+  "standing_goal",
+  "version"
+ ]
+}

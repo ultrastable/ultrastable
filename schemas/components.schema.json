@@ -1,0 +1,184 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/components.schema.json",
+ "title": "components.json",
+ "description": "Inferred from components.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "components": {
+   "type": "object",
+   "additionalProperties": {
+    "type": "object",
+    "properties": {
+     "impl": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "proof": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "what": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "impl",
+     "proof",
+     "what"
+    ]
+   }
+  },
+  "edges": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "from": {
+      "type": "string"
+     },
+     "probe": {
+      "type": "string"
+     },
+     "to": {
+      "type": "string"
+     },
+     "via": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "from",
+     "probe",
+     "to",
+     "via"
+    ]
+   }
+  },
+  "objections": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "answer": {
+      "type": "string"
+     },
+     "cites": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "id": {
+      "type": "string"
+     },
+     "nobody_offers": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "objection": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "answer",
+     "cites",
+     "id",
+     "nobody_offers",
+     "objection"
+    ]
+   }
+  },
+  "users": {
+   "type": "object",
+   "properties": {
+    "non-technical-founder": {
+     "type": "object",
+     "properties": {
+      "stories": {
+       "type": "array",
+       "items": {
+        "type": "object"
+       }
+      },
+      "who": {
+       "type": "string"
+      }
+     }
+    },
+    "platform-governance-lead": {
+     "type": "object",
+     "properties": {
+      "stories": {
+       "type": "array",
+       "items": {
+        "type": "object"
+       }
+      },
+      "who": {
+       "type": "string"
+      }
+     }
+    },
+    "research-lab": {
+     "type": "object",
+     "properties": {
+      "stories": {
+       "type": "array",
+       "items": {
+        "type": "object"
+       }
+      },
+      "who": {
+       "type": "string"
+      }
+     }
+    },
+    "small-team-startup": {
+     "type": "object",
+     "properties": {
+      "stories": {
+       "type": "array",
+       "items": {
+        "type": "object"
+       }
+      },
+      "who": {
+       "type": "string"
+      }
+     }
+    },
+    "solo-developer-maintainer": {
+     "type": "object",
+     "properties": {
+      "stories": {
+       "type": "array",
+       "items": {
+        "type": "object"
+       }
+      },
+      "who": {
+       "type": "string"
+      }
+     }
+    }
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "components",
+  "edges",
+  "objections",
+  "users"
+ ]
+}

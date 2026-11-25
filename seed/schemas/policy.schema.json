@@ -1,0 +1,303 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/seed/policy.schema.json",
+ "title": "policy.json",
+ "description": "Inferred from policy.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "$schema_version": {
+   "type": "string"
+  },
+  "closed_loop": {
+   "type": "object",
+   "properties": {
+    "assume_external_input": {
+     "type": "boolean"
+    },
+    "assume_human_reader": {
+     "type": "boolean"
+    },
+    "assume_human_review": {
+     "type": "boolean"
+    },
+    "assume_owner_decision": {
+     "type": "boolean"
+    },
+    "enforced_by": {
+     "type": "string"
+    },
+    "every_artifact_has_a_consumer": {
+     "type": "boolean"
+    },
+    "every_loop_closes_by_system": {
+     "type": "boolean"
+    },
+    "id": {
+     "type": "string"
+    },
+    "loop_proceeds_on_default_while_waiting": {
+     "type": "boolean"
+    },
+    "memory_or_document_is_storage": {
+     "type": "boolean"
+    },
+    "rule": {
+     "type": "string"
+    },
+    "wait_on_person_allowed_only_for": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "wait_requires_default_in_effect": {
+     "type": "boolean"
+    }
+   }
+  },
+  "doc": {
+   "type": "string"
+  },
+  "growth": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "enforced_by": {
+     "type": "string"
+    },
+    "experiment_measure_after_days": {
+     "type": "integer"
+    },
+    "growth_priority_weight": {
+     "type": "integer"
+    },
+    "growth_share_floor": {
+     "type": "number"
+    },
+    "min_metrics_per_product": {
+     "type": "integer"
+    },
+    "owner_role": {
+     "type": "string"
+    },
+    "rollback_when": {
+     "type": "string"
+    }
+   }
+  },
+  "interrupt_gate": {
+   "type": "object",
+   "properties": {
+    "card_fields": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "examples": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "rule": {
+     "type": "string"
+    }
+   }
+  },
+  "ladder": {
+   "type": "object",
+   "properties": {
+    "ceiling_by_max_permission": {
+     "type": "object",
+     "properties": {
+      "execute": {
+       "type": "string"
+      },
+      "none": {
+       "type": "string"
+      },
+      "propose": {
+       "type": "string"
+      }
+     }
+    },
+    "demote_when": {
+     "type": "object",
+     "properties": {
+      "or_any": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "reliability_below": {
+       "type": "number"
+      }
+     }
+    },
+    "meaning": {
+     "type": "object",
+     "properties": {
+      "assisted": {
+       "type": "string"
+      },
+      "autonomous": {
+       "type": "string"
+      },
+      "delegated": {
+       "type": "string"
+      },
+      "observed": {
+       "type": "string"
+      },
+      "self-directed": {
+       "type": "string"
+      },
+      "self-extending": {
+       "type": "string"
+      },
+      "self-modifying": {
+       "type": "string"
+      }
+     }
+    },
+    "promote_when": {
+     "type": "object",
+     "properties": {
+      "min_outcomes": {
+       "type": "integer"
+      },
+      "min_reliability": {
+       "type": "number"
+      },
+      "no_hidden_failure_days": {
+       "type": "integer"
+      }
+     }
+    },
+    "rungs": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "transitions_act_by": {
+     "type": "string"
+    }
+   }
+  },
+  "standing_limits": {
+   "type": "object",
+   "properties": {
+    "doc": {
+     "type": "string"
+    },
+    "limits": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "standing_order": {
+   "type": "object",
+   "properties": {
+    "decide_implement_deploy_verify": {
+     "type": "boolean"
+    },
+    "decision_needs_code_consumer": {
+     "type": "boolean"
+    },
+    "enforced_by": {
+     "type": "string"
+    },
+    "id": {
+     "type": "string"
+    },
+    "present_decisions_to_owner": {
+     "type": "boolean"
+    },
+    "rule": {
+     "type": "string"
+    },
+    "thread_is_storage": {
+     "type": "boolean"
+    }
+   }
+  },
+  "surfaces": {
+   "type": "object",
+   "additionalProperties": {
+    "type": "object",
+    "properties": {
+     "actions": {
+      "type": "object",
+      "additionalProperties": {
+       "type": "object"
+      }
+     },
+     "doc": {
+      "type": "string"
+     },
+     "kill_switch": {
+      "type": "string"
+     },
+     "max_permission": {
+      "type": "string"
+     },
+     "start_rung": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "actions",
+     "doc",
+     "max_permission",
+     "start_rung"
+    ]
+   }
+  },
+  "trust": {
+   "type": "object",
+   "properties": {
+    "baseline": {
+     "type": "number"
+    },
+    "decay_per_idle_day": {
+     "type": "number"
+    },
+    "formula": {
+     "type": "string"
+    },
+    "never_reaches": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "prior_weight": {
+     "type": "integer"
+    },
+    "widens": {
+     "type": "string"
+    }
+   }
+  }
+ },
+ "required": [
+  "$schema_version",
+  "closed_loop",
+  "doc",
+  "growth",
+  "interrupt_gate",
+  "ladder",
+  "standing_limits",
+  "standing_order",
+  "surfaces",
+  "trust"
+ ]
+}

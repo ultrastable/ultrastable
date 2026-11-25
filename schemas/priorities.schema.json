@@ -1,0 +1,153 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/priorities.schema.json",
+ "title": "priorities.json",
+ "description": "Inferred from priorities.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "age_cap": {
+   "type": "integer"
+  },
+  "age_weight_per_day": {
+   "type": "number"
+  },
+  "constraints": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "active": {
+      "type": "boolean"
+     },
+     "goal": {
+      "type": "string"
+     },
+     "multiplier": {
+      "type": "number"
+     },
+     "signal": {
+      "type": "string"
+     },
+     "why": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "goal",
+     "multiplier",
+     "why"
+    ]
+   }
+  },
+  "goal_match_fields": {
+   "type": "string"
+  },
+  "goals": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "string"
+     },
+     "match": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "weight": {
+      "type": "integer"
+     },
+     "why": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "match",
+     "weight",
+     "why"
+    ]
+   }
+  },
+  "label_bonus": {
+   "type": "object",
+   "properties": {
+    "p0": {
+     "type": "integer"
+    },
+    "p1": {
+     "type": "integer"
+    },
+    "p2": {
+     "type": "integer"
+    },
+    "p3": {
+     "type": "integer"
+    }
+   }
+  },
+  "owner_held_pattern": {
+   "type": "string"
+  },
+  "pareto_bonus": {
+   "type": "integer"
+  },
+  "pins": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "bonus": {
+     "type": "integer"
+    },
+    "ids": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "secondary_share": {
+   "type": "number"
+  },
+  "size_divisor": {
+   "type": "object",
+   "properties": {
+    "L": {
+     "type": "number"
+    },
+    "M": {
+     "type": "number"
+    },
+    "S": {
+     "type": "number"
+    }
+   }
+  },
+  "unblocks_weight": {
+   "type": "integer"
+  }
+ },
+ "required": [
+  "_doc",
+  "age_cap",
+  "age_weight_per_day",
+  "constraints",
+  "goal_match_fields",
+  "goals",
+  "label_bonus",
+  "owner_held_pattern",
+  "pareto_bonus",
+  "pins",
+  "secondary_share",
+  "size_divisor",
+  "unblocks_weight"
+ ]
+}

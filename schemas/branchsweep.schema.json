@@ -1,0 +1,131 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/branchsweep.schema.json",
+ "title": "branchsweep.json",
+ "description": "Inferred from branchsweep.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "branch_cleanup": {
+   "type": "object",
+   "properties": {
+    "code": {
+     "type": "string"
+    },
+    "probe": {
+     "type": "string"
+    },
+    "rule": {
+     "type": "string"
+    },
+    "run_by": {
+     "type": "string"
+    }
+   }
+  },
+  "budget_seconds": {
+   "type": "integer"
+  },
+  "carried": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "max_missing_lines": {
+     "type": "integer"
+    },
+    "min_share": {
+     "type": "number"
+    },
+    "residue_prefixes": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "residue_suffixes": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "fleet_repos": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "gate": {
+   "type": "array",
+   "items": {
+    "type": "array",
+    "items": {
+     "type": "string"
+    }
+   }
+  },
+  "held": {
+   "type": "object",
+   "properties": {
+    "agent/Q-GROW-AGENT-DIRECTORIES-q-grow-agent-directories-grow-5-prepare": {
+     "type": "string"
+    }
+   }
+  },
+  "max_deleted_lines": {
+   "type": "integer"
+  },
+  "min_idle_hours": {
+   "type": "integer"
+  },
+  "port_owner": {
+   "type": "string"
+  },
+  "rejected": {
+   "type": "object",
+   "properties": {
+    "parked/claude/sync-dot-dirs": {
+     "type": "string"
+    },
+    "worker/git-in-cloudflare-1": {
+     "type": "string"
+    },
+    "worker/port-exec-1": {
+     "type": "string"
+    },
+    "worker/q-tick-deploy": {
+     "type": "string"
+    }
+   }
+  },
+  "state_branches": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "state_prefixes": {
+   "type": "array"
+  }
+ },
+ "required": [
+  "_doc",
+  "branch_cleanup",
+  "budget_seconds",
+  "carried",
+  "fleet_repos",
+  "gate",
+  "held",
+  "max_deleted_lines",
+  "min_idle_hours",
+  "port_owner",
+  "rejected",
+  "state_branches",
+  "state_prefixes"
+ ]
+}

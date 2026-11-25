@@ -10,6 +10,7 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-25
 
+- 2026-11-25: OPEN-STANDARDS-1: every doctrine file, seed config and instance manifest has a JSON Schema in a SchemaStore-format catalog (`openstd --check`); CloudEvents 1.0 envelope (`seed/worker/src/cloudevents.js`); provenance exports as W3C PROV and CloudEvents; `catalog-info.yaml` (Backstage) generated from the topology; remaining standards are `Q-STD-*` items closed by `openstd --probe`
 - 2026-11-25: BOOTPROOF-1: seed kernel closure audit and daily scratch bootstrap probe (#2237)
 - 2026-11-25: Fix failure-audit evidence push and unroutable detectors (#2242)
 - 2026-11-25: Root-cause launch-day failures: hold merges with no checks, flag owner-deferred deploys, catch spelled-out claims (#2232)

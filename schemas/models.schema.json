@@ -1,0 +1,86 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/models.schema.json",
+ "title": "models.json",
+ "description": "Inferred from models.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "available": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "exclude": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "fallback_order": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "measured_at": {
+   "type": "string"
+  },
+  "plan": {
+   "type": "string"
+  },
+  "refused": {
+   "type": "object",
+   "properties": {
+    "@cf/deepseek-ai/deepseek-v4.1-flash-1017": {
+     "type": "string"
+    },
+    "@cf/zai-org/glm-5.3": {
+     "type": "string"
+    }
+   }
+  },
+  "retired": {
+   "type": "object",
+   "additionalProperties": {
+    "type": "object",
+    "properties": {
+     "evidence": {
+      "type": "string"
+     },
+     "successor": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "evidence",
+     "successor"
+    ]
+   }
+  },
+  "scan_globs": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "version": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "_doc",
+  "available",
+  "exclude",
+  "fallback_order",
+  "measured_at",
+  "plan",
+  "refused",
+  "retired",
+  "scan_globs",
+  "version"
+ ]
+}

@@ -1,0 +1,285 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/claims.schema.json",
+ "title": "claims.json",
+ "description": "Inferred from claims.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "claims": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "bound_by": {
+      "type": "string"
+     },
+     "id": {
+      "type": "string"
+     },
+     "of": {
+      "type": "string"
+     },
+     "probe": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "surface": {
+      "type": "string"
+     },
+     "text": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "probe",
+     "surface",
+     "text"
+    ]
+   }
+  },
+  "coverage": {
+   "type": "object",
+   "properties": {
+    "floor": {
+     "type": "number"
+    },
+    "live_pages": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "patterns": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "skip": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "skip_reasons": {
+     "type": "object",
+     "properties": {
+      "^workers/": {
+       "type": "string"
+      },
+      "intent-yield-data\\.js": {
+       "type": "string"
+      }
+     }
+    },
+    "src_globs": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "src_unbound_budget": {
+     "type": "integer"
+    },
+    "target": {
+     "type": "number"
+    }
+   }
+  },
+  "generated": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "string"
+     },
+     "measure": {
+      "type": "object",
+      "properties": {
+       "js": {
+        "type": "object"
+       },
+       "n": {
+        "type": "object"
+       },
+       "py": {
+        "type": "object"
+       }
+      }
+     },
+     "surface": {
+      "type": "string"
+     },
+     "template": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "measure",
+     "surface",
+     "template"
+    ]
+   }
+  },
+  "inventory": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "exempt": {
+      "type": "object",
+      "properties": {
+       "/dashboard": {
+        "type": "string"
+       }
+      }
+     },
+     "id": {
+      "type": "string"
+     },
+     "mention": {
+      "type": "string"
+     },
+     "note": {
+      "type": "string"
+     },
+     "set": {
+      "type": "object",
+      "properties": {
+       "file": {
+        "type": "string"
+       },
+       "regex": {
+        "type": "string"
+       },
+       "within": {
+        "type": "string"
+       }
+      }
+     },
+     "surfaces": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     }
+    }
+   }
+  },
+  "ledgers": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "string"
+     },
+     "name": {
+      "type": "string"
+     },
+     "probe": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "name",
+     "probe"
+    ]
+   }
+  },
+  "live": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "contains": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "id": {
+      "type": "string"
+     },
+     "url": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "contains",
+     "id",
+     "url"
+    ]
+   }
+  },
+  "modules": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "check": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "generator": {
+      "type": "string"
+     },
+     "header": {
+      "type": "string"
+     },
+     "id": {
+      "type": "string"
+     },
+     "probe": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "source": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "surface": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "generator",
+     "header",
+     "id",
+     "probe",
+     "source",
+     "surface"
+    ]
+   }
+  },
+  "version": {
+   "type": "integer"
+  }
+ },
+ "required": [
+  "_doc",
+  "claims",
+  "coverage",
+  "generated",
+  "inventory",
+  "ledgers",
+  "live",
+  "modules",
+  "version"
+ ]
+}

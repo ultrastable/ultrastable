@@ -1,0 +1,85 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/scout.schema.json",
+ "title": "scout.json",
+ "description": "Inferred from scout.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "max_per_run": {
+   "type": "integer"
+  },
+  "needs": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "sources": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "string"
+     },
+     "kind": {
+      "type": "string"
+     },
+     "topic": {
+      "type": "string"
+     },
+     "url": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "kind",
+     "topic",
+     "url"
+    ]
+   }
+  },
+  "threshold": {
+   "type": "number"
+  },
+  "weight": {
+   "type": "object",
+   "properties": {
+    "boost": {
+     "type": "number"
+    },
+    "ceiling": {
+     "type": "number"
+    },
+    "decay": {
+     "type": "number"
+    },
+    "floor": {
+     "type": "number"
+    },
+    "initial": {
+     "type": "number"
+    },
+    "quiet_passes": {
+     "type": "integer"
+    }
+   }
+  },
+  "window_days": {
+   "type": "integer"
+  }
+ },
+ "required": [
+  "_doc",
+  "max_per_run",
+  "needs",
+  "sources",
+  "threshold",
+  "weight",
+  "window_days"
+ ]
+}

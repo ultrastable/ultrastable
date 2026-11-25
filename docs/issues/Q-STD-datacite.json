@@ -1,0 +1,12 @@
+{
+  "id": "Q-STD-datacite",
+  "title": "Q-STD-datacite: Read replications by DOI from Crossref and publish ledger records with DataCite metadata",
+  "body": "**Owner:** executor\n**Trigger:** OPEN-STANDARDS-1 register entry `datacite-crossref` is planned or partial in seed/standards/standards.json\n**Done check:** cmd:python3 -m foundation openstd --probe datacite-crossref\n**Status:** open\n\nIn the replication-ledger tenant repository, resolve each finding and replication by DOI through the Crossref REST API and serve each ledger record with DataCite Metadata Schema 4.5 fields and schema.org ScholarlyArticle JSON-LD.\n\n**Prediction:** ledger_records_with_doi_share >= 0.8 within 336 h\n\n**Out of scope:** Minting DOIs (an identity-bound registration).\n\nsize: M\n\n**Closing probe:** `python3 -m foundation openstd --probe datacite-crossref` exits 0.\n",
+  "labels": [
+    "p2",
+    "agent-ready",
+    "standards"
+  ],
+  "milestone": "Now",
+  "workstream": "Open standards"
+}

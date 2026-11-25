@@ -1,0 +1,394 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/uiux.schema.json",
+ "title": "uiux.json",
+ "description": "Inferred from uiux.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "audit_report": {
+   "type": "string"
+  },
+  "audits": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "a11y": {
+     "type": "string"
+    },
+    "boundary": {
+     "type": "string"
+    },
+    "brand": {
+     "type": "string"
+    },
+    "claims": {
+     "type": "string"
+    },
+    "copy": {
+     "type": "string"
+    },
+    "design": {
+     "type": "string"
+    },
+    "happy-path": {
+     "type": "string"
+    },
+    "path-drop": {
+     "type": "string"
+    },
+    "performance": {
+     "type": "string"
+    },
+    "structure": {
+     "type": "string"
+    },
+    "visual-drift": {
+     "type": "string"
+    }
+   }
+  },
+  "baseline": {
+   "type": "string"
+  },
+  "boundary": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "exempt_paths": {
+     "type": "object",
+     "properties": {
+      "/claims": {
+       "type": "string"
+      },
+      "/dashboard": {
+       "type": "string"
+      },
+      "/dashboard-owner": {
+       "type": "string"
+      },
+      "/engineers": {
+       "type": "string"
+      },
+      "/how": {
+       "type": "string"
+      },
+      "/live": {
+       "type": "string"
+      },
+      "/ops": {
+       "type": "string"
+      },
+      "/org": {
+       "type": "string"
+      },
+      "/roadmap": {
+       "type": "string"
+      }
+     }
+    },
+    "forbidden": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "copy": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "max_h1_words": {
+     "type": "integer"
+    },
+    "placeholders": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "essential_variables": {
+   "type": "object",
+   "properties": {
+    "happy_paths": {
+     "type": "string"
+    },
+    "ui_findings": {
+     "type": "string"
+    }
+   }
+  },
+  "experiments": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "defaults": {
+     "type": "object",
+     "properties": {}
+    },
+    "guard_tolerance": {
+     "type": "number"
+    },
+    "measurable_guards": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "fresh_days": {
+   "type": "integer"
+  },
+  "funnels": {
+   "type": "string"
+  },
+  "id": {
+   "type": "string"
+  },
+  "item": {
+   "type": "object",
+   "properties": {
+    "labels": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "max_new_per_run": {
+     "type": "integer"
+    },
+    "max_pages_listed": {
+     "type": "integer"
+    },
+    "owner": {
+     "type": "string"
+    },
+    "workstream": {
+     "type": "string"
+    }
+   }
+  },
+  "item_prefix": {
+   "type": "string"
+  },
+  "ledger": {
+   "type": "string"
+  },
+  "marker": {
+   "type": "string"
+  },
+  "paths": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "baseline_min_days": {
+     "type": "integer"
+    },
+    "drop_ratio": {
+     "type": "number"
+    },
+    "extra": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "audience": {
+        "type": "string"
+       },
+       "entry": {
+        "type": "string"
+       },
+       "id": {
+        "type": "string"
+       },
+       "label": {
+        "type": "string"
+       },
+       "steps": {
+        "type": "array"
+       }
+      },
+      "required": [
+       "audience",
+       "entry",
+       "id",
+       "label",
+       "steps"
+      ]
+     }
+    },
+    "min_entries": {
+     "type": "integer"
+    },
+    "stale_after_days": {
+     "type": "integer"
+    },
+    "window_days": {
+     "type": "integer"
+    }
+   }
+  },
+  "performance": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "dom_nodes": {
+     "type": "integer"
+    },
+    "html_bytes": {
+     "type": "integer"
+    },
+    "inline_script_bytes": {
+     "type": "integer"
+    },
+    "live": {
+     "type": "object",
+     "properties": {
+      "cls": {
+       "type": "number"
+      },
+      "lcp_ms": {
+       "type": "integer"
+      },
+      "ttfb_ms": {
+       "type": "integer"
+      }
+     }
+    }
+   }
+  },
+  "served": {
+   "type": "string"
+  },
+  "status": {
+   "type": "string"
+  },
+  "structure": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "exempt_primary": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "max_primary_actions": {
+     "type": "integer"
+    },
+    "primary_selector": {
+     "type": "string"
+    },
+    "single_h1": {
+     "type": "boolean"
+    }
+   }
+  },
+  "surfaces": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "hosts": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "schemes": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "tenants_from": {
+     "type": "string"
+    },
+    "viewports": {
+     "type": "array",
+     "items": {
+      "type": "array",
+      "items": {
+       "type": [
+        "integer",
+        "string"
+       ]
+      }
+     }
+    }
+   }
+  },
+  "version": {
+   "type": "string"
+  },
+  "visual": {
+   "type": "object",
+   "properties": {
+    "_baseline_roll": {
+     "type": "string"
+    },
+    "_doc": {
+     "type": "string"
+    },
+    "max_baseline_days": {
+     "type": "integer"
+    },
+    "max_elements": {
+     "type": "integer"
+    },
+    "min_similarity": {
+     "type": "number"
+    },
+    "tolerance_px": {
+     "type": "integer"
+    }
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "audit_report",
+  "audits",
+  "baseline",
+  "boundary",
+  "copy",
+  "essential_variables",
+  "experiments",
+  "fresh_days",
+  "funnels",
+  "id",
+  "item",
+  "item_prefix",
+  "ledger",
+  "marker",
+  "paths",
+  "performance",
+  "served",
+  "status",
+  "structure",
+  "surfaces",
+  "version",
+  "visual"
+ ]
+}

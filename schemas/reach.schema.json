@@ -1,0 +1,225 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/reach.schema.json",
+ "title": "reach.json",
+ "description": "Inferred from reach.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "acquisition": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "channel": {
+      "type": "string"
+     },
+     "connect": {
+      "type": "string"
+     },
+     "note": {
+      "type": "string"
+     },
+     "secrets": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     }
+    },
+    "required": [
+     "channel",
+     "connect",
+     "note",
+     "secrets"
+    ]
+   }
+  },
+  "arms": {
+   "type": "object",
+   "additionalProperties": {
+    "type": "object",
+    "properties": {
+     "path": {
+      "type": "string"
+     },
+     "what": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "path",
+     "what"
+    ]
+   }
+  },
+  "attention": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "credential_free": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "evidence_window_days": {
+     "type": "integer"
+    },
+    "no_mentions": {
+     "type": "boolean"
+    },
+    "reach_url": {
+     "type": "string"
+    },
+    "self_origins": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "consent": {
+   "type": "object",
+   "properties": {
+    "at": {
+     "type": "string"
+    },
+    "by": {
+     "type": "string"
+    },
+    "scope": {
+     "type": "string"
+    },
+    "source": {
+     "type": "string"
+    }
+   }
+  },
+  "evergreen": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "arm": {
+      "type": "string"
+     },
+     "id": {
+      "type": "string"
+     },
+     "text": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "arm",
+     "id",
+     "text"
+    ]
+   }
+  },
+  "lookback_days": {
+   "type": "integer"
+  },
+  "max_new_per_run": {
+   "type": "integer"
+  },
+  "owned_domains": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "ps_path_prefixes": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "raise_factor": {
+   "type": "number"
+  },
+  "raise_when_met_runs": {
+   "type": "integer"
+  },
+  "revert_if_total_below": {
+   "type": "number"
+  },
+  "search_hosts": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "site": {
+   "type": "string"
+  },
+  "social_hosts": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "targets": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "direction": {
+      "type": "string"
+     },
+     "floor": {
+      "type": "integer"
+     },
+     "id": {
+      "type": "string"
+     },
+     "what": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "direction",
+     "floor",
+     "id",
+     "what"
+    ]
+   }
+  },
+  "version": {
+   "type": "string"
+  },
+  "weight_bounds": {
+   "type": "array",
+   "items": {
+    "type": "number"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "acquisition",
+  "arms",
+  "attention",
+  "consent",
+  "evergreen",
+  "lookback_days",
+  "max_new_per_run",
+  "owned_domains",
+  "ps_path_prefixes",
+  "raise_factor",
+  "raise_when_met_runs",
+  "revert_if_total_below",
+  "search_hosts",
+  "site",
+  "social_hosts",
+  "targets",
+  "version",
+  "weight_bounds"
+ ]
+}

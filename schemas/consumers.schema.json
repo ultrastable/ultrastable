@@ -1,0 +1,45 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/consumers.schema.json",
+ "title": "consumers.json",
+ "description": "Inferred from consumers.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "artifacts": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "consumer": {
+      "type": "string"
+     },
+     "glob": {
+      "type": "string"
+     },
+     "reads": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "consumer",
+     "glob",
+     "reads"
+    ]
+   }
+  },
+  "roots": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "artifacts",
+  "roots"
+ ]
+}

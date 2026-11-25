@@ -1,0 +1,105 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/seed-lifecycle.schema.json",
+ "title": "seed-lifecycle.json",
+ "description": "Inferred from seed-lifecycle.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "clocks": {
+   "type": "string"
+  },
+  "core_inputs": {
+   "type": "string"
+  },
+  "fixtures": {
+   "type": "object",
+   "properties": {
+    "demo-child": {
+     "type": "string"
+    },
+    "second-tenant": {
+     "type": "string"
+    }
+   }
+  },
+  "marker": {
+   "type": "string"
+  },
+  "not_seeds": {
+   "type": "object",
+   "properties": {
+    "qnfo": {
+     "type": "string"
+    },
+    "spinoffs": {
+     "type": "string"
+    }
+   }
+  },
+  "progress": {
+   "type": "string"
+  },
+  "seed_deploys": {
+   "type": "string"
+  },
+  "survival": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "default_inherit": {
+      "type": [
+       "null",
+       "string"
+      ]
+     },
+     "id": {
+      "type": "string"
+     },
+     "what": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "default_inherit",
+     "id",
+     "what"
+    ]
+   }
+  },
+  "target_days": {
+   "type": "integer"
+  },
+  "topology": {
+   "type": "string"
+  },
+  "verify_key": {
+   "type": "string"
+  },
+  "verify_max_age_hours": {
+   "type": "integer"
+  },
+  "verify_store": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "_doc",
+  "clocks",
+  "core_inputs",
+  "fixtures",
+  "marker",
+  "not_seeds",
+  "progress",
+  "seed_deploys",
+  "survival",
+  "target_days",
+  "topology",
+  "verify_key",
+  "verify_max_age_hours",
+  "verify_store"
+ ]
+}

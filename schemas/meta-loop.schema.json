@@ -1,0 +1,146 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/meta-loop.schema.json",
+ "title": "meta-loop.json",
+ "description": "Inferred from meta-loop.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "closing_probe": {
+   "type": "string"
+  },
+  "consent": {
+   "type": "string"
+  },
+  "detectors": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "kind": {
+      "type": "string"
+     },
+     "patterns": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "roadmap": {
+      "type": "string"
+     },
+     "weight": {
+      "type": "integer"
+     }
+    },
+    "required": [
+     "kind",
+     "patterns",
+     "roadmap",
+     "weight"
+    ]
+   }
+  },
+  "id": {
+   "type": "string"
+  },
+  "ingest": {
+   "type": "string"
+  },
+  "issue_prefix": {
+   "type": "string"
+  },
+  "mic_events": {
+   "type": "object",
+   "properties": {
+    "codes": {
+     "type": "object",
+     "additionalProperties": {
+      "type": "object",
+      "properties": {
+       "kind": {
+        "type": "string"
+       },
+       "roadmap": {
+        "type": "string"
+       },
+       "weight": {
+        "type": "integer"
+       }
+      },
+      "required": [
+       "kind",
+       "roadmap",
+       "weight"
+      ]
+     }
+    },
+    "doc": {
+     "type": "string"
+    },
+    "thresholds": {
+     "type": "object",
+     "properties": {
+      "file_issue_when_count_at_least": {
+       "type": "integer"
+      },
+      "window_days": {
+       "type": "integer"
+      }
+     }
+    }
+   }
+  },
+  "owner_directive": {
+   "type": "string"
+  },
+  "rule": {
+   "type": "string"
+  },
+  "server_owner": {
+   "type": "string"
+  },
+  "sink": {
+   "type": "string"
+  },
+  "sla_hours": {
+   "type": "integer"
+  },
+  "sources": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "thresholds": {
+   "type": "object",
+   "properties": {
+    "dedupe_window_days": {
+     "type": "integer"
+    },
+    "file_issue_when_weight_at_least": {
+     "type": "integer"
+    }
+   }
+  },
+  "version": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "closing_probe",
+  "consent",
+  "detectors",
+  "id",
+  "ingest",
+  "issue_prefix",
+  "mic_events",
+  "owner_directive",
+  "rule",
+  "server_owner",
+  "sink",
+  "sla_hours",
+  "sources",
+  "thresholds",
+  "version"
+ ]
+}

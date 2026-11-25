@@ -1,0 +1,18 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/seed-deploys.schema.json",
+ "title": "seed-deploys.json",
+ "description": "Inferred from seed-deploys.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "seeds": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  }
+ },
+ "required": [
+  "seeds"
+ ]
+}

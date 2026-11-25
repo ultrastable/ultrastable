@@ -1,0 +1,64 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/redmain.schema.json",
+ "title": "redmain.json",
+ "description": "Inferred from redmain.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "gate_timeout_s": {
+   "type": "integer"
+  },
+  "gates": {
+   "type": "object",
+   "properties": {
+    "deploy-site": {
+     "type": "object",
+     "properties": {
+      "cmd": {
+       "type": "string"
+      },
+      "paths": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "workflows": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      }
+     }
+    }
+   }
+  },
+  "max_candidates": {
+   "type": "integer"
+  },
+  "max_commits_back": {
+   "type": "integer"
+  },
+  "never_revert": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "version": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "_doc",
+  "gate_timeout_s",
+  "gates",
+  "max_candidates",
+  "max_commits_back",
+  "never_revert",
+  "version"
+ ]
+}

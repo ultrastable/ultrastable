@@ -1,0 +1,49 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/runway.schema.json",
+ "title": "runway.json",
+ "description": "Inferred from runway.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "cost_max_age_days": {
+   "type": "integer"
+  },
+  "cost_trend_days": {
+   "type": "integer"
+  },
+  "failure_labels": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "failure_prefixes": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "max_failure_open_days": {
+   "type": "integer"
+  },
+  "target_days": {
+   "type": "integer"
+  },
+  "version": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "_doc",
+  "cost_max_age_days",
+  "cost_trend_days",
+  "failure_labels",
+  "failure_prefixes",
+  "max_failure_open_days",
+  "target_days",
+  "version"
+ ]
+}

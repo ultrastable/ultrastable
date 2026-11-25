@@ -1,0 +1,240 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/system.schema.json",
+ "title": "system.json",
+ "description": "Inferred from system.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "compatibility_date": {
+   "type": "string"
+  },
+  "deploy_counter": {
+   "type": "string"
+  },
+  "edit_path": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "name": {
+   "type": "string"
+  },
+  "resources": {
+   "type": "object",
+   "properties": {
+    "d1": {
+     "type": "object",
+     "properties": {
+      "ops": {
+       "type": "object",
+       "properties": {
+        "id": {
+         "type": "string"
+        },
+        "name": {
+         "type": "string"
+        }
+       }
+      },
+      "org": {
+       "type": "object",
+       "properties": {
+        "id": {
+         "type": "string"
+        },
+        "name": {
+         "type": "string"
+        }
+       }
+      },
+      "replication-ledger": {
+       "type": "object",
+       "properties": {
+        "id": {
+         "type": "string"
+        },
+        "name": {
+         "type": "string"
+        }
+       }
+      },
+      "spinoffs": {
+       "type": "object",
+       "properties": {
+        "id": {
+         "type": "string"
+        },
+        "name": {
+         "type": "string"
+        }
+       }
+      },
+      "unlearn": {
+       "type": "object",
+       "properties": {
+        "id": {
+         "type": "string"
+        },
+        "name": {
+         "type": "string"
+        }
+       }
+      },
+      "what-works": {
+       "type": "object",
+       "properties": {
+        "id": {
+         "type": "string"
+        },
+        "name": {
+         "type": "string"
+        }
+       }
+      }
+     }
+    },
+    "kv": {
+     "type": "object",
+     "properties": {
+      "assets": {
+       "type": "object",
+       "properties": {
+        "title": {
+         "type": "string"
+        }
+       }
+      },
+      "private": {
+       "type": "object",
+       "properties": {
+        "title": {
+         "type": "string"
+        }
+       }
+      },
+      "state": {
+       "type": "object",
+       "properties": {
+        "title": {
+         "type": "string"
+        }
+       }
+      }
+     }
+    },
+    "queues": {
+     "type": "object",
+     "properties": {
+      "work": {
+       "type": "object",
+       "properties": {
+        "name": {
+         "type": "string"
+        }
+       }
+      }
+     }
+    },
+    "vectorize": {
+     "type": "object",
+     "properties": {
+      "memory": {
+       "type": "object",
+       "properties": {
+        "dimensions": {
+         "type": "integer"
+        },
+        "metric": {
+         "type": "string"
+        },
+        "name": {
+         "type": "string"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "workers": {
+   "type": "object",
+   "additionalProperties": {
+    "type": "object",
+    "properties": {
+     "bindings": {
+      "type": "object",
+      "properties": {
+       "ai": {
+        "type": "array"
+       },
+       "d1": {
+        "type": "object"
+       },
+       "kv": {
+        "type": "object"
+       },
+       "queue_consumers": {
+        "type": "array"
+       },
+       "queue_producers": {
+        "type": "object"
+       },
+       "services": {
+        "type": "object"
+       },
+       "vectorize": {
+        "type": "object"
+       }
+      }
+     },
+     "crons": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "main": {
+      "type": "string"
+     },
+     "role": {
+      "type": "string"
+     },
+     "source": {
+      "type": "object",
+      "properties": {
+       "ref": {
+        "type": "string"
+       },
+       "repo": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "ref",
+       "repo"
+      ]
+     }
+    },
+    "required": [
+     "bindings",
+     "crons",
+     "main",
+     "role"
+    ]
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "compatibility_date",
+  "deploy_counter",
+  "edit_path",
+  "name",
+  "resources",
+  "workers"
+ ]
+}

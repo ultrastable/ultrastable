@@ -1,0 +1,12 @@
+{
+  "id": "Q-STD-trace-context",
+  "title": "Q-STD-trace-context: Carry one W3C traceparent through tick, workers, queues and dispatched workflows",
+  "body": "**Owner:** executor\n**Trigger:** OPEN-STANDARDS-1 register entry `w3c-trace-context` is planned or partial in seed/standards/standards.json\n**Done check:** cmd:python3 -m foundation openstd --probe w3c-trace-context\n**Status:** open\n\nGenerate a traceparent at the start of each tick (seed/worker/src/tick.js), pass it on service-binding fetches, queue messages and workflow_dispatch inputs, and emit OpenTelemetry spans with it through seed/worker/src/agentic/adapters/console-telemetry.js.\n\n**Prediction:** tick_runs_with_traceparent_share >= 0.9 within 168 h\n\n**Out of scope:** Running a hosted tracing backend.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation openstd --probe w3c-trace-context` exits 0.\n",
+  "labels": [
+    "p2",
+    "agent-ready",
+    "standards"
+  ],
+  "milestone": "Now",
+  "workstream": "Open standards"
+}

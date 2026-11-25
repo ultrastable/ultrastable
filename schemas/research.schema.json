@@ -1,0 +1,176 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/research.schema.json",
+ "title": "research.json",
+ "description": "Inferred from research.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "intake": {
+   "type": "object",
+   "properties": {
+    "feed": {
+     "type": "string"
+    },
+    "max_intake_items": {
+     "type": "integer"
+    },
+    "min_score": {
+     "type": "integer"
+    },
+    "queries": {
+     "type": "object",
+     "properties": {
+      "cost": {
+       "type": "string"
+      },
+      "economics": {
+       "type": "string"
+      },
+      "oversight": {
+       "type": "string"
+      },
+      "quality": {
+       "type": "string"
+      },
+      "reliability": {
+       "type": "string"
+      },
+      "safety": {
+       "type": "string"
+      },
+      "security": {
+       "type": "string"
+      },
+      "systems": {
+       "type": "string"
+      }
+     }
+    }
+   }
+  },
+  "page_module": {
+   "type": "string"
+  },
+  "papers_dir": {
+   "type": "string"
+  },
+  "perspectives": {
+   "type": "object",
+   "properties": {
+    "cost": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "economics": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "oversight": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "quality": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "reliability": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "safety": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "security": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "systems": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "questions": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "string"
+     },
+     "metric": {
+      "type": "string"
+     },
+     "prediction": {
+      "type": "string"
+     },
+     "question": {
+      "type": "string"
+     },
+     "target": {
+      "type": "object",
+      "properties": {
+       "op": {
+        "type": "string"
+       },
+       "value": {
+        "type": "number"
+       }
+      },
+      "required": [
+       "op",
+       "value"
+      ]
+     }
+    },
+    "required": [
+     "id",
+     "metric",
+     "prediction",
+     "question",
+     "target"
+    ]
+   }
+  },
+  "state_dir": {
+   "type": "string"
+  },
+  "studies_dir": {
+   "type": "string"
+  },
+  "version": {
+   "type": "integer"
+  }
+ },
+ "required": [
+  "_doc",
+  "intake",
+  "page_module",
+  "papers_dir",
+  "perspectives",
+  "questions",
+  "state_dir",
+  "studies_dir",
+  "version"
+ ]
+}

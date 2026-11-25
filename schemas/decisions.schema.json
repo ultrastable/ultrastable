@@ -1,0 +1,246 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/decisions.schema.json",
+ "title": "decisions.json",
+ "description": "Inferred from decisions.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "discover": {
+   "type": "object",
+   "properties": {
+    "globs": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "js_pattern": {
+     "type": "string"
+    },
+    "marker": {
+     "type": "string"
+    },
+    "py_pattern": {
+     "type": "string"
+    }
+   }
+  },
+  "gap_item": {
+   "type": "string"
+  },
+  "ledger": {
+   "type": "string"
+  },
+  "not_decisions": {
+   "type": "object",
+   "properties": {
+    "foundation/agents.py": {
+     "type": "string"
+    },
+    "foundation/boundary.py": {
+     "type": "string"
+    },
+    "foundation/branchsweep.py": {
+     "type": "string"
+    },
+    "foundation/conflicts.py": {
+     "type": "string"
+    },
+    "foundation/design.py": {
+     "type": "string"
+    },
+    "foundation/filing.py": {
+     "type": "string"
+    },
+    "foundation/ghmirror.py": {
+     "type": "string"
+    },
+    "foundation/seedadmit.py": {
+     "type": "string"
+    },
+    "foundation/seedlaunch.py": {
+     "type": "string"
+    },
+    "foundation/thought.py": {
+     "type": "string"
+    },
+    "foundation/triggers.py": {
+     "type": "string"
+    },
+    "seed/worker/src/airouter.js": {
+     "type": "string"
+    },
+    "seed/worker/src/critloop.js": {
+     "type": "string"
+    },
+    "seed/worker/src/events.js": {
+     "type": "string"
+    },
+    "seed/worker/src/pace.js": {
+     "type": "string"
+    }
+   }
+  },
+  "outcomes": {
+   "type": "string"
+  },
+  "page_data": {
+   "type": "string"
+  },
+  "points": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "files": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "id": {
+      "type": "string"
+     },
+     "measure": {
+      "type": "object",
+      "properties": {
+       "field": {
+        "type": "string"
+       },
+       "kind": {
+        "type": "string"
+       },
+       "match": {
+        "type": "string"
+       },
+       "path": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "kind"
+      ]
+     },
+     "metric": {
+      "type": "string"
+     },
+     "metric_says": {
+      "type": "string"
+     },
+     "name": {
+      "type": "string"
+     },
+     "op": {
+      "type": "string"
+     },
+     "predict": {
+      "type": "string"
+     },
+     "store": {
+      "type": "string"
+     },
+     "target": {
+      "type": "number"
+     },
+     "why": {
+      "type": "string"
+     },
+     "window_h": {
+      "type": "integer"
+     }
+    },
+    "required": [
+     "files",
+     "id",
+     "measure",
+     "metric",
+     "metric_says",
+     "name",
+     "op",
+     "predict",
+     "store",
+     "target",
+     "why",
+     "window_h"
+    ]
+   }
+  },
+  "probe": {
+   "type": "object",
+   "properties": {
+    "grace_h": {
+     "type": "integer"
+    },
+    "live_url": {
+     "type": "string"
+    },
+    "min_due_to_judge": {
+     "type": "integer"
+    },
+    "min_settled_share": {
+     "type": "number"
+    }
+   }
+  },
+  "trend": {
+   "type": "object",
+   "properties": {
+    "flat_band": {
+     "type": "number"
+    },
+    "min_settled_to_judge": {
+     "type": "integer"
+    }
+   }
+  },
+  "uninstrumented": {
+   "type": "object",
+   "properties": {
+    "foundation/failover.py": {
+     "type": "string"
+    },
+    "foundation/promote.py": {
+     "type": "string"
+    },
+    "foundation/reach.py": {
+     "type": "string"
+    },
+    "foundation/uiux.py": {
+     "type": "string"
+    },
+    "seed/worker/src/budget.js": {
+     "type": "string"
+    },
+    "seed/worker/src/cutover.js": {
+     "type": "string"
+    },
+    "seed/worker/src/pr-executor.js": {
+     "type": "string"
+    },
+    "seed/worker/src/unknowns.js": {
+     "type": "string"
+    }
+   }
+  },
+  "version": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "_doc",
+  "discover",
+  "gap_item",
+  "ledger",
+  "not_decisions",
+  "outcomes",
+  "page_data",
+  "points",
+  "probe",
+  "trend",
+  "uninstrumented",
+  "version"
+ ]
+}

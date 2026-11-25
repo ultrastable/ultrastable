@@ -1,0 +1,147 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/selfcode.schema.json",
+ "title": "selfcode.json",
+ "description": "Inferred from selfcode.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "enabled": {
+   "type": "boolean"
+  },
+  "kinds": {
+   "type": "object",
+   "properties": {
+    "bare_except": {
+     "type": "object",
+     "properties": {
+      "enabled": {
+       "type": "boolean"
+      },
+      "weight": {
+       "type": "integer"
+      }
+     }
+    },
+    "failing_test": {
+     "type": "object",
+     "properties": {
+      "enabled": {
+       "type": "boolean"
+      },
+      "weight": {
+       "type": "integer"
+      },
+      "why": {
+       "type": "string"
+      }
+     }
+    },
+    "todo": {
+     "type": "object",
+     "properties": {
+      "enabled": {
+       "type": "boolean"
+      },
+      "weight": {
+       "type": "integer"
+      }
+     }
+    },
+    "unused_import": {
+     "type": "object",
+     "properties": {
+      "enabled": {
+       "type": "boolean"
+      },
+      "weight": {
+       "type": "integer"
+      },
+      "why": {
+       "type": "string"
+      }
+     }
+    }
+   }
+  },
+  "learning": {
+   "type": "object",
+   "properties": {
+    "min_kept_rate": {
+     "type": "number"
+    },
+    "min_settled": {
+     "type": "integer"
+    },
+    "pause_hours": {
+     "type": "integer"
+    }
+   }
+  },
+  "rails": {
+   "type": "object",
+   "properties": {
+    "capacity_share": {
+     "type": "number"
+    },
+    "intake_label": {
+     "type": "string"
+    },
+    "max_filed_per_day": {
+     "type": "integer"
+    },
+    "max_new_per_run": {
+     "type": "integer"
+    },
+    "max_open": {
+     "type": "integer"
+    },
+    "refile_cooldown_hours": {
+     "type": "integer"
+    },
+    "settle_after_minutes": {
+     "type": "integer"
+    },
+    "share_window": {
+     "type": "integer"
+    },
+    "tractable_bytes": {
+     "type": "integer"
+    },
+    "trusted_issue_authors": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "scope": {
+   "type": "object",
+   "properties": {
+    "read_globs": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "write": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "enabled",
+  "kinds",
+  "learning",
+  "rails",
+  "scope"
+ ]
+}

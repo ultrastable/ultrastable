@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "checked": "2026-11-14",
+  "checked": "2026-11-25",
   "stale_after_days": 120,
   "bodies": [
     {
@@ -443,11 +443,15 @@
       "body": "JSON Schema organisation",
       "status": "stable",
       "tracked": "2020-12",
-      "why": "Tool inputs (MCP), the standards register and the surface registry are all JSON Schema, so any validator or model can read them.",
+      "why": "Every data file the system reads (doctrine, seed config, instance manifests, ledgers) has a JSON Schema matched by a SchemaStore-format catalog, so YAML, JSON and TOML copies validate the same way; tool inputs (MCP), the standards register and the surface registry are JSON Schema too.",
       "support": "supported",
       "how": [
         "seed/worker/src/agentic/core/tools.js",
-        "seed/standards/standards.schema.json"
+        "seed/standards/standards.schema.json",
+        "seed/scripts/openstd.py",
+        "schemas/catalog.json",
+        "seed/schemas/catalog.json",
+        "foundation/manifest.py"
       ],
       "tests": [
         {
@@ -457,6 +461,10 @@
         {
           "file": "seed/worker/test/agentic.discovery.test.js",
           "name": "discovery: well-known paths and json schema register"
+        },
+        {
+          "file": "tests/foundation/test_openstd.py",
+          "name": "test_every_doctrine_file_and_manifest_is_catalogued"
         }
       ],
       "sources": [
@@ -465,6 +473,12 @@
           "url": "https://json-schema.org/draft/2020-12",
           "published": "2020-12-08",
           "accessed": "2026-11-11"
+        },
+        {
+          "title": "SchemaStore catalog format",
+          "url": "https://json.schemastore.org/schema-catalog.json",
+          "published": null,
+          "accessed": "2026-11-25"
         }
       ]
     },
@@ -993,6 +1007,242 @@
           "url": "https://gdpr-info.eu/art-20-gdpr/",
           "published": null,
           "accessed": "2026-11-14"
+        }
+      ]
+    },
+    {
+      "id": "cloudevents",
+      "name": "CloudEvents 1.0",
+      "body": "CNCF",
+      "status": "stable",
+      "tracked": "CloudEvents 1.0.2, JSON event format, HTTP structured mode",
+      "why": "One envelope for events between loops, workers, tenants and webhook subscribers, so any broker, queue or consumer reads them without a custom parser.",
+      "support": "partial",
+      "how": [
+        "seed/worker/src/cloudevents.js",
+        "seed/scripts/openstd.py",
+        "site/webhooks.js",
+        "foundation/provenance.py"
+      ],
+      "gap": "Webhook deliveries and the provenance export are CloudEvents; the other append-only ledgers under ops/ still write their own row shapes (Q-STD-ledger-cloudevents).",
+      "tracked_by": "Q-STD-ledger-cloudevents",
+      "tests": [
+        {
+          "file": "seed/worker/test/cloudevents.test.js",
+          "name": "cloudEvent builds a conforming CloudEvents 1.0 event with a stable id"
+        },
+        {
+          "file": "tests/foundation/test_openstd.py",
+          "name": "test_provenance_row_is_a_conforming_cloudevent"
+        }
+      ],
+      "sources": [
+        {
+          "title": "CloudEvents specification 1.0.2",
+          "url": "https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/spec.md",
+          "published": "2022-02-05",
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "w3c-prov",
+      "name": "W3C PROV (PROV-DM, PROV-JSON)",
+      "body": "W3C",
+      "status": "stable",
+      "tracked": "PROV-DM Recommendation 2013; PROV-JSON Member Submission",
+      "why": "The provenance ledger exports as standard activities, agents and entities, so lineage tools and auditors read where every change came from.",
+      "support": "supported",
+      "how": [
+        "foundation/provenance.py",
+        "seed/scripts/openstd.py"
+      ],
+      "tests": [
+        {
+          "file": "tests/foundation/test_openstd.py",
+          "name": "test_provenance_exports_as_prov_json"
+        }
+      ],
+      "sources": [
+        {
+          "title": "PROV-DM: The PROV Data Model",
+          "url": "https://www.w3.org/TR/prov-dm/",
+          "published": "2013-04-30",
+          "accessed": "2026-11-25"
+        },
+        {
+          "title": "PROV-JSON",
+          "url": "https://www.w3.org/submissions/prov-json/",
+          "published": "2013-04-24",
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "backstage-catalog",
+      "name": "Backstage software catalog (catalog-info.yaml)",
+      "body": "CNCF (Backstage)",
+      "status": "stable",
+      "tracked": "backstage.io/v1alpha1 System and Component",
+      "why": "The service catalog is generated from the declared topology in the format developer portals and catalog tools already import.",
+      "support": "supported",
+      "how": [
+        "catalog-info.yaml",
+        "foundation/openstd.py"
+      ],
+      "tests": [
+        {
+          "file": "tests/foundation/test_openstd.py",
+          "name": "test_catalog_info_lists_every_topology_worker"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Backstage descriptor format",
+          "url": "https://backstage.io/docs/features/software-catalog/descriptor-format",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "conventional-commits",
+      "name": "Conventional Commits 1.0",
+      "body": "conventionalcommits.org",
+      "status": "stable",
+      "tracked": "1.0.0",
+      "why": "Commit subjects that tools parse (type, scope, breaking marker) feed changelogs and release versions without a custom parser.",
+      "support": "partial",
+      "how": [
+        "seed/scripts/openstd.py"
+      ],
+      "gap": "Loop commits already use `type: subject`; PR titles written by sessions are prose. The share is measured by `openstd --report` (Q-STD-changelog-semver).",
+      "tracked_by": "Q-STD-changelog-semver",
+      "tests": [
+        {
+          "file": "tests/foundation/test_openstd.py",
+          "name": "test_conventional_commit_subjects"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Conventional Commits 1.0.0",
+          "url": "https://www.conventionalcommits.org/en/v1.0.0/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "keep-a-changelog-semver",
+      "name": "Keep a Changelog 1.1 and Semantic Versioning 2.0",
+      "body": "keepachangelog.com; semver.org",
+      "status": "stable",
+      "tracked": "KaC 1.1.0; SemVer 2.0.0",
+      "why": "A human- and tool-readable CHANGELOG.md and version numbers derived from Conventional Commits, generated from the provenance changelog rather than typed.",
+      "support": "planned",
+      "tracked_by": "Q-STD-changelog-semver",
+      "acl": "foundation/provenance.py",
+      "sources": [
+        {
+          "title": "Keep a Changelog 1.1.0",
+          "url": "https://keepachangelog.com/en/1.1.0/",
+          "published": null,
+          "accessed": "2026-11-25"
+        },
+        {
+          "title": "Semantic Versioning 2.0.0",
+          "url": "https://semver.org/spec/v2.0.0.html",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "w3c-trace-context",
+      "name": "W3C Trace Context (traceparent) with OpenTelemetry traces",
+      "body": "W3C; OpenTelemetry (CNCF)",
+      "status": "stable",
+      "tracked": "Trace Context Level 1 Recommendation",
+      "why": "One trace id carried from the tick through workers, queues and dispatched workflows, so a loop's whole cycle is one trace in any OpenTelemetry backend.",
+      "support": "planned",
+      "tracked_by": "Q-STD-trace-context",
+      "acl": "seed/worker/src/agentic/adapters/console-telemetry.js",
+      "sources": [
+        {
+          "title": "Trace Context",
+          "url": "https://www.w3.org/TR/trace-context/",
+          "published": "2021-11-23",
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "openfeature",
+      "name": "OpenFeature flag evaluation",
+      "body": "CNCF (OpenFeature)",
+      "status": "stable",
+      "tracked": "OpenFeature specification 0.8; flagd flag definition schema",
+      "why": "Knobs and kill switches evaluated through a standard flag API, so any provider (Cloudflare Flagship, flagd) can serve them.",
+      "support": "planned",
+      "tracked_by": "Q-STD-openfeature",
+      "acl": "seed/worker/src/goals.js",
+      "sources": [
+        {
+          "title": "OpenFeature specification",
+          "url": "https://openfeature.dev/specification/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "sbom-slsa",
+      "name": "SPDX SBOM and SLSA build provenance",
+      "body": "Linux Foundation (SPDX); OpenSSF (SLSA)",
+      "status": "stable",
+      "tracked": "SPDX 2.3 (GitHub dependency graph export); SLSA v1.0 build provenance via GitHub artifact attestations",
+      "why": "Every deploy carries a bill of materials and a signed statement of how it was built, which supply-chain tools verify.",
+      "support": "planned",
+      "tracked_by": "Q-STD-sbom-slsa",
+      "acl": ".github/workflows/deploy-ultrastable.yml",
+      "sources": [
+        {
+          "title": "SLSA v1.0",
+          "url": "https://slsa.dev/spec/v1.0/",
+          "published": "2023-04-19",
+          "accessed": "2026-11-25"
+        },
+        {
+          "title": "SPDX 2.3",
+          "url": "https://spdx.github.io/spdx-spec/v2.3/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "datacite-crossref",
+      "name": "DataCite and Crossref metadata for scholarly records",
+      "body": "DataCite; Crossref",
+      "status": "stable",
+      "tracked": "DataCite Metadata Schema 4.5; Crossref REST API",
+      "why": "The replication ledger reads findings and replications by DOI from Crossref and publishes its records with DataCite-shaped metadata, so citation tools resolve them.",
+      "support": "planned",
+      "tracked_by": "Q-STD-datacite",
+      "acl": "instances/replication-ledger/instance.json",
+      "sources": [
+        {
+          "title": "DataCite Metadata Schema 4.5",
+          "url": "https://schema.datacite.org/meta/kernel-4.5/",
+          "published": "2024-01-22",
+          "accessed": "2026-11-25"
+        },
+        {
+          "title": "Crossref REST API",
+          "url": "https://www.crossref.org/documentation/retrieve-metadata/rest-api/",
+          "published": null,
+          "accessed": "2026-11-25"
         }
       ]
     }

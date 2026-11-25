@@ -1,0 +1,52 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/bootproof.schema.json",
+ "title": "bootproof.json",
+ "description": "Inferred from bootproof.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_": {
+   "type": "string"
+  },
+  "_grandfather": {
+   "type": "string"
+  },
+  "migration_duplicates_grandfathered": {
+   "type": "array",
+   "items": {
+    "type": "integer"
+   }
+  },
+  "secrets": {
+   "type": "object",
+   "additionalProperties": {
+    "type": "object",
+    "properties": {
+     "acquire": {
+      "type": "string"
+     },
+     "degrade": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "acquire",
+     "degrade"
+    ]
+   }
+  },
+  "wrangler_filled_elsewhere": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  }
+ },
+ "required": [
+  "_",
+  "_grandfather",
+  "migration_duplicates_grandfathered",
+  "secrets",
+  "wrangler_filled_elsewhere"
+ ]
+}

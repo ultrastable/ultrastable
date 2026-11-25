@@ -1,0 +1,128 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/claim-code.schema.json",
+ "title": "claim-code.json",
+ "description": "Inferred from claim-code.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "baseline": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "claim_patterns": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "claims": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "string"
+     },
+     "probe": {
+      "type": "object",
+      "properties": {
+       "contains": {
+        "type": "string"
+       },
+       "file": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "contains",
+       "file"
+      ]
+     },
+     "quote": {
+      "type": "string"
+     },
+     "source": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "probe",
+     "quote",
+     "source"
+    ]
+   }
+  },
+  "closing_probe": {
+   "type": "string"
+  },
+  "id": {
+   "type": "string"
+  },
+  "min_len": {
+   "type": "integer"
+  },
+  "owner": {
+   "type": "string"
+  },
+  "rule": {
+   "type": "string"
+  },
+  "scan_globs": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "skip": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "skip_reasons": {
+   "type": "object",
+   "properties": {
+    "intent-yield-data\\.js": {
+     "type": "string"
+    },
+    "research-data\\.js": {
+     "type": "string"
+    },
+    "saydo-data\\.js": {
+     "type": "string"
+    },
+    "self-data\\.js": {
+     "type": "string"
+    },
+    "temporal-data\\.js": {
+     "type": "string"
+    },
+    "trajectory-data\\.js": {
+     "type": "string"
+    },
+    "yearfail-data\\.js": {
+     "type": "string"
+    },
+    "yearsim-data\\.js": {
+     "type": "string"
+    }
+   }
+  }
+ },
+ "required": [
+  "baseline",
+  "claim_patterns",
+  "claims",
+  "closing_probe",
+  "id",
+  "min_len",
+  "owner",
+  "rule",
+  "scan_globs",
+  "skip",
+  "skip_reasons"
+ ]
+}

@@ -1,0 +1,131 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/blindspots.schema.json",
+ "title": "blindspots.json",
+ "description": "Inferred from blindspots.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "answers_file": {
+   "type": "string"
+  },
+  "closed_file": {
+   "type": "string"
+  },
+  "domain_expiry_file": {
+   "type": "string"
+  },
+  "domains": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "gates_allowed": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "grace_days": {
+   "type": "integer"
+  },
+  "learned_file": {
+   "type": "string"
+  },
+  "needs": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "action": {
+      "type": "string"
+     },
+     "class": {
+      "type": "string"
+     },
+     "domain": {
+      "type": "string"
+     },
+     "gate": {
+      "type": "string"
+     },
+     "id": {
+      "type": "string"
+     },
+     "probe": {
+      "type": "string"
+     },
+     "why": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "action",
+     "class",
+     "domain",
+     "id",
+     "probe",
+     "why"
+    ]
+   }
+  },
+  "refresh_days": {
+   "type": "integer"
+  },
+  "renewal_gate_days": {
+   "type": "integer"
+  },
+  "sweeps": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "cadence_days": {
+      "type": "integer"
+     },
+     "data": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "domain": {
+      "type": "string"
+     },
+     "paths": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "question": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "cadence_days",
+     "domain",
+     "paths",
+     "question"
+    ]
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "answers_file",
+  "closed_file",
+  "domain_expiry_file",
+  "domains",
+  "gates_allowed",
+  "grace_days",
+  "learned_file",
+  "needs",
+  "refresh_days",
+  "renewal_gate_days",
+  "sweeps"
+ ]
+}

@@ -1,0 +1,176 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/boundary.schema.json",
+ "title": "boundary.json",
+ "description": "Inferred from boundary.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "axiom": {
+   "type": "string"
+  },
+  "egress": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "class": {
+      "type": "string"
+     },
+     "default": {
+      "type": "string"
+     },
+     "gate": {
+      "type": "string"
+     },
+     "id": {
+      "type": "string"
+     },
+     "probe": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "class",
+     "default",
+     "gate",
+     "id",
+     "probe"
+    ]
+   }
+  },
+  "inside": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "string"
+     },
+     "rebuild": {
+      "type": "string"
+     },
+     "what": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "rebuild",
+     "what"
+    ]
+   }
+  },
+  "instruction_files": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "marker": {
+   "type": "string"
+  },
+  "permissions": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "inside": {
+     "type": "object",
+     "properties": {
+      "create": {
+       "type": "string"
+      },
+      "destroy-derived": {
+       "type": "string"
+      },
+      "destroy-instance": {
+       "type": "string"
+      },
+      "edit": {
+       "type": "string"
+      },
+      "read": {
+       "type": "string"
+      },
+      "rebuild": {
+       "type": "string"
+      },
+      "self-modify": {
+       "type": "string"
+      }
+     }
+    },
+    "reserved": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "reaper": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "finished_states": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "idle_hours": {
+     "type": "integer"
+    }
+   }
+  },
+  "rebuild": {
+   "type": "object",
+   "properties": {
+    "digest_paths": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "drill_checks": {
+     "type": "array",
+     "items": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     }
+    }
+   }
+  },
+  "strange_loop": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "ledger": {
+     "type": "string"
+    }
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "axiom",
+  "egress",
+  "inside",
+  "instruction_files",
+  "marker",
+  "permissions",
+  "reaper",
+  "rebuild",
+  "strange_loop"
+ ]
+}

@@ -1,0 +1,179 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/user-path.schema.json",
+ "title": "user-path.json",
+ "description": "Inferred from user-path.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_detect": {
+   "type": "string"
+  },
+  "_doc": {
+   "type": "string"
+  },
+  "done": {
+   "type": "object",
+   "properties": {
+    "text": {
+     "type": "string"
+    },
+    "title": {
+     "type": "string"
+    }
+   }
+  },
+  "steps": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "ask": {
+      "type": "string"
+     },
+     "confirm": {
+      "type": "string"
+     },
+     "detect": {
+      "type": "object",
+      "properties": {
+       "kind": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "kind"
+      ]
+     },
+     "id": {
+      "type": "string"
+     },
+     "input": {
+      "type": "object",
+      "properties": {
+       "field": {
+        "type": "string"
+       },
+       "placeholder": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "field",
+       "placeholder"
+      ]
+     },
+     "no": {
+      "type": "object",
+      "properties": {
+       "label": {
+        "type": "string"
+       },
+       "next": {
+        "type": "boolean"
+       },
+       "then": {
+        "type": "string"
+       },
+       "url": {
+        "type": "string"
+       }
+      }
+     },
+     "optional": {
+      "type": "boolean"
+     },
+     "service": {
+      "type": "string"
+     },
+     "why": {
+      "type": "string"
+     },
+     "yes": {
+      "type": "object",
+      "properties": {
+       "label": {
+        "type": "string"
+       },
+       "next": {
+        "type": "boolean"
+       },
+       "then": {
+        "type": "string"
+       },
+       "url": {
+        "type": "string"
+       }
+      }
+     }
+    },
+    "required": [
+     "ask",
+     "id",
+     "service",
+     "why"
+    ]
+   }
+  },
+  "tasks": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "change": {
+     "type": "object",
+     "properties": {
+      "steps": {
+       "type": "array",
+       "items": {
+        "type": "object"
+       }
+      },
+      "title": {
+       "type": "string"
+      }
+     }
+    },
+    "manage": {
+     "type": "object",
+     "properties": {
+      "steps": {
+       "type": "array",
+       "items": {
+        "type": "object"
+       }
+      },
+      "title": {
+       "type": "string"
+      }
+     }
+    },
+    "publish": {
+     "type": "object",
+     "properties": {
+      "steps": {
+       "type": "array",
+       "items": {
+        "type": "object"
+       }
+      },
+      "title": {
+       "type": "string"
+      }
+     }
+    }
+   }
+  },
+  "template": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "_detect",
+  "_doc",
+  "done",
+  "steps",
+  "tasks",
+  "template"
+ ]
+}

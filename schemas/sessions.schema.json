@@ -1,0 +1,35 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/sessions.schema.json",
+ "title": "sessions.json",
+ "description": "Inferred from sessions.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "backlog_owner": {
+   "type": "string"
+  },
+  "blocked_values": {
+   "type": "array"
+  },
+  "history": {
+   "type": "array"
+  },
+  "idle_ttl_hours": {
+   "type": "number"
+  },
+  "ttl_floor_hours": {
+   "type": "number"
+  }
+ },
+ "required": [
+  "_doc",
+  "backlog_owner",
+  "blocked_values",
+  "history",
+  "idle_ttl_hours",
+  "ttl_floor_hours"
+ ]
+}

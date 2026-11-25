@@ -1,0 +1,42 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/agent-budget.schema.json",
+ "title": "agent-budget.json",
+ "description": "Inferred from agent-budget.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "kill_switches": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "log": {
+   "type": "string"
+  },
+  "max_open_agent_prs": {
+   "type": "integer"
+  },
+  "max_runs_per_day": {
+   "type": "integer"
+  },
+  "max_unknown_items_per_run": {
+   "type": "integer"
+  },
+  "max_usd_per_day": {
+   "type": "number"
+  }
+ },
+ "required": [
+  "_doc",
+  "kill_switches",
+  "log",
+  "max_open_agent_prs",
+  "max_runs_per_day",
+  "max_unknown_items_per_run",
+  "max_usd_per_day"
+ ]
+}

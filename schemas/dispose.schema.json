@@ -1,0 +1,77 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/dispose.schema.json",
+ "title": "dispose.json",
+ "description": "Inferred from dispose.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "_ttl_hours": {
+   "type": "string"
+  },
+  "dispositions": {
+   "type": "object",
+   "properties": {
+    "fixed": {
+     "type": "string"
+    },
+    "gate": {
+     "type": "string"
+    },
+    "shelved": {
+     "type": "string"
+    }
+   }
+  },
+  "fail_limit": {
+   "type": "integer"
+  },
+  "final_statuses": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "gate_default": {
+   "type": "string"
+  },
+  "max_per_pass": {
+   "type": "integer"
+  },
+  "owner_bound": {
+   "type": "string"
+  },
+  "revive_days": {
+   "type": "integer"
+  },
+  "revive_per_pass": {
+   "type": "integer"
+  },
+  "ttl_days": {
+   "type": "integer"
+  },
+  "ttl_hours": {
+   "type": "integer"
+  },
+  "version": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "_doc",
+  "_ttl_hours",
+  "dispositions",
+  "fail_limit",
+  "final_statuses",
+  "gate_default",
+  "max_per_pass",
+  "owner_bound",
+  "revive_days",
+  "revive_per_pass",
+  "ttl_days",
+  "ttl_hours",
+  "version"
+ ]
+}

@@ -3,7 +3,10 @@
 """PROVENANCE-1: where every input and change came from, what it touched, what it did. Ultrastable is the foundation for any autonomous system.
 
   python3 -m foundation provenance [--check | --record JSON | --settle ID kept|reverted|none [NOTE] | --ingest-git [--since REV] [--apply]
-                                    | --timeline [--tenant T] [--origin C] | --changelog [--apply] | --lessons | --signal]
+                                    | --timeline [--tenant T] [--origin C] | --changelog [--apply] | --lessons | --signal
+                                    | --prov [--tenant T] | --cloudevents [--tenant T]]
+STANDARDS  OPEN-STANDARDS-1: `--prov` exports the ledger as W3C PROV-JSON and `--cloudevents` as CloudEvents 1.0 JSON Lines, through the
+        shared engine seed/scripts/openstd.py, so any PROV or CloudEvents consumer reads it without a custom parser.
 
 SCHEMA  one JSON row per fact in ops/provenance.jsonl (append-only, event-sourced through foundation/ledger.py): id, at, tenant, origin {class, actor, channel},
         kind, summary, ref, affected[], effect {status, metric, note}, public, parent. A settlement row names its parent and carries the measured effect.
@@ -267,6 +270,28 @@ def check(root=REPO) -> list:
     return bad
 
 
+def _openstd():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("seed_openstd", REPO / "seed/scripts/openstd.py")
+    mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod)
+    return mod
+
+
+def to_cloudevent(row: dict) -> dict:
+    """One provenance row as a CloudEvents 1.0 event: type io.ultrastable.provenance.<kind>, source /<tenant>/<origin class>/<actor>."""
+    o = row.get("origin") or {}
+    src = "/" + "/".join(re.sub(r"[^A-Za-z0-9._-]+", "-", str(x)) for x in (row.get("tenant") or "ultrastable", o.get("class") or "unknown", o.get("actor") or "unknown"))
+    kind = re.sub(r"[^a-z0-9.]+", "-", str(row.get("kind") or "change").lower())
+    return _openstd().cloudevent(f"io.ultrastable.provenance.{kind}", src, row, subject=str(row.get("ref") or "")[:200],
+                                 id_=str(row.get("id") or ""), time=str(row.get("at") or ""),
+                                 dataschema="https://ultrastable.io/schemas/provenance-row.schema.json")
+
+
+def to_prov(rows: list) -> dict:
+    """The ledger as a W3C PROV-JSON document (activities, agents, generated entities, informing activities)."""
+    return _openstd().prov_document(rows)
+
+
 def main(argv) -> int:
     a, root = list(argv), REPO
     flag = lambda f: f in a
@@ -294,6 +319,13 @@ def main(argv) -> int:
         print(push(root, val("--push") if val("--push", ) and val("--push").startswith("http") else "https://ultrastable.io/api/fleet/provenance"), "rows pushed"); return 0
     if flag("--settle-due"):
         print(len(settle_due(root)), "settled"); return 0
+    if flag("--prov") or flag("--cloudevents"):
+        rows = [r for r in entries(root) if not val("--tenant") or r.get("tenant") == val("--tenant")]
+        if flag("--prov"):
+            print(json.dumps(to_prov(rows), indent=1)); return 0
+        for r in rows:
+            print(json.dumps(to_cloudevent(r), sort_keys=True))
+        return 0
     if flag("--lessons"):
         print(json.dumps(lessons(root), indent=1)); return 0
     if flag("--signal"):

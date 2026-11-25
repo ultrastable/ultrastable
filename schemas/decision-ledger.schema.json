@@ -1,0 +1,53 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/decision-ledger.schema.json",
+ "title": "decision-ledger.json",
+ "description": "Inferred from decision-ledger.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "rows": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "body": {
+      "type": "string"
+     },
+     "date": {
+      "type": "string"
+     },
+     "id": {
+      "type": "string"
+     },
+     "kind": {
+      "type": "string"
+     },
+     "probe": {
+      "type": "string"
+     },
+     "session": {
+      "type": "string"
+     },
+     "title": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "body",
+     "date",
+     "id",
+     "kind",
+     "probe",
+     "title"
+    ]
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "rows"
+ ]
+}

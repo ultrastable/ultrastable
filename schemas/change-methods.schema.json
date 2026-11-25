@@ -1,0 +1,57 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/change-methods.schema.json",
+ "title": "change-methods.json",
+ "description": "Inferred from change-methods.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "id": {
+   "type": "string"
+  },
+  "methods": {
+   "type": "object",
+   "additionalProperties": {
+    "type": "object",
+    "properties": {
+     "move": {
+      "type": "string"
+     },
+     "source": {
+      "type": "string"
+     },
+     "stage": {
+      "type": "string"
+     },
+     "strength": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "move",
+     "source",
+     "stage",
+     "strength"
+    ]
+   }
+  },
+  "min_per_idea": {
+   "type": "integer"
+  },
+  "stages": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "id",
+  "methods",
+  "min_per_idea",
+  "stages"
+ ]
+}

@@ -1,0 +1,52 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/lessons.schema.json",
+ "title": "lessons.json",
+ "description": "Inferred from lessons.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "id": {
+   "type": "string"
+  },
+  "lessons": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "enforced_by": {
+      "type": "array",
+      "items": {
+       "type": "object"
+      }
+     },
+     "id": {
+      "type": "string"
+     },
+     "item": {
+      "type": "string"
+     },
+     "lesson": {
+      "type": "string"
+     },
+     "source": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "enforced_by",
+     "id",
+     "lesson",
+     "source"
+    ]
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "id",
+  "lessons"
+ ]
+}

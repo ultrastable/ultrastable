@@ -1,0 +1,45 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/durable-facts.schema.json",
+ "title": "durable-facts.json",
+ "description": "Inferred from durable-facts.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "facts": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "also": {
+      "type": "string"
+     },
+     "id": {
+      "type": "string"
+     },
+     "probe": {
+      "type": "string"
+     },
+     "statement": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "probe",
+     "statement"
+    ]
+   }
+  },
+  "version": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "_doc",
+  "facts",
+  "version"
+ ]
+}

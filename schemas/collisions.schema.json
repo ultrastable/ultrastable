@@ -1,0 +1,31 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/collisions.schema.json",
+ "title": "collisions.json",
+ "description": "Inferred from collisions.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "baseline_duplicates": {
+   "type": "object",
+   "properties": {
+    "seed/worker/migrations": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "rule": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "_doc",
+  "baseline_duplicates",
+  "rule"
+ ]
+}

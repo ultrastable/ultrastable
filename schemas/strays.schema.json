@@ -1,0 +1,40 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/strays.schema.json",
+ "title": "strays.json",
+ "description": "Inferred from strays.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "baseline": {
+   "type": "array"
+  },
+  "code_roots": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "extensions": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "workflow_template_dirs": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "baseline",
+  "code_roots",
+  "extensions",
+  "workflow_template_dirs"
+ ]
+}

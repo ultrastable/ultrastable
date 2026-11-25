@@ -1,0 +1,167 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/provenance.schema.json",
+ "title": "provenance.json",
+ "description": "Inferred from provenance.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "axiom": {
+   "type": "string"
+  },
+  "channels": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "effects": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "git_rules": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "channel": {
+      "type": "string"
+     },
+     "class": {
+      "type": "string"
+     },
+     "match": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "channel",
+     "class",
+     "match"
+    ]
+   }
+  },
+  "id": {
+   "type": "string"
+  },
+  "improve": {
+   "type": "object",
+   "properties": {
+    "min_settled": {
+     "type": "integer"
+    },
+    "reinforce_above": {
+     "type": "number"
+    },
+    "retire_below": {
+     "type": "number"
+    }
+   }
+  },
+  "kinds": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "ledger": {
+   "type": "string"
+  },
+  "marker": {
+   "type": "string"
+  },
+  "max_public_summary": {
+   "type": "integer"
+  },
+  "origin_classes": {
+   "type": "object",
+   "properties": {
+    "agent": {
+     "type": "string"
+    },
+    "end_user": {
+     "type": "string"
+    },
+    "external": {
+     "type": "string"
+    },
+    "loop": {
+     "type": "string"
+    },
+    "owner": {
+     "type": "string"
+    },
+    "system": {
+     "type": "string"
+    }
+   }
+  },
+  "public_view": {
+   "type": "string"
+  },
+  "redact": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "sources": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "actor": {
+      "type": "string"
+     },
+     "class": {
+      "type": "string"
+     },
+     "kind": {
+      "type": "string"
+     },
+     "path": {
+      "type": "string"
+     },
+     "public": {
+      "type": "boolean"
+     },
+     "summary_field": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "tenants": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "version": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "_doc",
+  "axiom",
+  "channels",
+  "effects",
+  "git_rules",
+  "id",
+  "improve",
+  "kinds",
+  "ledger",
+  "marker",
+  "max_public_summary",
+  "origin_classes",
+  "public_view",
+  "redact",
+  "sources",
+  "tenants",
+  "version"
+ ]
+}

@@ -1,0 +1,111 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/qnfo-port.schema.json",
+ "title": "qnfo-port.json",
+ "description": "Inferred from qnfo-port.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "mechanisms": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "config": {
+      "type": "object",
+      "properties": {
+       "doers": {
+        "type": "object"
+       },
+       "hold_minutes": {
+        "type": "object"
+       },
+       "passes_after_reopen": {
+        "type": "integer"
+       },
+       "relapse_cmd_per_pass": {
+        "type": "integer"
+       },
+       "window_days": {
+        "type": "integer"
+       }
+      },
+      "required": [
+       "window_days"
+      ]
+     },
+     "feeds_criticality": {
+      "type": "string"
+     },
+     "id": {
+      "type": "string"
+     },
+     "next": {
+      "type": "string"
+     },
+     "priority": {
+      "type": "integer"
+     },
+     "qnfo_rule": {
+      "type": "string"
+     },
+     "qnfo_source": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "status": {
+      "type": "string"
+     },
+     "status_before": {
+      "type": "string"
+     },
+     "status_before_why": {
+      "type": "string"
+     },
+     "test": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "ultrastable_module": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "wired_into": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     }
+    },
+    "required": [
+     "feeds_criticality",
+     "id",
+     "priority",
+     "qnfo_rule",
+     "qnfo_source",
+     "status",
+     "status_before",
+     "test",
+     "ultrastable_module",
+     "wired_into"
+    ]
+   }
+  },
+  "version": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "_doc",
+  "mechanisms",
+  "version"
+ ]
+}

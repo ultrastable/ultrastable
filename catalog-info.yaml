@@ -1,0 +1,214 @@
+# generated-by: python3 -m foundation openstd --apply (Backstage catalog-info, backstage.io/v1alpha1). Edit the topology, not this file.
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: "ultrastable"
+  description: "Ultrastable is the foundation for any autonomous system."
+spec:
+  owner: "group:ultrastable"
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: "tenant-base-rates"
+  description: "manifest only; its repository is created before its first line of code, so its code is born outside the core"
+  annotations:
+    github.com/project-slug: "ultrastable/base-rates"
+spec:
+  type: "website"
+  lifecycle: "experimental"
+  owner: "group:ultrastable"
+  system: "ultrastable"
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: "tenant-did-it-work"
+  description: "manifest only; its repository is created before its first line of code, so its code is born outside the core"
+  annotations:
+    github.com/project-slug: "ultrastable/did-it-work"
+spec:
+  type: "website"
+  lifecycle: "experimental"
+  owner: "group:ultrastable"
+  system: "ultrastable"
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: "tenant-open-questions"
+  description: "manifest only; its repository is created before its first line of code, so its code is born outside the core"
+  annotations:
+    github.com/project-slug: "ultrastable/open-questions"
+spec:
+  type: "website"
+  lifecycle: "experimental"
+  owner: "group:ultrastable"
+  system: "ultrastable"
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: "tenant-practical-solutions"
+  description: "created as its own repository from the start"
+  annotations:
+    github.com/project-slug: "ultrastable/practical-solutions"
+  links:
+    - url: "https://tenant-ps-web.ultrastable.workers.dev"
+spec:
+  type: "website"
+  lifecycle: "production"
+  owner: "group:ultrastable"
+  system: "ultrastable"
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: "tenant-replication-ledger"
+  description: "replication-ledger"
+  annotations:
+    github.com/project-slug: "ultrastable/replication-ledger"
+spec:
+  type: "website"
+  lifecycle: "experimental"
+  owner: "group:ultrastable"
+  system: "ultrastable"
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: "ultrastable-agents"
+  description: "code agents (Workers AI adapters from doctrine/code-agents.json), probed live"
+  annotations:
+    github.com/project-slug: "ultrastable/ultrastable"
+spec:
+  type: "service"
+  lifecycle: "production"
+  owner: "group:ultrastable"
+  system: "ultrastable"
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: "ultrastable-dashboard"
+  description: "owner dashboard: e-mailed-code login, task queue, audit log, and a plain-English console agent (read-only until a fresh code; changes go through the audited command path); reached only through the sit"
+  annotations:
+    github.com/project-slug: "ultrastable/ultrastable"
+spec:
+  type: "service"
+  lifecycle: "production"
+  owner: "group:ultrastable"
+  system: "ultrastable"
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: "ultrastable-replication-ledger"
+  description: "Replication Ledger tenant app (moving to ultrastable/replication-ledger): which landmark findings held up when replicated and which failed, across many fields; hourly beat searches OpenAlex for new re"
+  annotations:
+    github.com/project-slug: "ultrastable/ultrastable"
+  links:
+    - url: "https://replication-ledger.ultrastable.org"
+spec:
+  type: "website"
+  lifecycle: "production"
+  owner: "group:ultrastable"
+  system: "ultrastable"
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: "ultrastable-site"
+  description: "public site, read-only live record, agent surfaces (/mcp, discovery documents), control-plane API /api/v1 and /ops dashboard (reads ORG live)"
+  annotations:
+    github.com/project-slug: "ultrastable/ultrastable"
+  links:
+    - url: "https://ultrastable.io"
+spec:
+  type: "website"
+  lifecycle: "production"
+  owner: "group:ultrastable"
+  system: "ultrastable"
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: "ultrastable-spinoffs"
+  description: "spinoff apps on *.ultrastable.app (SPINOFF-1): serves the registry bundle, answers 410 for retired apps; the zone route *.ultrastable.app/* names this script (a zone route, not a custom domain: it is "
+  annotations:
+    github.com/project-slug: "ultrastable/ultrastable"
+spec:
+  type: "service"
+  lifecycle: "production"
+  owner: "group:ultrastable"
+  system: "ultrastable"
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: "ultrastable-tenants"
+  description: "tenant store (US-SPEC-25): per-tenant SQLite Durable Objects with free-plan budgets, vectors and rollups; /health runs a self-test the tick reads"
+  annotations:
+    github.com/project-slug: "ultrastable/ultrastable"
+spec:
+  type: "service"
+  lifecycle: "production"
+  owner: "group:ultrastable"
+  system: "ultrastable"
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: "ultrastable-tick"
+  description: "heartbeat, executor dispatch, in-Worker code agents, lane, worker gate and handoffs (merge -> deploy -> probe -> close or roll back)"
+  annotations:
+    github.com/project-slug: "ultrastable/ultrastable"
+spec:
+  type: "service"
+  lifecycle: "production"
+  owner: "group:ultrastable"
+  system: "ultrastable"
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: "ultrastable-unlearn"
+  description: "Unlearn tenant app (ultrastable/unlearn): coaching moves for the adult beside a curious child; hourly beat re-learns move weights, measures, opens the next phase when its gates hold, prunes by retenti"
+  annotations:
+    github.com/project-slug: "ultrastable/unlearn"
+  links:
+    - url: "https://unlearn.ultrastable.org"
+spec:
+  type: "website"
+  lifecycle: "production"
+  owner: "group:ultrastable"
+  system: "ultrastable"
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: "ultrastable-what-works"
+  description: "What Works tenant app (ultrastable/what-works): a living atlas of what works in public policy; hourly beat resolves citations, searches OpenAlex, Europe PMC and Crossref, reads new trials in under a v"
+  annotations:
+    github.com/project-slug: "ultrastable/what-works"
+  links:
+    - url: "https://what-works.ultrastable.org"
+spec:
+  type: "website"
+  lifecycle: "production"
+  owner: "group:ultrastable"
+  system: "ultrastable"

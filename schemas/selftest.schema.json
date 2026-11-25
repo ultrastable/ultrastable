@@ -1,0 +1,54 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/selftest.schema.json",
+ "title": "selftest.json",
+ "description": "Inferred from selftest.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "data": {
+   "type": "object",
+   "properties": {
+    "default_max_age_h": {
+     "type": "integer"
+    },
+    "exempt": {
+     "type": "object",
+     "properties": {}
+    },
+    "max_age_h": {
+     "type": "object",
+     "properties": {
+      "site/feed-data.js": {
+       "type": "integer"
+      }
+     }
+    }
+   }
+  },
+  "workflows": {
+   "type": "object",
+   "properties": {
+    "repos": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "stale_h": {
+     "type": "integer"
+    },
+    "window": {
+     "type": "integer"
+    }
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "data",
+  "workflows"
+ ]
+}

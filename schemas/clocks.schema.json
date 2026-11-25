@@ -1,0 +1,216 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/clocks.schema.json",
+ "title": "clocks.json",
+ "description": "Inferred from clocks.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "_doc_health": {
+   "type": "string"
+  },
+  "_doc_replicas": {
+   "type": "string"
+  },
+  "account_id": {
+   "type": "string"
+  },
+  "catchup": {
+   "type": "object",
+   "properties": {
+    "dispatch": {
+     "type": "object",
+     "properties": {
+      "author": {
+       "type": "string"
+      },
+      "publish": {
+       "type": "string"
+      }
+     }
+    },
+    "max_per_stage_per_day": {
+     "type": "integer"
+    }
+   }
+  },
+  "chain": {
+   "type": "object",
+   "properties": {
+    "backoff_after_failures": {
+     "type": "integer"
+    },
+    "max_runs_per_day": {
+     "type": "integer"
+    },
+    "max_runs_per_day_public": {
+     "type": "integer"
+    },
+    "max_wakes_per_hour": {
+     "type": "integer"
+    },
+    "workflow": {
+     "type": "string"
+    }
+   }
+  },
+  "clocks": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "column": {
+      "type": "string"
+     },
+     "d1_id": {
+      "type": "string"
+     },
+     "event_driven": {
+      "type": "boolean"
+     },
+     "expected_interval_s": {
+      "type": "integer"
+     },
+     "health_urls": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "id": {
+      "type": "string"
+     },
+     "idle_when_no_work": {
+      "type": "boolean"
+     },
+     "periodic": {
+      "type": "boolean"
+     },
+     "replicas": {
+      "type": "array",
+      "items": {
+       "type": "object"
+      }
+     },
+     "source": {
+      "type": "string"
+     },
+     "table": {
+      "type": "string"
+     },
+     "what": {
+      "type": "string"
+     },
+     "workflow": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "expected_interval_s",
+     "id",
+     "periodic",
+     "source",
+     "what"
+    ]
+   }
+  },
+  "escalation": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "action": {
+      "type": "string"
+     },
+     "missed": {
+      "type": "integer"
+     },
+     "what": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "action",
+     "missed",
+     "what"
+    ]
+   }
+  },
+  "settlement": {
+   "type": "object",
+   "properties": {
+    "close_comment": {
+     "type": "string"
+    },
+    "names": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "sla_hours": {
+     "type": "integer"
+    }
+   }
+  },
+  "stages": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "clock": {
+      "type": "string"
+     },
+     "id": {
+      "type": "string"
+     },
+     "needs_work": {
+      "type": "boolean"
+     },
+     "paths": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "sla_s": {
+      "type": "integer"
+     },
+     "source": {
+      "type": "string"
+     },
+     "what": {
+      "type": "string"
+     },
+     "workflow": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "sla_s",
+     "source",
+     "what"
+    ]
+   }
+  },
+  "version": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "_doc",
+  "_doc_health",
+  "_doc_replicas",
+  "account_id",
+  "catchup",
+  "chain",
+  "clocks",
+  "escalation",
+  "settlement",
+  "stages",
+  "version"
+ ]
+}

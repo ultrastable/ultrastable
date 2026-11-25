@@ -1,0 +1,92 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/cf-posture.schema.json",
+ "title": "cf-posture.json",
+ "description": "Inferred from cf-posture.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "account_id": {
+   "type": "string"
+  },
+  "gateway": {
+   "type": "string"
+  },
+  "horizon_days": {
+   "type": "integer"
+  },
+  "preview_idle_days": {
+   "type": "integer"
+  },
+  "preview_prefixes": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "required_alerts": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "rules": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "default": {
+      "type": "string"
+     },
+     "id": {
+      "type": "string"
+     },
+     "kind": {
+      "type": "string"
+     },
+     "remedy": {
+      "type": "string"
+     },
+     "title": {
+      "type": "string"
+     },
+     "why": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "kind",
+     "title",
+     "why"
+    ]
+   }
+  },
+  "scan_exclude": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "upload_paths": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "account_id",
+  "gateway",
+  "horizon_days",
+  "preview_idle_days",
+  "preview_prefixes",
+  "required_alerts",
+  "rules",
+  "scan_exclude",
+  "upload_paths"
+ ]
+}

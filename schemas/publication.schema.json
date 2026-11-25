@@ -1,0 +1,112 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/publication.schema.json",
+ "title": "publication.json",
+ "description": "Inferred from publication.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "facts": {
+   "type": "object",
+   "properties": {
+    "actions_on_private_repositories": {
+     "type": "string"
+    },
+    "codeowners": {
+     "type": "string"
+    }
+   }
+  },
+  "id": {
+   "type": "string"
+  },
+  "license_blob": {
+   "type": "string"
+  },
+  "private_data": {
+   "type": "object",
+   "properties": {
+    "allow": {
+     "type": "string"
+    },
+    "patterns": {
+     "type": "object",
+     "properties": {
+      "local_path": {
+       "type": "string"
+      },
+      "personal_email": {
+       "type": "string"
+      }
+     }
+    },
+    "scan_suffixes": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "skip_paths": {
+     "type": "string"
+    }
+   }
+  },
+  "procedure": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "how": {
+      "type": "string"
+     },
+     "step": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "how",
+     "step"
+    ]
+   }
+  },
+  "required_files": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "source_suffixes": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "spdx": {
+   "type": "string"
+  },
+  "spdx_baseline": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "version": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "_doc",
+  "facts",
+  "id",
+  "license_blob",
+  "private_data",
+  "procedure",
+  "required_files",
+  "source_suffixes",
+  "spdx",
+  "spdx_baseline",
+  "version"
+ ]
+}

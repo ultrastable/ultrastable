@@ -1,0 +1,126 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/seed/improve.schema.json",
+ "title": "improve.json",
+ "description": "Inferred from improve.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "bank": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "better": {
+      "type": "string"
+     },
+     "id": {
+      "type": "string"
+     },
+     "kind": {
+      "type": "string"
+     },
+     "metric": {
+      "type": "string"
+     },
+     "probe": {
+      "type": "string"
+     },
+     "title": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "kind",
+     "metric",
+     "probe",
+     "title"
+    ]
+   }
+  },
+  "market_max_age_days": {
+   "type": "integer"
+  },
+  "max_open_from_loop": {
+   "type": "integer"
+  },
+  "min_items_per_cycle": {
+   "type": "integer"
+  },
+  "plus_per_cycle": {
+   "type": "integer"
+  },
+  "plus_share": {
+   "type": "number"
+  },
+  "rule": {
+   "type": "string"
+  },
+  "settle_days": {
+   "type": "integer"
+  },
+  "signals": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "string"
+     },
+     "key": {
+      "type": [
+       "null",
+       "string"
+      ]
+     },
+     "max_age_hours": {
+      "type": "integer"
+     },
+     "path": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "key",
+     "max_age_hours",
+     "path"
+    ]
+   }
+  },
+  "tiers": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "evidence": {
+      "type": "string"
+     },
+     "id": {
+      "type": "string"
+     },
+     "window_days": {
+      "type": "integer"
+     }
+    },
+    "required": [
+     "evidence",
+     "id",
+     "window_days"
+    ]
+   }
+  }
+ },
+ "required": [
+  "bank",
+  "market_max_age_days",
+  "max_open_from_loop",
+  "min_items_per_cycle",
+  "plus_per_cycle",
+  "plus_share",
+  "rule",
+  "settle_days",
+  "signals",
+  "tiers"
+ ]
+}

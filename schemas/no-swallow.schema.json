@@ -1,0 +1,63 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/no-swallow.schema.json",
+ "title": "no-swallow.json",
+ "description": "Inferred from no-swallow.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "baseline": {
+   "type": "object",
+   "properties": {
+    ".github/workflows/fleet.yml": {
+     "type": "integer"
+    },
+    "scripts/apply_github_settings.sh": {
+     "type": "integer"
+    },
+    "scripts/completion_sweep.sh": {
+     "type": "integer"
+    },
+    "scripts/executor_evidence.sh": {
+     "type": "integer"
+    },
+    "scripts/lane.sh": {
+     "type": "integer"
+    },
+    "scripts/lib-safe.sh": {
+     "type": "integer"
+    },
+    "scripts/mirror_then_delete.sh": {
+     "type": "integer"
+    }
+   }
+  },
+  "exclude": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "python_globs": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "shell_globs": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "baseline",
+  "exclude",
+  "python_globs",
+  "shell_globs"
+ ]
+}

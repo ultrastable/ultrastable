@@ -1,0 +1,521 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/spinoff.schema.json",
+ "title": "spinoff.json",
+ "description": "Inferred from spinoff.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "archetypes": {
+   "type": "object",
+   "properties": {
+    "domain-check": {
+     "type": "object",
+     "properties": {
+      "audience": {
+       "type": "integer"
+      },
+      "collects": {
+       "type": "array"
+      },
+      "cost_per_use": {
+       "type": "integer"
+      },
+      "implemented": {
+       "type": "boolean"
+      },
+      "input": {
+       "type": "string"
+      },
+      "what": {
+       "type": "string"
+      }
+     }
+    },
+    "live-feed": {
+     "type": "object",
+     "properties": {
+      "audience": {
+       "type": "integer"
+      },
+      "collects": {
+       "type": "array"
+      },
+      "cost_per_use": {
+       "type": "integer"
+      },
+      "implemented": {
+       "type": "boolean"
+      },
+      "input": {
+       "type": "string"
+      },
+      "what": {
+       "type": "string"
+      }
+     }
+    },
+    "live-lookup": {
+     "type": "object",
+     "properties": {
+      "audience": {
+       "type": "integer"
+      },
+      "collects": {
+       "type": "array"
+      },
+      "cost_per_use": {
+       "type": "integer"
+      },
+      "implemented": {
+       "type": "boolean"
+      },
+      "input": {
+       "type": "string"
+      },
+      "what": {
+       "type": "string"
+      }
+     }
+    },
+    "status-board": {
+     "type": "object",
+     "properties": {
+      "audience": {
+       "type": "integer"
+      },
+      "collects": {
+       "type": "array"
+      },
+      "cost_per_use": {
+       "type": "integer"
+      },
+      "implemented": {
+       "type": "boolean"
+      },
+      "input": {
+       "type": "string"
+      },
+      "what": {
+       "type": "string"
+      }
+     }
+    },
+    "template-generator": {
+     "type": "object",
+     "properties": {
+      "audience": {
+       "type": "integer"
+      },
+      "collects": {
+       "type": "array"
+      },
+      "cost_per_use": {
+       "type": "integer"
+      },
+      "implemented": {
+       "type": "boolean"
+      },
+      "input": {
+       "type": "string"
+      },
+      "what": {
+       "type": "string"
+      }
+     }
+    }
+   }
+  },
+  "budget": {
+   "type": "object",
+   "properties": {
+    "max_launches_per_day": {
+     "type": "integer"
+    },
+    "max_launches_per_week": {
+     "type": "integer"
+    },
+    "max_live": {
+     "type": "integer"
+    },
+    "max_requests_per_app_per_day": {
+     "type": "integer"
+    },
+    "monthly_usd_ceiling": {
+     "type": "integer"
+    },
+    "note": {
+     "type": "string"
+    },
+    "subrequests_per_use": {
+     "type": "integer"
+    }
+   }
+  },
+  "check_library": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "fix": {
+      "type": "string"
+     },
+     "id": {
+      "type": "string"
+     },
+     "needs": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "title": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "fix",
+     "id",
+     "needs",
+     "title"
+    ]
+   }
+  },
+  "domain": {
+   "type": "string"
+  },
+  "domain_impact": {
+   "type": "object",
+   "properties": {
+    "accessibility": {
+     "type": "integer"
+    },
+    "continuity": {
+     "type": "integer"
+    },
+    "finance": {
+     "type": "integer"
+    },
+    "ip": {
+     "type": "integer"
+    },
+    "legal": {
+     "type": "integer"
+    },
+    "outreach": {
+     "type": "integer"
+    },
+    "privacy": {
+     "type": "integer"
+    },
+    "security": {
+     "type": "integer"
+    }
+   }
+  },
+  "domain_reach": {
+   "type": "object",
+   "properties": {
+    "accessibility": {
+     "type": "integer"
+    },
+    "continuity": {
+     "type": "integer"
+    },
+    "finance": {
+     "type": "integer"
+    },
+    "ip": {
+     "type": "integer"
+    },
+    "legal": {
+     "type": "integer"
+    },
+    "outreach": {
+     "type": "integer"
+    },
+    "privacy": {
+     "type": "integer"
+    },
+    "security": {
+     "type": "integer"
+    }
+   }
+  },
+  "guard_metrics": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "id": {
+   "type": "string"
+  },
+  "impact_metrics": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "ledger": {
+   "type": "string"
+  },
+  "lineage": {
+   "type": "object",
+   "properties": {
+    "qnfo-idea-hub": {
+     "type": "string"
+    },
+    "reentry_todo": {
+     "type": "string"
+    }
+   }
+  },
+  "marker": {
+   "type": "string"
+  },
+  "metrics_ledger": {
+   "type": "string"
+  },
+  "need_archetype": {
+   "type": "object",
+   "properties": {
+    "domain-check": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "status-board": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "template-generator": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "outcomes_ledger": {
+   "type": "string"
+  },
+  "portfolio": {
+   "type": "object",
+   "properties": {
+    "budget_share_floor": {
+     "type": "number"
+    },
+    "iterate_between": {
+     "type": "array",
+     "items": {
+      "type": "number"
+     }
+    },
+    "kill_below_value": {
+     "type": "number"
+    },
+    "min_age_days": {
+     "type": "integer"
+    },
+    "promote_above_value": {
+     "type": "number"
+    },
+    "retire_status": {
+     "type": "integer"
+    },
+    "weights": {
+     "type": "object",
+     "properties": {
+      "gap_closed": {
+       "type": "number"
+      },
+      "reached_with_gap": {
+       "type": "number"
+      },
+      "retained": {
+       "type": "number"
+      }
+     }
+    }
+   }
+  },
+  "reach_metrics": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "registry": {
+   "type": "string"
+  },
+  "safety": {
+   "type": "object",
+   "properties": {
+    "allowed_inputs": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "deny_collect": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "deny_domains": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "rules": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "score": {
+   "type": "object",
+   "properties": {
+    "bandit": {
+     "type": "object",
+     "properties": {
+      "ceiling": {
+       "type": "number"
+      },
+      "floor": {
+       "type": "number"
+      },
+      "step": {
+       "type": "number"
+      }
+     }
+    },
+    "diversity_cap": {
+     "type": "number"
+    },
+    "formula": {
+     "type": "string"
+    },
+    "impact_scale": {
+     "type": "string"
+    },
+    "min_score": {
+     "type": "integer"
+    },
+    "reach_scale": {
+     "type": "string"
+    }
+   }
+  },
+  "sources": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "string"
+     },
+     "kind": {
+      "type": "string"
+     },
+     "path": {
+      "type": "string"
+     },
+     "what": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "kind",
+     "what"
+    ]
+   }
+  },
+  "value": {
+   "type": "object",
+   "properties": {
+    "definition": {
+     "type": "string"
+    },
+    "excluded": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "measured_by": {
+     "type": "object",
+     "properties": {
+      "gap_closed": {
+       "type": "string"
+      },
+      "reached_with_gap": {
+       "type": "string"
+      },
+      "retained": {
+       "type": "string"
+      }
+     }
+    },
+    "weights": {
+     "type": "object",
+     "properties": {
+      "gap_closed": {
+       "type": "number"
+      },
+      "reached_with_gap": {
+       "type": "number"
+      },
+      "retained": {
+       "type": "number"
+      }
+     }
+    }
+   }
+  },
+  "version": {
+   "type": "string"
+  },
+  "worker": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "_doc",
+  "archetypes",
+  "budget",
+  "check_library",
+  "domain",
+  "domain_impact",
+  "domain_reach",
+  "guard_metrics",
+  "id",
+  "impact_metrics",
+  "ledger",
+  "lineage",
+  "marker",
+  "metrics_ledger",
+  "need_archetype",
+  "outcomes_ledger",
+  "portfolio",
+  "reach_metrics",
+  "registry",
+  "safety",
+  "score",
+  "sources",
+  "value",
+  "version",
+  "worker"
+ ]
+}

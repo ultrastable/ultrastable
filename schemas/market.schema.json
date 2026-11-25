@@ -1,0 +1,246 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/market.schema.json",
+ "title": "market.json",
+ "description": "Inferred from market.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "capabilities": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "capability-set": {
+   "type": "string"
+  },
+  "checked": {
+   "type": "string"
+  },
+  "components": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "alternatives": {
+      "type": "array",
+      "items": {
+       "type": "object"
+      }
+     },
+     "features": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "id": {
+      "type": "string"
+     },
+     "integration_gap": {
+      "type": "string"
+     },
+     "name": {
+      "type": "string"
+     },
+     "what": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "alternatives",
+     "features",
+     "id",
+     "integration_gap",
+     "name",
+     "what"
+    ]
+   }
+  },
+  "components_built_next": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "features": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "string"
+     },
+     "name": {
+      "type": "string"
+     },
+     "note": {
+      "type": "string"
+     },
+     "proof": {
+      "type": "string"
+     },
+     "status": {
+      "type": "string"
+     },
+     "test": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "name",
+     "note",
+     "proof",
+     "status",
+     "test"
+    ]
+   }
+  },
+  "gaps": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "closing_probe": {
+      "type": "string"
+     },
+     "component": {
+      "type": "string"
+     },
+     "id": {
+      "type": "string"
+     },
+     "owner": {
+      "type": "string"
+     },
+     "title": {
+      "type": "string"
+     },
+     "why": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "closing_probe",
+     "component",
+     "id",
+     "owner",
+     "title",
+     "why"
+    ]
+   }
+  },
+  "objections": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "answer": {
+      "type": "string"
+     },
+     "components": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "concede": {
+      "type": "string"
+     },
+     "evidence": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "id": {
+      "type": "string"
+     },
+     "objection": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "answer",
+     "components",
+     "concede",
+     "evidence",
+     "id",
+     "objection"
+    ]
+   }
+  },
+  "rationale": {
+   "type": "string"
+  },
+  "sources": {
+   "type": "object",
+   "additionalProperties": {
+    "type": "object",
+    "properties": {
+     "url": {
+      "type": "string"
+     },
+     "what": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "url",
+     "what"
+    ]
+   }
+  },
+  "users": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "string"
+     },
+     "needs": {
+      "type": "string"
+     },
+     "persona": {
+      "type": "string"
+     },
+     "stories": {
+      "type": "array",
+      "items": {
+       "type": "object"
+      }
+     }
+    },
+    "required": [
+     "id",
+     "needs",
+     "persona",
+     "stories"
+    ]
+   }
+  },
+  "visibility": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "_doc",
+  "capabilities",
+  "capability-set",
+  "checked",
+  "components",
+  "components_built_next",
+  "features",
+  "gaps",
+  "objections",
+  "rationale",
+  "sources",
+  "users",
+  "visibility"
+ ]
+}

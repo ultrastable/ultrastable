@@ -1,0 +1,60 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/seed/pace.schema.json",
+ "title": "pace.json",
+ "description": "Inferred from pace.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "gauges": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "idle_runs": {
+   "type": "integer"
+  },
+  "max_stride": {
+   "type": "integer"
+  },
+  "never_pace": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "rank": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "cost": {
+      "type": "integer"
+     },
+     "prefix": {
+      "type": "string"
+     },
+     "reach": {
+      "type": "integer"
+     }
+    },
+    "required": [
+     "cost",
+     "prefix",
+     "reach"
+    ]
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "gauges",
+  "idle_runs",
+  "max_stride",
+  "never_pace",
+  "rank"
+ ]
+}

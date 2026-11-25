@@ -1,0 +1,113 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/unknowns.schema.json",
+ "title": "unknowns.json",
+ "description": "Inferred from unknowns.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "cadence_days": {
+   "type": "integer"
+  },
+  "candidates": {
+   "type": "string"
+  },
+  "kind_impact": {
+   "type": "object",
+   "properties": {
+    "default": {
+     "type": "integer"
+    },
+    "deploy": {
+     "type": "integer"
+    },
+    "governance": {
+     "type": "integer"
+    },
+    "growth": {
+     "type": "integer"
+    }
+   }
+  },
+  "ledger": {
+   "type": "string"
+  },
+  "lenses": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "string"
+     },
+     "method": {
+      "type": "string"
+     },
+     "q": {
+      "type": "string"
+     },
+     "region": {
+      "type": "string"
+     },
+     "uia": {
+      "type": "integer"
+     }
+    },
+    "required": [
+     "id",
+     "method",
+     "q",
+     "region"
+    ]
+   }
+  },
+  "max_new_per_day": {
+   "type": "integer"
+  },
+  "max_new_per_run": {
+   "type": "integer"
+  },
+  "min_answer_chars": {
+   "type": "integer"
+  },
+  "plus_share_for_unknowns": {
+   "type": "number"
+  },
+  "regions": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "seed_score": {
+   "type": "integer"
+  },
+  "summary": {
+   "type": "string"
+  },
+  "verdicts": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "cadence_days",
+  "candidates",
+  "kind_impact",
+  "ledger",
+  "lenses",
+  "max_new_per_day",
+  "max_new_per_run",
+  "min_answer_chars",
+  "plus_share_for_unknowns",
+  "regions",
+  "seed_score",
+  "summary",
+  "verdicts"
+ ]
+}

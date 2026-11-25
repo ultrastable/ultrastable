@@ -1,0 +1,295 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/topology.schema.json",
+ "title": "topology.json",
+ "description": "Inferred from topology.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_account_split": {
+   "type": "string"
+  },
+  "_doc": {
+   "type": "string"
+  },
+  "account_id": {
+   "type": "string"
+  },
+  "deploy_counter": {
+   "type": "string"
+  },
+  "edit_path": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "prefix": {
+   "type": "string"
+  },
+  "stores": {
+   "type": "object",
+   "properties": {
+    "d1": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "id": {
+        "type": "string"
+       },
+       "key": {
+        "type": "string"
+       },
+       "name": {
+        "type": "string"
+       },
+       "state": {
+        "type": "string"
+       },
+       "what": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "id",
+       "key",
+       "name",
+       "state",
+       "what"
+      ]
+     }
+    },
+    "kv": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "id": {
+        "type": "string"
+       },
+       "key": {
+        "type": "string"
+       },
+       "name": {
+        "type": "string"
+       },
+       "state": {
+        "type": "string"
+       },
+       "what": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "key",
+       "name",
+       "state",
+       "what"
+      ]
+     }
+    },
+    "queues": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "key": {
+        "type": "string"
+       },
+       "name": {
+        "type": "string"
+       },
+       "state": {
+        "type": "string"
+       },
+       "what": {
+        "type": "string"
+       }
+      }
+     }
+    },
+    "r2": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "name": {
+        "type": "string"
+       },
+       "state": {
+        "type": "string"
+       },
+       "what": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "name",
+       "state",
+       "what"
+      ]
+     }
+    },
+    "vectorize": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "dimensions": {
+        "type": "integer"
+       },
+       "key": {
+        "type": "string"
+       },
+       "metric": {
+        "type": "string"
+       },
+       "name": {
+        "type": "string"
+       },
+       "state": {
+        "type": "string"
+       },
+       "what": {
+        "type": "string"
+       }
+      }
+     }
+    },
+    "workflows": {
+     "type": "array"
+    }
+   }
+  },
+  "system_compatibility_date": {
+   "type": "string"
+  },
+  "version": {
+   "type": "string"
+  },
+  "workers": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "bindings": {
+      "type": "object",
+      "properties": {
+       "ai": {
+        "type": "array"
+       },
+       "d1": {
+        "type": "object"
+       },
+       "durable_objects": {
+        "type": "object"
+       },
+       "kv": {
+        "type": "object"
+       },
+       "migrations": {
+        "type": "array"
+       },
+       "queues_consumer": {
+        "type": "array"
+       },
+       "queues_producer": {
+        "type": "object"
+       },
+       "r2": {
+        "type": "object"
+       },
+       "secrets": {
+        "type": "array"
+       },
+       "send_email": {
+        "type": "array"
+       },
+       "services": {
+        "type": "object"
+       },
+       "var_names": {
+        "type": "array"
+       },
+       "vars": {
+        "type": "object"
+       },
+       "vectorize": {
+        "type": "object"
+       }
+      }
+     },
+     "compatibility_date": {
+      "type": "string"
+     },
+     "crons": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "id": {
+      "type": "string"
+     },
+     "main": {
+      "type": "string"
+     },
+     "public": {
+      "type": "boolean"
+     },
+     "pulse": {
+      "type": "string"
+     },
+     "role": {
+      "type": "string"
+     },
+     "routes": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "source": {
+      "type": "object",
+      "properties": {
+       "ref": {
+        "type": "string"
+       },
+       "repo": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "ref",
+       "repo"
+      ]
+     },
+     "state": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "bindings",
+     "compatibility_date",
+     "id",
+     "main",
+     "public",
+     "role",
+     "state"
+    ]
+   }
+  }
+ },
+ "required": [
+  "_account_split",
+  "_doc",
+  "account_id",
+  "deploy_counter",
+  "edit_path",
+  "prefix",
+  "stores",
+  "system_compatibility_date",
+  "version",
+  "workers"
+ ]
+}

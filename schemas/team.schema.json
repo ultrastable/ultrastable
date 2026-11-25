@@ -1,0 +1,104 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/team.schema.json",
+ "title": "team.json",
+ "description": "Inferred from team.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "$schema_version": {
+   "type": "string"
+  },
+  "doc": {
+   "type": "string"
+  },
+  "phases": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "existing": {
+      "type": "boolean"
+     },
+     "gate": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "n": {
+      "type": "integer"
+     },
+     "name": {
+      "type": "string"
+     },
+     "roles": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     }
+    },
+    "required": [
+     "gate",
+     "n",
+     "name",
+     "roles"
+    ]
+   }
+  },
+  "roles": {
+   "type": "object",
+   "additionalProperties": {
+    "type": "object",
+    "properties": {
+     "metric": {
+      "type": "string"
+     },
+     "never": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "owner_only": {
+      "type": "string"
+     },
+     "owns": {
+      "type": "string"
+     },
+     "program": {
+      "type": "string"
+     },
+     "steps": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "tick_every": {
+      "type": "integer"
+     },
+     "title": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "metric",
+     "never",
+     "owner_only",
+     "owns",
+     "program",
+     "steps",
+     "tick_every",
+     "title"
+    ]
+   }
+  }
+ },
+ "required": [
+  "$schema_version",
+  "doc",
+  "phases",
+  "roles"
+ ]
+}

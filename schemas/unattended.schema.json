@@ -1,0 +1,158 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/unattended.schema.json",
+ "title": "unattended.json",
+ "description": "Inferred from unattended.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "dependencies": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "class": {
+      "type": "string"
+     },
+     "connect": {
+      "type": "string"
+     },
+     "default": {
+      "type": "string"
+     },
+     "evidence": {
+      "type": "string"
+     },
+     "expires": {
+      "type": [
+       "null",
+       "string"
+      ]
+     },
+     "id": {
+      "type": "string"
+     },
+     "item": {
+      "type": "string"
+     },
+     "measured": {
+      "type": "string"
+     },
+     "needs_you": {
+      "type": "string"
+     },
+     "probe": {
+      "type": "string"
+     },
+     "renewal": {
+      "type": "string"
+     },
+     "status": {
+      "type": "string"
+     },
+     "what": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "class",
+     "evidence",
+     "expires",
+     "id",
+     "measured",
+     "probe",
+     "renewal",
+     "status",
+     "what"
+    ]
+   }
+  },
+  "target": {
+   "type": "object",
+   "properties": {
+    "metric": {
+     "type": "string"
+    },
+    "op": {
+     "type": "string"
+    },
+    "pillars": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "field": {
+        "type": "string"
+       },
+       "id": {
+        "type": "string"
+       },
+       "op": {
+        "type": "string"
+       },
+       "source": {
+        "type": "string"
+       },
+       "statement": {
+        "type": "string"
+       },
+       "value": {
+        "type": "integer"
+       },
+       "where": {
+        "type": "object"
+       }
+      },
+      "required": [
+       "field",
+       "id",
+       "op",
+       "source",
+       "statement",
+       "value"
+      ]
+     }
+    },
+    "principle": {
+     "type": "string"
+    },
+    "probe": {
+     "type": "string"
+    },
+    "release_metric": {
+     "type": "string"
+    },
+    "release_op": {
+     "type": "string"
+    },
+    "release_value": {
+     "type": "integer"
+    },
+    "set": {
+     "type": "string"
+    },
+    "statement": {
+     "type": "string"
+    },
+    "value": {
+     "type": "integer"
+    }
+   }
+  },
+  "version": {
+   "type": "string"
+  },
+  "warn_days": {
+   "type": "integer"
+  }
+ },
+ "required": [
+  "_doc",
+  "dependencies",
+  "target",
+  "version",
+  "warn_days"
+ ]
+}

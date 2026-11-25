@@ -1,0 +1,77 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/tenant-sync.schema.json",
+ "title": "tenant-sync.json",
+ "description": "Inferred from tenant-sync.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "core": {
+   "type": "object",
+   "properties": {
+    "dir": {
+     "type": "string"
+    },
+    "repo": {
+     "type": "string"
+    },
+    "tool": {
+     "type": "string"
+    }
+   }
+  },
+  "drift_max_days": {
+   "type": "integer"
+  },
+  "future_tenant_rule": {
+   "type": "string"
+  },
+  "ledger": {
+   "type": "string"
+  },
+  "max_prs_per_day": {
+   "type": "integer"
+  },
+  "repos": {
+   "type": "object",
+   "additionalProperties": {
+    "type": "object",
+    "properties": {
+     "clone": {
+      "type": "string"
+     },
+     "pr_repo": {
+      "type": "string"
+     },
+     "role": {
+      "type": "string"
+     },
+     "vendor_dir": {
+      "type": "string"
+     },
+     "why": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "role"
+    ]
+   }
+  },
+  "upstream_min_30d": {
+   "type": "integer"
+  }
+ },
+ "required": [
+  "_doc",
+  "core",
+  "drift_max_days",
+  "future_tenant_rule",
+  "ledger",
+  "max_prs_per_day",
+  "repos",
+  "upstream_min_30d"
+ ]
+}

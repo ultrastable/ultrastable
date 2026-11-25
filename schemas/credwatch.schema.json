@@ -1,0 +1,72 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/credwatch.schema.json",
+ "title": "credwatch.json",
+ "description": "Inferred from credwatch.json; tighten by hand.",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "credentials": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "kind": {
+      "type": "string"
+     },
+     "name": {
+      "type": "string"
+     },
+     "optional": {
+      "type": "boolean"
+     },
+     "used_by": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "kind",
+     "name",
+     "used_by"
+    ]
+   }
+  },
+  "registrations": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "auto_renew": {
+      "type": "boolean"
+     },
+     "expires": {
+      "type": "string"
+     },
+     "name": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "auto_renew",
+     "expires",
+     "name"
+    ]
+   }
+  },
+  "version": {
+   "type": "string"
+  },
+  "warn_days": {
+   "type": "integer"
+  }
+ },
+ "required": [
+  "_doc",
+  "credentials",
+  "registrations",
+  "version",
+  "warn_days"
+ ]
+}
