@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-25-owner-found-9-failures-before-any-loop-redteam-1",
+  "kind": "lesson",
+  "date": "2026-11-25",
+  "title": "Owner found 9 failures before any loop (REDTEAM-1)",
+  "body": "Probes checked that mechanisms exist, not that their output is true. Classes: vacuous, stale, unscored, phantom, timebomb, undetected, starved, credential. foundation/redteam.py tests each adversarially; owner_found_30d is the metric.",
+  "probe": "file:foundation/redteam.py",
+  "session": "session_0156nqDrAs7rUXpvph8XjAkz"
+ },
+ "kind": "lesson",
+ "title": "Owner found 9 failures before any loop (REDTEAM-1)",
+ "session": "session_0156nqDrAs7rUXpvph8XjAkz"
+}

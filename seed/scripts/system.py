@@ -44,9 +44,10 @@ def check(root: Path) -> list[str]:
             for c in p.get("code", []):
                 if not (root / c).exists():
                     bad.append(f"part {p['id']}: {c} does not exist (a statement with no code)")
-    md = root / "doctrine" / "SYSTEM.md"
-    if not md.exists() or md.read_text(encoding="utf-8") != render(d):
-        bad.append("doctrine/SYSTEM.md is stale: run python3 scripts/system.py --gen --apply")
+    # doctrine/SYSTEM.md is the prose definition owned by COLDSTART-1 (a byte copy of the platform's
+    # docs/doctrine/SYSTEM.md, checked by `foundation coldstart --check`); system.json is its machine map.
+    if not (root / "doctrine" / "SYSTEM.md").exists():
+        bad.append("doctrine/SYSTEM.md is missing")
     cl = root / "CLAUDE.md"
     if cl.exists() and "@doctrine/SYSTEM.md" not in cl.read_text(encoding="utf-8"):
         bad.append("CLAUDE.md does not import @doctrine/SYSTEM.md")
@@ -58,7 +59,7 @@ def main(argv: list[str]) -> int:
     if "--gen" in argv:
         text = render(load(root))
         if "--apply" in argv:
-            (root / "doctrine" / "SYSTEM.md").write_text(text, encoding="utf-8")
+            (root / "doctrine" / "SYSTEM-MAP.md").write_text(text, encoding="utf-8")
         else:
             print(text)
         return 0

@@ -2407,25 +2407,27 @@
       "bound_by": "cited"
     },
     {
-      "id": "cited-4d5fed0f55",
+      "id": "cited-467a38f9b7",
       "surface": "agents/AGENTS.md",
-      "text": "- **No branch outlives its pull request (BRANCH-CLEANUP-1, Rowan 2026-11-25).** \"You shall never keep branches active after merging. All",
+      "text": "- **Red-team the system's own blind spots; the owner should never find a failure first (REDTEAM-1, Rowan 2026-11-25).** \"Audit and",
       "probe": [
-        "file:scripts/branch_cleanup.py"
+        "file:foundation/redteam.py",
+        "file:ops/redteam/findings.jsonl",
+        "file:tests/foundation/test_redteam.py"
       ],
       "bound_by": "cited"
     },
     {
-      "id": "cited-edabfbae8f",
+      "id": "cited-badeab1b44",
       "surface": "agents/AGENTS.md",
-      "text": "- **One definition; every surface from one source; a fresh seed proves it (SYSTEM-1, COHERENCE-1, CLEANROOM-1, Rowan 2026-11-25).** \"All",
+      "text": "- **Everything bootstraps itself from a cold start and works together from birth (COLDSTART-1, Rowan 2026-11-25).** \"All surfaces, all",
       "probe": [
-        "file:seed/doctrine/system.json",
-        "file:seed/doctrine/SYSTEM.md",
-        "file:seed/scripts/system.py",
-        "file:workers/agents/CONTRACT.md",
-        "file:doctrine/tenant-repos.json",
-        "file:.github/workflows/cleanroom.yml"
+        "file:doctrine/coldstart.json",
+        "file:seed/worker/src/visibility.js",
+        "file:docs/doctrine/SYSTEM.md",
+        "file:CLAUDE.md",
+        "file:doctrine/schemas/coldstart.schema.json",
+        "file:foundation/coldstart.py"
       ],
       "bound_by": "cited"
     },
@@ -2794,6 +2796,36 @@
         "file:doctrine/standing-order.json",
         "file:foundation/standingorder.py",
         "grep:.github/workflows/checks.yml::foundation[ .]standingorder\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-b4d6cc4189",
+      "surface": "seed/doctrine/SYSTEM.md",
+      "text": "`doctrine/coldstart.json` (JSON Schema `doctrine/schemas/coldstart.schema.json`) or the code they name drift apart. The owner never",
+      "probe": [
+        "file:doctrine/coldstart.json",
+        "file:doctrine/schemas/coldstart.schema.json"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-94e4bb2cbb",
+      "surface": "seed/doctrine/SYSTEM.md",
+      "text": "default in effect, never a task in prose (`doctrine/open-loops.json`, `foundation/data/needs-you.json`). Anything else handed to a person",
+      "probe": [
+        "file:doctrine/open-loops.json",
+        "file:foundation/data/needs-you.json"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-a191183c3c",
+      "surface": "seed/doctrine/SYSTEM.md",
+      "text": "`python3 -m foundation coldstart --check` runs in `checks` on every change. It fails when the seed stops carrying a capability, when this",
+      "probe": [
+        "file:foundation/coldstart.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]coldstart\\b"
       ],
       "bound_by": "cited"
     },
@@ -3369,14 +3401,16 @@
       "of": "cited-0e153ff129"
     },
     {
-      "id": "mirror-3e533029e6",
+      "id": "mirror-309506fe16",
       "surface": "seed/agents/AGENTS.md",
-      "text": "- **No branch outlives its pull request (BRANCH-CLEANUP-1, Rowan 2026-11-25).** \"You shall never keep branches active after merging. All",
+      "text": "- **Red-team the system's own blind spots; the owner should never find a failure first (REDTEAM-1, Rowan 2026-11-25).** \"Audit and",
       "probe": [
-        "file:scripts/branch_cleanup.py"
+        "file:foundation/redteam.py",
+        "file:ops/redteam/findings.jsonl",
+        "file:tests/foundation/test_redteam.py"
       ],
       "bound_by": "mirror",
-      "of": "cited-4d5fed0f55"
+      "of": "cited-467a38f9b7"
     },
     {
       "id": "mirror-ad11709e94",
@@ -3405,19 +3439,19 @@
       "of": "cited-d77a994a9e"
     },
     {
-      "id": "mirror-09a99fa607",
+      "id": "mirror-23cc6eb0f0",
       "surface": "seed/agents/AGENTS.md",
-      "text": "- **One definition; every surface from one source; a fresh seed proves it (SYSTEM-1, COHERENCE-1, CLEANROOM-1, Rowan 2026-11-25).** \"All",
+      "text": "- **Everything bootstraps itself from a cold start and works together from birth (COLDSTART-1, Rowan 2026-11-25).** \"All surfaces, all",
       "probe": [
-        "file:seed/doctrine/system.json",
-        "file:seed/doctrine/SYSTEM.md",
-        "file:seed/scripts/system.py",
-        "file:workers/agents/CONTRACT.md",
-        "file:doctrine/tenant-repos.json",
-        "file:.github/workflows/cleanroom.yml"
+        "file:doctrine/coldstart.json",
+        "file:seed/worker/src/visibility.js",
+        "file:docs/doctrine/SYSTEM.md",
+        "file:CLAUDE.md",
+        "file:doctrine/schemas/coldstart.schema.json",
+        "file:foundation/coldstart.py"
       ],
       "bound_by": "mirror",
-      "of": "cited-edabfbae8f"
+      "of": "cited-badeab1b44"
     },
     {
       "id": "mirror-be5af6748b",
@@ -4530,8 +4564,7 @@
       "node_modules",
       "^workers/",
       "temporal-data\\.js",
-      "intent-yield-data\\.js",
-      "seed/doctrine/SYSTEM\\.md"
+      "intent-yield-data\\.js"
     ],
     "skip_reasons": {
       "intent-yield-data\\.js": "INTENT-YIELD-1: generated by foundation/intentyield.py; its titles are the owner's directive titles copied from agents/AGENTS.md, scanned there, and its numbers are verdicts from running each directive's own probe",
