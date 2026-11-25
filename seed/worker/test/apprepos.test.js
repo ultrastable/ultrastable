@@ -143,3 +143,25 @@ test('the tenant route needs the internal key', async () => {
   const ok = await handleAppHost(new Request('https://t/host/tenant-repo', { method: 'POST', headers: { 'x-internal-key': w.env.INTERNAL_DEPLOY_KEY }, body: '{"repo":"ultrastable/replication-ledger"}' }), { ...w.env, DB: w.db }, { tenant: T, fetch: w.f });
   assert.equal(ok.status, 200); assert.equal((await ok.json()).empty, true);
 });
+
+// REPO-SETTINGS-1: branch cleanup reached delete_branch_on_merge only through an ORG_ADMIN_TOKEN nobody had; the admin app sets the two settings.
+test('the admin app turns on exactly the two drifted settings, for org repositories only, behind the internal key', async () => {
+  const { ensureRepoSettings, REPO_SETTINGS } = await import('../src/apprepos.js');
+  const w = await world();
+  const patched = [];
+  const f = async (url, init = {}) => {
+    const u = new URL(url), tok = (init.headers.authorization || '').slice(7);
+    if (u.pathname === '/repos/ultrastable/ultrastable' && (init.method || 'GET') === 'GET') return new Response(JSON.stringify({ delete_branch_on_merge: false, allow_auto_merge: true }), { status: 200 });
+    if (u.pathname === '/repos/ultrastable/ultrastable' && init.method === 'PATCH') { patched.push({ tok, body: JSON.parse(init.body) }); return new Response('{}', { status: 200 }); }
+    return w.f(url, init);
+  };
+  const r = await ensureRepoSettings(w.db, w.env, T, { repo: 'ultrastable/ultrastable' }, { fetch: f });
+  assert.equal(r.ok, true); assert.deepEqual(r.changed, ['delete_branch_on_merge']);
+  assert.deepEqual(patched, [{ tok: 'admin-token', body: { delete_branch_on_merge: true } }]);
+  assert.deepEqual(Object.keys(REPO_SETTINGS).sort(), ['allow_auto_merge', 'delete_branch_on_merge']);
+  for (const n of ['other/x', 'ultrastable/../x', '']) assert.equal((await ensureRepoSettings(w.db, w.env, T, { repo: n }, { fetch: f })).ok, false, n);
+  const bad = await handleAppHost(new Request('https://t/host/repo-settings', { method: 'POST', headers: { 'x-internal-key': 'nope' }, body: '{"repo":"ultrastable/ultrastable"}' }), { ...w.env, DB: w.db }, { tenant: T, fetch: f });
+  assert.equal(bad.status, 404);
+  const none = await world({ admin: false });
+  assert.equal((await ensureRepoSettings(none.db, none.env, T, { repo: 'ultrastable/ultrastable' }, { fetch: none.f })).waiting_on, 'admin-app');
+});

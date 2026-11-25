@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-25-deploys-read-every-knowledge-graph-back-repo-settings-go-thr",
+  "kind": "decision",
+  "date": "2026-11-25",
+  "title": "Deploys read every knowledge graph back; repo settings go through the admin App",
+  "body": "datagraph --live runs after each deploy and daily. org-settings no longer goes red without ORG_ADMIN_TOKEN: the admin App sets delete_branch_on_merge and allow_auto_merge; the rest is gate org-admin-settings.",
+  "probe": "grep:foundation/datagraph.py::def live",
+  "session": "session_0156nqDrE184nXAFKcTRxk26"
+ },
+ "kind": "decision",
+ "title": "Deploys read every knowledge graph back; repo settings go through the admin App",
+ "session": "session_0156nqDrE184nXAFKcTRxk26"
+}

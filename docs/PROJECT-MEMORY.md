@@ -10,6 +10,7 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-25
 
+- 2026-11-25: Failure audit (Rowan: "audit and remediate all of your failures and their root causes ... in code"). COLLISION-1: `foundation collisions --check/--prs/--claim` in checks and SOP (competing graph PRs). GH-RETRY-1: `seed/worker/src/ghfetch.js` shared by lane, sweeper, lanemerge, mergenow. DATAGRAPH-LIVE-1: `datagraph --live` after each deploy and daily (Replication Ledger 357 nodes, Practical Solutions 615, Unlearn 1894, read from D1 2026-11-25). REPO-SETTINGS-1: admin App sets delete_branch_on_merge/allow_auto_merge; org-settings no longer red; gate org-admin-settings. Main red fixed: 'qnfo' in seed/worker/test/postfeedback.test.js (from #2222, merged red).
 - 2026-11-25: ZERO-MINUTES-1: worker merged #2213
 - 2026-11-25: Replication Ledger: Europe PMC most-cited first, name search, OpenAlex key support (#2213)
 - 2026-11-25: watchdog: clock probe (RESILIENCE-1) (part 2/2) [skip ci]
