@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-25-a-tenant-move-touches-more-than-the-folder",
+  "kind": "lesson",
+  "date": "2026-11-25",
+  "title": "A tenant move touches more than the folder",
+  "body": "Moving Unlearn out broke the decision ledger, the topology main check, system.json, seedlife build paths and a core test that read the tenant's phases. Tenant checks now live in the tenant repo next to the code; core checks read source repos from topology.",
+  "probe": "grep:doctrine/topology.json::ultrastable/unlearn",
+  "session": "session_0156nqDtv3xZHzUu11Sy1geK"
+ },
+ "kind": "lesson",
+ "title": "A tenant move touches more than the folder",
+ "session": "session_0156nqDtv3xZHzUu11Sy1geK"
+}

@@ -43,7 +43,8 @@ class TenantRepos(unittest.TestCase):
 
     def test_prepare_vendors_core_files_and_rewrites_imports(self):
         d = _repo.scratch()
-        shutil.copytree(ROOT / "instances/unlearn/worker", d / "worker")
+        (d / "worker").mkdir()
+        (d / "worker/index.js").write_text('import M from "../../../doctrine/models.json" with { type: "json" };\nexport default M;\n')
         out = tr.prepare(d, "unlearn", ROOT)
         self.assertTrue((d / "vendor/ultrastable/models.json").exists())
         src = (d / "worker/index.js").read_text()
