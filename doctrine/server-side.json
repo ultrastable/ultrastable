@@ -133,6 +133,10 @@
   {
    "path": "docs/bootstrapping/bootstrap-log.md",
    "reason": "a dated incident log; its rows record failed attempts to reach a person's computer, which is the lesson the rule keeps"
+  },
+  {
+   "path": "site/directory*",
+   "reason": "the directory refuses loopback and private names in a URL someone registers (SSRF guard, DISCOVER-1); it never connects to a person's computer"
   }
  ]
 }

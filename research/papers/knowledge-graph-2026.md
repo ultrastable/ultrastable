@@ -36,10 +36,10 @@ Source: doctrine/knowledge-graph.json (declared).
 
 ## Proposed further links (leads, not findings)
 
-Found by core/connect on the lexical-512-1u9rw8s route; each is a proposal until a study file adopts it.
+Found by core/connect on the lexical-512-1kk7vh3 route; each is a proposal until a study file adopts it.
 
 - K1 may also relate to DATAGRAPH-1 (similarity 0.169)
-- K1 may also relate to POINT-AND-CLICK-1 (similarity 0.152)
+- K1 may also relate to POINT-AND-CLICK-1 (similarity 0.153)
 
 ## Method
 
