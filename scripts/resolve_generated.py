@@ -18,7 +18,7 @@ for f in list(conf):
             fcntl.flock(lock, fcntl.LOCK_UN)
     elif f.endswith(".jsonl") or f == "docs/PROJECT-MEMORY.md":  # append-only: keep both sides
         t = open(f).read(); open(f, "w").write("\n".join(l for l in t.splitlines() if not re.match(r"^(<<<<<<<|=======|>>>>>>>)", l)) + "\n")
-    elif f in ("ops/transparency.json", "site/dashboard-data.js", "site/claims-data.js", "site/research-data.js") or f.startswith("research/papers/"):  # papers are rebuilt by `research --page --apply` below   # claims-data.js is rewritten below from the merged doctrine/claims.json
+    elif f in ("ops/transparency.json", "site/dashboard-data.js", "site/claims-data.js", "site/research-data.js", "site/self-data.js", "seed/SYSTEM.md") or f.startswith("research/papers/"):  # papers are rebuilt by `research --page --apply` below   # claims-data.js is rewritten below from the merged doctrine/claims.json
         subprocess.run(["git", "checkout", "--theirs", f])
     else:
         continue
@@ -120,5 +120,14 @@ subprocess.run([sys.executable, "-m", "foundation", "research", "--page", "--app
 subprocess.run(["git", "add", "research", "site/research-data.js"])
 subprocess.run([sys.executable, "scripts/build_dashboard.py"], capture_output=True)
 subprocess.run(["git", "add", "site/dashboard-data.js"])
+subprocess.run([sys.executable, "-m", "foundation", "selfmodel", "--apply"], capture_output=True)  # SELF-MODEL-1: regenerated, never merged by hand
+subprocess.run(["git", "add", "site/self-data.js"])
+import os
+if os.path.isfile("seed/scripts/system.py"):  # SYSTEM-SPEC-1: the definition follows the merged code (absent in a repository without the kit)
+    subprocess.run([sys.executable, "seed/scripts/system.py", "--write"], capture_output=True)
+    subprocess.run(["git", "add", "seed/SYSTEM.md"])
+if os.path.isfile("seed/scripts/claims.py"):  # the seed's own generated counts (README, docs/claims.json)
+    subprocess.run([sys.executable, "scripts/claims.py", "--fix", "--apply"], cwd="seed", capture_output=True)
+    subprocess.run(["git", "add", "seed/README.md", "seed/docs/claims.json"])
 print("still conflicting:", conf)
 sys.exit(1 if conf else 0)
