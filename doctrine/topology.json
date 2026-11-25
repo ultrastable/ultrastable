@@ -34,6 +34,13 @@
         "key": "what-works"
       },
       {
+        "name": "ultrastable-spinoffs",
+        "id": "7daf8b68-8516-42a8-b7c4-68fd00d10e24",
+        "state": "live",
+        "what": "spinoff app events (spinoffs/schema.sql); the database in the ultrastable account, created 2026-11-20",
+        "key": "spinoffs"
+      },
+      {
         "name": "ultrastable-replication-ledger",
         "id": "c59cdeca-7f57-4edd-ac7e-256ab07fab57",
         "state": "live",
@@ -322,6 +329,19 @@
       "routes": [
         "what-works.ultrastable.org"
       ]
+    },
+    {
+      "id": "ultrastable-spinoffs",
+      "state": "live",
+      "role": "spinoff apps on *.ultrastable.app (SPINOFF-1): serves the registry bundle, answers 410 for retired apps; the zone route *.ultrastable.app/* names this script (a zone route, not a custom domain: it is not re-attached by the deployer, so the worker is listed as not public)",
+      "main": "spinoffs/worker.js",
+      "compatibility_date": "2026-11-04",
+      "public": false,
+      "bindings": {
+        "d1": {
+          "DB": "ultrastable-spinoffs"
+        }
+      }
     },
     {
       "id": "ultrastable-replication-ledger",

@@ -21,9 +21,29 @@ def load(root=REPO) -> dict:
     return json.loads((p if p.is_file() else REPO / PATH).read_text(encoding="utf-8"))  # a root without its own registry (a temp copy, a new org) uses the platform default
 
 
+UA = "ultrastable-executor/1"  # MODELS-UA-1: Cloudflare and GitHub edges answer the default Python-urllib agent with a refusal or a stub ("OK", text/plain)
+SITE = "https://ultrastable-site.ultrastable.workers.dev"
+
+
+def oidc_route(env) -> bool:
+    """AI-OIDC-1: Workers AI with no Cloudflare credential in GitHub. The repo secrets name the retired account (SINGLE-ACCOUNT-2, cfaccount strips them),
+    so every workers-ai rung was unavailable and the executor had only GitHub Models, which answered 200 "OK" for days. A run with id-token: write sends
+    the call to the site Worker's /__internal/cf route (site/deployer.js, allow-list `ai/run/@cf/...`), which adds the credential only it holds."""
+    return bool(env.get("ACTIONS_ID_TOKEN_REQUEST_URL") and env.get("ACTIONS_ID_TOKEN_REQUEST_TOKEN"))
+
+
 def available(a: dict, env=None) -> bool:
     env = os.environ if env is None else env
+    if a["route"] == "workers-ai" and not all(env.get(s) for s in a["secrets"]):
+        return oidc_route(env)
     return a["route"] != "session" and all(env.get(s) for s in a["secrets"])
+
+
+def _oidc_token(env, opener=None) -> str:
+    opener = opener or urllib.request.urlopen
+    req = urllib.request.Request(env["ACTIONS_ID_TOKEN_REQUEST_URL"] + "&audience=ultrastable-deploy", headers={"authorization": "Bearer " + env["ACTIONS_ID_TOKEN_REQUEST_TOKEN"], "user-agent": UA})
+    with opener(req, timeout=20) as r:
+        return json.loads(r.read())["value"]
 
 
 def _cost(a: dict) -> float:
@@ -66,14 +86,17 @@ def build_request(a: dict, prompt: str, env=None) -> tuple[str, dict, dict]:
     env = os.environ if env is None else env
     prompt = fit(a, prompt)
     if a["route"] == "workers-ai":
-        url = f"https://api.cloudflare.com/client/v4/accounts/{env['CLOUDFLARE_ACCOUNT_ID']}/ai/run/{a['model']}"
         body = {"messages": [{"role": "user", "content": prompt}], "max_tokens": 7000, **a.get("extra", {})}
+        if not (env.get("CLOUDFLARE_API_TOKEN") and env.get("CLOUDFLARE_ACCOUNT_ID")):  # AI-OIDC-1
+            return (env.get("TARGET_SITE") or SITE).rstrip("/") + "/__internal/cf", {"authorization": "Bearer " + _oidc_token(env), "x-cf-method": "POST",
+                    "x-cf-path": "ai/run/" + a["model"], "content-type": "application/json"}, body
+        url = f"https://api.cloudflare.com/client/v4/accounts/{env['CLOUDFLARE_ACCOUNT_ID']}/ai/run/{a['model']}"
         return url, {"authorization": "Bearer " + env["CLOUDFLARE_API_TOKEN"], "content-type": "application/json"}, body
     if a["route"] == "anthropic":
         return "https://api.anthropic.com/v1/messages", {"x-api-key": env["ANTHROPIC_API_KEY"], "anthropic-version": "2023-06-01", "content-type": "application/json"}, \
             {"model": a["model"], "max_tokens": 16000, "messages": [{"role": "user", "content": prompt}]}
     if a["route"] == "github-models":  # FREE-LLM-1: OpenAI-compatible chat endpoint, authenticated by the Actions token itself
-        return "https://models.github.ai/inference/chat/completions", {"authorization": "Bearer " + env["GITHUB_TOKEN"], "content-type": "application/json", "accept": "application/vnd.github+json"}, \
+        return "https://models.github.ai/inference/chat/completions", {"authorization": "Bearer " + env["GITHUB_TOKEN"], "content-type": "application/json", "accept": "application/vnd.github+json", "x-github-api-version": "2022-11-28"}, \
             {"model": a["model"], "max_tokens": 4000, "messages": [{"role": "user", "content": prompt}]}
     raise ValueError("route " + a["route"] + " is not invoked over HTTP")
 
@@ -88,7 +111,7 @@ def parse_text(a: dict, resp: dict) -> str:
 
 
 def http(url, headers, body, timeout=300) -> dict:
-    req = urllib.request.Request(url, method="POST", data=json.dumps(body).encode(), headers=headers)
+    req = urllib.request.Request(url, method="POST", data=json.dumps(body).encode(), headers={"user-agent": UA, **headers})  # MODELS-UA-1
     with urllib.request.urlopen(req, timeout=timeout) as r:
         raw = r.read()
         if not raw.strip():  # seen live from the free tier: HTTP 200 with an empty body; say so instead of a bare JSONDecodeError
@@ -102,10 +125,13 @@ def http(url, headers, body, timeout=300) -> dict:
 GH_MODELS_ORG = "https://models.github.ai/orgs/{org}/inference/chat/completions"
 
 
-def invoke(a: dict, prompt: str, env=None, transport=http) -> str:
+def request(a: dict, prompt: str, env=None, transport=None) -> dict:
+    """The provider's JSON reply for one call, with every second route this adapter has. Both invoke() and the executor's ladder
+    (foundation/agent_ladder.py transport) go through here; MODELS-ORG-1 was first written only in invoke(), which the executor never calls."""
+    transport = transport or http  # looked up at call time, so a test (or a host) that replaces agents.http is honoured
     url, headers, body = build_request(a, prompt, env)
     try:
-        return parse_text(a, transport(url, headers, body))
+        return transport(url, headers, body)
     except RuntimeError as e:
         # MODELS-ORG-1 (2026-11-25): the user endpoint answered HTTP 200 "OK" text/plain to the Actions token for days, so every code agent failed.
         # The org-attributed endpoint is the second route on the same token; a different failure there is raised as usual.
@@ -113,7 +139,11 @@ def invoke(a: dict, prompt: str, env=None, transport=http) -> str:
             raise
         env = os.environ if env is None else env
         org = (env.get("GITHUB_REPOSITORY_OWNER") or "ultrastable")
-        return parse_text(a, transport(GH_MODELS_ORG.format(org=org), headers, body))
+        return transport(GH_MODELS_ORG.format(org=org), headers, body)
+
+
+def invoke(a: dict, prompt: str, env=None, transport=None) -> str:
+    return parse_text(a, request(a, prompt, env, transport))
 
 
 BLOCK_FORMAT = ("SUMMARY: one line\n"

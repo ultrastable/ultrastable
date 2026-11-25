@@ -23,7 +23,7 @@ export default {
   },
   {
    "name": "seed",
-   "visibility": "private",
+   "visibility": "public",
    "holds": "Only the starting kit (seed/ of the main repository): code and agent instructions, no company papers. It is the GitHub template new systems copy (TEMPLATE-CODE-ONLY-1)."
   },
   {
