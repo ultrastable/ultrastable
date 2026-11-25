@@ -482,8 +482,43 @@
       "cadence_ticks": 1,
       "probe": "grep:tests/foundation/test_tenantrepos.py::class TenantHealth"
     },
-    {"id": "fm-static-content", "trigger": "a published page's visible text does not change for max_unchanged_days", "symptom": "the system looks frozen to a visitor; content is not autonomous", "blast_radius": "reach, stickiness and the claim that the system runs itself", "detection": "python3 -m foundation staticcontent --run --apply (detector static-content)", "root_cause": "the page is hand-typed or a snapshot with no loop that regenerates it", "remediation": "bind the page to a loop; the detector's Q-AUDIT item names the page", "status": "controlled", "cadence_ticks": 144, "probe": "grep:tests/foundation/test_staticcontent.py::def test_static_page_is_a_finding"}
-],
+    {
+      "id": "fm-static-content",
+      "trigger": "a published page's visible text does not change for max_unchanged_days",
+      "symptom": "the system looks frozen to a visitor; content is not autonomous",
+      "blast_radius": "reach, stickiness and the claim that the system runs itself",
+      "detection": "python3 -m foundation staticcontent --run --apply (detector static-content)",
+      "root_cause": "the page is hand-typed or a snapshot with no loop that regenerates it",
+      "remediation": "bind the page to a loop; the detector's Q-AUDIT item names the page",
+      "status": "controlled",
+      "cadence_ticks": 144,
+      "probe": "grep:tests/foundation/test_staticcontent.py::def test_static_page_is_a_finding"
+    },
+    {
+      "id": "fm-frozen-page",
+      "trigger": "a generator stops or its output never reaches main",
+      "symptom": "a public page shows data days old",
+      "blast_radius": "public pages and every loop that reads them",
+      "detection": "python3 -m foundation selftest --data --workflows",
+      "root_cause": "generator not scheduled, or its file rides a PR that goes red",
+      "remediation": "failure-audit files a Q-AUDIT item with suspects; the detector is its closing probe",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:tests/foundation/test_selftest.py::def test_frozen_module_is_found_and_fresh_one_is_not"
+    },
+    {
+      "id": "fm-silent-loop-stop",
+      "trigger": "a scheduled workflow fails every run",
+      "symptom": "the loop does nothing and nobody sees it (seed kit-sync, 11-22 to 11-25)",
+      "blast_radius": "public pages and every loop that reads them",
+      "detection": "python3 -m foundation selftest --data --workflows",
+      "root_cause": "no check reads scheduled run outcomes across the org",
+      "remediation": "failure-audit files a Q-AUDIT item with suspects; the detector is its closing probe",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:tests/foundation/test_selftest.py::def test_three_failed_runs_is_a_silent_stop"
+    }
+  ],
   "controls": [
     {
       "id": "ctl-interrupt-gate",

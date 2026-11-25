@@ -8,7 +8,7 @@ from foundation import datagraph
 REPO = Path(__file__).resolve().parents[2]
 POL = json.loads((REPO / datagraph.POLICY).read_text())
 FILES = [datagraph.POLICY, "instances/ultrastable/progress.json", "doctrine/tenant-repos.json", "seed/worker/src/index.js", "seed/worker/migrations/index.json",
-         datagraph.RESEARCH, POL["core_module"], POL["seed_vendor"], POL["seed_step"], POL["migration"], *POL["rule_files"]] + [f"docs/issues/{r['item']}.json" for r in POL["systems"].values() if r.get("item")]
+         datagraph.RESEARCH, POL["core_module"], POL["seed_vendor"], POL["seed_step"], POL["migration"], *POL["rule_files"], "seed/worker/src/knowledge.js"] + [f"docs/issues/{r['item']}.json" for r in POL["systems"].values() if r.get("item")]
 
 
 class DataGraph(unittest.TestCase):
@@ -42,11 +42,15 @@ class DataGraph(unittest.TestCase):
         self.assertTrue(any("knowledge-graph step" in b for b in datagraph.check(self.tmp)))
 
     def test_pending_tenant_needs_item_and_vendor(self):
-        (self.tmp / "docs/issues/Q-KG-unlearn.json").unlink()
+        self.edit(datagraph.POLICY, lambda d: d["systems"].update({"unlearn": {"state": "pending", "item": "Q-KG-unlearn"}}))
         self.edit("doctrine/tenant-repos.json", lambda d: d["tenants"]["unlearn"]["vendor"].pop(POL["core_module"]))
         bad = datagraph.check(self.tmp)
         self.assertTrue(any("unlearn: pending with no queue item" in b for b in bad))
         self.assertTrue(any("unlearn: doctrine/tenant-repos.json does not vendor" in b for b in bad))
+
+    def test_built_tenant_on_the_shared_engine_needs_it_vendored(self):
+        self.edit("doctrine/tenant-repos.json", lambda d: d["tenants"]["unlearn"]["vendor"].pop("seed/worker/src/knowledge.js"))
+        self.assertTrue(any("unlearn: doctrine/tenant-repos.json does not vendor seed/worker/src/knowledge.js" in b for b in datagraph.check(self.tmp)))
 
 
 if __name__ == "__main__":

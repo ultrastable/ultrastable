@@ -1,0 +1,15 @@
+{
+ "_doc": "SELFTEST-1: limits for foundation/selftest.py. data: a generated site/*-data.js whose own \"at\" stamp is older than its limit is a frozen page. workflows: a scheduled workflow whose last `window` scheduled runs all failed, or that has not run for `stale_h`, is a silent loop. Consumed by detectors selftest-data and selftest-workflows in doctrine/detectors.json.",
+ "data": {
+  "default_max_age_h": 72,
+  "max_age_h": {
+   "site/feed-data.js": 168
+  },
+  "exempt": {}
+ },
+ "workflows": {
+  "repos": ["ultrastable/ultrastable", "ultrastable/seed", "ultrastable/workers", "ultrastable/spec", "ultrastable/license", "ultrastable/practical-solutions", "ultrastable/unlearn", "ultrastable/.github"],
+  "window": 3,
+  "stale_h": 120
+ }
+}
