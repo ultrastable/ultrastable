@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-25-datagraph-1-every-system-keeps-a-knowledge-graph-of-all-its-",
+  "kind": "decision",
+  "date": "2026-11-25",
+  "title": "DATAGRAPH-1: every system keeps a knowledge graph of all its data",
+  "body": "Owner directive 2026-11-25. Built as core/datagraph (deterministic extraction from the data: rows are nodes, key-equal values and ids in text are edges), the seed tick step knowledge-graph (bi-temporal D1 storage, hash-diff writes, PageRank, communities, bridges, orphans, Adamic-Adar leads settled against later data, calibrated kind weights, KG-ORPHANS items), a privacy-gated read side (/api/graph*, /graph), and doctrine/knowledge-graph.json with foundation/datagraph.py --check covering every system. LLM extraction and Leiden are upgrade paths, not the default: schema-first extraction and topology heuristics are cheaper and competitive. Research: docs/research/knowledge-graph.md.",
+  "probe": "file:doctrine/knowledge-graph.json",
+  "session": "https://claude.ai/code/session_0156nqDvcxMuXbDzftceaEZU"
+ },
+ "kind": "decision",
+ "title": "DATAGRAPH-1: every system keeps a knowledge graph of all its data",
+ "session": "https://claude.ai/code/session_0156nqDvcxMuXbDzftceaEZU"
+}

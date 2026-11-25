@@ -29,5 +29,6 @@
  "0027_trust_ledger_tenant_pk.sql",
  "0028_progress.sql",
  "0029_pr_latency.sql",
- "0030_stickiness.sql"
+ "0030_stickiness.sql",
+ "0031_datagraph.sql"
 ]

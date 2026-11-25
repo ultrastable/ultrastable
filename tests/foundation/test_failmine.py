@@ -88,6 +88,6 @@ if __name__ == "__main__":
 class SeedVendored(unittest.TestCase):
     def test_seed_vendored_core_matches_workers_core(self):
         """SEED-SELFCONTAINED-1: the seed imports core modules from its own vendor/ copy so a standalone checkout is green; the copy stays identical."""
-        for m in ("progress", "audit", "substance", "stickiness"):
+        for m in ("progress", "audit", "substance", "stickiness", "datagraph"):
             v = (ROOT / f"seed/worker/src/vendor/core/{m}.js").read_text().split("\n", 1)[1]
             self.assertEqual(v, (ROOT / f"workers/core/{m}/index.js").read_text(), m)

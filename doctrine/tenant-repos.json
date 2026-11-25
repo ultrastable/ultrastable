@@ -5,8 +5,7 @@
   "practical-solutions": {
    "repo": "ultrastable/practical-solutions",
    "state": "own-repo",
-   "why": "created as its own repository from the start",
-   "frontend": "https://tenant-ps-web.ultrastable.workers.dev"
+   "why": "created as its own repository from the start"
   },
   "unlearn": {
    "repo": "ultrastable/unlearn",
@@ -22,7 +21,8 @@
    "vendor": {
     "doctrine/models.json": "vendor/ultrastable/models.json",
     "seed/worker/src/promoqueue.js": "vendor/ultrastable/promoqueue.js",
-    "doctrine/stakeholders.json": "vendor/ultrastable/stakeholders.json"
+    "doctrine/stakeholders.json": "vendor/ultrastable/stakeholders.json",
+    "workers/core/datagraph/index.js": "vendor/ultrastable/datagraph.js"
    },
    "worker": "ultrastable-unlearn",
    "ai": true,
@@ -55,7 +55,8 @@
    "vendor": {
     "doctrine/models.json": "vendor/ultrastable/models.json",
     "doctrine/stakeholders.json": "vendor/ultrastable/stakeholders.json",
-    "seed/worker/src/promoqueue.js": "vendor/ultrastable/promoqueue.js"
+    "seed/worker/src/promoqueue.js": "vendor/ultrastable/promoqueue.js",
+    "workers/core/datagraph/index.js": "vendor/ultrastable/datagraph.js"
    },
    "worker": "ultrastable-what-works",
    "ai": true,
@@ -85,7 +86,9 @@
     "runway.json",
     "README.md"
    ],
-   "vendor": {},
+   "vendor": {
+    "workers/core/datagraph/index.js": "vendor/ultrastable/datagraph.js"
+   },
    "worker": "ultrastable-replication-ledger",
    "ai": false,
    "visibility": "public",
