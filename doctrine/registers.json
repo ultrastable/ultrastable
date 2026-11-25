@@ -519,6 +519,78 @@
       "probe": "grep:tests/foundation/test_selftest.py::def test_three_failed_runs_is_a_silent_stop"
     },
     {
+      "id": "fm-silent-job-ok",
+      "trigger": "a job or loop reports success while its result never arrives",
+      "symptom": "zero output, stale ledger, skipped schedule",
+      "blast_radius": "every loop that reports success without a result",
+      "detection": "silentfail --stale / --classes",
+      "root_cause": "probes read the job, not the result",
+      "remediation": "detector files Q-AUDIT, executor fixes, same detector closes it",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:tests/foundation/test_silentfail.py::def test_classes_have_detectors"
+    },
+    {
+      "id": "fm-actions-stuck",
+      "trigger": "a run waits at action_required or an event by the built-in token triggers nothing",
+      "symptom": "PRs and issues sit untaken",
+      "blast_radius": "every loop that reports success without a result",
+      "detection": "silentfail --actions",
+      "root_cause": "GitHub does not run or approve workflows for token-made events",
+      "remediation": "detector files Q-AUDIT, executor fixes, same detector closes it",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:tests/foundation/test_silentfail.py::def test_classes_have_detectors"
+    },
+    {
+      "id": "fm-bundle-break",
+      "trigger": "Worker source cannot bundle",
+      "symptom": "deploy fails after merge",
+      "blast_radius": "every loop that reports success without a result",
+      "detection": "silentfail --bundle",
+      "root_cause": "no pre-merge bundle check",
+      "remediation": "detector files Q-AUDIT, executor fixes, same detector closes it",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:tests/foundation/test_silentfail.py::def test_classes_have_detectors"
+    },
+    {
+      "id": "fm-duplicate-build",
+      "trigger": "a module is built twice",
+      "symptom": "two modules do one job",
+      "blast_radius": "every loop that reports success without a result",
+      "detection": "silentfail --overlap",
+      "root_cause": "no pre-build overlap check",
+      "remediation": "detector files Q-AUDIT, executor fixes, same detector closes it",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:tests/foundation/test_silentfail.py::def test_classes_have_detectors"
+    },
+    {
+      "id": "fm-done-unverified",
+      "trigger": "done is claimed without a live reading",
+      "symptom": "public surface wrong while a PR says fixed",
+      "blast_radius": "every loop that reports success without a result",
+      "detection": "silentfail --live / --cite",
+      "root_cause": "agents cannot reach public hosts and nothing demanded a server-side reading",
+      "remediation": "detector files Q-AUDIT, executor fixes, same detector closes it",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:tests/foundation/test_silentfail.py::def test_classes_have_detectors"
+    },
+    {
+      "id": "fm-model-route",
+      "trigger": "a model route fails on large tasks",
+      "symptom": "executor runs fail on every rung",
+      "blast_radius": "every loop that reports success without a result",
+      "detection": "agents --check",
+      "root_cause": "one route, no probe per rung",
+      "remediation": "detector files Q-AUDIT, executor fixes, same detector closes it",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:tests/foundation/test_silentfail.py::def test_classes_have_detectors"
+    },
+    {
       "id": "fm-blind-spot",
       "trigger": "a check passes on empty, stale, unscored or vacuous data",
       "symptom": "the owner finds the failure before any loop",

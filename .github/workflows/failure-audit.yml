@@ -13,6 +13,8 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
+  actions: write  # SILENT-FAIL-1: the actions-stuck detector approves or dispatches runs stuck at action_required
+  issues: read
   pull-requests: write  # scripts/land_data.py falls back to a pull request when the main writer is refused
   id-token: write  # MAIN-WRITER-1: tools/push_main.py presents the run's OIDC token
 concurrency:
@@ -54,6 +56,8 @@ jobs:
           if [ "$(date -u +%u)" = "7" ]; then python3 -m foundation redteam --run --apply --chaos; else python3 -m foundation redteam --run --apply; fi
       - run: python3 -m foundation failure_audit --run
         continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
       - name: Ledger to the evidence branch
         run: |
           git config user.name "ultrastable-audit"
