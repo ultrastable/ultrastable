@@ -1,5 +1,5 @@
 {
- "at": "2026-11-25T17:28:35Z",
+ "at": "2026-11-25T17:36:16Z",
  "gaps": 5,
  "match_share": 0.99,
  "sources": {
@@ -507,6 +507,15 @@
     "unmeasured": []
    },
    {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "TENANT-SANDBOX-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
     "checks": 2,
     "external": [],
     "failing": [],
@@ -828,7 +837,7 @@
     "checks": 1,
     "external": [],
     "failing": [
-     "python3 -m foundation dispose --check: an open item is 119.4 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+     "python3 -m foundation dispose --check: an open item is 122.0 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
     ],
     "id": "DISPOSE-1",
     "missing": [],
@@ -909,12 +918,12 @@
   },
   "rules": {
    "gaps": 2,
-   "total": 77
+   "total": 78
   },
   "year": {
    "gaps": 1,
    "total": 2
   }
  },
- "total": 484
+ "total": 485
 }
