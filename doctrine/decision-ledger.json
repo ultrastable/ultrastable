@@ -5690,6 +5690,41 @@
    "body": "SYSTEM-1 and COLDSTART-1 answered the same owner message in two threads; the later one was folded into the earlier on merge. collisions --claim <ID> catches same-id work only, so a directive answered under two ids slips through.",
    "probe": "file:doctrine/coldstart.json",
    "session": "session_0156nqDrmKoDzyTndxNktxWH"
+  },
+  {
+   "id": "decision-2026-11-25-constitution-1-the-seed-states-what-an-ultrastable-system-is",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "CONSTITUTION-1: the seed states what an ultrastable system is, as code",
+   "body": "Rowan 2026-11-25: the core template must say what an ultrastable system is, how it runs, bootstraps, becomes autonomous and reaches criticality, so the owner never supplies it by chat. seed/doctrine/constitution.json is the statement; seed/scripts/constitution.py checks it against the tick steps, boot stages, ladder rungs, ignition stages and criticality conditions in code; each rule names a detector and a remediation that exist; bootstrap stage constitute assembles org/constitution.json; CLAUDE.md imports the generated prose; a standing rule with no entry fails CI. Remaining unmapped product-feature rules are a shrink-only baseline drained by Q-CONSTITUTION-DRAIN.",
+   "probe": "file:seed/doctrine/constitution.json",
+   "session": "session_0156nqDrw4gPrPVFvZNWQFzs"
+  },
+  {
+   "id": "decision-2026-11-25-supply-chain-posture-is-a-weekly-loop-on-open-standards",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Supply-chain posture is a weekly loop on open standards",
+   "body": "OpenSSF Scorecard and the SPDX SBOM from GitHub's dependency graph are read weekly by supply-chain.yml and summarised by foundation/supplychain.py; checks under the floor in doctrine/scorecard.json and packages outside the licence policy become Q-STD-SC-* items closed by the next reading. Settings were renamed from doctrine/open-standards.json to avoid COLLISION-1 with PR #2260, which owns that path.",
+   "probe": "file:foundation/supplychain.py",
+   "session": "session_0156nqDudxrbHqznYEuTrpLY"
+  },
+  {
+   "id": "lesson-2026-11-25-a-merge-by-the-built-in-token-fires-no-push-workflow",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "A merge by the built-in token fires no push workflow",
+   "body": "Bot merges (GitHub auto-merge enabled by github-actions, or the lane) left every on-push workflow silent after #2243: seed-launch and three deploys never ran. scripts/postmerge_dispatch.py reads each workflow's own push paths and the lane dispatches what a merge touched; tests pass in tests/foundation/test_postmerge_dispatch.py; residual risk: a PR merged more than 6 h before the lane's next pass is not caught.",
+   "probe": "grep:.github/workflows/lane.yml::postmerge_dispatch.py --apply",
+   "session": "session_0156nqDtbnNSagT7p6jpUTuY"
+  },
+  {
+   "id": "lesson-2026-11-25-a-newborn-system-waited-until-03-00-utc-to-ask-the-directory",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "A newborn system waited until 03:00 UTC to ask the directory to list it",
+   "body": "BOOT-4 says every system is listed from its first deploy, but the seed's directory heartbeat only fired in the 03:00 UTC window, so the first live acceptance run (seed-launch 45709149770) passed six of seven layers and failed discovery for second-tenant. The heartbeat now registers from birth, hourly until listed, and keeps the directory's answer in directory_registration; bootaccept --run registers by a second route and names the directory's reason when it still refuses.",
+   "probe": "grep:seed/worker/src/discover.js::directory_registration"
   }
  ]
 }
