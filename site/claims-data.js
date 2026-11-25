@@ -1581,7 +1581,7 @@ export default {
   {
    "claim": "- **Load from the repository, never from tool memory.** Project memory, tool memory and chat are not storage (Rowan, 2026-11-12): they may",
    "detail": "",
-   "how": "file:docs/doctrine/GUIDING-DIRECTIVE.md + file:doctrine/kernel-8.2.1.md + file:docs/PROJECT-MEMORY.md + file:agents/PROJECT-INSTRUCTIONS.md + file:docs/BOOTSTRAP-NO-MEMORY.md + file:doctrine/durable-facts.json",
+   "how": "file:seed/SYSTEM.md + file:docs/doctrine/GUIDING-DIRECTIVE.md + file:doctrine/kernel-8.2.1.md + file:docs/PROJECT-MEMORY.md + file:agents/PROJECT-INSTRUCTIONS.md + file:docs/BOOTSTRAP-NO-MEMORY.md",
    "id": "cited-32424bab79",
    "kind": "claim",
    "pass": true,
@@ -2301,7 +2301,7 @@ export default {
   {
    "claim": "- **Load from the repository, never from tool memory.** Project memory, tool memory and chat are not storage (Rowan, 2026-11-12): they may",
    "detail": "",
-   "how": "file:docs/doctrine/GUIDING-DIRECTIVE.md + file:doctrine/kernel-8.2.1.md + file:docs/PROJECT-MEMORY.md + file:agents/PROJECT-INSTRUCTIONS.md + file:docs/BOOTSTRAP-NO-MEMORY.md + file:doctrine/durable-facts.json",
+   "how": "file:seed/SYSTEM.md + file:docs/doctrine/GUIDING-DIRECTIVE.md + file:doctrine/kernel-8.2.1.md + file:docs/PROJECT-MEMORY.md + file:agents/PROJECT-INSTRUCTIONS.md + file:docs/BOOTSTRAP-NO-MEMORY.md",
    "id": "mirror-1586e98ac2",
    "kind": "claim",
    "pass": true,
@@ -3289,7 +3289,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 64 Python and 539 Worker tests",
+   "claim": "seed-tests: 71 Python and 539 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3368,6 +3368,15 @@ export default {
    "kind": "generated",
    "pass": true,
    "surface": "platform/README.md"
+  },
+  {
+   "claim": "module: seed/SYSTEM.md is written by seed/scripts/system.py from seed/autonomy/system.json",
+   "detail": "",
+   "how": "header names the generator + file:seed/scripts/system.py + grep:.github/workflows/checks.yml::scripts/system.py --check",
+   "id": "module-system-spec",
+   "kind": "module",
+   "pass": true,
+   "surface": "seed/SYSTEM.md"
   },
   {
    "claim": "module: site/claims-data.js is written by foundation/claims.py from doctrine/claims.json",
@@ -3539,7 +3548,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 390,
-  "total": 390
+  "pass": 391,
+  "total": 391
  }
 };

@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-25T20:56:22Z",
- "commit": "3b3e7b4",
+ "generated": "2026-11-25T21:14:33Z",
+ "commit": "7b3c8be",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 114,
@@ -16,10 +16,10 @@
   "open_gaps": 2,
   "open_prs": 0,
   "merged_prs_listed": 0,
-  "prs_merged_total": 221,
+  "prs_merged_total": 222,
   "prs_merged_unattended": 9,
-  "backlog_open": 29,
-  "backlog_items": 969
+  "backlog_open": 45,
+  "backlog_items": 985
  },
  "unknowns": {
   "units": 136,
@@ -56,16 +56,16 @@
  },
  "throughput": {
   "queue": {
-   "items": 969,
+   "items": 985,
    "by_status": {
     "closed": 931,
-    "open": 29,
+    "open": 45,
     "done": 9
    },
-   "takeable_now": 28
+   "takeable_now": 44
   },
   "merged": {
-   "total": 221,
+   "total": 222,
    "by_origin": {
     "unattended executor": {
      "prs": 9,
@@ -73,7 +73,7 @@
      "lines_removed": 0
     },
     "agent session": {
-     "prs": 205,
+     "prs": 206,
      "lines_added": 0,
      "lines_removed": 0
     },
@@ -94,7 +94,7 @@
     "2026-11-21": 105,
     "2026-11-22": 31,
     "2026-11-23": 4,
-    "2026-11-25": 58
+    "2026-11-25": 59
    },
    "median_hours_open_to_merge": 0.12
   },
@@ -102,6 +102,14 @@
    {
     "date": "2026-11-25",
     "changes": [
+     {
+      "n": 2233,
+      "title": "Second loop reads itself: owner interventions, keep rate, spec gate, research in code",
+      "by": "agent session",
+      "plus": 0,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/2233"
+     },
      {
       "n": 2237,
       "title": "BOOTPROOF-1: seed kernel closure audit and daily scratch bootstrap probe",
@@ -1907,22 +1915,22 @@
    },
    "latest": {
     "conclusion": "success",
-    "createdAt": "2026-11-25T20:42:59Z",
+    "createdAt": "2026-11-25T20:55:21Z",
     "event": "push",
-    "headSha": "fecbe75602a16d2500851a10d5714c84ea2990c7"
+    "headSha": "21a47a06c6275daa2c5b71424941008d2c0f9d6f"
    },
    "per_day_success": {
-    "2026-11-21": 22,
+    "2026-11-21": 21,
     "2026-11-22": 12,
     "2026-11-23": 1,
-    "2026-11-25": 11
+    "2026-11-25": 12
    }
   },
   "executor": {
    "runs": 30,
    "by_conclusion": {
-    "failure": 3,
-    "success": 27
+    "success": 28,
+    "failure": 2
    },
    "prs_opened_unattended": 0,
    "prs_merged_unattended": 9,
@@ -1981,7 +1989,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 74.8,
+   "age_s": 83.0,
    "status": "fresh",
    "missed": 0
   },
@@ -2005,15 +2013,15 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 567.8,
-   "status": "fresh",
-   "missed": 0
+   "age_s": 926.0,
+   "status": "stale",
+   "missed": 1
   },
   {
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 18561.8,
+   "age_s": 19645.0,
    "status": "fresh",
    "missed": 0
   }
@@ -2232,7 +2240,7 @@
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-25T20:55:07Z",
+  "generated": "2026-11-25T21:13:14Z",
   "blindspots": {
    "backup": {
     "skipped": "last drill is fresh"
@@ -2257,7 +2265,7 @@
     "id": "pageviews_7d",
     "baseline": 1310,
     "target": 1500,
-    "expected_today": 1404.1,
+    "expected_today": 1404.2,
     "value": null,
     "behind": null,
     "progress": null
@@ -2426,8 +2434,8 @@
    },
    {
     "id": "deploy",
-    "status": "fresh",
-    "missed": 0
+    "status": "stale",
+    "missed": 1
    },
    {
     "id": "publish",
@@ -2528,16 +2536,16 @@
  },
  "growth": {
   "mix": {
-   "growth": 2,
+   "growth": 3,
    "fix": 1,
-   "maintenance": 17,
+   "maintenance": 16,
    "total": 20,
-   "growth_share": 0.1,
+   "growth_share": 0.15,
    "target": 0.4
   },
   "target_growth_share": 0.4,
   "growth_items_takeable": 5,
-  "items_takeable": 28,
+  "items_takeable": 44,
   "metrics_error": "public: URLError: <urlopen error Tunnel connection failed: 403 Forbidden (agent proxy: no rule or network setting allows this host)>",
   "metrics": [
    {
@@ -2583,7 +2591,7 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 14.7,
+   "last_beat_age_s": 61.1,
    "expected_interval_s": 21600,
    "beats_24h": 60,
    "expected_24h": 4.0,
@@ -2594,7 +2602,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 18658.7,
+   "last_beat_age_s": 19748.1,
    "expected_interval_s": 86400,
    "beats_24h": 2,
    "expected_24h": 1.0,
@@ -2605,7 +2613,7 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 41.7,
+   "last_beat_age_s": 1131.1,
    "expected_interval_s": 86400,
    "beats_24h": 13,
    "expected_24h": 1.0,
@@ -2616,7 +2624,7 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 97162.7,
+   "last_beat_age_s": 98252.1,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -2627,7 +2635,7 @@
    "id": "a11y",
    "what": "A11Y-LOOP-1: the weekly accessibility and layout audit of every public page",
    "source": "workflow",
-   "last_beat_age_s": 17735.7,
+   "last_beat_age_s": 18825.1,
    "expected_interval_s": 604800,
    "beats_24h": 1,
    "expected_24h": 0.1,
@@ -2645,7 +2653,7 @@
    "id": "claims",
    "what": "words checked against code and the deployed site",
    "source": "workflow",
-   "last_beat_age_s": 11959.7,
+   "last_beat_age_s": 13049.1,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -2656,7 +2664,7 @@
    "id": "watchdog",
    "what": "RESILIENCE-1: the GitHub watchdog that probes every clock and restarts the stopped ones; the tick Worker dispatches it again when it is older than 12 hours",
    "source": "workflow",
-   "last_beat_age_s": -8.3,
+   "last_beat_age_s": 44.1,
    "expected_interval_s": 43200,
    "beats_24h": 60,
    "expected_24h": 2.0,
@@ -2667,7 +2675,7 @@
    "id": "temporal",
    "what": "the daily trend read: series per component, loop and entry, and what they show",
    "source": "workflow",
-   "last_beat_age_s": 13602.7,
+   "last_beat_age_s": 14692.1,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -2685,7 +2693,7 @@
    "id": "intent-yield",
    "what": "the daily intent yield: every owner directive's own probe, restatements charged to the original, /yield",
    "source": "workflow",
-   "last_beat_age_s": 10301.7,
+   "last_beat_age_s": 11391.1,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -4830,6 +4838,15 @@
  "changes": {
   "commits": [
    {
+    "sha": "7b3c8be",
+    "at": "2026-11-25T20:57:03+00:00",
+    "author": "Claude",
+    "subject": "BOOT-ACCEPT-1: SPDX headers, scratch cleanup, trigger register, regenerated claims and dashboard data",
+    "pr": null,
+    "item": "BOOT-ACCEPT-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/7b3c8be6943537daf1fd153f15a89309006d7fa8"
+   },
+   {
     "sha": "3b3e7b4",
     "at": "2026-11-25T20:48:36+00:00",
     "author": "Claude",
@@ -5179,15 +5196,6 @@
     "pr": null,
     "item": null,
     "url": "https://github.com/ultrastable/ultrastable/commit/78c9de21ddbe94682d4a2f445579c04aef9617dd"
-   },
-   {
-    "sha": "8fa097d",
-    "at": "2026-11-25T20:50:25+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "core/impact: split items that failed twice into smaller children (#2221)",
-    "pr": 2221,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/8fa097d5d369a5b2afc6d15326f9296ce911ddc4"
    }
   ],
   "pull_requests": []

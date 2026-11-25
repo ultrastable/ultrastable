@@ -1,0 +1,12 @@
+{
+  "id": "Q-KIT-INTERVIEW-1",
+  "title": "Q-KIT-INTERVIEW-1: carry INTERVIEW-1 into the seed kit",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** grep:seed/autonomy/system.json::not_in_kit\n**Status:** open\n\nSYSTEM-SPEC-1: the standing rule INTERVIEW-1 (Interview-first, voice-first, pill-shaped input) is enforced only by the platform (site/interview.js, site/site.test.mjs). A system built from the seed inherits the rule as an instruction but has no code here that enforces it.\n\nShip the check or loop that enforces INTERVIEW-1 into seed/ (a script under seed/scripts/, a tick step under seed/worker/src/, or a test under seed/tests/), add its probe to kit_enforcement in seed/autonomy/system.json, and remove INTERVIEW-1 from not_in_kit.\n\nsize: M\n\n**Closing probe:** cd seed && python3 scripts/system.py --gaps prints no line for INTERVIEW-1, and python3 scripts/system.py --check passes.\n",
+  "labels": [
+    "p2",
+    "agent-ready",
+    "raises-self"
+  ],
+  "milestone": "Now",
+  "workstream": "Executor queue"
+}

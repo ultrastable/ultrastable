@@ -1,0 +1,299 @@
+{
+  "$schema_version": "0.1.0",
+  "doc": "SYSTEM-SPEC-1 (Rowan, 2026-11-25: \"something's missing in the core ultra-stable template that's not saying, hey, this is what an ultra-stable system is. This is how ultra-stable runs. This is how ultra-stable bootstraps. This is how ultra-stable becomes autonomous and achieves criticality.\"). The definition of an Ultrastable system, as data. scripts/system.py renders SYSTEM.md from it and from the code of record (bootstrap stages from bootstrap/bootstrap.py, tick steps from worker/src/tick.js, ignition stages from worker/src/ignition.js, the criticality formula from autonomy/criticality.json, standing rules from agents/AGENTS.md), and `scripts/system.py --check` fails when SYSTEM.md is stale, a clause's probe fails in this kit, or a standing rule has no enforcement here that is not on the shrink-only not_in_kit list. Every probe is a path inside this kit: grep:<path>::<regex> or file:<path>.",
+  "sections": [
+    {
+      "id": "identity",
+      "title": "What an Ultrastable system is",
+      "clauses": [
+        {
+          "id": "ID-1",
+          "text": "An Ultrastable system is an organization of virtual managers and staff that runs itself on a server-side clock and closes its own loops. A person writes one file, IDEA.md; everything after that is the system's work.",
+          "probe": [
+            "file:IDEA.md",
+            "grep:bootstrap/bootstrap.py::def read\\("
+          ]
+        },
+        {
+          "id": "ID-2",
+          "text": "It is for something that has to keep running. An idea qualifies only when all four hold: a loop it must close, a measure that can be wrong, upkeep and improvement that never end, and a running cost the owner accepts. The bootstrapper refuses anything else before it hires a role or provisions anything.",
+          "probe": [
+            "grep:bootstrap/bootstrap.py::def qualify\\(",
+            "grep:IDEA.md::# System test",
+            "grep:doctrine/VISION.md::The system test"
+          ]
+        },
+        {
+          "id": "ID-3",
+          "text": "Autonomous means the system has self-referential loops and the ability to close them. Every loop has a trigger, an owner, a closing probe and a write-back, and every open item has an owner, a trigger and a probe.",
+          "probe": [
+            "grep:worker/src/tick.js::async reconcile\\(",
+            "grep:worker/src/pulse.js::export async function watch"
+          ]
+        },
+        {
+          "id": "ID-4",
+          "text": "The owner supplies direction, the idea and a budget. The system does the back end: errors, credentials, deploys, retries and repairs, recorded where the owner can audit them and never handed to the owner to act on.",
+          "probe": [
+            "grep:worker/src/errors.js::export function userError",
+            "grep:autonomy/policy.json::interrupt"
+          ]
+        },
+        {
+          "id": "ID-5",
+          "text": "Everything runs server-side: a Cloudflare Worker with its own D1 database and cron, and GitHub Actions on its built-in token. Nothing depends on a person's computer, a desktop app or an open chat session.",
+          "probe": [
+            "grep:worker/wrangler.template.jsonc::crons",
+            "grep:worker/src/index.js::async scheduled\\("
+          ]
+        },
+        {
+          "id": "ID-6",
+          "text": "If it is not in code, it does not exist. The repository and the database are the only memory; chat, tool memory and documents nothing reads are not storage.",
+          "probe": [
+            "grep:docs/PROJECT-MEMORY.template.md::.",
+            "grep:agents/AGENTS.md::If it is not in code, it does not exist"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "run",
+      "title": "How it runs",
+      "generated": "tick_steps",
+      "clauses": [
+        {
+          "id": "RUN-1",
+          "text": "The heartbeat is one tick every 10 minutes from the Worker's cron. A second producer, POST /pulse/watch, runs a tick when the newest one is older than two intervals, so one silent trigger never stops the clock.",
+          "probe": [
+            "grep:worker/src/index.js::async scheduled\\(",
+            "grep:worker/src/index.js::/pulse/watch"
+          ]
+        },
+        {
+          "id": "RUN-2",
+          "text": "A tick runs every step listed below, and the same cron runs the loops listed after them. A failing step is recorded and filed as work, and the other steps still run. Each tick writes its report to tick_runs and /health.",
+          "probe": [
+            "grep:worker/src/tick.js::export const STEPS",
+            "grep:worker/src/index.js::/health"
+          ]
+        },
+        {
+          "id": "RUN-3",
+          "text": "Work is items with a claim, a prediction logged before the change and a closing probe after it. An item leaves the active set only with a disposition; reconcile reopens any that left without one.",
+          "probe": [
+            "grep:worker/src/tick.js::silent_drop"
+          ]
+        },
+        {
+          "id": "RUN-4",
+          "text": "The only pause is the interrupt gate: a step that is irreversible and identity-bound with no reversible path. It becomes one gate card with a default in effect and a closing probe; the system works on in the meantime.",
+          "probe": [
+            "grep:autonomy/policy.json::interrupt"
+          ]
+        },
+        {
+          "id": "RUN-5",
+          "text": "One halt stops every recurring path: the Worker variable HALT=1 stops the cron, the watch route and the webhooks. Pages keep serving.",
+          "probe": [
+            "grep:worker/src/budget.js::export function halted"
+          ]
+        },
+        {
+          "id": "RUN-6",
+          "text": "Every model call is paid from the owner's monthly budget through one governor; the budget is a number in the repository, never a promise.",
+          "probe": [
+            "grep:worker/src/budget.js::governedAI"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bootstrap",
+      "title": "How it bootstraps",
+      "generated": "boot_stages",
+      "clauses": [
+        {
+          "id": "BOOT-1",
+          "text": "bootstrap/bootstrap.py runs the stages below in order. It is idempotent: running it again changes nothing that is already true.",
+          "probe": [
+            "grep:bootstrap/bootstrap.py::for name in \\(\"read\", \"qualify\""
+          ]
+        },
+        {
+          "id": "BOOT-2",
+          "text": "A stage that cannot finish is recorded as blocked with its reason and becomes a backlog item with a closing probe; the boot continues with the next stage. A missing credential never stops the boot.",
+          "probe": [
+            "grep:bootstrap/bootstrap.py::def guard\\("
+          ]
+        },
+        {
+          "id": "BOOT-3",
+          "text": "The boot is accepted only when the system's own drills show at least a year unattended (year_gate) and its /health answers live (verify_live).",
+          "probe": [
+            "grep:bootstrap/bootstrap.py::def year_gate\\(",
+            "grep:bootstrap/bootstrap.py::def verify_live\\("
+          ]
+        },
+        {
+          "id": "BOOT-4",
+          "text": "From its first deploy every system serves all of its public surfaces together: a web page with the Built on Ultrastable footer, /health, the discovery manifest, the knowledge graph's read side, and a listing in the ultrastable.io directory. No gate may hide one of them.",
+          "probe": [
+            "grep:worker/src/visibility.js::PUBLIC_READS",
+            "grep:worker/src/discover.js::export function manifest",
+            "grep:worker/src/datagraph.js::export async function readGraph"
+          ]
+        },
+        {
+          "id": "BOOT-5",
+          "text": "A system needs no key from its owner when it is hosted: the platform deploys it through its own OIDC route and gives it its repository from the seed.",
+          "probe": [
+            "grep:IDEA.md::hosted_by|owner_contact",
+            "grep:worker/src/apprepos.js::."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "autonomy",
+      "title": "How it becomes autonomous and reaches criticality",
+      "generated": "ignition",
+      "clauses": [
+        {
+          "id": "AUT-1",
+          "text": "The system reads its own stage every tick from evidence it recorded itself; nothing is declared. A stage is reached when the reading holds for it and every stage below, and lost when it stops holding. The first unmet stage is filed as IGNITE-<stage> with the numbers that block it, and only the same reading closes it.",
+          "probe": [
+            "grep:worker/src/ignition.js::export function judge",
+            "grep:worker/src/ignition.js::IGNITE-"
+          ]
+        },
+        {
+          "id": "AUT-2",
+          "text": "Bootstrapped means instrumented or above: the system stands, runs and measures itself. Critical and self-sustaining are the two stages above that.",
+          "probe": [
+            "grep:worker/src/ignition.js::BOOTSTRAPPED_AT = 'instrumented'"
+          ]
+        },
+        {
+          "id": "AUT-3",
+          "text": "Criticality is a number. k_eff = (credited verified deploys + credited loop-originated items) / (spend units + human touches) over the window. The system is critical when k_eff stays at or above k_min, and self-sustaining when it stays critical with no open ignition gaps and no human touches.",
+          "probe": [
+            "file:autonomy/criticality.json",
+            "grep:worker/src/criticality.js::k_eff"
+          ]
+        },
+        {
+          "id": "AUT-4",
+          "text": "Self-reference is the multiplier: k_self counts only deploys the system originated and shipped on itself. A deploy an outside session drove raises k_eff, never k_self.",
+          "probe": [
+            "grep:autonomy/criticality.json::\"self\""
+          ]
+        },
+        {
+          "id": "AUT-5",
+          "text": "The standing goal is a year unattended: a simulated 10th-percentile horizon of at least 365 days, with every fault class it names drilled against the real recovery code.",
+          "probe": [
+            "grep:autonomy/goals.json::core.year.unattended",
+            "file:autonomy/yearsim.json",
+            "file:scripts/yearsim.py"
+          ]
+        },
+        {
+          "id": "AUT-6",
+          "text": "Trust is computed per surface and action class from recorded outcomes, and widens scope only through a reviewed change to autonomy/policy.json. Trust never reaches the interrupt gate, secrets or harness permissions.",
+          "probe": [
+            "grep:worker/src/tick.js::accrue_trust"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rules",
+      "title": "Standing rules",
+      "generated": "rules",
+      "clauses": []
+    }
+  ],
+  "not_in_kit_doc": "Rule ids whose enforcement lives only in the platform repository (foundation/, site/, deploy/, doctrine/ outside this kit). A seeded system inherits the rule as an instruction; the platform checks it for every system it hosts. Shrink-only: a new rule must ship its check into the kit or the check fails.",
+  "not_in_kit": [
+    "AUTO-IMPROVE-1",
+    "BLINDSPOT-1",
+    "BREADTH-1",
+    "CONNECT-1",
+    "CONSOLE-AGENT-1",
+    "DOC-CONSUMED-1",
+    "FLOW-DIRECTIVE-1",
+    "IGNORANCE-1",
+    "INFO-USEFUL-1",
+    "INTERVIEW-1",
+    "META-SIGNAL-1",
+    "PROVENANCE-1",
+    "RESEARCH-1",
+    "STRANGE-LOOP-1",
+    "TEMPLATE-CODE-ONLY-1",
+    "TENANT-SANDBOX-1"
+  ],
+  "kit_enforcement_doc": "A rule whose bullet cites platform paths but whose behaviour this kit carries under its own names: each probe must pass here, so the map cannot claim code that is not in the kit.",
+  "kit_enforcement": {
+    "CRITICALITY-1": [
+      "grep:worker/src/criticality.js::k_eff",
+      "file:autonomy/criticality.json"
+    ],
+    "SELF-REFERENCE-1": [
+      "grep:autonomy/criticality.json::\"self\""
+    ],
+    "CLOCKWORK-1": [
+      "grep:worker/src/pulse.js::export async function watch"
+    ],
+    "FAILURE-RESOLVE-1": [
+      "file:autonomy/failure-modes.json",
+      "file:worker/src/selfaudit.js"
+    ],
+    "WORDS-MATCH-CODE-1": [
+      "file:scripts/claims.py",
+      "file:doctrine/claims.json"
+    ],
+    "SUBSTANCE-1": [
+      "file:worker/src/vendor/core/substance.js"
+    ],
+    "DISPOSE-1": [
+      "grep:worker/src/tick.js::age_sla",
+      "file:worker/src/sla.js"
+    ],
+    "RUNWAY-1": [
+      "file:scripts/yearsim.py",
+      "file:scripts/seedlife.py"
+    ],
+    "TEMPORAL-1": [
+      "file:scripts/trajectory.py"
+    ],
+    "GROWTH-1": [
+      "grep:scripts/improve.py::frontend"
+    ],
+    "SCOUT-1": [
+      "grep:scripts/improve.py::Market"
+    ],
+    "RND-1": [
+      "grep:scripts/improve.py::market_max_age_days"
+    ],
+    "PROMOTE-1": [
+      "file:worker/src/promoqueue.js"
+    ],
+    "COMPLETE-1": [
+      "grep:worker/src/sweeper.js::CLIENT_PREFIX"
+    ],
+    "DRAIN-ALL-1": [
+      "grep:worker/src/sweeper.js::Q-OPENLOOP",
+      "file:worker/src/lane.js"
+    ],
+    "SESSION-CLOSE-1": [
+      "grep:worker/src/sweeper.js::refresh a stale branch"
+    ],
+    "TENANT-SYNC-1": [
+      "file:.github/workflows/platform-sync.yml"
+    ],
+    "NO-OPEN-ITEMS-1": [
+      "grep:worker/src/tick.js::probe_gates"
+    ]
+  }
+}

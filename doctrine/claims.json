@@ -1956,12 +1956,12 @@
       "surface": "agents/AGENTS.md",
       "text": "- **Load from the repository, never from tool memory.** Project memory, tool memory and chat are not storage (Rowan, 2026-11-12): they may",
       "probe": [
+        "file:seed/SYSTEM.md",
         "file:docs/doctrine/GUIDING-DIRECTIVE.md",
         "file:doctrine/kernel-8.2.1.md",
         "file:docs/PROJECT-MEMORY.md",
         "file:agents/PROJECT-INSTRUCTIONS.md",
-        "file:docs/BOOTSTRAP-NO-MEMORY.md",
-        "file:doctrine/durable-facts.json"
+        "file:docs/BOOTSTRAP-NO-MEMORY.md"
       ],
       "bound_by": "cited"
     },
@@ -2884,12 +2884,12 @@
       "surface": "seed/agents/AGENTS.md",
       "text": "- **Load from the repository, never from tool memory.** Project memory, tool memory and chat are not storage (Rowan, 2026-11-12): they may",
       "probe": [
+        "file:seed/SYSTEM.md",
         "file:docs/doctrine/GUIDING-DIRECTIVE.md",
         "file:doctrine/kernel-8.2.1.md",
         "file:docs/PROJECT-MEMORY.md",
         "file:agents/PROJECT-INSTRUCTIONS.md",
-        "file:docs/BOOTSTRAP-NO-MEMORY.md",
-        "file:doctrine/durable-facts.json"
+        "file:docs/BOOTSTRAP-NO-MEMORY.md"
       ],
       "bound_by": "mirror",
       "of": "cited-32424bab79"
@@ -4461,6 +4461,7 @@
       "STAGED",
       "node_modules",
       "^workers/",
+      "^seed/SYSTEM\\.md$",
       "temporal-data\\.js",
       "intent-yield-data\\.js"
     ],
@@ -4471,6 +4472,23 @@
     "src_unbound_budget": 10
   },
   "modules": [
+    {
+      "id": "system-spec",
+      "surface": "seed/SYSTEM.md",
+      "header": "scripts/system.py --write",
+      "generator": "seed/scripts/system.py",
+      "source": [
+        "seed/autonomy/system.json"
+      ],
+      "check": [
+        "python3",
+        "seed/scripts/system.py",
+        "--check"
+      ],
+      "probe": [
+        "grep:.github/workflows/checks.yml::scripts/system.py --check"
+      ]
+    },
     {
       "id": "claims-data",
       "surface": "site/claims-data.js",
