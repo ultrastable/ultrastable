@@ -142,6 +142,7 @@ jobs:
           python3 -m foundation discover --check  # DISCOVER-1: every live tenant listed and cross-linked; the seed serves its manifest, footer and heartbeat
           python3 -m foundation fullstack --check  # FULLSTACK-1: repository, back end and public front end for every system
           python3 -m foundation datagraph --check
+          python3 -m foundation openstd --check  # OPEN-STANDARDS-1: registered open standards; no new bespoke format
           python3 -m foundation cfposture --check
           python3 -m foundation standingorder --check
           python3 -m foundation rules --check

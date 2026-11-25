@@ -23,6 +23,7 @@
   python3 -m foundation redmain [--run [--apply]|--check]                  REDMAIN-1: a red deploy gate on main is repaired by reverting the smallest change that broke it
   python3 -m foundation tenantrepos [--check|--missing|--prepare DIR --slug S|--behind]   TENANT-REPO-1: every tenant app lives in its own repository
   python3 -m foundation seedlife [--check|--status [SLUG]|--verify [--apply]|--run [--apply]|--probe SLUG]   SEED-LIFECYCLE-1: every seed is built, deployed, live and a year unattended
+  python3 -m foundation openstd [--check|--baseline]   OPEN-STANDARDS-1: open standards, no home-grown formats
   python3 -m foundation compatdate [--check|--run [--apply]]   COMPAT-DATE-1: Worker compatibility dates advance by a loop
   python3 -m foundation runway [--run [--apply]|--probe C|--check]         RUNWAY-1: projected days of unattended running against the one-year target
   python3 -m foundation credwatch [--run [--apply]|--check]                TOKEN-EXPIRY-1: every credential the loops use is probed for expiry before it lapses
@@ -120,6 +121,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["yearfail"]:
         from . import yearfail
         return yearfail.main(_av[1:])
+    if _av[:1] == ["openstd"]:
+        from . import openstd
+        return openstd.main(_av[1:])
     if _av[:1] == ["compatdate"]:
         from . import compatdate
         return compatdate.main(_av[1:])
