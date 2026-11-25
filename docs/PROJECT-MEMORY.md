@@ -10,6 +10,11 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-25
 
+- 2026-11-25: ZERO-MINUTES-1: worker merged #2213
+- 2026-11-25: Replication Ledger: Europe PMC most-cited first, name search, OpenAlex key support (#2213)
+- 2026-11-25: watchdog: clock probe (RESILIENCE-1) (part 2/2) [skip ci]
+- 2026-11-25: watchdog: clock probe (RESILIENCE-1) (part 1/2) [skip ci]
+- 2026-11-25: tenant-repos: push new tenant repositories with the route's token, not the checkout's (#2205)
 - 2026-11-25: tenant-repos: push a tenant's split with the platform token, not the run's own (#2204)
 - 2026-11-25: Product manager pass: 0 growth and repair item(s) filed (#2203)
 - 2026-11-25: Create tenant repositories with the platform's own administration app; read Practical Solutions' real back end (TENANT-REPO-2) (#2179)
