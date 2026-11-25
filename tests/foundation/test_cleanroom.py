@@ -16,7 +16,7 @@ class CleanRoom(unittest.TestCase):
         self.assertEqual(cleanroom.check(), [])
 
     def test_sandbox_boots_runs_and_tears_down(self):
-        rec = cleanroom.run(ticks=6)
+        rec = cleanroom.run(ticks=12)
         bad = {r["id"]: r["evidence"] for r in rec["results"] if not r["ok"]}
         self.assertEqual(bad, {})
         self.assertTrue(next(r for r in rec["results"] if r["id"] == "teardown")["ok"])

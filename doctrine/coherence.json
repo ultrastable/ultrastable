@@ -93,7 +93,9 @@
   },
   "_enforcement_elsewhere_why": "enforced in rwnq8/resume (scripts/check_decisions.py, scripts/audit_surfaces.py), a repository outside this org that this check cannot read",
   "retired_copies": [
-    "workers"
+    "workers",
+    "spec",
+    "license"
   ],
-  "_retired_why": "ultrastable/workers is archived (REPOS-1); its code lives in workers/ here"
+  "_retired_why": "archived repositories (REPOS-1): pushes are refused with 403; their code and text live here"
 }

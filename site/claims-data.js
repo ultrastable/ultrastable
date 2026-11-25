@@ -1921,6 +1921,24 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **No branch outlives its pull request (BRANCH-CLEANUP-1, Rowan 2026-11-25).** \"You shall never keep branches active after merging. All",
+   "detail": "",
+   "how": "file:scripts/branch_cleanup.py",
+   "id": "cited-4d5fed0f55",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **One definition; every surface from one source; a fresh seed proves it (SYSTEM-1, COHERENCE-1, CLEANROOM-1, Rowan 2026-11-25).** \"All",
+   "detail": "",
+   "how": "file:seed/doctrine/system.json + file:seed/doctrine/SYSTEM.md + file:seed/scripts/system.py + file:workers/agents/CONTRACT.md + file:doctrine/tenant-repos.json + file:.github/workflows/cleanroom.yml",
+   "id": "cited-edabfbae8f",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
@@ -2609,6 +2627,42 @@ export default {
    "detail": "",
    "how": "file:seed/.github/workflows/platform-sync.yml + file:tests/foundation/test_improve.py + file:foundation/tenantsync.py + grep:.github/workflows/checks.yml::foundation[ .]tenantsync\\b",
    "id": "mirror-1ca2a53c76",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **No branch outlives its pull request (BRANCH-CLEANUP-1, Rowan 2026-11-25).** \"You shall never keep branches active after merging. All",
+   "detail": "",
+   "how": "file:scripts/branch_cleanup.py",
+   "id": "mirror-3e533029e6",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Issue inflow never exceeds closures; every issue inside its SLA (FLOW-BALANCE-1, Rowan 2026-11-21).** \"All UltraStable issues must be",
+   "detail": "",
+   "how": "file:seed/worker/src/flowbalance.js + file:doctrine/balance.json + file:tests/foundation/test_balance.py + file:foundation/balance.py",
+   "id": "mirror-ad11709e94",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Find another path before asking; the information is already held (PATHFINDER-1, Rowan 2026-11-21).** \"There are always multiple paths,",
+   "detail": "",
+   "how": "file:doctrine/pathfinder.json + file:ops/paths/attempts.jsonl + file:foundation/pathfinder.py + file:tests/foundation/test_pathfinder.py",
+   "id": "mirror-7a700bcc8c",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **One definition; every surface from one source; a fresh seed proves it (SYSTEM-1, COHERENCE-1, CLEANROOM-1, Rowan 2026-11-25).** \"All",
+   "detail": "",
+   "how": "file:seed/doctrine/system.json + file:seed/doctrine/SYSTEM.md + file:seed/scripts/system.py + file:workers/agents/CONTRACT.md + file:doctrine/tenant-repos.json + file:.github/workflows/cleanroom.yml",
+   "id": "mirror-09a99fa607",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3521,7 +3575,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 388,
-  "total": 388
+  "pass": 394,
+  "total": 394
  }
 };
