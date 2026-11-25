@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { hiddenByHealthOnly, publicPage } from './visibility.js';
+import { hiddenByHealthOnly, publicPage, PUBLIC_READS } from './visibility.js';
 
 test('PUBLIC_HEALTH_ONLY leaves only GET /health and POST /hook/github open', () => {
   const env = { PUBLIC_HEALTH_ONLY: '1' };
@@ -25,4 +25,12 @@ test('FULLSTACK-1: a health-only system serves a public page at / and nothing el
   assert.match(r.headers.get('content-type'), /text\/html/);
   assert.match(html, /Last pass finished 2026-11-25T10:00:00Z/); assert.match(html, /ticking/); assert.ok(!html.includes('<b>'));
   assert.match(await publicPage({ name: 'x' }).text(), /No pass has run yet/);
+});
+
+test('COLDSTART-1: a health-only system still serves the public reads every system owes from birth, GET only', () => {
+  const env = { PUBLIC_HEALTH_ONLY: '1' };
+  for (const p of PUBLIC_READS) { assert.equal(hiddenByHealthOnly(env, 'GET', p), false, p); assert.equal(hiddenByHealthOnly(env, 'POST', p), true, 'POST ' + p); }
+  assert.equal(hiddenByHealthOnly(env, 'GET', '/api/stickiness/queue/second-tenant.json'), false);
+  assert.equal(hiddenByHealthOnly(env, 'GET', '/api/stickiness/queue/../x'), true);
+  for (const p of ['/api/analytics', '/api/audit/verify', '/needs-you', '/api/budget', '/mcp']) assert.equal(hiddenByHealthOnly(env, 'GET', p), true, p);
 });

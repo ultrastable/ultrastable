@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/full-stack.schema.json",
+  "title": "full-stack (doctrine/full-stack.json)",
+  "description": "Contract for doctrine/full-stack.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "systems": {
+      "type": "object",
+      "properties": {
+        "ultrastable": {
+          "type": "object"
+        },
+        "practical-solutions": {
+          "type": "object"
+        },
+        "unlearn": {
+          "type": "object"
+        },
+        "second-tenant": {
+          "type": "object"
+        }
+      }
+    },
+    "user_agent": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "systems",
+    "user_agent"
+  ]
+}

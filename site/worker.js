@@ -61,6 +61,24 @@ const BASE = ":root{color-scheme:light dark;--bg:#f6f1e7;--sf:#fffdf8;--sf2:#efe
 + ".main{max-width:960px;margin:0 auto;padding:20px 16px 64px}.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:44px;padding:10px 18px;border-radius:6px;border:1px solid var(--line);background:var(--sf);color:var(--ink);font:600 16px system-ui;text-decoration:none}.btn-primary{background:var(--ac);border-color:var(--ac);color:var(--on)}.btn-quiet{border-color:transparent;background:transparent;color:var(--ac)}"
 + ".skip-link{position:absolute;left:-9999px}.skip-link:focus{left:16px;top:8px;background:var(--sf);padding:8px}:focus-visible{outline:3px solid var(--ac);outline-offset:2px}.card{background:var(--sf);border:1px solid var(--line);border-radius:8px;padding:16px;margin:0 0 12px}.meta,small{color:var(--ink2);font-size:14px}.head p{color:var(--ink2)}"
 + "@media(max-width:640px){.hide-sm{display:none!important}h1{font-size:24px}}";
+// REDTEAM-1: the public text of a claim. The register keeps the exact quote for binding; a quote cut from code keeps only its prose, tags dropped,
+// and a quote that starts mid-sentence is marked with an ellipsis.
+export function publicText(q) {
+  let t = String(q || "");
+  if (/" ?\+|\+ ?"|^\s*(const|return|let|if|card)\b|\bcard\(|\bsec\(|\.push\(|^\s*\+/.test(t)) {
+    const out = [];
+    for (const seg of t.replace(/\\"/g, '"').split(/["']/)) {
+      if (/^\s*\+[^\n]*\+\s*$/.test(seg)) out.push("\u2026");
+      else if ((/[A-Za-z]{2,}[ ,.][A-Za-z ]/.test(seg) || (out.length && out[out.length - 1] === "\u2026" && /[A-Za-z]{3,}/.test(seg))) && !/^[\w-]+ c?\d+$/.test(seg.trim()) && !/[{};=]|\b(const|return|function)\b|^\s*[\w.]+\(/.test(seg))
+        out.push(seg.replace(/<[^>]*>/g, " ").replace(/^[\s,(]+|[\s,(]+$/g, ""));
+    }
+    while (out.length && out[out.length - 1] === "\u2026") out.pop();
+    t = out.filter(Boolean).join(" ") || "(generated from code; see the probe)";
+  }
+  t = t.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim();
+  return /^[a-z]/.test(t) ? "\u2026" + t : t;
+}
+function atCommit() { const c = String(VERIFIED.commit || ""); return /^[0-9a-f]{7,40}$/.test(c) ? " at commit " + esc(c) : " on every merge"; }
 function dsEsc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
 function dsHead(title, description, extraCss) {
   return "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>" + dsEsc(title) + "</title><meta name=\"description\" content=\"" + dsEsc(description) + "\"><style>" + BASE + "\n" + (extraCss || "") + "</style>";
@@ -97,7 +115,7 @@ function shell(opts, body) {
 function statusLine() {
   // Own records only (PROOF-OWN-1): the count comes from Ultrastable's verified-claims register, never from another system.
   const t = VERIFIED.summary;
-  return t.pass + " of " + t.total + " claims verified against code at commit " + esc(VERIFIED.commit) + ".";
+  return t.pass + " of " + t.total + " claims verified against code" + atCommit() + ".";
 }
 
 function home(ux) {
@@ -1205,7 +1223,7 @@ const handler = {
       case "/claims": return new Response(claimsPage(), { headers: HTML });
       case "/changelog": case "/api/changelog": if (u.hostname === "dashboard.ultrastable.io") return new Response("changelog unavailable", { status: 503, headers: { "retry-after": "60" } }); /* CHANGELOG-LOOP-1: this host is served by this worker, so a redirect to itself looped; OWNER_PATH forwards to the dashboard worker first */ return Response.redirect("https://dashboard.ultrastable.io" + pth + u.search, 302); // PROVENANCE-1: the public changelog is served by the dashboard worker
       case "/self": case "/.well-known/ultrastable": return new Response(JSON.stringify(SELF, null, 1), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300", "Link": "</self>; rel=\"describedby\"" } });
-      case "/api/claims": return new Response(JSON.stringify(VERIFIED), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } });
+      case "/api/claims": return new Response(JSON.stringify({ ...VERIFIED, claims: VERIFIED.claims.map(function (c) { return { ...c, claim: publicText(c.claim), quote: c.claim }; }) }), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } });
       case "/product": return new Response(product(), { headers: HTML });
       case "/team": return new Response(team(), { headers: HTML });
       case "/org": return new Response(org(), { headers: HTML });

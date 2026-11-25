@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/resilience.schema.json",
+  "title": "resilience (doctrine/resilience.json)",
+  "description": "Contract for doctrine/resilience.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "marker": {
+      "type": "string"
+    },
+    "ledger": {
+      "type": "string"
+    },
+    "item_prefix": {
+      "type": "string"
+    },
+    "stalled_after_intervals": {
+      "type": "number"
+    },
+    "max_restarts_per_clock_per_day": {
+      "type": "number"
+    },
+    "max_restarts_per_run": {
+      "type": "number"
+    },
+    "escalate_after_failed_restarts": {
+      "type": "number"
+    },
+    "beat_fresh_s": {
+      "type": "number"
+    },
+    "restart_routes": {
+      "type": "object",
+      "properties": {
+        "tick-heartbeat": {
+          "type": "object"
+        },
+        "criticality-loop": {
+          "type": "object"
+        },
+        "unlearn-beat": {
+          "type": "object"
+        },
+        "what-works-beat": {
+          "type": "object"
+        },
+        "replication-ledger-beat": {
+          "type": "object"
+        }
+      }
+    },
+    "watchers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "expected_interval_s": {
+            "type": "number"
+          },
+          "host": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "restarted_by": {
+            "type": "string"
+          },
+          "watched_by": {
+            "type": "string"
+          },
+          "what": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "site_probes": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "beat_fresh_s",
+    "escalate_after_failed_restarts",
+    "item_prefix",
+    "ledger",
+    "marker",
+    "max_restarts_per_clock_per_day",
+    "max_restarts_per_run",
+    "restart_routes",
+    "site_probes",
+    "stalled_after_intervals",
+    "version",
+    "watchers"
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/closed-loop.schema.json",
+  "title": "closed-loop (doctrine/closed-loop.json)",
+  "description": "Contract for doctrine/closed-loop.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "marker": {
+      "type": "string"
+    },
+    "axiom": {
+      "type": "string"
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "instruction_files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "prompt_sources": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "human_dependency": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "patterns": {
+            "type": "array"
+          }
+        }
+      }
+    },
+    "excused_by": {
+      "type": "string"
+    },
+    "lint_scan": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "lint_exempt": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "gate_loops_allowed": {
+      "type": "array"
+    },
+    "fleet": {
+      "type": "object",
+      "properties": {
+        "file": {
+          "type": "string"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "axiom",
+    "excused_by",
+    "fleet",
+    "gate_loops_allowed",
+    "human_dependency",
+    "id",
+    "instruction_files",
+    "lint_exempt",
+    "lint_scan",
+    "marker",
+    "prompt_sources",
+    "rules",
+    "version"
+  ]
+}

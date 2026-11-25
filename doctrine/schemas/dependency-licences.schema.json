@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/dependency-licences.schema.json",
+  "title": "dependency-licences (doctrine/dependency-licences.json)",
+  "description": "Contract for doctrine/dependency-licences.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "checked": {
+      "type": "string"
+    },
+    "policy": {
+      "type": "object",
+      "properties": {
+        "shipped": {
+          "type": "array"
+        },
+        "tool": {
+          "type": "array"
+        }
+      }
+    },
+    "licences": {
+      "type": "object",
+      "properties": {
+        "action:actions/checkout": {
+          "type": "object"
+        },
+        "action:actions/setup-node": {
+          "type": "object"
+        },
+        "action:actions/setup-python": {
+          "type": "object"
+        },
+        "npm:axe-core": {
+          "type": "object"
+        },
+        "npm:esbuild": {
+          "type": "object"
+        },
+        "npm:playwright": {
+          "type": "object"
+        },
+        "npm:wrangler": {
+          "type": "object"
+        },
+        "pypi:piper-tts": {
+          "type": "object"
+        },
+        "pypi:playwright": {
+          "type": "object"
+        },
+        "pypi:psycopg": {
+          "type": "object"
+        },
+        "pypi:pyyaml": {
+          "type": "object"
+        }
+      }
+    },
+    "inventory": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "eco": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "spdx": {
+            "type": "string"
+          },
+          "use": {
+            "type": "string"
+          },
+          "verdict": {
+            "type": "string"
+          },
+          "where": {
+            "type": "array"
+          }
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "checked",
+    "inventory",
+    "licences",
+    "policy"
+  ]
+}

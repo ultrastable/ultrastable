@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/selftest.schema.json",
+  "title": "selftest (doctrine/selftest.json)",
+  "description": "Contract for doctrine/selftest.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "default_max_age_h": {
+          "type": "number"
+        },
+        "max_age_h": {
+          "type": "object"
+        },
+        "exempt": {
+          "type": "object"
+        }
+      }
+    },
+    "workflows": {
+      "type": "object",
+      "properties": {
+        "repos": {
+          "type": "array"
+        },
+        "window": {
+          "type": "number"
+        },
+        "stale_h": {
+          "type": "number"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "data",
+    "workflows"
+  ]
+}

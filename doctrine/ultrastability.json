@@ -1,662 +1,662 @@
 {
- "_doc": "ULTRASTABILITY-1 (Rowan, 2026-11-17): the platform's name is a design rule from W. Ross Ashby (Design for a Brain, 1952). A system is ultrastable when two loops keep its essential variables inside bounds: a fast first-order loop that corrects ordinary disturbance without changing the system, and a slow second-order loop that, when a variable stays out of bounds, makes a discrete step change to the system's own parameters or structure and keeps the change only if the variable returns; after the ladder it keeps searching untried parameter values until one holds the variable (ASHBY-SEARCH-1). Every variable has limits (ASHBY-1). Read by foundation/ultrastability.py; checked by `python3 -m foundation ultrastability --check`; rendered on /how from site/ultrastability-data.js (generated). Never edit a bound to clear a breach: bounds are the viability limits, changed only by a PR with a lineage note.",
- "id": "ultrastability",
- "version": "1.1.0",
- "marker": "ULTRASTABILITY-1",
- "credit": "W. Ross Ashby, Design for a Brain (1952)",
- "ledger": "ops/ultrastability.jsonl",
- "item_prefix": "Q-ULTRA",
- "patience_ticks": 2,
- "settle_ticks": 3,
- "scopes": {
-  "platform": {
-   "status": "running",
-   "what": "Ultrastable running on itself (tenant 0)",
-   "variables": [
-    {
-     "id": "spend",
-     "name": "Spend against budget",
-     "reading": "criticality.cost",
-     "min": 0,
-     "max": 1.0,
-     "unit": "of budget",
-     "first_order": [
-      "cost-guard",
-      "tick-heartbeat"
-     ],
-     "why": "Past 1.0 the system costs more than its owner accepts, so it is no longer viable.",
-     "ladder": [
-      {
-       "kind": "param",
-       "file": "doctrine/clocks.json",
-       "path": "chain.max_runs_per_day",
-       "delta": -1,
-       "min": 1,
-       "max": 8,
-       "what": "wake the executor less often"
-      },
-      {
-       "kind": "item",
-       "labels": [
-        "p0",
-        "agent-ready",
-        "cuts-cost"
-       ],
-       "workstream": "cost",
-       "what": "restructure: find and cut the spend source"
-      }
-     ]
+  "_doc": "ULTRASTABILITY-1 (Rowan, 2026-11-17): the platform's name is a design rule from W. Ross Ashby (Design for a Brain, 1952). A system is ultrastable when two loops keep its essential variables inside bounds: a fast first-order loop that corrects ordinary disturbance without changing the system, and a slow second-order loop that, when a variable stays out of bounds, makes a discrete step change to the system's own parameters or structure and keeps the change only if the variable returns; after the ladder it keeps searching untried parameter values until one holds the variable (ASHBY-SEARCH-1). Every variable has limits (ASHBY-1). Read by foundation/ultrastability.py; checked by `python3 -m foundation ultrastability --check`; rendered on /how from site/ultrastability-data.js (generated). Never edit a bound to clear a breach: bounds are the viability limits, changed only by a PR with a lineage note.",
+  "id": "ultrastability",
+  "version": "1.1.0",
+  "marker": "ULTRASTABILITY-1",
+  "credit": "W. Ross Ashby, Design for a Brain (1952)",
+  "ledger": "ops/ultrastability.jsonl",
+  "item_prefix": "Q-ULTRA",
+  "patience_ticks": 2,
+  "settle_ticks": 4,
+  "scopes": {
+    "platform": {
+      "status": "running",
+      "what": "Ultrastable running on itself (tenant 0)",
+      "variables": [
+        {
+          "id": "spend",
+          "name": "Spend against budget",
+          "reading": "criticality.cost",
+          "min": 0,
+          "max": 1.0,
+          "unit": "of budget",
+          "first_order": [
+            "cost-guard",
+            "tick-heartbeat"
+          ],
+          "why": "Past 1.0 the system costs more than its owner accepts, so it is no longer viable.",
+          "ladder": [
+            {
+              "kind": "param",
+              "file": "doctrine/clocks.json",
+              "path": "chain.max_runs_per_day",
+              "delta": -1,
+              "min": 1,
+              "max": 8,
+              "what": "wake the executor less often"
+            },
+            {
+              "kind": "item",
+              "labels": [
+                "p0",
+                "agent-ready",
+                "cuts-cost"
+              ],
+              "workstream": "cost",
+              "what": "restructure: find and cut the spend source"
+            }
+          ]
+        },
+        {
+          "id": "deploy_health",
+          "name": "Verified deploys",
+          "reading": "criticality.verified_share",
+          "min": 1.0,
+          "max": 1.0,
+          "unit": "of deploys",
+          "first_order": [
+            "deploy-workers",
+            "site-deploy",
+            "ciwatch"
+          ],
+          "why": "A deploy whose live code differs from its commit means the loop that ships is not closing.",
+          "ladder": [
+            {
+              "kind": "param",
+              "file": "doctrine/priorities.json",
+              "path": "goals.#repair-deploys.weight",
+              "delta": 20,
+              "min": 30,
+              "max": 150,
+              "what": "shift executor capacity to deploy repairs (raise the repair-deploys weight)"
+            },
+            {
+              "kind": "item",
+              "labels": [
+                "p0",
+                "agent-ready",
+                "raises-deploys"
+              ],
+              "workstream": "deploys",
+              "what": "restructure: repair the deploy path that failed verification"
+            }
+          ]
+        },
+        {
+          "id": "claims_drift",
+          "name": "Words that no longer match code",
+          "reading": "claims.drift",
+          "min": 0,
+          "max": 0,
+          "unit": "claims",
+          "first_order": [
+            "claims-conformance"
+          ],
+          "why": "A public statement the code no longer makes true breaks the system's own record of itself.",
+          "ladder": [
+            {
+              "kind": "param",
+              "file": "doctrine/priorities.json",
+              "path": "goals.#repair-claims.weight",
+              "delta": 20,
+              "min": 30,
+              "max": 150,
+              "what": "shift executor capacity to say-do fixes (raise the repair-claims weight)"
+            },
+            {
+              "kind": "item",
+              "labels": [
+                "p1",
+                "agent-ready"
+              ],
+              "workstream": "Claims",
+              "what": "restructure: bind or regenerate the drifting statements"
+            }
+          ]
+        },
+        {
+          "id": "value",
+          "name": "Verified deploys per unit of cost and human touch (k)",
+          "reading": "criticality.k",
+          "min": 1.0,
+          "max": null,
+          "unit": "k",
+          "first_order": [
+            "agent-executor",
+            "criticality-loop"
+          ],
+          "why": "Below the floor the system ships less than it costs to run, so the work stops compounding.",
+          "ladder": [
+            {
+              "kind": "param",
+              "file": "doctrine/clocks.json",
+              "path": "chain.max_runs_per_day",
+              "delta": 1,
+              "min": 1,
+              "max": 8,
+              "what": "wake the executor more often"
+            },
+            {
+              "kind": "item",
+              "labels": [
+                "p0",
+                "agent-ready",
+                "raises-deploys"
+              ],
+              "workstream": "deploys",
+              "what": "restructure: remove what keeps deploys from shipping"
+            }
+          ]
+        },
+        {
+          "id": "stalled_clocks",
+          "name": "Clocks that stopped",
+          "reading": "resilience.stalled",
+          "min": 0,
+          "max": 0,
+          "unit": "clocks",
+          "first_order": [
+            "watchdog",
+            "resilience"
+          ],
+          "why": "A clock that stops halts the loop it drives; the system is viable only while every clock keeps ticking, and a watchdog that goes silent reads as unmeasured.",
+          "ladder": [
+            {
+              "kind": "param",
+              "file": "doctrine/resilience.json",
+              "path": "stalled_after_intervals",
+              "delta": -1,
+              "min": 2,
+              "max": 3,
+              "what": "declare a stall sooner so the restart comes earlier"
+            },
+            {
+              "kind": "item",
+              "labels": [
+                "p0",
+                "agent-ready",
+                "raises-deploys"
+              ],
+              "workstream": "Resilience",
+              "what": "restructure: add an independent trigger to the clock that keeps stopping"
+            }
+          ]
+        },
+        {
+          "id": "ui_findings",
+          "name": "Front-end findings that block a user",
+          "reading": "uiux.findings",
+          "min": 0,
+          "max": 0,
+          "unit": "findings",
+          "first_order": [
+            "uiux-loop",
+            "agent-executor"
+          ],
+          "why": "A page that fails accessibility, leaks backend detail, breaks its structure or its brand is a front end drifting into a mishmash; the UI/UX loop (UIUX-1) must keep this at zero, and a variable that cannot be read from a fresh audit is unmeasured and so not in bounds.",
+          "ladder": [
+            {
+              "kind": "param",
+              "file": "doctrine/priorities.json",
+              "path": "goals.#repair-ui.weight",
+              "delta": 20,
+              "min": 30,
+              "max": 150,
+              "what": "shift executor capacity to front-end fixes (raise the repair-ui weight)"
+            },
+            {
+              "kind": "item",
+              "labels": [
+                "p1",
+                "agent-ready"
+              ],
+              "workstream": "Design",
+              "what": "restructure: move the failing rule into the shared component or design token so each page inherits the fix"
+            }
+          ]
+        },
+        {
+          "id": "happy_paths",
+          "name": "User paths that still walk end to end",
+          "reading": "uiux.happy_paths",
+          "min": 1.0,
+          "max": 1.0,
+          "unit": "of paths",
+          "first_order": [
+            "uiux-loop"
+          ],
+          "why": "A path in doctrine/stakeholders.json that no longer clicks through is a user who cannot get from entry to the next step; every audience path must walk, and the UI/UX loop runs each as a browser flow.",
+          "ladder": [
+            {
+              "kind": "param",
+              "file": "doctrine/priorities.json",
+              "path": "goals.#repair-ui.weight",
+              "delta": 20,
+              "min": 30,
+              "max": 150,
+              "what": "shift executor capacity to broken user paths (raise the repair-ui weight)"
+            },
+            {
+              "kind": "item",
+              "labels": [
+                "p0",
+                "agent-ready"
+              ],
+              "workstream": "Design",
+              "what": "restructure: repair the broken step or change the path in doctrine/stakeholders.json so it matches the page"
+            }
+          ]
+        },
+        {
+          "id": "unattended_horizon",
+          "name": "Unattended horizon",
+          "reading": "yearsim.horizon_p10",
+          "min": 365,
+          "max": null,
+          "unit": "days (10th percentile of simulated years)",
+          "first_order": [
+            "watchdog",
+            "executor"
+          ],
+          "why": "A year with no person is the design target (UNATTENDED-365). foundation/yearsim.py injects a year of faults into the real recovery code; when the 10th percentile of simulated years ends before 365 days, something the system needs is not repairing itself.",
+          "ladder": [
+            {
+              "kind": "param",
+              "file": "doctrine/priorities.json",
+              "path": "goals.#unattended-year.weight",
+              "delta": 20,
+              "min": 30,
+              "max": 150,
+              "what": "shift executor capacity to whatever ends the simulated year (raise the unattended-year weight)"
+            },
+            {
+              "kind": "item",
+              "labels": [
+                "p0",
+                "agent-ready"
+              ],
+              "workstream": "Ultrastability",
+              "what": "restructure: build the recovery mechanism for the fault class that ends the simulated year first"
+            }
+          ]
+        },
+        {
+          "id": "self_shipping",
+          "name": "Self-originated releases",
+          "reading": "yearsim.self_rate",
+          "min": 1.0,
+          "max": null,
+          "unit": "substantive server-originated changes a day (14-day mean, at least 10 changed code lines each)",
+          "first_order": [
+            "executor",
+            "merge-lane",
+            "deploy-workers"
+          ],
+          "why": "Rowan's biggest goal: the server itself originates and ships substantive changes daily (SELF-REFERENCE-1). Counted from git by foundation/yearsim.py self_commits: executor or own-agent commits on main with at least 10 changed lines of code outside ledgers and generated data. A one-line import removal is upkeep, not a release (NO-TRIVIAL-COMMITS).",
+          "ladder": [
+            {
+              "kind": "param",
+              "file": "doctrine/clocks.json",
+              "path": "chain.max_runs_per_day",
+              "delta": 1,
+              "min": 1,
+              "max": 8,
+              "what": "wake the executor more often"
+            },
+            {
+              "kind": "param",
+              "file": "doctrine/priorities.json",
+              "path": "goals.#self-shipping.weight",
+              "delta": 20,
+              "min": 30,
+              "max": 150,
+              "what": "shift executor capacity to its own repair (raise the self-shipping weight)"
+            },
+            {
+              "kind": "item",
+              "labels": [
+                "p0",
+                "agent-ready",
+                "raises-self"
+              ],
+              "workstream": "Ultrastability",
+              "what": "restructure: find why the executor's items fail and change its route (model rung, patch format, item size)"
+            }
+          ]
+        },
+        {
+          "id": "owner_interventions",
+          "name": "Owner interventions",
+          "reading": "owner.interventions_7d",
+          "min": 0,
+          "max": 0,
+          "unit": "owner-driven thread sessions in 7 days",
+          "first_order": [
+            "executor",
+            "watchdog"
+          ],
+          "why": "Every time Rowan has to notice a problem and redirect the system in chat, he is acting as the second loop. Ultrastable means the system does that itself. Counted from provenance: distinct thread sessions that changed the repository.",
+          "ladder": [
+            {
+              "kind": "item",
+              "labels": [
+                "p0",
+                "agent-ready",
+                "raises-self"
+              ],
+              "workstream": "Ultrastability",
+              "what": "absorb: turn each recent owner intervention into a variable, bound, detector or rule here, so the same message is not needed again"
+            },
+            {
+              "kind": "item",
+              "labels": [
+                "p0",
+                "agent-ready",
+                "raises-self"
+              ],
+              "workstream": "Ultrastability",
+              "what": "restructure: the intervention kinds that keep recurring get their own essential variable with a ladder"
+            }
+          ]
+        },
+        {
+          "id": "second_loop_keep_rate",
+          "name": "Second-loop steps that worked",
+          "reading": "ultra.keep_rate",
+          "min": 0.25,
+          "max": null,
+          "unit": "share of the last 30 verdicts kept",
+          "first_order": [
+            "watchdog"
+          ],
+          "why": "A slow loop whose changes are all undone is moving, not learning; that was the state before SECOND-LOOP-2.",
+          "ladder": [
+            {
+              "kind": "param",
+              "file": "doctrine/ultrastability.json",
+              "path": "settle_ticks",
+              "delta": 1,
+              "min": 2,
+              "max": 8,
+              "what": "give a parameter step more ticks before judging it"
+            },
+            {
+              "kind": "param",
+              "file": "doctrine/ultrastability.json",
+              "path": "patience_ticks",
+              "delta": 1,
+              "min": 2,
+              "max": 6,
+              "what": "act only on variables that stay out longer (fewer steps on noise)"
+            },
+            {
+              "kind": "item",
+              "labels": [
+                "p0",
+                "agent-ready",
+                "raises-self"
+              ],
+              "workstream": "Ultrastability",
+              "what": "restructure: find the ladders whose steps keep being undone and replace those steps"
+            }
+          ]
+        },
+        {
+          "id": "spec_quality",
+          "name": "Work items an agent cannot misread",
+          "reading": "spec.quality",
+          "min": 0.9,
+          "max": null,
+          "unit": "share of open items with done check, prediction, out-of-scope line and live proof",
+          "first_order": [
+            "executor"
+          ],
+          "why": "unlearn.dev lesson: a vague item gets a plausible wrong fix. An item passes foundation/specgate.py only with all four parts.",
+          "ladder": [
+            {
+              "kind": "item",
+              "labels": [
+                "p0",
+                "agent-ready",
+                "raises-self"
+              ],
+              "workstream": "Ultrastability",
+              "what": "rewrite the open items that miss a part so they pass specgate, from their own source code"
+            },
+            {
+              "kind": "item",
+              "labels": [
+                "p0",
+                "agent-ready",
+                "raises-self"
+              ],
+              "workstream": "Ultrastability",
+              "what": "restructure: make the filer of each failing item write all four parts (fix the writer, not the item)"
+            }
+          ]
+        },
+        {
+          "id": "research_in_code",
+          "name": "Research findings true in code",
+          "reading": "research.met_share",
+          "min": 1.0,
+          "max": null,
+          "unit": "share of findings in every paper whose own measurement meets its target",
+          "first_order": [
+            "executor"
+          ],
+          "why": "RESEARCH-LOOP-1 (Rowan, 2026-11-25): 'make sure your code reflects your own R&D ... that's an open loop too'. Every finding names its mechanism paths and the metric that tests it; research --check fails a missing path, and this variable fails a finding the system does not live up to.",
+          "ladder": [
+            {
+              "kind": "item",
+              "labels": [
+                "p0",
+                "agent-ready",
+                "raises-self"
+              ],
+              "workstream": "Ultrastability",
+              "what": "build: for each finding that is not met, change the mechanism it names until its metric meets the target (research files Q-RES items; take them first)"
+            },
+            {
+              "kind": "item",
+              "labels": [
+                "p0",
+                "agent-ready",
+                "raises-self"
+              ],
+              "workstream": "Ultrastability",
+              "what": "restructure: a finding still not met after its items closed gets a new mechanism, a new ladder here, or its paper states the gap with the number"
+            }
+          ]
+        },
+        {
+          "id": "lessons_enforced",
+          "name": "Lessons enforced in code",
+          "reading": "lessons.enforced_share",
+          "min": 1.0,
+          "max": null,
+          "unit": "share of lessons in doctrine/lessons.json bound to a check, variable, detector or test",
+          "first_order": [
+            "executor"
+          ],
+          "why": "LESSONS-1 (Rowan, 2026-11-25): a lesson that lives in chat is learned again the hard way. Each one is bound to code, or carried by an open item until it is.",
+          "ladder": [
+            {
+              "kind": "item",
+              "labels": [
+                "p0",
+                "agent-ready",
+                "raises-self"
+              ],
+              "workstream": "Ultrastability",
+              "what": "build: take the Q-LESSON items and bind each lesson to a check, variable, detector or test"
+            }
+          ]
+        }
+      ]
     },
-    {
-     "id": "deploy_health",
-     "name": "Verified deploys",
-     "reading": "criticality.verified_share",
-     "min": 1.0,
-     "max": 1.0,
-     "unit": "of deploys",
-     "first_order": [
-      "deploy-workers",
-      "site-deploy",
-      "ciwatch"
-     ],
-     "why": "A deploy whose live code differs from its commit means the loop that ships is not closing.",
-     "ladder": [
-      {
-       "kind": "param",
-       "file": "doctrine/priorities.json",
-       "path": "goals.#repair-deploys.weight",
-       "delta": 20,
-       "min": 30,
-       "max": 150,
-       "what": "shift executor capacity to deploy repairs (raise the repair-deploys weight)"
-      },
-      {
-       "kind": "item",
-       "labels": [
-        "p0",
-        "agent-ready",
-        "raises-deploys"
-       ],
-       "workstream": "deploys",
-       "what": "restructure: repair the deploy path that failed verification"
-      }
-     ]
-    },
-    {
-     "id": "claims_drift",
-     "name": "Words that no longer match code",
-     "reading": "claims.drift",
-     "min": 0,
-     "max": 0,
-     "unit": "claims",
-     "first_order": [
-      "claims-conformance"
-     ],
-     "why": "A public statement the code no longer makes true breaks the system's own record of itself.",
-     "ladder": [
-      {
-       "kind": "param",
-       "file": "doctrine/priorities.json",
-       "path": "goals.#repair-claims.weight",
-       "delta": 20,
-       "min": 30,
-       "max": 150,
-       "what": "shift executor capacity to say-do fixes (raise the repair-claims weight)"
-      },
-      {
-       "kind": "item",
-       "labels": [
-        "p1",
-        "agent-ready"
-       ],
-       "workstream": "Claims",
-       "what": "restructure: bind or regenerate the drifting statements"
-      }
-     ]
-    },
-    {
-     "id": "value",
-     "name": "Verified deploys per unit of cost and human touch (k)",
-     "reading": "criticality.k",
-     "min": 1.0,
-     "max": null,
-     "unit": "k",
-     "first_order": [
-      "agent-executor",
-      "criticality-loop"
-     ],
-     "why": "Below the floor the system ships less than it costs to run, so the work stops compounding.",
-     "ladder": [
-      {
-       "kind": "param",
-       "file": "doctrine/clocks.json",
-       "path": "chain.max_runs_per_day",
-       "delta": 1,
-       "min": 1,
-       "max": 8,
-       "what": "wake the executor more often"
-      },
-      {
-       "kind": "item",
-       "labels": [
-        "p0",
-        "agent-ready",
-        "raises-deploys"
-       ],
-       "workstream": "deploys",
-       "what": "restructure: remove what keeps deploys from shipping"
-      }
-     ]
-    },
-    {
-     "id": "stalled_clocks",
-     "name": "Clocks that stopped",
-     "reading": "resilience.stalled",
-     "min": 0,
-     "max": 0,
-     "unit": "clocks",
-     "first_order": [
-      "watchdog",
-      "resilience"
-     ],
-     "why": "A clock that stops halts the loop it drives; the system is viable only while every clock keeps ticking, and a watchdog that goes silent reads as unmeasured.",
-     "ladder": [
-      {
-       "kind": "param",
-       "file": "doctrine/resilience.json",
-       "path": "stalled_after_intervals",
-       "delta": -1,
-       "min": 2,
-       "max": 3,
-       "what": "declare a stall sooner so the restart comes earlier"
-      },
-      {
-       "kind": "item",
-       "labels": [
-        "p0",
-        "agent-ready",
-        "raises-deploys"
-       ],
-       "workstream": "Resilience",
-       "what": "restructure: add an independent trigger to the clock that keeps stopping"
-      }
-     ]
-    },
-    {
-     "id": "ui_findings",
-     "name": "Front-end findings that block a user",
-     "reading": "uiux.findings",
-     "min": 0,
-     "max": 0,
-     "unit": "findings",
-     "first_order": [
-      "uiux-loop",
-      "agent-executor"
-     ],
-     "why": "A page that fails accessibility, leaks backend detail, breaks its structure or its brand is a front end drifting into a mishmash; the UI/UX loop (UIUX-1) must keep this at zero, and a variable that cannot be read from a fresh audit is unmeasured and so not in bounds.",
-     "ladder": [
-      {
-       "kind": "param",
-       "file": "doctrine/priorities.json",
-       "path": "goals.#repair-ui.weight",
-       "delta": 20,
-       "min": 30,
-       "max": 150,
-       "what": "shift executor capacity to front-end fixes (raise the repair-ui weight)"
-      },
-      {
-       "kind": "item",
-       "labels": [
-        "p1",
-        "agent-ready"
-       ],
-       "workstream": "Design",
-       "what": "restructure: move the failing rule into the shared component or design token so each page inherits the fix"
-      }
-     ]
-    },
-    {
-     "id": "happy_paths",
-     "name": "User paths that still walk end to end",
-     "reading": "uiux.happy_paths",
-     "min": 1.0,
-     "max": 1.0,
-     "unit": "of paths",
-     "first_order": [
-      "uiux-loop"
-     ],
-     "why": "A path in doctrine/stakeholders.json that no longer clicks through is a user who cannot get from entry to the next step; every audience path must walk, and the UI/UX loop runs each as a browser flow.",
-     "ladder": [
-      {
-       "kind": "param",
-       "file": "doctrine/priorities.json",
-       "path": "goals.#repair-ui.weight",
-       "delta": 20,
-       "min": 30,
-       "max": 150,
-       "what": "shift executor capacity to broken user paths (raise the repair-ui weight)"
-      },
-      {
-       "kind": "item",
-       "labels": [
-        "p0",
-        "agent-ready"
-       ],
-       "workstream": "Design",
-       "what": "restructure: repair the broken step or change the path in doctrine/stakeholders.json so it matches the page"
-      }
-     ]
-    },
-    {
-     "id": "unattended_horizon",
-     "name": "Unattended horizon",
-     "reading": "yearsim.horizon_p10",
-     "min": 365,
-     "max": null,
-     "unit": "days (10th percentile of simulated years)",
-     "first_order": [
-      "watchdog",
-      "executor"
-     ],
-     "why": "A year with no person is the design target (UNATTENDED-365). foundation/yearsim.py injects a year of faults into the real recovery code; when the 10th percentile of simulated years ends before 365 days, something the system needs is not repairing itself.",
-     "ladder": [
-      {
-       "kind": "param",
-       "file": "doctrine/priorities.json",
-       "path": "goals.#unattended-year.weight",
-       "delta": 20,
-       "min": 30,
-       "max": 150,
-       "what": "shift executor capacity to whatever ends the simulated year (raise the unattended-year weight)"
-      },
-      {
-       "kind": "item",
-       "labels": [
-        "p0",
-        "agent-ready"
-       ],
-       "workstream": "Ultrastability",
-       "what": "restructure: build the recovery mechanism for the fault class that ends the simulated year first"
-      }
-     ]
-    },
-    {
-     "id": "self_shipping",
-     "name": "Self-originated releases",
-     "reading": "yearsim.self_rate",
-     "min": 1.0,
-     "max": null,
-     "unit": "substantive server-originated changes a day (14-day mean, at least 10 changed code lines each)",
-     "first_order": [
-      "executor",
-      "merge-lane",
-      "deploy-workers"
-     ],
-     "why": "Rowan's biggest goal: the server itself originates and ships substantive changes daily (SELF-REFERENCE-1). Counted from git by foundation/yearsim.py self_commits: executor or own-agent commits on main with at least 10 changed lines of code outside ledgers and generated data. A one-line import removal is upkeep, not a release (NO-TRIVIAL-COMMITS).",
-     "ladder": [
-      {
-       "kind": "param",
-       "file": "doctrine/clocks.json",
-       "path": "chain.max_runs_per_day",
-       "delta": 1,
-       "min": 1,
-       "max": 8,
-       "what": "wake the executor more often"
-      },
-      {
-       "kind": "param",
-       "file": "doctrine/priorities.json",
-       "path": "goals.#self-shipping.weight",
-       "delta": 20,
-       "min": 30,
-       "max": 150,
-       "what": "shift executor capacity to its own repair (raise the self-shipping weight)"
-      },
-      {
-       "kind": "item",
-       "labels": [
-        "p0",
-        "agent-ready",
-        "raises-self"
-       ],
-       "workstream": "Ultrastability",
-       "what": "restructure: find why the executor's items fail and change its route (model rung, patch format, item size)"
-      }
-     ]
-    },
-    {
-     "id": "owner_interventions",
-     "name": "Owner interventions",
-     "reading": "owner.interventions_7d",
-     "min": 0,
-     "max": 0,
-     "unit": "owner-driven thread sessions in 7 days",
-     "first_order": [
-      "executor",
-      "watchdog"
-     ],
-     "why": "Every time Rowan has to notice a problem and redirect the system in chat, he is acting as the second loop. Ultrastable means the system does that itself. Counted from provenance: distinct thread sessions that changed the repository.",
-     "ladder": [
-      {
-       "kind": "item",
-       "labels": [
-        "p0",
-        "agent-ready",
-        "raises-self"
-       ],
-       "workstream": "Ultrastability",
-       "what": "absorb: turn each recent owner intervention into a variable, bound, detector or rule here, so the same message is not needed again"
-      },
-      {
-       "kind": "item",
-       "labels": [
-        "p0",
-        "agent-ready",
-        "raises-self"
-       ],
-       "workstream": "Ultrastability",
-       "what": "restructure: the intervention kinds that keep recurring get their own essential variable with a ladder"
-      }
-     ]
-    },
-    {
-     "id": "second_loop_keep_rate",
-     "name": "Second-loop steps that worked",
-     "reading": "ultra.keep_rate",
-     "min": 0.25,
-     "max": null,
-     "unit": "share of the last 30 verdicts kept",
-     "first_order": [
-      "watchdog"
-     ],
-     "why": "A slow loop whose changes are all undone is moving, not learning; that was the state before SECOND-LOOP-2.",
-     "ladder": [
-      {
-       "kind": "param",
-       "file": "doctrine/ultrastability.json",
-       "path": "settle_ticks",
-       "delta": 1,
-       "min": 2,
-       "max": 8,
-       "what": "give a parameter step more ticks before judging it"
-      },
-      {
-       "kind": "param",
-       "file": "doctrine/ultrastability.json",
-       "path": "patience_ticks",
-       "delta": 1,
-       "min": 2,
-       "max": 6,
-       "what": "act only on variables that stay out longer (fewer steps on noise)"
-      },
-      {
-       "kind": "item",
-       "labels": [
-        "p0",
-        "agent-ready",
-        "raises-self"
-       ],
-       "workstream": "Ultrastability",
-       "what": "restructure: find the ladders whose steps keep being undone and replace those steps"
-      }
-     ]
-    },
-    {
-     "id": "spec_quality",
-     "name": "Work items an agent cannot misread",
-     "reading": "spec.quality",
-     "min": 0.9,
-     "max": null,
-     "unit": "share of open items with done check, prediction, out-of-scope line and live proof",
-     "first_order": [
-      "executor"
-     ],
-     "why": "unlearn.dev lesson: a vague item gets a plausible wrong fix. An item passes foundation/specgate.py only with all four parts.",
-     "ladder": [
-      {
-       "kind": "item",
-       "labels": [
-        "p0",
-        "agent-ready",
-        "raises-self"
-       ],
-       "workstream": "Ultrastability",
-       "what": "rewrite the open items that miss a part so they pass specgate, from their own source code"
-      },
-      {
-       "kind": "item",
-       "labels": [
-        "p0",
-        "agent-ready",
-        "raises-self"
-       ],
-       "workstream": "Ultrastability",
-       "what": "restructure: make the filer of each failing item write all four parts (fix the writer, not the item)"
-      }
-     ]
-    },
-    {
-     "id": "research_in_code",
-     "name": "Research findings true in code",
-     "reading": "research.met_share",
-     "min": 1.0,
-     "max": null,
-     "unit": "share of findings in every paper whose own measurement meets its target",
-     "first_order": [
-      "executor"
-     ],
-     "why": "RESEARCH-LOOP-1 (Rowan, 2026-11-25): 'make sure your code reflects your own R&D ... that's an open loop too'. Every finding names its mechanism paths and the metric that tests it; research --check fails a missing path, and this variable fails a finding the system does not live up to.",
-     "ladder": [
-      {
-       "kind": "item",
-       "labels": [
-        "p0",
-        "agent-ready",
-        "raises-self"
-       ],
-       "workstream": "Ultrastability",
-       "what": "build: for each finding that is not met, change the mechanism it names until its metric meets the target (research files Q-RES items; take them first)"
-      },
-      {
-       "kind": "item",
-       "labels": [
-        "p0",
-        "agent-ready",
-        "raises-self"
-       ],
-       "workstream": "Ultrastability",
-       "what": "restructure: a finding still not met after its items closed gets a new mechanism, a new ladder here, or its paper states the gap with the number"
-      }
-     ]
-    },
-    {
-     "id": "lessons_enforced",
-     "name": "Lessons enforced in code",
-     "reading": "lessons.enforced_share",
-     "min": 1.0,
-     "max": null,
-     "unit": "share of lessons in doctrine/lessons.json bound to a check, variable, detector or test",
-     "first_order": [
-      "executor"
-     ],
-     "why": "LESSONS-1 (Rowan, 2026-11-25): a lesson that lives in chat is learned again the hard way. Each one is bound to code, or carried by an open item until it is.",
-     "ladder": [
-      {
-       "kind": "item",
-       "labels": [
-        "p0",
-        "agent-ready",
-        "raises-self"
-       ],
-       "workstream": "Ultrastability",
-       "what": "build: take the Q-LESSON items and bind each lesson to a check, variable, detector or test"
-      }
-     ]
+    "tenant": {
+      "status": "declared",
+      "what": "Every system built on Ultrastable declares the same four variables at bootstrap; the platform loop runs them for tenant 0 only",
+      "variables": [
+        {
+          "id": "uptime",
+          "name": "Uptime",
+          "reading": "tenant.probe_pass_rate",
+          "min": 0.99,
+          "max": 1.0,
+          "unit": "of probes",
+          "first_order": [
+            "spinoff",
+            "liveness"
+          ],
+          "why": "The system has to be reachable to be improved.",
+          "ladder": [
+            {
+              "kind": "param",
+              "file": "doctrine/spinoff.json",
+              "path": "budget.max_live",
+              "delta": -2,
+              "min": 4,
+              "max": 12,
+              "what": "run fewer live apps, so each one gets more of the free-tier capacity"
+            },
+            {
+              "kind": "spinoff",
+              "verb": "iterate",
+              "what": "iterate: change the app"
+            },
+            {
+              "kind": "spinoff",
+              "verb": "retire",
+              "what": "retire: stop spending on what cannot stay up"
+            }
+          ]
+        },
+        {
+          "id": "spend",
+          "name": "Spend against the declared monthly budget",
+          "reading": "tenant.spend_vs_budget",
+          "min": 0,
+          "max": 1.0,
+          "unit": "of budget",
+          "first_order": [
+            "cost-guard"
+          ],
+          "why": "The owner accepted a running cost; past it the system is not viable.",
+          "ladder": [
+            {
+              "kind": "param",
+              "file": "doctrine/spinoff.json",
+              "path": "budget.max_requests_per_app_per_day",
+              "delta": -4000,
+              "min": 4000,
+              "max": 20000,
+              "what": "lower the per-app daily request cap (a soft throttle)"
+            },
+            {
+              "kind": "spinoff",
+              "verb": "iterate",
+              "what": "iterate: cut the spend source"
+            },
+            {
+              "kind": "spinoff",
+              "verb": "retire",
+              "what": "retire: stop spending"
+            }
+          ]
+        },
+        {
+          "id": "claims_drift",
+          "name": "Words that no longer match code",
+          "reading": "tenant.claims_drift",
+          "min": 0,
+          "max": 0,
+          "unit": "claims",
+          "first_order": [
+            "claims-conformance"
+          ],
+          "why": "A tenant's public statements stay true.",
+          "ladder": [
+            {
+              "kind": "param",
+              "file": "doctrine/spinoff.json",
+              "path": "budget.max_launches_per_day",
+              "delta": -1,
+              "min": 1,
+              "max": 3,
+              "what": "launch fewer new apps a day, leaving capacity for upkeep"
+            },
+            {
+              "kind": "spinoff",
+              "verb": "iterate",
+              "what": "iterate: regenerate the statements from code"
+            }
+          ]
+        },
+        {
+          "id": "value",
+          "name": "The tenant's own declared value metric",
+          "reading": "tenant.declared_metric_vs_target",
+          "min": 1.0,
+          "max": null,
+          "unit": "per its objective",
+          "first_order": [
+            "spinoff",
+            "predict-verify"
+          ],
+          "why": "A system with no measure that can be wrong cannot be improved. Read as the tenant's declared metric divided by its own declared target (ops/tenants/<slug>.json declared_metric, declared_target); 1.0 is on target.",
+          "ladder": [
+            {
+              "kind": "param",
+              "file": "doctrine/spinoff.json",
+              "path": "score.min_score",
+              "delta": 1,
+              "min": 6,
+              "max": 12,
+              "what": "launch only higher-scoring ideas"
+            },
+            {
+              "kind": "spinoff",
+              "verb": "iterate",
+              "what": "iterate: change what the app does"
+            },
+            {
+              "kind": "spinoff",
+              "verb": "retire",
+              "what": "retire: the measured value does not justify the cost"
+            }
+          ]
+        }
+      ]
     }
-   ]
   },
-  "tenant": {
-   "status": "declared",
-   "what": "Every system built on Ultrastable declares the same four variables at bootstrap; the platform loop runs them for tenant 0 only",
-   "variables": [
-    {
-     "id": "uptime",
-     "name": "Uptime",
-     "reading": "tenant.probe_pass_rate",
-     "min": 0.99,
-     "max": 1.0,
-     "unit": "of probes",
-     "first_order": [
-      "spinoff",
-      "liveness"
-     ],
-     "why": "The system has to be reachable to be improved.",
-     "ladder": [
-      {
-       "kind": "param",
-       "file": "doctrine/spinoff.json",
-       "path": "budget.max_live",
-       "delta": -2,
-       "min": 4,
-       "max": 12,
-       "what": "run fewer live apps, so each one gets more of the free-tier capacity"
-      },
-      {
-       "kind": "spinoff",
-       "verb": "iterate",
-       "what": "iterate: change the app"
-      },
-      {
-       "kind": "spinoff",
-       "verb": "retire",
-       "what": "retire: stop spending on what cannot stay up"
-      }
-     ]
-    },
-    {
-     "id": "spend",
-     "name": "Spend against the declared monthly budget",
-     "reading": "tenant.spend_vs_budget",
-     "min": 0,
-     "max": 1.0,
-     "unit": "of budget",
-     "first_order": [
-      "cost-guard"
-     ],
-     "why": "The owner accepted a running cost; past it the system is not viable.",
-     "ladder": [
-      {
-       "kind": "param",
-       "file": "doctrine/spinoff.json",
-       "path": "budget.max_requests_per_app_per_day",
-       "delta": -4000,
-       "min": 4000,
-       "max": 20000,
-       "what": "lower the per-app daily request cap (a soft throttle)"
-      },
-      {
-       "kind": "spinoff",
-       "verb": "iterate",
-       "what": "iterate: cut the spend source"
-      },
-      {
-       "kind": "spinoff",
-       "verb": "retire",
-       "what": "retire: stop spending"
-      }
-     ]
-    },
-    {
-     "id": "claims_drift",
-     "name": "Words that no longer match code",
-     "reading": "tenant.claims_drift",
-     "min": 0,
-     "max": 0,
-     "unit": "claims",
-     "first_order": [
-      "claims-conformance"
-     ],
-     "why": "A tenant's public statements stay true.",
-     "ladder": [
-      {
-       "kind": "param",
-       "file": "doctrine/spinoff.json",
-       "path": "budget.max_launches_per_day",
-       "delta": -1,
-       "min": 1,
-       "max": 3,
-       "what": "launch fewer new apps a day, leaving capacity for upkeep"
-      },
-      {
-       "kind": "spinoff",
-       "verb": "iterate",
-       "what": "iterate: regenerate the statements from code"
-      }
-     ]
-    },
-    {
-     "id": "value",
-     "name": "The tenant's own declared value metric",
-     "reading": "tenant.declared_metric_vs_target",
-     "min": 1.0,
-     "max": null,
-     "unit": "per its objective",
-     "first_order": [
-      "spinoff",
-      "predict-verify"
-     ],
-     "why": "A system with no measure that can be wrong cannot be improved. Read as the tenant's declared metric divided by its own declared target (ops/tenants/<slug>.json declared_metric, declared_target); 1.0 is on target.",
-     "ladder": [
-      {
-       "kind": "param",
-       "file": "doctrine/spinoff.json",
-       "path": "score.min_score",
-       "delta": 1,
-       "min": 6,
-       "max": 12,
-       "what": "launch only higher-scoring ideas"
-      },
-      {
-       "kind": "spinoff",
-       "verb": "iterate",
-       "what": "iterate: change what the app does"
-      },
-      {
-       "kind": "spinoff",
-       "verb": "retire",
-       "what": "retire: the measured value does not justify the cost"
-      }
-     ]
+  "self": {
+    "name": "ultrastable",
+    "is": "A system that keeps its own essential variables inside bounds with two loops: a fast loop that corrects ordinary disturbance without changing the system, and a slow loop that changes the system's own parameters or structure when a variable stays out of bounds, and keeps the change only if the variable returns.",
+    "does": [
+      "reads every essential variable against its bounds on a clock, from ledgers its own loops write",
+      "corrects disturbance with its regulators (the fast loop) without changing itself",
+      "when a variable stays out of bounds, takes one discrete step on that variable's ladder (the slow loop), then keeps or undoes it by the next readings",
+      "records every reading, step and verdict with provenance, and treats an unreadable variable as unmeasured, never as fine",
+      "declares what it is and what it consists of in this model, and fails its own build when running code and this model differ"
+    ],
+    "not": "It does not wait on a person to close a loop. The only pauses are the irreversible, identity-bound acts listed under the boundary.",
+    "boundary_ref": "doctrine/boundary.json",
+    "clocks_ref": "doctrine/clocks.json",
+    "inheritance": {
+      "rule": "Improve once, improve all: a change to the foundation or the seed reaches every system built on Ultrastable, because tenants are bootstrapped from the same kit and declare the same essential variables.",
+      "carriers": [
+        "seed/agents/AGENTS.md",
+        "seed/autonomy/policy.json",
+        "seed/ultrastable.json",
+        "seed/scripts/claims.py",
+        "doctrine/ultrastability.json"
+      ],
+      "tenant_scope": "tenant"
     }
-   ]
-  }
- },
- "self": {
-  "name": "ultrastable",
-  "is": "A system that keeps its own essential variables inside bounds with two loops: a fast loop that corrects ordinary disturbance without changing the system, and a slow loop that changes the system's own parameters or structure when a variable stays out of bounds, and keeps the change only if the variable returns.",
-  "does": [
-   "reads every essential variable against its bounds on a clock, from ledgers its own loops write",
-   "corrects disturbance with its regulators (the fast loop) without changing itself",
-   "when a variable stays out of bounds, takes one discrete step on that variable's ladder (the slow loop), then keeps or undoes it by the next readings",
-   "records every reading, step and verdict with provenance, and treats an unreadable variable as unmeasured, never as fine",
-   "declares what it is and what it consists of in this model, and fails its own build when running code and this model differ"
-  ],
-  "not": "It does not wait on a person to close a loop. The only pauses are the irreversible, identity-bound acts listed under the boundary.",
-  "boundary_ref": "doctrine/boundary.json",
-  "clocks_ref": "doctrine/clocks.json",
-  "inheritance": {
-   "rule": "Improve once, improve all: a change to the foundation or the seed reaches every system built on Ultrastable, because tenants are bootstrapped from the same kit and declare the same essential variables.",
-   "carriers": [
-    "seed/agents/AGENTS.md",
-    "seed/autonomy/policy.json",
-    "seed/ultrastable.json",
-    "seed/scripts/claims.py",
-    "doctrine/ultrastability.json"
-   ],
-   "tenant_scope": "tenant"
-  }
- },
- "item_settle_ticks": 21,
- "_doc_settle": "SECOND-LOOP-SETTLE-1 (2026-11-21): a param step is judged after settle_ticks readings, because a parameter acts at once. An item or spinoff step is work the executor must do first, so judging it after 3 readings reverted all 14 of them before any could act (0 of 14 kept, ops/ultrastability.jsonl to 2026-11-21). It is kept as soon as the variable is back in bounds, reverted when its item reaches a final status with the variable still out, or after item_settle_ticks readings.",
- "_doc_second_loop_2": "SECOND-LOOP-2 (Rowan, 2026-11-25): 'I'm still not getting the ultra stable part.' Three variables added that measure the second loop itself: how often a person had to act as the second loop (owner_interventions, target 0), whether its own steps work (second_loop_keep_rate; until now every verdict was a revert) and whether work items can be misread (spec_quality, SPEC-GATE-1). A tenant value shared by every tenant is a sensor fault (common_mode) and is held. readiness() is the one-year score published on /ultrastability."
+  },
+  "item_settle_ticks": 21,
+  "_doc_settle": "SECOND-LOOP-SETTLE-1 (2026-11-21): a param step is judged after settle_ticks readings, because a parameter acts at once. An item or spinoff step is work the executor must do first, so judging it after 3 readings reverted all 14 of them before any could act (0 of 14 kept, ops/ultrastability.jsonl to 2026-11-21). It is kept as soon as the variable is back in bounds, reverted when its item reaches a final status with the variable still out, or after item_settle_ticks readings.",
+  "_doc_second_loop_2": "SECOND-LOOP-2 (Rowan, 2026-11-25): 'I'm still not getting the ultra stable part.' Three variables added that measure the second loop itself: how often a person had to act as the second loop (owner_interventions, target 0), whether its own steps work (second_loop_keep_rate; until now every verdict was a revert) and whether work items can be misread (spec_quality, SPEC-GATE-1). A tenant value shared by every tenant is a sensor fault (common_mode) and is held. readiness() is the one-year score published on /ultrastability."
 }

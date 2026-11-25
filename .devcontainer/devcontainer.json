@@ -1,0 +1,12 @@
+{
+  "$schema": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainer.schema.json",
+  "name": "ultrastable",
+  "image": "mcr.microsoft.com/devcontainers/python:1-3.12-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "24"
+    }
+  },
+  "postCreateCommand": "python3 -m foundation directive --bootstrap",
+  "_doc": "STANDARDS-1: the Development Containers spec (containers.dev) environment for any cloud agent or Codespace: the same Python 3.12 and Node 24 the checks run on. Consumed by GitHub Codespaces and any devcontainer-aware agent; checked by tests/foundation/test_stdgen.py."
+}

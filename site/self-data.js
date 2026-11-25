@@ -42,7 +42,7 @@ export default {
    },
    {
     "id": "sandbox-instances",
-    "rebuild": "python3 -m foundation scaffold",
+    "rebuild": "python3 -m foundation new-system --manifest instances/<slug>/instance.json --out <dir> --apply",
     "what": "instances created from instances/<slug>/instance.json in a sandbox account or container"
    },
    {
@@ -2865,6 +2865,12 @@ export default {
    "unmeasured": false,
    "value": 1.0
   },
+  "lessons_enforced": {
+   "at": "2026-11-25T21:34:40Z",
+   "in_bounds": false,
+   "unmeasured": false,
+   "value": 0.692
+  },
   "loop-ledger:claims_drift": {
    "at": "2026-11-25T20:54:49Z",
    "in_bounds": false,
@@ -2913,6 +2919,12 @@ export default {
    "unmeasured": true,
    "value": null
   },
+  "owner_interventions": {
+   "at": "2026-11-25T21:34:40Z",
+   "in_bounds": false,
+   "unmeasured": false,
+   "value": 49
+  },
   "portfolio-board:claims_drift": {
    "at": "2026-11-25T20:54:49Z",
    "in_bounds": false,
@@ -2937,11 +2949,29 @@ export default {
    "unmeasured": true,
    "value": null
   },
+  "research_in_code": {
+   "at": "2026-11-25T21:34:40Z",
+   "in_bounds": false,
+   "unmeasured": false,
+   "value": 0.621
+  },
+  "second_loop_keep_rate": {
+   "at": "2026-11-25T21:34:40Z",
+   "in_bounds": false,
+   "unmeasured": false,
+   "value": 0.0
+  },
   "self_shipping": {
    "at": "2026-11-25T20:54:49Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.714
+  },
+  "spec_quality": {
+   "at": "2026-11-25T21:34:40Z",
+   "in_bounds": false,
+   "unmeasured": false,
+   "value": 0.375
   },
   "spend": {
    "at": "2026-11-25T20:54:49Z",
@@ -3018,7 +3048,7 @@ export default {
    "doctrine/ultrastability.json:settle_ticks"
   ],
   "patience_ticks": 2,
-  "settle_ticks": 3,
+  "settle_ticks": 4,
   "what": "step-function changes to parameters or structure when a variable stays out of bounds, kept only if the variable returns"
  }
 };

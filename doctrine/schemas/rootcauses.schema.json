@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/rootcauses.schema.json",
+  "title": "rootcauses (doctrine/rootcauses.json)",
+  "description": "Contract for doctrine/rootcauses.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "window_days": {
+      "type": "number"
+    },
+    "escalate_days": {
+      "type": "number"
+    },
+    "quiet_days": {
+      "type": "number"
+    },
+    "classes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "guard": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "match": {
+            "type": "object"
+          },
+          "owner": {
+            "type": "string"
+          },
+          "remedy": {
+            "type": "string"
+          },
+          "root": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "classes",
+    "escalate_days",
+    "quiet_days",
+    "version",
+    "window_days"
+  ]
+}
