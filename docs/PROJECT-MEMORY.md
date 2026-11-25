@@ -10,6 +10,9 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-25
 
+- 2026-11-25: Replication Ledger front end, deployed by the platform; FULLSTACK-1 for every tenant (#2127)
+- 2026-11-25: STATIC-CONTENT-1: a page that never changes is a failure mode (#2145)
+- 2026-11-25: Replication Ledger front end, deployed by the platform; FULLSTACK-1 for every tenant (#2127)
 - 2026-11-25: org profile probe: no pipe into grep -q (SLA-ISSUE-1) (#2122)
 - 2026-11-25: Keep tenant redeploys running when another tenant's repo cannot be created; judge Unlearn on its own feeds (#2133)
 - 2026-11-25: Run branch cleanup from the lane's completion sweep (#2115)
