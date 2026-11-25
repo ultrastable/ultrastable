@@ -45,6 +45,9 @@ METRICS = {
     "second_loop_kept_share": "share of second-order steps that brought the variable back inside its limits and were kept",
     "loops_closing_probe_share": "share of registered loops that declare a closing probe and a server-side owner",
     "kg_systems_share": "share of systems in doctrine/knowledge-graph.json whose knowledge graph is built, not pending",
+    "owner_interventions_7d": "owner-driven thread sessions that changed the repository in the last 7 days (ops/provenance.jsonl)",
+    "spec_quality": "share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py)",
+    "research_findings_met_share": "share of every finding in every paper whose own measurement meets its target, excluding this metric (RESEARCH-LOOP-1)",
 }
 NOW = lambda: dt.datetime.now(dt.timezone.utc)
 ISO = lambda t: t.strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -148,6 +151,16 @@ def measures(root=REPO, pol=None) -> dict:
     kgp = root / "doctrine/knowledge-graph.json"
     kgs = json.loads(kgp.read_text(encoding="utf-8")).get("systems", {}) if kgp.is_file() else {}
     m["kg_systems_share"] = {"value": round(sum(1 for x in kgs.values() if x.get("state") != "pending") / len(kgs), 3) if kgs else None, "n": len(kgs), "source": "doctrine/knowledge-graph.json (declared)"}
+    try:  # SECOND-LOOP-2 and SPEC-GATE-1 readings, the same functions the second loop reads
+        from . import ultrastability as U2
+        m["owner_interventions_7d"] = {"value": U2.owner_interventions(root), "n": None, "source": "ops/provenance.jsonl, last 7 days"}
+        m["spec_quality"] = {"value": U2.spec_quality(root), "n": None, "source": "foundation/specgate.py over docs/issues"}
+    except (OSError, ValueError, KeyError) as e:
+        print(f"research: second-loop readings failed: {e}", file=sys.stderr)
+        m["owner_interventions_7d"] = m["spec_quality"] = {"value": None, "n": 0, "source": "unreadable"}
+    fs = [f for st in studies(root, pol) for f in st.get("findings", []) if f.get("metric") != "research_findings_met_share"]
+    met = [f for f in fs if verdict(f, m)["status"] == "met"]
+    m["research_findings_met_share"] = {"value": round(len(met) / len(fs), 3) if fs else None, "n": len(fs), "source": "research/studies, each finding measured as above"}
     m["_window"] = {"start": ISO(start) if start else None, "end": ISO(end) if end else None, "days": round((end - start).total_seconds() / 86400, 2) if start else None,
                     "prs": len(prs), "merged": len(merged), "regime": last.get("regime"), "k_self": last.get("k_self"),
                     "as_of": max([x for x in (snap.get("fetched_at"), last.get("at"), deps[-1].get("at") if deps else None) if x] or [None], key=lambda x: _t(x) if x else dt.datetime.min.replace(tzinfo=dt.timezone.utc))}

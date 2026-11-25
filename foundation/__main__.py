@@ -10,6 +10,8 @@
   python3 -m foundation resilience [--run [--apply]|--report|--check|--probe ID]   every clock keeps ticking; stalled ones are restarted (RESILIENCE-1)
   python3 -m foundation verify [--check|--report]                          VERIFY-1: model-check the core loops and tie the models to the code
   python3 -m foundation ultrastability [--tick [--apply]|--check|--data [--apply]]  Ashby's two loops over essential variables (ULTRASTABILITY-1)
+  python3 -m foundation lessons [--check]  every lesson bound to enforcing code or an open item (LESSONS-1)
+  python3 -m foundation specgate [--check]  work items an agent cannot misread: done check, prediction, out of scope, live proof (SPEC-GATE-1)
   python3 -m foundation criticality [--tick [--apply]|--check|--gate]     the mantra as a computed invariant (CRITICALITY-1)
   python3 -m foundation claimcode [--check|--baseline|--list]                words match code: every number, cadence or guarantee on a public surface is bound to a probe (WORDS-MATCH-CODE-1)
   python3 -m foundation pointclick [--check|--baseline]                    no surface asks a person to handle a token, secret or setting (POINT-AND-CLICK-1)
@@ -28,6 +30,7 @@
   python3 -m foundation failmine [--run [--apply]|--report|--probe HASH|--check]   FAILMINE-1: mine every failure record, classify root causes, register new modes, escalate recurrence
   python3 -m foundation intentyield [--run [--apply]|--probe|--check|--report]   INTENT-YIELD-1: owner directives kept per unit of attention; no counts, no person scored
   python3 -m foundation temporal [--run [--apply]|--settled ID|--probe|--check|--report]   TEMPORAL-1: series per area, loop and entry; hotspots, neglect and stopped loops feed the failure-mode machinery
+  python3 -m foundation bootproof [--check]   BOOTPROOF-1: the seed kernel is closed under bootstrap (instructions, placeholders, secrets, triggers)
   python3 -m foundation seedlaunch [--e2e [--keep]|--fleet|--check]   SEED-LAUNCH-1: every seed built, deployed, year-gated and probed live by the system
   python3 -m foundation discover [--gen|--check|--live]                    DISCOVER-1: every system is listed, cross-linked and findable
   python3 -m foundation fullstack [--check|--live|--probe ID|--list]        FULLSTACK-1: every system has a repository, a back end and a public front end
@@ -303,6 +306,12 @@ def main(argv=None) -> int:
     if _av[:1] == ["verify"]:
         from . import verify
         return verify.main(_av[1:])
+    if _av[:1] == ["lessons"]:
+        from . import lessons
+        return lessons.main(_av[1:])
+    if _av[:1] == ["specgate"]:
+        from . import specgate
+        return specgate.main(_av[1:])
     if _av[:1] == ["ultrastability"]:
         from . import ultrastability
         return ultrastability.main(_av[1:])
@@ -333,6 +342,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["openloops"]:
         from . import openloops
         return openloops.main(_av[1:])
+    if _av[:1] == ["bootproof"]:
+        from . import bootproof
+        return bootproof.main(_av[1:])
     if _av[:1] == ["seedlaunch"]:
         from . import seedlaunch
         return seedlaunch.main(_av[1:])
