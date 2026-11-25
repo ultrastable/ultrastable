@@ -274,6 +274,8 @@ jobs:
         run: python3 -m foundation proofown --check
       - name: Tenant sync registry, TENANT-SYNC-1
         run: python3 -m foundation.tenantsync --check
+      - name: Tenant admission, ADMIT-1 (one tenant-repos row; every registry derived)
+        run: python3 -m foundation admit --check
       - name: Agent data is current
         run: python3 scripts/build_site_agentdata.py --check
       - name: Platform brief is current

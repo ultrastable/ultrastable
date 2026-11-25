@@ -1813,6 +1813,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **One tenant row admits a tenant; every registry is derived (ADMIT-1, Rowan 2026-11-25).** \"All surfaces, all files, all code, all",
+   "detail": "",
+   "how": "file:doctrine/tenant-repos.json + file:scripts/regen_generated.py + file:doctrine/admission.json + file:site/worker.js + file:foundation/admit.py + file:tests/foundation/test_admit.py",
+   "id": "cited-9b5ff76eff",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Every system deploys itself in full: repo, back end and a public web UI (FULLSTACK-1, Rowan 2026-11-25).** \"All UltraStable deployments",
    "detail": "",
    "how": "file:doctrine/tenant-repos.json + file:doctrine/topology.json + file:tests/foundation/test_tenantrepos.py + file:instances/ultrastable/progress.json + file:doctrine/seed-deploys.json + file:doctrine/full-stack.json",
@@ -2342,6 +2351,15 @@ export default {
    "kind": "claim",
    "pass": true,
    "surface": "seed/AGENTS.md"
+  },
+  {
+   "claim": "- **One tenant row admits a tenant; every registry is derived (ADMIT-1, Rowan 2026-11-25).** \"All surfaces, all files, all code, all",
+   "detail": "",
+   "how": "file:doctrine/tenant-repos.json + file:scripts/regen_generated.py + file:doctrine/admission.json + file:site/worker.js + file:foundation/admit.py + file:tests/foundation/test_admit.py",
+   "id": "mirror-adf5fe12d6",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
   },
   {
    "claim": "Words match code (CLAIMS-1, Rowan 2026-11-17)",
@@ -3388,7 +3406,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 74 Python and 541 Worker tests",
+   "claim": "seed-tests: 74 Python and 547 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3397,7 +3415,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 541 Worker tests",
+   "claim": "seed-worker-tests: 547 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3647,7 +3665,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 402,
-  "total": 402
+  "pass": 404,
+  "total": 404
  }
 };

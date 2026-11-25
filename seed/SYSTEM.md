@@ -115,10 +115,11 @@ Criticality numbers (from `autonomy/criticality.json`): window 14 days, k_min 1,
 
 ## Standing rules
 
-81 standing rules from `agents/AGENTS.md`, each with the enforcement it cites. "In this kit" names code this repository runs;
+82 standing rules from `agents/AGENTS.md`, each with the enforcement it cites. "In this kit" names code this repository runs;
 a rule enforced only by the platform is marked so, and the platform checks it for every system it hosts.
 
 - **USER-BACKEND-1**: The user does the idea; the system does the backend; one fix improves every system. In this kit: `doctrine/user-backend.json`, `worker/src/errors.js`, `worker/test/errors.test.js`.
+- **ADMIT-1**: One tenant row admits a tenant; every registry is derived. In this kit: `worker/test/repo-settings-skip.test.js`.
 - **CLAIMS-1**: Words match code. In this kit: `doctrine/claims.json`, `scripts/claims.py`.
 - **VISION-1**: Vision: systems, not one-off apps. In this kit: `bootstrap/bootstrap.py`, `doctrine/VISION.md`.
 - **DRAIN-ZERO-1**: Drain to zero, fleetwide. In this kit: `scripts/resolve_generated.py`.
@@ -172,7 +173,7 @@ a rule enforced only by the platform is marked so, and the platform checks it fo
 - **IMPROVE-1**: Automate back-end and front-end development; improve on its own. In this kit: `.github/workflows/improve.yml`, `autonomy/improve.json`, `scripts/improve.py`.
 - **SYNC-BOTH-WAYS-1**: Every system updates itself and the platform. In this kit: `.github/workflows/platform-sync.yml`.
 - **REDTEAM-1**: Red-team the system's own blind spots; the owner should never find a failure first. In this kit: `scripts/redteam.py`.
-- **COLLISION-1**: Today's failures are guarded in code, not remembered. In this kit: `worker/src/ghfetch.js`, `worker/src/lane.js`, `worker/test/apprepos.test.js`, `worker/test/ghfetch.test.js`.
+- **COLLISION-1**: Today's failures are guarded in code, not remembered. In this kit: `scripts/branch_cleanup.py`, `worker/src/ghfetch.js`, `worker/src/lane.js`, `worker/test/apprepos.test.js`.
 - **INTENT-YIELD-1**: The owner's words are the input; what stays true is the output. In this kit: checked by the platform.
 - **FLOW-BALANCE-1**: Issue inflow never exceeds closures; every issue inside its SLA. In this kit: `scripts/balance.py`, `worker/src/flowbalance.js`.
 - **PATHFINDER-1**: Find another path before asking; the information is already held. In this kit: checked by the platform.

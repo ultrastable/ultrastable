@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-2276",
+  "title": "OL-PR-2276: land or supersede pull request #2276 (conflict)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #2276 is conflict\n**Done check:** cmd:python3 -m foundation loopowner --closed 2276\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #2276 (`claude/project-thread-7m8lt7` at 48b527e16c, opened by rwnq8): One definition of an Ultrastable system, a daily clean-room bootstrap, and a coherence check across every surface. The session that opened it is not its closer and is never asked to act. The branch conflicts with main. Merge main into the branch and resolve it, or redo the change from main in a new pull request and close this one as superseded. Failed checks: checks, fast, foundation, tests-a. Files (59): .github/workflows/checks.yml, .github/workflows/cleanroom.yml, CLAUDE.md, README.md, agents/AGENTS.md, agents/PROJECT-INSTRUCTIONS.md, docs/PROJECT-MEMORY.md, docs/issues/OL-20261125-2.json, doctrine/claim-code.json, doctrine/cleanroom.json, doctrine/clocks.json, doctrine/coherence.json, doctrine/flows.json, doctrine/writeback/decision-2026-11-25-clean-room-coherence-check-and-one-system-definition-adopted.json, doctrine/writeback/lesson-2026-11-25-copies-drift-silently-unless-one-source-generates-them-and-a.json, foundation/__main__.py, foundation/cleanroom.py, foundation/coherence.py, github/org-settings.json, instances/ultrastable/loop-registry.json, ops/cleanroom/latest.json, ops/cleanroom/runs.jsonl, ops/improvements.jsonl, platform/adapters/README.md, platform/selfhost/day.mjs, seed/.github/workflows/balance.yml, seed/.github/workflows/bootstrap.yml, seed/.github/workflows/branch-cleanup.yml, seed/.github/workflows/funding-maintenance.yml, seed/.github/workflows/improve.yml, seed/.github/workflows/memory-fresh.yml, seed/.github/workflows/org-init.yml, seed/.github/workflows/org-profile-probe.yml, seed/.github/workflows/outreach.yml, seed/CITATION.cff, seed/CLAUDE.md, seed/NOTICE, seed/agents/AGENTS.md, seed/bootstrap/bootstrap.py, seed/doctrine/balance.json ....\n\n**Prediction:** open_prs <= 0 within 24 h\n**Out of scope:** changing what pull request #2276 does; land it as written or carry it onto main unchanged.\n\n**Closing probe:** `python3 -m foundation loopowner --closed 2276` exits 0 (pull request #2276 is merged or closed).",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
