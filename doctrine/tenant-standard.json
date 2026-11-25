@@ -31,7 +31,7 @@
   "undeployed": "Not deployed yet"
  },
  "identity": {
-  "_doc": "IDENTITY-1: each repository's identity lives in one manifest at its root, ultrastable.json `identity` (schema seed/standards/system.schema.json, reconciled by seed/scripts/surfaces.py). The scaffold takes this one object as its input (foundation/tenantstd.py identity() computes it from doctrine/tenant-repos.json, doctrine/topology.json and the tenant's instance.json), writes it, and renders the README, package.json description, worker/contract.js SPEC and wrangler.jsonc from it. public_url is null while nothing is deployed (planned_url then names the address it will take, and no README links it).",
+  "_doc": "IDENTITY-1: each repository's identity lives in one manifest at its root, ultrastable.json `identity` (schema seed/standards/system.schema.json, reconciled by seed/scripts/surfaces.py). The scaffold takes this one object as its input (foundation/tenantstd.py identity() computes it from doctrine/tenant-repos.json, doctrine/topology.json and the tenant's instance.json), writes it, and renders the README, package.json description, worker/contract.js SPEC and wrangler.jsonc from it. The scaffold uses the identity a repository already carries (the reconciler owns its values) and computes one from the registries only for a repository that has none. public_url is null and runs_as is empty while nothing is deployed, and no README links a host then.",
   "keys": ["name", "slug", "summary", "repo", "public_url", "license", "topics", "runs_as"]
  },
  "survival": ["credentials", "source-control", "budget", "cost-alerts", "payment", "dependencies", "runtime", "models", "health", "backups", "renewal", "improvement", "privacy"],

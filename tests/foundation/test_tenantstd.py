@@ -93,7 +93,7 @@ class LiveBlock(unittest.TestCase):
         (d / "instance.json").write_text(json.dumps({"slug": "unlearn", "name": "Unlearn"}))
         block, ident = T.live_block("unlearn", REPO), T.identity("unlearn", d, STD, REPO)
         self.assertEqual(ident["public_url"], "https://unlearn.ultrastable.org")
-        self.assertEqual(ident["runs_as"]["worker"], "ultrastable-unlearn")
+        self.assertEqual(ident["runs_as"][0]["name"], "ultrastable-unlearn")
         for need in ("(https://unlearn.ultrastable.org/)", "`ultrastable-unlearn`", "https://unlearn.ultrastable.org/health", "https://unlearn.ultrastable.org/claims.json", "https://ultrastable.io/directory"):
             self.assertIn(need, block)
         (d / "README.md").write_text("# Unlearn\n\n" + block + "\n")
@@ -108,18 +108,22 @@ class LiveBlock(unittest.TestCase):
     def test_one_identity_object_is_the_scaffolds_input_and_every_file_reads_it(self):
         d = planned()
         ident = json.loads((d / "ultrastable.json").read_text())["identity"]
-        self.assertEqual(sorted(ident), sorted(STD["identity"]["keys"] + ["planned_url", "layer"]))
-        self.assertIsNone(ident["public_url"])
+        self.assertEqual(sorted(ident), sorted(STD["identity"]["keys"] + ["layer", "parent", "visibility", "visibility_reason", "status"]))
+        self.assertIsNone(ident["public_url"]); self.assertEqual(ident["runs_as"], []); self.assertEqual(ident["status"], "planned")
         self.assertEqual(json.loads((d / "package.json").read_text())["description"], ident["summary"])
         self.assertIn('import MANIFEST from "../ultrastable.json"', (d / "worker/contract.js").read_text())
-        self.assertIn(f'"name": "{ident["runs_as"]["worker"]}"', (d / "wrangler.jsonc").read_text())
+        self.assertIn('"name": "ultrastable-base-rates"', (d / "wrangler.jsonc").read_text())
         e = scratch()
         for f in (REPO / "instances/base-rates").iterdir():
             shutil.copy(f, e / f.name)
         T.scaffold(e, "base-rates", REPO, STD, {**ident, "name": "Renamed Rates", "summary": "A different summary for the test."})
         self.assertIn("# Renamed Rates", (e / "README.md").read_text())
         self.assertEqual(json.loads((e / "package.json").read_text())["description"], "A different summary for the test.")
-        self.assertTrue(any("differs from what the registries say" in b for b in T.check_tenant(e, STD, REPO)))
+        self.assertEqual(T.scaffold(e, "base-rates", REPO, STD), [], "the identity the repository carries is the input of the next run")
+        bad_id = {**ident, "public_url": "https://x.example.org", "runs_as": [{"name": "other-worker"}]}
+        (e / "ultrastable.json").write_text(json.dumps({"identity": bad_id}))
+        got = "\n".join(T.check_tenant(e, STD, REPO))
+        self.assertIn("the registries say not deployed", got); self.assertIn("runs_as names other-worker", got)
         ident2 = json.loads((d / "ultrastable.json").read_text()); ident2["identity"]["slug"] = "other"
         (d / "ultrastable.json").write_text(json.dumps(ident2))
         self.assertTrue(any("says slug 'other'" in b for b in T.check_tenant(d, STD, None)))
