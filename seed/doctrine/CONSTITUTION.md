@@ -124,3 +124,6 @@ Each rule has a detector that sees it break and a remediation that repairs it, b
 - **every-failure-mode-has-a-detector** (Rowan, 2026-11-21 and 2026-11-25): Every failure mode has a live probe, a failed probe files its own item, and the item closes only when the probe is green; a finding written where no loop reads it is itself a failure mode.
   - detector: `autonomy/failure-modes.json`, `worker/src/selfaudit.js`
   - remediation: `worker/src/selfaudit.js`, `worker/src/selfaudit.js`
+- **cold-start-contract** (Rowan, 2026-11-25): Every system is born with the cold-start contract: the same capabilities, each carried by seed files and checked, so nothing a new system needs is supplied by a person afterwards. The constitution adds the rules, ladder and criticality conditions on top of that definition.
+  - detector: `doctrine/SYSTEM.md`, `doctrine/coldstart.json` (platform)
+  - remediation: `bootstrap/bootstrap.py`, `foundation/coldstart.py` (platform)

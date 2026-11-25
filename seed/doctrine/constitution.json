@@ -683,7 +683,8 @@
       "source": "Rowan, 2026-11-21 and 2026-11-25",
       "covers": [
         "FAILURE-RESOLVE-1",
-        "SPEC-GATE-1"
+        "SPEC-GATE-1",
+        "REDTEAM-1"
       ],
       "detector": [
         {
@@ -703,6 +704,33 @@
         {
           "file": "worker/src/selfaudit.js",
           "has": "loopBreak"
+        }
+      ]
+    },
+    {
+      "id": "cold-start-contract",
+      "rule": "Every system is born with the cold-start contract: the same capabilities, each carried by seed files and checked, so nothing a new system needs is supplied by a person afterwards. The constitution adds the rules, ladder and criticality conditions on top of that definition.",
+      "source": "Rowan, 2026-11-25",
+      "covers": [
+        "COLDSTART-1"
+      ],
+      "detector": [
+        {
+          "file": "doctrine/SYSTEM.md"
+        },
+        {
+          "platform": true,
+          "file": "doctrine/coldstart.json"
+        }
+      ],
+      "remediation": [
+        {
+          "file": "bootstrap/bootstrap.py",
+          "has": "def qualify"
+        },
+        {
+          "platform": true,
+          "file": "foundation/coldstart.py"
         }
       ]
     }

@@ -422,6 +422,15 @@
     "file": "foundation/claimcode.py",
     "contains": "claim_patterns"
    }
+  },
+  {
+   "id": "coldstart-contract-agents",
+   "source": "agents/AGENTS.md",
+   "quote": "work together automatically and seamlessly from the beginning",
+   "probe": {
+    "file": ".github/workflows/checks.yml",
+    "contains": "python3 -m foundation coldstart --check"
+   }
   }
  ],
  "baseline": [
