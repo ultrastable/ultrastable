@@ -228,6 +228,7 @@
     "INTERVIEW-1",
     "META-SIGNAL-1",
     "PROVENANCE-1",
+    "REDTEAM-1",
     "RESEARCH-1",
     "STRANGE-LOOP-1",
     "TEMPLATE-CODE-ONLY-1",
@@ -294,6 +295,10 @@
     ],
     "NO-OPEN-ITEMS-1": [
       "grep:worker/src/tick.js::probe_gates"
+    ],
+    "NO-FABRICATION-1": [
+      "file:scripts/claims.py",
+      "file:doctrine/claims.json"
     ]
   }
 }

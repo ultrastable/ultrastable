@@ -1956,12 +1956,12 @@
       "surface": "agents/AGENTS.md",
       "text": "- **Load from the repository, never from tool memory.** Project memory, tool memory and chat are not storage (Rowan, 2026-11-12): they may",
       "probe": [
+        "file:seed/SYSTEM.md",
         "file:docs/doctrine/GUIDING-DIRECTIVE.md",
         "file:doctrine/kernel-8.2.1.md",
         "file:docs/PROJECT-MEMORY.md",
         "file:agents/PROJECT-INSTRUCTIONS.md",
-        "file:docs/BOOTSTRAP-NO-MEMORY.md",
-        "file:doctrine/durable-facts.json"
+        "file:docs/BOOTSTRAP-NO-MEMORY.md"
       ],
       "bound_by": "cited"
     },
@@ -2414,6 +2414,19 @@
         "file:foundation/redteam.py",
         "file:ops/redteam/findings.jsonl",
         "file:tests/foundation/test_redteam.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-c2464a2c9f",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Every surface works together from the first deploy; one command proves it (BOOT-ACCEPT-1, Rowan 2026-11-25).** \"All surfaces, all",
+      "probe": [
+        "file:seed/worker/src/visibility.js",
+        "file:doctrine/open-loops.json",
+        "file:tests/foundation/test_bootaccept.py",
+        "file:seed/worker/test/bootaccept.test.js",
+        "file:foundation/bootaccept.py"
       ],
       "bound_by": "cited"
     },
@@ -2892,12 +2905,12 @@
       "surface": "seed/agents/AGENTS.md",
       "text": "- **Load from the repository, never from tool memory.** Project memory, tool memory and chat are not storage (Rowan, 2026-11-12): they may",
       "probe": [
+        "file:seed/SYSTEM.md",
         "file:docs/doctrine/GUIDING-DIRECTIVE.md",
         "file:doctrine/kernel-8.2.1.md",
         "file:docs/PROJECT-MEMORY.md",
         "file:agents/PROJECT-INSTRUCTIONS.md",
-        "file:docs/BOOTSTRAP-NO-MEMORY.md",
-        "file:doctrine/durable-facts.json"
+        "file:docs/BOOTSTRAP-NO-MEMORY.md"
       ],
       "bound_by": "mirror",
       "of": "cited-32424bab79"
@@ -3367,6 +3380,20 @@
       ],
       "bound_by": "mirror",
       "of": "cited-467a38f9b7"
+    },
+    {
+      "id": "mirror-bda521b8b7",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Every surface works together from the first deploy; one command proves it (BOOT-ACCEPT-1, Rowan 2026-11-25).** \"All surfaces, all",
+      "probe": [
+        "file:seed/worker/src/visibility.js",
+        "file:doctrine/open-loops.json",
+        "file:tests/foundation/test_bootaccept.py",
+        "file:seed/worker/test/bootaccept.test.js",
+        "file:foundation/bootaccept.py"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-c2464a2c9f"
     },
     {
       "id": "mirror-be5af6748b",
@@ -4478,7 +4505,8 @@
       "STAGED",
       "node_modules",
       "^workers/",
-      "^seed/SYSTEM\\.md$", "temporal-data\\.js",
+      "^seed/SYSTEM\\.md$",
+      "temporal-data\\.js",
       "intent-yield-data\\.js"
     ],
     "skip_reasons": {
@@ -4488,7 +4516,23 @@
     "src_unbound_budget": 10
   },
   "modules": [
-  {"id": "system-spec", "surface": "seed/SYSTEM.md", "header": "scripts/system.py --write", "generator": "seed/scripts/system.py", "source": ["seed/autonomy/system.json"], "check": ["python3", "seed/scripts/system.py", "--check"], "probe": ["grep:.github/workflows/checks.yml::scripts/system.py --check"]},
+    {
+      "id": "system-spec",
+      "surface": "seed/SYSTEM.md",
+      "header": "scripts/system.py --write",
+      "generator": "seed/scripts/system.py",
+      "source": [
+        "seed/autonomy/system.json"
+      ],
+      "check": [
+        "python3",
+        "seed/scripts/system.py",
+        "--check"
+      ],
+      "probe": [
+        "grep:.github/workflows/checks.yml::scripts/system.py --check"
+      ]
+    },
     {
       "id": "claims-data",
       "surface": "site/claims-data.js",
