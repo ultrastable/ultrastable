@@ -58,11 +58,14 @@ jobs:
         run: |
           git config user.name "ultrastable-audit"
           git config user.email "actions@users.noreply.github.com"
-          git add ops/failure-audit.jsonl
-          if git diff --cached --quiet; then echo "no ledger change"; else
-            git commit -q -m "failure-audit: ledger"
-            git push -q origin HEAD:refs/heads/audit-evidence --force
-            git reset -q --mixed HEAD~1
+          # SILENT-FAIL-1 root cause: the evidence commit used to sit on top of main, so any change to a workflow file on main made the push look like a workflow
+          # update, which a GitHub App token refuses (run 45694466342). The commit now holds only the ledger, built with plumbing: no workflow file can ride along.
+          if [ -f ops/failure-audit.jsonl ]; then
+            blob=$(git hash-object -w ops/failure-audit.jsonl)
+            sub=$(printf '100644 blob %s\tfailure-audit.jsonl\n' "$blob" | git mktree)
+            tree=$(printf '040000 tree %s\tops\n' "$sub" | git mktree)
+            commit=$(git commit-tree "$tree" -m "failure-audit: ledger")
+            git push -q origin "$commit:refs/heads/audit-evidence" --force
           fi
       - name: Findings to main, where the executor takes them
         env:
