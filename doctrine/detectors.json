@@ -546,6 +546,22 @@
       "remedy": "Read ops/seed-launches.jsonl failed_stages, fix the seed or bootstrap stage in seed/, add a regression test, dispatch seed-launch.yml."
     },
     {
+      "id": "boot-accept",
+      "failure_mode": "fm-surfaces-not-integrated",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "bootaccept",
+        "--check"
+      ],
+      "timeout": 60,
+      "root_cause": "a surface was added and proved on its own, but a launched system does not serve it with the others: a visibility gate hid the discovery manifest and the knowledge graph on every seed, and seeds deployed without their public URL or repository",
+      "owner": "operations",
+      "remedy": "Read ops/boot-accept.jsonl failed_layers and each layer's detail, fix the seed kernel or deploy/deploy-seed.mjs, add a regression test in seed/worker/test/bootaccept.test.js or tests/foundation/test_bootaccept.py, dispatch seed-launch.yml."
+    },
+    {
       "id": "seed-autonomous",
       "failure_mode": "fm-seed-not-autonomous",
       "kind": "command",

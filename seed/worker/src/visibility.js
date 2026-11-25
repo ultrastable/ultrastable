@@ -7,13 +7,20 @@ export function hiddenByHealthOnly(env, method, pathname) {
   if (pathname === '/hook/github' && method === 'POST') return false;
   if (pathname === '/hook/cloudflare' && method === 'POST') return false;  // CF-ALERTS-1: Cloudflare's alert webhook, verified by its own secret
   if (pathname === '/pulse/watch' && method === 'POST') return false;  // LOOPPROOF-1: the second producer; it only runs a tick when the newest one is stale
+  if (method === 'GET' && PUBLIC_READS.has(pathname)) return false;  // BOOT-ACCEPT-1: the surfaces every system must serve from its first deploy
   return true;
 }
+
+// BOOT-ACCEPT-1 (Rowan, 2026-11-25: "all surfaces ... everything has to work together automatically and seamlessly from the beginning"). The gate above
+// once hid the discovery manifest (DISCOVER-1) and the knowledge graph's read side (DATAGRAPH-1) on every seed and every visitor app, because each was
+// added after the gate and nothing proved them together. These reads are public by design: the manifest names nothing private, and the graph's read
+// side shows only counts and declared public kinds without the owner's bearer. foundation/bootaccept.py reads each one live after every launch.
+export const PUBLIC_READS = new Set(['/.well-known/ultrastable.json', '/api/graph', '/api/graph/insights', '/api/graph/search', '/graph']);
 
 // FULLSTACK-1: every system has a public front end. A health-only system serves this page at /: its name, whether its clock is turning and the
 // stage it read for itself. No backlog, no screens, no owner routes. Every value comes from the same rows /health reads.
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-export function publicPage({ name, last, ignition }) {
+export function publicPage({ name, last, ignition, footer = '' }) {  // footer: DISCOVER-1's "Built on Ultrastable" line (discover.js footerHtml)
   const done = Boolean(last && last.steps_completed === last.steps_total), when = last && (last.finished_at || last.started_at);
   const title = esc(String(name || 'system').replace(/-/g, ' '));
   const body = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title>`
@@ -21,6 +28,6 @@ export function publicPage({ name, last, ignition }) {
     + `<main><h1>${title}</h1><p>This system runs itself on Ultrastable. Its managers work on a clock, with nobody in the loop.</p><dl>`
     + `<dt>Clock</dt><dd>${when ? (done ? 'Last pass finished ' : 'Last pass started ') + esc(when) : 'No pass has run yet.'}</dd>`
     + `<dt>Stage</dt><dd>${ignition && ignition.stage ? esc(ignition.stage) : 'Not read yet.'}</dd></dl>`
-    + '<p><a href="/health">The full health report</a><br><a href="https://ultrastable.io">Ultrastable is the foundation for any autonomous system.</a></p></main></body></html>';
+    + '<p><a href="/health">The full health report</a><br><a href="https://ultrastable.io">Ultrastable is the foundation for any autonomous system.</a></p></main>' + footer + '</body></html>';
   return new Response(body, { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=60' } });
 }

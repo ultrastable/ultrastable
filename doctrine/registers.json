@@ -459,6 +459,18 @@
       "probe": "grep:tests/foundation/test_seedlaunch.py::def test_check_fails_on_failed_e2e"
     },
     {
+      "id": "fm-surfaces-not-integrated",
+      "trigger": "a rule adds a public surface (discovery manifest, knowledge graph, footer, directory listing) that is proved alone, while a launched system does not serve it together with the rest",
+      "symptom": "a seed or visitor app is live and ticking, yet its manifest or graph answers 404, its page has no footer, or the directory cannot list it",
+      "blast_radius": "every seed and every app launched at the front door",
+      "detection": "python3 -m foundation bootaccept --check",
+      "root_cause": "each surface had its own test and no test read every surface of one launched system from outside",
+      "remediation": "seed-launch.yml launches a seed from the kernel and reads repo, back end, health, web UI, graph and discovery live (bootaccept --run); a failed layer files Q-AUDIT-boot-accept",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:tests/foundation/test_bootaccept.py::def test_check_fails_on_failed_layer"
+    },
+    {
       "id": "fm-seed-not-autonomous",
       "trigger": "a seed is deployed and answers /health, but its own loops fail or never record a run",
       "symptom": "the launch record says passed while the seed's tick reports stalled, at ignition stage ticking",

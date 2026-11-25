@@ -1,12 +1,15 @@
 name: seed-launch
 # SEED-LAUNCH-1 (Rowan, 2026-11-21): every seed is built, deployed, gated on a year unattended and probed live by the system itself.
 # budget: ~15 min x 5 per month (weekly e2e plus fleet, and dispatch)
-# trigger: weekly and dispatch; a seed changes the kit at most daily (kit-sync), and the e2e record is fresh for 8 days
+# trigger: weekly, dispatch, and a push that changes a surface every launched system serves (BOOT-ACCEPT-1); a seed changes the kit at most daily (kit-sync), and the e2e record is fresh for 8 days
 # free-alternative: a cloud-hosted agent session runs `python3 -m foundation seedlaunch --e2e --fleet` with the same Cloudflare binding
 on:
   schedule:
     - cron: "23 7 * * 1"
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["seed/worker/src/visibility.js", "seed/worker/src/discover.js", "deploy/deploy-seed.mjs", "foundation/bootaccept.py"]
 permissions:
   contents: write
   pull-requests: write  # scripts/land_data.py falls back to a pull request when the main writer is refused
@@ -28,11 +31,14 @@ jobs:
       - run: python3 scripts/actions_guard.py seed-launch
         env:
           GH_TOKEN: ${{ github.token }}
-      - name: A fresh seed built from the kernel, deployed into the Ultrastable account through the site worker's OIDC route, verified live
+      - name: A fresh seed built from the kernel, deployed into the Ultrastable account through the site worker's OIDC route, then every layer read live
         # SEED-DEPLOY-2: no stored Cloudflare credential; the repo secret pointed at the retired account (SINGLE-ACCOUNT-1)
-        run: python3 -m foundation seedlaunch --e2e-oidc
+        # BOOT-ACCEPT-1: the launch, then repo, back end, health, web UI, graph and discovery of every standing seed, read from outside
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 -m foundation bootaccept --run
       - name: Land the launch records on main
         if: always()
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
-        run: python3 scripts/land_data.py "seed launch records (SEED-LAUNCH-1)" ops/seed-launches.jsonl
+        run: python3 scripts/land_data.py "seed launch and bootstrap acceptance records (SEED-LAUNCH-1, BOOT-ACCEPT-1)" ops/seed-launches.jsonl ops/boot-accept.jsonl
