@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-25-tenant-standard-1-one-standard-one-scaffold-and-one-check-fo",
+  "kind": "decision",
+  "date": "2026-11-25",
+  "title": "TENANT-STANDARD-1: one standard, one scaffold and one check for every tenant repository",
+  "body": "A tenant repository's contents are data in doctrine/tenant-standard.json. One scaffold (scaffold/tenant, foundation/tenantstd.py, called by tenantrepos prepare) writes every standard file from one identity object, saved as ultrastable.json. One check reads it: tenantstd in checks, in tenant-repos.yml against each repository's main, and vendored into each tenant's ci.yml. Verified by tests/foundation/test_tenantstd.py, which scaffolds a tenant and runs its Worker tests.",
+  "probe": "file:foundation/tenantstd.py"
+ },
+ "kind": "decision",
+ "title": "TENANT-STANDARD-1: one standard, one scaffold and one check for every tenant repository",
+ "session": ""
+}
