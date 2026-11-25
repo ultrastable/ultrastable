@@ -10,6 +10,8 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-25
 
+- 2026-11-25: fix: bounded self-migration, write routes answer a read with 405, the org's security policy meets the repository standard (#2355)
+- 2026-11-25: chore(seed-launch): record seed launch and bootstrap acceptance (SEED-LAUNCH-1, BOOT-ACCEPT-1) [skip ci]
 - 2026-11-25: Blind-spot red team (BLINDSPOT-RED-1). Found and fixed: cost probe measured no D1 database (read a thresholds file that never existed); cost level scored probe rows as 0 (measured Workers AI use 0.805 of the free budget); ultrastable.io feed had empty texts and was frozen since 2026-11-17 (feed-data.js never committed). New detectors: cost-runaway, d1-growth (`cost --guard`), credential-expiry (`credwatch --ledger`, now watching the tick Worker's administration App via a dry read), content-drift (`contentdrift --live`). SPOF register adds spof-admin-app.
 - 2026-11-25: CONSTITUTION-1: the seed states what an ultrastable system is (identity, run loop, bootstrap, ladder, criticality, every standing rule) in seed/doctrine/constitution.json; each rule has a detector and remediation in code; boot stage `constitute`; CI fails an unmapped rule
 - 2026-11-25: OPEN-STANDARDS-1 (stdkit): `seed/scripts/stdkit.py` is the one place for JSON Schema validation, CloudEvents 1.0, W3C PROV and Conventional Commits (JS twin `seed/worker/src/cloudevents.js`); the instance manifest structure is `seed/schemas/instance.schema.json`; `provenance --prov` and `--cloudevents` export the ledger. Overlapping standards PRs #2259, #2260, #2273 carry the doctrine schema catalog, registry and Backstage descriptor.
