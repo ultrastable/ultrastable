@@ -1,6 +1,7 @@
 // HANDOFF-1: the deploy and rollback hands of the server-side handoff loop. The tick Worker (seed/worker/src/handoff.js) reads the merge commit from GitHub
 // and posts the flattened modules here over its SITE service binding; this worker holds the Cloudflare credential (CF_DEPLOY_TOKEN, CF_ACCOUNT_ID) and uploads.
 // Guarded by a shared internal key (secret INTERNAL_DEPLOY_KEY on both workers), compared in constant time; without the key the paths answer 404 like any unknown page.
+import { launchesInternal } from "./graduate.js";
 const J = (o, s) => new Response(JSON.stringify(o), { status: s || 200, headers: { "content-type": "application/json" } });
 const ALLOWED = /^ultrastable-[a-z0-9-]{1,40}$/;  // only the platform's own workers; tenant idea workers have their own path (deployIdeaWorker)
 
@@ -120,6 +121,7 @@ export async function internalDeploy(request, env, fetcher) {
   const byOidc = !byKey && bearer ? (await verifyGithubOidc(bearer[1], env, fetcher).catch(e => ({ ok: false, why: String(e && e.message) }))).ok : false;
   if (request.method !== "POST" || !(byKey || byOidc)) return new Response("Not found", { status: 404 });
   if (u.pathname === "/__internal/transparency") return ingestTransparency(request, env);
+  if (u.pathname === "/__internal/launches") return launchesInternal(request, env);  // LAUNCH-PATH-1: the launch queue, read and marked by deploy/launch-apps.mjs
   const f = fetcher || fetch, T = env.CF_DEPLOY_TOKEN, A = env.CF_ACCOUNT_ID;
   if (!T || !A) return J({ ok: false, error: "site has no CF_DEPLOY_TOKEN / CF_ACCOUNT_ID" }, 503);
   if (u.pathname === "/__internal/cf") return cfProxy(request, env, f);

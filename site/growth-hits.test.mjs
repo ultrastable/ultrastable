@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
 // GROWTH-HITS-1: the public aggregate counts the growth loop reads without a Cloudflare token.
 import test from "node:test";
 import assert from "node:assert/strict";

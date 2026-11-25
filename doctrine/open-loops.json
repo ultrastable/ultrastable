@@ -495,6 +495,39 @@
    "reason": "creating a repository in the org needs an org-scoped credential (a token or an App with administration write) that only an org owner can bind",
    "default": "Unlearn keeps its code under instances/unlearn and deploy-ultrastable builds and deploys it from this repository; tenant-repos.yml retries daily and creates the repository with its history the first time any of the three routes is bound",
    "probe": "cmd:python3 -m foundation tenantrepos --probe unlearn"
+  },
+  {
+   "id": "visitor-app-repos",
+   "surfaces": [
+    {
+     "s": "deploy/launch-apps.mjs in tenant-repos.yml tries ORG_ADMIN_TOKEN, LANE_PAT and the lane GitHub App's org token on every daily run and logs each route's answer",
+     "result": "first reading comes from the first run on main after this change; on 2026-11-22 all three were unbound (gate tenant-repo-unlearn)",
+     "class": "existing-credentials"
+    },
+    {
+     "s": "GITHUB_TOKEN of the workflow",
+     "result": "scoped to this repository only; GitHub does not let it create a repository in the org",
+     "class": "alternate-channel"
+    },
+    {
+     "s": "route around the repository: deploy the visitor's system from the kernel through the site worker's OIDC route (deploy/deploy-seed.mjs with SEED_EXTRA)",
+     "result": "built; a dry run on 2026-11-25 admitted the policy atlas idea (year p10 730 days) and bundled 97 modules and 32 migrations with no credential",
+     "class": "construct"
+    },
+    {
+     "s": "tick Worker GitHub App installation token",
+     "result": "not tried: scoped to merging in this repository; creating a repository waits on the App being granted administration write, which is the same owner act",
+     "class": "sibling-workers"
+    },
+    {
+     "s": "git history of tenant-repos.yml",
+     "na": "no visitor app repository has been created before this change, so there is no working configuration to restore",
+     "class": "prior-working-config"
+    }
+   ],
+   "reason": "creating a repository in the org needs an org-scoped credential (a token, or the lane App with administration write) that only an org owner can bind; it is the same single act as the existing owner step lane-credential",
+   "default": "every visitor app is live at ultrastable.io/s/<id>, gets its own deployed system on the platform's account, and has its change requests and ownership request kept in its launch record; the daily run creates the repository, files the requests and sends the invitation the first time any route is bound",
+   "probe": "cmd:node deploy/launch-apps.mjs --routes"
   }
  ]
 }

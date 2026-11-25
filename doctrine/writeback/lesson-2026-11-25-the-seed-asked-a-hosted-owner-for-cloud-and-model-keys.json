@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-25-the-seed-asked-a-hosted-owner-for-cloud-and-model-keys",
+  "kind": "lesson",
+  "date": "2026-11-25",
+  "title": "The seed asked a hosted owner for cloud and model keys",
+  "body": "Walking the policy atlas idea through the seed's bootstrap opened cards asking the owner to set CLOUDFLARE_API_TOKEN and ANTHROPIC_API_KEY and to approve spending. A person with no code agent cannot do that. IDEA.md now takes hosted_by; the host deploys and binds models and the bootstrap opens no secret or budget card (HOSTED-1).",
+  "probe": "grep:seed/bootstrap/bootstrap.py::HOSTED-1"
+ },
+ "kind": "lesson",
+ "title": "The seed asked a hosted owner for cloud and model keys",
+ "session": ""
+}

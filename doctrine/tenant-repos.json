@@ -38,5 +38,15 @@
     "AGENTS.md": "# Unlearn: agent instructions\n\n> Ultrastable is the foundation for any autonomous system.\n\nUnlearn is a tenant system on Ultrastable. This repository holds its code: the evidence encyclopedia and its loops (`worker/`), the coaching\ntool's phases (`phases.json`), and core files it reads, vendored under `vendor/ultrastable/`. Its manifest (IDEA.md, instance.json,\nlifecycle.json, runway.json) and the platform rules every agent follows live in the core repository, `ultrastable/ultrastable`\n(`agents/AGENTS.md`, `instances/unlearn/`, `doctrine/tenant-repos.json`).\n\n- Test: `node --test worker/*.test.mjs` (CI runs it on every pull request).\n- Deploy: the platform builds this repository's `main` into the `ultrastable-unlearn` Worker (D1 `ultrastable-unlearn`, Workers AI, hourly\n  cron, `unlearn.ultrastable.org`). Nothing here holds a credential.\n- Honest grading: nothing publishes on an unverified citation; a model may only label or re-word, never add a number, a name or a source.\n- No child accounts and no child data; no cookies; reader taps are anonymous counts.\n"
    }
   }
+ },
+ "visitor_apps": {
+  "_doc": "LAUNCH-PATH-1: an idea typed at ultrastable.io by someone with no code agent. Its launch record lives in the site's store (site/graduate.js); deploy/launch-apps.mjs (run daily by tenant-repos.yml) deploys its own system, creates its repository from the template, files the owner's requests there and invites the owner on request. Visitor apps have no folder under instances/: their manifest is generated from the idea.",
+  "template": "ultrastable/seed",
+  "repo_prefix": "app-",
+  "visibility": "private",
+  "base_manifest": "instances/second-tenant/instance.json",
+  "usd_per_month": 5,
+  "max_apps": 20,
+  "max_deploys_per_run": 2
  }
 }
