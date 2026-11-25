@@ -1814,11 +1814,11 @@ export default {
   },
   {
    "claim": "- **Every system deploys itself in full: repo, back end and a public web UI (FULLSTACK-1, Rowan 2026-11-25).** \"All UltraStable deployments",
-   "detail": "",
-   "how": "file:doctrine/tenant-repos.json + file:doctrine/topology.json + file:tests/foundation/test_tenantrepos.py + file:foundation/tenantrepos.py + grep:.github/workflows/checks.yml::foundation[ .]tenantrepos\\b",
+   "detail": "the sentence is no longer on the surface: update the registry or restore the words",
+   "how": "sentence on surface",
    "id": "cited-faa1765dd1",
    "kind": "claim",
-   "pass": true,
+   "pass": false,
    "surface": "agents/AGENTS.md"
   },
   {
@@ -2489,11 +2489,11 @@ export default {
   },
   {
    "claim": "- **Every system deploys itself in full: repo, back end and a public web UI (FULLSTACK-1, Rowan 2026-11-25).** \"All UltraStable deployments",
-   "detail": "",
-   "how": "file:doctrine/tenant-repos.json + file:doctrine/topology.json + file:tests/foundation/test_tenantrepos.py + file:foundation/tenantrepos.py + grep:.github/workflows/checks.yml::foundation[ .]tenantrepos\\b",
+   "detail": "the sentence is no longer on the surface: update the registry or restore the words",
+   "how": "sentence on surface",
    "id": "mirror-3ae0f5f6d0",
    "kind": "claim",
-   "pass": true,
+   "pass": false,
    "surface": "seed/agents/AGENTS.md"
   },
   {
@@ -3217,7 +3217,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 63 Python and 483 Worker tests",
+   "claim": "seed-tests: 63 Python and 490 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3226,7 +3226,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 483 Worker tests",
+   "claim": "seed-worker-tests: 490 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3466,8 +3466,8 @@ export default {
   }
  ],
  "summary": {
-  "drift": 0,
-  "pass": 382,
+  "drift": 2,
+  "pass": 380,
   "total": 382
  }
 };

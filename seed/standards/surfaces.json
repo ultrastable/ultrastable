@@ -656,6 +656,71 @@
       "discoverable": false,
       "description": "SOCIAL-MODULE-1: token-gated hand-over of a channel token into the sealed credential store; answers names only, never values.",
       "reason": "Machine-to-machine bearer route for moving a channel login into the system; not a capability for callers."
+    },
+    {
+      "id": "graph",
+      "path": "/api/graph",
+      "methods": [
+        "GET"
+      ],
+      "kind": "rest",
+      "audience": "public",
+      "standards": [],
+      "discoverable": false,
+      "description": "The knowledge graph of this system's own data: last pass summary (counts by kind, hubs, communities, bridges, orphans) and its series; the public view veils records of kinds not declared public (DATAGRAPH-1).",
+      "reason": "served by the tick Worker; the site serves /api/graph and /api/graph/insights publicly over a service binding"
+    },
+    {
+      "id": "graph-insights",
+      "path": "/api/graph/insights",
+      "methods": [
+        "GET"
+      ],
+      "kind": "rest",
+      "audience": "public",
+      "standards": [],
+      "discoverable": false,
+      "description": "Open findings of the knowledge graph (orphaned kinds, bridges, new hubs, fragmentation) and link leads awaiting confirmation by later data (DATAGRAPH-1).",
+      "reason": "served by the tick Worker; the site serves /api/graph and /api/graph/insights publicly over a service binding"
+    },
+    {
+      "id": "graph-node",
+      "path": "/api/graph/node",
+      "methods": [
+        "GET"
+      ],
+      "kind": "rest",
+      "audience": "public",
+      "standards": [],
+      "discoverable": false,
+      "description": "One record of the knowledge graph and its neighbourhood (depth 1 or 2), the local context for retrieval; public kinds only without the owner bearer (DATAGRAPH-1).",
+      "reason": "served by the tick Worker; the site serves /api/graph and /api/graph/insights publicly over a service binding"
+    },
+    {
+      "id": "graph-search",
+      "path": "/api/graph/search",
+      "methods": [
+        "GET"
+      ],
+      "kind": "rest",
+      "audience": "public",
+      "standards": [],
+      "discoverable": false,
+      "description": "Label search over the knowledge graph; public kinds only without the owner bearer (DATAGRAPH-1).",
+      "reason": "served by the tick Worker; the site serves /api/graph and /api/graph/insights publicly over a service binding"
+    },
+    {
+      "id": "graph-page",
+      "path": "/graph",
+      "methods": [
+        "GET"
+      ],
+      "kind": "ui",
+      "audience": "public",
+      "standards": [],
+      "discoverable": false,
+      "description": "The knowledge graph of this system's data in plain words: size, what the system noticed, most connected records, how connected each kind is (DATAGRAPH-1).",
+      "reason": "served by the tick Worker; the site serves /api/graph and /api/graph/insights publicly over a service binding"
     }
   ]
 }
