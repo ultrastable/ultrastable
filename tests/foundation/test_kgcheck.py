@@ -43,6 +43,7 @@ class KgCheck(unittest.TestCase):
         self.assertTrue(any("unlearn" in b and "vendor" in b for b in kgcheck.check(self.root)))
 
     def test_pending_without_item_fails(self):
+        self.edit("doctrine/knowledge-graph.json", lambda d: d["systems"].update({"what-works": {"state": "pending", "item": "Q-KG-what-works"}}))
         (self.root / "docs/issues/Q-KG-what-works.json").unlink()
         self.assertTrue(any("what-works" in b and "queue item" in b for b in kgcheck.check(self.root)))
 

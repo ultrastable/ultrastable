@@ -8,7 +8,7 @@
     "unlearn": { "state": "live", "vendor": "vendor/ultrastable/knowledge.js", "route": "/api/graph", "page": "/graph" },
     "practical-solutions": { "state": "live", "vendor": "vendor/seed/knowledge.js", "route": "/api/graph", "repo_change": "ultrastable/practical-solutions worker/src/kg.js" },
     "what-works": { "state": "live", "vendor": "vendor/ultrastable/knowledge.js", "route": "/api/graph", "page": "/connections" },
-    "replication-ledger": { "state": "pending", "item": "Q-KG-replication-ledger", "reason": "tenant is still moving to its own repository; the graph lands with the move" }
+    "replication-ledger": { "state": "live", "vendor": "worker/vendor/knowledge.js", "route": "/api/graph" }
   },
   "pending_is_shrink_only": true
 }
