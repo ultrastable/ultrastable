@@ -1815,7 +1815,7 @@ export default {
   {
    "claim": "- **Every system deploys itself in full: repo, back end and a public web UI (FULLSTACK-1, Rowan 2026-11-25).** \"All UltraStable deployments",
    "detail": "",
-   "how": "file:doctrine/tenant-repos.json + file:doctrine/topology.json + file:tests/foundation/test_tenantrepos.py + file:foundation/tenantrepos.py + grep:.github/workflows/checks.yml::foundation[ .]tenantrepos\\b",
+   "how": "file:doctrine/tenant-repos.json + file:doctrine/topology.json + file:tests/foundation/test_tenantrepos.py + file:instances/ultrastable/progress.json + file:doctrine/seed-deploys.json + file:doctrine/full-stack.json",
    "id": "cited-faa1765dd1",
    "kind": "claim",
    "pass": true,
@@ -2508,7 +2508,7 @@ export default {
   {
    "claim": "- **Every system deploys itself in full: repo, back end and a public web UI (FULLSTACK-1, Rowan 2026-11-25).** \"All UltraStable deployments",
    "detail": "",
-   "how": "file:doctrine/tenant-repos.json + file:doctrine/topology.json + file:tests/foundation/test_tenantrepos.py + file:foundation/tenantrepos.py + grep:.github/workflows/checks.yml::foundation[ .]tenantrepos\\b",
+   "how": "file:doctrine/tenant-repos.json + file:doctrine/topology.json + file:tests/foundation/test_tenantrepos.py + file:instances/ultrastable/progress.json + file:doctrine/seed-deploys.json + file:doctrine/full-stack.json",
    "id": "mirror-3ae0f5f6d0",
    "kind": "claim",
    "pass": true,
@@ -3253,7 +3253,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 63 Python and 505 Worker tests",
+   "claim": "seed-tests: 64 Python and 511 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3262,7 +3262,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 505 Worker tests",
+   "claim": "seed-worker-tests: 511 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
