@@ -1,5 +1,5 @@
 {
- "_doc": "FLEET-MAP-1 (Rowan, 2026-11-25: \"what really needs to be in the ultra-stable template repo as opposed to these other repos that you created ... it's starting to look like a mess ... create your own instructions and fail-safe ways to make sure it all works together every single time it's deployed for every tenant, any code agent, everything.\"). One row per repository of the org: what it is for, its layer, what it is copied from (source path, the workflow that copies it, direction), which Workers deploy from it, whether it runs Actions, where it runs (live, equal to what fleetcontract reads from the registries), its visibility and the instruction file an agent reads there. Read by foundation/fleetmap.py: --check (in checks) fails when a repository named in doctrine/tenant-repos.json, doctrine/full-stack.json (seeds of doctrine/seed-deploys.json), github/org-settings.json or session_repos below has no row, when a row is in none of them, and when a synced_from names a path or workflow that does not exist; --drift compares every mirror with its source (a clone beside this checkout, or the public GitHub tree) and reports differ, missing, extra or unmeasured, never ok without a reading; --drift --apply files Q-FLEETMAP-<repo> per mirror that is not equal and closes it when the same reading passes. Ultrastable is the foundation for any autonomous system.",
+ "_doc": "FLEET-MAP-1 (Rowan, 2026-11-25: \"what really needs to be in the ultra-stable template repo as opposed to these other repos that you created ... it's starting to look like a mess ... create your own instructions and fail-safe ways to make sure it all works together every single time it's deployed for every tenant, any code agent, everything.\"). One row per repository of the org: what it is for, its layer, what it is copied from (source path, the workflow that copies it, direction), which Workers deploy from it, whether it runs Actions, where it runs (live, equal to what fleetcontract reads from the registries), its visibility and the instruction file an agent reads there. Read by foundation/fleetmap.py: --check (in checks) fails when a repository named in doctrine/tenant-repos.json, doctrine/full-stack.json (seeds of doctrine/seed-deploys.json), github/org-settings.json or session_repos below has no row, when a row is in none of them, and when a synced_from names a path or workflow that does not exist; --drift compares every mirror with its source (a clone beside this checkout, or the public GitHub tree) and reports differ, missing, extra or unmeasured, never ok without a reading; --drift --apply files Q-FLEETMAP-<repo> per mirror that is not equal and closes it when the same reading passes. Ultrastable is the foundation for any autonomous system. SYSTEM-MANIFEST-1: the purpose, layer, live address, visibility and deploys of a row are not typed here; `fleetmap --gen` reads them from the ultrastable.json manifest at the root of each repository (seed/standards/system.schema.json), and --check fails a live or planned repository whose manifest was not found. What a row adds by hand is only what a manifest cannot know about itself: what it is copied from, by which workflow, and the instruction file.",
  "org": "ultrastable",
  "layers": {
   "platform": "the one repository where code and rules are written; everything else is copied from it or vendors from it",
@@ -39,13 +39,15 @@
    "LICENSING.md",
    "install.py",
    "ultrastable.json",
-   ".gitignore"
+   ".gitignore",
+   "CITATION.cff",
+   "publiccode.yml",
+   ".ultrastable/"
   ],
   "keep": [
    "NOTICE",
    "COMMERCIAL-TERMS.md",
    "SECURITY.md",
-   "CITATION.cff",
    ".github/workflows/kit-sync.yml"
   ],
   "never": [
@@ -102,10 +104,14 @@
      "AGENTS.md",
      ".github/copilot-instructions.md"
     ]
+   },
+   "manifest": {
+    "found": true,
+    "shape": "schema"
    }
   },
   "ultrastable/seed": {
-   "purpose": "The template a visitor's app repository is created from: a published copy of the platform's seed/ folder and nothing else.",
+   "purpose": "The code-only kernel a new autonomous system starts from: bootstrapper, tick Worker, roles, agent instructions and the loops that take it to criticality. A copy of seed/ in the Ultrastable platform.",
    "layer": "template",
    "state": "live",
    "live": null,
@@ -123,7 +129,7 @@
    "deploys": [],
    "actions": true,
    "visibility": "public",
-   "visibility_reason": "DISCOVER-1: public by default; github/org-settings.json sets private false",
+   "visibility_reason": "DISCOVER-1: public by default",
    "instructions": {
     "file": "agents/AGENTS.md",
     "kind": "copy",
@@ -133,7 +139,11 @@
      "AGENTS.md"
     ]
    },
-   "example": "ultrastable/second-tenant"
+   "example": "ultrastable/second-tenant",
+   "manifest": {
+    "found": true,
+    "shape": "schema"
+   }
   },
   "ultrastable/second-tenant": {
    "purpose": "The first system started from the kernel with no code agent: proof that seed/ alone boots, deploys and runs a system.",
@@ -172,6 +182,10 @@
      "CLAUDE.md",
      "AGENTS.md"
     ]
+   },
+   "manifest": {
+    "found": true,
+    "shape": "schema"
    }
   },
   "ultrastable/ops": {
@@ -188,6 +202,10 @@
     "file": "AGENTS.md",
     "kind": "pointer",
     "source": "agents/AGENTS.md"
+   },
+   "manifest": {
+    "found": true,
+    "shape": "schema"
    }
   },
   "ultrastable/.github": {
@@ -207,6 +225,10 @@
     "entry": [
      "CLAUDE.md"
     ]
+   },
+   "manifest": {
+    "found": true,
+    "shape": "schema"
    }
   },
   "ultrastable/practical-solutions": {
@@ -236,10 +258,14 @@
     "kind": "pointer",
     "source": "agents/AGENTS.md"
    },
-   "deploys_by": "its own repository's pipeline (deploy-tenant.yml), not the platform's deploy lane"
+   "deploys_by": "its own repository's pipeline (deploy-tenant.yml), not the platform's deploy lane",
+   "manifest": {
+    "found": true,
+    "shape": "schema"
+   }
   },
   "ultrastable/unlearn": {
-   "purpose": "Tenant app Unlearn: popular beliefs set against the evidence.",
+   "purpose": "Unlearn: popular beliefs where the evidence points another way, with graded evidence, named sources and a loop that keeps checking them.",
    "layer": "tenant",
    "state": "live",
    "live": "https://unlearn.ultrastable.org",
@@ -275,10 +301,14 @@
     "file": "AGENTS.md",
     "kind": "pointer",
     "source": "agents/AGENTS.md"
+   },
+   "manifest": {
+    "found": true,
+    "shape": "tenant-standard"
    }
   },
   "ultrastable/what-works": {
-   "purpose": "Tenant app What Works: interventions and what the evidence says they do.",
+   "purpose": "What Works: a living atlas of what works in public policy, every programme graded by its trials and re-graded as evidence lands.",
    "layer": "tenant",
    "state": "live",
    "live": "https://what-works.ultrastable.org",
@@ -313,10 +343,14 @@
     "file": "AGENTS.md",
     "kind": "pointer",
     "source": "agents/AGENTS.md"
+   },
+   "manifest": {
+    "found": true,
+    "shape": "tenant-standard"
    }
   },
   "ultrastable/replication-ledger": {
-   "purpose": "Tenant app Replication Ledger: which published findings replicated, across fields.",
+   "purpose": "Replication Ledger: which landmark findings held up and which failed, across many fields, updated as replications publish.",
    "layer": "tenant",
    "state": "live",
    "live": "https://replication-ledger.ultrastable.org",
@@ -351,29 +385,33 @@
     "file": "AGENTS.md",
     "kind": "pointer",
     "source": "agents/AGENTS.md"
+   },
+   "manifest": {
+    "found": true,
+    "shape": "tenant-standard"
    }
   },
   "ultrastable/base-rates": {
-   "purpose": "Planned tenant Base Rates: its repository holds the manifest until its first code.",
+   "purpose": "Before you decide, see what usually happens: graded base rates for life, work and policy choices, and your own forecasting record.",
    "layer": "tenant",
    "state": "planned",
    "live": null,
    "synced_from": [
     {
-     "kind": "tree",
+     "kind": "manifest",
      "source_repo": "ultrastable/ultrastable",
      "source": "instances/base-rates",
+     "files": [
+      "instance.json",
+      "lifecycle.json"
+     ],
      "direction": "down",
-     "workflow": ".github/workflows/tenant-repos.yml",
-     "keep": [
-      "AGENTS.md",
-      ".github/",
-      "LICENSE",
-      "README.md"
-     ]
+     "workflow": ".github/workflows/tenant-repos.yml"
     }
    ],
-   "deploys": [],
+   "deploys": [
+    "ultrastable-base-rates"
+   ],
    "actions": false,
    "visibility": "public",
    "visibility_reason": "DISCOVER-1: public by default",
@@ -382,32 +420,32 @@
     "kind": "pointer",
     "source": "agents/AGENTS.md"
    },
-   "redundant": {
-    "verdict": "duplicate-today",
-    "evidence": "holds only the manifest files that instances/base-rates/ in the core already holds; kept because TENANT-SANDBOX-1 creates a planned tenant's repository before its first code"
+   "manifest": {
+    "found": true,
+    "shape": "tenant-standard"
    }
   },
   "ultrastable/did-it-work": {
-   "purpose": "Planned tenant Did It Work: its repository holds the manifest until its first code.",
+   "purpose": "Every big policy promised something. See what it promised, what the evaluations found since, and how the verdict moved.",
    "layer": "tenant",
    "state": "planned",
    "live": null,
    "synced_from": [
     {
-     "kind": "tree",
+     "kind": "manifest",
      "source_repo": "ultrastable/ultrastable",
      "source": "instances/did-it-work",
+     "files": [
+      "instance.json",
+      "lifecycle.json"
+     ],
      "direction": "down",
-     "workflow": ".github/workflows/tenant-repos.yml",
-     "keep": [
-      "AGENTS.md",
-      ".github/",
-      "LICENSE",
-      "README.md"
-     ]
+     "workflow": ".github/workflows/tenant-repos.yml"
     }
    ],
-   "deploys": [],
+   "deploys": [
+    "ultrastable-did-it-work"
+   ],
    "actions": false,
    "visibility": "public",
    "visibility_reason": "DISCOVER-1: public by default",
@@ -416,32 +454,32 @@
     "kind": "pointer",
     "source": "agents/AGENTS.md"
    },
-   "redundant": {
-    "verdict": "duplicate-today",
-    "evidence": "holds only the manifest files that instances/did-it-work/ in the core already holds; kept because TENANT-SANDBOX-1 creates a planned tenant's repository before its first code"
+   "manifest": {
+    "found": true,
+    "shape": "tenant-standard"
    }
   },
   "ultrastable/open-questions": {
-   "purpose": "Planned tenant Open Questions: its repository holds the manifest until its first code.",
+   "purpose": "What science honestly does not know yet: the big open questions, where the evidence leans today, and how that lean has moved.",
    "layer": "tenant",
    "state": "planned",
    "live": null,
    "synced_from": [
     {
-     "kind": "tree",
+     "kind": "manifest",
      "source_repo": "ultrastable/ultrastable",
      "source": "instances/open-questions",
+     "files": [
+      "instance.json",
+      "lifecycle.json"
+     ],
      "direction": "down",
-     "workflow": ".github/workflows/tenant-repos.yml",
-     "keep": [
-      "AGENTS.md",
-      ".github/",
-      "LICENSE",
-      "README.md"
-     ]
+     "workflow": ".github/workflows/tenant-repos.yml"
     }
    ],
-   "deploys": [],
+   "deploys": [
+    "ultrastable-open-questions"
+   ],
    "actions": false,
    "visibility": "public",
    "visibility_reason": "DISCOVER-1: public by default",
@@ -450,9 +488,9 @@
     "kind": "pointer",
     "source": "agents/AGENTS.md"
    },
-   "redundant": {
-    "verdict": "duplicate-today",
-    "evidence": "holds only the manifest files that instances/open-questions/ in the core already holds; kept because TENANT-SANDBOX-1 creates a planned tenant's repository before its first code"
+   "manifest": {
+    "found": true,
+    "shape": "tenant-standard"
    }
   },
   "ultrastable/workers": {

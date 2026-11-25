@@ -18,6 +18,9 @@ Ultrastable is the foundation for any autonomous system.
                                                          anything else is a conflict to carry up (template-publish.yml)
   python3 -m foundation fleetmap --example [--apply]      the running-example block of seed/README.md, from the map (LIVE-LINKS-1 for the template)
   python3 -m foundation fleetmap --system-readme PATH --id ID   turn a copied template README into the system's own: its name and its Live block
+  python3 -m foundation fleetmap --gen [--apply] [--clones DIR]   SYSTEM-MANIFEST-1: fill each row's purpose, layer, live address, visibility and deploys
+                                                         from the ultrastable.json manifest of its repository (this checkout, a clone, raw GitHub)
+  python3 -m foundation fleetmap --adopt DIR --id ID     give a repository just filled from seed/ its own manifest identity and render its surfaces
   python3 -m foundation fleetmap --keep REPO             the paths only the copy holds on purpose, one per line (read by template-publish.yml)
   python3 -m foundation fleetmap --instructions REPO     the AGENTS.md a repository with no instruction file gets: a pointer to the platform's rules
   python3 -m foundation fleetmap --list                  one line per repository
@@ -124,6 +127,14 @@ def check(root=REPO) -> list[str]:
             errs.append(f"identity file {f} is not in foundation/upstream.py OWNED: the kernel sync could overwrite it")
         if any(f == k or f.startswith(k.rstrip("/") + "/") for k in __import__("foundation.scaffold", fromlist=["x"]).KERNEL_PATHS):
             errs.append(f"identity file {f} is inside a kernel path: the kernel sync would overwrite it")
+    for repo, r in sorted(rows.items()):
+        if r.get("state") == "retired":
+            continue
+        if not (r.get("manifest") or {}).get("found"):
+            errs.append(f"{repo}: no ultrastable.json manifest was found for it (SYSTEM-MANIFEST-1); add one with an identity object, then python3 -m foundation fleetmap --gen --apply")
+        i, where = manifest_of(root, repo, r, None, lambda url: None)
+        if i is not None and {k: v for k, v in row_from_identity(r, normalize(i)[0]).items() if k != "manifest"} != {k: v for k, v in r.items() if k != "manifest"}:
+            errs.append(f"{repo}: the row differs from its manifest in this checkout; run python3 -m foundation fleetmap --gen --apply")
     readme = root / "seed/README.md"
     if readme.is_file() and example_block(root) not in readme.read_text(encoding="utf-8"):
         errs.append("seed/README.md does not carry the current running-example block; run python3 -m foundation fleetmap --example --apply")
@@ -267,7 +278,7 @@ def drift_one(root, repo: str, row: dict, clones=None, fetch=None, template_keep
             src = local_tree(root / s["source"])
             keep = list(s.get("keep") or []) + (list(template_keep) if s.get("keep_from") else [])
             skip = list(s.get("not_synced") or []) if kind == "kernel" else []
-            owned = [STAMP, "IDEA.md", "README.md", "instance.json", "docs/PROJECT-MEMORY.md", "ultrastable.lock.json", ".ultrastable/", "ops/", "org/", "domain/"] if kind == "kernel" else []
+            owned = [STAMP, "ultrastable.json", "publiccode.yml", "CITATION.cff", ".ultrastable/github.json", "IDEA.md", "README.md", "instance.json", "docs/PROJECT-MEMORY.md", "ultrastable.lock.json", ".ultrastable/", "ops/", "org/", "domain/"] if kind == "kernel" else []
             for p, sha in src.items():
                 if _under(p, skip) or _under(p, owned):
                     continue
@@ -296,6 +307,22 @@ def drift_one(root, repo: str, row: dict, clones=None, fetch=None, template_keep
         mw = s.get("mirror_workflow")
         if mw and mw not in tree:
             out["notes"].append(f"{mw} is missing: this repository has no workflow of its own that pulls the update")
+    if "ultrastable.json" not in tree:
+        out["missing"].append("ultrastable.json")
+        out["notes"].append("no ultrastable.json manifest: nothing says what this repository is or renders its surfaces (SYSTEM-MANIFEST-1)")
+    elif how == "clone":
+        try:
+            i = json.loads((Path(clones) / repo.split("/", 1)[1] / "ultrastable.json").read_text(encoding="utf-8")).get("identity")
+        except ValueError:
+            i = None
+        if not isinstance(i, dict):
+            out["notes"].append("ultrastable.json has no identity object (SYSTEM-MANIFEST-1)")
+        else:
+            ni, converted = normalize(i)
+            if row.get("layer") != "template" and all(k in ni for k in ("summary", "layer")) and row_from_identity(row, ni) != row:
+                out["notes"].append("the manifest's identity differs from the map's row; run fleetmap --gen --apply")
+            if converted:
+                out["notes"].append("ultrastable.json is in the older tenant-standard shape (runs_as as one object, no visibility); the schema is seed/standards/system.schema.json")
     ins = row.get("instructions") or {}
     if ins.get("kind") in ("copy", "pointer") and ins.get("file") not in tree:
         out["missing"].append(ins["file"])
@@ -400,6 +427,135 @@ def system_readme(text: str, sid: str, root=REPO) -> str:
     return f"# {sid}\n\n{livelinks.block(sid, root)}\n{intro}\n{rest}"
 
 
+def _surfaces():
+    from . import surfaces
+    return surfaces.engine()
+
+
+def manifest_of(root, repo: str, row: dict, clones=None, fetch_text=None):
+    """(identity, where) of a repository's manifest: this checkout for the platform and for the template's source, a clone, then raw GitHub."""
+    root = Path(root)
+    cands = []
+    if row.get("layer") == "platform" and row.get("state") != "retired":
+        cands.append(root / "ultrastable.json")
+    if row.get("layer") == "template":
+        cands.append(root / "seed/ultrastable.json")
+    if clones:
+        cands.append(Path(clones) / repo.split("/", 1)[1] / "ultrastable.json")
+    for c in cands:
+        if c.is_file():
+            try:
+                i = json.loads(c.read_text(encoding="utf-8")).get("identity")
+            except ValueError:
+                i = None
+            if isinstance(i, dict) and all(k in i for k in ("summary", "layer")):
+                return i, "checkout" if root in c.parents else "clone"
+    text = (fetch_text or _fetch_text)(f"https://raw.githubusercontent.com/{repo}/HEAD/ultrastable.json")
+    try:
+        i = json.loads(text).get("identity") if text else None
+    except ValueError:
+        i = None
+    return (i, "github") if isinstance(i, dict) else (None, None)
+
+
+def _fetch_text(url):
+    try:
+        with urllib.request.urlopen(urllib.request.Request(url, headers={"user-agent": UA}), timeout=20) as r:
+            return r.read().decode("utf-8")
+    except (urllib.error.URLError, OSError, ValueError):
+        return None
+
+
+def normalize(i: dict) -> tuple[dict, bool]:
+    """(identity in the schema's shape, whether it had to be converted). The tenant standard wrote runs_as as one object and no visibility
+    before the schema existed; the map reads both so no repository is unreadable while its manifest converges on the schema."""
+    if isinstance(i.get("runs_as"), list) and "visibility" in i:
+        return i, False
+    ra = i.get("runs_as")
+    out = {k: v for k, v in i.items() if k not in ("runs_as", "planned_url")}
+    if isinstance(ra, dict):
+        out["runs_as"] = [{"provider": "cloudflare", "kind": "worker", "name": ra["worker"]}] if ra.get("worker") else []
+        out.setdefault("status", "live" if ra.get("deployed") else "planned")
+    else:
+        out["runs_as"] = ra if isinstance(ra, list) else []
+    out.setdefault("visibility", "public")
+    out.setdefault("visibility_reason", "DISCOVER-1: public by default")
+    return out, True
+
+
+def row_from_identity(row: dict, i: dict) -> dict:
+    """The fields of a row that come from the manifest, and only those."""
+    out = dict(row)
+    out.update({"purpose": i["summary"], "layer": i["layer"], "state": i.get("status", "live"), "live": i.get("public_url"),
+                "visibility": i["visibility"], "visibility_reason": i["visibility_reason"], "deploys": [r["name"] for r in i.get("runs_as") or [] if r.get("kind") != "actions"]})
+    return out
+
+
+def gen(root=REPO, clones=None, fetch_text=None, apply=False) -> dict:
+    root = Path(root)
+    m, rep = load(root), {"from_manifest": [], "no_manifest": [], "invalid": []}
+    sch = _surfaces().schema(root)
+    for repo, row in m["repos"].items():
+        if row.get("state") == "retired":
+            continue
+        i, where = manifest_of(root, repo, row, clones, fetch_text)
+        if i is None:
+            row["manifest"] = {"found": False}
+            rep["no_manifest"].append(repo)
+            continue
+        i, converted = normalize(i)
+        errs = _surfaces().validate({"identity": i}, sch)
+        if errs or i.get("repo") != repo:
+            rep["invalid"].append(f"{repo}: " + "; ".join(errs or [f"identity.repo is {i.get('repo')}"]))
+            continue
+        new = row_from_identity(row, i)
+        new["manifest"] = {"found": True, "shape": "tenant-standard" if converted else "schema"}
+        m["repos"][repo] = new
+        rep["from_manifest"].append(repo)
+    if apply:
+        (root / MAP).write_text(json.dumps(m, indent=1) + "\n", encoding="utf-8")
+    return rep
+
+
+def adopt(root, target, sid: str) -> list[str]:
+    """Give a repository just filled from seed/ its own identity: the manifest's identity object from this system's row, then every surface rendered
+    from it (README with its own name and Live block, publiccode.yml, CITATION.cff, the repository metadata). The template's are not copied."""
+    root, target = Path(root), Path(target)
+    m = load(root)
+    repo = next((r for r in m["repos"] if r.split("/", 1)[1] == sid), f"{m['org']}/{sid}")
+    row = m["repos"].get(repo) or {}
+    seed_i = json.loads((root / "seed/ultrastable.json").read_text(encoding="utf-8"))["identity"]
+    live = row.get("live")
+    worker = (row.get("deploys") or [None])[0]
+    i = {"name": sid, "slug": sid, "summary": row.get("purpose") or f"{sid}: an autonomous system started from the Ultrastable seed and run by its own managers.",
+         "repo": repo, "public_url": live, "license": seed_i["license"], "topics": ["autonomous-agents", "built-on-ultrastable", "cloudflare-workers", "ultrastable"],
+         "layer": "seeded-system", "parent": "ultrastable/ultrastable", "visibility": row.get("visibility", "public"), "visibility_reason": row.get("visibility_reason", "DISCOVER-1: public by default"),
+         "status": "live", "loop": seed_i.get("loop", ""),
+         "runs_as": [{"provider": "cloudflare", "kind": "worker", "name": worker, "how": "built from the Ultrastable seed and deployed by the platform's seed deploy"}] if worker else []}
+    p = target / "ultrastable.json"
+    cfg = json.loads(p.read_text(encoding="utf-8")) if p.is_file() else {}
+    old = cfg.get("identity") or {}
+    if old.get("repo") == repo:  # the system has its own identity already: only where it runs follows the registry
+        i = {**old, "public_url": live or old.get("public_url")}
+    cfg = {**{k: v for k, v in cfg.items() if k == "$schema_version"}, "identity": i, **{k: v for k, v in cfg.items() if k not in ("$schema_version", "identity")}}
+    p.write_text(json.dumps(cfg, indent=2) + "\n", encoding="utf-8")
+    rd = target / "README.md"
+    before = rd.read_text(encoding="utf-8") if rd.is_file() else ""
+    text = EX_BLOCK.sub("", before, count=1)
+    intro = ("A system started from the [Ultrastable seed](https://github.com/ultrastable/seed) and run by its own managers. "
+             "The text below the Live block is the seed's own description of what every such system carries.\n")
+    for name in ("identity", "how"):
+        text = re.sub(rf"<!-- {name}:start[^>]*-->.*?<!-- {name}:end -->\n?", "", text, count=1, flags=re.S)
+    h = re.search(r"^# .*\n", text, re.M)
+    rest = (text[h.end():] if h else text).lstrip("\n")
+    rd.write_text(f"# {sid}\n\n" + (rest if intro in rest else intro + "\n" + rest), encoding="utf-8")
+    cit = target / "CITATION.cff"
+    if cit.is_file() and "ultrastable/seed" in cit.read_text(encoding="utf-8"):
+        cit.unlink()  # the template's citation is not this system's; the render writes its own
+    wrote = _surfaces().render(target)
+    return [w for w in wrote if w != "README.md" or rd.read_text(encoding="utf-8") != before]
+
+
 def instructions_text(root, repo: str) -> str:
     m = load(root)
     row = m["repos"][repo]
@@ -452,6 +608,13 @@ def main(argv=None) -> int:
         if "--apply" in av and new != p.read_text(encoding="utf-8"):
             p.write_text(new, encoding="utf-8")
         sys.stdout.write(example_block(REPO))
+        return 0
+    if "--gen" in av:
+        rep = gen(REPO, clones, apply="--apply" in av)
+        print(json.dumps(rep, indent=1))
+        return 1 if rep["invalid"] else 0
+    if "--adopt" in av:
+        print("fleetmap --adopt:", ", ".join(adopt(REPO, av[av.index("--adopt") + 1], av[av.index("--id") + 1])) or "nothing to change")
         return 0
     if "--system-readme" in av:
         p = Path(av[av.index("--system-readme") + 1])

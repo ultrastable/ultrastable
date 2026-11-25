@@ -1,6 +1,6 @@
 {
  "rule": "FLEET-MAP-1",
- "at": "2026-11-25T20:59:18Z",
+ "at": "2026-11-25T21:09:08Z",
  "repos": {
   "ultrastable/ultrastable": {
    "status": "not-a-copy",
@@ -13,30 +13,30 @@
   "ultrastable/seed": {
    "status": "drifted",
    "how": "clone",
-   "differ": 52,
-   "missing": 70,
+   "differ": 54,
+   "missing": 75,
    "extra": 11,
-   "notes": []
+   "notes": [
+    "ultrastable.json has no identity object (SYSTEM-MANIFEST-1)"
+   ]
   },
   "ultrastable/second-tenant": {
    "status": "drifted",
    "how": "clone",
-   "differ": 15,
-   "missing": 4,
+   "differ": 16,
+   "missing": 6,
    "extra": 0,
    "notes": [
     "ultrastable.lock.json is missing: the kernel sync treats every changed file as a local edit and updates nothing"
    ]
   },
   "ultrastable/ops": {
-   "status": "drifted",
+   "status": "equal",
    "how": "clone",
    "differ": 0,
-   "missing": 1,
+   "missing": 0,
    "extra": 0,
-   "notes": [
-    "no instruction file: an agent that opens this repository reads no rules (AGENTS.md)"
-   ]
+   "notes": []
   },
   "ultrastable/.github": {
    "status": "equal",
@@ -62,7 +62,9 @@
    "differ": 1,
    "missing": 0,
    "extra": 0,
-   "notes": []
+   "notes": [
+    "ultrastable.json is in the older tenant-standard shape (runs_as as one object, no visibility); the schema is seed/standards/system.schema.json"
+   ]
   },
   "ultrastable/what-works": {
    "status": "drifted",
@@ -70,44 +72,48 @@
    "differ": 1,
    "missing": 0,
    "extra": 0,
-   "notes": []
+   "notes": [
+    "ultrastable.json is in the older tenant-standard shape (runs_as as one object, no visibility); the schema is seed/standards/system.schema.json"
+   ]
   },
   "ultrastable/replication-ledger": {
    "status": "drifted",
    "how": "clone",
    "differ": 1,
-   "missing": 1,
+   "missing": 0,
    "extra": 0,
-   "notes": []
+   "notes": [
+    "ultrastable.json is in the older tenant-standard shape (runs_as as one object, no visibility); the schema is seed/standards/system.schema.json"
+   ]
   },
   "ultrastable/base-rates": {
    "status": "drifted",
    "how": "clone",
-   "differ": 0,
-   "missing": 1,
+   "differ": 1,
+   "missing": 0,
    "extra": 0,
    "notes": [
-    "no instruction file: an agent that opens this repository reads no rules (AGENTS.md)"
+    "ultrastable.json is in the older tenant-standard shape (runs_as as one object, no visibility); the schema is seed/standards/system.schema.json"
    ]
   },
   "ultrastable/did-it-work": {
    "status": "drifted",
    "how": "clone",
-   "differ": 0,
-   "missing": 1,
+   "differ": 1,
+   "missing": 0,
    "extra": 0,
    "notes": [
-    "no instruction file: an agent that opens this repository reads no rules (AGENTS.md)"
+    "ultrastable.json is in the older tenant-standard shape (runs_as as one object, no visibility); the schema is seed/standards/system.schema.json"
    ]
   },
   "ultrastable/open-questions": {
    "status": "drifted",
    "how": "clone",
-   "differ": 0,
-   "missing": 1,
+   "differ": 1,
+   "missing": 0,
    "extra": 0,
    "notes": [
-    "no instruction file: an agent that opens this repository reads no rules (AGENTS.md)"
+    "ultrastable.json is in the older tenant-standard shape (runs_as as one object, no visibility); the schema is seed/standards/system.schema.json"
    ]
   }
  }

@@ -384,6 +384,7 @@ class Boot:
             "claim_ttl_minutes": 120,
             "max_wip_per_role": self.config["capacity"]["max_wip_per_role"],
             "plus_share": self.config["capacity"]["plus_share"],
+            **({"identity": self.config["identity"]} if (self.config.get("identity") or {}).get("layer") not in (None, "template") else {}),  # SYSTEM-MANIFEST-1
             "policy": {k: self.policy[k] for k in ("trust", "ladder", "surfaces")},
             "criticality": json.loads((self.root / "autonomy" / "criticality.json").read_text()),
             "failure_modes": json.loads((self.root / "autonomy" / "failure-modes.json").read_text()),

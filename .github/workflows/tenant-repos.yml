@@ -102,8 +102,8 @@ jobs:
             # FLEET-MAP-1: record what the kernel was at the fill (ultrastable.lock.json), so the system's weekly platform-sync can tell a kernel
             # file the core changed from one the system edited; without it the sync treated every change as a local edit and updated nothing
             python3 -m foundation upstream sync --instance "$d" --apply >/dev/null
-            # LIVE-LINKS-1: the system's README is its own (its name, where it runs), not a copy of the template's
-            python3 -m foundation fleetmap --system-readme "$d/README.md" --id "$id"
+            # LIVE-LINKS-1 / SYSTEM-MANIFEST-1: the system's manifest identity, README, publiccode.yml and citation are its own, rendered from its manifest, not copies of the template's
+            python3 -m foundation fleetmap --adopt "$d" --id "$id"
             git -C "$d" init -q -b main; git -C "$d" add -A
             git -C "$d" -c user.name="ultrastable" -c user.email="ultrastable@users.noreply.github.com" commit -q -m "Start from the Ultrastable seed (FULLSTACK-1)"
             if git -C "$d" push -q "https://x-access-token:${srv}@github.com/${repo}.git" "HEAD:refs/heads/main"; then echo "filled $repo from seed/"; continue; fi

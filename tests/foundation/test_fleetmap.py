@@ -23,11 +23,11 @@ class World(unittest.TestCase):
         self.addCleanup(shutil.rmtree, self.tmp, ignore_errors=True)
         self.core, self.clones = self.tmp / "ultrastable", self.tmp
         for rel, text in {"seed/worker/a.js": "one\n", "seed/agents/AGENTS.md": "rules\n", "seed/.github/workflows/platform-sync.yml": "name: p\n",
-                          "agents/AGENTS.md": "rules\n", ".github/workflows/publish.yml": "name: x\n", "vendor/k.js": "k1\n"}.items():
+                          "seed/ultrastable.json": "{\"identity\": {\"runs_as\": [], \"visibility\": \"public\"}}\n", "agents/AGENTS.md": "rules\n", ".github/workflows/publish.yml": "name: x\n", "vendor/k.js": "k1\n"}.items():
             (self.core / rel).parent.mkdir(parents=True, exist_ok=True)
             (self.core / rel).write_text(text)
         self.map = {"org": "o", "layers": {l: "x" for l in fm.LAYERS}, "session_repos": {"repos": ["o/ultrastable"]},
-                    "template_contents": {"belongs": ["worker/", "agents/", ".github/"], "keep": ["NOTICE"], "never": ["admin/"]},
+                    "template_contents": {"belongs": ["worker/", "agents/", ".github/", "ultrastable.json"], "keep": ["NOTICE"], "never": ["admin/"]},
                     "repos": {
                         "o/ultrastable": {"purpose": "The platform.", "layer": "platform", "state": "live", "synced_from": [], "deploys": ["w"], "actions": True,
                                           "visibility": "public", "visibility_reason": "r", "instructions": {"file": "agents/AGENTS.md", "kind": "canonical"}},
@@ -45,10 +45,12 @@ class World(unittest.TestCase):
         self._write("doctrine/topology.json", {"workers": []})
         for r in self.map["repos"].values():
             r["live"] = "https://x.example" if r["deploys"] else None
+            r["manifest"] = {"found": True}
         self.save()
         shutil.copytree(self.core / "seed", self.tmp / "seed")
         (self.tmp / "app/v").mkdir(parents=True)
         (self.tmp / "app/v/k.js").write_text("k1\n")
+        (self.tmp / "app/ultrastable.json").write_text("{\"identity\": {\"runs_as\": [], \"visibility\": \"public\"}}\n")
         (self.tmp / "app/AGENTS.md").write_text("Rules: agents/AGENTS.md in ultrastable/ultrastable.\n")
 
     def _write(self, rel, data):
@@ -273,6 +275,61 @@ class Identity(unittest.TestCase):
             m["repos"]["ultrastable/unlearn"]["live"] = "https://elsewhere.example"
             (root / fm.MAP).write_text(json.dumps(m))
             self.assertTrue(any("ultrastable/unlearn: live is https://elsewhere.example" in e for e in fm.check(root)))
+
+
+class Manifests(unittest.TestCase):
+    """SYSTEM-MANIFEST-1: a row's identity fields come from the repository's manifest, and a repository without one fails the check."""
+
+    def test_the_real_rows_equal_the_manifests_in_this_checkout(self):
+        m = fm.load(REPO)
+        for repo in ("ultrastable/ultrastable", "ultrastable/seed"):
+            i, where = fm.manifest_of(REPO, repo, m["repos"][repo], None, lambda url: None)
+            self.assertEqual(where, "checkout")
+            self.assertEqual(fm.row_from_identity(m["repos"][repo], i)["purpose"], m["repos"][repo]["purpose"])
+        self.assertTrue(all(r["manifest"]["found"] for r in m["repos"].values() if r.get("state") != "retired"))
+
+    def test_gen_reads_a_clone_then_github_and_a_missing_manifest_fails_check(self):
+        with tempfile.TemporaryDirectory() as d:
+            root, clones = Path(d) / "core", Path(d) / "clones"
+            for rel in ("doctrine", "github", "seed", "agents", "instances", ".github/workflows", "foundation"):
+                shutil.copytree(REPO / rel, root / rel, ignore=shutil.ignore_patterns("__pycache__", "node_modules"))
+            shutil.copy(REPO / "ultrastable.json", root / "ultrastable.json")
+            ident = {"name": "Unlearn", "slug": "unlearn", "summary": "A changed summary that is long enough to be valid.", "repo": "ultrastable/unlearn", "public_url": "https://unlearn.ultrastable.org",
+                     "license": "MIT", "layer": "tenant", "visibility": "public", "visibility_reason": "public by default", "runs_as": [{"provider": "cloudflare", "kind": "worker", "name": "ultrastable-unlearn"}]}
+            (clones / "unlearn").mkdir(parents=True)
+            (clones / "unlearn/ultrastable.json").write_text(json.dumps({"identity": ident}))
+            remote = lambda url: json.dumps({"identity": {**ident, "name": "What Works", "slug": "what-works", "repo": "ultrastable/what-works", "public_url": "https://what-works.ultrastable.org",  # noqa: E731
+                                                          "runs_as": [{"provider": "cloudflare", "kind": "worker", "name": "ultrastable-what-works"}]}}) if "/what-works/" in url else None
+            rep = fm.gen(root, clones, remote, apply=True)
+            self.assertIn("ultrastable/unlearn", rep["from_manifest"])
+            self.assertIn("ultrastable/what-works", rep["from_manifest"])
+            self.assertIn("ultrastable/ops", rep["no_manifest"])
+            m = fm.load(root)
+            self.assertEqual(m["repos"]["ultrastable/unlearn"]["purpose"], ident["summary"])
+            self.assertEqual(m["repos"]["ultrastable/unlearn"]["deploys"], ["ultrastable-unlearn"])
+            self.assertTrue(any("ultrastable/ops: no ultrastable.json manifest" in e for e in fm.check(root)))
+            (clones / "unlearn/ultrastable.json").write_text(json.dumps({"identity": {**ident, "stage": "autonomous"}}))
+            self.assertTrue(any("stage" in x for x in fm.gen(root, clones, remote)["invalid"]))
+
+    def test_adopt_gives_a_filled_repository_its_own_identity_and_is_idempotent(self):
+        from foundation import livelinks
+        with tempfile.TemporaryDirectory() as d:
+            t = Path(d) / "second-tenant"
+            shutil.copytree(REPO / "seed", t, ignore=shutil.ignore_patterns("__pycache__", "node_modules"))
+            self.assertIn("README.md", fm.adopt(REPO, t, "second-tenant"))
+            i = json.loads((t / "ultrastable.json").read_text())["identity"]
+            self.assertEqual((i["repo"], i["layer"]), ("ultrastable/second-tenant", "seeded-system"))
+            readme = (t / "README.md").read_text()
+            self.assertTrue(readme.startswith("# second-tenant\n"))
+            self.assertNotIn("example:start", readme)
+            self.assertTrue(livelinks.has(readme, livelinks.block("second-tenant", REPO)))  # the manifest renders the block the registries render
+            self.assertIn("ultrastable/second-tenant", (t / "CITATION.cff").read_text())
+            self.assertEqual(fm.adopt(REPO, t, "second-tenant"), [])
+            i["summary"] = "The owner's own words about this system, kept through every later fill and sync."
+            cfg = json.loads((t / "ultrastable.json").read_text()); cfg["identity"] = i
+            (t / "ultrastable.json").write_text(json.dumps(cfg))
+            fm.adopt(REPO, t, "second-tenant")
+            self.assertEqual(json.loads((t / "ultrastable.json").read_text())["identity"]["summary"], i["summary"])
 
 
 class RealMap(unittest.TestCase):
