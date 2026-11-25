@@ -1,17 +1,13 @@
 {
  "target_days": 365,
  "runway_days": null,
- "meets_target": false,
- "below": [
-  "credentials"
- ],
- "unmeasured": [
-  "credentials"
- ],
+ "meets_target": true,
+ "below": [],
+ "unmeasured": [],
  "components": {
   "credentials": {
-   "days": "unmeasured",
-   "why": "CF_DEPLOY_TOKEN could not be probed"
+   "days": null,
+   "why": "nothing that lapses"
   },
   "cost": {
    "days": null,
@@ -28,12 +24,6 @@
  "seed_verify": {
   "ultrastable": [
    {
-    "at": "2026-11-25T14:54:18Z",
-    "url": "https://ultrastable.io/health",
-    "status": 200,
-    "ok": true
-   },
-   {
     "at": "2026-11-25T15:04:38Z",
     "url": "https://ultrastable.io/health",
     "status": 200,
@@ -203,6 +193,12 @@
    },
    {
     "at": "2026-11-25T19:54:26Z",
+    "url": "https://ultrastable.io/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-25T20:04:42Z",
     "url": "https://ultrastable.io/health",
     "status": 200,
     "ok": true
@@ -210,12 +206,6 @@
   ],
   "unlearn": [
    {
-    "at": "2026-11-25T14:54:18Z",
-    "url": "https://unlearn.ultrastable.org/health",
-    "status": 200,
-    "ok": true
-   },
-   {
     "at": "2026-11-25T15:04:38Z",
     "url": "https://unlearn.ultrastable.org/health",
     "status": 200,
@@ -385,6 +375,12 @@
    },
    {
     "at": "2026-11-25T19:54:26Z",
+    "url": "https://unlearn.ultrastable.org/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-25T20:04:42Z",
     "url": "https://unlearn.ultrastable.org/health",
     "status": 200,
     "ok": true
@@ -722,6 +718,12 @@
     "url": "https://what-works.ultrastable.org/health",
     "status": 200,
     "ok": true
+   },
+   {
+    "at": "2026-11-25T20:04:42Z",
+    "url": "https://what-works.ultrastable.org/health",
+    "status": 200,
+    "ok": true
    }
   ],
   "replication-ledger": [
@@ -855,6 +857,12 @@
    },
    {
     "at": "2026-11-25T19:54:26Z",
+    "url": "https://replication-ledger.ultrastable.org/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-25T20:04:42Z",
     "url": "https://replication-ledger.ultrastable.org/health",
     "status": 200,
     "ok": true

@@ -2,7 +2,7 @@
  "rows": [
   {
    "name": "CF_DEPLOY_TOKEN",
-   "state": "unmeasured",
+   "state": "ok",
    "expires": null
   },
   {
