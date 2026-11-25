@@ -1,0 +1,9 @@
+{"id": "papers-unposted", "at": "2026-11-25T18:00:00Z", "by": "owner", "what": "white papers written but never posted (4 of 5 never scheduled)", "detectors": ["selftest-outcomes"], "fixed_by": "#2222"}
+{"id": "papers-unindexed", "at": "2026-11-25T18:00:00Z", "by": "owner", "what": "white papers not in the sitemap or IndexNow", "detectors": ["selftest-outcomes"], "fixed_by": "#2222"}
+{"id": "changelog-quiet", "at": "2026-11-25T18:00:00Z", "by": "owner", "what": "/changelog frozen since 11-21", "detectors": ["selftest-data"], "fixed_by": "#2185"}
+{"id": "live-zero", "at": "2026-11-25T18:00:00Z", "by": "owner", "what": "/live showed 0 changes while PRs merged", "detectors": ["selftest-outcomes"], "fixed_by": "#2123"}
+{"id": "stale-branches", "at": "2026-11-25T18:00:00Z", "by": "owner", "what": "stale PRs and branches left after merge", "detectors": ["branch-cleanup"], "fixed_by": "#2186"}
+{"id": "balance-frozen", "at": "2026-11-25T18:00:00Z", "by": "owner", "what": "/balance page frozen since 11-21", "detectors": ["selftest-data"], "fixed_by": "#2185"}
+{"id": "seed-sync-red", "at": "2026-11-25T18:00:00Z", "by": "owner", "what": "seed kit-sync red every day since 11-22", "detectors": ["selftest-workflows"], "fixed_by": "#2185"}
+{"id": "fb-ig-fail", "at": "2026-11-25T18:00:00Z", "by": "owner", "what": "Facebook and Instagram failed every send (8 of 8)", "detectors": ["selftest-outcomes"], "fixed_by": "this PR (CHANNEL-BREAKER-1)"}
+{"id": "mastodon-name", "at": "2026-11-25T18:00:00Z", "by": "owner", "what": "Mastodon feedback read the wrong channel name", "detectors": ["selftest-outcomes"], "fixed_by": "#2222"}

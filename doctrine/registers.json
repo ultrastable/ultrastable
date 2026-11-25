@@ -517,6 +517,66 @@
       "status": "controlled",
       "cadence_ticks": 1,
       "probe": "grep:tests/foundation/test_selftest.py::def test_three_failed_runs_is_a_silent_stop"
+    },
+    {
+      "id": "fm-output-never-reached",
+      "trigger": "a pipeline ships its output but it never reaches its audience or consumer",
+      "symptom": "papers written but never posted or in the sitemap; a channel name that never matches",
+      "blast_radius": "reach, growth and every loop fed by engagement",
+      "detection": "python3 -m foundation selftest --outcomes",
+      "root_cause": "probes checked that jobs ran, not that the end state was reached",
+      "remediation": "OUTCOME-PROBE-1: declared end states in doctrine/selftest.json read against live reality; failure-audit files Q-AUDIT with suspects",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:tests/foundation/test_selftest.py::def test_unposted_paper_and_missing_sitemap_entry_are_found"
+    },
+    {
+      "id": "fm-empty-read-passed",
+      "trigger": "a read returns nothing or fails and is counted as success",
+      "symptom": "/live shows 0 changes while merges land; a domain or sitemap answers empty",
+      "blast_radius": "every public number and the loops that trust it",
+      "detection": "python3 -m foundation selftest --outcomes",
+      "root_cause": "no independent source compared with the surface",
+      "remediation": "nonzero and domain rules in selftest compare each surface with a repository count",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:tests/foundation/test_selftest.py::def test_zero_count_against_nonzero_source_is_found"
+    },
+    {
+      "id": "fm-channel-always-fails",
+      "trigger": "a publishing channel fails on every call",
+      "symptom": "Facebook and Instagram failed 8 of 8 sends with no-channel",
+      "blast_radius": "posting quota and reach",
+      "detection": "python3 -m foundation selftest --outcomes",
+      "root_cause": "failures were retried, never counted as a streak",
+      "remediation": "CHANNEL-BREAKER-1 pauses the service after 3 failures in a row; the outcome probe files the fix",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:seed/worker/test/channel-breaker.test.js::three failures in a row pause a service"
+    },
+    {
+      "id": "fm-loop-no-effect",
+      "trigger": "a loop runs with no metric for its effect",
+      "symptom": "the loop cannot show it did anything",
+      "blast_radius": "improvement loops",
+      "detection": "python3 -m foundation selftest --effects",
+      "root_cause": "loops registered without cycle_metric",
+      "remediation": "shrink-only baseline; new loops must declare cycle_metric",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:tests/foundation/test_selftest.py::def test_new_loop_without_metric_fails"
+    },
+    {
+      "id": "fm-owner-found-first",
+      "trigger": "the owner reports a problem the system had not seen",
+      "symptom": "the owner acts as the detector",
+      "blast_radius": "autonomy rate",
+      "detection": "python3 -m foundation selftest --owner",
+      "root_cause": "a failure class had no detector",
+      "remediation": "OWNER-FIRST-1: each report is a row in ops/owner-reports.jsonl that must name the detector added for it; meta-loop kind owner-found-first files META items from owner chat",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:tests/foundation/test_selftest.py::def test_owner_report_without_detector_is_a_gap"
     }
   ],
   "controls": [

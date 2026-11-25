@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-25-probes-checked-that-jobs-ran-not-that-results-arrived",
+  "kind": "lesson",
+  "date": "2026-11-25",
+  "title": "Probes checked that jobs ran, not that results arrived",
+  "body": "On 2026-11-25 the owner found about nine problems first (unposted papers, papers missing from search, /live at 0, frozen pages, a red seed sync, Facebook and Instagram failing 8 of 8, no Replication Ledger sitemap). Every probe was a liveness probe. Fix: OUTCOME-PROBE-1 selftest --outcomes on every domain, CHANNEL-BREAKER-1, OWNER-FIRST-1 ledger plus meta-loop kind, selftest --effects baseline 107, seed copy and daily workflow.",
+  "probe": "grep:foundation/selftest.py::def outcome_findings",
+  "session": "session_0156nqDttaAqSQRe1Rba7unt"
+ },
+ "kind": "lesson",
+ "title": "Probes checked that jobs ran, not that results arrived",
+ "session": "session_0156nqDttaAqSQRe1Rba7unt"
+}

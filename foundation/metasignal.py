@@ -98,7 +98,8 @@ def ingest(root: Path, rows: list[dict], cfg: dict, apply: bool = False) -> dict
 
 
 SAMPLES = {"frustration": "I'm not going to keep telling you", "repeat-directive": "I already said never stop", "correction": "that's not what I asked",
-           "idea": "what if we recorded everything", "confusion": "I don't understand this step", "stall": "it is stuck", "delight": "that is perfect"}
+           "idea": "what if we recorded everything", "confusion": "I don't understand this step", "stall": "it is stuck", "delight": "that is perfect",
+           "owner-found-first": "this should have been detected automatically"}
 
 
 def check(root=REPO) -> list[str]:

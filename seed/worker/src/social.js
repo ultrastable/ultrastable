@@ -94,8 +94,18 @@ export async function postBuffer(token, text, f, short, only) {
   return out;
 }
 
-export async function postRelay(env, p, f, only) {
-  const r = await f(env.SOCIAL_RELAY_URL + '/relay/post', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + env.SOCIAL_RELAY_TOKEN }, body: JSON.stringify({ text: p.long || p.text, short: p.text, channels: only && only.length ? only : ['mastodon', 'linkedin', 'twitter', 'substack', 'facebook', 'instagram'] }) });
+export const RELAY_SERVICES = ['mastodon', 'linkedin', 'twitter', 'substack', 'facebook', 'instagram'];
+// CHANNEL-BREAKER-1 (Rowan 2026-11-25: Facebook and Instagram failed on all 8 calls and nothing noticed): a service whose last 3 sends all failed is
+// paused for a week, then tried once more. The same 3-in-a-row reading is detector selftest-outcomes (channel_breaker), which files the fix item.
+export function deadServices(rows, now, prefix = 'relay:', streak = 3, pauseMs = 7 * 864e5) {
+  const by = {};
+  for (const r of rows) if (r.channel && r.channel.startsWith(prefix)) (by[r.channel.slice(prefix.length)] ||= []).push(r);
+  return Object.entries(by).filter(([, rr]) => { rr.sort((a, b) => String(b.at).localeCompare(String(a.at))); const last = rr.slice(0, streak); return last.length >= streak && last.every(r => r.status === 'failed') && now - Date.parse(last[0].at) < pauseMs; }).map(([s]) => s);
+}
+export async function postRelay(env, p, f, only, skip = []) {
+  const list = (only && only.length ? only : RELAY_SERVICES).filter(s => !skip.includes(s));
+  if (!list.length) return {};
+  const r = await f(env.SOCIAL_RELAY_URL + '/relay/post', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + env.SOCIAL_RELAY_TOKEN }, body: JSON.stringify({ text: p.long || p.text, short: p.text, channels: list }) });
   if (!r.ok) throw new Error('relay HTTP ' + r.status);
   return (await r.json()).results || {};
 }
@@ -188,7 +198,8 @@ export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), t
   // THOUGHT-1: a failed send waits a day before its retry, so a refused account is not hit every tick.
   const recent = r => now - Date.parse(r.at) < 864e5;
   const done = (id, ch) => rows.some(r => r.id === id && r.channel === ch && (r.status == null || r.status !== 'failed' || r.attempts >= 3 || recent(r)));
-  const relayDone = id => { const rr = rows.filter(r => r.id === id && r.channel.startsWith('relay:')); return rr.length > 0 ? rr.every(r => r.status !== 'failed' || r.attempts >= 3 || recent(r)) : done(id, 'relay'); };  // POST-READBACK-2: per-service rows override a legacy channel='relay' row
+  const dead = deadServices(rows, now);
+  const relayDone = id => { const rr = rows.filter(r => r.id === id && r.channel.startsWith('relay:') && !dead.includes(r.channel.slice(6))); return rr.length > 0 ? rr.every(r => r.status !== 'failed' || r.attempts >= 3 || recent(r)) : done(id, 'relay'); };  // POST-READBACK-2: per-service rows override a legacy channel='relay' row
   const bufferDone = id => { const rr = rows.filter(r => r.id === id && r.channel.startsWith('buffer:')); return rr.length > 0 && rr.every(r => r.status !== 'failed' || r.attempts >= 3 || recent(r)); };  // SOCIAL-MODULE-1: one row per Buffer service, so each is verified and retried on its own
   // THOUGHT-1: a post may name its channels and carry a text per channel. A post with no list goes to Bluesky and Mastodon (and the Buffer and relay
   // fan-outs), so LinkedIn direct gets the white papers and nothing else. A paper is due on a channel it has not reached yet, so a channel linked later
@@ -223,7 +234,7 @@ export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), t
         const failed = rows.filter(r => r.id === p.id && r.channel.startsWith('relay:') && r.status === 'failed').map(r => r.channel.slice(6));
         const stale = rows.filter(r => r.id === p.id && r.channel.startsWith('relay:') && r.status === 'failed').map(r => (/queued ([0-9a-f]{24})/.exec(String(r.ref)) || [])[1]).filter(Boolean);
         if (stale.length) { try { await f(env.SOCIAL_RELAY_URL + '/relay/cancel', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + env.SOCIAL_RELAY_TOKEN }, body: JSON.stringify({ ids: stale }) }); } catch (e) { /* allow-silent: a failed cancel only risks a duplicate post; the retry below still goes out and the miss shows in the relay response */ } }  // POST-READBACK-2: a queued Buffer entry that never published is cancelled before its replacement shares now
-        const res = await classifyRelay(await postRelay(env, { ...p, long, text: short }, f, failed), f);  // a retry re-sends only the services that failed
+        const res = await classifyRelay(await postRelay(env, { ...p, long, text: short }, f, failed, dead), f);  // a retry re-sends only the services that failed
         for (const [svc, v] of Object.entries(res)) await rec('relay:' + svc, v.ref, v.status);
         continue;
       }
@@ -232,4 +243,22 @@ export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), t
     } catch (e) { await rec(ch, String(e && e.message || e), 'failed'); }
   }
   return { id: p.id, results: out };
+}
+
+// OUTCOME-PROBE-1 (Rowan 2026-11-25: papers that were never posted, channels failing every call): the end state of the publisher, public and
+// without refs or tokens. Per channel: sends by status, the current run of failures, and the post ids that reached it. Read by
+// `python3 -m foundation selftest --outcomes`, which files a fix item when a paper never reached a channel or a channel keeps failing.
+export async function socialOutcomes(db, now = Date.now()) {
+  let rows = [];
+  try { rows = (await db.prepare('SELECT id, channel, at, status FROM social_posted ORDER BY at DESC LIMIT 2000').all()).results || []; }
+  catch (e) { if (/no such table/i.test(String(e && e.message))) return { at: new Date(now).toISOString(), channels: {}, posts: 0 }; throw e; }
+  const channels = {};
+  for (const r of rows) {
+    const c = (channels[r.channel] ||= { sent: 0, by_status: {}, fail_streak: 0, streak_open: true, last_at: r.at, reached: [] });
+    c.sent++; const st = r.status || 'sent'; c.by_status[st] = (c.by_status[st] || 0) + 1;
+    if (c.streak_open) { if (st === 'failed') c.fail_streak++; else c.streak_open = false; }
+    if (st !== 'failed' && st !== 'blocked') c.reached.push(r.id);
+  }
+  for (const c of Object.values(channels)) delete c.streak_open;
+  return { at: new Date(now).toISOString(), channels, posts: new Set(rows.map(r => r.id)).size, paused: deadServices(rows, now) };
 }

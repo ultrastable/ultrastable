@@ -1,0 +1,42 @@
+name: selftest
+# budget: ~1 min per run, once a day = ~30 min per month
+# trigger: daily; outcomes (posted, indexed, served, counted) move over hours, never faster than daily
+# free-alternative: `python3 scripts/selftest.py --outcomes --workflows --data --effects --owner` from the tick Worker's dispatch or any cloud-hosted agent session
+# OUTCOME-PROBE-1 and OWNER-FIRST-1 (Rowan 2026-11-25: "Having the user tell you that something is off is not autonomous"): every system checks that
+# its work reached its audience, that no read counted empty as success, that no channel fails every call, and that every problem its owner found
+# first now has a detector. A finding fails the run and opens one issue, closed by the next green run.
+on:
+  schedule:
+    - cron: "41 5 * * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+  actions: read
+concurrency:
+  group: selftest
+  cancel-in-progress: false
+jobs:
+  selftest:
+    if: ${{ vars.HALT != '1' && !github.event.repository.is_template && github.repository != 'ultrastable/seed' }}  # HALT-1; TEMPLATE-CODE-ONLY-1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: outcome probes
+        id: probe
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -o pipefail
+          python3 scripts/selftest.py --outcomes --workflows --data --effects --owner 2>&1 | tee selftest.txt
+      - name: file or close the finding
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          OUTCOME: ${{ steps.probe.outcome }}
+        run: |
+          n=$(gh issue list --label selftest --state open --json number --jq '.[0].number // empty')
+          if [ "$OUTCOME" = "failure" ]; then
+            if [ -n "$n" ]; then gh issue comment "$n" --body-file selftest.txt; else gh label create selftest --force >/dev/null; gh issue create --title "selftest: outcome findings" --label selftest --body-file selftest.txt; fi
+          elif [ -n "$n" ]; then gh issue close "$n" --comment "Closed by a green selftest run: no findings."; fi

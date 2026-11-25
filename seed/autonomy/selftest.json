@@ -1,0 +1,38 @@
+{
+ "_doc": "SELFTEST-1 and OUTCOME-PROBE-1 for a seeded system, read by scripts/selftest.py (the platform's foundation/selftest.py, kept identical). Add this system's public hosts to outcomes.domains.hosts; each must serve a page and a sitemap. detectors lists the probes owner reports may name.",
+ "data": {
+  "default_max_age_h": 72,
+  "max_age_h": {},
+  "exempt": {}
+ },
+ "workflows": {
+  "repos": [],
+  "window": 3,
+  "stale_h": 120
+ },
+ "outcomes": {
+  "channels": {
+   "fail_streak": 3
+  },
+  "domains": {
+   "min_bytes": 500,
+   "hosts": [],
+   "exempt": {}
+  },
+  "nonzero": []
+ },
+ "effects": {
+  "baseline": 0
+ },
+ "detectors": [
+  {
+   "id": "selftest-outcomes"
+  },
+  {
+   "id": "selftest-workflows"
+  },
+  {
+   "id": "selftest-data"
+  }
+ ]
+}

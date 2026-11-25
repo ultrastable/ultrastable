@@ -625,6 +625,100 @@
       "root_cause": "a scheduled workflow fails every run or stopped being scheduled, and no check watches it",
       "owner": "operations",
       "remedy": "Read the failing run's log, fix the root cause in that repository, and dispatch it once to prove it is green."
+    },
+    {
+      "id": "selftest-outcomes",
+      "failure_mode": "fm-output-never-reached",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "selftest",
+        "--outcomes"
+      ],
+      "timeout": 240,
+      "root_cause": "a pipeline's end state (posted, indexed, counted, served) differs from what its job reported",
+      "owner": "product",
+      "remedy": "Read the finding: post or index the missing item, reconnect or drop a failing channel, or fix the reader that returns 0; rerun until no findings."
+    },
+    {
+      "id": "selftest-effects",
+      "failure_mode": "fm-loop-no-effect",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "selftest",
+        "--effects"
+      ],
+      "timeout": 60,
+      "root_cause": "a loop was registered without the metric that shows its effect",
+      "owner": "operations",
+      "remedy": "Add cycle_metric to the loop in instances/ultrastable/loop-registry.json and lower the baseline."
+    },
+    {
+      "id": "selftest-owner",
+      "failure_mode": "fm-owner-found-first",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "selftest",
+        "--owner"
+      ],
+      "timeout": 60,
+      "root_cause": "the owner found a problem no detector watches",
+      "owner": "operations",
+      "remedy": "Add the missing detector to doctrine/detectors.json and name it on the report's row in ops/owner-reports.jsonl."
+    },
+    {
+      "id": "branch-cleanup",
+      "failure_mode": "fm-silent-loop-stop",
+      "kind": "command",
+      "run": [
+        "python3",
+        "scripts/branch_cleanup.py",
+        "--check"
+      ],
+      "timeout": 240,
+      "root_cause": "a merged or closed PR left its branch behind, or delete-on-merge drifted off",
+      "owner": "operations",
+      "remedy": "Run scripts/branch_cleanup.py --apply through branch-cleanup.yml."
+    },
+    {
+      "id": "selftest-empty-reads",
+      "failure_mode": "fm-empty-read-passed",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "selftest",
+        "--outcomes"
+      ],
+      "timeout": 240,
+      "root_cause": "a reader returns 0 or an empty page while its source shows data",
+      "owner": "product",
+      "remedy": "Read the finding: post or index the missing item, reconnect or drop a failing channel, or fix the reader that returns 0; rerun until no findings."
+    },
+    {
+      "id": "selftest-channels",
+      "failure_mode": "fm-channel-always-fails",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "selftest",
+        "--outcomes"
+      ],
+      "timeout": 240,
+      "root_cause": "a publishing channel fails every send and the publisher keeps trying",
+      "owner": "product",
+      "remedy": "Read the finding: post or index the missing item, reconnect or drop a failing channel, or fix the reader that returns 0; rerun until no findings."
     }
   ]
 }

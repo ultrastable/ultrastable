@@ -44,6 +44,13 @@ export function route(url, ledger = seed, live = { checks: {}, beats: [], change
     const f = all.find(x => x.id === m[1]);
     return f ? json({ ...f, live: live.checks[f.id] || null }) : json({ error: "not_found", code: "finding_not_found" }, 404);
   }
+  // OUTCOME-PROBE-1 (2026-11-25): the ledger had no sitemap, so search engines could not find a single finding. Generated from the ledger.
+  if (p === "/robots.txt") return new Response(`User-agent: *\nAllow: /\nSitemap: ${SITE}/sitemap.xml\n`, { headers: { "content-type": "text/plain; charset=utf-8" } });
+  if (p === "/sitemap.xml") {
+    const fields = [...new Set(all.map(f => f.field))].filter(id => FIELDS[id]);
+    const urls = ["/", "/projects", "/changes", "/rubric", "/graph", ...fields.map(id => `/field/${id}`), ...all.map(f => `/f/${f.id}`)];
+    return new Response(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map(u => `<url><loc>${SITE}${u}</loc></url>`).join("\n")}\n</urlset>\n`, { headers: { "content-type": "application/xml; charset=utf-8" } });
+  }
   if (p.startsWith("/api/")) return json({ error: "not_found", code: "route_not_found" }, 404);
   if (p === "/") return html(home(all, ledger.projects || [], live));
   if (p === "/rubric") return html(rubricPage());

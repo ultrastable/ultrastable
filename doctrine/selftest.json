@@ -8,8 +8,54 @@
   "exempt": {}
  },
  "workflows": {
-  "repos": ["ultrastable/ultrastable", "ultrastable/seed", "ultrastable/workers", "ultrastable/spec", "ultrastable/license", "ultrastable/practical-solutions", "ultrastable/unlearn", "ultrastable/.github"],
+  "repos": [
+   "ultrastable/ultrastable",
+   "ultrastable/seed",
+   "ultrastable/workers",
+   "ultrastable/spec",
+   "ultrastable/license",
+   "ultrastable/practical-solutions",
+   "ultrastable/unlearn",
+   "ultrastable/.github"
+  ],
   "window": 3,
   "stale_h": 120
+ },
+ "outcomes": {
+  "_doc": "OUTCOME-PROBE-1: declared end states. papers_posted: every paper in site/research-data.js is in social/calendar.json and, max_days after its first scheduling, has reached each channel as read from the tick Worker's /api/social/outcomes. channels: fail_streak failures in a row is a finding. sitemap: every paper url is listed. domains: every live route host in doctrine/topology.json serves a page of at least min_bytes and a sitemap with urls. nonzero: a live count that reads 0 while the named repository source shows otherwise.",
+  "papers_posted": {
+   "url": "https://ultrastable-tick.ultrastable.workers.dev/api/social/outcomes",
+   "max_days": 3,
+   "channels": [
+    "bluesky",
+    "relay:mastodon",
+    "relay:linkedin"
+   ]
+  },
+  "channels": {
+   "fail_streak": 3
+  },
+  "sitemap": {
+   "url": "https://ultrastable.io/sitemap.xml",
+   "base": "https://ultrastable.io"
+  },
+  "domains": {
+   "min_bytes": 500,
+   "exempt": {
+    "ultrastable.app": "redirects every path to ultrastable.io, which is probed",
+    "ultrastable.net": "redirects every path to ultrastable.io, which is probed"
+   }
+  },
+  "nonzero": [
+   {
+    "url": "https://ultrastable-tick.ultrastable.workers.dev/api/live/changes",
+    "field": "changes.#",
+    "source": "git_merges_7d"
+   }
+  ]
+ },
+ "effects": {
+  "_doc": "a loop in instances/ultrastable/loop-registry.json with no cycle_metric has no measured effect. Shrink-only baseline.",
+  "baseline": 107
  }
 }

@@ -45,7 +45,7 @@ import { datagraphStep, readGraph, readInsights, readNode, searchGraph } from '.
 import { watchFreshness } from './freshness.js'; // LIVE-FRESH-2
 import { watchTenantDeploys } from './tenantdeploy.js'; // TENANT-DEPLOY-1
 import { recordGovernor, readDecisions, safely as decisionSafely } from './decisions.js'; // DECISIONS-1
-import { runSocial, blueskyAccess } from './social.js';
+import { runSocial, blueskyAccess, socialOutcomes } from './social.js';
 import { importCredentials, reconcileBuffer, intakeInbox, seedLinkRows } from './humans.js';  // SOCIAL-MODULE-1  // REACH-1
 import { probe as probeAgents } from './codeagent.js';
 import { hiddenByHealthOnly, publicPage } from './visibility.js';
@@ -295,6 +295,7 @@ export default {
     if (url.pathname === '/api/stickiness') { try { return Response.json(await readStickiness(env.DB), { headers: { 'cache-control': 'public, max-age=60', 'access-control-allow-origin': '*' } }); } catch (e) { return d1Unavailable(e); } }  // STICKY-1
     { const qm = /^\/api\/stickiness\/queue\/([a-z0-9-]{1,60})\.json$/.exec(url.pathname); if (qm) { try { return Response.json(await readQueue(env.DB, qm[1]), { headers: { 'cache-control': 'public, max-age=300' } }); } catch (e) { return d1Unavailable(e); } } }  // STICKY-1: the queue the core social module drains for this system
     if (url.pathname === '/api/progress') { try { return Response.json(await readProgress(env.DB, config), { headers: { 'cache-control': 'public, max-age=60', 'access-control-allow-origin': '*' } }); } catch (e) { return d1Unavailable(e); } }  // PROGRESS-1
+    if (url.pathname === '/api/social/outcomes') { try { return Response.json(await socialOutcomes(env.DB, Date.now()), { headers: { 'cache-control': 'public, max-age=300' } }); } catch (e) { return d1Unavailable(e); } }  // OUTCOME-PROBE-1: what reached each channel, read by selftest --outcomes
     if (url.pathname === '/api/live/changes') { try { const rs = config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []); return Response.json(await readLiveChanges(env.DB, rs.find(r => r.endsWith('/ultrastable')) || rs[0] || null), { headers: { 'cache-control': 'public, max-age=60' } }); } catch (e) { return d1Unavailable(e); } }  // LIVE-FRESH-1
     if (url.pathname === '/api/roi') { try { return Response.json(await readRoi(env.DB, { env, config }), { headers: { 'cache-control': 'public, max-age=300', 'access-control-allow-origin': '*' } }); } catch (e) { return d1Unavailable(e); } }  // ROI-1
     if (url.pathname === '/api/decisions') { try { return Response.json(await readDecisions(env.DB), { headers: { 'cache-control': 'public, max-age=60', 'access-control-allow-origin': '*' } }); } catch (e) { return d1Unavailable(e); } }  // DECISIONS-1
