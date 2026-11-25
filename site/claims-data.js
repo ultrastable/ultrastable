@@ -1813,6 +1813,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **Every system deploys itself in full: repo, back end and a public web UI (FULLSTACK-1, Rowan 2026-11-25).** \"All UltraStable deployments",
+   "detail": "",
+   "how": "file:doctrine/tenant-repos.json + file:doctrine/topology.json + file:tests/foundation/test_tenantrepos.py + file:foundation/tenantrepos.py + grep:.github/workflows/checks.yml::foundation[ .]tenantrepos\\b",
+   "id": "cited-faa1765dd1",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Everything is traceable, and the database stays small (AUDIT-CHAIN-1, Rowan 2026-11-17).** \"It has to be auditable to be believed ...",
    "detail": "",
    "how": "file:seed/autonomy/retention.json + file:seed/worker/test/auditchain.test.js",
@@ -2474,6 +2483,15 @@ export default {
    "detail": "",
    "how": "file:doctrine/claim-code.json + file:tests/foundation/test_claimcode.py + file:foundation/claimcode.py + grep:.github/workflows/checks.yml::foundation[ .]claimcode\\b",
    "id": "mirror-7886ca3a91",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Every system deploys itself in full: repo, back end and a public web UI (FULLSTACK-1, Rowan 2026-11-25).** \"All UltraStable deployments",
+   "detail": "",
+   "how": "file:doctrine/tenant-repos.json + file:doctrine/topology.json + file:tests/foundation/test_tenantrepos.py + file:foundation/tenantrepos.py + grep:.github/workflows/checks.yml::foundation[ .]tenantrepos\\b",
+   "id": "mirror-3ae0f5f6d0",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3199,7 +3217,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 63 Python and 483 Worker tests",
+   "claim": "seed-tests: 63 Python and 487 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3208,7 +3226,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 483 Worker tests",
+   "claim": "seed-worker-tests: 487 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3244,7 +3262,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 932",
+   "claim": "live-deploys: 934",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",
@@ -3449,7 +3467,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 380,
-  "total": 380
+  "pass": 382,
+  "total": 382
  }
 };

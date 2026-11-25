@@ -58,18 +58,21 @@ jobs:
                    -f description="$(jq -r '.description // ""' <<<"$row")" -F has_wiki=false >/dev/null; then echo "created $repo"; tok="$t"; break; fi
               echo "::warning::this credential could not create $repo; trying the next route"
             done
-            [ -n "$tok" ] || { echo "::error::no credential could create $repo (ORG_ADMIN_TOKEN, LANE_PAT, lane App)"; exit 1; }
+            # one tenant without a credential must not stop the others or the redeploy step below: record it, go on, fail at the end
+            if [ -z "$tok" ]; then echo "::error::no credential could create $repo (ORG_ADMIN_TOKEN, LANE_PAT, lane App)"; echo "$repo" >> /tmp/tenant-repos-failed; continue; fi
             # an empty repository answers 409 here; that answer is logged, not hidden, and means "push the split"
             if head_sha="$(GH_TOKEN="$tok" gh api "repos/$repo/commits?per_page=1" --jq '.[0].sha' 2>/tmp/commits.err)" && [ -n "$head_sha" ]; then echo "$repo already has history; left as it is"; continue; fi
             echo "no commits yet in $repo: $(cat /tmp/commits.err)"
             git subtree split --prefix "$src" -b "split-$slug"
             git worktree add "/tmp/$slug" "split-$slug"
             python3 -m foundation tenantrepos --prepare "/tmp/$slug" --slug "$slug"
-            (cd "/tmp/$slug" && git add -A && { git diff --cached --quiet || git commit -q -m "Stand alone: vendor the core files Unlearn reads (TENANT-REPO-1)"; } \
+            (cd "/tmp/$slug" && git add -A && { git diff --cached --quiet || git commit -q -m "Stand alone: vendor the core files $slug reads (TENANT-REPO-1)"; } \
               && git push "https://x-access-token:${tok}@github.com/${repo}.git" "HEAD:refs/heads/main")
             echo "pushed $src with its history to $repo"
           done
+          if [ -s /tmp/tenant-repos-failed ]; then echo "::error::tenant repositories not created: $(tr '\n' ' ' </tmp/tenant-repos-failed)"; exit 1; fi
       - name: Redeploy tenants whose repository moved past the last deploy
+        if: ${{ !cancelled() }}  # moved tenants redeploy even when creating another tenant's repository failed above
         env:
           GH_TOKEN: ${{ github.token }}
         run: |

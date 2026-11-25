@@ -41,6 +41,7 @@ import { refreshLiveChanges, readLiveChanges, refreshFleetChanges, classifyPendi
 import { progressStep, readProgress } from './progress.js'; // PROGRESS-1
 import { stickinessStep, readStickiness, readQueue } from './stickiness.js'; // STICKY-1
 import { watchFreshness } from './freshness.js'; // LIVE-FRESH-2
+import { watchTenantDeploys } from './tenantdeploy.js'; // TENANT-DEPLOY-1
 import { recordGovernor, readDecisions, safely as decisionSafely } from './decisions.js'; // DECISIONS-1
 import { runSocial, blueskyAccess } from './social.js';
 import { importCredentials, reconcileBuffer, intakeInbox, seedLinkRows } from './humans.js';  // SOCIAL-MODULE-1  // REACH-1
@@ -147,6 +148,7 @@ export default {
       await b('stickiness', () => stickinessStep({ db: env.DB, config, ensureItem }));  // STICKY-1: freshness, breadth, depth and diversity of every system's content; a stale or thin one files STICKY-<system>, and its unpromoted entries become the social queue
       await b('progress', () => progressStep({ db: env.DB, config, token, ensureItem }));  // PROGRESS-1: release cadence monitor; a slow system has its producers dispatched, a stalled one files STALL-<system>
       await b('freshness', () => watchFreshness({ token, repo: main, siteUrl: env.PUBLIC_ORIGIN || 'https://ultrastable.io' }));  // LIVE-FRESH-2: a stale published snapshot re-dispatches its own publisher
+      if (new Date().getUTCMinutes() % 30 < 10) await b('tenant-deploy', () => watchTenantDeploys({ token, repo: main }));  // TENANT-DEPLOY-1: a tenant repository's merge ships within the hour (twice an hour, ~4 subrequests)
       step('executor', async () => { const r = await runExecutor({ ...env, TENANT: env.TENANT || config.org_slug, AI: gov.ai || undefined, GITHUB_DISPATCH_TOKEN: token || env.GITHUB_DISPATCH_TOKEN, GITHUB_REPO: env.GITHUB_REPO || repos[0] }); await noteExecutor(env.DB, r); return r; });
       step('gate', async () => { const g = await runGate({ token, repos }); await gateCard(env.DB, g, { origin: env.PUBLIC_ORIGIN || '' }); return g; });  // ZERO-MINUTES-1, Q-GATE-403
       const ghBudget = githubBudget(env.GITHUB_CALLS_PER_TICK || config.github_calls_per_tick);  // GITHUB-BUDGET-1: one GitHub call budget for the lane and the handoffs of this tick (default 40)
