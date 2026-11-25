@@ -216,6 +216,12 @@ def main(argv=None) -> int:
     if _av[:1] == ["selftest"]:  # SELFTEST-1
         from . import selftest
         return selftest.main(_av[1:])
+    if _av[:1] == ["staticcontent"]:  # STATIC-CONTENT-1 (detector static-content was unroutable: SILENT-FAIL-1 routes check)
+        from . import staticcontent
+        return staticcontent.main(_av[1:])
+    if _av[:1] == ["slawatch"]:
+        from . import slawatch
+        return slawatch.main(_av[1:])
     if _av[:1] == ["silentfail"]:  # SILENT-FAIL-1
         from . import silentfail
         return silentfail.main(_av[1:])
