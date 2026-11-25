@@ -38,14 +38,14 @@ export default {
     0,
     73602
    ],
-   "share_recent": 0.268,
-   "share_trend": 0.268,
+   "share_recent": 0.266,
+   "share_trend": 0.266,
    "total": 73602
   },
   {
    "area": "doctrine",
    "quiet_days": 0,
-   "recent7": 34993,
+   "recent7": 35088,
    "series": [
     0,
     0,
@@ -76,16 +76,16 @@ export default {
     0,
     0,
     0,
-    34993
+    35088
    ],
    "share_recent": 0.127,
    "share_trend": 0.127,
-   "total": 34993
+   "total": 35088
   },
   {
    "area": "foundation",
    "quiet_days": 0,
-   "recent7": 32862,
+   "recent7": 32968,
    "series": [
     0,
     0,
@@ -116,16 +116,16 @@ export default {
     0,
     0,
     0,
-    32862
+    32968
    ],
-   "share_recent": 0.12,
-   "share_trend": 0.12,
-   "total": 32862
+   "share_recent": 0.119,
+   "share_trend": 0.119,
+   "total": 32968
   },
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 24187,
+   "recent7": 25393,
    "series": [
     0,
     0,
@@ -156,16 +156,16 @@ export default {
     0,
     0,
     0,
-    24187
+    25393
    ],
-   "share_recent": 0.088,
-   "share_trend": 0.088,
-   "total": 24187
+   "share_recent": 0.092,
+   "share_trend": 0.092,
+   "total": 25393
   },
   {
    "area": "seed/worker",
    "quiet_days": 0,
-   "recent7": 17260,
+   "recent7": 17378,
    "series": [
     0,
     0,
@@ -196,16 +196,16 @@ export default {
     0,
     0,
     0,
-    17260
+    17378
    ],
    "share_recent": 0.063,
    "share_trend": 0.063,
-   "total": 17260
+   "total": 17378
   },
   {
    "area": "tests/foundation",
    "quiet_days": 0,
-   "recent7": 13181,
+   "recent7": 13223,
    "series": [
     0,
     0,
@@ -236,16 +236,16 @@ export default {
     0,
     0,
     0,
-    13181
+    13223
    ],
    "share_recent": 0.048,
    "share_trend": 0.048,
-   "total": 13181
+   "total": 13223
   },
   {
    "area": "platform",
    "quiet_days": 0,
-   "recent7": 10871,
+   "recent7": 10873,
    "series": [
     0,
     0,
@@ -276,16 +276,16 @@ export default {
     0,
     0,
     0,
-    10871
+    10873
    ],
-   "share_recent": 0.04,
-   "share_trend": 0.04,
-   "total": 10871
+   "share_recent": 0.039,
+   "share_trend": 0.039,
+   "total": 10873
   },
   {
    "area": "instances",
    "quiet_days": 0,
-   "recent7": 10549,
+   "recent7": 10614,
    "series": [
     0,
     0,
@@ -316,14 +316,14 @@ export default {
     0,
     0,
     0,
-    10549
+    10614
    ],
    "share_recent": 0.038,
    "share_trend": 0.038,
-   "total": 10549
+   "total": 10614
   }
  ],
- "at": "2026-11-25T17:30:23Z",
+ "at": "2026-11-25T17:32:21Z",
  "days": 30,
  "findings": [
   {
@@ -343,12 +343,6 @@ export default {
    "id": "loop:ciwatch",
    "kind": "neglected",
    "why": "the ciwatch ledger had 24 rows, then none for 8 days: the loop that writes it has gone quiet"
-  },
-  {
-   "evidence": "quiet_days 10",
-   "id": "loop:contracts",
-   "kind": "neglected",
-   "why": "the contracts ledger had 367 rows, then none for 10 days: the loop that writes it has gone quiet"
   },
   {
    "evidence": "quiet_days 10",
@@ -395,16 +389,16 @@ export default {
    0,
    0,
    0,
-   48
+   35
   ],
-  "closed": 1046,
-  "opened": 1094
+  "closed": 1061,
+  "opened": 1096
  },
  "loops": [
   {
    "loop": "ultrastability",
    "quiet_days": 0,
-   "rows": 13258,
+   "rows": 13299,
    "series": [
     0,
     0,
@@ -435,13 +429,50 @@ export default {
     5004,
     3322,
     2312,
-    820
+    861
+   ]
+  },
+  {
+   "loop": "contracts",
+   "quiet_days": 0,
+   "rows": 1071,
+   "series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    367,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    704
    ]
   },
   {
    "loop": "deploys",
    "quiet_days": 0,
-   "rows": 950,
+   "rows": 960,
    "series": [
     0,
     0,
@@ -472,7 +503,7 @@ export default {
     50,
     14,
     0,
-    36
+    46
    ]
   },
   {
@@ -513,46 +544,9 @@ export default {
    ]
   },
   {
-   "loop": "contracts",
-   "quiet_days": 10,
-   "rows": 367,
-   "series": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    367,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
    "loop": "resilience",
    "quiet_days": 0,
-   "rows": 341,
+   "rows": 342,
    "series": [
     0,
     0,
@@ -583,87 +577,13 @@ export default {
     122,
     80,
     55,
-    20
-   ]
-  },
-  {
-   "loop": "yearsim",
-   "quiet_days": 0,
-   "rows": 276,
-   "series": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    9,
-    112,
-    80,
-    55,
-    20
-   ]
-  },
-  {
-   "loop": "saydo",
-   "quiet_days": 0,
-   "rows": 275,
-   "series": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    8,
-    112,
-    80,
-    55,
-    20
+    21
    ]
   },
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 275,
+   "rows": 277,
    "series": [
     0,
     0,
@@ -694,7 +614,81 @@ export default {
     112,
     80,
     55,
-    23
+    25
+   ]
+  },
+  {
+   "loop": "yearsim",
+   "quiet_days": 0,
+   "rows": 277,
+   "series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    9,
+    112,
+    80,
+    55,
+    21
+   ]
+  },
+  {
+   "loop": "saydo",
+   "quiet_days": 0,
+   "rows": 276,
+   "series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    8,
+    112,
+    80,
+    55,
+    21
    ]
   }
  ],
