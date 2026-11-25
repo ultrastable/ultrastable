@@ -1,0 +1,12 @@
+{
+  "id": "Q-SAYDO-rules-CLONE-PATH-1",
+  "title": "Q-SAYDO-rules-CLONE-PATH-1: says CLONE-PATH-1, does not do it",
+  "body": "**Owner:** executor\n**Trigger:** say-do check (SAY-DO-1) on the watchdog run\n**Done check:** cmd:python3 -m foundation saydo --probe rules:CLONE-PATH-1\n**Status:** open\n\nThe system states `CLONE-PATH-1` (rules) and its code does not do it: org/owner-status.json\n\nChange the code to do what the statement says, or change the statement to what the code does; never weaken the probe.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation saydo --probe rules:CLONE-PATH-1` exits 0.\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "say-do"
+  ],
+  "milestone": "Now",
+  "workstream": "Ultrastability"
+}
