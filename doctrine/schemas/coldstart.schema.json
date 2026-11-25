@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/coldstart.schema.json",
+  "title": "Ultrastable cold-start contract (COLDSTART-1)",
+  "description": "What every Ultrastable system carries from birth. Read by foundation/coldstart.py; the canonical text is docs/doctrine/SYSTEM.md.",
+  "type": "object",
+  "required": ["capabilities", "definition", "instructions", "command_refs"],
+  "properties": {
+    "$schema": {"type": "string"},
+    "_doc": {"type": "string"},
+    "capabilities": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "rule", "seed"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+          "rule": {"type": "string"},
+          "seed": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+          "step": {"type": "string"},
+          "cron": {"type": "string"},
+          "fleet": {"type": "string"},
+          "live": {
+            "type": "object",
+            "required": ["path", "status"],
+            "additionalProperties": false,
+            "properties": {
+              "path": {"type": "string", "pattern": "^/"},
+              "status": {"type": "array", "items": {"type": "integer"}, "minItems": 1},
+              "json": {"type": "boolean"},
+              "html": {"type": "boolean"}
+            }
+          }
+        }
+      }
+    },
+    "definition": {
+      "type": "object",
+      "required": ["platform", "seed", "stages_from", "regimes", "bootstrap_stages"],
+      "properties": {
+        "_doc": {"type": "string"},
+        "platform": {"type": "string"},
+        "seed": {"type": "string"},
+        "stages_from": {"type": "string"},
+        "regimes": {"type": "array", "items": {"type": "string"}},
+        "bootstrap_stages": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "instructions": {
+      "type": "object",
+      "required": ["platform", "seed", "imports"],
+      "properties": {
+        "_doc": {"type": "string"},
+        "platform": {"type": "string"},
+        "seed": {"type": "string"},
+        "imports": {"type": "array", "items": {"type": "string"}},
+        "platform_only": {"type": "object", "additionalProperties": {"type": "string"}}
+      }
+    },
+    "command_refs": {
+      "type": "object",
+      "required": ["globs"],
+      "properties": {"_doc": {"type": "string"}, "globs": {"type": "array", "items": {"type": "string"}}}
+    }
+  }
+}

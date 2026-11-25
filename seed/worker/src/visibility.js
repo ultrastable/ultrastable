@@ -1,7 +1,14 @@
-// LIVE-1: with PUBLIC_HEALTH_ONLY=1 a runtime answers GET /health (the last tick's report) , a public page at / (FULLSTACK-1) and the signed GitHub webhook, and nothing else,
+// LIVE-1: with PUBLIC_HEALTH_ONLY=1 a runtime answers GET /health (the last tick's report), a public page at / (FULLSTACK-1), the public reads below (COLDSTART-1) and the signed GitHub webhook, and nothing else,
 // so its liveness can be read by a dashboard or a parent system while its backlog, screens and agent surfaces stay private.
+// COLDSTART-1: the standing rules make some public reads part of every system from birth, health-only or not: the discovery manifest
+// (DISCOVER-1: the directory lists a site only after reading it), the knowledge graph's public view (DATAGRAPH-1: counts and declared public
+// kinds only without the owner's bearer), progress (PROGRESS-1) and stickiness with its social queue (STICKY-1). Each is read-only and shows
+// nothing private. doctrine/coldstart.json names the same paths and `python3 -m foundation coldstart --check` fails when the two differ.
+export const PUBLIC_READS = Object.freeze(['/.well-known/ultrastable.json', '/api/graph', '/api/graph/insights', '/api/graph/search', '/api/graph/node', '/graph', '/api/progress', '/api/stickiness']);
+const STICKY_QUEUE = /^\/api\/stickiness\/queue\/[a-z0-9-]{1,60}\.json$/;
 export function hiddenByHealthOnly(env, method, pathname) {
   if (!env || env.PUBLIC_HEALTH_ONLY !== '1') return false;
+  if (method === 'GET' && (PUBLIC_READS.includes(pathname) || STICKY_QUEUE.test(pathname))) return false;
   if (pathname === '/health' && method === 'GET') return false;
   if (pathname === '/' && method === 'GET') return false;  // FULLSTACK-1: the public page below; it shows nothing the health report does not
   if (pathname === '/hook/github' && method === 'POST') return false;
