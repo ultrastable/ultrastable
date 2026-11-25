@@ -1840,15 +1840,6 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
-   "claim": "- **One contract for every system; statements hold front to back and back to front (FLEET-CONTRACT-1, Rowan 2026-11-25).** \"Make sure",
-   "detail": "",
-   "how": "file:seed/worker/src/contract.js + file:doctrine/tenant-repos.json + file:doctrine/fleet-contract.json + file:foundation/fleetcontract.py + file:site/contract.js + file:seed/worker/test/contract.test.js",
-   "id": "cited-98686c53a7",
-   "kind": "claim",
-   "pass": true,
-   "surface": "agents/AGENTS.md"
-  },
-  {
    "claim": "- **Every system keeps a knowledge graph of all its data, built and maintained automatically (DATAGRAPH-1, Rowan 2026-11-25).** \"All",
    "detail": "",
    "how": "file:seed/worker/src/vendor/core/datagraph.js + file:doctrine/tenant-repos.json + file:seed/worker/src/datagraph.js + file:instances/ultrastable/progress.json + file:doctrine/knowledge-graph.json + file:docs/research/knowledge-graph.md",
@@ -2546,15 +2537,6 @@ export default {
    "detail": "",
    "how": "file:seed/worker/src/livechanges.js + file:site/live.js + file:seed/worker/test/livechanges.test.js + file:site/site.test.mjs",
    "id": "mirror-b9c4dda8e0",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/agents/AGENTS.md"
-  },
-  {
-   "claim": "- **One contract for every system; statements hold front to back and back to front (FLEET-CONTRACT-1, Rowan 2026-11-25).** \"Make sure",
-   "detail": "",
-   "how": "file:seed/worker/src/contract.js + file:doctrine/tenant-repos.json + file:doctrine/fleet-contract.json + file:foundation/fleetcontract.py + file:site/contract.js + file:seed/worker/test/contract.test.js",
-   "id": "mirror-b783f29537",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3289,7 +3271,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 64 Python and 538 Worker tests",
+   "claim": "seed-tests: 64 Python and 535 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3298,7 +3280,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 538 Worker tests",
+   "claim": "seed-worker-tests: 535 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3334,7 +3316,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 1020",
+   "claim": "live-deploys: 1042",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",
@@ -3539,7 +3521,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 390,
-  "total": 390
+  "pass": 388,
+  "total": 388
  }
 };
