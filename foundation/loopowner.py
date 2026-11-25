@@ -161,7 +161,8 @@ def item(pr: dict, st: str, d: dict) -> dict:
     failed = sorted({c.get("name") or c.get("context") or "?" for c in pr.get("statusCheckRollup") or [] if (c.get("conclusion") or c.get("state") or "").upper() in FAILED})
     paths = [f["path"] if isinstance(f, dict) else f for f in pr.get("files") or []]
     who = (pr.get("author") or {}).get("login", "unknown")
-    body = (f"**Owner:** {a['owner']}\n**Trigger:** lane pass: pull request #{n} is {st}\n**Done check:** cmd:python3 -m foundation loopowner --closed {n}\n**Status:** open\n\n"
+    body = (f"**Owner:** {a['owner']}\n**Trigger:** lane pass: pull request #{n} is {st}\n**Done check:** cmd:python3 -m foundation loopowner --closed {n}\n"
+            f"**Prediction:** open_loop_age_hours <= 24 within 24 h\n**Out of scope:** files outside pull request #{n}'s own diff\n**Status:** open\n\n"
             f"{d['marker']}: the server owns pull request #{n} (`{pr.get('headRefName', '')}` at {str(pr.get('headRefOid', ''))[:10]}, opened by {who}): {pr.get('title', '')}. "
             f"The session that opened it is not its closer and is never asked to act. {a['states'][st]}"
             + (f" Failed checks: {', '.join(failed)}." if failed else "")

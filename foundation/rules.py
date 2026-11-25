@@ -253,7 +253,8 @@ def probe_once(p, root, sh=_sh):
 
 def item(rule, p, detail):
     iid = f"Q-RULE-{rule['id']}-{p['id']}"
-    body = (f"**Owner:** staff\n**Trigger:** every lane pass (rules --run --due)\n**Done check:** cmd:{p['cmd']}\n**Status:** open\n\n"
+    body = (f"**Owner:** staff\n**Trigger:** every lane pass (rules --run --due)\n**Done check:** cmd:{p['cmd']}\n"
+            f"**Prediction:** rule_probe_failures <= 0 within 24 h\n**Out of scope:** weakening the rule or its probe to make it pass\n**Status:** open\n\n"
             f"RULES-1: the standing rule `{rule['id']}` is violated: {rule['statement']}\nProbe `{p['id']}` says: {detail}\n\n"
             f"Fix the cause in code so the probe passes; the tick re-runs it every pass. Never weaken the probe or the registry.")
     return {"id": iid, "title": f"{iid}: standing rule {rule['id']} violated ({p['id']})", "body": body, "labels": ["role:staff", "ci-failure"], "milestone": "Now", "workstream": "Reliability"}

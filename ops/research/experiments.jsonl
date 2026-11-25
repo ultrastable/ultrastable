@@ -26,3 +26,9 @@
 {"key": "safety-by-limits-2026:S4", "opened_at": "2026-11-21T10:23:15Z", "metric": "second_loop_kept_share", "op": ">=", "value": 0.25, "window_h": 336, "baseline": 0.0}
 {"key": "safety-by-limits-2026:S5", "opened_at": "2026-11-21T10:23:15Z", "metric": "pr_closed_unmerged_share", "op": "<=", "value": 0.2, "window_h": 336, "baseline": 0.36}
 {"key": "safety-by-limits-2026:S6", "opened_at": "2026-11-21T10:23:15Z", "metric": "loops_closing_probe_share", "op": ">=", "value": 1.0, "window_h": 168, "baseline": 1.0}
+{"key": "ashby-1952:A1", "opened_at": "2026-11-25T19:56:05Z", "metric": "essential_bounded_share", "op": ">=", "value": 1.0, "window_h": 24, "baseline": 1.0}
+{"key": "unlearn-dev-2026:U1", "opened_at": "2026-11-25T19:56:05Z", "metric": "item_prediction_share", "op": ">=", "value": 0.9, "window_h": 336, "baseline": 0.0}
+{"key": "unlearn-dev-2026:U2", "opened_at": "2026-11-25T19:56:05Z", "metric": "item_out_of_scope_share", "op": ">=", "value": 0.5, "window_h": 336, "baseline": 0.0}
+{"key": "unlearn-dev-2026:U3", "opened_at": "2026-11-25T19:56:05Z", "metric": "deploy_verified_share", "op": ">=", "value": 0.95, "window_h": 168, "baseline": 1.0}
+{"key": "unlearn-dev-2026:U4", "opened_at": "2026-11-25T19:56:05Z", "metric": "loops_closing_probe_share", "op": ">=", "value": 1.0, "window_h": 168, "baseline": 1.0}
+{"key": "unlearn-dev-2026:U5", "opened_at": "2026-11-25T19:56:05Z", "metric": "revert_share", "op": "<=", "value": 0.05, "window_h": 336, "baseline": 0.0}

@@ -1,0 +1,12 @@
+{
+  "id": "Q-RES-unlearn-dev-2026-U2",
+  "title": "Q-RES-unlearn-dev-2026-U2: Say what must not be built (measured 0.0, target >= 0.5)",
+  "body": "**Owner:** product-manager\n**Trigger:** research pass: unlearn-dev-2026 finding U2 is not-met (measured 0.0)\n**Done check:** cmd:python3 -m foundation research --probe unlearn-dev-2026:U2\n**Prediction:** item_out_of_scope_share >= 0.5 within 336 h\n**Status:** open\n\nConcern: Say what must not be built. The study: Course: write down what the system must not build and what a feature excludes, so the agent does not wander. Same idea as scope boundaries in Shape Up and Toyota's standard work. Test: open items carry an Out of scope line.\n\nMechanisms that should answer it: UNLEARN-DEV-1 (foundation/rules.py); UNLEARN-DEV-1 (foundation/loopowner.py).\n\nMetric: share of open work items (docs/issues) that say what the change must not touch (an Out of scope line), target >= 0.5. Improve the mechanism (or add one) until the probe passes; the white paper at /research updates itself from the same measurement.",
+  "labels": [
+    "role:product-manager",
+    "research",
+    "plus"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}

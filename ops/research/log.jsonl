@@ -1,2 +1,3 @@
 {"at": "2026-11-21T09:33:27Z", "studies": 2, "findings": 12, "met": 8, "filed": [], "experiments": {"opened": 16, "settled": 0, "met": 0}}
 {"at": "2026-11-21T10:23:15Z", "studies": 4, "findings": 24, "met": 15, "filed": ["Q-RES-open-loops-2026-O4", "Q-RES-open-loops-2026-O5", "Q-RES-open-loops-2026-O6", "Q-RES-safety-by-limits-2026-S4", "Q-RES-safety-by-limits-2026-S5"], "experiments": {"opened": 12, "settled": 0, "met": 0}}
+{"at": "2026-11-25T19:56:05Z", "studies": 5, "findings": 29, "met": 20, "filed": ["Q-RES-unlearn-dev-2026-U1", "Q-RES-unlearn-dev-2026-U2"], "experiments": {"opened": 6, "settled": 1, "met": 1}}

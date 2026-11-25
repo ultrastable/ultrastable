@@ -1,0 +1,12 @@
+{
+  "id": "Q-RES-unlearn-dev-2026-U1",
+  "title": "Q-RES-unlearn-dev-2026-U1: A spec an agent can't misread (measured 0.0, target >= 0.9)",
+  "body": "**Owner:** product-manager\n**Trigger:** research pass: unlearn-dev-2026 finding U1 is not-met (measured 0.0)\n**Done check:** cmd:python3 -m foundation research --probe unlearn-dev-2026:U1\n**Prediction:** item_prediction_share >= 0.9 within 336 h\n**Status:** open\n\nConcern: A spec an agent can't misread. The study: Course: plan before you prompt; turn a vague idea into a spec with roles and constraints so the agent \"doesn't have to guess\". Same idea as lean's hypothesis-first build and eval-driven AI work. Test: every open work item names its done check and a prediction that can fail.\n\nMechanisms that should answer it: DECISIONS-1 (foundation/decisions.py); UNLEARN-DEV-1 (foundation/loopowner.py).\n\nMetric: share of open work items (docs/issues) that carry both a done check and a checkable prediction, target >= 0.9. Improve the mechanism (or add one) until the probe passes; the white paper at /research updates itself from the same measurement.",
+  "labels": [
+    "role:product-manager",
+    "research",
+    "plus"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}

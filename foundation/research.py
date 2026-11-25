@@ -44,6 +44,8 @@ METRICS = {
     "second_loop_steps_30d": "second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl)",
     "second_loop_kept_share": "share of second-order steps that brought the variable back inside its limits and were kept",
     "loops_closing_probe_share": "share of registered loops that declare a closing probe and a server-side owner",
+    "item_prediction_share": "share of open work items (docs/issues) that carry both a done check and a checkable prediction",
+    "item_out_of_scope_share": "share of open work items (docs/issues) that say what the change must not touch (an Out of scope line)",
 }
 NOW = lambda: dt.datetime.now(dt.timezone.utc)
 ISO = lambda t: t.strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -81,6 +83,25 @@ def _p90(xs):
         return None
     s = sorted(xs)
     return round(s[min(len(s) - 1, int(round(0.9 * (len(s) - 1))))], 2)
+
+
+def item_spec_measures(root=REPO) -> dict:
+    """UNLEARN-DEV-1: is each open work item a spec an agent cannot misread? Reads docs/issues/*.json bodies."""
+    items = []
+    for f in sorted((Path(root) / "docs/issues").glob("*.json")):
+        try:
+            d = json.loads(f.read_text(encoding="utf-8"))
+        except (OSError, ValueError) as e:
+            print(f"research: skipped unreadable item {f.name}: {e}", file=sys.stderr)
+            continue
+        if isinstance(d, dict) and re.search(r"\*\*Status:\*\*\s*open\b", d.get("body") or "", re.I):
+            items.append(d.get("body") or "")
+    n = len(items)
+    pred = sum(1 for b in items if re.search(r"\*\*Done check:\*\*\s*\S", b) and re.search(r"\*\*Prediction:\*\*\s*\S", b))
+    out = sum(1 for b in items if re.search(r"\*\*Out of scope:\*\*\s*\S", b))
+    src = "docs/issues/*.json (open items)"
+    return {"item_prediction_share": {"value": round(pred / n, 3) if n else None, "n": n, "source": src},
+            "item_out_of_scope_share": {"value": round(out / n, 3) if n else None, "n": n, "source": src}}
 
 
 def measures(root=REPO, pol=None) -> dict:
@@ -144,6 +165,7 @@ def measures(root=REPO, pol=None) -> dict:
         m["loops_closing_probe_share"] = {"value": round(sum(1 for x in loops if x.get("closing_probe") and x.get("server_owner")) / len(loops), 3) if loops else None, "n": len(loops), "source": "instances/ultrastable/loop-registry.json (declared)"}
     else:
         m["loops_closing_probe_share"] = {"value": None, "n": 0, "source": "instances/ultrastable/loop-registry.json (missing)"}
+    m.update(item_spec_measures(root))
     m["_window"] = {"start": ISO(start) if start else None, "end": ISO(end) if end else None, "days": round((end - start).total_seconds() / 86400, 2) if start else None,
                     "prs": len(prs), "merged": len(merged), "regime": last.get("regime"), "k_self": last.get("k_self"),
                     "as_of": max([x for x in (snap.get("fetched_at"), last.get("at"), deps[-1].get("at") if deps else None) if x] or [None], key=lambda x: _t(x) if x else dt.datetime.min.replace(tzinfo=dt.timezone.utc))}

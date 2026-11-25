@@ -1,0 +1,99 @@
+{
+  "schema": "research-study/1",
+  "id": "unlearn-dev-2026",
+  "order": 5,
+  "title": "Unlearn: developer education for the AI era (unlearn.dev course catalog)",
+  "paper_title": "Direct the work, don't type it: what a course catalog for AI-era engineers says about a system that runs itself",
+  "paper_frame": "unlearn.dev teaches people the calls that sit around an AI agent: what to build, what to leave out, what to reject. Ultrastable makes the same calls with code. We take each lesson, name the old idea it repeats (Toyota's stop-the-line, lean's build-measure-learn, continuous discovery, eval-driven AI work, Ashby's requisite variety) and test whether this system already does it. Where it does not, the gap is a number.",
+  "authors": ["Alex Garrett-Smith (curriculum lead)"],
+  "institution": "BitterBrains (unlearn.dev)",
+  "kind": "commercial course catalog read as a practitioner source (not peer reviewed; course claims and survey figures are self-reported)",
+  "version": "2026-11-25 (catalog read: 20 live courses, 4 read lesson by lesson)",
+  "seeded_by": "owner, 2026-11-25 (thread: Learn from unlearn.dev)",
+  "data": "Public course pages at unlearn.dev: the catalog, and the lesson lists of Spec a Product Before AI Builds It, Design a Feature AI Can Execute Without Guessing, Build Features with an AI Agent, and Reviewing AI-Written Code",
+  "sources": [
+    "https://unlearn.dev/courses",
+    "https://unlearn.dev/courses/plan-the-product",
+    "https://unlearn.dev/courses/plan-a-feature",
+    "https://unlearn.dev/courses/implement-a-feature-with-an-ai-agent",
+    "https://unlearn.dev/courses/reviewing-ai-written-code"
+  ],
+  "summary": "The site's pitch is \"Direct AI. Don't get led by it.\" Agents made typing nearly free, so the skill left is deciding what to build, writing it down so an agent cannot misread it, saying what not to build, and rejecting output that only looks right. Not related to Ultrastable's own Unlearn tenant, which is an evidence encyclopedia of popular beliefs.",
+  "misperception": {
+    "belief": "With AI agents, the hard part of building software is writing the code, and the skill to learn is a tool.",
+    "short": "The skill is the tool; the work is the code.",
+    "counter": "The code is the cheap half. The work is the spec, the boundary and the check. A person can learn those calls, and a system can encode them: every item says what done means, what is out of scope and what number should move."
+  },
+  "perspectives": ["product", "quality", "systems"],
+  "findings": [
+    {
+      "id": "U1",
+      "concern": "A spec an agent can't misread",
+      "claim": "Course: plan before you prompt; turn a vague idea into a spec with roles and constraints so the agent \"doesn't have to guess\". Same idea as lean's hypothesis-first build and eval-driven AI work. Test: every open work item names its done check and a prediction that can fail.",
+      "where": "Spec a Product Before AI Builds It; Design a Feature AI Can Execute Without Guessing",
+      "perspective": "product",
+      "mechanisms": [
+        {"rule": "DECISIONS-1", "path": "foundation/decisions.py", "how": "each decision logs a prediction that is scored later"},
+        {"rule": "UNLEARN-DEV-1", "path": "foundation/loopowner.py", "how": "the lane's own items now carry a prediction"}
+      ],
+      "metric": "item_prediction_share",
+      "target": {"op": ">=", "value": 0.9},
+      "prediction": "item_prediction_share >= 0.9 within 336 h"
+    },
+    {
+      "id": "U2",
+      "concern": "Say what must not be built",
+      "claim": "Course: write down what the system must not build and what a feature excludes, so the agent does not wander. Same idea as scope boundaries in Shape Up and Toyota's standard work. Test: open items carry an Out of scope line.",
+      "where": "Spec a Product (what not to build); Design a Feature (scoping out); A Coding Agent You Can Walk Away From",
+      "perspective": "quality",
+      "mechanisms": [
+        {"rule": "UNLEARN-DEV-1", "path": "foundation/rules.py", "how": "standing-rule items say the rule and its probe are out of scope"},
+        {"rule": "UNLEARN-DEV-1", "path": "foundation/loopowner.py", "how": "lane items limit the fix to the pull request's own diff"}
+      ],
+      "metric": "item_out_of_scope_share",
+      "target": {"op": ">=", "value": 0.5},
+      "prediction": "item_out_of_scope_share >= 0.5 within 336 h"
+    },
+    {
+      "id": "U3",
+      "concern": "Code that looks right",
+      "claim": "Course: \"AI code looks right, and that's what makes it dangerous\"; review by claim, verify, trace, with a second agent. Same idea as Toyota's stop-the-line and Ashby's point that only variety can absorb variety: the check has to be as varied as the change. Test: deploys proven live against their commit.",
+      "where": "Reviewing AI-Written Code; Build Features with an AI Agent (local review by a second agent)",
+      "perspective": "quality",
+      "mechanisms": [
+        {"rule": "HANDOFF-1", "path": "seed/worker/src/handoff.js", "how": "a merged change is deployed and its verify line is fetched before the item closes"},
+        {"rule": "SAY-DO-1", "path": "foundation/saydo.py", "how": "each claim is tied to a probe"}
+      ],
+      "metric": "deploy_verified_share",
+      "target": {"op": ">=", "value": 0.95},
+      "prediction": "deploy_verified_share >= 0.95 within 168 h"
+    },
+    {
+      "id": "U4",
+      "concern": "From seems fine to measured",
+      "claim": "Course: test AI features with evals, from \"seems fine\" to measured quality. Same idea as continuous discovery and kaizen: no change without a number to judge it. Test: every loop declares a closing probe.",
+      "where": "Test AI Features with Evals",
+      "perspective": "systems",
+      "mechanisms": [
+        {"rule": "CLOCKWORK-1", "path": "instances/ultrastable/loop-registry.json", "how": "each loop names its closing probe"}
+      ],
+      "metric": "loops_closing_probe_share",
+      "target": {"op": ">=", "value": 1.0},
+      "prediction": "loops_closing_probe_share >= 1 within 168 h"
+    },
+    {
+      "id": "U5",
+      "concern": "An agent you can walk away from",
+      "claim": "Course: small focused branches, guardrails and hooks before the agent writes code, so its work can be left alone. Test: few changes on main have to be reverted.",
+      "where": "Build Features with an AI Agent; A Coding Agent You Can Walk Away From",
+      "perspective": "systems",
+      "mechanisms": [
+        {"rule": "SUBSTANCE-1", "path": "foundation/substance.py", "how": "trivial changes never open a pull request"},
+        {"rule": "RUNWAY-1", "path": "foundation/redmain.py", "how": "a red main is bisected and the smallest revert applied"}
+      ],
+      "metric": "revert_share",
+      "target": {"op": "<=", "value": 0.05},
+      "prediction": "revert_share <= 0.05 within 336 h"
+    }
+  ]
+}

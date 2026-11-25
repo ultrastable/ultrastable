@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-25-lessons-from-unlearn-dev-unlearn-dev-1",
+  "kind": "lesson",
+  "date": "2026-11-25",
+  "title": "Lessons from unlearn.dev (UNLEARN-DEV-1)",
+  "body": "unlearn.dev is a BitterBrains course catalog for AI-era engineers, unrelated to the Unlearn tenant. Its thesis: agents made typing cheap; the work is the spec, the boundary and the check. Study research/studies/unlearn-dev-2026.json adds metrics item_prediction_share and item_out_of_scope_share; lane and rule items now carry Prediction and Out of scope lines.",
+  "probe": "grep:foundation/research.py::item_out_of_scope_share"
+ },
+ "kind": "lesson",
+ "title": "Lessons from unlearn.dev (UNLEARN-DEV-1)",
+ "session": ""
+}
