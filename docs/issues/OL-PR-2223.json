@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-2223",
+  "title": "OL-PR-2223: land or supersede pull request #2223 (conflict)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #2223 is conflict\n**Done check:** cmd:python3 -m foundation loopowner --closed 2223\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #2223 (`claude/project-thread-9mkgu8` at 27841bc73e, opened by rwnq8): Learn from unlearn.dev: study, item-spec metrics, scope lines on lane items. The session that opened it is not its closer and is never asked to act. The branch conflicts with main. Merge main into the branch and resolve it, or redo the change from main in a new pull request and close this one as superseded. Files (14): docs/PROJECT-MEMORY.md, docs/issues/Q-RES-unlearn-dev-2026-U1.json, docs/issues/Q-RES-unlearn-dev-2026-U2.json, doctrine/research.json, doctrine/writeback/lesson-2026-11-25-lessons-from-unlearn-dev-unlearn-dev-1.json, foundation/loopowner.py, foundation/research.py, foundation/rules.py, ops/research/experiments.jsonl, ops/research/log.jsonl, ops/research/outcomes.jsonl, research/papers/unlearn-dev-2026.md, research/studies/unlearn-dev-2026.json, site/research-data.js. Closing probe: pull request #2223 is merged or closed.",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
