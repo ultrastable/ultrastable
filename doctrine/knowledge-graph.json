@@ -6,7 +6,7 @@
   "consumers": ["foundation/kgcheck.py", "seed/worker/src/kgstep.js"],
   "systems": {
     "unlearn": { "state": "live", "vendor": "vendor/ultrastable/knowledge.js", "route": "/api/graph", "page": "/graph" },
-    "practical-solutions": { "state": "pending", "item": "Q-KG-practical-solutions", "reason": "own repository with its own core/kgraph blob graph and core/connect; moves onto the shared D1 engine by vendoring it" },
+    "practical-solutions": { "state": "live", "vendor": "vendor/seed/knowledge.js", "route": "/api/graph", "repo_change": "ultrastable/practical-solutions worker/src/kg.js" },
     "what-works": { "state": "pending", "item": "Q-KG-what-works", "reason": "tenant repository vendors the core files; mappers for its records are the next change" },
     "replication-ledger": { "state": "pending", "item": "Q-KG-replication-ledger", "reason": "tenant is still moving to its own repository; the graph lands with the move" }
   },
