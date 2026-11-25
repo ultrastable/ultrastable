@@ -93,9 +93,10 @@ export async function scopedToken(db, env, tenant, repo, { fetch: f = fetch, now
 // token for that repository is handed back only while the repository holds no commit, so the caller (tenant-repos.yml, through the site's OIDC
 // route) can push the tenant folder's history once; a repository with history gets no token from here.
 export const TENANT_REPO = /^ultrastable\/(?!app-)[a-z0-9][a-z0-9-]{1,60}$/;
+export const CORE_REPO = /^ultrastable\/(ultrastable|workers|spec|seed|license|ops|\.github)$/;
 export async function ensureTenantRepo(db, env, tenant, spec, { fetch: f = fetch, now = Date.now() } = {}) {
   const repo = String(spec.repo || ''), out = { repo };
-  if (!TENANT_REPO.test(repo) || /^ultrastable\/(ultrastable|workers|spec|seed|license|ops|\.github)$/.test(repo)) return { ...out, ok: false, error: 'not a tenant repository name' };
+  if (!TENANT_REPO.test(repo) || CORE_REPO.test(repo)) return { ...out, ok: false, error: 'not a tenant repository name' };
   const [org, name] = repo.split('/');
   const adm = await getToken(db, env, tenant, 'github-admin', { fetch: f, now });
   if (!adm.ok) return { ...out, ok: false, waiting_on: 'admin-app', error: 'administration app: ' + adm.error };
@@ -214,7 +215,9 @@ export async function handleAppHost(request, env, { tenant = 'default', fetch: f
     return J(r, r.ok ? 200 : r.waiting_on ? 409 : 400);
   }
   const repo = String(b.repo || '');
-  if (!APP_REPO.test(repo) || !same(b.key, await hostKey(env.INTERNAL_DEPLOY_KEY, repo))) return new Response('Not found', { status: 404 });
+  // SEED-HOST-1: a standing seed's Worker asks for its own repository the same way; the key its host bound at deploy names that one repository.
+  const seedOwn = TENANT_REPO.test(repo) && !CORE_REPO.test(repo);
+  if (!(APP_REPO.test(repo) || seedOwn) || !same(b.key, await hostKey(env.INTERNAL_DEPLOY_KEY, repo))) return new Response('Not found', { status: 404 });
   const t = await scopedToken(env.DB, env, tenant, repo, { fetch: f, now });
   await store.event(env.DB, tenant, 'github-app', t.ok ? 'app-token' : 'failed', t.ok ? repo : `app token ${repo}: ${t.error}`);
   return J(t.ok ? { ok: true, token: t.token, expires_at: new Date(t.expiresAt).toISOString() } : { ok: false, error: t.error }, t.ok ? 200 : 503);

@@ -527,7 +527,7 @@
     {
       "id": "curated-e11ba7a3fe",
       "surface": "seed/README.md",
-      "text": "A missing credential never stops the boot. The step is recorded as a backlog item with its blocker and a closing probe, and the rest of the",
+      "text": "A missing sign-in never stops the boot. The step is recorded as a backlog item with its blocker and a closing probe",
       "probe": [
         "grep:seed/bootstrap/bootstrap.py::def guard",
         "grep:seed/bootstrap/bootstrap.py::closing_probe",
@@ -1147,7 +1147,7 @@
         "grep:.github/workflows/checks.yml::rules --probe no-secrets",
         "grep:doctrine/rules.json::secret_patterns",
         "grep:products/gaplint/gaplint/rules.py::GL006",
-        "grep:seed/bootstrap/bootstrap.py::env:"
+        "grep:seed/bootstrap/bootstrap.py::GATE-RUNTIME"
       ],
       "bound_by": "curated"
     },
@@ -1279,9 +1279,9 @@
     {
       "id": "curated-17bb8cbfd7",
       "surface": "seed/docs/bootstrapping.md",
-      "text": "| detect | environment | which connector secrets are set (never their values), which tools exist | each missing secret becomes a gate card",
+      "text": "| detect | environment | which sign-ins the system holds (never their values), which tools exist | a system with nowhere to run gets one card with one link",
       "probe": [
-        "grep:seed/bootstrap/bootstrap.py::env:",
+        "grep:seed/bootstrap/bootstrap.py::GATE-RUNTIME",
         "grep:seed/bootstrap/bootstrap.py::connectors present",
         "grep:.github/workflows/checks.yml::rules --probe no-secrets"
       ],
@@ -2286,16 +2286,58 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-788da7db34",
+      "surface": "agents/AGENTS.md",
+      "text": "- **One repository standard, applied at creation and every day (REPO-STANDARD-1, Rowan 2026-11-25).** \"Even the repos aren't being created",
+      "probe": [
+        "file:github/repo-standard.json",
+        "file:github/org-settings.json",
+        "file:foundation/repostd.py",
+        "file:seed/worker/src/repostandard.js",
+        "file:deploy/record-deployments.mjs",
+        "file:scripts/branch_cleanup.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-f35cd86e2e",
+      "surface": "agents/AGENTS.md",
+      "text": "- **One map, one manifest, no hand-copied mirrors (FLEET-MAP-1, SYSTEM-MANIFEST-1, Rowan 2026-11-25).** \"What really needs to be in the",
+      "probe": [
+        "file:doctrine/fleet-map.json",
+        "file:ultrastable.json",
+        "file:seed/standards/system.schema.json",
+        "file:seed/scripts/surfaces.py",
+        "file:doctrine/tenant-repos.json",
+        "file:tests/foundation/test_fleetmap.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-ad4d8b2850",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Both start paths are user stories that run (CLONE-PATH-1, Rowan 2026-11-25).** \"For any new deployment, whether on Cloudflare as a",
+      "probe": [
+        "file:seed/.github/ISSUE_TEMPLATE/start.yml",
+        "file:seed/.github/workflows/bootstrap.yml",
+        "file:seed/bootstrap/intake.py",
+        "file:site/graduate.js",
+        "file:seed/tests/test_happy_path.py",
+        "file:site/launchpath.test.mjs"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-3fe93559ed",
       "surface": "agents/AGENTS.md",
       "text": "- **One standard for every tenant repository; one scaffold writes it, one check reads it (TENANT-STANDARD-1, Rowan 2026-11-25).** \"Even the",
       "probe": [
         "file:doctrine/tenant-standard.json",
+        "file:ultrastable.json",
         "file:foundation/livelinks.py",
         "file:doctrine/tenant-repos.json",
         "file:foundation/tenantstd.py",
-        "file:workers/tools/vendor_sync.mjs",
-        "file:tests/foundation/test_tenantstd.py"
+        "file:workers/tools/vendor_sync.mjs"
       ],
       "bound_by": "cited"
     },
@@ -2536,6 +2578,15 @@
         "file:tests/foundation/test_blindspots.py",
         "grep:.github/workflows/checks.yml::foundation[ .]blindspots\\b",
         "grep:.github/workflows/checks.yml::foundation[ .]blindspots\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-8b0eeccd00",
+      "surface": "agents/AGENTS.md",
+      "text": "- A share of capacity (`capacity.plus_share` in `ultrastable.json`, default 20%) goes to accepted pluses.",
+      "probe": [
+        "file:ultrastable.json"
       ],
       "bound_by": "cited"
     },
@@ -2790,6 +2841,15 @@
         "file:foundation/growth.py",
         "grep:.github/workflows/checks.yml::foundation[ .]growth\\b",
         "grep:.github/workflows/checks.yml::foundation[ .]growth\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-995af546b7",
+      "surface": "seed/docs/BOOTSTRAP-PROMPT.md",
+      "text": "1. Create every repo in `ultrastable.json` `org.repos`, never in archived state; check `isArchived` and `visibility` on each at boot and",
+      "probe": [
+        "file:ultrastable.json"
       ],
       "bound_by": "cited"
     },
@@ -3270,16 +3330,61 @@
       "of": "cited-d3be926b7b"
     },
     {
+      "id": "mirror-587916db07",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **One repository standard, applied at creation and every day (REPO-STANDARD-1, Rowan 2026-11-25).** \"Even the repos aren't being created",
+      "probe": [
+        "file:github/repo-standard.json",
+        "file:github/org-settings.json",
+        "file:foundation/repostd.py",
+        "file:seed/worker/src/repostandard.js",
+        "file:deploy/record-deployments.mjs",
+        "file:scripts/branch_cleanup.py"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-788da7db34"
+    },
+    {
+      "id": "mirror-fa789cdb47",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **One map, one manifest, no hand-copied mirrors (FLEET-MAP-1, SYSTEM-MANIFEST-1, Rowan 2026-11-25).** \"What really needs to be in the",
+      "probe": [
+        "file:doctrine/fleet-map.json",
+        "file:ultrastable.json",
+        "file:seed/standards/system.schema.json",
+        "file:seed/scripts/surfaces.py",
+        "file:doctrine/tenant-repos.json",
+        "file:tests/foundation/test_fleetmap.py"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-f35cd86e2e"
+    },
+    {
+      "id": "mirror-e16666aecc",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Both start paths are user stories that run (CLONE-PATH-1, Rowan 2026-11-25).** \"For any new deployment, whether on Cloudflare as a",
+      "probe": [
+        "file:seed/.github/ISSUE_TEMPLATE/start.yml",
+        "file:seed/.github/workflows/bootstrap.yml",
+        "file:seed/bootstrap/intake.py",
+        "file:site/graduate.js",
+        "file:seed/tests/test_happy_path.py",
+        "file:site/launchpath.test.mjs"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-ad4d8b2850"
+    },
+    {
       "id": "mirror-3321deb655",
       "surface": "seed/agents/AGENTS.md",
       "text": "- **One standard for every tenant repository; one scaffold writes it, one check reads it (TENANT-STANDARD-1, Rowan 2026-11-25).** \"Even the",
       "probe": [
         "file:doctrine/tenant-standard.json",
+        "file:ultrastable.json",
         "file:foundation/livelinks.py",
         "file:doctrine/tenant-repos.json",
         "file:foundation/tenantstd.py",
-        "file:workers/tools/vendor_sync.mjs",
-        "file:tests/foundation/test_tenantstd.py"
+        "file:workers/tools/vendor_sync.mjs"
       ],
       "bound_by": "mirror",
       "of": "cited-3fe93559ed"
@@ -4316,6 +4421,29 @@
       ],
       "bound_by": "mirror",
       "of": "cited-5d0567ad32"
+    },
+    {
+      "id": "mirror-1b7f585dd4",
+      "surface": "seed/tests/fixtures/IDEA.example.md",
+      "text": "owner_contact: set-in-secret-store   # never put an email or token in this file",
+      "probe": [
+        "grep:.github/workflows/checks.yml::rules --probe no-secrets",
+        "grep:doctrine/rules.json::secret_patterns",
+        "grep:products/gaplint/gaplint/rules.py::GL006"
+      ],
+      "bound_by": "mirror",
+      "of": "curated-35b69b3c85"
+    },
+    {
+      "id": "mirror-d6ad2a66d6",
+      "surface": "seed/tests/fixtures/IDEA.example.md",
+      "text": "- Controls and evidence are never more than a week out of date",
+      "probe": [
+        "grep:seed/bootstrap/bootstrap.py::qualify",
+        "grep:tests/test_vision.py::test_seed_idea_is_a_system"
+      ],
+      "bound_by": "mirror",
+      "of": "curated-990a6e17c4"
     }
   ],
   "generated": [

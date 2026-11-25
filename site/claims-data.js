@@ -427,7 +427,7 @@ export default {
    "surface": "seed/IDEA.md"
   },
   {
-   "claim": "A missing credential never stops the boot. The step is recorded as a backlog item with its blocker and a closing probe, and the rest of the",
+   "claim": "A missing sign-in never stops the boot. The step is recorded as a backlog item with its blocker and a closing probe",
    "detail": "",
    "how": "grep:seed/bootstrap/bootstrap.py::def guard + grep:seed/bootstrap/bootstrap.py::closing_probe + grep:seed/tests/test_seed.py::test_missing_idea_degrades_not_dies",
    "id": "curated-e11ba7a3fe",
@@ -924,7 +924,7 @@ export default {
   {
    "claim": "At the very start, while the owner is present, obtain the org-admin credential yourself, in this order, stopping at the first that works:",
    "detail": "",
-   "how": "grep:.github/workflows/checks.yml::rules --probe no-secrets + grep:doctrine/rules.json::secret_patterns + grep:products/gaplint/gaplint/rules.py::GL006 + grep:seed/bootstrap/bootstrap.py::env:",
+   "how": "grep:.github/workflows/checks.yml::rules --probe no-secrets + grep:doctrine/rules.json::secret_patterns + grep:products/gaplint/gaplint/rules.py::GL006 + grep:seed/bootstrap/bootstrap.py::GATE-RUNTIME",
    "id": "curated-ce0653a6ae",
    "kind": "claim",
    "pass": true,
@@ -1030,9 +1030,9 @@ export default {
    "surface": "seed/docs/bootstrapping.md"
   },
   {
-   "claim": "| detect | environment | which connector secrets are set (never their values), which tools exist | each missing secret becomes a gate card",
+   "claim": "| detect | environment | which sign-ins the system holds (never their values), which tools exist | a system with nowhere to run gets one card with one link",
    "detail": "",
-   "how": "grep:seed/bootstrap/bootstrap.py::env: + grep:seed/bootstrap/bootstrap.py::connectors present + grep:.github/workflows/checks.yml::rules --probe no-secrets",
+   "how": "grep:seed/bootstrap/bootstrap.py::GATE-RUNTIME + grep:seed/bootstrap/bootstrap.py::connectors present + grep:.github/workflows/checks.yml::rules --probe no-secrets",
    "id": "curated-17bb8cbfd7",
    "kind": "claim",
    "pass": true,
@@ -1840,9 +1840,36 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **One repository standard, applied at creation and every day (REPO-STANDARD-1, Rowan 2026-11-25).** \"Even the repos aren't being created",
+   "detail": "",
+   "how": "file:github/repo-standard.json + file:github/org-settings.json + file:foundation/repostd.py + file:seed/worker/src/repostandard.js + file:deploy/record-deployments.mjs + file:scripts/branch_cleanup.py",
+   "id": "cited-788da7db34",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **One map, one manifest, no hand-copied mirrors (FLEET-MAP-1, SYSTEM-MANIFEST-1, Rowan 2026-11-25).** \"What really needs to be in the",
+   "detail": "",
+   "how": "file:doctrine/fleet-map.json + file:ultrastable.json + file:seed/standards/system.schema.json + file:seed/scripts/surfaces.py + file:doctrine/tenant-repos.json + file:tests/foundation/test_fleetmap.py",
+   "id": "cited-f35cd86e2e",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Both start paths are user stories that run (CLONE-PATH-1, Rowan 2026-11-25).** \"For any new deployment, whether on Cloudflare as a",
+   "detail": "",
+   "how": "file:seed/.github/ISSUE_TEMPLATE/start.yml + file:seed/.github/workflows/bootstrap.yml + file:seed/bootstrap/intake.py + file:site/graduate.js + file:seed/tests/test_happy_path.py + file:site/launchpath.test.mjs",
+   "id": "cited-ad4d8b2850",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **One standard for every tenant repository; one scaffold writes it, one check reads it (TENANT-STANDARD-1, Rowan 2026-11-25).** \"Even the",
    "detail": "",
-   "how": "file:doctrine/tenant-standard.json + file:foundation/livelinks.py + file:doctrine/tenant-repos.json + file:foundation/tenantstd.py + file:workers/tools/vendor_sync.mjs + file:tests/foundation/test_tenantstd.py",
+   "how": "file:doctrine/tenant-standard.json + file:ultrastable.json + file:foundation/livelinks.py + file:doctrine/tenant-repos.json + file:foundation/tenantstd.py + file:workers/tools/vendor_sync.mjs",
    "id": "cited-3fe93559ed",
    "kind": "claim",
    "pass": true,
@@ -2015,6 +2042,15 @@ export default {
    "detail": "",
    "how": "file:doctrine/blindspots.json + file:foundation/blindspots.py + file:tests/foundation/test_blindspots.py + grep:.github/workflows/checks.yml::foundation[ .]blindspots\\b + grep:.github/workflows/checks.yml::foundation[ .]blindspots\\b",
    "id": "cited-181b9ac692",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- A share of capacity (`capacity.plus_share` in `ultrastable.json`, default 20%) goes to accepted pluses.",
+   "detail": "",
+   "how": "file:ultrastable.json",
+   "id": "cited-8b0eeccd00",
    "kind": "claim",
    "pass": true,
    "surface": "agents/AGENTS.md"
@@ -2225,6 +2261,15 @@ export default {
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/roles/product-manager.md"
+  },
+  {
+   "claim": "1. Create every repo in `ultrastable.json` `org.repos`, never in archived state; check `isArchived` and `visibility` on each at boot and",
+   "detail": "",
+   "how": "file:ultrastable.json",
+   "id": "cited-995af546b7",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/docs/BOOTSTRAP-PROMPT.md"
   },
   {
    "claim": "CLOSED-LOOP-AXIOM (owner, 2026-11-12): every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing",
@@ -2578,9 +2623,36 @@ export default {
    "surface": "seed/agents/AGENTS.md"
   },
   {
+   "claim": "- **One repository standard, applied at creation and every day (REPO-STANDARD-1, Rowan 2026-11-25).** \"Even the repos aren't being created",
+   "detail": "",
+   "how": "file:github/repo-standard.json + file:github/org-settings.json + file:foundation/repostd.py + file:seed/worker/src/repostandard.js + file:deploy/record-deployments.mjs + file:scripts/branch_cleanup.py",
+   "id": "mirror-587916db07",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **One map, one manifest, no hand-copied mirrors (FLEET-MAP-1, SYSTEM-MANIFEST-1, Rowan 2026-11-25).** \"What really needs to be in the",
+   "detail": "",
+   "how": "file:doctrine/fleet-map.json + file:ultrastable.json + file:seed/standards/system.schema.json + file:seed/scripts/surfaces.py + file:doctrine/tenant-repos.json + file:tests/foundation/test_fleetmap.py",
+   "id": "mirror-fa789cdb47",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Both start paths are user stories that run (CLONE-PATH-1, Rowan 2026-11-25).** \"For any new deployment, whether on Cloudflare as a",
+   "detail": "",
+   "how": "file:seed/.github/ISSUE_TEMPLATE/start.yml + file:seed/.github/workflows/bootstrap.yml + file:seed/bootstrap/intake.py + file:site/graduate.js + file:seed/tests/test_happy_path.py + file:site/launchpath.test.mjs",
+   "id": "mirror-e16666aecc",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
    "claim": "- **One standard for every tenant repository; one scaffold writes it, one check reads it (TENANT-STANDARD-1, Rowan 2026-11-25).** \"Even the",
    "detail": "",
-   "how": "file:doctrine/tenant-standard.json + file:foundation/livelinks.py + file:doctrine/tenant-repos.json + file:foundation/tenantstd.py + file:workers/tools/vendor_sync.mjs + file:tests/foundation/test_tenantstd.py",
+   "how": "file:doctrine/tenant-standard.json + file:ultrastable.json + file:foundation/livelinks.py + file:doctrine/tenant-repos.json + file:foundation/tenantstd.py + file:workers/tools/vendor_sync.mjs",
    "id": "mirror-3321deb655",
    "kind": "claim",
    "pass": true,
@@ -3343,7 +3415,25 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 64 Python and 544 Worker tests",
+   "claim": "owner_contact: set-in-secret-store   # never put an email or token in this file",
+   "detail": "",
+   "how": "grep:.github/workflows/checks.yml::rules --probe no-secrets + grep:doctrine/rules.json::secret_patterns + grep:products/gaplint/gaplint/rules.py::GL006",
+   "id": "mirror-1b7f585dd4",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/tests/fixtures/IDEA.example.md"
+  },
+  {
+   "claim": "- Controls and evidence are never more than a week out of date",
+   "detail": "",
+   "how": "grep:seed/bootstrap/bootstrap.py::qualify + grep:tests/test_vision.py::test_seed_idea_is_a_system",
+   "id": "mirror-d6ad2a66d6",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/tests/fixtures/IDEA.example.md"
+  },
+  {
+   "claim": "seed-tests: 86 Python and 558 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3352,7 +3442,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 544 Worker tests",
+   "claim": "seed-worker-tests: 558 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3593,7 +3683,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 396,
-  "total": 396
+  "pass": 406,
+  "total": 406
  }
 };

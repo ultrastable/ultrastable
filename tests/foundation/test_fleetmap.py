@@ -19,7 +19,7 @@ class World(unittest.TestCase):
     """A small platform checkout with a seed/ folder, the registries --check reads, and clones of two copies beside it."""
 
     def setUp(self):
-        self.tmp = Path(tempfile.mkdtemp())
+        self.tmp = Path(tempfile.mkdtemp()); self.addCleanup(shutil.rmtree, self.tmp, True)
         self.addCleanup(shutil.rmtree, self.tmp, ignore_errors=True)
         self.core, self.clones = self.tmp / "ultrastable", self.tmp
         for rel, text in {"seed/worker/a.js": "one\n", "seed/agents/AGENTS.md": "rules\n", "seed/.github/workflows/platform-sync.yml": "name: p\n",
@@ -208,7 +208,7 @@ class KernelSyncWithoutALock(unittest.TestCase):
     """A system filled by a plain copy of seed/ has no lock; the sync must still replace kernel files it never edited (second-tenant, 2026-11-25)."""
 
     def test_an_older_core_version_is_not_a_local_edit(self):
-        tmp = Path(tempfile.mkdtemp())
+        tmp = Path(tempfile.mkdtemp()); self.addCleanup(shutil.rmtree, tmp, True)
         self.addCleanup(shutil.rmtree, tmp, ignore_errors=True)
         core, inst = tmp / "core", tmp / "inst"
         for rel, text in {"seed/agents/AGENTS.md": "v1\n", "seed/worker/x.js": "v1\n"}.items():
@@ -251,7 +251,7 @@ class Identity(unittest.TestCase):
         self.assertEqual(fm.place_example(once.replace("running at", "was at"), b), once)
 
     def test_the_kernel_sync_never_touches_identity_files(self):
-        tmp = Path(tempfile.mkdtemp())
+        tmp = Path(tempfile.mkdtemp()); self.addCleanup(shutil.rmtree, tmp, True)
         self.addCleanup(shutil.rmtree, tmp, ignore_errors=True)
         inst = tmp / "inst"
         shutil.copytree(REPO / "seed", inst, ignore=shutil.ignore_patterns("__pycache__", "node_modules"))

@@ -706,6 +706,7 @@ async function siteRoutes(u, env, ctx, request, own) {
   const id = m[1]; let st = await env.ASSETS.get("state:" + id); const page = (t, b) => new Response(shell({ path: u.pathname, title: t + " - Ultrastable", description: t }, b), { headers: HTML });
   if (!st) return new Response(start("That site was not found."), { status: 404, headers: HTML });
   if (st === "building" && Date.now() - Number(await env.ASSETS.get("since:" + id) || 0) > 150000) { st = "failed"; await env.ASSETS.put("state:" + id, "failed"); }
+  if (st === "failed" && await GRAD.requeueBuild(env, id)) st = "building";  // LAUNCH-PATH-1: a failed build is queued again from the kept idea (graduate.js requeueBuild)
   if (st === "ready" && (!m[2] || m[2] === "/review")) await ensureAudit(env, ctx, id);
   if (m[2] === "/own" || m[2] === "/launch") {  // LAUNCH-PATH-1: where the app is, what was asked for, and taking it over; /launch is the same record as JSON with no idea text
     const rec = (await GRAD.getLaunch(env, id)) || await GRAD.enqueue(env, id, ((await jget(env, "brief:" + id)) || {}).brief || "");  // an app made before this path existed joins it on first visit
@@ -744,7 +745,7 @@ async function siteRoutes(u, env, ctx, request, own) {
     let cur = st;
     if (cur === "building") cur = await resume(env, id);
     if (cur === "ready") return Response.redirect("https://" + CANON + "/s/" + id, 302);
-    const msg = cur === "failed" ? "<p>That did not work this time. <a href=\"/start\">Try again</a>.</p>" : "<p>Building your site. This takes about half a minute. This page updates by itself.</p><meta http-equiv=\"refresh\" content=\"4\">";
+    const msg = cur === "failed" ? "<p>Building it did not work this time. Your idea is saved and we try again by ourselves in a few minutes. This page updates when it is ready; you do not need to do anything.</p><meta http-equiv=\"refresh\" content=\"120\">" : "<p>Building your site. This takes about half a minute. This page updates by itself.</p><meta http-equiv=\"refresh\" content=\"4\">";
     return page("Building", "<div class=\"head\"><h1>" + (cur === "failed" ? "Something went wrong" : "Building...") + "</h1></div>" + msg);
   }
   if (st === "asking") return Response.redirect("https://" + CANON + "/s/" + id + "/ask", 302);

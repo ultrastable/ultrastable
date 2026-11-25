@@ -222,11 +222,13 @@ class Minutes(unittest.TestCase):
         self.assertEqual(minutes.estimate([{"minutes_per_run": 3, "runs_per_month": 100}])["state"], "ok")
         self.assertEqual(minutes.estimate([{"minutes_per_run": 10, "runs_per_month": 200}])["state"], "pause")
 
-    def test_lint_flags_daily_cron_and_matrix(self):
+    def test_lint_flags_a_cron_faster_than_daily_and_matrix(self):
         with tempfile.TemporaryDirectory() as d:
-            (Path(d) / "a.yml").write_text("# budget: x\n# trigger: x\n# free-alternative: x\non:\n  schedule:\n    - cron: '5 6 * * *'\nconcurrency: {group: a}\njobs:\n  j:\n    runs-on: x\n    timeout-minutes: 1\n    strategy: {matrix: {a: [1]}}\n")
+            (Path(d) / "a.yml").write_text("# budget: x\n# trigger: x\n# free-alternative: x\non:\n  schedule:\n    - cron: '5 */6 * * *'\nconcurrency: {group: a}\njobs:\n  j:\n    runs-on: x\n    timeout-minutes: 1\n    strategy: {matrix: {a: [1]}}\n")
             got = minutes.check_dir(d)
-            self.assertTrue(any("more often than weekly" in g for g in got) and any("matrix" in g for g in got))
+            self.assertTrue(any("more often than daily" in g for g in got) and any("matrix" in g for g in got))
+            (Path(d) / "a.yml").write_text((Path(d) / "a.yml").read_text().replace("5 */6 * * *", "5 6 * * *"))
+            self.assertFalse(any("more often than daily" in g for g in minutes.check_dir(d)), "a daily clock is allowed")
 
 
 class EndToEnd(unittest.TestCase):

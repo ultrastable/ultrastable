@@ -10,7 +10,7 @@
   "funding": {"routes": [], "individual_eligible_only": true},
   "social": {"channels": [], "mode": "dry-run"},
   "runtime": {"provider": "cloudflare"},
-  "repos": {"org": "ultrastable", "names": ["ultrastable"], "canonical": "ultrastable/ultrastable"},
+  "repos": {"org": "ultrastable", "names": ["second-tenant"], "canonical": "ultrastable/second-tenant"},
   "disclosure": {"public_allowed": true, "gate": "none", "safe_now_only": false},
   "ip": {"has_invention": false, "priority_filed": false, "has_practitioner": false},
   "budget": {"usd_per_month": 5, "actions_minutes_monthly": 100},

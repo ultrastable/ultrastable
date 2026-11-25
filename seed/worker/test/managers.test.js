@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
 // MANAGERS-1: the register hires every switched-on manager; an off manager is kept and not dispatched; a core manager cannot be switched off.
 import test from 'node:test';
 import assert from 'node:assert/strict';
