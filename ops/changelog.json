@@ -9,8 +9,8 @@
   "external": "a signal from outside (scout finding, funder reply, competitor change)"
  },
  "counts_by_origin": {
-  "owner": 26,
-  "agent": 8
+  "owner": 29,
+  "agent": 17
  },
  "entries": [
   {
@@ -28,6 +28,204 @@
     "foundation",
     "ops",
     "tests"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-23eb90d7f036",
+   "at": "2026-11-25T17:51:35Z",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "FULLSTACK-1: a public page and its own repository for every seed (#2184)",
+   "affected": [
+    ".github",
+    "agents",
+    "docs",
+    "doctrine",
+    "foundation",
+    "seed"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-2b7e35583635",
+   "at": "2026-11-25T17:49:50Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "Replication Ledger: read replications from Europe PMC when OpenAlex refuses (#2201)",
+   "affected": [
+    "doctrine",
+    "instances"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-bc71cc2d84f1",
+   "at": "2026-11-25T17:35:57Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "Create tenant repositories with the platform's own administration app; read Practical Solutions' real back end (TENANT-REPO-2) (#2179)",
+   "affected": [
+    ".github",
+    "deploy",
+    "doctrine",
+    "seed",
+    "site"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-3433f1a3b69b",
+   "at": "2026-11-25T17:32:12Z",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "Sandbox every deployment as a tenant with its own repo (#2116)",
+   "affected": [
+    "agents",
+    "doctrine",
+    "foundation",
+    "instances",
+    "seed",
+    "tests"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-62e68ab175be",
+   "at": "2026-11-25T17:31:54Z",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "Close lane items when their PR closes; site search, llms-full, Server-Timing, Early Hints (#2189)",
+   "affected": [
+    "docs",
+    "doctrine",
+    "foundation",
+    "ops",
+    "site",
+    "tests"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-08eeb3db709c",
+   "at": "2026-11-25T17:31:24Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "commit",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "ZERO-MINUTES-1: worker merged #2191",
+   "affected": [
+    "ops"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-eb08efc349a4",
+   "at": "2026-11-25T17:31:20Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "Replication Ledger: name the knowledge graph on the front end (/graph) (#2191)",
+   "affected": [
+    "doctrine",
+    "instances"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-5d259c3606d7",
+   "at": "2026-11-25T17:31:15Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "commit",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "ZERO-MINUTES-1: worker merged #2193",
+   "affected": [
+    "ops"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-600573b8acec",
+   "at": "2026-11-25T17:31:12Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "Seed graph step never SELECTs secret-shaped or platform tables (DATAGRAPH-1) (#2193)",
+   "affected": [
+    "doctrine",
+    "seed"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-4dd1d9c53731",
+   "at": "2026-11-25T17:29:42Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "KGRAPH-AI-1: Workers AI layer on the knowledge graph (#2183)",
+   "affected": [
+    "docs",
+    "doctrine",
+    "foundation",
+    "research",
+    "seed"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-aa25a4f5a737",
+   "at": "2026-11-25T17:29:25Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "Product manager pass: 0 growth and repair item(s) filed (#2192)",
+   "affected": [
+    "docs",
+    "doctrine",
+    "ops"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-5dc67595200a",
+   "at": "2026-11-25T17:29:11Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "Knowledge graph skips underscore bookkeeping tables (DATAGRAPH-1) (#2190)",
+   "affected": [
+    "doctrine",
+    "seed",
+    "workers"
    ],
    "effect": "kept"
   },
