@@ -45,7 +45,9 @@
    "catalog-info.yaml",
    ".ultrastable/",
    "SYSTEM.md",
-   "schemas/"
+   "schemas/",
+   ".devcontainer/",
+   ".editorconfig"
   ],
   "keep": [
    "NOTICE",

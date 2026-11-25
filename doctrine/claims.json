@@ -530,7 +530,7 @@
     {
       "id": "curated-e11ba7a3fe",
       "surface": "seed/README.md",
-      "text": "A missing sign-in never stops the boot. The step is recorded as a backlog item with its blocker and a closing probe",
+      "text": "A missing credential never stops the boot. The step is recorded as a backlog item with its blocker and a closing probe",
       "probe": [
         "grep:seed/bootstrap/bootstrap.py::def guard",
         "grep:seed/bootstrap/bootstrap.py::closing_probe",
@@ -4870,9 +4870,19 @@
       "surface": "seed/doctrine/CONSTITUTION.md",
       "header": "scripts/constitution.py --render",
       "generator": "seed/scripts/constitution.py",
-      "source": ["seed/doctrine/constitution.json"],
-      "check": ["python3", "-m", "foundation", "constitution", "--check"],
-      "probe": ["file:tests/foundation/test_constitution.py"]
+      "source": [
+        "seed/doctrine/constitution.json"
+      ],
+      "check": [
+        "python3",
+        "-m",
+        "foundation",
+        "constitution",
+        "--check"
+      ],
+      "probe": [
+        "file:tests/foundation/test_constitution.py"
+      ]
     },
     {
       "id": "claims-data",

@@ -2301,7 +2301,16 @@
           "published": null,
           "accessed": "2026-11-25"
         }
-      ]
+      ],
+      "decision": "adopt-now",
+      "adoption": "adopted",
+      "conformance": "Nothing further: it is in force in the files named under how.",
+      "cost": "none",
+      "probes": [
+        "file:.editorconfig",
+        "file:seed/.editorconfig"
+      ],
+      "audited": "2026-11-25"
     },
     {
       "id": "spdx-sbom",
@@ -2334,7 +2343,16 @@
           "published": null,
           "accessed": "2026-11-25"
         }
-      ]
+      ],
+      "decision": "adopt-now",
+      "adoption": "adopted",
+      "conformance": "Nothing further: it is in force in the files named under how.",
+      "cost": "none",
+      "probes": [
+        "file:.github/workflows/supply-chain.yml",
+        "file:foundation/supplychain.py"
+      ],
+      "audited": "2026-11-25"
     },
     {
       "id": "json-feed",
@@ -2361,7 +2379,16 @@
           "published": null,
           "accessed": "2026-11-25"
         }
-      ]
+      ],
+      "decision": "adopt-now",
+      "adoption": "adopted",
+      "conformance": "Nothing further: it is in force in the files named under how.",
+      "cost": "none",
+      "probes": [
+        "file:workers/core/feed/index.js",
+        "file:workers/core/stickiness/index.js"
+      ],
+      "audited": "2026-11-25"
     },
     {
       "id": "schema-org-kg",
@@ -2371,7 +2398,7 @@
       "tracked": "JSON-LD 1.1",
       "why": "Every system's /api/graph readable by any linked-data tool, not only by our own pages.",
       "support": "planned",
-      "tracked_by": "STD-7: executor item in docs/issues/STD-7.json",
+      "tracked_by": "STD-7",
       "acl": "seed/worker/src/datagraph.js",
       "sources": [
         {
@@ -2380,7 +2407,19 @@
           "published": "2020-07-16",
           "accessed": "2026-11-25"
         }
-      ]
+      ],
+      "decision": "adopt-later",
+      "adoption": "homegrown",
+      "conformance": "/api/graph is also served as schema.org JSON-LD, so any linked-data tool reads it (STD-7).",
+      "cost": "M",
+      "probes": [
+        "file:seed/worker/src/datagraph.js"
+      ],
+      "homegrown": [
+        "seed/worker/src/datagraph.js",
+        "seed/worker/src/knowledge.js"
+      ],
+      "audited": "2026-11-25"
     },
     {
       "id": "reusable-workflows",
@@ -2390,7 +2429,7 @@
       "tracked": "workflow_call",
       "why": "Tenants call the platform's checks, deploy and supply-chain workflows instead of carrying copies that drift.",
       "support": "planned",
-      "tracked_by": "STD-9: executor item in docs/issues/STD-9.json",
+      "tracked_by": "STD-9",
       "acl": "seed/.github/workflows/bootstrap.yml",
       "sources": [
         {
@@ -2399,7 +2438,19 @@
           "published": null,
           "accessed": "2026-11-25"
         }
-      ]
+      ],
+      "decision": "adopt-later",
+      "adoption": "homegrown",
+      "conformance": "Tenants call the platform's workflows with `uses:` instead of carrying scaffolded copies (STD-9).",
+      "cost": "M",
+      "probes": [
+        "file:foundation/tenantstd.py"
+      ],
+      "homegrown": [
+        "scaffold/tenant",
+        "workers/tools/vendor_sync.mjs"
+      ],
+      "audited": "2026-11-25"
     }
   ],
   "undecided_ceiling": 28

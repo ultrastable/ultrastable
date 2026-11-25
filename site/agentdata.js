@@ -328,8 +328,8 @@ export default {
     "name": "Conventional Commits and SemVer",
     "body": "conventionalcommits.org; semver.org",
     "status": "stable",
-    "support": "not_applicable",
-    "tracked_by": null
+    "support": "partial",
+    "tracked_by": "Q-STD-conventional-commits"
    },
    {
     "id": "opa-rego",
@@ -356,26 +356,154 @@ export default {
     "tracked_by": "Q-STD-SLSA"
    },
    {
-    "id": "editorconfig",
-    "name": "EditorConfig",
-    "body": "editorconfig.org",
-    "status": "de-facto",
+    "id": "cloudevents",
+    "name": "CloudEvents 1.0 for events between loops",
+    "body": "Cloud Native Computing Foundation",
+    "status": "stable",
+    "support": "partial",
+    "tracked_by": "Q-STD-cloudevents"
+   },
+   {
+    "id": "rfc9457-problem",
+    "name": "Problem Details for HTTP APIs (RFC 9457)",
+    "body": "IETF",
+    "status": "stable",
+    "support": "partial",
+    "tracked_by": "Q-STD-rfc9457-problem"
+   },
+   {
+    "id": "schema-org-jsonld",
+    "name": "schema.org as JSON-LD",
+    "body": "schema.org community (W3C community group)",
+    "status": "stable",
+    "support": "partial",
+    "tracked_by": null
+   },
+   {
+    "id": "publiccode-yml",
+    "name": "publiccode.yml",
+    "body": "publiccode.yml working group (Team Digitale, Italy; Foundation for Public Code)",
+    "status": "stable",
+    "support": "partial",
+    "tracked_by": null
+   },
+   {
+    "id": "citation-cff",
+    "name": "Citation File Format (CITATION.cff)",
+    "body": "Citation File Format project",
+    "status": "stable",
     "support": "supported",
     "tracked_by": null
    },
    {
     "id": "dependabot",
-    "name": "Dependabot version updates",
+    "name": "Automated dependency updates (Dependabot)",
     "body": "GitHub",
+    "status": "stable",
+    "support": "partial",
+    "tracked_by": "Q-STD-dependabot"
+   },
+   {
+    "id": "oidc",
+    "name": "OpenID Connect (workload identity for deploys)",
+    "body": "OpenID Foundation",
     "status": "stable",
     "support": "supported",
     "tracked_by": null
    },
    {
+    "id": "spdx-reuse",
+    "name": "SPDX licence identifiers and REUSE",
+    "body": "Linux Foundation (SPDX); FSFE (REUSE)",
+    "status": "stable",
+    "support": "partial",
+    "tracked_by": null
+   },
+   {
+    "id": "security-txt",
+    "name": "security.txt (RFC 9116)",
+    "body": "IETF",
+    "status": "stable",
+    "support": "partial",
+    "tracked_by": null
+   },
+   {
+    "id": "feeds",
+    "name": "JSON Feed 1.1 and Atom (RFC 4287)",
+    "body": "jsonfeed.org; IETF",
+    "status": "stable",
+    "support": "supported",
+    "tracked_by": null
+   },
+   {
+    "id": "robots-sitemaps",
+    "name": "Robots Exclusion Protocol (RFC 9309) and Sitemaps",
+    "body": "IETF; sitemaps.org",
+    "status": "stable",
+    "support": "supported",
+    "tracked_by": null
+   },
+   {
+    "id": "wcag",
+    "name": "Web Content Accessibility Guidelines 2.2, level AA",
+    "body": "W3C",
+    "status": "stable",
+    "support": "partial",
+    "tracked_by": null
+   },
+   {
+    "id": "w3c-prov",
+    "name": "W3C PROV (PROV-O as JSON-LD)",
+    "body": "W3C",
+    "status": "stable",
+    "support": "planned",
+    "tracked_by": "Q-STD-w3c-prov"
+   },
+   {
     "id": "openssf-scorecard",
     "name": "OpenSSF Scorecard",
-    "body": "OpenSSF (Linux Foundation)",
+    "body": "Open Source Security Foundation",
     "status": "stable",
+    "support": "planned",
+    "tracked_by": "Q-STD-openssf-scorecard"
+   },
+   {
+    "id": "asyncapi",
+    "name": "AsyncAPI 3.0",
+    "body": "AsyncAPI Initiative (Linux Foundation)",
+    "status": "stable",
+    "support": "not_applicable",
+    "tracked_by": null
+   },
+   {
+    "id": "opentelemetry",
+    "name": "OpenTelemetry metrics, logs and traces (OTLP export)",
+    "body": "OpenTelemetry (CNCF)",
+    "status": "stable",
+    "support": "not_applicable",
+    "tracked_by": null
+   },
+   {
+    "id": "openslo",
+    "name": "OpenSLO",
+    "body": "OpenSLO project",
+    "status": "stable",
+    "support": "not_applicable",
+    "tracked_by": null
+   },
+   {
+    "id": "terraform-opentofu",
+    "name": "Terraform / OpenTofu (infrastructure as code)",
+    "body": "OpenTofu (Linux Foundation); HashiCorp",
+    "status": "stable",
+    "support": "not_applicable",
+    "tracked_by": null
+   },
+   {
+    "id": "editorconfig",
+    "name": "EditorConfig",
+    "body": "editorconfig.org",
+    "status": "de-facto",
     "support": "supported",
     "tracked_by": null
    },
@@ -396,36 +524,12 @@ export default {
     "tracked_by": null
    },
    {
-    "id": "schema-org-jsonld",
-    "name": "schema.org vocabulary in JSON-LD",
-    "body": "schema.org (W3C community group)",
-    "status": "stable",
-    "support": "partial",
-    "tracked_by": null
-   },
-   {
-    "id": "citation-cff",
-    "name": "Citation File Format",
-    "body": "Citation File Format project",
-    "status": "stable",
-    "support": "supported",
-    "tracked_by": null
-   },
-   {
     "id": "schema-org-kg",
     "name": "Knowledge graph served as JSON-LD (schema.org)",
     "body": "W3C / schema.org",
     "status": "stable",
     "support": "planned",
-    "tracked_by": "STD-7: executor item in docs/issues/STD-7.json"
-   },
-   {
-    "id": "openslo",
-    "name": "OpenSLO definitions for loop clocks",
-    "body": "OpenSLO project",
-    "status": "stable",
-    "support": "planned",
-    "tracked_by": "STD-8: executor item in docs/issues/STD-8.json"
+    "tracked_by": "STD-7"
    },
    {
     "id": "reusable-workflows",
@@ -433,7 +537,7 @@ export default {
     "body": "GitHub",
     "status": "stable",
     "support": "planned",
-    "tracked_by": "STD-9: executor item in docs/issues/STD-9.json"
+    "tracked_by": "STD-9"
    }
   ]
  },

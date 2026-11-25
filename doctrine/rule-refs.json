@@ -166,6 +166,10 @@
       "repo": "what-works",
       "path": "worker/linked.js",
       "reason": "What Works' linked-data module lives in its own repository (STANDARDS-1 names it as the example of schema.org, DCAT and PROV-O in a tenant)."
+    },
+    {
+      "ref": "ops/supply-chain.json",
+      "reason": "Written by the supply-chain workflow on its first run (foundation/supplychain.py); it is an output that does not exist until that run lands it."
     }
   ],
   "undescribed": {

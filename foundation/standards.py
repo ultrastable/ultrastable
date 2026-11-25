@@ -85,7 +85,7 @@ def audit(root, reg) -> list[str]:
             bad.append(f"{i}: adopt-now means adopted or partial, with support supported or partial")
         if dec == "adopt-later":
             item = e.get("tracked_by", "")
-            if not re.fullmatch(r"Q-[A-Za-z0-9-]+", item) or not (root / "docs/issues" / (item + ".json")).is_file():
+            if not re.fullmatch(r"(Q|STD)-[A-Za-z0-9-]+", item) or not (root / "docs/issues" / (item + ".json")).is_file():
                 bad.append(f"{i}: adopt-later needs `tracked_by` naming a filed item in docs/issues/")
         if dec == "decline" and not (e.get("reason") and e.get("revisit") and e["support"] == "not_applicable"):
             bad.append(f"{i}: a declined row needs a reason, a `revisit` condition and support not_applicable")
