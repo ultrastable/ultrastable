@@ -541,6 +541,19 @@
       "reason": "internal feed read by the site worker over a service binding and drained by the social module, not a capability for callers"
     },
     {
+      "id": "kgraph",
+      "path": "/api/kgraph",
+      "methods": [
+        "GET"
+      ],
+      "kind": "rest",
+      "audience": "public",
+      "standards": [],
+      "discoverable": false,
+      "description": "The judged knowledge graph of every system (kg/1 shape, provenance, upkeep age), its top insights and its daily series (KGRAPH-1).",
+      "reason": "internal feed read by the tick and the site worker over a service binding; each system serves its own graph publicly at its /graph.json"
+    },
+    {
       "id": "decisions",
       "path": "/api/decisions",
       "methods": [
