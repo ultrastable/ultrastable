@@ -278,7 +278,7 @@ def drift_one(root, repo: str, row: dict, clones=None, fetch=None, template_keep
             src = local_tree(root / s["source"])
             keep = list(s.get("keep") or []) + (list(template_keep) if s.get("keep_from") else [])
             skip = list(s.get("not_synced") or []) if kind == "kernel" else []
-            owned = [STAMP, "ultrastable.json", "publiccode.yml", "CITATION.cff", ".ultrastable/github.json", "IDEA.md", "README.md", "instance.json", "docs/PROJECT-MEMORY.md", "ultrastable.lock.json", ".ultrastable/", "ops/", "org/", "domain/"] if kind == "kernel" else []
+            owned = [STAMP, "ultrastable.json", "publiccode.yml", "catalog-info.yaml", "CITATION.cff", ".ultrastable/github.json", "IDEA.md", "README.md", "instance.json", "docs/PROJECT-MEMORY.md", "ultrastable.lock.json", ".ultrastable/", "ops/", "org/", "domain/"] if kind == "kernel" else []
             for p, sha in src.items():
                 if _under(p, skip) or _under(p, owned):
                     continue

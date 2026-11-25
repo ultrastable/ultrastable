@@ -49,7 +49,7 @@ class Schema(unittest.TestCase):
 class Render(unittest.TestCase):
     def test_render_writes_every_surface_and_twice_changes_nothing(self):
         d = world()
-        self.assertEqual(sorted(S.render(d)), sorted(["README.md", "publiccode.yml", "CITATION.cff", S.GITHUB_PLAN]))
+        self.assertEqual(sorted(S.render(d)), sorted(["README.md", "publiccode.yml", "catalog-info.yaml", "CITATION.cff", S.GITHUB_PLAN]))
         self.assertEqual(S.render(d), [])
         self.assertEqual(S.check(d), [])
         r = (d / "README.md").read_text()
@@ -68,10 +68,29 @@ class Render(unittest.TestCase):
         S.render(d)
         (d / "ultrastable.json").write_text(json.dumps({"identity": {**IDENT, "public_url": "https://moved.example"}}))
         drift = S.check(d)
-        self.assertEqual(len(drift), 4)  # one moved address is drift on every surface
+        self.assertEqual(len(drift), 5)  # one moved address is drift on every surface (README, publiccode, catalog-info, CITATION, the GitHub plan)
         S.render(d)
         self.assertEqual(S.check(d), [])
         self.assertIn("https://moved.example", (d / "publiccode.yml").read_text())
+
+    def test_catalog_info_is_a_backstage_component_built_from_the_manifest(self):
+        """STANDARDS-FIRST-1: catalog-info.yaml (Backstage descriptor format) is rendered, never typed; a changed manifest is drift until rendered."""
+        d = world()
+        S.render(d)
+        c = (d / "catalog-info.yaml").read_text()
+        for want in ("apiVersion: backstage.io/v1alpha1\nkind: Component\n", "  name: river-watch\n", '  title: "River Watch"\n', "    github.com/project-slug: acme/river-watch\n",
+                     '    - url: "https://river.example"\n      title: "Live"', '    - url: "https://river.example/health"', "  lifecycle: production\n", '  owner: "group:default/acme"\n', "  system: ultrastable\n"):
+            self.assertIn(want, c)
+        self.assertRegex(c, r"spec:\n  type: (website|service)\n")
+        self.assertNotIn("kind: System", c)
+        keys = [l.split(":")[0] for l in c.splitlines() if l and not l.startswith((" ", "#", "-"))]
+        self.assertEqual(keys, ["apiVersion", "kind", "metadata", "spec"])
+        plat = S.catalog({**IDENT, "layer": "platform", "slug": "ultrastable", "repo": "ultrastable/ultrastable"}, "live")
+        self.assertIn("---\napiVersion: backstage.io/v1alpha1\nkind: System\nmetadata:\n  name: ultrastable\n", plat)
+        self.assertIn("lifecycle: experimental", S.catalog({**IDENT, "status": "planned"}, "planned"))
+        m = json.loads((d / "ultrastable.json").read_text()); m["identity"]["summary"] = "A different summary, long enough for the schema to accept it."
+        (d / "ultrastable.json").write_text(json.dumps(m))
+        self.assertTrue(any(e.startswith("catalog-info.yaml: differs") for e in S.check(d)))
 
     def test_publiccode_citation_and_plans_carry_the_manifest(self):
         d = world()

@@ -64,7 +64,7 @@
      "type": "object",
      "additionalProperties": {
       "type": "string",
-      "pattern": "^vendor/(ultrastable|seed)/"
+      "pattern": "(^|/)vendor/"
      }
     },
     "sandbox": {

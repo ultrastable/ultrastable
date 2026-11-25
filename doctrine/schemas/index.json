@@ -17,7 +17,7 @@
   "seed/standards/*.schema.json": "a schema, checked by the schema lint",
   "seed/standards/cloudevents-vectors.json": "test vectors read by the two CloudEvents conformance tests"
  },
- "repo_manifest_schema": "seed/standards/org-config.schema.json",
+ "repo_manifest_schema": "seed/standards/system.schema.json",
  "map": [
   {
    "schema": "doctrine/schemas/tenant-repos.schema.json",
@@ -120,9 +120,16 @@
    "files": [
     "seed/standards/surfaces.json"
    ]
+  },
+  {
+   "schema": "seed/standards/system.schema.json",
+   "files": [
+    "ultrastable.json",
+    "seed/ultrastable.json"
+   ]
   }
  ],
- "baseline_ceiling": 139,
+ "baseline_ceiling": 142,
  "baseline": [
   "doctrine/agent-budget.json",
   "doctrine/agent-standards.json",
@@ -158,6 +165,7 @@
   "doctrine/doc-consumers.json",
   "doctrine/driftguard.json",
   "doctrine/durable-facts.json",
+  "doctrine/fleet-map.json",
   "doctrine/fleet.json",
   "doctrine/flows-external.json",
   "doctrine/flows.json",
@@ -175,6 +183,7 @@
   "doctrine/lessons.json",
   "doctrine/lineage.json",
   "doctrine/loop-ownership.json",
+  "doctrine/managers.json",
   "doctrine/market-evidence.json",
   "doctrine/market.json",
   "doctrine/meta-loop.json",
@@ -258,6 +267,7 @@
   "seed/autonomy/goals.json",
   "seed/autonomy/improve.json",
   "seed/autonomy/kit.json",
+  "seed/autonomy/managers.json",
   "seed/autonomy/pace.json",
   "seed/autonomy/policy.json",
   "seed/autonomy/retention.json",

@@ -8,7 +8,7 @@ config and manifest. Ultrastable is the foundation for any autonomous system.
 
 The map of file to schema, the scope and the baseline are data: doctrine/schemas/index.json. The validator below is the standard's own
 keyword vocabulary on the standard library (no dependency): type, required, properties, patternProperties, additionalProperties, items,
-minItems, uniqueItems, enum, const, pattern, minLength, maxLength, minimum, maximum, oneOf, anyOf, allOf, not, $ref inside the file.
+minItems, maxItems, uniqueItems, enum, const, pattern, minLength, maxLength, minimum, maximum, oneOf, anyOf, allOf, not, $ref inside the file.
 A keyword outside that list in a schema is an error, never ignored, so a schema cannot claim a check nothing runs.
 Tests: tests/foundation/test_schemas.py."""
 from __future__ import annotations
@@ -19,7 +19,7 @@ REPO = Path(__file__).resolve().parents[1]
 INDEX = "doctrine/schemas/index.json"
 DIALECT = "https://json-schema.org/draft/2020-12/schema"
 ANNOTATIONS = {"$schema", "$id", "$defs", "$comment", "title", "description", "default", "examples", "deprecated"}
-KEYWORDS = {"type", "required", "properties", "patternProperties", "additionalProperties", "items", "minItems", "uniqueItems", "enum", "const",
+KEYWORDS = {"type", "required", "properties", "patternProperties", "additionalProperties", "items", "minItems", "maxItems", "uniqueItems", "enum", "const",
             "pattern", "minLength", "maxLength", "minimum", "maximum", "oneOf", "anyOf", "allOf", "not", "$ref"}
 TYPES = {"object": lambda v: isinstance(v, dict), "array": lambda v: isinstance(v, list), "string": lambda v: isinstance(v, str),
          "boolean": lambda v: isinstance(v, bool), "null": lambda v: v is None,
@@ -106,6 +106,8 @@ def validate(schema, value, path="$", root_schema=None) -> list[str]:
     if isinstance(value, list):
         if len(value) < schema.get("minItems", 0):
             bad.append(f"{path}: needs at least {schema['minItems']} items")
+        if "maxItems" in schema and len(value) > schema["maxItems"]:
+            bad.append(f"{path}: more than {schema['maxItems']} items")
         if schema.get("uniqueItems") and len({json.dumps(v, sort_keys=True) for v in value}) != len(value):
             bad.append(f"{path}: items repeat")
         if "items" in schema:
@@ -135,13 +137,13 @@ def in_scope(root: Path, idx: dict) -> list[str]:
     return sorted(f for f in out if not any(fnmatch.fnmatch(f, x) for x in idx.get("not_config", {})))
 
 
-def mapping(root: Path, idx: dict) -> dict[str, str]:
-    """file -> schema, from the index's map (a `files` entry may be a glob)."""
+def mapping(root: Path, idx: dict) -> dict[str, list[str]]:
+    """file -> its schemas, from the index's map (a `files` entry may be a glob; a file may be held by more than one schema)."""
     out = {}
     for row in idx["map"]:
         for g in row["files"]:
             for p in ([root / g] if not any(c in g for c in "*?[") else sorted(root.glob(g))):
-                out[p.relative_to(root).as_posix()] = row["schema"]
+                out.setdefault(p.relative_to(root).as_posix(), []).append(row["schema"])
     return out
 
 
@@ -155,7 +157,7 @@ def check(root=REPO, limit=6) -> list[str]:
     if len(set(baseline)) != len(baseline) or baseline != sorted(baseline):
         bad.append(f"{INDEX}: baseline must be sorted with no repeats")
     schemas = {}
-    for s in sorted(set(m.values())):
+    for s in sorted({x for v in m.values() for x in v}):
         p = root / s
         if not p.is_file():
             bad.append(f"{s}: schema file missing")
@@ -168,9 +170,11 @@ def check(root=REPO, limit=6) -> list[str]:
     for f in sorted(m):
         if not (root / f).is_file():
             bad.append(f"{INDEX}: maps {f}, which does not exist")
-        elif m[f] in schemas:
-            errs = validate(schemas[m[f]], _json(root / f))
-            bad += [f"{f} {x}" for x in errs[:limit]] + ([f"{f}: and {len(errs) - limit} more"] if len(errs) > limit else [])
+        else:
+            doc = _json(root / f)
+            for sname in m[f]:
+                errs = validate(schemas[sname], doc) if sname in schemas else []
+                bad += [f"{f} {x}" for x in errs[:limit]] + ([f"{f}: and {len(errs) - limit} more"] if len(errs) > limit else [])
     for f in files:
         if f not in m and f not in baseline:
             bad.append(f"{f}: no JSON Schema and not on the baseline; add doctrine/schemas/<name>.schema.json and a map row in {INDEX}")
@@ -195,4 +199,4 @@ def coverage(root=REPO) -> dict:
     root = Path(root)
     idx = _json(root / INDEX)
     files, m = in_scope(root, idx), mapping(root, idx)
-    return {"in_scope": len(files), "with_schema": sum(1 for f in files if f in m), "baseline": len(idx.get("baseline", [])), "schemas": len(set(m.values()))}
+    return {"in_scope": len(files), "with_schema": sum(1 for f in files if f in m), "baseline": len(idx.get("baseline", [])), "schemas": len({x for v in m.values() for x in v})}
