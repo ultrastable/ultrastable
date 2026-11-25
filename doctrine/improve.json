@@ -76,6 +76,12 @@
       "path": "ops/uiux/status.json",
       "key": null,
       "max_age_hours": 48
+    },
+    {
+      "id": "tenant-sync",
+      "path": "ops/tenant-sync/metrics.json",
+      "key": null,
+      "max_age_hours": 48
     }
   ],
   "bank": [

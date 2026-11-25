@@ -2366,6 +2366,18 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-0e153ff129",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Every system updates itself and the platform (SYNC-BOTH-WAYS-1, Rowan 2026-11-25).** \"Every Ultrastable system shall always improve and",
+      "probe": [
+        "file:seed/.github/workflows/platform-sync.yml",
+        "file:tests/foundation/test_improve.py",
+        "file:foundation/tenantsync.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]tenantsync\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-95432168bf",
       "surface": "agents/AGENTS.md",
       "text": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
@@ -3249,6 +3261,19 @@
       ],
       "bound_by": "mirror",
       "of": "cited-3c3d6c30bf"
+    },
+    {
+      "id": "mirror-1ca2a53c76",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Every system updates itself and the platform (SYNC-BOTH-WAYS-1, Rowan 2026-11-25).** \"Every Ultrastable system shall always improve and",
+      "probe": [
+        "file:seed/.github/workflows/platform-sync.yml",
+        "file:tests/foundation/test_improve.py",
+        "file:foundation/tenantsync.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]tenantsync\\b"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-0e153ff129"
     },
     {
       "id": "mirror-be5af6748b",
