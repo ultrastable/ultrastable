@@ -6,13 +6,6 @@
  "kernel_paths": [
   "agents",
   "autonomy",
-  "doctrine/constitution.json",
-  "doctrine/constitution.schema.json",
-  "doctrine/CONSTITUTION.md",
-  "doctrine/SYSTEM.md",
-  "doctrine/standing-order.json",
-  "doctrine/claims.json",
-  "doctrine/constitution-baseline.json",
   "bootstrap",
   "worker",
   "analytics",
