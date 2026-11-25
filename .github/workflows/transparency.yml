@@ -31,6 +31,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      - name: Merged count on /live matches GitHub (LIVE-COUNT-1)
+        run: sleep 20 && python3 -m foundation transparency --probe-merged
+        env:
+          GH_TOKEN: ${{ github.token }}
       - name: Freshness probe (FRONT-BACKED-1)
         run: |
           sleep 20
