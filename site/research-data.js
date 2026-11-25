@@ -49,7 +49,7 @@ export default {
      "AI systems leave their loops open. Put in place: an output with no code consumer fails the build. Check it with one number, share of registered loops that declare a closing probe and a server-side owner, and set a limit for it (>= 1.0 is the limit we use)."
     ],
     "practice_note": [
-     "In our own system, 4 of 5 of these checks pass today. Share of declared essential variables that have limits (doctrine/ultrastability.json) reads 1.0 (n = 18; source: doctrine/ultrastability.json). Second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl) reads 98 (n = 14236; source: ops/ultrastability.jsonl). Share of essential variables whose second loop can change a parameter of the first loop reads 0.778 (n = 18; source: doctrine/ultrastability.json). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+     "In our own system, 4 of 5 of these checks pass today. Share of declared essential variables that have limits (doctrine/ultrastability.json) reads 1.0 (n = 18; source: doctrine/ultrastability.json). Second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl) reads 98 (n = 14274; source: ops/ultrastability.jsonl). Share of essential variables whose second loop can change a parameter of the first loop reads 0.778 (n = 18; source: doctrine/ultrastability.json). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
     ],
     "tradeoffs": [
      "Reading. Chapters 7 and 8 were not machine-read for this paper: the archive.org text the research loop could reach ends in chapter 2. Ashby's mechanism is stated here in our own words from the book's contents and preface; the only verbatim quotation is from the preface (page v).",
@@ -160,7 +160,7 @@ export default {
      "metric_label": "second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl)",
      "measured": 98,
      "status": "met",
-     "n": 14236,
+     "n": 14274,
      "source": "ops/ultrastability.jsonl",
      "item": null
     },
@@ -275,7 +275,7 @@ export default {
     {
      "finding": "A2",
      "rule": "SPEC-GATE-1",
-     "score": 0.129
+     "score": 0.13
     },
     {
      "finding": "A2",
@@ -283,12 +283,17 @@ export default {
      "score": 0.121
     },
     {
+     "finding": "A3",
+     "rule": "OPEN-STANDARDS-1",
+     "score": 0.102
+    },
+    {
      "finding": "A5",
      "rule": "UIUX-1",
      "score": 0.108
     }
    ],
-   "leads_route": "lexical-512-1pzqblq",
+   "leads_route": "lexical-512-cuimb0",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -624,7 +629,7 @@ export default {
      "prediction": "self_deploys >= 1 within 336 h",
      "metric_label": "verified deploys the system originated and executed itself (latest criticality tick)",
      "measured": 0,
-     "status": "not-met",
+     "status": "unmeasured",
      "n": 0,
      "source": "ops/criticality.jsonl at 2026-11-24T17:40:23Z",
      "item": "Q-RES-chen-stratton-2026-F7"
@@ -653,7 +658,7 @@ export default {
     {
      "finding": "F3",
      "rule": "DRAIN-ZERO-1",
-     "score": 0.135
+     "score": 0.134
     },
     {
      "finding": "F4",
@@ -663,15 +668,15 @@ export default {
     {
      "finding": "F5",
      "rule": "AUTO-SHIP-CLEAN-1",
-     "score": 0.127
+     "score": 0.126
     },
     {
      "finding": "F7",
      "rule": "OUTREACH-INTRO-1",
-     "score": 0.137
+     "score": 0.138
     }
    ],
-   "leads_route": "lexical-512-8a8ywj",
+   "leads_route": "lexical-512-1hkisfn",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -722,7 +727,7 @@ export default {
      "The system ships its own deploys. Put in place: the tick wakes the executor, whose merged change deploys from the merge commit. Check it with one number, verified deploys the system originated and executed itself (latest criticality tick), and set a limit for it (>= 1 is the limit we use)."
     ],
     "practice_note": [
-     "In our own system, 4 of 6 of these checks pass today. Share of registered loops that declare a closing probe and a server-side owner reads 1.0 (n = 114; source: instances/ultrastable/loop-registry.json (declared)). Median hours from a pull request opening to its merge reads 0.15 (n = 64; source: GitHub REST pulls?state=closed, last 100 closed pull requests, fetched 2026-11-21T09:30:00Z). Share of uploaded deploys proven live against their commit reads 1.0 (n = 40; source: ops/deploys.jsonl (same window)). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+     "In our own system, 3 of 6 of these checks pass today. Share of registered loops that declare a closing probe and a server-side owner reads 1.0 (n = 114; source: instances/ultrastable/loop-registry.json (declared)). Median hours from a pull request opening to its merge reads 0.15 (n = 64; source: GitHub REST pulls?state=closed, last 100 closed pull requests, fetched 2026-11-21T09:30:00Z). Share of uploaded deploys proven live against their commit reads 1.0 (n = 40; source: ops/deploys.jsonl (same window)). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
     ],
     "tradeoffs": [
      "Scale. One organization: 100 closed pull requests (64 merged) over 0.75 days. Our numbers describe this system; they are not a causal estimate and are not compared with the study's effect sizes as if they were.",
@@ -764,7 +769,7 @@ export default {
     "data": "This system's own ledgers: closed pull requests read from GitHub, the deploy record, the criticality ticks, the ultrastability ledger and the loop registry",
     "summary": "A common belief holds that AI agents can draft code but a person must still merge it, deploy it and check that it works. Ultrastable is built to close those loops itself: a server-side lane merges green changes, every deploy is proven live against its commit, and every loop names its closing probe."
    },
-   "abstract": "Ultrastable R&D (Ultrastable): A common belief holds that AI agents can draft code but a person must still merge it, deploy it and check that it works. Ultrastable is built to close those loops itself: a server-side lane merges green changes, every deploy is proven live against its commit, and every loop names its closing probe. We state the common belief as properties that can fail, and test each against the records of a system that merges, deploys and checks its own work. Where it still depends on outside sessions, the paper says so with the number. 4 of 6 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.",
+   "abstract": "Ultrastable R&D (Ultrastable): A common belief holds that AI agents can draft code but a person must still merge it, deploy it and check that it works. Ultrastable is built to close those loops itself: a server-side lane merges green changes, every deploy is proven live against its commit, and every loop names its closing probe. We state the common belief as properties that can fail, and test each against the records of a system that merges, deploys and checks its own work. Where it still depends on outside sessions, the paper says so with the number. 3 of 6 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.",
    "window": {
     "start": "2026-11-20T15:16:32Z",
     "end": "2026-11-21T09:10:55Z",
@@ -885,10 +890,10 @@ export default {
      "prediction": "human_touches <= 0 within 168 h",
      "metric_label": "human touches counted by the latest criticality tick",
      "measured": 0,
-     "status": "met",
+     "status": "unmeasured",
      "n": 0,
      "source": "ops/criticality.jsonl at 2026-11-24T17:40:23Z",
-     "item": null
+     "item": "Q-RES-open-loops-2026-O4"
     },
     {
      "id": "O5",
@@ -937,13 +942,13 @@ export default {
      "prediction": "self_deploys >= 1 within 336 h",
      "metric_label": "verified deploys the system originated and executed itself (latest criticality tick)",
      "measured": 0,
-     "status": "not-met",
+     "status": "unmeasured",
      "n": 0,
      "source": "ops/criticality.jsonl at 2026-11-24T17:40:23Z",
      "item": "Q-RES-open-loops-2026-O6"
     }
    ],
-   "met": 4,
+   "met": 3,
    "total": 6,
    "limits": [
     "Scale. One organization: 100 closed pull requests (64 merged) over 0.75 days. Our numbers describe this system; they are not a causal estimate and are not compared with the study's effect sizes as if they were.",
@@ -964,9 +969,14 @@ export default {
      "score": 0.129
     },
     {
+     "finding": "O3",
+     "rule": "REDTEAM-1",
+     "score": 0.148
+    },
+    {
      "finding": "O4",
      "rule": "NO-FABRICATION-1",
-     "score": 0.116
+     "score": 0.114
     },
     {
      "finding": "O5",
@@ -982,14 +992,9 @@ export default {
      "finding": "O6",
      "rule": "FLOW-DIRECTIVE-1",
      "score": 0.114
-    },
-    {
-     "finding": "O6",
-     "rule": "INTERVIEW-1",
-     "score": 0.113
     }
    ],
-   "leads_route": "lexical-512-f1w47",
+   "leads_route": "lexical-512-1xhcq5r",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -1289,7 +1294,12 @@ export default {
     {
      "finding": "S3",
      "rule": "RUNWAY-1",
-     "score": 0.115
+     "score": 0.114
+    },
+    {
+     "finding": "S3",
+     "rule": "REDTEAM-1",
+     "score": 0.105
     },
     {
      "finding": "S4",
@@ -1299,7 +1309,7 @@ export default {
     {
      "finding": "S5",
      "rule": "COMPLETE-1",
-     "score": 0.114
+     "score": 0.115
     },
     {
      "finding": "S5",
@@ -1314,10 +1324,10 @@ export default {
     {
      "finding": "S6",
      "rule": "TEMPORAL-1",
-     "score": 0.112
+     "score": 0.111
     }
    ],
-   "leads_route": "lexical-512-hb8gmo",
+   "leads_route": "lexical-512-asuipi",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -1459,10 +1469,10 @@ export default {
     {
      "finding": "K1",
      "rule": "POINT-AND-CLICK-1",
-     "score": 0.149
+     "score": 0.148
     }
    ],
-   "leads_route": "lexical-512-15u9w9j",
+   "leads_route": "lexical-512-1ff6b3",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -1510,7 +1520,7 @@ export default {
      "Limits on everything that matters. Put in place: the check fails a variable with no limits. Check it with one number, share of declared essential variables that have limits (doctrine/ultrastability.json), and set a limit for it (>= 1.0 is the limit we use)."
     ],
     "practice_note": [
-     "In our own system, 1 of 5 of these checks pass today. Owner-driven thread sessions that changed the repository in the last 7 days (ops/provenance.jsonl) reads 49 (n = None; source: ops/provenance.jsonl, last 7 days). Share of second-order steps that brought the variable back inside its limits and were kept reads 0.0 (n = 91; source: ops/ultrastability.jsonl verdicts). Share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py) reads 0.35 (n = None; source: foundation/specgate.py over docs/issues). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+     "In our own system, 1 of 5 of these checks pass today. Owner-driven thread sessions that changed the repository in the last 7 days (ops/provenance.jsonl) reads 49 (n = None; source: ops/provenance.jsonl, last 7 days). Share of second-order steps that brought the variable back inside its limits and were kept reads 0.0 (n = 91; source: ops/ultrastability.jsonl verdicts). Share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py) reads 0.407 (n = None; source: foundation/specgate.py over docs/issues). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
     ],
     "tradeoffs": [
      "Source. Own R&D question set, regenerated from this system's records, version 2026-11-25."
@@ -1632,7 +1642,7 @@ export default {
      },
      "prediction": "spec_quality >= 0.9 within 72 h",
      "metric_label": "share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py)",
-     "measured": 0.35,
+     "measured": 0.407,
      "status": "not-met",
      "n": null,
      "source": "foundation/specgate.py over docs/issues",
@@ -1663,7 +1673,7 @@ export default {
      },
      "prediction": "research_findings_met_share >= 1.0 within 72 h",
      "metric_label": "share of every finding in every paper whose own measurement meets its target, excluding this metric (RESEARCH-LOOP-1)",
-     "measured": 0.655,
+     "measured": 0.621,
      "status": "not-met",
      "n": 29,
      "source": "research/studies, each finding measured as above",
@@ -1713,12 +1723,17 @@ export default {
      "score": 0.109
     },
     {
+     "finding": "S3",
+     "rule": "DISPOSE-1",
+     "score": 0.106
+    },
+    {
      "finding": "S4",
      "rule": "META-SIGNAL-1",
      "score": 0.109
     }
    ],
-   "leads_route": "lexical-512-1yavx7c",
+   "leads_route": "lexical-512-14lm032",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   }
  ],

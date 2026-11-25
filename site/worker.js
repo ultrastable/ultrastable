@@ -60,6 +60,24 @@ const BASE = ":root{color-scheme:light dark;--bg:#f6f1e7;--sf:#fffdf8;--sf2:#efe
 + ".main{max-width:960px;margin:0 auto;padding:20px 16px 64px}.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:44px;padding:10px 18px;border-radius:6px;border:1px solid var(--line);background:var(--sf);color:var(--ink);font:600 16px system-ui;text-decoration:none}.btn-primary{background:var(--ac);border-color:var(--ac);color:var(--on)}.btn-quiet{border-color:transparent;background:transparent;color:var(--ac)}"
 + ".skip-link{position:absolute;left:-9999px}.skip-link:focus{left:16px;top:8px;background:var(--sf);padding:8px}:focus-visible{outline:3px solid var(--ac);outline-offset:2px}.card{background:var(--sf);border:1px solid var(--line);border-radius:8px;padding:16px;margin:0 0 12px}.meta,small{color:var(--ink2);font-size:14px}.head p{color:var(--ink2)}"
 + "@media(max-width:640px){.hide-sm{display:none!important}h1{font-size:24px}}";
+// REDTEAM-1: the public text of a claim. The register keeps the exact quote for binding; a quote cut from code keeps only its prose, tags dropped,
+// and a quote that starts mid-sentence is marked with an ellipsis.
+export function publicText(q) {
+  let t = String(q || "");
+  if (/" ?\+|\+ ?"|^\s*(const|return|let|if|card)\b|\bcard\(|\bsec\(|\.push\(|^\s*\+/.test(t)) {
+    const out = [];
+    for (const seg of t.replace(/\\"/g, '"').split(/["']/)) {
+      if (/^\s*\+[^\n]*\+\s*$/.test(seg)) out.push("\u2026");
+      else if ((/[A-Za-z]{2,}[ ,.][A-Za-z ]/.test(seg) || (out.length && out[out.length - 1] === "\u2026" && /[A-Za-z]{3,}/.test(seg))) && !/^[\w-]+ c?\d+$/.test(seg.trim()) && !/[{};=]|\b(const|return|function)\b|^\s*[\w.]+\(/.test(seg))
+        out.push(seg.replace(/<[^>]*>/g, " ").replace(/^[\s,(]+|[\s,(]+$/g, ""));
+    }
+    while (out.length && out[out.length - 1] === "\u2026") out.pop();
+    t = out.filter(Boolean).join(" ") || "(generated from code; see the probe)";
+  }
+  t = t.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim();
+  return /^[a-z]/.test(t) ? "\u2026" + t : t;
+}
+function atCommit() { const c = String(VERIFIED.commit || ""); return /^[0-9a-f]{7,40}$/.test(c) ? " at commit " + esc(c) : " on every merge"; }
 function dsEsc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
 function dsHead(title, description, extraCss) {
   return "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>" + dsEsc(title) + "</title><meta name=\"description\" content=\"" + dsEsc(description) + "\"><style>" + BASE + "\n" + (extraCss || "") + "</style>";
@@ -96,7 +114,7 @@ function shell(opts, body) {
 function statusLine() {
   // Own records only (PROOF-OWN-1): the count comes from Ultrastable's verified-claims register, never from another system.
   const t = VERIFIED.summary;
-  return t.pass + " of " + t.total + " claims verified against code at commit " + esc(VERIFIED.commit) + ".";
+  return t.pass + " of " + t.total + " claims verified against code" + atCommit() + ".";
 }
 
 function home(ux) {
@@ -105,7 +123,7 @@ function home(ux) {
     + IV.askBar("Tell me what is on your mind…")
     + "<div class=\"us-actions\"><a class=\"btn\" href=\"/setup\">" + esc(slotText("home.setup_label", "primary_label", "Set up my own", ux)) + "</a><a class=\"btn\" href=\"/live\">See the live proof</a><a class=\"btn btn-quiet\" href=\"/research\">Read the white papers</a></div>"
     + "<div class=\"us-status\" role=\"status\">" + statusLine() + "</div></section>"
-    + "<div class=\"us-lane\"><h2>Already comfortable with code?</h2><p class=\"us-tagline\">A system is autonomous if it has self-referential loops and the ability to close them. Coding agents write code. Ultrastable runs the system. Ultrastable runs on itself.</p><p class=\"us-lede\">It finds its own work in your metrics and failures, hands each task to the coding agent that fits, proves every change live with an automatic revert, and keeps score of how often its decisions were right.</p><p>You do not have to answer questions. The loops, virtual managers, agents and plussing budget are all there to use, with an honest list of what is live, in testing, and not built yet.</p><div class=\"us-actions\"><a class=\"btn\" href=\"/engineers\">Go straight to the engine</a></div></div>"
+    + "<div class=\"us-lane\"><h2>Already comfortable with code?</h2><p class=\"us-tagline\">A system is autonomous if it has self-referential loops and the ability to close them. Coding agents write code. Ultrastable runs the system. Ultrastable runs on itself.</p><p class=\"us-lede\">It finds its own work in your metrics and failures, hands each task to the coding agent that fits, proves every change live with an automatic revert, and keeps score of how often its decisions were right.</p><p>You do not have to answer questions. The loops, virtual managers, agents and the share of work kept for improvements are all there to use, with an honest list of what is live, in testing, and not built yet.</p><div class=\"us-actions\"><a class=\"btn\" href=\"/engineers\">Go straight to the engine</a></div></div>"
     + examplesSection()
     + "<h2>Who are you?</h2><div class=\"us-grid c3\">" + SH.audiences.map(audienceCard).join("") + "</div>"
     + "<h2>Test cases</h2><div class=\"us-grid c2\">" + SH.showcases.filter(function (c) { return c.status !== "sunsetting"; }).map(caseCard).join("") + "</div><p><a href=\"/showcase\">All test cases, including the earlier testbed</a></p>"
@@ -115,7 +133,7 @@ function home(ux) {
     + card("Not a substitute for a goal", "It needs setup and commitment: a named objective, a budget and a short list of steps a person always decides. From a bare skeleton it works out the next improvement; it does not invent your purpose.")
     + "</div>"
     + "<h2>What is different</h2><div class=\"us-grid c3\">"
-    + card("It chooses the work", "Metrics breach, a trigger files an issue, a coding agent opens the pull request. A person sets direction and reads reports.")
+    + card("It chooses the work", "Metrics breach, a trigger files an issue, a coding agent opens the pull request. A person sets direction. Nobody has to review each change; checks do that.")
     + card("It proves every change", "Each deploy declares probes. A probe that passed before and fails after reverts the push on its own.")
     + card("It keeps score", "Every decision logs a prediction first. The outcome is scored later, so you can see how often the system was right.")
     + "</div>"
@@ -187,10 +205,15 @@ function ultrastability() {
 }
 
 function claimsPage() {
-  const rows = VERIFIED.claims.map(function (c) { return "<tr><td class=\"" + (c.pass ? "us-pass" : "us-fail") + "\">" + (c.pass ? "Verified" : "Drift") + "</td><td>" + esc(c.claim) + "<br><small>" + esc(c.surface) + " · " + esc(c.how) + (c.detail ? " · " + esc(c.detail) : "") + "</small></td></tr>"; }).join("");
+  // REDTEAM-1: a stranger read internal agent rules as public promises. Statements on public pages come first; operating rules are their own section.
+  const internal = function (c) { return /^(agents|doctrine|docs|seed\/agents|seed\/doctrine|\.github)\//.test(String(c.surface || "")); };
+  const row = function (c) { return "<tr><td class=\"" + (c.pass ? "us-pass" : "us-fail") + "\">" + (c.pass ? "Verified" : "Drift") + "</td><td>" + esc(publicText(c.claim)) + "<br><small>" + esc(c.surface) + " · " + esc(c.how) + (c.detail ? " · " + esc(c.detail) : "") + "</small></td></tr>"; };
+  const table = function (list) { return "<div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Status</th><th>Claim, surface and probe</th></tr></thead><tbody>" + list.map(row).join("") + "</tbody></table></div>"; };
+  const pub = VERIFIED.claims.filter(function (c) { return !internal(c); }), ops = VERIFIED.claims.filter(internal);
   return shell({ path: "/claims", title: "Verified claims: Ultrastable words matched to code", description: "Every statement on the Ultrastable surfaces is bound to a probe in the code, checked on every change and daily against the live site." },
-    "<div class=\"head\"><h1>Verified claims</h1><p id=\"st\" role=\"status\">" + VERIFIED.summary.pass + " of " + VERIFIED.summary.total + " claims verified against code at commit " + esc(VERIFIED.commit) + ". Words must match code; a claim that stops matching fails the build and files its own fix item.</p></div>"
-    + "<div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Status</th><th>Claim, surface and probe</th></tr></thead><tbody>" + rows + "</tbody></table></div>"
+    "<div class=\"head\"><h1>Verified claims</h1><p id=\"st\" role=\"status\">" + VERIFIED.summary.pass + " of " + VERIFIED.summary.total + " claims verified against code" + atCommit() + ". Words must match code; a claim that stops matching fails the build and files its own fix item.</p></div>"
+    + "<h2>What the public pages say (" + pub.length + ")</h2>" + table(pub)
+    + "<h2>Internal operating rules the agents follow (" + ops.length + ")</h2><p class=\"meta\">These are instructions to the system's own agents, not promises to visitors. They are checked the same way.</p>" + table(ops)
     + "<p class=\"meta\">Machine form: <a href=\"/api/claims\">/api/claims</a>. Registry: doctrine/claims.json; checker: python3 -m foundation claims --check. Generated copy (counts, tool lists) is rewritten from code, so it cannot drift; the reverse direction (shipped behaviour that no surface describes) is checked too.</p>");
 }
 
@@ -1201,7 +1224,7 @@ const handler = {
       case "/claims": return new Response(claimsPage(), { headers: HTML });
       case "/changelog": case "/api/changelog": if (u.hostname === "dashboard.ultrastable.io") return new Response("changelog unavailable", { status: 503, headers: { "retry-after": "60" } }); /* CHANGELOG-LOOP-1: this host is served by this worker, so a redirect to itself looped; OWNER_PATH forwards to the dashboard worker first */ return Response.redirect("https://dashboard.ultrastable.io" + pth + u.search, 302); // PROVENANCE-1: the public changelog is served by the dashboard worker
       case "/self": case "/.well-known/ultrastable": return new Response(JSON.stringify(SELF, null, 1), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300", "Link": "</self>; rel=\"describedby\"" } });
-      case "/api/claims": return new Response(JSON.stringify(VERIFIED), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } });
+      case "/api/claims": return new Response(JSON.stringify({ ...VERIFIED, claims: VERIFIED.claims.map(function (c) { return { ...c, claim: publicText(c.claim), quote: c.claim }; }) }), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } });
       case "/product": return new Response(product(), { headers: HTML });
       case "/team": return new Response(team(), { headers: HTML });
       case "/org": return new Response(org(), { headers: HTML });
