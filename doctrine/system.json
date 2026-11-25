@@ -165,7 +165,7 @@
         "repo": "ultrastable/what-works",
         "ref": "main"
       },
-      "role": "What Works tenant app (ultrastable/what-works): a living atlas of what works in public policy; hourly beat resolves citations, searches OpenAlex and Europe PMC, reads new trials in under a verbatim-quote guard, re-grades every programme and logs each move",
+      "role": "What Works tenant app (ultrastable/what-works): a living atlas of what works in public policy; hourly beat resolves citations, searches OpenAlex, Europe PMC and Crossref, reads new trials in under a verbatim-quote guard, re-grades every programme and logs each move",
       "crons": [
         "17 * * * *"
       ],
