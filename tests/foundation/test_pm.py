@@ -222,3 +222,13 @@ class Clockwork(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class GrowthStarve(unittest.TestCase):
+    def test_unmeasured_metrics_file_growth_when_share_below_target(self):
+        import time
+        from foundation import pm
+        vals = {"pageviews_7d": None, "visitors_7d": None, "agent_hits_7d": None, "pilot_page_views_7d": None}
+        tgt = pm.targets(pm.REPO, vals, time.time())
+        self.assertEqual(pm.file_growth(pm.REPO, tgt, [], write=False), [])
+        self.assertTrue(pm.file_growth(pm.REPO, tgt, [], write=False, growth_share=0.0))

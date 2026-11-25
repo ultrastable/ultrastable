@@ -209,16 +209,19 @@ def _write_item(root, iid, title, probe, body_text, labels, workstream, owner):
     p.write_text(json.dumps({"id": iid, "title": f"{iid}: {title}", "body": body, "labels": labels, "milestone": "Now", "workstream": workstream}, indent=2) + chr(10), encoding="utf-8")
 
 
-def file_growth(root, tgt: list[dict], experiments: list[dict], write=True) -> list[str]:
-    """For each metric behind its line, file the next idea from its bank that was not filed; a replaced experiment's metric also gets the next idea."""
+def file_growth(root, tgt: list[dict], experiments: list[dict], write=True, growth_share=None) -> list[str]:
+    """For each metric behind its line, file the next idea from its bank that was not filed; a replaced experiment's metric also gets the next idea.
+    GROWTH-STARVE-1 (2026-11-25): with no analytics reading every metric was None, `behind` was None, and the pass filed nothing for days while the
+    growth share sat at 0. An unmeasured metric now counts as behind whenever the growth share is under target, so the loop never goes quiet."""
     cfg, filed = G.load(root), []
+    starving = growth_share is not None and growth_share < cfg.get("target_growth_share", 0)
     replace = {e["metric"] for e in experiments if e.get("verdict") == "replace"}
     open_metrics = set()
     for it in _items(root):
         if cfg["label"] in it["json"].get("labels", []) and it["status"] == "open":
             open_metrics.update(_parse_item(it)["metrics"])
     for t in tgt:
-        if not (t["behind"] or t["id"] in replace) or t["id"] in open_metrics:
+        if not (t["behind"] or t["id"] in replace or (t["behind"] is None and starving)) or t["id"] in open_metrics:
             continue
         for idea in cfg["bank"].get(t["id"], []):
             iid = "Q-GROW-" + idea["id"]
@@ -331,7 +334,7 @@ def run(root=REPO, apply=False, now=None, use_live=True, env=None, vals=None, st
     ex = review_experiments(ex, vals, now, guards_ok=True)
     tuned = tune(root, vals, now, write=apply)
     stage_rows = clockwork.stages(root, now) if stage_rows is None else stage_rows
-    growth_filed = file_growth(root, tgt, ex, write=apply)
+    growth_filed = file_growth(root, tgt, ex, write=apply, growth_share=vals.get("growth_share"))
     repair_filed = file_repairs(root, stage_rows, cfgc["escalation"], write=apply)
     # INSIGHT-1: the per-page analytics loop (trends, findings, growth items, settled outcomes, self-tuned threshold) runs inside the pass.
     from . import insight
