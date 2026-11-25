@@ -35,17 +35,21 @@ h2{font-size:1.3rem;margin:36px 0 12px}h3{font-size:1.05rem;margin:0 0 4px}.lede
 .opts button.right{border-color:var(--holds);font-weight:700}.opts button.wrong{border-color:var(--fails)}
 .attempt{border-top:1px solid var(--line);padding:12px 0}.attempt:first-child{border-top:0}table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
 .wrap{overflow-x:auto}summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font-weight:650}[hidden]{display:none!important}
-footer{border-top:1px solid var(--line);margin-top:48px;padding:20px 16px;color:var(--muted);font-size:.9rem}footer div{max-width:1040px;margin:0 auto}
+blockquote{margin:8px 0;padding:8px 14px;border-left:3px solid var(--accent);background:var(--chip);border-radius:6px}footer{border-top:1px solid var(--line);margin-top:48px;padding:20px 16px;color:var(--muted);font-size:.9rem}footer div{max-width:1040px;margin:0 auto}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}`;
 
 function shell(title, desc, inner, { path = "/", script = "" } = {}) {
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(title)}</title><meta name="description" content="${esc(desc)}"><link rel="canonical" href="${SITE}${esc(path)}">
 <meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(desc)}"><style>${CSS}</style></head>
-<body><header class="top"><nav aria-label="Main"><a class="brand" href="/">Replication&nbsp;<span>Ledger</span></a><a href="/#fields">Fields</a><a href="/projects">Replication projects</a><a href="/rubric">How standings work</a></nav></header>
-<main>${inner}</main><footer><div>Guess whether a textbook finding survived replication, then see the record. Every standing is computed from the replication attempts on file, never typed by hand.
-Runs on <a href="https://ultrastable.io/">Ultrastable</a>, the foundation for any autonomous system. No cookies, no trackers. Data: <a href="/api/findings">/api/findings</a> · <a href="/api/rubric">/api/rubric</a></div></footer>${script}</body></html>`;
+<body><header class="top"><nav aria-label="Main"><a class="brand" href="/">Replication&nbsp;<span>Ledger</span></a><a href="/#fields">Fields</a><a href="/projects">Replication projects</a><a href="/changes">What changed</a><a href="/rubric">How standings work</a></nav></header>
+<main>${inner}</main><footer><div>Guess whether a textbook finding survived replication, then see the record. Every standing is computed from the replication attempts on file, never typed by hand. The ledger searches for new replications and new landmark findings every hour by itself.
+Runs on <a href="https://ultrastable.io/">Ultrastable</a>, the foundation for any autonomous system. No cookies, no trackers. Data: <a href="/api/findings">/api/findings</a> · <a href="/feed.json">/feed.json</a> · <a href="/api/rubric">/api/rubric</a></div></footer>${script}</body></html>`;
 }
+
+const ago = m => m == null ? "not yet" : m < 1 ? "just now" : m < 90 ? `${m} min ago` : m < 2880 ? `${Math.round(m / 60)} h ago` : `${Math.round(m / 1440)} days ago`;
+const sinceIso = t => t ? Math.round((Date.now() - Date.parse(t)) / 6e4) : null;
+export const liveLine = live => `<p class="small muted">Last search for new replications: ${esc(ago(sinceIso(live?.beat?.ended_at)))}. <a href="/changes">What changed</a>.</p>`;
 
 export const badge = st => `<span class="badge s-${esc(st)}">${esc(STANDINGS[st].name)}</span>`;
 const doiLink = c => c.doi ? `<a href="https://doi.org/${esc(c.doi)}">doi:${esc(c.doi)}</a>` : c.url ? `<a href="${esc(c.url)}">source</a>` : `<span class="muted">${esc(c.note || "no DOI")}</span>`;
@@ -56,14 +60,14 @@ function card(f, { reveal = true } = {}) {
 ${reveal ? `<div class="row">${badge(f.standing.standing)} <span class="small muted">${f.standing.attempts} ${f.standing.attempts === 1 ? "attempt" : "attempts"}</span></div>` : `<span class="tag">Guess: did it hold?</span>`}</a>`;
 }
 
-export function home(findings, projects) {
+export function home(findings, projects, live = {}) {
   const counts = Object.fromEntries(Object.keys(STANDINGS).map(k => [k, findings.filter(f => f.standing.standing === k).length]));
   const attempts = findings.reduce((n, f) => n + f.standing.attempts, 0);
   const fields = Object.entries(FIELDS).filter(([id]) => findings.some(f => f.field === id));
   const inner = `<h1>Which landmark findings held up?</h1>
 <p class="lede">A ledger of famous scientific findings and every attempt to repeat them, across ${fields.length} fields. Guess first, then see what the replications found.</p>
-<div class="stats"><div><b>${findings.length}</b><span class="muted small">findings</span></div><div><b>${attempts}</b><span class="muted small">replication attempts</span></div>
-<div><b>${counts.holds}</b><span class="muted small">hold</span></div><div><b>${counts.fails}</b><span class="muted small">failed</span></div><div><b>${counts.weakened + counts.contested}</b><span class="muted small">weakened or contested</span></div></div>
+${liveLine(live)}<div class="stats"><div><b>${findings.length}</b><span class="muted small">findings</span></div><div><b>${attempts}</b><span class="muted small">replication attempts</span></div>
+<div><b>${counts.holds}</b><span class="muted small">hold</span></div><div><b>${counts.fails}</b><span class="muted small">failed</span></div><div><b>${counts.weakened + counts.contested}</b><span class="muted small">weakened or contested</span></div><div><b>${findings.filter(f => f.discovered).length + findings.reduce((n, f) => n + f.replications.filter(r => r.machine).length, 0)}</b><span class="muted small">findings and attempts the ledger found itself</span></div></div>
 <h2 id="fields">Fields</h2><div class="tiles">${fields.map(([id, fl]) => `<a class="tile" href="/field/${esc(id)}"><b>${esc(fl.name)}</b><span class="muted small">${findings.filter(f => f.field === id).length} findings</span></a>`).join("")}</div>
 <h2>Did it survive? Guess first</h2><div class="grid">${findings.map(f => card(f, { reveal: false })).join("")}</div>
 <h2>Large replication projects</h2><p class="muted">${projects.length} field-wide efforts that repeated many studies at once. <a href="/projects">See them all</a>.</p>`;
@@ -82,14 +86,20 @@ rec.hidden=true;box.hidden=false;box.querySelectorAll("button").forEach(b=>b.add
 if(x.dataset.v===ans)x.classList.add("right");else if(x===b)x.classList.add("wrong")});const out=document.getElementById("verdict");
 out.textContent=b.dataset.v===ans?"Right. Here is the record.":"Not quite. Here is the record.";rec.hidden=false;rec.open=true;rec.scrollIntoView({block:"start"})}))})()</script>`;
 
-export function findingPage(f) {
+const outBadge = r => badge(r.outcome === "held" ? "holds" : r.outcome === "failed" ? "fails" : r.outcome === "smaller" ? "weakened" : "contested");
+const says = r => r.machine ? `<blockquote>${esc(r.quote)}</blockquote><p class="small muted">Found and read by the ledger on ${esc(r.added)} (${r.read_by === "model" ? "model reading, checked against the abstract word for word" : "fixed-pattern reading"}). Counts at ${RUBRIC.MACHINE} of its weight because a machine read it.</p>` : `<p>${esc(r.summary)}</p>`;
+
+export function findingPage(f, live = {}) {
   const st = f.standing;
   const guessable = GUESS.includes(st.standing);
-  const attempts = f.replications.map(r => `<div class="attempt"><div class="row">${badge(r.outcome === "held" ? "holds" : r.outcome === "failed" ? "fails" : r.outcome === "smaller" ? "weakened" : "contested")}
+  const ck = live.checks?.[f.id];
+  const attempts = f.replications.map(r => `<div class="attempt"><div class="row">${outBadge(r)}${r.machine ? `<span class="tag">Found by the ledger</span>` : ""}
 <span class="tag">${esc(KINDS[r.kind].name)}</span>${r.preregistered ? `<span class="tag">Preregistered</span>` : ""}<span class="small muted">weight ${attemptWeight(r)}</span></div>
-<p>${esc(r.summary)}</p><p class="small muted">${cite(r.cite)}</p></div>`).join("");
+${says(r)}<p class="small muted">${cite(r.cite)}</p></div>`).join("");
   const inner = `<p class="small"><a href="/">Ledger</a> · <a href="/field/${esc(f.field)}">${esc(FIELDS[f.field].name)}</a></p>
-<h1>${esc(f.name)}</h1><div class="step"><div class="k">The claim</div><p>${esc(f.claim)}</p><p class="small muted">Original study: ${cite(f.original)}</p></div>
+<h1>${esc(f.name)}</h1><div class="step"><div class="k">The claim</div><p>${esc(f.claim)}</p><p class="small muted">${f.claim_quoted ? "Claim quoted from the original abstract. " : ""}Original study: ${cite(f.original)}</p>
+${ck?.retracted ? `<p class="badge s-fails">The original paper has been retracted</p>` : ""}${f.discovered ? `<p class="small muted">Added by the ledger itself after it found a replication paper: ${cite(f.via)}</p>` : ""}
+<p class="small muted">Last searched for new replications: ${esc(ago(sinceIso(ck?.checked_at)))}.</p></div>
 ${guessable ? `<div class="step" id="guess" data-answer="${esc(st.standing)}" hidden><div class="k">Your guess</div><p>When other researchers tried to repeat this, did it hold up?</p>
 <div class="opts">${GUESS.map(g => `<button type="button" data-v="${g}">${esc(STANDINGS[g].name)}</button>`).join("")}</div><p id="verdict" class="muted" aria-live="polite"></p></div>` : ""}
 <details id="record" open><summary>The replication record</summary>
@@ -112,10 +122,21 @@ export function rubricPage() {
   return shell("How standings work · Replication Ledger", "The rubric that computes every standing from the replication record.",
     `<p class="small"><a href="/">Ledger</a></p><h1>How standings work</h1><p class="lede">No standing is typed by hand. This page is rendered from the same code that computes every standing.</p>
 <h2>1. Each attempt weighs by its kind</h2><div class="wrap"><table><thead><tr><th>Kind of attempt</th><th>Weight</th></tr></thead><tbody>${kinds}</tbody></table></div>
-<p>A preregistered attempt weighs ${RUBRIC.PREREG} times more. An attempt found automatically from a new abstract counts at ${RUBRIC.MACHINE} of its weight until it is confirmed.</p>
+<p>A preregistered attempt weighs ${RUBRIC.PREREG} times more. An attempt the ledger found and read by itself counts at ${RUBRIC.MACHINE} of its weight, and is filed only when a sentence quoted word for word from its abstract states the result.</p>
 <h2>2. Each outcome scores how far the claim held</h2><div class="wrap"><table><thead><tr><th>Outcome</th><th>Score</th></tr></thead><tbody>${outs}</tbody></table></div>
 <h2>3. The standing</h2><p>With no attempts, a finding is not yet replicated. Under a total weight of ${RUBRIC.MIN_WEIGHT} there are too few replications to call. Otherwise: it holds at a weighted score of ${Math.round(RUBRIC.HOLDS * 100)}% or more, it failed under ${Math.round(RUBRIC.FAILS * 100)}%, it is weakened when "held, but much smaller" carries at least ${Math.round(RUBRIC.SMALLER_SHARE * 100)}% of the weight, and otherwise it is contested.</p>
 <div class="wrap"><table><tbody>${sts}</tbody></table></div>`, { path: "/rubric" });
 }
 
 export const notFound = () => shell("Not found · Replication Ledger", "Page not found.", `<h1>Not found</h1><p><a href="/">Back to the ledger</a></p>`);
+
+const STNAME = st => st ? STANDINGS[st]?.name || st : "new";
+export function changesPage(changes, beats, ledger) {
+  const names = Object.fromEntries(ledger.findings.map(f => [f.id, f.name]));
+  const moves = changes.map(c => `<tr><td class="small">${esc(String(c.at).slice(0, 16).replace("T", " "))}</td><td><a href="/f/${esc(c.finding_id)}">${esc(names[c.finding_id] || c.finding_id)}</a></td><td>${esc(STNAME(c.from_st))} → ${badge(c.to_st)}</td><td class="small">${c.doi ? `<a href="https://doi.org/${esc(c.doi)}">${esc(OUTCOMES[c.outcome]?.name || "")}</a>` : "added to the ledger"}</td></tr>`).join("");
+  const bt = beats.map(b => `<tr><td class="small">${esc(String(b.started_at).slice(0, 16).replace("T", " "))}</td><td>${b.checked}</td><td>${b.attempts}</td><td>${b.leads}</td><td>${b.findings}</td><td>${JSON.parse(b.errors || "[]").length}</td></tr>`).join("");
+  return shell("What changed · Replication Ledger", "Every standing the ledger moved, and every search it ran.",
+    `<p class="small"><a href="/">Ledger</a></p><h1>What changed</h1><p class="lede">Every hour the ledger searches for new replications of the findings it holds and for landmark findings it does not hold yet. Each standing it moved is listed here.</p>
+<h2>Standings that moved</h2>${moves ? `<div class="wrap"><table><thead><tr><th>When (UTC)</th><th>Finding</th><th>Move</th><th>Because of</th></tr></thead><tbody>${moves}</tbody></table></div>` : `<p class="muted">No standing has moved yet.</p>`}
+<h2>Recent searches</h2>${bt ? `<div class="wrap"><table><thead><tr><th>Started (UTC)</th><th>Findings checked</th><th>Attempts filed</th><th>Leads kept</th><th>New findings</th><th>Errors</th></tr></thead><tbody>${bt}</tbody></table></div>` : `<p class="muted">The first search has not run yet.</p>`}`, { path: "/changes" });
+}

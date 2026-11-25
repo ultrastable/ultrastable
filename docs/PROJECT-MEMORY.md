@@ -10,6 +10,10 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-25
 
+- 2026-11-25: Register What Works for progress, stickiness, the showcase and the social queue (#2124)
+- 2026-11-25: Replication Ledger keeps itself current: hourly discovery beat (#2150)
+- 2026-11-25: Read every tenant's health parts live and ship tenant merges within the hour (TENANT-HEALTH-1, TENANT-DEPLOY-1) (#2134)
+- 2026-11-25: queue: closing-probe verdicts for 20 item(s) (QUEUE-PERSIST-1) [skip ci]
 - 2026-11-25: Replication Ledger front end, deployed by the platform; FULLSTACK-1 for every tenant (#2127)
 - 2026-11-25: STATIC-CONTENT-1: a page that never changes is a failure mode (#2145)
 - 2026-11-25: Replication Ledger front end, deployed by the platform; FULLSTACK-1 for every tenant (#2127)
