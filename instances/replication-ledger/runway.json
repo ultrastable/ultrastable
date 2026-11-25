@@ -1,0 +1,13 @@
+{
+  "_doc": "Replication Ledger: what could stop it within a year of no input, and the safeguard for each. Test probes name a test in worker/*.test.mjs. Platform-wide faults (Actions outages, GitHub and Cloudflare incidents, Node end of life) are covered by doctrine/yearsim.json and apply to this Worker too.",
+  "target_days": 365,
+  "risks": [
+    {"id": "typed-standing", "what": "a standing is typed by hand and drifts from its evidence", "safeguard": "standings are computed by standing.js at request time; the validator refuses a typed standing", "probe": "test:a typed standing, a number in a summary, or a duplicate paper is refused"},
+    {"id": "silent-restanding", "what": "a standing changes with no record", "safeguard": "cli.mjs add appends every change with the paper that moved it to data/changes.jsonl", "probe": "test:adding a replication recomputes the standing and logs the move"},
+    {"id": "citation-rot", "what": "a DOI is mistyped or a title drifts from the registry", "safeguard": "cli.mjs verify resolves every DOI at Crossref and compares title and year; new attempts take their citation from Crossref by DOI", "probe": "test:Crossref metadata becomes a citation and mismatches are caught"},
+    {"id": "model-retired", "what": "the model that labels candidates is retired", "safeguard": "standings need no model; candidates wait unread when no model answers", "probe": "file:instances/replication-ledger/worker/standing.js"},
+    {"id": "credential-expiry", "what": "a token or secret expires", "safeguard": "the Worker holds no secret; Crossref and OpenAlex are open", "probe": "file:instances/replication-ledger/worker/crossref.js"},
+    {"id": "dependency-drift", "what": "an npm package breaks", "safeguard": "zero dependencies: plain Worker modules", "probe": "file:instances/replication-ledger/worker/index.js"}
+  ],
+  "owner_only": []
+}
