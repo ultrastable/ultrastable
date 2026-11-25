@@ -280,6 +280,7 @@
     },
     {
       "id": "ultrastable-unlearn",
+      "pulse": "https://unlearn.ultrastable.org/pulse/watch",
       "state": "live",
       "role": "Unlearn tenant app (ultrastable/unlearn): coaching moves for the adult beside a curious child; hourly beat re-learns move weights, measures, opens the next phase when its gates hold, prunes by retention",
       "main": "worker/index.js",
@@ -306,6 +307,7 @@
     },
     {
       "id": "ultrastable-what-works",
+      "pulse": "https://what-works.ultrastable.org/pulse/watch",
       "state": "live",
       "role": "What Works tenant app (ultrastable/what-works): a living atlas of what works in public policy; hourly beat resolves citations, searches OpenAlex, Europe PMC and Crossref, reads new trials in under a verbatim-quote guard, re-grades every programme and logs each move",
       "main": "worker/index.js",
@@ -345,6 +347,7 @@
     },
     {
       "id": "ultrastable-replication-ledger",
+      "pulse": "https://replication-ledger.ultrastable.org/pulse/watch",
       "state": "live",
       "role": "Replication Ledger tenant app (moving to ultrastable/replication-ledger): which landmark findings held up when replicated and which failed, across many fields; hourly beat searches OpenAlex for new replications of every finding and for landmark originals not yet held, files an attempt only under a verbatim-quote guard, checks citations at Crossref, recomputes standings and logs each move; reader pages with a guess-first reveal, /changes and /feed.json",
       "main": "instances/replication-ledger/worker/index.js",

@@ -190,6 +190,16 @@ if (!LIVE) {
       if (sim < CFG.visual.min_similarity) add("visual-drift", k.split("@")[0], k.split("@")[1], "layout-or-style-changed", `similarity ${sim.toFixed(2)} < ${CFG.visual.min_similarity}`);
     }
   } else console.error("no visual baseline yet: run with --rebaseline once");
+  // DECLARED-LIVE-1 (baseline roll): a baseline is a reading of main, not a monument. It went stale for a week (taken 2026-11-17, every page
+  // drifted after many merges, so the drift findings said nothing about any one change). With --roll-baseline, a baseline older than
+  // visual.max_baseline_days is replaced after this run's comparison, so drift is reported once against the previous window and the next run
+  // compares against this one. Findings of this run are already recorded above; nothing is hidden.
+  const rollDays = CFG.visual.max_baseline_days || 7;
+  if (flag("--roll-baseline") && !flag("--rebaseline") && (!existsSync(basePath) || (Date.now() - Date.parse(JSON.parse(readFileSync(basePath, "utf8")).at || 0)) > rollDays * 864e5)) {
+    mkdirSync(fileURLToPath(here("ops/uiux")), { recursive: true });
+    writeFileSync(basePath, JSON.stringify({ at: new Date().toISOString(), fingerprints }, null, 0) + "\n");
+    console.log(`baseline older than ${rollDays} days: rolled forward for`, Object.keys(fingerprints).length, "page views");
+  }
 }
 
 const report = { at: new Date().toISOString(), mode: LIVE ? "live" : "offline", pages: audited, hosts: LIVE ? hosts : [ORIGIN], axe: !!axeSrc, findings, paths: pathResults, perf };

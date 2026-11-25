@@ -32,6 +32,21 @@ class StandingOrder(unittest.TestCase):
             self.assertEqual(so.consumerless(tmp, d), ["d1"])
             self.assertTrue(so.ledger_failures(tmp, d))
 
+    def test_ledger_row_deferring_a_deploy_to_the_owner_fails(self):
+        """DEPLOY-PREAPPROVED-1: the What Works deploy was recorded as 'deploy after owner go-ahead' and held although deploys were pre-approved."""
+        for t in ("What Works tenant: grades computed, deploy after owner go-ahead", "Added to topology once the owner confirms the production deploy.",
+                  "The deploy is held for a manual go-ahead."):
+            self.assertTrue(so.lint(t), t)
+        tmp = scratch()
+        (tmp / "doctrine").mkdir(); (tmp / "x.py").write_text("x")
+        shutil.copy(REPO / so.PATH, tmp / so.PATH)
+        (tmp / "doctrine/decision-ledger.json").write_text(json.dumps({"rows": [
+            {"id": "d2", "kind": "decision", "title": "Ship the tenant once Rowan approves", "body": "", "probe": "file:x.py"},
+            {"id": "d3", "kind": "decision", "title": "Ship the tenant", "body": "Deployed and probed live.", "probe": "file:x.py"}]}))
+        d = so.load(tmp)
+        self.assertEqual(so.ledger_handoffs(tmp, d), ["d2"])
+        self.assertTrue(any("d2" in f for f in so.ledger_handoff_failures(tmp, d)))
+
     def test_seed_copy_matches(self):
         self.assertEqual((REPO / so.PATH).read_text(), (REPO / "seed/doctrine/standing-order.json").read_text())
 

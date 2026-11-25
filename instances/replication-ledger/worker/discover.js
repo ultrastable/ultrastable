@@ -3,7 +3,8 @@
 // The discovery loop: how the ledger keeps itself current with no person in the path. Every beat (hourly cron, and any page request when
 // the last beat is older than BEAT.SPARK_MIN, so no single trigger can stop it) it
 //   1. takes the findings checked longest ago, asks OpenAlex for works citing the original that report a replication, reanalysis or
-//      meta-analysis, and notes whether the original was retracted;
+//      meta-analysis, and notes whether the original was retracted; when OpenAlex refuses (no key from a Worker), the OpenAlex mirror
+//      a GitHub runner lands (mirror.js), Europe PMC (epmc.js), Crossref and Semantic Scholar (keyless.js) answer in that order;
 //   2. reads each new abstract: a kind and outcome are filed only when backed by a sentence quoted verbatim from the abstract (Workers AI
 //      first, a fixed lexical reader when no model answers); an attempt it cannot read stays a lead and never moves a standing;
 //   3. searches recent replication papers for landmark originals not yet in the ledger and adds them as findings, claim quoted from the
@@ -14,8 +15,12 @@
 import { KINDS, OUTCOMES } from "./standing.js";
 import { FIELDS, doiKey } from "./ledger.js";
 import { citingReplications } from "./epmc.js";
+import { keylessRoute, ROUTES } from "./keyless.js";
+import { fromMirror } from "./mirror.js";
 
-export const BEAT = { FINDINGS: 4, READS: 6, CANDIDATES: 12, DISCOVER: 3, CROSSREF: 3, MIN_CITED: 300, MIN_OVERLAP: 2, SPARK_MIN: 120, STALE_DAYS: 30 };
+// KEYLESS: calls to Crossref and Semantic Scholar per beat (keyless.js), shared by every finding the beat checks, so a beat stays well
+// inside a Worker invocation's subrequest limit even when OpenAlex refuses every call.
+export const BEAT = { FINDINGS: 4, READS: 6, CANDIDATES: 12, DISCOVER: 3, CROSSREF: 3, KEYLESS: 6, MIN_CITED: 300, MIN_OVERLAP: 2, SPARK_MIN: 120, STALE_DAYS: 30 };
 export const OA = "https://api.openalex.org/";
 const UA = "replication-ledger/1 (+https://replication-ledger.ultrastable.org)";
 export const MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
@@ -125,25 +130,58 @@ export async function readCandidate(w, finding, ai) {
   return { attempt: { kind: KINDS[kind] ? kind : "conceptual", outcome: r.outcome, preregistered, machine: true, quote: r.quote, read_by: r.read_by, cite } };
 }
 
+// The OpenAlex half of a finding's check: the original by DOI, then the works citing it that speak of replication. Used by the beat and,
+// unchanged, by the daily runner that writes data/openalex.json (openalex-mirror.mjs), so both egresses ask the same question.
+export async function openalexCandidates(f, fetchImpl = fetch) {
+  const orig = await oa(`works/doi:${encodeURIComponent(f.original.doi)}?select=id,is_retracted,cited_by_count`, fetchImpl);
+  if (!orig) return null;
+  const wid = String(orig.id).split("/").pop();
+  const works = (await oa(`works?filter=cites:${wid},title_and_abstract.search:${encodeURIComponent("replication OR replicate OR reanalysis OR meta-analysis")}&sort=publication_date:desc&per-page=${BEAT.CANDIDATES}&select=${SEL}`, fetchImpl))?.results || [];
+  return { orig, works };
+}
+
 // 1 + 2: replications of one finding. known: Set of DOIs already filed or led for this finding.
-// When OpenAlex refuses, the same candidates are read from Europe PMC (epmc.js); out.source says which route answered.
-export async function checkFinding(f, { fetchImpl = fetch, ai, known = new Set(), reads = BEAT.READS } = {}) {
-  const out = { finding: f.id, attempts: [], leads: [], retracted: false, openalex: null, cited_by: null, source: "openalex" };
+// When OpenAlex refuses, the other routes are tried in turn: the OpenAlex mirror the daily runner lands (mirror.js, no call at all),
+// Europe PMC (epmc.js), then Crossref and Semantic Scholar (keyless.js, counted against budget). The first route with candidates
+// answers; out.source says which, out.tried lists every route asked. Every candidate goes through the same reader whatever its route.
+export async function checkFinding(f, { fetchImpl = fetch, ai, known = new Set(), reads = BEAT.READS, mirror = null, budget = { calls: BEAT.KEYLESS }, wait } = {}) {
+  const out = { finding: f.id, attempts: [], leads: [], retracted: false, openalex: null, cited_by: null, source: "openalex", tried: ["openalex"] };
   if (!f.original?.doi) return out;
   let works;
   try {
-    const orig = await oa(`works/doi:${encodeURIComponent(f.original.doi)}?select=id,is_retracted,cited_by_count`, fetchImpl);
-    if (!orig) return out;
-    out.openalex = orig.id; out.retracted = !!orig.is_retracted; out.cited_by = orig.cited_by_count ?? null;
-    const wid = String(orig.id).split("/").pop();
-    works = (await oa(`works?filter=cites:${wid},title_and_abstract.search:${encodeURIComponent("replication OR replicate OR reanalysis OR meta-analysis")}&sort=publication_date:desc&per-page=${BEAT.CANDIDATES}&select=${SEL}`, fetchImpl))?.results || [];
+    const r = await openalexCandidates(f, fetchImpl);
+    if (!r) return out;
+    out.openalex = r.orig.id; out.retracted = !!r.orig.is_retracted; out.cited_by = r.orig.cited_by_count ?? null;
+    works = r.works;
   } catch (e) {
     if (!/^openalex/.test(String(e?.message))) throw e;
-    let alt;
-    try { alt = await citingReplications(f.original.doi, { pageSize: BEAT.CANDIDATES, name: f.name }, fetchImpl); }
-    catch (e2) { throw new Error(`${e.message}; ${e2?.message || e2}`); }
-    if (!alt) throw new Error(`${e.message}; europepmc has no record to search from`);
-    out.source = "europepmc"; out.cited_by = alt.cited_by; works = alt.works;
+    const errors = [e.message];
+    let answered = null;
+    const m = fromMirror(mirror, f);
+    if (m) {
+      out.tried.push("openalex-mirror");
+      out.openalex = m.openalex; out.retracted = m.retracted; out.cited_by = m.cited_by;
+      answered = { source: "openalex-mirror", works: m.works };
+    }
+    if (!answered?.works.length) {
+      out.tried.push("europepmc");
+      try {
+        const alt = await citingReplications(f.original.doi, { pageSize: BEAT.CANDIDATES, name: f.name }, fetchImpl);
+        if (!alt) errors.push("europepmc has no record to search from");
+        else { if (out.cited_by == null) out.cited_by = alt.cited_by; if (!answered || alt.works.length) answered = { source: "europepmc", works: alt.works }; }
+      } catch (e2) { errors.push(String(e2?.message || e2)); }
+    }
+    for (const [name] of ROUTES) {
+      if (answered?.works.length) break;
+      out.tried.push(name);
+      try {
+        const w = await keylessRoute(name, f, { pageSize: BEAT.CANDIDATES, budget, wait }, fetchImpl);
+        if (w == null) errors.push(`${name}: the finding has no name to search`);
+        else if (!answered || w.length) answered = { source: name, works: w };
+      } catch (e3) { errors.push(String(e3?.message || e3)); }
+    }
+    if (!answered) throw new Error(errors.join("; "));
+    out.source = answered.source; works = answered.works;
   }
   for (const w of works) {
     const doi = doiKey(citeOf(w).doi);

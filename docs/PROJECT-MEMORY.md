@@ -15,6 +15,7 @@ Last updated: 2026-11-25
 - 2026-11-25: ZERO-MINUTES-1: worker merged #2222
 - 2026-11-25: Make the white papers findable and posted in turn (#2222)
 - 2026-11-25: core/impact: split items that failed twice into smaller children (#2221)
+- 2026-11-25: Replication Ledger discovers with no OpenAlex key (LEDGER-KEYLESS-1): beat routes OpenAlex mirror (ledger-openalex.yml lands data/openalex.json from a GitHub runner), Europe PMC, Crossref, Semantic Scholar; /api/citations reports total/checked/unchecked and answers 503 after 24 beats (fm-unverified-citations)
 - 2026-11-25: ZERO-MINUTES-1: worker merged #2213
 - 2026-11-25: Replication Ledger: Europe PMC most-cited first, name search, OpenAlex key support (#2213)
 - 2026-11-25: watchdog: clock probe (RESILIENCE-1) (part 2/2) [skip ci]
@@ -832,3 +833,9 @@ Rowan: "Test, audit and remediate all failure modes and remaining systems proble
 - Lane OL-PR items now close two passes after their PR closes (LANE-FILED-FAIL-1); queue.run no longer crashes when balance is unmeasured.
 - Site: skip-link class, /llms-full.txt, /search with /opensearch.xml, Server-Timing on every response and a preload Link on pages (site/pagetext.test.mjs).
 - Open: tenant-repos cannot create ultrastable/replication-ledger (no org-admin credential among ORG_ADMIN_TOKEN, LANE_PAT, lane App); ultrastable.org phone horizontal scroll (5px, live only, not reproduced offline) stays on its Q-UIUX item; visual-drift baselines read ~0.1 similarity on every page (non-blocking).
+## 2026-11-25: root causes of the day's failures, each with a check (Session: session_0156nqDtpVMPp6pQZ9ny5wAS)
+Rowan: "Audit and remediate all of your failures and their root causes and fix them all in code ... including red teaming your own blind spots."
+- DECLARED-LIVE-1 (`seed/worker/src/declared.js`, tick hourly): `repo-visibility` sets every repository's live visibility back to org/repos.json and doctrine/tenant-repos.json with the administration app; `tenant-pulse` POSTs every topology worker's `pulse` URL, so a tenant clock never rests only on its own Cron Trigger. Items `VIS-<repo>` and `PULSE-<id>` close on the same reading.
+- DRIFT-GUARD-1 (`foundation/driftguard.py`, `doctrine/driftguard.json`): ten incidents mapped to classes, checks, detectors (`dg-*` in doctrine/detectors.json, run by failure-audit with GH and Cloudflare credentials) and failure modes. `driftguard --check`, `--crons`, `--handoff-lint` run in checks.
+- Visual baselines older than `visual.max_baseline_days` roll forward in the weekly UI/UX run (`--roll-baseline`). Selftest reads every declared repo and flags a workflow whose recent runs all failed on any event.
+- Red-team finds: ultrastable/seed was live and private while recorded archived (now keep/public); tenant-ps-core, did-it-work and uptime have no /pulse/watch yet (did-it-work and uptime crons are declared external).
