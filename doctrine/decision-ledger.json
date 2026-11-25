@@ -4983,6 +4983,15 @@
    "body": "Moving Unlearn out broke the decision ledger, the topology main check, system.json, seedlife build paths and a core test that read the tenant's phases. Tenant checks now live in the tenant repo next to the code; core checks read source repos from topology.",
    "probe": "grep:doctrine/topology.json::ultrastable/unlearn",
    "session": "session_0156nqDtv3xZHzUu11Sy1geK"
+  },
+  {
+   "id": "lesson-2026-11-25-gh-issue-search-read-a-title-prefix-as-a-qualifier",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "gh issue search read a title prefix as a qualifier",
+   "body": "org_profile_probe.sh found its issue with --search 'org-profile-probe: ... in:title'; the leading org-profile-probe: is parsed as a search qualifier, so a passing probe never closed issue 2107 and failing runs could file duplicates. It now matches the exact title over the open list.",
+   "probe": "grep:scripts/org_profile_probe.sh::select\\(.title",
+   "session": "session_0156nqDvX8P4Z5wfkTJvFwh9"
   }
  ]
 }
