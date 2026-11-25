@@ -144,6 +144,8 @@ jobs:
           python3 -m foundation fullstack --check  # FULLSTACK-1: repository, back end and public front end for every system
           python3 -m foundation fleetcontract --check  # FLEET-CONTRACT-1: every live system carries the one contract module; one surface list
           python3 -m foundation tenantstd --check  # TENANT-STANDARD-1: every tenant vendors the standard's base files; one scaffold writes every standard file
+          python3 -m foundation fleetmap --check  # FLEET-MAP-1: every repository of the org is one row; every copy names its source and its sync
+          python3 -m foundation surfaces --check  # SYSTEM-MANIFEST-1: the kernel manifest is valid and every surface equals what it renders
           python3 -m foundation livelinks --check  # LIVE-LINKS-1: the README names where the platform and every system run
           python3 -m foundation managers --check  # MANAGERS-1: every role is a loop with code, a clock, a probe and a settler; every loop has a manager; the seed carries every manager
           python3 -m foundation datagraph --check

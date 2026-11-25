@@ -285,3 +285,17 @@ test('a deploy is recorded as a production Deployment with its live URL on the r
   const no = await recordDeployment(w.db, w.env, T, { repo: 'ultrastable/unlearn', sha, url: 'https://unlearn.ultrastable.org/' }, { fetch: f });
   assert.equal(no.ok, false); assert.equal(no.waiting_on, 'code-app-scope'); assert.match(no.error, /Deployments: write/);
 });
+
+test('the template route hands a token for the template repository only, behind the internal key', async () => {
+  const { templateToken, TEMPLATE_REPO } = await import('../src/apprepos.js');
+  const w = await tenantWorld();
+  const r = await templateToken(w.db, w.env, T, { repo: TEMPLATE_REPO }, { fetch: w.f });
+  assert.equal(r.ok, true); assert.equal(r.token, 'scoped:seed');
+  for (const n of ['ultrastable/ultrastable', 'ultrastable/ops', 'ultrastable/unlearn', 'ultrastable/seed/', '']) assert.equal((await templateToken(w.db, w.env, T, { repo: n }, { fetch: w.f })).ok, false, n);
+  const u = await tenantWorld({ covers: false });
+  assert.equal((await templateToken(u.db, u.env, T, { repo: TEMPLATE_REPO }, { fetch: u.f })).waiting_on, 'code-app-scope');
+  const bad = await handleAppHost(new Request('https://t/host/template-token', { method: 'POST', headers: { 'x-internal-key': 'nope' }, body: '{"repo":"ultrastable/seed"}' }), { ...w.env, DB: w.db }, { tenant: T, fetch: w.f });
+  assert.equal(bad.status, 404);
+  const ok = await handleAppHost(new Request('https://t/host/template-token', { method: 'POST', headers: { 'x-internal-key': w.env.INTERNAL_DEPLOY_KEY }, body: '{"repo":"ultrastable/seed"}' }), { ...w.env, DB: w.db }, { tenant: T, fetch: w.f });
+  assert.equal(ok.status, 200); assert.equal((await ok.json()).token, 'scoped:seed');
+});

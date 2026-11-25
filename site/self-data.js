@@ -840,6 +840,7 @@ export default {
   "findable",
   "first-run",
   "fleet-lane",
+  "fleet-map",
   "funding-outreach",
   "funding-verify",
   "gap-register",
@@ -2136,6 +2137,19 @@ export default {
     ]
    },
    {
+    "closing_probe": "grep:foundation/fleetmap.py::def drift",
+    "id": "fleet-map",
+    "kind": "governance",
+    "owner": "operations",
+    "server_owner": "github-actions",
+    "sla": "1d",
+    "summary": "One map of every repository of the org (FLEET-MAP-1): each copy names its source and its sync, the template repository is published from seed/ without overwriting work done there, and every copy is read against its source daily; a copy that differs or cannot be read is an item, never assumed equal.",
+    "trigger": "every push to seed/ on main, daily workflow, and dispatch",
+    "workflows": [
+     "template-publish"
+    ]
+   },
+   {
     "closing_probe": "grep:scripts/regen_generated.py::def run_all",
     "id": "regen-generated",
     "kind": "governance",
@@ -2654,6 +2668,12 @@ export default {
     "id": "spinoff",
     "loops": [
      "spinoff"
+    ]
+   },
+   {
+    "id": "template-publish",
+    "loops": [
+     "fleet-map"
     ]
    },
    {
