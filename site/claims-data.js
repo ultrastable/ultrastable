@@ -1921,19 +1921,10 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
-   "claim": "- **No branch outlives its pull request (BRANCH-CLEANUP-1, Rowan 2026-11-25).** \"You shall never keep branches active after merging. All",
+   "claim": "- **Red-team the system's own blind spots; the owner should never find a failure first (REDTEAM-1, Rowan 2026-11-25).** \"Audit and",
    "detail": "",
-   "how": "file:scripts/branch_cleanup.py",
-   "id": "cited-4d5fed0f55",
-   "kind": "claim",
-   "pass": true,
-   "surface": "agents/AGENTS.md"
-  },
-  {
-   "claim": "- **One definition; every surface from one source; a fresh seed proves it (SYSTEM-1, COHERENCE-1, CLEANROOM-1, Rowan 2026-11-25).** \"All",
-   "detail": "",
-   "how": "file:seed/doctrine/system.json + file:seed/doctrine/SYSTEM.md + file:seed/scripts/system.py + file:workers/agents/CONTRACT.md + file:doctrine/tenant-repos.json + file:.github/workflows/cleanroom.yml",
-   "id": "cited-edabfbae8f",
+   "how": "file:foundation/redteam.py + file:ops/redteam/findings.jsonl + file:tests/foundation/test_redteam.py",
+   "id": "cited-467a38f9b7",
    "kind": "claim",
    "pass": true,
    "surface": "agents/AGENTS.md"
@@ -2641,37 +2632,10 @@ export default {
    "surface": "seed/agents/AGENTS.md"
   },
   {
-   "claim": "- **No branch outlives its pull request (BRANCH-CLEANUP-1, Rowan 2026-11-25).** \"You shall never keep branches active after merging. All",
+   "claim": "- **Red-team the system's own blind spots; the owner should never find a failure first (REDTEAM-1, Rowan 2026-11-25).** \"Audit and",
    "detail": "",
-   "how": "file:scripts/branch_cleanup.py",
-   "id": "mirror-3e533029e6",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/agents/AGENTS.md"
-  },
-  {
-   "claim": "- **Issue inflow never exceeds closures; every issue inside its SLA (FLOW-BALANCE-1, Rowan 2026-11-21).** \"All UltraStable issues must be",
-   "detail": "",
-   "how": "file:seed/worker/src/flowbalance.js + file:doctrine/balance.json + file:tests/foundation/test_balance.py + file:foundation/balance.py",
-   "id": "mirror-ad11709e94",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/agents/AGENTS.md"
-  },
-  {
-   "claim": "- **Find another path before asking; the information is already held (PATHFINDER-1, Rowan 2026-11-21).** \"There are always multiple paths,",
-   "detail": "",
-   "how": "file:doctrine/pathfinder.json + file:ops/paths/attempts.jsonl + file:foundation/pathfinder.py + file:tests/foundation/test_pathfinder.py",
-   "id": "mirror-7a700bcc8c",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/agents/AGENTS.md"
-  },
-  {
-   "claim": "- **One definition; every surface from one source; a fresh seed proves it (SYSTEM-1, COHERENCE-1, CLEANROOM-1, Rowan 2026-11-25).** \"All",
-   "detail": "",
-   "how": "file:seed/doctrine/system.json + file:seed/doctrine/SYSTEM.md + file:seed/scripts/system.py + file:workers/agents/CONTRACT.md + file:doctrine/tenant-repos.json + file:.github/workflows/cleanroom.yml",
-   "id": "mirror-09a99fa607",
+   "how": "file:foundation/redteam.py + file:ops/redteam/findings.jsonl + file:tests/foundation/test_redteam.py",
+   "id": "mirror-309506fe16",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3343,7 +3307,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 72 Python and 536 Worker tests",
+   "claim": "seed-tests: 67 Python and 537 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3352,7 +3316,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 536 Worker tests",
+   "claim": "seed-worker-tests: 537 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3388,7 +3352,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 1052",
+   "claim": "live-deploys: 1054",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",
@@ -3593,7 +3557,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 396,
-  "total": 396
+  "pass": 392,
+  "total": 392
  }
 };
