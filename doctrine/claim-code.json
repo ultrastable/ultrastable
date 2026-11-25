@@ -397,6 +397,15 @@
    }
   },
   {
+   "id": "admit-1-bootstrap",
+   "source": "agents/AGENTS.md",
+   "quote": "everything has to work together automatically and seamlessly from the beginning",
+   "probe": {
+    "file": "scripts/regen_generated.py",
+    "contains": "\"admit\", \"--apply\""
+   }
+  },
+  {
    "id": "no-fabrication-agents-agents.md",
    "source": "agents/AGENTS.md",
    "quote": "No made-up numbers (NO-FABRICATION-1",

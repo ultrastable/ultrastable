@@ -1,0 +1,15 @@
+{
+  "_doc": "ADMIT-1 (Rowan, 2026-11-25): \"everything has to work together automatically and seamlessly from the beginning ... it has to all bootstrap autonomously.\" One row in doctrine/tenant-repos.json admits a tenant; every registry below is derived from that row, the tenant's instance.json and its doctrine/topology.json worker by foundation/admit.py, so the checks that enumerate tenants from these registries (progress, tenantpromo, fullstack, stickiness, clock, cost guard) see every live tenant. Read by foundation/admit.py: `admit --check` in checks, `admit --apply` in scripts/regen_generated.py on every merge.",
+  "version": 1,
+  "live_states": ["own-repo", "moving", "moved"],
+  "registries": [
+    {"id": "progress", "file": "instances/ultrastable/progress.json", "why": "visible progress, stall repair and stickiness (PROGRESS-1, STICKY-1); the root registry the other tenant checks read"},
+    {"id": "promotion", "file": "doctrine/tenant-promotion.json", "why": "the tenant promotes itself (TENANT-PROMO-1)"},
+    {"id": "gate", "file": "social/gate.json", "why": "the core publisher drains the tenant's social queue"},
+    {"id": "org-settings", "file": "github/org-settings.json", "why": "repository settings and visibility are applied by org-settings.yml (REPO-SETTINGS-1, DISCOVER-1)"},
+    {"id": "showcase", "file": "doctrine/stakeholders.json", "why": "ultrastable.io and every sibling link to it (DISCOVER-1)"},
+    {"id": "clock", "file": "doctrine/clocks.json", "why": "its beat is a clock; a stopped beat is a defect (CLOCKWORK-1)"},
+    {"id": "budget", "file": "instances/ultrastable/cost-budgets.json", "why": "its D1 reads are sampled hourly against its own budget (TENANT-SANDBOX-1)"}
+  ],
+  "rule_files": ["agents/AGENTS.md", "seed/agents/AGENTS.md", "agents/PROJECT-INSTRUCTIONS.md"]
+}

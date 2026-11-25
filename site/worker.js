@@ -589,7 +589,32 @@ async function build(env, id, brief, prev, change) {
     await env.ASSETS.put("brief:" + id, JSON.stringify({ brief, change: change || null }));
     { const before = await env.ASSETS.get("site:" + id); const html = await aiHtml(env, brief, prev, change); if (before) await recordVersion(env, id, before, change ? "you asked: " + String(change).slice(0, 100) : "rebuilt"); await env.ASSETS.put("site:" + id, html); } await env.ASSETS.put("state:" + id, "ready"); // SITE-UPKEEP-1: the page before each change is kept
     await env.ASSETS.delete("audit:" + id);
-  } catch (e) { console.error("build failed", id, String(e)); await env.ASSETS.put("state:" + id, "failed"); }
+  } catch (e) {
+    console.error("build failed", id, String(e));
+    // SPEND-SOFT-1 at the front door (ADMIT-1, 2026-11-25): when the day's model allowance is spent the budget crawls at one call an hour, and every
+    // first build failed ("the page was not built: failed", LAUNCH-PATH-1 probe red). A first build now always yields a page: a deterministic draft
+    // from the visitor's own words, saved and marked so the next build or change request replaces it with a model-built page. A change to an
+    // existing page still reports failed, so the person is told it did not happen.
+    if (!prev && !(await env.ASSETS.get("site:" + id))) {
+      await env.ASSETS.put("site:" + id, draftHtml(brief)); await env.ASSETS.put("draft:" + id, String(e).slice(0, 200));
+      await env.ASSETS.put("state:" + id, "ready"); return;
+    }
+    await env.ASSETS.put("state:" + id, "failed");
+  }
+}
+// The no-model first draft: the idea and what the person said, plus a notes area that keeps what they type. Passes lint() by construction.
+export function draftHtml(brief) {
+  const b = String(brief || ""), idea = (/^Idea:\s*(.+)$/m.exec(b) || [])[1] || "Your new site";
+  const said = b.split("\n").map(l => /^- (.+?) (YES|NO)$/.exec(l)).filter(Boolean).map(m => (m[2] === "YES" ? "Yes: " : "No: ") + m[1]).slice(0, 12);
+  return "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>" + esc(idea.slice(0, 80)) + "</title>"
+    + "<style>" + BASE + "*{box-sizing:border-box}body{margin:0;font:16px/1.6 system-ui,sans-serif;background:var(--bg);color:var(--ink)}main{max-width:720px;margin:0 auto;padding:24px 16px}"
+    + ".card{background:var(--sf);border:1px solid var(--line);border-radius:12px;padding:16px;margin:16px 0}textarea{width:100%;min-height:140px;font:inherit;padding:10px}"
+    + "button{min-height:44px;padding:0 18px;font:inherit;border-radius:8px;border:0;background:var(--ac);color:var(--on)}</style></head><body><main>"
+    + "<h1>" + esc(idea) + "</h1><p>This is the first draft of this site. It is being built out by itself.</p>"
+    + (said.length ? "<div class=\"card\"><h2>What it is built around</h2><ul>" + said.map(x => "<li>" + esc(x) + "</li>").join("") + "</ul></div>" : "")
+    + "<div class=\"card\"><h2>Notes</h2><label for=\"n\">Anything you want to keep here</label><textarea id=\"n\"></textarea><p><button id=\"s\" type=\"button\">Save</button> <span id=\"m\">Nothing saved yet.</span></p></div>"
+    + "</main><script>var mem='';function g(){try{return localStorage.getItem('notes')||''}catch(e){return mem}}function p(v){try{localStorage.setItem('notes',v)}catch(e){mem=v}}"
+    + "var n=document.getElementById('n');n.value=g();document.getElementById('s').addEventListener('click',function(){p(n.value);document.getElementById('m').textContent='Saved.'});</script></body></html>";
 }
 // Each stage runs in its own request so it gets its own time budget (waitUntil is capped at about 30 s): build, then audit and at most one fix.
 async function ensureAudit(env, ctx, id) {
