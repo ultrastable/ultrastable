@@ -1,5 +1,5 @@
 {
- "at": "2026-11-25T14:23:16Z",
+ "at": "2026-11-25T20:31:33Z",
  "probes": {
   "closed-loops/closedloop": {
    "status": "ok",
@@ -32,10 +32,10 @@
    "item": null
   },
   "front-end-matches-back-end/claims": {
-   "status": "violated",
-   "detail": "claims: 376 verified of 378; 2 drift",
+   "status": "ok",
+   "detail": "claims: 388 verified of 388; 0 drift",
    "fixed": false,
-   "item": "Q-RULE-front-end-matches-back-end-claims"
+   "item": null
   },
   "front-end-matches-back-end/claimcode": {
    "status": "ok",
@@ -56,10 +56,10 @@
    "item": null
   },
   "no-merge-over-red/mergeaudit": {
-   "status": "ok",
-   "detail": "every recent merge had a green checks run",
+   "status": "violated",
+   "detail": "merged without green checks: #2203, #2222",
    "fixed": false,
-   "item": null
+   "item": "Q-RULE-no-merge-over-red-mergeaudit"
   },
   "no-merge-over-red/ciwatch": {
    "status": "ok",
@@ -129,7 +129,7 @@
   },
   "clock-never-stops/clock": {
    "status": "ok",
-   "detail": "clock ok: tick-heartbeat, executor, transparency, deploy-site, scout, a11y, criticality-loop, claims, watchdog, temporal, unlearn-beat, intent-yield",
+   "detail": "clock ok: tick-heartbeat, executor, transparency, deploy-site, scout, a11y, criticality-loop, claims, watchdog, temporal, unlearn-beat, intent-yield, what-works",
    "fixed": false,
    "item": null
   },
@@ -218,9 +218,7 @@
    "item": null
   }
  },
- "filed": [
-  "Q-RULE-front-end-matches-back-end-claims"
- ],
+ "filed": [],
  "rules": {
   "closed-loops": {
    "status": "enforced",
@@ -237,7 +235,7 @@
    "statement": "No decision, question or step is handed to the owner; agents decide, deploy and verify (GUIDING-DIRECTIVE, CODE-ONLY-ORDER)."
   },
   "front-end-matches-back-end": {
-   "status": "violated",
+   "status": "unmeasured",
    "ci": 2,
    "probes": 4,
    "gaps": [
@@ -246,7 +244,7 @@
    "statement": "Words match code: every public statement is bound to a probe of the running code (CLAIMS-1, WORDS-MATCH-CODE-1)."
   },
   "no-merge-over-red": {
-   "status": "enforced",
+   "status": "violated",
    "ci": 2,
    "probes": 2,
    "gaps": [],
