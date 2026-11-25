@@ -1,7 +1,7 @@
 {
- "at": "2026-11-25T21:45:38Z",
- "gaps": 6,
- "match_share": 0.988,
+ "at": "2026-11-25T22:07:08Z",
+ "gaps": 9,
+ "match_share": 0.982,
  "sources": {
   "changes": [
    {
@@ -153,17 +153,22 @@
   ],
   "claims": [
    {
-    "drift": 0,
+    "detail": "site/worker.js: json:doctrine/ultrastability.json::patience_ticks==2 failed (doctrine/ultrastability.json: patience_ticks=3)",
+    "id": "how-ultrastable-second-order",
+    "ok": false
+   },
+   {
+    "drift": 1,
     "id": "claims-total",
     "ok": true,
-    "total": 399
+    "total": 404
    }
   ],
   "loops": [
    {
-    "detail": "0 of 91 second-order steps kept in 14 days",
+    "detail": "0 of 93 second-order steps kept in 14 days",
     "id": "second-loop-kept",
-    "judged": 91,
+    "judged": 93,
     "kept": 0,
     "ok": false
    }
@@ -464,10 +469,12 @@
    {
     "checks": 1,
     "external": [],
-    "failing": [],
+    "failing": [
+     "python3 -m foundation claims --check: DRIFT how-ultrastable-second-order [claim] site/worker.js: json:doctrine/ultrastability.json::patience_ticks==2 failed (doctrine/ultrastability.json: patience_ticks=3); claims: 403 verified of 404; 1 "
+    ],
     "id": "CLAIMS-1",
     "missing": [],
-    "ok": true,
+    "ok": false,
     "unmeasured": []
    },
    {
@@ -511,6 +518,15 @@
     "external": [],
     "failing": [],
     "id": "TENANT-SANDBOX-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "ADMIT-1",
     "missing": [],
     "ok": true,
     "unmeasured": []
@@ -702,8 +718,19 @@
    {
     "checks": 1,
     "external": [],
-    "failing": [],
+    "failing": [
+     "python3 -m foundation coldstart --check: doctrine/decision-ledger.json: `python3 -m foundation commands` names no command (no module with main, no argparse entry)"
+    ],
     "id": "COLDSTART-1",
+    "missing": [],
+    "ok": false,
+    "unmeasured": []
+   },
+   {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "WORK-NOT-PULSE-1",
     "missing": [],
     "ok": true,
     "unmeasured": []
@@ -712,7 +739,16 @@
     "checks": 0,
     "external": [],
     "failing": [],
-    "id": "WORK-NOT-PULSE-1",
+    "id": "BOOT-ACCEPT-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "SYSTEM-SPEC-1",
     "missing": [],
     "ok": true,
     "unmeasured": []
@@ -902,7 +938,7 @@
     "checks": 1,
     "external": [],
     "failing": [
-     "python3 -m foundation dispose --check: an open item is 80.2 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+     "python3 -m foundation dispose --check: an open item is 80.5 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
     ],
     "id": "DISPOSE-1",
     "missing": [],
@@ -974,21 +1010,21 @@
    "total": 16
   },
   "claims": {
-   "gaps": 0,
-   "total": 399
+   "gaps": 1,
+   "total": 404
   },
   "loops": {
    "gaps": 1,
    "total": 1
   },
   "rules": {
-   "gaps": 3,
-   "total": 85
+   "gaps": 5,
+   "total": 88
   },
   "year": {
    "gaps": 1,
    "total": 2
   }
  },
- "total": 503
+ "total": 511
 }

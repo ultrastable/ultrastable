@@ -1,0 +1,12 @@
+{
+  "id": "STD-7",
+  "title": "STD-7: adopt Knowledge graph served as JSON-LD (schema.org) with SHACL-style shape checks",
+  "body": "**Owner:** staff\n**Trigger:** STANDARDS-1 audit 2026-11-25: `schema-org-kg` is planned in seed/standards/standards.json\n**Done check:** cmd:python3 -m foundation standards --check && python3 -c \"import json,sys;e=[x for x in json.load(open('seed/standards/standards.json'))['entries'] if x['id']=='schema-org-kg'][0];sys.exit(e['support'] not in ('supported','partial'))\"\n**Status:** open\n\nKnowledge graph served as JSON-LD (schema.org) with SHACL-style shape checks. Every system's /api/graph readable by any linked-data tool, not only by our own pages.\n\nLands in `seed/worker/src/datagraph.js` (and its seed twin so every system inherits it). Move the register entry `schema-org-kg` to supported with `how` paths and a passing test in the same change; replace the home-grown format, do not add a second one.\n\n**Closing probe:** `python3 -m foundation standards --probe schema-org-kg`\n**Prediction:** standards_supported >= 45 within 336 h\n**Out of scope:** adopting a standard nothing in the system reads; a parallel format kept beside the old one.",
+  "labels": [
+    "role:staff",
+    "ws:platform",
+    "standards"
+  ],
+  "milestone": "Next",
+  "workstream": "Platform"
+}
