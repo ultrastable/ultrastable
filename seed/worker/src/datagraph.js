@@ -9,7 +9,7 @@
 // earlier proposals against the data (kept when the data later links the pair, dropped after keepDays), re-weights insight kinds from those outcomes, and
 // files one KG-ORPHANS-<kind> item when most of a kind's records connect to nothing; the same reading closes it.
 // Read side: /api/graph (summary), /api/graph/node?id= (a node and its neighbourhood, for retrieval), /api/graph/search?q=, /api/graph/insights, /graph.
-import { extract, analyze, predict, insights as findInsights, settle, calibrate, neighborhood, DEFAULTS } from './vendor/core/datagraph.js';
+import { extract, analyze, predict, insights as findInsights, settle, calibrate, neighborhood, DEFAULTS, SKIP_TABLE } from './vendor/core/datagraph.js';
 import { ORIGINATE_MAX_PER_DAY } from './tick.js';
 export const KG_RESERVE = 2;  // like STICKY_RESERVE: the daily originate cap is spent early by other filers; one orphan finding a pass needs a small reserve
 export const KG_DEFAULTS = Object.freeze({ every_min: 360, max_rows_total: 6000, max_rows_per_table: 400, max_tables: 60, proposals_per_pass: 10 });
@@ -35,6 +35,8 @@ async function readTables(db, cfg, skip) {
   const names = (await all(db, `SELECT name FROM sqlite_master WHERE type='table' ORDER BY name`)).map(r => r.name).filter(n => !skip(n)).slice(0, cfg.max_tables);
   const per = Math.max(20, Math.min(cfg.max_rows_per_table, Math.floor(cfg.max_rows_total / Math.max(1, names.length)))), out = [], errors = [];
   for (const name of names) {
+    // A secret-shaped or platform table is passed on empty, never SELECTed: core drops it by name and reports it (_cf_KV refuses reads anyway).
+    if (SKIP_TABLE.test(name)) { out.push({ name, rows: [] }); continue; }
     try { out.push({ name, rows: await all(db, `SELECT rowid AS _rid, * FROM ${qi(name)} ORDER BY rowid DESC LIMIT ?`, per) }); }
     catch (e) {
       try { out.push({ name, rows: await all(db, `SELECT * FROM ${qi(name)} LIMIT ?`, per) }); }
