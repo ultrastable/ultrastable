@@ -36,7 +36,13 @@ def run(root=REPO, runner=None) -> dict:
     res = []
     for s in steps(root):
         env = {k: str(v) for k, v in s["env"].items() if "${{" not in str(v)}
-        p = runner(resolve(s["run"]), s["cwd"], env)
+        try:
+            p = runner(resolve(s["run"]), s["cwd"], env)
+        except subprocess.TimeoutExpired as e:  # CHECKSRUN-TIMEOUT-1: one slow step is a failed step with its tail, never a crash that records no evidence row
+            out = (e.stdout or b"") + (e.stderr or b"")
+            out = out.decode("utf-8", "replace") if isinstance(out, bytes) else out
+            res.append({"step": s["name"], "ok": False, "tail": (out[-1200:] + f"\ntimed out after {e.timeout:.0f} s")[-1500:]})
+            continue
         res.append({"step": s["name"], "ok": p.returncode == 0, "tail": "" if p.returncode == 0 else (p.stdout + p.stderr)[-1500:]})
     head = subprocess.run(["git", "-C", str(root), "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
     return {"at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"), "sha": head, "steps": len(res), "failed": [r["step"] for r in res if not r["ok"]], "results": res}
