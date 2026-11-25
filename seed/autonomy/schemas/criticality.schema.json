@@ -1,0 +1,180 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/seed/autonomy/criticality.schema.json",
+  "title": "criticality (seed/autonomy/criticality.json)",
+  "description": "Contract for seed/autonomy/criticality.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "$schema_version": {
+      "type": "string"
+    },
+    "doc": {
+      "type": "string"
+    },
+    "window_days": {
+      "type": "number"
+    },
+    "k_min": {
+      "type": "number"
+    },
+    "denominator_floor": {
+      "type": "number"
+    },
+    "dispatch_spend_units": {
+      "type": "number"
+    },
+    "self": {
+      "type": "object",
+      "properties": {
+        "origins": {
+          "type": "array"
+        },
+        "doc": {
+          "type": "string"
+        }
+      }
+    },
+    "deploy": {
+      "type": "object",
+      "properties": {
+        "action_classes": {
+          "type": "array"
+        },
+        "surfaces": {
+          "type": "array"
+        },
+        "verifier_evidence_prefix": {
+          "type": "string"
+        },
+        "doc": {
+          "type": "string"
+        }
+      }
+    },
+    "originated": {
+      "type": "object",
+      "properties": {
+        "id_prefixes": {
+          "type": "array"
+        },
+        "credit_cap": {
+          "type": "number"
+        },
+        "doc": {
+          "type": "string"
+        }
+      }
+    },
+    "guards": {
+      "type": "object",
+      "properties": {
+        "spend_worse_tolerance": {
+          "type": "number"
+        },
+        "fail_rate_worse_tolerance": {
+          "type": "number"
+        },
+        "doc": {
+          "type": "string"
+        }
+      }
+    },
+    "origination": {
+      "type": "object",
+      "properties": {
+        "order": {
+          "type": "array"
+        },
+        "head_priority": {
+          "type": "number"
+        },
+        "spend_budget_units": {
+          "type": "number"
+        },
+        "max_fail_rate": {
+          "type": "number"
+        },
+        "owner_roles": {
+          "type": "object"
+        },
+        "titles": {
+          "type": "object"
+        }
+      }
+    },
+    "k_max": {
+      "type": "number"
+    },
+    "successor": {
+      "type": "object",
+      "properties": {
+        "batch": {
+          "type": "number"
+        },
+        "id_prefix": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "doc": {
+          "type": "string"
+        }
+      }
+    },
+    "control": {
+      "type": "object",
+      "properties": {
+        "doc": {
+          "type": "string"
+        },
+        "subcritical_ticks": {
+          "type": "number"
+        },
+        "prediction_hours": {
+          "type": "number"
+        },
+        "cooldown_hours": {
+          "type": "number"
+        },
+        "stall_ticks": {
+          "type": "number"
+        },
+        "history_keep_days": {
+          "type": "number"
+        },
+        "beat_interval_s": {
+          "type": "number"
+        },
+        "owner_role": {
+          "type": "string"
+        },
+        "raises_id_prefixes": {
+          "type": "array"
+        },
+        "raises_kinds": {
+          "type": "array"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "$schema_version",
+    "control",
+    "denominator_floor",
+    "deploy",
+    "dispatch_spend_units",
+    "doc",
+    "guards",
+    "k_max",
+    "k_min",
+    "originated",
+    "origination",
+    "self",
+    "successor",
+    "window_days"
+  ]
+}

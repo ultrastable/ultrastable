@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/topology.schema.json",
+  "title": "topology (doctrine/topology.json)",
+  "description": "Contract for doctrine/topology.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "account_id": {
+      "type": "string"
+    },
+    "prefix": {
+      "type": "string"
+    },
+    "stores": {
+      "type": "object",
+      "properties": {
+        "d1": {
+          "type": "array"
+        },
+        "kv": {
+          "type": "array"
+        },
+        "r2": {
+          "type": "array"
+        },
+        "queues": {
+          "type": "array"
+        },
+        "vectorize": {
+          "type": "array"
+        },
+        "workflows": {
+          "type": "array"
+        }
+      }
+    },
+    "workers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "bindings": {
+            "type": "object"
+          },
+          "compatibility_date": {
+            "type": "string"
+          },
+          "crons": {
+            "type": "array"
+          },
+          "id": {
+            "type": "string"
+          },
+          "main": {
+            "type": "string"
+          },
+          "public": {
+            "type": "boolean"
+          },
+          "pulse": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "routes": {
+            "type": "array"
+          },
+          "state": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "edit_path": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "deploy_counter": {
+      "type": "string"
+    },
+    "system_compatibility_date": {
+      "type": "string"
+    },
+    "_account_split": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_account_split",
+    "_doc",
+    "account_id",
+    "deploy_counter",
+    "edit_path",
+    "prefix",
+    "stores",
+    "system_compatibility_date",
+    "version",
+    "workers"
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/meta-loop.schema.json",
+  "title": "meta-loop (doctrine/meta-loop.json)",
+  "description": "Contract for doctrine/meta-loop.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "owner_directive": {
+      "type": "string"
+    },
+    "rule": {
+      "type": "string"
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "consent": {
+      "type": "string"
+    },
+    "detectors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "patterns": {
+            "type": "array"
+          },
+          "roadmap": {
+            "type": "string"
+          },
+          "weight": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "mic_events": {
+      "type": "object",
+      "properties": {
+        "doc": {
+          "type": "string"
+        },
+        "codes": {
+          "type": "object"
+        },
+        "thresholds": {
+          "type": "object"
+        }
+      }
+    },
+    "thresholds": {
+      "type": "object",
+      "properties": {
+        "file_issue_when_weight_at_least": {
+          "type": "number"
+        },
+        "dedupe_window_days": {
+          "type": "number"
+        }
+      }
+    },
+    "issue_prefix": {
+      "type": "string"
+    },
+    "sink": {
+      "type": "string"
+    },
+    "closing_probe": {
+      "type": "string"
+    },
+    "server_owner": {
+      "type": "string"
+    },
+    "ingest": {
+      "type": "string"
+    },
+    "sla_hours": {
+      "type": "number"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "closing_probe",
+    "consent",
+    "detectors",
+    "id",
+    "ingest",
+    "issue_prefix",
+    "mic_events",
+    "owner_directive",
+    "rule",
+    "server_owner",
+    "sink",
+    "sla_hours",
+    "sources",
+    "thresholds",
+    "version"
+  ]
+}

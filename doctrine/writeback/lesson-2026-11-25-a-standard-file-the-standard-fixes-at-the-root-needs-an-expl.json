@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-25-a-standard-file-the-standard-fixes-at-the-root-needs-an-expl",
+  "kind": "lesson",
+  "date": "2026-11-25",
+  "title": "A standard file the standard fixes at the root needs an explicit allowance, and a register a site serves needs its generator in REGEN-1",
+  "body": "catalog-info.yaml failed STRAYS-1 as a root code file (now doctrine/strays.json standard_root_files), and editing seed/standards/standards.json left site/agentdata.js stale because neither regen list rebuilt it (now in both).",
+  "probe": "grep:scripts/regen_generated.sh::build_site_agentdata",
+  "session": "session_0156nqDriSf7RENkyFHy7NoW"
+ },
+ "kind": "lesson",
+ "title": "A standard file the standard fixes at the root needs an explicit allowance, and a register a site serves needs its generator in REGEN-1",
+ "session": "session_0156nqDriSf7RENkyFHy7NoW"
+}

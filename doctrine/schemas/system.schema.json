@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/system.schema.json",
+  "title": "system (doctrine/system.json)",
+  "description": "Contract for doctrine/system.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "compatibility_date": {
+      "type": "string"
+    },
+    "resources": {
+      "type": "object",
+      "properties": {
+        "d1": {
+          "type": "object"
+        },
+        "kv": {
+          "type": "object"
+        },
+        "queues": {
+          "type": "object"
+        },
+        "vectorize": {
+          "type": "object"
+        }
+      }
+    },
+    "workers": {
+      "type": "object",
+      "properties": {
+        "ultrastable-tick": {
+          "type": "object"
+        },
+        "ultrastable-site": {
+          "type": "object"
+        },
+        "ultrastable-dashboard": {
+          "type": "object"
+        },
+        "ultrastable-agents": {
+          "type": "object"
+        },
+        "ultrastable-tenants": {
+          "type": "object"
+        },
+        "ultrastable-unlearn": {
+          "type": "object"
+        },
+        "ultrastable-what-works": {
+          "type": "object"
+        },
+        "ultrastable-spinoffs": {
+          "type": "object"
+        },
+        "ultrastable-replication-ledger": {
+          "type": "object"
+        }
+      }
+    },
+    "edit_path": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "deploy_counter": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "compatibility_date",
+    "deploy_counter",
+    "edit_path",
+    "name",
+    "resources",
+    "workers"
+  ]
+}
