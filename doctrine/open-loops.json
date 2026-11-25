@@ -495,6 +495,44 @@
    "reason": "creating a repository in the org needs an org-scoped credential (a token or an App with administration write) that only an org owner can bind",
    "default": "Unlearn keeps its code under instances/unlearn and deploy-ultrastable builds and deploys it from this repository; tenant-repos.yml retries daily and creates the repository with its history the first time any of the three routes is bound",
    "probe": "cmd:python3 -m foundation tenantrepos --probe unlearn"
+  },
+  {
+   "id": "tenant-repo-what-works",
+   "surfaces": [
+    {
+     "s": "tenant-repos.yml with ORG_ADMIN_TOKEN, LANE_PAT and the lane App (runs 45213880823 and 45431995426, 2026-11-23 and 24)",
+     "result": "all three credentials are unbound; the workflow cannot create any tenant repository",
+     "class": "existing-credentials"
+    },
+    {
+     "s": "the lane GitHub App org installation token (scripts/lane_credential.py org-token), built for Unlearn in PR #1966",
+     "result": "the App secrets are unbound, so no installation token is minted",
+     "class": "construct"
+    },
+    {
+     "s": "GITHUB_TOKEN of the workflow",
+     "result": "scoped to this repository only; GitHub does not let it create a repository in the org",
+     "class": "alternate-channel"
+    },
+    {
+     "s": "GitHub MCP create_repository from a code session",
+     "result": "excluded for this session by its harness rules; not used",
+     "class": "alternate-channel"
+    },
+    {
+     "class": "prior-working-config",
+     "s": "how ultrastable/unlearn was created (PR #2101)",
+     "result": "Rowan created the empty repository, then a code session with the repository added pushed the split; the same route applies here"
+    },
+    {
+     "class": "sibling-workers",
+     "s": "tick Worker GitHub App (credential store read by seed/worker/src/appaudit.js and lanemerge.js)",
+     "result": "not tried: its installation token is scoped to merging in this repository and no Worker route creates an org repository; building one waits on the App being granted administration write, which is the same owner act"
+    }
+   ],
+   "reason": "creating a repository in the org needs an org-scoped credential that only an org owner can bind, or the owner creating the empty repository",
+   "default": "What Works keeps its code under instances/what-works and deploy-ultrastable builds and deploys it from this repository (registry state moving); once ultrastable/what-works exists, a session pushes the split with its history and the core keeps only the manifest",
+   "probe": "cmd:python3 -m foundation tenantrepos --probe what-works"
   }
  ]
 }
