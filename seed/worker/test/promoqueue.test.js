@@ -48,3 +48,13 @@ test('TENANT-PROMO-1: tenants share one rung and the tenant that posted least th
   const due = [{ id: 'a', arm: 'ps-solution', kind: 'backlog', date: '2026-11-01' }, { id: 'b', tenant: 'unlearn', arm: 'unlearn-belief', kind: 'tenant', date: '2026-11-24' }, { id: 'c', arm: 'meta-story', date: '2026-11-25' }];
   assert.deepEqual(fairOrder(due, rows, now).map(p => p.id), ['c', 'b', 'a']);
 });
+
+// NO-MADE-UP-NUMBERS-1: a tenant post with a figure and no https source is held back; one with a source, or with no figure, goes through.
+import { unsourcedNumbers } from '../src/promoqueue.js';
+import t2 from 'node:test';
+import a2 from 'node:assert/strict';
+t2('a figure needs a source', () => {
+  a2.deepEqual(unsourcedNumbers({ text: 'Deworming raises school attendance by 25%.' }), ['25%']);
+  a2.deepEqual(unsourcedNumbers({ text: 'Deworming raises attendance by 25%.', sources: ['https://example.org/study'] }), []);
+  a2.deepEqual(unsourcedNumbers({ text: 'A plain post from 2026 with no figure.' }), []);
+});

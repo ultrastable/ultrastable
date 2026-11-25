@@ -5,7 +5,7 @@
 import * as store from './auth/store.js';
 import { getToken } from './auth/index.js';
 import { dpopFetch, refreshForm, assertionFields } from './auth/atproto.js';
-import { tenantOf } from './promoqueue.js';
+import { tenantOf, unsourcedNumbers } from './promoqueue.js';
 
 const RAW = repo => `https://raw.githubusercontent.com/${repo}/main/social/`;
 const DDL = "CREATE TABLE IF NOT EXISTS social_posted (id TEXT NOT NULL, channel TEXT NOT NULL, at TEXT NOT NULL, ref TEXT, arm TEXT, PRIMARY KEY (id, channel))";
@@ -171,7 +171,7 @@ export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), t
   const [gate, cal] = await Promise.all([get('gate.json'), get('calendar.json')]);
   // SOCIAL-TENANTS-1: a tenant publishes its own queue ({ posts: [{ id, date, text, kind, arm }] }) in its own voice; core only drains it within the gate's caps.
   // The gate lists the queue URLs (data, not code). A queue that cannot be read is skipped this run and never blocks the others.
-  for (const url of gate.tenant_queues || []) { try { const r = await f(url); if (r.ok) cal.posts = [...(cal.posts || []), ...((await r.json()).posts || [])]; } catch (e) { /* allow-silent: a tenant queue that cannot be read is skipped this run and never blocks the others; it is read again next run */ } }
+  for (const url of gate.tenant_queues || []) { try { const r = await f(url); if (r.ok) { const got = (await r.json()).posts || [], ok = got.filter(x => !unsourcedNumbers(x).length); if (ok.length < got.length) await store.event(db, tenant, 'social', 'unsourced-held', url + ' ' + (got.length - ok.length)); cal.posts = [...(cal.posts || []), ...ok]; } } catch (e) { /* allow-silent: a tenant queue that cannot be read is skipped this run and never blocks the others; it is read again next run */ } }
   if (gate.kill) return { skipped: 'kill switch' };
   if (gate.mode !== 'live') return { skipped: 'gate mode ' + gate.mode };
   if (gate.kill) return { skipped: 'kill switch' };

@@ -533,6 +533,26 @@
    "reason": "whether GitHub lets the administration App create a repository in the org, and whether the code App's installation covers a repository created after it was installed, is only known from GitHub's live answer; if either is refused the remaining act is the owner's one click at /connect/github-admin or /connect/repos",
    "default": "every visitor app is live at ultrastable.io/s/<id> and gets its own deployed system; its change requests and ownership request are kept in its launch record with the exact thing waited on (admin-app, admin-app-scope, code-app-scope); each daily run tries again and finishes the repository the first time GitHub allows it",
    "probe": "cmd:node deploy/launch-apps.mjs --routes"
+  },
+  {
+   "id": "syndication-accounts",
+   "surfaces": [
+    {
+     "s": "repository search for dev.to, Hashnode or Medium credentials (2026-11-25)",
+     "result": "none held; only Bluesky, Mastodon and the social relay (LinkedIn, X, Substack) are connected"
+    },
+    {
+     "s": "credential-free routes",
+     "result": "in place: Atom feed /research.atom, sitemap and IndexNow with papers, schema.org ScholarlyArticle, WebSub ping of every fleet feed (findable.yml)"
+    },
+    {
+     "s": "account creation by the system",
+     "result": "not attempted: dev.to, Hashnode and Medium sign-up needs a person and a CAPTCHA; owner rule is accounts in Ultrastable's own name only, no CAPTCHA workarounds"
+    }
+   ],
+   "reason": "syndication sites that import RSS or take canonical cross-posts need an account a person signs up for",
+   "default": "papers reach readers through the five live social channels, the Atom feed with WebSub, sitemap with IndexNow, and structured data on every paper; when an API key for a site appears in the credential store, the publisher can add it as a channel",
+   "probe": "cmd:python3 -m foundation findable --check"
   }
  ]
 }

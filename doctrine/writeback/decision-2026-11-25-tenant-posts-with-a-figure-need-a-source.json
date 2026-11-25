@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-25-tenant-posts-with-a-figure-need-a-source",
+  "kind": "decision",
+  "date": "2026-11-25",
+  "title": "Tenant posts with a figure need a source",
+  "body": "NO-MADE-UP-NUMBERS-1 extended to tenant social queues: the core publisher holds back any tenant post that states a figure without an https source and logs it as unsourced-held. Syndication sites that need a person's sign-up are recorded as gate syndication-accounts with the feed, WebSub, IndexNow and five live channels as the default in effect.",
+  "probe": "grep:seed/worker/src/promoqueue.js::export function unsourcedNumbers",
+  "session": "session_0156nqDuQXEUhGCq6LkokuuL"
+ },
+ "kind": "decision",
+ "title": "Tenant posts with a figure need a source",
+ "session": "session_0156nqDuQXEUhGCq6LkokuuL"
+}

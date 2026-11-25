@@ -26,6 +26,16 @@ export function guard(text, { hook, link, limit = 300 } = {}) {
   return why;
 }
 
+// NO-MADE-UP-NUMBERS-1 (Rowan, 2026-11-25): "Never ... make up numbers that can't be double-checked ... sourced, cited." A post that states a figure
+// (a percentage, or a number of two or more digits that is not a year) must carry the https source it came from; one that does not is held back.
+export function unsourcedNumbers(post) {
+  const text = String((post && (post.text || post.long)) || '').replace(URL_RE, '');
+  const figs = (text.match(/(?<![\w.])\d[\d,]*(?:\.\d+)?%|(?<![\w.])\d{2,}(?:[\d,]*)(?:\.\d+)?(?![\w])/g) || []).filter(n => !/^(19|20)\d\d$/.test(n));
+  if (!figs.length) return [];
+  const src = [].concat(post.sources || [], post.source || [], post.url || []).filter(u => /^https:\/\//.test(String(u)));
+  return src.length ? [] : figs;
+}
+
 // Fit body + link + hook inside the limit by shortening the body only; the hook and the link are never cut.
 export function compose(body, url, hook, limit = 300) {
   const tail = '\n' + url + (hook ? '\n' + hook : '');

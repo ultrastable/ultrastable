@@ -26267,3 +26267,8 @@
 {"at": "2026-11-25T20:04:40+00:00", "ask": "linkedin", "class": "prior-working-config", "route": "regress:social/accounts.json", "ok": true, "detail": "2 suspect commits since None"}
 {"at": "2026-11-25T20:04:40+00:00", "ask": "ledger:clocks:all", "class": "prior-working-config", "route": "regress:foundation/clock.py", "ok": false, "detail": "0 suspect commits since add800e814fc"}
 {"at": "2026-11-25T20:04:41+00:00", "ask": "ledger:executor:pr-outcome", "class": "prior-working-config", "route": "regress:foundation/executor.py", "ok": false, "detail": "0 suspect commits since 61808a25d06d"}
+{"at": "2026-11-25T20:43:42+00:00", "ask": "syndication-accounts", "class": "existing-credentials", "route": "grep repo and credential bindings for dev.to/Hashnode/Medium keys", "ok": false, "detail": "none held"}
+{"at": "2026-11-25T20:43:42+00:00", "ask": "syndication-accounts", "class": "prior-working-config", "route": "git history for a syndication channel", "ok": false, "detail": "no prior dev.to/Hashnode/Medium config ever existed"}
+{"at": "2026-11-25T20:43:42+00:00", "ask": "syndication-accounts", "class": "sibling-workers", "route": "social relay channel list", "ok": false, "detail": "relay serves mastodon, linkedin, twitter, substack; no dev.to/Hashnode"}
+{"at": "2026-11-25T20:43:42+00:00", "ask": "syndication-accounts", "class": "alternate-channel", "route": "Atom feed + WebSub + IndexNow + sitemap + 5 social channels", "ok": true, "detail": "live; carries papers with no account"}
+{"at": "2026-11-25T20:43:42+00:00", "ask": "syndication-accounts", "class": "construct", "route": "system-created account", "ok": false, "detail": "sign-up needs a person and a CAPTCHA; owner rule forbids CAPTCHA workarounds"}
