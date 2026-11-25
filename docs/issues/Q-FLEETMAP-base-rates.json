@@ -1,0 +1,13 @@
+{
+  "id": "Q-FLEETMAP-base-rates",
+  "title": "Q-FLEETMAP-base-rates: ultrastable/base-rates is not equal to its source (0 file(s) differ, 1 missing, 0 only in the copy)",
+  "body": "**Owner:** operations\n**Trigger:** fleetmap --drift --apply (daily in tenant-sync.yml)\n**Done check:** cmd:python3 -m foundation fleetmap --probe base-rates\n**Prediction:** fleet_map_drifted_repos <= 0 within 168 h\n**Status:** open\n\nultrastable/base-rates is a copy and is not equal to its source (FLEET-MAP-1): 0 file(s) differ, 1 missing, 0 only in the copy.\n\n- missing: AGENTS.md\n- no instruction file: an agent that opens this repository reads no rules (AGENTS.md)\n\nFix the sync named in doctrine/fleet-map.json for this repository (never copy by hand), then the same reading closes this item.\n\n**Closing probe:** cmd:python3 -m foundation fleetmap --probe base-rates\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "role:operations",
+    "sync"
+  ],
+  "milestone": "Now",
+  "workstream": "Executor queue"
+}

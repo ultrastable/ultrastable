@@ -1,0 +1,522 @@
+{
+ "_doc": "FLEET-MAP-1 (Rowan, 2026-11-25: \"what really needs to be in the ultra-stable template repo as opposed to these other repos that you created ... it's starting to look like a mess ... create your own instructions and fail-safe ways to make sure it all works together every single time it's deployed for every tenant, any code agent, everything.\"). One row per repository of the org: what it is for, its layer, what it is copied from (source path, the workflow that copies it, direction), which Workers deploy from it, whether it runs Actions, its visibility and the instruction file an agent reads there. Read by foundation/fleetmap.py: --check (in checks) fails when a repository named in doctrine/tenant-repos.json, doctrine/full-stack.json (seeds of doctrine/seed-deploys.json), github/org-settings.json or session_repos below has no row, when a row is in none of them, and when a synced_from names a path or workflow that does not exist; --drift compares every mirror with its source (a clone beside this checkout, or the public GitHub tree) and reports differ, missing, extra or unmeasured, never ok without a reading; --drift --apply files Q-FLEETMAP-<repo> per mirror that is not equal and closes it when the same reading passes. Ultrastable is the foundation for any autonomous system.",
+ "org": "ultrastable",
+ "layers": {
+  "platform": "the one repository where code and rules are written; everything else is copied from it or vendors from it",
+  "template": "a published copy of the platform's seed/ folder, the kernel a new system starts from; never edited by hand",
+  "seeded-system": "a system started from the kernel; owns its idea, instance and domain content, receives the kernel by sync",
+  "tenant": "an app the platform runs; owns its app code, vendors named core files",
+  "admin": "the company's own papers and ledgers; not code",
+  "org-profile": "the organization's public profile and community defaults"
+ },
+ "template_contents": {
+  "_doc": "TEMPLATE-CODE-ONLY-1: what belongs in ultrastable/seed. It is seed/ of the platform, plus the files in keep. Anything else there is drift: either kernel code to move up into seed/ or a file to delete.",
+  "belongs": [
+   "agents/",
+   "autonomy/",
+   "bootstrap/",
+   "worker/",
+   "analytics/",
+   "standards/",
+   "scripts/",
+   "plugins/",
+   "tests/",
+   "doctrine/",
+   "self/",
+   "funding/",
+   "outreach/",
+   "docs/",
+   "instance-template/",
+   "autonomy-kit/",
+   ".claude/",
+   ".github/",
+   "AGENTS.md",
+   "CLAUDE.md",
+   "IDEA.md",
+   "README.md",
+   "SCOPE.md",
+   "LICENSE",
+   "LICENSING.md",
+   "install.py",
+   "ultrastable.json",
+   ".gitignore"
+  ],
+  "keep": [
+   "NOTICE",
+   "COMMERCIAL-TERMS.md",
+   "SECURITY.md",
+   "CITATION.cff",
+   ".github/workflows/kit-sync.yml"
+  ],
+  "never": [
+   "admin/",
+   "legal/",
+   "strategy/",
+   "instances/",
+   "ops/",
+   "brand/",
+   "site/",
+   "dashboard/"
+  ]
+ },
+ "session_repos": {
+  "_doc": "Repositories a cloud session of 2026-11-25 had cloned beside the platform; a repository that exists and is in no registry is caught here.",
+  "repos": [
+   "ultrastable/ultrastable",
+   "ultrastable/seed",
+   "ultrastable/second-tenant",
+   "ultrastable/ops",
+   "ultrastable/.github",
+   "ultrastable/unlearn",
+   "ultrastable/what-works",
+   "ultrastable/replication-ledger",
+   "ultrastable/practical-solutions",
+   "ultrastable/base-rates",
+   "ultrastable/did-it-work",
+   "ultrastable/open-questions"
+  ]
+ },
+ "repos": {
+  "ultrastable/ultrastable": {
+   "purpose": "The platform: all code, rules, doctrine, the website, the dashboard and the seed/ kernel are written here and nowhere else.",
+   "layer": "platform",
+   "state": "live",
+   "synced_from": [],
+   "deploys": [
+    "ultrastable-tick",
+    "ultrastable-site",
+    "ultrastable-dashboard",
+    "ultrastable-agents",
+    "ultrastable-tenants",
+    "ultrastable-spinoffs"
+   ],
+   "actions": true,
+   "visibility": "public",
+   "visibility_reason": "DISCOVER-1: public by default",
+   "instructions": {
+    "file": "agents/AGENTS.md",
+    "kind": "canonical",
+    "entry": [
+     "CLAUDE.md",
+     "AGENTS.md",
+     ".github/copilot-instructions.md"
+    ]
+   }
+  },
+  "ultrastable/seed": {
+   "purpose": "The template a visitor's app repository is created from: a published copy of the platform's seed/ folder and nothing else.",
+   "layer": "template",
+   "state": "live",
+   "synced_from": [
+    {
+     "kind": "tree",
+     "source_repo": "ultrastable/ultrastable",
+     "source": "seed",
+     "direction": "down",
+     "workflow": ".github/workflows/template-publish.yml",
+     "mirror_workflow": ".github/workflows/kit-sync.yml",
+     "keep_from": "template_contents.keep"
+    }
+   ],
+   "deploys": [],
+   "actions": true,
+   "visibility": "public",
+   "visibility_reason": "DISCOVER-1: public by default; github/org-settings.json sets private false",
+   "instructions": {
+    "file": "agents/AGENTS.md",
+    "kind": "copy",
+    "source": "seed/agents/AGENTS.md",
+    "entry": [
+     "CLAUDE.md",
+     "AGENTS.md"
+    ]
+   }
+  },
+  "ultrastable/second-tenant": {
+   "purpose": "The first system started from the kernel with no code agent: proof that seed/ alone boots, deploys and runs a system.",
+   "layer": "seeded-system",
+   "state": "live",
+   "synced_from": [
+    {
+     "kind": "kernel",
+     "source_repo": "ultrastable/ultrastable",
+     "source": "seed",
+     "direction": "both",
+     "workflow": "seed/.github/workflows/platform-sync.yml",
+     "mirror_workflow": ".github/workflows/platform-sync.yml",
+     "lock": "ultrastable.lock.json",
+     "not_synced": [
+      "doctrine/",
+      "tests/",
+      "plugins/",
+      "self/",
+      ".github/workflows/"
+     ]
+    }
+   ],
+   "deploys": [
+    "ultrastable-seed-second-tenant"
+   ],
+   "actions": true,
+   "visibility": "public",
+   "visibility_reason": "DISCOVER-1: public by default",
+   "instructions": {
+    "file": "agents/AGENTS.md",
+    "kind": "copy",
+    "source": "seed/agents/AGENTS.md",
+    "entry": [
+     "CLAUDE.md",
+     "AGENTS.md"
+    ]
+   }
+  },
+  "ultrastable/ops": {
+   "purpose": "The company's own admin, legal and business papers, backups and sealed audit ledgers; no code deploys from it.",
+   "layer": "admin",
+   "state": "live",
+   "synced_from": [],
+   "deploys": [],
+   "actions": false,
+   "visibility": "private",
+   "visibility_reason": "company admin, legal and backup ledgers (TEMPLATE-CODE-ONLY-1); the one marked exception to DISCOVER-1",
+   "instructions": {
+    "file": "AGENTS.md",
+    "kind": "pointer",
+    "source": "agents/AGENTS.md"
+   }
+  },
+  "ultrastable/.github": {
+   "purpose": "The organization's public profile page and community health defaults.",
+   "layer": "org-profile",
+   "state": "live",
+   "synced_from": [],
+   "deploys": [],
+   "actions": true,
+   "visibility": "public",
+   "visibility_reason": "GitHub shows an org profile only from a public .github repository",
+   "instructions": {
+    "file": "AGENTS.md",
+    "kind": "pointer",
+    "source": "agents/AGENTS.md",
+    "entry": [
+     "CLAUDE.md"
+    ]
+   }
+  },
+  "ultrastable/practical-solutions": {
+   "purpose": "Tenant app Practical Solutions (ultrastable.org): evidence-based solutions to global problems.",
+   "layer": "tenant",
+   "state": "live",
+   "synced_from": [
+    {
+     "kind": "vendor",
+     "source_repo": "ultrastable/ultrastable",
+     "source": "doctrine/tenant-repos.json",
+     "map": "tenants.practical-solutions.vendor",
+     "direction": "down",
+     "workflow": ".github/workflows/tenant-sync.yml",
+     "mirror_workflow": ".github/workflows/vendor-seed.yml"
+    }
+   ],
+   "deploys": [
+    "tenant-ps-core"
+   ],
+   "actions": true,
+   "visibility": "public",
+   "visibility_reason": "DISCOVER-1: public by default",
+   "instructions": {
+    "file": "AGENTS.md",
+    "kind": "pointer",
+    "source": "agents/AGENTS.md"
+   },
+   "deploys_by": "its own repository's pipeline (deploy-tenant.yml), not the platform's deploy lane"
+  },
+  "ultrastable/unlearn": {
+   "purpose": "Tenant app Unlearn: popular beliefs set against the evidence.",
+   "layer": "tenant",
+   "state": "live",
+   "synced_from": [
+    {
+     "kind": "vendor",
+     "source_repo": "ultrastable/ultrastable",
+     "source": "doctrine/tenant-repos.json",
+     "map": "tenants.unlearn.vendor",
+     "direction": "down",
+     "workflow": ".github/workflows/tenant-sync.yml",
+     "mirror_workflow": ".github/workflows/vendor-sync.yml"
+    },
+    {
+     "kind": "manifest",
+     "source_repo": "ultrastable/ultrastable",
+     "source": "instances/unlearn",
+     "files": [
+      "instance.json",
+      "lifecycle.json"
+     ],
+     "direction": "down",
+     "workflow": ".github/workflows/tenant-repos.yml"
+    }
+   ],
+   "deploys": [
+    "ultrastable-unlearn"
+   ],
+   "actions": true,
+   "visibility": "public",
+   "visibility_reason": "DISCOVER-1: public by default",
+   "instructions": {
+    "file": "AGENTS.md",
+    "kind": "pointer",
+    "source": "agents/AGENTS.md"
+   }
+  },
+  "ultrastable/what-works": {
+   "purpose": "Tenant app What Works: interventions and what the evidence says they do.",
+   "layer": "tenant",
+   "state": "live",
+   "synced_from": [
+    {
+     "kind": "vendor",
+     "source_repo": "ultrastable/ultrastable",
+     "source": "doctrine/tenant-repos.json",
+     "map": "tenants.what-works.vendor",
+     "direction": "down",
+     "workflow": ".github/workflows/tenant-sync.yml"
+    },
+    {
+     "kind": "manifest",
+     "source_repo": "ultrastable/ultrastable",
+     "source": "instances/what-works",
+     "files": [
+      "instance.json",
+      "lifecycle.json"
+     ],
+     "direction": "down",
+     "workflow": ".github/workflows/tenant-repos.yml"
+    }
+   ],
+   "deploys": [
+    "ultrastable-what-works"
+   ],
+   "actions": true,
+   "visibility": "public",
+   "visibility_reason": "DISCOVER-1: public by default",
+   "instructions": {
+    "file": "AGENTS.md",
+    "kind": "pointer",
+    "source": "agents/AGENTS.md"
+   }
+  },
+  "ultrastable/replication-ledger": {
+   "purpose": "Tenant app Replication Ledger: which published findings replicated, across fields.",
+   "layer": "tenant",
+   "state": "live",
+   "synced_from": [
+    {
+     "kind": "vendor",
+     "source_repo": "ultrastable/ultrastable",
+     "source": "doctrine/tenant-repos.json",
+     "map": "tenants.replication-ledger.vendor",
+     "direction": "down",
+     "workflow": ".github/workflows/tenant-sync.yml"
+    },
+    {
+     "kind": "manifest",
+     "source_repo": "ultrastable/ultrastable",
+     "source": "instances/replication-ledger",
+     "files": [
+      "instance.json",
+      "lifecycle.json"
+     ],
+     "direction": "down",
+     "workflow": ".github/workflows/tenant-repos.yml"
+    }
+   ],
+   "deploys": [
+    "ultrastable-replication-ledger"
+   ],
+   "actions": true,
+   "visibility": "public",
+   "visibility_reason": "DISCOVER-1: public by default",
+   "instructions": {
+    "file": "AGENTS.md",
+    "kind": "pointer",
+    "source": "agents/AGENTS.md"
+   }
+  },
+  "ultrastable/base-rates": {
+   "purpose": "Planned tenant Base Rates: its repository holds the manifest until its first code.",
+   "layer": "tenant",
+   "state": "planned",
+   "synced_from": [
+    {
+     "kind": "tree",
+     "source_repo": "ultrastable/ultrastable",
+     "source": "instances/base-rates",
+     "direction": "down",
+     "workflow": ".github/workflows/tenant-repos.yml",
+     "keep": [
+      "AGENTS.md",
+      ".github/",
+      "LICENSE",
+      "README.md"
+     ]
+    }
+   ],
+   "deploys": [],
+   "actions": false,
+   "visibility": "public",
+   "visibility_reason": "DISCOVER-1: public by default",
+   "instructions": {
+    "file": "AGENTS.md",
+    "kind": "pointer",
+    "source": "agents/AGENTS.md"
+   },
+   "redundant": {
+    "verdict": "duplicate-today",
+    "evidence": "holds only the manifest files that instances/base-rates/ in the core already holds; kept because TENANT-SANDBOX-1 creates a planned tenant's repository before its first code"
+   }
+  },
+  "ultrastable/did-it-work": {
+   "purpose": "Planned tenant Did It Work: its repository holds the manifest until its first code.",
+   "layer": "tenant",
+   "state": "planned",
+   "synced_from": [
+    {
+     "kind": "tree",
+     "source_repo": "ultrastable/ultrastable",
+     "source": "instances/did-it-work",
+     "direction": "down",
+     "workflow": ".github/workflows/tenant-repos.yml",
+     "keep": [
+      "AGENTS.md",
+      ".github/",
+      "LICENSE",
+      "README.md"
+     ]
+    }
+   ],
+   "deploys": [],
+   "actions": false,
+   "visibility": "public",
+   "visibility_reason": "DISCOVER-1: public by default",
+   "instructions": {
+    "file": "AGENTS.md",
+    "kind": "pointer",
+    "source": "agents/AGENTS.md"
+   },
+   "redundant": {
+    "verdict": "duplicate-today",
+    "evidence": "holds only the manifest files that instances/did-it-work/ in the core already holds; kept because TENANT-SANDBOX-1 creates a planned tenant's repository before its first code"
+   }
+  },
+  "ultrastable/open-questions": {
+   "purpose": "Planned tenant Open Questions: its repository holds the manifest until its first code.",
+   "layer": "tenant",
+   "state": "planned",
+   "synced_from": [
+    {
+     "kind": "tree",
+     "source_repo": "ultrastable/ultrastable",
+     "source": "instances/open-questions",
+     "direction": "down",
+     "workflow": ".github/workflows/tenant-repos.yml",
+     "keep": [
+      "AGENTS.md",
+      ".github/",
+      "LICENSE",
+      "README.md"
+     ]
+    }
+   ],
+   "deploys": [],
+   "actions": false,
+   "visibility": "public",
+   "visibility_reason": "DISCOVER-1: public by default",
+   "instructions": {
+    "file": "AGENTS.md",
+    "kind": "pointer",
+    "source": "agents/AGENTS.md"
+   },
+   "redundant": {
+    "verdict": "duplicate-today",
+    "evidence": "holds only the manifest files that instances/open-questions/ in the core already holds; kept because TENANT-SANDBOX-1 creates a planned tenant's repository before its first code"
+   }
+  },
+  "ultrastable/workers": {
+   "purpose": "Retired: the core Worker code moved into the platform under workers/.",
+   "layer": "platform",
+   "state": "retired",
+   "synced_from": [],
+   "deploys": [],
+   "actions": false,
+   "visibility": "public",
+   "visibility_reason": "kept public so existing links resolve",
+   "instructions": {
+    "file": null,
+    "kind": "none",
+    "reason": "retired: no agent works here"
+   },
+   "redundant": {
+    "verdict": "redundant",
+    "evidence": "github/org-settings.json describes it as retired; the code is workers/ in the platform"
+   }
+  },
+  "ultrastable/spec": {
+   "purpose": "Retired: the specifications moved into the platform (specs/, SCOPE.md, licensing/).",
+   "layer": "platform",
+   "state": "retired",
+   "synced_from": [],
+   "deploys": [],
+   "actions": false,
+   "visibility": "public",
+   "visibility_reason": "kept public so existing links resolve",
+   "instructions": {
+    "file": null,
+    "kind": "none",
+    "reason": "retired: no agent works here"
+   },
+   "redundant": {
+    "verdict": "redundant",
+    "evidence": "github/org-settings.json describes it as retired"
+   }
+  },
+  "ultrastable/license": {
+   "purpose": "Retired: the licence text moved into the platform (LICENSE, licensing/).",
+   "layer": "platform",
+   "state": "retired",
+   "synced_from": [],
+   "deploys": [],
+   "actions": false,
+   "visibility": "public",
+   "visibility_reason": "kept public so existing links resolve",
+   "instructions": {
+    "file": null,
+    "kind": "none",
+    "reason": "retired: no agent works here"
+   },
+   "redundant": {
+    "verdict": "redundant",
+    "evidence": "github/org-settings.json describes it as retired"
+   }
+  },
+  "ultrastable/spinoffs": {
+   "purpose": "Retired: the eight generated apps that shared one Worker; replaced by one repository per tenant.",
+   "layer": "tenant",
+   "state": "retired",
+   "synced_from": [],
+   "deploys": [],
+   "actions": false,
+   "visibility": "public",
+   "visibility_reason": "kept public so existing links resolve",
+   "instructions": {
+    "file": null,
+    "kind": "none",
+    "reason": "retired: no agent works here"
+   },
+   "redundant": {
+    "verdict": "redundant",
+    "evidence": "doctrine/tenant-repos.json state retired"
+   }
+  }
+ }
+}

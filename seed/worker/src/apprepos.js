@@ -108,6 +108,20 @@ export async function ensureTenantRepo(db, env, tenant, spec, { fetch: f = fetch
   await store.event(db, tenant, 'github-app', 'tenant-repo-token', repo);
   return { ...out, ok: true, empty: true, token: t.token, expires_at: new Date(t.expiresAt).toISOString() };
 }
+// TEMPLATE-PUBLISH-1 (FLEET-MAP-1, 2026-11-25): the template repository is a copy of the platform's seed/ folder and nothing in the platform's
+// Actions could write it (no stored credential; the tenant route above refuses it by name), so it drifted for days. This hands the platform's
+// template-publish workflow, through the site's OIDC route, a one-hour token for that one repository and no other.
+export const TEMPLATE_REPO = 'ultrastable/seed';
+export async function templateToken(db, env, tenant, spec, { fetch: f = fetch, now = Date.now() } = {}) {
+  const repo = String(spec.repo || ''), out = { repo };
+  if (repo !== TEMPLATE_REPO) return { ...out, ok: false, error: 'not the template repository' };
+  let t = await scopedToken(db, env, tenant, repo, { fetch: f, now, extra: { workflows: 'write', pull_requests: 'write' } });
+  if (!t.ok) t = await scopedToken(db, env, tenant, repo, { fetch: f, now, extra: { pull_requests: 'write' } });
+  if (!t.ok) t = await scopedToken(db, env, tenant, repo, { fetch: f, now });
+  if (!t.ok) { await store.event(db, tenant, 'github-app', 'failed', `template token ${repo}: ${t.error}`); return { ...out, ok: false, waiting_on: 'code-app-scope', error: t.error }; }
+  await store.event(db, tenant, 'github-app', 'template-token', repo);
+  return { ...out, ok: true, token: t.token, expires_at: new Date(t.expiresAt).toISOString() };
+}
 // REPO-SETTINGS-1 (2026-11-25): the core repositories had no ORG_ADMIN_TOKEN, so delete_branch_on_merge and allow_auto_merge could not be set from
 // Actions and branch cleanup and org-settings stayed red. The administration app this Worker already holds sets exactly these two settings, on any
 // repository of the org and nothing else; every other setting stays with org-settings.yml and its gate.
@@ -130,12 +144,17 @@ export async function ensureRepoSettings(db, env, tenant, spec, { fetch: f = fet
 }
 export async function handleAppHost(request, env, { tenant = 'default', fetch: f = fetch, now = Date.now() } = {}) {
   const url = new URL(request.url);
-  if (url.pathname !== '/host/app-repo' && url.pathname !== '/host/app-token' && url.pathname !== '/host/tenant-repo' && url.pathname !== '/host/repo-settings') return null;
+  if (url.pathname !== '/host/app-repo' && url.pathname !== '/host/app-token' && url.pathname !== '/host/tenant-repo' && url.pathname !== '/host/repo-settings' && url.pathname !== '/host/template-token') return null;
   if (request.method !== 'POST' || !env.INTERNAL_DEPLOY_KEY) return new Response('Not found', { status: 404 });
   let b; try { b = await request.json(); } catch { return J({ ok: false, error: 'bad json' }, 400); }
   if (url.pathname === '/host/tenant-repo') {
     if (!same(request.headers.get('x-internal-key'), env.INTERNAL_DEPLOY_KEY)) return new Response('Not found', { status: 404 });
     const r = await ensureTenantRepo(env.DB, env, tenant, b, { fetch: f, now });
+    return J(r, r.ok ? 200 : r.waiting_on ? 409 : 400);
+  }
+  if (url.pathname === '/host/template-token') {
+    if (!same(request.headers.get('x-internal-key'), env.INTERNAL_DEPLOY_KEY)) return new Response('Not found', { status: 404 });
+    const r = await templateToken(env.DB, env, tenant, b, { fetch: f, now });
     return J(r, r.ok ? 200 : r.waiting_on ? 409 : 400);
   }
   if (url.pathname === '/host/repo-settings') {

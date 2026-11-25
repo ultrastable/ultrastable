@@ -2484,6 +2484,30 @@
         "ORG_ADMIN_TOKEN"
       ]
     },
+    "fleet-map": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        },
+        {
+          "signal": "fleet.drift",
+          "via": "file:ops/fleet-map.json"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "fleet.drift",
+          "via": "file:ops/fleet-map.json"
+        },
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "each daily reading of every copy against its source is recorded; a copy that is not equal files Q-FLEETMAP-<repo>, and the next reading closes the item or keeps it open, so a sync that stopped working shows within a day",
+      "bindings": []
+    },
     "improve": {
       "inflows": [
         {

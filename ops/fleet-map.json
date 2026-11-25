@@ -1,0 +1,114 @@
+{
+ "rule": "FLEET-MAP-1",
+ "at": "2026-11-25T20:59:18Z",
+ "repos": {
+  "ultrastable/ultrastable": {
+   "status": "not-a-copy",
+   "how": null,
+   "differ": 0,
+   "missing": 0,
+   "extra": 0,
+   "notes": []
+  },
+  "ultrastable/seed": {
+   "status": "drifted",
+   "how": "clone",
+   "differ": 52,
+   "missing": 70,
+   "extra": 11,
+   "notes": []
+  },
+  "ultrastable/second-tenant": {
+   "status": "drifted",
+   "how": "clone",
+   "differ": 15,
+   "missing": 4,
+   "extra": 0,
+   "notes": [
+    "ultrastable.lock.json is missing: the kernel sync treats every changed file as a local edit and updates nothing"
+   ]
+  },
+  "ultrastable/ops": {
+   "status": "drifted",
+   "how": "clone",
+   "differ": 0,
+   "missing": 1,
+   "extra": 0,
+   "notes": [
+    "no instruction file: an agent that opens this repository reads no rules (AGENTS.md)"
+   ]
+  },
+  "ultrastable/.github": {
+   "status": "equal",
+   "how": "clone",
+   "differ": 0,
+   "missing": 0,
+   "extra": 0,
+   "notes": []
+  },
+  "ultrastable/practical-solutions": {
+   "status": "drifted",
+   "how": "clone",
+   "differ": 1,
+   "missing": 0,
+   "extra": 0,
+   "notes": [
+    "AGENTS.md does not point at the platform's rules (ultrastable/ultrastable agents/AGENTS.md)"
+   ]
+  },
+  "ultrastable/unlearn": {
+   "status": "drifted",
+   "how": "clone",
+   "differ": 1,
+   "missing": 0,
+   "extra": 0,
+   "notes": []
+  },
+  "ultrastable/what-works": {
+   "status": "drifted",
+   "how": "clone",
+   "differ": 1,
+   "missing": 0,
+   "extra": 0,
+   "notes": []
+  },
+  "ultrastable/replication-ledger": {
+   "status": "drifted",
+   "how": "clone",
+   "differ": 1,
+   "missing": 1,
+   "extra": 0,
+   "notes": []
+  },
+  "ultrastable/base-rates": {
+   "status": "drifted",
+   "how": "clone",
+   "differ": 0,
+   "missing": 1,
+   "extra": 0,
+   "notes": [
+    "no instruction file: an agent that opens this repository reads no rules (AGENTS.md)"
+   ]
+  },
+  "ultrastable/did-it-work": {
+   "status": "drifted",
+   "how": "clone",
+   "differ": 0,
+   "missing": 1,
+   "extra": 0,
+   "notes": [
+    "no instruction file: an agent that opens this repository reads no rules (AGENTS.md)"
+   ]
+  },
+  "ultrastable/open-questions": {
+   "status": "drifted",
+   "how": "clone",
+   "differ": 0,
+   "missing": 1,
+   "extra": 0,
+   "notes": [
+    "no instruction file: an agent that opens this repository reads no rules (AGENTS.md)"
+   ]
+  }
+ }
+}

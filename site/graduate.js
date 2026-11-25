@@ -124,6 +124,11 @@ export async function launchesInternal(request, env) {
     const r = await env.TICK.fetch(new Request("https://tick.internal/host/tenant-repo", { method: "POST", headers: { "content-type": "application/json", "x-internal-key": env.INTERNAL_DEPLOY_KEY }, body: JSON.stringify({ repo: String(b.repo || ""), visibility: b.visibility === "private" ? "private" : "public", description: String(b.description || "").slice(0, 300) }) }));
     return J((await r.json().catch(() => null)) || { ok: false, error: "tick Worker answered HTTP " + r.status }, r.status);
   }
+  if (b.op === "template-token") {  // TEMPLATE-PUBLISH-1: template-publish.yml's credential-free route to the one template repository; the tick checks the name
+    if (!env.TICK || !env.INTERNAL_DEPLOY_KEY) return J({ ok: false, waiting_on: "host-binding", error: "the site has no route to the tick Worker" }, 409);
+    const r = await env.TICK.fetch(new Request("https://tick.internal/host/template-token", { method: "POST", headers: { "content-type": "application/json", "x-internal-key": env.INTERNAL_DEPLOY_KEY }, body: JSON.stringify({ repo: String(b.repo || "") }) }));
+    return J((await r.json().catch(() => null)) || { ok: false, error: "tick Worker answered HTTP " + r.status }, r.status);
+  }
   if (b.op === "repo-settings") {  // REPO-SETTINGS-1: branch cleanup's credential-free route to delete_branch_on_merge and allow_auto_merge
     if (!env.TICK || !env.INTERNAL_DEPLOY_KEY) return J({ ok: false, waiting_on: "host-binding", error: "the site has no route to the tick Worker" }, 409);
     const r = await env.TICK.fetch(new Request("https://tick.internal/host/repo-settings", { method: "POST", headers: { "content-type": "application/json", "x-internal-key": env.INTERNAL_DEPLOY_KEY }, body: JSON.stringify({ repo: String(b.repo || "") }) }));
