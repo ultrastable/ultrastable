@@ -890,6 +890,22 @@
       "root_cause": "the seed kernel needs something no code in it produces (instruction import, wrangler placeholder, undeclared secret, migration collision, workflow with no trigger)",
       "owner": "operations",
       "remedy": "Run python3 -m foundation bootproof, fix the seed tree or declare the item in doctrine/bootproof.json with its degrade and acquire route (BOOTPROOF-1)."
+    },
+    {
+      "id": "constitution",
+      "failure_mode": "fm-constitution-drift",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "constitution",
+        "--check"
+      ],
+      "timeout": 120,
+      "root_cause": "a section of the constitution no longer matches the code it describes, or a standing rule has no detector and remediation in code",
+      "owner": "operations",
+      "remedy": "Run python3 -m foundation constitution --check; bind the rule to code (seed/doctrine/constitution.json) or fix the drifted code; regenerate with --render (CONSTITUTION-1)."
     }
   ]
 }

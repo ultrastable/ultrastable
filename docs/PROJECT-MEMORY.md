@@ -10,6 +10,7 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-25
 
+- 2026-11-25: CONSTITUTION-1: the seed states what an ultrastable system is (identity, run loop, bootstrap, ladder, criticality, every standing rule) in seed/doctrine/constitution.json; each rule has a detector and remediation in code; boot stage `constitute`; CI fails an unmapped rule
 - 2026-11-25: BOOTPROOF-1: seed kernel closure audit and daily scratch bootstrap probe (#2237)
 - 2026-11-25: Fix failure-audit evidence push and unroutable detectors (#2242)
 - 2026-11-25: Root-cause launch-day failures: hold merges with no checks, flag owner-deferred deploys, catch spelled-out claims (#2232)

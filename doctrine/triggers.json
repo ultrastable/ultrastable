@@ -445,7 +445,7 @@
     "workflow_dispatch"
    ],
    "crons": [
-    "23 7 * * 1"
+    "23 7 * * *"
    ]
   },
   "sessions.yml": {
