@@ -1,0 +1,11 @@
+{
+  "id": "Q-STD-supply-chain",
+  "title": "Q-STD-supply-chain: Attest builds, publish SBOM, run Scorecard",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** grep:doctrine/open-standards.json::\"id\": \"supply-chain\".*\"status\": \"adopted\"\n**Status:** open\n\nOPEN-STANDARDS-1 (Rowan, 2026-11-25): add GitHub build attestations (SLSA, Sigstore) to deploy-ultrastable, publish a CycloneDX or SPDX SBOM, and run OpenSSF Scorecard weekly.\n\nsize: M\nOut of scope: new formats not in doctrine/open-standards.json.\n\n**Closing probe:** python3 -m foundation openstd --check passes and the registry row for supply-chain reads adopted with evidence files that exist.\n",
+  "labels": [
+    "p2",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Executor queue"
+}

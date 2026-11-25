@@ -140,7 +140,50 @@ def baseline(root: Path = REPO, init: bool = False) -> dict:
     return out
 
 
+def drain(root: Path = REPO, n: int = 25) -> list[str]:
+    """Add a $schema key to up to n baseline config files (text insertion, so formatting and key order stay).
+    A file that is not a JSON object is left in the baseline; CI on the landing change is the gate that keeps a conversion honest."""
+    root = Path(root)
+    base = _load(root, BASE)
+    done: list[str] = []
+    for rel in list(base.get("config", [])):
+        if len(done) >= n:
+            break
+        p = root / rel
+        try:
+            txt = p.read_text(encoding="utf-8")
+            d = json.loads(txt)
+        except (OSError, ValueError):
+            continue
+        if not isinstance(d, dict) or "$schema" in d or not txt.lstrip().startswith("{"):
+            continue
+        depth = "../" * rel.count("/")
+        i = txt.index("{") + 1
+        ins = f'\n  "$schema": "{depth}schemas/doctrine.schema.json",' if d else f'\n  "$schema": "{depth}schemas/doctrine.schema.json"\n'
+        p.write_text(txt[:i] + ins + txt[i:], encoding="utf-8")
+        json.loads(p.read_text(encoding="utf-8"))
+        done.append(rel)
+    baseline(root)
+    return done
+
+
+def record(root: Path, type_: str, data: dict) -> dict:
+    ev = cloudevent(type_, "/loop/openstd", data)
+    p = Path(root) / "ops/openstd/events.jsonl"
+    p.parent.mkdir(parents=True, exist_ok=True)
+    with p.open("a", encoding="utf-8") as f:
+        f.write(json.dumps(ev) + "\n")
+    return ev
+
+
 def main(argv: list[str]) -> int:
+    if "--drain" in argv:
+        n = int(argv[argv.index("--drain") + 1]) if len(argv) > argv.index("--drain") + 1 else 25
+        done = drain(REPO, n)
+        left = {k: len(v) for k, v in _load(REPO, BASE).items() if isinstance(v, list)}
+        record(REPO, "openstd.drain", {"converted": done, "baseline_left": left})
+        print(f"converted {len(done)}; baseline left {left}")
+        return 0
     if "--baseline" in argv:
         b = baseline(init="--init" in argv)
         print({k: len(v) for k, v in b.items() if isinstance(v, list)})

@@ -1,0 +1,11 @@
+{
+  "id": "Q-STD-otel",
+  "title": "Q-STD-otel: Turn on OpenTelemetry export",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** grep:doctrine/open-standards.json::\"id\": \"observability\".*\"status\": \"adopted\"\n**Status:** open\n\nOPEN-STANDARDS-1 (Rowan, 2026-11-25): enable Workers OTLP export for the tick Worker and map tick steps to spans; add the setting to its wrangler config and a test that reads it.\n\nsize: M\nOut of scope: new formats not in doctrine/open-standards.json.\n\n**Closing probe:** python3 -m foundation openstd --check passes and the registry row for observability reads adopted with evidence files that exist.\n",
+  "labels": [
+    "p2",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Executor queue"
+}

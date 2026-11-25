@@ -9,6 +9,7 @@
   "ops/branchsweep-ledger.jsonl"
  ],
  "consumers": [
+    {"id": "changelog", "paths": ["CHANGELOG.md"], "consumer": "foundation/semrel.py", "needle": "CHANGELOG.md", "how": "foundation/semrel.py writes it from Conventional Commits; the openstd workflow lands it with the version tag (OPEN-STANDARDS-1)"},
   {
    "id": "github-platform",
    "paths": [

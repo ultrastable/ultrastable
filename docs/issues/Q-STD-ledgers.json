@@ -1,0 +1,11 @@
+{
+  "id": "Q-STD-ledgers",
+  "title": "Q-STD-ledgers: Convert baseline ledgers to CloudEvents",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** grep:doctrine/open-standards.json::\"id\": \"event-ledgers-cloudevents\".*\"status\": \"adopted\"\n**Status:** open\n\nOPEN-STANDARDS-1 (Rowan, 2026-11-25): convert each ledger family in doctrine/open-standards-baseline.json to CloudEvents 1.0 by changing its writer to openstd.cloudevent() and its reader to read event.data, one family per change, then remove it from the baseline.\n\nsize: M\nOut of scope: new formats not in doctrine/open-standards.json.\n\n**Closing probe:** python3 -m foundation openstd --check passes and the registry row for event-ledgers-cloudevents reads adopted with evidence files that exist.\n",
+  "labels": [
+    "p2",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Executor queue"
+}

@@ -1,0 +1,41 @@
+name: openstd
+# OPEN-STANDARDS-1 (Rowan, 2026-11-25): drains the standards baseline a batch at a time, records CloudEvents, and cuts a SemVer release from Conventional Commits with a Keep a Changelog file.
+# budget: ~1 min x 30 per month
+# trigger: daily and dispatch; a baseline batch and a release need a day of merged commits to be worth a run
+# free-alternative: a cloud-hosted agent session runs `python3 -m foundation openstd --drain 25 && python3 -m foundation semrel --apply`
+on:
+  schedule:
+    - cron: "41 5 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write  # scripts/land_data.py falls back to a pull request, and the checks job gates the conversion
+  id-token: write  # MAIN-WRITER-1
+concurrency:
+  group: openstd
+  cancel-in-progress: false
+jobs:
+  openstd:
+    if: ${{ vars.HALT != '1' }}  # HALT-1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: main
+          fetch-depth: 0  # tags and history are the release input
+      - name: Convert a batch of baseline config files
+        run: python3 -m foundation openstd --drain 25
+      - name: Release notes and version from Conventional Commits
+        run: python3 -m foundation semrel --apply
+      - name: Land the batch, events, changelog and version
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          python3 scripts/land_data.py "open standards - baseline batch, events, release notes (OPEN-STANDARDS-1)" doctrine ops/openstd CHANGELOG.md VERSION
+      - name: Tag the release
+        run: |
+          v="v$(cat VERSION 2>/dev/null || echo)"
+          [ "$v" = "v" ] && exit 0
+          git rev-parse -q --verify "refs/tags/$v" >/dev/null && exit 0
+          git tag "$v" && git push origin "$v" || echo "::warning::tag $v refused; the next run tries again"

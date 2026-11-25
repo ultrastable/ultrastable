@@ -121,6 +121,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["yearfail"]:
         from . import yearfail
         return yearfail.main(_av[1:])
+    if _av[:1] == ["semrel"]:
+        from . import semrel
+        return semrel.main(_av[1:])
     if _av[:1] == ["openstd"]:
         from . import openstd
         return openstd.main(_av[1:])
