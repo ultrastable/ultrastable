@@ -5,9 +5,10 @@
   "date": "2026-11-25",
   "title": "Graph skips underscore bookkeeping tables",
   "body": "DATAGRAPH-1: tables whose name starts with an underscore (_migrations, _copy_progress, _cf_KV) are D1 and migration bookkeeping, not system data; read into the graph they only produced orphan findings and the item KG-ORPHANS-_copy_progress. SKIP_TABLE now drops every leading-underscore table; the step closes that item on its next pass when the finding stops firing.",
-  "probe": "grep:workers/core/datagraph/index.js::SKIP_TABLE = /\\^\\(sqlite_\\|_\\|"
+  "probe": "grep:workers/core/datagraph/index.js::SKIP_TABLE = /\\^\\(sqlite_\\|_\\|",
+  "session": "https://claude.ai/code/session_0156nqDvcxMuXbDzftceaEZU"
  },
  "kind": "lesson",
  "title": "Graph skips underscore bookkeeping tables",
- "session": ""
+ "session": "https://claude.ai/code/session_0156nqDvcxMuXbDzftceaEZU"
 }
