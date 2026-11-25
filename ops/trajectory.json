@@ -3,7 +3,7 @@
   {
    "area": "workers",
    "quiet_days": 0,
-   "recent7": 73602,
+   "recent7": 73600,
    "series": [
     0,
     0,
@@ -34,17 +34,17 @@
     0,
     0,
     0,
-    73602
+    73600
    ],
    "share_recent": 0.267,
    "share_trend": 0.267,
-   "slope": 474.8516,
-   "total": 73602
+   "slope": 474.8387,
+   "total": 73600
   },
   {
    "area": "doctrine",
    "quiet_days": 0,
-   "recent7": 34853,
+   "recent7": 34993,
    "series": [
     0,
     0,
@@ -75,12 +75,12 @@
     0,
     0,
     0,
-    34853
+    34993
    ],
    "share_recent": 0.127,
    "share_trend": 0.127,
-   "slope": 224.8581,
-   "total": 34853
+   "slope": 225.7613,
+   "total": 34993
   },
   {
    "area": "foundation",
@@ -126,7 +126,7 @@
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 24663,
+   "recent7": 24677,
    "series": [
     0,
     0,
@@ -157,12 +157,12 @@
     0,
     0,
     0,
-    24663
+    24677
    ],
    "share_recent": 0.09,
    "share_trend": 0.09,
-   "slope": 159.1161,
-   "total": 24663
+   "slope": 159.2065,
+   "total": 24677
   },
   {
    "area": "seed/worker",
@@ -208,7 +208,7 @@
   {
    "area": "tests/foundation",
    "quiet_days": 0,
-   "recent7": 13189,
+   "recent7": 13185,
    "series": [
     0,
     0,
@@ -239,17 +239,17 @@
     0,
     0,
     0,
-    13189
+    13185
    ],
    "share_recent": 0.048,
    "share_trend": 0.048,
-   "slope": 85.0903,
-   "total": 13189
+   "slope": 85.0645,
+   "total": 13185
   },
   {
    "area": "platform",
    "quiet_days": 0,
-   "recent7": 10873,
+   "recent7": 10871,
    "series": [
     0,
     0,
@@ -280,17 +280,17 @@
     0,
     0,
     0,
-    10873
+    10871
    ],
-   "share_recent": 0.04,
-   "share_trend": 0.04,
-   "slope": 70.1484,
-   "total": 10873
+   "share_recent": 0.039,
+   "share_trend": 0.039,
+   "slope": 70.1355,
+   "total": 10871
   },
   {
    "area": "instances",
    "quiet_days": 0,
-   "recent7": 10553,
+   "recent7": 10549,
    "series": [
     0,
     0,
@@ -321,12 +321,12 @@
     0,
     0,
     0,
-    10553
+    10549
    ],
    "share_recent": 0.038,
    "share_trend": 0.038,
-   "slope": 68.0839,
-   "total": 10553
+   "slope": 68.0581,
+   "total": 10549
   },
   {
    "area": "scripts",
@@ -577,7 +577,7 @@
   {
    "area": ".github",
    "quiet_days": 0,
-   "recent7": 2841,
+   "recent7": 2839,
    "series": [
     0,
     0,
@@ -608,12 +608,12 @@
     0,
     0,
     0,
-    2841
+    2839
    ],
    "share_recent": 0.01,
    "share_trend": 0.01,
-   "slope": 18.329,
-   "total": 2841
+   "slope": 18.3161,
+   "total": 2839
   },
   {
    "area": "brand",
@@ -741,7 +741,7 @@
   {
    "area": "agents",
    "quiet_days": 0,
-   "recent7": 1512,
+   "recent7": 1508,
    "series": [
     0,
     0,
@@ -772,12 +772,12 @@
     0,
     0,
     0,
-    1512
+    1508
    ],
    "share_recent": 0.005,
    "share_trend": 0.005,
-   "slope": 9.7548,
-   "total": 1512
+   "slope": 9.729,
+   "total": 1508
   },
   {
    "area": "seed/autonomy",
@@ -946,7 +946,7 @@
   {
    "area": "research",
    "quiet_days": 0,
-   "recent7": 1146,
+   "recent7": 1122,
    "series": [
     0,
     0,
@@ -977,12 +977,12 @@
     0,
     0,
     0,
-    1146
+    1122
    ],
    "share_recent": 0.004,
    "share_trend": 0.004,
-   "slope": 7.3935,
-   "total": 1146
+   "slope": 7.2387,
+   "total": 1122
   },
   {
    "area": "seed",
@@ -1026,7 +1026,7 @@
    "total": 1088
   }
  ],
- "at": "2026-11-25T17:21:08Z",
+ "at": "2026-11-25T17:23:38Z",
  "days": 30,
  "files": [],
  "findings": [
@@ -1099,10 +1099,10 @@
    0,
    0,
    0,
-   43
+   42
   ],
-  "closed": 1048,
-  "opened": 1091
+  "closed": 1050,
+  "opened": 1092
  },
  "loops": [
   {
@@ -1602,7 +1602,7 @@
   {
    "loop": "provenance",
    "quiet_days": 0,
-   "rows": 149,
+   "rows": 154,
    "series": [
     0,
     0,
@@ -1633,9 +1633,9 @@
     40,
     3,
     1,
-    78
+    83
    ],
-   "slope": 0.8567
+   "slope": 0.889
   },
   {
    "loop": "resilience",
@@ -1792,7 +1792,7 @@
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 273,
+   "rows": 274,
    "series": [
     0,
     0,
@@ -1823,9 +1823,9 @@
     112,
     80,
     55,
-    21
+    22
    ],
-   "slope": 1.5072
+   "slope": 1.5137
   },
   {
    "loop": "ultrastability",

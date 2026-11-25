@@ -5,7 +5,7 @@ export default {
   {
    "area": "workers",
    "quiet_days": 0,
-   "recent7": 73602,
+   "recent7": 73600,
    "series": [
     0,
     0,
@@ -36,16 +36,16 @@ export default {
     0,
     0,
     0,
-    73602
+    73600
    ],
    "share_recent": 0.267,
    "share_trend": 0.267,
-   "total": 73602
+   "total": 73600
   },
   {
    "area": "doctrine",
    "quiet_days": 0,
-   "recent7": 34853,
+   "recent7": 34993,
    "series": [
     0,
     0,
@@ -76,11 +76,11 @@ export default {
     0,
     0,
     0,
-    34853
+    34993
    ],
    "share_recent": 0.127,
    "share_trend": 0.127,
-   "total": 34853
+   "total": 34993
   },
   {
    "area": "foundation",
@@ -125,7 +125,7 @@ export default {
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 24663,
+   "recent7": 24677,
    "series": [
     0,
     0,
@@ -156,11 +156,11 @@ export default {
     0,
     0,
     0,
-    24663
+    24677
    ],
    "share_recent": 0.09,
    "share_trend": 0.09,
-   "total": 24663
+   "total": 24677
   },
   {
    "area": "seed/worker",
@@ -205,7 +205,7 @@ export default {
   {
    "area": "tests/foundation",
    "quiet_days": 0,
-   "recent7": 13189,
+   "recent7": 13185,
    "series": [
     0,
     0,
@@ -236,16 +236,16 @@ export default {
     0,
     0,
     0,
-    13189
+    13185
    ],
    "share_recent": 0.048,
    "share_trend": 0.048,
-   "total": 13189
+   "total": 13185
   },
   {
    "area": "platform",
    "quiet_days": 0,
-   "recent7": 10873,
+   "recent7": 10871,
    "series": [
     0,
     0,
@@ -276,16 +276,16 @@ export default {
     0,
     0,
     0,
-    10873
+    10871
    ],
-   "share_recent": 0.04,
-   "share_trend": 0.04,
-   "total": 10873
+   "share_recent": 0.039,
+   "share_trend": 0.039,
+   "total": 10871
   },
   {
    "area": "instances",
    "quiet_days": 0,
-   "recent7": 10553,
+   "recent7": 10549,
    "series": [
     0,
     0,
@@ -316,14 +316,14 @@ export default {
     0,
     0,
     0,
-    10553
+    10549
    ],
    "share_recent": 0.038,
    "share_trend": 0.038,
-   "total": 10553
+   "total": 10549
   }
  ],
- "at": "2026-11-25T17:21:08Z",
+ "at": "2026-11-25T17:23:38Z",
  "days": 30,
  "findings": [
   {
@@ -395,10 +395,10 @@ export default {
    0,
    0,
    0,
-   43
+   42
   ],
-  "closed": 1048,
-  "opened": 1091
+  "closed": 1050,
+  "opened": 1092
  },
  "loops": [
   {
@@ -663,7 +663,7 @@ export default {
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 273,
+   "rows": 274,
    "series": [
     0,
     0,
@@ -694,7 +694,7 @@ export default {
     112,
     80,
     55,
-    21
+    22
    ]
   }
  ],
