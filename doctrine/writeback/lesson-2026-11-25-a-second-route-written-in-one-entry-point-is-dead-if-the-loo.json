@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-25-a-second-route-written-in-one-entry-point-is-dead-if-the-loo",
+  "kind": "lesson",
+  "date": "2026-11-25",
+  "title": "A second route written in one entry point is dead if the loop calls another",
+  "body": "MODELS-ORG-1 added the GitHub Models org-endpoint fallback in agents.invoke, but the executor calls agent_ladder.transport, which built and sent the request itself, so the fallback never ran and every executor run failed on 200 text/plain OK. Both now go through agents.request.",
+  "probe": "grep:foundation/agent_ladder.py::agents\\.request\\(",
+  "session": "session_0156nqDuo7mxQbyexaaJm48F"
+ },
+ "kind": "lesson",
+ "title": "A second route written in one entry point is dead if the loop calls another",
+ "session": "session_0156nqDuo7mxQbyexaaJm48F"
+}

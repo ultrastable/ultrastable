@@ -28,8 +28,7 @@ def rungs(root=REPO, env=None) -> list[dict]:
 
 def transport(a: dict, prompt: str, env=None) -> tuple[str, dict]:
     """One model call through the registry's request builder. Returns the reply text and usage {in, out}."""
-    url, headers, body = agents.build_request(a, prompt, env)
-    resp = agents.http(url, headers, body)
+    resp = agents.request(a, prompt, env)  # MODELS-ORG-1 / AI-OIDC-1: the same second routes as agents.invoke
     u = (resp.get("result") or {}).get("usage") or resp.get("usage") or {}
     text = agents.parse_text(a, resp)
     if not isinstance(text, str):  # some models return the JSON object itself instead of a string

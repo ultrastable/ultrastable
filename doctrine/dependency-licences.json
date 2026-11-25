@@ -140,16 +140,6 @@
    ]
   },
   {
-   "name": "wrangler",
-   "eco": "npm",
-   "use": "tool",
-   "spdx": "MIT OR Apache-2.0",
-   "verdict": "ok",
-   "where": [
-    ".github/workflows/spinoff.yml"
-   ]
-  },
-  {
    "name": "piper-tts",
    "eco": "pypi",
    "use": "tool",

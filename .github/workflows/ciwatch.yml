@@ -41,7 +41,8 @@ jobs:
           git config user.name "ultrastable-ciwatch"
           git config user.email "actions@users.noreply.github.com"
           git add ops/ciwatch.jsonl
-          git diff --cached --quiet || { git commit -q -m "ciwatch: ledger"; git push -q origin HEAD:refs/heads/ciwatch-evidence --force; }
+          # PUSH-RETRY-1: GitHub answered 500 on this push (run 45649056299) and the whole pass failed; three tries with backoff, then fail loudly
+          git diff --cached --quiet || { git commit -q -m "ciwatch: ledger"; for i in 1 2 3; do git push -q origin HEAD:refs/heads/ciwatch-evidence --force && break; [ "$i" = 3 ] && exit 1; sleep $((i*10)); done; }
           git reset -q --hard origin/main
           python3 -m foundation ciwatch --run --apply > /dev/null
           git checkout -q -- ops/ciwatch.jsonl

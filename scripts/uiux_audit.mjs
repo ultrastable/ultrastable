@@ -157,7 +157,13 @@ const fingerprints = {}, perf = {}, pathResults = [];
 let hosts = [""], audited = 0;
 if (LIVE) {
   hosts = CFG.surfaces.hosts.map(h => "https://" + h);
-  try { const led = readFileSync(here(CFG.surfaces.tenants_from), "utf8").split("\n").filter(Boolean).map(l => JSON.parse(l)); const by = {}; for (const r of led) if (r.slug) by[r.slug] = { ...by[r.slug], ...r }; for (const a of Object.values(by)) if (a.url && a.event !== "retire") hosts.push(a.url.replace(/\/$/, "")); } catch (e) { console.error("no tenant ledger: tenant apps not audited"); }
+  // UIUX-RETIRED-1: a retired app answers 410 by design and is not a page a person lands on. Retirement is read from the registry the spinoffs
+  // Worker serves (spinoffs/registry.json `retired`, written by `ideas --retire`) and from any retire row; the ledger's last row (often a promote)
+  // never re-opens it. Hosts are deduplicated so one app is audited once per viewport.
+  let retired = new Set();
+  try { retired = new Set(JSON.parse(readFileSync(here("spinoffs/registry.json"), "utf8")).retired || []); } catch (e) { console.error("spinoffs/registry.json unreadable: retired apps not excluded:", e.message); }
+  try { const led = readFileSync(here(CFG.surfaces.tenants_from), "utf8").split("\n").filter(Boolean).map(l => JSON.parse(l)); const by = {}; for (const r of led) if (r.slug) { by[r.slug] = { ...by[r.slug], ...r }; if (r.event === "retire") retired.add(r.slug); } for (const a of Object.values(by)) if (a.url && !retired.has(a.slug)) hosts.push(a.url.replace(/\/$/, "")); } catch (e) { console.error("no tenant ledger: tenant apps not audited"); }
+  hosts = [...new Set(hosts)];
 }
 for (const host of hosts) {
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } }); await wire(ctx);

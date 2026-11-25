@@ -10,6 +10,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  id-token: write  # SPINOFF-DEPLOY-2: deploy-oidc.mjs presents this run's OIDC token to ultrastable-site
 concurrency:
   group: spinoff
   cancel-in-progress: false
@@ -53,13 +54,15 @@ jobs:
             git push -q origin "$b"
             gh pr create --base main --head "$b" --title "spinoff: portfolio tick" --body "Metrics, decisions and launches recorded by the SPINOFF-1 loop. Evidence: ops/spinoff/ledger.jsonl."
           fi
-      - name: Deploy the spinoffs Worker from the rebuilt bundle and probe every app (SPINOFF-DEPLOY-1)
-        # The ultrastable.app zone and the ultrastable-spinoffs Worker live in the quniverse account until the zone transfer (deploy/transfer/plan.json).
-        # Without this step a launched app was recorded live but never served (numbers-board and portfolio-board answered 404).
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with: {node-version: 24}
+      - name: Deploy the spinoffs Worker from main through the OIDC route and probe every app (SPINOFF-DEPLOY-2)
+        # SPINOFF-DEPLOY-2: the wrangler step here used the repository's CLOUDFLARE_* secrets, which name the retired account (SINGLE-ACCOUNT-2),
+        # and a D1 id that only exists there, so it failed every day from 2026-11-21. The worker is now in doctrine/topology.json and deploys
+        # like every platform worker: this run's OIDC token, verified by ultrastable-site, uploads main's bundle; the registry PR above
+        # redeploys through deploy-ultrastable.yml (path spinoffs/**) when the lane merges it.
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
-          [ -n "$CLOUDFLARE_API_TOKEN" ] && [ -n "$CLOUDFLARE_ACCOUNT_ID" ] || { echo "::error::Cloudflare secrets not set; spinoffs not deployed"; exit 1; }
-          (cd spinoffs && npx --yes wrangler@4 deploy)
+          node deploy/deploy-oidc.mjs ultrastable-spinoffs
           python3 scripts/probe_spinoffs.py
