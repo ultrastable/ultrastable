@@ -24,7 +24,7 @@ test('records merge evidence on main when evidenceRepo matches', async () => {
   const { f, calls } = fake({
     'GET /repos/a/b/pulls?': [200, [{ number: 1, labels: [] }]],
     'GET /repos/a/b/pulls/1': [200, { draft: false, mergeable_state: 'clean', head: { sha: 'abc1234' } }],
-    'GET /repos/a/b/commits/abc1234/check-runs': [200, { check_runs: [] }],
+    'GET /repos/a/b/commits/abc1234/check-runs': [200, { check_runs: [{ name: 'ci', status: 'completed', conclusion: 'success' }] }],
     'GET /repos/a/b/issues/1/comments': [200, []],
     'PUT /repos/a/b/pulls/1/merge': [200, { sha: 'abc' }],
     'PUT /repos/a/b/contents/ops/worker-merge-evidence.jsonl': [201, {}],
@@ -39,7 +39,7 @@ test('merges a clean PR, holds a HOLD one, dispatches an unclaimed issue', async
     'GET /repos/a/b/pulls?': [200, [{ number: 1, labels: [] }, { number: 2, labels: [] }]],
     'GET /repos/a/b/pulls/1': [200, { draft: false, mergeable_state: 'clean', head: { sha: 'abc1234' } }],
     'GET /repos/a/b/pulls/2': [200, { draft: false, mergeable_state: 'clean', head: { sha: 'abc1234' } }],
-    'GET /repos/a/b/commits/abc1234/check-runs': [200, { check_runs: [] }],
+    'GET /repos/a/b/commits/abc1234/check-runs': [200, { check_runs: [{ name: 'ci', status: 'completed', conclusion: 'success' }] }],
     'GET /repos/a/b/issues/1/comments': [200, []],
     'GET /repos/a/b/issues/2/comments': [200, [{ body: 'HOLD: fix x' }]],
     'PUT /repos/a/b/pulls/1/merge': [200, {}],

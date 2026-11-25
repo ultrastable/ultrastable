@@ -1,0 +1,9 @@
+{
+ "_doc": "Written by openalex-mirror.mjs on a GitHub runner (workflow ledger-openalex.yml), read by the Worker's beat when OpenAlex refuses it (mirror.js). Do not edit by hand.",
+ "version": 1,
+ "generated_at": null,
+ "route": "github-actions",
+ "findings": {},
+ "discovered": [],
+ "errors": []
+}

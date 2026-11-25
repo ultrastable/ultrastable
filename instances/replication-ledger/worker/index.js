@@ -4,15 +4,31 @@
 // discovery loop has found (store.js, D1). The loop runs on the hourly cron, and any request that finds the last beat older than
 // BEAT.SPARK_MIN starts one in the background, so the ledger keeps itself current even if the cron stops.
 import seed from "./data/findings.json" with { type: "json" };
+import openalexMirror from "./data/openalex.json" with { type: "json" };
 import { withStandings, FIELDS } from "./ledger.js";
 import { KINDS, OUTCOMES, STANDINGS, RUBRIC } from "./standing.js";
 import { BEAT } from "./discover.js";
-import { load, beat, freshness, minutesSince } from "./store.js";
+import { load, beat, freshness, minutesSince, seedCites } from "./store.js";
+import { doiKey } from "./ledger.js";
 import { graphTick, graphApi, graphView } from "./graph.js";
 import { home, fieldPage, findingPage, projectsPage, rubricPage, changesPage, graphPage, notFound, SITE } from "./site.js";
 
 const json = (body, status = 200) => new Response(JSON.stringify(body, null, 1), { status, headers: { "content-type": "application/json; charset=utf-8", "access-control-allow-origin": "*" } });
 const html = (body, status = 200) => new Response(body, { status, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=120" } });
+
+// Citation verification as a probe: every seed DOI is checked at Crossref within the first CITE_GRACE_BEATS beats (BEAT.CROSSREF per beat).
+// After that, a seed DOI never checked or one that failed is a 503, so "never verified" cannot read as verified (fm-unverified-citations).
+export const CITE_GRACE_BEATS = 24;
+export function citations(live = {}, cites = seedCites()) {
+  const rows = live.cites || {};
+  const keys = cites.map(c => doiKey(c.doi));
+  const checked = keys.filter(k => rows[k]).length;
+  const failed = keys.filter(k => rows[k] && !rows[k].ok).map(k => ({ doi: k, issues: JSON.parse(rows[k].issues || "[]") }));
+  const beats = Number(live.beat?.n) || 0;
+  const verified = checked === keys.length && failed.length === 0;
+  return { ok: beats < CITE_GRACE_BEATS || verified, verified, total: keys.length, checked, unchecked: keys.length - checked, failed,
+    beats, grace_beats: CITE_GRACE_BEATS, unchecked_dois: keys.filter(k => !rows[k]).slice(0, 20), unchecked_dois_limit: 20 };
+}
 
 export function route(url, ledger = seed, live = { checks: {}, beats: [], changes: [], cites: {} }) {
   const u = new URL(url);
@@ -22,11 +38,12 @@ export function route(url, ledger = seed, live = { checks: {}, beats: [], change
     const fr = freshness(ledger, live);
     return json({ ok: true, findings: ledger.findings.length, attempts: all.reduce((n, f) => n + f.standing.attempts, 0),
       discovered: { findings: ledger.findings.filter(f => f.discovered).length, attempts: all.reduce((n, f) => n + f.replications.filter(r => r.machine).length, 0), leads: live.leads || 0 },
-      loop: { beats: live.beats.length, last_beat_minutes: fr.last_beat_minutes, fresh: fr.ok } });
+      loop: { beats: live.beats.length, last_beat_minutes: fr.last_beat_minutes, fresh: fr.ok },
+      openalex_mirror: { generated_at: openalexMirror.generated_at || null, findings: Object.keys(openalexMirror.findings || {}).length, discovered: (openalexMirror.discovered || []).length } });
   }
   if (p === "/api/freshness") { const fr = freshness(ledger, live); return json(fr, fr.ok ? 200 : 503); }
   if (p === "/api/beats") return json({ beats: live.beats.map(b => ({ ...b, errors: JSON.parse(b.errors || "[]") })) });
-  if (p === "/api/citations") return json({ checked: Object.keys(live.cites).length, failed: Object.values(live.cites).filter(c => !c.ok).map(c => ({ doi: c.doi, issues: JSON.parse(c.issues) })) });
+  if (p === "/api/citations") { const c = citations(live); return json(c, c.ok ? 200 : 503); }
   if (p === "/api/rubric") return json({ kinds: KINDS, outcomes: OUTCOMES, standings: STANDINGS, rubric: RUBRIC });
   if (p === "/api/findings") {
     const field = u.searchParams.get("field");

@@ -27,7 +27,7 @@ jobs:
       - name: Audit every user page and walk every user path (accessibility, boundary, structure, copy, performance, visual fingerprint)
         id: offline
         continue-on-error: true  # findings are recorded and filed by the pass below, which also fails this job
-        run: node scripts/uiux_audit.mjs --write
+        run: node scripts/uiux_audit.mjs --write --roll-baseline  # DECLARED-LIVE-1: a baseline older than visual.max_baseline_days rolls forward after the comparison
       - name: Audit the real hosts and tenant apps (live timing)
         id: live
         continue-on-error: true

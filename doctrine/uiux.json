@@ -69,6 +69,8 @@
  "visual": {
   "_doc": "Visual-regression without storing images: each page at each width is fingerprinted by the rounded boxes and computed colour/type tokens of its headings, links, buttons, inputs and landmarks, and compared with ops/uiux/baseline.json. A page below min_similarity is drift; an intended redesign re-baselines in the same PR (`node scripts/uiux_audit.mjs --rebaseline`).",
   "min_similarity": 0.82,
+  "max_baseline_days": 7,
+  "_baseline_roll": "DECLARED-LIVE-1: a baseline older than max_baseline_days rolls forward after the weekly comparison (--roll-baseline in uiux.yml), so drift is measured against the previous window, never against a week-old snapshot.",
   "max_elements": 80,
   "tolerance_px": 6
  },

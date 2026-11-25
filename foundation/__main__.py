@@ -75,6 +75,7 @@
   python3 -m foundation rootcause [--run|--check|--report]               ROOTCAUSE-1: every finding traced to its root cause; recurrence escalates to the root
   python3 -m foundation failure_audit [--run|--check]                    FAILURE-AUDIT-1: live detectors for every failure mode; failures file their own issues
   python3 -m foundation flows [--check|--map]                             FLOW-DIRECTIVE-1: every loop declares inflows, outflows and its feedback path
+  python3 -m foundation driftguard [--check|--crons [--live]|--triggers [--apply]|--empty-commits|--accounts-live|--visibility-live|--built-live|--handoff-lint [FILE]]  DRIFT-GUARD-1: each root-cause class of 2026-11-25 has a check
   python3 -m foundation outreach [--rank|--selftest|--check]              OUTREACH-1: replies reward a segment; UCB1 orders the next intro queue
   python3 -m foundation metasignal [--check|--scan F|--ingest F [--apply]]  META-SIGNAL-1: sentiment, frustration, mic events and ideas feed the roadmap
   python3 -m foundation unknowns [--check|--run [--apply]|--answer KEY --verdict V --text T|--status]   UNKNOWNS-1: audit what the system does not know; inverted questions feed the objective space
@@ -209,9 +210,18 @@ def main(argv=None) -> int:
     if _av[:1] == ["rootcause"]:
         from . import rootcause
         return rootcause.main(_av[1:])
+    if _av[:1] == ["driftguard"]:  # DRIFT-GUARD-1
+        from . import driftguard
+        return driftguard.main(_av[1:])
     if _av[:1] == ["selftest"]:  # SELFTEST-1
         from . import selftest
         return selftest.main(_av[1:])
+    if _av[:1] == ["staticcontent"]:  # STATIC-CONTENT-1 (detector static-content was unroutable: SILENT-FAIL-1 routes check)
+        from . import staticcontent
+        return staticcontent.main(_av[1:])
+    if _av[:1] == ["slawatch"]:
+        from . import slawatch
+        return slawatch.main(_av[1:])
     if _av[:1] == ["silentfail"]:  # SILENT-FAIL-1
         from . import silentfail
         return silentfail.main(_av[1:])
