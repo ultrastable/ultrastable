@@ -1,0 +1,9 @@
+{
+  "id": "Q-STD-openssf-scorecard",
+  "title": "Q-STD-openssf-scorecard: read the OpenSSF Scorecard for the public repositories and file what falls",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -m foundation standards --adopted openssf-scorecard\n**Status:** open\n\nAdd one weekly workflow (header comments `# budget:`, `# trigger:`, `# free-alternative:`; the action pinned by commit SHA; public repositories only, so no private minutes) that runs the OpenSSF Scorecard action and publishes the result. Add a detector in doctrine/detectors.json that reads the published score with a GET (user agent ultrastable-audit/1.0) and fails when a check the system already claims (Pinned-Dependencies, Token-Permissions, Dangerous-Workflow) scores below its recorded floor, so the failure audit files the item. The floors are data and only rise.\n\nSTANDARDS-FIRST-1 (Rowan, 2026-11-25): \"Standards, don't reinvent the wheel. Apply standards.\" The row is `openssf-scorecard` in seed/standards/standards.json; this item closes when that row reads `\"adoption\": \"adopted\"` and every probe on it passes. Change the row in the same change that makes it true, never before.",
+  "labels": [
+    "standards",
+    "agent-ready"
+  ]
+}

@@ -36,4 +36,4 @@ jobs:
         run: |
           git config user.name "ultrastable-bootstrap"
           git config user.email "bootstrap@users.noreply.github.com"
-          git add org && git diff --cached --quiet || git commit -m "Record boot: org/ charter, roles, backlog, gate cards" && git push
+          git add org && git diff --cached --quiet || git commit -m "bootstrap: record boot (org/ charter, roles, backlog, gate cards)" && git push

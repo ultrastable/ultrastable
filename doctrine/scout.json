@@ -1,5 +1,5 @@
 {
-  "_doc": "SCOUT-1 (Rowan, 2026-11-12): the growth product manager looks for the state of the art and files what it finds. foundation/scout.py reads each source on a weekly clock, scores every new entry against the gap register in doctrine/market.json and the needs below, files a growth queue item (Q-SCOUT-*) for each entry over the threshold, and re-weights its own sources from what was adopted. Sources are data: a pass that finds a better one adds it by PR (the scout also files a growth item when a source returns nothing for four passes). Read by foundation/scout.py, scripts and .github/workflows/scout.yml.",
+  "_doc": "SCOUT-1 (Rowan, 2026-11-12): the growth product manager looks for the state of the art and files what it finds. foundation/scout.py reads each source on a weekly clock, scores every new entry against the gap register in doctrine/market.json and the needs below, files a growth queue item (Q-SCOUT-*) for each entry over the threshold, and re-weights its own sources from what was adopted. Sources are data: a pass that finds a better one adds it by PR; a source with `standard` is the release feed of a standard adopted in seed/standards/standards.json, and every new entry on it is filed as an item (STANDARDS-FIRST-1) (the scout also files a growth item when a source returns nothing for four passes). Read by foundation/scout.py, scripts and .github/workflows/scout.yml.",
   "threshold": 2.0,
   "max_per_run": 5,
   "window_days": 30,
@@ -16,12 +16,20 @@
     {"id": "cloudflare-workers-sdk", "kind": "atom", "url": "https://github.com/cloudflare/workers-sdk/releases.atom", "topic": "agent platform"},
     {"id": "langgraph", "kind": "atom", "url": "https://github.com/langchain-ai/langgraph/releases.atom", "topic": "agent orchestration"},
     {"id": "google-adk", "kind": "atom", "url": "https://github.com/google/adk-python/releases.atom", "topic": "agent orchestration"},
-    {"id": "mcp-spec", "kind": "atom", "url": "https://github.com/modelcontextprotocol/modelcontextprotocol/releases.atom", "topic": "agent standards"},
+    {"id": "mcp-spec", "kind": "atom", "url": "https://github.com/modelcontextprotocol/modelcontextprotocol/releases.atom", "topic": "agent standards", "standard": "mcp"},
     {"id": "cloudflare-blog", "kind": "rss", "url": "https://blog.cloudflare.com/rss/", "topic": "agent platform"},
     {"id": "gemini-cli", "kind": "atom", "url": "https://github.com/google-gemini/gemini-cli/releases.atom", "topic": "coding agents"},
     {"id": "aider", "kind": "atom", "url": "https://github.com/Aider-AI/aider/releases.atom", "topic": "coding agents"},
     {"id": "cline", "kind": "atom", "url": "https://github.com/cline/cline/releases.atom", "topic": "coding agents"},
     {"id": "crewai", "kind": "atom", "url": "https://github.com/crewAIInc/crewAI/releases.atom", "topic": "agent orchestration"},
-    {"id": "autogen", "kind": "atom", "url": "https://github.com/microsoft/autogen/releases.atom", "topic": "agent orchestration"}
+    {"id": "autogen", "kind": "atom", "url": "https://github.com/microsoft/autogen/releases.atom", "topic": "agent orchestration"},
+    {"id": "cloudevents-spec", "kind": "atom", "url": "https://github.com/cloudevents/spec/releases.atom", "topic": "adopted standards", "standard": "cloudevents"},
+    {"id": "openapi-spec", "kind": "atom", "url": "https://github.com/OAI/OpenAPI-Specification/releases.atom", "topic": "adopted standards", "standard": "openapi"},
+    {"id": "otel-semconv", "kind": "atom", "url": "https://github.com/open-telemetry/semantic-conventions/releases.atom", "topic": "adopted standards", "standard": "otel-genai"},
+    {"id": "a2a-spec", "kind": "atom", "url": "https://github.com/a2aproject/A2A/releases.atom", "topic": "adopted standards", "standard": "a2a"},
+    {"id": "schemaorg", "kind": "atom", "url": "https://github.com/schemaorg/schemaorg/releases.atom", "topic": "adopted standards", "standard": "schema-org-jsonld"},
+    {"id": "publiccode-spec", "kind": "atom", "url": "https://github.com/publiccodeyml/publiccode.yml/releases.atom", "topic": "adopted standards", "standard": "publiccode-yml"},
+    {"id": "cff-spec", "kind": "atom", "url": "https://github.com/citation-file-format/citation-file-format/releases.atom", "topic": "adopted standards", "standard": "citation-cff"},
+    {"id": "conventional-commits-spec", "kind": "atom", "url": "https://github.com/conventional-commits/conventionalcommits.org/releases.atom", "topic": "adopted standards", "standard": "conventional-commits"}
   ]
 }

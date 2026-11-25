@@ -31,4 +31,4 @@ jobs:
       - name: Land the reading and the queue items on main
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
-        run: python3 scripts/land_data.py "findable reading and queue items (FINDABLE-1)" ops/findable.json docs/issues
+        run: python3 scripts/land_data.py "findable: reading and queue items (FINDABLE-1)" ops/findable.json docs/issues

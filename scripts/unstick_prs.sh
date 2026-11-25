@@ -27,7 +27,7 @@ for n in $(gh api "repos/$repo/pulls?state=open&per_page=50" --jq '.[]|select(.h
   for g in $(node -e "import('./seed/worker/src/generated.js').then(m=>console.log(m.GENERATED.join('\n')))"); do
     if [ -n "$(git ls-tree origin/main -- "$g")" ]; then git checkout -q origin/main -- "$g"; fi  # a file main does not have is left as the PR has it
   done
-  git add -A; git diff --cached --quiet || git commit -q -m "UNSTICK-1: generated files follow main"
+  git add -A; git diff --cached --quiet || git commit -q -m "unstick: generated files follow main (UNSTICK-1)"
   if git push -q origin "HEAD:refs/heads/$ref"; then
     echo "PR #$n reconciled"; gh workflow run checks.yml --ref "$ref" || echo "::warning::UNSTICK-1 #$n: checks dispatch failed"
   else

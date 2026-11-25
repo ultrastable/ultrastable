@@ -40,6 +40,24 @@ class Scout(unittest.TestCase):
         again = S.run(d, fetch, apply=True); self.assertEqual((again["scanned"], again["filed"]), (0, []))
         self.assertEqual(len((d / "ops/scout/log.jsonl").read_text().splitlines()), 2)
 
+    def test_a_new_version_of_an_adopted_standard_is_filed_whatever_it_scores(self):
+        """STANDARDS-FIRST-1: the first reading of a standard's release feed records what exists; every entry after that becomes an item."""
+        src = [{"id": "ce-spec", "kind": "atom", "url": "https://x.test/std", "topic": "adopted standards", "standard": "cloudevents"}]
+        feed = lambda n: '<feed xmlns="http://www.w3.org/2005/Atom">' + "".join(f"<entry><id>tag:ce,{i}</id><title>v1.0.{i}</title><link href=\"https://example.test/ce/{i}\"/><updated>2026-11-1{i}T00:00:00Z</updated><content>patch release</content></entry>" for i in range(1, n + 1)) + "</feed>"
+        d = make(src)
+        first = S.run(d, lambda url, timeout=30: feed(2), apply=True)
+        self.assertEqual((first["scanned"], first["filed"]), (2, []))
+        nxt = S.run(d, lambda url, timeout=30: feed(3), apply=True)
+        self.assertEqual(len(nxt["filed"]), 1)
+        it = json.loads((d / "docs/issues" / (nxt["filed"][0] + ".json")).read_text())
+        self.assertIn("v1.0.3", it["title"]); self.assertIn("standard:cloudevents", it["body"]); self.assertIn("`cloudevents` in seed/standards/standards.json", it["body"])
+        self.assertEqual(S.run(d, lambda url, timeout=30: feed(3), apply=True)["filed"], [])
+
+    def test_a_watched_standard_must_be_in_the_register(self):
+        d = make([{"id": "x-spec", "kind": "atom", "url": "https://x.test/std", "topic": "t", "standard": "no-such-standard"}])
+        self.assertTrue(any("no-such-standard" in b for b in S.check(d)))
+        self.assertTrue(all(any(e["id"] == s["standard"] for e in json.loads((REPO / "seed/standards/standards.json").read_text())["entries"]) for s in S.load(REPO)["sources"] if "standard" in s))
+
     def test_outcomes_reweight_sources(self):
         d = make(SRC); row = S.run(d, fetch, apply=True); iid = next(i for i in row["filed"] if "-feed-one-" in i)
         S.adopt(d, iid, "adopted", "shipped"); S.run(d, fetch, apply=True)

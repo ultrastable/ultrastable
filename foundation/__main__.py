@@ -3,7 +3,7 @@
   python3 -m foundation new-system --manifest instances/<slug>/instance.json --out ../<slug> [--apply]
   python3 -m foundation validate --manifest FILE
   python3 -m foundation ladder            # credential ladder against the host it runs on
-  python3 -m foundation standards [--check|--apply]   agentic standards register, surfaces, conformance lint
+  python3 -m foundation standards [--check|--apply|--schemas [--repo DIR]|--commits|--live|--render|--audit|--adopted ID]   STANDARDS-FIRST-1: standards register with measured decisions, surfaces, JSON Schema coverage, commit-title lint
   python3 -m foundation filing --manifest FILE
   python3 -m foundation launch [--commit --push | --probe | --export-d1 F | --install SURFACE | --failover [--decide]]   start the loops on this repo (server-side hosts only)
   python3 -m foundation liveness [--json|--check|--file-items|--static|--probe ID]   are the autonomous loops actually running (evidence, not files)
@@ -534,6 +534,8 @@ def main(argv=None) -> int:
     ck = ws.add_parser("check"); ck.add_argument("--base", default="origin/main"); ck.add_argument("--head", default="HEAD")
     ou = ws.add_parser("outputs"); ou.add_argument("dirs", nargs="+"); ou.add_argument("--ignore", action="append", default=[])
     st = sub.add_parser("standards"); sg = st.add_mutually_exclusive_group(required=True); sg.add_argument("--apply", action="store_true"); sg.add_argument("--check", action="store_true")
+    sg.add_argument("--schemas", action="store_true"); sg.add_argument("--commits", action="store_true"); sg.add_argument("--live", action="store_true"); sg.add_argument("--render", action="store_true"); sg.add_argument("--audit", action="store_true")
+    sg.add_argument("--adopted", default=None, metavar="ID"); st.add_argument("--repo", default=None)
     f = sub.add_parser("filing"); f.add_argument("--manifest", required=True)
     r = sub.add_parser("autorun"); r.add_argument("--ticks", type=int, default=10); r.add_argument("--out", default=".selfhost/autorun"); r.add_argument("--public", action="store_true"); r.add_argument("--no-node", action="store_true")
     c = sub.add_parser("cockpit"); c.add_argument("--out", default=".selfhost/cockpit"); c.add_argument("--ticks", type=int, default=10); c.add_argument("--no-node", action="store_true")
@@ -654,6 +656,17 @@ def main(argv=None) -> int:
         except ValueError as e:
             print("refused:", e); return 1
         print("\n".join(bad) or "writeback ok"); return 1 if bad else 0
+    if a.cmd == "standards" and a.adopted:  # the closing probe of a Q-STD-<id> item
+        bad = standards.adopted(standards.REPO, a.adopted); print("\n".join(bad) or f"{a.adopted}: adopted, every probe passes"); return 1 if bad else 0
+    if a.cmd == "standards" and (a.schemas or a.commits or a.live or a.render or a.audit):  # STANDARDS-FIRST-1
+        from . import schemas, commitlint
+        if a.render:
+            w = standards.render(); print("written: " + ", ".join(w) if w else "rendered surfaces already current"); return 0
+        if a.audit:
+            print(standards.audit_table()); return 0
+        bad = (schemas.check_repo(a.repo) if a.repo else schemas.check()) if a.schemas else commitlint.check() if a.commits else standards.live()
+        ok = (json.dumps(schemas.coverage()) if a.schemas and not a.repo else "ok")
+        print("\n".join(bad) or f"standards {'schemas' if a.schemas else 'commits' if a.commits else 'live'}: {ok}"); return 1 if bad else 0
     if a.cmd == "standards":
         if a.apply:
             print("docs/standards table updated" if standards.apply() else "docs/standards table already current")

@@ -127,6 +127,12 @@
     "ultrastable.json",
     "seed/ultrastable.json"
    ]
+  },
+  {
+   "schema": "doctrine/schemas/commit-convention.schema.json",
+   "files": [
+    "doctrine/commit-convention.json"
+   ]
   }
  ],
  "baseline_ceiling": 142,
