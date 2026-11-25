@@ -65,6 +65,16 @@ Research date: 2026-11-11. Every entry in the register carries its sources with 
 | Open Policy Agent (Rego) policy-as-code | CNCF (Open Policy Agent) | stable | n/a | Standing rules are already policy as code: each is a `python3 -m foundation <rule> --check` in checks, and request authorization uses OpenID AuthZEN (entry authzen). A Rego runtime would add a second policy language with no consumer; JSON Schema (entry json-schema-config) covers config shape. |
 | OpenFeature flag evaluation for the goal knobs | CNCF (OpenFeature) | draft | planned | Q-STD-OPENFEATURE |
 | SLSA v1 build provenance for deploys | OpenSSF (SLSA) | stable | planned | Q-STD-SLSA |
+| EditorConfig | editorconfig.org | de-facto | supported | `test_editorconfig_present` |
+| Dependabot version updates | GitHub | stable | supported | `test_dependabot_covers_every_ecosystem` |
+| OpenSSF Scorecard | OpenSSF (Linux Foundation) | stable | supported | `test_supply_chain_loop_files_and_closes`; `test_supply_chain_workflow_reads_both_standards` |
+| SPDX 2.3 SBOM from the dependency graph | Linux Foundation (ISO/IEC 5962) | stable | supported | `test_supply_chain_loop_files_and_closes` |
+| JSON Feed 1.1 and RSS 2.0 | jsonfeed.org; RSS Advisory Board | stable | supported | `feed renders escaped RSS and JSON Feed from described changes` |
+| schema.org vocabulary in JSON-LD | schema.org (W3C community group) | stable | partial | `test_site_pages_carry_schema_org_jsonld` |
+| Citation File Format | Citation File Format project | stable | supported | `test_citation_cff_parses` |
+| Knowledge graph served as JSON-LD (schema.org) | W3C / schema.org | stable | planned | STD-7: executor item in docs/issues/STD-7.json |
+| OpenSLO definitions for loop clocks | OpenSLO project | stable | planned | STD-8: executor item in docs/issues/STD-8.json |
+| Reusable GitHub Actions workflows shared by every tenant | GitHub | stable | planned | STD-9: executor item in docs/issues/STD-9.json |
 
 <!-- standards:end -->
 

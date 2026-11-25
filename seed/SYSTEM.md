@@ -185,7 +185,7 @@ a rule enforced only by the platform is marked so, and the platform checks it fo
 - **CLOSED-LOOP-1**: Closed loops only; nobody reads, reviews or decides. In this kit: `autonomy/policy.json`.
 - **NO-FABRICATION-1**: No made-up numbers. In this kit: `doctrine/claims.json`, `scripts/claims.py`.
 - **SPEC-GATE-1**: Work items an agent cannot misread; done means proven live. In this kit: `scripts/specgate.py`.
-- **STANDARDS-1**: Apply open standards; do not reinvent formats. In this kit: `standards/standards.json`.
+- **STANDARDS-1**: Apply open standards; do not reinvent formats. In this kit: `.devcontainer/devcontainer.json`, `standards/standards.json`.
 - **OUTREACH-INTRO-1**: Introduce the work; do not wait to be found. In this kit: `.github/workflows/outreach.yml`, `outreach/gate.json`, `outreach/intro-profile.json`, `outreach/prospects.json`.
 - **PROMOTE-1**: Strategy and promotion are the system's job. In this kit: `worker/src/promoqueue.js`.
 - **TENANT-PROMO-1**: Promotion is part of every app's and tenant's role. In this kit: `worker/src/promoqueue.js`, `worker/src/social.js`, `worker/test/promoqueue.test.js`.

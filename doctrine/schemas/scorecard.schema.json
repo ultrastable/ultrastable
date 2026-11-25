@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/scorecard.schema.json",
+  "title": "scorecard (doctrine/scorecard.json)",
+  "description": "Contract for doctrine/scorecard.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "scorecard_floor": {
+      "type": "number"
+    },
+    "ignore_checks": {
+      "type": "object",
+      "properties": {
+        "Code-Review": {
+          "type": "string"
+        },
+        "Contributors": {
+          "type": "string"
+        },
+        "CII-Best-Practices": {
+          "type": "string"
+        },
+        "Maintained": {
+          "type": "string"
+        },
+        "Signed-Releases": {
+          "type": "string"
+        },
+        "Packaging": {
+          "type": "string"
+        },
+        "Fuzzing": {
+          "type": "string"
+        }
+      }
+    },
+    "licence_policy": {
+      "type": "string"
+    },
+    "max_age_days": {
+      "type": "number"
+    },
+    "max_items_per_run": {
+      "type": "number"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "ignore_checks",
+    "licence_policy",
+    "max_age_days",
+    "max_items_per_run",
+    "scorecard_floor"
+  ]
+}

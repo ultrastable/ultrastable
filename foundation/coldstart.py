@@ -79,7 +79,7 @@ def check_capabilities(c: dict, root=ROOT) -> list[str]:
 
 def check_commands(c: dict, root=ROOT) -> list[str]:
     root, bad = Path(root), []
-    skip = set(c["command_refs"].get("exclude", []))  # append-only ledgers quote history in prose; they instruct no one
+    skip = set(c["command_refs"].get("exclude", {}))
     for p in _files(root, c["command_refs"]["globs"]):
         if str(p.relative_to(root)) in skip:
             continue
