@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/tenant-controls.schema.json",
+  "title": "tenant-controls (doctrine/tenant-controls.json)",
+  "description": "Contract for doctrine/tenant-controls.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "controls": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "needs": {
+            "type": "string"
+          },
+          "obligation": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "string"
+          },
+          "probes": {
+            "type": "array"
+          }
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "controls",
+    "version"
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/models.schema.json",
+  "title": "models (doctrine/models.json)",
+  "description": "Contract for doctrine/models.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "measured_at": {
+      "type": "string"
+    },
+    "plan": {
+      "type": "string"
+    },
+    "scan_globs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "exclude": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "fallback_order": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "available": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "retired": {
+      "type": "object",
+      "properties": {
+        "@cf/zai-org/glm-5.3-flash": {
+          "type": "object"
+        },
+        "@cf/meta/llama-3.1-8b-instruct-fp8": {
+          "type": "object"
+        },
+        "@cf/moonshotai/kimi-k2.7-code": {
+          "type": "object"
+        },
+        "@cf/moonshotai/kimi-k2.6": {
+          "type": "object"
+        },
+        "@cf/nvidia/nemotron-3-120b-a12b": {
+          "type": "object"
+        },
+        "@cf/qwen/qwen3-30b-a3b-fp8": {
+          "type": "object"
+        },
+        "@cf/deepseek-ai/deepseek-v4-flash-0731": {
+          "type": "object"
+        },
+        "@cf/zai-org/glm-5.2": {
+          "type": "object"
+        },
+        "@cf/qwen/qwq-32b": {
+          "type": "object"
+        }
+      }
+    },
+    "refused": {
+      "type": "object",
+      "properties": {
+        "@cf/zai-org/glm-5.3": {
+          "type": "string"
+        },
+        "@cf/deepseek-ai/deepseek-v4.1-flash-1017": {
+          "type": "string"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "available",
+    "exclude",
+    "fallback_order",
+    "measured_at",
+    "plan",
+    "refused",
+    "retired",
+    "scan_globs",
+    "version"
+  ]
+}

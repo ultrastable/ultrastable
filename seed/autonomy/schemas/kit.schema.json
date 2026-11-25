@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/seed/autonomy/kit.schema.json",
+  "title": "kit (seed/autonomy/kit.json)",
+  "description": "Contract for seed/autonomy/kit.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "target_days": {
+      "type": "number"
+    },
+    "max_age_days": {
+      "type": "number"
+    },
+    "required_faults": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "components": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "covers": {
+            "type": "array"
+          },
+          "files": {
+            "type": "array"
+          },
+          "id": {
+            "type": "string"
+          },
+          "probe": {
+            "type": "array"
+          },
+          "what": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "components",
+    "max_age_days",
+    "required_faults",
+    "target_days",
+    "version"
+  ]
+}

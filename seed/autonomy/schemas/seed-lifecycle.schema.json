@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/seed/autonomy/seed-lifecycle.schema.json",
+  "title": "seed-lifecycle (seed/autonomy/seed-lifecycle.json)",
+  "description": "Contract for seed/autonomy/seed-lifecycle.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "marker": {
+      "type": "string"
+    },
+    "target_days": {
+      "type": "number"
+    },
+    "verify_max_age_hours": {
+      "type": "number"
+    },
+    "verify_ledger": {
+      "type": "string"
+    },
+    "topology": {
+      "type": "string"
+    },
+    "clocks": {
+      "type": "string"
+    },
+    "progress": {
+      "type": "string"
+    },
+    "survival": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "what": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "clocks",
+    "marker",
+    "progress",
+    "survival",
+    "target_days",
+    "topology",
+    "verify_ledger",
+    "verify_max_age_hours"
+  ]
+}
