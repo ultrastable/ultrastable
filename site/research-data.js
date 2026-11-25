@@ -9,6 +9,76 @@ export default {
    "slug": "ashby-1952",
    "order": 1,
    "title": "Closing the loop: Ashby's ultrastable system and why today's AI systems disappoint",
+   "sections": {
+    "summary": [
+     "Many people believe that AI systems are smart enough already; what holds them back is model capability. This paper argues otherwise: what holds most AI systems back is an open loop: nothing checks the result against limits and changes the system when it fails. That is an engineering property, and it can be tested.",
+     "Ultrastable takes its name from Ashby's ultrastable system. Most current AI systems answer and stop: nothing checks the result against limits and changes the system when it fails, so their loops stay open. We state Ashby's mechanism as a set of testable properties, check each against this system's code and records, and show where the code falls short.",
+     "It is written for people who build or run AI systems and want them to keep working without someone watching. It names 5 concrete problems, the mechanism that answers each one, and how to put that mechanism in place."
+    ],
+    "problem": [
+     "An adaptive system keeps its essential variables within limits through two feedbacks: a first loop that reacts to the environment, and a second loop that changes the first loop's parameters (step-functions) only when an essential variable leaves its limits, and keeps changing them until a configuration holds the variables in bounds. [1]",
+     "This matters now because the usual answer, AI is held back by model capability, sends teams after the wrong fix. A better model or another reviewer does not close a loop that nothing checks.",
+     "The problems in detail:"
+    ],
+    "problem_list": [
+     "An essential variable without limits. In Ashby's account, adaptation is defined by keeping certain essential variables within limits. A variable with no limits can never trigger the second loop, so a system that declares one without limits is not ultrastable in that variable. [1]",
+     "A second loop that never acts. The second feedback runs through the essential variables: when one leaves its limits, the system changes itself. A second loop that is declared but never steps is a diagram, not a mechanism. [1]",
+     "Nothing the second loop can change. Ashby's preface: \"any system which shows adaptation must (1) contain many variables that behave as step-functions\". The second loop changes the first loop's parameters; where it can only file a work item, the change waits on another loop. [1]",
+     "A search that stops before anything holds. The ultrastable system keeps changing its step-functions until it reaches a configuration that holds the essential variables within limits, and then keeps it. A loop that gives up after a fixed list of tries, or never finds a configuration that holds, has not adapted. [1]",
+     "AI systems leave their loops open. Ultrastable's reading, not Ashby's words: a chat model or coding agent produces an answer and stops. Nothing checks the result against limits and changes the system when it fails, so the loop is open, and disappointment follows. Every loop Ultrastable runs is meant to carry its own closing check. [1]"
+    ],
+    "approach": [
+     "The approach follows Ashby's ultrastable system [1]: a first loop acts on the world, and a second loop changes the first loop's settings whenever a variable that matters leaves its limits, and keeps changing them until it is back inside.",
+     "Ultrastable is that design as working code [2]. For each problem above it uses a specific mechanism:"
+    ],
+    "approach_list": [
+     "An essential variable without limits: every essential variable is declared with its limits, per scope (platform, tenant) (ULTRASTABILITY-1, `doctrine/ultrastability.json`); the check fails when an essential variable has neither a lower nor an upper limit (ASHBY-1, `foundation/ultrastability.py`)",
+     "A second loop that never acts: after patience_ticks readings out of limits, one step is taken and logged with a prediction (ULTRASTABILITY-1, `foundation/ultrastability.py`); the second loop runs on the watchdog clock and on the cost guard, server-side (CLOCKWORK-1, `.github/workflows/watchdog.yml`)",
+     "Nothing the second loop can change: a ladder step of kind param changes a declared value the first loop reads, inside declared limits (ULTRASTABILITY-1, `doctrine/ultrastability.json`)",
+     "A search that stops before anything holds: after the ladder, untried parameter values are drawn until one holds or the declared range is spent; only then a redesign item (ASHBY-SEARCH-1, `foundation/ultrastability.py`); a step is kept only when the variable is back inside its limits within settle_ticks; otherwise it is undone (ULTRASTABILITY-1, `foundation/ultrastability.py`)",
+     "AI systems leave their loops open: an output with no code consumer fails the build (CLOSED-LOOP-1, `foundation/closedloop.py`); every loop has a server-side owner; a client session never closes one (SERVER-OWNS-LOOPS-1, `foundation/loopowner.py`)"
+    ],
+    "practice": [
+     "To apply this to your own system, one step per problem:"
+    ],
+    "practice_list": [
+     "An essential variable without limits. Put in place: every essential variable is declared with its limits, per scope (platform, tenant). Check it with one number, share of declared essential variables that have limits (doctrine/ultrastability.json), and set a limit for it (>= 1.0 is the limit we use).",
+     "A second loop that never acts. Put in place: after patience_ticks readings out of limits, one step is taken and logged with a prediction. Check it with one number, second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl), and set a limit for it (>= 1 is the limit we use).",
+     "Nothing the second loop can change. Put in place: a ladder step of kind param changes a declared value the first loop reads, inside declared limits. Check it with one number, share of essential variables whose second loop can change a parameter of the first loop, and set a limit for it (>= 0.5 is the limit we use).",
+     "A search that stops before anything holds. Put in place: after the ladder, untried parameter values are drawn until one holds or the declared range is spent; only then a redesign item. Check it with one number, share of second-order steps that brought the variable back inside its limits and were kept, and set a limit for it (>= 0.25 is the limit we use).",
+     "AI systems leave their loops open. Put in place: an output with no code consumer fails the build. Check it with one number, share of registered loops that declare a closing probe and a server-side owner, and set a limit for it (>= 1.0 is the limit we use)."
+    ],
+    "practice_note": [
+     "In our own system, 4 of 5 of these checks pass today. Share of declared essential variables that have limits (doctrine/ultrastability.json) reads 1.0 (n = 13; source: doctrine/ultrastability.json). Second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl) reads 98 (n = 13990; source: ops/ultrastability.jsonl). Share of essential variables whose second loop can change a parameter of the first loop reads 1.0 (n = 13; source: doctrine/ultrastability.json). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+    ],
+    "tradeoffs": [
+     "Reading. Chapters 7 and 8 were not machine-read for this paper: the archive.org text the research loop could reach ends in chapter 2. Ashby's mechanism is stated here in our own words from the book's contents and preface; the only verbatim quotation is from the preface (page v).",
+     "Search. Ashby's step-functions take new values at random. Ultrastable first takes a fixed ladder of steps, then draws untried values at random (seeded, so a run can be replayed) from each parameter's declared range. A restructure step is a work item for the executor, not a step-function, and depends on the executor completing it.",
+     "Declared versus observed. The closed-loop share counts loops that declare a closing probe and a server-side owner; it does not show that each probe passes today.",
+     "Source. Book, version 1952, reprinted with corrections 1954."
+    ],
+    "action": [
+     "Read the code that does this; it is source-available: https://github.com/ultrastable/ultrastable",
+     "Start a system of your own on the same foundation: https://ultrastable.io/start",
+     "Follow new papers by feed: https://ultrastable.io/research.atom"
+    ]
+   },
+   "references": [
+    {
+     "key": "ashby-1952",
+     "text": "W. Ross Ashby (1952, reprinted with corrections 1954). Design for a Brain: The Origin of Adaptive Behaviour. John Wiley & Sons, New York; book.",
+     "url": "https://archive.org/details/designforbrain00ashb"
+    },
+    {
+     "key": "ultrastable",
+     "text": "Ultrastable (2026). Source code, ledgers and loop registry of the Ultrastable system. Read for this paper at the date of generation.",
+     "url": "https://github.com/ultrastable/ultrastable"
+    }
+   ],
+   "derived": [
+    80,
+    0
+   ],
    "study": {
     "title": "Design for a Brain: The Origin of Adaptive Behaviour",
     "authors": [
@@ -90,7 +160,7 @@ export default {
      "metric_label": "second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl)",
      "measured": 98,
      "status": "met",
-     "n": 14031,
+     "n": 13990,
      "source": "ops/ultrastability.jsonl",
      "item": null
     },
@@ -178,7 +248,7 @@ export default {
      "metric_label": "share of registered loops that declare a closing probe and a server-side owner",
      "measured": 1.0,
      "status": "met",
-     "n": 112,
+     "n": 113,
      "source": "instances/ultrastable/loop-registry.json (declared)",
      "item": null
     }
@@ -231,6 +301,88 @@ export default {
    "slug": "chen-stratton-2026",
    "order": 2,
    "title": "Review without a queue: what Chen and Stratton (2026) mean for an autonomous system",
+   "sections": {
+    "summary": [
+     "Many people believe that AI writes more code, so a team must review more code, and review becomes the bottleneck. This paper argues otherwise: review is a bottleneck only when a person is the gate. Replace the queue with checks that can fail, live verification and automatic revert, and measure quality instead of waiting.",
+     "We map each of their findings to the mechanisms Ultrastable uses instead of a human review queue, and test each mapping against this system's own records.",
+     "It is written for people who build or run AI systems and want them to keep working without someone watching. It names 7 concrete problems, the mechanism that answers each one, and how to put that mechanism in place."
+    ],
+    "problem": [
+     "AI coding tools raise code output substantially but final software output only a little, with no detectable employment effect. Code review becomes the bottleneck: code waits longer for a reviewer, spends longer in review and draws more requested changes. [1]",
+     "This matters now because the usual answer, more AI code means a bigger human review queue, sends teams after the wrong fix. A better model or another reviewer does not close a loop that nothing checks.",
+     "The problems in detail:"
+    ],
+    "problem_list": [
+     "More code is not more shipped work. After AI agent adoption, pull requests opened rise 35.7% while resolved issues (work deployed to production) rise only 13.7%; increases above 30.7% are ruled out. [1]",
+     "Review becomes the bottleneck. After AI agent adoption, the time from a pull request's submission to its merge rises 56.1%: waiting for a reviewer rises 59.9% and time in active review 58.5%. [1]",
+     "System-made changes wait longer than session-made ones. The study's model predicts that when review capacity is fixed, the waiting time grows with the volume of submitted code. A system that writes its own changes must not let its own pull requests queue behind human-driven ones. [1]",
+     "Lower code quality raises review effort and risk. After agent adoption the share of changes receiving a review comment rises 13.1% and comments per change rise 38.6%; interviewees report outages caused by AI-generated commits. [1]",
+     "Unverified deploys reach production. Code must be reviewed and tested before it can be deployed; the study treats review as the quality gate that AI-written code strains. [1]",
+     "AI review tools leave humans in the loop. 79.1% of firms adopted AI code review tools, but the overwhelming majority of reviews and comments are still written by people, so the bottleneck persists. [1]",
+     "One approver is a single point of failure. Reviewers mostly review code they already know (82.8% versus 17.2% at random); an interviewee describes one senior engineer as the only approver, reviewing once a week. [1]"
+    ],
+    "approach": [
+     "The approach follows Ashby's ultrastable system [2]: a first loop acts on the world, and a second loop changes the first loop's settings whenever a variable that matters leaves its limits, and keeps changing them until it is back inside.",
+     "Ultrastable is that design as working code [3]. For each problem above it uses a specific mechanism:"
+    ],
+    "approach_list": [
+     "More code is not more shipped work: the system's own score counts verified live deploys, never commits or lines (CRITICALITY-1, `foundation/criticality.py`); the public progress page lists merged and shipped work only; record-keeping merges are excluded (PROGRESS-1, `site/progress.js`)",
+     "Review becomes the bottleneck: a server-side lane merges a green pull request without waiting for a person (AUTO-SHIP-CLEAN-1, `seed/worker/src/sweeper.js`); the tick Worker owns merge, deploy and live verification after a pull request opens (HANDOFF-1, `seed/worker/src/handoff.js`); a green pull request left open fails a check (DRAIN-ZERO-1, `foundation/lanewatch.py`)",
+     "System-made changes wait longer than session-made ones: the lane takes every open pull request until none is left (DRAIN-ALL-1, `.github/workflows/lane.yml`); work the system originates on itself is ranked first when the regime is driven (SELF-REFERENCE-1, `foundation/criticality.py`)",
+     "Lower code quality raises review effort and risk: a model change that elides or stubs code is refused before it becomes a pull request (ELISION-1, `foundation/executor.py`); a red main is repaired by reverting the smallest change that broke it (REDMAIN-1, `foundation/redmain.py`); every failure mode has a live detector and a queue item (FAILURE-RESOLVE-1, `foundation/failure_audit.py`)",
+     "Unverified deploys reach production: every deploy runs a verify line against production and rolls back on failure (HANDOFF-1, `seed/worker/src/handoff.js`); freshness of each live source is served and probed (FRONT-BACKED-1, `site/live.js`)",
+     "AI review tools leave humans in the loop: no step waits on a person reading, reviewing or approving (CLOSED-LOOP-1, `foundation/closedloop.py`); human touches are counted every tick and lower the score (CRITICALITY-1, `foundation/criticality.py`)",
+     "One approver is a single point of failure: every single point of failure, approvals included, is registered and remediated (GUIDING-DIRECTIVE section 12, `doctrine/registers.json`); every merge and deploy path has a second route needing no person's credential (NO-SINGLE-ROUTE, `foundation/failover.py`)"
+    ],
+    "practice": [
+     "To apply this to your own system, one step per problem:"
+    ],
+    "practice_list": [
+     "More code is not more shipped work. Put in place: the system's own score counts verified live deploys, never commits or lines. Check it with one number, verified live deploys per merged pull request in the same window, and set a limit for it (>= 0.5 is the limit we use).",
+     "Review becomes the bottleneck. Put in place: a server-side lane merges a green pull request without waiting for a person. Check it with one number, median hours from a pull request opening to its merge, and set a limit for it (<= 1.0 is the limit we use).",
+     "System-made changes wait longer than session-made ones. Put in place: the lane takes every open pull request until none is left. Check it with one number, median hours to merge for pull requests the system's own workflows or App opened, and set a limit for it (<= 2.0 is the limit we use).",
+     "Lower code quality raises review effort and risk. Put in place: a model change that elides or stubs code is refused before it becomes a pull request. Check it with one number, commits on main whose subject starts with Revert, per merged pull request in the window, and set a limit for it (<= 0.05 is the limit we use).",
+     "Unverified deploys reach production. Put in place: every deploy runs a verify line against production and rolls back on failure. Check it with one number, share of uploaded deploys proven live against their commit, and set a limit for it (>= 0.95 is the limit we use).",
+     "AI review tools leave humans in the loop. Put in place: no step waits on a person reading, reviewing or approving. Check it with one number, share of merged pull requests opened by the system itself, and set a limit for it (>= 0.5 is the limit we use).",
+     "One approver is a single point of failure. Put in place: every single point of failure, approvals included, is registered and remediated. Check it with one number, verified deploys the system originated and executed itself (latest criticality tick), and set a limit for it (>= 1 is the limit we use)."
+    ],
+    "practice_note": [
+     "In our own system, 5 of 7 of these checks pass today. Verified live deploys per merged pull request in the same window reads 0.625 (n = 64; source: ops/deploys.jsonl and the pull request snapshot). Median hours from a pull request opening to its merge reads 0.15 (n = 64; source: GitHub REST pulls?state=closed, last 100 closed pull requests, fetched 2026-11-21T09:30:00Z). Median hours to merge for pull requests the system's own workflows or App opened reads 0.49 (n = 13; source: GitHub REST pulls?state=closed, last 100 closed pull requests, fetched 2026-11-21T09:30:00Z). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+    ],
+    "tradeoffs": [
+     "Scale. One organization: 100 closed pull requests (64 merged) over 0.75 days, against a study of 655 firms over more than five years. Our numbers describe this system; they are not a causal estimate and are not compared with the study's effect sizes as if they were.",
+     "Who wrote the changes. 80% of merged pull requests in the window were opened by code agent sessions run under the owner's account, not by the system's own loops. The latest criticality tick puts the system in the subcritical regime with 0 self-originated deploys, so most of the work measured here was started from outside.",
+     "Review by construction. Ultrastable has no human review step, so a short open-to-merge time is partly a consequence of the design. The real test of the design is quality: the revert and deploy-verification findings, which can fail.",
+     "Revert share counts commits whose subject starts with Revert; a fix that undoes a change without that word is not counted, so the figure is a lower bound.",
+     "Source. Job market paper (working paper, not peer reviewed), version 2026-11-19 (first version 2026-01-07); its findings may change in later versions."
+    ],
+    "action": [
+     "Read the code that does this; it is source-available: https://github.com/ultrastable/ultrastable",
+     "Start a system of your own on the same foundation: https://ultrastable.io/start",
+     "Follow new papers by feed: https://ultrastable.io/research.atom"
+    ]
+   },
+   "references": [
+    {
+     "key": "chen-stratton-2026",
+     "text": "Fiona Chen, James Stratton (2026-11-19 (first version 2026-01-07)). Artificial Intelligence in the Firm: Bottlenecks in Software Production. Harvard University; job market paper (working paper, not peer reviewed).",
+     "url": null
+    },
+    {
+     "key": "ashby1952",
+     "text": "Ashby, W. R. (1952; corrected 1954). Design for a Brain: The Origin of Adaptive Behaviour. John Wiley & Sons, New York.",
+     "url": "https://archive.org/details/designforbrain00ashb"
+    },
+    {
+     "key": "ultrastable",
+     "text": "Ultrastable (2026). Source code, ledgers and loop registry of the Ultrastable system. Read for this paper at the date of generation.",
+     "url": "https://github.com/ultrastable/ultrastable"
+    }
+   ],
+   "derived": [
+    80,
+    0
+   ],
    "study": {
     "title": "Artificial Intelligence in the Firm: Bottlenecks in Software Production",
     "authors": [
@@ -477,7 +629,7 @@ export default {
      "prediction": "self_deploys >= 1 within 336 h",
      "metric_label": "verified deploys the system originated and executed itself (latest criticality tick)",
      "measured": 0,
-     "status": "unmeasured",
+     "status": "not-met",
      "n": 0,
      "source": "ops/criticality.jsonl at 2026-11-24T17:40:23Z",
      "item": "Q-RES-chen-stratton-2026-F7"
@@ -532,6 +684,80 @@ export default {
    "slug": "open-loops-2026",
    "order": 3,
    "title": "Closing its own loops: what an AI system that runs itself shows about the human in every step",
+   "sections": {
+    "summary": [
+     "Many people believe that AI agents can draft code, but a person still has to merge it, deploy it and check that it works. This paper argues otherwise: merging, deploying and checking are loops, and loops can be closed by code: checks that can fail, a lane that merges what passes, a probe that proves the deploy live, and a revert when it is not.",
+     "We state the common belief as properties that can fail, and test each against the records of a system that merges, deploys and checks its own work. Where it still depends on outside sessions, the paper says so with the number.",
+     "It is written for people who build or run AI systems and want them to keep working without someone watching. It names 6 concrete problems, the mechanism that answers each one, and how to put that mechanism in place."
+    ],
+    "problem": [
+     "A common belief holds that AI agents can draft code but a person must still merge it, deploy it and check that it works. Ultrastable is built to close those loops itself: a server-side lane merges green changes, every deploy is proven live against its commit, and every loop names its closing probe. [2]",
+     "This matters now because the usual answer, a person must merge, deploy and check AI work, sends teams after the wrong fix. A better model or another reviewer does not close a loop that nothing checks.",
+     "The problems in detail:"
+    ],
+    "problem_list": [
+     "Every loop says how it closes. Belief: an automated process needs a person to notice when it is done. Test: every registered loop declares a closing probe and a server-side owner. [2]",
+     "Merging needs no person. Belief: a change waits for a person to merge it. Test: median hours from a pull request opening to its merge. [2]",
+     "Deploys are checked by the system. Belief: someone has to check that a deploy really worked. Test: share of uploaded deploys proven live against their own commit. [2]",
+     "No person in the path. Belief: automation still needs a hand on the wheel. Test: human touches counted by the latest criticality tick. [2]",
+     "The system starts its own work. Belief: an AI system only does what a person asks. Test: share of merged pull requests the system's own loops opened. [2]",
+     "The system ships its own deploys. Belief: shipping to production needs a person. Test: verified deploys the system originated and executed itself. [2]"
+    ],
+    "approach": [
+     "The approach follows Ashby's ultrastable system [1]: a first loop acts on the world, and a second loop changes the first loop's settings whenever a variable that matters leaves its limits, and keeps changing them until it is back inside.",
+     "Ultrastable is that design as working code [2]. For each problem above it uses a specific mechanism:"
+    ],
+    "approach_list": [
+     "Every loop says how it closes: a loop with no server-side owner fails the build (SERVER-OWNS-LOOPS-1, `foundation/loopowner.py`); each loop row carries its trigger, closing probe and owner (CLOCKWORK-1, `instances/ultrastable/loop-registry.json`)",
+     "Merging needs no person: the server-side sweeper merges a green pull request (AUTO-SHIP-CLEAN-1, `seed/worker/src/sweeper.js`); the lane reconciles conflicts with main and retries (DRAIN-ALL-1, `seed/worker/src/lane.js`)",
+     "Deploys are checked by the system: every deploy is read back and compared with its commit before it counts (HANDOFF-1, `deploy/deploy-workers.mjs`)",
+     "No person in the path: human touches are counted in the denominator of the system's own score (CRITICALITY-1, `foundation/criticality.py`)",
+     "The system starts its own work: the executor takes items from the queue in driver order and opens its own pull requests (SELF-REFERENCE-1, `foundation/executor.py`)",
+     "The system ships its own deploys: the tick wakes the executor, whose merged change deploys from the merge commit (SELF-REFERENCE-1, `seed/worker/src/executor.js`)"
+    ],
+    "practice": [
+     "To apply this to your own system, one step per problem:"
+    ],
+    "practice_list": [
+     "Every loop says how it closes. Put in place: a loop with no server-side owner fails the build. Check it with one number, share of registered loops that declare a closing probe and a server-side owner, and set a limit for it (>= 1.0 is the limit we use).",
+     "Merging needs no person. Put in place: the server-side sweeper merges a green pull request. Check it with one number, median hours from a pull request opening to its merge, and set a limit for it (<= 1.0 is the limit we use).",
+     "Deploys are checked by the system. Put in place: every deploy is read back and compared with its commit before it counts. Check it with one number, share of uploaded deploys proven live against their commit, and set a limit for it (>= 0.95 is the limit we use).",
+     "No person in the path. Put in place: human touches are counted in the denominator of the system's own score. Check it with one number, human touches counted by the latest criticality tick, and set a limit for it (<= 0 is the limit we use).",
+     "The system starts its own work. Put in place: the executor takes items from the queue in driver order and opens its own pull requests. Check it with one number, share of merged pull requests opened by the system itself, and set a limit for it (>= 0.5 is the limit we use).",
+     "The system ships its own deploys. Put in place: the tick wakes the executor, whose merged change deploys from the merge commit. Check it with one number, verified deploys the system originated and executed itself (latest criticality tick), and set a limit for it (>= 1 is the limit we use)."
+    ],
+    "practice_note": [
+     "In our own system, 4 of 6 of these checks pass today. Share of registered loops that declare a closing probe and a server-side owner reads 1.0 (n = 113; source: instances/ultrastable/loop-registry.json (declared)). Median hours from a pull request opening to its merge reads 0.15 (n = 64; source: GitHub REST pulls?state=closed, last 100 closed pull requests, fetched 2026-11-21T09:30:00Z). Share of uploaded deploys proven live against their commit reads 1.0 (n = 40; source: ops/deploys.jsonl (same window)). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+    ],
+    "tradeoffs": [
+     "Scale. One organization: 100 closed pull requests (64 merged) over 0.75 days. Our numbers describe this system; they are not a causal estimate and are not compared with the study's effect sizes as if they were.",
+     "Who wrote the changes. 80% of merged pull requests in the window were opened by code agent sessions run under the owner's account, not by the system's own loops. The latest criticality tick puts the system in the subcritical regime with 0 self-originated deploys, so most of the work measured here was started from outside.",
+     "Review by construction. Ultrastable has no human review step, so a short open-to-merge time is partly a consequence of the design. The real test of the design is quality: the revert and deploy-verification findings, which can fail.",
+     "Revert share counts commits whose subject starts with Revert; a fix that undoes a change without that word is not counted, so the figure is a lower bound.",
+     "Source. Own R&D question set, regenerated from this system's records, version 2026-11-21; its findings may change in later versions."
+    ],
+    "action": [
+     "Read the code that does this; it is source-available: https://github.com/ultrastable/ultrastable",
+     "Start a system of your own on the same foundation: https://ultrastable.io/start",
+     "Follow new papers by feed: https://ultrastable.io/research.atom"
+    ]
+   },
+   "references": [
+    {
+     "key": "ashby1952",
+     "text": "Ashby, W. R. (1952; corrected 1954). Design for a Brain: The Origin of Adaptive Behaviour. John Wiley & Sons, New York.",
+     "url": "https://archive.org/details/designforbrain00ashb"
+    },
+    {
+     "key": "ultrastable",
+     "text": "Ultrastable (2026). Source code, ledgers and loop registry of the Ultrastable system. Read for this paper at the date of generation.",
+     "url": "https://github.com/ultrastable/ultrastable"
+    }
+   ],
+   "derived": [
+    80,
+    0
+   ],
    "study": {
     "title": "Can an AI system close its own loops?",
     "authors": [
@@ -543,7 +769,7 @@ export default {
     "data": "This system's own ledgers: closed pull requests read from GitHub, the deploy record, the criticality ticks, the ultrastability ledger and the loop registry",
     "summary": "A common belief holds that AI agents can draft code but a person must still merge it, deploy it and check that it works. Ultrastable is built to close those loops itself: a server-side lane merges green changes, every deploy is proven live against its commit, and every loop names its closing probe."
    },
-   "abstract": "Ultrastable R&D (Ultrastable): A common belief holds that AI agents can draft code but a person must still merge it, deploy it and check that it works. Ultrastable is built to close those loops itself: a server-side lane merges green changes, every deploy is proven live against its commit, and every loop names its closing probe. We state the common belief as properties that can fail, and test each against the records of a system that merges, deploys and checks its own work. Where it still depends on outside sessions, the paper says so with the number. 3 of 6 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.",
+   "abstract": "Ultrastable R&D (Ultrastable): A common belief holds that AI agents can draft code but a person must still merge it, deploy it and check that it works. Ultrastable is built to close those loops itself: a server-side lane merges green changes, every deploy is proven live against its commit, and every loop names its closing probe. We state the common belief as properties that can fail, and test each against the records of a system that merges, deploys and checks its own work. Where it still depends on outside sessions, the paper says so with the number. 4 of 6 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.",
    "window": {
     "start": "2026-11-20T15:16:32Z",
     "end": "2026-11-21T09:10:55Z",
@@ -582,7 +808,7 @@ export default {
      "metric_label": "share of registered loops that declare a closing probe and a server-side owner",
      "measured": 1.0,
      "status": "met",
-     "n": 112,
+     "n": 113,
      "source": "instances/ultrastable/loop-registry.json (declared)",
      "item": null
     },
@@ -664,10 +890,10 @@ export default {
      "prediction": "human_touches <= 0 within 168 h",
      "metric_label": "human touches counted by the latest criticality tick",
      "measured": 0,
-     "status": "unmeasured",
+     "status": "met",
      "n": 0,
      "source": "ops/criticality.jsonl at 2026-11-24T17:40:23Z",
-     "item": "Q-RES-open-loops-2026-O4"
+     "item": null
     },
     {
      "id": "O5",
@@ -716,20 +942,20 @@ export default {
      "prediction": "self_deploys >= 1 within 336 h",
      "metric_label": "verified deploys the system originated and executed itself (latest criticality tick)",
      "measured": 0,
-     "status": "unmeasured",
+     "status": "not-met",
      "n": 0,
      "source": "ops/criticality.jsonl at 2026-11-24T17:40:23Z",
      "item": "Q-RES-open-loops-2026-O6"
     }
    ],
-   "met": 3,
+   "met": 4,
    "total": 6,
    "limits": [
     "Scale. One organization: 100 closed pull requests (64 merged) over 0.75 days. Our numbers describe this system; they are not a causal estimate and are not compared with the study's effect sizes as if they were.",
     "Who wrote the changes. 80% of merged pull requests in the window were opened by code agent sessions run under the owner's account, not by the system's own loops. The latest criticality tick puts the system in the subcritical regime with 0 self-originated deploys, so most of the work measured here was started from outside.",
     "Review by construction. Ultrastable has no human review step, so a short open-to-merge time is partly a consequence of the design. The real test of the design is quality: the revert and deploy-verification findings, which can fail.",
     "Revert share counts commits whose subject starts with Revert; a fix that undoes a change without that word is not counted, so the figure is a lower bound.",
-    "Source. Own r&d question set, regenerated from this system's records, version 2026-11-21; its findings may change in later versions."
+    "Source. Own R&D question set, regenerated from this system's records, version 2026-11-21; its findings may change in later versions."
    ],
    "leads": [
     {
@@ -776,6 +1002,80 @@ export default {
    "slug": "safety-by-limits-2026",
    "order": 4,
    "title": "Safety by limits, not by approval: testing an AI system that has no approval queue",
+   "sections": {
+    "summary": [
+     "Many people believe that the way to keep AI safe is to have a person approve every step. This paper argues otherwise: approval of every step does not scale and is not the same as safety. Limits on what matters, checks that can fail, live verification and automatic revert can be measured, and a person stays the gate only for acts that cannot be undone.",
+     "We test the alternative to approval on every step: declared limits on what matters, checks that can fail, live verification, automatic revert and one narrow stop for acts that are both irreversible and identity-bound. Each property is measured; the ones that fall short are open work.",
+     "It is written for people who build or run AI systems and want them to keep working without someone watching. It names 6 concrete problems, the mechanism that answers each one, and how to put that mechanism in place."
+    ],
+    "problem": [
+     "A common belief holds that the way to keep an AI system safe is to have a person approve each step. Ultrastable has no approval queue. It bounds its essential variables, verifies every deploy live, reverts what fails, and pauses only for acts that are both irreversible and bound to the owner's identity. [2]",
+     "This matters now because the usual answer, AI is safe only if a person approves every step, sends teams after the wrong fix. A better model or another reviewer does not close a loop that nothing checks.",
+     "The problems in detail:"
+    ],
+    "problem_list": [
+     "Everything that matters has limits. Belief: without a person watching, nothing stops a system drifting. Test: share of declared essential variables that have limits. [2]",
+     "Unreviewed changes are not reverted more. Belief: changes merged without human review get undone. Test: reverts on main per merged pull request. [2]",
+     "What ships is proven live. Belief: an unapproved deploy could be anything. Test: share of uploaded deploys proven live against their commit. [2]",
+     "The system corrects itself when a limit is crossed. Belief: only a person can correct a system that goes out of bounds. Test: share of second-order steps that brought a variable back inside its limits and were kept. [2]",
+     "Little work is thrown away. Belief: without approval, a system produces work that has to be discarded. Test: share of closed pull requests closed without merging. [2]",
+     "One halt stops everything. Belief: an autonomous system cannot be stopped. Test: every registered loop has a server-side owner and closing probe, so one switch reaches each of them. [2]"
+    ],
+    "approach": [
+     "The approach follows Ashby's ultrastable system [1]: a first loop acts on the world, and a second loop changes the first loop's settings whenever a variable that matters leaves its limits, and keeps changing them until it is back inside.",
+     "Ultrastable is that design as working code [2]. For each problem above it uses a specific mechanism:"
+    ],
+    "approach_list": [
+     "Everything that matters has limits: an essential variable with no limits fails the check (ASHBY-1, `foundation/ultrastability.py`)",
+     "Unreviewed changes are not reverted more: only a change whose checks pass merges (AUTO-SHIP-CLEAN-1, `seed/worker/src/sweeper.js`); a red main is repaired by bisection and the smallest revert (RUNWAY-1, `foundation/redmain.py`)",
+     "What ships is proven live: a deploy counts only after the live read-back matches its commit (HANDOFF-1, `deploy/deploy-workers.mjs`)",
+     "The system corrects itself when a limit is crossed: the second loop keeps changing a parameter until the variable holds, and reverts a step that did not help (ASHBY-SEARCH-1, `foundation/ultrastability.py`)",
+     "Little work is thrown away: a failing detector files its own item with root-cause suspects, so failed work becomes a fix (FAILURE-RESOLVE-1, `foundation/failure_audit.py`)",
+     "One halt stops everything: one worker variable or committed file stops every cron, webhook and workflow job (HALT-1, `seed/worker/src/budget.js`)"
+    ],
+    "practice": [
+     "To apply this to your own system, one step per problem:"
+    ],
+    "practice_list": [
+     "Everything that matters has limits. Put in place: an essential variable with no limits fails the check. Check it with one number, share of declared essential variables that have limits (doctrine/ultrastability.json), and set a limit for it (>= 1.0 is the limit we use).",
+     "Unreviewed changes are not reverted more. Put in place: only a change whose checks pass merges. Check it with one number, commits on main whose subject starts with Revert, per merged pull request in the window, and set a limit for it (<= 0.05 is the limit we use).",
+     "What ships is proven live. Put in place: a deploy counts only after the live read-back matches its commit. Check it with one number, share of uploaded deploys proven live against their commit, and set a limit for it (>= 0.95 is the limit we use).",
+     "The system corrects itself when a limit is crossed. Put in place: the second loop keeps changing a parameter until the variable holds, and reverts a step that did not help. Check it with one number, share of second-order steps that brought the variable back inside its limits and were kept, and set a limit for it (>= 0.25 is the limit we use).",
+     "Little work is thrown away. Put in place: a failing detector files its own item with root-cause suspects, so failed work becomes a fix. Check it with one number, share of closed pull requests closed without merging, and set a limit for it (<= 0.2 is the limit we use).",
+     "One halt stops everything. Put in place: one worker variable or committed file stops every cron, webhook and workflow job. Check it with one number, share of registered loops that declare a closing probe and a server-side owner, and set a limit for it (>= 1.0 is the limit we use)."
+    ],
+    "practice_note": [
+     "In our own system, 4 of 6 of these checks pass today. Share of declared essential variables that have limits (doctrine/ultrastability.json) reads 1.0 (n = 13; source: doctrine/ultrastability.json). Commits on main whose subject starts with Revert, per merged pull request in the window reads 0.0 (n = 64; source: git log of main, subjects starting with Revert). Share of uploaded deploys proven live against their commit reads 1.0 (n = 40; source: ops/deploys.jsonl (same window)). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+    ],
+    "tradeoffs": [
+     "Scale. One organization: 100 closed pull requests (64 merged) over 0.75 days. Our numbers describe this system; they are not a causal estimate and are not compared with the study's effect sizes as if they were.",
+     "Who wrote the changes. 80% of merged pull requests in the window were opened by code agent sessions run under the owner's account, not by the system's own loops. The latest criticality tick puts the system in the subcritical regime with 0 self-originated deploys, so most of the work measured here was started from outside.",
+     "Review by construction. Ultrastable has no human review step, so a short open-to-merge time is partly a consequence of the design. The real test of the design is quality: the revert and deploy-verification findings, which can fail.",
+     "Revert share counts commits whose subject starts with Revert; a fix that undoes a change without that word is not counted, so the figure is a lower bound.",
+     "Source. Own R&D question set, regenerated from this system's records, version 2026-11-21; its findings may change in later versions."
+    ],
+    "action": [
+     "Read the code that does this; it is source-available: https://github.com/ultrastable/ultrastable",
+     "Start a system of your own on the same foundation: https://ultrastable.io/start",
+     "Follow new papers by feed: https://ultrastable.io/research.atom"
+    ]
+   },
+   "references": [
+    {
+     "key": "ashby1952",
+     "text": "Ashby, W. R. (1952; corrected 1954). Design for a Brain: The Origin of Adaptive Behaviour. John Wiley & Sons, New York.",
+     "url": "https://archive.org/details/designforbrain00ashb"
+    },
+    {
+     "key": "ultrastable",
+     "text": "Ultrastable (2026). Source code, ledgers and loop registry of the Ultrastable system. Read for this paper at the date of generation.",
+     "url": "https://github.com/ultrastable/ultrastable"
+    }
+   ],
+   "derived": [
+    80,
+    0
+   ],
    "study": {
     "title": "Is human approval of every step what keeps AI safe?",
     "authors": [
@@ -956,7 +1256,7 @@ export default {
      "metric_label": "share of registered loops that declare a closing probe and a server-side owner",
      "measured": 1.0,
      "status": "met",
-     "n": 112,
+     "n": 113,
      "source": "instances/ultrastable/loop-registry.json (declared)",
      "item": null
     }
@@ -968,7 +1268,7 @@ export default {
     "Who wrote the changes. 80% of merged pull requests in the window were opened by code agent sessions run under the owner's account, not by the system's own loops. The latest criticality tick puts the system in the subcritical regime with 0 self-originated deploys, so most of the work measured here was started from outside.",
     "Review by construction. Ultrastable has no human review step, so a short open-to-merge time is partly a consequence of the design. The real test of the design is quality: the revert and deploy-verification findings, which can fail.",
     "Revert share counts commits whose subject starts with Revert; a fix that undoes a change without that word is not counted, so the figure is a lower bound.",
-    "Source. Own r&d question set, regenerated from this system's records, version 2026-11-21; its findings may change in later versions."
+    "Source. Own R&D question set, regenerated from this system's records, version 2026-11-21; its findings may change in later versions."
    ],
    "leads": [
     {
@@ -1030,6 +1330,66 @@ export default {
    "slug": "knowledge-graph-2026",
    "order": 5,
    "title": "A graph that grows itself: what a knowledge graph is worth when nobody is there to query it",
+   "sections": {
+    "summary": [
+     "Many people believe that a knowledge graph is a search index: it only pays off when a person asks it something. This paper argues otherwise: a graph that is rebuilt from every record and mined for missing links produces its own work, and whether that work was worth doing can be counted.",
+     "Most graph work assumes a person asks a question and the graph helps answer it. We test the other use: a system that builds the graph from everything it writes down, looks for pairs that read alike but are not linked, files each one as work, and counts how many turn out to be real.",
+     "It is written for people who build or run AI systems and want them to keep working without someone watching. It names 1 concrete problems, the mechanism that answers each one, and how to put that mechanism in place."
+    ],
+    "problem": [
+     "The common view is that a knowledge graph is a search aid: you build it, then someone queries it. Microsoft's GraphRAG work (Edge and others, 2024) showed graphs help most on questions about a whole corpus, by grouping entities into communities and summarising each one. LightRAG and HippoRAG pushed the same idea toward cheaper, incremental updates. Link prediction and Swanson's old literature-based discovery go further: the useful output is the missing edge. Ashby's ultrastable system needs exactly that kind of signal, a measure that tells the second loop when the first one is stuck. So we built the graph into every system Ultrastable runs. Each tick reads only rows past a cursor, pulls out ids, rule tags and file paths without a model, then has a small model name the entities and relations in those new rows, embeds them, and summarizes each community whose members changed. The spend throttle slows this down; it never switches it off. A pair that reads alike, has no edge and shares no neighbour becomes a lead. Two leads a day at most become work items. A lead counts as kept only when a later change links the pair for real. [2]",
+     "This matters now because the usual answer, a graph only helps when someone queries it, sends teams after the wrong fix. A better model or another reviewer does not close a loop that nothing checks.",
+     "The problems in detail:"
+    ],
+    "problem_list": [
+     "The graph keeps itself current. Every system Ultrastable runs keeps a knowledge graph of its own data, built and refreshed by its own tick, with no setup. [2]"
+    ],
+    "approach": [
+     "The approach follows Ashby's ultrastable system [1]: a first loop acts on the world, and a second loop changes the first loop's settings whenever a variable that matters leaves its limits, and keeps changing them until it is back inside.",
+     "Ultrastable is that design as working code [2]. For each problem above it uses a specific mechanism:"
+    ],
+    "approach_list": [
+     "The graph keeps itself current: the daily build reads every work item, study and rule, and a probe fails when the graph is over 36 hours old (KGRAPH-1, `foundation/datagraph.py`); each tick Worker reads only rows past its cursor and files KG-LAG when it falls behind (KGRAPH-1, `seed/worker/src/graphai.js`)"
+    ],
+    "practice": [
+     "To apply this to your own system, one step per problem:"
+    ],
+    "practice_list": [
+     "The graph keeps itself current. Put in place: the daily build reads every work item, study and rule, and a probe fails when the graph is over 36 hours old. Check it with one number, share of systems in doctrine/knowledge-graph.json whose knowledge graph is built, not pending, and set a limit for it (>= 1 is the limit we use)."
+    ],
+    "practice_note": [
+     "In our own system, 1 of 1 of these checks pass today. Share of systems in doctrine/knowledge-graph.json whose knowledge graph is built, not pending reads 1.0 (n = 5; source: doctrine/knowledge-graph.json (declared)). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+    ],
+    "tradeoffs": [
+     "Extraction. Every tick Worker now asks a small Workers AI model to name the entities and relations in its new rows, a few records per call, and embeds them in one batched call. The repository half that builds the core graph in CI still extracts ids, tags, paths and terms only.",
+     "Communities. Communities come from label propagation, not the Leiden clustering GraphRAG uses, and only communities whose membership changed are summarized again. The model's summaries are proposals and are not checked against the records yet.",
+     "Cost. AI work is scaled by the account's spend level and capped at a share of the included daily allocation; the neuron counts are estimates per call, recorded per system per day, not a meter reading.",
+     "Yield is young. A lead needs days to be acted on, so the kept share starts near zero and only means something after a few weeks of filings.",
+     "Sources. Edge et al. 2024, From Local to Global: A Graph RAG Approach to Query-Focused Summarization (arXiv 2404.16130); Guo et al. 2024, LightRAG (arXiv 2410.05779); Gutierrez et al. 2024, HippoRAG (arXiv 2405.14831); Swanson 1986, Fish oil, Raynaud's syndrome, and undiscovered public knowledge; Ashby 1952, Design for a Brain.",
+     "Source. Own R&D question set, read against the published work on graph retrieval and link prediction and regenerated from this system's own graph, version 2026-11-25."
+    ],
+    "action": [
+     "Read the code that does this; it is source-available: https://github.com/ultrastable/ultrastable",
+     "Start a system of your own on the same foundation: https://ultrastable.io/start",
+     "Follow new papers by feed: https://ultrastable.io/research.atom"
+    ]
+   },
+   "references": [
+    {
+     "key": "ashby1952",
+     "text": "Ashby, W. R. (1952; corrected 1954). Design for a Brain: The Origin of Adaptive Behaviour. John Wiley & Sons, New York.",
+     "url": "https://archive.org/details/designforbrain00ashb"
+    },
+    {
+     "key": "ultrastable",
+     "text": "Ultrastable (2026). Source code, ledgers and loop registry of the Ultrastable system. Read for this paper at the date of generation.",
+     "url": "https://github.com/ultrastable/ultrastable"
+    }
+   ],
+   "derived": [
+    80,
+    0
+   ],
    "study": {
     "title": "Can a system find connections in its own records that nobody asked it to find?",
     "authors": [
@@ -1093,7 +1453,7 @@ export default {
     "Cost. AI work is scaled by the account's spend level and capped at a share of the included daily allocation; the neuron counts are estimates per call, recorded per system per day, not a meter reading.",
     "Yield is young. A lead needs days to be acted on, so the kept share starts near zero and only means something after a few weeks of filings.",
     "Sources. Edge et al. 2024, From Local to Global: A Graph RAG Approach to Query-Focused Summarization (arXiv 2404.16130); Guo et al. 2024, LightRAG (arXiv 2410.05779); Gutierrez et al. 2024, HippoRAG (arXiv 2405.14831); Swanson 1986, Fish oil, Raynaud's syndrome, and undiscovered public knowledge; Ashby 1952, Design for a Brain.",
-    "Source. Own r&d question set, read against the published work on graph retrieval and link prediction and regenerated from this system's own graph, version 2026-11-25."
+    "Source. Own R&D question set, read against the published work on graph retrieval and link prediction and regenerated from this system's own graph, version 2026-11-25."
    ],
    "leads": [
     {
