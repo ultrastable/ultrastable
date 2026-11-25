@@ -1,7 +1,7 @@
 {
   "id": "Q-FLEETMAP-practical-solutions",
-  "title": "Q-FLEETMAP-practical-solutions: ultrastable/practical-solutions is not equal to its source (1 file(s) differ, 0 missing, 0 only in the copy)",
-  "body": "**Owner:** operations\n**Trigger:** fleetmap --drift --apply (daily in tenant-sync.yml)\n**Done check:** cmd:python3 -m foundation fleetmap --probe practical-solutions\n**Prediction:** fleet_map_drifted_repos <= 0 within 168 h\n**Status:** open\n\nultrastable/practical-solutions is a copy and is not equal to its source (FLEET-MAP-1): 1 file(s) differ, 0 missing, 0 only in the copy.\n\n- differ: vendor/seed/knowledge.js\n- AGENTS.md does not point at the platform's rules (ultrastable/ultrastable agents/AGENTS.md)\n\nFix the sync named in doctrine/fleet-map.json for this repository (never copy by hand), then the same reading closes this item.\n\n**Closing probe:** cmd:python3 -m foundation fleetmap --probe practical-solutions\n\n\n**Out of scope:** editing the copy by hand, changing the source it is copied from, or relaxing the drift reading.",
+  "title": "Q-FLEETMAP-practical-solutions: ultrastable/practical-solutions is not equal to its source (2 file(s) differ, 0 missing, 0 only in the copy)",
+  "body": "**Owner:** operations\n**Trigger:** fleetmap --drift --apply (daily in tenant-sync.yml)\n**Done check:** cmd:python3 -m foundation fleetmap --probe practical-solutions\n**Prediction:** fleet_map_drifted_repos <= 0 within 168 h\n**Status:** open\n\nultrastable/practical-solutions is a copy and is not equal to its source (FLEET-MAP-1): 2 file(s) differ, 0 missing, 0 only in the copy.\n\n- differ: vendor/seed/contract.js, vendor/seed/knowledge.js\n\nFix the sync named in doctrine/fleet-map.json for this repository (never copy by hand), then the same reading closes this item.\n\n**Closing probe:** cmd:python3 -m foundation fleetmap --probe practical-solutions\n",
   "labels": [
     "p1",
     "agent-ready",
