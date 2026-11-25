@@ -746,6 +746,7 @@ export default {
   "ultrastability-loop",
   "ultrastable-agents",
   "ultrastable-dashboard",
+  "ultrastable-replication-ledger",
   "ultrastable-site",
   "ultrastable-tenants",
   "ultrastable-tick",
@@ -2146,6 +2147,10 @@ export default {
    },
    {
     "id": "ultrastable-what-works",
+    "state": "live"
+   },
+   {
+    "id": "ultrastable-replication-ledger",
     "state": "live"
    }
   ],
