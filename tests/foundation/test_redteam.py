@@ -38,6 +38,8 @@ class Live(unittest.TestCase):
         pages = {"/": home, "/api/claims": claims, "/progress.json": json.dumps({"apps": {"as_of": apps_at}, "digests": {"weekly": {"substantive": weekly}}}),
                  "/pulse.json": json.dumps({"week": {"substantive": 249}})}
         def get(url, token=None):
+            if "rulesets" in url:
+                return '[{"name": "main-no-rewrite"}]'
             if "api.github.com" in url:
                 return "[]"
             return pages[url.replace("https://ultrastable.io", "")]
@@ -46,6 +48,17 @@ class Live(unittest.TestCase):
     def test_owner_findings_of_2026_11_25(self):
         bad = redteam.check_live(".", get=self.page("2026-11-17T21:00:00Z", 345, '"One loop, " + VERIFIED.ledgers.length + " ledgers', "371 claims at commit generated."), at=AT)
         self.assertEqual({b["id"] for b in bad}, {"unsourced:home-placeholder", "unsourced:claims-template", "stale:progress-apps", "conflict:weekly-substantive"})
+
+    def test_force_push_and_missing_guard(self):
+        base = self.page("2026-11-25T10:00:00Z", 250)
+        def get(url, token=None):
+            if "activity_type=force_push" in url and "workers" in url:
+                return '[{"timestamp": "2026-11-25T18:03:09Z", "actor": {"login": "bot"}}]'
+            if "rulesets" in url and "spec" in url:
+                return "[]"
+            return base(url, token)
+        ids = {b["id"] for b in redteam.check_live(".", get=get, at=AT)}
+        self.assertEqual(ids, {"rewrite:ultrastable/workers", "rewrite:unprotected:ultrastable/spec"})
 
     def test_clean(self):
         self.assertEqual(redteam.check_live(".", get=self.page("2026-11-25T10:00:00Z", 250), at=AT), [])

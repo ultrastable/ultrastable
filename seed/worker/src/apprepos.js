@@ -122,11 +122,27 @@ export async function ensureRepoSettings(db, env, tenant, spec, { fetch: f = fet
   const seen = await A('GET', `/repos/${repo}`);
   if (seen.status !== 200) return { ...out, ok: false, waiting_on: 'admin-app-scope', error: `read ${repo}: HTTP ${seen.status}` };
   const drift = Object.fromEntries(Object.entries(REPO_SETTINGS).filter(([k, v]) => seen.json[k] !== v));
-  if (!Object.keys(drift).length) return { ...out, ok: true, changed: [] };
+  const guard = await ensureNoRewrite(A, db, tenant, repo);
+  if (!Object.keys(drift).length) return { ...out, ok: true, changed: guard.added ? [NO_REWRITE.name] : [], protect: guard.state };
   const p = await A('PATCH', `/repos/${repo}`, drift);
   if (p.status !== 200) { await store.event(db, tenant, 'github-admin', 'failed', `repo settings ${repo} HTTP ${p.status}`); return { ...out, ok: false, waiting_on: 'admin-app-scope', error: `set ${Object.keys(drift).join(', ')} on ${repo}: HTTP ${p.status} ${p.json.message || ''}`.slice(0, 200) }; }
   await store.event(db, tenant, 'github-admin', 'repo-settings', `${repo}: ${Object.keys(drift).join(', ')} on`);
-  return { ...out, ok: true, changed: Object.keys(drift) };
+  return { ...out, ok: true, changed: [...Object.keys(drift), ...(guard.added ? [NO_REWRITE.name] : [])], protect: guard.state };
+}
+// REDTEAM-1 (2026-11-25): org-settings.json said allow_force_pushes false on every main, but nothing applied it (no ORG_ADMIN_TOKEN), so a
+// force-push or deletion of main was possible on every repository. The admin app adds one ruleset with exactly those two rules. A private repository
+// on the free plan cannot have rulesets: that reads 'plan', never 'protected'.
+export const NO_REWRITE = Object.freeze({ name: 'main-no-rewrite', target: 'branch', enforcement: 'active',
+  conditions: { ref_name: { include: ['~DEFAULT_BRANCH'], exclude: [] } }, rules: [{ type: 'non_fast_forward' }, { type: 'deletion' }], bypass_actors: [] });
+export async function ensureNoRewrite(A, db, tenant, repo) {
+  const l = await A('GET', `/repos/${repo}/rulesets?includes_parents=true`);
+  if (l.status === 403) return { state: 'plan', added: false };
+  if (l.status !== 200 || !Array.isArray(l.json)) return { state: `unread:${l.status}`, added: false };
+  if (l.json.some(r => r.name === NO_REWRITE.name)) return { state: 'protected', added: false };
+  const p = await A('POST', `/repos/${repo}/rulesets`, NO_REWRITE);
+  if (p.status === 201 || p.status === 200) { await store.event(db, tenant, 'github-admin', 'repo-settings', `${repo}: ${NO_REWRITE.name} on`); return { state: 'protected', added: true }; }
+  await store.event(db, tenant, 'github-admin', 'failed', `ruleset ${repo} HTTP ${p.status}`);
+  return { state: p.status === 403 ? 'plan' : `failed:${p.status}`, added: false };
 }
 export async function handleAppHost(request, env, { tenant = 'default', fetch: f = fetch, now = Date.now() } = {}) {
   const url = new URL(request.url);

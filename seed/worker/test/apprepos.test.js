@@ -165,3 +165,21 @@ test('the admin app turns on exactly the two drifted settings, for org repositor
   const none = await world({ admin: false });
   assert.equal((await ensureRepoSettings(none.db, none.env, T, { repo: 'ultrastable/ultrastable' }, { fetch: none.f })).waiting_on, 'admin-app');
 });
+
+// REDTEAM-1: main could be force-pushed or deleted on every repository because the protection in org-settings.json was never applied.
+test('the admin app adds the no-rewrite ruleset once and reads a free-plan refusal as plan, not protected', async () => {
+  const { ensureNoRewrite, NO_REWRITE } = await import('../src/apprepos.js');
+  const w = await world();
+  const posted = [];
+  let have = [];
+  const A = async (m, path, body) => {
+    if (m === 'GET') return path.includes('private') ? { status: 403, json: {} } : { status: 200, json: have };
+    posted.push({ path, body }); have = [{ name: body.name }]; return { status: 201, json: {} };
+  };
+  assert.deepEqual(await ensureNoRewrite(A, w.db, T, 'ultrastable/ultrastable'), { state: 'protected', added: true });
+  assert.deepEqual(await ensureNoRewrite(A, w.db, T, 'ultrastable/ultrastable'), { state: 'protected', added: false });
+  assert.equal(posted.length, 1);
+  assert.deepEqual(posted[0].body.rules.map(r => r.type).sort(), ['deletion', 'non_fast_forward']);
+  assert.deepEqual(NO_REWRITE.bypass_actors, []);
+  assert.equal((await ensureNoRewrite(A, w.db, T, 'ultrastable/private')).state, 'plan');
+});

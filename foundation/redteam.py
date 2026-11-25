@@ -30,7 +30,8 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 LEDGER = "ops/redteam/findings.jsonl"
-CLASSES = ("vacuous", "stale", "unscored", "phantom", "timebomb", "undetected", "unsourced", "credential", "starved")
+REPOS = ("ultrastable/ultrastable", "ultrastable/seed", "ultrastable/workers", "ultrastable/spec", "ultrastable/license", "ultrastable/ops", "ultrastable/practical-solutions", "ultrastable/.github", "ultrastable/unlearn")
+CLASSES = ("rewrite", "vacuous", "stale", "unscored", "phantom", "timebomb", "undetected", "unsourced", "credential", "starved")
 STALE_DAYS = 3
 PRED_RX = re.compile(r"\b([a-z][a-z0-9_]{2,})\s*(?:>=|<=|==|>|<)\s*-?[\d.]+\s+within\s+\d+\s*h\b")
 
@@ -216,6 +217,20 @@ def check_live(root=REPO, get=_get, at=None) -> list[dict]:
                 f(f"stale:prs:{repo}", "stale", f"{repo} has {len(old)} open PRs idle over a day", old[:10])
         except Exception as e:
             f(f"vacuous:github:{repo}", "vacuous", f"{repo} pull requests could not be read", repr(e))
+    for repo in REPOS:  # history rewrites: a force-push or deletion of main loses merged work without any check noticing
+        try:
+            fp = json.loads(get(f"https://api.github.com/repos/{repo}/activity?ref=refs/heads/main&activity_type=force_push&time_period=week", tok))
+            if fp:
+                f(f"rewrite:{repo}", "rewrite", f"main of {repo} was force-pushed {len(fp)} time(s) this week", [(x.get("timestamp"), (x.get("actor") or {}).get("login")) for x in fp[:5]])
+        except Exception as e:
+            f(f"vacuous:activity:{repo}", "vacuous", f"{repo} branch activity could not be read", repr(e))
+        try:
+            rs = json.loads(get(f"https://api.github.com/repos/{repo}/rulesets?includes_parents=true", tok))
+            if not any(r.get("name") == "main-no-rewrite" for r in rs):
+                f(f"rewrite:unprotected:{repo}", "rewrite", f"main of {repo} has no no-rewrite ruleset", "GET rulesets")
+        except Exception as e:
+            if "403" not in repr(e):  # a private repository on the free plan cannot hold rulesets; that is a plan limit, recorded in org-settings
+                f(f"vacuous:rulesets:{repo}", "vacuous", f"{repo} rulesets could not be read", repr(e))
     return out
 
 
