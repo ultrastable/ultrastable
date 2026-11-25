@@ -5,11 +5,11 @@
 // Ingest: each source (work items, predictions, decisions, metrics) is read past its own rowid cursor, at most `batch` rows a pass, so a pass reads only
 // what changed (a graph that rescans its tables on every pass reads billions of rows a month; this never rescans). Extract: deterministic, no model: the row itself is a
 // node, ids and rule tags it mentions (FOO-12, Q-BAR-x) and file paths become nodes with `mentions` edges, a prediction links to its metric. Each node
-// keeps its top terms; when Workers AI is bound and the `embed` knob is on, up to `embed_max` nodes a pass also get a small embedding.
+// keeps its top terms.
 // Insight: every new node is compared with a bounded pool of recent nodes. A pair that reads alike but has no edge and no shared neighbour is a lead
 // (a `proposed` edge, never a fact). At most `max_filed_per_day` leads become KG-<hash> items the managers take. A lead is `kept` when a later row
 // links the pair for real, which is the insight-yield measure. Probes: freshness (the cursor keeps up with its source), growth (daily series) and yield.
-// Public by default: /api/graph, /api/graph/export and /graph serve it. Nothing here posts or calls outside except the optional embedding.
+// Public by default: /api/graph, /api/graph/export and /graph serve it. Workers AI adds embeddings, entity and relation extraction and community summaries for new rows only, scaled by the spend level and capped at daily_neurons.
 const run = (db, sql, ...a) => db.prepare(sql).bind(...a).run();
 const all = async (db, sql, ...a) => (await db.prepare(sql).bind(...a).all()).results || [];
 const first = (db, sql, ...a) => db.prepare(sql).bind(...a).first();
@@ -23,8 +23,19 @@ export const GRAPH_DDL = [
   `CREATE TABLE IF NOT EXISTS kg_cursor (source TEXT PRIMARY KEY, last INTEGER NOT NULL DEFAULT 0, lag INTEGER NOT NULL DEFAULT 0, at INTEGER NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS kg_leads (id TEXT PRIMARY KEY, a TEXT NOT NULL, b TEXT NOT NULL, score REAL NOT NULL, why TEXT, status TEXT NOT NULL DEFAULT 'open', item_id TEXT, at INTEGER NOT NULL, settled_at INTEGER)`,
   `CREATE TABLE IF NOT EXISTS kg_series (day TEXT PRIMARY KEY, nodes INTEGER NOT NULL, edges INTEGER NOT NULL, leads INTEGER NOT NULL, filed INTEGER NOT NULL, kept INTEGER NOT NULL, lag INTEGER NOT NULL)`,
+  `CREATE TABLE IF NOT EXISTS kg_work (id TEXT PRIMARY KEY, text TEXT NOT NULL, embed INTEGER NOT NULL DEFAULT 1, extract INTEGER NOT NULL DEFAULT 1, at INTEGER NOT NULL)`,
+  `CREATE TABLE IF NOT EXISTS kg_communities (id TEXT PRIMARY KEY, size INTEGER NOT NULL, sig TEXT NOT NULL, top TEXT NOT NULL, summary TEXT, summarized_sig TEXT, at INTEGER NOT NULL)`,
+  `CREATE TABLE IF NOT EXISTS kg_cost (day TEXT PRIMARY KEY, embed_calls INTEGER NOT NULL DEFAULT 0, llm_calls INTEGER NOT NULL DEFAULT 0, neurons REAL NOT NULL DEFAULT 0, skipped INTEGER NOT NULL DEFAULT 0)`,
 ];
-export const DEFAULTS = { batch: 60, pool: 300, threshold: 0.45, max_leads_per_pass: 3, max_filed_per_day: 2, embed: false, embed_max: 8, lag_alarm: 500, embed_model: '@cf/baai/bge-small-en-v1.5' };
+export const DEFAULTS = { batch: 60, pool: 300, threshold: 0.45, max_leads_per_pass: 3, max_filed_per_day: 2, embed_max: 16, extract_max: 6, summarize_max: 3, communities_every_h: 1, lag_alarm: 500,
+  embed_model: '@cf/baai/bge-small-en-v1.5', llm_model: '@cf/meta/llama-3.1-8b-instruct-fast',
+  // Workers AI's included allocation is 10,000 neurons a day per account; the graph takes a share of it, as an estimate per call (calibrated by the cost probe).
+  daily_neurons: 2500, neurons_per_embed_item: 1, neurons_per_llm_call: 40 };
+// SPEND-SOFT-1: the account's spend level scales AI work down; nothing switches it off. At pace 1 a pass takes the full batch, at crawl (pace 6) a trickle of one.
+export function aiBudget(k, spend) {
+  const pace = Math.max(1, Number(spend && spend.knobs && spend.knobs.pace) || 1);
+  return { pace, embed: Math.max(1, Math.floor(k.embed_max / pace)), extract: Math.max(1, Math.floor(k.extract_max / pace)), summarize: Math.max(1, Math.floor(k.summarize_max / pace)), communities_every_h: Math.ceil(k.communities_every_h * pace) };
+}
 // Each source: a table, the columns that make its node, and how a row links out. Missing tables are skipped, so a young system runs with what it has.
 export const SOURCES = [
   { name: 'items', sql: `SELECT rowid r, id, title t, kind k, owner_role o, closing_probe p FROM items WHERE rowid > ? ORDER BY rowid LIMIT ?`, node: x => ({ id: 'tag:' + x.id, kind: 'item', label: x.title || x.t, text: [x.t, x.p].join(' '), links: [['owned_by', 'role:' + x.o]] }) },
@@ -75,8 +86,92 @@ const kindOf = id => id.split(':')[0];
 // Records filed by one template share their first two id segments (STICKY-a, STICKY-b). Siblings are known, never a lead.
 export const family = id => id.slice(id.indexOf(':') + 1).split('-').slice(0, 2).join('-');
 
+async function charge(db, now, f) {
+  const day = new Date(now).toISOString().slice(0, 10);
+  await run(db, `INSERT INTO kg_cost (day, embed_calls, llm_calls, neurons, skipped) VALUES (?,?,?,?,?) ON CONFLICT(day) DO UPDATE SET embed_calls = embed_calls + excluded.embed_calls, llm_calls = llm_calls + excluded.llm_calls, neurons = neurons + excluded.neurons, skipped = skipped + excluded.skipped`, day, f.embed || 0, f.llm || 0, f.neurons || 0, f.skipped || 0);
+}
+const spent = async (db, now) => ((await first(db, `SELECT neurons FROM kg_cost WHERE day = ?`, new Date(now).toISOString().slice(0, 10))) || {}).neurons || 0;
+const jsonIn = t => { const m = String(t || '').match(/[\[{][\s\S]*[\]}]/); try { return m ? JSON.parse(m[0]) : null; } catch (e) { return null; } };
+const reply = r => (r && (r.response ?? r.result?.response)) || '';
+const slug = x => String(x || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60);
+
+export async function aiPass(db, { ai, k, budget, now }) {
+  const out = { embedded: 0, extracted: 0, entities: 0, relations: 0, communities: 0, summarized: 0, skipped: 0, errors: [] };
+  if (!ai) { out.skipped = -1; return out; }  // no binding: the term route carries the graph
+  const room = async need => { if ((await spent(db, now)) + need > k.daily_neurons) { out.skipped++; await charge(db, now, { skipped: 1 }); return false; } return true; };
+  // 1. Embeddings, one batched call.
+  const em = await all(db, `SELECT id, text FROM kg_work WHERE embed = 1 ORDER BY at LIMIT ?`, budget.embed);
+  if (em.length && await room(em.length * k.neurons_per_embed_item)) {
+    try {
+      const r = await ai.run(k.embed_model, { text: em.map(x => x.text.slice(0, 300)) });
+      const data = (r && r.data) || [];
+      for (let i = 0; i < em.length; i++) { if (data[i]) await run(db, `UPDATE kg_nodes SET vec = ? WHERE id = ?`, JSON.stringify(data[i].map(x => Math.round(x * 1000) / 1000)), em[i].id); await run(db, `UPDATE kg_work SET embed = 0 WHERE id = ?`, em[i].id); }
+      out.embedded = data.length; await charge(db, now, { embed: 1, neurons: em.length * k.neurons_per_embed_item });
+    } catch (e) { out.errors.push('embed: ' + String(e && e.message || e).slice(0, 100)); }
+  }
+  // 2. Entities and relations, several records in one call. The model's output is a proposal of named things; every edge carries its source row.
+  const ex = await all(db, `SELECT id, text FROM kg_work WHERE extract = 1 ORDER BY at LIMIT ?`, budget.extract);
+  if (ex.length && await room(k.neurons_per_llm_call)) {
+    try {
+      const prompt = 'Extract the named things (systems, components, metrics, people roles, organisations, concepts) and how they relate, from each numbered record. Reply with JSON only: [{"i":0,"entities":[{"name":"","type":""}],"relations":[{"from":"","rel":"","to":""}]}]. Use short lowercase names. At most 6 entities per record.\n\n' + ex.map((x, i) => `${i}. ${x.text.slice(0, 400)}`).join('\n');
+      const parsed = jsonIn(reply(await ai.run(k.llm_model, { messages: [{ role: 'user', content: prompt }], max_tokens: 900 })));
+      for (const rec of Array.isArray(parsed) ? parsed : []) {
+        const src = ex[Number(rec && rec.i)]; if (!src) continue;
+        const ents = (rec.entities || []).slice(0, 6).filter(e => slug(e && e.name));
+        for (const e of ents) { const id = 'ent:' + slug(e.name); await upsertNode(db, { id, kind: 'entity', label: String(e.name).slice(0, 80), terms: terms(e.name + ' ' + (e.type || '')), source: 'extract' }, now); await addEdge(db, src.id, 'about', id, now, 'extracted'); out.entities++; }
+        const known = new Set(ents.map(e => slug(e.name)));
+        for (const r of (rec.relations || []).slice(0, 8)) { const a = slug(r && r.from), b = slug(r && r.to); if (a && b && known.has(a) && known.has(b)) { await addEdge(db, 'ent:' + a, slug(r.rel) || 'related', 'ent:' + b, now, 'extracted from ' + src.id); out.relations++; } }
+      }
+      for (const x of ex) await run(db, `UPDATE kg_work SET extract = 0 WHERE id = ?`, x.id);
+      out.extracted = ex.length; await charge(db, now, { llm: 1, neurons: k.neurons_per_llm_call });
+    } catch (e) { out.errors.push('extract: ' + String(e && e.message || e).slice(0, 100)); }
+  }
+  await run(db, `DELETE FROM kg_work WHERE embed = 0 AND extract = 0`);
+  // 3. Communities: label propagation over confirmed edges, at most every communities_every_h hours; only communities whose membership changed are summarized again.
+  const last = (await first(db, `SELECT MAX(at) m FROM kg_communities`)) || {};
+  if (!last.m || now - last.m >= budget.communities_every_h * 3600e3) {
+    const es = await all(db, `SELECT src, dst FROM kg_edges WHERE status = 'confirmed' AND dst NOT LIKE 'role:%' LIMIT 20000`);
+    const comms = communities(es);
+    for (const c of comms.slice(0, 50)) {
+      const sig = hashOf(c.members.slice().sort().join('|')), top = c.members.slice(0, 12);
+      await run(db, `INSERT INTO kg_communities (id, size, sig, top, at) VALUES (?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET size = excluded.size, sig = excluded.sig, top = excluded.top, at = excluded.at`, c.id, c.members.length, sig, JSON.stringify(top), now);
+    }
+    out.communities = comms.length;
+    const todo = await all(db, `SELECT id, top FROM kg_communities WHERE summarized_sig IS NULL OR summarized_sig <> sig ORDER BY size DESC LIMIT ?`, budget.summarize);
+    for (const c of todo) {
+      if (!(await room(k.neurons_per_llm_call))) break;
+      const ids = JSON.parse(c.top), ls = [];
+      for (const id of ids) { const n = await first(db, `SELECT label FROM kg_nodes WHERE id = ?`, id); ls.push(n ? n.label : id); }
+      try {
+        const txt = reply(await ai.run(k.llm_model, { messages: [{ role: 'user', content: 'These records belong together in one system. In two plain sentences, say what ties them together and what is missing or worth doing next. No lists.\n\n' + ls.map(x => '- ' + String(x).slice(0, 120)).join('\n') }], max_tokens: 160 }));
+        await run(db, `UPDATE kg_communities SET summary = ?, summarized_sig = sig WHERE id = ?`, String(txt).trim().slice(0, 600), c.id);
+        out.summarized++; await charge(db, now, { llm: 1, neurons: k.neurons_per_llm_call });
+      } catch (e) { out.errors.push('summary: ' + String(e && e.message || e).slice(0, 100)); break; }
+    }
+  }
+  return out;
+}
+const hashOf = s => { let h = 2166136261; for (const c of s) h = Math.imul(h ^ c.charCodeAt(0), 16777619); return (h >>> 0).toString(36); };
+// Label propagation: each node takes the most common label among its neighbours, a few rounds, ties to the smaller label so a run is repeatable.
+export function communities(edges, rounds = 6) {
+  const adj = new Map();
+  for (const { src, dst } of edges) { if (!adj.has(src)) adj.set(src, []); if (!adj.has(dst)) adj.set(dst, []); adj.get(src).push(dst); adj.get(dst).push(src); }
+  const lab = new Map([...adj.keys()].map(n => [n, n])), order = [...adj.keys()].sort();
+  for (let r = 0; r < rounds; r++) {
+    let moved = 0;
+    for (const n of order) {
+      const c = new Map(); for (const m of adj.get(n)) c.set(lab.get(m), (c.get(lab.get(m)) || 0) + 1);
+      let best = lab.get(n), bn = 0; for (const [l, v] of c) if (v > bn || (v === bn && l < best)) { best = l; bn = v; }
+      if (best !== lab.get(n)) { lab.set(n, best); moved++; }
+    }
+    if (!moved) break;
+  }
+  const g = new Map(); for (const [n, l] of lab) { if (!g.has(l)) g.set(l, []); g.get(l).push(n); }
+  return [...g].filter(([, m]) => m.length >= 3).map(([l, m]) => ({ id: 'c:' + hashOf(l), members: m.sort((a, b) => (adj.get(b).length - adj.get(a).length) || a.localeCompare(b)) })).sort((a, b) => b.members.length - a.members.length);
+}
+
 // One pass. ai: a Workers AI binding or null. ensureItem: tick.js's filer (respects the originate cap). Returns what it did, for the beat ledger.
-export async function graphStep({ db, config = {}, ai = null, ensureItem = null, now = Date.now() }) {
+export async function graphStep({ db, config = {}, ai = null, spend = null, ensureItem = null, now = Date.now() }) {
   const k = { ...DEFAULTS, ...(config.graph || {}) };
   await ensure(db);
   const out = { ingested: {}, nodes: 0, edges: 0, leads: [], filed: [], kept: [], lag: 0, skipped: [] }, fresh = [];
@@ -98,15 +193,10 @@ export async function graphStep({ db, config = {}, ai = null, ensureItem = null,
     await run(db, `INSERT INTO kg_cursor (source, last, lag, at) VALUES (?,?,?,?) ON CONFLICT(source) DO UPDATE SET last = excluded.last, lag = excluded.lag, at = excluded.at`, s.name, last, lag, now);
     out.ingested[s.name] = rows.length; out.lag += lag;
   }
-  // Optional embedding: a knob, bounded per pass. A failure keeps the term route; it never stops the pass.
-  if (k.embed && ai && fresh.length) {
-    const take = fresh.slice(0, k.embed_max);
-    try {
-      const r = await ai.run(k.embed_model, { text: take.map(n => `${n.label}`.slice(0, 300)) });
-      (r && r.data || []).forEach((v, i) => { take[i].vec = v.map(x => Math.round(x * 1000) / 1000); });
-      for (const n of take) if (n.vec) await run(db, `UPDATE kg_nodes SET vec = ? WHERE id = ?`, JSON.stringify(n.vec), n.id);
-    } catch (e) { out.embed_error = String(e && e.message || e).slice(0, 120); }
-  }
+  // AI layer: embeddings, entity and relation extraction, community summaries. Only new rows are queued (kg_work), calls are batched, and the day's
+  // estimated neurons stay inside daily_neurons; past it the graph keeps running on the term route and the skip is counted, never hidden.
+  for (const n of fresh) await run(db, `INSERT INTO kg_work (id, text, at) VALUES (?,?,?) ON CONFLICT(id) DO UPDATE SET text = excluded.text, embed = 1, extract = 1, at = excluded.at`, n.id, `${n.label} ${n.text || ''}`.slice(0, 600), now);
+  out.ai = await aiPass(db, { ai, k, budget: aiBudget(k, spend), now, fresh });
   // Settle: an open lead whose pair is now linked for real is kept.
   for (const l of await all(db, `SELECT id, a, b, item_id FROM kg_leads WHERE status = 'open' LIMIT 50`)) {
     const linked = await first(db, `SELECT 1 x FROM kg_edges WHERE status = 'confirmed' AND ((src = ? AND dst = ?) OR (src = ? AND dst = ?)) LIMIT 1`, l.a, l.b, l.b, l.a);
@@ -152,6 +242,10 @@ export async function graphStep({ db, config = {}, ai = null, ensureItem = null,
   // Freshness probe: a source that keeps falling behind files one alarm item, closed by the same reading.
   if (ensureItem && out.lag > k.lag_alarm) await ensureItem(db, { id: 'KG-LAG', kind: 'fix', owner_role: 'operations', priority: 20, title: `KG-LAG: the knowledge graph is ${out.lag} rows behind its sources; raise graph.batch or the pass cadence`, done_check: 'graph lag at or below lag_alarm', closing_probe: 'GET /api/graph expect "fresh":true' });
   else if (out.lag <= k.lag_alarm) await run(db, `UPDATE items SET status = 'done', disposition = 'graph caught up with its sources' WHERE id = 'KG-LAG' AND status NOT IN ('done','superseded','cancelled')`).catch(() => null);
+  // Cost probe: the graph's own AI estimate for today against its share. Over it files KG-COST; the next day's reading closes it.
+  const cost = (await first(db, `SELECT * FROM kg_cost WHERE day = ?`, new Date(now).toISOString().slice(0, 10))) || { neurons: 0 };
+  if (ensureItem && cost.neurons > k.daily_neurons * 1.1) await ensureItem(db, { id: 'KG-COST', kind: 'fix', owner_role: 'operations', priority: 20, title: `KG-COST: the knowledge graph spent about ${Math.round(cost.neurons)} neurons today against ${k.daily_neurons}; tighten the batch sizes`, done_check: 'graph AI estimate inside daily_neurons', closing_probe: 'GET /api/graph expect "cost_ok":true' });
+  else if (cost.neurons <= k.daily_neurons) await run(db, `UPDATE items SET status = 'done', disposition = 'graph AI spend back inside its share' WHERE id = 'KG-COST' AND status NOT IN ('done','superseded','cancelled')`).catch(() => null);
   await series(db, now);
   return out;
 }
@@ -176,9 +270,11 @@ export async function readGraph(db, { now = Date.now(), config = {} } = {}) {
   const s = await all(db, `SELECT * FROM kg_series ORDER BY day DESC LIMIT 30`);
   const kinds = await all(db, `SELECT kind, COUNT(*) n FROM kg_nodes GROUP BY kind ORDER BY n DESC`);
   const leads = await all(db, `SELECT id, a, b, score, why, status, item_id, at FROM kg_leads ORDER BY at DESC LIMIT 20`);
+  const today = (await first(db, `SELECT * FROM kg_cost WHERE day = ?`, new Date(now).toISOString().slice(0, 10))) || { embed_calls: 0, llm_calls: 0, neurons: 0, skipped: 0 };
+  const comms = (await all(db, `SELECT id, size, top, summary FROM kg_communities ORDER BY size DESC LIMIT 10`)).map(x => ({ ...x, top: JSON.parse(x.top) }));
   const week = s.find(x => x.day <= new Date(now - 7 * 864e5).toISOString().slice(0, 10));
   return { ...c, kinds, cursors, leads, series: s.reverse(), fresh: !!lastAt && now - lastAt < 2 * 3600e3 && c.lag <= k.lag_alarm, age_min: lastAt ? Math.round((now - lastAt) / 60e3) : null,
-    growth_7d: week ? c.nodes - week.nodes : null, yield: c.filed ? Math.round((c.kept / c.filed) * 1000) / 1000 : null };
+    growth_7d: week ? c.nodes - week.nodes : null, cost_today: today, cost_ok: today.neurons <= k.daily_neurons * 1.1, communities: comms, yield: c.filed ? Math.round((c.kept / c.filed) * 1000) / 1000 : null };
 }
 export async function readLead(db, id) { await ensure(db); return (await first(db, `SELECT * FROM kg_leads WHERE id = ?`, id)) || null; }
 // Bounded export for the public view: the most recently touched nodes and the confirmed or proposed edges among them.

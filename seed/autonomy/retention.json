@@ -298,6 +298,18 @@
     "kg_series": {
       "keep": "state",
       "reason": "KGRAPH-1: one row per day; the step itself deletes rows older than 400 days"
+    },
+    "kg_work": {
+      "keep": "state",
+      "reason": "KGRAPH-1: queue of new rows awaiting AI work; a row is deleted once embedded and extracted"
+    },
+    "kg_communities": {
+      "keep": "state",
+      "reason": "KGRAPH-1: one row per community, upserted by id; at most 50 kept current per pass"
+    },
+    "kg_cost": {
+      "keep": "state",
+      "reason": "KGRAPH-1: one row per day, the graph's own AI cost probe"
     }
   }
 }

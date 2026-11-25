@@ -65,8 +65,32 @@ test('a missing source table is skipped, the export is bounded and an embedding 
   _reset(); const db = makeDb();
   await db.prepare('DROP TABLE IF EXISTS decision_log').run();
   await item(db, 'E-1', 'One two three four words here');
-  const r = await graphStep({ db, ai: { run: async () => { throw new Error('quota'); } }, config: { graph: { embed: true } }, now: NOW });
-  assert.ok(r.skipped.includes('decisions')); assert.match(r.embed_error, /quota/);
+  const r = await graphStep({ db, ai: { run: async () => { throw new Error('quota'); } }, now: NOW });
+  assert.ok(r.skipped.includes('decisions')); assert.match(r.ai.errors.join(' '), /quota/);
   const ex = await exportGraph(db, { limit: 2 });
   assert.equal(ex.nodes.length, 2); assert.ok(ex.truncated);
+});
+
+test('the AI layer embeds, extracts and summarizes new rows in batches, scales with the spend level and stays inside its daily share', async () => {
+  const { aiBudget, DEFAULTS, communities } = await import('../src/graph.js');
+  assert.equal(aiBudget(DEFAULTS, { knobs: { pace: 1 } }).embed, 16);
+  assert.equal(aiBudget(DEFAULTS, { knobs: { pace: 6 } }).extract, 1, 'crawl trickles, never stops');
+  assert.equal(communities([{ src: 'a', dst: 'b' }, { src: 'b', dst: 'c' }, { src: 'a', dst: 'c' }, { src: 'x', dst: 'y' }]).length, 1);
+  _reset(); const db = makeDb(); const calls = [];
+  const ai = { run: async (model, inp) => { calls.push(model);
+    if (inp.text) return { data: inp.text.map(() => [0.1, 0.2, 0.3]) };
+    if (/Extract/.test(inp.messages[0].content)) return { response: JSON.stringify([{ i: 0, entities: [{ name: 'D1 reads', type: 'metric' }, { name: 'audit table', type: 'component' }], relations: [{ from: 'audit table', rel: 'drives', to: 'D1 reads' }] }]) };
+    return { response: 'They are all about read cost. Index the audit table next.' }; } };
+  for (let i = 0; i < 4; i++) await item(db, 'R-' + i, `Cut D1 reads on the audit table ${i} by adding an index for KGRAPH-${i % 2}`);
+  const r = await graphStep({ db, ai, spend: { knobs: { pace: 1 } }, now: NOW });
+  assert.equal(r.ai.embedded, 4); assert.equal(r.ai.extracted, 4);
+  assert.equal(calls.filter(m => /bge/.test(m)).length, 1, 'one batched embed call');
+  assert.ok(await db.prepare(`SELECT 1 x FROM kg_edges WHERE src = 'ent:audit-table' AND rel = 'drives' AND dst = 'ent:d1-reads'`).first());
+  assert.ok(r.ai.communities >= 1 && r.ai.summarized >= 1);
+  const g = await readGraph(db, { now: NOW });
+  assert.ok(g.cost_today.neurons > 0 && g.cost_ok); assert.ok(g.communities[0].summary);
+  const tight = await graphStep({ db, ai, config: { graph: { daily_neurons: 1 } }, now: NOW + 60e3 });
+  await item(db, 'R-9', 'another audit table read row');
+  const t2 = await graphStep({ db, ai, config: { graph: { daily_neurons: 1 } }, now: NOW + 120e3 });
+  assert.ok(t2.ai.skipped >= 1, 'past its share the graph keeps running on terms and counts the skip'); void tight;
 });

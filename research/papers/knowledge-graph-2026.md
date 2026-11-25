@@ -5,7 +5,7 @@
 
 ## Abstract
 
-Ultrastable R&D (Ultrastable): The common view is that a knowledge graph is a search aid: you build it, then someone queries it. Microsoft's GraphRAG work (Edge and others, 2024) showed graphs help most on questions about a whole corpus, by grouping entities into communities and summarising each one. LightRAG and HippoRAG pushed the same idea toward cheaper, incremental updates. Link prediction and Swanson's old literature-based discovery go further: the useful output is the missing edge. Ashby's ultrastable system needs exactly that kind of signal, a measure that tells the second loop when the first one is stuck. So we built the graph into every system Ultrastable runs. Each tick reads only rows past a cursor, pulls out ids, rule tags and file paths without a model, and keeps the top terms of each record. A pair that reads alike, has no edge and shares no neighbour becomes a lead. Two leads a day at most become work items. A lead counts as kept only when a later change links the pair for real. Most graph work assumes a person asks a question and the graph helps answer it. We test the other use: a system that builds the graph from everything it writes down, looks for pairs that read alike but are not linked, files each one as work, and counts how many turn out to be real. 3 of 4 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.
+Ultrastable R&D (Ultrastable): The common view is that a knowledge graph is a search aid: you build it, then someone queries it. Microsoft's GraphRAG work (Edge and others, 2024) showed graphs help most on questions about a whole corpus, by grouping entities into communities and summarising each one. LightRAG and HippoRAG pushed the same idea toward cheaper, incremental updates. Link prediction and Swanson's old literature-based discovery go further: the useful output is the missing edge. Ashby's ultrastable system needs exactly that kind of signal, a measure that tells the second loop when the first one is stuck. So we built the graph into every system Ultrastable runs. Each tick reads only rows past a cursor, pulls out ids, rule tags and file paths without a model, then has a small model name the entities and relations in those new rows, embeds them, and summarizes each community whose members changed. The spend throttle slows this down; it never switches it off. A pair that reads alike, has no edge and shares no neighbour becomes a lead. Two leads a day at most become work items. A lead counts as kept only when a later change links the pair for real. Most graph work assumes a person asks a question and the graph helps answer it. We test the other use: a system that builds the graph from everything it writes down, looks for pairs that read alike but are not linked, files each one as work, and counts how many turn out to be real. 3 of 4 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.
 
 ## The study
 
@@ -22,7 +22,7 @@ Can a system find connections in its own records that nobody asked it to find?. 
 - KGRAPH-1 (`foundation/kgraph.py`): the daily build reads every work item, study and rule, and a probe fails when the graph is over 36 hours old
 - KGRAPH-1 (`seed/worker/src/graph.js`): each tick Worker reads only rows past its cursor and files KG-LAG when it falls behind
 
-**Measured here:** hours since the core knowledge graph was last rebuilt: 0.3 (n = 1). Target <= 36. Verdict: **met**.
+**Measured here:** hours since the core knowledge graph was last rebuilt: 0.5 (n = 1). Target <= 36. Verdict: **met**.
 Source: ops/kgraph/core.json at 2026-11-25T16:03:06Z.
 
 ### K2. It covers what the system knows (systems)
@@ -60,21 +60,22 @@ Source: ops/kgraph/core.json at 2026-11-25T16:03:06Z.
 
 ## Limits
 
-- Extraction. Entities here are ids, rule tags, file paths and top terms. There is no LLM entity or relation extraction yet, which the GraphRAG line of work relies on. An embedding route exists in the Worker (Workers AI, off by default to stay inside the spend throttle) but most links today are lexical.
-- Communities. We do not yet group nodes into communities or write community summaries, which is where GraphRAG gets its gains on whole-corpus questions.
+- Extraction. Every tick Worker now asks a small Workers AI model to name the entities and relations in its new rows, a few records per call, and embeds them in one batched call. The repository half that builds the core graph in CI still extracts ids, tags, paths and terms only.
+- Communities. Communities come from label propagation, not the Leiden clustering GraphRAG uses, and only communities whose membership changed are summarized again. The model's summaries are proposals and are not checked against the records yet.
+- Cost. AI work is scaled by the account's spend level and capped at a share of the included daily allocation; the neuron counts are estimates per call, recorded per system per day, not a meter reading.
 - Yield is young. A lead needs days to be acted on, so the kept share starts near zero and only means something after a few weeks of filings.
 - Sources. Edge et al. 2024, From Local to Global: A Graph RAG Approach to Query-Focused Summarization (arXiv 2404.16130); Guo et al. 2024, LightRAG (arXiv 2410.05779); Gutierrez et al. 2024, HippoRAG (arXiv 2405.14831); Swanson 1986, Fish oil, Raynaud's syndrome, and undiscovered public knowledge; Ashby 1952, Design for a Brain.
 - Source. Own r&d question set, read against the published work on graph retrieval and link prediction and regenerated from this system's own graph, version 2026-11-25.
 
 ## Proposed further links (leads, not findings)
 
-Found by core/connect on the lexical-512-1wb8hdk route; each is a proposal until a study file adopts it.
+Found by core/connect on the lexical-512-13nl1gn route; each is a proposal until a study file adopts it.
 
 - K1 may also relate to INFO-USEFUL-1 (similarity 0.127)
 - K1 may also relate to INSIGHT-1 (similarity 0.126)
 - K2 may also relate to CLOCKWORK-1 (similarity 0.137)
 - K3 may also relate to CLOCKWORK-1 (similarity 0.152)
-- K4 may also relate to THOUGHT-1 (similarity 0.133)
+- K4 may also relate to THOUGHT-1 (similarity 0.132)
 
 ## Method
 

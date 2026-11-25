@@ -215,10 +215,10 @@ export default {
     {
      "finding": "A5",
      "rule": "UIUX-1",
-     "score": 0.11
+     "score": 0.111
     }
    ],
-   "leads_route": "lexical-512-fmer63",
+   "leads_route": "lexical-512-coh44w",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -496,7 +496,7 @@ export default {
     {
      "finding": "F3",
      "rule": "DRAIN-ZERO-1",
-     "score": 0.136
+     "score": 0.135
     },
     {
      "finding": "F4",
@@ -514,7 +514,7 @@ export default {
      "score": 0.139
     }
    ],
-   "leads_route": "lexical-512-8zf1du",
+   "leads_route": "lexical-512-83uas1",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -748,7 +748,7 @@ export default {
      "score": 0.115
     }
    ],
-   "leads_route": "lexical-512-1hnbgie",
+   "leads_route": "lexical-512-vhkbz1",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -958,13 +958,13 @@ export default {
     },
     {
      "finding": "S1",
-     "rule": "THOUGHT-1",
+     "rule": "PROMOTE-1",
      "score": 0.115
     },
     {
      "finding": "S2",
      "rule": "TENANT-SYNC-1",
-     "score": 0.152
+     "score": 0.153
     },
     {
      "finding": "S2",
@@ -999,10 +999,10 @@ export default {
     {
      "finding": "S6",
      "rule": "TEMPORAL-1",
-     "score": 0.117
+     "score": 0.116
     }
    ],
-   "leads_route": "lexical-512-41v4zt",
+   "leads_route": "lexical-512-a1mag6",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -1019,9 +1019,9 @@ export default {
     "kind": "own R&D question set, read against the published work on graph retrieval and link prediction and regenerated from this system's own graph",
     "version": "2026-11-25",
     "data": "The core knowledge graph this system rebuilds every day from its own work items, studies and rules (ops/kgraph), and the leads it files and settles (ops/kgraph/leads.jsonl)",
-    "summary": "The common view is that a knowledge graph is a search aid: you build it, then someone queries it. Microsoft's GraphRAG work (Edge and others, 2024) showed graphs help most on questions about a whole corpus, by grouping entities into communities and summarising each one. LightRAG and HippoRAG pushed the same idea toward cheaper, incremental updates. Link prediction and Swanson's old literature-based discovery go further: the useful output is the missing edge. Ashby's ultrastable system needs exactly that kind of signal, a measure that tells the second loop when the first one is stuck. So we built the graph into every system Ultrastable runs. Each tick reads only rows past a cursor, pulls out ids, rule tags and file paths without a model, and keeps the top terms of each record. A pair that reads alike, has no edge and shares no neighbour becomes a lead. Two leads a day at most become work items. A lead counts as kept only when a later change links the pair for real."
+    "summary": "The common view is that a knowledge graph is a search aid: you build it, then someone queries it. Microsoft's GraphRAG work (Edge and others, 2024) showed graphs help most on questions about a whole corpus, by grouping entities into communities and summarising each one. LightRAG and HippoRAG pushed the same idea toward cheaper, incremental updates. Link prediction and Swanson's old literature-based discovery go further: the useful output is the missing edge. Ashby's ultrastable system needs exactly that kind of signal, a measure that tells the second loop when the first one is stuck. So we built the graph into every system Ultrastable runs. Each tick reads only rows past a cursor, pulls out ids, rule tags and file paths without a model, then has a small model name the entities and relations in those new rows, embeds them, and summarizes each community whose members changed. The spend throttle slows this down; it never switches it off. A pair that reads alike, has no edge and shares no neighbour becomes a lead. Two leads a day at most become work items. A lead counts as kept only when a later change links the pair for real."
    },
-   "abstract": "Ultrastable R&D (Ultrastable): The common view is that a knowledge graph is a search aid: you build it, then someone queries it. Microsoft's GraphRAG work (Edge and others, 2024) showed graphs help most on questions about a whole corpus, by grouping entities into communities and summarising each one. LightRAG and HippoRAG pushed the same idea toward cheaper, incremental updates. Link prediction and Swanson's old literature-based discovery go further: the useful output is the missing edge. Ashby's ultrastable system needs exactly that kind of signal, a measure that tells the second loop when the first one is stuck. So we built the graph into every system Ultrastable runs. Each tick reads only rows past a cursor, pulls out ids, rule tags and file paths without a model, and keeps the top terms of each record. A pair that reads alike, has no edge and shares no neighbour becomes a lead. Two leads a day at most become work items. A lead counts as kept only when a later change links the pair for real. Most graph work assumes a person asks a question and the graph helps answer it. We test the other use: a system that builds the graph from everything it writes down, looks for pairs that read alike but are not linked, files each one as work, and counts how many turn out to be real. 3 of 4 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.",
+   "abstract": "Ultrastable R&D (Ultrastable): The common view is that a knowledge graph is a search aid: you build it, then someone queries it. Microsoft's GraphRAG work (Edge and others, 2024) showed graphs help most on questions about a whole corpus, by grouping entities into communities and summarising each one. LightRAG and HippoRAG pushed the same idea toward cheaper, incremental updates. Link prediction and Swanson's old literature-based discovery go further: the useful output is the missing edge. Ashby's ultrastable system needs exactly that kind of signal, a measure that tells the second loop when the first one is stuck. So we built the graph into every system Ultrastable runs. Each tick reads only rows past a cursor, pulls out ids, rule tags and file paths without a model, then has a small model name the entities and relations in those new rows, embeds them, and summarizes each community whose members changed. The spend throttle slows this down; it never switches it off. A pair that reads alike, has no edge and shares no neighbour becomes a lead. Two leads a day at most become work items. A lead counts as kept only when a later change links the pair for real. Most graph work assumes a person asks a question and the graph helps answer it. We test the other use: a system that builds the graph from everything it writes down, looks for pairs that read alike but are not linked, files each one as work, and counts how many turn out to be real. 3 of 4 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.",
    "window": {
     "start": "2026-11-20T15:16:32Z",
     "end": "2026-11-21T09:10:55Z",
@@ -1058,7 +1058,7 @@ export default {
      },
      "prediction": "kg_age_hours <= 36 within 48 h",
      "metric_label": "hours since the core knowledge graph was last rebuilt",
-     "measured": 0.3,
+     "measured": 0.5,
      "status": "met",
      "n": 1,
      "source": "ops/kgraph/core.json at 2026-11-25T16:03:06Z",
@@ -1146,8 +1146,9 @@ export default {
    "met": 3,
    "total": 4,
    "limits": [
-    "Extraction. Entities here are ids, rule tags, file paths and top terms. There is no LLM entity or relation extraction yet, which the GraphRAG line of work relies on. An embedding route exists in the Worker (Workers AI, off by default to stay inside the spend throttle) but most links today are lexical.",
-    "Communities. We do not yet group nodes into communities or write community summaries, which is where GraphRAG gets its gains on whole-corpus questions.",
+    "Extraction. Every tick Worker now asks a small Workers AI model to name the entities and relations in its new rows, a few records per call, and embeds them in one batched call. The repository half that builds the core graph in CI still extracts ids, tags, paths and terms only.",
+    "Communities. Communities come from label propagation, not the Leiden clustering GraphRAG uses, and only communities whose membership changed are summarized again. The model's summaries are proposals and are not checked against the records yet.",
+    "Cost. AI work is scaled by the account's spend level and capped at a share of the included daily allocation; the neuron counts are estimates per call, recorded per system per day, not a meter reading.",
     "Yield is young. A lead needs days to be acted on, so the kept share starts near zero and only means something after a few weeks of filings.",
     "Sources. Edge et al. 2024, From Local to Global: A Graph RAG Approach to Query-Focused Summarization (arXiv 2404.16130); Guo et al. 2024, LightRAG (arXiv 2410.05779); Gutierrez et al. 2024, HippoRAG (arXiv 2405.14831); Swanson 1986, Fish oil, Raynaud's syndrome, and undiscovered public knowledge; Ashby 1952, Design for a Brain.",
     "Source. Own r&d question set, read against the published work on graph retrieval and link prediction and regenerated from this system's own graph, version 2026-11-25."
@@ -1176,10 +1177,10 @@ export default {
     {
      "finding": "K4",
      "rule": "THOUGHT-1",
-     "score": 0.133
+     "score": 0.132
     }
    ],
-   "leads_route": "lexical-512-1wb8hdk",
+   "leads_route": "lexical-512-13nl1gn",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   }
  ],

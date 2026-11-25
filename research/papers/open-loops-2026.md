@@ -91,7 +91,7 @@ Source: ops/criticality.jsonl at 2026-11-24T17:40:23Z.
 
 ## Proposed further links (leads, not findings)
 
-Found by core/connect on the lexical-512-1hnbgie route; each is a proposal until a study file adopts it.
+Found by core/connect on the lexical-512-vhkbz1 route; each is a proposal until a study file adopts it.
 
 - O1 may also relate to FLOW-DIRECTIVE-1 (similarity 0.144)
 - O2 may also relate to CLOCKWORK-1 (similarity 0.129)
