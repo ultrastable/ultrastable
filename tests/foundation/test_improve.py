@@ -54,6 +54,14 @@ class Improve(unittest.TestCase):
         spec = importlib.util.spec_from_file_location("s", REPO / "seed/scripts/improve.py"); m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
         self.assertEqual(m.check(REPO / "seed"), [])
 
+    def test_defects_bypass_the_cap(self):
+        d = sandbox(); cfg = improve.load(d)
+        for i in range(cfg["max_open_from_loop"]):
+            (d / f"docs/issues/Q-IMPROVE-x{i}.json").write_text(json.dumps({"id": f"Q-IMPROVE-x{i}", "body": "**Status:** open"}))
+        filed = improve.plan(d)["filed"]
+        self.assertTrue(any(i.startswith("Q-IMPROVE-SIGNAL-") for i in filed))
+        self.assertFalse(any(i.startswith("Q-IMPROVE-fe-") for i in filed))
+
     def test_idempotent(self):
         d = sandbox(); p = improve.plan(d); improve.apply(d, p)
         self.assertTrue(set(p["filed"]).isdisjoint(improve.plan(d)["filed"]))

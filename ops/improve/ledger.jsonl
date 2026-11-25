@@ -11,3 +11,4 @@
 {"at": "2026-11-25T15:23:22.366629+00:00", "event": "filed", "id": "Q-IMPROVE-opensearch", "metric": "search_referrals_7d", "baseline": 38.0, "better": "up"}
 {"at": "2026-11-25T15:23:27.137062+00:00", "event": "filed", "id": "Q-IMPROVE-fe-skip-link", "metric": "uiux:findings_total", "baseline": 0.0, "better": "down"}
 {"at": "2026-11-25T15:23:27.137062+00:00", "event": "filed", "id": "Q-IMPROVE-be-early-hints", "metric": "external_referrals_7d", "baseline": 83.0, "better": "up"}
+{"at": "2026-11-25T15:33:34.746296+00:00", "event": "filed", "id": "Q-IMPROVE-SIGNAL-uiux", "metric": null, "baseline": null, "better": "up"}

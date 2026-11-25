@@ -1,61 +1,61 @@
 {
-  "at": "2026-11-25T15:23:27.137062+00:00",
+  "at": "2026-11-25T15:33:34.746296+00:00",
   "signals": [
     {
       "id": "reach",
       "path": "ops/reach/metrics.jsonl",
       "state": "ok",
       "value": 83,
-      "age_h": 15.5
+      "age_h": 15.7
     },
     {
       "id": "search",
       "path": "ops/reach/metrics.jsonl",
       "state": "ok",
       "value": 38,
-      "age_h": 15.5
+      "age_h": 15.7
     },
     {
       "id": "social",
       "path": "ops/reach/metrics.jsonl",
       "state": "ok",
       "value": 0,
-      "age_h": 15.5
+      "age_h": 15.7
     },
     {
       "id": "tenant",
       "path": "ops/reach/metrics.jsonl",
       "state": "ok",
       "value": 150,
-      "age_h": 15.5
+      "age_h": 15.7
     },
     {
       "id": "suggestions",
       "path": "ops/reach/metrics.jsonl",
       "state": "unmeasured",
       "value": null,
-      "age_h": 15.5
+      "age_h": 15.7
     },
     {
       "id": "market",
       "path": "ops/rnd/log.jsonl",
       "state": "stale",
       "value": 3,
-      "age_h": 191.1
+      "age_h": 191.3
     },
     {
       "id": "insight",
       "path": "ops/insight/findings.json",
       "state": "ok",
       "value": 1,
-      "age_h": 0.9
+      "age_h": 1.1
     },
     {
       "id": "uiux",
       "path": "ops/uiux/status.json",
       "state": "stale",
       "value": 1,
-      "age_h": 96.1
+      "age_h": 96.2
     }
   ],
   "tiers": [
@@ -84,10 +84,9 @@
       "alive": true
     }
   ],
-  "open": 10,
+  "open": 12,
   "filed": [
-    "Q-IMPROVE-fe-skip-link",
-    "Q-IMPROVE-be-early-hints"
+    "Q-IMPROVE-SIGNAL-uiux"
   ],
   "settle": []
 }

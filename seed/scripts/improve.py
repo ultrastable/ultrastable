@@ -152,7 +152,9 @@ def plan(root=REPO, now=None) -> dict:
     files: list[dict] = []
 
     def add(it):
-        if it["id"] not in have and len(files) < room:
+        # A stalled manager or a dead signal is a defect, not new work: it is filed whatever the cap says.
+        defect = "stall" in it["labels"] or "signal" in it["labels"]
+        if it["id"] not in have and (defect or sum(1 for f in files if not ({"stall", "signal"} & set(f["labels"]))) < room):
             files.append(it)
 
     # The plus budget is protected: its slot is taken before anything else can fill the room.
