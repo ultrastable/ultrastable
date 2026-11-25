@@ -1921,15 +1921,6 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
-   "claim": "- **Blind spots are measured, not assumed safe (BLINDSPOT-RED-1, COST-RUNAWAY-1, D1-GROWTH-1, CRED-EXPIRY-1, CONTENT-DRIFT-1, Rowan",
-   "detail": "",
-   "how": "file:doctrine/content-drift.json + file:tests/foundation/test_cost.py + file:test/cost-probe.test.mjs + file:tests/foundation/test_credwatch.py + file:tests/foundation/test_contentdrift.py + file:foundation/cost.py",
-   "id": "cited-08be9e0fbe",
-   "kind": "claim",
-   "pass": true,
-   "surface": "agents/AGENTS.md"
-  },
-  {
    "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
@@ -2623,15 +2614,6 @@ export default {
    "surface": "seed/agents/AGENTS.md"
   },
   {
-   "claim": "- **Blind spots are measured, not assumed safe (BLINDSPOT-RED-1, COST-RUNAWAY-1, D1-GROWTH-1, CRED-EXPIRY-1, CONTENT-DRIFT-1, Rowan",
-   "detail": "",
-   "how": "file:doctrine/content-drift.json + file:tests/foundation/test_cost.py + file:test/cost-probe.test.mjs + file:tests/foundation/test_credwatch.py + file:tests/foundation/test_contentdrift.py + file:foundation/cost.py",
-   "id": "mirror-e420f8077f",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/agents/AGENTS.md"
-  },
-  {
    "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
@@ -3289,7 +3271,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 64 Python and 529 Worker tests",
+   "claim": "seed-tests: 64 Python and 535 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3298,7 +3280,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 529 Worker tests",
+   "claim": "seed-worker-tests: 535 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3334,7 +3316,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 1008",
+   "claim": "live-deploys: 1042",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",
@@ -3539,7 +3521,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 390,
-  "total": 390
+  "pass": 388,
+  "total": 388
  }
 };
