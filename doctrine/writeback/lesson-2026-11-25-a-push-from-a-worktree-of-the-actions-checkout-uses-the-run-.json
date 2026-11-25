@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-25-a-push-from-a-worktree-of-the-actions-checkout-uses-the-run-",
+  "kind": "lesson",
+  "date": "2026-11-25",
+  "title": "A push from a worktree of the Actions checkout uses the run's own token, not the token in the URL",
+  "body": "tenant-repos run 45669164019: ultrastable/base-rates was created by the platform route, then the push of its split failed with 'Permission denied to github-actions[bot]'. actions/checkout stores an http extraheader in the repository config and a worktree shares it, so it overrides the token in the push URL. The push now clears that header. The seed step was unaffected because it pushes from a fresh git init. Same run: second-tenant repository created and filled, front-door walk passed with 0 visitor steps, fullstack --live read 5 of 5 systems complete.",
+  "probe": "grep:.github/workflows/tenant-repos.yml::extraheader=",
+  "session": "session_0156nqDrbe8Pmy5MPH111zRn"
+ },
+ "kind": "lesson",
+ "title": "A push from a worktree of the Actions checkout uses the run's own token, not the token in the URL",
+ "session": "session_0156nqDrbe8Pmy5MPH111zRn"
+}
