@@ -27,6 +27,22 @@
       "url": "constitution.schema.json"
     },
     {
+      "name": "open-standards-baseline.json",
+      "description": "Contract for seed/doctrine/open-standards-baseline.json",
+      "fileMatch": [
+        "seed/doctrine/open-standards-baseline.json"
+      ],
+      "url": "open-standards-baseline.schema.json"
+    },
+    {
+      "name": "open-standards.json",
+      "description": "Contract for seed/doctrine/open-standards.json",
+      "fileMatch": [
+        "seed/doctrine/open-standards.json"
+      ],
+      "url": "open-standards.schema.json"
+    },
+    {
       "name": "readmes.json",
       "description": "Contract for seed/doctrine/readmes.json",
       "fileMatch": [

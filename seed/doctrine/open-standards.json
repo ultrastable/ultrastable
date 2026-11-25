@@ -1,0 +1,77 @@
+{
+  "$schema": "../schemas/open-standards.schema.json",
+  "_doc": "OPEN-STANDARDS-1: a system follows established open standards. Gate: python3 scripts/openstd.py; the baseline only shrinks. Add a format class here with its standard before it appears.",
+  "scopes": {
+    "json_config": [
+      "doctrine/*.json",
+      "autonomy/*.json",
+      "instances/*/*.json",
+      "schemas/*.json"
+    ],
+    "event_ledgers": [
+      "ops/*.jsonl",
+      "ops/**/*.jsonl"
+    ]
+  },
+  "known_extensions": [
+    "json",
+    "jsonc",
+    "jsonl",
+    "js",
+    "mjs",
+    "py",
+    "md",
+    "mdc",
+    "sql",
+    "yml",
+    "yaml",
+    "toml",
+    "html",
+    "css",
+    "svg",
+    "png",
+    "pdf",
+    "gz",
+    "sh",
+    "cff",
+    "txt",
+    "lock",
+    "patch",
+    "sha256",
+    "pyc",
+    "gitignore",
+    "gitattributes",
+    "dockerignore",
+    "editorconfig",
+    "(none)"
+  ],
+  "formats": [
+    {
+      "id": "config-json-schema",
+      "covers": "doctrine/*.json, seed/autonomy/*.json, instances/*/*.json",
+      "standard": "JSON Schema 2020-12 ($schema on every config file)",
+      "spec": "https://json-schema.org/draft/2020-12",
+      "status": "partial",
+      "evidence": [
+        "schemas/doctrine.schema.json"
+      ],
+      "next": "drain the baseline: add $schema and a per-file schema to each listed config",
+      "trigger": "every checks run (baseline may only shrink)",
+      "probe": "python3 -m foundation openstd --check"
+    },
+    {
+      "id": "event-ledgers-cloudevents",
+      "covers": "ops/**/*.jsonl ledgers",
+      "standard": "CloudEvents 1.0 JSON format, one event per line",
+      "spec": "https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/formats/json-format.md",
+      "status": "partial",
+      "evidence": [
+        "schemas/cloudevent.schema.json",
+        "scripts/openstd.py"
+      ],
+      "next": "ops/openstd/events.jsonl emits CloudEvents now; convert each baseline ledger family (Q-STD-ledgers)",
+      "trigger": "every checks run (new ledgers must conform at once)",
+      "probe": "python3 scripts/openstd.py"
+    }
+  ]
+}
