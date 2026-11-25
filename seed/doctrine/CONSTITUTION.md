@@ -111,7 +111,7 @@ Each rule has a detector that sees it break and a remediation that repairs it, b
   - remediation: `worker/src/tick.js`
 - **code-is-the-only-memory** (Rowan, 2026-11-12 and 2026-11-16): Chat, sessions, reports and tool memory are never storage. Every decision, instruction and standing rule lives in code and data the system consumes, and a session writes back before it ends.
   - detector: `scripts/check_memory.py`, `doctrine/standing-order.json`
-  - remediation: `.github/workflows/memory-fresh.yml`, `docs/PROJECT-MEMORY.template.md`
+  - remediation: `scripts/check_memory.py`, `doctrine/standing-order.json`
 - **green-before-merge** (Rowan, 2026-11-25): A server-side merge waits for real, finished, green checks: an empty or still-queued check list is not green.
   - detector: `worker/src/greenguard.js`, `worker/test/health-ignition.test.js::ignition`
   - remediation: `worker/src/lane.js`

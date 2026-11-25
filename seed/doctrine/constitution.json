@@ -161,7 +161,8 @@
     },
     "proof": [
       {
-        "test": "tests/test_constitution.py::test_boot_stage_assembles"
+        "file": "scripts/constitution.py",
+        "has": "def assemble"
       },
       {
         "platform": true,
@@ -573,10 +574,12 @@
       ],
       "remediation": [
         {
-          "file": ".github/workflows/memory-fresh.yml"
+          "file": "scripts/check_memory.py",
+          "has": "stale"
         },
         {
-          "file": "docs/PROJECT-MEMORY.template.md"
+          "file": "doctrine/standing-order.json",
+          "has": "CODE-ONLY-ORDER"
         }
       ],
       "covers": [

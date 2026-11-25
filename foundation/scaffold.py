@@ -12,7 +12,7 @@ from . import TAGLINE, __version__, filing, genesis, manifest as mf, minutes, ow
 
 REPO = Path(__file__).resolve().parent.parent
 KERNEL = REPO / "seed"
-KERNEL_PATHS = ["agents", "autonomy", "bootstrap", "worker", "analytics", "standards", ".claude", ".github/copilot-instructions.md", "AGENTS.md", "CLAUDE.md", "scripts", "funding", "outreach", "docs/aios-lessons.md", "docs/bootstrapping.md"]
+KERNEL_PATHS = ["agents", "autonomy", "doctrine", "bootstrap", "worker", "analytics", "standards", ".claude", ".github/copilot-instructions.md", "AGENTS.md", "CLAUDE.md", "scripts", "funding", "outreach", "docs/aios-lessons.md", "docs/bootstrapping.md"]
 SKIP = shutil.ignore_patterns("__pycache__", "node_modules", "*.pyc", ".wrangler")
 
 
