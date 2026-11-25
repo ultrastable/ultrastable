@@ -5640,6 +5640,14 @@
    "body": "Probes checked that mechanisms exist, not that their output is true. Classes: vacuous, stale, unscored, phantom, timebomb, undetected, starved, credential. foundation/redteam.py tests each adversarially; owner_found_30d is the metric.",
    "probe": "file:foundation/redteam.py",
    "session": "session_0156nqDrAs7rUXpvph8XjAkz"
+  },
+  {
+   "id": "decision-2026-11-25-supply-chain-posture-is-a-weekly-loop-on-open-standards",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Supply-chain posture is a weekly loop on open standards",
+   "body": "STANDARDS-1: OpenSSF Scorecard and the SPDX SBOM GitHub exports are read weekly; checks under the floor and packages outside the licence policy become Q-STD-SC items closed by the next reading. The parallel schema engine from this thread was dropped because configschema from #2273 already covers every config.",
+   "probe": "grep:.github/workflows/supply-chain.yml::supplychain --ingest"
   }
  ]
 }
