@@ -1,0 +1,12 @@
+{
+  "id": "Q-GROW-MARKDOWN-PAGES",
+  "title": "Q-GROW-MARKDOWN-PAGES: GROW-11: markdown content negotiation for every page",
+  "body": "**Owner:** product-manager\n**Trigger:** executor tick, driver order\n**Done check:** grep:site/worker.js::text/markdown\n**Status:** open\n\nReturn a Markdown rendering of each page when the request sends Accept: text/markdown, with an x-markdown-tokens header, so agents read the site cheaply. Paths: site/worker.js, site/site.test.mjs.\n\nMetric moved: agent_hits_7d. Prediction: agent_hits_7d rises at least 20 percent within 14 days of the change (baseline 817, today None, expected today 905.9). Keep only if the target moved and no guard worsened.\n\nsize: M\n\n**Closing probe:** grep:site/worker.js::text/markdown.",
+  "labels": [
+    "p1",
+    "growth",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Growth"
+}

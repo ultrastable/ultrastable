@@ -1,0 +1,12 @@
+{
+  "id": "Q-GROW-PILOT-FAQ",
+  "title": "Q-GROW-PILOT-FAQ: GROW-13: a pilot FAQ answering price, data, hosting and exit",
+  "body": "**Owner:** product-manager\n**Trigger:** executor tick, driver order\n**Done check:** file:site/pilotfaq.js\n**Status:** open\n\nAnswer the questions a pilot applicant has before applying (what it costs, where the data lives, who hosts it, how to leave), from the pilot offer data. Paths: site/pilotfaq.js, site/worker.js.\n\nMetric moved: pilot_page_views_7d. Prediction: pilot_page_views_7d rises at least 15 percent within 14 days of the change (baseline 326, today None, expected today 362.0). Keep only if the target moved and no guard worsened.\n\nsize: M\n\n**Closing probe:** file:site/pilotfaq.js.",
+  "labels": [
+    "p1",
+    "growth",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Growth"
+}

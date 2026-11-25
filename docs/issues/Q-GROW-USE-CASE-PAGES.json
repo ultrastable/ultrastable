@@ -1,0 +1,12 @@
+{
+  "id": "Q-GROW-USE-CASE-PAGES",
+  "title": "Q-GROW-USE-CASE-PAGES: GROW-7: one page per kind of system the product runs (club site, service fleet, research desk) with a deep link into the interview",
+  "body": "**Owner:** product-manager\n**Trigger:** executor tick, driver order\n**Done check:** file:site/usecases.js\n**Status:** open\n\nAdd /use-cases and one page per system type from the VISION list, each with the loop, the measure, the upkeep and a typical monthly cost, linking into the interview. Paths: site/usecases.js, site/worker.js, site/site.test.mjs.\n\nMetric moved: pageviews_7d. Prediction: pageviews_7d rises at least 15 percent within 14 days of the change (baseline 1310, today None, expected today 1402.3). Keep only if the target moved and no guard worsened.\n\nsize: M\n\n**Closing probe:** file:site/usecases.js.",
+  "labels": [
+    "p1",
+    "growth",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Growth"
+}

@@ -1,0 +1,12 @@
+{
+  "id": "Q-GROW-SHARE-CARDS",
+  "title": "Q-GROW-SHARE-CARDS: GROW-9: a share card per page generated from the live record",
+  "body": "**Owner:** product-manager\n**Trigger:** executor tick, driver order\n**Done check:** file:site/cards.js\n**Status:** open\n\nGenerate Open Graph cards for /live, /demo and the case study showing the current scoreboard, so a shared link shows the system working. Paths: site/cards.js, site/worker.js.\n\nMetric moved: visitors_7d. Prediction: visitors_7d rises at least 15 percent within 14 days of the change (baseline 564, today None, expected today 605.8). Keep only if the target moved and no guard worsened.\n\nsize: M\n\n**Closing probe:** file:site/cards.js.",
+  "labels": [
+    "p1",
+    "growth",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Growth"
+}
