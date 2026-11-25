@@ -1894,6 +1894,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **Every system keeps a knowledge graph of all its data, built and maintained by itself (KGRAPH-1, Rowan 2026-11-25).** \"All UltraStable",
+   "detail": "",
+   "how": "file:seed/worker/src/knowledge.js + file:doctrine/knowledge-graph.json + file:seed/worker/test/knowledge.test.js + file:tests/foundation/test_kgcheck.py",
+   "id": "cited-bd5257bc87",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Every system updates itself and the platform (SYNC-BOTH-WAYS-1, Rowan 2026-11-25).** \"Every Ultrastable system shall always improve and",
    "detail": "",
    "how": "file:seed/.github/workflows/platform-sync.yml + file:tests/foundation/test_improve.py + file:foundation/tenantsync.py + grep:.github/workflows/checks.yml::foundation[ .]tenantsync\\b",
@@ -2569,6 +2578,15 @@ export default {
    "surface": "seed/agents/AGENTS.md"
   },
   {
+   "claim": "- **Every system keeps a knowledge graph of all its data, built and maintained by itself (KGRAPH-1, Rowan 2026-11-25).** \"All UltraStable",
+   "detail": "",
+   "how": "file:seed/worker/src/knowledge.js + file:doctrine/knowledge-graph.json + file:seed/worker/test/knowledge.test.js + file:tests/foundation/test_kgcheck.py",
+   "id": "mirror-acc4975a56",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
    "claim": "- **Every system updates itself and the platform (SYNC-BOTH-WAYS-1, Rowan 2026-11-25).** \"Every Ultrastable system shall always improve and",
    "detail": "",
    "how": "file:seed/.github/workflows/platform-sync.yml + file:tests/foundation/test_improve.py + file:foundation/tenantsync.py + grep:.github/workflows/checks.yml::foundation[ .]tenantsync\\b",
@@ -3235,7 +3253,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 63 Python and 487 Worker tests",
+   "claim": "seed-tests: 63 Python and 499 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3244,7 +3262,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 487 Worker tests",
+   "claim": "seed-worker-tests: 499 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3485,7 +3503,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 384,
-  "total": 384
+  "pass": 386,
+  "total": 386
  }
 };
