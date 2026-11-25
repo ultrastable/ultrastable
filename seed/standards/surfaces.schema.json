@@ -53,12 +53,21 @@
       }
      },
      "kind": {
-      "type": "string",
-      "minLength": 1
+      "enum": [
+       "rest",
+       "discovery",
+       "ui",
+       "analytics",
+       "mcp"
+      ]
      },
      "audience": {
-      "type": "string",
-      "minLength": 1
+      "enum": [
+       "public",
+       "owner",
+       "machine",
+       "agent"
+      ]
      },
      "standards": {
       "type": "array",
