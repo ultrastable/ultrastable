@@ -18,6 +18,9 @@ REPO = Path(__file__).resolve().parents[1]
 PATH = "doctrine/claim-code.json"
 
 
+_LAYOUT = re.compile(r"""\b(?:max-|min-)?(?:width|height)\s*[:=]\s*\\?["']?\d+(?:\.\d+)?%""")
+
+
 def _pol(root): return json.loads((Path(root) / PATH).read_text("utf-8"))
 def _key(rel, line): return rel + "::" + hashlib.sha1(re.sub(r"\s+", " ", line).strip().encode()).hexdigest()[:12]
 
@@ -36,7 +39,7 @@ def scan(root=REPO, extra_globs=()) -> list[tuple[str, int, str, str]]:
             for n, line in enumerate(f.read_text("utf-8", errors="replace").splitlines(), 1):
                 if len(line) < pol["min_len"] or not re.search(r"[A-Za-z]{3,} [A-Za-z]{2,} [A-Za-z]{2,}", line) or re.match(r"\s*(//|\*|#)", line):
                     continue
-                if any(p.search(line) for p in pats):
+                if any(p.search(_LAYOUT.sub("", line)) for p in pats):   # `width="100%"` is layout, not a stated number
                     out.append((rel, n, line.strip(), _key(rel, line)))
     return out
 

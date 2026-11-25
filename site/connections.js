@@ -4,7 +4,7 @@
 // /connect/<provider>[/start|/disconnect] is the same owner-only consent flow, now reachable from ultrastable.io: the provider's callback carries its own signed state, so only /callback skips the session.
 import { currentSubject } from "./passkeys.js";
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-const HOSTS = h => h === "ultrastable.io" || h === "www.ultrastable.io" || h.endsWith(".workers.dev") || h === "localhost"; // server-side only: SSRF guard, loopback is rejected, never a host
+const HOSTS = h => h === "ultrastable.io" || h === "www.ultrastable.io" || h.endsWith(".workers.dev") || h === "localhost"; // server-side only: the hosts this route answers on; localhost is the Worker runtime's own test origin and the system hosts nothing there
 const CSS = ":root{color-scheme:light dark}body{font:16px system-ui;max-width:42rem;margin:2.5rem auto;padding:0 1rem}.card{border:1px solid #8886;border-radius:.6rem;padding:.8rem 1rem;margin:.6rem 0}.mut{opacity:.7}button,.btn{font:inherit;padding:.5rem .9rem;border-radius:.4rem;border:1px solid #888;background:transparent;color:inherit;cursor:pointer;text-decoration:none;display:inline-block;margin:.2rem .2rem .2rem 0}input{font:inherit;padding:.5rem;width:70%}";
 const page = (body, status) => new Response("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Connections</title><style>" + CSS + "</style></head><body>" + body + "</body></html>", { status: status || 200, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store", "x-content-type-options": "nosniff" } });
 

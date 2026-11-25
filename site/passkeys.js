@@ -170,7 +170,7 @@ function addPage() {
 export async function passkeys(request, env) {
   const u = new URL(request.url), p = u.pathname.replace(/\/$/, "");
   if (p !== "/auth/signin" && p !== "/auth/signout" && !p.startsWith("/auth/passkey")) return null;
-  if (u.hostname !== "ultrastable.io" && u.hostname !== "www.ultrastable.io" && !u.hostname.endsWith(".workers.dev") && u.hostname !== "localhost") return null; // server-side only: SSRF guard, loopback is rejected, never a host
+  if (u.hostname !== "ultrastable.io" && u.hostname !== "www.ultrastable.io" && !u.hostname.endsWith(".workers.dev") && u.hostname !== "localhost") return null; // server-side only: the hosts this route answers on; localhost is the Worker runtime's own test origin and the system hosts nothing there
   if (!env || !env.DB) return json({ error: "database not bound" }, 503);
   const now = Date.now();
   try {

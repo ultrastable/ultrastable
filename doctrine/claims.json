@@ -32,10 +32,11 @@
     {
       "id": "how-probe-revert",
       "surface": "site/worker.js",
-      "text": "Each deploy declares probes. A probe that passed before and fails after reverts the push on its own.",
+      "text": "Each handed-off change declares a live check. When the check fails after the deploy, the deploy is rolled back on its own and the work item goes back to the queue.",
       "probe": [
-        "json:site/probes.json::mode==revert",
-        "grep:platform/cloudflare-reference/scripts/deploy_probes.py::reverted by the existing REVERT path"
+        "grep:seed/worker/test/handoff.test.js::a red probe rolls the deploy back and puts the item back to ready",
+        "grep:seed/worker/src/handoff.js::rolls the deploy back and reopens it",
+        "grep:site/deployer.js::/__internal/rollback"
       ]
     },
     {
@@ -123,11 +124,13 @@
     {
       "id": "claims-page-bound",
       "surface": "site/worker.js",
-      "text": "Every statement on the Ultrastable surfaces is bound to a probe in the code",
+      "text": "Statements on the Ultrastable surfaces are bound to probes in the code, checked on every change and daily against the live site; the share bound is measured and the rest is listed.",
       "probe": [
         "file:foundation/claims.py",
-        "file:doctrine/claims.json",
-        "cron:.github/workflows/claims.yml"
+        "cron:.github/workflows/claims.yml",
+        "grep:foundation/claims.py::def coverage",
+        "grep:.github/workflows/checks.yml::foundation claims --check",
+        "grep:foundation/claimcode.py::--list"
       ]
     },
     {
@@ -1767,12 +1770,11 @@
     {
       "id": "curated-688407a097",
       "surface": "site/worker.js",
-      "text": "Every claim on this site is a query against a live record: see Live proof.",
+      "text": "Claims on this site are bound to probes in the code and re-checked on every change: see the claims page.",
       "probe": [
         "grep:.github/workflows/checks.yml::foundation claims --check",
-        "file:.github/workflows/claims.yml",
-        "file:seed/worker/src/decisions.js",
-        "json:site/probes.json::mode==revert"
+        "grep:.github/workflows/checks.yml::foundation claimcode --check",
+        "file:doctrine/claims.json"
       ],
       "bound_by": "curated"
     },
@@ -1790,18 +1792,18 @@
     {
       "id": "curated-87d4e3a632",
       "surface": "site/worker.js",
-      "text": "Every change is checked after it ships and rolled back automatically if something that worked before now fails.",
+      "text": "A handed-off change is checked live after it ships and rolled back automatically if the check fails.",
       "probe": [
-        "json:site/probes.json::mode==revert",
-        "grep:platform/cloudflare-reference/scripts/deploy_probes.py::reverted by the existing REVERT path",
-        "grep:seed/worker/src/handoff.js::rolls the deploy back and reopens it"
+        "grep:seed/worker/src/handoff.js::rolls the deploy back and reopens it",
+        "grep:seed/worker/test/handoff.test.js::a red probe rolls the deploy back and puts the item back to ready",
+        "grep:site/deployer.js::/__internal/rollback"
       ],
       "bound_by": "curated"
     },
     {
       "id": "curated-40d3200c36",
       "surface": "site/worker.js",
-      "text": "Work is claimed before it starts, checked after it ships, and every claim on this site can be traced to a record.",
+      "text": "Work is claimed before it starts and checked after it ships, and the claims on this site are bound to probes in the code.",
       "probe": [
         "grep:.github/workflows/checks.yml::foundation claims --check",
         "file:.github/workflows/claims.yml",
@@ -1824,11 +1826,11 @@
     {
       "id": "curated-b302da8fa8",
       "surface": "site/worker.js",
-      "text": "If one that passed before now fails, the change is rolled back automatically and an issue is filed.",
+      "text": "If the check fails after the deploy, the deploy is rolled back automatically and the work item goes back to the queue.",
       "probe": [
-        "json:site/probes.json::mode==revert",
-        "grep:platform/cloudflare-reference/scripts/deploy_probes.py::reverted by the existing REVERT path",
-        "grep:seed/worker/src/handoff.js::rolls the deploy back and reopens it"
+        "grep:seed/worker/src/handoff.js::rolls the deploy back and reopens it",
+        "grep:seed/worker/test/handoff.test.js::a red probe rolls the deploy back and puts the item back to ready",
+        "grep:site/deployer.js::/__internal/rollback"
       ],
       "bound_by": "curated"
     },
@@ -1918,13 +1920,13 @@
     {
       "id": "curated-6b69d08089",
       "surface": "site/worker.js",
-      "text": "It finds its own work in your metrics and failures, hands each task to the coding agent that fits, proves every change live with an automatic revert, and keeps score of how often its decisions were right.",
+      "text": "It finds its own work in your metrics and failures, hands each task to the coding agent that fits, proves each handed-off change live and rolls it back when the proof fails, and keeps score of how often its decisions were right.",
       "probe": [
         "file:doctrine/triggers.json",
         "file:foundation/triggers.py",
         "file:seed/worker/src/decisions.js",
-        "json:site/probes.json::mode==revert",
-        "grep:platform/cloudflare-reference/scripts/deploy_probes.py::reverted by the existing REVERT path"
+        "grep:seed/worker/test/handoff.test.js::a red probe rolls the deploy back and puts the item back to ready",
+        "grep:site/deployer.js::/__internal/rollback"
       ],
       "bound_by": "curated"
     },
@@ -1940,6 +1942,26 @@
         "file:doctrine/team.json"
       ],
       "bound_by": "curated"
+    },
+    {
+      "id": "handoff-proof-live",
+      "surface": "site/worker.js",
+      "text": "Handed-off changes are proven live after deploy and rolled back when the proof fails.",
+      "probe": [
+        "grep:seed/worker/test/handoff.test.js::a red probe rolls the deploy back and puts the item back to ready",
+        "grep:seed/worker/src/handoff.js::rolls the deploy back and reopens it",
+        "grep:site/deployer.js::/__internal/rollback"
+      ]
+    },
+    {
+      "id": "reply-promise",
+      "surface": "site/worker.js",
+      "text": "This reads as a fit for the system test; your answers are scored and stored.",
+      "probe": [
+        "grep:site/worker.js::ASSETS\\.put\\(\"pilot:\"",
+        "grep:site/worker.js::const r = scorePilot\\(a\\)",
+        "grep:site/site.test.mjs::api/pilot"
+      ]
     },
     {
       "id": "cited-06c8ef7187",

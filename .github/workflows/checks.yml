@@ -148,6 +148,7 @@ jobs:
           python3 -m foundation surfaces --check  # SYSTEM-MANIFEST-1: the kernel manifest is valid and every surface equals what it renders
           python3 -m foundation livelinks --check  # LIVE-LINKS-1: the README names where the platform and every system run
           python3 -m foundation managers --check  # MANAGERS-1: every role is a loop with code, a clock, a probe and a settler; every loop has a manager; the seed carries every manager
+          python3 -m foundation rulerefs --check  # RULE-REFS-1: every path, command, test, workflow and route the rule files name resolves
           python3 -m foundation datagraph --check
           python3 -m foundation cfposture --check
           python3 -m foundation standingorder --check

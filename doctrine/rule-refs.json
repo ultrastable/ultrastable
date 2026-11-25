@@ -1,0 +1,205 @@
+{
+  "id": "RULE-REFS-1",
+  "rule": "Every backticked path, foundation command, test, workflow and endpoint named in a rule file resolves in this repository, or is listed in `external` with the reason it lives elsewhere. Shipped code nothing names is listed in `undescribed`, which only shrinks. `corrections` holds references whose rule text is wrong and the right text: it only shrinks, and a row is removed when the rule file is corrected.",
+  "owner": "Rowan, 2026-11-25",
+  "sources": [
+    "agents/AGENTS.md",
+    "seed/agents/AGENTS.md",
+    "docs/doctrine/*.md",
+    "README.md",
+    "SCOPE.md",
+    "ROADMAP.md"
+  ],
+  "roots": [
+    "seed/",
+    "workers/",
+    "site/",
+    ".github/workflows/",
+    "docs/",
+    "seed/worker/",
+    "seed/.github/workflows/"
+  ],
+  "route_globs": [
+    "site/*.js",
+    "seed/worker/src/*.js",
+    "seed/worker/src/**/*.js",
+    "dashboard/*.js",
+    "seed/site/**/*.js",
+    "workers/core/**/*.js",
+    "seed/analytics/*.js"
+  ],
+  "word_globs": [
+    "agents/**/*.md",
+    "seed/agents/**/*.md",
+    "docs/**/*.md",
+    "README.md",
+    "SCOPE.md",
+    "ROADMAP.md",
+    "doctrine/*.json",
+    "doctrine/*.md",
+    "instances/ultrastable/*.json",
+    "foundation/__main__.py"
+  ],
+  "hosts": [
+    "ultrastable.io",
+    "ultrastable-tick.ultrastable.workers.dev"
+  ],
+  "loop_registry": "instances/ultrastable/loop-registry.json",
+  "site_router": "site/*.js",
+  "repositories": [
+    "ultrastable/ops",
+    "ultrastable/ultrastable",
+    "ultrastable/practical-solutions",
+    "ultrastable/workers",
+    "ultrastable/spec",
+    "ultrastable/seed",
+    "rwnq8/resume"
+  ],
+  "external": [
+    {
+      "ref": "agent/*",
+      "reason": "A git branch name pattern, not a file path; the branch reaper matches it (foundation/sessions.py, doctrine/sessions.json)."
+    },
+    {
+      "ref": "claude/*",
+      "reason": "A git branch name pattern, not a file path; the branch reaper matches it (foundation/sessions.py, doctrine/sessions.json)."
+    },
+    {
+      "ref": "agent/<item>-<slug>",
+      "reason": "A git branch name pattern, not a file path; the branch reaper matches it (foundation/sessions.py, doctrine/sessions.json)."
+    },
+    {
+      "ref": "_shared/flow-registry.js",
+      "reason": "The fleet twin in QNFO/qnfo-workers, a repository of another organization; not readable from here, so it is unverified by this check."
+    },
+    {
+      "ref": "migrations/2026-11-14-analytics-loop.sql",
+      "reason": "The fleet twin in QNFO/qnfo-workers, a repository of another organization; not readable from here, so it is unverified by this check."
+    },
+    {
+      "ref": "/connect/google",
+      "reason": "Served by the one pattern route /connect/<id> in seed/worker/src/auth/connectors.js for every provider in its REGISTRY (google and microsoft are rows); seed/worker/test/connectors.test.js fetches it."
+    },
+    {
+      "ref": "/connect/microsoft",
+      "reason": "Served by the one pattern route /connect/<id> in seed/worker/src/auth/connectors.js for every provider in its REGISTRY (google and microsoft are rows); seed/worker/test/connectors.test.js fetches it."
+    },
+    {
+      "ref": "/api/graph/method",
+      "reason": "Mounted by handleKg in seed/worker/src/knowledge.js as base + '/method' with base /api/graph; seed/worker/test/knowledge.test.js fetches /api/graph/method."
+    },
+    {
+      "ref": "vendor/ultrastable/VENDORED_FROM",
+      "repo": "practical-solutions",
+      "path": "vendor/ultrastable/VENDORED_FROM",
+      "reason": "A file in each tenant repository that vendors the core, written by workers/tools/tenant_sync.py."
+    },
+    {
+      "ref": "upstream.json",
+      "repo": "practical-solutions",
+      "path": "upstream.json",
+      "reason": "A file at the root of a tenant repository, read by workers/tools/tenant_sync.py."
+    },
+    {
+      "ref": "python3 vendor/ultrastable/tools/tenant_sync.py check --tenant .",
+      "repo": "practical-solutions",
+      "path": "vendor/ultrastable/tools/tenant_sync.py",
+      "reason": "Run in a tenant repository's CI against its vendored copy of workers/tools/tenant_sync.py."
+    },
+    {
+      "ref": "vendor/ultrastable/datagraph.js",
+      "repo": "replication-ledger",
+      "path": "vendor/ultrastable/datagraph.js",
+      "reason": "The vendored copy of workers/core/datagraph in a tenant repository, per the vendor map in doctrine/tenant-repos.json."
+    },
+    {
+      "ref": "app/index.html",
+      "reason": "The page file inside each visitor app's own repository (PAGE_PATH in site/graduate.js); no such file belongs in the core."
+    },
+    {
+      "ref": "docs/DECISIONS.json",
+      "reason": "A file of the reference implementation rwnq8/resume, the owner's personal repository outside this organization; unverified by this check."
+    },
+    {
+      "ref": "docs/INGEST-LOG.json",
+      "reason": "A file of the reference implementation rwnq8/resume, the owner's personal repository outside this organization; unverified by this check."
+    },
+    {
+      "ref": "scripts/check_decisions.py",
+      "reason": "A file of the reference implementation rwnq8/resume, the owner's personal repository outside this organization; unverified by this check."
+    },
+    {
+      "ref": "docs/SURFACES.json",
+      "reason": "A file of the reference implementation rwnq8/resume, the owner's personal repository outside this organization; unverified by this check."
+    },
+    {
+      "ref": "scripts/audit_surfaces.py",
+      "reason": "A file of the reference implementation rwnq8/resume, the owner's personal repository outside this organization; unverified by this check."
+    },
+    {
+      "ref": "charter.json",
+      "source": "docs/doctrine/SEED.md",
+      "reason": "SEED.md states on the same line that the per-system charter is not yet built (SEED-1; item docs/issues/Q-SEED-1.json is shelved with its probe still running)."
+    },
+    {
+      "ref": "org/objectives.json",
+      "reason": "Written by bootstrap stage instrument into the booted system's output folder (seed/bootstrap/bootstrap.py, default <root>/org); it is an output, not a file of this repository."
+    },
+    {
+      "ref": "refs/archive/",
+      "reason": "A git ref namespace, not a file path: scripts/branch_cleanup.py moves a branch tip there before deleting the branch."
+    },
+    {
+      "ref": "org/owner-status.json",
+      "reason": "Written by every boot into the booted system's own repository (seed/bootstrap/bootstrap.py); it is an output, not a file of this repository."
+    },
+    {
+      "ref": "vendor-sync.yml",
+      "reason": "A workflow of each tenant repository, written by the tenant scaffold from scaffold/tenant (foundation/tenantstd.py); this repository holds its template, not the file."
+    },
+    {
+      "ref": "vendor/ultrastable/",
+      "reason": "The one vendor directory of each tenant repository (doctrine/tenant-standard.json); the core is the source of the vendored files, not a holder of that directory."
+    }
+  ],
+  "undescribed": {
+    "modules": [
+      "foundation/evals.py",
+      "foundation/workerroute.py"
+    ],
+    "workflows": [],
+    "routes": [
+      "/.well-known/oauth-authorization-server/mcp",
+      "/.well-known/oauth-protected-resource/mcp",
+      "/social-card.svg"
+    ]
+  },
+  "closing_probe": "python3 -m foundation rulerefs --check",
+  "corrections": [
+    {
+      "ref": "tools/connect.mjs",
+      "correct": "tools/connections.mjs",
+      "reason": "CONNECT-1 names tools/connect.mjs in ultrastable/practical-solutions; the file there is tools/connections.mjs.",
+      "repo": "practical-solutions",
+      "path": "tools/connections.mjs"
+    },
+    {
+      "ref": "connect.yml",
+      "correct": "connections.yml",
+      "reason": "CONNECT-1 names workflow connect.yml in ultrastable/practical-solutions; the workflow there is .github/workflows/connections.yml.",
+      "repo": "practical-solutions",
+      "path": ".github/workflows/connections.yml"
+    }
+  ],
+  "caller_globs": [
+    "deploy/*.mjs",
+    "foundation/*.py",
+    "brand/**/*.md",
+    ".github/workflows/*.yml",
+    "scripts/*.py",
+    "scripts/*.mjs",
+    "scripts/*.sh",
+    "site/**/*.html",
+    "seed/standards/*.json"
+  ]
+}
