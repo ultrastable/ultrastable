@@ -5097,6 +5097,68 @@
    "body": "tenant-repos.yml exited on the first tenant it could not create (replication-ledger, no ORG_ADMIN_TOKEN/LANE_PAT/lane App in this repo) and the redeploy step had no if, so moved tenants such as Unlearn were never redeployed by it. Now each tenant failure is recorded and skipped, the run still fails at the end, and the redeploy step runs unless cancelled.",
    "probe": "grep:.github/workflows/tenant-repos.yml::!cancelled()",
    "session": "session_0156nqDuaQoFBGSV57Y6JNRx"
+  },
+  {
+   "id": "decision-2026-11-25-fullstack-1-every-system-deploys-repo-back-end-and-a-public-",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "FULLSTACK-1: every system deploys repo, back end and a public web UI",
+   "body": "Rowan 2026-11-25 asked that every Ultrastable system deploy its repo, back end and public web UI by itself. tenantrepos --check now fails a registered tenant with no public front end (a live topology Worker with a route, or an https frontend); deploy-ultrastable redeploys tenant code still moving in instances/*/worker. The Replication Ledger gains reader pages in worker/site.js and the topology Worker ultrastable-replication-ledger with route replication-ledger.ultrastable.org; seedlife verifies its /health after the deploy.",
+   "probe": "grep:foundation/tenantrepos.py::FULLSTACK-1",
+   "session": "session_0156nqDsz4YUXpAoqH9CX7mq"
+  },
+  {
+   "id": "decision-2026-11-25-replication-ledger-keeps-itself-current-the-hourly-discovery",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Replication Ledger keeps itself current: the hourly discovery beat is the core",
+   "body": "Rowan, 2026-11-25: static content is not autonomous and is contrary to the objective of an Ultrastable system. The hand-written findings are now only the ledger's seed. instances/replication-ledger/worker/discover.js and store.js run an hourly beat (cron 23 * * * *, plus a spark from any request when the last beat is over two hours old). It searches OpenAlex for works citing each original that report a replication, files a kind and outcome only under a verbatim-quote guard (Workers AI, then a fixed lexical reader), keeps everything else as leads, finds landmark originals not yet held from recent replication papers' references, flags retractions and checks seed citations at Crossref. Each standing move is a standing_changes row served at /changes and /feed.json; /api/freshness answers 503 when a finding goes unchecked for thirty days. State is kept in D1 ultrastable-replication-ledger, whose schema the Worker creates itself. Probe: node --test instances/replication-ledger/worker/discover.test.mjs. Residual risk: the OpenAlex query syntax was exercised only against a fake in tests, because this session's egress refuses api.openalex.org; /api/beats records each beat's errors so the first live beat shows any mismatch.",
+   "probe": "grep:instances/replication-ledger/worker/discover.test.mjs::one beat files the attempt",
+   "session": "https://claude.ai/code/session_0156nqDsz4YUXpAoqH9CX7mq"
+  },
+  {
+   "id": "decision-2026-11-25-static-content-1-a-page-that-never-changes-is-a-failure-mode",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "STATIC-CONTENT-1: a page that never changes is a failure mode",
+   "body": "Rowan 2026-11-25: static content is not autonomous. foundation/staticcontent.py hashes each system's sitemap pages daily into ops/static-content.json and the static-content detector fails when a page is unchanged for max_unchanged_days; a young ledger is unmeasured, never a pass.",
+   "probe": "grep:tests/foundation/test_staticcontent.py::def test_static_page_is_a_finding",
+   "session": "session_0156nqDvX8P4Z5wfkTJvFwh9"
+  },
+  {
+   "id": "lesson-2026-11-25-org-profile-probe-grep-q-in-a-pipe-under-pipefail-reads-a-pa",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "org profile probe: grep -q in a pipe under pipefail reads a pass as a failure",
+   "body": "echo page | grep -q dies of SIGPIPE under pipefail on a large page; use a here-string.",
+   "probe": "grep:scripts/org_profile_probe.sh::<<<",
+   "session": "session_0156nqDvX8P4Z5wfkTJvFwh9"
+  },
+  {
+   "id": "lesson-2026-11-25-tenant-liveness-hid-a-dead-loop-what-works-launch",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Tenant liveness hid a dead loop (What Works launch)",
+   "body": "On What Works' launch /health said ok while every OpenAlex call answered 429 and every Europe PMC call 503, so no programme was ever checked; overlapping catch-up beats from visits caused the burst and duplicate first grades. Liveness must report each part of the loop with its own ok, and the platform reads every tenant's parts live (tenantrepos --health, detector tenant-health). A tenant merge now ships within the hour via the tick's tenant-deploy step.",
+   "probe": "grep:tests/foundation/test_tenantrepos.py::class TenantHealth"
+  },
+  {
+   "id": "lesson-2026-11-25-what-works-went-live-repo-creation-and-visibility-still-need",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "What Works went live; repo creation and visibility still needed the owner",
+   "body": "What Works is live at what-works.ultrastable.org (deploy 2026-11-25 15:42 UTC, custom domain attached although deploy-ultrastable reports ultrastable.org routes unreadable). Two steps needed Rowan: creating ultrastable/what-works and making it public, because tenant-repos.yml has none of its three credential routes bound (same gap as tenant-repo-unlearn). Tenant repos must be public: seedlife and deploy read them over raw.githubusercontent.com. This change adds What Works to progress, stickiness, the showcase and the social queue (TENANT-PROMO-1).",
+   "probe": "grep:instances/ultrastable/progress.json::\"id\": \"what-works\"",
+   "session": "session_0156nqDvibwHjBezJBzy8i3x"
+  },
+  {
+   "id": "lesson-2026-11-25-workers-calling-openalex-need-the-polite-pool-closed-seed-it",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Workers calling OpenAlex need the polite pool; closed seed items need evidence",
+   "body": "The Replication Ledger's first live beat (beat 1, 2026-11-25 16:21 UTC, /api/beats) got HTTP 429 from OpenAlex on every call: Workers share outbound addresses and anonymous calls are limited by address. discover.js oa() now sends the project's published contact (security.txt address) as mailto, which OpenAlex serves from its polite pool, and retries a 429 once. Second lesson: seedlife --run closed Q-SEED-what-works with no Evidence line, which turned closedloop --check red on main; it now writes the probe it passed as Evidence. Probe: node --test instances/replication-ledger/worker/ and tests/foundation/test_seedlife.py. Residual risk: whether the polite pool clears the 429 is known only after the next live beat.",
+   "probe": "grep:instances/replication-ledger/worker/discover.js::mailto=",
+   "session": "https://claude.ai/code/session_0156nqDsz4YUXpAoqH9CX7mq"
   }
  ]
 }
