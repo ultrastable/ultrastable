@@ -442,6 +442,7 @@
   },
   "seed-launch.yml": {
    "events": [
+    "push",
     "workflow_dispatch"
    ],
    "crons": [
