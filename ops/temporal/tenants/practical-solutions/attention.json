@@ -1,1 +1,4 @@
-{}
+{
+ "infrastructure-manager": 1.25,
+ "uiux-manager": 1.25
+}

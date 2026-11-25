@@ -1,6 +1,9 @@
 {
+ "design-manager": 1.25,
  "funding-manager": 1.25,
- "operations": 1.25,
+ "infrastructure-manager": 1.25,
+ "operations": 2.0,
+ "org-designer": 1.25,
  "project-manager": 1.25,
  "uiux-manager": 0.75
 }

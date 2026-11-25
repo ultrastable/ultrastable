@@ -1,26 +1,17 @@
 [
  {
-  "id": "Q-TEMPORAL-73e9f6599f",
-  "title": "Q-TEMPORAL-73e9f6599f: hotspot: file:upstream.json",
-  "body": "Temporal loop finding (hotspot) in root: upstream.json edited 16 times in 3 days (outside generated and ledger paths). Seen in 4 runs since 2026-11-21T11:56:24Z. Advocate: product-manager.\n\nFind why this keeps being edited (a flaky generator, an unstable spec, a loop that rewrites its own output) and fix the cause with a test or guard. Do not slow the work down; stop the churn.\n\nFiles: upstream.json.\n\nPrediction: upstream.json is edited at most 5 times in 3 days within 7 days.\n\nThis item closes when the finding no longer holds (`python3 -m foundation temporal --settled 73e9f6599f` recomputes it from the repository's own history).",
+  "id": "Q-TEMPORAL-55c354d3c4",
+  "title": "Q-TEMPORAL-55c354d3c4: neglect: area:ux",
+  "body": "Temporal loop finding (neglect) in ux: decay: 1 commits in 3 days after 55 in the 9 days before (6.1 a day). Seen in 1 runs since 2026-11-25T17:11:25Z. Advocate: uiux-manager.\n\nAssign the area's advocate to it: pick the highest-value open item or the stalest entry in this area, move it or record its disposition, and say what attention it needs from now on.\n\nPrediction: area ux gets at least 9 commits in 3 days within 7 days.\n\nThis item closes when the finding no longer holds (`python3 -m foundation temporal --settled 55c354d3c4` recomputes it from the repository's own history).",
   "labels": [
    "temporal",
    "agent-task"
   ]
  },
  {
-  "id": "Q-TEMPORAL-5f09f22b3f",
-  "title": "Q-TEMPORAL-5f09f22b3f: hotspot: file:worker/src/pages.js",
-  "body": "Temporal loop finding (hotspot) in worker: worker/src/pages.js edited 15 times in 3 days (outside generated and ledger paths). Seen in 4 runs since 2026-11-21T11:56:24Z. Advocate: operations.\n\nFind why this keeps being edited (a flaky generator, an unstable spec, a loop that rewrites its own output) and fix the cause with a test or guard. Do not slow the work down; stop the churn.\n\nFiles: worker/src/pages.js.\n\nPrediction: worker/src/pages.js is edited at most 5 times in 3 days within 7 days.\n\nThis item closes when the finding no longer holds (`python3 -m foundation temporal --settled 5f09f22b3f` recomputes it from the repository's own history).",
-  "labels": [
-   "temporal",
-   "agent-task"
-  ]
- },
- {
-  "id": "Q-TEMPORAL-2822daa6f2",
-  "title": "Q-TEMPORAL-2822daa6f2: hotspot: file:worker/src/site.js",
-  "body": "Temporal loop finding (hotspot) in worker: worker/src/site.js edited 15 times in 3 days (outside generated and ledger paths). Seen in 4 runs since 2026-11-21T11:56:24Z. Advocate: operations.\n\nFind why this keeps being edited (a flaky generator, an unstable spec, a loop that rewrites its own output) and fix the cause with a test or guard. Do not slow the work down; stop the churn.\n\nFiles: worker/src/site.js.\n\nPrediction: worker/src/site.js is edited at most 5 times in 3 days within 7 days.\n\nThis item closes when the finding no longer holds (`python3 -m foundation temporal --settled 2822daa6f2` recomputes it from the repository's own history).",
+  "id": "Q-TEMPORAL-01bb7480cb",
+  "title": "Q-TEMPORAL-01bb7480cb: neglect: area:workflows",
+  "body": "Temporal loop finding (neglect) in workflows: decay: 4 commits in 3 days after 67 in the 9 days before (7.4 a day). Seen in 1 runs since 2026-11-25T17:11:25Z. Advocate: infrastructure-manager.\n\nAssign the area's advocate to it: pick the highest-value open item or the stalest entry in this area, move it or record its disposition, and say what attention it needs from now on.\n\nPrediction: area workflows gets at least 11 commits in 3 days within 7 days.\n\nThis item closes when the finding no longer holds (`python3 -m foundation temporal --settled 01bb7480cb` recomputes it from the repository's own history).",
   "labels": [
    "temporal",
    "agent-task"

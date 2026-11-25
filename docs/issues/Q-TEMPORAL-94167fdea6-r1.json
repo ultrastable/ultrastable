@@ -1,0 +1,12 @@
+{
+  "id": "Q-TEMPORAL-94167fdea6-r1",
+  "title": "Q-TEMPORAL-94167fdea6-r1: neglect: area:business",
+  "body": "**Owner:** funding-manager\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -m foundation temporal --settled 94167fdea6\n**Status:** open\n\nTemporal loop finding (neglect) in business: untouched: 0 commits in 3 days after 40 in the 12 days before (3.3 a day). Seen in 2 runs since 2026-11-24T17:38:51Z. Advocate: funding-manager.\n\nAssign the area's advocate to it: pick the highest-value open item or the stalest entry in this area, move it or record its disposition, and say what attention it needs from now on.\n\nPrediction: area business gets at least 5 commits in 3 days within 7 days.\n\nThis item closes when the finding no longer holds (`python3 -m foundation temporal --settled 94167fdea6` recomputes it from the repository's own history).\n\nsize: M\n\n**Closing probe:** cmd:python3 -m foundation temporal --settled 94167fdea6.",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "temporal"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

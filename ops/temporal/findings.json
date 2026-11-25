@@ -7,15 +7,15 @@
    "area": "business",
    "advocate": "funding-manager",
    "severity": "act",
-   "evidence": "decay: 1 commits in 3 days after 39 in the 11 days before (3.5 a day)",
+   "evidence": "untouched: 0 commits in 3 days after 40 in the 12 days before (3.3 a day)",
    "prediction": "area business gets at least 5 commits in 3 days within 7 days",
    "files": [],
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-24T17:38:51Z",
-   "last_seen": "2026-11-24T17:38:51Z",
-   "runs": 1,
-   "item": "Q-TEMPORAL-94167fdea6",
+   "last_seen": "2026-11-25T17:11:28Z",
+   "runs": 2,
+   "item": "Q-TEMPORAL-94167fdea6-r1",
    "reopened": 1
   },
   "69713c50e8": {
@@ -25,14 +25,14 @@
    "area": "docs",
    "advocate": "project-manager",
    "severity": "act",
-   "evidence": "decay: 2 commits in 3 days after 102 in the 11 days before (9.3 a day)",
-   "prediction": "area docs gets at least 14 commits in 3 days within 7 days",
+   "evidence": "decay: 1 commits in 3 days after 103 in the 12 days before (8.6 a day)",
+   "prediction": "area docs gets at least 13 commits in 3 days within 7 days",
    "files": [],
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-21T11:56:24Z",
-   "last_seen": "2026-11-24T17:38:51Z",
-   "runs": 6,
+   "last_seen": "2026-11-25T17:11:28Z",
+   "runs": 7,
    "item": "Q-TEMPORAL-69713c50e8",
    "reopened": 0
   },
@@ -49,12 +49,13 @@
     "foundation/executor.py"
    ],
    "last_good": "96e38e8c0ab1",
-   "status": "open",
+   "status": "settled",
    "first_seen": "2026-11-21T11:56:24Z",
    "last_seen": "2026-11-24T17:38:51Z",
    "runs": 6,
    "item": "Q-TEMPORAL-e5ddf8e610",
-   "reopened": 0
+   "reopened": 0,
+   "settled_at": "2026-11-25T17:11:28Z"
   },
   "e0c6ffc24a": {
    "id": "e0c6ffc24a",
@@ -193,12 +194,13 @@
     "site/worker.js"
    ],
    "last_good": null,
-   "status": "open",
+   "status": "settled",
    "first_seen": "2026-11-21T11:56:24Z",
    "last_seen": "2026-11-24T17:38:51Z",
    "runs": 6,
    "item": "Q-TEMPORAL-54854bf10b",
-   "reopened": 0
+   "reopened": 0,
+   "settled_at": "2026-11-25T17:11:28Z"
   },
   "67d6a95a40": {
    "id": "67d6a95a40",
@@ -207,7 +209,7 @@
    "area": "foundation",
    "advocate": "operations",
    "severity": "act",
-   "evidence": "all: 238 failures in a row, 212 in the last 3 days against 10 in the 11 before",
+   "evidence": "all: 287 failures in a row, 254 in the last 3 days against 23 in the 12 before",
    "prediction": "ledger:clocks:all has no failure in its next 3 events within 7 days",
    "files": [
     "foundation/clock.py"
@@ -215,8 +217,8 @@
    "last_good": "add800e814fc",
    "status": "open",
    "first_seen": "2026-11-22T14:31:06Z",
-   "last_seen": "2026-11-24T17:38:51Z",
-   "runs": 3,
+   "last_seen": "2026-11-25T17:11:28Z",
+   "runs": 4,
    "item": "Q-TEMPORAL-67d6a95a40",
    "reopened": 0
   },
@@ -227,7 +229,7 @@
    "area": "foundation",
    "advocate": "operations",
    "severity": "act",
-   "evidence": "pr-outcome: last event 67 h ago, it used to arrive every 1.6 h (42.8 intervals)",
+   "evidence": "pr-outcome: last event 90 h ago, it used to arrive every 1.6 h (57.9 intervals)",
    "prediction": "ledger:executor:pr-outcome records an event within 7 days",
    "files": [
     "foundation/executor.py"
@@ -235,8 +237,8 @@
    "last_good": "61808a25d06d",
    "status": "open",
    "first_seen": "2026-11-22T14:31:06Z",
-   "last_seen": "2026-11-24T17:38:51Z",
-   "runs": 3,
+   "last_seen": "2026-11-25T17:11:28Z",
+   "runs": 4,
    "item": "Q-TEMPORAL-4f9b20023a",
    "reopened": 0
   },
@@ -293,12 +295,13 @@
     "agents/AGENTS.md"
    ],
    "last_good": null,
-   "status": "open",
+   "status": "settled",
    "first_seen": "2026-11-22T14:31:06Z",
    "last_seen": "2026-11-24T17:38:51Z",
    "runs": 3,
    "item": "Q-TEMPORAL-d01db32c1b",
-   "reopened": 0
+   "reopened": 0,
+   "settled_at": "2026-11-25T17:11:28Z"
   },
   "cb14699baf": {
    "id": "cb14699baf",
@@ -334,12 +337,13 @@
     "doctrine/flows.json"
    ],
    "last_good": null,
-   "status": "open",
+   "status": "settled",
    "first_seen": "2026-11-22T14:31:06Z",
    "last_seen": "2026-11-24T17:38:51Z",
    "runs": 3,
    "item": "Q-TEMPORAL-b5792f9a73",
-   "reopened": 0
+   "reopened": 0,
+   "settled_at": "2026-11-25T17:11:28Z"
   },
   "e32a734d41": {
    "id": "e32a734d41",
@@ -354,12 +358,13 @@
     "foundation/__main__.py"
    ],
    "last_good": null,
-   "status": "open",
+   "status": "settled",
    "first_seen": "2026-11-22T14:31:06Z",
    "last_seen": "2026-11-24T17:38:51Z",
    "runs": 3,
    "item": "Q-TEMPORAL-e32a734d41",
-   "reopened": 0
+   "reopened": 0,
+   "settled_at": "2026-11-25T17:11:28Z"
   },
   "bfbb87dc25": {
    "id": "bfbb87dc25",
@@ -374,12 +379,13 @@
     "deploy/deploy-workers.mjs"
    ],
    "last_good": "f3f4a67ff158",
-   "status": "open",
+   "status": "settled",
    "first_seen": "2026-11-23T18:00:44Z",
    "last_seen": "2026-11-24T17:38:51Z",
    "runs": 2,
    "item": "Q-TEMPORAL-bfbb87dc25",
-   "reopened": 0
+   "reopened": 0,
+   "settled_at": "2026-11-25T17:11:28Z"
   },
   "381e97ef1d": {
    "id": "381e97ef1d",
@@ -394,12 +400,13 @@
     "deploy/deploy-workers.mjs"
    ],
    "last_good": "f3f4a67ff158",
-   "status": "open",
+   "status": "settled",
    "first_seen": "2026-11-23T18:00:44Z",
    "last_seen": "2026-11-24T17:38:51Z",
    "runs": 2,
    "item": "Q-TEMPORAL-381e97ef1d",
-   "reopened": 0
+   "reopened": 0,
+   "settled_at": "2026-11-25T17:11:28Z"
   },
   "458cb625ba": {
    "id": "458cb625ba",
@@ -414,12 +421,13 @@
     "deploy/deploy-workers.mjs"
    ],
    "last_good": "f3f4a67ff158",
-   "status": "open",
+   "status": "settled",
    "first_seen": "2026-11-23T18:00:44Z",
    "last_seen": "2026-11-24T17:38:51Z",
    "runs": 2,
    "item": "Q-TEMPORAL-458cb625ba",
-   "reopened": 0
+   "reopened": 0,
+   "settled_at": "2026-11-25T17:11:28Z"
   },
   "b2caf01433": {
    "id": "b2caf01433",
@@ -434,12 +442,13 @@
     "deploy/deploy-workers.mjs"
    ],
    "last_good": "f3f4a67ff158",
-   "status": "open",
+   "status": "settled",
    "first_seen": "2026-11-23T18:00:44Z",
    "last_seen": "2026-11-24T17:38:51Z",
    "runs": 2,
    "item": null,
-   "reopened": 0
+   "reopened": 0,
+   "settled_at": "2026-11-25T17:11:28Z"
   },
   "e127ef84b4": {
    "id": "e127ef84b4",
@@ -454,12 +463,13 @@
     "deploy/deploy-workers.mjs"
    ],
    "last_good": "f3f4a67ff158",
-   "status": "open",
+   "status": "settled",
    "first_seen": "2026-11-23T18:00:44Z",
    "last_seen": "2026-11-24T17:38:51Z",
    "runs": 2,
    "item": null,
-   "reopened": 0
+   "reopened": 0,
+   "settled_at": "2026-11-25T17:11:28Z"
   },
   "9a81e17b01": {
    "id": "9a81e17b01",
@@ -474,12 +484,13 @@
     "deploy/deploy-workers.mjs"
    ],
    "last_good": "f3f4a67ff158",
-   "status": "open",
+   "status": "settled",
    "first_seen": "2026-11-23T18:00:44Z",
    "last_seen": "2026-11-24T17:38:51Z",
    "runs": 2,
    "item": null,
-   "reopened": 0
+   "reopened": 0,
+   "settled_at": "2026-11-25T17:11:28Z"
   },
   "c9d655385f": {
    "id": "c9d655385f",
@@ -494,12 +505,13 @@
     "deploy/deploy-workers.mjs"
    ],
    "last_good": "f3f4a67ff158",
-   "status": "open",
+   "status": "settled",
    "first_seen": "2026-11-23T18:00:44Z",
    "last_seen": "2026-11-24T17:38:51Z",
    "runs": 2,
    "item": null,
-   "reopened": 0
+   "reopened": 0,
+   "settled_at": "2026-11-25T17:11:28Z"
   },
   "8fd50318d7": {
    "id": "8fd50318d7",
@@ -508,15 +520,15 @@
    "area": "site",
    "advocate": "uiux-manager",
    "severity": "watch",
-   "evidence": "233 commits in 3 days against a baseline of 13.5 a day (5.8x)",
+   "evidence": "259 commits in 3 days against a baseline of 14.5 a day (6.0x)",
    "prediction": "area site recent_rate returns below 3.0x baseline within 7 days",
    "files": [],
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-23T18:00:44Z",
-   "last_seen": "2026-11-24T17:38:51Z",
-   "runs": 2,
-   "item": null,
+   "last_seen": "2026-11-25T17:11:28Z",
+   "runs": 3,
+   "item": "Q-TEMPORAL-8fd50318d7",
    "reopened": 0
   },
   "2ce384e48d": {
@@ -526,7 +538,7 @@
    "area": "site",
    "advocate": "uiux-manager",
    "severity": "watch",
-   "evidence": "site/saydo-data.js edited 193 times in 3 days (outside generated and ledger paths)",
+   "evidence": "site/saydo-data.js edited 247 times in 3 days (outside generated and ledger paths)",
    "prediction": "site/saydo-data.js is edited at most 5 times in 3 days within 7 days",
    "files": [
     "site/saydo-data.js"
@@ -534,9 +546,9 @@
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-23T18:00:44Z",
-   "last_seen": "2026-11-24T17:38:51Z",
-   "runs": 2,
-   "item": null,
+   "last_seen": "2026-11-25T17:11:28Z",
+   "runs": 3,
+   "item": "Q-TEMPORAL-2ce384e48d",
    "reopened": 0
   },
   "43e2427dcb": {
@@ -546,14 +558,14 @@
    "area": "platform",
    "advocate": "operations",
    "severity": "act",
-   "evidence": "untouched: 0 commits in 3 days after 32 in the 11 days before (2.9 a day)",
+   "evidence": "untouched: 0 commits in 3 days after 32 in the 12 days before (2.7 a day)",
    "prediction": "area platform gets at least 4 commits in 3 days within 7 days",
    "files": [],
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-24T17:38:51Z",
-   "last_seen": "2026-11-24T17:38:51Z",
-   "runs": 1,
+   "last_seen": "2026-11-25T17:11:28Z",
+   "runs": 2,
    "item": null,
    "reopened": 0
   },
@@ -570,9 +582,154 @@
     "doctrine/claim-code.json"
    ],
    "last_good": null,
-   "status": "open",
+   "status": "settled",
    "first_seen": "2026-11-24T17:38:51Z",
    "last_seen": "2026-11-24T17:38:51Z",
+   "runs": 1,
+   "item": null,
+   "reopened": 0,
+   "settled_at": "2026-11-25T17:11:28Z"
+  },
+  "ec78027dc6": {
+   "id": "ec78027dc6",
+   "kind": "neglect",
+   "subject": "area:agents",
+   "area": "agents",
+   "advocate": "org-designer",
+   "severity": "act",
+   "evidence": "decay: 4 commits in 3 days after 95 in the 12 days before (7.9 a day)",
+   "prediction": "area agents gets at least 12 commits in 3 days within 7 days",
+   "files": [],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-25T17:11:28Z",
+   "last_seen": "2026-11-25T17:11:28Z",
+   "runs": 1,
+   "item": null,
+   "reopened": 0
+  },
+  "d35e8a7e44": {
+   "id": "d35e8a7e44",
+   "kind": "neglect",
+   "subject": "area:brand",
+   "area": "brand",
+   "advocate": "design-manager",
+   "severity": "act",
+   "evidence": "untouched: 0 commits in 3 days after 32 in the 12 days before (2.7 a day)",
+   "prediction": "area brand gets at least 4 commits in 3 days within 7 days",
+   "files": [],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-25T17:11:28Z",
+   "last_seen": "2026-11-25T17:11:28Z",
+   "runs": 1,
+   "item": null,
+   "reopened": 0
+  },
+  "76f2de809d": {
+   "id": "76f2de809d",
+   "kind": "neglect",
+   "subject": "area:dashboard",
+   "area": "dashboard",
+   "advocate": "operations",
+   "severity": "act",
+   "evidence": "decay: 2 commits in 3 days after 55 in the 12 days before (4.6 a day)",
+   "prediction": "area dashboard gets at least 7 commits in 3 days within 7 days",
+   "files": [],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-25T17:11:28Z",
+   "last_seen": "2026-11-25T17:11:28Z",
+   "runs": 1,
+   "item": null,
+   "reopened": 0
+  },
+  "6a0423d089": {
+   "id": "6a0423d089",
+   "kind": "neglect",
+   "subject": "area:deploy",
+   "area": "deploy",
+   "advocate": "operations",
+   "severity": "act",
+   "evidence": "decay: 3 commits in 3 days after 73 in the 12 days before (6.1 a day)",
+   "prediction": "area deploy gets at least 9 commits in 3 days within 7 days",
+   "files": [],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-25T17:11:28Z",
+   "last_seen": "2026-11-25T17:11:28Z",
+   "runs": 1,
+   "item": null,
+   "reopened": 0
+  },
+  "8806bd4059": {
+   "id": "8806bd4059",
+   "kind": "neglect",
+   "subject": "area:root",
+   "area": "root",
+   "advocate": "operations",
+   "severity": "act",
+   "evidence": "decay: 2 commits in 3 days after 69 in the 12 days before (5.8 a day)",
+   "prediction": "area root gets at least 9 commits in 3 days within 7 days",
+   "files": [],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-25T17:11:28Z",
+   "last_seen": "2026-11-25T17:11:28Z",
+   "runs": 1,
+   "item": null,
+   "reopened": 0
+  },
+  "1408ef2fde": {
+   "id": "1408ef2fde",
+   "kind": "neglect",
+   "subject": "area:scripts",
+   "area": "scripts",
+   "advocate": "operations",
+   "severity": "act",
+   "evidence": "decay: 6 commits in 3 days after 137 in the 12 days before (11.4 a day)",
+   "prediction": "area scripts gets at least 17 commits in 3 days within 7 days",
+   "files": [],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-25T17:11:28Z",
+   "last_seen": "2026-11-25T17:11:28Z",
+   "runs": 1,
+   "item": null,
+   "reopened": 0
+  },
+  "a0b27a446a": {
+   "id": "a0b27a446a",
+   "kind": "neglect",
+   "subject": "area:seed",
+   "area": "seed",
+   "advocate": "operations",
+   "severity": "act",
+   "evidence": "decay: 12 commits in 3 days after 259 in the 12 days before (21.6 a day)",
+   "prediction": "area seed gets at least 32 commits in 3 days within 7 days",
+   "files": [],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-25T17:11:28Z",
+   "last_seen": "2026-11-25T17:11:28Z",
+   "runs": 1,
+   "item": null,
+   "reopened": 0
+  },
+  "01bb7480cb": {
+   "id": "01bb7480cb",
+   "kind": "neglect",
+   "subject": "area:workflows",
+   "area": "workflows",
+   "advocate": "infrastructure-manager",
+   "severity": "act",
+   "evidence": "decay: 6 commits in 3 days after 201 in the 12 days before (16.8 a day)",
+   "prediction": "area workflows gets at least 25 commits in 3 days within 7 days",
+   "files": [],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-25T17:11:28Z",
+   "last_seen": "2026-11-25T17:11:28Z",
    "runs": 1,
    "item": null,
    "reopened": 0
@@ -658,6 +815,110 @@
    "first_seen": "2026-11-22T14:31:06Z",
    "settled_at": "2026-11-24T17:38:51Z",
    "runs": 2
+  },
+  {
+   "id": "e5ddf8e610",
+   "kind": "repeated_failure",
+   "subject": "ledger:executor:pr-outcome",
+   "first_seen": "2026-11-21T11:56:24Z",
+   "settled_at": "2026-11-25T17:11:28Z",
+   "runs": 6
+  },
+  {
+   "id": "54854bf10b",
+   "kind": "hotspot",
+   "subject": "file:site/worker.js",
+   "first_seen": "2026-11-21T11:56:24Z",
+   "settled_at": "2026-11-25T17:11:28Z",
+   "runs": 6
+  },
+  {
+   "id": "d01db32c1b",
+   "kind": "hotspot",
+   "subject": "file:agents/AGENTS.md",
+   "first_seen": "2026-11-22T14:31:06Z",
+   "settled_at": "2026-11-25T17:11:28Z",
+   "runs": 3
+  },
+  {
+   "id": "b5792f9a73",
+   "kind": "hotspot",
+   "subject": "file:doctrine/flows.json",
+   "first_seen": "2026-11-22T14:31:06Z",
+   "settled_at": "2026-11-25T17:11:28Z",
+   "runs": 3
+  },
+  {
+   "id": "e32a734d41",
+   "kind": "hotspot",
+   "subject": "file:foundation/__main__.py",
+   "first_seen": "2026-11-22T14:31:06Z",
+   "settled_at": "2026-11-25T17:11:28Z",
+   "runs": 3
+  },
+  {
+   "id": "bfbb87dc25",
+   "kind": "stopped_loop",
+   "subject": "ledger:deploys:ultrastable-agents",
+   "first_seen": "2026-11-23T18:00:44Z",
+   "settled_at": "2026-11-25T17:11:28Z",
+   "runs": 2
+  },
+  {
+   "id": "381e97ef1d",
+   "kind": "stopped_loop",
+   "subject": "ledger:deploys:ultrastable-dashboard",
+   "first_seen": "2026-11-23T18:00:44Z",
+   "settled_at": "2026-11-25T17:11:28Z",
+   "runs": 2
+  },
+  {
+   "id": "458cb625ba",
+   "kind": "stopped_loop",
+   "subject": "ledger:deploys:ultrastable-seed-second-tenant",
+   "first_seen": "2026-11-23T18:00:44Z",
+   "settled_at": "2026-11-25T17:11:28Z",
+   "runs": 2
+  },
+  {
+   "id": "b2caf01433",
+   "kind": "stopped_loop",
+   "subject": "ledger:deploys:ultrastable-site",
+   "first_seen": "2026-11-23T18:00:44Z",
+   "settled_at": "2026-11-25T17:11:28Z",
+   "runs": 2
+  },
+  {
+   "id": "e127ef84b4",
+   "kind": "stopped_loop",
+   "subject": "ledger:deploys:ultrastable-tenants",
+   "first_seen": "2026-11-23T18:00:44Z",
+   "settled_at": "2026-11-25T17:11:28Z",
+   "runs": 2
+  },
+  {
+   "id": "9a81e17b01",
+   "kind": "stopped_loop",
+   "subject": "ledger:deploys:ultrastable-tick",
+   "first_seen": "2026-11-23T18:00:44Z",
+   "settled_at": "2026-11-25T17:11:28Z",
+   "runs": 2
+  },
+  {
+   "id": "c9d655385f",
+   "kind": "stopped_loop",
+   "subject": "ledger:deploys:ultrastable-unlearn",
+   "first_seen": "2026-11-23T18:00:44Z",
+   "settled_at": "2026-11-25T17:11:28Z",
+   "runs": 2
+  },
+  {
+   "id": "99ee9c3bfb",
+   "kind": "hotspot",
+   "subject": "file:doctrine/claim-code.json",
+   "first_seen": "2026-11-24T17:38:51Z",
+   "settled_at": "2026-11-25T17:11:28Z",
+   "runs": 1
   }
  ]
 }
