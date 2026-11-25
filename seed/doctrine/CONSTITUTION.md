@@ -127,3 +127,6 @@ Each rule has a detector that sees it break and a remediation that repairs it, b
 - **cold-start-contract** (Rowan, 2026-11-25): Every system is born with the cold-start contract: the same capabilities, each carried by seed files and checked, so nothing a new system needs is supplied by a person afterwards. The constitution adds the rules, ladder and criticality conditions on top of that definition.
   - detector: `doctrine/SYSTEM.md`, `doctrine/coldstart.json` (platform)
   - remediation: `bootstrap/bootstrap.py`, `foundation/coldstart.py` (platform)
+- **configs-have-schemas** (Rowan, 2026-11-25): Every JSON config the system runs on has a JSON Schema 2020-12 contract in a Schema Store catalog, generated with the config, so any tool or agent validates it without reading the code that consumes it. The constitution is itself such a config.
+  - detector: `doctrine/schemas/catalog.json`, `foundation/configschema.py` (platform)
+  - remediation: `doctrine/schemas/constitution.schema.json`, `foundation/configschema.py` (platform)
