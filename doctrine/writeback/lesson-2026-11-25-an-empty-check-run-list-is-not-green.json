@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-25-an-empty-check-run-list-is-not-green",
+  "kind": "lesson",
+  "date": "2026-11-25",
+  "title": "An empty check-run list is not green",
+  "body": "what-works#8 was merged by the lane 7 s after opening, before its ci and citations runs existed; citations then failed. greenguard.notGreen now holds when a suite is queued or a fresh head has no suite (NO-RUNS-NOT-GREEN-1).",
+  "probe": "file:seed/worker/src/greenguard.js",
+  "session": "session_0156nqDtbnNSagT7p6jpUTuY"
+ },
+ "kind": "lesson",
+ "title": "An empty check-run list is not green",
+ "session": "session_0156nqDtbnNSagT7p6jpUTuY"
+}
