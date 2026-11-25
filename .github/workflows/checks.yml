@@ -118,6 +118,8 @@ jobs:
         run: ./scripts/regen_generated.sh
       - name: Doctrine check (positioning and code-is-the-only-memory, from doctrine/positioning.json)
         run: python3 -m foundation doctrine --check
+      - name: Seed kernel is closed under bootstrap (BOOTPROOF-1)
+        run: python3 -m foundation bootproof
       - name: Pins (every status pin and roadmap item on the site is computed from code, proofs and probe-backed issues)
         run: python3 -m foundation pins --check
       - name: Action pins (every `uses:` is a full commit SHA, shrink-only baseline, PINS-1 supply chain)
@@ -140,6 +142,7 @@ jobs:
           python3 -m foundation discover --check  # DISCOVER-1: every live tenant listed and cross-linked; the seed serves its manifest, footer and heartbeat
           python3 -m foundation fullstack --check  # FULLSTACK-1: repository, back end and public front end for every system
           python3 -m foundation datagraph --check
+          python3 -m foundation coldstart --check  # COLDSTART-1: the seed carries every capability a system owes from birth; named commands resolve; agent files agree
           python3 -m foundation cfposture --check
           python3 -m foundation standingorder --check
           python3 -m foundation rules --check
@@ -182,6 +185,8 @@ jobs:
           python3 -m foundation flows --check
           python3 -m foundation criticality --check
           python3 -m foundation ultrastability --check
+          python3 -m foundation specgate --check  # SPEC-GATE-1: new items carry done check, prediction, out of scope, live proof
+          python3 -m foundation lessons --check  # LESSONS-1: every lesson enforced in code or carried by an open item
           python3 -m foundation verify --check
           python3 -m foundation selfmodel --check
           python3 -m foundation cost --check
@@ -266,8 +271,6 @@ jobs:
         run: python3 -m foundation.tenantsync --check
       - name: Tenant admission, ADMIT-1 (one tenant-repos row; every registry derived)
         run: python3 -m foundation admit --check
-      - name: The template says what a system is and the code proves it, SYSTEM-1
-        run: python3 seed/scripts/contract.py --check --root seed
       - name: Agent data is current
         run: python3 scripts/build_site_agentdata.py --check
       - name: Platform brief is current

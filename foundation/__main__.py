@@ -10,6 +10,8 @@
   python3 -m foundation resilience [--run [--apply]|--report|--check|--probe ID]   every clock keeps ticking; stalled ones are restarted (RESILIENCE-1)
   python3 -m foundation verify [--check|--report]                          VERIFY-1: model-check the core loops and tie the models to the code
   python3 -m foundation ultrastability [--tick [--apply]|--check|--data [--apply]]  Ashby's two loops over essential variables (ULTRASTABILITY-1)
+  python3 -m foundation lessons [--check]  every lesson bound to enforcing code or an open item (LESSONS-1)
+  python3 -m foundation specgate [--check]  work items an agent cannot misread: done check, prediction, out of scope, live proof (SPEC-GATE-1)
   python3 -m foundation criticality [--tick [--apply]|--check|--gate]     the mantra as a computed invariant (CRITICALITY-1)
   python3 -m foundation claimcode [--check|--baseline|--list]                words match code: every number, cadence or guarantee on a public surface is bound to a probe (WORDS-MATCH-CODE-1)
   python3 -m foundation pointclick [--check|--baseline]                    no surface asks a person to handle a token, secret or setting (POINT-AND-CLICK-1)
@@ -28,6 +30,7 @@
   python3 -m foundation failmine [--run [--apply]|--report|--probe HASH|--check]   FAILMINE-1: mine every failure record, classify root causes, register new modes, escalate recurrence
   python3 -m foundation intentyield [--run [--apply]|--probe|--check|--report]   INTENT-YIELD-1: owner directives kept per unit of attention; no counts, no person scored
   python3 -m foundation temporal [--run [--apply]|--settled ID|--probe|--check|--report]   TEMPORAL-1: series per area, loop and entry; hotspots, neglect and stopped loops feed the failure-mode machinery
+  python3 -m foundation bootproof [--check]   BOOTPROOF-1: the seed kernel is closed under bootstrap (instructions, placeholders, secrets, triggers)
   python3 -m foundation seedlaunch [--e2e [--keep]|--fleet|--check]   SEED-LAUNCH-1: every seed built, deployed, year-gated and probed live by the system
   python3 -m foundation discover [--gen|--check|--live]                    DISCOVER-1: every system is listed, cross-linked and findable
   python3 -m foundation fullstack [--check|--live|--probe ID|--list]        FULLSTACK-1: every system has a repository, a back end and a public front end
@@ -99,6 +102,21 @@
 import argparse, datetime as dt, json, os, sys
 
 from . import boundary, closedloop, standards, doctrine, directive, filing, glossary, kernel, ladder, loops, manifest as mf, scaffold, selfhost, trust, writeback
+
+
+# Commands parsed by the argparse block at the end of main(); every other name resolves to a module (COLDSTART-1).
+ARGPARSE_COMMANDS = frozenset({"new-system", "validate", "ladder", "doctrine", "selfhost", "glossary", "loops", "kernel", "closedloop", "directive",
+                               "trust", "docs_audit", "needsyou", "executor", "upstream", "writeback", "standards", "filing", "autorun", "cockpit", "launch"})
+
+
+def resolve(name: str):
+    """The foundation module that answers `python3 -m foundation <name>`, or None. A module answers when foundation/<name>.py exists and defines main."""
+    import importlib, re as _re
+    from pathlib import Path as _P
+    if not _re.fullmatch(r"[a-z][a-z0-9_]*", name or "") or not (_P(__file__).resolve().parent / f"{name}.py").exists():
+        return None
+    m = importlib.import_module("foundation." + name)
+    return m if callable(getattr(m, "main", None)) else None
 
 
 def main(argv=None) -> int:
@@ -217,6 +235,12 @@ def main(argv=None) -> int:
     if _av[:1] == ["selftest"]:  # SELFTEST-1
         from . import selftest
         return selftest.main(_av[1:])
+    if _av[:1] == ["staticcontent"]:  # STATIC-CONTENT-1 (detector static-content was unroutable: SILENT-FAIL-1 routes check)
+        from . import staticcontent
+        return staticcontent.main(_av[1:])
+    if _av[:1] == ["slawatch"]:
+        from . import slawatch
+        return slawatch.main(_av[1:])
     if _av[:1] == ["silentfail"]:  # SILENT-FAIL-1
         from . import silentfail
         return silentfail.main(_av[1:])
@@ -265,7 +289,7 @@ def main(argv=None) -> int:
     if _av[:1] == ["flows"]:
         from . import flows
         return flows.main(_av[1:])
-    if _av[:1] and _av[0] in ("sauce", "contracts", "metricloop", "throughput", "metafold", "dispose", "balance", "yearsim", "saydo", "trajectory", "seedadmit"):
+    if _av[:1] and _av[0] in ("sauce", "redteam", "contracts", "metricloop", "throughput", "metafold", "dispose", "balance", "yearsim", "saydo", "trajectory", "seedadmit"):
         import importlib
         return importlib.import_module("foundation." + _av[0]).main(_av[1:])
     if _av[:1] == ["unknowns"]:
@@ -283,6 +307,12 @@ def main(argv=None) -> int:
     if _av[:1] == ["verify"]:
         from . import verify
         return verify.main(_av[1:])
+    if _av[:1] == ["lessons"]:
+        from . import lessons
+        return lessons.main(_av[1:])
+    if _av[:1] == ["specgate"]:
+        from . import specgate
+        return specgate.main(_av[1:])
     if _av[:1] == ["ultrastability"]:
         from . import ultrastability
         return ultrastability.main(_av[1:])
@@ -313,6 +343,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["openloops"]:
         from . import openloops
         return openloops.main(_av[1:])
+    if _av[:1] == ["bootproof"]:
+        from . import bootproof
+        return bootproof.main(_av[1:])
     if _av[:1] == ["seedlaunch"]:
         from . import seedlaunch
         return seedlaunch.main(_av[1:])
@@ -468,6 +501,9 @@ def main(argv=None) -> int:
     if args0[:1] == ["upstream"]:
         from . import upstream
         return upstream.main(args0[1:])
+    mod = resolve(args0[0]) if args0 and args0[0] not in ARGPARSE_COMMANDS else None
+    if mod is not None:  # COLDSTART-1: every foundation module with main() is a command from birth; no hand-kept dispatch list
+        return mod.main(args0[1:])
     ap = argparse.ArgumentParser(prog="foundation", description=__doc__.split("\n")[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
     n = sub.add_parser("new-system"); n.add_argument("--manifest", required=True); n.add_argument("--out", required=True); n.add_argument("--apply", action="store_true"); n.add_argument("--date")

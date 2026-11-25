@@ -2250,17 +2250,6 @@
       "bound_by": "cited"
     },
     {
-      "id": "cited-4547a8f9d5",
-      "surface": "agents/AGENTS.md",
-      "text": "- **The template says what a system is, and the code proves it (SYSTEM-1, Rowan 2026-11-25).** \"Something's missing in the core",
-      "probe": [
-        "file:seed/doctrine/system-contract.json",
-        "file:seed/doctrine/SYSTEM.md",
-        "file:CLAUDE.md"
-      ],
-      "bound_by": "cited"
-    },
-    {
       "id": "cited-9b5ff76eff",
       "surface": "agents/AGENTS.md",
       "text": "- **One tenant row admits a tenant; every registry is derived (ADMIT-1, Rowan 2026-11-25).** \"All surfaces, all files, all code, all",
@@ -2432,11 +2421,46 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-467a38f9b7",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Red-team the system's own blind spots; the owner should never find a failure first (REDTEAM-1, Rowan 2026-11-25).** \"Audit and",
+      "probe": [
+        "file:foundation/redteam.py",
+        "file:ops/redteam/findings.jsonl",
+        "file:tests/foundation/test_redteam.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-badeab1b44",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Everything bootstraps itself from a cold start and works together from birth (COLDSTART-1, Rowan 2026-11-25).** \"All surfaces, all",
+      "probe": [
+        "file:doctrine/coldstart.json",
+        "file:seed/worker/src/visibility.js",
+        "file:docs/doctrine/SYSTEM.md",
+        "file:CLAUDE.md",
+        "file:doctrine/schemas/coldstart.schema.json",
+        "file:foundation/coldstart.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-95432168bf",
       "surface": "agents/AGENTS.md",
       "text": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
       "probe": [
         "file:docs/PROJECT-MEMORY.md"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-e2a1c0be98",
+      "surface": "agents/AGENTS.md",
+      "text": "- **No made-up numbers (NO-FABRICATION-1, Rowan 2026-11-25).** \"Nothing gets made up. Everything must be completely supported and backed",
+      "probe": [
+        "file:foundation/claimcode.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]claimcode\\b"
       ],
       "bound_by": "cited"
     },
@@ -2790,6 +2814,36 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-b4d6cc4189",
+      "surface": "seed/doctrine/SYSTEM.md",
+      "text": "`doctrine/coldstart.json` (JSON Schema `doctrine/schemas/coldstart.schema.json`) or the code they name drift apart. The owner never",
+      "probe": [
+        "file:doctrine/coldstart.json",
+        "file:doctrine/schemas/coldstart.schema.json"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-94e4bb2cbb",
+      "surface": "seed/doctrine/SYSTEM.md",
+      "text": "default in effect, never a task in prose (`doctrine/open-loops.json`, `foundation/data/needs-you.json`). Anything else handed to a person",
+      "probe": [
+        "file:doctrine/open-loops.json",
+        "file:foundation/data/needs-you.json"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-a191183c3c",
+      "surface": "seed/doctrine/SYSTEM.md",
+      "text": "`python3 -m foundation coldstart --check` runs in `checks` on every change. It fails when the seed stops carrying a capability, when this",
+      "probe": [
+        "file:foundation/coldstart.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]coldstart\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-0cea4449d8",
       "surface": "seed/self/SELF.md",
       "text": "- uiux-manager: the front end as a measured, continuously audited surface (UIUX-1): how every page across ultrastable.io, .org and .app,",
@@ -2879,18 +2933,6 @@
       ],
       "bound_by": "mirror",
       "of": "cited-e7cebff4c4"
-    },
-    {
-      "id": "mirror-6cc3725674",
-      "surface": "seed/agents/AGENTS.md",
-      "text": "- **The template says what a system is, and the code proves it (SYSTEM-1, Rowan 2026-11-25).** \"Something's missing in the core",
-      "probe": [
-        "file:seed/doctrine/system-contract.json",
-        "file:seed/doctrine/SYSTEM.md",
-        "file:CLAUDE.md"
-      ],
-      "bound_by": "mirror",
-      "of": "cited-4547a8f9d5"
     },
     {
       "id": "mirror-adf5fe12d6",
@@ -3388,6 +3430,59 @@
       "of": "cited-0e153ff129"
     },
     {
+      "id": "mirror-309506fe16",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Red-team the system's own blind spots; the owner should never find a failure first (REDTEAM-1, Rowan 2026-11-25).** \"Audit and",
+      "probe": [
+        "file:foundation/redteam.py",
+        "file:ops/redteam/findings.jsonl",
+        "file:tests/foundation/test_redteam.py"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-467a38f9b7"
+    },
+    {
+      "id": "mirror-ad11709e94",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Issue inflow never exceeds closures; every issue inside its SLA (FLOW-BALANCE-1, Rowan 2026-11-21).** \"All UltraStable issues must be",
+      "probe": [
+        "file:seed/worker/src/flowbalance.js",
+        "file:doctrine/balance.json",
+        "file:tests/foundation/test_balance.py",
+        "file:foundation/balance.py"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-574da783c3"
+    },
+    {
+      "id": "mirror-7a700bcc8c",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Find another path before asking; the information is already held (PATHFINDER-1, Rowan 2026-11-21).** \"There are always multiple paths,",
+      "probe": [
+        "file:doctrine/pathfinder.json",
+        "file:ops/paths/attempts.jsonl",
+        "file:foundation/pathfinder.py",
+        "file:tests/foundation/test_pathfinder.py"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-d77a994a9e"
+    },
+    {
+      "id": "mirror-23cc6eb0f0",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Everything bootstraps itself from a cold start and works together from birth (COLDSTART-1, Rowan 2026-11-25).** \"All surfaces, all",
+      "probe": [
+        "file:doctrine/coldstart.json",
+        "file:seed/worker/src/visibility.js",
+        "file:docs/doctrine/SYSTEM.md",
+        "file:CLAUDE.md",
+        "file:doctrine/schemas/coldstart.schema.json",
+        "file:foundation/coldstart.py"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-badeab1b44"
+    },
+    {
       "id": "mirror-be5af6748b",
       "surface": "seed/agents/AGENTS.md",
       "text": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
@@ -3396,6 +3491,17 @@
       ],
       "bound_by": "mirror",
       "of": "cited-95432168bf"
+    },
+    {
+      "id": "mirror-9a507beeee",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **No made-up numbers (NO-FABRICATION-1, Rowan 2026-11-25).** \"Nothing gets made up. Everything must be completely supported and backed",
+      "probe": [
+        "file:foundation/claimcode.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]claimcode\\b"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-e2a1c0be98"
     },
     {
       "id": "mirror-6c62259d6b",
@@ -4674,26 +4780,6 @@
       ],
       "probe": [
         "grep:.github/workflows/checks.yml::foundation research --check"
-      ]
-    },
-    {
-      "id": "system-contract",
-      "surface": "seed/doctrine/SYSTEM.md",
-      "header": "scripts/contract.py --write",
-      "generator": "seed/scripts/contract.py",
-      "source": [
-        "seed/doctrine/system-contract.json"
-      ],
-      "check": [
-        "python3",
-        "seed/scripts/contract.py",
-        "--check",
-        "--root",
-        "seed"
-      ],
-      "probe": [
-        "grep:.github/workflows/checks.yml::seed/scripts/contract.py --check",
-        "grep:seed/.github/workflows/bootstrap.yml::scripts/contract.py --check"
       ]
     }
   ]

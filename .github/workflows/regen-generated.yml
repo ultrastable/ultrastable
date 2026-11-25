@@ -26,6 +26,7 @@ on:
       - "research/papers/open-loops-2026.md"
       - "research/papers/safety-by-limits-2026.md"
       - "social/calendar.json"
+      - "ops/research/prs.json"
       - "ops/thought/log.jsonl"
       - "ops/decisions/outcomes.jsonl"
       - "ops/decisions/rescore.jsonl"

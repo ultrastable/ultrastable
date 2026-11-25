@@ -1,5 +1,5 @@
 {
-  "_doc": "HOSTSYNC-1: what this repository declares about the hosts that run it. `python3 -m foundation hostsync --check` validates it; workers/tools/hostsync.mjs reconciles it against the live host through the deploy gateway's /state route. Names only; no secret value appears here or in ops/hosting/.",
+  "_doc": "HOSTSYNC-1: what this repository declares about the hosts that run it. workers/tools/hostsync.mjs (host-sync.yml) reads and reconciles it against the live host through the deploy gateway's /state route. Names only; no secret value appears here or in ops/hosting/.",
   "repo": "ultrastable/ultrastable",
   "ref": "main",
   "gateway": "https://ultrastable-deploy-gateway.ultrastable.workers.dev",

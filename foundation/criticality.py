@@ -174,8 +174,6 @@ def compute(root=REPO, now: datetime | None = None, feed_ok: bool | None = None)
     if feed_ok is None:
         from . import flows
         feed_ok = not flows.check(root)
-    denom = max(cost, c["cost_floor"]) + touches
-    k = round(len(verified) / denom, 3)
     sr = c.get("self_reference", {})
     origins = {}
     pos = {id(r): i for i, r in enumerate(allrows)}
@@ -185,6 +183,11 @@ def compute(root=REPO, now: datetime | None = None, feed_ok: bool | None = None)
         if key not in seen:  # one git walk per deployed commit, not per worker
             seen[key] = deploy_origin(root, r, c, allrows[:pos.get(id(r), 0)] if id(r) in pos else None)
         o = seen[key]; origins[o] = origins.get(o, 0) + 1
+    # REDTEAM-1 (phantom touches): a deploy an outside session drove is a human touch, not a self-run; counting only owner-held items read 0
+    # k keeps its held-item denominator (the regime gate steers the executor); the reported count is the honest one
+    denom = max(cost, c["cost_floor"]) + touches
+    touches += origins.get("outside", 0)
+    k = round(len(verified) / denom, 3)
     self_n = sum(n for o, n in origins.items() if o in sr.get("self_origins", ()))
     k_self, boot = round(self_n / denom, 3), bootstrap_holds(root)
     regime = "subcritical" if k < c["k_floor"] else "self-sustaining" if k_self >= c["k_floor"] and boot is not False else "driven"

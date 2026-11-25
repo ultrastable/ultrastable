@@ -685,6 +685,18 @@
       "status": "controlled",
       "cadence_ticks": 1,
       "probe": "grep:instances/replication-ledger/worker/citations.test.mjs::after 24 beats an unchecked seed DOI makes /api/citations answer 503"
+    },
+    {
+      "id": "fm-blind-spot",
+      "trigger": "a check passes on empty, stale, unscored or vacuous data",
+      "symptom": "the owner finds the failure before any loop",
+      "blast_radius": "every claim and loop that trusts its probe",
+      "detection": "python3 -m foundation redteam --probe",
+      "root_cause": "probes test that a mechanism exists, not that its output is true",
+      "remediation": "adversarial red-team checks per blind-spot class; owner-found failures recorded and mapped to a detector",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:tests/foundation/test_redteam.py::def test_owner_findings_of_2026_11_25"
     }
   ],
   "controls": [
