@@ -1,0 +1,23 @@
+# Backstage software catalog entry (STANDARDS-FIRST-1). Tenants get their own in their repositories.
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: ultrastable
+  description: Ultrastable is the foundation for any autonomous system.
+  annotations:
+    github.com/project-slug: ultrastable/ultrastable
+spec:
+  owner: ultrastable
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: ultrastable-core
+  description: Kernel, foundation and the tick Worker that run Ultrastable on itself.
+  annotations:
+    github.com/project-slug: ultrastable/ultrastable
+spec:
+  type: service
+  lifecycle: production
+  owner: ultrastable
+  system: ultrastable

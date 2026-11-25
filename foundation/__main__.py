@@ -101,7 +101,7 @@
 """
 import argparse, datetime as dt, json, os, sys
 
-from . import boundary, closedloop, schemas, standards, doctrine, directive, filing, glossary, kernel, ladder, loops, manifest as mf, scaffold, selfhost, trust, writeback
+from . import boundary, closedloop, openslo, schemas, standards, doctrine, directive, filing, glossary, kernel, ladder, loops, manifest as mf, scaffold, selfhost, trust, writeback
 
 
 def main(argv=None) -> int:
@@ -506,6 +506,7 @@ def main(argv=None) -> int:
         rc.add_argument("--" + opt, default="")
     ck = ws.add_parser("check"); ck.add_argument("--base", default="origin/main"); ck.add_argument("--head", default="HEAD")
     ou = ws.add_parser("outputs"); ou.add_argument("dirs", nargs="+"); ou.add_argument("--ignore", action="append", default=[])
+    so = sub.add_parser("openslo"); sog = so.add_mutually_exclusive_group(required=True); sog.add_argument("--apply", action="store_true"); sog.add_argument("--check", action="store_true")
     sc = sub.add_parser("schemas"); scg = sc.add_mutually_exclusive_group(required=True); scg.add_argument("--infer", action="store_true"); scg.add_argument("--check", action="store_true")
     st = sub.add_parser("standards"); sg = st.add_mutually_exclusive_group(required=True); sg.add_argument("--apply", action="store_true"); sg.add_argument("--check", action="store_true")
     f = sub.add_parser("filing"); f.add_argument("--manifest", required=True)
@@ -628,6 +629,10 @@ def main(argv=None) -> int:
         except ValueError as e:
             print("refused:", e); return 1
         print("\n".join(bad) or "writeback ok"); return 1 if bad else 0
+    if a.cmd == "openslo":
+        if a.apply:
+            print("slo/essential-variables.yaml updated" if openslo.apply() else "slo already current"); return 0
+        bad = openslo.check(); print("\n".join(bad) or "openslo ok"); return 1 if bad else 0
     if a.cmd == "schemas":
         if a.infer:
             print("\n".join(schemas.apply_infer()) or "every doctrine file already has a schema"); return 0

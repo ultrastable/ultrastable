@@ -1050,15 +1050,25 @@
    "status": "stable",
    "tracked": "current",
    "why": "Essential variables and their bounds as standard SLO files.",
-   "support": "planned",
+   "support": "supported",
    "tracked_by": "STANDARDS-FIRST-1",
-   "acl": "seed/standards/standards.json",
+   "acl": "foundation/openslo.py",
    "sources": [
     {
      "title": "OpenSLO",
      "url": "https://openslo.com/",
      "published": "2026-11-25",
      "accessed": "2026-11-25"
+    }
+   ],
+   "how": [
+    "foundation/openslo.py",
+    "slo/essential-variables.yaml"
+   ],
+   "tests": [
+    {
+     "file": "tests/foundation/test_schemas.py",
+     "name": "test_openslo_current"
     }
    ]
   },
@@ -1133,6 +1143,109 @@
     {
      "title": "Conventional Commits + SemVer",
      "url": "https://www.conventionalcommits.org/",
+     "published": "2026-11-25",
+     "accessed": "2026-11-25"
+    }
+   ]
+  },
+  {
+   "id": "asyncapi",
+   "name": "AsyncAPI 3",
+   "body": "linux-foundation",
+   "status": "stable",
+   "tracked": "current",
+   "why": "Event channels between loops described like OpenAPI describes HTTP.",
+   "support": "planned",
+   "tracked_by": "STANDARDS-FIRST-1",
+   "acl": "seed/standards/standards.json",
+   "sources": [
+    {
+     "title": "AsyncAPI 3",
+     "url": "https://www.asyncapi.com/",
+     "published": "2026-11-25",
+     "accessed": "2026-11-25"
+    }
+   ]
+  },
+  {
+   "id": "opa-rego",
+   "name": "Open Policy Agent (Rego)",
+   "body": "cncf",
+   "status": "stable",
+   "tracked": "current",
+   "why": "Rules and lessons registry as policy code any tool can evaluate.",
+   "support": "planned",
+   "tracked_by": "STANDARDS-FIRST-1",
+   "acl": "seed/standards/standards.json",
+   "sources": [
+    {
+     "title": "Open Policy Agent (Rego)",
+     "url": "https://www.openpolicyagent.org/",
+     "published": "2026-11-25",
+     "accessed": "2026-11-25"
+    }
+   ]
+  },
+  {
+   "id": "jsonld-prov",
+   "name": "schema.org JSON-LD + W3C PROV-O",
+   "body": "w3c",
+   "status": "stable",
+   "tracked": "current",
+   "why": "Knowledge-graph nodes, edges and every published number carry typed meaning and provenance.",
+   "support": "planned",
+   "tracked_by": "STANDARDS-FIRST-1",
+   "acl": "seed/standards/standards.json",
+   "sources": [
+    {
+     "title": "schema.org JSON-LD + W3C PROV-O",
+     "url": "https://www.w3.org/TR/prov-o/",
+     "published": "2026-11-25",
+     "accessed": "2026-11-25"
+    }
+   ]
+  },
+  {
+   "id": "renovate",
+   "name": "Renovate",
+   "body": "community",
+   "status": "stable",
+   "tracked": "current",
+   "why": "Dependency updates in every repo and the seed, merged by the lane.",
+   "support": "planned",
+   "tracked_by": "STANDARDS-FIRST-1",
+   "acl": "seed/standards/standards.json",
+   "sources": [
+    {
+     "title": "Renovate",
+     "url": "https://docs.renovatebot.com/",
+     "published": "2026-11-25",
+     "accessed": "2026-11-25"
+    }
+   ]
+  },
+  {
+   "id": "backstage-catalog",
+   "name": "Backstage catalog-info.yaml",
+   "body": "cncf",
+   "status": "de-facto",
+   "tracked": "backstage.io/v1alpha1",
+   "why": "Each system says what it is, who owns it, its APIs and dependencies in one standard file.",
+   "support": "partial",
+   "how": [
+    "catalog-info.yaml"
+   ],
+   "acl": "catalog-info.yaml",
+   "tests": [
+    {
+     "file": "tests/foundation/test_schemas.py",
+     "name": "test_backstage_catalog"
+    }
+   ],
+   "sources": [
+    {
+     "title": "Backstage descriptor format",
+     "url": "https://backstage.io/docs/features/software-catalog/descriptor-format",
      "published": "2026-11-25",
      "accessed": "2026-11-25"
     }

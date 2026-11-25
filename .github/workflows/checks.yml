@@ -212,6 +212,7 @@ jobs:
         run: |
           python3 -m foundation standards --check
           python3 -m foundation schemas --check
+          python3 -m foundation openslo --check
           (cd seed/worker && node --test --no-warnings test/*.test.js)
   tests-a:
     if: ${{ vars.HALT != '1' && (github.event.pull_request.draft != true) }}  # HALT-1

@@ -1,5 +1,5 @@
 import unittest
-from foundation import schemas
+from foundation import openslo, schemas
 
 
 class Schemas(unittest.TestCase):
@@ -9,6 +9,14 @@ class Schemas(unittest.TestCase):
     def test_infer_catches_dropped_key(self):
         s = schemas.infer({"a": 1, "b": "x"})
         self.assertTrue(schemas._validate(s, {"a": 1}))
+
+    def test_openslo_current(self):
+        self.assertEqual(openslo.check(), [])
+
+    def test_backstage_catalog(self):
+        import yaml
+        docs = list(yaml.safe_load_all(open("catalog-info.yaml")))
+        self.assertTrue(docs and all(d["apiVersion"].startswith("backstage.io/") for d in docs))
 
 
 if __name__ == "__main__":
