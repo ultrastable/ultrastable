@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-25-branch-cleanup-runs-in-the-lane",
+  "kind": "decision",
+  "date": "2026-11-25",
+  "title": "branch cleanup runs in the lane",
+  "body": "scripts/branch_cleanup.py runs from the lane's completion sweep on every scheduled lane pass, as a second route beside branchsweep --remote.",
+  "probe": "grep:scripts/completion_sweep.sh::BRANCH-CLEANUP-1",
+  "session": "session_0156nqDsM82hJafZbpixiZx9"
+ },
+ "kind": "decision",
+ "title": "branch cleanup runs in the lane",
+ "session": "session_0156nqDsM82hJafZbpixiZx9"
+}
