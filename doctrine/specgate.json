@@ -1,0 +1,16 @@
+{
+ "_doc": "SPEC-GATE-1 (Rowan, 2026-11-25): items an agent cannot misread. baseline is shrink-only: ids filed before the gate; a new open item must pass foundation/specgate.py.",
+ "id": "specgate",
+ "baseline": [
+  "OL-PR-2048",
+  "OL-PR-2049",
+  "OL-PR-2050",
+  "OL-PR-2051",
+  "OL-PR-2052",
+  "OL-PR-2053",
+  "OL-PR-2054",
+  "OL-PR-2055",
+  "OL-PR-2085",
+  "Q-RULE-front-end-matches-back-end-claims"
+ ]
+}

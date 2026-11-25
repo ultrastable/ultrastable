@@ -1,13 +1,13 @@
 {
  "_doc": "ULTRASTABILITY-1 (Rowan, 2026-11-17): the platform's name is a design rule from W. Ross Ashby (Design for a Brain, 1952). A system is ultrastable when two loops keep its essential variables inside bounds: a fast first-order loop that corrects ordinary disturbance without changing the system, and a slow second-order loop that, when a variable stays out of bounds, makes a discrete step change to the system's own parameters or structure and keeps the change only if the variable returns; after the ladder it keeps searching untried parameter values until one holds the variable (ASHBY-SEARCH-1). Every variable has limits (ASHBY-1). Read by foundation/ultrastability.py; checked by `python3 -m foundation ultrastability --check`; rendered on /how from site/ultrastability-data.js (generated). Never edit a bound to clear a breach: bounds are the viability limits, changed only by a PR with a lineage note.",
  "id": "ultrastability",
- "version": "1.0.0",
+ "version": "1.1.0",
  "marker": "ULTRASTABILITY-1",
  "credit": "W. Ross Ashby, Design for a Brain (1952)",
  "ledger": "ops/ultrastability.jsonl",
  "item_prefix": "Q-ULTRA",
  "patience_ticks": 2,
- "settle_ticks": 3,
+ "settle_ticks": 4,
  "scopes": {
   "platform": {
    "status": "running",
@@ -323,6 +323,151 @@
        "what": "restructure: find why the executor's items fail and change its route (model rung, patch format, item size)"
       }
      ]
+    },
+    {
+     "id": "owner_interventions",
+     "name": "Owner interventions",
+     "reading": "owner.interventions_7d",
+     "min": 0,
+     "max": 0,
+     "unit": "owner-driven thread sessions in 7 days",
+     "first_order": [
+      "executor",
+      "watchdog"
+     ],
+     "why": "Every time Rowan has to notice a problem and redirect the system in chat, he is acting as the second loop. Ultrastable means the system does that itself. Counted from provenance: distinct thread sessions that changed the repository.",
+     "ladder": [
+      {
+       "kind": "item",
+       "labels": [
+        "p0",
+        "agent-ready",
+        "raises-self"
+       ],
+       "workstream": "Ultrastability",
+       "what": "absorb: turn each recent owner intervention into a variable, bound, detector or rule here, so the same message is not needed again"
+      },
+      {
+       "kind": "item",
+       "labels": [
+        "p0",
+        "agent-ready",
+        "raises-self"
+       ],
+       "workstream": "Ultrastability",
+       "what": "restructure: the intervention kinds that keep recurring get their own essential variable with a ladder"
+      }
+     ]
+    },
+    {
+     "id": "second_loop_keep_rate",
+     "name": "Second-loop steps that worked",
+     "reading": "ultra.keep_rate",
+     "min": 0.25,
+     "max": null,
+     "unit": "share of the last 30 verdicts kept",
+     "first_order": [
+      "watchdog"
+     ],
+     "why": "A slow loop whose changes are all undone is moving, not learning; that was the state before SECOND-LOOP-2.",
+     "ladder": [
+      {
+       "kind": "param",
+       "file": "doctrine/ultrastability.json",
+       "path": "settle_ticks",
+       "delta": 1,
+       "min": 2,
+       "max": 8,
+       "what": "give a parameter step more ticks before judging it"
+      },
+      {
+       "kind": "param",
+       "file": "doctrine/ultrastability.json",
+       "path": "patience_ticks",
+       "delta": 1,
+       "min": 2,
+       "max": 6,
+       "what": "act only on variables that stay out longer (fewer steps on noise)"
+      },
+      {
+       "kind": "item",
+       "labels": [
+        "p0",
+        "agent-ready",
+        "raises-self"
+       ],
+       "workstream": "Ultrastability",
+       "what": "restructure: find the ladders whose steps keep being undone and replace those steps"
+      }
+     ]
+    },
+    {
+     "id": "spec_quality",
+     "name": "Work items an agent cannot misread",
+     "reading": "spec.quality",
+     "min": 0.9,
+     "max": null,
+     "unit": "share of open items with done check, prediction, out-of-scope line and live proof",
+     "first_order": [
+      "executor"
+     ],
+     "why": "unlearn.dev lesson: a vague item gets a plausible wrong fix. An item passes foundation/specgate.py only with all four parts.",
+     "ladder": [
+      {
+       "kind": "item",
+       "labels": [
+        "p0",
+        "agent-ready",
+        "raises-self"
+       ],
+       "workstream": "Ultrastability",
+       "what": "rewrite the open items that miss a part so they pass specgate, from their own source code"
+      },
+      {
+       "kind": "item",
+       "labels": [
+        "p0",
+        "agent-ready",
+        "raises-self"
+       ],
+       "workstream": "Ultrastability",
+       "what": "restructure: make the filer of each failing item write all four parts (fix the writer, not the item)"
+      }
+     ]
+    },
+    {
+     "id": "research_in_code",
+     "name": "Research findings true in code",
+     "reading": "research.met_share",
+     "min": 1.0,
+     "max": null,
+     "unit": "share of findings in every paper whose own measurement meets its target",
+     "first_order": [
+      "executor"
+     ],
+     "why": "RESEARCH-LOOP-1 (Rowan, 2026-11-25): 'make sure your code reflects your own R&D ... that's an open loop too'. Every finding names its mechanism paths and the metric that tests it; research --check fails a missing path, and this variable fails a finding the system does not live up to.",
+     "ladder": [
+      {
+       "kind": "item",
+       "labels": [
+        "p0",
+        "agent-ready",
+        "raises-self"
+       ],
+       "workstream": "Ultrastability",
+       "what": "build: for each finding that is not met, change the mechanism it names until its metric meets the target (research files Q-RES items; take them first)"
+      },
+      {
+       "kind": "item",
+       "labels": [
+        "p0",
+        "agent-ready",
+        "raises-self"
+       ],
+       "workstream": "Ultrastability",
+       "what": "restructure: a finding still not met after its items closed gets a new mechanism, a new ladder here, or its paper states the gap with the number"
+      }
+     ]
     }
    ]
   },
@@ -488,5 +633,6 @@
   }
  },
  "item_settle_ticks": 21,
- "_doc_settle": "SECOND-LOOP-SETTLE-1 (2026-11-21): a param step is judged after settle_ticks readings, because a parameter acts at once. An item or spinoff step is work the executor must do first, so judging it after 3 readings reverted all 14 of them before any could act (0 of 14 kept, ops/ultrastability.jsonl to 2026-11-21). It is kept as soon as the variable is back in bounds, reverted when its item reaches a final status with the variable still out, or after item_settle_ticks readings."
+ "_doc_settle": "SECOND-LOOP-SETTLE-1 (2026-11-21): a param step is judged after settle_ticks readings, because a parameter acts at once. An item or spinoff step is work the executor must do first, so judging it after 3 readings reverted all 14 of them before any could act (0 of 14 kept, ops/ultrastability.jsonl to 2026-11-21). It is kept as soon as the variable is back in bounds, reverted when its item reaches a final status with the variable still out, or after item_settle_ticks readings.",
+ "_doc_second_loop_2": "SECOND-LOOP-2 (Rowan, 2026-11-25): 'I'm still not getting the ultra stable part.' Three variables added that measure the second loop itself: how often a person had to act as the second loop (owner_interventions, target 0), whether its own steps work (second_loop_keep_rate; until now every verdict was a revert) and whether work items can be misread (spec_quality, SPEC-GATE-1). A tenant value shared by every tenant is a sensor fault (common_mode) and is held. readiness() is the one-year score published on /ultrastability."
 }

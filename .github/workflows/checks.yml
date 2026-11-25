@@ -182,6 +182,7 @@ jobs:
           python3 -m foundation flows --check
           python3 -m foundation criticality --check
           python3 -m foundation ultrastability --check
+          python3 -m foundation specgate --check  # SPEC-GATE-1: new items carry done check, prediction, out of scope, live proof
           python3 -m foundation verify --check
           python3 -m foundation selfmodel --check
           python3 -m foundation cost --check
