@@ -65,6 +65,19 @@ def http_get(url: str, timeout=20) -> tuple[int, dict, str]:
         return 0, {}, f"{type(e).__name__}: {e}"[:200]
 
 
+def http_post_json(url: str, payload: dict, timeout=30) -> tuple[int, str]:
+    """POST JSON -> (status, body). A network error is status 0 with the reason; never raised."""
+    req = urllib.request.Request(url, data=json.dumps(payload).encode(), method="POST",
+                                 headers={"user-agent": UA, "content-type": "application/json"})
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            return r.status, r.read(20_000).decode("utf-8", "replace")
+    except urllib.error.HTTPError as e:
+        return e.code, e.read(20_000).decode("utf-8", "replace")
+    except Exception as e:  # noqa: BLE001 - the reason is recorded as the layer's detail
+        return 0, f"{type(e).__name__}: {e}"[:200]
+
+
 def _json(body: str):
     try:
         return json.loads(body)
@@ -72,7 +85,7 @@ def _json(body: str):
         return None
 
 
-def probe(base: str, repo: str | None, get=http_get) -> dict:
+def probe(base: str, repo: str | None, get=http_get, post=None) -> dict:
     """Read every layer of one system. Returns {layer: {ok, detail}}; every layer is always present."""
     base = base.rstrip("/")
     out: dict[str, dict] = {}
@@ -120,8 +133,17 @@ def probe(base: str, repo: str | None, get=http_get) -> dict:
     if not why:
         st2, _, body2 = get(DIRECTORY + "/directory.json")
         listing = json.dumps(_json(body2) or {})
-        if base not in listing:
+        if base not in listing and post is None:
             why.append(f"not in {DIRECTORY}/directory.json (HTTP {st2})")
+        elif base not in listing:
+            # Second route (No single route): register it the way the seed's own heartbeat does, keep the directory's
+            # reason, and read the listing again, so a refusal names its cause instead of only "not listed".
+            st3, body3 = post(DIRECTORY + "/api/directory/register", {"url": base})
+            r3 = _json(body3) or {}
+            st2, _, body2 = get(DIRECTORY + "/directory.json")
+            if base not in json.dumps(_json(body2) or {}):
+                why.append(f"not in {DIRECTORY}/directory.json (HTTP {st2}); register answered HTTP {st3}"
+                           + (f": {r3.get('why') or r3.get('error')}" if (r3.get('why') or r3.get('error')) else ""))
     out["discovery"] = {"ok": not why, "detail": "; ".join(why) or "manifest names this URL and repository; listed in the directory"}
     return out
 
@@ -138,14 +160,14 @@ def standing_systems(root=ROOT) -> list[dict]:
     return [{"system": s, "base": f"https://ultrastable-seed-{s}.ultrastable.workers.dev", "repo": (declared.get(s) or {}).get("repo")} for s in seeds]
 
 
-def accept(systems: list[dict], get=http_get, launch: dict | None = None, retries=1, wait_s=0, sleep=time.sleep) -> list[dict]:
+def accept(systems: list[dict], get=http_get, launch: dict | None = None, retries=1, wait_s=0, sleep=time.sleep, post=None) -> list[dict]:
     """Probe each system; a layer that fails is read again after wait_s (a fresh system ticks and registers within one cron interval)."""
     recs = []
     for s in systems:
-        layers = probe(s["base"], s.get("repo"), get)
+        layers = probe(s["base"], s.get("repo"), get, post)
         for _ in range(retries if not verdict(layers)["passed"] else 0):
             sleep(wait_s)
-            layers = probe(s["base"], s.get("repo"), get)
+            layers = probe(s["base"], s.get("repo"), get, post)
         rec = {"at": _now(), "system": s["system"], "base": s["base"], "repo": s.get("repo"), "layers": layers, **verdict(layers),
                "owner_gates": list(OWNER_GATES)}
         if launch is not None:
@@ -203,7 +225,7 @@ def main(argv=None) -> int:
         from foundation import seedlaunch
         launch = seedlaunch.e2e_oidc()
         seedlaunch.append([launch])
-    recs = accept(systems, launch=launch, retries=1, wait_s=int(os.environ.get("BOOT_ACCEPT_WAIT_S", "660")) if "--run" in a else 60)
+    recs = accept(systems, launch=launch, post=http_post_json, retries=1, wait_s=int(os.environ.get("BOOT_ACCEPT_WAIT_S", "660")) if "--run" in a else 60)
     if "--url" not in a:
         append(recs)
     for r in recs:

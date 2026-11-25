@@ -360,7 +360,7 @@
    "quote": "checks in once a day",
    "probe": {
     "file": "seed/worker/src/discover.js",
-    "contains": "now.getUTCHours() !== 3"
+    "contains": "now.getUTCHours() === 3"
    }
   },
   {
@@ -387,7 +387,7 @@
    "quote": "a daily heartbeat",
    "probe": {
     "file": "seed/worker/src/discover.js",
-    "contains": "now.getUTCHours() !== 3"
+    "contains": "now.getUTCHours() === 3"
    }
   },
   {

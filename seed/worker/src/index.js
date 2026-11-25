@@ -114,7 +114,7 @@ export default {
     const cut = await decide(env.DB, env, { githubOk }).catch(e => ({ run: (env.SLOT || 'primary') !== 'standby', notes: ['cutover check failed: ' + String(e && e.message).slice(0, 160)] }));
     await beat(env.DB, 'cutover', async () => ({ run: cut.run, slot: cut.slot, epoch: cut.epoch, promoted: Boolean(cut.promoted), notes: cut.notes })).catch(e => console.error('cutover beat', e && e.message));
     if (!cut.run) { if (env.SLOT === 'standby' || cut.slot !== 'primary') ctx.waitUntil(refreshDue(env.DB, env).catch(() => null)); return; }
-    ctx.waitUntil(directoryHeartbeat(env, config).then(r => { if (r.sent) console.log('directory heartbeat', r.status); }).catch(e => console.error('directory heartbeat', e && e.message)));  // DISCOVER-1: daily, opt-out-able
+    ctx.waitUntil(directoryHeartbeat(env, config).then(r => { if (r.sent) console.log('directory heartbeat', r.status, r.why || ''); if (r.stateError) console.error('directory registration state', r.stateError); }).catch(e => console.error('directory heartbeat', e && e.message)));  // DISCOVER-1: daily and from birth (BOOT-4), opt-out-able
     const gov = await aiFor(env);
     if (gov.state) console.log('budget', JSON.stringify({ mode: gov.state.mode, why: gov.state.why, neurons_today: Math.round(gov.state.usage.ai_neurons_today), cap: gov.state.allowance.ai_neurons_day }));
     const caps = capsFor(planOf(config, env));  // PLAN-1: paid plan, 1,000 planned subrequests and no rotation
