@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-25-silent-loops-and-frozen-pages-a-green-run-is-not-a-landed-re",
+  "kind": "lesson",
+  "date": "2026-11-25",
+  "title": "Silent loops and frozen pages: a green run is not a landed result",
+  "body": "Session: session_0156nqDu4uGc3HMjQ8qCqHyK. 2026-11-25 audit: seed kit-sync failed every scheduled run for 3 days unseen; /balance froze because only balance --gate ran; /changelog froze because it rode the product-manager PR, which went red and was superseded. foundation/selftest.py now checks every scheduled workflow in the org and every generated site data stamp, as failure-audit detectors.",
+  "probe": "file:foundation/selftest.py"
+ },
+ "kind": "lesson",
+ "title": "Silent loops and frozen pages: a green run is not a landed result",
+ "session": ""
+}
