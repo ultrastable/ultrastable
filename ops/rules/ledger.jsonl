@@ -8,3 +8,4 @@
 {"at": "2026-11-20T19:52:53Z", "changed": {"no-merge-over-red/mergeaudit": "ok", "no-open-items/modelwatch": "ok", "no-open-items/unattended": "ok", "held-out-rescoring/rescored": "ok", "own-database/owndb-live": "unmeasured", "hosted-tier-closed-until-proven/tenantcontrols": "ok", "visible-progress/progress": "ok", "visible-progress/progress-apps": "ok", "visible-progress/progress-live": "ok"}}
 {"at": "2026-11-21T16:48:07Z", "changed": {"no-merge-over-red/mergeaudit": "violated"}}
 {"at": "2026-11-22T09:12:13Z", "changed": {"no-merge-over-red/mergeaudit": "ok"}}
+{"at": "2026-11-25T14:23:16Z", "changed": {"front-end-matches-back-end/claims": "violated"}}

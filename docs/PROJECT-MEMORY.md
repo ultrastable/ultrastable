@@ -8,8 +8,11 @@
 
 This file is the single source of truth for project memory. Chat memory, tool memory and platform memory stores are read-only pointers to this file and are never edited as a record. Every session starts by reading this file and ends by updating it. Nothing is done until it is deployed end to end; every open item is an issue or an owner card with a default in effect and a closing probe.
 
-Last updated: 2026-11-24
+Last updated: 2026-11-25
 
+- 2026-11-25: Put parked/ PRs on the SLA ladder; stop the sweep reopening them (PARKED-PR-1) (#2084)
+- 2026-11-25: ZERO-MINUTES-1: worker merged #2081
+- 2026-11-25: ROADMAP-AGENT-AGENT-SCOREBOARD: QNFO.OPS #AGENT-SCOREBOARD: Per-agent and per-harness quality scoreboard from intake attri (#2081)
 - 2026-11-23: ZERO-MINUTES-1: worker merged #2037
 - 2026-11-23: ciwatch: file failing-workflow items (CIWATCH-1) (#2037)
 - 2026-11-23: actions-budget: pause non-essential workflows (projected minutes near the free quota) [skip ci]

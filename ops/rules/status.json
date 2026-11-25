@@ -1,5 +1,5 @@
 {
- "at": "2026-11-24T15:51:48Z",
+ "at": "2026-11-25T14:23:16Z",
  "probes": {
   "closed-loops/closedloop": {
    "status": "ok",
@@ -32,10 +32,10 @@
    "item": null
   },
   "front-end-matches-back-end/claims": {
-   "status": "ok",
-   "detail": "claims: 378 verified of 378; 0 drift",
+   "status": "violated",
+   "detail": "claims: 376 verified of 378; 2 drift",
    "fixed": false,
-   "item": null
+   "item": "Q-RULE-front-end-matches-back-end-claims"
   },
   "front-end-matches-back-end/claimcode": {
    "status": "ok",
@@ -218,7 +218,9 @@
    "item": null
   }
  },
- "filed": [],
+ "filed": [
+  "Q-RULE-front-end-matches-back-end-claims"
+ ],
  "rules": {
   "closed-loops": {
    "status": "enforced",
@@ -235,7 +237,7 @@
    "statement": "No decision, question or step is handed to the owner; agents decide, deploy and verify (GUIDING-DIRECTIVE, CODE-ONLY-ORDER)."
   },
   "front-end-matches-back-end": {
-   "status": "unmeasured",
+   "status": "violated",
    "ci": 2,
    "probes": 4,
    "gaps": [
