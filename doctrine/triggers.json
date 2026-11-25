@@ -257,6 +257,14 @@
     "41 5 * * *"
    ]
   },
+  "findable.yml": {
+   "events": [
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "41 7 * * *"
+   ]
+  },
   "first-run.yml": {
    "events": [
     "push",
