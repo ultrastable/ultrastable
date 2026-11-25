@@ -12,3 +12,5 @@
 {"at": "2026-11-25T15:23:27.137062+00:00", "event": "filed", "id": "Q-IMPROVE-fe-skip-link", "metric": "uiux:findings_total", "baseline": 0.0, "better": "down"}
 {"at": "2026-11-25T15:23:27.137062+00:00", "event": "filed", "id": "Q-IMPROVE-be-early-hints", "metric": "external_referrals_7d", "baseline": 83.0, "better": "up"}
 {"at": "2026-11-25T15:33:34.746296+00:00", "event": "filed", "id": "Q-IMPROVE-SIGNAL-uiux", "metric": null, "baseline": null, "better": "up"}
+{"at": "2026-11-25T17:57:24.615232+00:00", "event": "filed", "id": "Q-IMPROVE-fe-speculation", "metric": "uiux:findings_total", "baseline": 0.0, "better": "down"}
+{"at": "2026-11-25T17:57:24.615232+00:00", "event": "filed", "id": "Q-IMPROVE-rel-me", "metric": "social_referrals_7d", "baseline": 0.0, "better": "up"}

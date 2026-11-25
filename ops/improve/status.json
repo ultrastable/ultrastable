@@ -1,47 +1,47 @@
 {
-  "at": "2026-11-25T17:21:19.522429+00:00",
+  "at": "2026-11-25T17:57:24.615232+00:00",
   "signals": [
     {
       "id": "reach",
       "path": "ops/reach/metrics.jsonl",
       "state": "ok",
       "value": 83,
-      "age_h": 17.4
+      "age_h": 18.1
     },
     {
       "id": "search",
       "path": "ops/reach/metrics.jsonl",
       "state": "ok",
       "value": 38,
-      "age_h": 17.4
+      "age_h": 18.1
     },
     {
       "id": "social",
       "path": "ops/reach/metrics.jsonl",
       "state": "ok",
       "value": 0,
-      "age_h": 17.4
+      "age_h": 18.1
     },
     {
       "id": "tenant",
       "path": "ops/reach/metrics.jsonl",
       "state": "ok",
       "value": 150,
-      "age_h": 17.4
+      "age_h": 18.1
     },
     {
       "id": "suggestions",
       "path": "ops/reach/metrics.jsonl",
       "state": "unmeasured",
       "value": null,
-      "age_h": 17.4
+      "age_h": 18.1
     },
     {
       "id": "market",
       "path": "ops/rnd/log.jsonl",
       "state": "stale",
       "value": 3,
-      "age_h": 193.1
+      "age_h": 193.7
     },
     {
       "id": "insight",
@@ -53,45 +53,48 @@
     {
       "id": "uiux",
       "path": "ops/uiux/status.json",
-      "state": "stale",
+      "state": "ok",
       "value": 1,
-      "age_h": 98.0
+      "age_h": 0.6
     },
     {
       "id": "tenant-sync",
       "path": "ops/tenant-sync/metrics.json",
       "state": "ok",
       "value": 1,
-      "age_h": 1.5
+      "age_h": 0.5
     }
   ],
   "tiers": [
     {
       "id": "portfolio",
       "window_days": 14,
-      "merges": 62,
+      "merges": 64,
       "alive": true
     },
     {
       "id": "program",
       "window_days": 7,
-      "merges": 50,
+      "merges": 51,
       "alive": true
     },
     {
       "id": "project",
       "window_days": 3,
-      "merges": 41,
+      "merges": 51,
       "alive": true
     },
     {
       "id": "product",
       "window_days": 7,
-      "merges": 37,
+      "merges": 40,
       "alive": true
     }
   ],
-  "open": 12,
-  "filed": [],
+  "open": 6,
+  "filed": [
+    "Q-IMPROVE-fe-speculation",
+    "Q-IMPROVE-rel-me"
+  ],
   "settle": []
 }
