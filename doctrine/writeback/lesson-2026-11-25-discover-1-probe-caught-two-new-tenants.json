@@ -4,7 +4,7 @@
   "kind": "lesson",
   "date": "2026-11-25",
   "title": "DISCOVER-1 probe caught two new tenants",
-  "body": "discover --check failed twice when a tenant went live without a showcase (What Works, Replication Ledger). Both were added. Next: file the showcase automatically from the tenant's IDEA.md.",
+  "body": "discover --check failed twice when a tenant went live without a showcase (What Works, Replication Ledger). Both were added. Next: file the showcase automatically from the tenant's IDEA.md. Session: session_0156nqDvKe54xZ9t3tXhvDPH. The red suites on this branch were fixed by Session: session_0156nqDu4uGc3HMjQ8qCqHyK (commit a176393f).",
   "probe": "file:foundation/discover.py",
   "session": "session_0156nqDvKe54xZ9t3tXhvDPH"
  },
