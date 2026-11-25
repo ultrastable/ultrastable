@@ -4,72 +4,60 @@ export default {
  "credit": "W. Ross Ashby, Design for a Brain (1952)",
  "now": {
   "claims_drift": {
-   "at": "2026-11-25T20:02:13Z",
+   "at": "2026-11-25T20:24:33Z",
    "ok": true,
    "value": 0
   },
   "deploy_health": {
-   "at": "2026-11-25T20:02:13Z",
+   "at": "2026-11-25T20:24:33Z",
    "ok": true,
    "value": 1.0
   },
   "happy_paths": {
-   "at": "2026-11-25T20:02:13Z",
+   "at": "2026-11-25T20:24:33Z",
    "ok": true,
    "value": 1.0
   },
-  "owner_interventions": {
-   "at": "2026-11-25T20:02:13Z",
-   "ok": false,
-   "value": 23
-  },
+  "owner_interventions": null,
   "research_in_code": null,
-  "second_loop_keep_rate": {
-   "at": "2026-11-25T20:02:13Z",
-   "ok": false,
-   "value": 0.0
-  },
+  "second_loop_keep_rate": null,
   "self_shipping": {
-   "at": "2026-11-25T20:02:13Z",
+   "at": "2026-11-25T20:24:33Z",
    "ok": false,
    "value": 0.714
   },
-  "spec_quality": {
-   "at": "2026-11-25T20:02:13Z",
-   "ok": false,
-   "value": 0.0
-  },
+  "spec_quality": null,
   "spend": {
-   "at": "2026-11-25T20:02:13Z",
+   "at": "2026-11-25T20:24:33Z",
    "ok": true,
    "value": 0.0
   },
   "stalled_clocks": {
-   "at": "2026-11-25T20:02:13Z",
+   "at": "2026-11-25T20:24:33Z",
    "ok": false,
-   "value": 1
+   "value": 4
   },
   "ui_findings": {
-   "at": "2026-11-25T20:02:13Z",
+   "at": "2026-11-25T20:24:33Z",
    "ok": true,
    "value": 0
   },
   "unattended_horizon": {
-   "at": "2026-11-25T20:02:13Z",
+   "at": "2026-11-25T20:24:33Z",
    "ok": true,
    "value": 730
   },
   "value": {
-   "at": "2026-11-25T20:02:13Z",
-   "ok": false,
-   "value": 0.0
+   "at": "2026-11-25T20:24:33Z",
+   "ok": true,
+   "value": 960.0
   }
  },
  "readiness": {
-  "bounds": 0.462,
+  "bounds": 0.538,
   "horizon": 1.0,
   "learning": 0.5,
-  "score": 23
+  "score": 27
  },
  "scopes": {
   "platform": {
@@ -359,15 +347,6 @@ export default {
  },
  "self_changes": [
   {
-   "after": 4,
-   "at": "2026-11-25T20:02:13Z",
-   "before": 3,
-   "reading": 0.0,
-   "var": "second_loop_keep_rate",
-   "verdict": "pending",
-   "what": "give a parameter step more ticks before judging it"
-  },
-  {
    "after": 8,
    "at": "2026-11-24T19:14:07Z",
    "before": 5,
@@ -465,6 +444,15 @@ export default {
    "var": "deploy_health",
    "verdict": "reverted",
    "what": "search: goals.#repair-deploys.weight = 90 (untried in this episode)"
+  },
+  {
+   "after": 8,
+   "at": "2026-11-22T03:42:50Z",
+   "before": 5,
+   "reading": 0.714,
+   "var": "self_shipping",
+   "verdict": "reverted",
+   "what": "search: chain.max_runs_per_day = 8 (untried in this episode)"
   }
  ]
 };

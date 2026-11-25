@@ -7,7 +7,7 @@
  "ledger": "ops/ultrastability.jsonl",
  "item_prefix": "Q-ULTRA",
  "patience_ticks": 2,
- "settle_ticks": 4,
+ "settle_ticks": 3,
  "scopes": {
   "platform": {
    "status": "running",
