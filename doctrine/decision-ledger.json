@@ -5606,39 +5606,6 @@
    "body": "Rowan 2026-11-25: the slow loop existed but every verdict was a revert and Rowan did its job in chat. Added variables owner_interventions, second_loop_keep_rate, spec_quality, research_in_code; common-mode sensor guard; spec gate in the seed; readiness score and self-change log on /ultrastability; paper second-loop-2026.",
    "probe": "grep:foundation/ultrastability.py::def keep_rate",
    "session": "session_0156nqDvpqV1qd6Epa67tywp"
-  },
-  {
-   "id": "decision-2026-11-25-coldstart-1-one-cold-start-contract-every-system-carries-fro",
-   "kind": "decision",
-   "date": "2026-11-25",
-   "title": "COLDSTART-1: one cold-start contract every system carries from birth",
-   "body": "Rowan 2026-11-25: everything must bootstrap fully autonomously from a cold start. doctrine/coldstart.json lists the capabilities a system owes from birth (repo, back end, front end, clock, discovery, knowledge graph, progress, live content, self-improvement, platform sync, year unattended, goals, instructions); coldstart --check proves the seed carries them, that every named foundation command resolves and that the platform and seed agent files agree; seedlaunch --e2e-oidc probes every live path on the fresh seed. Root causes removed: health-only seeds hid /.well-known/ultrastable.json, /api/graph, /api/progress and /api/stickiness (now PUBLIC_READS in seed/worker/src/visibility.js); the CLI dispatched only hand-listed modules, so detector static-content could not run (any module with main now resolves); duplicate and missing rule bullets in the agent files. Probe: python3 -m foundation coldstart --check passes; tests/foundation/test_coldstart.py.",
-   "probe": "grep:foundation/coldstart.py::def check\\("
-  },
-  {
-   "id": "decision-2026-11-25-every-config-has-a-json-schema-standards-before-home-grown-f",
-   "kind": "decision",
-   "date": "2026-11-25",
-   "title": "Every config has a JSON Schema; standards before home-grown formats",
-   "body": "OPEN-STANDARDS-1: syntaxes (YAML, TOML, JSON) do not make surfaces interoperate, shared schemas and protocols do. Every JSON config in the platform and seed is validated against a draft 2020-12 schema in a SchemaStore-format catalog; the standards register lists every standard as supported, partial or planned with an executor item; OpenSSF Scorecard and the SPDX SBOM feed a weekly loop.",
-   "probe": "grep:.github/workflows/checks.yml::foundation schemas --check"
-  },
-  {
-   "id": "lesson-2026-11-25-owner-found-9-failures-before-any-loop-redteam-1",
-   "kind": "lesson",
-   "date": "2026-11-25",
-   "title": "Owner found 9 failures before any loop (REDTEAM-1)",
-   "body": "Probes checked that mechanisms exist, not that their output is true. Classes: vacuous, stale, unscored, phantom, timebomb, undetected, starved, credential. foundation/redteam.py tests each adversarially; owner_found_30d is the metric.",
-   "probe": "file:foundation/redteam.py",
-   "session": "session_0156nqDrAs7rUXpvph8XjAkz"
-  },
-  {
-   "id": "lesson-2026-11-25-seeded-systems-shipped-npm-code-with-no-dependabot",
-   "kind": "lesson",
-   "date": "2026-11-25",
-   "title": "Seeded systems shipped npm code with no Dependabot",
-   "body": "Root cause: seed/.github had no dependabot.yml, so DEP-LOOP-1 reached only the platform. The seed now carries one for github-actions and worker npm; test_dependabot_covers_every_ecosystem checks both roots on every change.",
-   "probe": "file:seed/.github/dependabot.yml"
   }
  ]
 }
