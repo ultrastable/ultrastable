@@ -119,6 +119,11 @@ export async function launchesInternal(request, env) {
     return J({ ok: true, dropped: rec.id });
   }
   if (b.op === "repo") return repoOp(b, env);
+  if (b.op === "tenant-repo") {  // TENANT-REPO-2: tenant-repos.yml's credential-free route; the tick decides, the name rule is checked there too
+    if (!env.TICK || !env.INTERNAL_DEPLOY_KEY) return J({ ok: false, waiting_on: "host-binding", error: "the site has no route to the tick Worker" }, 409);
+    const r = await env.TICK.fetch(new Request("https://tick.internal/host/tenant-repo", { method: "POST", headers: { "content-type": "application/json", "x-internal-key": env.INTERNAL_DEPLOY_KEY }, body: JSON.stringify({ repo: String(b.repo || ""), visibility: b.visibility === "private" ? "private" : "public", description: String(b.description || "").slice(0, 300) }) }));
+    return J((await r.json().catch(() => null)) || { ok: false, error: "tick Worker answered HTTP " + r.status }, r.status);
+  }
   if (b.op === "mark") {
     const rec = await getLaunch(env, String(b.id || "")); if (!rec) return J({ ok: false, error: "no such launch" }, 404);
     if (b.state) { if (!MARKS.has(b.state)) return J({ ok: false, error: "unknown state " + b.state }, 400); rec.state = b.state; }
