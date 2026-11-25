@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-2289",
+  "title": "OL-PR-2289: land or supersede pull request #2289 (conflict)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #2289 is conflict\n**Done check:** cmd:python3 -m foundation loopowner --closed 2289\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #2289 (`claude/project-thread-q8wjkt` at a205c20ccf, opened by rwnq8): CACHE-FRESH-1: visitors see a deploy within a minute. The session that opened it is not its closer and is never asked to act. The branch conflicts with main. Merge main into the branch and resolve it, or redo the change from main in a new pull request and close this one as superseded. Failed checks: checks, fast. Files (17): .github/workflows/deploy-ultrastable.yml, .github/workflows/regen-generated.yml, agents/AGENTS.md, doctrine/writeback/lesson-2026-11-25-deploys-are-judged-by-what-visitors-see-the-edge-cache-must-.json, doctrine/writeback/lesson-2026-11-25-owner-found-9-failures-before-any-loop-redteam-1.json, foundation/redteam.py, scripts/regen_generated.py, seed/agents/AGENTS.md, seed/docs/claims.json, seed/scripts/redteam.py, seed/scripts/stale_probe.mjs, seed/tests/test_redteam.py, seed/worker/src/freshcache.js, seed/worker/src/generated.js, seed/worker/src/index.js, seed/worker/test/freshcache.test.js, site/worker.js.\n\n**Prediction:** open_prs <= 0 within 24 h\n**Out of scope:** changing what pull request #2289 does; land it as written or carry it onto main unchanged.\n\n**Closing probe:** `python3 -m foundation loopowner --closed 2289` exits 0 (pull request #2289 is merged or closed).",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
