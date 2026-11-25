@@ -23,6 +23,14 @@ class ClaimCode(unittest.TestCase):
         (d / "site/page.js").write_text('const t = "The loop runs every 10 minutes and always fixes what it finds.";\n')
         errs = claimcode.check(d); self.assertEqual(len(errs), 1); self.assertIn("site/page.js:1", errs[0])
 
+    def test_counts_and_cadences_in_words_are_claims(self):
+        """SHOWCASE-CLAIM-1: the What Works showcase said 'five policy areas' (the code had twelve) and 'every six hours' style cadences in
+        words slipped past the digit-only patterns."""
+        d = _tree()
+        (d / "site/page.js").write_text('const a = "Live public site with five policy areas and a page per programme.";\n'
+                                        'const b = "The loop refreshes the ranking every six hours from public data.";\n')
+        errs = claimcode.check(d); self.assertEqual(len(errs), 2, errs)
+
     def test_a_bound_claim_passes_and_a_changed_sentence_fails(self):
         q = "The loop runs every 10 minutes"
         d = _tree([{"id": "loop-cadence", "source": "site/page.js", "quote": q, "probe": {"file": "t/cadence.test.js", "contains": "every 10 minutes"}}])

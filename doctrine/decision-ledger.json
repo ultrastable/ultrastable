@@ -5535,6 +5535,33 @@
    "body": "Merges failed on GitHub 5xx with only manual retry; four separate gh helpers had no retry. seed/worker/src/ghfetch.js is the one shared fetch.",
    "probe": "file:seed/worker/src/ghfetch.js",
    "session": "session_0156nqDrE184nXAFKcTRxk26"
+  },
+  {
+   "id": "decision-2026-11-25-ultrastable-seed-is-kept-public-and-is-the-launch-template",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "ultrastable/seed is kept, public, and is the launch template",
+   "body": "org/repos.json said archived; live it is the template visitor app repos are generated from. Registry now says keep/public (DISCOVER-1). Visitor app repos stay private unless declared public, because they hold visitor idea text.",
+   "probe": "grep:org/repos.json::Revived 2026-11-25 as the launch template",
+   "session": "session_0156nqDtpVMPp6pQZ9ny5wAS"
+  },
+  {
+   "id": "lesson-2026-11-25-openalex-refuses-cloudflare-workers-without-a-key-give-the-l",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "OpenAlex refuses Cloudflare Workers without a key; give the ledger keyless routes and a second egress",
+   "body": "LEDGER-KEYLESS-1: OpenAlex answers 429 'Insufficient budget. This request has no API key' to the Replication Ledger Worker, and Europe PMC covers only biomedicine. The beat now tries, after OpenAlex refuses: the OpenAlex mirror a GitHub runner lands daily (data/openalex.json via ledger-openalex.yml, same openalexCandidates and discoverFindings code, zero subrequests), Europe PMC, then Crossref works search and Semantic Scholar paper search (keyless.js, one shared BEAT.KEYLESS call budget per beat, a record kept only when it names the finding). Every record goes through the same reader and verbatim-quote guard. /api/citations now reports total, checked and unchecked against the seed DOIs and answers 503 after 24 beats when any is unchecked or failed (detector replication-ledger-citations, fm-unverified-citations), so never-verified no longer reads as verified.",
+   "probe": "grep:instances/replication-ledger/worker/keyless.test.mjs::the OpenAlex mirror a runner landed answers first",
+   "session": "session_0156nqDtpVMPp6pQZ9ny5wAS"
+  },
+  {
+   "id": "lesson-2026-11-25-today-s-failures-shared-seven-root-cause-classes-each-now-ha",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Today's failures shared seven root-cause classes; each now has a check",
+   "body": "DRIFT-GUARD-1 (foundation/driftguard.py, doctrine/driftguard.json): declared-vs-live drift (repo visibility reset hourly by the tick, seed/worker/src/declared.js; stale visual baselines roll forward), single-route schedules (tick pulses every tenant /pulse/watch hourly; crons counted against the plan limit), missed push triggers (dispatched by dg-triggers), empty-commit loops, account drift (retired account by sha256 only), built-without-evidence (graph rows read live; checks refuse a deploy verified only by the tick /health), and hand-kept repo lists (selftest reads org/repos.json and tenant-repos.json).",
+   "probe": "grep:foundation/driftguard.py::DRIFT-GUARD-1",
+   "session": "session_0156nqDtpVMPp6pQZ9ny5wAS"
   }
  ]
 }

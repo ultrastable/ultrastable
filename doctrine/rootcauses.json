@@ -56,6 +56,10 @@
   {"id": "estimate-miscalibrated", "match": {"text": ["(?i)brier", "(?i)calibrat"]},
    "root": "predictions were scored against outcomes without feeding the score back into the forecaster",
    "guard": "grep:foundation/decisions.py::recalibrat", "owner": "operations",
-   "remedy": "Recalibrate the forecaster from settled outcomes until its Brier score beats a coin."}
- ]
+   "remedy": "Recalibrate the forecaster from settled outcomes until its Brier score beats a coin."},
+    {"id": "declared-live-drift", "match": {"text": ["(?i)declared (public|private)", "(?i)visibility", "(?i)baseline (is )?stale"]}, "root": "a fact the repository declares was applied once and never read back against the live system", "guard": "grep:seed/worker/src/declared.js::reconcileVisibility", "owner": "operations", "remedy": "Read the live value on a clock and set it back to the declaration (DECLARED-LIVE-1)."},
+    {"id": "single-route-schedule", "match": {"text": ["(?i)cron.?trigger limit", "(?i)no beat", "(?i)pulse"]}, "root": "a back end's only route to run was its own cron, an account-wide quota nobody counted", "guard": "grep:seed/worker/src/declared.js::pulseTenants", "owner": "operations", "remedy": "Give the back end a pulse URL in doctrine/topology.json; the tick calls it hourly."},
+    {"id": "missed-trigger", "match": {"text": ["(?i)started no run", "(?i)did not run (after|on) (merge|push)"]}, "root": "a push made with a run's own token starts no workflow, and nothing compared pushes with runs", "guard": "grep:foundation/driftguard.py::def triggers", "owner": "operations", "remedy": "driftguard --triggers --apply dispatches the workflow."},
+    {"id": "built-without-evidence", "match": {"text": ["(?i)marked (built|done)", "(?i)without (live )?verif"]}, "root": "state was written by the agent that wrote the code, not by a live reading", "guard": "grep:foundation/driftguard.py::def built_live", "owner": "product", "remedy": "Set the row back until its live probe shows evidence."}
+  ]
 }

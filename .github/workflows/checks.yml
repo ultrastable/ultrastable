@@ -190,6 +190,9 @@ jobs:
           python3 -m foundation tenantrepos --check  # TENANT-REPO-1: tenant code lives in its own repository
           python3 -m foundation pointclick --check
           python3 -m foundation claimcode --check
+          python3 -m foundation driftguard --check  # DRIFT-GUARD-1: every incident class has a check, detector and failure mode
+          python3 -m foundation driftguard --crons  # DRIFT-GUARD-1: crons fit the account's plan limit; every tenant clock has a pulse route
+          python3 -m foundation driftguard --handoff-lint  # DRIFT-GUARD-1: a deploy is verified by reading what it deployed, not the tick's /health
           python3 -m foundation silentfail --check  # SILENT-FAIL-1: Worker bundle, duplicate modules, silent-failure classes
           printf '%s' "$PR_BODY" > "$RUNNER_TEMP/pr_body.txt" && python3 -m foundation silentfail --cite "$RUNNER_TEMP/pr_body.txt"  # a done claim cites a live reading
           python3 -m foundation directive --lint HANDOFF.md docs/lessons/*.md

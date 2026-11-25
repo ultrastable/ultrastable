@@ -341,6 +341,14 @@
     "11 5 * * *"
    ]
   },
+  "ledger-openalex.yml": {
+   "events": [
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "41 5 * * *"
+   ]
+  },
   "loop.yml": {
    "events": [
     "workflow_dispatch"
