@@ -2,6 +2,7 @@
 // Cron fires runTick; GET /health shows the last tick's four-line report.
 // Standard issue: first-party web analytics (analytics/analytics.js): /a.js beacon, /a/e collector, GET /api/analytics (bearer ANALYTICS_TOKEN).
 import { paced } from './pace.js';
+import { discoverRoute, heartbeat as directoryHeartbeat } from './discover.js';  // DISCOVER-1
 import { withKnobs, readGoals, registerTenant, reportReadings, knobValues } from './goals.js';  // GOALS-1
 import { tune } from './roi.js';  // BOUNDARIES-1
 import { runTick, lastTickForHealth, METRICS, ensureItem } from './tick.js';
@@ -111,6 +112,7 @@ export default {
     const cut = await decide(env.DB, env, { githubOk }).catch(e => ({ run: (env.SLOT || 'primary') !== 'standby', notes: ['cutover check failed: ' + String(e && e.message).slice(0, 160)] }));
     await beat(env.DB, 'cutover', async () => ({ run: cut.run, slot: cut.slot, epoch: cut.epoch, promoted: Boolean(cut.promoted), notes: cut.notes })).catch(e => console.error('cutover beat', e && e.message));
     if (!cut.run) { if (env.SLOT === 'standby' || cut.slot !== 'primary') ctx.waitUntil(refreshDue(env.DB, env).catch(() => null)); return; }
+    ctx.waitUntil(directoryHeartbeat(env, config).then(r => { if (r.sent) console.log('directory heartbeat', r.status); }).catch(e => console.error('directory heartbeat', e && e.message)));  // DISCOVER-1: daily, opt-out-able
     const gov = await aiFor(env);
     if (gov.state) console.log('budget', JSON.stringify({ mode: gov.state.mode, why: gov.state.why, neurons_today: Math.round(gov.state.usage.ai_neurons_today), cap: gov.state.allowance.ai_neurons_day }));
     const caps = capsFor(planOf(config, env));  // PLAN-1: paid plan, 1,000 planned subrequests and no rotation
@@ -186,6 +188,7 @@ export default {
     if (au) return au;
     { const ah = await handleAppHost(request, env, { tenant: env.TENANT || config.org_slug || 'default' }); if (ah) return ah; }  // APP-REPO-1: repositories and one-repository tokens for apps this system hosts
     if (halted(config, env) && (url.pathname === '/hook/github' || url.pathname === '/hook/host' || url.pathname === '/hook/cloudflare' || url.pathname === '/pulse/watch')) return Response.json({ halted: true }, { status: 202 });  // HALT-1
+    { const d = discoverRoute(url, env, config); if (d) return d; }  // DISCOVER-1: public manifest, nothing private
     if (url.pathname === '/hook/cloudflare' && request.method === 'POST') return onCloudflareAlert(request, { db: env.DB, secret: env.CF_ALERT_SECRET, fileItem: (it) => ensureItem(env.DB, it) });  // CF-ALERTS-1: Cloudflare's own alerts become queue items
     if (url.pathname === '/hook/github' && request.method === 'POST') {  // event-driven trigger: signed GitHub webhook wakes a role now
       const body = await request.text();
