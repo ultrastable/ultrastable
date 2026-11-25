@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
 // KGRAPH-1: the shared knowledge-graph engine. Extraction and identity, incremental sync with retirement (no silent drop), analytics,
 // the insights loop (settle and calibrate), the read side, and the DDL kept equal to the migration.
 import test from 'node:test';
