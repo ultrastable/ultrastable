@@ -347,6 +347,51 @@
     "file": "tests/foundation/test_improve.py",
     "contains": "class SyncBothWays"
    }
+  },
+  {
+   "id": "directory-daily-listing",
+   "source": "site/worker.js",
+   "quote": "checks in once a day",
+   "probe": {
+    "file": "seed/worker/src/discover.js",
+    "contains": "now.getUTCHours() !== 3"
+   }
+  },
+  {
+   "id": "directory-recheck-daily",
+   "source": "site/worker.js",
+   "quote": "rechecks it daily",
+   "probe": {
+    "file": "site/directory.js",
+    "contains": "20 * 3600e3"
+   }
+  },
+  {
+   "id": "directory-drop-three",
+   "source": "agents/AGENTS.md",
+   "quote": "three failed days",
+   "probe": {
+    "file": "site/directory.js",
+    "contains": "row.fails + 1 >= 3"
+   }
+  },
+  {
+   "id": "directory-heartbeat-daily-agents",
+   "source": "agents/AGENTS.md",
+   "quote": "a daily heartbeat",
+   "probe": {
+    "file": "seed/worker/src/discover.js",
+    "contains": "now.getUTCHours() !== 3"
+   }
+  },
+  {
+   "id": "directory-recheck-agents",
+   "source": "agents/AGENTS.md",
+   "quote": "rechecks daily",
+   "probe": {
+    "file": "site/directory.js",
+    "contains": "20 * 3600e3"
+   }
   }
  ],
  "baseline": [

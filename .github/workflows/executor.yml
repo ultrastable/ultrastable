@@ -24,6 +24,7 @@ permissions:
   pull-requests: write
   issues: write
   actions: write
+  id-token: write  # AI-OIDC-1: Workers AI through the site Worker's /__internal/cf route; the repo's Cloudflare secrets name the retired account
   models: read  # FREE-LLM-1: GitHub Models over the built-in token, the first and free rung of the code-agent ladder
 jobs:
   # SPARK-QUEUE-1: the chain cap is decided outside the executor's concurrency group, so a capped spark never displaces a queued dispatch (measured 2026-11-17: capped workflow_run sparks cancelled manual and Worker dispatches)

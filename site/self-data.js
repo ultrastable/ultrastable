@@ -755,6 +755,7 @@ export default {
   "ultrastable-dashboard",
   "ultrastable-replication-ledger",
   "ultrastable-site",
+  "ultrastable-spinoffs",
   "ultrastable-tenants",
   "ultrastable-tick",
   "ultrastable-unlearn",
@@ -2154,6 +2155,10 @@ export default {
    },
    {
     "id": "ultrastable-what-works",
+    "state": "live"
+   },
+   {
+    "id": "ultrastable-spinoffs",
     "state": "live"
    },
    {

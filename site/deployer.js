@@ -58,7 +58,8 @@ export async function ingestTransparency(request, env) {
 export const CF_BUCKET = "ultrastable-git", CF_PREFIX = "backups/";
 const Q = "(\\?[\\w=&.%:/-]*)?";
 const CF_RULES = [
-  ["GET", /^subscriptions$/],  // LIVE-PLAN-1: read-only plan check for the owner page
+  ["GET", /^subscriptions$/],
+  ["POST", /^ai\/run\/@cf\/[\w.-]+\/[\w.-]+$/],  // AI-OIDC-1: Workers AI inference for the executor's code-agent ladder (foundation/agents.py), a model under @cf/ only  // LIVE-PLAN-1: read-only plan check for the owner page
   ["GET", new RegExp("^d1/database" + Q + "$")],
   ["POST", /^d1\/database\/[0-9a-f-]{36}\/(export|query)$/],
   ["GET", new RegExp("^storage/kv/namespaces" + Q + "$")],
