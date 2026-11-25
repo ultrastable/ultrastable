@@ -1876,6 +1876,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **Every system keeps a knowledge graph of all its data and mines it for links nobody made (KGRAPH-1, Rowan 2026-11-25).** \"All",
+   "detail": "",
+   "how": "file:seed/worker/src/graph.js + file:seed/worker/migrations/0031_graph.sql + file:research/studies/knowledge-graph-2026.json + file:foundation/kgraph.py + file:doctrine/kgraph.json + file:tests/foundation/test_kgraph.py",
+   "id": "cited-af406de0ff",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Automate back-end and front-end development; improve on its own (IMPROVE-1, FRONTEND-AUTO-1, Rowan 2026-11-25).** \"Automatically",
    "detail": "",
    "how": "file:seed/scripts/improve.py + file:seed/autonomy/improve.json + file:seed/.github/workflows/improve.yml + file:foundation/improve.py + file:doctrine/improve.json + file:tests/foundation/test_improve.py",
@@ -2528,6 +2537,15 @@ export default {
    "detail": "",
    "how": "file:seed/worker/src/vendor/core/stickiness.js + file:seed/worker/src/stickiness.js + file:instances/ultrastable/progress.json + file:seed/worker/test/stickiness.test.js + file:workers/core/stickiness/stickiness.test.js",
    "id": "mirror-9111f7c2d8",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Every system keeps a knowledge graph of all its data and mines it for links nobody made (KGRAPH-1, Rowan 2026-11-25).** \"All",
+   "detail": "",
+   "how": "file:seed/worker/src/graph.js + file:seed/worker/migrations/0031_graph.sql + file:research/studies/knowledge-graph-2026.json + file:foundation/kgraph.py + file:doctrine/kgraph.json + file:tests/foundation/test_kgraph.py",
+   "id": "mirror-7b8a603445",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3449,7 +3467,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 380,
-  "total": 380
+  "pass": 382,
+  "total": 382
  }
 };

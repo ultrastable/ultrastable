@@ -1,16 +1,17 @@
 # SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 # Copyright (c) Ultrastable
 """KGRAPH-1: the repository half of the knowledge graph builds, finds leads, files at most the daily cap and settles a lead when the pair is linked."""
-import json, tempfile, unittest
+import json, unittest
 from pathlib import Path
 from foundation import kgraph as K
+from _repo import scratch
 
 POL = {"sources": [{"glob": "docs/issues/*.json", "kind": "item", "text": ["title", "body"]}],
        "insight": {"kinds": ["item"], "threshold": 0.5, "min_shared": 3, "max_term_df": 40, "hub_degree": 60, "max_leads_per_run": 5, "max_filed_per_day": 1}, "tenants": "x"}
 
 
 def repo(items):
-    d = Path(tempfile.mkdtemp())
+    d = Path(scratch())
     (d / "docs/issues").mkdir(parents=True)
     (d / "doctrine").mkdir()
     (d / "doctrine/kgraph.json").write_text(json.dumps(POL))
