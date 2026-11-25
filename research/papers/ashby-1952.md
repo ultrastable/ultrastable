@@ -34,7 +34,7 @@ Source: doctrine/ultrastability.json.
 - ULTRASTABILITY-1 (`foundation/ultrastability.py`): after patience_ticks readings out of limits, one step is taken and logged with a prediction
 - CLOCKWORK-1 (`.github/workflows/watchdog.yml`): the second loop runs on the watchdog clock and on the cost guard, server-side
 
-**Measured here:** second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl): 77 (n = 12643). Target >= 1. Verdict: **met**.
+**Measured here:** second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl): 77 (n = 12807). Target >= 1. Verdict: **met**.
 Source: ops/ultrastability.jsonl.
 
 ### A3. Nothing the second loop can change (systems)
@@ -69,7 +69,7 @@ Source: ops/ultrastability.jsonl verdicts.
 - CLOSED-LOOP-1 (`foundation/closedloop.py`): an output with no code consumer fails the build
 - SERVER-OWNS-LOOPS-1 (`foundation/loopowner.py`): every loop has a server-side owner; a client session never closes one
 
-**Measured here:** share of registered loops that declare a closing probe and a server-side owner: 1.0 (n = 111). Target >= 1.0. Verdict: **met**.
+**Measured here:** share of registered loops that declare a closing probe and a server-side owner: 1.0 (n = 112). Target >= 1.0. Verdict: **met**.
 Source: instances/ultrastable/loop-registry.json (declared).
 
 ## Limits

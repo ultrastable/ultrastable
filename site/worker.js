@@ -1078,6 +1078,7 @@ const handler = {
     { const cp = await controlPlane(request, env, ctx); if (cp) return cp; } // CONTROL-PLANE-1: /api/v1
     if (u.pathname === "/feed.xml" || u.pathname === "/feed.json") { if (env && env.DB) { try { ctx.waitUntil(record(env, request, { host: CANON, path: u.pathname, ref: "", name: "feed" })); } catch (e) { console.error("feed hit", String(e && e.message)); } } return u.pathname === "/feed.xml" ? feedResponse(CANON) : jsonFeedResponse(CANON); } // REACH-1; STICKY-1: a feed request is counted server-side (name "feed", daily-rotating id, no cookie), so the number of daily feed readers is measured
     if (u.pathname === "/api/stickiness" || /^\/api\/stickiness\/queue\/[a-z0-9-]{1,60}\.json$/.test(u.pathname)) { let j = { error: "tick worker not reachable" }, st = 503; try { if (env && env.TICK) { const r = await env.TICK.fetch(new Request("https://tick.internal" + u.pathname)); j = await r.json(); st = r.status; } } catch (e) { console.error("api/stickiness", String(e && e.message)); } return new Response(JSON.stringify(j), { status: st, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } }); } // STICKY-1: the judged content state and the social queue the core social module drains
+    if (request.method === "GET" && u.pathname === "/api/growth/hits") return growthHits(env); // GROWTH-HITS-1: aggregate counts only, read by foundation/growth.py so Actions needs no Cloudflare token
     if (u.pathname === "/api/reach") { const v = await jget(env, "promote:reach"); return Response.json(v || { rows: null, error: "not measured yet" }, { status: v ? 200 : 503, headers: { "cache-control": "public, max-age=600", "access-control-allow-origin": "*" } }); } // ATTENTION-1: aggregate counts only
     { const pr = await progressRoutes(u, env, shell, HTML, CANON); if (pr) return pr; } // PROGRESS-1
     { const ys = yearRoutes(u, shell, HTML); if (ys) return ys; } // YEAR-SIM-1: /year, /year.json
@@ -1176,3 +1177,24 @@ export function forwardTo(request, upstream) {
   return fetch(new Request(new URL(u.pathname + u.search, t), { method: request.method, headers: h, body: ["GET", "HEAD"].includes(request.method) ? undefined : request.body, redirect: "manual" }));
 }
 export default { async scheduled(event, env, ctx) { if (env && env.UPSTREAM_ORIGIN) return; if (halted(null, env)) return; /* HALT-1 */ env = budgetEnv(env, SHARES.site); ctx.waitUntil(tick(env, ctx).catch(e => console.error("tick failed", String(e)))); }, async fetch(request, env, ctx) { { const dropped = hookEventFilter(request); if (dropped) return dropped; } /* FREE-TIER-1 */ if (env && env.UPSTREAM_ORIGIN) { const fw = forwardTo(request, env.UPSTREAM_ORIGIN); if (fw) return fw; } env = budgetEnv(env, SHARES.site); { const idp = await internalDeploy(request, env || {}); if (idp) return idp; } /* HANDOFF-1 */ if (request.method === "POST" && new URL(request.url).pathname === "/pulse/watch") { const w = await watchTick(env); return Response.json({ ok: w.status === "ok", via: "ultrastable-site", ...w }, { status: w.status === "ok" ? 200 : 503 }); } /* SINGLE-ACCOUNT-1: the second, independent restart route for the tick, inside the ultrastable account */ /* OWNER-ROUTE-1: owner paths are tested before AUTH_PATH, because /connect/github-signin also matches /connect/<provider> and would land on the tick Worker's placeholder */ if (env && env.OWNER && OWNER_PATH.test(new URL(request.url).pathname.replace(/\/$/, ""))) return env.OWNER.fetch(request); if (env && env.TICK && AUTH_PATH.test(new URL(request.url).pathname)) { try { return await env.TICK.fetch(request); } catch (e) { return new Response('<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width"><title>Connect</title><body style="font:16px system-ui;max-width:32rem;margin:4rem auto;padding:0 1rem"><h1>One moment</h1><p>The connection service is restarting. <a href="/connect/github">Try again</a>.</p>', { status: 503, headers: { 'content-type': 'text/html; charset=utf-8', 'retry-after': '10' } }); } } { const kf = keyFile(new URL(request.url).pathname); if (kf) return kf; } { const pk = await passkeys(request, env); if (pk) return pk; } { const z = await authzen(request, env); if (z) return z; } const a = await agentic(request, env); if (a) return a; if (new URL(request.url).pathname === "/webmcp.js") return new Response(WEBMCP_JS, { headers: { "content-type": "text/javascript; charset=utf-8", "cache-control": "public, max-age=300", "x-content-type-options": "nosniff" } }); return negotiate(withLinks(await handler.fetch(request, env, ctx), request), request); } };
+
+
+// GROWTH-HITS-1 (2026-11-25): the product manager runs in Actions, which had no Cloudflare token, so every growth metric read empty and it filed nothing.
+// The Worker already holds the analytics database; it serves the four 7-day aggregates (no paths, no visitor ids), cached for 10 minutes.
+export async function growthHits(env, now = Date.now()) {
+  const h = { "content-type": "application/json", "cache-control": "public, max-age=600", "access-control-allow-origin": "*" };
+  if (!env || !env.DB) return new Response(JSON.stringify({ error: "no analytics database" }), { status: 503, headers: h });
+  const w = Math.floor(now / 1000) - 7 * 86400;
+  try {
+    const one = (sql) => env.DB.prepare(sql).bind(w).first();
+    const [a, b, c] = await Promise.all([
+      one("SELECT COUNT(*) AS pv, COUNT(DISTINCT vid) AS v FROM hits WHERE bot=0 AND name='pageview' AND at>=?"),
+      one("SELECT COUNT(*) AS n FROM hits WHERE bot=1 AND at>=?"),
+      one("SELECT COUNT(*) AS n FROM hits WHERE bot=0 AND name='pageview' AND path LIKE '/pilot%' AND at>=?"),
+    ]);
+    return new Response(JSON.stringify({ pageviews_7d: a.pv, visitors_7d: a.v, agent_hits_7d: b.n, pilot_page_views_7d: c.n, window_days: 7 }), { headers: h });
+  } catch (e) {
+    console.error("api/growth/hits", String(e && e.message));
+    return new Response(JSON.stringify({ error: "analytics read failed" }), { status: 503, headers: h });
+  }
+}

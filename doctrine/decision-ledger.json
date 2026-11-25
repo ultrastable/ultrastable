@@ -4387,7 +4387,7 @@
    "date": "2026-11-21",
    "title": "Unlearn phase 1 runs as its own Worker with no secrets",
    "body": "ultrastable-unlearn: one Worker, one D1, one hourly cron, zero dependencies, library-first moves so no model or credential can stop it; a visit catches up a silent cron; runway.json maps 12 year-long risks to tested safeguards.",
-   "probe": "file:instances/unlearn/worker/worker.test.mjs",
+   "probe": "grep:doctrine/tenant-repos.json::\"state\": \"moved\"",
    "session": "session_0156nqDtYB5VwjCzYcyHVqNp"
   },
   {
@@ -4600,7 +4600,7 @@
    "date": "2026-11-22",
    "title": "Unlearn research principles carried in code",
    "body": "Each principle in instances/unlearn/phases.json names a probe; phase 1 ships the help ladder, who-led measure and wide-walls measure; phase 3 principles (fade support, sandbox) wait for phase 3 gates.",
-   "probe": "grep:tests/foundation/test_unlearn.py::test_principles_are_in_code"
+   "probe": "grep:doctrine/tenant-repos.json::\"state\": \"moved\""
   },
   {
    "id": "decision-2026-11-22-cloudflare-alerts-reach-the-tick-cloudflare-alerts-closed",
@@ -4727,7 +4727,7 @@
    "date": "2026-11-22",
    "title": "Unlearn becomes an evidence encyclopedia of beliefs to unlearn",
    "body": "Rowan found the coaching-only Unlearn too unstructured. The tenant is now a clickable, encyclopedic site of popular beliefs the evidence contradicts, modelled on Practical Solutions, with each entry in a guided debunking order and an hourly evidence loop (Crossref DOIs, Europe PMC new reviews, freshness, review queue). The coaching tool stays at /coach.",
-   "probe": "grep:instances/unlearn/worker/entries.js::export const FORMAT"
+   "probe": "grep:doctrine/tenant-repos.json::\"state\": \"moved\""
   },
   {
    "id": "decision-2026-11-22-unlearn-improves-itself-grounded-review-labels-automatic-re-",
@@ -4735,7 +4735,7 @@
    "date": "2026-11-22",
    "title": "Unlearn improves itself: grounded review labels, automatic re-grading, Lab discovery, wording trials",
    "body": "Rowan asked to grow Unlearn and make it run and improve automatically. Decision: a model may only label or re-word, never add facts; every label or draft must quote a sentence present in the abstract it read, re-words may add no number or name, entries' cited sources are never changed by a model, drafts live on /lab and are never published as entries, and wording trials need 40 answers per arm and a two-proportion z of 1.96 to replace the original.",
-   "probe": "grep:instances/unlearn/worker/lab.js::export function grounded",
+   "probe": "grep:doctrine/tenant-repos.json::\"state\": \"moved\"",
    "session": "session_0156nqDvj2EuthJ3xYxicfND"
   },
   {
@@ -4744,7 +4744,7 @@
    "date": "2026-11-22",
    "title": "Unlearn tells famous-finding-retold stories by itself and gives readers a reason to come back daily",
    "body": "Rowan wants far more narrative-vs-later-evidence entries, automated, and a sticky site that runs a year unattended. Decision: a retold topic with then/now timelines graded honestly; a second daily discovery search for replications and re-analyses; drafts reach their own page only after reader votes and only with an index citation, always labelled a draft from one paper; a myth of the day cycle, an Atom feed and a browser-only streak bring readers back without accounts or cookies.",
-   "probe": "grep:instances/unlearn/worker/lab.js::export const RETOLD_QUERY",
+   "probe": "grep:doctrine/tenant-repos.json::\"state\": \"moved\"",
    "session": "session_0156nqDvj2EuthJ3xYxicfND"
   },
   {
@@ -4860,7 +4860,7 @@
    "date": "2026-11-22",
    "title": "Unlearn change layer: graded practices with private trials",
    "body": "Rowan asked for evidence-based change, not only debunking. Practices are full graded entries with a trial kit; all personal trial data stays in the reader's browser; the server counts anonymous events per practice and re-orders suggested if-then plans by keep rate; oversold claims (power posing, ego depletion, growth mindset) get no kit; the Lab drafts candidate practices from intervention reviews under the same grounding guards.",
-   "probe": "file:instances/unlearn/worker/change.js",
+   "probe": "grep:doctrine/tenant-repos.json::\"state\": \"moved\"",
    "session": "session_0156nqDvj2EuthJ3xYxicfND"
   },
   {
@@ -4923,6 +4923,66 @@
    "body": "test_stages_advance_only_with_evidence called seedlife.probe with the real clock against a verify written at a fixed 2026-11-21 NOW; once 48 h passed the test failed on every PR (red tests-a, unrelated to the diff). probe now takes now= and the test passes the fixture clock.",
    "probe": "grep:tests/foundation/test_seedlife.py::probe\\(\"s1\", self.root, NOW\\)",
    "session": "session_0156nqDvX8P4Z5wfkTJvFwh9"
+  },
+  {
+   "id": "decision-2026-11-25-impact-loop-1-generic-impact-and-reach-loop-in-core-impact",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "IMPACT-LOOP-1: generic impact and reach loop in core/impact",
+   "body": "core/impact records metric series, detects plateaus, plans bounded lever items with predictions and settles them; tenants declare metrics and levers. Practical Solutions is the first consumer.",
+   "probe": "file:workers/core/impact/index.js",
+   "session": "session_0156nqDrqL9XCgR639FAfNMv"
+  },
+  {
+   "id": "decision-2026-11-25-growth-metrics-read-through-the-site-worker-not-a-token-in-a",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Growth metrics read through the site Worker, not a token in Actions",
+   "body": "GROWTH-HITS-1 (2026-11-25, Session: session_0156nqDvJ5oNPSCVZzS8cYKL): the Cloudflare token never reached Actions, so growth metrics were empty for days. The site Worker already binds the analytics D1, so it serves the four 7-day aggregates at /api/growth/hits and foundation/growth.py falls back to it when no token is present. No credential crosses into Actions.",
+   "probe": "grep:site/worker.js::GROWTH-HITS-1"
+  },
+  {
+   "id": "lesson-2026-11-25-the-live-page-showed-0-merged-prs",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "The live page showed 0 merged PRs",
+   "body": "LIVE-COUNT-1 (2026-11-25, Session: session_0156nqDvJ5oNPSCVZzS8cYKL): /live How much code ships read 0 in every row. The snapshot builds it from one gh pr list GraphQL call; when that call fails or times out, _sh returns empty and 0 is published as fact. A REST fallback now fills the count, and transparency --probe-merged fails the workflow when /live shows 0 while GitHub has merges in the last 7 days.",
+   "probe": "grep:foundation/transparency.py::LIVE-COUNT-1"
+  },
+  {
+   "id": "lesson-2026-11-25-retriage-and-org-profile-probe-ran-weekly-their-issues-sat-o",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "retriage and org-profile probe ran weekly; their issues sat open for days (SLA-ISSUE-1)",
+   "body": "scripts/retriage.sh was documented as every 3 h but its cron is weekly (budget), so the rolling Retriage gaps issue (#2032) never refreshed; org-profile-probe is weekly, never closes its own issue and grepped for 'runs itself', a phrase absent from the profile README (#2033). Both now run from the 10-minute fleet clock; scripts/org_profile_probe.sh closes its issue on pass and checks the README headline.",
+   "probe": "file:scripts/org_profile_probe.sh",
+   "session": "session_0156nqDvX8P4Z5wfkTJvFwh9"
+  },
+  {
+   "id": "decision-2026-11-25-branch-cleanup-1",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "BRANCH-CLEANUP-1",
+   "body": "No branch outlives its PR. branchsweep --remote runs scripts/branch_cleanup.py daily: enforces delete_branch_on_merge and deletes merged or closed PR branches in every fleet repo.",
+   "probe": "file:scripts/branch_cleanup.py",
+   "session": "session_0156nqDsM82hJafZbpixiZx9"
+  },
+  {
+   "id": "decision-2026-11-25-unlearn-now-lives-in-ultrastable-unlearn",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Unlearn now lives in ultrastable/unlearn",
+   "body": "Rowan created the empty repo on 2026-11-25. A code session split instances/unlearn with its history, vendored promoqueue.js, stakeholders.json and models.json, and pushed it. The core keeps only the manifest; topology and system.json name source repo ultrastable/unlearn; seedlife reads build paths from build.repo; the system renderer writes a repo-root wrangler config for tenant workers. The tenant-repos workflow still has no org credential, so future tenant moves need the repo created first.",
+   "probe": "grep:doctrine/topology.json::ultrastable/unlearn"
+  },
+  {
+   "id": "lesson-2026-11-25-a-tenant-move-touches-more-than-the-folder",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "A tenant move touches more than the folder",
+   "body": "Moving Unlearn out broke the decision ledger, the topology main check, system.json, seedlife build paths and a core test that read the tenant's phases. Tenant checks now live in the tenant repo next to the code; core checks read source repos from topology.",
+   "probe": "grep:doctrine/topology.json::ultrastable/unlearn",
+   "session": "session_0156nqDtv3xZHzUu11Sy1geK"
   }
  ]
 }

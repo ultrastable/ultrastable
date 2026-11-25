@@ -137,8 +137,12 @@
       "bindings": {}
     },
     "ultrastable-unlearn": {
-      "main": "instances/unlearn/worker/index.js",
-      "role": "Unlearn tenant app (instances/unlearn): coaching moves for the adult beside a curious child; hourly beat re-learns move weights, measures, opens the next phase when its gates hold, prunes by retention",
+      "main": "worker/index.js",
+      "source": {
+        "repo": "ultrastable/unlearn",
+        "ref": "main"
+      },
+      "role": "Unlearn tenant app (ultrastable/unlearn): coaching moves for the adult beside a curious child; hourly beat re-learns move weights, measures, opens the next phase when its gates hold, prunes by retention",
       "crons": [
         "41 * * * *"
       ],

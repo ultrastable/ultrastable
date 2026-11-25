@@ -10,6 +10,11 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-25
 
+- 2026-11-25: Bump the actions group with 2 updates (#2045)
+- 2026-11-25: Run retriage and the org profile probe on the fleet clock (SLA-ISSUE-1) (#2100)
+- 2026-11-25: Measure growth and shipped code without a token in Actions (#2086)
+- 2026-11-25: core/impact: generic impact and reach closed loop (#2088)
+- 2026-11-25: Restart the growth loop and code agents after the 11-22 stall (#2085)
 - 2026-11-25: Put parked/ PRs on the SLA ladder; stop the sweep reopening them (PARKED-PR-1) (#2084)
 - 2026-11-25: ZERO-MINUTES-1: worker merged #2081
 - 2026-11-25: ROADMAP-AGENT-AGENT-SCOREBOARD: QNFO.OPS #AGENT-SCOREBOARD: Per-agent and per-harness quality scoreboard from intake attri (#2081)
@@ -765,3 +770,4 @@ Rowan: "All UltraStable issues must be resolved within their SLAs and daily/week
 
 ## 2026-11-25: IMPROVE-1, the loop that never runs out of work
 Rowan: "Automatically improve impact and reach. An Ultrastable system shall always continue improving entirely on its own, 100% autonomously." `python3 -m foundation improve --run --apply` (daily, product-manager workflow) files reach, impact and plus items from `doctrine/improve.json` every pass, a stall item per manager tier with no merge in its window, signal items for missing or stale numbers, and the market pass when R&D goes stale. Closed items are judged a week later on their metric. First run: portfolio tier had no matching merge in 14 days; suggestions signal unmeasured; R&D log 8 days old.
+- BRANCH-CLEANUP-1 (Rowan, 2026-11-25): no branch outlives its PR in any Ultrastable repo; delete_branch_on_merge enforced by `scripts/branch_cleanup.py` run by `branchsweep --remote` in the daily branchsweep workflow, probe `--check`. Closed PRs no longer keep their branches.

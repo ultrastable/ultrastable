@@ -233,6 +233,10 @@
       "class": "core",
       "role": "Owner action page: every thing only the owner can do is one sign-in and one click (OAuth, atproto OAuth, review links), tenant-agnostic (OWNERLINK-1)"
     },
+    "core/impact": {
+      "class": "core",
+      "role": "closed loop that raises a system's own impact and reach metrics: series, plateau detection, lever planning, prediction settling (IMPACT-LOOP-1)"
+    },
     "core/pace": {
       "class": "core",
       "role": "speed at near-zero cost: cadence plan, progress per run, cost per day, reach per cost ranking"
