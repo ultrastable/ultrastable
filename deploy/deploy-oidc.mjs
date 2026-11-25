@@ -44,6 +44,10 @@ try { carried = JSON.parse(execFileSync("python3", ["-m", "foundation", "critica
 catch (e) { console.error("origin lookup failed, recorded as unknown:", e.message); }
 console.log("origin:", carried.origin, "carried", (carried.carried || []).length, "commit(s)");
 for (const x of results) appendFileSync(new URL("../ops/deploys.jsonl", import.meta.url), JSON.stringify({ at: new Date().toISOString(), worker: x.worker, uploaded: x.ok, live_matches_commit: !!(x.ok && x.version && h), version: x.version || "", route: "oidc", account: topo.account_id, sha, main_sha: carried.sha || "", origin: carried.origin, carried: (carried.carried || []).map(c => c.sha + ":" + c.origin).slice(0, 20), ...(x.source_sha ? { source_repo: x.source_repo, source_sha: x.source_sha } : {}) }) + "\n");
+// DEPLOY-VISIBLE-1: each repository whose code went live shows where it runs (a GitHub Deployment with the live URL). A refusal is printed, never fatal here;
+// `python3 -m foundation repostd --live` reads the homepage back, and the gate repo-deployments-grant in doctrine/open-loops.json holds what the App lacks.
+try { const { record } = await import("./record-deployments.mjs"); await record(results, { coreRepo: repo, coreSha: sha, token: gh, site: SITE, oidc }); }
+catch (e) { console.error("::warning::DEPLOY-VISIBLE-1: recording deployments failed:", e.message); }
 // SEED-DEPLOY-1: admitted seeds (doctrine/seed-deploys.json) deploy through the same OIDC route after the platform workers. A seed failure is a row in ops/deploys.jsonl
 // that the `seed-live` detector files; it never fails the platform deploy or blocks its record step.
 try { execFileSync("node", ["deploy/deploy-seed.mjs"], { cwd: fileURLToPath(new URL("..", import.meta.url)), stdio: "inherit" }); } catch (e) { console.error("seed deploy did not finish live:", e.message); }

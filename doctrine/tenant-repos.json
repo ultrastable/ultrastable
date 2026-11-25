@@ -6,6 +6,7 @@
    "repo": "ultrastable/practical-solutions",
    "state": "own-repo",
    "why": "created as its own repository from the start",
+      "description": "Practical Solutions: evidence-based solutions to pressing global problems, each with its study and cheapest first test. A system running on Ultrastable.",
    "frontend": "https://ultrastable.org",
    "vendor": {
     "seed/worker/src/knowledge.js": "vendor/seed/knowledge.js",
@@ -213,7 +214,8 @@
   "_doc": "LAUNCH-PATH-1: an idea typed at ultrastable.io by someone with no code agent. Its launch record lives in the site's store (site/graduate.js); deploy/launch-apps.mjs (run daily by tenant-repos.yml) deploys its own system, creates its repository from the template, files the owner's requests there and invites the owner on request. Visitor apps have no folder under instances/: their manifest is generated from the idea.",
   "template": "ultrastable/seed",
   "repo_prefix": "app-",
-  "visibility": "private",
+  "visibility": "public",
+  "_visibility": "REPO-STANDARD-1: an app repository is made from the seed template and carries its workflows; a private repository with workflows is billed for Actions minutes, so it is public (seed/worker/src/apprepos.js ensureAppRepo)",
   "base_manifest": "instances/second-tenant/instance.json",
   "usd_per_month": 5,
   "max_apps": 20,

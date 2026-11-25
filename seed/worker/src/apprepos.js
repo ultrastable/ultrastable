@@ -7,10 +7,12 @@
 //   POST /host/app-repo   (x-internal-key)  create the repository if missing, write files, invite its owner
 //   POST /host/tenant-repo (x-internal-key)  a registered tenant's repository, and a push token while it is empty (TENANT-REPO-2)
 //   POST /host/app-token  ({repo, key})     a one-hour token for that one repository; key is this host's HMAC over the repository name
-//   POST /host/repo-settings (x-internal-key) REPO-SETTINGS-1: delete_branch_on_merge and allow_auto_merge on for one org repository
+//   POST /host/repo-settings (x-internal-key) REPO-STANDARD-1: the whole repository standard (merge rules, security, main ruleset, description, homepage, topics) on one org repository
+//   POST /host/repo-deployment (x-internal-key) DEPLOY-VISIBLE-1: a GitHub Deployment with its live URL on the repository the code came from
 import { getToken } from './auth/index.js';
 import { appJwt } from './auth/github-app.js';
 import * as store from './auth/store.js';
+import { REPO_STANDARD, applyStandard } from './repostandard.js';
 const API = 'https://api.github.com', UA = 'ultrastable-app-repos';
 export const APP_REPO = /^[a-z0-9][a-z0-9-]{0,38}\/app-[a-z0-9-]{1,60}$/;  // the only repositories these routes will ever touch
 const J = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' } });
@@ -36,20 +38,27 @@ export async function ensureAppRepo(db, env, tenant, spec, { fetch: f = fetch, n
   if (spec.dry) return { ...out, ok: true, dry: true };  // both credentials are live; nothing is touched
   const A = gh(f, adm.token), C = gh(f, code.token);
   let seen = await A('GET', `/repos/${repo}`);
+  // REPO-STANDARD-1: the seed template carries workflows, and a private repository with workflows is billed, so an app repository is public unless asked otherwise
+  const priv = spec.visibility === 'private';
   if (seen.status === 404) {
     let made = null;
     if (spec.template) {  // a full copy of the seed when the template is reachable; GitHub's answer is recorded either way
-      made = await A('POST', `/repos/${spec.template}/generate`, { owner: org, name, private: spec.visibility !== 'public', description: String(spec.description || '').slice(0, 300) });
+      made = await A('POST', `/repos/${spec.template}/generate`, { owner: org, name, private: priv, description: String(spec.description || '').slice(0, 300) });
       out.steps.push(`from template ${spec.template}: HTTP ${made.status}`);
     }
     if (!made || made.status !== 201) {
-      made = await A('POST', `/orgs/${org}/repos`, { name, private: spec.visibility !== 'public', description: String(spec.description || '').slice(0, 300), auto_init: true, has_wiki: false, delete_branch_on_merge: true });
+      made = await A('POST', `/orgs/${org}/repos`, { name, private: priv, description: String(spec.description || '').slice(0, 300), auto_init: true, ...REPO_STANDARD.settings });
       out.steps.push(`created empty: HTTP ${made.status}`);
       if (made.status !== 201) { await store.event(db, tenant, 'github-admin', 'failed', `app repo ${repo} HTTP ${made.status} ${made.json.message || ''}`); return { ...out, ok: false, waiting_on: 'admin-app-scope', error: `create ${repo}: HTTP ${made.status} ${made.json.message || ''}`.slice(0, 200) }; }
       out.from_template = false;
     } else out.from_template = true;
     await store.event(db, tenant, 'github-admin', 'app-repo', `${repo} created${out.from_template ? ' from ' + spec.template : ''}`);
     out.created = true; seen = made;
+    // the standard goes on in the same pass that creates the repository; a refused step is named in the answer and retried by the daily standard run
+    const live = await A('GET', `/repos/${repo}`);
+    const std = await applyStandard(A, repo, live.status === 200 ? live.json : { private: priv }, { description: spec.description, homepage: spec.homepage, topics: spec.topics });
+    out.standard = { ok: std.ok, changed: std.changed, refused: std.refused, gated: std.gated };
+    if (!std.ok) await store.event(db, tenant, 'github-admin', 'failed', `repo standard ${repo}: ${std.refused.join('; ')}`.slice(0, 300));
   } else if (seen.status !== 200) return { ...out, ok: false, waiting_on: 'admin-app-scope', error: `read ${repo}: HTTP ${seen.status}` };
   out.files = [];
   for (const file of (spec.files || []).slice(0, 20)) {
@@ -93,10 +102,15 @@ export async function ensureTenantRepo(db, env, tenant, spec, { fetch: f = fetch
   const A = gh(f, adm.token);
   let seen = await A('GET', `/repos/${repo}`);
   if (seen.status === 404) {
-    const made = await A('POST', `/orgs/${org}/repos`, { name, private: spec.visibility === 'private', description: String(spec.description || '').slice(0, 300), has_wiki: false, delete_branch_on_merge: true });
+    const made = await A('POST', `/orgs/${org}/repos`, { name, private: spec.visibility === 'private', description: String(spec.description || '').slice(0, 300), ...REPO_STANDARD.settings });
     if (made.status !== 201) { await store.event(db, tenant, 'github-admin', 'failed', `tenant repo ${repo} HTTP ${made.status} ${made.json.message || ''}`); return { ...out, ok: false, waiting_on: 'admin-app-scope', error: `create ${repo}: HTTP ${made.status} ${made.json.message || ''}`.slice(0, 200) }; }
     await store.event(db, tenant, 'github-admin', 'tenant-repo', `${repo} created`);
     out.created = true;
+    // REPO-STANDARD-1: security, the main ruleset, homepage and topics in the same pass that creates it
+    const live = await A('GET', `/repos/${repo}`);
+    const std = await applyStandard(A, repo, live.status === 200 ? live.json : { private: spec.visibility === 'private' }, { description: spec.description, homepage: spec.homepage, topics: spec.topics });
+    out.standard = { ok: std.ok, changed: std.changed, refused: std.refused, gated: std.gated };
+    if (!std.ok) await store.event(db, tenant, 'github-admin', 'failed', `repo standard ${repo}: ${std.refused.join('; ')}`.slice(0, 300));
   } else if (seen.status !== 200) return { ...out, ok: false, waiting_on: 'admin-app-scope', error: `read ${repo}: HTTP ${seen.status}` };
   else if ((spec.visibility === 'public' || spec.visibility === 'private') && Boolean(seen.json.private) !== (spec.visibility === 'private')) {  // DECLARED-LIVE-1: an existing repository is set to its declared visibility (replication-ledger was made private and its CI could not read it)
     const p = await A('PATCH', `/repos/${repo}`, { private: spec.visibility === 'private' });
@@ -113,10 +127,10 @@ export async function ensureTenantRepo(db, env, tenant, spec, { fetch: f = fetch
   await store.event(db, tenant, 'github-app', 'tenant-repo-token', repo);
   return { ...out, ok: true, empty: true, token: t.token, expires_at: new Date(t.expiresAt).toISOString() };
 }
-// REPO-SETTINGS-1 (2026-11-25): the core repositories had no ORG_ADMIN_TOKEN, so delete_branch_on_merge and allow_auto_merge could not be set from
-// Actions and branch cleanup and org-settings stayed red. The administration app this Worker already holds sets exactly these two settings, on any
-// repository of the org and nothing else; every other setting stays with org-settings.yml and its gate.
-export const REPO_SETTINGS = Object.freeze({ delete_branch_on_merge: true, allow_auto_merge: true });
+// REPO-SETTINGS-1 (2026-11-25): the core repositories had no ORG_ADMIN_TOKEN, so no setting could be set from Actions and branch cleanup and
+// org-settings stayed red. REPO-STANDARD-1 (same day): two settings were not a standard; the administration app this Worker already holds now
+// applies the whole of it (repostandard.js) to any repository of the org, with the description, homepage and topics the core computed.
+export const REPO_SETTINGS = Object.freeze({ ...REPO_STANDARD.settings });
 export const ORG_REPO = /^ultrastable\/[A-Za-z0-9._-]{1,100}$/;
 export async function ensureRepoSettings(db, env, tenant, spec, { fetch: f = fetch, now = Date.now() } = {}) {
   const repo = String(spec.repo || ''), out = { repo };
@@ -126,16 +140,38 @@ export async function ensureRepoSettings(db, env, tenant, spec, { fetch: f = fet
   const A = gh(f, adm.token);
   const seen = await A('GET', `/repos/${repo}`);
   if (seen.status !== 200) return { ...out, ok: false, waiting_on: 'admin-app-scope', error: `read ${repo}: HTTP ${seen.status}` };
-  const drift = Object.fromEntries(Object.entries(REPO_SETTINGS).filter(([k, v]) => seen.json[k] !== v));
-  if (!Object.keys(drift).length) return { ...out, ok: true, changed: [] };
-  const p = await A('PATCH', `/repos/${repo}`, drift);
-  if (p.status !== 200) { await store.event(db, tenant, 'github-admin', 'failed', `repo settings ${repo} HTTP ${p.status}`); return { ...out, ok: false, waiting_on: 'admin-app-scope', error: `set ${Object.keys(drift).join(', ')} on ${repo}: HTTP ${p.status} ${p.json.message || ''}`.slice(0, 200) }; }
-  await store.event(db, tenant, 'github-admin', 'repo-settings', `${repo}: ${Object.keys(drift).join(', ')} on`);
-  return { ...out, ok: true, changed: Object.keys(drift) };
+  const r = await applyStandard(A, repo, seen.json, spec);
+  if (r.archived) return { ...out, ok: true, archived: true, changed: [] };
+  if (!r.ok) { await store.event(db, tenant, 'github-admin', 'failed', `repo standard ${repo}: ${r.refused.join('; ')}`.slice(0, 300)); return { ...out, ok: false, waiting_on: 'admin-app-scope', changed: r.changed, refused: r.refused, gated: r.gated, error: `${repo}: ${r.refused.join('; ')}`.slice(0, 300) }; }
+  if (r.changed.length) await store.event(db, tenant, 'github-admin', 'repo-settings', `${repo}: ${r.changed.join(', ')}`.slice(0, 300));
+  return { ...out, ok: true, changed: r.changed, gated: r.gated };
+}
+// DEPLOY-VISIBLE-1 (Rowan, 2026-11-25: "If somebody sees the code, then show them where it's running, show them the URL ... what I'm not seeing
+// is where these repos are actually deployed."): a GitHub Deployment (environment production) with its live URL, on the repository and commit
+// the code came from. The code app writes it with a one-hour token for that one repository; a grant the app lacks is named, never papered over.
+export async function recordDeployment(db, env, tenant, spec, { fetch: f = fetch, now = Date.now() } = {}) {
+  const repo = String(spec.repo || ''), sha = String(spec.sha || ''), url = String(spec.url || ''), out = { repo, sha, url };
+  if (!ORG_REPO.test(repo) || repo.includes('..')) return { ...out, ok: false, error: 'not a repository of the org' };
+  if (!/^[0-9a-f]{40}$/.test(sha)) return { ...out, ok: false, error: 'sha must be a full commit id' };
+  if (!/^https:\/\/[a-z0-9.-]+(\/[^\s]*)?$/i.test(url)) return { ...out, ok: false, error: 'url must be https' };
+  const t = await scopedToken(db, env, tenant, repo, { fetch: f, now, extra: { deployments: 'write' } });
+  if (!t.ok) return { ...out, ok: false, waiting_on: 'code-app-scope', error: `the code app has no Deployments: write grant on ${repo} (${t.error})`.slice(0, 300) };
+  const C = gh(f, t.token), environment = String(spec.environment || 'production').replace(/[^A-Za-z0-9._-]/g, '').slice(0, 40) || 'production';
+  const last = await C('GET', `/repos/${repo}/deployments?sha=${sha}&environment=${environment}&per_page=1`);
+  let id = last.status === 200 && Array.isArray(last.json) && last.json[0] ? last.json[0].id : null;
+  if (!id) {
+    const d = await C('POST', `/repos/${repo}/deployments`, { ref: sha, environment, auto_merge: false, required_contexts: [], production_environment: environment === 'production', description: String(spec.description || 'Deployed by Ultrastable').slice(0, 140) });
+    if (d.status !== 201) return { ...out, ok: false, waiting_on: d.status === 403 || d.status === 404 ? 'code-app-scope' : null, error: `create deployment on ${repo}: HTTP ${d.status} ${d.json.message || ''}`.slice(0, 200) };
+    id = d.json.id; out.created = true;
+  }
+  const s = await C('POST', `/repos/${repo}/deployments/${id}/statuses`, { state: spec.state === 'failure' ? 'failure' : 'success', environment, environment_url: url, auto_inactive: true, description: String(spec.description || 'Live').slice(0, 140) });
+  if (s.status !== 201) return { ...out, ok: false, error: `deployment status on ${repo}: HTTP ${s.status} ${s.json.message || ''}`.slice(0, 200) };
+  await store.event(db, tenant, 'github-app', 'deployment', `${repo}@${sha.slice(0, 7)} ${url}`);
+  return { ...out, ok: true, deployment: id };
 }
 export async function handleAppHost(request, env, { tenant = 'default', fetch: f = fetch, now = Date.now() } = {}) {
   const url = new URL(request.url);
-  if (url.pathname !== '/host/app-repo' && url.pathname !== '/host/app-token' && url.pathname !== '/host/tenant-repo' && url.pathname !== '/host/repo-settings') return null;
+  if (url.pathname !== '/host/app-repo' && url.pathname !== '/host/app-token' && url.pathname !== '/host/tenant-repo' && url.pathname !== '/host/repo-settings' && url.pathname !== '/host/repo-deployment') return null;
   if (request.method !== 'POST' || !env.INTERNAL_DEPLOY_KEY) return new Response('Not found', { status: 404 });
   let b; try { b = await request.json(); } catch { return J({ ok: false, error: 'bad json' }, 400); }
   if (url.pathname === '/host/tenant-repo') {
@@ -146,6 +182,11 @@ export async function handleAppHost(request, env, { tenant = 'default', fetch: f
   if (url.pathname === '/host/repo-settings') {
     if (!same(request.headers.get('x-internal-key'), env.INTERNAL_DEPLOY_KEY)) return new Response('Not found', { status: 404 });
     const r = await ensureRepoSettings(env.DB, env, tenant, b, { fetch: f, now });
+    return J(r, r.ok ? 200 : r.waiting_on ? 409 : 400);
+  }
+  if (url.pathname === '/host/repo-deployment') {
+    if (!same(request.headers.get('x-internal-key'), env.INTERNAL_DEPLOY_KEY)) return new Response('Not found', { status: 404 });
+    const r = await recordDeployment(env.DB, env, tenant, b, { fetch: f, now });
     return J(r, r.ok ? 200 : r.waiting_on ? 409 : 400);
   }
   if (url.pathname === '/host/app-repo') {

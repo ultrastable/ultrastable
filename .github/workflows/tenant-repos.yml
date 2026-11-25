@@ -109,6 +109,11 @@ jobs:
             if git -C "$d" push -q "https://x-access-token:${srv}@github.com/${repo}.git" "HEAD:refs/heads/main"; then echo "filled $repo from seed/ without workflows"; else echo "::error::could not fill $repo"; fail=1; fi
           done < <(jq -r --slurpfile s doctrine/seed-deploys.json '.systems | to_entries[] | select(.key as $k | $s[0].seeds | index($k)) | select(.value.repo) | "\(.key) \(.value.repo)"' doctrine/full-stack.json)
           exit $fail
+      - name: Every repository, the ones just created included, is on the one standard (REPO-STANDARD-1)
+        # Merge rules, security and the main ruleset went on when the tick Worker created the repository; this adds the computed description,
+        # homepage (where it runs) and topics the same hour, through the administration app. A refusal is red and names the repository.
+        if: ${{ !cancelled() }}
+        run: python3 -m foundation repostd --apply
       - name: Launch what visitors asked for, and walk a test idea through the front door (LAUNCH-PATH-1)
         # Someone with no code agent typed an idea at ultrastable.io. This deploys its own system, gives it a repository from the seed, files the
         # owner's plain-words requests there and invites the owner when they asked. The test idea fails the job on any step a visitor would have to do.
