@@ -1,5 +1,7 @@
 # AGENTS.md
 
+Start with [`SYSTEM.md`](SYSTEM.md): what an Ultrastable system is, how it runs, how it bootstraps and how it becomes autonomous and reaches criticality, generated from this repository's code and checked by `python3 scripts/system.py --check`.
+
 The protocol for every agent in this repo is in [`agents/AGENTS.md`](agents/AGENTS.md). Read it first, then your role file in [`agents/roles/`](agents/roles/). Limits: [`autonomy/policy.json`](autonomy/policy.json).
 
 > CONSTITUTION-1: what an ultrastable system is, how it runs, bootstraps, becomes autonomous and reaches criticality is in [`doctrine/CONSTITUTION.md`](doctrine/CONSTITUTION.md), generated from `doctrine/constitution.json`, which the system reads at boot (stage `constitute`) and checks with `python3 scripts/constitution.py --check`. A standing rule with no detector and remediation in code fails that check. Nobody supplies this by chat.

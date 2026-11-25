@@ -15,6 +15,15 @@ const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const verifyOnly = process.argv.includes("--verify"), dryRun = process.argv.includes("--dry-run");  // --dry-run: generate, bootstrap and bundle, never call the site
 const OUT = process.env.SEED_DEPLOY_OUT || "/tmp/seed-deploy";
 const cfg = JSON.parse(readFileSync(new URL("../doctrine/seed-deploys.json", import.meta.url), "utf8"));
+// BOOT-ACCEPT-1: the repository each standing seed declares (doctrine/full-stack.json), named in its discovery manifest from the first deploy.
+const stackOf = (() => { try { const j = JSON.parse(readFileSync(new URL("../doctrine/full-stack.json", import.meta.url), "utf8")); return j.systems || j.declared || {}; } catch (e) { console.log("::warning::full-stack.json unreadable: " + e.message); return {}; } })();
+const DIRECTORY = process.env.DIRECTORY_URL || "https://ultrastable.io";
+// DISCOVER-1 from minute one: the seed's own heartbeat registers once a day at 03:00 UTC, so a new system would wait up to a day to be findable.
+// The deploy registers it at once; the directory reads the system's own manifest before listing it, so this cannot list anything untrue.
+async function registerDirectory(url) {
+  try { const r = await fetch(DIRECTORY + "/api/directory/register", { method: "POST", headers: { "content-type": "application/json", "user-agent": "ultrastable-seed-deploy/1" }, body: JSON.stringify({ url }) }); const j = await r.json().catch(() => ({})); return { status: r.status, listed: Boolean(j.listed), why: j.why || j.error || null }; }
+  catch (e) { return { status: 0, listed: false, why: String(e.message || e).slice(0, 160) }; }
+}
 const sh = (cmd, args, opts = {}) => execFileSync(cmd, args, { stdio: ["ignore", "pipe", "inherit"], encoding: "utf8", ...opts });
 async function oidc() {
   const u = process.env.ACTIONS_ID_TOKEN_REQUEST_URL, t = process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
@@ -44,6 +53,7 @@ async function probe(url) {
   }
   return { ok: false, last };
 }
+const repoOf = (slug, hostRepo) => { const r = hostRepo || (stackOf[slug] && stackOf[slug].repo) || ""; return /^[\w.-]+\/[\w.-]+$/.test(r) ? r : null; };
 const gitsha = process.env.GITHUB_SHA || sh("git", ["rev-parse", "HEAD"], { cwd: ROOT }).trim();
 const rows = [];
 // LAUNCH-PATH-1: a visitor's app is deployed by the same route. deploy/launch-apps.mjs passes its manifest in SEED_EXTRA ([{slug, instance, ai}]);
@@ -74,12 +84,13 @@ for (const { slug, instance, ai, host_repo } of todo) {
       const db = await site("/__internal/seed-d1", { name, migrations });
       const up = await site("/__internal/deploy", {
         name, main: mods[0].name, modules: mods.map(({ name: n, src, type }) => ({ name: n, src, type })), compatibility_date: "2026-11-12", workers_dev: true, crons: ["*/10 * * * *"], ...(host_repo ? { host_repo } : {}),
-        bindings: [{ type: "d1", name: "DB", id: db.uuid }, { type: "plain_text", name: "PUBLIC_HEALTH_ONLY", text: "1" }].concat(ai ? [{ type: "ai", name: "AI" }] : []),  // a visitor's app gets the account's own models: no key for anyone to mint
+        bindings: [{ type: "d1", name: "DB", id: db.uuid }, { type: "plain_text", name: "PUBLIC_HEALTH_ONLY", text: "1" }, { type: "plain_text", name: "PUBLIC_URL", text: url }].concat(repoOf(slug, host_repo) ? [{ type: "plain_text", name: "PUBLIC_REPO", text: repoOf(slug, host_repo) }] : []).concat(ai ? [{ type: "ai", name: "AI" }] : []),  // a visitor's app gets the account's own models: no key for anyone to mint
       });
       row.version = up.version || ""; row.migrations_applied = db.applied.length;
     }
     const p = await probe(url);
     row = { ...row, uploaded: !verifyOnly, live_ok: p.ok, live_matches_commit: !verifyOnly && p.ok, status: p.status || 0, ...(p.ok ? {} : { error: "health: " + p.last }) };
+    if (p.ok && !dryRun) row.directory = await registerDirectory(url);  // recorded, read by foundation/bootaccept.py; a refusal says why
   } catch (e) { row = { ...row, live_ok: false, error: String(e.message).slice(0, 300) }; }
   console.log(row.live_ok ? "OK    " : "FAIL  ", name, row.live_ok ? url + "/health" : row.error || "no health");
   rows.push(row);

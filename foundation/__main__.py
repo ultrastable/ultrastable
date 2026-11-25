@@ -33,6 +33,8 @@
   python3 -m foundation intentyield [--run [--apply]|--probe|--check|--report]   INTENT-YIELD-1: owner directives kept per unit of attention; no counts, no person scored
   python3 -m foundation temporal [--run [--apply]|--settled ID|--probe|--check|--report]   TEMPORAL-1: series per area, loop and entry; hotspots, neglect and stopped loops feed the failure-mode machinery
   python3 -m foundation constitution [--check|--fresh|--render]   CONSTITUTION-1: the seed states what an ultrastable system is; every rule has a detector and a remediation in code
+  python3 -m foundation systemspec [--check|--write|--gaps|--rule ID]   SYSTEM-SPEC-1: seed/SYSTEM.md, the definition every system carries, generated from code and probed
+  python3 -m foundation bootaccept [--run|--probe|--url U --repo O/R|--check]   BOOT-ACCEPT-1: nothing to repo, back end, web UI, graph, discovery and health, read live
   python3 -m foundation bootproof [--check]   BOOTPROOF-1: the seed kernel is closed under bootstrap (instructions, placeholders, secrets, triggers)
   python3 -m foundation seedlaunch [--e2e [--keep]|--fleet|--check]   SEED-LAUNCH-1: every seed built, deployed, year-gated and probed live by the system
   python3 -m foundation discover [--gen|--check|--live]                    DISCOVER-1: every system is listed, cross-linked and findable
@@ -358,6 +360,12 @@ def main(argv=None) -> int:
     if _av[:1] == ["seedlaunch"]:
         from . import seedlaunch
         return seedlaunch.main(_av[1:])
+    if _av[:1] == ["systemspec"]:
+        from . import systemspec
+        return systemspec.main(_av[1:])
+    if _av[:1] == ["bootaccept"]:
+        from . import bootaccept
+        return bootaccept.main(_av[1:])
     if _av[:1] == ["intentyield"]:
         from . import intentyield
         return intentyield.main(_av[1:])
