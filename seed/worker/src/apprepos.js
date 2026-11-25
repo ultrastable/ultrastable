@@ -154,6 +154,10 @@ export async function ensureRepoSettings(db, env, tenant, spec, { fetch: f = fet
   if (!adm.ok) return { ...out, ok: false, waiting_on: 'admin-app', error: 'administration app: ' + adm.error };
   const A = gh(f, adm.token);
   const seen = await A('GET', `/repos/${repo}`);
+  // ADMIT-1 (2026-11-25): org-settings.yml stayed red every run on the three archived repositories (a read-only repository refuses any PATCH),
+  // and a tenant registered before tenant-repos.yml created its repository would do the same. Neither is a settings failure: both are skipped and named.
+  if (seen.status === 200 && seen.json.archived === true) return { ...out, ok: true, changed: [], skipped: 'archived (read-only)' };
+  if (seen.status === 404) return { ...out, ok: true, changed: [], skipped: 'not created yet (tenant-repos.yml creates it)' };
   if (seen.status !== 200) return { ...out, ok: false, waiting_on: 'admin-app-scope', error: `read ${repo}: HTTP ${seen.status}` };
   const r = await applyStandard(A, repo, seen.json, spec);
   if (r.archived) return { ...out, ok: true, archived: true, changed: [] };

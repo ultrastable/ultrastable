@@ -19,6 +19,11 @@ export function hiddenByHealthOnly(env, method, pathname) {
   return true;
 }
 
+// BOOT-ACCEPT-1 (Rowan, 2026-11-25: "all surfaces ... everything has to work together automatically and seamlessly from the beginning"). The gate above
+// once hid the discovery manifest (DISCOVER-1) and the knowledge graph's read side (DATAGRAPH-1) on every seed and every visitor app, because each was
+// added after the gate and nothing proved them together. These reads are public by design: the manifest names nothing private, and the graph's read
+// side shows only counts and declared public kinds without the owner's bearer. foundation/bootaccept.py reads each one live after every launch.
+
 // FULLSTACK-1: every system has a public front end. A health-only system serves this page at /: its name, whether its clock is turning and the
 // stage it read for itself. No backlog, no screens, no owner routes. Every value comes from the same rows /health reads.
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));

@@ -7,6 +7,7 @@ import { footerLinks, statementsHtml } from "../vendor/ultrastable/contract.js";
 import { SPEC } from "./contract.js";
 import { FIELDS } from "./ledger.js";
 import { KINDS, OUTCOMES, STANDINGS, RUBRIC, attemptWeight } from "./standing.js";
+import { SIBLINGS } from "./promote.js";
 
 export const SITE = SPEC.url;
 export const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));

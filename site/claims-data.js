@@ -1599,7 +1599,7 @@ export default {
   {
    "claim": "- **Load from the repository, never from tool memory.** Project memory, tool memory and chat are not storage (Rowan, 2026-11-12): they may",
    "detail": "",
-   "how": "file:docs/doctrine/GUIDING-DIRECTIVE.md + file:doctrine/kernel-8.2.1.md + file:docs/PROJECT-MEMORY.md + file:agents/PROJECT-INSTRUCTIONS.md + file:docs/BOOTSTRAP-NO-MEMORY.md + file:doctrine/durable-facts.json",
+   "how": "file:seed/SYSTEM.md + file:docs/doctrine/GUIDING-DIRECTIVE.md + file:doctrine/kernel-8.2.1.md + file:docs/PROJECT-MEMORY.md + file:agents/PROJECT-INSTRUCTIONS.md + file:docs/BOOTSTRAP-NO-MEMORY.md",
    "id": "cited-32424bab79",
    "kind": "claim",
    "pass": true,
@@ -1831,6 +1831,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **One tenant row admits a tenant; every registry is derived (ADMIT-1, Rowan 2026-11-25).** \"All surfaces, all files, all code, all",
+   "detail": "",
+   "how": "file:doctrine/tenant-repos.json + file:scripts/regen_generated.py + file:doctrine/admission.json + file:site/worker.js + file:foundation/admit.py + file:tests/foundation/test_admit.py",
+   "id": "cited-9b5ff76eff",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Every system deploys itself in full: repo, back end and a public web UI (FULLSTACK-1, Rowan 2026-11-25).** \"All UltraStable deployments",
    "detail": "",
    "how": "file:doctrine/tenant-repos.json + file:doctrine/topology.json + file:tests/foundation/test_tenantrepos.py + file:instances/ultrastable/progress.json + file:doctrine/seed-deploys.json + file:doctrine/full-stack.json",
@@ -2006,6 +2015,15 @@ export default {
    "detail": "",
    "how": "file:doctrine/coldstart.json + file:seed/worker/src/visibility.js + file:docs/doctrine/SYSTEM.md + file:CLAUDE.md + file:doctrine/schemas/coldstart.schema.json + file:foundation/coldstart.py",
    "id": "cited-badeab1b44",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Every surface works together from the first deploy; one command proves it (BOOT-ACCEPT-1, Rowan 2026-11-25).** \"All surfaces, all",
+   "detail": "",
+   "how": "file:seed/worker/src/visibility.js + file:doctrine/open-loops.json + file:tests/foundation/test_bootaccept.py + file:seed/worker/test/bootaccept.test.js + file:foundation/bootaccept.py",
+   "id": "cited-c2464a2c9f",
    "kind": "claim",
    "pass": true,
    "surface": "agents/AGENTS.md"
@@ -2425,6 +2443,15 @@ export default {
    "surface": "seed/AGENTS.md"
   },
   {
+   "claim": "- **One tenant row admits a tenant; every registry is derived (ADMIT-1, Rowan 2026-11-25).** \"All surfaces, all files, all code, all",
+   "detail": "",
+   "how": "file:doctrine/tenant-repos.json + file:scripts/regen_generated.py + file:doctrine/admission.json + file:site/worker.js + file:foundation/admit.py + file:tests/foundation/test_admit.py",
+   "id": "mirror-adf5fe12d6",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
    "claim": "Words match code (CLAIMS-1, Rowan 2026-11-17)",
    "detail": "",
    "how": "file:foundation/claims.py + file:tests/foundation/test_claims.py",
@@ -2436,7 +2463,7 @@ export default {
   {
    "claim": "- **Load from the repository, never from tool memory.** Project memory, tool memory and chat are not storage (Rowan, 2026-11-12): they may",
    "detail": "",
-   "how": "file:docs/doctrine/GUIDING-DIRECTIVE.md + file:doctrine/kernel-8.2.1.md + file:docs/PROJECT-MEMORY.md + file:agents/PROJECT-INSTRUCTIONS.md + file:docs/BOOTSTRAP-NO-MEMORY.md + file:doctrine/durable-facts.json",
+   "how": "file:seed/SYSTEM.md + file:docs/doctrine/GUIDING-DIRECTIVE.md + file:doctrine/kernel-8.2.1.md + file:docs/PROJECT-MEMORY.md + file:agents/PROJECT-INSTRUCTIONS.md + file:docs/BOOTSTRAP-NO-MEMORY.md",
    "id": "mirror-1586e98ac2",
    "kind": "claim",
    "pass": true,
@@ -2843,6 +2870,15 @@ export default {
    "detail": "",
    "how": "file:doctrine/coldstart.json + file:seed/worker/src/visibility.js + file:docs/doctrine/SYSTEM.md + file:CLAUDE.md + file:doctrine/schemas/coldstart.schema.json + file:foundation/coldstart.py",
    "id": "mirror-23cc6eb0f0",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Every surface works together from the first deploy; one command proves it (BOOT-ACCEPT-1, Rowan 2026-11-25).** \"All surfaces, all",
+   "detail": "",
+   "how": "file:seed/worker/src/visibility.js + file:doctrine/open-loops.json + file:tests/foundation/test_bootaccept.py + file:seed/worker/test/bootaccept.test.js + file:foundation/bootaccept.py",
+   "id": "mirror-bda521b8b7",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3701,6 +3737,15 @@ export default {
    "kind": "module",
    "pass": true,
    "surface": "site/research-data.js"
+  },
+  {
+   "claim": "module: seed/SYSTEM.md is written by seed/scripts/system.py from seed/autonomy/system.json",
+   "detail": "",
+   "how": "header names the generator + file:seed/scripts/system.py + grep:.github/workflows/checks.yml::scripts/system.py --check",
+   "id": "module-system-spec",
+   "kind": "module",
+   "pass": true,
+   "surface": "seed/SYSTEM.md"
   },
   {
    "claim": "ledger: work claims",

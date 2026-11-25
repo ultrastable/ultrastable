@@ -49,7 +49,7 @@ export default {
      "AI systems leave their loops open. Put in place: an output with no code consumer fails the build. Check it with one number, share of registered loops that declare a closing probe and a server-side owner, and set a limit for it (>= 1.0 is the limit we use)."
     ],
     "practice_note": [
-     "In our own system, 4 of 5 of these checks pass today. Share of declared essential variables that have limits (doctrine/ultrastability.json) reads 1.0 (n = 18; source: doctrine/ultrastability.json). Second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl) reads 103 (n = 14393; source: ops/ultrastability.jsonl). Share of essential variables whose second loop can change a parameter of the first loop reads 0.778 (n = 18; source: doctrine/ultrastability.json). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+     "In our own system, 4 of 5 of these checks pass today. Share of declared essential variables that have limits (doctrine/ultrastability.json) reads 1.0 (n = 18; source: doctrine/ultrastability.json). Second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl) reads 103 (n = 14431; source: ops/ultrastability.jsonl). Share of essential variables whose second loop can change a parameter of the first loop reads 0.778 (n = 18; source: doctrine/ultrastability.json). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
     ],
     "tradeoffs": [
      "Reading. Chapters 7 and 8 were not machine-read for this paper: the archive.org text the research loop could reach ends in chapter 2. Ashby's mechanism is stated here in our own words from the book's contents and preface; the only verbatim quotation is from the preface (page v).",
@@ -160,7 +160,7 @@ export default {
      "metric_label": "second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl)",
      "measured": 103,
      "status": "met",
-     "n": 14393,
+     "n": 14431,
      "source": "ops/ultrastability.jsonl",
      "item": null
     },
@@ -265,12 +265,12 @@ export default {
     {
      "finding": "A1",
      "rule": "AUTO-IMPROVE-1",
-     "score": 0.118
+     "score": 0.116
     },
     {
      "finding": "A1",
      "rule": "IGNORANCE-1",
-     "score": 0.106
+     "score": 0.108
     },
     {
      "finding": "A2",
@@ -285,7 +285,7 @@ export default {
     {
      "finding": "A4",
      "rule": "STANDARDS-1",
-     "score": 0.111
+     "score": 0.11
     },
     {
      "finding": "A5",
@@ -976,7 +976,7 @@ export default {
     {
      "finding": "O1",
      "rule": "FLOW-DIRECTIVE-1",
-     "score": 0.148
+     "score": 0.147
     },
     {
      "finding": "O2",
@@ -1324,6 +1324,11 @@ export default {
     {
      "finding": "S4",
      "rule": "DISPOSE-1",
+     "score": 0.113
+    },
+    {
+     "finding": "S5",
+     "rule": "SYSTEM-SPEC-1",
      "score": 0.114
     },
     {
@@ -1735,7 +1740,7 @@ export default {
     {
      "finding": "S1",
      "rule": "GOALS-1",
-     "score": 0.117
+     "score": 0.118
     },
     {
      "finding": "S1",
@@ -1745,7 +1750,12 @@ export default {
     {
      "finding": "S3",
      "rule": "DISPOSE-1",
-     "score": 0.105
+     "score": 0.106
+    },
+    {
+     "finding": "S4",
+     "rule": "BOOT-ACCEPT-1",
+     "score": 0.13
     },
     {
      "finding": "S4",

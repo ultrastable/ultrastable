@@ -1,0 +1,24 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/seed/provenance-row.schema.json",
+ "title": "Provenance ledger row (PROVENANCE-1)",
+ "description": "One row of ops/provenance.jsonl. Validated by tests/foundation/test_stdkit.py. Exported as W3C PROV-JSON (`provenance --prov`) and as CloudEvents 1.0 (`provenance --cloudevents`); this schema is the CloudEvents dataschema.",
+ "type": "array",
+ "items": {
+  "type": "object",
+  "required": ["id", "at", "kind", "origin"],
+  "properties": {
+   "id": {"type": "string", "pattern": "^pv-"},
+   "at": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T"},
+   "tenant": {"type": "string"},
+   "kind": {"type": "string", "minLength": 1},
+   "summary": {"type": "string"},
+   "ref": {"type": "string"},
+   "affected": {"type": "array", "items": {"type": "string"}},
+   "public": {"type": "boolean"},
+   "parent": {"type": "string"},
+   "effect": {"type": "object"},
+   "origin": {"type": "object", "required": ["class"], "properties": {"class": {"enum": ["system", "loop", "owner", "end_user", "agent", "external"]}, "actor": {"type": "string"}, "channel": {"type": "string"}}}
+  }
+ }
+}

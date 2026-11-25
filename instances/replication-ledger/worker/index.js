@@ -46,6 +46,7 @@ export function route(url, ledger = seed, live = { checks: {}, beats: [], change
       loop: { beats: live.beats.length, last_beat_minutes: fr.last_beat_minutes, fresh: fr.ok },
       openalex_mirror: { generated_at: openalexMirror.generated_at || null, findings: Object.keys(openalexMirror.findings || {}).length, discovered: (openalexMirror.discovered || []).length } });
   }
+  if (p === "/social-queue.json") return json(socialQueue());  // TENANT-PROMO-1: drained by the core publisher (social/gate.json tenant_queues)
   if (p === "/api/freshness") { const fr = freshness(ledger, live); return json(fr, fr.ok ? 200 : 503); }
   if (p === "/api/beats") return json({ beats: live.beats.map(b => ({ ...b, errors: JSON.parse(b.errors || "[]") })) });
   if (p === "/api/citations") { const c = citations(live); return json(c, c.ok ? 200 : 503); }

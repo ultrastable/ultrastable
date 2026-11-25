@@ -106,12 +106,7 @@ def validate_subset(schema, value, path="$") -> list[str]:
 
 
 def validate(schema, value) -> list[str]:
-    try:
-        import jsonschema  # full draft 2020-12 when available
-    except ImportError:
-        return validate_subset(schema, value)
-    v = jsonschema.Draft202012Validator(schema)
-    return [f"$.{'.'.join(str(p) for p in e.absolute_path)}: {e.message}" for e in sorted(v.iter_errors(value), key=lambda e: list(map(str, e.absolute_path)))]
+    return _kit().validate(schema, value)
 
 
 # ---------- files ----------

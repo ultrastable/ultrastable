@@ -423,6 +423,10 @@ export default {
        "fm-seed-not-launched"
       ],
       [
+       "boot-accept",
+       "fm-surfaces-not-integrated"
+      ],
+      [
        "seed-autonomous",
        "fm-seed-not-autonomous"
       ],

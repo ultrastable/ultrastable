@@ -32,6 +32,8 @@
   python3 -m foundation failmine [--run [--apply]|--report|--probe HASH|--check]   FAILMINE-1: mine every failure record, classify root causes, register new modes, escalate recurrence
   python3 -m foundation intentyield [--run [--apply]|--probe|--check|--report]   INTENT-YIELD-1: owner directives kept per unit of attention; no counts, no person scored
   python3 -m foundation temporal [--run [--apply]|--settled ID|--probe|--check|--report]   TEMPORAL-1: series per area, loop and entry; hotspots, neglect and stopped loops feed the failure-mode machinery
+  python3 -m foundation systemspec [--check|--write|--gaps|--rule ID]   SYSTEM-SPEC-1: seed/SYSTEM.md, the definition every system carries, generated from code and probed
+  python3 -m foundation bootaccept [--run|--probe|--url U --repo O/R|--check]   BOOT-ACCEPT-1: nothing to repo, back end, web UI, graph, discovery and health, read live
   python3 -m foundation bootproof [--check]   BOOTPROOF-1: the seed kernel is closed under bootstrap (instructions, placeholders, secrets, triggers)
   python3 -m foundation seedlaunch [--e2e [--keep]|--fleet|--check]   SEED-LAUNCH-1: every seed built, deployed, year-gated and probed live by the system
   python3 -m foundation repostd [--check|--plan|--live|--apply|--branches]   REPO-STANDARD-1: one repository standard for every repository of the org
@@ -47,6 +49,7 @@
   python3 -m foundation surfaces [--check|--render|--plan [github|wellknown|publiccode]] [--root DIR]   SYSTEM-MANIFEST-1: one manifest per system; every surface rendered from it
   python3 -m foundation rulerefs [--check|--list|--reverse|--seed|--exec|--live]             RULE-REFS-1: every path, command, test, workflow and endpoint a rule names resolves; code nothing names is listed
   python3 -m foundation tenantpromo [--check|--list]                      TENANT-PROMO-1: every tenant promotes itself (social queue, showcase, cross-links)
+  python3 -m foundation admit [--check|--apply [--slug S]|--list]          ADMIT-1: one tenant-repos row admits a tenant; every other registry is derived
   python3 -m foundation progress [--check|--live]                          PROGRESS-1: every system shows substantive progress at every visit; the cadence monitor is wired
   python3 -m foundation cost [--check|--probe|--guard [--apply]]          D1 rows read and AI neurons against budgets (COST-GUARD-1)
   python3 -m foundation issueloop [--apply|--json]                       ISSUE-LOOP-1: every open issue's probe is run; a passing probe closes it
@@ -361,6 +364,12 @@ def main(argv=None) -> int:
     if _av[:1] == ["seedlaunch"]:
         from . import seedlaunch
         return seedlaunch.main(_av[1:])
+    if _av[:1] == ["systemspec"]:
+        from . import systemspec
+        return systemspec.main(_av[1:])
+    if _av[:1] == ["bootaccept"]:
+        from . import bootaccept
+        return bootaccept.main(_av[1:])
     if _av[:1] == ["intentyield"]:
         from . import intentyield
         return intentyield.main(_av[1:])
@@ -403,6 +412,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["datagraph"]:
         from . import datagraph
         return datagraph.main(_av[1:])
+    if _av[:1] == ["admit"]:
+        from . import admit
+        return admit.main(_av[1:])
     if _av[:1] == ["tenantpromo"]:
         from . import tenantpromo
         return tenantpromo.main(_av[1:])
