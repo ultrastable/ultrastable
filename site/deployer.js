@@ -6,6 +6,8 @@ const J = (o, s) => new Response(JSON.stringify(o), { status: s || 200, headers:
 const ALLOWED = /^ultrastable-[a-z0-9-]{1,40}$/;  // only the platform's own workers; tenant idea workers have their own path (deployIdeaWorker)
 
 const HOST_REPO = /^[a-z0-9][a-z0-9-]{0,38}\/app-[a-z0-9-]{1,60}$/;
+// The one repository a standing seed's Worker may be given a token for: its own, never a core repository and never a visitor's app.
+export function seedRepoOf(name) { const m = /^ultrastable-seed-([a-z0-9][a-z0-9-]{1,34})$/.exec(String(name || "")); return m && !/^app-/.test(m[1]) && !/^(ultrastable|workers|spec|seed|license|ops)$/.test(m[1]) ? "ultrastable/" + m[1] : null; }
 // The same HMAC the tick Worker checks (seed/worker/src/apprepos.js hostKey); site/launchpath.test.mjs holds the two equal.
 export async function hostKey(secret, repo) {
   const k = await crypto.subtle.importKey("raw", new TextEncoder().encode(String(secret)), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
@@ -142,7 +144,9 @@ export async function internalDeploy(request, env, fetcher) {
     // HOSTED-1: an app this platform hosts gets the address of its host's token route and a key that opens its one repository there. The key is
     // made here from a secret the caller never sees, so the workflow that asks for the deploy cannot mint one.
     if (b.host_repo) {
-      if (!/^ultrastable-seed-app-[a-f0-9]{10}$/.test(b.name) || !HOST_REPO.test(String(b.host_repo)) || !env.INTERNAL_DEPLOY_KEY) return J({ ok: false, error: "host_repo is only for a hosted app" }, 400);
+      // SEED-HOST-1: a standing seed gets the same route to its own repository and no other: ultrastable-seed-<slug> may name only ultrastable/<slug>.
+      const app = /^ultrastable-seed-app-[a-f0-9]{10}$/.test(b.name) && HOST_REPO.test(String(b.host_repo)), seed = seedRepoOf(b.name) === String(b.host_repo);
+      if (!(app || seed) || !env.INTERNAL_DEPLOY_KEY) return J({ ok: false, error: "host_repo is only for a hosted app or a seed's own repository" }, 400);
       b.bindings = (b.bindings || []).filter(x => !/^HOST_/.test(x.name)).concat([{ type: "plain_text", name: "HOST_REPO", text: b.host_repo }, { type: "plain_text", name: "HOST_TOKEN_URL", text: (env.TICK_ORIGIN || "https://ultrastable-tick.ultrastable.workers.dev") + "/host/app-token" }, { type: "secret_text", name: "HOST_APP_KEY", text: await hostKey(env.INTERNAL_DEPLOY_KEY, b.host_repo) }]);
     }
     const form = new FormData();

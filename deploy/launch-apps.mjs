@@ -52,13 +52,18 @@ export function steerItem(launch, s) {
   return { path: "docs/issues/" + id + ".json", json: { id, title: id + ": " + s.text.slice(0, 80), body: "**Owner:** product-manager\n**Trigger:** the owner asked for this at ultrastable.io/s/" + launch.id + "/change on " + s.at + "\n**Done check:** the live app does what was asked\n**Status:** open\n\nIn the owner's words:\n\n> " + s.text + "\n\nsize: S\n\n**Closing probe:** GET the live app and confirm the change; then set Status to closed in this file.\n", labels: ["p1", "agent-ready", "owner-asked"], milestone: "Now", workstream: "Owner requests" } };
 }
 // One pass. Everything that touches the outside is injected, so the stories in site/launchpath.test.mjs run it against fakes.
-export async function run({ site, deploySeed, cfg, base, log = console.log, now = () => Date.now() }) {
+export async function run({ site, deploySeed, cfg, base, log = console.log, now = () => Date.now(), poke = null }) {
   const { launches } = await site({ op: "list" }), out = [], running = launches.filter((l) => l.system && !l.synthetic).length;
   let deploys = 0;
   for (const l of launches) {
     const r = { id: l.id, synthetic: Boolean(l.synthetic), steps: [], visitor_steps: 0 }, mark = { op: "mark", id: l.id, filed: [] };
     out.push(r);
-    if (!l.built) { r.steps.push("page not built yet (" + l.site_state + ")"); Object.assign(r, stackOf(l, cfg, now())); continue; }
+    if (!l.built) {
+      // A build that failed while nobody was looking (the model was unavailable) is queued again here; the next status read builds it.
+      if (l.site_state === "failed" && !l.synthetic) { const q = await site({ op: "rebuild", id: l.id }); if (q.requeued && poke) await poke(l.id); r.steps.push("page: build failed earlier; " + (q.requeued ? "queued again" : "nothing to rebuild from")); }
+      else r.steps.push("page not built yet (" + l.site_state + ")");
+      Object.assign(r, stackOf(l, cfg, now())); continue;
+    }
     const m = manifestOf(l, base, cfg), short = "app-" + l.id;
     try {
       // 1. its own system
@@ -139,7 +144,8 @@ async function main() {
   if (process.argv.includes("--routes")) { const c = await site({ op: "repo", check: true }); console.log(c.ok ? "the platform can create a visitor app's repository" : "it cannot yet: " + (c.waiting_on || c.error)); process.exit(c.ok ? 0 : 1); }  // closing probe of gate visitor-app-repos
   let probeId = null, fail = null;
   if (probe) { try { probeId = await walk(process.env.FRONT_DOOR || SITE); console.log("test idea " + probeId + " went through the front door"); } catch (e) { fail = "front door: " + e.message; } }
-  const out = await run({ site, deploySeed: async (l, dry) => realDeploy(l, dry), cfg, base });
+  const front = process.env.FRONT_DOOR || SITE, poke = async (id) => { for (let i = 0; i < 4; i++) { const s = await (await fetch(front + "/s/" + id + "/status", { headers: { "user-agent": UA } })).json().catch(() => ({})); if (s.state !== "building") return; } };
+  const out = await run({ site, deploySeed: async (l, dry) => realDeploy(l, dry), cfg, base, poke });
   for (const r of out) console.log((r.error ? "FAIL " : "ok   ") + r.id + (r.synthetic ? " (test)" : "") + ": " + r.steps.join("; ") + (r.error ? " | " + r.error : ""));
   if (probe && !fail) { const mine = out.find((r) => r.id === probeId); if (!mine) fail = "the test idea never reached the launch queue"; else if (mine.error) fail = mine.error; else if (mine.gate) console.log("::warning::gate " + mine.gate + ": apps are live and managed; their repositories wait on " + mine.steps.join("; ")); }
   for (const r of out.filter((x) => x.synthetic)) await site({ op: "drop", id: r.id });

@@ -527,7 +527,7 @@
     {
       "id": "curated-e11ba7a3fe",
       "surface": "seed/README.md",
-      "text": "A missing credential never stops the boot. The step is recorded as a backlog item with its blocker and a closing probe, and the rest of the",
+      "text": "A missing sign-in never stops the boot. The step is recorded as a backlog item with its blocker and a closing probe",
       "probe": [
         "grep:seed/bootstrap/bootstrap.py::def guard",
         "grep:seed/bootstrap/bootstrap.py::closing_probe",
@@ -1147,7 +1147,7 @@
         "grep:.github/workflows/checks.yml::rules --probe no-secrets",
         "grep:doctrine/rules.json::secret_patterns",
         "grep:products/gaplint/gaplint/rules.py::GL006",
-        "grep:seed/bootstrap/bootstrap.py::env:"
+        "grep:seed/bootstrap/bootstrap.py::GATE-RUNTIME"
       ],
       "bound_by": "curated"
     },
@@ -1279,9 +1279,9 @@
     {
       "id": "curated-17bb8cbfd7",
       "surface": "seed/docs/bootstrapping.md",
-      "text": "| detect | environment | which connector secrets are set (never their values), which tools exist | each missing secret becomes a gate card",
+      "text": "| detect | environment | which sign-ins the system holds (never their values), which tools exist | a system with nowhere to run gets one card with one link",
       "probe": [
-        "grep:seed/bootstrap/bootstrap.py::env:",
+        "grep:seed/bootstrap/bootstrap.py::GATE-RUNTIME",
         "grep:seed/bootstrap/bootstrap.py::connectors present",
         "grep:.github/workflows/checks.yml::rules --probe no-secrets"
       ],

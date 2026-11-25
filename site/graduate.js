@@ -35,10 +35,31 @@ export async function steer(env, id, text, now) {
   rec.steer.push({ n: rec.steer.length + 1, text: String(text).slice(0, 1000), at: (now || new Date()).toISOString(), filed: false });
   await save(env, rec); return rec;
 }
-// What anyone may see about a launch: no idea text, no key.
+// USER-BACKEND-1: what a launch waits on is recorded in backend words for the platform (which credential, which gate). A person reads plain words
+// that say what happened and that the system is still acting; the backend text never leaves the record.
+export function plainWaiting(w) {
+  if (!w) return null;
+  if (/places for hosted apps/.test(w)) return "Every place for a hosted app is taken right now. Your page stays live and yours is next in line; you do not need to do anything.";
+  if (/repository|project home|gate /.test(w)) return "Its own project home is not set up yet. We try again every day; you do not need to do anything.";
+  return "A step failed on our side. It is tried again on the next run; you do not need to do anything.";
+}
+// What anyone may see about a launch: no idea text, no key, no backend words.
 export function publicView(rec) {
   if (!rec) return null;
-  return { id: rec.id, state: rec.state, repo: rec.state === "repo" || rec.state === "handed-over" ? rec.repo : null, changes: rec.steer.length, changes_filed: rec.steer.filter((s) => s.filed).length, system: rec.system || null, owner_requested: Boolean(rec.want_owner), waiting_on: rec.waiting_on || null, served_from: rec.page_sha ? "repository" : "platform", manual_steps: 0 };
+  return { id: rec.id, state: rec.state, repo: rec.state === "repo" || rec.state === "handed-over" ? rec.repo : null, changes: rec.steer.length, changes_filed: rec.steer.filter((s) => s.filed).length, system: rec.system || null, owner_requested: Boolean(rec.want_owner), waiting_on: plainWaiting(rec.waiting_on), served_from: rec.page_sha ? "repository" : "platform", manual_steps: 0 };
+}
+// LAUNCH-PATH-1: a build that failed (the model was unavailable, the host was busy) is not the end. The idea is kept, so the page is queued again with
+// fresh tries: when the person comes back, and by the daily launcher (op "rebuild") when they do not. Nobody types the idea twice.
+export async function requeueBuild(env, id, minAgeMs = 600000, now = Date.now()) {
+  if ((await env.ASSETS.get("state:" + id)) !== "failed") return false;
+  if (now - Number((await env.ASSETS.get("since:" + id)) || 0) < minAgeMs) return false;
+  let b = null; try { b = JSON.parse((await env.ASSETS.get("brief:" + id)) || "null"); } catch (e) { console.error("brief unreadable", id, String(e)); }
+  const rec = await getLaunch(env, id), text = (b && b.brief) || (rec && rec.brief); if (!text) return false;
+  const base = Boolean(await env.ASSETS.get("site:" + id));
+  await env.ASSETS.put("job:" + id, JSON.stringify({ brief: text, change: base && b ? b.change : null, base }), { expirationTtl: 86400 });
+  await env.ASSETS.put("tries:" + id, "0", { expirationTtl: 86400 });
+  await env.ASSETS.put("state:" + id, "building"); await env.ASSETS.put("since:" + id, String(now));
+  return true;
 }
 const GH_LOGIN = /^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/i;
 export async function requestOwnership(request, env, id) {
@@ -61,7 +82,7 @@ export function ownBody(rec, canon, mine) {
   const engine = rec.system ? "<p class=\"meta\">It has its own managers running on a clock: they measure it, decide what to improve and do the work. <a href=\"" + esc(rec.system) + "/health\">Their pulse</a></p>" : "";
   const asks = rec.steer.length ? "<div class=\"card\"><h3 class=\"card-title\">What you asked for</h3><ul>" + rec.steer.slice(-8).map((s) => "<li>" + esc(s.text) + " <span class=\"meta\">(" + (s.filed ? "on the to-do list" : "applied to the page; queued for the project") + ")</span></li>").join("") + "</ul></div>" : "";
   const own = rec.want_owner ? "<p class=\"meta\">Ownership asked for by " + esc(rec.want_owner.login) + (rec.want_owner.done ? ". The invitation has been sent." : ". The invitation goes out when the project home is ready.") + "</p>"
-    : mine ? "<form method=\"post\" action=\"/s/" + rec.id + "/own\"><p>Want to own the project yourself later? Type your GitHub name and we invite you with full control. This is optional.</p><div class=\"us-ask\"><input name=\"github\" type=\"text\" maxlength=\"39\" autocomplete=\"off\" aria-label=\"Your GitHub name\" placeholder=\"your-name\"><button type=\"submit\" class=\"btn\">Invite me</button></div></form>"
+    : mine ? "<form method=\"post\" action=\"/s/" + rec.id + "/own\"><p>Want to own the project yourself later? Type your GitHub name and we invite you with full control. This is optional: with no GitHub name the app stays yours at this address and we keep looking after it.</p><div class=\"us-ask\"><input name=\"github\" type=\"text\" maxlength=\"39\" autocomplete=\"off\" aria-label=\"Your GitHub name\" placeholder=\"your-name\"><button type=\"submit\" class=\"btn\">Invite me</button></div></form>"
       : "<p class=\"meta\">To take the project over, open this page in the browser you made the app in.</p>";
   return "<div class=\"head\"><h1>" + esc(w[0]) + "</h1><p>" + esc(w[1]) + "</p></div>"
     + "<div class=\"card\"><p><a href=\"" + live + "\">" + esc(live.replace("https://", "")) + "</a></p>" + home + engine + "</div>"
@@ -118,6 +139,7 @@ export async function launchesInternal(request, env) {
     for (const k of ["grad:", "state:", "site:", "brief:", "job:", "tries:", "since:", "audit:", "profile:"]) await env.ASSETS.delete(k + rec.id);
     return J({ ok: true, dropped: rec.id });
   }
+  if (b.op === "rebuild") return J({ ok: true, requeued: await requeueBuild(env, String(b.id || ""), 0) });  // the launcher's side of "a failed build is tried again"
   if (b.op === "repo") return repoOp(b, env);
   if (b.op === "tenant-repo") {  // TENANT-REPO-2: tenant-repos.yml's credential-free route; the tick decides, the name rule is checked there too
     if (!env.TICK || !env.INTERNAL_DEPLOY_KEY) return J({ ok: false, waiting_on: "host-binding", error: "the site has no route to the tick Worker" }, 409);
