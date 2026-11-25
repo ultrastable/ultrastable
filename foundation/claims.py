@@ -248,32 +248,6 @@ def _commit(root):
         return "unknown"
 
 
-CODE_MARK = re.compile(r'" ?\+|\+ ?"|^\s*(const|return|let|if|card)\b|\bcard\(|\bsec\(|\.push\(|^\s*\+')
-
-
-def public_text(text):
-    """REDTEAM-1: the public claim text a stranger reads. Code-shaped quotes keep only their string literals, tags dropped; a quote that starts
-    mid-sentence is marked with an ellipsis. The registry keeps the exact quote for binding."""
-    t = text or ""
-    if CODE_MARK.search(t):
-        segs = re.split(r"(?<!\\)[\"']", t.replace('\\"', '"'))
-        out = []
-        for seg in segs:
-            if re.fullmatch(r"\s*\+[^\n]*\+\s*", seg):
-                out.append("\u2026")
-            elif (re.search(r"[A-Za-z]{2,}[ ,.][A-Za-z ]", seg) or (out and out[-1] == "\u2026" and re.search(r"[A-Za-z]{3,}", seg))) and not re.fullmatch(r"[\w-]+ c?\d+", seg.strip()) and not re.search(r"[{};=]|\b(const|return|function)\b|^\s*[\w.]+\(", seg):
-                out.append(re.sub(r"<[^>]*>", " ", seg).strip(" ,("))
-        parts = [x for x in out if x]
-        while parts and parts[-1] == "\u2026":
-            parts.pop()
-        t = " ".join(parts) or "(generated from code; see the probe)"
-    t = re.sub(r'<[^>]*>|\\"', lambda m: '"' if m.group(0) == '\\"' else "", t)
-    t = re.sub(r"\s+", " ", t).strip()
-    if t[:1].islower():
-        t = "\u2026" + t
-    return t
-
-
 def data(root=REPO):
     root = Path(root)
     reg, rows, drift = evaluate(root)
