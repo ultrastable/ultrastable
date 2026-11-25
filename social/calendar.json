@@ -476,6 +476,27 @@
    "arm": "shipped",
    "kind": "event",
    "tag": "EVENT"
+  },
+  {
+   "id": "paper:chen-stratton-2026:5of7:2026-11-25",
+   "date": "2026-11-25",
+   "text": "Common belief: More AI code means a bigger human review queue.\nOur records: 5 of 7 tests met.\nUltrastable runs on Ultrastable and writes these papers itself. https://ultrastable.io/research/chen-stratton-2026",
+   "texts": {
+    "bluesky": "Common belief: More AI code means a bigger human review queue.\nOur records: 5 of 7 tests met.\nUltrastable runs on Ultrastable and writes these papers itself. https://ultrastable.io/research/chen-stratton-2026",
+    "mastodon": "Common belief: AI writes more code, so a team must review more code, and review becomes the bottleneck.\n\nWhat this system's own records show: 5 of 7 tests met; every miss is an open work item. Measured: verified live deploys per merged pull request in the same window = 0.625 (n = 64).\n\nUltrastable runs on Ultrastable: it writes, measures and republishes these papers from its own records. Practical Solutions is one system it runs…\n\nhttps://ultrastable.io/research/chen-stratton-2026",
+    "linkedin": "Review without a queue: what Chen and Stratton (2026) mean for an autonomous system\n\nA common belief: AI writes more code, so a team must review more code, and review becomes the bottleneck.\n\nReview is a bottleneck only when a person is the gate. Replace the queue with checks that can fail, live verification and automatic revert, and measure quality instead of waiting.\n\nWhat the system's own records show (window of 0.75 days, 64 merged changes):\n• Verified live deploys per merged pull request in the same window: 0.625 (n = 64) against a target of >= 0.5 (met).\n• Median hours from a pull request opening to its merge: 0.15 (n = 64) against a target of <= 1.0 (met).\n• Median hours to merge for pull requests the system's own workflows or App opened: 0.49 (n = 13) against a target of <= 2.0 (met).\n• Share of merged pull requests opened by the system itself: 0.203 (n = 64) against a target of >= 0.5 (not met yet).\n\n5 of 7 tests met; every miss is an open work item. The paper regenerates itself from the records after every change, limits included.\n\nWhy this is on my feed: Ultrastable runs on Ultrastable. Its fixes, deploys and these white papers are produced and checked by the system itself, from its own records. Practical Solutions is one example of a system it runs: a free, evidence-based catalogue of fixes for global problems that keeps its own evidence current. The subject is the example; the point is what a self-running system can do for your own work. https://ultrastable.org\n\nFull paper, method and limits: https://ultrastable.io/research/chen-stratton-2026"
+   },
+   "channels": [
+    "bluesky",
+    "mastodon",
+    "linkedin"
+   ],
+   "kind": "paper",
+   "arm": "paper",
+   "paper": "chen-stratton-2026",
+   "state": "5of7",
+   "source": "site/research-data.js",
+   "url": "https://ultrastable.io/research/chen-stratton-2026"
   }
  ]
 }

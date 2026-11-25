@@ -5463,6 +5463,15 @@
    "body": "core/impact plan() takes failures and a lever split(); an item failed twice is replaced by its children.",
    "probe": "grep:workers/core/impact/index.js::split_after",
    "session": "session_0156nqDrqL9XCgR639FAfNMv"
+  },
+  {
+   "id": "lesson-2026-11-25-papers-were-invisible-to-search-and-mostly-unposted",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Papers were invisible to search and mostly unposted",
+   "body": "REACH-PAPERS-1: research papers were missing from the sitemap and IndexNow and had no structured data; only the Ashby paper was posted because cadence was 3 days and changed-state reposts went first; Mastodon engagement was never read because relay rows are named relay:mastodon. All four fixed in this change; postfeedback tests pass (19) and thought --run now schedules chen-stratton-2026.",
+   "probe": "grep:site/promote.js::REACH-PAPERS-1",
+   "session": "session_0156nqDuQXEUhGCq6LkokuuL"
   }
  ]
 }
