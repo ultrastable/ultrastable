@@ -284,7 +284,13 @@ def main(argv=None) -> int:
     ap.add_argument("--slug")
     ap.add_argument("--isolation", action="store_true", help="the sandbox probe: every tenant worker touches only its own stores")
     ap.add_argument("--probe", metavar="SLUG", help="pass when the tenant's own repository exists with a main branch (closes its gate)")
+    ap.add_argument("--moved", metavar="SLUG", help="pass when the tenant's code lives only in its own repository (state moved and the registry check clean); closes Q-MOVE-<slug>")
     a = ap.parse_args(argv)
+    if a.moved:
+        t, errs = load().get("tenants", {}).get(a.moved), check()
+        ok = bool(t) and t.get("state") == "moved" and not errs
+        print(f"{a.moved}: " + ("moved; the core builds it from " + t["repo"] if ok else f"not moved (state {t.get('state') if t else 'unknown'}" + (f"; {errs[0]}" if errs else "") + ")"))
+        return 0 if ok else 1
     if a.probe:
         t = load().get("tenants", {}).get(a.probe)
         if not t:

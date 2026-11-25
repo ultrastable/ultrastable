@@ -4173,6 +4173,44 @@
    ],
    "area": "managers",
    "server_owner": "github-actions"
+  },
+  {
+   "id": "replication-ledger-openalex",
+   "kind": "tick",
+   "summary": "LEDGER-KEYLESS-1: OpenAlex refuses the Replication Ledger Worker (Cloudflare egress, no API key). A GitHub runner asks OpenAlex the beat's own questions for every finding and its discovery searches, lands the answers as instances/replication-ledger/worker/data/openalex.json, and redeploys the Worker, whose beat reads them as a route through the same verbatim-quote guard; in between, the beat's keyless routes (Europe PMC, Crossref, Semantic Scholar) answer.",
+   "trigger": "daily workflow ledger-openalex.yml and on demand",
+   "owner": "product-manager",
+   "closes_by": "system",
+   "sla": "1d",
+   "done": "GET https://replication-ledger.ultrastable.org/health shows openalex_mirror.generated_at equal to the generated_at of data/openalex.json on main, and findings above 0",
+   "paths": [
+    {
+     "id": "github",
+     "how": ".github/workflows/ledger-openalex.yml runs node instances/replication-ledger/worker/openalex-mirror.mjs and lands the file with scripts/land_data.py",
+     "class": "free"
+    },
+    {
+     "id": "keyless",
+     "how": "the Worker's hourly beat reads Europe PMC, Crossref and Semantic Scholar with no key (instances/replication-ledger/worker/keyless.js) when OpenAlex refuses and the mirror holds no candidates",
+     "class": "degraded"
+    }
+   ],
+   "closing_probe": "grep:instances/replication-ledger/worker/keyless.test.mjs::the OpenAlex mirror a runner landed answers first",
+   "writeback": [
+    "instances/replication-ledger/worker/data/openalex.json"
+   ],
+   "system_path": [
+    "instances/replication-ledger/worker/openalex-mirror.mjs",
+    "instances/replication-ledger/worker/mirror.js",
+    "instances/replication-ledger/worker/keyless.js",
+    "instances/replication-ledger/worker/keyless.test.mjs",
+    ".github/workflows/ledger-openalex.yml"
+   ],
+   "workflows": [
+    "ledger-openalex.yml"
+   ],
+   "area": "tenants",
+   "server_owner": "github-actions"
   }
  ],
  "launch_registry": "instances/ultrastable/loops.json"

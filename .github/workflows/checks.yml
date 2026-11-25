@@ -118,6 +118,8 @@ jobs:
         run: ./scripts/regen_generated.sh
       - name: Doctrine check (positioning and code-is-the-only-memory, from doctrine/positioning.json)
         run: python3 -m foundation doctrine --check
+      - name: Seed kernel is closed under bootstrap (BOOTPROOF-1)
+        run: python3 -m foundation bootproof
       - name: Pins (every status pin and roadmap item on the site is computed from code, proofs and probe-backed issues)
         run: python3 -m foundation pins --check
       - name: Action pins (every `uses:` is a full commit SHA, shrink-only baseline, PINS-1 supply chain)
@@ -184,6 +186,8 @@ jobs:
           python3 -m foundation flows --check
           python3 -m foundation criticality --check
           python3 -m foundation ultrastability --check
+          python3 -m foundation specgate --check  # SPEC-GATE-1: new items carry done check, prediction, out of scope, live proof
+          python3 -m foundation lessons --check  # LESSONS-1: every lesson enforced in code or carried by an open item
           python3 -m foundation verify --check
           python3 -m foundation selfmodel --check
           python3 -m foundation cost --check
@@ -191,6 +195,9 @@ jobs:
           python3 -m foundation tenantrepos --check  # TENANT-REPO-1: tenant code lives in its own repository
           python3 -m foundation pointclick --check
           python3 -m foundation claimcode --check
+          python3 -m foundation driftguard --check  # DRIFT-GUARD-1: every incident class has a check, detector and failure mode
+          python3 -m foundation driftguard --crons  # DRIFT-GUARD-1: crons fit the account's plan limit; every tenant clock has a pulse route
+          python3 -m foundation driftguard --handoff-lint  # DRIFT-GUARD-1: a deploy is verified by reading what it deployed, not the tick's /health
           python3 -m foundation silentfail --check  # SILENT-FAIL-1: Worker bundle, duplicate modules, silent-failure classes
           printf '%s' "$PR_BODY" > "$RUNNER_TEMP/pr_body.txt" && python3 -m foundation silentfail --cite "$RUNNER_TEMP/pr_body.txt"  # a done claim cites a live reading
           python3 -m foundation directive --lint HANDOFF.md docs/lessons/*.md

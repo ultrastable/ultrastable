@@ -30,6 +30,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -123,6 +124,45 @@ def e2e_oidc(root=ROOT, wait_s=660, run=None, sleep=None) -> dict:
             "failed_stages": {} if ok else {"verify_live": out[-300:]}, "report": out.splitlines()[-3:]}
 
 
+def e2e_scratch(root=ROOT, wait_s=660, run=None, sleep=None, stamp=None) -> dict:
+    """BOOTPROOF-1: a slug no earlier run used, built from the kernel and deployed with a D1 created from zero through the OIDC route, then probed
+    on /health. The standing seeds prove upkeep; this proves a new system comes up from code alone, every day."""
+    import time
+    stamp = stamp or dt.datetime.now(dt.timezone.utc).strftime("%m%d%H%M")
+    slug = f"bootproof-{stamp}"
+    work = Path(tempfile.mkdtemp(prefix="bootproof-"))
+    inst = work / "instance.json"
+    inst.write_text((Path(root) / "instances" / "second-tenant" / "instance.json").read_text())
+    res = work / "result.json"
+    res.write_text("[]")
+    env = {**os.environ, "SEED_EXTRA": json.dumps([{"slug": slug, "instance": str(inst)}]), "SEED_ONLY_EXTRA": "1", "SEED_RESULT": str(res), "SEED_DEPLOY_OUT": str(work / "out")}
+    run = run or (lambda argv: _run_env(argv, root, env))
+    sleep = sleep or time.sleep
+    code, out = run(["node", "deploy/deploy-seed.mjs"])
+    rows = json.loads(res.read_text() or "[]")
+    up = rows[-1] if rows else {}
+    rec = {"at": _now(), "kind": "e2e", "route": "oidc-scratch", "slug": slug, "year": {"p10": up.get("year_p10")}, "deploy_exit": code}
+    if not up.get("uploaded"):
+        return {**rec, "passed": False, "failed_stages": {"provision": (up.get("error") or out[-300:])}}
+    if not up.get("live_ok"):
+        sleep(wait_s)
+        url = up.get("url", "") + "/health"
+        try:
+            ok = urllib.request.urlopen(urllib.request.Request(url, headers={"user-agent": "ultrastable-bootproof"}), timeout=30).status == 200
+        except urllib.error.HTTPError as e:
+            ok = False if e.code != 503 else None  # 503 with a JSON org body is the seed saying it has not completed a tick yet
+        except OSError:
+            ok = False
+        up["live_ok"] = bool(ok)
+    return {**rec, "passed": bool(up.get("live_ok")) and (up.get("year_p10") or 0) >= 365, "live_url": up.get("url", "") + "/health",
+            "failed_stages": {} if up.get("live_ok") else {"verify_live": "scratch seed did not answer /health"}}
+
+
+def _run_env(argv, cwd, env, timeout=900):
+    r = subprocess.run(argv, cwd=cwd, env=env, capture_output=True, text=True, timeout=timeout)
+    return r.returncode, (r.stdout + r.stderr)
+
+
 def e2e(keep=False, root=ROOT) -> dict:
     stamp = dt.datetime.now(dt.timezone.utc).strftime("%m%d%H%M")
     work = Path(tempfile.mkdtemp(prefix="seed-e2e-"))
@@ -211,6 +251,8 @@ def main(argv=None) -> int:
         print("seedlaunch ok" if not e else "\n".join(e))
         return 1 if e else 0
     recs = []
+    if "--e2e-scratch" in a:
+        recs.append(e2e_scratch())
     if "--e2e-oidc" in a:
         recs.append(e2e_oidc())
     elif "--e2e" in a:

@@ -30,9 +30,20 @@
   "\\b\\d[\\d,]*(\\.\\d+)? ?(%|percent)",
   "\\b\\d[\\d,]* (draws|checks|probes|tests|sources|repositories|workers|tenants|loops|agents|roles)\\b",
   "\\b(100%|always|never|automatically|guarantee[sd]?|every (change|deploy|merge|claim|statement|page))\\b",
-  "\\bwithin \\d+ ?(minutes?|hours?|seconds?|days?)\\b"
+  "\\bwithin \\d+ ?(minutes?|hours?|seconds?|days?)\\b",
+  "\\bevery (two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|thirty|fifty|hundred) (minutes?|hours?|days?|weeks?)\\b",
+  "\\b(two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|thirty|fifty|hundred) (policy )?(areas|sources|indexes|indices|programmes|programs|channels|tenants|systems|loops|workers|repositories|checks|probes)\\b"
  ],
  "claims": [
+  {
+   "id": "agents-word-claims-example",
+   "source": "agents/AGENTS.md",
+   "quote": "Counts and cadences written in words (\"five policy areas\", \"every six hours\") are claims too",
+   "probe": {
+    "file": "tests/foundation/test_claimcode.py",
+    "contains": "every six hours from public data"
+   }
+  },
   {
    "id": "readme-plus-share",
    "source": "README.md",
@@ -391,6 +402,33 @@
    "probe": {
     "file": "site/directory.js",
     "contains": "20 * 3600e3"
+   }
+  },
+  {
+   "id": "no-fabrication-agents-agents.md",
+   "source": "agents/AGENTS.md",
+   "quote": "No made-up numbers (NO-FABRICATION-1",
+   "probe": {
+    "file": "foundation/claimcode.py",
+    "contains": "claim_patterns"
+   }
+  },
+  {
+   "id": "no-fabrication-seed-agents-agents.md",
+   "source": "seed/agents/AGENTS.md",
+   "quote": "No made-up numbers (NO-FABRICATION-1",
+   "probe": {
+    "file": "foundation/claimcode.py",
+    "contains": "claim_patterns"
+   }
+  },
+  {
+   "id": "no-fabrication-agents-project-instructions.md",
+   "source": "agents/PROJECT-INSTRUCTIONS.md",
+   "quote": "No made-up numbers (NO-FABRICATION-1",
+   "probe": {
+    "file": "foundation/claimcode.py",
+    "contains": "claim_patterns"
    }
   },
   {

@@ -197,12 +197,8 @@
       }
     },
     "ultrastable-replication-ledger": {
-      "main": "worker/index.js",
-      "source": {
-        "repo": "ultrastable/replication-ledger",
-        "ref": "main"
-      },
-      "role": "Replication Ledger tenant app (ultrastable/replication-ledger): which landmark findings held up when replicated and which failed, across many fields; hourly beat searches OpenAlex for new replications of every finding and for landmark originals not yet held, files an attempt only under a verbatim-quote guard, checks citations at Crossref, recomputes standings and logs each move; reader pages with a guess-first reveal, /changes and /feed.json",
+      "main": "instances/replication-ledger/worker/index.js",
+      "role": "Replication Ledger tenant app (moving to ultrastable/replication-ledger): which landmark findings held up when replicated and which failed, across many fields; hourly beat searches OpenAlex for new replications of every finding and for landmark originals not yet held, files an attempt only under a verbatim-quote guard, checks citations at Crossref, recomputes standings and logs each move; reader pages with a guess-first reveal, /changes and /feed.json",
       "crons": [
         "23 * * * *"
       ],

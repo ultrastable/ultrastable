@@ -107,7 +107,7 @@
   },
   "replication-ledger": {
    "repo": "ultrastable/replication-ledger",
-   "state": "moved",
+   "state": "moving",
    "source": "instances/replication-ledger",
    "keep_in_core": [
     "IDEA.md",
