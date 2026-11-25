@@ -1,5 +1,5 @@
 {
- "at": "2026-11-25T20:56:04Z",
+ "at": "2026-11-25T21:17:50Z",
  "gaps": 5,
  "match_share": 0.99,
  "sources": {
@@ -156,7 +156,7 @@
     "drift": 0,
     "id": "claims-total",
     "ok": true,
-    "total": 388
+    "total": 392
    }
   ],
   "loops": [
@@ -682,6 +682,15 @@
     "unmeasured": []
    },
    {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "REDTEAM-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
     "checks": 1,
     "external": [],
     "failing": [],
@@ -713,6 +722,24 @@
     "external": [],
     "failing": [],
     "id": "CLOSED-LOOP-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "NO-FABRICATION-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "SPEC-GATE-1",
     "missing": [],
     "ok": true,
     "unmeasured": []
@@ -855,7 +882,7 @@
     "checks": 1,
     "external": [],
     "failing": [
-     "python3 -m foundation dispose --check: an open item is 79.4 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+     "python3 -m foundation dispose --check: an open item is 103.6 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
     ],
     "id": "DISPOSE-1",
     "missing": [],
@@ -928,7 +955,7 @@
   },
   "claims": {
    "gaps": 0,
-   "total": 388
+   "total": 392
   },
   "loops": {
    "gaps": 1,
@@ -936,12 +963,12 @@
   },
   "rules": {
    "gaps": 2,
-   "total": 80
+   "total": 83
   },
   "year": {
    "gaps": 1,
    "total": 2
   }
  },
- "total": 487
+ "total": 494
 }
