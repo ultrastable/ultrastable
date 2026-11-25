@@ -80,3 +80,26 @@ class Improve(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class SyncBothWays(unittest.TestCase):
+    """SYNC-BOTH-WAYS-1: drift per tenant and the upstream flow are measured from the tenant-sync ledger and file their own items."""
+
+    def _root(self, rows):
+        d = Path(tempfile.mkdtemp()); atexit.register(shutil.rmtree, d, True)
+        (d / "doctrine").mkdir(); (d / "docs/issues").mkdir(parents=True); (d / "ops/tenant-sync").mkdir(parents=True)
+        shutil.copy(REPO / "doctrine/tenant-sync.json", d / "doctrine/tenant-sync.json")
+        (d / "ops/tenant-sync/ledger.jsonl").write_text("".join(json.dumps(r) + "\n" for r in rows))
+        return d
+
+    def test_drift_and_upstream(self):
+        from foundation import tenantsync as ts
+        now = datetime.now(timezone.utc)
+        old = (now - timedelta(days=5)).isoformat()
+        d = self._root([{"at": old, "tenant": "practical-solutions", "status": "needs-pr", "revendor": {"changed": 3}, "send_up": ["x.js"]}])
+        m = ts.metrics(d, now)
+        self.assertFalse(m["tenants"]["practical-solutions"]["ok"])
+        self.assertFalse(m["upstream_ok"])
+        self.assertEqual(sorted(ts.file_items(d, m)), ["Q-SYNC-DRIFT-practical-solutions", "Q-SYNC-UPSTREAM"])
+        d2 = self._root([{"at": now.isoformat(), "tenant": "practical-solutions", "status": "in-sync", "revendor": {}, "send_up": []}])
+        self.assertTrue(ts.metrics(d2, now)["tenants"]["practical-solutions"]["ok"])

@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-25-sync-both-ways-1-tenants-pull-the-platform-and-lift-general-",
+  "kind": "decision",
+  "date": "2026-11-25",
+  "title": "SYNC-BOTH-WAYS-1: tenants pull the platform and lift general code up",
+  "body": "tenantsync now opens its pull requests over REST with the token passed in, clones ultrastable/practical-solutions, measures days behind per tenant and lifts reaching the core, and files Q-SYNC items with their own probes. Seeded systems also pull the kernel weekly with their own token.",
+  "probe": "grep:foundation/tenantsync.py::SYNC-BOTH-WAYS-1",
+  "session": "session_0156nqDs42dQamHBbr9uK8E2"
+ },
+ "kind": "decision",
+ "title": "SYNC-BOTH-WAYS-1: tenants pull the platform and lift general code up",
+ "session": "session_0156nqDs42dQamHBbr9uK8E2"
+}

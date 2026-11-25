@@ -1,0 +1,14 @@
+{
+ "at": "2026-11-25T15:52:51.000664+00:00",
+ "tenants": {
+  "practical-solutions": {
+   "status": "needs-pr",
+   "drift_files": 24,
+   "days_behind": 7.9,
+   "ok": false
+  }
+ },
+ "upstream_prs_30d": 0,
+ "upstream_candidates_30d": 0,
+ "upstream_ok": true
+}
