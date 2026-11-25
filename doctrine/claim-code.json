@@ -293,6 +293,33 @@
     "file": "tests/foundation/test_improve.py",
     "contains": "def test_frontend_and_backend_lanes_every_pass"
    }
+  },
+  {
+   "id": "kgraph-hourly-agents",
+   "source": "agents/AGENTS.md",
+   "quote": "runs step `knowledge` hourly over its own items, objectives and metrics",
+   "probe": {
+    "file": "seed/worker/test/knowledge.test.js",
+    "contains": "throttled to once an hour"
+   }
+  },
+  {
+   "id": "kgraph-hourly-seed",
+   "source": "seed/agents/AGENTS.md",
+   "quote": "runs step `knowledge` hourly over its own items, objectives and metrics",
+   "probe": {
+    "file": "seed/worker/test/knowledge.test.js",
+    "contains": "throttled to once an hour"
+   }
+  },
+  {
+   "id": "kgraph-hourly-pi",
+   "source": "agents/PROJECT-INSTRUCTIONS.md",
+   "quote": "runs step `knowledge` hourly over its own items, objectives and metrics",
+   "probe": {
+    "file": "seed/worker/test/knowledge.test.js",
+    "contains": "throttled to once an hour"
+   }
   }
  ],
  "baseline": [

@@ -29,6 +29,7 @@
   python3 -m foundation intentyield [--run [--apply]|--probe|--check|--report]   INTENT-YIELD-1: owner directives kept per unit of attention; no counts, no person scored
   python3 -m foundation temporal [--run [--apply]|--settled ID|--probe|--check|--report]   TEMPORAL-1: series per area, loop and entry; hotspots, neglect and stopped loops feed the failure-mode machinery
   python3 -m foundation seedlaunch [--e2e [--keep]|--fleet|--check]   SEED-LAUNCH-1: every seed built, deployed, year-gated and probed live by the system
+  python3 -m foundation kgraph [--check|--list]                           KGRAPH-1: every system keeps a self-maintained knowledge graph of all its data
   python3 -m foundation tenantpromo [--check|--list]                      TENANT-PROMO-1: every tenant promotes itself (social queue, showcase, cross-links)
   python3 -m foundation progress [--check|--live]                          PROGRESS-1: every system shows substantive progress at every visit; the cadence monitor is wired
   python3 -m foundation cost [--check|--probe|--guard [--apply]]          D1 rows read and AI neurons against budgets (COST-GUARD-1)
@@ -301,6 +302,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["temporal"]:
         from . import temporal
         return temporal.main(_av[1:])
+    if _av[:1] == ["kgraph"]:
+        from . import kgcheck
+        return kgcheck.main(_av[1:])
     if _av[:1] == ["tenantpromo"]:
         from . import tenantpromo
         return tenantpromo.main(_av[1:])

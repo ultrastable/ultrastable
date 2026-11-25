@@ -1,0 +1,12 @@
+{
+  "id": "Q-KG-practical-solutions",
+  "title": "Q-KG-practical-solutions: give practical-solutions its self-maintained knowledge graph (KGRAPH-1)",
+  "body": "**Owner:** knowledge\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -m foundation kgraph --list shows `practical-solutions: live`\n**Status:** open\n\nPractical Solutions keeps a single-blob core/kgraph graph and core/connect leads in its own repository. Vendor seed/worker/src/knowledge.js (add it to its vendor map in doctrine/tenant-repos.json), write mappers for problems, solutions, agencies and sources, run runKg on its clock, serve /api/graph and a live /graph page, then mark it live in doctrine/knowledge-graph.json. Unlearn is the reference tenant (ultrastable/unlearn worker/graph.js).\n\nPrediction: kg_nodes for tenant practical-solutions > 0 within 168 h.\n\nsize: M\n\n**Closing probe:** cmd:python3 -m foundation kgraph --check, with practical-solutions live in doctrine/knowledge-graph.json.\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "kgraph"
+  ],
+  "milestone": "Now",
+  "workstream": "Platform"
+}

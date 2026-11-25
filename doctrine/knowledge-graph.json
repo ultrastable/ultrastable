@@ -1,0 +1,14 @@
+{
+  "rule": "KGRAPH-1",
+  "said": "All UltraStable deployments and systems shall have a knowledge graph (graph network) to automatically build and maintain a graph of connections for all data. (Rowan, 2026-11-25)",
+  "engine": "seed/worker/src/knowledge.js",
+  "platform": { "step_file": "seed/worker/src/tick.js", "step": "'knowledge'", "routes_file": "seed/worker/src/index.js", "route": "/api/graph" },
+  "consumers": ["foundation/kgcheck.py", "seed/worker/src/kgstep.js"],
+  "systems": {
+    "unlearn": { "state": "live", "vendor": "vendor/ultrastable/knowledge.js", "route": "/api/graph", "page": "/graph" },
+    "practical-solutions": { "state": "pending", "item": "Q-KG-practical-solutions", "reason": "own repository with its own core/kgraph blob graph and core/connect; moves onto the shared D1 engine by vendoring it" },
+    "what-works": { "state": "pending", "item": "Q-KG-what-works", "reason": "tenant repository vendors the core files; mappers for its records are the next change" },
+    "replication-ledger": { "state": "pending", "item": "Q-KG-replication-ledger", "reason": "tenant is still moving to its own repository; the graph lands with the move" }
+  },
+  "pending_is_shrink_only": true
+}

@@ -21,7 +21,8 @@
    "vendor": {
     "doctrine/models.json": "vendor/ultrastable/models.json",
     "seed/worker/src/promoqueue.js": "vendor/ultrastable/promoqueue.js",
-    "doctrine/stakeholders.json": "vendor/ultrastable/stakeholders.json"
+    "doctrine/stakeholders.json": "vendor/ultrastable/stakeholders.json",
+    "seed/worker/src/knowledge.js": "vendor/ultrastable/knowledge.js"
    },
    "worker": "ultrastable-unlearn",
    "ai": true,

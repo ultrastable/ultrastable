@@ -1,0 +1,12 @@
+{
+  "id": "Q-KG-what-works",
+  "title": "Q-KG-what-works: give what-works its self-maintained knowledge graph (KGRAPH-1)",
+  "body": "**Owner:** knowledge\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -m foundation kgraph --list shows `what-works: live`\n**Status:** open\n\nWhat Works vendors core files already. Add seed/worker/src/knowledge.js to its vendor map, write mappers for its records, run runKg on its clock, serve /api/graph and a live /graph page, then mark it live in doctrine/knowledge-graph.json. Unlearn is the reference tenant (ultrastable/unlearn worker/graph.js).\n\nPrediction: kg_nodes for tenant what-works > 0 within 168 h.\n\nsize: M\n\n**Closing probe:** cmd:python3 -m foundation kgraph --check, with what-works live in doctrine/knowledge-graph.json.\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "kgraph"
+  ],
+  "milestone": "Now",
+  "workstream": "Platform"
+}

@@ -1,0 +1,12 @@
+{
+  "id": "Q-KG-replication-ledger",
+  "title": "Q-KG-replication-ledger: give replication-ledger its self-maintained knowledge graph (KGRAPH-1)",
+  "body": "**Owner:** knowledge\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -m foundation kgraph --list shows `replication-ledger: live`\n**Status:** open\n\nReplication Ledger is moving to its own repository. Land the graph with the move: vendor seed/worker/src/knowledge.js, mappers for its studies and replications, runKg on its clock, /api/graph and a live /graph page, then mark it live in doctrine/knowledge-graph.json. Unlearn is the reference tenant (ultrastable/unlearn worker/graph.js).\n\nPrediction: kg_nodes for tenant replication-ledger > 0 within 168 h.\n\nsize: M\n\n**Closing probe:** cmd:python3 -m foundation kgraph --check, with replication-ledger live in doctrine/knowledge-graph.json.\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "kgraph"
+  ],
+  "milestone": "Now",
+  "workstream": "Platform"
+}
