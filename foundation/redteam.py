@@ -200,6 +200,11 @@ def check_live(root=REPO, get=_get, at=None) -> list[dict]:
         home = get(site + "/")
         if re.search(r"at commit generated|\{\{|\$\{", home):
             f("unsourced:home-placeholder", "unsourced", "homepage shows an unfilled placeholder where a commit or number belongs", "at commit generated")
+        if get is _get:  # CACHE-FRESH-1: the cached pages a visitor gets carry the deployed build (shared check from the seed)
+            import importlib.util
+            sp = importlib.util.spec_from_file_location("seed_redteam", Path(root) / "seed/scripts/redteam.py"); sm = importlib.util.module_from_spec(sp); sp.loader.exec_module(sm)
+            for x in sm.check_cache(site):
+                f("stale:" + x["id"], x["cls"], x["what"], x["evidence"])
         claims = get(site + "/api/claims")
         if re.search(r'" \+ [A-Za-z_.]+ \+ "', claims):
             f("unsourced:claims-template", "unsourced", "a published claim contains unrendered template code", 'pattern \" + X + \"')

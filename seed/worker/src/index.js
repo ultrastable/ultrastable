@@ -1,6 +1,7 @@
 // Ultrastable seed Worker: the server-side heartbeat for one org.
 // Cron fires runTick; GET /health shows the last tick's four-line report.
 // Standard issue: first-party web analytics (analytics/analytics.js): /a.js beacon, /a/e collector, GET /api/analytics (bearer ANALYTICS_TOKEN).
+import { freshHtml } from './freshcache.js';  // CACHE-FRESH-1
 import { paced } from './pace.js';
 import { discoverRoute, heartbeat as directoryHeartbeat } from './discover.js';  // DISCOVER-1
 import { withKnobs, readGoals, registerTenant, reportReadings, knobValues } from './goals.js';  // GOALS-1
@@ -105,7 +106,7 @@ function hostRegistry(env, token, repo) {  // HOSTS-1: every host that can run t
   return createHosts(list, { db: env.DB });
 }
 
-export default {
+const WORKER = {
   async scheduled(_event, env, ctx) {
     if (halted(config, env)) { ctx.waitUntil(beat(env.DB, 'halted', async () => ({ halted: true })).catch(e => console.error('halted beat', e && e.message))); return; }  // HALT-1: no loops, lane, executor, deploys or model calls
     // ACCOUNT-SPLIT-2: decide first whether this account's tick runs the loops (one primary across both Cloudflare accounts).
@@ -412,3 +413,6 @@ async function declaredItems(db, prefix, failing, all) {
     else await db.prepare(`UPDATE items SET status='done', disposition=?, updated_at=? WHERE id=? AND status NOT IN ('done','superseded','cancelled')`).bind(`probe green: declared:${prefix}:${id}`, new Date().toISOString(), item).run().catch(() => null);
   }
 }
+
+// CACHE-FRESH-1: every HTML page this system serves revalidates in browsers and stays at most a minute in the edge cache.
+export default { ...WORKER, async fetch(request, env, ctx) { return freshHtml(await WORKER.fetch(request, env, ctx), (env && env.BUILD) || ''); } };

@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-25-deploys-are-judged-by-what-visitors-see-the-edge-cache-must-",
+  "kind": "lesson",
+  "date": "2026-11-25",
+  "title": "Deploys are judged by what visitors see; the edge cache must not outlive a deploy (CACHE-FRESH-1)",
+  "body": "On 2026-11-25 the site kept serving old /claims and /live for 30+ minutes after deploy while cache-busted fetches were new. HTML now revalidates in browsers, stays at most 60 s at the edge, names its build, and a post-deploy probe fails on stale cached pages.",
+  "probe": "file:seed/worker/src/freshcache.js"
+ },
+ "kind": "lesson",
+ "title": "Deploys are judged by what visitors see; the edge cache must not outlive a deploy (CACHE-FRESH-1)",
+ "session": ""
+}

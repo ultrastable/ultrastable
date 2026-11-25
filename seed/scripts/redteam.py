@@ -72,7 +72,7 @@ def _get(url):
         return r.read().decode("utf-8", "replace")
 
 
-def check_live(url, get=_get, at=None):
+def check_live(url, get=_get, at=None, cache=None):
     at, out = at or NOW(), []
     try:
         home = get(url.rstrip("/") + "/")
@@ -80,6 +80,7 @@ def check_live(url, get=_get, at=None):
             out.append({"id": "stale-placeholder", "cls": "stale", "what": "the front page shows an unfilled placeholder", "evidence": url})
     except Exception as e:
         return [{"id": "vacuous-site", "cls": "vacuous", "what": "the front end could not be read", "evidence": repr(e)[:160]}]
+    out += (cache or (check_cache if get is _get else (lambda u: [])))(url)  # a stubbed reader means a test, which has no edge to probe
     for feed in ("/feed.json", "/progress.json"):
         try:
             dates = re.findall(r'"(?:date_published|date_modified|at|as_of)"\s*:\s*"(\d{4}-\d\d-\d\dT[^"]+)"', get(url.rstrip("/") + feed))
@@ -89,6 +90,18 @@ def check_live(url, get=_get, at=None):
         if newest is not None and (at - newest).days >= 3:
             out.append({"id": f"stale-{feed.strip('/').split('.')[0]}", "cls": "stale", "what": f"{feed} has nothing newer than {newest.date()}", "evidence": url + feed})
     return out
+
+
+def check_cache(url, run=None):
+    """CACHE-FRESH-1: the page a visitor gets through the cache carries the origin's build and leaves the edge within a minute."""
+    import shutil, subprocess
+    run = run or subprocess.run
+    if not shutil.which("node"):
+        return [{"id": "cache-unprobed", "cls": "vacuous", "what": "node is missing, so the cache probe did not run", "evidence": url}]
+    r = run(["node", str(Path(__file__).with_name("stale_probe.mjs")), url, "/", "--wait-s", "0"], capture_output=True, text=True, timeout=120)
+    if r.returncode == 0:
+        return []
+    return [{"id": "stale-cache", "cls": "stale", "what": "visitors get a cached page older than the deployed one, or the edge may hold pages too long", "evidence": (r.stdout or r.stderr)[-300:]}]
 
 
 def rows(root=ROOT):

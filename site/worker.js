@@ -3,7 +3,8 @@
 // Ultrastable's own records; /proof is a 301 to /live (PROOF-OWN-1). Positioning: docs/PRODUCT-ULTRASTABLE.md and product/boundary.json.
 import { handleAnalytics, record } from "../seed/analytics/analytics.js";
 import { routeChat } from "../seed/worker/src/airoute.js"; // AI-ROUTER-1: cache, dedupe, free-first, learned routing for every site model call
-import { budgetEnv, SHARES, halted } from "../seed/worker/src/budget.js";  // SPEND-GOVERNOR-1: site model calls spend from the owner's budget
+import { budgetEnv, SHARES, halted } from "../seed/worker/src/budget.js";
+import { freshHtml } from "../seed/worker/src/freshcache.js";  // CACHE-FRESH-1  // SPEND-GOVERNOR-1: site model calls spend from the owner's budget
 import USER_PATH from "./userpath.js";
 import SH from "./stakeholders.js"; // STAKEHOLDERS-1
 import BRIEF from "./platformbrief.js";
@@ -1315,4 +1316,4 @@ export function timed(res, t0, now = Date.now()) {
   if ((r.headers.get("content-type") || "").includes("text/html")) r.headers.append("Link", "</favicon.svg>; rel=preload; as=image; type=\"image/svg+xml\"");
   return r;
 }
-export default { scheduled: entry.scheduled, async fetch(request, env, ctx) { const t0 = Date.now(); return timed(await entry.fetch(request, env, ctx), t0); } };
+export default { scheduled: entry.scheduled, async fetch(request, env, ctx) { const t0 = Date.now(); return freshHtml(timed(await entry.fetch(request, env, ctx), t0), DASH.asof_at || ""); } };

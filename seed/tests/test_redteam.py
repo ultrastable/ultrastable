@@ -39,3 +39,12 @@ class Seed(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Cache(unittest.TestCase):
+    def test_stale_cache_is_a_finding(self):
+        import types
+        bad = lambda *a, **k: types.SimpleNamespace(returncode=1, stdout='{"fails":["old build"]}', stderr="")
+        ok = lambda *a, **k: types.SimpleNamespace(returncode=0, stdout="", stderr="")
+        self.assertEqual([f["id"] for f in redteam.check_cache("https://x.test", run=bad)], ["stale-cache"])
+        self.assertEqual(redteam.check_cache("https://x.test", run=ok), [])
