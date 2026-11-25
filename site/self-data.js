@@ -911,7 +911,6 @@ export default {
   "social-post",
   "spinoff",
   "strange-loop-hygiene",
-  "supply-chain",
   "temporal",
   "tenant-repos",
   "tenant-sync",
@@ -2324,19 +2323,6 @@ export default {
     "workflows": [
      "ledger-openalex"
     ]
-   },
-   {
-    "closing_probe": "grep:foundation/supplychain.py::def probe",
-    "id": "supply-chain",
-    "kind": "governance",
-    "owner": "staff",
-    "server_owner": "github-actions",
-    "sla": "7d",
-    "summary": "STANDARDS-1: OpenSSF Scorecard and the SPDX SBOM from GitHub's dependency graph are read weekly; each check under the floor and each package outside the licence policy becomes a Q-STD-SC-* item closed by the next reading. The reading itself is written to ops/supply-chain.json by the first run.",
-    "trigger": "weekly (supply-chain.yml) and on demand",
-    "workflows": [
-     "supply-chain"
-    ]
    }
   ],
   "workers": [
@@ -2656,12 +2642,6 @@ export default {
     "id": "spinoff",
     "loops": [
      "spinoff"
-    ]
-   },
-   {
-    "id": "supply-chain",
-    "loops": [
-     "supply-chain"
     ]
    },
    {
