@@ -90,7 +90,7 @@ export default {
      "metric_label": "second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl)",
      "measured": 77,
      "status": "met",
-     "n": 12807,
+     "n": 12766,
      "source": "ops/ultrastability.jsonl",
      "item": null
     },
@@ -178,7 +178,7 @@ export default {
      "metric_label": "share of registered loops that declare a closing probe and a server-side owner",
      "measured": 1.0,
      "status": "met",
-     "n": 112,
+     "n": 111,
      "source": "instances/ultrastable/loop-registry.json (declared)",
      "item": null
     }
@@ -577,7 +577,7 @@ export default {
      "metric_label": "share of registered loops that declare a closing probe and a server-side owner",
      "measured": 1.0,
      "status": "met",
-     "n": 112,
+     "n": 111,
      "source": "instances/ultrastable/loop-registry.json (declared)",
      "item": null
     },
@@ -941,7 +941,7 @@ export default {
      "metric_label": "share of registered loops that declare a closing probe and a server-side owner",
      "measured": 1.0,
      "status": "met",
-     "n": 112,
+     "n": 111,
      "source": "instances/ultrastable/loop-registry.json (declared)",
      "item": null
     }
