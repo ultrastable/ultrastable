@@ -1,7 +1,7 @@
 {
   "id": "Q-ULTRA-blindspot-uptime-3",
   "title": "Q-ULTRA-blindspot-uptime-3: Uptime out of bounds: retire: stop spending on what cannot stay up (blindspot; verb retire)",
-  "body": "**Owner:** executor\n**Trigger:** essential variable `blindspot:uptime` out of bounds (reading 0.0; limits 0.99 to 1.0)\n**Done check:** cmd:python3 -m foundation ultrastability --check\n**Status:** open\n\nULTRASTABILITY-1 second-order step: retire: stop spending on what cannot stay up (blindspot; verb retire). The system has to be reachable to be improved.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation ultrastability --tick` reads `uptime` inside its bounds.\n",
+  "body": "**Owner:** executor\n**Trigger:** essential variable `blindspot:uptime` out of bounds (reading 0.0; limits 0.99 to 1.0)\n**Done check:** cmd:python3 -m foundation ultrastability --check\n**Status:** open\n\nULTRASTABILITY-1 second-order step: retire: stop spending on what cannot stay up (blindspot; verb retire). The system has to be reachable to be improved.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation ultrastability --tick` reads `uptime` inside its bounds.\n\n\n**Vacuous:** 2026-11-25T18:32:02Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n",
   "labels": [
     "p1",
     "agent-ready"
