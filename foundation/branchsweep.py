@@ -469,7 +469,14 @@ def main(argv=None) -> int:
         tok = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN") or ""
         if not tok:
             print("branchsweep --remote: no token in GH_TOKEN or GITHUB_TOKEN"); return 1
-        r = remote_prune(policy().get("fleet_repos", []), tok, dry="--dry" in a); print(json.dumps(r, indent=1)); return 0
+        r = remote_prune(policy().get("fleet_repos", []), tok, dry="--dry" in a); print(json.dumps(r, indent=1))
+        # BRANCH-CLEANUP-1 (Rowan, 2026-11-25): no branch outlives its PR; enforce delete_branch_on_merge and delete merged/closed PR branches
+        import subprocess, sys
+        names = " ".join(x.split("/")[-1] for x in policy().get("fleet_repos", []))
+        env = dict(os.environ, BRANCH_CLEANUP_REPOS=names or "ultrastable")
+        if "--dry" in a:
+            return 0
+        return subprocess.run([sys.executable, str(REPO / "scripts" / "branch_cleanup.py"), "--apply"], env=env).returncode
     if "--archive" in a:
         import os
         tok = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN") or ""

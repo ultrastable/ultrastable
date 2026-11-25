@@ -2145,10 +2145,6 @@ export default {
     ]
    },
    {
-    "id": "branch-cleanup",
-    "loops": []
-   },
-   {
     "id": "branchsweep",
     "loops": [
      "branch-sweep"

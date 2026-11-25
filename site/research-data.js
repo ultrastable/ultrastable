@@ -210,15 +210,20 @@ export default {
     {
      "finding": "A2",
      "rule": "VISION-1",
-     "score": 0.11
+     "score": 0.111
     },
     {
      "finding": "A5",
      "rule": "UIUX-1",
      "score": 0.11
+    },
+    {
+     "finding": "A5",
+     "rule": "FLOW-DIRECTIVE-1",
+     "score": 0.105
     }
    ],
-   "leads_route": "lexical-512-7n0brl",
+   "leads_route": "lexical-512-s92dt6",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -489,11 +494,6 @@ export default {
    ],
    "leads": [
     {
-     "finding": "F1",
-     "rule": "COMPLETE-1",
-     "score": 0.111
-    },
-    {
      "finding": "F3",
      "rule": "WORDS-MATCH-CODE-1",
      "score": 0.142
@@ -501,7 +501,7 @@ export default {
     {
      "finding": "F3",
      "rule": "DRAIN-ZERO-1",
-     "score": 0.134
+     "score": 0.135
     },
     {
      "finding": "F4",
@@ -519,7 +519,7 @@ export default {
      "score": 0.139
     }
    ],
-   "leads_route": "lexical-512-3723tg",
+   "leads_route": "lexical-512-1iafa7",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -740,25 +740,20 @@ export default {
     {
      "finding": "O5",
      "rule": "UNKNOWNS-1",
-     "score": 0.169
+     "score": 0.168
     },
     {
      "finding": "O5",
      "rule": "DRAIN-ZERO-1",
-     "score": 0.154
+     "score": 0.157
     },
     {
      "finding": "O6",
      "rule": "FLOW-DIRECTIVE-1",
      "score": 0.116
-    },
-    {
-     "finding": "O6",
-     "rule": "INTERVIEW-1",
-     "score": 0.114
     }
    ],
-   "leads_route": "lexical-512-1f688ww",
+   "leads_route": "lexical-512-4vkxmr",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -968,8 +963,8 @@ export default {
     },
     {
      "finding": "S1",
-     "rule": "THOUGHT-1",
-     "score": 0.115
+     "rule": "PROMOTE-1",
+     "score": 0.116
     },
     {
      "finding": "S2",
@@ -979,7 +974,7 @@ export default {
     {
      "finding": "S2",
      "rule": "DRAIN-ZERO-1",
-     "score": 0.13
+     "score": 0.132
     },
     {
      "finding": "S3",
@@ -994,12 +989,12 @@ export default {
     {
      "finding": "S5",
      "rule": "COMPLETE-1",
-     "score": 0.114
+     "score": 0.115
     },
     {
      "finding": "S5",
      "rule": "DRAIN-ZERO-1",
-     "score": 0.108
+     "score": 0.111
     },
     {
      "finding": "S6",
@@ -1009,10 +1004,10 @@ export default {
     {
      "finding": "S6",
      "rule": "TEMPORAL-1",
-     "score": 0.115
+     "score": 0.116
     }
    ],
-   "leads_route": "lexical-512-1f6esz3",
+   "leads_route": "lexical-512-rkn4ng",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   }
  ],
