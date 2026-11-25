@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """SYSTEM-1: the one definition of an Ultrastable system names real code for every part; HUMAN-VOICE-1 lint works."""
 import subprocess
 import sys

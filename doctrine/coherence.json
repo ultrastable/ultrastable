@@ -20,9 +20,12 @@
         "seed": "ultrastable/seed"
       },
       "repo_only": [
-        ".github/workflows/kit-sync.yml"
+        ".github/workflows/kit-sync.yml",
+        "COMMERCIAL-TERMS.md",
+        "SECURITY.md"
       ],
-      "synced_by": "ultrastable/seed .github/workflows/kit-sync.yml (daily pull request)"
+      "synced_by": "ultrastable/seed .github/workflows/kit-sync.yml (daily pull request)",
+      "_repo_only_why": "kit-sync bookkeeping and the template repository's own legal and security notices; TEMPLATE-CODE-ONLY-1 keeps company terms out of seed/"
     },
     {
       "id": "org-settings",

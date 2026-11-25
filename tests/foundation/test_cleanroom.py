@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """CLEANROOM-1 and COHERENCE-1: the sandbox boots from the seed alone and every surface agrees with its one source."""
 import json
 import tempfile

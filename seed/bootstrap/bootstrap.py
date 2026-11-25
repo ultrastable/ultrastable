@@ -283,8 +283,8 @@ class Boot:
         facts.setdefault("budget_usd_per_month", self.budget)
         if getattr(self, "hosted_by", ""):
             # CLEANROOM-1: a hosted system gets its repository from the host's Apps (TENANT-REPO-2), posts through the host's connected
-            # channels (TENANT-PROMO-1, SOCIAL-MODULE-1) and mails through the host's relay (USER-BACKEND-1), so no card asks its owner to
-            # mint a token, open accounts or register a sender. Facts the owner stated in IDEA.md still win.
+            # channels (TENANT-PROMO-1, SOCIAL-MODULE-1) and mails through the host's relay (USER-BACKEND-1), so no card asks its owner for a
+            # credential, an account or a sender. Facts the owner stated in IDEA.md still win.
             for k in ("has_org_admin_token", "has_social_accounts", "has_sender_identity"):
                 facts.setdefault(k, True)
             facts.setdefault("provided_by_host", self.hosted_by)

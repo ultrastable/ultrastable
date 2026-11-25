@@ -1,529 +1,567 @@
 {
- "id": "WORDS-MATCH-CODE-1",
- "rule": "A published statement is true only if code makes it true, and code checks that on every change. A line on a public surface that states a number, a cadence, a guarantee or an automatic behaviour is bound to a probe (registered claim: exact quote + probe file + string the probe must contain) or sits in the shrink-only baseline that the executor drains. Tenant pages render statements from config with core/statements (probed at runtime and in CI).",
- "owner": "Rowan, 2026-11-17",
- "scan_globs": [
-  "site/*.js",
-  "site/**/*.html",
-  "seed/site/**/*.js",
-  "seed/site/**/*.html",
-  "README.md",
-  "agents/AGENTS.md"
- ],
- "skip": [
-  "\\.test\\.",
-  "/test/",
-  "STAGED",
-  "node_modules",
-  "self-data\\.js",
-  "research-data\\.js",
-  "temporal-data\\.js",
-  "yearfail-data\\.js",
-  "saydo-data\\.js",
-  "yearsim-data\\.js",
-  "trajectory-data\\.js",
-  "intent-yield-data\\.js"
- ],
- "min_len": 40,
- "claim_patterns": [
-  "\\bevery \\d+ (minutes?|hours?|days?)\\b",
-  "\\b\\d[\\d,]*(\\.\\d+)? ?(%|percent)",
-  "\\b\\d[\\d,]* (draws|checks|probes|tests|sources|repositories|workers|tenants|loops|agents|roles)\\b",
-  "\\b(100%|always|never|automatically|guarantee[sd]?|every (change|deploy|merge|claim|statement|page))\\b",
-  "\\bwithin \\d+ ?(minutes?|hours?|seconds?|days?)\\b"
- ],
- "claims": [
-  {
-   "id": "readme-plus-share",
-   "source": "README.md",
-   "quote": "A protected share of capacity (20% by default)",
-   "probe": {
-    "file": "seed/ultrastable.json",
-    "contains": "\"plus_share\": 0.2"
-   }
+  "id": "WORDS-MATCH-CODE-1",
+  "rule": "A published statement is true only if code makes it true, and code checks that on every change. A line on a public surface that states a number, a cadence, a guarantee or an automatic behaviour is bound to a probe (registered claim: exact quote + probe file + string the probe must contain) or sits in the shrink-only baseline that the executor drains. Tenant pages render statements from config with core/statements (probed at runtime and in CI).",
+  "owner": "Rowan, 2026-11-17",
+  "scan_globs": [
+    "site/*.js",
+    "site/**/*.html",
+    "seed/site/**/*.js",
+    "seed/site/**/*.html",
+    "README.md",
+    "agents/AGENTS.md"
+  ],
+  "skip": [
+    "\\.test\\.",
+    "/test/",
+    "STAGED",
+    "node_modules",
+    "self-data\\.js",
+    "research-data\\.js",
+    "temporal-data\\.js",
+    "yearfail-data\\.js",
+    "saydo-data\\.js",
+    "yearsim-data\\.js",
+    "trajectory-data\\.js",
+    "intent-yield-data\\.js",
+    "seed/doctrine/SYSTEM\\.md"
+  ],
+  "min_len": 40,
+  "claim_patterns": [
+    "\\bevery \\d+ (minutes?|hours?|days?)\\b",
+    "\\b\\d[\\d,]*(\\.\\d+)? ?(%|percent)",
+    "\\b\\d[\\d,]* (draws|checks|probes|tests|sources|repositories|workers|tenants|loops|agents|roles)\\b",
+    "\\b(100%|always|never|automatically|guarantee[sd]?|every (change|deploy|merge|claim|statement|page))\\b",
+    "\\bwithin \\d+ ?(minutes?|hours?|seconds?|days?)\\b"
+  ],
+  "claims": [
+    {
+      "id": "readme-plus-share",
+      "source": "README.md",
+      "quote": "A protected share of capacity (20% by default)",
+      "probe": {
+        "file": "seed/ultrastable.json",
+        "contains": "\"plus_share\": 0.2"
+      }
+    },
+    {
+      "id": "audit-chain-seal",
+      "source": "agents/AGENTS.md",
+      "quote": "after 7 days the chain is sealed into gzip NDJSON segments",
+      "probe": {
+        "file": "seed/worker/src/auditchain.js",
+        "contains": "gzip"
+      }
+    },
+    {
+      "id": "agent-md-maintains-itself",
+      "source": "site/worker.js",
+      "quote": "it now maintains itself",
+      "probe": {
+        "file": ".github/workflows/executor.yml",
+        "contains": "name: executor"
+      }
+    },
+    {
+      "id": "front-backed-freshness",
+      "source": "agents/AGENTS.md",
+      "quote": "returns 503 when one is older",
+      "probe": {
+        "file": "site/live.js",
+        "contains": "status: d.freshness.ok ? 200 : 503"
+      }
+    },
+    {
+      "id": "live-stale-banner",
+      "source": "site/live.js",
+      "quote": "older than its cadence; the freshness probe in the transparency workflow fails and files the repair",
+      "probe": {
+        "file": ".github/workflows/transparency.yml",
+        "contains": "api/freshness"
+      }
+    },
+    {
+      "id": "no-open-items",
+      "source": "agents/AGENTS.md",
+      "quote": "The Ultrastable system shall never allow 'Not done, needs you'",
+      "probe": {
+        "file": "foundation/openloops.py",
+        "contains": "banned_phrases"
+      }
+    },
+    {
+      "id": "unattended-sessions-never-count",
+      "source": "agents/AGENTS.md",
+      "quote": "it never counts toward the target and no loop may depend on one",
+      "probe": {
+        "file": "doctrine/unattended.json",
+        "contains": "never counts"
+      }
+    },
+    {
+      "id": "progress-last-visit-local",
+      "source": "site/progress.js",
+      "quote": "Your last visit is kept only in this browser and is never sent anywhere.",
+      "probe": {
+        "file": "workers/core/progress/progress.test.js",
+        "contains": "assert.doesNotMatch(s, /cookie|fetch\\(|XMLHttpRequest/)"
+      }
+    },
+    {
+      "id": "visible-progress",
+      "source": "agents/AGENTS.md",
+      "quote": "Visible progress at every visit, for six months with no input (PROGRESS-1, Rowan 2026-11-20).",
+      "probe": {
+        "file": "seed/worker/src/progress.js",
+        "contains": "export async function progressStep("
+      }
+    },
+    {
+      "id": "runway-agents",
+      "source": "agents/AGENTS.md",
+      "quote": "The system shall be able to run entirely unattended for 1 year with zero external input",
+      "probe": {
+        "file": "foundation/runway.py",
+        "contains": "target_days is below the owner's minimum of 365"
+      }
+    },
+    {
+      "id": "runway-seed",
+      "source": "seed/agents/AGENTS.md",
+      "quote": "The system shall be able to run entirely unattended for 1 year with zero external input",
+      "probe": {
+        "file": "foundation/runway.py",
+        "contains": "target_days is below the owner's minimum of 365"
+      }
+    },
+    {
+      "id": "runway-agents-pi",
+      "source": "agents/PROJECT-INSTRUCTIONS.md",
+      "quote": "The system shall be able to run entirely unattended for 1 year with zero external input",
+      "probe": {
+        "file": "foundation/runway.py",
+        "contains": "target_days is below the owner's minimum of 365"
+      }
+    },
+    {
+      "id": "decisions-outreach-segment-predict",
+      "source": "site/decisions-data.js",
+      "quote": "the segment's mean reward so far, or 0 for a segment never tried",
+      "probe": {
+        "file": "foundation/outreach.py",
+        "contains": "top[\"mean_reward\"] if top[\"mean_reward\"] is not None else 0.0"
+      }
+    },
+    {
+      "id": "failure-resolve-coverage",
+      "source": "agents/AGENTS.md",
+      "quote": "a mode nothing watches, or a recorded failure with no open queue item, fails `python3 -m foundation failure_audit --check`",
+      "probe": {
+        "file": "foundation/failure_audit.py",
+        "contains": "no live detector in"
+      }
+    },
+    {
+      "id": "template-code-only",
+      "source": "agents/AGENTS.md",
+      "quote": "fails a change that brings admin material back",
+      "probe": {
+        "file": "foundation/template.py",
+        "contains": "admin material is back in the template"
+      }
+    },
+    {
+      "id": "pathfinder-exhaustion",
+      "source": "agents/AGENTS.md",
+      "quote": "An ask without an exhaustion proof fails `python3 -m foundation pathfinder --check`",
+      "probe": {
+        "file": "foundation/pathfinder.py",
+        "contains": "owner ask without exhaustion proof"
+      }
+    },
+    {
+      "id": "flow-balance-site",
+      "source": "site/balance.js",
+      "quote": "a merged duplicate lowers new issues and never counts as closed",
+      "probe": {
+        "file": "seed/scripts/balance.py",
+        "contains": "never_closure"
+      }
+    },
+    {
+      "id": "flow-balance-rule",
+      "source": "agents/AGENTS.md",
+      "quote": "Superseded items lower net inflow and never count as closures",
+      "probe": {
+        "file": "seed/scripts/balance.py",
+        "contains": "never_closure"
+      }
+    },
+    {
+      "id": "verify-page-coverage",
+      "source": "site/verification.js",
+      "quote": "guarantees are model-checked and tied to the deployed code",
+      "probe": {
+        "file": "foundation/verify.py",
+        "contains": "def check(init, succ, invariants, goal"
+      }
+    },
+    {
+      "id": "verify-route-description",
+      "source": "site/worker.js",
+      "quote": "Guarantees model-checked and tied to the deployed code",
+      "probe": {
+        "file": "foundation/verify.py",
+        "contains": "tied_to_code"
+      }
+    },
+    {
+      "id": "year-saydo-every-watchdog",
+      "source": "site/year.js",
+      "quote": "are checked against the code on every watchdog pass",
+      "probe": {
+        "file": "foundation/ultrastability.py",
+        "contains": "importlib.import_module(\"foundation.\" + name).run(REPO, apply=True)"
+      }
+    },
+    {
+      "id": "yearsim-saydo-every-watchdog",
+      "source": "agents/AGENTS.md",
+      "quote": "Both run on every watchdog pass",
+      "probe": {
+        "file": "foundation/ultrastability.py",
+        "contains": "importlib.import_module(\"foundation.\" + name).run(REPO, apply=True)"
+      }
+    },
+    {
+      "id": "seedadmit-year-target",
+      "source": "agents/PROJECT-INSTRUCTIONS.md",
+      "quote": "the seeded year reaches 365 days at the 10th percentile in normal and strict mode",
+      "probe": {
+        "file": "seed/autonomy/kit.json",
+        "contains": "\"target_days\": 365"
+      }
+    },
+    {
+      "id": "seedadmit-expiry",
+      "source": "agents/PROJECT-INSTRUCTIONS.md",
+      "quote": "expires after 8 days",
+      "probe": {
+        "file": "seed/autonomy/kit.json",
+        "contains": "\"max_age_days\": 8"
+      }
+    },
+    {
+      "id": "tenant-promo-no-cold",
+      "source": "agents/AGENTS.md",
+      "quote": "a tenant never creates an account, never posts from the owner's personal account and never sends a cold message to a person",
+      "probe": {
+        "file": "seed/worker/src/promoqueue.js",
+        "contains": "@[a-z0-9_]"
+      }
+    },
+    {
+      "id": "seed-autonomy-stage",
+      "source": "agents/AGENTS.md",
+      "quote": "that is below `looping` 48 hours after its first live deploy",
+      "probe": {
+        "file": "tests/foundation/test_seedadmit.py",
+        "contains": "def test_autonomy_is_read_from_the_seed"
+      }
+    },
+    {
+      "id": "improve-loop-agents",
+      "source": "agents/AGENTS.md",
+      "quote": "\"Automatically improve impact and reach. An Ultrastable system shall always continue improving entirely on its own, 100% autonomously.\"",
+      "probe": {
+        "file": "tests/foundation/test_improve.py",
+        "contains": "def test_frontend_and_backend_lanes_every_pass"
+      }
+    },
+    {
+      "id": "improve-loop-seed",
+      "source": "seed/agents/AGENTS.md",
+      "quote": "\"Automatically improve impact and reach. An Ultrastable system shall always continue improving entirely on its own, 100% autonomously.\"",
+      "probe": {
+        "file": "tests/foundation/test_improve.py",
+        "contains": "def test_frontend_and_backend_lanes_every_pass"
+      }
+    },
+    {
+      "id": "improve-loop-agents-pi",
+      "source": "agents/PROJECT-INSTRUCTIONS.md",
+      "quote": "\"Automatically improve impact and reach. An Ultrastable system shall always continue improving entirely on its own, 100% autonomously.\"",
+      "probe": {
+        "file": "tests/foundation/test_improve.py",
+        "contains": "def test_frontend_and_backend_lanes_every_pass"
+      }
+    },
+    {
+      "id": "datagraph-agents",
+      "source": "agents/AGENTS.md",
+      "quote": "\"All UltraStable deployments and systems shall have a knowledge graph (graph network) to automatically build and maintain a graph of connections for all data.",
+      "probe": {
+        "file": "seed/worker/test/datagraph.test.js",
+        "contains": "a pass builds the graph from every table with no configuration"
+      }
+    },
+    {
+      "id": "datagraph-seed-agents",
+      "source": "seed/agents/AGENTS.md",
+      "quote": "\"All UltraStable deployments and systems shall have a knowledge graph (graph network) to automatically build and maintain a graph of connections for all data.",
+      "probe": {
+        "file": "seed/worker/test/datagraph.test.js",
+        "contains": "a pass builds the graph from every table with no configuration"
+      }
+    },
+    {
+      "id": "datagraph-agents-pi",
+      "source": "agents/PROJECT-INSTRUCTIONS.md",
+      "quote": "\"All UltraStable deployments and systems shall have a knowledge graph (graph network) to automatically build and maintain a graph of connections for all data.",
+      "probe": {
+        "file": "seed/worker/test/datagraph.test.js",
+        "contains": "a pass builds the graph from every table with no configuration"
+      }
+    },
+    {
+      "id": "sync-both-ways-agents-agents",
+      "source": "agents/AGENTS.md",
+      "quote": "\"Every Ultrastable system shall always improve and update itself and the Ultrastable platform automatically.\"",
+      "probe": {
+        "file": "tests/foundation/test_improve.py",
+        "contains": "class SyncBothWays"
+      }
+    },
+    {
+      "id": "sync-both-ways-seed-agents-agents",
+      "source": "seed/agents/AGENTS.md",
+      "quote": "\"Every Ultrastable system shall always improve and update itself and the Ultrastable platform automatically.\"",
+      "probe": {
+        "file": "tests/foundation/test_improve.py",
+        "contains": "class SyncBothWays"
+      }
+    },
+    {
+      "id": "sync-both-ways-agents-project-instructions",
+      "source": "agents/PROJECT-INSTRUCTIONS.md",
+      "quote": "\"Every Ultrastable system shall always improve and update itself and the Ultrastable platform automatically.\"",
+      "probe": {
+        "file": "tests/foundation/test_improve.py",
+        "contains": "class SyncBothWays"
+      }
+    },
+    {
+      "id": "directory-daily-listing",
+      "source": "site/worker.js",
+      "quote": "checks in once a day",
+      "probe": {
+        "file": "seed/worker/src/discover.js",
+        "contains": "now.getUTCHours() !== 3"
+      }
+    },
+    {
+      "id": "directory-recheck-daily",
+      "source": "site/worker.js",
+      "quote": "rechecks it daily",
+      "probe": {
+        "file": "site/directory.js",
+        "contains": "20 * 3600e3"
+      }
+    },
+    {
+      "id": "directory-drop-three",
+      "source": "agents/AGENTS.md",
+      "quote": "three failed days",
+      "probe": {
+        "file": "site/directory.js",
+        "contains": "row.fails + 1 >= 3"
+      }
+    },
+    {
+      "id": "directory-heartbeat-daily-agents",
+      "source": "agents/AGENTS.md",
+      "quote": "a daily heartbeat",
+      "probe": {
+        "file": "seed/worker/src/discover.js",
+        "contains": "now.getUTCHours() !== 3"
+      }
+    },
+    {
+      "id": "directory-recheck-agents",
+      "source": "agents/AGENTS.md",
+      "quote": "rechecks daily",
+      "probe": {
+        "file": "site/directory.js",
+        "contains": "20 * 3600e3"
+      }
+    },
+    {
+      "id": "branch-cleanup-1-agents",
+      "source": "agents/AGENTS.md",
+      "quote": "** \"You shall never keep branches active after merging",
+      "probe": {
+        "file": "seed/scripts/branch_cleanup.py",
+        "contains": "delete_branch_on_merge"
+      }
+    },
+    {
+      "id": "system-1-agents",
+      "source": "agents/AGENTS.md",
+      "quote": "** \"All surfaces, all files, all code, all instructions, everything has to work together automatically and seamlessly fr",
+      "probe": {
+        "file": "doctrine/cleanroom.json",
+        "contains": "\"ticks\": 144"
+      }
+    },
+    {
+      "id": "branch-cleanup-1-seed",
+      "source": "seed/agents/AGENTS.md",
+      "quote": "** \"You shall never keep branches active after merging",
+      "probe": {
+        "file": "seed/scripts/branch_cleanup.py",
+        "contains": "delete_branch_on_merge"
+      }
+    },
+    {
+      "id": "system-1-seed",
+      "source": "seed/agents/AGENTS.md",
+      "quote": "** \"All surfaces, all files, all code, all instructions, everything has to work together automatically and seamlessly fr",
+      "probe": {
+        "file": "doctrine/cleanroom.json",
+        "contains": "\"ticks\": 144"
+      }
+    }
+  ],
+  "baseline": [
+    "README.md::09912c6536f8",
+    "README.md::141aa984ab48",
+    "README.md::3d80ea469c5f",
+    "README.md::3ddc85e8d981",
+    "README.md::7584ad3cba03",
+    "README.md::bda8f4533bb6",
+    "README.md::e74daf974654",
+    "agents/AGENTS.md::0c016caf5dfc",
+    "agents/AGENTS.md::1d3293565376",
+    "agents/AGENTS.md::26a71681c98d",
+    "agents/AGENTS.md::2984cf5718e9",
+    "agents/AGENTS.md::2dcd8bf8e417",
+    "agents/AGENTS.md::39cbbd679f91",
+    "agents/AGENTS.md::3fb93b9527f7",
+    "agents/AGENTS.md::415519d6752c",
+    "agents/AGENTS.md::45f893bfb2a6",
+    "agents/AGENTS.md::492aaccc1f07",
+    "agents/AGENTS.md::4cae15531077",
+    "agents/AGENTS.md::51c90e2c0c89",
+    "agents/AGENTS.md::51fea31279c0",
+    "agents/AGENTS.md::57202b449cc0",
+    "agents/AGENTS.md::592175775359",
+    "agents/AGENTS.md::64fa0abbc415",
+    "agents/AGENTS.md::77296f27ab40",
+    "agents/AGENTS.md::77f4246aea0c",
+    "agents/AGENTS.md::7b73ff1a114d",
+    "agents/AGENTS.md::7c664f03372a",
+    "agents/AGENTS.md::7d05a3543178",
+    "agents/AGENTS.md::7e312462f296",
+    "agents/AGENTS.md::7f290400eaca",
+    "agents/AGENTS.md::804c8eec4019",
+    "agents/AGENTS.md::83b8cc35ece9",
+    "agents/AGENTS.md::8e693fe3f0f1",
+    "agents/AGENTS.md::909040319c96",
+    "agents/AGENTS.md::92c138ef3653",
+    "agents/AGENTS.md::945b863d962d",
+    "agents/AGENTS.md::9a9acea54280",
+    "agents/AGENTS.md::a097efc8783e",
+    "agents/AGENTS.md::a201be9b139b",
+    "agents/AGENTS.md::aeeb90805f9b",
+    "agents/AGENTS.md::b1ce214568e5",
+    "agents/AGENTS.md::b3ceca3aac74",
+    "agents/AGENTS.md::bb1632fa5864",
+    "agents/AGENTS.md::bebac3b6aeae",
+    "agents/AGENTS.md::c0d4deeab9aa",
+    "agents/AGENTS.md::c38c94412a37",
+    "agents/AGENTS.md::c48b5845001b",
+    "agents/AGENTS.md::c638e52e5d5b",
+    "agents/AGENTS.md::c685a817f3a3",
+    "agents/AGENTS.md::c799124b7de6",
+    "agents/AGENTS.md::c9706213b925",
+    "agents/AGENTS.md::cc219b375327",
+    "agents/AGENTS.md::cc29a7a0740b",
+    "agents/AGENTS.md::ce36647a4e7f",
+    "agents/AGENTS.md::d88204e16c54",
+    "agents/AGENTS.md::ddcc6c730add",
+    "agents/AGENTS.md::e10d08a2dac9",
+    "agents/AGENTS.md::e16f46cf5e69",
+    "agents/AGENTS.md::ef4b278fa7de",
+    "agents/AGENTS.md::f8cdb610248f",
+    "site/agentdata.js::f88bf585a47d",
+    "site/authzen.js::544137c3b225",
+    "site/claims-data.js::504e4faea1fb",
+    "site/connections.js::225a7a9d3b2e",
+    "site/connections.js::445f7bc02092",
+    "site/controlplane.js::55cf36f6723c",
+    "site/controlplane.js::9991800e21a3",
+    "site/dashboard-data.js::18b59115f563",
+    "site/dashboard-data.js::4e3eebe32437",
+    "site/dashboard-data.js::7b3fe3667cbd",
+    "site/dashboard-data.js::9919b359d0c5",
+    "site/dashboard-data.js::d8b08106b61d",
+    "site/feed-data.js::830d0643fe27",
+    "site/feed-data.js::b8ddf219e4c1",
+    "site/live.js::b317efd43c38",
+    "site/live.js::c1466e752290",
+    "site/mydata.js::02ca34fb43fd",
+    "site/mydata.js::900d72d78ead",
+    "site/oauth.js::0d60e988ae2e",
+    "site/oauth.js::2f47f9a20037",
+    "site/oauth.js::687e55ca815a",
+    "site/passkeys.js::900d72d78ead",
+    "site/platformbrief.js::10b3d56fb934",
+    "site/platformbrief.js::33a3f68eaf07",
+    "site/platformbrief.js::6079cb307527",
+    "site/platformbrief.js::679cd7845747",
+    "site/platformbrief.js::a1643684c5ce",
+    "site/roadmap-data.js::f9073676ba08",
+    "site/sop.js::263b8951cc98",
+    "site/stakeholders.js::234a2a8c3dfb",
+    "site/stakeholders.js::4efb6f692137",
+    "site/stakeholders.js::921904b57ebd",
+    "site/stakeholders.js::e4426faa78a2",
+    "site/userpath.js::d3a8370d7865",
+    "site/userpath.js::eac0cdb7b2e4",
+    "site/worker.js::18b5686b65a7",
+    "site/worker.js::23a14fe90826",
+    "site/worker.js::242a6d3c9328",
+    "site/worker.js::2f7a8c27c3f8",
+    "site/worker.js::2f8cd2cb26f3",
+    "site/worker.js::3ecabe1a8c1a",
+    "site/worker.js::41275bcf49dc",
+    "site/worker.js::59dba735a602",
+    "site/worker.js::7d86f84d76ca",
+    "site/worker.js::7fc1f51c7eb6",
+    "site/worker.js::888a1d5fbd61",
+    "site/worker.js::88e4ac4418ab",
+    "site/worker.js::89bda4872114",
+    "site/worker.js::92538928373c",
+    "site/worker.js::a1d1cb1a2944",
+    "site/worker.js::a3dbae472ff2",
+    "site/worker.js::b978c24a0e21",
+    "site/worker.js::cdcaf97a43cf",
+    "site/worker.js::de5210014e8e",
+    "site/worker.js::edb0dfb12da8",
+    "site/worker.js::ee4d9c70bd79",
+    "site/worker.js::efdec906438d",
+    "site/worker.js::f1c6cc2e941f",
+    "site/worker.js::f3c13722dcc2"
+  ],
+  "closing_probe": "python3 -m foundation claimcode --check",
+  "skip_reasons": {
+    "self-data\\.js": "SELF-MODEL-1: a generated mirror of the loop registry, clocks and boundary declarations (the code's own statements about itself), kept equal to them by `foundation selfmodel --check`; it authors no statement of its own.",
+    "research-data\\.js": "RESEARCH-1: generated by foundation/research.py. Its numbers are either measurements computed from the ledgers by `measures()` (tests/foundation/test_research.py) or figures quoted from a study file in research/studies, and its mechanism lines name paths `research --check` proves exist; it authors no statement of its own.",
+    "temporal-data\\.js": "TEMPORAL-1: generated by foundation/temporal.py from the repository's own history and ledgers (series, findings, predictions it computed); it authors no statement of its own, and site/temporal.js renders it.",
+    "yearfail-data\\.js": "YEARFAIL-1: generated by foundation/yearfail.py from a real run on every weekly run; each cell is a measured result or the quoted evidence of a detector, and the page labels what was simulated; it authors no statement of its own (tests/foundation/test_yearfail.py).",
+    "saydo-data\\.js": "SAY-DO-1: generated by foundation/saydo.py from ops/saydo.json; its lines quote the gaps the say-do check measured (statement and probe output) and author no statement of their own; `saydo --check` fails when it is stale.",
+    "yearsim-data\\.js": "YEAR-SIM-1: generated by foundation/yearsim.py from ops/yearsim.json; every number is a simulation output and every evidence line is a drill result; `yearsim --check` fails when it is stale.",
+    "trajectory-data\\.js": "TRAJECTORY-1: generated by foundation/trajectory.py from ops/trajectory.json; every number is read from git and the ops ledgers and it authors no statement of its own; `trajectory --check` fails when stale.",
+    "intent-yield-data\\.js": "INTENT-YIELD-1: generated by foundation/intentyield.py. Its titles are the owner's own directive titles copied from agents/AGENTS.md (already scanned there) and its numbers are verdicts computed by running each directive's own probe; it authors no statement of its own."
   },
-  {
-   "id": "audit-chain-seal",
-   "source": "agents/AGENTS.md",
-   "quote": "after 7 days the chain is sealed into gzip NDJSON segments",
-   "probe": {
-    "file": "seed/worker/src/auditchain.js",
-    "contains": "gzip"
-   }
-  },
-  {
-   "id": "agent-md-maintains-itself",
-   "source": "site/worker.js",
-   "quote": "it now maintains itself",
-   "probe": {
-    "file": ".github/workflows/executor.yml",
-    "contains": "name: executor"
-   }
-  },
-  {
-   "id": "front-backed-freshness",
-   "source": "agents/AGENTS.md",
-   "quote": "returns 503 when one is older",
-   "probe": {
-    "file": "site/live.js",
-    "contains": "status: d.freshness.ok ? 200 : 503"
-   }
-  },
-  {
-   "id": "live-stale-banner",
-   "source": "site/live.js",
-   "quote": "older than its cadence; the freshness probe in the transparency workflow fails and files the repair",
-   "probe": {
-    "file": ".github/workflows/transparency.yml",
-    "contains": "api/freshness"
-   }
-  },
-  {
-   "id": "no-open-items",
-   "source": "agents/AGENTS.md",
-   "quote": "The Ultrastable system shall never allow 'Not done, needs you'",
-   "probe": {
-    "file": "foundation/openloops.py",
-    "contains": "banned_phrases"
-   }
-  },
-  {
-   "id": "unattended-sessions-never-count",
-   "source": "agents/AGENTS.md",
-   "quote": "it never counts toward the target and no loop may depend on one",
-   "probe": {
-    "file": "doctrine/unattended.json",
-    "contains": "never counts"
-   }
-  },
-  {
-   "id": "progress-last-visit-local",
-   "source": "site/progress.js",
-   "quote": "Your last visit is kept only in this browser and is never sent anywhere.",
-   "probe": {
-    "file": "workers/core/progress/progress.test.js",
-    "contains": "assert.doesNotMatch(s, /cookie|fetch\\(|XMLHttpRequest/)"
-   }
-  },
-  {
-   "id": "visible-progress",
-   "source": "agents/AGENTS.md",
-   "quote": "Visible progress at every visit, for six months with no input (PROGRESS-1, Rowan 2026-11-20).",
-   "probe": {
-    "file": "seed/worker/src/progress.js",
-    "contains": "export async function progressStep("
-   }
-  },
-  {
-   "id": "runway-agents",
-   "source": "agents/AGENTS.md",
-   "quote": "The system shall be able to run entirely unattended for 1 year with zero external input",
-   "probe": {
-    "file": "foundation/runway.py",
-    "contains": "target_days is below the owner's minimum of 365"
-   }
-  },
-  {
-   "id": "runway-seed",
-   "source": "seed/agents/AGENTS.md",
-   "quote": "The system shall be able to run entirely unattended for 1 year with zero external input",
-   "probe": {
-    "file": "foundation/runway.py",
-    "contains": "target_days is below the owner's minimum of 365"
-   }
-  },
-  {
-   "id": "runway-agents-pi",
-   "source": "agents/PROJECT-INSTRUCTIONS.md",
-   "quote": "The system shall be able to run entirely unattended for 1 year with zero external input",
-   "probe": {
-    "file": "foundation/runway.py",
-    "contains": "target_days is below the owner's minimum of 365"
-   }
-  },
-  {
-   "id": "decisions-outreach-segment-predict",
-   "source": "site/decisions-data.js",
-   "quote": "the segment's mean reward so far, or 0 for a segment never tried",
-   "probe": {
-    "file": "foundation/outreach.py",
-    "contains": "top[\"mean_reward\"] if top[\"mean_reward\"] is not None else 0.0"
-   }
-  },
-  {
-   "id": "failure-resolve-coverage",
-   "source": "agents/AGENTS.md",
-   "quote": "a mode nothing watches, or a recorded failure with no open queue item, fails `python3 -m foundation failure_audit --check`",
-   "probe": {
-    "file": "foundation/failure_audit.py",
-    "contains": "no live detector in"
-   }
-  },
-  {
-   "id": "template-code-only",
-   "source": "agents/AGENTS.md",
-   "quote": "fails a change that brings admin material back",
-   "probe": {
-    "file": "foundation/template.py",
-    "contains": "admin material is back in the template"
-   }
-  },
-  {
-   "id": "pathfinder-exhaustion",
-   "source": "agents/AGENTS.md",
-   "quote": "An ask without an exhaustion proof fails `python3 -m foundation pathfinder --check`",
-   "probe": {
-    "file": "foundation/pathfinder.py",
-    "contains": "owner ask without exhaustion proof"
-   }
-  },
-  {
-   "id": "flow-balance-site",
-   "source": "site/balance.js",
-   "quote": "a merged duplicate lowers new issues and never counts as closed",
-   "probe": {
-    "file": "seed/scripts/balance.py",
-    "contains": "never_closure"
-   }
-  },
-  {
-   "id": "flow-balance-rule",
-   "source": "agents/AGENTS.md",
-   "quote": "Superseded items lower net inflow and never count as closures",
-   "probe": {
-    "file": "seed/scripts/balance.py",
-    "contains": "never_closure"
-   }
-  },
-  {
-   "id": "verify-page-coverage",
-   "source": "site/verification.js",
-   "quote": "guarantees are model-checked and tied to the deployed code",
-   "probe": {
-    "file": "foundation/verify.py",
-    "contains": "def check(init, succ, invariants, goal"
-   }
-  },
-  {
-   "id": "verify-route-description",
-   "source": "site/worker.js",
-   "quote": "Guarantees model-checked and tied to the deployed code",
-   "probe": {
-    "file": "foundation/verify.py",
-    "contains": "tied_to_code"
-   }
-  },
-  {
-   "id": "year-saydo-every-watchdog",
-   "source": "site/year.js",
-   "quote": "are checked against the code on every watchdog pass",
-   "probe": {
-    "file": "foundation/ultrastability.py",
-    "contains": "importlib.import_module(\"foundation.\" + name).run(REPO, apply=True)"
-   }
-  },
-  {
-   "id": "yearsim-saydo-every-watchdog",
-   "source": "agents/AGENTS.md",
-   "quote": "Both run on every watchdog pass",
-   "probe": {
-    "file": "foundation/ultrastability.py",
-    "contains": "importlib.import_module(\"foundation.\" + name).run(REPO, apply=True)"
-   }
-  },
-  {
-   "id": "seedadmit-year-target",
-   "source": "agents/PROJECT-INSTRUCTIONS.md",
-   "quote": "the seeded year reaches 365 days at the 10th percentile in normal and strict mode",
-   "probe": {
-    "file": "seed/autonomy/kit.json",
-    "contains": "\"target_days\": 365"
-   }
-  },
-  {
-   "id": "seedadmit-expiry",
-   "source": "agents/PROJECT-INSTRUCTIONS.md",
-   "quote": "expires after 8 days",
-   "probe": {
-    "file": "seed/autonomy/kit.json",
-    "contains": "\"max_age_days\": 8"
-   }
-  },
-  {
-   "id": "tenant-promo-no-cold",
-   "source": "agents/AGENTS.md",
-   "quote": "a tenant never creates an account, never posts from the owner's personal account and never sends a cold message to a person",
-   "probe": {
-    "file": "seed/worker/src/promoqueue.js",
-    "contains": "@[a-z0-9_]"
-   }
-  },
-  {
-   "id": "seed-autonomy-stage",
-   "source": "agents/AGENTS.md",
-   "quote": "that is below `looping` 48 hours after its first live deploy",
-   "probe": {
-    "file": "tests/foundation/test_seedadmit.py",
-    "contains": "def test_autonomy_is_read_from_the_seed"
-   }
-  },
-  {
-   "id": "improve-loop-agents",
-   "source": "agents/AGENTS.md",
-   "quote": "\"Automatically improve impact and reach. An Ultrastable system shall always continue improving entirely on its own, 100% autonomously.\"",
-   "probe": {
-    "file": "tests/foundation/test_improve.py",
-    "contains": "def test_frontend_and_backend_lanes_every_pass"
-   }
-  },
-  {
-   "id": "improve-loop-seed",
-   "source": "seed/agents/AGENTS.md",
-   "quote": "\"Automatically improve impact and reach. An Ultrastable system shall always continue improving entirely on its own, 100% autonomously.\"",
-   "probe": {
-    "file": "tests/foundation/test_improve.py",
-    "contains": "def test_frontend_and_backend_lanes_every_pass"
-   }
-  },
-  {
-   "id": "improve-loop-agents-pi",
-   "source": "agents/PROJECT-INSTRUCTIONS.md",
-   "quote": "\"Automatically improve impact and reach. An Ultrastable system shall always continue improving entirely on its own, 100% autonomously.\"",
-   "probe": {
-    "file": "tests/foundation/test_improve.py",
-    "contains": "def test_frontend_and_backend_lanes_every_pass"
-   }
-  },
-  {
-   "id": "datagraph-agents",
-   "source": "agents/AGENTS.md",
-   "quote": "\"All UltraStable deployments and systems shall have a knowledge graph (graph network) to automatically build and maintain a graph of connections for all data.",
-   "probe": {
-    "file": "seed/worker/test/datagraph.test.js",
-    "contains": "a pass builds the graph from every table with no configuration"
-   }
-  },
-  {
-   "id": "datagraph-seed-agents",
-   "source": "seed/agents/AGENTS.md",
-   "quote": "\"All UltraStable deployments and systems shall have a knowledge graph (graph network) to automatically build and maintain a graph of connections for all data.",
-   "probe": {
-    "file": "seed/worker/test/datagraph.test.js",
-    "contains": "a pass builds the graph from every table with no configuration"
-   }
-  },
-  {
-   "id": "datagraph-agents-pi",
-   "source": "agents/PROJECT-INSTRUCTIONS.md",
-   "quote": "\"All UltraStable deployments and systems shall have a knowledge graph (graph network) to automatically build and maintain a graph of connections for all data.",
-   "probe": {
-    "file": "seed/worker/test/datagraph.test.js",
-    "contains": "a pass builds the graph from every table with no configuration"
-   }
-  },
-  {
-   "id": "sync-both-ways-agents-agents",
-   "source": "agents/AGENTS.md",
-   "quote": "\"Every Ultrastable system shall always improve and update itself and the Ultrastable platform automatically.\"",
-   "probe": {
-    "file": "tests/foundation/test_improve.py",
-    "contains": "class SyncBothWays"
-   }
-  },
-  {
-   "id": "sync-both-ways-seed-agents-agents",
-   "source": "seed/agents/AGENTS.md",
-   "quote": "\"Every Ultrastable system shall always improve and update itself and the Ultrastable platform automatically.\"",
-   "probe": {
-    "file": "tests/foundation/test_improve.py",
-    "contains": "class SyncBothWays"
-   }
-  },
-  {
-   "id": "sync-both-ways-agents-project-instructions",
-   "source": "agents/PROJECT-INSTRUCTIONS.md",
-   "quote": "\"Every Ultrastable system shall always improve and update itself and the Ultrastable platform automatically.\"",
-   "probe": {
-    "file": "tests/foundation/test_improve.py",
-    "contains": "class SyncBothWays"
-   }
-  },
-  {
-   "id": "directory-daily-listing",
-   "source": "site/worker.js",
-   "quote": "checks in once a day",
-   "probe": {
-    "file": "seed/worker/src/discover.js",
-    "contains": "now.getUTCHours() !== 3"
-   }
-  },
-  {
-   "id": "directory-recheck-daily",
-   "source": "site/worker.js",
-   "quote": "rechecks it daily",
-   "probe": {
-    "file": "site/directory.js",
-    "contains": "20 * 3600e3"
-   }
-  },
-  {
-   "id": "directory-drop-three",
-   "source": "agents/AGENTS.md",
-   "quote": "three failed days",
-   "probe": {
-    "file": "site/directory.js",
-    "contains": "row.fails + 1 >= 3"
-   }
-  },
-  {
-   "id": "directory-heartbeat-daily-agents",
-   "source": "agents/AGENTS.md",
-   "quote": "a daily heartbeat",
-   "probe": {
-    "file": "seed/worker/src/discover.js",
-    "contains": "now.getUTCHours() !== 3"
-   }
-  },
-  {
-   "id": "directory-recheck-agents",
-   "source": "agents/AGENTS.md",
-   "quote": "rechecks daily",
-   "probe": {
-    "file": "site/directory.js",
-    "contains": "20 * 3600e3"
-   }
-  }
- ],
- "baseline": [
-  "README.md::09912c6536f8",
-  "README.md::141aa984ab48",
-  "README.md::3d80ea469c5f",
-  "README.md::3ddc85e8d981",
-  "README.md::7584ad3cba03",
-  "README.md::bda8f4533bb6",
-  "README.md::e74daf974654",
-  "agents/AGENTS.md::0c016caf5dfc",
-  "agents/AGENTS.md::1d3293565376",
-  "agents/AGENTS.md::26a71681c98d",
-  "agents/AGENTS.md::2984cf5718e9",
-  "agents/AGENTS.md::2dcd8bf8e417",
-  "agents/AGENTS.md::39cbbd679f91",
-  "agents/AGENTS.md::3fb93b9527f7",
-  "agents/AGENTS.md::415519d6752c",
-  "agents/AGENTS.md::45f893bfb2a6",
-  "agents/AGENTS.md::492aaccc1f07",
-  "agents/AGENTS.md::4cae15531077",
-  "agents/AGENTS.md::51c90e2c0c89",
-  "agents/AGENTS.md::51fea31279c0",
-  "agents/AGENTS.md::57202b449cc0",
-  "agents/AGENTS.md::592175775359",
-  "agents/AGENTS.md::64fa0abbc415",
-  "agents/AGENTS.md::77296f27ab40",
-  "agents/AGENTS.md::77f4246aea0c",
-  "agents/AGENTS.md::7b73ff1a114d",
-  "agents/AGENTS.md::7c664f03372a",
-  "agents/AGENTS.md::7d05a3543178",
-  "agents/AGENTS.md::7e312462f296",
-  "agents/AGENTS.md::7f290400eaca",
-  "agents/AGENTS.md::804c8eec4019",
-  "agents/AGENTS.md::83b8cc35ece9",
-  "agents/AGENTS.md::8e693fe3f0f1",
-  "agents/AGENTS.md::909040319c96",
-  "agents/AGENTS.md::92c138ef3653",
-  "agents/AGENTS.md::945b863d962d",
-  "agents/AGENTS.md::9a9acea54280",
-  "agents/AGENTS.md::a097efc8783e",
-  "agents/AGENTS.md::a201be9b139b",
-  "agents/AGENTS.md::aeeb90805f9b",
-  "agents/AGENTS.md::b1ce214568e5",
-  "agents/AGENTS.md::b3ceca3aac74",
-  "agents/AGENTS.md::bb1632fa5864",
-  "agents/AGENTS.md::bebac3b6aeae",
-  "agents/AGENTS.md::c0d4deeab9aa",
-  "agents/AGENTS.md::c38c94412a37",
-  "agents/AGENTS.md::c48b5845001b",
-  "agents/AGENTS.md::c638e52e5d5b",
-  "agents/AGENTS.md::c685a817f3a3",
-  "agents/AGENTS.md::c799124b7de6",
-  "agents/AGENTS.md::c9706213b925",
-  "agents/AGENTS.md::cc219b375327",
-  "agents/AGENTS.md::cc29a7a0740b",
-  "agents/AGENTS.md::ce36647a4e7f",
-  "agents/AGENTS.md::d88204e16c54",
-  "agents/AGENTS.md::ddcc6c730add",
-  "agents/AGENTS.md::e10d08a2dac9",
-  "agents/AGENTS.md::e16f46cf5e69",
-  "agents/AGENTS.md::ef4b278fa7de",
-  "agents/AGENTS.md::f8cdb610248f",
-  "site/agentdata.js::f88bf585a47d",
-  "site/authzen.js::544137c3b225",
-  "site/claims-data.js::504e4faea1fb",
-  "site/connections.js::225a7a9d3b2e",
-  "site/connections.js::445f7bc02092",
-  "site/controlplane.js::55cf36f6723c",
-  "site/controlplane.js::9991800e21a3",
-  "site/dashboard-data.js::18b59115f563",
-  "site/dashboard-data.js::4e3eebe32437",
-  "site/dashboard-data.js::7b3fe3667cbd",
-  "site/dashboard-data.js::9919b359d0c5",
-  "site/dashboard-data.js::d8b08106b61d",
-  "site/feed-data.js::830d0643fe27",
-  "site/feed-data.js::b8ddf219e4c1",
-  "site/live.js::b317efd43c38",
-  "site/live.js::c1466e752290",
-  "site/mydata.js::02ca34fb43fd",
-  "site/mydata.js::900d72d78ead",
-  "site/oauth.js::0d60e988ae2e",
-  "site/oauth.js::2f47f9a20037",
-  "site/oauth.js::687e55ca815a",
-  "site/passkeys.js::900d72d78ead",
-  "site/platformbrief.js::10b3d56fb934",
-  "site/platformbrief.js::33a3f68eaf07",
-  "site/platformbrief.js::6079cb307527",
-  "site/platformbrief.js::679cd7845747",
-  "site/platformbrief.js::a1643684c5ce",
-  "site/roadmap-data.js::f9073676ba08",
-  "site/sop.js::263b8951cc98",
-  "site/stakeholders.js::234a2a8c3dfb",
-  "site/stakeholders.js::4efb6f692137",
-  "site/stakeholders.js::921904b57ebd",
-  "site/stakeholders.js::e4426faa78a2",
-  "site/userpath.js::d3a8370d7865",
-  "site/userpath.js::eac0cdb7b2e4",
-  "site/worker.js::18b5686b65a7",
-  "site/worker.js::23a14fe90826",
-  "site/worker.js::242a6d3c9328",
-  "site/worker.js::2f7a8c27c3f8",
-  "site/worker.js::2f8cd2cb26f3",
-  "site/worker.js::3ecabe1a8c1a",
-  "site/worker.js::41275bcf49dc",
-  "site/worker.js::59dba735a602",
-  "site/worker.js::7d86f84d76ca",
-  "site/worker.js::7fc1f51c7eb6",
-  "site/worker.js::888a1d5fbd61",
-  "site/worker.js::88e4ac4418ab",
-  "site/worker.js::89bda4872114",
-  "site/worker.js::92538928373c",
-  "site/worker.js::a1d1cb1a2944",
-  "site/worker.js::a3dbae472ff2",
-  "site/worker.js::b978c24a0e21",
-  "site/worker.js::cdcaf97a43cf",
-  "site/worker.js::de5210014e8e",
-  "site/worker.js::edb0dfb12da8",
-  "site/worker.js::ee4d9c70bd79",
-  "site/worker.js::efdec906438d",
-  "site/worker.js::f1c6cc2e941f",
-  "site/worker.js::f3c13722dcc2"
- ],
- "closing_probe": "python3 -m foundation claimcode --check",
- "skip_reasons": {
-  "self-data\\.js": "SELF-MODEL-1: a generated mirror of the loop registry, clocks and boundary declarations (the code's own statements about itself), kept equal to them by `foundation selfmodel --check`; it authors no statement of its own.",
-  "research-data\\.js": "RESEARCH-1: generated by foundation/research.py. Its numbers are either measurements computed from the ledgers by `measures()` (tests/foundation/test_research.py) or figures quoted from a study file in research/studies, and its mechanism lines name paths `research --check` proves exist; it authors no statement of its own.",
-  "temporal-data\\.js": "TEMPORAL-1: generated by foundation/temporal.py from the repository's own history and ledgers (series, findings, predictions it computed); it authors no statement of its own, and site/temporal.js renders it.",
-  "yearfail-data\\.js": "YEARFAIL-1: generated by foundation/yearfail.py from a real run on every weekly run; each cell is a measured result or the quoted evidence of a detector, and the page labels what was simulated; it authors no statement of its own (tests/foundation/test_yearfail.py).",
-  "saydo-data\\.js": "SAY-DO-1: generated by foundation/saydo.py from ops/saydo.json; its lines quote the gaps the say-do check measured (statement and probe output) and author no statement of their own; `saydo --check` fails when it is stale.",
-  "yearsim-data\\.js": "YEAR-SIM-1: generated by foundation/yearsim.py from ops/yearsim.json; every number is a simulation output and every evidence line is a drill result; `yearsim --check` fails when it is stale.",
-  "trajectory-data\\.js": "TRAJECTORY-1: generated by foundation/trajectory.py from ops/trajectory.json; every number is read from git and the ops ledgers and it authors no statement of its own; `trajectory --check` fails when stale.",
-  "intent-yield-data\\.js": "INTENT-YIELD-1: generated by foundation/intentyield.py. Its titles are the owner's own directive titles copied from agents/AGENTS.md (already scanned there) and its numbers are verdicts computed by running each directive's own probe; it authors no statement of its own."
- }
+  "_skip_system_md": "SYSTEM-1: every line of seed/doctrine/SYSTEM.md is generated from seed/doctrine/system.json and names its own code and probe; seed/scripts/system.py --check fails when that code is missing"
 }
