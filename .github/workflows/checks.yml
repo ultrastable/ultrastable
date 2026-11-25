@@ -267,6 +267,9 @@ jobs:
         run: python3 scripts/build_site_roadmap.py --check
       - name: Words match code, CLAIMS-1, both directions
         run: python3 -m foundation claims --check
+      - name: The seed carries its own definition and passes its own tests, as a new system would (SYSTEM-SPEC-1)
+        # The platform edits seed/ on every change, yet never ran the seed's Python suite; a new system was the first to find a break.
+        run: cd seed && python3 scripts/system.py --check && python3 -m unittest discover tests
       - name: Proof surfaces own data only (PROOF-OWN-1)
         run: python3 -m foundation proofown --check
       - name: Tenant sync registry, TENANT-SYNC-1

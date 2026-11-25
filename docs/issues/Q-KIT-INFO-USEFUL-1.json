@@ -1,0 +1,12 @@
+{
+  "id": "Q-KIT-INFO-USEFUL-1",
+  "title": "Q-KIT-INFO-USEFUL-1: carry INFO-USEFUL-1 into the seed kit",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -m foundation systemspec --rule INFO-USEFUL-1\n**Status:** open\n\nSYSTEM-SPEC-1: the standing rule INFO-USEFUL-1 is enforced only by the platform. A system built from the seed inherits the rule as an instruction but has no code in the kit that enforces it.\n\nShip the check or loop that enforces INFO-USEFUL-1 into seed/ (a script under seed/scripts/, a tick step under seed/worker/src/, or a test under seed/tests/), add its probe to kit_enforcement in seed/autonomy/system.json, and remove INFO-USEFUL-1 from not_in_kit.\n\nPrediction: kit_rules_not_enforced <= 16 within 168 h\n\n**Out of scope:** changing the rule's wording in agents/AGENTS.md, or moving the platform's own check out of foundation/.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation systemspec --rule INFO-USEFUL-1` exits 0: the spec holds and INFO-USEFUL-1 is enforced inside the kit.\n",
+  "labels": [
+    "p2",
+    "agent-ready",
+    "raises-self"
+  ],
+  "milestone": "Now",
+  "workstream": "Executor queue"
+}
