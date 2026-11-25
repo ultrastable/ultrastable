@@ -666,7 +666,6 @@ export default {
   "host-sync",
   "hosts",
   "ignition-ladder",
-  "improve",
   "index-refresh",
   "insight-loop",
   "intent-yield",
@@ -2098,17 +2097,6 @@ export default {
     "workflows": [
      "seed-launch"
     ]
-   },
-   {
-    "closing_probe": "file:foundation/improve.py",
-    "id": "improve",
-    "kind": "plussing",
-    "owner": "product-manager",
-    "server_owner": "ultrastable-tick",
-    "sla": "1d",
-    "summary": "IMPROVE-1: files reach, impact and plus work every pass, escalates stalled manager tiers, settles each change on its metric.",
-    "trigger": "daily product-manager workflow",
-    "workflows": []
    }
   ],
   "workers": [
