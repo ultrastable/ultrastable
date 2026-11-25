@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-25-tenant-repositories-are-created-by-the-platform-s-own-admini",
+  "kind": "decision",
+  "date": "2026-11-25",
+  "title": "Tenant repositories are created by the platform's own administration app (TENANT-REPO-2)",
+  "body": "Evidence: tenant-repos.yml run 45659451015 failed with 'no credential could create ultrastable/replication-ledger' because ORG_ADMIN_TOKEN, LANE_PAT and the lane App are unbound. Decision: a fourth route with no stored credential. deploy/tenant-repo-token.mjs asks the site over GitHub OIDC (op tenant-repo), the site asks the tick at /host/tenant-repo, the tick creates the repository with the administration app and returns a one-hour code-app token for that one repository only while it has no commit. Tested by seed/worker/test/apprepos.test.js (11 pass). The live probe is the next tenant-repos.yml run creating ultrastable/replication-ledger. Also: doctrine/full-stack.json now reads Practical Solutions' back end at tenant-ps-core (agencies.json answered 200 in Workers logs), not tenant-ps-web/health (404).",
+  "probe": "grep:seed/worker/src/apprepos.js::ensureTenantRepo",
+  "session": "session_0156nqDvGPcBsDy63L214bPa"
+ },
+ "kind": "decision",
+ "title": "Tenant repositories are created by the platform's own administration app (TENANT-REPO-2)",
+ "session": "session_0156nqDvGPcBsDy63L214bPa"
+}

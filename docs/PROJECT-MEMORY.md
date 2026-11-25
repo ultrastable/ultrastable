@@ -10,6 +10,9 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-25
 
+- 2026-11-25: Create tenant repositories with the platform's own administration app; read Practical Solutions' real back end (TENANT-REPO-2) (#2179)
+- 2026-11-25: queue: closing-probe verdicts for 17 item(s) (QUEUE-PERSIST-1) [skip ci]
+- 2026-11-25: Sandbox every deployment as a tenant with its own repo (#2116)
 - 2026-11-25: regen-generated: refresh generated data after merge (REGEN-GENERATED-1) (part 2/2) [skip ci]
 - 2026-11-25: regen-generated: refresh generated data after merge (REGEN-GENERATED-1) (part 1/2) [skip ci]
 - 2026-11-25: provenance - public changelog (CHANGELOG-FRESH-1) [skip ci]
@@ -791,7 +794,7 @@ Rowan: "All UltraStable issues must be resolved within their SLAs and daily/week
 
 ## 2026-11-25: LAUNCH-PATH-1, anyone can launch without a code agent
 - BREADTH-1 (Rowan, 2026-11-25): he widened the replication-ledger suggestion from one field to many. `owner_edits` and `narrow_phrases` in `doctrine/idea-bank.json` steer `--grow`; the widened idea is the second launch-walk idea. Same change fixed the idea bank check that PR 2081 left red on main (ideas now carry `change`, CHANGE-1).
-- FULLSTACK-1 (Rowan, 2026-11-25): every system deploys its repository, back end and public web front end. `doctrine/full-stack.json`, `foundation/fullstack.py` (`--check` in checks, `--live` daily in tenant-repos.yml, red when a part is missing). First live run (2026-11-25): the front-door walk passed with no visitor step; the tenant-repos workflow holds no org credential (all three secrets empty), so TENANT-REPO-2 has the tick Worker's Apps make tenant and seed repositories through the workflow's OIDC token (`deploy/tenant-repo.mjs`); a health-only seed serves a public page at `/`; practical-solutions has no /health, its back end is read at /releases.json. Visitor apps: `stackOf` in deploy/launch-apps.mjs.
+- FULLSTACK-1 (Rowan, 2026-11-25): every system deploys its repository, back end and public web front end. `doctrine/full-stack.json`, `foundation/fullstack.py` (`--check` in checks, `--live` daily in tenant-repos.yml, red when a part is missing). First live run (2026-11-25): the front-door walk passed with no visitor step; the tenant-repos workflow holds no org credential (all three secrets empty), so TENANT-REPO-2 has the tick Worker's Apps make tenant and seed repositories through the workflow's OIDC token (`deploy/tenant-repo-token.mjs`); a health-only seed serves a public page at `/`; practical-solutions has no /health, its back end is read at /releases.json. Visitor apps: `stackOf` in deploy/launch-apps.mjs.
 - Rowan picked a homepage suggestion (a living atlas of what works in public policy) as the model of a launchable system and asked how a person with no code agent launches and reaches criticality.
 - Now: an idea typed at ultrastable.io gets a launch record (`site/graduate.js`); `deploy/launch-apps.mjs` in the daily `tenant-repos.yml` deploys its own system by OIDC, creates its repository from `ultrastable/seed`, files the visitor's change requests there and invites them on request (`/s/<id>/own`). The seed takes `hosted_by` and then asks its owner for no key or budget approval.
 - Checked: the atlas idea is admitted (year p10 730 days) and bundles into 97 modules with no credential. The live site could not be reached from the session, so the first live walk is the workflow's own test idea.

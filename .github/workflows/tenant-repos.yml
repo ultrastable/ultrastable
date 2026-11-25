@@ -12,7 +12,7 @@ on:
     - cron: "23 5 * * *"
   push:
     branches: [main]
-    paths: ["doctrine/tenant-repos.json", ".github/workflows/tenant-repos.yml", "deploy/launch-apps.mjs", "deploy/tenant-repo.mjs", "doctrine/full-stack.json"]
+    paths: ["doctrine/tenant-repos.json", "doctrine/full-stack.json", ".github/workflows/tenant-repos.yml", "deploy/launch-apps.mjs"]
   workflow_dispatch:
 permissions:
   contents: read
@@ -59,15 +59,16 @@ jobs:
                    -f description="$(jq -r '.description // ""' <<<"$row")" -F has_wiki=false >/dev/null; then echo "created $repo"; tok="$t"; break; fi
               echo "::warning::this credential could not create $repo; trying the next route"
             done
-            # fourth route, no stored credential (TENANT-REPO-2): the tick Worker's Apps create the repository; a token comes back only while it is empty
+            # fourth route, no stored credential (TENANT-REPO-2): the tick Worker's administration app creates it over the site's OIDC route and
+            # hands back a one-hour push token for this one repository while it is still empty
             if [ -z "$tok" ]; then
-              vis=""; [ "$(jq -r '.visibility // "public"' <<<"$row")" = "private" ] && vis="--private"
-              if t="$(node deploy/tenant-repo.mjs "$repo" $vis --description "$(jq -r '.description // ""' <<<"$row")" --push)"; then
-                if [ -n "$t" ]; then echo "::add-mask::$t"; tok="$t"; else echo "$repo already has history; left as it is"; continue; fi
-              else echo "::warning::the tick Worker could not create $repo"; fi
+              if srv="$(node deploy/tenant-repo-token.mjs "$repo" "$(jq -r '.visibility // "public"' <<<"$row")" "$(jq -r '.description // ""' <<<"$row")")"; then
+                if [ "$srv" = "has-history" ]; then echo "$repo already has history; left as it is"; continue; fi
+                echo "::add-mask::$srv"; tok="$srv"
+              else echo "::warning::the platform's own route could not create $repo (logged above)"; fi
             fi
             # one tenant without a credential must not stop the others or the redeploy step below: record it, go on, fail at the end
-            if [ -z "$tok" ]; then echo "::error::no credential could create $repo (ORG_ADMIN_TOKEN, LANE_PAT, lane App, tick Worker)"; echo "$repo" >> /tmp/tenant-repos-failed; continue; fi
+            if [ -z "$tok" ]; then echo "::error::no route could create $repo (ORG_ADMIN_TOKEN, LANE_PAT, lane App, platform OIDC route)"; echo "$repo" >> /tmp/tenant-repos-failed; continue; fi
             # an empty repository answers 409 here; that answer is logged, not hidden, and means "push the split"
             if head_sha="$(GH_TOKEN="$tok" gh api "repos/$repo/commits?per_page=1" --jq '.[0].sha' 2>/tmp/commits.err)" && [ -n "$head_sha" ]; then echo "$repo already has history; left as it is"; continue; fi
             echo "no commits yet in $repo: $(cat /tmp/commits.err)"
@@ -79,6 +80,29 @@ jobs:
             echo "pushed $src with its history to $repo"
           done
           if [ -s /tmp/tenant-repos-failed ]; then echo "::error::tenant repositories not created: $(tr '\n' ' ' </tmp/tenant-repos-failed)"; exit 1; fi
+      - name: Every seed has its own repository, filled from the seed (FULLSTACK-1)
+        # A seed in doctrine/seed-deploys.json whose doctrine/full-stack.json row names a repository gets that repository over the same
+        # credential-free route as a tenant (TENANT-REPO-2). While it is empty it is filled once from seed/; one with history is left alone.
+        if: ${{ !cancelled() }}
+        run: |
+          set -uo pipefail
+          fail=0
+          while read -r id repo; do
+            [ -n "$repo" ] || continue
+            if ! srv="$(node deploy/tenant-repo-token.mjs "$repo" public "An Ultrastable system: $id")"; then echo "::error::no route could create $repo"; fail=1; continue; fi
+            if [ "$srv" = "has-history" ]; then echo "$repo already has history; left as it is"; continue; fi
+            echo "::add-mask::$srv"
+            d="$(mktemp -d)"; cp -a seed/. "$d/"
+            git -C "$d" init -q -b main; git -C "$d" add -A
+            git -C "$d" -c user.name="ultrastable" -c user.email="ultrastable@users.noreply.github.com" commit -q -m "Start from the Ultrastable seed (FULLSTACK-1)"
+            if git -C "$d" push -q "https://x-access-token:${srv}@github.com/${repo}.git" "HEAD:refs/heads/main"; then echo "filled $repo from seed/"; continue; fi
+            # a token without the workflows grant may not push workflow files; the rest still goes, and the miss is said
+            echo "::warning::$repo refused the push with workflow files; pushing without .github/workflows"
+            git -C "$d" rm -rq --cached .github/workflows
+            git -C "$d" -c user.name="ultrastable" -c user.email="ultrastable@users.noreply.github.com" commit -q --amend -m "Start from the Ultrastable seed, without its workflows (FULLSTACK-1)"
+            if git -C "$d" push -q "https://x-access-token:${srv}@github.com/${repo}.git" "HEAD:refs/heads/main"; then echo "filled $repo from seed/ without workflows"; else echo "::error::could not fill $repo"; fail=1; fi
+          done < <(jq -r --slurpfile s doctrine/seed-deploys.json '.systems | to_entries[] | select(.key as $k | $s[0].seeds | index($k)) | select(.value.repo) | "\(.key) \(.value.repo)"' doctrine/full-stack.json)
+          exit $fail
       - name: Launch what visitors asked for, and walk a test idea through the front door (LAUNCH-PATH-1)
         # Someone with no code agent typed an idea at ultrastable.io. This deploys its own system, gives it a repository from the seed, files the
         # owner's plain-words requests there and invites the owner when they asked. The test idea fails the job on any step a visitor would have to do.
@@ -87,9 +111,6 @@ jobs:
         run: |
           set -euo pipefail
           node deploy/launch-apps.mjs --probe
-      - name: Every seed has its own repository, from the seed template (FULLSTACK-1, TENANT-REPO-2)
-        if: ${{ !cancelled() }}
-        run: node deploy/tenant-repo.mjs --seeds
       - name: Redeploy tenants whose repository moved past the last deploy
         if: ${{ !cancelled() }}  # moved tenants redeploy even when creating another tenant's repository failed above
         env:

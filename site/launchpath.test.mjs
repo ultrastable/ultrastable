@@ -187,18 +187,6 @@ test("story: a one-off is told so before anything is queued; the queue is closed
   assert.equal(open.status, 404);
 });
 
-test("TENANT-REPO-2: the workflow with no org credential gets a tenant's repository made, and a push token only while it is empty", async () => {
-  const w = await world();
-  const a = await w.internal({ op: "tenant-repo", repo: "ultrastable/replication-ledger", description: "ledger", push: true });
-  assert.equal(a.ok, true); assert.equal(a.created, true); assert.equal(a.token, "scoped:replication-ledger");
-  w.repos.get("ultrastable/replication-ledger").set("README.md", "history");
-  const b = await w.internal({ op: "tenant-repo", repo: "ultrastable/replication-ledger", push: true });
-  assert.equal(b.ok, true); assert.equal(b.token, undefined, "never a token for a repository with history");
-  assert.equal((await w.internal({ op: "tenant-repo", repo: "ultrastable/ultrastable", push: true })).ok, false, "never the platform's own repository");
-  const seeds = (await import("../deploy/tenant-repo.mjs")).seedRepos();
-  assert.ok(seeds.some((x) => x.repo === "ultrastable/second-tenant" && x.template === cfg.template), "every seed with a declared repository is on the list");
-  const c = await w.internal({ op: "tenant-repo", ...seeds[0] }); assert.equal(c.ok, true); assert.equal(c.from_template, true);
-});
 test("the generated manifest is one the seed admits", () => {
   const m = L.manifestOf({ id: "ab12cd34ef", slug: "app-living-atlas-works-ab12cd34ef", repo: "ultrastable/app-living-atlas-works-ab12cd34ef", brief: IDEA }, base, cfg);
   for (const k of ["loop", "measure", "upkeep", "run_cost"]) assert.ok(m.system_test[k]);
