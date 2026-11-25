@@ -10,6 +10,7 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-25
 
+- 2026-11-25: DISCOVER-1 (Rowan): public by default and discoverable. Homepage and /directory list every live tenant from the registries (foundation/discover.py); the seed serves /.well-known/ultrastable.json, a Built on Ultrastable footer and a daily opt-out-able heartbeat; the directory lists external systems only after reading their manifest and drops dead or opted-out ones. Repo visibility in github/org-settings.json: seed public, ops the one private exception. Core repo is public (not private, as old tool memory said).
 - 2026-11-25: Replication Ledger: OpenAlex polite pool and one 429 retry (#2160)
 - 2026-11-25: Register What Works for progress, stickiness, the showcase and the social queue (#2124)
 - 2026-11-25: Replication Ledger keeps itself current: hourly discovery beat (#2150)
@@ -796,3 +797,11 @@ Rowan: "All UltraStable issues must be resolved within their SLAs and daily/week
 Rowan: "Automatically improve impact and reach. An Ultrastable system shall always continue improving entirely on its own, 100% autonomously." `python3 -m foundation improve --run --apply` (daily, product-manager workflow) files reach, impact and plus items from `doctrine/improve.json` every pass, a stall item per manager tier with no merge in its window, signal items for missing or stale numbers, and the market pass when R&D goes stale. Closed items are judged a week later on their metric. First run: portfolio tier had no matching merge in 14 days; suggestions signal unmeasured; R&D log 8 days old.
 - BRANCH-CLEANUP-1 (Rowan, 2026-11-25): no branch outlives its PR in any Ultrastable repo; delete_branch_on_merge enforced by `scripts/branch_cleanup.py` run by `branchsweep --remote` in the daily branchsweep workflow, probe `--check`. Closed PRs no longer keep their branches.
 - AUTO-MERGE-DEFAULT-1 (Rowan, 2026-11-25): auto-merge and auto-delete of head branches are on by default in every Ultrastable repo and tenant repo; `scripts/branch_cleanup.py` (REPO_SETTINGS) resets either when it drifts, run from the lane's completion sweep.
+
+## 2026-11-25: platform audit, four red loops repaired (Session: session_0156nqDuo7mxQbyexaaJm48F)
+Rowan: "Test, audit and remediate all failure modes and remaining systems problems." Read the last day of red runs on main and fixed the root causes:
+- Executor (self-coding loop) failed every run: GitHub Models answered 200 "OK" text/plain, the MODELS-ORG-1 fallback lived only in `agents.invoke` (the ladder never calls it), and every Workers AI rung was unavailable because the repo's Cloudflare secrets name the retired account. Now `agents.request` carries the fallback for both paths, requests name their client (MODELS-UA-1), and Workers AI runs through the site Worker's OIDC route (AI-OIDC-1, `ai/run/@cf/...` in `site/deployer.js`, `id-token: write` in executor.yml).
+- Spinoff loop failed daily since 2026-11-21 (SPINOFF-DEPLOY-2): wrangler with retired-account secrets and a quniverse D1 id. `ultrastable-spinoffs` is in `doctrine/topology.json` and deploys through `deploy/deploy-oidc.mjs`; deploy-ultrastable watches `spinoffs/**`.
+- UI/UX live audit raised 11 blocking findings on retired apps: retirement now read from `spinoffs/registry.json` (UIUX-RETIRED-1), hosts deduplicated.
+- ciwatch failed on one GitHub 500 during its evidence push: three tries with backoff (PUSH-RETRY-1).
+- Open: tenant-repos cannot create ultrastable/replication-ledger (no org-admin credential among ORG_ADMIN_TOKEN, LANE_PAT, lane App); ultrastable.org phone horizontal scroll (5px, live only, not reproduced offline) stays on its Q-UIUX item; visual-drift baselines read ~0.1 similarity on every page (non-blocking).

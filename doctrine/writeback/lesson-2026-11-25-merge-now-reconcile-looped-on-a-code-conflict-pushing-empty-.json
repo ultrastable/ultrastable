@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-25-merge-now-reconcile-looped-on-a-code-conflict-pushing-empty-",
+  "kind": "lesson",
+  "date": "2026-11-25",
+  "title": "MERGE-NOW reconcile looped on a code conflict, pushing empty commits",
+  "body": "On a PR with a hand-written conflict, mergenow.reconcile set generated files to main's copy even when they already matched, committed the unchanged tree, failed the merge with 409, and the synchronize event from its own commit ran it again: 34 empty commits in four minutes on #2165, each starting CI. It now commits only when the new tree differs from the head tree.",
+  "probe": "grep:seed/worker/src/mergenow.js::MERGENOW-NOOP-1",
+  "session": "claude-code"
+ },
+ "kind": "lesson",
+ "title": "MERGE-NOW reconcile looped on a code conflict, pushing empty commits",
+ "session": "claude-code"
+}
