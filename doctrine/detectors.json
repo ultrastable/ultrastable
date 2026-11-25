@@ -739,6 +739,21 @@
       "root_cause": "a code-agent model route fails and nothing falls to the next rung",
       "owner": "operations",
       "remedy": "Fix the ladder in foundation/agents.py; probe each rung"
+    },
+    {
+      "id": "bootproof",
+      "failure_mode": "fm-seed-not-launched",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "bootproof"
+      ],
+      "timeout": 60,
+      "root_cause": "the seed kernel needs something no code in it produces (instruction import, wrangler placeholder, undeclared secret, migration collision, workflow with no trigger)",
+      "owner": "operations",
+      "remedy": "Run python3 -m foundation bootproof, fix the seed tree or declare the item in doctrine/bootproof.json with its degrade and acquire route (BOOTPROOF-1)."
     }
   ]
 }
