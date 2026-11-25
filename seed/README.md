@@ -29,17 +29,23 @@ IDEA.md  ──►  bootstrap/bootstrap.py  ──►  org/ (charter, roles, bac
 
 After the first boot, nothing runs on a laptop. The bootstrapper is the only step that starts from a person; every later step starts from the tick.
 
-## Boot in three steps
+## Start with an idea (no code, no terminal, no key)
 
-1. Copy this repo (template repo, `git clone`, or the bundle). Write your idea in [`IDEA.md`](IDEA.md). That is the only file a founder has to touch.
-2. Dry run, anywhere with Python 3.11+ and no dependencies:
-   `python3 bootstrap/bootstrap.py --dry-run`
-   It writes `org/` (charter, roles, backlog, gate cards, boot log) and prints a four-line report. Nothing leaves the host it runs on.
-3. Apply, once, from CI or a cloud-hosted session with a Cloudflare token in the environment:
-   `python3 bootstrap/bootstrap.py --apply`
-   It creates the D1 database, applies migrations, loads the seed rows and deploys the Worker. From then on the Worker's cron is the heartbeat. The GitHub workflow [`bootstrap.yml`](.github/workflows/bootstrap.yml) runs the same command on the first push.
+What you do:
 
-A missing credential never stops the boot. The step is recorded as a backlog item with its blocker and a closing probe, and the rest of the boot continues (the AIOS "PID 1 never dies" rule; see [docs/bootstrapping.md](docs/bootstrapping.md)).
+1. Press **Use this template** on this page. That gives you your own copy.
+2. In your copy, open **Issues** and choose **Start my system**. Say in a sentence or two what it should do and keep doing. That is all.
+
+What the system does, by itself, from there:
+
+- It writes [`IDEA.md`](IDEA.md) from your words and fills in the rest (the loop it closes, its first measure, a small monthly budget) so the managers can start; they replace the measure once the first readings exist (`bootstrap/intake.py`).
+- It plans the organization (charter, roles, backlog, checks), tests itself and simulates a year unattended (`bootstrap/bootstrap.py`, run by [`bootstrap.yml`](.github/workflows/bootstrap.yml) on the server).
+- It deploys itself when the repository has a hosting sign-in. When it has none, the plan is kept, the start is tried again every day, and you get one link that runs it on Ultrastable's own account with nothing to set up.
+- It tells you what happened in plain words on one thread in your copy, **Your system**, and keeps that note current. A failure says what happened and what the system is doing about it; none of them hands you a task.
+
+A missing sign-in never stops the boot. The step is recorded as a backlog item with its blocker and a closing probe, each thing only you can approve is one card with one link and a default in effect, and the rest of the boot continues (the AIOS "PID 1 never dies" rule; see [docs/bootstrapping.md](docs/bootstrapping.md)).
+
+Engineers: the same boot runs anywhere with Python 3.11+ (`bootstrap/bootstrap.py --dry-run` plans and writes `org/`, `--apply` also deploys when the environment holds the hosting sign-in). Nobody has to.
 
 ## What is in the seed
 

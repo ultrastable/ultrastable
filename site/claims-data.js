@@ -427,7 +427,7 @@ export default {
    "surface": "seed/IDEA.md"
   },
   {
-   "claim": "A missing credential never stops the boot. The step is recorded as a backlog item with its blocker and a closing probe",
+   "claim": "A missing sign-in never stops the boot. The step is recorded as a backlog item with its blocker and a closing probe",
    "detail": "",
    "how": "grep:seed/bootstrap/bootstrap.py::def guard + grep:seed/bootstrap/bootstrap.py::closing_probe + grep:seed/tests/test_seed.py::test_missing_idea_degrades_not_dies",
    "id": "curated-e11ba7a3fe",

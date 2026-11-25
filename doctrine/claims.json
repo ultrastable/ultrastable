@@ -530,7 +530,7 @@
     {
       "id": "curated-e11ba7a3fe",
       "surface": "seed/README.md",
-      "text": "A missing credential never stops the boot. The step is recorded as a backlog item with its blocker and a closing probe",
+      "text": "A missing sign-in never stops the boot. The step is recorded as a backlog item with its blocker and a closing probe",
       "probe": [
         "grep:seed/bootstrap/bootstrap.py::def guard",
         "grep:seed/bootstrap/bootstrap.py::closing_probe",
