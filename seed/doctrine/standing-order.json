@@ -71,11 +71,15 @@
    "\\bawait(s|ing)? (your|the owner'?s?|rowan'?s?) (decision|approval|go-?ahead|answer|reply)\\b",
    "\\b(needs|requires) (your|owner|rowan'?s?) (decision|approval|sign-?off)\\b",
    "\\bdecision (is )?(for|with|up to) (the )?(owner|rowan|you)\\b",
-   "\\bpending (owner|rowan) (decision|approval)\\b"
+   "\\bpending (owner|rowan) (decision|approval)\\b",
+   "\\b(after|once|until|when) (the )?(owner|rowan)('s)? (confirms?|approves?|go-?ahead|approval|confirmation|ok|okay|says)\\b",
+   "\\bheld (for|until) (a |an )?(manual|owner|human|explicit) (go-?ahead|approval|confirmation|ok)\\b"
   ]},
   {"id": "menu-to-owner", "patterns": [
    "\\boptions? for (the )?(owner|rowan|you)\\b",
    "\\b(choose|pick) (one of|between) (the )?(options|A and B)\\b"
   ]}
- ]
+ ],
+ "_doc_ledger_handoff": "DEPLOY-PREAPPROVED-1 (2026-11-25): the decision ledger is linted with decision_handoff too. The What Works deploy was recorded as 'deploy after owner go-ahead' and held, although deploys were pre-approved; report files were linted, ledger rows were not. A row that defers a reversible step to the owner fails `standingorder --check`; rows recorded before the check are in ledger_handoff_baseline, shrink-only.",
+ "ledger_handoff_baseline": ["decision-2026-11-25-what-works-tenant-grades-computed-deploy-after-owner-go-ahea"]
 }

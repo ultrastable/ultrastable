@@ -11,6 +11,7 @@
   python3 -m foundation verify [--check|--report]                          VERIFY-1: model-check the core loops and tie the models to the code
   python3 -m foundation ultrastability [--tick [--apply]|--check|--data [--apply]]  Ashby's two loops over essential variables (ULTRASTABILITY-1)
   python3 -m foundation criticality [--tick [--apply]|--check|--gate]     the mantra as a computed invariant (CRITICALITY-1)
+  python3 -m foundation overlap [--intent WORDS|--check --pr N|--report]     never build the same thing twice: open and just-merged PRs that overlap (OVERLAP-1)
   python3 -m foundation claimcode [--check|--baseline|--list]                words match code: every number, cadence or guarantee on a public surface is bound to a probe (WORDS-MATCH-CODE-1)
   python3 -m foundation pointclick [--check|--baseline]                    no surface asks a person to handle a token, secret or setting (POINT-AND-CLICK-1)
   python3 -m foundation loopowner [--check|--sync]                        every loop has a server-side owner and path (SERVER-OWNS-LOOPS-1)
@@ -277,6 +278,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["criticality"]:
         from . import criticality
         return criticality.main(_av[1:])
+    if _av[:1] == ["overlap"]:
+        from . import overlap
+        return overlap.main(_av[1:])
     if _av[:1] == ["claimcode"]:
         from . import claimcode
         return claimcode.main(_av[1:])

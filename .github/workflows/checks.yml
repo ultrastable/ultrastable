@@ -9,6 +9,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  pull-requests: read
 concurrency:
   group: checks-${{ github.ref }}
   cancel-in-progress: true
@@ -47,6 +48,14 @@ jobs:
           if [ -n "${BASE_SHA:-}" ]; then python3 -m foundation substance --gate --executor --range "${BASE_SHA}...HEAD"
           elif [ "${EVENT:-}" = "workflow_dispatch" ] && [[ "${REF_NAME:-}" == agent/* ]]; then  # the executor dispatches checks on its own agent/ branch
             git fetch -q origin main && PR_BODY="Executor run (dispatched checks)" python3 -m foundation substance --gate --executor --range "origin/main...HEAD"; fi
+      - name: No duplicate work beside an earlier open PR (OVERLAP-1)
+        # four sessions built a knowledge-graph engine in parallel on 2026-11-25 (three 0031 migrations); a PR that adds the same new file or
+        # migration number as an earlier open PR fails here and carries its change onto the earlier one
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR: ${{ github.event.pull_request.number }}
+        run: python3 -m foundation overlap --check --pr "$PR"
       - name: Workflow minute-budget lint (cheap, runs first)
         run: python3 scripts/lint_workflows.py
       - name: Public docs complete and in sync with the code (DOCS-SYNC-1)
