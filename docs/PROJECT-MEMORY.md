@@ -10,6 +10,8 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-25
 
+- 2026-11-25: tenant-repos: push a tenant's split with the platform token, not the run's own (#2204)
+- 2026-11-25: Product manager pass: 0 growth and repair item(s) filed (#2203)
 - 2026-11-25: Create tenant repositories with the platform's own administration app; read Practical Solutions' real back end (TENANT-REPO-2) (#2179)
 - 2026-11-25: queue: closing-probe verdicts for 17 item(s) (QUEUE-PERSIST-1) [skip ci]
 - 2026-11-25: Sandbox every deployment as a tenant with its own repo (#2116)
