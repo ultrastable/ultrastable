@@ -45,7 +45,7 @@ export default {
   {
    "area": "doctrine",
    "quiet_days": 0,
-   "recent7": 36273,
+   "recent7": 36290,
    "series": [
     0,
     0,
@@ -76,16 +76,16 @@ export default {
     0,
     0,
     0,
-    36273
+    36290
    ],
    "share_recent": 0.129,
    "share_trend": 0.129,
-   "total": 36273
+   "total": 36290
   },
   {
    "area": "foundation",
    "quiet_days": 0,
-   "recent7": 34177,
+   "recent7": 34190,
    "series": [
     0,
     0,
@@ -116,16 +116,16 @@ export default {
     0,
     0,
     0,
-    34177
+    34190
    ],
    "share_recent": 0.122,
    "share_trend": 0.122,
-   "total": 34177
+   "total": 34190
   },
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 24973,
+   "recent7": 25015,
    "series": [
     0,
     0,
@@ -156,11 +156,11 @@ export default {
     0,
     0,
     0,
-    24973
+    25015
    ],
    "share_recent": 0.089,
    "share_trend": 0.089,
-   "total": 24973
+   "total": 25015
   },
   {
    "area": "seed/worker",
@@ -205,7 +205,7 @@ export default {
   {
    "area": "tests/foundation",
    "quiet_days": 0,
-   "recent7": 13629,
+   "recent7": 13636,
    "series": [
     0,
     0,
@@ -236,11 +236,11 @@ export default {
     0,
     0,
     0,
-    13629
+    13636
    ],
    "share_recent": 0.049,
    "share_trend": 0.049,
-   "total": 13629
+   "total": 13636
   },
   {
    "area": "instances",
@@ -323,7 +323,7 @@ export default {
    "total": 10871
   }
  ],
- "at": "2026-11-25T20:43:07Z",
+ "at": "2026-11-25T20:49:10Z",
  "days": 30,
  "findings": [
   {
@@ -389,16 +389,16 @@ export default {
    0,
    0,
    0,
-   44
+   42
   ],
-  "closed": 1074,
-  "opened": 1118
+  "closed": 1078,
+  "opened": 1120
  },
  "loops": [
   {
    "loop": "ultrastability",
    "quiet_days": 0,
-   "rows": 14154,
+   "rows": 14195,
    "series": [
     0,
     0,
@@ -429,7 +429,7 @@ export default {
     5004,
     3322,
     2312,
-    1716
+    1757
    ]
   },
   {
@@ -472,7 +472,7 @@ export default {
   {
    "loop": "deploys",
    "quiet_days": 0,
-   "rows": 1024,
+   "rows": 1044,
    "series": [
     0,
     0,
@@ -503,7 +503,7 @@ export default {
     50,
     14,
     0,
-    110
+    130
    ]
   },
   {
@@ -546,7 +546,7 @@ export default {
   {
    "loop": "resilience",
    "quiet_days": 0,
-   "rows": 362,
+   "rows": 363,
    "series": [
     0,
     0,
@@ -577,13 +577,13 @@ export default {
     122,
     80,
     55,
-    41
+    42
    ]
   },
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 309,
+   "rows": 311,
    "series": [
     0,
     0,
@@ -614,13 +614,13 @@ export default {
     112,
     80,
     55,
-    57
+    59
    ]
   },
   {
    "loop": "yearsim",
    "quiet_days": 0,
-   "rows": 297,
+   "rows": 298,
    "series": [
     0,
     0,
@@ -651,13 +651,13 @@ export default {
     112,
     80,
     55,
-    41
+    42
    ]
   },
   {
    "loop": "saydo",
    "quiet_days": 0,
-   "rows": 296,
+   "rows": 297,
    "series": [
     0,
     0,
@@ -688,7 +688,7 @@ export default {
     112,
     80,
     55,
-    41
+    42
    ]
   }
  ],
