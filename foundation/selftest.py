@@ -55,13 +55,25 @@ def _get(url: str, token: str | None):
         return json.loads(r.read().decode())
 
 
+def _declared_repos(root=None) -> list[str]:
+    """Every repository the org declares: org/repos.json (not archived) and doctrine/tenant-repos.json (not retired)."""
+    root = Path(root or REPO); out = []
+    try:
+        out += [f"ultrastable/{r['name']}" for r in json.loads((root / "org/repos.json").read_text())["repos"] if not r.get("archived")]
+        out += [t["repo"] for t in json.loads((root / "doctrine/tenant-repos.json").read_text())["tenants"].values() if t.get("repo") and t.get("state") != "retired"]
+    except (OSError, ValueError, KeyError) as e:
+        print(f"selftest: declared repositories unread ({e})", file=sys.stderr)
+    return out
+
+
 def workflow_findings(cfg=None, get=None, now=None) -> list[str]:
     cfg = cfg or load()
     now = now or datetime.now(timezone.utc)
     token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
     get = get or (lambda url: _get(url, token))
     w, out = cfg["workflows"], []
-    for repo in w["repos"]:
+    repos = list(dict.fromkeys(w["repos"] + _declared_repos()))  # DECLARED-LIVE-1: a hand-kept list missed every tenant repository made after it
+    for repo in repos:
         try:
             wfs = get(f"https://api.github.com/repos/{repo}/actions/workflows?per_page=100").get("workflows", [])
         except Exception as e:  # unreadable is unmeasured, never passed
@@ -71,8 +83,12 @@ def workflow_findings(cfg=None, get=None, now=None) -> list[str]:
                 continue
             try:
                 runs = get(f"https://api.github.com/repos/{repo}/actions/workflows/{wf['id']}/runs?event=schedule&per_page={w['window']}").get("workflow_runs", [])
+                anyev = get(f"https://api.github.com/repos/{repo}/actions/workflows/{wf['id']}/runs?per_page={w['window']}").get("workflow_runs", [])
             except Exception as e:
                 out.append(f"{repo} {wf.get('path')}: unmeasured ({type(e).__name__})"); continue
+            last = [r for r in anyev if r.get("status") == "completed"]
+            if len(last) >= w["window"] and all(r.get("conclusion") == "failure" for r in last) and not all(r.get("event") == "schedule" for r in last):
+                out.append(f"{repo} {wf['path']}: last {len(last)} runs (push, dispatch or schedule) all failed")  # ultrastable/.github branch-cleanup was red on dispatch runs
             done = [r for r in runs if r.get("status") == "completed"]
             if not done:
                 continue  # never scheduled (dispatch-only) or brand new

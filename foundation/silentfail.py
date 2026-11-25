@@ -258,6 +258,11 @@ def class_findings(root=REPO) -> list[dict]:
             out.append({"class": k["id"], "why": f"failure mode {k['failure_mode']} is not registered"})
         if not k.get("example") or not k.get("signatures"):
             out.append({"class": k["id"], "why": "no example or signatures"})
+    main_py = (root / "foundation/__main__.py").read_text(encoding="utf-8") if (root / "foundation/__main__.py").exists() else ""
+    for d in json.loads((root / "doctrine/detectors.json").read_text(encoding="utf-8"))["detectors"]:
+        r = d.get("run") or []
+        if main_py and r[:3] == ["python3", "-m", "foundation"] and len(r) > 3 and f'"{r[3]}"' not in main_py:
+            out.append({"class": "unroutable-detector", "why": f"detector {d['id']} runs `foundation {r[3]}`, which __main__ does not route: it can only fail"})
     sigs = [re.compile(s, re.I) for k in classes for s in k["signatures"]]
     fdir = root / "docs/failures"
     for p in sorted(fdir.glob("*.md")) if fdir.is_dir() else []:
@@ -289,7 +294,7 @@ def main(argv=None) -> int:
             with open(REPO / LIVE_LEDGER, "a", encoding="utf-8") as f:
                 for r in rows:
                     f.write(json.dumps(r) + "\n")
-        res["live_failed"] = [r["id"] for r in rows if not r["ok"]]
+        res["live_failed"] = [f"{r['id']} HTTP {r['status']}" for r in rows if not r["ok"]]
     if "--cite" in a:
         res["cite"] = cite_findings(Path(a[a.index("--cite") + 1]).read_text(encoding="utf-8"))
     if "--actions" in a:
@@ -298,6 +303,8 @@ def main(argv=None) -> int:
         else:
             res["actions"] = actions_pass(lambda m, p, d=None: gh(token, m, p, d), os.environ.get("GITHUB_REPOSITORY", "ultrastable/ultrastable"), apply=apply)
     print(json.dumps(res, indent=1))
+    if res.get("live_failed"):
+        print("LIVE FAILED: " + "; ".join(res["live_failed"]))  # last line, so the audit's truncated tail names the target
     bad = any(res.get(k) for k in ("bundle", "overlap", "classes", "stale", "live_failed", "cite")) or \
         bool((res.get("actions") or {}).get("stuck_runs") or (res.get("actions") or {}).get("errors")) and not apply
     if "--actions" in a and apply:

@@ -1,5 +1,5 @@
 {
- "at": "2026-11-25T20:34:28Z",
+ "at": "2026-11-25T20:45:03Z",
  "days": 730,
  "drills": {
   "actions-billing": {
@@ -79,7 +79,7 @@
   "node-eol": {
    "capacity": 0.95,
    "date": "2028-04-30",
-   "evidence": "pins: 24 x15; earliest end of maintenance 2028-04-30; automatic rewrite to 24 works: True",
+   "evidence": "pins: 24 x16; earliest end of maintenance 2028-04-30; automatic rewrite to 24 works: True",
    "exercised": true,
    "mode": "recovers",
    "recover": true
