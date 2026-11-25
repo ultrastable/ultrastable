@@ -1813,6 +1813,24 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **The template says what a system is, and the code proves it (SYSTEM-1, Rowan 2026-11-25).** \"Something's missing in the core",
+   "detail": "",
+   "how": "file:seed/doctrine/system-contract.json + file:seed/doctrine/SYSTEM.md + file:CLAUDE.md",
+   "id": "cited-4547a8f9d5",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **One tenant row admits a tenant; every registry is derived (ADMIT-1, Rowan 2026-11-25).** \"All surfaces, all files, all code, all",
+   "detail": "",
+   "how": "file:doctrine/tenant-repos.json + file:scripts/regen_generated.py + file:doctrine/admission.json + file:site/worker.js + file:foundation/admit.py + file:tests/foundation/test_admit.py",
+   "id": "cited-9b5ff76eff",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Every system deploys itself in full: repo, back end and a public web UI (FULLSTACK-1, Rowan 2026-11-25).** \"All UltraStable deployments",
    "detail": "",
    "how": "file:doctrine/tenant-repos.json + file:doctrine/topology.json + file:tests/foundation/test_tenantrepos.py + file:instances/ultrastable/progress.json + file:doctrine/seed-deploys.json + file:doctrine/full-stack.json",
@@ -2279,6 +2297,24 @@ export default {
    "kind": "claim",
    "pass": true,
    "surface": "seed/AGENTS.md"
+  },
+  {
+   "claim": "- **The template says what a system is, and the code proves it (SYSTEM-1, Rowan 2026-11-25).** \"Something's missing in the core",
+   "detail": "",
+   "how": "file:seed/doctrine/system-contract.json + file:seed/doctrine/SYSTEM.md + file:CLAUDE.md",
+   "id": "mirror-6cc3725674",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **One tenant row admits a tenant; every registry is derived (ADMIT-1, Rowan 2026-11-25).** \"All surfaces, all files, all code, all",
+   "detail": "",
+   "how": "file:doctrine/tenant-repos.json + file:scripts/regen_generated.py + file:doctrine/admission.json + file:site/worker.js + file:foundation/admit.py + file:tests/foundation/test_admit.py",
+   "id": "mirror-adf5fe12d6",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
   },
   {
    "claim": "Words match code (CLAIMS-1, Rowan 2026-11-17)",
@@ -3442,6 +3478,15 @@ export default {
    "surface": "site/research-data.js"
   },
   {
+   "claim": "module: seed/doctrine/SYSTEM.md is written by seed/scripts/contract.py from seed/doctrine/system-contract.json",
+   "detail": "",
+   "how": "header names the generator + file:seed/scripts/contract.py + grep:.github/workflows/checks.yml::seed/scripts/contract.py --check + grep:seed/.github/workflows/bootstrap.yml::scripts/contract.py --check",
+   "id": "module-system-contract",
+   "kind": "module",
+   "pass": true,
+   "surface": "seed/doctrine/SYSTEM.md"
+  },
+  {
    "claim": "ledger: work claims",
    "detail": "seed/worker/migrations/0001_init.sql",
    "how": "grep:seed/worker/migrations/0001_init.sql::CREATE TABLE IF NOT EXISTS claims",
@@ -3521,7 +3566,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 388,
-  "total": 388
+  "pass": 393,
+  "total": 393
  }
 };

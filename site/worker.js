@@ -577,10 +577,9 @@ export function draftHtml(brief) {
   const b = String(brief || ""), idea = (/^Idea:\s*(.+)$/m.exec(b) || [])[1] || "Your new site";
   const said = b.split("\n").map(l => /^- (.+?) (YES|NO)$/.exec(l)).filter(Boolean).map(m => (m[2] === "YES" ? "Yes: " : "No: ") + m[1]).slice(0, 12);
   return "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>" + esc(idea.slice(0, 80)) + "</title>"
-    + "<style>*{box-sizing:border-box}body{margin:0;font:16px/1.6 system-ui,sans-serif;background:#f7f6f3;color:#1d1b18}main{max-width:720px;margin:0 auto;padding:24px 16px}"
-    + ".card{background:#fff;border:1px solid #e2ddd4;border-radius:12px;padding:16px;margin:16px 0}textarea{width:100%;min-height:140px;font:inherit;padding:10px}"
-    + "button{min-height:44px;padding:0 18px;font:inherit;border-radius:8px;border:0;background:#2d5bd7;color:#fff}"
-    + "@media (prefers-color-scheme:dark){body{background:#141311;color:#ece8e1}.card{background:#1d1b18;border-color:#38342e}}</style></head><body><main>"
+    + "<style>" + BASE + "*{box-sizing:border-box}body{margin:0;font:16px/1.6 system-ui,sans-serif;background:var(--bg);color:var(--ink)}main{max-width:720px;margin:0 auto;padding:24px 16px}"
+    + ".card{background:var(--sf);border:1px solid var(--line);border-radius:12px;padding:16px;margin:16px 0}textarea{width:100%;min-height:140px;font:inherit;padding:10px}"
+    + "button{min-height:44px;padding:0 18px;font:inherit;border-radius:8px;border:0;background:var(--ac);color:var(--on)}</style></head><body><main>"
     + "<h1>" + esc(idea) + "</h1><p>This is the first draft of this site. It is being built out by itself.</p>"
     + (said.length ? "<div class=\"card\"><h2>What it is built around</h2><ul>" + said.map(x => "<li>" + esc(x) + "</li>").join("") + "</ul></div>" : "")
     + "<div class=\"card\"><h2>Notes</h2><label for=\"n\">Anything you want to keep here</label><textarea id=\"n\"></textarea><p><button id=\"s\" type=\"button\">Save</button> <span id=\"m\">Nothing saved yet.</span></p></div>"

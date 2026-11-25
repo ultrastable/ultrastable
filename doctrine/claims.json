@@ -2250,6 +2250,31 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-4547a8f9d5",
+      "surface": "agents/AGENTS.md",
+      "text": "- **The template says what a system is, and the code proves it (SYSTEM-1, Rowan 2026-11-25).** \"Something's missing in the core",
+      "probe": [
+        "file:seed/doctrine/system-contract.json",
+        "file:seed/doctrine/SYSTEM.md",
+        "file:CLAUDE.md"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-9b5ff76eff",
+      "surface": "agents/AGENTS.md",
+      "text": "- **One tenant row admits a tenant; every registry is derived (ADMIT-1, Rowan 2026-11-25).** \"All surfaces, all files, all code, all",
+      "probe": [
+        "file:doctrine/tenant-repos.json",
+        "file:scripts/regen_generated.py",
+        "file:doctrine/admission.json",
+        "file:site/worker.js",
+        "file:foundation/admit.py",
+        "file:tests/foundation/test_admit.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-faa1765dd1",
       "surface": "agents/AGENTS.md",
       "text": "- **Every system deploys itself in full: repo, back end and a public web UI (FULLSTACK-1, Rowan 2026-11-25).** \"All UltraStable deployments",
@@ -2854,6 +2879,33 @@
       ],
       "bound_by": "mirror",
       "of": "cited-e7cebff4c4"
+    },
+    {
+      "id": "mirror-6cc3725674",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **The template says what a system is, and the code proves it (SYSTEM-1, Rowan 2026-11-25).** \"Something's missing in the core",
+      "probe": [
+        "file:seed/doctrine/system-contract.json",
+        "file:seed/doctrine/SYSTEM.md",
+        "file:CLAUDE.md"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-4547a8f9d5"
+    },
+    {
+      "id": "mirror-adf5fe12d6",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **One tenant row admits a tenant; every registry is derived (ADMIT-1, Rowan 2026-11-25).** \"All surfaces, all files, all code, all",
+      "probe": [
+        "file:doctrine/tenant-repos.json",
+        "file:scripts/regen_generated.py",
+        "file:doctrine/admission.json",
+        "file:site/worker.js",
+        "file:foundation/admit.py",
+        "file:tests/foundation/test_admit.py"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-9b5ff76eff"
     },
     {
       "id": "mirror-961fe87d91",
@@ -4622,6 +4674,26 @@
       ],
       "probe": [
         "grep:.github/workflows/checks.yml::foundation research --check"
+      ]
+    },
+    {
+      "id": "system-contract",
+      "surface": "seed/doctrine/SYSTEM.md",
+      "header": "scripts/contract.py --write",
+      "generator": "seed/scripts/contract.py",
+      "source": [
+        "seed/doctrine/system-contract.json"
+      ],
+      "check": [
+        "python3",
+        "seed/scripts/contract.py",
+        "--check",
+        "--root",
+        "seed"
+      ],
+      "probe": [
+        "grep:.github/workflows/checks.yml::seed/scripts/contract.py --check",
+        "grep:seed/.github/workflows/bootstrap.yml::scripts/contract.py --check"
       ]
     }
   ]

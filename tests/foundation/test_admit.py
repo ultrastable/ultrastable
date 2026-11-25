@@ -16,14 +16,13 @@ FILES = ["doctrine/tenant-repos.json", "doctrine/topology.json", "doctrine/stake
 
 class Admit(unittest.TestCase):
     def setUp(self):
-        self.d = Path(tempfile.mkdtemp())
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        self.d = Path(tmp.name)
         for f in FILES:
             (self.d / f).parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(ROOT / f, self.d / f)
         (self.d / "instances/ultrastable/system").mkdir(parents=True, exist_ok=True)
-
-    def tearDown(self):
-        shutil.rmtree(self.d)
 
     def j(self, rel):
         return json.loads((self.d / rel).read_text())

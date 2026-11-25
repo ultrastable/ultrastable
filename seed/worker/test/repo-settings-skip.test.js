@@ -8,7 +8,7 @@ import { newKey } from '../src/auth/seal.js';
 import * as store from '../src/auth/store.js';
 import { ensureRepoSettings } from '../src/apprepos.js';
 
-const toPem = der => `-----BEGIN PRIVATE KEY-----\n${Buffer.from(der).toString('base64').match(/.{1,64}/g).join('\n')}\n-----END PRIVATE KEY-----`;
+const toPem = (der, label = 'PRIVATE KEY') => `-----BEGIN ${label}-----\n${Buffer.from(der).toString('base64').match(/.{1,64}/g).join('\n')}\n-----END ${label}-----`;
 async function pem() { const k = await crypto.subtle.generateKey({ name: 'RSASSA-PKCS1-v1_5', modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]), hash: 'SHA-256' }, true, ['sign', 'verify']); return toPem(new Uint8Array(await crypto.subtle.exportKey('pkcs8', k.privateKey))); }
 const T = 'ultrastable';
 
