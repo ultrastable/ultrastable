@@ -38,7 +38,7 @@ export default {
     2,
     14634
    ],
-   "share_recent": 0.274,
+   "share_recent": 0.273,
    "share_trend": 0.251,
    "total": 124699
   },
@@ -85,7 +85,7 @@ export default {
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 50711,
+   "recent7": 50922,
    "series": [
     0,
     0,
@@ -116,11 +116,11 @@ export default {
     5013,
     2446,
     1383,
-    22840
+    23051
    ],
-   "share_recent": 0.234,
+   "share_recent": 0.235,
    "share_trend": 0.12,
-   "total": 64970
+   "total": 65181
   },
   {
    "area": "foundation",
@@ -323,7 +323,7 @@ export default {
    "total": 15067
   }
  ],
- "at": "2026-11-25T22:16:36Z",
+ "at": "2026-11-25T22:26:21Z",
  "days": 30,
  "findings": [
   {
@@ -345,37 +345,37 @@ export default {
    "why": "platform's share of attention moved -16 points between the first and second half of the window"
   },
   {
-   "evidence": "quiet_days 7; system change in the last 7 days 216397",
+   "evidence": "quiet_days 7; system change in the last 7 days 216608",
    "id": "docs/ops",
    "kind": "neglected",
    "why": "docs/ops had 396 lines of change, then nothing for 7 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 9; system change in the last 7 days 216397",
+   "evidence": "quiet_days 9; system change in the last 7 days 216608",
    "id": "docs/architecture",
    "kind": "neglected",
    "why": "docs/architecture had 192 lines of change, then nothing for 9 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 8; system change in the last 7 days 216397",
+   "evidence": "quiet_days 8; system change in the last 7 days 216608",
    "id": "seed/self",
    "kind": "neglected",
    "why": "seed/self had 151 lines of change, then nothing for 8 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 10; system change in the last 7 days 216397",
+   "evidence": "quiet_days 10; system change in the last 7 days 216608",
    "id": "seed/outreach",
    "kind": "neglected",
    "why": "seed/outreach had 139 lines of change, then nothing for 10 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 12; system change in the last 7 days 216397",
+   "evidence": "quiet_days 12; system change in the last 7 days 216608",
    "id": "docs/runbooks",
    "kind": "neglected",
    "why": "docs/runbooks had 134 lines of change, then nothing for 12 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 7; system change in the last 7 days 216397",
+   "evidence": "quiet_days 7; system change in the last 7 days 216608",
    "id": "HANDOFF.md",
    "kind": "neglected",
    "why": "HANDOFF.md had 51 lines of change, then nothing for 7 days while the rest of the system moved"
@@ -431,16 +431,16 @@ export default {
    -416,
    -907,
    -1222,
-   -1616
+   -1623
   ],
-  "closed": 2810,
-  "opened": 1194
+  "closed": 2818,
+  "opened": 1195
  },
  "loops": [
   {
    "loop": "ultrastability",
    "quiet_days": 0,
-   "rows": 14548,
+   "rows": 14588,
    "series": [
     0,
     0,
@@ -471,7 +471,7 @@ export default {
     5004,
     3322,
     2312,
-    2110
+    2150
    ]
   },
   {
@@ -588,7 +588,7 @@ export default {
   {
    "loop": "resilience",
    "quiet_days": 0,
-   "rows": 372,
+   "rows": 373,
    "series": [
     0,
     0,
@@ -619,13 +619,13 @@ export default {
     122,
     80,
     55,
-    51
+    52
    ]
   },
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 323,
+   "rows": 324,
    "series": [
     0,
     0,
@@ -656,13 +656,13 @@ export default {
     112,
     80,
     55,
-    71
+    72
    ]
   },
   {
    "loop": "yearsim",
    "quiet_days": 0,
-   "rows": 307,
+   "rows": 308,
    "series": [
     0,
     0,
@@ -693,13 +693,13 @@ export default {
     112,
     80,
     55,
-    51
+    52
    ]
   },
   {
    "loop": "saydo",
    "quiet_days": 0,
-   "rows": 306,
+   "rows": 307,
    "series": [
     0,
     0,
@@ -730,7 +730,7 @@ export default {
     112,
     80,
     55,
-    51
+    52
    ]
   }
  ],
