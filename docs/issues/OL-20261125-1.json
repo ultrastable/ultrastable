@@ -1,7 +1,7 @@
 {
   "id": "OL-20261125-1",
   "title": "OL-20261125-1: Scratch bootstrap tenants are not torn down",
-  "body": "**Owner:** operations\n**Trigger:** daily seed-launch.yml run\n**Done check:** file:foundation/seedlaunch.py\n**Status:** open\n\nseedlaunch --e2e-scratch leaves a Worker and D1 per day; site worker has no delete route. Add a scoped delete for bootproof-* names in site/deployer.js and call it after the probe. Also audit other repos and the Cloudflare account for hand-made resources.",
+  "body": "**Owner:** operations\n**Trigger:** daily seed-launch.yml run\n**Done check:** file:foundation/seedlaunch.py\n**Status:** open\n\nseedlaunch --e2e-scratch leaves a Worker and D1 per day; site worker has no delete route. Add a scoped delete for bootproof-* names in site/deployer.js and call it after the probe. Also audit other repos and the Cloudflare account for hand-made resources.\n\n**Vacuous:** 2026-11-25T20:52:23Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n",
   "labels": [
     "role:operations",
     "open-loop"
