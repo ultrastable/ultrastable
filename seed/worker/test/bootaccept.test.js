@@ -17,7 +17,7 @@ test('BOOT-ACCEPT-1: a health-only system serves the discovery manifest and the 
 test('BOOT-ACCEPT-1: every public route the seed Worker serves for a rule is either in PUBLIC_READS or exempted above it', () => {
   // the route a rule makes public must not sit behind the gate; read the Worker so a new public route cannot be added without this list
   const src = readFileSync(new URL('../src/discover.js', import.meta.url), 'utf8');
-  assert.ok(src.includes("'/.well-known/ultrastable.json'") && PUBLIC_READS.has('/.well-known/ultrastable.json'));
+  assert.ok(src.includes("'/.well-known/ultrastable.json'") && PUBLIC_READS.includes('/.well-known/ultrastable.json'));
   const idx = readFileSync(new URL('../src/index.js', import.meta.url), 'utf8');
   assert.ok(idx.indexOf('hiddenByHealthOnly(') < idx.indexOf('discoverRoute('), 'the gate runs first, so PUBLIC_READS is what keeps discovery reachable');
 });

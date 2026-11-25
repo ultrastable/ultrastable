@@ -8,5 +8,11 @@
     "raises-self"
   ],
   "milestone": "Now",
-  "workstream": "Executor queue"
+  "workstream": "Executor queue",
+  "status": "done",
+  "resolution": {
+    "disposition": "fixed",
+    "evidence": "seed/scripts/redteam.py (#2227) carries REDTEAM-1 in the kit; python3 -m foundation systemspec --rule REDTEAM-1 exits 0",
+    "at": "2026-11-25"
+  }
 }

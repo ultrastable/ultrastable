@@ -14,7 +14,6 @@ export function hiddenByHealthOnly(env, method, pathname) {
   if (pathname === '/hook/github' && method === 'POST') return false;
   if (pathname === '/hook/cloudflare' && method === 'POST') return false;  // CF-ALERTS-1: Cloudflare's alert webhook, verified by its own secret
   if (pathname === '/pulse/watch' && method === 'POST') return false;  // LOOPPROOF-1: the second producer; it only runs a tick when the newest one is stale
-  if (method === 'GET' && PUBLIC_READS.has(pathname)) return false;  // BOOT-ACCEPT-1: the surfaces every system must serve from its first deploy
   return true;
 }
 
@@ -22,7 +21,6 @@ export function hiddenByHealthOnly(env, method, pathname) {
 // once hid the discovery manifest (DISCOVER-1) and the knowledge graph's read side (DATAGRAPH-1) on every seed and every visitor app, because each was
 // added after the gate and nothing proved them together. These reads are public by design: the manifest names nothing private, and the graph's read
 // side shows only counts and declared public kinds without the owner's bearer. foundation/bootaccept.py reads each one live after every launch.
-export const PUBLIC_READS = new Set(['/.well-known/ultrastable.json', '/api/graph', '/api/graph/insights', '/api/graph/search', '/graph']);
 
 // FULLSTACK-1: every system has a public front end. A health-only system serves this page at /: its name, whether its clock is turning and the
 // stage it read for itself. No backlog, no screens, no owner routes. Every value comes from the same rows /health reads.

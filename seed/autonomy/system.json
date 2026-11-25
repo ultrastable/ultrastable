@@ -228,11 +228,12 @@
     "INTERVIEW-1",
     "META-SIGNAL-1",
     "PROVENANCE-1",
-    "REDTEAM-1",
     "RESEARCH-1",
     "STRANGE-LOOP-1",
     "TEMPLATE-CODE-ONLY-1",
-    "TENANT-SANDBOX-1"
+    "TENANT-SANDBOX-1",
+    "INTENT-YIELD-1",
+    "PATHFINDER-1"
   ],
   "kit_enforcement_doc": "A rule whose bullet cites platform paths but whose behaviour this kit carries under its own names: each probe must pass here, so the map cannot claim code that is not in the kit.",
   "kit_enforcement": {
@@ -299,6 +300,10 @@
     "NO-FABRICATION-1": [
       "file:scripts/claims.py",
       "file:doctrine/claims.json"
+    ],
+    "REDTEAM-1": [
+      "file:scripts/redteam.py",
+      "grep:scripts/redteam.py::--probe"
     ]
   }
 }
