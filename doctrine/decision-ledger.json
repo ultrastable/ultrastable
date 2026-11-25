@@ -5725,6 +5725,31 @@
    "title": "A newborn system waited until 03:00 UTC to ask the directory to list it",
    "body": "BOOT-4 says every system is listed from its first deploy, but the seed's directory heartbeat only fired in the 03:00 UTC window, so the first live acceptance run (seed-launch 45709149770) passed six of seven layers and failed discovery for second-tenant. The heartbeat now registers from birth, hourly until listed, and keeps the directory's answer in directory_registration; bootaccept --run registers by a second route and names the directory's reason when it still refuses.",
    "probe": "grep:seed/worker/src/discover.js::directory_registration"
+  },
+  {
+   "id": "lesson-2026-11-25-the-directory-register-route-was-dead-behind-the-site-worker",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "The directory register route was dead behind the site worker's GET-only gate",
+   "body": "POST /api/directory/register was a case inside the switch that runs after the site worker rejects every non-GET/HEAD with 405, so no seed heartbeat ever reached register() and the directory had 0 external rows. The second live bootaccept run named it (register answered HTTP 405). The route now sits before the gate, a worker-level test POSTs it, and a guard fails any POST branch written after the gate.",
+   "probe": "grep:site/directory.test.mjs::no POST route in the site worker sits after",
+   "session": "session_0156nqDtbnNSagT7p6jpUTuY"
+  },
+  {
+   "id": "decision-2026-11-25-watch-the-administration-app-as-a-credential",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Watch the administration App as a credential",
+   "body": "The tick Worker's administration App creates tenant and visitor repositories and sets repo settings when ORG_ADMIN_TOKEN is absent, so it is a SPOF (spof-admin-app) and a credwatch row (GITHUB_ADMIN_APP) probed daily with a dry repo-settings read through the site Worker's OIDC route; nothing is written by the probe.",
+   "probe": "grep:doctrine/credwatch.json::GITHUB_ADMIN_APP"
+  },
+  {
+   "id": "lesson-2026-11-25-an-empty-reading-is-unmeasured-never-zero",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "An empty reading is unmeasured, never zero",
+   "body": "Red-team pass 2026-11-25: the cost probe recorded d1: [] for weeks because run() read data/cost-thresholds.json, which never existed, and foundation/cost.py scored probe rows as 0 while the measured Workers AI use was 0.805 of the free budget (source: ops/cost.jsonl, 2026-11-24 row); the platform feed had empty texts and stopped updating on 2026-11-17 because site/feed-data.js was regenerated but never committed. Detectors cost-runaway, d1-growth, credential-expiry and content-drift now fail on these.",
+   "probe": "grep:doctrine/detectors.json::content-drift"
   }
  ]
 }

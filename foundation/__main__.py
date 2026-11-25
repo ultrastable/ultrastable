@@ -389,6 +389,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["fullstack"]:
         from . import fullstack
         return fullstack.main(_av[1:])
+    if _av[:1] == ["contentdrift"]:
+        from . import contentdrift
+        return contentdrift.main(_av[1:])
     if _av[:1] == ["collisions"]:
         from . import collisions
         return collisions.main(_av[1:])

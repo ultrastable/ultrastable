@@ -5,6 +5,8 @@ import datetime as dt, json, shutil, sys, tempfile, unittest
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import _repo  # noqa: E402
 from foundation import credwatch  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[2]
@@ -85,6 +87,40 @@ class Cred(unittest.TestCase):
     def test_config_and_wiring(self):
         self.assertEqual(credwatch.check(REPO), [])
         self.assertIn("foundation credwatch --run --apply", (REPO / ".github/workflows/watchdog.yml").read_text())
+
+
+class Ledger(unittest.TestCase):
+    """CRED-EXPIRY-1: the detector reads the recorded states; a required credential not ok, an expiry in the window or a never-recorded one fails."""
+    def _root(self, rows):
+        d = _repo.scratch(); (d / "doctrine").mkdir(); (d / "ops").mkdir()
+        (d / "doctrine/credwatch.json").write_text(json.dumps({"warn_days": 45, "registrations": [],
+            "credentials": [{"name": "A", "kind": "github-token", "used_by": "x"}, {"name": "B", "kind": "github-token", "used_by": "y", "optional": True}]}))
+        (d / "ops/credwatch.json").write_text(json.dumps({"rows": rows}))
+        return d
+
+    def test_ledger(self):
+        self.assertEqual(credwatch.ledger(self._root([{"name": "A", "state": "ok"}, {"name": "B", "state": "invalid"}]), TODAY), [])
+        self.assertTrue(credwatch.ledger(self._root([{"name": "B", "state": "ok"}]), TODAY)[0].startswith("A: never recorded"))
+        self.assertEqual(credwatch.ledger(self._root([{"name": "A", "state": "invalid"}, {"name": "B", "state": "ok"}]), TODAY), ["A: invalid"])
+        soon = credwatch.ledger(self._root([{"name": "A", "state": "ok"}, {"name": "dom", "state": "ok", "expires": "2026-12-10"}]), TODAY)
+        self.assertTrue(any("20 days left" in m for m in soon))
+
+    def test_admin_app_probe_reads_dry(self):
+        """APP-CRED-WATCH-1: the admin App probe sends a dry repo-settings op and maps the answer."""
+        from foundation import workerroute
+        sent = []
+        class R:
+            def __init__(self, b): self.b = b
+            def read(self): return self.b
+            def __enter__(self): return self
+            def __exit__(self, *a): return False
+        def opener(req, timeout=0):
+            if "token.example" in req.full_url:
+                return R(b'{"value": "jwt"}')
+            sent.append(json.loads(req.data)); return R(b'{"ok": true, "dry": true, "drift": []}')
+        env = {"ACTIONS_ID_TOKEN_REQUEST_URL": "https://token.example/?x=1", "ACTIONS_ID_TOKEN_REQUEST_TOKEN": "t"}
+        self.assertEqual(workerroute.admin_app(env, opener=opener)["state"], "ok")
+        self.assertEqual(sent, [{"op": "repo-settings", "repo": "ultrastable/ultrastable", "dry": True}])
 
 
 if __name__ == "__main__":

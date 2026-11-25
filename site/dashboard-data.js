@@ -284,7 +284,7 @@ export default {
      "id": "failures",
      "title": "Failure modes under audit",
      "source": "doctrine/detectors.json",
-     "headline": "55 failure modes, 63 live detectors",
+     "headline": "59 failure modes, 67 live detectors",
      "rows": [
       [
        "selfhost-tick",
@@ -537,6 +537,22 @@ export default {
       [
        "constitution",
        "fm-constitution-drift"
+      ],
+      [
+       "cost-runaway",
+       "fm-cost-runaway"
+      ],
+      [
+       "d1-growth",
+       "fm-d1-growth"
+      ],
+      [
+       "credential-expiry",
+       "fm-credential-expiry"
+      ],
+      [
+       "content-drift",
+       "fm-content-drift"
       ]
      ],
      "note": "A failing detector files one issue; the same failure twice means change the approach, three times an incident."

@@ -19,7 +19,7 @@
       "secret_scanning_push_protection": "enabled"
     },
     "ruleset": {
-      "name": "main-protected",
+      "name": "main-no-rewrite",
       "target": "branch",
       "enforcement": "active",
       "conditions": {"ref_name": {"include": ["~DEFAULT_BRANCH"], "exclude": []}},

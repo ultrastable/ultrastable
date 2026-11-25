@@ -56,7 +56,7 @@ class FakeApi:
         if rest == "actions/workflows":
             return 200, {"workflows": [{"path": f".github/workflows/w{i}.yml"} for i in range(x.get("workflows", 0))]}
         if rest == "rulesets":
-            return 200, ([{"id": 1, "name": "main-protected", "enforcement": "active"}] if x.get("ruleset") else [])
+            return 200, ([{"id": 1, "name": "main-no-rewrite", "enforcement": "active"}] if x.get("ruleset") else [])
         if rest.startswith("branches/"):
             return 200, {"protected": False}
         if rest.startswith("contents/"):

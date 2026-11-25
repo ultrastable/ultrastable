@@ -1,5 +1,5 @@
 {
- "at": "2026-11-25T22:36:43Z",
+ "at": "2026-11-25T23:05:24Z",
  "gaps": 6,
  "match_share": 0.988,
  "sources": {
@@ -156,7 +156,7 @@
     "drift": 0,
     "id": "claims-total",
     "ok": true,
-    "total": 405
+    "total": 407
    }
   ],
   "loops": [
@@ -709,6 +709,15 @@
     "unmeasured": []
    },
    {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "BLINDSPOT-RED-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
     "checks": 1,
     "external": [],
     "failing": [],
@@ -930,7 +939,7 @@
     "checks": 1,
     "external": [],
     "failing": [
-     "python3 -m foundation dispose --check: an open item is 81.0 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+     "python3 -m foundation dispose --check: an open item is 81.5 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
     ],
     "id": "DISPOSE-1",
     "missing": [],
@@ -1003,7 +1012,7 @@
   },
   "claims": {
    "gaps": 0,
-   "total": 405
+   "total": 407
   },
   "loops": {
    "gaps": 1,
@@ -1011,12 +1020,12 @@
   },
   "rules": {
    "gaps": 3,
-   "total": 88
+   "total": 89
   },
   "year": {
    "gaps": 1,
    "total": 2
   }
  },
- "total": 512
+ "total": 515
 }

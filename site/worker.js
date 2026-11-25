@@ -189,7 +189,8 @@ function bound(v) { return v.min !== null && v.max !== null ? (v.min === v.max ?
 function ultrastability() {
   const P = ULTRA.scopes.platform, T = ULTRA.scopes.tenant;
   const now = ULTRA.now || {}, R = ULTRA.readiness;
-  const reads = function (v) { const n = now[v.id]; return n ? (n.value === null ? "unmeasured" : esc(String(n.value)) + (n.ok ? " (in bounds)" : " (out of bounds)")) : "no reading yet"; };
+  // NUMFMT-1: a reading is shown to three significant figures; the ledger keeps the full value
+  const reads = function (v) { const n = now[v.id]; return n ? (n.value === null ? "unmeasured" : esc(String(typeof n.value === "number" && Number.isFinite(n.value) ? Number(n.value.toPrecision(3)) : n.value)) + (n.ok ? " (in bounds)" : " (out of bounds)")) : "no reading yet"; };
   const row = function (v) { return "<tr><td>" + esc(v.name) + "</td><td>" + esc(bound(v)) + " " + esc(v.unit) + "</td><td>" + reads(v) + "</td><td>" + esc(v.steps.join("; ")) + "</td></tr>"; };
   return "<h2 id=\"why-ultrastable\">Why ultrastable</h2>"
     + "<p>A system is ultrastable, in W. Ross Ashby's sense, when two loops keep its essential variables inside bounds: a fast loop that corrects disturbance, and a slow loop that changes the system itself when the fast loop cannot.</p>"
@@ -1228,6 +1229,7 @@ const handler = {
     if (request.method === "POST" && u.pathname === "/api/org") return orgSetup(request, env); // ORG-THREAD-1
     { const sr = await siteRoutes(u, env, ctx, request); if (sr) return sr; }
     if (request.method === "GET" && u.pathname.replace(/\/$/, "") === "/status") return new Response(await statusPage(env), { headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" } });
+    if (request.method === "POST" && u.pathname === "/api/directory/register") return registerDirectory(request, env, fetch);  // DISCOVER-1: a seed's heartbeat; it was dead behind the 405 below until BOOT-ACCEPT-1 read it live
     if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method not allowed", { status: 405 });
     const PAGES = ["/", "/engineers", "/dashboard", "/roadmap", "/decisions", "/goals", "/org", "/how", "/showcase", "/for", "/claims", "/product", "/team", "/faq", "/contact", "/pilot", "/start", "/setup", "/ops", "/privacy", "/accessibility"], pth = u.pathname.replace(/\/$/, "") || "/";
     if (env && env.DB && request.method === "GET" && (PAGES.includes(pth) || /^\/(for|showcase)\/[a-z0-9-]+$/.test(pth))) { /* UIUX-1: audience and case pages are path steps, so they are counted too */ const w = record(env, request, { host: CANON, path: pth, ref: request.headers.get("referer") }).catch(e => console.error("analytics", e && e.message)); if (ctx && ctx.waitUntil) ctx.waitUntil(w); }
@@ -1243,7 +1245,7 @@ const handler = {
       case "/showcase": return new Response(showcase(), { headers: HTML });
       case "/directory": return new Response(directoryPage(await directoryListing(env)), { headers: HTML });  // DISCOVER-1
       case "/directory.json": return Response.json(await directoryListing(env), { headers: { "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } });
-      case "/api/directory/register": if (request.method === "POST") return registerDirectory(request, env, fetch); return Response.json({ ok: false, error: "use_post" }, { status: 405 });
+      case "/api/directory/register": return Response.json({ ok: false, error: "use_post" }, { status: 405 });
       case "/family.json": return new Response(JSON.stringify({ family: SH.domains, nav: [["Find your path", "/for"], ["Test cases", "/showcase"], ["Product", "/product"], ["How it works", "/how"], ["Live proof", "/live"], ["Research", "/research"], ["Contact", "/contact"]], tokens: { accent_light: "#b83800", accent_dark: "#ff7f4d", base: "https://" + CANON + "/" } }), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } });
       case "/for": return new Response(forIndex(), { headers: HTML });
       case "/claims": return new Response(claimsPage(), { headers: HTML });

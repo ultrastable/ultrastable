@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { measureDay, discoverResources, appendRecord, routedFetch } from '../deploy/cost-probe.mjs';
+import { measureDay, discoverResources, appendRecord, routedFetch, run, sizeBreaches, dayThresholds } from '../deploy/cost-probe.mjs';
 
 function gqlFetchFactory(data) {
   return async () => ({ ok: true, status: 200, json: async () => ({ data, errors: null }) });
@@ -74,6 +74,36 @@ describe('cost probe', () => {
     appendRecord({ date: '2026-11-13', d1: [] }, join(dir, 'cost.jsonl'));
     assert.ok(existsSync(join(dir, 'cost.jsonl')));
     assert.equal(JSON.parse(readFileSync(join(dir, 'cost.jsonl'), 'utf8')).date, '2026-11-13');
+  });
+});
+
+describe('D1 measured from discovery (COST-THRESHOLDS-1, D1-GROWTH-1)', () => {
+  it('maps the window limits to per-day limits', () => {
+    const t = dayThresholds({ window_days: 7, rows_read_max: 14000000, neurons_max: 70000, rows_read_override: { a: 7000 } });
+    assert.equal(t.d1RowsReadDefault, 2000000); assert.equal(t.neurons, 10000); assert.equal(t.d1RowsRead.a, 1000);
+  });
+  it('a database over the warn share of the size limit is a breach', () => {
+    const b = sizeBreaches([{ databaseId: 'x', name: 'big', bytes: 400e6 }, { databaseId: 'y', name: 'small', bytes: 1e6 }], { d1_size_max_bytes: 500e6, d1_size_warn_share: 0.6 });
+    assert.deepEqual(b.map((x) => x.name), ['big']);
+  });
+  it('run measures every listed database and records sizes, never an empty account', async () => {
+    const dir = mkdtempSync(join(tmpdir(), 'cp-')); const { mkdirSync } = await import('node:fs');
+    mkdirSync(join(dir, 'ops')); mkdirSync(join(dir, 'doctrine'));
+    writeFileSync(join(dir, 'ops/cost-thresholds.json'), JSON.stringify({ window_days: 7, rows_read_max: 7, d1_size_max_bytes: 100, d1_size_warn_share: 0.5 }));
+    writeFileSync(join(dir, 'doctrine/topology.json'), JSON.stringify({ stores: { d1: [{ id: 'db1' }] } }));
+    const fetchFn = async (url, init) => {
+      if (String(url).includes('/graphql')) {
+        const isD1 = JSON.parse(init.body).query.includes('d1Analytics');
+        return { ok: true, status: 200, json: async () => ({ data: { viewer: { accounts: [isD1 ? { d1AnalyticsAdaptiveGroups: [{ sum: { rowsRead: 3 } }] } : { aiInferenceAdaptiveGroups: [] }] } } }) };
+      }
+      const result = String(url).includes('/d1/database') ? [{ uuid: 'db1', name: 'n', file_size: 80 }] : [];
+      return { ok: true, status: 200, json: async () => ({ result }) };
+    };
+    const { record } = await run({ fetchFn, token: 't', account: 'a', date: '2026-11-25', cwd: dir });
+    assert.equal(record.d1[0].rowsRead, 3);
+    assert.equal(record.breaches.find((b) => b.kind === 'd1-rows-read').limit, 1);
+    assert.equal(record.d1Size[0].bytes, 80);
+    assert.ok(record.breaches.some((b) => b.kind === 'd1-size'));
   });
 });
 

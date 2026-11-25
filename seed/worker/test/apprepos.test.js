@@ -194,13 +194,13 @@ test('a drifted public repository gets every part: settings, description, homepa
   assert.deepEqual(w.calls.find(c => c.path.endsWith('/topics')).body, { names: ['ultrastable', 'built-on-ultrastable'] });
   assert.ok(w.calls.some(c => c.m === 'PUT' && c.path.endsWith('/vulnerability-alerts')));
   assert.deepEqual(w.calls.find(c => c.m === 'PATCH' && c.body.security_and_analysis).body.security_and_analysis.secret_scanning, { status: 'enabled' });
-  assert.equal(w.calls.find(c => c.m === 'POST' && c.path.endsWith('/rulesets')).body.name, 'main-protected');
+  assert.equal(w.calls.find(c => c.m === 'POST' && c.path.endsWith('/rulesets')).body.name, 'main-no-rewrite');
   for (const k of ['description', 'homepage', 'topics', 'ruleset', 'delete_branch_on_merge', 'allow_auto_merge']) assert.ok(r.changed.includes(k), k);
 });
 test('a repository already at the standard is not written to; an archived one is left alone', async () => {
   const { applyStandard, REPO_STANDARD } = await import('../src/repostandard.js');
   const live = { private: false, ...REPO_STANDARD.settings, description: 'd', homepage: 'https://ultrastable.io', topics: ['ultrastable'], security_and_analysis: { secret_scanning: { status: 'enabled' }, secret_scanning_push_protection: { status: 'enabled' } } };
-  const w = ghFake(live, { rulesets: [{ id: 7, name: 'main-protected', enforcement: 'active' }] });
+  const w = ghFake(live, { rulesets: [{ id: 7, name: 'main-no-rewrite', enforcement: 'active' }] });
   w.A = (inner => async (m, p, b) => (m === 'GET' && p.endsWith('/vulnerability-alerts') ? (w.calls.push({ m, path: p }), { status: 204, json: {} }) : inner(m, p, b)))(w.A);
   const r = await applyStandard(w.A, 'ultrastable/unlearn', live, { description: 'd', homepage: 'https://ultrastable.io', topics: ['ultrastable'] });
   assert.equal(r.ok, true); assert.deepEqual(r.changed, []); assert.equal(w.calls.filter(c => c.m !== 'GET').length, 0);
@@ -213,7 +213,7 @@ test('a refused step is named and the answer is not ok; nothing is skipped quiet
   const w = ghFake({ private: false, delete_branch_on_merge: false }, { refuse: { '/rulesets': 403, '/topics': 403 } });
   const r = await applyStandard(w.A, 'ultrastable/what-works', w.live, { topics: ['ultrastable'] });
   assert.equal(r.ok, false); assert.equal(r.refused.length, 2);
-  assert.match(r.refused.join(' | '), /topics: HTTP 403 Resource not accessible.*ruleset main-protected: HTTP 403/);
+  assert.match(r.refused.join(' | '), /topics: HTTP 403 Resource not accessible.*ruleset main-no-rewrite: HTTP 403/);
   assert.ok(r.changed.includes('delete_branch_on_merge'), 'the steps that were allowed still happened');
 });
 test('a private repository: what the Free plan withholds is reported as gated, and only a named repository is made public', async () => {
@@ -245,7 +245,13 @@ test('the settings route applies the standard with the admin app, for org reposi
   };
   const r = await ensureRepoSettings(w.db, w.env, T, { repo: 'ultrastable/ultrastable', homepage: 'https://ultrastable.io' }, { fetch: f });
   assert.equal(r.ok, true); assert.ok(r.changed.includes('delete_branch_on_merge')); assert.ok(r.changed.includes('ruleset')); assert.ok(r.changed.includes('homepage'));
+  assert.equal(r.protect, 'protected');
   assert.ok(writes.every(x => x.tok === 'admin-token'));
+  const n = writes.length;
+  const dry = await ensureRepoSettings(w.db, w.env, T, { repo: 'ultrastable/ultrastable', dry: true }, { fetch: f });  // APP-CRED-WATCH-1
+  assert.equal(dry.ok, true); assert.ok(dry.drift.includes('delete_branch_on_merge')); assert.equal(writes.length, n, 'a dry read never writes');
+  const arch = await ensureRepoSettings(w.db, w.env, T, { repo: 'ultrastable/workers' }, { fetch: async (url, init = {}) => new URL(url).pathname === '/repos/ultrastable/workers' ? new Response(JSON.stringify({ archived: true }), { status: 200 }) : f(url, init) });
+  assert.equal(arch.ok, true); assert.match(arch.skipped, /archived/);  // ARCHIVED-READONLY-1: run 45696915881 failed on the archived workers repository
   for (const n of ['other/x', 'ultrastable/../x', '']) assert.equal((await ensureRepoSettings(w.db, w.env, T, { repo: n }, { fetch: f })).ok, false, n);
   const bad = await handleAppHost(new Request('https://t/host/repo-settings', { method: 'POST', headers: { 'x-internal-key': 'nope' }, body: '{"repo":"ultrastable/ultrastable"}' }), { ...w.env, DB: w.db }, { tenant: T, fetch: f });
   assert.equal(bad.status, 404);

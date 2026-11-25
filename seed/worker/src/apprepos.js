@@ -146,6 +146,8 @@ export async function templateToken(db, env, tenant, spec, { fetch: f = fetch, n
 // org-settings stayed red. REPO-STANDARD-1 (same day): two settings were not a standard; the administration app this Worker already holds now
 // applies the whole of it (repostandard.js) to any repository of the org, with the description, homepage and topics the core computed.
 export const REPO_SETTINGS = Object.freeze({ ...REPO_STANDARD.settings });
+export const KEEP_PRIVATE = Object.freeze(['ultrastable/ops']);  // DISCOVER-1: the one repository that is never made public
+export const NO_REWRITE = REPO_STANDARD.ruleset;  // REDTEAM-1: main refuses force pushes and deletion; one ruleset, defined in the standard
 export const ORG_REPO = /^ultrastable\/[A-Za-z0-9._-]{1,100}$/;
 export async function ensureRepoSettings(db, env, tenant, spec, { fetch: f = fetch, now = Date.now() } = {}) {
   const repo = String(spec.repo || ''), out = { repo };
@@ -159,11 +161,19 @@ export async function ensureRepoSettings(db, env, tenant, spec, { fetch: f = fet
   if (seen.status === 200 && seen.json.archived === true) return { ...out, ok: true, changed: [], skipped: 'archived (read-only)' };
   if (seen.status === 404) return { ...out, ok: true, changed: [], skipped: 'not created yet (tenant-repos.yml creates it)' };
   if (seen.status !== 200) return { ...out, ok: false, waiting_on: 'admin-app-scope', error: `read ${repo}: HTTP ${seen.status}` };
-  const r = await applyStandard(A, repo, seen.json, spec);
-  if (r.archived) return { ...out, ok: true, archived: true, changed: [] };
-  if (!r.ok) { await store.event(db, tenant, 'github-admin', 'failed', `repo standard ${repo}: ${r.refused.join('; ')}`.slice(0, 300)); return { ...out, ok: false, waiting_on: 'admin-app-scope', changed: r.changed, refused: r.refused, gated: r.gated, error: `${repo}: ${r.refused.join('; ')}`.slice(0, 300) }; }
+  // One standard, one engine (REPO-STANDARD-1 with REDTEAM-1 and DISCOVER-1 from main): applyStandard sets the merge rules, metadata, security and the
+  // main-no-rewrite ruleset. `public: true` makes a declared-public repository public, never one in KEEP_PRIVATE and never the other way.
+  const std = { ...spec, visibility: (spec.public === true || spec.visibility === 'public') && !KEEP_PRIVATE.includes(repo) ? 'public' : undefined };
+  if (spec.dry) {  // APP-CRED-WATCH-1: the credential watch reads, never writes
+    const drift = Object.keys(REPO_SETTINGS).filter(k => seen.json[k] !== REPO_SETTINGS[k]);
+    if (std.visibility === 'public' && seen.json.private === true) drift.push('private');
+    return { ...out, ok: true, dry: true, drift };
+  }
+  const r = await applyStandard(A, repo, seen.json, std);
+  const protect = r.gated.includes('ruleset') ? 'plan' : r.refused.some(x => /ruleset/.test(x)) ? 'failed' : 'protected';
+  if (!r.ok) { await store.event(db, tenant, 'github-admin', 'failed', `repo standard ${repo}: ${r.refused.join('; ')}`.slice(0, 300)); return { ...out, ok: false, waiting_on: 'admin-app-scope', error: r.refused.join('; ').slice(0, 300), changed: r.changed, refused: r.refused, gated: r.gated, protect }; }
   if (r.changed.length) await store.event(db, tenant, 'github-admin', 'repo-settings', `${repo}: ${r.changed.join(', ')}`.slice(0, 300));
-  return { ...out, ok: true, changed: r.changed, gated: r.gated };
+  return { ...out, ok: true, changed: r.changed, gated: r.gated, protect };
 }
 // DEPLOY-VISIBLE-1 (Rowan, 2026-11-25: "If somebody sees the code, then show them where it's running, show them the URL ... what I'm not seeing
 // is where these repos are actually deployed."): a GitHub Deployment (environment production) with its live URL, on the repository and commit

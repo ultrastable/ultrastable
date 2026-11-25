@@ -987,6 +987,70 @@
       "root_cause": "a section of the constitution no longer matches the code it describes, or a standing rule has no detector and remediation in code",
       "owner": "operations",
       "remedy": "Run python3 -m foundation constitution --check; bind the rule to code (seed/doctrine/constitution.json) or fix the drifted code; regenerate with --render (CONSTITUTION-1)."
+    },
+    {
+      "id": "cost-runaway",
+      "failure_mode": "fm-cost-runaway",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "cost",
+        "--guard"
+      ],
+      "timeout": 120,
+      "root_cause": "the cost reading stopped, was unmeasured, or a free-plan limit is near",
+      "owner": "operations",
+      "remedy": "Read the latest ops/cost.jsonl row: fix the probe if unmeasured, otherwise cut the largest spender (model route, read pattern) by PR"
+    },
+    {
+      "id": "d1-growth",
+      "failure_mode": "fm-d1-growth",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "cost",
+        "--guard"
+      ],
+      "timeout": 120,
+      "root_cause": "a database's measured growth reaches the size limit inside the horizon",
+      "owner": "operations",
+      "remedy": "Add or tighten its retention rows in seed/autonomy/retention.json and archive old rows through the audit chain"
+    },
+    {
+      "id": "credential-expiry",
+      "failure_mode": "fm-credential-expiry",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "credwatch",
+        "--ledger"
+      ],
+      "timeout": 120,
+      "root_cause": "a credential or registration is invalid, unrecorded or inside its warning window",
+      "owner": "staff",
+      "remedy": "Move the loops that use it to a credential-free route, then renew it through the connect flow"
+    },
+    {
+      "id": "content-drift",
+      "failure_mode": "fm-content-drift",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "contentdrift",
+        "--live"
+      ],
+      "timeout": 120,
+      "root_cause": "a system's feed is unreadable or its newest entries are empty, cut off, templated or repeated",
+      "owner": "product-manager",
+      "remedy": "Fix the generator in that system's repository so each entry is whole and distinct; never loosen the thresholds"
     }
   ]
 }

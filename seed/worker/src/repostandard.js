@@ -24,7 +24,7 @@ export const REPO_STANDARD = /*repo-standard:begin*/{
     "secret_scanning_push_protection": "enabled"
   },
   "ruleset": {
-    "name": "main-protected",
+    "name": "main-no-rewrite",
     "target": "branch",
     "enforcement": "active",
     "conditions": {

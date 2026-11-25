@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-25T23:08:17Z",
- "commit": "91aaf6cc",
+ "generated": "2026-11-25T23:17:30Z",
+ "commit": "943e3bba",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 117,
@@ -18,7 +18,7 @@
   "merged_prs_listed": 0,
   "prs_merged_total": 228,
   "prs_merged_unattended": 9,
-  "backlog_open": 99,
+  "backlog_open": 92,
   "backlog_items": 1057
  },
  "unknowns": {
@@ -58,11 +58,11 @@
   "queue": {
    "items": 1057,
    "by_status": {
-    "closed": 949,
-    "open": 99,
+    "closed": 956,
+    "open": 92,
     "done": 9
    },
-   "takeable_now": 96
+   "takeable_now": 92
   },
   "merged": {
    "total": 228,
@@ -1977,8 +1977,8 @@
   "executor": {
    "runs": 30,
    "by_conclusion": {
-    "success": 24,
-    "failure": 6
+    "failure": 7,
+    "success": 23
    },
    "prs_opened_unattended": 0,
    "prs_merged_unattended": 9,
@@ -2037,7 +2037,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 253.8,
+   "age_s": 334.3,
    "status": "fresh",
    "missed": 0
   },
@@ -2061,16 +2061,15 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 277.8,
+   "age_s": 505.3,
    "status": "fresh",
-   "missed": 0,
-   "lag_s": 1032.0
+   "missed": 0
   },
   {
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 26537.8,
+   "age_s": 27099.3,
    "status": "fresh",
    "missed": 0
   }
@@ -2289,7 +2288,7 @@
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-25T23:07:41Z",
+  "generated": "2026-11-25T23:17:00Z",
   "blindspots": {
    "backup": {
     "skipped": "last drill is fresh"
@@ -2315,7 +2314,7 @@
     "baseline": 1310,
     "target": 1500,
     "expected_today": 1404.8,
-    "value": 12149,
+    "value": 12150,
     "behind": false,
     "progress": 57.05
    },
@@ -2333,18 +2332,18 @@
     "baseline": 817,
     "target": 1000,
     "expected_today": 908.3,
-    "value": 9699,
+    "value": 9708,
     "behind": false,
-    "progress": 48.54
+    "progress": 48.58
    },
    {
     "id": "pilot_page_views_7d",
     "baseline": 326,
     "target": 400,
     "expected_today": 362.9,
-    "value": 3893,
+    "value": 3894,
     "behind": false,
-    "progress": 48.2
+    "progress": 48.22
    }
   ],
   "experiments": [
@@ -2580,21 +2579,21 @@
  },
  "growth": {
   "mix": {
-   "growth": 0,
+   "growth": 1,
    "fix": 2,
-   "maintenance": 18,
+   "maintenance": 17,
    "total": 20,
-   "growth_share": 0.0,
+   "growth_share": 0.05,
    "target": 0.4
   },
   "target_growth_share": 0.4,
   "growth_items_takeable": 0,
-  "items_takeable": 96,
+  "items_takeable": 92,
   "metrics": [
    {
     "id": "pageviews_7d",
     "what": "human page views in the last 7 days (first-party, cookieless, bots excluded)",
-    "value": 12149,
+    "value": 12150,
     "target": 1500,
     "breach": false
    },
@@ -2608,14 +2607,14 @@
    {
     "id": "agent_hits_7d",
     "what": "requests from bots and agents in the last 7 days (discovery documents, MCP, llms.txt)",
-    "value": 9699,
+    "value": 9708,
     "target": 1000,
     "breach": false
    },
    {
     "id": "pilot_page_views_7d",
     "what": "views of the pilot application page in the last 7 days",
-    "value": 3893,
+    "value": 3894,
     "target": 400,
     "breach": false
    }
@@ -2634,7 +2633,7 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 296.0,
+   "last_beat_age_s": 370.5,
    "expected_interval_s": 21600,
    "beats_24h": 60,
    "expected_24h": 4.0,
@@ -2645,7 +2644,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 26580.0,
+   "last_beat_age_s": 27135.5,
    "expected_interval_s": 86400,
    "beats_24h": 2,
    "expected_24h": 1.0,
@@ -2656,7 +2655,7 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 339.0,
+   "last_beat_age_s": 894.5,
    "expected_interval_s": 86400,
    "beats_24h": 19,
    "expected_24h": 1.0,
@@ -2667,7 +2666,7 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 105084.0,
+   "last_beat_age_s": 105639.5,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -2678,7 +2677,7 @@
    "id": "a11y",
    "what": "A11Y-LOOP-1: the weekly accessibility and layout audit of every public page",
    "source": "workflow",
-   "last_beat_age_s": 25657.0,
+   "last_beat_age_s": 26212.5,
    "expected_interval_s": 604800,
    "beats_24h": 1,
    "expected_24h": 0.1,
@@ -2696,7 +2695,7 @@
    "id": "claims",
    "what": "words checked against code and the deployed site",
    "source": "workflow",
-   "last_beat_age_s": 19881.0,
+   "last_beat_age_s": 20436.5,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -2707,7 +2706,7 @@
    "id": "watchdog",
    "what": "RESILIENCE-1: the GitHub watchdog that probes every clock and restarts the stopped ones; the tick Worker dispatches it again when it is older than 12 hours",
    "source": "workflow",
-   "last_beat_age_s": 273.0,
+   "last_beat_age_s": 263.5,
    "expected_interval_s": 43200,
    "beats_24h": 60,
    "expected_24h": 2.0,
@@ -2718,7 +2717,7 @@
    "id": "temporal",
    "what": "the daily trend read: series per component, loop and entry, and what they show",
    "source": "workflow",
-   "last_beat_age_s": 21524.0,
+   "last_beat_age_s": 22079.5,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -2736,7 +2735,7 @@
    "id": "intent-yield",
    "what": "the daily intent yield: every owner directive's own probe, restatements charged to the original, /yield",
    "source": "workflow",
-   "last_beat_age_s": 18223.0,
+   "last_beat_age_s": 18778.5,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -4917,6 +4916,15 @@
  "changes": {
   "commits": [
    {
+    "sha": "943e3bba",
+    "at": "2026-11-25T23:08:18+00:00",
+    "author": "Claude",
+    "subject": "Constitution carries the new standing rules with detectors in the kit; seed README start section restored",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/943e3bba06f0e427a926e2b2bdc510b24f241c9f"
+   },
+   {
     "sha": "91aaf6cc",
     "at": "2026-11-25T22:49:28+00:00",
     "author": "Claude",
@@ -5266,15 +5274,6 @@
     "pr": 2254,
     "item": "ADMIT-1",
     "url": "https://github.com/ultrastable/ultrastable/commit/e9b3b57d8a3adfa7c73f6d04879e4ec7f033818c"
-   },
-   {
-    "sha": "4738d516",
-    "at": "2026-11-25T21:46:07+00:00",
-    "author": "Claude",
-    "subject": "STANDARDS-FIRST-1: findable workflow title in a block scalar; failure mode names the modules its probes rest on",
-    "pr": null,
-    "item": "STANDARDS-FIRST-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/4738d516141ca4143db9ab0269b0756282598799"
    }
   ],
   "pull_requests": []
