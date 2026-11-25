@@ -5159,6 +5159,170 @@
    "body": "The Replication Ledger's first live beat (beat 1, 2026-11-25 16:21 UTC, /api/beats) got HTTP 429 from OpenAlex on every call: Workers share outbound addresses and anonymous calls are limited by address. discover.js oa() now sends the project's published contact (security.txt address) as mailto, which OpenAlex serves from its polite pool, and retries a 429 once. Second lesson: seedlife --run closed Q-SEED-what-works with no Evidence line, which turned closedloop --check red on main; it now writes the probe it passed as Evidence. Probe: node --test instances/replication-ledger/worker/ and tests/foundation/test_seedlife.py. Residual risk: whether the polite pool clears the 429 is known only after the next live beat.",
    "probe": "grep:instances/replication-ledger/worker/discover.js::mailto=",
    "session": "https://claude.ai/code/session_0156nqDsz4YUXpAoqH9CX7mq"
+  },
+  {
+   "id": "decision-2026-11-25-breadth-1-owner-edits-to-suggestions-steer-the-idea-bank",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "BREADTH-1: owner edits to suggestions steer the idea bank",
+   "body": "The owner's edit to a front-door suggestion is stored in owner_edits in doctrine/idea-bank.json and shown to the grow prompt; build_idea_bank.py validate() now turns away ideas that hold a narrow phrase. Verified by tests/test_idea_bank.py.",
+   "probe": "grep:doctrine/idea-bank.json::owner_edits",
+   "session": "session_0156nqDrbe8Pmy5MPH111zRn"
+  },
+  {
+   "id": "decision-2026-11-25-datagraph-1-every-system-keeps-a-knowledge-graph-of-all-its-",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "DATAGRAPH-1: every system keeps a knowledge graph of all its data",
+   "body": "Owner directive 2026-11-25. Built as core/datagraph (deterministic extraction from the data: rows are nodes, key-equal values and ids in text are edges), the seed tick step knowledge-graph (bi-temporal D1 storage, hash-diff writes, PageRank, communities, bridges, orphans, Adamic-Adar leads settled against later data, calibrated kind weights, KG-ORPHANS items), a privacy-gated read side (/api/graph*, /graph), and doctrine/knowledge-graph.json with foundation/datagraph.py --check covering every system. LLM extraction and Leiden are upgrade paths, not the default: schema-first extraction and topology heuristics are cheaper and competitive. Research: docs/research/knowledge-graph.md.",
+   "probe": "file:doctrine/knowledge-graph.json",
+   "session": "https://claude.ai/code/session_0156nqDvcxMuXbDzftceaEZU"
+  },
+  {
+   "id": "decision-2026-11-25-discover-1-public-by-default-every-system-discoverable",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "DISCOVER-1: public by default, every system discoverable",
+   "body": "Every live tenant is listed and cross-linked on ultrastable.io from the registries; seeded systems self-register daily via their public manifest; external listings are verified, rechecked daily and dropped on opt-out, noindex or 3 failures. Only ultrastable/ops stays private.",
+   "probe": "file:foundation/discover.py"
+  },
+  {
+   "id": "decision-2026-11-25-full-stack-1-repository-back-end-and-public-front-end-for-ev",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "FULLSTACK-1: repository, back end and public front end for every system",
+   "body": "Every system is checked for all three parts by foundation/fullstack.py: check runs in checks, live runs daily in tenant-repos.yml. Verified by tests/foundation/test_fullstack.py. The second-tenant seed has a back end only and carries Q-FULLSTACK-second-tenant.",
+   "probe": "file:foundation/fullstack.py",
+   "session": "session_0156nqDrbe8Pmy5MPH111zRn"
+  },
+  {
+   "id": "decision-2026-11-25-kgraph-1-one-shared-knowledge-graph-engine-for-every-system",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Knowledge graphs: the platform runs DATAGRAPH-1, tenants with domain data run the shared engine",
+   "body": "The platform keeps DATAGRAPH-1 (seed step knowledge-graph, zero-config over every table). Tenants with domain data run seed/worker/src/knowledge.js with their own mappers (built rows in doctrine/knowledge-graph.json, vendored through doctrine/tenant-repos.json). The two engines share kg_* table names with different schemas, so never both on one D1.",
+   "probe": "file:seed/worker/src/knowledge.js",
+   "session": "session_0156nqDvwrub84GRd3gGvBQy"
+  },
+  {
+   "id": "decision-2026-11-25-launch-path-1-a-visitor-with-no-code-agent-launches-from-one",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "LAUNCH-PATH-1: a visitor with no code agent launches from one form post",
+   "body": "An idea typed at ultrastable.io gets a launch record (site/graduate.js). deploy/launch-apps.mjs, run daily by tenant-repos.yml, deploys the idea's own system through the site worker's OIDC route, creates its repository from ultrastable/seed, files the owner's plain-words requests there and invites the owner on request. Without an org credential the app stays live and managed and the repository waits (gate visitor-app-repos). A test idea walks the front door on every run. Still open: Q-LAUNCH-1, Q-LAUNCH-2.",
+   "probe": "grep:deploy/launch-apps.mjs::LAUNCH-PATH-1"
+  },
+  {
+   "id": "decision-2026-11-25-sync-both-ways-1-tenants-pull-the-platform-and-lift-general-",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "SYNC-BOTH-WAYS-1: tenants pull the platform and lift general code up",
+   "body": "tenantsync now opens its pull requests over REST with the token passed in, clones ultrastable/practical-solutions, measures days behind per tenant and lifts reaching the core, and files Q-SYNC items with their own probes. Seeded systems also pull the kernel weekly with their own token.",
+   "probe": "grep:foundation/tenantsync.py::SYNC-BOTH-WAYS-1",
+   "session": "session_0156nqDs42dQamHBbr9uK8E2"
+  },
+  {
+   "id": "decision-2026-11-25-workers-ai-for-the-executor-goes-through-the-site-worker-s-o",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Workers AI for the executor goes through the site Worker's OIDC route (AI-OIDC-1)",
+   "body": "The repo's Cloudflare secrets name the retired account and cfaccount strips them, so every workers-ai rung was unavailable. With id-token: write, a workers-ai rung with no Cloudflare secret calls /__internal/cf with ai/run/@cf/<model>, an allow-listed path in site/deployer.js.",
+   "probe": "grep:site/deployer.js::AI-OIDC-1",
+   "session": "session_0156nqDuo7mxQbyexaaJm48F"
+  },
+  {
+   "id": "lesson-2026-11-25-a-graph-of-all-data-is-a-disclosure-surface",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "A graph of all data is a disclosure surface",
+   "body": "Joining every table links records that were separate, and the platform D1 holds people's replies and owner answers. Personal and secret tables are excluded at extraction, and the public read view shows only counts, orphan findings and kinds a system declares public; the owner bearer sees the rest.",
+   "probe": "grep:workers/core/datagraph/index.js::inbox\\|answer\\|interview"
+  },
+  {
+   "id": "lesson-2026-11-25-a-second-route-written-in-one-entry-point-is-dead-if-the-loo",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "A second route written in one entry point is dead if the loop calls another",
+   "body": "MODELS-ORG-1 added the GitHub Models org-endpoint fallback in agents.invoke, but the executor calls agent_ladder.transport, which built and sent the request itself, so the fallback never ran and every executor run failed on 200 text/plain OK. Both now go through agents.request.",
+   "probe": "grep:foundation/agent_ladder.py::agents\\.request\\(",
+   "session": "session_0156nqDuo7mxQbyexaaJm48F"
+  },
+  {
+   "id": "lesson-2026-11-25-a-test-must-not-read-the-live-queue-it-is-testing",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "A test must not read the live queue it is testing",
+   "body": "Session: session_0156nqDu4uGc3HMjQ8qCqHyK. test_pm GrowthStarve read main's docs/issues, so it failed whenever the product manager had already filed growth items, which is every product-manager PR. Patch queue reads in tests.",
+   "probe": "grep:tests/foundation/test_pm.py::SELFTEST-1"
+  },
+  {
+   "id": "lesson-2026-11-25-a-visitor-app-needs-a-repo-token-scoped-to-its-one-repositor",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "A visitor app needs a repo token scoped to its one repository",
+   "body": "The app's own Worker asks its host (the tick Worker) for a one-hour installation token limited to its repository, proved by an HMAC key the deployer binds. No app holds an org-wide credential.",
+   "probe": "grep:seed/worker/src/apprepos.js::scopedToken",
+   "session": "session_0156nqDrbe8Pmy5MPH111zRn"
+  },
+  {
+   "id": "lesson-2026-11-25-discover-1-probe-caught-two-new-tenants",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "DISCOVER-1 probe caught two new tenants",
+   "body": "discover --check failed twice when a tenant went live without a showcase (What Works, Replication Ledger). Both were added. Next: file the showcase automatically from the tenant's IDEA.md. Session: session_0156nqDvKe54xZ9t3tXhvDPH. The red suites on this branch were fixed by Session: session_0156nqDu4uGc3HMjQ8qCqHyK (commit a176393f).",
+   "probe": "file:foundation/discover.py",
+   "session": "session_0156nqDvKe54xZ9t3tXhvDPH"
+  },
+  {
+   "id": "lesson-2026-11-25-generated-trajectory-data-must-be-regenerated-on-merge-and-l",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Generated trajectory data must be regenerated on merge and landed by the watchdog",
+   "body": "test_trajectory went red on main because the watchdog wrote ops/trajectory.* but never landed site/trajectory-data.js, and regen-generated did not run the trajectory generator.",
+   "probe": "grep:scripts/regen_generated.py::trajectory",
+   "session": "session_0156nqDs42dQamHBbr9uK8E2"
+  },
+  {
+   "id": "lesson-2026-11-25-merge-now-reconcile-looped-on-a-code-conflict-pushing-empty-",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "MERGE-NOW reconcile looped on a code conflict, pushing empty commits",
+   "body": "On a PR with a hand-written conflict, mergenow.reconcile set generated files to main's copy even when they already matched, committed the unchanged tree, failed the merge with 409, and the synchronize event from its own commit ran it again: 34 empty commits in four minutes on #2165, each starting CI. It now commits only when the new tree differs from the head tree.",
+   "probe": "grep:seed/worker/src/mergenow.js::MERGENOW-NOOP-1",
+   "session": "claude-code"
+  },
+  {
+   "id": "lesson-2026-11-25-silent-loops-and-frozen-pages-a-green-run-is-not-a-landed-re",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Silent loops and frozen pages: a green run is not a landed result",
+   "body": "Session: session_0156nqDu4uGc3HMjQ8qCqHyK. 2026-11-25 audit: seed kit-sync failed every scheduled run for 3 days unseen; /balance froze because only balance --gate ran; /changelog froze because it rode the product-manager PR, which went red and was superseded. foundation/selftest.py now checks every scheduled workflow in the org and every generated site data stamp, as failure-audit detectors.",
+   "probe": "file:foundation/selftest.py"
+  },
+  {
+   "id": "lesson-2026-11-25-spinoffs-deployed-with-retired-account-secrets-for-4-days-sp",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "spinoffs deployed with retired-account secrets for 4 days (SPINOFF-DEPLOY-2)",
+   "body": "spinoff.yml ran wrangler with CLOUDFLARE_* repo secrets (retired account) and a D1 id that only exists there; it failed daily from 2026-11-21 and the live worker kept serving retired apps. ultrastable-spinoffs is now in doctrine/topology.json, deploys through deploy-oidc.mjs, and deploy-ultrastable watches spinoffs/**. The uiux live audit reads retirement from spinoffs/registry.json.",
+   "probe": "grep:.github/workflows/spinoff.yml::SPINOFF-DEPLOY-2",
+   "session": "session_0156nqDuo7mxQbyexaaJm48F"
+  },
+  {
+   "id": "lesson-2026-11-25-the-credential-everyone-said-was-missing-was-already-in-the-",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "The credential everyone said was missing was already in the tick Worker",
+   "body": "Three gates said no credential could create an org repository. The tick Worker's sealed store held a live administration App token the whole time; the gate listed that route as not tried. Read the credential store before recording a credential gate (PATHFINDER-1). APP-REPO-1 uses it.",
+   "probe": "grep:seed/worker/src/apprepos.js::APP-REPO-1"
+  },
+  {
+   "id": "lesson-2026-11-25-the-seed-asked-a-hosted-owner-for-cloud-and-model-keys",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "The seed asked a hosted owner for cloud and model keys",
+   "body": "Walking the policy atlas idea through the seed's bootstrap opened cards asking the owner to set CLOUDFLARE_API_TOKEN and ANTHROPIC_API_KEY and to approve spending. A person with no code agent cannot do that. IDEA.md now takes hosted_by; the host deploys and binds models and the bootstrap opens no secret or budget card (HOSTED-1).",
+   "probe": "grep:seed/bootstrap/bootstrap.py::HOSTED-1"
   }
  ]
 }

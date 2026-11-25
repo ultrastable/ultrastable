@@ -230,5 +230,9 @@ class GrowthStarve(unittest.TestCase):
         from foundation import pm
         vals = {"pageviews_7d": None, "visitors_7d": None, "agent_hits_7d": None, "pilot_page_views_7d": None}
         tgt = pm.targets(pm.REPO, vals, time.time())
-        self.assertEqual(pm.file_growth(pm.REPO, tgt, [], write=False), [])
-        self.assertTrue(pm.file_growth(pm.REPO, tgt, [], write=False, growth_share=0.0))
+        # SELFTEST-1: read no live queue. Against main's docs/issues this went red exactly when the product manager had already filed the
+        # items, so every product-manager PR (2080, 2087) failed CI and was superseded, and the loop that refills the queue never landed.
+        from unittest import mock
+        with mock.patch.object(pm, "_items", return_value=[]), mock.patch.object(pm, "_item_exists", return_value=False):
+            self.assertEqual(pm.file_growth(pm.REPO, tgt, [], write=False), [])
+            self.assertTrue(pm.file_growth(pm.REPO, tgt, [], write=False, growth_share=0.0))

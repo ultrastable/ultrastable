@@ -9,10 +9,100 @@
   "external": "a signal from outside (scout finding, funder reply, competitor change)"
  },
  "counts_by_origin": {
-  "owner": 22,
-  "agent": 7
+  "owner": 26,
+  "agent": 8
  },
  "entries": [
+  {
+   "id": "pv-324cba6ff2ba",
+   "at": "2026-11-25T18:18:50+01:00",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "Daily self-test for silent loops and frozen pages; unfreeze /balance and /changelog (SELFTEST-1) (#2185)",
+   "affected": [
+    ".github",
+    "doctrine",
+    "foundation",
+    "ops",
+    "tests"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-bb139214dc5d",
+   "at": "2026-11-25T17:19:41Z",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "Let product-manager PRs pass CI: test_pm stops reading the live queue (#2186)",
+   "affected": [
+    "doctrine",
+    "tests"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-6ccc54d46835",
+   "at": "2026-11-25T17:18:04Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "Knowledge graphs: tenants map their own records with the shared engine (DATAGRAPH-1 built rows) (#2151)",
+   "affected": [
+    "README.md",
+    "agents",
+    "docs",
+    "doctrine",
+    "foundation",
+    "instances"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-bbbbd8f544bb",
+   "at": "2026-11-25T17:07:37Z",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "List and cross-link every Ultrastable system; let seeded systems register themselves (DISCOVER-1) (#2132)",
+   "affected": [
+    ".github",
+    "README.md",
+    "agents",
+    "brand",
+    "docs",
+    "doctrine"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-8f1e3040a86d",
+   "at": "2026-11-25T17:06:36Z",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "Repair five red loops: self-coding models, spinoff deploy, UI audit of retired apps, ciwatch push, checksrun timeout (#2165)",
+   "affected": [
+    ".github",
+    "docs",
+    "doctrine",
+    "foundation",
+    "instances",
+    "scripts"
+   ],
+   "effect": "kept"
+  },
   {
    "id": "pv-b353f2f233b4",
    "at": "2026-11-25T17:00:37+01:00",
