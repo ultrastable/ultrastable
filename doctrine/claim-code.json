@@ -395,6 +395,15 @@
     "file": "site/directory.js",
     "contains": "20 * 3600e3"
    }
+  },
+  {
+   "id": "coldstart-contract-agents",
+   "source": "agents/AGENTS.md",
+   "quote": "work together automatically and seamlessly from the beginning",
+   "probe": {
+    "file": ".github/workflows/checks.yml",
+    "contains": "python3 -m foundation coldstart --check"
+   }
   }
  ],
  "baseline": [
