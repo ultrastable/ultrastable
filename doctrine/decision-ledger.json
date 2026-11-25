@@ -4932,6 +4932,22 @@
    "body": "core/impact records metric series, detects plateaus, plans bounded lever items with predictions and settles them; tenants declare metrics and levers. Practical Solutions is the first consumer.",
    "probe": "file:workers/core/impact/index.js",
    "session": "session_0156nqDrqL9XCgR639FAfNMv"
+  },
+  {
+   "id": "decision-2026-11-25-growth-metrics-read-through-the-site-worker-not-a-token-in-a",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Growth metrics read through the site Worker, not a token in Actions",
+   "body": "GROWTH-HITS-1 (2026-11-25, Session: session_0156nqDvJ5oNPSCVZzS8cYKL): the Cloudflare token never reached Actions, so growth metrics were empty for days. The site Worker already binds the analytics D1, so it serves the four 7-day aggregates at /api/growth/hits and foundation/growth.py falls back to it when no token is present. No credential crosses into Actions.",
+   "probe": "grep:site/worker.js::GROWTH-HITS-1"
+  },
+  {
+   "id": "lesson-2026-11-25-the-live-page-showed-0-merged-prs",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "The live page showed 0 merged PRs",
+   "body": "LIVE-COUNT-1 (2026-11-25, Session: session_0156nqDvJ5oNPSCVZzS8cYKL): /live How much code ships read 0 in every row. The snapshot builds it from one gh pr list GraphQL call; when that call fails or times out, _sh returns empty and 0 is published as fact. A REST fallback now fills the count, and transparency --probe-merged fails the workflow when /live shows 0 while GitHub has merges in the last 7 days.",
+   "probe": "grep:foundation/transparency.py::LIVE-COUNT-1"
   }
  ]
 }
