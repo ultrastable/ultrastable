@@ -159,7 +159,7 @@ def desired(name: str, reg: dict | None = None, root: Path = ROOT, std: dict | N
         "make_public": name in std["visibility"].get("make_public", {}),
         "description": m["description"], "homepage": m["homepage"], "topics": m["topics"],
         "settings": settings, "security": dict(std["worker"]["security"]), "ruleset": std["worker"]["ruleset"],
-        "files": list(std["files"]), "workflows": [] if name in std.get("workflow_exempt", {}) else list(std["workflows"]),
+        "files": list(std["files"]), "org_default_files": list(std.get("org_default_files") or []), "workflows": [] if name in std.get("workflow_exempt", {}) else list(std["workflows"]),
     }
 
 
@@ -345,6 +345,12 @@ def measure(api, name: str, want: dict, std: dict) -> dict:
     # files and the cleanup workflow
     for f in want["files"] + want["workflows"]:
         st_f, _ = api("GET", f"/repos/{full}/contents/{f}")
+        if st_f == 404 and f in (want.get("org_default_files") or []) and not live.get("private"):
+            # the org's public .github repository serves this file on every repository without its own; read it there before calling it missing
+            st_f, _ = api("GET", f"/repos/{full.split('/')[0]}/.github/contents/{f}")
+            if st_f not in (200, 404):
+                res["unmeasured"].append(f"{f}: not in the repository, and the org default could not be read (HTTP {st_f})")
+                continue
         if st_f == 404:
             res["findings"].append(f"{f} is missing")
         elif st_f != 200:

@@ -33,7 +33,12 @@ class JsonSchema(unittest.TestCase):
         for p in sorted((REPO / "instances").glob("*/instance.json")):
             self.assertEqual(kit.validate(schema, json.loads(p.read_text())), [], str(p))
             self.assertEqual(manifest.validate(json.loads(p.read_text())), [], str(p))
-        rows = kit.load_data(REPO / "ops/provenance.jsonl")
+        # STANDARDS-FIRST-1: new rows are CloudEvents envelopes and older rows stay readable, so the ledger is read the way every reader does:
+        # an envelope must conform, and the row it carries (or the bare older row) must fit the row schema.
+        from foundation import cloudevents
+        raw = kit.load_data(REPO / "ops/provenance.jsonl")
+        self.assertEqual([e for r in raw if cloudevents.is_event(r) for e in cloudevents.conforms(r)][:3], [])
+        rows = [cloudevents.unwrap(r) for r in raw]
         self.assertEqual(kit.validate(json.loads((REPO / "seed/schemas/provenance-row.schema.json").read_text()), rows)[:3], [])
 
     def test_manifest_structure_comes_from_the_schema(self):
