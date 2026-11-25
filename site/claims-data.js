@@ -1921,6 +1921,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **Red-team the system's own blind spots; the owner should never find a failure first (REDTEAM-1, Rowan 2026-11-25).** \"Audit and",
+   "detail": "",
+   "how": "file:foundation/redteam.py + file:ops/redteam/findings.jsonl + file:tests/foundation/test_redteam.py",
+   "id": "cited-467a38f9b7",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Everything bootstraps itself from a cold start and works together from birth (COLDSTART-1, Rowan 2026-11-25).** \"All surfaces, all",
    "detail": "",
    "how": "file:doctrine/coldstart.json + file:seed/worker/src/visibility.js + file:docs/doctrine/SYSTEM.md + file:CLAUDE.md + file:doctrine/schemas/coldstart.schema.json + file:foundation/coldstart.py",
@@ -2659,6 +2668,15 @@ export default {
    "surface": "seed/agents/AGENTS.md"
   },
   {
+   "claim": "- **Red-team the system's own blind spots; the owner should never find a failure first (REDTEAM-1, Rowan 2026-11-25).** \"Audit and",
+   "detail": "",
+   "how": "file:foundation/redteam.py + file:ops/redteam/findings.jsonl + file:tests/foundation/test_redteam.py",
+   "id": "mirror-309506fe16",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
    "claim": "- **Issue inflow never exceeds closures; every issue inside its SLA (FLOW-BALANCE-1, Rowan 2026-11-21).** \"All UltraStable issues must be",
    "detail": "",
    "how": "file:seed/worker/src/flowbalance.js + file:doctrine/balance.json + file:tests/foundation/test_balance.py + file:foundation/balance.py",
@@ -3352,7 +3370,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 64 Python and 535 Worker tests",
+   "claim": "seed-tests: 67 Python and 537 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3361,7 +3379,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 535 Worker tests",
+   "claim": "seed-worker-tests: 537 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3602,7 +3620,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 397,
-  "total": 397
+  "pass": 399,
+  "total": 399
  }
 };
