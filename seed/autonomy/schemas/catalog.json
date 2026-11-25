@@ -99,6 +99,14 @@
       "url": "seed-lifecycle.schema.json"
     },
     {
+      "name": "system.json",
+      "description": "Contract for seed/autonomy/system.json",
+      "fileMatch": [
+        "seed/autonomy/system.json"
+      ],
+      "url": "system.schema.json"
+    },
+    {
       "name": "yearsim.json",
       "description": "Contract for seed/autonomy/yearsim.json",
       "fileMatch": [

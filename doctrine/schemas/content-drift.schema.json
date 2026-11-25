@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/content-drift.schema.json",
+  "title": "content-drift (doctrine/content-drift.json)",
+  "description": "Contract for doctrine/content-drift.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "newest": {
+      "type": "number"
+    },
+    "min_chars": {
+      "type": "number"
+    },
+    "max_bad_share": {
+      "type": "number"
+    },
+    "placeholders": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "slop": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "max_bad_share",
+    "min_chars",
+    "newest",
+    "placeholders",
+    "slop",
+    "version"
+  ]
+}
