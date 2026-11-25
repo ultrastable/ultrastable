@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-25T14:35:00Z",
- "commit": "dfee6121",
+ "generated": "2026-11-25T14:25:14Z",
+ "commit": "dfd741ff",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 111,
@@ -18,8 +18,8 @@
   "merged_prs_listed": 0,
   "prs_merged_total": 0,
   "prs_merged_unattended": 0,
-  "backlog_open": 10,
-  "backlog_items": 891
+  "backlog_open": null,
+  "backlog_items": 881
  },
  "unknowns": {
   "units": 133,
@@ -56,13 +56,12 @@
  },
  "throughput": {
   "queue": {
-   "items": 891,
+   "items": 881,
    "by_status": {
     "closed": 872,
-    "open": 10,
     "done": 9
    },
-   "takeable_now": 10
+   "takeable_now": 0
   },
   "merged": {
    "total": 0,
@@ -173,8 +172,8 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 61.4,
-   "status": "fresh",
+   "age_s": 172.9,
+   "status": "idle",
    "missed": 0
   },
   {
@@ -182,22 +181,22 @@
    "what": "an unattended pull request was opened",
    "sla_s": 172800,
    "age_s": null,
-   "status": "missing",
-   "missed": 1
+   "status": "idle",
+   "missed": 0
   },
   {
    "id": "merge",
    "what": "an unattended pull request merged to main",
    "sla_s": 259200,
    "age_s": null,
-   "status": "missing",
-   "missed": 1
+   "status": "idle",
+   "missed": 0
   },
   {
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 598.4,
+   "age_s": 163.9,
    "status": "fresh",
    "missed": 0
   },
@@ -205,7 +204,7 @@
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 81369.4,
+   "age_s": 80779.9,
    "status": "fresh",
    "missed": 0
   }
@@ -424,7 +423,7 @@
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-25T14:34:30Z",
+  "generated": "2026-11-25T14:24:42Z",
   "blindspots": {
    "backup": {
     "skipped": "last drill is fresh"
@@ -476,7 +475,7 @@
     "id": "pilot_page_views_7d",
     "baseline": 326,
     "target": 400,
-    "expected_today": 362.0,
+    "expected_today": 361.9,
     "value": null,
     "behind": null,
     "progress": null
@@ -491,7 +490,7 @@
     "started": "2026-11-17T16:52:10Z",
     "check_after_days": 7,
     "verdict": "unmeasured",
-    "reviewed": "2026-11-25T14:34:30Z"
+    "reviewed": "2026-11-25T14:24:42Z"
    },
    {
     "item": "Q-GROW-AGENT-DIRECTORIES",
@@ -543,7 +542,7 @@
     "metric": "visitors_7d",
     "baseline": null,
     "predicted_pct": 15,
-    "started": "2026-11-25T14:34:30Z",
+    "started": "2026-11-25T14:24:42Z",
     "check_after_days": 7,
     "verdict": null
    },
@@ -552,7 +551,7 @@
     "metric": "pilot_page_views_7d",
     "baseline": null,
     "predicted_pct": 15,
-    "started": "2026-11-25T14:34:30Z",
+    "started": "2026-11-25T14:24:42Z",
     "check_after_days": 7,
     "verdict": null
    }
@@ -569,7 +568,12 @@
    }
   },
   "filed": {
-   "growth": [],
+   "growth": [
+    "Q-GROW-USE-CASE-PAGES",
+    "Q-GROW-SHARE-CARDS",
+    "Q-GROW-MARKDOWN-PAGES",
+    "Q-GROW-PILOT-FAQ"
+   ],
    "repair": [],
    "insight": [],
    "uiux": [],
@@ -586,7 +590,6 @@
    "blocking": 0,
    "happy_path_pass_share": 1.0,
    "unmeasured": [
-    "brand: FileNotFoundError",
     "analytics: no CLOUDFLARE_API_TOKEN, funnels and experiments not read"
    ]
   },
@@ -598,18 +601,18 @@
    },
    {
     "id": "author",
-    "status": "fresh",
+    "status": "idle",
     "missed": 0
    },
    {
     "id": "pr",
-    "status": "missing",
-    "missed": 1
+    "status": "idle",
+    "missed": 0
    },
    {
     "id": "merge",
-    "status": "missing",
-    "missed": 1
+    "status": "idle",
+    "missed": 0
    },
    {
     "id": "deploy",
@@ -644,15 +647,15 @@
  "growth": {
   "mix": {
    "growth": 1,
-   "fix": 0,
-   "maintenance": 19,
+   "fix": 1,
+   "maintenance": 18,
    "total": 20,
    "growth_share": 0.05,
    "target": 0.4
   },
   "target_growth_share": 0.4,
   "growth_items_takeable": 0,
-  "items_takeable": 10,
+  "items_takeable": 0,
   "metrics": [
    {
     "id": "pageviews_7d",
@@ -697,18 +700,18 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 96.6,
+   "last_beat_age_s": 13.4,
    "expected_interval_s": 21600,
    "beats_24h": 60,
    "expected_24h": 4.0,
    "median_jitter_s": null,
-   "status": "ticking"
+   "status": "idle"
   },
   {
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 81404.6,
+   "last_beat_age_s": 80817.4,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -719,7 +722,7 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 189392.6,
+   "last_beat_age_s": 188805.4,
    "expected_interval_s": 86400,
    "beats_24h": 0,
    "expected_24h": 1.0,
@@ -730,7 +733,7 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 74289.6,
+   "last_beat_age_s": 73702.4,
    "expected_interval_s": 604800,
    "beats_24h": 1,
    "expected_24h": 0.1,
@@ -741,7 +744,7 @@
    "id": "a11y",
    "what": "A11Y-LOOP-1: the weekly accessibility and layout audit of every public page",
    "source": "workflow",
-   "last_beat_age_s": 564828.6,
+   "last_beat_age_s": 564241.4,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -759,7 +762,7 @@
    "id": "claims",
    "what": "words checked against code and the deployed site",
    "source": "workflow",
-   "last_beat_age_s": 72983.6,
+   "last_beat_age_s": 72396.4,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -770,7 +773,7 @@
    "id": "watchdog",
    "what": "RESILIENCE-1: the GitHub watchdog that probes every clock and restarts the stopped ones; the tick Worker dispatches it again when it is older than 12 hours",
    "source": "workflow",
-   "last_beat_age_s": 76.6,
+   "last_beat_age_s": 13.4,
    "expected_interval_s": 43200,
    "beats_24h": 60,
    "expected_24h": 2.0,
@@ -781,7 +784,7 @@
    "id": "temporal",
    "what": "the daily trend read: series per component, loop and entry, and what they show",
    "source": "workflow",
-   "last_beat_age_s": 75403.6,
+   "last_beat_age_s": 74816.4,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -799,7 +802,7 @@
    "id": "intent-yield",
    "what": "the daily intent yield: every owner directive's own probe, restatements charged to the original, /yield",
    "source": "workflow",
-   "last_beat_age_s": 70552.6,
+   "last_beat_age_s": 69965.4,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -877,7 +880,7 @@
    {
     "id": "ultrastable-unlearn",
     "state": "live",
-    "role": "Unlearn tenant app (ultrastable/unlearn): coaching moves for the adult beside a curious child; hourly beat re-learns move weights, measures, opens the next phase when its gates hold, prunes by retention",
+    "role": "Unlearn tenant app (instances/unlearn): coaching moves for the adult beside a curious child; hourly beat re-learns move weights, measures, opens the next phase when its gates hold, prunes by retention",
     "public": false
    }
   ],
@@ -2431,7 +2434,7 @@
    "owner": "product-manager",
    "trigger": "cron 41 * * * * on ultrastable-unlearn; a page visit runs the beat when the cron has been silent for 2 hours",
    "sla": "2h",
-   "closing_probe": "grep:doctrine/topology.json::ultrastable/unlearn",
+   "closing_probe": "grep:instances/unlearn/worker/index.js::export async function beat",
    "cycle_metric": null,
    "last_plus": null,
    "last_run": null
@@ -2867,13 +2870,22 @@
  "changes": {
   "commits": [
    {
-    "sha": "dfee6121",
-    "at": "2026-11-25T14:24:16+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "lane: server-owned loops (SERVER-OWNS-LOOPS-1) [skip ci]",
+    "sha": "dfd741ff",
+    "at": "2026-11-25T14:23:48+00:00",
+    "author": "Claude",
+    "subject": "Merge main; keep main's seedlife clock fix",
     "pr": null,
-    "item": "SERVER-OWNS-LOOPS-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/dfee61219c3ca7eaf2f442f5de9b5880333bd60a"
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/dfd741ffc66357f1d4fe0a5232bccfdfbe55ad56"
+   },
+   {
+    "sha": "a9103361",
+    "at": "2026-11-25T14:22:29+00:00",
+    "author": "Claude",
+    "subject": "Unbreak required checks: pin the seedlife probe to the test clock",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/a9103361a80cdecc22ddc30e9a361c1c382f2f54"
    },
    {
     "sha": "677773f2",
@@ -2892,6 +2904,24 @@
     "pr": 2084,
     "item": "PARKED-PR-1",
     "url": "https://github.com/ultrastable/ultrastable/commit/b6341bd5fc59da35dc295aca5a48b787d2edce17"
+   },
+   {
+    "sha": "3d3b2996",
+    "at": "2026-11-25T14:17:35+00:00",
+    "author": "Claude",
+    "subject": "Write back the 11-22 stall lesson",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/3d3b2996ce031429c92c617b4df88a6fad2a95da"
+   },
+   {
+    "sha": "b06eb113",
+    "at": "2026-11-25T14:17:11+00:00",
+    "author": "Claude",
+    "subject": "Restart the growth loop and the code agents after the 11-22 stall",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/b06eb113283b03c0f90fd3e0a1b480ce23f7ecb2"
    },
    {
     "sha": "56a3904c",
@@ -3198,33 +3228,6 @@
     "pr": null,
     "item": "QUEUE-PERSIST-1",
     "url": "https://github.com/ultrastable/ultrastable/commit/b3902af62f85c69e2322fdf489273e818d5d8679"
-   },
-   {
-    "sha": "78a636b2",
-    "at": "2026-11-24T21:35:51+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "watchdog: clock probe (RESILIENCE-1) [skip ci]",
-    "pr": null,
-    "item": "RESILIENCE-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/78a636b2e3d9328adfccdaed839a6d994973e9e9"
-   },
-   {
-    "sha": "715e8dbb",
-    "at": "2026-11-24T21:32:17+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "queue: closing-probe verdicts for 3 item(s) (QUEUE-PERSIST-1) [skip ci]",
-    "pr": null,
-    "item": "QUEUE-PERSIST-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/715e8dbbb2f4952a2cc484dac1d7375f63859258"
-   },
-   {
-    "sha": "f4db5a11",
-    "at": "2026-11-24T21:25:18+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "watchdog: clock probe (RESILIENCE-1) [skip ci]",
-    "pr": null,
-    "item": "RESILIENCE-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/f4db5a11e9f6247828ef36f33bd72277b75f257b"
    }
   ],
   "pull_requests": []

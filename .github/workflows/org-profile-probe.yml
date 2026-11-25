@@ -21,9 +21,16 @@ jobs:
     steps:
       - name: Org page shows the profile
         run: |
-          page=$(curl -fsSL "https://github.com/$ORG") && echo "$page" | grep -qi "runs itself" && echo "ok: profile live" && exit 0
-          echo "::error::https://github.com/$ORG does not show the profile"
           title="org-profile-probe: public org page missing profile"
+          # the phrase is the profile's own heading (profile/README.md in ultrastable/.github); the old phrase was removed from the profile on 11-23
+          if page=$(curl -fsSL "https://github.com/$ORG") && echo "$page" | grep -qi "foundation for any autonomous system"; then
+            echo "ok: profile live"
+            for n in $(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "$title in:title" --json number --jq '.[].number'); do
+              gh issue close "$n" --repo "$GITHUB_REPOSITORY" --comment "Closing probe passed: https://github.com/$ORG shows the profile."
+            done
+            exit 0
+          fi
+          echo "::error::https://github.com/$ORG does not show the profile"
           n=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "$title in:title" --json number --jq '.[0].number // empty')
           [ -n "$n" ] || gh issue create --repo "$GITHUB_REPOSITORY" --title "$title" --body "Probe failed. Owner: org-init. Check .github is unarchived+public and profile/README.md exists. Closing probe: this workflow passes."
           exit 1
