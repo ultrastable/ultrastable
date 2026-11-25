@@ -91,7 +91,7 @@ class Research(unittest.TestCase):
         md = (self.d / "research/papers/s1.md").read_text()
         self.assertIn("3 closed pull requests (2 merged)", md)
         self.assertIn("50% of merged pull requests", md)
-        self.assertIn("Verdict: **unmeasured**", md)
+        self.assertIn("| unmeasured |", md)
         page = (self.d / "site/research-data.js").read_text()
         self.assertIn('"study_id": "s1"', page)
 
