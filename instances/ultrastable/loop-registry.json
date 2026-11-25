@@ -4136,6 +4136,43 @@
     "tests/foundation/test_improve.py"
    ],
    "server_owner": "ultrastable-tick"
+  },
+  {
+   "id": "findable",
+   "kind": "manager",
+   "summary": "FINDABLE-1: every fleet property is read daily for search and AI discoverability by open standards (robots, sitemap, llms.txt, meta description, canonical, Open Graph, schema.org JSON-LD, feed); gaps become one Q-FIND item per property and each feed is pinged to the open WebSub hub.",
+   "trigger": "daily workflow and on demand",
+   "owner": "product-manager",
+   "closes_by": "system",
+   "sla": "1d",
+   "done": "ops/findable.json is under 2 days old and every property with gaps has an open Q-FIND item; a property with none has its item closed",
+   "paths": [
+    {
+     "id": "github",
+     "how": ".github/workflows/findable.yml runs python3 -m foundation findable --apply --ping",
+     "class": "free"
+    },
+    {
+     "id": "session",
+     "how": "python3 -m foundation findable --apply --ping from a cloud-hosted agent session",
+     "class": "session"
+    }
+   ],
+   "closing_probe": "grep:foundation/findable.py::def home_gaps",
+   "writeback": [
+    "ops/findable.json",
+    "docs/issues"
+   ],
+   "system_path": [
+    "foundation/findable.py",
+    "tests/foundation/test_findable.py",
+    ".github/workflows/findable.yml"
+   ],
+   "workflows": [
+    "findable.yml"
+   ],
+   "area": "managers",
+   "server_owner": "github-actions"
   }
  ],
  "launch_registry": "instances/ultrastable/loops.json"
