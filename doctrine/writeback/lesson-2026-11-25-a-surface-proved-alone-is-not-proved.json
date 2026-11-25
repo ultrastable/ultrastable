@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-25-a-surface-proved-alone-is-not-proved",
+  "kind": "lesson",
+  "date": "2026-11-25",
+  "title": "A surface proved alone is not proved",
+  "body": "Found: seed/worker/src/visibility.js answered 404 for /.well-known/ultrastable.json and /api/graph whenever PUBLIC_HEALTH_ONLY=1, which deploy/deploy-seed.mjs sets on every seed and visitor app, and deploy-seed bound no PUBLIC_URL, so manifest() returned url null. Fixed in code with PUBLIC_READS, the footer and the bindings; seed/worker tests pass (546) and tests/foundation/test_bootaccept.py passes (13). Residual risk until bootaccept --run in seed-launch.yml has probed the live seeds; ledger ops/boot-accept.jsonl. BOOT-ACCEPT-1.",
+  "probe": "grep:seed/worker/src/visibility.js::PUBLIC_READS"
+ },
+ "kind": "lesson",
+ "title": "A surface proved alone is not proved",
+ "session": "session_0156nqDtbnNSagT7p6jpUTuY"
+}

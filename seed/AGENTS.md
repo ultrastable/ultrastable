@@ -1,5 +1,7 @@
 # AGENTS.md
 
+Start with [`SYSTEM.md`](SYSTEM.md): what an Ultrastable system is, how it runs, how it bootstraps and how it becomes autonomous and reaches criticality, generated from this repository's code and checked by `python3 scripts/system.py --check`.
+
 The protocol for every agent in this repo is in [`agents/AGENTS.md`](agents/AGENTS.md). Read it first, then your role file in [`agents/roles/`](agents/roles/). Limits: [`autonomy/policy.json`](autonomy/policy.json).
 
 > CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and nothing is ever assumed to be read. Every output has a code consumer (registered in doctrine/consumers.json). Every open item has an automatic owner, trigger and probe. A credential only the owner can mint becomes an automated acquisition attempt across every surface plus a staged default in effect, never a document or a card. A document, memory or note that no code consumes is not produced. Enforced by `python3 -m foundation closedloop --check` (doctrine/closed-loop.json).

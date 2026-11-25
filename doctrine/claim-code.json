@@ -36,6 +36,9 @@
   "\\b(two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|thirty|fifty|hundred) (policy )?(areas|sources|indexes|indices|programmes|programs|channels|tenants|systems|loops|workers|repositories|checks|probes)\\b"
  ],
  "claims": [
+  {"id": "agents-boot-accept-cadence", "source": "agents/AGENTS.md", "quote": "weekly and on every push that changes a public surface", "probe": {"file": ".github/workflows/seed-launch.yml", "contains": "seed/worker/src/visibility.js"}},
+  {"id": "seed-agents-boot-accept-cadence", "source": "seed/agents/AGENTS.md", "quote": "weekly and on every push that changes a public surface", "probe": {"file": ".github/workflows/seed-launch.yml", "contains": "seed/worker/src/visibility.js"}},
+  {"id": "pi-boot-accept-cadence", "source": "agents/PROJECT-INSTRUCTIONS.md", "quote": "weekly and on every push that changes a public surface", "probe": {"file": ".github/workflows/seed-launch.yml", "contains": "seed/worker/src/visibility.js"}},
   {"id": "agents-word-claims-example", "source": "agents/AGENTS.md", "quote": "Counts and cadences written in words (\"five policy areas\", \"every six hours\") are claims too", "probe": {"file": "tests/foundation/test_claimcode.py", "contains": "every six hours from public data"}},
   {
    "id": "readme-plus-share",

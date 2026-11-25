@@ -21,7 +21,7 @@ export function optedOut(env = {}, config = {}) {
 }
 
 export function manifest(env = {}, config = {}) {
-  const repos = config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []);
+  const repos = config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : (env.PUBLIC_REPO ? [env.PUBLIC_REPO] : []));  // PUBLIC_REPO: the repository a deploy names for the manifest only (deploy/deploy-seed.mjs); it grants nothing
   return {
     ultrastable: 1,
     name: clean(config.org_name || config.org_slug || env.TENANT || 'An Ultrastable system', 80),
