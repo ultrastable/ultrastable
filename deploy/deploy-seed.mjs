@@ -74,7 +74,7 @@ for (const { slug, instance, ai, host_repo } of todo) {
       const db = await site("/__internal/seed-d1", { name, migrations });
       const up = await site("/__internal/deploy", {
         name, main: mods[0].name, modules: mods.map(({ name: n, src, type }) => ({ name: n, src, type })), compatibility_date: "2026-11-12", workers_dev: true, crons: ["*/10 * * * *"], ...(host_repo ? { host_repo } : {}),
-        bindings: [{ type: "d1", name: "DB", id: db.uuid }, { type: "plain_text", name: "PUBLIC_HEALTH_ONLY", text: "1" }].concat(ai ? [{ type: "ai", name: "AI" }] : []),  // a visitor's app gets the account's own models: no key for anyone to mint
+        bindings: [{ type: "d1", name: "DB", id: db.uuid }, { type: "plain_text", name: "PUBLIC_HEALTH_ONLY", text: "1" }, { type: "plain_text", name: "PUBLIC_URL", text: url }].concat(ai ? [{ type: "ai", name: "AI" }] : []),  // a visitor's app gets the account's own models: no key for anyone to mint
       });
       row.version = up.version || ""; row.migrations_applied = db.applied.length;
     }

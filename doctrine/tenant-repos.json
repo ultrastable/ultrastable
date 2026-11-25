@@ -6,9 +6,10 @@
    "repo": "ultrastable/practical-solutions",
    "state": "own-repo",
    "why": "created as its own repository from the start",
-   "frontend": "https://tenant-ps-web.ultrastable.workers.dev",
+   "frontend": "https://ultrastable.org",
    "vendor": {
-    "seed/worker/src/knowledge.js": "vendor/seed/knowledge.js"
+    "seed/worker/src/knowledge.js": "vendor/seed/knowledge.js",
+    "seed/worker/src/contract.js": "vendor/seed/contract.js"
    }
   },
   "unlearn": {
@@ -27,7 +28,8 @@
     "seed/worker/src/promoqueue.js": "vendor/ultrastable/promoqueue.js",
     "doctrine/stakeholders.json": "vendor/ultrastable/stakeholders.json",
     "workers/core/datagraph/index.js": "vendor/ultrastable/datagraph.js",
-    "seed/worker/src/knowledge.js": "vendor/ultrastable/knowledge.js"
+    "seed/worker/src/knowledge.js": "vendor/ultrastable/knowledge.js",
+    "seed/worker/src/contract.js": "vendor/ultrastable/contract.js"
    },
    "worker": "ultrastable-unlearn",
    "ai": true,
@@ -72,7 +74,8 @@
     "doctrine/models.json": "vendor/ultrastable/models.json",
     "doctrine/stakeholders.json": "vendor/ultrastable/stakeholders.json",
     "seed/worker/src/promoqueue.js": "vendor/ultrastable/promoqueue.js",
-    "workers/core/datagraph/index.js": "vendor/ultrastable/datagraph.js"
+    "workers/core/datagraph/index.js": "vendor/ultrastable/datagraph.js",
+    "seed/worker/src/contract.js": "vendor/ultrastable/contract.js"
    },
    "worker": "ultrastable-what-works",
    "ai": true,
@@ -104,7 +107,7 @@
   },
   "replication-ledger": {
    "repo": "ultrastable/replication-ledger",
-   "state": "moving",
+   "state": "moved",
    "source": "instances/replication-ledger",
    "keep_in_core": [
     "IDEA.md",
@@ -115,7 +118,9 @@
    ],
    "vendor": {
     "workers/core/datagraph/index.js": "vendor/ultrastable/datagraph.js",
-    "seed/worker/src/knowledge.js": "worker/vendor/knowledge.js"
+    "seed/worker/src/knowledge.js": "worker/vendor/knowledge.js",
+    "seed/worker/src/contract.js": "vendor/ultrastable/contract.js",
+    "seed/worker/src/promoqueue.js": "vendor/ultrastable/promoqueue.js"
    },
    "worker": "ultrastable-replication-ledger",
    "ai": false,

@@ -66,4 +66,4 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
         run: |
-          python3 scripts/land_data.py "failure-audit: file and close failure-mode items (FAILURE-RESOLVE-1)" docs/issues ops/failure-audit-state.json ops/failmine.json site/failmine-data.js doctrine/registers.json doctrine/detectors.json
+          python3 scripts/land_data.py "failure-audit: file and close failure-mode items (FAILURE-RESOLVE-1)" docs/issues ops/fleet-contract.json ops/failure-audit-state.json ops/failmine.json site/failmine-data.js doctrine/registers.json doctrine/detectors.json

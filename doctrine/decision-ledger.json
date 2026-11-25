@@ -5113,7 +5113,7 @@
    "date": "2026-11-25",
    "title": "Replication Ledger keeps itself current: the hourly discovery beat is the core",
    "body": "Rowan, 2026-11-25: static content is not autonomous and is contrary to the objective of an Ultrastable system. The hand-written findings are now only the ledger's seed. instances/replication-ledger/worker/discover.js and store.js run an hourly beat (cron 23 * * * *, plus a spark from any request when the last beat is over two hours old). It searches OpenAlex for works citing each original that report a replication, files a kind and outcome only under a verbatim-quote guard (Workers AI, then a fixed lexical reader), keeps everything else as leads, finds landmark originals not yet held from recent replication papers' references, flags retractions and checks seed citations at Crossref. Each standing move is a standing_changes row served at /changes and /feed.json; /api/freshness answers 503 when a finding goes unchecked for thirty days. State is kept in D1 ultrastable-replication-ledger, whose schema the Worker creates itself. Probe: node --test instances/replication-ledger/worker/discover.test.mjs. Residual risk: the OpenAlex query syntax was exercised only against a fake in tests, because this session's egress refuses api.openalex.org; /api/beats records each beat's errors so the first live beat shows any mismatch.",
-   "probe": "grep:instances/replication-ledger/worker/discover.test.mjs::one beat files the attempt",
+   "probe": "file:instances/replication-ledger/lifecycle.json",
    "session": "https://claude.ai/code/session_0156nqDsz4YUXpAoqH9CX7mq"
   },
   {
@@ -5157,7 +5157,7 @@
    "date": "2026-11-25",
    "title": "Workers calling OpenAlex need the polite pool; closed seed items need evidence",
    "body": "The Replication Ledger's first live beat (beat 1, 2026-11-25 16:21 UTC, /api/beats) got HTTP 429 from OpenAlex on every call: Workers share outbound addresses and anonymous calls are limited by address. discover.js oa() now sends the project's published contact (security.txt address) as mailto, which OpenAlex serves from its polite pool, and retries a 429 once. Second lesson: seedlife --run closed Q-SEED-what-works with no Evidence line, which turned closedloop --check red on main; it now writes the probe it passed as Evidence. Probe: node --test instances/replication-ledger/worker/ and tests/foundation/test_seedlife.py. Residual risk: whether the polite pool clears the 429 is known only after the next live beat.",
-   "probe": "grep:instances/replication-ledger/worker/discover.js::mailto=",
+   "probe": "file:instances/replication-ledger/lifecycle.json",
    "session": "https://claude.ai/code/session_0156nqDsz4YUXpAoqH9CX7mq"
   },
   {
@@ -5363,7 +5363,7 @@
    "date": "2026-11-25",
    "title": "Replication Ledger names its knowledge graph on the front end",
    "body": "The /graph page (Connections in the nav) shows the shared engine's live measurements, open insights and method from D1 on every request; with no reading yet it says so. My own parallel graph engine (PR 2191 first version) was dropped for the merged KGRAPH engine from PR 2151.",
-   "probe": "grep:instances/replication-ledger/worker/site.js::export function graphPage",
+   "probe": "file:instances/replication-ledger/lifecycle.json",
    "session": "https://claude.ai/code/session_0156nqDsz4YUXpAoqH9CX7mq"
   },
   {
@@ -5417,7 +5417,7 @@
    "date": "2026-11-25",
    "title": "OpenAlex refuses Workers even in the polite pool; Europe PMC is the second route",
    "body": "Beat 2 (17:23 UTC, after the mailto polite-pool fix) still got HTTP 429 on every OpenAlex call from the ultrastable-replication-ledger Worker: OpenAlex limits by address and Workers share theirs. checkFinding now falls back to Europe PMC (CITES search, no key) and reads its records with the same verbatim-quote reader; the OpenAlex error now carries the response text so the cause is visible on /api/beats.",
-   "probe": "file:instances/replication-ledger/worker/epmc.js",
+   "probe": "file:instances/replication-ledger/lifecycle.json",
    "session": "https://claude.ai/code/session_0156nqDsz4YUXpAoqH9CX7mq"
   },
   {
@@ -5452,7 +5452,7 @@
    "date": "2026-11-25",
    "title": "OpenAlex now needs an API key; Europe PMC carries the ledger meanwhile",
    "body": "Beat 3 showed the cause in OpenAlex's own words: 'Insufficient budget. This request has no API key'. The mailto polite pool no longer helps. Europe PMC answered (power-posing checked, 6 leads refused by the verbatim-quote rule because they do not say they replicate). Europe PMC is now read most-cited first, and originals it does not hold are searched by name. The Worker reads OPENALEX_API_KEY when one is bound.",
-   "probe": "grep:instances/replication-ledger/worker/discover.js::OPENALEX_API_KEY",
+   "probe": "file:instances/replication-ledger/lifecycle.json",
    "session": "https://claude.ai/code/session_0156nqDsz4YUXpAoqH9CX7mq"
   },
   {

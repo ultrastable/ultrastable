@@ -223,6 +223,7 @@
   "seed/worker/src/airouter.js": "vendored copy of core/airouter; the routing decisions are logged and scored under ai-router by src/airoute.js and decisions.js",
   "seed/worker/src/critloop.js": "pickForRole takes the first role-matching item from the rank computed by foundation/prioritize.py, which carries the work-queue-priority metric",
   "seed/worker/src/events.js": "routeEvent looks an event name up in EVENT_TABLE generated from doctrine, a table lookup with no ranking",
-  "seed/worker/src/pace.js": "rankRows sorts rows by the rank list already chosen by foundation/prioritize.py, which is the instrumented decision"
+  "seed/worker/src/pace.js": "rankRows sorts rows by the rank list already chosen by foundation/prioritize.py, which is the instrumented decision",
+  "seed/worker/src/contract.js": "routesIn and contractRoute read a router's paths and match a request path against two fixed routes, a lookup with one answer and nothing to weigh"
  }
 }

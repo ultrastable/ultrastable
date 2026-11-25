@@ -392,6 +392,33 @@
     "file": "site/directory.js",
     "contains": "20 * 3600e3"
    }
+  },
+  {
+   "id": "platform-statement-claims",
+   "source": "site/contract.js",
+   "quote": "Every statement on this site is bound to a probe in the code, and the result of each probe is served as data.",
+   "probe": {
+    "file": "site/worker.js",
+    "contains": "case \"/api/claims\""
+   }
+  },
+  {
+   "id": "platform-statement-audit",
+   "source": "site/contract.js",
+   "quote": "Every deploy and decision is a row in a hash chain whose head is public.",
+   "probe": {
+    "file": "seed/worker/src/index.js",
+    "contains": "/api/audit/head"
+   }
+  },
+  {
+   "id": "fleet-contract-daily-agents",
+   "source": "agents/AGENTS.md",
+   "quote": "daily in `tenant-repos.yml`, and the failure-audit detector `fleet-contract`",
+   "probe": {
+    "file": ".github/workflows/tenant-repos.yml",
+    "contains": "python3 -m foundation fleetcontract --live"
+   }
   }
  ],
  "baseline": [

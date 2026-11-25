@@ -131,3 +131,7 @@ jobs:
       - name: Every system's knowledge graph is built and fresh (DATAGRAPH-LIVE-1)
         if: ${{ !cancelled() }}
         run: python3 -m foundation datagraph --live
+      - name: Every system serves the fleet contract and backs every statement both ways (FLEET-CONTRACT-1)
+        # Fetches each system's surfaces, each statement's page and endpoint, and every /api link its pages carry. Red names the system, the direction and the route.
+        if: always()
+        run: python3 -m foundation fleetcontract --live

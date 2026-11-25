@@ -1,0 +1,20 @@
+{
+ "_doc": "FLEET-CONTRACT-1 (Rowan, 2026-11-25: 'Make sure everything that is said about ultra stable is true in code, and vice versa ... what users see on the front end matches the capabilities on the back end and vice versa.'). One contract every system on Ultrastable serves, the platform included. A system declares its statements once (a sentence a page shows, the page, the endpoint that backs it); the shared module seed/worker/src/contract.js serves /.well-known/ultrastable.json and /claims.json from that declaration and verifies it in the system's own tests. foundation/fleetcontract.py reads this file: --check (in checks) fails a live system whose vendor map does not carry the module and that has no open Q-CONTRACT-<id> item, and fails when the surfaces below differ from the module's; --live fetches every surface of every live system, then every statement's page (back to front) and endpoint (front to back), and every /api link the home page carries; --live --apply files Q-CONTRACT-<id> per failing system and closes it when the same reading passes. `surfaces` must equal SURFACES in the module. `systems` adds what the registries cannot say: `origin` for a system whose front end is not a topology route, `module` for where the platform itself imports the contract.",
+ "contract": 1,
+ "module": "seed/worker/src/contract.js",
+ "surfaces": [
+  {"id": "home", "path": "/", "kind": "html"},
+  {"id": "manifest", "path": "/.well-known/ultrastable.json", "kind": "json"},
+  {"id": "claims", "path": "/claims.json", "kind": "json"},
+  {"id": "health", "path": "/health", "kind": "json"},
+  {"id": "social", "path": "/social-queue.json", "kind": "json"},
+  {"id": "graph", "path": "/api/graph", "kind": "json"}
+ ],
+ "systems": {
+  "ultrastable": {"origin": "https://ultrastable.io", "module": "site/contract.js"},
+  "second-tenant": {"origin": "https://ultrastable-seed-second-tenant.ultrastable.workers.dev", "module": "seed/worker/src/discover.js"}
+ },
+ "platform_link": "https://ultrastable.io",
+ "user_agent": "ultrastable-fleet-contract/1",
+ "max_statements": 80
+}

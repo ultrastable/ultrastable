@@ -589,6 +589,18 @@
       "status": "controlled",
       "cadence_ticks": 1,
       "probe": "grep:tests/foundation/test_silentfail.py::def test_classes_have_detectors"
+    },
+    {
+      "id": "fm-front-back-drift",
+      "trigger": "a page keeps a sentence whose endpoint is gone, an endpoint ships that no page describes, or a system does not serve a contract surface",
+      "symptom": "a reader sees a capability the back end does not serve, or the back end serves one nobody can find; the platform cannot read the system the way it reads the others",
+      "blast_radius": "every public surface of the platform and of each tenant",
+      "detection": "fleetcontract --live (detector fleet-contract), and each system's own contract test",
+      "root_cause": "words and routes declared in separate places with nothing tying a sentence to its page and its endpoint",
+      "remediation": "one declaration per system (seed/worker/src/contract.js); detector files Q-AUDIT, the system is fixed in its own repository, the same reading closes it",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:tests/foundation/test_fleetcontract.py::def test_a_sentence_missing_from_its_page_fails"
     }
   ],
   "controls": [

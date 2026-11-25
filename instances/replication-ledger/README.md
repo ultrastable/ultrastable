@@ -11,4 +11,4 @@ Its code moves to its own repository, `ultrastable/replication-ledger` (TENANT-R
 - Data model and validator: `worker/ledger.js`. Standing rubric: `worker/standing.js` (served at `/api/rubric`). Findings: `worker/data/findings.json`.
 - Add a replication: `node worker/cli.mjs add <finding> <doi> --kind K --outcome O [--prereg] --summary "..."` (citation fetched from Crossref by DOI; the standing change is appended to `worker/data/changes.jsonl`).
 - Check: `node worker/cli.mjs validate`, `node worker/cli.mjs verify` (every DOI against Crossref).
-- Test: `node --test instances/replication-ledger/worker/*.test.mjs`.
+- Test: `npm test` in https://github.com/ultrastable/replication-ledger (`node --test worker/*.test.mjs`).
