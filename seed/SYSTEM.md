@@ -162,10 +162,10 @@ a rule enforced only by the platform is marked so, and the platform checks it fo
 - **MANAGERS-1**: Every manager is a running loop that owns code. In this kit: `agents/roles/`, `autonomy/managers.json`, `worker/src/managers.js`, `worker/test/managers.test.js`.
 - **FLEET-MAP-1**: One map, one manifest, no hand-copied mirrors. In this kit: ``, `scripts/surfaces.py`, `standards/system.schema.json`, `tests/test_surfaces.py`.
 - **CLONE-PATH-1**: Both start paths are user stories that run. In this kit: `.github/ISSUE_TEMPLATE/start.yml`, `.github/workflows/bootstrap.yml`, `bootstrap/intake.py`, `tests/test_happy_path.py`.
-- **RULE-REFS-1**: Every reference a rule names resolves. In this kit: checked by the platform.
+- **RULE-REFS-1**: Every reference a rule names resolves. In this kit: no enforcement found.
 - **STANDARDS-FIRST-1**: Standards are measured, with a decision per standard. In this kit: `scripts/surfaces.py`, `standards/standards.json`, `worker/src/cloudevents.js`, `worker/src/contract.js`.
-- **TENANT-STANDARD-1**: One standard for every tenant repository; one scaffold writes it, one check reads it. In this kit: checked by the platform.
-- **LIVE-LINKS-1**: Every repository says where its code runs. In this kit: `scripts/surfaces.py`.
+- **TENANT-STANDARD-1**: One standard for every tenant repository; one scaffold writes it, one check reads it. In this kit: no enforcement found.
+- **LIVE-LINKS-1**: Every repository says where its code runs. In this kit: no enforcement found.
 - **FLEET-CONTRACT-1**: One contract for every system; statements hold front to back and back to front. In this kit: `worker/src/contract.js`, `worker/test/contract.test.js`.
 - **DECISIONS-1**: Every decision is measured. In this kit: `worker/src/decisions.js`, `worker/test/decisions.test.js`.
 - **GOALS-1**: The system sets its own goals and turns its own knobs. In this kit: `autonomy/goals.json`, `worker/src/goals.js`, `worker/test/goals.test.js`.

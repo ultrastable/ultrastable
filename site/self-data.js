@@ -840,7 +840,6 @@ export default {
   "findable",
   "first-run",
   "fleet-lane",
-  "fleet-map",
   "funding-outreach",
   "funding-verify",
   "gap-register",
@@ -860,7 +859,6 @@ export default {
   "liveness",
   "loop-proof",
   "loop-registry",
-  "managers",
   "market-gaps",
   "memory-fresh",
   "merge-lane",
@@ -1488,7 +1486,7 @@ export default {
     "closing_probe": "file:foundation/fleet.py",
     "id": "fleet-lane",
     "kind": "tick",
-    "owner": "program-manager",
+    "owner": "system",
     "server_owner": "github-actions",
     "sla": "1d",
     "summary": "One queue, one merge lane and one drift loop across every org repository; residual items of finished threads are probed until they pass.",
@@ -1794,7 +1792,7 @@ export default {
     "closing_probe": "file:doctrine/cost.json",
     "id": "cost-guard",
     "kind": "probe",
-    "owner": "infrastructure-manager",
+    "owner": "operations",
     "server_owner": "github-actions",
     "sla": "1d",
     "summary": "Reads D1 rows read and Workers AI neurons daily, compares with budgets in doctrine/cost.json, files a queue item per breach.",
@@ -1807,7 +1805,7 @@ export default {
     "closing_probe": "file:ops/deploys.jsonl",
     "id": "deploy-workers",
     "kind": "probe",
-    "owner": "infrastructure-manager",
+    "owner": "operations",
     "server_owner": "github-actions",
     "sla": "1d",
     "summary": "Every merge deploys the tick and dashboard Workers and verifies the live code equals the commit (DEPLOY-ALL-1); the count of verified deploys in ops/deploys.jsonl is the criticality measure. DEPLOY-OIDC-1: deploy-ultrastable.yml deploys the ultrastable account through the ultrastable-site OIDC endpoint (no stored Cloudflare secret).",
@@ -1938,7 +1936,7 @@ export default {
     "closing_probe": "grep:seed/worker/src/critloop.js::export async function controlStep",
     "id": "criticality-loop",
     "kind": "governance",
-    "owner": "program-manager",
+    "owner": "operations",
     "server_owner": "ultrastable-tick",
     "sla": "10m",
     "summary": "k_eff is acted on, not only measured: after three subcritical beats the tick Worker's dispatch lever moves to raise-only, the move carries the prediction 'k_eff > k within 24 h', a miss reverts it and files CRIT-LEVER, a stall files CRIT-STALL; one criticality_history row per tick is the loop's clock.",
@@ -1997,7 +1995,7 @@ export default {
     "closing_probe": "grep:foundation/publication.py::def check",
     "id": "publication-guard",
     "kind": "governance",
-    "owner": "legal-ip-manager",
+    "owner": "operations",
     "server_owner": "github-actions",
     "sla": "1d",
     "summary": "Every public repository keeps LICENSE (canonical blob), NOTICE, COMMERCIAL-TERMS.md, CITATION.cff, SECURITY.md, no case-colliding paths, the SPDX header on new source (shrink-only baseline) and no personal email or local path. Cross-repo copies are drift-checked by fleet. Procedure of the pre-publication audit is data in doctrine/publication.json.",
@@ -2137,19 +2135,6 @@ export default {
     ]
    },
    {
-    "closing_probe": "grep:foundation/fleetmap.py::def drift",
-    "id": "fleet-map",
-    "kind": "governance",
-    "owner": "operations",
-    "server_owner": "github-actions",
-    "sla": "1d",
-    "summary": "One map of every repository of the org (FLEET-MAP-1): each copy names its source and its sync, the template repository is published from seed/ without overwriting work done there, and every copy is read against its source daily; a copy that differs or cannot be read is an item, never assumed equal.",
-    "trigger": "every push to seed/ on main, daily workflow, and dispatch",
-    "workflows": [
-     "template-publish"
-    ]
-   },
-   {
     "closing_probe": "grep:scripts/regen_generated.py::def run_all",
     "id": "regen-generated",
     "kind": "governance",
@@ -2204,7 +2189,7 @@ export default {
     "closing_probe": "file:foundation/backup.py",
     "id": "backup-drill",
     "kind": "probe",
-    "owner": "infrastructure-manager",
+    "owner": "operations",
     "server_owner": "github-actions",
     "sla": "7d",
     "summary": "Export every D1 database and KV namespace of the Ultrastable account weekly and prove a restore.",
@@ -2217,7 +2202,7 @@ export default {
     "closing_probe": "grep:foundation/research.py::def experiments",
     "id": "research",
     "kind": "governance",
-    "owner": "research-publisher",
+    "owner": "product-manager",
     "server_owner": "github-actions",
     "sla": "7d",
     "summary": "RESEARCH-1: Ultrastable's own R&D department: outside studies are ingested as findings mapped to mechanisms and metrics, each finding is measured from the system's ledgers, a finding not met files a Q-RES item whose closing probe is the measurement, experiments settle and reopen, and the white papers at /research are regenerated from the measurements.",
@@ -2338,17 +2323,6 @@ export default {
     "workflows": [
      "ledger-openalex"
     ]
-   },
-   {
-    "closing_probe": "grep:foundation/managers.py::def check",
-    "id": "managers",
-    "kind": "governance",
-    "owner": "org-designer",
-    "server_owner": "ultrastable-tick",
-    "sla": "1d",
-    "summary": "MANAGERS-1: every manager role is a running loop that owns code. One register (seed/autonomy/managers.json) says which managers a system runs; the tick hires every switched-on manager that has no runtime row, the check fails a role with no loop, code, clock or probe, and the live reading names managers that are missing or stopped.",
-    "trigger": "every change (checks.yml), every tick (reconcile step hires missing managers), every failure-audit pass (detector managers-live)",
-    "workflows": []
    }
   ],
   "workers": [
@@ -2668,12 +2642,6 @@ export default {
     "id": "spinoff",
     "loops": [
      "spinoff"
-    ]
-   },
-   {
-    "id": "template-publish",
-    "loops": [
-     "fleet-map"
     ]
    },
    {
