@@ -20,7 +20,6 @@
   python3 -m foundation modelwatch [--check|--status|--refresh [--apply]]  MODEL-WATCH-1: no retired hosted model id in source
   python3 -m foundation redmain [--run [--apply]|--check]                  REDMAIN-1: a red deploy gate on main is repaired by reverting the smallest change that broke it
   python3 -m foundation tenantrepos [--check|--missing|--prepare DIR --slug S|--behind]   TENANT-REPO-1: every tenant app lives in its own repository
-  python3 -m foundation staticcontent [--run [--apply]|--check]   STATIC-CONTENT-1: a published page that never changes is a finding
   python3 -m foundation seedlife [--check|--status [SLUG]|--verify [--apply]|--run [--apply]|--probe SLUG]   SEED-LIFECYCLE-1: every seed is built, deployed, live and a year unattended
   python3 -m foundation compatdate [--check|--run [--apply]]   COMPAT-DATE-1: Worker compatibility dates advance by a loop
   python3 -m foundation runway [--run [--apply]|--probe C|--check]         RUNWAY-1: projected days of unattended running against the one-year target
@@ -30,6 +29,7 @@
   python3 -m foundation intentyield [--run [--apply]|--probe|--check|--report]   INTENT-YIELD-1: owner directives kept per unit of attention; no counts, no person scored
   python3 -m foundation temporal [--run [--apply]|--settled ID|--probe|--check|--report]   TEMPORAL-1: series per area, loop and entry; hotspots, neglect and stopped loops feed the failure-mode machinery
   python3 -m foundation seedlaunch [--e2e [--keep]|--fleet|--check]   SEED-LAUNCH-1: every seed built, deployed, year-gated and probed live by the system
+  python3 -m foundation datagraph [--check|--list]                        DATAGRAPH-1: every system keeps a knowledge graph of all its data
   python3 -m foundation tenantpromo [--check|--list]                      TENANT-PROMO-1: every tenant promotes itself (social queue, showcase, cross-links)
   python3 -m foundation progress [--check|--live]                          PROGRESS-1: every system shows substantive progress at every visit; the cadence monitor is wired
   python3 -m foundation cost [--check|--probe|--guard [--apply]]          D1 rows read and AI neurons against budgets (COST-GUARD-1)
@@ -116,9 +116,6 @@ def main(argv=None) -> int:
     if _av[:1] == ["tenantrepos"]:
         from . import tenantrepos
         return tenantrepos.main(_av[1:])
-    if _av[:1] == ["staticcontent"]:
-        from . import staticcontent
-        return staticcontent.main(_av[1:])
     if _av[:1] == ["seedlife"]:
         from . import seedlife
         return seedlife.main(_av[1:])
@@ -308,6 +305,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["temporal"]:
         from . import temporal
         return temporal.main(_av[1:])
+    if _av[:1] == ["datagraph"]:
+        from . import datagraph
+        return datagraph.main(_av[1:])
     if _av[:1] == ["tenantpromo"]:
         from . import tenantpromo
         return tenantpromo.main(_av[1:])
