@@ -43,16 +43,28 @@ export function discoverRoute(url, env, config) {
   return Response.json(manifest(env, config), { headers: { 'cache-control': 'public, max-age=3600', 'access-control-allow-origin': '*' } });
 }
 
-// Once a day (the 03:00 UTC tick window), and never when opted out or without a public URL.
-export async function heartbeat(env = {}, config = {}, { fetchFn = fetch, now = new Date() } = {}) {
+// Once a day (the 03:00 UTC tick window), and never when opted out or without a public URL. BOOT-4: a newborn system also
+// registers on its first ticks, without waiting for 03:00, until the directory has answered "listed" once; those attempts are
+// spaced an hour apart and every answer (status and the directory's reason) is kept in directory_registration, so a refusal is read.
+const REG_TABLE = 'CREATE TABLE IF NOT EXISTS directory_registration (id INTEGER PRIMARY KEY CHECK (id = 1), at TEXT NOT NULL, status INTEGER, listed INTEGER NOT NULL DEFAULT 0, why TEXT)';
+export async function heartbeat(env = {}, config = {}, { fetchFn = fetch, now = new Date(), db = env.DB } = {}) {
   const m = manifest(env, config);
   if (!m.discoverable) return { sent: false, why: 'opted out' };
   if (!m.url) return { sent: false, why: 'no public URL' };
-  if (now.getUTCHours() !== 3 || now.getUTCMinutes() >= 10) return { sent: false, why: 'not the daily window' };
+  let last = null;
+  if (db) { try { await db.prepare(REG_TABLE).run(); last = await db.prepare('SELECT at, listed FROM directory_registration WHERE id = 1').first(); } catch (e) { console.error('directory registration read', e && e.message); } }
+  const daily = now.getUTCHours() === 3 && now.getUTCMinutes() < 10;
+  const birth = Boolean(db) && !(last && last.listed) && (!last || now - Date.parse(last.at) >= 3600e3);
+  if (!daily && !birth) return { sent: false, why: 'not the daily window' };
+  let status = 0, why = null;
   try {
     const r = await fetchFn(DIRECTORY + '/api/directory/register', { method: 'POST', headers: { 'content-type': 'application/json', 'user-agent': 'ultrastable-heartbeat/1' }, body: JSON.stringify({ url: m.url }) });
-    return { sent: true, status: r.status };
+    status = r.status;
+    try { const j = r.json ? await r.json() : null; why = j && (j.why || j.error) ? clean(j.why || j.error, 160) : null; } catch { why = null; }
   } catch (e) {
-    return { sent: false, why: 'directory unreachable: ' + clean(e && e.message, 120) };
+    why = 'directory unreachable: ' + clean(e && e.message, 120);
   }
+  const listed = status >= 200 && status < 300;
+  if (db) { try { await db.prepare('INSERT INTO directory_registration (id, at, status, listed, why) VALUES (1, ?1, ?2, ?3, ?4) ON CONFLICT(id) DO UPDATE SET at = ?1, status = ?2, listed = MAX(listed, ?3), why = ?4').bind(now.toISOString(), status, listed ? 1 : 0, why).run(); } catch (e) { console.error('directory registration write', e && e.message); } }
+  return status ? { sent: true, status, listed, why, birth: !daily } : { sent: false, why };
 }
