@@ -267,6 +267,7 @@ def public_text(text):
         while parts and parts[-1] == "\u2026":
             parts.pop()
         t = " ".join(parts) or "(generated from code; see the probe)"
+    t = re.sub(r'<[^>]*>|\\"', lambda m: '"' if m.group(0) == '\\"' else "", t)
     t = re.sub(r"\s+", " ", t).strip()
     if t[:1].islower():
         t = "\u2026" + t

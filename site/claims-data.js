@@ -67,7 +67,7 @@ export default {
    "surface": "site/worker.js"
   },
   {
-   "claim": "Coverage and findings are on the <a href=\\\"/live\\\">live page</a>.",
+   "claim": "Coverage and findings are on the live page.",
    "detail": "",
    "how": "file:foundation/unknowns.py + file:foundation/transparency.py + grep:site/worker.js::u.pathname === \"/live\"",
    "id": "unknowns-audit",
@@ -1390,7 +1390,7 @@ export default {
    "surface": "site/live.js"
   },
   {
-   "claim": "<button id=\"r\">Restore from a file</button><input id=\"f\" type=\"file\" accept=\"application/json\" hidden><p id=\"m\"><small>Restoring twice",
+   "claim": "Restore from a fileRestoring twice",
    "detail": "",
    "how": "grep:site/portability.js::skipped\\+\\+ + grep:site/portability.js::import is idempotent",
    "id": "curated-22652536a5",
@@ -1399,7 +1399,7 @@ export default {
    "surface": "site/mydata.js"
   },
   {
-   "claim": "{ id: \"build\", title: \"Build on a branch\", do: \"Branch from the default branch as agent/<item-id>-<slug> (or claude/, codex/, kimi/ ...).",
+   "claim": "{ id: \"build\", title: \"Build on a branch\", do: \"Branch from the default branch as agent/- (or claude/, codex/, kimi/ ...).",
    "detail": "",
    "how": "grep:scripts/protected_paths.py::Protected-change + grep:.github/workflows/checks.yml::rules --probe no-secrets",
    "id": "curated-d134b21111",
@@ -1543,7 +1543,7 @@ export default {
    "surface": "site/worker.js"
   },
   {
-   "claim": "Cite as `US-SPEC-<nn> v<version>, <section>` and a requirement as `US-<nn>-R<mm>`, for example \"US-06-R04 (US-SPEC-06 v0.1.0)\". Requirement",
+   "claim": "Cite as `US-SPEC- v, ` and a requirement as `US--R`, for example \"US-06-R04 (US-SPEC-06 v0.1.0)\". Requirement",
    "detail": "",
    "how": "file:scripts/spec_ids.py + grep:tests/foundation/test_spec_ids.py::test_removed_renumbered_reused_and_misplaced_ids_fail + file:doctrine/spec-ids.json",
    "id": "curated-98ddfcb206",

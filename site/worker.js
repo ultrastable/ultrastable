@@ -106,7 +106,7 @@ function home(ux) {
     + IV.askBar("Tell me what is on your mind…")
     + "<div class=\"us-actions\"><a class=\"btn\" href=\"/setup\">" + esc(slotText("home.setup_label", "primary_label", "Set up my own", ux)) + "</a><a class=\"btn\" href=\"/live\">See the live proof</a><a class=\"btn btn-quiet\" href=\"/research\">Read the white papers</a></div>"
     + "<div class=\"us-status\" role=\"status\">" + statusLine() + "</div></section>"
-    + "<div class=\"us-lane\"><h2>Already comfortable with code?</h2><p class=\"us-tagline\">A system is autonomous if it has self-referential loops and the ability to close them. Coding agents write code. Ultrastable runs the system. Ultrastable runs on itself.</p><p class=\"us-lede\">It finds its own work in your metrics and failures, hands each task to the coding agent that fits, proves every change live with an automatic revert, and keeps score of how often its decisions were right.</p><p>You do not have to answer questions. The loops, virtual managers, agents and plussing budget are all there to use, with an honest list of what is live, in testing, and not built yet.</p><div class=\"us-actions\"><a class=\"btn\" href=\"/engineers\">Go straight to the engine</a></div></div>"
+    + "<div class=\"us-lane\"><h2>Already comfortable with code?</h2><p class=\"us-tagline\">A system is autonomous if it has self-referential loops and the ability to close them. Coding agents write code. Ultrastable runs the system. Ultrastable runs on itself.</p><p class=\"us-lede\">It finds its own work in your metrics and failures, hands each task to the coding agent that fits, proves every change live with an automatic revert, and keeps score of how often its decisions were right.</p><p>You do not have to answer questions. The loops, virtual managers, agents and the share of work kept for improvements are all there to use, with an honest list of what is live, in testing, and not built yet.</p><div class=\"us-actions\"><a class=\"btn\" href=\"/engineers\">Go straight to the engine</a></div></div>"
     + examplesSection()
     + "<h2>Who are you?</h2><div class=\"us-grid c3\">" + SH.audiences.map(audienceCard).join("") + "</div>"
     + "<h2>Test cases</h2><div class=\"us-grid c2\">" + SH.showcases.filter(function (c) { return c.status !== "sunsetting"; }).map(caseCard).join("") + "</div><p><a href=\"/showcase\">All test cases, including the earlier testbed</a></p>"
@@ -116,7 +116,7 @@ function home(ux) {
     + card("Not a substitute for a goal", "It needs setup and commitment: a named objective, a budget and a short list of steps a person always decides. From a bare skeleton it works out the next improvement; it does not invent your purpose.")
     + "</div>"
     + "<h2>What is different</h2><div class=\"us-grid c3\">"
-    + card("It chooses the work", "Metrics breach, a trigger files an issue, a coding agent opens the pull request. A person sets direction and reads reports.")
+    + card("It chooses the work", "Metrics breach, a trigger files an issue, a coding agent opens the pull request. A person sets direction. Nobody has to review each change; checks do that.")
     + card("It proves every change", "Each deploy declares probes. A probe that passed before and fails after reverts the push on its own.")
     + card("It keeps score", "Every decision logs a prediction first. The outcome is scored later, so you can see how often the system was right.")
     + "</div>"
@@ -182,10 +182,15 @@ function ultrastability() {
 }
 
 function claimsPage() {
-  const rows = VERIFIED.claims.map(function (c) { return "<tr><td class=\"" + (c.pass ? "us-pass" : "us-fail") + "\">" + (c.pass ? "Verified" : "Drift") + "</td><td>" + esc(c.claim) + "<br><small>" + esc(c.surface) + " · " + esc(c.how) + (c.detail ? " · " + esc(c.detail) : "") + "</small></td></tr>"; }).join("");
+  // REDTEAM-1: a stranger read internal agent rules as public promises. Statements on public pages come first; operating rules are their own section.
+  const internal = function (c) { return /^(agents|doctrine|docs|seed\/agents|seed\/doctrine|\.github)\//.test(String(c.surface || "")); };
+  const row = function (c) { return "<tr><td class=\"" + (c.pass ? "us-pass" : "us-fail") + "\">" + (c.pass ? "Verified" : "Drift") + "</td><td>" + esc(c.claim) + "<br><small>" + esc(c.surface) + " · " + esc(c.how) + (c.detail ? " · " + esc(c.detail) : "") + "</small></td></tr>"; };
+  const table = function (list) { return "<div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Status</th><th>Claim, surface and probe</th></tr></thead><tbody>" + list.map(row).join("") + "</tbody></table></div>"; };
+  const pub = VERIFIED.claims.filter(function (c) { return !internal(c); }), ops = VERIFIED.claims.filter(internal);
   return shell({ path: "/claims", title: "Verified claims: Ultrastable words matched to code", description: "Every statement on the Ultrastable surfaces is bound to a probe in the code, checked on every change and daily against the live site." },
     "<div class=\"head\"><h1>Verified claims</h1><p id=\"st\" role=\"status\">" + VERIFIED.summary.pass + " of " + VERIFIED.summary.total + " claims verified against code" + atCommit() + ". Words must match code; a claim that stops matching fails the build and files its own fix item.</p></div>"
-    + "<div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Status</th><th>Claim, surface and probe</th></tr></thead><tbody>" + rows + "</tbody></table></div>"
+    + "<h2>What the public pages say (" + pub.length + ")</h2>" + table(pub)
+    + "<h2>Internal operating rules the agents follow (" + ops.length + ")</h2><p class=\"meta\">These are instructions to the system's own agents, not promises to visitors. They are checked the same way.</p>" + table(ops)
     + "<p class=\"meta\">Machine form: <a href=\"/api/claims\">/api/claims</a>. Registry: doctrine/claims.json; checker: python3 -m foundation claims --check. Generated copy (counts, tool lists) is rewritten from code, so it cannot drift; the reverse direction (shipped behaviour that no surface describes) is checked too.</p>");
 }
 
