@@ -45,6 +45,15 @@
    "bound_by": [
     "instances/ultrastable/system/ultrastable-what-works.wrangler.jsonc"
    ]
+  },
+  {
+   "name": "ultrastable-replication-ledger",
+   "id": "c59cdeca-7f57-4edd-ac7e-256ab07fab57",
+   "binding": "DB on the ultrastable-replication-ledger Worker only",
+   "holds": "the Replication Ledger tenant app (ultrastable/replication-ledger): discovered findings, machine-read replication attempts, leads, retraction flags, Crossref checks, standing changes, beats; no personal data",
+   "bound_by": [
+    "instances/ultrastable/system/ultrastable-replication-ledger.wrangler.jsonc"
+   ]
   }
  ],
  "tenant": [
@@ -112,8 +121,15 @@
     "tables": 0,
     "read_at": "2026-11-25T15:00:00Z",
     "note": "created through the Cloudflare API from the cloud session; tables are created by the Worker on its first beat"
+   },
+   {
+    "name": "ultrastable-replication-ledger",
+    "id": "c59cdeca-7f57-4edd-ac7e-256ab07fab57",
+    "tables": 0,
+    "read_at": "2026-11-25T16:04:01Z",
+    "note": "created through the Cloudflare API from the cloud session; tables are created by the Worker on its first beat (store.js SCHEMA)"
    }
   ],
-  "finding": "the account holds five databases; the two core databases are bound only by core Workers, each tenant has its own database, and no database of the originating fleet is in the account"
+  "finding": "the account holds six databases; the two core databases are bound only by core Workers, each tenant has its own database, and no database of the originating fleet is in the account"
  }
 }

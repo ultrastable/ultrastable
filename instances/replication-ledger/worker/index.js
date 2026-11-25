@@ -59,7 +59,13 @@ export default {
   async fetch(req, env, ctx) {
     const { ledger, live } = await load(env).catch(e => (console.error("load failed", e?.message || e), load(null)));
     const age = minutesSince(live.beat?.ended_at);
-    if (env?.DB && (age == null || age > BEAT.SPARK_MIN)) ctx?.waitUntil?.(runBeat(env, "spark"));
+    if (new URL(req.url).pathname === "/pulse/watch" && req.method === "POST") {
+      // The restart route the platform watchdog calls (doctrine/resilience.json): runs a beat only when the last one is old.
+      if (!env?.DB) return new Response(JSON.stringify({ ok: false, error: "no database bound" }), { status: 503, headers: { "content-type": "application/json" } });
+      const r = age != null && age <= BEAT.SPARK_MIN ? { skipped: "the last beat is recent", last_beat_minutes: age } : await beat(env, { trigger: "watch" }).catch(e => ({ error: String(e?.message || e) }));
+      return new Response(JSON.stringify({ ok: !r.error, ...r }), { status: r.error ? 500 : 200, headers: { "content-type": "application/json" } });
+    }
+    else if (env?.DB && (age == null || age > BEAT.SPARK_MIN)) ctx?.waitUntil?.(runBeat(env, "spark"));
     return route(req.url, ledger, live);
   },
   async scheduled(_ev, env, ctx) { ctx.waitUntil(runBeat(env, "cron")); }

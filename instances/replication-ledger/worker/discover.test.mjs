@@ -95,10 +95,26 @@ test("one beat files the attempt, keeps the lead, adds the finding, logs the mov
   assert.equal(typeof freshness(ledger, live).oldest_check_days, "number");
 });
 
-test("a request sparks a beat when the last one is old; the Worker serves the seed without a database", async () => {
+test("a request sparks a beat when the last one is old; the Worker serves the seed without a database", async t => {
+  const real = globalThis.fetch;
+  globalThis.fetch = fakeFetch();
+  t.after(() => { globalThis.fetch = real; });
   const res = await worker.fetch(new Request("https://x/health"), {}, {});
   assert.equal((await res.json()).ok, true);
   const env = { DB: d1() }, waits = [];
   await worker.fetch(new Request("https://x/"), env, { waitUntil: p => waits.push(p) });
   assert.equal(waits.length, 1);
+  await Promise.all(waits);
+});
+
+test("the watchdog's restart route runs a beat only when the last one is old", async t => {
+  const real = globalThis.fetch;
+  globalThis.fetch = fakeFetch();
+  t.after(() => { globalThis.fetch = real; });
+  const env = { DB: d1() };
+  const r1 = await (await worker.fetch(new Request("https://x/pulse/watch", { method: "POST" }), env, {})).json();
+  assert.equal(r1.ok, true);
+  assert.equal(typeof r1.n, "number");
+  const r2 = await (await worker.fetch(new Request("https://x/pulse/watch", { method: "POST" }), env, {})).json();
+  assert.match(r2.skipped, /recent/);
 });

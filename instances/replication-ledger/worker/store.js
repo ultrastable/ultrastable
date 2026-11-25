@@ -21,8 +21,11 @@ export const SCHEMA = [
   `CREATE TABLE IF NOT EXISTS beats (n INTEGER PRIMARY KEY AUTOINCREMENT, started_at TEXT NOT NULL, ended_at TEXT, trigger TEXT, checked INTEGER DEFAULT 0, attempts INTEGER DEFAULT 0, leads INTEGER DEFAULT 0, findings INTEGER DEFAULT 0, cites INTEGER DEFAULT 0, errors TEXT DEFAULT '[]')`
 ];
 
-let ready = null;
-export const ensure = db => (ready ??= db.batch(SCHEMA.map(s => db.prepare(s))).catch(e => { ready = null; throw e; }));
+const ready = new WeakMap();
+export function ensure(db) {
+  if (!ready.has(db)) ready.set(db, db.batch(SCHEMA.map(s => db.prepare(s))).catch(e => { ready.delete(db); throw e; }));
+  return ready.get(db);
+}
 const all = async (db, sql, ...b) => (await db.prepare(sql).bind(...b).all()).results || [];
 
 // The ledger as served: seed plus everything discovered, with per-finding live facts. Without a database it is the seed alone.
