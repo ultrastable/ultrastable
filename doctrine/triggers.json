@@ -380,11 +380,10 @@
   },
   "org-settings.yml": {
    "events": [
-    "push",
     "workflow_dispatch"
    ],
    "crons": [
-    "17 5 * * *"
+    "17 5 * * 1"
    ]
   },
   "outreach.yml": {
@@ -480,15 +479,6 @@
    ],
    "crons": [
     "41 6 * * *"
-   ]
-  },
-  "template-publish.yml": {
-   "events": [
-    "push",
-    "workflow_dispatch"
-   ],
-   "crons": [
-    "37 4 * * *"
    ]
   },
   "temporal.yml": {
