@@ -1194,6 +1194,9 @@ const handler = {
     if (host === "ultrastable.net") return Response.redirect("https://" + CANON + "/live", 301);
     if (u.hostname === "www." + CANON) return Response.redirect("https://" + CANON + u.pathname, 301);
     const an = env && env.DB ? await handleAnalytics(request, env, { hosts: [CANON] }) : null; if (an) return an;
+    // FLEET-CONTRACT-1: a write route a page posts to answers a read with 405 and says which method it takes, never 404, so the front-to-back
+    // reading (every /api path a page names resolves) holds for forms and beacons too.
+    if ((request.method === "GET" || request.method === "HEAD") && (u.pathname === "/api/meta/ingest" || u.pathname === "/api/idea")) return new Response(JSON.stringify({ type: "about:blank", title: "Method Not Allowed", status: 405, detail: "This route takes POST." }), { status: 405, headers: { "content-type": "application/problem+json", allow: "POST" } });
     if (request.method === "POST" && u.pathname === "/api/meta/ingest") return metaIngest(request, env); // META-SIGNAL-1
     if (request.method === "GET" && u.pathname === "/api/suggest") return suggestions(u, env);
     { const cn = await connectionsRoute(request, env); if (cn) return cn; } // CONNECTIONS-1: /connections and the owner-only /connect/* consent flow

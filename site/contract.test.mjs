@@ -43,3 +43,11 @@ test("the audit chain's head is reachable on the site through the tick binding",
   assert.equal((await contractRoutes(new URL("https://ultrastable.io/api/audit/head"), {})).status, 503);
   assert.equal(await contractRoutes(new URL("https://ultrastable.io/api/other"), {}), null);
 });
+
+test("a write route a page posts to answers a read with 405 and names its method, never 404", async () => {
+  const mod = (await import("./worker.js")).default;
+  for (const p of ["/api/idea", "/api/meta/ingest"]) {
+    const r = await mod.fetch(new Request("https://ultrastable.io" + p), {}, { waitUntil() {} });
+    assert.equal(r.status, 405, p); assert.equal(r.headers.get("allow"), "POST"); assert.equal((await r.json()).status, 405);
+  }
+});

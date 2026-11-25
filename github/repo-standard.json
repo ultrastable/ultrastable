@@ -41,6 +41,8 @@
     "_doc": "description, homepage and topics are computed: an override row in github/org-settings.json, else the tenant's row in doctrine/tenant-repos.json (description, frontend), else the public route of the doctrine/topology.json Worker built from the repository, else doctrine/full-stack.json, else the defaults here."
   },
   "files": ["README.md", "LICENSE", "AGENTS.md", "SECURITY.md"],
+  "org_default_files": ["SECURITY.md"],
+  "_org_default_files": "GitHub serves a community health file from the org's public .github repository on every repository that has none of its own, so one policy covers all of them. A file listed here is met by that repository holding it; the reading still fails when neither holds it.",
   "workflows": [".github/workflows/branch-cleanup.yml"],
   "workflow_exempt": {
     "ultrastable": "the core's daily branchsweep.yml runs scripts/branch_cleanup.py over every repository of the org (BRANCH-SWEEP-2)",

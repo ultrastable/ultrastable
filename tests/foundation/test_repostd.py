@@ -131,6 +131,18 @@ class Live(unittest.TestCase):
         r = self.one(FakeApi(repos, {"unlearn": {"workflows": 2, "ruleset": True}}), "unlearn")
         self.assertEqual((r["findings"], r["unmeasured"], r["status"]), ([], [], "measured"))
 
+    def test_the_orgs_default_security_policy_covers_a_public_repository_and_its_absence_is_still_a_finding(self):
+        repos, _ = self.world()
+        repos[".github"] = {"name": ".github", "private": False}
+        want = rs.desired("unlearn", root=ROOT)
+        self.assertIn("SECURITY.md", want["org_default_files"])
+        covered = rs.measure(FakeApi(repos, {"unlearn": {"workflows": 2, "ruleset": True, "missing": {"SECURITY.md"}}}), "unlearn", want, STD)
+        self.assertEqual(covered["findings"], [])
+        neither = rs.measure(FakeApi(repos, {"unlearn": {"workflows": 2, "ruleset": True, "missing": {"SECURITY.md"}}, ".github": {"missing": {"SECURITY.md"}}}), "unlearn", want, STD)
+        self.assertEqual(neither["findings"], ["SECURITY.md is missing"])
+        other = rs.measure(FakeApi(repos, {"unlearn": {"workflows": 2, "ruleset": True, "missing": {"README.md"}}}), "unlearn", want, STD)
+        self.assertEqual(other["findings"], ["README.md is missing"], "only a community health file has an org default")
+
     def test_a_private_repository_with_workflows_fails(self):
         repos, _ = self.world(("seed",))
         repos["seed"]["private"] = True
