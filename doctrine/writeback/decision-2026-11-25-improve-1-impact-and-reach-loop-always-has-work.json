@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-25-improve-1-impact-and-reach-loop-always-has-work",
+  "kind": "decision",
+  "date": "2026-11-25",
+  "title": "IMPROVE-1: impact and reach loop always has work",
+  "body": "foundation/improve.py runs daily in product-manager.yml: reach, impact and protected plus items every pass, missing signals are defects, market pass when R&D is stale, p0 stall per manager tier, closed items settled on their metric after 7 days.",
+  "probe": "file:foundation/improve.py",
+  "session": "session_0156nqDs42dQamHBbr9uK8E2"
+ },
+ "kind": "decision",
+ "title": "IMPROVE-1: impact and reach loop always has work",
+ "session": "session_0156nqDs42dQamHBbr9uK8E2"
+}

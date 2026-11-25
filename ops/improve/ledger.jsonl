@@ -1,0 +1,8 @@
+{"at": "2026-11-25T14:32:02.025929+00:00", "event": "filed", "id": "Q-IMPROVE-STALL-portfolio", "metric": null, "baseline": null}
+{"at": "2026-11-25T14:32:02.025929+00:00", "event": "filed", "id": "Q-IMPROVE-SIGNAL-suggestions", "metric": null, "baseline": null}
+{"at": "2026-11-25T14:32:02.025929+00:00", "event": "filed", "id": "Q-IMPROVE-SIGNAL-market", "metric": null, "baseline": null}
+{"at": "2026-11-25T14:32:02.025929+00:00", "event": "filed", "id": "Q-IMPROVE-MARKET", "metric": null, "baseline": null}
+{"at": "2026-11-25T14:32:02.025929+00:00", "event": "filed", "id": "Q-IMPROVE-plus-seed-improve", "metric": "external_referrals_7d", "baseline": 83.0}
+{"at": "2026-11-25T14:32:02.025929+00:00", "event": "filed", "id": "Q-IMPROVE-llms-full", "metric": "external_referrals_7d", "baseline": 83.0}
+{"at": "2026-11-25T14:32:13.890155+00:00", "event": "filed", "id": "Q-IMPROVE-plus-executor-verdicts", "metric": "external_referrals_7d", "baseline": 83.0}
+{"at": "2026-11-25T14:32:13.890155+00:00", "event": "filed", "id": "Q-IMPROVE-impact-page", "metric": "external_referrals_7d", "baseline": 83.0}
