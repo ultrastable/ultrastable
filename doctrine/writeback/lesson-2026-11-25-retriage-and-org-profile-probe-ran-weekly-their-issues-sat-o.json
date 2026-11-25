@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-25-retriage-and-org-profile-probe-ran-weekly-their-issues-sat-o",
+  "kind": "lesson",
+  "date": "2026-11-25",
+  "title": "retriage and org-profile probe ran weekly; their issues sat open for days (SLA-ISSUE-1)",
+  "body": "scripts/retriage.sh was documented as every 3 h but its cron is weekly (budget), so the rolling Retriage gaps issue (#2032) never refreshed; org-profile-probe is weekly, never closes its own issue and grepped for 'runs itself', a phrase absent from the profile README (#2033). Both now run from the 10-minute fleet clock; scripts/org_profile_probe.sh closes its issue on pass and checks the README headline.",
+  "probe": "file:scripts/org_profile_probe.sh",
+  "session": "session_0156nqDvX8P4Z5wfkTJvFwh9"
+ },
+ "kind": "lesson",
+ "title": "retriage and org-profile probe ran weekly; their issues sat open for days (SLA-ISSUE-1)",
+ "session": "session_0156nqDvX8P4Z5wfkTJvFwh9"
+}
