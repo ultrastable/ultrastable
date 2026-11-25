@@ -49,8 +49,8 @@ class DataGraph(unittest.TestCase):
         self.assertTrue(any("unlearn: doctrine/tenant-repos.json does not vendor" in b for b in bad))
 
     def test_built_tenant_on_the_shared_engine_needs_it_vendored(self):
-        self.edit("doctrine/tenant-repos.json", lambda d: d["tenants"]["what-works"]["vendor"].pop("seed/worker/src/knowledge.js"))
-        self.assertTrue(any("what-works: doctrine/tenant-repos.json does not vendor seed/worker/src/knowledge.js" in b for b in datagraph.check(self.tmp)))
+        self.edit("doctrine/tenant-repos.json", lambda d: d["tenants"]["unlearn"]["vendor"].pop("seed/worker/src/knowledge.js"))
+        self.assertTrue(any("unlearn: doctrine/tenant-repos.json does not vendor seed/worker/src/knowledge.js" in b for b in datagraph.check(self.tmp)))
 
 
 if __name__ == "__main__":
