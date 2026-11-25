@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/seed/autonomy/failure-modes.schema.json",
+  "title": "failure-modes (seed/autonomy/failure-modes.json)",
+  "description": "Contract for seed/autonomy/failure-modes.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "$schema_version": {
+      "type": "string"
+    },
+    "doc": {
+      "type": "string"
+    },
+    "modes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "failure": {
+            "type": "string"
+          },
+          "fixes": {
+            "type": "array"
+          },
+          "id": {
+            "type": "string"
+          },
+          "owner_role": {
+            "type": "string"
+          },
+          "probe": {
+            "type": "string"
+          },
+          "remedy": {
+            "type": "string"
+          },
+          "root_cause": {
+            "type": "string"
+          },
+          "spof": {
+            "type": "boolean"
+          },
+          "trigger": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "max_redispatch": {
+      "type": "number"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "$schema_version",
+    "doc",
+    "max_redispatch",
+    "modes"
+  ]
+}

@@ -1,0 +1,204 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/market.schema.json",
+  "title": "market (doctrine/market.json)",
+  "description": "Contract for doctrine/market.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "checked": {
+      "type": "string"
+    },
+    "visibility": {
+      "type": "string"
+    },
+    "sources": {
+      "type": "object",
+      "properties": {
+        "appbuilders": {
+          "type": "object"
+        },
+        "copilot": {
+          "type": "object"
+        },
+        "routines": {
+          "type": "object"
+        },
+        "vibesdk": {
+          "type": "object"
+        },
+        "factory": {
+          "type": "object"
+        },
+        "zapier": {
+          "type": "object"
+        },
+        "githubagents": {
+          "type": "object"
+        }
+      }
+    },
+    "components": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "alternatives": {
+            "type": "array"
+          },
+          "features": {
+            "type": "array"
+          },
+          "id": {
+            "type": "string"
+          },
+          "integration_gap": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "what": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "features": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          },
+          "proof": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "test": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "closing_probe": {
+            "type": "string"
+          },
+          "component": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "why": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "users": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "needs": {
+            "type": "string"
+          },
+          "persona": {
+            "type": "string"
+          },
+          "stories": {
+            "type": "array"
+          }
+        }
+      }
+    },
+    "objections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "answer": {
+            "type": "string"
+          },
+          "components": {
+            "type": "array"
+          },
+          "concede": {
+            "type": "string"
+          },
+          "evidence": {
+            "type": "array"
+          },
+          "id": {
+            "type": "string"
+          },
+          "objection": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "capability-set": {
+      "type": "string"
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "components_built_next": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "rationale": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "capabilities",
+    "capability-set",
+    "checked",
+    "components",
+    "components_built_next",
+    "features",
+    "gaps",
+    "objections",
+    "rationale",
+    "sources",
+    "users",
+    "visibility"
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/compat-dates.schema.json",
+  "title": "compat-dates (doctrine/compat-dates.json)",
+  "description": "Contract for doctrine/compat-dates.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "lag_days": {
+      "type": "number"
+    },
+    "min_step_days": {
+      "type": "number"
+    },
+    "max_age_days": {
+      "type": "number"
+    },
+    "topology": {
+      "type": "string"
+    },
+    "node_eol": {
+      "type": "object",
+      "properties": {
+        "20": {
+          "type": "string"
+        },
+        "22": {
+          "type": "string"
+        },
+        "24": {
+          "type": "string"
+        },
+        "26": {
+          "type": "string"
+        }
+      }
+    },
+    "node_min_days": {
+      "type": "number"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "lag_days",
+    "max_age_days",
+    "min_step_days",
+    "node_eol",
+    "node_min_days",
+    "topology"
+  ]
+}

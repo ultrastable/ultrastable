@@ -1,0 +1,339 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/spinoff.schema.json",
+  "title": "spinoff (doctrine/spinoff.json)",
+  "description": "Contract for doctrine/spinoff.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "marker": {
+      "type": "string"
+    },
+    "domain": {
+      "type": "string"
+    },
+    "registry": {
+      "type": "string"
+    },
+    "ledger": {
+      "type": "string"
+    },
+    "metrics_ledger": {
+      "type": "string"
+    },
+    "outcomes_ledger": {
+      "type": "string"
+    },
+    "worker": {
+      "type": "string"
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "what": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "archetypes": {
+      "type": "object",
+      "properties": {
+        "domain-check": {
+          "type": "object"
+        },
+        "template-generator": {
+          "type": "object"
+        },
+        "status-board": {
+          "type": "object"
+        },
+        "live-feed": {
+          "type": "object"
+        },
+        "live-lookup": {
+          "type": "object"
+        }
+      }
+    },
+    "score": {
+      "type": "object",
+      "properties": {
+        "formula": {
+          "type": "string"
+        },
+        "reach_scale": {
+          "type": "string"
+        },
+        "impact_scale": {
+          "type": "string"
+        },
+        "min_score": {
+          "type": "number"
+        },
+        "bandit": {
+          "type": "object"
+        },
+        "diversity_cap": {
+          "type": "number"
+        }
+      }
+    },
+    "safety": {
+      "type": "object",
+      "properties": {
+        "deny_domains": {
+          "type": "array"
+        },
+        "deny_collect": {
+          "type": "array"
+        },
+        "allowed_inputs": {
+          "type": "array"
+        },
+        "rules": {
+          "type": "array"
+        }
+      }
+    },
+    "budget": {
+      "type": "object",
+      "properties": {
+        "max_live": {
+          "type": "number"
+        },
+        "max_launches_per_week": {
+          "type": "number"
+        },
+        "max_requests_per_app_per_day": {
+          "type": "number"
+        },
+        "subrequests_per_use": {
+          "type": "number"
+        },
+        "monthly_usd_ceiling": {
+          "type": "number"
+        },
+        "note": {
+          "type": "string"
+        },
+        "max_launches_per_day": {
+          "type": "number"
+        }
+      }
+    },
+    "portfolio": {
+      "type": "object",
+      "properties": {
+        "min_age_days": {
+          "type": "number"
+        },
+        "weights": {
+          "type": "object"
+        },
+        "kill_below_value": {
+          "type": "number"
+        },
+        "promote_above_value": {
+          "type": "number"
+        },
+        "iterate_between": {
+          "type": "array"
+        },
+        "budget_share_floor": {
+          "type": "number"
+        },
+        "retire_status": {
+          "type": "number"
+        }
+      }
+    },
+    "reach_metrics": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "impact_metrics": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "guard_metrics": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "check_library": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "fix": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "needs": {
+            "type": "array"
+          },
+          "title": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "need_archetype": {
+      "type": "object",
+      "properties": {
+        "domain-check": {
+          "type": "array"
+        },
+        "template-generator": {
+          "type": "array"
+        },
+        "status-board": {
+          "type": "array"
+        }
+      }
+    },
+    "domain_impact": {
+      "type": "object",
+      "properties": {
+        "security": {
+          "type": "number"
+        },
+        "privacy": {
+          "type": "number"
+        },
+        "legal": {
+          "type": "number"
+        },
+        "outreach": {
+          "type": "number"
+        },
+        "accessibility": {
+          "type": "number"
+        },
+        "continuity": {
+          "type": "number"
+        },
+        "finance": {
+          "type": "number"
+        },
+        "ip": {
+          "type": "number"
+        }
+      }
+    },
+    "domain_reach": {
+      "type": "object",
+      "properties": {
+        "security": {
+          "type": "number"
+        },
+        "privacy": {
+          "type": "number"
+        },
+        "legal": {
+          "type": "number"
+        },
+        "outreach": {
+          "type": "number"
+        },
+        "accessibility": {
+          "type": "number"
+        },
+        "continuity": {
+          "type": "number"
+        },
+        "finance": {
+          "type": "number"
+        },
+        "ip": {
+          "type": "number"
+        }
+      }
+    },
+    "value": {
+      "type": "object",
+      "properties": {
+        "definition": {
+          "type": "string"
+        },
+        "weights": {
+          "type": "object"
+        },
+        "excluded": {
+          "type": "array"
+        },
+        "measured_by": {
+          "type": "object"
+        }
+      }
+    },
+    "lineage": {
+      "type": "object",
+      "properties": {
+        "qnfo-idea-hub": {
+          "type": "string"
+        },
+        "reentry_todo": {
+          "type": "string"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "archetypes",
+    "budget",
+    "check_library",
+    "domain",
+    "domain_impact",
+    "domain_reach",
+    "guard_metrics",
+    "id",
+    "impact_metrics",
+    "ledger",
+    "lineage",
+    "marker",
+    "metrics_ledger",
+    "need_archetype",
+    "outcomes_ledger",
+    "portfolio",
+    "reach_metrics",
+    "registry",
+    "safety",
+    "score",
+    "sources",
+    "value",
+    "version",
+    "worker"
+  ]
+}

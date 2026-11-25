@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/pilot-model.schema.json",
+  "title": "pilot-model (doctrine/pilot-model.json)",
+  "description": "Contract for doctrine/pilot-model.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "decision": {
+      "type": "string"
+    },
+    "decided": {
+      "type": "string"
+    },
+    "why": {
+      "type": "string"
+    },
+    "revert": {
+      "type": "string"
+    },
+    "options": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "our_data_burden": {
+            "type": "string"
+          },
+          "revenue": {
+            "type": "string"
+          },
+          "runs_on": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "pilot_proof_points": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "hypotheses": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "program": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "pitch": {
+          "type": "string"
+        },
+        "selection": {
+          "type": "array"
+        },
+        "you_get": {
+          "type": "string"
+        },
+        "we_get": {
+          "type": "string"
+        },
+        "apply_fields": {
+          "type": "array"
+        },
+        "price": {
+          "type": "string"
+        },
+        "intake_probe": {
+          "type": "string"
+        }
+      }
+    },
+    "layers": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "rule": {
+          "type": "string"
+        },
+        "levels": {
+          "type": "array"
+        },
+        "roll_up": {
+          "type": "string"
+        },
+        "enforced_by": {
+          "type": "array"
+        },
+        "tenancy": {
+          "type": "string"
+        }
+      }
+    },
+    "multi_tenant_obligations": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "before_offering": {
+          "type": "array"
+        },
+        "closing_probe": {
+          "type": "string"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "decided",
+    "decision",
+    "hypotheses",
+    "layers",
+    "multi_tenant_obligations",
+    "options",
+    "pilot_proof_points",
+    "program",
+    "revert",
+    "why"
+  ]
+}

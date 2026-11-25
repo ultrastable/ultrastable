@@ -5616,12 +5616,21 @@
    "probe": "grep:foundation/coldstart.py::def check\\("
   },
   {
-   "id": "decision-2026-11-25-the-seed-carries-the-definition-of-an-ultrastable-system-enf",
+   "id": "decision-2026-11-25-standards-1-apply-published-standards-instead-of-home-grown-",
    "kind": "decision",
    "date": "2026-11-25",
-   "title": "The seed's definition of a system is COLDSTART-1; SYSTEM-1 folded into it",
-   "body": "SYSTEM-1 (a generated seed/doctrine/SYSTEM.md from a separate contract) duplicated COLDSTART-1 (#2245), which merged first with the same purpose: one canonical SYSTEM.md in platform and seed, imported by both CLAUDE.md files, checked by foundation coldstart --check against the ignition ladder, bootstrap stages and capabilities. The duplicate contract was removed; M-storage liveness and ADMIT-1 stay.",
-   "probe": "file:doctrine/coldstart.json"
+   "title": "STANDARDS-1: apply published standards instead of home-grown formats",
+   "body": "Every JSON config has a JSON Schema 2020-12 contract in a Schema Store catalog (configschema), catalog-info.yaml (Backstage) and sbom.cdx.json (CycloneDX 1.6) are generated from the registers (stdgen), devcontainer.json gives cloud agents the checks' runtimes, and the standards register records supported, planned (OpenFeature, SLSA, with items) and not-applicable choices (Rego, Conventional Commits/SemVer, with reasons). What Works publishes schema.org ClaimReview, ISO 3166, DCAT, PROV-O and OpenAPI.",
+   "probe": "grep:.github/workflows/checks.yml::configschema --check"
+  },
+  {
+   "id": "lesson-2026-11-25-a-standard-file-the-standard-fixes-at-the-root-needs-an-expl",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "A standard file the standard fixes at the root needs an explicit allowance, and a register a site serves needs its generator in REGEN-1",
+   "body": "catalog-info.yaml failed STRAYS-1 as a root code file (now doctrine/strays.json standard_root_files), and editing seed/standards/standards.json left site/agentdata.js stale because neither regen list rebuilt it (now in both).",
+   "probe": "grep:scripts/regen_generated.sh::build_site_agentdata",
+   "session": "session_0156nqDriSf7RENkyFHy7NoW"
   },
   {
    "id": "lesson-2026-11-25-owner-found-9-failures-before-any-loop-redteam-1",
@@ -5631,6 +5640,14 @@
    "body": "Probes checked that mechanisms exist, not that their output is true. Classes: vacuous, stale, unscored, phantom, timebomb, undetected, starved, credential. foundation/redteam.py tests each adversarially; owner_found_30d is the metric.",
    "probe": "file:foundation/redteam.py",
    "session": "session_0156nqDrAs7rUXpvph8XjAkz"
+  },
+  {
+   "id": "decision-2026-11-25-the-seed-carries-the-definition-of-an-ultrastable-system-enf",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "The seed's definition of a system is COLDSTART-1; SYSTEM-1 folded into it",
+   "body": "SYSTEM-1 (a generated seed/doctrine/SYSTEM.md from a separate contract) duplicated COLDSTART-1 (#2245), which merged first with the same purpose: one canonical SYSTEM.md in platform and seed, imported by both CLAUDE.md files, checked by foundation coldstart --check against the ignition ladder, bootstrap stages and capabilities. The duplicate contract was removed; M-storage liveness and ADMIT-1 stay.",
+   "probe": "file:doctrine/coldstart.json"
   },
   {
    "id": "lesson-2026-11-25-tenant-checks-read-progress-json-not-the-tenant-registry-so-",

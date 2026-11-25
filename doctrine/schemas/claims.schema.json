@@ -1,0 +1,173 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/claims.schema.json",
+  "title": "claims (doctrine/claims.json)",
+  "description": "Contract for doctrine/claims.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "number"
+    },
+    "ledgers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "probe": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "bound_by": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "of": {
+            "type": "string"
+          },
+          "probe": {
+            "type": "array"
+          },
+          "surface": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "generated": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "measure": {
+            "type": "object"
+          },
+          "surface": {
+            "type": "string"
+          },
+          "template": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "inventory": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "live": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "contains": {
+            "type": "array"
+          },
+          "id": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "type": "number"
+        },
+        "floor": {
+          "type": "number"
+        },
+        "live_pages": {
+          "type": "array"
+        },
+        "src_globs": {
+          "type": "array"
+        },
+        "patterns": {
+          "type": "array"
+        },
+        "skip": {
+          "type": "array"
+        },
+        "skip_reasons": {
+          "type": "object"
+        },
+        "src_unbound_budget": {
+          "type": "number"
+        }
+      }
+    },
+    "modules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "check": {
+            "type": "array"
+          },
+          "generator": {
+            "type": "string"
+          },
+          "header": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "probe": {
+            "type": "array"
+          },
+          "source": {
+            "type": "array"
+          },
+          "surface": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "claims",
+    "coverage",
+    "generated",
+    "inventory",
+    "ledgers",
+    "live",
+    "modules",
+    "version"
+  ]
+}

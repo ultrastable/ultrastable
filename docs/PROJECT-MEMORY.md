@@ -10,6 +10,7 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-25
 
+- 2026-11-25: STANDARDS-1 (Rowan: "Standards, don't reinvent the wheel"): JSON Schema 2020-12 contracts for all 150 doctrine/seed configs with Schema Store catalogs (`foundation configschema`), Backstage `catalog-info.yaml` and CycloneDX `sbom.cdx.json` generated from the registers (`foundation stdgen`), `.devcontainer/devcontainer.json`, nine new rows in `seed/standards/standards.json` (OpenFeature and SLSA planned as Q-STD-*; Rego and Conventional Commits/SemVer not applicable with reasons). What Works publishes schema.org ClaimReview, ISO 3166, DCAT, PROV-O and OpenAPI (ultrastable/what-works#12).
 - 2026-11-25: COLDSTART-1 (Rowan: "everything has to work together automatically and seamlessly from the beginning ... fully autonomous bootstrapping"). `doctrine/coldstart.json` is the contract a system carries from birth; `foundation coldstart --check` (in checks) and the seed e2e now probe every surface. Root causes removed: health-only seeds hid the discovery manifest, graph, progress and stickiness reads; the CLI only ran hand-listed modules, so detector `static-content` could not run; `hostsync` and `scaffold` were named as commands that did not exist; agent files had duplicated bullets and three rules missing from the seed.
 - 2026-11-25: REDTEAM-1: red-team the system's own blind spots (#2227)
 - 2026-11-25: failure-audit: file and close failure-mode items (FAILURE-RESOLVE-1) (part 2/2) [skip ci]

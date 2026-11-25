@@ -33,6 +33,9 @@ GENERATORS = [
     (["python3", "-m", "foundation", "tenantcontrols", "--write"], "."),  # TENANT-CONTROLS-1
     (["python3", "-m", "foundation", "upstream", "contract", "--apply"], "."),
     (["python3", "-m", "foundation", "triggers", "--sync"], "."),
+    (["python3", "scripts/build_site_agentdata.py"], "."),  # STANDARDS-1: the site serves the standards register; an edit to it left agentdata.js stale (#2273)
+    (["python3", "-m", "foundation", "configschema", "--gen"], "."),  # CONFIG-SCHEMA-1: a new config gets its contract
+    (["python3", "-m", "foundation", "stdgen", "--gen"], "."),  # STANDARDS-1: Backstage catalog and CycloneDX SBOM follow the registers
     (["python3", "-m", "plugins", "self", "--write"], "seed"),
 ]
 # Files the generators write; the workflow ignores pushes that touch only these, so the bot's own commit cannot retrigger it.

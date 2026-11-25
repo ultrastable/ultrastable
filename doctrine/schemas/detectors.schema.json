@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/detectors.schema.json",
+  "title": "detectors (doctrine/detectors.json)",
+  "description": "Contract for doctrine/detectors.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "workflow": {
+      "type": "string"
+    },
+    "detectors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "failure_mode": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "json_ok": {
+            "type": "boolean"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "string"
+          },
+          "remedy": {
+            "type": "string"
+          },
+          "root_cause": {
+            "type": "string"
+          },
+          "run": {
+            "type": "array"
+          },
+          "spec": {
+            "type": "string"
+          },
+          "timeout": {
+            "type": "number"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "detectors",
+    "version",
+    "workflow"
+  ]
+}
