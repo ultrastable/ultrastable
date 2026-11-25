@@ -278,6 +278,26 @@
       "column": "at",
       "keep_days": 30,
       "reason": "CF-ALERTS-1: one row per Cloudflare alert; settling reads the last day per type, so 30 days is ample"
+    },
+    "kg_nodes": {
+      "keep": "state",
+      "reason": "KGRAPH-1: one row per record or entity the graph knows; bounded by the system's own data, and the graph is the point"
+    },
+    "kg_edges": {
+      "keep": "state",
+      "reason": "KGRAPH-1: the links between nodes; upserted by key, so a record re-read adds no rows"
+    },
+    "kg_cursor": {
+      "keep": "state",
+      "reason": "KGRAPH-1: one row per source, rewritten every pass"
+    },
+    "kg_leads": {
+      "keep": "state",
+      "reason": "KGRAPH-1: every lead and its outcome is the insight-yield measure; at most max_leads_per_pass per pass"
+    },
+    "kg_series": {
+      "keep": "state",
+      "reason": "KGRAPH-1: one row per day; the step itself deletes rows older than 400 days"
     }
   }
 }

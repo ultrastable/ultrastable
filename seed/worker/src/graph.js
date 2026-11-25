@@ -164,6 +164,7 @@ async function counts(db) {
 async function series(db, now) {
   const c = await counts(db), day = new Date(now).toISOString().slice(0, 10);
   await run(db, `INSERT INTO kg_series (day, nodes, edges, leads, filed, kept, lag) VALUES (?,?,?,?,?,?,?) ON CONFLICT(day) DO UPDATE SET nodes=excluded.nodes, edges=excluded.edges, leads=excluded.leads, filed=excluded.filed, kept=excluded.kept, lag=excluded.lag`, day, c.nodes, c.edges, c.leads, c.filed, c.kept, c.lag);
+  await run(db, `DELETE FROM kg_series WHERE day < ?`, new Date(now - 400 * 864e5).toISOString().slice(0, 10));
 }
 
 // Public read: stats, the probes and the newest leads. fresh = every cursor ran inside 2 h and the total lag is under the alarm.
