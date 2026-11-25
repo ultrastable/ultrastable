@@ -33,13 +33,34 @@ class TenantRepos(unittest.TestCase):
         self.assertTrue(any("newapp" in e and "own repository" in e for e in tr.check(d)))
 
     def test_moved_tenant_needs_no_code_left_and_a_topology_source(self):
-        reg = {"org": "o", "tenants": {"a": {"repo": "o/a", "state": "moved", "source": "instances/a", "worker": "w-a"}}}
+        reg = {"org": "o", "tenants": {"a": {"repo": "o/a", "state": "moved", "source": "instances/a", "worker": "w-a",
+                                              "sandbox": {"budget": {"requests_per_day": 1, "d1_reads_per_day": 1, "ai_neurons_per_day": 1}}}}}
         d = scratch(reg, {"workers": [{"id": "w-a", "main": "worker/index.js"}]}, ["instances/a/worker"])
         errs = tr.check(d)
         self.assertTrue(any("still in the core" in e for e in errs))
         self.assertTrue(any("does not build from o/a" in e for e in errs))
         d2 = scratch(reg, {"workers": [{"id": "w-a", "main": "worker/index.js", "source": {"repo": "o/a"}}]}, ["instances/a"])
         self.assertEqual(tr.check(d2), [])
+
+    def test_sandbox_rejects_shared_stores_services_and_missing_budget(self):
+        reg = {"org": "o", "tenants": {"a": {"repo": "o/a", "state": "own-repo", "worker": "w-a",
+                                              "sandbox": {"stores": ["ultrastable-a"], "secrets": []}}}}
+        topo = {"workers": [
+            {"id": "w-a", "source": {"repo": "o/a"}, "bindings": {"d1": {"DB": "ultrastable-a", "ORG": "ultrastable-org"},
+                                                                 "services": {"TICK": "ultrastable-tick"}, "secrets": ["CF_DEPLOY_TOKEN"]}},
+            {"id": "core", "bindings": {"d1": {"X": "ultrastable-a"}}}]}
+        errs = tr.isolation(scratch(reg, topo), reg, topo)
+        for frag in ("binds ultrastable-org", "binds services", "outside its scope", "daily budget", "core worker core binds ultrastable-a"):
+            self.assertTrue(any(frag in e for e in errs), frag)
+        reg["tenants"]["a"]["sandbox"]["budget"] = {"requests_per_day": 1, "d1_reads_per_day": 1, "ai_neurons_per_day": 1}
+        ok = {"workers": [{"id": "w-a", "source": {"repo": "o/a"}, "bindings": {"d1": {"DB": "ultrastable-a"}}}]}
+        self.assertEqual(tr.isolation(scratch(reg, ok), reg, ok), [])
+
+    def test_retired_group_fails_when_an_app_goes_live(self):
+        reg = {"org": "o", "tenants": {"s": {"repo": "o/s", "state": "retired", "source": "instances/s"}}}
+        d = scratch(reg, {"workers": []}, ["instances/s/x"])
+        (d / "instances/s/x/app.json").write_text(json.dumps({"status": "live"}))
+        self.assertTrue(any("live again" in e for e in tr.check(d)))
 
     def test_prepare_vendors_core_files_and_rewrites_imports(self):
         d = _repo.scratch()
