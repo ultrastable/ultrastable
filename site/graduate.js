@@ -38,7 +38,7 @@ export async function steer(env, id, text, now) {
 // What anyone may see about a launch: no idea text, no key.
 export function publicView(rec) {
   if (!rec) return null;
-  return { id: rec.id, state: rec.state, repo: rec.state === "repo" || rec.state === "handed-over" ? rec.repo : null, changes: rec.steer.length, changes_filed: rec.steer.filter((s) => s.filed).length, system: rec.system || null, owner_requested: Boolean(rec.want_owner), waiting_on: rec.waiting_on || null, manual_steps: 0 };
+  return { id: rec.id, state: rec.state, repo: rec.state === "repo" || rec.state === "handed-over" ? rec.repo : null, changes: rec.steer.length, changes_filed: rec.steer.filter((s) => s.filed).length, system: rec.system || null, owner_requested: Boolean(rec.want_owner), waiting_on: rec.waiting_on || null, served_from: rec.page_sha ? "repository" : "platform", manual_steps: 0 };
 }
 const GH_LOGIN = /^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/i;
 export async function requestOwnership(request, env, id) {
@@ -70,6 +70,40 @@ export function ownBody(rec, canon, mine) {
     + "<p class=\"meta\">There is no code for you to write and no password to keep. We build it, publish it and look after it.</p>";
 }
 
+// APP-REPO-1: the repository work goes to the tick Worker, which already holds the two App credentials (seed/worker/src/apprepos.js). The repository
+// name comes from the launch record, never from the caller. The page a visitor sees is kept the same in both places: a change made on the site is
+// committed to app/index.html, and a change merged in the repository is published to the site. When both moved, the visitor's own words win and
+// the repository keeps the other version in its history.
+const PAGE_PATH = "app/index.html";
+async function sha(text) { return Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(String(text)))), (x) => x.toString(16).padStart(2, "0")).join(""); }
+async function tickRepo(env, spec) {
+  if (!env.TICK || !env.INTERNAL_DEPLOY_KEY) return { ok: false, waiting_on: "host-binding", error: "the site has no route to the tick Worker" };
+  const r = await env.TICK.fetch(new Request("https://tick.internal/host/app-repo", { method: "POST", headers: { "content-type": "application/json", "x-internal-key": env.INTERNAL_DEPLOY_KEY }, body: JSON.stringify(spec) }));
+  const j = await r.json().catch(() => null);
+  return j || { ok: false, error: "tick Worker answered HTTP " + r.status };
+}
+async function repoOp(b, env) {
+  if (b.check) { const r = await tickRepo(env, { repo: ORG + "/app-route-check", dry: true }); return J({ ok: Boolean(r.ok), waiting_on: r.waiting_on || null, error: r.error || null }); }
+  const rec = await getLaunch(env, String(b.id || "")); if (!rec) return J({ ok: false, error: "no such launch" }, 404);
+  if (rec.synthetic) return J({ ok: false, error: "a probe launch gets no repository" }, 400);
+  const files = (Array.isArray(b.files) ? b.files : []).filter((f) => f && typeof f.path === "string" && typeof f.content === "string" && f.path !== PAGE_PATH).slice(0, 12);
+  const first = await tickRepo(env, { repo: rec.repo, template: b.template, description: rec.brief.slice(0, 300), files, read: [PAGE_PATH], invite: b.invite || undefined });
+  if (!first.ok) return J({ ok: false, waiting_on: first.waiting_on || null, error: first.error || "repository step failed", steps: first.steps || [], created: Boolean(first.created) });
+  const out = { ok: true, created: Boolean(first.created), from_template: first.from_template, steps: first.steps || [], invited: first.invited || null, page: "same" };
+  const live = await env.ASSETS.get("site:" + rec.id), inRepo = first.read ? first.read[PAGE_PATH] : undefined;
+  if (live) {
+    const hLive = await sha(live), hRepo = inRepo === undefined ? null : await sha(inRepo);
+    if (hRepo && hRepo !== hLive && rec.page_sha === hLive) { await env.ASSETS.put("site:" + rec.id, inRepo); rec.page_sha = hRepo; out.page = "published from the repository"; }
+    else if (hRepo !== hLive) {
+      const w = await tickRepo(env, { repo: rec.repo, files: [{ path: PAGE_PATH, content: live, message: "The page as its owner sees it" }] });
+      if (!w.ok) return J({ ok: false, waiting_on: w.waiting_on || null, error: w.error || "page commit failed", steps: out.steps, created: out.created });
+      rec.page_sha = hLive; out.page = "committed to the repository";
+    } else rec.page_sha = hLive;
+    await save(env, rec);
+  }
+  return J(out);
+}
+
 // The server side's hands (deploy/launch-apps.mjs). Reached only through internalDeploy's key or GitHub OIDC check.
 const MARKS = new Set(["queued", "waiting", "repo", "handed-over"]);
 export async function launchesInternal(request, env) {
@@ -84,6 +118,7 @@ export async function launchesInternal(request, env) {
     for (const k of ["grad:", "state:", "site:", "brief:", "job:", "tries:", "since:", "audit:", "profile:"]) await env.ASSETS.delete(k + rec.id);
     return J({ ok: true, dropped: rec.id });
   }
+  if (b.op === "repo") return repoOp(b, env);
   if (b.op === "mark") {
     const rec = await getLaunch(env, String(b.id || "")); if (!rec) return J({ ok: false, error: "no such launch" }, 404);
     if (b.state) { if (!MARKS.has(b.state)) return J({ ok: false, error: "unknown state " + b.state }, 400); rec.state = b.state; }

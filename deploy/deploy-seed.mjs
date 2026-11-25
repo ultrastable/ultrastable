@@ -50,7 +50,7 @@ const rows = [];
 // with SEED_ONLY_EXTRA=1 the standing seeds are left alone, and SEED_RESULT names a file that receives the rows (nothing is appended to the ledger).
 const extra = JSON.parse(process.env.SEED_EXTRA || "[]"), onlyExtra = process.env.SEED_ONLY_EXTRA === "1";
 const todo = (onlyExtra ? [] : cfg.seeds.map(slug => ({ slug, instance: `instances/${slug}/instance.json` }))).concat(extra);
-for (const { slug, instance, ai } of todo) {
+for (const { slug, instance, ai, host_repo } of todo) {
   if (!/^[a-z0-9-]{1,35}$/.test(slug)) throw new Error("seed slug not allowed: " + slug);
   const name = `ultrastable-seed-${slug}`, url = SITE.replace("ultrastable-site", name);
   let row = { at: new Date().toISOString(), kind: "seed", worker: name, slug, url, sha: gitsha };
@@ -73,7 +73,7 @@ for (const { slug, instance, ai } of todo) {
       if (dryRun) { console.log(`PREPARED ${slug}: ${mods.length} modules, ${migrations.length} migrations`); rows.push({ ...row, prepared: true, modules: mods.length, live_ok: true }); continue; }
       const db = await site("/__internal/seed-d1", { name, migrations });
       const up = await site("/__internal/deploy", {
-        name, main: mods[0].name, modules: mods.map(({ name: n, src, type }) => ({ name: n, src, type })), compatibility_date: "2026-11-12", workers_dev: true, crons: ["*/10 * * * *"],
+        name, main: mods[0].name, modules: mods.map(({ name: n, src, type }) => ({ name: n, src, type })), compatibility_date: "2026-11-12", workers_dev: true, crons: ["*/10 * * * *"], ...(host_repo ? { host_repo } : {}),
         bindings: [{ type: "d1", name: "DB", id: db.uuid }, { type: "plain_text", name: "PUBLIC_HEALTH_ONLY", text: "1" }].concat(ai ? [{ type: "ai", name: "AI" }] : []),  // a visitor's app gets the account's own models: no key for anyone to mint
       });
       row.version = up.version || ""; row.migrations_applied = db.applied.length;

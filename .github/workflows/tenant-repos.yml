@@ -74,17 +74,9 @@ jobs:
         # Someone with no code agent typed an idea at ultrastable.io. This deploys its own system, gives it a repository from the seed, files the
         # owner's plain-words requests there and invites the owner when they asked. The test idea fails the job on any step a visitor would have to do.
         if: always()
-        env:
-          ORG_ADMIN_TOKEN: ${{ secrets.ORG_ADMIN_TOKEN }}
-          LANE_PAT: ${{ secrets.LANE_PAT }}
-          LANE_APP_ID: ${{ secrets.LANE_APP_ID }}
-          LANE_APP_PRIVATE_KEY: ${{ secrets.LANE_APP_PRIVATE_KEY }}
+        # No GitHub credential here: the repository work is done by the tick Worker with the App credentials it already holds (APP-REPO-1).
         run: |
           set -euo pipefail
-          export APP_TOKEN=""
-          if [ -n "$LANE_APP_ID" ] && [ -n "$LANE_APP_PRIVATE_KEY" ]; then
-            if APP_TOKEN="$(python3 scripts/lane_credential.py org-token)"; then echo "::add-mask::$APP_TOKEN"; else APP_TOKEN=""; echo "::warning::the lane App gave no org token"; fi
-          fi
           node deploy/launch-apps.mjs --probe
       - name: Redeploy tenants whose repository moved past the last deploy
         env:

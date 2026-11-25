@@ -6,8 +6,10 @@
 //   2. gives it its own repository from the seed, with IDEA.md written from the visitor's words;
 //   3. files each plain-words change the visitor typed as a work item in that repository;
 //   4. invites the visitor to the repository with full control when they asked for it.
-// Step 2 needs an org credential that can create a repository. Without one the launch is marked "waiting" with the reason, steps 3 and 4 wait
-// with it, and step 1 still runs: the app is live and managed either way. Run by .github/workflows/tenant-repos.yml; limits in
+// Steps 2 to 4 are done by the tick Worker with the two GitHub App credentials it already holds (seed/worker/src/apprepos.js), reached through
+// the site worker; this script holds no GitHub credential. When the tick Worker cannot finish, the launch is marked "waiting" with what GitHub
+// answered and step 1 still runs: the app is live and managed either way. The app's own Worker gets a key for a one-hour token to its one
+// repository, so its executor can open pull requests there. Run by .github/workflows/tenant-repos.yml; limits in
 // doctrine/tenant-repos.json `visitor_apps`.
 //   node deploy/launch-apps.mjs            do the work
 //   node deploy/launch-apps.mjs --probe    also send a test idea through the public front door first and fail on any step a visitor would have to do
@@ -46,7 +48,7 @@ export function steerItem(launch, s) {
   return { path: "docs/issues/" + id + ".json", json: { id, title: id + ": " + s.text.slice(0, 80), body: "**Owner:** product-manager\n**Trigger:** the owner asked for this at ultrastable.io/s/" + launch.id + "/change on " + s.at + "\n**Done check:** the live app does what was asked\n**Status:** open\n\nIn the owner's words:\n\n> " + s.text + "\n\nsize: S\n\n**Closing probe:** GET the live app and confirm the change; then set Status to closed in this file.\n", labels: ["p1", "agent-ready", "owner-asked"], milestone: "Now", workstream: "Owner requests" } };
 }
 // One pass. Everything that touches the outside is injected, so the stories in site/launchpath.test.mjs run it against fakes.
-export async function run({ site, gh, deploySeed, cfg, base, log = console.log }) {
+export async function run({ site, deploySeed, cfg, base, log = console.log }) {
   const { launches } = await site({ op: "list" }), out = [], running = launches.filter((l) => l.system && !l.synthetic).length;
   let deploys = 0;
   for (const l of launches) {
@@ -60,30 +62,27 @@ export async function run({ site, gh, deploySeed, cfg, base, log = console.log }
         if (!l.synthetic && running + deploys >= cfg.max_apps) { mark.waiting_on = "all " + cfg.max_apps + " places for hosted apps are taken; the next one frees up when an app is handed over or retired"; r.steps.push("system: no place free"); }
         else if (!l.synthetic && deploys >= cfg.max_deploys_per_run) r.steps.push("system: next run (" + cfg.max_deploys_per_run + " per run)");
         else {
-          const row = (await deploySeed([{ slug: short, manifest: m, ai: true }], Boolean(l.synthetic)))[0] || {};
+          const row = (await deploySeed([{ slug: short, manifest: m, ai: true, host_repo: l.repo }], Boolean(l.synthetic)))[0] || {};
           if (row.live_ok && !l.synthetic) { mark.system = row.url; deploys++; r.steps.push("system: live at " + row.url); }
           else if (row.live_ok) r.steps.push("system: built and bundled (" + row.modules + " modules), not deployed for a test idea");
           else throw new Error("system deploy: " + (row.error || "no row"));
         }
       }
-      // 2. its own repository
-      let hasRepo = l.state === "repo" || l.state === "handed-over";
-      if (!hasRepo) {
-        const route = await gh.route();
-        if (!route) { mark.state = "waiting"; mark.waiting_on = mark.waiting_on || "no credential on the platform can create a repository yet (gate visitor-app-repos)"; r.gate = "visitor-app-repos"; r.steps.push("repository: waiting on the platform's own credential"); }
-        else if (l.synthetic) r.steps.push("repository: route " + route + " is bound; not created for a test idea");
-        else {
-          if (!(await gh.exists(l.repo))) await gh.generate(l.repo, m.idea.slice(0, 300));
-          await gh.putFile(l.repo, "IDEA.md", ideaFile(m), "The idea, in its owner's words (LAUNCH-PATH-1)");
-          mark.state = "repo"; hasRepo = true; r.steps.push("repository: " + l.repo);
-        }
-      }
-      if (hasRepo && !l.synthetic) {
-        // 3. what the visitor asked for
-        for (const s of (l.steer || []).filter((x) => !x.filed)) { const it = steerItem(l, s); await gh.putFile(l.repo, it.path, JSON.stringify(it.json, null, 2) + "\n", it.json.title); mark.filed.push(s.n); }
-        if (mark.filed.length) r.steps.push("filed " + mark.filed.length + " request(s)");
-        // 4. handing it over
-        if (l.want_owner && !l.want_owner.done) { await gh.invite(l.repo, l.want_owner.login); mark.owner_done = true; mark.state = "handed-over"; r.steps.push("invited " + l.want_owner.login + " with full control"); }
+      // 2 to 4. its own repository, what the visitor asked for, and handing it over: one call, done by the tick Worker with the App
+      // credentials it already holds (seed/worker/src/apprepos.js). The page the visitor sees is kept the same in the repository and on the site.
+      if (l.synthetic) {
+        const c = await site({ op: "repo", check: true });
+        if (c.ok) r.steps.push("repository: the platform can create one; not created for a test idea");
+        else { r.gate = "visitor-app-repos"; r.steps.push("repository: " + (c.waiting_on || c.error)); }
+      } else {
+        const todo = (l.steer || []).filter((x) => !x.filed), invite = l.want_owner && !l.want_owner.done ? l.want_owner.login : null;
+        const files = [{ path: "IDEA.md", content: ideaFile(m), message: "The idea, in its owner's words (LAUNCH-PATH-1)" }].concat(todo.map((x) => { const it = steerItem(l, x); return { path: it.path, content: JSON.stringify(it.json, null, 2) + "\n", message: it.json.title }; }));
+        const g = await site({ op: "repo", id: l.id, template: cfg.template, files, invite });
+        if (g.ok) {
+          mark.state = invite || l.state === "handed-over" ? "handed-over" : "repo"; mark.filed = todo.map((x) => x.n); if (invite) mark.owner_done = true;
+          r.steps.push("repository: " + l.repo + (g.created ? (g.from_template ? " created from the seed" : " created (the seed could not be copied: " + g.steps.join("; ") + ")") : "") + "; page " + g.page + (todo.length ? "; filed " + todo.length + " request(s)" : "") + (invite ? "; invited " + invite : ""));
+        } else if (g.waiting_on) { if (l.state === "queued") mark.state = "waiting"; mark.waiting_on = mark.waiting_on || "the platform cannot finish the repository yet: " + g.waiting_on + " (gate visitor-app-repos)"; r.gate = "visitor-app-repos"; r.waiting_on = g.waiting_on; r.steps.push("repository: waiting on " + g.waiting_on + " | " + g.error); }
+        else throw new Error("repository: " + g.error);
       }
     } catch (e) { r.error = String(e && e.message || e).slice(0, 300); mark.waiting_on = "a step failed on our side and is retried on the next run"; log("::error::launch " + l.id + ": " + r.error); }
     await site(mark);
@@ -98,21 +97,9 @@ async function oidc() {
   const j = await (await fetch(u + "&audience=ultrastable-deploy", { headers: { authorization: "bearer " + t } })).json();
   if (!j.value) throw new Error("no OIDC token"); return j.value;
 }
-function realGh(tokens, template) {
-  let tok = null, name = null;
-  const api = async (method, path, body, t) => { const r = await fetch("https://api.github.com" + path, { method, headers: { authorization: "Bearer " + (t || tok), accept: "application/vnd.github+json", "user-agent": UA, "content-type": "application/json" }, body: body ? JSON.stringify(body) : undefined }); return { status: r.status, json: await r.json().catch(() => ({})) }; };
-  return {
-    // A route counts when its token can read the private template: the same right repository creation from it needs. A refusal is logged per route.
-    async route() { if (name) return name; for (const [n, t] of tokens) { if (!t) { console.log("route " + n + ": not bound"); continue; } const r = await api("GET", "/repos/" + template, null, t); if (r.status === 200 && r.json.permissions && r.json.permissions.admin) { tok = t; name = n; return n; } console.log("route " + n + ": HTTP " + r.status + (r.status === 200 ? " without administration rights" : "")); } return null; },
-    async exists(repo) { return (await api("GET", "/repos/" + repo)).status === 200; },
-    async generate(repo, description) { const [owner, nm] = repo.split("/"); const r = await api("POST", "/repos/" + template + "/generate", { owner, name: nm, private: true, description: description.slice(0, 300) }); if (r.status !== 201) throw new Error("create " + repo + ": HTTP " + r.status + " " + (r.json.message || "")); for (let i = 0; i < 10; i++) { if ((await api("GET", "/repos/" + repo + "/contents/README.md")).status === 200) return; await new Promise((z) => setTimeout(z, 3000)); } throw new Error(repo + " was created but its files did not appear"); },
-    async putFile(repo, path, content, message) { const cur = await api("GET", "/repos/" + repo + "/contents/" + path); const r = await api("PUT", "/repos/" + repo + "/contents/" + path, { message, content: Buffer.from(content).toString("base64"), sha: cur.status === 200 ? cur.json.sha : undefined }); if (r.status !== 200 && r.status !== 201) throw new Error("write " + path + ": HTTP " + r.status + " " + (r.json.message || "")); },
-    async invite(repo, login) { const r = await api("PUT", "/repos/" + repo + "/collaborators/" + encodeURIComponent(login), { permission: "admin" }); if (r.status !== 201 && r.status !== 204) throw new Error("invite " + login + ": HTTP " + r.status + " " + (r.json.message || "")); }
-  };
-}
 function realDeploy(list, dry) {
   const dir = "/tmp/launch-apps"; mkdirSync(dir, { recursive: true });
-  const extra = list.map((x) => { const p = dir + "/" + x.slug + ".json"; writeFileSync(p, JSON.stringify(x.manifest)); return { slug: x.slug, instance: p, ai: x.ai }; }), res = dir + "/result.json";
+  const extra = list.map((x) => { const p = dir + "/" + x.slug + ".json"; writeFileSync(p, JSON.stringify(x.manifest)); return { slug: x.slug, instance: p, ai: x.ai, host_repo: x.host_repo }; }), res = dir + "/result.json";
   writeFileSync(res, "[]");
   try { execFileSync("node", ["deploy/deploy-seed.mjs"].concat(dry ? ["--dry-run"] : []), { cwd: ROOT, stdio: "inherit", env: { ...process.env, SEED_EXTRA: JSON.stringify(extra), SEED_ONLY_EXTRA: "1", SEED_RESULT: res, SEED_DEPLOY_OUT: dir + "/out" } }); }
   catch (e) { console.log("::warning::deploy-seed exited " + e.status + "; its rows say why"); }
@@ -137,14 +124,13 @@ export async function walk(front, fetchFn = fetch, wait = (ms) => new Promise((z
 async function main() {
   const reg = JSON.parse(readFileSync(ROOT + "doctrine/tenant-repos.json", "utf8")), cfg = reg.visitor_apps, base = JSON.parse(readFileSync(ROOT + cfg.base_manifest, "utf8"));
   const SITE = process.env.TARGET_SITE || "https://ultrastable-site.ultrastable.workers.dev", probe = process.argv.includes("--probe");
-  const site = async (body) => { const r = await fetch(SITE + "/__internal/launches", { method: "POST", headers: { authorization: "Bearer " + await oidc(), "content-type": "application/json", "user-agent": UA }, body: JSON.stringify(body) }); const j = await r.json().catch(() => ({})); if (!r.ok || !j.ok) throw new Error("launch queue " + body.op + ": HTTP " + r.status + " " + (j.error || "")); return j; };
-  if (process.argv.includes("--routes")) { const r = await realGh([["ORG_ADMIN_TOKEN", process.env.ORG_ADMIN_TOKEN], ["LANE_PAT", process.env.LANE_PAT], ["lane-app", process.env.APP_TOKEN]], cfg.template).route(); console.log(r ? "repository route: " + r : "no route can create a visitor app's repository"); process.exit(r ? 0 : 1); }  // closing probe of gate visitor-app-repos
+  const site = async (body) => { const r = await fetch(SITE + "/__internal/launches", { method: "POST", headers: { authorization: "Bearer " + await oidc(), "content-type": "application/json", "user-agent": UA }, body: JSON.stringify(body) }); const j = await r.json().catch(() => ({})); if (body.op === "repo") return j.ok === undefined ? { ok: false, error: "HTTP " + r.status } : j; if (!r.ok || !j.ok) throw new Error("launch queue " + body.op + ": HTTP " + r.status + " " + (j.error || "")); return j; };
+  if (process.argv.includes("--routes")) { const c = await site({ op: "repo", check: true }); console.log(c.ok ? "the platform can create a visitor app's repository" : "it cannot yet: " + (c.waiting_on || c.error)); process.exit(c.ok ? 0 : 1); }  // closing probe of gate visitor-app-repos
   let probeId = null, fail = null;
   if (probe) { try { probeId = await walk(process.env.FRONT_DOOR || SITE); console.log("test idea " + probeId + " went through the front door"); } catch (e) { fail = "front door: " + e.message; } }
-  const gh = realGh([["ORG_ADMIN_TOKEN", process.env.ORG_ADMIN_TOKEN], ["LANE_PAT", process.env.LANE_PAT], ["lane-app", process.env.APP_TOKEN]], cfg.template);
-  const out = await run({ site, gh, deploySeed: async (l, dry) => realDeploy(l, dry), cfg, base });
+  const out = await run({ site, deploySeed: async (l, dry) => realDeploy(l, dry), cfg, base });
   for (const r of out) console.log((r.error ? "FAIL " : "ok   ") + r.id + (r.synthetic ? " (test)" : "") + ": " + r.steps.join("; ") + (r.error ? " | " + r.error : ""));
-  if (probe && !fail) { const mine = out.find((r) => r.id === probeId); if (!mine) fail = "the test idea never reached the launch queue"; else if (mine.error) fail = mine.error; else if (mine.gate) console.log("::warning::gate " + mine.gate + ": the app is live and managed, its repository waits on the platform's credential"); }
+  if (probe && !fail) { const mine = out.find((r) => r.id === probeId); if (!mine) fail = "the test idea never reached the launch queue"; else if (mine.error) fail = mine.error; else if (mine.gate) console.log("::warning::gate " + mine.gate + ": apps are live and managed; their repositories wait on " + mine.steps.join("; ")); }
   for (const r of out.filter((x) => x.synthetic)) await site({ op: "drop", id: r.id });
   const rec = { at: new Date().toISOString(), probe, passed: !fail && !out.some((r) => r.error), fail, launches: out.filter((r) => !r.synthetic).length, gate: out.some((r) => r.gate) ? "visitor-app-repos" : null, visitor_steps: 0 };
   if (process.env.LAUNCH_RESULT) writeFileSync(process.env.LAUNCH_RESULT, JSON.stringify(rec) + "\n");
