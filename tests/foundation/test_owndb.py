@@ -40,6 +40,14 @@ class OwnDb(unittest.TestCase):
         self.assertTrue(any("bound_by is stale" in b for b in owndb.check(d2)))
         owndb.write(d2); self.assertEqual(owndb.check(d2), [])
 
+    def test_write_restores_a_topology_database_the_record_lost(self):
+        # The merge lane takes this record from main and reruns --write; a database the topology declares and a config binds comes back.
+        d = repo(); (d / "doctrine").mkdir(exist_ok=True); shutil.copy(ROOT / "doctrine/topology.json", d / "doctrine/topology.json")
+        rec = owndb.load(d); gone = rec["core"].pop(); rec["live"]["databases"] = [x for x in rec["live"]["databases"] if x["id"] != gone["id"]]
+        (d / owndb.PATH).write_text(json.dumps(rec))
+        self.assertTrue(any("does not declare" in b for b in owndb.check(d)))
+        owndb.write(d); self.assertEqual(owndb.check(d), [])
+
     def test_live_is_unmeasured_without_a_credential_and_never_ok(self):
         self.assertEqual(owndb.live(ROOT, env={})[0], 2)
         def boom(url, tok): raise OSError("down")
