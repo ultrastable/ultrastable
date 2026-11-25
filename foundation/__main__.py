@@ -227,6 +227,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["provenance"]:
         from . import provenance
         return provenance.main(_av[1:])
+    if _av[:1] == ["tenantsync"]:
+        from . import tenantsync
+        return tenantsync.main(_av[1:])
     if _av[:1] == ["improve"]:
         from . import improve
         return improve.main(_av[1:])

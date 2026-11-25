@@ -34,7 +34,11 @@ Source: doctrine/ultrastability.json.
 - ULTRASTABILITY-1 (`foundation/ultrastability.py`): after patience_ticks readings out of limits, one step is taken and logged with a prediction
 - CLOCKWORK-1 (`.github/workflows/watchdog.yml`): the second loop runs on the watchdog clock and on the cost guard, server-side
 
+<<<<<<< HEAD
 **Measured here:** second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl): 77 (n = 13176). Target >= 1. Verdict: **met**.
+=======
+**Measured here:** second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl): 77 (n = 13217). Target >= 1. Verdict: **met**.
+>>>>>>> origin/main
 Source: ops/ultrastability.jsonl.
 
 ### A3. Nothing the second loop can change (systems)

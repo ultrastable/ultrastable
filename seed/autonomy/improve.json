@@ -46,6 +46,12 @@
       "path": "ops/rnd/log.jsonl",
       "key": null,
       "max_age_hours": 168
+    },
+    {
+      "id": "platform-sync",
+      "path": "ops/platform-sync.json",
+      "key": null,
+      "max_age_hours": 192
     }
   ],
   "bank": [
