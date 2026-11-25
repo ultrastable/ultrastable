@@ -5,9 +5,10 @@
   "date": "2026-11-25",
   "title": "The directory register route was dead behind the site worker's GET-only gate",
   "body": "POST /api/directory/register was a case inside the switch that runs after the site worker rejects every non-GET/HEAD with 405, so no seed heartbeat ever reached register() and the directory had 0 external rows. The second live bootaccept run named it (register answered HTTP 405). The route now sits before the gate, a worker-level test POSTs it, and a guard fails any POST branch written after the gate.",
-  "probe": "grep:site/directory.test.mjs::no POST route in the site worker sits after"
+  "probe": "grep:site/directory.test.mjs::no POST route in the site worker sits after",
+  "session": "session_0156nqDtbnNSagT7p6jpUTuY"
  },
  "kind": "lesson",
  "title": "The directory register route was dead behind the site worker's GET-only gate",
- "session": ""
+ "session": "session_0156nqDtbnNSagT7p6jpUTuY"
 }
