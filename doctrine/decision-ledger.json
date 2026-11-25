@@ -5750,6 +5750,94 @@
    "title": "An empty reading is unmeasured, never zero",
    "body": "Red-team pass 2026-11-25: the cost probe recorded d1: [] for weeks because run() read data/cost-thresholds.json, which never existed, and foundation/cost.py scored probe rows as 0 while the measured Workers AI use was 0.805 of the free budget (source: ops/cost.jsonl, 2026-11-24 row); the platform feed had empty texts and stopped updating on 2026-11-17 because site/feed-data.js was regenerated but never committed. Detectors cost-runaway, d1-growth, credential-expiry and content-drift now fail on these.",
    "probe": "grep:doctrine/detectors.json::content-drift"
+  },
+  {
+   "id": "decision-2026-11-25-fleet-contract-1-one-contract-per-system-statements-checked-",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "FLEET-CONTRACT-1: one contract per system, statements checked front to back and back to front",
+   "body": "The platform, every seed and every tenant serve the same surfaces and declare each statement once as sentence, page and endpoint in the shared seed/worker/src/contract.js; foundation/fleetcontract.py reads every live system daily and as the failure-audit detector fleet-contract. Tests pass: seed/worker/test/contract.test.js, site/contract.test.mjs, tests/foundation/test_fleetcontract.py. Source: Rowan 2026-11-25.",
+   "probe": "file:foundation/fleetcontract.py",
+   "session": "session_0156nqDufLi3JgDJf3gVw7Fh"
+  },
+  {
+   "id": "decision-2026-11-25-standards-first-1-standards-are-measured-rows-with-a-decisio",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "STANDARDS-FIRST-1: standards are measured rows with a decision; events, errors, configs, page markup and repository descriptors follow them",
+   "body": "Rowan, 2026-11-25: 'Standards, don't reinvent the wheel. Apply standards. Figure out what the standards are and apply them broadly.' The existing register (seed/standards/standards.json) now carries, per audited row, the homegrown equivalent, the measured adoption, what conformance changes, the cost, a decision (adopt now, adopt later with a filed item, decline with a reason and the condition that reopens it) and probes that standards --check runs. Adopted by code: JSON Schema for configs (foundation/schemas.py, doctrine/schemas/index.json, shrink-only baseline), CloudEvents 1.0 on handoff and provenance writes, RFC 9457 on the shared error path, schema.org JSON-LD from the shared contract module, catalog-info.yaml from the manifest reconciler, Conventional Commits header lint on generated titles. Declined after evaluation: Terraform/OpenTofu, OPA, OTLP export, OpenSLO, AsyncAPI, SBOM (each row says why and when to look again). A failing row files through detectors standards-register and standards-live; a new release of an adopted standard is filed by the scout from its release feed.",
+   "probe": "grep:foundation/standards.py::def audit\\(root, reg\\)",
+   "session": "session_0156nqDufLi3JgDJf3gVw7Fh"
+  },
+  {
+   "id": "decision-2026-11-25-tenant-standard-1-one-standard-one-scaffold-and-one-check-fo",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "TENANT-STANDARD-1: one standard, one scaffold and one check for every tenant repository",
+   "body": "A tenant repository's contents are data in doctrine/tenant-standard.json. One scaffold (scaffold/tenant, foundation/tenantstd.py, called by tenantrepos prepare) writes every standard file from one identity object, saved as ultrastable.json. One check reads it: tenantstd in checks, in tenant-repos.yml against each repository's main, and vendored into each tenant's ci.yml. Verified by tests/foundation/test_tenantstd.py, which scaffolds a tenant and runs its Worker tests.",
+   "probe": "file:foundation/tenantstd.py"
+  },
+  {
+   "id": "lesson-2026-11-25-a-role-whose-only-loop-is-probed-by-its-own-role-file-is-a-t",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "A role whose only loop is probed by its own role file is a title, not a manager",
+   "body": "MANAGERS-1, measured 2026-11-25: all 18 roles had a role-<id> loop whose closing probe was file:agents/roles/<id>.md, which proves only that a file exists. Four (program-manager, research-publisher, legal-ip-manager, org-designer) owned nothing else; the loop fleet-lane had owner system. Live, https://ultrastable.io/api/v1/agents showed 9 of 18 managers with no runtime row (the roles table is written once at bootstrap and was never reconciled with the roster) and the other 9 with a dispatch beat 2.8 h old because a D1 rows-read breach holds dispatch to once per 3 h. Fix in code: doctrine/managers.json and seed/autonomy/managers.json (one register, switched by data), seed/worker/src/managers.js hireStep in the tick's reconcile step, python3 -m foundation managers --check in checks, detector managers-live.",
+   "probe": "grep:foundation/managers.py::def check",
+   "session": "claude-code-managers"
+  },
+  {
+   "id": "lesson-2026-11-25-a-rule-about-live-systems-is-only-true-when-a-live-reading-s",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "A rule about live systems is only true when a live reading says so: DISCOVER-1 and the tenant claims rule were false in production",
+   "body": "The health-only gate hid the seed manifest, no seed had PUBLIC_URL bound, three tenants served no /claims.json and Replication Ledger still ran from the core copy. Repository checks were green throughout because none fetched the live surfaces. fleetcontract --live now does, for every system; the first reading ran on 2026-11-25 and named each gap.",
+   "probe": "grep:tests/foundation/test_fleetcontract.py::def test_missing_surfaces_an_unwell_system_and_a_foreign_manifest_fail",
+   "session": "session_0156nqDufLi3JgDJf3gVw7Fh"
+  },
+  {
+   "id": "lesson-2026-11-25-clone-path-1-a-copied-template-starts-from-one-form-and-one-",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "CLONE-PATH-1: a copied template starts from one form and one link",
+   "body": "Lesson: a start path is only walked when a test walks it as a person with no developer skill. Found that way: gate cards naming keys to set, a README of terminal commands, a red run for every copy with no hosting sign-in, the template example staffed as the owner's idea, the interview's IDEA.md turned away as not a fit, kernel tests failing once IDEA.md held a real idea, a front-door build failure ending in a start-over link. Changed on branch local/bootstrap, not deployed and not verified live: evidence is seed/tests/test_happy_path.py (13 pass) and site/launchpath.test.mjs (18 pass) run in a cloud session on 2026-11-25; the live proof is the next tenant-repos run of deploy/launch-apps.mjs --probe.",
+   "probe": "file:seed/tests/test_happy_path.py"
+  },
+  {
+   "id": "lesson-2026-11-25-merging-a-moving-main-with-a-prefer-ours-strategy-left-the-s",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Merging a moving main with a prefer-ours strategy left the seed Worker calling a list it no longer defined",
+   "body": "Three merges of the lane's commits used -X ours and kept older versions of files main had since changed (the visibility gate, the cold-start check, a claim probe). Only running every suite and the regeneration step with its warnings found them; tests pass on the repaired tree. For a branch the lane also writes to, merge without a side preference and resolve by reading both.",
+   "probe": "grep:seed/worker/src/visibility.js::export const PUBLIC_READS",
+   "session": "session_0156nqDufLi3JgDJf3gVw7Fh"
+  },
+  {
+   "id": "lesson-2026-11-25-practical-solutions-health-was-404-a-worker-cannot-fetch-a-s",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Practical Solutions /health was 404: a Worker cannot fetch a sibling Worker's workers.dev address (Cloudflare 1042); use the service binding",
+   "body": "tenant-ps-web proxied /health, /ps/briefs and /ps/criticality with a plain fetch to tenant-ps-core.ultrastable.workers.dev. Cloudflare refuses that inside one account. The front end now computes its own health and uses env.CORE for the rest.",
+   "probe": "grep:seed/worker/src/contract.js::id: 'health', path: '/health'",
+   "session": "session_0156nqDufLi3JgDJf3gVw7Fh"
+  },
+  {
+   "id": "lesson-2026-11-25-rule-refs-1-a-claim-bound-to-a-file-nothing-runs-is-not-boun",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "RULE-REFS-1: a claim bound to a file nothing runs is not bound",
+   "body": "Audit 2026-11-25. The public revert claim was bound to site/probes.json (mode revert), which no workflow or deploy script reads; rollback exists on the handoff path only. The claimcode baseline held 119 rows of which 87 were dead or already bound. Four site comments said loopback is rejected on lines that accept it. The seed rule file names 353 of 446 files and commands the seed does not carry. Check: foundation/rulerefs.py resolves every reference the rule files name; a probe must name code that executes the behaviour (a test), never a config file alone.",
+   "probe": "file:foundation/rulerefs.py",
+   "session": "rulerefs-audit"
+  },
+  {
+   "id": "lesson-2026-11-25-the-session-check-runner-read-two-actions-only-steps-as-fail",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "The session check runner read two Actions-only steps as failures on every run and started a half-hour run on --help",
+   "body": "checksrun now names steps that read other jobs' results or need GITHUB_REPOSITORY as skipped, never failed or passed, prints its help without running, and refuses an unknown argument. Tests pass: tests/foundation/test_checksrun.py (4).",
+   "probe": "grep:tests/foundation/test_checksrun.py::def test_help_and_unknown_arguments_run_nothing",
+   "session": "session_0156nqDufLi3JgDJf3gVw7Fh"
   }
  ]
 }
