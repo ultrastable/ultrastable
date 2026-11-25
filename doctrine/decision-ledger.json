@@ -5079,6 +5079,24 @@
    "body": "branch_cleanup.py sets allow_auto_merge and delete_branch_on_merge on every fleet repo and every tenant repo listed in doctrine/tenant-repos.json, from the lane's completion sweep.",
    "probe": "grep:scripts/branch_cleanup.py::allow_auto_merge",
    "session": "session_0156nqDsM82hJafZbpixiZx9"
+  },
+  {
+   "id": "decision-2026-11-25-unlearn-is-judged-on-its-own-feeds",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Unlearn is judged on its own feeds",
+   "body": "progress.json's Unlearn row read ultrastable.io's feed and healed with ci.yml, which ships nothing. It now reads unlearn.ultrastable.org/feed.xml, heals with vendor-sync.yml then ci.yml, and declares a stickiness block on the new JSON Feed (ultrastable/unlearn#2).",
+   "probe": "grep:instances/ultrastable/progress.json::unlearn.ultrastable.org/feed.json",
+   "session": "session_0156nqDuaQoFBGSV57Y6JNRx"
+  },
+  {
+   "id": "lesson-2026-11-25-one-tenant-s-missing-credential-stopped-every-tenant-s-redep",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "One tenant's missing credential stopped every tenant's redeploy",
+   "body": "tenant-repos.yml exited on the first tenant it could not create (replication-ledger, no ORG_ADMIN_TOKEN/LANE_PAT/lane App in this repo) and the redeploy step had no if, so moved tenants such as Unlearn were never redeployed by it. Now each tenant failure is recorded and skipped, the run still fails at the end, and the redeploy step runs unless cancelled.",
+   "probe": "grep:.github/workflows/tenant-repos.yml::!cancelled()",
+   "session": "session_0156nqDuaQoFBGSV57Y6JNRx"
   }
  ]
 }
