@@ -166,8 +166,8 @@ def run(root=REPO, apply=False, fetch=None, now=None, live=True) -> dict:
     return {"seeds": [{k: r.get(k) for k in ("slug", "stage", "next", "gates", "open", "horizon_days")} for r in rs], "verify": readings, "changed": changed}
 
 
-def probe(slug, root=REPO) -> int:
-    r = status(root, slug)[0]
+def probe(slug, root=REPO, now=None) -> int:
+    r = status(root, slug, now)[0]
     print(f"{slug}: {r.get('stage')}" + ("" if r.get("stage") == "autonomous" else f"; next {r.get('next')}: " + "; ".join(r.get("need", [])[:3])))
     return 0 if r.get("stage") == "autonomous" else 1
 

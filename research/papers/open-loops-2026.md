@@ -56,8 +56,8 @@ Source: ops/deploys.jsonl (same window).
 
 - CRITICALITY-1 (`foundation/criticality.py`): human touches are counted in the denominator of the system's own score
 
-**Measured here:** human touches counted by the latest criticality tick: 0 (n = 14). Target <= 0. Verdict: **met**.
-Source: ops/criticality.jsonl at 2026-11-23T18:02:27Z.
+**Measured here:** human touches counted by the latest criticality tick: 0 (n = 0). Target <= 0. Verdict: **met**.
+Source: ops/criticality.jsonl at 2026-11-24T17:40:23Z.
 
 ### O5. The system starts its own work (systems)
 
@@ -78,13 +78,13 @@ Source: GitHub REST pulls?state=closed, last 100 closed pull requests, fetched 2
 
 - SELF-REFERENCE-1 (`seed/worker/src/executor.js`): the tick wakes the executor, whose merged change deploys from the merge commit
 
-**Measured here:** verified deploys the system originated and executed itself (latest criticality tick): 0 (n = 14). Target >= 1. Verdict: **not-met**. Open item: `Q-RES-open-loops-2026-O6`.
-Source: ops/criticality.jsonl at 2026-11-23T18:02:27Z.
+**Measured here:** verified deploys the system originated and executed itself (latest criticality tick): 0 (n = 0). Target >= 1. Verdict: **not-met**. Open item: `Q-RES-open-loops-2026-O6`.
+Source: ops/criticality.jsonl at 2026-11-24T17:40:23Z.
 
 ## Limits
 
 - Scale. One organization: 100 closed pull requests (64 merged) over 0.75 days. Our numbers describe this system; they are not a causal estimate and are not compared with the study's effect sizes as if they were.
-- Who wrote the changes. 80% of merged pull requests in the window were opened by code agent sessions run under the owner's account, not by the system's own loops. The latest criticality tick puts the system in the driven regime with 0 self-originated deploys, so most of the work measured here was started from outside.
+- Who wrote the changes. 80% of merged pull requests in the window were opened by code agent sessions run under the owner's account, not by the system's own loops. The latest criticality tick puts the system in the subcritical regime with 0 self-originated deploys, so most of the work measured here was started from outside.
 - Review by construction. Ultrastable has no human review step, so a short open-to-merge time is partly a consequence of the design. The real test of the design is quality: the revert and deploy-verification findings, which can fail.
 - Revert share counts commits whose subject starts with Revert; a fix that undoes a change without that word is not counted, so the figure is a lower bound.
 - Source. Own r&d question set, regenerated from this system's records, version 2026-11-21; its findings may change in later versions.

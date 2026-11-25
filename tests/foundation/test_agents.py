@@ -91,3 +91,18 @@ class Agents(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ModelsOrgFallback(unittest.TestCase):
+    def test_non_json_user_endpoint_retries_org_endpoint(self):
+        from foundation import agents
+        calls = []
+
+        def tr(u, h, b):
+            calls.append(u)
+            if len(calls) == 1:
+                raise RuntimeError("non-JSON response (HTTP 200, text/plain) from x: OK")
+            return {"choices": [{"message": {"content": "done"}}]}
+        out = agents.invoke({"route": "github-models", "model": "m", "id": "g"}, "p", {"GITHUB_TOKEN": "t", "GITHUB_REPOSITORY_OWNER": "acme"}, tr)
+        self.assertEqual(out, "done")
+        self.assertIn("/orgs/acme/", calls[1])

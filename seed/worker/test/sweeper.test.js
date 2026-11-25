@@ -91,3 +91,9 @@ test('BRANCH-ROOT-CAUSE-1: a blocked PR with no check run is closed and reopened
   const r2 = await sweepOpenLoops({ token: 't', repos: ['o/r'], fetch: b.f, now: NOW });
   assert.equal(r2.retriggered, undefined);
 });
+
+test('PARKED-PR-1: parked/ branches are on the SLA ladder (they were not, so 17 automerge PRs aged past 8 h and failed agewatch every pass)', async () => {
+  const { prTier } = await import('../src/sla.js');
+  assert.equal(prTier({ ageMin: 400, idleMin: 300, state: 'blocked', branch: 'parked/agent/redmain-1' }), 'supersede');
+  assert.equal(prTier({ ageMin: 400, idleMin: 300, state: 'clean', branch: 'parked/x' }), 'ok');
+});

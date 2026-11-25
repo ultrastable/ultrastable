@@ -82,3 +82,15 @@ class GrowthProducts(unittest.TestCase):
         with tempfile.TemporaryDirectory() as t:
             bad = self._copy(t, m)
         self.assertTrue(any("growth_share_floor" in b for b in bad), bad)
+
+
+class HitsPublic(unittest.TestCase):
+    def test_public_route_returns_counts(self):
+        from foundation import growth
+        body = {"pageviews_7d": 5, "visitors_7d": 3, "agent_hits_7d": 9, "pilot_page_views_7d": 1}
+        self.assertEqual(growth.hits_public(fetch=lambda u: body), body)
+
+    def test_public_route_rejects_an_error_body(self):
+        from foundation import growth
+        with self.assertRaises(ValueError):
+            growth.hits_public(fetch=lambda u: {"error": "no analytics database"})

@@ -142,7 +142,7 @@
   ],
   "chain": {
     "workflow": "executor",
-    "max_runs_per_day": 5,
+    "max_runs_per_day": 4,
     "backoff_after_failures": 3,
     "max_runs_per_day_public": 48,
     "max_wakes_per_hour": 8
