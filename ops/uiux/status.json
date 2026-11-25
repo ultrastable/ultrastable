@@ -1,16 +1,21 @@
 {
- "at": "2026-11-21T15:19:35Z",
- "audit_at": "2026-11-17T18:46:57.420Z",
+ "at": "2026-11-25T15:51:54Z",
+ "audit_at": "2026-11-25T15:51:05.154Z",
  "audit_fresh": true,
  "audit_mode": "offline",
- "by_kind": {},
+ "by_kind": {
+  "boundary": 6,
+  "performance": 1,
+  "structure": 5,
+  "visual-drift": 44
+ },
  "experiments": [],
- "findings_blocking": 0,
- "findings_total": 0,
+ "findings_blocking": 11,
+ "findings_total": 56,
  "happy_path_pass_share": 1.0,
  "pages": 22,
  "paths": {},
  "unmeasured": [
-  "analytics: HTTPError HTTP Error 403: Forbidden"
+  "analytics: no CLOUDFLARE_API_TOKEN, funnels and experiments not read"
  ]
 }

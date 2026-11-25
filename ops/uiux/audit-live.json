@@ -1,0 +1,198 @@
+{
+ "at": "2026-11-25T15:51:54.620Z",
+ "mode": "live",
+ "pages": 11,
+ "hosts": [
+  "https://ultrastable.io",
+  "https://ultrastable.org",
+  "https://ultrastable.app",
+  "https://blindspot.ultrastable.app",
+  "https://numbers-board.ultrastable.app",
+  "https://portfolio-board.ultrastable.app",
+  "https://air-quality.ultrastable.app",
+  "https://access-check.ultrastable.app",
+  "https://country-snapshot.ultrastable.app",
+  "https://free-tier-meter.ultrastable.app",
+  "https://loop-ledger.ultrastable.app"
+ ],
+ "axe": false,
+ "findings": [
+  {
+   "kind": "structure",
+   "path": "ultrastable.org/",
+   "viewport": "phone",
+   "rule": "horizontal-scroll",
+   "detail": "5px"
+  },
+  {
+   "kind": "performance",
+   "path": "ultrastable.org/",
+   "viewport": "phone",
+   "rule": "ttfb",
+   "detail": "1308ms > 800"
+  },
+  {
+   "kind": "boundary",
+   "path": "numbers-board.ultrastable.app/",
+   "viewport": "phone",
+   "rule": "backend-detail",
+   "detail": "\"ops/transparency.json\" is visible to users"
+  },
+  {
+   "kind": "boundary",
+   "path": "numbers-board.ultrastable.app/",
+   "viewport": "desktop",
+   "rule": "backend-detail",
+   "detail": "\"ops/transparency.json\" is visible to users"
+  },
+  {
+   "kind": "boundary",
+   "path": "free-tier-meter.ultrastable.app/",
+   "viewport": "phone",
+   "rule": "backend-detail",
+   "detail": "\"D1\" is visible to users"
+  },
+  {
+   "kind": "boundary",
+   "path": "free-tier-meter.ultrastable.app/",
+   "viewport": "phone",
+   "rule": "backend-detail",
+   "detail": "\"ops/free-tier.json\" is visible to users"
+  },
+  {
+   "kind": "boundary",
+   "path": "free-tier-meter.ultrastable.app/",
+   "viewport": "desktop",
+   "rule": "backend-detail",
+   "detail": "\"D1\" is visible to users"
+  },
+  {
+   "kind": "boundary",
+   "path": "free-tier-meter.ultrastable.app/",
+   "viewport": "desktop",
+   "rule": "backend-detail",
+   "detail": "\"ops/free-tier.json\" is visible to users"
+  },
+  {
+   "kind": "structure",
+   "path": "loop-ledger.ultrastable.app/",
+   "viewport": "phone",
+   "rule": "status",
+   "detail": "404"
+  },
+  {
+   "kind": "structure",
+   "path": "loop-ledger.ultrastable.app/",
+   "viewport": "desktop",
+   "rule": "status",
+   "detail": "404"
+  },
+  {
+   "kind": "structure",
+   "path": "loop-ledger.ultrastable.app/",
+   "viewport": "phone",
+   "rule": "status",
+   "detail": "404"
+  },
+  {
+   "kind": "structure",
+   "path": "loop-ledger.ultrastable.app/",
+   "viewport": "desktop",
+   "rule": "status",
+   "detail": "404"
+  }
+ ],
+ "paths": [],
+ "perf": {
+  "ultrastable.io/@phone": {
+   "ttfb": 281,
+   "lcp": 315,
+   "cls": 0
+  },
+  "ultrastable.io/@desktop": {
+   "ttfb": 2,
+   "lcp": 37,
+   "cls": 0
+  },
+  "ultrastable.org/@phone": {
+   "ttfb": 1308,
+   "lcp": 1337,
+   "cls": 0
+  },
+  "ultrastable.org/@desktop": {
+   "ttfb": 1,
+   "lcp": 27,
+   "cls": 0
+  },
+  "blindspot.ultrastable.app/@phone": {
+   "ttfb": 110,
+   "lcp": 133,
+   "cls": 0
+  },
+  "blindspot.ultrastable.app/@desktop": {
+   "ttfb": 1,
+   "lcp": 16,
+   "cls": 0
+  },
+  "numbers-board.ultrastable.app/@phone": {
+   "ttfb": 127,
+   "lcp": 144,
+   "cls": 0
+  },
+  "numbers-board.ultrastable.app/@desktop": {
+   "ttfb": 1,
+   "lcp": 12,
+   "cls": 0
+  },
+  "portfolio-board.ultrastable.app/@phone": {
+   "ttfb": 109,
+   "lcp": 128,
+   "cls": 0
+  },
+  "portfolio-board.ultrastable.app/@desktop": {
+   "ttfb": 1,
+   "lcp": 14,
+   "cls": 0
+  },
+  "air-quality.ultrastable.app/@phone": {
+   "ttfb": 258,
+   "lcp": 275,
+   "cls": 0
+  },
+  "air-quality.ultrastable.app/@desktop": {
+   "ttfb": 1,
+   "lcp": 33,
+   "cls": 0
+  },
+  "access-check.ultrastable.app/@phone": {
+   "ttfb": 207,
+   "lcp": 230,
+   "cls": 0
+  },
+  "access-check.ultrastable.app/@desktop": {
+   "ttfb": 1,
+   "lcp": 13,
+   "cls": 0
+  },
+  "country-snapshot.ultrastable.app/@phone": {
+   "ttfb": 222,
+   "lcp": 246,
+   "cls": 0
+  },
+  "country-snapshot.ultrastable.app/@desktop": {
+   "ttfb": 1,
+   "lcp": 24,
+   "cls": 0
+  },
+  "free-tier-meter.ultrastable.app/@phone": {
+   "ttfb": 126,
+   "lcp": 144,
+   "cls": 0
+  },
+  "free-tier-meter.ultrastable.app/@desktop": {
+   "ttfb": 1,
+   "lcp": 33,
+   "cls": 0
+  }
+ }
+}
