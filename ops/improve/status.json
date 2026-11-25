@@ -1,92 +1,90 @@
 {
-  "at": "2026-11-25T15:33:34.746296+00:00",
+  "at": "2026-11-25T15:43:38.101891+00:00",
   "signals": [
     {
       "id": "reach",
       "path": "ops/reach/metrics.jsonl",
       "state": "ok",
       "value": 83,
-      "age_h": 15.7
+      "age_h": 15.8
     },
     {
       "id": "search",
       "path": "ops/reach/metrics.jsonl",
       "state": "ok",
       "value": 38,
-      "age_h": 15.7
+      "age_h": 15.8
     },
     {
       "id": "social",
       "path": "ops/reach/metrics.jsonl",
       "state": "ok",
       "value": 0,
-      "age_h": 15.7
+      "age_h": 15.8
     },
     {
       "id": "tenant",
       "path": "ops/reach/metrics.jsonl",
       "state": "ok",
       "value": 150,
-      "age_h": 15.7
+      "age_h": 15.8
     },
     {
       "id": "suggestions",
       "path": "ops/reach/metrics.jsonl",
       "state": "unmeasured",
       "value": null,
-      "age_h": 15.7
+      "age_h": 15.8
     },
     {
       "id": "market",
       "path": "ops/rnd/log.jsonl",
       "state": "stale",
       "value": 3,
-      "age_h": 191.3
+      "age_h": 191.5
     },
     {
       "id": "insight",
       "path": "ops/insight/findings.json",
       "state": "ok",
       "value": 1,
-      "age_h": 1.1
+      "age_h": 0.0
     },
     {
       "id": "uiux",
       "path": "ops/uiux/status.json",
       "state": "stale",
       "value": 1,
-      "age_h": 96.2
+      "age_h": 96.4
     }
   ],
   "tiers": [
     {
       "id": "portfolio",
       "window_days": 14,
-      "merges": 0,
-      "alive": false
+      "merges": 56,
+      "alive": true
     },
     {
       "id": "program",
       "window_days": 7,
-      "merges": 1,
+      "merges": 49,
       "alive": true
     },
     {
       "id": "project",
       "window_days": 3,
-      "merges": 3,
+      "merges": 21,
       "alive": true
     },
     {
       "id": "product",
       "window_days": 7,
-      "merges": 2,
+      "merges": 34,
       "alive": true
     }
   ],
-  "open": 12,
-  "filed": [
-    "Q-IMPROVE-SIGNAL-uiux"
-  ],
+  "open": 13,
+  "filed": [],
   "settle": []
 }
