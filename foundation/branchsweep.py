@@ -140,7 +140,10 @@ def resolve(root) -> list[str]:
         elif f.endswith(".jsonl"):
             _union_lines(root, f)
         elif f in OURS or f.startswith(OURS_PREFIX):
-            _g(root, "checkout", "--ours", f)
+            if git(root, "cat-file", "-e", ":2:" + f)[0] == 0:
+                _g(root, "checkout", "--ours", f)
+            else:  # deleted on main (modify/delete): main's deletion wins; "checkout --ours" has nothing to check out
+                _g(root, "rm", "-q", "--cached", f); (Path(root) / f).unlink(missing_ok=True); continue
         else:
             left.append(f); continue
         _g(root, "add", f)

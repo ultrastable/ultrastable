@@ -10,6 +10,11 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-25
 
+- 2026-11-25: Run branch cleanup from the lane's completion sweep (#2115)
+- 2026-11-25: Add What Works, a living atlas of policy evidence, as a tenant (#2108)
+- 2026-11-25: Fix the branch sweep so stale branches actually get deleted (#2111)
+- 2026-11-25: ZERO-MINUTES-1: worker merged #2110
+- 2026-11-25: org profile probe: find its issue by exact title (SLA-ISSUE-1) (#2110)
 - 2026-11-25: Bump the actions group with 2 updates (#2045)
 - 2026-11-25: Run retriage and the org profile probe on the fleet clock (SLA-ISSUE-1) (#2100)
 - 2026-11-25: Measure growth and shipped code without a token in Actions (#2086)
