@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/seed-lifecycle.schema.json",
+  "title": "seed-lifecycle (doctrine/seed-lifecycle.json)",
+  "description": "Contract for doctrine/seed-lifecycle.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "marker": {
+      "type": "string"
+    },
+    "target_days": {
+      "type": "number"
+    },
+    "verify_max_age_hours": {
+      "type": "number"
+    },
+    "verify_store": {
+      "type": "string"
+    },
+    "verify_key": {
+      "type": "string"
+    },
+    "topology": {
+      "type": "string"
+    },
+    "seed_deploys": {
+      "type": "string"
+    },
+    "clocks": {
+      "type": "string"
+    },
+    "progress": {
+      "type": "string"
+    },
+    "core_inputs": {
+      "type": "string"
+    },
+    "survival": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "what": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "not_seeds": {
+      "type": "object",
+      "properties": {
+        "spinoffs": {
+          "type": "string"
+        },
+        "qnfo": {
+          "type": "string"
+        }
+      }
+    },
+    "fixtures": {
+      "type": "object",
+      "properties": {
+        "demo-child": {
+          "type": "string"
+        },
+        "second-tenant": {
+          "type": "string"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "clocks",
+    "core_inputs",
+    "fixtures",
+    "marker",
+    "not_seeds",
+    "progress",
+    "seed_deploys",
+    "survival",
+    "target_days",
+    "topology",
+    "verify_key",
+    "verify_max_age_hours",
+    "verify_store"
+  ]
+}

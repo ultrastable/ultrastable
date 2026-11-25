@@ -185,3 +185,43 @@ test('the admin app turns on exactly the two drifted settings, for org repositor
   const none = await world({ admin: false });
   assert.equal((await ensureRepoSettings(none.db, none.env, T, { repo: 'ultrastable/ultrastable' }, { fetch: none.f })).waiting_on, 'admin-app');
 });
+
+// REDTEAM-1: main could be force-pushed or deleted on every repository because the protection in org-settings.json was never applied.
+test('the admin app adds the no-rewrite ruleset once and reads a free-plan refusal as plan, not protected', async () => {
+  const { ensureNoRewrite, NO_REWRITE } = await import('../src/apprepos.js');
+  const w = await world();
+  const posted = [];
+  let have = [];
+  const A = async (m, path, body) => {
+    if (m === 'GET') return path.includes('private') ? { status: 403, json: {} } : { status: 200, json: have };
+    posted.push({ path, body }); have = [{ name: body.name }]; return { status: 201, json: {} };
+  };
+  assert.deepEqual(await ensureNoRewrite(A, w.db, T, 'ultrastable/ultrastable'), { state: 'protected', added: true });
+  assert.deepEqual(await ensureNoRewrite(A, w.db, T, 'ultrastable/ultrastable'), { state: 'protected', added: false });
+  assert.equal(posted.length, 1);
+  assert.deepEqual(posted[0].body.rules.map(r => r.type).sort(), ['deletion', 'non_fast_forward']);
+  assert.deepEqual(NO_REWRITE.bypass_actors, []);
+  assert.equal((await ensureNoRewrite(A, w.db, T, 'ultrastable/private')).state, 'plan');
+});
+
+test('a repository declared public is made public and then protected; ops never', async () => {
+  const { ensureRepoSettings } = await import('../src/apprepos.js');
+  const w = await world();
+  const calls = [];
+  let priv = true;
+  const f = async (url, init = {}) => {
+    const u = new URL(url), m = init.method || 'GET';
+    if (/^\/repos\/ultrastable\/(seed|ops)$/.test(u.pathname) && m === 'GET') return new Response(JSON.stringify({ private: priv, delete_branch_on_merge: true, allow_auto_merge: true }), { status: 200 });
+    if (u.pathname.endsWith('/rulesets') && m === 'GET') return new Response(priv ? '{}' : '[]', { status: priv ? 403 : 200 });
+    calls.push(m + ' ' + u.pathname + ' ' + (init.body || ''));
+    if (m === 'PATCH') { priv = JSON.parse(init.body).private === false ? false : priv; return new Response('{}', { status: 200 }); }
+    if (m === 'POST') return new Response('{}', { status: 201 });
+    return w.f(url, init);
+  };
+  const r = await ensureRepoSettings(w.db, w.env, T, { repo: 'ultrastable/seed', public: true }, { fetch: f });
+  assert.equal(r.ok, true); assert.equal(r.protect, 'protected');
+  assert.ok(r.changed.includes('private') && r.changed.includes('main-no-rewrite'));
+  priv = true; calls.length = 0;
+  const o = await ensureRepoSettings(w.db, w.env, T, { repo: 'ultrastable/ops', public: true }, { fetch: f });
+  assert.equal(o.protect, 'plan'); assert.equal(calls.filter(c => c.startsWith('PATCH')).length, 0);
+});

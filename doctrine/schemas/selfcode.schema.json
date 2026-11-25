@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/selfcode.schema.json",
+  "title": "selfcode (doctrine/selfcode.json)",
+  "description": "Contract for doctrine/selfcode.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "enabled": {
+      "type": "boolean"
+    },
+    "scope": {
+      "type": "object",
+      "properties": {
+        "write": {
+          "type": "array"
+        },
+        "read_globs": {
+          "type": "array"
+        }
+      }
+    },
+    "rails": {
+      "type": "object",
+      "properties": {
+        "max_new_per_run": {
+          "type": "number"
+        },
+        "max_open": {
+          "type": "number"
+        },
+        "max_filed_per_day": {
+          "type": "number"
+        },
+        "refile_cooldown_hours": {
+          "type": "number"
+        },
+        "settle_after_minutes": {
+          "type": "number"
+        },
+        "trusted_issue_authors": {
+          "type": "array"
+        },
+        "intake_label": {
+          "type": "string"
+        },
+        "capacity_share": {
+          "type": "number"
+        },
+        "share_window": {
+          "type": "number"
+        },
+        "tractable_bytes": {
+          "type": "number"
+        }
+      }
+    },
+    "learning": {
+      "type": "object",
+      "properties": {
+        "min_settled": {
+          "type": "number"
+        },
+        "min_kept_rate": {
+          "type": "number"
+        },
+        "pause_hours": {
+          "type": "number"
+        }
+      }
+    },
+    "kinds": {
+      "type": "object",
+      "properties": {
+        "failing_test": {
+          "type": "object"
+        },
+        "bare_except": {
+          "type": "object"
+        },
+        "unused_import": {
+          "type": "object"
+        },
+        "todo": {
+          "type": "object"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "enabled",
+    "kinds",
+    "learning",
+    "rails",
+    "scope"
+  ]
+}

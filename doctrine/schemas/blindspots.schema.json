@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/blindspots.schema.json",
+  "title": "blindspots (doctrine/blindspots.json)",
+  "description": "Contract for doctrine/blindspots.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "gates_allowed": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "answers_file": {
+      "type": "string"
+    },
+    "learned_file": {
+      "type": "string"
+    },
+    "needs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "class": {
+            "type": "string"
+          },
+          "domain": {
+            "type": "string"
+          },
+          "gate": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "probe": {
+            "type": "string"
+          },
+          "why": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "sweeps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "cadence_days": {
+            "type": "number"
+          },
+          "data": {
+            "type": "array"
+          },
+          "domain": {
+            "type": "string"
+          },
+          "paths": {
+            "type": "array"
+          },
+          "question": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "closed_file": {
+      "type": "string"
+    },
+    "domain_expiry_file": {
+      "type": "string"
+    },
+    "domains": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "renewal_gate_days": {
+      "type": "number"
+    },
+    "refresh_days": {
+      "type": "number"
+    },
+    "grace_days": {
+      "type": "number"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "answers_file",
+    "closed_file",
+    "domain_expiry_file",
+    "domains",
+    "gates_allowed",
+    "grace_days",
+    "learned_file",
+    "needs",
+    "refresh_days",
+    "renewal_gate_days",
+    "sweeps"
+  ]
+}

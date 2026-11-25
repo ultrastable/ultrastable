@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/seed/autonomy/cost-budgets.schema.json",
+  "title": "cost-budgets (seed/autonomy/cost-budgets.json)",
+  "description": "Contract for seed/autonomy/cost-budgets.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "doc": {
+      "type": "string"
+    },
+    "budgets": {
+      "type": "array"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "budgets",
+    "doc"
+  ]
+}

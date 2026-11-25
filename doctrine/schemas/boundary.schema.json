@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/boundary.schema.json",
+  "title": "boundary (doctrine/boundary.json)",
+  "description": "Contract for doctrine/boundary.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "marker": {
+      "type": "string"
+    },
+    "axiom": {
+      "type": "string"
+    },
+    "instruction_files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "inside": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "rebuild": {
+            "type": "string"
+          },
+          "what": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "egress": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "class": {
+            "type": "string"
+          },
+          "default": {
+            "type": "string"
+          },
+          "gate": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "probe": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "rebuild": {
+      "type": "object",
+      "properties": {
+        "drill_checks": {
+          "type": "array"
+        },
+        "digest_paths": {
+          "type": "array"
+        }
+      }
+    },
+    "permissions": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": "string"
+        },
+        "inside": {
+          "type": "object"
+        },
+        "reserved": {
+          "type": "array"
+        }
+      }
+    },
+    "strange_loop": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": "string"
+        },
+        "ledger": {
+          "type": "string"
+        }
+      }
+    },
+    "reaper": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": "string"
+        },
+        "idle_hours": {
+          "type": "number"
+        },
+        "finished_states": {
+          "type": "array"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "axiom",
+    "egress",
+    "inside",
+    "instruction_files",
+    "marker",
+    "permissions",
+    "reaper",
+    "rebuild",
+    "strange_loop"
+  ]
+}

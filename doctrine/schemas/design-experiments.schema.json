@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/design-experiments.schema.json",
+  "title": "design-experiments (doctrine/design-experiments.json)",
+  "description": "Contract for doctrine/design-experiments.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "policy": {
+      "type": "object",
+      "properties": {
+        "alpha": {
+          "type": "number"
+        },
+        "min_sample_per_arm": {
+          "type": "number"
+        },
+        "max_days": {
+          "type": "number"
+        },
+        "max_concurrent_per_surface": {
+          "type": "number"
+        },
+        "bucketing": {
+          "type": "string"
+        },
+        "no_peeking": {
+          "type": "string"
+        },
+        "axes_allowed": {
+          "type": "array"
+        },
+        "never_a_variant": {
+          "type": "array"
+        },
+        "kept_when": {
+          "type": "string"
+        },
+        "statuses": {
+          "type": "array"
+        },
+        "sources": {
+          "type": "string"
+        },
+        "after_verdict": {
+          "type": "string"
+        }
+      }
+    },
+    "experiments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "arms": {
+            "type": "array"
+          },
+          "axis": {
+            "type": "string"
+          },
+          "guard_metrics": {
+            "type": "array"
+          },
+          "hypothesis": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "metric": {
+            "type": "string"
+          },
+          "prediction": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "surface": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ideas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "blast_box": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "idea": {
+            "type": "string"
+          },
+          "promote_when": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "experiments",
+    "ideas",
+    "policy",
+    "version"
+  ]
+}

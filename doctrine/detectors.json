@@ -877,6 +877,37 @@
       "remedy": "The ledger's beat checks BEAT.CROSSREF seed DOIs per beat; the 503 body names unchecked_dois and failed. A failed DOI is corrected in instances/replication-ledger/worker/data/findings.json (node worker/cli.mjs verify); an unchecked one means beats are erroring at Crossref (GET /api/beats)."
     },
     {
+      "id": "bootproof",
+      "failure_mode": "fm-seed-not-launched",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "bootproof"
+      ],
+      "timeout": 60,
+      "root_cause": "the seed kernel needs something no code in it produces (instruction import, wrangler placeholder, undeclared secret, migration collision, workflow with no trigger)",
+      "owner": "operations",
+      "remedy": "Run python3 -m foundation bootproof, fix the seed tree or declare the item in doctrine/bootproof.json with its degrade and acquire route (BOOTPROOF-1)."
+    },
+    {
+      "id": "redteam",
+      "failure_mode": "fm-blind-spot",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "redteam",
+        "--probe"
+      ],
+      "timeout": 300,
+      "root_cause": "a probe reads empty, stale, unscored or vacuous data as fine, so a failure passes until the owner sees it",
+      "owner": "operations",
+      "remedy": "Fix the check named in the finding at its root (the measurer, not the reading) and add a test that reproduces the owner-found failure."
+    },
+    {
       "id": "cost-runaway",
       "failure_mode": "fm-cost-runaway",
       "kind": "command",

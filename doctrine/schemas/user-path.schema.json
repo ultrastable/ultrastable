@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/user-path.schema.json",
+  "title": "user-path (doctrine/user-path.json)",
+  "description": "Contract for doctrine/user-path.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "template": {
+      "type": "string"
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "ask": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "no": {
+            "type": "object"
+          },
+          "service": {
+            "type": "string"
+          },
+          "why": {
+            "type": "string"
+          },
+          "yes": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "done": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      }
+    },
+    "_detect": {
+      "type": "string"
+    },
+    "tasks": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": "string"
+        },
+        "manage": {
+          "type": "object"
+        },
+        "change": {
+          "type": "object"
+        },
+        "publish": {
+          "type": "object"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_detect",
+    "_doc",
+    "done",
+    "steps",
+    "tasks",
+    "template"
+  ]
+}

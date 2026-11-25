@@ -1,0 +1,11 @@
+{
+  "id": "Q-ULTRA-uptime-COMMON-MODE",
+  "title": "Q-ULTRA-uptime-COMMON-MODE: every tenant reads the same out-of-bounds uptime; fix the reading, not the tenants",
+  "body": "**Owner:** executor\n**Trigger:** 8 tenants read one identical out-of-bounds value for `uptime` (access-check:uptime, air-quality:uptime, blindspot:uptime, country-snapshot:uptime, free-tier-meter:uptime, loop-ledger:uptime)\n**Done check:** cmd:python3 -m foundation ultrastability --status\n**Status:** open\n\nThe second loop holds its per-tenant steps on this variable (SECOND-LOOP-2 common_mode): the fault is in the shared probe or path.\n\n**Prediction:** tenant.uptime_distinct_values >= 2 within 72 h\n**Out of scope:** retiring, rebuilding or changing any single tenant.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation ultrastability --status` shows no key in common_mode.\n\n\n**Vacuous:** 2026-11-25T21:13:57Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n",
+  "labels": [
+    "p0",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Ultrastability"
+}

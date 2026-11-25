@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/runway.schema.json",
+  "title": "runway (doctrine/runway.json)",
+  "description": "Contract for doctrine/runway.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "target_days": {
+      "type": "number"
+    },
+    "cost_max_age_days": {
+      "type": "number"
+    },
+    "cost_trend_days": {
+      "type": "number"
+    },
+    "max_failure_open_days": {
+      "type": "number"
+    },
+    "failure_labels": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "failure_prefixes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "cost_max_age_days",
+    "cost_trend_days",
+    "failure_labels",
+    "failure_prefixes",
+    "max_failure_open_days",
+    "target_days",
+    "version"
+  ]
+}

@@ -1,10 +1,10 @@
 {
- "at": "2026-11-25T20:45:03Z",
+ "at": "2026-11-25T21:34:41Z",
  "days": 730,
  "drills": {
   "actions-billing": {
    "capacity": 0.5,
-   "evidence": "second route present: foundation/checksrun.py, seed/worker/src/sweeper.js, seed/worker/src/handoff.js; checksrun steps: 46",
+   "evidence": "second route present: foundation/checksrun.py, seed/worker/src/sweeper.js, seed/worker/src/handoff.js; checksrun steps: 47",
    "exercised": false,
    "mode": "degrades",
    "recover": true
@@ -112,7 +112,7 @@
    "why": "its recovery is declared but no drill exercises code"
   },
   {
-   "evidence": "second route present: foundation/checksrun.py, seed/worker/src/sweeper.js, seed/worker/src/handoff.js; checksrun steps: 46",
+   "evidence": "second route present: foundation/checksrun.py, seed/worker/src/sweeper.js, seed/worker/src/handoff.js; checksrun steps: 47",
    "id": "actions-billing",
    "why": "its recovery is declared but no drill exercises code"
   },
@@ -128,18 +128,20 @@
   }
  ],
  "horizon": {
-  "capacity_year_p50": 0.706,
+  "capacity_year_p50": 0.69,
   "killers": {
-   "token-revoked": 12
+   "token-revoked": 15
   },
   "p10": 730,
   "p50": 730,
   "p90": 730,
-  "survive_year": 0.995
+  "survive_year": 1.0
  },
  "marker": "YEAR-SIM-1",
  "meets_target": true,
- "rates_observed": [],
+ "rates_observed": [
+  "merge-conflict"
+ ],
  "release_horizon_p10": 730,
  "runs": 200,
  "self_commits": {
@@ -175,75 +177,41 @@
   "window_days": 14
  },
  "self_rate_per_day": 0.714,
- "self_releases_year_p50": 184.0,
+ "self_releases_year_p50": 179.8,
  "sensitivity": {
   "base": {
    "p10": 730,
-   "survive_year": 0.983
+   "survive_year": 1.0
   },
   "ranked": [
    {
     "effect": {
      "0.5": {
-      "d_survive": 0.017,
+      "d_survive": 0.0,
       "p10": 730,
       "survive_year": 1.0
      },
      "2.0": {
-      "d_survive": -0.033,
-      "p10": 604,
+      "d_survive": -0.05,
+      "p10": 428,
       "survive_year": 0.95
      }
     },
-    "id": "scheduler-silent",
-    "rate": 52,
-    "swing": 0.033
+    "id": "token-revoked",
+    "rate": 1,
+    "swing": 0.05
    },
    {
     "effect": {
      "0.5": {
-      "d_survive": 0.017,
+      "d_survive": -0.017,
       "p10": 730,
-      "survive_year": 1.0
+      "survive_year": 0.983
      },
      "2.0": {
       "d_survive": 0.0,
-      "p10": 715,
-      "survive_year": 0.983
-     }
-    },
-    "id": "actions-billing",
-    "rate": 4,
-    "swing": 0.017
-   },
-   {
-    "effect": {
-     "0.5": {
-      "d_survive": 0.017,
-      "p10": 730,
+      "p10": 718,
       "survive_year": 1.0
-     },
-     "2.0": {
-      "d_survive": 0.017,
-      "p10": 730,
-      "survive_year": 1.0
-     }
-    },
-    "id": "actions-outage",
-    "rate": 24,
-    "swing": 0.017
-   },
-   {
-    "effect": {
-     "0.5": {
-      "d_survive": 0.017,
-      "p10": 730,
-      "survive_year": 1.0
-     },
-     "2.0": {
-      "d_survive": -0.016,
-      "p10": 730,
-      "survive_year": 0.967
      }
     },
     "id": "ai-quota",
@@ -253,12 +221,12 @@
    {
     "effect": {
      "0.5": {
-      "d_survive": 0.017,
+      "d_survive": -0.017,
       "p10": 730,
-      "survive_year": 1.0
+      "survive_year": 0.983
      },
      "2.0": {
-      "d_survive": 0.017,
+      "d_survive": 0.0,
       "p10": 730,
       "survive_year": 1.0
      }
@@ -270,14 +238,14 @@
    {
     "effect": {
      "0.5": {
-      "d_survive": 0.017,
+      "d_survive": 0.0,
       "p10": 730,
       "survive_year": 1.0
      },
      "2.0": {
-      "d_survive": 0.017,
-      "p10": 671,
-      "survive_year": 1.0
+      "d_survive": -0.017,
+      "p10": 730,
+      "survive_year": 0.983
      }
     },
     "id": "cost-spike",
@@ -287,65 +255,99 @@
    {
     "effect": {
      "0.5": {
-      "d_survive": 0.017,
+      "d_survive": 0.0,
       "p10": 730,
       "survive_year": 1.0
      },
      "2.0": {
-      "d_survive": 0.017,
+      "d_survive": -0.017,
+      "p10": 730,
+      "survive_year": 0.983
+     }
+    },
+    "id": "github-down",
+    "rate": 3,
+    "swing": 0.017
+   },
+   {
+    "effect": {
+     "0.5": {
+      "d_survive": 0.0,
       "p10": 730,
       "survive_year": 1.0
+     },
+     "2.0": {
+      "d_survive": -0.017,
+      "p10": 730,
+      "survive_year": 0.983
      }
     },
     "id": "merge-conflict",
-    "rate": 200,
+    "rate": 159.7,
     "swing": 0.017
    },
    {
     "effect": {
      "0.5": {
-      "d_survive": 0.017,
-      "p10": 730,
-      "survive_year": 1.0
+      "d_survive": -0.017,
+      "p10": 630,
+      "survive_year": 0.983
      },
      "2.0": {
-      "d_survive": 0.017,
-      "p10": 730,
+      "d_survive": 0.0,
+      "p10": 674,
       "survive_year": 1.0
      }
     },
-    "id": "model-retirement",
-    "rate": 6,
-    "swing": 0.017
-   },
-   {
-    "effect": {
-     "0.5": {
-      "d_survive": 0.017,
-      "p10": 730,
-      "survive_year": 1.0
-     },
-     "2.0": {
-      "d_survive": -0.016,
-      "p10": 511,
-      "survive_year": 0.967
-     }
-    },
-    "id": "token-revoked",
-    "rate": 1,
+    "id": "scheduler-silent",
+    "rate": 52,
     "swing": 0.017
    },
    {
     "effect": {
      "0.5": {
       "d_survive": 0.0,
-      "p10": 730,
-      "survive_year": 0.983
+      "p10": 720,
+      "survive_year": 1.0
      },
      "2.0": {
       "d_survive": 0.0,
       "p10": 730,
-      "survive_year": 0.983
+      "survive_year": 1.0
+     }
+    },
+    "id": "actions-billing",
+    "rate": 4,
+    "swing": 0.0
+   },
+   {
+    "effect": {
+     "0.5": {
+      "d_survive": 0.0,
+      "p10": 730,
+      "survive_year": 1.0
+     },
+     "2.0": {
+      "d_survive": 0.0,
+      "p10": 730,
+      "survive_year": 1.0
+     }
+    },
+    "id": "actions-outage",
+    "rate": 24,
+    "swing": 0.0
+   },
+   {
+    "effect": {
+     "0.5": {
+      "d_survive": 0.0,
+      "p10": 730,
+      "survive_year": 1.0
+     },
+     "2.0": {
+      "d_survive": 0.0,
+      "p10": 730,
+      "survive_year": 1.0
      }
     },
     "id": "dependency-break",
@@ -357,29 +359,29 @@
      "0.5": {
       "d_survive": 0.0,
       "p10": 730,
-      "survive_year": 0.983
+      "survive_year": 1.0
      },
      "2.0": {
       "d_survive": 0.0,
       "p10": 730,
-      "survive_year": 0.983
+      "survive_year": 1.0
      }
     },
-    "id": "github-down",
-    "rate": 3,
+    "id": "model-retirement",
+    "rate": 6,
     "swing": 0.0
    }
   ],
   "runs": 60
  },
  "strict": {
-  "capacity_year_p50": 0.498,
+  "capacity_year_p50": 0.728,
   "killers": {
-   "domain-renewal": 75,
-   "token-revoked": 125
+   "domain-renewal": 100,
+   "token-revoked": 100
   },
-  "p10": 50,
-  "p50": 233,
+  "p10": 42,
+  "p50": 349,
   "p90": 350,
   "survive_year": 0.0
  },
