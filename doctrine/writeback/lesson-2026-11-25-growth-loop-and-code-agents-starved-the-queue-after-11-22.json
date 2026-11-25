@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-25-growth-loop-and-code-agents-starved-the-queue-after-11-22",
+  "kind": "lesson",
+  "date": "2026-11-25",
+  "title": "Growth loop and code agents starved the queue after 11-22",
+  "body": "GROWTH-STARVE-1 + MODELS-ORG-1 (2026-11-25, Session: session_0156nqDvJ5oNPSCVZzS8cYKL): queue drained to 0; PM skipped unmeasured metrics; GitHub Models answered 200 OK text. Unmeasured metrics now count as behind under the growth target; github-models retries the org endpoint.",
+  "probe": "grep:foundation/pm.py::GROWTH-STARVE-1"
+ },
+ "kind": "lesson",
+ "title": "Growth loop and code agents starved the queue after 11-22",
+ "session": ""
+}
