@@ -1894,6 +1894,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **Every system keeps a knowledge graph of all its data, built and maintained by itself (KGRAPH-1, Rowan 2026-11-25).** \"All UltraStable",
+   "detail": "",
+   "how": "file:seed/worker/src/knowledge.js + file:doctrine/knowledge-graph.json + file:seed/worker/test/knowledge.test.js + file:tests/foundation/test_kgcheck.py",
+   "id": "cited-bd5257bc87",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
@@ -2555,6 +2564,15 @@ export default {
    "detail": "",
    "how": "file:seed/scripts/improve.py + file:seed/autonomy/improve.json + file:seed/.github/workflows/improve.yml + file:foundation/improve.py + file:doctrine/improve.json + file:tests/foundation/test_improve.py",
    "id": "mirror-0ea4d489e9",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Every system keeps a knowledge graph of all its data, built and maintained by itself (KGRAPH-1, Rowan 2026-11-25).** \"All UltraStable",
+   "detail": "",
+   "how": "file:seed/worker/src/knowledge.js + file:doctrine/knowledge-graph.json + file:seed/worker/test/knowledge.test.js + file:tests/foundation/test_kgcheck.py",
+   "id": "mirror-acc4975a56",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3467,7 +3485,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 382,
-  "total": 382
+  "pass": 384,
+  "total": 384
  }
 };

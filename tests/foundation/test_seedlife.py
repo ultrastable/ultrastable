@@ -141,7 +141,9 @@ class Stages(Fixture):
         self.assertIn("**Status:** open", it["body"]); self.assertIn("seedlife --probe s1", it["body"])
         self.autonomous()
         seedlife.run(self.root, apply=True, now=NOW, live=False)
-        self.assertIn("**Status:** closed", json.loads((self.root / "docs/issues/Q-SEED-s1.json").read_text(encoding="utf-8"))["body"])
+        body = json.loads((self.root / "docs/issues/Q-SEED-s1.json").read_text(encoding="utf-8"))["body"]
+        self.assertIn("**Status:** closed", body)
+        self.assertIn("**Evidence:**", body)  # queue.check calls a closed item without evidence a silent drop; Q-SEED-what-works turned main red (2026-11-25)
         self.assertEqual(seedlife.check(self.root, NOW), [])
 
     def test_malformed_answers_fail(self):

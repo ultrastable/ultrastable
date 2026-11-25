@@ -278,6 +278,30 @@
       "column": "at",
       "keep_days": 30,
       "reason": "CF-ALERTS-1: one row per Cloudflare alert; settling reads the last day per type, so 30 days is ample"
+    },
+    "kg_nodes": {
+      "keep": "managed",
+      "reason": "KGRAPH-1: pruned by seed/worker/src/knowledge.js runKg (retired facts after retain_days 180, runs after runs_days 90); integer-millisecond time columns"
+    },
+    "kg_edges": {
+      "keep": "managed",
+      "reason": "KGRAPH-1: pruned by seed/worker/src/knowledge.js runKg (retired facts after retain_days 180, runs after runs_days 90); integer-millisecond time columns"
+    },
+    "kg_runs": {
+      "keep": "managed",
+      "reason": "KGRAPH-1: pruned by seed/worker/src/knowledge.js runKg (retired facts after retain_days 180, runs after runs_days 90); integer-millisecond time columns"
+    },
+    "kg_sources": {
+      "keep": "managed",
+      "reason": "KGRAPH-1: one row per source record, replaced on each sync; size follows the system's own records"
+    },
+    "kg_insights": {
+      "keep": "managed",
+      "reason": "KGRAPH-1: one row per insight; settled insights are the calibration history the insight weights are computed from"
+    },
+    "kg_state": {
+      "keep": "managed",
+      "reason": "KGRAPH-1: one row per tenant (analysis cache and insight weights)"
     }
   }
 }

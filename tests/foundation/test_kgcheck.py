@@ -4,6 +4,7 @@
 back, a pending row with no queue item, and a missing rule."""
 import json, shutil, tempfile, unittest
 from pathlib import Path
+import _repo
 from foundation import kgcheck
 
 REPO = Path(__file__).resolve().parents[2]
@@ -13,7 +14,7 @@ FILES = ["doctrine/knowledge-graph.json", "doctrine/tenant-repos.json", "instanc
 
 class KgCheck(unittest.TestCase):
     def setUp(self):
-        self.root = Path(tempfile.mkdtemp())
+        self.root = _repo.scratch()
         for f in FILES:
             (self.root / f).parent.mkdir(parents=True, exist_ok=True)
             shutil.copy(REPO / f, self.root / f)
