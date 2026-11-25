@@ -91,12 +91,12 @@ Source: ops/criticality.jsonl at 2026-11-24T17:40:23Z.
 
 ## Proposed further links (leads, not findings)
 
-Found by core/connect on the lexical-512-vhkbz1 route; each is a proposal until a study file adopts it.
+Found by core/connect on the lexical-512-19e9ln route; each is a proposal until a study file adopts it.
 
-- O1 may also relate to FLOW-DIRECTIVE-1 (similarity 0.144)
+- O1 may also relate to FLOW-DIRECTIVE-1 (similarity 0.146)
 - O2 may also relate to CLOCKWORK-1 (similarity 0.129)
-- O5 may also relate to UNKNOWNS-1 (similarity 0.167)
-- O5 may also relate to DRAIN-ZERO-1 (similarity 0.158)
+- O5 may also relate to UNKNOWNS-1 (similarity 0.168)
+- O5 may also relate to DRAIN-ZERO-1 (similarity 0.157)
 - O6 may also relate to FLOW-DIRECTIVE-1 (similarity 0.115)
 
 ## Method

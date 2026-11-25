@@ -1813,6 +1813,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **Every system deploys itself in full: repo, back end and a public web UI (FULLSTACK-1, Rowan 2026-11-25).** \"All UltraStable deployments",
+   "detail": "",
+   "how": "file:doctrine/tenant-repos.json + file:doctrine/topology.json + file:tests/foundation/test_tenantrepos.py + file:foundation/tenantrepos.py + grep:.github/workflows/checks.yml::foundation[ .]tenantrepos\\b",
+   "id": "cited-faa1765dd1",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Everything is traceable, and the database stays small (AUDIT-CHAIN-1, Rowan 2026-11-17).** \"It has to be auditable to be believed ...",
    "detail": "",
    "how": "file:seed/autonomy/retention.json + file:seed/worker/test/auditchain.test.js",
@@ -1871,15 +1880,6 @@ export default {
    "detail": "",
    "how": "file:seed/worker/src/vendor/core/stickiness.js + file:seed/worker/src/stickiness.js + file:instances/ultrastable/progress.json + file:seed/worker/test/stickiness.test.js + file:workers/core/stickiness/stickiness.test.js",
    "id": "cited-be4db6262d",
-   "kind": "claim",
-   "pass": true,
-   "surface": "agents/AGENTS.md"
-  },
-  {
-   "claim": "- **Every system keeps a knowledge graph of all its data and mines it for links nobody made (KGRAPH-1, Rowan 2026-11-25).** \"All",
-   "detail": "",
-   "how": "file:seed/worker/src/graph.js + file:seed/worker/migrations/0031_graph.sql + file:research/studies/knowledge-graph-2026.json + file:foundation/kgraph.py + file:doctrine/kgraph.json + file:tests/foundation/test_kgraph.py",
-   "id": "cited-af406de0ff",
    "kind": "claim",
    "pass": true,
    "surface": "agents/AGENTS.md"
@@ -2488,6 +2488,15 @@ export default {
    "surface": "seed/agents/AGENTS.md"
   },
   {
+   "claim": "- **Every system deploys itself in full: repo, back end and a public web UI (FULLSTACK-1, Rowan 2026-11-25).** \"All UltraStable deployments",
+   "detail": "",
+   "how": "file:doctrine/tenant-repos.json + file:doctrine/topology.json + file:tests/foundation/test_tenantrepos.py + file:foundation/tenantrepos.py + grep:.github/workflows/checks.yml::foundation[ .]tenantrepos\\b",
+   "id": "mirror-3ae0f5f6d0",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
    "claim": "- **Everything is traceable, and the database stays small (AUDIT-CHAIN-1, Rowan 2026-11-17).** \"It has to be auditable to be believed ...",
    "detail": "",
    "how": "file:seed/autonomy/retention.json + file:seed/worker/test/auditchain.test.js",
@@ -2537,15 +2546,6 @@ export default {
    "detail": "",
    "how": "file:seed/worker/src/vendor/core/stickiness.js + file:seed/worker/src/stickiness.js + file:instances/ultrastable/progress.json + file:seed/worker/test/stickiness.test.js + file:workers/core/stickiness/stickiness.test.js",
    "id": "mirror-9111f7c2d8",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/agents/AGENTS.md"
-  },
-  {
-   "claim": "- **Every system keeps a knowledge graph of all its data and mines it for links nobody made (KGRAPH-1, Rowan 2026-11-25).** \"All",
-   "detail": "",
-   "how": "file:seed/worker/src/graph.js + file:seed/worker/migrations/0031_graph.sql + file:research/studies/knowledge-graph-2026.json + file:foundation/kgraph.py + file:doctrine/kgraph.json + file:tests/foundation/test_kgraph.py",
-   "id": "mirror-7b8a603445",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3217,7 +3217,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 63 Python and 490 Worker tests",
+   "claim": "seed-tests: 63 Python and 487 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3226,7 +3226,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 490 Worker tests",
+   "claim": "seed-worker-tests: 487 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3262,7 +3262,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 932",
+   "claim": "live-deploys: 937",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",
