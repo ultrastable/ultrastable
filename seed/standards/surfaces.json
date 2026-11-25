@@ -671,6 +671,19 @@
       "reason": "served by the tick Worker; the site serves /api/graph and /api/graph/insights publicly over a service binding"
     },
     {
+      "id": "graph-ai",
+      "path": "/api/graph/ai",
+      "methods": [
+        "GET"
+      ],
+      "kind": "rest",
+      "audience": "public",
+      "standards": [],
+      "discoverable": false,
+      "description": "KGRAPH-AI-1: the knowledge graph's AI layer: today's neuron cost against its share, embedded node count and community summaries.",
+      "reason": "served by the tick Worker; a cost probe for the graph's Workers AI use"
+    },
+    {
       "id": "graph-insights",
       "path": "/api/graph/insights",
       "methods": [
