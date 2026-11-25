@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-25-replication-ledger-names-its-knowledge-graph-on-the-front-en",
+  "kind": "decision",
+  "date": "2026-11-25",
+  "title": "Replication Ledger names its knowledge graph on the front end",
+  "body": "The /graph page (Connections in the nav) shows the shared engine's live measurements, open insights and method from D1 on every request; with no reading yet it says so. My own parallel graph engine (PR 2191 first version) was dropped for the merged KGRAPH engine from PR 2151.",
+  "probe": "grep:instances/replication-ledger/worker/site.js::export function graphPage",
+  "session": "https://claude.ai/code/session_0156nqDsz4YUXpAoqH9CX7mq"
+ },
+ "kind": "decision",
+ "title": "Replication Ledger names its knowledge graph on the front end",
+ "session": "https://claude.ai/code/session_0156nqDsz4YUXpAoqH9CX7mq"
+}
