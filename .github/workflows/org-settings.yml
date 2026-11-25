@@ -4,7 +4,9 @@ name: org-settings
 # free-alternative: run `scripts/apply_github_settings.sh` from a cloud-hosted agent session with the admin token bound
 # Applies github/org-settings.json (org profile fields, repo description/homepage/topics, merge and
 # security settings, main-branch protection). Needs ORG_ADMIN_TOKEN (docs/ops/ORG-TOKEN.md).
-# Without the token the run is red with an explicit gate message; that is the recorded state of BG-22.
+# REPO-SETTINGS-1: without the token the run is green and degrades: delete_branch_on_merge and allow_auto_merge are set on every repo through the
+# platform's own administration app (deploy/repo-settings.mjs over this run's OIDC token), and the rest stays the recorded gate org-admin-settings
+# in doctrine/open-loops.json (default in effect, probe there). A red run every week with nothing to act on taught nothing.
 on:
   schedule:
     - cron: '17 5 * * 1'
@@ -13,6 +15,7 @@ on:
       mode: {description: "apply | probe", required: true, default: apply}
 permissions:
   contents: read
+  id-token: write  # REPO-SETTINGS-1: the admin-app route for the two repo settings when ORG_ADMIN_TOKEN is not bound
 concurrency: {group: org-settings, cancel-in-progress: false}
 jobs:
   run:
@@ -21,9 +24,24 @@ jobs:
     timeout-minutes: 10
     env:
       GH_TOKEN: ${{ secrets.ORG_ADMIN_TOKEN || github.token }}
+      HAS_ADMIN: ${{ secrets.ORG_ADMIN_TOKEN != '' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        if: env.HAS_ADMIN != 'true'
+        with: {node-version: 24}
+      - name: Without the admin token, the two repo settings go through the platform's admin app (REPO-SETTINGS-1)
+        if: env.HAS_ADMIN != 'true'
+        run: |
+          fail=0
+          for R in $(jq -r '.repos|keys[]' github/org-settings.json); do
+            if out="$(node deploy/repo-settings.mjs "$R")"; then echo "ok   $R: $out"; else echo "FAIL $R"; fail=1; fi
+          done
+          echo "the remaining org settings are gate org-admin-settings in doctrine/open-loops.json (default in effect)"
+          exit $fail
       - name: Platform audit (probe, then fix drift)
+        if: env.HAS_ADMIN == 'true'
         run: python3 -m foundation platformaudit ${{ (inputs.mode || 'apply') == 'probe' && '--probe' || '--apply' }}
       - name: Apply or probe
+        if: env.HAS_ADMIN == 'true'
         run: bash scripts/apply_github_settings.sh "${{ inputs.mode || 'apply' }}"

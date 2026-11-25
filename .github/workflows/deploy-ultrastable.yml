@@ -41,6 +41,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: node deploy/deploy-oidc.mjs "${{ inputs.workers }}"
+      - name: Every system's knowledge graph answers live after the deploy (DATAGRAPH-LIVE-1)
+        # a deploy was once called done while two tenants' graphs were never read back; the read is part of the deploy, a red one goes to ciwatch
+        if: steps.gate.outputs.deploy == 'true'
+        run: python3 -m foundation datagraph --live
       - name: Record the verified deploy (DEPLOY-RECORD-1)
         if: steps.gate.outputs.deploy == 'true'
         run: |

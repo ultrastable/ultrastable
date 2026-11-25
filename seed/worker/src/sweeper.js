@@ -4,13 +4,14 @@
 // For each open PR on a client branch: refresh a stale branch, merge when green, and once it is older than maxAgeH file one tracked item (Q-OPENLOOP-<repo>-<n>) with owner, trigger and probe.
 // For each issue still labelled claimed/dispatched past maxAgeH: release the claim so the executor re-takes it. Returns open_loop_age_hours, the probe value (target 0).
 import { notGreen } from './greenguard.js';
+import { ghFetch, mergedAnyway } from './ghfetch.js';  // GH-RETRY-1
 import { reconcile, makeGh, latency } from './mergenow.js';
 import { prTier, portItemId } from './sla.js';  // SLA-1
 const API = 'https://api.github.com';
 // BRANCH-ROOT-CAUSE-1: `worker/` branches (the Worker executor's own PRs) were never swept, so they sat blocked; every automation prefix is swept.
 const CLIENT_PREFIX = ['claude/', 'agent/', 'worker/', 'parked/', 'dependabot/'];  // PARKED-PR-1: the branch reaper parks as parked/<name> and the completion sweep opens a PR for it; without this prefix those PRs had no clock (23 overdue, fleet red every 10 min).  // DEP-LOOP-1: dependency updates merge on green like any client PR (GREEN-GUARD-1 applies)
 export async function gh(f, token, method, path, body) {
-  const r = await f(API + path, { method, headers: { authorization: 'Bearer ' + token, accept: 'application/vnd.github+json', 'user-agent': 'ultrastable-sweeper', 'content-type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
+  const r = await ghFetch(f, API + path, { method, headers: { authorization: 'Bearer ' + token, accept: 'application/vnd.github+json', 'user-agent': 'ultrastable-sweeper', 'content-type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
   const t = await r.text();
   // Not a throw: every caller reads ok/status and records a failure in out.errors (sweeper_runs.errors), so nothing is silent,
   // and a 410 (issues off) or 405 (merge refused) is an expected answer that must not abort the rest of the sweep.
@@ -75,6 +76,7 @@ export async function sweepOpenLoops({ token, repos = [], fetch: f = fetch, now 
         if (hold) out.held = [...(out.held || []), `${tag} ${hold}`];
         if (d.mergeable_state === 'clean' && !hold) {
           const m = await gh(f, token, 'PUT', `/repos/${repo}/pulls/${p.number}/merge`, { merge_method: 'squash' });
+          if (!m.ok && await mergedAnyway((mm, pp) => gh(f, token, mm, pp), repo, p.number, m.status)) m.ok = true;  // GH-RETRY-1
           if (m.ok) { out.merged.push(tag); continue; }
         }
         const age = hours(p.updated_at || p.created_at, now);

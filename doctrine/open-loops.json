@@ -533,6 +533,39 @@
    "reason": "whether GitHub lets the administration App create a repository in the org, and whether the code App's installation covers a repository created after it was installed, is only known from GitHub's live answer; if either is refused the remaining act is the owner's one click at /connect/github-admin or /connect/repos",
    "default": "every visitor app is live at ultrastable.io/s/<id> and gets its own deployed system; its change requests and ownership request are kept in its launch record with the exact thing waited on (admin-app, admin-app-scope, code-app-scope); each daily run tries again and finishes the repository the first time GitHub allows it",
    "probe": "cmd:node deploy/launch-apps.mjs --routes"
+  },
+  {
+   "id": "org-admin-settings",
+   "surfaces": [
+    {
+     "s": "ORG_ADMIN_TOKEN in org-settings.yml",
+     "result": "unbound; the weekly run was red on every run since 2026-11-16 with nothing it could act on",
+     "class": "existing-credentials"
+    },
+    {
+     "s": "GITHUB_TOKEN of the workflow",
+     "result": "may not change repository settings or org fields",
+     "class": "alternate-channel"
+    },
+    {
+     "s": "the tick Worker's credential store (D1 ultrastable-org), read 2026-11-25",
+     "result": "holds a live administration-only App token (github-admin), the same one that now creates tenant repositories (TENANT-REPO-2)",
+     "class": "sibling-workers"
+    },
+    {
+     "s": "the tick Worker's administration App (github-admin), reached over the site's OIDC route",
+     "result": "built (seed/worker/src/apprepos.js ensureRepoSettings, deploy/repo-settings.mjs): sets delete_branch_on_merge and allow_auto_merge on every org repository; used by org-settings.yml and scripts/branch_cleanup.py when the token is absent",
+     "class": "construct"
+    },
+    {
+     "s": "git history of org-settings.yml",
+     "na": "the workflow has never run green; there is no working configuration to restore",
+     "class": "prior-working-config"
+    }
+   ],
+   "reason": "org profile fields, branch protection and security settings in github/org-settings.json need an org-admin credential that only the owner can mint; the administration App covers the two settings branch cleanup needs",
+   "default": "delete_branch_on_merge and allow_auto_merge are held on every repository by the admin App each week and on every lane completion sweep; branch cleanup deletes merged branches itself; the other org settings stay as they are on GitHub",
+   "probe": "cmd:python3 scripts/branch_cleanup.py --check"
   }
  ]
 }

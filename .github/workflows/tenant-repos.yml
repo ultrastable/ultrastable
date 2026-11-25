@@ -128,3 +128,6 @@ jobs:
         # Fetches each system's front end and back end. Red when a part is missing or does not answer; the missing part's queue item is the fix.
         if: always()
         run: python3 -m foundation fullstack --live
+      - name: Every system's knowledge graph is built and fresh (DATAGRAPH-LIVE-1)
+        if: ${{ !cancelled() }}
+        run: python3 -m foundation datagraph --live
