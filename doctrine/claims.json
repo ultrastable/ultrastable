@@ -2285,6 +2285,20 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-e8b911178e",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Every system keeps a knowledge graph of all its data and reads insights from it on its own (KGRAPH-1, Rowan 2026-11-25).** \"All",
+      "probe": [
+        "file:workers/core/kgraph/insight.js",
+        "file:seed/worker/src/kgraph.js",
+        "file:doctrine/knowledge-graph.json",
+        "file:workers/core/kgraph/insight.test.js",
+        "file:seed/worker/test/kgraph.test.js",
+        "file:tests/foundation/test_kgraph.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-0b86697d1d",
       "surface": "agents/AGENTS.md",
       "text": "- **Ultrastable runs its own R&D and publishes its own white papers; Ashby's mechanism is code (RESEARCH-1, ASHBY-1, Rowan 2026-11-21).**",
@@ -3175,6 +3189,21 @@
       ],
       "bound_by": "mirror",
       "of": "cited-d3be926b7b"
+    },
+    {
+      "id": "mirror-e07e027afe",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Every system keeps a knowledge graph of all its data and reads insights from it on its own (KGRAPH-1, Rowan 2026-11-25).** \"All",
+      "probe": [
+        "file:workers/core/kgraph/insight.js",
+        "file:seed/worker/src/kgraph.js",
+        "file:doctrine/knowledge-graph.json",
+        "file:workers/core/kgraph/insight.test.js",
+        "file:seed/worker/test/kgraph.test.js",
+        "file:tests/foundation/test_kgraph.py"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-e8b911178e"
     },
     {
       "id": "mirror-289b3b8589",

@@ -1840,6 +1840,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **Every system keeps a knowledge graph of all its data and reads insights from it on its own (KGRAPH-1, Rowan 2026-11-25).** \"All",
+   "detail": "",
+   "how": "file:workers/core/kgraph/insight.js + file:seed/worker/src/kgraph.js + file:doctrine/knowledge-graph.json + file:workers/core/kgraph/insight.test.js + file:seed/worker/test/kgraph.test.js + file:tests/foundation/test_kgraph.py",
+   "id": "cited-e8b911178e",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Ultrastable runs its own R&D and publishes its own white papers; Ashby's mechanism is code (RESEARCH-1, ASHBY-1, Rowan 2026-11-21).**",
    "detail": "",
    "how": "file:foundation/ultrastability.py + file:foundation/research.py + file:doctrine/research.json + file:site/research.js + file:tests/foundation/test_research.py + file:tests/foundation/test_ultrastability.py",
@@ -2510,6 +2519,15 @@ export default {
    "detail": "",
    "how": "file:seed/worker/src/livechanges.js + file:site/live.js + file:seed/worker/test/livechanges.test.js + file:site/site.test.mjs",
    "id": "mirror-b9c4dda8e0",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Every system keeps a knowledge graph of all its data and reads insights from it on its own (KGRAPH-1, Rowan 2026-11-25).** \"All",
+   "detail": "",
+   "how": "file:workers/core/kgraph/insight.js + file:seed/worker/src/kgraph.js + file:doctrine/knowledge-graph.json + file:workers/core/kgraph/insight.test.js + file:seed/worker/test/kgraph.test.js + file:tests/foundation/test_kgraph.py",
+   "id": "mirror-e07e027afe",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3467,7 +3485,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 382,
-  "total": 382
+  "pass": 384,
+  "total": 384
  }
 };
