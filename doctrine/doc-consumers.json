@@ -167,6 +167,7 @@
     "instances/base-rates/IDEA.md",
     "instances/did-it-work/IDEA.md",
     "instances/open-questions/IDEA.md",
+    "instances/replication-ledger/IDEA.md",
     "instances/what-works/IDEA.md"
    ],
    "consumer": "foundation/seedlife.py",

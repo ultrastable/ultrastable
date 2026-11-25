@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-25-replication-ledger-seeded-as-a-moving-tenant-tenant-repo-1",
+  "kind": "decision",
+  "date": "2026-11-25",
+  "title": "Replication Ledger seeded as a moving tenant (TENANT-REPO-1)",
+  "body": "Rowan 2026-11-25 asked for an encyclopedic replication ledger across fields, and restated that every Ultrastable deployment has its own GitHub repo and runs sandboxed as a tenant app. instances/replication-ledger holds the manifest plus a first-slice worker (data model, computed standing rubric, Crossref-backed add/verify CLI, 25 findings in 5 fields, 6 replication projects); doctrine/tenant-repos.json registers it as moving so tenant-repos.yml creates ultrastable/replication-ledger from the folder's history. Seed DOIs are unchecked until Q-RLEDGER-VERIFY: this session had no route to Crossref.",
+  "probe": "grep:doctrine/tenant-repos.json::\"replication-ledger\""
+ },
+ "kind": "decision",
+ "title": "Replication Ledger seeded as a moving tenant (TENANT-REPO-1)",
+ "session": "session_0156nqDsz4YUXpAoqH9CX7mq"
+}
