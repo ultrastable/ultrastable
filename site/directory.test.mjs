@@ -56,3 +56,22 @@ test("opt-out removes a listed site at once", async () => {
   await recheck(env, site({ ...good, discoverable: false }), new Date(Date.now() + 21 * 3600e3));
   assert.equal(env.DB.rows.size, 0);
 });
+
+// BOOT-ACCEPT-1 found it live: POST /api/directory/register sat behind the site worker's "GET or HEAD only" gate and answered 405,
+// so no seed's heartbeat ever reached register(). The route is read through the worker's own fetch, as a seed calls it.
+test("the site worker routes POST /api/directory/register to register(), not to the 405 gate", async () => {
+  const mod = (await import("./worker.js")).default;
+  const r = await mod.fetch(new Request("https://ultrastable.io/api/directory/register", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ url: "https://example.org" }) }), {}, { waitUntil() {} });
+  assert.notEqual(r.status, 405);
+  assert.equal((await r.json()).error, "directory_unavailable");
+});
+
+// The class, not the instance: a POST branch written after the method gate can never run.
+test("no POST route in the site worker sits after its GET/HEAD-only gate", async () => {
+  const { readFileSync } = await import("node:fs");
+  const src = readFileSync(new URL("./worker.js", import.meta.url), "utf8");
+  const gate = src.indexOf('if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method not allowed"');
+  assert.ok(gate > 0, "method gate not found");
+  const after = src.slice(gate, src.indexOf("const entry = {", gate));
+  assert.doesNotMatch(after, /request\.method === "POST"/);
+});
