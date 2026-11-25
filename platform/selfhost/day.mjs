@@ -25,6 +25,8 @@ for (let i = 0; i < Number(n); i++) {
   }
 }
 const rows = await db.prepare('SELECT COUNT(*) AS c FROM tick_runs').first();
+let ignition = null;
+try { const m = await import(pathToFileURL(join(seedRoot, 'worker/src/ignition.js')).href); ignition = await m.readIgnition(db); } catch (e) { ignition = { error: String(e && e.message).slice(0, 200) }; }
 db.close();
-console.log(JSON.stringify({ ticks: Number(n), completed, errors: errors.slice(0, 10), error_count: errors.length, tick_runs: rows ? rows.c : 0 }));
+console.log(JSON.stringify({ ticks: Number(n), completed, errors: errors.slice(0, 10), error_count: errors.length, tick_runs: rows ? rows.c : 0, ignition }));
 process.exit(errors.length ? 1 : 0);

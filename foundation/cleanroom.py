@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """CLEANROOM-1: a new system is born from nothing but the seed and an idea, runs a day, and tears itself down. Ultrastable is the foundation for any autonomous system.
 
 Rowan, 2026-11-25: "all surfaces, all files, all code, all instructions, everything has to work together automatically and seamlessly from the
@@ -101,12 +103,34 @@ def _day(ctx):
     return bool(d) and d.get("error_count", 1) == 0 and d.get("completed") == d.get("ticks"), json.dumps(d)[:400]
 
 
+def _definition(ctx):
+    r = subprocess.run([sys.executable, "-I", str(ctx["sb"] / "scripts" / "system.py"), "--check", "--root", str(ctx["sb"])], capture_output=True, text=True, timeout=120)
+    return r.returncode == 0, r.stdout.strip().splitlines()[-1] if r.returncode == 0 else " ".join(r.stdout.split("\n")[:4])[:400]
+
+
+def _human_voice(ctx):
+    r = subprocess.run([sys.executable, "-I", str(ctx["sb"] / "scripts" / "humanvoice.py"), "--check"], capture_output=True, text=True, timeout=60, cwd=ctx["sb"])
+    return r.returncode == 0, r.stdout.strip()[-300:]
+
+
+STAGES = ["unseeded", "seeded", "ticking", "looping", "closing", "instrumented", "critical", "self-sustaining"]
+
+
+def _ignition(ctx):
+    ig = (ctx.get("day") or {}).get("ignition") or {}
+    st = ig.get("stage", "unmeasured")
+    need = ctx["spec"].get("min_sandbox_stage", "ticking")
+    ok = st in STAGES and STAGES.index(st) >= STAGES.index(need)
+    b = ig.get("blocking") or {}
+    return ok, f"stage {st} (sandbox floor {need}); next blocked: {b.get('stage')}: {str(b.get('why', ''))[:200]}"
+
+
 def _teardown(ctx):
     return ctx.get("torn_down", False), "sandbox deleted" if ctx.get("torn_down") else "sandbox still on disk"
 
 
 CHECKS = {"boot_ok": _boot_ok, "no_secret_cards": _no_secret_cards, "workflow_headers": _workflow_headers, "provision_plan": _provision_plan,
-          "managers": _managers, "liveness": _liveness, "year_gate": _year_gate, "day": _day, "teardown": _teardown}
+          "managers": _managers, "liveness": _liveness, "year_gate": _year_gate, "day": _day, "teardown": _teardown, "definition": _definition, "human_voice": _human_voice, "ignition": _ignition}
 
 
 def _cap(ctx, cap) -> tuple[bool, str]:

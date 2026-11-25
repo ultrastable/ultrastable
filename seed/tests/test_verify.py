@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """VERIFY-1 in the seed: every new system inherits the model checker; it finds seeded defects and passes on this repository. Ultrastable is the foundation for any autonomous system."""
 import sys, unittest
 from pathlib import Path

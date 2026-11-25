@@ -2521,6 +2521,24 @@
       "bindings": [
         "LANE_PAT"
       ]
+    },
+    "cleanroom": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "a capability that does not come up in the sandbox becomes a Q-CLEANROOM item whose closing probe is the same clean-room check; the next run closes it when the seed brings the capability up on its own",
+      "bindings": [
+        "LANE_PAT"
+      ]
     }
   },
   "implicit_producers": {

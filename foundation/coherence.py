@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """COHERENCE-1: one source for every instruction and config surface; a copy that drifts, contradicts or enforces nothing fails. Ultrastable is the foundation for any autonomous system.
 
 Rowan, 2026-11-25: "all surfaces, all files, all code, all instructions, everything has to work together automatically and seamlessly from the
@@ -144,11 +146,11 @@ def org_settings(root: Path = REPO) -> dict:
         repo = t.get("repo")
         if not repo or t.get("state") not in spec["tenant_repo_states"]:
             continue
+        fresh = repo not in new["repos"]
         e = copy.deepcopy(new["repos"].get(repo) or tmpl)
-        if t.get("description"):
-            e["description"] = t["description"]
-        if t.get("frontend") and not e.get("homepage"):
-            e["homepage"] = t["frontend"]
+        if fresh:  # descriptions and topics of a listed repo belong to brand/brand.json (brand/tools/sync_settings.py); a new one starts from the tenant row
+            e["description"] = t.get("description") or e.get("description")
+            e["homepage"] = t.get("frontend")
         e.setdefault("settings", {})
         e["settings"]["private"] = t.get("visibility") == "private"
         e["settings"]["delete_branch_on_merge"] = True  # BRANCH-CLEANUP-1

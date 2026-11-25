@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """VERIFY-1 (Rowan, 2026-11-21): "What can Ultrastable learn from verified proof systems and critical infrastructure code that must prove all
 statements are true and will run as expected without errors?" Ultrastable is the foundation for any autonomous system.
 
