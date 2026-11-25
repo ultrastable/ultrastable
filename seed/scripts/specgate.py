@@ -57,10 +57,23 @@ def quality(root=REPO):
     return report(root)["quality"]
 
 
+def added(root, base="origin/main"):
+    """Item ids this change adds, from git. None when git cannot say (no base ref): then every open item is judged."""
+    import subprocess
+    r = subprocess.run(["git", "-C", str(root), "diff", "--name-only", "--diff-filter=A", f"{base}...HEAD", "--", "docs/issues"], capture_output=True, text=True)
+    if r.returncode != 0:
+        return None
+    return {Path(x).stem for x in r.stdout.split()}
+
+
 def check(root=REPO) -> list[str]:
+    """A change may not add an item an agent can misread. Items the running loops file on main are judged by the essential variable
+    spec_quality instead, whose ladder fixes the filer; failing every pull request for them would stop the line on a measurement."""
     c = Path(root) / CONF  # a new system starts with no baseline: every item must pass from day one
     base = set(json.loads(c.read_text(encoding="utf-8"))["baseline"]) if c.is_file() else set()
-    return [f"{i}: missing {', '.join(m)} (SPEC-GATE-1)" for i, m in report(root)["failing"].items() if i not in base]
+    new = added(root)
+    return [f"{i}: missing {', '.join(m)} (SPEC-GATE-1)" for i, m in report(root)["failing"].items()
+            if i not in base and (new is None or i in new)]
 
 
 def main(argv=None) -> int:
