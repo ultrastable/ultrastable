@@ -59,7 +59,7 @@ def check(root=REPO) -> list[str]:
         if f"'{ep}'" not in idx:
             bad.append(f"seed/worker/src/index.js does not serve {ep}")
     systems = pol.get("systems", {})
-    want = {s["id"] for s in _j(root, "instances/ultrastable/progress.json").get("systems", [])} | set(_j(root, "doctrine/tenant-repos.json").get("tenants", {}))
+    want = {s["id"] for s in _j(root, "instances/ultrastable/progress.json").get("systems", [])} | {k for k, v in _j(root, "doctrine/tenant-repos.json").get("tenants", {}).items() if v.get("state") not in ("planned", "retired")}
     tenants = _j(root, "doctrine/tenant-repos.json").get("tenants", {})
     for sid in sorted(want - set(systems)):
         bad.append(f"system {sid} has no row in {POLICY}: give it the seed step or a pending row with a queue item")
