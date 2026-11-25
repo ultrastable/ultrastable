@@ -38,14 +38,14 @@ export default {
     0,
     73618
    ],
-   "share_recent": 0.263,
-   "share_trend": 0.263,
+   "share_recent": 0.261,
+   "share_trend": 0.261,
    "total": 73618
   },
   {
    "area": "doctrine",
    "quiet_days": 0,
-   "recent7": 36290,
+   "recent7": 36753,
    "series": [
     0,
     0,
@@ -76,16 +76,16 @@ export default {
     0,
     0,
     0,
-    36290
+    36753
    ],
-   "share_recent": 0.129,
-   "share_trend": 0.129,
-   "total": 36290
+   "share_recent": 0.13,
+   "share_trend": 0.13,
+   "total": 36753
   },
   {
    "area": "foundation",
    "quiet_days": 0,
-   "recent7": 34190,
+   "recent7": 34601,
    "series": [
     0,
     0,
@@ -116,16 +116,16 @@ export default {
     0,
     0,
     0,
-    34190
+    34601
    ],
-   "share_recent": 0.122,
-   "share_trend": 0.122,
-   "total": 34190
+   "share_recent": 0.123,
+   "share_trend": 0.123,
+   "total": 34601
   },
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 25015,
+   "recent7": 25672,
    "series": [
     0,
     0,
@@ -156,11 +156,11 @@ export default {
     0,
     0,
     0,
-    25015
+    25672
    ],
-   "share_recent": 0.089,
-   "share_trend": 0.089,
-   "total": 25015
+   "share_recent": 0.091,
+   "share_trend": 0.091,
+   "total": 25672
   },
   {
    "area": "seed/worker",
@@ -198,14 +198,14 @@ export default {
     0,
     17823
    ],
-   "share_recent": 0.064,
-   "share_trend": 0.064,
+   "share_recent": 0.063,
+   "share_trend": 0.063,
    "total": 17823
   },
   {
    "area": "tests/foundation",
    "quiet_days": 0,
-   "recent7": 13636,
+   "recent7": 13743,
    "series": [
     0,
     0,
@@ -236,11 +236,11 @@ export default {
     0,
     0,
     0,
-    13636
+    13743
    ],
    "share_recent": 0.049,
    "share_trend": 0.049,
-   "total": 13636
+   "total": 13743
   },
   {
    "area": "instances",
@@ -323,7 +323,7 @@ export default {
    "total": 10871
   }
  ],
- "at": "2026-11-25T20:49:10Z",
+ "at": "2026-11-25T20:55:30Z",
  "days": 30,
  "findings": [
   {
@@ -389,10 +389,10 @@ export default {
    0,
    0,
    0,
-   42
+   50
   ],
-  "closed": 1078,
-  "opened": 1120
+  "closed": 1079,
+  "opened": 1129
  },
  "loops": [
   {
@@ -583,7 +583,7 @@ export default {
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 311,
+   "rows": 312,
    "series": [
     0,
     0,
@@ -614,7 +614,7 @@ export default {
     112,
     80,
     55,
-    59
+    60
    ]
   },
   {

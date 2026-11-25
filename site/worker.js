@@ -187,14 +187,20 @@ function bound(v) { return v.min !== null && v.max !== null ? (v.min === v.max ?
 
 function ultrastability() {
   const P = ULTRA.scopes.platform, T = ULTRA.scopes.tenant;
-  const row = function (v) { return "<tr><td>" + esc(v.name) + "</td><td>" + esc(bound(v)) + " " + esc(v.unit) + "</td><td>" + esc(v.steps.join("; ")) + "</td></tr>"; };
+  const now = ULTRA.now || {}, R = ULTRA.readiness;
+  const reads = function (v) { const n = now[v.id]; return n ? (n.value === null ? "unmeasured" : esc(String(n.value)) + (n.ok ? " (in bounds)" : " (out of bounds)")) : "no reading yet"; };
+  const row = function (v) { return "<tr><td>" + esc(v.name) + "</td><td>" + esc(bound(v)) + " " + esc(v.unit) + "</td><td>" + reads(v) + "</td><td>" + esc(v.steps.join("; ")) + "</td></tr>"; };
   return "<h2 id=\"why-ultrastable\">Why ultrastable</h2>"
     + "<p>A system is ultrastable, in W. Ross Ashby's sense, when two loops keep its essential variables inside bounds: a fast loop that corrects disturbance, and a slow loop that changes the system itself when the fast loop cannot.</p>"
     + "<p>The fast loop is the probes, the cost check, the claims check and the executor. The slow loop reads the same variables every tick, and when one has been out of bounds for two ticks in a row it takes one discrete step on that variable's ladder, keeps the step only if the variable comes back, and otherwise undoes it and takes the next.</p>"
+    + (R ? "<p id=\"one-year\"><strong>One-year readiness: " + esc(String(R.score)) + " of 100.</strong> It multiplies three parts: the simulated unattended horizon against a year (" + esc(String(R.horizon)) + "), the share of essential variables in bounds at the last tick (" + esc(String(R.bounds)) + "), and how often the slow loop's own changes worked (" + esc(String(R.learning)) + "). A person stepping in to redirect the system counts against it.</p>" : "")
     + "<p>The essential variables of " + esc(P.what) + " (" + esc(P.status) + "):</p>"
-    + "<div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Variable</th><th>Bounds</th><th>Second-order steps, in order</th></tr></thead><tbody>" + P.variables.map(row).join("") + "</tbody></table></div>"
+    + "<div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Variable</th><th>Bounds</th><th>Last reading</th><th>Second-order steps, in order</th></tr></thead><tbody>" + P.variables.map(row).join("") + "</tbody></table></div>"
     + "<p>" + esc(T.what) + " (" + esc(T.status) + "): " + T.variables.map(function (v) { return esc(v.name.toLowerCase()); }).join(", ") + ".</p>"
     + "<p>The system describes itself in code: what it is, its regulators, its variables and bounds, its clocks and its boundary are served as JSON at <a href=\"/self\">/self</a>.</p>"
+    + (ULTRA.self_changes && ULTRA.self_changes.length ? "<h3 id=\"self-changes\">Changes the slow loop made to itself</h3><div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>When</th><th>Variable</th><th>Change</th><th>Before</th><th>After</th><th>Verdict</th></tr></thead><tbody>"
+      + ULTRA.self_changes.map(function (c) { return "<tr><td>" + esc(c.at) + "</td><td>" + esc(c.var) + "</td><td>" + esc(c.what) + "</td><td>" + esc(String(c.before)) + "</td><td>" + esc(String(c.after)) + "</td><td>" + esc(c.verdict) + "</td></tr>"; }).join("") + "</tbody></table></div>" : "")
+    + "<p class=\"meta\">Every reading above is the last row for that variable in <a href=\"https://github.com/ultrastable/ultrastable/blob/main/ops/ultrastability.jsonl\">ops/ultrastability.jsonl</a>, computed by <a href=\"https://github.com/ultrastable/ultrastable/blob/main/foundation/ultrastability.py\">foundation/ultrastability.py</a>. Nothing on this page is typed by hand.</p>"
     + "<p class=\"meta\">After " + esc(ULTRA.credit) + ". Every reading, step and verdict is a row in the ultrastability ledger and a provenance row.</p>";
 }
 

@@ -395,6 +395,33 @@
     "file": "site/directory.js",
     "contains": "20 * 3600e3"
    }
+  },
+  {
+   "id": "no-fabrication-agents-agents.md",
+   "source": "agents/AGENTS.md",
+   "quote": "No made-up numbers (NO-FABRICATION-1",
+   "probe": {
+    "file": "foundation/claimcode.py",
+    "contains": "claim_patterns"
+   }
+  },
+  {
+   "id": "no-fabrication-seed-agents-agents.md",
+   "source": "seed/agents/AGENTS.md",
+   "quote": "No made-up numbers (NO-FABRICATION-1",
+   "probe": {
+    "file": "foundation/claimcode.py",
+    "contains": "claim_patterns"
+   }
+  },
+  {
+   "id": "no-fabrication-agents-project-instructions.md",
+   "source": "agents/PROJECT-INSTRUCTIONS.md",
+   "quote": "No made-up numbers (NO-FABRICATION-1",
+   "probe": {
+    "file": "foundation/claimcode.py",
+    "contains": "claim_patterns"
+   }
   }
  ],
  "baseline": [

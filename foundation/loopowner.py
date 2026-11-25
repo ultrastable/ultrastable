@@ -166,7 +166,8 @@ def item(pr: dict, st: str, d: dict) -> dict:
             f"The session that opened it is not its closer and is never asked to act. {a['states'][st]}"
             + (f" Failed checks: {', '.join(failed)}." if failed else "")
             + (f" Files ({len(paths)}): {', '.join(paths[:40])}{' ...' if len(paths) > 40 else ''}." if paths else "")
-            + f" Closing probe: pull request #{n} is merged or closed.")
+            + f"\n\n**Prediction:** open_prs <= 0 within 24 h\n**Out of scope:** changing what pull request #{n} does; land it as written or carry it onto main unchanged."
+            + f"\n\n**Closing probe:** `python3 -m foundation loopowner --closed {n}` exits 0 (pull request #{n} is merged or closed).")  # SPEC-GATE-1
     return {"id": f"{a['item_prefix']}{n}", "title": f"{a['item_prefix']}{n}: land or supersede pull request #{n} ({st})", "body": body,
             "labels": ["role:" + a["owner"], "open-loop", "server-owned"], "milestone": "Now", "workstream": "Open loops"}
 
