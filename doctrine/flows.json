@@ -2484,6 +2484,26 @@
         "LANE_PAT",
         "ORG_ADMIN_TOKEN"
       ]
+    },
+    "improve": {
+      "inflows": [
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        },
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "each closed Q-IMPROVE item is judged a week later on its metric: kept if it rose, else a replace item is filed; a tier with no merge in its window files its own stall item, which closes when a merge lands",
+      "bindings": []
     }
   },
   "implicit_producers": {

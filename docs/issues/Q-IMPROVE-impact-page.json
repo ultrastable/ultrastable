@@ -1,0 +1,15 @@
+{
+  "id": "Q-IMPROVE-impact-page",
+  "title": "Q-IMPROVE-impact-page: Publish /impact: public-benefit demos ranked by their BENEFIT-1 score, read live from the idea bank",
+  "body": "**Owner:** product-manager\n**Trigger:** improve --run\n**Done check:** grep:site/worker.js::/impact\n**Prediction:** external_referrals_7d > 83 within 168 h\n**Status:** open\n\nKind: impact. Baseline external_referrals_7d = 83. Settled 7 days after it closes: kept if external_referrals_7d rose, else replaced.\n\n**Closing probe:** grep:site/worker.js::/impact\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "role:product-manager",
+    "growth",
+    "improve",
+    "impact"
+  ],
+  "milestone": "Now",
+  "workstream": "Growth"
+}

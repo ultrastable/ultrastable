@@ -2339,6 +2339,20 @@
    "bound_by": "cited"
   },
   {
+   "id": "cited-3c3d6c30bf",
+   "surface": "agents/AGENTS.md",
+   "text": "- **Automate back-end and front-end development; improve on its own (IMPROVE-1, FRONTEND-AUTO-1, Rowan 2026-11-25).** \"Automatically",
+   "probe": [
+    "file:seed/scripts/improve.py",
+    "file:seed/autonomy/improve.json",
+    "file:seed/.github/workflows/improve.yml",
+    "file:foundation/improve.py",
+    "file:doctrine/improve.json",
+    "file:tests/foundation/test_improve.py"
+   ],
+   "bound_by": "cited"
+  },
+  {
    "id": "cited-95432168bf",
    "surface": "agents/AGENTS.md",
    "text": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
@@ -3193,6 +3207,21 @@
    ],
    "bound_by": "mirror",
    "of": "cited-be4db6262d"
+  },
+  {
+   "id": "mirror-0ea4d489e9",
+   "surface": "seed/agents/AGENTS.md",
+   "text": "- **Automate back-end and front-end development; improve on its own (IMPROVE-1, FRONTEND-AUTO-1, Rowan 2026-11-25).** \"Automatically",
+   "probe": [
+    "file:seed/scripts/improve.py",
+    "file:seed/autonomy/improve.json",
+    "file:seed/.github/workflows/improve.yml",
+    "file:foundation/improve.py",
+    "file:doctrine/improve.json",
+    "file:tests/foundation/test_improve.py"
+   ],
+   "bound_by": "mirror",
+   "of": "cited-3c3d6c30bf"
   },
   {
    "id": "mirror-be5af6748b",
