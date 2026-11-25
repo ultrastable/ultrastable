@@ -10,6 +10,8 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-25
 
+- 2026-11-25: Bump the actions group with 2 updates (#2045)
+- 2026-11-25: Run retriage and the org profile probe on the fleet clock (SLA-ISSUE-1) (#2100)
 - 2026-11-25: Measure growth and shipped code without a token in Actions (#2086)
 - 2026-11-25: core/impact: generic impact and reach closed loop (#2088)
 - 2026-11-25: Restart the growth loop and code agents after the 11-22 stall (#2085)

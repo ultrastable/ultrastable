@@ -26,12 +26,6 @@
  "seed_verify": {
   "ultrastable": [
    {
-    "at": "2026-11-24T18:13:43Z",
-    "url": "https://ultrastable.io/health",
-    "status": 200,
-    "ok": true
-   },
-   {
     "at": "2026-11-24T18:23:36Z",
     "url": "https://ultrastable.io/health",
     "status": 200,
@@ -201,6 +195,12 @@
    },
    {
     "at": "2026-11-25T14:34:29Z",
+    "url": "https://ultrastable.io/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-25T14:44:03Z",
     "url": "https://ultrastable.io/health",
     "status": 200,
     "ok": true
@@ -208,12 +208,6 @@
   ],
   "unlearn": [
    {
-    "at": "2026-11-24T18:13:43Z",
-    "url": "https://unlearn.ultrastable.org/health",
-    "status": 200,
-    "ok": true
-   },
-   {
     "at": "2026-11-24T18:23:36Z",
     "url": "https://unlearn.ultrastable.org/health",
     "status": 200,
@@ -383,6 +377,12 @@
    },
    {
     "at": "2026-11-25T14:34:29Z",
+    "url": "https://unlearn.ultrastable.org/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-25T14:44:03Z",
     "url": "https://unlearn.ultrastable.org/health",
     "status": 200,
     "ok": true
