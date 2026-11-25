@@ -4,10 +4,11 @@
   "kind": "decision",
   "date": "2026-11-25",
   "title": "BRANCH-CLEANUP-1",
-  "body": "Branches are deleted after merge or close in every repo; delete_branch_on_merge enforced by branch-cleanup.yml.",
-  "probe": "file:scripts/branch_cleanup.py"
+  "body": "No branch outlives its PR. branchsweep --remote runs scripts/branch_cleanup.py daily: enforces delete_branch_on_merge and deletes merged or closed PR branches in every fleet repo.",
+  "probe": "file:scripts/branch_cleanup.py",
+  "session": "session_0156nqDsM82hJafZbpixiZx9"
  },
  "kind": "decision",
  "title": "BRANCH-CLEANUP-1",
- "session": ""
+ "session": "session_0156nqDsM82hJafZbpixiZx9"
 }
