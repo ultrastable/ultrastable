@@ -165,7 +165,9 @@ assert.match(pilot, /twitter:card" content="summary_large_image/);
 // Generic public pages: no research framing, no patent wording. QNFO may be named since Rowan's 2026-11-17 SHOWCASE-1 directive (it is a test case); /showcase carries it.
 for (const p of ["/", "/product", "/team", "/org", "/faq", "/contact"]) {
   const h = await (await get("https://ultrastable.io" + p)).text();
-  assert.doesNotMatch(h, /patent|provisional|disclos|research/i, p + " stays generic");
+  // WHITEPAPER-1 (Rowan, 2026-11-25: "I don't see links to the research"): links to /research are wanted on every page; research framing elsewhere is not.
+  assert.match(h, /href="\/research"/, p + " links the white papers");
+  assert.doesNotMatch(h.replace(/<a[^>]+href="\/research[^"]*"[^>]*>[^<]*<\/a>/g, ""), /patent|provisional|disclos|research/i, p + " stays generic");
 }
 console.log("ultrastable-site pages ok");
 

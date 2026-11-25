@@ -28,17 +28,17 @@ function listPage(d) {
     + `<p class="muted">Generated ${esc(d.as_of)} from the system's ledgers.</p>`;
 }
 
+// WHITEPAPER-1: a paper reads as a white paper: numbered sections, a results table, limitations, conclusion and numbered references.
+const SEC = [["introduction", "1. Introduction"], ["background", "2. Background and related work"], ["method", "3. Method"], ["results", "4. Results"],
+  ["discussion", "5. Discussion"], ["limitations", "6. Limitations"], ["conclusion", "7. Conclusion"]];
 function paperPage(p, asOf) {
-  const fs = p.findings.map(f => `<article class="card"><h3>${esc(f.id)}. ${esc(f.concern)} <span class="muted">(${esc(f.perspective)})</span></h3>`
-    + `<p><strong>The study:</strong> ${esc(f.claim)}</p><p><strong>How Ultrastable answers it:</strong></p><ul>${f.mechanisms.map(m => `<li>${esc(m.rule)} (<code>${esc(m.path)}</code>): ${esc(m.how)}</li>`).join("")}</ul>`
-    + `<p><strong>Measured here:</strong> ${esc(f.metric_label)}: ${esc(fmt(f.measured))} (n = ${esc(f.n)}). Target ${esc(f.target.op)} ${esc(f.target.value)}. <strong>${esc(BADGE[f.status])}</strong>${f.item ? ` · open item <code>${esc(f.item)}</code>` : ""}</p>`
-    + `<p class="muted">Source: ${esc(f.source)}</p></article>`).join("");
-  const leads = p.leads.length ? `<section><h2>Proposed further links</h2><p class="muted">Leads from the connection engine; each is a proposal until a study file adopts it.</p><ul>${p.leads.map(l => `<li>${esc(l.finding)} may also relate to ${esc(l.rule)}</li>`).join("")}</ul></section>` : "";
-  return `<div class="head"><p><a href="/research">Research</a></p><h1>${esc(p.title)}</h1><p>${esc(p.abstract)}</p>${share(p)}</div>`
-    + `<section><h2>The study</h2><p>${esc(p.study.title)}. ${esc(p.study.authors.join(", "))}, ${esc(p.study.institution)}; ${esc(p.study.kind)}, version ${esc(p.study.version)}.</p><p>${esc(p.study.data)}</p></section>`
-    + `<section><h2>Findings, mechanisms and measurements</h2>${fs}</section>`
-    + `<section><h2>Limits</h2><ul>${p.limits.map(x => `<li>${esc(x)}</li>`).join("")}</ul></section>` + leads
-    + `<section><h2>Method</h2><p>${esc(p.method)}</p></section>` + HOOK + `<p class="muted">Generated ${esc(asOf)}. JSON: <a href="/api/research/${esc(p.slug)}">/api/research/${esc(p.slug)}</a></p>`;
+  const s = p.sections || {};
+  const table = `<table><caption>Table 1. Findings, measurements and targets.</caption><thead><tr><th>Finding</th><th>Concern</th><th>Metric</th><th>Measured (n)</th><th>Target</th><th>Verdict</th></tr></thead><tbody>`
+    + (s.table || []).map(r => `<tr><td>${esc(r.id)}</td><td>${esc(r.concern)}</td><td>${esc(r.metric)}</td><td>${esc(fmt(r.measured))} (${esc(r.n)})</td><td>${esc(r.target)}</td><td>${esc(BADGE[r.status] || r.status)}</td></tr>`).join("") + `</tbody></table>`;
+  const body = SEC.map(([k, h]) => `<section><h2>${h}</h2>` + (k === "limitations" ? `<ul>${(s[k] || []).map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : (s[k] || []).map(x => `<p>${esc(x)}</p>`).join("")) + (k === "results" ? table : "") + `</section>`).join("");
+  const refs = `<section><h2>References</h2><ol>${(p.references || []).map(r => `<li>${esc(r.text)}${r.url ? ` <a href="${esc(r.url)}">${esc(r.url)}</a>` : ""}</li>`).join("")}</ol></section>`;
+  return `<article class="paper"><div class="head"><p><a href="/research">Research</a> / White paper</p><h1>${esc(p.title)}</h1><p class="muted">Ultrastable white paper · updated ${esc(asOf)}</p><h2>Abstract</h2><p>${esc(p.abstract)}</p>${share(p)}</div>`
+    + body + refs + HOOK + `<p class="muted">Generated from the system's own records. JSON: <a href="/api/research/${esc(p.slug)}">/api/research/${esc(p.slug)}</a></p></article>`;
 }
 
 // THOUGHT-1: a feed of the papers, so readers and aggregators follow them with no account; an entry's id changes when its measured result does.
