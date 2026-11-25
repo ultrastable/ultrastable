@@ -750,6 +750,17 @@
       "root_cause": "the UI/UX run no longer rolls a stale visual baseline",
       "owner": "design",
       "remedy": "Restore --roll-baseline in uiux.yml."
+    },
+    {
+      "id": "replication-ledger-citations",
+      "failure_mode": "fm-unverified-citations",
+      "kind": "http",
+      "url": "https://replication-ledger.ultrastable.org/api/citations",
+      "json_ok": true,
+      "timeout": 15,
+      "root_cause": "a seed DOI of the Replication Ledger was never checked at Crossref after the grace beats, or its check failed",
+      "owner": "operations",
+      "remedy": "The ledger's beat checks BEAT.CROSSREF seed DOIs per beat; the 503 body names unchecked_dois and failed. A failed DOI is corrected in instances/replication-ledger/worker/data/findings.json (node worker/cli.mjs verify); an unchecked one means beats are erroring at Crossref (GET /api/beats)."
     }
   ]
 }

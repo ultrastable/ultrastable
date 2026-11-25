@@ -14,7 +14,8 @@
     "ext.cf_analytics": "Cloudflare GraphQL analytics: D1 rows read and Workers AI neurons per day (doctrine/cost.json budgets)",
     "ext.unlearn_adults": "coaches and parents using Unlearn: they log curiosities and answer the 7 and 14 day follow-ups (instances/unlearn; no child data in phase 1)",
     "ext.unlearn_readers": "readers of the Unlearn encyclopedia: their anonymous guesses and 'did this change your view' taps per entry (no identifier stored)",
-    "ext.unlearn_literature": "new systematic reviews and DOI records published on Europe PMC and Crossref, read by the Unlearn evidence step"
+    "ext.unlearn_literature": "new systematic reviews and DOI records published on Europe PMC and Crossref, read by the Unlearn evidence step",
+    "ext.ledger_literature": "replication papers and their citation records published on OpenAlex, read from a GitHub runner by the Replication Ledger's OpenAlex mirror (OpenAlex refuses the Worker without a key)"
   },
   "flows": {
     "qnfo-sauce": {
@@ -2505,6 +2506,26 @@
       ],
       "feedback": "each closed Q-IMPROVE item is judged a week later on its metric: kept if it rose, else a replace item is filed; a tier with no merge in its window files its own stall item, which closes when a merge lands",
       "bindings": []
+    },
+    "replication-ledger-openalex": {
+      "inflows": [
+        {
+          "signal": "ledger.literature",
+          "via": "https:openalex"
+        },
+        {
+          "signal": "ledger.mirror",
+          "via": "repo:instances/replication-ledger/worker/data/openalex.json"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "ledger.mirror",
+          "via": "repo:instances/replication-ledger/worker/data/openalex.json"
+        }
+      ],
+      "feedback": "each run reads the mirror already on main and rewrites it only when OpenAlex's answer changed; the ledger Worker's beat reads the deployed mirror when OpenAlex refuses it and files attempts under the verbatim-quote guard, the findings it adds are listed by /api/findings and become the next run's questions, and the live /health generated_at is compared with main's so a mirror that did not reach the Worker is redeployed",
+      "bindings": []
     }
   },
   "implicit_producers": {
@@ -2517,7 +2538,8 @@
     "loop.registry": "ext.loop_registry",
     "unlearn.followups": "ext.unlearn_adults",
     "unlearn.reader_taps": "ext.unlearn_readers",
-    "unlearn.literature": "ext.unlearn_literature"
+    "unlearn.literature": "ext.unlearn_literature",
+    "ledger.literature": "ext.ledger_literature"
   },
   "pending": []
 }

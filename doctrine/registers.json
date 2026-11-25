@@ -601,6 +601,18 @@
       "status": "controlled",
       "cadence_ticks": 1,
       "probe": "grep:tests/foundation/test_driftguard.py::def test_a_built_graph_with_no_nodes_fails"
+    },
+    {
+      "id": "fm-unverified-citations",
+      "trigger": "the Replication Ledger's beat never checks some seed DOIs at Crossref, or a check finds a mismatched citation",
+      "symptom": "/api/citations reported a count of checks with no total, so a DOI never verified read the same as a verified one",
+      "blast_radius": "every Replication Ledger page that cites a seed paper, and the standings computed from those citations",
+      "detection": "detector replication-ledger-citations: GET https://replication-ledger.ultrastable.org/api/citations answers 503 with ok false after 24 beats while any seed DOI is unchecked or failed",
+      "root_cause": "the citation endpoint counted rows checked instead of comparing them with the seed's DOIs",
+      "remediation": "citations() in instances/replication-ledger/worker/index.js reports total, checked, unchecked and failed against seedCites(); failure-audit files a Q-AUDIT item and the detector is its closing probe",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:instances/replication-ledger/worker/citations.test.mjs::after 24 beats an unchecked seed DOI makes /api/citations answer 503"
     }
   ],
   "controls": [
