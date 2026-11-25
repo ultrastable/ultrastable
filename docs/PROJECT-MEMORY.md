@@ -10,6 +10,11 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-25
 
+- 2026-11-25: regen-generated: refresh generated data after merge (REGEN-GENERATED-1) (part 2/2) [skip ci]
+- 2026-11-25: regen-generated: refresh generated data after merge (REGEN-GENERATED-1) (part 1/2) [skip ci]
+- 2026-11-25: provenance - public changelog (CHANGELOG-FRESH-1) [skip ci]
+- 2026-11-25: Let product-manager PRs pass CI: test_pm stops reading the live queue (#2186)
+- 2026-11-25: Daily self-test for silent loops and frozen pages; unfreeze /balance and /changelog (SELFTEST-1) (#2185)
 - 2026-11-25: DISCOVER-1 (Rowan): public by default and discoverable. Homepage and /directory list every live tenant from the registries (foundation/discover.py); the seed serves /.well-known/ultrastable.json, a Built on Ultrastable footer and a daily opt-out-able heartbeat; the directory lists external systems only after reading their manifest and drops dead or opted-out ones. Repo visibility in github/org-settings.json: seed public, ops the one private exception. Core repo is public (not private, as old tool memory said).
 - 2026-11-25: Replication Ledger: OpenAlex polite pool and one 429 retry (#2160)
 - 2026-11-25: Register What Works for progress, stickiness, the showcase and the social queue (#2124)
