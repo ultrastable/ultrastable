@@ -5579,6 +5579,15 @@
    "title": "Launch-day failures are root-caused in code: work not pulse, duplicate PRs, ledger deferrals, word claims",
    "body": "Audit 2026-11-25: the What Works reader had read nothing (gpt-oss spent its 400-token cap reasoning, every reply empty, logged not JSON) while /health said ticking; four sessions built knowledge-graph engines in parallel; a decision row deferred a pre-approved deploy to the owner; showcase copy said five policy areas (code: twelve). Guards: duplicate PRs are COLLISION-1 (foundation/collisions.py, built in parallel by another session; this session's overlap.py was dropped for it), standingorder ledger lint, claimcode word-number patterns, what-works rootcause tests and work-based /health.",
    "probe": "file:foundation/standingorder.py"
+  },
+  {
+   "id": "lesson-2026-11-25-evidence-branch-commits-must-hold-only-the-ledger",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Evidence branch commits must hold only the ledger",
+   "body": "The failure-audit evidence push failed because its commit sat on main and so carried a workflow-file change, which a GitHub App token refuses. The commit is now built with plumbing and holds only ops/failure-audit.jsonl. A detector whose command is not routed in foundation/__main__.py is now a finding (staticcontent and slawatch were unroutable).",
+   "probe": "file:foundation/silentfail.py",
+   "session": "session_0156nqDuMYtda8kTyfqmpNJk"
   }
  ]
 }
