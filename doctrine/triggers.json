@@ -149,6 +149,15 @@
     "37 5 * * 1"
    ]
   },
+  "branch-cleanup.yml": {
+   "events": [
+    "push",
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "17 4 * * *"
+   ]
+  },
   "branchsweep.yml": {
    "events": [
     "workflow_dispatch"
