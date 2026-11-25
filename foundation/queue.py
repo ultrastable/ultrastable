@@ -169,7 +169,7 @@ def run(root=REPO, apply=False) -> list[dict]:
     try:
         from . import balance
         m = balance.run(root, apply=apply)
-        out.append({"id": "FLOW-BALANCE-1", "probe": "balance --probe", "passed": not m["tipped"], "evidence": json.dumps({"windows": m["windows"], "sla": {k: m["sla"][k] for k in ("within", "breached", "compliance")}, "actions": m["actions"]}), "action": "measure"})
+        out.append({"id": "FLOW-BALANCE-1", "probe": "balance --probe", "passed": not m["tipped"] and not m.get("unmeasured"), "evidence": json.dumps({"windows": m["windows"], "sla": {k: m["sla"].get(k) for k in ("within", "breached", "compliance")}, "unmeasured": m.get("unmeasured"), "actions": m["actions"]}), "action": "measure"})
     except Exception as e:  # noqa: BLE001
         import sys
         print(f"balance failed: {type(e).__name__}: {e}", file=sys.stderr)

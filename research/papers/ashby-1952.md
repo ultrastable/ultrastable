@@ -34,7 +34,7 @@ Source: doctrine/ultrastability.json.
 - ULTRASTABILITY-1 (`foundation/ultrastability.py`): after patience_ticks readings out of limits, one step is taken and logged with a prediction
 - CLOCKWORK-1 (`.github/workflows/watchdog.yml`): the second loop runs on the watchdog clock and on the cost guard, server-side
 
-**Measured here:** second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl): 77 (n = 13258). Target >= 1. Verdict: **met**.
+**Measured here:** second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl): 77 (n = 13299). Target >= 1. Verdict: **met**.
 Source: ops/ultrastability.jsonl.
 
 ### A3. Nothing the second loop can change (systems)
@@ -81,14 +81,14 @@ Source: instances/ultrastable/loop-registry.json (declared).
 
 ## Proposed further links (leads, not findings)
 
-Found by core/connect on the lexical-512-1yy1eyg route; each is a proposal until a study file adopts it.
+Found by core/connect on the lexical-512-1id6r6g route; each is a proposal until a study file adopts it.
 
 - A1 may also relate to AUTO-IMPROVE-1 (similarity 0.117)
 - A1 may also relate to IGNORANCE-1 (similarity 0.107)
 - A2 may also relate to DESIGN-LANGUAGE-1 (similarity 0.122)
 - A2 may also relate to VISION-1 (similarity 0.111)
 - A5 may also relate to UIUX-1 (similarity 0.109)
-- A5 may also relate to FLOW-DIRECTIVE-1 (similarity 0.104)
+- A5 may also relate to FLOW-DIRECTIVE-1 (similarity 0.102)
 
 ## Method
 

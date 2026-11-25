@@ -6,7 +6,8 @@ import assert from "node:assert/strict";
 import { DatabaseSync } from "node:sqlite";
 import { readFileSync } from "node:fs";
 import seed from "./data/findings.json" with { type: "json" };
-import { authorsOf, graphTick, graphApi, records, TENANT } from "./graph.js";
+import { authorsOf, graphTick, graphApi, graphView, records, TENANT } from "./graph.js";
+import { graphPage } from "./site.js";
 
 function d1() {
   const raw = new DatabaseSync(":memory:");
@@ -37,6 +38,11 @@ test("the graph holds every finding, links findings through shared researchers, 
   assert.equal((await graphTick(db, seed, T0 + 60e3)).skipped, "recent");
   const r2 = await graphTick(db, seed, T0 + 3600e3); assert.equal(r2.added, 0);
   const h = await graphApi(new Request("https://r.test/api/graph/health"), db, T0 + 3600e3); assert.equal(h.status, 200);
+  const v = await graphView(db, T0 + 3600e3);
+  assert.ok(v.health.nodes > 0 && Array.isArray(v.insights) && /Source:/.test(v.method));
+  const page = graphPage(v);
+  assert.match(page, /<h1>Connections<\/h1>/); assert.match(page, /How the graph is kept honest/);
+  assert.match(graphPage(null), /not been measured yet/);
 });
 
 test("the vendored engine stays equal to the core's", () => {

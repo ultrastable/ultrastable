@@ -5323,6 +5323,84 @@
    "title": "The seed asked a hosted owner for cloud and model keys",
    "body": "Walking the policy atlas idea through the seed's bootstrap opened cards asking the owner to set CLOUDFLARE_API_TOKEN and ANTHROPIC_API_KEY and to approve spending. A person with no code agent cannot do that. IDEA.md now takes hosted_by; the host deploys and binds models and the bootstrap opens no secret or budget card (HOSTED-1).",
    "probe": "grep:seed/bootstrap/bootstrap.py::HOSTED-1"
+  },
+  {
+   "id": "lesson-2026-11-25-graph-skips-underscore-bookkeeping-tables",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Graph skips underscore bookkeeping tables",
+   "body": "DATAGRAPH-1: tables whose name starts with an underscore (_migrations, _copy_progress, _cf_KV) are D1 and migration bookkeeping, not system data; read into the graph they only produced orphan findings and the item KG-ORPHANS-_copy_progress. SKIP_TABLE now drops every leading-underscore table; the step closes that item on its next pass when the finding stops firing.",
+   "probe": "grep:workers/core/datagraph/index.js::SKIP_TABLE = /\\^\\(sqlite_\\|_\\|",
+   "session": "https://claude.ai/code/session_0156nqDvcxMuXbDzftceaEZU"
+  },
+  {
+   "id": "decision-2026-11-25-every-deployment-is-a-sandboxed-tenant-with-its-own-repo",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Every deployment is a sandboxed tenant with its own repo",
+   "body": "what-works moving; base-rates, did-it-work, open-questions planned; spinoffs retired. Tenant workers bind only their own stores, no core services or secrets, with a sampled daily budget. Repo creation waits on an org-scoped credential (sibling thread owns that route); tenant-repos.yml creates the four repos once one binds.",
+   "probe": "grep:foundation/tenantrepos.py::def isolation"
+  },
+  {
+   "id": "decision-2026-11-25-graph-ai-layer-on-datagraph-1-tables",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Graph AI layer on DATAGRAPH-1 tables",
+   "body": "KGRAPH-AI-1: embeddings, extracted relations, community summaries and a cost probe (/api/graph/ai) run on DATAGRAPH-1's tables. PR 2166 was closed as a duplicate of PR 2158 because it reused kg_nodes/kg_edges with a different schema.",
+   "probe": "file:seed/worker/src/graphai.js"
+  },
+  {
+   "id": "decision-2026-11-25-product-manager-pass-2026112517-0-item-s-filed",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Product manager pass 2026112517: 0 item(s) filed",
+   "body": "Growth and repair items, experiment verdicts and knob review recorded in ops/growth/pm-report.json by foundation/pm.py; tests pass.",
+   "probe": "file:foundation/pm.py"
+  },
+  {
+   "id": "decision-2026-11-25-replication-ledger-names-its-knowledge-graph-on-the-front-en",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Replication Ledger names its knowledge graph on the front end",
+   "body": "The /graph page (Connections in the nav) shows the shared engine's live measurements, open insights and method from D1 on every request; with no reading yet it says so. My own parallel graph engine (PR 2191 first version) was dropped for the merged KGRAPH engine from PR 2151.",
+   "probe": "grep:instances/replication-ledger/worker/site.js::export function graphPage",
+   "session": "https://claude.ai/code/session_0156nqDsz4YUXpAoqH9CX7mq"
+  },
+  {
+   "id": "decision-2026-11-25-site-serves-llms-full-txt-site-search-with-opensearch-server",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Site serves llms-full.txt, site search with OpenSearch, Server-Timing and a preload Link",
+   "body": "Five improve items closed in code: the skip link carries class skip-link, /llms-full.txt and /search read the text of every public page rendered by the same handler (cached an hour per isolate), /opensearch.xml describes /search, every response carries Server-Timing and every HTML page a preload Link for the favicon Cloudflare can send as a 103 Early Hint.",
+   "probe": "file:site/pagetext.test.mjs",
+   "session": "claude-code"
+  },
+  {
+   "id": "lesson-2026-11-25-graph-step-must-not-select-tables-core-drops-by-name",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Graph step must not SELECT tables core drops by name",
+   "body": "What Works' live beat logged '_cf_KV: access prohibited' because the datagraph step read every D1 table before core/datagraph dropped secret-shaped and platform ones. Filter by SKIP_TABLE before reading (pass the table on empty so it is still reported as dropped). Several parallel sessions also built DATAGRAPH-1 at once (#2151, #2157, #2158, #2166): check open PRs for the same directive before starting.",
+   "probe": "grep:seed/worker/src/datagraph.js::if \\(SKIP_TABLE\\.test\\(name\\)\\)",
+   "session": "session_0156nqDryMqrcf3FtGVreZkf"
+  },
+  {
+   "id": "lesson-2026-11-25-lane-pr-items-stayed-open-a-day-after-their-pr-closed",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Lane PR items stayed open a day after their PR closed",
+   "body": "OL-PR-n items were marked vacuous when the PR merged before any queue pass saw the probe fail, so they stayed open for the 24 h vacuous hold. The lane's filing is the recorded failure (contracts.filed_on_failure); queue.run also survives a shallow checkout where balance is unmeasured.",
+   "probe": "grep:foundation/contracts.py::LANE-FILED-FAIL-1",
+   "session": "claude-code"
+  },
+  {
+   "id": "lesson-2026-11-25-sandbox-check-found-unbudgeted-tenants-on-merge",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Sandbox check found unbudgeted tenants on merge",
+   "body": "Merging main brought replication-ledger and what-works D1s with no sandbox or sampled budget; the isolation check caught both. Planned and retired tenants are exempt from the full-stack rule.",
+   "probe": "grep:foundation/tenantrepos.py::def isolation",
+   "session": "session_0156nqDtZYBcuUWAFffTDjya"
   }
  ]
 }

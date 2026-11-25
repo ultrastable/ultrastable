@@ -6,7 +6,7 @@
 // The engine finds what nobody wrote down: findings that rest on the same researchers' work, researchers whose work spans fields, findings
 // with no replication attempt yet. Each finding is checked later and kinds that come true are trusted more (calibration in the engine).
 // Data: /api/graph, /api/graph/insights, /api/graph/node, /api/graph/method, /api/graph/health.
-import { runKg, kgHealth, handleKg, lastRun } from "./vendor/knowledge.js";
+import { runKg, kgHealth, handleKg, lastRun, insights, practices, methodHtml } from "./vendor/knowledge.js";
 
 export const TENANT = "replication-ledger";
 
@@ -80,3 +80,9 @@ export async function graphTick(db, ledger, now = Date.now()) {
 }
 export const graphHealth = (db, now = Date.now()) => kgHealth(db, TENANT, now);
 export const graphApi = (req, db, now = Date.now()) => handleKg(req, db, { tenant: TENANT, now });
+
+// What the /graph page shows, read live from D1 on every request: the engine's own measurements and the open insights.
+export async function graphView(db, now = Date.now()) {
+  const [p, open] = await Promise.all([practices(db, TENANT, now), insights(db, TENANT, { status: "open", limit: 25 })]);
+  return { health: p.health, insights: open, method: methodHtml(p) };
+}
