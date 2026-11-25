@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """OPEN-STANDARDS-1: the open standards the register marks supported hold in this repository and in the seed."""
 import glob, json, os, tempfile, unittest
 from pathlib import Path

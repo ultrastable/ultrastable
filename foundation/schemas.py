@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """OPEN-STANDARDS-1: JSON Schema coverage for the platform's configs and manifests. The engine is the seed's
 `scripts/schemas.py` (one fix reaches every system); this module points it at the platform root and also checks the seed's
 own catalog, so the template stays valid. `python3 -m foundation schemas --check|--gen|--refresh FILE`."""

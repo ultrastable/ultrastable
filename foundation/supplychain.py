@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """OPEN-STANDARDS-1 supply-chain loop. Inputs are two standard documents: the OpenSSF Scorecard JSON result and the SPDX 2.3 SBOM
 that GitHub's dependency graph exports. `--ingest SCORECARD SBOM [--apply]` writes ops/supply-chain.json and files one
 Q-STD-SC-* item per Scorecard check under the floor and per package whose licence is outside doctrine/dependency-licences.json;

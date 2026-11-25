@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """OPEN-STANDARDS-1: every JSON config and manifest a system ships has a JSON Schema (draft 2020-12), listed in a catalog in
 the SchemaStore catalog format, and drift fails the build. Ultrastable is the foundation for any autonomous system.
 

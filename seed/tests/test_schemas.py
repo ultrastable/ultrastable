@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """OPEN-STANDARDS-1: every JSON config this system ships validates against its JSON Schema (schemas/catalog.json)."""
 import importlib.util, unittest
 from pathlib import Path

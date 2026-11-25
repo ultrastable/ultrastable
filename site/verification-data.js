@@ -114,7 +114,7 @@ export default {
   },
   "second-loop": {
    "ok": true,
-   "states": 15
+   "states": 21
   },
   "spend-conformance": {
    "ok": true,
