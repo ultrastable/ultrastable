@@ -50,12 +50,12 @@
   {
    "id": "unlearn",
    "name": "Unlearn",
-   "repo": "ultrastable/ultrastable",
+   "repo": "ultrastable/unlearn",
    "url": "https://unlearn.ultrastable.org/",
    "feed": "https://ultrastable.io/feed.xml",
    "expect_hours": 168,
    "heal": [
-    "executor.yml"
+    "ci.yml"
    ]
   }
  ],
