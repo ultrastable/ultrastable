@@ -1,0 +1,48 @@
+{
+ "_doc": "FLOW-BALANCE-1 (Rowan, 2026-11-21: 'All Ultrastable issues must be resolved within their SLAs and daily/weekly inflow of new issues shall never exceed merged/closed issues for any Ultrastable system.'). The second loop over the work queue: foundation/balance.py measures inflow (items filed) against outflow (items closed with evidence) per day and per week, and the SLA age of every open item. When the balance tips it throttles and consolidates filing (exact duplicates superseded by the oldest open item, a flood from one filing family batched into one item) and raises closure capacity (ops/balance.json closure_boost, read by the executor and dispose). Superseded items lower net inflow; they are never counted as closures. Consumers: foundation/balance.py (run from foundation/queue.py run on every fleet pass), foundation/claims.py file_items (admit), site/balance.js (/balance), workers core/flowbalance for tenants, seed/scripts/balance.py for every new system.",
+ "version": "1.0.0",
+ "sla_days": {
+  "p0": 2,
+  "p1": 7,
+  "default": 14
+ },
+ "windows": {
+  "day": 1,
+  "week": 7
+ },
+ "family": "^([A-Z]+(?:-[A-Z]+)?)",
+ "batch_threshold": 5,
+ "batch_window_days": 1,
+ "batch_exclude": [
+  "OL-PR",
+  "OL",
+  "PORT-BRANCH",
+  "PORT",
+  "BATCH"
+ ],
+ "max_supersede_per_pass": 200,
+ "throttle": {
+  "daily_quota_floor": 3,
+  "quota_share_of_weekly_outflow": 1.0
+ },
+ "boost": {
+  "normal": 1,
+  "tipped": 3,
+  "max": 4
+ },
+ "final_statuses": [
+  "closed",
+  "done",
+  "live"
+ ],
+ "counts_as_closure": [
+  "fixed",
+  "gate",
+  "shelved",
+  ""
+ ],
+ "never_closure": [
+  "superseded"
+ ],
+ "_batch_exclude_doc": "per-object loops (one item per pull request or branch) are owned by the merge lane and closed by their own object's state; batching them would hide an object, so they are only deduplicated"
+}

@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 jobs:
   test:
-    if: ${{ !github.event.repository.is_template && github.repository != 'ultrastable/seed' }}  # TEMPLATE-CODE-ONLY-1: the template itself never runs a system's loops
+    if: ${{ !github.event.repository.is_template && github.repository != 'ultrastable/seed' && vars.HALT != '1' }}  # HALT-1; TEMPLATE-CODE-ONLY-1: the template itself never runs a system's loops
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     # Provisions only when the owner has set the secrets; otherwise the dry run above already opened gate cards.
-    if: (!github.event.repository.is_template && github.repository != 'ultrastable/seed') && (github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main')
+    if: (!github.event.repository.is_template && github.repository != 'ultrastable/seed') && (github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main') && vars.HALT != '1'
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

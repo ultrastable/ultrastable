@@ -1,0 +1,50 @@
+name: cleanroom
+# CLEANROOM-1 (Rowan, 2026-11-25): "everything has to work together automatically and seamlessly from the beginning ... it has to all bootstrap
+# autonomously." A sandbox system is built from nothing but seed/ and an idea, boots, runs a simulated day of ticks and tears itself down.
+# Every capability that does not come up with zero human steps is filed as Q-CLEANROOM-<id>; a capability that passes again closes its item.
+# budget: ~2 min x 30 per month (one bootstrap, 144 ticks against SQLite, no network)
+# trigger: daily, on every push to main that touches seed/ or doctrine/cleanroom.json, and dispatch; the seed changes only by merges
+# free-alternative: a cloud-hosted agent session runs `python3 -m foundation cleanroom --run --apply`; the tick Worker's watchdog restarts this clock
+on:
+  schedule:
+    - cron: "47 6 * * *"
+  push:
+    branches: [main]
+    paths: ["seed/**", "doctrine/cleanroom.json", "foundation/cleanroom.py", "platform/selfhost/**"]
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write  # scripts/land_data.py falls back to a pull request when the main writer is refused
+  id-token: write  # MAIN-WRITER-1: tools/push_main.py presents the run's OIDC token
+concurrency:
+  group: cleanroom
+  cancel-in-progress: false
+jobs:
+  cleanroom:
+    if: ${{ vars.HALT != '1' }}  # HALT-1: the owner's halt (repository variable HALT=1) stops every job
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: main
+      - run: python3 scripts/actions_guard.py cleanroom
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Build a sandbox from the seed alone, run a day, tear it down
+        id: run
+        run: python3 -m foundation cleanroom --run --apply || echo "failed=1" >> "$GITHUB_OUTPUT"
+      - name: Every copy in another repository matches its source (COHERENCE-1)
+        id: coh
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || github.token }}
+        run: set -o pipefail; python3 -m foundation coherence --check --remote | tee ops/cleanroom/coherence.txt || echo "failed=1" >> "$GITHUB_OUTPUT"
+      - name: Land the result and any findings on main
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+        run: python3 scripts/land_data.py "clean-room bootstrap run (CLEANROOM-1)" ops/cleanroom docs/issues
+      - name: Fail loudly when a capability did not come up
+        if: steps.run.outputs.failed == '1' || steps.coh.outputs.failed == '1'
+        run: |
+          python3 -c "import json;r=json.load(open('ops/cleanroom/latest.json'));print('findings:', r['findings'])"
+          exit 1

@@ -1,0 +1,26 @@
+{
+  "_doc": "CLEANROOM-1 (Rowan, 2026-11-25): 'everything has to work together automatically and seamlessly from the beginning ... it has to all bootstrap autonomously.' Read by foundation/cleanroom.py. A sandbox tenant is built from nothing but seed/ and the idea below, booted, run for a simulated day and torn down. Every capability below must come up with zero human steps; a capability that does not is a finding filed as Q-CLEANROOM-<id>, closed only by `python3 -m foundation cleanroom --probe <id>`.",
+  "version": 1,
+  "ticks": 144,
+  "idea": "---\norg_name: Cleanroom Sandbox\nslug: cleanroom-sandbox\nowner: sandbox\nowner_contact: set-in-secret-store\nowner_contact_backup: set-in-secret-store\nhosted_by: ultrastable.io\n---\n\n# Idea\n\nA living, encyclopedic replication ledger across many fields that tracks which published findings were re-tested, keeps every entry current as new replications appear, and reports what went stale each week.\n\n# System test\n\n- Loop: new replication found, entry updated, stale entries re-checked, with no person in the middle\n- Measure: entries older than their review window, target 0\n- Upkeep: new studies and replications are published every week\n- Run cost: 5 USD a month for the back end\n\n# Who it is for\n\n- Researchers and readers who need to know what held up\n\n# First outcomes\n\n- Every new replication is linked within one day\n- No entry is more than a month past its review date\n- A weekly report lists what changed\n\n# Constraints\n\n- Budget per month: 5 USD\n",
+  "secret_words": ["secret", "token", "api key", "api_key", "mint "],
+  "capabilities": [
+    {"id": "boot", "what": "the bootstrap runs every stage without a blocked one", "check": "boot_ok"},
+    {"id": "no-human-steps", "what": "a hosted boot opens no card that asks a person for a secret, token or key", "check": "no_secret_cards"},
+    {"id": "repo-settings", "what": "the repository resets its own settings (delete branch on merge) and cleans branches", "paths": ["scripts/branch_cleanup.py", ".github/workflows/branch-cleanup.yml"], "grep": {"scripts/branch_cleanup.py": "delete_branch_on_merge"}},
+    {"id": "workflows", "what": "every workflow declares budget, trigger, free alternative and a timeout, and honours HALT", "check": "workflow_headers"},
+    {"id": "credentials", "what": "credentials come through the platform's own path (host or consent screen), never pasted", "paths": ["worker/src/auth", "worker/src/apprepos.js"]},
+    {"id": "cloudflare", "what": "D1, Worker and cron are declared and the provision plan is written", "paths": ["worker/wrangler.template.jsonc", "worker/migrations"], "check": "provision_plan"},
+    {"id": "back-end", "what": "the tick Worker and its loops exist", "paths": ["worker/src/index.js", "worker/src/tick.js"]},
+    {"id": "front-end", "what": "a public page is served at /", "paths": ["worker/src/visibility.js"], "grep": {"worker/src/visibility.js": "publicPage"}},
+    {"id": "managers", "what": "portfolio, product and project managers and a reviewer are staffed", "check": "managers"},
+    {"id": "probes", "what": "objectives and the liveness metrics are seeded", "check": "liveness"},
+    {"id": "knowledge-graph", "what": "the system keeps a knowledge graph of its own data", "paths": ["worker/src/datagraph.js"], "glob": ["worker/migrations/*datagraph*.sql"]},
+    {"id": "discoverable", "what": "the system serves its manifest and joins the directory", "paths": ["worker/src/discover.js"]},
+    {"id": "red-team", "what": "the system questions what it does not know (inverted lenses, pre-mortem, red team)", "paths": ["worker/src/unknowns.js"]},
+    {"id": "improve", "what": "the system files its own improvement and research work", "paths": ["scripts/improve.py", ".github/workflows/improve.yml"]},
+    {"id": "year-gate", "what": "every declared fault has an exercised drill", "check": "year_gate"},
+    {"id": "day", "what": "a simulated day of ticks runs with no error", "check": "day"},
+    {"id": "teardown", "what": "the sandbox is torn down and leaves nothing behind", "check": "teardown"}
+  ]
+}

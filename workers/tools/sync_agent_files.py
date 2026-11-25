@@ -46,7 +46,7 @@ REPOS = {
         "test": "`node scripts/check-copies.mjs workers spec` (the license files in every repository must be identical).",
         "rules": [
             "The license text is immutable once released: a change is a new version, never an edit.",
-            "Pricing numbers live in `COMMERCIAL-TERMS.md` only. Every change is a protected change with a human reviewer.",
+            "Pricing numbers live in `COMMERCIAL-TERMS.md` only. A change to the license or the terms is a legal act in the owner's name: it is a gate card with the current version in effect (IC-GATE-001), never a waiting review.",
             "Not legal advice: nothing here has had a lawyer's review until the repository says so.",
         ],
     },
@@ -55,7 +55,7 @@ REPOS = {
         "test": "Read the rendered profile; it must agree with `SCOPE.md` in `ultrastable/spec`.",
         "rules": [
             "The profile is public. It must not promise business plans, patents, marketing or platforms other than Cloudflare Workers.",
-            "Every change to the profile is a protected change.",
+            "Every change to the profile is a protected change, passed by the automated gates.",
         ],
     },
 }
