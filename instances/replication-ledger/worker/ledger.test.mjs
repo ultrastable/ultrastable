@@ -78,5 +78,21 @@ test("the Worker serves findings with computed standings", async () => {
   const one = await route("https://x/api/findings/ego-depletion").json();
   assert.equal(one.standing.standing, "fails");
   assert.equal(route("https://x/api/findings/nope").status, 404);
+  assert.equal(route("https://x/api/nope").status, 404);
   assert.equal((await route("https://x/health").json()).ok, true);
+});
+
+test("reader pages render from the ledger, with the guess hidden until answered", async () => {
+  const home = await route("https://x/").text();
+  assert.match(home, /Which landmark findings held up/);
+  for (const f of ledger.findings) assert.ok(home.includes(`/f/${f.id}`), f.id);
+  const page = await route("https://x/f/ego-depletion").text();
+  assert.match(page, /data-answer="fails"/);
+  assert.match(page, /doi.org\/10.1177\/1745691616652873/);
+  assert.match(await route("https://x/field/medicine").text(), /Statins/);
+  assert.match(await route("https://x/rubric").text(), /Many-lab or multisite replication/);
+  assert.match(await route("https://x/projects").text(), /Open Science Collaboration/);
+  assert.equal(route("https://x/f/nope").status, 404);
+  assert.equal(route("https://x/field/astrology").status, 404);
+  assert.doesNotMatch(home, /<script src=/, "no third-party scripts");
 });
