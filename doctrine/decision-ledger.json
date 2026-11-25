@@ -5018,6 +5018,67 @@
    "title": "What Works tenant: grades computed, deploy after owner go-ahead",
    "body": "New tenant what-works (policy evidence atlas). Grades come only from worker/grade.js over curated and read-in trials; a model may only label design and direction with verbatim abstract quotes. Code registered to move to ultrastable/what-works. Worker, D1 and route are added to doctrine/topology.json once the owner confirms the production deploy.",
    "probe": "grep:doctrine/tenant-repos.json::ultrastable/what-works"
+  },
+  {
+   "id": "lesson-2026-11-25-branch-cleanup-keeps-evidence-branches",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "branch cleanup keeps evidence branches",
+   "body": "Ledger branches named *-evidence are kept by branch_cleanup.py, and each repo is handled on its own so one 404 does not end the pass.",
+   "probe": "grep:scripts/branch_cleanup.py::-evidence",
+   "session": "session_0156nqDsM82hJafZbpixiZx9"
+  },
+  {
+   "id": "decision-2026-11-25-deploy-what-works-worker-d1-and-route-in-the-topology",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Deploy What Works: Worker, D1 and route in the topology",
+   "body": "Rowan approved the deploy (2026-11-25). D1 ultrastable-what-works (c915e72c) created in the ultrastable account; Worker ultrastable-what-works builds from instances/what-works/worker while the tenant is moving to ultrastable/what-works; cron 17 * * * *; route what-works.ultrastable.org; clock what-works-beat with a /pulse/watch restart route; loop what-works-beat owned by the Worker.",
+   "probe": "grep:doctrine/topology.json::ultrastable-what-works"
+  },
+  {
+   "id": "decision-2026-11-25-frontend-auto-1-front-end-and-back-end-lanes-in-the-improve-",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "FRONTEND-AUTO-1: front-end and back-end lanes in the improve loop, engine in the seed",
+   "body": "seed/scripts/improve.py is the engine every system carries; each pass files one front-end and one back-end item; front-end items carry the UI/UX audit, Core Web Vitals and human-voice gate; lower-is-better metrics settle correctly.",
+   "probe": "file:seed/scripts/improve.py",
+   "session": "session_0156nqDs42dQamHBbr9uK8E2"
+  },
+  {
+   "id": "decision-2026-11-25-improve-1-impact-and-reach-loop-always-has-work",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "IMPROVE-1: impact and reach loop always has work",
+   "body": "foundation/improve.py runs daily in product-manager.yml: reach, impact and protected plus items every pass, missing signals are defects, market pass when R&D is stale, p0 stall per manager tier, closed items settled on their metric after 7 days.",
+   "probe": "file:foundation/improve.py",
+   "session": "session_0156nqDs42dQamHBbr9uK8E2"
+  },
+  {
+   "id": "decision-2026-11-25-replication-ledger-seeded-as-a-moving-tenant-tenant-repo-1",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Replication Ledger seeded as a moving tenant (TENANT-REPO-1)",
+   "body": "Rowan 2026-11-25 asked for an encyclopedic replication ledger across fields, and restated that every Ultrastable deployment has its own GitHub repo and runs sandboxed as a tenant app. instances/replication-ledger holds the manifest plus a first-slice worker (data model, computed standing rubric, Crossref-backed add/verify CLI, 25 findings in 5 fields, 6 replication projects); doctrine/tenant-repos.json registers it as moving so tenant-repos.yml creates ultrastable/replication-ledger from the folder's history. Seed DOIs are unchecked until Q-RLEDGER-VERIFY: this session had no route to Crossref.",
+   "probe": "grep:doctrine/tenant-repos.json::\"replication-ledger\""
+  },
+  {
+   "id": "decision-2026-11-25-what-works-moved-to-its-own-repository",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "What Works moved to its own repository",
+   "body": "Rowan created ultrastable/what-works (2026-11-25) and asked for it to be public. The tenant folder was split with its history, the core files it reads vendored (tenantrepos --prepare) and a CI workflow added; topology now builds ultrastable-what-works from that repository's main (worker/index.js), the registry state is moved and the worker code left the core. Seedlife and deploy read the repository over raw.githubusercontent.com, so it must be public.",
+   "probe": "grep:doctrine/topology.json::\"repo\": \"ultrastable/what-works\"",
+   "session": "session_0156nqDvibwHjBezJBzy8i3x"
+  },
+  {
+   "id": "decision-2026-11-25-auto-merge-default-1",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "AUTO-MERGE-DEFAULT-1",
+   "body": "branch_cleanup.py sets allow_auto_merge and delete_branch_on_merge on every fleet repo and every tenant repo listed in doctrine/tenant-repos.json, from the lane's completion sweep.",
+   "probe": "grep:scripts/branch_cleanup.py::allow_auto_merge",
+   "session": "session_0156nqDsM82hJafZbpixiZx9"
   }
  ]
 }

@@ -60,7 +60,8 @@
    "store": "repo",
    "files": [
     "foundation/executor.py",
-    "foundation/prioritize.py"
+    "foundation/prioritize.py",
+    "seed/scripts/improve.py"
    ],
    "metric": "item_closed",
    "metric_says": "1 when the picked item is closed (verified, merged or closed by its probe) inside one cycle",

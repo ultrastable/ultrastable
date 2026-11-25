@@ -300,6 +300,33 @@
    "domain": "org",
    "home": "https://unlearn.ultrastable.org/",
    "homeLabel": "Open the encyclopedia"
+  },
+  {
+   "id": "what-works",
+   "name": "What Works",
+   "tag": "Public-benefit demo, live",
+   "status": "live",
+   "summary": "A living atlas of public programmes, each graded by its trials. Readers guess the verdict first, then see the studies behind it.",
+   "problem": "Programmes that sound right, like Scared Straight, can make things worse, and the trials that show it are hard to find.",
+   "loop": "The loop keeps checking the programmes checked longest ago, resolves their citations against Crossref, searches OpenAlex and Europe PMC for new trials and reviews, and recomputes the grades with one rubric. A new study joins a grade only when its design and effect are quoted word for word from its own abstract, and a change of verdict is logged with the study that moved it.",
+   "results": [
+    "Live public site where each verdict comes from the studies under it.",
+    "Evidence freshness is published at /api/freshness and every re-grade at /changes."
+   ],
+   "learned": "A fourth system runs on the same loop and the same evidence guard as Unlearn.",
+   "links": [
+    {
+     "label": "Operations dashboard",
+     "href": "/ops"
+    },
+    {
+     "label": "Get in touch",
+     "href": "/contact"
+    }
+   ],
+   "domain": "org",
+   "home": "https://what-works.ultrastable.org/",
+   "homeLabel": "Open the encyclopedia"
   }
  ],
  "domains": {

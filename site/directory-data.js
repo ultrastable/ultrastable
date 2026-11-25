@@ -27,5 +27,14 @@ export default [
   "license": "LicenseRef-Ultrastable-USL-1.0",
   "kind": "tenant",
   "summary": "A clickable encyclopedia of popular beliefs the evidence contradicts. Each entry starts from why the belief feels true, asks the reader to guess, then shows graded evidence with named sources."
+ },
+ {
+  "id": "what-works",
+  "name": "What Works",
+  "url": "https://what-works.ultrastable.org/",
+  "repo": "https://github.com/ultrastable/what-works",
+  "license": "LicenseRef-Ultrastable-USL-1.0",
+  "kind": "tenant",
+  "summary": "A living atlas of public programmes, each graded by its trials. Readers guess the verdict first, then see the studies behind it."
  }
 ];

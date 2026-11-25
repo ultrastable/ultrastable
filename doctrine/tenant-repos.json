@@ -42,7 +42,7 @@
   },
   "what-works": {
    "repo": "ultrastable/what-works",
-   "state": "moving",
+   "state": "moved",
    "source": "instances/what-works",
    "keep_in_core": [
     "IDEA.md",
@@ -71,6 +71,37 @@
      }
     },
     "AGENTS.md": "# What Works: agent instructions\n\n> Ultrastable is the foundation for any autonomous system.\n\nWhat Works is a tenant system on Ultrastable: a living atlas of what works in public policy. This repository holds its code (`worker/`) and the core files it reads, vendored under `vendor/ultrastable/`. Its manifest (IDEA.md, instance.json, lifecycle.json, runway.json) and the platform rules every agent follows live in the core repository, `ultrastable/ultrastable` (`agents/AGENTS.md`, `instances/what-works/`, `doctrine/tenant-repos.json`).\n\n- Test: `node --test worker/*.test.mjs`.\n- Deploy: the platform builds this repository's `main` into the `ultrastable-what-works` Worker (D1 `ultrastable-what-works`, Workers AI, hourly cron). Nothing here holds a credential.\n- Honest grading: every verdict is computed by `worker/grade.js`; never type a grade. Findings carry no typed numbers. A model may only label a study's design and direction, each with a verbatim quote from its abstract.\n- No accounts, no cookies; reader guesses are anonymous counts.\n"
+   }
+  },
+  "replication-ledger": {
+   "repo": "ultrastable/replication-ledger",
+   "state": "moving",
+   "source": "instances/replication-ledger",
+   "keep_in_core": [
+    "IDEA.md",
+    "instance.json",
+    "lifecycle.json",
+    "runway.json",
+    "README.md"
+   ],
+   "vendor": {},
+   "worker": "ultrastable-replication-ledger",
+   "ai": false,
+   "visibility": "public",
+   "description": "Replication Ledger: which landmark findings held up and which failed, across many fields, updated as replications publish. A tenant system running on Ultrastable.",
+   "write": {
+    "package.json": {
+     "name": "replication-ledger",
+     "private": true,
+     "type": "module",
+     "description": "Replication Ledger: which landmark findings held up and which failed, across many fields. A tenant system running on Ultrastable.",
+     "scripts": {
+      "test": "node --test --no-warnings worker/*.test.mjs",
+      "validate": "node worker/cli.mjs validate",
+      "verify": "node worker/cli.mjs verify"
+     }
+    },
+    "AGENTS.md": "# Replication Ledger: agent instructions\n\n> Ultrastable is the foundation for any autonomous system.\n\nThe Replication Ledger is a tenant system on Ultrastable: which landmark findings held up when replicated and which failed, across many fields. This repository holds its code (`worker/`) and its data (`worker/data/findings.json`). Its manifest (IDEA.md, instance.json, lifecycle.json, runway.json) and the platform rules every agent follows live in the core repository, `ultrastable/ultrastable` (`agents/AGENTS.md`, `instances/replication-ledger/`, `doctrine/tenant-repos.json`).\n\n- Test: `node --test worker/*.test.mjs`. Validate the data: `node worker/cli.mjs validate`. Check every DOI at Crossref: `node worker/cli.mjs verify`.\n- Add a replication: `node worker/cli.mjs add <finding> <doi> --kind K --outcome O [--prereg] --summary \"...\"`; the citation comes from Crossref by DOI and the standing change is logged.\n- Honest standings: every standing is computed by `worker/standing.js`; never type one. Summaries carry no typed numbers.\n- No accounts, no cookies. Nothing here holds a credential.\n"
    }
   }
  }

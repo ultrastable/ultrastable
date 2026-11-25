@@ -1,0 +1,16 @@
+{
+  "id": "Q-IMPROVE-plus-executor-verdicts",
+  "title": "Q-IMPROVE-plus-executor-verdicts: Let the executor rank work by the kept rate of past improve verdicts per area",
+  "body": "**Owner:** portfolio-manager\n**Trigger:** improve --run\n**Done check:** grep:foundation/executor.py::improve\n**Prediction:** external_referrals_7d > 83 within 168 h\n**Status:** open\n\nKind: plus. Baseline external_referrals_7d = 83. Settled 7 days after it closes: kept if external_referrals_7d rose, else replaced.\n\n**Closing probe:** grep:foundation/executor.py::improve\n\n\n**Vacuous:** 2026-11-25T15:51:35Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "role:portfolio-manager",
+    "growth",
+    "improve",
+    "plus",
+    "plus"
+  ],
+  "milestone": "Now",
+  "workstream": "Growth"
+}

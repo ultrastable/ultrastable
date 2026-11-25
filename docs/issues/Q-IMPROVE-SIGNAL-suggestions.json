@@ -1,0 +1,15 @@
+{
+  "id": "Q-IMPROVE-SIGNAL-suggestions",
+  "title": "Q-IMPROVE-SIGNAL-suggestions: suggestions signal is unmeasured",
+  "body": "**Owner:** product-manager\n**Trigger:** improve --run\n**Done check:** cmd:python3 -m foundation improve --probe signal:suggestions\n**Prediction:** signal_suggestions_ok == 1 within 72 h\n**Status:** open\n\nops/reach/metrics.jsonl is unmeasured. A signal nobody reads is a blind spot, not a quiet week. Restore the producer or give it a second route.\n\n**Closing probe:** cmd:python3 -m foundation improve --probe signal:suggestions\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "role:product-manager",
+    "growth",
+    "improve",
+    "signal"
+  ],
+  "milestone": "Now",
+  "workstream": "Growth"
+}

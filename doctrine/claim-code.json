@@ -268,6 +268,33 @@
    }
   },
   {
+   "id": "improve-loop-agents",
+   "source": "agents/AGENTS.md",
+   "quote": "\"Automatically improve impact and reach. An Ultrastable system shall always continue improving entirely on its own, 100% autonomously.\"",
+   "probe": {
+    "file": "tests/foundation/test_improve.py",
+    "contains": "def test_frontend_and_backend_lanes_every_pass"
+   }
+  },
+  {
+   "id": "improve-loop-seed",
+   "source": "seed/agents/AGENTS.md",
+   "quote": "\"Automatically improve impact and reach. An Ultrastable system shall always continue improving entirely on its own, 100% autonomously.\"",
+   "probe": {
+    "file": "tests/foundation/test_improve.py",
+    "contains": "def test_frontend_and_backend_lanes_every_pass"
+   }
+  },
+  {
+   "id": "improve-loop-agents-pi",
+   "source": "agents/PROJECT-INSTRUCTIONS.md",
+   "quote": "\"Automatically improve impact and reach. An Ultrastable system shall always continue improving entirely on its own, 100% autonomously.\"",
+   "probe": {
+    "file": "tests/foundation/test_improve.py",
+    "contains": "def test_frontend_and_backend_lanes_every_pass"
+   }
+  },
+  {
    "id": "directory-daily-listing",
    "source": "site/worker.js",
    "quote": "checks in once a day",

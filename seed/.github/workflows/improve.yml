@@ -1,0 +1,38 @@
+name: improve
+# budget: ~1 min per run, once a day = ~30 min per month
+# trigger: daily; improvements settle over days, never faster than daily
+# free-alternative: `python3 scripts/improve.py --run --apply` from the tick Worker's dispatch or any cloud-hosted agent session
+# IMPROVE-1 and FRONTEND-AUTO-1: every system files its own reach, impact, front-end and back-end work each day, escalates a stalled
+# manager tier, and keeps or replaces each change on its measured outcome. The files it writes merge through the system's own lane.
+on:
+  schedule:
+    - cron: "23 6 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+concurrency:
+  group: improve
+  cancel-in-progress: false
+jobs:
+  improve:
+    if: ${{ vars.HALT != '1' && !github.event.repository.is_template && github.repository != 'ultrastable/seed' }}  # HALT-1; TEMPLATE-CODE-ONLY-1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Improvement pass
+        run: python3 scripts/improve.py --run --apply
+      - name: Open the filed work as a pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -e
+          git diff --quiet && git diff --cached --quiet && [ -z "$(git ls-files --others --exclude-standard docs/issues ops/improve)" ] && exit 0
+          b="improve/$(date -u +%Y%m%d)"
+          git config user.name "ultrastable-improve"; git config user.email "improve@users.noreply.github.com"
+          git checkout -b "$b"; git add docs/issues ops/improve; git commit -m "Improvement pass: new reach, front-end and back-end work"
+          git push -u origin "$b"
+          gh pr create --title "Improvement pass $(date -u +%F)" --body "Filed by scripts/improve.py (IMPROVE-1, FRONTEND-AUTO-1)." --label handoff

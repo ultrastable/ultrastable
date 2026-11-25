@@ -1876,6 +1876,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **Automate back-end and front-end development; improve on its own (IMPROVE-1, FRONTEND-AUTO-1, Rowan 2026-11-25).** \"Automatically",
+   "detail": "",
+   "how": "file:seed/scripts/improve.py + file:seed/autonomy/improve.json + file:seed/.github/workflows/improve.yml + file:foundation/improve.py + file:doctrine/improve.json + file:tests/foundation/test_improve.py",
+   "id": "cited-3c3d6c30bf",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
@@ -2519,6 +2528,15 @@ export default {
    "detail": "",
    "how": "file:seed/worker/src/vendor/core/stickiness.js + file:seed/worker/src/stickiness.js + file:instances/ultrastable/progress.json + file:seed/worker/test/stickiness.test.js + file:workers/core/stickiness/stickiness.test.js",
    "id": "mirror-9111f7c2d8",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Automate back-end and front-end development; improve on its own (IMPROVE-1, FRONTEND-AUTO-1, Rowan 2026-11-25).** \"Automatically",
+   "detail": "",
+   "how": "file:seed/scripts/improve.py + file:seed/autonomy/improve.json + file:seed/.github/workflows/improve.yml + file:foundation/improve.py + file:doctrine/improve.json + file:tests/foundation/test_improve.py",
+   "id": "mirror-0ea4d489e9",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3226,7 +3244,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 921",
+   "claim": "live-deploys: 932",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",
@@ -3431,7 +3449,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 378,
-  "total": 378
+  "pass": 380,
+  "total": 380
  }
 };
