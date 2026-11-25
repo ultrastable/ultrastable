@@ -28,12 +28,6 @@
  "seed_verify": {
   "ultrastable": [
    {
-    "at": "2026-11-24T19:43:36Z",
-    "url": "https://ultrastable.io/health",
-    "status": 200,
-    "ok": true
-   },
-   {
     "at": "2026-11-24T19:53:41Z",
     "url": "https://ultrastable.io/health",
     "status": 200,
@@ -203,6 +197,12 @@
    },
    {
     "at": "2026-11-25T16:04:59Z",
+    "url": "https://ultrastable.io/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-25T16:09:16Z",
     "url": "https://ultrastable.io/health",
     "status": 200,
     "ok": true
@@ -210,12 +210,6 @@
   ],
   "unlearn": [
    {
-    "at": "2026-11-24T19:43:36Z",
-    "url": "https://unlearn.ultrastable.org/health",
-    "status": 200,
-    "ok": true
-   },
-   {
     "at": "2026-11-24T19:53:41Z",
     "url": "https://unlearn.ultrastable.org/health",
     "status": 200,
@@ -385,6 +379,12 @@
    },
    {
     "at": "2026-11-25T16:04:59Z",
+    "url": "https://unlearn.ultrastable.org/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-25T16:09:16Z",
     "url": "https://unlearn.ultrastable.org/health",
     "status": 200,
     "ok": true
@@ -590,6 +590,21 @@
     "url": "https://what-works.ultrastable.org/health",
     "status": 200,
     "ok": true
+   },
+   {
+    "at": "2026-11-25T16:09:16Z",
+    "url": "https://what-works.ultrastable.org/health",
+    "status": 200,
+    "ok": true
+   }
+  ],
+  "replication-ledger": [
+   {
+    "at": "2026-11-25T16:09:16Z",
+    "url": "https://replication-ledger.ultrastable.org/health",
+    "status": null,
+    "ok": false,
+    "error": "<urlopen error [Errno -2] Name or service not known>"
    }
   ]
  }
