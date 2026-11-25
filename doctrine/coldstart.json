@@ -1,0 +1,31 @@
+{
+  "_doc": "COLDSTART-1 (Rowan, 2026-11-25): \"All surfaces, all files, all code, all instructions, everything has to work together automatically and seamlessly from the beginning ... it has to all bootstrap autonomously.\" One contract for what a system has from the moment it is born from the seed, with no step by a person. Each capability names the standing rule it serves, the seed files that carry it (so a fresh copy has it by construction), the tick step that runs it, the public path a deployed system answers on, and the platform check that holds it fleetwide. Read by foundation/coldstart.py: `coldstart --check` (in checks) proves the seed carries every capability, every live path is open on a health-only seed (seed/worker/src/visibility.js PUBLIC_READS), every `python3 -m foundation <cmd>` named in instructions, doctrine and workflows resolves, and the platform and seed agent files carry the same rules; `coldstart --live URL` probes a deployed system; `seedlaunch --e2e-oidc` runs that probe on the fresh seed it launches, so the end-to-end proof covers every surface, not only /health.",
+  "capabilities": [
+    {"id": "own-repo", "rule": "TENANT-REPO-1", "seed": ["seed/.github/workflows/bootstrap.yml", "seed/worker/src/apprepos.js"], "fleet": "tenantrepos --check"},
+    {"id": "backend", "rule": "FULLSTACK-1", "seed": ["seed/worker/src/index.js", "seed/worker/wrangler.template.jsonc", "seed/bootstrap/bootstrap.py"], "live": {"path": "/health", "status": [200, 503], "json": true}, "fleet": "fullstack --check"},
+    {"id": "frontend", "rule": "FULLSTACK-1", "seed": ["seed/worker/src/visibility.js"], "live": {"path": "/", "status": [200], "html": true}, "fleet": "fullstack --check"},
+    {"id": "clock", "rule": "CLOCKWORK-1", "seed": ["seed/worker/src/tick.js"], "cron": "seed/worker/wrangler.template.jsonc", "fleet": "seedadmit --autonomy"},
+    {"id": "discoverable", "rule": "DISCOVER-1", "seed": ["seed/worker/src/discover.js"], "live": {"path": "/.well-known/ultrastable.json", "status": [200], "json": true}, "fleet": "discover --check"},
+    {"id": "knowledge-graph", "rule": "DATAGRAPH-1", "seed": ["seed/worker/src/datagraph.js", "seed/worker/src/vendor/core/datagraph.js"], "step": "knowledge-graph", "live": {"path": "/api/graph", "status": [200, 503], "json": true}, "fleet": "datagraph --check"},
+    {"id": "progress", "rule": "PROGRESS-1", "seed": ["seed/worker/src/progress.js"], "step": "progress", "live": {"path": "/api/progress", "status": [200, 503], "json": true}, "fleet": "progress --check"},
+    {"id": "live-content", "rule": "STICKY-1", "seed": ["seed/worker/src/stickiness.js", "seed/worker/src/vendor/core/stickiness.js"], "step": "stickiness", "live": {"path": "/api/stickiness", "status": [200, 503], "json": true}, "fleet": "staticcontent --check"},
+    {"id": "self-improve", "rule": "IMPROVE-1", "seed": ["seed/scripts/improve.py", "seed/autonomy/improve.json", "seed/.github/workflows/improve.yml"], "fleet": "improve --check"},
+    {"id": "platform-sync", "rule": "SYNC-BOTH-WAYS-1", "seed": ["seed/.github/workflows/platform-sync.yml"], "fleet": "tenantsync --check"},
+    {"id": "year-unattended", "rule": "YEAR-SIM-1", "seed": ["seed/scripts/yearsim.py", "seed/autonomy/yearsim.json", "seed/scripts/seedlife.py"], "fleet": "seedlaunch --check"},
+    {"id": "goals", "rule": "GOALS-1", "seed": ["seed/autonomy/goals.json", "seed/worker/src/goals.js"]},
+    {"id": "instructions", "rule": "Rules live everywhere", "seed": ["seed/CLAUDE.md", "seed/agents/AGENTS.md", "seed/doctrine/GUIDING-DIRECTIVE.md", "seed/doctrine/VISION.md"], "fleet": "directive --check"}
+  ],
+  "instructions": {
+    "_doc": "Agent files that must agree. Every rule id written in the platform file is also in the seed file, unless it is listed in platform_only with the reason the seed does not carry it.",
+    "platform": "agents/AGENTS.md",
+    "seed": "seed/agents/AGENTS.md",
+    "imports": ["CLAUDE.md", "seed/CLAUDE.md"],
+    "platform_only": {
+      "ANALYTICS-LOOP-1": "named only as the QNFO fleet twin of INSIGHT-1; the seed carries INSIGHT-1 itself"
+    }
+  },
+  "command_refs": {
+    "_doc": "Files whose `python3 -m foundation <cmd>` references must resolve to a command (foundation/__main__.py ARGPARSE_COMMANDS or a foundation module with main). Tests are excluded: they quote unknown commands on purpose.",
+    "globs": ["agents/**/*.md", "seed/agents/**/*.md", "AGENTS.md", "CLAUDE.md", "docs/doctrine/*.md", "doctrine/*.json", "deploy/*.json", ".github/workflows/*.yml", "instances/ultrastable/loop-registry.json"]
+  }
+}

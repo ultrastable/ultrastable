@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-25-coldstart-1-one-cold-start-contract-every-system-carries-fro",
+  "kind": "decision",
+  "date": "2026-11-25",
+  "title": "COLDSTART-1: one cold-start contract every system carries from birth",
+  "body": "Rowan 2026-11-25: everything must bootstrap fully autonomously from a cold start. doctrine/coldstart.json lists the capabilities a system owes from birth (repo, back end, front end, clock, discovery, knowledge graph, progress, live content, self-improvement, platform sync, year unattended, goals, instructions); coldstart --check proves the seed carries them, that every named foundation command resolves and that the platform and seed agent files agree; seedlaunch --e2e-oidc probes every live path on the fresh seed. Root causes removed: health-only seeds hid /.well-known/ultrastable.json, /api/graph, /api/progress and /api/stickiness (now PUBLIC_READS in seed/worker/src/visibility.js); the CLI dispatched only hand-listed modules, so detector static-content could not run (any module with main now resolves); duplicate and missing rule bullets in the agent files. Probe: python3 -m foundation coldstart --check passes; tests/foundation/test_coldstart.py.",
+  "probe": "grep:foundation/coldstart.py::def check\\("
+ },
+ "kind": "decision",
+ "title": "COLDSTART-1: one cold-start contract every system carries from birth",
+ "session": ""
+}

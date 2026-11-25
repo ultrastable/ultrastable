@@ -13,6 +13,8 @@ GitHub Actions) and carries each seed from repository to a live, ticking Worker:
   year_gate              the seed's own drills against its real recovery code; horizon p10 >= 365 days or the boot is not accepted
   verify_live            /health on the deployed Worker answers 200
 
+  coldstart              every live path of doctrine/coldstart.json answers on the fresh seed (COLDSTART-1)
+
   python3 -m foundation seedlaunch --e2e [--keep]     a fresh seed from seed/, launched, verified, then torn down (the reproducible proof)
   python3 -m foundation seedlaunch --fleet            every org repository created from the ultrastable/seed template
   python3 -m foundation seedlaunch --check            the latest e2e record passed and is newer than max_age_days (the required gate)
@@ -101,7 +103,7 @@ def teardown(seed_root: Path) -> list[str]:
     return notes
 
 
-def e2e_oidc(root=ROOT, wait_s=660, run=None, sleep=None) -> dict:
+def e2e_oidc(root=ROOT, wait_s=660, run=None, sleep=None, coldstart_live=None) -> dict:
     """SEED-DEPLOY-2: the credential-free route. deploy/deploy-seed.mjs generates and admits each seed in doctrine/seed-deploys.json from the kernel
     (a fresh build every run), creates its D1 and deploys its Worker into the Ultrastable account through the site worker's OIDC endpoint; no stored
     Cloudflare token is read. /health answers 503 until the first complete tick, so the verify pass runs after one cron interval."""
@@ -119,8 +121,16 @@ def e2e_oidc(root=ROOT, wait_s=660, run=None, sleep=None) -> dict:
         code, out = run(["node", "deploy/deploy-seed.mjs", "--verify"])
     ok = code == 0
     url = (up.get("url") or "") + "/health"
-    return {**rec, "passed": ok and bool(up.get("year_p10")) and up["year_p10"] >= 365, "live_url": url,
-            "failed_stages": {} if ok else {"verify_live": out[-300:]}, "report": out.splitlines()[-3:]}
+    failed = {} if ok else {"verify_live": out[-300:]}
+    contract = []
+    if ok and up.get("url"):  # COLDSTART-1: the proof is the whole cold-start contract (front end, discovery, graph, progress, content), not /health alone
+        from . import coldstart
+        contract = (coldstart_live or coldstart.live)(up["url"])
+        miss = [f"{r['path']}: {r['why']}" for r in contract if not r["ok"]]
+        if miss:
+            failed["coldstart"] = "; ".join(miss)[:600]
+    return {**rec, "passed": not failed and bool(up.get("year_p10")) and up["year_p10"] >= 365, "live_url": url,
+            "coldstart": {r["capability"]: r["ok"] for r in contract}, "failed_stages": failed, "report": out.splitlines()[-3:]}
 
 
 def e2e(keep=False, root=ROOT) -> dict:

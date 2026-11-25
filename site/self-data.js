@@ -42,7 +42,7 @@ export default {
    },
    {
     "id": "sandbox-instances",
-    "rebuild": "python3 -m foundation scaffold",
+    "rebuild": "python3 -m foundation new-system --manifest instances/<slug>/instance.json --out <dir> --apply",
     "what": "instances created from instances/<slug>/instance.json in a sandbox account or container"
    },
    {
