@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 # Copyright (c) Ultrastable
-"""SPEC-GATE-1 on the platform. The engine lives once in seed/scripts/specgate.py, so every seeded system carries the same gate.
-Ultrastable is the foundation for any autonomous system."""
+"""SPEC-GATE-1: reject a work item that lacks a done check, a predicted metric, an out-of-scope line or a live probe.
+Shim over seed/scripts/specgate.py. Ultrastable is the foundation for any autonomous system."""
 from __future__ import annotations
 import importlib.util, sys
 from pathlib import Path
