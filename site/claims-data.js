@@ -1948,15 +1948,6 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
-   "claim": "- **Open standards, never a home-grown format (OPEN-STANDARDS-1, Rowan 2026-11-25).** \"Standards, don't reinvent the wheel. Apply standards",
-   "detail": "",
-   "how": "file:foundation/openstd.py + file:doctrine/open-standards.json + file:doctrine/open-standards-baseline.json + file:tests/foundation/test_openstd.py + grep:.github/workflows/checks.yml::foundation[ .]openstd\\b",
-   "id": "cited-897a8cdffd",
-   "kind": "claim",
-   "pass": true,
-   "surface": "agents/AGENTS.md"
-  },
-  {
    "claim": "- **Every surface works together from the first deploy; one command proves it (BOOT-ACCEPT-1, Rowan 2026-11-25).** \"All surfaces, all",
    "detail": "",
    "how": "file:seed/worker/src/visibility.js + file:doctrine/open-loops.json + file:tests/foundation/test_bootaccept.py + file:seed/worker/test/bootaccept.test.js + file:foundation/bootaccept.py",
@@ -2740,15 +2731,6 @@ export default {
    "surface": "seed/agents/AGENTS.md"
   },
   {
-   "claim": "- **Open standards, never a home-grown format (OPEN-STANDARDS-1, Rowan 2026-11-25).** \"Standards, don't reinvent the wheel. Apply standards",
-   "detail": "",
-   "how": "file:foundation/openstd.py + file:doctrine/open-standards.json + file:doctrine/open-standards-baseline.json + file:tests/foundation/test_openstd.py + grep:.github/workflows/checks.yml::foundation[ .]openstd\\b",
-   "id": "mirror-79e254f607",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/agents/AGENTS.md"
-  },
-  {
    "claim": "- **Every surface works together from the first deploy; one command proves it (BOOT-ACCEPT-1, Rowan 2026-11-25).** \"All surfaces, all",
    "detail": "",
    "how": "file:seed/worker/src/visibility.js + file:doctrine/open-loops.json + file:tests/foundation/test_bootaccept.py + file:seed/worker/test/bootaccept.test.js + file:foundation/bootaccept.py",
@@ -3469,7 +3451,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 1084",
+   "claim": "live-deploys: 1094",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",
@@ -3692,7 +3674,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 407,
-  "total": 407
+  "pass": 405,
+  "total": 405
  }
 };
