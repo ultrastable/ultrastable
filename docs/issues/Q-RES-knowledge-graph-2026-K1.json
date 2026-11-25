@@ -1,0 +1,12 @@
+{
+  "id": "Q-RES-knowledge-graph-2026-K1",
+  "title": "Q-RES-knowledge-graph-2026-K1: The graph keeps itself current (measured 0.2, target >= 1)",
+  "body": "**Owner:** product-manager\n**Trigger:** research pass: knowledge-graph-2026 finding K1 is not-met (measured 0.2)\n**Done check:** cmd:python3 -m foundation research --probe knowledge-graph-2026:K1\n**Prediction:** kg_systems_share >= 1 within 336 h\n**Status:** open\n\nConcern: The graph keeps itself current. The study: Every system Ultrastable runs keeps a knowledge graph of its own data, built and refreshed by its own tick, with no setup.\n\nMechanisms that should answer it: KGRAPH-1 (foundation/datagraph.py); KGRAPH-1 (seed/worker/src/graphai.js).\n\nMetric: share of systems in doctrine/knowledge-graph.json whose knowledge graph is built, not pending, target >= 1. Improve the mechanism (or add one) until the probe passes; the white paper at /research updates itself from the same measurement.",
+  "labels": [
+    "role:product-manager",
+    "research",
+    "plus"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}

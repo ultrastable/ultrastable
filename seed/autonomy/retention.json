@@ -294,6 +294,10 @@
     "kg_runs": {
       "keep": "managed",
       "reason": "DATAGRAPH-1: one row per graph pass, pruned to 400 days by seed/worker/src/datagraph.js"
-    }
+    },
+    "kg_vec": {"keep": "state", "reason": "KGRAPH-AI-1: one embedding per live graph node, rewritten when the node changes"},
+    "kg_summaries": {"keep": "state", "reason": "KGRAPH-AI-1: one summary per community insight"},
+    "kg_ai_cursor": {"keep": "state", "reason": "KGRAPH-AI-1: one cursor row"},
+    "kg_cost": {"keep": "managed", "reason": "KGRAPH-AI-1: one row per day of graph AI cost"}
   }
 }
