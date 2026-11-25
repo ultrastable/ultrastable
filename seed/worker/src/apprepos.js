@@ -134,6 +134,7 @@ export async function ensureRepoSettings(db, env, tenant, spec, { fetch: f = fet
   const drift = Object.fromEntries(Object.entries(REPO_SETTINGS).filter(([k, v]) => seen.json[k] !== v));
   // DISCOVER-1: a repository declared public in github/org-settings.json is made public; never the private ops repository, and never the other way
   if (spec.public === true && seen.json.private === true && !KEEP_PRIVATE.includes(repo)) drift.private = false;
+  if (spec.dry) return { ...out, ok: true, dry: true, drift: Object.keys(drift) };  // APP-CRED-WATCH-1: the credential watch reads, never writes
   const guard = await ensureNoRewrite(A, db, tenant, repo);
   if (!Object.keys(drift).length) return { ...out, ok: true, changed: guard.added ? [NO_REWRITE.name] : [], protect: guard.state };
   const p = await A('PATCH', `/repos/${repo}`, drift);

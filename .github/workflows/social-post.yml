@@ -55,7 +55,7 @@ jobs:
         run: |
           python3 -m foundation balance --gate --apply  # FLOW-BALANCE-1: the one filing gate before any item lands
           if [ -f ops/balance-held.jsonl ]; then git add ops/balance-held.jsonl; fi
-          git add social/calendar.json ops/reach docs/issues
+          git add social/calendar.json ops/reach docs/issues site/feed-data.js  # FEED-FROZEN-1: the feed was regenerated every run and never committed
           if [ -d ops/thought ]; then git add ops/thought; fi
           if [ -f social/state.json ]; then git add social/state.json; fi
           if git diff --cached --quiet; then echo "no state change"; exit 0; fi

@@ -130,3 +130,6 @@ Each rule has a detector that sees it break and a remediation that repairs it, b
 - **configs-have-schemas** (Rowan, 2026-11-25): Every JSON config the system runs on has a JSON Schema 2020-12 contract in a Schema Store catalog, generated with the config, so any tool or agent validates it without reading the code that consumes it. The constitution is itself such a config.
   - detector: `doctrine/schemas/catalog.json`, `foundation/configschema.py` (platform)
   - remediation: `doctrine/schemas/constitution.schema.json`, `foundation/configschema.py` (platform)
+- **blind-spots-are-measured** (Rowan, 2026-11-25): A reading that is empty is unmeasured, never zero: cost, database growth, credential expiry and published content are each read by a probe, and a probe that cannot read files its own item instead of passing.
+  - detector: `worker/src/costsample.js`, `worker/src/tick.js`, `worker/src/apprepos.js`
+  - remediation: `worker/src/tick.js`, `worker/src/tick.js`

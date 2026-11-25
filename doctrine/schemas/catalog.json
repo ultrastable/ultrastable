@@ -187,6 +187,14 @@
       "url": "consumers.schema.json"
     },
     {
+      "name": "content-drift.json",
+      "description": "Contract for doctrine/content-drift.json",
+      "fileMatch": [
+        "doctrine/content-drift.json"
+      ],
+      "url": "content-drift.schema.json"
+    },
+    {
       "name": "cost.json",
       "description": "Contract for doctrine/cost.json",
       "fileMatch": [

@@ -767,6 +767,42 @@
           "has": "--gen"
         }
       ]
+    },
+    {
+      "id": "blind-spots-are-measured",
+      "rule": "A reading that is empty is unmeasured, never zero: cost, database growth, credential expiry and published content are each read by a probe, and a probe that cannot read files its own item instead of passing.",
+      "source": "Rowan, 2026-11-25",
+      "covers": [
+        "BLINDSPOT-RED-1",
+        "COST-RUNAWAY-1",
+        "D1-GROWTH-1",
+        "CRED-EXPIRY-1",
+        "CONTENT-DRIFT-1"
+      ],
+      "detector": [
+        {
+          "file": "worker/src/costsample.js",
+          "has": "recorded as a sample with an error"
+        },
+        {
+          "file": "worker/src/tick.js",
+          "has": "CONNECTOR-HEALTH-1"
+        },
+        {
+          "file": "worker/src/apprepos.js",
+          "has": "APP-CRED-WATCH-1"
+        }
+      ],
+      "remediation": [
+        {
+          "file": "worker/src/tick.js",
+          "has": "async cost_probe("
+        },
+        {
+          "file": "worker/src/tick.js",
+          "has": "Q-COST-PROOF-2"
+        }
+      ]
     }
   ]
 }

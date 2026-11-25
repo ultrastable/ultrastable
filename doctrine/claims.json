@@ -2432,6 +2432,20 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-08be9e0fbe",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Blind spots are measured, not assumed safe (BLINDSPOT-RED-1, COST-RUNAWAY-1, D1-GROWTH-1, CRED-EXPIRY-1, CONTENT-DRIFT-1, Rowan",
+      "probe": [
+        "file:doctrine/content-drift.json",
+        "file:tests/foundation/test_cost.py",
+        "file:test/cost-probe.test.mjs",
+        "file:tests/foundation/test_credwatch.py",
+        "file:tests/foundation/test_contentdrift.py",
+        "file:foundation/cost.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-badeab1b44",
       "surface": "agents/AGENTS.md",
       "text": "- **Everything bootstraps itself from a cold start and works together from birth (COLDSTART-1, Rowan 2026-11-25).** \"All surfaces, all",
@@ -3453,6 +3467,21 @@
       ],
       "bound_by": "mirror",
       "of": "cited-467a38f9b7"
+    },
+    {
+      "id": "mirror-e420f8077f",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Blind spots are measured, not assumed safe (BLINDSPOT-RED-1, COST-RUNAWAY-1, D1-GROWTH-1, CRED-EXPIRY-1, CONTENT-DRIFT-1, Rowan",
+      "probe": [
+        "file:doctrine/content-drift.json",
+        "file:tests/foundation/test_cost.py",
+        "file:test/cost-probe.test.mjs",
+        "file:tests/foundation/test_credwatch.py",
+        "file:tests/foundation/test_contentdrift.py",
+        "file:foundation/cost.py"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-08be9e0fbe"
     },
     {
       "id": "mirror-ad11709e94",
