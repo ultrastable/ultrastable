@@ -1,0 +1,13 @@
+{
+  "id": "Q-FLEETMAP-did-it-work",
+  "title": "Q-FLEETMAP-did-it-work: ultrastable/did-it-work is not equal to its source (1 file(s) differ, 0 missing, 0 only in the copy)",
+  "body": "**Owner:** operations\n**Trigger:** fleetmap --drift --apply (daily in tenant-sync.yml)\n**Done check:** cmd:python3 -m foundation fleetmap --probe did-it-work\n**Prediction:** fleet_map_drifted_repos <= 0 within 168 h\n**Status:** open\n\nultrastable/did-it-work is a copy and is not equal to its source (FLEET-MAP-1): 1 file(s) differ, 0 missing, 0 only in the copy.\n\n- differ: lifecycle.json\n- ultrastable.json is in the older tenant-standard shape (runs_as as one object, no visibility); the schema is seed/standards/system.schema.json\n\nFix the sync named in doctrine/fleet-map.json for this repository (never copy by hand), then the same reading closes this item.\n\n**Closing probe:** cmd:python3 -m foundation fleetmap --probe did-it-work\n\n\n**Out of scope:** editing the copy by hand, changing the source it is copied from, or relaxing the drift reading.",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "role:operations",
+    "sync"
+  ],
+  "milestone": "Now",
+  "workstream": "Executor queue"
+}

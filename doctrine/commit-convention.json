@@ -1,0 +1,22 @@
+{
+ "_doc": "STANDARDS-FIRST-1: the commits the system writes itself carry a Conventional Commits 1.0.0 header, `<type>[(scope)][!]: <description>`, where the type is the loop that wrote it. `python3 -m foundation standards --commits` (a probe of the `conventional-commits` row in seed/standards/standards.json, run by `standards --check`) reads every generator under `generators`; a title that does not parse is on `baseline`, which only shrinks (length at most `baseline_ceiling`). A baseline title is one another program or record still matches by its text (foundation/queue.py, scripts/smoke_live.py, docs/PROJECT-MEMORY.md) or whose workflow another change is rewriting; it is changed together with its reader. Read by foundation/commitlint.py; tests tests/foundation/test_commitlint.py.",
+ "spec": "https://www.conventionalcommits.org/en/v1.0.0/",
+ "generators": [
+  ".github/workflows/*.yml",
+  "seed/.github/workflows/*.yml",
+  "scripts/*.sh",
+  "scripts/*.py",
+  "seed/scripts/*.py",
+  "deploy/*.mjs"
+ ],
+ "baseline_ceiling": 8,
+ "baseline": [
+  ".github/workflows/backup-drill.yml: backup drill record (BLINDSPOT-1)",
+  ".github/workflows/checks.yml: REGEN-1: regenerate generated files",
+  ".github/workflows/intent-yield.yml: intent yield, directives probed (INTENT-YIELD-1)",
+  ".github/workflows/product-manager.yml: provenance - public changelog (CHANGELOG-FRESH-1)",
+  ".github/workflows/temporal.yml: temporal series, findings and queue items (TEMPORAL-1)",
+  ".github/workflows/tenant-repos.yml: Stand alone: vendor the core files $slug reads (TENANT-REPO-1)",
+  "scripts/executor_evidence.sh: executor provenance"
+ ]
+}

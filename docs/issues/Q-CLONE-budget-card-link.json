@@ -1,0 +1,12 @@
+{
+  "id": "Q-CLONE-budget-card-link",
+  "title": "Q-CLONE-budget-card-link: The spending card of a copied template is one link, or is not asked twice",
+  "body": "**Owner:** staff\n**Trigger:** every executor run\n**Done check:** cmd:git grep -qF test_budget_card_is_one_link_or_absent -- seed/tests/test_happy_path.py\n**Status:** open\n\nseed/bootstrap/bootstrap.py `select` still opens GATE-BUDGET (\"Approve spending up to N USD/month\") with no `connect` link for a system that is not hosted, although the person already stated the amount in the Start my system form. Default in effect: free allowances only. Either treat the amount typed in the form as the approval of that ceiling and record it, or give the card one link to the system's own approval page (`/needs-you`). CASE-ENTITY has the same shape (a legal act; default: the system runs in the owner's own name).\n\nsize: S\n\n**Closing probe:** cmd:git grep -qF test_budget_card_is_one_link_or_absent -- seed/tests/test_happy_path.py ; cd seed && python3 -m unittest tests.test_happy_path\n\n**Prediction:** spec_quality >= 0.7 within 336 h (read by `python3 -m foundation specgate --report`; this item closing by its done check keeps the share of well-specified open items at or above today's reading)\n\n**Out of scope:** changing what a visitor is asked, adding a step a person performs, or naming a key on any card.",
+  "labels": [
+    "role:staff",
+    "p1",
+    "agent-ready"
+  ],
+  "milestone": "Next",
+  "workstream": "Launch path"
+}

@@ -1,0 +1,20 @@
+{
+ "_doc": "Shared conformance vectors for the CloudEvents 1.0 envelope (JSON format). Read by seed/worker/test/cloudevents.test.js and tests/foundation/test_cloudevents.py, so the Worker helper and the Python helper accept and refuse the same events.",
+ "spec": "https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/spec.md",
+ "valid": [
+  {"specversion": "1.0", "id": "a1", "source": "/workers/ultrastable-tick/handoff", "type": "io.ultrastable.handoff.merged"},
+  {"specversion": "1.0", "id": "pv-0123456789ab", "source": "/tenants/ultrastable/origins/loop/executor", "type": "io.ultrastable.provenance.change", "time": "2026-11-25T20:55:29Z", "subject": "docs/issues/Q-1.json", "datacontenttype": "application/json", "data": {"kind": "change"}},
+  {"specversion": "1.0", "id": "x", "source": "https://ultrastable.io", "type": "io.ultrastable.item.done", "time": "2026-11-25T20:55:29.123+01:00", "tenant": "unlearn", "attempt": 2}
+ ],
+ "invalid": [
+  {"why": "specversion missing", "event": {"id": "a", "source": "/s", "type": "io.ultrastable.a.b"}},
+  {"why": "wrong specversion", "event": {"specversion": "0.3", "id": "a", "source": "/s", "type": "io.ultrastable.a.b"}},
+  {"why": "empty id", "event": {"specversion": "1.0", "id": "", "source": "/s", "type": "io.ultrastable.a.b"}},
+  {"why": "source missing", "event": {"specversion": "1.0", "id": "a", "type": "io.ultrastable.a.b"}},
+  {"why": "type missing", "event": {"specversion": "1.0", "id": "a", "source": "/s"}},
+  {"why": "time is not RFC 3339", "event": {"specversion": "1.0", "id": "a", "source": "/s", "type": "io.ultrastable.a.b", "time": "2026-11-25 20:55:29"}},
+  {"why": "attribute name has an underscore", "event": {"specversion": "1.0", "id": "a", "source": "/s", "type": "io.ultrastable.a.b", "tenant_id": "x"}},
+  {"why": "extension attribute is an object", "event": {"specversion": "1.0", "id": "a", "source": "/s", "type": "io.ultrastable.a.b", "origin": {"class": "loop"}}},
+  {"why": "data and data_base64 together", "event": {"specversion": "1.0", "id": "a", "source": "/s", "type": "io.ultrastable.a.b", "data": {}, "data_base64": "e30="}}
+ ]
+}

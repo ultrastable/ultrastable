@@ -1,0 +1,12 @@
+{
+  "id": "Q-CLONE-status-page-before-deploy",
+  "title": "Q-CLONE-status-page-before-deploy: A copied template shows its status on a page before it has a place to run",
+  "body": "**Owner:** staff\n**Trigger:** every executor run\n**Done check:** cmd:git grep -qF pages -- seed/.github/workflows/bootstrap.yml\n**Status:** open\n\nCLONE-PATH-1 tells the person what happened on one issue thread in their copy (seed/bootstrap/intake.py `tell`). A person who has never used GitHub still has to find that thread. Publish org/owner-status.json as a plain page through the repository's own Pages (GitHub's built-in credential, no sign-in) and put its address in the repository description, so the first screen they see says where the system is.\n\nsize: M\n\n**Closing probe:** cmd:git grep -qF pages -- seed/.github/workflows/bootstrap.yml ; cd seed && python3 -m unittest tests.test_happy_path\n\n**Prediction:** spec_quality >= 0.7 within 336 h (read by `python3 -m foundation specgate --report`; this item closing by its done check keeps the share of well-specified open items at or above today's reading)\n\n**Out of scope:** changing what a visitor is asked, adding a step a person performs, or naming a key on any card.",
+  "labels": [
+    "role:staff",
+    "p1",
+    "agent-ready"
+  ],
+  "milestone": "Next",
+  "workstream": "Launch path"
+}

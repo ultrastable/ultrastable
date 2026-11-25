@@ -2,8 +2,17 @@
  "_doc": "SEED-LIFECYCLE-1 answers for open-questions; scaffolded by foundation/seedlife.py, completed by the executor through Q-SEED-open-questions.",
  "slug": "open-questions",
  "build": {
-  "paths": [],
-  "tests": []
+  "repo": "ultrastable/open-questions",
+  "paths": [
+   "worker/index.js",
+   "worker/site.js",
+   "worker/contract.js",
+   "worker/entries.js"
+  ],
+  "tests": [
+   "worker/worker.test.mjs",
+   "worker/contract.test.mjs"
+  ]
  },
  "deploy": {
   "worker": ""

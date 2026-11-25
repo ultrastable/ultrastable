@@ -3,6 +3,8 @@
 // The ledger's pages, rendered on the server from data/findings.json and the standings standing.js computes, so every page works with no
 // script and is indexable. Script only adds the guess-first reveal; without it the record is one tap away in a <details>. Light and dark,
 // 16 px body, 44 px targets, visible focus, reduced motion respected. No cookies, no trackers, nothing stored about the reader.
+import { footerLinks, statementsHtml } from "../vendor/ultrastable/contract.js";
+import { SPEC } from "./contract.js";
 import { FIELDS } from "./ledger.js";
 import { KINDS, OUTCOMES, STANDINGS, RUBRIC, attemptWeight } from "./standing.js";
 import { SIBLINGS } from "./promote.js";
@@ -44,8 +46,8 @@ function shell(title, desc, inner, { path = "/", script = "" } = {}) {
 <title>${esc(title)}</title><meta name="description" content="${esc(desc)}"><link rel="canonical" href="${SITE}${esc(path)}">
 <meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(desc)}"><style>${CSS}</style></head>
 <body><header class="top"><nav aria-label="Main"><a class="brand" href="/">Replication&nbsp;<span>Ledger</span></a><a href="/#fields">Fields</a><a href="/projects">Replication projects</a><a href="/changes">What changed</a><a href="/rubric">How standings work</a><a href="/graph">Connections</a></nav></header>
-<main>${inner}</main><footer><div>Guess whether a textbook finding survived replication, then see the record. Every standing is computed from the replication attempts on file, never typed by hand. The ledger searches for new replications and new landmark findings every hour by itself.
-Runs on <a href="https://ultrastable.io/">Ultrastable</a>, the foundation for any autonomous system. ${SIBLINGS.length ? `Also running on Ultrastable: ${SIBLINGS.map(c => `<a href="${esc(c.home)}">${esc(c.name)}</a>`).join(" · ")}. ` : ""}No cookies, no trackers. Data: <a href="/api/findings">/api/findings</a> · <a href="/feed.json">/feed.json</a> · <a href="/api/rubric">/api/rubric</a></div></footer>${script}</body></html>`;
+<main>${inner}${statementsHtml(SPEC, path)}</main><footer><div>Guess whether a textbook finding survived replication, then see the record. Every standing is computed from the replication attempts on file, never typed by hand. The ledger searches for new replications and new landmark findings every hour by itself.
+Runs on <a href="https://ultrastable.io/">Ultrastable</a>, the foundation for any autonomous system. ${SIBLINGS.length ? `Also running on Ultrastable: ${SIBLINGS.map(c => `<a href="${esc(c.home)}">${esc(c.name)}</a>`).join(" · ")}. ` : ""}No cookies, no trackers. Data: <a href="/api/findings">/api/findings</a> · <a href="/feed.json">/feed.json</a> · <a href="/api/rubric">/api/rubric</a><br>${footerLinks(SPEC)}</div></footer>${script}</body></html>`;
 }
 
 const ago = m => m == null ? "not yet" : m < 1 ? "just now" : m < 90 ? `${m} min ago` : m < 2880 ? `${Math.round(m / 60)} h ago` : `${Math.round(m / 1440)} days ago`;
@@ -132,14 +134,16 @@ export function rubricPage() {
 export const notFound = () => shell("Not found · Replication Ledger", "Page not found.", `<h1>Not found</h1><p><a href="/">Back to the ledger</a></p>`);
 
 const STNAME = st => st ? STANDINGS[st]?.name || st : "new";
-export function changesPage(changes, beats, ledger) {
+export function changesPage(changes, beats, ledger, cites = {}) {
+  const cv = Object.values(cites), cbad = cv.filter(c => !c.ok).length;
   const names = Object.fromEntries(ledger.findings.map(f => [f.id, f.name]));
   const moves = changes.map(c => `<tr><td class="small">${esc(String(c.at).slice(0, 16).replace("T", " "))}</td><td><a href="/f/${esc(c.finding_id)}">${esc(names[c.finding_id] || c.finding_id)}</a></td><td>${esc(STNAME(c.from_st))} → ${badge(c.to_st)}</td><td class="small">${c.doi ? `<a href="https://doi.org/${esc(c.doi)}">${esc(OUTCOMES[c.outcome]?.name || "")}</a>` : "added to the ledger"}</td></tr>`).join("");
   const bt = beats.map(b => `<tr><td class="small">${esc(String(b.started_at).slice(0, 16).replace("T", " "))}</td><td>${b.checked}</td><td>${b.attempts}</td><td>${b.leads}</td><td>${b.findings}</td><td>${JSON.parse(b.errors || "[]").length}</td></tr>`).join("");
   return shell("What changed · Replication Ledger", "Every standing the ledger moved, and every search it ran.",
     `<p class="small"><a href="/">Ledger</a></p><h1>What changed</h1><p class="lede">Every hour the ledger searches for new replications of the findings it holds and for landmark findings it does not hold yet. Each standing it moved is listed here.</p>
 <h2>Standings that moved</h2>${moves ? `<div class="wrap"><table><thead><tr><th>When (UTC)</th><th>Finding</th><th>Move</th><th>Because of</th></tr></thead><tbody>${moves}</tbody></table></div>` : `<p class="muted">No standing has moved yet.</p>`}
-<h2>Recent searches</h2>${bt ? `<div class="wrap"><table><thead><tr><th>Started (UTC)</th><th>Findings checked</th><th>Attempts filed</th><th>Leads kept</th><th>New findings</th><th>Errors</th></tr></thead><tbody>${bt}</tbody></table></div>` : `<p class="muted">The first search has not run yet.</p>`}`, { path: "/changes" });
+<h2>Recent searches</h2>${bt ? `<div class="wrap"><table><thead><tr><th>Started (UTC)</th><th>Findings checked</th><th>Attempts filed</th><th>Leads kept</th><th>New findings</th><th>Errors</th></tr></thead><tbody>${bt}</tbody></table></div>` : `<p class="muted">The first search has not run yet.</p>`}
+<h2>Citations</h2><p>Every citation is checked against the publisher's record. Checked so far: ${cv.length}. Failing the check: ${cbad}. The failing ones are listed at <a href="/api/citations">/api/citations</a>.</p>`, { path: "/changes" });
 }
 
 // The knowledge graph, named on the front end (DATAGRAPH-1): what the engine found in the ledger, measured live. With no reading yet it says so.

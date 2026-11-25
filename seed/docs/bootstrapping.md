@@ -18,7 +18,7 @@ After `start`, the Worker's cron fires `runTick` every 10 minutes. Managers and 
 | Stage | Input | Output | If it fails |
 |---|---|---|---|
 | read | `IDEA.md`, `ultrastable.json`, `autonomy/policy.json` | parsed idea; policy validated (`validate_policy`) | missing IDEA.md: degrade to an empty charter and open a gate card; invalid policy: block |
-| detect | environment | which connector secrets are set (never their values), which tools exist | each missing secret becomes a gate card with an `env:NAME` closing probe |
+| detect | environment | which sign-ins the system holds (never their values), which tools exist | a system with nowhere to run gets one card with one link (`GATE-RUNTIME`: run it on the platform's account); the plan is kept and the start is tried again daily. No card names a key for a person to make |
 | select | budget in IDEA.md | model for doer, reviewer, manager | budget 0 uses the smallest tier |
 | plan | the above | role instances (one project manager and product manager per outcome), kit backlog `KIT-0..6`, outcome items `OUT-n`, predictions | |
 | write | plan | `org/` files, `worker/wrangler.jsonc`, `worker/src/config.js`, `org/seed.sql` | |

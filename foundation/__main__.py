@@ -3,7 +3,7 @@
   python3 -m foundation new-system --manifest instances/<slug>/instance.json --out ../<slug> [--apply]
   python3 -m foundation validate --manifest FILE
   python3 -m foundation ladder            # credential ladder against the host it runs on
-  python3 -m foundation standards [--check|--apply|--probe ID]   standards register, surfaces, conformance lint
+  python3 -m foundation standards [--check|--apply|--probe ID|--commits|--live|--audit|--adopted ID]   standards register with measured decisions (STANDARDS-FIRST-1), surfaces, conformance lint, commit-title lint
   python3 -m foundation configschema [--check|--gen]   CONFIG-SCHEMA-1: every JSON config has a JSON Schema 2020-12 contract in a Schema Store catalog
   python3 -m foundation stdgen [--check|--gen]         STANDARDS-1: catalog-info.yaml (Backstage) and sbom.cdx.json (CycloneDX) from the registers
   python3 -m foundation filing --manifest FILE
@@ -37,10 +37,18 @@
   python3 -m foundation bootaccept [--run|--probe|--url U --repo O/R|--check]   BOOT-ACCEPT-1: nothing to repo, back end, web UI, graph, discovery and health, read live
   python3 -m foundation bootproof [--check]   BOOTPROOF-1: the seed kernel is closed under bootstrap (instructions, placeholders, secrets, triggers)
   python3 -m foundation seedlaunch [--e2e [--keep]|--fleet|--check]   SEED-LAUNCH-1: every seed built, deployed, year-gated and probed live by the system
+  python3 -m foundation repostd [--check|--plan|--live|--apply|--branches]   REPO-STANDARD-1: one repository standard for every repository of the org
   python3 -m foundation discover [--gen|--check|--live]                    DISCOVER-1: every system is listed, cross-linked and findable
   python3 -m foundation fullstack [--check|--live|--probe ID|--list]        FULLSTACK-1: every system has a repository, a back end and a public front end
   python3 -m foundation collisions [--check|--prs [--pr N]|--claim ID]   COLLISION-1: no two migrations share a number; a PR may not add what an older open PR adds
   python3 -m foundation datagraph [--check|--list|--live]                        DATAGRAPH-1: every system keeps a knowledge graph of all its data
+  python3 -m foundation livelinks [--check [--readme PATH --id ID]|--write README --id ID|--block ID|--live]   LIVE-LINKS-1: every README says where its code runs
+  python3 -m foundation fleetcontract [--check|--live [--apply|--record]|--probe ID|--list]   FLEET-CONTRACT-1: one contract per system; statements hold front to back and back to front
+  python3 -m foundation tenantstd [--check [--tenant PATH]|--scaffold PATH --slug S|--measure PATH|--table PATH...|--live]   TENANT-STANDARD-1: one standard, one scaffold and one check for every tenant repository
+  python3 -m foundation managers [--check|--report [--with-live]|--live]   MANAGERS-1: every manager role is a running loop that owns code; the seed carries every manager
+  python3 -m foundation fleetmap [--check|--drift [--apply]|--probe REPO|--list]   FLEET-MAP-1: one map of every repository; a copy that differs from its source is never ok
+  python3 -m foundation surfaces [--check|--render|--plan [github|wellknown|publiccode]] [--root DIR]   SYSTEM-MANIFEST-1: one manifest per system; every surface rendered from it
+  python3 -m foundation rulerefs [--check|--list|--reverse|--seed|--exec|--live]             RULE-REFS-1: every path, command, test, workflow and endpoint a rule names resolves; code nothing names is listed
   python3 -m foundation tenantpromo [--check|--list]                      TENANT-PROMO-1: every tenant promotes itself (social queue, showcase, cross-links)
   python3 -m foundation admit [--check|--apply [--slug S]|--list]          ADMIT-1: one tenant-repos row admits a tenant; every other registry is derived
   python3 -m foundation progress [--check|--live]                          PROGRESS-1: every system shows substantive progress at every visit; the cadence monitor is wired
@@ -372,6 +380,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["temporal"]:
         from . import temporal
         return temporal.main(_av[1:])
+    if _av[:1] == ["repostd"]:
+        from . import repostd
+        return repostd.main(_av[1:])
     if _av[:1] == ["discover"]:
         from . import discover
         return discover.main(_av[1:])
@@ -384,6 +395,27 @@ def main(argv=None) -> int:
     if _av[:1] == ["collisions"]:
         from . import collisions
         return collisions.main(_av[1:])
+    if _av[:1] == ["livelinks"]:
+        from . import livelinks
+        return livelinks.main(_av[1:])
+    if _av[:1] == ["fleetcontract"]:
+        from . import fleetcontract
+        return fleetcontract.main(_av[1:])
+    if _av[:1] == ["tenantstd"]:
+        from . import tenantstd
+        return tenantstd.main(_av[1:])
+    if _av[:1] == ["managers"]:
+        from . import managers
+        return managers.main(_av[1:])
+    if _av[:1] == ["surfaces"]:
+        from . import surfaces
+        return surfaces.main(_av[1:])
+    if _av[:1] == ["fleetmap"]:
+        from . import fleetmap
+        return fleetmap.main(_av[1:])
+    if _av[:1] == ["rulerefs"]:
+        from . import rulerefs
+        return rulerefs.main(_av[1:])
     if _av[:1] == ["datagraph"]:
         from . import datagraph
         return datagraph.main(_av[1:])
@@ -548,6 +580,7 @@ def main(argv=None) -> int:
     ck = ws.add_parser("check"); ck.add_argument("--base", default="origin/main"); ck.add_argument("--head", default="HEAD")
     ou = ws.add_parser("outputs"); ou.add_argument("dirs", nargs="+"); ou.add_argument("--ignore", action="append", default=[])
     st = sub.add_parser("standards"); sg = st.add_mutually_exclusive_group(required=True); sg.add_argument("--apply", action="store_true"); sg.add_argument("--check", action="store_true"); sg.add_argument("--probe", metavar="ID")
+    sg.add_argument("--commits", action="store_true"); sg.add_argument("--live", action="store_true"); sg.add_argument("--audit", action="store_true"); sg.add_argument("--adopted", default=None, metavar="ID")
     f = sub.add_parser("filing"); f.add_argument("--manifest", required=True)
     r = sub.add_parser("autorun"); r.add_argument("--ticks", type=int, default=10); r.add_argument("--out", default=".selfhost/autorun"); r.add_argument("--public", action="store_true"); r.add_argument("--no-node", action="store_true")
     c = sub.add_parser("cockpit"); c.add_argument("--out", default=".selfhost/cockpit"); c.add_argument("--ticks", type=int, default=10); c.add_argument("--no-node", action="store_true")
@@ -668,6 +701,14 @@ def main(argv=None) -> int:
         except ValueError as e:
             print("refused:", e); return 1
         print("\n".join(bad) or "writeback ok"); return 1 if bad else 0
+    if a.cmd == "standards" and a.adopted:  # STANDARDS-FIRST-1: the closing probe of an item that brings a row to adopted
+        bad = standards.adopted(standards.REPO, a.adopted); print("\n".join(bad) or f"{a.adopted}: adopted, every probe passes"); return 1 if bad else 0
+    if a.cmd == "standards" and (a.commits or a.live or a.audit):
+        from . import commitlint
+        if a.audit:
+            print(standards.audit_table()); return 0
+        bad = commitlint.check() if a.commits else standards.live()
+        print("\n".join(bad) or f"standards {'commits' if a.commits else 'live'}: ok"); return 1 if bad else 0
     if a.cmd == "standards":
         if a.probe:  # STANDARDS-1 closing probe: passes when the register marks the standard supported
             sup = {e["id"]: e["support"] for e in standards._load(standards.REPO, standards.REG)["entries"]}.get(a.probe)

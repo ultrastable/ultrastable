@@ -17,6 +17,7 @@ on:
 permissions:
   contents: write  # DEPLOY-RECORD-1: the record step commits ops/deploys.jsonl
   id-token: write
+  deployments: write  # DEPLOY-VISIBLE-1: the deploy is recorded as a GitHub Deployment with its live URL
 concurrency: {group: deploy-ultrastable, cancel-in-progress: false}
 jobs:
   deploy:

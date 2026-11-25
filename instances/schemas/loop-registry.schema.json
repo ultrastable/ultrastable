@@ -1,0 +1,275 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/loop-registry.schema.json",
+ "title": "Loop registry (close every loop; SERVER-OWNS-LOOPS-1)",
+ "$defs": {
+  "role": {
+   "enum": [
+    "customer-success",
+    "design-manager",
+    "funding-manager",
+    "infrastructure-manager",
+    "legal-ip-manager",
+    "marketing-manager",
+    "operations",
+    "org-designer",
+    "outreach-coordinator",
+    "outreach-manager",
+    "portfolio-manager",
+    "product-manager",
+    "program-manager",
+    "project-manager",
+    "research-publisher",
+    "reviewer",
+    "staff",
+    "uiux-manager"
+   ]
+  }
+ },
+ "type": "object",
+ "required": [
+  "id",
+  "version",
+  "credentials",
+  "loops"
+ ],
+ "properties": {
+  "id": {
+   "type": "string",
+   "pattern": "^[a-z0-9][a-z0-9-]*$"
+  },
+  "version": {
+   "type": "string",
+   "pattern": "^\\d+\\.\\d+\\.\\d+$"
+  },
+  "launch_registry": {
+   "type": "string",
+   "minLength": 1
+  },
+  "credentials": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "binding",
+     "source",
+     "probe"
+    ],
+    "properties": {
+     "binding": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Z0-9_]*$"
+     },
+     "source": {
+      "type": "string",
+      "minLength": 1
+     },
+     "probe": {
+      "type": "string",
+      "minLength": 1
+     }
+    },
+    "additionalProperties": false,
+    "patternProperties": {
+     "^_": true
+    }
+   }
+  },
+  "loops": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "id",
+     "kind",
+     "summary",
+     "trigger",
+     "owner",
+     "closes_by",
+     "sla",
+     "done",
+     "paths",
+     "closing_probe",
+     "writeback",
+     "system_path",
+     "server_owner"
+    ],
+    "properties": {
+     "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+     },
+     "kind": {
+      "enum": [
+       "governance",
+       "manager",
+       "probe",
+       "doctrine",
+       "tick",
+       "release",
+       "outreach",
+       "review",
+       "staff",
+       "reporting",
+       "plussing",
+       "memory",
+       "budget",
+       "funding",
+       "trust"
+      ]
+     },
+     "summary": {
+      "type": "string",
+      "minLength": 1
+     },
+     "trigger": {
+      "type": "string",
+      "minLength": 1
+     },
+     "owner": {
+      "anyOf": [
+       {
+        "$ref": "#/$defs/role"
+       },
+       {
+        "const": "system"
+       }
+      ]
+     },
+     "closes_by": {
+      "type": "string",
+      "minLength": 1
+     },
+     "sla": {
+      "type": "string",
+      "minLength": 1
+     },
+     "done": {
+      "type": "string",
+      "minLength": 1
+     },
+     "paths": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "required": [
+        "id",
+        "how",
+        "class"
+       ],
+       "properties": {
+        "id": {
+         "type": "string",
+         "minLength": 1
+        },
+        "how": {
+         "type": "string",
+         "minLength": 1
+        },
+        "class": {
+         "enum": [
+          "free",
+          "session",
+          "credential",
+          "external",
+          "degraded"
+         ]
+        }
+       },
+       "additionalProperties": false,
+       "patternProperties": {
+        "^_": true
+       }
+      },
+      "minItems": 2
+     },
+     "closing_probe": {
+      "type": "string",
+      "pattern": "^(file|grep):.+"
+     },
+     "writeback": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "minLength": 1
+      },
+      "minItems": 1
+     },
+     "system_path": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "minLength": 1
+      },
+      "minItems": 1
+     },
+     "server_owner": {
+      "type": "string",
+      "pattern": "^(github-actions|ultrastable-[a-z0-9-]+)$"
+     },
+     "workflows": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "pattern": "\\.yml$"
+      }
+     },
+     "area": {
+      "type": "string",
+      "minLength": 1
+     },
+     "launch": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "staged_default": {
+      "type": "string",
+      "minLength": 1
+     },
+     "credentials": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "minLength": 1
+      }
+     },
+     "program": {
+      "type": "object"
+     },
+     "identity_bound": {
+      "enum": [
+       "none",
+       "credential",
+       "money",
+       "legal_signature",
+       "account"
+      ]
+     },
+     "default_in_effect": {
+      "type": "string",
+      "minLength": 1
+     },
+     "cycle_metric": {
+      "type": "string",
+      "minLength": 1
+     },
+     "last_plus": {
+      "type": "string",
+      "minLength": 1
+     }
+    },
+    "additionalProperties": false,
+    "patternProperties": {
+     "^_": true
+    }
+   },
+   "minItems": 1
+  }
+ },
+ "additionalProperties": false,
+ "patternProperties": {
+  "^_": true
+ }
+}

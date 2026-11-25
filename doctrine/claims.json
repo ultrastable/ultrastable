@@ -32,10 +32,11 @@
     {
       "id": "how-probe-revert",
       "surface": "site/worker.js",
-      "text": "Each deploy declares probes. A probe that passed before and fails after reverts the push on its own.",
+      "text": "Each handed-off change declares a live check. When the check fails after the deploy, the deploy is rolled back on its own and the work item goes back to the queue.",
       "probe": [
-        "json:site/probes.json::mode==revert",
-        "grep:platform/cloudflare-reference/scripts/deploy_probes.py::reverted by the existing REVERT path"
+        "grep:seed/worker/test/handoff.test.js::a red probe rolls the deploy back and puts the item back to ready",
+        "grep:seed/worker/src/handoff.js::rolls the deploy back and reopens it",
+        "grep:site/deployer.js::/__internal/rollback"
       ]
     },
     {
@@ -123,11 +124,13 @@
     {
       "id": "claims-page-bound",
       "surface": "site/worker.js",
-      "text": "Every statement on the Ultrastable surfaces is bound to a probe in the code",
+      "text": "Statements on the Ultrastable surfaces are bound to probes in the code, checked on every change and daily against the live site; the share bound is measured and the rest is listed.",
       "probe": [
         "file:foundation/claims.py",
-        "file:doctrine/claims.json",
-        "cron:.github/workflows/claims.yml"
+        "cron:.github/workflows/claims.yml",
+        "grep:foundation/claims.py::def coverage",
+        "grep:.github/workflows/checks.yml::foundation claims --check",
+        "grep:foundation/claimcode.py::--list"
       ]
     },
     {
@@ -527,7 +530,7 @@
     {
       "id": "curated-e11ba7a3fe",
       "surface": "seed/README.md",
-      "text": "A missing credential never stops the boot. The step is recorded as a backlog item with its blocker and a closing probe, and the rest of the",
+      "text": "A missing sign-in never stops the boot. The step is recorded as a backlog item with its blocker and a closing probe",
       "probe": [
         "grep:seed/bootstrap/bootstrap.py::def guard",
         "grep:seed/bootstrap/bootstrap.py::closing_probe",
@@ -1147,7 +1150,7 @@
         "grep:.github/workflows/checks.yml::rules --probe no-secrets",
         "grep:doctrine/rules.json::secret_patterns",
         "grep:products/gaplint/gaplint/rules.py::GL006",
-        "grep:seed/bootstrap/bootstrap.py::env:"
+        "grep:seed/bootstrap/bootstrap.py::connect="
       ],
       "bound_by": "curated"
     },
@@ -1279,9 +1282,9 @@
     {
       "id": "curated-17bb8cbfd7",
       "surface": "seed/docs/bootstrapping.md",
-      "text": "| detect | environment | which connector secrets are set (never their values), which tools exist | each missing secret becomes a gate card",
+      "text": "| detect | environment | which sign-ins the system holds (never their values), which tools exist | a system with nowhere to run gets one card with one link",
       "probe": [
-        "grep:seed/bootstrap/bootstrap.py::env:",
+        "grep:seed/bootstrap/bootstrap.py::GATE-RUNTIME",
         "grep:seed/bootstrap/bootstrap.py::connectors present",
         "grep:.github/workflows/checks.yml::rules --probe no-secrets"
       ],
@@ -1767,12 +1770,11 @@
     {
       "id": "curated-688407a097",
       "surface": "site/worker.js",
-      "text": "Every claim on this site is a query against a live record: see Live proof.",
+      "text": "Claims on this site are bound to probes in the code and re-checked on every change: see the claims page.",
       "probe": [
         "grep:.github/workflows/checks.yml::foundation claims --check",
-        "file:.github/workflows/claims.yml",
-        "file:seed/worker/src/decisions.js",
-        "json:site/probes.json::mode==revert"
+        "grep:.github/workflows/checks.yml::foundation claimcode --check",
+        "file:doctrine/claims.json"
       ],
       "bound_by": "curated"
     },
@@ -1790,18 +1792,18 @@
     {
       "id": "curated-87d4e3a632",
       "surface": "site/worker.js",
-      "text": "Every change is checked after it ships and rolled back automatically if something that worked before now fails.",
+      "text": "A handed-off change is checked live after it ships and rolled back automatically if the check fails.",
       "probe": [
-        "json:site/probes.json::mode==revert",
-        "grep:platform/cloudflare-reference/scripts/deploy_probes.py::reverted by the existing REVERT path",
-        "grep:seed/worker/src/handoff.js::rolls the deploy back and reopens it"
+        "grep:seed/worker/src/handoff.js::rolls the deploy back and reopens it",
+        "grep:seed/worker/test/handoff.test.js::a red probe rolls the deploy back and puts the item back to ready",
+        "grep:site/deployer.js::/__internal/rollback"
       ],
       "bound_by": "curated"
     },
     {
       "id": "curated-40d3200c36",
       "surface": "site/worker.js",
-      "text": "Work is claimed before it starts, checked after it ships, and every claim on this site can be traced to a record.",
+      "text": "Work is claimed before it starts and checked after it ships, and the claims on this site are bound to probes in the code.",
       "probe": [
         "grep:.github/workflows/checks.yml::foundation claims --check",
         "file:.github/workflows/claims.yml",
@@ -1824,11 +1826,11 @@
     {
       "id": "curated-b302da8fa8",
       "surface": "site/worker.js",
-      "text": "If one that passed before now fails, the change is rolled back automatically and an issue is filed.",
+      "text": "If the check fails after the deploy, the deploy is rolled back automatically and the work item goes back to the queue.",
       "probe": [
-        "json:site/probes.json::mode==revert",
-        "grep:platform/cloudflare-reference/scripts/deploy_probes.py::reverted by the existing REVERT path",
-        "grep:seed/worker/src/handoff.js::rolls the deploy back and reopens it"
+        "grep:seed/worker/src/handoff.js::rolls the deploy back and reopens it",
+        "grep:seed/worker/test/handoff.test.js::a red probe rolls the deploy back and puts the item back to ready",
+        "grep:site/deployer.js::/__internal/rollback"
       ],
       "bound_by": "curated"
     },
@@ -1918,13 +1920,13 @@
     {
       "id": "curated-6b69d08089",
       "surface": "site/worker.js",
-      "text": "It finds its own work in your metrics and failures, hands each task to the coding agent that fits, proves every change live with an automatic revert, and keeps score of how often its decisions were right.",
+      "text": "It finds its own work in your metrics and failures, hands each task to the coding agent that fits, proves each handed-off change live and rolls it back when the proof fails, and keeps score of how often its decisions were right.",
       "probe": [
         "file:doctrine/triggers.json",
         "file:foundation/triggers.py",
         "file:seed/worker/src/decisions.js",
-        "json:site/probes.json::mode==revert",
-        "grep:platform/cloudflare-reference/scripts/deploy_probes.py::reverted by the existing REVERT path"
+        "grep:seed/worker/test/handoff.test.js::a red probe rolls the deploy back and puts the item back to ready",
+        "grep:site/deployer.js::/__internal/rollback"
       ],
       "bound_by": "curated"
     },
@@ -1940,6 +1942,26 @@
         "file:doctrine/team.json"
       ],
       "bound_by": "curated"
+    },
+    {
+      "id": "handoff-proof-live",
+      "surface": "site/worker.js",
+      "text": "Handed-off changes are proven live after deploy and rolled back when the proof fails.",
+      "probe": [
+        "grep:seed/worker/test/handoff.test.js::a red probe rolls the deploy back and puts the item back to ready",
+        "grep:seed/worker/src/handoff.js::rolls the deploy back and reopens it",
+        "grep:site/deployer.js::/__internal/rollback"
+      ]
+    },
+    {
+      "id": "reply-promise",
+      "surface": "site/worker.js",
+      "text": "This reads as a fit for the system test; your answers are scored and stored.",
+      "probe": [
+        "grep:site/worker.js::ASSETS\\.put\\(\"pilot:\"",
+        "grep:site/worker.js::const r = scorePilot\\(a\\)",
+        "grep:site/site.test.mjs::api/pilot"
+      ]
     },
     {
       "id": "cited-06c8ef7187",
@@ -2300,6 +2322,89 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-788da7db34",
+      "surface": "agents/AGENTS.md",
+      "text": "- **One repository standard, applied at creation and every day (REPO-STANDARD-1, Rowan 2026-11-25).** \"Even the repos aren't being created",
+      "probe": [
+        "file:github/repo-standard.json",
+        "file:github/org-settings.json",
+        "file:foundation/repostd.py",
+        "file:seed/worker/src/repostandard.js",
+        "file:deploy/record-deployments.mjs",
+        "file:scripts/branch_cleanup.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-f35cd86e2e",
+      "surface": "agents/AGENTS.md",
+      "text": "- **One map, one manifest, no hand-copied mirrors (FLEET-MAP-1, SYSTEM-MANIFEST-1, Rowan 2026-11-25).** \"What really needs to be in the",
+      "probe": [
+        "file:doctrine/fleet-map.json",
+        "file:ultrastable.json",
+        "file:seed/standards/system.schema.json",
+        "file:seed/scripts/surfaces.py",
+        "file:doctrine/tenant-repos.json",
+        "file:tests/foundation/test_fleetmap.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-ad4d8b2850",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Both start paths are user stories that run (CLONE-PATH-1, Rowan 2026-11-25).** \"For any new deployment, whether on Cloudflare as a",
+      "probe": [
+        "file:seed/.github/ISSUE_TEMPLATE/start.yml",
+        "file:seed/.github/workflows/bootstrap.yml",
+        "file:seed/bootstrap/intake.py",
+        "file:site/graduate.js",
+        "file:seed/tests/test_happy_path.py",
+        "file:site/launchpath.test.mjs"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-3fe93559ed",
+      "surface": "agents/AGENTS.md",
+      "text": "- **One standard for every tenant repository; one scaffold writes it, one check reads it (TENANT-STANDARD-1, Rowan 2026-11-25).** \"Even the",
+      "probe": [
+        "file:doctrine/tenant-standard.json",
+        "file:ultrastable.json",
+        "file:foundation/livelinks.py",
+        "file:doctrine/tenant-repos.json",
+        "file:foundation/tenantstd.py",
+        "file:workers/tools/vendor_sync.mjs"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-997134914a",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Every repository says where its code runs (LIVE-LINKS-1, Rowan 2026-11-25).** \"If somebody sees the code, then show them where it's",
+      "probe": [
+        "file:foundation/livelinks.py",
+        "file:doctrine/fleet-contract.json",
+        "file:doctrine/tenant-repos.json",
+        "file:tests/foundation/test_livelinks.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]livelinks\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-98686c53a7",
+      "surface": "agents/AGENTS.md",
+      "text": "- **One contract for every system; statements hold front to back and back to front (FLEET-CONTRACT-1, Rowan 2026-11-25).** \"Make sure",
+      "probe": [
+        "file:seed/worker/src/contract.js",
+        "file:doctrine/tenant-repos.json",
+        "file:doctrine/fleet-contract.json",
+        "file:foundation/fleetcontract.py",
+        "file:site/contract.js",
+        "file:seed/worker/test/contract.test.js"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-29846ff1a5",
       "surface": "agents/AGENTS.md",
       "text": "- **Every system keeps a knowledge graph of all its data, built and maintained automatically (DATAGRAPH-1, Rowan 2026-11-25).** \"All",
@@ -2565,6 +2670,15 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-8b0eeccd00",
+      "surface": "agents/AGENTS.md",
+      "text": "- A share of capacity (`capacity.plus_share` in `ultrastable.json`, default 20%) goes to accepted pluses.",
+      "probe": [
+        "file:ultrastable.json"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-10e79eb496",
       "surface": "agents/AGENTS.md",
       "text": "Every system is built on three layers: kernel (`seed/`), foundation (`foundation/`) and one instance manifest",
@@ -2815,6 +2929,15 @@
         "file:foundation/growth.py",
         "grep:.github/workflows/checks.yml::foundation[ .]growth\\b",
         "grep:.github/workflows/checks.yml::foundation[ .]growth\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-995af546b7",
+      "surface": "seed/docs/BOOTSTRAP-PROMPT.md",
+      "text": "1. Create every repo in `ultrastable.json` `org.repos`, never in archived state; check `isArchived` and `visibility` on each at boot and",
+      "probe": [
+        "file:ultrastable.json"
       ],
       "bound_by": "cited"
     },
@@ -3338,6 +3461,95 @@
       ],
       "bound_by": "mirror",
       "of": "cited-d3be926b7b"
+    },
+    {
+      "id": "mirror-587916db07",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **One repository standard, applied at creation and every day (REPO-STANDARD-1, Rowan 2026-11-25).** \"Even the repos aren't being created",
+      "probe": [
+        "file:github/repo-standard.json",
+        "file:github/org-settings.json",
+        "file:foundation/repostd.py",
+        "file:seed/worker/src/repostandard.js",
+        "file:deploy/record-deployments.mjs",
+        "file:scripts/branch_cleanup.py"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-788da7db34"
+    },
+    {
+      "id": "mirror-fa789cdb47",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **One map, one manifest, no hand-copied mirrors (FLEET-MAP-1, SYSTEM-MANIFEST-1, Rowan 2026-11-25).** \"What really needs to be in the",
+      "probe": [
+        "file:doctrine/fleet-map.json",
+        "file:ultrastable.json",
+        "file:seed/standards/system.schema.json",
+        "file:seed/scripts/surfaces.py",
+        "file:doctrine/tenant-repos.json",
+        "file:tests/foundation/test_fleetmap.py"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-f35cd86e2e"
+    },
+    {
+      "id": "mirror-e16666aecc",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Both start paths are user stories that run (CLONE-PATH-1, Rowan 2026-11-25).** \"For any new deployment, whether on Cloudflare as a",
+      "probe": [
+        "file:seed/.github/ISSUE_TEMPLATE/start.yml",
+        "file:seed/.github/workflows/bootstrap.yml",
+        "file:seed/bootstrap/intake.py",
+        "file:site/graduate.js",
+        "file:seed/tests/test_happy_path.py",
+        "file:site/launchpath.test.mjs"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-ad4d8b2850"
+    },
+    {
+      "id": "mirror-3321deb655",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **One standard for every tenant repository; one scaffold writes it, one check reads it (TENANT-STANDARD-1, Rowan 2026-11-25).** \"Even the",
+      "probe": [
+        "file:doctrine/tenant-standard.json",
+        "file:ultrastable.json",
+        "file:foundation/livelinks.py",
+        "file:doctrine/tenant-repos.json",
+        "file:foundation/tenantstd.py",
+        "file:workers/tools/vendor_sync.mjs"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-3fe93559ed"
+    },
+    {
+      "id": "mirror-3ba315e84d",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Every repository says where its code runs (LIVE-LINKS-1, Rowan 2026-11-25).** \"If somebody sees the code, then show them where it's",
+      "probe": [
+        "file:foundation/livelinks.py",
+        "file:doctrine/fleet-contract.json",
+        "file:doctrine/tenant-repos.json",
+        "file:tests/foundation/test_livelinks.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]livelinks\\b"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-997134914a"
+    },
+    {
+      "id": "mirror-b783f29537",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **One contract for every system; statements hold front to back and back to front (FLEET-CONTRACT-1, Rowan 2026-11-25).** \"Make sure",
+      "probe": [
+        "file:seed/worker/src/contract.js",
+        "file:doctrine/tenant-repos.json",
+        "file:doctrine/fleet-contract.json",
+        "file:foundation/fleetcontract.py",
+        "file:site/contract.js",
+        "file:seed/worker/test/contract.test.js"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-98686c53a7"
     },
     {
       "id": "mirror-1d1a4fbb93",
@@ -4424,6 +4636,29 @@
       ],
       "bound_by": "mirror",
       "of": "cited-5d0567ad32"
+    },
+    {
+      "id": "mirror-1b7f585dd4",
+      "surface": "seed/tests/fixtures/IDEA.example.md",
+      "text": "owner_contact: set-in-secret-store   # never put an email or token in this file",
+      "probe": [
+        "grep:.github/workflows/checks.yml::rules --probe no-secrets",
+        "grep:doctrine/rules.json::secret_patterns",
+        "grep:products/gaplint/gaplint/rules.py::GL006"
+      ],
+      "bound_by": "mirror",
+      "of": "curated-35b69b3c85"
+    },
+    {
+      "id": "mirror-d6ad2a66d6",
+      "surface": "seed/tests/fixtures/IDEA.example.md",
+      "text": "- Controls and evidence are never more than a week out of date",
+      "probe": [
+        "grep:seed/bootstrap/bootstrap.py::qualify",
+        "grep:tests/test_vision.py::test_seed_idea_is_a_system"
+      ],
+      "bound_by": "mirror",
+      "of": "curated-990a6e17c4"
     }
   ],
   "generated": [
@@ -4664,9 +4899,19 @@
       "surface": "seed/doctrine/CONSTITUTION.md",
       "header": "scripts/constitution.py --render",
       "generator": "seed/scripts/constitution.py",
-      "source": ["seed/doctrine/constitution.json"],
-      "check": ["python3", "-m", "foundation", "constitution", "--check"],
-      "probe": ["file:tests/foundation/test_constitution.py"]
+      "source": [
+        "seed/doctrine/constitution.json"
+      ],
+      "check": [
+        "python3",
+        "-m",
+        "foundation",
+        "constitution",
+        "--check"
+      ],
+      "probe": [
+        "file:tests/foundation/test_constitution.py"
+      ]
     },
     {
       "id": "claims-data",

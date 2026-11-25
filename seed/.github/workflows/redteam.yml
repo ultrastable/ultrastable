@@ -34,6 +34,6 @@ jobs:
           git diff --quiet && git diff --cached --quiet && [ -z "$(git ls-files --others --exclude-standard docs/issues ops/redteam)" ] && exit 0
           b="redteam/$(date -u +%Y%m%d)"
           git config user.name "ultrastable-redteam"; git config user.email "redteam@users.noreply.github.com"
-          git checkout -b "$b"; git add docs/issues ops/redteam; git commit -m "Red-team pass: findings the system's own probes missed"
+          git checkout -b "$b"; git add docs/issues ops/redteam; git commit -m "redteam: findings the system's own probes missed"
           git push -u origin "$b"
           gh pr create --title "Red-team pass $(date -u +%F)" --body "Filed by scripts/redteam.py (REDTEAM-1)." --label handoff

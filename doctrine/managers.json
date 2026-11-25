@@ -1,0 +1,264 @@
+{
+ "_doc": "MANAGERS-1 (Rowan, 2026-11-25): \"All of those managers need to own their own code and make sure that all open loops are closed ... operate just like a full-time team\". The platform side of the manager register: for every role file in agents/roles, the code that runs it (`runs`), its clocks (`runtime` is the tick's dispatch beat, roles.last_tick_at, read live by `managers --live`; `clock:<id>` is a clock in doctrine/clocks.json; `workflow:<file>` is a scheduled workflow), a closing probe that is not its own role file (`probe`) and the code that settles what it files (`settles`). Its loops are not listed here: they are the rows of instances/ultrastable/loop-registry.json it owns, and it must own at least one besides role-<id>. Which managers a system runs, and how a deployment switches one off, is seed/autonomy/managers.json (the one register every seeded system carries). `seed_absent` records, with a reason, a platform manager the seed does not carry; `platform_absent` the reverse. Read by foundation/managers.py: `python3 -m foundation managers --check` (in checks), `--report` (the matrix), `--live` (detector managers-live). Ultrastable is the foundation for any autonomous system. `closure` is the reading behind `managers --closure`: a manager with at least min_ended ended items of which more than max_shelved_share ended shelved (closed by the time limit with no fix) files more than it closes. `managers --clocks` lists scheduled manager workflows that are not clocks in doctrine/clocks.json.",
+ "marker": "MANAGERS-1",
+ "version": 1,
+ "seed_register": "seed/autonomy/managers.json",
+ "live": {
+  "agents_url": "https://ultrastable.io/api/v1/agents",
+  "user_agent": "ultrastable-audit/1.0",
+  "timeout_s": 30
+ },
+ "seed_absent": {},
+ "platform_absent": {},
+ "roles": {
+  "portfolio-manager": {
+   "runs": [
+    "seed/worker/src/tick.js",
+    "foundation/criticality.py",
+    "foundation/spinoff.py"
+   ],
+   "clock": [
+    "runtime",
+    "clock:tick-heartbeat",
+    "workflow:spinoff.yml"
+   ],
+   "probe": "cmd:python3 -m foundation criticality --check",
+   "settles": "grep:seed/worker/src/tick.js::async reconcile(db, ctx)"
+  },
+  "program-manager": {
+   "runs": [
+    "seed/worker/src/critloop.js",
+    "foundation/fleet.py",
+    "foundation/queue.py",
+    ".github/workflows/fleet.yml"
+   ],
+   "clock": [
+    "runtime",
+    "clock:criticality-loop",
+    "workflow:fleet.yml"
+   ],
+   "probe": "cmd:python3 -m foundation lanewatch --check",
+   "settles": "grep:foundation/queue.py::def close"
+  },
+  "project-manager": {
+   "runs": [
+    "scripts/triage.sh",
+    "scripts/retriage.sh",
+    "foundation/dispose.py",
+    ".github/workflows/issues.yml"
+   ],
+   "clock": [
+    "runtime",
+    "workflow:issues.yml",
+    "workflow:retriage.yml"
+   ],
+   "probe": "cmd:python3 -m foundation dispose --check",
+   "settles": "grep:foundation/dispose.py::def mark_fixed"
+  },
+  "product-manager": {
+   "runs": [
+    "foundation/pm.py",
+    "foundation/improve.py",
+    "foundation/insight.py",
+    "foundation/scout.py",
+    ".github/workflows/product-manager.yml"
+   ],
+   "clock": [
+    "runtime",
+    "clock:scout",
+    "workflow:product-manager.yml"
+   ],
+   "probe": "cmd:python3 -m foundation improve --check",
+   "settles": "grep:foundation/insight.py::def settle"
+  },
+  "staff": {
+   "runs": [
+    "foundation/executor.py",
+    "seed/worker/src/doer.js",
+    ".github/workflows/executor.yml"
+   ],
+   "clock": [
+    "runtime",
+    "clock:executor"
+   ],
+   "probe": "cmd:python3 -m foundation substance --check",
+   "settles": "grep:seed/worker/src/doer.js::export async function executeStep"
+  },
+  "reviewer": {
+   "runs": [
+    ".github/workflows/checks.yml",
+    "foundation/mergeaudit.py",
+    "seed/worker/src/lane.js"
+   ],
+   "clock": [
+    "runtime"
+   ],
+   "probe": "cmd:python3 -m foundation loops --verify",
+   "settles": "grep:foundation/mergeaudit.py::def probe"
+  },
+  "operations": {
+   "runs": [
+    "foundation/resilience.py",
+    "foundation/failure_audit.py",
+    "seed/worker/src/sweeper.js",
+    ".github/workflows/watchdog.yml"
+   ],
+   "clock": [
+    "runtime",
+    "clock:watchdog"
+   ],
+   "probe": "cmd:python3 -m foundation clock --check",
+   "settles": "grep:foundation/failure_audit.py::def _close"
+  },
+  "infrastructure-manager": {
+   "runs": [
+    "deploy/deploy-workers.mjs",
+    "foundation/cost.py",
+    "foundation/backup.py",
+    "foundation/topology.py",
+    ".github/workflows/cost-guard.yml"
+   ],
+   "clock": [
+    "runtime",
+    "workflow:cost-guard.yml",
+    "workflow:backup-drill.yml"
+   ],
+   "probe": "cmd:python3 -m foundation topology --check",
+   "settles": "grep:foundation/queue.py::def close"
+  },
+  "funding-manager": {
+   "runs": [
+    "scripts/funding_verify.py",
+    ".github/workflows/funding-maintenance.yml"
+   ],
+   "clock": [
+    "runtime",
+    "workflow:funding-maintenance.yml"
+   ],
+   "probe": "file:scripts/funding_verify.py",
+   "settles": "grep:foundation/queue.py::def close"
+  },
+  "outreach-manager": {
+   "runs": [
+    "scripts/outreach.py",
+    "scripts/outreach_intro.py",
+    ".github/workflows/outreach.yml"
+   ],
+   "clock": [
+    "runtime",
+    "workflow:outreach.yml"
+   ],
+   "probe": "file:scripts/test_outreach_intro.py",
+   "settles": "grep:scripts/outreach.py::no reply after the last follow-up"
+  },
+  "outreach-coordinator": {
+   "runs": [
+    "scripts/social_post.py",
+    "seed/worker/src/social.js",
+    "seed/worker/src/humans.js",
+    ".github/workflows/social-post.yml"
+   ],
+   "clock": [
+    "runtime",
+    "workflow:social-post.yml"
+   ],
+   "probe": "cmd:python3 -m foundation tenantpromo --check",
+   "settles": "grep:seed/worker/src/humans.js::human_inbox"
+  },
+  "research-publisher": {
+   "runs": [
+    "foundation/research.py",
+    "site/research.js",
+    ".github/workflows/scout.yml"
+   ],
+   "clock": [
+    "runtime",
+    "clock:scout"
+   ],
+   "probe": "cmd:python3 -m foundation research --check",
+   "settles": "grep:foundation/research.py::def experiments"
+  },
+  "marketing-manager": {
+   "runs": [
+    "foundation/promote.py",
+    "foundation/thought.py",
+    "site/promote.js",
+    ".github/workflows/social-post.yml"
+   ],
+   "clock": [
+    "runtime",
+    "workflow:social-post.yml",
+    "workflow:demo-video.yml"
+   ],
+   "probe": "cmd:python3 -m foundation promote --check",
+   "settles": "grep:foundation/promote.py::def outcome"
+  },
+  "legal-ip-manager": {
+   "runs": [
+    "foundation/publication.py",
+    "foundation/licences.py",
+    "foundation/template.py"
+   ],
+   "clock": [
+    "runtime"
+   ],
+   "probe": "cmd:python3 -m foundation publication --check",
+   "settles": "grep:foundation/publication.py::def fix_headers"
+  },
+  "customer-success": {
+   "runs": [
+    ".github/workflows/first-run.yml",
+    "seed/worker/src/humans.js",
+    "foundation/seedadmit.py"
+   ],
+   "clock": [
+    "runtime"
+   ],
+   "probe": "cmd:python3 -m foundation seedlife --check",
+   "settles": "grep:foundation/queue.py::def close"
+  },
+  "org-designer": {
+   "runs": [
+    "foundation/managers.py",
+    "foundation/team.py",
+    "seed/worker/src/managers.js"
+   ],
+   "clock": [
+    "runtime"
+   ],
+   "probe": "cmd:python3 -m foundation managers --check",
+   "settles": "grep:seed/worker/src/managers.js::export async function hireStep"
+  },
+  "design-manager": {
+   "runs": [
+    "foundation/design.py",
+    "scripts/a11y_audit.mjs",
+    ".github/workflows/a11y.yml"
+   ],
+   "clock": [
+    "runtime",
+    "clock:a11y"
+   ],
+   "probe": "cmd:python3 -m foundation design --check",
+   "settles": "grep:foundation/design.py::def evaluate"
+  },
+  "uiux-manager": {
+   "runs": [
+    "foundation/uiux.py",
+    "scripts/uiux_audit.mjs",
+    "site/uiux.js",
+    ".github/workflows/uiux.yml"
+   ],
+   "clock": [
+    "runtime",
+    "workflow:uiux.yml"
+   ],
+   "probe": "cmd:python3 -m foundation uiux --check",
+   "settles": "grep:foundation/uiux.py::def settle_experiments"
+  }
+ },
+ "closure": {
+  "min_ended": 5,
+  "max_shelved_share": 0.5
+ }
+}

@@ -1,0 +1,9 @@
+{
+  "id": "Q-STD-w3c-prov",
+  "title": "Q-STD-w3c-prov: serve the public changelog as W3C PROV-O JSON-LD",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -m foundation standards --adopted w3c-prov\n**Status:** open\n\nThe public changelog (foundation/provenance.py `public_view`, ops/changelog.json, /changelog) holds who changed what: origin class and actor, kind, summary, affected paths, effect. Add one mapping function that renders those public rows as PROV-O in JSON-LD (`@context` https://www.w3.org/ns/prov: each row a prov:Activity with prov:startedAtTime, prov:wasAssociatedWith a prov:Agent for origin.actor typed by origin class, and prov:used / prov:generated prov:Entity for each affected path) and serve it at /changelog.jsonld from the same data the page shows. Private rows never leave the ledger (the same redaction as `public_view`). Test: parse the output, every node has an @id and an @type from the PROV namespace, and the number of activities equals the number of public rows. Register the surface and set the register row to supported with the test.\n\nSTANDARDS-FIRST-1 (Rowan, 2026-11-25): \"Standards, don't reinvent the wheel. Apply standards.\" The row is `w3c-prov` in seed/standards/standards.json; this item closes when that row reads `\"adoption\": \"adopted\"` and every probe on it passes. Change the row in the same change that makes it true, never before.\n\n**Closing probe:** cmd:python3 -m foundation standards --adopted w3c-prov\n\n**Prediction:** spec_quality >= 0.7 within 336 h (read by `python3 -m foundation specgate --report`; this item closing by its done check keeps the share of well-specified open items at or above today's reading)\n\n**Out of scope:** rewriting working internals to carry the label, or changing the row to adopted without code and a probe.",
+  "labels": [
+    "standards",
+    "agent-ready"
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "_doc": "REPO-STANDARD-1 (Rowan, 2026-11-25: \"even the repos aren't being created correctly. They don't have the right merge rules ... I'm seeing extra branches ... some are public, some are private ... standardized and consistent\" and \"all repos need full data, full metadata, full description, full documentation, everything, all of them\"). ONE standard for every repository of the org, present and future. Read by foundation/repostd.py (--check in checks, --live and --apply in org-settings.yml), by scripts/branch_cleanup.py and, as the same values, by the tick Worker (seed/worker/src/repostandard.js; repostd --check fails when the two differ). Repositories are discovered at run time; nothing here is a per-repository row. A repository differs from the default only through its row in github/org-settings.json (an override) or a reason written below.",
+  "org": "ultrastable",
+  "worker": {
+    "settings": {
+      "has_wiki": false,
+      "allow_squash_merge": true,
+      "allow_merge_commit": false,
+      "allow_rebase_merge": false,
+      "allow_auto_merge": true,
+      "allow_update_branch": true,
+      "delete_branch_on_merge": true,
+      "squash_merge_commit_title": "PR_TITLE",
+      "squash_merge_commit_message": "PR_BODY"
+    },
+    "security": {
+      "vulnerability_alerts": true,
+      "secret_scanning": "enabled",
+      "secret_scanning_push_protection": "enabled"
+    },
+    "ruleset": {
+      "name": "main-no-rewrite",
+      "target": "branch",
+      "enforcement": "active",
+      "conditions": {"ref_name": {"include": ["~DEFAULT_BRANCH"], "exclude": []}},
+      "rules": [{"type": "deletion"}, {"type": "non_fast_forward"}],
+      "bypass_actors": []
+    },
+    "private_plan_gated": ["allow_auto_merge", "security", "ruleset"]
+  },
+  "_worker": "the block above is the part the tick Worker applies with its administration app; it is byte-for-byte the JSON between the markers in seed/worker/src/repostandard.js. private_plan_gated: what GitHub's Free plan withholds from a private repository; on a private repository these are reported as gated, never as passed and never as a failure.",
+  "metadata": {
+    "homepage_default": "https://ultrastable.io",
+    "topics": {
+      "platform": ["autonomous-agents", "cloudflare-workers", "ultrastable"],
+      "system": ["autonomous-agents", "built-on-ultrastable", "cloudflare-workers", "ultrastable"]
+    },
+    "description": {
+      "system": "{title}: a system running on Ultrastable."
+    },
+    "_doc": "description, homepage and topics are computed: an override row in github/org-settings.json, else the tenant's row in doctrine/tenant-repos.json (description, frontend), else the public route of the doctrine/topology.json Worker built from the repository, else doctrine/full-stack.json, else the defaults here."
+  },
+  "files": ["README.md", "LICENSE", "AGENTS.md", "SECURITY.md"],
+  "workflows": [".github/workflows/branch-cleanup.yml"],
+  "workflow_exempt": {
+    "ultrastable": "the core's daily branchsweep.yml runs scripts/branch_cleanup.py over every repository of the org (BRANCH-SWEEP-2)",
+    "ops": "private and without workflows by rule (a workflow here would be billed); the core's branchsweep.yml cleans its branches"
+  },
+  "platform": ["ultrastable", "seed", "ops", ".github"],
+  "visibility": {
+    "rule": "public unless named under private with a reason; a repository that has any workflow file must be public (Actions minutes are free on public repositories and billed on private ones); a private repository may hold no workflow",
+    "private": {
+      "ops": "company admin, legal and backup ledgers (TEMPLATE-CODE-ONLY-1); holds no workflow, so nothing is billed"
+    },
+    "make_public": {
+      "seed": "DISCOVER-1 (Rowan, 2026-11-25): scanned for secrets 2026-11-25 (only redaction patterns and test fakes); it holds workflows, so private it is billed"
+    },
+    "_make_public": "the only repositories the apply path may flip from private to public; any other private repository with workflows is a red finding, never an automatic flip (publishing is egress, BOUNDARY-AXIOM)"
+  },
+  "keep_branches": {
+    "exact": ["main"],
+    "suffixes": ["-evidence"],
+    "_doc": "never deleted by scripts/branch_cleanup.py: the default branch, the append-only ledger branches loops write to, any protected branch and any branch with an open pull request"
+  }
+}

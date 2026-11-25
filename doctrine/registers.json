@@ -710,16 +710,40 @@
       "probe": "grep:instances/replication-ledger/worker/citations.test.mjs::after 24 beats an unchecked seed DOI makes /api/citations answer 503"
     },
     {
-      "id": "fm-blind-spot",
-      "trigger": "a check passes on empty, stale, unscored or vacuous data",
-      "symptom": "the owner finds the failure before any loop",
-      "blast_radius": "every claim and loop that trusts its probe",
-      "detection": "python3 -m foundation redteam --probe",
-      "root_cause": "probes test that a mechanism exists, not that its output is true",
-      "remediation": "adversarial red-team checks per blind-spot class; owner-found failures recorded and mapped to a detector",
+      "id": "fm-front-back-drift",
+      "trigger": "a page keeps a sentence whose endpoint is gone, an endpoint ships that no page describes, or a system does not serve a contract surface",
+      "symptom": "a reader sees a capability the back end does not serve, or the back end serves one nobody can find; the platform cannot read the system the way it reads the others",
+      "blast_radius": "every public surface of the platform and of each tenant",
+      "detection": "fleetcontract --live (detector fleet-contract), and each system's own contract test",
+      "root_cause": "words and routes declared in separate places with nothing tying a sentence to its page and its endpoint",
+      "remediation": "one declaration per system (seed/worker/src/contract.js); detector files Q-AUDIT, the system is fixed in its own repository, the same reading closes it",
       "status": "controlled",
       "cadence_ticks": 1,
-      "probe": "grep:tests/foundation/test_redteam.py::def test_owner_findings_of_2026_11_25"
+      "probe": "grep:tests/foundation/test_fleetcontract.py::def test_a_sentence_missing_from_its_page_fails"
+    },
+    {
+      "id": "fm-manager-not-running",
+      "trigger": "a manager is added to the roster after a system booted, a runtime drops a role row, or the dispatch step stops running",
+      "symptom": "the role file exists and items are filed to that owner, but the runtime has no row for it or its dispatch beat stopped, so nothing takes its items: a title, not a manager",
+      "blast_radius": "every item owned by that role, in the platform and in each system made from the seed",
+      "detection": "managers --live (detector managers-live) reads the runtime's own role rows and beats; managers --check on every change",
+      "root_cause": "the roles table was written once at bootstrap and never reconciled with the roster",
+      "remediation": "seed/worker/src/managers.js hireStep runs inside the tick's reconcile step and hires every switched-on manager with no runtime row; the detector files Q-AUDIT-managers-live and the same reading closes it",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:seed/worker/test/managers.test.js::a system that booted with part of the team is brought to the full register by one tick"
+    },
+    {
+      "id": "fm-standard-drift",
+      "trigger": "a change breaks a standard the system has adopted, a new config or generated commit title arrives outside it, or a public address stops answering in the standard's form",
+      "symptom": "other tools, agents and people read a boundary (an event, an error body, a manifest, a page's markup, a repository's descriptor) that no longer follows the format they expect, while the register still says it does",
+      "blast_radius": "every boundary other systems read: events between loops, API errors, configs and manifests, page markup, repository metadata",
+      "detection": "standards --check on every change and standards --live daily (detectors standards-register and standards-live); the probes rest on foundation/schemas.py (the JSON Schema validator behind configschema), foundation/cloudevents.py (the event envelope) and foundation/commitlint.py (generated commit titles)",
+      "root_cause": "conformance declared in a document instead of measured by a probe that runs",
+      "remediation": "each register row carries probes that run in checks and in the failure audit; a failing probe files Q-AUDIT-standards-register or Q-AUDIT-standards-live with the changed files as suspects and the same probe closes it; a new release of an adopted standard is filed by the scout from its release feed",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:tests/foundation/test_schemas.py::def test_a_row_whose_probe_fails_is_named"
     },
     {
       "id": "fm-constitution-drift",

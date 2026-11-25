@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-25-a-rule-about-live-systems-is-only-true-when-a-live-reading-s",
+  "kind": "lesson",
+  "date": "2026-11-25",
+  "title": "A rule about live systems is only true when a live reading says so: DISCOVER-1 and the tenant claims rule were false in production",
+  "body": "The health-only gate hid the seed manifest, no seed had PUBLIC_URL bound, three tenants served no /claims.json and Replication Ledger still ran from the core copy. Repository checks were green throughout because none fetched the live surfaces. fleetcontract --live now does, for every system; the first reading ran on 2026-11-25 and named each gap.",
+  "probe": "grep:tests/foundation/test_fleetcontract.py::def test_missing_surfaces_an_unwell_system_and_a_foreign_manifest_fail",
+  "session": "session_0156nqDufLi3JgDJf3gVw7Fh"
+ },
+ "kind": "lesson",
+ "title": "A rule about live systems is only true when a live reading says so: DISCOVER-1 and the tenant claims rule were false in production",
+ "session": "session_0156nqDufLi3JgDJf3gVw7Fh"
+}

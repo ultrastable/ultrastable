@@ -10,6 +10,9 @@ SETTINGS = json.loads((ROOT / ".claude/settings.json").read_text())
 
 def copy_seed(dst: Path):
     shutil.copytree(ROOT, dst, dirs_exist_ok=True, ignore=shutil.ignore_patterns(".git", "org", "node_modules", "__pycache__", "config.js", "wrangler.jsonc"))
+    # The tests boot a fixed example, never the system's own IDEA.md: in a real system that file holds its owner's idea, and the kernel's tests
+    # must still pass there (they run before every boot in .github/workflows/bootstrap.yml).
+    shutil.copy(ROOT / "tests/fixtures/IDEA.example.md", dst / "IDEA.md")
 
 
 class PolicyTests(unittest.TestCase):
@@ -79,7 +82,8 @@ class BootTests(unittest.TestCase):
             for f in ("charter.md", "roles.json", "backlog.json", "gate-cards.json", "seed.sql", "boot-log.json"):
                 self.assertTrue((org / f).exists(), f)
             cards = json.loads((org / "gate-cards.json").read_text())
-            self.assertTrue(any("CLOUDFLARE_API_TOKEN" in c["what"] for c in cards))
+            self.assertTrue(any(c["id"] == "GATE-RUNTIME" and c["connect"].startswith("https://") for c in cards))  # one card, one link; no key is named for a person to make
+            self.assertFalse([c["what"] for c in cards if "TOKEN" in c["what"] or "secret" in c["what"].lower()])
             for c in cards:
                 self.assertTrue(c["closing_probe"] and c["default_in_effect"])
 

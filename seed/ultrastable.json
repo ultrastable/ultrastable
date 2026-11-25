@@ -1,5 +1,26 @@
 {
   "$schema_version": "0.1.0",
+  "identity": {
+    "name": "Ultrastable seed",
+    "slug": "seed",
+    "summary": "The code-only kernel a new autonomous system starts from: bootstrapper, tick Worker, roles, agent instructions and the loops that take it to criticality. A copy of seed/ in the Ultrastable platform.",
+    "repo": "ultrastable/seed",
+    "public_url": null,
+    "license": "LicenseRef-Ultrastable-USL-1.0",
+    "topics": [
+      "autonomous-agents",
+      "cloudflare-workers",
+      "template",
+      "ultrastable"
+    ],
+    "layer": "template",
+    "parent": "ultrastable/ultrastable",
+    "visibility": "public",
+    "visibility_reason": "DISCOVER-1: public by default",
+    "status": "live",
+    "loop": "Every tick the system reconciles its state, takes its highest-priority item, does it, verifies it through an independent path, scores the prediction it logged and files the next improvement.",
+    "runs_as": []
+  },
   "runtime": {
     "provider": "cloudflare",
     "worker_name": "{slug}-ultrastable",
@@ -173,7 +194,9 @@
       "env": "ANTHROPIC_API_KEY",
       "required_for": [
         "agents"
-      ]
+      ],
+      "optional": true,
+      "note": "the runtime binds the account's own models (worker/wrangler.template.jsonc `ai`), so no model key is asked of anyone; a key in the environment is used when one exists"
     },
     "chat": {
       "env": "CHAT_WEBHOOK_URL",

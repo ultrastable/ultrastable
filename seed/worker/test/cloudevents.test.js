@@ -1,28 +1,39 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) Ultrastable
-// OPEN-STANDARDS-1: events between loops are CloudEvents 1.0, built and checked by one shared module.
+// STANDARDS-FIRST-1: the CloudEvents 1.0 envelope every Worker shares, and its use on the handoff path.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { cloudEvent, cloudEventErrors, toHttp, CONTENT_TYPE } from '../src/cloudevents.js';
-import { cloudEvent as webhookEvent } from '../../../site/webhooks.js';
+import { readFileSync } from 'node:fs';
+import { envelope as cloudEvent, conforms, unwrap, isCloudEvent, eventType } from '../src/cloudevents.js';
+import { handoffEvent } from '../src/handoff.js';
 
-test('cloudEvent builds a conforming CloudEvents 1.0 event with a stable id', async () => {
-  const a = await cloudEvent({ type: 'io.ultrastable.tick.done', source: '/ultrastable/tick', data: { ok: 1 }, time: '2026-11-25T21:00:00Z' });
-  const b = await cloudEvent({ type: 'io.ultrastable.tick.done', source: '/ultrastable/tick', data: { ok: 1 }, time: '2026-11-25T21:00:00Z' });
-  assert.deepEqual(cloudEventErrors(a), []);
-  assert.equal(a.id, b.id);
-  assert.equal(a.specversion, '1.0');
-  assert.equal(a.datacontenttype, 'application/json');
-  assert.equal(toHttp(a).headers['content-type'], CONTENT_TYPE);
+const VEC = JSON.parse(readFileSync(new URL('../../standards/cloudevents-vectors.json', import.meta.url), 'utf8'));
+
+test('cloudevents: shared vectors, valid events conform', () => { for (const e of VEC.valid) assert.deepEqual(conforms(e), [], JSON.stringify(e)); });
+test('cloudevents: shared vectors, invalid events are refused', () => { for (const v of VEC.invalid) assert.ok(conforms(v.event).length, v.why); });
+test('cloudevents: envelope carries the required attributes and a reverse-DNS type', () => {
+  const e = cloudEvent({ area: 'item', event: 'done', source: '/tenants/t/loops/tick', subject: 'Q-1', data: { ok: true }, time: Date.UTC(2026, 10, 25) });
+  assert.deepEqual(conforms(e), []);
+  assert.equal(e.specversion, '1.0'); assert.equal(e.type, 'io.ultrastable.item.done'); assert.equal(e.time, '2026-11-25T00:00:00.000Z');
+  assert.equal(e.datacontenttype, 'application/json'); assert.ok(e.id.length >= 16);
+  assert.notEqual(cloudEvent({ area: 'a', event: 'b', source: '/s' }).id, cloudEvent({ area: 'a', event: 'b', source: '/s' }).id);
 });
-
-test('cloudEventErrors names missing attributes and bad extension names', async () => {
-  assert.deepEqual(cloudEventErrors({ specversion: '1.0', id: 'x', source: '/s' }), ['missing type']);
-  assert.ok(cloudEventErrors({ specversion: '1.0', id: 'x', source: '/s', type: 't', Bad_Name: 1 }).some((e) => e.includes('Bad_Name')));
-  await assert.rejects(cloudEvent({ type: 't', source: '/s', BadExt: 1 }));
+test('cloudevents: a missing source or an object extension attribute throws', () => {
+  assert.throws(() => cloudEvent({ area: 'a', event: 'b' }), /source/);
+  assert.throws(() => cloudEvent({ area: 'a', event: 'b', source: '/s', extensions: { origin: { class: 'loop' } } }), /extension attribute/);
+  assert.throws(() => eventType('', 'b'));
 });
-
-test('webhook deliveries already conform to the same envelope', () => {
-  const ev = webhookEvent({ id: 'ev_1', type: 'item.closed', subject: 'Q-1', created_at: '2026-11-25T21:00:00Z', data: '{"a":1}' });
-  assert.deepEqual(cloudEventErrors(JSON.parse(JSON.stringify(ev))), []);
+test('cloudevents: unwrap returns the payload and leaves older rows and foreign events alone', () => {
+  const old = { state: 'merged' };
+  assert.equal(unwrap(old), old);
+  assert.deepEqual(unwrap(cloudEvent({ area: 'handoff', event: 'merged', source: '/s', data: old })), old);
+  const foreign = { specversion: '1.0', id: '1', source: '/x', type: 'com.example.thing', data: { a: 1 } };
+  assert.ok(isCloudEvent(foreign)); assert.equal(unwrap(foreign), foreign);
+});
+test('cloudevents: a handoff state change is a conformant event that fits the audit row', () => {
+  const e = handoffEvent('ultrastable/ultrastable#12', 'verify_failed', 'x'.repeat(900), 'unlearn');
+  assert.deepEqual(conforms(e), []);
+  assert.equal(e.type, 'io.ultrastable.handoff.verify_failed'); assert.equal(e.subject, 'ultrastable/ultrastable#12'); assert.equal(e.source, '/tenants/unlearn/loops/handoff');
+  assert.equal(unwrap(e).state, 'verify_failed'); assert.equal(e.data.detail.length, 300);
+  assert.ok(JSON.stringify(e).length < 2000, 'the audit chain keeps 2000 characters of data');
 });

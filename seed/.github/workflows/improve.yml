@@ -33,6 +33,6 @@ jobs:
           git diff --quiet && git diff --cached --quiet && [ -z "$(git ls-files --others --exclude-standard docs/issues ops/improve)" ] && exit 0
           b="improve/$(date -u +%Y%m%d)"
           git config user.name "ultrastable-improve"; git config user.email "improve@users.noreply.github.com"
-          git checkout -b "$b"; git add docs/issues ops/improve; git commit -m "Improvement pass: new reach, front-end and back-end work"
+          git checkout -b "$b"; git add docs/issues ops/improve; git commit -m "improve: new reach, front-end and back-end work"
           git push -u origin "$b"
           gh pr create --title "Improvement pass $(date -u +%F)" --body "Filed by scripts/improve.py (IMPROVE-1, FRONTEND-AUTO-1)." --label handoff

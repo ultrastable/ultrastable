@@ -36,10 +36,15 @@
   "\\b(two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|thirty|fifty|hundred) (policy )?(areas|sources|indexes|indices|programmes|programs|channels|tenants|systems|loops|workers|repositories|checks|probes)\\b"
  ],
  "claims": [
-  {"id": "agents-boot-accept-cadence", "source": "agents/AGENTS.md", "quote": "weekly and on every push that changes a public surface", "probe": {"file": ".github/workflows/seed-launch.yml", "contains": "seed/worker/src/visibility.js"}},
-  {"id": "seed-agents-boot-accept-cadence", "source": "seed/agents/AGENTS.md", "quote": "weekly and on every push that changes a public surface", "probe": {"file": ".github/workflows/seed-launch.yml", "contains": "seed/worker/src/visibility.js"}},
-  {"id": "pi-boot-accept-cadence", "source": "agents/PROJECT-INSTRUCTIONS.md", "quote": "weekly and on every push that changes a public surface", "probe": {"file": ".github/workflows/seed-launch.yml", "contains": "seed/worker/src/visibility.js"}},
-  {"id": "agents-word-claims-example", "source": "agents/AGENTS.md", "quote": "Counts and cadences written in words (\"five policy areas\", \"every six hours\") are claims too", "probe": {"file": "tests/foundation/test_claimcode.py", "contains": "every six hours from public data"}},
+  {
+   "id": "agents-word-claims-example",
+   "source": "agents/AGENTS.md",
+   "quote": "Counts and cadences written in words (\"five policy areas\", \"every six hours\") are claims too",
+   "probe": {
+    "file": "tests/foundation/test_claimcode.py",
+    "contains": "every six hours from public data"
+   }
+  },
   {
    "id": "readme-plus-share",
    "source": "README.md",
@@ -437,83 +442,71 @@
    }
   },
   {
-   "id": "coldstart-contract-agents",
-   "source": "agents/AGENTS.md",
-   "quote": "work together automatically and seamlessly from the beginning",
+   "id": "platform-statement-claims",
+   "source": "site/contract.js",
+   "quote": "Every statement on this site is bound to a probe in the code, and the result of each probe is served as data.",
    "probe": {
-    "file": ".github/workflows/checks.yml",
-    "contains": "python3 -m foundation coldstart --check"
+    "file": "site/worker.js",
+    "contains": "case \"/api/claims\""
+   }
+  },
+  {
+   "id": "platform-statement-audit",
+   "source": "site/contract.js",
+   "quote": "Every deploy and decision is a row in a hash chain whose head is public.",
+   "probe": {
+    "file": "seed/worker/src/index.js",
+    "contains": "/api/audit/head"
+   }
+  },
+  {
+   "id": "fleet-contract-daily-agents",
+   "source": "agents/AGENTS.md",
+   "quote": "daily in `tenant-repos.yml`, and the failure-audit detector `fleet-contract`",
+   "probe": {
+    "file": ".github/workflows/tenant-repos.yml",
+    "contains": "python3 -m foundation fleetcontract --live"
+   }
+  },
+  {
+   "id": "readme-live-core-deploy",
+   "source": "README.md",
+   "quote": "deployed from this repository's `main` on every merge that changes them",
+   "probe": {
+    "file": ".github/workflows/deploy-ultrastable.yml",
+    "contains": "branches: [main]"
+   }
+  },
+  {
+   "id": "controlplane-tick-cron",
+   "source": "site/controlplane.js",
+   "quote": "cron is every 10 minutes",
+   "probe": {
+    "file": "seed/ultrastable.json",
+    "contains": "\"tick_cron\": \"*/10 * * * *\""
+   }
+  },
+  {
+   "id": "oauth-code-single-use",
+   "source": "site/oauth.js",
+   "quote": "single use, burned before any check so a replay can never succeed",
+   "probe": {
+    "file": "site/oauth.test.mjs",
+    "contains": "a failed attempt burns the code"
+   }
+  },
+  {
+   "id": "roadmap-plus-share",
+   "source": "site/roadmap-data.js",
+   "quote": "A protected share of capacity (default 20%)",
+   "probe": {
+    "file": "seed/ultrastable.json",
+    "contains": "\"plus_share\": 0.2"
    }
   }
  ],
  "baseline": [
-  "README.md::09912c6536f8",
-  "README.md::141aa984ab48",
-  "README.md::3d80ea469c5f",
-  "README.md::3ddc85e8d981",
-  "README.md::7584ad3cba03",
-  "README.md::bda8f4533bb6",
-  "README.md::e74daf974654",
-  "agents/AGENTS.md::0c016caf5dfc",
-  "agents/AGENTS.md::1d3293565376",
-  "agents/AGENTS.md::26a71681c98d",
-  "agents/AGENTS.md::2984cf5718e9",
-  "agents/AGENTS.md::2dcd8bf8e417",
-  "agents/AGENTS.md::39cbbd679f91",
-  "agents/AGENTS.md::3fb93b9527f7",
-  "agents/AGENTS.md::415519d6752c",
-  "agents/AGENTS.md::45f893bfb2a6",
-  "agents/AGENTS.md::492aaccc1f07",
-  "agents/AGENTS.md::4cae15531077",
-  "agents/AGENTS.md::51c90e2c0c89",
-  "agents/AGENTS.md::51fea31279c0",
-  "agents/AGENTS.md::57202b449cc0",
-  "agents/AGENTS.md::592175775359",
-  "agents/AGENTS.md::64fa0abbc415",
-  "agents/AGENTS.md::77296f27ab40",
-  "agents/AGENTS.md::77f4246aea0c",
-  "agents/AGENTS.md::7b73ff1a114d",
-  "agents/AGENTS.md::7c664f03372a",
-  "agents/AGENTS.md::7d05a3543178",
-  "agents/AGENTS.md::7e312462f296",
-  "agents/AGENTS.md::7f290400eaca",
-  "agents/AGENTS.md::804c8eec4019",
-  "agents/AGENTS.md::83b8cc35ece9",
-  "agents/AGENTS.md::8e693fe3f0f1",
-  "agents/AGENTS.md::909040319c96",
-  "agents/AGENTS.md::92c138ef3653",
-  "agents/AGENTS.md::945b863d962d",
-  "agents/AGENTS.md::9a9acea54280",
-  "agents/AGENTS.md::a097efc8783e",
-  "agents/AGENTS.md::a201be9b139b",
-  "agents/AGENTS.md::aeeb90805f9b",
-  "agents/AGENTS.md::b1ce214568e5",
-  "agents/AGENTS.md::b3ceca3aac74",
-  "agents/AGENTS.md::bb1632fa5864",
-  "agents/AGENTS.md::bebac3b6aeae",
-  "agents/AGENTS.md::c0d4deeab9aa",
-  "agents/AGENTS.md::c38c94412a37",
-  "agents/AGENTS.md::c48b5845001b",
-  "agents/AGENTS.md::c638e52e5d5b",
-  "agents/AGENTS.md::c685a817f3a3",
-  "agents/AGENTS.md::c799124b7de6",
-  "agents/AGENTS.md::c9706213b925",
-  "agents/AGENTS.md::cc219b375327",
-  "agents/AGENTS.md::cc29a7a0740b",
-  "agents/AGENTS.md::ce36647a4e7f",
-  "agents/AGENTS.md::d88204e16c54",
-  "agents/AGENTS.md::ddcc6c730add",
-  "agents/AGENTS.md::e10d08a2dac9",
-  "agents/AGENTS.md::e16f46cf5e69",
-  "agents/AGENTS.md::ef4b278fa7de",
-  "agents/AGENTS.md::f8cdb610248f",
   "site/agentdata.js::f88bf585a47d",
-  "site/authzen.js::544137c3b225",
-  "site/claims-data.js::504e4faea1fb",
-  "site/connections.js::225a7a9d3b2e",
-  "site/connections.js::445f7bc02092",
-  "site/controlplane.js::55cf36f6723c",
-  "site/controlplane.js::9991800e21a3",
   "site/dashboard-data.js::18b59115f563",
   "site/dashboard-data.js::4e3eebe32437",
   "site/dashboard-data.js::7b3fe3667cbd",
@@ -521,51 +514,17 @@
   "site/dashboard-data.js::d8b08106b61d",
   "site/feed-data.js::830d0643fe27",
   "site/feed-data.js::b8ddf219e4c1",
-  "site/live.js::b317efd43c38",
-  "site/live.js::c1466e752290",
-  "site/mydata.js::02ca34fb43fd",
-  "site/mydata.js::900d72d78ead",
-  "site/oauth.js::0d60e988ae2e",
-  "site/oauth.js::2f47f9a20037",
-  "site/oauth.js::687e55ca815a",
-  "site/passkeys.js::900d72d78ead",
   "site/platformbrief.js::10b3d56fb934",
   "site/platformbrief.js::33a3f68eaf07",
   "site/platformbrief.js::6079cb307527",
   "site/platformbrief.js::679cd7845747",
   "site/platformbrief.js::a1643684c5ce",
-  "site/roadmap-data.js::f9073676ba08",
-  "site/sop.js::263b8951cc98",
   "site/stakeholders.js::234a2a8c3dfb",
   "site/stakeholders.js::4efb6f692137",
   "site/stakeholders.js::921904b57ebd",
   "site/stakeholders.js::e4426faa78a2",
   "site/userpath.js::d3a8370d7865",
-  "site/userpath.js::eac0cdb7b2e4",
-  "site/worker.js::18b5686b65a7",
-  "site/worker.js::23a14fe90826",
-  "site/worker.js::242a6d3c9328",
-  "site/worker.js::2f7a8c27c3f8",
-  "site/worker.js::2f8cd2cb26f3",
-  "site/worker.js::3ecabe1a8c1a",
-  "site/worker.js::41275bcf49dc",
-  "site/worker.js::59dba735a602",
-  "site/worker.js::7d86f84d76ca",
-  "site/worker.js::7fc1f51c7eb6",
-  "site/worker.js::888a1d5fbd61",
-  "site/worker.js::88e4ac4418ab",
-  "site/worker.js::89bda4872114",
-  "site/worker.js::92538928373c",
-  "site/worker.js::a1d1cb1a2944",
-  "site/worker.js::a3dbae472ff2",
-  "site/worker.js::b978c24a0e21",
-  "site/worker.js::cdcaf97a43cf",
-  "site/worker.js::de5210014e8e",
-  "site/worker.js::edb0dfb12da8",
-  "site/worker.js::ee4d9c70bd79",
-  "site/worker.js::efdec906438d",
-  "site/worker.js::f1c6cc2e941f",
-  "site/worker.js::f3c13722dcc2"
+  "site/userpath.js::eac0cdb7b2e4"
  ],
  "closing_probe": "python3 -m foundation claimcode --check",
  "skip_reasons": {

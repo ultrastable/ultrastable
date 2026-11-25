@@ -7,6 +7,8 @@
   "d1_databases": [
     { "binding": "DB", "database_name": "{d1_database}", "database_id": "{d1_database_id}", "migrations_dir": "migrations" }
   ],
+  // The account's own models: the system needs no model key from anyone (POINT-AND-CLICK-1; the hosted route binds the same, deploy/deploy-seed.mjs).
+  "ai": { "binding": "AI" },
   "workers_dev": {workers_dev},
   "vars": { "PUBLIC_HEALTH_ONLY": "{public_health_only}" },
   "observability": { "enabled": true }
