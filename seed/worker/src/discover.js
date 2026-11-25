@@ -51,8 +51,8 @@ export async function heartbeat(env = {}, config = {}, { fetchFn = fetch, now = 
   const m = manifest(env, config);
   if (!m.discoverable) return { sent: false, why: 'opted out' };
   if (!m.url) return { sent: false, why: 'no public URL' };
-  let last = null;
-  if (db) { try { await db.prepare(REG_TABLE).run(); last = await db.prepare('SELECT at, listed FROM directory_registration WHERE id = 1').first(); } catch (e) { console.error('directory registration read', e && e.message); } }
+  let last = null, stateError = null;  // a state error is returned to the caller, which logs it; the send still goes ahead
+  if (db) { try { await db.prepare(REG_TABLE).run(); last = await db.prepare('SELECT at, listed FROM directory_registration WHERE id = 1').first(); } catch (e) { stateError = 'read: ' + clean(e && e.message, 120); } }
   const daily = now.getUTCHours() === 3 && now.getUTCMinutes() < 10;
   const birth = Boolean(db) && !(last && last.listed) && (!last || now - Date.parse(last.at) >= 3600e3);
   if (!daily && !birth) return { sent: false, why: 'not the daily window' };
@@ -65,6 +65,6 @@ export async function heartbeat(env = {}, config = {}, { fetchFn = fetch, now = 
     why = 'directory unreachable: ' + clean(e && e.message, 120);
   }
   const listed = status >= 200 && status < 300;
-  if (db) { try { await db.prepare('INSERT INTO directory_registration (id, at, status, listed, why) VALUES (1, ?1, ?2, ?3, ?4) ON CONFLICT(id) DO UPDATE SET at = ?1, status = ?2, listed = MAX(listed, ?3), why = ?4').bind(now.toISOString(), status, listed ? 1 : 0, why).run(); } catch (e) { console.error('directory registration write', e && e.message); } }
-  return status ? { sent: true, status, listed, why, birth: !daily } : { sent: false, why };
+  if (db) { try { await db.prepare('INSERT INTO directory_registration (id, at, status, listed, why) VALUES (1, ?1, ?2, ?3, ?4) ON CONFLICT(id) DO UPDATE SET at = ?1, status = ?2, listed = MAX(listed, ?3), why = ?4').bind(now.toISOString(), status, listed ? 1 : 0, why).run(); } catch (e) { stateError = 'write: ' + clean(e && e.message, 120); } }
+  return status ? { sent: true, status, listed, why, birth: !daily, stateError } : { sent: false, why, stateError };
 }
