@@ -1894,15 +1894,6 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
-   "claim": "- **Public by default, discoverable always (DISCOVER-1, Rowan 2026-11-25).** \"The intent is public deployments, public accessibility,",
-   "detail": "",
-   "how": "file:github/org-settings.json + file:doctrine/tenant-repos.json + file:doctrine/topology.json + file:doctrine/stakeholders.json + file:seed/worker/src/discover.js + file:site/directory.js",
-   "id": "cited-988a412a5f",
-   "kind": "claim",
-   "pass": true,
-   "surface": "agents/AGENTS.md"
-  },
-  {
    "claim": "- **Automate back-end and front-end development; improve on its own (IMPROVE-1, FRONTEND-AUTO-1, Rowan 2026-11-25).** \"Automatically",
    "detail": "",
    "how": "file:seed/scripts/improve.py + file:seed/autonomy/improve.json + file:seed/.github/workflows/improve.yml + file:foundation/improve.py + file:doctrine/improve.json + file:tests/foundation/test_improve.py",
@@ -1916,15 +1907,6 @@ export default {
    "detail": "",
    "how": "file:seed/.github/workflows/platform-sync.yml + file:tests/foundation/test_improve.py + file:foundation/tenantsync.py + grep:.github/workflows/checks.yml::foundation[ .]tenantsync\\b",
    "id": "cited-0e153ff129",
-   "kind": "claim",
-   "pass": true,
-   "surface": "agents/AGENTS.md"
-  },
-  {
-   "claim": "- **Red-team the system's own blind spots; the owner should never find a failure first (REDTEAM-1, Rowan 2026-11-25).** \"Audit and",
-   "detail": "",
-   "how": "file:foundation/redteam.py + file:ops/redteam/findings.jsonl + file:tests/foundation/test_redteam.py",
-   "id": "cited-467a38f9b7",
    "kind": "claim",
    "pass": true,
    "surface": "agents/AGENTS.md"
@@ -2596,15 +2578,6 @@ export default {
    "surface": "seed/agents/AGENTS.md"
   },
   {
-   "claim": "- **Public by default, discoverable always (DISCOVER-1, Rowan 2026-11-25).** \"The intent is public deployments, public accessibility,",
-   "detail": "",
-   "how": "file:github/org-settings.json + file:doctrine/tenant-repos.json + file:doctrine/topology.json + file:doctrine/stakeholders.json + file:seed/worker/src/discover.js + file:site/directory.js",
-   "id": "mirror-a4386ccae1",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/agents/AGENTS.md"
-  },
-  {
    "claim": "- **Automate back-end and front-end development; improve on its own (IMPROVE-1, FRONTEND-AUTO-1, Rowan 2026-11-25).** \"Automatically",
    "detail": "",
    "how": "file:seed/scripts/improve.py + file:seed/autonomy/improve.json + file:seed/.github/workflows/improve.yml + file:foundation/improve.py + file:doctrine/improve.json + file:tests/foundation/test_improve.py",
@@ -2618,15 +2591,6 @@ export default {
    "detail": "",
    "how": "file:seed/.github/workflows/platform-sync.yml + file:tests/foundation/test_improve.py + file:foundation/tenantsync.py + grep:.github/workflows/checks.yml::foundation[ .]tenantsync\\b",
    "id": "mirror-1ca2a53c76",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/agents/AGENTS.md"
-  },
-  {
-   "claim": "- **Red-team the system's own blind spots; the owner should never find a failure first (REDTEAM-1, Rowan 2026-11-25).** \"Audit and",
-   "detail": "",
-   "how": "file:foundation/redteam.py + file:ops/redteam/findings.jsonl + file:tests/foundation/test_redteam.py",
-   "id": "mirror-309506fe16",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3289,6 +3253,24 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
+   "claim": "- **Public by default, discoverable always (DISCOVER-1, Rowan 2026-11-25).** \"The intent is public deployments, public accessibility,",
+   "detail": "",
+   "how": "file:github/org-settings.json + file:doctrine/tenant-repos.json + file:doctrine/topology.json + file:doctrine/stakeholders.json + file:seed/worker/src/discover.js + file:site/directory.js",
+   "id": "cited-988a412a5f",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Public by default, discoverable always (DISCOVER-1, Rowan 2026-11-25).** \"The intent is public deployments, public accessibility,",
+   "detail": "",
+   "how": "file:github/org-settings.json + file:doctrine/tenant-repos.json + file:doctrine/topology.json + file:doctrine/stakeholders.json + file:seed/worker/src/discover.js + file:site/directory.js",
+   "id": "mirror-a4386ccae1",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
    "claim": "seed-tests: 64 Python and 523 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
@@ -3539,7 +3521,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 390,
-  "total": 390
+  "pass": 388,
+  "total": 388
  }
 };
