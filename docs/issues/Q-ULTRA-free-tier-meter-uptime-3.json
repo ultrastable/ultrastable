@@ -1,0 +1,11 @@
+{
+  "id": "Q-ULTRA-free-tier-meter-uptime-3",
+  "title": "Q-ULTRA-free-tier-meter-uptime-3: Uptime out of bounds: retire: stop spending on what cannot stay up (free-tier-meter; verb retire)",
+  "body": "**Owner:** executor\n**Trigger:** essential variable `free-tier-meter:uptime` out of bounds (reading 0.0; limits 0.99 to 1.0)\n**Done check:** cmd:python3 -m foundation ultrastability --check\n**Status:** open\n\nULTRASTABILITY-1 second-order step: retire: stop spending on what cannot stay up (free-tier-meter; verb retire). The system has to be reachable to be improved.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation ultrastability --tick` reads `uptime` inside its bounds.\n",
+  "labels": [
+    "p1",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Ultrastability"
+}
