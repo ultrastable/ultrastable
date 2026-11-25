@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-25-graph-leads-need-template-siblings-excluded",
+  "kind": "lesson",
+  "date": "2026-11-25",
+  "title": "Graph leads need template siblings excluded",
+  "body": "Lexical leads on the core repo were all template siblings (Q-ULTRA-x-spend vs -value) until pairs sharing the first two id segments were skipped.",
+  "probe": "grep:foundation/kgraph.py::def family"
+ },
+ "kind": "lesson",
+ "title": "Graph leads need template siblings excluded",
+ "session": ""
+}

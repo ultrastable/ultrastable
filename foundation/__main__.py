@@ -27,6 +27,7 @@
   python3 -m foundation openloops [--check]                                NO-OPEN-ITEMS-1: no "needs you"; every leftover is closed or a recorded gate
   python3 -m foundation failmine [--run [--apply]|--report|--probe HASH|--check]   FAILMINE-1: mine every failure record, classify root causes, register new modes, escalate recurrence
   python3 -m foundation intentyield [--run [--apply]|--probe|--check|--report]   INTENT-YIELD-1: owner directives kept per unit of attention; no counts, no person scored
+  python3 -m foundation kgraph [--run [--apply]|--settled ID|--probe|--check]   KGRAPH-1: knowledge graph of every record; unlinked look-alikes become Q-KG leads
   python3 -m foundation temporal [--run [--apply]|--settled ID|--probe|--check|--report]   TEMPORAL-1: series per area, loop and entry; hotspots, neglect and stopped loops feed the failure-mode machinery
   python3 -m foundation seedlaunch [--e2e [--keep]|--fleet|--check]   SEED-LAUNCH-1: every seed built, deployed, year-gated and probed live by the system
   python3 -m foundation tenantpromo [--check|--list]                      TENANT-PROMO-1: every tenant promotes itself (social queue, showcase, cross-links)
@@ -298,6 +299,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["intentyield"]:
         from . import intentyield
         return intentyield.main(_av[1:])
+    if _av[:1] == ["kgraph"]:
+        from . import kgraph
+        return kgraph.main(_av[1:])
     if _av[:1] == ["temporal"]:
         from . import temporal
         return temporal.main(_av[1:])

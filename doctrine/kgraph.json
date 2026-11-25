@@ -1,0 +1,69 @@
+{
+  "_doc": "KGRAPH-1 (Rowan, 2026-11-25): every system keeps a knowledge graph of all its data. Consumers: foundation/kgraph.py (repository graph, daily in .github/workflows/temporal.yml for the core and every tenant in doctrine/temporal.json) and seed/worker/src/graph.js (the live graph each tick Worker builds from its D1 records). sources: what becomes a node. insight: the lead rule both halves share.",
+  "version": 1,
+  "tenants": "doctrine/temporal.json",
+  "sources": [
+    {
+      "glob": "docs/issues/*.json",
+      "kind": "item",
+      "text": [
+        "title",
+        "body"
+      ]
+    },
+    {
+      "glob": "research/studies/*.json",
+      "kind": "study",
+      "prefix": "study:",
+      "label": "title",
+      "text": [
+        "title",
+        "summary",
+        "paper_frame"
+      ],
+      "sub": "findings"
+    },
+    {
+      "glob": "agents/AGENTS.md",
+      "kind": "rule",
+      "rule_bullets": true
+    },
+    {
+      "glob": "docs/*.md",
+      "kind": "doc"
+    },
+    {
+      "glob": "data/**/*.json",
+      "kind": "content",
+      "text": [
+        "title",
+        "summary",
+        "body",
+        "description"
+      ]
+    }
+  ],
+  "insight": {
+    "kinds": [
+      "item",
+      "study-finding",
+      "rule",
+      "doc",
+      "content"
+    ],
+    "threshold": 0.5,
+    "min_shared": 4,
+    "max_term_df": 40,
+    "hub_degree": 60,
+    "max_leads_per_run": 25,
+    "max_filed_per_day": 2
+  },
+  "aliases": [
+    {
+      "pattern": "^tag:Q-RES-(.+)-([A-Z]\\d+)$",
+      "to": "study:\\1:\\2",
+      "rel": "tests",
+      "why": "a research item tests its own finding"
+    }
+  ]
+}

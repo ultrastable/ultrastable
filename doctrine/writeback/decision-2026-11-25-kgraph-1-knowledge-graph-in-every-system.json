@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-25-kgraph-1-knowledge-graph-in-every-system",
+  "kind": "decision",
+  "date": "2026-11-25",
+  "title": "KGRAPH-1: knowledge graph in every system",
+  "body": "Seed Worker graph step plus daily repository graph; leads filed as KG/Q-KG items and settled by real links; yield measured in ops/kgraph.",
+  "probe": "grep:seed/worker/src/index.js::graphStep\\("
+ },
+ "kind": "decision",
+ "title": "KGRAPH-1: knowledge graph in every system",
+ "session": ""
+}

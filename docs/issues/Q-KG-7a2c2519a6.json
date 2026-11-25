@@ -1,0 +1,13 @@
+{
+  "id": "Q-KG-7a2c2519a6",
+  "title": "Q-KG-7a2c2519a6: connect Deploys are checked by the system and What ships is proven live",
+  "body": "**Owner:** product-manager\n**Trigger:** knowledge graph insight pass (KGRAPH-1)\n**Done check:** cmd:python3 -m foundation kgraph --settled Q-KG-7a2c2519a6\n**Status:** open\n\n`study:open-loops-2026:O3` (Deploys are checked by the system) and `study:safety-by-limits-2026:S3` (What ships is proven live) read alike (deploys, against, belief, commit, deploy) but nothing links them (score 0.645).\n\nRead both. If one should build on, replace or reuse the other, make the change and reference one from the other. If they only look alike, add Q-KG-7a2c2519a6 to ops/kgraph/declined.json with a one-line reason.\n\nPrediction: kg_leads_kept_share >= 0.2 within 336 h\n\nsize: S\n\n**Closing probe:** cmd:python3 -m foundation kgraph --settled Q-KG-7a2c2519a6\n",
+  "labels": [
+    "p2",
+    "agent-ready",
+    "kgraph",
+    "plus"
+  ],
+  "milestone": "Now",
+  "workstream": "Product"
+}

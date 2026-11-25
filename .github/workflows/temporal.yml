@@ -41,6 +41,7 @@ jobs:
             [ -z "$id" ] && continue
             if git clone -q "https://x-access-token:${GH_TOKEN}@github.com/${repo}.git" "tenant-clone-${id}"; then
               python3 -m foundation temporal --run --apply --tenant "$id" --root "tenant-clone-${id}" --out .
+              python3 -m foundation kgraph --run --apply --tenant "$id" --root "tenant-clone-${id}" --out . || echo "::warning::tenant ${id}: knowledge graph not built; the freshness probe reports it"
               python3 scripts/temporal_issues.py "$id" "$repo" || echo "::warning::tenant ${id}: issue filing refused, the findings stay in ops/temporal/tenants/${id}"
             else
               echo "::warning::tenant ${id}: clone refused; it is read again next run and the page says when it was last read"
@@ -48,7 +49,9 @@ jobs:
           done < tenants.txt
       - name: This repository, with the tenants' results embedded
         run: python3 -m foundation temporal --run --apply
+      - name: Knowledge graph of this repository; unlinked look-alikes become Q-KG items (KGRAPH-1)
+        run: python3 -m foundation kgraph --run --apply && python3 -m foundation kgraph --probe
       - name: Land the series, findings and page data on main, where the executor takes the items
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
-        run: python3 scripts/land_data.py "temporal series, findings and queue items (TEMPORAL-1)" ops/temporal site/temporal-data.js dashboard/temporal-data.js docs/issues
+        run: python3 scripts/land_data.py "temporal series, findings and queue items (TEMPORAL-1)" ops/temporal site/temporal-data.js dashboard/temporal-data.js ops/kgraph docs/issues

@@ -1,0 +1,92 @@
+{
+ "at": "2026-11-25T16:03:06Z",
+ "edges": 6846,
+ "filed": 2,
+ "kept": 0,
+ "kinds": {
+  "content": 1,
+  "doc": 23,
+  "file": 1512,
+  "item": 1066,
+  "rule": 65,
+  "study": 5,
+  "study-finding": 28,
+  "tag": 459
+ },
+ "leads": 16,
+ "newest_leads": [
+  {
+   "a": "study:open-loops-2026:O3",
+   "b": "study:safety-by-limits-2026:S3",
+   "id": "Q-KG-7a2c2519a6",
+   "score": 0.645,
+   "why": "read alike (deploys, against, belief, commit, deploy) but nothing links them"
+  },
+  {
+   "a": "tag:GH-1",
+   "b": "tag:OL-20261115-7",
+   "id": "Q-KG-9eb44e3d13",
+   "score": 0.583,
+   "why": "read alike (repos, fleet, runs, account, binds) but nothing links them"
+  },
+  {
+   "a": "tag:IP-8",
+   "b": "tag:OL-20261115-7",
+   "id": "Q-KG-c350f2e390",
+   "score": 0.583,
+   "why": "read alike (bound, default, effect, identity, runs) but nothing links them"
+  },
+  {
+   "a": "tag:GH-4",
+   "b": "tag:OL-20261115-7",
+   "id": "Q-KG-ebdb748332",
+   "score": 0.583,
+   "why": "read alike (repos, runs, account, binds, bound) but nothing links them"
+  },
+  {
+   "a": "tag:FN-2",
+   "b": "tag:FUND-4",
+   "id": "Q-KG-0585e1d1cf",
+   "score": 0.542,
+   "why": "read alike (drafts, runs, account, binds, bound) but nothing links them"
+  },
+  {
+   "a": "tag:FN-2",
+   "b": "tag:OL-20261115-16",
+   "id": "Q-KG-22ab9596a1",
+   "score": 0.542,
+   "why": "read alike (cloud, runs, account, binds, bound) but nothing links them"
+  },
+  {
+   "a": "tag:PIN-fresh-account-bootstrap",
+   "b": "tag:Q-GAP-fresh-account-bootstrap",
+   "id": "Q-KG-50bf4887f0",
+   "score": 0.542,
+   "why": "read alike (account, apply, empty, cloudflare, first) but nothing links them"
+  },
+  {
+   "a": "tag:FN-3",
+   "b": "tag:FUND-4",
+   "id": "Q-KG-50d0005e84",
+   "score": 0.542,
+   "why": "read alike (drafts, runs, account, binds, bound) but nothing links them"
+  },
+  {
+   "a": "tag:IP-8",
+   "b": "tag:OL-20261115-16",
+   "id": "Q-KG-5edc01f146",
+   "score": 0.542,
+   "why": "read alike (bound, default, effect, identity, runs) but nothing links them"
+  },
+  {
+   "a": "tag:STD-2",
+   "b": "tag:STD-3",
+   "id": "Q-KG-899cf64615",
+   "score": 0.542,
+   "why": "read alike (adapter, executor, hours, std, days) but nothing links them"
+  }
+ ],
+ "nodes": 3159,
+ "system": "core",
+ "yield": 0.0
+}

@@ -39,6 +39,7 @@ import { mergeNow, prsForEvent } from './mergenow.js';
 import { refreshLiveChanges, readLiveChanges, refreshFleetChanges, classifyPending } from './livechanges.js'; // LIVE-FRESH-1, SUBSTANCE-1
 import { progressStep, readProgress } from './progress.js'; // PROGRESS-1
 import { stickinessStep, readStickiness, readQueue } from './stickiness.js'; // STICKY-1
+import { graphStep, readGraph, readLead, exportGraph, GRAPH_PAGE } from './graph.js'; // KGRAPH-1
 import { watchFreshness } from './freshness.js'; // LIVE-FRESH-2
 import { recordGovernor, readDecisions, safely as decisionSafely } from './decisions.js'; // DECISIONS-1
 import { runSocial, blueskyAccess } from './social.js';
@@ -143,7 +144,8 @@ export default {
       await b('live-changes', () => refreshLiveChanges({ db: env.DB, token, repo: main }));  // LIVE-FRESH-2: own early step; inside the sweeper it ran after 32 of 46 subrequests were spent and never wrote, so /live froze
       await b('fleet-changes', () => refreshFleetChanges({ db: env.DB, token, repos: ((config.progress || {}).systems || []).map(x => x.repo).filter(r => r && r !== main) }));  // PROGRESS-1: the other repositories, at most hourly each
       await b('substance', () => classifyPending({ db: env.DB, token, max: 2 }));  // SUBSTANCE-1: two merged PRs per pass are classified from their diff, so trivial merges never count as progress
-      await b('stickiness', () => stickinessStep({ db: env.DB, config, ensureItem }));  // STICKY-1: freshness, breadth, depth and diversity of every system's content; a stale or thin one files STICKY-<system>, and its unpromoted entries become the social queue
+      await b('stickiness', () => stickinessStep({ db: env.DB, config, ensureItem }));
+      await b('graph', () => graphStep({ db: env.DB, config: knobConfig, ai: gov.ai || null, ensureItem }));  // KGRAPH-1: every record joins the knowledge graph past its cursor; unlinked look-alikes become KG-<hash> leads the managers take  // STICKY-1: freshness, breadth, depth and diversity of every system's content; a stale or thin one files STICKY-<system>, and its unpromoted entries become the social queue
       await b('progress', () => progressStep({ db: env.DB, config, token, ensureItem }));  // PROGRESS-1: release cadence monitor; a slow system has its producers dispatched, a stalled one files STALL-<system>
       await b('freshness', () => watchFreshness({ token, repo: main, siteUrl: env.PUBLIC_ORIGIN || 'https://ultrastable.io' }));  // LIVE-FRESH-2: a stale published snapshot re-dispatches its own publisher
       step('executor', async () => { const r = await runExecutor({ ...env, TENANT: env.TENANT || config.org_slug, AI: gov.ai || undefined, GITHUB_DISPATCH_TOKEN: token || env.GITHUB_DISPATCH_TOKEN, GITHUB_REPO: env.GITHUB_REPO || repos[0] }); await noteExecutor(env.DB, r); return r; });
@@ -269,6 +271,10 @@ export default {
         return Response.json(r, { headers: { 'cache-control': 'no-store' } });
       } catch (e) { return d1Unavailable(e); }
     }
+    if (url.pathname === '/api/graph') { try { return Response.json(await readGraph(env.DB, { config }), { headers: { 'cache-control': 'public, max-age=60', 'access-control-allow-origin': '*' } }); } catch (e) { return d1Unavailable(e); } }  // KGRAPH-1
+    if (url.pathname === '/api/graph/export') { try { return Response.json(await exportGraph(env.DB, { limit: url.searchParams.get('limit') }), { headers: { 'cache-control': 'public, max-age=300', 'access-control-allow-origin': '*' } }); } catch (e) { return d1Unavailable(e); } }  // KGRAPH-1
+    { const gm = /^\/api\/graph\/lead\/(KG-[a-z0-9]{1,16})$/.exec(url.pathname); if (gm) { try { const l = await readLead(env.DB, gm[1]); return Response.json(l || { error: 'no such lead' }, { status: l ? 200 : 404 }); } catch (e) { return d1Unavailable(e); } } }  // KGRAPH-1: the closing probe of a KG item
+    if (url.pathname === '/graph') return new Response(GRAPH_PAGE, { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=300' } });  // KGRAPH-1: public by default
     if (url.pathname === '/api/stickiness') { try { return Response.json(await readStickiness(env.DB), { headers: { 'cache-control': 'public, max-age=60', 'access-control-allow-origin': '*' } }); } catch (e) { return d1Unavailable(e); } }  // STICKY-1
     { const qm = /^\/api\/stickiness\/queue\/([a-z0-9-]{1,60})\.json$/.exec(url.pathname); if (qm) { try { return Response.json(await readQueue(env.DB, qm[1]), { headers: { 'cache-control': 'public, max-age=300' } }); } catch (e) { return d1Unavailable(e); } } }  // STICKY-1: the queue the core social module drains for this system
     if (url.pathname === '/api/progress') { try { return Response.json(await readProgress(env.DB, config), { headers: { 'cache-control': 'public, max-age=60', 'access-control-allow-origin': '*' } }); } catch (e) { return d1Unavailable(e); } }  // PROGRESS-1

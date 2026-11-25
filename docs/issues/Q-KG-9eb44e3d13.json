@@ -1,0 +1,13 @@
+{
+  "id": "Q-KG-9eb44e3d13",
+  "title": "Q-KG-9eb44e3d13: connect GH-1: Create repos (now seven: add `seed`), instal and OL-20261115-7: OPS-1 (ops#11): archived duplicate ",
+  "body": "**Owner:** product-manager\n**Trigger:** knowledge graph insight pass (KGRAPH-1)\n**Done check:** cmd:python3 -m foundation kgraph --settled Q-KG-9eb44e3d13\n**Status:** open\n\n`tag:GH-1` (GH-1: Create repos (now seven: add `seed`), install Claude app) and `tag:OL-20261115-7` (OL-20261115-7: OPS-1 (ops#11): archived duplicate repos and scratch) read alike (repos, fleet, runs, account, binds) but nothing links them (score 0.583).\n\nRead both. If one should build on, replace or reuse the other, make the change and reference one from the other. If they only look alike, add Q-KG-9eb44e3d13 to ops/kgraph/declined.json with a one-line reason.\n\nPrediction: kg_leads_kept_share >= 0.2 within 336 h\n\nsize: S\n\n**Closing probe:** cmd:python3 -m foundation kgraph --settled Q-KG-9eb44e3d13\n",
+  "labels": [
+    "p2",
+    "agent-ready",
+    "kgraph",
+    "plus"
+  ],
+  "milestone": "Now",
+  "workstream": "Product"
+}
