@@ -42,6 +42,14 @@ function paperPage(p, asOf) {
 }
 
 // THOUGHT-1: a feed of the papers, so readers and aggregators follow them with no account; an entry's id changes when its measured result does.
+// REACH-PAPERS-1: schema.org ScholarlyArticle on every paper, so search engines and scholar indexes read title, date and author.
+export function jsonld(p, asOf, origin = "https://ultrastable.io") {
+  const ld = { "@context": "https://schema.org", "@type": "ScholarlyArticle", headline: p.title, abstract: p.abstract, url: origin + "/research/" + p.slug,
+    datePublished: asOf, dateModified: asOf, author: { "@type": "Organization", name: "Ultrastable", url: origin }, publisher: { "@type": "Organization", name: "Ultrastable" },
+    isAccessibleForFree: true, inLanguage: "en" };
+  return '<script type="application/ld+json">' + JSON.stringify(ld).replace(/</g, "\\u003c") + "</script>";
+}
+
 export function atom(d, origin = "https://ultrastable.io") {
   const x = s => esc(s);
   const entries = d.papers.map(p => `<entry><id>${x(origin)}/research/${x(p.slug)}#${x(p.met)}of${x(p.total)}</id><title>${x(p.title)}</title><link href="${x(origin)}/research/${x(p.slug)}"/><updated>${x(d.as_of)}</updated><summary>${x(p.abstract)} Ultrastable runs on Ultrastable; Practical Solutions (https://ultrastable.org) is one system it runs.</summary></entry>`).join("");
@@ -63,7 +71,7 @@ export function researchRoutes(u, shell, HTML, data = DATA) {
   if (m) {
     const paper = data.papers.find(x => x.slug === m[1]);
     if (!paper) return null;
-    return new Response(shell({ path: p, title: paper.title + " - Ultrastable", description: paper.abstract.slice(0, 200) }, paperPage(paper, data.as_of)), { headers: { ...HTML, "Cache-Control": "public, max-age=300" } });
+    return new Response(shell({ path: p, title: paper.title + " - Ultrastable", description: paper.abstract.slice(0, 200) }, paperPage(paper, data.as_of) + jsonld(paper, data.as_of)), { headers: { ...HTML, "Cache-Control": "public, max-age=300" } });
   }
   return null;
 }

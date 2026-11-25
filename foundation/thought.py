@@ -167,6 +167,7 @@ def choose(root=REPO, now=None, cfg=None):
     for p in mine:
         last.setdefault(p["paper"], []).append(p)
     fresh = [p for p in papers if not any(x.get("state") == _state(p) for x in last.get(p["slug"], []))]
+    fresh.sort(key=lambda p: p["slug"] in last)  # REACH-PAPERS-1: a paper never posted goes before a repost of a changed one
     if fresh:
         return fresh[0], cal
     stale = [(max(dt.date.fromisoformat(x["date"]) for x in last[p["slug"]]), p) for p in papers if p["slug"] in last]

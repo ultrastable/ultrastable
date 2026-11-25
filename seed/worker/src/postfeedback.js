@@ -7,6 +7,7 @@
 export const MIN_N = 3, PRIOR_N = 5, AFTER_MS = 864e5;
 export const migrate = ['ALTER TABLE social_posted ADD COLUMN likes INTEGER', 'ALTER TABLE social_posted ADD COLUMN reposts INTEGER', 'ALTER TABLE social_posted ADD COLUMN replies INTEGER', 'ALTER TABLE social_posted ADD COLUMN measured_at TEXT'];
 export async function engagementOf(kind, ref, f) {
+  if (String(kind).startsWith('relay:')) { kind = kind.slice(6); ref = (String(ref).match(/https:\/\/\S+/) || [''])[0]; } // relay rows hold '<id> <url>'
   if (kind === 'bluesky') { const r = await f('https://public.api.bsky.app/xrpc/app.bsky.feed.getPosts?uris=' + encodeURIComponent(ref)); if (!r.ok) return null; const p = ((await r.json()).posts || [])[0]; return p ? { likes: p.likeCount || 0, reposts: p.repostCount || 0, replies: p.replyCount || 0 } : null; }
   if (kind === 'mastodon') { const m = /^https:\/\/([^/]+)\/@[^/]+\/(\d+)/.exec(String(ref)); if (!m) return null; const r = await f('https://' + m[1] + '/api/v1/statuses/' + m[2]); if (!r.ok) return null; const s = await r.json(); return { likes: s.favourites_count || 0, reposts: s.reblogs_count || 0, replies: s.replies_count || 0 }; }
   return null;
@@ -23,7 +24,7 @@ export function armScores(rows) {
 // Reads back at most `limit` posts older than a day and not measured in the last day. Returns what it measured, so a quiet run is visible.
 export async function reconcileEngagement(db, f, now, limit = 8) {
   const cut = new Date(now - AFTER_MS).toISOString();
-  const rows = ((await db.prepare("SELECT id, channel, ref FROM social_posted WHERE channel IN ('bluesky','mastodon') AND status IN ('verified','unverified') AND at < ? AND (measured_at IS NULL OR measured_at < ?) LIMIT ?").bind(cut, cut, limit).all()).results || []);
+  const rows = ((await db.prepare("SELECT id, channel, ref FROM social_posted WHERE channel IN ('bluesky','mastodon','relay:mastodon') AND status IN ('verified','unverified') AND at < ? AND (measured_at IS NULL OR measured_at < ?) LIMIT ?").bind(cut, cut, limit).all()).results || []);
   const done = [];
   for (const r of rows) {
     const e = await engagementOf(r.channel, r.ref, f).catch(() => null);

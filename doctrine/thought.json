@@ -20,7 +20,7 @@
     "mastodon": {"limit": 500},
     "linkedin": {"limit": 3000}
   },
-  "cadence_days": 3,
+  "cadence_days": 1,
   "repost_days": 21,
   "max_findings_long": 4,
   "arm": "paper",

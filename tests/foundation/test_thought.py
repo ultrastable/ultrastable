@@ -53,7 +53,7 @@ class Thought(unittest.TestCase):
         first = T.run(self.tmp, apply=True, now=now)
         order1 = sorted(self.data["papers"], key=lambda p: p.get("order", 9))[0]["slug"]
         self.assertTrue(first["scheduled"].startswith(f"paper:{order1}:"))
-        self.assertIsNone(T.run(self.tmp, apply=True, now=now + dt.timedelta(days=1))["scheduled"], "cadence holds")
+        self.assertIsNone(T.run(self.tmp, apply=True, now=now)["scheduled"], "cadence holds")
         cal = json.loads((self.tmp / "social/calendar.json").read_text())
         post = cal["posts"][0]
         self.assertEqual(post["kind"], "paper")
