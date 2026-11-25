@@ -37,9 +37,13 @@ export const SEARCHES = ["registered replication report", "many labs replication
 // after the wait the server asks for (at most OA_WAIT_MS). A call that still fails is an error of the beat; the finding is retried next beat.
 export const CONTACT = "pilot@ultrastable.io";
 export const OA_WAIT_MS = 4000;
+// OpenAlex now budgets callers with no API key (429 "Insufficient budget. This request has no API key"). The key is the Worker
+// secret OPENALEX_API_KEY when one is bound; without it Europe PMC answers.
+let OA_KEY = "";
+export const setOpenAlexKey = k => { OA_KEY = String(k || ""); };
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 export async function oa(path, fetchImpl = fetch, wait = sleep) {
-  const url = OA + path + (path.includes("?") ? "&" : "?") + "mailto=" + encodeURIComponent(CONTACT);
+  const url = OA + path + (path.includes("?") ? "&" : "?") + "mailto=" + encodeURIComponent(CONTACT) + (OA_KEY ? "&api_key=" + encodeURIComponent(OA_KEY) : "");
   for (let tries = 0; ; tries++) {
     const r = await fetchImpl(url, { headers: { "user-agent": `${UA} mailto:${CONTACT}`, accept: "application/json" } });
     if (r.status === 404) return null;
@@ -136,9 +140,9 @@ export async function checkFinding(f, { fetchImpl = fetch, ai, known = new Set()
   } catch (e) {
     if (!/^openalex/.test(String(e?.message))) throw e;
     let alt;
-    try { alt = await citingReplications(f.original.doi, { pageSize: BEAT.CANDIDATES }, fetchImpl); }
+    try { alt = await citingReplications(f.original.doi, { pageSize: BEAT.CANDIDATES, name: f.name }, fetchImpl); }
     catch (e2) { throw new Error(`${e.message}; ${e2?.message || e2}`); }
-    if (!alt) throw new Error(`${e.message}; europepmc does not hold the original`);
+    if (!alt) throw new Error(`${e.message}; europepmc has no record to search from`);
     out.source = "europepmc"; out.cited_by = alt.cited_by; works = alt.works;
   }
   for (const w of works) {
