@@ -177,7 +177,7 @@ test('the admin app turns on exactly the two drifted settings, for org repositor
   assert.deepEqual(Object.keys(REPO_SETTINGS).sort(), ['allow_auto_merge', 'delete_branch_on_merge']);
   const dry = await ensureRepoSettings(w.db, w.env, T, { repo: 'ultrastable/ultrastable', dry: true }, { fetch: f });  // APP-CRED-WATCH-1
   const arch = await ensureRepoSettings(w.db, w.env, T, { repo: 'ultrastable/workers' }, { fetch: async (url, init = {}) => new URL(url).pathname === '/repos/ultrastable/workers' ? new Response(JSON.stringify({ archived: true }), { status: 200 }) : w.f(url, init) });
-  assert.equal(arch.ok, true); assert.equal(arch.archived, true);  // ARCHIVED-READONLY-1: run 45696915881 failed on the archived workers repository
+  assert.equal(arch.ok, true); assert.match(arch.skipped, /archived/);  // ARCHIVED-READONLY-1: run 45696915881 failed on the archived workers repository
   assert.equal(dry.ok, true); assert.deepEqual(dry.drift, ['delete_branch_on_merge']); assert.equal(patched.length, 1, 'a dry read never writes');
   for (const n of ['other/x', 'ultrastable/../x', '']) assert.equal((await ensureRepoSettings(w.db, w.env, T, { repo: n }, { fetch: f })).ok, false, n);
   const bad = await handleAppHost(new Request('https://t/host/repo-settings', { method: 'POST', headers: { 'x-internal-key': 'nope' }, body: '{"repo":"ultrastable/ultrastable"}' }), { ...w.env, DB: w.db }, { tenant: T, fetch: f });

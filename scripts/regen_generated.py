@@ -28,6 +28,7 @@ GENERATORS = [
     (["python3", "-m", "foundation", "thought", "--run", "--apply"], "."),  # THOUGHT-1: second route (besides social-post) that schedules the next paper piece; cadence-guarded, so most runs add nothing
     (["python3", "-m", "foundation", "rescore", "--run", "--apply"], "."),  # RESCORE-1: held-out graders re-score what settle just scored
     (["python3", "-m", "foundation", "executor", "--fold", "--apply"], "."),  # PR-OUTCOME-1: what became of each pull request the executor opened
+    (["python3", "-m", "foundation", "admit", "--apply"], "."),  # ADMIT-1: a new doctrine/tenant-repos.json row writes the tenant's rows in every registry
     (["python3", "-m", "foundation", "owndb", "--write"], "."),  # OWN-DB-1
     (["python3", "-m", "foundation", "tenantcontrols", "--write"], "."),  # TENANT-CONTROLS-1
     (["python3", "-m", "foundation", "upstream", "contract", "--apply"], "."),
