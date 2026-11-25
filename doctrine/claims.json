@@ -2286,6 +2286,20 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-3fe93559ed",
+      "surface": "agents/AGENTS.md",
+      "text": "- **One standard for every tenant repository; one scaffold writes it, one check reads it (TENANT-STANDARD-1, Rowan 2026-11-25).** \"Even the",
+      "probe": [
+        "file:doctrine/tenant-standard.json",
+        "file:foundation/livelinks.py",
+        "file:doctrine/tenant-repos.json",
+        "file:foundation/tenantstd.py",
+        "file:workers/tools/vendor_sync.mjs",
+        "file:tests/foundation/test_tenantstd.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-997134914a",
       "surface": "agents/AGENTS.md",
       "text": "- **Every repository says where its code runs (LIVE-LINKS-1, Rowan 2026-11-25).** \"If somebody sees the code, then show them where it's",
@@ -3254,6 +3268,21 @@
       ],
       "bound_by": "mirror",
       "of": "cited-d3be926b7b"
+    },
+    {
+      "id": "mirror-3321deb655",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **One standard for every tenant repository; one scaffold writes it, one check reads it (TENANT-STANDARD-1, Rowan 2026-11-25).** \"Even the",
+      "probe": [
+        "file:doctrine/tenant-standard.json",
+        "file:foundation/livelinks.py",
+        "file:doctrine/tenant-repos.json",
+        "file:foundation/tenantstd.py",
+        "file:workers/tools/vendor_sync.mjs",
+        "file:tests/foundation/test_tenantstd.py"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-3fe93559ed"
     },
     {
       "id": "mirror-3ba315e84d",

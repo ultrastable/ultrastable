@@ -181,13 +181,10 @@ def prepare(dirpath: Path, slug: str, root: Path = ROOT) -> list[str]:
             if n != s:
                 f.write_text(n)
                 done.append(f"rewrote import in {f.relative_to(dirpath).as_posix()}")
-    # Files only the standalone repository needs (its package.json, its agent instructions) are data here, written at split time,
-    # so the core carries no orphan copy of them.
-    for name, body in (t.get("write") or {}).items():
-        out = dirpath / name
-        out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(body if isinstance(body, str) else json.dumps(body, indent=2) + "\n")
-        done.append(f"wrote {name}")
+    # TENANT-STANDARD-1: every other file a repository needs to run itself (workflows, agent instructions, package.json, licence, the vendored
+    # tools, the README's Live block, and for a tenant with no code yet its first Worker) comes from the one scaffold, scaffold/tenant.
+    from . import tenantstd
+    done += tenantstd.scaffold(dirpath, slug, root)
     return done
 
 

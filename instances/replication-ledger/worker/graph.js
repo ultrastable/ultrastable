@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) Ultrastable
-// KGRAPH-1 for the Replication Ledger: the ledger's knowledge graph, rebuilt by the hourly beat with the shared engine (vendor/knowledge.js,
+// KGRAPH-1 for the Replication Ledger: the ledger's knowledge graph, rebuilt by the hourly beat with the shared engine (vendor/ultrastable/knowledge.js,
 // kept equal to the core's seed/worker/src/knowledge.js by doctrine/tenant-repos.json). Every finding is a record: its field and topic, the
 // original study and its authors, every replication attempt (seed or machine-read) with its outcome and authors, and every lead the loop filed.
 // The engine finds what nobody wrote down: findings that rest on the same researchers' work, researchers whose work spans fields, findings
 // with no replication attempt yet. Each finding is checked later and kinds that come true are trusted more (calibration in the engine).
 // Data: /api/graph, /api/graph/insights, /api/graph/node, /api/graph/method, /api/graph/health.
-import { runKg, kgHealth, handleKg, lastRun, insights, practices, methodHtml } from "./vendor/knowledge.js";
+import { runKg, kgHealth, handleKg, lastRun, insights, practices, methodHtml } from "../vendor/ultrastable/knowledge.js";
 
 export const TENANT = "replication-ledger";
 

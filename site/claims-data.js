@@ -1840,6 +1840,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **One standard for every tenant repository; one scaffold writes it, one check reads it (TENANT-STANDARD-1, Rowan 2026-11-25).** \"Even the",
+   "detail": "",
+   "how": "file:doctrine/tenant-standard.json + file:foundation/livelinks.py + file:doctrine/tenant-repos.json + file:foundation/tenantstd.py + file:workers/tools/vendor_sync.mjs + file:tests/foundation/test_tenantstd.py",
+   "id": "cited-3fe93559ed",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Every repository says where its code runs (LIVE-LINKS-1, Rowan 2026-11-25).** \"If somebody sees the code, then show them where it's",
    "detail": "",
    "how": "file:foundation/livelinks.py + file:doctrine/fleet-contract.json + file:doctrine/tenant-repos.json + file:tests/foundation/test_livelinks.py + grep:.github/workflows/checks.yml::foundation[ .]livelinks\\b",
@@ -2564,6 +2573,15 @@ export default {
    "detail": "",
    "how": "file:seed/worker/src/livechanges.js + file:site/live.js + file:seed/worker/test/livechanges.test.js + file:site/site.test.mjs",
    "id": "mirror-b9c4dda8e0",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **One standard for every tenant repository; one scaffold writes it, one check reads it (TENANT-STANDARD-1, Rowan 2026-11-25).** \"Even the",
+   "detail": "",
+   "how": "file:doctrine/tenant-standard.json + file:foundation/livelinks.py + file:doctrine/tenant-repos.json + file:foundation/tenantstd.py + file:workers/tools/vendor_sync.mjs + file:tests/foundation/test_tenantstd.py",
+   "id": "mirror-3321deb655",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3575,7 +3593,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 394,
-  "total": 394
+  "pass": 396,
+  "total": 396
  }
 };

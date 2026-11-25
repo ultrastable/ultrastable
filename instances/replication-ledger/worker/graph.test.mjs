@@ -47,5 +47,5 @@ test("the graph holds every finding, links findings through shared researchers, 
 
 test("the vendored engine stays equal to the core's", () => {
   let up; try { up = readFileSync(new URL("../../../seed/worker/src/knowledge.js", import.meta.url), "utf8"); } catch { return; }
-  assert.equal(readFileSync(new URL("./vendor/knowledge.js", import.meta.url), "utf8"), up);
+  assert.equal(readFileSync(new URL("../vendor/ultrastable/knowledge.js", import.meta.url), "utf8"), up);
 });

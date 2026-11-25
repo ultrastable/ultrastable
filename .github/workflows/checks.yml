@@ -142,6 +142,7 @@ jobs:
           python3 -m foundation discover --check  # DISCOVER-1: every live tenant listed and cross-linked; the seed serves its manifest, footer and heartbeat
           python3 -m foundation fullstack --check  # FULLSTACK-1: repository, back end and public front end for every system
           python3 -m foundation fleetcontract --check  # FLEET-CONTRACT-1: every live system carries the one contract module; one surface list
+          python3 -m foundation tenantstd --check  # TENANT-STANDARD-1: every tenant vendors the standard's base files; one scaffold writes every standard file
           python3 -m foundation livelinks --check  # LIVE-LINKS-1: the README names where the platform and every system run
           python3 -m foundation datagraph --check
           python3 -m foundation cfposture --check
