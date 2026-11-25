@@ -92,6 +92,8 @@ class Resolve(unittest.TestCase):
         d = tree("`tools/connect.mjs` and `foundation/gone.py`", {"corrections": [{"ref": "tools/connect.mjs", "correct": "tools/connections.mjs", "reason": "renamed"}]})
         s = statuses(d)
         self.assertEqual((s["tools/connect.mjs"], s["foundation/gone.py"]), ("wrong", "dangling"))
+        d = tree("`tools/connections.mjs`", {"corrections": [{"ref": "tools/connect.mjs", "correct": "tools/connections.mjs", "reason": "renamed"}]})
+        self.assertEqual(statuses(d), {"tools/connections.mjs": "external"})   # once the rule file is corrected the same row carries it
 
 
 class Reverse(unittest.TestCase):

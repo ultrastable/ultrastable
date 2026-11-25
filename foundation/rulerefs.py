@@ -134,6 +134,7 @@ def resolve(root=REPO, siblings=None) -> list[dict]:
     tree, refs = Tree(root), extract(root)
     allow = {(e.get("source", "*"), e["ref"]): e for e in pol.get("external", [])}
     corr = {e["ref"]: e for e in pol.get("corrections", [])}
+    fixed = {e["correct"]: e for e in pol.get("corrections", [])}
     sib_root = Path(siblings) if siblings else root.parent
     sib = {}
     routes = None
@@ -187,6 +188,15 @@ def resolve(root=REPO, siblings=None) -> list[dict]:
                     sib[repo] = Tree(sib_root / repo)
                 if not sib[repo].has(e["path"]):
                     r["status"], r["why"] = "dangling", f"allowlisted as {repo}:{e['path']}, and that clone does not hold it"
+        elif why and r["ref"] in fixed:
+            # the rule file now carries the corrected text: it lives where the correction row says, verified when that clone is present
+            e = fixed[r["ref"]]
+            r["status"], r["why"] = "external", "corrected rule text: " + e["reason"]
+            if e.get("repo") and (sib_root / e["repo"]).is_dir():
+                if e["repo"] not in sib:
+                    sib[e["repo"]] = Tree(sib_root / e["repo"])
+                if not sib[e["repo"]].has(e["path"]):
+                    r["status"], r["why"] = "dangling", f"correction names {e['repo']}:{e['path']}, and that clone does not hold it"
         elif why and r["ref"] in corr:
             # the rule text is wrong and the right text is recorded: known debt that only shrinks, printed on every run
             e = corr[r["ref"]]
