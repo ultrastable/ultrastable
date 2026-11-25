@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-25-unlearn-is-judged-on-its-own-feeds",
+  "kind": "decision",
+  "date": "2026-11-25",
+  "title": "Unlearn is judged on its own feeds",
+  "body": "progress.json's Unlearn row read ultrastable.io's feed and healed with ci.yml, which ships nothing. It now reads unlearn.ultrastable.org/feed.xml, heals with vendor-sync.yml then ci.yml, and declares a stickiness block on the new JSON Feed (ultrastable/unlearn#2).",
+  "probe": "grep:instances/ultrastable/progress.json::unlearn.ultrastable.org/feed.json",
+  "session": "session_0156nqDuaQoFBGSV57Y6JNRx"
+ },
+ "kind": "decision",
+ "title": "Unlearn is judged on its own feeds",
+ "session": "session_0156nqDuaQoFBGSV57Y6JNRx"
+}
