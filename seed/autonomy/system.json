@@ -304,6 +304,10 @@
     "REDTEAM-1": [
       "file:scripts/redteam.py",
       "grep:scripts/redteam.py::--probe"
+    ],
+    "BLINDSPOT-RED-1": [
+      "grep:worker/src/costsample.js::recorded as a sample with an error",
+      "grep:worker/src/apprepos.js::APP-CRED-WATCH-1"
     ]
   }
 }

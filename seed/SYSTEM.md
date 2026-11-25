@@ -174,7 +174,7 @@ a rule enforced only by the platform is marked so, and the platform checks it fo
 - **SYNC-BOTH-WAYS-1**: Every system updates itself and the platform. In this kit: `.github/workflows/platform-sync.yml`.
 - **REDTEAM-1**: Red-team the system's own blind spots; the owner should never find a failure first. In this kit: `scripts/redteam.py`.
 - **COLLISION-1**: Today's failures are guarded in code, not remembered. In this kit: `scripts/branch_cleanup.py`, `worker/src/ghfetch.js`, `worker/src/lane.js`, `worker/test/apprepos.test.js`.
-- **BLINDSPOT-RED-1**: Blind spots are measured, not assumed safe. In this kit: no enforcement found.
+- **BLINDSPOT-RED-1**: Blind spots are measured, not assumed safe. In this kit: `worker/src/apprepos.js`, `worker/src/costsample.js`.
 - **INTENT-YIELD-1**: The owner's words are the input; what stays true is the output. In this kit: checked by the platform.
 - **FLOW-BALANCE-1**: Issue inflow never exceeds closures; every issue inside its SLA. In this kit: `scripts/balance.py`, `worker/src/flowbalance.js`.
 - **PATHFINDER-1**: Find another path before asking; the information is already held. In this kit: checked by the platform.
