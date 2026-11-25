@@ -89,6 +89,26 @@
       ]
     },
     {
+      "type": "application",
+      "bom-ref": "pkg:github/ossf/scorecard-action@2d1146689b8cda280b9bc96326124645441f03bc",
+      "name": "ossf/scorecard-action",
+      "version": "2d1146689b8cda280b9bc96326124645441f03bc",
+      "purl": "pkg:github/ossf/scorecard-action@2d1146689b8cda280b9bc96326124645441f03bc",
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/ossf/scorecard-action"
+        }
+      ],
+      "properties": [
+        {
+          "name": "ultrastable:tag-comment",
+          "value": "v2.4.4"
+        }
+      ]
+    },
+    {
       "type": "library",
       "bom-ref": "pkg:npm/%40ultrastable/adapter-cloudflare",
       "name": "@ultrastable/adapter-cloudflare",
@@ -157,5 +177,5 @@
       ]
     }
   ],
-  "serialNumber": "urn:uuid:904277fa-1221-5ce1-9982-cafe6eb848a1"
+  "serialNumber": "urn:uuid:576b795a-321c-58cb-b7b3-c28a4b166ad0"
 }
