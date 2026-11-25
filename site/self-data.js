@@ -130,12 +130,6 @@ export default {
     "id": "intent-yield",
     "source": "workflow",
     "what": "the daily intent yield: every owner directive's own probe, restatements charged to the original, /yield"
-   },
-   {
-    "expected_interval_s": 3600,
-    "id": "what-works-beat",
-    "source": "d1",
-    "what": "What Works tenant beat (cron 17 * * * * on ultrastable-what-works; a visit catches up a silent cron): check a batch of programmes against Crossref, OpenAlex and Europe PMC, read new trials in, re-grade and log every move"
    }
   ],
   "watchdog_escalation": [
@@ -749,11 +743,9 @@ export default {
   "ultrastable-tenants",
   "ultrastable-tick",
   "ultrastable-unlearn",
-  "ultrastable-what-works",
   "unknowns",
   "unlearn-beat",
   "watchdog",
-  "what-works-beat",
   "workers-tests",
   "write-back",
   "yearfail"
@@ -2130,10 +2122,6 @@ export default {
    },
    {
     "id": "ultrastable-unlearn",
-    "state": "live"
-   },
-   {
-    "id": "ultrastable-what-works",
     "state": "live"
    }
   ],
