@@ -5,6 +5,8 @@ import datetime as dt, json, shutil, sys, tempfile, unittest
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import _repo  # noqa: E402
 from foundation import credwatch  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[2]
@@ -90,7 +92,7 @@ class Cred(unittest.TestCase):
 class Ledger(unittest.TestCase):
     """CRED-EXPIRY-1: the detector reads the recorded states; a required credential not ok, an expiry in the window or a never-recorded one fails."""
     def _root(self, rows):
-        d = Path(tempfile.mkdtemp()); (d / "doctrine").mkdir(); (d / "ops").mkdir()
+        d = _repo.scratch(); (d / "doctrine").mkdir(); (d / "ops").mkdir()
         (d / "doctrine/credwatch.json").write_text(json.dumps({"warn_days": 45, "registrations": [],
             "credentials": [{"name": "A", "kind": "github-token", "used_by": "x"}, {"name": "B", "kind": "github-token", "used_by": "y", "optional": True}]}))
         (d / "ops/credwatch.json").write_text(json.dumps({"rows": rows}))

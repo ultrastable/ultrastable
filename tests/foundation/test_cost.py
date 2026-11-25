@@ -3,6 +3,8 @@ import sys, unittest
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import _repo  # noqa: E402
 from foundation import cost as C  # noqa: E402
 
 THR = {"rows_read_max": 100, "rows_read_override": {"ultrastable-big": 1000}, "neurons_max": 50, "file_prefixes": ["ultrastable-"]}
@@ -24,8 +26,8 @@ class Cost(unittest.TestCase):
         self.assertEqual(C.level(row, thr), 1.4)
 
     def _root(self, rows, **thr):
-        import json, tempfile
-        d = Path(tempfile.mkdtemp()); (d / "ops").mkdir()
+        import json
+        d = _repo.scratch(); (d / "ops").mkdir()
         (d / "ops/cost-thresholds.json").write_text(json.dumps(dict(THR, window_days=7, neurons_max=1000, **thr)))
         (d / "ops/cost.jsonl").write_text("".join(json.dumps(r) + "\n" for r in rows))
         return d
