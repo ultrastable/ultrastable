@@ -507,14 +507,6 @@
       "url": "open-loops.schema.json"
     },
     {
-      "name": "open-standards.json",
-      "description": "Contract for doctrine/open-standards.json",
-      "fileMatch": [
-        "doctrine/open-standards.json"
-      ],
-      "url": "open-standards.schema.json"
-    },
-    {
       "name": "orphans-baseline.json",
       "description": "Contract for doctrine/orphans-baseline.json",
       "fileMatch": [
@@ -713,6 +705,14 @@
         "doctrine/runway.json"
       ],
       "url": "runway.schema.json"
+    },
+    {
+      "name": "scorecard.json",
+      "description": "Contract for doctrine/scorecard.json",
+      "fileMatch": [
+        "doctrine/scorecard.json"
+      ],
+      "url": "scorecard.schema.json"
     },
     {
       "name": "scout.json",

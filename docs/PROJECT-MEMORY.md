@@ -567,8 +567,8 @@ Update this file in the same PR as any change to status, rules, facts, owner ite
 
 ## 2026-11-25: supply chain and editor standards (STANDARDS-1, second PR)
 - Config schemas, Backstage catalog, CycloneDX SBOM and devcontainer landed in #2273 (`foundation configschema`, `stdgen`). A parallel schema engine from this thread was dropped in favour of it.
-- Added: weekly `supply-chain.yml` (OpenSSF Scorecard plus GitHub's SPDX SBOM) -> `foundation/supplychain.py` -> `ops/supply-chain.json` and `Q-STD-SC-*` items closed by the next reading (settings `doctrine/open-standards.json`); EditorConfig in core and seed; seed devcontainer; Dependabot for the seed (seeded systems had none).
-- Register entries added: editorconfig, dependabot, openssf-scorecard, spdx-sbom, json-feed, schema-org-jsonld (partial), citation-cff; planned STD-7 JSON-LD knowledge graph, STD-8 OpenSLO, STD-9 reusable workflows, STD-10 OTLP metrics.
+- Added: weekly `supply-chain.yml` (OpenSSF Scorecard plus GitHub's SPDX SBOM) -> `foundation/supplychain.py` -> `ops/supply-chain.json` and `Q-STD-SC-*` items closed by the next reading (settings `doctrine/scorecard.json`); EditorConfig in core and seed; seed devcontainer; Dependabot for the seed (seeded systems had none).
+- Register entries added: editorconfig, dependabot, openssf-scorecard, spdx-sbom, json-feed, schema-org-jsonld (partial), citation-cff; planned STD-7 JSON-LD knowledge graph, STD-8 OpenSLO, STD-9 reusable workflows.
 - TOML answer: TOML, YAML and JSON are interchangeable syntaxes; JSON Schema validates all three.
 
 ## 2026-11-12: executor and account transfer

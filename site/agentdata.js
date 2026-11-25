@@ -434,14 +434,6 @@ export default {
     "status": "stable",
     "support": "planned",
     "tracked_by": "STD-9: executor item in docs/issues/STD-9.json"
-   },
-   {
-    "id": "otel-metrics",
-    "name": "OpenTelemetry metrics and logs (OTLP) beyond GenAI spans",
-    "body": "OpenTelemetry (CNCF)",
-    "status": "stable",
-    "support": "planned",
-    "tracked_by": "STD-10: executor item in docs/issues/STD-10.json"
    }
   ]
  },

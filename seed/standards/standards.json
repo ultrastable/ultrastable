@@ -1305,7 +1305,7 @@
       "how": [
         ".github/workflows/supply-chain.yml",
         "foundation/supplychain.py",
-        "doctrine/open-standards.json"
+        "doctrine/scorecard.json"
       ],
       "tests": [
         {
@@ -1492,25 +1492,6 @@
         {
           "title": "Reusing workflows",
           "url": "https://docs.github.com/en/actions/sharing-automations/reusing-workflows",
-          "published": null,
-          "accessed": "2026-11-25"
-        }
-      ]
-    },
-    {
-      "id": "otel-metrics",
-      "name": "OpenTelemetry metrics and logs (OTLP) beyond GenAI spans",
-      "body": "OpenTelemetry (CNCF)",
-      "status": "stable",
-      "tracked": "OTLP 1.x",
-      "why": "Liveness metrics, clock beats and cost readings exported as OTLP so any backend reads them.",
-      "support": "planned",
-      "tracked_by": "STD-10: executor item in docs/issues/STD-10.json",
-      "acl": "seed/worker/src/agentic/adapters/console-telemetry.js",
-      "sources": [
-        {
-          "title": "OTLP specification",
-          "url": "https://opentelemetry.io/docs/specs/otlp/",
           "published": null,
           "accessed": "2026-11-25"
         }

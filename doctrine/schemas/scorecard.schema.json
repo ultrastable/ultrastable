@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://ultrastable.io/schemas/doctrine/open-standards.schema.json",
-  "title": "open-standards (doctrine/open-standards.json)",
-  "description": "Contract for doctrine/open-standards.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "$id": "https://ultrastable.io/schemas/doctrine/scorecard.schema.json",
+  "title": "scorecard (doctrine/scorecard.json)",
+  "description": "Contract for doctrine/scorecard.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
   "type": "object",
   "properties": {
     "_doc": {

@@ -4238,7 +4238,7 @@
     "docs/issues"
    ],
    "system_path": [
-    "doctrine/open-standards.json",
+    "doctrine/scorecard.json",
     "foundation/supplychain.py"
    ],
    "area": "governance",

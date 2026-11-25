@@ -75,7 +75,6 @@ Research date: 2026-11-11. Every entry in the register carries its sources with 
 | Knowledge graph served as JSON-LD (schema.org) | W3C / schema.org | stable | planned | STD-7: executor item in docs/issues/STD-7.json |
 | OpenSLO definitions for loop clocks | OpenSLO project | stable | planned | STD-8: executor item in docs/issues/STD-8.json |
 | Reusable GitHub Actions workflows shared by every tenant | GitHub | stable | planned | STD-9: executor item in docs/issues/STD-9.json |
-| OpenTelemetry metrics and logs (OTLP) beyond GenAI spans | OpenTelemetry (CNCF) | stable | planned | STD-10: executor item in docs/issues/STD-10.json |
 
 <!-- standards:end -->
 

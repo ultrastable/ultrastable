@@ -4,13 +4,13 @@
 that GitHub's dependency graph exports. `--ingest SCORECARD SBOM [--apply]` writes ops/supply-chain.json and files one
 Q-STD-SC-* item per Scorecard check under the floor and per package whose licence is outside doctrine/dependency-licences.json;
 `--probe ID` is each item's closing probe (exit 0 when the latest reading passes); `--check` validates the settings and the age
-of the last reading. Settings: doctrine/open-standards.json. Ultrastable is the foundation for any autonomous system."""
+of the last reading. Settings: doctrine/scorecard.json. Ultrastable is the foundation for any autonomous system."""
 from __future__ import annotations
 import datetime as dt, json, re
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
-CFG, OUT = "doctrine/open-standards.json", "ops/supply-chain.json"
+CFG, OUT = "doctrine/scorecard.json", "ops/supply-chain.json"
 
 
 def _load(p):
