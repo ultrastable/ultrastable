@@ -715,7 +715,7 @@
       "trigger": "a change breaks a standard the system has adopted, a new config or generated commit title arrives outside it, or a public address stops answering in the standard's form",
       "symptom": "other tools, agents and people read a boundary (an event, an error body, a manifest, a page's markup, a repository's descriptor) that no longer follows the format they expect, while the register still says it does",
       "blast_radius": "every boundary other systems read: events between loops, API errors, configs and manifests, page markup, repository metadata",
-      "detection": "standards --check on every change and standards --live daily (detectors standards-register and standards-live)",
+      "detection": "standards --check on every change and standards --live daily (detectors standards-register and standards-live); the probes rest on foundation/schemas.py (the JSON Schema validator behind configschema), foundation/cloudevents.py (the event envelope) and foundation/commitlint.py (generated commit titles)",
       "root_cause": "conformance declared in a document instead of measured by a probe that runs",
       "remediation": "each register row carries probes that run in checks and in the failure audit; a failing probe files Q-AUDIT-standards-register or Q-AUDIT-standards-live with the changed files as suspects and the same probe closes it; a new release of an adopted standard is filed by the scout from its release feed",
       "status": "controlled",
