@@ -1249,7 +1249,8 @@
      "published": "2026-11-25",
      "accessed": "2026-11-25"
     }
-   ]
+   ],
+   "gap": "Core repo only; each tenant repository and the seed still need their own catalog-info.yaml with APIs and dependencies."
   }
  ]
 }
