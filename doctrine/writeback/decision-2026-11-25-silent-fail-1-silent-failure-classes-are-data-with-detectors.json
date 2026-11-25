@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-25-silent-fail-1-silent-failure-classes-are-data-with-detectors",
+  "kind": "decision",
+  "date": "2026-11-25",
+  "title": "SILENT-FAIL-1: silent-failure classes are data with detectors",
+  "body": "Classes live in doctrine/silent-failures.json, each bound to a detector. Worker bundle, duplicate-module and live-citation checks run in checks. An incident matching no class is a finding. A Status: done claim cites a server-side Live: GET line.",
+  "probe": "file:foundation/silentfail.py",
+  "session": "session_0156nqDuMYtda8kTyfqmpNJk"
+ },
+ "kind": "decision",
+ "title": "SILENT-FAIL-1: silent-failure classes are data with detectors",
+ "session": "session_0156nqDuMYtda8kTyfqmpNJk"
+}
