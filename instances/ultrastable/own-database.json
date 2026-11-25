@@ -54,16 +54,6 @@
    "bound_by": [
     "instances/ultrastable/system/ultrastable-replication-ledger.wrangler.jsonc"
    ]
-  },
-  {
-   "name": "ultrastable-spinoffs",
-   "id": "7daf8b68-8516-42a8-b7c4-68fd00d10e24",
-   "binding": "DB on the ultrastable-spinoffs Worker only",
-   "holds": "the spinoff loop's app registry and launch ledger (spinoffs/); created in this account 2026-11-25 (SPINOFF-DEPLOY-2), replacing the id that lived in the retired account",
-   "bound_by": [
-    "instances/ultrastable/system/ultrastable-spinoffs.wrangler.jsonc",
-    "spinoffs/wrangler.toml"
-   ]
   }
  ],
  "tenant": [
@@ -81,7 +71,14 @@
    "id": "7d442530-44c7-4cfc-a58d-98a17f0f6c81"
   }
  ],
- "declared_not_present": [],
+ "declared_not_present": [
+  {
+   "name": "ultrastable-spinoffs",
+   "id": "9e05f27a-4445-45c3-998a-0d4d4595a33d",
+   "config": "spinoffs/wrangler.toml",
+   "finding": "the config names a database and a Worker (ultrastable-spinoffs) that the 2026-11-20 reading of the account does not contain; nothing in this account binds it (docs/PROJECT-MEMORY.md, 2026-11-18, places that Worker in the retired account)"
+  }
+ ],
  "retired_configs": [
   "instances/ultrastable/system/ultrastable-ultrastable.wrangler.jsonc"
  ],
@@ -130,12 +127,6 @@
     "id": "c59cdeca-7f57-4edd-ac7e-256ab07fab57",
     "tables": 0,
     "note": "id from doctrine/topology.json, which records it from the Cloudflare API at creation; owndb --live confirms it against the account; tables are created by the Worker"
-   },
-   {
-    "name": "ultrastable-spinoffs",
-    "id": "7daf8b68-8516-42a8-b7c4-68fd00d10e24",
-    "read_at": "2026-11-25T16:00:00Z",
-    "note": "read from the Cloudflare API D1 list of this account by the cloud session that repaired the spinoff deploy (SPINOFF-DEPLOY-2); tables are created by the Worker"
    }
   ],
   "finding": "the account holds five databases; the two core databases are bound only by core Workers, each tenant has its own database, and no database of the originating fleet is in the account"
