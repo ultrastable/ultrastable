@@ -625,6 +625,120 @@
       "root_cause": "a scheduled workflow fails every run or stopped being scheduled, and no check watches it",
       "owner": "operations",
       "remedy": "Read the failing run's log, fix the root cause in that repository, and dispatch it once to prove it is green."
+    },
+    {
+      "id": "actions-stuck",
+      "failure_mode": "fm-actions-stuck",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "silentfail",
+        "--actions",
+        "--apply"
+      ],
+      "timeout": 60,
+      "root_cause": "workflow runs sit at action_required, or an issue made with the built-in token triggered nothing",
+      "owner": "operations",
+      "remedy": "silentfail --actions approves or dispatches the run and dispatches the issue loop; fix the repository approval setting if it recurs"
+    },
+    {
+      "id": "worker-bundle",
+      "failure_mode": "fm-bundle-break",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "silentfail",
+        "--bundle"
+      ],
+      "timeout": 120,
+      "root_cause": "Worker source imports a Node builtin without nodejs_compat or a file that does not exist",
+      "owner": "operations",
+      "remedy": "Remove the import or add the compat flag in the worker's wrangler file; the check runs before merge in checks"
+    },
+    {
+      "id": "module-overlap",
+      "failure_mode": "fm-duplicate-build",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "silentfail",
+        "--overlap",
+        "HEAD~40"
+      ],
+      "timeout": 120,
+      "root_cause": "a new module duplicates an existing one",
+      "owner": "operations",
+      "remedy": "Extend the existing module; if distinct, add the pair to overlap.distinct in doctrine/silent-failures.json with the reason in the commit"
+    },
+    {
+      "id": "live-verify",
+      "failure_mode": "fm-done-unverified",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "silentfail",
+        "--live"
+      ],
+      "timeout": 120,
+      "root_cause": "a public surface no longer reads what the code says it serves (zero changes, a wrong claim, a dead page)",
+      "owner": "operations",
+      "remedy": "Fix the producer, not the reading; the ledger ops/live-verify.jsonl is what every done claim cites"
+    },
+    {
+      "id": "ledger-stale",
+      "failure_mode": "fm-silent-job-ok",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "silentfail",
+        "--stale"
+      ],
+      "timeout": 120,
+      "root_cause": "a loop stopped writing its ledger",
+      "owner": "operations",
+      "remedy": "Find the loop's workflow run, fix its trigger, add a second route"
+    },
+    {
+      "id": "classes-complete",
+      "failure_mode": "fm-silent-job-ok",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "silentfail",
+        "--classes"
+      ],
+      "timeout": 120,
+      "root_cause": "an incident matches no silent-failure class, or a class lost its detector",
+      "owner": "operations",
+      "remedy": "Add the class with a detector to doctrine/silent-failures.json"
+    },
+    {
+      "id": "model-routes",
+      "failure_mode": "fm-model-route",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "agents",
+        "--check"
+      ],
+      "timeout": 120,
+      "root_cause": "a code-agent model route fails and nothing falls to the next rung",
+      "owner": "operations",
+      "remedy": "Fix the ladder in foundation/agents.py; probe each rung"
     }
   ]
 }
