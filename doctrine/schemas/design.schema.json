@@ -1,0 +1,233 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/design.schema.json",
+  "title": "design (doctrine/design.json)",
+  "description": "Contract for doctrine/design.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "layers": {
+      "type": "object",
+      "properties": {
+        "core": {
+          "type": "string"
+        },
+        "portfolio": {
+          "type": "string"
+        },
+        "product": {
+          "type": "string"
+        },
+        "experiment": {
+          "type": "string"
+        }
+      }
+    },
+    "invariants": {
+      "type": "object",
+      "properties": {
+        "tap_px": {
+          "type": "number"
+        },
+        "body_px": {
+          "type": "number"
+        },
+        "min_text_px": {
+          "type": "number"
+        },
+        "field_px": {
+          "type": "number"
+        },
+        "contrast_text": {
+          "type": "number"
+        },
+        "contrast_graphic": {
+          "type": "number"
+        },
+        "primary_actions_per_screen": {
+          "type": "number"
+        },
+        "spacing_px": {
+          "type": "array"
+        },
+        "type_scale_px": {
+          "type": "object"
+        },
+        "max_content_px": {
+          "type": "number"
+        },
+        "status_colors_reserved": {
+          "type": "array"
+        },
+        "required_states": {
+          "type": "array"
+        },
+        "dark_mode": {
+          "type": "boolean"
+        },
+        "reduced_motion": {
+          "type": "boolean"
+        },
+        "visible_focus": {
+          "type": "boolean"
+        }
+      }
+    },
+    "token_contract": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "contrast_pairs": {
+      "type": "array",
+      "items": {
+        "type": "array"
+      }
+    },
+    "portfolios": {
+      "type": "object",
+      "properties": {
+        "ultrastable": {
+          "type": "object"
+        }
+      }
+    },
+    "products": {
+      "type": "object",
+      "properties": {
+        "ultrastable-site": {
+          "type": "object"
+        },
+        "ultrastable-cockpit": {
+          "type": "object"
+        },
+        "ultrastable-console": {
+          "type": "object"
+        }
+      }
+    },
+    "tenants": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": "string"
+        },
+        "default_portfolio": {
+          "type": "string"
+        },
+        "required": {
+          "type": "array"
+        },
+        "optional": {
+          "type": "array"
+        },
+        "selection": {
+          "type": "string"
+        }
+      }
+    },
+    "density": {
+      "type": "object",
+      "properties": {
+        "compact": {
+          "type": "number"
+        },
+        "regular": {
+          "type": "number"
+        },
+        "airy": {
+          "type": "number"
+        }
+      }
+    },
+    "product_may_vary": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "product_may_not_vary": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "surfaces_lint": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": "string"
+        },
+        "files": {
+          "type": "array"
+        },
+        "baseline": {
+          "type": "string"
+        }
+      }
+    },
+    "research": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": "string"
+        },
+        "practices": {
+          "type": "array"
+        }
+      }
+    },
+    "library": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": "string"
+        },
+        "neutral_sets": {
+          "type": "object"
+        },
+        "status": {
+          "type": "object"
+        },
+        "stacks": {
+          "type": "object"
+        },
+        "personalities": {
+          "type": "object"
+        },
+        "selection": {
+          "type": "string"
+        },
+        "distinct_min_hue_deg": {
+          "type": "number"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "contrast_pairs",
+    "density",
+    "invariants",
+    "layers",
+    "library",
+    "portfolios",
+    "product_may_not_vary",
+    "product_may_vary",
+    "products",
+    "research",
+    "surfaces_lint",
+    "tenants",
+    "token_contract",
+    "version"
+  ]
+}

@@ -1,0 +1,223 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/positioning.schema.json",
+  "title": "positioning (doctrine/positioning.json)",
+  "description": "Contract for doctrine/positioning.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "tagline": {
+      "type": "string"
+    },
+    "pattern": {
+      "type": "string"
+    },
+    "contradictions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "inject": {
+      "type": "object",
+      "properties": {
+        "md_files": {
+          "type": "array"
+        },
+        "check_only": {
+          "type": "array"
+        }
+      }
+    },
+    "licensing": {
+      "type": "object",
+      "properties": {
+        "decision": {
+          "type": "string"
+        },
+        "license_file": {
+          "type": "string"
+        },
+        "required_patterns": {
+          "type": "array"
+        },
+        "banned_patterns": {
+          "type": "array"
+        },
+        "scan": {
+          "type": "array"
+        }
+      }
+    },
+    "memory": {
+      "type": "object",
+      "properties": {
+        "rule": {
+          "type": "string"
+        },
+        "canonical": {
+          "type": "string"
+        },
+        "required_in": {
+          "type": "array"
+        },
+        "required_pattern": {
+          "type": "string"
+        },
+        "scan": {
+          "type": "array"
+        },
+        "banned_patterns": {
+          "type": "array"
+        }
+      }
+    },
+    "runs_on_itself": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": "string"
+        },
+        "tagline": {
+          "type": "string"
+        },
+        "pattern": {
+          "type": "string"
+        },
+        "line": {
+          "type": "string"
+        },
+        "contradictions": {
+          "type": "array"
+        },
+        "md_files": {
+          "type": "array"
+        },
+        "check_only": {
+          "type": "array"
+        },
+        "verifier": {
+          "type": "string"
+        },
+        "registry": {
+          "type": "array"
+        },
+        "_public_note": {
+          "type": "string"
+        }
+      }
+    },
+    "loops_thesis": {
+      "type": "string"
+    },
+    "autonomy": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": "string"
+        },
+        "tagline": {
+          "type": "string"
+        },
+        "pattern": {
+          "type": "string"
+        },
+        "line": {
+          "type": "string"
+        },
+        "contradictions": {
+          "type": "array"
+        },
+        "md_files": {
+          "type": "array"
+        },
+        "check_only": {
+          "type": "array"
+        },
+        "registry": {
+          "type": "array"
+        }
+      }
+    },
+    "self_bootstrapped": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": "string"
+        },
+        "tagline": {
+          "type": "string"
+        },
+        "kernel": {
+          "type": "string"
+        }
+      }
+    },
+    "banned_framing": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": "string"
+        },
+        "exclude": {
+          "type": "array"
+        },
+        "max_bytes": {
+          "type": "number"
+        }
+      }
+    },
+    "stability_line": {
+      "type": "string"
+    },
+    "zero_fuss": {
+      "type": "object",
+      "properties": {
+        "rule": {
+          "type": "string"
+        },
+        "required_in": {
+          "type": "array"
+        },
+        "required_pattern": {
+          "type": "string"
+        },
+        "scan_user_facing": {
+          "type": "array"
+        },
+        "banned_patterns": {
+          "type": "array"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "autonomy",
+    "banned_framing",
+    "contradictions",
+    "id",
+    "inject",
+    "licensing",
+    "loops_thesis",
+    "memory",
+    "pattern",
+    "runs_on_itself",
+    "self_bootstrapped",
+    "stability_line",
+    "tagline",
+    "version",
+    "zero_fuss"
+  ]
+}

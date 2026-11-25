@@ -1,0 +1,232 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/seed/autonomy/policy.schema.json",
+  "title": "policy (seed/autonomy/policy.json)",
+  "description": "Contract for seed/autonomy/policy.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "$schema_version": {
+      "type": "string"
+    },
+    "doc": {
+      "type": "string"
+    },
+    "interrupt_gate": {
+      "type": "object",
+      "properties": {
+        "rule": {
+          "type": "string"
+        },
+        "card_fields": {
+          "type": "array"
+        },
+        "examples": {
+          "type": "array"
+        }
+      }
+    },
+    "closed_loop": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "rule": {
+          "type": "string"
+        },
+        "assume_human_reader": {
+          "type": "boolean"
+        },
+        "assume_human_review": {
+          "type": "boolean"
+        },
+        "assume_owner_decision": {
+          "type": "boolean"
+        },
+        "assume_external_input": {
+          "type": "boolean"
+        },
+        "memory_or_document_is_storage": {
+          "type": "boolean"
+        },
+        "every_artifact_has_a_consumer": {
+          "type": "boolean"
+        },
+        "every_loop_closes_by_system": {
+          "type": "boolean"
+        },
+        "wait_on_person_allowed_only_for": {
+          "type": "array"
+        },
+        "wait_requires_default_in_effect": {
+          "type": "boolean"
+        },
+        "loop_proceeds_on_default_while_waiting": {
+          "type": "boolean"
+        },
+        "enforced_by": {
+          "type": "string"
+        }
+      }
+    },
+    "standing_limits": {
+      "type": "object",
+      "properties": {
+        "doc": {
+          "type": "string"
+        },
+        "limits": {
+          "type": "array"
+        }
+      }
+    },
+    "trust": {
+      "type": "object",
+      "properties": {
+        "baseline": {
+          "type": "number"
+        },
+        "prior_weight": {
+          "type": "number"
+        },
+        "formula": {
+          "type": "string"
+        },
+        "decay_per_idle_day": {
+          "type": "number"
+        },
+        "widens": {
+          "type": "string"
+        },
+        "never_reaches": {
+          "type": "array"
+        }
+      }
+    },
+    "ladder": {
+      "type": "object",
+      "properties": {
+        "rungs": {
+          "type": "array"
+        },
+        "meaning": {
+          "type": "object"
+        },
+        "promote_when": {
+          "type": "object"
+        },
+        "demote_when": {
+          "type": "object"
+        },
+        "transitions_act_by": {
+          "type": "string"
+        },
+        "ceiling_by_max_permission": {
+          "type": "object"
+        }
+      }
+    },
+    "surfaces": {
+      "type": "object",
+      "properties": {
+        "repo": {
+          "type": "object"
+        },
+        "runtime": {
+          "type": "object"
+        },
+        "work_tracker": {
+          "type": "object"
+        },
+        "internal_chat": {
+          "type": "object"
+        },
+        "outreach": {
+          "type": "object"
+        },
+        "dns": {
+          "type": "object"
+        },
+        "money": {
+          "type": "object"
+        },
+        "legal": {
+          "type": "object"
+        },
+        "secrets": {
+          "type": "object"
+        }
+      }
+    },
+    "growth": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": "string"
+        },
+        "growth_share_floor": {
+          "type": "number"
+        },
+        "growth_priority_weight": {
+          "type": "number"
+        },
+        "min_metrics_per_product": {
+          "type": "number"
+        },
+        "experiment_measure_after_days": {
+          "type": "number"
+        },
+        "rollback_when": {
+          "type": "string"
+        },
+        "owner_role": {
+          "type": "string"
+        },
+        "enforced_by": {
+          "type": "string"
+        }
+      }
+    },
+    "standing_order": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "rule": {
+          "type": "string"
+        },
+        "thread_is_storage": {
+          "type": "boolean"
+        },
+        "present_decisions_to_owner": {
+          "type": "boolean"
+        },
+        "decide_implement_deploy_verify": {
+          "type": "boolean"
+        },
+        "decision_needs_code_consumer": {
+          "type": "boolean"
+        },
+        "enforced_by": {
+          "type": "string"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "$schema_version",
+    "closed_loop",
+    "doc",
+    "growth",
+    "interrupt_gate",
+    "ladder",
+    "standing_limits",
+    "standing_order",
+    "surfaces",
+    "trust"
+  ]
+}

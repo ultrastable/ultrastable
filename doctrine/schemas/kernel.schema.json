@@ -1,0 +1,197 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/kernel.schema.json",
+  "title": "kernel (doctrine/kernel.json)",
+  "description": "Contract for doctrine/kernel.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "text": {
+      "type": "string"
+    },
+    "framing": {
+      "type": "string"
+    },
+    "commitments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "recognitions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "applies_to": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "lint": {
+            "type": "array"
+          },
+          "means": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "excused_by": {
+      "type": "string"
+    },
+    "trust": {
+      "type": "object",
+      "properties": {
+        "baseline": {
+          "type": "number"
+        },
+        "decay_per_idle_tick": {
+          "type": "number"
+        },
+        "rises": {
+          "type": "object"
+        },
+        "falls": {
+          "type": "object"
+        },
+        "ladder": {
+          "type": "array"
+        },
+        "ladder_min_score": {
+          "type": "object"
+        },
+        "ladder_note": {
+          "type": "string"
+        },
+        "never_reaches": {
+          "type": "array"
+        }
+      }
+    },
+    "tick_steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "closing_probe": {
+            "type": "string"
+          },
+          "done": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "implemented_by": {
+            "type": "string"
+          },
+          "paths": {
+            "type": "array"
+          },
+          "sla": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "tick_states": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "metrics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "lineage": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "directives": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "enforced_by": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          },
+          "probe": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "directives_text": {
+      "type": "string"
+    },
+    "evidence_rules": {
+      "type": "object",
+      "properties": {
+        "verify-live": {
+          "type": "object"
+        },
+        "honest-measure": {
+          "type": "object"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "commitments",
+    "directives",
+    "directives_text",
+    "evidence_rules",
+    "excused_by",
+    "framing",
+    "id",
+    "lineage",
+    "metrics",
+    "recognitions",
+    "text",
+    "tick_states",
+    "tick_steps",
+    "trust",
+    "version"
+  ]
+}

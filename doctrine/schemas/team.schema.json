@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/team.schema.json",
+  "title": "team (doctrine/team.json)",
+  "description": "Contract for doctrine/team.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "$schema_version": {
+      "type": "string"
+    },
+    "doc": {
+      "type": "string"
+    },
+    "phases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "gate": {
+            "type": "array"
+          },
+          "n": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "roles": {
+            "type": "array"
+          }
+        }
+      }
+    },
+    "roles": {
+      "type": "object",
+      "properties": {
+        "research-publisher": {
+          "type": "object"
+        },
+        "marketing-manager": {
+          "type": "object"
+        },
+        "legal-ip-manager": {
+          "type": "object"
+        },
+        "customer-success": {
+          "type": "object"
+        },
+        "org-designer": {
+          "type": "object"
+        },
+        "business-manager": {
+          "type": "object"
+        },
+        "sales-partnerships": {
+          "type": "object"
+        },
+        "finance-controller": {
+          "type": "object"
+        },
+        "community-manager": {
+          "type": "object"
+        },
+        "security-compliance": {
+          "type": "object"
+        },
+        "data-analyst": {
+          "type": "object"
+        },
+        "design-manager": {
+          "type": "object"
+        },
+        "uiux-manager": {
+          "type": "object"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "$schema_version",
+    "doc",
+    "phases",
+    "roles"
+  ]
+}

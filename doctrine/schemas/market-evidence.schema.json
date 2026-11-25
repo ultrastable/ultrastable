@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/market-evidence.schema.json",
+  "title": "market-evidence (doctrine/market-evidence.json)",
+  "description": "Contract for doctrine/market-evidence.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "accessed": {
+      "type": "string"
+    },
+    "products": {
+      "type": "object",
+      "properties": {
+        "Claude Code": {
+          "type": "object"
+        },
+        "GitHub Copilot coding agent": {
+          "type": "object"
+        },
+        "OpenAI Codex": {
+          "type": "object"
+        },
+        "Devin (Cognition)": {
+          "type": "object"
+        },
+        "Cursor": {
+          "type": "object"
+        },
+        "Factory (Droids)": {
+          "type": "object"
+        },
+        "OpenHands (All Hands)": {
+          "type": "object"
+        },
+        "Cloudflare Agents SDK + Workflows": {
+          "type": "object"
+        },
+        "Zapier Agents": {
+          "type": "object"
+        },
+        "Temporal": {
+          "type": "object"
+        },
+        "LangGraph (LangSmith Deployment)": {
+          "type": "object"
+        }
+      }
+    },
+    "closest_overlaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "component": {
+            "type": "string"
+          },
+          "product": {
+            "type": "string"
+          },
+          "why_it_matters": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "caveats": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "accessed",
+    "caveats",
+    "closest_overlaps",
+    "products"
+  ]
+}

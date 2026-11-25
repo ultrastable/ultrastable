@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/cost.schema.json",
+  "title": "cost (doctrine/cost.json)",
+  "description": "Contract for doctrine/cost.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "account_id": {
+      "type": "string"
+    },
+    "standing_goal": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "north_star": {
+          "type": "string"
+        },
+        "measures": {
+          "type": "array"
+        },
+        "priority_order": {
+          "type": "array"
+        }
+      }
+    },
+    "budgets": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    },
+    "baseline_2026-11-13": {
+      "type": "object",
+      "properties": {
+        "window": {
+          "type": "string"
+        },
+        "d1_rows_read": {
+          "type": "object"
+        },
+        "qnfo_audit_rows_per_read_query": {
+          "type": "number"
+        },
+        "ai_neurons_by_model": {
+          "type": "object"
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "cause": {
+            "type": "string"
+          },
+          "db": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "remedy": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "closing_probe": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "account_id",
+    "baseline_2026-11-13",
+    "budgets",
+    "closing_probe",
+    "findings",
+    "standing_goal",
+    "version"
+  ]
+}

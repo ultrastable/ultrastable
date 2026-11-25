@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/seed/autonomy/improve.schema.json",
+  "title": "improve (seed/autonomy/improve.json)",
+  "description": "Contract for seed/autonomy/improve.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "rule": {
+      "type": "string"
+    },
+    "min_items_per_cycle": {
+      "type": "number"
+    },
+    "max_open_from_loop": {
+      "type": "number"
+    },
+    "plus_share": {
+      "type": "number"
+    },
+    "plus_per_cycle": {
+      "type": "number"
+    },
+    "market_max_age_days": {
+      "type": "number"
+    },
+    "settle_days": {
+      "type": "number"
+    },
+    "tiers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "evidence": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "window_days": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "signals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "max_age_hours": {
+            "type": "number"
+          },
+          "path": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "bank": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "metric": {
+            "type": "string"
+          },
+          "probe": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "bank",
+    "market_max_age_days",
+    "max_open_from_loop",
+    "min_items_per_cycle",
+    "plus_per_cycle",
+    "plus_share",
+    "rule",
+    "settle_days",
+    "signals",
+    "tiers"
+  ]
+}
