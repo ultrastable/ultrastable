@@ -1,29 +1,41 @@
 name: org-init
-# budget: ~1 min per owner dispatch
-# trigger: dispatch only
+# budget: ~1 min per boot that has an organization to set up; seconds otherwise
+# trigger: after every bootstrap run and on dispatch; nobody has to start it
 # free-alternative: run the same steps from a cloud-hosted agent session with the admin token bound
 # Initializes the GitHub org with no questions: repos, public profile, org details, projects.
-# Needs the ORG_ADMIN_TOKEN secret (the single identity-bound step; see docs/BOOTSTRAP-GAPS.md BG-1/BG-2).
+# Runs with the organization approval when the system holds one (the single identity-bound step: one link, /connect/github-admin; BG-1/BG-2).
+# Without it the run ends green in seconds: the card and its default are already in org/gate-cards.json, and the next boot tries again.
 on:
+  workflow_run:
+    workflows: [bootstrap]
+    types: [completed]
   workflow_dispatch:
+concurrency:
+  group: org-init
+  cancel-in-progress: false
 jobs:
   init:
-    if: ${{ !github.event.repository.is_template && github.repository != 'ultrastable/seed' }}  # TEMPLATE-CODE-ONLY-1: the template itself never runs a system's loops
+    if: ${{ vars.HALT != '1' && !github.event.repository.is_template && github.repository != 'ultrastable/seed' }}  # TEMPLATE-CODE-ONLY-1: the template itself never runs a system's loops
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
       GH_TOKEN: ${{ secrets.ORG_ADMIN_TOKEN }}
     steps:
       - uses: actions/checkout@v4
-      - name: Require token
-        run: '[ -n "$GH_TOKEN" ] || { echo "ORG_ADMIN_TOKEN not set: open the gate card"; exit 1; }'
+      - name: Is there an organization to set up, and the approval to do it?
+        id: can
+        run: |
+          ORG=$(python3 -c "import json;print(json.load(open('ultrastable.json')).get('org',{}).get('name',''))")
+          if [ -n "$GH_TOKEN" ] && [ -n "$ORG" ]; then echo "go=1" >> "$GITHUB_OUTPUT"; else echo "go=0" >> "$GITHUB_OUTPUT"; echo "::notice::no organization to set up yet, or no approval for it; the card (one link) is in org/gate-cards.json and the next boot tries again"; fi
       - name: Create repos
+        if: steps.can.outputs.go == '1'
         run: |
           ORG=$(python3 -c "import json;print(json.load(open('ultrastable.json'))['org']['name'])" 2>/dev/null || echo "${GITHUB_REPOSITORY_OWNER}")
           for R in $(python3 -c "import json;print(' '.join(json.load(open('ultrastable.json'))['org']['repos']))"); do
             gh repo view "$ORG/$R" >/dev/null 2>&1 || gh repo create "$ORG/$R" --private
           done
       - name: Publish public profile
+        if: steps.can.outputs.go == '1'
         run: |
           ORG="${GITHUB_REPOSITORY_OWNER}"
           [ -d brand/public-profile/profile ] || { echo "no profile staged"; exit 0; }
@@ -33,8 +45,10 @@ jobs:
           cd /tmp/dotgithub && git add -A && (git -c user.name=ultrastable -c user.email=pilot@ultrastable.io commit -m "Org profile" && git push origin HEAD:main || true)
           gh repo edit "$ORG/.github" --visibility public --accept-visibility-change-consequences
       - name: Org details
+        if: steps.can.outputs.go == '1'
         run: gh api -X PATCH "orgs/${GITHUB_REPOSITORY_OWNER}" -f description='Coding agents write code. Ultrastable runs the system.' -f blog=https://ultrastable.io -f email=pilot@ultrastable.io
       - name: Verify live (done = the public org page shows the profile)
+        if: steps.can.outputs.go == '1'
         run: |
           sleep 10
           for i in 1 2 3 4 5 6; do

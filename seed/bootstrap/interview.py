@@ -121,6 +121,14 @@ def render_idea(answers: dict, org_name: str = "My Project", owner: str = "Owner
         "---", f"org_name: {org_name}", f"slug: {from_slug}", f"owner: {owner}",
         "owner_contact: set-in-secret-store", "owner_contact_backup: set-in-secret-store", "---", "",
         "# Idea", "", answers.get("idea", ""), "",
+        # The person answered plain questions, not a system test: the four answers every system starts with come from what the kernel does for it
+        # (same defaults as bootstrap/intake.py); the measure is the person's own success test when they gave one. Without this section the
+        # bootstrapper's `qualify` stage turned every interviewed idea away as "not a fit".
+        "# System test", "",
+        "- Loop: its own clock measures the system, files what is wrong or missing and ships the fix, with no person in the middle",
+        f"- Measure: {answers.get('success') or 'open work items past their deadline, target 0'}",
+        "- Upkeep: new evidence, sources and requests from its owner keep arriving",
+        f"- Run cost: {budget} USD a month for the back end", "",
         "# Who it is for", "", f"- {_choice(next(x for x in questions() if x['id']=='audience'), answers['audience'])['label']}" if answers.get("audience") else "- unknown",
         "", "# First outcomes", "",
         f"- Working first version that meets: {answers.get('success', 'a success test the managers will propose')}",

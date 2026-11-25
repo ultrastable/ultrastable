@@ -1,0 +1,27 @@
+name: Start my system
+description: Say what it should do. Everything else is done for you.
+title: "My idea: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Say in your own words what your system should do and keep doing. There is nothing to set up and no code to write.
+        Ultrastable is for things that keep running and keep being improved, not for a single page made once.
+  - type: textarea
+    id: idea
+    attributes:
+      label: What should it do?
+      description: A sentence or two is enough.
+      placeholder: "A living list of what works in public policy: every programme graded by its trials and re-graded as evidence lands."
+    validations:
+      required: true
+  - type: input
+    id: name
+    attributes:
+      label: What should we call it?
+      description: Optional. Leave it empty and it is named from your words.
+  - type: input
+    id: budget
+    attributes:
+      label: How much may it cost a month, in US dollars?
+      description: Optional. Leave it empty and it stays inside 5 dollars a month.
