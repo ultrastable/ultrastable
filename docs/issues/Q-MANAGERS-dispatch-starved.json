@@ -1,0 +1,13 @@
+{
+  "id": "Q-MANAGERS-dispatch-starved",
+  "title": "Q-MANAGERS-dispatch-starved: managers stop dispatching while a D1 rows-read breach holds the tick lean",
+  "body": "**Owner:** infrastructure-manager\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -m foundation managers --live\n**Status:** open\n\nMANAGERS-1. Measured 2026-11-25T20:50Z at https://ultrastable-tick.ultrastable.workers.dev/health: tick 9068 reported `cost breach: ultrastable-org read 5030284 rows/h > 120000; skipped non-essential steps (... goals, dispatch, execute ...)` and `dispatched 0 item(s)` with 278 active items. Under a breach the steps outside COST_ESSENTIAL_STEPS (seed/worker/src/tick.js) run once per LEAN_EVERY_H (3 hours), so every manager's dispatch beat is every 3 hours instead of every 10 to 120 minutes. `python3 -m foundation managers --live` at 20:56Z read 2 ticking, 2 late, 5 stopped (operations, staff, reviewer, project-manager, outreach-coordinator: last beat 18:07Z). /api/goals read core.cost.peak 10.684 against a target of 0.6; the tick's own pulse read 397 of 1440 slots good in 24 h.\n\nRoot cause to find and remove: which statements read about 5 million rows an hour from ultrastable-org (unindexed scans in per-minute loops are the first suspect: read the D1 query insights, add the index or bound the query). Do not raise max_rows_read_per_hour and do not move dispatch into COST_ESSENTIAL_STEPS to pass: the breach is the defect. Second half: `dispatch` costs one small read per role, so once the scan is fixed confirm it runs every tick. Prediction: stopped managers in managers --live = 0 within 72 h of the fix deploying.\n\nsize: M\n\n**Closing probe:** cmd:python3 -m foundation managers --live.\n",
+  "labels": [
+    "role:infrastructure-manager",
+    "p0",
+    "agent-ready",
+    "managers"
+  ],
+  "milestone": "Now",
+  "workstream": "Reliability"
+}

@@ -1,0 +1,13 @@
+{
+  "id": "Q-FLEETMAP-second-tenant",
+  "title": "Q-FLEETMAP-second-tenant: ultrastable/second-tenant is not equal to its source (16 file(s) differ, 6 missing, 0 only in the copy)",
+  "body": "**Owner:** operations\n**Trigger:** fleetmap --drift --apply (daily in tenant-sync.yml)\n**Done check:** cmd:python3 -m foundation fleetmap --probe second-tenant\n**Prediction:** fleet_map_drifted_repos <= 0 within 168 h\n**Status:** open\n\nultrastable/second-tenant is a copy and is not equal to its source (FLEET-MAP-1): 16 file(s) differ, 6 missing, 0 only in the copy.\n\n- differ: agents/AGENTS.md, bootstrap/bootstrap.py, worker/src/apprepos.js, worker/src/discover.js, worker/src/index.js, worker/src/lane.js, worker/src/lanemerge.js, worker/src/mergenow.js, worker/src/postfeedback.js, worker/src/social.js, worker/src/sweeper.js, worker/src/visibility.js ...\n- missing: scripts/surfaces.py, standards/system.schema.json, worker/src/contract.js, worker/src/ghfetch.js, worker/test/contract.test.js, worker/test/ghfetch.test.js\n- ultrastable.lock.json is missing: the kernel sync treats every changed file as a local edit and updates nothing\n\nFix the sync named in doctrine/fleet-map.json for this repository (never copy by hand), then the same reading closes this item.\n\n**Closing probe:** cmd:python3 -m foundation fleetmap --probe second-tenant\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "role:operations",
+    "sync"
+  ],
+  "milestone": "Now",
+  "workstream": "Executor queue"
+}

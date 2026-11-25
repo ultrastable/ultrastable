@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it as below."
+type: software
+authors:
+  - name: "Ultrastable"
+title: "Ultrastable seed"
+abstract: "The code-only kernel a new autonomous system starts from: bootstrapper, tick Worker, roles, agent instructions and the loops that take it to criticality. A copy of seed/ in the Ultrastable platform."
+repository-code: "https://github.com/ultrastable/seed"
+license: "LicenseRef-Ultrastable-USL-1.0"

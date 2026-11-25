@@ -185,6 +185,12 @@ def prepare(dirpath: Path, slug: str, root: Path = ROOT) -> list[str]:
     # tools, the README's Live block, and for a tenant with no code yet its first Worker) comes from the one scaffold, scaffold/tenant.
     from . import tenantstd
     done += tenantstd.scaffold(dirpath, slug, root)
+    # REPO-STANDARD-1: every repository is born with the branch cleanup (the same workflow and script the seed kit carries), never added later by hand
+    for src, dst in (("seed/.github/workflows/branch-cleanup.yml", ".github/workflows/branch-cleanup.yml"), ("scripts/branch_cleanup.py", "scripts/branch_cleanup.py")):
+        if (root / src).exists():
+            (dirpath / dst).parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(root / src, dirpath / dst)
+            done.append(f"standard {dst}")
     return done
 
 

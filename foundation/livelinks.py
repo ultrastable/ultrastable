@@ -64,7 +64,8 @@ def place(text: str, blk: str) -> str:
     """Replace the block, or insert it after the first markdown heading (or at the top when there is none)."""
     if BLOCK.search(text):
         return BLOCK.sub(lambda _m: blk, text, count=1)
-    m = re.search(r"^# .*\n", text, re.M)
+    b = re.search(r"<!-- brand:end[^>]*-->\n?", text)  # a generated brand header owns the title; the block goes after it, never inside it
+    m = b or re.search(r"^# .*\n", text, re.M)
     return (text[:m.end()] + "\n" + blk + text[m.end():]) if m else blk + "\n" + text
 
 

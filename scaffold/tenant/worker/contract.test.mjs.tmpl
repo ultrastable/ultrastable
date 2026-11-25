@@ -7,7 +7,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { verify, routesIn } from "../vendor/ultrastable/contract.js";
 import { handle } from "./index.js";
-import { SPEC, ID } from "./contract.js";
+import { SPEC, ID, SITE } from "./contract.js";
 import { d1 } from "./worker.test.mjs";
 
 const now = Date.UTC(2026, 10, 25, 12);
@@ -36,6 +36,6 @@ test("an endpoint nothing describes fails the reading, back to front", async () 
 test("the manifest names this system and the claims list every statement", async () => {
   const real = site();
   const m = await (await real("/.well-known/ultrastable.json")).json(), c = await (await real("/claims.json")).json();
-  assert.equal(m.ultrastable, 1); assert.equal(m.url, ID.public_url || ID.planned_url); assert.equal(m.repo, "https://github.com/" + ID.repo); assert.equal(m.name, ID.name);
+  assert.equal(m.ultrastable, 1); assert.equal(m.url, SITE); assert.equal(m.repo, "https://github.com/" + ID.repo); assert.equal(m.name, ID.name);
   assert.deepEqual(c.statements.map(s => s.id), SPEC.statements.map(s => s.id));
 });

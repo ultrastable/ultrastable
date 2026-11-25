@@ -19,6 +19,7 @@ import { executeStep, claimsReleasedUnworked24h } from './doer.js';
 import { pulseStep, tickCadenceMin } from './pulse.js';
 import { ignitionStep } from './ignition.js';
 import { ensureSchema as ensureCredentialSchema } from './auth/store.js';  // CONNECTOR-HEALTH-1
+import { hireStep, isOff } from './managers.js';  // MANAGERS-1: the register hires; an off manager is not dispatched
 import { OWN_SQL, tenantOf } from './tenant.js';  // Q-TENANT-row-isolation: a runtime acts only on rows with tenant_id NULL (own) or its own slug
 
 const TERMINAL = ['done', 'superseded', 'cancelled'];
@@ -164,6 +165,7 @@ export const STEPS = {
     const r = await run(db, `UPDATE items SET status='ready', updated_at=?
       WHERE status='open' AND ${OWN_SQL()} AND (trigger_on IS NULL OR trigger_on IN (SELECT id FROM items WHERE status='done' AND ${OWN_SQL()}))`, ctx.nowIso, T, T);
     ctx.notes.push(`reconciled: ${drops.length} reopened, ${r.meta?.changes ?? 0} became ready`);
+    await hireStep(db, ctx);  // MANAGERS-1: every manager that is on in the register has a runtime row before dispatch
   },
 
   // Claims with no heartbeat for claim_ttl_minutes are released so work never stalls.
@@ -378,6 +380,7 @@ export const STEPS = {
     let n = 0;
     for (const role of roles) {
       if (ctx.wake !== role.role && ctx.tickId % Math.max(1, role.tick_every) !== 0) continue;  // an event wakes its role out of turn
+      if (isOff(ctx.config.managers, role.role)) continue;  // MANAGERS-1: switched off by this system's register, with its reason
       const wip = await first(db, `SELECT COUNT(*) AS n FROM claims WHERE agent=? AND ${OWN_SQL()}`, role.id, tenantOf(ctx));
       if (wip.n >= ctx.config.max_wip_per_role) continue;
       const item = await pickForRole(db, role, ctx.config.criticality, (ctx.config.pace || {}).rank, tenantOf(ctx));  // CRITICALITY-LOOP-1: raising items first while k_eff is under k_min

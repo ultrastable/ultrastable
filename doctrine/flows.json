@@ -2487,6 +2487,30 @@
         "ORG_ADMIN_TOKEN"
       ]
     },
+    "fleet-map": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        },
+        {
+          "signal": "fleet.drift",
+          "via": "file:ops/fleet-map.json"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "fleet.drift",
+          "via": "file:ops/fleet-map.json"
+        },
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "each daily reading of every copy against its source is recorded; a copy that is not equal files Q-FLEETMAP-<repo>, and the next reading closes the item or keeps it open, so a sync that stopped working shows within a day",
+      "bindings": []
+    },
     "improve": {
       "inflows": [
         {
@@ -2543,6 +2567,22 @@
         }
       ],
       "feedback": "each run reads the mirror already on main and rewrites it only when OpenAlex's answer changed; the ledger Worker's beat reads the deployed mirror when OpenAlex refuses it and files attempts under the verbatim-quote guard, the findings it adds are listed by /api/findings and become the next run's questions, and the live /health generated_at is compared with main's so a mirror that did not reach the Worker is redeployed",
+      "bindings": []
+    },
+    "managers": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "feedback": "a manager with no loop, code, clock or probe fails managers --check on the change that caused it; a switched-on manager with no runtime row is hired by the next tick's reconcile step, and one that stays missing or stopped fails the detector managers-live, which files Q-AUDIT-managers-live for the executor",
       "bindings": []
     }
   },

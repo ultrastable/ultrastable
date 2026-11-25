@@ -1,0 +1,13 @@
+{
+  "id": "Q-MANAGERS-closure",
+  "title": "Q-MANAGERS-closure: three managers file more than they close: most of their items end shelved",
+  "body": "**Owner:** program-manager\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -m foundation managers --closure\n**Status:** open\n\nMANAGERS-1, DISPOSE-1. `python3 -m foundation managers --closure` (docs/issues by owner, 2026-11-25): infrastructure-manager 11 ended, 9 shelved (82%); portfolio-manager 23 ended, 17 shelved (74%); reviewer 10 ended, 7 shelved (70%). Shelved means the time limit closed the item and no probe passed: the loop was not closed, it was put away. Across all owners the ledger reads 310 shelved against 162 fixed (dispose --report).\n\nFor each shelved item of these three owners: run its closing probe; where the probe is vacuous or cannot fail, rewrite it; where the work is real, split it to a size the executor ships (PATCH-EDIT-1) and requeue; where it is not, supersede it with evidence. A manager whose filer keeps producing items nothing can close has its filer changed (same failure twice: mutate the approach). Do not raise max_shelved_share in doctrine/managers.json to pass. Prediction: no manager over the share within 14 days.\n\nsize: M\n\n**Closing probe:** cmd:python3 -m foundation managers --closure.\n",
+  "labels": [
+    "role:program-manager",
+    "p1",
+    "agent-ready",
+    "managers"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

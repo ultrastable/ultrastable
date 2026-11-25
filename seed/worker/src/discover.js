@@ -23,10 +23,12 @@ export function optedOut(env = {}, config = {}) {
 }
 
 export function manifest(env = {}, config = {}, requestUrl = null) {
-  const repos = config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []);
+  // SYSTEM-MANIFEST-1: the identity object of ultrastable.json (written into config by the bootstrap) is the first source of name and repository
+  const id = config.identity || {};
+  const repos = id.repo ? [id.repo] : config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []);
   return {
     ultrastable: 1,
-    name: clean(config.org_name || config.org_slug || env.TENANT || 'An Ultrastable system', 80),
+    name: clean((id.repo && id.name) || config.org_name || config.org_slug || env.TENANT || 'An Ultrastable system', 80),
     url: publicUrl(env, requestUrl),
     repo: repos[0] ? 'https://github.com/' + clean(repos[0], 120) : null,
     license: LICENSE,

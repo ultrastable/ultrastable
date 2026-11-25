@@ -1,0 +1,59 @@
+name: template-publish
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# FLEET-MAP-1 / TEMPLATE-CODE-ONLY-1: ultrastable/seed (the template a visitor's app repository is created from) is a copy of seed/ in this
+# repository. Its own kit-sync job never completed a run (4 of 4 failed inside two seconds, 2026-11-22 to 2026-11-25) and nothing here could
+# write it, so the template drifted while sessions edited it by hand. This is the platform-side route: a one-hour token for that one repository
+# from the tick Worker over this run's OIDC token (deploy/template-token.mjs, no stored credential), then `fleetmap --publish`, which replaces a
+# template file only when it is what the last publish wrote or an older version of the source. A file edited in the template is a conflict:
+# it is left alone, listed, and the run is red until that work is carried up into seed/ (the Q-FLEETMAP-seed item names the files).
+# budget: ~1 min per run; on a push that changes seed/ and once a day
+# trigger: push to main under seed/ (the template should follow the kernel the same day) and daily (a missed push or an expired token heals)
+# free-alternative: the template's own kit-sync.yml pulls the same tree on its built-in token; `python3 -m foundation fleetmap --publish DIR --apply` from a cloud-hosted agent session
+on:
+  schedule:
+    - cron: "37 4 * * *"
+  push:
+    branches: [main]
+    paths: ["seed/**", "doctrine/fleet-map.json", ".github/workflows/template-publish.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write  # TEMPLATE-PUBLISH-1: the token for the template repository comes over the site worker's OIDC route
+concurrency:
+  group: template-publish
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: ${{ vars.HALT != '1' }}  # HALT-1: the owner's halt stops every job
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0  # --publish reads each file's history to tell an older copy from an edit
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with: {node-version: 24}
+      - name: Publish seed/ to the template repository
+        run: |
+          set -uo pipefail
+          if ! tok="$(node deploy/template-token.mjs)"; then echo "::error::template-publish: no token for ultrastable/seed (the reason is on the line above)"; exit 1; fi
+          echo "::add-mask::$tok"
+          url="https://x-access-token:${tok}@github.com/ultrastable/seed.git"
+          git clone -q "$url" "$RUNNER_TEMP/template" || { echo "::error::template-publish: clone of ultrastable/seed refused"; exit 1; }
+          python3 -m foundation fleetmap --publish "$RUNNER_TEMP/template" --apply | tee "$RUNNER_TEMP/publish.txt"
+          cd "$RUNNER_TEMP/template"
+          git add -A
+          if git diff --cached --quiet; then echo "the template already holds every file this run may write"; else
+            git -c user.name="ultrastable" -c user.email="ultrastable@users.noreply.github.com" commit -q -m "template-publish: seed/ from ultrastable/ultrastable@${GITHUB_SHA::9} (FLEET-MAP-1)"
+            if ! git push -q "$url" HEAD:main; then
+              # a token without the workflows grant may not push workflow files; the rest still goes, and the miss is said
+              echo "::warning::ultrastable/seed refused the push with workflow files; pushing without .github/workflows"
+              git reset -q --soft HEAD~1; git reset -q HEAD -- .github/workflows
+              git -c user.name="ultrastable" -c user.email="ultrastable@users.noreply.github.com" commit -q -m "template-publish: seed/ from ultrastable/ultrastable@${GITHUB_SHA::9}, without workflow files (FLEET-MAP-1)"
+              git push -q "$url" HEAD:main || { echo "::error::template-publish: push to ultrastable/seed refused"; exit 1; }
+            fi
+            echo "published to ultrastable/seed"
+          fi
+          n="$(grep -c '^conflicts: ' "$RUNNER_TEMP/publish.txt" || true)"; x="$(grep -c '^extra: ' "$RUNNER_TEMP/publish.txt" || true)"
+          if [ "$n" != 0 ] || [ "$x" != 0 ]; then echo "::error::template-publish: $n file(s) were edited in the template and $x exist only there; carry them into seed/ (they are listed above and in Q-FLEETMAP-seed)"; exit 1; fi

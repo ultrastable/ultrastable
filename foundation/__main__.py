@@ -32,6 +32,7 @@
   python3 -m foundation temporal [--run [--apply]|--settled ID|--probe|--check|--report]   TEMPORAL-1: series per area, loop and entry; hotspots, neglect and stopped loops feed the failure-mode machinery
   python3 -m foundation bootproof [--check]   BOOTPROOF-1: the seed kernel is closed under bootstrap (instructions, placeholders, secrets, triggers)
   python3 -m foundation seedlaunch [--e2e [--keep]|--fleet|--check]   SEED-LAUNCH-1: every seed built, deployed, year-gated and probed live by the system
+  python3 -m foundation repostd [--check|--plan|--live|--apply|--branches]   REPO-STANDARD-1: one repository standard for every repository of the org
   python3 -m foundation discover [--gen|--check|--live]                    DISCOVER-1: every system is listed, cross-linked and findable
   python3 -m foundation fullstack [--check|--live|--probe ID|--list]        FULLSTACK-1: every system has a repository, a back end and a public front end
   python3 -m foundation collisions [--check|--prs [--pr N]|--claim ID]   COLLISION-1: no two migrations share a number; a PR may not add what an older open PR adds
@@ -39,6 +40,9 @@
   python3 -m foundation livelinks [--check [--readme PATH --id ID]|--write README --id ID|--block ID|--live]   LIVE-LINKS-1: every README says where its code runs
   python3 -m foundation fleetcontract [--check|--live [--apply|--record]|--probe ID|--list]   FLEET-CONTRACT-1: one contract per system; statements hold front to back and back to front
   python3 -m foundation tenantstd [--check [--tenant PATH]|--scaffold PATH --slug S|--measure PATH|--table PATH...|--live]   TENANT-STANDARD-1: one standard, one scaffold and one check for every tenant repository
+  python3 -m foundation managers [--check|--report [--with-live]|--live]   MANAGERS-1: every manager role is a running loop that owns code; the seed carries every manager
+  python3 -m foundation fleetmap [--check|--drift [--apply]|--probe REPO|--list]   FLEET-MAP-1: one map of every repository; a copy that differs from its source is never ok
+  python3 -m foundation surfaces [--check|--render|--plan [github|wellknown|publiccode]] [--root DIR]   SYSTEM-MANIFEST-1: one manifest per system; every surface rendered from it
   python3 -m foundation tenantpromo [--check|--list]                      TENANT-PROMO-1: every tenant promotes itself (social queue, showcase, cross-links)
   python3 -m foundation progress [--check|--live]                          PROGRESS-1: every system shows substantive progress at every visit; the cadence monitor is wired
   python3 -m foundation cost [--check|--probe|--guard [--apply]]          D1 rows read and AI neurons against budgets (COST-GUARD-1)
@@ -342,6 +346,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["temporal"]:
         from . import temporal
         return temporal.main(_av[1:])
+    if _av[:1] == ["repostd"]:
+        from . import repostd
+        return repostd.main(_av[1:])
     if _av[:1] == ["discover"]:
         from . import discover
         return discover.main(_av[1:])
@@ -360,6 +367,15 @@ def main(argv=None) -> int:
     if _av[:1] == ["tenantstd"]:
         from . import tenantstd
         return tenantstd.main(_av[1:])
+    if _av[:1] == ["managers"]:
+        from . import managers
+        return managers.main(_av[1:])
+    if _av[:1] == ["surfaces"]:
+        from . import surfaces
+        return surfaces.main(_av[1:])
+    if _av[:1] == ["fleetmap"]:
+        from . import fleetmap
+        return fleetmap.main(_av[1:])
     if _av[:1] == ["datagraph"]:
         from . import datagraph
         return datagraph.main(_av[1:])
