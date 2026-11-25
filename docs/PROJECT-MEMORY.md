@@ -10,6 +10,9 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-25
 
+- 2026-11-25: Measure growth and shipped code without a token in Actions (#2086)
+- 2026-11-25: core/impact: generic impact and reach closed loop (#2088)
+- 2026-11-25: Restart the growth loop and code agents after the 11-22 stall (#2085)
 - 2026-11-25: Put parked/ PRs on the SLA ladder; stop the sweep reopening them (PARKED-PR-1) (#2084)
 - 2026-11-25: ZERO-MINUTES-1: worker merged #2081
 - 2026-11-25: ROADMAP-AGENT-AGENT-SCOREBOARD: QNFO.OPS #AGENT-SCOREBOARD: Per-agent and per-harness quality scoreboard from intake attri (#2081)
