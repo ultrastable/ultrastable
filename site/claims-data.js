@@ -1876,6 +1876,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **Every system deploys itself in full: repository, back end, public front end (FULL-STACK-1, Rowan 2026-11-25).** \"All UltraStable",
+   "detail": "",
+   "how": "file:instances/ultrastable/progress.json + file:doctrine/seed-deploys.json + file:doctrine/full-stack.json + file:deploy/launch-apps.mjs + file:foundation/fullstack.py + file:tests/foundation/test_fullstack.py",
+   "id": "cited-423086c682",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
@@ -2519,6 +2528,15 @@ export default {
    "detail": "",
    "how": "file:seed/worker/src/vendor/core/stickiness.js + file:seed/worker/src/stickiness.js + file:instances/ultrastable/progress.json + file:seed/worker/test/stickiness.test.js + file:workers/core/stickiness/stickiness.test.js",
    "id": "mirror-9111f7c2d8",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Every system deploys itself in full: repository, back end, public front end (FULL-STACK-1, Rowan 2026-11-25).** \"All UltraStable",
+   "detail": "",
+   "how": "file:instances/ultrastable/progress.json + file:doctrine/seed-deploys.json + file:doctrine/full-stack.json + file:deploy/launch-apps.mjs + file:foundation/fullstack.py + file:tests/foundation/test_fullstack.py",
+   "id": "mirror-4a1adb91b4",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3431,7 +3449,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 378,
-  "total": 378
+  "pass": 380,
+  "total": 380
  }
 };
