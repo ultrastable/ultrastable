@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-25-lane-pr-items-stayed-open-a-day-after-their-pr-closed",
+  "kind": "lesson",
+  "date": "2026-11-25",
+  "title": "Lane PR items stayed open a day after their PR closed",
+  "body": "OL-PR-n items were marked vacuous when the PR merged before any queue pass saw the probe fail, so they stayed open for the 24 h vacuous hold. The lane's filing is the recorded failure (contracts.filed_on_failure); queue.run also survives a shallow checkout where balance is unmeasured.",
+  "probe": "grep:foundation/contracts.py::LANE-FILED-FAIL-1",
+  "session": "claude-code"
+ },
+ "kind": "lesson",
+ "title": "Lane PR items stayed open a day after their PR closed",
+ "session": "claude-code"
+}
