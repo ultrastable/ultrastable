@@ -1,7 +1,7 @@
 {
- "at": "2026-11-25T22:07:08Z",
- "gaps": 9,
- "match_share": 0.982,
+ "at": "2026-11-25T22:16:27Z",
+ "gaps": 6,
+ "match_share": 0.988,
  "sources": {
   "changes": [
    {
@@ -153,12 +153,7 @@
   ],
   "claims": [
    {
-    "detail": "site/worker.js: json:doctrine/ultrastability.json::patience_ticks==2 failed (doctrine/ultrastability.json: patience_ticks=3)",
-    "id": "how-ultrastable-second-order",
-    "ok": false
-   },
-   {
-    "drift": 1,
+    "drift": 0,
     "id": "claims-total",
     "ok": true,
     "total": 404
@@ -469,12 +464,10 @@
    {
     "checks": 1,
     "external": [],
-    "failing": [
-     "python3 -m foundation claims --check: DRIFT how-ultrastable-second-order [claim] site/worker.js: json:doctrine/ultrastability.json::patience_ticks==2 failed (doctrine/ultrastability.json: patience_ticks=3); claims: 403 verified of 404; 1 "
-    ],
+    "failing": [],
     "id": "CLAIMS-1",
     "missing": [],
-    "ok": false,
+    "ok": true,
     "unmeasured": []
    },
    {
@@ -718,12 +711,10 @@
    {
     "checks": 1,
     "external": [],
-    "failing": [
-     "python3 -m foundation coldstart --check: doctrine/decision-ledger.json: `python3 -m foundation commands` names no command (no module with main, no argparse entry)"
-    ],
+    "failing": [],
     "id": "COLDSTART-1",
     "missing": [],
-    "ok": false,
+    "ok": true,
     "unmeasured": []
    },
    {
@@ -795,7 +786,8 @@
     "failing": [],
     "id": "STANDARDS-1",
     "missing": [
-     "worker/linked.js"
+     "worker/linked.js",
+     "ops/supply-chain.json"
     ],
     "ok": false,
     "unmeasured": []
@@ -938,7 +930,7 @@
     "checks": 1,
     "external": [],
     "failing": [
-     "python3 -m foundation dispose --check: an open item is 80.5 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+     "python3 -m foundation dispose --check: an open item is 80.7 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
     ],
     "id": "DISPOSE-1",
     "missing": [],
@@ -1010,7 +1002,7 @@
    "total": 16
   },
   "claims": {
-   "gaps": 1,
+   "gaps": 0,
    "total": 404
   },
   "loops": {
@@ -1018,7 +1010,7 @@
    "total": 1
   },
   "rules": {
-   "gaps": 5,
+   "gaps": 3,
    "total": 88
   },
   "year": {
