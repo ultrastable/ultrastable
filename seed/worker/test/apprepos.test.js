@@ -88,3 +88,58 @@ test('a hosted app asks its host for its token and holds no App key of its own',
   const bad = await getToken(makeDb(), { ...appEnv, HOST_APP_KEY: 'x' }, 'app', 'github-app', { fetch: hostFetch });
   assert.equal(bad.ok, false); assert.match(bad.error, /host token HTTP 404/);
 });
+
+// TENANT-REPO-2: a registered tenant's repository is created by the administration app; a push token is handed back only while it is empty.
+import { ensureTenantRepo, TENANT_REPO } from '../src/apprepos.js';
+function tenantWorld({ commits = 409, covers = true, existing = false, workflows = true } = {}) {
+  return world().then(w => {
+    const base = w.f, made = [];
+    if (existing) w.repos.set('ultrastable/replication-ledger', new Map());
+    w.f = async (url, init = {}) => {
+      const u = new URL(url), body = init.body ? JSON.parse(init.body) : null, tok = ((init.headers || {}).authorization || '').slice(7);
+      if (/\/commits$/.test(u.pathname)) return new Response(JSON.stringify(commits === 200 ? [{ sha: 'abc' }] : { message: 'Git Repository is empty.' }), { status: commits });
+      if (/^\/app\/installations\/11\/access_tokens$/.test(u.pathname)) {
+        if (!covers) return new Response(JSON.stringify({ message: 'There is at least one repository that does not exist or is not accessible to the parent installation.' }), { status: 422 });
+        if (body.permissions.workflows && !workflows) return new Response(JSON.stringify({ message: 'The permissions requested are not granted to this installation.' }), { status: 422 });
+      }
+      if (/^\/orgs\/[^/]+\/repos$/.test(u.pathname)) made.push({ tok, body });
+      return base(url, init);
+    };
+    return { ...w, made };
+  });
+}
+test('a missing tenant repository is created public by the administration app and gets a push token while empty', async () => {
+  const w = await tenantWorld();
+  const r = await ensureTenantRepo(w.db, w.env, T, { repo: 'ultrastable/replication-ledger', visibility: 'public', description: 'd' }, { fetch: w.f });
+  assert.equal(r.ok, true); assert.equal(r.created, true); assert.equal(r.empty, true);
+  assert.equal(r.token, 'scoped:replication-ledger');
+  assert.equal(w.made[0].tok, 'admin-token'); assert.equal(w.made[0].body.private, false);
+  assert.ok(w.calls.some(c => c.body && c.body.permissions && c.body.permissions.workflows === 'write'));
+});
+test('a tenant repository with history gets no token', async () => {
+  const w = await tenantWorld({ commits: 200, existing: true });
+  const r = await ensureTenantRepo(w.db, w.env, T, { repo: 'ultrastable/replication-ledger' }, { fetch: w.f });
+  assert.equal(r.ok, true); assert.equal(r.empty, false); assert.equal(r.token, undefined); assert.equal(r.created, undefined);
+});
+test('without the workflows grant the token falls back to contents only; an uncovered repository says so', async () => {
+  const w = await tenantWorld({ workflows: false });
+  assert.equal((await ensureTenantRepo(w.db, w.env, T, { repo: 'ultrastable/replication-ledger' }, { fetch: w.f })).token, 'scoped:replication-ledger');
+  const u = await tenantWorld({ covers: false });
+  const r = await ensureTenantRepo(u.db, u.env, T, { repo: 'ultrastable/replication-ledger' }, { fetch: u.f });
+  assert.equal(r.ok, false); assert.equal(r.waiting_on, 'code-app-scope');
+});
+test('core and app repositories are never tenant repositories', async () => {
+  for (const n of ['ultrastable/ultrastable', 'ultrastable/ops', 'ultrastable/.github', 'ultrastable/app-x1', 'other/what-works', 'ultrastable/a']) {
+    const w = await tenantWorld();
+    const r = await ensureTenantRepo(w.db, w.env, T, { repo: n }, { fetch: w.f });
+    assert.equal(r.ok, false, n); assert.equal(w.made.length, 0, n);
+  }
+  assert.ok(TENANT_REPO.test('ultrastable/what-works'));
+});
+test('the tenant route needs the internal key', async () => {
+  const w = await tenantWorld();
+  const bad = await handleAppHost(new Request('https://t/host/tenant-repo', { method: 'POST', headers: { 'x-internal-key': 'nope' }, body: '{"repo":"ultrastable/replication-ledger"}' }), { ...w.env, DB: w.db }, { tenant: T, fetch: w.f });
+  assert.equal(bad.status, 404);
+  const ok = await handleAppHost(new Request('https://t/host/tenant-repo', { method: 'POST', headers: { 'x-internal-key': w.env.INTERNAL_DEPLOY_KEY }, body: '{"repo":"ultrastable/replication-ledger"}' }), { ...w.env, DB: w.db }, { tenant: T, fetch: w.f });
+  assert.equal(ok.status, 200); assert.equal((await ok.json()).empty, true);
+});

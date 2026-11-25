@@ -59,8 +59,16 @@ jobs:
                    -f description="$(jq -r '.description // ""' <<<"$row")" -F has_wiki=false >/dev/null; then echo "created $repo"; tok="$t"; break; fi
               echo "::warning::this credential could not create $repo; trying the next route"
             done
+            # fourth route, no stored credential (TENANT-REPO-2): the tick Worker's administration app creates it over the site's OIDC route and
+            # hands back a one-hour push token for this one repository while it is still empty
+            if [ -z "$tok" ]; then
+              if srv="$(node deploy/tenant-repo-token.mjs "$repo" "$(jq -r '.visibility // "public"' <<<"$row")" "$(jq -r '.description // ""' <<<"$row")")"; then
+                if [ "$srv" = "has-history" ]; then echo "$repo already has history; left as it is"; continue; fi
+                echo "::add-mask::$srv"; tok="$srv"
+              else echo "::warning::the platform's own route could not create $repo (logged above)"; fi
+            fi
             # one tenant without a credential must not stop the others or the redeploy step below: record it, go on, fail at the end
-            if [ -z "$tok" ]; then echo "::error::no credential could create $repo (ORG_ADMIN_TOKEN, LANE_PAT, lane App)"; echo "$repo" >> /tmp/tenant-repos-failed; continue; fi
+            if [ -z "$tok" ]; then echo "::error::no route could create $repo (ORG_ADMIN_TOKEN, LANE_PAT, lane App, platform OIDC route)"; echo "$repo" >> /tmp/tenant-repos-failed; continue; fi
             # an empty repository answers 409 here; that answer is logged, not hidden, and means "push the split"
             if head_sha="$(GH_TOKEN="$tok" gh api "repos/$repo/commits?per_page=1" --jq '.[0].sha' 2>/tmp/commits.err)" && [ -n "$head_sha" ]; then echo "$repo already has history; left as it is"; continue; fi
             echo "no commits yet in $repo: $(cat /tmp/commits.err)"
