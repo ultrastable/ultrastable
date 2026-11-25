@@ -2418,6 +2418,19 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-897a8cdffd",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Open standards, never a home-grown format (OPEN-STANDARDS-1, Rowan 2026-11-25).** \"Standards, don't reinvent the wheel. Apply standards",
+      "probe": [
+        "file:foundation/openstd.py",
+        "file:doctrine/open-standards.json",
+        "file:doctrine/open-standards-baseline.json",
+        "file:tests/foundation/test_openstd.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]openstd\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-95432168bf",
       "surface": "agents/AGENTS.md",
       "text": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
@@ -3367,6 +3380,20 @@
       ],
       "bound_by": "mirror",
       "of": "cited-467a38f9b7"
+    },
+    {
+      "id": "mirror-79e254f607",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Open standards, never a home-grown format (OPEN-STANDARDS-1, Rowan 2026-11-25).** \"Standards, don't reinvent the wheel. Apply standards",
+      "probe": [
+        "file:foundation/openstd.py",
+        "file:doctrine/open-standards.json",
+        "file:doctrine/open-standards-baseline.json",
+        "file:tests/foundation/test_openstd.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]openstd\\b"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-897a8cdffd"
     },
     {
       "id": "mirror-be5af6748b",
