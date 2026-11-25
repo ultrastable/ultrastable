@@ -60,6 +60,7 @@ const BASE = ":root{color-scheme:light dark;--bg:#f6f1e7;--sf:#fffdf8;--sf2:#efe
 + ".main{max-width:960px;margin:0 auto;padding:20px 16px 64px}.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:44px;padding:10px 18px;border-radius:6px;border:1px solid var(--line);background:var(--sf);color:var(--ink);font:600 16px system-ui;text-decoration:none}.btn-primary{background:var(--ac);border-color:var(--ac);color:var(--on)}.btn-quiet{border-color:transparent;background:transparent;color:var(--ac)}"
 + ".skip-link{position:absolute;left:-9999px}.skip-link:focus{left:16px;top:8px;background:var(--sf);padding:8px}:focus-visible{outline:3px solid var(--ac);outline-offset:2px}.card{background:var(--sf);border:1px solid var(--line);border-radius:8px;padding:16px;margin:0 0 12px}.meta,small{color:var(--ink2);font-size:14px}.head p{color:var(--ink2)}"
 + "@media(max-width:640px){.hide-sm{display:none!important}h1{font-size:24px}}";
+function atCommit() { const c = String(VERIFIED.commit || ""); return /^[0-9a-f]{7,40}$/.test(c) ? " at commit " + esc(c) : " on every merge"; }
 function dsEsc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
 function dsHead(title, description, extraCss) {
   return "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>" + dsEsc(title) + "</title><meta name=\"description\" content=\"" + dsEsc(description) + "\"><style>" + BASE + "\n" + (extraCss || "") + "</style>";
@@ -96,7 +97,7 @@ function shell(opts, body) {
 function statusLine() {
   // Own records only (PROOF-OWN-1): the count comes from Ultrastable's verified-claims register, never from another system.
   const t = VERIFIED.summary;
-  return t.pass + " of " + t.total + " claims verified against code at commit " + esc(VERIFIED.commit) + ".";
+  return t.pass + " of " + t.total + " claims verified against code" + atCommit() + ".";
 }
 
 function home(ux) {
@@ -183,7 +184,7 @@ function ultrastability() {
 function claimsPage() {
   const rows = VERIFIED.claims.map(function (c) { return "<tr><td class=\"" + (c.pass ? "us-pass" : "us-fail") + "\">" + (c.pass ? "Verified" : "Drift") + "</td><td>" + esc(c.claim) + "<br><small>" + esc(c.surface) + " · " + esc(c.how) + (c.detail ? " · " + esc(c.detail) : "") + "</small></td></tr>"; }).join("");
   return shell({ path: "/claims", title: "Verified claims: Ultrastable words matched to code", description: "Every statement on the Ultrastable surfaces is bound to a probe in the code, checked on every change and daily against the live site." },
-    "<div class=\"head\"><h1>Verified claims</h1><p id=\"st\" role=\"status\">" + VERIFIED.summary.pass + " of " + VERIFIED.summary.total + " claims verified against code at commit " + esc(VERIFIED.commit) + ". Words must match code; a claim that stops matching fails the build and files its own fix item.</p></div>"
+    "<div class=\"head\"><h1>Verified claims</h1><p id=\"st\" role=\"status\">" + VERIFIED.summary.pass + " of " + VERIFIED.summary.total + " claims verified against code" + atCommit() + ". Words must match code; a claim that stops matching fails the build and files its own fix item.</p></div>"
     + "<div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Status</th><th>Claim, surface and probe</th></tr></thead><tbody>" + rows + "</tbody></table></div>"
     + "<p class=\"meta\">Machine form: <a href=\"/api/claims\">/api/claims</a>. Registry: doctrine/claims.json; checker: python3 -m foundation claims --check. Generated copy (counts, tool lists) is rewritten from code, so it cannot drift; the reverse direction (shipped behaviour that no surface describes) is checked too.</p>");
 }

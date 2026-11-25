@@ -209,7 +209,7 @@ def check_live(root=REPO, get=_get, at=None) -> list[dict]:
         if t is None or (at - t).days >= STALE_DAYS:
             f("stale:progress-apps", "stale", "progress.json apps block is stale", apps.get("as_of"))
         pulse = json.loads(get(site + "/pulse.json"))
-        a, b = (pulse.get("week") or {}).get("substantive"), ((prog.get("digests") or {}).get("weekly") or {}).get("substantive")
+        a, b = (pulse.get("week") or {}).get("substantive"), (lambda w: w.get("substantive_changes", w.get("substantive")))((prog.get("digests") or {}).get("weekly") or {})
         if isinstance(a, int) and isinstance(b, int) and abs(a - b) > 0.1 * max(a, b, 1):
             f("conflict:weekly-substantive", "unsourced", f"two pages give different weekly substantive counts ({a} vs {b})", "/pulse.json vs /progress.json")
     except Exception as e:
