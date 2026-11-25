@@ -116,6 +116,7 @@ def _existing(root) -> dict:
     return out
 
 
+# DECISION-METRIC: work-queue-priority (which reach, impact, plus and stall items enter the queue each pass; each is a row in ops/improve/ledger.jsonl and settled on its metric)
 def plan(root=REPO, now=None) -> dict:
     root, now = Path(root), now or datetime.now(timezone.utc)
     cfg, have = load(root), _existing(root)
