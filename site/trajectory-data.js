@@ -125,7 +125,7 @@ export default {
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 26764,
+   "recent7": 26772,
    "series": [
     0,
     0,
@@ -156,11 +156,11 @@ export default {
     0,
     0,
     23482,
-    3282
+    3290
    ],
    "share_recent": 0.086,
    "share_trend": 0.086,
-   "total": 26764
+   "total": 26772
   },
   {
    "area": "instances",
@@ -323,7 +323,7 @@ export default {
    "total": 10875
   }
  ],
- "at": "2026-11-25T16:33:32Z",
+ "at": "2026-11-25T16:40:12Z",
  "days": 30,
  "findings": [
   {
@@ -401,16 +401,16 @@ export default {
    0,
    0,
    -29,
-   -140
+   -137
   ],
   "closed": 1221,
-  "opened": 1081
+  "opened": 1084
  },
  "loops": [
   {
    "loop": "ultrastability",
    "quiet_days": 0,
-   "rows": 13176,
+   "rows": 13217,
    "series": [
     0,
     0,
@@ -441,13 +441,13 @@ export default {
     5004,
     3322,
     2312,
-    738
+    779
    ]
   },
   {
    "loop": "deploys",
    "quiet_days": 0,
-   "rows": 939,
+   "rows": 948,
    "series": [
     0,
     0,
@@ -478,7 +478,7 @@ export default {
     50,
     14,
     0,
-    25
+    34
    ]
   },
   {
@@ -558,7 +558,7 @@ export default {
   {
    "loop": "resilience",
    "quiet_days": 0,
-   "rows": 339,
+   "rows": 340,
    "series": [
     0,
     0,
@@ -589,13 +589,13 @@ export default {
     122,
     80,
     55,
-    18
+    19
    ]
   },
   {
    "loop": "yearsim",
    "quiet_days": 0,
-   "rows": 274,
+   "rows": 275,
    "series": [
     0,
     0,
@@ -626,13 +626,13 @@ export default {
     112,
     80,
     55,
-    18
+    19
    ]
   },
   {
    "loop": "saydo",
    "quiet_days": 0,
-   "rows": 273,
+   "rows": 274,
    "series": [
     0,
     0,
@@ -663,7 +663,7 @@ export default {
     112,
     80,
     55,
-    18
+    19
    ]
   },
   {

@@ -126,7 +126,7 @@
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 26764,
+   "recent7": 26772,
    "series": [
     0,
     0,
@@ -157,12 +157,12 @@
     0,
     0,
     23482,
-    3282
+    3290
    ],
    "share_recent": 0.086,
    "share_trend": 0.086,
-   "slope": 162.2229,
-   "total": 26764
+   "slope": 162.2745,
+   "total": 26772
   },
   {
    "area": "instances",
@@ -1026,7 +1026,7 @@
    "total": 1088
   }
  ],
- "at": "2026-11-25T16:33:32Z",
+ "at": "2026-11-25T16:40:12Z",
  "days": 30,
  "files": [],
  "findings": [
@@ -1105,10 +1105,10 @@
    0,
    0,
    -29,
-   -140
+   -137
   ],
   "closed": 1221,
-  "opened": 1081
+  "opened": 1084
  },
  "loops": [
   {
@@ -1418,7 +1418,7 @@
   {
    "loop": "deploys",
    "quiet_days": 0,
-   "rows": 939,
+   "rows": 948,
    "series": [
     0,
     0,
@@ -1449,9 +1449,9 @@
     50,
     14,
     0,
-    25
+    34
    ],
-   "slope": 3.4578
+   "slope": 3.5159
   },
   {
    "loop": "executor-log",
@@ -1608,7 +1608,7 @@
   {
    "loop": "provenance",
    "quiet_days": 0,
-   "rows": 94,
+   "rows": 101,
    "series": [
     0,
     0,
@@ -1639,14 +1639,14 @@
     40,
     3,
     1,
-    23
+    30
    ],
-   "slope": 0.5019
+   "slope": 0.5471
   },
   {
    "loop": "resilience",
    "quiet_days": 0,
-   "rows": 339,
+   "rows": 340,
    "series": [
     0,
     0,
@@ -1677,14 +1677,14 @@
     122,
     80,
     55,
-    18
+    19
    ],
-   "slope": 1.7742
+   "slope": 1.7806
   },
   {
    "loop": "saydo",
    "quiet_days": 0,
-   "rows": 273,
+   "rows": 274,
    "series": [
     0,
     0,
@@ -1715,9 +1715,9 @@
     112,
     80,
     55,
-    18
+    19
    ],
-   "slope": 1.5019
+   "slope": 1.5083
   },
   {
    "loop": "seed-launches",
@@ -1836,7 +1836,7 @@
   {
    "loop": "ultrastability",
    "quiet_days": 0,
-   "rows": 13176,
+   "rows": 13217,
    "series": [
     0,
     0,
@@ -1867,9 +1867,9 @@
     5004,
     3322,
     2312,
-    738
+    779
    ],
-   "slope": 70.7502
+   "slope": 71.0147
   },
   {
    "loop": "worker-merge-evidence",
@@ -1912,7 +1912,7 @@
   {
    "loop": "yearsim",
    "quiet_days": 0,
-   "rows": 274,
+   "rows": 275,
    "series": [
     0,
     0,
@@ -1943,9 +1943,9 @@
     112,
     80,
     55,
-    18
+    19
    ],
-   "slope": 1.5066
+   "slope": 1.513
   }
  ],
  "observed": {
@@ -2016,7 +2016,7 @@
     0,
     0,
     0,
-    5
+    6
    ]
   },
   "deploy_not_live": {
