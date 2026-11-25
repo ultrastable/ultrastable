@@ -622,6 +622,30 @@ export default {
      ],
      "unit": "share of findings in every paper whose own measurement meets its target",
      "why": "RESEARCH-LOOP-1 (Rowan, 2026-11-25): 'make sure your code reflects your own R&D ... that's an open loop too'. Every finding names its mechanism paths and the metric that tests it; research --check fails a missing path, and this variable fails a finding the system does not live up to."
+    },
+    {
+     "id": "lessons_enforced",
+     "max": null,
+     "min": 1.0,
+     "name": "Lessons enforced in code",
+     "reading": "lessons.enforced_share",
+     "regulators": [
+      "executor"
+     ],
+     "steps": [
+      {
+       "kind": "item",
+       "labels": [
+        "p0",
+        "agent-ready",
+        "raises-self"
+       ],
+       "what": "build: take the Q-LESSON items and bind each lesson to a check, variable, detector or test",
+       "workstream": "Ultrastability"
+      }
+     ],
+     "unit": "share of lessons in doctrine/lessons.json bound to a check, variable, detector or test",
+     "why": "LESSONS-1 (Rowan, 2026-11-25): a lesson that lives in chat is learned again the hard way. Each one is bound to code, or carried by an open item until it is."
     }
    ],
    "what": "Ultrastable running on itself (tenant 0)"

@@ -253,3 +253,19 @@ class SecondLoop2(unittest.TestCase):
         self.assertEqual(u.readiness(REPO, last)["score"], 100)
         last["second_loop_keep_rate"] = {"value": None, "ok": False}
         self.assertLess(u.readiness(REPO, last)["score"], 100)
+
+
+class Lessons(unittest.TestCase):
+    """LESSONS-1: every lesson resolves to enforcing code or an open, spec-complete item."""
+
+    def test_repo_lessons_hold(self):
+        from foundation import lessons
+        self.assertEqual(lessons.check(REPO), [])
+
+    def test_unbound_lesson_fails(self):
+        from foundation import lessons
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / "doctrine").mkdir()
+            (Path(d) / "docs/issues").mkdir(parents=True)
+            (Path(d) / "doctrine/lessons.json").write_text(json.dumps({"lessons": [{"id": "x", "lesson": "l", "enforced_by": []}]}))
+            self.assertIn("x: bound to nothing and names no item", lessons.report(d)["errors"])

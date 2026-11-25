@@ -468,6 +468,30 @@
        "what": "restructure: a finding still not met after its items closed gets a new mechanism, a new ladder here, or its paper states the gap with the number"
       }
      ]
+    },
+    {
+     "id": "lessons_enforced",
+     "name": "Lessons enforced in code",
+     "reading": "lessons.enforced_share",
+     "min": 1.0,
+     "max": null,
+     "unit": "share of lessons in doctrine/lessons.json bound to a check, variable, detector or test",
+     "first_order": [
+      "executor"
+     ],
+     "why": "LESSONS-1 (Rowan, 2026-11-25): a lesson that lives in chat is learned again the hard way. Each one is bound to code, or carried by an open item until it is.",
+     "ladder": [
+      {
+       "kind": "item",
+       "labels": [
+        "p0",
+        "agent-ready",
+        "raises-self"
+       ],
+       "workstream": "Ultrastability",
+       "what": "build: take the Q-LESSON items and bind each lesson to a check, variable, detector or test"
+      }
+     ]
     }
    ]
   },

@@ -1,0 +1,145 @@
+{
+ "_doc": "LESSONS-1 (Rowan, 2026-11-25): 'There's a ton of lessons learned here that you need to bake into your system.' Each lesson is bound to code that enforces it, or to an open item that will. Checked by python3 -m foundation lessons --check.",
+ "id": "lessons",
+ "lessons": [
+  {
+   "id": "spec-scope-metric",
+   "lesson": "Write a spec an agent can't misread, and say what not to build: every item names its done check, the number it moves and an out-of-scope line.",
+   "source": "Rowan, 2026-11-25 (unlearn.dev)",
+   "enforced_by": [
+    {
+     "kind": "check",
+     "ref": "foundation specgate --check"
+    },
+    {
+     "kind": "variable",
+     "ref": "spec_quality"
+    }
+   ]
+  },
+  {
+   "id": "proven-live",
+   "lesson": "AI code looks right, and that's the danger. Done means proven live, not merged or read.",
+   "source": "Rowan, 2026-11-25 (unlearn.dev)",
+   "enforced_by": [
+    {
+     "kind": "check",
+     "ref": "silentfail --cite"
+    }
+   ]
+  },
+  {
+   "id": "measured-not-seems-fine",
+   "lesson": "Go from 'seems fine' to measured: an unmeasured value is never in bounds.",
+   "source": "Rowan, 2026-11-25 (unlearn.dev)",
+   "enforced_by": [
+    {
+     "kind": "test",
+     "ref": "tests/foundation/test_ultrastability.py::test_bounds"
+    }
+   ]
+  },
+  {
+   "id": "no-made-up-numbers",
+   "lesson": "No number appears on any surface without a source a reader can check.",
+   "source": "Rowan, 2026-11-25",
+   "enforced_by": [
+    {
+     "kind": "check",
+     "ref": "foundation claimcode --check"
+    },
+    {
+     "kind": "check",
+     "ref": "foundation claims --check"
+    }
+   ]
+  },
+  {
+   "id": "owner-found-first-zero",
+   "lesson": "When the owner finds a problem first, the system failed to be its own second loop.",
+   "source": "Rowan, 2026-11-25",
+   "enforced_by": [
+    {
+     "kind": "variable",
+     "ref": "owner_interventions"
+    }
+   ]
+  },
+  {
+   "id": "second-loop-judged",
+   "lesson": "A slow loop is judged by whether its changes worked, not by whether it moved.",
+   "source": "SECOND-LOOP-2 finding, 2026-11-25",
+   "enforced_by": [
+    {
+     "kind": "variable",
+     "ref": "second_loop_keep_rate"
+    }
+   ]
+  },
+  {
+   "id": "research-in-code",
+   "lesson": "Every finding in a published paper is true in code, or the slow loop builds until it is.",
+   "source": "Rowan, 2026-11-25",
+   "enforced_by": [
+    {
+     "kind": "variable",
+     "ref": "research_in_code"
+    },
+    {
+     "kind": "check",
+     "ref": "foundation research --check"
+    }
+   ]
+  },
+  {
+   "id": "sensor-before-system",
+   "lesson": "When every tenant reads the same bad value, fix the sensor before touching any tenant.",
+   "source": "SECOND-LOOP-2 finding, 2026-11-25",
+   "enforced_by": [
+    {
+     "kind": "test",
+     "ref": "tests/foundation/test_ultrastability.py::test_common_mode_holds_identical_tenant_faults"
+    }
+   ]
+  },
+  {
+   "id": "no-stale-pages",
+   "lesson": "Every number on a page comes from live data or a module regenerated on merge.",
+   "source": "Rowan, 2026-11-18 (FRONT-BACKED-1)",
+   "enforced_by": [
+    {
+     "kind": "check",
+     "ref": "foundation claims --check"
+    }
+   ]
+  },
+  {
+   "id": "outcome-over-liveness",
+   "lesson": "A probe that a page answers is not a probe that it works; probe the outcome a person would see.",
+   "source": "Rowan, 2026-11-25 (red team)",
+   "enforced_by": [],
+   "item": "Q-LESSON-outcome-over-liveness"
+  },
+  {
+   "id": "no-template-leaks",
+   "lesson": "No placeholder or template text reaches a live page.",
+   "source": "Rowan, 2026-11-25 (red team)",
+   "enforced_by": [],
+   "item": "Q-LESSON-no-template-leaks"
+  },
+  {
+   "id": "no-date-bombs",
+   "lesson": "No hard-coded date or expiry silently breaks a loop later.",
+   "source": "Rowan, 2026-11-25 (red team)",
+   "enforced_by": [],
+   "item": "Q-LESSON-no-date-bombs"
+  },
+  {
+   "id": "unshallow-before-history",
+   "lesson": "Read history from a full clone before claiming anything about it.",
+   "source": "Red-team thread, 2026-11-25",
+   "enforced_by": [],
+   "item": "Q-LESSON-unshallow-before-history"
+  }
+ ]
+}

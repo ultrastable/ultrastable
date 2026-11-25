@@ -52,7 +52,16 @@ def readings(root=REPO) -> dict:
             "criticality.cost": cost, "criticality.verified_share": round(verified, 3), "claims.drift": drift, "criticality.k": c["k"], "resilience.stalled": resilience.stalled_reading(root),
             "uiux.findings": uiux.status_reading(root, "findings_blocking"), "uiux.happy_paths": uiux.status_reading(root, "happy_path_pass_share"),
             "owner.interventions_7d": owner_interventions(root), "ultra.keep_rate": keep_rate(root), "spec.quality": spec_quality(root),
-            "research.met_share": research_met(root)}
+            "research.met_share": research_met(root), "lessons.enforced_share": lessons_share(root)}
+
+
+def lessons_share(root):
+    """LESSONS-1: share of recorded lessons bound to code that enforces them."""
+    from . import lessons
+    try:
+        return lessons.report(root)["share"]
+    except (OSError, ValueError, KeyError):
+        return None
 
 
 def research_met(root):
@@ -611,7 +620,7 @@ def _parse(root):
 
 def readings_keys():
     return ("yearsim.horizon_p10", "yearsim.self_rate", "criticality.cost", "criticality.verified_share", "claims.drift", "criticality.k", "resilience.stalled", "uiux.findings", "uiux.happy_paths",
-            "owner.interventions_7d", "ultra.keep_rate", "spec.quality", "research.met_share")
+            "owner.interventions_7d", "ultra.keep_rate", "spec.quality", "research.met_share", "lessons.enforced_share")
 
 
 def data(root=REPO) -> dict:
