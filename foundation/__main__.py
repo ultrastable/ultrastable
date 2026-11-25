@@ -204,6 +204,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["rootcause"]:
         from . import rootcause
         return rootcause.main(_av[1:])
+    if _av[:1] == ["selftest"]:  # SELFTEST-1
+        from . import selftest
+        return selftest.main(_av[1:])
     if _av[:1] == ["failure_audit"]:
         from . import failure_audit
         return failure_audit.main(_av[1:])
