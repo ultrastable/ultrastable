@@ -5437,6 +5437,23 @@
    "body": "tenant-repos run 45669164019: ultrastable/base-rates was created by the platform route, then the push of its split failed with 'Permission denied to github-actions[bot]'. actions/checkout stores an http extraheader in the repository config and a worktree shares it, so it overrides the token in the push URL. The push now clears that header. The seed step was unaffected because it pushes from a fresh git init. Same run: second-tenant repository created and filled, front-door walk passed with 0 visitor steps, fullstack --live read 5 of 5 systems complete.",
    "probe": "grep:.github/workflows/tenant-repos.yml::extraheader=",
    "session": "session_0156nqDrbe8Pmy5MPH111zRn"
+  },
+  {
+   "id": "lesson-2026-11-25-a-checkout-s-stored-token-wins-over-the-token-in-a-push-url",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "A checkout's stored token wins over the token in a push URL",
+   "body": "actions/checkout stores GITHUB_TOKEN as an http extraheader for github.com, and a later git push to an x-access-token URL still sends that header, so GitHub reads the push as github-actions[bot]. Evidence: tenant-repos run 45669381614 held a one-repo token from the platform route (TENANT-REPO-2) and its push to base-rates answered 403. Fixed in the same change: the job sets persist-credentials false and records a failed push per repository, then goes on; the workflow lint passes and the next tenant-repos run is the live probe. Session: session_0156nqDvGPcBsDy63L214bPa",
+   "probe": "grep:.github/workflows/tenant-repos.yml::persist-credentials: false"
+  },
+  {
+   "id": "lesson-2026-11-25-openalex-now-needs-an-api-key-europe-pmc-carries-the-ledger-",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "OpenAlex now needs an API key; Europe PMC carries the ledger meanwhile",
+   "body": "Beat 3 showed the cause in OpenAlex's own words: 'Insufficient budget. This request has no API key'. The mailto polite pool no longer helps. Europe PMC answered (power-posing checked, 6 leads refused by the verbatim-quote rule because they do not say they replicate). Europe PMC is now read most-cited first, and originals it does not hold are searched by name. The Worker reads OPENALEX_API_KEY when one is bound.",
+   "probe": "grep:instances/replication-ledger/worker/discover.js::OPENALEX_API_KEY",
+   "session": "https://claude.ai/code/session_0156nqDsz4YUXpAoqH9CX7mq"
   }
  ]
 }

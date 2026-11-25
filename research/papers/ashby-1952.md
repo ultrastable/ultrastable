@@ -34,7 +34,7 @@ Source: doctrine/ultrastability.json.
 - ULTRASTABILITY-1 (`foundation/ultrastability.py`): after patience_ticks readings out of limits, one step is taken and logged with a prediction
 - CLOCKWORK-1 (`.github/workflows/watchdog.yml`): the second loop runs on the watchdog clock and on the cost guard, server-side
 
-**Measured here:** second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl): 84 (n = 13429). Target >= 1. Verdict: **met**.
+**Measured here:** second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl): 98 (n = 13580). Target >= 1. Verdict: **met**.
 Source: ops/ultrastability.jsonl.
 
 ### A3. Nothing the second loop can change (systems)
@@ -57,7 +57,7 @@ Source: doctrine/ultrastability.json.
 - ASHBY-SEARCH-1 (`foundation/ultrastability.py`): after the ladder, untried parameter values are drawn until one holds or the declared range is spent; only then a redesign item
 - ULTRASTABILITY-1 (`foundation/ultrastability.py`): a step is kept only when the variable is back inside its limits within settle_ticks; otherwise it is undone
 
-**Measured here:** share of second-order steps that brought the variable back inside its limits and were kept: 0.0 (n = 77). Target >= 0.25. Verdict: **not-met**. Open item: `Q-RES-ashby-1952-A4`.
+**Measured here:** share of second-order steps that brought the variable back inside its limits and were kept: 0.0 (n = 91). Target >= 0.25. Verdict: **not-met**. Open item: `Q-RES-ashby-1952-A4`.
 Source: ops/ultrastability.jsonl verdicts.
 
 ### A5. AI systems leave their loops open (oversight)

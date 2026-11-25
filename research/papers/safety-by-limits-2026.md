@@ -55,7 +55,7 @@ Source: ops/deploys.jsonl (same window).
 
 - ASHBY-SEARCH-1 (`foundation/ultrastability.py`): the second loop keeps changing a parameter until the variable holds, and reverts a step that did not help
 
-**Measured here:** share of second-order steps that brought the variable back inside its limits and were kept: 0.0 (n = 77). Target >= 0.25. Verdict: **not-met**. Open item: `Q-RES-safety-by-limits-2026-S4`.
+**Measured here:** share of second-order steps that brought the variable back inside its limits and were kept: 0.0 (n = 91). Target >= 0.25. Verdict: **not-met**. Open item: `Q-RES-safety-by-limits-2026-S4`.
 Source: ops/ultrastability.jsonl verdicts.
 
 ### S5. Little work is thrown away (quality)

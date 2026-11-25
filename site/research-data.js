@@ -88,9 +88,9 @@ export default {
      },
      "prediction": "second_loop_steps_30d >= 1 within 168 h",
      "metric_label": "second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl)",
-     "measured": 84,
+     "measured": 98,
      "status": "met",
-     "n": 13429,
+     "n": 13580,
      "source": "ops/ultrastability.jsonl",
      "item": null
     },
@@ -147,7 +147,7 @@ export default {
      "metric_label": "share of second-order steps that brought the variable back inside its limits and were kept",
      "measured": 0.0,
      "status": "not-met",
-     "n": 77,
+     "n": 91,
      "source": "ops/ultrastability.jsonl verdicts",
      "item": "Q-RES-ashby-1952-A4"
     },
@@ -904,7 +904,7 @@ export default {
      "metric_label": "share of second-order steps that brought the variable back inside its limits and were kept",
      "measured": 0.0,
      "status": "not-met",
-     "n": 77,
+     "n": 91,
      "source": "ops/ultrastability.jsonl verdicts",
      "item": "Q-RES-safety-by-limits-2026-S4"
     },
