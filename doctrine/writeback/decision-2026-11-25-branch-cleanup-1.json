@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-25-branch-cleanup-1",
+  "kind": "decision",
+  "date": "2026-11-25",
+  "title": "BRANCH-CLEANUP-1",
+  "body": "Branches are deleted after merge or close in every repo; delete_branch_on_merge enforced by branch-cleanup.yml.",
+  "probe": "file:scripts/branch_cleanup.py"
+ },
+ "kind": "decision",
+ "title": "BRANCH-CLEANUP-1",
+ "session": ""
+}
