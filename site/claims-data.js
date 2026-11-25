@@ -1921,6 +1921,24 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **Red-team the system's own blind spots; the owner should never find a failure first (REDTEAM-1, Rowan 2026-11-25).** \"Audit and",
+   "detail": "",
+   "how": "file:foundation/redteam.py + file:ops/redteam/findings.jsonl + file:tests/foundation/test_redteam.py",
+   "id": "cited-467a38f9b7",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Everything bootstraps itself from a cold start and works together from birth (COLDSTART-1, Rowan 2026-11-25).** \"All surfaces, all",
+   "detail": "",
+   "how": "file:doctrine/coldstart.json + file:seed/worker/src/visibility.js + file:docs/doctrine/SYSTEM.md + file:CLAUDE.md + file:doctrine/schemas/coldstart.schema.json + file:foundation/coldstart.py",
+   "id": "cited-badeab1b44",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
@@ -2216,6 +2234,33 @@ export default {
    "kind": "claim",
    "pass": true,
    "surface": "seed/doctrine/GUIDING-DIRECTIVE.md"
+  },
+  {
+   "claim": "`doctrine/coldstart.json` (JSON Schema `doctrine/schemas/coldstart.schema.json`) or the code they name drift apart. The owner never",
+   "detail": "",
+   "how": "file:doctrine/coldstart.json + file:doctrine/schemas/coldstart.schema.json",
+   "id": "cited-b4d6cc4189",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/SYSTEM.md"
+  },
+  {
+   "claim": "default in effect, never a task in prose (`doctrine/open-loops.json`, `foundation/data/needs-you.json`). Anything else handed to a person",
+   "detail": "",
+   "how": "file:doctrine/open-loops.json + file:foundation/data/needs-you.json",
+   "id": "cited-94e4bb2cbb",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/SYSTEM.md"
+  },
+  {
+   "claim": "`python3 -m foundation coldstart --check` runs in `checks` on every change. It fails when the seed stops carrying a capability, when this",
+   "detail": "",
+   "how": "file:foundation/coldstart.py + grep:.github/workflows/checks.yml::foundation[ .]coldstart\\b",
+   "id": "cited-a191183c3c",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/SYSTEM.md"
   },
   {
    "claim": "- uiux-manager: the front end as a measured, continuously audited surface (UIUX-1): how every page across ultrastable.io, .org and .app,",
@@ -2618,6 +2663,42 @@ export default {
    "detail": "",
    "how": "file:seed/.github/workflows/platform-sync.yml + file:tests/foundation/test_improve.py + file:foundation/tenantsync.py + grep:.github/workflows/checks.yml::foundation[ .]tenantsync\\b",
    "id": "mirror-1ca2a53c76",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Red-team the system's own blind spots; the owner should never find a failure first (REDTEAM-1, Rowan 2026-11-25).** \"Audit and",
+   "detail": "",
+   "how": "file:foundation/redteam.py + file:ops/redteam/findings.jsonl + file:tests/foundation/test_redteam.py",
+   "id": "mirror-309506fe16",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Issue inflow never exceeds closures; every issue inside its SLA (FLOW-BALANCE-1, Rowan 2026-11-21).** \"All UltraStable issues must be",
+   "detail": "",
+   "how": "file:seed/worker/src/flowbalance.js + file:doctrine/balance.json + file:tests/foundation/test_balance.py + file:foundation/balance.py",
+   "id": "mirror-ad11709e94",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Find another path before asking; the information is already held (PATHFINDER-1, Rowan 2026-11-21).** \"There are always multiple paths,",
+   "detail": "",
+   "how": "file:doctrine/pathfinder.json + file:ops/paths/attempts.jsonl + file:foundation/pathfinder.py + file:tests/foundation/test_pathfinder.py",
+   "id": "mirror-7a700bcc8c",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Everything bootstraps itself from a cold start and works together from birth (COLDSTART-1, Rowan 2026-11-25).** \"All surfaces, all",
+   "detail": "",
+   "how": "file:doctrine/coldstart.json + file:seed/worker/src/visibility.js + file:docs/doctrine/SYSTEM.md + file:CLAUDE.md + file:doctrine/schemas/coldstart.schema.json + file:foundation/coldstart.py",
+   "id": "mirror-23cc6eb0f0",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3289,7 +3370,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 65 Python and 535 Worker tests",
+   "claim": "seed-tests: 68 Python and 537 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3298,7 +3379,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 535 Worker tests",
+   "claim": "seed-worker-tests: 537 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3334,7 +3415,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 1052",
+   "claim": "live-deploys: 1054",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",
@@ -3539,7 +3620,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 390,
-  "total": 390
+  "pass": 399,
+  "total": 399
  }
 };

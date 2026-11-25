@@ -104,6 +104,21 @@ import argparse, datetime as dt, json, os, sys
 from . import boundary, closedloop, standards, doctrine, directive, filing, glossary, kernel, ladder, loops, manifest as mf, scaffold, selfhost, trust, writeback
 
 
+# Commands parsed by the argparse block at the end of main(); every other name resolves to a module (COLDSTART-1).
+ARGPARSE_COMMANDS = frozenset({"new-system", "validate", "ladder", "doctrine", "selfhost", "glossary", "loops", "kernel", "closedloop", "directive",
+                               "trust", "docs_audit", "needsyou", "executor", "upstream", "writeback", "standards", "filing", "autorun", "cockpit", "launch"})
+
+
+def resolve(name: str):
+    """The foundation module that answers `python3 -m foundation <name>`, or None. A module answers when foundation/<name>.py exists and defines main."""
+    import importlib, re as _re
+    from pathlib import Path as _P
+    if not _re.fullmatch(r"[a-z][a-z0-9_]*", name or "") or not (_P(__file__).resolve().parent / f"{name}.py").exists():
+        return None
+    m = importlib.import_module("foundation." + name)
+    return m if callable(getattr(m, "main", None)) else None
+
+
 def main(argv=None) -> int:
     from . import cfaccount
     cfaccount.scrub()  # SINGLE-ACCOUNT-2: never act on a retired Cloudflare account
@@ -274,7 +289,7 @@ def main(argv=None) -> int:
     if _av[:1] == ["flows"]:
         from . import flows
         return flows.main(_av[1:])
-    if _av[:1] and _av[0] in ("sauce", "contracts", "metricloop", "throughput", "metafold", "dispose", "balance", "yearsim", "saydo", "trajectory", "seedadmit", "schemas", "supplychain"):
+    if _av[:1] and _av[0] in ("sauce", "redteam", "contracts", "metricloop", "throughput", "metafold", "dispose", "balance", "yearsim", "saydo", "trajectory", "seedadmit", "schemas", "supplychain"):
         import importlib
         return importlib.import_module("foundation." + _av[0]).main(_av[1:])
     if _av[:1] == ["unknowns"]:
@@ -483,6 +498,9 @@ def main(argv=None) -> int:
     if args0[:1] == ["upstream"]:
         from . import upstream
         return upstream.main(args0[1:])
+    mod = resolve(args0[0]) if args0 and args0[0] not in ARGPARSE_COMMANDS else None
+    if mod is not None:  # COLDSTART-1: every foundation module with main() is a command from birth; no hand-kept dispatch list
+        return mod.main(args0[1:])
     ap = argparse.ArgumentParser(prog="foundation", description=__doc__.split("\n")[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
     n = sub.add_parser("new-system"); n.add_argument("--manifest", required=True); n.add_argument("--out", required=True); n.add_argument("--apply", action="store_true"); n.add_argument("--date")
