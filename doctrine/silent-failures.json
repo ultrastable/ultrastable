@@ -53,7 +53,16 @@
         "silentfail"
       ]
     ],
-    "distinct": []
+    "distinct": [
+      [
+        "foundation/silentfail.py",
+        "foundation/selftest.py"
+      ],
+      [
+        "foundation/silentfail.py",
+        "foundation/failure_audit.py"
+      ]
+    ]
   },
   "cite_hosts": [
     "ultrastable.io",
