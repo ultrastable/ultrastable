@@ -1,0 +1,36 @@
+{
+  "_doc": "KGRAPH-1 (Rowan, 2026-11-25): \"All UltraStable deployments and systems shall have a knowledge graph (graph network) to automatically build and maintain a graph of connections for all data.\" Every system Ultrastable runs is a row here. A system with a url builds its graph from its own data on its own clock and serves it as kg/1 (workers/core/kgraph/insight.js, vendored); a row without a url is undeclared. Read by the tick step `kgraph` (seed/worker/src/kgraph.js, through config.kgraph built in deploy/deploy-workers.mjs and seed/worker/src/handoff.js), which files KG-<id> for an undeclared, unreadable, invalid, empty or stale graph and closes it when the same reading is healthy, and by foundation/kgraph.py (--check in checks), which fails when a system in instances/ultrastable/progress.json or doctrine/tenant-repos.json has no row.",
+  "rule": "KGRAPH-1",
+  "defaults": {
+    "expect_hours": 3,
+    "min_nodes": 10
+  },
+  "systems": [
+    {
+      "id": "ultrastable",
+      "name": "Ultrastable",
+      "url": null
+    },
+    {
+      "id": "practical-solutions",
+      "name": "Practical Solutions",
+      "url": null
+    },
+    {
+      "id": "unlearn",
+      "name": "Unlearn",
+      "url": null
+    },
+    {
+      "id": "what-works",
+      "name": "What Works",
+      "url": "https://what-works.ultrastable.org/graph.json",
+      "expect_hours": 3
+    },
+    {
+      "id": "replication-ledger",
+      "name": "Replication Ledger",
+      "url": null
+    }
+  ]
+}

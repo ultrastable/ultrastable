@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-25-kgraph-1-every-system-keeps-a-knowledge-graph",
+  "kind": "decision",
+  "date": "2026-11-25",
+  "title": "KGRAPH-1: every system keeps a knowledge graph",
+  "body": "Each system serves a kg/1 graph built from its own data with provenance, bitemporal upkeep and shared model-free analytics; the tick step kgraph files KG-<id> until it is healthy; foundation kgraph --check fails a system with no row in doctrine/knowledge-graph.json.",
+  "probe": "file:seed/worker/src/kgraph.js",
+  "session": "session_0156nqDryMqrcf3FtGVreZkf"
+ },
+ "kind": "decision",
+ "title": "KGRAPH-1: every system keeps a knowledge graph",
+ "session": "session_0156nqDryMqrcf3FtGVreZkf"
+}

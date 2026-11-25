@@ -320,6 +320,24 @@
     "file": "tests/foundation/test_tenantrepos.py",
     "contains": "def test_every_tenant_deploys_a_public_front_end"
    }
+  },
+  {
+   "id": "kgraph-auto-build",
+   "source": "agents/AGENTS.md",
+   "quote": "to automatically build and maintain a graph of connections for all data",
+   "probe": {
+    "file": "seed/worker/src/kgraph.js",
+    "contains": "export async function kgraphStep"
+   }
+  },
+  {
+   "id": "kgraph-never-deleted",
+   "source": "agents/AGENTS.md",
+   "quote": "a fact that drops out is retired with a date, never deleted",
+   "probe": {
+    "file": "workers/core/kgraph/insight.js",
+    "contains": "retired_at: at"
+   }
   }
  ],
  "baseline": [

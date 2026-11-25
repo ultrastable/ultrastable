@@ -91,3 +91,5 @@ class SeedVendored(unittest.TestCase):
         for m in ("progress", "audit", "substance", "stickiness"):
             v = (ROOT / f"seed/worker/src/vendor/core/{m}.js").read_text().split("\n", 1)[1]
             self.assertEqual(v, (ROOT / f"workers/core/{m}/index.js").read_text(), m)
+        kg = (ROOT / "seed/worker/src/vendor/core/kgraph.js").read_text().split("\n", 1)[1]
+        self.assertEqual(kg, (ROOT / "workers/core/kgraph/insight.js").read_text(), "kgraph")  # KGRAPH-1
