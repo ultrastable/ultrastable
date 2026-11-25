@@ -262,6 +262,14 @@
       "keep": "state",
       "reason": "STICKY-1: one row per system per day; the step itself deletes rows older than 400 days"
     },
+    "kgraph_state": {
+      "keep": "state",
+      "reason": "KGRAPH-1: one row per system, rewritten by the tick step kgraph"
+    },
+    "kgraph_series": {
+      "keep": "state",
+      "reason": "KGRAPH-1: one row per system per day; the step itself deletes rows older than 400 days"
+    },
     "progress_cadence": {
       "keep": "state",
       "reason": "PROGRESS-1: one row per system, rewritten every pass by the tick step progress"
