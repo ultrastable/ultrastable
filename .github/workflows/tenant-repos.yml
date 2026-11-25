@@ -65,7 +65,7 @@ jobs:
             git subtree split --prefix "$src" -b "split-$slug"
             git worktree add "/tmp/$slug" "split-$slug"
             python3 -m foundation tenantrepos --prepare "/tmp/$slug" --slug "$slug"
-            (cd "/tmp/$slug" && git add -A && { git diff --cached --quiet || git commit -q -m "Stand alone: vendor the core files Unlearn reads (TENANT-REPO-1)"; } \
+            (cd "/tmp/$slug" && git add -A && { git diff --cached --quiet || git commit -q -m "Stand alone: vendor the core files $slug reads (TENANT-REPO-1)"; } \
               && git push "https://x-access-token:${tok}@github.com/${repo}.git" "HEAD:refs/heads/main")
             echo "pushed $src with its history to $repo"
           done

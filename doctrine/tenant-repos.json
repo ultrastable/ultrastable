@@ -37,6 +37,39 @@
     },
     "AGENTS.md": "# Unlearn: agent instructions\n\n> Ultrastable is the foundation for any autonomous system.\n\nUnlearn is a tenant system on Ultrastable. This repository holds its code: the evidence encyclopedia and its loops (`worker/`), the coaching\ntool's phases (`phases.json`), and core files it reads, vendored under `vendor/ultrastable/`. Its manifest (IDEA.md, instance.json,\nlifecycle.json, runway.json) and the platform rules every agent follows live in the core repository, `ultrastable/ultrastable`\n(`agents/AGENTS.md`, `instances/unlearn/`, `doctrine/tenant-repos.json`).\n\n- Test: `node --test worker/*.test.mjs` (CI runs it on every pull request).\n- Deploy: the platform builds this repository's `main` into the `ultrastable-unlearn` Worker (D1 `ultrastable-unlearn`, Workers AI, hourly\n  cron, `unlearn.ultrastable.org`). Nothing here holds a credential.\n- Honest grading: nothing publishes on an unverified citation; a model may only label or re-word, never add a number, a name or a source.\n- No child accounts and no child data; no cookies; reader taps are anonymous counts.\n"
    }
+  },
+  "what-works": {
+   "repo": "ultrastable/what-works",
+   "state": "moving",
+   "source": "instances/what-works",
+   "keep_in_core": [
+    "IDEA.md",
+    "instance.json",
+    "lifecycle.json",
+    "runway.json",
+    "README.md"
+   ],
+   "vendor": {
+    "doctrine/models.json": "vendor/ultrastable/models.json",
+    "doctrine/stakeholders.json": "vendor/ultrastable/stakeholders.json",
+    "seed/worker/src/promoqueue.js": "vendor/ultrastable/promoqueue.js"
+   },
+   "worker": "ultrastable-what-works",
+   "ai": true,
+   "visibility": "public",
+   "description": "What Works: a living atlas of what works in public policy, every programme graded by its trials and re-graded as evidence lands. A tenant system running on Ultrastable.",
+   "write": {
+    "package.json": {
+     "name": "what-works",
+     "private": true,
+     "type": "module",
+     "description": "What Works: a living atlas of what works in public policy. A tenant system running on Ultrastable.",
+     "scripts": {
+      "test": "node --test --no-warnings worker/*.test.mjs"
+     }
+    },
+    "AGENTS.md": "# What Works: agent instructions\n\n> Ultrastable is the foundation for any autonomous system.\n\nWhat Works is a tenant system on Ultrastable: a living atlas of what works in public policy. This repository holds its code (`worker/`) and the core files it reads, vendored under `vendor/ultrastable/`. Its manifest (IDEA.md, instance.json, lifecycle.json, runway.json) and the platform rules every agent follows live in the core repository, `ultrastable/ultrastable` (`agents/AGENTS.md`, `instances/what-works/`, `doctrine/tenant-repos.json`).\n\n- Test: `node --test worker/*.test.mjs`.\n- Deploy: the platform builds this repository's `main` into the `ultrastable-what-works` Worker (D1 `ultrastable-what-works`, Workers AI, hourly cron). Nothing here holds a credential.\n- Honest grading: every verdict is computed by `worker/grade.js`; never type a grade. Findings carry no typed numbers. A model may only label a study's design and direction, each with a verbatim quote from its abstract.\n- No accounts, no cookies; reader guesses are anonymous counts.\n"
+   }
   }
  }
 }

@@ -10,6 +10,7 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-25
 
+- 2026-11-25: WHAT-WORKS-1 (Rowan: "A living atlas of what works in public policy: every programme graded by its trials and re-graded as evidence lands ... run as tenant app on Ultrastable Cloudflare account"; "Also need its own GitHub repo"). Tenant `instances/what-works/` (IDEA.md, instance.json, lifecycle.json, runway.json, worker/), registered `moving` to `ultrastable/what-works` in doctrine/tenant-repos.json so tenant-repos.yml creates the repository on merge. Verdicts are computed by `worker/grade.js` (design weights, replication counted by experiment, conflict cap), never typed; 15 curated programmes in 5 areas; hourly beat resolves citations (Crossref), searches OpenAlex and Europe PMC, reads leads in only under a verbatim-quote guard (`worker/reader.js`), logs every re-grade in `grade_changes`. Not yet in doctrine/topology.json: the Worker `ultrastable-what-works`, D1 and route `what-works.ultrastable.org` land after the owner's go-ahead on the deploy. Tests `node --test instances/what-works/worker/*.test.mjs` (in checks.yml).
 - 2026-11-25: Put parked/ PRs on the SLA ladder; stop the sweep reopening them (PARKED-PR-1) (#2084)
 - 2026-11-25: ZERO-MINUTES-1: worker merged #2081
 - 2026-11-25: ROADMAP-AGENT-AGENT-SCOREBOARD: QNFO.OPS #AGENT-SCOREBOARD: Per-agent and per-harness quality scoreboard from intake attri (#2081)
