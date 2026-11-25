@@ -153,6 +153,13 @@ class Reading(unittest.TestCase):
         for need in ("edited by hand", "second vendor directory", "license: LICENSE is missing", "unresolved merge marker", "has dependencies", "names a test that is not in worker", "workflow extra.yml: no `# budget:`", "not pinned to a full commit sha"):
             self.assertIn(need, bad)
 
+    def test_a_dated_exception_holds_until_its_date_and_then_the_rule_fails_again(self):
+        self.assertEqual(T.excepted("replication-ledger", STD, "2026-11-26"), {"worker/vendor/knowledge.js"})
+        self.assertEqual(T.excepted("replication-ledger", STD, "2027-01-01"), set())
+        self.assertEqual(T.excepted("unlearn", STD, "2026-11-26"), set())
+        std = json.loads(json.dumps(STD)); std["exceptions"]["x"] = {"vendor_outside": ["a"], "why": "short"}
+        self.assertTrue(any("exception for x needs" in b for b in T.check_core(REPO, std)))
+
     def test_live_reads_each_registered_repository_and_an_unreadable_one_fails(self):
         good = planned()
         def clone(repo, dest):

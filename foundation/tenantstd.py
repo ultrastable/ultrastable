@@ -254,8 +254,16 @@ def check_tenant(tenant: Path, std: dict | None = None, root: Path | None = None
     return bad
 
 
+def excepted(slug: str, std: dict, today: str | None = None) -> set:
+    """Vendored paths a tenant may keep outside the vendor directory: a dated exception in the standard, tied to the item that ends it."""
+    import datetime
+    e = (std.get("exceptions") or {}).get(slug) or {}
+    return set(e.get("vendor_outside", [])) if (today or datetime.date.today().isoformat()) <= str(e.get("until", "")) else set()
+
+
 def _vendor_problems(tenant: Path, std: dict) -> list[str]:
     vdir, bad = std["vendor"]["dir"], []
+    allowed = excepted(slug_of(tenant), std)
     head, listed = vendored_from(tenant, std)
     if (tenant / vdir / "VENDORED_FROM").is_file():
         if not re.match(r"^[\w.-]+/[\w.-]+@\S+$", head):
@@ -264,7 +272,7 @@ def _vendor_problems(tenant: Path, std: dict) -> list[str]:
             if dst not in listed:
                 bad.append(f"vendor: {dst} (core {src}) is not vendored; every tenant carries it")
         for dst, (src, sha) in sorted(listed.items()):
-            if not dst.startswith(vdir):
+            if not dst.startswith(vdir) and dst not in allowed:
                 bad.append(f"vendor: {dst} is vendored outside {vdir}")
             elif not (tenant / dst).is_file():
                 bad.append(f"vendor: VENDORED_FROM lists {dst}, which is missing")
@@ -278,7 +286,7 @@ def _vendor_problems(tenant: Path, std: dict) -> list[str]:
                 bad.append(f"vendor: {rel} is in {vdir} and not in VENDORED_FROM (a core file with no recorded source)")
     for p in sorted(tenant.rglob("vendor")):
         rel = p.relative_to(tenant).as_posix()
-        if p.is_dir() and not (set(p.relative_to(tenant).parts) & SKIP_DIRS) and rel != "vendor" and not rel.startswith(vdir):
+        if p.is_dir() and not (set(p.relative_to(tenant).parts) & SKIP_DIRS) and rel != "vendor" and not rel.startswith(vdir) and not any(a.startswith(rel + "/") for a in allowed):
             bad.append(f"vendor: {rel}/ is a second vendor directory; core files live only under {vdir}")
     return bad
 
@@ -438,10 +446,13 @@ def check_core(root: Path | None = None, std: dict | None = None) -> list[str]:
         for src, dst in std["vendor"]["base"].items():
             if v.get(src) != dst:
                 bad.append(f"{slug}: vendor map in {REG} does not carry {src} -> {dst} (every tenant vendors the standard's base files)")
-        bad += [f"{slug}: vendors {src} to {dst}, outside {std['vendor']['dir']}" for src, dst in v.items() if not dst.startswith(std["vendor"]["dir"])]
+        bad += [f"{slug}: vendors {src} to {dst}, outside {std['vendor']['dir']}" for src, dst in v.items() if not dst.startswith(std["vendor"]["dir"]) and dst not in excepted(slug, std)]
         bad += [f"{slug}: vendor map names {src}, which is not in the core" for src in v if not (root / src).is_file()]
         if t.get("write"):
             bad.append(f"{slug}: hand-typed `write` files in {REG}; a repository's files come from the one scaffold ({sc['dir']})")
+    for slug, e in std.get("exceptions", {}).items():
+        if slug != "_doc" and not (len(str(e.get("why", ""))) >= 40 and e.get("item") and re.match(r"^\d{4}-\d\d-\d\d$", str(e.get("until", "")))):
+            bad.append(f"{STD_CORE}: exception for {slug} needs a reason, a queue item and an `until` date")
     for slug, e in std.get("exempt", {}).items():
         if len(str(e.get("why", ""))) < 40:
             bad.append(f"{STD_CORE}: exempt {slug} needs a reason")
@@ -509,6 +520,9 @@ def main(argv=None) -> int:
         bad = check_tenant(Path(target), std, root)
         for b in bad:
             print("tenantstd:", b)
+        ex = (std.get("exceptions") or {}).get(slug_of(Path(target)))
+        if ex:
+            print(f"tenantstd: exception in effect until {ex['until']} ({ex['item']}): {', '.join(ex.get('vendor_outside', []))}")
         print(f"tenantstd: {slug_of(Path(target))} meets the standard" if not bad else f"tenantstd: {len(bad)} problem(s) in {slug_of(Path(target))}")
         return 0 if (a.measure or not bad) else 1
     if root is None:

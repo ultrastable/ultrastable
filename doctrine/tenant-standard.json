@@ -86,6 +86,15 @@
   "ai": "a Workers AI binding (registry `ai: true`); the Worker must still answer with no model",
   "cadence": "registry `scaffold.beat_hours`: how often the tenant's loop beats (1 hourly, 24 daily, 168 weekly)"
  },
+ "exceptions": {
+  "_doc": "A dated departure from one rule for one tenant, tied to the queue item that ends it. tenantstd accepts it until `until` (then the rule fails again) and prints it on every reading, so it is never silent.",
+  "replication-ledger": {
+   "vendor_outside": ["worker/vendor/knowledge.js"],
+   "until": "2026-12-31",
+   "item": "Q-MOVE-replication-ledger",
+   "why": "the ledger is still in state moving: production deploys from the core copy instances/replication-ledger/worker, which imports ./vendor/knowledge.js, and the tenant repository's worker/ must stay equal to it until the move finishes; the engine moves to vendor/ultrastable/ in the same change that makes the tenant repository the deploy source"
+  }
+ },
  "exempt": {
   "practical-solutions": {
    "why": "born as its own repository before the tenant shape existed: its Worker is worker/src/ with its own wrangler template and migrations, it vendors the whole core tree by hash through workers/tools/tenant_sync.py (vendor/ultrastable/VENDORED_FROM is that tool's JSON), and it deploys from its own pipeline to ultrastable.org. `tenantstd --check --tenant` measures it and prints what differs; the measure is reported, not enforced, until its move to this shape is filed as its own item.",
