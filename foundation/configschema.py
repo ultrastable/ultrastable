@@ -97,47 +97,21 @@ def _is(value, t):
     return isinstance(value, _KINDS[t])
 
 
+def _kit():
+    """OPEN-STANDARDS-1: one JSON Schema validator for every system, seed/scripts/stdkit.py (library first, stdlib subset otherwise)."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("seed_stdkit", REPO / "seed/scripts/stdkit.py")
+    mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod)
+    return mod
+
+
 def validate_subset(schema, value, path="$") -> list[str]:
-    bad = []
-    if not isinstance(schema, dict):
-        return bad
-    t = schema.get("type")
-    if t and not any(_is(value, k) for k in ([t] if isinstance(t, str) else t)):
-        return [f"{path}: expected {t}, got {_type(value)}"]
-    if "const" in schema and value != schema["const"]:
-        bad.append(f"{path}: must be {schema['const']!r}")
-    if "enum" in schema and value not in schema["enum"]:
-        bad.append(f"{path}: {value!r} not in {schema['enum']}")
-    if isinstance(value, str) and "pattern" in schema and not re.search(schema["pattern"], value):
-        bad.append(f"{path}: {value!r} does not match {schema['pattern']}")
-    if "anyOf" in schema and not any(not validate_subset(s, value, path) for s in schema["anyOf"]):
-        bad.append(f"{path}: matches none of anyOf")
-    if isinstance(value, dict):
-        bad += [f"{path}: missing required key {k!r}" for k in schema.get("required", []) if k not in value]
-        props = schema.get("properties", {})
-        for k, v in value.items():
-            if k in props:
-                bad += validate_subset(props[k], v, f"{path}.{k}")
-            elif schema.get("additionalProperties") is False:
-                bad.append(f"{path}: unexpected key {k!r}")
-            elif isinstance(schema.get("additionalProperties"), dict):
-                bad += validate_subset(schema["additionalProperties"], v, f"{path}.{k}")
-    if isinstance(value, list):
-        if len(value) < schema.get("minItems", 0):
-            bad.append(f"{path}: needs at least {schema['minItems']} items")
-        if isinstance(schema.get("items"), dict):
-            for i, v in enumerate(value):
-                bad += validate_subset(schema["items"], v, f"{path}[{i}]")
-    return bad
+    """The stdlib subset alone (no jsonschema library), as every seeded system runs it without dependencies."""
+    return _kit().validate(schema, value, prefer_library=False)
 
 
 def validate(schema, value) -> list[str]:
-    try:
-        import jsonschema  # full draft 2020-12 when available
-    except ImportError:
-        return validate_subset(schema, value)
-    v = jsonschema.Draft202012Validator(schema)
-    return [f"$.{'.'.join(str(p) for p in e.absolute_path)}: {e.message}" for e in sorted(v.iter_errors(value), key=lambda e: list(map(str, e.absolute_path)))]
+    return _kit().validate(schema, value)
 
 
 # ---------- files ----------
