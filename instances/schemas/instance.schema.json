@@ -1,0 +1,138 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/instance.schema.json",
+ "title": "Instance manifest: instances/<slug>/instance.json",
+ "type": "object",
+ "required": [
+  "name",
+  "slug",
+  "kind",
+  "owner",
+  "brand",
+  "idea",
+  "goals",
+  "positioning",
+  "funding",
+  "social",
+  "runtime",
+  "repos",
+  "disclosure",
+  "ip",
+  "budget"
+ ],
+ "properties": {
+  "name": {
+   "type": "string",
+   "minLength": 1
+  },
+  "slug": {
+   "type": "string",
+   "pattern": "^[a-z0-9][a-z0-9-]*$"
+  },
+  "kind": {
+   "type": "string",
+   "minLength": 1
+  },
+  "owner": {
+   "type": "object",
+   "required": [
+    "name"
+   ],
+   "properties": {
+    "name": {
+     "type": "string",
+     "minLength": 1
+    },
+    "contact_binding": {
+     "type": "string",
+     "pattern": "^[A-Z][A-Z0-9_]*$"
+    },
+    "contact_binding_backup": {
+     "type": "string",
+     "pattern": "^[A-Z][A-Z0-9_]*$"
+    }
+   }
+  },
+  "brand": {
+   "type": "object",
+   "required": [
+    "public_name",
+    "tagline"
+   ],
+   "properties": {
+    "public_name": {
+     "type": "string",
+     "minLength": 1
+    },
+    "tagline": {
+     "type": "string",
+     "minLength": 1
+    }
+   }
+  },
+  "idea": {
+   "type": "string",
+   "minLength": 1
+  },
+  "goals": {
+   "type": "array",
+   "items": {
+    "type": "string",
+    "minLength": 1
+   },
+   "minItems": 1
+  },
+  "positioning": {
+   "type": "string",
+   "minLength": 1
+  },
+  "funding": {
+   "type": "object"
+  },
+  "social": {
+   "type": "object"
+  },
+  "runtime": {
+   "type": "object",
+   "required": [
+    "provider"
+   ],
+   "properties": {
+    "provider": {
+     "type": "string",
+     "minLength": 1
+    }
+   }
+  },
+  "repos": {
+   "type": "object",
+   "required": [
+    "org"
+   ],
+   "properties": {
+    "org": {
+     "type": "string",
+     "minLength": 1
+    }
+   }
+  },
+  "disclosure": {
+   "type": "object"
+  },
+  "ip": {
+   "type": "object"
+  },
+  "budget": {
+   "type": "object"
+  },
+  "status": {
+   "not": {
+    "enum": [
+     "done",
+     "launched",
+     "complete"
+    ]
+   }
+  }
+ }
+}

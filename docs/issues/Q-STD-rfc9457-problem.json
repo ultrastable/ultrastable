@@ -1,0 +1,9 @@
+{
+  "id": "Q-STD-rfc9457-problem",
+  "title": "Q-STD-rfc9457-problem: route every hand-built JSON error body through the shared problem+json path",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -m foundation standards --adopted rfc9457-problem\n**Status:** open\n\nseed/worker/src/errors.js `userError` and `userJson` answer RFC 9457 problem details (application/problem+json with type, title, status, detail, instance, and the existing `code` and `error`). Routes that still build an error by hand, for example `json({ error: ... }, 400)` in site/worker.js, site/controlplane.js, dashboard/worker.js and seed/worker/src/index.js, do not. Replace each with `userJson(say(message, status, code), where)` so the body, the content type and the owner-only backend record are the same everywhere; keep every existing `code` value, since clients read it. Then add a lint to `python3 -m foundation userbackend --check` that fails a new hand-built JSON error response in a Worker.\n\nSTANDARDS-FIRST-1 (Rowan, 2026-11-25): \"Standards, don't reinvent the wheel. Apply standards.\" The row is `rfc9457-problem` in seed/standards/standards.json; this item closes when that row reads `\"adoption\": \"adopted\"` and every probe on it passes. Change the row in the same change that makes it true, never before.",
+  "labels": [
+    "standards",
+    "agent-ready"
+  ]
+}

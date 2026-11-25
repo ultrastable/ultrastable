@@ -591,7 +591,7 @@
       ],
       "timeout": 300,
       "root_cause": "a published page is not bound to any loop that regenerates it, so it stopped changing",
-      "owner": "product",
+      "owner": "product-manager",
       "remedy": "Bind the named page to a loop (generated block, feed or live read) in the system that serves it; never edit its text only to change it."
     },
     {
@@ -844,7 +844,7 @@
       ],
       "timeout": 120,
       "root_cause": "a knowledge-graph row is built but its probe answers no nodes",
-      "owner": "product",
+      "owner": "product-manager",
       "remedy": "Run the tenant's graph step and set the row back to pending until its probe shows nodes."
     },
     {
@@ -862,7 +862,7 @@
       "kind": "probe",
       "spec": "grep:.github/workflows/uiux.yml::--roll-baseline",
       "root_cause": "the UI/UX run no longer rolls a stale visual baseline",
-      "owner": "design",
+      "owner": "design-manager",
       "remedy": "Restore --roll-baseline in uiux.yml."
     },
     {
@@ -923,6 +923,38 @@
       "root_cause": "a switched-on manager has no runtime row (the roles table was not reconciled with the register) or its dispatch beat stopped (the tick skipped dispatch, for example while a cost breach holds the tick lean)",
       "owner": "org-designer",
       "remedy": "Read python3 -m foundation managers --live. For `missing`: the tick's reconcile step (seed/worker/src/managers.js hireStep) hires it once the Worker carries seed/autonomy/managers.json in its config; check the three config builders (deploy/deploy-workers.mjs, seed/worker/src/handoff.js tickConfigSource, seed/bootstrap/bootstrap.py). For `stopped` or `late`: read the last tick report at /health; when dispatch is skipped for a cost breach, cut the rows read (Q-MANAGERS-dispatch-starved) and never raise the limit to pass."
+    },
+    {
+      "id": "standards-register",
+      "failure_mode": "fm-standard-drift",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "standards",
+        "--check"
+      ],
+      "timeout": 300,
+      "root_cause": "a row of the standards register no longer measures true: a probe fails, a config stopped validating against its JSON Schema or arrived without one, a generated commit title left the Conventional Commits header, a rendered surface (catalog-info.yaml) drifted from its manifest, or an adopt-later row lost its item",
+      "owner": "operations",
+      "remedy": "Read the failing lines of python3 -m foundation standards --check: each names the row and the probe. Fix the code or the data so the standard is met again (render with python3 -m foundation standards --render, write the missing schema, correct the config the schema refused). Never loosen a schema, raise a baseline ceiling or change a row to adopted to pass (STANDARDS-FIRST-1)."
+    },
+    {
+      "id": "standards-live",
+      "failure_mode": "fm-standard-drift",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "standards",
+        "--live"
+      ],
+      "timeout": 300,
+      "root_cause": "a public address that a standards row names as its proof (llms.txt, the OpenAPI description, security.txt, the feeds, robots and sitemap, the JSON-LD on the home page) stopped answering in the form the standard requires",
+      "owner": "operations",
+      "remedy": "Read the failing lines of python3 -m foundation standards --live: each names the row, the address and what was missing. Repair the route in the Worker that serves it and redeploy; the same reading closes the item."
     }
   ]
 }

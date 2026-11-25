@@ -42,6 +42,7 @@
    ".gitignore",
    "CITATION.cff",
    "publiccode.yml",
+   "catalog-info.yaml",
    ".ultrastable/"
   ],
   "keep": [

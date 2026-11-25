@@ -98,7 +98,8 @@ def item(src: dict, e: dict, sc: float, why: list[str]) -> dict:
     return {"id": iid, "title": f"{iid}: {e['title'][:80]} ({src['id']})",
             "body": f"**Owner:** product-manager\n**Trigger:** every scout pass\n**Done check:** grep:ops/scout/adopted.jsonl::\"id\": \"{iid}\"\n**Prediction:** adoption_outcomes_recorded >= 1 within 336 h\n**Status:** open\n\n"
                     f"Scout finding from {src['id']} ({src['topic']}), score {sc}, matched {', '.join(why[:6])}.\n{e['title']}\n{e['link']}\n\n{e['summary'][:300]}\n\n"
-                    f"Decide: adopt (ship the change that closes a gap or adds the capability) or decline with a reason, then record `python3 -m foundation scout --adopt {iid} --outcome adopted|declined --reason ...`. The outcome re-weights this source.",
+                    + (f"This is a new version of a standard the system has adopted (`{src['standard']}` in seed/standards/standards.json). Read what changed, make the code that implements the standard conform, update the row's `tracked` version and `audited` date, and keep its probes passing (`python3 -m foundation standards --check`).\n\n" if src.get("standard") else "")
+                    + f"Decide: adopt (ship the change that closes a gap or adds the capability) or decline with a reason, then record `python3 -m foundation scout --adopt {iid} --outcome adopted|declined --reason ...`. The outcome re-weights this source.",
             "labels": ["role:product-manager", "growth", "scout"], "milestone": "Next", "workstream": "Growth"}
 
 
@@ -137,12 +138,21 @@ def run(root=REPO, fetch=http, now=None, apply=False) -> dict:
         except Exception as e:  # a dead source is recorded, never swallowed, and decays by the quiet-pass rule
             errors[s["id"]] = f"{type(e).__name__}: {e}"[:160]; continue
         wt = weights.get(s["id"], {}).get("weight", cfg["weight"]["initial"])
+        # STANDARDS-FIRST-1: a source that carries `standard` is the release feed of a standard this system has adopted (seed/standards/standards.json).
+        # Every new entry there is a new version to conform to, so it is filed whatever it scores; the first reading of such a source only records
+        # what already exists, so history is never filed as news.
+        std = s.get("standard")
+        first = bool(std) and not any(k.startswith(s["id"] + ":") for k in seen)
         for e in entries:
             key = s["id"] + ":" + e["id"]
             if key in seen:
                 continue
             seen.add(key); scanned += 1
+            if first:
+                continue
             sc, why = score(e, tg, cfg["needs"], wt)
+            if std:
+                sc, why = max(sc, float(cfg["threshold"]) + 1000), ["standard:" + std] + why  # ahead of scored findings inside max_per_run
             if sc >= cfg["threshold"]:
                 cands.append((sc, s, e, why))
     cands.sort(key=lambda c: -c[0])
@@ -192,6 +202,9 @@ def check(root=REPO) -> list[str]:
         ids.add(s["id"])
         if s["kind"] not in ("atom", "rss"): bad.append(f"{s['id']}: kind must be atom or rss")
         if not s["url"].startswith("https://"): bad.append(f"{s['id']}: url must be https")
+        reg = Path(root) / "seed/standards/standards.json"
+        if "standard" in s and not any(e["id"] == s["standard"] for e in (json.loads(reg.read_text(encoding="utf-8"))["entries"] if reg.is_file() else [])):
+            bad.append(f"{s['id']}: watches standard {s['standard']!r}, which is not in seed/standards/standards.json")
     for f in ("seen.json", "weights.json"):
         try:
             _j(root, f, {})

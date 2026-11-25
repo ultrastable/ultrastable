@@ -284,7 +284,7 @@ export default {
      "id": "failures",
      "title": "Failure modes under audit",
      "source": "doctrine/detectors.json",
-     "headline": "52 failure modes, 59 live detectors",
+     "headline": "53 failure modes, 61 live detectors",
      "rows": [
       [
        "selfhost-tick",
@@ -521,6 +521,14 @@ export default {
       [
        "managers-live",
        "fm-manager-not-running"
+      ],
+      [
+       "standards-register",
+       "fm-standard-drift"
+      ],
+      [
+       "standards-live",
+       "fm-standard-drift"
       ]
      ],
      "note": "A failing detector files one issue; the same failure twice means change the approach, three times an incident."
@@ -610,7 +618,7 @@ export default {
      "id": "roadmap",
      "title": "Roadmap",
      "source": "docs/issues",
-     "headline": "1171 issue files, 29 without a runnable probe (shrink-only)",
+     "headline": "1177 issue files, 29 without a runnable probe (shrink-only)",
      "rows": [
       [
        "open issues without a probe",
@@ -618,7 +626,7 @@ export default {
       ],
       [
        "issue files",
-       1171
+       1177
       ]
      ],
      "note": "Every open item carries an owner, a trigger and a done check the system runs."

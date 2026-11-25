@@ -2,7 +2,7 @@
 // Copyright (c) Ultrastable
 // {{name}}'s pages: server-rendered, readable without script, light and dark from the same tokens. The statements a page makes are rendered from
 // worker/contract.js by the shared module, so the words on the page and the words in /claims.json are one string.
-import { footerLinks, statementsHtml } from "../vendor/ultrastable/contract.js";
+import { footerLinks, statementsHtml, jsonLd } from "../vendor/ultrastable/contract.js";
 import { SPEC, BEAT_HOURS } from "./contract.js";
 import { ENTRIES, EMPTY_WHY } from "./entries.js";
 
@@ -22,7 +22,7 @@ footer a{display:inline-block;min-height:44px;line-height:44px}`;
 export function shell(title, body, path = "/") {
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(title)}</title><meta name="description" content="${esc(SPEC.summary)}"><link rel="canonical" href="${esc(SPEC.url + path)}">
-<link rel="alternate" type="application/feed+json" href="/feed.json"><style>${CSS}</style></head>
+<link rel="alternate" type="application/feed+json" href="/feed.json">${path === "/" ? jsonLd(SPEC) : ""}<style>${CSS}</style></head>
 <body><main>${body}${statementsHtml(SPEC, path)}</main><footer>${footerLinks(SPEC)}</footer></body></html>`;
 }
 

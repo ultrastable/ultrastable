@@ -147,6 +147,14 @@
       "url": "collisions.schema.json"
     },
     {
+      "name": "commit-convention.json",
+      "description": "Contract for doctrine/commit-convention.json",
+      "fileMatch": [
+        "doctrine/commit-convention.json"
+      ],
+      "url": "commit-convention.schema.json"
+    },
+    {
       "name": "compat-dates.json",
       "description": "Contract for doctrine/compat-dates.json",
       "fileMatch": [

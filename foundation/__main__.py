@@ -3,7 +3,7 @@
   python3 -m foundation new-system --manifest instances/<slug>/instance.json --out ../<slug> [--apply]
   python3 -m foundation validate --manifest FILE
   python3 -m foundation ladder            # credential ladder against the host it runs on
-  python3 -m foundation standards [--check|--apply|--probe ID]   standards register, surfaces, conformance lint
+  python3 -m foundation standards [--check|--apply|--probe ID|--commits|--live|--audit|--adopted ID]   standards register with measured decisions (STANDARDS-FIRST-1), surfaces, conformance lint, commit-title lint
   python3 -m foundation configschema [--check|--gen]   CONFIG-SCHEMA-1: every JSON config has a JSON Schema 2020-12 contract in a Schema Store catalog
   python3 -m foundation stdgen [--check|--gen]         STANDARDS-1: catalog-info.yaml (Backstage) and sbom.cdx.json (CycloneDX) from the registers
   python3 -m foundation filing --manifest FILE
@@ -561,6 +561,7 @@ def main(argv=None) -> int:
     ck = ws.add_parser("check"); ck.add_argument("--base", default="origin/main"); ck.add_argument("--head", default="HEAD")
     ou = ws.add_parser("outputs"); ou.add_argument("dirs", nargs="+"); ou.add_argument("--ignore", action="append", default=[])
     st = sub.add_parser("standards"); sg = st.add_mutually_exclusive_group(required=True); sg.add_argument("--apply", action="store_true"); sg.add_argument("--check", action="store_true"); sg.add_argument("--probe", metavar="ID")
+    sg.add_argument("--commits", action="store_true"); sg.add_argument("--live", action="store_true"); sg.add_argument("--audit", action="store_true"); sg.add_argument("--adopted", default=None, metavar="ID")
     f = sub.add_parser("filing"); f.add_argument("--manifest", required=True)
     r = sub.add_parser("autorun"); r.add_argument("--ticks", type=int, default=10); r.add_argument("--out", default=".selfhost/autorun"); r.add_argument("--public", action="store_true"); r.add_argument("--no-node", action="store_true")
     c = sub.add_parser("cockpit"); c.add_argument("--out", default=".selfhost/cockpit"); c.add_argument("--ticks", type=int, default=10); c.add_argument("--no-node", action="store_true")
@@ -681,6 +682,14 @@ def main(argv=None) -> int:
         except ValueError as e:
             print("refused:", e); return 1
         print("\n".join(bad) or "writeback ok"); return 1 if bad else 0
+    if a.cmd == "standards" and a.adopted:  # STANDARDS-FIRST-1: the closing probe of an item that brings a row to adopted
+        bad = standards.adopted(standards.REPO, a.adopted); print("\n".join(bad) or f"{a.adopted}: adopted, every probe passes"); return 1 if bad else 0
+    if a.cmd == "standards" and (a.commits or a.live or a.audit):
+        from . import commitlint
+        if a.audit:
+            print(standards.audit_table()); return 0
+        bad = commitlint.check() if a.commits else standards.live()
+        print("\n".join(bad) or f"standards {'commits' if a.commits else 'live'}: ok"); return 1 if bad else 0
     if a.cmd == "standards":
         if a.probe:  # STANDARDS-1 closing probe: passes when the register marks the standard supported
             sup = {e["id"]: e["support"] for e in standards._load(standards.REPO, standards.REG)["entries"]}.get(a.probe)

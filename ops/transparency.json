@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-25T21:50:16Z",
- "commit": "9c3c889c",
+ "generated": "2026-11-25T21:59:37Z",
+ "commit": "9cd3cb7c",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 116,
@@ -16,10 +16,10 @@
   "open_gaps": 2,
   "open_prs": 0,
   "merged_prs_listed": 0,
-  "prs_merged_total": 226,
+  "prs_merged_total": 228,
   "prs_merged_unattended": 9,
-  "backlog_open": 73,
-  "backlog_items": 1020
+  "backlog_open": 79,
+  "backlog_items": 1026
  },
  "unknowns": {
   "units": 138,
@@ -56,16 +56,16 @@
  },
  "throughput": {
   "queue": {
-   "items": 1020,
+   "items": 1026,
    "by_status": {
     "closed": 938,
-    "open": 73,
+    "open": 79,
     "done": 9
    },
-   "takeable_now": 72
+   "takeable_now": 78
   },
   "merged": {
-   "total": 226,
+   "total": 228,
    "by_origin": {
     "unattended executor": {
      "prs": 9,
@@ -73,7 +73,7 @@
      "lines_removed": 0
     },
     "agent session": {
-     "prs": 210,
+     "prs": 212,
      "lines_added": 0,
      "lines_removed": 0
     },
@@ -94,14 +94,30 @@
     "2026-11-21": 105,
     "2026-11-22": 31,
     "2026-11-23": 4,
-    "2026-11-25": 63
+    "2026-11-25": 65
    },
-   "median_hours_open_to_merge": 0.12
+   "median_hours_open_to_merge": 0.13
   },
   "changelog": [
    {
     "date": "2026-11-25",
     "changes": [
+     {
+      "n": 2243,
+      "title": "Every surface works together from the first deploy; one command proves it",
+      "by": "agent session",
+      "plus": 0,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/2243"
+     },
+     {
+      "n": 2274,
+      "title": "feat(standards): one standards kit for JSON Schema, CloudEvents and W3C PROV; manifest as a schema (OPEN-STANDARDS-1)",
+      "by": "agent session",
+      "plus": 0,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/2274"
+     },
      {
       "n": 2254,
       "title": "Bootstrap from zero: one tenant row admits a tenant (ADMIT-1); storage guard, draft front door, archived-repo skip",
@@ -1941,21 +1957,21 @@
   "deploys": {
    "site_runs": 50,
    "by_conclusion": {
-    "cancelled": 4,
     "success": 45,
+    "cancelled": 4,
     "failure": 1
    },
    "latest": {
-    "conclusion": "cancelled",
-    "createdAt": "2026-11-25T21:37:46Z",
-    "event": "push",
-    "headSha": "77e0b3aa3634cb478b3d58d0d7220a905d755d74"
+    "conclusion": "success",
+    "createdAt": "2026-11-25T21:50:15Z",
+    "event": "workflow_dispatch",
+    "headSha": "1944a6e261db3cac5170aabe33a441371cb88daa"
    },
    "per_day_success": {
-    "2026-11-21": 20,
+    "2026-11-21": 19,
     "2026-11-22": 12,
     "2026-11-23": 1,
-    "2026-11-25": 12
+    "2026-11-25": 13
    }
   },
   "executor": {
@@ -2021,7 +2037,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 137.3,
+   "age_s": 231.9,
    "status": "fresh",
    "missed": 0
   },
@@ -2045,7 +2061,7 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 542.3,
+   "age_s": 416.9,
    "status": "fresh",
    "missed": 0
   },
@@ -2053,7 +2069,7 @@
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 21838.3,
+   "age_s": 22425.9,
    "status": "fresh",
    "missed": 0
   }
@@ -2272,7 +2288,7 @@
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-25T21:49:37Z",
+  "generated": "2026-11-25T21:59:08Z",
   "blindspots": {
    "backup": {
     "skipped": "last drill is fresh"
@@ -2298,36 +2314,36 @@
     "baseline": 1310,
     "target": 1500,
     "expected_today": 1404.4,
-    "value": 12122,
+    "value": 12129,
     "behind": false,
-    "progress": 56.91
+    "progress": 56.94
    },
    {
     "id": "visitors_7d",
     "baseline": 564,
     "target": 650,
     "expected_today": 606.7,
-    "value": 3236,
+    "value": 3239,
     "behind": false,
-    "progress": 31.07
+    "progress": 31.1
    },
    {
     "id": "agent_hits_7d",
     "baseline": 817,
     "target": 1000,
-    "expected_today": 907.9,
-    "value": 9616,
+    "expected_today": 908.0,
+    "value": 9626,
     "behind": false,
-    "progress": 48.08
+    "progress": 48.14
    },
    {
     "id": "pilot_page_views_7d",
     "baseline": 326,
     "target": 400,
     "expected_today": 362.8,
-    "value": 3885,
+    "value": 3887,
     "behind": false,
-    "progress": 48.09
+    "progress": 48.12
    }
   ],
   "experiments": [
@@ -2564,41 +2580,41 @@
  "growth": {
   "mix": {
    "growth": 0,
-   "fix": 1,
-   "maintenance": 19,
+   "fix": 2,
+   "maintenance": 18,
    "total": 20,
    "growth_share": 0.0,
    "target": 0.4
   },
   "target_growth_share": 0.4,
   "growth_items_takeable": 4,
-  "items_takeable": 72,
+  "items_takeable": 78,
   "metrics": [
    {
     "id": "pageviews_7d",
     "what": "human page views in the last 7 days (first-party, cookieless, bots excluded)",
-    "value": 12122,
+    "value": 12129,
     "target": 1500,
     "breach": false
    },
    {
     "id": "visitors_7d",
     "what": "distinct visitors in the last 7 days",
-    "value": 3236,
+    "value": 3239,
     "target": 650,
     "breach": false
    },
    {
     "id": "agent_hits_7d",
     "what": "requests from bots and agents in the last 7 days (discovery documents, MCP, llms.txt)",
-    "value": 9616,
+    "value": 9626,
     "target": 1000,
     "breach": false
    },
    {
     "id": "pilot_page_views_7d",
     "what": "views of the pilot application page in the last 7 days",
-    "value": 3885,
+    "value": 3887,
     "target": 400,
     "breach": false
    }
@@ -2617,7 +2633,7 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 200.5,
+   "last_beat_age_s": 269.2,
    "expected_interval_s": 21600,
    "beats_24h": 60,
    "expected_24h": 4.0,
@@ -2628,7 +2644,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 21901.5,
+   "last_beat_age_s": 22463.2,
    "expected_interval_s": 86400,
    "beats_24h": 2,
    "expected_24h": 1.0,
@@ -2639,9 +2655,9 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 739.5,
+   "last_beat_age_s": 552.2,
    "expected_interval_s": 86400,
-   "beats_24h": 14,
+   "beats_24h": 15,
    "expected_24h": 1.0,
    "median_jitter_s": null,
    "status": "ticking"
@@ -2650,7 +2666,7 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 100405.5,
+   "last_beat_age_s": 100967.2,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -2661,7 +2677,7 @@
    "id": "a11y",
    "what": "A11Y-LOOP-1: the weekly accessibility and layout audit of every public page",
    "source": "workflow",
-   "last_beat_age_s": 20978.5,
+   "last_beat_age_s": 21540.2,
    "expected_interval_s": 604800,
    "beats_24h": 1,
    "expected_24h": 0.1,
@@ -2679,7 +2695,7 @@
    "id": "claims",
    "what": "words checked against code and the deployed site",
    "source": "workflow",
-   "last_beat_age_s": 15202.5,
+   "last_beat_age_s": 15764.2,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -2690,7 +2706,7 @@
    "id": "watchdog",
    "what": "RESILIENCE-1: the GitHub watchdog that probes every clock and restarts the stopped ones; the tick Worker dispatches it again when it is older than 12 hours",
    "source": "workflow",
-   "last_beat_age_s": -4.5,
+   "last_beat_age_s": 87.2,
    "expected_interval_s": 43200,
    "beats_24h": 60,
    "expected_24h": 2.0,
@@ -2701,7 +2717,7 @@
    "id": "temporal",
    "what": "the daily trend read: series per component, loop and entry, and what they show",
    "source": "workflow",
-   "last_beat_age_s": 16845.5,
+   "last_beat_age_s": 17407.2,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -2719,7 +2735,7 @@
    "id": "intent-yield",
    "what": "the daily intent yield: every owner directive's own probe, restatements charged to the original, /yield",
    "source": "workflow",
-   "last_beat_age_s": 13544.5,
+   "last_beat_age_s": 14106.2,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -4888,6 +4904,15 @@
  "changes": {
   "commits": [
    {
+    "sha": "9cd3cb7c",
+    "at": "2026-11-25T21:51:53+00:00",
+    "author": "Claude",
+    "subject": "Repair the merge with main: the seed's visibility gate keeps main's public reads and adds the contract's two",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/9cd3cb7c17cff2c0bf504e481ec8e0cb769e90c1"
+   },
+   {
     "sha": "9c3c889c",
     "at": "2026-11-25T21:40:00+00:00",
     "author": "Claude",
@@ -5237,15 +5262,6 @@
     "pr": null,
     "item": "TENANT-STANDARD-1",
     "url": "https://github.com/ultrastable/ultrastable/commit/841996f994e7126302b04f9371ceb7c9ebae2f7d"
-   },
-   {
-    "sha": "c90ed731",
-    "at": "2026-11-25T21:06:34+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "watchdog: clock probe (RESILIENCE-1) [skip ci]",
-    "pr": null,
-    "item": "RESILIENCE-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/c90ed731c896d6c5e85a1671b125e7b35760b252"
    }
   ],
   "pull_requests": []

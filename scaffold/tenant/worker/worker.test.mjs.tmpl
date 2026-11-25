@@ -80,3 +80,13 @@ test("a write is refused and an unknown page is a 404 page", async () => {
   assert.equal(r.status, 405);
   assert.equal((await get({ DB: d1() }, "/nope")).status, 404);
 });
+
+test("the home page says what the system is as schema.org JSON-LD, from the same spec the page shows", async () => {
+  const { SPEC } = await import("./contract.js");
+  const html = await (await get({ DB: d1() }, "/")).text();
+  const m = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
+  assert.ok(m, "the home page carries JSON-LD");
+  const ld = JSON.parse(m[1]);
+  assert.equal(ld["@context"], "https://schema.org"); assert.equal(ld["@type"], "WebSite");
+  assert.equal(ld.name, SPEC.name); assert.equal(ld.description, SPEC.summary); assert.equal(ld.mainEntity["@type"], "SoftwareApplication");
+});

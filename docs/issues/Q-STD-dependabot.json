@@ -1,0 +1,9 @@
+{
+  "id": "Q-STD-dependabot",
+  "title": "Q-STD-dependabot: every repository and every new system carries dependabot.yml",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -m foundation standards --adopted dependabot\n**Status:** open\n\nMeasured 2026-11-25: only ultrastable/ultrastable has .github/dependabot.yml. The seed template (seed/.github/) and the tenant scaffold (scaffold/tenant/.github/) carry none, so seed, second-tenant, practical-solutions, unlearn, what-works, replication-ledger, base-rates, did-it-work, open-questions and ops have no automated updates, and their commit-pinned actions never move. Add `.github/dependabot.yml` (version 2; `github-actions` weekly, grouped, at most 2 open pull requests; `npm` monthly where a package.json exists) to seed/.github/ and as scaffold/tenant/.github/dependabot.yml.tmpl, require it in doctrine/tenant-standard.json `files` and in the repository standard (REPO-STANDARD-1), and let the tenant-sync and fleet-map loops carry it to the existing repositories. The sweeper already merges green Dependabot branches (DEP-LOOP-1).\n\nSTANDARDS-FIRST-1 (Rowan, 2026-11-25): \"Standards, don't reinvent the wheel. Apply standards.\" The row is `dependabot` in seed/standards/standards.json; this item closes when that row reads `\"adoption\": \"adopted\"` and every probe on it passes. Change the row in the same change that makes it true, never before.",
+  "labels": [
+    "standards",
+    "agent-ready"
+  ]
+}

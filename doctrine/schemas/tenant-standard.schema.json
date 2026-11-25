@@ -1,222 +1,256 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://ultrastable.io/schemas/doctrine/tenant-standard.schema.json",
-  "title": "tenant-standard (doctrine/tenant-standard.json)",
-  "description": "Contract for doctrine/tenant-standard.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
-  "type": "object",
-  "properties": {
-    "_doc": {
-      "type": "string"
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/tenant-standard.schema.json",
+ "title": "Tenant standard (TENANT-STANDARD-1)",
+ "type": "object",
+ "required": [
+  "rule",
+  "version",
+  "core_repo",
+  "bootstrap_url",
+  "positioning",
+  "files",
+  "live",
+  "identity",
+  "survival",
+  "package",
+  "vendor",
+  "workflows",
+  "scaffold"
+ ],
+ "properties": {
+  "rule": {
+   "type": "string",
+   "pattern": "^[A-Z][A-Z0-9-]+-\\d+$"
+  },
+  "version": {
+   "type": "integer",
+   "minimum": 1
+  },
+  "core_repo": {
+   "type": "string",
+   "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"
+  },
+  "bootstrap_url": {
+   "type": "string",
+   "pattern": "^https://[^\\s]+$"
+  },
+  "positioning": {
+   "type": "string",
+   "minLength": 1
+  },
+  "files": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "id",
+     "path",
+     "why"
+    ],
+    "properties": {
+     "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+     },
+     "path": {
+      "type": "string",
+      "minLength": 1
+     },
+     "contains": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "minLength": 1
+      }
+     },
+     "why": {
+      "type": "string",
+      "minLength": 1
+     }
+    }
+   },
+   "minItems": 1
+  },
+  "live": {
+   "type": "object",
+   "required": [
+    "platform",
+    "links",
+    "undeployed"
+   ],
+   "properties": {
+    "platform": {
+     "type": "string",
+     "pattern": "^https://[^\\s]+$"
     },
+    "links": {
+     "type": "array",
+     "items": {
+      "type": "string",
+      "minLength": 1
+     }
+    },
+    "undeployed": {
+     "type": "string",
+     "minLength": 1
+    }
+   }
+  },
+  "identity": {
+   "type": "object",
+   "required": [
+    "keys"
+   ],
+   "properties": {
+    "keys": {
+     "type": "array",
+     "items": {
+      "type": "string",
+      "minLength": 1
+     },
+     "minItems": 1,
+     "uniqueItems": true
+    }
+   }
+  },
+  "survival": {
+   "type": "array",
+   "items": {
+    "type": "string",
+    "pattern": "^[a-z0-9][a-z0-9-]*$"
+   },
+   "minItems": 13,
+   "uniqueItems": true
+  },
+  "package": {
+   "type": "object",
+   "required": [
+    "dependencies",
+    "why"
+   ],
+   "properties": {
+    "dependencies": {
+     "type": "string",
+     "minLength": 1
+    },
+    "why": {
+     "type": "string",
+     "minLength": 1
+    }
+   }
+  },
+  "vendor": {
+   "type": "object",
+   "required": [
+    "dir",
+    "base",
+    "rule"
+   ],
+   "properties": {
     "rule": {
-      "type": "string"
+     "type": "string",
+     "minLength": 1
     },
-    "version": {
-      "type": "number"
+    "dir": {
+     "type": "string",
+     "minLength": 1
     },
-    "core_repo": {
-      "type": "string"
+    "base": {
+     "type": "object",
+     "additionalProperties": {
+      "type": "string",
+      "minLength": 1
+     }
+    }
+   }
+  },
+  "workflows": {
+   "type": "object",
+   "required": [
+    "header",
+    "needs",
+    "pins",
+    "runner"
+   ],
+   "properties": {
+    "pins": {
+     "type": "string",
+     "minLength": 1
     },
-    "bootstrap_url": {
-      "type": "string"
+    "runner": {
+     "type": "string",
+     "minLength": 1
     },
-    "positioning": {
-      "type": "string"
+    "header": {
+     "type": "array",
+     "items": {
+      "type": "string",
+      "pattern": "^# [a-z-]+:$"
+     }
+    },
+    "needs": {
+     "type": "array",
+     "items": {
+      "type": "string",
+      "minLength": 1
+     }
+    }
+   }
+  },
+  "scaffold": {
+   "type": "object",
+   "required": [
+    "dir",
+    "files",
+    "defaults"
+   ],
+   "properties": {
+    "dir": {
+     "type": "string",
+     "minLength": 1
     },
     "files": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "contains": {
-            "type": "array"
-          },
-          "id": {
-            "type": "string"
-          },
-          "json": {
-            "type": "object"
-          },
-          "path": {
-            "type": "string"
-          },
-          "why": {
-            "type": "string"
-          }
-        }
-      }
+     "type": "array",
+     "items": {
+      "type": "object"
+     }
     },
-    "live": {
-      "type": "object",
-      "properties": {
-        "_doc": {
-          "type": "string"
-        },
-        "platform": {
-          "type": "string"
-        },
-        "links": {
-          "type": "array"
-        },
-        "undeployed": {
-          "type": "string"
-        }
-      }
+    "generated": {
+     "type": "array",
+     "items": {
+      "type": "string",
+      "minLength": 1
+     }
     },
-    "identity": {
-      "type": "object",
-      "properties": {
-        "_doc": {
-          "type": "string"
-        },
-        "keys": {
-          "type": "array"
-        }
+    "defaults": {
+     "type": "object",
+     "required": [
+      "beat_hours",
+      "noun",
+      "host",
+      "compatibility_date"
+     ],
+     "properties": {
+      "noun": {
+       "type": "string",
+       "minLength": 1
+      },
+      "beat_hours": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "host": {
+       "type": "string",
+       "pattern": "\\{slug\\}"
+      },
+      "compatibility_date": {
+       "type": "string",
+       "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
       }
-    },
-    "survival": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "package": {
-      "type": "object",
-      "properties": {
-        "dependencies": {
-          "type": "string"
-        },
-        "why": {
-          "type": "string"
-        }
-      }
-    },
-    "vendor": {
-      "type": "object",
-      "properties": {
-        "dir": {
-          "type": "string"
-        },
-        "base": {
-          "type": "object"
-        },
-        "rule": {
-          "type": "string"
-        }
-      }
-    },
-    "workflows": {
-      "type": "object",
-      "properties": {
-        "header": {
-          "type": "array"
-        },
-        "needs": {
-          "type": "array"
-        },
-        "pins": {
-          "type": "string"
-        },
-        "runner": {
-          "type": "string"
-        }
-      }
-    },
-    "scaffold": {
-      "type": "object",
-      "properties": {
-        "dir": {
-          "type": "string"
-        },
-        "_doc": {
-          "type": "string"
-        },
-        "files": {
-          "type": "array"
-        },
-        "copy": {
-          "type": "object"
-        },
-        "copy_if_missing": {
-          "type": "object"
-        },
-        "generated": {
-          "type": "array"
-        },
-        "defaults": {
-          "type": "object"
-        }
-      }
-    },
-    "options": {
-      "type": "object",
-      "properties": {
-        "_doc": {
-          "type": "string"
-        },
-        "extra_workflows": {
-          "type": "string"
-        },
-        "extra_vendor": {
-          "type": "string"
-        },
-        "extra_scripts": {
-          "type": "string"
-        },
-        "extra_manifest": {
-          "type": "string"
-        },
-        "data": {
-          "type": "string"
-        },
-        "ai": {
-          "type": "string"
-        },
-        "cadence": {
-          "type": "string"
-        }
-      }
-    },
-    "exceptions": {
-      "type": "object",
-      "properties": {
-        "_doc": {
-          "type": "string"
-        },
-        "replication-ledger": {
-          "type": "object"
-        }
-      }
-    },
-    "exempt": {
-      "type": "object",
-      "properties": {
-        "practical-solutions": {
-          "type": "object"
-        }
-      }
-    },
-    "$schema": {
-      "type": "string"
+     }
     }
-  },
-  "required": [
-    "_doc",
-    "bootstrap_url",
-    "core_repo",
-    "exceptions",
-    "exempt",
-    "files",
-    "identity",
-    "live",
-    "options",
-    "package",
-    "positioning",
-    "rule",
-    "scaffold",
-    "survival",
-    "vendor",
-    "version",
-    "workflows"
-  ]
+   }
+  }
+ }
 }
