@@ -1,5 +1,5 @@
 {
-  "rule": "IMPROVE-1 (Rowan, 2026-11-25): \"Automatically improve impact and reach. An Ultrastable system shall always continue improving entirely on its own, 100% autonomously.\"",
+  "rule": "IMPROVE-1 (Rowan, 2026-11-25): \"Automatically improve impact and reach. An Ultrastable system shall always continue improving entirely on its own, 100% autonomously.\" FRONTEND-AUTO-1 (Rowan, 2026-11-25): \"An Ultrastable system shall always automate its back-end and also front-end development.\"",
   "min_items_per_cycle": 2,
   "max_open_from_loop": 12,
   "plus_share": 0.2,
@@ -70,6 +70,12 @@
       "path": "ops/insight/findings.json",
       "key": null,
       "max_age_hours": 72
+    },
+    {
+      "id": "uiux",
+      "path": "ops/uiux/status.json",
+      "key": null,
+      "max_age_hours": 48
     }
   ],
   "bank": [
@@ -135,6 +141,60 @@
       "metric": "external_referrals_7d",
       "title": "Let the executor rank work by the kept rate of past improve verdicts per area",
       "probe": "grep:foundation/executor.py::improve"
+    },
+    {
+      "id": "fe-vitals-beacon",
+      "kind": "frontend",
+      "metric": "uiux:findings_total",
+      "better": "down",
+      "title": "Report real-user Core Web Vitals (LCP, CLS, INP) through the cookieless beacon so speed is measured, not guessed",
+      "probe": "grep:site/worker.js::PerformanceObserver"
+    },
+    {
+      "id": "fe-skip-link",
+      "kind": "frontend",
+      "metric": "uiux:findings_total",
+      "better": "down",
+      "title": "Add a skip-to-content link on every page so keyboard and screen-reader users reach the content first",
+      "probe": "grep:site/worker.js::skip-link"
+    },
+    {
+      "id": "fe-speculation",
+      "kind": "frontend",
+      "metric": "uiux:findings_total",
+      "better": "down",
+      "title": "Prefetch the next likely page with speculation rules so clicks between core pages feel instant",
+      "probe": "grep:site/worker.js::speculationrules"
+    },
+    {
+      "id": "fe-font-display",
+      "kind": "frontend",
+      "metric": "uiux:findings_total",
+      "better": "down",
+      "title": "Load web fonts with font-display swap so text shows at once on slow phones",
+      "probe": "grep:site/worker.js::font-display"
+    },
+    {
+      "id": "fe-ab-cta",
+      "kind": "frontend",
+      "metric": "external_referrals_7d",
+      "title": "Pre-register an A/B test of the home page's main call to action and let the loop promote the winner",
+      "probe": "grep:doctrine/design-experiments.json::home-cta"
+    },
+    {
+      "id": "be-server-timing",
+      "kind": "backend",
+      "metric": "uiux:findings_total",
+      "better": "down",
+      "title": "Send Server-Timing headers from the site Worker so slow back-end steps show up in every audit",
+      "probe": "grep:site/worker.js::Server-Timing"
+    },
+    {
+      "id": "be-early-hints",
+      "kind": "backend",
+      "metric": "external_referrals_7d",
+      "title": "Send 103 Early Hints for the main stylesheet and script from the site Worker",
+      "probe": "grep:site/worker.js::Link.*rel=preload"
     }
   ]
 }

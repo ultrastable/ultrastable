@@ -31,6 +31,29 @@ class Improve(unittest.TestCase):
         for it in p["items"]:
             self.assertIn("**Prediction:**", it["body"]); self.assertIn("**Owner:**", it["body"])
 
+    def test_frontend_and_backend_lanes_every_pass(self):
+        d = sandbox(); items = improve.plan(d)["items"]
+        kinds = {l for it in items for l in it["labels"]}
+        self.assertIn("frontend", kinds); self.assertIn("backend", kinds)
+        fe = next(it for it in items if "frontend" in it["labels"])
+        for gate in ("uiux", "Core Web Vitals", "human-voice"):
+            self.assertIn(gate, fe["body"])
+        self.assertIn("role:uiux-manager", fe["labels"])
+
+    def test_lower_is_better_settles(self):
+        d = sandbox(); now = datetime.now(timezone.utc)
+        (d / "ops/uiux").mkdir(parents=True); (d / "ops/uiux/status.json").write_text(json.dumps({"findings_total": 3}))
+        (d / "ops/improve").mkdir()
+        old = (now - timedelta(days=8)).isoformat()
+        (d / improve.LEDGER).write_text(json.dumps({"at": old, "event": "filed", "id": "Q-IMPROVE-fe", "metric": "uiux:findings_total", "baseline": 5, "better": "down"}) + "\n")
+        (d / "docs/issues/Q-IMPROVE-fe.json").write_text(json.dumps({"id": "Q-IMPROVE-fe", "body": "**Status:** closed"}))
+        self.assertEqual(improve.plan(d, now)["settle"][0]["verdict"], "kept")
+
+    def test_seed_carries_the_engine(self):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("s", REPO / "seed/scripts/improve.py"); m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+        self.assertEqual(m.check(REPO / "seed"), [])
+
     def test_idempotent(self):
         d = sandbox(); p = improve.plan(d); improve.apply(d, p)
         self.assertTrue(set(p["filed"]).isdisjoint(improve.plan(d)["filed"]))

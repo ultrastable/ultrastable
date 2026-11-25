@@ -666,6 +666,7 @@ export default {
   "host-sync",
   "hosts",
   "ignition-ladder",
+  "improve",
   "index-refresh",
   "insight-loop",
   "intent-yield",
@@ -2097,6 +2098,17 @@ export default {
     "workflows": [
      "seed-launch"
     ]
+   },
+   {
+    "closing_probe": "file:foundation/improve.py",
+    "id": "improve",
+    "kind": "plussing",
+    "owner": "product-manager",
+    "server_owner": "ultrastable-tick",
+    "sla": "1d",
+    "summary": "IMPROVE-1: files reach, impact and plus work every pass, escalates stalled manager tiers, settles each change on its metric.",
+    "trigger": "daily product-manager workflow",
+    "workflows": []
    }
   ],
   "workers": [
@@ -2446,247 +2458,247 @@ export default {
  },
  "readings": {
   "access-check:claims_drift": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "access-check:spend": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
   },
   "access-check:uptime": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "access-check:value": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "air-quality:claims_drift": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "air-quality:spend": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
   },
   "air-quality:uptime": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "air-quality:value": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "blindspot:claims_drift": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "blindspot:spend": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
   },
   "blindspot:uptime": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "blindspot:value": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 2.02
   },
   "claims_drift": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0
   },
   "country-snapshot:claims_drift": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "country-snapshot:spend": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
   },
   "country-snapshot:uptime": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "country-snapshot:value": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "deploy_health": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "free-tier-meter:claims_drift": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "free-tier-meter:spend": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
   },
   "free-tier-meter:uptime": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "free-tier-meter:value": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "happy_paths": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "loop-ledger:claims_drift": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "loop-ledger:spend": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "loop-ledger:uptime": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "loop-ledger:value": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "numbers-board:claims_drift": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "numbers-board:spend": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
   },
   "numbers-board:uptime": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "numbers-board:value": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "portfolio-board:claims_drift": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "portfolio-board:spend": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
   },
   "portfolio-board:uptime": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "portfolio-board:value": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "self_shipping": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.714
   },
   "spend": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
   },
   "stalled_clocks": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 1
   },
   "ui_findings": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0
   },
   "unattended_horizon": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 730
   },
   "value": {
-   "at": "2026-11-24T17:40:25Z",
+   "at": "2026-11-25T12:43:36Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
