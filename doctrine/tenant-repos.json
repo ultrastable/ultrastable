@@ -1,5 +1,5 @@
 {
- "_doc": "TENANT-REPO-1 (Rowan, 2026-11-22: \"This is an app, a tenant, so it needs its own repo.\"): every tenant app lives in its own repository of the org; this repository keeps only its manifest (IDEA.md, instance.json, lifecycle.json, runway.json, README pointer). Read by foundation/tenantrepos.py (--check in checks) and by .github/workflows/tenant-repos.yml, which creates a missing repository from the tenant's folder with its history. The tenant's Worker is deployed by deploy-ultrastable, which builds it from the tenant repository named as `source` in doctrine/topology.json.",
+ "_doc": "TENANT-REPO-1 (Rowan, 2026-11-22: \"This is an app, a tenant, so it needs its own repo.\"): every tenant app lives in its own repository of the org; this repository keeps only its manifest (IDEA.md, instance.json, lifecycle.json, runway.json, README pointer). Read by foundation/tenantrepos.py (--check in checks) and by .github/workflows/tenant-repos.yml, which creates a missing repository from the tenant's folder with its history. The tenant's Worker is deployed by deploy-ultrastable, which builds it from the tenant repository named as `source` in doctrine/topology.json. TENANT-SANDBOX-1 (Rowan, 2026-11-25: \"All UltraStable deployments shall have their own GitHub repo and shall be sandboxed as tenant apps.\"): every tenant with a worker carries `sandbox` (its own stores named ultrastable-<slug>*, its own secret names, a daily budget whose D1 part is sampled by the tick through instances/ultrastable/cost-budgets.json); `tenantrepos --isolation` is the probe. States planned (manifest only; its repository is created before its first code, by the same workflow) and retired (no live deployment).",
  "org": "ultrastable",
  "tenants": {
   "practical-solutions": {
@@ -44,6 +44,17 @@
      }
     },
     "AGENTS.md": "# Unlearn: agent instructions\n\n> Ultrastable is the foundation for any autonomous system.\n\nUnlearn is a tenant system on Ultrastable. This repository holds its code: the evidence encyclopedia and its loops (`worker/`), the coaching\ntool's phases (`phases.json`), and core files it reads, vendored under `vendor/ultrastable/`. Its manifest (IDEA.md, instance.json,\nlifecycle.json, runway.json) and the platform rules every agent follows live in the core repository, `ultrastable/ultrastable`\n(`agents/AGENTS.md`, `instances/unlearn/`, `doctrine/tenant-repos.json`).\n\n- Test: `node --test worker/*.test.mjs` (CI runs it on every pull request).\n- Deploy: the platform builds this repository's `main` into the `ultrastable-unlearn` Worker (D1 `ultrastable-unlearn`, Workers AI, hourly\n  cron, `unlearn.ultrastable.org`). Nothing here holds a credential.\n- Honest grading: nothing publishes on an unverified citation; a model may only label or re-word, never add a number, a name or a source.\n- No child accounts and no child data; no cookies; reader taps are anonymous counts.\n"
+   },
+   "sandbox": {
+    "stores": [
+     "ultrastable-unlearn"
+    ],
+    "secrets": [],
+    "budget": {
+     "requests_per_day": 20000,
+     "d1_reads_per_day": 500000,
+     "ai_neurons_per_day": 2000
+    }
    }
   },
   "what-works": {
@@ -78,6 +89,17 @@
      }
     },
     "AGENTS.md": "# What Works: agent instructions\n\n> Ultrastable is the foundation for any autonomous system.\n\nWhat Works is a tenant system on Ultrastable: a living atlas of what works in public policy. This repository holds its code (`worker/`) and the core files it reads, vendored under `vendor/ultrastable/`. Its manifest (IDEA.md, instance.json, lifecycle.json, runway.json) and the platform rules every agent follows live in the core repository, `ultrastable/ultrastable` (`agents/AGENTS.md`, `instances/what-works/`, `doctrine/tenant-repos.json`).\n\n- Test: `node --test worker/*.test.mjs`.\n- Deploy: the platform builds this repository's `main` into the `ultrastable-what-works` Worker (D1 `ultrastable-what-works`, Workers AI, hourly cron). Nothing here holds a credential.\n- Honest grading: every verdict is computed by `worker/grade.js`; never type a grade. Findings carry no typed numbers. A model may only label a study's design and direction, each with a verbatim quote from its abstract.\n- No accounts, no cookies; reader guesses are anonymous counts.\n"
+   },
+   "sandbox": {
+    "stores": [
+     "ultrastable-what-works"
+    ],
+    "secrets": [],
+    "budget": {
+     "requests_per_day": 20000,
+     "d1_reads_per_day": 500000,
+     "ai_neurons_per_day": 2000
+    }
    }
   },
   "replication-ledger": {
@@ -112,7 +134,69 @@
      }
     },
     "AGENTS.md": "# Replication Ledger: agent instructions\n\n> Ultrastable is the foundation for any autonomous system.\n\nThe Replication Ledger is a tenant system on Ultrastable: which landmark findings held up when replicated and which failed, across many fields. This repository holds its code (`worker/`) and its data (`worker/data/findings.json`). Its manifest (IDEA.md, instance.json, lifecycle.json, runway.json) and the platform rules every agent follows live in the core repository, `ultrastable/ultrastable` (`agents/AGENTS.md`, `instances/replication-ledger/`, `doctrine/tenant-repos.json`).\n\n- Test: `node --test worker/*.test.mjs`. Validate the data: `node worker/cli.mjs validate`. Check every DOI at Crossref: `node worker/cli.mjs verify`.\n- Add a replication: `node worker/cli.mjs add <finding> <doi> --kind K --outcome O [--prereg] --summary \"...\"`; the citation comes from Crossref by DOI and the standing change is logged.\n- Honest standings: every standing is computed by `worker/standing.js`; never type one. Summaries carry no typed numbers.\n- No accounts, no cookies. Nothing here holds a credential.\n"
+   },
+   "sandbox": {
+    "stores": [
+     "ultrastable-replication-ledger"
+    ],
+    "secrets": [],
+    "budget": {
+     "requests_per_day": 20000,
+     "d1_reads_per_day": 500000,
+     "ai_neurons_per_day": 2000
+    }
    }
+  },
+  "base-rates": {
+   "repo": "ultrastable/base-rates",
+   "state": "planned",
+   "source": "instances/base-rates",
+   "keep_in_core": [
+    "IDEA.md",
+    "instance.json",
+    "lifecycle.json",
+    "runway.json",
+    "README.md"
+   ],
+   "visibility": "public",
+   "description": "Base Rates: a tenant system running on Ultrastable.",
+   "why": "manifest only; its repository is created before its first line of code, so its code is born outside the core"
+  },
+  "did-it-work": {
+   "repo": "ultrastable/did-it-work",
+   "state": "planned",
+   "source": "instances/did-it-work",
+   "keep_in_core": [
+    "IDEA.md",
+    "instance.json",
+    "lifecycle.json",
+    "runway.json",
+    "README.md"
+   ],
+   "visibility": "public",
+   "description": "Did It Work: a tenant system running on Ultrastable.",
+   "why": "manifest only; its repository is created before its first line of code, so its code is born outside the core"
+  },
+  "open-questions": {
+   "repo": "ultrastable/open-questions",
+   "state": "planned",
+   "source": "instances/open-questions",
+   "keep_in_core": [
+    "IDEA.md",
+    "instance.json",
+    "lifecycle.json",
+    "runway.json",
+    "README.md"
+   ],
+   "visibility": "public",
+   "description": "Open Questions: a tenant system running on Ultrastable.",
+   "why": "manifest only; its repository is created before its first line of code, so its code is born outside the core"
+  },
+  "spinoffs": {
+   "repo": "ultrastable/spinoffs",
+   "state": "retired",
+   "source": "instances/spinoffs",
+   "why": "the eight generated *.ultrastable.app apps shared one Worker and one D1 (ultrastable-spinoffs); all eight are retired (spinoffs/registry.json). A new spinoff launches as its own tenant repository; the check fails when a spinoff app is live again."
   }
  },
  "visitor_apps": {

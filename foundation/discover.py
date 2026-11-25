@@ -30,7 +30,7 @@ def live_tenants(root=REPO) -> dict:
     root = Path(root)
     tr = _j(root, "doctrine/tenant-repos.json").get("tenants", {})
     live = {w["id"] for w in _j(root, "doctrine/topology.json").get("workers", []) if w.get("state") == "live"}
-    return {k: v for k, v in tr.items() if not v.get("worker") or v["worker"] in live}
+    return {k: v for k, v in tr.items() if v.get("state") not in ("planned", "retired") and (not v.get("worker") or v["worker"] in live)}
 
 
 def core(root=REPO) -> list:

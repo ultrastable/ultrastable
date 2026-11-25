@@ -19,7 +19,14 @@ least one public route, deployed by deploy-ultrastable) or `frontend` (the https
 a tenant with neither, so a new tenant is a repo, a back end and a public web UI from its first registration.
 
 Registry: doctrine/tenant-repos.json. States: own-repo (born separate), moving (code still in the core while its repository is created),
-moved (code only in the tenant repository; the core's topology entry builds from it).
+moved (code only in the tenant repository; the core's topology entry builds from it), planned (manifest only; its repository is created
+before its first line of code), retired (no live deployment; kept as a record).
+
+Sandbox (TENANT-SANDBOX-1, Rowan 2026-11-25: "All UltraStable deployments shall have their own GitHub repo and shall be sandboxed as tenant
+apps."): every tenant with a worker declares `sandbox` (its own stores, its own secret names, a daily budget). The check fails when a tenant
+worker binds a store that is not its own, binds a core worker as a service, uses a secret outside its scope, or has no budget, and when a
+core worker binds a tenant's store.
+  python3 -m foundation tenantrepos --isolation             the isolation probe: one line per tenant, exit 1 on any shared binding
 """
 from __future__ import annotations
 
@@ -33,7 +40,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 REG = "doctrine/tenant-repos.json"
-STATES = {"own-repo", "moving", "moved"}
+STATES = {"own-repo", "moving", "moved", "planned", "retired"}
+CORE_PREFIX_EXEMPT = ()  # no core store may be bound by a tenant worker
 CODE_DIRS = ("worker", "src", "app")
 
 
@@ -75,6 +83,8 @@ def check(root: Path = ROOT) -> list[str]:
                 errs.append(f"topology {w['id']}: source {src} is not the registered repository of a tenant")
     workers = {w.get("id"): w for w in topo.get("workers", [])}
     for slug, t in tenants.items():  # FULLSTACK-1: repo, back end and a public web UI front end, deployed by the platform
+        if t.get("state") in ("planned", "retired"):  # nothing deployed yet, or nothing deployed any more
+            continue
         w = workers.get(t.get("worker")) if t.get("worker") else None
         if t.get("worker") and not (w and w.get("state") == "live" and w.get("routes")):
             errs.append(f"{slug}: worker {t['worker']} is not a live topology Worker with a public route (FULLSTACK-1)")
@@ -85,6 +95,67 @@ def check(root: Path = ROOT) -> list[str]:
             w = next((x for x in topo.get("workers", []) if x["id"] == t["worker"]), None)
             if not w or (w.get("source") or {}).get("repo") != t["repo"]:
                 errs.append(f"{slug}: moved, but topology {t['worker']} does not build from {t['repo']} (the core's second deploy route)")
+    errs += isolation(root, reg, topo)
+    return errs
+
+
+def _stores(w: dict) -> set[str]:
+    out = set()
+    for kind in ("d1", "kv", "r2", "vectorize", "queues_producer"):
+        v = (w.get("bindings") or {}).get(kind)
+        if isinstance(v, dict):
+            out |= {str(x) for x in v.values()}
+    out |= {str(x) for x in (w.get("bindings") or {}).get("queues_consumer", []) or []}
+    return out
+
+
+def isolation(root: Path = ROOT, reg: dict | None = None, topo: dict | None = None) -> list[str]:
+    """TENANT-SANDBOX-1: a tenant worker touches only its own stores, secrets and budget; no core worker touches a tenant's store."""
+    reg = reg or load(root)
+    topo = topo or json.loads((root / "doctrine/topology.json").read_text())
+    workers = {w["id"]: w for w in topo.get("workers", []) if isinstance(w, dict)}
+    errs, tenant_workers, tenant_stores = [], set(), {}
+    for slug, t in reg.get("tenants", {}).items():
+        w = workers.get(t.get("worker", ""))
+        if not w:
+            continue
+        tenant_workers.add(w["id"])
+        sb = t.get("sandbox") or {}
+        own = set(sb.get("stores", []))
+        for st in own:
+            if not st.startswith(f"ultrastable-{slug}"):
+                errs.append(f"{slug}: sandbox store {st} is not named for the tenant (ultrastable-{slug}*)")
+            tenant_stores[st] = slug
+        for st in sorted(_stores(w) - own):
+            errs.append(f"{slug}: worker {w['id']} binds {st}, which is not in its sandbox (no shared stores)")
+        svc = (w.get("bindings") or {}).get("services") or {}
+        if svc:
+            errs.append(f"{slug}: worker {w['id']} binds services {sorted(svc.values())}; a tenant reaches the core only over its public API")
+        extra = set((w.get("bindings") or {}).get("secrets", []) or []) - set(sb.get("secrets", []))
+        if extra:
+            errs.append(f"{slug}: worker {w['id']} uses secrets outside its scope: {sorted(extra)}")
+        b = sb.get("budget") or {}
+        if not all(isinstance(b.get(k), int) and b[k] > 0 for k in ("requests_per_day", "d1_reads_per_day", "ai_neurons_per_day")):
+            errs.append(f"{slug}: sandbox needs a daily budget (requests_per_day, d1_reads_per_day, ai_neurons_per_day)")
+    budgets_path = root / "instances/ultrastable/cost-budgets.json"
+    sampled = {b.get("database_name") for b in json.loads(budgets_path.read_text()).get("budgets", [])} if budgets_path.exists() else set()
+    for slug, t in reg.get("tenants", {}).items():
+        w = workers.get(t.get("worker", ""))
+        for st in sorted(set(((w or {}).get("bindings") or {}).get("d1", {}).values()) & set((t.get("sandbox") or {}).get("stores", []))):
+            if budgets_path.exists() and st not in sampled:
+                errs.append(f"{slug}: D1 {st} has no row in instances/ultrastable/cost-budgets.json, so its budget is never sampled")
+    for slug, t in reg.get("tenants", {}).items():
+        if t.get("state") != "retired":
+            continue
+        src = root / t.get("source", f"instances/{slug}")
+        for app in sorted(src.glob("*/app.json")) if src.exists() else []:
+            if json.loads(app.read_text()).get("status") != "retired":
+                errs.append(f"{app.relative_to(root)}: live again inside retired {slug}; launch it as its own tenant repository")
+    for wid, w in workers.items():
+        if wid in tenant_workers:
+            continue
+        for st in sorted(_stores(w) & set(tenant_stores)):
+            errs.append(f"core worker {wid} binds {st}, which belongs to tenant {tenant_stores[st]}")
     return errs
 
 
@@ -200,7 +271,7 @@ def health(root: Path = ROOT, fetch=None) -> dict:
 
 
 def missing(reg: dict) -> list[dict]:
-    return [{"slug": s, **t} for s, t in sorted(reg.get("tenants", {}).items()) if t.get("state") == "moving"]
+    return [{"slug": s, **t} for s, t in sorted(reg.get("tenants", {}).items()) if t.get("state") in ("moving", "planned")]
 
 
 def main(argv=None) -> int:
@@ -211,6 +282,7 @@ def main(argv=None) -> int:
     ap.add_argument("--health", action="store_true", help="read every tenant worker's /health live; fail when any is not ok or reports a part not ok (TENANT-HEALTH-1)")
     ap.add_argument("--prepare")
     ap.add_argument("--slug")
+    ap.add_argument("--isolation", action="store_true", help="the sandbox probe: every tenant worker touches only its own stores")
     ap.add_argument("--probe", metavar="SLUG", help="pass when the tenant's own repository exists with a main branch (closes its gate)")
     a = ap.parse_args(argv)
     if a.probe:
@@ -221,6 +293,15 @@ def main(argv=None) -> int:
         sha = _gh_head(t["repo"])
         print(f"{t['repo']} main {sha[:12]}" if sha else f"{t['repo']} has no main branch yet")
         return 0 if sha else 1
+    if a.isolation:
+        errs = isolation()
+        for slug in sorted(load().get("tenants", {})):
+            bad = [e for e in errs if e.startswith(slug + ":")]
+            print(f"{slug}: {'shared: ' + bad[0] if bad else 'isolated'}")
+        for e in errs:
+            if e.startswith("core worker"):
+                print(e)
+        return 1 if errs else 0
     if a.health:
         res = health()
         print(json.dumps(res, indent=1))
