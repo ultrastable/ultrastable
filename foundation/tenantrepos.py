@@ -12,6 +12,11 @@ on a push here, on a dispatch, and daily when the tenant's main moved past the l
   python3 -m foundation tenantrepos --missing               tenants whose repository is still to be created (read by tenant-repos.yml)
   python3 -m foundation tenantrepos --behind                workers whose tenant repository moved past the last deployed commit (daily redeploy)
 
+FULLSTACK-1 (Rowan, 2026-11-25: "All UltraStable systems shall automatically deploy themselves: repo, back-end, and public-facing Web UI
+front-end."): every registered tenant names its deployed public front end, either `worker` (a live doctrine/topology.json Worker with at
+least one public route, deployed by deploy-ultrastable) or `frontend` (the https URL its own repository's pipeline deploys to); check fails
+a tenant with neither, so a new tenant is a repo, a back end and a public web UI from its first registration.
+
 Registry: doctrine/tenant-repos.json. States: own-repo (born separate), moving (code still in the core while its repository is created),
 moved (code only in the tenant repository; the core's topology entry builds from it).
 """
@@ -67,6 +72,13 @@ def check(root: Path = ROOT) -> list[str]:
             st = by_worker.get(w["id"])
             if not st or st[1]["repo"] != src:
                 errs.append(f"topology {w['id']}: source {src} is not the registered repository of a tenant")
+    workers = {w.get("id"): w for w in topo.get("workers", [])}
+    for slug, t in tenants.items():  # FULLSTACK-1: repo, back end and a public web UI front end, deployed by the platform
+        w = workers.get(t.get("worker")) if t.get("worker") else None
+        if t.get("worker") and not (w and w.get("state") == "live" and w.get("routes")):
+            errs.append(f"{slug}: worker {t['worker']} is not a live topology Worker with a public route (FULLSTACK-1)")
+        if not t.get("worker") and not str(t.get("frontend", "")).startswith("https://"):
+            errs.append(f"{slug}: no deployed public front end: name a topology `worker` with a route or an https `frontend` (FULLSTACK-1)")
     for slug, t in tenants.items():
         if t.get("state") == "moved" and t.get("worker"):
             w = next((x for x in topo.get("workers", []) if x["id"] == t["worker"]), None)
