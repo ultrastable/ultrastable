@@ -36,15 +36,15 @@
     0,
     73618
    ],
-   "share_recent": 0.267,
-   "share_trend": 0.267,
+   "share_recent": 0.266,
+   "share_trend": 0.266,
    "slope": 474.9548,
    "total": 73618
   },
   {
    "area": "doctrine",
    "quiet_days": 0,
-   "recent7": 35217,
+   "recent7": 35226,
    "series": [
     0,
     0,
@@ -75,12 +75,12 @@
     0,
     0,
     0,
-    35217
+    35226
    ],
    "share_recent": 0.127,
    "share_trend": 0.127,
-   "slope": 227.2065,
-   "total": 35217
+   "slope": 227.2645,
+   "total": 35226
   },
   {
    "area": "foundation",
@@ -126,7 +126,7 @@
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 24538,
+   "recent7": 24986,
    "series": [
     0,
     0,
@@ -157,12 +157,12 @@
     0,
     0,
     0,
-    24538
+    24986
    ],
-   "share_recent": 0.089,
-   "share_trend": 0.089,
-   "slope": 158.3097,
-   "total": 24538
+   "share_recent": 0.09,
+   "share_trend": 0.09,
+   "slope": 161.2,
+   "total": 24986
   },
   {
    "area": "seed/worker",
@@ -487,8 +487,8 @@
     0,
     3455
    ],
-   "share_recent": 0.013,
-   "share_trend": 0.013,
+   "share_recent": 0.012,
+   "share_trend": 0.012,
    "slope": 22.2903,
    "total": 3455
   },
@@ -946,7 +946,7 @@
   {
    "area": "research",
    "quiet_days": 0,
-   "recent7": 1230,
+   "recent7": 1232,
    "series": [
     0,
     0,
@@ -977,12 +977,12 @@
     0,
     0,
     0,
-    1230
+    1232
    ],
    "share_recent": 0.004,
    "share_trend": 0.004,
-   "slope": 7.9355,
-   "total": 1230
+   "slope": 7.9484,
+   "total": 1232
   },
   {
    "area": "seed",
@@ -1026,7 +1026,7 @@
    "total": 1088
   }
  ],
- "at": "2026-11-25T20:02:05Z",
+ "at": "2026-11-25T20:04:41Z",
  "days": 30,
  "files": [],
  "findings": [
@@ -1093,9 +1093,9 @@
    0,
    0,
    0,
-   38
+   33
   ],
-  "closed": 1073,
+  "closed": 1078,
   "opened": 1111
  },
  "loops": [
@@ -1406,7 +1406,7 @@
   {
    "loop": "deploys",
    "quiet_days": 0,
-   "rows": 1000,
+   "rows": 1010,
    "series": [
     0,
     0,
@@ -1437,9 +1437,9 @@
     50,
     14,
     0,
-    86
+    96
    ],
-   "slope": 3.8514
+   "slope": 3.9159
   },
   {
    "loop": "executor-log",
@@ -1786,7 +1786,7 @@
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 300,
+   "rows": 301,
    "series": [
     0,
     0,
@@ -1817,9 +1817,9 @@
     112,
     80,
     55,
-    48
+    49
    ],
-   "slope": 1.6814
+   "slope": 1.6879
   },
   {
    "loop": "ultrastability",
@@ -1862,7 +1862,7 @@
   {
    "loop": "worker-merge-evidence",
    "quiet_days": 0,
-   "rows": 30,
+   "rows": 31,
    "series": [
     0,
     0,
@@ -1893,9 +1893,9 @@
     6,
     3,
     0,
-    6
+    7
    ],
-   "slope": 0.1535
+   "slope": 0.16
   },
   {
    "loop": "yearsim",
