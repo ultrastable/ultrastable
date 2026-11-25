@@ -99,9 +99,21 @@ def http(url, headers, body, timeout=300) -> dict:
             raise RuntimeError(f"non-JSON response (HTTP {r.status}, {r.headers.get('content-type')}) from {url}: {raw[:200].decode('utf-8', 'replace')}") from None
 
 
+GH_MODELS_ORG = "https://models.github.ai/orgs/{org}/inference/chat/completions"
+
+
 def invoke(a: dict, prompt: str, env=None, transport=http) -> str:
     url, headers, body = build_request(a, prompt, env)
-    return parse_text(a, transport(url, headers, body))
+    try:
+        return parse_text(a, transport(url, headers, body))
+    except RuntimeError as e:
+        # MODELS-ORG-1 (2026-11-25): the user endpoint answered HTTP 200 "OK" text/plain to the Actions token for days, so every code agent failed.
+        # The org-attributed endpoint is the second route on the same token; a different failure there is raised as usual.
+        if a["route"] != "github-models" or "non-JSON" not in str(e) and "empty response" not in str(e):
+            raise
+        env = os.environ if env is None else env
+        org = (env.get("GITHUB_REPOSITORY_OWNER") or "ultrastable")
+        return parse_text(a, transport(GH_MODELS_ORG.format(org=org), headers, body))
 
 
 BLOCK_FORMAT = ("SUMMARY: one line\n"
