@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-25-a-checkout-s-stored-token-wins-over-the-token-in-a-push-url",
+  "kind": "lesson",
+  "date": "2026-11-25",
+  "title": "A checkout's stored token wins over the token in a push URL",
+  "body": "actions/checkout stores GITHUB_TOKEN as an http extraheader for github.com, and a later git push to an x-access-token URL still sends that header, so GitHub reads the push as github-actions[bot]. Evidence: tenant-repos run 45669381614 held a one-repo token from the platform route (TENANT-REPO-2) and its push to base-rates answered 403. Fixed in the same change: the job sets persist-credentials false and records a failed push per repository, then goes on; the workflow lint passes and the next tenant-repos run is the live probe. Session: session_0156nqDvGPcBsDy63L214bPa",
+  "probe": "grep:.github/workflows/tenant-repos.yml::persist-credentials: false"
+ },
+ "kind": "lesson",
+ "title": "A checkout's stored token wins over the token in a push URL",
+ "session": ""
+}
