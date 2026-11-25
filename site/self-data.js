@@ -2700,13 +2700,13 @@ export default {
  },
  "readings": {
   "access-check:claims_drift": {
-   "at": "2026-11-25T20:54:49Z",
+   "at": "2026-11-25T21:04:49Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "access-check:spend": {
-   "at": "2026-11-25T20:54:49Z",
+   "at": "2026-11-25T21:04:49Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
@@ -2718,19 +2718,19 @@ export default {
    "value": 0.0
   },
   "access-check:value": {
-   "at": "2026-11-25T20:54:49Z",
+   "at": "2026-11-25T21:04:49Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "air-quality:claims_drift": {
-   "at": "2026-11-25T20:54:49Z",
+   "at": "2026-11-25T21:04:49Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "air-quality:spend": {
-   "at": "2026-11-25T20:54:49Z",
+   "at": "2026-11-25T21:04:49Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
@@ -2742,19 +2742,19 @@ export default {
    "value": 0.0
   },
   "air-quality:value": {
-   "at": "2026-11-25T20:54:49Z",
+   "at": "2026-11-25T21:04:49Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "blindspot:claims_drift": {
-   "at": "2026-11-25T20:54:49Z",
+   "at": "2026-11-25T21:04:49Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "blindspot:spend": {
-   "at": "2026-11-25T20:54:49Z",
+   "at": "2026-11-25T21:04:49Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
@@ -2766,25 +2766,25 @@ export default {
    "value": 0.0
   },
   "blindspot:value": {
-   "at": "2026-11-25T20:54:49Z",
+   "at": "2026-11-25T21:04:49Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 2.02
   },
   "claims_drift": {
-   "at": "2026-11-25T20:54:49Z",
+   "at": "2026-11-25T21:04:49Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0
   },
   "country-snapshot:claims_drift": {
-   "at": "2026-11-25T20:54:49Z",
+   "at": "2026-11-25T21:04:49Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "country-snapshot:spend": {
-   "at": "2026-11-25T20:54:49Z",
+   "at": "2026-11-25T21:04:49Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
@@ -2796,25 +2796,25 @@ export default {
    "value": 0.0
   },
   "country-snapshot:value": {
-   "at": "2026-11-25T20:54:49Z",
+   "at": "2026-11-25T21:04:49Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "deploy_health": {
-   "at": "2026-11-25T20:54:49Z",
+   "at": "2026-11-25T21:04:49Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "free-tier-meter:claims_drift": {
-   "at": "2026-11-25T20:54:49Z",
+   "at": "2026-11-25T21:04:49Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "free-tier-meter:spend": {
-   "at": "2026-11-25T20:54:49Z",
+   "at": "2026-11-25T21:04:49Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
@@ -2826,25 +2826,31 @@ export default {
    "value": 0.0
   },
   "free-tier-meter:value": {
-   "at": "2026-11-25T20:54:49Z",
+   "at": "2026-11-25T21:04:49Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "happy_paths": {
-   "at": "2026-11-25T20:54:49Z",
+   "at": "2026-11-25T21:04:49Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
+  "lessons_enforced": {
+   "at": "2026-11-25T21:04:49Z",
+   "in_bounds": false,
+   "unmeasured": false,
+   "value": 0.692
+  },
   "loop-ledger:claims_drift": {
-   "at": "2026-11-25T20:54:49Z",
+   "at": "2026-11-25T21:04:49Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "loop-ledger:spend": {
-   "at": "2026-11-25T20:54:49Z",
+   "at": "2026-11-25T21:04:49Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
@@ -2856,19 +2862,19 @@ export default {
    "value": 0.0
   },
   "loop-ledger:value": {
-   "at": "2026-11-25T20:54:49Z",
+   "at": "2026-11-25T21:04:49Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "numbers-board:claims_drift": {
-   "at": "2026-11-25T20:54:49Z",
+   "at": "2026-11-25T21:04:49Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "numbers-board:spend": {
-   "at": "2026-11-25T20:54:49Z",
+   "at": "2026-11-25T21:04:49Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
@@ -2880,19 +2886,25 @@ export default {
    "value": 0.0
   },
   "numbers-board:value": {
-   "at": "2026-11-25T20:54:49Z",
+   "at": "2026-11-25T21:04:49Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
+  "owner_interventions": {
+   "at": "2026-11-25T21:04:49Z",
+   "in_bounds": false,
+   "unmeasured": false,
+   "value": 49
+  },
   "portfolio-board:claims_drift": {
-   "at": "2026-11-25T20:54:49Z",
+   "at": "2026-11-25T21:04:49Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "portfolio-board:spend": {
-   "at": "2026-11-25T20:54:49Z",
+   "at": "2026-11-25T21:04:49Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
@@ -2904,46 +2916,64 @@ export default {
    "value": 0.0
   },
   "portfolio-board:value": {
-   "at": "2026-11-25T20:54:49Z",
+   "at": "2026-11-25T21:04:49Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
+  "research_in_code": {
+   "at": "2026-11-25T21:04:49Z",
+   "in_bounds": false,
+   "unmeasured": false,
+   "value": 0.655
+  },
+  "second_loop_keep_rate": {
+   "at": "2026-11-25T21:04:49Z",
+   "in_bounds": false,
+   "unmeasured": false,
+   "value": 0.0
+  },
   "self_shipping": {
-   "at": "2026-11-25T20:54:49Z",
+   "at": "2026-11-25T21:04:49Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.714
   },
+  "spec_quality": {
+   "at": "2026-11-25T21:04:49Z",
+   "in_bounds": false,
+   "unmeasured": false,
+   "value": 0.225
+  },
   "spend": {
-   "at": "2026-11-25T20:54:49Z",
+   "at": "2026-11-25T21:04:49Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
   },
   "stalled_clocks": {
-   "at": "2026-11-25T20:54:49Z",
+   "at": "2026-11-25T21:04:49Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 5
   },
   "ui_findings": {
-   "at": "2026-11-25T20:54:49Z",
+   "at": "2026-11-25T21:04:49Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0
   },
   "unattended_horizon": {
-   "at": "2026-11-25T20:54:49Z",
+   "at": "2026-11-25T21:04:49Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 730
   },
   "value": {
-   "at": "2026-11-25T20:54:49Z",
+   "at": "2026-11-25T21:04:49Z",
    "in_bounds": true,
    "unmeasured": false,
-   "value": 1300.0
+   "value": 1400.0
   }
  },
  "self": {

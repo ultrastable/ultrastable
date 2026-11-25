@@ -217,6 +217,7 @@
     "ops/paths/attempts.jsonl",
     "ops/provenance.jsonl",
     "ops/reach/metrics.jsonl",
+    "ops/redteam/findings.jsonl",
     "ops/research/experiments.jsonl",
     "ops/research/log.jsonl",
     "ops/resilience.jsonl",

@@ -152,6 +152,15 @@ export function changelogFeed(d, origin) {
   return { json, xml };
 }
 
+const hesc = v => String(v == null ? "" : v).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[c]));
+export function serverView(d, generated) {
+  const days = ((d && d.throughput && d.throughput.changelog) || []).slice(0, 3), n = days.reduce((a, g) => a + g.changes.length, 0);
+  const asof = "Snapshot taken " + hesc(generated || "at an unknown time") + ". " + n + " merged changes in the last " + days.length + " days shown below.";
+  const first = days.length ? "<section class=\"card\"><h2>Latest merged changes</h2>" + days.map(g => "<h3>" + hesc(g.date) + " (" + g.changes.length + ")</h3><ul>"
+    + g.changes.slice(0, 15).map(c => "<li>" + (c.url ? "<a href=\"" + hesc(c.url) + "\">#" + hesc(c.n) + "</a> " : "#" + hesc(c.n) + " ") + hesc(c.title) + "</li>").join("") + "</ul>").join("") + "</section>" : "";
+  return { asof, first };
+}
+
 export async function liveResponse(u, request, env, shell, HTML, bundleAt = null) {
   if (request.method !== "GET" && request.method !== "HEAD") return new Response(JSON.stringify({ error: "read-only" }), { status: 405, headers: { ...JSON_H, allow: "GET, HEAD" } });
   if (u.pathname === "/api/freshness") {
@@ -170,6 +179,13 @@ export async function liveResponse(u, request, env, shell, HTML, bundleAt = null
     if (!r) return new Response(JSON.stringify({ error: "No snapshot published yet." }), { status: 503, headers: JSON_H });
     return new Response(JSON.stringify(await overlay(JSON.parse(r.body), env, r.generated, Date.now(), bundleAt)), { headers: JSON_H });
   }
-  const body = "<div class=\"head\"><h1>Ultrastable running on Ultrastable</h1><p>Everything here is read-only and open to everyone. It is the same record the managers and agents work from.</p><p class=\"meta\" id=\"asof\">Loading...</p><p class=\"meta\">Subscribe to merged changes: <a href=\"/changelog.xml\">RSS</a> or <a href=\"/changelog.json\">JSON</a>.</p></div><div id=\"live\"></div><script>" + JS + "</script>";
+  // REDTEAM-1: the page used to say only "Loading..." until its script ran, so crawlers, AI readers and no-JS visitors saw no figures.
+  // The server now renders the snapshot time and the latest merged changes; the script replaces them with the full view.
+  let asof = "The live record could not be read just now.", first = "";
+  try {
+    const r = await load(env);
+    if (r) { const d = await overlay(JSON.parse(r.body), env, r.generated, Date.now(), bundleAt); ({ asof, first } = serverView(d, r.generated)); }
+  } catch (e) { console.error("live ssr", e && e.message); }
+  const body = "<div class=\"head\"><h1>Ultrastable running on Ultrastable</h1><p>Everything here is read-only and open to everyone. It is the same record the managers and agents work from.</p><p class=\"meta\" id=\"asof\">" + asof + "</p><p class=\"meta\">Subscribe to merged changes: <a href=\"/changelog.xml\">RSS</a> or <a href=\"/changelog.json\">JSON</a>.</p></div><div id=\"live\">" + first + "</div><script>" + JS + "</script>";
   return new Response(shell({ path: "/live", title: "Live: Ultrastable running on Ultrastable", description: "Read-only view of the managers, loops, claim checks and code changes behind Ultrastable." }, body), { headers: HTML });
 }

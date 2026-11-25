@@ -10,6 +10,10 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-25
 
+- 2026-11-25: REDTEAM-1: red-team the system's own blind spots (#2227)
+- 2026-11-25: failure-audit: file and close failure-mode items (FAILURE-RESOLVE-1) (part 2/2) [skip ci]
+- 2026-11-25: failure-audit: file and close failure-mode items (FAILURE-RESOLVE-1) (part 1/2) [skip ci]
+- 2026-11-25: static-content: record page changes (STATIC-CONTENT-1) [skip ci]
 - 2026-11-25: BOOTPROOF-1: seed kernel closure audit and daily scratch bootstrap probe (#2237)
 - 2026-11-25: Fix failure-audit evidence push and unroutable detectors (#2242)
 - 2026-11-25: Root-cause launch-day failures: hold merges with no checks, flag owner-deferred deploys, catch spelled-out claims (#2232)
