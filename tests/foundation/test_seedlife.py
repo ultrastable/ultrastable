@@ -102,7 +102,7 @@ class Stages(Fixture):
         self.live(); self.assertEqual(self.stage()["stage"], "live")
         self.autonomous(); r = self.stage()
         self.assertEqual(r["stage"], "autonomous", r["need"])
-        self.assertEqual(seedlife.probe("s1", self.root, now=NOW), 0)
+        self.assertEqual(seedlife.probe("s1", self.root, NOW), 0)  # fixed clock: the 48 h verify window made this test fail from 2026-11-23 on wall-clock time
 
     def test_seed_deploy_list_counts_as_the_lane_owning_the_worker(self):
         self.autonomous()

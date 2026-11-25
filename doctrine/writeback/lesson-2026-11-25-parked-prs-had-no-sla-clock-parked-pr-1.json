@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-25-parked-prs-had-no-sla-clock-parked-pr-1",
+  "kind": "lesson",
+  "date": "2026-11-25",
+  "title": "parked/ PRs had no SLA clock (PARKED-PR-1)",
+  "body": "The branch reaper parks sessions as parked/<name> and completion_sweep opened automerge PRs for them; neither sweeper CLIENT_PREFIX nor sla BOT_PREFIX covered parked/, so 17 PRs aged past 8 h and agewatch failed the fleet job every pass. Both prefixes now include parked/, and the sweep skips parked/ and already-closed tips.",
+  "probe": "grep:seed/worker/src/sla.js::parked/",
+  "session": "session_0156nqDvX8P4Z5wfkTJvFwh9"
+ },
+ "kind": "lesson",
+ "title": "parked/ PRs had no SLA clock (PARKED-PR-1)",
+ "session": "session_0156nqDvX8P4Z5wfkTJvFwh9"
+}

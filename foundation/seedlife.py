@@ -167,7 +167,6 @@ def run(root=REPO, apply=False, fetch=None, now=None, live=True) -> dict:
 
 
 def probe(slug, root=REPO, now=None) -> int:
-    # CLOCK-TEST-1 (2026-11-25): the probe read the wall clock, so a fixture's 48 h live window expired and turned every PR's checks red.
     r = status(root, slug, now)[0]
     print(f"{slug}: {r.get('stage')}" + ("" if r.get("stage") == "autonomous" else f"; next {r.get('next')}: " + "; ".join(r.get("need", [])[:3])))
     return 0 if r.get("stage") == "autonomous" else 1
