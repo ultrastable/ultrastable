@@ -7,6 +7,10 @@
                                             tenant in doctrine/tenant-repos.json has a row in doctrine/knowledge-graph.json; a 'pending' row names a queue item
                                             in docs/issues/ and the tenant has the module in its vendor map; the rule is in every agent file
   python3 -m foundation datagraph --list    one line per system with its state
+  python3 -m foundation datagraph --live    DATAGRAPH-LIVE-1: read every system's graph probe (row `probe`, else `public_api`) after a deploy and daily:
+                                            a /health probe must answer ok with nodes > 0, a /api/graph probe built with nodes > 0; exit 1 otherwise.
+                                            Run by deploy-ultrastable.yml after each deploy and by tenant-repos.yml daily, so "deployed but not
+                                            confirmed live" is never left to a person to check
 
 Data: doctrine/knowledge-graph.json. Consumers of what it guards: seed/worker/src/index.js (tick step knowledge-graph and /api/graph*), site/worker.js
 (public /api/graph), the tenants' own Workers (vendor/ultrastable/datagraph.js). Tests: tests/foundation/test_datagraph.py.
@@ -89,8 +93,52 @@ def check(root=REPO) -> list[str]:
     return bad
 
 
+def _get(url, timeout=25):
+    import urllib.request, urllib.error
+    try:
+        req = urllib.request.Request(url, headers={"user-agent": "ultrastable-datagraph-probe/1", "accept": "application/json"})
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            return r.status, r.read(400000).decode("utf-8", "replace")
+    except urllib.error.HTTPError as e:
+        return e.code, e.read(400000).decode("utf-8", "replace")
+    except Exception as e:  # noqa: BLE001  an unreachable probe is the reading: not live
+        return 0, str(e)[:200]
+
+
+def reading(status: int, body: str) -> tuple[bool, str]:
+    """(live, why) from one probe answer. /health: {ok, nodes}; /api/graph: {built, last: {nodes}}. A 503 health with nodes is a stale graph."""
+    try:
+        j = json.loads(body)
+    except ValueError:
+        return False, f"HTTP {status}, not JSON"
+    if not isinstance(j, dict):
+        return False, f"HTTP {status}, unexpected JSON"
+    if "built" in j or "last" in j:
+        nodes = ((j.get("last") or {}).get("nodes")) or 0
+        return (status == 200 and bool(j.get("built")) and nodes > 0), f"HTTP {status}, built={j.get('built')}, nodes={nodes}"
+    nodes = j.get("nodes") or 0
+    return (status == 200 and bool(j.get("ok")) and nodes > 0), f"HTTP {status}, ok={j.get('ok')}, nodes={nodes}, last run {j.get('last_run_hours_ago')} h ago"
+
+
+def live(root=REPO, get=_get) -> list[dict]:
+    out = []
+    for sid, row in _j(root, POLICY)["systems"].items():
+        url = row.get("probe") or row.get("public_api")
+        if not url:
+            out.append({"id": sid, "ok": False, "why": "no probe or public_api in " + POLICY})
+            continue
+        ok, why = reading(*get(url))
+        out.append({"id": sid, "url": url, "ok": ok, "why": why})
+    return out
+
+
 def main(argv=None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
+    if "--live" in argv:
+        rows = live()
+        for r in rows:
+            print(f"datagraph live: {r['id']:20} {'live' if r['ok'] else 'NOT LIVE'}  {r['why']}  {r.get('url', '')}")
+        return 0 if all(r["ok"] for r in rows) else 1
     if "--list" in argv:
         for sid, row in _j(REPO, POLICY)["systems"].items():
             print(f"{sid:22} {row['state']:10} {row.get('item') or row.get('worker') or ''}")

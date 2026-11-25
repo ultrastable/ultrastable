@@ -9,6 +9,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  pull-requests: read  # COLLISION-1: reads the other open PRs' files
 concurrency:
   group: checks-${{ github.ref }}
   cancel-in-progress: true
@@ -47,6 +48,14 @@ jobs:
           if [ -n "${BASE_SHA:-}" ]; then python3 -m foundation substance --gate --executor --range "${BASE_SHA}...HEAD"
           elif [ "${EVENT:-}" = "workflow_dispatch" ] && [[ "${REF_NAME:-}" == agent/* ]]; then  # the executor dispatches checks on its own agent/ branch
             git fetch -q origin main && PR_BODY="Executor run (dispatched checks)" python3 -m foundation substance --gate --executor --range "origin/main...HEAD"; fi
+      - name: No clash with an older open PR or a reused migration number (COLLISION-1)
+        # the knowledge-graph directive reached several sessions and five competing PRs clashed on a migration number, /api/graph and a check command
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          python3 -m foundation collisions --check
+          python3 -m foundation collisions --prs
       - name: Workflow minute-budget lint (cheap, runs first)
         run: python3 scripts/lint_workflows.py
       - name: Public docs complete and in sync with the code (DOCS-SYNC-1)
