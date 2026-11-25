@@ -122,9 +122,12 @@ subprocess.run([sys.executable, "scripts/build_dashboard.py"], capture_output=Tr
 subprocess.run(["git", "add", "site/dashboard-data.js"])
 subprocess.run([sys.executable, "-m", "foundation", "selfmodel", "--apply"], capture_output=True)  # SELF-MODEL-1: regenerated, never merged by hand
 subprocess.run(["git", "add", "site/self-data.js"])
-subprocess.run([sys.executable, "seed/scripts/system.py", "--write"], capture_output=True)  # SYSTEM-SPEC-1: the definition follows the merged code
-subprocess.run(["git", "add", "seed/SYSTEM.md"])
-subprocess.run([sys.executable, "scripts/claims.py", "--fix", "--apply"], cwd="seed", capture_output=True)  # the seed's own generated counts (README, docs/claims.json)
-subprocess.run(["git", "add", "seed/README.md", "seed/docs/claims.json"])
+import os
+if os.path.isfile("seed/scripts/system.py"):  # SYSTEM-SPEC-1: the definition follows the merged code (absent in a repository without the kit)
+    subprocess.run([sys.executable, "seed/scripts/system.py", "--write"], capture_output=True)
+    subprocess.run(["git", "add", "seed/SYSTEM.md"])
+if os.path.isfile("seed/scripts/claims.py"):  # the seed's own generated counts (README, docs/claims.json)
+    subprocess.run([sys.executable, "scripts/claims.py", "--fix", "--apply"], cwd="seed", capture_output=True)
+    subprocess.run(["git", "add", "seed/README.md", "seed/docs/claims.json"])
 print("still conflicting:", conf)
 sys.exit(1 if conf else 0)
