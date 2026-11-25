@@ -8,7 +8,7 @@
 import seed from "./data/findings.json" with { type: "json" };
 import { standing } from "./standing.js";
 import { doiKey } from "./ledger.js";
-import { BEAT, checkFinding, discoverFindings } from "./discover.js";
+import { BEAT, checkFinding, discoverFindings, setOpenAlexKey } from "./discover.js";
 import { lookup, check } from "./crossref.js";
 
 export const SCHEMA = [
@@ -59,6 +59,7 @@ export const minutesSince = iso => iso ? Math.round((Date.now() - Date.parse(iso
 // One beat. Idempotent: every write is keyed (finding, DOI), so a repeated beat files nothing twice.
 export async function beat(env, { trigger = "cron", fetchImpl = fetch, now = new Date().toISOString() } = {}) {
   const db = env.DB;
+  setOpenAlexKey(env.OPENALEX_API_KEY);
   await ensure(db);
   const running = await all(db, "SELECT n FROM beats WHERE ended_at IS NULL AND started_at > ?", new Date(Date.now() - 15 * 6e4).toISOString());
   if (running.length) return { skipped: "a beat is already running" };

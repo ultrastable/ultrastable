@@ -31,9 +31,22 @@ export function asWork(r) {
 }
 
 // The original by DOI, then the papers citing it whose text speaks of replication, newest first.
-export async function citingReplications(doi, { pageSize = 12 } = {}, fetchImpl = fetch) {
+// Most-cited first, so the landmark replications are read before this year's passing mentions. When Europe PMC does not hold the
+// original (many psychology journals are outside PubMed), the finding's name is searched in titles and abstracts instead.
+const SPEAKS = `(replicat* OR reanalys* OR "re-analysis" OR "meta-analysis")`;
+export const nameQuery = name => {
+  const words = String(name || "").replace(/["()]/g, " ").split(/\s+/).filter(w => w.length > 2).slice(0, 6);
+  return words.length ? `(${words.map(w => `TITLE_ABS:"${w}"`).join(" AND ")}) AND ${SPEAKS}` : null;
+};
+export async function citingReplications(doi, { pageSize = 12, name = "" } = {}, fetchImpl = fetch) {
   const [orig] = await epmc(`DOI:"${doi}"`, {}, fetchImpl);
-  if (!orig) return null;
-  const rows = await epmc(`CITES:${orig.id}_${orig.source} AND (replicat* OR reanalys* OR "re-analysis" OR "meta-analysis")`, { resultType: "core", pageSize, sort: "P_PDATE_D desc" }, fetchImpl);
-  return { id: `${orig.source}/${orig.id}`, cited_by: orig.citedByCount ?? null, works: rows.map(asWork) };
+  const opts = { resultType: "core", pageSize, sort: "CITED desc" };
+  if (orig) {
+    const rows = await epmc(`CITES:${orig.id}_${orig.source} AND ${SPEAKS}`, opts, fetchImpl);
+    return { id: `${orig.source}/${orig.id}`, cited_by: orig.citedByCount ?? null, via: "cites", works: rows.map(asWork) };
+  }
+  const q = nameQuery(name);
+  if (!q) return null;
+  const rows = await epmc(q, opts, fetchImpl);
+  return { id: null, cited_by: null, via: "name", works: rows.map(asWork) };
 }
