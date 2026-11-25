@@ -5,7 +5,8 @@
   "practical-solutions": {
    "repo": "ultrastable/practical-solutions",
    "state": "own-repo",
-   "why": "created as its own repository from the start"
+   "why": "created as its own repository from the start",
+   "frontend": "https://tenant-ps-web.ultrastable.workers.dev"
   },
   "unlearn": {
    "repo": "ultrastable/unlearn",
