@@ -27,7 +27,7 @@ export function hiddenByHealthOnly(env, method, pathname) {
 // FULLSTACK-1: every system has a public front end. A health-only system serves this page at /: its name, whether its clock is turning and the
 // stage it read for itself. No backlog, no screens, no owner routes. Every value comes from the same rows /health reads.
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-export function publicPage({ name, last, ignition, statements = '', head = '' }) {
+export function publicPage({ name, last, ignition, footer = '', statements = '', head = '' }) {  // footer: DISCOVER-1's "Built on Ultrastable" line (discover.js footerHtml); statements: FLEET-CONTRACT-1's sentences for this page
   const done = Boolean(last && last.steps_completed === last.steps_total), when = last && (last.finished_at || last.started_at);
   const title = esc(String(name || 'system').replace(/-/g, ' '));
   const body = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title>${head}`
@@ -35,6 +35,6 @@ export function publicPage({ name, last, ignition, statements = '', head = '' })
     + `<main><h1>${title}</h1><p>This system runs itself on Ultrastable. Its managers work on a clock, with nobody in the loop.</p><dl>`
     + `<dt>Clock</dt><dd>${when ? (done ? 'Last pass finished ' : 'Last pass started ') + esc(when) : 'No pass has run yet.'}</dd>`
     + `<dt>Stage</dt><dd>${ignition && ignition.stage ? esc(ignition.stage) : 'Not read yet.'}</dd></dl>`
-    + '<p><a href="/health">The full health report</a><br><a href="https://ultrastable.io">Ultrastable is the foundation for any autonomous system.</a></p>' + statements + '</main></body></html>';
+    + '<p><a href="/health">The full health report</a><br><a href="https://ultrastable.io">Ultrastable is the foundation for any autonomous system.</a></p>' + statements + '</main>' + footer + '</body></html>';
   return new Response(body, { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=60' } });
 }

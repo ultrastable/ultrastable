@@ -22,7 +22,8 @@ export function newId() {
   const b = crypto.getRandomValues(new Uint8Array(16));
   return [...b].map(x => x.toString(16).padStart(2, '0')).join('');
 }
-export function cloudEvent({ area, event, type, source, subject, data, id, time, dataschema, extensions } = {}) {
+// The synchronous builder the loops use: an io.ultrastable.<area>.<event> envelope with a fresh id, refused when it does not conform.
+export function envelope({ area, event, type, source, subject, data, id, time, dataschema, extensions } = {}) {
   const e = { specversion: SPECVERSION, id: String(id || newId()), source: String(source || ''), type: type || eventType(area, event) };
   if (subject != null && subject !== '') e.subject = String(subject);
   e.time = typeof time === 'number' ? new Date(time).toISOString() : (time || new Date().toISOString());
@@ -50,3 +51,36 @@ export function conforms(e) {
 }
 export const isCloudEvent = r => Boolean(r && typeof r === 'object' && r.specversion === SPECVERSION && typeof r.type === 'string' && typeof r.id === 'string');
 export const unwrap = r => (isCloudEvent(r) && r.type.startsWith(TYPE_PREFIX) && r.data && typeof r.data === 'object' ? r.data : r);
+
+// OPEN-STANDARDS-1 names from the standards kit, kept as one module: the same checks under the kit's names, and the structured-mode HTTP form.
+export const SPEC_VERSION = SPECVERSION;
+export const CONTENT_TYPE = 'application/cloudevents+json';
+const ATTR = /^[a-z0-9]{1,20}$/;
+/** Errors against CloudEvents 1.0 core requirements; empty when the event conforms. */
+export function cloudEventErrors(ev) {
+  const bad = [];
+  for (const k of ['specversion', 'id', 'source', 'type']) if (!ev || !ev[k]) bad.push(`missing ${k}`);
+  if (ev && ev.specversion && ev.specversion !== SPECVERSION) bad.push(`specversion must be ${SPECVERSION}`);
+  if (ev && ev.time && !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(String(ev.time))) bad.push('time must be RFC 3339');
+  for (const k of Object.keys(ev || {})) if (!ATTR.test(k)) bad.push(`attribute name ${k} is not a valid CloudEvents name`);
+  return bad;
+}
+const hex = async (x) => {
+  const d = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(x));
+  return [...new Uint8Array(d)].map((b) => b.toString(16).padStart(2, '0')).join('').slice(0, 24);
+};
+/** OPEN-STANDARDS-1: build any CloudEvent with a stable id (the same event built twice has one id). type is reverse-DNS; source is a URI reference. */
+export async function cloudEvent({ type, source, data, subject, id, time, dataschema, datacontenttype = 'application/json', ...ext }) {
+  const t = time || new Date().toISOString();
+  const ev = { specversion: SPECVERSION, id: id || (await hex(`${type}|${source}|${subject || ''}|${t}|${JSON.stringify(data ?? null)}`)), source, type, time: t };
+  if (subject) ev.subject = subject;
+  if (data !== undefined) { ev.datacontenttype = datacontenttype; ev.data = data; }
+  if (dataschema) ev.dataschema = dataschema;
+  for (const [k, v] of Object.entries(ext)) {
+    if (!ATTR.test(k)) throw new Error(`CloudEvents extension names are lower-case alphanumerics: ${k}`);
+    if (v !== undefined) ev[k] = v;
+  }
+  return ev;
+}
+/** Structured-mode HTTP body and headers for sending one event. */
+export const toHttp = (ev) => ({ headers: { 'content-type': CONTENT_TYPE }, body: JSON.stringify(ev) });

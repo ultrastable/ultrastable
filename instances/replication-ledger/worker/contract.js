@@ -3,12 +3,8 @@
 // FLEET-CONTRACT-1: what the Replication Ledger states, the page that shows each statement and the endpoint that backs it. The shared module
 // (vendor/ultrastable/contract.js, the core's seed/worker/src/contract.js) serves /.well-known/ultrastable.json and /claims.json from this one
 // declaration; contract.test.mjs runs its verify() against the router, and the platform runs the same reading against the deployed site.
-// TENANT-PROMO-1: the ledger's own social queue, built by the shared promoqueue module and drained by the core publisher.
-import { promoQueue } from "../vendor/ultrastable/promoqueue.js";
 
 export const SITE = "https://replication-ledger.ultrastable.org";
-export const HOOK = "The Replication Ledger runs on Ultrastable.";
-export const START = "2026-11-27", EVERY_DAYS = 2;
 
 export const SPEC = {
   name: "Replication Ledger",
@@ -26,15 +22,3 @@ export const SPEC = {
   ],
   internal: [],
 };
-
-// One post per finding, fields in turn. The post never states the verdict: it asks the reader to guess, and the page shows the record.
-export function order(findings) {
-  const fields = [...new Set(findings.map(f => f.field))], by = fields.map(x => findings.filter(f => f.field === x)), out = [];
-  for (let i = 0; by.some(l => i < l.length); i++) for (const l of by) if (i < l.length) out.push(l[i]);
-  return out;
-}
-export const postText = f => `${f.name}: a landmark finding. Did it hold up when others ran it again? Guess first, then see the replication record:`;
-export function socialQueue(findings, now = Date.now()) {
-  const items = order(findings).map(f => ({ id: f.id, path: "/f/" + f.id, text: postText(f), kind: "finding" }));
-  return promoQueue({ tenant: "replication-ledger", site: SITE, hook: HOOK, items, start: START, every_days: EVERY_DAYS, now });
-}

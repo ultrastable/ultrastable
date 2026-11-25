@@ -9,7 +9,7 @@ import { FIELDS } from "./ledger.js";
 import { KINDS, OUTCOMES, STANDINGS, RUBRIC, attemptWeight } from "./standing.js";
 import { SIBLINGS } from "./promote.js";
 
-export const SITE = SPEC.url;
+export const SITE = "https://replication-ledger.ultrastable.org";
 export const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
 // What a reader can guess: the four standings a replication record can reach. thin and untested are not offered, they are not a verdict.
@@ -47,7 +47,7 @@ function shell(title, desc, inner, { path = "/", script = "" } = {}) {
 <meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(desc)}"><style>${CSS}</style></head>
 <body><header class="top"><nav aria-label="Main"><a class="brand" href="/">Replication&nbsp;<span>Ledger</span></a><a href="/#fields">Fields</a><a href="/projects">Replication projects</a><a href="/changes">What changed</a><a href="/rubric">How standings work</a><a href="/graph">Connections</a></nav></header>
 <main>${inner}${statementsHtml(SPEC, path)}</main><footer><div>Guess whether a textbook finding survived replication, then see the record. Every standing is computed from the replication attempts on file, never typed by hand. The ledger searches for new replications and new landmark findings every hour by itself.
-Runs on <a href="https://ultrastable.io/">Ultrastable</a>, the foundation for any autonomous system. No cookies, no trackers. Data: <a href="/api/findings">/api/findings</a> · <a href="/feed.json">/feed.json</a> · <a href="/api/rubric">/api/rubric</a><br>${footerLinks(SPEC)}</div></footer>${script}</body></html>`;
+Runs on <a href="https://ultrastable.io/">Ultrastable</a>, the foundation for any autonomous system. ${SIBLINGS.length ? `Also running on Ultrastable: ${SIBLINGS.map(c => `<a href="${esc(c.home)}">${esc(c.name)}</a>`).join(" · ")}. ` : ""}No cookies, no trackers. Data: <a href="/api/findings">/api/findings</a> · <a href="/feed.json">/feed.json</a> · <a href="/api/rubric">/api/rubric</a><br>${footerLinks(SPEC)}</div></footer>${script}</body></html>`;
 }
 
 const ago = m => m == null ? "not yet" : m < 1 ? "just now" : m < 90 ? `${m} min ago` : m < 2880 ? `${Math.round(m / 60)} h ago` : `${Math.round(m / 1440)} days ago`;

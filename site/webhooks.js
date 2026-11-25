@@ -5,7 +5,7 @@
 // Delivery rides the existing hourly tick (no new cron or worker). Tables are created on first use (mirrors seed/worker/migrations/0011_webhooks.sql).
 // No site imports: controlplane.js imports this file for its OpenAPI paths, so authentication is injected by the caller (worker.js passes authIntegration).
 // The one import is the shared CloudEvents envelope every Worker uses (a leaf module with no imports of its own).
-import { cloudEvent as envelope, TYPE_PREFIX } from "../seed/worker/src/cloudevents.js";
+import { envelope, TYPE_PREFIX } from "../seed/worker/src/cloudevents.js";
 
 const ORIGIN = "https://ultrastable.io";
 const CORS = { "access-control-allow-origin": "*", "x-content-type-options": "nosniff" };

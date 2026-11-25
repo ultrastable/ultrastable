@@ -115,7 +115,7 @@ Criticality numbers (from `autonomy/criticality.json`): window 14 days, k_min 1,
 
 ## Standing rules
 
-82 standing rules from `agents/AGENTS.md`, each with the enforcement it cites. "In this kit" names code this repository runs;
+91 standing rules from `agents/AGENTS.md`, each with the enforcement it cites. "In this kit" names code this repository runs;
 a rule enforced only by the platform is marked so, and the platform checks it for every system it hosts.
 
 - **USER-BACKEND-1**: The user does the idea; the system does the backend; one fix improves every system. In this kit: `doctrine/user-backend.json`, `worker/src/errors.js`, `worker/test/errors.test.js`.
@@ -158,6 +158,15 @@ a rule enforced only by the platform is marked so, and the platform checks it fo
 - **FULLSTACK-1**: Every system deploys itself in full: repo, back end and a public web UI. In this kit: `worker/src/apprepos.js`, `worker/src/visibility.js`.
 - **AUDIT-CHAIN-1**: Everything is traceable, and the database stays small. In this kit: `autonomy/retention.json`, `worker/test/auditchain.test.js`.
 - **FRONT-BACKED-1**: The front end is always backed by the back end. In this kit: `worker/src/livechanges.js`, `worker/test/livechanges.test.js`.
+- **REPO-STANDARD-1**: One repository standard, applied at creation and every day. In this kit: `scripts/branch_cleanup.py`, `worker/src/repostandard.js`, `worker/test/apprepos.test.js`.
+- **MANAGERS-1**: Every manager is a running loop that owns code. In this kit: `agents/roles/`, `autonomy/managers.json`, `worker/src/managers.js`, `worker/test/managers.test.js`.
+- **FLEET-MAP-1**: One map, one manifest, no hand-copied mirrors. In this kit: ``, `scripts/surfaces.py`, `standards/system.schema.json`, `tests/test_surfaces.py`.
+- **CLONE-PATH-1**: Both start paths are user stories that run. In this kit: `.github/ISSUE_TEMPLATE/start.yml`, `.github/workflows/bootstrap.yml`, `bootstrap/intake.py`, `tests/test_happy_path.py`.
+- **RULE-REFS-1**: Every reference a rule names resolves. In this kit: checked by the platform.
+- **STANDARDS-FIRST-1**: Standards are measured, with a decision per standard. In this kit: `scripts/surfaces.py`, `standards/standards.json`, `worker/src/cloudevents.js`, `worker/src/contract.js`.
+- **TENANT-STANDARD-1**: One standard for every tenant repository; one scaffold writes it, one check reads it. In this kit: checked by the platform.
+- **LIVE-LINKS-1**: Every repository says where its code runs. In this kit: `scripts/surfaces.py`.
+- **FLEET-CONTRACT-1**: One contract for every system; statements hold front to back and back to front. In this kit: `worker/src/contract.js`, `worker/test/contract.test.js`.
 - **DECISIONS-1**: Every decision is measured. In this kit: `worker/src/decisions.js`, `worker/test/decisions.test.js`.
 - **GOALS-1**: The system sets its own goals and turns its own knobs. In this kit: `autonomy/goals.json`, `worker/src/goals.js`, `worker/test/goals.test.js`.
 - **CONNECT-1**: A vector space and a knowledge graph in every system; novel connections are generated, not waited for. In this kit: checked by the platform.

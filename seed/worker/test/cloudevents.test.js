@@ -4,7 +4,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { cloudEvent, conforms, unwrap, isCloudEvent, eventType } from '../src/cloudevents.js';
+import { envelope as cloudEvent, conforms, unwrap, isCloudEvent, eventType } from '../src/cloudevents.js';
 import { handoffEvent } from '../src/handoff.js';
 
 const VEC = JSON.parse(readFileSync(new URL('../../standards/cloudevents-vectors.json', import.meta.url), 'utf8'));

@@ -1330,7 +1330,7 @@
       "conformance": "Nothing for outbound callbacks; they now build their envelope with the shared helper. Events between loops are row cloudevents.",
       "cost": "none",
       "probes": [
-        "grep:site/webhooks.js::import \\{ cloudEvent as envelope"
+        "grep:site/webhooks.js::import \\{ envelope"
       ],
       "audited": "2026-11-25"
     },

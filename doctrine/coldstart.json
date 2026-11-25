@@ -212,6 +212,9 @@
       "deploy/*.json",
       ".github/workflows/*.yml",
       "instances/ultrastable/loop-registry.json"
-    ]
+    ],
+    "exclude": {
+      "doctrine/decision-ledger.json": "append-only history of past decisions in prose; it quotes commands as they were named then, so it is a record, not an instruction"
+    }
   }
 }

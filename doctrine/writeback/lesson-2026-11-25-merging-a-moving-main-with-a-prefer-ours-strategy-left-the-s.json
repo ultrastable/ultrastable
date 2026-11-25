@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-25-merging-a-moving-main-with-a-prefer-ours-strategy-left-the-s",
+  "kind": "lesson",
+  "date": "2026-11-25",
+  "title": "Merging a moving main with a prefer-ours strategy left the seed Worker calling a list it no longer defined",
+  "body": "Three merges of the lane's commits used -X ours and kept older versions of files main had since changed (the visibility gate, the cold-start check, a claim probe). Only running every suite and the regeneration step with its warnings found them; tests pass on the repaired tree. For a branch the lane also writes to, merge without a side preference and resolve by reading both.",
+  "probe": "grep:seed/worker/src/visibility.js::export const PUBLIC_READS",
+  "session": "session_0156nqDufLi3JgDJf3gVw7Fh"
+ },
+ "kind": "lesson",
+ "title": "Merging a moving main with a prefer-ours strategy left the seed Worker calling a list it no longer defined",
+ "session": "session_0156nqDufLi3JgDJf3gVw7Fh"
+}

@@ -51,11 +51,13 @@ export function publicView(rec) {
 // LAUNCH-PATH-1: a build that failed (the model was unavailable, the host was busy) is not the end. The idea is kept, so the page is queued again with
 // fresh tries: when the person comes back, and by the daily launcher (op "rebuild") when they do not. Nobody types the idea twice.
 export async function requeueBuild(env, id, minAgeMs = 600000, now = Date.now()) {
-  if ((await env.ASSETS.get("state:" + id)) !== "failed") return false;
+  // a failed build, or a first page that is still the no-model draft (site/worker.js draftHtml): both are built again from the kept idea
+  const draft = Boolean(await env.ASSETS.get("draft:" + id));
+  if ((await env.ASSETS.get("state:" + id)) !== "failed" && !draft) return false;
   if (now - Number((await env.ASSETS.get("since:" + id)) || 0) < minAgeMs) return false;
   let b = null; try { b = JSON.parse((await env.ASSETS.get("brief:" + id)) || "null"); } catch (e) { console.error("brief unreadable", id, String(e)); }
   const rec = await getLaunch(env, id), text = (b && b.brief) || (rec && rec.brief); if (!text) return false;
-  const base = Boolean(await env.ASSETS.get("site:" + id));
+  const base = !draft && Boolean(await env.ASSETS.get("site:" + id));  // a draft is replaced whole; the rebuild starts from the idea, with no page to change
   await env.ASSETS.put("job:" + id, JSON.stringify({ brief: text, change: base && b ? b.change : null, base }), { expirationTtl: 86400 });
   await env.ASSETS.put("tries:" + id, "0", { expirationTtl: 86400 });
   await env.ASSETS.put("state:" + id, "building"); await env.ASSETS.put("since:" + id, String(now));
@@ -131,7 +133,7 @@ export async function launchesInternal(request, env) {
   let b; try { b = await request.json(); } catch (e) { return J({ ok: false, error: "bad json" }, 400); }
   if (b.op === "list") {
     const out = []; let cursor;
-    for (let i = 0; i < 10; i++) { const r = await env.ASSETS.list({ prefix: "grad:", cursor }); for (const k of r.keys) { const rec = await getLaunch(env, k.name.slice(5)); if (rec) { const { key: _k, ...pub } = rec; pub.site_state = await env.ASSETS.get("state:" + rec.id); pub.built = Boolean(await env.ASSETS.get("site:" + rec.id));  /* a page that was built once stays live while a change rebuilds it */ const b = await env.ASSETS.get("brief:" + rec.id); if (b) { try { pub.brief = JSON.parse(b).brief || pub.brief; } catch (e) { console.error("brief unreadable", rec.id, String(e)); } } out.push(pub); } } if (r.list_complete) break; cursor = r.cursor; }
+    for (let i = 0; i < 10; i++) { const r = await env.ASSETS.list({ prefix: "grad:", cursor }); for (const k of r.keys) { const rec = await getLaunch(env, k.name.slice(5)); if (rec) { const { key: _k, ...pub } = rec; pub.site_state = await env.ASSETS.get("state:" + rec.id); pub.built = Boolean(await env.ASSETS.get("site:" + rec.id)); pub.draft = Boolean(await env.ASSETS.get("draft:" + rec.id));  /* a page that was built once stays live while a change rebuilds it */ const b = await env.ASSETS.get("brief:" + rec.id); if (b) { try { pub.brief = JSON.parse(b).brief || pub.brief; } catch (e) { console.error("brief unreadable", rec.id, String(e)); } } out.push(pub); } } if (r.list_complete) break; cursor = r.cursor; }
     return J({ ok: true, launches: out });
   }
   if (b.op === "drop") {  // only the scheduled probe's own test launches are ever removed

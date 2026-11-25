@@ -43,7 +43,9 @@
    "CITATION.cff",
    "publiccode.yml",
    "catalog-info.yaml",
-   ".ultrastable/"
+   ".ultrastable/",
+   "SYSTEM.md",
+   "schemas/"
   ],
   "keep": [
    "NOTICE",

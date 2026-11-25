@@ -165,23 +165,25 @@ test("story: the model is unavailable when they type the idea; the idea is kept 
   w.env.AI = { run: async (...a) => { if (!up) throw new Error("model unavailable"); return good(...a); } };
   const r = await w.call("/api/idea", { method: "POST", body: form({ idea: IDEA, profile: "{}" }), headers: { accept: "application/json" } }), { id } = await r.json();
   let st; for (let i = 0; i < 5; i++) st = (await (await w.call("/s/" + id + "/status")).json()).state;
-  assert.equal(st, "failed", "three tries, then it stops spending");
-  const make = await (await w.call("/s/" + id + "/make")).text();
-  assert.ok(/Your idea is saved/.test(make) && /try again by ourselves/.test(make) && !/href="\/start"/.test(make.split("<main")[1] || make) , "no dead end and no 'start over' link");
-  assert.ok(!DEV_WORDS.test(make.replace(/<[^>]+>/g, " ").match(/Building it did not work[^<]*/)[0]));
+  assert.equal(st, "ready", "a first build always yields a page: with no model, a draft from the visitor's own words");
+  const first = await (await w.call("/s/" + id)).text();
+  assert.match(first, /first draft of this site/);
+  assert.ok(!DEV_WORDS.test(first.replace(/<[^>]+>/g, " ")), "the draft says nothing in developer words");
   // nobody comes back: the daily launcher queues it again and reads its status once, which builds it
   up = true;
   const out = await L.run({ site: w.internal, deploySeed: async () => [], cfg, base, log() {}, poke: async (x) => { await w.call("/s/" + x + "/status"); } });
   assert.match(out[0].steps[0], /queued again/);
   assert.equal((await (await w.call("/s/" + id + "/status")).json()).state, "ready");
   assert.match(await (await w.call("/s/" + id)).text(), /Policy atlas/);
-  // and when they do come back to a failed build after a while, the visit itself restarts it
+  // and when they do come back to the draft after a while, the visit itself builds the full page
   const w2 = await world(); w2.env.AI = { run: async () => { throw new Error("model unavailable"); } };
   const id2 = (await (await w2.call("/api/idea", { method: "POST", body: form({ idea: IDEA, profile: "{}" }), headers: { accept: "application/json" } })).json()).id;
   for (let i = 0; i < 5; i++) await w2.call("/s/" + id2 + "/status");
-  assert.equal(w2.m.get("state:" + id2), "failed"); w2.m.set("since:" + id2, String(Date.now() - 3600e3)); w2.env.AI = { run: good };
+  assert.equal(w2.m.get("state:" + id2), "ready"); assert.ok(w2.m.get("draft:" + id2), "the page is the draft, and marked as one");
+  w2.m.set("since:" + id2, String(Date.now() - 3600e3)); w2.env.AI = { run: good };
   for (let i = 0; i < 3; i++) await w2.call("/s/" + id2 + "/make");
-  assert.equal(w2.m.get("state:" + id2), "ready");
+  assert.equal(w2.m.get("state:" + id2), "ready"); assert.ok(!w2.m.get("draft:" + id2), "the draft was replaced by the built page");
+  assert.match(await (await w2.call("/s/" + id2)).text(), /Policy atlas/);
 });
 test("story: taking it over needs no GitHub knowledge; saying nothing keeps the app theirs and looked after", async () => {
   const w = await world(), { id, cookie } = await submit(w, IDEA); await w.pass();

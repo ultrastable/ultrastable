@@ -100,12 +100,12 @@
   {
    "id": "replication-ledger",
    "name": "Replication Ledger",
-   "repo": "ultrastable/replication-ledger",
+   "repo": "ultrastable/ultrastable",
    "url": "https://replication-ledger.ultrastable.org/",
    "feed": "https://replication-ledger.ultrastable.org/feed.json",
    "expect_hours": 168,
    "heal": [
-    "ci.yml"
+    "deploy-ultrastable.yml"
    ],
    "stickiness": {
     "content_feed": "https://replication-ledger.ultrastable.org/feed.json",

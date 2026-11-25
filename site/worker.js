@@ -583,7 +583,7 @@ async function audit(env, id, brief, html) {
 async function build(env, id, brief, prev, change) {
   try {
     await env.ASSETS.put("brief:" + id, JSON.stringify({ brief, change: change || null }));
-    { const before = await env.ASSETS.get("site:" + id); const html = await aiHtml(env, brief, prev, change); if (before) await recordVersion(env, id, before, change ? "you asked: " + String(change).slice(0, 100) : "rebuilt"); await env.ASSETS.put("site:" + id, html); } await env.ASSETS.put("state:" + id, "ready"); // SITE-UPKEEP-1: the page before each change is kept
+    { const before = await env.ASSETS.get("site:" + id); const html = await aiHtml(env, brief, prev, change); if (before) await recordVersion(env, id, before, change ? "you asked: " + String(change).slice(0, 100) : "rebuilt"); await env.ASSETS.put("site:" + id, html); await env.ASSETS.delete("draft:" + id); } await env.ASSETS.put("state:" + id, "ready"); // SITE-UPKEEP-1: the page before each change is kept
     await env.ASSETS.delete("audit:" + id);
   } catch (e) {
     console.error("build failed", id, String(e));
@@ -595,6 +595,7 @@ async function build(env, id, brief, prev, change) {
       await env.ASSETS.put("site:" + id, draftHtml(brief)); await env.ASSETS.put("draft:" + id, String(e).slice(0, 200));
       await env.ASSETS.put("state:" + id, "ready"); return;
     }
+    if (await env.ASSETS.get("draft:" + id)) { await env.ASSETS.put("state:" + id, "ready"); return; }  // a retry of a draft that failed again: the draft stays the page, and the next pass tries again
     await env.ASSETS.put("state:" + id, "failed");
   }
 }
@@ -749,7 +750,7 @@ async function siteRoutes(u, env, ctx, request, own) {
   const id = m[1]; let st = await env.ASSETS.get("state:" + id); const page = (t, b) => new Response(shell({ path: u.pathname, title: t + " - Ultrastable", description: t }, b), { headers: HTML });
   if (!st) return new Response(start("That site was not found."), { status: 404, headers: HTML });
   if (st === "building" && Date.now() - Number(await env.ASSETS.get("since:" + id) || 0) > 150000) { st = "failed"; await env.ASSETS.put("state:" + id, "failed"); }
-  if (st === "failed" && await GRAD.requeueBuild(env, id)) st = "building";  // LAUNCH-PATH-1: a failed build is queued again from the kept idea (graduate.js requeueBuild)
+  if ((st === "failed" || (st === "ready" && await env.ASSETS.get("draft:" + id))) && await GRAD.requeueBuild(env, id)) st = "building";  // LAUNCH-PATH-1: a failed build is queued again from the kept idea (graduate.js requeueBuild)
   if (st === "ready" && (!m[2] || m[2] === "/review")) await ensureAudit(env, ctx, id);
   if (m[2] === "/own" || m[2] === "/launch") {  // LAUNCH-PATH-1: where the app is, what was asked for, and taking it over; /launch is the same record as JSON with no idea text
     const rec = (await GRAD.getLaunch(env, id)) || await GRAD.enqueue(env, id, ((await jget(env, "brief:" + id)) || {}).brief || "");  // an app made before this path existed joins it on first visit

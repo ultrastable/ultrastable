@@ -58,9 +58,11 @@ export async function run({ site, deploySeed, cfg, base, log = console.log, now 
   for (const l of launches) {
     const r = { id: l.id, synthetic: Boolean(l.synthetic), steps: [], visitor_steps: 0 }, mark = { op: "mark", id: l.id, filed: [] };
     out.push(r);
+    // a first page that is still the no-model draft is built again from the kept idea; the draft stays the page until that works
+    if (l.built && l.draft && !l.synthetic) { const q = await site({ op: "rebuild", id: l.id }); if (q.requeued && poke) await poke(l.id); r.steps.push("page: still the first draft; " + (q.requeued ? "queued again" : "nothing to rebuild from")); }
     if (!l.built) {
       // A build that failed while nobody was looking (the model was unavailable) is queued again here; the next status read builds it.
-      if (l.site_state === "failed" && !l.synthetic) { const q = await site({ op: "rebuild", id: l.id }); if (q.requeued && poke) await poke(l.id); r.steps.push("page: build failed earlier; " + (q.requeued ? "queued again" : "nothing to rebuild from")); }
+      if ((l.site_state === "failed" || l.draft) && !l.synthetic) { const q = await site({ op: "rebuild", id: l.id }); if (q.requeued && poke) await poke(l.id); r.steps.push("page: " + (l.draft ? "still the first draft; " : "build failed earlier; ") + (q.requeued ? "queued again" : "nothing to rebuild from")); }
       else r.steps.push("page not built yet (" + l.site_state + ")");
       Object.assign(r, stackOf(l, cfg, now())); continue;
     }

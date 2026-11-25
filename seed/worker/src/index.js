@@ -2,7 +2,7 @@
 // Cron fires runTick; GET /health shows the last tick's four-line report.
 // Standard issue: first-party web analytics (analytics/analytics.js): /a.js beacon, /a/e collector, GET /api/analytics (bearer ANALYTICS_TOKEN).
 import { paced } from './pace.js';
-import { discoverRoute, seedStatements, seedJsonLd, heartbeat as directoryHeartbeat } from './discover.js';  // DISCOVER-1
+import { footerHtml, discoverRoute, seedStatements, seedJsonLd, heartbeat as directoryHeartbeat } from './discover.js';  // DISCOVER-1
 import { withKnobs, readGoals, registerTenant, reportReadings, knobValues } from './goals.js';  // GOALS-1
 import { tune } from './roi.js';  // BOUNDARIES-1
 import { runTick, lastTickForHealth, METRICS, ensureItem } from './tick.js';
@@ -336,7 +336,7 @@ export default {
     }
     if (url.pathname === '/' && request.method === 'GET' && env.PUBLIC_HEALTH_ONLY === '1') {  // FULLSTACK-1: a health-only system still has a public front end
       let last; try { last = await lastTickForHealth(env.DB); } catch (e) { return d1Unavailable(e); }
-      return publicPage({ name: config.org_slug, last, ignition: await readIgnition(env.DB).catch(() => null), statements: seedStatements(env, config, url), head: seedJsonLd(env, config, url) });
+      return publicPage({ name: config.org_slug, last, ignition: await readIgnition(env.DB).catch(() => null), footer: footerHtml(env, config), statements: seedStatements(env, config, url), head: seedJsonLd(env, config, url) });
     }
     if (url.pathname === '/health') {
       if (halted(config, env)) return Response.json({ ok: true, halted: true, org: config.org_slug, why: 'HALT-1: the owner stopped every loop; pages keep serving' });

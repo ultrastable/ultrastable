@@ -15,7 +15,6 @@
   ".github/workflows/checks.yml: REGEN-1: regenerate generated files",
   ".github/workflows/intent-yield.yml: intent yield, directives probed (INTENT-YIELD-1)",
   ".github/workflows/product-manager.yml: provenance - public changelog (CHANGELOG-FRESH-1)",
-  ".github/workflows/seed-launch.yml: seed launch records (SEED-LAUNCH-1)",
   ".github/workflows/temporal.yml: temporal series, findings and queue items (TEMPORAL-1)",
   ".github/workflows/tenant-repos.yml: Stand alone: vendor the core files $slug reads (TENANT-REPO-1)",
   "scripts/executor_evidence.sh: executor provenance"

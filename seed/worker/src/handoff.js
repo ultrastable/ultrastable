@@ -67,8 +67,8 @@ export async function runProbe(spec, f = fetch) {
 }
 
 import { record } from './auditchain.js';
-import { cloudEvent } from './cloudevents.js';
-export const handoffEvent = (id, state, detail, tenant = handoffTenant) => cloudEvent({ area: 'handoff', event: state, source: '/tenants/' + (tenant || 'ultrastable') + '/loops/handoff', subject: String(id), data: { state, detail: detail ? String(detail).slice(0, 300) : null } });
+import { envelope } from './cloudevents.js';
+export const handoffEvent = (id, state, detail, tenant = handoffTenant) => envelope({ area: 'handoff', event: state, source: '/tenants/' + (tenant || 'ultrastable') + '/loops/handoff', subject: String(id), data: { state, detail: detail ? String(detail).slice(0, 300) : null } });
 import { tenantOf } from './tenant.js';  // Q-TENANT-row-isolation: a handoff block can name any item id; only this runtime's own items (tenant_id NULL or its slug) are advanced or closed
 let handoffTenant = '';
 async function event(db, id, state, detail) {

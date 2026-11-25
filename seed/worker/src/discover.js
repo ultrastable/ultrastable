@@ -25,7 +25,7 @@ export function optedOut(env = {}, config = {}) {
 export function manifest(env = {}, config = {}, requestUrl = null) {
   // SYSTEM-MANIFEST-1: the identity object of ultrastable.json (written into config by the bootstrap) is the first source of name and repository
   const id = config.identity || {};
-  const repos = id.repo ? [id.repo] : config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []);
+  const repos = id.repo ? [id.repo] : config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : (env.PUBLIC_REPO ? [env.PUBLIC_REPO] : []));  // PUBLIC_REPO: the repository a deploy names for the manifest only (deploy/deploy-seed.mjs); it grants no access
   return {
     ultrastable: 1,
     name: clean((id.repo && id.name) || config.org_name || config.org_slug || env.TENANT || 'An Ultrastable system', 80),

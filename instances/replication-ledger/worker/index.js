@@ -11,8 +11,9 @@ import { BEAT } from "./discover.js";
 import { load, beat, freshness, minutesSince, seedCites } from "./store.js";
 import { doiKey } from "./ledger.js";
 import { graphTick, graphApi, graphView } from "./graph.js";
+import { socialQueue } from "./promote.js";
 import { contractRoute } from "../vendor/ultrastable/contract.js";
-import { SPEC, socialQueue } from "./contract.js";
+import { SPEC } from "./contract.js";
 import { home, fieldPage, findingPage, projectsPage, rubricPage, changesPage, graphPage, notFound, SITE } from "./site.js";
 
 const json = (body, status = 200) => new Response(JSON.stringify(body, null, 1), { status, headers: { "content-type": "application/json; charset=utf-8", "access-control-allow-origin": "*" } });
@@ -38,7 +39,6 @@ export function route(url, ledger = seed, live = { checks: {}, beats: [], change
   const all = withStandings(ledger);
   const c = contractRoute(p, SPEC);  // FLEET-CONTRACT-1: /.well-known/ultrastable.json and /claims.json
   if (c) return c;
-  if (p === "/social-queue.json") return json(socialQueue(ledger.findings, live.now || Date.now()));  // TENANT-PROMO-1
   if (p === "/health") {
     const fr = freshness(ledger, live);
     return json({ ok: true, findings: ledger.findings.length, attempts: all.reduce((n, f) => n + f.standing.attempts, 0),

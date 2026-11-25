@@ -105,6 +105,14 @@ def validate_subset(schema, value, path="$") -> list[str]:
     return schemas.validate(schema, value, path)
 
 
+def _kit():
+    """OPEN-STANDARDS-1: one JSON Schema validator for every system, seed/scripts/stdkit.py (library first, stdlib subset otherwise)."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("seed_stdkit", REPO / "seed/scripts/stdkit.py")
+    mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod)
+    return mod
+
+
 def validate(schema, value) -> list[str]:
     return _kit().validate(schema, value)
 

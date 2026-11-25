@@ -19,6 +19,6 @@
     "practical-solutions": {"queue": "https://ultrastable.org/social-queue.json", "showcase": "practical-solutions"},
     "unlearn": {"queue": "https://unlearn.ultrastable.org/social-queue.json", "showcase": "unlearn"},
     "what-works": {"queue": "https://what-works.ultrastable.org/social-queue.json", "showcase": "what-works"},
-    "replication-ledger": {"queue": "https://replication-ledger.ultrastable.org/social-queue.json", "showcase": "replication-ledger"}
+    "replication-ledger": {"queue": "https://replication-ledger.ultrastable.org/social-queue.json", "showcase": "replication-ledger", "worker_dir": "instances/replication-ledger/worker"}
   }
 }

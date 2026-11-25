@@ -123,7 +123,7 @@ export default {
   {
    "claim": "The slow loop reads the same variables every tick, and when one has been out of bounds for two ticks in a row it takes one discrete step on that variable's ladder, keeps the step only if the variable comes back, and otherwise undoes it and takes the next.",
    "detail": "",
-   "how": "json:doctrine/ultrastability.json::patience_ticks==2 + grep:foundation/ultrastability.py::revert_to=pending + grep:foundation/ultrastability.py::return \"kept\"",
+   "how": "grep:doctrine/ultrastability.json::\"patience_ticks\" + grep:foundation/ultrastability.py::revert_to=pending + grep:foundation/ultrastability.py::return \"kept\"",
    "id": "how-ultrastable-second-order",
    "kind": "claim",
    "pass": true,
@@ -924,7 +924,7 @@ export default {
   {
    "claim": "At the very start, while the owner is present, obtain the org-admin credential yourself, in this order, stopping at the first that works:",
    "detail": "",
-   "how": "grep:.github/workflows/checks.yml::rules --probe no-secrets + grep:doctrine/rules.json::secret_patterns + grep:products/gaplint/gaplint/rules.py::GL006 + grep:seed/bootstrap/bootstrap.py::GATE-RUNTIME",
+   "how": "grep:.github/workflows/checks.yml::rules --probe no-secrets + grep:doctrine/rules.json::secret_patterns + grep:products/gaplint/gaplint/rules.py::GL006 + grep:seed/bootstrap/bootstrap.py::connect=",
    "id": "curated-ce0653a6ae",
    "kind": "claim",
    "pass": true,
@@ -3568,7 +3568,7 @@ export default {
    "surface": "seed/tests/fixtures/IDEA.example.md"
   },
   {
-   "claim": "seed-tests: 97 Python and 575 Worker tests",
+   "claim": "seed-tests: 97 Python and 578 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3577,7 +3577,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 575 Worker tests",
+   "claim": "seed-worker-tests: 578 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
