@@ -149,7 +149,8 @@ test('the research is live: every practice is measured from the graph, and an em
 });
 
 test('a database that already holds DATAGRAPH-1 tables is refused with a plain reason, never written into', async () => {
-  const db = makeDb();
+  const db = tenantDb();
+  db.raw.exec('CREATE TABLE kg_nodes (id TEXT PRIMARY KEY, kind TEXT NOT NULL, label TEXT, props TEXT, hash TEXT, source TEXT, first_seen TEXT NOT NULL, changed_at TEXT NOT NULL, valid_to TEXT)');  // DATAGRAPH-1's shape
   await assert.rejects(kg.runKg(db, { tenant: 't', records: recs(base), mappers, spec, now: 1 }).then(r => { if (r.error) throw new Error(r.error); return r; }), /DATAGRAPH-1/);
 });
 
