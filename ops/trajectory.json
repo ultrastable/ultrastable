@@ -44,7 +44,7 @@
   {
    "area": "doctrine",
    "quiet_days": 0,
-   "recent7": 36231,
+   "recent7": 36273,
    "series": [
     0,
     0,
@@ -75,17 +75,17 @@
     0,
     0,
     0,
-    36231
+    36273
    ],
    "share_recent": 0.129,
    "share_trend": 0.129,
-   "slope": 233.7484,
-   "total": 36231
+   "slope": 234.0194,
+   "total": 36273
   },
   {
    "area": "foundation",
    "quiet_days": 0,
-   "recent7": 34164,
+   "recent7": 34177,
    "series": [
     0,
     0,
@@ -116,17 +116,17 @@
     0,
     0,
     0,
-    34164
+    34177
    ],
    "share_recent": 0.122,
    "share_trend": 0.122,
-   "slope": 220.4129,
-   "total": 34164
+   "slope": 220.4968,
+   "total": 34177
   },
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 24955,
+   "recent7": 24973,
    "series": [
     0,
     0,
@@ -157,17 +157,17 @@
     0,
     0,
     0,
-    24955
+    24973
    ],
    "share_recent": 0.089,
    "share_trend": 0.089,
-   "slope": 161.0,
-   "total": 24955
+   "slope": 161.1161,
+   "total": 24973
   },
   {
    "area": "seed/worker",
    "quiet_days": 0,
-   "recent7": 17798,
+   "recent7": 17823,
    "series": [
     0,
     0,
@@ -198,17 +198,17 @@
     0,
     0,
     0,
-    17798
+    17823
    ],
    "share_recent": 0.064,
    "share_trend": 0.064,
-   "slope": 114.8258,
-   "total": 17798
+   "slope": 114.9871,
+   "total": 17823
   },
   {
    "area": "tests/foundation",
    "quiet_days": 0,
-   "recent7": 13606,
+   "recent7": 13629,
    "series": [
     0,
     0,
@@ -239,12 +239,12 @@
     0,
     0,
     0,
-    13606
+    13629
    ],
    "share_recent": 0.049,
    "share_trend": 0.049,
-   "slope": 87.7806,
-   "total": 13606
+   "slope": 87.929,
+   "total": 13629
   },
   {
    "area": "instances",
@@ -741,7 +741,7 @@
   {
    "area": "agents",
    "quiet_days": 0,
-   "recent7": 1511,
+   "recent7": 1513,
    "series": [
     0,
     0,
@@ -772,12 +772,12 @@
     0,
     0,
     0,
-    1511
+    1513
    ],
    "share_recent": 0.005,
    "share_trend": 0.005,
-   "slope": 9.7484,
-   "total": 1511
+   "slope": 9.7613,
+   "total": 1513
   },
   {
    "area": "seed/autonomy",
@@ -1026,7 +1026,7 @@
    "total": 1088
   }
  ],
- "at": "2026-11-25T20:42:05Z",
+ "at": "2026-11-25T20:43:07Z",
  "days": 30,
  "files": [],
  "findings": [
@@ -1596,7 +1596,7 @@
   {
    "loop": "provenance",
    "quiet_days": 0,
-   "rows": 193,
+   "rows": 195,
    "series": [
     0,
     0,
@@ -1627,9 +1627,9 @@
     40,
     3,
     1,
-    122
+    124
    ],
-   "slope": 1.1406
+   "slope": 1.1535
   },
   {
    "loop": "resilience",
@@ -1786,7 +1786,7 @@
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 308,
+   "rows": 309,
    "series": [
     0,
     0,
@@ -1817,9 +1817,9 @@
     112,
     80,
     55,
-    56
+    57
    ],
-   "slope": 1.733
+   "slope": 1.7395
   },
   {
    "loop": "ultrastability",
