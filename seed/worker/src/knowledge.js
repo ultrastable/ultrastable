@@ -191,12 +191,14 @@ export function modularity(G, lab) {
 }
 // Adamic-Adar (Adamic and Adar 2003; Liben-Nowell and Kleinberg 2007): two unlinked nodes that share many rare neighbours are likely related.
 // Hubs above maxHub are skipped as intermediaries: a neighbour everything shares says nothing, and skipping it bounds the work.
-export function predictLinks(g, G, { pairs = [], maxHub = KG_DEFAULTS.max_hub, maxPairs = KG_DEFAULTS.max_pairs, top = 50 } = {}) {
+// viaKinds limits which shared neighbours count as evidence (Unlearn: a shared study or author, not a shared topic), so the wording stays true.
+export function predictLinks(g, G, { pairs = [], viaKinds = null, maxHub = KG_DEFAULTS.max_hub, maxPairs = KG_DEFAULTS.max_pairs, top = 50 } = {}) {
   if (!pairs.length) return [];
+  const via_ok = viaKinds ? new Set(viaKinds) : null;
   const kind = i => g.nodes.get(G.ids[i]).kind, ok = (a, b) => pairs.some(p => (p.from === kind(a) && p.to === kind(b)) || (p.from === kind(b) && p.to === kind(a)));
   const score = new Map(), via = new Map(); let n = 0;
   for (let w = 0; w < G.ids.length && n < maxPairs; w++) {
-    const deg = G.adj[w].size; if (deg < 2 || deg > maxHub) continue;
+    const deg = G.adj[w].size; if (deg < 2 || deg > maxHub || (via_ok && !via_ok.has(g.nodes.get(G.ids[w]).kind))) continue;
     const nb = [...G.adj[w].keys()].sort((a, b) => a - b), s = 1 / Math.log(deg);
     for (let x = 0; x < nb.length; x++) for (let y = x + 1; y < nb.length; y++) {
       const a = nb[x], b = nb[y]; if (G.adj[a].has(b) || !ok(a, b)) continue;
@@ -230,7 +232,7 @@ export function analyze(g, spec = {}) {
     .filter(b => b.deg >= 3 && b.groups >= 2 && b.p >= 0.5 && (!bridgeKinds || bridgeKinds.has(g.nodes.get(b.id).kind))).sort((a, b) => b.p * Math.log(b.deg) - a.p * Math.log(a.deg) || a.id.localeCompare(b.id)).slice(0, 20);
   const hubs = G.ids.map((id, i) => ({ id, rank: pr[i] })).sort((a, b) => b.rank - a.rank || a.id.localeCompare(b.id)).slice(0, 10).map(h => h.id);
   return { G, rank, community, communities: [...sizes.values()].filter(s => s > 1).length, sizes, modularity: Number(modularity(G, lab).toFixed(4)), bridges, hubs,
-    links: predictLinks(g, G, { pairs: spec.predict || [], maxHub: spec.max_hub, maxPairs: spec.max_pairs }), gaps: gaps(g, spec.gaps || []) };
+    links: predictLinks(g, G, { pairs: spec.predict || [], viaKinds: spec.via_kinds, maxHub: spec.max_hub, maxPairs: spec.max_pairs }), gaps: gaps(g, spec.gaps || []) };
 }
 
 // ---------------------------------------------------------------------------------------------------------------------------- insights loop
@@ -242,7 +244,7 @@ export function candidates(g, an, spec = {}, weights = {}) {
     text: (spec.link_text || ((a, b, via) => `${a} and ${b} are not linked, but share ${via.join(', ')}.`))(label(g, l.a), label(g, l.b), l.via.map(v => label(g, v))) });
   for (const x of an.gaps) out.push({ id: `G:${x.rule}:${x.node}`, kind: 'gap', subject: x.node, object: x.rule, score: x.weight * w('gap'), text: x.text });
   for (const b of an.bridges) out.push({ id: `B:${b.id}`, kind: 'bridge', subject: b.id, object: null, score: b.p * w('bridge'),
-    text: `${label(g, b.id)} connects ${b.groups} separate clusters of the graph.` });
+    text: (spec.bridge_text || ((n, k) => `${n} connects ${k} separate clusters of the graph.`))(label(g, b.id), b.groups) });
   return out.filter(c => c.score > 0).sort((a, b) => b.score - a.score || a.id.localeCompare(b.id));
 }
 const linked = (g, a, b) => g.edges.some(e => (e.src === a && e.dst === b) || (e.src === b && e.dst === a));

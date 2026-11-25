@@ -164,3 +164,11 @@ test('every seeded system keeps a graph of its own records; an unmeasured object
   assert.ok(ins.some(i => i.subject === 'metric:M-2' || i.object === 'metric:M-2'), 'the unattached metric is proposed for the objective its owner holds');
   assert.deepEqual(await knowledgeStep(db, ctx, ensureItem, { now: now + 60000 }), { skipped: true });
 });
+
+test('via_kinds limits the shared neighbours that count as evidence for a predicted link', async () => {
+  const db = makeDb();
+  await kg.sync(db, kg.extract(recs(base), mappers), { tenant: 'v', now: 1 });
+  const g = await kg.load(db, 'v');
+  assert.ok(kg.analyze(g, { ...spec, via_kinds: ['author'] }).links.every(l => l.via.every(v => v.startsWith('author:'))));
+  assert.equal(kg.analyze(g, { ...spec, via_kinds: ['venue'] }).links.length, 0);
+});
