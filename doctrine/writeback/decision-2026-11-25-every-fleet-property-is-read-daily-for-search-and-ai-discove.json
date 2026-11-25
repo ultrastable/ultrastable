@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-25-every-fleet-property-is-read-daily-for-search-and-ai-discove",
+  "kind": "decision",
+  "date": "2026-11-25",
+  "title": "Every fleet property is read daily for search and AI discoverability",
+  "body": "FINDABLE-1 (Rowan 2026-11-25): no Zenodo or DOIs. Reach comes from open standards: robots, sitemap, llms.txt, meta, canonical, Open Graph, JSON-LD and feeds on every property in the directory, read daily by foundation/findable.py; gaps become Q-FIND items and feeds are pinged to the WebSub hub. Tests: tests/foundation/test_findable.py 4 pass.",
+  "probe": "grep:foundation/findable.py::def home_gaps",
+  "session": "session_0156nqDuQXEUhGCq6LkokuuL"
+ },
+ "kind": "decision",
+ "title": "Every fleet property is read daily for search and AI discoverability",
+ "session": "session_0156nqDuQXEUhGCq6LkokuuL"
+}

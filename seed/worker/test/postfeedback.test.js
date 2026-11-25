@@ -24,6 +24,6 @@ import assert2 from 'node:assert/strict';
 test2('relay:mastodon rows are measured from the url in the ref', async () => {
   let seen = '';
   const f = async u => { seen = u; return { ok: true, json: async () => ({ favourites_count: 2, reblogs_count: 1, replies_count: 0 }) }; };
-  assert2.deepEqual(await eng2('relay:mastodon', 'https://mstdn.science/@QNFO/117674144920210814', f), { likes: 2, reposts: 1, replies: 0 });
+  assert2.deepEqual(await eng2('relay:mastodon', 'https://mstdn.science/@acct/117674144920210814', f), { likes: 2, reposts: 1, replies: 0 });
   assert2.equal(seen, 'https://mstdn.science/api/v1/statuses/117674144920210814');
 });

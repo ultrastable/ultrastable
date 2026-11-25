@@ -2503,6 +2503,24 @@
       ],
       "feedback": "each closed Q-IMPROVE item is judged a week later on its metric: kept if it rose, else a replace item is filed; a tier with no merge in its window files its own stall item, which closes when a merge lands",
       "bindings": []
+    },
+    "findable": {
+      "inflows": [
+        {
+          "signal": "metric.readings",
+          "via": "d1:ultrastable-org"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "feedback": "a property's gaps return as a Q-FIND item the executor fixes, and the next daily reading closes it or keeps it open",
+      "bindings": [
+        "LANE_PAT"
+      ]
     }
   },
   "implicit_producers": {
