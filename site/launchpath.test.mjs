@@ -57,6 +57,16 @@ async function submit(w, idea) {
   return { id, cookie };
 }
 
+// BREADTH-1: the owner's own widened wording of a second suggestion, typed as he typed it (slashes and all), and both probe ideas.
+test("story: a second, wider idea in the owner's raw words launches the same way", async () => {
+  const raw = "An encyclopedic replication ledger for many/multiple domains/fields: which landmark findings held up and which failed, updated as replications publish.";
+  const w = await world(), { id } = await submit(w, raw); await w.pass();
+  const l = await (await w.call("/s/" + id + "/launch")).json();
+  assert.equal(l.state, "repo"); assert.match(l.repo, /^ultrastable\/app-[a-z0-9-]+-[a-f0-9]{10}$/); assert.ok(l.repo.length <= 60, "a long idea still gets a short repository name");
+  assert.ok(w.repos.get(l.repo).get("IDEA.md").includes(raw), "IDEA.md keeps the words exactly");
+  assert.equal(L.PROBE_IDEAS.length, 2); assert.notEqual(L.probeIdea(0), L.probeIdea(864e5), "the daily walk takes the ideas in turn");
+  for (const p of L.PROBE_IDEAS) assert.ok(p.startsWith("[launch-path probe] "));
+});
 test("story: a person types the atlas idea and gets a live, managed app with its own repository, doing nothing else", async () => {
   const w = await world(), { id } = await submit(w, IDEA);
   assert.equal((await w.call("/s/" + id)).status, 200, "the app is live straight away");

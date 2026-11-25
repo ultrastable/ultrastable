@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LicenseRef-Ultrastable-1.0
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) Ultrastable
 // LAUNCH-PATH-1 / APP-REPO-1: the host's hands on GitHub for apps started by people with no code agent.
 // This Worker already holds two App credentials in its sealed store: the administration-only app ('github-admin', REPOS-1) and the code app

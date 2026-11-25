@@ -769,6 +769,7 @@ Rowan: "All UltraStable issues must be resolved within their SLAs and daily/week
 - Open: Q-SEED-ultrastable, Q-SEED-second-tenant; Unlearn joins through its own lifecycle.json (scaffolded by the watchdog if its PR lands without one).
 
 ## 2026-11-25: LAUNCH-PATH-1, anyone can launch without a code agent
+- BREADTH-1 (Rowan, 2026-11-25): he widened the replication-ledger suggestion from one field to many. `owner_edits` and `narrow_phrases` in `doctrine/idea-bank.json` steer `--grow`; the widened idea is the second launch-walk idea. Same change fixed the idea bank check that PR 2081 left red on main (ideas now carry `change`, CHANGE-1).
 - Rowan picked a homepage suggestion (a living atlas of what works in public policy) as the model of a launchable system and asked how a person with no code agent launches and reaches criticality.
 - Now: an idea typed at ultrastable.io gets a launch record (`site/graduate.js`); `deploy/launch-apps.mjs` in the daily `tenant-repos.yml` deploys its own system by OIDC, creates its repository from `ultrastable/seed`, files the visitor's change requests there and invites them on request (`/s/<id>/own`). The seed takes `hosted_by` and then asks its owner for no key or budget approval.
 - Checked: the atlas idea is admitted (year p10 730 days) and bundles into 97 modules with no credential. The live site could not be reached from the session, so the first live walk is the workflow's own test idea.

@@ -18,7 +18,11 @@ import { execFileSync } from "node:child_process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const UA = "ultrastable-launch-path";
-export const PROBE_IDEA = "[launch-path probe] A living atlas of what works in public policy: every programme graded by its trials and re-graded as evidence lands.";
+// Two real front-door suggestions, taken in turn by day, so the walk is not tuned to one idea. The second is the owner's own widened wording (BREADTH-1).
+export const PROBE_IDEAS = ["[launch-path probe] A living atlas of what works in public policy: every programme graded by its trials and re-graded as evidence lands.",
+  "[launch-path probe] An encyclopedic replication ledger across many fields: which landmark findings held up and which failed, updated as replications publish."];
+export const probeIdea = (now = Date.now()) => PROBE_IDEAS[Math.floor(now / 864e5) % PROBE_IDEAS.length];
+export const PROBE_IDEA = PROBE_IDEAS[0];
 
 const title = (brief) => { const w = String(brief).replace(/\[[^\]]*\]/g, "").replace(/[^A-Za-z0-9 ]+/g, " ").trim().split(/\s+/).slice(0, 5).join(" "); return (w.charAt(0).toUpperCase() + w.slice(1)).slice(0, 60) || "New system"; };
 // The manifest the seed is generated from. The visitor gave an idea, not a system test, so the four answers every system starts with are filled in
@@ -106,8 +110,8 @@ function realDeploy(list, dry) {
   return JSON.parse(readFileSync(res, "utf8"));
 }
 // The visitor's side, exactly as a browser with no script does it: one form post, then waiting. Anything else it would take is a failure.
-export async function walk(front, fetchFn = fetch, wait = (ms) => new Promise((z) => setTimeout(z, ms))) {
-  const fd = new FormData(); fd.set("idea", PROBE_IDEA); fd.set("profile", JSON.stringify({ probe: true }));
+export async function walk(front, fetchFn = fetch, wait = (ms) => new Promise((z) => setTimeout(z, ms)), idea = probeIdea()) {
+  const fd = new FormData(); fd.set("idea", idea); fd.set("profile", JSON.stringify({ probe: true }));
   const r = await fetchFn(front + "/api/idea", { method: "POST", body: fd, headers: { accept: "application/json", "user-agent": UA } });
   const j = await r.json().catch(() => ({})); if (!r.ok || !j.id) throw new Error("front door: HTTP " + r.status + " " + JSON.stringify(j).slice(0, 200));
   const cookie = (r.headers.get("set-cookie") || "").split(";")[0];

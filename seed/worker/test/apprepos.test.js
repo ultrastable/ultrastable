@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
 // APP-REPO-1: the host creates, fills and hands over app repositories with the two App credentials it already holds, and gives a hosted app a token for its one repository only.
 import test from 'node:test';
 import assert from 'node:assert/strict';

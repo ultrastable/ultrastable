@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-25-breadth-1-owner-edits-to-suggestions-steer-the-idea-bank",
+  "kind": "decision",
+  "date": "2026-11-25",
+  "title": "BREADTH-1: owner edits to suggestions steer the idea bank",
+  "body": "The owner's edit to a front-door suggestion is stored in owner_edits in doctrine/idea-bank.json and shown to the grow prompt; build_idea_bank.py validate() now turns away ideas that hold a narrow phrase. Verified by tests/test_idea_bank.py.",
+  "probe": "grep:doctrine/idea-bank.json::owner_edits",
+  "session": "session_0156nqDrbe8Pmy5MPH111zRn"
+ },
+ "kind": "decision",
+ "title": "BREADTH-1: owner edits to suggestions steer the idea bank",
+ "session": "session_0156nqDrbe8Pmy5MPH111zRn"
+}
