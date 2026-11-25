@@ -32,6 +32,13 @@
         "state": "live",
         "what": "What Works tenant: citation checks, leads, grades, grade changes, reader guesses, beats (instances/what-works); created 2026-11-25",
         "key": "what-works"
+      },
+      {
+        "name": "ultrastable-replication-ledger",
+        "id": "c59cdeca-7f57-4edd-ac7e-256ab07fab57",
+        "state": "live",
+        "what": "Replication Ledger tenant: discovered findings, machine-read attempts, leads, retraction flags, Crossref checks, standing changes, beats (instances/replication-ledger); created 2026-11-25",
+        "key": "replication-ledger"
       }
     ],
     "kv": [
@@ -293,7 +300,7 @@
     {
       "id": "ultrastable-what-works",
       "state": "live",
-      "role": "What Works tenant app (ultrastable/what-works): a living atlas of what works in public policy; hourly beat resolves citations, searches OpenAlex and Europe PMC, reads new trials in under a verbatim-quote guard, re-grades every programme and logs each move",
+      "role": "What Works tenant app (ultrastable/what-works): a living atlas of what works in public policy; hourly beat resolves citations, searches OpenAlex, Europe PMC and Crossref, reads new trials in under a verbatim-quote guard, re-grades every programme and logs each move",
       "main": "worker/index.js",
       "source": {
         "repo": "ultrastable/what-works",
@@ -314,6 +321,28 @@
       },
       "routes": [
         "what-works.ultrastable.org"
+      ]
+    },
+    {
+      "id": "ultrastable-replication-ledger",
+      "state": "live",
+      "role": "Replication Ledger tenant app (moving to ultrastable/replication-ledger): which landmark findings held up when replicated and which failed, across many fields; hourly beat searches OpenAlex for new replications of every finding and for landmark originals not yet held, files an attempt only under a verbatim-quote guard, checks citations at Crossref, recomputes standings and logs each move; reader pages with a guess-first reveal, /changes and /feed.json",
+      "main": "instances/replication-ledger/worker/index.js",
+      "compatibility_date": "2026-11-12",
+      "crons": [
+        "23 * * * *"
+      ],
+      "public": false,
+      "bindings": {
+        "d1": {
+          "DB": "ultrastable-replication-ledger"
+        },
+        "ai": [
+          "AI"
+        ]
+      },
+      "routes": [
+        "replication-ledger.ultrastable.org"
       ]
     }
   ],

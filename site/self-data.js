@@ -135,7 +135,13 @@ export default {
     "expected_interval_s": 3600,
     "id": "what-works-beat",
     "source": "d1",
-    "what": "What Works tenant beat (cron 17 * * * * on ultrastable-what-works; a visit catches up a silent cron): check a batch of programmes against Crossref, OpenAlex and Europe PMC, read new trials in, re-grade and log every move"
+    "what": "What Works tenant beat (cron 17 * * * * on ultrastable-what-works; a visit catches up a silent cron): check a batch of programmes against Crossref, OpenAlex and Europe PMC (a refusing index rested for an hour, one beat at a time), read new trials in, re-grade and log every move"
+   },
+   {
+    "expected_interval_s": 3600,
+    "id": "replication-ledger-beat",
+    "source": "d1",
+    "what": "Replication Ledger tenant beat (cron 23 * * * * on ultrastable-replication-ledger; a visit sparks one when the last is over two hours old): search OpenAlex for new replications and new landmark findings, file attempts under a verbatim-quote guard, check Crossref, recompute standings and log every move"
    }
   ],
   "watchdog_escalation": [
@@ -702,6 +708,7 @@ export default {
   "qnfo-sauce",
   "recognition-lint",
   "regen-generated",
+  "replication-ledger-beat",
   "research",
   "resilience",
   "retriage",
@@ -746,6 +753,7 @@ export default {
   "ultrastability-loop",
   "ultrastable-agents",
   "ultrastable-dashboard",
+  "ultrastable-replication-ledger",
   "ultrastable-site",
   "ultrastable-tenants",
   "ultrastable-tick",
@@ -2147,6 +2155,10 @@ export default {
    {
     "id": "ultrastable-what-works",
     "state": "live"
+   },
+   {
+    "id": "ultrastable-replication-ledger",
+    "state": "live"
    }
   ],
   "workflows": [
@@ -2470,250 +2482,250 @@ export default {
  },
  "readings": {
   "access-check:claims_drift": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "access-check:spend": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
   },
   "access-check:uptime": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "access-check:value": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "air-quality:claims_drift": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "air-quality:spend": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
   },
   "air-quality:uptime": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "air-quality:value": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "blindspot:claims_drift": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "blindspot:spend": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
   },
   "blindspot:uptime": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "blindspot:value": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 2.02
   },
   "claims_drift": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0
   },
   "country-snapshot:claims_drift": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "country-snapshot:spend": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
   },
   "country-snapshot:uptime": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "country-snapshot:value": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "deploy_health": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "free-tier-meter:claims_drift": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "free-tier-meter:spend": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
   },
   "free-tier-meter:uptime": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "free-tier-meter:value": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "happy_paths": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "loop-ledger:claims_drift": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "loop-ledger:spend": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "loop-ledger:uptime": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "loop-ledger:value": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "numbers-board:claims_drift": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "numbers-board:spend": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
   },
   "numbers-board:uptime": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "numbers-board:value": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "portfolio-board:claims_drift": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "portfolio-board:spend": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
   },
   "portfolio-board:uptime": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "portfolio-board:value": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "self_shipping": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.714
   },
   "spend": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
   },
   "stalled_clocks": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": false,
    "unmeasured": false,
-   "value": 2
+   "value": 3
   },
   "ui_findings": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0
   },
   "unattended_horizon": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 730
   },
   "value": {
-   "at": "2026-11-25T15:43:48Z",
+   "at": "2026-11-25T16:35:06Z",
    "in_bounds": true,
    "unmeasured": false,
-   "value": 90.0
+   "value": 250.0
   }
  },
  "self": {

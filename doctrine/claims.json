@@ -2250,6 +2250,20 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-faa1765dd1",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Every system deploys itself in full: repo, back end and a public web UI (FULLSTACK-1, Rowan 2026-11-25).** \"All UltraStable deployments",
+      "probe": [
+        "file:doctrine/tenant-repos.json",
+        "file:doctrine/topology.json",
+        "file:tests/foundation/test_tenantrepos.py",
+        "file:instances/ultrastable/progress.json",
+        "file:doctrine/seed-deploys.json",
+        "file:doctrine/full-stack.json"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-b765c5605f",
       "surface": "agents/AGENTS.md",
       "text": "- **Everything is traceable, and the database stays small (AUDIT-CHAIN-1, Rowan 2026-11-17).** \"It has to be auditable to be believed ...",
@@ -2268,6 +2282,20 @@
         "file:site/live.js",
         "file:seed/worker/test/livechanges.test.js",
         "file:site/site.test.mjs"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-29846ff1a5",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Every system keeps a knowledge graph of all its data, built and maintained automatically (DATAGRAPH-1, Rowan 2026-11-25).** \"All",
+      "probe": [
+        "file:seed/worker/src/vendor/core/datagraph.js",
+        "file:doctrine/tenant-repos.json",
+        "file:seed/worker/src/datagraph.js",
+        "file:instances/ultrastable/progress.json",
+        "file:doctrine/knowledge-graph.json",
+        "file:docs/research/knowledge-graph.md"
       ],
       "bound_by": "cited"
     },
@@ -2339,20 +2367,6 @@
       "bound_by": "cited"
     },
     {
-      "id": "cited-988a412a5f",
-      "surface": "agents/AGENTS.md",
-      "text": "- **Public by default, discoverable always (DISCOVER-1, Rowan 2026-11-25).** \"The intent is public deployments, public accessibility,",
-      "probe": [
-        "file:github/org-settings.json",
-        "file:doctrine/tenant-repos.json",
-        "file:doctrine/topology.json",
-        "file:doctrine/stakeholders.json",
-        "file:seed/worker/src/discover.js",
-        "file:site/directory.js"
-      ],
-      "bound_by": "cited"
-    },
-    {
       "id": "cited-3c3d6c30bf",
       "surface": "agents/AGENTS.md",
       "text": "- **Automate back-end and front-end development; improve on its own (IMPROVE-1, FRONTEND-AUTO-1, Rowan 2026-11-25).** \"Automatically",
@@ -2363,6 +2377,18 @@
         "file:foundation/improve.py",
         "file:doctrine/improve.json",
         "file:tests/foundation/test_improve.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-0e153ff129",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Every system updates itself and the platform (SYNC-BOTH-WAYS-1, Rowan 2026-11-25).** \"Every Ultrastable system shall always improve and",
+      "probe": [
+        "file:seed/.github/workflows/platform-sync.yml",
+        "file:tests/foundation/test_improve.py",
+        "file:foundation/tenantsync.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]tenantsync\\b"
       ],
       "bound_by": "cited"
     },
@@ -3140,6 +3166,21 @@
       "of": "cited-46fa451291"
     },
     {
+      "id": "mirror-3ae0f5f6d0",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Every system deploys itself in full: repo, back end and a public web UI (FULLSTACK-1, Rowan 2026-11-25).** \"All UltraStable deployments",
+      "probe": [
+        "file:doctrine/tenant-repos.json",
+        "file:doctrine/topology.json",
+        "file:tests/foundation/test_tenantrepos.py",
+        "file:instances/ultrastable/progress.json",
+        "file:doctrine/seed-deploys.json",
+        "file:doctrine/full-stack.json"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-faa1765dd1"
+    },
+    {
       "id": "mirror-232a3323fe",
       "surface": "seed/agents/AGENTS.md",
       "text": "- **Everything is traceable, and the database stays small (AUDIT-CHAIN-1, Rowan 2026-11-17).** \"It has to be auditable to be believed ...",
@@ -3162,6 +3203,21 @@
       ],
       "bound_by": "mirror",
       "of": "cited-d3be926b7b"
+    },
+    {
+      "id": "mirror-1d1a4fbb93",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Every system keeps a knowledge graph of all its data, built and maintained automatically (DATAGRAPH-1, Rowan 2026-11-25).** \"All",
+      "probe": [
+        "file:seed/worker/src/vendor/core/datagraph.js",
+        "file:doctrine/tenant-repos.json",
+        "file:seed/worker/src/datagraph.js",
+        "file:instances/ultrastable/progress.json",
+        "file:doctrine/knowledge-graph.json",
+        "file:docs/research/knowledge-graph.md"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-29846ff1a5"
     },
     {
       "id": "mirror-289b3b8589",
@@ -3223,21 +3279,6 @@
       "of": "cited-be4db6262d"
     },
     {
-      "id": "mirror-a4386ccae1",
-      "surface": "seed/agents/AGENTS.md",
-      "text": "- **Public by default, discoverable always (DISCOVER-1, Rowan 2026-11-25).** \"The intent is public deployments, public accessibility,",
-      "probe": [
-        "file:github/org-settings.json",
-        "file:doctrine/tenant-repos.json",
-        "file:doctrine/topology.json",
-        "file:doctrine/stakeholders.json",
-        "file:seed/worker/src/discover.js",
-        "file:site/directory.js"
-      ],
-      "bound_by": "mirror",
-      "of": "cited-988a412a5f"
-    },
-    {
       "id": "mirror-0ea4d489e9",
       "surface": "seed/agents/AGENTS.md",
       "text": "- **Automate back-end and front-end development; improve on its own (IMPROVE-1, FRONTEND-AUTO-1, Rowan 2026-11-25).** \"Automatically",
@@ -3251,6 +3292,19 @@
       ],
       "bound_by": "mirror",
       "of": "cited-3c3d6c30bf"
+    },
+    {
+      "id": "mirror-1ca2a53c76",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Every system updates itself and the platform (SYNC-BOTH-WAYS-1, Rowan 2026-11-25).** \"Every Ultrastable system shall always improve and",
+      "probe": [
+        "file:seed/.github/workflows/platform-sync.yml",
+        "file:tests/foundation/test_improve.py",
+        "file:foundation/tenantsync.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]tenantsync\\b"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-0e153ff129"
     },
     {
       "id": "mirror-be5af6748b",
@@ -4127,6 +4181,35 @@
       ],
       "bound_by": "mirror",
       "of": "cited-5d0567ad32"
+    },
+    {
+      "id": "cited-988a412a5f",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Public by default, discoverable always (DISCOVER-1, Rowan 2026-11-25).** \"The intent is public deployments, public accessibility,",
+      "probe": [
+        "file:github/org-settings.json",
+        "file:doctrine/tenant-repos.json",
+        "file:doctrine/topology.json",
+        "file:doctrine/stakeholders.json",
+        "file:seed/worker/src/discover.js",
+        "file:site/directory.js"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "mirror-a4386ccae1",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Public by default, discoverable always (DISCOVER-1, Rowan 2026-11-25).** \"The intent is public deployments, public accessibility,",
+      "probe": [
+        "file:github/org-settings.json",
+        "file:doctrine/tenant-repos.json",
+        "file:doctrine/topology.json",
+        "file:doctrine/stakeholders.json",
+        "file:seed/worker/src/discover.js",
+        "file:site/directory.js"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-988a412a5f"
     }
   ],
   "generated": [

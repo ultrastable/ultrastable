@@ -49,3 +49,19 @@ export function questionScreen(q, answers) {
 export const doneScreen = () => page_('Done', '<h1>Thank you</h1><p>The managers have what they need to draft the charter and the specification.</p><a class="btn" href="/">See where things stand</a>');
 
 function page_(title, body) { return html(title, body); }
+
+// DATAGRAPH-1: the knowledge graph of this system's own data, in plain words. Every number comes from the last pass of the tick step (kg_runs).
+export function graphScreen({ graph, insights }) {
+  const l = graph && graph.last;
+  if (!l) return page_('Connections', '<h1>Connections in this system\'s data</h1><div class="card">The first map of connections is built on the next pass of the system\'s clock. Nothing to show yet.</div>');
+  const kinds = Object.entries(l.by_kind || {}).sort((a, b) => b[1].nodes - a[1].nodes).slice(0, 12)
+    .map(([k, b]) => `<p>${esc(k)} <span class="mut">${b.nodes} records, ${b.orphans} not connected</span></p><div class="bar"><i style="width:${b.nodes ? Math.round(100 * (b.nodes - b.orphans) / b.nodes) : 0}%"></i></div>`).join('');
+  const hubs = (l.hubs || []).slice(0, 5).map(h => `<p>${esc(h.label)} <span class="mut">${esc(h.kind)}, ${h.degree} links</span></p>`).join('') || '<p class="mut">None yet.</p>';
+  const ins = ((insights && insights.insights) || []).slice(0, 6).map(i => `<div class="card">${esc(i.text)}<div class="mut">${esc(i.kind)}${i.item_id ? ', work item ' + esc(i.item_id) : ''}</div></div>`).join('') || '<div class="card">No findings on the last pass.</div>';
+  return page_('Connections', `<h1>Connections in this system's data</h1>
+<div class="card"><b>${l.nodes} records, ${l.edges} links, ${l.communities ? l.communities.length : 0} clusters</b><div class="mut">Built ${esc(l.at)} from ${l.tables} tables. ${l.proposals ? l.proposals.kept + ' suggested links confirmed by later data, ' + l.proposals.dropped + ' dropped.' : ''}</div></div>
+<h2>What the system noticed</h2>${ins}
+<div class="card"><b>Most connected</b>${hubs}</div>
+<div class="card"><b>How connected each kind of record is</b>${kinds}</div>
+<p class="mut">Machine-readable: <a href="/api/graph">/api/graph</a>, <a href="/api/graph/insights">/api/graph/insights</a>, /api/graph/node?id=, /api/graph/search?q=</p>`);
+}

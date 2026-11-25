@@ -1,0 +1,10 @@
+{
+ "_doc": "FULLSTACK-1 (Rowan, 2026-11-25: 'All UltraStable systems shall automatically deploy themselves: repo, back-end, and public-facing Web UI front-end. Ultrastable is a full-stack autonomous development platform/system.'). Every system Ultrastable runs has three parts: its own repository, a live back end and a public web front end. Systems come from instances/ultrastable/progress.json (repo and url are read from there) and doctrine/seed-deploys.json; this file adds each system's back-end address and, for a system that lacks a part, the queue item that is building it. foundation/fullstack.py --check fails a system with a part that is neither declared nor on an open item; --live fetches the front end and the back end and fails when one does not answer. Visitor apps are judged by deploy/launch-apps.mjs (stackOf) on every launch run.",
+ "systems": {
+  "ultrastable": {"backend": "https://ultrastable-tick.ultrastable.workers.dev/health"},
+  "practical-solutions": {"backend": "https://tenant-ps-web.ultrastable.workers.dev/health"},
+  "unlearn": {"backend": "https://unlearn.ultrastable.org/api/freshness"},
+  "second-tenant": {"backend": "https://ultrastable-seed-second-tenant.ultrastable.workers.dev/health", "gaps": {"repo": "Q-FULLSTACK-second-tenant", "frontend": "Q-FULLSTACK-second-tenant"}}
+ },
+ "user_agent": "ultrastable-fullstack-probe/1"
+}

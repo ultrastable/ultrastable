@@ -45,6 +45,15 @@
         "https://what-works.ultrastable.org/pulse/watch"
       ],
       "idempotent": true
+    },
+    "replication-ledger-beat": {
+      "kind": "http",
+      "why": "POST /pulse/watch runs the Replication Ledger beat only when the last one is over two hours old; safe to call by anyone; a page visit sparks the same beat as a second route",
+      "urls": [
+        "https://ultrastable-replication-ledger.ultrastable.workers.dev/pulse/watch",
+        "https://replication-ledger.ultrastable.org/pulse/watch"
+      ],
+      "idempotent": true
     }
   },
   "watchers": [

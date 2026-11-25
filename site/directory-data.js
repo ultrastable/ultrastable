@@ -35,6 +35,15 @@ export default [
   "repo": "https://github.com/ultrastable/what-works",
   "license": "LicenseRef-Ultrastable-USL-1.0",
   "kind": "tenant",
-  "summary": "A living atlas of public programmes, each graded by its trials. Readers guess the verdict first, then see the studies behind it."
+  "summary": "A living atlas of what works in public policy. Each programme is graded from its trials by a published rubric, and readers guess the verdict before they see it."
+ },
+ {
+  "id": "replication-ledger",
+  "name": "Replication Ledger",
+  "url": "https://replication-ledger.ultrastable.org/",
+  "repo": "https://github.com/ultrastable/replication-ledger",
+  "license": "LicenseRef-Ultrastable-USL-1.0",
+  "kind": "tenant",
+  "summary": "A record of which landmark findings held up when others tried to repeat them, and which did not. Readers guess first, then see the attempts."
  }
 ];

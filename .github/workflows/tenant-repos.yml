@@ -4,7 +4,7 @@ name: tenant-repos
 # repository when it is missing (with the tenant folder's history, split from this repository, core files vendored). The tenant's Worker is
 # deployed by this repository's deploy-ultrastable from the tenant repository (doctrine/topology.json `source`).
 # Daily it also redeploys any moved tenant whose repository's main moved past the last deployed commit (deploy-ultrastable builds from it).
-# budget: ~1 min per run; once a day, plus when the registry changes on main, or by dispatch
+# budget: ~3 min per run (one test idea is built and bundled; at most two visitor apps are deployed); once a day, plus when the registry changes on main, or by dispatch
 # trigger: daily (a tenant repository's push cannot start this repository's deploy without a stored credential), push to the registry, dispatch
 # free-alternative: `python3 -m foundation tenantrepos --missing` and the same git and API steps from a cloud-hosted agent session
 on:
@@ -12,11 +12,12 @@ on:
     - cron: "23 5 * * *"
   push:
     branches: [main]
-    paths: ["doctrine/tenant-repos.json", ".github/workflows/tenant-repos.yml"]
+    paths: ["doctrine/tenant-repos.json", ".github/workflows/tenant-repos.yml", "deploy/launch-apps.mjs"]
   workflow_dispatch:
 permissions:
   contents: read
   actions: write  # dispatches deploy-ultrastable for a tenant whose repository moved
+  id-token: write  # LAUNCH-PATH-1: the launch queue and the app deploys go through the site worker's OIDC route, no stored credential
 concurrency:
   group: tenant-repos
   cancel-in-progress: false
@@ -24,7 +25,7 @@ jobs:
   repos:
     if: ${{ vars.HALT != '1' }}  # HALT-1: the owner's halt stops every job
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -58,20 +59,35 @@ jobs:
                    -f description="$(jq -r '.description // ""' <<<"$row")" -F has_wiki=false >/dev/null; then echo "created $repo"; tok="$t"; break; fi
               echo "::warning::this credential could not create $repo; trying the next route"
             done
-            [ -n "$tok" ] || { echo "::error::no credential could create $repo (ORG_ADMIN_TOKEN, LANE_PAT, lane App)"; exit 1; }
+            # one tenant without a credential must not stop the others or the redeploy step below: record it, go on, fail at the end
+            if [ -z "$tok" ]; then echo "::error::no credential could create $repo (ORG_ADMIN_TOKEN, LANE_PAT, lane App)"; echo "$repo" >> /tmp/tenant-repos-failed; continue; fi
             # an empty repository answers 409 here; that answer is logged, not hidden, and means "push the split"
             if head_sha="$(GH_TOKEN="$tok" gh api "repos/$repo/commits?per_page=1" --jq '.[0].sha' 2>/tmp/commits.err)" && [ -n "$head_sha" ]; then echo "$repo already has history; left as it is"; continue; fi
             echo "no commits yet in $repo: $(cat /tmp/commits.err)"
             git subtree split --prefix "$src" -b "split-$slug"
             git worktree add "/tmp/$slug" "split-$slug"
             python3 -m foundation tenantrepos --prepare "/tmp/$slug" --slug "$slug"
-            (cd "/tmp/$slug" && git add -A && { git diff --cached --quiet || git commit -q -m "Stand alone: vendor the core files Unlearn reads (TENANT-REPO-1)"; } \
+            (cd "/tmp/$slug" && git add -A && { git diff --cached --quiet || git commit -q -m "Stand alone: vendor the core files $slug reads (TENANT-REPO-1)"; } \
               && git push "https://x-access-token:${tok}@github.com/${repo}.git" "HEAD:refs/heads/main")
             echo "pushed $src with its history to $repo"
           done
+          if [ -s /tmp/tenant-repos-failed ]; then echo "::error::tenant repositories not created: $(tr '\n' ' ' </tmp/tenant-repos-failed)"; exit 1; fi
+      - name: Launch what visitors asked for, and walk a test idea through the front door (LAUNCH-PATH-1)
+        # Someone with no code agent typed an idea at ultrastable.io. This deploys its own system, gives it a repository from the seed, files the
+        # owner's plain-words requests there and invites the owner when they asked. The test idea fails the job on any step a visitor would have to do.
+        if: always()
+        # No GitHub credential here: the repository work is done by the tick Worker with the App credentials it already holds (APP-REPO-1).
+        run: |
+          set -euo pipefail
+          node deploy/launch-apps.mjs --probe
       - name: Redeploy tenants whose repository moved past the last deploy
+        if: ${{ !cancelled() }}  # moved tenants redeploy even when creating another tenant's repository failed above
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           w=$(python3 -m foundation tenantrepos --behind)
           if [ -n "$w" ]; then gh workflow run deploy-ultrastable.yml --ref main -f workers="$w"; echo "dispatched deploy of $w"; else echo "every moved tenant is deployed at its main"; fi
+      - name: Every system has a repository, a live back end and a public front end (FULLSTACK-1)
+        # Fetches each system's front end and back end. Red when a part is missing or does not answer; the missing part's queue item is the fix.
+        if: always()
+        run: python3 -m foundation fullstack --live

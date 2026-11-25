@@ -24371,3 +24371,477 @@
 {"at": "2026-11-25T15:54:17+00:00", "ask": "linkedin", "class": "prior-working-config", "route": "regress:social/accounts.json", "ok": true, "detail": "2 suspect commits since None"}
 {"at": "2026-11-25T15:54:18+00:00", "ask": "ledger:clocks:all", "class": "prior-working-config", "route": "regress:foundation/clock.py", "ok": false, "detail": "0 suspect commits since add800e814fc"}
 {"at": "2026-11-25T15:54:18+00:00", "ask": "ledger:executor:pr-outcome", "class": "prior-working-config", "route": "regress:foundation/executor.py", "ok": false, "detail": "0 suspect commits since 61808a25d06d"}
+{"at": "2026-11-25T16:04:54+00:00", "ask": "org_admin", "class": "existing-credentials", "route": "env:ORG_ADMIN_TOKEN|GH_ORG_TOKEN", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:04:54+00:00", "ask": "org_admin", "class": "existing-credentials", "route": "env_all:GH_APP_ID&GH_APP_INSTALLATION_ID&GH_APP_KEY_BINDING", "ok": false, "detail": "missing: GH_APP_ID,GH_APP_INSTALLATION_ID,GH_APP_KEY_BINDING"}
+{"at": "2026-11-25T16:04:54+00:00", "ask": "org_admin", "class": "prior-working-config", "route": "git:seed/worker/src/auth/github-app.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:04:54+00:00", "ask": "org_admin", "class": "sibling-workers", "route": "file:seed/worker/src/auth/github-app.js", "ok": true, "detail": "seed/worker/src/auth/github-app.js"}
+{"at": "2026-11-25T16:04:54+00:00", "ask": "org_admin", "class": "alternate-channel", "route": "file:seed/worker/src/auth/rulesets.js", "ok": true, "detail": "seed/worker/src/auth/rulesets.js"}
+{"at": "2026-11-25T16:04:54+00:00", "ask": "org_admin", "class": "construct", "route": "file:seed/worker/src/auth/consent.js", "ok": true, "detail": "seed/worker/src/auth/consent.js"}
+{"at": "2026-11-25T16:04:54+00:00", "ask": "ORG-TOKEN", "class": "existing-credentials", "route": "env:ORG_ADMIN_TOKEN|GH_ORG_TOKEN", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:04:54+00:00", "ask": "ORG-TOKEN", "class": "existing-credentials", "route": "env_all:GH_APP_ID&GH_APP_INSTALLATION_ID&GH_APP_KEY_BINDING", "ok": false, "detail": "missing: GH_APP_ID,GH_APP_INSTALLATION_ID,GH_APP_KEY_BINDING"}
+{"at": "2026-11-25T16:04:54+00:00", "ask": "ORG-TOKEN", "class": "prior-working-config", "route": "git:seed/worker/src/auth/github-app.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:04:54+00:00", "ask": "ORG-TOKEN", "class": "sibling-workers", "route": "file:seed/worker/src/auth/github-app.js", "ok": true, "detail": "seed/worker/src/auth/github-app.js"}
+{"at": "2026-11-25T16:04:54+00:00", "ask": "ORG-TOKEN", "class": "alternate-channel", "route": "file:seed/worker/src/auth/rulesets.js", "ok": true, "detail": "seed/worker/src/auth/rulesets.js"}
+{"at": "2026-11-25T16:04:54+00:00", "ask": "ORG-TOKEN", "class": "construct", "route": "file:seed/worker/src/auth/consent.js", "ok": true, "detail": "seed/worker/src/auth/consent.js"}
+{"at": "2026-11-25T16:04:54+00:00", "ask": "CF-TOKEN", "class": "existing-credentials", "route": "env_all:CLOUDFLARE_API_TOKEN&CLOUDFLARE_ACCOUNT_ID", "ok": false, "detail": "missing: CLOUDFLARE_API_TOKEN,CLOUDFLARE_ACCOUNT_ID"}
+{"at": "2026-11-25T16:04:54+00:00", "ask": "CF-TOKEN", "class": "prior-working-config", "route": "git:seed/worker/src/auth/cloudflare.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:04:54+00:00", "ask": "CF-TOKEN", "class": "sibling-workers", "route": "file:seed/worker/src/auth/cloudflare.js", "ok": true, "detail": "seed/worker/src/auth/cloudflare.js"}
+{"at": "2026-11-25T16:04:54+00:00", "ask": "CF-TOKEN", "class": "alternate-channel", "route": "file:deploy/deploy-workers.mjs", "ok": true, "detail": "deploy/deploy-workers.mjs"}
+{"at": "2026-11-25T16:04:54+00:00", "ask": "CF-TOKEN", "class": "construct", "route": "file:foundation/credwatch.py", "ok": true, "detail": "foundation/credwatch.py"}
+{"at": "2026-11-25T16:04:54+00:00", "ask": "cloudflare", "class": "existing-credentials", "route": "env_all:CLOUDFLARE_API_TOKEN&CLOUDFLARE_ACCOUNT_ID", "ok": false, "detail": "missing: CLOUDFLARE_API_TOKEN,CLOUDFLARE_ACCOUNT_ID"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "cloudflare", "class": "prior-working-config", "route": "git:seed/worker/src/auth/cloudflare.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "cloudflare", "class": "sibling-workers", "route": "file:seed/worker/src/auth/cloudflare.js", "ok": true, "detail": "seed/worker/src/auth/cloudflare.js"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "cloudflare", "class": "alternate-channel", "route": "file:deploy/deploy-workers.mjs", "ok": true, "detail": "deploy/deploy-workers.mjs"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "cloudflare", "class": "construct", "route": "file:foundation/credwatch.py", "ok": true, "detail": "foundation/credwatch.py"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "model_api", "class": "existing-credentials", "route": "env:ANTHROPIC_API_KEY", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "model_api", "class": "existing-credentials", "route": "env:WORKERS_AI_BINDING", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "MODEL-KEY", "class": "existing-credentials", "route": "env:ANTHROPIC_API_KEY", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "MODEL-KEY", "class": "existing-credentials", "route": "env:WORKERS_AI_BINDING", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "OUT-SENDER", "class": "existing-credentials", "route": "env_all:EMAIL_SENDER_BINDING&EMAIL_SENDER_DOMAIN", "ok": false, "detail": "missing: EMAIL_SENDER_BINDING,EMAIL_SENDER_DOMAIN"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "OUT-SENDER", "class": "existing-credentials", "route": "env:CLOUDFLARE_EMAIL_SENDING", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "email_sender", "class": "existing-credentials", "route": "env_all:EMAIL_SENDER_BINDING&EMAIL_SENDER_DOMAIN", "ok": false, "detail": "missing: EMAIL_SENDER_BINDING,EMAIL_SENDER_DOMAIN"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "email_sender", "class": "existing-credentials", "route": "env:CLOUDFLARE_EMAIL_SENDING", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "SOC-ACCOUNTS", "class": "existing-credentials", "route": "env_all:BLUESKY_HANDLE_BINDING&BLUESKY_APP_PASSWORD_BINDING", "ok": false, "detail": "missing: BLUESKY_HANDLE_BINDING,BLUESKY_APP_PASSWORD_BINDING"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "SOC-ACCOUNTS", "class": "existing-credentials", "route": "env_all:MASTODON_INSTANCE&MASTODON_TOKEN_BINDING", "ok": false, "detail": "missing: MASTODON_INSTANCE,MASTODON_TOKEN_BINDING"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "SOC-ACCOUNTS", "class": "prior-working-config", "route": "git:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "SOC-ACCOUNTS", "class": "prior-working-config", "route": "git:seed/worker/src/auth/atproto.js", "ok": true, "detail": "3 commits"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "SOC-ACCOUNTS", "class": "prior-working-config", "route": "git:scripts/social_post.py", "ok": true, "detail": "5 commits"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "SOC-ACCOUNTS", "class": "sibling-workers", "route": "file:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "workers/packs/social/channels/bluesky.js"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "SOC-ACCOUNTS", "class": "sibling-workers", "route": "file:workers/core/ownerlink/mastodon.js", "ok": true, "detail": "workers/core/ownerlink/mastodon.js"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "SOC-ACCOUNTS", "class": "sibling-workers", "route": "file:seed/worker/src/social.js", "ok": true, "detail": "seed/worker/src/social.js"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "SOC-ACCOUNTS", "class": "alternate-channel", "route": "file:seed/worker/src/auth/connectors.js", "ok": true, "detail": "seed/worker/src/auth/connectors.js"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "SOC-ACCOUNTS", "class": "alternate-channel", "route": "file:.github/workflows/social-post.yml", "ok": true, "detail": ".github/workflows/social-post.yml"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "SOC-ACCOUNTS", "class": "construct", "route": "file:seed/worker/src/auth/oauth.js", "ok": true, "detail": "seed/worker/src/auth/oauth.js"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "social_accounts", "class": "existing-credentials", "route": "env_all:BLUESKY_HANDLE_BINDING&BLUESKY_APP_PASSWORD_BINDING", "ok": false, "detail": "missing: BLUESKY_HANDLE_BINDING,BLUESKY_APP_PASSWORD_BINDING"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "social_accounts", "class": "existing-credentials", "route": "env_all:MASTODON_INSTANCE&MASTODON_TOKEN_BINDING", "ok": false, "detail": "missing: MASTODON_INSTANCE,MASTODON_TOKEN_BINDING"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "social_accounts", "class": "prior-working-config", "route": "git:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "social_accounts", "class": "prior-working-config", "route": "git:seed/worker/src/auth/atproto.js", "ok": true, "detail": "3 commits"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "social_accounts", "class": "prior-working-config", "route": "git:scripts/social_post.py", "ok": true, "detail": "5 commits"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "social_accounts", "class": "sibling-workers", "route": "file:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "workers/packs/social/channels/bluesky.js"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "social_accounts", "class": "sibling-workers", "route": "file:workers/core/ownerlink/mastodon.js", "ok": true, "detail": "workers/core/ownerlink/mastodon.js"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "social_accounts", "class": "sibling-workers", "route": "file:seed/worker/src/social.js", "ok": true, "detail": "seed/worker/src/social.js"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "social_accounts", "class": "alternate-channel", "route": "file:seed/worker/src/auth/connectors.js", "ok": true, "detail": "seed/worker/src/auth/connectors.js"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "social_accounts", "class": "alternate-channel", "route": "file:.github/workflows/social-post.yml", "ok": true, "detail": ".github/workflows/social-post.yml"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "social_accounts", "class": "construct", "route": "file:seed/worker/src/auth/oauth.js", "ok": true, "detail": "seed/worker/src/auth/oauth.js"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "owner-social", "class": "existing-credentials", "route": "env_all:BLUESKY_HANDLE_BINDING&BLUESKY_APP_PASSWORD_BINDING", "ok": false, "detail": "missing: BLUESKY_HANDLE_BINDING,BLUESKY_APP_PASSWORD_BINDING"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "owner-social", "class": "existing-credentials", "route": "env_all:MASTODON_INSTANCE&MASTODON_TOKEN_BINDING", "ok": false, "detail": "missing: MASTODON_INSTANCE,MASTODON_TOKEN_BINDING"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "owner-social", "class": "prior-working-config", "route": "git:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "owner-social", "class": "prior-working-config", "route": "git:seed/worker/src/auth/atproto.js", "ok": true, "detail": "3 commits"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "owner-social", "class": "prior-working-config", "route": "git:scripts/social_post.py", "ok": true, "detail": "5 commits"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "owner-social", "class": "sibling-workers", "route": "file:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "workers/packs/social/channels/bluesky.js"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "owner-social", "class": "sibling-workers", "route": "file:workers/core/ownerlink/mastodon.js", "ok": true, "detail": "workers/core/ownerlink/mastodon.js"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "owner-social", "class": "sibling-workers", "route": "file:seed/worker/src/social.js", "ok": true, "detail": "seed/worker/src/social.js"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "owner-social", "class": "alternate-channel", "route": "file:seed/worker/src/auth/connectors.js", "ok": true, "detail": "seed/worker/src/auth/connectors.js"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "owner-social", "class": "alternate-channel", "route": "file:.github/workflows/social-post.yml", "ok": true, "detail": ".github/workflows/social-post.yml"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "owner-social", "class": "construct", "route": "file:seed/worker/src/auth/oauth.js", "ok": true, "detail": "seed/worker/src/auth/oauth.js"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "owner-oauth-apps", "class": "existing-credentials", "route": "env:ORG_ADMIN_TOKEN|GH_ORG_TOKEN", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "owner-oauth-apps", "class": "existing-credentials", "route": "env_all:GH_APP_ID&GH_APP_INSTALLATION_ID&GH_APP_KEY_BINDING", "ok": false, "detail": "missing: GH_APP_ID,GH_APP_INSTALLATION_ID,GH_APP_KEY_BINDING"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "owner-oauth-apps", "class": "prior-working-config", "route": "git:seed/worker/src/auth/github-app.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "owner-oauth-apps", "class": "sibling-workers", "route": "file:seed/worker/src/auth/github-app.js", "ok": true, "detail": "seed/worker/src/auth/github-app.js"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "owner-oauth-apps", "class": "alternate-channel", "route": "file:seed/worker/src/auth/rulesets.js", "ok": true, "detail": "seed/worker/src/auth/rulesets.js"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "owner-oauth-apps", "class": "construct", "route": "file:seed/worker/src/auth/consent.js", "ok": true, "detail": "seed/worker/src/auth/consent.js"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "owner-domains-move", "class": "existing-credentials", "route": "env_all:CLOUDFLARE_API_TOKEN&CLOUDFLARE_ACCOUNT_ID", "ok": false, "detail": "missing: CLOUDFLARE_API_TOKEN,CLOUDFLARE_ACCOUNT_ID"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "owner-domains-move", "class": "prior-working-config", "route": "git:seed/worker/src/auth/cloudflare.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "owner-domains-move", "class": "sibling-workers", "route": "file:seed/worker/src/auth/cloudflare.js", "ok": true, "detail": "seed/worker/src/auth/cloudflare.js"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "owner-domains-move", "class": "alternate-channel", "route": "file:deploy/deploy-workers.mjs", "ok": true, "detail": "deploy/deploy-workers.mjs"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "owner-domains-move", "class": "construct", "route": "file:foundation/credwatch.py", "ok": true, "detail": "foundation/credwatch.py"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "bluesky", "class": "prior-working-config", "route": "regress:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "1 suspect commits since None"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "mastodon", "class": "prior-working-config", "route": "regress:workers/core/ownerlink/mastodon.js", "ok": true, "detail": "1 suspect commits since None"}
+{"at": "2026-11-25T16:04:55+00:00", "ask": "linkedin", "class": "prior-working-config", "route": "regress:social/accounts.json", "ok": true, "detail": "2 suspect commits since None"}
+{"at": "2026-11-25T16:04:56+00:00", "ask": "ledger:clocks:all", "class": "prior-working-config", "route": "regress:foundation/clock.py", "ok": false, "detail": "0 suspect commits since add800e814fc"}
+{"at": "2026-11-25T16:04:56+00:00", "ask": "ledger:executor:pr-outcome", "class": "prior-working-config", "route": "regress:foundation/executor.py", "ok": false, "detail": "0 suspect commits since 61808a25d06d"}
+{"at": "2026-11-25T16:09:11+00:00", "ask": "org_admin", "class": "existing-credentials", "route": "env:ORG_ADMIN_TOKEN|GH_ORG_TOKEN", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:09:11+00:00", "ask": "org_admin", "class": "existing-credentials", "route": "env_all:GH_APP_ID&GH_APP_INSTALLATION_ID&GH_APP_KEY_BINDING", "ok": false, "detail": "missing: GH_APP_ID,GH_APP_INSTALLATION_ID,GH_APP_KEY_BINDING"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "org_admin", "class": "prior-working-config", "route": "git:seed/worker/src/auth/github-app.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "org_admin", "class": "sibling-workers", "route": "file:seed/worker/src/auth/github-app.js", "ok": true, "detail": "seed/worker/src/auth/github-app.js"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "org_admin", "class": "alternate-channel", "route": "file:seed/worker/src/auth/rulesets.js", "ok": true, "detail": "seed/worker/src/auth/rulesets.js"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "org_admin", "class": "construct", "route": "file:seed/worker/src/auth/consent.js", "ok": true, "detail": "seed/worker/src/auth/consent.js"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "ORG-TOKEN", "class": "existing-credentials", "route": "env:ORG_ADMIN_TOKEN|GH_ORG_TOKEN", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "ORG-TOKEN", "class": "existing-credentials", "route": "env_all:GH_APP_ID&GH_APP_INSTALLATION_ID&GH_APP_KEY_BINDING", "ok": false, "detail": "missing: GH_APP_ID,GH_APP_INSTALLATION_ID,GH_APP_KEY_BINDING"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "ORG-TOKEN", "class": "prior-working-config", "route": "git:seed/worker/src/auth/github-app.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "ORG-TOKEN", "class": "sibling-workers", "route": "file:seed/worker/src/auth/github-app.js", "ok": true, "detail": "seed/worker/src/auth/github-app.js"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "ORG-TOKEN", "class": "alternate-channel", "route": "file:seed/worker/src/auth/rulesets.js", "ok": true, "detail": "seed/worker/src/auth/rulesets.js"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "ORG-TOKEN", "class": "construct", "route": "file:seed/worker/src/auth/consent.js", "ok": true, "detail": "seed/worker/src/auth/consent.js"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "CF-TOKEN", "class": "existing-credentials", "route": "env_all:CLOUDFLARE_API_TOKEN&CLOUDFLARE_ACCOUNT_ID", "ok": false, "detail": "missing: CLOUDFLARE_API_TOKEN,CLOUDFLARE_ACCOUNT_ID"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "CF-TOKEN", "class": "prior-working-config", "route": "git:seed/worker/src/auth/cloudflare.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "CF-TOKEN", "class": "sibling-workers", "route": "file:seed/worker/src/auth/cloudflare.js", "ok": true, "detail": "seed/worker/src/auth/cloudflare.js"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "CF-TOKEN", "class": "alternate-channel", "route": "file:deploy/deploy-workers.mjs", "ok": true, "detail": "deploy/deploy-workers.mjs"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "CF-TOKEN", "class": "construct", "route": "file:foundation/credwatch.py", "ok": true, "detail": "foundation/credwatch.py"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "cloudflare", "class": "existing-credentials", "route": "env_all:CLOUDFLARE_API_TOKEN&CLOUDFLARE_ACCOUNT_ID", "ok": false, "detail": "missing: CLOUDFLARE_API_TOKEN,CLOUDFLARE_ACCOUNT_ID"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "cloudflare", "class": "prior-working-config", "route": "git:seed/worker/src/auth/cloudflare.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "cloudflare", "class": "sibling-workers", "route": "file:seed/worker/src/auth/cloudflare.js", "ok": true, "detail": "seed/worker/src/auth/cloudflare.js"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "cloudflare", "class": "alternate-channel", "route": "file:deploy/deploy-workers.mjs", "ok": true, "detail": "deploy/deploy-workers.mjs"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "cloudflare", "class": "construct", "route": "file:foundation/credwatch.py", "ok": true, "detail": "foundation/credwatch.py"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "model_api", "class": "existing-credentials", "route": "env:ANTHROPIC_API_KEY", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "model_api", "class": "existing-credentials", "route": "env:WORKERS_AI_BINDING", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "MODEL-KEY", "class": "existing-credentials", "route": "env:ANTHROPIC_API_KEY", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "MODEL-KEY", "class": "existing-credentials", "route": "env:WORKERS_AI_BINDING", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "email_sender", "class": "existing-credentials", "route": "env_all:EMAIL_SENDER_BINDING&EMAIL_SENDER_DOMAIN", "ok": false, "detail": "missing: EMAIL_SENDER_BINDING,EMAIL_SENDER_DOMAIN"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "email_sender", "class": "existing-credentials", "route": "env:CLOUDFLARE_EMAIL_SENDING", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "OUT-SENDER", "class": "existing-credentials", "route": "env_all:EMAIL_SENDER_BINDING&EMAIL_SENDER_DOMAIN", "ok": false, "detail": "missing: EMAIL_SENDER_BINDING,EMAIL_SENDER_DOMAIN"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "OUT-SENDER", "class": "existing-credentials", "route": "env:CLOUDFLARE_EMAIL_SENDING", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "SOC-ACCOUNTS", "class": "existing-credentials", "route": "env_all:BLUESKY_HANDLE_BINDING&BLUESKY_APP_PASSWORD_BINDING", "ok": false, "detail": "missing: BLUESKY_HANDLE_BINDING,BLUESKY_APP_PASSWORD_BINDING"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "SOC-ACCOUNTS", "class": "existing-credentials", "route": "env_all:MASTODON_INSTANCE&MASTODON_TOKEN_BINDING", "ok": false, "detail": "missing: MASTODON_INSTANCE,MASTODON_TOKEN_BINDING"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "SOC-ACCOUNTS", "class": "prior-working-config", "route": "git:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "SOC-ACCOUNTS", "class": "prior-working-config", "route": "git:seed/worker/src/auth/atproto.js", "ok": true, "detail": "3 commits"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "SOC-ACCOUNTS", "class": "prior-working-config", "route": "git:scripts/social_post.py", "ok": true, "detail": "5 commits"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "SOC-ACCOUNTS", "class": "sibling-workers", "route": "file:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "workers/packs/social/channels/bluesky.js"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "SOC-ACCOUNTS", "class": "sibling-workers", "route": "file:workers/core/ownerlink/mastodon.js", "ok": true, "detail": "workers/core/ownerlink/mastodon.js"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "SOC-ACCOUNTS", "class": "sibling-workers", "route": "file:seed/worker/src/social.js", "ok": true, "detail": "seed/worker/src/social.js"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "SOC-ACCOUNTS", "class": "alternate-channel", "route": "file:seed/worker/src/auth/connectors.js", "ok": true, "detail": "seed/worker/src/auth/connectors.js"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "SOC-ACCOUNTS", "class": "alternate-channel", "route": "file:.github/workflows/social-post.yml", "ok": true, "detail": ".github/workflows/social-post.yml"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "SOC-ACCOUNTS", "class": "construct", "route": "file:seed/worker/src/auth/oauth.js", "ok": true, "detail": "seed/worker/src/auth/oauth.js"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "social_accounts", "class": "existing-credentials", "route": "env_all:BLUESKY_HANDLE_BINDING&BLUESKY_APP_PASSWORD_BINDING", "ok": false, "detail": "missing: BLUESKY_HANDLE_BINDING,BLUESKY_APP_PASSWORD_BINDING"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "social_accounts", "class": "existing-credentials", "route": "env_all:MASTODON_INSTANCE&MASTODON_TOKEN_BINDING", "ok": false, "detail": "missing: MASTODON_INSTANCE,MASTODON_TOKEN_BINDING"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "social_accounts", "class": "prior-working-config", "route": "git:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "social_accounts", "class": "prior-working-config", "route": "git:seed/worker/src/auth/atproto.js", "ok": true, "detail": "3 commits"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "social_accounts", "class": "prior-working-config", "route": "git:scripts/social_post.py", "ok": true, "detail": "5 commits"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "social_accounts", "class": "sibling-workers", "route": "file:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "workers/packs/social/channels/bluesky.js"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "social_accounts", "class": "sibling-workers", "route": "file:workers/core/ownerlink/mastodon.js", "ok": true, "detail": "workers/core/ownerlink/mastodon.js"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "social_accounts", "class": "sibling-workers", "route": "file:seed/worker/src/social.js", "ok": true, "detail": "seed/worker/src/social.js"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "social_accounts", "class": "alternate-channel", "route": "file:seed/worker/src/auth/connectors.js", "ok": true, "detail": "seed/worker/src/auth/connectors.js"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "social_accounts", "class": "alternate-channel", "route": "file:.github/workflows/social-post.yml", "ok": true, "detail": ".github/workflows/social-post.yml"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "social_accounts", "class": "construct", "route": "file:seed/worker/src/auth/oauth.js", "ok": true, "detail": "seed/worker/src/auth/oauth.js"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "owner-social", "class": "existing-credentials", "route": "env_all:BLUESKY_HANDLE_BINDING&BLUESKY_APP_PASSWORD_BINDING", "ok": false, "detail": "missing: BLUESKY_HANDLE_BINDING,BLUESKY_APP_PASSWORD_BINDING"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "owner-social", "class": "existing-credentials", "route": "env_all:MASTODON_INSTANCE&MASTODON_TOKEN_BINDING", "ok": false, "detail": "missing: MASTODON_INSTANCE,MASTODON_TOKEN_BINDING"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "owner-social", "class": "prior-working-config", "route": "git:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "owner-social", "class": "prior-working-config", "route": "git:seed/worker/src/auth/atproto.js", "ok": true, "detail": "3 commits"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "owner-social", "class": "prior-working-config", "route": "git:scripts/social_post.py", "ok": true, "detail": "5 commits"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "owner-social", "class": "sibling-workers", "route": "file:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "workers/packs/social/channels/bluesky.js"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "owner-social", "class": "sibling-workers", "route": "file:workers/core/ownerlink/mastodon.js", "ok": true, "detail": "workers/core/ownerlink/mastodon.js"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "owner-social", "class": "sibling-workers", "route": "file:seed/worker/src/social.js", "ok": true, "detail": "seed/worker/src/social.js"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "owner-social", "class": "alternate-channel", "route": "file:seed/worker/src/auth/connectors.js", "ok": true, "detail": "seed/worker/src/auth/connectors.js"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "owner-social", "class": "alternate-channel", "route": "file:.github/workflows/social-post.yml", "ok": true, "detail": ".github/workflows/social-post.yml"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "owner-social", "class": "construct", "route": "file:seed/worker/src/auth/oauth.js", "ok": true, "detail": "seed/worker/src/auth/oauth.js"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "owner-oauth-apps", "class": "existing-credentials", "route": "env:ORG_ADMIN_TOKEN|GH_ORG_TOKEN", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "owner-oauth-apps", "class": "existing-credentials", "route": "env_all:GH_APP_ID&GH_APP_INSTALLATION_ID&GH_APP_KEY_BINDING", "ok": false, "detail": "missing: GH_APP_ID,GH_APP_INSTALLATION_ID,GH_APP_KEY_BINDING"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "owner-oauth-apps", "class": "prior-working-config", "route": "git:seed/worker/src/auth/github-app.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "owner-oauth-apps", "class": "sibling-workers", "route": "file:seed/worker/src/auth/github-app.js", "ok": true, "detail": "seed/worker/src/auth/github-app.js"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "owner-oauth-apps", "class": "alternate-channel", "route": "file:seed/worker/src/auth/rulesets.js", "ok": true, "detail": "seed/worker/src/auth/rulesets.js"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "owner-oauth-apps", "class": "construct", "route": "file:seed/worker/src/auth/consent.js", "ok": true, "detail": "seed/worker/src/auth/consent.js"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "owner-domains-move", "class": "existing-credentials", "route": "env_all:CLOUDFLARE_API_TOKEN&CLOUDFLARE_ACCOUNT_ID", "ok": false, "detail": "missing: CLOUDFLARE_API_TOKEN,CLOUDFLARE_ACCOUNT_ID"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "owner-domains-move", "class": "prior-working-config", "route": "git:seed/worker/src/auth/cloudflare.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "owner-domains-move", "class": "sibling-workers", "route": "file:seed/worker/src/auth/cloudflare.js", "ok": true, "detail": "seed/worker/src/auth/cloudflare.js"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "owner-domains-move", "class": "alternate-channel", "route": "file:deploy/deploy-workers.mjs", "ok": true, "detail": "deploy/deploy-workers.mjs"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "owner-domains-move", "class": "construct", "route": "file:foundation/credwatch.py", "ok": true, "detail": "foundation/credwatch.py"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "bluesky", "class": "prior-working-config", "route": "regress:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "1 suspect commits since None"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "mastodon", "class": "prior-working-config", "route": "regress:workers/core/ownerlink/mastodon.js", "ok": true, "detail": "1 suspect commits since None"}
+{"at": "2026-11-25T16:09:12+00:00", "ask": "linkedin", "class": "prior-working-config", "route": "regress:social/accounts.json", "ok": true, "detail": "2 suspect commits since None"}
+{"at": "2026-11-25T16:09:13+00:00", "ask": "ledger:clocks:all", "class": "prior-working-config", "route": "regress:foundation/clock.py", "ok": false, "detail": "0 suspect commits since add800e814fc"}
+{"at": "2026-11-25T16:09:13+00:00", "ask": "ledger:executor:pr-outcome", "class": "prior-working-config", "route": "regress:foundation/executor.py", "ok": false, "detail": "0 suspect commits since 61808a25d06d"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "org_admin", "class": "existing-credentials", "route": "env:ORG_ADMIN_TOKEN|GH_ORG_TOKEN", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "org_admin", "class": "existing-credentials", "route": "env_all:GH_APP_ID&GH_APP_INSTALLATION_ID&GH_APP_KEY_BINDING", "ok": false, "detail": "missing: GH_APP_ID,GH_APP_INSTALLATION_ID,GH_APP_KEY_BINDING"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "org_admin", "class": "prior-working-config", "route": "git:seed/worker/src/auth/github-app.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "org_admin", "class": "sibling-workers", "route": "file:seed/worker/src/auth/github-app.js", "ok": true, "detail": "seed/worker/src/auth/github-app.js"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "org_admin", "class": "alternate-channel", "route": "file:seed/worker/src/auth/rulesets.js", "ok": true, "detail": "seed/worker/src/auth/rulesets.js"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "org_admin", "class": "construct", "route": "file:seed/worker/src/auth/consent.js", "ok": true, "detail": "seed/worker/src/auth/consent.js"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "ORG-TOKEN", "class": "existing-credentials", "route": "env:ORG_ADMIN_TOKEN|GH_ORG_TOKEN", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "ORG-TOKEN", "class": "existing-credentials", "route": "env_all:GH_APP_ID&GH_APP_INSTALLATION_ID&GH_APP_KEY_BINDING", "ok": false, "detail": "missing: GH_APP_ID,GH_APP_INSTALLATION_ID,GH_APP_KEY_BINDING"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "ORG-TOKEN", "class": "prior-working-config", "route": "git:seed/worker/src/auth/github-app.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "ORG-TOKEN", "class": "sibling-workers", "route": "file:seed/worker/src/auth/github-app.js", "ok": true, "detail": "seed/worker/src/auth/github-app.js"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "ORG-TOKEN", "class": "alternate-channel", "route": "file:seed/worker/src/auth/rulesets.js", "ok": true, "detail": "seed/worker/src/auth/rulesets.js"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "ORG-TOKEN", "class": "construct", "route": "file:seed/worker/src/auth/consent.js", "ok": true, "detail": "seed/worker/src/auth/consent.js"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "CF-TOKEN", "class": "existing-credentials", "route": "env_all:CLOUDFLARE_API_TOKEN&CLOUDFLARE_ACCOUNT_ID", "ok": false, "detail": "missing: CLOUDFLARE_API_TOKEN,CLOUDFLARE_ACCOUNT_ID"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "CF-TOKEN", "class": "prior-working-config", "route": "git:seed/worker/src/auth/cloudflare.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "CF-TOKEN", "class": "sibling-workers", "route": "file:seed/worker/src/auth/cloudflare.js", "ok": true, "detail": "seed/worker/src/auth/cloudflare.js"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "CF-TOKEN", "class": "alternate-channel", "route": "file:deploy/deploy-workers.mjs", "ok": true, "detail": "deploy/deploy-workers.mjs"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "CF-TOKEN", "class": "construct", "route": "file:foundation/credwatch.py", "ok": true, "detail": "foundation/credwatch.py"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "cloudflare", "class": "existing-credentials", "route": "env_all:CLOUDFLARE_API_TOKEN&CLOUDFLARE_ACCOUNT_ID", "ok": false, "detail": "missing: CLOUDFLARE_API_TOKEN,CLOUDFLARE_ACCOUNT_ID"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "cloudflare", "class": "prior-working-config", "route": "git:seed/worker/src/auth/cloudflare.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "cloudflare", "class": "sibling-workers", "route": "file:seed/worker/src/auth/cloudflare.js", "ok": true, "detail": "seed/worker/src/auth/cloudflare.js"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "cloudflare", "class": "alternate-channel", "route": "file:deploy/deploy-workers.mjs", "ok": true, "detail": "deploy/deploy-workers.mjs"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "cloudflare", "class": "construct", "route": "file:foundation/credwatch.py", "ok": true, "detail": "foundation/credwatch.py"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "model_api", "class": "existing-credentials", "route": "env:ANTHROPIC_API_KEY", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "model_api", "class": "existing-credentials", "route": "env:WORKERS_AI_BINDING", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "MODEL-KEY", "class": "existing-credentials", "route": "env:ANTHROPIC_API_KEY", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "MODEL-KEY", "class": "existing-credentials", "route": "env:WORKERS_AI_BINDING", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "OUT-SENDER", "class": "existing-credentials", "route": "env_all:EMAIL_SENDER_BINDING&EMAIL_SENDER_DOMAIN", "ok": false, "detail": "missing: EMAIL_SENDER_BINDING,EMAIL_SENDER_DOMAIN"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "OUT-SENDER", "class": "existing-credentials", "route": "env:CLOUDFLARE_EMAIL_SENDING", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "email_sender", "class": "existing-credentials", "route": "env_all:EMAIL_SENDER_BINDING&EMAIL_SENDER_DOMAIN", "ok": false, "detail": "missing: EMAIL_SENDER_BINDING,EMAIL_SENDER_DOMAIN"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "email_sender", "class": "existing-credentials", "route": "env:CLOUDFLARE_EMAIL_SENDING", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "SOC-ACCOUNTS", "class": "existing-credentials", "route": "env_all:BLUESKY_HANDLE_BINDING&BLUESKY_APP_PASSWORD_BINDING", "ok": false, "detail": "missing: BLUESKY_HANDLE_BINDING,BLUESKY_APP_PASSWORD_BINDING"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "SOC-ACCOUNTS", "class": "existing-credentials", "route": "env_all:MASTODON_INSTANCE&MASTODON_TOKEN_BINDING", "ok": false, "detail": "missing: MASTODON_INSTANCE,MASTODON_TOKEN_BINDING"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "SOC-ACCOUNTS", "class": "prior-working-config", "route": "git:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "SOC-ACCOUNTS", "class": "prior-working-config", "route": "git:seed/worker/src/auth/atproto.js", "ok": true, "detail": "3 commits"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "SOC-ACCOUNTS", "class": "prior-working-config", "route": "git:scripts/social_post.py", "ok": true, "detail": "5 commits"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "SOC-ACCOUNTS", "class": "sibling-workers", "route": "file:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "workers/packs/social/channels/bluesky.js"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "SOC-ACCOUNTS", "class": "sibling-workers", "route": "file:workers/core/ownerlink/mastodon.js", "ok": true, "detail": "workers/core/ownerlink/mastodon.js"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "SOC-ACCOUNTS", "class": "sibling-workers", "route": "file:seed/worker/src/social.js", "ok": true, "detail": "seed/worker/src/social.js"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "SOC-ACCOUNTS", "class": "alternate-channel", "route": "file:seed/worker/src/auth/connectors.js", "ok": true, "detail": "seed/worker/src/auth/connectors.js"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "SOC-ACCOUNTS", "class": "alternate-channel", "route": "file:.github/workflows/social-post.yml", "ok": true, "detail": ".github/workflows/social-post.yml"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "SOC-ACCOUNTS", "class": "construct", "route": "file:seed/worker/src/auth/oauth.js", "ok": true, "detail": "seed/worker/src/auth/oauth.js"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "social_accounts", "class": "existing-credentials", "route": "env_all:BLUESKY_HANDLE_BINDING&BLUESKY_APP_PASSWORD_BINDING", "ok": false, "detail": "missing: BLUESKY_HANDLE_BINDING,BLUESKY_APP_PASSWORD_BINDING"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "social_accounts", "class": "existing-credentials", "route": "env_all:MASTODON_INSTANCE&MASTODON_TOKEN_BINDING", "ok": false, "detail": "missing: MASTODON_INSTANCE,MASTODON_TOKEN_BINDING"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "social_accounts", "class": "prior-working-config", "route": "git:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "social_accounts", "class": "prior-working-config", "route": "git:seed/worker/src/auth/atproto.js", "ok": true, "detail": "3 commits"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "social_accounts", "class": "prior-working-config", "route": "git:scripts/social_post.py", "ok": true, "detail": "5 commits"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "social_accounts", "class": "sibling-workers", "route": "file:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "workers/packs/social/channels/bluesky.js"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "social_accounts", "class": "sibling-workers", "route": "file:workers/core/ownerlink/mastodon.js", "ok": true, "detail": "workers/core/ownerlink/mastodon.js"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "social_accounts", "class": "sibling-workers", "route": "file:seed/worker/src/social.js", "ok": true, "detail": "seed/worker/src/social.js"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "social_accounts", "class": "alternate-channel", "route": "file:seed/worker/src/auth/connectors.js", "ok": true, "detail": "seed/worker/src/auth/connectors.js"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "social_accounts", "class": "alternate-channel", "route": "file:.github/workflows/social-post.yml", "ok": true, "detail": ".github/workflows/social-post.yml"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "social_accounts", "class": "construct", "route": "file:seed/worker/src/auth/oauth.js", "ok": true, "detail": "seed/worker/src/auth/oauth.js"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "owner-social", "class": "existing-credentials", "route": "env_all:BLUESKY_HANDLE_BINDING&BLUESKY_APP_PASSWORD_BINDING", "ok": false, "detail": "missing: BLUESKY_HANDLE_BINDING,BLUESKY_APP_PASSWORD_BINDING"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "owner-social", "class": "existing-credentials", "route": "env_all:MASTODON_INSTANCE&MASTODON_TOKEN_BINDING", "ok": false, "detail": "missing: MASTODON_INSTANCE,MASTODON_TOKEN_BINDING"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "owner-social", "class": "prior-working-config", "route": "git:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "owner-social", "class": "prior-working-config", "route": "git:seed/worker/src/auth/atproto.js", "ok": true, "detail": "3 commits"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "owner-social", "class": "prior-working-config", "route": "git:scripts/social_post.py", "ok": true, "detail": "5 commits"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "owner-social", "class": "sibling-workers", "route": "file:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "workers/packs/social/channels/bluesky.js"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "owner-social", "class": "sibling-workers", "route": "file:workers/core/ownerlink/mastodon.js", "ok": true, "detail": "workers/core/ownerlink/mastodon.js"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "owner-social", "class": "sibling-workers", "route": "file:seed/worker/src/social.js", "ok": true, "detail": "seed/worker/src/social.js"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "owner-social", "class": "alternate-channel", "route": "file:seed/worker/src/auth/connectors.js", "ok": true, "detail": "seed/worker/src/auth/connectors.js"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "owner-social", "class": "alternate-channel", "route": "file:.github/workflows/social-post.yml", "ok": true, "detail": ".github/workflows/social-post.yml"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "owner-social", "class": "construct", "route": "file:seed/worker/src/auth/oauth.js", "ok": true, "detail": "seed/worker/src/auth/oauth.js"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "owner-oauth-apps", "class": "existing-credentials", "route": "env:ORG_ADMIN_TOKEN|GH_ORG_TOKEN", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "owner-oauth-apps", "class": "existing-credentials", "route": "env_all:GH_APP_ID&GH_APP_INSTALLATION_ID&GH_APP_KEY_BINDING", "ok": false, "detail": "missing: GH_APP_ID,GH_APP_INSTALLATION_ID,GH_APP_KEY_BINDING"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "owner-oauth-apps", "class": "prior-working-config", "route": "git:seed/worker/src/auth/github-app.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "owner-oauth-apps", "class": "sibling-workers", "route": "file:seed/worker/src/auth/github-app.js", "ok": true, "detail": "seed/worker/src/auth/github-app.js"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "owner-oauth-apps", "class": "alternate-channel", "route": "file:seed/worker/src/auth/rulesets.js", "ok": true, "detail": "seed/worker/src/auth/rulesets.js"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "owner-oauth-apps", "class": "construct", "route": "file:seed/worker/src/auth/consent.js", "ok": true, "detail": "seed/worker/src/auth/consent.js"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "owner-domains-move", "class": "existing-credentials", "route": "env_all:CLOUDFLARE_API_TOKEN&CLOUDFLARE_ACCOUNT_ID", "ok": false, "detail": "missing: CLOUDFLARE_API_TOKEN,CLOUDFLARE_ACCOUNT_ID"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "owner-domains-move", "class": "prior-working-config", "route": "git:seed/worker/src/auth/cloudflare.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "owner-domains-move", "class": "sibling-workers", "route": "file:seed/worker/src/auth/cloudflare.js", "ok": true, "detail": "seed/worker/src/auth/cloudflare.js"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "owner-domains-move", "class": "alternate-channel", "route": "file:deploy/deploy-workers.mjs", "ok": true, "detail": "deploy/deploy-workers.mjs"}
+{"at": "2026-11-25T16:14:24+00:00", "ask": "owner-domains-move", "class": "construct", "route": "file:foundation/credwatch.py", "ok": true, "detail": "foundation/credwatch.py"}
+{"at": "2026-11-25T16:14:25+00:00", "ask": "bluesky", "class": "prior-working-config", "route": "regress:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "1 suspect commits since None"}
+{"at": "2026-11-25T16:14:25+00:00", "ask": "mastodon", "class": "prior-working-config", "route": "regress:workers/core/ownerlink/mastodon.js", "ok": true, "detail": "1 suspect commits since None"}
+{"at": "2026-11-25T16:14:25+00:00", "ask": "linkedin", "class": "prior-working-config", "route": "regress:social/accounts.json", "ok": true, "detail": "2 suspect commits since None"}
+{"at": "2026-11-25T16:14:25+00:00", "ask": "ledger:clocks:all", "class": "prior-working-config", "route": "regress:foundation/clock.py", "ok": false, "detail": "0 suspect commits since add800e814fc"}
+{"at": "2026-11-25T16:14:25+00:00", "ask": "ledger:executor:pr-outcome", "class": "prior-working-config", "route": "regress:foundation/executor.py", "ok": false, "detail": "0 suspect commits since 61808a25d06d"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "org_admin", "class": "existing-credentials", "route": "env:ORG_ADMIN_TOKEN|GH_ORG_TOKEN", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "org_admin", "class": "existing-credentials", "route": "env_all:GH_APP_ID&GH_APP_INSTALLATION_ID&GH_APP_KEY_BINDING", "ok": false, "detail": "missing: GH_APP_ID,GH_APP_INSTALLATION_ID,GH_APP_KEY_BINDING"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "org_admin", "class": "prior-working-config", "route": "git:seed/worker/src/auth/github-app.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "org_admin", "class": "sibling-workers", "route": "file:seed/worker/src/auth/github-app.js", "ok": true, "detail": "seed/worker/src/auth/github-app.js"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "org_admin", "class": "alternate-channel", "route": "file:seed/worker/src/auth/rulesets.js", "ok": true, "detail": "seed/worker/src/auth/rulesets.js"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "org_admin", "class": "construct", "route": "file:seed/worker/src/auth/consent.js", "ok": true, "detail": "seed/worker/src/auth/consent.js"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "ORG-TOKEN", "class": "existing-credentials", "route": "env:ORG_ADMIN_TOKEN|GH_ORG_TOKEN", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "ORG-TOKEN", "class": "existing-credentials", "route": "env_all:GH_APP_ID&GH_APP_INSTALLATION_ID&GH_APP_KEY_BINDING", "ok": false, "detail": "missing: GH_APP_ID,GH_APP_INSTALLATION_ID,GH_APP_KEY_BINDING"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "ORG-TOKEN", "class": "prior-working-config", "route": "git:seed/worker/src/auth/github-app.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "ORG-TOKEN", "class": "sibling-workers", "route": "file:seed/worker/src/auth/github-app.js", "ok": true, "detail": "seed/worker/src/auth/github-app.js"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "ORG-TOKEN", "class": "alternate-channel", "route": "file:seed/worker/src/auth/rulesets.js", "ok": true, "detail": "seed/worker/src/auth/rulesets.js"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "ORG-TOKEN", "class": "construct", "route": "file:seed/worker/src/auth/consent.js", "ok": true, "detail": "seed/worker/src/auth/consent.js"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "CF-TOKEN", "class": "existing-credentials", "route": "env_all:CLOUDFLARE_API_TOKEN&CLOUDFLARE_ACCOUNT_ID", "ok": false, "detail": "missing: CLOUDFLARE_API_TOKEN,CLOUDFLARE_ACCOUNT_ID"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "CF-TOKEN", "class": "prior-working-config", "route": "git:seed/worker/src/auth/cloudflare.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "CF-TOKEN", "class": "sibling-workers", "route": "file:seed/worker/src/auth/cloudflare.js", "ok": true, "detail": "seed/worker/src/auth/cloudflare.js"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "CF-TOKEN", "class": "alternate-channel", "route": "file:deploy/deploy-workers.mjs", "ok": true, "detail": "deploy/deploy-workers.mjs"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "CF-TOKEN", "class": "construct", "route": "file:foundation/credwatch.py", "ok": true, "detail": "foundation/credwatch.py"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "cloudflare", "class": "existing-credentials", "route": "env_all:CLOUDFLARE_API_TOKEN&CLOUDFLARE_ACCOUNT_ID", "ok": false, "detail": "missing: CLOUDFLARE_API_TOKEN,CLOUDFLARE_ACCOUNT_ID"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "cloudflare", "class": "prior-working-config", "route": "git:seed/worker/src/auth/cloudflare.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "cloudflare", "class": "sibling-workers", "route": "file:seed/worker/src/auth/cloudflare.js", "ok": true, "detail": "seed/worker/src/auth/cloudflare.js"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "cloudflare", "class": "alternate-channel", "route": "file:deploy/deploy-workers.mjs", "ok": true, "detail": "deploy/deploy-workers.mjs"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "cloudflare", "class": "construct", "route": "file:foundation/credwatch.py", "ok": true, "detail": "foundation/credwatch.py"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "model_api", "class": "existing-credentials", "route": "env:ANTHROPIC_API_KEY", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "model_api", "class": "existing-credentials", "route": "env:WORKERS_AI_BINDING", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "MODEL-KEY", "class": "existing-credentials", "route": "env:ANTHROPIC_API_KEY", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "MODEL-KEY", "class": "existing-credentials", "route": "env:WORKERS_AI_BINDING", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "OUT-SENDER", "class": "existing-credentials", "route": "env_all:EMAIL_SENDER_BINDING&EMAIL_SENDER_DOMAIN", "ok": false, "detail": "missing: EMAIL_SENDER_BINDING,EMAIL_SENDER_DOMAIN"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "OUT-SENDER", "class": "existing-credentials", "route": "env:CLOUDFLARE_EMAIL_SENDING", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "email_sender", "class": "existing-credentials", "route": "env_all:EMAIL_SENDER_BINDING&EMAIL_SENDER_DOMAIN", "ok": false, "detail": "missing: EMAIL_SENDER_BINDING,EMAIL_SENDER_DOMAIN"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "email_sender", "class": "existing-credentials", "route": "env:CLOUDFLARE_EMAIL_SENDING", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "social_accounts", "class": "existing-credentials", "route": "env_all:BLUESKY_HANDLE_BINDING&BLUESKY_APP_PASSWORD_BINDING", "ok": false, "detail": "missing: BLUESKY_HANDLE_BINDING,BLUESKY_APP_PASSWORD_BINDING"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "social_accounts", "class": "existing-credentials", "route": "env_all:MASTODON_INSTANCE&MASTODON_TOKEN_BINDING", "ok": false, "detail": "missing: MASTODON_INSTANCE,MASTODON_TOKEN_BINDING"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "social_accounts", "class": "prior-working-config", "route": "git:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "social_accounts", "class": "prior-working-config", "route": "git:seed/worker/src/auth/atproto.js", "ok": true, "detail": "3 commits"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "social_accounts", "class": "prior-working-config", "route": "git:scripts/social_post.py", "ok": true, "detail": "5 commits"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "social_accounts", "class": "sibling-workers", "route": "file:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "workers/packs/social/channels/bluesky.js"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "social_accounts", "class": "sibling-workers", "route": "file:workers/core/ownerlink/mastodon.js", "ok": true, "detail": "workers/core/ownerlink/mastodon.js"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "social_accounts", "class": "sibling-workers", "route": "file:seed/worker/src/social.js", "ok": true, "detail": "seed/worker/src/social.js"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "social_accounts", "class": "alternate-channel", "route": "file:seed/worker/src/auth/connectors.js", "ok": true, "detail": "seed/worker/src/auth/connectors.js"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "social_accounts", "class": "alternate-channel", "route": "file:.github/workflows/social-post.yml", "ok": true, "detail": ".github/workflows/social-post.yml"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "social_accounts", "class": "construct", "route": "file:seed/worker/src/auth/oauth.js", "ok": true, "detail": "seed/worker/src/auth/oauth.js"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "SOC-ACCOUNTS", "class": "existing-credentials", "route": "env_all:BLUESKY_HANDLE_BINDING&BLUESKY_APP_PASSWORD_BINDING", "ok": false, "detail": "missing: BLUESKY_HANDLE_BINDING,BLUESKY_APP_PASSWORD_BINDING"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "SOC-ACCOUNTS", "class": "existing-credentials", "route": "env_all:MASTODON_INSTANCE&MASTODON_TOKEN_BINDING", "ok": false, "detail": "missing: MASTODON_INSTANCE,MASTODON_TOKEN_BINDING"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "SOC-ACCOUNTS", "class": "prior-working-config", "route": "git:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "SOC-ACCOUNTS", "class": "prior-working-config", "route": "git:seed/worker/src/auth/atproto.js", "ok": true, "detail": "3 commits"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "SOC-ACCOUNTS", "class": "prior-working-config", "route": "git:scripts/social_post.py", "ok": true, "detail": "5 commits"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "SOC-ACCOUNTS", "class": "sibling-workers", "route": "file:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "workers/packs/social/channels/bluesky.js"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "SOC-ACCOUNTS", "class": "sibling-workers", "route": "file:workers/core/ownerlink/mastodon.js", "ok": true, "detail": "workers/core/ownerlink/mastodon.js"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "SOC-ACCOUNTS", "class": "sibling-workers", "route": "file:seed/worker/src/social.js", "ok": true, "detail": "seed/worker/src/social.js"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "SOC-ACCOUNTS", "class": "alternate-channel", "route": "file:seed/worker/src/auth/connectors.js", "ok": true, "detail": "seed/worker/src/auth/connectors.js"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "SOC-ACCOUNTS", "class": "alternate-channel", "route": "file:.github/workflows/social-post.yml", "ok": true, "detail": ".github/workflows/social-post.yml"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "SOC-ACCOUNTS", "class": "construct", "route": "file:seed/worker/src/auth/oauth.js", "ok": true, "detail": "seed/worker/src/auth/oauth.js"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "owner-social", "class": "existing-credentials", "route": "env_all:BLUESKY_HANDLE_BINDING&BLUESKY_APP_PASSWORD_BINDING", "ok": false, "detail": "missing: BLUESKY_HANDLE_BINDING,BLUESKY_APP_PASSWORD_BINDING"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "owner-social", "class": "existing-credentials", "route": "env_all:MASTODON_INSTANCE&MASTODON_TOKEN_BINDING", "ok": false, "detail": "missing: MASTODON_INSTANCE,MASTODON_TOKEN_BINDING"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "owner-social", "class": "prior-working-config", "route": "git:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "owner-social", "class": "prior-working-config", "route": "git:seed/worker/src/auth/atproto.js", "ok": true, "detail": "3 commits"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "owner-social", "class": "prior-working-config", "route": "git:scripts/social_post.py", "ok": true, "detail": "5 commits"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "owner-social", "class": "sibling-workers", "route": "file:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "workers/packs/social/channels/bluesky.js"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "owner-social", "class": "sibling-workers", "route": "file:workers/core/ownerlink/mastodon.js", "ok": true, "detail": "workers/core/ownerlink/mastodon.js"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "owner-social", "class": "sibling-workers", "route": "file:seed/worker/src/social.js", "ok": true, "detail": "seed/worker/src/social.js"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "owner-social", "class": "alternate-channel", "route": "file:seed/worker/src/auth/connectors.js", "ok": true, "detail": "seed/worker/src/auth/connectors.js"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "owner-social", "class": "alternate-channel", "route": "file:.github/workflows/social-post.yml", "ok": true, "detail": ".github/workflows/social-post.yml"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "owner-social", "class": "construct", "route": "file:seed/worker/src/auth/oauth.js", "ok": true, "detail": "seed/worker/src/auth/oauth.js"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "owner-oauth-apps", "class": "existing-credentials", "route": "env:ORG_ADMIN_TOKEN|GH_ORG_TOKEN", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "owner-oauth-apps", "class": "existing-credentials", "route": "env_all:GH_APP_ID&GH_APP_INSTALLATION_ID&GH_APP_KEY_BINDING", "ok": false, "detail": "missing: GH_APP_ID,GH_APP_INSTALLATION_ID,GH_APP_KEY_BINDING"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "owner-oauth-apps", "class": "prior-working-config", "route": "git:seed/worker/src/auth/github-app.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "owner-oauth-apps", "class": "sibling-workers", "route": "file:seed/worker/src/auth/github-app.js", "ok": true, "detail": "seed/worker/src/auth/github-app.js"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "owner-oauth-apps", "class": "alternate-channel", "route": "file:seed/worker/src/auth/rulesets.js", "ok": true, "detail": "seed/worker/src/auth/rulesets.js"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "owner-oauth-apps", "class": "construct", "route": "file:seed/worker/src/auth/consent.js", "ok": true, "detail": "seed/worker/src/auth/consent.js"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "owner-domains-move", "class": "existing-credentials", "route": "env_all:CLOUDFLARE_API_TOKEN&CLOUDFLARE_ACCOUNT_ID", "ok": false, "detail": "missing: CLOUDFLARE_API_TOKEN,CLOUDFLARE_ACCOUNT_ID"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "owner-domains-move", "class": "prior-working-config", "route": "git:seed/worker/src/auth/cloudflare.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "owner-domains-move", "class": "sibling-workers", "route": "file:seed/worker/src/auth/cloudflare.js", "ok": true, "detail": "seed/worker/src/auth/cloudflare.js"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "owner-domains-move", "class": "alternate-channel", "route": "file:deploy/deploy-workers.mjs", "ok": true, "detail": "deploy/deploy-workers.mjs"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "owner-domains-move", "class": "construct", "route": "file:foundation/credwatch.py", "ok": true, "detail": "foundation/credwatch.py"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "bluesky", "class": "prior-working-config", "route": "regress:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "1 suspect commits since None"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "mastodon", "class": "prior-working-config", "route": "regress:workers/core/ownerlink/mastodon.js", "ok": true, "detail": "1 suspect commits since None"}
+{"at": "2026-11-25T16:24:21+00:00", "ask": "linkedin", "class": "prior-working-config", "route": "regress:social/accounts.json", "ok": true, "detail": "2 suspect commits since None"}
+{"at": "2026-11-25T16:24:22+00:00", "ask": "ledger:clocks:all", "class": "prior-working-config", "route": "regress:foundation/clock.py", "ok": false, "detail": "0 suspect commits since add800e814fc"}
+{"at": "2026-11-25T16:24:23+00:00", "ask": "ledger:executor:pr-outcome", "class": "prior-working-config", "route": "regress:foundation/executor.py", "ok": false, "detail": "0 suspect commits since 61808a25d06d"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "ORG-TOKEN", "class": "existing-credentials", "route": "env:ORG_ADMIN_TOKEN|GH_ORG_TOKEN", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "ORG-TOKEN", "class": "existing-credentials", "route": "env_all:GH_APP_ID&GH_APP_INSTALLATION_ID&GH_APP_KEY_BINDING", "ok": false, "detail": "missing: GH_APP_ID,GH_APP_INSTALLATION_ID,GH_APP_KEY_BINDING"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "ORG-TOKEN", "class": "prior-working-config", "route": "git:seed/worker/src/auth/github-app.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "ORG-TOKEN", "class": "sibling-workers", "route": "file:seed/worker/src/auth/github-app.js", "ok": true, "detail": "seed/worker/src/auth/github-app.js"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "ORG-TOKEN", "class": "alternate-channel", "route": "file:seed/worker/src/auth/rulesets.js", "ok": true, "detail": "seed/worker/src/auth/rulesets.js"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "ORG-TOKEN", "class": "construct", "route": "file:seed/worker/src/auth/consent.js", "ok": true, "detail": "seed/worker/src/auth/consent.js"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "org_admin", "class": "existing-credentials", "route": "env:ORG_ADMIN_TOKEN|GH_ORG_TOKEN", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "org_admin", "class": "existing-credentials", "route": "env_all:GH_APP_ID&GH_APP_INSTALLATION_ID&GH_APP_KEY_BINDING", "ok": false, "detail": "missing: GH_APP_ID,GH_APP_INSTALLATION_ID,GH_APP_KEY_BINDING"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "org_admin", "class": "prior-working-config", "route": "git:seed/worker/src/auth/github-app.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "org_admin", "class": "sibling-workers", "route": "file:seed/worker/src/auth/github-app.js", "ok": true, "detail": "seed/worker/src/auth/github-app.js"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "org_admin", "class": "alternate-channel", "route": "file:seed/worker/src/auth/rulesets.js", "ok": true, "detail": "seed/worker/src/auth/rulesets.js"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "org_admin", "class": "construct", "route": "file:seed/worker/src/auth/consent.js", "ok": true, "detail": "seed/worker/src/auth/consent.js"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "cloudflare", "class": "existing-credentials", "route": "env_all:CLOUDFLARE_API_TOKEN&CLOUDFLARE_ACCOUNT_ID", "ok": false, "detail": "missing: CLOUDFLARE_API_TOKEN,CLOUDFLARE_ACCOUNT_ID"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "cloudflare", "class": "prior-working-config", "route": "git:seed/worker/src/auth/cloudflare.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "cloudflare", "class": "sibling-workers", "route": "file:seed/worker/src/auth/cloudflare.js", "ok": true, "detail": "seed/worker/src/auth/cloudflare.js"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "cloudflare", "class": "alternate-channel", "route": "file:deploy/deploy-workers.mjs", "ok": true, "detail": "deploy/deploy-workers.mjs"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "cloudflare", "class": "construct", "route": "file:foundation/credwatch.py", "ok": true, "detail": "foundation/credwatch.py"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "CF-TOKEN", "class": "existing-credentials", "route": "env_all:CLOUDFLARE_API_TOKEN&CLOUDFLARE_ACCOUNT_ID", "ok": false, "detail": "missing: CLOUDFLARE_API_TOKEN,CLOUDFLARE_ACCOUNT_ID"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "CF-TOKEN", "class": "prior-working-config", "route": "git:seed/worker/src/auth/cloudflare.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "CF-TOKEN", "class": "sibling-workers", "route": "file:seed/worker/src/auth/cloudflare.js", "ok": true, "detail": "seed/worker/src/auth/cloudflare.js"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "CF-TOKEN", "class": "alternate-channel", "route": "file:deploy/deploy-workers.mjs", "ok": true, "detail": "deploy/deploy-workers.mjs"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "CF-TOKEN", "class": "construct", "route": "file:foundation/credwatch.py", "ok": true, "detail": "foundation/credwatch.py"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "model_api", "class": "existing-credentials", "route": "env:ANTHROPIC_API_KEY", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "model_api", "class": "existing-credentials", "route": "env:WORKERS_AI_BINDING", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "MODEL-KEY", "class": "existing-credentials", "route": "env:ANTHROPIC_API_KEY", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "MODEL-KEY", "class": "existing-credentials", "route": "env:WORKERS_AI_BINDING", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "email_sender", "class": "existing-credentials", "route": "env_all:EMAIL_SENDER_BINDING&EMAIL_SENDER_DOMAIN", "ok": false, "detail": "missing: EMAIL_SENDER_BINDING,EMAIL_SENDER_DOMAIN"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "email_sender", "class": "existing-credentials", "route": "env:CLOUDFLARE_EMAIL_SENDING", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "OUT-SENDER", "class": "existing-credentials", "route": "env_all:EMAIL_SENDER_BINDING&EMAIL_SENDER_DOMAIN", "ok": false, "detail": "missing: EMAIL_SENDER_BINDING,EMAIL_SENDER_DOMAIN"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "OUT-SENDER", "class": "existing-credentials", "route": "env:CLOUDFLARE_EMAIL_SENDING", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "SOC-ACCOUNTS", "class": "existing-credentials", "route": "env_all:BLUESKY_HANDLE_BINDING&BLUESKY_APP_PASSWORD_BINDING", "ok": false, "detail": "missing: BLUESKY_HANDLE_BINDING,BLUESKY_APP_PASSWORD_BINDING"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "SOC-ACCOUNTS", "class": "existing-credentials", "route": "env_all:MASTODON_INSTANCE&MASTODON_TOKEN_BINDING", "ok": false, "detail": "missing: MASTODON_INSTANCE,MASTODON_TOKEN_BINDING"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "SOC-ACCOUNTS", "class": "prior-working-config", "route": "git:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "SOC-ACCOUNTS", "class": "prior-working-config", "route": "git:seed/worker/src/auth/atproto.js", "ok": true, "detail": "3 commits"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "SOC-ACCOUNTS", "class": "prior-working-config", "route": "git:scripts/social_post.py", "ok": true, "detail": "5 commits"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "SOC-ACCOUNTS", "class": "sibling-workers", "route": "file:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "workers/packs/social/channels/bluesky.js"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "SOC-ACCOUNTS", "class": "sibling-workers", "route": "file:workers/core/ownerlink/mastodon.js", "ok": true, "detail": "workers/core/ownerlink/mastodon.js"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "SOC-ACCOUNTS", "class": "sibling-workers", "route": "file:seed/worker/src/social.js", "ok": true, "detail": "seed/worker/src/social.js"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "SOC-ACCOUNTS", "class": "alternate-channel", "route": "file:seed/worker/src/auth/connectors.js", "ok": true, "detail": "seed/worker/src/auth/connectors.js"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "SOC-ACCOUNTS", "class": "alternate-channel", "route": "file:.github/workflows/social-post.yml", "ok": true, "detail": ".github/workflows/social-post.yml"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "SOC-ACCOUNTS", "class": "construct", "route": "file:seed/worker/src/auth/oauth.js", "ok": true, "detail": "seed/worker/src/auth/oauth.js"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "social_accounts", "class": "existing-credentials", "route": "env_all:BLUESKY_HANDLE_BINDING&BLUESKY_APP_PASSWORD_BINDING", "ok": false, "detail": "missing: BLUESKY_HANDLE_BINDING,BLUESKY_APP_PASSWORD_BINDING"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "social_accounts", "class": "existing-credentials", "route": "env_all:MASTODON_INSTANCE&MASTODON_TOKEN_BINDING", "ok": false, "detail": "missing: MASTODON_INSTANCE,MASTODON_TOKEN_BINDING"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "social_accounts", "class": "prior-working-config", "route": "git:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:34:59+00:00", "ask": "social_accounts", "class": "prior-working-config", "route": "git:seed/worker/src/auth/atproto.js", "ok": true, "detail": "3 commits"}
+{"at": "2026-11-25T16:35:00+00:00", "ask": "social_accounts", "class": "prior-working-config", "route": "git:scripts/social_post.py", "ok": true, "detail": "5 commits"}
+{"at": "2026-11-25T16:35:00+00:00", "ask": "social_accounts", "class": "sibling-workers", "route": "file:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "workers/packs/social/channels/bluesky.js"}
+{"at": "2026-11-25T16:35:00+00:00", "ask": "social_accounts", "class": "sibling-workers", "route": "file:workers/core/ownerlink/mastodon.js", "ok": true, "detail": "workers/core/ownerlink/mastodon.js"}
+{"at": "2026-11-25T16:35:00+00:00", "ask": "social_accounts", "class": "sibling-workers", "route": "file:seed/worker/src/social.js", "ok": true, "detail": "seed/worker/src/social.js"}
+{"at": "2026-11-25T16:35:00+00:00", "ask": "social_accounts", "class": "alternate-channel", "route": "file:seed/worker/src/auth/connectors.js", "ok": true, "detail": "seed/worker/src/auth/connectors.js"}
+{"at": "2026-11-25T16:35:00+00:00", "ask": "social_accounts", "class": "alternate-channel", "route": "file:.github/workflows/social-post.yml", "ok": true, "detail": ".github/workflows/social-post.yml"}
+{"at": "2026-11-25T16:35:00+00:00", "ask": "social_accounts", "class": "construct", "route": "file:seed/worker/src/auth/oauth.js", "ok": true, "detail": "seed/worker/src/auth/oauth.js"}
+{"at": "2026-11-25T16:35:00+00:00", "ask": "owner-social", "class": "existing-credentials", "route": "env_all:BLUESKY_HANDLE_BINDING&BLUESKY_APP_PASSWORD_BINDING", "ok": false, "detail": "missing: BLUESKY_HANDLE_BINDING,BLUESKY_APP_PASSWORD_BINDING"}
+{"at": "2026-11-25T16:35:00+00:00", "ask": "owner-social", "class": "existing-credentials", "route": "env_all:MASTODON_INSTANCE&MASTODON_TOKEN_BINDING", "ok": false, "detail": "missing: MASTODON_INSTANCE,MASTODON_TOKEN_BINDING"}
+{"at": "2026-11-25T16:35:00+00:00", "ask": "owner-social", "class": "prior-working-config", "route": "git:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:35:00+00:00", "ask": "owner-social", "class": "prior-working-config", "route": "git:seed/worker/src/auth/atproto.js", "ok": true, "detail": "3 commits"}
+{"at": "2026-11-25T16:35:00+00:00", "ask": "owner-social", "class": "prior-working-config", "route": "git:scripts/social_post.py", "ok": true, "detail": "5 commits"}
+{"at": "2026-11-25T16:35:00+00:00", "ask": "owner-social", "class": "sibling-workers", "route": "file:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "workers/packs/social/channels/bluesky.js"}
+{"at": "2026-11-25T16:35:00+00:00", "ask": "owner-social", "class": "sibling-workers", "route": "file:workers/core/ownerlink/mastodon.js", "ok": true, "detail": "workers/core/ownerlink/mastodon.js"}
+{"at": "2026-11-25T16:35:00+00:00", "ask": "owner-social", "class": "sibling-workers", "route": "file:seed/worker/src/social.js", "ok": true, "detail": "seed/worker/src/social.js"}
+{"at": "2026-11-25T16:35:00+00:00", "ask": "owner-social", "class": "alternate-channel", "route": "file:seed/worker/src/auth/connectors.js", "ok": true, "detail": "seed/worker/src/auth/connectors.js"}
+{"at": "2026-11-25T16:35:00+00:00", "ask": "owner-social", "class": "alternate-channel", "route": "file:.github/workflows/social-post.yml", "ok": true, "detail": ".github/workflows/social-post.yml"}
+{"at": "2026-11-25T16:35:00+00:00", "ask": "owner-social", "class": "construct", "route": "file:seed/worker/src/auth/oauth.js", "ok": true, "detail": "seed/worker/src/auth/oauth.js"}
+{"at": "2026-11-25T16:35:00+00:00", "ask": "owner-oauth-apps", "class": "existing-credentials", "route": "env:ORG_ADMIN_TOKEN|GH_ORG_TOKEN", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:35:00+00:00", "ask": "owner-oauth-apps", "class": "existing-credentials", "route": "env_all:GH_APP_ID&GH_APP_INSTALLATION_ID&GH_APP_KEY_BINDING", "ok": false, "detail": "missing: GH_APP_ID,GH_APP_INSTALLATION_ID,GH_APP_KEY_BINDING"}
+{"at": "2026-11-25T16:35:00+00:00", "ask": "owner-oauth-apps", "class": "prior-working-config", "route": "git:seed/worker/src/auth/github-app.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:35:00+00:00", "ask": "owner-oauth-apps", "class": "sibling-workers", "route": "file:seed/worker/src/auth/github-app.js", "ok": true, "detail": "seed/worker/src/auth/github-app.js"}
+{"at": "2026-11-25T16:35:00+00:00", "ask": "owner-oauth-apps", "class": "alternate-channel", "route": "file:seed/worker/src/auth/rulesets.js", "ok": true, "detail": "seed/worker/src/auth/rulesets.js"}
+{"at": "2026-11-25T16:35:00+00:00", "ask": "owner-oauth-apps", "class": "construct", "route": "file:seed/worker/src/auth/consent.js", "ok": true, "detail": "seed/worker/src/auth/consent.js"}
+{"at": "2026-11-25T16:35:00+00:00", "ask": "owner-domains-move", "class": "existing-credentials", "route": "env_all:CLOUDFLARE_API_TOKEN&CLOUDFLARE_ACCOUNT_ID", "ok": false, "detail": "missing: CLOUDFLARE_API_TOKEN,CLOUDFLARE_ACCOUNT_ID"}
+{"at": "2026-11-25T16:35:00+00:00", "ask": "owner-domains-move", "class": "prior-working-config", "route": "git:seed/worker/src/auth/cloudflare.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:35:00+00:00", "ask": "owner-domains-move", "class": "sibling-workers", "route": "file:seed/worker/src/auth/cloudflare.js", "ok": true, "detail": "seed/worker/src/auth/cloudflare.js"}
+{"at": "2026-11-25T16:35:00+00:00", "ask": "owner-domains-move", "class": "alternate-channel", "route": "file:deploy/deploy-workers.mjs", "ok": true, "detail": "deploy/deploy-workers.mjs"}
+{"at": "2026-11-25T16:35:00+00:00", "ask": "owner-domains-move", "class": "construct", "route": "file:foundation/credwatch.py", "ok": true, "detail": "foundation/credwatch.py"}
+{"at": "2026-11-25T16:35:00+00:00", "ask": "bluesky", "class": "prior-working-config", "route": "regress:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "1 suspect commits since None"}
+{"at": "2026-11-25T16:35:00+00:00", "ask": "mastodon", "class": "prior-working-config", "route": "regress:workers/core/ownerlink/mastodon.js", "ok": true, "detail": "1 suspect commits since None"}
+{"at": "2026-11-25T16:35:00+00:00", "ask": "linkedin", "class": "prior-working-config", "route": "regress:social/accounts.json", "ok": true, "detail": "2 suspect commits since None"}
+{"at": "2026-11-25T16:35:01+00:00", "ask": "ledger:clocks:all", "class": "prior-working-config", "route": "regress:foundation/clock.py", "ok": false, "detail": "0 suspect commits since add800e814fc"}
+{"at": "2026-11-25T16:35:01+00:00", "ask": "ledger:executor:pr-outcome", "class": "prior-working-config", "route": "regress:foundation/executor.py", "ok": false, "detail": "0 suspect commits since 61808a25d06d"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "org_admin", "class": "existing-credentials", "route": "env:ORG_ADMIN_TOKEN|GH_ORG_TOKEN", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "org_admin", "class": "existing-credentials", "route": "env_all:GH_APP_ID&GH_APP_INSTALLATION_ID&GH_APP_KEY_BINDING", "ok": false, "detail": "missing: GH_APP_ID,GH_APP_INSTALLATION_ID,GH_APP_KEY_BINDING"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "org_admin", "class": "prior-working-config", "route": "git:seed/worker/src/auth/github-app.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "org_admin", "class": "sibling-workers", "route": "file:seed/worker/src/auth/github-app.js", "ok": true, "detail": "seed/worker/src/auth/github-app.js"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "org_admin", "class": "alternate-channel", "route": "file:seed/worker/src/auth/rulesets.js", "ok": true, "detail": "seed/worker/src/auth/rulesets.js"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "org_admin", "class": "construct", "route": "file:seed/worker/src/auth/consent.js", "ok": true, "detail": "seed/worker/src/auth/consent.js"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "ORG-TOKEN", "class": "existing-credentials", "route": "env:ORG_ADMIN_TOKEN|GH_ORG_TOKEN", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "ORG-TOKEN", "class": "existing-credentials", "route": "env_all:GH_APP_ID&GH_APP_INSTALLATION_ID&GH_APP_KEY_BINDING", "ok": false, "detail": "missing: GH_APP_ID,GH_APP_INSTALLATION_ID,GH_APP_KEY_BINDING"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "ORG-TOKEN", "class": "prior-working-config", "route": "git:seed/worker/src/auth/github-app.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "ORG-TOKEN", "class": "sibling-workers", "route": "file:seed/worker/src/auth/github-app.js", "ok": true, "detail": "seed/worker/src/auth/github-app.js"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "ORG-TOKEN", "class": "alternate-channel", "route": "file:seed/worker/src/auth/rulesets.js", "ok": true, "detail": "seed/worker/src/auth/rulesets.js"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "ORG-TOKEN", "class": "construct", "route": "file:seed/worker/src/auth/consent.js", "ok": true, "detail": "seed/worker/src/auth/consent.js"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "CF-TOKEN", "class": "existing-credentials", "route": "env_all:CLOUDFLARE_API_TOKEN&CLOUDFLARE_ACCOUNT_ID", "ok": false, "detail": "missing: CLOUDFLARE_API_TOKEN,CLOUDFLARE_ACCOUNT_ID"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "CF-TOKEN", "class": "prior-working-config", "route": "git:seed/worker/src/auth/cloudflare.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "CF-TOKEN", "class": "sibling-workers", "route": "file:seed/worker/src/auth/cloudflare.js", "ok": true, "detail": "seed/worker/src/auth/cloudflare.js"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "CF-TOKEN", "class": "alternate-channel", "route": "file:deploy/deploy-workers.mjs", "ok": true, "detail": "deploy/deploy-workers.mjs"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "CF-TOKEN", "class": "construct", "route": "file:foundation/credwatch.py", "ok": true, "detail": "foundation/credwatch.py"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "cloudflare", "class": "existing-credentials", "route": "env_all:CLOUDFLARE_API_TOKEN&CLOUDFLARE_ACCOUNT_ID", "ok": false, "detail": "missing: CLOUDFLARE_API_TOKEN,CLOUDFLARE_ACCOUNT_ID"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "cloudflare", "class": "prior-working-config", "route": "git:seed/worker/src/auth/cloudflare.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "cloudflare", "class": "sibling-workers", "route": "file:seed/worker/src/auth/cloudflare.js", "ok": true, "detail": "seed/worker/src/auth/cloudflare.js"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "cloudflare", "class": "alternate-channel", "route": "file:deploy/deploy-workers.mjs", "ok": true, "detail": "deploy/deploy-workers.mjs"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "cloudflare", "class": "construct", "route": "file:foundation/credwatch.py", "ok": true, "detail": "foundation/credwatch.py"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "model_api", "class": "existing-credentials", "route": "env:ANTHROPIC_API_KEY", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "model_api", "class": "existing-credentials", "route": "env:WORKERS_AI_BINDING", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "MODEL-KEY", "class": "existing-credentials", "route": "env:ANTHROPIC_API_KEY", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "MODEL-KEY", "class": "existing-credentials", "route": "env:WORKERS_AI_BINDING", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "email_sender", "class": "existing-credentials", "route": "env_all:EMAIL_SENDER_BINDING&EMAIL_SENDER_DOMAIN", "ok": false, "detail": "missing: EMAIL_SENDER_BINDING,EMAIL_SENDER_DOMAIN"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "email_sender", "class": "existing-credentials", "route": "env:CLOUDFLARE_EMAIL_SENDING", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "OUT-SENDER", "class": "existing-credentials", "route": "env_all:EMAIL_SENDER_BINDING&EMAIL_SENDER_DOMAIN", "ok": false, "detail": "missing: EMAIL_SENDER_BINDING,EMAIL_SENDER_DOMAIN"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "OUT-SENDER", "class": "existing-credentials", "route": "env:CLOUDFLARE_EMAIL_SENDING", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "social_accounts", "class": "existing-credentials", "route": "env_all:BLUESKY_HANDLE_BINDING&BLUESKY_APP_PASSWORD_BINDING", "ok": false, "detail": "missing: BLUESKY_HANDLE_BINDING,BLUESKY_APP_PASSWORD_BINDING"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "social_accounts", "class": "existing-credentials", "route": "env_all:MASTODON_INSTANCE&MASTODON_TOKEN_BINDING", "ok": false, "detail": "missing: MASTODON_INSTANCE,MASTODON_TOKEN_BINDING"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "social_accounts", "class": "prior-working-config", "route": "git:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "social_accounts", "class": "prior-working-config", "route": "git:seed/worker/src/auth/atproto.js", "ok": true, "detail": "3 commits"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "social_accounts", "class": "prior-working-config", "route": "git:scripts/social_post.py", "ok": true, "detail": "5 commits"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "social_accounts", "class": "sibling-workers", "route": "file:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "workers/packs/social/channels/bluesky.js"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "social_accounts", "class": "sibling-workers", "route": "file:workers/core/ownerlink/mastodon.js", "ok": true, "detail": "workers/core/ownerlink/mastodon.js"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "social_accounts", "class": "sibling-workers", "route": "file:seed/worker/src/social.js", "ok": true, "detail": "seed/worker/src/social.js"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "social_accounts", "class": "alternate-channel", "route": "file:seed/worker/src/auth/connectors.js", "ok": true, "detail": "seed/worker/src/auth/connectors.js"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "social_accounts", "class": "alternate-channel", "route": "file:.github/workflows/social-post.yml", "ok": true, "detail": ".github/workflows/social-post.yml"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "social_accounts", "class": "construct", "route": "file:seed/worker/src/auth/oauth.js", "ok": true, "detail": "seed/worker/src/auth/oauth.js"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "SOC-ACCOUNTS", "class": "existing-credentials", "route": "env_all:BLUESKY_HANDLE_BINDING&BLUESKY_APP_PASSWORD_BINDING", "ok": false, "detail": "missing: BLUESKY_HANDLE_BINDING,BLUESKY_APP_PASSWORD_BINDING"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "SOC-ACCOUNTS", "class": "existing-credentials", "route": "env_all:MASTODON_INSTANCE&MASTODON_TOKEN_BINDING", "ok": false, "detail": "missing: MASTODON_INSTANCE,MASTODON_TOKEN_BINDING"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "SOC-ACCOUNTS", "class": "prior-working-config", "route": "git:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "SOC-ACCOUNTS", "class": "prior-working-config", "route": "git:seed/worker/src/auth/atproto.js", "ok": true, "detail": "3 commits"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "SOC-ACCOUNTS", "class": "prior-working-config", "route": "git:scripts/social_post.py", "ok": true, "detail": "5 commits"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "SOC-ACCOUNTS", "class": "sibling-workers", "route": "file:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "workers/packs/social/channels/bluesky.js"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "SOC-ACCOUNTS", "class": "sibling-workers", "route": "file:workers/core/ownerlink/mastodon.js", "ok": true, "detail": "workers/core/ownerlink/mastodon.js"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "SOC-ACCOUNTS", "class": "sibling-workers", "route": "file:seed/worker/src/social.js", "ok": true, "detail": "seed/worker/src/social.js"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "SOC-ACCOUNTS", "class": "alternate-channel", "route": "file:seed/worker/src/auth/connectors.js", "ok": true, "detail": "seed/worker/src/auth/connectors.js"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "SOC-ACCOUNTS", "class": "alternate-channel", "route": "file:.github/workflows/social-post.yml", "ok": true, "detail": ".github/workflows/social-post.yml"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "SOC-ACCOUNTS", "class": "construct", "route": "file:seed/worker/src/auth/oauth.js", "ok": true, "detail": "seed/worker/src/auth/oauth.js"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "owner-social", "class": "existing-credentials", "route": "env_all:BLUESKY_HANDLE_BINDING&BLUESKY_APP_PASSWORD_BINDING", "ok": false, "detail": "missing: BLUESKY_HANDLE_BINDING,BLUESKY_APP_PASSWORD_BINDING"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "owner-social", "class": "existing-credentials", "route": "env_all:MASTODON_INSTANCE&MASTODON_TOKEN_BINDING", "ok": false, "detail": "missing: MASTODON_INSTANCE,MASTODON_TOKEN_BINDING"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "owner-social", "class": "prior-working-config", "route": "git:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "owner-social", "class": "prior-working-config", "route": "git:seed/worker/src/auth/atproto.js", "ok": true, "detail": "3 commits"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "owner-social", "class": "prior-working-config", "route": "git:scripts/social_post.py", "ok": true, "detail": "5 commits"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "owner-social", "class": "sibling-workers", "route": "file:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "workers/packs/social/channels/bluesky.js"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "owner-social", "class": "sibling-workers", "route": "file:workers/core/ownerlink/mastodon.js", "ok": true, "detail": "workers/core/ownerlink/mastodon.js"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "owner-social", "class": "sibling-workers", "route": "file:seed/worker/src/social.js", "ok": true, "detail": "seed/worker/src/social.js"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "owner-social", "class": "alternate-channel", "route": "file:seed/worker/src/auth/connectors.js", "ok": true, "detail": "seed/worker/src/auth/connectors.js"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "owner-social", "class": "alternate-channel", "route": "file:.github/workflows/social-post.yml", "ok": true, "detail": ".github/workflows/social-post.yml"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "owner-social", "class": "construct", "route": "file:seed/worker/src/auth/oauth.js", "ok": true, "detail": "seed/worker/src/auth/oauth.js"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "owner-oauth-apps", "class": "existing-credentials", "route": "env:ORG_ADMIN_TOKEN|GH_ORG_TOKEN", "ok": false, "detail": "no such binding in this run"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "owner-oauth-apps", "class": "existing-credentials", "route": "env_all:GH_APP_ID&GH_APP_INSTALLATION_ID&GH_APP_KEY_BINDING", "ok": false, "detail": "missing: GH_APP_ID,GH_APP_INSTALLATION_ID,GH_APP_KEY_BINDING"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "owner-oauth-apps", "class": "prior-working-config", "route": "git:seed/worker/src/auth/github-app.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "owner-oauth-apps", "class": "sibling-workers", "route": "file:seed/worker/src/auth/github-app.js", "ok": true, "detail": "seed/worker/src/auth/github-app.js"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "owner-oauth-apps", "class": "alternate-channel", "route": "file:seed/worker/src/auth/rulesets.js", "ok": true, "detail": "seed/worker/src/auth/rulesets.js"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "owner-oauth-apps", "class": "construct", "route": "file:seed/worker/src/auth/consent.js", "ok": true, "detail": "seed/worker/src/auth/consent.js"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "owner-domains-move", "class": "existing-credentials", "route": "env_all:CLOUDFLARE_API_TOKEN&CLOUDFLARE_ACCOUNT_ID", "ok": false, "detail": "missing: CLOUDFLARE_API_TOKEN,CLOUDFLARE_ACCOUNT_ID"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "owner-domains-move", "class": "prior-working-config", "route": "git:seed/worker/src/auth/cloudflare.js", "ok": true, "detail": "1 commits"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "owner-domains-move", "class": "sibling-workers", "route": "file:seed/worker/src/auth/cloudflare.js", "ok": true, "detail": "seed/worker/src/auth/cloudflare.js"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "owner-domains-move", "class": "alternate-channel", "route": "file:deploy/deploy-workers.mjs", "ok": true, "detail": "deploy/deploy-workers.mjs"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "owner-domains-move", "class": "construct", "route": "file:foundation/credwatch.py", "ok": true, "detail": "foundation/credwatch.py"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "bluesky", "class": "prior-working-config", "route": "regress:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "1 suspect commits since None"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "mastodon", "class": "prior-working-config", "route": "regress:workers/core/ownerlink/mastodon.js", "ok": true, "detail": "1 suspect commits since None"}
+{"at": "2026-11-25T16:44:59+00:00", "ask": "linkedin", "class": "prior-working-config", "route": "regress:social/accounts.json", "ok": true, "detail": "2 suspect commits since None"}
+{"at": "2026-11-25T16:45:00+00:00", "ask": "ledger:clocks:all", "class": "prior-working-config", "route": "regress:foundation/clock.py", "ok": false, "detail": "0 suspect commits since add800e814fc"}
+{"at": "2026-11-25T16:45:00+00:00", "ask": "ledger:executor:pr-outcome", "class": "prior-working-config", "route": "regress:foundation/executor.py", "ok": false, "detail": "0 suspect commits since 61808a25d06d"}

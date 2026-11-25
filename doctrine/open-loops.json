@@ -495,6 +495,44 @@
    "reason": "creating a repository in the org needs an org-scoped credential (a token or an App with administration write) that only an org owner can bind",
    "default": "Unlearn keeps its code under instances/unlearn and deploy-ultrastable builds and deploys it from this repository; tenant-repos.yml retries daily and creates the repository with its history the first time any of the three routes is bound",
    "probe": "cmd:python3 -m foundation tenantrepos --probe unlearn"
+  },
+  {
+   "id": "visitor-app-repos",
+   "surfaces": [
+    {
+     "s": "the tick Worker's own credential store, read from D1 ultrastable-org on 2026-11-25",
+     "result": "it holds a live administration-only App token (github-admin, refreshed hourly) and the code App token (github-app, writing to main the same hour); the earlier gate tenant-repo-unlearn recorded this route as not tried",
+     "class": "sibling-workers"
+    },
+    {
+     "s": "built on that: seed/worker/src/apprepos.js creates the repository with the administration App and writes to it with the code App; deploy/launch-apps.mjs reaches it through the site worker",
+     "result": "passes against a faked GitHub (seed/worker/test/apprepos.test.js, site/launchpath.test.mjs); GitHub's real answer to creating a repository with this App is first read on the daily run after deploy",
+     "class": "construct"
+    },
+    {
+     "s": "ORG_ADMIN_TOKEN, LANE_PAT and the lane App in tenant-repos.yml",
+     "result": "all three were unbound on 2026-11-22 (gate tenant-repo-unlearn); no longer used for visitor apps",
+     "class": "existing-credentials"
+    },
+    {
+     "s": "GITHUB_TOKEN of the workflow",
+     "result": "scoped to this repository only; GitHub does not let it create a repository in the org",
+     "class": "alternate-channel"
+    },
+    {
+     "s": "route around the repository: deploy the visitor's system from the kernel through the site worker's OIDC route",
+     "result": "built; a dry run on 2026-11-25 admitted the policy atlas idea (year p10 730 days) and bundled 97 modules with no credential",
+     "class": "alternate-channel"
+    },
+    {
+     "s": "git history of tenant-repos.yml",
+     "na": "no visitor app repository has been created before this change, so there is no working configuration to restore",
+     "class": "prior-working-config"
+    }
+   ],
+   "reason": "whether GitHub lets the administration App create a repository in the org, and whether the code App's installation covers a repository created after it was installed, is only known from GitHub's live answer; if either is refused the remaining act is the owner's one click at /connect/github-admin or /connect/repos",
+   "default": "every visitor app is live at ultrastable.io/s/<id> and gets its own deployed system; its change requests and ownership request are kept in its launch record with the exact thing waited on (admin-app, admin-app-scope, code-app-scope); each daily run tries again and finishes the repository the first time GitHub allows it",
+   "probe": "cmd:node deploy/launch-apps.mjs --routes"
   }
  ]
 }

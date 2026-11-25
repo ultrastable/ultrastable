@@ -48,6 +48,7 @@ import { webhooksRoute, tickWebhooks } from "./webhooks.js"; // WEBHOOKS-1
 import { siteFeed, siteBadge, insights as siteInsights, insightsBody, viewedRecently, upkeepRound, recordVersion, restore as restoreVersion, versions as siteVersions, historyBody } from "./upkeep.js"; // SITE-UPKEEP-1
 import { connectionsRoute } from "./connections.js"; // CONNECTIONS-1
 import { internalDeploy } from "./deployer.js";
+import * as GRAD from "./graduate.js";  // LAUNCH-PATH-1
 import { zoneCutover } from "./zonecutover.js"; // ZONE-CUTOVER-1: attaches domains the tick a moved zone turns active
 var VERSION = "0.15.1";
 const CANON = "ultrastable.io";
@@ -657,16 +658,17 @@ async function takeIdea(request, env, ctx) {
   }
   const lim = await limited(request, env); if (lim) return lim;
   const id = newId(); await env.ASSETS.put("idea:" + new Date().toISOString() + ":" + id, idea);
+  const grad = await GRAD.enqueue(env, id, idea), mine = (r) => { const h = new Headers(r.headers); h.append("Set-Cookie", GRAD.setCookie(grad)); return new Response(r.body, { status: r.status, headers: h }); };  // LAUNCH-PATH-1: the launch record, and the browser that made it
   const profText = String(f.get("profile") || "").slice(0, 2000); let profOk = false;
   const wantsJson = (request.headers.get("accept") || "").includes("application/json");
   if (profText) { try { JSON.parse(profText); await env.ASSETS.put("profile:" + id, profText, { expirationTtl: 31536000 }); profOk = true; } catch (e) { console.error("bad profile dropped", String(e)); } }
   // INTERVIEW-1: the on-page interview already asked its questions, so build now; without it (no JavaScript) the server-side questions run.
   // INTERVIEW-2: the chat thread asked its questions in the conversation and wants JSON, not a redirect; the build then runs from /s/<id>/status.
-  if (profOk && wantsJson) { await store(env, id, idea, null, null); return json({ id, state: "building" }); }
-  if (profOk) return launch(env, ctx, id, idea, null, null);
+  if (profOk && wantsJson) { await store(env, id, idea, null, null); return mine(json({ id, state: "building" })); }
+  if (profOk) return mine(await launch(env, ctx, id, idea, null, null));
   await jput(env, "ask:" + id, { idea, qs: await questionsFor(env, idea), ans: [] });
   await env.ASSETS.put("state:" + id, "asking");
-  return goto(id, "/ask");
+  return mine(goto(id, "/ask"));
 }
 async function takeAnswer(request, env, ctx) {
   const f = await request.formData().catch(() => null), id = f && String(f.get("id") || ""), v = f && String(f.get("a") || "");
@@ -683,18 +685,25 @@ async function takeChange(request, env, ctx) {
   if (!prev || !change) return new Response(start("That site was not found."), { status: 404, headers: HTML });
   const lim = await limited(request, env); if (lim) return lim;
   const a = await jget(env, "ask:" + id), brief = a ? briefOf(a) : ((await jget(env, "brief:" + id)) || {}).brief || "";
+  await GRAD.steer(env, id, change);  // LAUNCH-PATH-1: the same words become a work item in the app's own repository
   if ((request.headers.get("accept") || "").includes("application/json")) { await store(env, id, brief, prev, change); return json({ id, state: "building" }); }
   return launch(env, ctx, id, brief, prev, change);
 }
 const li = (xs) => xs.length ? "<ul>" + xs.map(x => "<li>" + esc(x) + "</li>").join("") + "</ul>" : "<p class=\"meta\">Nothing to list.</p>";
 async function siteRoutes(u, env, ctx, request, own) {
-  const m = /^\/s\/([a-f0-9]{10})(\/make|\/change|\/ask|\/review|\/status|\/history|\/insights|\/feed\.xml|\/badge\.svg|\/api)?$/.exec(u.pathname);
+  const m = /^\/s\/([a-f0-9]{10})(\/make|\/change|\/own|\/launch|\/ask|\/review|\/status|\/history|\/insights|\/feed\.xml|\/badge\.svg|\/api)?$/.exec(u.pathname);
   if (!m || !env || !env.ASSETS) return null;
   if (m[2] === "/api") return siteApi(request, env, m[1]);
   const id = m[1]; let st = await env.ASSETS.get("state:" + id); const page = (t, b) => new Response(shell({ path: u.pathname, title: t + " - Ultrastable", description: t }, b), { headers: HTML });
   if (!st) return new Response(start("That site was not found."), { status: 404, headers: HTML });
   if (st === "building" && Date.now() - Number(await env.ASSETS.get("since:" + id) || 0) > 150000) { st = "failed"; await env.ASSETS.put("state:" + id, "failed"); }
   if (st === "ready" && (!m[2] || m[2] === "/review")) await ensureAudit(env, ctx, id);
+  if (m[2] === "/own" || m[2] === "/launch") {  // LAUNCH-PATH-1: where the app is, what was asked for, and taking it over; /launch is the same record as JSON with no idea text
+    const rec = (await GRAD.getLaunch(env, id)) || await GRAD.enqueue(env, id, ((await jget(env, "brief:" + id)) || {}).brief || "");  // an app made before this path existed joins it on first visit
+    if (m[2] === "/launch") return json(Object.assign({ site: st }, GRAD.publicView(rec)));
+    if (request.method === "POST") { const r = await GRAD.requestOwnership(request, env, id); if (!r.ok) return new Response(shell({ path: u.pathname, title: "Not yet - Ultrastable", description: r.say }, "<div class=\"head\"><h1>Not yet</h1><p>" + esc(r.say) + "</p></div><div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/s/" + id + "/own\">Back</a></div>"), { status: r.status, headers: HTML }); return Response.redirect("https://" + CANON + "/s/" + id + "/own", 303); }
+    return page("Your app", GRAD.ownBody(rec, CANON, GRAD.cookieOf(request, id) === rec.key));
+  }
   if (m[2] === "/feed.xml") return new Response(siteFeed(id, await siteVersions(env, id), "https://" + CANON, (/<title>([^<]*)<\/title>/i.exec(await env.ASSETS.get("site:" + id) || "") || [])[1]), { headers: { "content-type": "application/atom+xml; charset=utf-8", "cache-control": "public, max-age=900" } }); // SITE-FEED-1
   if (m[2] === "/badge.svg") return new Response(siteBadge(await siteVersions(env, id)), { headers: { "content-type": "image/svg+xml", "cache-control": "public, max-age=900" } });
   if (m[2] === "/insights") return page("Who visits your site", insightsBody(id, env.DB ? await siteInsights(env.DB, id).catch((e) => { console.error("insights failed", String(e).slice(0, 100)); return { views7: 0, views30: 0, visitors7: 0, refs: [], countries: [], devices: [] }; }) : { views7: 0, views30: 0, visitors7: 0, refs: [], countries: [], devices: [] })); // SITE-INSIGHTS-1
@@ -735,7 +744,7 @@ async function siteRoutes(u, env, ctx, request, own) {
   const lk = (h, t) => "<a href=\"https://" + CANON + "/s/" + id + h + "\" style=\"background:#111;color:#fff;padding:10px 14px;border-radius:999px;text-decoration:none;margin-left:6px\" target=\"_top\">" + t + "</a>";
   // BLINDSPOT-1 legal sweep 2026-11-20 (EU AI Act Article 50, in force 2026-08-02): a page the system wrote says so, to a person (the bar) and to a machine (the generator meta tag).
   const aiMark = "<meta name=\"generator\" content=\"Ultrastable (AI-generated page)\">";
-  const bar = "<div style=\"position:fixed;right:12px;bottom:12px;z-index:99999;font:14px system-ui\"><span style=\"background:#fff;color:#111;padding:10px 14px;border-radius:999px;border:1px solid #111\">Written by AI</span>" + lk("/review", "What I checked") + lk("/change", "Change something") + lk("/history", "History") + lk("/insights", "Visitors") + "</div>";
+  const bar = "<div style=\"position:fixed;right:12px;bottom:12px;z-index:99999;font:14px system-ui\"><span style=\"background:#fff;color:#111;padding:10px 14px;border-radius:999px;border:1px solid #111\">Written by AI</span>" + lk("/review", "What I checked") + lk("/change", "Change something") + lk("/history", "History") + lk("/insights", "Visitors") + lk("/own", "Your app") + "</div>";
   const html = (await env.ASSETS.get("site:" + id) || "").replace(/<\/body>/i, bar + "</body>");
   if (env.DB && request && request.method === "GET" && ctx && ctx.waitUntil) ctx.waitUntil(record(env, request, { host: CANON, path: "/s/" + id, ref: request.headers.get("referer"), name: "site-view" }).catch((e) => console.error("site view not counted", String(e).slice(0, 100)))); // SITE-INSIGHTS-1
   const us = aiMark + usClient(host, id), html1 = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, (m) => m + us) : /<html[^>]*>/i.test(html) ? html.replace(/<html[^>]*>/i, (m) => m + us) : us + html;
@@ -1092,6 +1101,7 @@ const handler = {
     if (u.pathname === "/agents/scoreboard") return Response.redirect("https://" + CANON + "/api/v1/agents/scoreboard", 302);  // AGENT-SCOREBOARD-1: agent_scoreboard per agent and harness (site/controlplane.js agentScoreboard)
     { const cp = await controlPlane(request, env, ctx); if (cp) return cp; } // CONTROL-PLANE-1: /api/v1
     if (u.pathname === "/feed.xml" || u.pathname === "/feed.json") { if (env && env.DB) { try { ctx.waitUntil(record(env, request, { host: CANON, path: u.pathname, ref: "", name: "feed" })); } catch (e) { console.error("feed hit", String(e && e.message)); } } return u.pathname === "/feed.xml" ? feedResponse(CANON) : jsonFeedResponse(CANON); } // REACH-1; STICKY-1: a feed request is counted server-side (name "feed", daily-rotating id, no cookie), so the number of daily feed readers is measured
+    if (u.pathname === "/api/graph" || u.pathname === "/api/graph/insights") { let j = { error: "tick worker not reachable" }, st = 503; try { if (env && env.TICK) { const r = await env.TICK.fetch(new Request("https://tick.internal" + u.pathname)); j = await r.json(); st = r.status; } } catch (e) { console.error("api/graph", String(e && e.message)); } return new Response(JSON.stringify(j), { status: st, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } }); } // DATAGRAPH-1: the public view of the knowledge graph of the platform's own data (counts, series, orphan findings; no record a visitor may not see)
     if (u.pathname === "/api/stickiness" || /^\/api\/stickiness\/queue\/[a-z0-9-]{1,60}\.json$/.test(u.pathname)) { let j = { error: "tick worker not reachable" }, st = 503; try { if (env && env.TICK) { const r = await env.TICK.fetch(new Request("https://tick.internal" + u.pathname)); j = await r.json(); st = r.status; } } catch (e) { console.error("api/stickiness", String(e && e.message)); } return new Response(JSON.stringify(j), { status: st, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } }); } // STICKY-1: the judged content state and the social queue the core social module drains
     if (request.method === "GET" && u.pathname === "/api/growth/hits") return growthHits(env); // GROWTH-HITS-1: aggregate counts only, read by foundation/growth.py so Actions needs no Cloudflare token
     if (u.pathname === "/api/reach") { const v = await jget(env, "promote:reach"); return Response.json(v || { rows: null, error: "not measured yet" }, { status: v ? 200 : 503, headers: { "cache-control": "public, max-age=600", "access-control-allow-origin": "*" } }); } // ATTENTION-1: aggregate counts only

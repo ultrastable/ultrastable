@@ -4,8 +4,8 @@
 // hand, and any page that explains the rubric renders these same constants (WORDS-MATCH-CODE-1).
 //
 // 1. Each attempt weighs by its kind: many-lab and meta-analytic evidence most, a single conceptual replication least. A preregistered
-//    attempt weighs RUBRIC.PREREG times more. An attempt the loop added from a new abstract (machine: true) counts at RUBRIC.MACHINE until
-//    a curator confirms it.
+//    attempt weighs RUBRIC.PREREG times more. An attempt the discovery loop filed from a new abstract (machine: true, discover.js) counts at
+//    RUBRIC.MACHINE of its weight.
 // 2. Each outcome scores how far the original claim held: held 1, smaller 0.5 (the effect is there but much weaker), mixed 0.5 (held under
 //    some conditions, not others), failed 0.
 // 3. Standing, in order: untested with no attempts; thin when the total weight is under RUBRIC.MIN_WEIGHT; holds when the weighted score is

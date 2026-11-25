@@ -141,7 +141,7 @@
     },
     {
       "id": "what-works-beat",
-      "what": "What Works tenant beat (cron 17 * * * * on ultrastable-what-works; a visit catches up a silent cron): check a batch of programmes against Crossref, OpenAlex and Europe PMC, read new trials in, re-grade and log every move",
+      "what": "What Works tenant beat (cron 17 * * * * on ultrastable-what-works; a visit catches up a silent cron): check a batch of programmes against Crossref, OpenAlex and Europe PMC (a refusing index rested for an hour, one beat at a time), read new trials in, re-grade and log every move",
       "source": "d1",
       "d1_id": "c915e72c-5b9c-45aa-b86e-bbd9e5246755",
       "table": "beats",
@@ -158,6 +158,27 @@
       "health_urls": [
         "https://ultrastable-what-works.ultrastable.workers.dev/health",
         "https://what-works.ultrastable.org/health"
+      ]
+    },
+    {
+      "id": "replication-ledger-beat",
+      "what": "Replication Ledger tenant beat (cron 23 * * * * on ultrastable-replication-ledger; a visit sparks one when the last is over two hours old): search OpenAlex for new replications and new landmark findings, file attempts under a verbatim-quote guard, check Crossref, recompute standings and log every move",
+      "source": "d1",
+      "d1_id": "c59cdeca-7f57-4edd-ac7e-256ab07fab57",
+      "table": "beats",
+      "column": "started_at",
+      "expected_interval_s": 3600,
+      "periodic": true,
+      "replicas": [
+        {
+          "account_id": "81e3a4efb4eb66e613529b87682911bb",
+          "d1_id": "c59cdeca-7f57-4edd-ac7e-256ab07fab57",
+          "why": "ultrastable account, the only copy"
+        }
+      ],
+      "health_urls": [
+        "https://ultrastable-replication-ledger.ultrastable.workers.dev/health",
+        "https://replication-ledger.ultrastable.org/health"
       ]
     }
   ],

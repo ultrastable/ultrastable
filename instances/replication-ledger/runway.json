@@ -3,9 +3,10 @@
   "target_days": 365,
   "risks": [
     {"id": "typed-standing", "what": "a standing is typed by hand and drifts from its evidence", "safeguard": "standings are computed by standing.js at request time; the validator refuses a typed standing", "probe": "test:a typed standing, a number in a summary, or a duplicate paper is refused"},
-    {"id": "silent-restanding", "what": "a standing changes with no record", "safeguard": "cli.mjs add appends every change with the paper that moved it to data/changes.jsonl", "probe": "test:adding a replication recomputes the standing and logs the move"},
+    {"id": "silent-restanding", "what": "a standing changes with no record", "safeguard": "every move the beat makes is a standing_changes row served at /changes and /feed.json; cli.mjs add logs hand-filed changes to data/changes.jsonl", "probe": "test:adding a replication recomputes the standing and logs the move"},
     {"id": "citation-rot", "what": "a DOI is mistyped or a title drifts from the registry", "safeguard": "cli.mjs verify resolves every DOI at Crossref and compares title and year; new attempts take their citation from Crossref by DOI", "probe": "test:Crossref metadata becomes a citation and mismatches are caught"},
-    {"id": "model-retired", "what": "the model that labels candidates is retired", "safeguard": "standings need no model; candidates wait unread when no model answers", "probe": "file:instances/replication-ledger/worker/standing.js"},
+    {"id": "model-retired", "what": "the model that labels candidates is retired", "safeguard": "standings need no model; when no model answers, the fixed lexical reader files attempts under the same verbatim-quote guard", "probe": "file:instances/replication-ledger/worker/discover.js"},
+    {"id": "beat-stopped", "what": "the hourly discovery beat stops and the ledger goes stale", "safeguard": "two triggers: the hourly cron and any page request when the last beat is over two hours old; /api/freshness answers 503 when a finding has gone unchecked for thirty days", "probe": "test:a request sparks a beat when the last one is old; the Worker serves the seed without a database"},
     {"id": "credential-expiry", "what": "a token or secret expires", "safeguard": "the Worker holds no secret; Crossref and OpenAlex are open", "probe": "file:instances/replication-ledger/worker/crossref.js"},
     {"id": "dependency-drift", "what": "an npm package breaks", "safeguard": "zero dependencies: plain Worker modules", "probe": "file:instances/replication-ledger/worker/index.js"}
   ],
