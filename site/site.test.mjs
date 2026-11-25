@@ -75,13 +75,14 @@ r = await mod.fetch(new Request("https://ultrastable.io/s/" + id), E2); assert.m
   assert.match(r.headers.get("content-security-policy"), /allow-same-origin/); assert.match(r.headers.get("content-security-policy"), /connect-src 'self'/);
   r = await api("ultrastable.io", "/s/" + id); assert.doesNotMatch(r.headers.get("content-security-policy"), /allow-same-origin/);
 }
-// BUILD-2: a model that always fails ends as failed after 3 tries, and the questions fall back to defaults
+// BUILD-2 + ADMIT-1: a model that always fails (or a spent allowance) still ends with a page: the no-model draft from the visitor's own words, which passes lint
 const bad = { ASSETS: mem, AI: { run: async () => { throw new Error("model down"); } } };
 const post2 = (path, o) => { const f = new FormData(); for (const k in o) f.set(k, o[k]); return mod.fetch(new Request("https://ultrastable.io" + path, { method: "POST", body: f }), bad); };
 r = await post2("/api/idea", { idea: "x" }); const id2 = /\/s\/([a-f0-9]{10})\/ask/.exec(r.headers.get("location"))[1];
 for (let i = 0; i < 4; i++) await post2("/api/answer", { id: id2, a: "yes" });  // with the model down the rule table still asks follow-ups, up to the cap of four
 for (let i = 0; i < 4; i++) { r = await mod.fetch(new Request("https://ultrastable.io/s/" + id2 + "/make"), bad); }
-assert.equal(kv.get("state:" + id2), "failed"); assert.match(await r.text(), /Something went wrong/);
+assert.equal(kv.get("state:" + id2), "ready"); assert.ok(kv.get("draft:" + id2)); assert.deepEqual((await import("./worker.js")).lint(kv.get("site:" + id2)), []); assert.match(kv.get("site:" + id2), /<h1>x<\/h1>/);
+{ const { draftHtml } = await import("./worker.js"); const h = draftHtml("Idea: A board for <our> club\n- Sign up? YES\n- Pay? NO\n- Photos? NOT ASKED"); assert.ok(h.includes("A board for &lt;our&gt; club") && h.includes("Yes: Sign up?") && h.includes("No: Pay?") && !h.includes("Photos")); assert.deepEqual((await import("./worker.js")).lint(h), []); }
 r = await mod.fetch(new Request("https://ultrastable.io/s/0000000000"), E2); assert.equal(r.status, 404);
 r = await get("https://ultrastable.net/"); assert.equal(r.headers.get("location"), "https://ultrastable.io/live");
 r = await get("https://www.ultrastable.io/how"); assert.equal(r.headers.get("location"), "https://ultrastable.io/how");
@@ -551,3 +552,4 @@ console.log("ATTENTION-1 websub, archive, reach ok");
   assert.match(IVm, /setup-org/); assert.match(IVm, /'\/api\/org'/); assert.match(IVm, /Set up the organization/);
   console.log("ultrastable-site data path, own domain, organization in thread ok");
 }
+

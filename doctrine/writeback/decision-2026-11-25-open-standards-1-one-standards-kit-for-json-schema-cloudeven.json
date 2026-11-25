@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-25-open-standards-1-one-standards-kit-for-json-schema-cloudeven",
+  "kind": "decision",
+  "date": "2026-11-25",
+  "title": "OPEN-STANDARDS-1: one standards kit for JSON Schema, CloudEvents, W3C PROV; manifest structure is a schema",
+  "body": "Four sessions from four projects opened overlapping standards PRs (#2259 doctrine schemas, #2260 registry and gate, #2273 config schemas and Backstage, #2274 this). Per COLLISION-1 this PR keeps only what none of the others adds: seed/scripts/stdkit.py (JSON Schema validation with a stdlib fallback, CloudEvents 1.0, PROV-JSON, Conventional Commits), its JS twin seed/worker/src/cloudevents.js, the instance manifest's structural rules moved into seed/schemas/instance.schema.json, and provenance exports as W3C PROV and CloudEvents. The doctrine schema catalog and Backstage descriptor come from the older PRs.",
+  "probe": "grep:foundation/manifest.py::seed_stdkit",
+  "session": "session_0156nqDsyGRG1TdtTGodgits"
+ },
+ "kind": "decision",
+ "title": "OPEN-STANDARDS-1: one standards kit for JSON Schema, CloudEvents, W3C PROV; manifest structure is a schema",
+ "session": "session_0156nqDsyGRG1TdtTGodgits"
+}
