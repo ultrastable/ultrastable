@@ -1,0 +1,39 @@
+name: redteam
+# budget: ~1 min per run, once a day = ~30 min per month
+# trigger: daily; blind spots surface over days, so a faster event buys nothing
+# free-alternative: `python3 scripts/redteam.py --run --apply --url <front end>` from the tick Worker's dispatch or any cloud-hosted agent session
+# REDTEAM-1: every system runs an adversarial reviewer on itself. It assumes the system's own probes are wrong, reads the ledgers and the live
+# front end as a stranger would, files one RT-* work item per finding, and counts findings it made against ones the owner made first.
+on:
+  schedule:
+    - cron: "37 6 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+concurrency:
+  group: redteam
+  cancel-in-progress: false
+jobs:
+  redteam:
+    if: ${{ vars.HALT != '1' && !github.event.repository.is_template && github.repository != 'ultrastable/seed' }}  # HALT-1; TEMPLATE-CODE-ONLY-1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - name: Red-team pass
+        env:
+          FRONTEND: ${{ vars.PUBLIC_URL }}
+        run: |
+          if [ -n "$FRONTEND" ]; then python3 scripts/redteam.py --run --apply --url "$FRONTEND"; else python3 scripts/redteam.py --run --apply; fi
+      - name: Open the findings as a pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -e
+          git diff --quiet && git diff --cached --quiet && [ -z "$(git ls-files --others --exclude-standard docs/issues ops/redteam)" ] && exit 0
+          b="redteam/$(date -u +%Y%m%d)"
+          git config user.name "ultrastable-redteam"; git config user.email "redteam@users.noreply.github.com"
+          git checkout -b "$b"; git add docs/issues ops/redteam; git commit -m "Red-team pass: findings the system's own probes missed"
+          git push -u origin "$b"
+          gh pr create --title "Red-team pass $(date -u +%F)" --body "Filed by scripts/redteam.py (REDTEAM-1)." --label handoff

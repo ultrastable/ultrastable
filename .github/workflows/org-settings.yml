@@ -35,7 +35,8 @@ jobs:
         run: |
           fail=0
           for R in $(jq -r '.repos|keys[]' github/org-settings.json); do
-            if out="$(node deploy/repo-settings.mjs "$R")"; then echo "ok   $R: $out"; else echo "FAIL $R"; fail=1; fi
+            V=$(jq -r --arg r "$R" 'if .repos[$r].settings.private == false then "public" else "" end' github/org-settings.json)
+            if out="$(node deploy/repo-settings.mjs "$R" $V)"; then echo "ok   $R: $out"; else echo "FAIL $R"; fail=1; fi
           done
           echo "the remaining org settings are gate org-admin-settings in doctrine/open-loops.json (default in effect)"
           exit $fail

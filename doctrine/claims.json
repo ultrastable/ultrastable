@@ -2407,6 +2407,17 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-467a38f9b7",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Red-team the system's own blind spots; the owner should never find a failure first (REDTEAM-1, Rowan 2026-11-25).** \"Audit and",
+      "probe": [
+        "file:foundation/redteam.py",
+        "file:ops/redteam/findings.jsonl",
+        "file:tests/foundation/test_redteam.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-95432168bf",
       "surface": "agents/AGENTS.md",
       "text": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
@@ -3344,6 +3355,18 @@
       ],
       "bound_by": "mirror",
       "of": "cited-0e153ff129"
+    },
+    {
+      "id": "mirror-309506fe16",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Red-team the system's own blind spots; the owner should never find a failure first (REDTEAM-1, Rowan 2026-11-25).** \"Audit and",
+      "probe": [
+        "file:foundation/redteam.py",
+        "file:ops/redteam/findings.jsonl",
+        "file:tests/foundation/test_redteam.py"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-467a38f9b7"
     },
     {
       "id": "mirror-be5af6748b",

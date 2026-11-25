@@ -198,7 +198,7 @@ def run(root=REPO, apply=False, now=None) -> dict:
         log.parent.mkdir(parents=True, exist_ok=True)
         with log.open("a", encoding="utf-8") as fh:
             fh.write(json.dumps({"at": now.strftime("%Y-%m-%dT%H:%M:%SZ"), "id": post["id"], "paper": paper["slug"], "state": post["state"], "channels": post["channels"],
-                                 "prediction": "paper_referrals >= 1 within 168 h"}) + "\n")
+                                 "prediction": "social_referrals_7d >= 1 within 168 h"}) + "\n")
     return {"scheduled": post["id"], "applied": apply}
 
 
