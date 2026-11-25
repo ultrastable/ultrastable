@@ -75,8 +75,9 @@ jobs:
             git subtree split --prefix "$src" -b "split-$slug"
             git worktree add "/tmp/$slug" "split-$slug"
             python3 -m foundation tenantrepos --prepare "/tmp/$slug" --slug "$slug"
+            # the worktree shares the checkout's git config; its auth header (the run's own token) would win over the token in the URL, so it is cleared for this push
             (cd "/tmp/$slug" && git add -A && { git diff --cached --quiet || git commit -q -m "Stand alone: vendor the core files $slug reads (TENANT-REPO-1)"; } \
-              && git push "https://x-access-token:${tok}@github.com/${repo}.git" "HEAD:refs/heads/main")
+              && git -c "http.https://github.com/.extraheader=" push "https://x-access-token:${tok}@github.com/${repo}.git" "HEAD:refs/heads/main")
             echo "pushed $src with its history to $repo"
           done
           if [ -s /tmp/tenant-repos-failed ]; then echo "::error::tenant repositories not created: $(tr '\n' ' ' </tmp/tenant-repos-failed)"; exit 1; fi
