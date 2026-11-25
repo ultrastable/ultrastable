@@ -1581,7 +1581,7 @@ export default {
   {
    "claim": "- **Load from the repository, never from tool memory.** Project memory, tool memory and chat are not storage (Rowan, 2026-11-12): they may",
    "detail": "",
-   "how": "file:docs/doctrine/GUIDING-DIRECTIVE.md + file:doctrine/kernel-8.2.1.md + file:docs/PROJECT-MEMORY.md + file:agents/PROJECT-INSTRUCTIONS.md + file:docs/BOOTSTRAP-NO-MEMORY.md + file:doctrine/durable-facts.json",
+   "how": "file:seed/SYSTEM.md + file:docs/doctrine/GUIDING-DIRECTIVE.md + file:doctrine/kernel-8.2.1.md + file:docs/PROJECT-MEMORY.md + file:agents/PROJECT-INSTRUCTIONS.md + file:docs/BOOTSTRAP-NO-MEMORY.md",
    "id": "cited-32424bab79",
    "kind": "claim",
    "pass": true,
@@ -1934,6 +1934,15 @@ export default {
    "detail": "",
    "how": "file:doctrine/coldstart.json + file:seed/worker/src/visibility.js + file:docs/doctrine/SYSTEM.md + file:CLAUDE.md + file:doctrine/schemas/coldstart.schema.json + file:foundation/coldstart.py",
    "id": "cited-badeab1b44",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Every surface works together from the first deploy; one command proves it (BOOT-ACCEPT-1, Rowan 2026-11-25).** \"All surfaces, all",
+   "detail": "",
+   "how": "file:seed/worker/src/visibility.js + file:doctrine/open-loops.json + file:tests/foundation/test_bootaccept.py + file:seed/worker/test/bootaccept.test.js + file:foundation/bootaccept.py",
+   "id": "cited-c2464a2c9f",
    "kind": "claim",
    "pass": true,
    "surface": "agents/AGENTS.md"
@@ -2346,7 +2355,7 @@ export default {
   {
    "claim": "- **Load from the repository, never from tool memory.** Project memory, tool memory and chat are not storage (Rowan, 2026-11-12): they may",
    "detail": "",
-   "how": "file:docs/doctrine/GUIDING-DIRECTIVE.md + file:doctrine/kernel-8.2.1.md + file:docs/PROJECT-MEMORY.md + file:agents/PROJECT-INSTRUCTIONS.md + file:docs/BOOTSTRAP-NO-MEMORY.md + file:doctrine/durable-facts.json",
+   "how": "file:seed/SYSTEM.md + file:docs/doctrine/GUIDING-DIRECTIVE.md + file:doctrine/kernel-8.2.1.md + file:docs/PROJECT-MEMORY.md + file:agents/PROJECT-INSTRUCTIONS.md + file:docs/BOOTSTRAP-NO-MEMORY.md",
    "id": "mirror-1586e98ac2",
    "kind": "claim",
    "pass": true,
@@ -2699,6 +2708,15 @@ export default {
    "detail": "",
    "how": "file:doctrine/coldstart.json + file:seed/worker/src/visibility.js + file:docs/doctrine/SYSTEM.md + file:CLAUDE.md + file:doctrine/schemas/coldstart.schema.json + file:foundation/coldstart.py",
    "id": "mirror-23cc6eb0f0",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Every surface works together from the first deploy; one command proves it (BOOT-ACCEPT-1, Rowan 2026-11-25).** \"All surfaces, all",
+   "detail": "",
+   "how": "file:seed/worker/src/visibility.js + file:doctrine/open-loops.json + file:tests/foundation/test_bootaccept.py + file:seed/worker/test/bootaccept.test.js + file:foundation/bootaccept.py",
+   "id": "mirror-bda521b8b7",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3370,7 +3388,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 67 Python and 537 Worker tests",
+   "claim": "seed-tests: 74 Python and 541 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3379,7 +3397,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 537 Worker tests",
+   "claim": "seed-worker-tests: 541 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3541,6 +3559,15 @@ export default {
    "surface": "site/research-data.js"
   },
   {
+   "claim": "module: seed/SYSTEM.md is written by seed/scripts/system.py from seed/autonomy/system.json",
+   "detail": "",
+   "how": "header names the generator + file:seed/scripts/system.py + grep:.github/workflows/checks.yml::scripts/system.py --check",
+   "id": "module-system-spec",
+   "kind": "module",
+   "pass": true,
+   "surface": "seed/SYSTEM.md"
+  },
+  {
    "claim": "ledger: work claims",
    "detail": "seed/worker/migrations/0001_init.sql",
    "how": "grep:seed/worker/migrations/0001_init.sql::CREATE TABLE IF NOT EXISTS claims",
@@ -3620,7 +3647,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 399,
-  "total": 399
+  "pass": 402,
+  "total": 402
  }
 };
