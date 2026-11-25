@@ -10,6 +10,9 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-25
 
+- 2026-11-25: Create tenant repositories with the platform's own administration app; read Practical Solutions' real back end (TENANT-REPO-2) (#2179)
+- 2026-11-25: queue: closing-probe verdicts for 17 item(s) (QUEUE-PERSIST-1) [skip ci]
+- 2026-11-25: Sandbox every deployment as a tenant with its own repo (#2116)
 - 2026-11-25: regen-generated: refresh generated data after merge (REGEN-GENERATED-1) (part 2/2) [skip ci]
 - 2026-11-25: regen-generated: refresh generated data after merge (REGEN-GENERATED-1) (part 1/2) [skip ci]
 - 2026-11-25: provenance - public changelog (CHANGELOG-FRESH-1) [skip ci]
