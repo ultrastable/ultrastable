@@ -1,11 +1,11 @@
 name: seed-launch
 # SEED-LAUNCH-1 (Rowan, 2026-11-21): every seed is built, deployed, gated on a year unattended and probed live by the system itself.
-# budget: ~15 min x 5 per month (weekly e2e plus fleet, and dispatch)
-# trigger: weekly, dispatch, and a push that changes a surface every launched system serves (BOOT-ACCEPT-1); a seed changes the kit at most daily (kit-sync), and the e2e record is fresh for 8 days
+# budget: ~15 min x 35 per month (daily scratch bootstrap plus the standing seed, BOOTPROOF-1; pushes that change a public surface, BOOT-ACCEPT-1)
+# trigger: daily, dispatch, and a push that changes a surface every launched system serves (BOOT-ACCEPT-1); a seed changes the kit at most daily (kit-sync), and the e2e record is fresh for 8 days
 # free-alternative: a cloud-hosted agent session runs `python3 -m foundation seedlaunch --e2e --fleet` with the same Cloudflare binding
 on:
   schedule:
-    - cron: "23 7 * * 1"
+    - cron: "23 7 * * *"
   workflow_dispatch:
   push:
     branches: [main]
@@ -31,6 +31,10 @@ jobs:
       - run: python3 scripts/actions_guard.py seed-launch
         env:
           GH_TOKEN: ${{ github.token }}
+      - name: The seed kernel is closed under bootstrap (BOOTPROOF-1)
+        run: python3 -m foundation bootproof
+      - name: A never-used slug is built from the kernel, its D1 created from zero, deployed through OIDC and probed live (BOOTPROOF-1)
+        run: python3 -m foundation seedlaunch --e2e-scratch
       - name: A fresh seed built from the kernel, deployed into the Ultrastable account through the site worker's OIDC route, then every layer read live
         # SEED-DEPLOY-2: no stored Cloudflare credential; the repo secret pointed at the retired account (SINGLE-ACCOUNT-1)
         # BOOT-ACCEPT-1: the launch, then repo, back end, health, web UI, graph and discovery of every standing seed, read from outside

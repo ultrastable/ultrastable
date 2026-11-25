@@ -10,6 +10,12 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-25
 
+- 2026-11-25: REDTEAM-1: red-team the system's own blind spots (#2227)
+- 2026-11-25: failure-audit: file and close failure-mode items (FAILURE-RESOLVE-1) (part 2/2) [skip ci]
+- 2026-11-25: failure-audit: file and close failure-mode items (FAILURE-RESOLVE-1) (part 1/2) [skip ci]
+- 2026-11-25: static-content: record page changes (STATIC-CONTENT-1) [skip ci]
+- 2026-11-25: BOOTPROOF-1: seed kernel closure audit and daily scratch bootstrap probe (#2237)
+- 2026-11-25: Fix failure-audit evidence push and unroutable detectors (#2242)
 - 2026-11-25: Root-cause launch-day failures: hold merges with no checks, flag owner-deferred deploys, catch spelled-out claims (#2232)
 - 2026-11-25: Failure audit (Rowan: "audit and remediate all of your failures and their root causes ... in code"). COLLISION-1: `foundation collisions --check/--prs/--claim` in checks and SOP (competing graph PRs). GH-RETRY-1: `seed/worker/src/ghfetch.js` shared by lane, sweeper, lanemerge, mergenow. DATAGRAPH-LIVE-1: `datagraph --live` after each deploy and daily (Replication Ledger 357 nodes, Practical Solutions 615, Unlearn 1894, read from D1 2026-11-25). REPO-SETTINGS-1: admin App sets delete_branch_on_merge/allow_auto_merge; org-settings no longer red; gate org-admin-settings. MERGE-RUNNING-1: the worker gate waits for running checks (#2222 merged while checks ran).
 - 2026-11-25: Write the papers as white papers, link them everywhere, and check fleet discoverability (#2224)
@@ -834,6 +840,7 @@ Rowan: "Test, audit and remediate all failure modes and remaining systems proble
 - Lane OL-PR items now close two passes after their PR closes (LANE-FILED-FAIL-1); queue.run no longer crashes when balance is unmeasured.
 - Site: skip-link class, /llms-full.txt, /search with /opensearch.xml, Server-Timing on every response and a preload Link on pages (site/pagetext.test.mjs).
 - Open: tenant-repos cannot create ultrastable/replication-ledger (no org-admin credential among ORG_ADMIN_TOKEN, LANE_PAT, lane App); ultrastable.org phone horizontal scroll (5px, live only, not reproduced offline) stays on its Q-UIUX item; visual-drift baselines read ~0.1 similarity on every page (non-blocking).
+- 2026-11-25 SECOND-LOOP-2 (Rowan: "make Ultrastable actually ultrastable"): the slow loop now reads itself. New essential variables owner_interventions (target 0), second_loop_keep_rate, spec_quality (SPEC-GATE-1, engine seed/scripts/specgate.py) and research_in_code (RESEARCH-LOOP-1). Tenant values equal across every tenant are held as a sensor fault (common_mode). One-year readiness score and self-change log on /ultrastability (ONE-YEAR-READY-1). Paper: research/studies/second-loop-2026.json.
 ## 2026-11-25: root causes of the day's failures, each with a check (Session: session_0156nqDtpVMPp6pQZ9ny5wAS)
 Rowan: "Audit and remediate all of your failures and their root causes and fix them all in code ... including red teaming your own blind spots."
 - DECLARED-LIVE-1 (`seed/worker/src/declared.js`, tick hourly): `repo-visibility` sets every repository's live visibility back to org/repos.json and doctrine/tenant-repos.json with the administration app; `tenant-pulse` POSTs every topology worker's `pulse` URL, so a tenant clock never rests only on its own Cron Trigger. Items `VIS-<repo>` and `PULSE-<id>` close on the same reading.

@@ -3307,7 +3307,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 67 Python and 537 Worker tests",
+   "claim": "seed-tests: 74 Python and 541 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3316,7 +3316,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 537 Worker tests",
+   "claim": "seed-worker-tests: 541 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3386,6 +3386,15 @@ export default {
    "kind": "generated",
    "pass": true,
    "surface": "platform/README.md"
+  },
+  {
+   "claim": "module: seed/SYSTEM.md is written by seed/scripts/system.py from seed/autonomy/system.json",
+   "detail": "",
+   "how": "header names the generator + file:seed/scripts/system.py + grep:.github/workflows/checks.yml::scripts/system.py --check",
+   "id": "module-system-spec",
+   "kind": "module",
+   "pass": true,
+   "surface": "seed/SYSTEM.md"
   },
   {
    "claim": "module: site/claims-data.js is written by foundation/claims.py from doctrine/claims.json",
@@ -3557,7 +3566,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 392,
-  "total": 392
+  "pass": 393,
+  "total": 393
  }
 };
