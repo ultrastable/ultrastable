@@ -803,4 +803,7 @@ Rowan: "Test, audit and remediate all failure modes and remaining systems proble
 - Spinoff loop failed daily since 2026-11-21 (SPINOFF-DEPLOY-2): wrangler with retired-account secrets and a quniverse D1 id. `ultrastable-spinoffs` is in `doctrine/topology.json` and deploys through `deploy/deploy-oidc.mjs`; deploy-ultrastable watches `spinoffs/**`.
 - UI/UX live audit raised 11 blocking findings on retired apps: retirement now read from `spinoffs/registry.json` (UIUX-RETIRED-1), hosts deduplicated.
 - ciwatch failed on one GitHub 500 during its evidence push: three tries with backoff (PUSH-RETRY-1).
+- MERGE-NOW reconcile pushed 34 empty commits in four minutes on one PR with a code conflict (its own commit re-triggered it); it now commits only a changed tree (MERGENOW-NOOP-1).
+- Lane OL-PR items now close two passes after their PR closes (LANE-FILED-FAIL-1); queue.run no longer crashes when balance is unmeasured.
+- Site: skip-link class, /llms-full.txt, /search with /opensearch.xml, Server-Timing on every response and a preload Link on pages (site/pagetext.test.mjs).
 - Open: tenant-repos cannot create ultrastable/replication-ledger (no org-admin credential among ORG_ADMIN_TOKEN, LANE_PAT, lane App); ultrastable.org phone horizontal scroll (5px, live only, not reproduced offline) stays on its Q-UIUX item; visual-drift baselines read ~0.1 similarity on every page (non-blocking).

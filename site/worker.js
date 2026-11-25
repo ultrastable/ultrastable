@@ -57,7 +57,7 @@ const BASE = ":root{color-scheme:light dark;--bg:#f6f1e7;--sf:#fffdf8;--sf2:#efe
 + "*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 'IBM Plex Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif}a{color:var(--ac)}h1{font-family:Fraunces,Georgia,serif;font-size:28px;line-height:1.2;margin:0 0 8px}h2{font-size:20px;margin:28px 0 8px}h3{margin:0;font-size:17px}p{margin:0 0 12px}"
 + ".top{position:sticky;top:0;background:var(--sf);border-bottom:1px solid var(--line);z-index:5}.top-in{max-width:960px;margin:0 auto;padding:8px 16px;display:flex;align-items:center;gap:8px;min-height:60px}.brand{font-weight:700;font-size:18px;color:var(--ink);text-decoration:none;margin-right:auto}"
 + ".main{max-width:960px;margin:0 auto;padding:20px 16px 64px}.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:44px;padding:10px 18px;border-radius:6px;border:1px solid var(--line);background:var(--sf);color:var(--ink);font:600 16px system-ui;text-decoration:none}.btn-primary{background:var(--ac);border-color:var(--ac);color:var(--on)}.btn-quiet{border-color:transparent;background:transparent;color:var(--ac)}"
-+ ".skip{position:absolute;left:-9999px}.skip:focus{left:16px;top:8px;background:var(--sf);padding:8px}:focus-visible{outline:3px solid var(--ac);outline-offset:2px}.card{background:var(--sf);border:1px solid var(--line);border-radius:8px;padding:16px;margin:0 0 12px}.meta,small{color:var(--ink2);font-size:14px}.head p{color:var(--ink2)}"
++ ".skip-link{position:absolute;left:-9999px}.skip-link:focus{left:16px;top:8px;background:var(--sf);padding:8px}:focus-visible{outline:3px solid var(--ac);outline-offset:2px}.card{background:var(--sf);border:1px solid var(--line);border-radius:8px;padding:16px;margin:0 0 12px}.meta,small{color:var(--ink2);font-size:14px}.head p{color:var(--ink2)}"
 + "@media(max-width:640px){.hide-sm{display:none!important}h1{font-size:24px}}";
 function dsEsc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
 function dsHead(title, description, extraCss) {
@@ -73,7 +73,8 @@ const CSS = [
   ".us-table th{font-size:14px;color:var(--ink2)}.us-wrap{overflow-x:auto;max-width:100%}.us-table td,.us-table th{overflow-wrap:anywhere;word-break:break-word;min-width:56px}@media(max-width:640px){.us-table td,.us-table th{padding:8px 6px;font-size:14px}}.us-us td{background:var(--soft);font-weight:600}",
   ".us-foot{border-top:1px solid var(--line);margin-top:32px;padding-top:16px;color:var(--ink2);font-size:14px}",
   ".us-case{display:block;text-decoration:none;color:inherit}.us-case:hover,.us-case:focus-visible{border-color:var(--accent,currentColor)}.us-tag{display:inline-block;font-size:14px;color:var(--ink2);border:1px solid var(--line);border-radius:999px;padding:2px 10px;margin-bottom:6px}.us-more{display:inline-block;margin-top:8px;font-weight:600;min-height:44px;line-height:44px}.us-note{border-left:4px solid var(--ac);background:var(--sf);padding:10px 14px;border-radius:6px}.crumbs{font-size:14px;color:var(--ink2);margin:8px 0}.us-stories li,.us-path li{margin:8px 0}.us-path a{display:inline-block;min-height:44px;line-height:44px}",
-  ".us-pass{color:var(--good);font-weight:700}.us-fail{color:var(--bad);font-weight:700}"
+  ".us-pass{color:var(--good);font-weight:700}.us-fail{color:var(--bad);font-weight:700}",
+  ".us-q{display:block;width:100%;min-height:44px;font:16px system-ui;padding:8px;margin:8px 0}"
 ].join("\n") + "\n" + IV.CSS;
 
 function esc(s) { return dsEsc(s); }
@@ -81,8 +82,8 @@ function esc(s) { return dsEsc(s); }
 function shell(opts, body) {
   const url = "https://" + CANON + opts.path;
   return "<!doctype html><html lang=\"en\"><head>" + dsHead(opts.title, opts.description, CSS)
-    + "<link rel=\"icon\" href=\"/favicon.svg\" type=\"image/svg+xml\"><meta property=\"og:image\" content=\"https://" + CANON + "/social-card.png\"><meta property=\"og:image:width\" content=\"640\"><meta property=\"og:image:height\" content=\"320\"><meta property=\"og:image:alt\" content=\"Coding agents write code. Ultrastable runs the system.\"><meta property=\"og:site_name\" content=\"Ultrastable\"><meta name=\"twitter:card\" content=\"summary_large_image\"><meta name=\"twitter:title\" content=\"" + esc(opts.title) + "\"><meta name=\"twitter:description\" content=\"" + esc(opts.description) + "\"><meta name=\"twitter:image\" content=\"https://" + CANON + "/social-card.png\"><meta name=\"theme-color\" content=\"#12342A\"><link rel=\"apple-touch-icon\" href=\"/apple-touch-icon.png\"><link rel=\"canonical\" href=\"" + url + "\"><meta property=\"og:title\" content=\"" + esc(opts.title) + "\"><meta property=\"og:description\" content=\"" + esc(opts.description) + "\"><meta property=\"og:type\" content=\"website\"><meta property=\"og:url\" content=\"" + url + "\">"
-    + "</head><body><a class=\"skip\" href=\"#main\">Skip to content</a>"
+    + "<link rel=\"icon\" href=\"/favicon.svg\" type=\"image/svg+xml\"><link rel=\"search\" type=\"application/opensearchdescription+xml\" title=\"Ultrastable\" href=\"/opensearch.xml\"><meta property=\"og:image\" content=\"https://" + CANON + "/social-card.png\"><meta property=\"og:image:width\" content=\"640\"><meta property=\"og:image:height\" content=\"320\"><meta property=\"og:image:alt\" content=\"Coding agents write code. Ultrastable runs the system.\"><meta property=\"og:site_name\" content=\"Ultrastable\"><meta name=\"twitter:card\" content=\"summary_large_image\"><meta name=\"twitter:title\" content=\"" + esc(opts.title) + "\"><meta name=\"twitter:description\" content=\"" + esc(opts.description) + "\"><meta name=\"twitter:image\" content=\"https://" + CANON + "/social-card.png\"><meta name=\"theme-color\" content=\"#12342A\"><link rel=\"apple-touch-icon\" href=\"/apple-touch-icon.png\"><link rel=\"canonical\" href=\"" + url + "\"><meta property=\"og:title\" content=\"" + esc(opts.title) + "\"><meta property=\"og:description\" content=\"" + esc(opts.description) + "\"><meta property=\"og:type\" content=\"website\"><meta property=\"og:url\" content=\"" + url + "\">"
+    + "</head><body><a class=\"skip-link\" href=\"#main\">Skip to content</a>"
     + "<header class=\"top\"><div class=\"top-in\"><a class=\"brand\" href=\"/\"><img src=\"/favicon.svg\" alt=\"\" width=\"28\" height=\"28\" style=\"vertical-align:middle;margin-right:8px\">ultrastable</a><a class=\"btn btn-quiet hide-sm\" href=\"/for\">Find your path</a><a class=\"btn btn-quiet\" href=\"/showcase\">Test cases</a><a class=\"btn btn-quiet hide-sm\" href=\"/product\">Product</a><a class=\"btn btn-quiet hide-sm\" href=\"/how\">How it works</a><a class=\"btn btn-quiet\" href=\"/live\">Live proof</a><a class=\"btn btn-quiet\" href=\"/progress\">What's new</a><a class=\"btn btn-quiet hide-sm\" href=\"/engineers\">Engineers</a><a class=\"btn btn-quiet hide-sm\" href=\"/contact\">Contact</a></div></header>"
     + "<main class=\"main\" id=\"main\">" + body
     + "<div class=\"us-foot\">Ultrastable is an early-stage product. Figures on this site come from a live system's own records. <a href=\"/live\">See the checks</a> · <a href=\"/progress\">What shipped</a> · <a href=\"/product\">Product</a> · <a href=\"/team\">Team</a> · <a href=\"/faq\">FAQ</a> · <a href=\"/privacy\">Privacy</a> · <a href=\"/accessibility\">Accessibility</a> · <a href=\"/contact\">Contact</a> · <a href=\"/llms.txt\">llms.txt</a></div>"
@@ -1050,6 +1051,52 @@ async function metaIngest(request, env) {
   return Response.json({ ok: true });
 }
 
+// LLMS-FULL-1 and OPENSEARCH-1: the text of every public page, rendered by this same handler (so it is the page, not a copy of it), read once an
+// hour per isolate. /llms-full.txt serves it to agents in one fetch; /search matches it for people and browsers (described at /opensearch.xml).
+const FULL_PATHS = ["/", "/how", "/product", "/for", "/showcase", "/engineers", "/roadmap", "/decisions", "/goals", "/org", "/claims", "/team", "/faq", "/pilot", "/start", "/privacy", "/accessibility", "/contact"];
+let PAGE_TEXT = null;
+export function pageText(html) {
+  const h = String(html), t = /<title>([^<]*)<\/title>/i.exec(h), m = /<main[^>]*>([\s\S]*?)<\/main>/i.exec(h);
+  const txt = (m ? m[1] : h).replace(/<(script|style)[\s\S]*?<\/\1>/gi, " ").replace(/<br\s*\/?>|<\/(p|li|h[1-6]|tr|div)>/gi, "\n").replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&#39;/g, "'").replace(/&amp;/g, "&")
+    .split("\n").map(l => l.replace(/\s+/g, " ").trim()).filter(Boolean).join("\n");
+  return { title: t ? t[1].replace(/&amp;/g, "&").trim() : "", text: txt };
+}
+async function pageTexts(env, ctx) {
+  if (PAGE_TEXT && Date.now() - PAGE_TEXT.at < 3600e3) return PAGE_TEXT.pages;
+  const pages = [];
+  for (const p of FULL_PATHS) {
+    try {  // the user agent marks this as a bot, so the analytics collector skips these internal renders
+      const r = await handler.fetch(new Request("https://" + CANON + p, { headers: { "user-agent": "ultrastable-pagetext/1 (bot)" } }), env, ctx);
+      if (r.ok && (r.headers.get("content-type") || "").includes("text/html")) pages.push({ path: p, ...pageText(await r.text()) });
+    } catch (e) { console.error("pagetext", p, String(e)); }
+  }
+  PAGE_TEXT = { at: Date.now(), pages };
+  return pages;
+}
+async function llmsFull(env, ctx) {
+  const pages = await pageTexts(env, ctx);
+  return LLMS + "\n\n# Full text of every public page (" + pages.length + " pages, rendered by the site Worker)\n" + pages.map(function (p) { return "\n\n## " + (p.title || p.path) + "\n\nURL: https://" + CANON + p.path + "\n\n" + p.text; }).join("");
+}
+const OPENSEARCH = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><OpenSearchDescription xmlns=\"http://a9.com/-/spec/opensearch/1.1/\"><ShortName>Ultrastable</ShortName><Description>Search the Ultrastable site</Description><InputEncoding>UTF-8</InputEncoding><Image width=\"16\" height=\"16\" type=\"image/svg+xml\">https://" + CANON + "/favicon.svg</Image><Url type=\"text/html\" method=\"get\" template=\"https://" + CANON + "/search?q={searchTerms}\"/></OpenSearchDescription>";
+export function searchPages(pages, q) {
+  const words = String(q).toLowerCase().split(/\s+/).filter(w => w.length > 1).slice(0, 8);
+  if (!words.length) return [];
+  return pages.map(function (p) {
+    const hay = (p.title + "\n" + p.text).toLowerCase(); let score = 0;
+    for (const w of words) { let i = -1, n = 0; while ((i = hay.indexOf(w, i + 1)) !== -1 && n < 50) n++; if (!n) return null; score += n + (p.title.toLowerCase().includes(w) ? 10 : 0); }
+    const at = hay.indexOf(words[0]), from = Math.max(0, at - 80);
+    return { path: p.path, title: p.title, score, snippet: (from ? "... " : "") + (p.title + "\n" + p.text).slice(from, from + 220).replace(/\n/g, " ") + " ..." };
+  }).filter(Boolean).sort((a, b) => b.score - a.score);
+}
+async function searchPage(env, ctx, q) {
+  q = String(q).slice(0, 120);
+  const hits = q ? searchPages(await pageTexts(env, ctx), q) : [];
+  const form = "<form action=\"/search\" method=\"get\" role=\"search\" class=\"card\"><label for=\"sq\">Search this site</label><br><input id=\"sq\" name=\"q\" type=\"search\" value=\"" + esc(q) + "\" class=\"us-q\"><button class=\"btn\" type=\"submit\">Search</button></form>";
+  const list = !q ? "" : hits.length ? "<p>" + hits.length + " page" + (hits.length === 1 ? "" : "s") + " match.</p>" + hits.map(function (h) { return "<div class=\"card\"><a href=\"" + esc(h.path) + "\"><strong>" + esc(h.title || h.path) + "</strong></a><p class=\"meta\">" + esc(h.snippet) + "</p></div>"; }).join("") : "<p>No page matches that. Try fewer words.</p>";
+  return shell({ path: "/search", title: "Search - Ultrastable", description: "Search every public page of the Ultrastable site." }, "<div class=\"head\"><h1>Search</h1></div>" + form + list);
+}
+
 const handler = {
   async fetch(request, env, ctx) {
     const u = new URL(request.url);
@@ -1160,6 +1207,9 @@ const handler = {
       case "/robots.txt": return new Response(ROBOTS, { headers: { "Content-Type": "text/plain" } });
       case "/connect-agent": return new Response(connectAgentPage(), { headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "public, max-age=300" } });
       case "/llms.txt": return new Response(LLMS, { headers: { "Content-Type": "text/plain; charset=utf-8" } });
+      case "/llms-full.txt": return new Response(await llmsFull(env, ctx), { headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "public, max-age=3600", "Access-Control-Allow-Origin": "*" } });  // LLMS-FULL-1
+      case "/opensearch.xml": return new Response(OPENSEARCH, { headers: { "Content-Type": "application/opensearchdescription+xml; charset=utf-8", "Cache-Control": "public, max-age=86400" } });  // OPENSEARCH-1
+      case "/search": return new Response(await searchPage(env, ctx, u.searchParams.get("q") || ""), { headers: { ...HTML, "Cache-Control": "public, max-age=300", "X-Robots-Tag": "noindex" } });  // OPENSEARCH-1
       case "/sitemap.xml": return new Response("<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">" + SITEMAP_PATHS.map(function (p) { return "<url><loc>https://" + CANON + p + "</loc></url>"; }).join("") + "</urlset>", { headers: { "Content-Type": "application/xml" } });
       default: return new Response(shell({ path: u.pathname, title: "Not found - Ultrastable", description: "Page not found." }, "<div class=\"head\"><h1>Not found</h1><p>That page does not exist. <a href=\"/\">Go to the home page</a>.</p></div>"), { status: 404, headers: HTML });
     }
@@ -1186,7 +1236,7 @@ export function forwardTo(request, upstream) {
   const h = new Headers(request.headers); h.set("x-forwarded-host", u.host); h.set("x-forwarded-proto", "https");
   return fetch(new Request(new URL(u.pathname + u.search, t), { method: request.method, headers: h, body: ["GET", "HEAD"].includes(request.method) ? undefined : request.body, redirect: "manual" }));
 }
-export default { async scheduled(event, env, ctx) { if (env && env.UPSTREAM_ORIGIN) return; if (halted(null, env)) return; /* HALT-1 */ env = budgetEnv(env, SHARES.site); ctx.waitUntil(tick(env, ctx).catch(e => console.error("tick failed", String(e)))); }, async fetch(request, env, ctx) { { const dropped = hookEventFilter(request); if (dropped) return dropped; } /* FREE-TIER-1 */ if (env && env.UPSTREAM_ORIGIN) { const fw = forwardTo(request, env.UPSTREAM_ORIGIN); if (fw) return fw; } env = budgetEnv(env, SHARES.site); { const idp = await internalDeploy(request, env || {}); if (idp) return idp; } /* HANDOFF-1 */ if (request.method === "POST" && new URL(request.url).pathname === "/pulse/watch") { const w = await watchTick(env); return Response.json({ ok: w.status === "ok", via: "ultrastable-site", ...w }, { status: w.status === "ok" ? 200 : 503 }); } /* SINGLE-ACCOUNT-1: the second, independent restart route for the tick, inside the ultrastable account */ /* OWNER-ROUTE-1: owner paths are tested before AUTH_PATH, because /connect/github-signin also matches /connect/<provider> and would land on the tick Worker's placeholder */ if (env && env.OWNER && OWNER_PATH.test(new URL(request.url).pathname.replace(/\/$/, ""))) return env.OWNER.fetch(request); if (env && env.TICK && AUTH_PATH.test(new URL(request.url).pathname)) { try { return await env.TICK.fetch(request); } catch (e) { return new Response('<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width"><title>Connect</title><body style="font:16px system-ui;max-width:32rem;margin:4rem auto;padding:0 1rem"><h1>One moment</h1><p>The connection service is restarting. <a href="/connect/github">Try again</a>.</p>', { status: 503, headers: { 'content-type': 'text/html; charset=utf-8', 'retry-after': '10' } }); } } { const kf = keyFile(new URL(request.url).pathname); if (kf) return kf; } { const pk = await passkeys(request, env); if (pk) return pk; } { const z = await authzen(request, env); if (z) return z; } const a = await agentic(request, env); if (a) return a; if (new URL(request.url).pathname === "/webmcp.js") return new Response(WEBMCP_JS, { headers: { "content-type": "text/javascript; charset=utf-8", "cache-control": "public, max-age=300", "x-content-type-options": "nosniff" } }); return negotiate(withLinks(await handler.fetch(request, env, ctx), request), request); } };
+const entry = { async scheduled(event, env, ctx) { if (env && env.UPSTREAM_ORIGIN) return; if (halted(null, env)) return; /* HALT-1 */ env = budgetEnv(env, SHARES.site); ctx.waitUntil(tick(env, ctx).catch(e => console.error("tick failed", String(e)))); }, async fetch(request, env, ctx) { { const dropped = hookEventFilter(request); if (dropped) return dropped; } /* FREE-TIER-1 */ if (env && env.UPSTREAM_ORIGIN) { const fw = forwardTo(request, env.UPSTREAM_ORIGIN); if (fw) return fw; } env = budgetEnv(env, SHARES.site); { const idp = await internalDeploy(request, env || {}); if (idp) return idp; } /* HANDOFF-1 */ if (request.method === "POST" && new URL(request.url).pathname === "/pulse/watch") { const w = await watchTick(env); return Response.json({ ok: w.status === "ok", via: "ultrastable-site", ...w }, { status: w.status === "ok" ? 200 : 503 }); } /* SINGLE-ACCOUNT-1: the second, independent restart route for the tick, inside the ultrastable account */ /* OWNER-ROUTE-1: owner paths are tested before AUTH_PATH, because /connect/github-signin also matches /connect/<provider> and would land on the tick Worker's placeholder */ if (env && env.OWNER && OWNER_PATH.test(new URL(request.url).pathname.replace(/\/$/, ""))) return env.OWNER.fetch(request); if (env && env.TICK && AUTH_PATH.test(new URL(request.url).pathname)) { try { return await env.TICK.fetch(request); } catch (e) { return new Response('<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width"><title>Connect</title><body style="font:16px system-ui;max-width:32rem;margin:4rem auto;padding:0 1rem"><h1>One moment</h1><p>The connection service is restarting. <a href="/connect/github">Try again</a>.</p>', { status: 503, headers: { 'content-type': 'text/html; charset=utf-8', 'retry-after': '10' } }); } } { const kf = keyFile(new URL(request.url).pathname); if (kf) return kf; } { const pk = await passkeys(request, env); if (pk) return pk; } { const z = await authzen(request, env); if (z) return z; } const a = await agentic(request, env); if (a) return a; if (new URL(request.url).pathname === "/webmcp.js") return new Response(WEBMCP_JS, { headers: { "content-type": "text/javascript; charset=utf-8", "cache-control": "public, max-age=300", "x-content-type-options": "nosniff" } }); return negotiate(withLinks(await handler.fetch(request, env, ctx), request), request); } };
 
 
 // GROWTH-HITS-1 (2026-11-25): the product manager runs in Actions, which had no Cloudflare token, so every growth metric read empty and it filed nothing.
@@ -1208,3 +1258,14 @@ export async function growthHits(env, now = Date.now()) {
     return new Response(JSON.stringify({ error: "analytics read failed" }), { status: 503, headers: h });
   }
 }
+
+// SERVER-TIMING-1 and EARLY-HINTS-1: every response says how long the Worker took (Server-Timing, read by the UI/UX audit and any browser's
+// developer tools), and every page names the one image all pages draw above the fold as a preload Link, which Cloudflare turns into a 103 Early Hint.
+export function timed(res, t0, now = Date.now()) {
+  if (!res || res.status === 101 || res.webSocket) return res;
+  const r = new Response(res.body, res);
+  r.headers.append("Server-Timing", "worker;dur=" + Math.max(0, now - t0) + ";desc=\"site worker\"");
+  if ((r.headers.get("content-type") || "").includes("text/html")) r.headers.append("Link", "</favicon.svg>; rel=preload; as=image; type=\"image/svg+xml\"");
+  return r;
+}
+export default { scheduled: entry.scheduled, async fetch(request, env, ctx) { const t0 = Date.now(); return timed(await entry.fetch(request, env, ctx), t0); } };
