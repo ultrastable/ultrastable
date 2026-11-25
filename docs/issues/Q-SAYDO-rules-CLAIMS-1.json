@@ -1,0 +1,12 @@
+{
+  "id": "Q-SAYDO-rules-CLAIMS-1",
+  "title": "Q-SAYDO-rules-CLAIMS-1: says CLAIMS-1, does not do it",
+  "body": "**Owner:** executor\n**Trigger:** say-do check (SAY-DO-1) on the watchdog run\n**Done check:** cmd:python3 -m foundation saydo --probe rules:CLAIMS-1\n**Status:** open\n\nThe system states `CLAIMS-1` (rules) and its code does not do it: python3 -m foundation claims --check: DRIFT how-ultrastable-second-order [claim] site/worker.js: json:doctrine/ultrastability.json::patience_ticks==2 failed (doctrine/ultrastability.json: patience_ticks=3); claims: 403 verified of 404; 1 \n\nChange the code to do what the statement says, or change the statement to what the code does; never weaken the probe.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation saydo --probe rules:CLAIMS-1` exits 0.\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "say-do"
+  ],
+  "milestone": "Now",
+  "workstream": "Ultrastability"
+}
