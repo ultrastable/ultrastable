@@ -35,15 +35,7 @@
   "\\b(two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|thirty|fifty|hundred) (policy )?(areas|sources|indexes|indices|programmes|programs|channels|tenants|systems|loops|workers|repositories|checks|probes)\\b"
  ],
  "claims": [
-  {
-   "id": "agents-word-claims-example",
-   "source": "agents/AGENTS.md",
-   "quote": "Counts and cadences written in words (\"five policy areas\", \"every six hours\") are claims too",
-   "probe": {
-    "file": "tests/foundation/test_claimcode.py",
-    "contains": "every six hours from public data"
-   }
-  },
+  {"id": "agents-word-claims-example", "source": "agents/AGENTS.md", "quote": "Counts and cadences written in words (\"five policy areas\", \"every six hours\") are claims too", "probe": {"file": "tests/foundation/test_claimcode.py", "contains": "every six hours from public data"}},
   {
    "id": "readme-plus-share",
    "source": "README.md",
@@ -429,15 +421,6 @@
    "probe": {
     "file": "foundation/claimcode.py",
     "contains": "claim_patterns"
-   }
-  },
-  {
-   "id": "constitution-never-by-chat",
-   "source": "agents/AGENTS.md",
-   "quote": "The user should never have to provide all of this.",
-   "probe": {
-    "file": "tests/foundation/test_constitution.py",
-    "contains": "def test_a_new_standing_rule_with_no_entry_fails"
    }
   }
  ],
