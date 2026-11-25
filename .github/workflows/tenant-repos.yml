@@ -30,6 +30,9 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
+          # the checkout's own token is sent as a header on every github.com push and wins over the token in the URL,
+          # so a push to a new tenant repository went as github-actions[bot] and was refused (run 45669381614)
+          persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with: {node-version: 24}
       - name: Create each missing tenant repository from its folder's history
@@ -75,10 +78,12 @@ jobs:
             git subtree split --prefix "$src" -b "split-$slug"
             git worktree add "/tmp/$slug" "split-$slug"
             python3 -m foundation tenantrepos --prepare "/tmp/$slug" --slug "$slug"
-            # the worktree shares the checkout's git config; its auth header (the run's own token) would win over the token in the URL, so it is cleared for this push
-            (cd "/tmp/$slug" && git add -A && { git diff --cached --quiet || git commit -q -m "Stand alone: vendor the core files $slug reads (TENANT-REPO-1)"; } \
-              && git -c "http.https://github.com/.extraheader=" push "https://x-access-token:${tok}@github.com/${repo}.git" "HEAD:refs/heads/main")
-            echo "pushed $src with its history to $repo"
+            # the worktree shares the checkout's git config; its auth header (the run's own token) would win over the token in the URL, so it is cleared for this push.
+            # a refused push is recorded and the loop goes on to the next tenant, so one repository never stops the others
+            if (cd "/tmp/$slug" && git add -A && { git diff --cached --quiet || git commit -q -m "Stand alone: vendor the core files $slug reads (TENANT-REPO-1)"; } \
+              && git -c "http.https://github.com/.extraheader=" push "https://x-access-token:${tok}@github.com/${repo}.git" "HEAD:refs/heads/main"); then
+              echo "pushed $src with its history to $repo"
+            else echo "::error::could not push $src to $repo"; echo "$repo" >> /tmp/tenant-repos-failed; fi
           done
           if [ -s /tmp/tenant-repos-failed ]; then echo "::error::tenant repositories not created: $(tr '\n' ' ' </tmp/tenant-repos-failed)"; exit 1; fi
       - name: Every seed has its own repository, filled from the seed (FULLSTACK-1)
