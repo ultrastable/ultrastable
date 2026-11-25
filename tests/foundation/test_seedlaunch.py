@@ -84,8 +84,17 @@ class E2EOidc(unittest.TestCase):
     def test_waits_then_verifies(self):
         d = self._root({"kind": "seed", "slug": "s", "url": "https://x", "year_p10": 730, "uploaded": True, "live_ok": False})
         calls, slept = [], []
-        r = seedlaunch.e2e_oidc(root=d, run=lambda a: (calls.append(a) or (0, "OK")), sleep=slept.append)
+        probed = []
+        ok = lambda u: probed.append(u) or [{"capability": "frontend", "path": "/", "ok": True, "why": ""}]
+        r = seedlaunch.e2e_oidc(root=d, run=lambda a: (calls.append(a) or (0, "OK")), sleep=slept.append, coldstart_live=ok)
         self.assertTrue(r["passed"]); self.assertEqual(len(calls), 2); self.assertEqual(slept, [660])
+        self.assertEqual(probed, ["https://x"]); self.assertEqual(r["coldstart"], {"frontend": True})
+
+    def test_coldstart_miss_fails_the_launch(self):
+        d = self._root({"kind": "seed", "slug": "s", "url": "https://x", "year_p10": 730, "uploaded": True, "live_ok": True})
+        miss = lambda u: [{"capability": "discoverable", "path": "/.well-known/ultrastable.json", "ok": False, "why": "status 404, expected [200]"}]
+        r = seedlaunch.e2e_oidc(root=d, run=lambda a: (0, "OK"), sleep=lambda s: None, coldstart_live=miss)
+        self.assertFalse(r["passed"]); self.assertIn("/.well-known/ultrastable.json", r["failed_stages"]["coldstart"])
 
     def test_upload_error_fails(self):
         d = self._root({"kind": "seed", "slug": "s", "year_p10": 730, "live_ok": False, "error": "ENOENT"})

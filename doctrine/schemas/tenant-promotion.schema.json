@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/tenant-promotion.schema.json",
+  "title": "tenant-promotion (doctrine/tenant-promotion.json)",
+  "description": "Contract for doctrine/tenant-promotion.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "number"
+    },
+    "consent": {
+      "type": "object",
+      "properties": {
+        "at": {
+          "type": "string"
+        },
+        "by": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "scope": {
+          "type": "string"
+        }
+      }
+    },
+    "platform": {
+      "type": "string"
+    },
+    "in_repo": {
+      "type": "object",
+      "properties": {
+        "ultrastable/ultrastable": {
+          "type": "object"
+        }
+      }
+    },
+    "tenants": {
+      "type": "object",
+      "properties": {
+        "practical-solutions": {
+          "type": "object"
+        },
+        "unlearn": {
+          "type": "object"
+        },
+        "what-works": {
+          "type": "object"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "consent",
+    "in_repo",
+    "platform",
+    "tenants",
+    "version"
+  ]
+}

@@ -5606,6 +5606,125 @@
    "body": "Rowan 2026-11-25: the slow loop existed but every verdict was a revert and Rowan did its job in chat. Added variables owner_interventions, second_loop_keep_rate, spec_quality, research_in_code; common-mode sensor guard; spec gate in the seed; readiness score and self-change log on /ultrastability; paper second-loop-2026.",
    "probe": "grep:foundation/ultrastability.py::def keep_rate",
    "session": "session_0156nqDvpqV1qd6Epa67tywp"
+  },
+  {
+   "id": "decision-2026-11-25-coldstart-1-one-cold-start-contract-every-system-carries-fro",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "COLDSTART-1: one cold-start contract every system carries from birth",
+   "body": "Rowan 2026-11-25: everything must bootstrap fully autonomously from a cold start. doctrine/coldstart.json lists the capabilities a system owes from birth (repo, back end, front end, clock, discovery, knowledge graph, progress, live content, self-improvement, platform sync, year unattended, goals, instructions); coldstart --check proves the seed carries them, that every named foundation command resolves and that the platform and seed agent files agree; seedlaunch --e2e-oidc probes every live path on the fresh seed. Root causes removed: health-only seeds hid /.well-known/ultrastable.json, /api/graph, /api/progress and /api/stickiness (now PUBLIC_READS in seed/worker/src/visibility.js); the CLI dispatched only hand-listed modules, so detector static-content could not run (any module with main now resolves); duplicate and missing rule bullets in the agent files. Probe: python3 -m foundation coldstart --check passes; tests/foundation/test_coldstart.py.",
+   "probe": "grep:foundation/coldstart.py::def check\\("
+  },
+  {
+   "id": "decision-2026-11-25-standards-1-apply-published-standards-instead-of-home-grown-",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "STANDARDS-1: apply published standards instead of home-grown formats",
+   "body": "Every JSON config has a JSON Schema 2020-12 contract in a Schema Store catalog (configschema), catalog-info.yaml (Backstage) and sbom.cdx.json (CycloneDX 1.6) are generated from the registers (stdgen), devcontainer.json gives cloud agents the checks' runtimes, and the standards register records supported, planned (OpenFeature, SLSA, with items) and not-applicable choices (Rego, Conventional Commits/SemVer, with reasons). What Works publishes schema.org ClaimReview, ISO 3166, DCAT, PROV-O and OpenAPI.",
+   "probe": "grep:.github/workflows/checks.yml::configschema --check"
+  },
+  {
+   "id": "lesson-2026-11-25-a-standard-file-the-standard-fixes-at-the-root-needs-an-expl",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "A standard file the standard fixes at the root needs an explicit allowance, and a register a site serves needs its generator in REGEN-1",
+   "body": "catalog-info.yaml failed STRAYS-1 as a root code file (now doctrine/strays.json standard_root_files), and editing seed/standards/standards.json left site/agentdata.js stale because neither regen list rebuilt it (now in both).",
+   "probe": "grep:scripts/regen_generated.sh::build_site_agentdata",
+   "session": "session_0156nqDriSf7RENkyFHy7NoW"
+  },
+  {
+   "id": "lesson-2026-11-25-owner-found-9-failures-before-any-loop-redteam-1",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Owner found 9 failures before any loop (REDTEAM-1)",
+   "body": "Probes checked that mechanisms exist, not that their output is true. Classes: vacuous, stale, unscored, phantom, timebomb, undetected, starved, credential. foundation/redteam.py tests each adversarially; owner_found_30d is the metric.",
+   "probe": "file:foundation/redteam.py",
+   "session": "session_0156nqDrAs7rUXpvph8XjAkz"
+  },
+  {
+   "id": "decision-2026-11-25-the-seed-carries-the-definition-of-an-ultrastable-system-enf",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "The seed's definition of a system is COLDSTART-1; SYSTEM-1 folded into it",
+   "body": "SYSTEM-1 (a generated seed/doctrine/SYSTEM.md from a separate contract) duplicated COLDSTART-1 (#2245), which merged first with the same purpose: one canonical SYSTEM.md in platform and seed, imported by both CLAUDE.md files, checked by foundation coldstart --check against the ignition ladder, bootstrap stages and capabilities. The duplicate contract was removed; M-storage liveness and ADMIT-1 stay.",
+   "probe": "file:doctrine/coldstart.json"
+  },
+  {
+   "id": "lesson-2026-11-25-tenant-checks-read-progress-json-not-the-tenant-registry-so-",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Tenant checks read progress.json, not the tenant registry, so a live tenant escaped all of them (ADMIT-1)",
+   "body": "Replication Ledger was live with a worker, a beat clock and a showcase but had no progress row, so progress, tenantpromo, fullstack and stickiness never looked at it. Fix: foundation/admit.py derives every registry row from the doctrine/tenant-repos.json row; admit --check in checks, admit --apply in regen_generated. Also: the front door's first build failed whenever the AI allowance was in crawl mode (LAUNCH-PATH-1 probe red); site/worker.js builds a no-model draft. org-settings was red only on archived repos; apprepos.js skips archived and not-yet-created repos. D1 size had no guard; M-storage liveness metric in every seed.",
+   "probe": "file:foundation/admit.py"
+  },
+  {
+   "id": "decision-2026-11-25-open-standards-1-one-standards-kit-for-json-schema-cloudeven",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "OPEN-STANDARDS-1: one standards kit for JSON Schema, CloudEvents, W3C PROV; manifest structure is a schema",
+   "body": "Four sessions from four projects opened overlapping standards PRs (#2259 doctrine schemas, #2260 registry and gate, #2273 config schemas and Backstage, #2274 this). Per COLLISION-1 this PR keeps only what none of the others adds: seed/scripts/stdkit.py (JSON Schema validation with a stdlib fallback, CloudEvents 1.0, PROV-JSON, Conventional Commits), its JS twin seed/worker/src/cloudevents.js, the instance manifest's structural rules moved into seed/schemas/instance.schema.json, and provenance exports as W3C PROV and CloudEvents. The doctrine schema catalog and Backstage descriptor come from the older PRs.",
+   "probe": "grep:foundation/manifest.py::seed_stdkit",
+   "session": "session_0156nqDsyGRG1TdtTGodgits"
+  },
+  {
+   "id": "decision-2026-11-25-the-seed-carries-its-own-definition-generated-from-its-code",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "The seed carries its own definition, generated from its code",
+   "body": "Found: seed/ had 72 standing rules and no single definition of what an Ultrastable system is, how it runs, bootstraps and reaches criticality; its instructions cited about 40 python3 -m foundation commands that a seeded system does not have, and checks.yml never ran seed/tests. Built seed/SYSTEM.md, generated by seed/scripts/system.py from seed/autonomy/system.json and the code of record, loaded first by CLAUDE.md and AGENTS.md; seed/tests/test_system.py passes (7) and the seed suite passes (82). 16 rules remain enforced only by the platform: not_in_kit, shrink-only, one Q-KIT item each. SYSTEM-SPEC-1.",
+   "probe": "grep:seed/scripts/system.py::def check"
+  },
+  {
+   "id": "lesson-2026-11-25-a-surface-proved-alone-is-not-proved",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "A surface proved alone is not proved",
+   "body": "Found: seed/worker/src/visibility.js answered 404 for /.well-known/ultrastable.json and /api/graph whenever PUBLIC_HEALTH_ONLY=1, which deploy/deploy-seed.mjs sets on every seed and visitor app, and deploy-seed bound no PUBLIC_URL, so manifest() returned url null. Fixed in code with PUBLIC_READS, the footer and the bindings; seed/worker tests pass (546) and tests/foundation/test_bootaccept.py passes (13). Residual risk until bootaccept --run in seed-launch.yml has probed the live seeds; ledger ops/boot-accept.jsonl. BOOT-ACCEPT-1.",
+   "probe": "grep:seed/worker/src/visibility.js::PUBLIC_READS"
+  },
+  {
+   "id": "lesson-2026-11-25-check-merged-main-for-a-same-directive-pr-before-adding-a-pa",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Check merged main for a same-directive PR before adding a parallel definition",
+   "body": "SYSTEM-1 and COLDSTART-1 answered the same owner message in two threads; the later one was folded into the earlier on merge. collisions --claim <ID> catches same-id work only, so a directive answered under two ids slips through.",
+   "probe": "file:doctrine/coldstart.json",
+   "session": "session_0156nqDrmKoDzyTndxNktxWH"
+  },
+  {
+   "id": "decision-2026-11-25-constitution-1-the-seed-states-what-an-ultrastable-system-is",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "CONSTITUTION-1: the seed states what an ultrastable system is, as code",
+   "body": "Rowan 2026-11-25: the core template must say what an ultrastable system is, how it runs, bootstraps, becomes autonomous and reaches criticality, so the owner never supplies it by chat. seed/doctrine/constitution.json is the statement; seed/scripts/constitution.py checks it against the tick steps, boot stages, ladder rungs, ignition stages and criticality conditions in code; each rule names a detector and a remediation that exist; bootstrap stage constitute assembles org/constitution.json; CLAUDE.md imports the generated prose; a standing rule with no entry fails CI. Remaining unmapped product-feature rules are a shrink-only baseline drained by Q-CONSTITUTION-DRAIN.",
+   "probe": "file:seed/doctrine/constitution.json",
+   "session": "session_0156nqDrw4gPrPVFvZNWQFzs"
+  },
+  {
+   "id": "decision-2026-11-25-supply-chain-posture-is-a-weekly-loop-on-open-standards",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Supply-chain posture is a weekly loop on open standards",
+   "body": "OpenSSF Scorecard and the SPDX SBOM from GitHub's dependency graph are read weekly by supply-chain.yml and summarised by foundation/supplychain.py; checks under the floor in doctrine/scorecard.json and packages outside the licence policy become Q-STD-SC-* items closed by the next reading. Settings were renamed from doctrine/open-standards.json to avoid COLLISION-1 with PR #2260, which owns that path.",
+   "probe": "file:foundation/supplychain.py",
+   "session": "session_0156nqDudxrbHqznYEuTrpLY"
+  },
+  {
+   "id": "lesson-2026-11-25-a-merge-by-the-built-in-token-fires-no-push-workflow",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "A merge by the built-in token fires no push workflow",
+   "body": "Bot merges (GitHub auto-merge enabled by github-actions, or the lane) left every on-push workflow silent after #2243: seed-launch and three deploys never ran. scripts/postmerge_dispatch.py reads each workflow's own push paths and the lane dispatches what a merge touched; tests pass in tests/foundation/test_postmerge_dispatch.py; residual risk: a PR merged more than 6 h before the lane's next pass is not caught.",
+   "probe": "grep:.github/workflows/lane.yml::postmerge_dispatch.py --apply",
+   "session": "session_0156nqDtbnNSagT7p6jpUTuY"
+  },
+  {
+   "id": "lesson-2026-11-25-a-newborn-system-waited-until-03-00-utc-to-ask-the-directory",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "A newborn system waited until 03:00 UTC to ask the directory to list it",
+   "body": "BOOT-4 says every system is listed from its first deploy, but the seed's directory heartbeat only fired in the 03:00 UTC window, so the first live acceptance run (seed-launch 45709149770) passed six of seven layers and failed discovery for second-tenant. The heartbeat now registers from birth, hourly until listed, and keeps the directory's answer in directory_registration; bootaccept --run registers by a second route and names the directory's reason when it still refuses.",
+   "probe": "grep:seed/worker/src/discover.js::directory_registration"
   }
  ]
 }

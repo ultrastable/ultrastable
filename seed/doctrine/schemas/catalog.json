@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json.schemastore.org/schema-catalog.json",
+  "version": 1,
+  "schemas": [
+    {
+      "name": "claims.json",
+      "description": "Contract for seed/doctrine/claims.json",
+      "fileMatch": [
+        "seed/doctrine/claims.json"
+      ],
+      "url": "claims.schema.json"
+    },
+    {
+      "name": "constitution-baseline.json",
+      "description": "Contract for seed/doctrine/constitution-baseline.json",
+      "fileMatch": [
+        "seed/doctrine/constitution-baseline.json"
+      ],
+      "url": "constitution-baseline.schema.json"
+    },
+    {
+      "name": "constitution.json",
+      "description": "Contract for seed/doctrine/constitution.json",
+      "fileMatch": [
+        "seed/doctrine/constitution.json"
+      ],
+      "url": "constitution.schema.json"
+    },
+    {
+      "name": "readmes.json",
+      "description": "Contract for seed/doctrine/readmes.json",
+      "fileMatch": [
+        "seed/doctrine/readmes.json"
+      ],
+      "url": "readmes.schema.json"
+    },
+    {
+      "name": "standing-order.json",
+      "description": "Contract for seed/doctrine/standing-order.json",
+      "fileMatch": [
+        "seed/doctrine/standing-order.json"
+      ],
+      "url": "standing-order.schema.json"
+    },
+    {
+      "name": "user-backend.json",
+      "description": "Contract for seed/doctrine/user-backend.json",
+      "fileMatch": [
+        "seed/doctrine/user-backend.json"
+      ],
+      "url": "user-backend.schema.json"
+    }
+  ]
+}

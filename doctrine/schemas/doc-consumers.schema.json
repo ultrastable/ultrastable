@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/doc-consumers.schema.json",
+  "title": "doc-consumers (doctrine/doc-consumers.json)",
+  "description": "Contract for doctrine/doc-consumers.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "ignore_references_from": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "consumers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "consumer": {
+            "type": "string"
+          },
+          "how": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "needle": {
+            "type": "string"
+          },
+          "paths": {
+            "type": "array"
+          }
+        }
+      }
+    },
+    "verified": {
+      "type": "object",
+      "properties": {
+        "globs": {
+          "type": "array"
+        }
+      }
+    },
+    "knowledge": {
+      "type": "object",
+      "properties": {
+        "globs": {
+          "type": "array"
+        },
+        "how": {
+          "type": "string"
+        }
+      }
+    },
+    "human_action_patterns": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "human_action_exempt": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "human_action_baseline": {
+      "type": "object",
+      "properties": {}
+    },
+    "converted": {
+      "type": "array"
+    },
+    "removed": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string"
+          },
+          "duplicate_of": {
+            "type": "string"
+          },
+          "evidence": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "recover": {
+            "type": "string"
+          },
+          "sha256": {
+            "type": "string"
+          },
+          "superseded_by": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "consumers",
+    "converted",
+    "human_action_baseline",
+    "human_action_exempt",
+    "human_action_patterns",
+    "ignore_references_from",
+    "knowledge",
+    "removed",
+    "verified",
+    "version"
+  ]
+}

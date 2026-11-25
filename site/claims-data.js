@@ -121,9 +121,9 @@ export default {
    "surface": "site/worker.js"
   },
   {
-   "claim": "The slow loop reads the same variables every tick, and when one has been out of bounds for two ticks in a row it takes one discrete step on that variable's ladder, keeps the step only if the variable comes back, and otherwise undoes it and takes the next.",
+   "claim": "The slow loop reads the same variables every tick, and when one has stayed out of bounds for as many ticks in a row as its patience setting (patience_ticks, which the loop tunes itself) it takes one discrete step on that variable's ladder, keeps the step only if the variable comes back, and otherwise undoes it and takes the next.",
    "detail": "",
-   "how": "json:doctrine/ultrastability.json::patience_ticks==2 + grep:foundation/ultrastability.py::revert_to=pending + grep:foundation/ultrastability.py::return \"kept\"",
+   "how": "grep:doctrine/ultrastability.json::\"patience_ticks\" + grep:foundation/ultrastability.py::revert_to=pending + grep:foundation/ultrastability.py::return \"kept\"",
    "id": "how-ultrastable-second-order",
    "kind": "claim",
    "pass": true,
@@ -1581,7 +1581,7 @@ export default {
   {
    "claim": "- **Load from the repository, never from tool memory.** Project memory, tool memory and chat are not storage (Rowan, 2026-11-12): they may",
    "detail": "",
-   "how": "file:docs/doctrine/GUIDING-DIRECTIVE.md + file:doctrine/kernel-8.2.1.md + file:docs/PROJECT-MEMORY.md + file:agents/PROJECT-INSTRUCTIONS.md + file:docs/BOOTSTRAP-NO-MEMORY.md + file:doctrine/durable-facts.json",
+   "how": "file:seed/SYSTEM.md + file:docs/doctrine/GUIDING-DIRECTIVE.md + file:doctrine/kernel-8.2.1.md + file:docs/PROJECT-MEMORY.md + file:agents/PROJECT-INSTRUCTIONS.md + file:docs/BOOTSTRAP-NO-MEMORY.md",
    "id": "cited-32424bab79",
    "kind": "claim",
    "pass": true,
@@ -1813,6 +1813,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **One tenant row admits a tenant; every registry is derived (ADMIT-1, Rowan 2026-11-25).** \"All surfaces, all files, all code, all",
+   "detail": "",
+   "how": "file:doctrine/tenant-repos.json + file:scripts/regen_generated.py + file:doctrine/admission.json + file:site/worker.js + file:foundation/admit.py + file:tests/foundation/test_admit.py",
+   "id": "cited-9b5ff76eff",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Every system deploys itself in full: repo, back end and a public web UI (FULLSTACK-1, Rowan 2026-11-25).** \"All UltraStable deployments",
    "detail": "",
    "how": "file:doctrine/tenant-repos.json + file:doctrine/topology.json + file:tests/foundation/test_tenantrepos.py + file:instances/ultrastable/progress.json + file:doctrine/seed-deploys.json + file:doctrine/full-stack.json",
@@ -1925,6 +1934,33 @@ export default {
    "detail": "",
    "how": "file:foundation/redteam.py + file:ops/redteam/findings.jsonl + file:tests/foundation/test_redteam.py",
    "id": "cited-467a38f9b7",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Everything bootstraps itself from a cold start and works together from birth (COLDSTART-1, Rowan 2026-11-25).** \"All surfaces, all",
+   "detail": "",
+   "how": "file:doctrine/coldstart.json + file:seed/worker/src/visibility.js + file:docs/doctrine/SYSTEM.md + file:CLAUDE.md + file:doctrine/schemas/coldstart.schema.json + file:foundation/coldstart.py",
+   "id": "cited-badeab1b44",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Open standards, never a home-grown format (OPEN-STANDARDS-1, Rowan 2026-11-25).** \"Standards, don't reinvent the wheel. Apply standards",
+   "detail": "",
+   "how": "file:foundation/openstd.py + file:doctrine/open-standards.json + file:doctrine/open-standards-baseline.json + file:tests/foundation/test_openstd.py + grep:.github/workflows/checks.yml::foundation[ .]openstd\\b",
+   "id": "cited-897a8cdffd",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Every surface works together from the first deploy; one command proves it (BOOT-ACCEPT-1, Rowan 2026-11-25).** \"All surfaces, all",
+   "detail": "",
+   "how": "file:seed/worker/src/visibility.js + file:doctrine/open-loops.json + file:tests/foundation/test_bootaccept.py + file:seed/worker/test/bootaccept.test.js + file:foundation/bootaccept.py",
+   "id": "cited-c2464a2c9f",
    "kind": "claim",
    "pass": true,
    "surface": "agents/AGENTS.md"
@@ -2227,6 +2263,33 @@ export default {
    "surface": "seed/doctrine/GUIDING-DIRECTIVE.md"
   },
   {
+   "claim": "`doctrine/coldstart.json` (JSON Schema `doctrine/schemas/coldstart.schema.json`) or the code they name drift apart. The owner never",
+   "detail": "",
+   "how": "file:doctrine/coldstart.json + file:doctrine/schemas/coldstart.schema.json",
+   "id": "cited-b4d6cc4189",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/SYSTEM.md"
+  },
+  {
+   "claim": "default in effect, never a task in prose (`doctrine/open-loops.json`, `foundation/data/needs-you.json`). Anything else handed to a person",
+   "detail": "",
+   "how": "file:doctrine/open-loops.json + file:foundation/data/needs-you.json",
+   "id": "cited-94e4bb2cbb",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/SYSTEM.md"
+  },
+  {
+   "claim": "`python3 -m foundation coldstart --check` runs in `checks` on every change. It fails when the seed stops carrying a capability, when this",
+   "detail": "",
+   "how": "file:foundation/coldstart.py + grep:.github/workflows/checks.yml::foundation[ .]coldstart\\b",
+   "id": "cited-a191183c3c",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/SYSTEM.md"
+  },
+  {
    "claim": "- uiux-manager: the front end as a measured, continuously audited surface (UIUX-1): how every page across ultrastable.io, .org and .app,",
    "detail": "",
    "how": "file:doctrine/stakeholders.json + file:doctrine/design.json + file:foundation/insight.py",
@@ -2299,6 +2362,15 @@ export default {
    "surface": "seed/AGENTS.md"
   },
   {
+   "claim": "- **One tenant row admits a tenant; every registry is derived (ADMIT-1, Rowan 2026-11-25).** \"All surfaces, all files, all code, all",
+   "detail": "",
+   "how": "file:doctrine/tenant-repos.json + file:scripts/regen_generated.py + file:doctrine/admission.json + file:site/worker.js + file:foundation/admit.py + file:tests/foundation/test_admit.py",
+   "id": "mirror-adf5fe12d6",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
    "claim": "Words match code (CLAIMS-1, Rowan 2026-11-17)",
    "detail": "",
    "how": "file:foundation/claims.py + file:tests/foundation/test_claims.py",
@@ -2310,7 +2382,7 @@ export default {
   {
    "claim": "- **Load from the repository, never from tool memory.** Project memory, tool memory and chat are not storage (Rowan, 2026-11-12): they may",
    "detail": "",
-   "how": "file:docs/doctrine/GUIDING-DIRECTIVE.md + file:doctrine/kernel-8.2.1.md + file:docs/PROJECT-MEMORY.md + file:agents/PROJECT-INSTRUCTIONS.md + file:docs/BOOTSTRAP-NO-MEMORY.md + file:doctrine/durable-facts.json",
+   "how": "file:seed/SYSTEM.md + file:docs/doctrine/GUIDING-DIRECTIVE.md + file:doctrine/kernel-8.2.1.md + file:docs/PROJECT-MEMORY.md + file:agents/PROJECT-INSTRUCTIONS.md + file:docs/BOOTSTRAP-NO-MEMORY.md",
    "id": "mirror-1586e98ac2",
    "kind": "claim",
    "pass": true,
@@ -2636,6 +2708,51 @@ export default {
    "detail": "",
    "how": "file:foundation/redteam.py + file:ops/redteam/findings.jsonl + file:tests/foundation/test_redteam.py",
    "id": "mirror-309506fe16",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Issue inflow never exceeds closures; every issue inside its SLA (FLOW-BALANCE-1, Rowan 2026-11-21).** \"All UltraStable issues must be",
+   "detail": "",
+   "how": "file:seed/worker/src/flowbalance.js + file:doctrine/balance.json + file:tests/foundation/test_balance.py + file:foundation/balance.py",
+   "id": "mirror-ad11709e94",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Find another path before asking; the information is already held (PATHFINDER-1, Rowan 2026-11-21).** \"There are always multiple paths,",
+   "detail": "",
+   "how": "file:doctrine/pathfinder.json + file:ops/paths/attempts.jsonl + file:foundation/pathfinder.py + file:tests/foundation/test_pathfinder.py",
+   "id": "mirror-7a700bcc8c",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Everything bootstraps itself from a cold start and works together from birth (COLDSTART-1, Rowan 2026-11-25).** \"All surfaces, all",
+   "detail": "",
+   "how": "file:doctrine/coldstart.json + file:seed/worker/src/visibility.js + file:docs/doctrine/SYSTEM.md + file:CLAUDE.md + file:doctrine/schemas/coldstart.schema.json + file:foundation/coldstart.py",
+   "id": "mirror-23cc6eb0f0",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Open standards, never a home-grown format (OPEN-STANDARDS-1, Rowan 2026-11-25).** \"Standards, don't reinvent the wheel. Apply standards",
+   "detail": "",
+   "how": "file:foundation/openstd.py + file:doctrine/open-standards.json + file:doctrine/open-standards-baseline.json + file:tests/foundation/test_openstd.py + grep:.github/workflows/checks.yml::foundation[ .]openstd\\b",
+   "id": "mirror-79e254f607",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Every surface works together from the first deploy; one command proves it (BOOT-ACCEPT-1, Rowan 2026-11-25).** \"All surfaces, all",
+   "detail": "",
+   "how": "file:seed/worker/src/visibility.js + file:doctrine/open-loops.json + file:tests/foundation/test_bootaccept.py + file:seed/worker/test/bootaccept.test.js + file:foundation/bootaccept.py",
+   "id": "mirror-bda521b8b7",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3307,7 +3424,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 67 Python and 537 Worker tests",
+   "claim": "seed-tests: 80 Python and 548 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3316,7 +3433,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 537 Worker tests",
+   "claim": "seed-worker-tests: 548 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3352,7 +3469,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 1054",
+   "claim": "live-deploys: 1084",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",
@@ -3386,6 +3503,15 @@ export default {
    "kind": "generated",
    "pass": true,
    "surface": "platform/README.md"
+  },
+  {
+   "claim": "module: seed/doctrine/CONSTITUTION.md is written by seed/scripts/constitution.py from seed/doctrine/constitution.json",
+   "detail": "",
+   "how": "header names the generator + file:seed/scripts/constitution.py + file:tests/foundation/test_constitution.py",
+   "id": "module-constitution-prose",
+   "kind": "module",
+   "pass": true,
+   "surface": "seed/doctrine/CONSTITUTION.md"
   },
   {
    "claim": "module: site/claims-data.js is written by foundation/claims.py from doctrine/claims.json",
@@ -3478,6 +3604,15 @@ export default {
    "surface": "site/research-data.js"
   },
   {
+   "claim": "module: seed/SYSTEM.md is written by seed/scripts/system.py from seed/autonomy/system.json",
+   "detail": "",
+   "how": "header names the generator + file:seed/scripts/system.py + grep:.github/workflows/checks.yml::scripts/system.py --check",
+   "id": "module-system-spec",
+   "kind": "module",
+   "pass": true,
+   "surface": "seed/SYSTEM.md"
+  },
+  {
    "claim": "ledger: work claims",
    "detail": "seed/worker/migrations/0001_init.sql",
    "how": "grep:seed/worker/migrations/0001_init.sql::CREATE TABLE IF NOT EXISTS claims",
@@ -3557,7 +3692,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 392,
-  "total": 392
+  "pass": 407,
+  "total": 407
  }
 };

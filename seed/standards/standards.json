@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "checked": "2026-11-14",
+  "checked": "2026-11-25",
   "stale_after_days": 120,
   "bodies": [
     {
@@ -27,6 +27,11 @@
       "id": "w3c",
       "name": "W3C community groups",
       "role": "WebMCP and browser agent work; watch, do not depend."
+    },
+    {
+      "id": "delivery",
+      "name": "Delivery, data and supply-chain standards bodies",
+      "role": "JSON Schema org, CNCF (CloudEvents, OpenTelemetry, Backstage, OpenFeature), OWASP/Ecma (CycloneDX), OpenSSF (SLSA), Development Containers spec, W3C (DCAT, PROV-O)."
     }
   ],
   "entries": [
@@ -993,6 +998,502 @@
           "url": "https://gdpr-info.eu/art-20-gdpr/",
           "published": null,
           "accessed": "2026-11-14"
+        }
+      ]
+    },
+    {
+      "id": "json-schema-config",
+      "name": "JSON Schema 2020-12 contracts for every config, listed in a Schema Store catalog",
+      "body": "JSON Schema organisation; SchemaStore catalog format",
+      "status": "stable",
+      "tracked": "draft 2020-12; schema-catalog.json version 1",
+      "why": "Every doctrine, seed doctrine and seed autonomy config has a contract any editor, provider or agent can validate without reading the Python that consumes it; a new config gets its contract in the same change (REGEN-1).",
+      "support": "supported",
+      "how": [
+        "foundation/configschema.py",
+        "doctrine/schemas/catalog.json",
+        "seed/doctrine/schemas/catalog.json",
+        "seed/autonomy/schemas/catalog.json"
+      ],
+      "tests": [
+        {
+          "file": "tests/foundation/test_configschema.py",
+          "name": "test_every_config_has_a_schema_and_validates"
+        },
+        {
+          "file": "tests/foundation/test_configschema.py",
+          "name": "test_catalog_is_schema_store_format"
+        }
+      ],
+      "sources": [
+        {
+          "title": "JSON Schema 2020-12 Core",
+          "url": "https://json-schema.org/draft/2020-12/json-schema-core",
+          "published": "2022-06-16",
+          "accessed": "2026-11-25"
+        },
+        {
+          "title": "JSON Schema Store catalog",
+          "url": "https://www.schemastore.org/json/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "backstage-catalog",
+      "name": "Backstage Software Catalog descriptor (catalog-info.yaml)",
+      "body": "CNCF (Backstage)",
+      "status": "de-facto",
+      "tracked": "backstage.io/v1alpha1: Group, Domain, System, Component, Resource, API",
+      "why": "Service identity, ownership and dependencies in the format developer portals and agents read, generated from doctrine/topology.json and doctrine/tenant-repos.json so it cannot drift.",
+      "support": "supported",
+      "how": [
+        "catalog-info.yaml",
+        "foundation/stdgen.py"
+      ],
+      "acl": "foundation/stdgen.py",
+      "tests": [
+        {
+          "file": "tests/foundation/test_stdgen.py",
+          "name": "test_backstage_catalog_names_every_worker_store_and_tenant"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Backstage descriptor format",
+          "url": "https://backstage.io/docs/features/software-catalog/descriptor-format",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "cyclonedx-sbom",
+      "name": "CycloneDX 1.6 SBOM with package URLs",
+      "body": "OWASP CycloneDX; Ecma TC54 (ECMA-424); purl",
+      "status": "stable",
+      "tracked": "CycloneDX 1.6 JSON; pkg:npm and pkg:github purls",
+      "why": "The supply chain (first-party packages and every GitHub Action by pinned commit) is machine-readable for any scanner; no timestamp, so it changes only when the supply chain does.",
+      "support": "supported",
+      "how": [
+        "sbom.cdx.json",
+        "foundation/stdgen.py"
+      ],
+      "tests": [
+        {
+          "file": "tests/foundation/test_stdgen.py",
+          "name": "test_cyclonedx_sbom_lists_pinned_actions_and_packages"
+        }
+      ],
+      "sources": [
+        {
+          "title": "CycloneDX 1.6 JSON reference",
+          "url": "https://cyclonedx.org/docs/1.6/json/",
+          "published": "2024-04-09",
+          "accessed": "2026-11-25"
+        },
+        {
+          "title": "Package URL specification",
+          "url": "https://github.com/package-url/purl-spec",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "devcontainer",
+      "name": "Development Containers (devcontainer.json)",
+      "body": "Development Containers specification",
+      "status": "stable",
+      "tracked": "devcontainer.json with image and features",
+      "why": "Any cloud agent or Codespace gets the same Python 3.12 and Node 24 the checks run on, from one standard file, with no setup steps.",
+      "support": "supported",
+      "how": [
+        ".devcontainer/devcontainer.json"
+      ],
+      "tests": [
+        {
+          "file": "tests/foundation/test_stdgen.py",
+          "name": "test_devcontainer_matches_ci_runtimes"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Development Container Specification",
+          "url": "https://containers.dev/implementors/spec/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "cloudevents-webhooks",
+      "name": "CloudEvents 1.0 envelopes signed per Standard Webhooks",
+      "body": "CNCF (CloudEvents); Standard Webhooks",
+      "status": "stable",
+      "tracked": "CloudEvents 1.0 structured JSON; Standard Webhooks v1 HMAC-SHA256",
+      "why": "Every outbound callback is a CloudEvent any consumer can route, and every signature is verifiable with off-the-shelf libraries.",
+      "support": "supported",
+      "how": [
+        "site/webhooks.js"
+      ],
+      "tests": [
+        {
+          "file": "site/webhooks.test.mjs",
+          "name": "application/cloudevents+json"
+        }
+      ],
+      "sources": [
+        {
+          "title": "CloudEvents 1.0.2",
+          "url": "https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/spec.md",
+          "published": "2022-02-05",
+          "accessed": "2026-11-25"
+        },
+        {
+          "title": "Standard Webhooks",
+          "url": "https://www.standardwebhooks.com/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "conventional-commits-semver",
+      "name": "Conventional Commits and SemVer",
+      "body": "conventionalcommits.org; semver.org",
+      "status": "stable",
+      "tracked": "Conventional Commits 1.0.0; SemVer 2.0.0",
+      "why": "Release notes and version bumps derived from commit types.",
+      "support": "not_applicable",
+      "reason": "No package from this repository is published to a registry (no package.json here carries a version), so there is no release for SemVer to number; commits lead with the rule or item id (for example STANDARDS-1:), which the queue and write-back loops key on. Revisit when a package is published.",
+      "sources": [
+        {
+          "title": "Conventional Commits 1.0.0",
+          "url": "https://www.conventionalcommits.org/en/v1.0.0/",
+          "published": null,
+          "accessed": "2026-11-25"
+        },
+        {
+          "title": "Semantic Versioning 2.0.0",
+          "url": "https://semver.org/spec/v2.0.0.html",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "opa-rego",
+      "name": "Open Policy Agent (Rego) policy-as-code",
+      "body": "CNCF (Open Policy Agent)",
+      "status": "stable",
+      "tracked": "Rego v1",
+      "why": "Policy as code for standing rules and access decisions.",
+      "support": "not_applicable",
+      "reason": "Standing rules are already policy as code: each is a `python3 -m foundation <rule> --check` in checks, and request authorization uses OpenID AuthZEN (entry authzen). A Rego runtime would add a second policy language with no consumer; JSON Schema (entry json-schema-config) covers config shape.",
+      "sources": [
+        {
+          "title": "OPA policy language",
+          "url": "https://www.openpolicyagent.org/docs/latest/policy-language/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "openfeature",
+      "name": "OpenFeature flag evaluation for the goal knobs",
+      "body": "CNCF (OpenFeature)",
+      "status": "draft",
+      "tracked": "OpenFeature specification",
+      "why": "The goals loop's knobs (seed/autonomy/goals.json) are feature flags in all but name; exposing them through an OpenFeature provider lets any SDK read them.",
+      "support": "planned",
+      "tracked_by": "Q-STD-OPENFEATURE",
+      "acl": "seed/worker/src/goals.js",
+      "sources": [
+        {
+          "title": "OpenFeature specification",
+          "url": "https://openfeature.dev/specification/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "slsa-provenance",
+      "name": "SLSA v1 build provenance for deploys",
+      "body": "OpenSSF (SLSA)",
+      "status": "stable",
+      "tracked": "SLSA v1.0 provenance (in-toto)",
+      "why": "Each Worker deploy carries a verifiable record of the commit and workflow that built it.",
+      "support": "planned",
+      "tracked_by": "Q-STD-SLSA",
+      "acl": "deploy/deploy-workers.mjs",
+      "sources": [
+        {
+          "title": "SLSA v1.0",
+          "url": "https://slsa.dev/spec/v1.0/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "editorconfig",
+      "name": "EditorConfig",
+      "body": "editorconfig.org",
+      "status": "de-facto",
+      "tracked": "spec 0.17",
+      "why": "Every editor and coding agent writes line endings, charset and indentation the same way.",
+      "support": "supported",
+      "how": [
+        ".editorconfig",
+        "seed/.editorconfig"
+      ],
+      "acl": ".editorconfig",
+      "tests": [
+        {
+          "file": "tests/foundation/test_open_standards.py",
+          "name": "test_editorconfig_present"
+        }
+      ],
+      "sources": [
+        {
+          "title": "EditorConfig specification",
+          "url": "https://spec.editorconfig.org/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "dependabot",
+      "name": "Dependabot version updates",
+      "body": "GitHub",
+      "status": "stable",
+      "tracked": "dependabot.yml version 2",
+      "why": "Every dependency ecosystem in the platform and every seed is advanced by a server-side loop; the merge lane merges green updates (DEP-LOOP-1).",
+      "support": "supported",
+      "how": [
+        ".github/dependabot.yml",
+        "seed/.github/dependabot.yml"
+      ],
+      "tests": [
+        {
+          "file": "tests/foundation/test_open_standards.py",
+          "name": "test_dependabot_covers_every_ecosystem"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Dependabot options reference",
+          "url": "https://docs.github.com/en/code-security/dependabot/working-with-dependabot/dependabot-options-reference",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "openssf-scorecard",
+      "name": "OpenSSF Scorecard",
+      "body": "OpenSSF (Linux Foundation)",
+      "status": "stable",
+      "tracked": "scorecard-action v2.4.4",
+      "why": "An outside, standard measure of supply-chain posture; each check under the floor becomes a queue item whose closing probe is the next weekly reading.",
+      "support": "supported",
+      "how": [
+        ".github/workflows/supply-chain.yml",
+        "foundation/supplychain.py",
+        "doctrine/scorecard.json"
+      ],
+      "tests": [
+        {
+          "file": "tests/foundation/test_open_standards.py",
+          "name": "test_supply_chain_loop_files_and_closes"
+        },
+        {
+          "file": "tests/foundation/test_open_standards.py",
+          "name": "test_supply_chain_workflow_reads_both_standards"
+        }
+      ],
+      "sources": [
+        {
+          "title": "OpenSSF Scorecard",
+          "url": "https://github.com/ossf/scorecard",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "spdx-sbom",
+      "name": "SPDX 2.3 SBOM from the dependency graph",
+      "body": "Linux Foundation (ISO/IEC 5962)",
+      "status": "stable",
+      "tracked": "SPDX-2.3 via GitHub dependency graph export",
+      "why": "GitHub's own view of the dependencies, read weekly against the licence policy in doctrine/dependency-licences.json; complements the CycloneDX SBOM generated from the registers.",
+      "support": "supported",
+      "how": [
+        ".github/workflows/supply-chain.yml",
+        "foundation/supplychain.py"
+      ],
+      "tests": [
+        {
+          "file": "tests/foundation/test_open_standards.py",
+          "name": "test_supply_chain_loop_files_and_closes"
+        }
+      ],
+      "sources": [
+        {
+          "title": "SPDX 2.3",
+          "url": "https://spdx.github.io/spdx-spec/v2.3/",
+          "published": null,
+          "accessed": "2026-11-25"
+        },
+        {
+          "title": "Export an SBOM from the dependency graph",
+          "url": "https://docs.github.com/en/rest/dependency-graph/sboms",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "json-feed",
+      "name": "JSON Feed 1.1 and RSS 2.0",
+      "body": "jsonfeed.org; RSS Advisory Board",
+      "status": "stable",
+      "tracked": "JSON Feed 1.1",
+      "why": "What a system ships is published as feeds any reader or aggregator consumes; the stickiness loop measures freshness from the same feed.",
+      "support": "supported",
+      "how": [
+        "workers/core/feed/index.js",
+        "workers/core/stickiness/index.js"
+      ],
+      "tests": [
+        {
+          "file": "workers/core/feed/feed.test.js",
+          "name": "feed renders escaped RSS and JSON Feed from described changes"
+        }
+      ],
+      "sources": [
+        {
+          "title": "JSON Feed 1.1",
+          "url": "https://www.jsonfeed.org/version/1.1/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "schema-org-jsonld",
+      "name": "schema.org vocabulary in JSON-LD",
+      "body": "schema.org (W3C community group)",
+      "status": "stable",
+      "tracked": "schema.org current release",
+      "why": "Pages describe themselves in the vocabulary search engines and agents read; the knowledge graph should speak the same vocabulary.",
+      "support": "partial",
+      "how": [
+        "site/worker.js",
+        "site/research.js"
+      ],
+      "tests": [
+        {
+          "file": "tests/foundation/test_open_standards.py",
+          "name": "test_site_pages_carry_schema_org_jsonld"
+        }
+      ],
+      "gap": "The knowledge graph (/api/graph) is not yet served as JSON-LD with schema.org types; tracked by STD-7.",
+      "sources": [
+        {
+          "title": "schema.org",
+          "url": "https://schema.org/docs/documents.html",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "citation-cff",
+      "name": "Citation File Format",
+      "body": "Citation File Format project",
+      "status": "stable",
+      "tracked": "CFF 1.2.0",
+      "why": "Papers and software are cited the way GitHub, Zenodo and reference managers read them.",
+      "support": "supported",
+      "how": [
+        "CITATION.cff"
+      ],
+      "tests": [
+        {
+          "file": "tests/foundation/test_open_standards.py",
+          "name": "test_citation_cff_parses"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Citation File Format 1.2.0",
+          "url": "https://citation-file-format.github.io/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "schema-org-kg",
+      "name": "Knowledge graph served as JSON-LD (schema.org)",
+      "body": "W3C / schema.org",
+      "status": "stable",
+      "tracked": "JSON-LD 1.1",
+      "why": "Every system's /api/graph readable by any linked-data tool, not only by our own pages.",
+      "support": "planned",
+      "tracked_by": "STD-7: executor item in docs/issues/STD-7.json",
+      "acl": "seed/worker/src/datagraph.js",
+      "sources": [
+        {
+          "title": "JSON-LD 1.1",
+          "url": "https://www.w3.org/TR/json-ld11/",
+          "published": "2020-07-16",
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "openslo",
+      "name": "OpenSLO definitions for loop clocks",
+      "body": "OpenSLO project",
+      "status": "stable",
+      "tracked": "OpenSLO v1",
+      "why": "Each clock's expected interval and the liveness targets become SLO objects any SLO tool can evaluate, generated from doctrine/clocks.json.",
+      "support": "planned",
+      "tracked_by": "STD-8: executor item in docs/issues/STD-8.json",
+      "acl": "foundation/clock.py",
+      "sources": [
+        {
+          "title": "OpenSLO specification",
+          "url": "https://github.com/OpenSLO/OpenSLO",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "reusable-workflows",
+      "name": "Reusable GitHub Actions workflows shared by every tenant",
+      "body": "GitHub",
+      "status": "stable",
+      "tracked": "workflow_call",
+      "why": "Tenants call the platform's checks, deploy and supply-chain workflows instead of carrying copies that drift.",
+      "support": "planned",
+      "tracked_by": "STD-9: executor item in docs/issues/STD-9.json",
+      "acl": "seed/.github/workflows/bootstrap.yml",
+      "sources": [
+        {
+          "title": "Reusing workflows",
+          "url": "https://docs.github.com/en/actions/sharing-automations/reusing-workflows",
+          "published": null,
+          "accessed": "2026-11-25"
         }
       ]
     }

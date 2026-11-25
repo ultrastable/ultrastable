@@ -1,0 +1,1110 @@
+{
+  "$schema": "https://json.schemastore.org/schema-catalog.json",
+  "version": 1,
+  "schemas": [
+    {
+      "name": "admission.json",
+      "description": "Contract for doctrine/admission.json",
+      "fileMatch": [
+        "doctrine/admission.json"
+      ],
+      "url": "admission.schema.json"
+    },
+    {
+      "name": "agent-budget.json",
+      "description": "Contract for doctrine/agent-budget.json",
+      "fileMatch": [
+        "doctrine/agent-budget.json"
+      ],
+      "url": "agent-budget.schema.json"
+    },
+    {
+      "name": "agent-standards.json",
+      "description": "Contract for doctrine/agent-standards.json",
+      "fileMatch": [
+        "doctrine/agent-standards.json"
+      ],
+      "url": "agent-standards.schema.json"
+    },
+    {
+      "name": "backup.json",
+      "description": "Contract for doctrine/backup.json",
+      "fileMatch": [
+        "doctrine/backup.json"
+      ],
+      "url": "backup.schema.json"
+    },
+    {
+      "name": "balance.json",
+      "description": "Contract for doctrine/balance.json",
+      "fileMatch": [
+        "doctrine/balance.json"
+      ],
+      "url": "balance.schema.json"
+    },
+    {
+      "name": "blindspots.json",
+      "description": "Contract for doctrine/blindspots.json",
+      "fileMatch": [
+        "doctrine/blindspots.json"
+      ],
+      "url": "blindspots.schema.json"
+    },
+    {
+      "name": "bootproof.json",
+      "description": "Contract for doctrine/bootproof.json",
+      "fileMatch": [
+        "doctrine/bootproof.json"
+      ],
+      "url": "bootproof.schema.json"
+    },
+    {
+      "name": "boundary.json",
+      "description": "Contract for doctrine/boundary.json",
+      "fileMatch": [
+        "doctrine/boundary.json"
+      ],
+      "url": "boundary.schema.json"
+    },
+    {
+      "name": "branchsweep.json",
+      "description": "Contract for doctrine/branchsweep.json",
+      "fileMatch": [
+        "doctrine/branchsweep.json"
+      ],
+      "url": "branchsweep.schema.json"
+    },
+    {
+      "name": "cf-posture.json",
+      "description": "Contract for doctrine/cf-posture.json",
+      "fileMatch": [
+        "doctrine/cf-posture.json"
+      ],
+      "url": "cf-posture.schema.json"
+    },
+    {
+      "name": "change-methods.json",
+      "description": "Contract for doctrine/change-methods.json",
+      "fileMatch": [
+        "doctrine/change-methods.json"
+      ],
+      "url": "change-methods.schema.json"
+    },
+    {
+      "name": "ciwatch.json",
+      "description": "Contract for doctrine/ciwatch.json",
+      "fileMatch": [
+        "doctrine/ciwatch.json"
+      ],
+      "url": "ciwatch.schema.json"
+    },
+    {
+      "name": "claim-code.json",
+      "description": "Contract for doctrine/claim-code.json",
+      "fileMatch": [
+        "doctrine/claim-code.json"
+      ],
+      "url": "claim-code.schema.json"
+    },
+    {
+      "name": "claims.json",
+      "description": "Contract for doctrine/claims.json",
+      "fileMatch": [
+        "doctrine/claims.json"
+      ],
+      "url": "claims.schema.json"
+    },
+    {
+      "name": "clocks.json",
+      "description": "Contract for doctrine/clocks.json",
+      "fileMatch": [
+        "doctrine/clocks.json"
+      ],
+      "url": "clocks.schema.json"
+    },
+    {
+      "name": "closed-loop.json",
+      "description": "Contract for doctrine/closed-loop.json",
+      "fileMatch": [
+        "doctrine/closed-loop.json"
+      ],
+      "url": "closed-loop.schema.json"
+    },
+    {
+      "name": "code-agents.json",
+      "description": "Contract for doctrine/code-agents.json",
+      "fileMatch": [
+        "doctrine/code-agents.json"
+      ],
+      "url": "code-agents.schema.json"
+    },
+    {
+      "name": "coldstart.json",
+      "description": "Contract for doctrine/coldstart.json",
+      "fileMatch": [
+        "doctrine/coldstart.json"
+      ],
+      "url": "coldstart.schema.json"
+    },
+    {
+      "name": "collisions.json",
+      "description": "Contract for doctrine/collisions.json",
+      "fileMatch": [
+        "doctrine/collisions.json"
+      ],
+      "url": "collisions.schema.json"
+    },
+    {
+      "name": "compat-dates.json",
+      "description": "Contract for doctrine/compat-dates.json",
+      "fileMatch": [
+        "doctrine/compat-dates.json"
+      ],
+      "url": "compat-dates.schema.json"
+    },
+    {
+      "name": "competitors.json",
+      "description": "Contract for doctrine/competitors.json",
+      "fileMatch": [
+        "doctrine/competitors.json"
+      ],
+      "url": "competitors.schema.json"
+    },
+    {
+      "name": "components.json",
+      "description": "Contract for doctrine/components.json",
+      "fileMatch": [
+        "doctrine/components.json"
+      ],
+      "url": "components.schema.json"
+    },
+    {
+      "name": "consumers.json",
+      "description": "Contract for doctrine/consumers.json",
+      "fileMatch": [
+        "doctrine/consumers.json"
+      ],
+      "url": "consumers.schema.json"
+    },
+    {
+      "name": "cost.json",
+      "description": "Contract for doctrine/cost.json",
+      "fileMatch": [
+        "doctrine/cost.json"
+      ],
+      "url": "cost.schema.json"
+    },
+    {
+      "name": "credwatch.json",
+      "description": "Contract for doctrine/credwatch.json",
+      "fileMatch": [
+        "doctrine/credwatch.json"
+      ],
+      "url": "credwatch.schema.json"
+    },
+    {
+      "name": "criticality.json",
+      "description": "Contract for doctrine/criticality.json",
+      "fileMatch": [
+        "doctrine/criticality.json"
+      ],
+      "url": "criticality.schema.json"
+    },
+    {
+      "name": "crosswalk.json",
+      "description": "Contract for doctrine/crosswalk.json",
+      "fileMatch": [
+        "doctrine/crosswalk.json"
+      ],
+      "url": "crosswalk.schema.json"
+    },
+    {
+      "name": "decision-ledger.json",
+      "description": "Contract for doctrine/decision-ledger.json",
+      "fileMatch": [
+        "doctrine/decision-ledger.json"
+      ],
+      "url": "decision-ledger.schema.json"
+    },
+    {
+      "name": "decisions.json",
+      "description": "Contract for doctrine/decisions.json",
+      "fileMatch": [
+        "doctrine/decisions.json"
+      ],
+      "url": "decisions.schema.json"
+    },
+    {
+      "name": "dependency-licences.json",
+      "description": "Contract for doctrine/dependency-licences.json",
+      "fileMatch": [
+        "doctrine/dependency-licences.json"
+      ],
+      "url": "dependency-licences.schema.json"
+    },
+    {
+      "name": "deprot.json",
+      "description": "Contract for doctrine/deprot.json",
+      "fileMatch": [
+        "doctrine/deprot.json"
+      ],
+      "url": "deprot.schema.json"
+    },
+    {
+      "name": "design-baseline.json",
+      "description": "Contract for doctrine/design-baseline.json",
+      "fileMatch": [
+        "doctrine/design-baseline.json"
+      ],
+      "url": "design-baseline.schema.json"
+    },
+    {
+      "name": "design-experiments.json",
+      "description": "Contract for doctrine/design-experiments.json",
+      "fileMatch": [
+        "doctrine/design-experiments.json"
+      ],
+      "url": "design-experiments.schema.json"
+    },
+    {
+      "name": "design.json",
+      "description": "Contract for doctrine/design.json",
+      "fileMatch": [
+        "doctrine/design.json"
+      ],
+      "url": "design.schema.json"
+    },
+    {
+      "name": "detectors.json",
+      "description": "Contract for doctrine/detectors.json",
+      "fileMatch": [
+        "doctrine/detectors.json"
+      ],
+      "url": "detectors.schema.json"
+    },
+    {
+      "name": "directive.json",
+      "description": "Contract for doctrine/directive.json",
+      "fileMatch": [
+        "doctrine/directive.json"
+      ],
+      "url": "directive.schema.json"
+    },
+    {
+      "name": "dispose.json",
+      "description": "Contract for doctrine/dispose.json",
+      "fileMatch": [
+        "doctrine/dispose.json"
+      ],
+      "url": "dispose.schema.json"
+    },
+    {
+      "name": "doc-consumers.json",
+      "description": "Contract for doctrine/doc-consumers.json",
+      "fileMatch": [
+        "doctrine/doc-consumers.json"
+      ],
+      "url": "doc-consumers.schema.json"
+    },
+    {
+      "name": "driftguard.json",
+      "description": "Contract for doctrine/driftguard.json",
+      "fileMatch": [
+        "doctrine/driftguard.json"
+      ],
+      "url": "driftguard.schema.json"
+    },
+    {
+      "name": "durable-facts.json",
+      "description": "Contract for doctrine/durable-facts.json",
+      "fileMatch": [
+        "doctrine/durable-facts.json"
+      ],
+      "url": "durable-facts.schema.json"
+    },
+    {
+      "name": "fleet.json",
+      "description": "Contract for doctrine/fleet.json",
+      "fileMatch": [
+        "doctrine/fleet.json"
+      ],
+      "url": "fleet.schema.json"
+    },
+    {
+      "name": "flows-external.json",
+      "description": "Contract for doctrine/flows-external.json",
+      "fileMatch": [
+        "doctrine/flows-external.json"
+      ],
+      "url": "flows-external.schema.json"
+    },
+    {
+      "name": "flows.json",
+      "description": "Contract for doctrine/flows.json",
+      "fileMatch": [
+        "doctrine/flows.json"
+      ],
+      "url": "flows.schema.json"
+    },
+    {
+      "name": "full-stack.json",
+      "description": "Contract for doctrine/full-stack.json",
+      "fileMatch": [
+        "doctrine/full-stack.json"
+      ],
+      "url": "full-stack.schema.json"
+    },
+    {
+      "name": "glossary.json",
+      "description": "Contract for doctrine/glossary.json",
+      "fileMatch": [
+        "doctrine/glossary.json"
+      ],
+      "url": "glossary.schema.json"
+    },
+    {
+      "name": "goals-baseline.json",
+      "description": "Contract for doctrine/goals-baseline.json",
+      "fileMatch": [
+        "doctrine/goals-baseline.json"
+      ],
+      "url": "goals-baseline.schema.json"
+    },
+    {
+      "name": "growth.json",
+      "description": "Contract for doctrine/growth.json",
+      "fileMatch": [
+        "doctrine/growth.json"
+      ],
+      "url": "growth.schema.json"
+    },
+    {
+      "name": "idea-bank.json",
+      "description": "Contract for doctrine/idea-bank.json",
+      "fileMatch": [
+        "doctrine/idea-bank.json"
+      ],
+      "url": "idea-bank.schema.json"
+    },
+    {
+      "name": "improve.json",
+      "description": "Contract for doctrine/improve.json",
+      "fileMatch": [
+        "doctrine/improve.json"
+      ],
+      "url": "improve.schema.json"
+    },
+    {
+      "name": "insight.json",
+      "description": "Contract for doctrine/insight.json",
+      "fileMatch": [
+        "doctrine/insight.json"
+      ],
+      "url": "insight.schema.json"
+    },
+    {
+      "name": "intent-yield.json",
+      "description": "Contract for doctrine/intent-yield.json",
+      "fileMatch": [
+        "doctrine/intent-yield.json"
+      ],
+      "url": "intent-yield.schema.json"
+    },
+    {
+      "name": "kernel.json",
+      "description": "Contract for doctrine/kernel.json",
+      "fileMatch": [
+        "doctrine/kernel.json"
+      ],
+      "url": "kernel.schema.json"
+    },
+    {
+      "name": "knobs.json",
+      "description": "Contract for doctrine/knobs.json",
+      "fileMatch": [
+        "doctrine/knobs.json"
+      ],
+      "url": "knobs.schema.json"
+    },
+    {
+      "name": "knowledge-graph.json",
+      "description": "Contract for doctrine/knowledge-graph.json",
+      "fileMatch": [
+        "doctrine/knowledge-graph.json"
+      ],
+      "url": "knowledge-graph.schema.json"
+    },
+    {
+      "name": "lessons.json",
+      "description": "Contract for doctrine/lessons.json",
+      "fileMatch": [
+        "doctrine/lessons.json"
+      ],
+      "url": "lessons.schema.json"
+    },
+    {
+      "name": "lineage.json",
+      "description": "Contract for doctrine/lineage.json",
+      "fileMatch": [
+        "doctrine/lineage.json"
+      ],
+      "url": "lineage.schema.json"
+    },
+    {
+      "name": "loop-ownership.json",
+      "description": "Contract for doctrine/loop-ownership.json",
+      "fileMatch": [
+        "doctrine/loop-ownership.json"
+      ],
+      "url": "loop-ownership.schema.json"
+    },
+    {
+      "name": "market-evidence.json",
+      "description": "Contract for doctrine/market-evidence.json",
+      "fileMatch": [
+        "doctrine/market-evidence.json"
+      ],
+      "url": "market-evidence.schema.json"
+    },
+    {
+      "name": "market.json",
+      "description": "Contract for doctrine/market.json",
+      "fileMatch": [
+        "doctrine/market.json"
+      ],
+      "url": "market.schema.json"
+    },
+    {
+      "name": "meta-loop.json",
+      "description": "Contract for doctrine/meta-loop.json",
+      "fileMatch": [
+        "doctrine/meta-loop.json"
+      ],
+      "url": "meta-loop.schema.json"
+    },
+    {
+      "name": "metric-loop.json",
+      "description": "Contract for doctrine/metric-loop.json",
+      "fileMatch": [
+        "doctrine/metric-loop.json"
+      ],
+      "url": "metric-loop.schema.json"
+    },
+    {
+      "name": "models.json",
+      "description": "Contract for doctrine/models.json",
+      "fileMatch": [
+        "doctrine/models.json"
+      ],
+      "url": "models.schema.json"
+    },
+    {
+      "name": "no-swallow.json",
+      "description": "Contract for doctrine/no-swallow.json",
+      "fileMatch": [
+        "doctrine/no-swallow.json"
+      ],
+      "url": "no-swallow.schema.json"
+    },
+    {
+      "name": "open-loops.json",
+      "description": "Contract for doctrine/open-loops.json",
+      "fileMatch": [
+        "doctrine/open-loops.json"
+      ],
+      "url": "open-loops.schema.json"
+    },
+    {
+      "name": "open-standards-baseline.json",
+      "description": "Contract for doctrine/open-standards-baseline.json",
+      "fileMatch": [
+        "doctrine/open-standards-baseline.json"
+      ],
+      "url": "open-standards-baseline.schema.json"
+    },
+    {
+      "name": "open-standards.json",
+      "description": "Contract for doctrine/open-standards.json",
+      "fileMatch": [
+        "doctrine/open-standards.json"
+      ],
+      "url": "open-standards.schema.json"
+    },
+    {
+      "name": "orphans-baseline.json",
+      "description": "Contract for doctrine/orphans-baseline.json",
+      "fileMatch": [
+        "doctrine/orphans-baseline.json"
+      ],
+      "url": "orphans-baseline.schema.json"
+    },
+    {
+      "name": "orphans.json",
+      "description": "Contract for doctrine/orphans.json",
+      "fileMatch": [
+        "doctrine/orphans.json"
+      ],
+      "url": "orphans.schema.json"
+    },
+    {
+      "name": "pathfinder.json",
+      "description": "Contract for doctrine/pathfinder.json",
+      "fileMatch": [
+        "doctrine/pathfinder.json"
+      ],
+      "url": "pathfinder.schema.json"
+    },
+    {
+      "name": "pilot-model.json",
+      "description": "Contract for doctrine/pilot-model.json",
+      "fileMatch": [
+        "doctrine/pilot-model.json"
+      ],
+      "url": "pilot-model.schema.json"
+    },
+    {
+      "name": "pilot-offer.json",
+      "description": "Contract for doctrine/pilot-offer.json",
+      "fileMatch": [
+        "doctrine/pilot-offer.json"
+      ],
+      "url": "pilot-offer.schema.json"
+    },
+    {
+      "name": "pins-baseline.json",
+      "description": "Contract for doctrine/pins-baseline.json",
+      "fileMatch": [
+        "doctrine/pins-baseline.json"
+      ],
+      "url": "pins-baseline.schema.json"
+    },
+    {
+      "name": "point-and-click.json",
+      "description": "Contract for doctrine/point-and-click.json",
+      "fileMatch": [
+        "doctrine/point-and-click.json"
+      ],
+      "url": "point-and-click.schema.json"
+    },
+    {
+      "name": "positioning.json",
+      "description": "Contract for doctrine/positioning.json",
+      "fileMatch": [
+        "doctrine/positioning.json"
+      ],
+      "url": "positioning.schema.json"
+    },
+    {
+      "name": "priorities.json",
+      "description": "Contract for doctrine/priorities.json",
+      "fileMatch": [
+        "doctrine/priorities.json"
+      ],
+      "url": "priorities.schema.json"
+    },
+    {
+      "name": "promotion.json",
+      "description": "Contract for doctrine/promotion.json",
+      "fileMatch": [
+        "doctrine/promotion.json"
+      ],
+      "url": "promotion.schema.json"
+    },
+    {
+      "name": "provenance.json",
+      "description": "Contract for doctrine/provenance.json",
+      "fileMatch": [
+        "doctrine/provenance.json"
+      ],
+      "url": "provenance.schema.json"
+    },
+    {
+      "name": "providers.json",
+      "description": "Contract for doctrine/providers.json",
+      "fileMatch": [
+        "doctrine/providers.json"
+      ],
+      "url": "providers.schema.json"
+    },
+    {
+      "name": "publication.json",
+      "description": "Contract for doctrine/publication.json",
+      "fileMatch": [
+        "doctrine/publication.json"
+      ],
+      "url": "publication.schema.json"
+    },
+    {
+      "name": "qnfo-fleet.json",
+      "description": "Contract for doctrine/qnfo-fleet.json",
+      "fileMatch": [
+        "doctrine/qnfo-fleet.json"
+      ],
+      "url": "qnfo-fleet.schema.json"
+    },
+    {
+      "name": "qnfo-port.json",
+      "description": "Contract for doctrine/qnfo-port.json",
+      "fileMatch": [
+        "doctrine/qnfo-port.json"
+      ],
+      "url": "qnfo-port.schema.json"
+    },
+    {
+      "name": "reach.json",
+      "description": "Contract for doctrine/reach.json",
+      "fileMatch": [
+        "doctrine/reach.json"
+      ],
+      "url": "reach.schema.json"
+    },
+    {
+      "name": "readmes.json",
+      "description": "Contract for doctrine/readmes.json",
+      "fileMatch": [
+        "doctrine/readmes.json"
+      ],
+      "url": "readmes.schema.json"
+    },
+    {
+      "name": "redmain.json",
+      "description": "Contract for doctrine/redmain.json",
+      "fileMatch": [
+        "doctrine/redmain.json"
+      ],
+      "url": "redmain.schema.json"
+    },
+    {
+      "name": "registers.json",
+      "description": "Contract for doctrine/registers.json",
+      "fileMatch": [
+        "doctrine/registers.json"
+      ],
+      "url": "registers.schema.json"
+    },
+    {
+      "name": "research.json",
+      "description": "Contract for doctrine/research.json",
+      "fileMatch": [
+        "doctrine/research.json"
+      ],
+      "url": "research.schema.json"
+    },
+    {
+      "name": "resilience.json",
+      "description": "Contract for doctrine/resilience.json",
+      "fileMatch": [
+        "doctrine/resilience.json"
+      ],
+      "url": "resilience.schema.json"
+    },
+    {
+      "name": "rootcauses.json",
+      "description": "Contract for doctrine/rootcauses.json",
+      "fileMatch": [
+        "doctrine/rootcauses.json"
+      ],
+      "url": "rootcauses.schema.json"
+    },
+    {
+      "name": "rules-baseline.json",
+      "description": "Contract for doctrine/rules-baseline.json",
+      "fileMatch": [
+        "doctrine/rules-baseline.json"
+      ],
+      "url": "rules-baseline.schema.json"
+    },
+    {
+      "name": "rules.json",
+      "description": "Contract for doctrine/rules.json",
+      "fileMatch": [
+        "doctrine/rules.json"
+      ],
+      "url": "rules.schema.json"
+    },
+    {
+      "name": "runway.json",
+      "description": "Contract for doctrine/runway.json",
+      "fileMatch": [
+        "doctrine/runway.json"
+      ],
+      "url": "runway.schema.json"
+    },
+    {
+      "name": "scorecard.json",
+      "description": "Contract for doctrine/scorecard.json",
+      "fileMatch": [
+        "doctrine/scorecard.json"
+      ],
+      "url": "scorecard.schema.json"
+    },
+    {
+      "name": "scout.json",
+      "description": "Contract for doctrine/scout.json",
+      "fileMatch": [
+        "doctrine/scout.json"
+      ],
+      "url": "scout.schema.json"
+    },
+    {
+      "name": "seed-deploys.json",
+      "description": "Contract for doctrine/seed-deploys.json",
+      "fileMatch": [
+        "doctrine/seed-deploys.json"
+      ],
+      "url": "seed-deploys.schema.json"
+    },
+    {
+      "name": "seed-lifecycle.json",
+      "description": "Contract for doctrine/seed-lifecycle.json",
+      "fileMatch": [
+        "doctrine/seed-lifecycle.json"
+      ],
+      "url": "seed-lifecycle.schema.json"
+    },
+    {
+      "name": "self-baseline.json",
+      "description": "Contract for doctrine/self-baseline.json",
+      "fileMatch": [
+        "doctrine/self-baseline.json"
+      ],
+      "url": "self-baseline.schema.json"
+    },
+    {
+      "name": "self-improvement.json",
+      "description": "Contract for doctrine/self-improvement.json",
+      "fileMatch": [
+        "doctrine/self-improvement.json"
+      ],
+      "url": "self-improvement.schema.json"
+    },
+    {
+      "name": "selfcode.json",
+      "description": "Contract for doctrine/selfcode.json",
+      "fileMatch": [
+        "doctrine/selfcode.json"
+      ],
+      "url": "selfcode.schema.json"
+    },
+    {
+      "name": "selftest.json",
+      "description": "Contract for doctrine/selftest.json",
+      "fileMatch": [
+        "doctrine/selftest.json"
+      ],
+      "url": "selftest.schema.json"
+    },
+    {
+      "name": "server-side.json",
+      "description": "Contract for doctrine/server-side.json",
+      "fileMatch": [
+        "doctrine/server-side.json"
+      ],
+      "url": "server-side.schema.json"
+    },
+    {
+      "name": "sessions.json",
+      "description": "Contract for doctrine/sessions.json",
+      "fileMatch": [
+        "doctrine/sessions.json"
+      ],
+      "url": "sessions.schema.json"
+    },
+    {
+      "name": "silent-failures.json",
+      "description": "Contract for doctrine/silent-failures.json",
+      "fileMatch": [
+        "doctrine/silent-failures.json"
+      ],
+      "url": "silent-failures.schema.json"
+    },
+    {
+      "name": "single-account.json",
+      "description": "Contract for doctrine/single-account.json",
+      "fileMatch": [
+        "doctrine/single-account.json"
+      ],
+      "url": "single-account.schema.json"
+    },
+    {
+      "name": "sla.json",
+      "description": "Contract for doctrine/sla.json",
+      "fileMatch": [
+        "doctrine/sla.json"
+      ],
+      "url": "sla.schema.json"
+    },
+    {
+      "name": "spec-ids.json",
+      "description": "Contract for doctrine/spec-ids.json",
+      "fileMatch": [
+        "doctrine/spec-ids.json"
+      ],
+      "url": "spec-ids.schema.json"
+    },
+    {
+      "name": "specgate.json",
+      "description": "Contract for doctrine/specgate.json",
+      "fileMatch": [
+        "doctrine/specgate.json"
+      ],
+      "url": "specgate.schema.json"
+    },
+    {
+      "name": "spinoff-ideas.json",
+      "description": "Contract for doctrine/spinoff-ideas.json",
+      "fileMatch": [
+        "doctrine/spinoff-ideas.json"
+      ],
+      "url": "spinoff-ideas.schema.json"
+    },
+    {
+      "name": "spinoff.json",
+      "description": "Contract for doctrine/spinoff.json",
+      "fileMatch": [
+        "doctrine/spinoff.json"
+      ],
+      "url": "spinoff.schema.json"
+    },
+    {
+      "name": "stakeholders.json",
+      "description": "Contract for doctrine/stakeholders.json",
+      "fileMatch": [
+        "doctrine/stakeholders.json"
+      ],
+      "url": "stakeholders.schema.json"
+    },
+    {
+      "name": "standing-order-baseline.json",
+      "description": "Contract for doctrine/standing-order-baseline.json",
+      "fileMatch": [
+        "doctrine/standing-order-baseline.json"
+      ],
+      "url": "standing-order-baseline.schema.json"
+    },
+    {
+      "name": "standing-order.json",
+      "description": "Contract for doctrine/standing-order.json",
+      "fileMatch": [
+        "doctrine/standing-order.json"
+      ],
+      "url": "standing-order.schema.json"
+    },
+    {
+      "name": "static-content.json",
+      "description": "Contract for doctrine/static-content.json",
+      "fileMatch": [
+        "doctrine/static-content.json"
+      ],
+      "url": "static-content.schema.json"
+    },
+    {
+      "name": "strays.json",
+      "description": "Contract for doctrine/strays.json",
+      "fileMatch": [
+        "doctrine/strays.json"
+      ],
+      "url": "strays.schema.json"
+    },
+    {
+      "name": "substance-vectors.json",
+      "description": "Contract for doctrine/substance-vectors.json",
+      "fileMatch": [
+        "doctrine/substance-vectors.json"
+      ],
+      "url": "substance-vectors.schema.json"
+    },
+    {
+      "name": "substance.json",
+      "description": "Contract for doctrine/substance.json",
+      "fileMatch": [
+        "doctrine/substance.json"
+      ],
+      "url": "substance.schema.json"
+    },
+    {
+      "name": "supply-chain.json",
+      "description": "Contract for doctrine/supply-chain.json",
+      "fileMatch": [
+        "doctrine/supply-chain.json"
+      ],
+      "url": "supply-chain.schema.json"
+    },
+    {
+      "name": "system.json",
+      "description": "Contract for doctrine/system.json",
+      "fileMatch": [
+        "doctrine/system.json"
+      ],
+      "url": "system.schema.json"
+    },
+    {
+      "name": "team.json",
+      "description": "Contract for doctrine/team.json",
+      "fileMatch": [
+        "doctrine/team.json"
+      ],
+      "url": "team.schema.json"
+    },
+    {
+      "name": "template-boundary.json",
+      "description": "Contract for doctrine/template-boundary.json",
+      "fileMatch": [
+        "doctrine/template-boundary.json"
+      ],
+      "url": "template-boundary.schema.json"
+    },
+    {
+      "name": "temporal.json",
+      "description": "Contract for doctrine/temporal.json",
+      "fileMatch": [
+        "doctrine/temporal.json"
+      ],
+      "url": "temporal.schema.json"
+    },
+    {
+      "name": "tenant-controls.json",
+      "description": "Contract for doctrine/tenant-controls.json",
+      "fileMatch": [
+        "doctrine/tenant-controls.json"
+      ],
+      "url": "tenant-controls.schema.json"
+    },
+    {
+      "name": "tenant-promotion.json",
+      "description": "Contract for doctrine/tenant-promotion.json",
+      "fileMatch": [
+        "doctrine/tenant-promotion.json"
+      ],
+      "url": "tenant-promotion.schema.json"
+    },
+    {
+      "name": "tenant-repos.json",
+      "description": "Contract for doctrine/tenant-repos.json",
+      "fileMatch": [
+        "doctrine/tenant-repos.json"
+      ],
+      "url": "tenant-repos.schema.json"
+    },
+    {
+      "name": "tenant-storage.json",
+      "description": "Contract for doctrine/tenant-storage.json",
+      "fileMatch": [
+        "doctrine/tenant-storage.json"
+      ],
+      "url": "tenant-storage.schema.json"
+    },
+    {
+      "name": "tenant-sync.json",
+      "description": "Contract for doctrine/tenant-sync.json",
+      "fileMatch": [
+        "doctrine/tenant-sync.json"
+      ],
+      "url": "tenant-sync.schema.json"
+    },
+    {
+      "name": "thought.json",
+      "description": "Contract for doctrine/thought.json",
+      "fileMatch": [
+        "doctrine/thought.json"
+      ],
+      "url": "thought.schema.json"
+    },
+    {
+      "name": "thread-residuals.json",
+      "description": "Contract for doctrine/thread-residuals.json",
+      "fileMatch": [
+        "doctrine/thread-residuals.json"
+      ],
+      "url": "thread-residuals.schema.json"
+    },
+    {
+      "name": "topology.json",
+      "description": "Contract for doctrine/topology.json",
+      "fileMatch": [
+        "doctrine/topology.json"
+      ],
+      "url": "topology.schema.json"
+    },
+    {
+      "name": "triggers.json",
+      "description": "Contract for doctrine/triggers.json",
+      "fileMatch": [
+        "doctrine/triggers.json"
+      ],
+      "url": "triggers.schema.json"
+    },
+    {
+      "name": "uiux.json",
+      "description": "Contract for doctrine/uiux.json",
+      "fileMatch": [
+        "doctrine/uiux.json"
+      ],
+      "url": "uiux.schema.json"
+    },
+    {
+      "name": "ultrastability.json",
+      "description": "Contract for doctrine/ultrastability.json",
+      "fileMatch": [
+        "doctrine/ultrastability.json"
+      ],
+      "url": "ultrastability.schema.json"
+    },
+    {
+      "name": "unattended.json",
+      "description": "Contract for doctrine/unattended.json",
+      "fileMatch": [
+        "doctrine/unattended.json"
+      ],
+      "url": "unattended.schema.json"
+    },
+    {
+      "name": "unknowns.json",
+      "description": "Contract for doctrine/unknowns.json",
+      "fileMatch": [
+        "doctrine/unknowns.json"
+      ],
+      "url": "unknowns.schema.json"
+    },
+    {
+      "name": "user-backend.json",
+      "description": "Contract for doctrine/user-backend.json",
+      "fileMatch": [
+        "doctrine/user-backend.json"
+      ],
+      "url": "user-backend.schema.json"
+    },
+    {
+      "name": "user-path.json",
+      "description": "Contract for doctrine/user-path.json",
+      "fileMatch": [
+        "doctrine/user-path.json"
+      ],
+      "url": "user-path.schema.json"
+    },
+    {
+      "name": "verification.json",
+      "description": "Contract for doctrine/verification.json",
+      "fileMatch": [
+        "doctrine/verification.json"
+      ],
+      "url": "verification.schema.json"
+    },
+    {
+      "name": "yearfail.json",
+      "description": "Contract for doctrine/yearfail.json",
+      "fileMatch": [
+        "doctrine/yearfail.json"
+      ],
+      "url": "yearfail.schema.json"
+    },
+    {
+      "name": "yearsim.json",
+      "description": "Contract for doctrine/yearsim.json",
+      "fileMatch": [
+        "doctrine/yearsim.json"
+      ],
+      "url": "yearsim.schema.json"
+    }
+  ]
+}

@@ -2,7 +2,7 @@
 // Cron fires runTick; GET /health shows the last tick's four-line report.
 // Standard issue: first-party web analytics (analytics/analytics.js): /a.js beacon, /a/e collector, GET /api/analytics (bearer ANALYTICS_TOKEN).
 import { paced } from './pace.js';
-import { discoverRoute, heartbeat as directoryHeartbeat } from './discover.js';  // DISCOVER-1
+import { discoverRoute, heartbeat as directoryHeartbeat, footerHtml } from './discover.js';  // DISCOVER-1
 import { withKnobs, readGoals, registerTenant, reportReadings, knobValues } from './goals.js';  // GOALS-1
 import { tune } from './roi.js';  // BOUNDARIES-1
 import { runTick, lastTickForHealth, METRICS, ensureItem } from './tick.js';
@@ -114,7 +114,7 @@ export default {
     const cut = await decide(env.DB, env, { githubOk }).catch(e => ({ run: (env.SLOT || 'primary') !== 'standby', notes: ['cutover check failed: ' + String(e && e.message).slice(0, 160)] }));
     await beat(env.DB, 'cutover', async () => ({ run: cut.run, slot: cut.slot, epoch: cut.epoch, promoted: Boolean(cut.promoted), notes: cut.notes })).catch(e => console.error('cutover beat', e && e.message));
     if (!cut.run) { if (env.SLOT === 'standby' || cut.slot !== 'primary') ctx.waitUntil(refreshDue(env.DB, env).catch(() => null)); return; }
-    ctx.waitUntil(directoryHeartbeat(env, config).then(r => { if (r.sent) console.log('directory heartbeat', r.status); }).catch(e => console.error('directory heartbeat', e && e.message)));  // DISCOVER-1: daily, opt-out-able
+    ctx.waitUntil(directoryHeartbeat(env, config).then(r => { if (r.sent) console.log('directory heartbeat', r.status, r.why || ''); if (r.stateError) console.error('directory registration state', r.stateError); }).catch(e => console.error('directory heartbeat', e && e.message)));  // DISCOVER-1: daily and from birth (BOOT-4), opt-out-able
     const gov = await aiFor(env);
     if (gov.state) console.log('budget', JSON.stringify({ mode: gov.state.mode, why: gov.state.why, neurons_today: Math.round(gov.state.usage.ai_neurons_today), cap: gov.state.allowance.ai_neurons_day }));
     const caps = capsFor(planOf(config, env));  // PLAN-1: paid plan, 1,000 planned subrequests and no rotation
@@ -336,7 +336,7 @@ export default {
     }
     if (url.pathname === '/' && request.method === 'GET' && env.PUBLIC_HEALTH_ONLY === '1') {  // FULLSTACK-1: a health-only system still has a public front end
       let last; try { last = await lastTickForHealth(env.DB); } catch (e) { return d1Unavailable(e); }
-      return publicPage({ name: config.org_slug, last, ignition: await readIgnition(env.DB).catch(() => null) });
+      return publicPage({ name: config.org_slug, last, ignition: await readIgnition(env.DB).catch(() => null), footer: footerHtml(env, config) });
     }
     if (url.pathname === '/health') {
       if (halted(config, env)) return Response.json({ ok: true, halted: true, org: config.org_slug, why: 'HALT-1: the owner stopped every loop; pages keep serving' });

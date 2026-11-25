@@ -1,0 +1,40 @@
+name: supply-chain
+# budget: ~3 min x 4/month (public repository: Actions minutes are free)
+# trigger: weekly; OpenSSF Scorecard and the dependency graph change over days, a faster event buys nothing; dispatch on demand
+# free-alternative: a cloud-hosted agent session downloads both documents and runs `python3 -m foundation supplychain --ingest SC SBOM --apply`
+# STANDARDS-1: OpenSSF Scorecard (supply-chain posture) and the SPDX 2.3 SBOM from GitHub's dependency graph feed one closed loop:
+# foundation/supplychain.py records ops/supply-chain.json and files Q-STD-SC-* items whose closing probe is the next reading.
+on:
+  schedule: [{cron: "41 5 * * 3"}]
+  workflow_dispatch: {}
+permissions: {contents: read, id-token: write, actions: write}
+concurrency: {group: supply-chain, cancel-in-progress: false}
+jobs:
+  read:
+    if: ${{ vars.HALT != '1' }}  # HALT-1
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with: {persist-credentials: false}
+      - name: Budget kill switch
+        env: {GH_TOKEN: "${{ github.token }}"}
+        run: python3 scripts/actions_guard.py supply-chain
+      - name: OpenSSF Scorecard
+        uses: ossf/scorecard-action@2d1146689b8cda280b9bc96326124645441f03bc # v2.4.4
+        with:
+          results_file: scorecard.json
+          results_format: json
+          publish_results: false
+      - name: SPDX SBOM from the dependency graph
+        env: {GH_TOKEN: "${{ github.token }}"}
+        run: gh api "repos/${GITHUB_REPOSITORY}/dependency-graph/sbom" > sbom.json
+      - name: Record the reading and file items (closing probe is the next reading)
+        run: python3 -m foundation supplychain --ingest scorecard.json sbom.json --apply
+      - name: Commit the reading
+        run: |
+          git config user.name "ultrastable-supply-chain"; git config user.email "actions@users.noreply.github.com"
+          python3 -m foundation balance --gate --apply  # FLOW-BALANCE-1: the one filing gate before any item lands
+          if [ -f ops/balance-held.jsonl ]; then git add ops/balance-held.jsonl; fi
+          git add ops/supply-chain.json docs/issues
+          git diff --cached --quiet || { git commit -m "supply-chain: weekly Scorecard and SBOM reading (STANDARDS-1) [skip ci]"; python3 tools/push_main.py; }

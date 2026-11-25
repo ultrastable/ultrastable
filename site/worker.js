@@ -192,7 +192,7 @@ function ultrastability() {
   const row = function (v) { return "<tr><td>" + esc(v.name) + "</td><td>" + esc(bound(v)) + " " + esc(v.unit) + "</td><td>" + reads(v) + "</td><td>" + esc(v.steps.join("; ")) + "</td></tr>"; };
   return "<h2 id=\"why-ultrastable\">Why ultrastable</h2>"
     + "<p>A system is ultrastable, in W. Ross Ashby's sense, when two loops keep its essential variables inside bounds: a fast loop that corrects disturbance, and a slow loop that changes the system itself when the fast loop cannot.</p>"
-    + "<p>The fast loop is the probes, the cost check, the claims check and the executor. The slow loop reads the same variables every tick, and when one has been out of bounds for two ticks in a row it takes one discrete step on that variable's ladder, keeps the step only if the variable comes back, and otherwise undoes it and takes the next.</p>"
+    + "<p>The fast loop is the probes, the cost check, the claims check and the executor. The slow loop reads the same variables every tick, and when one has stayed out of bounds for as many ticks in a row as its patience setting (patience_ticks, which the loop tunes itself) it takes one discrete step on that variable's ladder, keeps the step only if the variable comes back, and otherwise undoes it and takes the next.</p>"
     + (R ? "<p id=\"one-year\"><strong>One-year readiness: " + esc(String(R.score)) + " of 100.</strong> It multiplies three parts: the simulated unattended horizon against a year (" + esc(String(R.horizon)) + "), the share of essential variables in bounds at the last tick (" + esc(String(R.bounds)) + "), and how often the slow loop's own changes worked (" + esc(String(R.learning)) + "). A person stepping in to redirect the system counts against it.</p>" : "")
     + "<p>The essential variables of " + esc(P.what) + " (" + esc(P.status) + "):</p>"
     + "<div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Variable</th><th>Bounds</th><th>Last reading</th><th>Second-order steps, in order</th></tr></thead><tbody>" + P.variables.map(row).join("") + "</tbody></table></div>"
@@ -246,7 +246,7 @@ function directoryPage(d) {
     + "<h1>Every system built on Ultrastable</h1><p>Each system runs its own loops and links back here. Systems are public unless their owner opts out.</p>"
     + "<h2>Running in this account</h2><ul>" + d.core.map(row).join("") + "</ul>"
     + "<h2>Running elsewhere</h2>" + (d.external.length ? "<ul>" + d.external.map(row).join("") + "</ul>" : "<p>None listed yet.</p>")
-    + "<h2>Get listed</h2><p>A system started from the Ultrastable seed lists itself: it serves <code>/.well-known/ultrastable.json</code> and checks in once a day. This page reads that file before listing a site and rechecks it daily. Turn it off with <code>ULTRASTABLE_DIRECTORY=off</code>; a site that says noindex is never listed.</p>"
+    + "<h2>Get listed</h2><p>A system started from the Ultrastable seed lists itself: it serves <code>/.well-known/ultrastable.json</code> asks to be listed on its first tick and then checks in once a day. This page reads that file before listing a site and rechecks it daily. Turn it off with <code>ULTRASTABLE_DIRECTORY=off</code>; a site that says noindex is never listed.</p>"
     + "<script type=\"application/ld+json\">" + JSON.stringify({ "@context": "https://schema.org", "@type": "ItemList", name: "Systems built on Ultrastable", itemListElement: d.core.concat(d.external).map(function (c, i) { return { "@type": "ListItem", position: i + 1, item: { "@type": "SoftwareApplication", name: c.name, url: c.url, applicationCategory: "WebApplication", license: c.license || undefined } }; }) }).replace(/</g, "\\u003c") + "</script>");
 }
 function caseCard(c) { return "<a class=\"card us-case\" href=\"/showcase/" + esc(c.id) + "\"><span class=\"us-tag\">" + esc(c.tag) + "</span> <span class=\"us-tag\">" + esc(domLabel(c.domain)) + "</span><h3 class=\"card-title\">" + esc(c.name) + "</h3><p class=\"meta\">" + esc(c.summary) + "</p><span class=\"us-more\">Read the case</span></a>"; }
@@ -588,7 +588,32 @@ async function build(env, id, brief, prev, change) {
     await env.ASSETS.put("brief:" + id, JSON.stringify({ brief, change: change || null }));
     { const before = await env.ASSETS.get("site:" + id); const html = await aiHtml(env, brief, prev, change); if (before) await recordVersion(env, id, before, change ? "you asked: " + String(change).slice(0, 100) : "rebuilt"); await env.ASSETS.put("site:" + id, html); } await env.ASSETS.put("state:" + id, "ready"); // SITE-UPKEEP-1: the page before each change is kept
     await env.ASSETS.delete("audit:" + id);
-  } catch (e) { console.error("build failed", id, String(e)); await env.ASSETS.put("state:" + id, "failed"); }
+  } catch (e) {
+    console.error("build failed", id, String(e));
+    // SPEND-SOFT-1 at the front door (ADMIT-1, 2026-11-25): when the day's model allowance is spent the budget crawls at one call an hour, and every
+    // first build failed ("the page was not built: failed", LAUNCH-PATH-1 probe red). A first build now always yields a page: a deterministic draft
+    // from the visitor's own words, saved and marked so the next build or change request replaces it with a model-built page. A change to an
+    // existing page still reports failed, so the person is told it did not happen.
+    if (!prev && !(await env.ASSETS.get("site:" + id))) {
+      await env.ASSETS.put("site:" + id, draftHtml(brief)); await env.ASSETS.put("draft:" + id, String(e).slice(0, 200));
+      await env.ASSETS.put("state:" + id, "ready"); return;
+    }
+    await env.ASSETS.put("state:" + id, "failed");
+  }
+}
+// The no-model first draft: the idea and what the person said, plus a notes area that keeps what they type. Passes lint() by construction.
+export function draftHtml(brief) {
+  const b = String(brief || ""), idea = (/^Idea:\s*(.+)$/m.exec(b) || [])[1] || "Your new site";
+  const said = b.split("\n").map(l => /^- (.+?) (YES|NO)$/.exec(l)).filter(Boolean).map(m => (m[2] === "YES" ? "Yes: " : "No: ") + m[1]).slice(0, 12);
+  return "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>" + esc(idea.slice(0, 80)) + "</title>"
+    + "<style>" + BASE + "*{box-sizing:border-box}body{margin:0;font:16px/1.6 system-ui,sans-serif;background:var(--bg);color:var(--ink)}main{max-width:720px;margin:0 auto;padding:24px 16px}"
+    + ".card{background:var(--sf);border:1px solid var(--line);border-radius:12px;padding:16px;margin:16px 0}textarea{width:100%;min-height:140px;font:inherit;padding:10px}"
+    + "button{min-height:44px;padding:0 18px;font:inherit;border-radius:8px;border:0;background:var(--ac);color:var(--on)}</style></head><body><main>"
+    + "<h1>" + esc(idea) + "</h1><p>This is the first draft of this site. It is being built out by itself.</p>"
+    + (said.length ? "<div class=\"card\"><h2>What it is built around</h2><ul>" + said.map(x => "<li>" + esc(x) + "</li>").join("") + "</ul></div>" : "")
+    + "<div class=\"card\"><h2>Notes</h2><label for=\"n\">Anything you want to keep here</label><textarea id=\"n\"></textarea><p><button id=\"s\" type=\"button\">Save</button> <span id=\"m\">Nothing saved yet.</span></p></div>"
+    + "</main><script>var mem='';function g(){try{return localStorage.getItem('notes')||''}catch(e){return mem}}function p(v){try{localStorage.setItem('notes',v)}catch(e){mem=v}}"
+    + "var n=document.getElementById('n');n.value=g();document.getElementById('s').addEventListener('click',function(){p(n.value);document.getElementById('m').textContent='Saved.'});</script></body></html>";
 }
 // Each stage runs in its own request so it gets its own time budget (waitUntil is capped at about 30 s): build, then audit and at most one fix.
 async function ensureAudit(env, ctx, id) {
@@ -1203,6 +1228,7 @@ const handler = {
     if (request.method === "POST" && u.pathname === "/api/org") return orgSetup(request, env); // ORG-THREAD-1
     { const sr = await siteRoutes(u, env, ctx, request); if (sr) return sr; }
     if (request.method === "GET" && u.pathname.replace(/\/$/, "") === "/status") return new Response(await statusPage(env), { headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" } });
+    if (request.method === "POST" && u.pathname === "/api/directory/register") return registerDirectory(request, env, fetch);  // DISCOVER-1: a seed's heartbeat; it was dead behind the 405 below until BOOT-ACCEPT-1 read it live
     if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method not allowed", { status: 405 });
     const PAGES = ["/", "/engineers", "/dashboard", "/roadmap", "/decisions", "/goals", "/org", "/how", "/showcase", "/for", "/claims", "/product", "/team", "/faq", "/contact", "/pilot", "/start", "/setup", "/ops", "/privacy", "/accessibility"], pth = u.pathname.replace(/\/$/, "") || "/";
     if (env && env.DB && request.method === "GET" && (PAGES.includes(pth) || /^\/(for|showcase)\/[a-z0-9-]+$/.test(pth))) { /* UIUX-1: audience and case pages are path steps, so they are counted too */ const w = record(env, request, { host: CANON, path: pth, ref: request.headers.get("referer") }).catch(e => console.error("analytics", e && e.message)); if (ctx && ctx.waitUntil) ctx.waitUntil(w); }
@@ -1218,7 +1244,7 @@ const handler = {
       case "/showcase": return new Response(showcase(), { headers: HTML });
       case "/directory": return new Response(directoryPage(await directoryListing(env)), { headers: HTML });  // DISCOVER-1
       case "/directory.json": return Response.json(await directoryListing(env), { headers: { "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } });
-      case "/api/directory/register": if (request.method === "POST") return registerDirectory(request, env, fetch); return Response.json({ ok: false, error: "use_post" }, { status: 405 });
+      case "/api/directory/register": return Response.json({ ok: false, error: "use_post" }, { status: 405 });
       case "/family.json": return new Response(JSON.stringify({ family: SH.domains, nav: [["Find your path", "/for"], ["Test cases", "/showcase"], ["Product", "/product"], ["How it works", "/how"], ["Live proof", "/live"], ["Research", "/research"], ["Contact", "/contact"]], tokens: { accent_light: "#b83800", accent_dark: "#ff7f4d", base: "https://" + CANON + "/" } }), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } });
       case "/for": return new Response(forIndex(), { headers: HTML });
       case "/claims": return new Response(claimsPage(), { headers: HTML });

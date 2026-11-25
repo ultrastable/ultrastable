@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/qnfo-port.schema.json",
+  "title": "qnfo-port (doctrine/qnfo-port.json)",
+  "description": "Contract for doctrine/qnfo-port.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "mechanisms": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "feeds_criticality": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "next": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "number"
+          },
+          "qnfo_rule": {
+            "type": "string"
+          },
+          "qnfo_source": {
+            "type": "array"
+          },
+          "status": {
+            "type": "string"
+          },
+          "status_before": {
+            "type": "string"
+          },
+          "status_before_why": {
+            "type": "string"
+          },
+          "test": {
+            "type": "array"
+          },
+          "ultrastable_module": {
+            "type": "array"
+          },
+          "wired_into": {
+            "type": "array"
+          }
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "mechanisms",
+    "version"
+  ]
+}

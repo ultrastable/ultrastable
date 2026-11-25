@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/sessions.schema.json",
+  "title": "sessions (doctrine/sessions.json)",
+  "description": "Contract for doctrine/sessions.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "idle_ttl_hours": {
+      "type": "number"
+    },
+    "ttl_floor_hours": {
+      "type": "number"
+    },
+    "backlog_owner": {
+      "type": "string"
+    },
+    "history": {
+      "type": "array"
+    },
+    "blocked_values": {
+      "type": "array"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "backlog_owner",
+    "blocked_values",
+    "history",
+    "idle_ttl_hours",
+    "ttl_floor_hours"
+  ]
+}

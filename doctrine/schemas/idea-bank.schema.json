@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/idea-bank.schema.json",
+  "title": "idea-bank (doctrine/idea-bank.json)",
+  "description": "Contract for doctrine/idea-bank.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "min_domains": {
+      "type": "number"
+    },
+    "max_per_domain": {
+      "type": "number"
+    },
+    "ideas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "added": {
+            "type": "string"
+          },
+          "budget": {
+            "type": "number"
+          },
+          "change": {
+            "type": "array"
+          },
+          "data": {
+            "type": "array"
+          },
+          "depth": {
+            "type": "object"
+          },
+          "domain": {
+            "type": "string"
+          },
+          "empowers": {
+            "type": "string"
+          },
+          "hook": {
+            "type": "string"
+          },
+          "horizon": {
+            "type": "array"
+          },
+          "id": {
+            "type": "string"
+          },
+          "keywords": {
+            "type": "string"
+          },
+          "loop": {
+            "type": "string"
+          },
+          "measure": {
+            "type": "string"
+          },
+          "reach": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "thesis": {
+            "type": "string"
+          },
+          "upkeep": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "depth_fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "refused_domains": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "max_active": {
+      "type": "number"
+    },
+    "retired": {
+      "type": "array"
+    },
+    "max_text": {
+      "type": "number"
+    },
+    "narrow_phrases": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "owner_edits": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "depth_fields",
+    "ideas",
+    "max_active",
+    "max_per_domain",
+    "max_text",
+    "min_domains",
+    "narrow_phrases",
+    "owner_edits",
+    "refused_domains",
+    "retired"
+  ]
+}

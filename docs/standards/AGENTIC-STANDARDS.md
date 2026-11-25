@@ -56,6 +56,25 @@ Research date: 2026-11-11. Every entry in the register carries its sources with 
 | WebAuthn Level 3 passkeys (FIDO2) | W3C; FIDO Alliance | stable | supported | `software authenticator`; `one-tap sign-in` |
 | OAuth 2.1 client for remote MCP servers and service connectors (PKCE, RFC 8414, RFC 8707, CIMD, RFC 7591, RFC 7009) | MCP / IETF OAuth WG | stable | supported | `remote MCP server links with no pasted token and no owner app (CIMD)`; `remote MCP server links with no pasted token and no owner app (DCR)`; `Google flow: consent, PKCE redirect with signed state, callback exchange, sealed tokens, refresh, revoke`; `our Client ID Metadata Document is served and matches the callback`; `SSRF guard refuses private and non-https servers; no CIMD and no DCR is reported, not guessed` |
 | Open-format data export and restore (GDPR Art. 20 style portability) | EU GDPR Art. 20; Data Transfer Project norms | stable | supported | `mydata ok` |
+| JSON Schema 2020-12 contracts for every config, listed in a Schema Store catalog | JSON Schema organisation; SchemaStore catalog format | stable | supported | `test_every_config_has_a_schema_and_validates`; `test_catalog_is_schema_store_format` |
+| Backstage Software Catalog descriptor (catalog-info.yaml) | CNCF (Backstage) | de-facto | supported | `test_backstage_catalog_names_every_worker_store_and_tenant` |
+| CycloneDX 1.6 SBOM with package URLs | OWASP CycloneDX; Ecma TC54 (ECMA-424); purl | stable | supported | `test_cyclonedx_sbom_lists_pinned_actions_and_packages` |
+| Development Containers (devcontainer.json) | Development Containers specification | stable | supported | `test_devcontainer_matches_ci_runtimes` |
+| CloudEvents 1.0 envelopes signed per Standard Webhooks | CNCF (CloudEvents); Standard Webhooks | stable | supported | `application/cloudevents+json` |
+| Conventional Commits and SemVer | conventionalcommits.org; semver.org | stable | n/a | No package from this repository is published to a registry (no package.json here carries a version), so there is no release for SemVer to number; commits lead with the rule or item id (for example STANDARDS-1:), which the queue and write-back loops key on. Revisit when a package is published. |
+| Open Policy Agent (Rego) policy-as-code | CNCF (Open Policy Agent) | stable | n/a | Standing rules are already policy as code: each is a `python3 -m foundation <rule> --check` in checks, and request authorization uses OpenID AuthZEN (entry authzen). A Rego runtime would add a second policy language with no consumer; JSON Schema (entry json-schema-config) covers config shape. |
+| OpenFeature flag evaluation for the goal knobs | CNCF (OpenFeature) | draft | planned | Q-STD-OPENFEATURE |
+| SLSA v1 build provenance for deploys | OpenSSF (SLSA) | stable | planned | Q-STD-SLSA |
+| EditorConfig | editorconfig.org | de-facto | supported | `test_editorconfig_present` |
+| Dependabot version updates | GitHub | stable | supported | `test_dependabot_covers_every_ecosystem` |
+| OpenSSF Scorecard | OpenSSF (Linux Foundation) | stable | supported | `test_supply_chain_loop_files_and_closes`; `test_supply_chain_workflow_reads_both_standards` |
+| SPDX 2.3 SBOM from the dependency graph | Linux Foundation (ISO/IEC 5962) | stable | supported | `test_supply_chain_loop_files_and_closes` |
+| JSON Feed 1.1 and RSS 2.0 | jsonfeed.org; RSS Advisory Board | stable | supported | `feed renders escaped RSS and JSON Feed from described changes` |
+| schema.org vocabulary in JSON-LD | schema.org (W3C community group) | stable | partial | `test_site_pages_carry_schema_org_jsonld` |
+| Citation File Format | Citation File Format project | stable | supported | `test_citation_cff_parses` |
+| Knowledge graph served as JSON-LD (schema.org) | W3C / schema.org | stable | planned | STD-7: executor item in docs/issues/STD-7.json |
+| OpenSLO definitions for loop clocks | OpenSLO project | stable | planned | STD-8: executor item in docs/issues/STD-8.json |
+| Reusable GitHub Actions workflows shared by every tenant | GitHub | stable | planned | STD-9: executor item in docs/issues/STD-9.json |
 
 <!-- standards:end -->
 

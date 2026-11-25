@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/seed/autonomy/yearsim.schema.json",
+  "title": "yearsim (seed/autonomy/yearsim.json)",
+  "description": "Contract for seed/autonomy/yearsim.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "seed": {
+      "type": "string"
+    },
+    "runs": {
+      "type": "number"
+    },
+    "days": {
+      "type": "number"
+    },
+    "target_days": {
+      "type": "number"
+    },
+    "fatal_floor": {
+      "type": "number"
+    },
+    "fatal_after_days": {
+      "type": "number"
+    },
+    "faults": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "basis": {
+            "type": "string"
+          },
+          "drill": {
+            "type": "array"
+          },
+          "duration_days": {
+            "type": "array"
+          },
+          "id": {
+            "type": "string"
+          },
+          "rate_per_year": {
+            "type": "number"
+          },
+          "what": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "scheduled": {
+      "type": "array"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "days",
+    "fatal_after_days",
+    "fatal_floor",
+    "faults",
+    "runs",
+    "scheduled",
+    "seed",
+    "target_days"
+  ]
+}

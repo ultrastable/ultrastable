@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/substance.schema.json",
+  "title": "substance (doctrine/substance.json)",
+  "description": "Contract for doctrine/substance.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "code_ext": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "config_globs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "generated_globs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "record_globs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "doc_keys": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "executor_markers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "deploy": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": "string"
+        },
+        "max_age_hours": {
+          "type": "number"
+        }
+      }
+    },
+    "targets": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": "string"
+        },
+        "window_days": {
+          "type": "number"
+        },
+        "executor_trivial_prs": {
+          "type": "number"
+        },
+        "min_substantive_share": {
+          "type": "number"
+        },
+        "max_hours_without_substantive_self_change": {
+          "type": "number"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "code_ext",
+    "config_globs",
+    "deploy",
+    "doc_keys",
+    "executor_markers",
+    "generated_globs",
+    "record_globs",
+    "targets"
+  ]
+}

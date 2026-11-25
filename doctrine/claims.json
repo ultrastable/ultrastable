@@ -152,9 +152,9 @@
     {
       "id": "how-ultrastable-second-order",
       "surface": "site/worker.js",
-      "text": "The slow loop reads the same variables every tick, and when one has been out of bounds for two ticks in a row it takes one discrete step on that variable's ladder, keeps the step only if the variable comes back, and otherwise undoes it and takes the next.",
+      "text": "The slow loop reads the same variables every tick, and when one has stayed out of bounds for as many ticks in a row as its patience setting (patience_ticks, which the loop tunes itself) it takes one discrete step on that variable's ladder, keeps the step only if the variable comes back, and otherwise undoes it and takes the next.",
       "probe": [
-        "json:doctrine/ultrastability.json::patience_ticks==2",
+        "grep:doctrine/ultrastability.json::\"patience_ticks\"",
         "grep:foundation/ultrastability.py::revert_to=pending",
         "grep:foundation/ultrastability.py::return \"kept\""
       ]
@@ -1956,12 +1956,12 @@
       "surface": "agents/AGENTS.md",
       "text": "- **Load from the repository, never from tool memory.** Project memory, tool memory and chat are not storage (Rowan, 2026-11-12): they may",
       "probe": [
+        "file:seed/SYSTEM.md",
         "file:docs/doctrine/GUIDING-DIRECTIVE.md",
         "file:doctrine/kernel-8.2.1.md",
         "file:docs/PROJECT-MEMORY.md",
         "file:agents/PROJECT-INSTRUCTIONS.md",
-        "file:docs/BOOTSTRAP-NO-MEMORY.md",
-        "file:doctrine/durable-facts.json"
+        "file:docs/BOOTSTRAP-NO-MEMORY.md"
       ],
       "bound_by": "cited"
     },
@@ -2250,6 +2250,20 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-9b5ff76eff",
+      "surface": "agents/AGENTS.md",
+      "text": "- **One tenant row admits a tenant; every registry is derived (ADMIT-1, Rowan 2026-11-25).** \"All surfaces, all files, all code, all",
+      "probe": [
+        "file:doctrine/tenant-repos.json",
+        "file:scripts/regen_generated.py",
+        "file:doctrine/admission.json",
+        "file:site/worker.js",
+        "file:foundation/admit.py",
+        "file:tests/foundation/test_admit.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-faa1765dd1",
       "surface": "agents/AGENTS.md",
       "text": "- **Every system deploys itself in full: repo, back end and a public web UI (FULLSTACK-1, Rowan 2026-11-25).** \"All UltraStable deployments",
@@ -2418,6 +2432,20 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-badeab1b44",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Everything bootstraps itself from a cold start and works together from birth (COLDSTART-1, Rowan 2026-11-25).** \"All surfaces, all",
+      "probe": [
+        "file:doctrine/coldstart.json",
+        "file:seed/worker/src/visibility.js",
+        "file:docs/doctrine/SYSTEM.md",
+        "file:CLAUDE.md",
+        "file:doctrine/schemas/coldstart.schema.json",
+        "file:foundation/coldstart.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-897a8cdffd",
       "surface": "agents/AGENTS.md",
       "text": "- **Open standards, never a home-grown format (OPEN-STANDARDS-1, Rowan 2026-11-25).** \"Standards, don't reinvent the wheel. Apply standards",
@@ -2427,6 +2455,19 @@
         "file:doctrine/open-standards-baseline.json",
         "file:tests/foundation/test_openstd.py",
         "grep:.github/workflows/checks.yml::foundation[ .]openstd\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-c2464a2c9f",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Every surface works together from the first deploy; one command proves it (BOOT-ACCEPT-1, Rowan 2026-11-25).** \"All surfaces, all",
+      "probe": [
+        "file:seed/worker/src/visibility.js",
+        "file:doctrine/open-loops.json",
+        "file:tests/foundation/test_bootaccept.py",
+        "file:seed/worker/test/bootaccept.test.js",
+        "file:foundation/bootaccept.py"
       ],
       "bound_by": "cited"
     },
@@ -2799,6 +2840,36 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-b4d6cc4189",
+      "surface": "seed/doctrine/SYSTEM.md",
+      "text": "`doctrine/coldstart.json` (JSON Schema `doctrine/schemas/coldstart.schema.json`) or the code they name drift apart. The owner never",
+      "probe": [
+        "file:doctrine/coldstart.json",
+        "file:doctrine/schemas/coldstart.schema.json"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-94e4bb2cbb",
+      "surface": "seed/doctrine/SYSTEM.md",
+      "text": "default in effect, never a task in prose (`doctrine/open-loops.json`, `foundation/data/needs-you.json`). Anything else handed to a person",
+      "probe": [
+        "file:doctrine/open-loops.json",
+        "file:foundation/data/needs-you.json"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-a191183c3c",
+      "surface": "seed/doctrine/SYSTEM.md",
+      "text": "`python3 -m foundation coldstart --check` runs in `checks` on every change. It fails when the seed stops carrying a capability, when this",
+      "probe": [
+        "file:foundation/coldstart.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]coldstart\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-0cea4449d8",
       "surface": "seed/self/SELF.md",
       "text": "- uiux-manager: the front end as a measured, continuously audited surface (UIUX-1): how every page across ultrastable.io, .org and .app,",
@@ -2890,6 +2961,21 @@
       "of": "cited-e7cebff4c4"
     },
     {
+      "id": "mirror-adf5fe12d6",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **One tenant row admits a tenant; every registry is derived (ADMIT-1, Rowan 2026-11-25).** \"All surfaces, all files, all code, all",
+      "probe": [
+        "file:doctrine/tenant-repos.json",
+        "file:scripts/regen_generated.py",
+        "file:doctrine/admission.json",
+        "file:site/worker.js",
+        "file:foundation/admit.py",
+        "file:tests/foundation/test_admit.py"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-9b5ff76eff"
+    },
+    {
       "id": "mirror-961fe87d91",
       "surface": "seed/agents/AGENTS.md",
       "text": "Words match code (CLAIMS-1, Rowan 2026-11-17)",
@@ -2905,12 +2991,12 @@
       "surface": "seed/agents/AGENTS.md",
       "text": "- **Load from the repository, never from tool memory.** Project memory, tool memory and chat are not storage (Rowan, 2026-11-12): they may",
       "probe": [
+        "file:seed/SYSTEM.md",
         "file:docs/doctrine/GUIDING-DIRECTIVE.md",
         "file:doctrine/kernel-8.2.1.md",
         "file:docs/PROJECT-MEMORY.md",
         "file:agents/PROJECT-INSTRUCTIONS.md",
-        "file:docs/BOOTSTRAP-NO-MEMORY.md",
-        "file:doctrine/durable-facts.json"
+        "file:docs/BOOTSTRAP-NO-MEMORY.md"
       ],
       "bound_by": "mirror",
       "of": "cited-32424bab79"
@@ -3382,6 +3468,47 @@
       "of": "cited-467a38f9b7"
     },
     {
+      "id": "mirror-ad11709e94",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Issue inflow never exceeds closures; every issue inside its SLA (FLOW-BALANCE-1, Rowan 2026-11-21).** \"All UltraStable issues must be",
+      "probe": [
+        "file:seed/worker/src/flowbalance.js",
+        "file:doctrine/balance.json",
+        "file:tests/foundation/test_balance.py",
+        "file:foundation/balance.py"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-574da783c3"
+    },
+    {
+      "id": "mirror-7a700bcc8c",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Find another path before asking; the information is already held (PATHFINDER-1, Rowan 2026-11-21).** \"There are always multiple paths,",
+      "probe": [
+        "file:doctrine/pathfinder.json",
+        "file:ops/paths/attempts.jsonl",
+        "file:foundation/pathfinder.py",
+        "file:tests/foundation/test_pathfinder.py"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-d77a994a9e"
+    },
+    {
+      "id": "mirror-23cc6eb0f0",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Everything bootstraps itself from a cold start and works together from birth (COLDSTART-1, Rowan 2026-11-25).** \"All surfaces, all",
+      "probe": [
+        "file:doctrine/coldstart.json",
+        "file:seed/worker/src/visibility.js",
+        "file:docs/doctrine/SYSTEM.md",
+        "file:CLAUDE.md",
+        "file:doctrine/schemas/coldstart.schema.json",
+        "file:foundation/coldstart.py"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-badeab1b44"
+    },
+    {
       "id": "mirror-79e254f607",
       "surface": "seed/agents/AGENTS.md",
       "text": "- **Open standards, never a home-grown format (OPEN-STANDARDS-1, Rowan 2026-11-25).** \"Standards, don't reinvent the wheel. Apply standards",
@@ -3394,6 +3521,20 @@
       ],
       "bound_by": "mirror",
       "of": "cited-897a8cdffd"
+    },
+    {
+      "id": "mirror-bda521b8b7",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Every surface works together from the first deploy; one command proves it (BOOT-ACCEPT-1, Rowan 2026-11-25).** \"All surfaces, all",
+      "probe": [
+        "file:seed/worker/src/visibility.js",
+        "file:doctrine/open-loops.json",
+        "file:tests/foundation/test_bootaccept.py",
+        "file:seed/worker/test/bootaccept.test.js",
+        "file:foundation/bootaccept.py"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-c2464a2c9f"
     },
     {
       "id": "mirror-be5af6748b",
@@ -4506,7 +4647,8 @@
       "node_modules",
       "^workers/",
       "temporal-data\\.js",
-      "intent-yield-data\\.js"
+      "intent-yield-data\\.js",
+      "^seed/SYSTEM\\.md$"
     ],
     "skip_reasons": {
       "intent-yield-data\\.js": "INTENT-YIELD-1: generated by foundation/intentyield.py; its titles are the owner's directive titles copied from agents/AGENTS.md, scanned there, and its numbers are verdicts from running each directive's own probe",
@@ -4515,6 +4657,25 @@
     "src_unbound_budget": 10
   },
   "modules": [
+    {
+      "id": "constitution-prose",
+      "surface": "seed/doctrine/CONSTITUTION.md",
+      "header": "scripts/constitution.py --render",
+      "generator": "seed/scripts/constitution.py",
+      "source": [
+        "seed/doctrine/constitution.json"
+      ],
+      "check": [
+        "python3",
+        "-m",
+        "foundation",
+        "constitution",
+        "--check"
+      ],
+      "probe": [
+        "file:tests/foundation/test_constitution.py"
+      ]
+    },
     {
       "id": "claims-data",
       "surface": "site/claims-data.js",
@@ -4693,6 +4854,23 @@
       ],
       "probe": [
         "grep:.github/workflows/checks.yml::foundation research --check"
+      ]
+    },
+    {
+      "id": "system-spec",
+      "surface": "seed/SYSTEM.md",
+      "header": "scripts/system.py --write",
+      "generator": "seed/scripts/system.py",
+      "source": [
+        "seed/autonomy/system.json"
+      ],
+      "check": [
+        "python3",
+        "seed/scripts/system.py",
+        "--check"
+      ],
+      "probe": [
+        "grep:.github/workflows/checks.yml::scripts/system.py --check"
       ]
     }
   ]
