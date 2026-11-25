@@ -716,7 +716,9 @@
       "source": "Rowan, 2026-11-25",
       "covers": [
         "COLDSTART-1",
-        "ADMIT-1"
+        "ADMIT-1",
+        "SYSTEM-SPEC-1",
+        "BOOT-ACCEPT-1"
       ],
       "detector": [
         {
