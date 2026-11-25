@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-25-the-seed-carries-the-definition-of-an-ultrastable-system-enf",
+  "kind": "decision",
+  "date": "2026-11-25",
+  "title": "The seed carries the definition of an Ultrastable system, enforced (SYSTEM-1)",
+  "body": "seed/doctrine/system-contract.json defines what a system is, how it runs, the bootstrap stages, the ignition ladder to criticality and one probed invariant per standing directive; seed/doctrine/SYSTEM.md is rendered from it and loaded first by seed/CLAUDE.md and the core CLAUDE.md; seed/scripts/contract.py --check runs in bootstrap.yml and core checks. A new standing directive becomes an invariant in the same change.",
+  "probe": "file:seed/scripts/contract.py"
+ },
+ "kind": "decision",
+ "title": "The seed carries the definition of an Ultrastable system, enforced (SYSTEM-1)",
+ "session": ""
+}

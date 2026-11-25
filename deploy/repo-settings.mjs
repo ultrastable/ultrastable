@@ -14,4 +14,4 @@ const r = await fetch(SITE + "/__internal/launches", { method: "POST", headers: 
   body: JSON.stringify({ op: "repo-settings", repo }) });
 const j = await r.json().catch(() => ({}));
 if (!j.ok) { console.error(`repo settings ${repo}: HTTP ${r.status} ${j.waiting_on || ""} ${j.error || ""}`.trim()); process.exit(1); }
-console.log(j.changed && j.changed.length ? j.changed.join(", ") : "unchanged");
+console.log(j.skipped ? "skipped: " + j.skipped : j.changed && j.changed.length ? j.changed.join(", ") : "unchanged");
