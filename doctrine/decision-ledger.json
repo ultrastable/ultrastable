@@ -5606,6 +5606,40 @@
    "body": "Rowan 2026-11-25: the slow loop existed but every verdict was a revert and Rowan did its job in chat. Added variables owner_interventions, second_loop_keep_rate, spec_quality, research_in_code; common-mode sensor guard; spec gate in the seed; readiness score and self-change log on /ultrastability; paper second-loop-2026.",
    "probe": "grep:foundation/ultrastability.py::def keep_rate",
    "session": "session_0156nqDvpqV1qd6Epa67tywp"
+  },
+  {
+   "id": "decision-2026-11-25-coldstart-1-one-cold-start-contract-every-system-carries-fro",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "COLDSTART-1: one cold-start contract every system carries from birth",
+   "body": "Rowan 2026-11-25: everything must bootstrap fully autonomously from a cold start. doctrine/coldstart.json lists the capabilities a system owes from birth (repo, back end, front end, clock, discovery, knowledge graph, progress, live content, self-improvement, platform sync, year unattended, goals, instructions); coldstart --check proves the seed carries them, that every named foundation command resolves and that the platform and seed agent files agree; seedlaunch --e2e-oidc probes every live path on the fresh seed. Root causes removed: health-only seeds hid /.well-known/ultrastable.json, /api/graph, /api/progress and /api/stickiness (now PUBLIC_READS in seed/worker/src/visibility.js); the CLI dispatched only hand-listed modules, so detector static-content could not run (any module with main now resolves); duplicate and missing rule bullets in the agent files. Probe: python3 -m foundation coldstart --check passes; tests/foundation/test_coldstart.py.",
+   "probe": "grep:foundation/coldstart.py::def check\\("
+  },
+  {
+   "id": "decision-2026-11-25-standards-1-apply-published-standards-instead-of-home-grown-",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "STANDARDS-1: apply published standards instead of home-grown formats",
+   "body": "Every JSON config has a JSON Schema 2020-12 contract in a Schema Store catalog (configschema), catalog-info.yaml (Backstage) and sbom.cdx.json (CycloneDX 1.6) are generated from the registers (stdgen), devcontainer.json gives cloud agents the checks' runtimes, and the standards register records supported, planned (OpenFeature, SLSA, with items) and not-applicable choices (Rego, Conventional Commits/SemVer, with reasons). What Works publishes schema.org ClaimReview, ISO 3166, DCAT, PROV-O and OpenAPI.",
+   "probe": "grep:.github/workflows/checks.yml::configschema --check"
+  },
+  {
+   "id": "lesson-2026-11-25-a-standard-file-the-standard-fixes-at-the-root-needs-an-expl",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "A standard file the standard fixes at the root needs an explicit allowance, and a register a site serves needs its generator in REGEN-1",
+   "body": "catalog-info.yaml failed STRAYS-1 as a root code file (now doctrine/strays.json standard_root_files), and editing seed/standards/standards.json left site/agentdata.js stale because neither regen list rebuilt it (now in both).",
+   "probe": "grep:scripts/regen_generated.sh::build_site_agentdata",
+   "session": "session_0156nqDriSf7RENkyFHy7NoW"
+  },
+  {
+   "id": "lesson-2026-11-25-owner-found-9-failures-before-any-loop-redteam-1",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Owner found 9 failures before any loop (REDTEAM-1)",
+   "body": "Probes checked that mechanisms exist, not that their output is true. Classes: vacuous, stale, unscored, phantom, timebomb, undetected, starved, credential. foundation/redteam.py tests each adversarially; owner_found_30d is the metric.",
+   "probe": "file:foundation/redteam.py",
+   "session": "session_0156nqDrAs7rUXpvph8XjAkz"
   }
  ]
 }
