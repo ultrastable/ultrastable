@@ -110,6 +110,14 @@ class Reverse(unittest.TestCase):
         self.assertIn("shrink-only", errs[0])
 
 
+class SeedGap(unittest.TestCase):
+    def test_a_rule_the_seed_cannot_run_is_counted(self):
+        pol = {"sources": ["seed/agents/AGENTS.md"]}
+        d = tree("", pol, extra={"seed/agents/AGENTS.md": "`scripts/claims.py` `seed/scripts/claims.py` `foundation/real.py` `python3 -m foundation real --check`"})
+        g = R.seed_gap(d)
+        self.assertEqual((g["total"], sorted(r["ref"] for r in g["missing"])), (4, ["foundation/real.py", "python3 -m foundation real --check"]))
+
+
 class Live(unittest.TestCase):
     def test_get_only_no_placeholders_and_404_fails(self):
         d = tree("`/live` `/year.json` `POST /live` `/s/<id>/own`", extra={"site/worker.js": 'if (u.pathname === "/live") x();\nif (u.pathname === "/year.json") y();\nif (p.startsWith("/s/")) z();\n'})

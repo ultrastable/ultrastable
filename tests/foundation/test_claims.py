@@ -71,7 +71,8 @@ class Claims(unittest.TestCase):
         td = copy()
         w = (td / "site/worker.js").read_text(encoding="utf-8")
         (td / "site/worker.js").write_text(w.replace("A work-claim ledger gives each file to one agent at a time", "Agents share files freely"), encoding="utf-8")
-        (td / "site/probes.json").write_text(json.dumps({"mode": "observe"}), encoding="utf-8")
+        t = td / "seed/worker/test/handoff.test.js"   # the claim is bound to the test that proves the rollback, so removing that test is drift
+        t.write_text(t.read_text(encoding="utf-8").replace("a red probe rolls the deploy back and puts the item back to ready", "a red probe is logged"), encoding="utf-8")
         ids = {d["id"] for d in claims.evaluate(td)[2]}
         self.assertTrue({"how-claim-ledger", "how-probe-revert"} <= ids, ids)
 

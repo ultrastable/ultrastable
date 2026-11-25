@@ -106,7 +106,7 @@ function home(ux) {
     + IV.askBar("Tell me what is on your mind…")
     + "<div class=\"us-actions\"><a class=\"btn\" href=\"/setup\">" + esc(slotText("home.setup_label", "primary_label", "Set up my own", ux)) + "</a><a class=\"btn\" href=\"/live\">See the live proof</a><a class=\"btn btn-quiet\" href=\"/research\">Read the white papers</a></div>"
     + "<div class=\"us-status\" role=\"status\">" + statusLine() + "</div></section>"
-    + "<div class=\"us-lane\"><h2>Already comfortable with code?</h2><p class=\"us-tagline\">A system is autonomous if it has self-referential loops and the ability to close them. Coding agents write code. Ultrastable runs the system. Ultrastable runs on itself.</p><p class=\"us-lede\">It finds its own work in your metrics and failures, hands each task to the coding agent that fits, proves every change live with an automatic revert, and keeps score of how often its decisions were right.</p><p>You do not have to answer questions. The loops, virtual managers, agents and plussing budget are all there to use, with an honest list of what is live, in testing, and not built yet.</p><div class=\"us-actions\"><a class=\"btn\" href=\"/engineers\">Go straight to the engine</a></div></div>"
+    + "<div class=\"us-lane\"><h2>Already comfortable with code?</h2><p class=\"us-tagline\">A system is autonomous if it has self-referential loops and the ability to close them. Coding agents write code. Ultrastable runs the system. Ultrastable runs on itself.</p><p class=\"us-lede\">It finds its own work in your metrics and failures, hands each task to the coding agent that fits, proves each handed-off change live and rolls it back when the proof fails, and keeps score of how often its decisions were right.</p><p>You do not have to answer questions. The loops, virtual managers, agents and plussing budget are all there to use, with an honest list of what is live, in testing, and not built yet.</p><div class=\"us-actions\"><a class=\"btn\" href=\"/engineers\">Go straight to the engine</a></div></div>"
     + examplesSection()
     + "<h2>Who are you?</h2><div class=\"us-grid c3\">" + SH.audiences.map(audienceCard).join("") + "</div>"
     + "<h2>Test cases</h2><div class=\"us-grid c2\">" + SH.showcases.filter(function (c) { return c.status !== "sunsetting"; }).map(caseCard).join("") + "</div><p><a href=\"/showcase\">All test cases, including the earlier testbed</a></p>"
@@ -117,7 +117,7 @@ function home(ux) {
     + "</div>"
     + "<h2>What is different</h2><div class=\"us-grid c3\">"
     + card("It chooses the work", "Metrics breach, a trigger files an issue, a coding agent opens the pull request. A person sets direction and reads reports.")
-    + card("It proves every change", "Each deploy declares probes. A probe that passed before and fails after reverts the push on its own.")
+    + card("It proves every change", "Each handed-off change declares a live check. When the check fails after the deploy, the deploy is rolled back on its own and the work item goes back to the queue.")
     + card("It keeps score", "Every decision logs a prediction first. The outcome is scored later, so you can see how often the system was right.")
     + "</div>"
     + "<h2>It questions what it does not know</h2><p>Improving only what is known makes the solution space smaller each time. So the managers also audit their own ignorance: every loop is asked inverted questions (what if the opposite were true, what would a world look like where this was false, what are we pretending not to know) drawn from the Universal Ignorance Audit, pre-mortems and red teaming. Each answer, including 'we cannot know', is recorded, and a gap found becomes a new objective. Coverage and findings are on the <a href=\"/live\">live page</a>.</p>"
@@ -183,7 +183,7 @@ function ultrastability() {
 
 function claimsPage() {
   const rows = VERIFIED.claims.map(function (c) { return "<tr><td class=\"" + (c.pass ? "us-pass" : "us-fail") + "\">" + (c.pass ? "Verified" : "Drift") + "</td><td>" + esc(c.claim) + "<br><small>" + esc(c.surface) + " · " + esc(c.how) + (c.detail ? " · " + esc(c.detail) : "") + "</small></td></tr>"; }).join("");
-  return shell({ path: "/claims", title: "Verified claims: Ultrastable words matched to code", description: "Every statement on the Ultrastable surfaces is bound to a probe in the code, checked on every change and daily against the live site." },
+  return shell({ path: "/claims", title: "Verified claims: Ultrastable words matched to code", description: "Statements on the Ultrastable surfaces are bound to probes in the code, checked on every change and daily against the live site; the share bound is measured and the rest is listed." },
     "<div class=\"head\"><h1>Verified claims</h1><p id=\"st\" role=\"status\">" + VERIFIED.summary.pass + " of " + VERIFIED.summary.total + " claims verified against code at commit " + esc(VERIFIED.commit) + ". Words must match code; a claim that stops matching fails the build and files its own fix item.</p></div>"
     + "<div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Status</th><th>Claim, surface and probe</th></tr></thead><tbody>" + rows + "</tbody></table></div>"
     + platformStatements()
@@ -204,7 +204,7 @@ function pilot() {
     + "<h2 id=\"apply\">Apply</h2><form id=\"pf\" class=\"card\" method=\"post\" action=\"/api/pilot\">" + [["system", g.apply_fields[0]], ["keeps_doing", g.apply_fields[1]], ["measure", g.apply_fields[2]], ["budget", g.apply_fields[3]], ["runs_on", g.apply_fields[4]], ["contact", "How we reach you (email)"]].map(function (x) { return "<p><label>" + esc(x[1]) + "<br><textarea name=\"" + x[0] + "\" rows=\"2\" maxlength=\"1500\" style=\"width:100%\"" + (x[0] === "contact" ? "" : " required") + "></textarea></label></p>"; }).join("") + "<p><button class=\"btn btn-primary\" type=\"submit\">Send application</button></p><p id=\"pr\" class=\"meta\" role=\"status\"></p></form>"
     + "<script>document.getElementById('pf').addEventListener('submit',function(e){e.preventDefault();var f=e.target;fetch('/api/pilot',{method:'POST',body:new FormData(f),headers:{accept:'application/json'}}).then(function(r){return r.json()}).then(function(j){document.getElementById('pr').textContent=j.message||j.error||'Something went wrong.'}).catch(function(){document.getElementById('pr').textContent='Could not send; use the email link.'})})</script>"
     + "<div class=\"us-actions\"><a class=\"btn\" href=\"" + href + "\">Or apply by email</a><a class=\"btn\" href=\"/dashboard\">See the dashboard</a></div>"
-    + "<p class=\"meta\">Replies come from a person within two working days. The form above is the interview: it scores your answers against the four system-test questions.</p>");
+    + "<p class=\"meta\">Your answers are scored and stored when you apply; to reach a person, email the pilot team. The form above is the interview: it scores your answers against the four system-test questions.</p>");
 }
 
 function lis(a) { return "<ul>" + a.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>"; }
@@ -230,7 +230,7 @@ function showcase() {
     + "<div class=\"head\"><h1>Test cases</h1><p>Ultrastable is an autonomous development platform. What it develops (code, practical solutions) and how it develops itself are one loop.</p></div>"
     + "<div class=\"us-grid c2\">" + SH.showcases.map(caseCard).join("") + "</div>"
     + "<h2>One loop, not two</h2><p>The loop that finds a failing probe in a product, files the work, hands it to an agent, proves the change live and scores its own prediction is the same loop that improves Ultrastable. Each fix to the loop improves every system, and each system's problems improve the loop. It keeps closing its own loops, including the loop that watches the loops (a strange loop, in Hofstadter's sense).</p>"
-    + "<h2>How we test it</h2>" + lis(["Every claim on this site is a query against a live record: see Live proof.", "Each decision logs a prediction first (metric, comparison, number, hours) and is scored later.", "Changes are proven live after deploy and revert on regression.", "The same checks run on the platform and on each product, so a pass means the same thing everywhere."])
+    + "<h2>How we test it</h2>" + lis(["Claims on this site are bound to probes in the code and re-checked on every change: see the claims page.", "Each decision logs a prediction first (metric, comparison, number, hours) and is scored later.", "Handed-off changes are proven live after deploy and rolled back when the proof fails.", "The same checks run on the platform and on each product, so a pass means the same thing everywhere."])
     + "<p class=\"meta\">Early stage. Estimates are labelled as estimates. The code is source-available under the Ultrastable License: free for non-commercial use, a commercial licence for commercial use. <a href=\"/how#gaps\">Read the gaps.</a></p>"
     + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/for\">Find your path</a><a class=\"btn\" href=\"/how\">How it works</a></div>");
 }
@@ -278,10 +278,10 @@ function product() {
     + "<h2>What it does</h2><div class=\"us-grid c3\">"
     + card("Chooses the work", "Reads your metrics and failures, files the issues, and orders them so the most valuable work goes first.")
     + card("Hands it to an agent", "Gives each task to one coding agent at a time, so two agents never work the same item.")
-    + card("Checks the result", "Every change is checked after it ships and rolled back automatically if something that worked before now fails.")
+    + card("Checks the result", "A handed-off change is checked live after it ships and rolled back automatically if the check fails.")
     + "</div>"
     + "<h2>Who it is for</h2><p>Small engineering teams that run many services and want problems found and fixed without a person choosing every task. Teams that need an audit trail of what their agents changed and why.</p>"
-    + "<h2>What a pilot includes</h2><ul><li>The loop installed on one repository of yours.</li><li>Issues filed from your own metrics, with a check that proves each fix.</li><li>A written record of every decision and how it turned out.</li><li>A named contact who replies within two working days.</li></ul>"
+    + "<h2>What a pilot includes</h2><ul><li>The loop installed on one repository of yours.</li><li>Issues filed from your own metrics, with a check that proves each fix.</li><li>A written record of every decision and how it turned out.</li><li>A named contact you can email.</li></ul>"
     + "<h2>Status</h2><p>Early stage. The loop runs in production today on one installation; a second, independent installation and a packaged installer are the next milestones. Pricing is not set; pilots are free. <a href=\"/how#gaps\">Read the honest gaps.</a></p>"
     + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/pilot\">Join the pilot</a><a class=\"btn\" href=\"/faq\">Read the FAQ</a></div>");
 }
@@ -296,7 +296,7 @@ function team() {
     + card("Product manager", "Owns the product pages, customer conversations and the pilot programme.")
     + card("Operations and reviewers", "Run deploys and monitoring, and review each change independently of the agent that wrote it.")
     + "</div>"
-    + "<h2>How we work</h2><p>Plans, decisions and results are written down in version control, not in chat. Work is claimed before it starts, checked after it ships, and every claim on this site can be traced to a record.</p>"
+    + "<h2>How we work</h2><p>Plans, decisions and results are written down in version control, not in chat. Work is claimed before it starts and checked after it ships, and the claims on this site are bound to probes in the code.</p>"
     + "<h2>Open roles</h2><p>We are looking for an operator or co-founder with commercial and go-to-market experience, and for design partners. <a href=\"/contact\">Get in touch.</a></p>");
 }
 
@@ -316,7 +316,7 @@ function faq() {
     ["Is Ultrastable another coding agent?", "No. It is the layer around the agents you already use. It decides what to work on, assigns it, checks the result and keeps score."],
     ["Which agents and platforms does it work with?", "Open models, GitHub Copilot and Claude Code take work through the same ledger. It runs on Cloudflare today and is designed to run on other clouds."],
     ["Who decides what gets built?", "The system proposes work from your metrics and failures. A person sets direction and reads reports, and approves only steps that cannot be undone."],
-    ["What if a change breaks something?", "Each change declares checks that must keep passing. If one that passed before now fails, the change is rolled back automatically and an issue is filed."],
+    ["What if a change breaks something?", "A handed-off change declares a live check. If the check fails after the deploy, the deploy is rolled back automatically and the work item goes back to the queue."],
     ["Do I have to give it access to everything?", "No. A pilot covers one repository, with the permissions you grant. Secrets are never stored in the repository."],
     ["What does it cost?", "Pilots are free. Pricing is not set yet and will be published here before any paid plan starts."],
     ["Is it production ready?", "It runs in production on one installation today. It is early-stage: there is no packaged installer yet and a second independent installation is the next milestone."],
@@ -648,7 +648,7 @@ async function pilotApplication(request, env) {
   const lim = await limited(request, env); if (lim) return lim;
   const id = newId();
   await env.ASSETS.put("pilot:" + new Date().toISOString() + ":" + id, JSON.stringify({ a: a, fit: r.fit, checks: r.checks }), { expirationTtl: 31536000 });
-  return json({ id: id, fit: r.fit, checks: r.checks, message: r.fit ? "Thank you. This reads as a fit for the system test; a person replies within two working days." : "Thank you. As written this does not yet pass the system test (a loop to close, a measure that can be wrong, upkeep that never ends, a monthly budget). Tell us more and apply again." }, 201);
+  return json({ id: id, fit: r.fit, checks: r.checks, message: r.fit ? "Thank you. This reads as a fit for the system test; your answers are scored and stored. Email the pilot team to start the conversation." : "Thank you. As written this does not yet pass the system test (a loop to close, a measure that can be wrong, upkeep that never ends, a monthly budget). Tell us more and apply again." }, 201);
 }
 
 async function takeIdea(request, env, ctx) {
@@ -1031,7 +1031,7 @@ async function dashboard(tenantId) {
 }
 function contact() {
   return shell({ path: "/contact", title: "Contact Ultrastable", description: "How to reach the Ultrastable team about pilots, partnerships and press." },
-    "<div class=\"head\"><h1>Contact</h1><p>One address; a person replies within two working days.</p></div>"
+    "<div class=\"head\"><h1>Contact</h1><p>One address for everything.</p></div>"
     + "<div class=\"card\"><h3 class=\"card-title\">Pilots, partnerships and press</h3><p class=\"meta\"><a href=\"mailto:" + PILOT_MAIL + "\">" + PILOT_MAIL + "</a></p></div>"
     + "<div class=\"card\"><h3 class=\"card-title\">Online</h3><p class=\"meta\">ultrastable.io. The source is open; the Ultrastable License governs use.</p></div>"
     + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/pilot\">Join the pilot</a></div>");

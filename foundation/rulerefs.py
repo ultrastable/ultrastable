@@ -10,6 +10,8 @@ code no rule, doc or loop names.
                                              (`corrections` there: a reference whose rule text is wrong, with the right text; shrink-only)
   python3 -m foundation rulerefs --list      one line per reference: kind, status, source, text
   python3 -m foundation rulerefs --reverse   code without words: foundation modules nothing names, workflows no loop owns, site routes nothing names
+  python3 -m foundation rulerefs --seed      the seed's own rule file resolved against the seed alone: what a deployment is told exists and does not
+                                             carry (closing probe of Q-RULEREFS-seed-rules; exit 1 while any is missing)
   python3 -m foundation rulerefs --exec      run every referenced `--check` command once and report its exit code (never --apply, --run, --live, --fix)
   python3 -m foundation rulerefs --live      GET every referenced endpoint on the live hosts (user-agent ultrastable-audit/1.0); exit 1 on 404 or 5xx
 
@@ -271,6 +273,26 @@ def reverse_check(root=REPO) -> list[str]:
     return errs
 
 
+def seed_gap(root=REPO, rules="seed/agents/AGENTS.md", base="seed") -> dict:
+    """The rule file a seeded system's agents read, resolved against the seed alone: what a deployment is told exists and does not carry."""
+    root = Path(root)
+    tree, missing, total = Tree(root / base), [], 0
+    for r in extract(root):
+        if r["source"] != rules:
+            continue
+        if r["kind"] == "command":
+            total += 1
+            if not (root / base / "foundation" / f"{r['payload'][0]}.py").is_file():
+                missing.append(r)
+        elif r["kind"] in ("path", "file", "script"):
+            for p in (r["payload"] if isinstance(r["payload"], list) else [r["payload"]]):
+                total += 1
+                q = p[len(base) + 1:] if p.startswith(base + "/") else p
+                if not (tree.has(q) or q in tree.base or p in _pol(root).get("repositories", [])):
+                    missing.append(r)
+    return {"total": total, "missing": missing}
+
+
 # ---- running the references ----
 
 def exec_checks(root=REPO, timeout=300) -> list[dict]:
@@ -346,6 +368,11 @@ def main(argv) -> int:
         print(f"site routes nothing links or names: {len(rv['routes'])} of {c['routes_total']}")
         for x in rv["routes"]: print("  ", x)
         return 0
+    if argv[:1] == ["--seed"]:
+        g = seed_gap(root)
+        for r in g["missing"]: print(f"{r['kind']:8} seed/agents/AGENTS.md:{r['line']}: {r['ref']}")
+        print(f"rulerefs --seed: {len(g['missing'])} of {g['total']} files and commands the seed's rule file names are not in the seed")
+        return 1 if g["missing"] else 0
     if argv[:1] == ["--exec"]:
         res = exec_checks(root)
         bad = [x for x in res if x["exit"] != 0]
