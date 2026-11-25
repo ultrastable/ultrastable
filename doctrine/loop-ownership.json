@@ -6,7 +6,8 @@
     "ultrastable-tick",
     "github-actions",
     "cloud-routine",
-    "ultrastable-unlearn"
+    "ultrastable-unlearn",
+    "ultrastable-what-works"
   ],
   "server_path_classes": [
     "free",

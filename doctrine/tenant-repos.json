@@ -42,7 +42,7 @@
   },
   "what-works": {
    "repo": "ultrastable/what-works",
-   "state": "moving",
+   "state": "moved",
    "source": "instances/what-works",
    "keep_in_core": [
     "IDEA.md",
