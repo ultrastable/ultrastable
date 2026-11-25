@@ -45,7 +45,7 @@ export default {
   {
    "area": "doctrine",
    "quiet_days": 0,
-   "recent7": 36231,
+   "recent7": 36273,
    "series": [
     0,
     0,
@@ -76,16 +76,16 @@ export default {
     0,
     0,
     0,
-    36231
+    36273
    ],
    "share_recent": 0.129,
    "share_trend": 0.129,
-   "total": 36231
+   "total": 36273
   },
   {
    "area": "foundation",
    "quiet_days": 0,
-   "recent7": 34164,
+   "recent7": 34177,
    "series": [
     0,
     0,
@@ -116,16 +116,16 @@ export default {
     0,
     0,
     0,
-    34164
+    34177
    ],
    "share_recent": 0.122,
    "share_trend": 0.122,
-   "total": 34164
+   "total": 34177
   },
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 24955,
+   "recent7": 24973,
    "series": [
     0,
     0,
@@ -156,16 +156,16 @@ export default {
     0,
     0,
     0,
-    24955
+    24973
    ],
    "share_recent": 0.089,
    "share_trend": 0.089,
-   "total": 24955
+   "total": 24973
   },
   {
    "area": "seed/worker",
    "quiet_days": 0,
-   "recent7": 17798,
+   "recent7": 17823,
    "series": [
     0,
     0,
@@ -196,16 +196,16 @@ export default {
     0,
     0,
     0,
-    17798
+    17823
    ],
    "share_recent": 0.064,
    "share_trend": 0.064,
-   "total": 17798
+   "total": 17823
   },
   {
    "area": "tests/foundation",
    "quiet_days": 0,
-   "recent7": 13606,
+   "recent7": 13629,
    "series": [
     0,
     0,
@@ -236,11 +236,11 @@ export default {
     0,
     0,
     0,
-    13606
+    13629
    ],
    "share_recent": 0.049,
    "share_trend": 0.049,
-   "total": 13606
+   "total": 13629
   },
   {
    "area": "instances",
@@ -323,7 +323,7 @@ export default {
    "total": 10871
   }
  ],
- "at": "2026-11-25T20:42:05Z",
+ "at": "2026-11-25T20:43:07Z",
  "days": 30,
  "findings": [
   {
@@ -583,7 +583,7 @@ export default {
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 308,
+   "rows": 309,
    "series": [
     0,
     0,
@@ -614,7 +614,7 @@ export default {
     112,
     80,
     55,
-    56
+    57
    ]
   },
   {
