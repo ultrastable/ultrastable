@@ -13,6 +13,7 @@
 
 import { KINDS, OUTCOMES } from "./standing.js";
 import { FIELDS, doiKey } from "./ledger.js";
+import { citingReplications } from "./epmc.js";
 
 export const BEAT = { FINDINGS: 4, READS: 6, CANDIDATES: 12, DISCOVER: 3, CROSSREF: 3, MIN_CITED: 300, MIN_OVERLAP: 2, SPARK_MIN: 120, STALE_DAYS: 30 };
 export const OA = "https://api.openalex.org/";
@@ -43,7 +44,7 @@ export async function oa(path, fetchImpl = fetch, wait = sleep) {
     const r = await fetchImpl(url, { headers: { "user-agent": `${UA} mailto:${CONTACT}`, accept: "application/json" } });
     if (r.status === 404) return null;
     if (r.status === 429 && tries === 0) { await wait(Math.min(OA_WAIT_MS, 1000 * (Number(r.headers?.get?.("retry-after")) || 1))); continue; }
-    if (!r.ok) throw new Error(`openalex ${r.status}`);
+    if (!r.ok) { let why = ""; try { why = String(await r.text()).replace(/\s+/g, " ").slice(0, 120); } catch { why = ""; } throw new Error(`openalex ${r.status}${why ? ": " + why : ""}`); }
     return r.json();
   }
 }
@@ -121,15 +122,26 @@ export async function readCandidate(w, finding, ai) {
 }
 
 // 1 + 2: replications of one finding. known: Set of DOIs already filed or led for this finding.
+// When OpenAlex refuses, the same candidates are read from Europe PMC (epmc.js); out.source says which route answered.
 export async function checkFinding(f, { fetchImpl = fetch, ai, known = new Set(), reads = BEAT.READS } = {}) {
-  const out = { finding: f.id, attempts: [], leads: [], retracted: false, openalex: null, cited_by: null };
+  const out = { finding: f.id, attempts: [], leads: [], retracted: false, openalex: null, cited_by: null, source: "openalex" };
   if (!f.original?.doi) return out;
-  const orig = await oa(`works/doi:${encodeURIComponent(f.original.doi)}?select=id,is_retracted,cited_by_count`, fetchImpl);
-  if (!orig) return out;
-  out.openalex = orig.id; out.retracted = !!orig.is_retracted; out.cited_by = orig.cited_by_count ?? null;
-  const wid = String(orig.id).split("/").pop();
-  const res = await oa(`works?filter=cites:${wid},title_and_abstract.search:${encodeURIComponent("replication OR replicate OR reanalysis OR meta-analysis")}&sort=publication_date:desc&per-page=${BEAT.CANDIDATES}&select=${SEL}`, fetchImpl);
-  for (const w of res?.results || []) {
+  let works;
+  try {
+    const orig = await oa(`works/doi:${encodeURIComponent(f.original.doi)}?select=id,is_retracted,cited_by_count`, fetchImpl);
+    if (!orig) return out;
+    out.openalex = orig.id; out.retracted = !!orig.is_retracted; out.cited_by = orig.cited_by_count ?? null;
+    const wid = String(orig.id).split("/").pop();
+    works = (await oa(`works?filter=cites:${wid},title_and_abstract.search:${encodeURIComponent("replication OR replicate OR reanalysis OR meta-analysis")}&sort=publication_date:desc&per-page=${BEAT.CANDIDATES}&select=${SEL}`, fetchImpl))?.results || [];
+  } catch (e) {
+    if (!/^openalex/.test(String(e?.message))) throw e;
+    let alt;
+    try { alt = await citingReplications(f.original.doi, { pageSize: BEAT.CANDIDATES }, fetchImpl); }
+    catch (e2) { throw new Error(`${e.message}; ${e2?.message || e2}`); }
+    if (!alt) throw new Error(`${e.message}; europepmc does not hold the original`);
+    out.source = "europepmc"; out.cited_by = alt.cited_by; works = alt.works;
+  }
+  for (const w of works) {
     const doi = doiKey(citeOf(w).doi);
     if (!doi || known.has(doi) || doi === doiKey(f.original.doi)) continue;
     if (out.attempts.length + out.leads.length >= reads) break;

@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-25-openalex-refuses-workers-even-in-the-polite-pool-europe-pmc-",
+  "kind": "lesson",
+  "date": "2026-11-25",
+  "title": "OpenAlex refuses Workers even in the polite pool; Europe PMC is the second route",
+  "body": "Beat 2 (17:23 UTC, after the mailto polite-pool fix) still got HTTP 429 on every OpenAlex call from the ultrastable-replication-ledger Worker: OpenAlex limits by address and Workers share theirs. checkFinding now falls back to Europe PMC (CITES search, no key) and reads its records with the same verbatim-quote reader; the OpenAlex error now carries the response text so the cause is visible on /api/beats.",
+  "probe": "file:instances/replication-ledger/worker/epmc.js",
+  "session": "https://claude.ai/code/session_0156nqDsz4YUXpAoqH9CX7mq"
+ },
+ "kind": "lesson",
+ "title": "OpenAlex refuses Workers even in the polite pool; Europe PMC is the second route",
+ "session": "https://claude.ai/code/session_0156nqDsz4YUXpAoqH9CX7mq"
+}

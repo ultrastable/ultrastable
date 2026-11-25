@@ -10,12 +10,14 @@
    "instances/replication-ledger/worker/store.js",
    "instances/replication-ledger/worker/discover.js",
    "instances/replication-ledger/worker/crossref.js",
+   "instances/replication-ledger/worker/epmc.js",
    "instances/replication-ledger/worker/cli.mjs",
    "instances/replication-ledger/worker/data/findings.json"
   ],
   "tests": [
    "instances/replication-ledger/worker/ledger.test.mjs",
-   "instances/replication-ledger/worker/discover.test.mjs"
+   "instances/replication-ledger/worker/discover.test.mjs",
+   "instances/replication-ledger/worker/epmc.test.mjs"
   ]
  },
  "deploy": {
