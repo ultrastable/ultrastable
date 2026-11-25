@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/dispose.schema.json",
+  "title": "dispose (doctrine/dispose.json)",
+  "description": "Contract for doctrine/dispose.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "ttl_days": {
+      "type": "number"
+    },
+    "fail_limit": {
+      "type": "number"
+    },
+    "revive_days": {
+      "type": "number"
+    },
+    "revive_per_pass": {
+      "type": "number"
+    },
+    "max_per_pass": {
+      "type": "number"
+    },
+    "owner_bound": {
+      "type": "string"
+    },
+    "final_statuses": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "gate_default": {
+      "type": "string"
+    },
+    "dispositions": {
+      "type": "object",
+      "properties": {
+        "gate": {
+          "type": "string"
+        },
+        "shelved": {
+          "type": "string"
+        },
+        "fixed": {
+          "type": "string"
+        }
+      }
+    },
+    "ttl_hours": {
+      "type": "number"
+    },
+    "_ttl_hours": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "_ttl_hours",
+    "dispositions",
+    "fail_limit",
+    "final_statuses",
+    "gate_default",
+    "max_per_pass",
+    "owner_bound",
+    "revive_days",
+    "revive_per_pass",
+    "ttl_days",
+    "ttl_hours",
+    "version"
+  ]
+}

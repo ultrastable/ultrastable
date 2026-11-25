@@ -1,4 +1,4 @@
-# DEP-LOOP-1 / OPEN-STANDARDS-1: every dependency ecosystem a seeded system ships is advanced by Dependabot; the system's merge lane
+# DEP-LOOP-1 / STANDARDS-1: every dependency ecosystem a seeded system ships is advanced by Dependabot; the system's merge lane
 # merges the change when its checks pass. The platform's tests/foundation/test_open_standards.py fails when an ecosystem is missing.
 version: 2
 updates:

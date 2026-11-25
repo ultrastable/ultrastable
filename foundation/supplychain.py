@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 # Copyright (c) Ultrastable
-"""OPEN-STANDARDS-1 supply-chain loop. Inputs are two standard documents: the OpenSSF Scorecard JSON result and the SPDX 2.3 SBOM
+"""STANDARDS-1 supply-chain loop. Inputs are two standard documents: the OpenSSF Scorecard JSON result and the SPDX 2.3 SBOM
 that GitHub's dependency graph exports. `--ingest SCORECARD SBOM [--apply]` writes ops/supply-chain.json and files one
 Q-STD-SC-* item per Scorecard check under the floor and per package whose licence is outside doctrine/dependency-licences.json;
 `--probe ID` is each item's closing probe (exit 0 when the latest reading passes); `--check` validates the settings and the age
@@ -53,7 +53,7 @@ def file_items(root: Path, rep: dict, cfg: dict) -> list[str]:
             continue
         body = (f"**Owner:** staff\n**Trigger:** supply-chain reading {rep['at']}: {why}\n"
                 f"**Done check:** cmd:python3 -m foundation supplychain --probe {iid}\n**Status:** open\n\n"
-                f"{why}. Source: the weekly OpenSSF Scorecard and SPDX SBOM reading in `{OUT}` (OPEN-STANDARDS-1). Fix the cause in code "
+                f"{why}. Source: the weekly OpenSSF Scorecard and SPDX SBOM reading in `{OUT}` (STANDARDS-1). Fix the cause in code "
                 "(workflow permissions, pinned actions, dependency update or replacement); the item closes when the next reading passes. "
                 f"A check that cannot be met by code is added to `ignore_checks` in `{CFG}` with its reason.\n\n**Out of scope:** lowering the floor.")
         p.write_text(json.dumps({"id": iid, "title": f"{iid}: {why}", "body": body, "labels": ["role:staff", "ws:platform", "standards"],

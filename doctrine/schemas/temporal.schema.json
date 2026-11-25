@@ -1,0 +1,217 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/temporal.schema.json",
+  "title": "temporal (doctrine/temporal.json)",
+  "description": "Contract for doctrine/temporal.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "tenant": {
+      "type": "string"
+    },
+    "history_days": {
+      "type": "number"
+    },
+    "recent_days": {
+      "type": "number"
+    },
+    "baseline_days": {
+      "type": "number"
+    },
+    "min_baseline_days": {
+      "type": "number"
+    },
+    "spark_days": {
+      "type": "number"
+    },
+    "publish_areas": {
+      "type": "number"
+    },
+    "history_rows": {
+      "type": "number"
+    },
+    "hot_ratio": {
+      "type": "number"
+    },
+    "hot_floor_rate": {
+      "type": "number"
+    },
+    "hot_min_recent": {
+      "type": "number"
+    },
+    "file_churn_min": {
+      "type": "number"
+    },
+    "decay_ratio": {
+      "type": "number"
+    },
+    "neglect_min_base": {
+      "type": "number"
+    },
+    "revive_ratio": {
+      "type": "number"
+    },
+    "stop_factor": {
+      "type": "number"
+    },
+    "stop_min_events": {
+      "type": "number"
+    },
+    "min_gap_s": {
+      "type": "number"
+    },
+    "fail_streak": {
+      "type": "number"
+    },
+    "fail_min": {
+      "type": "number"
+    },
+    "settle_days": {
+      "type": "number"
+    },
+    "escalate_runs": {
+      "type": "number"
+    },
+    "max_items_per_run": {
+      "type": "number"
+    },
+    "attention_step": {
+      "type": "number"
+    },
+    "attention_min": {
+      "type": "number"
+    },
+    "attention_max": {
+      "type": "number"
+    },
+    "default_advocate": {
+      "type": "string"
+    },
+    "auto_areas": {
+      "type": "boolean"
+    },
+    "simulation": {
+      "type": "string"
+    },
+    "noise": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "areas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "advocate": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "paths": {
+            "type": "array"
+          }
+        }
+      }
+    },
+    "ledgers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "advocate": {
+            "type": "string"
+          },
+          "area": {
+            "type": "string"
+          },
+          "file": {
+            "type": "string"
+          },
+          "files": {
+            "type": "array"
+          },
+          "id": {
+            "type": "string"
+          },
+          "key": {
+            "type": "array"
+          },
+          "ok_field": {
+            "type": "string"
+          },
+          "ok_values": {
+            "type": "array"
+          },
+          "time": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "max_file_hotspots": {
+      "type": "number"
+    },
+    "tenants": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "areas",
+    "attention_max",
+    "attention_min",
+    "attention_step",
+    "auto_areas",
+    "baseline_days",
+    "decay_ratio",
+    "default_advocate",
+    "entries",
+    "escalate_runs",
+    "fail_min",
+    "fail_streak",
+    "file_churn_min",
+    "history_days",
+    "history_rows",
+    "hot_floor_rate",
+    "hot_min_recent",
+    "hot_ratio",
+    "ledgers",
+    "max_file_hotspots",
+    "max_items_per_run",
+    "min_baseline_days",
+    "min_gap_s",
+    "neglect_min_base",
+    "noise",
+    "publish_areas",
+    "recent_days",
+    "revive_ratio",
+    "settle_days",
+    "simulation",
+    "spark_days",
+    "stop_factor",
+    "stop_min_events",
+    "tenant",
+    "tenants",
+    "version"
+  ]
+}

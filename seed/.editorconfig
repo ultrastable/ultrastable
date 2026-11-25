@@ -1,4 +1,4 @@
-# OPEN-STANDARDS-1: EditorConfig (https://editorconfig.org) so every editor and agent writes files the same way.
+# STANDARDS-1: EditorConfig (https://editorconfig.org) so every editor and agent writes files the same way.
 root = true
 
 [*]

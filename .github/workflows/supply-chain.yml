@@ -2,7 +2,7 @@ name: supply-chain
 # budget: ~3 min x 4/month (public repository: Actions minutes are free)
 # trigger: weekly; OpenSSF Scorecard and the dependency graph change over days, a faster event buys nothing; dispatch on demand
 # free-alternative: a cloud-hosted agent session downloads both documents and runs `python3 -m foundation supplychain --ingest SC SBOM --apply`
-# OPEN-STANDARDS-1: OpenSSF Scorecard (supply-chain posture) and the SPDX 2.3 SBOM from GitHub's dependency graph feed one closed loop:
+# STANDARDS-1: OpenSSF Scorecard (supply-chain posture) and the SPDX 2.3 SBOM from GitHub's dependency graph feed one closed loop:
 # foundation/supplychain.py records ops/supply-chain.json and files Q-STD-SC-* items whose closing probe is the next reading.
 on:
   schedule: [{cron: "41 5 * * 3"}]
@@ -37,4 +37,4 @@ jobs:
           python3 -m foundation balance --gate --apply  # FLOW-BALANCE-1: the one filing gate before any item lands
           if [ -f ops/balance-held.jsonl ]; then git add ops/balance-held.jsonl; fi
           git add ops/supply-chain.json docs/issues
-          git diff --cached --quiet || { git commit -m "supply-chain: weekly Scorecard and SBOM reading (OPEN-STANDARDS-1) [skip ci]"; python3 tools/push_main.py; }
+          git diff --cached --quiet || { git commit -m "supply-chain: weekly Scorecard and SBOM reading (STANDARDS-1) [skip ci]"; python3 tools/push_main.py; }

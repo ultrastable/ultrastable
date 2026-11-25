@@ -1,0 +1,212 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/decisions.schema.json",
+  "title": "decisions (doctrine/decisions.json)",
+  "description": "Contract for doctrine/decisions.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "ledger": {
+      "type": "string"
+    },
+    "outcomes": {
+      "type": "string"
+    },
+    "page_data": {
+      "type": "string"
+    },
+    "probe": {
+      "type": "object",
+      "properties": {
+        "min_settled_share": {
+          "type": "number"
+        },
+        "min_due_to_judge": {
+          "type": "number"
+        },
+        "grace_h": {
+          "type": "number"
+        },
+        "live_url": {
+          "type": "string"
+        }
+      }
+    },
+    "trend": {
+      "type": "object",
+      "properties": {
+        "min_settled_to_judge": {
+          "type": "number"
+        },
+        "flat_band": {
+          "type": "number"
+        }
+      }
+    },
+    "points": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "files": {
+            "type": "array"
+          },
+          "id": {
+            "type": "string"
+          },
+          "measure": {
+            "type": "object"
+          },
+          "metric": {
+            "type": "string"
+          },
+          "metric_says": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "op": {
+            "type": "string"
+          },
+          "predict": {
+            "type": "string"
+          },
+          "store": {
+            "type": "string"
+          },
+          "target": {
+            "type": "number"
+          },
+          "why": {
+            "type": "string"
+          },
+          "window_h": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "discover": {
+      "type": "object",
+      "properties": {
+        "globs": {
+          "type": "array"
+        },
+        "py_pattern": {
+          "type": "string"
+        },
+        "js_pattern": {
+          "type": "string"
+        },
+        "marker": {
+          "type": "string"
+        }
+      }
+    },
+    "uninstrumented": {
+      "type": "object",
+      "properties": {
+        "foundation/failover.py": {
+          "type": "string"
+        },
+        "foundation/promote.py": {
+          "type": "string"
+        },
+        "foundation/reach.py": {
+          "type": "string"
+        },
+        "foundation/uiux.py": {
+          "type": "string"
+        },
+        "seed/worker/src/budget.js": {
+          "type": "string"
+        },
+        "seed/worker/src/cutover.js": {
+          "type": "string"
+        },
+        "seed/worker/src/pr-executor.js": {
+          "type": "string"
+        },
+        "seed/worker/src/unknowns.js": {
+          "type": "string"
+        }
+      }
+    },
+    "gap_item": {
+      "type": "string"
+    },
+    "not_decisions": {
+      "type": "object",
+      "properties": {
+        "foundation/agents.py": {
+          "type": "string"
+        },
+        "foundation/boundary.py": {
+          "type": "string"
+        },
+        "foundation/branchsweep.py": {
+          "type": "string"
+        },
+        "foundation/conflicts.py": {
+          "type": "string"
+        },
+        "foundation/design.py": {
+          "type": "string"
+        },
+        "foundation/filing.py": {
+          "type": "string"
+        },
+        "foundation/ghmirror.py": {
+          "type": "string"
+        },
+        "foundation/seedadmit.py": {
+          "type": "string"
+        },
+        "foundation/seedlaunch.py": {
+          "type": "string"
+        },
+        "foundation/thought.py": {
+          "type": "string"
+        },
+        "foundation/triggers.py": {
+          "type": "string"
+        },
+        "seed/worker/src/airouter.js": {
+          "type": "string"
+        },
+        "seed/worker/src/critloop.js": {
+          "type": "string"
+        },
+        "seed/worker/src/events.js": {
+          "type": "string"
+        },
+        "seed/worker/src/pace.js": {
+          "type": "string"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "discover",
+    "gap_item",
+    "ledger",
+    "not_decisions",
+    "outcomes",
+    "page_data",
+    "points",
+    "probe",
+    "trend",
+    "uninstrumented",
+    "version"
+  ]
+}

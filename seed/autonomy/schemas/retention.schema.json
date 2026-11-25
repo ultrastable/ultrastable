@@ -1,0 +1,250 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/seed/autonomy/retention.schema.json",
+  "title": "retention (seed/autonomy/retention.json)",
+  "description": "Contract for seed/autonomy/retention.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "doc": {
+      "type": "string"
+    },
+    "max_rows_per_run": {
+      "type": "number"
+    },
+    "tables": {
+      "type": "object",
+      "properties": {
+        "free_tier_samples": {
+          "type": "object"
+        },
+        "host_events": {
+          "type": "object"
+        },
+        "airouter_cache": {
+          "type": "object"
+        },
+        "airouter_calls": {
+          "type": "object"
+        },
+        "airouter_stats": {
+          "type": "object"
+        },
+        "airouter_retired": {
+          "type": "object"
+        },
+        "social_posted": {
+          "type": "object"
+        },
+        "human_inbox": {
+          "type": "object"
+        },
+        "_migrations": {
+          "type": "object"
+        },
+        "unknown_questions": {
+          "type": "object"
+        },
+        "tick_runs": {
+          "type": "object"
+        },
+        "dispatches": {
+          "type": "object"
+        },
+        "outcomes": {
+          "type": "object"
+        },
+        "predictions": {
+          "type": "object"
+        },
+        "criticality_samples": {
+          "type": "object"
+        },
+        "criticality_history": {
+          "type": "object"
+        },
+        "criticality_actions": {
+          "type": "object"
+        },
+        "cost_samples": {
+          "type": "object"
+        },
+        "sweeper_runs": {
+          "type": "object"
+        },
+        "failure_probe_runs": {
+          "type": "object"
+        },
+        "credential_events": {
+          "type": "object"
+        },
+        "handoff_events": {
+          "type": "object"
+        },
+        "webhook_events": {
+          "type": "object"
+        },
+        "webhook_deliveries": {
+          "type": "object"
+        },
+        "webhook_seen": {
+          "type": "object"
+        },
+        "loop_beats": {
+          "type": "object"
+        },
+        "ignition_log": {
+          "type": "object"
+        },
+        "budget_ledger": {
+          "type": "object"
+        },
+        "retention_runs": {
+          "type": "object"
+        },
+        "hits": {
+          "type": "object"
+        },
+        "analytics_meta": {
+          "type": "object"
+        },
+        "org": {
+          "type": "object"
+        },
+        "roles": {
+          "type": "object"
+        },
+        "items": {
+          "type": "object"
+        },
+        "claims": {
+          "type": "object"
+        },
+        "gate_cards": {
+          "type": "object"
+        },
+        "trust_ledger": {
+          "type": "object"
+        },
+        "doctrine_lineage": {
+          "type": "object"
+        },
+        "interview_answers": {
+          "type": "object"
+        },
+        "objectives": {
+          "type": "object"
+        },
+        "metrics": {
+          "type": "object"
+        },
+        "credentials": {
+          "type": "object"
+        },
+        "handoffs": {
+          "type": "object"
+        },
+        "ignition_gaps": {
+          "type": "object"
+        },
+        "webhook_subscriptions": {
+          "type": "object"
+        },
+        "webhook_inbound": {
+          "type": "object"
+        },
+        "webhook_state": {
+          "type": "object"
+        },
+        "loop_clock": {
+          "type": "object"
+        },
+        "cutover_state": {
+          "type": "object"
+        },
+        "audit_log": {
+          "type": "object"
+        },
+        "audit_segments": {
+          "type": "object"
+        },
+        "live_changes": {
+          "type": "object"
+        },
+        "live_changes_meta": {
+          "type": "object"
+        },
+        "decision_log": {
+          "type": "object"
+        },
+        "goal_samples": {
+          "type": "object"
+        },
+        "goal_adjustments": {
+          "type": "object"
+        },
+        "goals": {
+          "type": "object"
+        },
+        "goal_knobs": {
+          "type": "object"
+        },
+        "stickiness_state": {
+          "type": "object"
+        },
+        "stickiness_series": {
+          "type": "object"
+        },
+        "progress_cadence": {
+          "type": "object"
+        },
+        "trust_ledger_backup_0027": {
+          "type": "object"
+        },
+        "trust_ledger_v2": {
+          "type": "object"
+        },
+        "cf_alerts": {
+          "type": "object"
+        },
+        "kg_nodes": {
+          "type": "object"
+        },
+        "kg_edges": {
+          "type": "object"
+        },
+        "kg_insights": {
+          "type": "object"
+        },
+        "kg_runs": {
+          "type": "object"
+        },
+        "kg_vec": {
+          "type": "object"
+        },
+        "kg_summaries": {
+          "type": "object"
+        },
+        "kg_ai_cursor": {
+          "type": "object"
+        },
+        "kg_cost": {
+          "type": "object"
+        },
+        "kg_sources": {
+          "type": "object"
+        },
+        "kg_state": {
+          "type": "object"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "doc",
+    "max_rows_per_run",
+    "tables"
+  ]
+}

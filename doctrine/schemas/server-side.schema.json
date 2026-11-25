@@ -1,0 +1,145 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/server-side.schema.json",
+  "title": "server-side (doctrine/server-side.json)",
+  "description": "Contract for doctrine/server-side.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "marker": {
+      "type": "string"
+    },
+    "rule": {
+      "type": "string"
+    },
+    "required_in": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "required_pattern": {
+      "type": "string"
+    },
+    "platforms": {
+      "type": "object",
+      "properties": {
+        "cloudflare": {
+          "type": "object"
+        },
+        "github-actions": {
+          "type": "object"
+        },
+        "claude-cloud": {
+          "type": "object"
+        }
+      }
+    },
+    "registries": {
+      "type": "object",
+      "properties": {
+        "loops": {
+          "type": "string"
+        },
+        "routes": {
+          "type": "string"
+        },
+        "loop_registry": {
+          "type": "string"
+        },
+        "local_token": {
+          "type": "string"
+        }
+      }
+    },
+    "banned": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "pattern": {
+            "type": "string"
+          },
+          "why": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "excused_by": {
+      "type": "string"
+    },
+    "excused_note": {
+      "type": "string"
+    },
+    "scan": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "max_bytes": {
+      "type": "number"
+    },
+    "skip_dirs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "exclude": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "banned",
+    "exclude",
+    "excused_by",
+    "excused_note",
+    "id",
+    "marker",
+    "max_bytes",
+    "platforms",
+    "registries",
+    "required_in",
+    "required_pattern",
+    "rule",
+    "scan",
+    "skip_dirs",
+    "version"
+  ]
+}

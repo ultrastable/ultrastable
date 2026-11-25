@@ -17,8 +17,6 @@ ROOT = Path(__file__).resolve().parents[1]
 GENERATORS = [
     (["python3", "-c", "from foundation import writeback; print(writeback.fold())"], "."),  # WRITEBACK-SHARD-1
     (["python3", "-m", "foundation", "claims", "--fix", "--apply"], "."),
-    (["python3", "-m", "foundation", "schemas", "--gen"], "."),  # OPEN-STANDARDS-1: a new config gets its inferred JSON Schema; drift of an existing one still fails `schemas --check`
-    (["python3", "seed/scripts/schemas.py", "--gen", "--root", "seed"], "."),
     (["python3", "scripts/build_dashboard.py"], "."),
     (["python3", "-m", "foundation", "selfmodel", "--apply"], "."),
     (["python3", "-m", "foundation", "trajectory", "--run", "--apply"], "."),  # TRAJECTORY-1: its page data reads git history, so every merge makes it stale until regenerated
@@ -34,6 +32,9 @@ GENERATORS = [
     (["python3", "-m", "foundation", "tenantcontrols", "--write"], "."),  # TENANT-CONTROLS-1
     (["python3", "-m", "foundation", "upstream", "contract", "--apply"], "."),
     (["python3", "-m", "foundation", "triggers", "--sync"], "."),
+    (["python3", "scripts/build_site_agentdata.py"], "."),  # STANDARDS-1: the site serves the standards register; an edit to it left agentdata.js stale (#2273)
+    (["python3", "-m", "foundation", "configschema", "--gen"], "."),  # CONFIG-SCHEMA-1: a new config gets its contract
+    (["python3", "-m", "foundation", "stdgen", "--gen"], "."),  # STANDARDS-1: Backstage catalog and CycloneDX SBOM follow the registers
     (["python3", "-m", "plugins", "self", "--write"], "seed"),
 ]
 # Files the generators write; the workflow ignores pushes that touch only these, so the bot's own commit cannot retrigger it.

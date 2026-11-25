@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/fleet.schema.json",
+  "title": "fleet (doctrine/fleet.json)",
+  "description": "Contract for doctrine/fleet.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "org": {
+      "type": "string"
+    },
+    "repos": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "surfaces": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "how": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "merge": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "type": "string"
+        },
+        "require": {
+          "type": "array"
+        },
+        "skip_labels": {
+          "type": "array"
+        },
+        "wait_minutes": {
+          "type": "number"
+        },
+        "reviews_required": {
+          "type": "number"
+        },
+        "ready_drafts": {
+          "type": "boolean"
+        },
+        "auto_close_on_probe": {
+          "type": "boolean"
+        },
+        "_doc": {
+          "type": "string"
+        }
+      }
+    },
+    "copies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "files": {
+            "type": "array"
+          },
+          "id": {
+            "type": "string"
+          },
+          "repos": {
+            "type": "array"
+          },
+          "rule": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "public_read": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "reach_error": {
+      "type": "string"
+    },
+    "_archived": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_archived",
+    "_doc",
+    "copies",
+    "dependencies",
+    "merge",
+    "org",
+    "public_read",
+    "reach_error",
+    "repos",
+    "surfaces"
+  ]
+}

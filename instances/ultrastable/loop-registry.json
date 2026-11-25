@@ -4215,7 +4215,7 @@
   {
    "id": "supply-chain",
    "kind": "governance",
-   "summary": "OPEN-STANDARDS-1: OpenSSF Scorecard and the SPDX SBOM from GitHub's dependency graph are read weekly; each check under the floor and each package outside the licence policy becomes a Q-STD-SC-* item closed by the next reading. The reading itself is written to ops/supply-chain.json by the first run.",
+   "summary": "STANDARDS-1: OpenSSF Scorecard and the SPDX SBOM from GitHub's dependency graph are read weekly; each check under the floor and each package outside the licence policy becomes a Q-STD-SC-* item closed by the next reading. The reading itself is written to ops/supply-chain.json by the first run.",
    "trigger": "weekly (supply-chain.yml) and on demand",
    "owner": "staff",
    "closes_by": "system",

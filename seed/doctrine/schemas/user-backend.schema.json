@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/seed/doctrine/user-backend.schema.json",
+  "title": "user-backend (seed/doctrine/user-backend.json)",
+  "description": "Contract for seed/doctrine/user-backend.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "marker": {
+      "type": "string"
+    },
+    "shared_errors_module": {
+      "type": "string"
+    },
+    "surface_globs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "surface_exclude_globs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "leak_patterns": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "leak_ignore_line": {
+      "type": "string"
+    },
+    "leak_ok_marker": {
+      "type": "string"
+    },
+    "shared_consumers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "fork_patterns": {
+            "type": "array"
+          },
+          "id": {
+            "type": "string"
+          },
+          "module": {
+            "type": "string"
+          },
+          "must_reach_from": {
+            "type": "array"
+          }
+        }
+      }
+    },
+    "service_binding_exempt": {
+      "type": "object",
+      "properties": {
+        "deploy/agents-worker.js": {
+          "type": "string"
+        }
+      }
+    },
+    "inherited_by_tenants": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "id",
+    "inherited_by_tenants",
+    "leak_ignore_line",
+    "leak_ok_marker",
+    "leak_patterns",
+    "marker",
+    "service_binding_exempt",
+    "shared_consumers",
+    "shared_errors_module",
+    "surface_exclude_globs",
+    "surface_globs",
+    "version"
+  ]
+}

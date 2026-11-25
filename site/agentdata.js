@@ -285,25 +285,81 @@ export default {
    },
    {
     "id": "json-schema-config",
-    "name": "JSON Schema 2020-12 for every config and manifest, listed in a SchemaStore catalog",
-    "body": "JSON Schema organisation; SchemaStore",
+    "name": "JSON Schema 2020-12 contracts for every config, listed in a Schema Store catalog",
+    "body": "JSON Schema organisation; SchemaStore catalog format",
     "status": "stable",
     "support": "supported",
     "tracked_by": null
+   },
+   {
+    "id": "backstage-catalog",
+    "name": "Backstage Software Catalog descriptor (catalog-info.yaml)",
+    "body": "CNCF (Backstage)",
+    "status": "de-facto",
+    "support": "supported",
+    "tracked_by": null
+   },
+   {
+    "id": "cyclonedx-sbom",
+    "name": "CycloneDX 1.6 SBOM with package URLs",
+    "body": "OWASP CycloneDX; Ecma TC54 (ECMA-424); purl",
+    "status": "stable",
+    "support": "supported",
+    "tracked_by": null
+   },
+   {
+    "id": "devcontainer",
+    "name": "Development Containers (devcontainer.json)",
+    "body": "Development Containers specification",
+    "status": "stable",
+    "support": "supported",
+    "tracked_by": null
+   },
+   {
+    "id": "cloudevents-webhooks",
+    "name": "CloudEvents 1.0 envelopes signed per Standard Webhooks",
+    "body": "CNCF (CloudEvents); Standard Webhooks",
+    "status": "stable",
+    "support": "supported",
+    "tracked_by": null
+   },
+   {
+    "id": "conventional-commits-semver",
+    "name": "Conventional Commits and SemVer",
+    "body": "conventionalcommits.org; semver.org",
+    "status": "stable",
+    "support": "not_applicable",
+    "tracked_by": null
+   },
+   {
+    "id": "opa-rego",
+    "name": "Open Policy Agent (Rego) policy-as-code",
+    "body": "CNCF (Open Policy Agent)",
+    "status": "stable",
+    "support": "not_applicable",
+    "tracked_by": null
+   },
+   {
+    "id": "openfeature",
+    "name": "OpenFeature flag evaluation for the goal knobs",
+    "body": "CNCF (OpenFeature)",
+    "status": "draft",
+    "support": "planned",
+    "tracked_by": "Q-STD-OPENFEATURE"
+   },
+   {
+    "id": "slsa-provenance",
+    "name": "SLSA v1 build provenance for deploys",
+    "body": "OpenSSF (SLSA)",
+    "status": "stable",
+    "support": "planned",
+    "tracked_by": "Q-STD-SLSA"
    },
    {
     "id": "editorconfig",
     "name": "EditorConfig",
     "body": "editorconfig.org",
     "status": "de-facto",
-    "support": "supported",
-    "tracked_by": null
-   },
-   {
-    "id": "devcontainer",
-    "name": "Development Container specification",
-    "body": "containers.dev (Microsoft, open spec)",
-    "status": "stable",
     "support": "supported",
     "tracked_by": null
    },
@@ -325,7 +381,7 @@ export default {
    },
    {
     "id": "spdx-sbom",
-    "name": "SPDX 2.3 software bill of materials",
+    "name": "SPDX 2.3 SBOM from the dependency graph",
     "body": "Linux Foundation (ISO/IEC 5962)",
     "status": "stable",
     "support": "supported",
@@ -356,32 +412,8 @@ export default {
     "tracked_by": null
    },
    {
-    "id": "conventional-commits",
-    "name": "Conventional Commits and SemVer release notes",
-    "body": "conventionalcommits.org; semver.org",
-    "status": "stable",
-    "support": "planned",
-    "tracked_by": "STD-4: executor item in docs/issues/STD-4.json"
-   },
-   {
-    "id": "cloudevents",
-    "name": "CloudEvents 1.0 envelope for events between loops",
-    "body": "CNCF",
-    "status": "stable",
-    "support": "planned",
-    "tracked_by": "STD-5: executor item in docs/issues/STD-5.json"
-   },
-   {
-    "id": "openfeature",
-    "name": "OpenFeature flags for the goal knobs",
-    "body": "CNCF",
-    "status": "stable",
-    "support": "planned",
-    "tracked_by": "STD-6: executor item in docs/issues/STD-6.json"
-   },
-   {
     "id": "schema-org-kg",
-    "name": "Knowledge graph served as JSON-LD (schema.org) with SHACL-style shape checks",
+    "name": "Knowledge graph served as JSON-LD (schema.org)",
     "body": "W3C / schema.org",
     "status": "stable",
     "support": "planned",

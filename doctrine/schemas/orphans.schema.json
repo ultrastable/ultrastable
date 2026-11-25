@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/orphans.schema.json",
+  "title": "orphans (doctrine/orphans.json)",
+  "description": "Contract for doctrine/orphans.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string"
+    },
+    "assume": {
+      "type": "object",
+      "properties": {
+        "human_reader": {
+          "type": "boolean"
+        },
+        "human_review": {
+          "type": "boolean"
+        },
+        "owner_decision": {
+          "type": "boolean"
+        },
+        "external_input": {
+          "type": "boolean"
+        },
+        "memory_or_document_as_storage": {
+          "type": "boolean"
+        }
+      }
+    },
+    "rules": {
+      "type": "object",
+      "properties": {
+        "every_artifact_has_a_consumer": {
+          "type": "boolean"
+        },
+        "every_loop_closes_by_system": {
+          "type": "boolean"
+        },
+        "wait_on_person_allowed_only_for": {
+          "type": "array"
+        },
+        "wait_requires_default_in_effect": {
+          "type": "boolean"
+        },
+        "loop_proceeds_on_default_while_waiting": {
+          "type": "boolean"
+        },
+        "new_orphan_artifact_fails_ci": {
+          "type": "boolean"
+        },
+        "baseline_is_shrink_only": {
+          "type": "boolean"
+        },
+        "blocker_resolution": {
+          "type": "string"
+        }
+      }
+    },
+    "consumer_code_suffixes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "artifact_suffixes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "platform_consumed": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": "string"
+        },
+        "basenames": {
+          "type": "array"
+        },
+        "dirs": {
+          "type": "array"
+        }
+      }
+    },
+    "wait_phrases": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "properties": {
+        "orphan_artifacts": {
+          "type": "object"
+        },
+        "human_wait_states": {
+          "type": "object"
+        }
+      }
+    },
+    "backlog_issue": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "labels": {
+          "type": "array"
+        },
+        "batch": {
+          "type": "number"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "artifact_suffixes",
+    "assume",
+    "backlog_issue",
+    "consumer_code_suffixes",
+    "id",
+    "metrics",
+    "platform_consumed",
+    "rules",
+    "source",
+    "wait_phrases"
+  ]
+}

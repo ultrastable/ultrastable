@@ -1,42 +1,17 @@
 # SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 # Copyright (c) Ultrastable
-"""OPEN-STANDARDS-1: the open standards the register marks supported hold in this repository and in the seed."""
+"""STANDARDS-1: the open standards the register marks supported hold in this repository and in the seed."""
 import glob, json, os, tempfile, unittest
 from pathlib import Path
 
 import yaml
 
-from foundation import schemas, supplychain
+from foundation import supplychain
 
 ROOT = Path(__file__).resolve().parents[2]
 
 
 class OpenStandards(unittest.TestCase):
-    def test_every_config_has_a_json_schema(self):
-        self.assertEqual(schemas.check(ROOT), [])
-
-    def test_catalog_is_schemastore_format(self):
-        for root in (ROOT, ROOT / "seed"):
-            cat = json.loads((root / "schemas/catalog.json").read_text())
-            self.assertEqual(cat["$schema"], "https://json.schemastore.org/schema-catalog.json")
-            self.assertEqual(cat["version"], 1)
-            self.assertTrue(all({"name", "description", "fileMatch", "url"} <= set(s) for s in cat["schemas"]))
-
-    def test_schema_drift_fails(self):
-        with tempfile.TemporaryDirectory() as d:
-            r = Path(d)
-            (r / "schemas").mkdir()
-            (r / "doctrine").mkdir()
-            (r / "schemas/config.json").write_text(json.dumps({"cover": ["doctrine/*.json"]}))
-            (r / "doctrine/a.json").write_text(json.dumps({"x": 1, "items": [{"id": "a", "n": 2}]}))
-            self.assertTrue(schemas.check(r))  # no schema yet
-            schemas.engine.generate(r)
-            self.assertEqual(schemas.engine.check(r), [])
-            (r / "doctrine/a.json").write_text(json.dumps({"x": "one", "items": [{"id": "a", "n": 2}], "new": True}))
-            self.assertTrue(any("does not match" in b for b in schemas.engine.check(r)))  # type changed
-            (r / "doctrine/a.json").write_text(json.dumps({"x": 3, "items": [{"id": "b", "n": 5, "extra": 1}], "new": True}))
-            self.assertEqual(schemas.engine.check(r), [])  # additions are allowed
-
     def test_editorconfig_present(self):
         for root in (ROOT, ROOT / "seed"):
             text = (root / ".editorconfig").read_text()

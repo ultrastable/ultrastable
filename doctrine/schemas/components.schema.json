@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/components.schema.json",
+  "title": "components (doctrine/components.json)",
+  "description": "Contract for doctrine/components.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "components": {
+      "type": "object",
+      "properties": {
+        "time-trigger": {
+          "type": "object"
+        },
+        "event-trigger": {
+          "type": "object"
+        },
+        "persistent-state": {
+          "type": "object"
+        },
+        "role-managers": {
+          "type": "object"
+        },
+        "code-executor": {
+          "type": "object"
+        },
+        "independent-review": {
+          "type": "object"
+        },
+        "merge-deploy": {
+          "type": "object"
+        },
+        "verify-live": {
+          "type": "object"
+        },
+        "metrics-triggers": {
+          "type": "object"
+        },
+        "self-improvement": {
+          "type": "object"
+        },
+        "session-lifecycle": {
+          "type": "object"
+        },
+        "trust-ladder": {
+          "type": "object"
+        },
+        "budget-guard": {
+          "type": "object"
+        },
+        "failover": {
+          "type": "object"
+        },
+        "memory-in-repo": {
+          "type": "object"
+        },
+        "funding-outreach": {
+          "type": "object"
+        },
+        "ip-legal": {
+          "type": "object"
+        },
+        "research-publishing": {
+          "type": "object"
+        },
+        "marketing-content": {
+          "type": "object"
+        },
+        "customer-onboarding": {
+          "type": "object"
+        },
+        "fleet-multi-repo": {
+          "type": "object"
+        },
+        "bootstrap-from-idea": {
+          "type": "object"
+        },
+        "self-hosting": {
+          "type": "object"
+        },
+        "gap-analysis": {
+          "type": "object"
+        }
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string"
+          },
+          "probe": {
+            "type": "string"
+          },
+          "to": {
+            "type": "string"
+          },
+          "via": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "users": {
+      "type": "object",
+      "properties": {
+        "non-technical-founder": {
+          "type": "object"
+        },
+        "solo-developer-maintainer": {
+          "type": "object"
+        },
+        "research-lab": {
+          "type": "object"
+        },
+        "small-team-startup": {
+          "type": "object"
+        },
+        "platform-governance-lead": {
+          "type": "object"
+        }
+      }
+    },
+    "objections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "answer": {
+            "type": "string"
+          },
+          "cites": {
+            "type": "array"
+          },
+          "id": {
+            "type": "string"
+          },
+          "nobody_offers": {
+            "type": "array"
+          },
+          "objection": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "components",
+    "edges",
+    "objections",
+    "users"
+  ]
+}

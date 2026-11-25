@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/research.schema.json",
+  "title": "research (doctrine/research.json)",
+  "description": "Contract for doctrine/research.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "number"
+    },
+    "studies_dir": {
+      "type": "string"
+    },
+    "papers_dir": {
+      "type": "string"
+    },
+    "state_dir": {
+      "type": "string"
+    },
+    "page_module": {
+      "type": "string"
+    },
+    "perspectives": {
+      "type": "object",
+      "properties": {
+        "economics": {
+          "type": "array"
+        },
+        "quality": {
+          "type": "array"
+        },
+        "oversight": {
+          "type": "array"
+        },
+        "safety": {
+          "type": "array"
+        },
+        "security": {
+          "type": "array"
+        },
+        "cost": {
+          "type": "array"
+        },
+        "reliability": {
+          "type": "array"
+        },
+        "systems": {
+          "type": "array"
+        }
+      }
+    },
+    "intake": {
+      "type": "object",
+      "properties": {
+        "feed": {
+          "type": "string"
+        },
+        "queries": {
+          "type": "object"
+        },
+        "max_intake_items": {
+          "type": "number"
+        },
+        "min_score": {
+          "type": "number"
+        }
+      }
+    },
+    "questions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "metric": {
+            "type": "string"
+          },
+          "prediction": {
+            "type": "string"
+          },
+          "question": {
+            "type": "string"
+          },
+          "target": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "intake",
+    "page_module",
+    "papers_dir",
+    "perspectives",
+    "questions",
+    "state_dir",
+    "studies_dir",
+    "version"
+  ]
+}
