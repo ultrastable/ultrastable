@@ -1876,10 +1876,10 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
-   "claim": "- **Every system deploys itself in full: repository, back end, public front end (FULL-STACK-1, Rowan 2026-11-25).** \"All UltraStable",
+   "claim": "- **Automate back-end and front-end development; improve on its own (IMPROVE-1, FRONTEND-AUTO-1, Rowan 2026-11-25).** \"Automatically",
    "detail": "",
-   "how": "file:instances/ultrastable/progress.json + file:doctrine/seed-deploys.json + file:doctrine/full-stack.json + file:deploy/launch-apps.mjs + file:foundation/fullstack.py + file:tests/foundation/test_fullstack.py",
-   "id": "cited-423086c682",
+   "how": "file:seed/scripts/improve.py + file:seed/autonomy/improve.json + file:seed/.github/workflows/improve.yml + file:foundation/improve.py + file:doctrine/improve.json + file:tests/foundation/test_improve.py",
+   "id": "cited-3c3d6c30bf",
    "kind": "claim",
    "pass": true,
    "surface": "agents/AGENTS.md"
@@ -2533,10 +2533,10 @@ export default {
    "surface": "seed/agents/AGENTS.md"
   },
   {
-   "claim": "- **Every system deploys itself in full: repository, back end, public front end (FULL-STACK-1, Rowan 2026-11-25).** \"All UltraStable",
+   "claim": "- **Automate back-end and front-end development; improve on its own (IMPROVE-1, FRONTEND-AUTO-1, Rowan 2026-11-25).** \"Automatically",
    "detail": "",
-   "how": "file:instances/ultrastable/progress.json + file:doctrine/seed-deploys.json + file:doctrine/full-stack.json + file:deploy/launch-apps.mjs + file:foundation/fullstack.py + file:tests/foundation/test_fullstack.py",
-   "id": "mirror-4a1adb91b4",
+   "how": "file:seed/scripts/improve.py + file:seed/autonomy/improve.json + file:seed/.github/workflows/improve.yml + file:foundation/improve.py + file:doctrine/improve.json + file:tests/foundation/test_improve.py",
+   "id": "mirror-0ea4d489e9",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3199,7 +3199,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 64 Python and 489 Worker tests",
+   "claim": "seed-tests: 63 Python and 483 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3208,7 +3208,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 489 Worker tests",
+   "claim": "seed-worker-tests: 483 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3244,7 +3244,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 921",
+   "claim": "live-deploys: 932",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",
