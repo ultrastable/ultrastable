@@ -1,0 +1,41 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
+// FLEET-CONTRACT-1: {{name}} serves the fleet contract, and every statement holds front to back and back to front against the real router,
+// on an in-memory SQLite standing in for D1.
+import test from "node:test";
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { verify, routesIn } from "../vendor/ultrastable/contract.js";
+import { handle } from "./index.js";
+import { SPEC } from "./contract.js";
+import { d1 } from "./worker.test.mjs";
+
+const now = Date.UTC(2026, 10, 25, 12);
+const site = (env = { DB: d1() }) => path => handle(new Request("https://t.test" + path), env, now);
+const src = readFileSync(new URL("./index.js", import.meta.url), "utf8");
+
+test("every surface answers and every statement is backed, both ways", async () => {
+  const apis = routesIn(src);
+  for (const need of ["/api/beats", "/api/entries.json", "/api/graph"]) assert.ok(apis.includes(need), need + " read from the router");
+  const r = await verify(site(), SPEC, { apis });
+  assert.deepEqual(r.failures, []);
+  assert.ok(r.checks > 12);
+});
+
+test("a statement whose endpoint stops answering fails the reading, front to back", async () => {
+  const real = site();
+  const r = await verify(async p => p === "/api/beats" ? new Response("gone", { status: 404 }) : real(p), SPEC);
+  assert.ok(r.failures.some(f => f.id === "clock" && f.direction === "front-to-back"), JSON.stringify(r.failures));
+});
+
+test("an endpoint nothing describes fails the reading, back to front", async () => {
+  const r = await verify(site(), SPEC, { apis: ["/api/beats", "/api/undescribed"] });
+  assert.deepEqual(r.failures.map(f => [f.id, f.direction]), [["/api/undescribed", "back-to-front"]]);
+});
+
+test("the manifest names this system and the claims list every statement", async () => {
+  const real = site();
+  const m = await (await real("/.well-known/ultrastable.json")).json(), c = await (await real("/claims.json")).json();
+  assert.equal(m.ultrastable, 1); assert.equal(m.url, {{json:url}}); assert.equal(m.repo, "https://github.com/" + {{json:repo}});
+  assert.deepEqual(c.statements.map(s => s.id), SPEC.statements.map(s => s.id));
+});

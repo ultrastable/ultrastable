@@ -1,0 +1,23 @@
+# {{name}}: agent instructions
+
+> Ultrastable is the foundation for any autonomous system.
+
+{{name}} is a tenant system on Ultrastable. This repository holds its code (`worker/`), its manifest (IDEA.md, instance.json, lifecycle.json,
+runway.json) and the core files it reads, vendored under `vendor/ultrastable/`. The platform rules every agent follows live in the core
+repository, `{{core_repo}}` (`agents/AGENTS.md`, `instances/{{slug}}/`, `doctrine/tenant-repos.json`).
+
+- Honest content: nothing is published without a cited source; a page that has no data yet says so and says why. Never type a number, a grade or an entry that no source backs.
+- No accounts, no cookies, no trackers.
+
+<!-- ultrastable:standard (TENANT-STANDARD-1: written by the platform scaffold; write the tenant's own rules outside this block) -->
+## Platform standard
+
+- Bootstrap: at the start of every session fetch {{bootstrap_url}} and follow it. It carries the current fleet-wide rules and wins over anything stale here.
+- Test: `npm test` (`node --test --no-warnings worker/*.test.mjs`). CI runs it on every pull request and push to main.
+- Standard: `python3 vendor/ultrastable/tools/tenantstd.py --check --tenant .` reads this repository against `vendor/ultrastable/tenant-standard.json`; CI runs it too. Fix the repository, never the standard.
+- Contract: `worker/contract.js` declares every statement a page makes, the page and the endpoint that backs it (FLEET-CONTRACT-1). Change a page and its statement together; `worker/contract.test.mjs` reads both ways against the real router.
+- Vendored core files: never edit `vendor/ultrastable/` by hand. `vendor-sync.yml` refreshes it daily from the core's registry, tests, and commits to main (`node vendor/ultrastable/tools/vendor_sync.mjs --check` is the probe).
+- Deploy: the platform builds this repository's `main` into the `{{worker}}` Worker (D1 `{{d1}}`). Nothing here holds a credential and no agent deploys from here.
+- Branches: `branch-cleanup.yml` deletes a branch when its pull request is merged or closed (BRANCH-CLEANUP-1).
+- Dependencies: none. Plain Worker modules and Node's built-in test runner.
+<!-- /ultrastable:standard -->

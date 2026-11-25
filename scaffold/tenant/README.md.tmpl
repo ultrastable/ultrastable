@@ -1,0 +1,20 @@
+# {{name}}
+
+{{live_block}}
+
+**Ultrastable is the foundation for any autonomous system.** {{name}} is a tenant system on it (level 1, parent `ultrastable`).
+
+{{summary}}
+
+Idea and system test: `IDEA.md`. Manifest: `instance.json`. What could stop it within a year and the safeguard for each: `runway.json`.
+
+| Piece | Code |
+|---|---|
+| Router, the beat and `/health` | `worker/index.js` |
+| Pages (server-rendered, readable without script) | `worker/site.js` |
+| What the site states, the page that shows each statement and the endpoint that backs it | `worker/contract.js`, served at `/claims.json` |
+| Published {{noun}} | `worker/entries.js`, served at `/api/entries.json` |
+| Core files, vendored and refreshed daily | `vendor/ultrastable/` |
+| Tests | `npm test` |
+
+Source of the platform: <https://github.com/{{core_repo}}>.
