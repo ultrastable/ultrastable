@@ -697,6 +697,18 @@
       "status": "controlled",
       "cadence_ticks": 1,
       "probe": "grep:tests/foundation/test_fleetcontract.py::def test_a_sentence_missing_from_its_page_fails"
+    },
+    {
+      "id": "fm-manager-not-running",
+      "trigger": "a manager is added to the roster after a system booted, a runtime drops a role row, or the dispatch step stops running",
+      "symptom": "the role file exists and items are filed to that owner, but the runtime has no row for it or its dispatch beat stopped, so nothing takes its items: a title, not a manager",
+      "blast_radius": "every item owned by that role, in the platform and in each system made from the seed",
+      "detection": "managers --live (detector managers-live) reads the runtime's own role rows and beats; managers --check on every change",
+      "root_cause": "the roles table was written once at bootstrap and never reconciled with the roster",
+      "remediation": "seed/worker/src/managers.js hireStep runs inside the tick's reconcile step and hires every switched-on manager with no runtime row; the detector files Q-AUDIT-managers-live and the same reading closes it",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:seed/worker/test/managers.test.js::a system that booted with part of the team is brought to the full register by one tick"
     }
   ],
   "controls": [
