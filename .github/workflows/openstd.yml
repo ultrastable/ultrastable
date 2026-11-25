@@ -35,7 +35,7 @@ jobs:
           python3 scripts/land_data.py "open standards - baseline batch, events, release notes (OPEN-STANDARDS-1)" doctrine ops/openstd CHANGELOG.md VERSION
       - name: Tag the release
         run: |
-          v="v$(cat VERSION 2>/dev/null || echo)"
+          v="v$(cat VERSION)"
           [ "$v" = "v" ] && exit 0
           git rev-parse -q --verify "refs/tags/$v" >/dev/null && exit 0
           git tag "$v" && git push origin "$v" || echo "::warning::tag $v refused; the next run tries again"
