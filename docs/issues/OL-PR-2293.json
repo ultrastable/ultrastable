@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-2293",
+  "title": "OL-PR-2293: land or supersede pull request #2293 (conflict)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #2293 is conflict\n**Done check:** cmd:python3 -m foundation loopowner --closed 2293\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #2293 (`claude/project-thread-a3fnhp` at 9ba07c6294, opened by rwnq8): POSTMERGE-DISPATCH-1: the lane dispatches every push workflow a bot merge touched. The session that opened it is not its closer and is never asked to act. The branch conflicts with main. Merge main into the branch and resolve it, or redo the change from main in a new pull request and close this one as superseded. Files (15): .github/workflows/lane.yml, doctrine/claims.json, doctrine/coldstart.json, doctrine/writeback/lesson-2026-11-25-a-merge-by-the-built-in-token-fires-no-push-workflow.json, doctrine/writeback/lesson-2026-11-25-a-newborn-system-waited-until-03-00-utc-to-ask-the-directory.json, foundation/bootaccept.py, foundation/coldstart.py, scripts/postmerge_dispatch.py, seed/worker/src/discover.js, seed/worker/src/index.js, seed/worker/test/discover.test.js, site/claims-data.js, site/worker.js, tests/foundation/test_bootaccept.py, tests/foundation/test_postmerge_dispatch.py.\n\n**Prediction:** open_prs <= 0 within 24 h\n**Out of scope:** changing what pull request #2293 does; land it as written or carry it onto main unchanged.\n\n**Closing probe:** `python3 -m foundation loopowner --closed 2293` exits 0 (pull request #2293 is merged or closed).",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
