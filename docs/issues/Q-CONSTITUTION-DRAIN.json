@@ -1,0 +1,8 @@
+{
+  "id": "Q-CONSTITUTION-DRAIN",
+  "title": "Q-CONSTITUTION-DRAIN: map the remaining standing rules to a detector and a remediation",
+  "body": "**Owner:** executor\n**Trigger:** seed/doctrine/constitution-baseline.json lists standing rules with no constitution entry\n**Done check:** cmd:python3 -m foundation constitution --check\n**Status:** open\n\nCONSTITUTION-1: each id in the baseline moves into a rule's `covers` (or becomes a rule of its own) in seed/doctrine/constitution.json with code that exists in the seed, then leaves the baseline. The baseline only shrinks; the check fails a baseline entry the constitution already covers.\n\n**Prediction:** constitution_unmapped_rules <= 5 within 336 h\n**Out of scope:** adding new standing rules; rewriting the rules' text.\n\nsize: M\n\n**Closing probe:** `python3 -c \"import json;print(len(json.load(open('seed/doctrine/constitution-baseline.json'))['unmapped']))\"` prints 0.\n",
+  "labels": ["p1", "agent-ready", "raises-self"],
+  "milestone": "Now",
+  "workstream": "Ultrastability"
+}
