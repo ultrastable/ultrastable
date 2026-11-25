@@ -2,6 +2,7 @@
 // Cron fires runTick; GET /health shows the last tick's four-line report.
 // Standard issue: first-party web analytics (analytics/analytics.js): /a.js beacon, /a/e collector, GET /api/analytics (bearer ANALYTICS_TOKEN).
 import { paced } from './pace.js';
+import { readKnowledge } from './knowledge.js';
 import { withKnobs, readGoals, registerTenant, reportReadings, knobValues } from './goals.js';  // GOALS-1
 import { tune } from './roi.js';  // BOUNDARIES-1
 import { runTick, lastTickForHealth, METRICS, ensureItem } from './tick.js';
@@ -272,6 +273,7 @@ export default {
     if (url.pathname === '/api/stickiness') { try { return Response.json(await readStickiness(env.DB), { headers: { 'cache-control': 'public, max-age=60', 'access-control-allow-origin': '*' } }); } catch (e) { return d1Unavailable(e); } }  // STICKY-1
     { const qm = /^\/api\/stickiness\/queue\/([a-z0-9-]{1,60})\.json$/.exec(url.pathname); if (qm) { try { return Response.json(await readQueue(env.DB, qm[1]), { headers: { 'cache-control': 'public, max-age=300' } }); } catch (e) { return d1Unavailable(e); } } }  // STICKY-1: the queue the core social module drains for this system
     if (url.pathname === '/api/progress') { try { return Response.json(await readProgress(env.DB, config), { headers: { 'cache-control': 'public, max-age=60', 'access-control-allow-origin': '*' } }); } catch (e) { return d1Unavailable(e); } }  // PROGRESS-1
+    if (url.pathname === '/api/knowledge') { try { return Response.json(await readKnowledge(env.DB), { headers: { 'cache-control': 'public, max-age=60' } }); } catch (e) { return d1Unavailable(e); } }  // KNOWLEDGE-GRAPH-1
     if (url.pathname === '/api/live/changes') { try { const rs = config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []); return Response.json(await readLiveChanges(env.DB, rs.find(r => r.endsWith('/ultrastable')) || rs[0] || null), { headers: { 'cache-control': 'public, max-age=60' } }); } catch (e) { return d1Unavailable(e); } }  // LIVE-FRESH-1
     if (url.pathname === '/api/roi') { try { return Response.json(await readRoi(env.DB, { env, config }), { headers: { 'cache-control': 'public, max-age=300', 'access-control-allow-origin': '*' } }); } catch (e) { return d1Unavailable(e); } }  // ROI-1
     if (url.pathname === '/api/decisions') { try { return Response.json(await readDecisions(env.DB), { headers: { 'cache-control': 'public, max-age=60', 'access-control-allow-origin': '*' } }); } catch (e) { return d1Unavailable(e); } }  // DECISIONS-1

@@ -13,6 +13,7 @@ import { criticalityStep } from './criticality.js';
 import { pickForRole } from './critloop.js';
 import { selfAuditStep, loopBreak } from './selfaudit.js';
 import { unknownsStep } from './unknowns.js';
+import { knowledgeStep } from './knowledge.js';  // KNOWLEDGE-GRAPH-1
 import { goalsStep, seedGoals } from './goals.js';  // GOALS-1
 import { migrateStep } from './migrate.js';
 import { executeStep, claimsReleasedUnworked24h } from './doer.js';
@@ -372,6 +373,11 @@ export const STEPS = {
     if (r.filed.length) ctx.notes.push(`unknowns: filed ${r.filed.join(', ')}`);
   },
 
+  async knowledge(db, ctx) {
+    const r = await knowledgeStep(db, ctx, ctx.config.knowledge || {});
+    if (r.insights) ctx.notes.push(`knowledge: ${r.insights} insight(s) from ${(r.stats || {}).nodes} nodes`);
+  },
+
   // Roles whose tick is due pull the top ready item for their role and get a dispatch row.
   async dispatch(db, ctx) {
     const roles = await all(db, `SELECT * FROM roles`);
@@ -459,7 +465,7 @@ export const STEPS = {
   async ignition(db, ctx) { await ignitionStep(db, ctx, ensureItem); },
 };
 
-export const STEP_ORDER = ['migrate', 'reconcile', 'reap_claims', 'connector_health', 'probe_gates', 'score_predictions', 'measure', 'accrue_trust', 'selfaudit', 'unknowns', 'goals', 'dispatch', 'execute', 'check_plus_share', 'age_sla', 'cost_probe', 'pulse', 'criticality', 'ignition'];
+export const STEP_ORDER = ['migrate', 'reconcile', 'reap_claims', 'connector_health', 'probe_gates', 'score_predictions', 'measure', 'accrue_trust', 'selfaudit', 'unknowns', 'knowledge', 'goals', 'dispatch', 'execute', 'check_plus_share', 'age_sla', 'cost_probe', 'pulse', 'criticality', 'ignition'];
 
 // Q-LESSON-COST-SAMPLE-ACT: while the latest hourly cost sample of any budgeted D1 database is over its max_rows_read_per_hour, the tick runs
 // only these steps. reconcile keeps every item's disposition honest (no silent drops), measure keeps the liveness metrics and the breach visible,

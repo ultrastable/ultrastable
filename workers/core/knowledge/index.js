@@ -4,7 +4,25 @@
 // Tenant-agnostic. A tenant supplies records (see README for the interface); this module is a pure function over them, so a CI job, a Worker
 // tick or a test calls it the same way. No model is in the loop: structure is computed, text is templated from facts, every edge carries
 // provenance. Semantic links (core/discover) may be passed in as extra edges and are labelled as leads, never facts.
-import { communities } from '../discover/index.js';
+
+// Label propagation, the same rule as core/discover's communities(); inlined so this file has no imports and a seed can vendor it unchanged.
+function communities(ids, links, { rounds = 12 } = {}) {
+  const adj = new Map(ids.map(id => [id, []]));
+  for (const { a, b, w } of links) { if (adj.has(a) && adj.has(b) && a !== b) { adj.get(a).push([b, w]); adj.get(b).push([a, w]); } }
+  const lab = new Map(ids.map(id => [id, id])), order = [...ids].sort();
+  for (let r = 0; r < rounds; r++) {
+    let moved = 0;
+    for (const id of order) {
+      const score = new Map(); for (const [n, w] of adj.get(id)) score.set(lab.get(n), (score.get(lab.get(n)) || 0) + w);
+      if (!score.size) continue;
+      let best = lab.get(id), bs = score.get(best) || 0;
+      for (const [l, s] of score) if (s > bs + 1e-9 || (Math.abs(s - bs) <= 1e-9 && l < best)) { best = l; bs = s; }
+      if (best !== lab.get(id)) { lab.set(id, best); moved++; }
+    }
+    if (!moved) break;
+  }
+  return lab;
+}
 
 export const VERSION = '1.0.0';
 export const DEFAULTS = Object.freeze({ nearDup: 0.85, topLeads: 10, topHubs: 5, damping: 0.85, iters: 30, maxInsights: 12, minCommunity: 3 });
