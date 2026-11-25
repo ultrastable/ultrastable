@@ -1,6 +1,6 @@
 {
  "rule": "FLEET-MAP-1",
- "at": "2026-11-25T23:24:36Z",
+ "at": "2026-11-25T23:57:25Z",
  "repos": {
   "ultrastable/ultrastable": {
    "status": "not-a-copy",
@@ -11,20 +11,18 @@
    "notes": []
   },
   "ultrastable/seed": {
-   "status": "unmeasured",
-   "how": "unreadable",
-   "differ": 0,
-   "missing": 0,
-   "extra": 0,
-   "notes": [
-    "the repository could not be read: no clone beside this checkout and no public tree (private, missing or refused)"
-   ]
+   "status": "drifted",
+   "how": "github",
+   "differ": 59,
+   "missing": 66,
+   "extra": 12,
+   "notes": []
   },
   "ultrastable/second-tenant": {
    "status": "drifted",
    "how": "github",
    "differ": 55,
-   "missing": 57,
+   "missing": 56,
    "extra": 0,
    "notes": [
     "ultrastable.lock.json is missing: the kernel sync treats every changed file as a local edit and updates nothing"
