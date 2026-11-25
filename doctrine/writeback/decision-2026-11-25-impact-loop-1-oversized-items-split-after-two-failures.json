@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-25-impact-loop-1-oversized-items-split-after-two-failures",
+  "kind": "decision",
+  "date": "2026-11-25",
+  "title": "IMPACT-LOOP-1: oversized items split after two failures",
+  "body": "core/impact plan() takes failures and a lever split(); an item failed twice is replaced by its children.",
+  "probe": "grep:workers/core/impact/index.js::split_after",
+  "session": "session_0156nqDrqL9XCgR639FAfNMv"
+ },
+ "kind": "decision",
+ "title": "IMPACT-LOOP-1: oversized items split after two failures",
+ "session": "session_0156nqDrqL9XCgR639FAfNMv"
+}
