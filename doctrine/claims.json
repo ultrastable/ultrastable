@@ -2416,6 +2416,16 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-e2a1c0be98",
+      "surface": "agents/AGENTS.md",
+      "text": "- **No made-up numbers (NO-FABRICATION-1, Rowan 2026-11-25).** \"Nothing gets made up. Everything must be completely supported and backed",
+      "probe": [
+        "file:foundation/claimcode.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]claimcode\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-4a7cfcfa97",
       "surface": "agents/AGENTS.md",
       "text": "- **Measure everything.** Every site and service an org ships carries the standard first-party analytics (`seed/analytics/analytics.js`:",
@@ -3344,6 +3354,17 @@
       ],
       "bound_by": "mirror",
       "of": "cited-95432168bf"
+    },
+    {
+      "id": "mirror-9a507beeee",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **No made-up numbers (NO-FABRICATION-1, Rowan 2026-11-25).** \"Nothing gets made up. Everything must be completely supported and backed",
+      "probe": [
+        "file:foundation/claimcode.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]claimcode\\b"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-e2a1c0be98"
     },
     {
       "id": "mirror-6c62259d6b",
