@@ -1,0 +1,12 @@
+{
+  "id": "Q-SAYDO-rules-DATAGRAPH-1",
+  "title": "Q-SAYDO-rules-DATAGRAPH-1: says DATAGRAPH-1, does not do it",
+  "body": "**Owner:** executor\n**Trigger:** say-do check (SAY-DO-1) on the watchdog run\n**Done check:** cmd:python3 -m foundation saydo --probe rules:DATAGRAPH-1\n**Status:** open\n\nThe system states `DATAGRAPH-1` (rules) and its code does not do it: vendor/ultrastable/datagraph.js\n\nChange the code to do what the statement says, or change the statement to what the code does; never weaken the probe.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation saydo --probe rules:DATAGRAPH-1` exits 0.\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "say-do"
+  ],
+  "milestone": "Now",
+  "workstream": "Ultrastability"
+}

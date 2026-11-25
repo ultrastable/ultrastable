@@ -16,23 +16,16 @@
   },
   "failures": {
    "days": null,
-   "why": "3 open, oldest 0 days",
-   "open": 3
+   "why": "2 open, oldest 0 days",
+   "open": 2
   }
  },
  "failure_first_seen": {
   "Q-CIFAIL-github-branch-cleanup": "2026-11-25",
-  "Q-CIFAIL-ultrastable-uiux": "2026-11-25",
   "Q-RULE-front-end-matches-back-end-claims": "2026-11-25"
  },
  "seed_verify": {
   "ultrastable": [
-   {
-    "at": "2026-11-24T20:34:05Z",
-    "url": "https://ultrastable.io/health",
-    "status": 200,
-    "ok": true
-   },
    {
     "at": "2026-11-24T20:43:22Z",
     "url": "https://ultrastable.io/health",
@@ -203,6 +196,12 @@
    },
    {
     "at": "2026-11-25T16:45:02Z",
+    "url": "https://ultrastable.io/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-25T16:54:26Z",
     "url": "https://ultrastable.io/health",
     "status": 200,
     "ok": true
@@ -210,12 +209,6 @@
   ],
   "unlearn": [
    {
-    "at": "2026-11-24T20:34:05Z",
-    "url": "https://unlearn.ultrastable.org/health",
-    "status": 200,
-    "ok": true
-   },
-   {
     "at": "2026-11-24T20:43:22Z",
     "url": "https://unlearn.ultrastable.org/health",
     "status": 200,
@@ -385,6 +378,12 @@
    },
    {
     "at": "2026-11-25T16:45:02Z",
+    "url": "https://unlearn.ultrastable.org/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-25T16:54:26Z",
     "url": "https://unlearn.ultrastable.org/health",
     "status": 200,
     "ok": true
@@ -620,6 +619,12 @@
     "url": "https://what-works.ultrastable.org/health",
     "status": 200,
     "ok": true
+   },
+   {
+    "at": "2026-11-25T16:54:26Z",
+    "url": "https://what-works.ultrastable.org/health",
+    "status": 200,
+    "ok": true
    }
   ],
   "replication-ledger": [
@@ -651,6 +656,12 @@
    },
    {
     "at": "2026-11-25T16:45:02Z",
+    "url": "https://replication-ledger.ultrastable.org/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-25T16:54:26Z",
     "url": "https://replication-ledger.ultrastable.org/health",
     "status": 200,
     "ok": true
