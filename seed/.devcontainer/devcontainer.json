@@ -1,0 +1,12 @@
+{
+  "$schema": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainer.schema.json",
+  "name": "Ultrastable system",
+  "image": "mcr.microsoft.com/devcontainers/python:3.12",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": { "version": "24" }
+  },
+  "postCreateCommand": "pip install --user jsonschema && (cd worker && npm install --no-audit --no-fund)",
+  "customizations": {
+    "codespaces": { "openFiles": ["IDEA.md", "AGENTS.md"] }
+  }
+}

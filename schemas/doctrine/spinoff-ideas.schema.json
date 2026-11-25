@@ -1,0 +1,725 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/spinoff-ideas.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/spinoff-ideas.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "marker": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "headroom": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "stale_after_hours": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "queue": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "roadmap_out": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "reserve": {
+      "type": "object",
+      "properties": {
+        "d1_rows_read": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "d1_rows_written": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "workers_requests": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "ai_neurons": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "ai_neurons",
+        "d1_rows_read",
+        "d1_rows_written",
+        "workers_requests"
+      ]
+    },
+    "cadence": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ok": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "degrade": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "shed": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "_doc",
+        "degrade",
+        "ok",
+        "shed"
+      ]
+    },
+    "min_score": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "max_new_per_run": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "scope_ideas_per_run": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "weights": {
+      "type": "object",
+      "properties": {
+        "showcase_bonus": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "cost_penalty": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "cost_penalty",
+        "showcase_bonus"
+      ]
+    },
+    "board_stale_hours": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "bank": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "kind": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "archetype": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "tagline": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "showcases": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reach": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "impact": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "showcase": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "cost": {
+            "type": "object",
+            "properties": {
+              "workers_requests": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "d1_rows_read": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "d1_rows_written": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "ai_neurons": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "ai_neurons",
+              "d1_rows_read",
+              "d1_rows_written",
+              "workers_requests"
+            ]
+          },
+          "fact": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "kind": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "rows": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "label": {},
+                    "ptr": {},
+                    "of": {}
+                  },
+                  "required": [
+                    "label",
+                    "ptr"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "kind",
+              "path",
+              "rows"
+            ]
+          },
+          "live": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "regions": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "need": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "need_evidence": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "thesis": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "corpus": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "loop": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "returns": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "horizon": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "hook": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "public_good": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "change": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "name",
+          "tagline"
+        ]
+      }
+    },
+    "scope_templates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "probe": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "title": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "resource": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "cost": {
+            "type": "object",
+            "properties": {
+              "workers_requests": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "ai_neurons": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              }
+            }
+          },
+          "why": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "cost",
+          "id",
+          "probe",
+          "resource",
+          "title",
+          "why"
+        ]
+      }
+    },
+    "private_ledgers": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "max_live_boards": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "benefit": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "scale": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "region": {
+          "type": "object",
+          "properties": {
+            "global_at": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "global": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "multi": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "single": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "global",
+            "global_at",
+            "multi",
+            "single"
+          ]
+        },
+        "use": {
+          "type": "object",
+          "properties": {
+            "floor": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "ceiling": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "unmeasured": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "uses_for_ceiling": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "ceiling",
+            "floor",
+            "unmeasured",
+            "uses_for_ceiling"
+          ]
+        }
+      },
+      "required": [
+        "_doc",
+        "region",
+        "scale",
+        "use"
+      ]
+    },
+    "depth": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "marker": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "min_text": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "min_horizon": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "fields": {
+          "type": "object",
+          "properties": {
+            "thesis": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "corpus": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "loop": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "returns": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "horizon": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "hook": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "public_good": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "change": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "change",
+            "corpus",
+            "hook",
+            "horizon",
+            "loop",
+            "public_good",
+            "returns",
+            "thesis"
+          ]
+        },
+        "shallow_archetypes": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "commerce_words": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "change_library": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "aliases": {
+          "type": "object",
+          "properties": {
+            "_doc": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "method": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "_doc",
+            "method"
+          ]
+        }
+      },
+      "required": [
+        "_doc",
+        "aliases",
+        "change_library",
+        "commerce_words",
+        "fields",
+        "marker",
+        "min_horizon",
+        "min_text",
+        "shallow_archetypes"
+      ]
+    }
+  },
+  "required": [
+    "_doc",
+    "bank",
+    "benefit",
+    "board_stale_hours",
+    "cadence",
+    "depth",
+    "headroom",
+    "id",
+    "marker",
+    "max_live_boards",
+    "max_new_per_run",
+    "min_score",
+    "private_ledgers",
+    "queue",
+    "reserve",
+    "roadmap_out",
+    "scope_ideas_per_run",
+    "scope_templates",
+    "stale_after_hours",
+    "weights"
+  ]
+}

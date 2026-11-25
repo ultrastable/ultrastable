@@ -1,0 +1,314 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/pathfinder.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/pathfinder.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "surface_classes": {
+      "type": "object",
+      "properties": {
+        "existing-credentials": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "prior-working-config": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sibling-workers": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "alternate-channel": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "construct": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "alternate-channel",
+        "construct",
+        "existing-credentials",
+        "prior-working-config",
+        "sibling-workers"
+      ]
+    },
+    "route_kinds": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "asks": {
+      "type": "object",
+      "properties": {}
+    },
+    "integrations": {
+      "type": "array"
+    },
+    "grandfathered_gates": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "derive": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "surfaces": {
+          "type": "object",
+          "properties": {
+            "social_accounts": {
+              "type": "object",
+              "properties": {
+                "prior-working-config": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "sibling-workers": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "alternate-channel": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "construct": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "alternate-channel",
+                "construct",
+                "prior-working-config",
+                "sibling-workers"
+              ]
+            },
+            "cloudflare": {
+              "type": "object",
+              "properties": {
+                "prior-working-config": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "sibling-workers": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "alternate-channel": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "construct": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "alternate-channel",
+                "construct",
+                "prior-working-config",
+                "sibling-workers"
+              ]
+            },
+            "org_admin": {
+              "type": "object",
+              "properties": {
+                "prior-working-config": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "sibling-workers": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "alternate-channel": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "construct": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "alternate-channel",
+                "construct",
+                "prior-working-config",
+                "sibling-workers"
+              ]
+            }
+          },
+          "required": [
+            "cloudflare",
+            "org_admin",
+            "social_accounts"
+          ]
+        },
+        "gate_asks": {
+          "type": "object",
+          "properties": {
+            "owner-social": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "owner-oauth-apps": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "owner-domains-move": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "SOC-ACCOUNTS": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "CF-TOKEN": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "ORG-TOKEN": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "CF-TOKEN",
+            "ORG-TOKEN",
+            "SOC-ACCOUNTS",
+            "owner-domains-move",
+            "owner-oauth-apps",
+            "owner-social"
+          ]
+        }
+      },
+      "required": [
+        "_doc",
+        "gate_asks",
+        "surfaces"
+      ]
+    }
+  },
+  "required": [
+    "_doc",
+    "asks",
+    "derive",
+    "grandfathered_gates",
+    "integrations",
+    "route_kinds",
+    "surface_classes",
+    "version"
+  ]
+}

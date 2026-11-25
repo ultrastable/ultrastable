@@ -1,0 +1,287 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/boundary.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/boundary.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "marker": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "axiom": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "instruction_files": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "inside": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "what": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rebuild": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "rebuild",
+          "what"
+        ]
+      }
+    },
+    "egress": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "class": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "gate": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "default": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "probe": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "class",
+          "default",
+          "gate",
+          "id",
+          "probe"
+        ]
+      }
+    },
+    "rebuild": {
+      "type": "object",
+      "properties": {
+        "drill_checks": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "digest_paths": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "required": [
+        "digest_paths",
+        "drill_checks"
+      ]
+    },
+    "permissions": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "inside": {
+          "type": "object",
+          "properties": {
+            "read": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "create": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "edit": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "destroy-derived": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "rebuild": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "destroy-instance": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "self-modify": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "create",
+            "destroy-derived",
+            "destroy-instance",
+            "edit",
+            "read",
+            "rebuild",
+            "self-modify"
+          ]
+        },
+        "reserved": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "required": [
+        "_doc",
+        "inside",
+        "reserved"
+      ]
+    },
+    "strange_loop": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ledger": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "_doc",
+        "ledger"
+      ]
+    },
+    "reaper": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "idle_hours": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "finished_states": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "required": [
+        "_doc",
+        "finished_states",
+        "idle_hours"
+      ]
+    }
+  },
+  "required": [
+    "_doc",
+    "axiom",
+    "egress",
+    "inside",
+    "instruction_files",
+    "marker",
+    "permissions",
+    "reaper",
+    "rebuild",
+    "strange_loop"
+  ]
+}

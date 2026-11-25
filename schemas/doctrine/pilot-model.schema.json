@@ -1,0 +1,340 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/pilot-model.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/pilot-model.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "decision": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "decided": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "why": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "revert": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "options": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "runs_on": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "our_data_burden": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "setup": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "revenue": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "status": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "our_data_burden",
+          "revenue",
+          "runs_on",
+          "status"
+        ]
+      }
+    },
+    "pilot_proof_points": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "hypotheses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "claim": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "test": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "closing_probe": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "claim",
+          "closing_probe",
+          "id",
+          "test"
+        ]
+      }
+    },
+    "program": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "pitch": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "selection": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "you_get": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "we_get": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "apply_fields": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "price": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "intake_probe": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "apply_fields",
+        "intake_probe",
+        "pitch",
+        "price",
+        "selection",
+        "title",
+        "we_get",
+        "you_get"
+      ]
+    },
+    "layers": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rule": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "levels": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "level": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "what": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "exists": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "exists",
+              "level",
+              "name",
+              "what"
+            ]
+          }
+        },
+        "roll_up": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "enforced_by": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "tenancy": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "enforced_by",
+        "levels",
+        "roll_up",
+        "rule",
+        "tenancy",
+        "title"
+      ]
+    },
+    "multi_tenant_obligations": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "before_offering": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "closing_probe": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "before_offering",
+        "closing_probe",
+        "status"
+      ]
+    }
+  },
+  "required": [
+    "_doc",
+    "decided",
+    "decision",
+    "hypotheses",
+    "layers",
+    "multi_tenant_obligations",
+    "options",
+    "pilot_proof_points",
+    "program",
+    "revert",
+    "why"
+  ]
+}

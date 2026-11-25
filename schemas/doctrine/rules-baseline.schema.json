@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/rules-baseline.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/rules-baseline.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "qnfo": {
+      "type": "object",
+      "properties": {
+        "site/controlplane.js": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "site/dashboard-data.js": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "site/pins.json": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "site/promote.js": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "site/roadmap-data.js": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "site/self-data.js": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "site/stakeholders.js": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "site/worker.js": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "site/controlplane.js",
+        "site/dashboard-data.js",
+        "site/pins.json",
+        "site/promote.js",
+        "site/roadmap-data.js",
+        "site/self-data.js",
+        "site/stakeholders.js",
+        "site/worker.js"
+      ]
+    }
+  },
+  "required": [
+    "_doc",
+    "qnfo"
+  ]
+}

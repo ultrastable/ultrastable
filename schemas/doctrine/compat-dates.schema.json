@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/compat-dates.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/compat-dates.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "lag_days": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "min_step_days": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "max_age_days": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "topology": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "node_eol": {
+      "type": "object",
+      "properties": {
+        "20": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "22": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "24": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "26": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "20",
+        "22",
+        "24",
+        "26"
+      ]
+    },
+    "node_min_days": {
+      "type": [
+        "number",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "_doc",
+    "lag_days",
+    "max_age_days",
+    "min_step_days",
+    "node_eol",
+    "node_min_days",
+    "topology"
+  ]
+}

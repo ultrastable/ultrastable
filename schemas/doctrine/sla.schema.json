@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/sla.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/sla.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "pr": {
+      "type": "object",
+      "properties": {
+        "green_merge_min": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "act_min": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "hard_min": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "idle_min": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "_doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "_doc",
+        "act_min",
+        "green_merge_min",
+        "hard_min",
+        "idle_min"
+      ]
+    },
+    "issue": {
+      "type": "object",
+      "properties": {
+        "p0_days": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "p1_days": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "default_days": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "_doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "_doc",
+        "default_days",
+        "p0_days",
+        "p1_days"
+      ]
+    }
+  },
+  "required": [
+    "_doc",
+    "issue",
+    "pr",
+    "version"
+  ]
+}

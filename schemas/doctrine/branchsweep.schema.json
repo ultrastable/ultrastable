@@ -1,0 +1,219 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/branchsweep.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/branchsweep.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "state_branches": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "state_prefixes": {
+      "type": "array"
+    },
+    "gate": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "port_owner": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "rejected": {
+      "type": "object",
+      "properties": {
+        "worker/q-tick-deploy": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "worker/git-in-cloudflare-1": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "worker/port-exec-1": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "parked/claude/sync-dot-dirs": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "parked/claude/sync-dot-dirs",
+        "worker/git-in-cloudflare-1",
+        "worker/port-exec-1",
+        "worker/q-tick-deploy"
+      ]
+    },
+    "max_deleted_lines": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "held": {
+      "type": "object",
+      "properties": {
+        "agent/Q-GROW-AGENT-DIRECTORIES-q-grow-agent-directories-grow-5-prepare": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "agent/Q-GROW-AGENT-DIRECTORIES-q-grow-agent-directories-grow-5-prepare"
+      ]
+    },
+    "min_idle_hours": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "fleet_repos": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "budget_seconds": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "carried": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "min_share": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "max_missing_lines": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "residue_prefixes": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "residue_suffixes": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "required": [
+        "_doc",
+        "max_missing_lines",
+        "min_share",
+        "residue_prefixes",
+        "residue_suffixes"
+      ]
+    },
+    "branch_cleanup": {
+      "type": "object",
+      "properties": {
+        "rule": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "code": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "run_by": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "probe": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "code",
+        "probe",
+        "rule",
+        "run_by"
+      ]
+    }
+  },
+  "required": [
+    "_doc",
+    "branch_cleanup",
+    "budget_seconds",
+    "carried",
+    "fleet_repos",
+    "gate",
+    "held",
+    "max_deleted_lines",
+    "min_idle_hours",
+    "port_owner",
+    "rejected",
+    "state_branches",
+    "state_prefixes"
+  ]
+}

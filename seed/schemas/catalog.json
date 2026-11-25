@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json.schemastore.org/schema-catalog.json",
+  "version": 1,
+  "schemas": [
+    {
+      "name": "autonomy/balance.json",
+      "description": "Shape of autonomy/balance.json",
+      "fileMatch": [
+        "autonomy/balance.json"
+      ],
+      "url": "./autonomy/balance.schema.json"
+    },
+    {
+      "name": "autonomy/cost-budgets.json",
+      "description": "Shape of autonomy/cost-budgets.json",
+      "fileMatch": [
+        "autonomy/cost-budgets.json"
+      ],
+      "url": "./autonomy/cost-budgets.schema.json"
+    },
+    {
+      "name": "autonomy/criticality.json",
+      "description": "Shape of autonomy/criticality.json",
+      "fileMatch": [
+        "autonomy/criticality.json"
+      ],
+      "url": "./autonomy/criticality.schema.json"
+    },
+    {
+      "name": "autonomy/default-policy-pack.json",
+      "description": "Shape of autonomy/default-policy-pack.json",
+      "fileMatch": [
+        "autonomy/default-policy-pack.json"
+      ],
+      "url": "./autonomy/default-policy-pack.schema.json"
+    },
+    {
+      "name": "autonomy/failure-modes.json",
+      "description": "Shape of autonomy/failure-modes.json",
+      "fileMatch": [
+        "autonomy/failure-modes.json"
+      ],
+      "url": "./autonomy/failure-modes.schema.json"
+    },
+    {
+      "name": "autonomy/goals.json",
+      "description": "Shape of autonomy/goals.json",
+      "fileMatch": [
+        "autonomy/goals.json"
+      ],
+      "url": "./autonomy/goals.schema.json"
+    },
+    {
+      "name": "autonomy/improve.json",
+      "description": "Shape of autonomy/improve.json",
+      "fileMatch": [
+        "autonomy/improve.json"
+      ],
+      "url": "./autonomy/improve.schema.json"
+    },
+    {
+      "name": "autonomy/kit.json",
+      "description": "Shape of autonomy/kit.json",
+      "fileMatch": [
+        "autonomy/kit.json"
+      ],
+      "url": "./autonomy/kit.schema.json"
+    },
+    {
+      "name": "autonomy/pace.json",
+      "description": "Shape of autonomy/pace.json",
+      "fileMatch": [
+        "autonomy/pace.json"
+      ],
+      "url": "./autonomy/pace.schema.json"
+    },
+    {
+      "name": "autonomy/policy.json",
+      "description": "Shape of autonomy/policy.json",
+      "fileMatch": [
+        "autonomy/policy.json"
+      ],
+      "url": "./autonomy/policy.schema.json"
+    },
+    {
+      "name": "autonomy/retention.json",
+      "description": "Shape of autonomy/retention.json",
+      "fileMatch": [
+        "autonomy/retention.json"
+      ],
+      "url": "./autonomy/retention.schema.json"
+    },
+    {
+      "name": "autonomy/seed-lifecycle.json",
+      "description": "Shape of autonomy/seed-lifecycle.json",
+      "fileMatch": [
+        "autonomy/seed-lifecycle.json"
+      ],
+      "url": "./autonomy/seed-lifecycle.schema.json"
+    },
+    {
+      "name": "autonomy/yearsim.json",
+      "description": "Shape of autonomy/yearsim.json",
+      "fileMatch": [
+        "autonomy/yearsim.json"
+      ],
+      "url": "./autonomy/yearsim.schema.json"
+    },
+    {
+      "name": "doctrine/claims.json",
+      "description": "Shape of doctrine/claims.json",
+      "fileMatch": [
+        "doctrine/claims.json"
+      ],
+      "url": "./doctrine/claims.schema.json"
+    },
+    {
+      "name": "doctrine/readmes.json",
+      "description": "Shape of doctrine/readmes.json",
+      "fileMatch": [
+        "doctrine/readmes.json"
+      ],
+      "url": "./doctrine/readmes.schema.json"
+    },
+    {
+      "name": "doctrine/standing-order.json",
+      "description": "Shape of doctrine/standing-order.json",
+      "fileMatch": [
+        "doctrine/standing-order.json"
+      ],
+      "url": "./doctrine/standing-order.schema.json"
+    },
+    {
+      "name": "doctrine/user-backend.json",
+      "description": "Shape of doctrine/user-backend.json",
+      "fileMatch": [
+        "doctrine/user-backend.json"
+      ],
+      "url": "./doctrine/user-backend.schema.json"
+    },
+    {
+      "name": "standards/standards.json",
+      "description": "Standards register (hand-written schema)",
+      "fileMatch": [
+        "standards/standards.json"
+      ],
+      "url": "../standards/standards.schema.json"
+    },
+    {
+      "name": "standards/surfaces.json",
+      "description": "Shape of standards/surfaces.json",
+      "fileMatch": [
+        "standards/surfaces.json"
+      ],
+      "url": "./standards/surfaces.schema.json"
+    }
+  ]
+}

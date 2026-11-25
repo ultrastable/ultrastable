@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/spinoff.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/spinoff.json",
+  "type": "object",
+  "additionalProperties": {
+    "type": [
+      "array",
+      "null",
+      "object",
+      "string"
+    ]
+  }
+}

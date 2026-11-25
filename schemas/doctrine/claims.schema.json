@@ -1,0 +1,470 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/claims.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/claims.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "version": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "ledgers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "probe": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "probe"
+        ]
+      }
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "surface": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "text": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "probe": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "bound_by": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "of": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "probe",
+          "surface",
+          "text"
+        ]
+      }
+    },
+    "generated": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "surface": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "measure": {
+            "type": "object",
+            "properties": {
+              "py": {
+                "type": "object",
+                "properties": {
+                  "py_tests": {
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "py_tests"
+                ]
+              },
+              "js": {
+                "type": "object",
+                "properties": {
+                  "js_tests": {
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "js_tests"
+                ]
+              },
+              "n": {
+                "type": "object",
+                "properties": {
+                  "jsonl_count": {
+                    "type": "object",
+                    "properties": {
+                      "file": {},
+                      "where": {}
+                    },
+                    "required": [
+                      "file",
+                      "where"
+                    ]
+                  },
+                  "py_tests": {
+                    "type": "array"
+                  }
+                }
+              }
+            }
+          },
+          "template": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "measure",
+          "surface",
+          "template"
+        ]
+      }
+    },
+    "inventory": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "set": {
+            "type": "object",
+            "properties": {
+              "file": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "within": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "regex": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "file",
+              "regex",
+              "within"
+            ]
+          },
+          "surfaces": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "mention": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "exempt": {
+            "type": "object",
+            "properties": {
+              "/dashboard": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "/dashboard"
+            ]
+          }
+        },
+        "required": [
+          "exempt",
+          "id",
+          "mention",
+          "note",
+          "set",
+          "surfaces"
+        ]
+      }
+    },
+    "live": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "url": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "contains": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "required": [
+          "contains",
+          "id",
+          "url"
+        ]
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "floor": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "live_pages": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "src_globs": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "patterns": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "skip": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "skip_reasons": {
+          "type": "object",
+          "properties": {
+            "intent-yield-data\\.js": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "^workers/": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "^workers/",
+            "intent-yield-data\\.js"
+          ]
+        },
+        "src_unbound_budget": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "floor",
+        "live_pages",
+        "patterns",
+        "skip",
+        "skip_reasons",
+        "src_globs",
+        "src_unbound_budget",
+        "target"
+      ]
+    },
+    "modules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "surface": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "header": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "generator": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "source": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "check": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "probe": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "required": [
+          "generator",
+          "header",
+          "id",
+          "probe",
+          "source",
+          "surface"
+        ]
+      }
+    }
+  },
+  "required": [
+    "_doc",
+    "claims",
+    "coverage",
+    "generated",
+    "inventory",
+    "ledgers",
+    "live",
+    "modules",
+    "version"
+  ]
+}

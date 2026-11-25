@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/no-swallow.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/no-swallow.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "python_globs": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "shell_globs": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "exclude": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "baseline": {
+      "type": "object",
+      "properties": {
+        ".github/workflows/fleet.yml": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "scripts/apply_github_settings.sh": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "scripts/completion_sweep.sh": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "scripts/executor_evidence.sh": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "scripts/lane.sh": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "scripts/lib-safe.sh": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "scripts/mirror_then_delete.sh": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        ".github/workflows/fleet.yml",
+        "scripts/apply_github_settings.sh",
+        "scripts/completion_sweep.sh",
+        "scripts/executor_evidence.sh",
+        "scripts/lane.sh",
+        "scripts/lib-safe.sh",
+        "scripts/mirror_then_delete.sh"
+      ]
+    }
+  },
+  "required": [
+    "_doc",
+    "baseline",
+    "exclude",
+    "python_globs",
+    "shell_globs"
+  ]
+}

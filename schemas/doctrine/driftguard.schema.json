@@ -1,0 +1,281 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/driftguard.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/driftguard.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "cron_budget": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "limits": {
+          "type": "object",
+          "properties": {
+            "free": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "paid": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "free",
+            "paid"
+          ]
+        },
+        "headroom": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "external": {
+          "type": "object",
+          "properties": {
+            "tenant-ps-web": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "ultrastable-uptime": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "ultrastable-seed-second-tenant": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "ultrastable-did-it-work": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "required": [
+            "tenant-ps-web",
+            "ultrastable-did-it-work",
+            "ultrastable-seed-second-tenant",
+            "ultrastable-uptime"
+          ]
+        },
+        "pulse_external": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "url": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "_why": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "_why",
+              "id",
+              "url"
+            ]
+          }
+        }
+      },
+      "required": [
+        "_doc",
+        "external",
+        "headroom",
+        "limits",
+        "pulse_external"
+      ]
+    },
+    "missed_trigger": {
+      "type": "object",
+      "properties": {
+        "window_hours": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "grace_minutes": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "grace_minutes",
+        "window_hours"
+      ]
+    },
+    "empty_loop": {
+      "type": "object",
+      "properties": {
+        "max_empty_per_branch": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "max_empty_per_branch"
+      ]
+    },
+    "account_drift": {
+      "type": "object",
+      "properties": {
+        "retired_account_sha256": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "required": [
+        "retired_account_sha256"
+      ]
+    },
+    "incidents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "what": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "class": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "root_cause": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "fix": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "check": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "detector": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "failure_mode": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "code": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "required": [
+          "check",
+          "class",
+          "code",
+          "detector",
+          "failure_mode",
+          "fix",
+          "id",
+          "root_cause",
+          "what"
+        ]
+      }
+    }
+  },
+  "required": [
+    "_doc",
+    "account_drift",
+    "cron_budget",
+    "empty_loop",
+    "incidents",
+    "missed_trigger",
+    "version"
+  ]
+}

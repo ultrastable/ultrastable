@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/full-stack.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/full-stack.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "systems": {
+      "type": "object",
+      "properties": {
+        "ultrastable": {
+          "type": "object",
+          "properties": {
+            "backend": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "backend"
+          ]
+        },
+        "practical-solutions": {
+          "type": "object",
+          "properties": {
+            "backend": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "backend"
+          ]
+        },
+        "unlearn": {
+          "type": "object",
+          "properties": {
+            "backend": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "backend"
+          ]
+        },
+        "second-tenant": {
+          "type": "object",
+          "properties": {
+            "backend": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "repo": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "public_repo": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "frontend": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "backend",
+            "frontend",
+            "public_repo",
+            "repo"
+          ]
+        }
+      },
+      "required": [
+        "practical-solutions",
+        "second-tenant",
+        "ultrastable",
+        "unlearn"
+      ]
+    },
+    "user_agent": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "_doc",
+    "systems",
+    "user_agent"
+  ]
+}

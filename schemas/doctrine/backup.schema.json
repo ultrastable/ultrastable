@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/backup.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/backup.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "bucket": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "prefix": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "max_age_days": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "keep": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "exclude_tables": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "exclude_kv": {
+      "type": "array"
+    },
+    "kv_max_bytes": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "account_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "_doc",
+    "account_id",
+    "bucket",
+    "exclude_kv",
+    "exclude_tables",
+    "keep",
+    "kv_max_bytes",
+    "max_age_days",
+    "prefix"
+  ]
+}

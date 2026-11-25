@@ -1,0 +1,2279 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/design.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/design.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "layers": {
+      "type": "object",
+      "properties": {
+        "core": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "portfolio": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "product": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "experiment": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "core",
+        "experiment",
+        "portfolio",
+        "product"
+      ]
+    },
+    "invariants": {
+      "type": "object",
+      "properties": {
+        "tap_px": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "body_px": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "min_text_px": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "field_px": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "contrast_text": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "contrast_graphic": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "primary_actions_per_screen": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "spacing_px": {
+          "type": "array",
+          "items": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        },
+        "type_scale_px": {
+          "type": "object",
+          "properties": {
+            "small": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "body": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "lead": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "h3": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "h2": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "h1": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "body",
+            "h1",
+            "h2",
+            "h3",
+            "lead",
+            "small"
+          ]
+        },
+        "max_content_px": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "status_colors_reserved": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required_states": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "dark_mode": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "reduced_motion": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "visible_focus": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "body_px",
+        "contrast_graphic",
+        "contrast_text",
+        "dark_mode",
+        "field_px",
+        "max_content_px",
+        "min_text_px",
+        "primary_actions_per_screen",
+        "reduced_motion",
+        "required_states",
+        "spacing_px",
+        "status_colors_reserved",
+        "tap_px",
+        "type_scale_px",
+        "visible_focus"
+      ]
+    },
+    "token_contract": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "contrast_pairs": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": [
+            "null",
+            "number",
+            "string"
+          ]
+        }
+      }
+    },
+    "portfolios": {
+      "type": "object",
+      "properties": {
+        "ultrastable": {
+          "type": "object",
+          "properties": {
+            "voice": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "seed": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "hue_range_deg": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "fonts": {
+              "type": "object",
+              "properties": {
+                "display": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "body": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "mono": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "body",
+                "display",
+                "mono"
+              ]
+            },
+            "display_allowed": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "radius_px": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "m": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "l": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "l",
+                "m",
+                "s"
+              ]
+            },
+            "density": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "neutrals": {
+              "type": "object",
+              "properties": {
+                "light": {
+                  "type": "object",
+                  "properties": {
+                    "bg": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "surface": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "surface2": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "ink": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "ink2": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "line": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "lineStrong": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "good": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "goodSoft": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "warn": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "warnSoft": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "bad": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "badSoft": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "bad",
+                    "badSoft",
+                    "bg",
+                    "good",
+                    "goodSoft",
+                    "ink",
+                    "ink2",
+                    "line",
+                    "lineStrong",
+                    "surface",
+                    "surface2",
+                    "warn",
+                    "warnSoft"
+                  ]
+                },
+                "dark": {
+                  "type": "object",
+                  "properties": {
+                    "bg": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "surface": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "surface2": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "ink": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "ink2": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "line": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "lineStrong": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "good": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "goodSoft": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "warn": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "warnSoft": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "bad": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "badSoft": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "bad",
+                    "badSoft",
+                    "bg",
+                    "good",
+                    "goodSoft",
+                    "ink",
+                    "ink2",
+                    "line",
+                    "lineStrong",
+                    "surface",
+                    "surface2",
+                    "warn",
+                    "warnSoft"
+                  ]
+                }
+              },
+              "required": [
+                "dark",
+                "light"
+              ]
+            }
+          },
+          "required": [
+            "density",
+            "display_allowed",
+            "fonts",
+            "hue_range_deg",
+            "neutrals",
+            "radius_px",
+            "seed",
+            "voice"
+          ]
+        }
+      },
+      "required": [
+        "ultrastable"
+      ]
+    },
+    "products": {
+      "type": "object",
+      "properties": {
+        "ultrastable-site": {
+          "type": "object",
+          "properties": {
+            "portfolio": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "role": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "accent_seed": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "display": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "density": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "surfaces": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "required": [
+            "accent_seed",
+            "density",
+            "display",
+            "portfolio",
+            "role",
+            "surfaces"
+          ]
+        },
+        "ultrastable-cockpit": {
+          "type": "object",
+          "properties": {
+            "portfolio": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "role": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "accent_seed": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "display": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "density": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "surfaces": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "required": [
+            "accent_seed",
+            "density",
+            "display",
+            "portfolio",
+            "role",
+            "surfaces"
+          ]
+        },
+        "ultrastable-console": {
+          "type": "object",
+          "properties": {
+            "portfolio": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "role": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "accent_seed": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "display": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "density": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "surfaces": {
+              "type": "array"
+            }
+          },
+          "required": [
+            "accent_seed",
+            "density",
+            "display",
+            "portfolio",
+            "role",
+            "surfaces"
+          ]
+        }
+      },
+      "required": [
+        "ultrastable-cockpit",
+        "ultrastable-console",
+        "ultrastable-site"
+      ]
+    },
+    "tenants": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "default_portfolio": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "required": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "optional": {
+          "type": "array"
+        },
+        "selection": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "_doc",
+        "default_portfolio",
+        "optional",
+        "required",
+        "selection"
+      ]
+    },
+    "density": {
+      "type": "object",
+      "properties": {
+        "compact": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "regular": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "airy": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "airy",
+        "compact",
+        "regular"
+      ]
+    },
+    "product_may_vary": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "product_may_not_vary": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "surfaces_lint": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "baseline": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "_doc",
+        "baseline",
+        "files"
+      ]
+    },
+    "research": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "practices": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "adopted_as": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "adopted_as",
+              "id",
+              "source",
+              "status"
+            ]
+          }
+        }
+      },
+      "required": [
+        "_doc",
+        "practices"
+      ]
+    },
+    "library": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "neutral_sets": {
+          "type": "object",
+          "properties": {
+            "warm": {
+              "type": "object",
+              "properties": {
+                "light": {
+                  "type": "object",
+                  "properties": {
+                    "bg": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "surface": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "surface2": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "ink": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "ink2": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "line": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "lineStrong": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "good": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "goodSoft": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "warn": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "warnSoft": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "bad": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "badSoft": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "bad",
+                    "badSoft",
+                    "bg",
+                    "good",
+                    "goodSoft",
+                    "ink",
+                    "ink2",
+                    "line",
+                    "lineStrong",
+                    "surface",
+                    "surface2",
+                    "warn",
+                    "warnSoft"
+                  ]
+                },
+                "dark": {
+                  "type": "object",
+                  "properties": {
+                    "bg": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "surface": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "surface2": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "ink": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "ink2": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "line": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "lineStrong": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "good": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "goodSoft": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "warn": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "warnSoft": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "bad": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "badSoft": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "bad",
+                    "badSoft",
+                    "bg",
+                    "good",
+                    "goodSoft",
+                    "ink",
+                    "ink2",
+                    "line",
+                    "lineStrong",
+                    "surface",
+                    "surface2",
+                    "warn",
+                    "warnSoft"
+                  ]
+                }
+              },
+              "required": [
+                "dark",
+                "light"
+              ]
+            },
+            "cool": {
+              "type": "object",
+              "properties": {
+                "light": {
+                  "type": "object",
+                  "properties": {
+                    "bg": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "surface": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "surface2": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "ink": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "ink2": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "line": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "lineStrong": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "bg",
+                    "ink",
+                    "ink2",
+                    "line",
+                    "lineStrong",
+                    "surface",
+                    "surface2"
+                  ]
+                },
+                "dark": {
+                  "type": "object",
+                  "properties": {
+                    "bg": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "surface": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "surface2": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "ink": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "ink2": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "line": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "lineStrong": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "bg",
+                    "ink",
+                    "ink2",
+                    "line",
+                    "lineStrong",
+                    "surface",
+                    "surface2"
+                  ]
+                }
+              },
+              "required": [
+                "dark",
+                "light"
+              ]
+            },
+            "paper": {
+              "type": "object",
+              "properties": {
+                "light": {
+                  "type": "object",
+                  "properties": {
+                    "bg": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "surface": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "surface2": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "ink": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "ink2": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "line": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "lineStrong": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "bg",
+                    "ink",
+                    "ink2",
+                    "line",
+                    "lineStrong",
+                    "surface",
+                    "surface2"
+                  ]
+                },
+                "dark": {
+                  "type": "object",
+                  "properties": {
+                    "bg": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "surface": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "surface2": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "ink": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "ink2": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "line": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "lineStrong": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "bg",
+                    "ink",
+                    "ink2",
+                    "line",
+                    "lineStrong",
+                    "surface",
+                    "surface2"
+                  ]
+                }
+              },
+              "required": [
+                "dark",
+                "light"
+              ]
+            }
+          },
+          "required": [
+            "cool",
+            "paper",
+            "warm"
+          ]
+        },
+        "status": {
+          "type": "object",
+          "properties": {
+            "light": {
+              "type": "object",
+              "properties": {
+                "good": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "goodSoft": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "warn": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "warnSoft": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "bad": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "badSoft": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "bad",
+                "badSoft",
+                "good",
+                "goodSoft",
+                "warn",
+                "warnSoft"
+              ]
+            },
+            "dark": {
+              "type": "object",
+              "properties": {
+                "good": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "goodSoft": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "warn": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "warnSoft": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "bad": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "badSoft": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "bad",
+                "badSoft",
+                "good",
+                "goodSoft",
+                "warn",
+                "warnSoft"
+              ]
+            }
+          },
+          "required": [
+            "dark",
+            "light"
+          ]
+        },
+        "stacks": {
+          "type": "object",
+          "properties": {
+            "editorial": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "humanist": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "geometric": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "grotesk": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "technical": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "rounded": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "transitional": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "editorial",
+            "geometric",
+            "grotesk",
+            "humanist",
+            "rounded",
+            "technical",
+            "transitional"
+          ]
+        },
+        "personalities": {
+          "type": "object",
+          "properties": {
+            "signal": {
+              "type": "object",
+              "properties": {
+                "mood": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "keywords": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "seed": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "neutrals": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "display": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "body": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "radius_px": {
+                  "type": "object",
+                  "properties": {
+                    "s": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "m": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "l": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "l",
+                    "m",
+                    "s"
+                  ]
+                },
+                "density": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "body",
+                "density",
+                "display",
+                "keywords",
+                "mood",
+                "neutrals",
+                "radius_px",
+                "seed"
+              ]
+            },
+            "field-notes": {
+              "type": "object",
+              "properties": {
+                "mood": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "keywords": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "seed": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "neutrals": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "display": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "body": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "radius_px": {
+                  "type": "object",
+                  "properties": {
+                    "s": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "m": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "l": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "l",
+                    "m",
+                    "s"
+                  ]
+                },
+                "density": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "body",
+                "density",
+                "display",
+                "keywords",
+                "mood",
+                "neutrals",
+                "radius_px",
+                "seed"
+              ]
+            },
+            "ledger": {
+              "type": "object",
+              "properties": {
+                "mood": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "keywords": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "seed": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "neutrals": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "display": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "body": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "radius_px": {
+                  "type": "object",
+                  "properties": {
+                    "s": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "m": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "l": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "l",
+                    "m",
+                    "s"
+                  ]
+                },
+                "density": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "body",
+                "density",
+                "display",
+                "keywords",
+                "mood",
+                "neutrals",
+                "radius_px",
+                "seed"
+              ]
+            },
+            "workshop": {
+              "type": "object",
+              "properties": {
+                "mood": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "keywords": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "seed": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "neutrals": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "display": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "body": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "radius_px": {
+                  "type": "object",
+                  "properties": {
+                    "s": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "m": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "l": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "l",
+                    "m",
+                    "s"
+                  ]
+                },
+                "density": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "body",
+                "density",
+                "display",
+                "keywords",
+                "mood",
+                "neutrals",
+                "radius_px",
+                "seed"
+              ]
+            },
+            "garden": {
+              "type": "object",
+              "properties": {
+                "mood": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "keywords": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "seed": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "neutrals": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "display": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "body": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "radius_px": {
+                  "type": "object",
+                  "properties": {
+                    "s": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "m": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "l": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "l",
+                    "m",
+                    "s"
+                  ]
+                },
+                "density": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "body",
+                "density",
+                "display",
+                "keywords",
+                "mood",
+                "neutrals",
+                "radius_px",
+                "seed"
+              ]
+            },
+            "atlas": {
+              "type": "object",
+              "properties": {
+                "mood": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "keywords": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "seed": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "neutrals": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "display": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "body": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "radius_px": {
+                  "type": "object",
+                  "properties": {
+                    "s": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "m": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "l": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "l",
+                    "m",
+                    "s"
+                  ]
+                },
+                "density": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "body",
+                "density",
+                "display",
+                "keywords",
+                "mood",
+                "neutrals",
+                "radius_px",
+                "seed"
+              ]
+            },
+            "studio": {
+              "type": "object",
+              "properties": {
+                "mood": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "keywords": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "seed": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "neutrals": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "display": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "body": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "radius_px": {
+                  "type": "object",
+                  "properties": {
+                    "s": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "m": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "l": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "l",
+                    "m",
+                    "s"
+                  ]
+                },
+                "density": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "body",
+                "density",
+                "display",
+                "keywords",
+                "mood",
+                "neutrals",
+                "radius_px",
+                "seed"
+              ]
+            },
+            "harbor": {
+              "type": "object",
+              "properties": {
+                "mood": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "keywords": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "seed": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "neutrals": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "display": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "body": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "radius_px": {
+                  "type": "object",
+                  "properties": {
+                    "s": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "m": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "l": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "l",
+                    "m",
+                    "s"
+                  ]
+                },
+                "density": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "body",
+                "density",
+                "display",
+                "keywords",
+                "mood",
+                "neutrals",
+                "radius_px",
+                "seed"
+              ]
+            }
+          },
+          "required": [
+            "atlas",
+            "field-notes",
+            "garden",
+            "harbor",
+            "ledger",
+            "signal",
+            "studio",
+            "workshop"
+          ]
+        },
+        "selection": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "distinct_min_hue_deg": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "_doc",
+        "distinct_min_hue_deg",
+        "neutral_sets",
+        "personalities",
+        "selection",
+        "stacks",
+        "status"
+      ]
+    }
+  },
+  "required": [
+    "_doc",
+    "contrast_pairs",
+    "density",
+    "invariants",
+    "layers",
+    "library",
+    "portfolios",
+    "product_may_not_vary",
+    "product_may_vary",
+    "products",
+    "research",
+    "surfaces_lint",
+    "tenants",
+    "token_contract",
+    "version"
+  ]
+}

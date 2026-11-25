@@ -1,0 +1,1979 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./github/org-settings.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "github/org-settings.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "org": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "blog": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "email": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "default_repository_permission": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "has_organization_projects": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "has_repository_projects": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "web_commit_signoff_required": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "blog",
+        "default_repository_permission",
+        "description",
+        "email",
+        "has_organization_projects",
+        "has_repository_projects",
+        "name",
+        "web_commit_signoff_required"
+      ]
+    },
+    "repos": {
+      "type": "object",
+      "properties": {
+        "ultrastable/practical-solutions": {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "homepage": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "topics": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "settings": {
+              "type": "object",
+              "properties": {
+                "has_wiki": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_squash_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_merge_commit": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_rebase_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_auto_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_update_branch": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "delete_branch_on_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "squash_merge_commit_title": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "squash_merge_commit_message": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "private": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "allow_auto_merge",
+                "allow_merge_commit",
+                "allow_rebase_merge",
+                "allow_squash_merge",
+                "allow_update_branch",
+                "delete_branch_on_merge",
+                "has_wiki",
+                "private",
+                "squash_merge_commit_message",
+                "squash_merge_commit_title"
+              ]
+            },
+            "security": {
+              "type": "object",
+              "properties": {
+                "vulnerability_alerts": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "automated_security_fixes": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "secret_scanning": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "secret_scanning_push_protection": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "automated_security_fixes",
+                "secret_scanning",
+                "secret_scanning_push_protection",
+                "vulnerability_alerts"
+              ]
+            },
+            "branch_protection": {
+              "type": "object",
+              "properties": {
+                "branch": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "allow_force_pushes": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_deletions": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "required_linear_history": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "allow_deletions",
+                "allow_force_pushes",
+                "branch",
+                "required_linear_history"
+              ]
+            }
+          },
+          "required": [
+            "branch_protection",
+            "description",
+            "homepage",
+            "security",
+            "settings",
+            "topics"
+          ]
+        },
+        "ultrastable/unlearn": {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "homepage": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "topics": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "settings": {
+              "type": "object",
+              "properties": {
+                "has_wiki": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_squash_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_merge_commit": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_rebase_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_auto_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_update_branch": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "delete_branch_on_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "squash_merge_commit_title": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "squash_merge_commit_message": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "private": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "allow_auto_merge",
+                "allow_merge_commit",
+                "allow_rebase_merge",
+                "allow_squash_merge",
+                "allow_update_branch",
+                "delete_branch_on_merge",
+                "has_wiki",
+                "private",
+                "squash_merge_commit_message",
+                "squash_merge_commit_title"
+              ]
+            },
+            "security": {
+              "type": "object",
+              "properties": {
+                "vulnerability_alerts": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "automated_security_fixes": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "secret_scanning": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "secret_scanning_push_protection": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "automated_security_fixes",
+                "secret_scanning",
+                "secret_scanning_push_protection",
+                "vulnerability_alerts"
+              ]
+            },
+            "branch_protection": {
+              "type": "object",
+              "properties": {
+                "branch": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "allow_force_pushes": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_deletions": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "required_linear_history": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "allow_deletions",
+                "allow_force_pushes",
+                "branch",
+                "required_linear_history"
+              ]
+            }
+          },
+          "required": [
+            "branch_protection",
+            "description",
+            "homepage",
+            "security",
+            "settings",
+            "topics"
+          ]
+        },
+        "ultrastable/what-works": {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "homepage": {},
+            "topics": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "settings": {
+              "type": "object",
+              "properties": {
+                "has_wiki": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_squash_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_merge_commit": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_rebase_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_auto_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_update_branch": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "delete_branch_on_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "squash_merge_commit_title": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "squash_merge_commit_message": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "private": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "allow_auto_merge",
+                "allow_merge_commit",
+                "allow_rebase_merge",
+                "allow_squash_merge",
+                "allow_update_branch",
+                "delete_branch_on_merge",
+                "has_wiki",
+                "private",
+                "squash_merge_commit_message",
+                "squash_merge_commit_title"
+              ]
+            },
+            "security": {
+              "type": "object",
+              "properties": {
+                "vulnerability_alerts": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "automated_security_fixes": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "secret_scanning": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "secret_scanning_push_protection": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "automated_security_fixes",
+                "secret_scanning",
+                "secret_scanning_push_protection",
+                "vulnerability_alerts"
+              ]
+            },
+            "branch_protection": {
+              "type": "object",
+              "properties": {
+                "branch": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "allow_force_pushes": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_deletions": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "required_linear_history": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "allow_deletions",
+                "allow_force_pushes",
+                "branch",
+                "required_linear_history"
+              ]
+            }
+          },
+          "required": [
+            "branch_protection",
+            "description",
+            "homepage",
+            "security",
+            "settings",
+            "topics"
+          ]
+        },
+        "ultrastable/ultrastable": {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "homepage": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "topics": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "settings": {
+              "type": "object",
+              "properties": {
+                "has_issues": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "has_projects": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "has_wiki": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "has_discussions": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_squash_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_merge_commit": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_rebase_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_auto_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_update_branch": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "delete_branch_on_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "squash_merge_commit_title": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "squash_merge_commit_message": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "allow_auto_merge",
+                "allow_merge_commit",
+                "allow_rebase_merge",
+                "allow_squash_merge",
+                "allow_update_branch",
+                "delete_branch_on_merge",
+                "has_discussions",
+                "has_issues",
+                "has_projects",
+                "has_wiki",
+                "squash_merge_commit_message",
+                "squash_merge_commit_title"
+              ]
+            },
+            "security": {
+              "type": "object",
+              "properties": {
+                "vulnerability_alerts": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "automated_security_fixes": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "secret_scanning": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "secret_scanning_push_protection": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "automated_security_fixes",
+                "secret_scanning",
+                "secret_scanning_push_protection",
+                "vulnerability_alerts"
+              ]
+            },
+            "branch_protection": {
+              "type": "object",
+              "properties": {
+                "branch": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "allow_force_pushes": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_deletions": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "required_linear_history": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "allow_deletions",
+                "allow_force_pushes",
+                "branch",
+                "required_linear_history"
+              ]
+            },
+            "rulesets": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "target": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "enforcement": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "_doc": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "conditions": {
+                    "type": "object",
+                    "properties": {
+                      "ref_name": {}
+                    },
+                    "required": [
+                      "ref_name"
+                    ]
+                  },
+                  "rules": {
+                    "type": "array"
+                  },
+                  "bypass_actors": {
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "_doc",
+                  "bypass_actors",
+                  "conditions",
+                  "enforcement",
+                  "name",
+                  "rules",
+                  "target"
+                ]
+              }
+            }
+          },
+          "required": [
+            "branch_protection",
+            "description",
+            "homepage",
+            "rulesets",
+            "security",
+            "settings",
+            "topics"
+          ]
+        },
+        "ultrastable/workers": {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "homepage": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "topics": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "settings": {
+              "type": "object",
+              "properties": {
+                "has_issues": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "has_wiki": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "delete_branch_on_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_squash_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_merge_commit": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_rebase_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_auto_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_update_branch": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "allow_auto_merge",
+                "allow_merge_commit",
+                "allow_rebase_merge",
+                "allow_squash_merge",
+                "allow_update_branch",
+                "delete_branch_on_merge",
+                "has_issues",
+                "has_wiki"
+              ]
+            },
+            "security": {
+              "type": "object",
+              "properties": {
+                "vulnerability_alerts": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "automated_security_fixes": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "secret_scanning": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "secret_scanning_push_protection": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "automated_security_fixes",
+                "secret_scanning",
+                "secret_scanning_push_protection",
+                "vulnerability_alerts"
+              ]
+            },
+            "branch_protection": {
+              "type": "object",
+              "properties": {
+                "branch": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "allow_force_pushes": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_deletions": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "required_linear_history": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "allow_deletions",
+                "allow_force_pushes",
+                "branch",
+                "required_linear_history"
+              ]
+            }
+          },
+          "required": [
+            "branch_protection",
+            "description",
+            "homepage",
+            "security",
+            "settings",
+            "topics"
+          ]
+        },
+        "ultrastable/spec": {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "homepage": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "topics": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "settings": {
+              "type": "object",
+              "properties": {
+                "has_issues": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "has_wiki": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "delete_branch_on_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_squash_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_merge_commit": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_rebase_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_auto_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_update_branch": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "allow_auto_merge",
+                "allow_merge_commit",
+                "allow_rebase_merge",
+                "allow_squash_merge",
+                "allow_update_branch",
+                "delete_branch_on_merge",
+                "has_issues",
+                "has_wiki"
+              ]
+            },
+            "security": {
+              "type": "object",
+              "properties": {
+                "vulnerability_alerts": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "automated_security_fixes": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "secret_scanning": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "secret_scanning_push_protection": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "automated_security_fixes",
+                "secret_scanning",
+                "secret_scanning_push_protection",
+                "vulnerability_alerts"
+              ]
+            },
+            "branch_protection": {
+              "type": "object",
+              "properties": {
+                "branch": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "allow_force_pushes": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_deletions": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "required_linear_history": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "allow_deletions",
+                "allow_force_pushes",
+                "branch",
+                "required_linear_history"
+              ]
+            }
+          },
+          "required": [
+            "branch_protection",
+            "description",
+            "homepage",
+            "security",
+            "settings",
+            "topics"
+          ]
+        },
+        "ultrastable/license": {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "homepage": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "topics": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "settings": {
+              "type": "object",
+              "properties": {
+                "has_issues": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "has_wiki": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "delete_branch_on_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_squash_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_merge_commit": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_rebase_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_auto_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_update_branch": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "allow_auto_merge",
+                "allow_merge_commit",
+                "allow_rebase_merge",
+                "allow_squash_merge",
+                "allow_update_branch",
+                "delete_branch_on_merge",
+                "has_issues",
+                "has_wiki"
+              ]
+            },
+            "security": {
+              "type": "object",
+              "properties": {
+                "vulnerability_alerts": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "automated_security_fixes": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "secret_scanning": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "secret_scanning_push_protection": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "automated_security_fixes",
+                "secret_scanning",
+                "secret_scanning_push_protection",
+                "vulnerability_alerts"
+              ]
+            },
+            "branch_protection": {
+              "type": "object",
+              "properties": {
+                "branch": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "allow_force_pushes": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_deletions": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "required_linear_history": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "allow_deletions",
+                "allow_force_pushes",
+                "branch",
+                "required_linear_history"
+              ]
+            }
+          },
+          "required": [
+            "branch_protection",
+            "description",
+            "homepage",
+            "security",
+            "settings",
+            "topics"
+          ]
+        },
+        "ultrastable/ops": {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "homepage": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "topics": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "settings": {
+              "type": "object",
+              "properties": {
+                "has_issues": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "has_wiki": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "delete_branch_on_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_squash_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_merge_commit": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_rebase_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_auto_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_update_branch": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "private": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "allow_auto_merge",
+                "allow_merge_commit",
+                "allow_rebase_merge",
+                "allow_squash_merge",
+                "allow_update_branch",
+                "delete_branch_on_merge",
+                "has_issues",
+                "has_wiki",
+                "private"
+              ]
+            },
+            "security": {
+              "type": "object",
+              "properties": {
+                "vulnerability_alerts": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "automated_security_fixes": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "secret_scanning": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "secret_scanning_push_protection": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "automated_security_fixes",
+                "secret_scanning",
+                "secret_scanning_push_protection",
+                "vulnerability_alerts"
+              ]
+            },
+            "branch_protection": {
+              "type": "object",
+              "properties": {
+                "branch": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "allow_force_pushes": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_deletions": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "required_linear_history": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "allow_deletions",
+                "allow_force_pushes",
+                "branch",
+                "required_linear_history"
+              ]
+            },
+            "_visibility": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "_visibility",
+            "branch_protection",
+            "description",
+            "homepage",
+            "security",
+            "settings",
+            "topics"
+          ]
+        },
+        "ultrastable/seed": {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "homepage": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "topics": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "settings": {
+              "type": "object",
+              "properties": {
+                "has_issues": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "has_wiki": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "delete_branch_on_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_squash_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_merge_commit": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_rebase_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_auto_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_update_branch": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "is_template": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "private": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "allow_auto_merge",
+                "allow_merge_commit",
+                "allow_rebase_merge",
+                "allow_squash_merge",
+                "allow_update_branch",
+                "delete_branch_on_merge",
+                "has_issues",
+                "has_wiki",
+                "is_template",
+                "private"
+              ]
+            },
+            "security": {
+              "type": "object",
+              "properties": {
+                "vulnerability_alerts": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "automated_security_fixes": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "secret_scanning": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "secret_scanning_push_protection": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "automated_security_fixes",
+                "secret_scanning",
+                "secret_scanning_push_protection",
+                "vulnerability_alerts"
+              ]
+            },
+            "branch_protection": {
+              "type": "object",
+              "properties": {
+                "branch": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "allow_force_pushes": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_deletions": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "required_linear_history": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "allow_deletions",
+                "allow_force_pushes",
+                "branch",
+                "required_linear_history"
+              ]
+            },
+            "_template": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "_visibility": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "_template",
+            "_visibility",
+            "branch_protection",
+            "description",
+            "homepage",
+            "security",
+            "settings",
+            "topics"
+          ]
+        },
+        "ultrastable/.github": {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "homepage": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "topics": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "settings": {
+              "type": "object",
+              "properties": {
+                "has_issues": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "has_wiki": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "delete_branch_on_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_squash_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_merge_commit": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_rebase_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_auto_merge": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_update_branch": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "allow_auto_merge",
+                "allow_merge_commit",
+                "allow_rebase_merge",
+                "allow_squash_merge",
+                "allow_update_branch",
+                "delete_branch_on_merge",
+                "has_issues",
+                "has_wiki"
+              ]
+            },
+            "security": {
+              "type": "object",
+              "properties": {
+                "vulnerability_alerts": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "automated_security_fixes": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "secret_scanning": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "secret_scanning_push_protection": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "automated_security_fixes",
+                "secret_scanning",
+                "secret_scanning_push_protection",
+                "vulnerability_alerts"
+              ]
+            },
+            "branch_protection": {
+              "type": "object",
+              "properties": {
+                "branch": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "allow_force_pushes": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "allow_deletions": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "required_linear_history": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "allow_deletions",
+                "allow_force_pushes",
+                "branch",
+                "required_linear_history"
+              ]
+            }
+          },
+          "required": [
+            "branch_protection",
+            "description",
+            "homepage",
+            "security",
+            "settings",
+            "topics"
+          ]
+        }
+      },
+      "required": [
+        "ultrastable/.github",
+        "ultrastable/license",
+        "ultrastable/ops",
+        "ultrastable/practical-solutions",
+        "ultrastable/seed",
+        "ultrastable/spec",
+        "ultrastable/ultrastable",
+        "ultrastable/unlearn",
+        "ultrastable/what-works",
+        "ultrastable/workers"
+      ]
+    },
+    "manual_ui_only": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "item": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "file": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "where": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "probe": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "item",
+          "probe",
+          "where"
+        ]
+      }
+    },
+    "_plan_gated": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "_doc",
+    "_plan_gated",
+    "manual_ui_only",
+    "org",
+    "repos"
+  ]
+}

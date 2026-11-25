@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "checked": "2026-11-14",
+  "checked": "2026-11-25",
   "stale_after_days": 120,
   "bodies": [
     {
@@ -993,6 +993,416 @@
           "url": "https://gdpr-info.eu/art-20-gdpr/",
           "published": null,
           "accessed": "2026-11-14"
+        }
+      ]
+    },
+    {
+      "id": "json-schema-config",
+      "name": "JSON Schema 2020-12 for every config and manifest, listed in a SchemaStore catalog",
+      "body": "JSON Schema organisation; SchemaStore",
+      "status": "stable",
+      "tracked": "2020-12; schema-catalog.json version 1",
+      "why": "YAML, TOML and JSON are only syntaxes; a schema is what lets editors, CI, agents and other systems agree on a file's shape. Every config the platform and every seed ships is validated on every change, so drift fails the build instead of a loop.",
+      "support": "supported",
+      "how": [
+        "seed/scripts/schemas.py",
+        "foundation/schemas.py",
+        "schemas/catalog.json",
+        "seed/schemas/catalog.json"
+      ],
+      "tests": [
+        {
+          "file": "tests/foundation/test_open_standards.py",
+          "name": "test_every_config_has_a_json_schema"
+        },
+        {
+          "file": "tests/foundation/test_open_standards.py",
+          "name": "test_schema_drift_fails"
+        },
+        {
+          "file": "seed/tests/test_schemas.py",
+          "name": "test_configs_match_their_schemas"
+        }
+      ],
+      "sources": [
+        {
+          "title": "SchemaStore catalog",
+          "url": "https://www.schemastore.org/json/",
+          "published": null,
+          "accessed": "2026-11-25"
+        },
+        {
+          "title": "JSON Schema 2020-12",
+          "url": "https://json-schema.org/draft/2020-12",
+          "published": "2020-12-08",
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "editorconfig",
+      "name": "EditorConfig",
+      "body": "editorconfig.org",
+      "status": "de-facto",
+      "tracked": "spec 0.17",
+      "why": "Every editor and coding agent writes line endings, charset and indentation the same way.",
+      "support": "supported",
+      "how": [
+        ".editorconfig",
+        "seed/.editorconfig"
+      ],
+      "acl": ".editorconfig",
+      "tests": [
+        {
+          "file": "tests/foundation/test_open_standards.py",
+          "name": "test_editorconfig_present"
+        }
+      ],
+      "sources": [
+        {
+          "title": "EditorConfig specification",
+          "url": "https://spec.editorconfig.org/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "devcontainer",
+      "name": "Development Container specification",
+      "body": "containers.dev (Microsoft, open spec)",
+      "status": "stable",
+      "tracked": "devcontainer.json reference",
+      "why": "One file gives any cloud workspace or agent sandbox the same toolchain, server-side (Codespaces and other hosts), with nothing to install by hand.",
+      "support": "supported",
+      "how": [
+        ".devcontainer/devcontainer.json",
+        "seed/.devcontainer/devcontainer.json"
+      ],
+      "tests": [
+        {
+          "file": "tests/foundation/test_open_standards.py",
+          "name": "test_devcontainer_is_valid"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Development Container specification",
+          "url": "https://containers.dev/implementors/spec/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "dependabot",
+      "name": "Dependabot version updates",
+      "body": "GitHub",
+      "status": "stable",
+      "tracked": "dependabot.yml version 2",
+      "why": "Every dependency ecosystem in the platform and every seed is advanced by a server-side loop; the merge lane merges green updates (DEP-LOOP-1).",
+      "support": "supported",
+      "how": [
+        ".github/dependabot.yml",
+        "seed/.github/dependabot.yml"
+      ],
+      "tests": [
+        {
+          "file": "tests/foundation/test_open_standards.py",
+          "name": "test_dependabot_covers_every_ecosystem"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Dependabot options reference",
+          "url": "https://docs.github.com/en/code-security/dependabot/working-with-dependabot/dependabot-options-reference",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "openssf-scorecard",
+      "name": "OpenSSF Scorecard",
+      "body": "OpenSSF (Linux Foundation)",
+      "status": "stable",
+      "tracked": "scorecard-action v2",
+      "why": "An outside, standard measure of supply-chain posture; each check under the floor becomes a queue item whose closing probe is the next weekly reading.",
+      "support": "supported",
+      "how": [
+        ".github/workflows/supply-chain.yml",
+        "foundation/supplychain.py",
+        "doctrine/open-standards.json"
+      ],
+      "tests": [
+        {
+          "file": "tests/foundation/test_open_standards.py",
+          "name": "test_supply_chain_loop_files_and_closes"
+        },
+        {
+          "file": "tests/foundation/test_open_standards.py",
+          "name": "test_supply_chain_workflow_reads_both_standards"
+        }
+      ],
+      "sources": [
+        {
+          "title": "OpenSSF Scorecard",
+          "url": "https://github.com/ossf/scorecard",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "spdx-sbom",
+      "name": "SPDX 2.3 software bill of materials",
+      "body": "Linux Foundation (ISO/IEC 5962)",
+      "status": "stable",
+      "tracked": "SPDX-2.3 via GitHub dependency graph export",
+      "why": "The dependency graph's SPDX export is read weekly and every package outside the licence policy in doctrine/dependency-licences.json becomes an item.",
+      "support": "supported",
+      "how": [
+        ".github/workflows/supply-chain.yml",
+        "foundation/supplychain.py"
+      ],
+      "tests": [
+        {
+          "file": "tests/foundation/test_open_standards.py",
+          "name": "test_supply_chain_loop_files_and_closes"
+        }
+      ],
+      "sources": [
+        {
+          "title": "SPDX 2.3",
+          "url": "https://spdx.github.io/spdx-spec/v2.3/",
+          "published": null,
+          "accessed": "2026-11-25"
+        },
+        {
+          "title": "Export an SBOM from the dependency graph",
+          "url": "https://docs.github.com/en/rest/dependency-graph/sboms",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "json-feed",
+      "name": "JSON Feed 1.1 and RSS 2.0",
+      "body": "jsonfeed.org; RSS Advisory Board",
+      "status": "stable",
+      "tracked": "JSON Feed 1.1",
+      "why": "What a system ships is published as feeds any reader or aggregator consumes; the stickiness loop measures freshness from the same feed.",
+      "support": "supported",
+      "how": [
+        "workers/core/feed/index.js",
+        "workers/core/stickiness/index.js"
+      ],
+      "tests": [
+        {
+          "file": "workers/core/feed/feed.test.js",
+          "name": "feed renders escaped RSS and JSON Feed from described changes"
+        }
+      ],
+      "sources": [
+        {
+          "title": "JSON Feed 1.1",
+          "url": "https://www.jsonfeed.org/version/1.1/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "schema-org-jsonld",
+      "name": "schema.org vocabulary in JSON-LD",
+      "body": "schema.org (W3C community group)",
+      "status": "stable",
+      "tracked": "schema.org current release",
+      "why": "Pages describe themselves in the vocabulary search engines and agents read; the knowledge graph should speak the same vocabulary.",
+      "support": "partial",
+      "how": [
+        "site/worker.js",
+        "site/research.js"
+      ],
+      "tests": [
+        {
+          "file": "tests/foundation/test_open_standards.py",
+          "name": "test_site_pages_carry_schema_org_jsonld"
+        }
+      ],
+      "gap": "The knowledge graph (/api/graph) is not yet served as JSON-LD with schema.org types; tracked by STD-7.",
+      "sources": [
+        {
+          "title": "schema.org",
+          "url": "https://schema.org/docs/documents.html",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "citation-cff",
+      "name": "Citation File Format",
+      "body": "Citation File Format project",
+      "status": "stable",
+      "tracked": "CFF 1.2.0",
+      "why": "Papers and software are cited the way GitHub, Zenodo and reference managers read them.",
+      "support": "supported",
+      "how": [
+        "CITATION.cff"
+      ],
+      "tests": [
+        {
+          "file": "tests/foundation/test_open_standards.py",
+          "name": "test_citation_cff_parses"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Citation File Format 1.2.0",
+          "url": "https://citation-file-format.github.io/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "conventional-commits",
+      "name": "Conventional Commits and SemVer release notes",
+      "body": "conventionalcommits.org; semver.org",
+      "status": "stable",
+      "tracked": "Conventional Commits 1.0.0; SemVer 2.0.0",
+      "why": "Commit and PR titles in the type: subject form let release notes, change feeds and the substance check be generated from history instead of typed.",
+      "support": "planned",
+      "tracked_by": "STD-4: executor item in docs/issues/STD-4.json",
+      "acl": "seed/scripts/specgate.py",
+      "sources": [
+        {
+          "title": "Conventional Commits 1.0.0",
+          "url": "https://www.conventionalcommits.org/en/v1.0.0/",
+          "published": null,
+          "accessed": "2026-11-25"
+        },
+        {
+          "title": "Semantic Versioning 2.0.0",
+          "url": "https://semver.org/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "cloudevents",
+      "name": "CloudEvents 1.0 envelope for events between loops",
+      "body": "CNCF",
+      "status": "stable",
+      "tracked": "CloudEvents 1.0.2 (JSON format)",
+      "why": "Provenance rows, audit chain entries and fleet posts carry the same envelope (id, source, type, time, data), so any broker, queue or other system can route them.",
+      "support": "planned",
+      "tracked_by": "STD-5: executor item in docs/issues/STD-5.json",
+      "acl": "seed/worker/src/auditchain.js",
+      "sources": [
+        {
+          "title": "CloudEvents 1.0.2",
+          "url": "https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/spec.md",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "openfeature",
+      "name": "OpenFeature flags for the goal knobs",
+      "body": "CNCF",
+      "status": "stable",
+      "tracked": "OpenFeature spec 0.8; Cloudflare Flagship provider",
+      "why": "Goal knobs and A/B buckets evaluated through the OpenFeature API instead of a home-grown knob reader, so any flag provider can serve them.",
+      "support": "planned",
+      "tracked_by": "STD-6: executor item in docs/issues/STD-6.json",
+      "acl": "seed/worker/src/goals.js",
+      "sources": [
+        {
+          "title": "OpenFeature specification",
+          "url": "https://openfeature.dev/specification/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "schema-org-kg",
+      "name": "Knowledge graph served as JSON-LD (schema.org) with SHACL-style shape checks",
+      "body": "W3C / schema.org",
+      "status": "stable",
+      "tracked": "JSON-LD 1.1",
+      "why": "Every system's /api/graph readable by any linked-data tool, not only by our own pages.",
+      "support": "planned",
+      "tracked_by": "STD-7: executor item in docs/issues/STD-7.json",
+      "acl": "seed/worker/src/datagraph.js",
+      "sources": [
+        {
+          "title": "JSON-LD 1.1",
+          "url": "https://www.w3.org/TR/json-ld11/",
+          "published": "2020-07-16",
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "openslo",
+      "name": "OpenSLO definitions for loop clocks",
+      "body": "OpenSLO project",
+      "status": "stable",
+      "tracked": "OpenSLO v1",
+      "why": "Each clock's expected interval and the liveness targets become SLO objects any SLO tool can evaluate, generated from doctrine/clocks.json.",
+      "support": "planned",
+      "tracked_by": "STD-8: executor item in docs/issues/STD-8.json",
+      "acl": "foundation/clock.py",
+      "sources": [
+        {
+          "title": "OpenSLO specification",
+          "url": "https://github.com/OpenSLO/OpenSLO",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "reusable-workflows",
+      "name": "Reusable GitHub Actions workflows shared by every tenant",
+      "body": "GitHub",
+      "status": "stable",
+      "tracked": "workflow_call",
+      "why": "Tenants call the platform's checks, deploy and supply-chain workflows instead of carrying copies that drift.",
+      "support": "planned",
+      "tracked_by": "STD-9: executor item in docs/issues/STD-9.json",
+      "acl": "seed/.github/workflows/bootstrap.yml",
+      "sources": [
+        {
+          "title": "Reusing workflows",
+          "url": "https://docs.github.com/en/actions/sharing-automations/reusing-workflows",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "otel-metrics",
+      "name": "OpenTelemetry metrics and logs (OTLP) beyond GenAI spans",
+      "body": "OpenTelemetry (CNCF)",
+      "status": "stable",
+      "tracked": "OTLP 1.x; Workers observability export",
+      "why": "Liveness metrics, clock beats and cost readings exported as OTLP so any backend reads them; Cloudflare Workers can export OTLP natively.",
+      "support": "planned",
+      "tracked_by": "STD-10: executor item in docs/issues/STD-10.json",
+      "acl": "seed/worker/src/agentic/adapters/console-telemetry.js",
+      "sources": [
+        {
+          "title": "OTLP specification",
+          "url": "https://opentelemetry.io/docs/specs/otlp/",
+          "published": null,
+          "accessed": "2026-11-25"
         }
       ]
     }

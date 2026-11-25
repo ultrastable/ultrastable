@@ -1,0 +1,307 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/idea-bank.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/idea-bank.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "min_domains": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "max_per_domain": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "ideas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "domain": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reach": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "text": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "keywords": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "loop": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "measure": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "upkeep": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "budget": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "depth": {
+            "type": "object",
+            "properties": {
+              "corpus": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "method": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "returns": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "corpus",
+              "method",
+              "returns"
+            ]
+          },
+          "empowers": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "probe": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "note": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "name"
+              ]
+            }
+          },
+          "added": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "thesis": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "hook": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "horizon": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "change": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "required": [
+          "added",
+          "budget",
+          "change",
+          "data",
+          "depth",
+          "domain",
+          "empowers",
+          "hook",
+          "horizon",
+          "id",
+          "keywords",
+          "loop",
+          "measure",
+          "reach",
+          "text",
+          "thesis",
+          "upkeep"
+        ]
+      }
+    },
+    "depth_fields": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "refused_domains": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "max_active": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "retired": {
+      "type": "array"
+    },
+    "max_text": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "narrow_phrases": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "owner_edits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "before": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "after": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "lesson": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "after",
+          "before",
+          "date",
+          "id",
+          "lesson"
+        ]
+      }
+    }
+  },
+  "required": [
+    "_doc",
+    "depth_fields",
+    "ideas",
+    "max_active",
+    "max_per_domain",
+    "max_text",
+    "min_domains",
+    "narrow_phrases",
+    "owner_edits",
+    "refused_domains",
+    "retired"
+  ]
+}

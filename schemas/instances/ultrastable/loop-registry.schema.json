@@ -1,0 +1,290 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./instances/ultrastable/loop-registry.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "instances/ultrastable/loop-registry.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "credentials": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "binding": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "source": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "probe": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "binding",
+          "probe",
+          "source"
+        ]
+      }
+    },
+    "loops": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "kind": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "summary": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "trigger": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "owner": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "closes_by": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "sla": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "done": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "paths": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "how": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "class": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "class",
+                "how",
+                "id"
+              ]
+            }
+          },
+          "closing_probe": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "writeback": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "system_path": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "area": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "launch": {},
+          "server_owner": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "program": {
+            "type": "object",
+            "properties": {
+              "orient": {
+                "type": "array",
+                "items": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "originate_to": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "predict_log": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "lane": {
+                "type": "array",
+                "items": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "lane",
+              "orient",
+              "originate_to",
+              "predict_log"
+            ]
+          },
+          "workflows": {
+            "type": "array",
+            "items": {}
+          },
+          "credentials": {
+            "type": "array",
+            "items": {}
+          },
+          "staged_default": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "identity_bound": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "default_in_effect": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "cycle_metric": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "last_plus": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "closes_by",
+          "closing_probe",
+          "done",
+          "id",
+          "kind",
+          "owner",
+          "paths",
+          "server_owner",
+          "sla",
+          "summary",
+          "system_path",
+          "trigger",
+          "writeback"
+        ]
+      }
+    },
+    "launch_registry": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "_doc",
+    "credentials",
+    "id",
+    "launch_registry",
+    "loops",
+    "version"
+  ]
+}

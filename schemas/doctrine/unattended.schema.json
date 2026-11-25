@@ -1,0 +1,270 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/unattended.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/unattended.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "target": {
+      "type": "object",
+      "properties": {
+        "statement": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "metric": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "op": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "value": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "set": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "release_metric": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "release_op": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "release_value": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "probe": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "pillars": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "statement": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "field": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "op": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "value": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "where": {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "kind"
+                ]
+              }
+            },
+            "required": [
+              "field",
+              "id",
+              "op",
+              "source",
+              "statement",
+              "value"
+            ]
+          }
+        },
+        "principle": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "metric",
+        "op",
+        "pillars",
+        "principle",
+        "probe",
+        "release_metric",
+        "release_op",
+        "release_value",
+        "set",
+        "statement",
+        "value"
+      ]
+    },
+    "warn_days": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "class": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "what": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "status": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "renewal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "expires": {},
+          "evidence": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "measured": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "probe": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "needs_you": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "default": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "connect": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "item": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "class",
+          "evidence",
+          "expires",
+          "id",
+          "measured",
+          "probe",
+          "renewal",
+          "status",
+          "what"
+        ]
+      }
+    }
+  },
+  "required": [
+    "_doc",
+    "dependencies",
+    "target",
+    "version",
+    "warn_days"
+  ]
+}

@@ -1,0 +1,161 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./outreach/gate.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "outreach/gate.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "kill": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "mode": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "sender": {
+      "type": "object",
+      "properties": {
+        "registered": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "identity": {},
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "postal_address": {},
+        "booking_url": {}
+      },
+      "required": [
+        "booking_url",
+        "identity",
+        "note",
+        "postal_address",
+        "registered"
+      ]
+    },
+    "limits": {
+      "type": "object",
+      "properties": {
+        "max_new_per_run": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "max_sends_per_day": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "max_sends_per_week": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "followup_days": {
+          "type": "array",
+          "items": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        },
+        "max_followups": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "min_days_between_contacts_per_target": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "followup_days",
+        "max_followups",
+        "max_new_per_run",
+        "max_sends_per_day",
+        "max_sends_per_week",
+        "min_days_between_contacts_per_target"
+      ]
+    },
+    "paused_profiles": {
+      "type": "array"
+    },
+    "paused_programs": {
+      "type": "array"
+    },
+    "intro": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "max_new_per_run": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "max_sends_per_week": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "reverify_days": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "held_regions": {
+          "type": "array"
+        }
+      },
+      "required": [
+        "enabled",
+        "held_regions",
+        "max_new_per_run",
+        "max_sends_per_week",
+        "reverify_days"
+      ]
+    }
+  },
+  "required": [
+    "_doc",
+    "intro",
+    "kill",
+    "limits",
+    "mode",
+    "paused_profiles",
+    "paused_programs",
+    "sender"
+  ]
+}

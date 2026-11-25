@@ -1,0 +1,390 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/tenant-sync.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/tenant-sync.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "core": {
+      "type": "object",
+      "properties": {
+        "repo": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "dir": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tool": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "dir",
+        "repo",
+        "tool"
+      ]
+    },
+    "ledger": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "max_prs_per_day": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "repos": {
+      "type": "object",
+      "properties": {
+        "ultrastable": {
+          "type": "object",
+          "properties": {
+            "role": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "why": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "role",
+            "why"
+          ]
+        },
+        "practical-solutions": {
+          "type": "object",
+          "properties": {
+            "role": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "clone": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "pr_repo": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "vendor_dir": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "clone",
+            "pr_repo",
+            "role",
+            "vendor_dir"
+          ]
+        },
+        "ops": {
+          "type": "object",
+          "properties": {
+            "role": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "why": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "role",
+            "why"
+          ]
+        },
+        "workers": {
+          "type": "object",
+          "properties": {
+            "role": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "why": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "role",
+            "why"
+          ]
+        },
+        "spec": {
+          "type": "object",
+          "properties": {
+            "role": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "why": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "role",
+            "why"
+          ]
+        },
+        "seed": {
+          "type": "object",
+          "properties": {
+            "role": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "why": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "role",
+            "why"
+          ]
+        },
+        "license": {
+          "type": "object",
+          "properties": {
+            "role": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "why": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "role",
+            "why"
+          ]
+        },
+        ".github": {
+          "type": "object",
+          "properties": {
+            "role": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "why": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "role",
+            "why"
+          ]
+        },
+        "business": {
+          "type": "object",
+          "properties": {
+            "role": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "why": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "role",
+            "why"
+          ]
+        },
+        "docs": {
+          "type": "object",
+          "properties": {
+            "role": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "why": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "role",
+            "why"
+          ]
+        },
+        "ip": {
+          "type": "object",
+          "properties": {
+            "role": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "why": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "role",
+            "why"
+          ]
+        },
+        "platform": {
+          "type": "object",
+          "properties": {
+            "role": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "why": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "role",
+            "why"
+          ]
+        },
+        "site": {
+          "type": "object",
+          "properties": {
+            "role": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "why": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "role",
+            "why"
+          ]
+        }
+      },
+      "required": [
+        ".github",
+        "business",
+        "docs",
+        "ip",
+        "license",
+        "ops",
+        "platform",
+        "practical-solutions",
+        "seed",
+        "site",
+        "spec",
+        "ultrastable",
+        "workers"
+      ]
+    },
+    "future_tenant_rule": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "drift_max_days": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "upstream_min_30d": {
+      "type": [
+        "number",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "_doc",
+    "core",
+    "drift_max_days",
+    "future_tenant_rule",
+    "ledger",
+    "max_prs_per_day",
+    "repos",
+    "upstream_min_30d"
+  ]
+}

@@ -1,0 +1,297 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/tenant-storage.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/tenant-storage.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "price_as_of": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "decision": {
+      "type": "object",
+      "properties": {
+        "store": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "vectors": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "blobs": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "hot_reads": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "aggregates": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "control_plane": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "portable": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "aggregates",
+        "blobs",
+        "control_plane",
+        "hot_reads",
+        "portable",
+        "store",
+        "vectors"
+      ]
+    },
+    "monthly_ceiling_usd": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "plan_base_usd": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "default_budget": {
+      "type": "object",
+      "properties": {
+        "day": {
+          "type": "object",
+          "properties": {
+            "reads": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "writes": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "requests": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "reads",
+            "requests",
+            "writes"
+          ]
+        },
+        "month": {
+          "type": "object",
+          "properties": {
+            "reads": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "writes": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "requests": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "reads",
+            "requests",
+            "writes"
+          ]
+        },
+        "per_query_reads": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "max_storage_bytes": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "max_vectors": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "day",
+        "max_storage_bytes",
+        "max_vectors",
+        "month",
+        "per_query_reads"
+      ]
+    },
+    "tenants": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "kind": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "source": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "wave": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "source",
+          "wave"
+        ]
+      }
+    },
+    "migration": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "evidence": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "title": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "action": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "probe": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "owner": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "action",
+              "id",
+              "owner",
+              "probe",
+              "title"
+            ]
+          }
+        }
+      },
+      "required": [
+        "evidence",
+        "steps",
+        "target"
+      ]
+    }
+  },
+  "required": [
+    "_doc",
+    "decision",
+    "default_budget",
+    "migration",
+    "monthly_ceiling_usd",
+    "plan_base_usd",
+    "price_as_of",
+    "tenants",
+    "version"
+  ]
+}

@@ -1,0 +1,468 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/meta-loop.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/meta-loop.json",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "owner_directive": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "rule": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "consent": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "detectors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "patterns": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "weight": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "roadmap": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "kind",
+          "patterns",
+          "roadmap",
+          "weight"
+        ]
+      }
+    },
+    "mic_events": {
+      "type": "object",
+      "properties": {
+        "doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "codes": {
+          "type": "object",
+          "properties": {
+            "not-allowed": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "weight": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "roadmap": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "kind",
+                "roadmap",
+                "weight"
+              ]
+            },
+            "service-not-allowed": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "weight": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "roadmap": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "kind",
+                "roadmap",
+                "weight"
+              ]
+            },
+            "no-speech": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "weight": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "roadmap": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "kind",
+                "roadmap",
+                "weight"
+              ]
+            },
+            "network": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "weight": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "roadmap": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "kind",
+                "roadmap",
+                "weight"
+              ]
+            },
+            "audio-capture": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "weight": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "roadmap": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "kind",
+                "roadmap",
+                "weight"
+              ]
+            },
+            "unsupported": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "weight": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "roadmap": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "kind",
+                "roadmap",
+                "weight"
+              ]
+            },
+            "busy": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "weight": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "roadmap": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "kind",
+                "roadmap",
+                "weight"
+              ]
+            },
+            "edited-after-dictation": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "weight": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "roadmap": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "kind",
+                "roadmap",
+                "weight"
+              ]
+            },
+            "abandoned": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "weight": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "roadmap": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "kind",
+                "roadmap",
+                "weight"
+              ]
+            }
+          },
+          "required": [
+            "abandoned",
+            "audio-capture",
+            "busy",
+            "edited-after-dictation",
+            "network",
+            "no-speech",
+            "not-allowed",
+            "service-not-allowed",
+            "unsupported"
+          ]
+        },
+        "thresholds": {
+          "type": "object",
+          "properties": {
+            "file_issue_when_count_at_least": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "window_days": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "file_issue_when_count_at_least",
+            "window_days"
+          ]
+        }
+      },
+      "required": [
+        "codes",
+        "doc",
+        "thresholds"
+      ]
+    },
+    "thresholds": {
+      "type": "object",
+      "properties": {
+        "file_issue_when_weight_at_least": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "dedupe_window_days": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "dedupe_window_days",
+        "file_issue_when_weight_at_least"
+      ]
+    },
+    "issue_prefix": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "sink": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "closing_probe": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "server_owner": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "ingest": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "sla_hours": {
+      "type": [
+        "number",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "closing_probe",
+    "consent",
+    "detectors",
+    "id",
+    "ingest",
+    "issue_prefix",
+    "mic_events",
+    "owner_directive",
+    "rule",
+    "server_owner",
+    "sink",
+    "sla_hours",
+    "sources",
+    "thresholds",
+    "version"
+  ]
+}

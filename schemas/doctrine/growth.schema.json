@@ -1,0 +1,390 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/growth.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/growth.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "target_growth_share": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "window_merges": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "label": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "start": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "horizon_days": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "revise_after_days": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "experiment_check_after_days": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "classify": {
+      "type": "object",
+      "properties": {
+        "fix": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "growth": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "fix",
+        "growth"
+      ]
+    },
+    "products": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "what": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "owner_loop": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "metrics": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "required": [
+          "id",
+          "metrics",
+          "owner_loop",
+          "what"
+        ]
+      }
+    },
+    "metrics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "what": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "baseline": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "target": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "direction": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "trigger": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "baseline",
+          "direction",
+          "id",
+          "target",
+          "trigger",
+          "what"
+        ]
+      }
+    },
+    "bank": {
+      "type": "object",
+      "properties": {
+        "pageviews_7d": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "title": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "probe": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "pct": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "desc": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "desc",
+              "id",
+              "pct",
+              "probe",
+              "title"
+            ]
+          }
+        },
+        "visitors_7d": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "title": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "probe": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "pct": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "desc": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "desc",
+              "id",
+              "pct",
+              "probe",
+              "title"
+            ]
+          }
+        },
+        "agent_hits_7d": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "title": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "probe": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "pct": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "desc": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "desc",
+              "id",
+              "pct",
+              "probe",
+              "title"
+            ]
+          }
+        },
+        "pilot_page_views_7d": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "title": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "probe": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "pct": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "desc": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "desc",
+              "id",
+              "pct",
+              "probe",
+              "title"
+            ]
+          }
+        }
+      },
+      "required": [
+        "agent_hits_7d",
+        "pageviews_7d",
+        "pilot_page_views_7d",
+        "visitors_7d"
+      ]
+    },
+    "owner_note": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "_doc",
+    "bank",
+    "classify",
+    "experiment_check_after_days",
+    "horizon_days",
+    "label",
+    "metrics",
+    "owner_note",
+    "products",
+    "revise_after_days",
+    "start",
+    "target_growth_share",
+    "version",
+    "window_merges"
+  ]
+}

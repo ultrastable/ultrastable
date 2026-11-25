@@ -1,0 +1,202 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/balance.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/balance.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "sla_days": {
+      "type": "object",
+      "properties": {
+        "p0": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "p1": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "default": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "default",
+        "p0",
+        "p1"
+      ]
+    },
+    "windows": {
+      "type": "object",
+      "properties": {
+        "day": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "week": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "day",
+        "week"
+      ]
+    },
+    "family": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "batch_threshold": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "batch_window_days": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "batch_exclude": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "max_supersede_per_pass": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "throttle": {
+      "type": "object",
+      "properties": {
+        "daily_quota_floor": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "quota_share_of_weekly_outflow": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "daily_quota_floor",
+        "quota_share_of_weekly_outflow"
+      ]
+    },
+    "boost": {
+      "type": "object",
+      "properties": {
+        "normal": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "tipped": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "max": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "max",
+        "normal",
+        "tipped"
+      ]
+    },
+    "final_statuses": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "counts_as_closure": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "never_closure": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "_batch_exclude_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "_batch_exclude_doc",
+    "_doc",
+    "batch_exclude",
+    "batch_threshold",
+    "batch_window_days",
+    "boost",
+    "counts_as_closure",
+    "family",
+    "final_statuses",
+    "max_supersede_per_pass",
+    "never_closure",
+    "sla_days",
+    "throttle",
+    "version",
+    "windows"
+  ]
+}

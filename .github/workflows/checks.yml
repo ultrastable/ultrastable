@@ -208,9 +208,10 @@ jobs:
         run: |
           python3 -m foundation upstream contract --check
           python3 -m foundation upstream leaks
-      - name: Agentic standards (register, surfaces, discovery lint; Worker conformance and contract tests)
+      - name: Agentic and open standards (register, surfaces, discovery lint, JSON Schema for every config; Worker conformance and contract tests)
         run: |
           python3 -m foundation standards --check
+          python3 -m foundation schemas --check
           (cd seed/worker && node --test --no-warnings test/*.test.js)
   tests-a:
     if: ${{ vars.HALT != '1' && (github.event.pull_request.draft != true) }}  # HALT-1

@@ -1,0 +1,304 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/flows.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/flows.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "quote": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "external_sources": {
+      "type": "object",
+      "properties": {
+        "ext.app_users": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ext.site_visits": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ext.post_engagement": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ext.owner_goals": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ext.outreach_replies": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ext.actions_quota": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ext.frontier": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ext.cf_analytics": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ext.unlearn_adults": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ext.unlearn_readers": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ext.unlearn_literature": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ext.ledger_literature": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "ext.actions_quota",
+        "ext.app_users",
+        "ext.cf_analytics",
+        "ext.frontier",
+        "ext.ledger_literature",
+        "ext.outreach_replies",
+        "ext.owner_goals",
+        "ext.post_engagement",
+        "ext.site_visits",
+        "ext.unlearn_adults",
+        "ext.unlearn_literature",
+        "ext.unlearn_readers"
+      ]
+    },
+    "flows": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "inflows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "signal": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "via": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "signal",
+                "via"
+              ]
+            }
+          },
+          "outflows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "signal": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "via": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "to": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "returns": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "signal",
+                "via"
+              ]
+            }
+          },
+          "feedback": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "bindings": {
+            "type": "array",
+            "items": {}
+          }
+        },
+        "required": [
+          "feedback",
+          "inflows",
+          "outflows"
+        ]
+      }
+    },
+    "implicit_producers": {
+      "type": "object",
+      "properties": {
+        "owner.goals": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "app.metrics": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "actions.minutes": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "frontier.releases": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "cf.analytics": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "site.hits": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "loop.registry": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "unlearn.followups": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "unlearn.reader_taps": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "unlearn.literature": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ledger.literature": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "actions.minutes",
+        "app.metrics",
+        "cf.analytics",
+        "frontier.releases",
+        "ledger.literature",
+        "loop.registry",
+        "owner.goals",
+        "site.hits",
+        "unlearn.followups",
+        "unlearn.literature",
+        "unlearn.reader_taps"
+      ]
+    },
+    "pending": {
+      "type": "array"
+    }
+  },
+  "required": [
+    "_doc",
+    "external_sources",
+    "flows",
+    "id",
+    "implicit_producers",
+    "pending",
+    "quote",
+    "version"
+  ]
+}

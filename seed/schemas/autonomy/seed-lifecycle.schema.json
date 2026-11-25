@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./autonomy/seed-lifecycle.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "autonomy/seed-lifecycle.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "marker": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "target_days": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "verify_max_age_hours": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "verify_ledger": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "topology": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "clocks": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "progress": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "survival": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "what": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "what"
+        ]
+      }
+    }
+  },
+  "required": [
+    "_doc",
+    "clocks",
+    "marker",
+    "progress",
+    "survival",
+    "target_days",
+    "topology",
+    "verify_ledger",
+    "verify_max_age_hours"
+  ]
+}

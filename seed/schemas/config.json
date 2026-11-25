@@ -1,0 +1,9 @@
+{
+  "_doc": "OPEN-STANDARDS-1: JSON configs and manifests every seeded system ships, each with a JSON Schema (draft 2020-12) listed in schemas/catalog.json. Checked by `python3 scripts/schemas.py --check` in bootstrap.yml and in the platform's `checks`.",
+  "cover": [
+    "doctrine/*.json",
+    "autonomy/*.json",
+    "standards/*.json"
+  ],
+  "exclude": ["*.schema.json"]
+}

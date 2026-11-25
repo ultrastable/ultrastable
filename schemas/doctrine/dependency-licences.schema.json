@@ -1,0 +1,380 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/dependency-licences.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/dependency-licences.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "checked": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "policy": {
+      "type": "object",
+      "properties": {
+        "shipped": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "tool": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "required": [
+        "shipped",
+        "tool"
+      ]
+    },
+    "licences": {
+      "type": "object",
+      "properties": {
+        "action:actions/checkout": {
+          "type": "object",
+          "properties": {
+            "spdx": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "source",
+            "spdx"
+          ]
+        },
+        "action:actions/setup-node": {
+          "type": "object",
+          "properties": {
+            "spdx": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "source",
+            "spdx"
+          ]
+        },
+        "action:actions/setup-python": {
+          "type": "object",
+          "properties": {
+            "spdx": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "source",
+            "spdx"
+          ]
+        },
+        "npm:axe-core": {
+          "type": "object",
+          "properties": {
+            "spdx": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "note": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "note",
+            "source",
+            "spdx"
+          ]
+        },
+        "npm:esbuild": {
+          "type": "object",
+          "properties": {
+            "spdx": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "source",
+            "spdx"
+          ]
+        },
+        "npm:playwright": {
+          "type": "object",
+          "properties": {
+            "spdx": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "source",
+            "spdx"
+          ]
+        },
+        "npm:wrangler": {
+          "type": "object",
+          "properties": {
+            "spdx": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "source",
+            "spdx"
+          ]
+        },
+        "pypi:piper-tts": {
+          "type": "object",
+          "properties": {
+            "spdx": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "note": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "note",
+            "source",
+            "spdx"
+          ]
+        },
+        "pypi:playwright": {
+          "type": "object",
+          "properties": {
+            "spdx": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "source",
+            "spdx"
+          ]
+        },
+        "pypi:psycopg": {
+          "type": "object",
+          "properties": {
+            "spdx": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "note": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "note",
+            "source",
+            "spdx"
+          ]
+        },
+        "pypi:pyyaml": {
+          "type": "object",
+          "properties": {
+            "spdx": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "source",
+            "spdx"
+          ]
+        }
+      },
+      "required": [
+        "action:actions/checkout",
+        "action:actions/setup-node",
+        "action:actions/setup-python",
+        "npm:axe-core",
+        "npm:esbuild",
+        "npm:playwright",
+        "npm:wrangler",
+        "pypi:piper-tts",
+        "pypi:playwright",
+        "pypi:psycopg",
+        "pypi:pyyaml"
+      ]
+    },
+    "inventory": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "eco": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "use": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "spdx": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "verdict": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "where": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "required": [
+          "eco",
+          "name",
+          "spdx",
+          "use",
+          "verdict",
+          "where"
+        ]
+      }
+    }
+  },
+  "required": [
+    "_doc",
+    "checked",
+    "inventory",
+    "licences",
+    "policy"
+  ]
+}

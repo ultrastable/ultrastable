@@ -1,0 +1,370 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/stakeholders.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/stakeholders.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "audiences": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "nav": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "promise": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "needs": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "stories": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "as": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "want": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "so": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "as",
+                "so",
+                "want"
+              ]
+            }
+          },
+          "path": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "href": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "href",
+                "label"
+              ]
+            }
+          },
+          "cta": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "href": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "href",
+              "label"
+            ]
+          },
+          "domain": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "cta",
+          "domain",
+          "id",
+          "name",
+          "nav",
+          "needs",
+          "path",
+          "promise",
+          "stories"
+        ]
+      }
+    },
+    "showcases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "tag": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "status": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "summary": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "problem": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "loop": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "separate": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "learned": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "href": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "href",
+                "label"
+              ]
+            }
+          },
+          "domain": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "home": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "homeLabel": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "domain",
+          "id",
+          "learned",
+          "links",
+          "loop",
+          "name",
+          "problem",
+          "results",
+          "status",
+          "summary",
+          "tag"
+        ]
+      }
+    },
+    "domains": {
+      "type": "object",
+      "properties": {
+        "io": {
+          "type": "object",
+          "properties": {
+            "host": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "role": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "audiences": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "required": [
+            "audiences",
+            "host",
+            "name",
+            "role"
+          ]
+        },
+        "org": {
+          "type": "object",
+          "properties": {
+            "host": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "role": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "audiences": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "live_home": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "audiences",
+            "host",
+            "live_home",
+            "name",
+            "role"
+          ]
+        }
+      },
+      "required": [
+        "io",
+        "org"
+      ]
+    }
+  },
+  "required": [
+    "_doc",
+    "audiences",
+    "domains",
+    "showcases"
+  ]
+}

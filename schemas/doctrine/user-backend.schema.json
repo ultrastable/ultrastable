@@ -1,0 +1,179 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/user-backend.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/user-backend.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "marker": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "shared_errors_module": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "surface_globs": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "surface_exclude_globs": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "leak_patterns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "re": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "re"
+        ]
+      }
+    },
+    "leak_ignore_line": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "leak_ok_marker": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "shared_consumers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "module": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "must_reach_from": {
+            "type": "array",
+            "items": {}
+          },
+          "fork_patterns": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "fork_exempt": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "required": [
+          "fork_patterns",
+          "id",
+          "module",
+          "must_reach_from"
+        ]
+      }
+    },
+    "service_binding_exempt": {
+      "type": "object",
+      "properties": {
+        "deploy/agents-worker.js": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "deploy/agents-worker.js"
+      ]
+    },
+    "inherited_by_tenants": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    }
+  },
+  "required": [
+    "_doc",
+    "id",
+    "inherited_by_tenants",
+    "leak_ignore_line",
+    "leak_ok_marker",
+    "leak_patterns",
+    "marker",
+    "service_binding_exempt",
+    "shared_consumers",
+    "shared_errors_module",
+    "surface_exclude_globs",
+    "surface_globs",
+    "version"
+  ]
+}

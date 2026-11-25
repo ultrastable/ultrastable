@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/runway.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/runway.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "target_days": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "cost_max_age_days": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "cost_trend_days": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "max_failure_open_days": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "failure_labels": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "failure_prefixes": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    }
+  },
+  "required": [
+    "_doc",
+    "cost_max_age_days",
+    "cost_trend_days",
+    "failure_labels",
+    "failure_prefixes",
+    "max_failure_open_days",
+    "target_days",
+    "version"
+  ]
+}

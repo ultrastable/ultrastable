@@ -1,0 +1,295 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/server-side.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/server-side.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "marker": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "rule": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "required_in": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required_pattern": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "platforms": {
+      "type": "object",
+      "properties": {
+        "cloudflare": {
+          "type": "object",
+          "properties": {
+            "what": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "adapters": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "required": [
+            "adapters",
+            "what"
+          ]
+        },
+        "github-actions": {
+          "type": "object",
+          "properties": {
+            "what": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "adapters": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "required": [
+            "adapters",
+            "what"
+          ]
+        },
+        "claude-cloud": {
+          "type": "object",
+          "properties": {
+            "what": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "adapters": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "required": [
+            "adapters",
+            "what"
+          ]
+        }
+      },
+      "required": [
+        "claude-cloud",
+        "cloudflare",
+        "github-actions"
+      ]
+    },
+    "registries": {
+      "type": "object",
+      "properties": {
+        "loops": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "routes": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "loop_registry": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "local_token": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "local_token",
+        "loop_registry",
+        "loops",
+        "routes"
+      ]
+    },
+    "banned": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pattern": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "why": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "pattern",
+          "why"
+        ]
+      }
+    },
+    "excused_by": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "excused_note": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "scan": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "max_bytes": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "skip_dirs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "reason"
+        ]
+      }
+    },
+    "exclude": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "reason"
+        ]
+      }
+    }
+  },
+  "required": [
+    "_doc",
+    "banned",
+    "exclude",
+    "excused_by",
+    "excused_note",
+    "id",
+    "marker",
+    "max_bytes",
+    "platforms",
+    "registries",
+    "required_in",
+    "required_pattern",
+    "rule",
+    "scan",
+    "skip_dirs",
+    "version"
+  ]
+}

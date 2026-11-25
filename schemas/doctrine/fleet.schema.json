@@ -1,0 +1,238 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/fleet.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/fleet.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "org": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "repos": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "surfaces": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "how": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "how",
+          "id"
+        ]
+      }
+    },
+    "merge": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "require": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "skip_labels": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "wait_minutes": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "reviews_required": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "ready_drafts": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "auto_close_on_probe": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "_doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "_doc",
+        "auto_close_on_probe",
+        "method",
+        "ready_drafts",
+        "require",
+        "reviews_required",
+        "skip_labels",
+        "wait_minutes"
+      ]
+    },
+    "copies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "repos": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "rule": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "files",
+          "id",
+          "repos",
+          "rule"
+        ]
+      }
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "to": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "on": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "open": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "from",
+          "on",
+          "open",
+          "to"
+        ]
+      }
+    },
+    "public_read": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "reach_error": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "_archived": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "_archived",
+    "_doc",
+    "copies",
+    "dependencies",
+    "merge",
+    "org",
+    "public_read",
+    "reach_error",
+    "repos",
+    "surfaces"
+  ]
+}

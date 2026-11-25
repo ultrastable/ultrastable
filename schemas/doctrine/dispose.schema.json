@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/dispose.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/dispose.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "ttl_days": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "fail_limit": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "revive_days": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "revive_per_pass": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "max_per_pass": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "owner_bound": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "final_statuses": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "gate_default": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "dispositions": {
+      "type": "object",
+      "properties": {
+        "gate": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "shelved": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "fixed": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "fixed",
+        "gate",
+        "shelved"
+      ]
+    },
+    "ttl_hours": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "_ttl_hours": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "_doc",
+    "_ttl_hours",
+    "dispositions",
+    "fail_limit",
+    "final_statuses",
+    "gate_default",
+    "max_per_pass",
+    "owner_bound",
+    "revive_days",
+    "revive_per_pass",
+    "ttl_days",
+    "ttl_hours",
+    "version"
+  ]
+}

@@ -1,0 +1,291 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/orphans.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/orphans.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "assume": {
+      "type": "object",
+      "properties": {
+        "human_reader": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "human_review": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "owner_decision": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "external_input": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "memory_or_document_as_storage": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "external_input",
+        "human_reader",
+        "human_review",
+        "memory_or_document_as_storage",
+        "owner_decision"
+      ]
+    },
+    "rules": {
+      "type": "object",
+      "properties": {
+        "every_artifact_has_a_consumer": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "every_loop_closes_by_system": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "wait_on_person_allowed_only_for": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "wait_requires_default_in_effect": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "loop_proceeds_on_default_while_waiting": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "new_orphan_artifact_fails_ci": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "baseline_is_shrink_only": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "blocker_resolution": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "baseline_is_shrink_only",
+        "blocker_resolution",
+        "every_artifact_has_a_consumer",
+        "every_loop_closes_by_system",
+        "loop_proceeds_on_default_while_waiting",
+        "new_orphan_artifact_fails_ci",
+        "wait_on_person_allowed_only_for",
+        "wait_requires_default_in_effect"
+      ]
+    },
+    "consumer_code_suffixes": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "artifact_suffixes": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "platform_consumed": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "basenames": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "dirs": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "required": [
+        "_doc",
+        "basenames",
+        "dirs"
+      ]
+    },
+    "wait_phrases": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "properties": {
+        "orphan_artifacts": {
+          "type": "object",
+          "properties": {
+            "target": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "direction": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "direction",
+            "target"
+          ]
+        },
+        "human_wait_states": {
+          "type": "object",
+          "properties": {
+            "target": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "direction": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "direction",
+            "target"
+          ]
+        }
+      },
+      "required": [
+        "human_wait_states",
+        "orphan_artifacts"
+      ]
+    },
+    "backlog_issue": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "batch": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "batch",
+        "labels",
+        "title"
+      ]
+    }
+  },
+  "required": [
+    "_doc",
+    "artifact_suffixes",
+    "assume",
+    "backlog_issue",
+    "consumer_code_suffixes",
+    "id",
+    "metrics",
+    "platform_consumed",
+    "rules",
+    "source",
+    "wait_phrases"
+  ]
+}

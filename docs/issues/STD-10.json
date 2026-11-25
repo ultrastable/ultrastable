@@ -1,0 +1,12 @@
+{
+  "id": "STD-10",
+  "title": "STD-10: adopt OpenTelemetry metrics and logs (OTLP) beyond GenAI spans",
+  "body": "**Owner:** staff\n**Trigger:** OPEN-STANDARDS-1 audit 2026-11-25: `otel-metrics` is planned in seed/standards/standards.json\n**Done check:** cmd:python3 -m foundation standards --check && python3 -c \"import json,sys;e=[x for x in json.load(open('seed/standards/standards.json'))['entries'] if x['id']=='otel-metrics'][0];sys.exit(e['support'] not in ('supported','partial'))\"\n**Status:** open\n\nOpenTelemetry metrics and logs (OTLP) beyond GenAI spans. Liveness metrics, clock beats and cost readings exported as OTLP so any backend reads them; Cloudflare Workers can export OTLP natively.\n\nLands in `seed/worker/src/agentic/adapters/console-telemetry.js` (and its seed twin so every system inherits it). Move the register entry `otel-metrics` to supported with `how` paths and a passing test in the same change; replace the home-grown format, do not add a second one.\n\n**Prediction:** standards_supported >= 45 within 336 h\n**Out of scope:** adopting a standard nothing in the system reads; a parallel format kept beside the old one.",
+  "labels": [
+    "role:staff",
+    "ws:platform",
+    "standards"
+  ],
+  "milestone": "Next",
+  "workstream": "Platform"
+}

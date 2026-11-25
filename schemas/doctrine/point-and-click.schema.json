@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/point-and-click.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/point-and-click.json",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "rule": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "owner_directive": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "scan_globs": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "patterns": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "baseline": {
+      "type": "array"
+    },
+    "closing_probe": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "connect_link": {
+      "type": "object",
+      "properties": {
+        "rule": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "deep_link_baseline": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "required": [
+        "deep_link_baseline",
+        "rule"
+      ]
+    }
+  },
+  "required": [
+    "baseline",
+    "closing_probe",
+    "connect_link",
+    "id",
+    "owner_directive",
+    "patterns",
+    "rule",
+    "scan_globs"
+  ]
+}

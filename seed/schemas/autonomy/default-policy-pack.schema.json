@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./autonomy/default-policy-pack.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "autonomy/default-policy-pack.json",
+  "type": "object",
+  "properties": {
+    "$schema_version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "applies_to": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "say": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "surfaces": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "ceiling": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "uses": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "say"
+        ]
+      }
+    },
+    "defaults": {
+      "type": "object",
+      "properties": {
+        "monthly_budget_usd": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "start_rung": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "work_hours": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tick_every_minutes": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "report": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "monthly_budget_usd",
+        "report",
+        "start_rung",
+        "tick_every_minutes",
+        "work_hours"
+      ]
+    },
+    "buyer_may_change": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "buyer_may_not_change": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    }
+  },
+  "required": [
+    "$schema_version",
+    "applies_to",
+    "buyer_may_change",
+    "buyer_may_not_change",
+    "defaults",
+    "doc",
+    "id",
+    "rules"
+  ]
+}

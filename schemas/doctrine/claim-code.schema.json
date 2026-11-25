@@ -1,0 +1,204 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/claim-code.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/claim-code.json",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "rule": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "owner": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "scan_globs": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "skip": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "min_len": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "claim_patterns": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "source": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "quote": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "probe": {
+            "type": "object",
+            "properties": {
+              "file": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "contains": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "contains",
+              "file"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "probe",
+          "quote",
+          "source"
+        ]
+      }
+    },
+    "baseline": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "closing_probe": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "skip_reasons": {
+      "type": "object",
+      "properties": {
+        "self-data\\.js": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "research-data\\.js": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "temporal-data\\.js": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "yearfail-data\\.js": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "saydo-data\\.js": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "yearsim-data\\.js": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "trajectory-data\\.js": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "intent-yield-data\\.js": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "intent-yield-data\\.js",
+        "research-data\\.js",
+        "saydo-data\\.js",
+        "self-data\\.js",
+        "temporal-data\\.js",
+        "trajectory-data\\.js",
+        "yearfail-data\\.js",
+        "yearsim-data\\.js"
+      ]
+    }
+  },
+  "required": [
+    "baseline",
+    "claim_patterns",
+    "claims",
+    "closing_probe",
+    "id",
+    "min_len",
+    "owner",
+    "rule",
+    "scan_globs",
+    "skip",
+    "skip_reasons"
+  ]
+}

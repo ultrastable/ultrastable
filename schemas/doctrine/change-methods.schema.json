@@ -1,0 +1,590 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/change-methods.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/change-methods.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "min_per_idea": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "stages": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "methods": {
+      "type": "object",
+      "properties": {
+        "guess-first": {
+          "type": "object",
+          "properties": {
+            "stage": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "move": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "strength": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "move",
+            "source",
+            "stage",
+            "strength"
+          ]
+        },
+        "why-it-feels-true": {
+          "type": "object",
+          "properties": {
+            "stage": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "move": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "strength": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "move",
+            "source",
+            "stage",
+            "strength"
+          ]
+        },
+        "fact-myth-fallacy": {
+          "type": "object",
+          "properties": {
+            "stage": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "move": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "strength": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "move",
+            "source",
+            "stage",
+            "strength"
+          ]
+        },
+        "self-affirmation": {
+          "type": "object",
+          "properties": {
+            "stage": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "move": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "strength": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "move",
+            "source",
+            "stage",
+            "strength"
+          ]
+        },
+        "consider-the-opposite": {
+          "type": "object",
+          "properties": {
+            "stage": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "move": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "strength": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "move",
+            "source",
+            "stage",
+            "strength"
+          ]
+        },
+        "outside-view": {
+          "type": "object",
+          "properties": {
+            "stage": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "move": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "strength": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "move",
+            "source",
+            "stage",
+            "strength"
+          ]
+        },
+        "prebunking": {
+          "type": "object",
+          "properties": {
+            "stage": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "move": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "strength": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "move",
+            "source",
+            "stage",
+            "strength"
+          ]
+        },
+        "graded-uncertainty": {
+          "type": "object",
+          "properties": {
+            "stage": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "move": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "strength": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "move",
+            "source",
+            "stage",
+            "strength"
+          ]
+        },
+        "implementation-intention": {
+          "type": "object",
+          "properties": {
+            "stage": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "move": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "strength": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "move",
+            "source",
+            "stage",
+            "strength"
+          ]
+        },
+        "easy-attractive-social-timely": {
+          "type": "object",
+          "properties": {
+            "stage": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "move": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "strength": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "move",
+            "source",
+            "stage",
+            "strength"
+          ]
+        },
+        "com-b": {
+          "type": "object",
+          "properties": {
+            "stage": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "move": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "strength": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "move",
+            "source",
+            "stage",
+            "strength"
+          ]
+        },
+        "social-norms": {
+          "type": "object",
+          "properties": {
+            "stage": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "move": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "strength": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "move",
+            "source",
+            "stage",
+            "strength"
+          ]
+        },
+        "spaced-follow-up": {
+          "type": "object",
+          "properties": {
+            "stage": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "move": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "strength": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "move",
+            "source",
+            "stage",
+            "strength"
+          ]
+        },
+        "calibration-feedback": {
+          "type": "object",
+          "properties": {
+            "stage": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "move": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "strength": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "move",
+            "source",
+            "stage",
+            "strength"
+          ]
+        },
+        "change-management": {
+          "type": "object",
+          "properties": {
+            "stage": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "move": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "strength": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "move",
+            "source",
+            "stage",
+            "strength"
+          ]
+        }
+      },
+      "required": [
+        "calibration-feedback",
+        "change-management",
+        "com-b",
+        "consider-the-opposite",
+        "easy-attractive-social-timely",
+        "fact-myth-fallacy",
+        "graded-uncertainty",
+        "guess-first",
+        "implementation-intention",
+        "outside-view",
+        "prebunking",
+        "self-affirmation",
+        "social-norms",
+        "spaced-follow-up",
+        "why-it-feels-true"
+      ]
+    }
+  },
+  "required": [
+    "_doc",
+    "id",
+    "methods",
+    "min_per_idea",
+    "stages"
+  ]
+}

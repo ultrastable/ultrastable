@@ -4,6 +4,7 @@
   python3 -m foundation validate --manifest FILE
   python3 -m foundation ladder            # credential ladder against the host it runs on
   python3 -m foundation standards [--check|--apply]   agentic standards register, surfaces, conformance lint
+  python3 -m foundation schemas [--check|--gen|--refresh FILE]   OPEN-STANDARDS-1: every JSON config has a JSON Schema in a SchemaStore catalog
   python3 -m foundation filing --manifest FILE
   python3 -m foundation launch [--commit --push | --probe | --export-d1 F | --install SURFACE | --failover [--decide]]   start the loops on this repo (server-side hosts only)
   python3 -m foundation liveness [--json|--check|--file-items|--static|--probe ID]   are the autonomous loops actually running (evidence, not files)
@@ -273,7 +274,7 @@ def main(argv=None) -> int:
     if _av[:1] == ["flows"]:
         from . import flows
         return flows.main(_av[1:])
-    if _av[:1] and _av[0] in ("sauce", "contracts", "metricloop", "throughput", "metafold", "dispose", "balance", "yearsim", "saydo", "trajectory", "seedadmit"):
+    if _av[:1] and _av[0] in ("sauce", "contracts", "metricloop", "throughput", "metafold", "dispose", "balance", "yearsim", "saydo", "trajectory", "seedadmit", "schemas", "supplychain"):
         import importlib
         return importlib.import_module("foundation." + _av[0]).main(_av[1:])
     if _av[:1] == ["unknowns"]:

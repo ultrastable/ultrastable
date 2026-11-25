@@ -1,0 +1,244 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/rules.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/rules.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "workflows": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "interval_h": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "statement": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "source": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "ci": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "cmd": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "cmd"
+              ]
+            }
+          },
+          "runtime": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "cmd": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "fix": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "needs_network": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "cmd",
+                "id"
+              ]
+            }
+          },
+          "gaps": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "what": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "item": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "item",
+                "what"
+              ]
+            }
+          }
+        },
+        "required": [
+          "ci",
+          "id",
+          "runtime",
+          "source",
+          "statement"
+        ]
+      }
+    },
+    "repos": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "org": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "notice_pattern": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "secret_patterns": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "secret_exempt_globs": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "qnfo_scan_globs": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "qnfo_exempt_globs": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "qnfo_live_origin": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "qnfo_live_pages": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "pages_live_urls": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    }
+  },
+  "required": [
+    "_doc",
+    "interval_h",
+    "notice_pattern",
+    "org",
+    "pages_live_urls",
+    "qnfo_exempt_globs",
+    "qnfo_live_origin",
+    "qnfo_live_pages",
+    "qnfo_scan_globs",
+    "repos",
+    "rules",
+    "secret_exempt_globs",
+    "secret_patterns",
+    "version",
+    "workflows"
+  ]
+}

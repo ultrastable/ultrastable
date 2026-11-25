@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/consumers.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/consumers.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "roots": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "glob": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "consumer": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reads": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "consumer",
+          "glob",
+          "reads"
+        ]
+      }
+    }
+  },
+  "required": [
+    "_doc",
+    "artifacts",
+    "roots"
+  ]
+}

@@ -1,0 +1,191 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./instances/ultrastable/progress.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "instances/ultrastable/progress.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "marker": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "expect_hours": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "stall": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "cooldown_hours": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "systems": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "repo": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "url": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "feed": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "expect_hours": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "heal": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "stickiness": {
+            "type": "object",
+            "properties": {
+              "content_feed": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "domains": {
+                "type": "array",
+                "items": {}
+              },
+              "expect_days": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "min_depth": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "reveal": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "analytics_host": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "content_feed",
+              "domains",
+              "expect_days",
+              "min_depth",
+              "reveal"
+            ]
+          },
+          "releases": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "expect_hours",
+          "feed",
+          "heal",
+          "id",
+          "name",
+          "repo",
+          "stickiness",
+          "url"
+        ]
+      }
+    },
+    "apps": {
+      "type": "object",
+      "properties": {
+        "registry": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "expect_days": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "what": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "expect_days",
+        "registry",
+        "what"
+      ]
+    }
+  },
+  "required": [
+    "_doc",
+    "apps",
+    "cooldown_hours",
+    "expect_hours",
+    "marker",
+    "stall",
+    "systems"
+  ]
+}

@@ -1,0 +1,178 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./autonomy/improve.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "autonomy/improve.json",
+  "type": "object",
+  "properties": {
+    "rule": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "min_items_per_cycle": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "max_open_from_loop": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "plus_share": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "plus_per_cycle": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "market_max_age_days": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "settle_days": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "tiers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "window_days": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "evidence": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "evidence",
+          "id",
+          "window_days"
+        ]
+      }
+    },
+    "signals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "path": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "key": {},
+          "max_age_hours": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "key",
+          "max_age_hours",
+          "path"
+        ]
+      }
+    },
+    "bank": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "kind": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "metric": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "better": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "title": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "probe": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "metric",
+          "probe",
+          "title"
+        ]
+      }
+    }
+  },
+  "required": [
+    "bank",
+    "market_max_age_days",
+    "max_open_from_loop",
+    "min_items_per_cycle",
+    "plus_per_cycle",
+    "plus_share",
+    "rule",
+    "settle_days",
+    "signals",
+    "tiers"
+  ]
+}

@@ -1,0 +1,164 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/intent-yield.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/intent-yield.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "rule": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "owner_names": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "probe_pattern": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "probe_timeout_s": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "run_budget_s": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "settle_days": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "stale_hours": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "min_intents": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "max_drop_share": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "words_per_second": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "restatement_jaccard": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "restatement_min_words": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "max_items_per_run": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "target_kept_share": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "prediction_floor": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "history_keep": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "state": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "history": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "site_data": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "_doc",
+    "history",
+    "history_keep",
+    "max_drop_share",
+    "max_items_per_run",
+    "min_intents",
+    "owner_names",
+    "prediction_floor",
+    "probe_pattern",
+    "probe_timeout_s",
+    "restatement_jaccard",
+    "restatement_min_words",
+    "rule",
+    "run_budget_s",
+    "settle_days",
+    "site_data",
+    "sources",
+    "stale_hours",
+    "state",
+    "target_kept_share",
+    "words_per_second"
+  ]
+}

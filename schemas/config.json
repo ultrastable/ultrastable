@@ -1,0 +1,19 @@
+{
+  "_doc": "OPEN-STANDARDS-1: JSON configs and manifests that must carry a JSON Schema (draft 2020-12). Checked by `python3 -m foundation schemas --check` in `checks`; the seed's own files are covered by seed/schemas/config.json.",
+  "cover": [
+    "doctrine/*.json",
+    "instances/*/instance.json",
+    "instances/ultrastable/progress.json",
+    "instances/ultrastable/loop-registry.json",
+    "instances/ultrastable/cost-budgets.json",
+    "social/gate.json",
+    "outreach/gate.json",
+    "core-contract.json",
+    "server.json",
+    "actions-budget.json",
+    "spark.json",
+    "gaplint.json",
+    "github/org-settings.json"
+  ],
+  "exclude": ["*.schema.json"]
+}

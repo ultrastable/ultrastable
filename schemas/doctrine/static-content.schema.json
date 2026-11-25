@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/static-content.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/static-content.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "marker": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "max_unchanged_days": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "max_pages": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "exempt": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "pattern": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "pattern",
+          "reason"
+        ]
+      }
+    }
+  },
+  "required": [
+    "_doc",
+    "exempt",
+    "marker",
+    "max_pages",
+    "max_unchanged_days"
+  ]
+}

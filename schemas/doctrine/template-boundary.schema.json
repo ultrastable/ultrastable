@@ -1,0 +1,205 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/template-boundary.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/template-boundary.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "rule": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "quote": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "admin_repo": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "moved": {
+      "type": "object",
+      "properties": {
+        "ip/": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "business/": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "docs/ip/": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "docs/legal/": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "docs/strategy/": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "business/",
+        "docs/ip/",
+        "docs/legal/",
+        "docs/strategy/",
+        "ip/"
+      ]
+    },
+    "instance_data": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "instances/ultrastable/funding/": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "instances/ultrastable/briefing/": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "instances/ultrastable/name-clearance.json": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "_doc",
+        "instances/ultrastable/briefing/",
+        "instances/ultrastable/funding/",
+        "instances/ultrastable/name-clearance.json"
+      ]
+    },
+    "banned_names": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "skip_dirs": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "seed_generic": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "banned_tokens": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "required": [
+        "_doc",
+        "banned_tokens",
+        "files"
+      ]
+    },
+    "agent_files": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "same_bytes": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seed/LICENSE": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "_doc",
+        "seed/LICENSE"
+      ]
+    }
+  },
+  "required": [
+    "_doc",
+    "admin_repo",
+    "agent_files",
+    "banned_names",
+    "instance_data",
+    "moved",
+    "quote",
+    "rule",
+    "same_bytes",
+    "seed_generic",
+    "skip_dirs"
+  ]
+}

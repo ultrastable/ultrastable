@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/redmain.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/redmain.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "max_commits_back": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "max_candidates": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "gate_timeout_s": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "never_revert": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "gates": {
+      "type": "object",
+      "properties": {
+        "deploy-site": {
+          "type": "object",
+          "properties": {
+            "cmd": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "paths": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "workflows": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "required": [
+            "cmd",
+            "paths",
+            "workflows"
+          ]
+        }
+      },
+      "required": [
+        "deploy-site"
+      ]
+    }
+  },
+  "required": [
+    "_doc",
+    "gate_timeout_s",
+    "gates",
+    "max_candidates",
+    "max_commits_back",
+    "never_revert",
+    "version"
+  ]
+}

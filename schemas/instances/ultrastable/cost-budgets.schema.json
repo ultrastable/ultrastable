@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./instances/ultrastable/cost-budgets.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "instances/ultrastable/cost-budgets.json",
+  "type": "object",
+  "properties": {
+    "doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "budgets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "account_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "database_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "database_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "max_rows_read_per_hour": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "gates_tick": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "account_id",
+          "database_id",
+          "database_name",
+          "id",
+          "max_rows_read_per_hour",
+          "note"
+        ]
+      }
+    }
+  },
+  "required": [
+    "budgets",
+    "doc"
+  ]
+}

@@ -1,0 +1,240 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./autonomy/goals.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "autonomy/goals.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "control": {
+      "type": "object",
+      "properties": {
+        "stale_days": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "achieve_after": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "max_adjust_per_run": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "max_stretch_per_day": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "achieve_after",
+        "max_adjust_per_run",
+        "max_stretch_per_day",
+        "stale_days"
+      ]
+    },
+    "goals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "level": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "statement": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "parent_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "deadline": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "source": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "spec": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "unit": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "op": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "target": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "level",
+          "statement"
+        ]
+      }
+    },
+    "knobs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "goal_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "what": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "config_path": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "value": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "min": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "max": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "step": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "effect": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "cooldown_h": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "review_h": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "cooldown_h",
+          "effect",
+          "goal_id",
+          "id",
+          "max",
+          "min",
+          "review_h",
+          "step",
+          "value",
+          "what"
+        ]
+      }
+    },
+    "tenant_feeds": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "tenant": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "url": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "tenant",
+          "url"
+        ]
+      }
+    }
+  },
+  "required": [
+    "_doc",
+    "control",
+    "goals",
+    "knobs",
+    "tenant_feeds"
+  ]
+}

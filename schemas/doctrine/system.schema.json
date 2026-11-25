@@ -1,0 +1,1041 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/system.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/system.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "compatibility_date": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "resources": {
+      "type": "object",
+      "properties": {
+        "d1": {
+          "type": "object",
+          "properties": {
+            "org": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "name"
+              ]
+            },
+            "ops": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "name"
+              ]
+            },
+            "unlearn": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "name"
+              ]
+            },
+            "what-works": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "name"
+              ]
+            },
+            "spinoffs": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "name"
+              ]
+            },
+            "replication-ledger": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "name"
+              ]
+            }
+          },
+          "required": [
+            "ops",
+            "org",
+            "replication-ledger",
+            "spinoffs",
+            "unlearn",
+            "what-works"
+          ]
+        },
+        "kv": {
+          "type": "object",
+          "properties": {
+            "assets": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "title"
+              ]
+            },
+            "private": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "title"
+              ]
+            },
+            "state": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "title"
+              ]
+            }
+          },
+          "required": [
+            "assets",
+            "private",
+            "state"
+          ]
+        },
+        "queues": {
+          "type": "object",
+          "properties": {
+            "work": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "name"
+              ]
+            }
+          },
+          "required": [
+            "work"
+          ]
+        },
+        "vectorize": {
+          "type": "object",
+          "properties": {
+            "memory": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "dimensions": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "metric": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "dimensions",
+                "metric",
+                "name"
+              ]
+            }
+          },
+          "required": [
+            "memory"
+          ]
+        }
+      },
+      "required": [
+        "d1",
+        "kv",
+        "queues",
+        "vectorize"
+      ]
+    },
+    "workers": {
+      "type": "object",
+      "properties": {
+        "ultrastable-tick": {
+          "type": "object",
+          "properties": {
+            "main": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "role": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "crons": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "bindings": {
+              "type": "object",
+              "properties": {
+                "d1": {
+                  "type": "object",
+                  "properties": {
+                    "DB": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "DB"
+                  ]
+                },
+                "ai": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "kv": {
+                  "type": "object",
+                  "properties": {
+                    "STATE": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "STATE"
+                  ]
+                },
+                "queue_producers": {
+                  "type": "object",
+                  "properties": {
+                    "WORK": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "WORK"
+                  ]
+                },
+                "queue_consumers": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "vectorize": {
+                  "type": "object",
+                  "properties": {
+                    "MEMORY": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "MEMORY"
+                  ]
+                },
+                "services": {
+                  "type": "object",
+                  "properties": {
+                    "SITE": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "DASHBOARD": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "AGENTS": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "TENANTS": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "AGENTS",
+                    "DASHBOARD",
+                    "SITE",
+                    "TENANTS"
+                  ]
+                }
+              },
+              "required": [
+                "ai",
+                "d1",
+                "kv",
+                "queue_consumers",
+                "queue_producers",
+                "services",
+                "vectorize"
+              ]
+            }
+          },
+          "required": [
+            "bindings",
+            "crons",
+            "main",
+            "role"
+          ]
+        },
+        "ultrastable-site": {
+          "type": "object",
+          "properties": {
+            "main": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "role": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "crons": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "bindings": {
+              "type": "object",
+              "properties": {
+                "d1": {
+                  "type": "object",
+                  "properties": {
+                    "DB": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "ORG": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "DB",
+                    "ORG"
+                  ]
+                },
+                "ai": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "kv": {
+                  "type": "object",
+                  "properties": {
+                    "ASSETS": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "ASSETS"
+                  ]
+                },
+                "services": {
+                  "type": "object",
+                  "properties": {
+                    "OWNER": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "TICK": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "OWNER",
+                    "TICK"
+                  ]
+                }
+              },
+              "required": [
+                "ai",
+                "d1",
+                "kv",
+                "services"
+              ]
+            }
+          },
+          "required": [
+            "bindings",
+            "crons",
+            "main",
+            "role"
+          ]
+        },
+        "ultrastable-dashboard": {
+          "type": "object",
+          "properties": {
+            "main": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "role": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "crons": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "bindings": {
+              "type": "object",
+              "properties": {
+                "d1": {
+                  "type": "object",
+                  "properties": {
+                    "DB": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "DB"
+                  ]
+                },
+                "ai": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "services": {
+                  "type": "object",
+                  "properties": {
+                    "TICK": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "TICK"
+                  ]
+                }
+              },
+              "required": [
+                "ai",
+                "d1",
+                "services"
+              ]
+            }
+          },
+          "required": [
+            "bindings",
+            "crons",
+            "main",
+            "role"
+          ]
+        },
+        "ultrastable-agents": {
+          "type": "object",
+          "properties": {
+            "main": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "role": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "crons": {
+              "type": "array"
+            },
+            "bindings": {
+              "type": "object",
+              "properties": {
+                "d1": {
+                  "type": "object",
+                  "properties": {
+                    "DB": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "DB"
+                  ]
+                },
+                "ai": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "ai",
+                "d1"
+              ]
+            }
+          },
+          "required": [
+            "bindings",
+            "crons",
+            "main",
+            "role"
+          ]
+        },
+        "ultrastable-tenants": {
+          "type": "object",
+          "properties": {
+            "main": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "role": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "crons": {
+              "type": "array"
+            },
+            "bindings": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "required": [
+            "bindings",
+            "crons",
+            "main",
+            "role"
+          ]
+        },
+        "ultrastable-unlearn": {
+          "type": "object",
+          "properties": {
+            "main": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source": {
+              "type": "object",
+              "properties": {
+                "repo": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "ref": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "ref",
+                "repo"
+              ]
+            },
+            "role": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "crons": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "bindings": {
+              "type": "object",
+              "properties": {
+                "d1": {
+                  "type": "object",
+                  "properties": {
+                    "DB": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "DB"
+                  ]
+                },
+                "ai": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "ai",
+                "d1"
+              ]
+            }
+          },
+          "required": [
+            "bindings",
+            "crons",
+            "main",
+            "role",
+            "source"
+          ]
+        },
+        "ultrastable-what-works": {
+          "type": "object",
+          "properties": {
+            "main": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source": {
+              "type": "object",
+              "properties": {
+                "repo": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "ref": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "ref",
+                "repo"
+              ]
+            },
+            "role": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "crons": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "bindings": {
+              "type": "object",
+              "properties": {
+                "d1": {
+                  "type": "object",
+                  "properties": {
+                    "DB": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "DB"
+                  ]
+                },
+                "ai": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "ai",
+                "d1"
+              ]
+            }
+          },
+          "required": [
+            "bindings",
+            "crons",
+            "main",
+            "role",
+            "source"
+          ]
+        },
+        "ultrastable-spinoffs": {
+          "type": "object",
+          "properties": {
+            "main": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "role": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "crons": {
+              "type": "array"
+            },
+            "bindings": {
+              "type": "object",
+              "properties": {
+                "d1": {
+                  "type": "object",
+                  "properties": {
+                    "DB": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "DB"
+                  ]
+                }
+              },
+              "required": [
+                "d1"
+              ]
+            }
+          },
+          "required": [
+            "bindings",
+            "crons",
+            "main",
+            "role"
+          ]
+        },
+        "ultrastable-replication-ledger": {
+          "type": "object",
+          "properties": {
+            "main": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "role": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "crons": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "bindings": {
+              "type": "object",
+              "properties": {
+                "d1": {
+                  "type": "object",
+                  "properties": {
+                    "DB": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "DB"
+                  ]
+                },
+                "ai": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "ai",
+                "d1"
+              ]
+            }
+          },
+          "required": [
+            "bindings",
+            "crons",
+            "main",
+            "role"
+          ]
+        }
+      },
+      "required": [
+        "ultrastable-agents",
+        "ultrastable-dashboard",
+        "ultrastable-replication-ledger",
+        "ultrastable-site",
+        "ultrastable-spinoffs",
+        "ultrastable-tenants",
+        "ultrastable-tick",
+        "ultrastable-unlearn",
+        "ultrastable-what-works"
+      ]
+    },
+    "edit_path": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "deploy_counter": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "_doc",
+    "compatibility_date",
+    "deploy_counter",
+    "edit_path",
+    "name",
+    "resources",
+    "workers"
+  ]
+}

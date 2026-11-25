@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/selftest.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/selftest.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "default_max_age_h": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "max_age_h": {
+          "type": "object",
+          "properties": {
+            "site/feed-data.js": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "site/feed-data.js"
+          ]
+        },
+        "exempt": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      "required": [
+        "default_max_age_h",
+        "exempt",
+        "max_age_h"
+      ]
+    },
+    "workflows": {
+      "type": "object",
+      "properties": {
+        "repos": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "window": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "stale_h": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "repos",
+        "stale_h",
+        "window"
+      ]
+    }
+  },
+  "required": [
+    "_doc",
+    "data",
+    "workflows"
+  ]
+}

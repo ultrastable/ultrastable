@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./social/gate.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "social/gate.json",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "kill": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "mode": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "max_posts_per_day": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "max_posts_per_week": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "paused_channels": {
+      "type": "array"
+    },
+    "tenant_queues": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    }
+  },
+  "required": [
+    "_doc",
+    "kill",
+    "max_posts_per_day",
+    "max_posts_per_week",
+    "mode",
+    "paused_channels",
+    "tenant_queues"
+  ]
+}

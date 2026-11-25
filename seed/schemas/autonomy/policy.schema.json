@@ -1,0 +1,1555 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./autonomy/policy.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "autonomy/policy.json",
+  "type": "object",
+  "properties": {
+    "$schema_version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "interrupt_gate": {
+      "type": "object",
+      "properties": {
+        "rule": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "card_fields": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "examples": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "required": [
+        "card_fields",
+        "examples",
+        "rule"
+      ]
+    },
+    "closed_loop": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rule": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "assume_human_reader": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "assume_human_review": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "assume_owner_decision": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "assume_external_input": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "memory_or_document_is_storage": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "every_artifact_has_a_consumer": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "every_loop_closes_by_system": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "wait_on_person_allowed_only_for": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "wait_requires_default_in_effect": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "loop_proceeds_on_default_while_waiting": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "enforced_by": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "assume_external_input",
+        "assume_human_reader",
+        "assume_human_review",
+        "assume_owner_decision",
+        "enforced_by",
+        "every_artifact_has_a_consumer",
+        "every_loop_closes_by_system",
+        "id",
+        "loop_proceeds_on_default_while_waiting",
+        "memory_or_document_is_storage",
+        "rule",
+        "wait_on_person_allowed_only_for",
+        "wait_requires_default_in_effect"
+      ]
+    },
+    "standing_limits": {
+      "type": "object",
+      "properties": {
+        "doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "limits": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "required": [
+        "doc",
+        "limits"
+      ]
+    },
+    "trust": {
+      "type": "object",
+      "properties": {
+        "baseline": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "prior_weight": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "formula": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "decay_per_idle_day": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "widens": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "never_reaches": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "required": [
+        "baseline",
+        "decay_per_idle_day",
+        "formula",
+        "never_reaches",
+        "prior_weight",
+        "widens"
+      ]
+    },
+    "ladder": {
+      "type": "object",
+      "properties": {
+        "rungs": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "meaning": {
+          "type": "object",
+          "properties": {
+            "observed": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "assisted": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "delegated": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "autonomous": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "self-directed": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "self-modifying": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "self-extending": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "assisted",
+            "autonomous",
+            "delegated",
+            "observed",
+            "self-directed",
+            "self-extending",
+            "self-modifying"
+          ]
+        },
+        "promote_when": {
+          "type": "object",
+          "properties": {
+            "min_outcomes": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "min_reliability": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "no_hidden_failure_days": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "min_outcomes",
+            "min_reliability",
+            "no_hidden_failure_days"
+          ]
+        },
+        "demote_when": {
+          "type": "object",
+          "properties": {
+            "reliability_below": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "or_any": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "required": [
+            "or_any",
+            "reliability_below"
+          ]
+        },
+        "transitions_act_by": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ceiling_by_max_permission": {
+          "type": "object",
+          "properties": {
+            "none": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "propose": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "execute": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "execute",
+            "none",
+            "propose"
+          ]
+        }
+      },
+      "required": [
+        "ceiling_by_max_permission",
+        "demote_when",
+        "meaning",
+        "promote_when",
+        "rungs",
+        "transitions_act_by"
+      ]
+    },
+    "surfaces": {
+      "type": "object",
+      "properties": {
+        "repo": {
+          "type": "object",
+          "properties": {
+            "doc": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "max_permission": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "start_rung": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "actions": {
+              "type": "object",
+              "properties": {
+                "read": {
+                  "type": "object",
+                  "properties": {
+                    "reversible": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "identity_bound": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "identity_bound",
+                    "reversible"
+                  ]
+                },
+                "branch_commit_push": {
+                  "type": "object",
+                  "properties": {
+                    "reversible": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "identity_bound": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "identity_bound",
+                    "reversible"
+                  ]
+                },
+                "open_pr": {
+                  "type": "object",
+                  "properties": {
+                    "reversible": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "identity_bound": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "identity_bound",
+                    "reversible"
+                  ]
+                },
+                "merge_pr_green": {
+                  "type": "object",
+                  "properties": {
+                    "reversible": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "identity_bound": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "reversible_path": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "identity_bound",
+                    "reversible",
+                    "reversible_path"
+                  ]
+                },
+                "force_push_default_branch": {
+                  "type": "object",
+                  "properties": {
+                    "reversible": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "identity_bound": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "denied": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "reason": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "harness_deny": {
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "denied",
+                    "harness_deny",
+                    "identity_bound",
+                    "reason",
+                    "reversible"
+                  ]
+                },
+                "delete_repo": {
+                  "type": "object",
+                  "properties": {
+                    "reversible": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "identity_bound": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "harness_deny": {
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "harness_deny",
+                    "identity_bound",
+                    "reversible"
+                  ]
+                }
+              },
+              "required": [
+                "branch_commit_push",
+                "delete_repo",
+                "force_push_default_branch",
+                "merge_pr_green",
+                "open_pr",
+                "read"
+              ]
+            }
+          },
+          "required": [
+            "actions",
+            "doc",
+            "max_permission",
+            "start_rung"
+          ]
+        },
+        "runtime": {
+          "type": "object",
+          "properties": {
+            "doc": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "max_permission": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "start_rung": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "actions": {
+              "type": "object",
+              "properties": {
+                "deploy_preview": {
+                  "type": "object",
+                  "properties": {
+                    "reversible": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "identity_bound": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "identity_bound",
+                    "reversible"
+                  ]
+                },
+                "deploy_production": {
+                  "type": "object",
+                  "properties": {
+                    "reversible": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "identity_bound": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "reversible_path": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "identity_bound",
+                    "reversible",
+                    "reversible_path"
+                  ]
+                },
+                "migrate_additive": {
+                  "type": "object",
+                  "properties": {
+                    "reversible": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "identity_bound": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "identity_bound",
+                    "reversible"
+                  ]
+                },
+                "migrate_destructive": {
+                  "type": "object",
+                  "properties": {
+                    "reversible": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "identity_bound": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "reversible_path": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "identity_bound",
+                    "reversible",
+                    "reversible_path"
+                  ]
+                },
+                "delete_database_or_bucket": {
+                  "type": "object",
+                  "properties": {
+                    "reversible": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "identity_bound": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "harness_deny": {
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "harness_deny",
+                    "identity_bound",
+                    "reversible"
+                  ]
+                }
+              },
+              "required": [
+                "delete_database_or_bucket",
+                "deploy_preview",
+                "deploy_production",
+                "migrate_additive",
+                "migrate_destructive"
+              ]
+            }
+          },
+          "required": [
+            "actions",
+            "doc",
+            "max_permission",
+            "start_rung"
+          ]
+        },
+        "work_tracker": {
+          "type": "object",
+          "properties": {
+            "doc": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "max_permission": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "start_rung": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "actions": {
+              "type": "object",
+              "properties": {
+                "create_update_close": {
+                  "type": "object",
+                  "properties": {
+                    "reversible": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "identity_bound": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "identity_bound",
+                    "reversible"
+                  ]
+                },
+                "claim_release": {
+                  "type": "object",
+                  "properties": {
+                    "reversible": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "identity_bound": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "identity_bound",
+                    "reversible"
+                  ]
+                }
+              },
+              "required": [
+                "claim_release",
+                "create_update_close"
+              ]
+            }
+          },
+          "required": [
+            "actions",
+            "doc",
+            "max_permission",
+            "start_rung"
+          ]
+        },
+        "internal_chat": {
+          "type": "object",
+          "properties": {
+            "doc": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "max_permission": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "start_rung": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "actions": {
+              "type": "object",
+              "properties": {
+                "post_report": {
+                  "type": "object",
+                  "properties": {
+                    "reversible": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "identity_bound": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "identity_bound",
+                    "reversible"
+                  ]
+                }
+              },
+              "required": [
+                "post_report"
+              ]
+            }
+          },
+          "required": [
+            "actions",
+            "doc",
+            "max_permission",
+            "start_rung"
+          ]
+        },
+        "outreach": {
+          "type": "object",
+          "properties": {
+            "doc": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "max_permission": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "start_rung": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "actions": {
+              "type": "object",
+              "properties": {
+                "draft": {
+                  "type": "object",
+                  "properties": {
+                    "reversible": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "identity_bound": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "identity_bound",
+                    "reversible"
+                  ]
+                },
+                "send_as_owner": {
+                  "type": "object",
+                  "properties": {
+                    "reversible": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "identity_bound": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "identity_bound",
+                    "reversible"
+                  ]
+                },
+                "publish_public": {
+                  "type": "object",
+                  "properties": {
+                    "reversible": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "identity_bound": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "identity_bound",
+                    "reversible"
+                  ]
+                },
+                "submit_application": {
+                  "type": "object",
+                  "properties": {
+                    "reversible": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "identity_bound": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "identity_bound",
+                    "reversible"
+                  ]
+                },
+                "send_from_org_mailbox": {
+                  "type": "object",
+                  "properties": {
+                    "reversible": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "identity_bound": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "reversible_path": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "identity_bound",
+                    "reversible",
+                    "reversible_path"
+                  ]
+                }
+              },
+              "required": [
+                "draft",
+                "publish_public",
+                "send_as_owner",
+                "send_from_org_mailbox",
+                "submit_application"
+              ]
+            },
+            "kill_switch": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "actions",
+            "doc",
+            "kill_switch",
+            "max_permission",
+            "start_rung"
+          ]
+        },
+        "dns": {
+          "type": "object",
+          "properties": {
+            "doc": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "max_permission": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "start_rung": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "actions": {
+              "type": "object",
+              "properties": {
+                "add_record": {
+                  "type": "object",
+                  "properties": {
+                    "reversible": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "identity_bound": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "identity_bound",
+                    "reversible"
+                  ]
+                },
+                "change_live_record": {
+                  "type": "object",
+                  "properties": {
+                    "reversible": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "identity_bound": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "reversible_path": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "identity_bound",
+                    "reversible",
+                    "reversible_path"
+                  ]
+                },
+                "transfer_or_delete_domain": {
+                  "type": "object",
+                  "properties": {
+                    "reversible": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "identity_bound": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "identity_bound",
+                    "reversible"
+                  ]
+                }
+              },
+              "required": [
+                "add_record",
+                "change_live_record",
+                "transfer_or_delete_domain"
+              ]
+            }
+          },
+          "required": [
+            "actions",
+            "doc",
+            "max_permission",
+            "start_rung"
+          ]
+        },
+        "money": {
+          "type": "object",
+          "properties": {
+            "doc": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "max_permission": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "start_rung": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "actions": {
+              "type": "object",
+              "properties": {
+                "estimate_cost": {
+                  "type": "object",
+                  "properties": {
+                    "reversible": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "identity_bound": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "identity_bound",
+                    "reversible"
+                  ]
+                },
+                "spend": {
+                  "type": "object",
+                  "properties": {
+                    "reversible": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "identity_bound": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "identity_bound",
+                    "reversible"
+                  ]
+                }
+              },
+              "required": [
+                "estimate_cost",
+                "spend"
+              ]
+            }
+          },
+          "required": [
+            "actions",
+            "doc",
+            "max_permission",
+            "start_rung"
+          ]
+        },
+        "legal": {
+          "type": "object",
+          "properties": {
+            "doc": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "max_permission": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "start_rung": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "actions": {
+              "type": "object",
+              "properties": {
+                "draft": {
+                  "type": "object",
+                  "properties": {
+                    "reversible": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "identity_bound": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "identity_bound",
+                    "reversible"
+                  ]
+                },
+                "sign_or_file": {
+                  "type": "object",
+                  "properties": {
+                    "reversible": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "identity_bound": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "identity_bound",
+                    "reversible"
+                  ]
+                }
+              },
+              "required": [
+                "draft",
+                "sign_or_file"
+              ]
+            }
+          },
+          "required": [
+            "actions",
+            "doc",
+            "max_permission",
+            "start_rung"
+          ]
+        },
+        "secrets": {
+          "type": "object",
+          "properties": {
+            "doc": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "max_permission": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "start_rung": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "actions": {
+              "type": "object",
+              "properties": {
+                "request_binding": {
+                  "type": "object",
+                  "properties": {
+                    "reversible": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "identity_bound": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "identity_bound",
+                    "reversible"
+                  ]
+                },
+                "mint_or_rotate_owner_credential": {
+                  "type": "object",
+                  "properties": {
+                    "reversible": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "identity_bound": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "harness_deny": {
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "harness_deny",
+                    "identity_bound",
+                    "reversible"
+                  ]
+                }
+              },
+              "required": [
+                "mint_or_rotate_owner_credential",
+                "request_binding"
+              ]
+            }
+          },
+          "required": [
+            "actions",
+            "doc",
+            "max_permission",
+            "start_rung"
+          ]
+        }
+      },
+      "required": [
+        "dns",
+        "internal_chat",
+        "legal",
+        "money",
+        "outreach",
+        "repo",
+        "runtime",
+        "secrets",
+        "work_tracker"
+      ]
+    },
+    "growth": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "growth_share_floor": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "growth_priority_weight": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "min_metrics_per_product": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "experiment_measure_after_days": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "rollback_when": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "owner_role": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "enforced_by": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "_doc",
+        "enforced_by",
+        "experiment_measure_after_days",
+        "growth_priority_weight",
+        "growth_share_floor",
+        "min_metrics_per_product",
+        "owner_role",
+        "rollback_when"
+      ]
+    },
+    "standing_order": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rule": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "thread_is_storage": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "present_decisions_to_owner": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "decide_implement_deploy_verify": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "decision_needs_code_consumer": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "enforced_by": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "decide_implement_deploy_verify",
+        "decision_needs_code_consumer",
+        "enforced_by",
+        "id",
+        "present_decisions_to_owner",
+        "rule",
+        "thread_is_storage"
+      ]
+    }
+  },
+  "required": [
+    "$schema_version",
+    "closed_loop",
+    "doc",
+    "growth",
+    "interrupt_gate",
+    "ladder",
+    "standing_limits",
+    "standing_order",
+    "surfaces",
+    "trust"
+  ]
+}
