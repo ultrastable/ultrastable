@@ -1,17 +1,18 @@
 # SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 # Copyright (c) Ultrastable
 """SILENT-FAIL-1: bundle, overlap, live-citation, action_required and class checks, with injected I/O."""
-import json, shutil, sys, tempfile, unittest
+import json, sys, unittest
 from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 from foundation import silentfail as S  # noqa: E402
+from tests.foundation import _repo  # noqa: E402
 
 
 def scratch(files: dict) -> Path:
-    d = Path(tempfile.mkdtemp(prefix="ultrastable-test-sf-"))
+    d = _repo.scratch()
     for k, v in files.items():
         (d / k).parent.mkdir(parents=True, exist_ok=True); (d / k).write_text(v, encoding="utf-8")
     return d
@@ -26,7 +27,6 @@ class Silent(unittest.TestCase):
         cfg = json.loads((ROOT / S.CFG).read_text())
         cfg["bundle"] = {"groups": [{"wrangler": "w.jsonc", "source_globs": ["src/*.js"]}], "exclude_suffix": [".test.js"], "exclude_contains": [], "generated": ["src/gen.js"]}
         d = scratch({S.CFG: json.dumps(cfg), "w.jsonc": "{}", "src/a.js": "import fs from 'node:fs';\nimport './nope.js';\nimport './gen.js';\nimport './b.js';\n", "src/b.js": "export const x=1;"})
-        self.addCleanup(shutil.rmtree, d, True)
         r = S.bundle_findings(d)
         self.assertEqual(sorted((x["kind"], x["import"]) for x in r), [("node-builtin", "node:fs"), ("unresolved", "./nope.js")])
         (d / "w.jsonc").write_text('{"compatibility_flags":["nodejs_compat"]}')
@@ -36,7 +36,6 @@ class Silent(unittest.TestCase):
         cfg = json.loads((ROOT / S.CFG).read_text())
         cfg["overlap"]["module_globs"] = ["core/*/index.js"]
         d = scratch({S.CFG: json.dumps(cfg), "core/datagraph/index.js": "// graph of every row\n", "core/knowledge/index.js": "// a thing\n", "core/billing/index.js": "// invoices payments\n"})
-        self.addCleanup(shutil.rmtree, d, True)
         self.assertEqual([x["existing"] for x in S.overlap_findings(["core/knowledge/index.js"], d)], ["core/datagraph/index.js"])
         self.assertEqual(S.overlap_findings(["core/billing/index.js"], d), [])
 
@@ -71,7 +70,6 @@ class Silent(unittest.TestCase):
     def test_stale_ledger(self):
         d = scratch({S.CFG: json.dumps({"ledgers": [{"path": "ops/a.jsonl", "max_age_hours": 24}, {"path": "ops/b.jsonl", "max_age_hours": 24}]}),
                      "ops/a.jsonl": json.dumps({"at": "2026-11-20T00:00:00Z"}) + "\n", "ops/b.jsonl": json.dumps({"at": "2026-11-25T11:00:00Z"}) + "\n"})
-        self.addCleanup(shutil.rmtree, d, True)
         r = S.stale_findings(d, datetime(2026, 11, 25, 12, tzinfo=timezone.utc))
         self.assertEqual([x["ledger"] for x in r], ["ops/a.jsonl"])
 
@@ -79,7 +77,6 @@ class Silent(unittest.TestCase):
         d = scratch({S.CFG: json.dumps({"classes": [{"id": "x", "detector": "nope", "failure_mode": "nope", "example": "e", "signatures": ["zzz"]}]}),
                      "doctrine/detectors.json": json.dumps({"detectors": []}), "doctrine/registers.json": json.dumps({"failure_modes": []}),
                      "docs/failures/2026-01-01-new-thing.md": "something never seen before"})
-        self.addCleanup(shutil.rmtree, d, True)
         why = " | ".join(x["why"] for x in S.class_findings(d))
         self.assertIn("detector nope is not registered", why); self.assertIn("matches no silent-failure class", why)
 
