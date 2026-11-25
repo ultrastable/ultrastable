@@ -1930,6 +1930,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **No made-up numbers (NO-FABRICATION-1, Rowan 2026-11-25).** \"Nothing gets made up. Everything must be completely supported and backed",
+   "detail": "",
+   "how": "file:foundation/claimcode.py + grep:.github/workflows/checks.yml::foundation[ .]claimcode\\b",
+   "id": "cited-e2a1c0be98",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Measure everything.** Every site and service an org ships carries the standard first-party analytics (`seed/analytics/analytics.js`:",
    "detail": "",
    "how": "file:seed/analytics/analytics.js",
@@ -2623,6 +2632,15 @@ export default {
    "surface": "seed/agents/AGENTS.md"
   },
   {
+   "claim": "- **No made-up numbers (NO-FABRICATION-1, Rowan 2026-11-25).** \"Nothing gets made up. Everything must be completely supported and backed",
+   "detail": "",
+   "how": "file:foundation/claimcode.py + grep:.github/workflows/checks.yml::foundation[ .]claimcode\\b",
+   "id": "mirror-9a507beeee",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
    "claim": "- **Fund yourself.** Everything the owner starts must become self-sustaining; the owner is spending money they do not have. Funding and",
    "detail": "",
    "how": "file:scripts/outreach.py",
@@ -3271,7 +3289,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 64 Python and 534 Worker tests",
+   "claim": "seed-tests: 64 Python and 535 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3280,7 +3298,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 534 Worker tests",
+   "claim": "seed-worker-tests: 535 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3521,7 +3539,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 388,
-  "total": 388
+  "pass": 390,
+  "total": 390
  }
 };
