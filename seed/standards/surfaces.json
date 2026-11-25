@@ -656,6 +656,19 @@
       "discoverable": false,
       "description": "SOCIAL-MODULE-1: token-gated hand-over of a channel token into the sealed credential store; answers names only, never values.",
       "reason": "Machine-to-machine bearer route for moving a channel login into the system; not a capability for callers."
+    },
+    {
+      "id": "knowledge",
+      "path": "/api/knowledge",
+      "methods": [
+        "GET"
+      ],
+      "kind": "rest",
+      "audience": "public",
+      "standards": [],
+      "discoverable": false,
+      "description": "Insights the tick's knowledge step found in this system's own item graph (KNOWLEDGE-GRAPH-1).",
+      "reason": "Read by the system's own dashboard and loops; not an agent-facing API."
     }
   ]
 }
