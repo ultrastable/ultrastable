@@ -4,7 +4,7 @@
 """BRANCH-CLEANUP-1 (Rowan, 2026-11-25): no branch outlives its pull request in any Ultrastable repository.
 
 For every repository in the org:
-  1. enforce the repo setting delete_branch_on_merge=true (reset it when it drifts);
+  1. enforce the repo settings delete_branch_on_merge=true and allow_auto_merge=true (reset when they drift);
   2. delete every branch whose pull requests are all merged or closed (recoverable from refs/pull/<n>/head);
   3. delete every branch with no pull request once its tip is older than --window-hours, after moving the tip to
      refs/archive/<name> so no unmerged commit is lost.
@@ -14,6 +14,8 @@ main, the default branch, *-evidence ledger branches and any branch with an open
 import argparse, datetime as dt, json, os, subprocess, sys, urllib.parse
 
 ORG = os.environ.get("BRANCH_CLEANUP_ORG", "ultrastable")
+# AUTO-MERGE-DEFAULT-1 (Rowan, 2026-11-25): auto-merge and auto-delete of head branches are the default in every Ultrastable repository.
+REPO_SETTINGS = {"delete_branch_on_merge": True, "allow_auto_merge": True}
 
 
 def gh(*args, method="GET", fields=None, paginate=False):
@@ -32,7 +34,14 @@ def gh(*args, method="GET", fields=None, paginate=False):
 
 def repos():
     if os.environ.get("BRANCH_CLEANUP_REPOS"):
-        return os.environ["BRANCH_CLEANUP_REPOS"].split()
+        names = os.environ["BRANCH_CLEANUP_REPOS"].split()
+        tr = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "doctrine", "tenant-repos.json")
+        if os.path.exists(tr):  # every tenant repository gets the same settings and cleanup the moment it exists
+            for t in json.load(open(tr)).get("tenants", {}).values():
+                n = t.get("repo", "").split("/")[-1]
+                if n and n not in names:
+                    names.append(n)
+        return names
     return [r["name"] for r in gh(f"orgs/{ORG}/repos?per_page=100&type=all", paginate=True) if not r.get("archived")]
 
 
@@ -48,17 +57,18 @@ def run(apply, window_h):
             print(f"::warning::{full}: unreadable with this token: {e}")
             continue
         default = meta["default_branch"]
-        if not meta.get("delete_branch_on_merge"):
+        drift = {k: v for k, v in REPO_SETTINGS.items() if meta.get(k) is not v}
+        if drift:
             stale += 1
             if apply:
                 try:
-                    gh(f"repos/{full}", method="PATCH", fields={"delete_branch_on_merge": True})
-                    done.append(f"{full}: delete_branch_on_merge on")
+                    gh(f"repos/{full}", method="PATCH", fields=drift)
+                    done.append(f"{full}: settings on: {', '.join(drift)}")
                 except RuntimeError as e:
                     errors += 1
                     print(f"::warning::{full}: setting refused: {e}")
             else:
-                print(f"{full}: delete_branch_on_merge is off")
+                print(f"{full}: settings off: {', '.join(drift)}")
         for b in gh(f"repos/{full}/branches?per_page=100", paginate=True):
             br = b["name"]
             if br in ("main", default) or br.endswith("-evidence"):  # loop-evidence, ciwatch-evidence ...: ledgers loops append to
