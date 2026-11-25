@@ -91,7 +91,7 @@ class Research(unittest.TestCase):
         md = (self.d / "research/papers/s1.md").read_text()
         self.assertIn("3 closed pull requests (2 merged)", md)
         self.assertIn("50% of merged pull requests", md)
-        self.assertIn("Verdict: **unmeasured**", md)
+        self.assertNotIn("(latest criticality tick) reads", md)  # WHITEPAPER-2: an unmeasured metric is never given a number
         page = (self.d / "site/research-data.js").read_text()
         self.assertIn('"study_id": "s1"', page)
 
@@ -123,3 +123,14 @@ class Research(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class NoMadeUpNumbers(unittest.TestCase):
+    """NO-MADE-UP-NUMBERS-1: a number that traces to no measurement or cited source blocks the paper."""
+    def test_invented_number_is_blocked(self):
+        ms = R.measures()
+        st = R.studies()[0]
+        p = R.paper(R.REPO, st, ms, {})
+        self.assertEqual(R.gate(p, st), [])
+        p["sections"]["summary"].append("This cut costs by 47%.")
+        self.assertTrue(any("47%" in b for b in R.gate(p, st)))

@@ -1,0 +1,237 @@
+{
+  "_doc": "SILENT-FAIL-1 (Rowan, 2026-11-25): registry read by foundation/silentfail.py. `classes` is the red-team of our own blind spots: every way a loop can fail without anyone seeing, each bound to a detector in doctrine/detectors.json. An incident (docs/failures/*.md) that matches no class's signatures is itself a finding: the class list is incomplete.",
+  "bundle": {
+    "groups": [
+      {
+        "wrangler": "instances/ultrastable/system/ultrastable-tick.wrangler.jsonc",
+        "source_globs": [
+          "seed/worker/src/*.js",
+          "seed/worker/src/vendor/core/*.js"
+        ]
+      },
+      {
+        "wrangler": "instances/ultrastable/system/ultrastable-site.wrangler.jsonc",
+        "source_globs": [
+          "site/*.js"
+        ]
+      }
+    ],
+    "exclude_suffix": [
+      ".test.js",
+      ".test.mjs"
+    ],
+    "exclude_contains": [
+      "/test/"
+    ],
+    "generated": [
+      "seed/worker/src/config.js"
+    ]
+  },
+  "overlap": {
+    "module_globs": [
+      "foundation/*.py",
+      "workers/core/*/index.js",
+      "seed/worker/src/*.js"
+    ],
+    "jaccard": 0.45,
+    "clusters": [
+      [
+        "graph",
+        "kgraph",
+        "knowledge",
+        "datagraph",
+        "connect"
+      ],
+      [
+        "ignorance",
+        "unknowns",
+        "blindspots"
+      ],
+      [
+        "selftest",
+        "failure_audit",
+        "silentfail"
+      ]
+    ],
+    "distinct": [
+      [
+        "foundation/silentfail.py",
+        "foundation/selftest.py"
+      ],
+      [
+        "foundation/silentfail.py",
+        "foundation/failure_audit.py"
+      ]
+    ]
+  },
+  "cite_hosts": [
+    "ultrastable.io",
+    "ultrastable.org",
+    "ultrastable.app",
+    "workers.dev"
+  ],
+  "live": [
+    {
+      "id": "changes-nonzero",
+      "url": "https://ultrastable.io/api/live/changes",
+      "expect": "changes",
+      "reject": "\"changes\":\\s*\\[\\s*\\]"
+    },
+    {
+      "id": "site-health",
+      "url": "https://ultrastable.io/health",
+      "expect": "ok"
+    },
+    {
+      "id": "ps-home-claim",
+      "url": "https://ultrastable.org/",
+      "expect": "problem",
+      "reject": "\\b0 problems with no solution"
+    }
+  ],
+  "ledgers": [
+    {
+      "path": "ops/deploys.jsonl",
+      "max_age_hours": 72
+    },
+    {
+      "path": "ops/criticality.jsonl",
+      "max_age_hours": 72
+    }
+  ],
+  "unclassified_ok": [],
+  "classes": [
+    {
+      "id": "ran-not-arrived",
+      "failure_mode": "fm-silent-job-ok",
+      "detector": "selftest-data",
+      "example": "/changes read zero for 24 h while Actions work merged; a probe checked the job, not the result",
+      "signatures": [
+        "zero for",
+        "never arrived",
+        "result.*absent"
+      ]
+    },
+    {
+      "id": "scheduler-skipped",
+      "failure_mode": "fm-silent-job-ok",
+      "detector": "yearsim-scheduler-silent",
+      "example": "GitHub skipped scheduled runs; impact numbers did not move",
+      "signatures": [
+        "schedul",
+        "skipped run",
+        "cron"
+      ]
+    },
+    {
+      "id": "action-required-stuck",
+      "failure_mode": "fm-actions-stuck",
+      "detector": "actions-stuck",
+      "example": "PR runs sat at action_required for github-actions[bot] actors",
+      "signatures": [
+        "action_required",
+        "approval"
+      ]
+    },
+    {
+      "id": "event-by-builtin-token",
+      "failure_mode": "fm-actions-stuck",
+      "detector": "actions-stuck",
+      "example": "idea issue #204 sat 3 days: events made by the built-in token trigger no workflow",
+      "signatures": [
+        "built-in token",
+        "GITHUB_TOKEN",
+        "idea issue"
+      ]
+    },
+    {
+      "id": "worker-bundle-break",
+      "failure_mode": "fm-bundle-break",
+      "detector": "worker-bundle",
+      "example": "a Node import in the Worker bundle broke a deploy",
+      "signatures": [
+        "bundle",
+        "node:",
+        "nodejs_compat",
+        "import"
+      ]
+    },
+    {
+      "id": "duplicate-work",
+      "failure_mode": "fm-duplicate-build",
+      "detector": "module-overlap",
+      "example": "core/knowledge duplicated the datagraph module",
+      "signatures": [
+        "duplicat",
+        "overlap"
+      ]
+    },
+    {
+      "id": "done-without-live",
+      "failure_mode": "fm-done-unverified",
+      "detector": "live-verify",
+      "example": "done was claimed with no live reading; agents cannot reach the public hosts",
+      "signatures": [
+        "claimed done",
+        "unverified",
+        "live reading",
+        "cannot reach"
+      ]
+    },
+    {
+      "id": "claim-vs-data",
+      "failure_mode": "fm-done-unverified",
+      "detector": "live-verify",
+      "example": "homepage said 0 problems with no solution while 811 existed",
+      "signatures": [
+        "claims mismatch",
+        "words match",
+        "homepage"
+      ]
+    },
+    {
+      "id": "red-fleet-from-parked",
+      "failure_mode": "fm-silent-job-ok",
+      "detector": "sla-breach",
+      "example": "fleet check red for hours from parked PRs",
+      "signatures": [
+        "parked",
+        "fleet.*red",
+        "sla"
+      ]
+    },
+    {
+      "id": "model-route-down",
+      "failure_mode": "fm-model-route",
+      "detector": "model-routes",
+      "example": "the free model fails on large tasks; every code agent rung failed",
+      "signatures": [
+        "code agent rung",
+        "model route",
+        "ensemble"
+      ]
+    },
+    {
+      "id": "loop-stopped-writing",
+      "failure_mode": "fm-silent-job-ok",
+      "detector": "ledger-stale",
+      "example": "a ledger's newest row is days old and nothing noticed",
+      "signatures": [
+        "stale",
+        "stopped writing",
+        "no recorded run"
+      ]
+    },
+    {
+      "id": "single-route",
+      "failure_mode": "fm-silent-job-ok",
+      "detector": "classes-complete",
+      "example": "a path with one route fails and nothing else carries it",
+      "signatures": [
+        "single route",
+        "target account",
+        "unreachable"
+      ]
+    }
+  ]
+}

@@ -5472,6 +5472,42 @@
    "body": "REACH-PAPERS-1: research papers were missing from the sitemap and IndexNow and had no structured data; only the Ashby paper was posted because cadence was 3 days and changed-state reposts went first; Mastodon engagement was never read because relay rows are named relay:mastodon. All four fixed in this change; postfeedback tests pass (19) and thought --run now schedules chen-stratton-2026.",
    "probe": "grep:site/promote.js::REACH-PAPERS-1",
    "session": "session_0156nqDuQXEUhGCq6LkokuuL"
+  },
+  {
+   "id": "decision-2026-11-25-every-fleet-property-is-read-daily-for-search-and-ai-discove",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Every fleet property is read daily for search and AI discoverability",
+   "body": "FINDABLE-1 (Rowan 2026-11-25): no Zenodo or DOIs. Reach comes from open standards: robots, sitemap, llms.txt, meta, canonical, Open Graph, JSON-LD and feeds on every property in the directory, read daily by foundation/findable.py; gaps become Q-FIND items and feeds are pinged to the WebSub hub. Tests: tests/foundation/test_findable.py 4 pass.",
+   "probe": "grep:foundation/findable.py::def home_gaps",
+   "session": "session_0156nqDuQXEUhGCq6LkokuuL"
+  },
+  {
+   "id": "decision-2026-11-25-papers-are-full-white-papers-with-a-publishing-gate",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Papers are full white papers with a publishing gate",
+   "body": "WHITEPAPER-1 (Rowan 2026-11-25): papers read as white papers, with numbered sections (introduction, background, method, results with a table, discussion, limitations, conclusion) and numbered references cited in the text, assembled from the study file and live measurements. research.gate() holds back a paper missing a section, a citation or a measured result; research --check fails on it. /research is linked from the header, footer, homepage and the family nav tenants read. Tests: test_research 9 pass, site tests 71 pass.",
+   "probe": "grep:foundation/research.py::def gate",
+   "session": "session_0156nqDuQXEUhGCq6LkokuuL"
+  },
+  {
+   "id": "decision-2026-11-25-silent-fail-1-silent-failure-classes-are-data-with-detectors",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "SILENT-FAIL-1: silent-failure classes are data with detectors",
+   "body": "Classes live in doctrine/silent-failures.json, each bound to a detector. Worker bundle, duplicate-module and live-citation checks run in checks. An incident matching no class is a finding. A Status: done claim cites a server-side Live: GET line.",
+   "probe": "file:foundation/silentfail.py",
+   "session": "session_0156nqDuMYtda8kTyfqmpNJk"
+  },
+  {
+   "id": "decision-2026-11-25-white-papers-not-research-papers-no-number-without-a-source",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "White papers, not research papers; no number without a source",
+   "body": "WHITEPAPER-2 and NO-MADE-UP-NUMBERS-1 (Rowan 2026-11-25): papers are executive summary, problem, approach, putting it into practice, trade-offs, next steps and references; no forced results table. Live numbers appear only where a reading exists, each with its source. research.gate() blocks a paper with a number that traces to no measurement, study file or cited reference; a test injects 47% and the gate blocks it. Social posts already pass thought.guard, which blocks numbers not in the paper's data.",
+   "probe": "grep:foundation/research.py::def unsourced",
+   "session": "session_0156nqDuQXEUhGCq6LkokuuL"
   }
  ]
 }
