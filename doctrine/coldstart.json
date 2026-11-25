@@ -212,6 +212,10 @@
       "deploy/*.json",
       ".github/workflows/*.yml",
       "instances/ultrastable/loop-registry.json"
-    ]
+    ],
+    "exclude": [
+      "doctrine/decision-ledger.json"
+    ],
+    "_exclude_doc": "Append-only ledgers record what was said in merged PRs; a prose phrase there (\"foundation commands\") is history, not an instruction, and once merged it cannot be edited away by the PR that fixes it."
   }
 }
