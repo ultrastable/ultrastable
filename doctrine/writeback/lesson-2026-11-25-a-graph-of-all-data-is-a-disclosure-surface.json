@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-25-a-graph-of-all-data-is-a-disclosure-surface",
+  "kind": "lesson",
+  "date": "2026-11-25",
+  "title": "A graph of all data is a disclosure surface",
+  "body": "Joining every table links records that were separate, and the platform D1 holds people's replies and owner answers. Personal and secret tables are excluded at extraction, and the public read view shows only counts, orphan findings and kinds a system declares public; the owner bearer sees the rest.",
+  "probe": "grep:workers/core/datagraph/index.js::inbox\\|answer\\|interview"
+ },
+ "kind": "lesson",
+ "title": "A graph of all data is a disclosure surface",
+ "session": ""
+}

@@ -1,9 +1,16 @@
 // HANDOFF-1: the deploy and rollback hands of the server-side handoff loop. The tick Worker (seed/worker/src/handoff.js) reads the merge commit from GitHub
 // and posts the flattened modules here over its SITE service binding; this worker holds the Cloudflare credential (CF_DEPLOY_TOKEN, CF_ACCOUNT_ID) and uploads.
 // Guarded by a shared internal key (secret INTERNAL_DEPLOY_KEY on both workers), compared in constant time; without the key the paths answer 404 like any unknown page.
+import { launchesInternal } from "./graduate.js";
 const J = (o, s) => new Response(JSON.stringify(o), { status: s || 200, headers: { "content-type": "application/json" } });
 const ALLOWED = /^ultrastable-[a-z0-9-]{1,40}$/;  // only the platform's own workers; tenant idea workers have their own path (deployIdeaWorker)
 
+const HOST_REPO = /^[a-z0-9][a-z0-9-]{0,38}\/app-[a-z0-9-]{1,60}$/;
+// The same HMAC the tick Worker checks (seed/worker/src/apprepos.js hostKey); site/launchpath.test.mjs holds the two equal.
+export async function hostKey(secret, repo) {
+  const k = await crypto.subtle.importKey("raw", new TextEncoder().encode(String(secret)), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  return [...new Uint8Array(await crypto.subtle.sign("HMAC", k, new TextEncoder().encode("app-token:" + repo)))].map(x => x.toString(16).padStart(2, "0")).join("");
+}
 function same(a, b) { a = String(a || ""); b = String(b || ""); if (!a || a.length !== b.length) return false; let x = 0; for (let i = 0; i < a.length; i++) x |= a.charCodeAt(i) ^ b.charCodeAt(i); return x === 0; }
 
 // DEPLOY-OIDC-1: a second caller with no stored credential. GitHub Actions presents its per-run OIDC token (audience ultrastable-deploy);
@@ -121,6 +128,7 @@ export async function internalDeploy(request, env, fetcher) {
   const byOidc = !byKey && bearer ? (await verifyGithubOidc(bearer[1], env, fetcher).catch(e => ({ ok: false, why: String(e && e.message) }))).ok : false;
   if (request.method !== "POST" || !(byKey || byOidc)) return new Response("Not found", { status: 404 });
   if (u.pathname === "/__internal/transparency") return ingestTransparency(request, env);
+  if (u.pathname === "/__internal/launches") return launchesInternal(request, env);  // LAUNCH-PATH-1: the launch queue, read and marked by deploy/launch-apps.mjs
   const f = fetcher || fetch, T = env.CF_DEPLOY_TOKEN, A = env.CF_ACCOUNT_ID;
   if (!T || !A) return J({ ok: false, error: "site has no CF_DEPLOY_TOKEN / CF_ACCOUNT_ID" }, 503);
   if (u.pathname === "/__internal/cf") return cfProxy(request, env, f);
@@ -131,6 +139,12 @@ export async function internalDeploy(request, env, fetcher) {
   if (u.pathname === "/__internal/seed-d1") return seedD1(b, api, A);  // SEED-DEPLOY-1
   if (u.pathname === "/__internal/deploy") {
     if (!Array.isArray(b.modules) || !b.modules.length || !b.main) return J({ ok: false, error: "modules and main are required" }, 400);
+    // HOSTED-1: an app this platform hosts gets the address of its host's token route and a key that opens its one repository there. The key is
+    // made here from a secret the caller never sees, so the workflow that asks for the deploy cannot mint one.
+    if (b.host_repo) {
+      if (!/^ultrastable-seed-app-[a-f0-9]{10}$/.test(b.name) || !HOST_REPO.test(String(b.host_repo)) || !env.INTERNAL_DEPLOY_KEY) return J({ ok: false, error: "host_repo is only for a hosted app" }, 400);
+      b.bindings = (b.bindings || []).filter(x => !/^HOST_/.test(x.name)).concat([{ type: "plain_text", name: "HOST_REPO", text: b.host_repo }, { type: "plain_text", name: "HOST_TOKEN_URL", text: (env.TICK_ORIGIN || "https://ultrastable-tick.ultrastable.workers.dev") + "/host/app-token" }, { type: "secret_text", name: "HOST_APP_KEY", text: await hostKey(env.INTERNAL_DEPLOY_KEY, b.host_repo) }]);
+    }
     const form = new FormData();
     form.append("metadata", new Blob([JSON.stringify({ main_module: b.main, compatibility_date: b.compatibility_date || "2026-11-12", bindings: b.bindings || [], keep_bindings: ["secret_text", "secret_key"], observability: { enabled: true, head_sampling_rate: 1 }, annotations: b.tag ? { "workers/tag": b.tag, "workers/message": "HANDOFF-1 deploy of " + b.tag } : undefined })], { type: "application/json" }));
     for (const m of b.modules) form.append(m.name, new Blob([m.src], { type: m.type || "application/javascript+module" }), m.name);

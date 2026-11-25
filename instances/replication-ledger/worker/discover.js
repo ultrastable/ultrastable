@@ -31,11 +31,21 @@ export const FIELD_MAP = {
 export const SEARCHES = ["registered replication report", "many labs replication", "failed to replicate", "multisite replication",
   "replication of a classic", "reanalysis original data", "preregistered replication", "large-scale replication project"];
 
-export async function oa(path, fetchImpl = fetch) {
-  const r = await fetchImpl(OA + path, { headers: { "user-agent": UA, accept: "application/json" } });
-  if (r.status === 404) return null;
-  if (!r.ok) throw new Error(`openalex ${r.status}`);
-  return r.json();
+// OpenAlex rate-limits anonymous callers by address, and Workers share their outbound addresses, so every call names the project's
+// published contact (the security.txt address of ultrastable.io), which puts it in OpenAlex's polite pool, and a 429 is retried once
+// after the wait the server asks for (at most OA_WAIT_MS). A call that still fails is an error of the beat; the finding is retried next beat.
+export const CONTACT = "pilot@ultrastable.io";
+export const OA_WAIT_MS = 4000;
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+export async function oa(path, fetchImpl = fetch, wait = sleep) {
+  const url = OA + path + (path.includes("?") ? "&" : "?") + "mailto=" + encodeURIComponent(CONTACT);
+  for (let tries = 0; ; tries++) {
+    const r = await fetchImpl(url, { headers: { "user-agent": `${UA} mailto:${CONTACT}`, accept: "application/json" } });
+    if (r.status === 404) return null;
+    if (r.status === 429 && tries === 0) { await wait(Math.min(OA_WAIT_MS, 1000 * (Number(r.headers?.get?.("retry-after")) || 1))); continue; }
+    if (!r.ok) throw new Error(`openalex ${r.status}`);
+    return r.json();
+  }
 }
 
 export function abstractText(inv) {

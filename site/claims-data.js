@@ -1815,7 +1815,7 @@ export default {
   {
    "claim": "- **Every system deploys itself in full: repo, back end and a public web UI (FULLSTACK-1, Rowan 2026-11-25).** \"All UltraStable deployments",
    "detail": "",
-   "how": "file:doctrine/tenant-repos.json + file:doctrine/topology.json + file:tests/foundation/test_tenantrepos.py + file:foundation/tenantrepos.py + grep:.github/workflows/checks.yml::foundation[ .]tenantrepos\\b",
+   "how": "file:doctrine/tenant-repos.json + file:doctrine/topology.json + file:tests/foundation/test_tenantrepos.py + file:instances/ultrastable/progress.json + file:doctrine/seed-deploys.json + file:doctrine/full-stack.json",
    "id": "cited-faa1765dd1",
    "kind": "claim",
    "pass": true,
@@ -1835,6 +1835,15 @@ export default {
    "detail": "",
    "how": "file:seed/worker/src/livechanges.js + file:site/live.js + file:seed/worker/test/livechanges.test.js + file:site/site.test.mjs",
    "id": "cited-d3be926b7b",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Every system keeps a knowledge graph of all its data, built and maintained automatically (DATAGRAPH-1, Rowan 2026-11-25).** \"All",
+   "detail": "",
+   "how": "file:seed/worker/src/vendor/core/datagraph.js + file:doctrine/tenant-repos.json + file:seed/worker/src/datagraph.js + file:instances/ultrastable/progress.json + file:doctrine/knowledge-graph.json + file:docs/research/knowledge-graph.md",
+   "id": "cited-29846ff1a5",
    "kind": "claim",
    "pass": true,
    "surface": "agents/AGENTS.md"
@@ -1889,6 +1898,15 @@ export default {
    "detail": "",
    "how": "file:seed/scripts/improve.py + file:seed/autonomy/improve.json + file:seed/.github/workflows/improve.yml + file:foundation/improve.py + file:doctrine/improve.json + file:tests/foundation/test_improve.py",
    "id": "cited-3c3d6c30bf",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Every system updates itself and the platform (SYNC-BOTH-WAYS-1, Rowan 2026-11-25).** \"Every Ultrastable system shall always improve and",
+   "detail": "",
+   "how": "file:seed/.github/workflows/platform-sync.yml + file:tests/foundation/test_improve.py + file:foundation/tenantsync.py + grep:.github/workflows/checks.yml::foundation[ .]tenantsync\\b",
+   "id": "cited-0e153ff129",
    "kind": "claim",
    "pass": true,
    "surface": "agents/AGENTS.md"
@@ -2490,7 +2508,7 @@ export default {
   {
    "claim": "- **Every system deploys itself in full: repo, back end and a public web UI (FULLSTACK-1, Rowan 2026-11-25).** \"All UltraStable deployments",
    "detail": "",
-   "how": "file:doctrine/tenant-repos.json + file:doctrine/topology.json + file:tests/foundation/test_tenantrepos.py + file:foundation/tenantrepos.py + grep:.github/workflows/checks.yml::foundation[ .]tenantrepos\\b",
+   "how": "file:doctrine/tenant-repos.json + file:doctrine/topology.json + file:tests/foundation/test_tenantrepos.py + file:instances/ultrastable/progress.json + file:doctrine/seed-deploys.json + file:doctrine/full-stack.json",
    "id": "mirror-3ae0f5f6d0",
    "kind": "claim",
    "pass": true,
@@ -2510,6 +2528,15 @@ export default {
    "detail": "",
    "how": "file:seed/worker/src/livechanges.js + file:site/live.js + file:seed/worker/test/livechanges.test.js + file:site/site.test.mjs",
    "id": "mirror-b9c4dda8e0",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Every system keeps a knowledge graph of all its data, built and maintained automatically (DATAGRAPH-1, Rowan 2026-11-25).** \"All",
+   "detail": "",
+   "how": "file:seed/worker/src/vendor/core/datagraph.js + file:doctrine/tenant-repos.json + file:seed/worker/src/datagraph.js + file:instances/ultrastable/progress.json + file:doctrine/knowledge-graph.json + file:docs/research/knowledge-graph.md",
+   "id": "mirror-1d1a4fbb93",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -2555,6 +2582,15 @@ export default {
    "detail": "",
    "how": "file:seed/scripts/improve.py + file:seed/autonomy/improve.json + file:seed/.github/workflows/improve.yml + file:foundation/improve.py + file:doctrine/improve.json + file:tests/foundation/test_improve.py",
    "id": "mirror-0ea4d489e9",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Every system updates itself and the platform (SYNC-BOTH-WAYS-1, Rowan 2026-11-25).** \"Every Ultrastable system shall always improve and",
+   "detail": "",
+   "how": "file:seed/.github/workflows/platform-sync.yml + file:tests/foundation/test_improve.py + file:foundation/tenantsync.py + grep:.github/workflows/checks.yml::foundation[ .]tenantsync\\b",
+   "id": "mirror-1ca2a53c76",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3217,7 +3253,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 63 Python and 487 Worker tests",
+   "claim": "seed-tests: 64 Python and 500 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3226,7 +3262,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 487 Worker tests",
+   "claim": "seed-worker-tests: 500 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3262,7 +3298,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 937",
+   "claim": "live-deploys: 946",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",
@@ -3467,7 +3503,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 382,
-  "total": 382
+  "pass": 386,
+  "total": 386
  }
 };

@@ -1,7 +1,7 @@
 {
- "at": "2026-11-25T16:26:05Z",
- "gaps": 7,
- "match_share": 0.985,
+ "at": "2026-11-25T16:46:18Z",
+ "gaps": 5,
+ "match_share": 0.989,
  "sources": {
   "changes": [
    {
@@ -639,12 +639,10 @@
    {
     "checks": 1,
     "external": [],
-    "failing": [
-     "python3 -m foundation closedloop --check: Q-SEED-what-works: closed without evidence (silent drop)"
-    ],
+    "failing": [],
     "id": "CLOSED-LOOP-1",
     "missing": [],
-    "ok": false,
+    "ok": true,
     "unmeasured": []
    },
    {
@@ -710,12 +708,10 @@
    {
     "checks": 1,
     "external": [],
-    "failing": [
-     "python3 -m foundation closedloop --check: Q-SEED-what-works: closed without evidence (silent drop)"
-    ],
+    "failing": [],
     "id": "CLOSED-LOOP-AXIOM",
     "missing": [],
-    "ok": false,
+    "ok": true,
     "unmeasured": []
    },
    {
@@ -787,7 +783,7 @@
     "checks": 1,
     "external": [],
     "failing": [
-     "python3 -m foundation dispose --check: an open item is 74.9 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+     "python3 -m foundation dispose --check: an open item is 75.2 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
     ],
     "id": "DISPOSE-1",
     "missing": [],
@@ -867,7 +863,7 @@
    "total": 1
   },
   "rules": {
-   "gaps": 4,
+   "gaps": 2,
    "total": 72
   },
   "year": {

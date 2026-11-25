@@ -1,0 +1,54 @@
+name: platform-sync
+# budget: ~2 min per run, once a week = ~10 min per month
+# trigger: weekly; the platform's kernel moves on a day-to-week scale and each update lands as one pull request
+# free-alternative: the platform's tenant-sync loop pulls the same update from its side (TENANT-SYNC-1), so this is the second route
+# SYNC-BOTH-WAYS-1 (Rowan, 2026-11-25): "Every Ultrastable system shall always improve and update itself and the Ultrastable platform
+# automatically." Down: this system pulls the platform's kernel with its own token, so no credential from another repository is needed.
+# The update is a pull request the system's own lane tests; a red check is never merged, so main stays on the last good kernel (the rollback).
+# Up: kernel files this system changed are listed in ops/platform-sync.json; the platform's tenant-sync loop reads them and lifts the
+# general ones into the core.
+on:
+  schedule:
+    - cron: "41 5 * * 1"
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+concurrency:
+  group: platform-sync
+  cancel-in-progress: false
+jobs:
+  sync:
+    if: ${{ vars.HALT != '1' && !github.event.repository.is_template && github.repository != 'ultrastable/seed' }}  # HALT-1; TEMPLATE-CODE-ONLY-1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v7
+      - name: Fetch the platform
+        run: git clone --depth 1 https://github.com/ultrastable/ultrastable.git "$RUNNER_TEMP/core"
+      - name: Pull the kernel and record what to send up
+        run: |
+          set -e
+          cd "$RUNNER_TEMP/core"
+          python3 -m foundation upstream drift --instance "$GITHUB_WORKSPACE" --json > "$RUNNER_TEMP/drift.json"
+          python3 -m foundation upstream sync --instance "$GITHUB_WORKSPACE" --apply
+          python3 - "$RUNNER_TEMP/drift.json" "$GITHUB_WORKSPACE/ops/platform-sync.json" <<'PY'
+          import json, sys, datetime
+          d = json.load(open(sys.argv[1]))
+          d["at"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+          import os; os.makedirs(os.path.dirname(sys.argv[2]), exist_ok=True)
+          json.dump(d, open(sys.argv[2], "w"), indent=1)
+          PY
+      - name: Open the update as a pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -e
+          git add -A
+          git diff --cached --quiet && { echo "already on the platform's kernel"; exit 0; }
+          b="platform-sync/$(date -u +%Y%m%d)"
+          git config user.name platform-sync; git config user.email platform-sync@users.noreply.github.com
+          git checkout -b "$b"; git commit -qm "Pull the platform kernel (SYNC-BOTH-WAYS-1)"
+          git push -u origin "$b"
+          gh api "repos/$GITHUB_REPOSITORY/pulls" -f title="Pull the platform kernel $(date -u +%F)" -f head="$b" -f base=main \
+            -f body="Weekly kernel update from ultrastable/ultrastable. The lane merges it when checks pass; a red check leaves main on the last good kernel."

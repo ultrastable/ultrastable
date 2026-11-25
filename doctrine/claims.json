@@ -2257,8 +2257,9 @@
         "file:doctrine/tenant-repos.json",
         "file:doctrine/topology.json",
         "file:tests/foundation/test_tenantrepos.py",
-        "file:foundation/tenantrepos.py",
-        "grep:.github/workflows/checks.yml::foundation[ .]tenantrepos\\b"
+        "file:instances/ultrastable/progress.json",
+        "file:doctrine/seed-deploys.json",
+        "file:doctrine/full-stack.json"
       ],
       "bound_by": "cited"
     },
@@ -2281,6 +2282,20 @@
         "file:site/live.js",
         "file:seed/worker/test/livechanges.test.js",
         "file:site/site.test.mjs"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-29846ff1a5",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Every system keeps a knowledge graph of all its data, built and maintained automatically (DATAGRAPH-1, Rowan 2026-11-25).** \"All",
+      "probe": [
+        "file:seed/worker/src/vendor/core/datagraph.js",
+        "file:doctrine/tenant-repos.json",
+        "file:seed/worker/src/datagraph.js",
+        "file:instances/ultrastable/progress.json",
+        "file:doctrine/knowledge-graph.json",
+        "file:docs/research/knowledge-graph.md"
       ],
       "bound_by": "cited"
     },
@@ -2362,6 +2377,18 @@
         "file:foundation/improve.py",
         "file:doctrine/improve.json",
         "file:tests/foundation/test_improve.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-0e153ff129",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Every system updates itself and the platform (SYNC-BOTH-WAYS-1, Rowan 2026-11-25).** \"Every Ultrastable system shall always improve and",
+      "probe": [
+        "file:seed/.github/workflows/platform-sync.yml",
+        "file:tests/foundation/test_improve.py",
+        "file:foundation/tenantsync.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]tenantsync\\b"
       ],
       "bound_by": "cited"
     },
@@ -3146,8 +3173,9 @@
         "file:doctrine/tenant-repos.json",
         "file:doctrine/topology.json",
         "file:tests/foundation/test_tenantrepos.py",
-        "file:foundation/tenantrepos.py",
-        "grep:.github/workflows/checks.yml::foundation[ .]tenantrepos\\b"
+        "file:instances/ultrastable/progress.json",
+        "file:doctrine/seed-deploys.json",
+        "file:doctrine/full-stack.json"
       ],
       "bound_by": "mirror",
       "of": "cited-faa1765dd1"
@@ -3175,6 +3203,21 @@
       ],
       "bound_by": "mirror",
       "of": "cited-d3be926b7b"
+    },
+    {
+      "id": "mirror-1d1a4fbb93",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Every system keeps a knowledge graph of all its data, built and maintained automatically (DATAGRAPH-1, Rowan 2026-11-25).** \"All",
+      "probe": [
+        "file:seed/worker/src/vendor/core/datagraph.js",
+        "file:doctrine/tenant-repos.json",
+        "file:seed/worker/src/datagraph.js",
+        "file:instances/ultrastable/progress.json",
+        "file:doctrine/knowledge-graph.json",
+        "file:docs/research/knowledge-graph.md"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-29846ff1a5"
     },
     {
       "id": "mirror-289b3b8589",
@@ -3249,6 +3292,19 @@
       ],
       "bound_by": "mirror",
       "of": "cited-3c3d6c30bf"
+    },
+    {
+      "id": "mirror-1ca2a53c76",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Every system updates itself and the platform (SYNC-BOTH-WAYS-1, Rowan 2026-11-25).** \"Every Ultrastable system shall always improve and",
+      "probe": [
+        "file:seed/.github/workflows/platform-sync.yml",
+        "file:tests/foundation/test_improve.py",
+        "file:foundation/tenantsync.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]tenantsync\\b"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-0e153ff129"
     },
     {
       "id": "mirror-be5af6748b",

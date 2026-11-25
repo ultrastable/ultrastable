@@ -63,19 +63,25 @@ export async function reconcile(gh, repo, pr, { generated = GENERATED } = {}) {
       if (t !== a.text) tree.push({ path: p, mode: '100644', type: 'blob', content: t });
     }
   }
+  let head = null, nt = null;
   if (tree.length) {
-    const head = await gh('GET', `/repos/${repo}/git/commits/${pr.head.sha}`);
+    head = await gh('GET', `/repos/${repo}/git/commits/${pr.head.sha}`);
     if (!head.ok) return { result: 'error', why: `head ${head.status}` };
-    const nt = await gh('POST', `/repos/${repo}/git/trees`, { base_tree: head.json.tree.sha, tree });
+    nt = await gh('POST', `/repos/${repo}/git/trees`, { base_tree: head.json.tree.sha, tree });
     if (!nt.ok) return { result: 'error', why: `tree ${nt.status}` };
+  }
+  // MERGENOW-NOOP-1: a tree equal to the head's tree changes nothing. Committing it anyway pushed an empty commit, which raised a synchronize
+  // event, which ran this again: 34 empty commits in four minutes on one PR, each starting a full CI run. Nothing changed, so nothing is committed.
+  if (tree.length && nt.json.sha !== head.json.tree.sha) {
     const c = await gh('POST', `/repos/${repo}/git/commits`, { message: 'MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)', tree: nt.json.sha, parents: [pr.head.sha] });
     if (!c.ok) return { result: 'error', why: `commit ${c.status}` };
     const u = await gh('PATCH', `/repos/${repo}/git/refs/heads/${encodeURIComponent(pr.head.ref)}`, { sha: c.json.sha, force: false });
     if (!u.ok) return { result: 'error', why: `ref ${u.status}` };
   }
   const mg = await gh('POST', `/repos/${repo}/merges`, { base: pr.head.ref, head: 'main', commit_message: `MERGE-NOW-1: merge main into ${pr.head.ref}` });
-  if (mg.ok || mg.status === 204) return { result: 'resolved', stripped: tree.length };
-  if (mg.status === 409) return { result: 'code-conflict', stripped: tree.length };
+  const stripped = tree.length && nt && nt.json.sha !== head.json.tree.sha ? tree.length : 0;
+  if (mg.ok || mg.status === 204) return { result: 'resolved', stripped };
+  if (mg.status === 409) return { result: 'code-conflict', stripped };
   return { result: 'error', why: `merges ${mg.status}` };
 }
 

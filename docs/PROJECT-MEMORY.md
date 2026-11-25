@@ -10,6 +10,7 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-25
 
+- 2026-11-25: Replication Ledger: OpenAlex polite pool and one 429 retry (#2160)
 - 2026-11-25: Register What Works for progress, stickiness, the showcase and the social queue (#2124)
 - 2026-11-25: Replication Ledger keeps itself current: hourly discovery beat (#2150)
 - 2026-11-25: Read every tenant's health parts live and ship tenant merges within the hour (TENANT-HEALTH-1, TENANT-DEPLOY-1) (#2134)
@@ -782,6 +783,15 @@ Rowan: "All UltraStable issues must be resolved within their SLAs and daily/week
 - First readings: tenant 0 (`instances/ultrastable`) is deployed, next live (first verify reading comes from the watchdog), runway bounded at 160 days by node-runtime; second-tenant has no IDEA.md and its "deploy loop" writes a status file with no deploy behind it, so it is below seeded with Q-SEED-second-tenant open. demo-child is a test fixture, spinoffs and qnfo are not seeds (reasons in `doctrine/seed-lifecycle.json`).
 - Open: Q-SEED-ultrastable, Q-SEED-second-tenant; Unlearn joins through its own lifecycle.json (scaffolded by the watchdog if its PR lands without one).
 
+## 2026-11-25: LAUNCH-PATH-1, anyone can launch without a code agent
+- BREADTH-1 (Rowan, 2026-11-25): he widened the replication-ledger suggestion from one field to many. `owner_edits` and `narrow_phrases` in `doctrine/idea-bank.json` steer `--grow`; the widened idea is the second launch-walk idea. Same change fixed the idea bank check that PR 2081 left red on main (ideas now carry `change`, CHANGE-1).
+- FULLSTACK-1 (Rowan, 2026-11-25): every system deploys its repository, back end and public web front end. `doctrine/full-stack.json`, `foundation/fullstack.py` (`--check` in checks, `--live` daily in tenant-repos.yml, red when a part is missing). Known gap: seed `second-tenant` has a back end only (Q-FULLSTACK-second-tenant). Visitor apps: `stackOf` in deploy/launch-apps.mjs.
+- Rowan picked a homepage suggestion (a living atlas of what works in public policy) as the model of a launchable system and asked how a person with no code agent launches and reaches criticality.
+- Now: an idea typed at ultrastable.io gets a launch record (`site/graduate.js`); `deploy/launch-apps.mjs` in the daily `tenant-repos.yml` deploys its own system by OIDC, creates its repository from `ultrastable/seed`, files the visitor's change requests there and invites them on request (`/s/<id>/own`). The seed takes `hosted_by` and then asks its owner for no key or budget approval.
+- Checked: the atlas idea is admitted (year p10 730 days) and bundles into 97 modules with no credential. The live site could not be reached from the session, so the first live walk is the workflow's own test idea.
+- Later the same day (APP-REPO-1): the tick Worker already held a live administration App token and the code App token, a route the earlier gate had marked not tried. `seed/worker/src/apprepos.js` now creates and fills app repositories with them, keeps the visitor's page and `app/index.html` in step both ways, and mints a one-hour token for the app's one repository so the app's own Worker can ship there (Q-LAUNCH-1 and Q-LAUNCH-2 built).
+- Open: gate `visitor-app-repos` until GitHub's live answer is read (can the administration App create an org repository; does the code App cover a repository created after install).
+- Open: gate `visitor-app-repos` (repository creation needs the org credential), Q-LAUNCH-1 (the app's Worker cannot ship code to its repository yet), Q-LAUNCH-2 (the visitor's page is not served from the repository yet).
 ## 2026-11-25: IMPROVE-1, the loop that never runs out of work
 Rowan: "Automatically improve impact and reach. An Ultrastable system shall always continue improving entirely on its own, 100% autonomously." `python3 -m foundation improve --run --apply` (daily, product-manager workflow) files reach, impact and plus items from `doctrine/improve.json` every pass, a stall item per manager tier with no merge in its window, signal items for missing or stale numbers, and the market pass when R&D goes stale. Closed items are judged a week later on their metric. First run: portfolio tier had no matching merge in 14 days; suggestions signal unmeasured; R&D log 8 days old.
 - BRANCH-CLEANUP-1 (Rowan, 2026-11-25): no branch outlives its PR in any Ultrastable repo; delete_branch_on_merge enforced by `scripts/branch_cleanup.py` run by `branchsweep --remote` in the daily branchsweep workflow, probe `--check`. Closed PRs no longer keep their branches.

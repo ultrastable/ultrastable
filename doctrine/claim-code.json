@@ -295,30 +295,57 @@
    }
   },
   {
-   "id": "fullstack-agents",
+   "id": "datagraph-agents",
    "source": "agents/AGENTS.md",
-   "quote": "\"All UltraStable systems shall automatically deploy themselves: repo, back-end, and public-facing Web UI front-end. Ultrastable is a full-stack autonomous development platform/system.\"",
+   "quote": "\"All UltraStable deployments and systems shall have a knowledge graph (graph network) to automatically build and maintain a graph of connections for all data.",
    "probe": {
-    "file": "tests/foundation/test_tenantrepos.py",
-    "contains": "def test_every_tenant_deploys_a_public_front_end"
+    "file": "seed/worker/test/datagraph.test.js",
+    "contains": "a pass builds the graph from every table with no configuration"
    }
   },
   {
-   "id": "fullstack-seed-agents",
+   "id": "datagraph-seed-agents",
    "source": "seed/agents/AGENTS.md",
-   "quote": "\"All UltraStable systems shall automatically deploy themselves: repo, back-end, and public-facing Web UI front-end. Ultrastable is a full-stack autonomous development platform/system.\"",
+   "quote": "\"All UltraStable deployments and systems shall have a knowledge graph (graph network) to automatically build and maintain a graph of connections for all data.",
    "probe": {
-    "file": "tests/foundation/test_tenantrepos.py",
-    "contains": "def test_every_tenant_deploys_a_public_front_end"
+    "file": "seed/worker/test/datagraph.test.js",
+    "contains": "a pass builds the graph from every table with no configuration"
    }
   },
   {
-   "id": "fullstack-agents-pi",
+   "id": "datagraph-agents-pi",
    "source": "agents/PROJECT-INSTRUCTIONS.md",
-   "quote": "\"All UltraStable systems shall automatically deploy themselves: repo, back-end, and public-facing Web UI front-end. Ultrastable is a full-stack autonomous development platform/system.\"",
+   "quote": "\"All UltraStable deployments and systems shall have a knowledge graph (graph network) to automatically build and maintain a graph of connections for all data.",
    "probe": {
-    "file": "tests/foundation/test_tenantrepos.py",
-    "contains": "def test_every_tenant_deploys_a_public_front_end"
+    "file": "seed/worker/test/datagraph.test.js",
+    "contains": "a pass builds the graph from every table with no configuration"
+   }
+  },
+  {
+   "id": "sync-both-ways-agents-agents",
+   "source": "agents/AGENTS.md",
+   "quote": "\"Every Ultrastable system shall always improve and update itself and the Ultrastable platform automatically.\"",
+   "probe": {
+    "file": "tests/foundation/test_improve.py",
+    "contains": "class SyncBothWays"
+   }
+  },
+  {
+   "id": "sync-both-ways-seed-agents-agents",
+   "source": "seed/agents/AGENTS.md",
+   "quote": "\"Every Ultrastable system shall always improve and update itself and the Ultrastable platform automatically.\"",
+   "probe": {
+    "file": "tests/foundation/test_improve.py",
+    "contains": "class SyncBothWays"
+   }
+  },
+  {
+   "id": "sync-both-ways-agents-project-instructions",
+   "source": "agents/PROJECT-INSTRUCTIONS.md",
+   "quote": "\"Every Ultrastable system shall always improve and update itself and the Ultrastable platform automatically.\"",
+   "probe": {
+    "file": "tests/foundation/test_improve.py",
+    "contains": "class SyncBothWays"
    }
   }
  ],

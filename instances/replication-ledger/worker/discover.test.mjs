@@ -41,6 +41,17 @@ function fakeFetch(calls = []) {
   };
 }
 
+test("OpenAlex calls carry the contact and retry a 429 once", async () => {
+  const { oa } = await import("./discover.js");
+  const seen = [];
+  let n = 0;
+  const f = async url => { seen.push(url); return ++n === 1 ? { ok: false, status: 429, headers: new Headers({ "retry-after": "1" }) } : { ok: true, status: 200, json: async () => ({ ok: 1 }) }; };
+  assert.deepEqual(await oa("works?x=1", f, async () => {}), { ok: 1 });
+  assert.equal(seen.length, 2);
+  assert.match(seen[0], /&mailto=pilot%40ultrastable\.io$/);
+  await assert.rejects(oa("works", async () => ({ ok: false, status: 429, headers: new Headers() }), async () => {}), /openalex 429/);
+});
+
 test("the readers: kind, verbatim quote, lexical outcome", () => {
   assert.equal(kindOf("A Many Labs replication"), "multisite");
   assert.equal(kindOf("A meta-analysis of trials"), "meta-analysis");

@@ -278,6 +278,22 @@
       "column": "at",
       "keep_days": 30,
       "reason": "CF-ALERTS-1: one row per Cloudflare alert; settling reads the last day per type, so 30 days is ample"
+    },
+    "kg_nodes": {
+      "keep": "state",
+      "reason": "DATAGRAPH-1: one row per record of the system's own data; bi-temporal (valid_to closes a row that left the data), bounded by max_rows_total per pass"
+    },
+    "kg_edges": {
+      "keep": "state",
+      "reason": "DATAGRAPH-1: one row per connection between records, bounded by the nodes; proposed leads are settled kept or rejected within 14 days"
+    },
+    "kg_insights": {
+      "keep": "state",
+      "reason": "DATAGRAPH-1: current insights only; each pass rewrites them and deletes the ones that no longer fire"
+    },
+    "kg_runs": {
+      "keep": "managed",
+      "reason": "DATAGRAPH-1: one row per graph pass, pruned to 400 days by seed/worker/src/datagraph.js"
     }
   }
 }

@@ -1,0 +1,12 @@
+{
+  "id": "Q-LAUNCH-2",
+  "title": "Q-LAUNCH-2: The page a visitor sees is served from their app's repository",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** grep:site/graduate.js::served_from\n**Status:** closed\n\nA visitor's app is served from the site worker's store at /s/<id>, rebuilt by a model on each change. Its repository holds the seed and IDEA.md but not that page, so work done in the repository does not reach what the visitor sees. Commit the built page into the repository on every build (launch-apps pass), deploy the app's front end from the repository, and keep /s/<id> as a redirect once the repository's deploy is live. Paths: site/worker.js (build, siteRoutes), site/graduate.js, deploy/launch-apps.mjs.\n\nsize: M\n\n**Closing probe:** GET /s/<id>/launch reports served_from: repository for a launched app, and the story in site/launchpath.test.mjs passes\n\n**Evidence:** the built page is committed to app/index.html and a change merged there is published to the site (site/graduate.js repoOp); /s/<id>/launch reports served_from. Story in site/launchpath.test.mjs.\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "growth"
+  ],
+  "milestone": "Now",
+  "workstream": "Executor queue"
+}
