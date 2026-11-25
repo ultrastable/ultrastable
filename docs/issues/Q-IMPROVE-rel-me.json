@@ -1,7 +1,7 @@
 {
   "id": "Q-IMPROVE-rel-me",
   "title": "Q-IMPROVE-rel-me: Add rel=\"me\" links to the owned social accounts so profiles verify the site",
-  "body": "**Owner:** marketing-manager\n**Trigger:** improve --run\n**Done check:** grep:site/worker.js::rel=\"me\"\n**Prediction:** social_referrals_7d > 0 within 168 h\n**Status:** open\n\nKind: reach. Baseline social_referrals_7d = 0. Settled 7 days after it closes: kept if social_referrals_7d moved the right way, else replaced.\n\n**Closing probe:** grep:site/worker.js::rel=\"me\"\n",
+  "body": "**Owner:** marketing-manager\n**Trigger:** improve --run\n**Done check:** grep:site/worker.js::rel=\"me\"\n**Prediction:** social_referrals_7d > 0 within 168 h\n**Status:** closed\n\nKind: reach. Baseline social_referrals_7d = 0. Settled 7 days after it closes: kept if social_referrals_7d moved the right way, else replaced.\n\n**Closing probe:** grep:site/worker.js::rel=\"me\"\n\n**Disposition:** shelved (executor-failed, 2026-11-25T19:03:30Z, DISPOSE-1)\n\n**Evidence:** the executor failed 3 consecutive runs on this item; last reason: RuntimeError: checks failed after 3 attempts: the reply was not valid JSON with a files list: RuntimeError: every code agent rung failed: workers-ai-glm: HTTPError: HTTP Error 401: Unauthorized | github-models-gpt: RuntimeError: non-JSON re. Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
   "labels": [
     "p1",
     "agent-ready",
