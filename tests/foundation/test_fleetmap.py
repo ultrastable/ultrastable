@@ -41,6 +41,10 @@ class World(unittest.TestCase):
         self._write("doctrine/seed-deploys.json", {"seeds": []})
         self._write("doctrine/full-stack.json", {"systems": {}})
         self._write("github/org-settings.json", {"repos": {"o/ultrastable": {}, "o/seed": {}}})
+        self._write("doctrine/fleet-contract.json", {"module": "vendor/k.js", "systems": {}})
+        self._write("doctrine/topology.json", {"workers": []})
+        for r in self.map["repos"].values():
+            r["live"] = "https://x.example" if r["deploys"] else None
         self.save()
         shutil.copytree(self.core / "seed", self.tmp / "seed")
         (self.tmp / "app/v").mkdir(parents=True)
@@ -220,6 +224,55 @@ class KernelSyncWithoutALock(unittest.TestCase):
         self.assertEqual((inst / "agents/AGENTS.md").read_text(), "v2\n")
         self.assertEqual((inst / "worker/x.js").read_text(), "edited here\n")
         self.assertTrue((inst / upstream.LOCK).exists())
+
+
+class Identity(unittest.TestCase):
+    """LIVE-LINKS-1: a seeded system's README, IDEA.md and instance data are its own; no sync or fill may replace them with the template's."""
+
+    def test_the_fill_renders_the_systems_own_readme_and_is_idempotent(self):
+        from foundation import livelinks
+        seed = (REPO / "seed/README.md").read_text(encoding="utf-8")
+        self.assertIn(fm.example_block(REPO), seed)  # the template names a running example, generated from the map
+        out = fm.system_readme(seed, "second-tenant", REPO)
+        self.assertTrue(out.startswith("# second-tenant\n"))
+        self.assertTrue(livelinks.has(out, livelinks.block("second-tenant", REPO)))
+        self.assertNotIn("example:start", out)
+        self.assertNotIn("# ultrastable/seed", out)
+        self.assertEqual(fm.system_readme(out, "second-tenant", REPO), out)
+
+    def test_the_example_block_comes_from_the_map_and_is_replaced_in_place(self):
+        b = fm.example_block(REPO)
+        m = fm.load(REPO)
+        self.assertIn(m["repos"]["ultrastable/second-tenant"]["live"], b)
+        self.assertIn("https://ultrastable.io/directory", b)
+        once = fm.place_example("# t\n\nbody\n", b)
+        self.assertEqual(fm.place_example(once.replace("running at", "was at"), b), once)
+
+    def test_the_kernel_sync_never_touches_identity_files(self):
+        tmp = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, tmp, ignore_errors=True)
+        inst = tmp / "inst"
+        shutil.copytree(REPO / "seed", inst, ignore=shutil.ignore_patterns("__pycache__", "node_modules"))
+        mine = {"README.md": "# mine\n\n<!-- live:start x -->\nhere\n<!-- live:end -->\n", "IDEA.md": "my idea\n", "instance.json": "{\"name\": \"mine\"}\n"}
+        for f, t in mine.items():
+            (inst / f).write_text(t)
+        upstream.sync(REPO, inst, apply=True, force_adopt=True)
+        for f, t in mine.items():
+            self.assertEqual((inst / f).read_text(), t, f)
+        for f in fm.load(REPO)["identity"]["files"]:
+            self.assertIn(f, upstream.OWNED)
+
+    def test_every_row_says_where_it_runs_and_a_wrong_address_fails(self):
+        m = fm.load(REPO)
+        self.assertTrue(all("live" in r for r in m["repos"].values()))
+        self.assertEqual(m["repos"]["ultrastable/unlearn"]["live"], "https://unlearn.ultrastable.org")
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            for rel in ("doctrine", "github", "seed", "agents", "instances", ".github/workflows", "foundation"):
+                shutil.copytree(REPO / rel, root / rel, ignore=shutil.ignore_patterns("__pycache__", "node_modules"))
+            m["repos"]["ultrastable/unlearn"]["live"] = "https://elsewhere.example"
+            (root / fm.MAP).write_text(json.dumps(m))
+            self.assertTrue(any("ultrastable/unlearn: live is https://elsewhere.example" in e for e in fm.check(root)))
 
 
 class RealMap(unittest.TestCase):

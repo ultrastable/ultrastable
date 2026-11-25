@@ -1,5 +1,5 @@
 {
- "_doc": "FLEET-MAP-1 (Rowan, 2026-11-25: \"what really needs to be in the ultra-stable template repo as opposed to these other repos that you created ... it's starting to look like a mess ... create your own instructions and fail-safe ways to make sure it all works together every single time it's deployed for every tenant, any code agent, everything.\"). One row per repository of the org: what it is for, its layer, what it is copied from (source path, the workflow that copies it, direction), which Workers deploy from it, whether it runs Actions, its visibility and the instruction file an agent reads there. Read by foundation/fleetmap.py: --check (in checks) fails when a repository named in doctrine/tenant-repos.json, doctrine/full-stack.json (seeds of doctrine/seed-deploys.json), github/org-settings.json or session_repos below has no row, when a row is in none of them, and when a synced_from names a path or workflow that does not exist; --drift compares every mirror with its source (a clone beside this checkout, or the public GitHub tree) and reports differ, missing, extra or unmeasured, never ok without a reading; --drift --apply files Q-FLEETMAP-<repo> per mirror that is not equal and closes it when the same reading passes. Ultrastable is the foundation for any autonomous system.",
+ "_doc": "FLEET-MAP-1 (Rowan, 2026-11-25: \"what really needs to be in the ultra-stable template repo as opposed to these other repos that you created ... it's starting to look like a mess ... create your own instructions and fail-safe ways to make sure it all works together every single time it's deployed for every tenant, any code agent, everything.\"). One row per repository of the org: what it is for, its layer, what it is copied from (source path, the workflow that copies it, direction), which Workers deploy from it, whether it runs Actions, where it runs (live, equal to what fleetcontract reads from the registries), its visibility and the instruction file an agent reads there. Read by foundation/fleetmap.py: --check (in checks) fails when a repository named in doctrine/tenant-repos.json, doctrine/full-stack.json (seeds of doctrine/seed-deploys.json), github/org-settings.json or session_repos below has no row, when a row is in none of them, and when a synced_from names a path or workflow that does not exist; --drift compares every mirror with its source (a clone beside this checkout, or the public GitHub tree) and reports differ, missing, extra or unmeasured, never ok without a reading; --drift --apply files Q-FLEETMAP-<repo> per mirror that is not equal and closes it when the same reading passes. Ultrastable is the foundation for any autonomous system.",
  "org": "ultrastable",
  "layers": {
   "platform": "the one repository where code and rules are written; everything else is copied from it or vendors from it",
@@ -81,6 +81,7 @@
    "purpose": "The platform: all code, rules, doctrine, the website, the dashboard and the seed/ kernel are written here and nowhere else.",
    "layer": "platform",
    "state": "live",
+   "live": "https://ultrastable.io",
    "synced_from": [],
    "deploys": [
     "ultrastable-tick",
@@ -107,6 +108,7 @@
    "purpose": "The template a visitor's app repository is created from: a published copy of the platform's seed/ folder and nothing else.",
    "layer": "template",
    "state": "live",
+   "live": null,
    "synced_from": [
     {
      "kind": "tree",
@@ -130,12 +132,14 @@
      "CLAUDE.md",
      "AGENTS.md"
     ]
-   }
+   },
+   "example": "ultrastable/second-tenant"
   },
   "ultrastable/second-tenant": {
    "purpose": "The first system started from the kernel with no code agent: proof that seed/ alone boots, deploys and runs a system.",
    "layer": "seeded-system",
    "state": "live",
+   "live": "https://ultrastable-seed-second-tenant.ultrastable.workers.dev",
    "synced_from": [
     {
      "kind": "kernel",
@@ -174,6 +178,7 @@
    "purpose": "The company's own admin, legal and business papers, backups and sealed audit ledgers; no code deploys from it.",
    "layer": "admin",
    "state": "live",
+   "live": null,
    "synced_from": [],
    "deploys": [],
    "actions": false,
@@ -189,6 +194,7 @@
    "purpose": "The organization's public profile page and community health defaults.",
    "layer": "org-profile",
    "state": "live",
+   "live": null,
    "synced_from": [],
    "deploys": [],
    "actions": true,
@@ -207,6 +213,7 @@
    "purpose": "Tenant app Practical Solutions (ultrastable.org): evidence-based solutions to global problems.",
    "layer": "tenant",
    "state": "live",
+   "live": "https://ultrastable.org",
    "synced_from": [
     {
      "kind": "vendor",
@@ -235,6 +242,7 @@
    "purpose": "Tenant app Unlearn: popular beliefs set against the evidence.",
    "layer": "tenant",
    "state": "live",
+   "live": "https://unlearn.ultrastable.org",
    "synced_from": [
     {
      "kind": "vendor",
@@ -273,6 +281,7 @@
    "purpose": "Tenant app What Works: interventions and what the evidence says they do.",
    "layer": "tenant",
    "state": "live",
+   "live": "https://what-works.ultrastable.org",
    "synced_from": [
     {
      "kind": "vendor",
@@ -310,6 +319,7 @@
    "purpose": "Tenant app Replication Ledger: which published findings replicated, across fields.",
    "layer": "tenant",
    "state": "live",
+   "live": "https://replication-ledger.ultrastable.org",
    "synced_from": [
     {
      "kind": "vendor",
@@ -347,6 +357,7 @@
    "purpose": "Planned tenant Base Rates: its repository holds the manifest until its first code.",
    "layer": "tenant",
    "state": "planned",
+   "live": null,
    "synced_from": [
     {
      "kind": "tree",
@@ -380,6 +391,7 @@
    "purpose": "Planned tenant Did It Work: its repository holds the manifest until its first code.",
    "layer": "tenant",
    "state": "planned",
+   "live": null,
    "synced_from": [
     {
      "kind": "tree",
@@ -413,6 +425,7 @@
    "purpose": "Planned tenant Open Questions: its repository holds the manifest until its first code.",
    "layer": "tenant",
    "state": "planned",
+   "live": null,
    "synced_from": [
     {
      "kind": "tree",
@@ -446,6 +459,7 @@
    "purpose": "Retired: the core Worker code moved into the platform under workers/.",
    "layer": "platform",
    "state": "retired",
+   "live": null,
    "synced_from": [],
    "deploys": [],
    "actions": false,
@@ -465,6 +479,7 @@
    "purpose": "Retired: the specifications moved into the platform (specs/, SCOPE.md, licensing/).",
    "layer": "platform",
    "state": "retired",
+   "live": null,
    "synced_from": [],
    "deploys": [],
    "actions": false,
@@ -484,6 +499,7 @@
    "purpose": "Retired: the licence text moved into the platform (LICENSE, licensing/).",
    "layer": "platform",
    "state": "retired",
+   "live": null,
    "synced_from": [],
    "deploys": [],
    "actions": false,
@@ -503,6 +519,7 @@
    "purpose": "Retired: the eight generated apps that shared one Worker; replaced by one repository per tenant.",
    "layer": "tenant",
    "state": "retired",
+   "live": null,
    "synced_from": [],
    "deploys": [],
    "actions": false,
@@ -518,5 +535,14 @@
     "evidence": "doctrine/tenant-repos.json state retired"
    }
   }
+ },
+ "identity": {
+  "_doc": "LIVE-LINKS-1: what a seeded system owns and no sync may overwrite. The kernel sync (foundation/upstream.py OWNED) leaves these alone; the step that fills a new repository from seed/ renders README.md for the system (its own title and Live block) instead of copying the template's.",
+  "files": [
+   "README.md",
+   "IDEA.md",
+   "instance.json",
+   "docs/PROJECT-MEMORY.md"
+  ]
  }
 }
