@@ -4574,6 +4574,15 @@
   },
   "modules": [
     {
+      "id": "constitution-prose",
+      "surface": "seed/doctrine/CONSTITUTION.md",
+      "header": "scripts/constitution.py --render",
+      "generator": "seed/scripts/constitution.py",
+      "source": ["seed/doctrine/constitution.json"],
+      "check": ["python3", "-m", "foundation", "constitution", "--check"],
+      "probe": ["file:tests/foundation/test_constitution.py"]
+    },
+    {
       "id": "claims-data",
       "surface": "site/claims-data.js",
       "header": "foundation claims --apply",
