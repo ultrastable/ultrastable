@@ -4103,6 +4103,42 @@
    ],
    "area": "managers",
    "server_owner": "github-actions"
+  },
+  {
+   "id": "what-works-beat",
+   "kind": "tick",
+   "summary": "What Works tenant loop: each beat takes the programmes checked longest ago, resolves their cited trials to DOIs (Crossref, title and year must match), searches OpenAlex and Europe PMC for trials and reviews published since, reads new ones in only when design and direction are each backed by a verbatim quote from the abstract, recomputes every grade with worker/grade.js and logs every change of verdict or strength with the study that moved it; reader guesses measure surprise.",
+   "trigger": "cron 17 * * * * on ultrastable-what-works; a page visit runs the beat when the cron has been silent for 2 hours",
+   "owner": "product-manager",
+   "closes_by": "system",
+   "sla": "2h",
+   "done": "GET /health on ultrastable-what-works answers clock ticking and /api/freshness answers 200",
+   "paths": [
+    {
+     "id": "cron",
+     "how": "instances/what-works/worker/index.js scheduled(), on the Cloudflare cron",
+     "class": "free"
+    },
+    {
+     "id": "visit",
+     "how": "catchUp() in instances/what-works/worker/index.js runs the beat on the next visit when the cron is silent",
+     "class": "degraded"
+    }
+   ],
+   "closing_probe": "grep:doctrine/topology.json::ultrastable-what-works",
+   "writeback": [
+    "instances/what-works/runway.json"
+   ],
+   "system_path": [
+    "doctrine/tenant-repos.json",
+    "doctrine/topology.json",
+    "instances/what-works/lifecycle.json"
+   ],
+   "area": "tenants",
+   "workflows": [
+    "deploy-ultrastable.yml"
+   ],
+   "server_owner": "ultrastable-what-works"
   }
  ],
  "launch_registry": "instances/ultrastable/loops.json"

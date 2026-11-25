@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-25-deploy-what-works-worker-d1-and-route-in-the-topology",
+  "kind": "decision",
+  "date": "2026-11-25",
+  "title": "Deploy What Works: Worker, D1 and route in the topology",
+  "body": "Rowan approved the deploy (2026-11-25). D1 ultrastable-what-works (c915e72c) created in the ultrastable account; Worker ultrastable-what-works builds from instances/what-works/worker while the tenant is moving to ultrastable/what-works; cron 17 * * * *; route what-works.ultrastable.org; clock what-works-beat with a /pulse/watch restart route; loop what-works-beat owned by the Worker.",
+  "probe": "grep:doctrine/topology.json::ultrastable-what-works"
+ },
+ "kind": "decision",
+ "title": "Deploy What Works: Worker, D1 and route in the topology",
+ "session": "session_0156nqDvibwHjBezJBzy8i3x"
+}

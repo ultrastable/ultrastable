@@ -130,6 +130,12 @@ export default {
     "id": "intent-yield",
     "source": "workflow",
     "what": "the daily intent yield: every owner directive's own probe, restatements charged to the original, /yield"
+   },
+   {
+    "expected_interval_s": 3600,
+    "id": "what-works-beat",
+    "source": "d1",
+    "what": "What Works tenant beat (cron 17 * * * * on ultrastable-what-works; a visit catches up a silent cron): check a batch of programmes against Crossref, OpenAlex and Europe PMC, read new trials in, re-grade and log every move"
    }
   ],
   "watchdog_escalation": [
@@ -743,9 +749,11 @@ export default {
   "ultrastable-tenants",
   "ultrastable-tick",
   "ultrastable-unlearn",
+  "ultrastable-what-works",
   "unknowns",
   "unlearn-beat",
   "watchdog",
+  "what-works-beat",
   "workers-tests",
   "write-back",
   "yearfail"
@@ -2097,6 +2105,19 @@ export default {
     "workflows": [
      "seed-launch"
     ]
+   },
+   {
+    "closing_probe": "grep:doctrine/topology.json::ultrastable-what-works",
+    "id": "what-works-beat",
+    "kind": "tick",
+    "owner": "product-manager",
+    "server_owner": "ultrastable-what-works",
+    "sla": "2h",
+    "summary": "What Works tenant loop: each beat takes the programmes checked longest ago, resolves their cited trials to DOIs (Crossref, title and year must match), searches OpenAlex and Europe PMC for trials and reviews published since, reads new ones in only when design and direction are each backed by a verbatim quote from the abstract, recomputes every grade with worker/grade.js and logs every change of verdict or strength with the study that moved it; reader guesses measure surprise.",
+    "trigger": "cron 17 * * * * on ultrastable-what-works; a page visit runs the beat when the cron has been silent for 2 hours",
+    "workflows": [
+     "deploy-ultrastable"
+    ]
    }
   ],
   "workers": [
@@ -2122,6 +2143,10 @@ export default {
    },
    {
     "id": "ultrastable-unlearn",
+    "state": "live"
+   },
+   {
+    "id": "ultrastable-what-works",
     "state": "live"
    }
   ],
@@ -2209,7 +2234,8 @@ export default {
     "id": "deploy-ultrastable",
     "loops": [
      "deploy-workers",
-     "unlearn-beat"
+     "unlearn-beat",
+     "what-works-beat"
     ]
    },
    {
