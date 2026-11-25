@@ -63,3 +63,5 @@
 {"at": "2026-11-21T14:55:01Z", "channel": "indexnow", "event": "promote", "slug": "loop-ledger", "status": 202}
 {"at": "2026-11-21T14:55:01Z", "channel": "indexnow", "event": "promote", "slug": "numbers-board", "status": 200}
 {"at": "2026-11-21T14:55:01Z", "channel": "indexnow", "event": "promote", "slug": "portfolio-board", "status": 200}
+{"at": "2026-11-25T17:35:06Z", "error": "ValueError: [{\"message\": \"not authorized for that account\", \"path\": [\"viewer\", \"accounts\", \"0\", \"d1\"], \"extensions\": {\"code\": \"authz\", \"timestamp\": \"2026-11-25T17", "event": "headroom-failed"}
+{"at": "2026-11-25T17:35:06Z", "error": "HTTP Error 401: Unauthorized", "event": "tick-samples-failed"}

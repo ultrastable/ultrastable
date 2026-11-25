@@ -53,6 +53,16 @@ export default {
    "archetype": "status-board",
    "cost_share": 0.008,
    "fits": false,
+   "id": "board-agentwork",
+   "implemented": true,
+   "kind": "spinoff",
+   "name": "Agentwork Board",
+   "score": 8.33
+  },
+  {
+   "archetype": "status-board",
+   "cost_share": 0.008,
+   "fits": false,
    "id": "board-branchsweep-ledger",
    "implemented": true,
    "kind": "spinoff",
@@ -77,6 +87,16 @@ export default {
    "implemented": true,
    "kind": "spinoff",
    "name": "Ciwatch Board",
+   "score": 8.33
+  },
+  {
+   "archetype": "status-board",
+   "cost_share": 0.008,
+   "fits": false,
+   "id": "board-criticality",
+   "implemented": true,
+   "kind": "spinoff",
+   "name": "Criticality Board",
    "score": 8.33
   },
   {
@@ -143,41 +163,21 @@ export default {
    "archetype": "status-board",
    "cost_share": 0.008,
    "fits": false,
-   "id": "board-ultrastability",
+   "id": "board-saydo",
    "implemented": true,
    "kind": "spinoff",
-   "name": "Ultrastability Board",
+   "name": "Saydo Board",
    "score": 8.33
   },
   {
-   "archetype": null,
-   "cost_share": 0.0,
-   "fits": true,
-   "id": "base-rates",
-   "implemented": false,
-   "kind": "seed",
-   "name": "Base Rates",
-   "score": 7.5
-  },
-  {
-   "archetype": null,
-   "cost_share": 0.0,
-   "fits": true,
-   "id": "did-it-work",
-   "implemented": false,
-   "kind": "seed",
-   "name": "Did It Work?",
-   "score": 7.5
-  },
-  {
-   "archetype": null,
-   "cost_share": 0.0,
-   "fits": true,
-   "id": "open-questions",
-   "implemented": false,
-   "kind": "seed",
-   "name": "Open Questions",
-   "score": 6.0
+   "archetype": "status-board",
+   "cost_share": 0.008,
+   "fits": false,
+   "id": "board-trajectory",
+   "implemented": true,
+   "kind": "spinoff",
+   "name": "Trajectory Board",
+   "score": 8.33
   }
  ],
  "scope": [
