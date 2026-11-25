@@ -320,6 +320,33 @@
     "file": "seed/worker/test/datagraph.test.js",
     "contains": "a pass builds the graph from every table with no configuration"
    }
+  },
+  {
+   "id": "sync-both-ways-agents-agents",
+   "source": "agents/AGENTS.md",
+   "quote": "\"Every Ultrastable system shall always improve and update itself and the Ultrastable platform automatically.\"",
+   "probe": {
+    "file": "tests/foundation/test_improve.py",
+    "contains": "class SyncBothWays"
+   }
+  },
+  {
+   "id": "sync-both-ways-seed-agents-agents",
+   "source": "seed/agents/AGENTS.md",
+   "quote": "\"Every Ultrastable system shall always improve and update itself and the Ultrastable platform automatically.\"",
+   "probe": {
+    "file": "tests/foundation/test_improve.py",
+    "contains": "class SyncBothWays"
+   }
+  },
+  {
+   "id": "sync-both-ways-agents-project-instructions",
+   "source": "agents/PROJECT-INSTRUCTIONS.md",
+   "quote": "\"Every Ultrastable system shall always improve and update itself and the Ultrastable platform automatically.\"",
+   "probe": {
+    "file": "tests/foundation/test_improve.py",
+    "contains": "class SyncBothWays"
+   }
   }
  ],
  "baseline": [

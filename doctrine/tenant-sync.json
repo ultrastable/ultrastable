@@ -14,7 +14,7 @@
   },
   "practical-solutions": {
    "role": "tenant",
-   "clone": "qnfo/practical-solutions",
+   "clone": "ultrastable/practical-solutions",
    "pr_repo": "ultrastable/practical-solutions",
    "vendor_dir": "vendor/ultrastable"
   },
@@ -63,5 +63,7 @@
    "why": "archived; its content lives in ultrastable/ultrastable"
   }
  },
- "future_tenant_rule": "A new system built on Ultrastable is a tenant: add it here and give it upstream.json; the bootstrap does both (seed/bootstrap)."
+ "future_tenant_rule": "A new system built on Ultrastable is a tenant: add it here and give it upstream.json; the bootstrap does both (seed/bootstrap).",
+ "drift_max_days": 2,
+ "upstream_min_30d": 1
 }
