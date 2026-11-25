@@ -2274,6 +2274,132 @@
         "absent:**/*.tf.json"
       ],
       "audited": "2026-11-25"
+    },
+    {
+      "id": "editorconfig",
+      "name": "EditorConfig",
+      "body": "editorconfig.org",
+      "status": "de-facto",
+      "tracked": "spec 0.17",
+      "why": "Every editor and coding agent writes line endings, charset and indentation the same way.",
+      "support": "supported",
+      "how": [
+        ".editorconfig",
+        "seed/.editorconfig"
+      ],
+      "acl": ".editorconfig",
+      "tests": [
+        {
+          "file": "tests/foundation/test_open_standards.py",
+          "name": "test_editorconfig_present"
+        }
+      ],
+      "sources": [
+        {
+          "title": "EditorConfig specification",
+          "url": "https://spec.editorconfig.org/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "spdx-sbom",
+      "name": "SPDX 2.3 SBOM from the dependency graph",
+      "body": "Linux Foundation (ISO/IEC 5962)",
+      "status": "stable",
+      "tracked": "SPDX-2.3 via GitHub dependency graph export",
+      "why": "GitHub's own view of the dependencies, read weekly against the licence policy in doctrine/dependency-licences.json; complements the CycloneDX SBOM generated from the registers.",
+      "support": "supported",
+      "how": [
+        ".github/workflows/supply-chain.yml",
+        "foundation/supplychain.py"
+      ],
+      "tests": [
+        {
+          "file": "tests/foundation/test_open_standards.py",
+          "name": "test_supply_chain_loop_files_and_closes"
+        }
+      ],
+      "sources": [
+        {
+          "title": "SPDX 2.3",
+          "url": "https://spdx.github.io/spdx-spec/v2.3/",
+          "published": null,
+          "accessed": "2026-11-25"
+        },
+        {
+          "title": "Export an SBOM from the dependency graph",
+          "url": "https://docs.github.com/en/rest/dependency-graph/sboms",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "json-feed",
+      "name": "JSON Feed 1.1 and RSS 2.0",
+      "body": "jsonfeed.org; RSS Advisory Board",
+      "status": "stable",
+      "tracked": "JSON Feed 1.1",
+      "why": "What a system ships is published as feeds any reader or aggregator consumes; the stickiness loop measures freshness from the same feed.",
+      "support": "supported",
+      "how": [
+        "workers/core/feed/index.js",
+        "workers/core/stickiness/index.js"
+      ],
+      "tests": [
+        {
+          "file": "workers/core/feed/feed.test.js",
+          "name": "feed renders escaped RSS and JSON Feed from described changes"
+        }
+      ],
+      "sources": [
+        {
+          "title": "JSON Feed 1.1",
+          "url": "https://www.jsonfeed.org/version/1.1/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "schema-org-kg",
+      "name": "Knowledge graph served as JSON-LD (schema.org)",
+      "body": "W3C / schema.org",
+      "status": "stable",
+      "tracked": "JSON-LD 1.1",
+      "why": "Every system's /api/graph readable by any linked-data tool, not only by our own pages.",
+      "support": "planned",
+      "tracked_by": "STD-7: executor item in docs/issues/STD-7.json",
+      "acl": "seed/worker/src/datagraph.js",
+      "sources": [
+        {
+          "title": "JSON-LD 1.1",
+          "url": "https://www.w3.org/TR/json-ld11/",
+          "published": "2020-07-16",
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "reusable-workflows",
+      "name": "Reusable GitHub Actions workflows shared by every tenant",
+      "body": "GitHub",
+      "status": "stable",
+      "tracked": "workflow_call",
+      "why": "Tenants call the platform's checks, deploy and supply-chain workflows instead of carrying copies that drift.",
+      "support": "planned",
+      "tracked_by": "STD-9: executor item in docs/issues/STD-9.json",
+      "acl": "seed/.github/workflows/bootstrap.yml",
+      "sources": [
+        {
+          "title": "Reusing workflows",
+          "url": "https://docs.github.com/en/actions/sharing-automations/reusing-workflows",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
     }
   ],
   "undecided_ceiling": 28

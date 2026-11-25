@@ -1,7 +1,7 @@
 {
- "at": "2026-11-25T22:01:07Z",
- "gaps": 8,
- "match_share": 0.984,
+ "at": "2026-11-25T22:36:43Z",
+ "gaps": 6,
+ "match_share": 0.988,
  "sources": {
   "changes": [
    {
@@ -153,22 +153,17 @@
   ],
   "claims": [
    {
-    "detail": "site/worker.js: json:doctrine/ultrastability.json::patience_ticks==2 failed (doctrine/ultrastability.json: patience_ticks=3)",
-    "id": "how-ultrastable-second-order",
-    "ok": false
-   },
-   {
-    "drift": 1,
+    "drift": 0,
     "id": "claims-total",
     "ok": true,
-    "total": 404
+    "total": 405
    }
   ],
   "loops": [
    {
-    "detail": "0 of 93 second-order steps kept in 14 days",
+    "detail": "0 of 95 second-order steps kept in 14 days",
     "id": "second-loop-kept",
-    "judged": 93,
+    "judged": 95,
     "kept": 0,
     "ok": false
    }
@@ -469,12 +464,10 @@
    {
     "checks": 1,
     "external": [],
-    "failing": [
-     "python3 -m foundation claims --check: DRIFT how-ultrastable-second-order [claim] site/worker.js: json:doctrine/ultrastability.json::patience_ticks==2 failed (doctrine/ultrastability.json: patience_ticks=3); claims: 403 verified of 404; 1 "
-    ],
+    "failing": [],
     "id": "CLAIMS-1",
     "missing": [],
-    "ok": false,
+    "ok": true,
     "unmeasured": []
    },
    {
@@ -790,12 +783,11 @@
    {
     "checks": 2,
     "external": [],
-    "failing": [
-     "python3 -m foundation configschema --check: doctrine/admission.json: no schema at doctrine/schemas/admission.schema.json; run `python3 -m foundation configschema --gen`; seed/autonomy/system.json: no schema at seed/autonomy/schemas/system.schem"
-    ],
+    "failing": [],
     "id": "STANDARDS-1",
     "missing": [
-     "worker/linked.js"
+     "worker/linked.js",
+     "ops/supply-chain.json"
     ],
     "ok": false,
     "unmeasured": []
@@ -938,7 +930,7 @@
     "checks": 1,
     "external": [],
     "failing": [
-     "python3 -m foundation dispose --check: an open item is 80.4 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+     "python3 -m foundation dispose --check: an open item is 81.0 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
     ],
     "id": "DISPOSE-1",
     "missing": [],
@@ -1010,15 +1002,15 @@
    "total": 16
   },
   "claims": {
-   "gaps": 1,
-   "total": 404
+   "gaps": 0,
+   "total": 405
   },
   "loops": {
    "gaps": 1,
    "total": 1
   },
   "rules": {
-   "gaps": 4,
+   "gaps": 3,
    "total": 88
   },
   "year": {
@@ -1026,5 +1018,5 @@
    "total": 2
   }
  },
- "total": 511
+ "total": 512
 }

@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/seed/autonomy/static-content.schema.json",
+  "title": "static-content (seed/autonomy/static-content.json)",
+  "description": "Contract for seed/autonomy/static-content.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "max_unchanged_days": {
+      "type": "number"
+    },
+    "urls": {
+      "type": "array"
+    },
+    "exempt": {
+      "type": "array"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "exempt",
+    "max_unchanged_days",
+    "urls"
+  ]
+}

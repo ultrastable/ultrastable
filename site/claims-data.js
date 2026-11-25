@@ -121,9 +121,9 @@ export default {
    "surface": "site/worker.js"
   },
   {
-   "claim": "The slow loop reads the same variables every tick, and when one has been out of bounds for two ticks in a row it takes one discrete step on that variable's ladder, keeps the step only if the variable comes back, and otherwise undoes it and takes the next.",
+   "claim": "The slow loop reads the same variables every tick, and when one has stayed out of bounds for as many ticks in a row as its patience setting (patience_ticks, which the loop tunes itself) it takes one discrete step on that variable's ladder, keeps the step only if the variable comes back, and otherwise undoes it and takes the next.",
    "detail": "",
-   "how": "json:doctrine/ultrastability.json::patience_ticks==2 + grep:foundation/ultrastability.py::revert_to=pending + grep:foundation/ultrastability.py::return \"kept\"",
+   "how": "grep:doctrine/ultrastability.json::\"patience_ticks\" + grep:foundation/ultrastability.py::revert_to=pending + grep:foundation/ultrastability.py::return \"kept\"",
    "id": "how-ultrastable-second-order",
    "kind": "claim",
    "pass": true,
@@ -3406,7 +3406,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 74 Python and 547 Worker tests",
+   "claim": "seed-tests: 80 Python and 548 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3415,7 +3415,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 547 Worker tests",
+   "claim": "seed-worker-tests: 548 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3451,7 +3451,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 1074",
+   "claim": "live-deploys: 1084",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",
@@ -3485,6 +3485,15 @@ export default {
    "kind": "generated",
    "pass": true,
    "surface": "platform/README.md"
+  },
+  {
+   "claim": "module: seed/doctrine/CONSTITUTION.md is written by seed/scripts/constitution.py from seed/doctrine/constitution.json",
+   "detail": "",
+   "how": "header names the generator + file:seed/scripts/constitution.py + file:tests/foundation/test_constitution.py",
+   "id": "module-constitution-prose",
+   "kind": "module",
+   "pass": true,
+   "surface": "seed/doctrine/CONSTITUTION.md"
   },
   {
    "claim": "module: site/claims-data.js is written by foundation/claims.py from doctrine/claims.json",
@@ -3665,7 +3674,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 404,
-  "total": 404
+  "pass": 405,
+  "total": 405
  }
 };

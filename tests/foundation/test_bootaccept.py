@@ -54,6 +54,22 @@ class Probe(unittest.TestCase):
         g = fake({ba.DIRECTORY + "/directory.json": (200, {}, json.dumps({"external": []}))})
         self.assertEqual(ba.verdict(ba.probe(BASE, "o/x", g))["failed_layers"], ["discovery"])
 
+    def test_unlisted_registers_by_the_second_route_and_names_the_reason(self):
+        listed = {"v": False}
+        def g(u):
+            if u == ba.DIRECTORY + "/directory.json":
+                return 200, {}, json.dumps({"external": [{"url": BASE + "/"}] if listed["v"] else []})
+            return fake()(u)
+        posts = []
+        def refuse(u, body):
+            posts.append((u, body)); return 422, json.dumps({"ok": False, "error": "not_listed", "why": "no manifest (404)"})
+        layers = ba.probe(BASE, "o/x", g, refuse)
+        self.assertIn("no manifest (404)", layers["discovery"]["detail"])
+        self.assertEqual(posts, [(ba.DIRECTORY + "/api/directory/register", {"url": BASE})])
+        def accept_(u, body):
+            listed["v"] = True; return 202, json.dumps({"ok": True, "listed": True})
+        self.assertTrue(ba.probe(BASE, "o/x", g, accept_)["discovery"]["ok"])
+
     def test_unreachable_is_failure(self):
         self.assertEqual(len(ba.verdict(ba.probe(BASE, "o/x", lambda u: (0, {}, "URLError")))["failed_layers"]), len(ba.LAYERS))
 

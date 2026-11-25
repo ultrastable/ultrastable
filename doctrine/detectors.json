@@ -971,6 +971,22 @@
       "root_cause": "a public address that a standards row names as its proof (llms.txt, the OpenAPI description, security.txt, the feeds, robots and sitemap, the JSON-LD on the home page) stopped answering in the form the standard requires",
       "owner": "operations",
       "remedy": "Read the failing lines of python3 -m foundation standards --live: each names the row, the address and what was missing. Repair the route in the Worker that serves it and redeploy; the same reading closes the item."
+    },
+    {
+      "id": "constitution",
+      "failure_mode": "fm-constitution-drift",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "constitution",
+        "--check"
+      ],
+      "timeout": 120,
+      "root_cause": "a section of the constitution no longer matches the code it describes, or a standing rule has no detector and remediation in code",
+      "owner": "operations",
+      "remedy": "Run python3 -m foundation constitution --check; bind the rule to code (seed/doctrine/constitution.json) or fix the drifted code; regenerate with --render (CONSTITUTION-1)."
     }
   ]
 }

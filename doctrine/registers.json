@@ -733,6 +733,18 @@
       "status": "controlled",
       "cadence_ticks": 1,
       "probe": "grep:tests/foundation/test_schemas.py::def test_a_row_whose_probe_fails_is_named"
+    },
+    {
+      "id": "fm-constitution-drift",
+      "trigger": "the seed's statement of what the system is (tick steps, boot stages, rungs, criticality conditions, standing rules) stops matching the code, or a standing rule is added with no detector and remediation",
+      "symptom": "the owner has to supply by chat what the template should already say; a new system boots without knowing its own rules",
+      "blast_radius": "every seeded system and every tenant",
+      "detection": "python3 -m foundation constitution --check",
+      "root_cause": "rules were written as prose in agent instructions with no code binding them",
+      "remediation": "each rule in seed/doctrine/constitution.json names a detector and a remediation that exist; the seed boot stage constitute refuses drift; CI fails an unmapped rule",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:tests/foundation/test_constitution.py::def test_fresh_seed_boots_the_constitution"
     }
   ],
   "controls": [

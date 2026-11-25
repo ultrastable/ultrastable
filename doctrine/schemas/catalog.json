@@ -755,6 +755,14 @@
       "url": "runway.schema.json"
     },
     {
+      "name": "scorecard.json",
+      "description": "Contract for doctrine/scorecard.json",
+      "fileMatch": [
+        "doctrine/scorecard.json"
+      ],
+      "url": "scorecard.schema.json"
+    },
+    {
       "name": "scout.json",
       "description": "Contract for doctrine/scout.json",
       "fileMatch": [

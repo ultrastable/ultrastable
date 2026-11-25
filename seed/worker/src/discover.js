@@ -71,16 +71,28 @@ export function discoverRoute(url, env, config) {
 export const seedStatements = (env, config, url) => statementsHtml(seedSpec(env, config, url), '/');
 export const seedJsonLd = (env, config, url) => jsonLd(seedSpec(env, config, url));  // schema.org JSON-LD from the same spec as the statements
 
-// Once a day (the 03:00 UTC tick window), and never when opted out or without a public URL.
-export async function heartbeat(env = {}, config = {}, { fetchFn = fetch, now = new Date() } = {}) {
+// Once a day (the 03:00 UTC tick window), and never when opted out or without a public URL. BOOT-4: a newborn system also
+// registers on its first ticks, without waiting for 03:00, until the directory has answered "listed" once; those attempts are
+// spaced an hour apart and every answer (status and the directory's reason) is kept in directory_registration, so a refusal is read.
+const REG_TABLE = 'CREATE TABLE IF NOT EXISTS directory_registration (id INTEGER PRIMARY KEY CHECK (id = 1), at TEXT NOT NULL, status INTEGER, listed INTEGER NOT NULL DEFAULT 0, why TEXT)';
+export async function heartbeat(env = {}, config = {}, { fetchFn = fetch, now = new Date(), db = env.DB } = {}) {
   const m = manifest(env, config);
   if (!m.discoverable) return { sent: false, why: 'opted out' };
   if (!m.url) return { sent: false, why: 'no public URL' };
-  if (now.getUTCHours() !== 3 || now.getUTCMinutes() >= 10) return { sent: false, why: 'not the daily window' };
+  let last = null, stateError = null;  // a state error is returned to the caller, which logs it; the send still goes ahead
+  if (db) { try { await db.prepare(REG_TABLE).run(); last = await db.prepare('SELECT at, listed FROM directory_registration WHERE id = 1').first(); } catch (e) { stateError = 'read: ' + clean(e && e.message, 120); } }
+  const daily = now.getUTCHours() === 3 && now.getUTCMinutes() < 10;
+  const birth = Boolean(db) && !(last && last.listed) && (!last || now - Date.parse(last.at) >= 3600e3);
+  if (!daily && !birth) return { sent: false, why: 'not the daily window' };
+  let status = 0, why = null;
   try {
     const r = await fetchFn(DIRECTORY + '/api/directory/register', { method: 'POST', headers: { 'content-type': 'application/json', 'user-agent': 'ultrastable-heartbeat/1' }, body: JSON.stringify({ url: m.url }) });
-    return { sent: true, status: r.status };
+    status = r.status;
+    try { const j = r.json ? await r.json() : null; why = j && (j.why || j.error) ? clean(j.why || j.error, 160) : null; } catch { why = null; }
   } catch (e) {
-    return { sent: false, why: 'directory unreachable: ' + clean(e && e.message, 120) };
+    why = 'directory unreachable: ' + clean(e && e.message, 120);
   }
+  const listed = status >= 200 && status < 300;
+  if (db) { try { await db.prepare('INSERT INTO directory_registration (id, at, status, listed, why) VALUES (1, ?1, ?2, ?3, ?4) ON CONFLICT(id) DO UPDATE SET at = ?1, status = ?2, listed = MAX(listed, ?3), why = ?4').bind(now.toISOString(), status, listed ? 1 : 0, why).run(); } catch (e) { stateError = 'write: ' + clean(e && e.message, 120); } }
+  return status ? { sent: true, status, listed, why, birth: !daily, stateError } : { sent: false, why, stateError };
 }

@@ -481,6 +481,14 @@
     "41 6 * * *"
    ]
   },
+  "supply-chain.yml": {
+   "events": [
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "41 5 * * 3"
+   ]
+  },
   "temporal.yml": {
    "events": [
     "workflow_dispatch"

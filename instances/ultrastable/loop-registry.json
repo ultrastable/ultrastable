@@ -4287,6 +4287,41 @@
    ],
    "area": "managers",
    "server_owner": "ultrastable-tick"
+  },
+  {
+   "id": "supply-chain",
+   "kind": "governance",
+   "summary": "STANDARDS-1: OpenSSF Scorecard and the SPDX SBOM from GitHub's dependency graph are read weekly; each check under the floor and each package outside the licence policy becomes a Q-STD-SC-* item closed by the next reading. The reading itself is written to ops/supply-chain.json by the first run.",
+   "trigger": "weekly (supply-chain.yml) and on demand",
+   "owner": "staff",
+   "closes_by": "system",
+   "sla": "7d",
+   "done": "python3 -m foundation supplychain --check reports ok",
+   "paths": [
+    {
+     "id": "ci",
+     "how": "supply-chain.yml: scorecard-action, dependency-graph SBOM, python3 -m foundation supplychain --ingest scorecard.json sbom.json --apply",
+     "class": "free"
+    },
+    {
+     "id": "session",
+     "how": "python3 -m foundation supplychain --ingest SC SBOM --apply from a cloud-hosted agent session with the two documents",
+     "class": "session"
+    }
+   ],
+   "closing_probe": "grep:foundation/supplychain.py::def probe",
+   "writeback": [
+    "docs/issues"
+   ],
+   "system_path": [
+    "doctrine/scorecard.json",
+    "foundation/supplychain.py"
+   ],
+   "area": "governance",
+   "workflows": [
+    "supply-chain.yml"
+   ],
+   "server_owner": "github-actions"
   }
  ],
  "launch_registry": "instances/ultrastable/loops.json"
