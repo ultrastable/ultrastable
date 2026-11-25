@@ -282,6 +282,102 @@ export default {
     "status": "stable",
     "support": "supported",
     "tracked_by": null
+   },
+   {
+    "id": "schemastore-catalog",
+    "name": "SchemaStore catalog + JSON Schema for doctrine",
+    "body": "JSON Schema organisation",
+    "status": "de-facto",
+    "support": "supported",
+    "tracked_by": null
+   },
+   {
+    "id": "cloudevents",
+    "name": "CloudEvents 1.0",
+    "body": "cncf",
+    "status": "stable",
+    "support": "planned",
+    "tracked_by": "STANDARDS-FIRST-1"
+   },
+   {
+    "id": "openslo",
+    "name": "OpenSLO",
+    "body": "openslo",
+    "status": "stable",
+    "support": "supported",
+    "tracked_by": "STANDARDS-FIRST-1"
+   },
+   {
+    "id": "opentofu",
+    "name": "OpenTofu",
+    "body": "linux-foundation",
+    "status": "stable",
+    "support": "planned",
+    "tracked_by": "STANDARDS-FIRST-1"
+   },
+   {
+    "id": "openfeature",
+    "name": "OpenFeature",
+    "body": "cncf",
+    "status": "stable",
+    "support": "planned",
+    "tracked_by": "STANDARDS-FIRST-1"
+   },
+   {
+    "id": "slsa-sbom",
+    "name": "SLSA provenance and SPDX SBOM",
+    "body": "openssf",
+    "status": "stable",
+    "support": "planned",
+    "tracked_by": "STANDARDS-FIRST-1"
+   },
+   {
+    "id": "conventional-commits",
+    "name": "Conventional Commits + SemVer",
+    "body": "community",
+    "status": "stable",
+    "support": "planned",
+    "tracked_by": "STANDARDS-FIRST-1"
+   },
+   {
+    "id": "asyncapi",
+    "name": "AsyncAPI 3",
+    "body": "linux-foundation",
+    "status": "stable",
+    "support": "planned",
+    "tracked_by": "STANDARDS-FIRST-1"
+   },
+   {
+    "id": "opa-rego",
+    "name": "Open Policy Agent (Rego)",
+    "body": "cncf",
+    "status": "stable",
+    "support": "planned",
+    "tracked_by": "STANDARDS-FIRST-1"
+   },
+   {
+    "id": "jsonld-prov",
+    "name": "schema.org JSON-LD + W3C PROV-O",
+    "body": "w3c",
+    "status": "stable",
+    "support": "planned",
+    "tracked_by": "STANDARDS-FIRST-1"
+   },
+   {
+    "id": "renovate",
+    "name": "Renovate",
+    "body": "community",
+    "status": "stable",
+    "support": "planned",
+    "tracked_by": "STANDARDS-FIRST-1"
+   },
+   {
+    "id": "backstage-catalog",
+    "name": "Backstage catalog-info.yaml",
+    "body": "cncf",
+    "status": "de-facto",
+    "support": "partial",
+    "tracked_by": null
    }
   ]
  },
