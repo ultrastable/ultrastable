@@ -8,7 +8,7 @@ For every repository in the org:
   2. delete every branch whose pull requests are all merged or closed (recoverable from refs/pull/<n>/head);
   3. delete every branch with no pull request once its tip is older than --window-hours, after moving the tip to
      refs/archive/<name> so no unmerged commit is lost.
-main, the default branch and any branch with an open pull request are never touched.
+main, the default branch, *-evidence ledger branches and any branch with an open pull request are never touched.
 --check exits 1 when a repo has the setting off or holds a stale branch (the probe). --apply does the work.
 """
 import argparse, datetime as dt, json, os, subprocess, sys, urllib.parse
@@ -41,7 +41,12 @@ def run(apply, window_h):
     stale, errors, done = 0, 0, []
     for name in repos():
         full = f"{ORG}/{name}"
-        meta = gh(f"repos/{full}")
+        try:
+            meta = gh(f"repos/{full}")
+        except RuntimeError as e:  # a repo this token cannot read is unmeasured, never clean; the run goes on to the next repo
+            errors += 1
+            print(f"::warning::{full}: unreadable with this token: {e}")
+            continue
         default = meta["default_branch"]
         if not meta.get("delete_branch_on_merge"):
             stale += 1
@@ -56,7 +61,7 @@ def run(apply, window_h):
                 print(f"{full}: delete_branch_on_merge is off")
         for b in gh(f"repos/{full}/branches?per_page=100", paginate=True):
             br = b["name"]
-            if br in ("main", default):
+            if br in ("main", default) or br.endswith("-evidence"):  # loop-evidence, ciwatch-evidence ...: ledgers loops append to
                 continue
             prs = gh(f"repos/{full}/pulls?state=all&per_page=100&head={ORG}:{urllib.parse.quote(br)}")
             if any(p["state"] == "open" for p in prs):
