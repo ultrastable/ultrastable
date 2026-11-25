@@ -15,10 +15,10 @@ export function hiddenByHealthOnly(env, method, pathname) {
 // FULLSTACK-1: every system has a public front end. A health-only system serves this page at /: its name, whether its clock is turning and the
 // stage it read for itself. No backlog, no screens, no owner routes. Every value comes from the same rows /health reads.
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-export function publicPage({ name, last, ignition, statements = '' }) {
+export function publicPage({ name, last, ignition, statements = '', head = '' }) {
   const done = Boolean(last && last.steps_completed === last.steps_total), when = last && (last.finished_at || last.started_at);
   const title = esc(String(name || 'system').replace(/-/g, ' '));
-  const body = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title>`
+  const body = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title>${head}`
     + '<style>:root{color-scheme:light dark}body{font:16px/1.6 system-ui,sans-serif;max-width:40rem;margin:0 auto;padding:2rem 1rem}h1{font-size:1.6rem;text-transform:capitalize}dt{font-weight:600;margin-top:1rem}dd{margin:0}a{display:inline-block;padding:.75rem 0;min-height:44px}</style></head><body>'
     + `<main><h1>${title}</h1><p>This system runs itself on Ultrastable. Its managers work on a clock, with nobody in the loop.</p><dl>`
     + `<dt>Clock</dt><dd>${when ? (done ? 'Last pass finished ' : 'Last pass started ') + esc(when) : 'No pass has run yet.'}</dd>`

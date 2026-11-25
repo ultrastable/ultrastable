@@ -77,3 +77,28 @@ test('the sentence in /claims.json must be the sentence on the page; a route fam
   const ok = await verify(site(), { ...spec, internal: [...spec.internal, { path: '/api/item/*', why: 'one record by id; the list endpoint is the stated one' }] }, { apis: ['/api/item/*'] });
   assert.deepEqual(ok.failures, []);
 });
+
+// STANDARDS-FIRST-1: schema.org JSON-LD generated from the same spec the page shows
+const ldOf = html => [...String(html).matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map(m => JSON.parse(m[1]));
+test('JSON-LD: a page carries one schema.org WebSite whose facts are the spec the page renders', async () => {
+  const { jsonLd, linkedData } = await import('../src/contract.js');
+  const spec = { name: 'Base <Rates>', summary: 'How often things happen, with sources.', url: 'https://base-rates.example/', repo: 'ultrastable/base-rates', statements: [] };
+  const html = `<html><head>${jsonLd(spec)}</head><body><h1>${spec.name}</h1></body></html>`;
+  assert.ok(!/<Rates>/.test(html.split('</head>')[0]), 'a "<" in a value cannot close the script element');
+  const [ld] = ldOf(html);
+  assert.equal(ld['@context'], 'https://schema.org'); assert.equal(ld['@type'], 'WebSite');
+  assert.equal(ld.name, spec.name); assert.equal(ld.description, spec.summary); assert.equal(ld.url, 'https://base-rates.example');
+  assert.equal(ld.mainEntity['@type'], 'SoftwareApplication'); assert.equal(ld.mainEntity.isBasedOn.codeRepository, 'https://github.com/ultrastable/base-rates');
+  assert.equal(ld.isPartOf.url, PLATFORM);
+  assert.equal(linkedData({ name: 'x' }).url, undefined, 'no address is invented for a system that has none');
+  assert.equal(jsonLd({}), '');
+});
+test('JSON-LD: the seed public page carries the markup for its own spec', async () => {
+  const { publicPage } = await import('../src/visibility.js');
+  const { seedJsonLd, seedSpec } = await import('../src/discover.js');
+  const env = { PUBLIC_HEALTH_ONLY: '1' }, config = { org_slug: 'second-tenant' }, url = new URL('https://second-tenant.example/');
+  const html = await publicPage({ name: config.org_slug, head: seedJsonLd(env, config, url) }).text();
+  const [ld] = ldOf(html), spec = seedSpec(env, config, url);
+  assert.equal(ld['@type'], 'WebSite'); assert.equal(ld.name, spec.name);
+  assert.ok(html.indexOf('application/ld+json') < html.indexOf('</head>'));
+});

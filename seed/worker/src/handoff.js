@@ -67,13 +67,16 @@ export async function runProbe(spec, f = fetch) {
 }
 
 import { record } from './auditchain.js';
+import { cloudEvent } from './cloudevents.js';
+export const handoffEvent = (id, state, detail, tenant = handoffTenant) => cloudEvent({ area: 'handoff', event: state, source: '/tenants/' + (tenant || 'ultrastable') + '/loops/handoff', subject: String(id), data: { state, detail: detail ? String(detail).slice(0, 300) : null } });
 import { tenantOf } from './tenant.js';  // Q-TENANT-row-isolation: a handoff block can name any item id; only this runtime's own items (tenant_id NULL or its slug) are advanced or closed
 let handoffTenant = '';
 async function event(db, id, state, detail) {
   await db.prepare("UPDATE handoffs SET state = ?, detail = ?, updated_at = datetime('now') WHERE id = ?").bind(state, detail || null, id).run();
   await db.prepare('INSERT INTO handoff_events (handoff_id, state, detail) VALUES (?, ?, ?)').bind(id, state, detail || null).run();
   // AUDIT-CHAIN-1: every merge, deploy, probe and rollback also lands in the tamper-evident trail (a failure here is logged, never hidden)
-  await record(db, { kind: 'handoff:' + state, actor: 'handoff', ref: String(id), summary: String(detail || state).slice(0, 300), data: { state } }).catch(e => console.error('audit record', e && e.message));
+  // STANDARDS-FIRST-1: the event between loops is a CloudEvents 1.0 envelope (io.ultrastable.handoff.<state>); rows written before it hold { state } and stay readable (unwrap)
+  await record(db, { kind: 'handoff:' + state, actor: 'handoff', ref: String(id), summary: String(detail || state).slice(0, 300), data: handoffEvent(id, state, detail) }).catch(e => console.error('audit record', e && e.message));
 }
 async function say(f, token, repo, pr, text) { await gh(f, token, 'POST', `/repos/${repo}/issues/${pr}/comments`, { body: 'Ultrastable (server side, HANDOFF-1): ' + text }); }
 async function setItem(db, item, status, blocker) {

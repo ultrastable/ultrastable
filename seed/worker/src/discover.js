@@ -6,7 +6,7 @@
 // manifest itself before listing anything, so a heartbeat can never list a page that does not say it is an Ultrastable system.
 // Opt out with the variable ULTRASTABLE_DIRECTORY=off or "discoverable": false in ultrastable.json; then the manifest says so
 // and no heartbeat is sent. A system with no PUBLIC_URL has no public front end and sends nothing.
-import { CONTRACT_VERSION, SURFACES, claims, statementsHtml } from './contract.js';
+import { CONTRACT_VERSION, SURFACES, claims, statementsHtml, jsonLd } from './contract.js';
 export const DIRECTORY = 'https://ultrastable.io';
 export const LICENSE = 'LicenseRef-Ultrastable-USL-1.0';
 
@@ -67,6 +67,7 @@ export function discoverRoute(url, env, config) {
 }
 
 export const seedStatements = (env, config, url) => statementsHtml(seedSpec(env, config, url), '/');
+export const seedJsonLd = (env, config, url) => jsonLd(seedSpec(env, config, url));  // schema.org JSON-LD from the same spec as the statements
 
 // Once a day (the 03:00 UTC tick window), and never when opted out or without a public URL.
 export async function heartbeat(env = {}, config = {}, { fetchFn = fetch, now = new Date() } = {}) {

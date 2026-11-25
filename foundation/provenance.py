@@ -69,12 +69,21 @@ def make(origin: dict, kind: str, summary: str, *, tenant="ultrastable", ref="",
     return row
 
 
+def envelope(row: dict) -> dict:
+    """STANDARDS-FIRST-1: a provenance fact travels as a CloudEvents 1.0 envelope (type io.ultrastable.provenance.<kind>, the row as data).
+    The event id is the row's content hash, so the same fact is the same event wherever it is replayed."""
+    from . import cloudevents
+    o = row["origin"]
+    return cloudevents.event("provenance", row["kind"], f"/tenants/{row['tenant']}/origins/{o['class']}/{re.sub(r'[^A-Za-z0-9._~-]+', '-', o['actor'])}", row,
+                             subject=row.get("ref") or None, id=row["id"], time=row["at"] if re.match(r"^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?(Z|[+-]\d\d:\d\d)$", row["at"]) else False)
+
+
 def record(root, row_or_origin, *a, **kw) -> dict:
     """Append one row (a dict from make(), or the make() arguments). Identical rows are not written twice."""
     row = row_or_origin if isinstance(row_or_origin, dict) and "id" in row_or_origin else make(row_or_origin, *a, **kw)
     led = Path(root) / load(root)["ledger"]
     led.parent.mkdir(parents=True, exist_ok=True)
-    line = json.dumps(row, sort_keys=True, ensure_ascii=False)
+    line = json.dumps(envelope(row), sort_keys=True, ensure_ascii=False)
     if led.is_file() and any(l == line for l in led.read_text(encoding="utf-8").splitlines()):
         return row
     with led.open("a", encoding="utf-8", newline="\n") as f:

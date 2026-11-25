@@ -1,0 +1,335 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/claims.schema.json",
+ "title": "Public claims and their probes (CLAIMS-1)",
+ "type": "object",
+ "required": [
+  "version",
+  "ledgers",
+  "claims",
+  "generated",
+  "inventory",
+  "live",
+  "coverage",
+  "modules"
+ ],
+ "properties": {
+  "version": {
+   "type": "integer",
+   "minimum": 1
+  },
+  "ledgers": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "id",
+     "name",
+     "probe"
+    ],
+    "properties": {
+     "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+     },
+     "name": {
+      "type": "string",
+      "minLength": 1
+     },
+     "probe": {
+      "type": "string",
+      "minLength": 1
+     }
+    },
+    "additionalProperties": false,
+    "patternProperties": {
+     "^_": true
+    }
+   }
+  },
+  "claims": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "id",
+     "surface",
+     "text",
+     "probe"
+    ],
+    "properties": {
+     "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$"
+     },
+     "surface": {
+      "type": "string",
+      "minLength": 1
+     },
+     "text": {
+      "type": "string",
+      "minLength": 1
+     },
+     "probe": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "minLength": 1
+      },
+      "minItems": 1
+     },
+     "bound_by": {
+      "enum": [
+       "curated",
+       "mirror",
+       "cited"
+      ]
+     },
+     "of": {
+      "type": "string",
+      "minLength": 1
+     }
+    },
+    "additionalProperties": false,
+    "patternProperties": {
+     "^_": true
+    }
+   },
+   "minItems": 1
+  },
+  "generated": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "id",
+     "surface",
+     "measure",
+     "template"
+    ],
+    "properties": {
+     "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+     },
+     "surface": {
+      "type": "string",
+      "minLength": 1
+     },
+     "measure": {
+      "type": "object"
+     },
+     "template": {
+      "type": "string",
+      "pattern": "\\{[a-z_]+\\}"
+     }
+    },
+    "additionalProperties": false,
+    "patternProperties": {
+     "^_": true
+    }
+   }
+  },
+  "inventory": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "id",
+     "set",
+     "surfaces",
+     "mention",
+     "note"
+    ],
+    "properties": {
+     "note": {
+      "type": "string",
+      "minLength": 1
+     },
+     "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+     },
+     "set": {
+      "type": "object"
+     },
+     "surfaces": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "minLength": 1
+      },
+      "minItems": 1
+     },
+     "mention": {
+      "type": "string",
+      "pattern": "\\{item\\}"
+     },
+     "exempt": {
+      "type": "object",
+      "additionalProperties": {
+       "type": "string",
+       "minLength": 1
+      }
+     }
+    },
+    "additionalProperties": false,
+    "patternProperties": {
+     "^_": true
+    }
+   }
+  },
+  "live": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "id",
+     "url",
+     "contains"
+    ],
+    "properties": {
+     "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+     },
+     "url": {
+      "type": "string",
+      "pattern": "^https://[^\\s]+$"
+     },
+     "contains": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "minLength": 1
+      },
+      "minItems": 1
+     }
+    },
+    "additionalProperties": false,
+    "patternProperties": {
+     "^_": true
+    }
+   }
+  },
+  "coverage": {
+   "type": "object",
+   "required": [
+    "target",
+    "floor",
+    "live_pages",
+    "src_globs",
+    "patterns",
+    "skip",
+    "src_unbound_budget"
+   ],
+   "properties": {
+    "live_pages": {
+     "type": "array",
+     "items": {
+      "type": "string",
+      "minLength": 1
+     },
+     "minItems": 1
+    },
+    "src_globs": {
+     "type": "array",
+     "items": {
+      "type": "string",
+      "minLength": 1
+     },
+     "minItems": 1
+    },
+    "patterns": {
+     "type": "array",
+     "items": {
+      "type": "string",
+      "minLength": 1
+     },
+     "minItems": 1
+    },
+    "skip": {
+     "type": "array",
+     "items": {
+      "type": "string",
+      "minLength": 1
+     }
+    },
+    "target": {
+     "type": "number",
+     "minimum": 0,
+     "maximum": 1
+    },
+    "floor": {
+     "type": "number",
+     "minimum": 0,
+     "maximum": 1
+    },
+    "src_unbound_budget": {
+     "type": "integer",
+     "minimum": 0
+    }
+   }
+  },
+  "modules": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "id",
+     "surface",
+     "header",
+     "generator",
+     "source",
+     "probe"
+    ],
+    "properties": {
+     "header": {
+      "type": "string",
+      "minLength": 1
+     },
+     "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+     },
+     "surface": {
+      "type": "string",
+      "minLength": 1
+     },
+     "generator": {
+      "type": "string",
+      "minLength": 1
+     },
+     "source": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "minLength": 1
+      },
+      "minItems": 1
+     },
+     "check": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "minLength": 1
+      },
+      "minItems": 1
+     },
+     "probe": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "minLength": 1
+      },
+      "minItems": 1
+     }
+    },
+    "additionalProperties": false,
+    "patternProperties": {
+     "^_": true
+    }
+   }
+  }
+ }
+}

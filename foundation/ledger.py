@@ -8,6 +8,7 @@ rows to get their state, so no loop keeps a mutable state file that a fresh chec
 from __future__ import annotations
 import json, subprocess
 from pathlib import Path
+from . import cloudevents
 
 BRANCH = "origin/loop-evidence"
 
@@ -41,7 +42,7 @@ def rows(root, rel: str, branch: bool = True) -> list[dict]:
                 continue
             seen.add(line)
             try:
-                out.append(json.loads(line))
+                out.append(cloudevents.unwrap(json.loads(line)))  # a row written as a CloudEvents envelope reads as its payload; older rows are the payload
             except ValueError:
                 pass
     return sorted(out, key=lambda r: r.get("at") or "")

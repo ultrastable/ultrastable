@@ -1,0 +1,148 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/progress.schema.json",
+ "title": "Systems whose visible progress is judged (PROGRESS-1, STICKY-1)",
+ "type": "object",
+ "required": [
+  "marker",
+  "expect_hours",
+  "stall",
+  "cooldown_hours",
+  "systems",
+  "apps"
+ ],
+ "properties": {
+  "marker": {
+   "type": "string",
+   "minLength": 1
+  },
+  "expect_hours": {
+   "type": "integer",
+   "minimum": 1,
+   "maximum": 168
+  },
+  "stall": {
+   "type": "integer",
+   "minimum": 1
+  },
+  "cooldown_hours": {
+   "type": "integer",
+   "minimum": 1
+  },
+  "systems": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "id",
+     "name",
+     "repo",
+     "url",
+     "feed",
+     "expect_hours",
+     "heal",
+     "stickiness"
+    ],
+    "properties": {
+     "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+     },
+     "name": {
+      "type": "string",
+      "minLength": 1
+     },
+     "repo": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"
+     },
+     "url": {
+      "type": "string",
+      "pattern": "^https://[^/\\s]+/?$"
+     },
+     "feed": {
+      "type": "string",
+      "pattern": "^https://[^\\s]+$"
+     },
+     "releases": {
+      "type": "string",
+      "pattern": "^https://[^\\s]+$"
+     },
+     "expect_hours": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 168
+     },
+     "heal": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "pattern": "\\.yml$"
+      },
+      "minItems": 1
+     },
+     "stickiness": {
+      "type": "object",
+      "required": [
+       "content_feed",
+       "expect_days",
+       "min_depth",
+       "reveal"
+      ],
+      "properties": {
+       "content_feed": {
+        "type": "string",
+        "pattern": "^https://[^\\s]+$"
+       },
+       "domains": {
+        "type": "array",
+        "items": {
+         "type": "string",
+         "minLength": 1
+        }
+       },
+       "expect_days": {
+        "type": "integer",
+        "minimum": 1
+       },
+       "min_depth": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "reveal": {
+        "type": "string"
+       }
+      }
+     }
+    },
+    "additionalProperties": false,
+    "patternProperties": {
+     "^_": true
+    }
+   },
+   "minItems": 1
+  },
+  "apps": {
+   "type": "object",
+   "required": [
+    "registry",
+    "expect_days",
+    "what"
+   ],
+   "properties": {
+    "what": {
+     "type": "string",
+     "minLength": 1
+    },
+    "registry": {
+     "type": "string",
+     "minLength": 1
+    },
+    "expect_days": {
+     "type": "integer",
+     "minimum": 1
+    }
+   }
+  }
+ }
+}

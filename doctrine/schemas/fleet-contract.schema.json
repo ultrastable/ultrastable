@@ -1,0 +1,115 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/fleet-contract.schema.json",
+ "title": "Fleet contract (FLEET-CONTRACT-1)",
+ "type": "object",
+ "required": [
+  "contract",
+  "module",
+  "surfaces",
+  "systems",
+  "platform_link",
+  "user_agent",
+  "max_statements",
+  "runs_as",
+  "repos"
+ ],
+ "properties": {
+  "contract": {
+   "type": "integer",
+   "minimum": 1
+  },
+  "module": {
+   "type": "string",
+   "minLength": 1
+  },
+  "platform_link": {
+   "type": "string",
+   "pattern": "^https://[^\\s]+$"
+  },
+  "user_agent": {
+   "type": "string",
+   "pattern": "^ultrastable-"
+  },
+  "max_statements": {
+   "type": "integer",
+   "minimum": 1
+  },
+  "surfaces": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "id",
+     "path",
+     "kind"
+    ],
+    "properties": {
+     "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+     },
+     "path": {
+      "type": "string",
+      "pattern": "^/"
+     },
+     "kind": {
+      "enum": [
+       "json",
+       "html"
+      ]
+     }
+    },
+    "additionalProperties": false,
+    "patternProperties": {
+     "^_": true
+    }
+   },
+   "minItems": 1
+  },
+  "systems": {
+   "type": "object",
+   "additionalProperties": {
+    "type": "object",
+    "required": [
+     "origin",
+     "module"
+    ],
+    "properties": {
+     "origin": {
+      "type": "string",
+      "pattern": "^https://[^/\\s]+$"
+     },
+     "module": {
+      "type": "string",
+      "minLength": 1
+     }
+    },
+    "additionalProperties": false,
+    "patternProperties": {
+     "^_": true
+    }
+   }
+  },
+  "runs_as": {
+   "type": "object",
+   "additionalProperties": {
+    "type": "string",
+    "minLength": 1
+   }
+  },
+  "repos": {
+   "type": "object",
+   "patternProperties": {
+    "^_doc$": {
+     "type": "string",
+     "minLength": 1
+    }
+   },
+   "additionalProperties": {
+    "type": "string",
+    "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"
+   }
+  }
+ }
+}
