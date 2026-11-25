@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """AI-OIDC-1, MODELS-ORG-1 on the ladder, MODELS-UA-1: the executor's code agents keep a working model when the GitHub Models user endpoint
 answers 200 "OK" and the repo's Cloudflare secrets name a retired account."""
 import io, json, unittest
