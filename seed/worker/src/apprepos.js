@@ -121,7 +121,9 @@ export async function ensureRepoSettings(db, env, tenant, spec, { fetch: f = fet
   const A = gh(f, adm.token);
   const seen = await A('GET', `/repos/${repo}`);
   if (seen.status !== 200) return { ...out, ok: false, waiting_on: 'admin-app-scope', error: `read ${repo}: HTTP ${seen.status}` };
+  if (seen.json.archived) return { ...out, ok: true, archived: true, changed: [] };  // ARCHIVED-READONLY-1: GitHub refuses any write to an archived repository; it has no branches to clean
   const drift = Object.fromEntries(Object.entries(REPO_SETTINGS).filter(([k, v]) => seen.json[k] !== v));
+  if (spec.dry) return { ...out, ok: true, dry: true, drift: Object.keys(drift) };  // APP-CRED-WATCH-1: the credential watch reads, never writes
   if (!Object.keys(drift).length) return { ...out, ok: true, changed: [] };
   const p = await A('PATCH', `/repos/${repo}`, drift);
   if (p.status !== 200) { await store.event(db, tenant, 'github-admin', 'failed', `repo settings ${repo} HTTP ${p.status}`); return { ...out, ok: false, waiting_on: 'admin-app-scope', error: `set ${Object.keys(drift).join(', ')} on ${repo}: HTTP ${p.status} ${p.json.message || ''}`.slice(0, 200) }; }

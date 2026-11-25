@@ -10,6 +10,7 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-25
 
+- 2026-11-25: Blind-spot red team (BLINDSPOT-RED-1). Found and fixed: cost probe measured no D1 database (read a thresholds file that never existed); cost level scored probe rows as 0 (measured Workers AI use 0.805 of the free budget); ultrastable.io feed had empty texts and was frozen since 2026-11-17 (feed-data.js never committed). New detectors: cost-runaway, d1-growth (`cost --guard`), credential-expiry (`credwatch --ledger`, now watching the tick Worker's administration App via a dry read), content-drift (`contentdrift --live`). SPOF register adds spof-admin-app.
 - 2026-11-25: Failure audit (Rowan: "audit and remediate all of your failures and their root causes ... in code"). COLLISION-1: `foundation collisions --check/--prs/--claim` in checks and SOP (competing graph PRs). GH-RETRY-1: `seed/worker/src/ghfetch.js` shared by lane, sweeper, lanemerge, mergenow. DATAGRAPH-LIVE-1: `datagraph --live` after each deploy and daily (Replication Ledger 357 nodes, Practical Solutions 615, Unlearn 1894, read from D1 2026-11-25). REPO-SETTINGS-1: admin App sets delete_branch_on_merge/allow_auto_merge; org-settings no longer red; gate org-admin-settings. MERGE-RUNNING-1: the worker gate waits for running checks (#2222 merged while checks ran).
 - 2026-11-25: Write the papers as white papers, link them everywhere, and check fleet discoverability (#2224)
 - 2026-11-25: ZERO-MINUTES-1: worker merged #2222

@@ -8,9 +8,9 @@
       "what": "ORG_ADMIN_TOKEN is the only route to the public GitHub org page",
       "owner": "operations",
       "trigger": "org-profile probe fails",
-      "remediation": "second path: gate card docs/ops/ORG-TOKEN.md with the holding page as the default in effect",
+      "remediation": "second path: the tick Worker's administration App sets delete_branch_on_merge and allow_auto_merge on every repository (REPO-SETTINGS-1, deploy/repo-settings.mjs); the rest of the org settings is gate org-admin-settings with its default in effect",
       "status": "mitigated",
-      "second_path_exercised": "file:docs/ops/ORG-TOKEN.md",
+      "second_path_exercised": "grep:seed/worker/test/apprepos.test.js::ensureRepoSettings",
       "probe": "file:docs/ops/ORG-TOKEN.md"
     },
     {
@@ -83,6 +83,17 @@
       "status": "mitigated",
       "second_path_exercised": "grep:tests/foundation/test_cf_account.py::def test_probe_says_target_unreachable",
       "probe": "file:docs/failures/2026-11-12-target-account-unreachable.md"
+    },
+    {
+      "id": "spof-admin-app",
+      "kind": "credential",
+      "what": "the tick Worker's administration GitHub App is the only credential that creates tenant and visitor repositories and sets repo settings when ORG_ADMIN_TOKEN is absent",
+      "owner": "operations",
+      "trigger": "credwatch records GITHUB_ADMIN_APP as invalid",
+      "remediation": "probed daily through a dry read (APP-CRED-WATCH-1); while it is down, tenants stay live on their existing repositories and the launch record names what is waited on (gate visitor-app-repos); ORG_ADMIN_TOKEN is the second route when it is bound",
+      "status": "mitigated",
+      "second_path_exercised": "grep:tests/foundation/test_credwatch.py::def test_admin_app_probe_reads_dry",
+      "probe": "grep:doctrine/credwatch.json::GITHUB_ADMIN_APP"
     }
   ],
   "failure_modes": [
@@ -589,6 +600,54 @@
       "status": "controlled",
       "cadence_ticks": 1,
       "probe": "grep:tests/foundation/test_silentfail.py::def test_classes_have_detectors"
+    },
+    {
+      "id": "fm-cost-runaway",
+      "trigger": "Workers AI neurons or D1 rows read climb toward the free plan's limits, or the cost reading stops",
+      "symptom": "Workers AI neurons or D1 rows read climb toward the free plan's limits, or the cost reading stops",
+      "blast_radius": "the plan cuts the account off mid-month; every loop and page stops",
+      "detection": "cost --guard (detector cost-runaway)",
+      "root_cause": "the cost probe never measured D1 (wrong thresholds path) and the level read probe rows as 0, so the cost term of k could not rise",
+      "remediation": "detector files Q-AUDIT-cost-runaway; the criticality control rod limits the queue to cost-cutting items while the level is high",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:tests/foundation/test_cost.py::def test_guard"
+    },
+    {
+      "id": "fm-d1-growth",
+      "trigger": "a D1 database grows toward the plan's size limit",
+      "symptom": "a D1 database grows toward the plan's size limit",
+      "blast_radius": "writes fail for that system; its loops stop recording",
+      "detection": "cost --guard size series (detector d1-growth)",
+      "root_cause": "database size was never measured",
+      "remediation": "retention rows in seed/autonomy/retention.json; the detector projects days to the limit and files before it is reached",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:test/cost-probe.test.mjs::d1-size"
+    },
+    {
+      "id": "fm-credential-expiry",
+      "trigger": "a token, App installation or domain registration lapses",
+      "symptom": "a token, App installation or domain registration lapses",
+      "blast_radius": "every loop that uses it stops at once",
+      "detection": "credwatch --ledger (detector credential-expiry)",
+      "root_cause": "only GitHub-held tokens were watched; the tick Worker's administration App, which creates repositories and sets repo settings, had no probe",
+      "remediation": "credwatch --run probes each credential daily (the App through a dry, read-only call); renewal goes through the connect flow",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:tests/foundation/test_credwatch.py::def test_ledger"
+    },
+    {
+      "id": "fm-content-drift",
+      "trigger": "self-written entries come out empty, cut off, templated or repeated",
+      "symptom": "self-written entries come out empty, cut off, templated or repeated",
+      "blast_radius": "readers see broken content and leave; nothing reports it",
+      "detection": "contentdrift --live (detector content-drift)",
+      "root_cause": "posts were gated before sending, but nothing read the entries a system publishes on its own pages; the platform feed had empty texts and stopped updating for 8 days",
+      "remediation": "the detector reads every content_feed daily; the feed generator writes a text per entry and its output is committed",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:tests/foundation/test_contentdrift.py::def test_drifted_feed_fails"
     }
   ],
   "controls": [

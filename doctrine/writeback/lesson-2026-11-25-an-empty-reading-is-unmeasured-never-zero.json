@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-25-an-empty-reading-is-unmeasured-never-zero",
+  "kind": "lesson",
+  "date": "2026-11-25",
+  "title": "An empty reading is unmeasured, never zero",
+  "body": "Red-team pass 2026-11-25: the cost probe recorded d1: [] for weeks because run() read data/cost-thresholds.json, which never existed, and foundation/cost.py scored probe rows as 0 while the measured Workers AI use was 0.805 of the free budget (source: ops/cost.jsonl, 2026-11-24 row); the platform feed had empty texts and stopped updating on 2026-11-17 because site/feed-data.js was regenerated but never committed. Detectors cost-runaway, d1-growth, credential-expiry and content-drift now fail on these.",
+  "probe": "grep:doctrine/detectors.json::content-drift"
+ },
+ "kind": "lesson",
+ "title": "An empty reading is unmeasured, never zero",
+ "session": ""
+}

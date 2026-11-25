@@ -1921,6 +1921,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **Blind spots are measured, not assumed safe (BLINDSPOT-RED-1, COST-RUNAWAY-1, D1-GROWTH-1, CRED-EXPIRY-1, CONTENT-DRIFT-1, Rowan",
+   "detail": "",
+   "how": "file:doctrine/content-drift.json + file:tests/foundation/test_cost.py + file:test/cost-probe.test.mjs + file:tests/foundation/test_credwatch.py + file:tests/foundation/test_contentdrift.py + file:foundation/cost.py",
+   "id": "cited-08be9e0fbe",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
@@ -2609,6 +2618,15 @@ export default {
    "detail": "",
    "how": "file:seed/.github/workflows/platform-sync.yml + file:tests/foundation/test_improve.py + file:foundation/tenantsync.py + grep:.github/workflows/checks.yml::foundation[ .]tenantsync\\b",
    "id": "mirror-1ca2a53c76",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Blind spots are measured, not assumed safe (BLINDSPOT-RED-1, COST-RUNAWAY-1, D1-GROWTH-1, CRED-EXPIRY-1, CONTENT-DRIFT-1, Rowan",
+   "detail": "",
+   "how": "file:doctrine/content-drift.json + file:tests/foundation/test_cost.py + file:test/cost-probe.test.mjs + file:tests/foundation/test_credwatch.py + file:tests/foundation/test_contentdrift.py + file:foundation/cost.py",
+   "id": "mirror-e420f8077f",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3521,7 +3539,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 388,
-  "total": 388
+  "pass": 390,
+  "total": 390
  }
 };
