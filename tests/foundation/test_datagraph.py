@@ -55,3 +55,20 @@ class DataGraph(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Live(unittest.TestCase):
+    """DATAGRAPH-LIVE-1: a deploy is confirmed by reading each system's graph, not by a person."""
+    def test_readings(self):
+        from foundation import datagraph as d
+        self.assertTrue(d.reading(200, '{"ok": true, "nodes": 357, "last_run_hours_ago": 1}')[0])
+        self.assertFalse(d.reading(503, '{"ok": false, "nodes": 357}')[0])
+        self.assertFalse(d.reading(200, '{"ok": true, "nodes": 0}')[0])
+        self.assertTrue(d.reading(200, '{"built": true, "last": {"nodes": 12}}')[0])
+        self.assertFalse(d.reading(200, '{"built": false, "last": null}')[0])
+        self.assertFalse(d.reading(0, "refused")[0])
+
+    def test_every_system_has_a_probe(self):
+        from foundation import datagraph as d
+        rows = d.live(get=lambda url: (200, '{"ok": true, "nodes": 1}'))
+        self.assertTrue(rows and all(r["ok"] for r in rows), rows)

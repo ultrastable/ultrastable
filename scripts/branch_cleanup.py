@@ -45,6 +45,18 @@ def repos():
     return [r["name"] for r in gh(f"orgs/{ORG}/repos?per_page=100&type=all", paginate=True) if not r.get("archived")]
 
 
+def via_admin_app(full):
+    """The second route for the two settings (deploy/repo-settings.mjs over the job's OIDC token). None when it is not available or refused."""
+    if not os.environ.get("ACTIONS_ID_TOKEN_REQUEST_URL"):
+        return None
+    script = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "deploy", "repo-settings.mjs")
+    p = subprocess.run(["node", script, full], capture_output=True, text=True)
+    if p.returncode:
+        print(f"::warning::{full}: the admin app route refused too: {p.stderr.strip()[:300]}")
+        return None
+    return p.stdout.strip() or "unchanged"
+
+
 def run(apply, window_h):
     now = dt.datetime.now(dt.timezone.utc)
     stale, errors, done = 0, 0, []
@@ -65,8 +77,13 @@ def run(apply, window_h):
                     gh(f"repos/{full}", method="PATCH", fields=drift)
                     done.append(f"{full}: settings on: {', '.join(drift)}")
                 except RuntimeError as e:
-                    errors += 1
-                    print(f"::warning::{full}: setting refused: {e}")
+                    # REPO-SETTINGS-1: this token may not change settings (no ORG_ADMIN_TOKEN); the platform's admin app is the second route
+                    via = via_admin_app(full)
+                    if via is None:
+                        errors += 1
+                        print(f"::warning::{full}: setting refused: {e}")
+                    else:
+                        done.append(f"{full}: settings on through the platform's admin app: {via}")
             else:
                 print(f"{full}: settings off: {', '.join(drift)}")
         for b in gh(f"repos/{full}/branches?per_page=100", paginate=True):
