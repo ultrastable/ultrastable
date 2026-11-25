@@ -13468,3 +13468,58 @@
 {"at": "2026-11-25T18:04:27Z", "ev": "reading", "ok": true, "seq": 13467, "value": 0.0, "var": "portfolio-board:spend"}
 {"at": "2026-11-25T18:04:27Z", "ev": "reading", "ok": false, "seq": 13468, "unmeasured": true, "value": null, "var": "portfolio-board:claims_drift"}
 {"at": "2026-11-25T18:04:27Z", "ev": "reading", "ok": false, "seq": 13469, "unmeasured": true, "value": null, "var": "portfolio-board:value"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": true, "seq": 13470, "value": 0.0, "var": "spend"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": true, "seq": 13471, "value": 1.0, "var": "deploy_health"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": true, "seq": 13472, "value": 0, "var": "claims_drift"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": true, "seq": 13473, "value": 760.0, "var": "value"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": false, "seq": 13474, "value": 3, "var": "stalled_clocks"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": true, "seq": 13475, "value": 0, "var": "ui_findings"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": true, "seq": 13476, "value": 1.0, "var": "happy_paths"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": true, "seq": 13477, "value": 730, "var": "unattended_horizon"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": false, "seq": 13478, "value": 0.714, "var": "self_shipping"}
+{"at": "2026-11-25T18:15:02Z", "ev": "verdict", "seq": 13479, "step_id": "access-check:uptime-0-2026-11-25T17:44:31Z", "value": 0.0, "var": "access-check:uptime", "verdict": "reverted"}
+{"at": "2026-11-25T18:15:02Z", "consulted": ["spinoff", "liveness"], "ev": "step", "id": "access-check:uptime-1-2026-11-25T18:15:02Z", "idx": 1, "item": "Q-ULTRA-access-check-uptime-2", "kind": "spinoff", "n": 323, "prediction": "tenant.probe_pass_rate within bounds within 3 ticks", "seq": 13480, "value": 0.0, "var": "access-check:uptime", "what": "iterate: change the app"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": false, "seq": 13481, "value": 0.0, "var": "access-check:uptime"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": true, "seq": 13482, "value": 0.0, "var": "access-check:spend"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": false, "seq": 13483, "unmeasured": true, "value": null, "var": "access-check:claims_drift"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": false, "seq": 13484, "value": 0.0, "var": "access-check:value"}
+{"at": "2026-11-25T18:15:02Z", "ev": "verdict", "seq": 13485, "step_id": "air-quality:uptime-0-2026-11-25T17:44:31Z", "value": 0.0, "var": "air-quality:uptime", "verdict": "reverted"}
+{"at": "2026-11-25T18:15:02Z", "consulted": ["spinoff", "liveness"], "ev": "step", "id": "air-quality:uptime-1-2026-11-25T18:15:02Z", "idx": 1, "item": "Q-ULTRA-air-quality-uptime-2", "kind": "spinoff", "n": 325, "prediction": "tenant.probe_pass_rate within bounds within 3 ticks", "seq": 13486, "value": 0.0, "var": "air-quality:uptime", "what": "iterate: change the app"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": false, "seq": 13487, "value": 0.0, "var": "air-quality:uptime"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": true, "seq": 13488, "value": 0.0, "var": "air-quality:spend"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": false, "seq": 13489, "unmeasured": true, "value": null, "var": "air-quality:claims_drift"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": false, "seq": 13490, "value": 0.0, "var": "air-quality:value"}
+{"at": "2026-11-25T18:15:02Z", "ev": "verdict", "seq": 13491, "step_id": "blindspot:uptime-0-2026-11-25T17:44:31Z", "value": 0.0, "var": "blindspot:uptime", "verdict": "reverted"}
+{"at": "2026-11-25T18:15:02Z", "consulted": ["spinoff", "liveness"], "ev": "step", "id": "blindspot:uptime-1-2026-11-25T18:15:02Z", "idx": 1, "item": "Q-ULTRA-blindspot-uptime-2", "kind": "spinoff", "n": 340, "prediction": "tenant.probe_pass_rate within bounds within 3 ticks", "seq": 13492, "value": 0.0, "var": "blindspot:uptime", "what": "iterate: change the app"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": false, "seq": 13493, "value": 0.0, "var": "blindspot:uptime"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": true, "seq": 13494, "value": 0.0, "var": "blindspot:spend"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": false, "seq": 13495, "unmeasured": true, "value": null, "var": "blindspot:claims_drift"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": true, "seq": 13496, "value": 2.02, "var": "blindspot:value"}
+{"at": "2026-11-25T18:15:02Z", "ev": "verdict", "seq": 13497, "step_id": "country-snapshot:uptime-0-2026-11-25T17:44:31Z", "value": 0.0, "var": "country-snapshot:uptime", "verdict": "reverted"}
+{"at": "2026-11-25T18:15:02Z", "consulted": ["spinoff", "liveness"], "ev": "step", "id": "country-snapshot:uptime-1-2026-11-25T18:15:02Z", "idx": 1, "item": "Q-ULTRA-country-snapshot-uptime-2", "kind": "spinoff", "n": 323, "prediction": "tenant.probe_pass_rate within bounds within 3 ticks", "seq": 13498, "value": 0.0, "var": "country-snapshot:uptime", "what": "iterate: change the app"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": false, "seq": 13499, "value": 0.0, "var": "country-snapshot:uptime"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": true, "seq": 13500, "value": 0.0, "var": "country-snapshot:spend"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": false, "seq": 13501, "unmeasured": true, "value": null, "var": "country-snapshot:claims_drift"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": false, "seq": 13502, "value": 0.0, "var": "country-snapshot:value"}
+{"at": "2026-11-25T18:15:02Z", "ev": "verdict", "seq": 13503, "step_id": "free-tier-meter:uptime-0-2026-11-25T17:44:31Z", "value": 0.0, "var": "free-tier-meter:uptime", "verdict": "reverted"}
+{"at": "2026-11-25T18:15:02Z", "consulted": ["spinoff", "liveness"], "ev": "step", "id": "free-tier-meter:uptime-1-2026-11-25T18:15:02Z", "idx": 1, "item": "Q-ULTRA-free-tier-meter-uptime-2", "kind": "spinoff", "n": 323, "prediction": "tenant.probe_pass_rate within bounds within 3 ticks", "seq": 13504, "value": 0.0, "var": "free-tier-meter:uptime", "what": "iterate: change the app"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": false, "seq": 13505, "value": 0.0, "var": "free-tier-meter:uptime"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": true, "seq": 13506, "value": 0.0, "var": "free-tier-meter:spend"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": false, "seq": 13507, "unmeasured": true, "value": null, "var": "free-tier-meter:claims_drift"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": false, "seq": 13508, "unmeasured": true, "value": null, "var": "free-tier-meter:value"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": false, "seq": 13509, "value": 0.0, "var": "loop-ledger:uptime"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": false, "seq": 13510, "unmeasured": true, "value": null, "var": "loop-ledger:spend"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": false, "seq": 13511, "unmeasured": true, "value": null, "var": "loop-ledger:claims_drift"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": false, "seq": 13512, "unmeasured": true, "value": null, "var": "loop-ledger:value"}
+{"at": "2026-11-25T18:15:02Z", "ev": "verdict", "seq": 13513, "step_id": "numbers-board:uptime-0-2026-11-25T17:44:31Z", "value": 0.0, "var": "numbers-board:uptime", "verdict": "reverted"}
+{"at": "2026-11-25T18:15:02Z", "consulted": ["spinoff", "liveness"], "ev": "step", "id": "numbers-board:uptime-1-2026-11-25T18:15:02Z", "idx": 1, "item": "Q-ULTRA-numbers-board-uptime-2", "kind": "spinoff", "n": 329, "prediction": "tenant.probe_pass_rate within bounds within 3 ticks", "seq": 13514, "value": 0.0, "var": "numbers-board:uptime", "what": "iterate: change the app"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": false, "seq": 13515, "value": 0.0, "var": "numbers-board:uptime"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": true, "seq": 13516, "value": 0.0, "var": "numbers-board:spend"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": false, "seq": 13517, "unmeasured": true, "value": null, "var": "numbers-board:claims_drift"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": false, "seq": 13518, "unmeasured": true, "value": null, "var": "numbers-board:value"}
+{"at": "2026-11-25T18:15:02Z", "ev": "verdict", "seq": 13519, "step_id": "portfolio-board:uptime-0-2026-11-25T17:44:31Z", "value": 0.0, "var": "portfolio-board:uptime", "verdict": "reverted"}
+{"at": "2026-11-25T18:15:02Z", "consulted": ["spinoff", "liveness"], "ev": "step", "id": "portfolio-board:uptime-1-2026-11-25T18:15:02Z", "idx": 1, "item": "Q-ULTRA-portfolio-board-uptime-2", "kind": "spinoff", "n": 329, "prediction": "tenant.probe_pass_rate within bounds within 3 ticks", "seq": 13520, "value": 0.0, "var": "portfolio-board:uptime", "what": "iterate: change the app"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": false, "seq": 13521, "value": 0.0, "var": "portfolio-board:uptime"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": true, "seq": 13522, "value": 0.0, "var": "portfolio-board:spend"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": false, "seq": 13523, "unmeasured": true, "value": null, "var": "portfolio-board:claims_drift"}
+{"at": "2026-11-25T18:15:02Z", "ev": "reading", "ok": false, "seq": 13524, "unmeasured": true, "value": null, "var": "portfolio-board:value"}
