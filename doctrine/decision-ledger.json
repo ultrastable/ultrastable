@@ -5508,6 +5508,33 @@
    "body": "WHITEPAPER-2 and NO-MADE-UP-NUMBERS-1 (Rowan 2026-11-25): papers are executive summary, problem, approach, putting it into practice, trade-offs, next steps and references; no forced results table. Live numbers appear only where a reading exists, each with its source. research.gate() blocks a paper with a number that traces to no measurement, study file or cited reference; a test injects 47% and the gate blocks it. Social posts already pass thought.guard, which blocks numbers not in the paper's data.",
    "probe": "grep:foundation/research.py::def unsourced",
    "session": "session_0156nqDuQXEUhGCq6LkokuuL"
+  },
+  {
+   "id": "decision-2026-11-25-deploys-read-every-knowledge-graph-back-repo-settings-go-thr",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Deploys read every knowledge graph back; repo settings go through the admin App",
+   "body": "datagraph --live runs after each deploy and daily. org-settings no longer goes red without ORG_ADMIN_TOKEN: the admin App sets delete_branch_on_merge and allow_auto_merge; the rest is gate org-admin-settings.",
+   "probe": "grep:foundation/datagraph.py::def live",
+   "session": "session_0156nqDrE184nXAFKcTRxk26"
+  },
+  {
+   "id": "lesson-2026-11-25-a-directive-given-to-several-sessions-needs-a-claim-and-a-co",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "A directive given to several sessions needs a claim and a collision gate",
+   "body": "DATAGRAPH-1 reached several sessions at once; six PRs (2135, 2151, 2157, 2158, 2166, 2187) clashed on migration 0031, /api/graph and the datagraph command. collisions --prs now refuses the newer PR and collisions --claim is SOP step take.",
+   "probe": "file:foundation/collisions.py",
+   "session": "session_0156nqDrE184nXAFKcTRxk26"
+  },
+  {
+   "id": "lesson-2026-11-25-every-github-merge-path-retries-5xx-and-reads-back-the-merge",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Every GitHub merge path retries 5xx and reads back the merge",
+   "body": "Merges failed on GitHub 5xx with only manual retry; four separate gh helpers had no retry. seed/worker/src/ghfetch.js is the one shared fetch.",
+   "probe": "file:seed/worker/src/ghfetch.js",
+   "session": "session_0156nqDrE184nXAFKcTRxk26"
   }
  ]
 }
