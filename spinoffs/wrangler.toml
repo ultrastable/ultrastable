@@ -6,4 +6,4 @@ routes = [{ pattern = "*.ultrastable.app/*", zone_name = "ultrastable.app" }]
 [[d1_databases]]
 binding = "DB"
 database_name = "ultrastable-spinoffs"
-database_id = "9e05f27a-4445-45c3-998a-0d4d4595a33d"
+database_id = "7daf8b68-8516-42a8-b7c4-68fd00d10e24"
