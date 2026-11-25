@@ -1,0 +1,39 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/seed/instance.schema.json",
+ "title": "Ultrastable instance manifest",
+ "description": "The one declarative file that turns the foundation into one specific autonomous system (desired state). Validated after defaults are merged (foundation/manifest.py resolve). The same schema validates the manifest written as JSON, YAML or TOML. Rules that span fields (no secrets or e-mail addresses, backup binding differs, filing gate) stay in foundation/manifest.py.",
+ "type": "object",
+ "required": ["name", "slug", "kind", "owner", "goals", "runtime", "disclosure", "budget"],
+ "properties": {
+  "name": {"type": "string", "minLength": 1},
+  "slug": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{1,38}$"},
+  "kind": {"enum": ["business", "research", "open-source", "community", "internal", "other"]},
+  "origin": {"type": "string"},
+  "idea": {"type": "string"},
+  "positioning": {"type": "string"},
+  "goals": {"type": "array", "minItems": 1},
+  "owner": {
+   "type": "object",
+   "required": ["contact_binding", "contact_binding_backup"],
+   "properties": {
+    "name": {"type": "string"},
+    "jurisdiction": {"type": "string", "pattern": "^([A-Z]{2})?$"},
+    "contact_binding": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]+$"},
+    "contact_binding_backup": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]+$"}
+   }
+  },
+  "brand": {"type": "object"},
+  "funding": {"type": "object"},
+  "social": {"type": "object"},
+  "runtime": {"type": "object", "required": ["provider"], "properties": {"provider": {"enum": ["cloudflare", "gcp", "self-hosted"]}}},
+  "repos": {"type": "object"},
+  "disclosure": {"type": "object", "properties": {"gate": {"enum": ["none", "filed"]}, "public_allowed": {"type": "boolean"}}},
+  "ip": {"type": "object"},
+  "budget": {"type": "object", "required": ["actions_minutes_monthly"], "properties": {"actions_minutes_monthly": {"type": "number", "minimum": 1}, "usd_per_month": {"type": "number", "minimum": 0}}},
+  "facts": {"type": "object"},
+  "system_test": {"type": "object"},
+  "depth": {"type": "object"},
+  "spend": {"type": "object"}
+ }
+}

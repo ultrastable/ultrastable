@@ -201,6 +201,8 @@ class Boot:
          "operations", "Most loop runs return nothing. Lengthen the cadence of idle loops and shorten productive ones (core/pace plan)."),
         ("M-cost", "largest share of a free daily limit used today (1 = the whole free day)", "free_tier_peak_share", "<=", 0.8, 0,
          "operations", "A free daily limit is nearly spent. Lengthen idle loops (pace.json) and cut the heaviest reader before the plan sheds work."),
+        ("M-storage", "share of the per-database size limit this D1 uses (1 = full: every write refused)", "db_size_share", "<=", 0.6, 0,
+         "operations", "The database is past 60% of its size limit. Check retention (autonomy/retention.json), seal and prune the audit chain, and move bulk history to R2 before writes are refused."),
         ("M-instrumented", "objectives without a probe-backed target metric", "objectives_without_probe", "<=", 0, 1,
          "product-manager", "Ask what the owner would check to know this objective is being met, then insert a target metric with a builtin, sql or http probe."),
     )
