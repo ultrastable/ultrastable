@@ -99,6 +99,14 @@
       "url": "seed-lifecycle.schema.json"
     },
     {
+      "name": "static-content.json",
+      "description": "Contract for seed/autonomy/static-content.json",
+      "fileMatch": [
+        "seed/autonomy/static-content.json"
+      ],
+      "url": "static-content.schema.json"
+    },
+    {
       "name": "system.json",
       "description": "Contract for seed/autonomy/system.json",
       "fileMatch": [

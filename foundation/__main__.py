@@ -32,6 +32,7 @@
   python3 -m foundation failmine [--run [--apply]|--report|--probe HASH|--check]   FAILMINE-1: mine every failure record, classify root causes, register new modes, escalate recurrence
   python3 -m foundation intentyield [--run [--apply]|--probe|--check|--report]   INTENT-YIELD-1: owner directives kept per unit of attention; no counts, no person scored
   python3 -m foundation temporal [--run [--apply]|--settled ID|--probe|--check|--report]   TEMPORAL-1: series per area, loop and entry; hotspots, neglect and stopped loops feed the failure-mode machinery
+  python3 -m foundation constitution [--check|--fresh|--render]   CONSTITUTION-1: the seed states what an ultrastable system is; every rule has a detector and a remediation in code
   python3 -m foundation systemspec [--check|--write|--gaps|--rule ID]   SYSTEM-SPEC-1: seed/SYSTEM.md, the definition every system carries, generated from code and probed
   python3 -m foundation bootaccept [--run|--probe|--url U --repo O/R|--check]   BOOT-ACCEPT-1: nothing to repo, back end, web UI, graph, discovery and health, read live
   python3 -m foundation bootproof [--check]   BOOTPROOF-1: the seed kernel is closed under bootstrap (instructions, placeholders, secrets, triggers)
@@ -350,6 +351,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["openloops"]:
         from . import openloops
         return openloops.main(_av[1:])
+    if _av[:1] == ["constitution"]:
+        from . import constitution
+        return constitution.main(_av[1:])
     if _av[:1] == ["bootproof"]:
         from . import bootproof
         return bootproof.main(_av[1:])

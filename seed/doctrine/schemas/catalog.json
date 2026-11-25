@@ -11,6 +11,22 @@
       "url": "claims.schema.json"
     },
     {
+      "name": "constitution-baseline.json",
+      "description": "Contract for seed/doctrine/constitution-baseline.json",
+      "fileMatch": [
+        "seed/doctrine/constitution-baseline.json"
+      ],
+      "url": "constitution-baseline.schema.json"
+    },
+    {
+      "name": "constitution.json",
+      "description": "Contract for seed/doctrine/constitution.json",
+      "fileMatch": [
+        "seed/doctrine/constitution.json"
+      ],
+      "url": "constitution.schema.json"
+    },
+    {
       "name": "readmes.json",
       "description": "Contract for seed/doctrine/readmes.json",
       "fileMatch": [

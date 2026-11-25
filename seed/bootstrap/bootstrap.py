@@ -4,6 +4,7 @@
 Stages (the AIOS boot chain, moved from a laptop to a server):
 
   read      IDEA.md + ultrastable.json + autonomy/policy.json   (AIOS: GRUB -> kernel)
+  constitute doctrine/constitution.json checked against the code and assembled: what the system is, how it runs, its ladder and its rules (CONSTITUTION-1)
   qualify   the system test (doctrine/VISION.md): not a fit means no roles, no repos, nothing provisioned
   instrument objectives -> metrics -> probes: what the agents work toward and how the clock proves it is turning (OBJECTIVES-1)
   detect    which connectors have credentials, which tools exist (AIOS: RAM, CPU, disk)
@@ -160,6 +161,23 @@ class Boot:
         if problems:
             return "blocked", "policy invalid: " + "; ".join(problems)
         return "ok", f"org '{self.org_name}', {len(self.outcomes)} outcome(s), budget {self.budget:g} USD/month"
+
+    def constitute(self):
+        """CONSTITUTION-1: the system reads what it is before it decides anything. The constitution (doctrine/constitution.json) is checked against the
+        code it describes and assembled into org/constitution.json (rungs, tick steps, detectors, criticality conditions) for the stages after it.
+        A system whose code and constitution disagree is blocked here, with the disagreement as its backlog item, instead of booting into drift."""
+        sys.path.insert(0, str(self.root / "scripts"))
+        try:
+            import constitution  # noqa: E402  (the seed's portable engine)
+        finally:
+            sys.path.pop(0)
+        errs = constitution.check(self.root, instruction_files=["AGENTS.md", "agents/AGENTS.md"])
+        self.out.mkdir(parents=True, exist_ok=True)
+        (self.out / "constitution.json").write_text(json.dumps(constitution.assemble(self.root), indent=1) + "\n")
+        if errs:
+            return "blocked", f"{len(errs)} constitution disagreement(s): " + "; ".join(errs[:3])
+        c = constitution.load(self.root)
+        return "ok", f"constitution {c['version']}: {len(c['rules'])} rules, each with a detector and a remediation in code"
 
     SYSTEM_TEST = (("loop", "a loop it closes"), ("measure", "a measure that can be wrong"),
                    ("upkeep", "upkeep that never ends"), ("run cost", "a running cost the owner accepts"))
@@ -688,7 +706,7 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
     root = a.root.resolve()
     boot = Boot(root, (a.out or root / "org").resolve(), apply=a.apply)
-    for name in ("read", "qualify", "instrument", "detect", "select", "cases", "plan", "write", "surfaces", "org", "provision", "start", "year_gate", "verify_live"):
+    for name in ("read", "constitute", "qualify", "instrument", "detect", "select", "cases", "plan", "write", "surfaces", "org", "provision", "start", "year_gate", "verify_live"):
         st = boot.guard(name, getattr(boot, name))
         if name == "read" and st == "blocked" and not hasattr(boot, "idea"):
             break  # nothing to plan from; the report says why
