@@ -51,7 +51,6 @@ jobs:
           REDTEAM_LIVE: "1"
           GH_TOKEN: ${{ github.token }}
         run: |
-          pip install -q libfaketime
           if [ "$(date -u +%u)" = "7" ]; then python3 -m foundation redteam --run --apply --chaos; else python3 -m foundation redteam --run --apply; fi
       - run: python3 -m foundation failure_audit --run
         continue-on-error: true

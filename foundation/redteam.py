@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """REDTEAM-1 (Rowan, 2026-11-25): the system red-teams its own blind spots, on a clock, and counts who found each failure.
 
 On 2026-11-25 Rowan caught nine problems before any loop did: a dry work queue, a date-pinned test that froze the lane, /live showing 0,
@@ -146,17 +148,13 @@ def check_undetected(root=REPO) -> list[dict]:
 
 def check_timebomb(root=REPO, days=(30, 200)) -> list[dict]:
     """Run the foundation tests with the clock shifted forward. A test that passes today and fails later is a date bomb in the lane."""
-    try:
-        import libfaketime
-    except ImportError:
-        return [{"id": "timebomb:unavailable", "cls": "timebomb", "what": "libfaketime is not installed, so the clock cannot be shifted", "evidence": "pip install libfaketime"}]
-    _, env = libfaketime.get_reload_information()
+    env = {"PYTHONPATH": str(Path(__file__).resolve().parent / "data/timeshift")}
     base = _failing(root, dict(os.environ))
     out = []
     for d in days:
-        e = {**os.environ, **env, "FAKETIME": f"+{d}d"}
+        e = {**os.environ, **env, "REDTEAM_SHIFT_DAYS": str(d)}
         for t in sorted(_failing(root, e) - base):
-            out.append({"id": f"timebomb:{t}", "cls": "timebomb", "what": f"{t} passes today and fails {d} days from now", "evidence": f"FAKETIME=+{d}d"})
+            out.append({"id": f"timebomb:{t}", "cls": "timebomb", "what": f"{t} passes today and fails {d} days from now", "evidence": f"REDTEAM_SHIFT_DAYS={d}"})
     return out
 
 

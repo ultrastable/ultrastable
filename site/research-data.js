@@ -49,7 +49,7 @@ export default {
      "AI systems leave their loops open. Put in place: an output with no code consumer fails the build. Check it with one number, share of registered loops that declare a closing probe and a server-side owner, and set a limit for it (>= 1.0 is the limit we use)."
     ],
     "practice_note": [
-     "In our own system, 4 of 5 of these checks pass today. Share of declared essential variables that have limits (doctrine/ultrastability.json) reads 1.0 (n = 13; source: doctrine/ultrastability.json). Second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl) reads 98 (n = 13990; source: ops/ultrastability.jsonl). Share of essential variables whose second loop can change a parameter of the first loop reads 1.0 (n = 13; source: doctrine/ultrastability.json). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+     "In our own system, 4 of 5 of these checks pass today. Share of declared essential variables that have limits (doctrine/ultrastability.json) reads 1.0 (n = 13; source: doctrine/ultrastability.json). Second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl) reads 98 (n = 14072; source: ops/ultrastability.jsonl). Share of essential variables whose second loop can change a parameter of the first loop reads 1.0 (n = 13; source: doctrine/ultrastability.json). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
     ],
     "tradeoffs": [
      "Reading. Chapters 7 and 8 were not machine-read for this paper: the archive.org text the research loop could reach ends in chapter 2. Ashby's mechanism is stated here in our own words from the book's contents and preface; the only verbatim quotation is from the preface (page v).",
@@ -160,7 +160,7 @@ export default {
      "metric_label": "second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl)",
      "measured": 98,
      "status": "met",
-     "n": 13990,
+     "n": 14072,
      "source": "ops/ultrastability.jsonl",
      "item": null
     },
@@ -285,7 +285,7 @@ export default {
     {
      "finding": "A5",
      "rule": "UIUX-1",
-     "score": 0.109
+     "score": 0.108
     },
     {
      "finding": "A5",
@@ -293,7 +293,7 @@ export default {
      "score": 0.102
     }
    ],
-   "leads_route": "lexical-512-1id6r6g",
+   "leads_route": "lexical-512-1jq95my",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -629,7 +629,7 @@ export default {
      "prediction": "self_deploys >= 1 within 336 h",
      "metric_label": "verified deploys the system originated and executed itself (latest criticality tick)",
      "measured": 0,
-     "status": "not-met",
+     "status": "unmeasured",
      "n": 0,
      "source": "ops/criticality.jsonl at 2026-11-24T17:40:23Z",
      "item": "Q-RES-chen-stratton-2026-F7"
@@ -673,10 +673,10 @@ export default {
     {
      "finding": "F7",
      "rule": "OUTREACH-INTRO-1",
-     "score": 0.138
+     "score": 0.139
     }
    ],
-   "leads_route": "lexical-512-ywi03n",
+   "leads_route": "lexical-512-ku4xff",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -727,7 +727,7 @@ export default {
      "The system ships its own deploys. Put in place: the tick wakes the executor, whose merged change deploys from the merge commit. Check it with one number, verified deploys the system originated and executed itself (latest criticality tick), and set a limit for it (>= 1 is the limit we use)."
     ],
     "practice_note": [
-     "In our own system, 4 of 6 of these checks pass today. Share of registered loops that declare a closing probe and a server-side owner reads 1.0 (n = 113; source: instances/ultrastable/loop-registry.json (declared)). Median hours from a pull request opening to its merge reads 0.15 (n = 64; source: GitHub REST pulls?state=closed, last 100 closed pull requests, fetched 2026-11-21T09:30:00Z). Share of uploaded deploys proven live against their commit reads 1.0 (n = 40; source: ops/deploys.jsonl (same window)). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+     "In our own system, 3 of 6 of these checks pass today. Share of registered loops that declare a closing probe and a server-side owner reads 1.0 (n = 113; source: instances/ultrastable/loop-registry.json (declared)). Median hours from a pull request opening to its merge reads 0.15 (n = 64; source: GitHub REST pulls?state=closed, last 100 closed pull requests, fetched 2026-11-21T09:30:00Z). Share of uploaded deploys proven live against their commit reads 1.0 (n = 40; source: ops/deploys.jsonl (same window)). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
     ],
     "tradeoffs": [
      "Scale. One organization: 100 closed pull requests (64 merged) over 0.75 days. Our numbers describe this system; they are not a causal estimate and are not compared with the study's effect sizes as if they were.",
@@ -769,7 +769,7 @@ export default {
     "data": "This system's own ledgers: closed pull requests read from GitHub, the deploy record, the criticality ticks, the ultrastability ledger and the loop registry",
     "summary": "A common belief holds that AI agents can draft code but a person must still merge it, deploy it and check that it works. Ultrastable is built to close those loops itself: a server-side lane merges green changes, every deploy is proven live against its commit, and every loop names its closing probe."
    },
-   "abstract": "Ultrastable R&D (Ultrastable): A common belief holds that AI agents can draft code but a person must still merge it, deploy it and check that it works. Ultrastable is built to close those loops itself: a server-side lane merges green changes, every deploy is proven live against its commit, and every loop names its closing probe. We state the common belief as properties that can fail, and test each against the records of a system that merges, deploys and checks its own work. Where it still depends on outside sessions, the paper says so with the number. 4 of 6 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.",
+   "abstract": "Ultrastable R&D (Ultrastable): A common belief holds that AI agents can draft code but a person must still merge it, deploy it and check that it works. Ultrastable is built to close those loops itself: a server-side lane merges green changes, every deploy is proven live against its commit, and every loop names its closing probe. We state the common belief as properties that can fail, and test each against the records of a system that merges, deploys and checks its own work. Where it still depends on outside sessions, the paper says so with the number. 3 of 6 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.",
    "window": {
     "start": "2026-11-20T15:16:32Z",
     "end": "2026-11-21T09:10:55Z",
@@ -890,10 +890,10 @@ export default {
      "prediction": "human_touches <= 0 within 168 h",
      "metric_label": "human touches counted by the latest criticality tick",
      "measured": 0,
-     "status": "met",
+     "status": "unmeasured",
      "n": 0,
      "source": "ops/criticality.jsonl at 2026-11-24T17:40:23Z",
-     "item": null
+     "item": "Q-RES-open-loops-2026-O4"
     },
     {
      "id": "O5",
@@ -942,13 +942,13 @@ export default {
      "prediction": "self_deploys >= 1 within 336 h",
      "metric_label": "verified deploys the system originated and executed itself (latest criticality tick)",
      "measured": 0,
-     "status": "not-met",
+     "status": "unmeasured",
      "n": 0,
      "source": "ops/criticality.jsonl at 2026-11-24T17:40:23Z",
      "item": "Q-RES-open-loops-2026-O6"
     }
    ],
-   "met": 4,
+   "met": 3,
    "total": 6,
    "limits": [
     "Scale. One organization: 100 closed pull requests (64 merged) over 0.75 days. Our numbers describe this system; they are not a causal estimate and are not compared with the study's effect sizes as if they were.",
@@ -966,12 +966,12 @@ export default {
     {
      "finding": "O2",
      "rule": "CLOCKWORK-1",
-     "score": 0.13
+     "score": 0.131
     },
     {
-     "finding": "O4",
-     "rule": "PROMOTE-1",
-     "score": 0.113
+     "finding": "O3",
+     "rule": "REDTEAM-1",
+     "score": 0.149
     },
     {
      "finding": "O5",
@@ -987,14 +987,9 @@ export default {
      "finding": "O6",
      "rule": "FLOW-DIRECTIVE-1",
      "score": 0.114
-    },
-    {
-     "finding": "O6",
-     "rule": "INTERVIEW-1",
-     "score": 0.113
     }
    ],
-   "leads_route": "lexical-512-7c5i67",
+   "leads_route": "lexical-512-1e6u9n3",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -1294,7 +1289,12 @@ export default {
     {
      "finding": "S3",
      "rule": "RUNWAY-1",
-     "score": 0.117
+     "score": 0.116
+    },
+    {
+     "finding": "S3",
+     "rule": "REDTEAM-1",
+     "score": 0.106
     },
     {
      "finding": "S4",
@@ -1314,15 +1314,15 @@ export default {
     {
      "finding": "S6",
      "rule": "IGNORANCE-1",
-     "score": 0.13
+     "score": 0.129
     },
     {
      "finding": "S6",
      "rule": "TEMPORAL-1",
-     "score": 0.115
+     "score": 0.114
     }
    ],
-   "leads_route": "lexical-512-1p8i5v6",
+   "leads_route": "lexical-512-1yeujrc",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -1464,10 +1464,10 @@ export default {
     {
      "finding": "K1",
      "rule": "POINT-AND-CLICK-1",
-     "score": 0.153
+     "score": 0.152
     }
    ],
-   "leads_route": "lexical-512-5m4ikf",
+   "leads_route": "lexical-512-ibvm6n",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   }
  ],

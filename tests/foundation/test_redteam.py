@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """REDTEAM-1: each blind-spot check fires on the failure the owner found first on 2026-11-25, and stays quiet when it is fixed."""
 import datetime as dt, json, tempfile, unittest
 from pathlib import Path
