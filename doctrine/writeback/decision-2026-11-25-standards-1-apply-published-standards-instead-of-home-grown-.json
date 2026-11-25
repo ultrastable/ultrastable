@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-25-standards-1-apply-published-standards-instead-of-home-grown-",
+  "kind": "decision",
+  "date": "2026-11-25",
+  "title": "STANDARDS-1: apply published standards instead of home-grown formats",
+  "body": "Every JSON config has a JSON Schema 2020-12 contract in a Schema Store catalog (configschema), catalog-info.yaml (Backstage) and sbom.cdx.json (CycloneDX 1.6) are generated from the registers (stdgen), devcontainer.json gives cloud agents the checks' runtimes, and the standards register records supported, planned (OpenFeature, SLSA, with items) and not-applicable choices (Rego, Conventional Commits/SemVer, with reasons). What Works publishes schema.org ClaimReview, ISO 3166, DCAT, PROV-O and OpenAPI.",
+  "probe": "grep:.github/workflows/checks.yml::configschema --check"
+ },
+ "kind": "decision",
+ "title": "STANDARDS-1: apply published standards instead of home-grown formats",
+ "session": ""
+}

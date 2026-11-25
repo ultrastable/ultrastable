@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/publication.schema.json",
+  "title": "publication (doctrine/publication.json)",
+  "description": "Contract for doctrine/publication.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "license_blob": {
+      "type": "string"
+    },
+    "spdx": {
+      "type": "string"
+    },
+    "required_files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "source_suffixes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "private_data": {
+      "type": "object",
+      "properties": {
+        "scan_suffixes": {
+          "type": "array"
+        },
+        "skip_paths": {
+          "type": "string"
+        },
+        "patterns": {
+          "type": "object"
+        },
+        "allow": {
+          "type": "string"
+        }
+      }
+    },
+    "procedure": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "how": {
+            "type": "string"
+          },
+          "step": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "facts": {
+      "type": "object",
+      "properties": {
+        "actions_on_private_repositories": {
+          "type": "string"
+        },
+        "codeowners": {
+          "type": "string"
+        }
+      }
+    },
+    "spdx_baseline": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "facts",
+    "id",
+    "license_blob",
+    "private_data",
+    "procedure",
+    "required_files",
+    "source_suffixes",
+    "spdx",
+    "spdx_baseline",
+    "version"
+  ]
+}

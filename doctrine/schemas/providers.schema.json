@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/providers.schema.json",
+  "title": "providers (doctrine/providers.json)",
+  "description": "Contract for doctrine/providers.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "canonical": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "direction": {
+          "type": "string"
+        }
+      }
+    },
+    "layers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "provider_specific": {
+            "type": "boolean"
+          },
+          "what": {
+            "type": "string"
+          },
+          "where": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "providers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "self_hosting_test": {
+      "type": "object",
+      "properties": {
+        "claim": {
+          "type": "string"
+        },
+        "true_when": {
+          "type": "array"
+        },
+        "today": {
+          "type": "string"
+        },
+        "probe": {
+          "type": "string"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "canonical",
+    "capabilities",
+    "layers",
+    "providers",
+    "self_hosting_test",
+    "version"
+  ]
+}

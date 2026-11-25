@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/point-and-click.schema.json",
+  "title": "point-and-click (doctrine/point-and-click.json)",
+  "description": "Contract for doctrine/point-and-click.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "rule": {
+      "type": "string"
+    },
+    "owner_directive": {
+      "type": "string"
+    },
+    "scan_globs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "patterns": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "baseline": {
+      "type": "array"
+    },
+    "closing_probe": {
+      "type": "string"
+    },
+    "connect_link": {
+      "type": "object",
+      "properties": {
+        "rule": {
+          "type": "string"
+        },
+        "deep_link_baseline": {
+          "type": "array"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "baseline",
+    "closing_probe",
+    "connect_link",
+    "id",
+    "owner_directive",
+    "patterns",
+    "rule",
+    "scan_globs"
+  ]
+}

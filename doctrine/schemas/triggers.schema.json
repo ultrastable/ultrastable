@@ -1,0 +1,244 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/triggers.schema.json",
+  "title": "triggers (doctrine/triggers.json)",
+  "description": "Contract for doctrine/triggers.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "heartbeat": {
+      "type": "object",
+      "properties": {
+        "cron": {
+          "type": "string"
+        },
+        "why": {
+          "type": "string"
+        }
+      }
+    },
+    "host_limits": {
+      "type": "object",
+      "properties": {
+        "min_interval_minutes": {
+          "type": "number"
+        },
+        "max_crons_per_worker": {
+          "type": "number"
+        },
+        "max_ticks_per_day": {
+          "type": "number"
+        },
+        "max_role_period_minutes": {
+          "type": "number"
+        }
+      }
+    },
+    "workflow_max_fires_per_day": {
+      "type": "number"
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "actions": {
+            "type": "array"
+          },
+          "event": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "when": {
+            "type": "string"
+          },
+          "why": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "workflows": {
+      "type": "object",
+      "properties": {
+        "a11y.yml": {
+          "type": "object"
+        },
+        "actions-budget.yml": {
+          "type": "object"
+        },
+        "backup-drill.yml": {
+          "type": "object"
+        },
+        "branchsweep.yml": {
+          "type": "object"
+        },
+        "cf-account.yml": {
+          "type": "object"
+        },
+        "checks.yml": {
+          "type": "object"
+        },
+        "ciwatch.yml": {
+          "type": "object"
+        },
+        "claims.yml": {
+          "type": "object"
+        },
+        "cost-guard.yml": {
+          "type": "object"
+        },
+        "demo-video.yml": {
+          "type": "object"
+        },
+        "deploy-gateway.yml": {
+          "type": "object"
+        },
+        "deploy-site.yml": {
+          "type": "object"
+        },
+        "deploy-system.yml": {
+          "type": "object"
+        },
+        "deploy-ultrastable.yml": {
+          "type": "object"
+        },
+        "deploy-workers.yml": {
+          "type": "object"
+        },
+        "executor.yml": {
+          "type": "object"
+        },
+        "failure-audit.yml": {
+          "type": "object"
+        },
+        "findable.yml": {
+          "type": "object"
+        },
+        "first-run.yml": {
+          "type": "object"
+        },
+        "fleet.yml": {
+          "type": "object"
+        },
+        "funding-maintenance.yml": {
+          "type": "object"
+        },
+        "host-sync.yml": {
+          "type": "object"
+        },
+        "index.yml": {
+          "type": "object"
+        },
+        "intent-yield.yml": {
+          "type": "object"
+        },
+        "issueloop.yml": {
+          "type": "object"
+        },
+        "issues.yml": {
+          "type": "object"
+        },
+        "lane.yml": {
+          "type": "object"
+        },
+        "ledger-openalex.yml": {
+          "type": "object"
+        },
+        "loop.yml": {
+          "type": "object"
+        },
+        "mcp-registry.yml": {
+          "type": "object"
+        },
+        "org-manage.yml": {
+          "type": "object"
+        },
+        "org-profile-probe.yml": {
+          "type": "object"
+        },
+        "org-settings.yml": {
+          "type": "object"
+        },
+        "outreach.yml": {
+          "type": "object"
+        },
+        "owner-links-audit.yml": {
+          "type": "object"
+        },
+        "platform-core.yml": {
+          "type": "object"
+        },
+        "product-manager.yml": {
+          "type": "object"
+        },
+        "regen-generated.yml": {
+          "type": "object"
+        },
+        "retriage.yml": {
+          "type": "object"
+        },
+        "scout.yml": {
+          "type": "object"
+        },
+        "seed-launch.yml": {
+          "type": "object"
+        },
+        "sessions.yml": {
+          "type": "object"
+        },
+        "smoke-live.yml": {
+          "type": "object"
+        },
+        "social-post.yml": {
+          "type": "object"
+        },
+        "spinoff.yml": {
+          "type": "object"
+        },
+        "temporal.yml": {
+          "type": "object"
+        },
+        "tenant-repos.yml": {
+          "type": "object"
+        },
+        "tenant-sync.yml": {
+          "type": "object"
+        },
+        "transparency.yml": {
+          "type": "object"
+        },
+        "uiux.yml": {
+          "type": "object"
+        },
+        "upstream.yml": {
+          "type": "object"
+        },
+        "watchdog.yml": {
+          "type": "object"
+        },
+        "workers-tests.yml": {
+          "type": "object"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "events",
+    "heartbeat",
+    "host_limits",
+    "workflow_max_fires_per_day",
+    "workflows"
+  ]
+}

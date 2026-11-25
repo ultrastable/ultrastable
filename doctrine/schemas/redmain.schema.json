@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/redmain.schema.json",
+  "title": "redmain (doctrine/redmain.json)",
+  "description": "Contract for doctrine/redmain.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "max_commits_back": {
+      "type": "number"
+    },
+    "max_candidates": {
+      "type": "number"
+    },
+    "gate_timeout_s": {
+      "type": "number"
+    },
+    "never_revert": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "gates": {
+      "type": "object",
+      "properties": {
+        "deploy-site": {
+          "type": "object"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "gate_timeout_s",
+    "gates",
+    "max_candidates",
+    "max_commits_back",
+    "never_revert",
+    "version"
+  ]
+}

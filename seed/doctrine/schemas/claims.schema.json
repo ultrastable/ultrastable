@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/seed/doctrine/claims.schema.json",
+  "title": "claims (seed/doctrine/claims.json)",
+  "description": "Contract for seed/doctrine/claims.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "number"
+    },
+    "output": {
+      "type": "string"
+    },
+    "ledgers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "probe": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "generated": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "inventory": {
+      "type": "array"
+    },
+    "live": {
+      "type": "array"
+    },
+    "coverage": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "type": "number"
+        },
+        "floor": {
+          "type": "number"
+        },
+        "patterns": {
+          "type": "array"
+        },
+        "skip": {
+          "type": "array"
+        },
+        "src_globs": {
+          "type": "array"
+        },
+        "live_pages": {
+          "type": "array"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "claims",
+    "coverage",
+    "generated",
+    "inventory",
+    "ledgers",
+    "live",
+    "output",
+    "version"
+  ]
+}

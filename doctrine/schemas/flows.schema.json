@@ -1,0 +1,463 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/flows.schema.json",
+  "title": "flows (doctrine/flows.json)",
+  "description": "Contract for doctrine/flows.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "quote": {
+      "type": "string"
+    },
+    "external_sources": {
+      "type": "object",
+      "properties": {
+        "ext.app_users": {
+          "type": "string"
+        },
+        "ext.site_visits": {
+          "type": "string"
+        },
+        "ext.post_engagement": {
+          "type": "string"
+        },
+        "ext.owner_goals": {
+          "type": "string"
+        },
+        "ext.outreach_replies": {
+          "type": "string"
+        },
+        "ext.actions_quota": {
+          "type": "string"
+        },
+        "ext.frontier": {
+          "type": "string"
+        },
+        "ext.cf_analytics": {
+          "type": "string"
+        },
+        "ext.unlearn_adults": {
+          "type": "string"
+        },
+        "ext.unlearn_readers": {
+          "type": "string"
+        },
+        "ext.unlearn_literature": {
+          "type": "string"
+        },
+        "ext.ledger_literature": {
+          "type": "string"
+        }
+      }
+    },
+    "flows": {
+      "type": "object",
+      "properties": {
+        "qnfo-sauce": {
+          "type": "object"
+        },
+        "tick-heartbeat": {
+          "type": "object"
+        },
+        "agent-executor": {
+          "type": "object"
+        },
+        "change-gate": {
+          "type": "object"
+        },
+        "merge-lane": {
+          "type": "object"
+        },
+        "site-deploy": {
+          "type": "object"
+        },
+        "social-post": {
+          "type": "object"
+        },
+        "dashboard-snapshot": {
+          "type": "object"
+        },
+        "predict-verify": {
+          "type": "object"
+        },
+        "trust-ledger": {
+          "type": "object"
+        },
+        "temporal": {
+          "type": "object"
+        },
+        "failure-audit": {
+          "type": "object"
+        },
+        "product-manager-pass": {
+          "type": "object"
+        },
+        "plussing": {
+          "type": "object"
+        },
+        "issue-triage": {
+          "type": "object"
+        },
+        "planning-roadmap": {
+          "type": "object"
+        },
+        "funding-verify": {
+          "type": "object"
+        },
+        "funding-outreach": {
+          "type": "object"
+        },
+        "outreach-send": {
+          "type": "object"
+        },
+        "fleet-lane": {
+          "type": "object"
+        },
+        "index-refresh": {
+          "type": "object"
+        },
+        "org-profile": {
+          "type": "object"
+        },
+        "platform-core-tests": {
+          "type": "object"
+        },
+        "actions-budget": {
+          "type": "object"
+        },
+        "retriage": {
+          "type": "object"
+        },
+        "branch-reaper": {
+          "type": "object"
+        },
+        "public-transparency": {
+          "type": "object"
+        },
+        "core-instance-sync": {
+          "type": "object"
+        },
+        "launch": {
+          "type": "object"
+        },
+        "running-system": {
+          "type": "object"
+        },
+        "executor-session": {
+          "type": "object"
+        },
+        "scout": {
+          "type": "object"
+        },
+        "a11y": {
+          "type": "object"
+        },
+        "cost-guard": {
+          "type": "object"
+        },
+        "deploy-workers": {
+          "type": "object"
+        },
+        "open-loop-sweeper": {
+          "type": "object"
+        },
+        "demo-video": {
+          "type": "object"
+        },
+        "first-run": {
+          "type": "object"
+        },
+        "role-design-manager": {
+          "type": "object"
+        },
+        "promote": {
+          "type": "object"
+        },
+        "blindspots": {
+          "type": "object"
+        },
+        "provenance-loop": {
+          "type": "object"
+        },
+        "insight-loop": {
+          "type": "object"
+        },
+        "criticality-loop": {
+          "type": "object"
+        },
+        "ultrastability-loop": {
+          "type": "object"
+        },
+        "branch-sweep": {
+          "type": "object"
+        },
+        "loop-proof": {
+          "type": "object"
+        },
+        "ignition-ladder": {
+          "type": "object"
+        },
+        "publication-guard": {
+          "type": "object"
+        },
+        "unknowns": {
+          "type": "object"
+        },
+        "spinoff": {
+          "type": "object"
+        },
+        "ciwatch": {
+          "type": "object"
+        },
+        "claims-conformance": {
+          "type": "object"
+        },
+        "workers-tests": {
+          "type": "object"
+        },
+        "issue-loop": {
+          "type": "object"
+        },
+        "resilience": {
+          "type": "object"
+        },
+        "tenant-sync": {
+          "type": "object"
+        },
+        "uiux-loop": {
+          "type": "object"
+        },
+        "role-uiux-manager": {
+          "type": "object"
+        },
+        "regen-generated": {
+          "type": "object"
+        },
+        "hosts": {
+          "type": "object"
+        },
+        "host-sync": {
+          "type": "object"
+        },
+        "role-portfolio-manager": {
+          "type": "object"
+        },
+        "role-project-manager": {
+          "type": "object"
+        },
+        "role-product-manager": {
+          "type": "object"
+        },
+        "role-staff": {
+          "type": "object"
+        },
+        "role-reviewer": {
+          "type": "object"
+        },
+        "role-operations": {
+          "type": "object"
+        },
+        "role-funding-manager": {
+          "type": "object"
+        },
+        "role-outreach-manager": {
+          "type": "object"
+        },
+        "role-outreach-coordinator": {
+          "type": "object"
+        },
+        "memory-fresh": {
+          "type": "object"
+        },
+        "write-back": {
+          "type": "object"
+        },
+        "loop-registry": {
+          "type": "object"
+        },
+        "glossary": {
+          "type": "object"
+        },
+        "doctrine-check": {
+          "type": "object"
+        },
+        "recognition-lint": {
+          "type": "object"
+        },
+        "doctrine-amendment": {
+          "type": "object"
+        },
+        "gap-register": {
+          "type": "object"
+        },
+        "guiding-directive": {
+          "type": "object"
+        },
+        "durable-facts": {
+          "type": "object"
+        },
+        "doc-consumption": {
+          "type": "object"
+        },
+        "liveness": {
+          "type": "object"
+        },
+        "server-side-only": {
+          "type": "object"
+        },
+        "orphan-artifacts": {
+          "type": "object"
+        },
+        "containment-boundary": {
+          "type": "object"
+        },
+        "session-reaper": {
+          "type": "object"
+        },
+        "market-gaps": {
+          "type": "object"
+        },
+        "strange-loop-hygiene": {
+          "type": "object"
+        },
+        "role-research-publisher": {
+          "type": "object"
+        },
+        "role-marketing-manager": {
+          "type": "object"
+        },
+        "role-legal-ip-manager": {
+          "type": "object"
+        },
+        "role-customer-success": {
+          "type": "object"
+        },
+        "role-org-designer": {
+          "type": "object"
+        },
+        "triggers": {
+          "type": "object"
+        },
+        "lifecycle": {
+          "type": "object"
+        },
+        "components": {
+          "type": "object"
+        },
+        "agent-interop": {
+          "type": "object"
+        },
+        "terms-crosswalk": {
+          "type": "object"
+        },
+        "code-agents": {
+          "type": "object"
+        },
+        "role-program-manager": {
+          "type": "object"
+        },
+        "role-infrastructure-manager": {
+          "type": "object"
+        },
+        "smoke-live": {
+          "type": "object"
+        },
+        "backup-drill": {
+          "type": "object"
+        },
+        "research": {
+          "type": "object"
+        },
+        "thought": {
+          "type": "object"
+        },
+        "yearfail": {
+          "type": "object"
+        },
+        "unlearn-beat": {
+          "type": "object"
+        },
+        "intent-yield": {
+          "type": "object"
+        },
+        "seed-launch": {
+          "type": "object"
+        },
+        "tenant-repos": {
+          "type": "object"
+        },
+        "improve": {
+          "type": "object"
+        },
+        "findable": {
+          "type": "object"
+        },
+        "replication-ledger-openalex": {
+          "type": "object"
+        }
+      }
+    },
+    "implicit_producers": {
+      "type": "object",
+      "properties": {
+        "owner.goals": {
+          "type": "string"
+        },
+        "app.metrics": {
+          "type": "string"
+        },
+        "actions.minutes": {
+          "type": "string"
+        },
+        "frontier.releases": {
+          "type": "string"
+        },
+        "cf.analytics": {
+          "type": "string"
+        },
+        "site.hits": {
+          "type": "string"
+        },
+        "loop.registry": {
+          "type": "string"
+        },
+        "unlearn.followups": {
+          "type": "string"
+        },
+        "unlearn.reader_taps": {
+          "type": "string"
+        },
+        "unlearn.literature": {
+          "type": "string"
+        },
+        "ledger.literature": {
+          "type": "string"
+        }
+      }
+    },
+    "pending": {
+      "type": "array"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "external_sources",
+    "flows",
+    "id",
+    "implicit_producers",
+    "pending",
+    "quote",
+    "version"
+  ]
+}

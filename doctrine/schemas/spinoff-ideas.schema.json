@@ -1,0 +1,273 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/spinoff-ideas.schema.json",
+  "title": "spinoff-ideas (doctrine/spinoff-ideas.json)",
+  "description": "Contract for doctrine/spinoff-ideas.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "marker": {
+      "type": "string"
+    },
+    "headroom": {
+      "type": "string"
+    },
+    "stale_after_hours": {
+      "type": "number"
+    },
+    "queue": {
+      "type": "string"
+    },
+    "roadmap_out": {
+      "type": "string"
+    },
+    "reserve": {
+      "type": "object",
+      "properties": {
+        "d1_rows_read": {
+          "type": "number"
+        },
+        "d1_rows_written": {
+          "type": "number"
+        },
+        "workers_requests": {
+          "type": "number"
+        },
+        "ai_neurons": {
+          "type": "number"
+        }
+      }
+    },
+    "cadence": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": "string"
+        },
+        "ok": {
+          "type": "number"
+        },
+        "degrade": {
+          "type": "number"
+        },
+        "shed": {
+          "type": "number"
+        }
+      }
+    },
+    "min_score": {
+      "type": "number"
+    },
+    "max_new_per_run": {
+      "type": "number"
+    },
+    "scope_ideas_per_run": {
+      "type": "number"
+    },
+    "weights": {
+      "type": "object",
+      "properties": {
+        "showcase_bonus": {
+          "type": "number"
+        },
+        "cost_penalty": {
+          "type": "number"
+        }
+      }
+    },
+    "board_stale_hours": {
+      "type": "number"
+    },
+    "bank": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "archetype": {
+            "type": "string"
+          },
+          "change": {
+            "type": "array"
+          },
+          "corpus": {
+            "type": "string"
+          },
+          "cost": {
+            "type": "object"
+          },
+          "fact": {
+            "type": "object"
+          },
+          "hook": {
+            "type": "string"
+          },
+          "horizon": {
+            "type": "array"
+          },
+          "id": {
+            "type": "string"
+          },
+          "impact": {
+            "type": "number"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "live": {
+            "type": "string"
+          },
+          "loop": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "need": {
+            "type": "number"
+          },
+          "need_evidence": {
+            "type": "string"
+          },
+          "public_good": {
+            "type": "string"
+          },
+          "reach": {
+            "type": "number"
+          },
+          "regions": {
+            "type": "string"
+          },
+          "returns": {
+            "type": "string"
+          },
+          "showcase": {
+            "type": "boolean"
+          },
+          "showcases": {
+            "type": "string"
+          },
+          "tagline": {
+            "type": "string"
+          },
+          "thesis": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "scope_templates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "cost": {
+            "type": "object"
+          },
+          "id": {
+            "type": "string"
+          },
+          "probe": {
+            "type": "string"
+          },
+          "resource": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "why": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "private_ledgers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "max_live_boards": {
+      "type": "number"
+    },
+    "benefit": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": "string"
+        },
+        "scale": {
+          "type": "number"
+        },
+        "region": {
+          "type": "object"
+        },
+        "use": {
+          "type": "object"
+        }
+      }
+    },
+    "depth": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": "string"
+        },
+        "marker": {
+          "type": "string"
+        },
+        "min_text": {
+          "type": "number"
+        },
+        "min_horizon": {
+          "type": "number"
+        },
+        "fields": {
+          "type": "object"
+        },
+        "shallow_archetypes": {
+          "type": "array"
+        },
+        "commerce_words": {
+          "type": "array"
+        },
+        "change_library": {
+          "type": "string"
+        },
+        "aliases": {
+          "type": "object"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "bank",
+    "benefit",
+    "board_stale_hours",
+    "cadence",
+    "depth",
+    "headroom",
+    "id",
+    "marker",
+    "max_live_boards",
+    "max_new_per_run",
+    "min_score",
+    "private_ledgers",
+    "queue",
+    "reserve",
+    "roadmap_out",
+    "scope_ideas_per_run",
+    "scope_templates",
+    "stale_after_hours",
+    "weights"
+  ]
+}

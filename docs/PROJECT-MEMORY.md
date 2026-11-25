@@ -10,6 +10,7 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-25
 
+- 2026-11-25: STANDARDS-1 (Rowan: "Standards, don't reinvent the wheel"): JSON Schema 2020-12 contracts for all 150 doctrine/seed configs with Schema Store catalogs (`foundation configschema`), Backstage `catalog-info.yaml` and CycloneDX `sbom.cdx.json` generated from the registers (`foundation stdgen`), `.devcontainer/devcontainer.json`, nine new rows in `seed/standards/standards.json` (OpenFeature and SLSA planned as Q-STD-*; Rego and Conventional Commits/SemVer not applicable with reasons). What Works publishes schema.org ClaimReview, ISO 3166, DCAT, PROV-O and OpenAPI (ultrastable/what-works#12).
 - 2026-11-25: BOOTPROOF-1: seed kernel closure audit and daily scratch bootstrap probe (#2237)
 - 2026-11-25: Fix failure-audit evidence push and unroutable detectors (#2242)
 - 2026-11-25: Root-cause launch-day failures: hold merges with no checks, flag owner-deferred deploys, catch spelled-out claims (#2232)

@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/change-methods.schema.json",
+  "title": "change-methods (doctrine/change-methods.json)",
+  "description": "Contract for doctrine/change-methods.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "min_per_idea": {
+      "type": "number"
+    },
+    "stages": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "methods": {
+      "type": "object",
+      "properties": {
+        "guess-first": {
+          "type": "object"
+        },
+        "why-it-feels-true": {
+          "type": "object"
+        },
+        "fact-myth-fallacy": {
+          "type": "object"
+        },
+        "self-affirmation": {
+          "type": "object"
+        },
+        "consider-the-opposite": {
+          "type": "object"
+        },
+        "outside-view": {
+          "type": "object"
+        },
+        "prebunking": {
+          "type": "object"
+        },
+        "graded-uncertainty": {
+          "type": "object"
+        },
+        "implementation-intention": {
+          "type": "object"
+        },
+        "easy-attractive-social-timely": {
+          "type": "object"
+        },
+        "com-b": {
+          "type": "object"
+        },
+        "social-norms": {
+          "type": "object"
+        },
+        "spaced-follow-up": {
+          "type": "object"
+        },
+        "calibration-feedback": {
+          "type": "object"
+        },
+        "change-management": {
+          "type": "object"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "id",
+    "methods",
+    "min_per_idea",
+    "stages"
+  ]
+}
