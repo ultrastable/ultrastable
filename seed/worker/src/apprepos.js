@@ -7,6 +7,7 @@
 //   POST /host/app-repo   (x-internal-key)  create the repository if missing, write files, invite its owner
 //   POST /host/tenant-repo (x-internal-key)  a registered tenant's repository, and a push token while it is empty (TENANT-REPO-2)
 //   POST /host/app-token  ({repo, key})     a one-hour token for that one repository; key is this host's HMAC over the repository name
+//   POST /host/repo-settings (x-internal-key) REPO-SETTINGS-1: delete_branch_on_merge and allow_auto_merge on for one org repository
 import { getToken } from './auth/index.js';
 import { appJwt } from './auth/github-app.js';
 import * as store from './auth/store.js';
@@ -112,14 +113,39 @@ export async function ensureTenantRepo(db, env, tenant, spec, { fetch: f = fetch
   await store.event(db, tenant, 'github-app', 'tenant-repo-token', repo);
   return { ...out, ok: true, empty: true, token: t.token, expires_at: new Date(t.expiresAt).toISOString() };
 }
+// REPO-SETTINGS-1 (2026-11-25): the core repositories had no ORG_ADMIN_TOKEN, so delete_branch_on_merge and allow_auto_merge could not be set from
+// Actions and branch cleanup and org-settings stayed red. The administration app this Worker already holds sets exactly these two settings, on any
+// repository of the org and nothing else; every other setting stays with org-settings.yml and its gate.
+export const REPO_SETTINGS = Object.freeze({ delete_branch_on_merge: true, allow_auto_merge: true });
+export const ORG_REPO = /^ultrastable\/[A-Za-z0-9._-]{1,100}$/;
+export async function ensureRepoSettings(db, env, tenant, spec, { fetch: f = fetch, now = Date.now() } = {}) {
+  const repo = String(spec.repo || ''), out = { repo };
+  if (!ORG_REPO.test(repo) || repo.includes('..')) return { ...out, ok: false, error: 'not a repository of the org' };
+  const adm = await getToken(db, env, tenant, 'github-admin', { fetch: f, now });
+  if (!adm.ok) return { ...out, ok: false, waiting_on: 'admin-app', error: 'administration app: ' + adm.error };
+  const A = gh(f, adm.token);
+  const seen = await A('GET', `/repos/${repo}`);
+  if (seen.status !== 200) return { ...out, ok: false, waiting_on: 'admin-app-scope', error: `read ${repo}: HTTP ${seen.status}` };
+  const drift = Object.fromEntries(Object.entries(REPO_SETTINGS).filter(([k, v]) => seen.json[k] !== v));
+  if (!Object.keys(drift).length) return { ...out, ok: true, changed: [] };
+  const p = await A('PATCH', `/repos/${repo}`, drift);
+  if (p.status !== 200) { await store.event(db, tenant, 'github-admin', 'failed', `repo settings ${repo} HTTP ${p.status}`); return { ...out, ok: false, waiting_on: 'admin-app-scope', error: `set ${Object.keys(drift).join(', ')} on ${repo}: HTTP ${p.status} ${p.json.message || ''}`.slice(0, 200) }; }
+  await store.event(db, tenant, 'github-admin', 'repo-settings', `${repo}: ${Object.keys(drift).join(', ')} on`);
+  return { ...out, ok: true, changed: Object.keys(drift) };
+}
 export async function handleAppHost(request, env, { tenant = 'default', fetch: f = fetch, now = Date.now() } = {}) {
   const url = new URL(request.url);
-  if (url.pathname !== '/host/app-repo' && url.pathname !== '/host/app-token' && url.pathname !== '/host/tenant-repo') return null;
+  if (url.pathname !== '/host/app-repo' && url.pathname !== '/host/app-token' && url.pathname !== '/host/tenant-repo' && url.pathname !== '/host/repo-settings') return null;
   if (request.method !== 'POST' || !env.INTERNAL_DEPLOY_KEY) return new Response('Not found', { status: 404 });
   let b; try { b = await request.json(); } catch { return J({ ok: false, error: 'bad json' }, 400); }
   if (url.pathname === '/host/tenant-repo') {
     if (!same(request.headers.get('x-internal-key'), env.INTERNAL_DEPLOY_KEY)) return new Response('Not found', { status: 404 });
     const r = await ensureTenantRepo(env.DB, env, tenant, b, { fetch: f, now });
+    return J(r, r.ok ? 200 : r.waiting_on ? 409 : 400);
+  }
+  if (url.pathname === '/host/repo-settings') {
+    if (!same(request.headers.get('x-internal-key'), env.INTERNAL_DEPLOY_KEY)) return new Response('Not found', { status: 404 });
+    const r = await ensureRepoSettings(env.DB, env, tenant, b, { fetch: f, now });
     return J(r, r.ok ? 200 : r.waiting_on ? 409 : 400);
   }
   if (url.pathname === '/host/app-repo') {

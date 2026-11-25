@@ -5472,6 +5472,69 @@
    "body": "REACH-PAPERS-1: research papers were missing from the sitemap and IndexNow and had no structured data; only the Ashby paper was posted because cadence was 3 days and changed-state reposts went first; Mastodon engagement was never read because relay rows are named relay:mastodon. All four fixed in this change; postfeedback tests pass (19) and thought --run now schedules chen-stratton-2026.",
    "probe": "grep:site/promote.js::REACH-PAPERS-1",
    "session": "session_0156nqDuQXEUhGCq6LkokuuL"
+  },
+  {
+   "id": "decision-2026-11-25-every-fleet-property-is-read-daily-for-search-and-ai-discove",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Every fleet property is read daily for search and AI discoverability",
+   "body": "FINDABLE-1 (Rowan 2026-11-25): no Zenodo or DOIs. Reach comes from open standards: robots, sitemap, llms.txt, meta, canonical, Open Graph, JSON-LD and feeds on every property in the directory, read daily by foundation/findable.py; gaps become Q-FIND items and feeds are pinged to the WebSub hub. Tests: tests/foundation/test_findable.py 4 pass.",
+   "probe": "grep:foundation/findable.py::def home_gaps",
+   "session": "session_0156nqDuQXEUhGCq6LkokuuL"
+  },
+  {
+   "id": "decision-2026-11-25-papers-are-full-white-papers-with-a-publishing-gate",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Papers are full white papers with a publishing gate",
+   "body": "WHITEPAPER-1 (Rowan 2026-11-25): papers read as white papers, with numbered sections (introduction, background, method, results with a table, discussion, limitations, conclusion) and numbered references cited in the text, assembled from the study file and live measurements. research.gate() holds back a paper missing a section, a citation or a measured result; research --check fails on it. /research is linked from the header, footer, homepage and the family nav tenants read. Tests: test_research 9 pass, site tests 71 pass.",
+   "probe": "grep:foundation/research.py::def gate",
+   "session": "session_0156nqDuQXEUhGCq6LkokuuL"
+  },
+  {
+   "id": "decision-2026-11-25-silent-fail-1-silent-failure-classes-are-data-with-detectors",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "SILENT-FAIL-1: silent-failure classes are data with detectors",
+   "body": "Classes live in doctrine/silent-failures.json, each bound to a detector. Worker bundle, duplicate-module and live-citation checks run in checks. An incident matching no class is a finding. A Status: done claim cites a server-side Live: GET line.",
+   "probe": "file:foundation/silentfail.py",
+   "session": "session_0156nqDuMYtda8kTyfqmpNJk"
+  },
+  {
+   "id": "decision-2026-11-25-white-papers-not-research-papers-no-number-without-a-source",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "White papers, not research papers; no number without a source",
+   "body": "WHITEPAPER-2 and NO-MADE-UP-NUMBERS-1 (Rowan 2026-11-25): papers are executive summary, problem, approach, putting it into practice, trade-offs, next steps and references; no forced results table. Live numbers appear only where a reading exists, each with its source. research.gate() blocks a paper with a number that traces to no measurement, study file or cited reference; a test injects 47% and the gate blocks it. Social posts already pass thought.guard, which blocks numbers not in the paper's data.",
+   "probe": "grep:foundation/research.py::def unsourced",
+   "session": "session_0156nqDuQXEUhGCq6LkokuuL"
+  },
+  {
+   "id": "decision-2026-11-25-deploys-read-every-knowledge-graph-back-repo-settings-go-thr",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Deploys read every knowledge graph back; repo settings go through the admin App",
+   "body": "datagraph --live runs after each deploy and daily. org-settings no longer goes red without ORG_ADMIN_TOKEN: the admin App sets delete_branch_on_merge and allow_auto_merge; the rest is gate org-admin-settings.",
+   "probe": "grep:foundation/datagraph.py::def live",
+   "session": "session_0156nqDrE184nXAFKcTRxk26"
+  },
+  {
+   "id": "lesson-2026-11-25-a-directive-given-to-several-sessions-needs-a-claim-and-a-co",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "A directive given to several sessions needs a claim and a collision gate",
+   "body": "DATAGRAPH-1 reached several sessions at once; six PRs (2135, 2151, 2157, 2158, 2166, 2187) clashed on migration 0031, /api/graph and the datagraph command. collisions --prs now refuses the newer PR and collisions --claim is SOP step take.",
+   "probe": "file:foundation/collisions.py",
+   "session": "session_0156nqDrE184nXAFKcTRxk26"
+  },
+  {
+   "id": "lesson-2026-11-25-every-github-merge-path-retries-5xx-and-reads-back-the-merge",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Every GitHub merge path retries 5xx and reads back the merge",
+   "body": "Merges failed on GitHub 5xx with only manual retry; four separate gh helpers had no retry. seed/worker/src/ghfetch.js is the one shared fetch.",
+   "probe": "file:seed/worker/src/ghfetch.js",
+   "session": "session_0156nqDrE184nXAFKcTRxk26"
   }
  ]
 }

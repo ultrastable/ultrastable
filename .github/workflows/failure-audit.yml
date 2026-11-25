@@ -13,7 +13,8 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
-  actions: write  # DRIFT-GUARD-1: detector dg-triggers dispatches a workflow whose matching push on main started no run
+  actions: write  # SILENT-FAIL-1: the actions-stuck detector approves or dispatches runs stuck at action_required; DRIFT-GUARD-1: dg-triggers dispatches a workflow whose matching push on main started no run
+  issues: read
   pull-requests: write  # scripts/land_data.py falls back to a pull request when the main writer is refused
   id-token: write  # MAIN-WRITER-1: tools/push_main.py presents the run's OIDC token
 concurrency:
