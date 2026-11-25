@@ -4387,7 +4387,7 @@
    "date": "2026-11-21",
    "title": "Unlearn phase 1 runs as its own Worker with no secrets",
    "body": "ultrastable-unlearn: one Worker, one D1, one hourly cron, zero dependencies, library-first moves so no model or credential can stop it; a visit catches up a silent cron; runway.json maps 12 year-long risks to tested safeguards.",
-   "probe": "file:instances/unlearn/worker/worker.test.mjs",
+   "probe": "grep:doctrine/tenant-repos.json::\"state\": \"moved\"",
    "session": "session_0156nqDtYB5VwjCzYcyHVqNp"
   },
   {
@@ -4600,7 +4600,7 @@
    "date": "2026-11-22",
    "title": "Unlearn research principles carried in code",
    "body": "Each principle in instances/unlearn/phases.json names a probe; phase 1 ships the help ladder, who-led measure and wide-walls measure; phase 3 principles (fade support, sandbox) wait for phase 3 gates.",
-   "probe": "grep:tests/foundation/test_unlearn.py::test_principles_are_in_code"
+   "probe": "grep:doctrine/tenant-repos.json::\"state\": \"moved\""
   },
   {
    "id": "decision-2026-11-22-cloudflare-alerts-reach-the-tick-cloudflare-alerts-closed",
@@ -4727,7 +4727,7 @@
    "date": "2026-11-22",
    "title": "Unlearn becomes an evidence encyclopedia of beliefs to unlearn",
    "body": "Rowan found the coaching-only Unlearn too unstructured. The tenant is now a clickable, encyclopedic site of popular beliefs the evidence contradicts, modelled on Practical Solutions, with each entry in a guided debunking order and an hourly evidence loop (Crossref DOIs, Europe PMC new reviews, freshness, review queue). The coaching tool stays at /coach.",
-   "probe": "grep:instances/unlearn/worker/entries.js::export const FORMAT"
+   "probe": "grep:doctrine/tenant-repos.json::\"state\": \"moved\""
   },
   {
    "id": "decision-2026-11-22-unlearn-improves-itself-grounded-review-labels-automatic-re-",
@@ -4735,7 +4735,7 @@
    "date": "2026-11-22",
    "title": "Unlearn improves itself: grounded review labels, automatic re-grading, Lab discovery, wording trials",
    "body": "Rowan asked to grow Unlearn and make it run and improve automatically. Decision: a model may only label or re-word, never add facts; every label or draft must quote a sentence present in the abstract it read, re-words may add no number or name, entries' cited sources are never changed by a model, drafts live on /lab and are never published as entries, and wording trials need 40 answers per arm and a two-proportion z of 1.96 to replace the original.",
-   "probe": "grep:instances/unlearn/worker/lab.js::export function grounded",
+   "probe": "grep:doctrine/tenant-repos.json::\"state\": \"moved\"",
    "session": "session_0156nqDvj2EuthJ3xYxicfND"
   },
   {
@@ -4744,7 +4744,7 @@
    "date": "2026-11-22",
    "title": "Unlearn tells famous-finding-retold stories by itself and gives readers a reason to come back daily",
    "body": "Rowan wants far more narrative-vs-later-evidence entries, automated, and a sticky site that runs a year unattended. Decision: a retold topic with then/now timelines graded honestly; a second daily discovery search for replications and re-analyses; drafts reach their own page only after reader votes and only with an index citation, always labelled a draft from one paper; a myth of the day cycle, an Atom feed and a browser-only streak bring readers back without accounts or cookies.",
-   "probe": "grep:instances/unlearn/worker/lab.js::export const RETOLD_QUERY",
+   "probe": "grep:doctrine/tenant-repos.json::\"state\": \"moved\"",
    "session": "session_0156nqDvj2EuthJ3xYxicfND"
   },
   {
@@ -4860,7 +4860,7 @@
    "date": "2026-11-22",
    "title": "Unlearn change layer: graded practices with private trials",
    "body": "Rowan asked for evidence-based change, not only debunking. Practices are full graded entries with a trial kit; all personal trial data stays in the reader's browser; the server counts anonymous events per practice and re-orders suggested if-then plans by keep rate; oversold claims (power posing, ego depletion, growth mindset) get no kit; the Lab drafts candidate practices from intervention reviews under the same grounding guards.",
-   "probe": "file:instances/unlearn/worker/change.js",
+   "probe": "grep:doctrine/tenant-repos.json::\"state\": \"moved\"",
    "session": "session_0156nqDvj2EuthJ3xYxicfND"
   },
   {
