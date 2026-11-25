@@ -7,7 +7,7 @@ import { makeDb } from './d1shim.js';
 import { newKey } from '../src/auth/seal.js';
 import * as store from '../src/auth/store.js';
 import { getToken } from '../src/auth/index.js';
-import { ensureAppRepo, handleAppHost, hostKey, APP_REPO } from '../src/apprepos.js';
+import { ensureAppRepo, ensureTenantRepo, handleAppHost, hostKey, APP_REPO } from '../src/apprepos.js';
 
 const toPem = (der, label) => `-----BEGIN ${label}-----\n${Buffer.from(der).toString('base64').match(/.{1,64}/g).join('\n')}\n-----END ${label}-----`;
 async function pem() { const k = await crypto.subtle.generateKey({ name: 'RSASSA-PKCS1-v1_5', modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]), hash: 'SHA-256' }, true, ['sign', 'verify']); return toPem(new Uint8Array(await crypto.subtle.exportKey('pkcs8', k.privateKey)), 'PRIVATE KEY'); }
@@ -26,7 +26,8 @@ async function world({ admin = true, template = 201, covers = true } = {}) {
     let x;
     if ((x = /^\/app\/installations\/11\/access_tokens$/.exec(u.pathname))) return R(201, { token: 'scoped:' + body.repositories.join(','), expires_at: new Date(far).toISOString() });
     if ((x = /^\/repos\/([^/]+\/[^/]+)\/generate$/.exec(u.pathname))) { if (tok !== 'admin-token' || template !== 201) return R(template === 201 ? 403 : template, { message: 'no' }); repos.set(body.owner + '/' + body.name, new Map([['README.md', 'seed']])); return R(201, {}); }
-    if ((x = /^\/orgs\/([^/]+)\/repos$/.exec(u.pathname))) { if (tok !== 'admin-token') return R(403, { message: 'Resource not accessible by integration' }); repos.set(x[1] + '/' + body.name, new Map([['README.md', '']])); return R(201, {}); }
+    if ((x = /^\/orgs\/([^/]+)\/repos$/.exec(u.pathname))) { if (tok !== 'admin-token') return R(403, { message: 'Resource not accessible by integration' }); repos.set(x[1] + '/' + body.name, new Map(body.auto_init === false ? [] : [['README.md', '']])); return R(201, {}); }
+    if ((x = /^\/repos\/([^/]+\/[^/]+)\/commits$/.exec(u.pathname))) { const r = repos.get(x[1]); if (!r || tok !== 'code-token' || !covers) return R(404, { message: 'Not Found' }); return r.size ? R(200, [{ sha: 'c' }]) : R(409, { message: 'Git Repository is empty.' }); }
     if ((x = /^\/repos\/([^/]+\/[^/]+)\/contents\/(.+)$/.exec(u.pathname))) {
       const r = repos.get(x[1]); if (!r || tok !== 'code-token' || !covers) return R(404, { message: 'Not Found' });
       if (m === 'GET') return r.has(x[2]) ? R(200, { sha: 's', content: Buffer.from(r.get(x[2])).toString('base64') }) : R(404);
@@ -87,4 +88,27 @@ test('a hosted app asks its host for its token and holds no App key of its own',
   assert.equal((await getToken(appDb, appEnv, 'app', 'github-app', { fetch: async () => { throw new Error('must not be called'); } })).memo, true, 'the token is reused until it nears expiry');
   const bad = await getToken(makeDb(), { ...appEnv, HOST_APP_KEY: 'x' }, 'app', 'github-app', { fetch: hostFetch });
   assert.equal(bad.ok, false); assert.match(bad.error, /host token HTTP 404/);
+});
+
+test('TENANT-REPO-2: a tenant repository is created public and empty, and a push token is given only while it has no commit', async () => {
+  const w = await world(), o = { fetch: w.f };
+  const a = await ensureTenantRepo(w.db, w.env, T, { repo: 'ultrastable/replication-ledger', description: 'ledger', push: true }, o);
+  assert.equal(a.ok, true); assert.equal(a.created, true); assert.equal(a.empty, true); assert.equal(a.token, 'scoped:replication-ledger');
+  assert.equal(w.calls.find(c => c.path === '/orgs/ultrastable/repos').body.private, false);
+  w.repos.get('ultrastable/replication-ledger').set('README.md', 'pushed');
+  const b = await ensureTenantRepo(w.db, w.env, T, { repo: 'ultrastable/replication-ledger', push: true }, o);
+  assert.equal(b.ok, true); assert.equal(b.created, undefined); assert.equal(b.empty, false); assert.equal(b.token, undefined, 'a repository with history never gets a token');
+  const c = await ensureTenantRepo(w.db, w.env, T, { repo: 'ultrastable/second-tenant', template: 'ultrastable/seed' }, o);
+  assert.equal(c.ok, true); assert.equal(c.from_template, true); assert.equal(c.token, undefined);
+});
+test('TENANT-REPO-2: never the host repository, never another org, and each missing piece is named', async () => {
+  const w = await world(), o = { fetch: w.f };
+  for (const repo of ['ultrastable/ultrastable', 'someone-else/thing', 'ultrastable/../x', '']) assert.equal((await ensureTenantRepo(w.db, w.env, T, { repo, push: true }, o)).ok, false, repo);
+  assert.equal(w.calls.filter(c => c.m !== 'GET').length, 0, 'nothing was written');
+  const na = await world({ admin: false }); assert.equal((await ensureTenantRepo(na.db, na.env, T, { repo: 'ultrastable/x1' }, { fetch: na.f })).waiting_on, 'admin-app');
+  const n = await world({ covers: false }), r = await ensureTenantRepo(n.db, n.env, T, { repo: 'ultrastable/x1', push: true }, { fetch: n.f });
+  assert.equal(r.waiting_on, 'code-app-scope'); assert.equal(r.token, undefined);
+  const post = (body, h = {}) => handleAppHost(new Request('https://tick.internal/host/tenant-repo', { method: 'POST', headers: h, body: JSON.stringify(body) }), { ...w.env, DB: w.db }, { tenant: T, fetch: w.f });
+  assert.equal((await post({ repo: 'ultrastable/x2' })).status, 404, 'no key, no route');
+  assert.equal((await post({ repo: 'ultrastable/x2' }, { 'x-internal-key': w.env.INTERNAL_DEPLOY_KEY })).status, 200);
 });

@@ -76,9 +76,9 @@ export function ownBody(rec, canon, mine) {
 // the repository keeps the other version in its history.
 const PAGE_PATH = "app/index.html";
 async function sha(text) { return Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(String(text)))), (x) => x.toString(16).padStart(2, "0")).join(""); }
-async function tickRepo(env, spec) {
+async function tickRepo(env, spec, route = "app-repo") {
   if (!env.TICK || !env.INTERNAL_DEPLOY_KEY) return { ok: false, waiting_on: "host-binding", error: "the site has no route to the tick Worker" };
-  const r = await env.TICK.fetch(new Request("https://tick.internal/host/app-repo", { method: "POST", headers: { "content-type": "application/json", "x-internal-key": env.INTERNAL_DEPLOY_KEY }, body: JSON.stringify(spec) }));
+  const r = await env.TICK.fetch(new Request("https://tick.internal/host/" + route, { method: "POST", headers: { "content-type": "application/json", "x-internal-key": env.INTERNAL_DEPLOY_KEY }, body: JSON.stringify(spec) }));
   const j = await r.json().catch(() => null);
   return j || { ok: false, error: "tick Worker answered HTTP " + r.status };
 }
@@ -119,6 +119,10 @@ export async function launchesInternal(request, env) {
     return J({ ok: true, dropped: rec.id });
   }
   if (b.op === "repo") return repoOp(b, env);
+  if (b.op === "tenant-repo") {  // TENANT-REPO-2: the tenant-repos workflow holds no org credential; the tick Worker's Apps create the repository
+    const r = await tickRepo(env, { repo: String(b.repo || ""), template: b.template || undefined, public: b.public !== false, description: String(b.description || ""), push: Boolean(b.push) }, "tenant-repo");
+    return J(r, r.ok ? 200 : r.waiting_on ? 409 : 400);
+  }
   if (b.op === "mark") {
     const rec = await getLaunch(env, String(b.id || "")); if (!rec) return J({ ok: false, error: "no such launch" }, 404);
     if (b.state) { if (!MARKS.has(b.state)) return J({ ok: false, error: "unknown state " + b.state }, 400); rec.state = b.state; }

@@ -12,7 +12,7 @@ on:
     - cron: "23 5 * * *"
   push:
     branches: [main]
-    paths: ["doctrine/tenant-repos.json", ".github/workflows/tenant-repos.yml", "deploy/launch-apps.mjs"]
+    paths: ["doctrine/tenant-repos.json", ".github/workflows/tenant-repos.yml", "deploy/launch-apps.mjs", "deploy/tenant-repo.mjs", "doctrine/full-stack.json"]
   workflow_dispatch:
 permissions:
   contents: read
@@ -59,8 +59,15 @@ jobs:
                    -f description="$(jq -r '.description // ""' <<<"$row")" -F has_wiki=false >/dev/null; then echo "created $repo"; tok="$t"; break; fi
               echo "::warning::this credential could not create $repo; trying the next route"
             done
+            # fourth route, no stored credential (TENANT-REPO-2): the tick Worker's Apps create the repository; a token comes back only while it is empty
+            if [ -z "$tok" ]; then
+              vis=""; [ "$(jq -r '.visibility // "public"' <<<"$row")" = "private" ] && vis="--private"
+              if t="$(node deploy/tenant-repo.mjs "$repo" $vis --description "$(jq -r '.description // ""' <<<"$row")" --push)"; then
+                if [ -n "$t" ]; then echo "::add-mask::$t"; tok="$t"; else echo "$repo already has history; left as it is"; continue; fi
+              else echo "::warning::the tick Worker could not create $repo"; fi
+            fi
             # one tenant without a credential must not stop the others or the redeploy step below: record it, go on, fail at the end
-            if [ -z "$tok" ]; then echo "::error::no credential could create $repo (ORG_ADMIN_TOKEN, LANE_PAT, lane App)"; echo "$repo" >> /tmp/tenant-repos-failed; continue; fi
+            if [ -z "$tok" ]; then echo "::error::no credential could create $repo (ORG_ADMIN_TOKEN, LANE_PAT, lane App, tick Worker)"; echo "$repo" >> /tmp/tenant-repos-failed; continue; fi
             # an empty repository answers 409 here; that answer is logged, not hidden, and means "push the split"
             if head_sha="$(GH_TOKEN="$tok" gh api "repos/$repo/commits?per_page=1" --jq '.[0].sha' 2>/tmp/commits.err)" && [ -n "$head_sha" ]; then echo "$repo already has history; left as it is"; continue; fi
             echo "no commits yet in $repo: $(cat /tmp/commits.err)"
@@ -80,6 +87,9 @@ jobs:
         run: |
           set -euo pipefail
           node deploy/launch-apps.mjs --probe
+      - name: Every seed has its own repository, from the seed template (FULLSTACK-1, TENANT-REPO-2)
+        if: ${{ !cancelled() }}
+        run: node deploy/tenant-repo.mjs --seeds
       - name: Redeploy tenants whose repository moved past the last deploy
         if: ${{ !cancelled() }}  # moved tenants redeploy even when creating another tenant's repository failed above
         env:

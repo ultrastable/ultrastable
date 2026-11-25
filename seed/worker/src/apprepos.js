@@ -5,6 +5,7 @@
 // ('github-app'). Together they can create a repository in the org and write to it, so no token is asked of anyone and none leaves this Worker
 // except a one-hour token scoped to a single app repository, handed only to that app's own Worker.
 //   POST /host/app-repo   (x-internal-key)  create the repository if missing, write files, invite its owner
+//   POST /host/tenant-repo (x-internal-key)  TENANT-REPO-2: create a tenant's or seed's repository; a push token only while it is empty
 //   POST /host/app-token  ({repo, key})     a one-hour token for that one repository; key is this host's HMAC over the repository name
 import { getToken } from './auth/index.js';
 import { appJwt } from './auth/github-app.js';
@@ -78,14 +79,52 @@ export async function scopedToken(db, env, tenant, repo, { fetch: f = fetch, now
   if (r.status !== 201) return { ok: false, error: `scoped token HTTP ${r.status} ${j.message || ''}`.slice(0, 200) };
   return { ok: true, token: j.token, expiresAt: Date.parse(j.expires_at) };
 }
+// TENANT-REPO-2: a tenant's own repository (doctrine/tenant-repos.json) or a seed's (doctrine/seed-deploys.json), for the workflow that holds no
+// org credential. Only in this host's own org, never the host's own repository. An existing repository is never changed; a one-hour push token is
+// handed back only while the repository has no commit, so this route can fill an empty repository and can never write to one with history.
+export const TENANT_REPO = /^[a-z0-9][a-z0-9-]{0,38}\/[a-z0-9][a-z0-9-]{1,60}$/;
+export async function ensureTenantRepo(db, env, tenant, spec, { fetch: f = fetch, now = Date.now() } = {}) {
+  const repo = String(spec.repo || ''), main = String(env.MAIN_REPO || env.OIDC_REPO || 'ultrastable/ultrastable'), out = { repo, steps: [] };
+  if (!TENANT_REPO.test(repo) || repo === main || repo.split('/')[0] !== main.split('/')[0]) return { ...out, ok: false, error: 'not a tenant repository of this org' };
+  const [org, name] = repo.split('/');
+  const adm = await getToken(db, env, tenant, 'github-admin', { fetch: f, now }), code = await getToken(db, env, tenant, 'github-app', { fetch: f, now });
+  if (!adm.ok) return { ...out, ok: false, waiting_on: 'admin-app', error: 'administration app: ' + adm.error };
+  if (!code.ok) return { ...out, ok: false, waiting_on: 'code-app', error: 'code app: ' + code.error };
+  const A = gh(f, adm.token), C = gh(f, code.token), priv = spec.public === false, description = String(spec.description || '').slice(0, 300);
+  const seen = await A('GET', `/repos/${repo}`);
+  if (seen.status === 404) {
+    let made = null;
+    if (spec.template) { made = await A('POST', `/repos/${spec.template}/generate`, { owner: org, name, private: priv, description }); out.steps.push(`from template ${spec.template}: HTTP ${made.status}`); out.from_template = made.status === 201; }
+    if (!made || made.status !== 201) {
+      made = await A('POST', `/orgs/${org}/repos`, { name, private: priv, description, auto_init: Boolean(spec.template), has_wiki: false, delete_branch_on_merge: true });
+      out.steps.push(`created empty: HTTP ${made.status}`);
+      if (made.status !== 201) { await store.event(db, tenant, 'github-admin', 'failed', `tenant repo ${repo} HTTP ${made.status} ${made.json.message || ''}`); return { ...out, ok: false, waiting_on: 'admin-app-scope', error: `create ${repo}: HTTP ${made.status} ${made.json.message || ''}`.slice(0, 200) }; }
+    }
+    await store.event(db, tenant, 'github-admin', 'tenant-repo', `${repo} created`); out.created = true;
+  } else if (seen.status !== 200) return { ...out, ok: false, waiting_on: 'admin-app-scope', error: `read ${repo}: HTTP ${seen.status}` };
+  const commits = await C('GET', `/repos/${repo}/commits?per_page=1`);
+  out.empty = commits.status === 409;  // GitHub answers 409 for a repository with no commit
+  if (commits.status !== 409 && commits.status !== 200) return { ...out, ok: false, waiting_on: 'code-app-scope', error: `the code app cannot reach ${repo} (HTTP ${commits.status}); its installation does not cover new repositories` };
+  if (spec.push && out.empty) {
+    const t = await scopedToken(db, env, tenant, repo, { fetch: f, now });
+    if (!t.ok) return { ...out, ok: false, waiting_on: 'code-app-scope', error: t.error };
+    await store.event(db, tenant, 'github-app', 'tenant-token', repo); out.token = t.token;
+  }
+  return { ...out, ok: true };
+}
 export async function handleAppHost(request, env, { tenant = 'default', fetch: f = fetch, now = Date.now() } = {}) {
   const url = new URL(request.url);
-  if (url.pathname !== '/host/app-repo' && url.pathname !== '/host/app-token') return null;
+  if (url.pathname !== '/host/app-repo' && url.pathname !== '/host/app-token' && url.pathname !== '/host/tenant-repo') return null;
   if (request.method !== 'POST' || !env.INTERNAL_DEPLOY_KEY) return new Response('Not found', { status: 404 });
   let b; try { b = await request.json(); } catch { return J({ ok: false, error: 'bad json' }, 400); }
   if (url.pathname === '/host/app-repo') {
     if (!same(request.headers.get('x-internal-key'), env.INTERNAL_DEPLOY_KEY)) return new Response('Not found', { status: 404 });
     const r = await ensureAppRepo(env.DB, env, tenant, b, { fetch: f, now });
+    return J(r, r.ok ? 200 : r.waiting_on ? 409 : 400);
+  }
+  if (url.pathname === '/host/tenant-repo') {
+    if (!same(request.headers.get('x-internal-key'), env.INTERNAL_DEPLOY_KEY)) return new Response('Not found', { status: 404 });
+    const r = await ensureTenantRepo(env.DB, env, tenant, b, { fetch: f, now });
     return J(r, r.ok ? 200 : r.waiting_on ? 409 : 400);
   }
   const repo = String(b.repo || '');

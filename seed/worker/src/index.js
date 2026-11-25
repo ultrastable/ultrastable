@@ -46,7 +46,7 @@ import { recordGovernor, readDecisions, safely as decisionSafely } from './decis
 import { runSocial, blueskyAccess } from './social.js';
 import { importCredentials, reconcileBuffer, intakeInbox, seedLinkRows } from './humans.js';  // SOCIAL-MODULE-1  // REACH-1
 import { probe as probeAgents } from './codeagent.js';
-import { hiddenByHealthOnly } from './visibility.js';
+import { hiddenByHealthOnly, publicPage } from './visibility.js';
 import config from './config.js';
 import { backendRecord } from './errors.js';  // USER-BACKEND-1
 import { governedAI, budgetView, SHARES, halted, planOf } from './budget.js';
@@ -322,6 +322,10 @@ export default {
     if (url.pathname === '/pulse/watch' && request.method === 'POST') {  // LOOPPROOF-1: the second producer of the heartbeat. Safe to call by anyone: it runs a tick only when the newest one is older than two intervals
       const r = await watch(env.DB, async () => { const g = await aiFor(env); return runTick(env.DB, { config, env: presence(env), ai: g.ai, budget: g.state }); }, { config }).catch(e => ({ ok: false, error: String(e && e.message).slice(0, 200) }));
       return Response.json(r, { status: r.ok ? 200 : 503, headers: { 'cache-control': 'no-store' } });
+    }
+    if (url.pathname === '/' && request.method === 'GET' && env.PUBLIC_HEALTH_ONLY === '1') {  // FULLSTACK-1: a health-only system still has a public front end
+      let last; try { last = await lastTickForHealth(env.DB); } catch (e) { return d1Unavailable(e); }
+      return publicPage({ name: config.org_slug, last, ignition: await readIgnition(env.DB).catch(() => null) });
     }
     if (url.pathname === '/health') {
       if (halted(config, env)) return Response.json({ ok: true, halted: true, org: config.org_slug, why: 'HALT-1: the owner stopped every loop; pages keep serving' });
