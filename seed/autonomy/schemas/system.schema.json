@@ -105,9 +105,6 @@
         },
         "REDTEAM-1": {
           "type": "array"
-        },
-        "BLINDSPOT-RED-1": {
-          "type": "array"
         }
       }
     },

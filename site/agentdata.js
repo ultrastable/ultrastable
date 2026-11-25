@@ -354,6 +354,86 @@ export default {
     "status": "stable",
     "support": "planned",
     "tracked_by": "Q-STD-SLSA"
+   },
+   {
+    "id": "editorconfig",
+    "name": "EditorConfig",
+    "body": "editorconfig.org",
+    "status": "de-facto",
+    "support": "supported",
+    "tracked_by": null
+   },
+   {
+    "id": "dependabot",
+    "name": "Dependabot version updates",
+    "body": "GitHub",
+    "status": "stable",
+    "support": "supported",
+    "tracked_by": null
+   },
+   {
+    "id": "openssf-scorecard",
+    "name": "OpenSSF Scorecard",
+    "body": "OpenSSF (Linux Foundation)",
+    "status": "stable",
+    "support": "supported",
+    "tracked_by": null
+   },
+   {
+    "id": "spdx-sbom",
+    "name": "SPDX 2.3 SBOM from the dependency graph",
+    "body": "Linux Foundation (ISO/IEC 5962)",
+    "status": "stable",
+    "support": "supported",
+    "tracked_by": null
+   },
+   {
+    "id": "json-feed",
+    "name": "JSON Feed 1.1 and RSS 2.0",
+    "body": "jsonfeed.org; RSS Advisory Board",
+    "status": "stable",
+    "support": "supported",
+    "tracked_by": null
+   },
+   {
+    "id": "schema-org-jsonld",
+    "name": "schema.org vocabulary in JSON-LD",
+    "body": "schema.org (W3C community group)",
+    "status": "stable",
+    "support": "partial",
+    "tracked_by": null
+   },
+   {
+    "id": "citation-cff",
+    "name": "Citation File Format",
+    "body": "Citation File Format project",
+    "status": "stable",
+    "support": "supported",
+    "tracked_by": null
+   },
+   {
+    "id": "schema-org-kg",
+    "name": "Knowledge graph served as JSON-LD (schema.org)",
+    "body": "W3C / schema.org",
+    "status": "stable",
+    "support": "planned",
+    "tracked_by": "STD-7: executor item in docs/issues/STD-7.json"
+   },
+   {
+    "id": "openslo",
+    "name": "OpenSLO definitions for loop clocks",
+    "body": "OpenSLO project",
+    "status": "stable",
+    "support": "planned",
+    "tracked_by": "STD-8: executor item in docs/issues/STD-8.json"
+   },
+   {
+    "id": "reusable-workflows",
+    "name": "Reusable GitHub Actions workflows shared by every tenant",
+    "body": "GitHub",
+    "status": "stable",
+    "support": "planned",
+    "tracked_by": "STD-9: executor item in docs/issues/STD-9.json"
    }
   ]
  },

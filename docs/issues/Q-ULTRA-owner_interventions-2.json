@@ -1,0 +1,12 @@
+{
+  "id": "Q-ULTRA-owner_interventions-2",
+  "title": "Q-ULTRA-owner_interventions-2: Owner interventions out of bounds: restructure: the intervention kinds that keep recurring get their own essential variable with a ladder",
+  "body": "**Owner:** executor\n**Trigger:** essential variable `owner_interventions` out of bounds (reading 56; limits 0 to 0)\n**Done check:** cmd:python3 -m foundation ultrastability --check\n**Status:** open\n\nULTRASTABILITY-1 second-order step: restructure: the intervention kinds that keep recurring get their own essential variable with a ladder. Every time Rowan has to notice a problem and redirect the system in chat, he is acting as the second loop. Ultrastable means the system does that itself. Counted from provenance: distinct thread sessions that changed the repository.\n\n**Prediction:** owner.interventions_7d >= 0 within 72 h\n**Out of scope:** changing the bounds of `owner_interventions` or any other essential variable; a step is judged by the reading, never by relaxing the limit.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation ultrastability --tick` reads `owner_interventions` inside its bounds.\n\n\n**Vacuous:** 2026-11-25T22:41:39Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n",
+  "labels": [
+    "p0",
+    "agent-ready",
+    "raises-self"
+  ],
+  "milestone": "Now",
+  "workstream": "Ultrastability"
+}

@@ -68,7 +68,7 @@ Loops the same cron runs beside the tick (from `worker/src/index.js`):
 
 ## How it bootstraps
 
-- **BOOT-1.** bootstrap/bootstrap.py runs the stages below in order. It is idempotent: running it again changes nothing that is already true. (probe: `grep:bootstrap/bootstrap.py::for name in \("read", "qualify"`)
+- **BOOT-1.** bootstrap/bootstrap.py runs the stages below in order. It is idempotent: running it again changes nothing that is already true. (probe: `grep:bootstrap/bootstrap.py::for name in \("read", "constitute", "qualify"`)
 - **BOOT-2.** A stage that cannot finish is recorded as blocked with its reason and becomes a backlog item with a closing probe; the boot continues with the next stage. A missing credential never stops the boot. (probe: `grep:bootstrap/bootstrap.py::def guard\(`)
 - **BOOT-3.** The boot is accepted only when the system's own drills show at least a year unattended (year_gate) and its /health answers live (verify_live). (probe: `grep:bootstrap/bootstrap.py::def year_gate\(`, `grep:bootstrap/bootstrap.py::def verify_live\(`)
 - **BOOT-4.** From its first deploy every system serves all of its public surfaces together: a web page with the Built on Ultrastable footer, /health, the discovery manifest, the knowledge graph's read side, and a listing in the ultrastable.io directory. No gate may hide one of them. (probe: `grep:worker/src/visibility.js::PUBLIC_READS`, `grep:worker/src/discover.js::export function manifest`, `grep:worker/src/datagraph.js::export async function readGraph`)
@@ -77,19 +77,20 @@ Loops the same cron runs beside the tick (from `worker/src/index.js`):
 Boot stages, in order (from `bootstrap/bootstrap.py`):
 
 1. `read`
-2. `qualify`: doctrine/VISION.md: Ultrastable is for systems. Fail closed, before any role is hired or anything is provisioned.
-3. `instrument`: OBJECTIVES-1: objectives and metrics are the setup that differs for every system; the liveness set is the same for all. The metric the owner declared in IDEA.md '# System test' is recorded as 'declared': a breach until a probe exists for it
-4. `detect`
-5. `select`
-6. `cases`: Match the starting conditions against the case library: routes around each blocker, at most one owner card per blocker.
-7. `plan`
-8. `write`
-9. `surfaces`: Health-check every route before relying on it (BG-9, BG-12). Recorded, never fatal.
-10. `org`: Org initialization plan (BG-1 to BG-7, BG-11). Applied only with an admin token.
-11. `provision`
-12. `start`
-13. `year_gate`: SEED-LAUNCH-1: the year-unattended gate is a required acceptance check for every seed. The seed's own drills run against its real recovery code (scripts/yearsim.py, autonomy/yearsim.json); the boot is accepted only when the simulated horizo
-14. `verify_live`: SEED-LAUNCH-1: a boot is done only when the deployed Worker answers /health live with 200. /health answers 503 until the first complete tick, so the probe waits through one full cron interval (tick_cron, every 10 minutes) plus propagation: 
+2. `constitute`: CONSTITUTION-1: the system reads what it is before it decides anything. The constitution (doctrine/constitution.json) is checked against the code it describes and assembled into org/constitution.json (rungs, tick steps, detectors, criticali
+3. `qualify`: doctrine/VISION.md: Ultrastable is for systems. Fail closed, before any role is hired or anything is provisioned.
+4. `instrument`: OBJECTIVES-1: objectives and metrics are the setup that differs for every system; the liveness set is the same for all. The metric the owner declared in IDEA.md '# System test' is recorded as 'declared': a breach until a probe exists for it
+5. `detect`
+6. `select`
+7. `cases`: Match the starting conditions against the case library: routes around each blocker, at most one owner card per blocker.
+8. `plan`
+9. `write`
+10. `surfaces`: Health-check every route before relying on it (BG-9, BG-12). Recorded, never fatal.
+11. `org`: Org initialization plan (BG-1 to BG-7, BG-11). Applied only with an admin token.
+12. `provision`
+13. `start`
+14. `year_gate`: SEED-LAUNCH-1: the year-unattended gate is a required acceptance check for every seed. The seed's own drills run against its real recovery code (scripts/yearsim.py, autonomy/yearsim.json); the boot is accepted only when the simulated horizo
+15. `verify_live`: SEED-LAUNCH-1: a boot is done only when the deployed Worker answers /health live with 200. /health answers 503 until the first complete tick, so the probe waits through one full cron interval (tick_cron, every 10 minutes) plus propagation: 
 
 ## How it becomes autonomous and reaches criticality
 
@@ -186,7 +187,7 @@ a rule enforced only by the platform is marked so, and the platform checks it fo
 - **CLOSED-LOOP-1**: Closed loops only; nobody reads, reviews or decides. In this kit: `autonomy/policy.json`.
 - **NO-FABRICATION-1**: No made-up numbers. In this kit: `doctrine/claims.json`, `scripts/claims.py`.
 - **SPEC-GATE-1**: Work items an agent cannot misread; done means proven live. In this kit: `scripts/specgate.py`.
-- **STANDARDS-1**: Apply open standards; do not reinvent formats. In this kit: `standards/standards.json`.
+- **STANDARDS-1**: Apply open standards; do not reinvent formats. In this kit: `.devcontainer/devcontainer.json`, `standards/standards.json`.
 - **OUTREACH-INTRO-1**: Introduce the work; do not wait to be found. In this kit: `.github/workflows/outreach.yml`, `outreach/gate.json`, `outreach/intro-profile.json`, `outreach/prospects.json`.
 - **PROMOTE-1**: Strategy and promotion are the system's job. In this kit: `worker/src/promoqueue.js`.
 - **TENANT-PROMO-1**: Promotion is part of every app's and tenant's role. In this kit: `worker/src/promoqueue.js`, `worker/src/social.js`, `worker/test/promoqueue.test.js`.

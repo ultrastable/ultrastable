@@ -1,0 +1,16 @@
+{
+  "_doc": "STANDARDS-1 (Rowan 2026-11-25): \"Standards, don't reinvent the wheel ... Audit everything and refactor it with standards and autonomous closed loops.\" Settings of the supply-chain loop: OpenSSF Scorecard and the SPDX SBOM GitHub's dependency graph exports are read weekly by .github/workflows/supply-chain.yml, summarised by `python3 -m foundation supplychain --ingest` into ops/supply-chain.json, and every Scorecard check under the floor or SBOM package outside the licence policy becomes a Q-STD-SC-* item whose closing probe is `supplychain --probe`. The standards themselves are entries in seed/standards/standards.json.",
+  "scorecard_floor": 5,
+  "ignore_checks": {
+    "Code-Review": "CLOSED-LOOP-1: changes are reviewed by automated checks and a different agent, not by a person approving a pull request",
+    "Contributors": "measures outside organisations contributing; not something the system can change by code",
+    "CII-Best-Practices": "the OpenSSF Best Practices badge is a self-assessment form filed in the owner's name",
+    "Maintained": "counts recent human activity; machine commits are the maintenance here",
+    "Signed-Releases": "no release artifacts are published; deploys go straight to Workers",
+    "Packaging": "nothing is published to a package registry",
+    "Fuzzing": "OSS-Fuzz admission is an outside programme; tracked as a standards entry, not a weekly item"
+  },
+  "licence_policy": "doctrine/dependency-licences.json",
+  "max_age_days": 14,
+  "max_items_per_run": 5
+}

@@ -117,7 +117,7 @@
           "id": "BOOT-1",
           "text": "bootstrap/bootstrap.py runs the stages below in order. It is idempotent: running it again changes nothing that is already true.",
           "probe": [
-            "grep:bootstrap/bootstrap.py::for name in \\(\"read\", \"qualify\""
+            "grep:bootstrap/bootstrap.py::for name in \\(\"read\", \"constitute\", \"qualify\""
           ]
         },
         {

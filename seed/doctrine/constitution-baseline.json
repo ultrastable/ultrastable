@@ -1,0 +1,25 @@
+{
+ "_doc": "Shrink-only: standing rules in the agent instructions that the constitution does not yet map to a detector and a remediation. A new standing rule is never added here; it gets a rule in constitution.json in the same change. Each id leaves this list when a rule covers it (`covers`). Drained by item Q-CONSTITUTION-DRAIN.",
+ "unmapped": [
+  "BLINDSPOT-1",
+  "BREADTH-1",
+  "CONNECT-1",
+  "CONSOLE-AGENT-1",
+  "DATAGRAPH-1",
+  "DESIGN-LANGUAGE-1",
+  "DISCOVER-1",
+  "FLOW-DIRECTIVE-1",
+  "INTENT-YIELD-1",
+  "INTERVIEW-1",
+  "LAUNCH-PATH-1",
+  "META-SIGNAL-1",
+  "OUTREACH-INTRO-1",
+  "PROMOTE-1",
+  "PROVENANCE-1",
+  "SOCIAL-MODULE-1",
+  "TENANT-PROMO-1",
+  "THOUGHT-1",
+  "UIUX-1",
+  "VISION-1"
+ ]
+}

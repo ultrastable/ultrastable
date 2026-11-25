@@ -924,6 +924,22 @@
       "remedy": "Fix the check named in the finding at its root (the measurer, not the reading) and add a test that reproduces the owner-found failure."
     },
     {
+      "id": "constitution",
+      "failure_mode": "fm-constitution-drift",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "constitution",
+        "--check"
+      ],
+      "timeout": 120,
+      "root_cause": "a section of the constitution no longer matches the code it describes, or a standing rule has no detector and remediation in code",
+      "owner": "operations",
+      "remedy": "Run python3 -m foundation constitution --check; bind the rule to code (seed/doctrine/constitution.json) or fix the drifted code; regenerate with --render (CONSTITUTION-1)."
+    },
+    {
       "id": "cost-runaway",
       "failure_mode": "fm-cost-runaway",
       "kind": "command",
