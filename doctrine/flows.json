@@ -2521,6 +2521,22 @@
       "bindings": [
         "LANE_PAT"
       ]
+    },
+    "managers": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "feedback": "a manager with no loop, code, clock or probe fails managers --check on the change that caused it; a switched-on manager with no runtime row is hired by the next tick's reconcile step, and one that stays missing or stopped fails the detector managers-live, which files Q-AUDIT-managers-live for the executor",
+      "bindings": []
     }
   },
   "implicit_producers": {

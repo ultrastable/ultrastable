@@ -756,6 +756,22 @@
       "root_cause": "a system's pages and its endpoints are written in different places, so a sentence stays on a page after its endpoint is gone, an endpoint ships that no page describes, or a contract surface (manifest, statements, health, social queue, graph) is never served",
       "owner": "operations",
       "remedy": "Read the failing lines of python3 -m foundation fleetcontract --live: each names the system, the direction (front-to-back, back-to-front or contract) and the page or endpoint. Fix that system in its own repository: declare the statement in its contract.js so the page sentence and /claims.json are one string, serve the missing surface through the vendored seed/worker/src/contract.js, or repair the endpoint. Never remove a statement to pass and never relax the reading (FLEET-CONTRACT-1)."
+    },
+    {
+      "id": "managers-live",
+      "failure_mode": "fm-manager-not-running",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "managers",
+        "--live"
+      ],
+      "timeout": 120,
+      "root_cause": "a switched-on manager has no runtime row (the roles table was not reconciled with the register) or its dispatch beat stopped (the tick skipped dispatch, for example while a cost breach holds the tick lean)",
+      "owner": "org-designer",
+      "remedy": "Read python3 -m foundation managers --live. For `missing`: the tick's reconcile step (seed/worker/src/managers.js hireStep) hires it once the Worker carries seed/autonomy/managers.json in its config; check the three config builders (deploy/deploy-workers.mjs, seed/worker/src/handoff.js tickConfigSource, seed/bootstrap/bootstrap.py). For `stopped` or `late`: read the last tick report at /health; when dispatch is skipped for a cost breach, cut the rows read (Q-MANAGERS-dispatch-starved) and never raise the limit to pass."
     }
   ]
 }
