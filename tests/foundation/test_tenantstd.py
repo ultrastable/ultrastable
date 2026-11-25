@@ -93,7 +93,7 @@ class LiveBlock(unittest.TestCase):
         (d / "instance.json").write_text(json.dumps({"slug": "unlearn", "name": "Unlearn"}))
         block, ident = T.live_block("unlearn", REPO), T.identity("unlearn", d, STD, REPO)
         self.assertEqual(ident["public_url"], "https://unlearn.ultrastable.org")
-        self.assertEqual(ident["runs_as"]["worker"], "ultrastable-unlearn")
+        self.assertEqual(ident["runs_as"][0]["name"], "ultrastable-unlearn")
         for need in ("(https://unlearn.ultrastable.org/)", "`ultrastable-unlearn`", "https://unlearn.ultrastable.org/health", "https://unlearn.ultrastable.org/claims.json", "https://ultrastable.io/directory"):
             self.assertIn(need, block)
         (d / "README.md").write_text("# Unlearn\n\n" + block + "\n")
@@ -108,18 +108,22 @@ class LiveBlock(unittest.TestCase):
     def test_one_identity_object_is_the_scaffolds_input_and_every_file_reads_it(self):
         d = planned()
         ident = json.loads((d / "ultrastable.json").read_text())["identity"]
-        self.assertEqual(sorted(ident), sorted(STD["identity"]["keys"] + ["planned_url", "layer"]))
-        self.assertIsNone(ident["public_url"])
+        self.assertEqual(sorted(ident), sorted(STD["identity"]["keys"] + ["layer", "parent", "visibility", "visibility_reason", "status"]))
+        self.assertIsNone(ident["public_url"]); self.assertEqual(ident["runs_as"], []); self.assertEqual(ident["status"], "planned")
         self.assertEqual(json.loads((d / "package.json").read_text())["description"], ident["summary"])
         self.assertIn('import MANIFEST from "../ultrastable.json"', (d / "worker/contract.js").read_text())
-        self.assertIn(f'"name": "{ident["runs_as"]["worker"]}"', (d / "wrangler.jsonc").read_text())
+        self.assertIn('"name": "ultrastable-base-rates"', (d / "wrangler.jsonc").read_text())
         e = scratch()
         for f in (REPO / "instances/base-rates").iterdir():
             shutil.copy(f, e / f.name)
         T.scaffold(e, "base-rates", REPO, STD, {**ident, "name": "Renamed Rates", "summary": "A different summary for the test."})
         self.assertIn("# Renamed Rates", (e / "README.md").read_text())
         self.assertEqual(json.loads((e / "package.json").read_text())["description"], "A different summary for the test.")
-        self.assertTrue(any("differs from what the registries say" in b for b in T.check_tenant(e, STD, REPO)))
+        self.assertEqual(T.scaffold(e, "base-rates", REPO, STD), [], "the identity the repository carries is the input of the next run")
+        bad_id = {**ident, "public_url": "https://x.example.org", "runs_as": [{"name": "other-worker"}]}
+        (e / "ultrastable.json").write_text(json.dumps({"identity": bad_id}))
+        got = "\n".join(T.check_tenant(e, STD, REPO))
+        self.assertIn("the registries say not deployed", got); self.assertIn("runs_as names other-worker", got)
         ident2 = json.loads((d / "ultrastable.json").read_text()); ident2["identity"]["slug"] = "other"
         (d / "ultrastable.json").write_text(json.dumps(ident2))
         self.assertTrue(any("says slug 'other'" in b for b in T.check_tenant(d, STD, None)))
@@ -152,6 +156,13 @@ class Reading(unittest.TestCase):
         bad = "\n".join(T.check_tenant(d, STD, REPO))
         for need in ("edited by hand", "second vendor directory", "license: LICENSE is missing", "unresolved merge marker", "has dependencies", "names a test that is not in worker", "workflow extra.yml: no `# budget:`", "not pinned to a full commit sha"):
             self.assertIn(need, bad)
+
+    def test_a_dated_exception_holds_until_its_date_and_then_the_rule_fails_again(self):
+        self.assertEqual(T.excepted("replication-ledger", STD, "2026-11-26"), {"worker/vendor/knowledge.js"})
+        self.assertEqual(T.excepted("replication-ledger", STD, "2027-01-01"), set())
+        self.assertEqual(T.excepted("unlearn", STD, "2026-11-26"), set())
+        std = json.loads(json.dumps(STD)); std["exceptions"]["x"] = {"vendor_outside": ["a"], "why": "short"}
+        self.assertTrue(any("exception for x needs" in b for b in T.check_core(REPO, std)))
 
     def test_live_reads_each_registered_repository_and_an_unreadable_one_fails(self):
         good = planned()
