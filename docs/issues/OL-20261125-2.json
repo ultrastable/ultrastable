@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261125-2",
+  "title": "OL-20261125-2: Seed template workflows can only be synced by a credential with workflows scope",
+  "body": "**Owner:** operations\n**Trigger:** daily cleanroom run\n**Done check:** cmd:python3 -m foundation coherence --check --remote\n**Status:** open\n\nkit-sync runs on the built-in token, which GitHub refuses for workflow files, so ultrastable/seed workflows drift until a session or the tick Worker App pushes them. coherence --check --remote in cleanroom.yml goes red when they differ.",
+  "labels": [
+    "role:operations",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

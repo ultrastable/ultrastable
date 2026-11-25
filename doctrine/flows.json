@@ -2525,13 +2525,6 @@
         "LANE_PAT"
       ]
     },
-<<<<<<< HEAD
-    "cleanroom": {
-      "inflows": [
-        {
-          "signal": "main.merged",
-          "via": "github:main"
-=======
     "replication-ledger-openalex": {
       "inflows": [
         {
@@ -2541,12 +2534,26 @@
         {
           "signal": "ledger.mirror",
           "via": "repo:instances/replication-ledger/worker/data/openalex.json"
->>>>>>> origin/main
         }
       ],
       "outflows": [
         {
-<<<<<<< HEAD
+          "signal": "ledger.mirror",
+          "via": "repo:instances/replication-ledger/worker/data/openalex.json"
+        }
+      ],
+      "feedback": "each run reads the mirror already on main and rewrites it only when OpenAlex's answer changed; the ledger Worker's beat reads the deployed mirror when OpenAlex refuses it and files attempts under the verbatim-quote guard, the findings it adds are listed by /api/findings and become the next run's questions, and the live /health generated_at is compared with main's so a mirror that did not reach the Worker is redeployed",
+      "bindings": []
+    },
+    "cleanroom": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "outflows": [
+        {
           "signal": "issue.filed",
           "via": "file:docs/issues"
         }
@@ -2555,14 +2562,6 @@
       "bindings": [
         "LANE_PAT"
       ]
-=======
-          "signal": "ledger.mirror",
-          "via": "repo:instances/replication-ledger/worker/data/openalex.json"
-        }
-      ],
-      "feedback": "each run reads the mirror already on main and rewrites it only when OpenAlex's answer changed; the ledger Worker's beat reads the deployed mirror when OpenAlex refuses it and files attempts under the verbatim-quote guard, the findings it adds are listed by /api/findings and become the next run's questions, and the live /health generated_at is compared with main's so a mirror that did not reach the Worker is redeployed",
-      "bindings": []
->>>>>>> origin/main
     }
   },
   "implicit_producers": {
