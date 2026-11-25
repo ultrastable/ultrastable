@@ -1930,15 +1930,6 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
-   "claim": "- **Open standards, never a home-grown format (OPEN-STANDARDS-1, Rowan 2026-11-25).** \"Standards, don't reinvent the wheel. Apply standards",
-   "detail": "",
-   "how": "file:foundation/openstd.py + file:doctrine/open-standards.json + file:doctrine/open-standards-baseline.json + file:tests/foundation/test_openstd.py + grep:.github/workflows/checks.yml::foundation[ .]openstd\\b",
-   "id": "cited-897a8cdffd",
-   "kind": "claim",
-   "pass": true,
-   "surface": "agents/AGENTS.md"
-  },
-  {
    "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
@@ -2645,15 +2636,6 @@ export default {
    "detail": "",
    "how": "file:foundation/redteam.py + file:ops/redteam/findings.jsonl + file:tests/foundation/test_redteam.py",
    "id": "mirror-309506fe16",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/agents/AGENTS.md"
-  },
-  {
-   "claim": "- **Open standards, never a home-grown format (OPEN-STANDARDS-1, Rowan 2026-11-25).** \"Standards, don't reinvent the wheel. Apply standards",
-   "detail": "",
-   "how": "file:foundation/openstd.py + file:doctrine/open-standards.json + file:doctrine/open-standards-baseline.json + file:tests/foundation/test_openstd.py + grep:.github/workflows/checks.yml::foundation[ .]openstd\\b",
-   "id": "mirror-79e254f607",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3575,7 +3557,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 394,
-  "total": 394
+  "pass": 392,
+  "total": 392
  }
 };
