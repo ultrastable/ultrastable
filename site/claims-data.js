@@ -1921,19 +1921,19 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
-   "claim": "- **Everything bootstraps itself from a cold start and works together from birth (COLDSTART-1, Rowan 2026-11-25).** \"All surfaces, all",
+   "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
    "detail": "",
-   "how": "file:doctrine/coldstart.json + file:seed/worker/src/visibility.js + file:docs/doctrine/SYSTEM.md + file:CLAUDE.md + file:doctrine/schemas/coldstart.schema.json + file:foundation/coldstart.py",
-   "id": "cited-badeab1b44",
+   "how": "file:docs/PROJECT-MEMORY.md",
+   "id": "cited-95432168bf",
    "kind": "claim",
    "pass": true,
    "surface": "agents/AGENTS.md"
   },
   {
-   "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
+   "claim": "- **No made-up numbers (NO-FABRICATION-1, Rowan 2026-11-25).** \"Nothing gets made up. Everything must be completely supported and backed",
    "detail": "",
-   "how": "file:docs/PROJECT-MEMORY.md",
-   "id": "cited-95432168bf",
+   "how": "file:foundation/claimcode.py + grep:.github/workflows/checks.yml::foundation[ .]claimcode\\b",
+   "id": "cited-e2a1c0be98",
    "kind": "claim",
    "pass": true,
    "surface": "agents/AGENTS.md"
@@ -2216,33 +2216,6 @@ export default {
    "kind": "claim",
    "pass": true,
    "surface": "seed/doctrine/GUIDING-DIRECTIVE.md"
-  },
-  {
-   "claim": "`doctrine/coldstart.json` (JSON Schema `doctrine/schemas/coldstart.schema.json`) or the code they name drift apart. The owner never",
-   "detail": "",
-   "how": "file:doctrine/coldstart.json + file:doctrine/schemas/coldstart.schema.json",
-   "id": "cited-b4d6cc4189",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/doctrine/SYSTEM.md"
-  },
-  {
-   "claim": "default in effect, never a task in prose (`doctrine/open-loops.json`, `foundation/data/needs-you.json`). Anything else handed to a person",
-   "detail": "",
-   "how": "file:doctrine/open-loops.json + file:foundation/data/needs-you.json",
-   "id": "cited-94e4bb2cbb",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/doctrine/SYSTEM.md"
-  },
-  {
-   "claim": "`python3 -m foundation coldstart --check` runs in `checks` on every change. It fails when the seed stops carrying a capability, when this",
-   "detail": "",
-   "how": "file:foundation/coldstart.py + grep:.github/workflows/checks.yml::foundation[ .]coldstart\\b",
-   "id": "cited-a191183c3c",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/doctrine/SYSTEM.md"
   },
   {
    "claim": "- uiux-manager: the front end as a measured, continuously audited surface (UIUX-1): how every page across ultrastable.io, .org and .app,",
@@ -2650,37 +2623,19 @@ export default {
    "surface": "seed/agents/AGENTS.md"
   },
   {
-   "claim": "- **Issue inflow never exceeds closures; every issue inside its SLA (FLOW-BALANCE-1, Rowan 2026-11-21).** \"All UltraStable issues must be",
-   "detail": "",
-   "how": "file:seed/worker/src/flowbalance.js + file:doctrine/balance.json + file:tests/foundation/test_balance.py + file:foundation/balance.py",
-   "id": "mirror-ad11709e94",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/agents/AGENTS.md"
-  },
-  {
-   "claim": "- **Find another path before asking; the information is already held (PATHFINDER-1, Rowan 2026-11-21).** \"There are always multiple paths,",
-   "detail": "",
-   "how": "file:doctrine/pathfinder.json + file:ops/paths/attempts.jsonl + file:foundation/pathfinder.py + file:tests/foundation/test_pathfinder.py",
-   "id": "mirror-7a700bcc8c",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/agents/AGENTS.md"
-  },
-  {
-   "claim": "- **Everything bootstraps itself from a cold start and works together from birth (COLDSTART-1, Rowan 2026-11-25).** \"All surfaces, all",
-   "detail": "",
-   "how": "file:doctrine/coldstart.json + file:seed/worker/src/visibility.js + file:docs/doctrine/SYSTEM.md + file:CLAUDE.md + file:doctrine/schemas/coldstart.schema.json + file:foundation/coldstart.py",
-   "id": "mirror-23cc6eb0f0",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/agents/AGENTS.md"
-  },
-  {
    "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
    "id": "mirror-be5af6748b",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **No made-up numbers (NO-FABRICATION-1, Rowan 2026-11-25).** \"Nothing gets made up. Everything must be completely supported and backed",
+   "detail": "",
+   "how": "file:foundation/claimcode.py + grep:.github/workflows/checks.yml::foundation[ .]claimcode\\b",
+   "id": "mirror-9a507beeee",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3379,7 +3334,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 1042",
+   "claim": "live-deploys: 1052",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",
@@ -3584,7 +3539,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 395,
-  "total": 395
+  "pass": 390,
+  "total": 390
  }
 };
