@@ -5113,7 +5113,7 @@
    "date": "2026-11-25",
    "title": "Replication Ledger keeps itself current: the hourly discovery beat is the core",
    "body": "Rowan, 2026-11-25: static content is not autonomous and is contrary to the objective of an Ultrastable system. The hand-written findings are now only the ledger's seed. instances/replication-ledger/worker/discover.js and store.js run an hourly beat (cron 23 * * * *, plus a spark from any request when the last beat is over two hours old). It searches OpenAlex for works citing each original that report a replication, files a kind and outcome only under a verbatim-quote guard (Workers AI, then a fixed lexical reader), keeps everything else as leads, finds landmark originals not yet held from recent replication papers' references, flags retractions and checks seed citations at Crossref. Each standing move is a standing_changes row served at /changes and /feed.json; /api/freshness answers 503 when a finding goes unchecked for thirty days. State is kept in D1 ultrastable-replication-ledger, whose schema the Worker creates itself. Probe: node --test instances/replication-ledger/worker/discover.test.mjs. Residual risk: the OpenAlex query syntax was exercised only against a fake in tests, because this session's egress refuses api.openalex.org; /api/beats records each beat's errors so the first live beat shows any mismatch.",
-   "probe": "file:instances/replication-ledger/lifecycle.json",
+   "probe": "grep:instances/replication-ledger/worker/discover.test.mjs::one beat files the attempt",
    "session": "https://claude.ai/code/session_0156nqDsz4YUXpAoqH9CX7mq"
   },
   {
@@ -5157,7 +5157,7 @@
    "date": "2026-11-25",
    "title": "Workers calling OpenAlex need the polite pool; closed seed items need evidence",
    "body": "The Replication Ledger's first live beat (beat 1, 2026-11-25 16:21 UTC, /api/beats) got HTTP 429 from OpenAlex on every call: Workers share outbound addresses and anonymous calls are limited by address. discover.js oa() now sends the project's published contact (security.txt address) as mailto, which OpenAlex serves from its polite pool, and retries a 429 once. Second lesson: seedlife --run closed Q-SEED-what-works with no Evidence line, which turned closedloop --check red on main; it now writes the probe it passed as Evidence. Probe: node --test instances/replication-ledger/worker/ and tests/foundation/test_seedlife.py. Residual risk: whether the polite pool clears the 429 is known only after the next live beat.",
-   "probe": "file:instances/replication-ledger/lifecycle.json",
+   "probe": "grep:instances/replication-ledger/worker/discover.js::mailto=",
    "session": "https://claude.ai/code/session_0156nqDsz4YUXpAoqH9CX7mq"
   },
   {
@@ -5363,7 +5363,7 @@
    "date": "2026-11-25",
    "title": "Replication Ledger names its knowledge graph on the front end",
    "body": "The /graph page (Connections in the nav) shows the shared engine's live measurements, open insights and method from D1 on every request; with no reading yet it says so. My own parallel graph engine (PR 2191 first version) was dropped for the merged KGRAPH engine from PR 2151.",
-   "probe": "file:instances/replication-ledger/lifecycle.json",
+   "probe": "grep:instances/replication-ledger/worker/site.js::export function graphPage",
    "session": "https://claude.ai/code/session_0156nqDsz4YUXpAoqH9CX7mq"
   },
   {
@@ -5417,7 +5417,7 @@
    "date": "2026-11-25",
    "title": "OpenAlex refuses Workers even in the polite pool; Europe PMC is the second route",
    "body": "Beat 2 (17:23 UTC, after the mailto polite-pool fix) still got HTTP 429 on every OpenAlex call from the ultrastable-replication-ledger Worker: OpenAlex limits by address and Workers share theirs. checkFinding now falls back to Europe PMC (CITES search, no key) and reads its records with the same verbatim-quote reader; the OpenAlex error now carries the response text so the cause is visible on /api/beats.",
-   "probe": "file:instances/replication-ledger/lifecycle.json",
+   "probe": "file:instances/replication-ledger/worker/epmc.js",
    "session": "https://claude.ai/code/session_0156nqDsz4YUXpAoqH9CX7mq"
   },
   {
@@ -5452,7 +5452,7 @@
    "date": "2026-11-25",
    "title": "OpenAlex now needs an API key; Europe PMC carries the ledger meanwhile",
    "body": "Beat 3 showed the cause in OpenAlex's own words: 'Insufficient budget. This request has no API key'. The mailto polite pool no longer helps. Europe PMC answered (power-posing checked, 6 leads refused by the verbatim-quote rule because they do not say they replicate). Europe PMC is now read most-cited first, and originals it does not hold are searched by name. The Worker reads OPENALEX_API_KEY when one is bound.",
-   "probe": "file:instances/replication-ledger/lifecycle.json",
+   "probe": "grep:instances/replication-ledger/worker/discover.js::OPENALEX_API_KEY",
    "session": "https://claude.ai/code/session_0156nqDsz4YUXpAoqH9CX7mq"
   },
   {
@@ -5535,6 +5535,59 @@
    "body": "Merges failed on GitHub 5xx with only manual retry; four separate gh helpers had no retry. seed/worker/src/ghfetch.js is the one shared fetch.",
    "probe": "file:seed/worker/src/ghfetch.js",
    "session": "session_0156nqDrE184nXAFKcTRxk26"
+  },
+  {
+   "id": "decision-2026-11-25-ultrastable-seed-is-kept-public-and-is-the-launch-template",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "ultrastable/seed is kept, public, and is the launch template",
+   "body": "org/repos.json said archived; live it is the template visitor app repos are generated from. Registry now says keep/public (DISCOVER-1). Visitor app repos stay private unless declared public, because they hold visitor idea text.",
+   "probe": "grep:org/repos.json::Revived 2026-11-25 as the launch template",
+   "session": "session_0156nqDtpVMPp6pQZ9ny5wAS"
+  },
+  {
+   "id": "lesson-2026-11-25-openalex-refuses-cloudflare-workers-without-a-key-give-the-l",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "OpenAlex refuses Cloudflare Workers without a key; give the ledger keyless routes and a second egress",
+   "body": "LEDGER-KEYLESS-1: OpenAlex answers 429 'Insufficient budget. This request has no API key' to the Replication Ledger Worker, and Europe PMC covers only biomedicine. The beat now tries, after OpenAlex refuses: the OpenAlex mirror a GitHub runner lands daily (data/openalex.json via ledger-openalex.yml, same openalexCandidates and discoverFindings code, zero subrequests), Europe PMC, then Crossref works search and Semantic Scholar paper search (keyless.js, one shared BEAT.KEYLESS call budget per beat, a record kept only when it names the finding). Every record goes through the same reader and verbatim-quote guard. /api/citations now reports total, checked and unchecked against the seed DOIs and answers 503 after 24 beats when any is unchecked or failed (detector replication-ledger-citations, fm-unverified-citations), so never-verified no longer reads as verified.",
+   "probe": "grep:instances/replication-ledger/worker/keyless.test.mjs::the OpenAlex mirror a runner landed answers first",
+   "session": "session_0156nqDtpVMPp6pQZ9ny5wAS"
+  },
+  {
+   "id": "lesson-2026-11-25-today-s-failures-shared-seven-root-cause-classes-each-now-ha",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Today's failures shared seven root-cause classes; each now has a check",
+   "body": "DRIFT-GUARD-1 (foundation/driftguard.py, doctrine/driftguard.json): declared-vs-live drift (repo visibility reset hourly by the tick, seed/worker/src/declared.js; stale visual baselines roll forward), single-route schedules (tick pulses every tenant /pulse/watch hourly; crons counted against the plan limit), missed push triggers (dispatched by dg-triggers), empty-commit loops, account drift (retired account by sha256 only), built-without-evidence (graph rows read live; checks refuse a deploy verified only by the tick /health), and hand-kept repo lists (selftest reads org/repos.json and tenant-repos.json).",
+   "probe": "grep:foundation/driftguard.py::DRIFT-GUARD-1",
+   "session": "session_0156nqDtpVMPp6pQZ9ny5wAS"
+  },
+  {
+   "id": "lesson-2026-11-25-an-empty-check-run-list-is-not-green",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "An empty check-run list is not green",
+   "body": "what-works#8 was merged by the lane 7 s after opening, before its ci and citations runs existed; citations then failed. greenguard.notGreen now holds when a suite is queued or a fresh head has no suite (NO-RUNS-NOT-GREEN-1).",
+   "probe": "file:seed/worker/src/greenguard.js",
+   "session": "session_0156nqDtbnNSagT7p6jpUTuY"
+  },
+  {
+   "id": "lesson-2026-11-25-launch-day-failures-are-root-caused-in-code-work-not-pulse-d",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Launch-day failures are root-caused in code: work not pulse, duplicate PRs, ledger deferrals, word claims",
+   "body": "Audit 2026-11-25: the What Works reader had read nothing (gpt-oss spent its 400-token cap reasoning, every reply empty, logged not JSON) while /health said ticking; four sessions built knowledge-graph engines in parallel; a decision row deferred a pre-approved deploy to the owner; showcase copy said five policy areas (code: twelve). Guards: duplicate PRs are COLLISION-1 (foundation/collisions.py, built in parallel by another session; this session's overlap.py was dropped for it), standingorder ledger lint, claimcode word-number patterns, what-works rootcause tests and work-based /health.",
+   "probe": "file:foundation/standingorder.py"
+  },
+  {
+   "id": "lesson-2026-11-25-evidence-branch-commits-must-hold-only-the-ledger",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Evidence branch commits must hold only the ledger",
+   "body": "The failure-audit evidence push failed because its commit sat on main and so carried a workflow-file change, which a GitHub App token refuses. The commit is now built with plumbing and holds only ops/failure-audit.jsonl. A detector whose command is not routed in foundation/__main__.py is now a finding (staticcontent and slawatch were unroutable).",
+   "probe": "file:foundation/silentfail.py",
+   "session": "session_0156nqDuMYtda8kTyfqmpNJk"
   }
  ]
 }
