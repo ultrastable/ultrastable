@@ -4003,25 +4003,23 @@
    "paths": [
     {
      "id": "cron",
-     "how": "instances/unlearn/worker/index.js scheduled() on the Cloudflare cron",
+     "how": "worker/index.js scheduled() in ultrastable/unlearn, on the Cloudflare cron",
      "class": "free"
     },
     {
      "id": "visit",
-     "how": "catchUp() in instances/unlearn/worker/index.js runs the beat on the next visit when the cron is silent",
+     "how": "catchUp() in worker/index.js of ultrastable/unlearn runs the beat on the next visit when the cron is silent",
      "class": "degraded"
     }
    ],
-   "closing_probe": "grep:instances/unlearn/worker/index.js::export async function beat",
+   "closing_probe": "grep:doctrine/topology.json::ultrastable/unlearn",
    "writeback": [
     "instances/unlearn/runway.json"
    ],
    "system_path": [
-    "instances/unlearn/worker/index.js",
-    "instances/unlearn/worker/logic.js",
-    "instances/unlearn/phases.json",
-    "instances/unlearn/worker/evidence.js",
-    "instances/unlearn/worker/entries.js"
+    "doctrine/tenant-repos.json",
+    "doctrine/topology.json",
+    "instances/unlearn/lifecycle.json"
    ],
    "area": "tenants",
    "workflows": [

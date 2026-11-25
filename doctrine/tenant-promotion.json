@@ -17,6 +17,6 @@
   },
   "tenants": {
     "practical-solutions": {"queue": "https://ultrastable.org/social-queue.json", "showcase": "practical-solutions"},
-    "unlearn": {"queue": "https://unlearn.ultrastable.org/social-queue.json", "showcase": "unlearn", "worker_dir": "instances/unlearn/worker"}
+    "unlearn": {"queue": "https://unlearn.ultrastable.org/social-queue.json", "showcase": "unlearn"}
   }
 }

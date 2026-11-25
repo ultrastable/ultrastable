@@ -9,7 +9,7 @@
   },
   "unlearn": {
    "repo": "ultrastable/unlearn",
-   "state": "moving",
+   "state": "moved",
    "source": "instances/unlearn",
    "keep_in_core": [
     "IDEA.md",
@@ -19,7 +19,9 @@
     "README.md"
    ],
    "vendor": {
-    "doctrine/models.json": "vendor/ultrastable/models.json"
+    "doctrine/models.json": "vendor/ultrastable/models.json",
+    "seed/worker/src/promoqueue.js": "vendor/ultrastable/promoqueue.js",
+    "doctrine/stakeholders.json": "vendor/ultrastable/stakeholders.json"
    },
    "worker": "ultrastable-unlearn",
    "ai": true,

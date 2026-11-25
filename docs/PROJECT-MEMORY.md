@@ -11,6 +11,11 @@ This file is the single source of truth for project memory. Chat memory, tool me
 Last updated: 2026-11-25
 
 - 2026-11-25: WHAT-WORKS-1 (Rowan: "A living atlas of what works in public policy: every programme graded by its trials and re-graded as evidence lands ... run as tenant app on Ultrastable Cloudflare account"; "Also need its own GitHub repo"). Tenant `instances/what-works/` (IDEA.md, instance.json, lifecycle.json, runway.json, worker/), registered `moving` to `ultrastable/what-works` in doctrine/tenant-repos.json so tenant-repos.yml creates the repository on merge. Verdicts are computed by `worker/grade.js` (design weights, replication counted by experiment, conflict cap), never typed; 15 curated programmes in 5 areas; hourly beat resolves citations (Crossref), searches OpenAlex and Europe PMC, reads leads in only under a verbatim-quote guard (`worker/reader.js`), logs every re-grade in `grade_changes`. Not yet in doctrine/topology.json: the Worker `ultrastable-what-works`, D1 and route `what-works.ultrastable.org` land after the owner's go-ahead on the deploy. Tests `node --test instances/what-works/worker/*.test.mjs` (in checks.yml).
+- 2026-11-25: Bump the actions group with 2 updates (#2045)
+- 2026-11-25: Run retriage and the org profile probe on the fleet clock (SLA-ISSUE-1) (#2100)
+- 2026-11-25: Measure growth and shipped code without a token in Actions (#2086)
+- 2026-11-25: core/impact: generic impact and reach closed loop (#2088)
+- 2026-11-25: Restart the growth loop and code agents after the 11-22 stall (#2085)
 - 2026-11-25: Put parked/ PRs on the SLA ladder; stop the sweep reopening them (PARKED-PR-1) (#2084)
 - 2026-11-25: ZERO-MINUTES-1: worker merged #2081
 - 2026-11-25: ROADMAP-AGENT-AGENT-SCOREBOARD: QNFO.OPS #AGENT-SCOREBOARD: Per-agent and per-harness quality scoreboard from intake attri (#2081)
@@ -763,3 +768,5 @@ Rowan: "All UltraStable issues must be resolved within their SLAs and daily/week
 - Now: `foundation/seedlife.py` (engine `seed/scripts/seedlife.py`, carried by every system) computes each seed's stage from evidence (seeded, planned, built, deployed, live, autonomous) and judges 13 one-year survival classes per seed; classes inherit core inputs from `doctrine/unattended.json`, so open core gaps (offsite backup, cost alerts, dependency drift, Node runtime, self-coder) hold every seed below autonomous. The watchdog runway step runs the seed pass (`runway --run --apply` calls `seedlife.run`), and `openloops --check` in `checks` runs `seedlife --check`, which fails any seed reported further along than its evidence.
 - First readings: tenant 0 (`instances/ultrastable`) is deployed, next live (first verify reading comes from the watchdog), runway bounded at 160 days by node-runtime; second-tenant has no IDEA.md and its "deploy loop" writes a status file with no deploy behind it, so it is below seeded with Q-SEED-second-tenant open. demo-child is a test fixture, spinoffs and qnfo are not seeds (reasons in `doctrine/seed-lifecycle.json`).
 - Open: Q-SEED-ultrastable, Q-SEED-second-tenant; Unlearn joins through its own lifecycle.json (scaffolded by the watchdog if its PR lands without one).
+
+- BRANCH-CLEANUP-1 (Rowan, 2026-11-25): no branch outlives its PR in any Ultrastable repo; delete_branch_on_merge enforced by `scripts/branch_cleanup.py` run by `branchsweep --remote` in the daily branchsweep workflow, probe `--check`. Closed PRs no longer keep their branches.

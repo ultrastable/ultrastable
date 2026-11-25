@@ -65,7 +65,6 @@ jobs:
           node --test demos/test/*.test.mjs
           node --test test/cost-probe.test.mjs
           node --test test/plan-limits.test.mjs
-          node --test --no-warnings instances/unlearn/worker/*.test.mjs
           node --test --no-warnings instances/what-works/worker/*.test.mjs
           node --test --no-warnings tests/test_sweeper.js
           node --test --no-warnings dashboard/test/*.test.mjs
