@@ -38,11 +38,11 @@ export async function ensureAppRepo(db, env, tenant, spec, { fetch: f = fetch, n
   if (seen.status === 404) {
     let made = null;
     if (spec.template) {  // a full copy of the seed when the template is reachable; GitHub's answer is recorded either way
-      made = await A('POST', `/repos/${spec.template}/generate`, { owner: org, name, private: true, description: String(spec.description || '').slice(0, 300) });
+      made = await A('POST', `/repos/${spec.template}/generate`, { owner: org, name, private: spec.visibility !== 'public', description: String(spec.description || '').slice(0, 300) });
       out.steps.push(`from template ${spec.template}: HTTP ${made.status}`);
     }
     if (!made || made.status !== 201) {
-      made = await A('POST', `/orgs/${org}/repos`, { name, private: true, description: String(spec.description || '').slice(0, 300), auto_init: true, has_wiki: false, delete_branch_on_merge: true });
+      made = await A('POST', `/orgs/${org}/repos`, { name, private: spec.visibility !== 'public', description: String(spec.description || '').slice(0, 300), auto_init: true, has_wiki: false, delete_branch_on_merge: true });
       out.steps.push(`created empty: HTTP ${made.status}`);
       if (made.status !== 201) { await store.event(db, tenant, 'github-admin', 'failed', `app repo ${repo} HTTP ${made.status} ${made.json.message || ''}`); return { ...out, ok: false, waiting_on: 'admin-app-scope', error: `create ${repo}: HTTP ${made.status} ${made.json.message || ''}`.slice(0, 200) }; }
       out.from_template = false;
@@ -97,6 +97,11 @@ export async function ensureTenantRepo(db, env, tenant, spec, { fetch: f = fetch
     await store.event(db, tenant, 'github-admin', 'tenant-repo', `${repo} created`);
     out.created = true;
   } else if (seen.status !== 200) return { ...out, ok: false, waiting_on: 'admin-app-scope', error: `read ${repo}: HTTP ${seen.status}` };
+  else if ((spec.visibility === 'public' || spec.visibility === 'private') && Boolean(seen.json.private) !== (spec.visibility === 'private')) {  // DECLARED-LIVE-1: an existing repository is set to its declared visibility (replication-ledger was made private and its CI could not read it)
+    const p = await A('PATCH', `/repos/${repo}`, { private: spec.visibility === 'private' });
+    out.visibility = p.status === 200 ? 'set ' + (spec.visibility === 'private' ? 'private' : 'public') : `refused HTTP ${p.status}`;
+    await store.event(db, tenant, 'github-admin', p.status === 200 ? 'tenant-repo' : 'failed', `${repo} visibility ${out.visibility}`);
+  }
   // the tenant's history carries its own workflows, which only a token with workflows: write may push; without that grant the push of the rest still goes
   let t = await scopedToken(db, env, tenant, repo, { fetch: f, now, extra: { workflows: 'write' } });
   if (!t.ok) t = await scopedToken(db, env, tenant, repo, { fetch: f, now });

@@ -625,6 +625,131 @@
       "root_cause": "a scheduled workflow fails every run or stopped being scheduled, and no check watches it",
       "owner": "operations",
       "remedy": "Read the failing run's log, fix the root cause in that repository, and dispatch it once to prove it is green."
+    },
+    {
+      "id": "dg-visibility",
+      "failure_mode": "fm-declared-live-drift",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "driftguard",
+        "--visibility-live"
+      ],
+      "timeout": 120,
+      "root_cause": "a repository's live visibility differs from org/repos.json or doctrine/tenant-repos.json",
+      "owner": "operations",
+      "remedy": "The tick's repo-visibility loop sets it back; if it reports refused, give the administration app access to that repository."
+    },
+    {
+      "id": "dg-crons",
+      "failure_mode": "fm-cron-single-route",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "driftguard",
+        "--crons",
+        "--live"
+      ],
+      "timeout": 120,
+      "root_cause": "crons exceed the plan's account limit, a live schedule is undeclared, or a tenant clock has no pulse route",
+      "owner": "operations",
+      "remedy": "Declare the schedule in doctrine/topology.json and give the tenant a pulse URL the tick calls."
+    },
+    {
+      "id": "dg-triggers",
+      "failure_mode": "fm-missed-trigger",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "driftguard",
+        "--triggers",
+        "--apply"
+      ],
+      "timeout": 180,
+      "root_cause": "a push on main matched a workflow's paths and started no run",
+      "owner": "operations",
+      "remedy": "The detector dispatches the workflow; if dispatch is refused, the workflow needs workflow_dispatch."
+    },
+    {
+      "id": "dg-empty-commits",
+      "failure_mode": "fm-empty-commit-loop",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "driftguard",
+        "--empty-commits"
+      ],
+      "timeout": 60,
+      "root_cause": "a bot commits without comparing trees",
+      "owner": "operations",
+      "remedy": "Find the committing step on the named branch and compare its tree with the head before committing (MERGENOW-NOOP-1 pattern)."
+    },
+    {
+      "id": "dg-lane-closed",
+      "failure_mode": "fm-lane-item-open",
+      "kind": "probe",
+      "spec": "grep:foundation/contracts.py::LANE-FILED-FAIL-1",
+      "root_cause": "lane items are no longer closed by their PR's state",
+      "owner": "operations",
+      "remedy": "Restore LANE-FILED-FAIL-1 in foundation/contracts.py."
+    },
+    {
+      "id": "dg-accounts",
+      "failure_mode": "fm-account-drift",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "driftguard",
+        "--accounts-live"
+      ],
+      "timeout": 60,
+      "root_cause": "the Cloudflare credential reaches another account than the topology names",
+      "owner": "operations",
+      "remedy": "Re-issue the workflow secrets from the topology's account through the deploy route; never paste the retired id."
+    },
+    {
+      "id": "dg-built-live",
+      "failure_mode": "fm-built-without-evidence",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "driftguard",
+        "--built-live"
+      ],
+      "timeout": 120,
+      "root_cause": "a knowledge-graph row is built but its probe answers no nodes",
+      "owner": "product",
+      "remedy": "Run the tenant's graph step and set the row back to pending until its probe shows nodes."
+    },
+    {
+      "id": "dg-handoff-lint",
+      "failure_mode": "fm-built-without-evidence",
+      "kind": "probe",
+      "spec": "grep:.github/workflows/checks.yml::driftguard --handoff-lint",
+      "root_cause": "checks no longer refuse a deploy verified only by the tick's /health",
+      "owner": "operations",
+      "remedy": "Restore the handoff-lint step in checks.yml."
+    },
+    {
+      "id": "dg-baseline-roll",
+      "failure_mode": "fm-declared-live-drift",
+      "kind": "probe",
+      "spec": "grep:.github/workflows/uiux.yml::--roll-baseline",
+      "root_cause": "the UI/UX run no longer rolls a stale visual baseline",
+      "owner": "design",
+      "remedy": "Restore --roll-baseline in uiux.yml."
     }
   ]
 }

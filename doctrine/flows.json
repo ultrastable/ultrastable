@@ -315,6 +315,8 @@
       ],
       "feedback": "a detector that keeps firing escalates and files its own redesign",
       "bindings": [
+        "CLOUDFLARE_ACCOUNT_ID",
+        "CLOUDFLARE_API_TOKEN",
         "LANE_PAT"
       ]
     },

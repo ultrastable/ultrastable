@@ -143,3 +143,19 @@ test('the tenant route needs the internal key', async () => {
   const ok = await handleAppHost(new Request('https://t/host/tenant-repo', { method: 'POST', headers: { 'x-internal-key': w.env.INTERNAL_DEPLOY_KEY }, body: '{"repo":"ultrastable/replication-ledger"}' }), { ...w.env, DB: w.db }, { tenant: T, fetch: w.f });
   assert.equal(ok.status, 200); assert.equal((await ok.json()).empty, true);
 });
+test('DECLARED-LIVE-1: an existing tenant repository is set to its declared visibility; with none declared it is left alone', async () => {
+  const w = await tenantWorld({ commits: 200, existing: true });
+  const base = w.f, patches = [];
+  w.f = async (url, init = {}) => {
+    const u = new URL(url);
+    if (/^\/repos\/ultrastable\/replication-ledger$/.test(u.pathname)) {
+      if ((init.method || 'GET') === 'PATCH') { patches.push(JSON.parse(init.body)); return new Response(JSON.stringify({ private: false }), { status: 200 }); }
+      return new Response(JSON.stringify({ private: true }), { status: 200 });
+    }
+    return base(url, init);
+  };
+  const r = await ensureTenantRepo(w.db, w.env, T, { repo: 'ultrastable/replication-ledger', visibility: 'public' }, { fetch: w.f });
+  assert.equal(r.ok, true); assert.equal(r.visibility, 'set public'); assert.deepEqual(patches, [{ private: false }]);
+  await ensureTenantRepo(w.db, w.env, T, { repo: 'ultrastable/replication-ledger' }, { fetch: w.f });
+  assert.equal(patches.length, 1);
+});

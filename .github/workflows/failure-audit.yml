@@ -13,6 +13,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
+  actions: write  # DRIFT-GUARD-1: detector dg-triggers dispatches a workflow whose matching push on main started no run
   pull-requests: write  # scripts/land_data.py falls back to a pull request when the main writer is refused
   id-token: write  # MAIN-WRITER-1: tools/push_main.py presents the run's OIDC token
 concurrency:
@@ -48,6 +49,10 @@ jobs:
         run: python3 -m foundation failmine --run --apply
       - run: python3 -m foundation failure_audit --run
         continue-on-error: true
+        env:  # DRIFT-GUARD-1: the live detectors (visibility, crons, accounts, triggers) read with these; without them they report unmeasured
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       - name: Ledger to the evidence branch
         run: |
           git config user.name "ultrastable-audit"
