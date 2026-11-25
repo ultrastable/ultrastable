@@ -2286,6 +2286,20 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-98686c53a7",
+      "surface": "agents/AGENTS.md",
+      "text": "- **One contract for every system; statements hold front to back and back to front (FLEET-CONTRACT-1, Rowan 2026-11-25).** \"Make sure",
+      "probe": [
+        "file:seed/worker/src/contract.js",
+        "file:doctrine/tenant-repos.json",
+        "file:doctrine/fleet-contract.json",
+        "file:foundation/fleetcontract.py",
+        "file:site/contract.js",
+        "file:seed/worker/test/contract.test.js"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-29846ff1a5",
       "surface": "agents/AGENTS.md",
       "text": "- **Every system keeps a knowledge graph of all its data, built and maintained automatically (DATAGRAPH-1, Rowan 2026-11-25).** \"All",
@@ -3217,6 +3231,21 @@
       ],
       "bound_by": "mirror",
       "of": "cited-d3be926b7b"
+    },
+    {
+      "id": "mirror-b783f29537",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **One contract for every system; statements hold front to back and back to front (FLEET-CONTRACT-1, Rowan 2026-11-25).** \"Make sure",
+      "probe": [
+        "file:seed/worker/src/contract.js",
+        "file:doctrine/tenant-repos.json",
+        "file:doctrine/fleet-contract.json",
+        "file:foundation/fleetcontract.py",
+        "file:site/contract.js",
+        "file:seed/worker/test/contract.test.js"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-98686c53a7"
     },
     {
       "id": "mirror-1d1a4fbb93",
