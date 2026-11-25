@@ -3406,7 +3406,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 74 Python and 547 Worker tests",
+   "claim": "seed-tests: 80 Python and 547 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3485,6 +3485,15 @@ export default {
    "kind": "generated",
    "pass": true,
    "surface": "platform/README.md"
+  },
+  {
+   "claim": "module: seed/doctrine/CONSTITUTION.md is written by seed/scripts/constitution.py from seed/doctrine/constitution.json",
+   "detail": "",
+   "how": "header names the generator + file:seed/scripts/constitution.py + file:tests/foundation/test_constitution.py",
+   "id": "module-constitution-prose",
+   "kind": "module",
+   "pass": true,
+   "surface": "seed/doctrine/CONSTITUTION.md"
   },
   {
    "claim": "module: site/claims-data.js is written by foundation/claims.py from doctrine/claims.json",
@@ -3665,7 +3674,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 404,
-  "total": 404
+  "pass": 405,
+  "total": 405
  }
 };
