@@ -10,7 +10,6 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-25
 
-- 2026-11-25: WHAT-WORKS-1 (Rowan: "A living atlas of what works in public policy: every programme graded by its trials and re-graded as evidence lands ... run as tenant app on Ultrastable Cloudflare account"; "Also need its own GitHub repo"). Tenant `instances/what-works/` (IDEA.md, instance.json, lifecycle.json, runway.json, worker/), registered `moving` to `ultrastable/what-works` in doctrine/tenant-repos.json so tenant-repos.yml creates the repository on merge. Verdicts are computed by `worker/grade.js` (design weights, replication counted by experiment, conflict cap), never typed; 15 curated programmes in 5 areas; hourly beat resolves citations (Crossref), searches OpenAlex and Europe PMC, reads leads in only under a verbatim-quote guard (`worker/reader.js`), logs every re-grade in `grade_changes`. Not yet in doctrine/topology.json: the Worker `ultrastable-what-works`, D1 and route `what-works.ultrastable.org` land after the owner's go-ahead on the deploy. Tests `node --test instances/what-works/worker/*.test.mjs` (in checks.yml).
 - 2026-11-25: Bump the actions group with 2 updates (#2045)
 - 2026-11-25: Run retriage and the org profile probe on the fleet clock (SLA-ISSUE-1) (#2100)
 - 2026-11-25: Measure growth and shipped code without a token in Actions (#2086)
