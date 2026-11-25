@@ -17,7 +17,7 @@ class Schemas(unittest.TestCase):
 
     def test_backstage_catalog(self):
         import yaml
-        docs = list(yaml.safe_load_all(open("catalog-info.yaml")))
+        docs = list(yaml.safe_load_all(open("catalog/catalog-info.yaml")))
         self.assertTrue(docs and all(d["apiVersion"].startswith("backstage.io/") for d in docs))
 
 

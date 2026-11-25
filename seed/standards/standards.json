@@ -1233,9 +1233,9 @@
    "why": "Each system says what it is, who owns it, its APIs and dependencies in one standard file.",
    "support": "partial",
    "how": [
-    "catalog-info.yaml"
+    "catalog/catalog-info.yaml"
    ],
-   "acl": "catalog-info.yaml",
+   "acl": "catalog/catalog-info.yaml",
    "tests": [
     {
      "file": "tests/foundation/test_schemas.py",
