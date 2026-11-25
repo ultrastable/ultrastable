@@ -3,6 +3,14 @@
   "version": 1,
   "schemas": [
     {
+      "name": "admission.json",
+      "description": "Contract for doctrine/admission.json",
+      "fileMatch": [
+        "doctrine/admission.json"
+      ],
+      "url": "admission.schema.json"
+    },
+    {
       "name": "agent-budget.json",
       "description": "Contract for doctrine/agent-budget.json",
       "fileMatch": [

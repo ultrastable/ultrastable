@@ -122,11 +122,11 @@ export default {
   },
   {
    "claim": "The slow loop reads the same variables every tick, and when one has been out of bounds for two ticks in a row it takes one discrete step on that variable's ladder, keeps the step only if the variable comes back, and otherwise undoes it and takes the next.",
-   "detail": "",
+   "detail": "json:doctrine/ultrastability.json::patience_ticks==2 failed (doctrine/ultrastability.json: patience_ticks=3)",
    "how": "json:doctrine/ultrastability.json::patience_ticks==2 + grep:foundation/ultrastability.py::revert_to=pending + grep:foundation/ultrastability.py::return \"kept\"",
    "id": "how-ultrastable-second-order",
    "kind": "claim",
-   "pass": true,
+   "pass": false,
    "surface": "site/worker.js"
   },
   {
@@ -3613,7 +3613,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 1064",
+   "claim": "live-deploys: 1074",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",
@@ -3826,8 +3826,8 @@ export default {
   }
  ],
  "summary": {
-  "drift": 0,
-  "pass": 422,
+  "drift": 1,
+  "pass": 421,
   "total": 422
  }
 };
