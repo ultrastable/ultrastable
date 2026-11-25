@@ -15,6 +15,17 @@ class T(unittest.TestCase):
     def test_fresh_seed_boots_the_constitution(self):
         self.assertEqual(k.fresh(), [])
 
+    def test_a_scaffolded_system_passes_its_own_constitution_check(self):
+        import tempfile
+        sys.path.insert(0, str(ROOT / "tests/foundation"))
+        import test_foundation as tf
+        from foundation import scaffold
+        with tempfile.TemporaryDirectory() as d:
+            out = Path(d) / "x"
+            rep = scaffold.generate(tf.BASE, out, "2026-11-10", ctx=tf.ctx())
+            self.assertEqual(rep["failures"], [])
+            self.assertEqual(k.engine().check(out, instruction_files=["AGENTS.md", "agents/AGENTS.md"]), [])
+
     def test_a_new_standing_rule_with_no_entry_fails(self):
         import tempfile, shutil
         with tempfile.TemporaryDirectory() as d:
