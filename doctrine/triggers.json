@@ -364,14 +364,6 @@
    ],
    "crons": []
   },
-  "openstd.yml": {
-   "events": [
-    "workflow_dispatch"
-   ],
-   "crons": [
-    "41 5 * * *"
-   ]
-  },
   "org-manage.yml": {
    "events": [
     "workflow_dispatch"
@@ -388,10 +380,11 @@
   },
   "org-settings.yml": {
    "events": [
+    "push",
     "workflow_dispatch"
    ],
    "crons": [
-    "17 5 * * 1"
+    "17 5 * * *"
    ]
   },
   "outreach.yml": {
@@ -495,6 +488,15 @@
    ],
    "crons": [
     "41 5 * * 3"
+   ]
+  },
+  "template-publish.yml": {
+   "events": [
+    "push",
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "37 4 * * *"
    ]
   },
   "temporal.yml": {
