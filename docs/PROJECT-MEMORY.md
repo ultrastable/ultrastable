@@ -10,6 +10,9 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-25
 
+- 2026-11-25: Run branch cleanup from the lane's completion sweep (#2115)
+- 2026-11-25: Add What Works, a living atlas of policy evidence, as a tenant (#2108)
+- 2026-11-25: Fix the branch sweep so stale branches actually get deleted (#2111)
 - 2026-11-25: ZERO-MINUTES-1: worker merged #2110
 - 2026-11-25: org profile probe: find its issue by exact title (SLA-ISSUE-1) (#2110)
 - 2026-11-25: Bump the actions group with 2 updates (#2045)
@@ -777,4 +780,5 @@ Rowan: "All UltraStable issues must be resolved within their SLAs and daily/week
 - Checked: the atlas idea is admitted (year p10 730 days) and bundles into 97 modules with no credential. The live site could not be reached from the session, so the first live walk is the workflow's own test idea.
 - Later the same day (APP-REPO-1): the tick Worker already held a live administration App token and the code App token, a route the earlier gate had marked not tried. `seed/worker/src/apprepos.js` now creates and fills app repositories with them, keeps the visitor's page and `app/index.html` in step both ways, and mints a one-hour token for the app's one repository so the app's own Worker can ship there (Q-LAUNCH-1 and Q-LAUNCH-2 built).
 - Open: gate `visitor-app-repos` until GitHub's live answer is read (can the administration App create an org repository; does the code App cover a repository created after install).
+- Open: gate `visitor-app-repos` (repository creation needs the org credential), Q-LAUNCH-1 (the app's Worker cannot ship code to its repository yet), Q-LAUNCH-2 (the visitor's page is not served from the repository yet).
 - BRANCH-CLEANUP-1 (Rowan, 2026-11-25): no branch outlives its PR in any Ultrastable repo; delete_branch_on_merge enforced by `scripts/branch_cleanup.py` run by `branchsweep --remote` in the daily branchsweep workflow, probe `--check`. Closed PRs no longer keep their branches.
