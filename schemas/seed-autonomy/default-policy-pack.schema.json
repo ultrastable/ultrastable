@@ -1,0 +1,68 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/default-policy-pack.schema.json",
+ "title": "seed/autonomy/default-policy-pack.json",
+ "type": "object",
+ "properties": {
+  "$schema_version": {
+   "type": "string"
+  },
+  "id": {
+   "type": "string"
+  },
+  "doc": {
+   "type": "string"
+  },
+  "applies_to": {
+   "type": "string"
+  },
+  "rules": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "defaults": {
+   "type": "object",
+   "properties": {
+    "monthly_budget_usd": {
+     "type": "number"
+    },
+    "start_rung": {
+     "type": "string"
+    },
+    "work_hours": {
+     "type": "string"
+    },
+    "tick_every_minutes": {
+     "type": "number"
+    },
+    "report": {
+     "type": "string"
+    }
+   }
+  },
+  "buyer_may_change": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "buyer_may_not_change": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  }
+ },
+ "required": [
+  "$schema_version",
+  "applies_to",
+  "buyer_may_change",
+  "buyer_may_not_change",
+  "defaults",
+  "doc",
+  "id",
+  "rules"
+ ]
+}

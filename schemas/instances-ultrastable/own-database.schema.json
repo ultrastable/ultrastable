@@ -1,0 +1,79 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/own-database.schema.json",
+ "title": "instances/ultrastable/own-database.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "version": {
+   "type": "string"
+  },
+  "account": {
+   "type": "object",
+   "properties": {
+    "name": {
+     "type": "string"
+    },
+    "id": {
+     "type": "string"
+    }
+   }
+  },
+  "core": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "tenant": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "declared_not_present": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "retired_configs": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "live": {
+   "type": "object",
+   "properties": {
+    "read_at": {
+     "type": "string"
+    },
+    "method": {
+     "type": "string"
+    },
+    "databases": {
+     "type": "array",
+     "items": {
+      "type": "object"
+     }
+    },
+    "finding": {
+     "type": "string"
+    }
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "account",
+  "core",
+  "declared_not_present",
+  "live",
+  "retired_configs",
+  "tenant",
+  "version"
+ ]
+}

@@ -1,0 +1,49 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/yearsim.schema.json",
+ "title": "seed/autonomy/yearsim.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "seed": {
+   "type": "string"
+  },
+  "runs": {
+   "type": "number"
+  },
+  "days": {
+   "type": "number"
+  },
+  "target_days": {
+   "type": "number"
+  },
+  "fatal_floor": {
+   "type": "number"
+  },
+  "fatal_after_days": {
+   "type": "number"
+  },
+  "faults": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "scheduled": {
+   "type": "array"
+  }
+ },
+ "required": [
+  "_doc",
+  "days",
+  "fatal_after_days",
+  "fatal_floor",
+  "faults",
+  "runs",
+  "scheduled",
+  "seed",
+  "target_days"
+ ]
+}

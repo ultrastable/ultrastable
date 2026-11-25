@@ -1,0 +1,52 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/progress.schema.json",
+ "title": "instances/ultrastable/progress.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "marker": {
+   "type": "string"
+  },
+  "expect_hours": {
+   "type": "number"
+  },
+  "stall": {
+   "type": "number"
+  },
+  "cooldown_hours": {
+   "type": "number"
+  },
+  "systems": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "apps": {
+   "type": "object",
+   "properties": {
+    "registry": {
+     "type": "string"
+    },
+    "expect_days": {
+     "type": "number"
+    },
+    "what": {
+     "type": "string"
+    }
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "apps",
+  "cooldown_hours",
+  "expect_hours",
+  "marker",
+  "stall",
+  "systems"
+ ]
+}

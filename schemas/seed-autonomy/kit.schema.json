@@ -1,0 +1,40 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/kit.schema.json",
+ "title": "seed/autonomy/kit.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "version": {
+   "type": "string"
+  },
+  "target_days": {
+   "type": "number"
+  },
+  "max_age_days": {
+   "type": "number"
+  },
+  "required_faults": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "components": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "components",
+  "max_age_days",
+  "required_faults",
+  "target_days",
+  "version"
+ ]
+}

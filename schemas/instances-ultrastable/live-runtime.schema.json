@@ -1,0 +1,25 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/live-runtime.schema.json",
+ "title": "instances/ultrastable/live-runtime.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "deployed": {
+   "type": "string"
+  },
+  "runtimes": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "deployed",
+  "runtimes"
+ ]
+}

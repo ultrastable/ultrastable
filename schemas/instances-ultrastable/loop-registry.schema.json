@@ -1,0 +1,40 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/loop-registry.schema.json",
+ "title": "instances/ultrastable/loop-registry.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "id": {
+   "type": "string"
+  },
+  "version": {
+   "type": "string"
+  },
+  "credentials": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "loops": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "launch_registry": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "_doc",
+  "credentials",
+  "id",
+  "launch_registry",
+  "loops",
+  "version"
+ ]
+}

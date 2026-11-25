@@ -1,0 +1,28 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/objectives.schema.json",
+ "title": "instances/ultrastable/objectives.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "objectives": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "metrics": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "metrics",
+  "objectives"
+ ]
+}

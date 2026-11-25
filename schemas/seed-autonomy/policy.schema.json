@@ -1,0 +1,428 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/policy.schema.json",
+ "title": "seed/autonomy/policy.json",
+ "type": "object",
+ "properties": {
+  "$schema_version": {
+   "type": "string"
+  },
+  "doc": {
+   "type": "string"
+  },
+  "interrupt_gate": {
+   "type": "object",
+   "properties": {
+    "rule": {
+     "type": "string"
+    },
+    "card_fields": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "examples": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "closed_loop": {
+   "type": "object",
+   "properties": {
+    "id": {
+     "type": "string"
+    },
+    "rule": {
+     "type": "string"
+    },
+    "assume_human_reader": {
+     "type": "boolean"
+    },
+    "assume_human_review": {
+     "type": "boolean"
+    },
+    "assume_owner_decision": {
+     "type": "boolean"
+    },
+    "assume_external_input": {
+     "type": "boolean"
+    },
+    "memory_or_document_is_storage": {
+     "type": "boolean"
+    },
+    "every_artifact_has_a_consumer": {
+     "type": "boolean"
+    },
+    "every_loop_closes_by_system": {
+     "type": "boolean"
+    },
+    "wait_on_person_allowed_only_for": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "wait_requires_default_in_effect": {
+     "type": "boolean"
+    },
+    "loop_proceeds_on_default_while_waiting": {
+     "type": "boolean"
+    },
+    "enforced_by": {
+     "type": "string"
+    }
+   }
+  },
+  "standing_limits": {
+   "type": "object",
+   "properties": {
+    "doc": {
+     "type": "string"
+    },
+    "limits": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "trust": {
+   "type": "object",
+   "properties": {
+    "baseline": {
+     "type": "number"
+    },
+    "prior_weight": {
+     "type": "number"
+    },
+    "formula": {
+     "type": "string"
+    },
+    "decay_per_idle_day": {
+     "type": "number"
+    },
+    "widens": {
+     "type": "string"
+    },
+    "never_reaches": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "ladder": {
+   "type": "object",
+   "properties": {
+    "rungs": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "meaning": {
+     "type": "object",
+     "properties": {
+      "observed": {
+       "type": "string"
+      },
+      "assisted": {
+       "type": "string"
+      },
+      "delegated": {
+       "type": "string"
+      },
+      "autonomous": {
+       "type": "string"
+      },
+      "self-directed": {
+       "type": "string"
+      },
+      "self-modifying": {
+       "type": "string"
+      },
+      "self-extending": {
+       "type": "string"
+      }
+     }
+    },
+    "promote_when": {
+     "type": "object",
+     "properties": {
+      "min_outcomes": {
+       "type": "number"
+      },
+      "min_reliability": {
+       "type": "number"
+      },
+      "no_hidden_failure_days": {
+       "type": "number"
+      }
+     }
+    },
+    "demote_when": {
+     "type": "object",
+     "properties": {
+      "reliability_below": {
+       "type": "number"
+      },
+      "or_any": {
+       "type": "array"
+      }
+     }
+    },
+    "transitions_act_by": {
+     "type": "string"
+    },
+    "ceiling_by_max_permission": {
+     "type": "object",
+     "properties": {
+      "none": {
+       "type": "string"
+      },
+      "propose": {
+       "type": "string"
+      },
+      "execute": {
+       "type": "string"
+      }
+     }
+    }
+   }
+  },
+  "surfaces": {
+   "type": "object",
+   "properties": {
+    "repo": {
+     "type": "object",
+     "properties": {
+      "doc": {
+       "type": "string"
+      },
+      "max_permission": {
+       "type": "string"
+      },
+      "start_rung": {
+       "type": "string"
+      },
+      "actions": {
+       "type": "object"
+      }
+     }
+    },
+    "runtime": {
+     "type": "object",
+     "properties": {
+      "doc": {
+       "type": "string"
+      },
+      "max_permission": {
+       "type": "string"
+      },
+      "start_rung": {
+       "type": "string"
+      },
+      "actions": {
+       "type": "object"
+      }
+     }
+    },
+    "work_tracker": {
+     "type": "object",
+     "properties": {
+      "doc": {
+       "type": "string"
+      },
+      "max_permission": {
+       "type": "string"
+      },
+      "start_rung": {
+       "type": "string"
+      },
+      "actions": {
+       "type": "object"
+      }
+     }
+    },
+    "internal_chat": {
+     "type": "object",
+     "properties": {
+      "doc": {
+       "type": "string"
+      },
+      "max_permission": {
+       "type": "string"
+      },
+      "start_rung": {
+       "type": "string"
+      },
+      "actions": {
+       "type": "object"
+      }
+     }
+    },
+    "outreach": {
+     "type": "object",
+     "properties": {
+      "doc": {
+       "type": "string"
+      },
+      "max_permission": {
+       "type": "string"
+      },
+      "start_rung": {
+       "type": "string"
+      },
+      "actions": {
+       "type": "object"
+      },
+      "kill_switch": {
+       "type": "string"
+      }
+     }
+    },
+    "dns": {
+     "type": "object",
+     "properties": {
+      "doc": {
+       "type": "string"
+      },
+      "max_permission": {
+       "type": "string"
+      },
+      "start_rung": {
+       "type": "string"
+      },
+      "actions": {
+       "type": "object"
+      }
+     }
+    },
+    "money": {
+     "type": "object",
+     "properties": {
+      "doc": {
+       "type": "string"
+      },
+      "max_permission": {
+       "type": "string"
+      },
+      "start_rung": {
+       "type": "string"
+      },
+      "actions": {
+       "type": "object"
+      }
+     }
+    },
+    "legal": {
+     "type": "object",
+     "properties": {
+      "doc": {
+       "type": "string"
+      },
+      "max_permission": {
+       "type": "string"
+      },
+      "start_rung": {
+       "type": "string"
+      },
+      "actions": {
+       "type": "object"
+      }
+     }
+    },
+    "secrets": {
+     "type": "object",
+     "properties": {
+      "doc": {
+       "type": "string"
+      },
+      "max_permission": {
+       "type": "string"
+      },
+      "start_rung": {
+       "type": "string"
+      },
+      "actions": {
+       "type": "object"
+      }
+     }
+    }
+   }
+  },
+  "growth": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "growth_share_floor": {
+     "type": "number"
+    },
+    "growth_priority_weight": {
+     "type": "number"
+    },
+    "min_metrics_per_product": {
+     "type": "number"
+    },
+    "experiment_measure_after_days": {
+     "type": "number"
+    },
+    "rollback_when": {
+     "type": "string"
+    },
+    "owner_role": {
+     "type": "string"
+    },
+    "enforced_by": {
+     "type": "string"
+    }
+   }
+  },
+  "standing_order": {
+   "type": "object",
+   "properties": {
+    "id": {
+     "type": "string"
+    },
+    "rule": {
+     "type": "string"
+    },
+    "thread_is_storage": {
+     "type": "boolean"
+    },
+    "present_decisions_to_owner": {
+     "type": "boolean"
+    },
+    "decide_implement_deploy_verify": {
+     "type": "boolean"
+    },
+    "decision_needs_code_consumer": {
+     "type": "boolean"
+    },
+    "enforced_by": {
+     "type": "string"
+    }
+   }
+  }
+ },
+ "required": [
+  "$schema_version",
+  "closed_loop",
+  "doc",
+  "growth",
+  "interrupt_gate",
+  "ladder",
+  "standing_limits",
+  "standing_order",
+  "surfaces",
+  "trust"
+ ]
+}

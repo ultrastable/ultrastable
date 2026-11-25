@@ -1,0 +1,59 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/improve.schema.json",
+ "title": "seed/autonomy/improve.json",
+ "type": "object",
+ "properties": {
+  "rule": {
+   "type": "string"
+  },
+  "min_items_per_cycle": {
+   "type": "number"
+  },
+  "max_open_from_loop": {
+   "type": "number"
+  },
+  "plus_share": {
+   "type": "number"
+  },
+  "plus_per_cycle": {
+   "type": "number"
+  },
+  "market_max_age_days": {
+   "type": "number"
+  },
+  "settle_days": {
+   "type": "number"
+  },
+  "tiers": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "signals": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "bank": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "bank",
+  "market_max_age_days",
+  "max_open_from_loop",
+  "min_items_per_cycle",
+  "plus_per_cycle",
+  "plus_share",
+  "rule",
+  "settle_days",
+  "signals",
+  "tiers"
+ ]
+}

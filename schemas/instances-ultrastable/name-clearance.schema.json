@@ -1,0 +1,48 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/name-clearance.schema.json",
+ "title": "instances/ultrastable/name-clearance.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "at": {
+   "type": "string"
+  },
+  "name": {
+   "type": "string"
+  },
+  "clear": {
+   "type": "boolean"
+  },
+  "searched": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "unsearched": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "context": {
+   "type": "string"
+  },
+  "next": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "_doc",
+  "at",
+  "clear",
+  "context",
+  "name",
+  "next",
+  "searched",
+  "unsearched"
+ ]
+}

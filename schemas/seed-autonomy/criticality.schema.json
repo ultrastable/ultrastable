@@ -1,0 +1,225 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/criticality.schema.json",
+ "title": "seed/autonomy/criticality.json",
+ "type": "object",
+ "properties": {
+  "$schema_version": {
+   "type": "string"
+  },
+  "doc": {
+   "type": "string"
+  },
+  "window_days": {
+   "type": "number"
+  },
+  "k_min": {
+   "type": "number"
+  },
+  "denominator_floor": {
+   "type": "number"
+  },
+  "dispatch_spend_units": {
+   "type": "number"
+  },
+  "self": {
+   "type": "object",
+   "properties": {
+    "origins": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "doc": {
+     "type": "string"
+    }
+   }
+  },
+  "deploy": {
+   "type": "object",
+   "properties": {
+    "action_classes": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "surfaces": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "verifier_evidence_prefix": {
+     "type": "string"
+    },
+    "doc": {
+     "type": "string"
+    }
+   }
+  },
+  "originated": {
+   "type": "object",
+   "properties": {
+    "id_prefixes": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "credit_cap": {
+     "type": "number"
+    },
+    "doc": {
+     "type": "string"
+    }
+   }
+  },
+  "guards": {
+   "type": "object",
+   "properties": {
+    "spend_worse_tolerance": {
+     "type": "number"
+    },
+    "fail_rate_worse_tolerance": {
+     "type": "number"
+    },
+    "doc": {
+     "type": "string"
+    }
+   }
+  },
+  "origination": {
+   "type": "object",
+   "properties": {
+    "order": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "head_priority": {
+     "type": "number"
+    },
+    "spend_budget_units": {
+     "type": "number"
+    },
+    "max_fail_rate": {
+     "type": "number"
+    },
+    "owner_roles": {
+     "type": "object",
+     "properties": {
+      "cost_cut": {
+       "type": "string"
+      },
+      "flaky_deploy": {
+       "type": "string"
+      },
+      "unowned_backlog": {
+       "type": "string"
+      },
+      "generic": {
+       "type": "string"
+      }
+     }
+    },
+    "titles": {
+     "type": "object",
+     "properties": {
+      "cost_cut": {
+       "type": "string"
+      },
+      "flaky_deploy": {
+       "type": "string"
+      },
+      "unowned_backlog": {
+       "type": "string"
+      },
+      "generic": {
+       "type": "string"
+      }
+     }
+    }
+   }
+  },
+  "k_max": {
+   "type": "number"
+  },
+  "successor": {
+   "type": "object",
+   "properties": {
+    "batch": {
+     "type": "number"
+    },
+    "id_prefix": {
+     "type": "string"
+    },
+    "title": {
+     "type": "string"
+    },
+    "doc": {
+     "type": "string"
+    }
+   }
+  },
+  "control": {
+   "type": "object",
+   "properties": {
+    "doc": {
+     "type": "string"
+    },
+    "subcritical_ticks": {
+     "type": "number"
+    },
+    "prediction_hours": {
+     "type": "number"
+    },
+    "cooldown_hours": {
+     "type": "number"
+    },
+    "stall_ticks": {
+     "type": "number"
+    },
+    "history_keep_days": {
+     "type": "number"
+    },
+    "beat_interval_s": {
+     "type": "number"
+    },
+    "owner_role": {
+     "type": "string"
+    },
+    "raises_id_prefixes": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "raises_kinds": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  }
+ },
+ "required": [
+  "$schema_version",
+  "control",
+  "denominator_floor",
+  "deploy",
+  "dispatch_spend_units",
+  "doc",
+  "guards",
+  "k_max",
+  "k_min",
+  "originated",
+  "origination",
+  "self",
+  "successor",
+  "window_days"
+ ]
+}

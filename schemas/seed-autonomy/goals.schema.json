@@ -1,0 +1,53 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/goals.schema.json",
+ "title": "seed/autonomy/goals.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "control": {
+   "type": "object",
+   "properties": {
+    "stale_days": {
+     "type": "number"
+    },
+    "achieve_after": {
+     "type": "number"
+    },
+    "max_adjust_per_run": {
+     "type": "number"
+    },
+    "max_stretch_per_day": {
+     "type": "number"
+    }
+   }
+  },
+  "goals": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "knobs": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "tenant_feeds": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "control",
+  "goals",
+  "knobs",
+  "tenant_feeds"
+ ]
+}

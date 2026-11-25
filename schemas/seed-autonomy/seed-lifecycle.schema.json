@@ -1,0 +1,49 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/seed-lifecycle.schema.json",
+ "title": "seed/autonomy/seed-lifecycle.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "marker": {
+   "type": "string"
+  },
+  "target_days": {
+   "type": "number"
+  },
+  "verify_max_age_hours": {
+   "type": "number"
+  },
+  "verify_ledger": {
+   "type": "string"
+  },
+  "topology": {
+   "type": "string"
+  },
+  "clocks": {
+   "type": "string"
+  },
+  "progress": {
+   "type": "string"
+  },
+  "survival": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "clocks",
+  "marker",
+  "progress",
+  "survival",
+  "target_days",
+  "topology",
+  "verify_ledger",
+  "verify_max_age_hours"
+ ]
+}

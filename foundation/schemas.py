@@ -1,4 +1,4 @@
-"""SCHEMA-1: every doctrine file is validated against a JSON Schema (draft 2020-12), listed in a SchemaStore-format
+"""SCHEMA-1 / STANDARDS-FIRST-1: every data file under ROOTS (doctrine, seed/autonomy, the instance manifest) is checked; a new homegrown file there with no schema fails. Every doctrine file is validated against a JSON Schema (draft 2020-12), listed in a SchemaStore-format
 catalog (schemas/catalog.json), so editors, CI and any other tool check the same contract instead of reading
 homegrown shapes by convention. `--infer` writes a starting schema for a doctrine file that has none (types, required
 top-level keys, nested shapes); the schema is then the contract and a change that breaks it fails `--check` until the
@@ -38,12 +38,21 @@ def infer(v, depth=0):
     return s
 
 
+ROOTS = ("doctrine", "seed/autonomy", "instances/ultrastable")
+
+
+def _rel(root, p):
+    return p.relative_to(Path(root)).as_posix()
+
+
 def _files(root):
-    return sorted(p for p in (Path(root) / "doctrine").glob("*.json"))
+    return sorted(p for r in ROOTS for p in (Path(root) / r).glob("*.json"))
 
 
 def _schema_path(root, p):
-    return Path(root) / DIR / (p.stem + ".schema.json")
+    parent = _rel(root, p.parent)
+    d = DIR if parent == "doctrine" else "schemas/" + parent.replace("/", "-")
+    return Path(root) / d / (p.stem + ".schema.json")
 
 
 def _validate(schema, value):
@@ -70,15 +79,15 @@ def apply_infer(root=REPO):
         sp = _schema_path(root, p)
         if sp.exists():
             continue
-        s = {"$schema": DRAFT, "$id": BASE + sp.name, "title": f"doctrine/{p.name}"}
+        s = {"$schema": DRAFT, "$id": BASE + sp.name, "title": _rel(root, p)}
         s.update(infer(json.loads(p.read_text(encoding="utf-8"))))
         sp.parent.mkdir(parents=True, exist_ok=True)
         sp.write_text(json.dumps(s, indent=1) + "\n", encoding="utf-8")
         made.append(sp.name)
     catalog = {"$schema": "https://json.schemastore.org/schema-catalog.json", "version": 1,
-               "schemas": [{"name": f"doctrine/{p.name}", "description": "Ultrastable doctrine file",
-                            "fileMatch": [f"doctrine/{p.name}"], "url": BASE + p.stem + ".schema.json",
-                            "path": f"{DIR}/{p.stem}.schema.json"} for p in _files(root)]}
+               "schemas": [{"name": _rel(root, p), "description": "Ultrastable data file",
+                            "fileMatch": [_rel(root, p)], "url": "https://ultrastable.io/" + _rel(root, _schema_path(root, p)),
+                            "path": _rel(root, _schema_path(root, p))} for p in _files(root)]}
     (Path(root) / CATALOG).write_text(json.dumps(catalog, indent=1) + "\n", encoding="utf-8")
     return made
 
@@ -88,7 +97,7 @@ def check(root=REPO):
     cat = Path(root) / CATALOG
     listed = {s["fileMatch"][0] for s in json.loads(cat.read_text())["schemas"]} if cat.exists() else set()
     for p in _files(root):
-        rel = f"doctrine/{p.name}"
+        rel = _rel(root, p)
         sp = _schema_path(root, p)
         if not sp.exists():
             bad.append(f"{rel}: no schema (run `python3 -m foundation schemas --infer`)")

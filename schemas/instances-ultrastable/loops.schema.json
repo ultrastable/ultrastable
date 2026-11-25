@@ -1,0 +1,56 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/loops.schema.json",
+ "title": "instances/ultrastable/loops.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "version": {
+   "type": "string"
+  },
+  "command": {
+   "type": "string"
+  },
+  "evidence": {
+   "type": "string"
+  },
+  "loops": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "hosts": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "failover": {
+   "type": "object",
+   "properties": {
+    "command": {
+     "type": "string"
+    },
+    "rule": {
+     "type": "string"
+    }
+   }
+  },
+  "deploy_routes": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "_doc",
+  "command",
+  "deploy_routes",
+  "evidence",
+  "failover",
+  "hosts",
+  "loops",
+  "version"
+ ]
+}

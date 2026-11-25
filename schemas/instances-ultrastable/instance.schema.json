@@ -1,0 +1,193 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/instance.schema.json",
+ "title": "instances/ultrastable/instance.json",
+ "type": "object",
+ "properties": {
+  "name": {
+   "type": "string"
+  },
+  "slug": {
+   "type": "string"
+  },
+  "kind": {
+   "type": "string"
+  },
+  "owner": {
+   "type": "object",
+   "properties": {
+    "name": {
+     "type": "string"
+    },
+    "jurisdiction": {
+     "type": "string"
+    },
+    "contact_binding": {
+     "type": "string"
+    },
+    "contact_binding_backup": {
+     "type": "string"
+    }
+   }
+  },
+  "brand": {
+   "type": "object",
+   "properties": {
+    "public_name": {
+     "type": "string"
+    },
+    "tagline": {
+     "type": "string"
+    },
+    "separate_from": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "idea": {
+   "type": "string"
+  },
+  "goals": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "positioning": {
+   "type": "string"
+  },
+  "funding": {
+   "type": "object",
+   "properties": {
+    "routes": {
+     "type": "array",
+     "items": {
+      "type": "object"
+     }
+    },
+    "individual_eligible_only": {
+     "type": "boolean"
+    }
+   }
+  },
+  "social": {
+   "type": "object",
+   "properties": {
+    "channels": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "mode": {
+     "type": "string"
+    }
+   }
+  },
+  "runtime": {
+   "type": "object",
+   "properties": {
+    "provider": {
+     "type": "string"
+    }
+   }
+  },
+  "repos": {
+   "type": "object",
+   "properties": {
+    "org": {
+     "type": "string"
+    },
+    "names": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "canonical": {
+     "type": "string"
+    }
+   }
+  },
+  "disclosure": {
+   "type": "object",
+   "properties": {
+    "public_allowed": {
+     "type": "boolean"
+    },
+    "gate": {
+     "type": "string"
+    },
+    "safe_now_only": {
+     "type": "boolean"
+    }
+   }
+  },
+  "ip": {
+   "type": "object",
+   "properties": {
+    "has_invention": {
+     "type": "boolean"
+    },
+    "priority_filed": {
+     "type": "boolean"
+    },
+    "has_practitioner": {
+     "type": "boolean"
+    }
+   }
+  },
+  "budget": {
+   "type": "object",
+   "properties": {
+    "usd_per_month": {
+     "type": "number"
+    },
+    "plan": {
+     "type": "string"
+    },
+    "actions_minutes_monthly": {
+     "type": "number"
+    }
+   }
+  },
+  "spend": {
+   "type": "object",
+   "properties": {
+    "target_usd_day": {
+     "type": "number"
+    },
+    "soft": {
+     "type": "boolean"
+    },
+    "tenants": {
+     "type": "array",
+     "items": {
+      "type": "object"
+     }
+    }
+   }
+  }
+ },
+ "required": [
+  "brand",
+  "budget",
+  "disclosure",
+  "funding",
+  "goals",
+  "idea",
+  "ip",
+  "kind",
+  "name",
+  "owner",
+  "positioning",
+  "repos",
+  "runtime",
+  "slug",
+  "social",
+  "spend"
+ ]
+}

@@ -1,0 +1,47 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/selfhost.schema.json",
+ "title": "instances/ultrastable/selfhost.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "id": {
+   "type": "string"
+  },
+  "version": {
+   "type": "string"
+  },
+  "instance": {
+   "type": "string"
+  },
+  "boot_from": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "required_areas": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "processes": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "boot_from",
+  "id",
+  "instance",
+  "processes",
+  "required_areas",
+  "version"
+ ]
+}

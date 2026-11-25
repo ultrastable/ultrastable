@@ -1,0 +1,27 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/trust-ledger.schema.json",
+ "title": "instances/ultrastable/trust-ledger.json",
+ "type": "object",
+ "properties": {
+  "rows": {
+   "type": "object",
+   "properties": {}
+  },
+  "tick": {
+   "type": "number"
+  },
+  "transitions": {
+   "type": "array"
+  },
+  "version": {
+   "type": "number"
+  }
+ },
+ "required": [
+  "rows",
+  "tick",
+  "transitions",
+  "version"
+ ]
+}

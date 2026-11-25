@@ -1,0 +1,43 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/pace.schema.json",
+ "title": "seed/autonomy/pace.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "idle_runs": {
+   "type": "number"
+  },
+  "max_stride": {
+   "type": "number"
+  },
+  "gauges": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "never_pace": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "rank": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "gauges",
+  "idle_runs",
+  "max_stride",
+  "never_pace",
+  "rank"
+ ]
+}

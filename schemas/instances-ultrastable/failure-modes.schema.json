@@ -1,0 +1,21 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/failure-modes.schema.json",
+ "title": "instances/ultrastable/failure-modes.json",
+ "type": "object",
+ "properties": {
+  "doc": {
+   "type": "string"
+  },
+  "modes": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "doc",
+  "modes"
+ ]
+}

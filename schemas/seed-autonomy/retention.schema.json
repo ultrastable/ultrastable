@@ -1,0 +1,901 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/retention.schema.json",
+ "title": "seed/autonomy/retention.json",
+ "type": "object",
+ "properties": {
+  "doc": {
+   "type": "string"
+  },
+  "max_rows_per_run": {
+   "type": "number"
+  },
+  "tables": {
+   "type": "object",
+   "properties": {
+    "free_tier_samples": {
+     "type": "object",
+     "properties": {
+      "column": {
+       "type": "string"
+      },
+      "keep_days": {
+       "type": "number"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "host_events": {
+     "type": "object",
+     "properties": {
+      "column": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "keep_days": {
+       "type": "number"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "airouter_cache": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "airouter_calls": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "airouter_stats": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "airouter_retired": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "social_posted": {
+     "type": "object",
+     "properties": {
+      "column": {
+       "type": "string"
+      },
+      "keep_days": {
+       "type": "number"
+      },
+      "reason": {
+       "type": "string"
+      },
+      "archive": {
+       "type": "boolean"
+      }
+     }
+    },
+    "human_inbox": {
+     "type": "object",
+     "properties": {
+      "column": {
+       "type": "string"
+      },
+      "keep_days": {
+       "type": "number"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "_migrations": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "unknown_questions": {
+     "type": "object",
+     "properties": {
+      "column": {
+       "type": "string"
+      },
+      "keep_days": {
+       "type": "number"
+      }
+     }
+    },
+    "tick_runs": {
+     "type": "object",
+     "properties": {
+      "column": {
+       "type": "string"
+      },
+      "keep_days": {
+       "type": "number"
+      }
+     }
+    },
+    "dispatches": {
+     "type": "object",
+     "properties": {
+      "column": {
+       "type": "string"
+      },
+      "keep_days": {
+       "type": "number"
+      }
+     }
+    },
+    "outcomes": {
+     "type": "object",
+     "properties": {
+      "column": {
+       "type": "string"
+      },
+      "keep_days": {
+       "type": "number"
+      },
+      "archive": {
+       "type": "boolean"
+      }
+     }
+    },
+    "predictions": {
+     "type": "object",
+     "properties": {
+      "column": {
+       "type": "string"
+      },
+      "keep_days": {
+       "type": "number"
+      },
+      "archive": {
+       "type": "boolean"
+      }
+     }
+    },
+    "criticality_samples": {
+     "type": "object",
+     "properties": {
+      "column": {
+       "type": "string"
+      },
+      "keep_days": {
+       "type": "number"
+      }
+     }
+    },
+    "criticality_history": {
+     "type": "object",
+     "properties": {
+      "column": {
+       "type": "string"
+      },
+      "keep_days": {
+       "type": "number"
+      }
+     }
+    },
+    "criticality_actions": {
+     "type": "object",
+     "properties": {
+      "column": {
+       "type": "string"
+      },
+      "keep_days": {
+       "type": "number"
+      },
+      "archive": {
+       "type": "boolean"
+      }
+     }
+    },
+    "cost_samples": {
+     "type": "object",
+     "properties": {
+      "column": {
+       "type": "string"
+      },
+      "keep_days": {
+       "type": "number"
+      }
+     }
+    },
+    "sweeper_runs": {
+     "type": "object",
+     "properties": {
+      "column": {
+       "type": "string"
+      },
+      "keep_days": {
+       "type": "number"
+      }
+     }
+    },
+    "failure_probe_runs": {
+     "type": "object",
+     "properties": {
+      "column": {
+       "type": "string"
+      },
+      "keep_days": {
+       "type": "number"
+      }
+     }
+    },
+    "credential_events": {
+     "type": "object",
+     "properties": {
+      "column": {
+       "type": "string"
+      },
+      "keep_days": {
+       "type": "number"
+      },
+      "archive": {
+       "type": "boolean"
+      }
+     }
+    },
+    "handoff_events": {
+     "type": "object",
+     "properties": {
+      "column": {
+       "type": "string"
+      },
+      "keep_days": {
+       "type": "number"
+      }
+     }
+    },
+    "webhook_events": {
+     "type": "object",
+     "properties": {
+      "column": {
+       "type": "string"
+      },
+      "keep_days": {
+       "type": "number"
+      }
+     }
+    },
+    "webhook_deliveries": {
+     "type": "object",
+     "properties": {
+      "column": {
+       "type": "string"
+      },
+      "keep_days": {
+       "type": "number"
+      }
+     }
+    },
+    "webhook_seen": {
+     "type": "object",
+     "properties": {
+      "column": {
+       "type": "string"
+      },
+      "keep_days": {
+       "type": "number"
+      }
+     }
+    },
+    "loop_beats": {
+     "type": "object",
+     "properties": {
+      "column": {
+       "type": "string"
+      },
+      "keep_days": {
+       "type": "number"
+      }
+     }
+    },
+    "ignition_log": {
+     "type": "object",
+     "properties": {
+      "column": {
+       "type": "string"
+      },
+      "keep_days": {
+       "type": "number"
+      }
+     }
+    },
+    "budget_ledger": {
+     "type": "object",
+     "properties": {
+      "column": {
+       "type": "string"
+      },
+      "keep_days": {
+       "type": "number"
+      }
+     }
+    },
+    "retention_runs": {
+     "type": "object",
+     "properties": {
+      "column": {
+       "type": "string"
+      },
+      "keep_days": {
+       "type": "number"
+      }
+     }
+    },
+    "hits": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "analytics_meta": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "org": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "roles": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "items": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "claims": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "gate_cards": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "trust_ledger": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "doctrine_lineage": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "interview_answers": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "objectives": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "metrics": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "credentials": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "handoffs": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "ignition_gaps": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "webhook_subscriptions": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "webhook_inbound": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "webhook_state": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "loop_clock": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "cutover_state": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "audit_log": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "audit_segments": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "live_changes": {
+     "type": "object",
+     "properties": {
+      "column": {
+       "type": "string"
+      },
+      "keep_days": {
+       "type": "number"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "live_changes_meta": {
+     "type": "object",
+     "properties": {
+      "column": {
+       "type": "string"
+      },
+      "keep_days": {
+       "type": "number"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "decision_log": {
+     "type": "object",
+     "properties": {
+      "column": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "keep_days": {
+       "type": "number"
+      },
+      "reason": {
+       "type": "string"
+      },
+      "archive": {
+       "type": "boolean"
+      }
+     }
+    },
+    "goal_samples": {
+     "type": "object",
+     "properties": {
+      "column": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "keep_days": {
+       "type": "number"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "goal_adjustments": {
+     "type": "object",
+     "properties": {
+      "column": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "keep_days": {
+       "type": "number"
+      },
+      "reason": {
+       "type": "string"
+      },
+      "archive": {
+       "type": "boolean"
+      }
+     }
+    },
+    "goals": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "goal_knobs": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "stickiness_state": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "stickiness_series": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "progress_cadence": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "trust_ledger_backup_0027": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "trust_ledger_v2": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "cf_alerts": {
+     "type": "object",
+     "properties": {
+      "column": {
+       "type": "string"
+      },
+      "keep_days": {
+       "type": "number"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "kg_nodes": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "kg_edges": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "kg_insights": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "kg_runs": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "kg_vec": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "kg_summaries": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "kg_ai_cursor": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "kg_cost": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "kg_sources": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    },
+    "kg_state": {
+     "type": "object",
+     "properties": {
+      "keep": {
+       "type": "string"
+      },
+      "reason": {
+       "type": "string"
+      }
+     }
+    }
+   }
+  }
+ },
+ "required": [
+  "doc",
+  "max_rows_per_run",
+  "tables"
+ ]
+}

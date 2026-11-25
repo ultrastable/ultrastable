@@ -1,0 +1,21 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/improvements.schema.json",
+ "title": "instances/ultrastable/improvements.json",
+ "type": "object",
+ "properties": {
+  "version": {
+   "type": "number"
+  },
+  "entries": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "entries",
+  "version"
+ ]
+}

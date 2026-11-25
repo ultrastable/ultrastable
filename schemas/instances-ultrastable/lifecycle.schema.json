@@ -1,0 +1,186 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/lifecycle.schema.json",
+ "title": "instances/ultrastable/lifecycle.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "slug": {
+   "type": "string"
+  },
+  "build": {
+   "type": "object",
+   "properties": {
+    "paths": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "tests": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "deploy": {
+   "type": "object",
+   "properties": {
+    "worker": {
+     "type": "string"
+    }
+   }
+  },
+  "verify": {
+   "type": "object",
+   "properties": {
+    "url": {
+     "type": "string"
+    },
+    "expect": {
+     "type": "string"
+    }
+   }
+  },
+  "loops": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "survival": {
+   "type": "object",
+   "properties": {
+    "credentials": {
+     "type": "object",
+     "properties": {
+      "inherit": {
+       "type": "string"
+      }
+     }
+    },
+    "source-control": {
+     "type": "object",
+     "properties": {
+      "inherit": {
+       "type": "string"
+      }
+     }
+    },
+    "budget": {
+     "type": "object",
+     "properties": {
+      "inherit": {
+       "type": "string"
+      }
+     }
+    },
+    "cost-alerts": {
+     "type": "object",
+     "properties": {
+      "inherit": {
+       "type": "string"
+      }
+     }
+    },
+    "payment": {
+     "type": "object",
+     "properties": {
+      "inherit": {
+       "type": "string"
+      }
+     }
+    },
+    "dependencies": {
+     "type": "object",
+     "properties": {
+      "inherit": {
+       "type": "string"
+      }
+     }
+    },
+    "runtime": {
+     "type": "object",
+     "properties": {
+      "inherit": {
+       "type": "string"
+      }
+     }
+    },
+    "models": {
+     "type": "object",
+     "properties": {
+      "inherit": {
+       "type": "string"
+      }
+     }
+    },
+    "health": {
+     "type": "object",
+     "properties": {
+      "status": {
+       "type": "string"
+      },
+      "probe": {
+       "type": "string"
+      },
+      "how": {
+       "type": "string"
+      }
+     }
+    },
+    "backups": {
+     "type": "object",
+     "properties": {
+      "inherit": {
+       "type": "string"
+      }
+     }
+    },
+    "renewal": {
+     "type": "object",
+     "properties": {
+      "inherit": {
+       "type": "string"
+      }
+     }
+    },
+    "improvement": {
+     "type": "object",
+     "properties": {
+      "inherit": {
+       "type": "string"
+      }
+     }
+    },
+    "privacy": {
+     "type": "object",
+     "properties": {
+      "status": {
+       "type": "string"
+      },
+      "probe": {
+       "type": "string"
+      },
+      "how": {
+       "type": "string"
+      }
+     }
+    }
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "build",
+  "deploy",
+  "loops",
+  "slug",
+  "survival",
+  "verify"
+ ]
+}

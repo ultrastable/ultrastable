@@ -1,0 +1,21 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/cost-budgets.schema.json",
+ "title": "instances/ultrastable/cost-budgets.json",
+ "type": "object",
+ "properties": {
+  "doc": {
+   "type": "string"
+  },
+  "budgets": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "budgets",
+  "doc"
+ ]
+}

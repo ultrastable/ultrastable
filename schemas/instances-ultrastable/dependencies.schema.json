@@ -1,0 +1,21 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/dependencies.schema.json",
+ "title": "instances/ultrastable/dependencies.json",
+ "type": "object",
+ "properties": {
+  "instance": {
+   "type": "string"
+  },
+  "dependencies": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "dependencies",
+  "instance"
+ ]
+}
