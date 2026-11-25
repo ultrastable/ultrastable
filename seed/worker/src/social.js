@@ -95,7 +95,7 @@ export async function postBuffer(token, text, f, short, only) {
 }
 
 export async function postRelay(env, p, f, only) {
-  const r = await f(env.SOCIAL_RELAY_URL + '/relay/post', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + env.SOCIAL_RELAY_TOKEN }, body: JSON.stringify({ text: p.long || p.text, short: p.text, channels: only && only.length ? only : ['mastodon', 'linkedin', 'twitter', 'substack', 'facebook', 'instagram'] }) });
+  const r = await f(env.SOCIAL_RELAY_URL + '/relay/post', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + env.SOCIAL_RELAY_TOKEN }, body: JSON.stringify({ text: p.long || p.text, short: p.text, channels: only && only.length ? only : ['mastodon', 'linkedin', 'twitter', 'substack'] }) });
   if (!r.ok) throw new Error('relay HTTP ' + r.status);
   return (await r.json()).results || {};
 }
