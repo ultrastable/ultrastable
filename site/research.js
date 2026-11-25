@@ -28,16 +28,18 @@ function listPage(d) {
     + `<p class="muted">Generated ${esc(d.as_of)} from the system's ledgers.</p>`;
 }
 
-// WHITEPAPER-1: a paper reads as a white paper: numbered sections, a results table, limitations, conclusion and numbered references.
-const SEC = [["introduction", "1. Introduction"], ["background", "2. Background and related work"], ["method", "3. Method"], ["results", "4. Results"],
-  ["discussion", "5. Discussion"], ["limitations", "6. Limitations"], ["conclusion", "7. Conclusion"]];
+// WHITEPAPER-2: a white paper, not a research paper: summary, problem, approach, practice, trade-offs, next steps, references. No forced tables.
+const SEC = [["summary", "Executive summary"], ["problem", "1. The problem"], ["approach", "2. The approach"], ["practice", "3. Putting it into practice"],
+  ["tradeoffs", "4. Trade-offs and limits"], ["action", "5. Next steps"]];
+const link = t => esc(t).replace(/(https:\/\/[^\s<]+)/g, '<a href="$1">$1</a>');
 function paperPage(p, asOf) {
   const s = p.sections || {};
-  const table = `<table><caption>Table 1. Findings, measurements and targets.</caption><thead><tr><th>Finding</th><th>Concern</th><th>Metric</th><th>Measured (n)</th><th>Target</th><th>Verdict</th></tr></thead><tbody>`
-    + (s.table || []).map(r => `<tr><td>${esc(r.id)}</td><td>${esc(r.concern)}</td><td>${esc(r.metric)}</td><td>${esc(fmt(r.measured))} (${esc(r.n)})</td><td>${esc(r.target)}</td><td>${esc(BADGE[r.status] || r.status)}</td></tr>`).join("") + `</tbody></table>`;
-  const body = SEC.map(([k, h]) => `<section><h2>${h}</h2>` + (k === "limitations" ? `<ul>${(s[k] || []).map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : (s[k] || []).map(x => `<p>${esc(x)}</p>`).join("")) + (k === "results" ? table : "") + `</section>`).join("");
+  const body = SEC.map(([k, h]) => `<section><h2>${h}</h2>`
+    + (k === "tradeoffs" || k === "action" ? `<ul>${(s[k] || []).map(x => `<li>${link(x)}</li>`).join("")}</ul>` : (s[k] || []).map(x => `<p>${esc(x)}</p>`).join(""))
+    + (s[k + "_list"] ? `<ol>${s[k + "_list"].map(x => `<li>${esc(x)}</li>`).join("")}</ol>` : "")
+    + (s[k + "_note"] || []).map(x => `<p>${esc(x)}</p>`).join("") + `</section>`).join("");
   const refs = `<section><h2>References</h2><ol>${(p.references || []).map(r => `<li>${esc(r.text)}${r.url ? ` <a href="${esc(r.url)}">${esc(r.url)}</a>` : ""}</li>`).join("")}</ol></section>`;
-  return `<article class="paper"><div class="head"><p><a href="/research">Research</a> / White paper</p><h1>${esc(p.title)}</h1><p class="muted">Ultrastable white paper · updated ${esc(asOf)}</p><h2>Abstract</h2><p>${esc(p.abstract)}</p>${share(p)}</div>`
+  return `<article class="paper"><div class="head"><p><a href="/research">Research</a> / White paper</p><h1>${esc(p.title)}</h1><p class="muted">An Ultrastable white paper · updated ${esc(asOf)}</p>${share(p)}</div>`
     + body + refs + HOOK + `<p class="muted">Generated from the system's own records. JSON: <a href="/api/research/${esc(p.slug)}">/api/research/${esc(p.slug)}</a></p></article>`;
 }
 

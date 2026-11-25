@@ -197,7 +197,7 @@ def validate(root=REPO) -> list[str]:
     if not bad:  # WHITEPAPER-1: every paper passes the white-paper gate before it is published
         ms = measures(root, pol)
         for st in studies(root, pol):
-            bad += gate(paper(root, st, ms, {}))
+            bad += gate(paper(root, st, ms, {}), st)
     page = root / pol.get("page_module", "")
     if page.is_file():
         got = re.findall(r'"study_id": "([^"]+)"', page.read_text(encoding="utf-8"))
@@ -238,7 +238,7 @@ def limits(study, ms) -> list[str]:
     uses_prs = any(f["metric"].startswith(("pr_", "system_", "verified_deploys", "revert_", "deploy_")) for f in study["findings"])
     out = list(study.get("limits", []))
     if not uses_prs:
-        return out + [f"Source. {study['kind'].capitalize()}, version {study['version']}."]
+        return out + [f"Source. {study['kind'][:1].upper() + study['kind'][1:]}, version {study['version']}."]
     out += [f"Scale. One organization: {w['prs']} closed pull requests ({w['merged']} merged) over {w['days']} days" + (f", against {study['scale_compare']}" if study.get("scale_compare") else "") + ". "
            "Our numbers describe this system; they are not a causal estimate and are not compared with the study's effect sizes as if they were."]
     s = ms["system_authored_share"]["value"]
@@ -249,16 +249,18 @@ def limits(study, ms) -> list[str]:
     out.append("Review by construction. Ultrastable has no human review step, so a short open-to-merge time is partly a consequence of the design. "
                "The real test of the design is quality: the revert and deploy-verification findings, which can fail.")
     out.append("Revert share counts commits whose subject starts with Revert; a fix that undoes a change without that word is not counted, so the figure is a lower bound.")
-    out.append(f"Source. {study['kind'].capitalize()}, version {study['version']}; its findings may change in later versions.")
+    out.append(f"Source. {study['kind'][:1].upper() + study['kind'][1:]}, version {study['version']}; its findings may change in later versions.")
     return out
 
 
 # WHITEPAPER-1 (Rowan, 2026-11-25): "it would be nice if it was written in a more professional tone, like an actual white paper, not just a paragraph
 # ... we learned a lot from QNFO about proper research writing ... humans want to read text, and they want it to seem well thought out and professional."
-# Every paper has the sections of a research paper, numbered references cited in the text, and a results table taken from the measurements. Nothing
-# below is typed per paper: the prose is assembled from the study file and the system's own readings, so it changes when they do. gate() refuses a
-# paper that lacks a section, a citation or a measured result, and write_page() publishes only papers that pass it.
-SECTIONS = ("introduction", "background", "method", "results", "discussion", "limitations", "conclusion")
+# WHITEPAPER-2 (Rowan, same day): "White papers don't need quantitative results, but they do need a compelling reason to read them, especially
+# [for] somebody who might implement it." So a paper is an executive summary, the problem and why it matters now, the approach, how to put it into
+# practice, trade-offs and limits, and a call to action, with numbered references where a claim needs one. Live numbers appear only where a real
+# reading exists; nothing is invented and no table is forced. gate() refuses a paper with no clear problem, no concrete approach or no actionable
+# path, and write_page() publishes only papers that pass it.
+SECTIONS = ("summary", "problem", "approach", "practice", "tradeoffs", "action")  # WHITEPAPER-2: a white paper, not a research paper
 ASHBY = {"key": "ashby1952", "text": "Ashby, W. R. (1952; corrected 1954). Design for a Brain: The Origin of Adaptive Behaviour. John Wiley & Sons, New York.",
          "url": "https://archive.org/details/designforbrain00ashb"}
 SELF_REF = {"key": "ultrastable", "text": "Ultrastable (2026). Source code, ledgers and loop registry of the Ultrastable system. Read for this paper at the date of generation.",
@@ -292,50 +294,94 @@ def sections(study, fs, met, lim, method, refs) -> dict:
     src = cite(refs, study["id"]) if not own else cite(refs, "ultrastable")
     ash = cite(refs, "ashby1952") if study["id"] != "ashby-1952" else src
     me = cite(refs, "ultrastable")
-    persp = sorted({f["perspective"] for f in fs})
-    intro = []
+    summary = []
     if mp:
-        intro.append(f"A common view holds that {_lc(mp['belief'])} This paper tests a different account: {_lc(mp['counter'])}")
-    intro.append(study.get("paper_frame") or f"We read {study['title']} against the mechanisms of a running autonomous system.")
-    intro.append(f"The question is narrow and testable. For each of {len(fs)} findings we name the concern, the mechanism in this system that is meant to answer it, "
-                 f"and a metric from the system's own records that can show the answer does not hold. The findings cover {', '.join(persp)}.")
-    back = [f"{study['summary']} {src}", f"Evidence base: {study['data'].rstrip('.')}."]
-    if study["id"] != "ashby-1952":
-        back.append(f"The design under test takes its name and its central mechanism from Ashby's ultrastable system {ash}: a first feedback loop that acts on the world, "
-                    "and a second loop that changes the first loop's parameters only when an essential variable leaves its limits.")
-    back.append(f"Ultrastable is that design as code {me}. Its loops, limits and ledgers are public, so each claim below can be checked against the files named.")
-    meth = [method, "Each finding is stated as a target on one metric, with a prediction logged before the measurement. A finding is met only when the measured value meets "
-            "the target; a metric with no readings is reported as not measured, never as met."]
-    rows = [{"id": f["id"], "concern": f["concern"], "metric": f["metric_label"], "measured": f["measured"], "n": f["n"],
-             "target": f"{f['target']['op']} {f['target']['value']}", "status": f["status"]} for f in fs]
-    measured = sum(1 for f in fs if f["measured"] is not None)
-    res = [f"{met} of {len(fs)} findings are met; {measured} of {len(fs)} have readings. Table 1 gives each measurement against its target."]
-    disc = []
-    for f in fs:
-        how = "; ".join(f"{m['rule']} ({m['how']})" for m in f["mechanisms"])
-        val = "has no readings yet" if f["measured"] is None else f"reads {f['measured']} (n = {f['n']}) against a target of {f['target']['op']} {f['target']['value']}"
-        tail = "The mechanism holds on this evidence." if f["status"] == "met" else f"The mechanism does not yet hold; work item {f['item']} carries the fix and closes only when the same measurement passes."
-        disc.append(f"{f['id']}. {f['concern']}. {f['claim']} {src} In this system the answer is {how}. The metric, {f['metric_label']}, {val}. {tail}")
-    unmet = [f["concern"].rstrip(".").lower() for f in fs if f["status"] != "met"]
-    concl = [f"On this system's records, {met} of {len(fs)} findings hold." + (f" The gaps are {'; '.join(unmet)}." if unmet else " No finding is open."),
-             (f"That is evidence against the view that {_lc(mp['short']).rstrip('.')}: the properties tested here" if mp else "The properties tested here") +
-             " are engineering properties of the loop, and each can be measured and repaired without waiting on a better model.",
-             "The paper is regenerated from the measurements after every merge, so a reader who returns later sees the current result, not this one."]
-    return {"introduction": intro, "background": back, "method": meth, "results": res, "table": rows, "discussion": disc, "limitations": lim, "conclusion": concl}
+        summary.append(f"Many people believe that {_lc(mp['belief'])} This paper argues otherwise: {_lc(mp['counter'])}")
+    summary.append(study.get("paper_frame") or f"We read {study['title']} for what it means to anyone running an autonomous system.")
+    summary.append(f"It is written for people who build or run AI systems and want them to keep working without someone watching. It names {len(fs)} concrete problems, "
+                   "the mechanism that answers each one, and how to put that mechanism in place.")
+    problem = [f"{study['summary']} {src}"]
+    if mp:
+        problem.append(f"This matters now because the usual answer, {_lc(mp['short']).rstrip('.')}, sends teams after the wrong fix. A better model or another reviewer "
+                       "does not close a loop that nothing checks.")
+    problem.append("The problems in detail:")
+    problem_list = [f"{f['concern']}. {f['claim']} {src}" for f in fs]
+    approach = [f"The approach follows Ashby's ultrastable system {ash}: a first loop acts on the world, and a second loop changes the first loop's settings "
+                "whenever a variable that matters leaves its limits, and keeps changing them until it is back inside.",
+                f"Ultrastable is that design as working code {me}. For each problem above it uses a specific mechanism:"]
+    approach_list = [f"{f['concern']}: " + "; ".join(f"{m['how']} ({m['rule']}, `{m['path']}`)" for m in f["mechanisms"]) for f in fs]
+    practice = ["To apply this to your own system, one step per problem:"]
+    practice_list = [f"{f['concern']}. Put in place: {f['mechanisms'][0]['how']}. Check it with one number, {f['metric_label']}, and set a limit for it "
+                     f"({f['target']['op']} {f['target']['value']} is the limit we use)." for f in fs]
+    measured = [f for f in fs if f["measured"] is not None]
+    if measured:
+        note = (f"In our own system, {met} of {len(fs)} of these checks pass today. "
+                        + " ".join(f"{f['metric_label'][0].upper() + f['metric_label'][1:]} reads {f['measured']} (n = {f['n']}; source: {f['source']})." for f in measured[:3])
+                        + " Where a check fails, a work item carries the fix, and it closes only when the same check passes.")
+    else:
+        note = None
+    action = ["Read the code that does this; it is source-available: https://github.com/ultrastable/ultrastable",
+              "Start a system of your own on the same foundation: https://ultrastable.io/start",
+              "Follow new papers by feed: https://ultrastable.io/research.atom"]
+    return {"summary": summary, "problem": problem, "problem_list": problem_list, "approach": approach, "approach_list": approach_list,
+            "practice": practice, "practice_list": practice_list, "practice_note": [note] if note else [], "tradeoffs": lim, "action": action}
 
 
-def gate(p) -> list[str]:
-    """What a paper lacks before it may be published (WHITEPAPER-1)."""
-    bad = [f"{p['slug']}: missing section {k}" for k in SECTIONS if not (p.get("sections") or {}).get(k)]
-    if not p.get("references"):
-        bad.append(f"{p['slug']}: no references")
-    body = " ".join(" ".join(v) for k, v in (p.get("sections") or {}).items() if k != "table")
-    if not re.search(r"\[\d+\]", body):
-        bad.append(f"{p['slug']}: no citation in the text")
-    if not any(r.get("measured") is not None for r in (p.get("sections") or {}).get("table", [])):
-        bad.append(f"{p['slug']}: no measured result")
+NUM = re.compile(r"(?<![\w.`/-])\d+(?:\.\d+)?%?")
+
+
+def sourced_numbers(p, study=None) -> set:
+    """NO-MADE-UP-NUMBERS-1 (Rowan, 2026-11-25): "Never, ever ... make up numbers that can't be double-checked ... supported, verified, sourced, cited."
+    The numbers a paper may print: the measurements (each with its source file), the targets, the window, and figures quoted in the study file or its references."""
+    ok = set()
+    def add(v):
+        if v is None or isinstance(v, bool):
+            return
+        for m in NUM.findall(json.dumps(v) if not isinstance(v, (int, float)) else str(v)):
+            ok.add(m.rstrip("%"))
+    for f in p.get("findings", []):
+        for k in ("measured", "n", "target", "id", "metric_label", "source", "claim", "concern", "where", "mechanisms"):
+            add(f.get(k))
+    add(p.get("derived")); add(p.get("window")); add(p.get("study")); add(p.get("references")); add(p.get("title")); add(p.get("met")); add(p.get("total"))
+    if study:
+        add(study)
+    return ok
+
+
+def unsourced(p, study=None) -> list[str]:
+    ok = sourced_numbers(p, study)
+    text = " ".join(" ".join(v) for v in (p.get("sections") or {}).values()) + " " + p.get("abstract", "")
+    text = re.sub(r"\[\d+\]", "", text)  # citation markers are not claims
+    text = re.sub(r"https?://\S+|`[^`]*`|[A-Z][A-Z0-9-]*-\d+", "", text)  # links, code paths and rule ids are not claims
+    out = []
+    for m in NUM.findall(text):
+        v = m.rstrip("%")
+        if v in ok or str(float(v)).rstrip("0").rstrip(".") in {str(float(x)).rstrip("0").rstrip(".") for x in ok if re.fullmatch(r"\d+(\.\d+)?", x)}:
+            continue
+        if m.endswith("%") and any(abs(float(v) - 100 * float(x)) < 0.6 for x in ok if re.fullmatch(r"\d+(\.\d+)?", x)):
+            continue
+        out.append(m)
+    return sorted(set(out))
+
+
+def gate(p, study=None) -> list[str]:
+    """What a white paper lacks before it may be published (WHITEPAPER-2): a clear problem, a concrete approach, an actionable path, and no number
+    that does not trace to a measurement or a cited source (NO-MADE-UP-NUMBERS-1)."""
+    sec = p.get("sections") or {}
+    bad = [f"{p['slug']}: missing section {k}" for k in SECTIONS if not sec.get(k)]
+    if not sec.get("problem_list"):
+        bad.append(f"{p['slug']}: no concrete problem stated")
+    if not sec.get("practice_list"):
+        bad.append(f"{p['slug']}: no step a reader can take")
+    if not any("https://" in a for a in sec.get("action") or []):
+        bad.append(f"{p['slug']}: call to action has no link")
+    if not p.get("references") or not re.search(r"\[\d+\]", " ".join(sec.get("problem", []) + sec.get("approach", []))):
+        bad.append(f"{p['slug']}: problem or approach cites nothing")
     if len(p.get("abstract", "")) < 200:
-        bad.append(f"{p['slug']}: abstract too short")
+        bad.append(f"{p['slug']}: summary too short")
+    nums = unsourced(p, study)
+    if nums:
+        bad.append(f"{p['slug']}: numbers with no source: {', '.join(nums)}")
     return bad
 
 
@@ -358,6 +404,7 @@ def paper(root, study, ms, lds) -> dict:
     refs = references(study)
     return {"study_id": study["id"], "slug": study["id"], "order": study.get("order", 9), "title": study.get("paper_title") or f"What {study['title']} means for an autonomous system",
             "sections": sections(study, fs, met, lim, method, refs), "references": refs,
+            "derived": ([round(100 * (1 - ms["system_authored_share"]["value"]))] if ms["system_authored_share"]["value"] is not None else []) + [ms["self_deploys"]["value"]],
             "study": {k: study[k] for k in ("title", "authors", "institution", "kind", "version", "data", "summary")},
             "abstract": abstract, "window": w, "findings": fs, "met": met, "total": len(fs), "limits": lim,
             "leads": lds.get("leads", []), "leads_route": lds.get("route"),
@@ -366,23 +413,21 @@ def paper(root, study, ms, lds) -> dict:
 
 def markdown(p) -> str:
     sec = p["sections"]
-    L = [f"<!-- GENERATED by foundation/research.py (RESEARCH-1, WHITEPAPER-1). Do not edit; regenerated after every merge. -->", f"# {p['title']}", "",
-         "*Ultrastable white paper. Ultrastable is the foundation for any autonomous system.*", "", "## Abstract", "", p["abstract"], ""]
-    names = {"introduction": "1. Introduction", "background": "2. Background and related work", "method": "3. Method", "results": "4. Results",
-             "discussion": "5. Discussion", "limitations": "6. Limitations", "conclusion": "7. Conclusion"}
+    names = {"summary": "Executive summary", "problem": "1. The problem", "approach": "2. The approach", "practice": "3. Putting it into practice",
+             "tradeoffs": "4. Trade-offs and limits", "action": "5. Next steps"}
+    L = [f"<!-- GENERATED by foundation/research.py (RESEARCH-1, WHITEPAPER-2). Do not edit; regenerated after every merge. -->", f"# {p['title']}", "",
+         "*An Ultrastable white paper. Ultrastable is the foundation for any autonomous system.*", ""]
     for k in SECTIONS:
         L += [f"## {names[k]}", ""]
-        if k == "limitations":
+        if k in ("tradeoffs", "action"):
             L += [f"- {x}" for x in sec[k]] + [""]
-        else:
-            for para in sec[k]:
-                L += [para, ""]
-        if k == "results":
-            L += ["Table 1. Findings, measurements and targets.", "", "| Finding | Concern | Metric | Measured (n) | Target | Verdict |", "|---|---|---|---|---|---|"]
-            L += [f"| {r['id']} | {r['concern']} | {r['metric']} | {'not measured' if r['measured'] is None else r['measured']} ({r['n']}) | {r['target']} | {r['status']} |" for r in sec["table"]] + [""]
-    if p["leads"]:
-        L += ["## Proposed further links", "", f"Found by core/connect on the {p['leads_route']} route; each is a proposal until a study file adopts it.", ""]
-        L += [f"- {x['finding']} may also relate to {x['rule']} (similarity {x['score']})" for x in p["leads"]] + [""]
+            continue
+        for para in sec[k]:
+            L += [para, ""]
+        if sec.get(k + "_list"):
+            L += [f"{n}. {x}" for n, x in enumerate(sec[k + "_list"], 1)] + [""]
+        for para in sec.get(k + "_note") or []:
+            L += [para, ""]
     L += ["## References", ""] + [f"{n}. {r['text']}" + (f" {r['url']}" if r.get("url") else "") for n, r in enumerate(p["references"], 1)] + [""]
     return "\n".join(L)
 
@@ -390,10 +435,11 @@ def markdown(p) -> str:
 def write_page(root, pol, papers, ms, intake_state) -> None:
     root = Path(root)
     (root / pol["papers_dir"]).mkdir(parents=True, exist_ok=True)
-    held = [p for p in papers if gate(p)]
+    by = {st["id"]: st for st in studies(root, pol)}
+    held = [p for p in papers if gate(p, by.get(p["study_id"]))]
     for p in held:
-        print("research: paper held back by the white-paper gate: " + "; ".join(gate(p)), file=sys.stderr)
-    papers = [p for p in papers if not gate(p)]
+        print("research: paper held back by the white-paper gate: " + "; ".join(gate(p, by.get(p["study_id"]))), file=sys.stderr)
+    papers = [p for p in papers if not gate(p, by.get(p["study_id"]))]
     for p in papers:
         (root / pol["papers_dir"] / f"{p['slug']}.md").write_text(markdown(p), encoding="utf-8")
     covered = sorted({f["perspective"] for p in papers for f in p["findings"]})
