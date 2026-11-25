@@ -22,3 +22,6 @@
 {"at": "2026-11-23T00:26:09Z", "decided_at": "2026-11-21T19:41:22Z", "hit": true, "id": "d-3014df40792c", "measured": 1.0, "point": "work-queue-priority", "predicted": 1.0}
 {"at": "2026-11-23T00:26:09Z", "decided_at": "2026-11-21T20:21:06Z", "hit": true, "id": "d-6ebedf598a77", "measured": 1.0, "point": "work-queue-priority", "predicted": 1.0}
 {"at": "2026-11-23T00:26:09Z", "decided_at": "2026-11-21T20:41:33Z", "hit": true, "id": "d-a17603d6d58c", "measured": 1.0, "point": "work-queue-priority", "predicted": 1.0}
+{"at": "2026-11-25T00:02:28Z", "decided_at": "2026-11-17T15:45:58Z", "hit": true, "id": "d-091eb4b00797", "measured": 3.0, "point": "spinoff-launch", "predicted": 5.0}
+{"at": "2026-11-25T00:02:28Z", "decided_at": "2026-11-17T21:21:28Z", "hit": false, "id": "d-bb127e562ff9", "measured": 0.0, "point": "spinoff-launch", "predicted": 4.0}
+{"at": "2026-11-25T00:02:28Z", "decided_at": "2026-11-17T21:21:28Z", "hit": false, "id": "d-b743f9eb5366", "measured": 0.0, "point": "spinoff-launch", "predicted": 4.0}
