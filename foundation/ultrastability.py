@@ -592,9 +592,21 @@ def check(root=REPO) -> list[str]:
                         errs.append(f"{scope}.{v['id']} step verb {st['verb']!r} is not in foundation/spinoff.py")
                 elif st["kind"] != "item":
                     errs.append(f"{scope}.{v['id']} unknown step kind {st['kind']}")
-    if (root / DATA).is_file() and (root / DATA).read_text(encoding="utf-8") != render(root):
+    if (root / DATA).is_file() and _declared(_parse(root)) != _declared(data(root)):  # the readings part moves with every tick; only the declaration must match
         errs.append(f"{DATA} is stale: run ultrastability --data --apply")
     return errs
+
+
+def _declared(d) -> dict:
+    return {k: v for k, v in (d or {}).items() if k not in ("now", "readiness", "self_changes")}
+
+
+def _parse(root):
+    t = (Path(root) / DATA).read_text(encoding="utf-8")
+    try:
+        return json.loads(t[t.index("export default ") + len("export default "):].rstrip().rstrip(";"))
+    except ValueError:
+        return None
 
 
 def readings_keys():
