@@ -10,6 +10,8 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-25
 
+- 2026-11-25: org profile probe: no pipe into grep -q (SLA-ISSUE-1) (#2122)
+- 2026-11-25: Keep tenant redeploys running when another tenant's repo cannot be created; judge Unlearn on its own feeds (#2133)
 - 2026-11-25: Run branch cleanup from the lane's completion sweep (#2115)
 - 2026-11-25: Add What Works, a living atlas of policy evidence, as a tenant (#2108)
 - 2026-11-25: Fix the branch sweep so stale branches actually get deleted (#2111)
