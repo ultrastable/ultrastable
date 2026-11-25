@@ -625,6 +625,22 @@
       "root_cause": "a scheduled workflow fails every run or stopped being scheduled, and no check watches it",
       "owner": "operations",
       "remedy": "Read the failing run's log, fix the root cause in that repository, and dispatch it once to prove it is green."
+    },
+    {
+      "id": "redteam",
+      "failure_mode": "fm-blind-spot",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "redteam",
+        "--probe"
+      ],
+      "timeout": 300,
+      "root_cause": "a probe reads empty, stale, unscored or vacuous data as fine, so a failure passes until the owner sees it",
+      "owner": "operations",
+      "remedy": "Fix the check named in the finding at its root (the measurer, not the reading) and add a test that reproduces the owner-found failure."
     }
   ]
 }

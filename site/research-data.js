@@ -90,7 +90,7 @@ export default {
      "metric_label": "second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl)",
      "measured": 98,
      "status": "met",
-     "n": 13990,
+     "n": 14031,
      "source": "ops/ultrastability.jsonl",
      "item": null
     },
@@ -477,7 +477,7 @@ export default {
      "prediction": "self_deploys >= 1 within 336 h",
      "metric_label": "verified deploys the system originated and executed itself (latest criticality tick)",
      "measured": 0,
-     "status": "not-met",
+     "status": "unmeasured",
      "n": 0,
      "source": "ops/criticality.jsonl at 2026-11-24T17:40:23Z",
      "item": "Q-RES-chen-stratton-2026-F7"
@@ -543,7 +543,7 @@ export default {
     "data": "This system's own ledgers: closed pull requests read from GitHub, the deploy record, the criticality ticks, the ultrastability ledger and the loop registry",
     "summary": "A common belief holds that AI agents can draft code but a person must still merge it, deploy it and check that it works. Ultrastable is built to close those loops itself: a server-side lane merges green changes, every deploy is proven live against its commit, and every loop names its closing probe."
    },
-   "abstract": "Ultrastable R&D (Ultrastable): A common belief holds that AI agents can draft code but a person must still merge it, deploy it and check that it works. Ultrastable is built to close those loops itself: a server-side lane merges green changes, every deploy is proven live against its commit, and every loop names its closing probe. We state the common belief as properties that can fail, and test each against the records of a system that merges, deploys and checks its own work. Where it still depends on outside sessions, the paper says so with the number. 4 of 6 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.",
+   "abstract": "Ultrastable R&D (Ultrastable): A common belief holds that AI agents can draft code but a person must still merge it, deploy it and check that it works. Ultrastable is built to close those loops itself: a server-side lane merges green changes, every deploy is proven live against its commit, and every loop names its closing probe. We state the common belief as properties that can fail, and test each against the records of a system that merges, deploys and checks its own work. Where it still depends on outside sessions, the paper says so with the number. 3 of 6 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.",
    "window": {
     "start": "2026-11-20T15:16:32Z",
     "end": "2026-11-21T09:10:55Z",
@@ -664,10 +664,10 @@ export default {
      "prediction": "human_touches <= 0 within 168 h",
      "metric_label": "human touches counted by the latest criticality tick",
      "measured": 0,
-     "status": "met",
+     "status": "unmeasured",
      "n": 0,
      "source": "ops/criticality.jsonl at 2026-11-24T17:40:23Z",
-     "item": null
+     "item": "Q-RES-open-loops-2026-O4"
     },
     {
      "id": "O5",
@@ -716,13 +716,13 @@ export default {
      "prediction": "self_deploys >= 1 within 336 h",
      "metric_label": "verified deploys the system originated and executed itself (latest criticality tick)",
      "measured": 0,
-     "status": "not-met",
+     "status": "unmeasured",
      "n": 0,
      "source": "ops/criticality.jsonl at 2026-11-24T17:40:23Z",
      "item": "Q-RES-open-loops-2026-O6"
     }
    ],
-   "met": 4,
+   "met": 3,
    "total": 6,
    "limits": [
     "Scale. One organization: 100 closed pull requests (64 merged) over 0.75 days. Our numbers describe this system; they are not a causal estimate and are not compared with the study's effect sizes as if they were.",

@@ -96,7 +96,7 @@ Source: GitHub REST pulls?state=closed, last 100 closed pull requests, fetched 2
 - GUIDING-DIRECTIVE section 12 (`doctrine/registers.json`): every single point of failure, approvals included, is registered and remediated
 - NO-SINGLE-ROUTE (`foundation/failover.py`): every merge and deploy path has a second route needing no person's credential
 
-**Measured here:** verified deploys the system originated and executed itself (latest criticality tick): 0 (n = 0). Target >= 1. Verdict: **not-met**. Open item: `Q-RES-chen-stratton-2026-F7`.
+**Measured here:** verified deploys the system originated and executed itself (latest criticality tick): 0 (n = 0). Target >= 1. Verdict: **unmeasured**. Open item: `Q-RES-chen-stratton-2026-F7`.
 Source: ops/criticality.jsonl at 2026-11-24T17:40:23Z.
 
 ## Limits

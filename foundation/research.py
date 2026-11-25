@@ -157,8 +157,8 @@ def measures(root=REPO, pol=None) -> dict:
 def verdict(finding: dict, ms: dict) -> dict:
     mv = ms.get(finding["metric"], {}).get("value")
     t = finding["target"]
-    if mv is None:
-        return {"status": "unmeasured", "value": None}
+    if mv is None or ms.get(finding["metric"], {}).get("n") == 0:  # REDTEAM-1: a reading with no data is never met (vacuous pass)
+        return {"status": "unmeasured", "value": mv}
     return {"status": "met" if OPS[t["op"]](mv, t["value"]) else "not-met", "value": mv}
 
 
@@ -497,6 +497,12 @@ def main(argv=None) -> int:
     if "--intake" in av:
         print(json.dumps(intake(REPO, apply), indent=1))
         return 0
+    if "--refresh-prs-if-stale" in av:  # REDTEAM-1 (stale): the papers say they regenerate after every merge, so their source may not be days old
+        snap = REPO / load(REPO)["state_dir"] / "prs.json"
+        at = _t(json.loads(snap.read_text(encoding="utf-8")).get("fetched_at")) if snap.is_file() else None
+        if at and (dt.datetime.now(dt.timezone.utc) - at).total_seconds() < 86400:
+            print("research: pull-request snapshot is under a day old"); return 0
+        print(f"research: {refresh_prs(REPO)} pull requests recorded"); return 0
     if "--refresh-prs" in av:
         print(f"research: {refresh_prs(REPO)} pull requests recorded")
         return 0
