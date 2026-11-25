@@ -294,6 +294,14 @@
     "kg_runs": {
       "keep": "managed",
       "reason": "DATAGRAPH-1: one row per graph pass, pruned to 400 days by seed/worker/src/datagraph.js"
+    },
+    "kg_sources": {
+      "keep": "managed",
+      "reason": "Tenant engine seed/worker/src/knowledge.js (DATAGRAPH-1 built rows): one hash per source record; retired rows pruned after retain_days by runKg"
+    },
+    "kg_state": {
+      "keep": "state",
+      "reason": "Tenant engine seed/worker/src/knowledge.js: a handful of keys per tenant (last analysis, kind weights)"
     }
   }
 }
