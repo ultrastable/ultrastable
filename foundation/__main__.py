@@ -33,6 +33,7 @@
   python3 -m foundation fullstack [--check|--live|--probe ID|--list]        FULLSTACK-1: every system has a repository, a back end and a public front end
   python3 -m foundation collisions [--check|--prs [--pr N]|--claim ID]   COLLISION-1: no two migrations share a number; a PR may not add what an older open PR adds
   python3 -m foundation datagraph [--check|--list|--live]                        DATAGRAPH-1: every system keeps a knowledge graph of all its data
+  python3 -m foundation livelinks [--check [--readme PATH --id ID]|--write README --id ID|--block ID|--live]   LIVE-LINKS-1: every README says where its code runs
   python3 -m foundation fleetcontract [--check|--live [--apply|--record]|--probe ID|--list]   FLEET-CONTRACT-1: one contract per system; statements hold front to back and back to front
   python3 -m foundation tenantpromo [--check|--list]                      TENANT-PROMO-1: every tenant promotes itself (social queue, showcase, cross-links)
   python3 -m foundation progress [--check|--live]                          PROGRESS-1: every system shows substantive progress at every visit; the cadence monitor is wired
@@ -327,6 +328,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["collisions"]:
         from . import collisions
         return collisions.main(_av[1:])
+    if _av[:1] == ["livelinks"]:
+        from . import livelinks
+        return livelinks.main(_av[1:])
     if _av[:1] == ["fleetcontract"]:
         from . import fleetcontract
         return fleetcontract.main(_av[1:])

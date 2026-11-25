@@ -135,3 +135,6 @@ jobs:
         # Fetches each system's surfaces, each statement's page and endpoint, and every /api link its pages carry. Red names the system, the direction and the route.
         if: always()
         run: python3 -m foundation fleetcontract --live
+      - name: Every repository's README links the address its code runs at (LIVE-LINKS-1)
+        if: always()
+        run: python3 -m foundation livelinks --live

@@ -61,7 +61,10 @@ async function auditProxy(u, env) {
   catch (e) { console.error("audit proxy: tick unreachable", String(e && e.message)); return J({ error: "tick_unreachable" }, 503); }
 }
 
+// The paths this module answers, written out so the route list is readable in one place (scripts/check_readmes.py reads site routes from source).
+export const PATHS = ["/.well-known/ultrastable.json", "/claims.json", "/social-queue.json", "/api/fleet-contract", "/api/audit/head", "/api/audit/verify"];
 export async function contractRoutes(u, env, fetchFn = (...a) => fetch(...a)) {
+  if (!PATHS.includes(u.pathname)) return null;
   const c = contractRoute(u.pathname, SPEC);
   if (c) return c;
   if (u.pathname === "/social-queue.json") return socialQueue(fetchFn);

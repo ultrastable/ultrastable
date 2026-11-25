@@ -1840,6 +1840,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **Every repository says where its code runs (LIVE-LINKS-1, Rowan 2026-11-25).** \"If somebody sees the code, then show them where it's",
+   "detail": "",
+   "how": "file:foundation/livelinks.py + file:doctrine/fleet-contract.json + file:doctrine/tenant-repos.json + file:tests/foundation/test_livelinks.py + grep:.github/workflows/checks.yml::foundation[ .]livelinks\\b",
+   "id": "cited-997134914a",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **One contract for every system; statements hold front to back and back to front (FLEET-CONTRACT-1, Rowan 2026-11-25).** \"Make sure",
    "detail": "",
    "how": "file:seed/worker/src/contract.js + file:doctrine/tenant-repos.json + file:doctrine/fleet-contract.json + file:foundation/fleetcontract.py + file:site/contract.js + file:seed/worker/test/contract.test.js",
@@ -2546,6 +2555,15 @@ export default {
    "detail": "",
    "how": "file:seed/worker/src/livechanges.js + file:site/live.js + file:seed/worker/test/livechanges.test.js + file:site/site.test.mjs",
    "id": "mirror-b9c4dda8e0",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Every repository says where its code runs (LIVE-LINKS-1, Rowan 2026-11-25).** \"If somebody sees the code, then show them where it's",
+   "detail": "",
+   "how": "file:foundation/livelinks.py + file:doctrine/fleet-contract.json + file:doctrine/tenant-repos.json + file:tests/foundation/test_livelinks.py + grep:.github/workflows/checks.yml::foundation[ .]livelinks\\b",
+   "id": "mirror-3ba315e84d",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3539,7 +3557,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 390,
-  "total": 390
+  "pass": 392,
+  "total": 392
  }
 };

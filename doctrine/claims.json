@@ -2286,6 +2286,19 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-997134914a",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Every repository says where its code runs (LIVE-LINKS-1, Rowan 2026-11-25).** \"If somebody sees the code, then show them where it's",
+      "probe": [
+        "file:foundation/livelinks.py",
+        "file:doctrine/fleet-contract.json",
+        "file:doctrine/tenant-repos.json",
+        "file:tests/foundation/test_livelinks.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]livelinks\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-98686c53a7",
       "surface": "agents/AGENTS.md",
       "text": "- **One contract for every system; statements hold front to back and back to front (FLEET-CONTRACT-1, Rowan 2026-11-25).** \"Make sure",
@@ -3231,6 +3244,20 @@
       ],
       "bound_by": "mirror",
       "of": "cited-d3be926b7b"
+    },
+    {
+      "id": "mirror-3ba315e84d",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Every repository says where its code runs (LIVE-LINKS-1, Rowan 2026-11-25).** \"If somebody sees the code, then show them where it's",
+      "probe": [
+        "file:foundation/livelinks.py",
+        "file:doctrine/fleet-contract.json",
+        "file:doctrine/tenant-repos.json",
+        "file:tests/foundation/test_livelinks.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]livelinks\\b"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-997134914a"
     },
     {
       "id": "mirror-b783f29537",
