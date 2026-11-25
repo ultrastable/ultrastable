@@ -1,0 +1,11 @@
+{
+  "id": "Q-REDTEAM-weekly-count-conflict",
+  "title": "Q-REDTEAM-weekly-count-conflict: /pulse.json says 249 substantive merges this week, /progress.json says 345 for the same window",
+  "body": "**Owner:** product-manager\n**Trigger:** red-team pass (REDTEAM-1), daily\n**Done check:** cmd:python3 -m foundation redteam --probe\n**Status:** open\n\nFound by reading production as a stranger on 2026-11-25. Root cause: two pages compute 'substantive' differently. Fix the producer, not the page text. Closing probe: the two weekly counts agree within 10% (redteam check_live).",
+  "status": "open",
+  "labels": [
+    "role:product-manager",
+    "raises-self"
+  ],
+  "milestone": "Now"
+}

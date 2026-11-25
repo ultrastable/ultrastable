@@ -1,0 +1,11 @@
+{
+  "id": "Q-REDTEAM-claims-template-leak",
+  "title": "Q-REDTEAM-claims-template-leak: claim how-ledgers-count publishes raw template code ('\" + VERIFIED.ledgers.length + \"'), and two claims start mid-sentence",
+  "body": "**Owner:** product-manager\n**Trigger:** red-team pass (REDTEAM-1), daily\n**Done check:** cmd:python3 -m foundation redteam --probe\n**Status:** open\n\nFound by reading production as a stranger on 2026-11-25. Root cause: the claim extractor in foundation/claims.py reads JS string concatenation as prose. Fix the producer, not the page text. Closing probe: GET /api/claims has no '\" + ' sequence and no claim starting lowercase mid-sentence.",
+  "status": "open",
+  "labels": [
+    "role:product-manager",
+    "raises-self"
+  ],
+  "milestone": "Now"
+}

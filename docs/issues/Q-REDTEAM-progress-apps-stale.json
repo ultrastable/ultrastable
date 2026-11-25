@@ -1,0 +1,11 @@
+{
+  "id": "Q-REDTEAM-progress-apps-stale",
+  "title": "Q-REDTEAM-progress-apps-stale: /progress.json apps block is frozen at 2026-11-17 with live 0 and newest null",
+  "body": "**Owner:** product-manager\n**Trigger:** red-team pass (REDTEAM-1), daily\n**Done check:** cmd:python3 -m foundation redteam --probe\n**Status:** open\n\nFound by reading production as a stranger on 2026-11-25. Root cause: the apps block producer stopped; nothing alarms on its age. Fix the producer, not the page text. Closing probe: apps.as_of on /progress.json is under 3 days old.",
+  "status": "open",
+  "labels": [
+    "role:product-manager",
+    "raises-self"
+  ],
+  "milestone": "Now"
+}
