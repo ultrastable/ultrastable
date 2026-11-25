@@ -31,7 +31,7 @@ async function releasesOf(sys, fetchImpl) {
 export function appsBlock(apps, spin, now, dir = DIRECTORY) {
   const tenants = (dir || []).filter(x => x && x.kind === "tenant");
   return { live: apps.length, tenants_live: tenants.length, tenants: tenants.map(t => ({ id: t.id, name: t.name, url: t.url })), newest: apps.map(a => a.launched).sort().pop() || null,
-    as_of: new Date(now).toISOString(), source: "directory (regenerated on every merge) + launched spinoffs" };
+    as_of: new Date(now).toISOString(), source: "directory module and launched spinoffs" };
 }
 
 export async function progressData(env, { fetchImpl = fetch, now = Date.now(), spin = SPIN } = {}) {

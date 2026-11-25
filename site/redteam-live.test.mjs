@@ -17,3 +17,10 @@ test("apps block dates from the request and counts live tenants", () => {
   assert.equal(b.as_of, "2026-11-25T00:00:00.000Z");
   assert.equal(b.tenants_live, 1);
 });
+
+test("published claim text carries no template code or raw tags", async () => {
+  const { publicText } = await import("./worker.js");
+  assert.equal(publicText('One loop, " + VERIFIED.ledgers.length + " ledgers ('), "One loop … ledgers");
+  assert.equal(publicText("tools, generated from code"), "…tools, generated from code");
+  assert.equal(publicText('See the <a href="/live">live page</a>'), "See the live page");
+});
