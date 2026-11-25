@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-25-graph-ai-layer-on-datagraph-1-tables",
+  "kind": "decision",
+  "date": "2026-11-25",
+  "title": "Graph AI layer on DATAGRAPH-1 tables",
+  "body": "KGRAPH-AI-1: embeddings, extracted relations, community summaries and a cost probe (/api/graph/ai) run on DATAGRAPH-1's tables. PR 2166 was closed as a duplicate of PR 2158 because it reused kg_nodes/kg_edges with a different schema.",
+  "probe": "file:seed/worker/src/graphai.js"
+ },
+ "kind": "decision",
+ "title": "Graph AI layer on DATAGRAPH-1 tables",
+ "session": "session_0156nqDsLmwvRrp32WfdM7wg"
+}

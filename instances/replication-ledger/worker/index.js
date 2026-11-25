@@ -8,8 +8,8 @@ import { withStandings, FIELDS } from "./ledger.js";
 import { KINDS, OUTCOMES, STANDINGS, RUBRIC } from "./standing.js";
 import { BEAT } from "./discover.js";
 import { load, beat, freshness, minutesSince } from "./store.js";
-import { graphTick, graphApi } from "./graph.js";
-import { home, fieldPage, findingPage, projectsPage, rubricPage, changesPage, notFound, SITE } from "./site.js";
+import { graphTick, graphApi, graphView } from "./graph.js";
+import { home, fieldPage, findingPage, projectsPage, rubricPage, changesPage, graphPage, notFound, SITE } from "./site.js";
 
 const json = (body, status = 200) => new Response(JSON.stringify(body, null, 1), { status, headers: { "content-type": "application/json; charset=utf-8", "access-control-allow-origin": "*" } });
 const html = (body, status = 200) => new Response(body, { status, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=120" } });
@@ -49,6 +49,7 @@ export function route(url, ledger = seed, live = { checks: {}, beats: [], change
   if (p === "/rubric") return html(rubricPage());
   if (p === "/projects") return html(projectsPage(ledger.projects || []));
   if (p === "/changes") return html(changesPage(live.changes, live.beats, ledger));
+  if (p === "/graph") return html(graphPage(live.graph || null));
   if (p.startsWith("/field/")) { const id = p.slice(7); return FIELDS[id] && all.some(f => f.field === id) ? html(fieldPage(id, all)) : html(notFound(), 404); }
   if (p.startsWith("/f/")) { const f = all.find(x => x.id === p.slice(3)); return f ? html(findingPage(f, live)) : html(notFound(), 404); }
   return html(notFound(), 404);
@@ -69,6 +70,7 @@ export default {
       return new Response(JSON.stringify({ ok: !r.error, ...r }), { status: r.error ? 500 : 200, headers: { "content-type": "application/json" } });
     }
     if (env?.DB && new URL(req.url).pathname.startsWith("/api/graph")) return graphApi(req, env.DB);
+    if (env?.DB && new URL(req.url).pathname.replace(/\/+$/, "") === "/graph") live.graph = await graphView(env.DB).catch(e => (console.error("graph view failed", e?.message || e), null));
     if (env?.DB && (age == null || age > BEAT.SPARK_MIN)) ctx?.waitUntil?.(runBeat(env, "spark"));
     return route(req.url, ledger, live);
   },

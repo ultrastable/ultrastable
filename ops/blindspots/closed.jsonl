@@ -19,3 +19,4 @@
 {"id": "owner-gates-settle", "at": "2026-11-21", "probe": "grep:.github/workflows/watchdog.yml::foundation needsyou --settle"}
 {"id": "worker-logs-kept", "at": "2026-11-21", "probe": "grep:deploy/deploy-site.mjs::observability"}
 {"id": "action-version-rot", "at": "2026-11-21", "probe": "file:.github/dependabot.yml"}
+{"id": "name-clearance-eu-wipo", "at": "2026-11-25", "probe": "nogrep:ip/name-clearance.json::\"unsearched\": \\[\\s*\""}

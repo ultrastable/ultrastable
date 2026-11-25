@@ -1,7 +1,7 @@
 {
- "at": "2026-11-25T16:46:18Z",
+ "at": "2026-11-25T17:28:35Z",
  "gaps": 5,
- "match_share": 0.989,
+ "match_share": 0.99,
  "sources": {
   "changes": [
    {
@@ -156,7 +156,7 @@
     "drift": 0,
     "id": "claims-total",
     "ok": true,
-    "total": 382
+    "total": 388
    }
   ],
   "loops": [
@@ -507,7 +507,7 @@
     "unmeasured": []
    },
    {
-    "checks": 1,
+    "checks": 2,
     "external": [],
     "failing": [],
     "id": "FULLSTACK-1",
@@ -566,6 +566,17 @@
     "checks": 1,
     "external": [],
     "failing": [],
+    "id": "DATAGRAPH-1",
+    "missing": [
+     "vendor/ultrastable/datagraph.js"
+    ],
+    "ok": false,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
     "id": "RESEARCH-1",
     "missing": [],
     "ok": true,
@@ -601,12 +612,10 @@
    {
     "checks": 3,
     "external": [],
-    "failing": [
-     "python3 -m foundation trajectory --check: site/trajectory-data.js is stale: run trajectory --run --apply"
-    ],
+    "failing": [],
     "id": "YEAR-SIM-1",
     "missing": [],
-    "ok": false,
+    "ok": true,
     "unmeasured": []
    },
    {
@@ -619,10 +628,46 @@
     "unmeasured": []
    },
    {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "DISCOVER-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "LAUNCH-PATH-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "BREADTH-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
     "checks": 1,
     "external": [],
     "failing": [],
     "id": "IMPROVE-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "SYNC-BOTH-WAYS-1",
     "missing": [],
     "ok": true,
     "unmeasured": []
@@ -783,7 +828,7 @@
     "checks": 1,
     "external": [],
     "failing": [
-     "python3 -m foundation dispose --check: an open item is 75.2 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+     "python3 -m foundation dispose --check: an open item is 119.4 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
     ],
     "id": "DISPOSE-1",
     "missing": [],
@@ -856,7 +901,7 @@
   },
   "claims": {
    "gaps": 0,
-   "total": 382
+   "total": 388
   },
   "loops": {
    "gaps": 1,
@@ -864,12 +909,12 @@
   },
   "rules": {
    "gaps": 2,
-   "total": 72
+   "total": 77
   },
   "year": {
    "gaps": 1,
    "total": 2
   }
  },
- "total": 473
+ "total": 484
 }

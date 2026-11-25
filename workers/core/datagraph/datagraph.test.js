@@ -39,6 +39,8 @@ test('every row becomes a node, references are found from the data, ids in text 
   assert.ok(has('replications:R-1', 'mentions', 'studies:S-1998') && has('replications:R-1', 'mentions', 'studies:S-1996'), 'mentions in text');
   assert.equal(g.nodes.find(n => n.id === 'studies:S-1998').label, 'Baumeister 1998');
   assert.ok(SKIP_TABLE.test('oauth_tokens') && SKIP_TABLE.test('hits') && !SKIP_TABLE.test('findings'));
+  // Internal bookkeeping tables (a leading underscore: _migrations, _copy_progress) are not the system's data and only showed up as orphan findings.
+  assert.ok(SKIP_TABLE.test('_migrations') && SKIP_TABLE.test('_copy_progress') && SKIP_TABLE.test('_cf_KV'));
 });
 
 test('declared refs win, and a value shared by too many keys is not guessed', () => {

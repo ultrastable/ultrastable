@@ -42,7 +42,7 @@ function shell(title, desc, inner, { path = "/", script = "" } = {}) {
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(title)}</title><meta name="description" content="${esc(desc)}"><link rel="canonical" href="${SITE}${esc(path)}">
 <meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(desc)}"><style>${CSS}</style></head>
-<body><header class="top"><nav aria-label="Main"><a class="brand" href="/">Replication&nbsp;<span>Ledger</span></a><a href="/#fields">Fields</a><a href="/projects">Replication projects</a><a href="/changes">What changed</a><a href="/rubric">How standings work</a></nav></header>
+<body><header class="top"><nav aria-label="Main"><a class="brand" href="/">Replication&nbsp;<span>Ledger</span></a><a href="/#fields">Fields</a><a href="/projects">Replication projects</a><a href="/changes">What changed</a><a href="/rubric">How standings work</a><a href="/graph">Connections</a></nav></header>
 <main>${inner}</main><footer><div>Guess whether a textbook finding survived replication, then see the record. Every standing is computed from the replication attempts on file, never typed by hand. The ledger searches for new replications and new landmark findings every hour by itself.
 Runs on <a href="https://ultrastable.io/">Ultrastable</a>, the foundation for any autonomous system. No cookies, no trackers. Data: <a href="/api/findings">/api/findings</a> · <a href="/feed.json">/feed.json</a> · <a href="/api/rubric">/api/rubric</a></div></footer>${script}</body></html>`;
 }
@@ -139,4 +139,18 @@ export function changesPage(changes, beats, ledger) {
     `<p class="small"><a href="/">Ledger</a></p><h1>What changed</h1><p class="lede">Every hour the ledger searches for new replications of the findings it holds and for landmark findings it does not hold yet. Each standing it moved is listed here.</p>
 <h2>Standings that moved</h2>${moves ? `<div class="wrap"><table><thead><tr><th>When (UTC)</th><th>Finding</th><th>Move</th><th>Because of</th></tr></thead><tbody>${moves}</tbody></table></div>` : `<p class="muted">No standing has moved yet.</p>`}
 <h2>Recent searches</h2>${bt ? `<div class="wrap"><table><thead><tr><th>Started (UTC)</th><th>Findings checked</th><th>Attempts filed</th><th>Leads kept</th><th>New findings</th><th>Errors</th></tr></thead><tbody>${bt}</tbody></table></div>` : `<p class="muted">The first search has not run yet.</p>`}`, { path: "/changes" });
+}
+
+// The knowledge graph, named on the front end (DATAGRAPH-1): what the engine found in the ledger, measured live. With no reading yet it says so.
+export function graphPage(v) {
+  const kind = { link: "Possible link", gap: "Gap", bridge: "Bridge" };
+  const body = !v ? `<p>The graph has not been measured yet. It is rebuilt after every hourly search, so this page fills in on its own.</p>`
+    : `<p>${esc(v.health.nodes ?? 0)} records and ${esc(v.health.edges ?? 0)} links: findings, original studies, replication attempts, their authors and journals.
+The graph looks for things nobody wrote down, such as findings that rest on the same researchers' work, researchers whose work spans fields, and findings with no replication attempt yet.
+Each suggestion is checked later, and the kinds that turn out right are trusted more.</p>
+<h2>What the graph suggests now</h2>
+${v.insights.length ? `<ul>${v.insights.map(i => `<li><strong>${esc(kind[i.kind] || i.kind)}.</strong> ${esc(i.text)} <span class="small muted">Checked by ${esc(String(i.due_at || "").slice(0, 10))}.</span></li>`).join("")}</ul>` : `<p class="muted">No open suggestions right now.</p>`}
+<h2>How the graph is kept honest</h2>${v.method}`;
+  return shell("Connections · Replication Ledger", "Links between findings, studies and researchers that the ledger's knowledge graph finds on its own.",
+    `<h1>Connections</h1>${body}<p class="small muted">Data: <a href="/api/graph">/api/graph</a>, <a href="/api/graph/insights">/api/graph/insights</a>, <a href="/api/graph/method">/api/graph/method</a>.</p>`, { path: "/graph" });
 }

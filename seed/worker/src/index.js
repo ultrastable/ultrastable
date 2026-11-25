@@ -40,6 +40,7 @@ import { mergeNow, prsForEvent } from './mergenow.js';
 import { refreshLiveChanges, readLiveChanges, refreshFleetChanges, classifyPending } from './livechanges.js'; // LIVE-FRESH-1, SUBSTANCE-1
 import { progressStep, readProgress } from './progress.js'; // PROGRESS-1
 import { stickinessStep, readStickiness, readQueue } from './stickiness.js'; // STICKY-1
+import { graphAiStep, readGraphAi } from './graphai.js'; // KGRAPH-AI-1
 import { datagraphStep, readGraph, readInsights, readNode, searchGraph } from './datagraph.js'; // DATAGRAPH-1
 import { watchFreshness } from './freshness.js'; // LIVE-FRESH-2
 import { watchTenantDeploys } from './tenantdeploy.js'; // TENANT-DEPLOY-1
@@ -150,6 +151,7 @@ export default {
       await b('substance', () => classifyPending({ db: env.DB, token, max: 2 }));  // SUBSTANCE-1: two merged PRs per pass are classified from their diff, so trivial merges never count as progress
       await b('stickiness', () => stickinessStep({ db: env.DB, config, ensureItem }));  // STICKY-1: freshness, breadth, depth and diversity of every system's content; a stale or thin one files STICKY-<system>, and its unpromoted entries become the social queue
       await b('knowledge-graph', () => datagraphStep({ db: env.DB, config, ensureItem }));  // DATAGRAPH-1: every table of this system's own D1 becomes a graph (rows are nodes, references and mentioned ids are edges), kept bi-temporally; hubs, communities, bridges and orphans are read each pass, Adamic-Adar link leads are settled against later data, and a mostly unconnected kind files KG-ORPHANS-<kind>
+      await b('graph-ai', () => graphAiStep({ db: env.DB, ai: gov.ai || null, config, spend: spendNow, ensureItem }));  // KGRAPH-AI-1: embeddings, extracted relations and community summaries on new graph nodes, scaled by the spend throttle
       await b('progress', () => progressStep({ db: env.DB, config, token, ensureItem }));  // PROGRESS-1: release cadence monitor; a slow system has its producers dispatched, a stalled one files STALL-<system>
       await b('freshness', () => watchFreshness({ token, repo: main, siteUrl: env.PUBLIC_ORIGIN || 'https://ultrastable.io' }));  // LIVE-FRESH-2: a stale published snapshot re-dispatches its own publisher
       if (new Date().getUTCMinutes() % 30 < 10) await b('tenant-deploy', () => watchTenantDeploys({ token, repo: main }));  // TENANT-DEPLOY-1: a tenant repository's merge ships within the hour (twice an hour, ~4 subrequests)
@@ -278,6 +280,7 @@ export default {
         return Response.json(r, { headers: { 'cache-control': 'no-store' } });
       } catch (e) { return d1Unavailable(e); }
     }
+    if (url.pathname === '/api/graph/ai') { try { return Response.json(await readGraphAi(env.DB), { headers: { 'cache-control': 'public, max-age=60', 'access-control-allow-origin': '*' } }); } catch (e) { return d1Unavailable(e); } }  // KGRAPH-AI-1: the AI layer's cost probe and summaries
     if (url.pathname === '/api/graph' || url.pathname === '/api/graph/insights' || url.pathname === '/api/graph/node' || url.pathname === '/api/graph/search' || url.pathname === '/graph') {  // DATAGRAPH-1: the knowledge graph's read side (summary, insights and leads, a node with its neighbourhood for retrieval, label search, the page)
       try {
         const v = { open: bearerOk(request, env), publicKinds: (config.knowledge_graph && config.knowledge_graph.public_kinds) || [] };  // the owner's bearer sees every record; anyone else sees counts and declared public kinds only

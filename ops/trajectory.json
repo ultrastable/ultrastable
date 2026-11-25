@@ -3,7 +3,7 @@
   {
    "area": "workers",
    "quiet_days": 0,
-   "recent7": 73600,
+   "recent7": 73602,
    "series": [
     0,
     0,
@@ -34,12 +34,12 @@
     0,
     0,
     0,
-    73600
+    73602
    ],
-   "share_recent": 0.267,
-   "share_trend": 0.267,
-   "slope": 474.8387,
-   "total": 73600
+   "share_recent": 0.268,
+   "share_trend": 0.268,
+   "slope": 474.8516,
+   "total": 73602
   },
   {
    "area": "doctrine",
@@ -118,15 +118,15 @@
     0,
     32862
    ],
-   "share_recent": 0.119,
-   "share_trend": 0.119,
+   "share_recent": 0.12,
+   "share_trend": 0.12,
    "slope": 212.0129,
    "total": 32862
   },
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 24677,
+   "recent7": 24187,
    "series": [
     0,
     0,
@@ -157,12 +157,12 @@
     0,
     0,
     0,
-    24677
+    24187
    ],
-   "share_recent": 0.09,
-   "share_trend": 0.09,
-   "slope": 159.2065,
-   "total": 24677
+   "share_recent": 0.088,
+   "share_trend": 0.088,
+   "slope": 156.0452,
+   "total": 24187
   },
   {
    "area": "seed/worker",
@@ -208,7 +208,7 @@
   {
    "area": "tests/foundation",
    "quiet_days": 0,
-   "recent7": 13185,
+   "recent7": 13181,
    "series": [
     0,
     0,
@@ -239,12 +239,12 @@
     0,
     0,
     0,
-    13185
+    13181
    ],
    "share_recent": 0.048,
    "share_trend": 0.048,
-   "slope": 85.0645,
-   "total": 13185
+   "slope": 85.0387,
+   "total": 13181
   },
   {
    "area": "platform",
@@ -282,8 +282,8 @@
     0,
     10871
    ],
-   "share_recent": 0.039,
-   "share_trend": 0.039,
+   "share_recent": 0.04,
+   "share_trend": 0.04,
    "slope": 70.1355,
    "total": 10871
   },
@@ -659,7 +659,7 @@
   {
    "area": "docs",
    "quiet_days": 0,
-   "recent7": 1846,
+   "recent7": 1851,
    "series": [
     0,
     0,
@@ -690,12 +690,12 @@
     0,
     0,
     0,
-    1846
+    1851
    ],
    "share_recent": 0.007,
    "share_trend": 0.007,
-   "slope": 11.9097,
-   "total": 1846
+   "slope": 11.9419,
+   "total": 1851
   },
   {
    "area": "seed/standards",
@@ -1026,7 +1026,7 @@
    "total": 1088
   }
  ],
- "at": "2026-11-25T17:23:38Z",
+ "at": "2026-11-25T17:30:23Z",
  "days": 30,
  "files": [],
  "findings": [
@@ -1099,10 +1099,10 @@
    0,
    0,
    0,
-   42
+   48
   ],
-  "closed": 1050,
-  "opened": 1092
+  "closed": 1046,
+  "opened": 1094
  },
  "loops": [
   {
@@ -1412,7 +1412,7 @@
   {
    "loop": "deploys",
    "quiet_days": 0,
-   "rows": 948,
+   "rows": 950,
    "series": [
     0,
     0,
@@ -1443,9 +1443,9 @@
     50,
     14,
     0,
-    34
+    36
    ],
-   "slope": 3.5159
+   "slope": 3.5288
   },
   {
    "loop": "executor-log",
@@ -1602,7 +1602,7 @@
   {
    "loop": "provenance",
    "quiet_days": 0,
-   "rows": 154,
+   "rows": 155,
    "series": [
     0,
     0,
@@ -1633,9 +1633,9 @@
     40,
     3,
     1,
-    83
+    84
    ],
-   "slope": 0.889
+   "slope": 0.8954
   },
   {
    "loop": "resilience",
@@ -1792,7 +1792,7 @@
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 274,
+   "rows": 275,
    "series": [
     0,
     0,
@@ -1823,9 +1823,9 @@
     112,
     80,
     55,
-    22
+    23
    ],
-   "slope": 1.5137
+   "slope": 1.5201
   },
   {
    "loop": "ultrastability",

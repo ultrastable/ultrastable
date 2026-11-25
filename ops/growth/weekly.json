@@ -1,0 +1,77 @@
+{
+ "week": "2026-W48",
+ "generated": "2026-11-25T17:21:19Z",
+ "previous_week": null,
+ "metrics": [
+  {
+   "id": "pageviews_7d",
+   "value": 11924,
+   "previous": null,
+   "delta_pct": null,
+   "target": 1500,
+   "breach": false
+  },
+  {
+   "id": "visitors_7d",
+   "value": 3164,
+   "previous": null,
+   "delta_pct": null,
+   "target": 650,
+   "breach": false
+  },
+  {
+   "id": "agent_hits_7d",
+   "value": 9314,
+   "previous": null,
+   "delta_pct": null,
+   "target": 1000,
+   "breach": false
+  },
+  {
+   "id": "pilot_page_views_7d",
+   "value": 3856,
+   "previous": null,
+   "delta_pct": null,
+   "target": 400,
+   "breach": false
+  }
+ ],
+ "breaches": [],
+ "verdicts": [
+  {
+   "item": "Q-GROW-second-tenant-deploying",
+   "metric": "pilot_page_views_7d",
+   "verdict": "kept",
+   "moved_pct": 173.9
+  }
+ ],
+ "next_experiments": [
+  {
+   "item": "Q-GROW-USE-CASE-PAGES",
+   "title": "GROW-7: one page per kind of system the product runs (club site, service fleet, research desk) with a deep link into the interview",
+   "metric": "pageviews_7d",
+   "prediction": "pageviews_7d >= 13712 within 168 h",
+   "closing_probe": "file:site/usecases.js"
+  },
+  {
+   "item": "Q-GROW-SHARE-CARDS",
+   "title": "GROW-9: a share card per page generated from the live record",
+   "metric": "visitors_7d",
+   "prediction": "visitors_7d >= 3638 within 168 h",
+   "closing_probe": "file:site/cards.js"
+  },
+  {
+   "item": "Q-GROW-MARKDOWN-PAGES",
+   "title": "GROW-11: markdown content negotiation for every page",
+   "metric": "agent_hits_7d",
+   "prediction": "agent_hits_7d >= 11176 within 168 h",
+   "closing_probe": "grep:site/worker.js::text/markdown"
+  }
+ ],
+ "verdict_history": [
+  {
+   "item": "Q-GROW-second-tenant-deploying",
+   "verdict": "kept"
+  }
+ ]
+}
