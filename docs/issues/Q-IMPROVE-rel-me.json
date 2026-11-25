@@ -1,0 +1,15 @@
+{
+  "id": "Q-IMPROVE-rel-me",
+  "title": "Q-IMPROVE-rel-me: Add rel=\"me\" links to the owned social accounts so profiles verify the site",
+  "body": "**Owner:** marketing-manager\n**Trigger:** improve --run\n**Done check:** grep:site/worker.js::rel=\"me\"\n**Prediction:** social_referrals_7d > 0 within 168 h\n**Status:** open\n\nKind: reach. Baseline social_referrals_7d = 0. Settled 7 days after it closes: kept if social_referrals_7d moved the right way, else replaced.\n\n**Closing probe:** grep:site/worker.js::rel=\"me\"\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "role:marketing-manager",
+    "growth",
+    "improve",
+    "reach"
+  ],
+  "milestone": "Now",
+  "workstream": "Growth"
+}

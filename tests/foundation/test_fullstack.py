@@ -43,7 +43,7 @@ class FullStack(unittest.TestCase):
         pol = json.loads((d / "doctrine/full-stack.json").read_text())
         pol["systems"]["second-tenant"] = {"backend": "https://x.example/health", "gaps": {"repo": "Q-FULLSTACK-second-tenant", "frontend": "Q-FULLSTACK-second-tenant"}}
         (d / "doctrine/full-stack.json").write_text(json.dumps(pol))
-        # the real item closed once second-tenant went live; the test opens its own copy so it does not depend on queue state
+        # The test sets the item's state itself: the live item closes once the gap is filled.
         f = d / "docs/issues/Q-FULLSTACK-second-tenant.json"
         f.write_text(f.read_text().replace("**Status:** closed", "**Status:** open"))
         self.assertFalse(any(b.startswith("second-tenant") for b in F.check(d)))
