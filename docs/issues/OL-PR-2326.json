@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-2326",
+  "title": "OL-PR-2326: land or supersede pull request #2326 (conflict)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #2326 is conflict\n**Done check:** cmd:python3 -m foundation loopowner --closed 2326\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #2326 (`agent/redmain-45719590154` at 7b44729acb, opened by app/github-actions): redmain: repair a red deploy gate. The session that opened it is not its closer and is never asked to act. The branch conflicts with main. Merge main into the branch and resolve it, or redo the change from main in a new pull request and close this one as superseded. Files (4): site/saydo-data.js, site/trajectory-data.js, site/ultrastability-data.js, site/yearsim-data.js.\n\n**Prediction:** open_prs <= 0 within 24 h\n**Out of scope:** changing what pull request #2326 does; land it as written or carry it onto main unchanged.\n\n**Closing probe:** `python3 -m foundation loopowner --closed 2326` exits 0 (pull request #2326 is merged or closed).",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
