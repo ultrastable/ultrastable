@@ -13,6 +13,7 @@ rules from agents/AGENTS.md. Nothing in SYSTEM.md is typed by hand, so it cannot
   python3 scripts/system.py --check    SYSTEM.md is current; every clause's probe passes in this kit; every standing rule either cites
                                        enforcement that exists in this kit or is on the shrink-only not_in_kit list
   python3 scripts/system.py --gaps     list the standing rules whose enforcement is not in this kit
+  python3 scripts/system.py --rule ID  the spec holds and rule ID is enforced inside this kit (closing probe of Q-KIT-<ID>)
 
 Stdlib only. Runs from the kit root (a seeded system's repository, or seed/ in the platform).
 """
@@ -260,6 +261,11 @@ def main(argv=None) -> int:
                 print(r["id"], "|", r["title"][:90], "|", ", ".join(r["elsewhere"][:3]))
         return 0
     e = check(root)
+    if "--rule" in a:  # closing probe of a Q-KIT-<id> item: the rule is enforced inside this kit and the spec holds
+        rid = a[a.index("--rule") + 1]
+        r = next((x for x in rules(root) if x["id"] == rid), None)
+        if r is None or not r["in_kit"]:
+            e.append(f"{rid}: not enforced in this kit yet" if r else f"{rid}: no such standing rule")
     print("system spec ok" if not e else "\n".join(e))
     return 1 if e else 0
 
