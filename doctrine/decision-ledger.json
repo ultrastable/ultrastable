@@ -5838,6 +5838,14 @@
    "body": "checksrun now names steps that read other jobs' results or need GITHUB_REPOSITORY as skipped, never failed or passed, prints its help without running, and refuses an unknown argument. Tests pass: tests/foundation/test_checksrun.py (4).",
    "probe": "grep:tests/foundation/test_checksrun.py::def test_help_and_unknown_arguments_run_nothing",
    "session": "session_0156nqDufLi3JgDJf3gVw7Fh"
+  },
+  {
+   "id": "lesson-2026-11-25-a-health-route-that-answers-is-not-a-healthy-system-the-prac",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "A health route that answers is not a healthy system: the Practical Solutions backend was 23 migrations behind",
+   "body": "Reading the fleet contract live after the deploy showed Practical Solutions /health 503. Root cause: the deploy's D1 migration step stopped at an old numbering (the vendor renumbered its files), so the live database lacked 23 additive migrations and the backend tick failed 12 of 41 steps on missing tables; the old /health had reported ok. Fix: the tenant's self-apply list carries them, the shared applier applies each migration as one batched call and at most four per run, and a tenant test fails any migration that is on neither the deploy ledger nor the self-apply list. Also from the same live reading: write routes a page posts to answer a read with 405 (the site answered 404), and a community health file served from the org's .github repository satisfies the repository standard.",
+   "probe": "grep:workers/core/migrations/selfmigrate.js::MIGRATE-GAP-1"
   }
  ]
 }
