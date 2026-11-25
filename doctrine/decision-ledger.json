@@ -5454,6 +5454,15 @@
    "body": "Beat 3 showed the cause in OpenAlex's own words: 'Insufficient budget. This request has no API key'. The mailto polite pool no longer helps. Europe PMC answered (power-posing checked, 6 leads refused by the verbatim-quote rule because they do not say they replicate). Europe PMC is now read most-cited first, and originals it does not hold are searched by name. The Worker reads OPENALEX_API_KEY when one is bound.",
    "probe": "grep:instances/replication-ledger/worker/discover.js::OPENALEX_API_KEY",
    "session": "https://claude.ai/code/session_0156nqDsz4YUXpAoqH9CX7mq"
+  },
+  {
+   "id": "decision-2026-11-25-impact-loop-1-oversized-items-split-after-two-failures",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "IMPACT-LOOP-1: oversized items split after two failures",
+   "body": "core/impact plan() takes failures and a lever split(); an item failed twice is replaced by its children.",
+   "probe": "grep:workers/core/impact/index.js::split_after",
+   "session": "session_0156nqDrqL9XCgR639FAfNMv"
   }
  ]
 }
