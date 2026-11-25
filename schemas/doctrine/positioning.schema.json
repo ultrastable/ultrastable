@@ -1,0 +1,279 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/positioning.schema.json",
+ "title": "doctrine/positioning.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "id": {
+   "type": "string"
+  },
+  "version": {
+   "type": "string"
+  },
+  "tagline": {
+   "type": "string"
+  },
+  "pattern": {
+   "type": "string"
+  },
+  "contradictions": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "inject": {
+   "type": "object",
+   "properties": {
+    "md_files": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "check_only": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "licensing": {
+   "type": "object",
+   "properties": {
+    "decision": {
+     "type": "string"
+    },
+    "license_file": {
+     "type": "string"
+    },
+    "required_patterns": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "banned_patterns": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "scan": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "memory": {
+   "type": "object",
+   "properties": {
+    "rule": {
+     "type": "string"
+    },
+    "canonical": {
+     "type": "string"
+    },
+    "required_in": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "required_pattern": {
+     "type": "string"
+    },
+    "scan": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "banned_patterns": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "runs_on_itself": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "tagline": {
+     "type": "string"
+    },
+    "pattern": {
+     "type": "string"
+    },
+    "line": {
+     "type": "string"
+    },
+    "contradictions": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "md_files": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "check_only": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "verifier": {
+     "type": "string"
+    },
+    "registry": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "_public_note": {
+     "type": "string"
+    }
+   }
+  },
+  "loops_thesis": {
+   "type": "string"
+  },
+  "autonomy": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "tagline": {
+     "type": "string"
+    },
+    "pattern": {
+     "type": "string"
+    },
+    "line": {
+     "type": "string"
+    },
+    "contradictions": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "md_files": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "check_only": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "registry": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "self_bootstrapped": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "tagline": {
+     "type": "string"
+    },
+    "kernel": {
+     "type": "string"
+    }
+   }
+  },
+  "banned_framing": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "exclude": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "max_bytes": {
+     "type": "number"
+    }
+   }
+  },
+  "stability_line": {
+   "type": "string"
+  },
+  "zero_fuss": {
+   "type": "object",
+   "properties": {
+    "rule": {
+     "type": "string"
+    },
+    "required_in": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "required_pattern": {
+     "type": "string"
+    },
+    "scan_user_facing": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "banned_patterns": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "autonomy",
+  "banned_framing",
+  "contradictions",
+  "id",
+  "inject",
+  "licensing",
+  "loops_thesis",
+  "memory",
+  "pattern",
+  "runs_on_itself",
+  "self_bootstrapped",
+  "stability_line",
+  "tagline",
+  "version",
+  "zero_fuss"
+ ]
+}

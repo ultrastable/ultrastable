@@ -1,0 +1,65 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/full-stack.schema.json",
+ "title": "doctrine/full-stack.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "systems": {
+   "type": "object",
+   "properties": {
+    "ultrastable": {
+     "type": "object",
+     "properties": {
+      "backend": {
+       "type": "string"
+      }
+     }
+    },
+    "practical-solutions": {
+     "type": "object",
+     "properties": {
+      "backend": {
+       "type": "string"
+      }
+     }
+    },
+    "unlearn": {
+     "type": "object",
+     "properties": {
+      "backend": {
+       "type": "string"
+      }
+     }
+    },
+    "second-tenant": {
+     "type": "object",
+     "properties": {
+      "backend": {
+       "type": "string"
+      },
+      "repo": {
+       "type": "string"
+      },
+      "public_repo": {
+       "type": "boolean"
+      },
+      "frontend": {
+       "type": "string"
+      }
+     }
+    }
+   }
+  },
+  "user_agent": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "_doc",
+  "systems",
+  "user_agent"
+ ]
+}

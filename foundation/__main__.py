@@ -3,6 +3,7 @@
   python3 -m foundation new-system --manifest instances/<slug>/instance.json --out ../<slug> [--apply]
   python3 -m foundation validate --manifest FILE
   python3 -m foundation ladder            # credential ladder against the host it runs on
+  python3 -m foundation schemas [--check|--infer]      JSON Schema for every doctrine file (SCHEMA-1)
   python3 -m foundation standards [--check|--apply]   agentic standards register, surfaces, conformance lint
   python3 -m foundation filing --manifest FILE
   python3 -m foundation launch [--commit --push | --probe | --export-d1 F | --install SURFACE | --failover [--decide]]   start the loops on this repo (server-side hosts only)
@@ -100,7 +101,7 @@
 """
 import argparse, datetime as dt, json, os, sys
 
-from . import boundary, closedloop, standards, doctrine, directive, filing, glossary, kernel, ladder, loops, manifest as mf, scaffold, selfhost, trust, writeback
+from . import boundary, closedloop, schemas, standards, doctrine, directive, filing, glossary, kernel, ladder, loops, manifest as mf, scaffold, selfhost, trust, writeback
 
 
 def main(argv=None) -> int:
@@ -505,6 +506,7 @@ def main(argv=None) -> int:
         rc.add_argument("--" + opt, default="")
     ck = ws.add_parser("check"); ck.add_argument("--base", default="origin/main"); ck.add_argument("--head", default="HEAD")
     ou = ws.add_parser("outputs"); ou.add_argument("dirs", nargs="+"); ou.add_argument("--ignore", action="append", default=[])
+    sc = sub.add_parser("schemas"); scg = sc.add_mutually_exclusive_group(required=True); scg.add_argument("--infer", action="store_true"); scg.add_argument("--check", action="store_true")
     st = sub.add_parser("standards"); sg = st.add_mutually_exclusive_group(required=True); sg.add_argument("--apply", action="store_true"); sg.add_argument("--check", action="store_true")
     f = sub.add_parser("filing"); f.add_argument("--manifest", required=True)
     r = sub.add_parser("autorun"); r.add_argument("--ticks", type=int, default=10); r.add_argument("--out", default=".selfhost/autorun"); r.add_argument("--public", action="store_true"); r.add_argument("--no-node", action="store_true")
@@ -626,6 +628,11 @@ def main(argv=None) -> int:
         except ValueError as e:
             print("refused:", e); return 1
         print("\n".join(bad) or "writeback ok"); return 1 if bad else 0
+    if a.cmd == "schemas":
+        if a.infer:
+            print("\n".join(schemas.apply_infer()) or "every doctrine file already has a schema"); return 0
+        bad = schemas.check()
+        print("\n".join(bad) or "schemas: every doctrine file validates"); return 1 if bad else 0
     if a.cmd == "standards":
         if a.apply:
             print("docs/standards table updated" if standards.apply() else "docs/standards table already current")

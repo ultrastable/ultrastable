@@ -1,0 +1,141 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/thought.schema.json",
+ "title": "doctrine/thought.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "version": {
+   "type": "number"
+  },
+  "consent": {
+   "type": "object",
+   "properties": {
+    "at": {
+     "type": "string"
+    },
+    "by": {
+     "type": "string"
+    },
+    "source": {
+     "type": "string"
+    },
+    "scope": {
+     "type": "string"
+    }
+   }
+  },
+  "site": {
+   "type": "string"
+  },
+  "ps": {
+   "type": "object",
+   "properties": {
+    "name": {
+     "type": "string"
+    },
+    "url": {
+     "type": "string"
+    },
+    "what": {
+     "type": "string"
+    }
+   }
+  },
+  "hook": {
+   "type": "object",
+   "properties": {
+    "required": {
+     "type": "string"
+    },
+    "short": {
+     "type": "string"
+    },
+    "medium": {
+     "type": "string"
+    },
+    "long": {
+     "type": "string"
+    }
+   }
+  },
+  "channels": {
+   "type": "object",
+   "properties": {
+    "bluesky": {
+     "type": "object",
+     "properties": {
+      "limit": {
+       "type": "number"
+      }
+     }
+    },
+    "mastodon": {
+     "type": "object",
+     "properties": {
+      "limit": {
+       "type": "number"
+      }
+     }
+    },
+    "linkedin": {
+     "type": "object",
+     "properties": {
+      "limit": {
+       "type": "number"
+      }
+     }
+    }
+   }
+  },
+  "cadence_days": {
+   "type": "number"
+  },
+  "repost_days": {
+   "type": "number"
+  },
+  "max_findings_long": {
+   "type": "number"
+  },
+  "arm": {
+   "type": "string"
+  },
+  "guard": {
+   "type": "object",
+   "properties": {
+    "blocked_patterns": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "required_any_link": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "log": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "_doc",
+  "arm",
+  "cadence_days",
+  "channels",
+  "consent",
+  "guard",
+  "hook",
+  "log",
+  "max_findings_long",
+  "ps",
+  "repost_days",
+  "site",
+  "version"
+ ]
+}

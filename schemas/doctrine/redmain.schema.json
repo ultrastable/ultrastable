@@ -1,0 +1,57 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/redmain.schema.json",
+ "title": "doctrine/redmain.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "version": {
+   "type": "string"
+  },
+  "max_commits_back": {
+   "type": "number"
+  },
+  "max_candidates": {
+   "type": "number"
+  },
+  "gate_timeout_s": {
+   "type": "number"
+  },
+  "never_revert": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "gates": {
+   "type": "object",
+   "properties": {
+    "deploy-site": {
+     "type": "object",
+     "properties": {
+      "cmd": {
+       "type": "string"
+      },
+      "paths": {
+       "type": "array"
+      },
+      "workflows": {
+       "type": "array"
+      }
+     }
+    }
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "gate_timeout_s",
+  "gates",
+  "max_candidates",
+  "max_commits_back",
+  "never_revert",
+  "version"
+ ]
+}

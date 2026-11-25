@@ -1,0 +1,21 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/thread-residuals.schema.json",
+ "title": "doctrine/thread-residuals.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "residuals": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "residuals"
+ ]
+}

@@ -1,0 +1,257 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/system.schema.json",
+ "title": "doctrine/system.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "name": {
+   "type": "string"
+  },
+  "compatibility_date": {
+   "type": "string"
+  },
+  "resources": {
+   "type": "object",
+   "properties": {
+    "d1": {
+     "type": "object",
+     "properties": {
+      "org": {
+       "type": "object"
+      },
+      "ops": {
+       "type": "object"
+      },
+      "unlearn": {
+       "type": "object"
+      },
+      "what-works": {
+       "type": "object"
+      },
+      "spinoffs": {
+       "type": "object"
+      },
+      "replication-ledger": {
+       "type": "object"
+      }
+     }
+    },
+    "kv": {
+     "type": "object",
+     "properties": {
+      "assets": {
+       "type": "object"
+      },
+      "private": {
+       "type": "object"
+      },
+      "state": {
+       "type": "object"
+      }
+     }
+    },
+    "queues": {
+     "type": "object",
+     "properties": {
+      "work": {
+       "type": "object"
+      }
+     }
+    },
+    "vectorize": {
+     "type": "object",
+     "properties": {
+      "memory": {
+       "type": "object"
+      }
+     }
+    }
+   }
+  },
+  "workers": {
+   "type": "object",
+   "properties": {
+    "ultrastable-tick": {
+     "type": "object",
+     "properties": {
+      "main": {
+       "type": "string"
+      },
+      "role": {
+       "type": "string"
+      },
+      "crons": {
+       "type": "array"
+      },
+      "bindings": {
+       "type": "object"
+      }
+     }
+    },
+    "ultrastable-site": {
+     "type": "object",
+     "properties": {
+      "main": {
+       "type": "string"
+      },
+      "role": {
+       "type": "string"
+      },
+      "crons": {
+       "type": "array"
+      },
+      "bindings": {
+       "type": "object"
+      }
+     }
+    },
+    "ultrastable-dashboard": {
+     "type": "object",
+     "properties": {
+      "main": {
+       "type": "string"
+      },
+      "role": {
+       "type": "string"
+      },
+      "crons": {
+       "type": "array"
+      },
+      "bindings": {
+       "type": "object"
+      }
+     }
+    },
+    "ultrastable-agents": {
+     "type": "object",
+     "properties": {
+      "main": {
+       "type": "string"
+      },
+      "role": {
+       "type": "string"
+      },
+      "crons": {
+       "type": "array"
+      },
+      "bindings": {
+       "type": "object"
+      }
+     }
+    },
+    "ultrastable-tenants": {
+     "type": "object",
+     "properties": {
+      "main": {
+       "type": "string"
+      },
+      "role": {
+       "type": "string"
+      },
+      "crons": {
+       "type": "array"
+      },
+      "bindings": {
+       "type": "object"
+      }
+     }
+    },
+    "ultrastable-unlearn": {
+     "type": "object",
+     "properties": {
+      "main": {
+       "type": "string"
+      },
+      "source": {
+       "type": "object"
+      },
+      "role": {
+       "type": "string"
+      },
+      "crons": {
+       "type": "array"
+      },
+      "bindings": {
+       "type": "object"
+      }
+     }
+    },
+    "ultrastable-what-works": {
+     "type": "object",
+     "properties": {
+      "main": {
+       "type": "string"
+      },
+      "source": {
+       "type": "object"
+      },
+      "role": {
+       "type": "string"
+      },
+      "crons": {
+       "type": "array"
+      },
+      "bindings": {
+       "type": "object"
+      }
+     }
+    },
+    "ultrastable-spinoffs": {
+     "type": "object",
+     "properties": {
+      "main": {
+       "type": "string"
+      },
+      "role": {
+       "type": "string"
+      },
+      "crons": {
+       "type": "array"
+      },
+      "bindings": {
+       "type": "object"
+      }
+     }
+    },
+    "ultrastable-replication-ledger": {
+     "type": "object",
+     "properties": {
+      "main": {
+       "type": "string"
+      },
+      "role": {
+       "type": "string"
+      },
+      "crons": {
+       "type": "array"
+      },
+      "bindings": {
+       "type": "object"
+      }
+     }
+    }
+   }
+  },
+  "edit_path": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "deploy_counter": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "_doc",
+  "compatibility_date",
+  "deploy_counter",
+  "edit_path",
+  "name",
+  "resources",
+  "workers"
+ ]
+}

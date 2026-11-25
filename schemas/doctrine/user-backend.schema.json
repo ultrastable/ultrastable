@@ -1,0 +1,82 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/user-backend.schema.json",
+ "title": "doctrine/user-backend.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "id": {
+   "type": "string"
+  },
+  "version": {
+   "type": "string"
+  },
+  "marker": {
+   "type": "string"
+  },
+  "shared_errors_module": {
+   "type": "string"
+  },
+  "surface_globs": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "surface_exclude_globs": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "leak_patterns": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "leak_ignore_line": {
+   "type": "string"
+  },
+  "leak_ok_marker": {
+   "type": "string"
+  },
+  "shared_consumers": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "service_binding_exempt": {
+   "type": "object",
+   "properties": {
+    "deploy/agents-worker.js": {
+     "type": "string"
+    }
+   }
+  },
+  "inherited_by_tenants": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "id",
+  "inherited_by_tenants",
+  "leak_ignore_line",
+  "leak_ok_marker",
+  "leak_patterns",
+  "marker",
+  "service_binding_exempt",
+  "shared_consumers",
+  "shared_errors_module",
+  "surface_exclude_globs",
+  "surface_globs",
+  "version"
+ ]
+}

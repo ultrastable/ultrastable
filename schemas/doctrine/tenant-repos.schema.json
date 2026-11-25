@@ -1,0 +1,286 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/tenant-repos.schema.json",
+ "title": "doctrine/tenant-repos.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "org": {
+   "type": "string"
+  },
+  "tenants": {
+   "type": "object",
+   "properties": {
+    "practical-solutions": {
+     "type": "object",
+     "properties": {
+      "repo": {
+       "type": "string"
+      },
+      "state": {
+       "type": "string"
+      },
+      "why": {
+       "type": "string"
+      },
+      "frontend": {
+       "type": "string"
+      },
+      "vendor": {
+       "type": "object"
+      }
+     }
+    },
+    "unlearn": {
+     "type": "object",
+     "properties": {
+      "repo": {
+       "type": "string"
+      },
+      "state": {
+       "type": "string"
+      },
+      "source": {
+       "type": "string"
+      },
+      "keep_in_core": {
+       "type": "array"
+      },
+      "vendor": {
+       "type": "object"
+      },
+      "worker": {
+       "type": "string"
+      },
+      "ai": {
+       "type": "boolean"
+      },
+      "visibility": {
+       "type": "string"
+      },
+      "description": {
+       "type": "string"
+      },
+      "write": {
+       "type": "object"
+      },
+      "sandbox": {
+       "type": "object"
+      }
+     }
+    },
+    "what-works": {
+     "type": "object",
+     "properties": {
+      "repo": {
+       "type": "string"
+      },
+      "state": {
+       "type": "string"
+      },
+      "source": {
+       "type": "string"
+      },
+      "keep_in_core": {
+       "type": "array"
+      },
+      "vendor": {
+       "type": "object"
+      },
+      "worker": {
+       "type": "string"
+      },
+      "ai": {
+       "type": "boolean"
+      },
+      "visibility": {
+       "type": "string"
+      },
+      "description": {
+       "type": "string"
+      },
+      "write": {
+       "type": "object"
+      },
+      "sandbox": {
+       "type": "object"
+      }
+     }
+    },
+    "replication-ledger": {
+     "type": "object",
+     "properties": {
+      "repo": {
+       "type": "string"
+      },
+      "state": {
+       "type": "string"
+      },
+      "source": {
+       "type": "string"
+      },
+      "keep_in_core": {
+       "type": "array"
+      },
+      "vendor": {
+       "type": "object"
+      },
+      "worker": {
+       "type": "string"
+      },
+      "ai": {
+       "type": "boolean"
+      },
+      "visibility": {
+       "type": "string"
+      },
+      "description": {
+       "type": "string"
+      },
+      "write": {
+       "type": "object"
+      },
+      "sandbox": {
+       "type": "object"
+      }
+     }
+    },
+    "base-rates": {
+     "type": "object",
+     "properties": {
+      "repo": {
+       "type": "string"
+      },
+      "state": {
+       "type": "string"
+      },
+      "source": {
+       "type": "string"
+      },
+      "keep_in_core": {
+       "type": "array"
+      },
+      "visibility": {
+       "type": "string"
+      },
+      "description": {
+       "type": "string"
+      },
+      "why": {
+       "type": "string"
+      }
+     }
+    },
+    "did-it-work": {
+     "type": "object",
+     "properties": {
+      "repo": {
+       "type": "string"
+      },
+      "state": {
+       "type": "string"
+      },
+      "source": {
+       "type": "string"
+      },
+      "keep_in_core": {
+       "type": "array"
+      },
+      "visibility": {
+       "type": "string"
+      },
+      "description": {
+       "type": "string"
+      },
+      "why": {
+       "type": "string"
+      }
+     }
+    },
+    "open-questions": {
+     "type": "object",
+     "properties": {
+      "repo": {
+       "type": "string"
+      },
+      "state": {
+       "type": "string"
+      },
+      "source": {
+       "type": "string"
+      },
+      "keep_in_core": {
+       "type": "array"
+      },
+      "visibility": {
+       "type": "string"
+      },
+      "description": {
+       "type": "string"
+      },
+      "why": {
+       "type": "string"
+      }
+     }
+    },
+    "spinoffs": {
+     "type": "object",
+     "properties": {
+      "repo": {
+       "type": "string"
+      },
+      "state": {
+       "type": "string"
+      },
+      "source": {
+       "type": "string"
+      },
+      "why": {
+       "type": "string"
+      }
+     }
+    }
+   }
+  },
+  "visitor_apps": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "template": {
+     "type": "string"
+    },
+    "repo_prefix": {
+     "type": "string"
+    },
+    "visibility": {
+     "type": "string"
+    },
+    "base_manifest": {
+     "type": "string"
+    },
+    "usd_per_month": {
+     "type": "number"
+    },
+    "max_apps": {
+     "type": "number"
+    },
+    "max_deploys_per_run": {
+     "type": "number"
+    },
+    "full_stack_hours": {
+     "type": "number"
+    }
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "org",
+  "tenants",
+  "visitor_apps"
+ ]
+}

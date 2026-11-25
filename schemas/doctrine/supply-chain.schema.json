@@ -1,0 +1,22 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/supply-chain.schema.json",
+ "title": "doctrine/supply-chain.json",
+ "type": "object",
+ "properties": {
+  "rule": {
+   "type": "string"
+  },
+  "about": {
+   "type": "string"
+  },
+  "unpinned_baseline": {
+   "type": "number"
+  }
+ },
+ "required": [
+  "about",
+  "rule",
+  "unpinned_baseline"
+ ]
+}

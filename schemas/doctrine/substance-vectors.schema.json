@@ -1,0 +1,28 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/substance-vectors.schema.json",
+ "title": "doctrine/substance-vectors.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "cases": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "verdicts": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "cases",
+  "verdicts"
+ ]
+}

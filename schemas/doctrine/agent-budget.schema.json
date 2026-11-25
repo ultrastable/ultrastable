@@ -1,0 +1,41 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/agent-budget.schema.json",
+ "title": "doctrine/agent-budget.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "max_open_agent_prs": {
+   "type": "number"
+  },
+  "max_runs_per_day": {
+   "type": "number"
+  },
+  "max_usd_per_day": {
+   "type": "number"
+  },
+  "max_unknown_items_per_run": {
+   "type": "number"
+  },
+  "kill_switches": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "log": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "_doc",
+  "kill_switches",
+  "log",
+  "max_open_agent_prs",
+  "max_runs_per_day",
+  "max_unknown_items_per_run",
+  "max_usd_per_day"
+ ]
+}

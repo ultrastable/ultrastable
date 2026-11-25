@@ -1,0 +1,155 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/resilience.schema.json",
+ "title": "doctrine/resilience.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "version": {
+   "type": "string"
+  },
+  "marker": {
+   "type": "string"
+  },
+  "ledger": {
+   "type": "string"
+  },
+  "item_prefix": {
+   "type": "string"
+  },
+  "stalled_after_intervals": {
+   "type": "number"
+  },
+  "max_restarts_per_clock_per_day": {
+   "type": "number"
+  },
+  "max_restarts_per_run": {
+   "type": "number"
+  },
+  "escalate_after_failed_restarts": {
+   "type": "number"
+  },
+  "beat_fresh_s": {
+   "type": "number"
+  },
+  "restart_routes": {
+   "type": "object",
+   "properties": {
+    "tick-heartbeat": {
+     "type": "object",
+     "properties": {
+      "kind": {
+       "type": "string"
+      },
+      "why": {
+       "type": "string"
+      },
+      "urls": {
+       "type": "array"
+      },
+      "idempotent": {
+       "type": "boolean"
+      }
+     }
+    },
+    "criticality-loop": {
+     "type": "object",
+     "properties": {
+      "kind": {
+       "type": "string"
+      },
+      "why": {
+       "type": "string"
+      },
+      "urls": {
+       "type": "array"
+      },
+      "idempotent": {
+       "type": "boolean"
+      }
+     }
+    },
+    "unlearn-beat": {
+     "type": "object",
+     "properties": {
+      "kind": {
+       "type": "string"
+      },
+      "why": {
+       "type": "string"
+      },
+      "urls": {
+       "type": "array"
+      },
+      "idempotent": {
+       "type": "boolean"
+      }
+     }
+    },
+    "what-works-beat": {
+     "type": "object",
+     "properties": {
+      "kind": {
+       "type": "string"
+      },
+      "why": {
+       "type": "string"
+      },
+      "urls": {
+       "type": "array"
+      },
+      "idempotent": {
+       "type": "boolean"
+      }
+     }
+    },
+    "replication-ledger-beat": {
+     "type": "object",
+     "properties": {
+      "kind": {
+       "type": "string"
+      },
+      "why": {
+       "type": "string"
+      },
+      "urls": {
+       "type": "array"
+      },
+      "idempotent": {
+       "type": "boolean"
+      }
+     }
+    }
+   }
+  },
+  "watchers": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "site_probes": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "beat_fresh_s",
+  "escalate_after_failed_restarts",
+  "item_prefix",
+  "ledger",
+  "marker",
+  "max_restarts_per_clock_per_day",
+  "max_restarts_per_run",
+  "restart_routes",
+  "site_probes",
+  "stalled_after_intervals",
+  "version",
+  "watchers"
+ ]
+}

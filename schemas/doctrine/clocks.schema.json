@@ -1,0 +1,110 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/clocks.schema.json",
+ "title": "doctrine/clocks.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "version": {
+   "type": "string"
+  },
+  "account_id": {
+   "type": "string"
+  },
+  "clocks": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "chain": {
+   "type": "object",
+   "properties": {
+    "workflow": {
+     "type": "string"
+    },
+    "max_runs_per_day": {
+     "type": "number"
+    },
+    "backoff_after_failures": {
+     "type": "number"
+    },
+    "max_runs_per_day_public": {
+     "type": "number"
+    },
+    "max_wakes_per_hour": {
+     "type": "number"
+    }
+   }
+  },
+  "stages": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "escalation": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "catchup": {
+   "type": "object",
+   "properties": {
+    "max_per_stage_per_day": {
+     "type": "number"
+    },
+    "dispatch": {
+     "type": "object",
+     "properties": {
+      "author": {
+       "type": "string"
+      },
+      "publish": {
+       "type": "string"
+      }
+     }
+    }
+   }
+  },
+  "settlement": {
+   "type": "object",
+   "properties": {
+    "sla_hours": {
+     "type": "number"
+    },
+    "names": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "close_comment": {
+     "type": "string"
+    }
+   }
+  },
+  "_doc_replicas": {
+   "type": "string"
+  },
+  "_doc_health": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "_doc",
+  "_doc_health",
+  "_doc_replicas",
+  "account_id",
+  "catchup",
+  "chain",
+  "clocks",
+  "escalation",
+  "settlement",
+  "stages",
+  "version"
+ ]
+}

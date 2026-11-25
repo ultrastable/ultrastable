@@ -1,0 +1,43 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/ciwatch.schema.json",
+ "title": "doctrine/ciwatch.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "repos": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "failing": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "transient": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "max_reruns_per_run": {
+   "type": "number"
+  },
+  "max_items_per_run": {
+   "type": "number"
+  }
+ },
+ "required": [
+  "_doc",
+  "failing",
+  "max_items_per_run",
+  "max_reruns_per_run",
+  "repos",
+  "transient"
+ ]
+}

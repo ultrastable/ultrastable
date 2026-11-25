@@ -1,0 +1,155 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/market-evidence.schema.json",
+ "title": "doctrine/market-evidence.json",
+ "type": "object",
+ "properties": {
+  "accessed": {
+   "type": "string"
+  },
+  "products": {
+   "type": "object",
+   "properties": {
+    "Claude Code": {
+     "type": "object",
+     "properties": {
+      "url": {
+       "type": "string"
+      },
+      "components": {
+       "type": "object"
+      }
+     }
+    },
+    "GitHub Copilot coding agent": {
+     "type": "object",
+     "properties": {
+      "url": {
+       "type": "string"
+      },
+      "components": {
+       "type": "object"
+      }
+     }
+    },
+    "OpenAI Codex": {
+     "type": "object",
+     "properties": {
+      "url": {
+       "type": "string"
+      },
+      "components": {
+       "type": "object"
+      }
+     }
+    },
+    "Devin (Cognition)": {
+     "type": "object",
+     "properties": {
+      "url": {
+       "type": "string"
+      },
+      "components": {
+       "type": "object"
+      }
+     }
+    },
+    "Cursor": {
+     "type": "object",
+     "properties": {
+      "url": {
+       "type": "string"
+      },
+      "components": {
+       "type": "object"
+      }
+     }
+    },
+    "Factory (Droids)": {
+     "type": "object",
+     "properties": {
+      "url": {
+       "type": "string"
+      },
+      "components": {
+       "type": "object"
+      }
+     }
+    },
+    "OpenHands (All Hands)": {
+     "type": "object",
+     "properties": {
+      "url": {
+       "type": "string"
+      },
+      "components": {
+       "type": "object"
+      }
+     }
+    },
+    "Cloudflare Agents SDK + Workflows": {
+     "type": "object",
+     "properties": {
+      "url": {
+       "type": "string"
+      },
+      "components": {
+       "type": "object"
+      }
+     }
+    },
+    "Zapier Agents": {
+     "type": "object",
+     "properties": {
+      "url": {
+       "type": "string"
+      },
+      "components": {
+       "type": "object"
+      }
+     }
+    },
+    "Temporal": {
+     "type": "object",
+     "properties": {
+      "url": {
+       "type": "string"
+      },
+      "components": {
+       "type": "object"
+      }
+     }
+    },
+    "LangGraph (LangSmith Deployment)": {
+     "type": "object",
+     "properties": {
+      "url": {
+       "type": "string"
+      },
+      "components": {
+       "type": "object"
+      }
+     }
+    }
+   }
+  },
+  "closest_overlaps": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "caveats": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  }
+ },
+ "required": [
+  "accessed",
+  "caveats",
+  "closest_overlaps",
+  "products"
+ ]
+}

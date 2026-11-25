@@ -1,0 +1,89 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/unknowns.schema.json",
+ "title": "doctrine/unknowns.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "cadence_days": {
+   "type": "number"
+  },
+  "max_new_per_run": {
+   "type": "number"
+  },
+  "plus_share_for_unknowns": {
+   "type": "number"
+  },
+  "min_answer_chars": {
+   "type": "number"
+  },
+  "ledger": {
+   "type": "string"
+  },
+  "candidates": {
+   "type": "string"
+  },
+  "summary": {
+   "type": "string"
+  },
+  "verdicts": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "kind_impact": {
+   "type": "object",
+   "properties": {
+    "governance": {
+     "type": "number"
+    },
+    "growth": {
+     "type": "number"
+    },
+    "deploy": {
+     "type": "number"
+    },
+    "default": {
+     "type": "number"
+    }
+   }
+  },
+  "regions": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "lenses": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "seed_score": {
+   "type": "number"
+  },
+  "max_new_per_day": {
+   "type": "number"
+  }
+ },
+ "required": [
+  "_doc",
+  "cadence_days",
+  "candidates",
+  "kind_impact",
+  "ledger",
+  "lenses",
+  "max_new_per_day",
+  "max_new_per_run",
+  "min_answer_chars",
+  "plus_share_for_unknowns",
+  "regions",
+  "seed_score",
+  "summary",
+  "verdicts"
+ ]
+}

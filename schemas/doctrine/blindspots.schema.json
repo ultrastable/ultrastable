@@ -1,0 +1,70 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/blindspots.schema.json",
+ "title": "doctrine/blindspots.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "gates_allowed": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "answers_file": {
+   "type": "string"
+  },
+  "learned_file": {
+   "type": "string"
+  },
+  "needs": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "sweeps": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "closed_file": {
+   "type": "string"
+  },
+  "domain_expiry_file": {
+   "type": "string"
+  },
+  "domains": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "renewal_gate_days": {
+   "type": "number"
+  },
+  "refresh_days": {
+   "type": "number"
+  },
+  "grace_days": {
+   "type": "number"
+  }
+ },
+ "required": [
+  "_doc",
+  "answers_file",
+  "closed_file",
+  "domain_expiry_file",
+  "domains",
+  "gates_allowed",
+  "grace_days",
+  "learned_file",
+  "needs",
+  "refresh_days",
+  "renewal_gate_days",
+  "sweeps"
+ ]
+}

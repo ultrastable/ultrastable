@@ -1,0 +1,408 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/team.schema.json",
+ "title": "doctrine/team.json",
+ "type": "object",
+ "properties": {
+  "$schema_version": {
+   "type": "string"
+  },
+  "doc": {
+   "type": "string"
+  },
+  "phases": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "roles": {
+   "type": "object",
+   "properties": {
+    "research-publisher": {
+     "type": "object",
+     "properties": {
+      "title": {
+       "type": "string"
+      },
+      "program": {
+       "type": "string"
+      },
+      "owns": {
+       "type": "string"
+      },
+      "tick_every": {
+       "type": "number"
+      },
+      "metric": {
+       "type": "string"
+      },
+      "steps": {
+       "type": "array"
+      },
+      "never": {
+       "type": "array"
+      },
+      "owner_only": {
+       "type": "string"
+      }
+     }
+    },
+    "marketing-manager": {
+     "type": "object",
+     "properties": {
+      "title": {
+       "type": "string"
+      },
+      "program": {
+       "type": "string"
+      },
+      "owns": {
+       "type": "string"
+      },
+      "tick_every": {
+       "type": "number"
+      },
+      "metric": {
+       "type": "string"
+      },
+      "steps": {
+       "type": "array"
+      },
+      "never": {
+       "type": "array"
+      },
+      "owner_only": {
+       "type": "string"
+      }
+     }
+    },
+    "legal-ip-manager": {
+     "type": "object",
+     "properties": {
+      "title": {
+       "type": "string"
+      },
+      "program": {
+       "type": "string"
+      },
+      "owns": {
+       "type": "string"
+      },
+      "tick_every": {
+       "type": "number"
+      },
+      "metric": {
+       "type": "string"
+      },
+      "steps": {
+       "type": "array"
+      },
+      "never": {
+       "type": "array"
+      },
+      "owner_only": {
+       "type": "string"
+      }
+     }
+    },
+    "customer-success": {
+     "type": "object",
+     "properties": {
+      "title": {
+       "type": "string"
+      },
+      "program": {
+       "type": "string"
+      },
+      "owns": {
+       "type": "string"
+      },
+      "tick_every": {
+       "type": "number"
+      },
+      "metric": {
+       "type": "string"
+      },
+      "steps": {
+       "type": "array"
+      },
+      "never": {
+       "type": "array"
+      },
+      "owner_only": {
+       "type": "string"
+      }
+     }
+    },
+    "org-designer": {
+     "type": "object",
+     "properties": {
+      "title": {
+       "type": "string"
+      },
+      "program": {
+       "type": "string"
+      },
+      "owns": {
+       "type": "string"
+      },
+      "tick_every": {
+       "type": "number"
+      },
+      "metric": {
+       "type": "string"
+      },
+      "steps": {
+       "type": "array"
+      },
+      "never": {
+       "type": "array"
+      },
+      "owner_only": {
+       "type": "string"
+      }
+     }
+    },
+    "business-manager": {
+     "type": "object",
+     "properties": {
+      "title": {
+       "type": "string"
+      },
+      "program": {
+       "type": "string"
+      },
+      "owns": {
+       "type": "string"
+      },
+      "tick_every": {
+       "type": "number"
+      },
+      "metric": {
+       "type": "string"
+      },
+      "steps": {
+       "type": "array"
+      },
+      "never": {
+       "type": "array"
+      },
+      "owner_only": {
+       "type": "string"
+      }
+     }
+    },
+    "sales-partnerships": {
+     "type": "object",
+     "properties": {
+      "title": {
+       "type": "string"
+      },
+      "program": {
+       "type": "string"
+      },
+      "owns": {
+       "type": "string"
+      },
+      "tick_every": {
+       "type": "number"
+      },
+      "metric": {
+       "type": "string"
+      },
+      "steps": {
+       "type": "array"
+      },
+      "never": {
+       "type": "array"
+      },
+      "owner_only": {
+       "type": "string"
+      }
+     }
+    },
+    "finance-controller": {
+     "type": "object",
+     "properties": {
+      "title": {
+       "type": "string"
+      },
+      "program": {
+       "type": "string"
+      },
+      "owns": {
+       "type": "string"
+      },
+      "tick_every": {
+       "type": "number"
+      },
+      "metric": {
+       "type": "string"
+      },
+      "steps": {
+       "type": "array"
+      },
+      "never": {
+       "type": "array"
+      },
+      "owner_only": {
+       "type": "string"
+      }
+     }
+    },
+    "community-manager": {
+     "type": "object",
+     "properties": {
+      "title": {
+       "type": "string"
+      },
+      "program": {
+       "type": "string"
+      },
+      "owns": {
+       "type": "string"
+      },
+      "tick_every": {
+       "type": "number"
+      },
+      "metric": {
+       "type": "string"
+      },
+      "steps": {
+       "type": "array"
+      },
+      "never": {
+       "type": "array"
+      },
+      "owner_only": {
+       "type": "string"
+      }
+     }
+    },
+    "security-compliance": {
+     "type": "object",
+     "properties": {
+      "title": {
+       "type": "string"
+      },
+      "program": {
+       "type": "string"
+      },
+      "owns": {
+       "type": "string"
+      },
+      "tick_every": {
+       "type": "number"
+      },
+      "metric": {
+       "type": "string"
+      },
+      "steps": {
+       "type": "array"
+      },
+      "never": {
+       "type": "array"
+      },
+      "owner_only": {
+       "type": "string"
+      }
+     }
+    },
+    "data-analyst": {
+     "type": "object",
+     "properties": {
+      "title": {
+       "type": "string"
+      },
+      "program": {
+       "type": "string"
+      },
+      "owns": {
+       "type": "string"
+      },
+      "tick_every": {
+       "type": "number"
+      },
+      "metric": {
+       "type": "string"
+      },
+      "steps": {
+       "type": "array"
+      },
+      "never": {
+       "type": "array"
+      },
+      "owner_only": {
+       "type": "string"
+      }
+     }
+    },
+    "design-manager": {
+     "type": "object",
+     "properties": {
+      "title": {
+       "type": "string"
+      },
+      "program": {
+       "type": "string"
+      },
+      "owns": {
+       "type": "string"
+      },
+      "tick_every": {
+       "type": "number"
+      },
+      "metric": {
+       "type": "string"
+      },
+      "steps": {
+       "type": "array"
+      },
+      "never": {
+       "type": "array"
+      },
+      "owner_only": {
+       "type": "string"
+      }
+     }
+    },
+    "uiux-manager": {
+     "type": "object",
+     "properties": {
+      "title": {
+       "type": "string"
+      },
+      "program": {
+       "type": "string"
+      },
+      "owns": {
+       "type": "string"
+      },
+      "tick_every": {
+       "type": "number"
+      },
+      "metric": {
+       "type": "string"
+      },
+      "steps": {
+       "type": "array"
+      },
+      "never": {
+       "type": "array"
+      },
+      "owner_only": {
+       "type": "string"
+      }
+     }
+    }
+   }
+  }
+ },
+ "required": [
+  "$schema_version",
+  "doc",
+  "phases",
+  "roles"
+ ]
+}

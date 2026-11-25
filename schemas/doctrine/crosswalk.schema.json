@@ -1,0 +1,43 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/crosswalk.schema.json",
+ "title": "doctrine/crosswalk.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "marker": {
+   "type": "string"
+  },
+  "marker_text": {
+   "type": "string"
+  },
+  "instruction_files": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "entries": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "avoided": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "avoided",
+  "entries",
+  "instruction_files",
+  "marker",
+  "marker_text"
+ ]
+}

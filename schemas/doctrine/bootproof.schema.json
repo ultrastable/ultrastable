@@ -1,0 +1,126 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/bootproof.schema.json",
+ "title": "doctrine/bootproof.json",
+ "type": "object",
+ "properties": {
+  "_": {
+   "type": "string"
+  },
+  "secrets": {
+   "type": "object",
+   "properties": {
+    "CLOUDFLARE_ACCOUNT_ID": {
+     "type": "object",
+     "properties": {
+      "degrade": {
+       "type": "string"
+      },
+      "acquire": {
+       "type": "string"
+      }
+     }
+    },
+    "CLOUDFLARE_API_TOKEN": {
+     "type": "object",
+     "properties": {
+      "degrade": {
+       "type": "string"
+      },
+      "acquire": {
+       "type": "string"
+      }
+     }
+    },
+    "DASHBOARD_URL": {
+     "type": "object",
+     "properties": {
+      "degrade": {
+       "type": "string"
+      },
+      "acquire": {
+       "type": "string"
+      }
+     }
+    },
+    "FLEET_TOKEN": {
+     "type": "object",
+     "properties": {
+      "degrade": {
+       "type": "string"
+      },
+      "acquire": {
+       "type": "string"
+      }
+     }
+    },
+    "LANE_PAT": {
+     "type": "object",
+     "properties": {
+      "degrade": {
+       "type": "string"
+      },
+      "acquire": {
+       "type": "string"
+      }
+     }
+    },
+    "ORG_ADMIN_TOKEN": {
+     "type": "object",
+     "properties": {
+      "degrade": {
+       "type": "string"
+      },
+      "acquire": {
+       "type": "string"
+      }
+     }
+    },
+    "OUTREACH_SEND_TOKEN": {
+     "type": "object",
+     "properties": {
+      "degrade": {
+       "type": "string"
+      },
+      "acquire": {
+       "type": "string"
+      }
+     }
+    },
+    "OUTREACH_SEND_URL": {
+     "type": "object",
+     "properties": {
+      "degrade": {
+       "type": "string"
+      },
+      "acquire": {
+       "type": "string"
+      }
+     }
+    }
+   }
+  },
+  "wrangler_filled_elsewhere": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "migration_duplicates_grandfathered": {
+   "type": "array",
+   "items": {
+    "type": "number"
+   }
+  },
+  "_grandfather": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "_",
+  "_grandfather",
+  "migration_duplicates_grandfathered",
+  "secrets",
+  "wrangler_filled_elsewhere"
+ ]
+}

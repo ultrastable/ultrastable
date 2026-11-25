@@ -1,0 +1,66 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/competitors.schema.json",
+ "title": "doctrine/competitors.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "version": {
+   "type": "string"
+  },
+  "min_competitors": {
+   "type": "number"
+  },
+  "cadence_days": {
+   "type": "number"
+  },
+  "max_experiments_per_run": {
+   "type": "number"
+  },
+  "stall_days": {
+   "type": "number"
+  },
+  "metric_for": {
+   "type": "object",
+   "properties": {
+    "mcp-server": {
+     "type": "string"
+    },
+    "idea-to-deploy": {
+     "type": "string"
+    },
+    "existing-repo-adoption": {
+     "type": "string"
+    },
+    "default": {
+     "type": "string"
+    }
+   }
+  },
+  "capabilities": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "competitors": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "cadence_days",
+  "capabilities",
+  "competitors",
+  "max_experiments_per_run",
+  "metric_for",
+  "min_competitors",
+  "stall_days",
+  "version"
+ ]
+}

@@ -1,0 +1,30 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/collisions.schema.json",
+ "title": "doctrine/collisions.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "rule": {
+   "type": "string"
+  },
+  "baseline_duplicates": {
+   "type": "object",
+   "properties": {
+    "seed/worker/migrations": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "baseline_duplicates",
+  "rule"
+ ]
+}

@@ -1,0 +1,89 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/doc-consumers.schema.json",
+ "title": "doctrine/doc-consumers.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "version": {
+   "type": "string"
+  },
+  "ignore_references_from": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "consumers": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "verified": {
+   "type": "object",
+   "properties": {
+    "globs": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "knowledge": {
+   "type": "object",
+   "properties": {
+    "globs": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "how": {
+     "type": "string"
+    }
+   }
+  },
+  "human_action_patterns": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "human_action_exempt": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "human_action_baseline": {
+   "type": "object",
+   "properties": {}
+  },
+  "converted": {
+   "type": "array"
+  },
+  "removed": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "consumers",
+  "converted",
+  "human_action_baseline",
+  "human_action_exempt",
+  "human_action_patterns",
+  "ignore_references_from",
+  "knowledge",
+  "removed",
+  "verified",
+  "version"
+ ]
+}

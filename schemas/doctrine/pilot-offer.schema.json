@@ -1,0 +1,84 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/pilot-offer.schema.json",
+ "title": "doctrine/pilot-offer.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "version": {
+   "type": "number"
+  },
+  "who_for": {
+   "type": "object",
+   "properties": {
+    "heading": {
+     "type": "string"
+    },
+    "intro": {
+     "type": "string"
+    },
+    "questions": {
+     "type": "array",
+     "items": {
+      "type": "object"
+     }
+    }
+   }
+  },
+  "includes": {
+   "type": "object",
+   "properties": {
+    "heading": {
+     "type": "string"
+    },
+    "items": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "price": {
+   "type": "object",
+   "properties": {
+    "heading": {
+     "type": "string"
+    },
+    "status": {
+     "type": "string"
+    },
+    "monthly_usd": {
+     "type": "null"
+    },
+    "range_usd": {
+     "type": "null"
+    },
+    "rule": {
+     "type": "string"
+    },
+    "revision": {
+     "type": "string"
+    },
+    "tolerance_pct": {
+     "type": "null"
+    },
+    "revised_from": {
+     "type": "string"
+    },
+    "default_in_effect": {
+     "type": "string"
+    }
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "includes",
+  "price",
+  "version",
+  "who_for"
+ ]
+}

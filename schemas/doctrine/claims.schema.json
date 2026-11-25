@@ -1,0 +1,110 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/claims.schema.json",
+ "title": "doctrine/claims.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "version": {
+   "type": "number"
+  },
+  "ledgers": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "claims": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "generated": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "inventory": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "live": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "coverage": {
+   "type": "object",
+   "properties": {
+    "target": {
+     "type": "number"
+    },
+    "floor": {
+     "type": "number"
+    },
+    "live_pages": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "src_globs": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "patterns": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "skip": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "skip_reasons": {
+     "type": "object",
+     "properties": {
+      "intent-yield-data\\.js": {
+       "type": "string"
+      },
+      "^workers/": {
+       "type": "string"
+      }
+     }
+    },
+    "src_unbound_budget": {
+     "type": "number"
+    }
+   }
+  },
+  "modules": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "claims",
+  "coverage",
+  "generated",
+  "inventory",
+  "ledgers",
+  "live",
+  "modules",
+  "version"
+ ]
+}

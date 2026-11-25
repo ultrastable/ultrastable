@@ -56,6 +56,13 @@ Research date: 2026-11-11. Every entry in the register carries its sources with 
 | WebAuthn Level 3 passkeys (FIDO2) | W3C; FIDO Alliance | stable | supported | `software authenticator`; `one-tap sign-in` |
 | OAuth 2.1 client for remote MCP servers and service connectors (PKCE, RFC 8414, RFC 8707, CIMD, RFC 7591, RFC 7009) | MCP / IETF OAuth WG | stable | supported | `remote MCP server links with no pasted token and no owner app (CIMD)`; `remote MCP server links with no pasted token and no owner app (DCR)`; `Google flow: consent, PKCE redirect with signed state, callback exchange, sealed tokens, refresh, revoke`; `our Client ID Metadata Document is served and matches the callback`; `SSRF guard refuses private and non-https servers; no CIMD and no DCR is reported, not guessed` |
 | Open-format data export and restore (GDPR Art. 20 style portability) | EU GDPR Art. 20; Data Transfer Project norms | stable | supported | `mydata ok` |
+| SchemaStore catalog + JSON Schema for doctrine | JSON Schema organisation | de-facto | supported | `test_every_doctrine_file_validates` |
+| CloudEvents 1.0 | cncf | stable | planned | STANDARDS-FIRST-1 |
+| OpenSLO | openslo | stable | planned | STANDARDS-FIRST-1 |
+| OpenTofu | linux-foundation | stable | planned | STANDARDS-FIRST-1 |
+| OpenFeature | cncf | stable | planned | STANDARDS-FIRST-1 |
+| SLSA provenance and SPDX SBOM | openssf | stable | planned | STANDARDS-FIRST-1 |
+| Conventional Commits + SemVer | community | stable | planned | STANDARDS-FIRST-1 |
 
 <!-- standards:end -->
 

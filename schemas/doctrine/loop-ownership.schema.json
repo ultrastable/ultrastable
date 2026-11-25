@@ -1,0 +1,169 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/loop-ownership.schema.json",
+ "title": "doctrine/loop-ownership.json",
+ "type": "object",
+ "properties": {
+  "id": {
+   "type": "string"
+  },
+  "rule": {
+   "type": "string"
+  },
+  "owner_directive": {
+   "type": "string"
+  },
+  "server_owners": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "server_path_classes": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "client_path_classes": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "client_branch_prefixes": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "sweeper": {
+   "type": "object",
+   "properties": {
+    "code": {
+     "type": "string"
+    },
+    "max_open_age_hours": {
+     "type": "number"
+    },
+    "tracked_item_prefix": {
+     "type": "string"
+    },
+    "metric": {
+     "type": "string"
+    },
+    "target": {
+     "type": "number"
+    }
+   }
+  },
+  "executor_role": {
+   "type": "string"
+  },
+  "closing_probe": {
+   "type": "string"
+  },
+  "marker": {
+   "type": "string"
+  },
+  "required_in": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "required_pattern": {
+   "type": "string"
+  },
+  "handback": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "excused_note": {
+   "type": "string"
+  },
+  "scan": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "exclude": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "max_bytes": {
+   "type": "number"
+  },
+  "excused_by": {
+   "type": "string"
+  },
+  "wiring": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "adopt": {
+   "type": "object",
+   "properties": {
+    "owner": {
+     "type": "string"
+    },
+    "item_prefix": {
+     "type": "string"
+    },
+    "label": {
+     "type": "string"
+    },
+    "states": {
+     "type": "object",
+     "properties": {
+      "ci-failed": {
+       "type": "string"
+      },
+      "conflict": {
+       "type": "string"
+      },
+      "held": {
+       "type": "string"
+      },
+      "needs-pat": {
+       "type": "string"
+      }
+     }
+    },
+    "why": {
+     "type": "string"
+    }
+   }
+  }
+ },
+ "required": [
+  "adopt",
+  "client_branch_prefixes",
+  "client_path_classes",
+  "closing_probe",
+  "exclude",
+  "excused_by",
+  "excused_note",
+  "executor_role",
+  "handback",
+  "id",
+  "marker",
+  "max_bytes",
+  "owner_directive",
+  "required_in",
+  "required_pattern",
+  "rule",
+  "scan",
+  "server_owners",
+  "server_path_classes",
+  "sweeper",
+  "wiring"
+ ]
+}

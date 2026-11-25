@@ -1,0 +1,91 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/topology.schema.json",
+ "title": "doctrine/topology.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "version": {
+   "type": "string"
+  },
+  "account_id": {
+   "type": "string"
+  },
+  "prefix": {
+   "type": "string"
+  },
+  "stores": {
+   "type": "object",
+   "properties": {
+    "d1": {
+     "type": "array",
+     "items": {
+      "type": "object"
+     }
+    },
+    "kv": {
+     "type": "array",
+     "items": {
+      "type": "object"
+     }
+    },
+    "r2": {
+     "type": "array",
+     "items": {
+      "type": "object"
+     }
+    },
+    "queues": {
+     "type": "array",
+     "items": {
+      "type": "object"
+     }
+    },
+    "vectorize": {
+     "type": "array",
+     "items": {
+      "type": "object"
+     }
+    },
+    "workflows": {
+     "type": "array"
+    }
+   }
+  },
+  "workers": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "edit_path": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "deploy_counter": {
+   "type": "string"
+  },
+  "system_compatibility_date": {
+   "type": "string"
+  },
+  "_account_split": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "_account_split",
+  "_doc",
+  "account_id",
+  "deploy_counter",
+  "edit_path",
+  "prefix",
+  "stores",
+  "system_compatibility_date",
+  "version",
+  "workers"
+ ]
+}

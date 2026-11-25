@@ -1,0 +1,130 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/provenance.schema.json",
+ "title": "doctrine/provenance.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "id": {
+   "type": "string"
+  },
+  "version": {
+   "type": "string"
+  },
+  "marker": {
+   "type": "string"
+  },
+  "axiom": {
+   "type": "string"
+  },
+  "ledger": {
+   "type": "string"
+  },
+  "public_view": {
+   "type": "string"
+  },
+  "origin_classes": {
+   "type": "object",
+   "properties": {
+    "system": {
+     "type": "string"
+    },
+    "loop": {
+     "type": "string"
+    },
+    "owner": {
+     "type": "string"
+    },
+    "end_user": {
+     "type": "string"
+    },
+    "agent": {
+     "type": "string"
+    },
+    "external": {
+     "type": "string"
+    }
+   }
+  },
+  "channels": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "kinds": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "effects": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "tenants": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "git_rules": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "sources": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "redact": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "max_public_summary": {
+   "type": "number"
+  },
+  "improve": {
+   "type": "object",
+   "properties": {
+    "min_settled": {
+     "type": "number"
+    },
+    "retire_below": {
+     "type": "number"
+    },
+    "reinforce_above": {
+     "type": "number"
+    }
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "axiom",
+  "channels",
+  "effects",
+  "git_rules",
+  "id",
+  "improve",
+  "kinds",
+  "ledger",
+  "marker",
+  "max_public_summary",
+  "origin_classes",
+  "public_view",
+  "redact",
+  "sources",
+  "tenants",
+  "version"
+ ]
+}

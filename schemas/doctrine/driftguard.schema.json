@@ -1,0 +1,104 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/driftguard.schema.json",
+ "title": "doctrine/driftguard.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "version": {
+   "type": "string"
+  },
+  "cron_budget": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "limits": {
+     "type": "object",
+     "properties": {
+      "free": {
+       "type": "number"
+      },
+      "paid": {
+       "type": "number"
+      }
+     }
+    },
+    "headroom": {
+     "type": "number"
+    },
+    "external": {
+     "type": "object",
+     "properties": {
+      "tenant-ps-web": {
+       "type": "array"
+      },
+      "ultrastable-uptime": {
+       "type": "array"
+      },
+      "ultrastable-seed-second-tenant": {
+       "type": "array"
+      },
+      "ultrastable-did-it-work": {
+       "type": "array"
+      }
+     }
+    },
+    "pulse_external": {
+     "type": "array",
+     "items": {
+      "type": "object"
+     }
+    }
+   }
+  },
+  "missed_trigger": {
+   "type": "object",
+   "properties": {
+    "window_hours": {
+     "type": "number"
+    },
+    "grace_minutes": {
+     "type": "number"
+    }
+   }
+  },
+  "empty_loop": {
+   "type": "object",
+   "properties": {
+    "max_empty_per_branch": {
+     "type": "number"
+    }
+   }
+  },
+  "account_drift": {
+   "type": "object",
+   "properties": {
+    "retired_account_sha256": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "incidents": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "account_drift",
+  "cron_budget",
+  "empty_loop",
+  "incidents",
+  "missed_trigger",
+  "version"
+ ]
+}

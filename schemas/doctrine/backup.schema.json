@@ -1,0 +1,49 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/backup.schema.json",
+ "title": "doctrine/backup.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "bucket": {
+   "type": "string"
+  },
+  "prefix": {
+   "type": "string"
+  },
+  "max_age_days": {
+   "type": "number"
+  },
+  "keep": {
+   "type": "number"
+  },
+  "exclude_tables": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "exclude_kv": {
+   "type": "array"
+  },
+  "kv_max_bytes": {
+   "type": "number"
+  },
+  "account_id": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "_doc",
+  "account_id",
+  "bucket",
+  "exclude_kv",
+  "exclude_tables",
+  "keep",
+  "kv_max_bytes",
+  "max_age_days",
+  "prefix"
+ ]
+}

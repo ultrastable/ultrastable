@@ -1,0 +1,179 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/dependency-licences.schema.json",
+ "title": "doctrine/dependency-licences.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "checked": {
+   "type": "string"
+  },
+  "policy": {
+   "type": "object",
+   "properties": {
+    "shipped": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "tool": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "licences": {
+   "type": "object",
+   "properties": {
+    "action:actions/checkout": {
+     "type": "object",
+     "properties": {
+      "spdx": {
+       "type": "string"
+      },
+      "source": {
+       "type": "string"
+      }
+     }
+    },
+    "action:actions/setup-node": {
+     "type": "object",
+     "properties": {
+      "spdx": {
+       "type": "string"
+      },
+      "source": {
+       "type": "string"
+      }
+     }
+    },
+    "action:actions/setup-python": {
+     "type": "object",
+     "properties": {
+      "spdx": {
+       "type": "string"
+      },
+      "source": {
+       "type": "string"
+      }
+     }
+    },
+    "npm:axe-core": {
+     "type": "object",
+     "properties": {
+      "spdx": {
+       "type": "string"
+      },
+      "source": {
+       "type": "string"
+      },
+      "note": {
+       "type": "string"
+      }
+     }
+    },
+    "npm:esbuild": {
+     "type": "object",
+     "properties": {
+      "spdx": {
+       "type": "string"
+      },
+      "source": {
+       "type": "string"
+      }
+     }
+    },
+    "npm:playwright": {
+     "type": "object",
+     "properties": {
+      "spdx": {
+       "type": "string"
+      },
+      "source": {
+       "type": "string"
+      }
+     }
+    },
+    "npm:wrangler": {
+     "type": "object",
+     "properties": {
+      "spdx": {
+       "type": "string"
+      },
+      "source": {
+       "type": "string"
+      }
+     }
+    },
+    "pypi:piper-tts": {
+     "type": "object",
+     "properties": {
+      "spdx": {
+       "type": "string"
+      },
+      "source": {
+       "type": "string"
+      },
+      "note": {
+       "type": "string"
+      }
+     }
+    },
+    "pypi:playwright": {
+     "type": "object",
+     "properties": {
+      "spdx": {
+       "type": "string"
+      },
+      "source": {
+       "type": "string"
+      }
+     }
+    },
+    "pypi:psycopg": {
+     "type": "object",
+     "properties": {
+      "spdx": {
+       "type": "string"
+      },
+      "source": {
+       "type": "string"
+      },
+      "note": {
+       "type": "string"
+      }
+     }
+    },
+    "pypi:pyyaml": {
+     "type": "object",
+     "properties": {
+      "spdx": {
+       "type": "string"
+      },
+      "source": {
+       "type": "string"
+      }
+     }
+    }
+   }
+  },
+  "inventory": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "checked",
+  "inventory",
+  "licences",
+  "policy"
+ ]
+}

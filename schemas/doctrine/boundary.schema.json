@@ -1,0 +1,132 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/boundary.schema.json",
+ "title": "doctrine/boundary.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "marker": {
+   "type": "string"
+  },
+  "axiom": {
+   "type": "string"
+  },
+  "instruction_files": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "inside": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "egress": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "rebuild": {
+   "type": "object",
+   "properties": {
+    "drill_checks": {
+     "type": "array",
+     "items": {
+      "type": "array"
+     }
+    },
+    "digest_paths": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "permissions": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "inside": {
+     "type": "object",
+     "properties": {
+      "read": {
+       "type": "string"
+      },
+      "create": {
+       "type": "string"
+      },
+      "edit": {
+       "type": "string"
+      },
+      "destroy-derived": {
+       "type": "string"
+      },
+      "rebuild": {
+       "type": "string"
+      },
+      "destroy-instance": {
+       "type": "string"
+      },
+      "self-modify": {
+       "type": "string"
+      }
+     }
+    },
+    "reserved": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "strange_loop": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "ledger": {
+     "type": "string"
+    }
+   }
+  },
+  "reaper": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "idle_hours": {
+     "type": "number"
+    },
+    "finished_states": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "axiom",
+  "egress",
+  "inside",
+  "instruction_files",
+  "marker",
+  "permissions",
+  "reaper",
+  "rebuild",
+  "strange_loop"
+ ]
+}

@@ -1,0 +1,2028 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/flows.schema.json",
+ "title": "doctrine/flows.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "id": {
+   "type": "string"
+  },
+  "version": {
+   "type": "string"
+  },
+  "quote": {
+   "type": "string"
+  },
+  "external_sources": {
+   "type": "object",
+   "properties": {
+    "ext.app_users": {
+     "type": "string"
+    },
+    "ext.site_visits": {
+     "type": "string"
+    },
+    "ext.post_engagement": {
+     "type": "string"
+    },
+    "ext.owner_goals": {
+     "type": "string"
+    },
+    "ext.outreach_replies": {
+     "type": "string"
+    },
+    "ext.actions_quota": {
+     "type": "string"
+    },
+    "ext.frontier": {
+     "type": "string"
+    },
+    "ext.cf_analytics": {
+     "type": "string"
+    },
+    "ext.unlearn_adults": {
+     "type": "string"
+    },
+    "ext.unlearn_readers": {
+     "type": "string"
+    },
+    "ext.unlearn_literature": {
+     "type": "string"
+    },
+    "ext.ledger_literature": {
+     "type": "string"
+    }
+   }
+  },
+  "flows": {
+   "type": "object",
+   "properties": {
+    "qnfo-sauce": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "tick-heartbeat": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      }
+     }
+    },
+    "agent-executor": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "change-gate": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "merge-lane": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "site-deploy": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "social-post": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "dashboard-snapshot": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      }
+     }
+    },
+    "predict-verify": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      }
+     }
+    },
+    "trust-ledger": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      }
+     }
+    },
+    "temporal": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "failure-audit": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "product-manager-pass": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "plussing": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      }
+     }
+    },
+    "issue-triage": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "planning-roadmap": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      }
+     }
+    },
+    "funding-verify": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "funding-outreach": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "outreach-send": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      }
+     }
+    },
+    "fleet-lane": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "index-refresh": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "org-profile": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "platform-core-tests": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "actions-budget": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "retriage": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "branch-reaper": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "public-transparency": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "core-instance-sync": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "launch": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "running-system": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "executor-session": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "scout": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "a11y": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "cost-guard": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "deploy-workers": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "open-loop-sweeper": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "demo-video": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "first-run": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "role-design-manager": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "promote": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "blindspots": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "provenance-loop": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "insight-loop": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "criticality-loop": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "ultrastability-loop": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "branch-sweep": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "loop-proof": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      }
+     }
+    },
+    "ignition-ladder": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      }
+     }
+    },
+    "publication-guard": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "unknowns": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "spinoff": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "ciwatch": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "claims-conformance": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "workers-tests": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "issue-loop": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "resilience": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "tenant-sync": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "uiux-loop": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "role-uiux-manager": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "regen-generated": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "hosts": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "host-sync": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "role-portfolio-manager": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "role-project-manager": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "role-product-manager": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "role-staff": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "role-reviewer": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "role-operations": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "role-funding-manager": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "role-outreach-manager": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "role-outreach-coordinator": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "memory-fresh": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "write-back": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "loop-registry": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "glossary": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "doctrine-check": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "recognition-lint": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "doctrine-amendment": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "gap-register": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "guiding-directive": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "durable-facts": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "doc-consumption": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "liveness": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "server-side-only": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "orphan-artifacts": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "containment-boundary": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "session-reaper": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "market-gaps": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "strange-loop-hygiene": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "role-research-publisher": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "role-marketing-manager": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "role-legal-ip-manager": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "role-customer-success": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "role-org-designer": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "triggers": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "lifecycle": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "components": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "agent-interop": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "terms-crosswalk": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "code-agents": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "role-program-manager": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "role-infrastructure-manager": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "smoke-live": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "backup-drill": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "research": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "thought": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "yearfail": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "unlearn-beat": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "intent-yield": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "seed-launch": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "tenant-repos": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "improve": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "findable": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    },
+    "replication-ledger-openalex": {
+     "type": "object",
+     "properties": {
+      "inflows": {
+       "type": "array"
+      },
+      "outflows": {
+       "type": "array"
+      },
+      "feedback": {
+       "type": "string"
+      },
+      "bindings": {
+       "type": "array"
+      }
+     }
+    }
+   }
+  },
+  "implicit_producers": {
+   "type": "object",
+   "properties": {
+    "owner.goals": {
+     "type": "string"
+    },
+    "app.metrics": {
+     "type": "string"
+    },
+    "actions.minutes": {
+     "type": "string"
+    },
+    "frontier.releases": {
+     "type": "string"
+    },
+    "cf.analytics": {
+     "type": "string"
+    },
+    "site.hits": {
+     "type": "string"
+    },
+    "loop.registry": {
+     "type": "string"
+    },
+    "unlearn.followups": {
+     "type": "string"
+    },
+    "unlearn.reader_taps": {
+     "type": "string"
+    },
+    "unlearn.literature": {
+     "type": "string"
+    },
+    "ledger.literature": {
+     "type": "string"
+    }
+   }
+  },
+  "pending": {
+   "type": "array"
+  }
+ },
+ "required": [
+  "_doc",
+  "external_sources",
+  "flows",
+  "id",
+  "implicit_producers",
+  "pending",
+  "quote",
+  "version"
+ ]
+}

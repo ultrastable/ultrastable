@@ -1,0 +1,50 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/code-agents.schema.json",
+ "title": "doctrine/code-agents.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "adapters": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "routing": {
+   "type": "object",
+   "properties": {
+    "author_order": {
+     "type": "string"
+    },
+    "ensemble": {
+     "type": "object",
+     "properties": {
+      "min_models": {
+       "type": "number"
+      },
+      "max_models": {
+       "type": "number"
+      },
+      "disjoint_families": {
+       "type": "boolean"
+      },
+      "never_authors_family": {
+       "type": "boolean"
+      },
+      "when": {
+       "type": "string"
+      }
+     }
+    }
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "adapters",
+  "routing"
+ ]
+}

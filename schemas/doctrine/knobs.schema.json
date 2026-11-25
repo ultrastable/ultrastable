@@ -1,0 +1,33 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/knobs.schema.json",
+ "title": "doctrine/knobs.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "version": {
+   "type": "string"
+  },
+  "min_days_between_changes": {
+   "type": "number"
+  },
+  "review_after_days": {
+   "type": "number"
+  },
+  "knobs": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "knobs",
+  "min_days_between_changes",
+  "review_after_days",
+  "version"
+ ]
+}

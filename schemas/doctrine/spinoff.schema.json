@@ -1,0 +1,478 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/spinoff.schema.json",
+ "title": "doctrine/spinoff.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "id": {
+   "type": "string"
+  },
+  "version": {
+   "type": "string"
+  },
+  "marker": {
+   "type": "string"
+  },
+  "domain": {
+   "type": "string"
+  },
+  "registry": {
+   "type": "string"
+  },
+  "ledger": {
+   "type": "string"
+  },
+  "metrics_ledger": {
+   "type": "string"
+  },
+  "outcomes_ledger": {
+   "type": "string"
+  },
+  "worker": {
+   "type": "string"
+  },
+  "sources": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "archetypes": {
+   "type": "object",
+   "properties": {
+    "domain-check": {
+     "type": "object",
+     "properties": {
+      "implemented": {
+       "type": "boolean"
+      },
+      "input": {
+       "type": "string"
+      },
+      "collects": {
+       "type": "array"
+      },
+      "audience": {
+       "type": "number"
+      },
+      "cost_per_use": {
+       "type": "number"
+      },
+      "what": {
+       "type": "string"
+      }
+     }
+    },
+    "template-generator": {
+     "type": "object",
+     "properties": {
+      "implemented": {
+       "type": "boolean"
+      },
+      "input": {
+       "type": "string"
+      },
+      "collects": {
+       "type": "array"
+      },
+      "audience": {
+       "type": "number"
+      },
+      "cost_per_use": {
+       "type": "number"
+      },
+      "what": {
+       "type": "string"
+      }
+     }
+    },
+    "status-board": {
+     "type": "object",
+     "properties": {
+      "implemented": {
+       "type": "boolean"
+      },
+      "input": {
+       "type": "string"
+      },
+      "collects": {
+       "type": "array"
+      },
+      "audience": {
+       "type": "number"
+      },
+      "cost_per_use": {
+       "type": "number"
+      },
+      "what": {
+       "type": "string"
+      }
+     }
+    },
+    "live-feed": {
+     "type": "object",
+     "properties": {
+      "implemented": {
+       "type": "boolean"
+      },
+      "input": {
+       "type": "string"
+      },
+      "collects": {
+       "type": "array"
+      },
+      "audience": {
+       "type": "number"
+      },
+      "cost_per_use": {
+       "type": "number"
+      },
+      "what": {
+       "type": "string"
+      }
+     }
+    },
+    "live-lookup": {
+     "type": "object",
+     "properties": {
+      "implemented": {
+       "type": "boolean"
+      },
+      "input": {
+       "type": "string"
+      },
+      "collects": {
+       "type": "array"
+      },
+      "audience": {
+       "type": "number"
+      },
+      "cost_per_use": {
+       "type": "number"
+      },
+      "what": {
+       "type": "string"
+      }
+     }
+    }
+   }
+  },
+  "score": {
+   "type": "object",
+   "properties": {
+    "formula": {
+     "type": "string"
+    },
+    "reach_scale": {
+     "type": "string"
+    },
+    "impact_scale": {
+     "type": "string"
+    },
+    "min_score": {
+     "type": "number"
+    },
+    "bandit": {
+     "type": "object",
+     "properties": {
+      "floor": {
+       "type": "number"
+      },
+      "ceiling": {
+       "type": "number"
+      },
+      "step": {
+       "type": "number"
+      }
+     }
+    },
+    "diversity_cap": {
+     "type": "number"
+    }
+   }
+  },
+  "safety": {
+   "type": "object",
+   "properties": {
+    "deny_domains": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "deny_collect": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "allowed_inputs": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "rules": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "budget": {
+   "type": "object",
+   "properties": {
+    "max_live": {
+     "type": "number"
+    },
+    "max_launches_per_week": {
+     "type": "number"
+    },
+    "max_requests_per_app_per_day": {
+     "type": "number"
+    },
+    "subrequests_per_use": {
+     "type": "number"
+    },
+    "monthly_usd_ceiling": {
+     "type": "number"
+    },
+    "note": {
+     "type": "string"
+    },
+    "max_launches_per_day": {
+     "type": "number"
+    }
+   }
+  },
+  "portfolio": {
+   "type": "object",
+   "properties": {
+    "min_age_days": {
+     "type": "number"
+    },
+    "weights": {
+     "type": "object",
+     "properties": {
+      "gap_closed": {
+       "type": "number"
+      },
+      "retained": {
+       "type": "number"
+      },
+      "reached_with_gap": {
+       "type": "number"
+      }
+     }
+    },
+    "kill_below_value": {
+     "type": "number"
+    },
+    "promote_above_value": {
+     "type": "number"
+    },
+    "iterate_between": {
+     "type": "array",
+     "items": {
+      "type": "number"
+     }
+    },
+    "budget_share_floor": {
+     "type": "number"
+    },
+    "retire_status": {
+     "type": "number"
+    }
+   }
+  },
+  "reach_metrics": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "impact_metrics": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "guard_metrics": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "check_library": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "need_archetype": {
+   "type": "object",
+   "properties": {
+    "domain-check": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "template-generator": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "status-board": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "domain_impact": {
+   "type": "object",
+   "properties": {
+    "security": {
+     "type": "number"
+    },
+    "privacy": {
+     "type": "number"
+    },
+    "legal": {
+     "type": "number"
+    },
+    "outreach": {
+     "type": "number"
+    },
+    "accessibility": {
+     "type": "number"
+    },
+    "continuity": {
+     "type": "number"
+    },
+    "finance": {
+     "type": "number"
+    },
+    "ip": {
+     "type": "number"
+    }
+   }
+  },
+  "domain_reach": {
+   "type": "object",
+   "properties": {
+    "security": {
+     "type": "number"
+    },
+    "privacy": {
+     "type": "number"
+    },
+    "legal": {
+     "type": "number"
+    },
+    "outreach": {
+     "type": "number"
+    },
+    "accessibility": {
+     "type": "number"
+    },
+    "continuity": {
+     "type": "number"
+    },
+    "finance": {
+     "type": "number"
+    },
+    "ip": {
+     "type": "number"
+    }
+   }
+  },
+  "value": {
+   "type": "object",
+   "properties": {
+    "definition": {
+     "type": "string"
+    },
+    "weights": {
+     "type": "object",
+     "properties": {
+      "gap_closed": {
+       "type": "number"
+      },
+      "retained": {
+       "type": "number"
+      },
+      "reached_with_gap": {
+       "type": "number"
+      }
+     }
+    },
+    "excluded": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "measured_by": {
+     "type": "object",
+     "properties": {
+      "gap_closed": {
+       "type": "string"
+      },
+      "retained": {
+       "type": "string"
+      },
+      "reached_with_gap": {
+       "type": "string"
+      }
+     }
+    }
+   }
+  },
+  "lineage": {
+   "type": "object",
+   "properties": {
+    "qnfo-idea-hub": {
+     "type": "string"
+    },
+    "reentry_todo": {
+     "type": "string"
+    }
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "archetypes",
+  "budget",
+  "check_library",
+  "domain",
+  "domain_impact",
+  "domain_reach",
+  "guard_metrics",
+  "id",
+  "impact_metrics",
+  "ledger",
+  "lineage",
+  "marker",
+  "metrics_ledger",
+  "need_archetype",
+  "outcomes_ledger",
+  "portfolio",
+  "reach_metrics",
+  "registry",
+  "safety",
+  "score",
+  "sources",
+  "value",
+  "version",
+  "worker"
+ ]
+}

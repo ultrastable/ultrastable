@@ -1,0 +1,431 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/components.schema.json",
+ "title": "doctrine/components.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "components": {
+   "type": "object",
+   "properties": {
+    "time-trigger": {
+     "type": "object",
+     "properties": {
+      "what": {
+       "type": "string"
+      },
+      "impl": {
+       "type": "array"
+      },
+      "proof": {
+       "type": "array"
+      }
+     }
+    },
+    "event-trigger": {
+     "type": "object",
+     "properties": {
+      "what": {
+       "type": "string"
+      },
+      "impl": {
+       "type": "array"
+      },
+      "proof": {
+       "type": "array"
+      }
+     }
+    },
+    "persistent-state": {
+     "type": "object",
+     "properties": {
+      "what": {
+       "type": "string"
+      },
+      "impl": {
+       "type": "array"
+      },
+      "proof": {
+       "type": "array"
+      }
+     }
+    },
+    "role-managers": {
+     "type": "object",
+     "properties": {
+      "what": {
+       "type": "string"
+      },
+      "impl": {
+       "type": "array"
+      },
+      "proof": {
+       "type": "array"
+      }
+     }
+    },
+    "code-executor": {
+     "type": "object",
+     "properties": {
+      "what": {
+       "type": "string"
+      },
+      "impl": {
+       "type": "array"
+      },
+      "proof": {
+       "type": "array"
+      }
+     }
+    },
+    "independent-review": {
+     "type": "object",
+     "properties": {
+      "what": {
+       "type": "string"
+      },
+      "impl": {
+       "type": "array"
+      },
+      "proof": {
+       "type": "array"
+      }
+     }
+    },
+    "merge-deploy": {
+     "type": "object",
+     "properties": {
+      "what": {
+       "type": "string"
+      },
+      "impl": {
+       "type": "array"
+      },
+      "proof": {
+       "type": "array"
+      }
+     }
+    },
+    "verify-live": {
+     "type": "object",
+     "properties": {
+      "what": {
+       "type": "string"
+      },
+      "impl": {
+       "type": "array"
+      },
+      "proof": {
+       "type": "array"
+      }
+     }
+    },
+    "metrics-triggers": {
+     "type": "object",
+     "properties": {
+      "what": {
+       "type": "string"
+      },
+      "impl": {
+       "type": "array"
+      },
+      "proof": {
+       "type": "array"
+      }
+     }
+    },
+    "self-improvement": {
+     "type": "object",
+     "properties": {
+      "what": {
+       "type": "string"
+      },
+      "impl": {
+       "type": "array"
+      },
+      "proof": {
+       "type": "array"
+      }
+     }
+    },
+    "session-lifecycle": {
+     "type": "object",
+     "properties": {
+      "what": {
+       "type": "string"
+      },
+      "impl": {
+       "type": "array"
+      },
+      "proof": {
+       "type": "array"
+      }
+     }
+    },
+    "trust-ladder": {
+     "type": "object",
+     "properties": {
+      "what": {
+       "type": "string"
+      },
+      "impl": {
+       "type": "array"
+      },
+      "proof": {
+       "type": "array"
+      }
+     }
+    },
+    "budget-guard": {
+     "type": "object",
+     "properties": {
+      "what": {
+       "type": "string"
+      },
+      "impl": {
+       "type": "array"
+      },
+      "proof": {
+       "type": "array"
+      }
+     }
+    },
+    "failover": {
+     "type": "object",
+     "properties": {
+      "what": {
+       "type": "string"
+      },
+      "impl": {
+       "type": "array"
+      },
+      "proof": {
+       "type": "array"
+      }
+     }
+    },
+    "memory-in-repo": {
+     "type": "object",
+     "properties": {
+      "what": {
+       "type": "string"
+      },
+      "impl": {
+       "type": "array"
+      },
+      "proof": {
+       "type": "array"
+      }
+     }
+    },
+    "funding-outreach": {
+     "type": "object",
+     "properties": {
+      "what": {
+       "type": "string"
+      },
+      "impl": {
+       "type": "array"
+      },
+      "proof": {
+       "type": "array"
+      }
+     }
+    },
+    "ip-legal": {
+     "type": "object",
+     "properties": {
+      "what": {
+       "type": "string"
+      },
+      "impl": {
+       "type": "array"
+      },
+      "proof": {
+       "type": "array"
+      }
+     }
+    },
+    "research-publishing": {
+     "type": "object",
+     "properties": {
+      "what": {
+       "type": "string"
+      },
+      "impl": {
+       "type": "array"
+      },
+      "proof": {
+       "type": "array"
+      }
+     }
+    },
+    "marketing-content": {
+     "type": "object",
+     "properties": {
+      "what": {
+       "type": "string"
+      },
+      "impl": {
+       "type": "array"
+      },
+      "proof": {
+       "type": "array"
+      }
+     }
+    },
+    "customer-onboarding": {
+     "type": "object",
+     "properties": {
+      "what": {
+       "type": "string"
+      },
+      "impl": {
+       "type": "array"
+      },
+      "proof": {
+       "type": "array"
+      }
+     }
+    },
+    "fleet-multi-repo": {
+     "type": "object",
+     "properties": {
+      "what": {
+       "type": "string"
+      },
+      "impl": {
+       "type": "array"
+      },
+      "proof": {
+       "type": "array"
+      }
+     }
+    },
+    "bootstrap-from-idea": {
+     "type": "object",
+     "properties": {
+      "what": {
+       "type": "string"
+      },
+      "impl": {
+       "type": "array"
+      },
+      "proof": {
+       "type": "array"
+      }
+     }
+    },
+    "self-hosting": {
+     "type": "object",
+     "properties": {
+      "what": {
+       "type": "string"
+      },
+      "impl": {
+       "type": "array"
+      },
+      "proof": {
+       "type": "array"
+      }
+     }
+    },
+    "gap-analysis": {
+     "type": "object",
+     "properties": {
+      "what": {
+       "type": "string"
+      },
+      "impl": {
+       "type": "array"
+      },
+      "proof": {
+       "type": "array"
+      }
+     }
+    }
+   }
+  },
+  "edges": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "users": {
+   "type": "object",
+   "properties": {
+    "non-technical-founder": {
+     "type": "object",
+     "properties": {
+      "who": {
+       "type": "string"
+      },
+      "stories": {
+       "type": "array"
+      }
+     }
+    },
+    "solo-developer-maintainer": {
+     "type": "object",
+     "properties": {
+      "who": {
+       "type": "string"
+      },
+      "stories": {
+       "type": "array"
+      }
+     }
+    },
+    "research-lab": {
+     "type": "object",
+     "properties": {
+      "who": {
+       "type": "string"
+      },
+      "stories": {
+       "type": "array"
+      }
+     }
+    },
+    "small-team-startup": {
+     "type": "object",
+     "properties": {
+      "who": {
+       "type": "string"
+      },
+      "stories": {
+       "type": "array"
+      }
+     }
+    },
+    "platform-governance-lead": {
+     "type": "object",
+     "properties": {
+      "who": {
+       "type": "string"
+      },
+      "stories": {
+       "type": "array"
+      }
+     }
+    }
+   }
+  },
+  "objections": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "components",
+  "edges",
+  "objections",
+  "users"
+ ]
+}

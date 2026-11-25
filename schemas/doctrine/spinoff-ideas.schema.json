@@ -1,0 +1,246 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/spinoff-ideas.schema.json",
+ "title": "doctrine/spinoff-ideas.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "id": {
+   "type": "string"
+  },
+  "marker": {
+   "type": "string"
+  },
+  "headroom": {
+   "type": "string"
+  },
+  "stale_after_hours": {
+   "type": "number"
+  },
+  "queue": {
+   "type": "string"
+  },
+  "roadmap_out": {
+   "type": "string"
+  },
+  "reserve": {
+   "type": "object",
+   "properties": {
+    "d1_rows_read": {
+     "type": "number"
+    },
+    "d1_rows_written": {
+     "type": "number"
+    },
+    "workers_requests": {
+     "type": "number"
+    },
+    "ai_neurons": {
+     "type": "number"
+    }
+   }
+  },
+  "cadence": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "ok": {
+     "type": "number"
+    },
+    "degrade": {
+     "type": "number"
+    },
+    "shed": {
+     "type": "number"
+    }
+   }
+  },
+  "min_score": {
+   "type": "number"
+  },
+  "max_new_per_run": {
+   "type": "number"
+  },
+  "scope_ideas_per_run": {
+   "type": "number"
+  },
+  "weights": {
+   "type": "object",
+   "properties": {
+    "showcase_bonus": {
+     "type": "number"
+    },
+    "cost_penalty": {
+     "type": "number"
+    }
+   }
+  },
+  "board_stale_hours": {
+   "type": "number"
+  },
+  "bank": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "scope_templates": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "private_ledgers": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "max_live_boards": {
+   "type": "number"
+  },
+  "benefit": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "scale": {
+     "type": "number"
+    },
+    "region": {
+     "type": "object",
+     "properties": {
+      "global_at": {
+       "type": "number"
+      },
+      "global": {
+       "type": "number"
+      },
+      "multi": {
+       "type": "number"
+      },
+      "single": {
+       "type": "number"
+      }
+     }
+    },
+    "use": {
+     "type": "object",
+     "properties": {
+      "floor": {
+       "type": "number"
+      },
+      "ceiling": {
+       "type": "number"
+      },
+      "unmeasured": {
+       "type": "number"
+      },
+      "uses_for_ceiling": {
+       "type": "number"
+      }
+     }
+    }
+   }
+  },
+  "depth": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "marker": {
+     "type": "string"
+    },
+    "min_text": {
+     "type": "number"
+    },
+    "min_horizon": {
+     "type": "number"
+    },
+    "fields": {
+     "type": "object",
+     "properties": {
+      "thesis": {
+       "type": "string"
+      },
+      "corpus": {
+       "type": "string"
+      },
+      "loop": {
+       "type": "string"
+      },
+      "returns": {
+       "type": "string"
+      },
+      "horizon": {
+       "type": "string"
+      },
+      "hook": {
+       "type": "string"
+      },
+      "public_good": {
+       "type": "string"
+      },
+      "change": {
+       "type": "string"
+      }
+     }
+    },
+    "shallow_archetypes": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "commerce_words": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "change_library": {
+     "type": "string"
+    },
+    "aliases": {
+     "type": "object",
+     "properties": {
+      "_doc": {
+       "type": "string"
+      },
+      "method": {
+       "type": "string"
+      }
+     }
+    }
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "bank",
+  "benefit",
+  "board_stale_hours",
+  "cadence",
+  "depth",
+  "headroom",
+  "id",
+  "marker",
+  "max_live_boards",
+  "max_new_per_run",
+  "min_score",
+  "private_ledgers",
+  "queue",
+  "reserve",
+  "roadmap_out",
+  "scope_ideas_per_run",
+  "scope_templates",
+  "stale_after_hours",
+  "weights"
+ ]
+}

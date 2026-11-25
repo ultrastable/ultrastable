@@ -1,0 +1,421 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/design.schema.json",
+ "title": "doctrine/design.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "version": {
+   "type": "string"
+  },
+  "layers": {
+   "type": "object",
+   "properties": {
+    "core": {
+     "type": "string"
+    },
+    "portfolio": {
+     "type": "string"
+    },
+    "product": {
+     "type": "string"
+    },
+    "experiment": {
+     "type": "string"
+    }
+   }
+  },
+  "invariants": {
+   "type": "object",
+   "properties": {
+    "tap_px": {
+     "type": "number"
+    },
+    "body_px": {
+     "type": "number"
+    },
+    "min_text_px": {
+     "type": "number"
+    },
+    "field_px": {
+     "type": "number"
+    },
+    "contrast_text": {
+     "type": "number"
+    },
+    "contrast_graphic": {
+     "type": "number"
+    },
+    "primary_actions_per_screen": {
+     "type": "number"
+    },
+    "spacing_px": {
+     "type": "array",
+     "items": {
+      "type": "number"
+     }
+    },
+    "type_scale_px": {
+     "type": "object",
+     "properties": {
+      "small": {
+       "type": "number"
+      },
+      "body": {
+       "type": "number"
+      },
+      "lead": {
+       "type": "number"
+      },
+      "h3": {
+       "type": "number"
+      },
+      "h2": {
+       "type": "number"
+      },
+      "h1": {
+       "type": "number"
+      }
+     }
+    },
+    "max_content_px": {
+     "type": "number"
+    },
+    "status_colors_reserved": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "required_states": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "dark_mode": {
+     "type": "boolean"
+    },
+    "reduced_motion": {
+     "type": "boolean"
+    },
+    "visible_focus": {
+     "type": "boolean"
+    }
+   }
+  },
+  "token_contract": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "contrast_pairs": {
+   "type": "array",
+   "items": {
+    "type": "array"
+   }
+  },
+  "portfolios": {
+   "type": "object",
+   "properties": {
+    "ultrastable": {
+     "type": "object",
+     "properties": {
+      "voice": {
+       "type": "string"
+      },
+      "seed": {
+       "type": "string"
+      },
+      "hue_range_deg": {
+       "type": "number"
+      },
+      "fonts": {
+       "type": "object"
+      },
+      "display_allowed": {
+       "type": "array"
+      },
+      "radius_px": {
+       "type": "object"
+      },
+      "density": {
+       "type": "string"
+      },
+      "neutrals": {
+       "type": "object"
+      }
+     }
+    }
+   }
+  },
+  "products": {
+   "type": "object",
+   "properties": {
+    "ultrastable-site": {
+     "type": "object",
+     "properties": {
+      "portfolio": {
+       "type": "string"
+      },
+      "role": {
+       "type": "string"
+      },
+      "accent_seed": {
+       "type": "string"
+      },
+      "display": {
+       "type": "string"
+      },
+      "density": {
+       "type": "string"
+      },
+      "surfaces": {
+       "type": "array"
+      }
+     }
+    },
+    "ultrastable-cockpit": {
+     "type": "object",
+     "properties": {
+      "portfolio": {
+       "type": "string"
+      },
+      "role": {
+       "type": "string"
+      },
+      "accent_seed": {
+       "type": "string"
+      },
+      "display": {
+       "type": "string"
+      },
+      "density": {
+       "type": "string"
+      },
+      "surfaces": {
+       "type": "array"
+      }
+     }
+    },
+    "ultrastable-console": {
+     "type": "object",
+     "properties": {
+      "portfolio": {
+       "type": "string"
+      },
+      "role": {
+       "type": "string"
+      },
+      "accent_seed": {
+       "type": "string"
+      },
+      "display": {
+       "type": "string"
+      },
+      "density": {
+       "type": "string"
+      },
+      "surfaces": {
+       "type": "array"
+      }
+     }
+    }
+   }
+  },
+  "tenants": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "default_portfolio": {
+     "type": "string"
+    },
+    "required": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "optional": {
+     "type": "array"
+    },
+    "selection": {
+     "type": "string"
+    }
+   }
+  },
+  "density": {
+   "type": "object",
+   "properties": {
+    "compact": {
+     "type": "number"
+    },
+    "regular": {
+     "type": "number"
+    },
+    "airy": {
+     "type": "number"
+    }
+   }
+  },
+  "product_may_vary": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "product_may_not_vary": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "surfaces_lint": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "files": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "baseline": {
+     "type": "string"
+    }
+   }
+  },
+  "research": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "practices": {
+     "type": "array",
+     "items": {
+      "type": "object"
+     }
+    }
+   }
+  },
+  "library": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "neutral_sets": {
+     "type": "object",
+     "properties": {
+      "warm": {
+       "type": "object"
+      },
+      "cool": {
+       "type": "object"
+      },
+      "paper": {
+       "type": "object"
+      }
+     }
+    },
+    "status": {
+     "type": "object",
+     "properties": {
+      "light": {
+       "type": "object"
+      },
+      "dark": {
+       "type": "object"
+      }
+     }
+    },
+    "stacks": {
+     "type": "object",
+     "properties": {
+      "editorial": {
+       "type": "string"
+      },
+      "humanist": {
+       "type": "string"
+      },
+      "geometric": {
+       "type": "string"
+      },
+      "grotesk": {
+       "type": "string"
+      },
+      "technical": {
+       "type": "string"
+      },
+      "rounded": {
+       "type": "string"
+      },
+      "transitional": {
+       "type": "string"
+      }
+     }
+    },
+    "personalities": {
+     "type": "object",
+     "properties": {
+      "signal": {
+       "type": "object"
+      },
+      "field-notes": {
+       "type": "object"
+      },
+      "ledger": {
+       "type": "object"
+      },
+      "workshop": {
+       "type": "object"
+      },
+      "garden": {
+       "type": "object"
+      },
+      "atlas": {
+       "type": "object"
+      },
+      "studio": {
+       "type": "object"
+      },
+      "harbor": {
+       "type": "object"
+      }
+     }
+    },
+    "selection": {
+     "type": "string"
+    },
+    "distinct_min_hue_deg": {
+     "type": "number"
+    }
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "contrast_pairs",
+  "density",
+  "invariants",
+  "layers",
+  "library",
+  "portfolios",
+  "product_may_not_vary",
+  "product_may_vary",
+  "products",
+  "research",
+  "surfaces_lint",
+  "tenants",
+  "token_contract",
+  "version"
+ ]
+}

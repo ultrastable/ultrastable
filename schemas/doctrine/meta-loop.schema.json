@@ -1,0 +1,132 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/meta-loop.schema.json",
+ "title": "doctrine/meta-loop.json",
+ "type": "object",
+ "properties": {
+  "id": {
+   "type": "string"
+  },
+  "version": {
+   "type": "string"
+  },
+  "owner_directive": {
+   "type": "string"
+  },
+  "rule": {
+   "type": "string"
+  },
+  "sources": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "consent": {
+   "type": "string"
+  },
+  "detectors": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "mic_events": {
+   "type": "object",
+   "properties": {
+    "doc": {
+     "type": "string"
+    },
+    "codes": {
+     "type": "object",
+     "properties": {
+      "not-allowed": {
+       "type": "object"
+      },
+      "service-not-allowed": {
+       "type": "object"
+      },
+      "no-speech": {
+       "type": "object"
+      },
+      "network": {
+       "type": "object"
+      },
+      "audio-capture": {
+       "type": "object"
+      },
+      "unsupported": {
+       "type": "object"
+      },
+      "busy": {
+       "type": "object"
+      },
+      "edited-after-dictation": {
+       "type": "object"
+      },
+      "abandoned": {
+       "type": "object"
+      }
+     }
+    },
+    "thresholds": {
+     "type": "object",
+     "properties": {
+      "file_issue_when_count_at_least": {
+       "type": "number"
+      },
+      "window_days": {
+       "type": "number"
+      }
+     }
+    }
+   }
+  },
+  "thresholds": {
+   "type": "object",
+   "properties": {
+    "file_issue_when_weight_at_least": {
+     "type": "number"
+    },
+    "dedupe_window_days": {
+     "type": "number"
+    }
+   }
+  },
+  "issue_prefix": {
+   "type": "string"
+  },
+  "sink": {
+   "type": "string"
+  },
+  "closing_probe": {
+   "type": "string"
+  },
+  "server_owner": {
+   "type": "string"
+  },
+  "ingest": {
+   "type": "string"
+  },
+  "sla_hours": {
+   "type": "number"
+  }
+ },
+ "required": [
+  "closing_probe",
+  "consent",
+  "detectors",
+  "id",
+  "ingest",
+  "issue_prefix",
+  "mic_events",
+  "owner_directive",
+  "rule",
+  "server_owner",
+  "sink",
+  "sla_hours",
+  "sources",
+  "thresholds",
+  "version"
+ ]
+}

@@ -1,0 +1,97 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/fleet.schema.json",
+ "title": "doctrine/fleet.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "org": {
+   "type": "string"
+  },
+  "repos": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "surfaces": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "merge": {
+   "type": "object",
+   "properties": {
+    "method": {
+     "type": "string"
+    },
+    "require": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "skip_labels": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "wait_minutes": {
+     "type": "number"
+    },
+    "reviews_required": {
+     "type": "number"
+    },
+    "ready_drafts": {
+     "type": "boolean"
+    },
+    "auto_close_on_probe": {
+     "type": "boolean"
+    },
+    "_doc": {
+     "type": "string"
+    }
+   }
+  },
+  "copies": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "dependencies": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "public_read": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "reach_error": {
+   "type": "string"
+  },
+  "_archived": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "_archived",
+  "_doc",
+  "copies",
+  "dependencies",
+  "merge",
+  "org",
+  "public_read",
+  "reach_error",
+  "repos",
+  "surfaces"
+ ]
+}

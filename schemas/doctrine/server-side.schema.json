@@ -1,0 +1,138 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/server-side.schema.json",
+ "title": "doctrine/server-side.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "id": {
+   "type": "string"
+  },
+  "version": {
+   "type": "string"
+  },
+  "marker": {
+   "type": "string"
+  },
+  "rule": {
+   "type": "string"
+  },
+  "required_in": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "required_pattern": {
+   "type": "string"
+  },
+  "platforms": {
+   "type": "object",
+   "properties": {
+    "cloudflare": {
+     "type": "object",
+     "properties": {
+      "what": {
+       "type": "string"
+      },
+      "adapters": {
+       "type": "array"
+      }
+     }
+    },
+    "github-actions": {
+     "type": "object",
+     "properties": {
+      "what": {
+       "type": "string"
+      },
+      "adapters": {
+       "type": "array"
+      }
+     }
+    },
+    "claude-cloud": {
+     "type": "object",
+     "properties": {
+      "what": {
+       "type": "string"
+      },
+      "adapters": {
+       "type": "array"
+      }
+     }
+    }
+   }
+  },
+  "registries": {
+   "type": "object",
+   "properties": {
+    "loops": {
+     "type": "string"
+    },
+    "routes": {
+     "type": "string"
+    },
+    "loop_registry": {
+     "type": "string"
+    },
+    "local_token": {
+     "type": "string"
+    }
+   }
+  },
+  "banned": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "excused_by": {
+   "type": "string"
+  },
+  "excused_note": {
+   "type": "string"
+  },
+  "scan": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "max_bytes": {
+   "type": "number"
+  },
+  "skip_dirs": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "exclude": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "banned",
+  "exclude",
+  "excused_by",
+  "excused_note",
+  "id",
+  "marker",
+  "max_bytes",
+  "platforms",
+  "registries",
+  "required_in",
+  "required_pattern",
+  "rule",
+  "scan",
+  "skip_dirs",
+  "version"
+ ]
+}

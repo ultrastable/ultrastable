@@ -1,0 +1,125 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/tenant-storage.schema.json",
+ "title": "doctrine/tenant-storage.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "version": {
+   "type": "string"
+  },
+  "price_as_of": {
+   "type": "string"
+  },
+  "decision": {
+   "type": "object",
+   "properties": {
+    "store": {
+     "type": "string"
+    },
+    "vectors": {
+     "type": "string"
+    },
+    "blobs": {
+     "type": "string"
+    },
+    "hot_reads": {
+     "type": "string"
+    },
+    "aggregates": {
+     "type": "string"
+    },
+    "control_plane": {
+     "type": "string"
+    },
+    "portable": {
+     "type": "string"
+    }
+   }
+  },
+  "monthly_ceiling_usd": {
+   "type": "number"
+  },
+  "plan_base_usd": {
+   "type": "number"
+  },
+  "default_budget": {
+   "type": "object",
+   "properties": {
+    "day": {
+     "type": "object",
+     "properties": {
+      "reads": {
+       "type": "number"
+      },
+      "writes": {
+       "type": "number"
+      },
+      "requests": {
+       "type": "number"
+      }
+     }
+    },
+    "month": {
+     "type": "object",
+     "properties": {
+      "reads": {
+       "type": "number"
+      },
+      "writes": {
+       "type": "number"
+      },
+      "requests": {
+       "type": "number"
+      }
+     }
+    },
+    "per_query_reads": {
+     "type": "number"
+    },
+    "max_storage_bytes": {
+     "type": "number"
+    },
+    "max_vectors": {
+     "type": "number"
+    }
+   }
+  },
+  "tenants": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "migration": {
+   "type": "object",
+   "properties": {
+    "target": {
+     "type": "string"
+    },
+    "evidence": {
+     "type": "string"
+    },
+    "steps": {
+     "type": "array",
+     "items": {
+      "type": "object"
+     }
+    }
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "decision",
+  "default_budget",
+  "migration",
+  "monthly_ceiling_usd",
+  "plan_base_usd",
+  "price_as_of",
+  "tenants",
+  "version"
+ ]
+}

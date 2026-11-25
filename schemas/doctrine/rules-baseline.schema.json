@@ -1,0 +1,44 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/rules-baseline.schema.json",
+ "title": "doctrine/rules-baseline.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "qnfo": {
+   "type": "object",
+   "properties": {
+    "site/controlplane.js": {
+     "type": "number"
+    },
+    "site/dashboard-data.js": {
+     "type": "number"
+    },
+    "site/pins.json": {
+     "type": "number"
+    },
+    "site/promote.js": {
+     "type": "number"
+    },
+    "site/roadmap-data.js": {
+     "type": "number"
+    },
+    "site/self-data.js": {
+     "type": "number"
+    },
+    "site/stakeholders.js": {
+     "type": "number"
+    },
+    "site/worker.js": {
+     "type": "number"
+    }
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "qnfo"
+ ]
+}

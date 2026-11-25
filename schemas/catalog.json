@@ -1,0 +1,1203 @@
+{
+ "$schema": "https://json.schemastore.org/schema-catalog.json",
+ "version": 1,
+ "schemas": [
+  {
+   "name": "doctrine/agent-budget.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/agent-budget.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/agent-budget.schema.json",
+   "path": "schemas/doctrine/agent-budget.schema.json"
+  },
+  {
+   "name": "doctrine/agent-standards.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/agent-standards.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/agent-standards.schema.json",
+   "path": "schemas/doctrine/agent-standards.schema.json"
+  },
+  {
+   "name": "doctrine/backup.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/backup.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/backup.schema.json",
+   "path": "schemas/doctrine/backup.schema.json"
+  },
+  {
+   "name": "doctrine/balance.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/balance.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/balance.schema.json",
+   "path": "schemas/doctrine/balance.schema.json"
+  },
+  {
+   "name": "doctrine/blindspots.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/blindspots.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/blindspots.schema.json",
+   "path": "schemas/doctrine/blindspots.schema.json"
+  },
+  {
+   "name": "doctrine/bootproof.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/bootproof.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/bootproof.schema.json",
+   "path": "schemas/doctrine/bootproof.schema.json"
+  },
+  {
+   "name": "doctrine/boundary.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/boundary.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/boundary.schema.json",
+   "path": "schemas/doctrine/boundary.schema.json"
+  },
+  {
+   "name": "doctrine/branchsweep.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/branchsweep.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/branchsweep.schema.json",
+   "path": "schemas/doctrine/branchsweep.schema.json"
+  },
+  {
+   "name": "doctrine/cf-posture.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/cf-posture.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/cf-posture.schema.json",
+   "path": "schemas/doctrine/cf-posture.schema.json"
+  },
+  {
+   "name": "doctrine/change-methods.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/change-methods.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/change-methods.schema.json",
+   "path": "schemas/doctrine/change-methods.schema.json"
+  },
+  {
+   "name": "doctrine/ciwatch.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/ciwatch.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/ciwatch.schema.json",
+   "path": "schemas/doctrine/ciwatch.schema.json"
+  },
+  {
+   "name": "doctrine/claim-code.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/claim-code.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/claim-code.schema.json",
+   "path": "schemas/doctrine/claim-code.schema.json"
+  },
+  {
+   "name": "doctrine/claims.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/claims.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/claims.schema.json",
+   "path": "schemas/doctrine/claims.schema.json"
+  },
+  {
+   "name": "doctrine/clocks.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/clocks.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/clocks.schema.json",
+   "path": "schemas/doctrine/clocks.schema.json"
+  },
+  {
+   "name": "doctrine/closed-loop.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/closed-loop.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/closed-loop.schema.json",
+   "path": "schemas/doctrine/closed-loop.schema.json"
+  },
+  {
+   "name": "doctrine/code-agents.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/code-agents.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/code-agents.schema.json",
+   "path": "schemas/doctrine/code-agents.schema.json"
+  },
+  {
+   "name": "doctrine/collisions.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/collisions.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/collisions.schema.json",
+   "path": "schemas/doctrine/collisions.schema.json"
+  },
+  {
+   "name": "doctrine/compat-dates.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/compat-dates.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/compat-dates.schema.json",
+   "path": "schemas/doctrine/compat-dates.schema.json"
+  },
+  {
+   "name": "doctrine/competitors.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/competitors.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/competitors.schema.json",
+   "path": "schemas/doctrine/competitors.schema.json"
+  },
+  {
+   "name": "doctrine/components.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/components.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/components.schema.json",
+   "path": "schemas/doctrine/components.schema.json"
+  },
+  {
+   "name": "doctrine/consumers.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/consumers.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/consumers.schema.json",
+   "path": "schemas/doctrine/consumers.schema.json"
+  },
+  {
+   "name": "doctrine/cost.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/cost.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/cost.schema.json",
+   "path": "schemas/doctrine/cost.schema.json"
+  },
+  {
+   "name": "doctrine/credwatch.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/credwatch.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/credwatch.schema.json",
+   "path": "schemas/doctrine/credwatch.schema.json"
+  },
+  {
+   "name": "doctrine/criticality.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/criticality.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/criticality.schema.json",
+   "path": "schemas/doctrine/criticality.schema.json"
+  },
+  {
+   "name": "doctrine/crosswalk.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/crosswalk.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/crosswalk.schema.json",
+   "path": "schemas/doctrine/crosswalk.schema.json"
+  },
+  {
+   "name": "doctrine/decision-ledger.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/decision-ledger.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/decision-ledger.schema.json",
+   "path": "schemas/doctrine/decision-ledger.schema.json"
+  },
+  {
+   "name": "doctrine/decisions.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/decisions.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/decisions.schema.json",
+   "path": "schemas/doctrine/decisions.schema.json"
+  },
+  {
+   "name": "doctrine/dependency-licences.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/dependency-licences.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/dependency-licences.schema.json",
+   "path": "schemas/doctrine/dependency-licences.schema.json"
+  },
+  {
+   "name": "doctrine/deprot.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/deprot.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/deprot.schema.json",
+   "path": "schemas/doctrine/deprot.schema.json"
+  },
+  {
+   "name": "doctrine/design-baseline.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/design-baseline.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/design-baseline.schema.json",
+   "path": "schemas/doctrine/design-baseline.schema.json"
+  },
+  {
+   "name": "doctrine/design-experiments.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/design-experiments.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/design-experiments.schema.json",
+   "path": "schemas/doctrine/design-experiments.schema.json"
+  },
+  {
+   "name": "doctrine/design.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/design.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/design.schema.json",
+   "path": "schemas/doctrine/design.schema.json"
+  },
+  {
+   "name": "doctrine/detectors.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/detectors.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/detectors.schema.json",
+   "path": "schemas/doctrine/detectors.schema.json"
+  },
+  {
+   "name": "doctrine/directive.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/directive.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/directive.schema.json",
+   "path": "schemas/doctrine/directive.schema.json"
+  },
+  {
+   "name": "doctrine/dispose.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/dispose.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/dispose.schema.json",
+   "path": "schemas/doctrine/dispose.schema.json"
+  },
+  {
+   "name": "doctrine/doc-consumers.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/doc-consumers.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/doc-consumers.schema.json",
+   "path": "schemas/doctrine/doc-consumers.schema.json"
+  },
+  {
+   "name": "doctrine/driftguard.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/driftguard.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/driftguard.schema.json",
+   "path": "schemas/doctrine/driftguard.schema.json"
+  },
+  {
+   "name": "doctrine/durable-facts.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/durable-facts.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/durable-facts.schema.json",
+   "path": "schemas/doctrine/durable-facts.schema.json"
+  },
+  {
+   "name": "doctrine/fleet.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/fleet.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/fleet.schema.json",
+   "path": "schemas/doctrine/fleet.schema.json"
+  },
+  {
+   "name": "doctrine/flows-external.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/flows-external.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/flows-external.schema.json",
+   "path": "schemas/doctrine/flows-external.schema.json"
+  },
+  {
+   "name": "doctrine/flows.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/flows.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/flows.schema.json",
+   "path": "schemas/doctrine/flows.schema.json"
+  },
+  {
+   "name": "doctrine/full-stack.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/full-stack.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/full-stack.schema.json",
+   "path": "schemas/doctrine/full-stack.schema.json"
+  },
+  {
+   "name": "doctrine/glossary.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/glossary.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/glossary.schema.json",
+   "path": "schemas/doctrine/glossary.schema.json"
+  },
+  {
+   "name": "doctrine/goals-baseline.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/goals-baseline.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/goals-baseline.schema.json",
+   "path": "schemas/doctrine/goals-baseline.schema.json"
+  },
+  {
+   "name": "doctrine/growth.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/growth.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/growth.schema.json",
+   "path": "schemas/doctrine/growth.schema.json"
+  },
+  {
+   "name": "doctrine/idea-bank.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/idea-bank.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/idea-bank.schema.json",
+   "path": "schemas/doctrine/idea-bank.schema.json"
+  },
+  {
+   "name": "doctrine/improve.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/improve.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/improve.schema.json",
+   "path": "schemas/doctrine/improve.schema.json"
+  },
+  {
+   "name": "doctrine/insight.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/insight.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/insight.schema.json",
+   "path": "schemas/doctrine/insight.schema.json"
+  },
+  {
+   "name": "doctrine/intent-yield.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/intent-yield.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/intent-yield.schema.json",
+   "path": "schemas/doctrine/intent-yield.schema.json"
+  },
+  {
+   "name": "doctrine/kernel.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/kernel.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/kernel.schema.json",
+   "path": "schemas/doctrine/kernel.schema.json"
+  },
+  {
+   "name": "doctrine/knobs.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/knobs.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/knobs.schema.json",
+   "path": "schemas/doctrine/knobs.schema.json"
+  },
+  {
+   "name": "doctrine/knowledge-graph.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/knowledge-graph.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/knowledge-graph.schema.json",
+   "path": "schemas/doctrine/knowledge-graph.schema.json"
+  },
+  {
+   "name": "doctrine/lessons.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/lessons.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/lessons.schema.json",
+   "path": "schemas/doctrine/lessons.schema.json"
+  },
+  {
+   "name": "doctrine/lineage.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/lineage.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/lineage.schema.json",
+   "path": "schemas/doctrine/lineage.schema.json"
+  },
+  {
+   "name": "doctrine/loop-ownership.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/loop-ownership.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/loop-ownership.schema.json",
+   "path": "schemas/doctrine/loop-ownership.schema.json"
+  },
+  {
+   "name": "doctrine/market-evidence.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/market-evidence.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/market-evidence.schema.json",
+   "path": "schemas/doctrine/market-evidence.schema.json"
+  },
+  {
+   "name": "doctrine/market.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/market.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/market.schema.json",
+   "path": "schemas/doctrine/market.schema.json"
+  },
+  {
+   "name": "doctrine/meta-loop.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/meta-loop.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/meta-loop.schema.json",
+   "path": "schemas/doctrine/meta-loop.schema.json"
+  },
+  {
+   "name": "doctrine/metric-loop.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/metric-loop.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/metric-loop.schema.json",
+   "path": "schemas/doctrine/metric-loop.schema.json"
+  },
+  {
+   "name": "doctrine/models.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/models.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/models.schema.json",
+   "path": "schemas/doctrine/models.schema.json"
+  },
+  {
+   "name": "doctrine/no-swallow.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/no-swallow.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/no-swallow.schema.json",
+   "path": "schemas/doctrine/no-swallow.schema.json"
+  },
+  {
+   "name": "doctrine/open-loops.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/open-loops.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/open-loops.schema.json",
+   "path": "schemas/doctrine/open-loops.schema.json"
+  },
+  {
+   "name": "doctrine/orphans-baseline.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/orphans-baseline.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/orphans-baseline.schema.json",
+   "path": "schemas/doctrine/orphans-baseline.schema.json"
+  },
+  {
+   "name": "doctrine/orphans.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/orphans.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/orphans.schema.json",
+   "path": "schemas/doctrine/orphans.schema.json"
+  },
+  {
+   "name": "doctrine/pathfinder.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/pathfinder.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/pathfinder.schema.json",
+   "path": "schemas/doctrine/pathfinder.schema.json"
+  },
+  {
+   "name": "doctrine/pilot-model.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/pilot-model.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/pilot-model.schema.json",
+   "path": "schemas/doctrine/pilot-model.schema.json"
+  },
+  {
+   "name": "doctrine/pilot-offer.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/pilot-offer.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/pilot-offer.schema.json",
+   "path": "schemas/doctrine/pilot-offer.schema.json"
+  },
+  {
+   "name": "doctrine/pins-baseline.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/pins-baseline.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/pins-baseline.schema.json",
+   "path": "schemas/doctrine/pins-baseline.schema.json"
+  },
+  {
+   "name": "doctrine/point-and-click.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/point-and-click.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/point-and-click.schema.json",
+   "path": "schemas/doctrine/point-and-click.schema.json"
+  },
+  {
+   "name": "doctrine/positioning.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/positioning.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/positioning.schema.json",
+   "path": "schemas/doctrine/positioning.schema.json"
+  },
+  {
+   "name": "doctrine/priorities.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/priorities.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/priorities.schema.json",
+   "path": "schemas/doctrine/priorities.schema.json"
+  },
+  {
+   "name": "doctrine/promotion.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/promotion.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/promotion.schema.json",
+   "path": "schemas/doctrine/promotion.schema.json"
+  },
+  {
+   "name": "doctrine/provenance.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/provenance.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/provenance.schema.json",
+   "path": "schemas/doctrine/provenance.schema.json"
+  },
+  {
+   "name": "doctrine/providers.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/providers.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/providers.schema.json",
+   "path": "schemas/doctrine/providers.schema.json"
+  },
+  {
+   "name": "doctrine/publication.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/publication.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/publication.schema.json",
+   "path": "schemas/doctrine/publication.schema.json"
+  },
+  {
+   "name": "doctrine/qnfo-fleet.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/qnfo-fleet.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/qnfo-fleet.schema.json",
+   "path": "schemas/doctrine/qnfo-fleet.schema.json"
+  },
+  {
+   "name": "doctrine/qnfo-port.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/qnfo-port.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/qnfo-port.schema.json",
+   "path": "schemas/doctrine/qnfo-port.schema.json"
+  },
+  {
+   "name": "doctrine/reach.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/reach.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/reach.schema.json",
+   "path": "schemas/doctrine/reach.schema.json"
+  },
+  {
+   "name": "doctrine/readmes.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/readmes.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/readmes.schema.json",
+   "path": "schemas/doctrine/readmes.schema.json"
+  },
+  {
+   "name": "doctrine/redmain.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/redmain.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/redmain.schema.json",
+   "path": "schemas/doctrine/redmain.schema.json"
+  },
+  {
+   "name": "doctrine/registers.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/registers.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/registers.schema.json",
+   "path": "schemas/doctrine/registers.schema.json"
+  },
+  {
+   "name": "doctrine/research.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/research.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/research.schema.json",
+   "path": "schemas/doctrine/research.schema.json"
+  },
+  {
+   "name": "doctrine/resilience.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/resilience.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/resilience.schema.json",
+   "path": "schemas/doctrine/resilience.schema.json"
+  },
+  {
+   "name": "doctrine/rootcauses.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/rootcauses.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/rootcauses.schema.json",
+   "path": "schemas/doctrine/rootcauses.schema.json"
+  },
+  {
+   "name": "doctrine/rules-baseline.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/rules-baseline.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/rules-baseline.schema.json",
+   "path": "schemas/doctrine/rules-baseline.schema.json"
+  },
+  {
+   "name": "doctrine/rules.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/rules.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/rules.schema.json",
+   "path": "schemas/doctrine/rules.schema.json"
+  },
+  {
+   "name": "doctrine/runway.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/runway.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/runway.schema.json",
+   "path": "schemas/doctrine/runway.schema.json"
+  },
+  {
+   "name": "doctrine/scout.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/scout.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/scout.schema.json",
+   "path": "schemas/doctrine/scout.schema.json"
+  },
+  {
+   "name": "doctrine/seed-deploys.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/seed-deploys.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/seed-deploys.schema.json",
+   "path": "schemas/doctrine/seed-deploys.schema.json"
+  },
+  {
+   "name": "doctrine/seed-lifecycle.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/seed-lifecycle.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/seed-lifecycle.schema.json",
+   "path": "schemas/doctrine/seed-lifecycle.schema.json"
+  },
+  {
+   "name": "doctrine/self-baseline.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/self-baseline.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/self-baseline.schema.json",
+   "path": "schemas/doctrine/self-baseline.schema.json"
+  },
+  {
+   "name": "doctrine/self-improvement.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/self-improvement.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/self-improvement.schema.json",
+   "path": "schemas/doctrine/self-improvement.schema.json"
+  },
+  {
+   "name": "doctrine/selfcode.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/selfcode.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/selfcode.schema.json",
+   "path": "schemas/doctrine/selfcode.schema.json"
+  },
+  {
+   "name": "doctrine/selftest.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/selftest.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/selftest.schema.json",
+   "path": "schemas/doctrine/selftest.schema.json"
+  },
+  {
+   "name": "doctrine/server-side.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/server-side.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/server-side.schema.json",
+   "path": "schemas/doctrine/server-side.schema.json"
+  },
+  {
+   "name": "doctrine/sessions.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/sessions.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/sessions.schema.json",
+   "path": "schemas/doctrine/sessions.schema.json"
+  },
+  {
+   "name": "doctrine/silent-failures.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/silent-failures.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/silent-failures.schema.json",
+   "path": "schemas/doctrine/silent-failures.schema.json"
+  },
+  {
+   "name": "doctrine/single-account.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/single-account.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/single-account.schema.json",
+   "path": "schemas/doctrine/single-account.schema.json"
+  },
+  {
+   "name": "doctrine/sla.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/sla.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/sla.schema.json",
+   "path": "schemas/doctrine/sla.schema.json"
+  },
+  {
+   "name": "doctrine/spec-ids.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/spec-ids.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/spec-ids.schema.json",
+   "path": "schemas/doctrine/spec-ids.schema.json"
+  },
+  {
+   "name": "doctrine/specgate.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/specgate.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/specgate.schema.json",
+   "path": "schemas/doctrine/specgate.schema.json"
+  },
+  {
+   "name": "doctrine/spinoff-ideas.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/spinoff-ideas.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/spinoff-ideas.schema.json",
+   "path": "schemas/doctrine/spinoff-ideas.schema.json"
+  },
+  {
+   "name": "doctrine/spinoff.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/spinoff.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/spinoff.schema.json",
+   "path": "schemas/doctrine/spinoff.schema.json"
+  },
+  {
+   "name": "doctrine/stakeholders.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/stakeholders.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/stakeholders.schema.json",
+   "path": "schemas/doctrine/stakeholders.schema.json"
+  },
+  {
+   "name": "doctrine/standing-order-baseline.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/standing-order-baseline.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/standing-order-baseline.schema.json",
+   "path": "schemas/doctrine/standing-order-baseline.schema.json"
+  },
+  {
+   "name": "doctrine/standing-order.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/standing-order.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/standing-order.schema.json",
+   "path": "schemas/doctrine/standing-order.schema.json"
+  },
+  {
+   "name": "doctrine/static-content.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/static-content.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/static-content.schema.json",
+   "path": "schemas/doctrine/static-content.schema.json"
+  },
+  {
+   "name": "doctrine/strays.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/strays.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/strays.schema.json",
+   "path": "schemas/doctrine/strays.schema.json"
+  },
+  {
+   "name": "doctrine/substance-vectors.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/substance-vectors.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/substance-vectors.schema.json",
+   "path": "schemas/doctrine/substance-vectors.schema.json"
+  },
+  {
+   "name": "doctrine/substance.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/substance.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/substance.schema.json",
+   "path": "schemas/doctrine/substance.schema.json"
+  },
+  {
+   "name": "doctrine/supply-chain.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/supply-chain.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/supply-chain.schema.json",
+   "path": "schemas/doctrine/supply-chain.schema.json"
+  },
+  {
+   "name": "doctrine/system.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/system.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/system.schema.json",
+   "path": "schemas/doctrine/system.schema.json"
+  },
+  {
+   "name": "doctrine/team.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/team.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/team.schema.json",
+   "path": "schemas/doctrine/team.schema.json"
+  },
+  {
+   "name": "doctrine/template-boundary.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/template-boundary.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/template-boundary.schema.json",
+   "path": "schemas/doctrine/template-boundary.schema.json"
+  },
+  {
+   "name": "doctrine/temporal.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/temporal.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/temporal.schema.json",
+   "path": "schemas/doctrine/temporal.schema.json"
+  },
+  {
+   "name": "doctrine/tenant-controls.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/tenant-controls.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/tenant-controls.schema.json",
+   "path": "schemas/doctrine/tenant-controls.schema.json"
+  },
+  {
+   "name": "doctrine/tenant-promotion.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/tenant-promotion.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/tenant-promotion.schema.json",
+   "path": "schemas/doctrine/tenant-promotion.schema.json"
+  },
+  {
+   "name": "doctrine/tenant-repos.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/tenant-repos.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/tenant-repos.schema.json",
+   "path": "schemas/doctrine/tenant-repos.schema.json"
+  },
+  {
+   "name": "doctrine/tenant-storage.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/tenant-storage.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/tenant-storage.schema.json",
+   "path": "schemas/doctrine/tenant-storage.schema.json"
+  },
+  {
+   "name": "doctrine/tenant-sync.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/tenant-sync.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/tenant-sync.schema.json",
+   "path": "schemas/doctrine/tenant-sync.schema.json"
+  },
+  {
+   "name": "doctrine/thought.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/thought.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/thought.schema.json",
+   "path": "schemas/doctrine/thought.schema.json"
+  },
+  {
+   "name": "doctrine/thread-residuals.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/thread-residuals.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/thread-residuals.schema.json",
+   "path": "schemas/doctrine/thread-residuals.schema.json"
+  },
+  {
+   "name": "doctrine/topology.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/topology.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/topology.schema.json",
+   "path": "schemas/doctrine/topology.schema.json"
+  },
+  {
+   "name": "doctrine/triggers.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/triggers.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/triggers.schema.json",
+   "path": "schemas/doctrine/triggers.schema.json"
+  },
+  {
+   "name": "doctrine/uiux.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/uiux.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/uiux.schema.json",
+   "path": "schemas/doctrine/uiux.schema.json"
+  },
+  {
+   "name": "doctrine/ultrastability.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/ultrastability.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/ultrastability.schema.json",
+   "path": "schemas/doctrine/ultrastability.schema.json"
+  },
+  {
+   "name": "doctrine/unattended.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/unattended.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/unattended.schema.json",
+   "path": "schemas/doctrine/unattended.schema.json"
+  },
+  {
+   "name": "doctrine/unknowns.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/unknowns.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/unknowns.schema.json",
+   "path": "schemas/doctrine/unknowns.schema.json"
+  },
+  {
+   "name": "doctrine/user-backend.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/user-backend.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/user-backend.schema.json",
+   "path": "schemas/doctrine/user-backend.schema.json"
+  },
+  {
+   "name": "doctrine/user-path.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/user-path.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/user-path.schema.json",
+   "path": "schemas/doctrine/user-path.schema.json"
+  },
+  {
+   "name": "doctrine/verification.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/verification.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/verification.schema.json",
+   "path": "schemas/doctrine/verification.schema.json"
+  },
+  {
+   "name": "doctrine/yearfail.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/yearfail.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/yearfail.schema.json",
+   "path": "schemas/doctrine/yearfail.schema.json"
+  },
+  {
+   "name": "doctrine/yearsim.json",
+   "description": "Ultrastable doctrine file",
+   "fileMatch": [
+    "doctrine/yearsim.json"
+   ],
+   "url": "https://ultrastable.io/schemas/doctrine/yearsim.schema.json",
+   "path": "schemas/doctrine/yearsim.schema.json"
+  }
+ ]
+}

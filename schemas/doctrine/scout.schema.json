@@ -1,0 +1,64 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/scout.schema.json",
+ "title": "doctrine/scout.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "threshold": {
+   "type": "number"
+  },
+  "max_per_run": {
+   "type": "number"
+  },
+  "window_days": {
+   "type": "number"
+  },
+  "weight": {
+   "type": "object",
+   "properties": {
+    "initial": {
+     "type": "number"
+    },
+    "floor": {
+     "type": "number"
+    },
+    "ceiling": {
+     "type": "number"
+    },
+    "decay": {
+     "type": "number"
+    },
+    "boost": {
+     "type": "number"
+    },
+    "quiet_passes": {
+     "type": "number"
+    }
+   }
+  },
+  "needs": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "sources": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "max_per_run",
+  "needs",
+  "sources",
+  "threshold",
+  "weight",
+  "window_days"
+ ]
+}

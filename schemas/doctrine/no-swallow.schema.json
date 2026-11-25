@@ -1,0 +1,62 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/no-swallow.schema.json",
+ "title": "doctrine/no-swallow.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "python_globs": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "shell_globs": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "exclude": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "baseline": {
+   "type": "object",
+   "properties": {
+    ".github/workflows/fleet.yml": {
+     "type": "number"
+    },
+    "scripts/apply_github_settings.sh": {
+     "type": "number"
+    },
+    "scripts/completion_sweep.sh": {
+     "type": "number"
+    },
+    "scripts/executor_evidence.sh": {
+     "type": "number"
+    },
+    "scripts/lane.sh": {
+     "type": "number"
+    },
+    "scripts/lib-safe.sh": {
+     "type": "number"
+    },
+    "scripts/mirror_then_delete.sh": {
+     "type": "number"
+    }
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "baseline",
+  "exclude",
+  "python_globs",
+  "shell_globs"
+ ]
+}

@@ -1,0 +1,36 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/agent-standards.schema.json",
+ "title": "doctrine/agent-standards.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "marker": {
+   "type": "string"
+  },
+  "marker_text": {
+   "type": "string"
+  },
+  "instruction_files": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "standards": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "instruction_files",
+  "marker",
+  "marker_text",
+  "standards"
+ ]
+}

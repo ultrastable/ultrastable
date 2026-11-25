@@ -1,0 +1,119 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/template-boundary.schema.json",
+ "title": "doctrine/template-boundary.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "rule": {
+   "type": "string"
+  },
+  "quote": {
+   "type": "string"
+  },
+  "admin_repo": {
+   "type": "string"
+  },
+  "moved": {
+   "type": "object",
+   "properties": {
+    "ip/": {
+     "type": "string"
+    },
+    "business/": {
+     "type": "string"
+    },
+    "docs/ip/": {
+     "type": "string"
+    },
+    "docs/legal/": {
+     "type": "string"
+    },
+    "docs/strategy/": {
+     "type": "string"
+    }
+   }
+  },
+  "instance_data": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "instances/ultrastable/funding/": {
+     "type": "string"
+    },
+    "instances/ultrastable/briefing/": {
+     "type": "string"
+    },
+    "instances/ultrastable/name-clearance.json": {
+     "type": "string"
+    }
+   }
+  },
+  "banned_names": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "skip_dirs": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "seed_generic": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "files": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "banned_tokens": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "agent_files": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "same_bytes": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "seed/LICENSE": {
+     "type": "string"
+    }
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "admin_repo",
+  "agent_files",
+  "banned_names",
+  "instance_data",
+  "moved",
+  "quote",
+  "rule",
+  "same_bytes",
+  "seed_generic",
+  "skip_dirs"
+ ]
+}

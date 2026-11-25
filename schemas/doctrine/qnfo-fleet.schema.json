@@ -1,0 +1,25 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/qnfo-fleet.schema.json",
+ "title": "doctrine/qnfo-fleet.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "read_at": {
+   "type": "string"
+  },
+  "rows": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "read_at",
+  "rows"
+ ]
+}

@@ -1,0 +1,135 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/pilot-model.schema.json",
+ "title": "doctrine/pilot-model.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "decision": {
+   "type": "string"
+  },
+  "decided": {
+   "type": "string"
+  },
+  "why": {
+   "type": "string"
+  },
+  "revert": {
+   "type": "string"
+  },
+  "options": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "pilot_proof_points": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "hypotheses": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "program": {
+   "type": "object",
+   "properties": {
+    "title": {
+     "type": "string"
+    },
+    "pitch": {
+     "type": "string"
+    },
+    "selection": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "you_get": {
+     "type": "string"
+    },
+    "we_get": {
+     "type": "string"
+    },
+    "apply_fields": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "price": {
+     "type": "string"
+    },
+    "intake_probe": {
+     "type": "string"
+    }
+   }
+  },
+  "layers": {
+   "type": "object",
+   "properties": {
+    "title": {
+     "type": "string"
+    },
+    "rule": {
+     "type": "string"
+    },
+    "levels": {
+     "type": "array",
+     "items": {
+      "type": "object"
+     }
+    },
+    "roll_up": {
+     "type": "string"
+    },
+    "enforced_by": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "tenancy": {
+     "type": "string"
+    }
+   }
+  },
+  "multi_tenant_obligations": {
+   "type": "object",
+   "properties": {
+    "status": {
+     "type": "string"
+    },
+    "before_offering": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "closing_probe": {
+     "type": "string"
+    }
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "decided",
+  "decision",
+  "hypotheses",
+  "layers",
+  "multi_tenant_obligations",
+  "options",
+  "pilot_proof_points",
+  "program",
+  "revert",
+  "why"
+ ]
+}

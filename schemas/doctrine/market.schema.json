@@ -1,0 +1,162 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/market.schema.json",
+ "title": "doctrine/market.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "checked": {
+   "type": "string"
+  },
+  "visibility": {
+   "type": "string"
+  },
+  "sources": {
+   "type": "object",
+   "properties": {
+    "appbuilders": {
+     "type": "object",
+     "properties": {
+      "url": {
+       "type": "string"
+      },
+      "what": {
+       "type": "string"
+      }
+     }
+    },
+    "copilot": {
+     "type": "object",
+     "properties": {
+      "url": {
+       "type": "string"
+      },
+      "what": {
+       "type": "string"
+      }
+     }
+    },
+    "routines": {
+     "type": "object",
+     "properties": {
+      "url": {
+       "type": "string"
+      },
+      "what": {
+       "type": "string"
+      }
+     }
+    },
+    "vibesdk": {
+     "type": "object",
+     "properties": {
+      "url": {
+       "type": "string"
+      },
+      "what": {
+       "type": "string"
+      }
+     }
+    },
+    "factory": {
+     "type": "object",
+     "properties": {
+      "url": {
+       "type": "string"
+      },
+      "what": {
+       "type": "string"
+      }
+     }
+    },
+    "zapier": {
+     "type": "object",
+     "properties": {
+      "url": {
+       "type": "string"
+      },
+      "what": {
+       "type": "string"
+      }
+     }
+    },
+    "githubagents": {
+     "type": "object",
+     "properties": {
+      "url": {
+       "type": "string"
+      },
+      "what": {
+       "type": "string"
+      }
+     }
+    }
+   }
+  },
+  "components": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "features": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "gaps": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "users": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "objections": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "capability-set": {
+   "type": "string"
+  },
+  "capabilities": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "components_built_next": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "rationale": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "_doc",
+  "capabilities",
+  "capability-set",
+  "checked",
+  "components",
+  "components_built_next",
+  "features",
+  "gaps",
+  "objections",
+  "rationale",
+  "sources",
+  "users",
+  "visibility"
+ ]
+}

@@ -1,0 +1,42 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/lineage.schema.json",
+ "title": "doctrine/lineage.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "nodes": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "edges": {
+   "type": "array",
+   "items": {
+    "type": "array"
+   }
+  },
+  "channels": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "drafts": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "channels",
+  "drafts",
+  "edges",
+  "nodes"
+ ]
+}

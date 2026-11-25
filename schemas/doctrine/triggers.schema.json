@@ -1,0 +1,644 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/triggers.schema.json",
+ "title": "doctrine/triggers.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "heartbeat": {
+   "type": "object",
+   "properties": {
+    "cron": {
+     "type": "string"
+    },
+    "why": {
+     "type": "string"
+    }
+   }
+  },
+  "host_limits": {
+   "type": "object",
+   "properties": {
+    "min_interval_minutes": {
+     "type": "number"
+    },
+    "max_crons_per_worker": {
+     "type": "number"
+    },
+    "max_ticks_per_day": {
+     "type": "number"
+    },
+    "max_role_period_minutes": {
+     "type": "number"
+    }
+   }
+  },
+  "workflow_max_fires_per_day": {
+   "type": "number"
+  },
+  "events": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "workflows": {
+   "type": "object",
+   "properties": {
+    "a11y.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "actions-budget.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "backup-drill.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "branchsweep.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "cf-account.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "checks.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "ciwatch.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "claims.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "cost-guard.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "demo-video.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "deploy-gateway.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "deploy-site.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "deploy-system.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "deploy-ultrastable.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "deploy-workers.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "executor.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "failure-audit.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "findable.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "first-run.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "fleet.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "funding-maintenance.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "host-sync.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "index.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "intent-yield.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "issueloop.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "issues.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "lane.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "ledger-openalex.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "loop.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "mcp-registry.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "org-manage.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "org-profile-probe.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "org-settings.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "outreach.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "owner-links-audit.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "platform-core.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "product-manager.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "regen-generated.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "retriage.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "scout.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "seed-launch.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "sessions.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "smoke-live.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "social-post.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "spinoff.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "temporal.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "tenant-repos.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "tenant-sync.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "transparency.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "uiux.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "upstream.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "watchdog.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    },
+    "workers-tests.yml": {
+     "type": "object",
+     "properties": {
+      "events": {
+       "type": "array"
+      },
+      "crons": {
+       "type": "array"
+      }
+     }
+    }
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "events",
+  "heartbeat",
+  "host_limits",
+  "workflow_max_fires_per_day",
+  "workflows"
+ ]
+}

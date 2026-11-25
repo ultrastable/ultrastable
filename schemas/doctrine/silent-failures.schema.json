@@ -1,0 +1,103 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/silent-failures.schema.json",
+ "title": "doctrine/silent-failures.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "bundle": {
+   "type": "object",
+   "properties": {
+    "groups": {
+     "type": "array",
+     "items": {
+      "type": "object"
+     }
+    },
+    "exclude_suffix": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "exclude_contains": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "generated": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "overlap": {
+   "type": "object",
+   "properties": {
+    "module_globs": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "jaccard": {
+     "type": "number"
+    },
+    "clusters": {
+     "type": "array",
+     "items": {
+      "type": "array"
+     }
+    },
+    "distinct": {
+     "type": "array",
+     "items": {
+      "type": "array"
+     }
+    }
+   }
+  },
+  "cite_hosts": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "live": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "ledgers": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "unclassified_ok": {
+   "type": "array"
+  },
+  "classes": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "bundle",
+  "cite_hosts",
+  "classes",
+  "ledgers",
+  "live",
+  "overlap",
+  "unclassified_ok"
+ ]
+}

@@ -1,0 +1,290 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/change-methods.schema.json",
+ "title": "doctrine/change-methods.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "id": {
+   "type": "string"
+  },
+  "min_per_idea": {
+   "type": "number"
+  },
+  "stages": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "methods": {
+   "type": "object",
+   "properties": {
+    "guess-first": {
+     "type": "object",
+     "properties": {
+      "stage": {
+       "type": "string"
+      },
+      "move": {
+       "type": "string"
+      },
+      "source": {
+       "type": "string"
+      },
+      "strength": {
+       "type": "string"
+      }
+     }
+    },
+    "why-it-feels-true": {
+     "type": "object",
+     "properties": {
+      "stage": {
+       "type": "string"
+      },
+      "move": {
+       "type": "string"
+      },
+      "source": {
+       "type": "string"
+      },
+      "strength": {
+       "type": "string"
+      }
+     }
+    },
+    "fact-myth-fallacy": {
+     "type": "object",
+     "properties": {
+      "stage": {
+       "type": "string"
+      },
+      "move": {
+       "type": "string"
+      },
+      "source": {
+       "type": "string"
+      },
+      "strength": {
+       "type": "string"
+      }
+     }
+    },
+    "self-affirmation": {
+     "type": "object",
+     "properties": {
+      "stage": {
+       "type": "string"
+      },
+      "move": {
+       "type": "string"
+      },
+      "source": {
+       "type": "string"
+      },
+      "strength": {
+       "type": "string"
+      }
+     }
+    },
+    "consider-the-opposite": {
+     "type": "object",
+     "properties": {
+      "stage": {
+       "type": "string"
+      },
+      "move": {
+       "type": "string"
+      },
+      "source": {
+       "type": "string"
+      },
+      "strength": {
+       "type": "string"
+      }
+     }
+    },
+    "outside-view": {
+     "type": "object",
+     "properties": {
+      "stage": {
+       "type": "string"
+      },
+      "move": {
+       "type": "string"
+      },
+      "source": {
+       "type": "string"
+      },
+      "strength": {
+       "type": "string"
+      }
+     }
+    },
+    "prebunking": {
+     "type": "object",
+     "properties": {
+      "stage": {
+       "type": "string"
+      },
+      "move": {
+       "type": "string"
+      },
+      "source": {
+       "type": "string"
+      },
+      "strength": {
+       "type": "string"
+      }
+     }
+    },
+    "graded-uncertainty": {
+     "type": "object",
+     "properties": {
+      "stage": {
+       "type": "string"
+      },
+      "move": {
+       "type": "string"
+      },
+      "source": {
+       "type": "string"
+      },
+      "strength": {
+       "type": "string"
+      }
+     }
+    },
+    "implementation-intention": {
+     "type": "object",
+     "properties": {
+      "stage": {
+       "type": "string"
+      },
+      "move": {
+       "type": "string"
+      },
+      "source": {
+       "type": "string"
+      },
+      "strength": {
+       "type": "string"
+      }
+     }
+    },
+    "easy-attractive-social-timely": {
+     "type": "object",
+     "properties": {
+      "stage": {
+       "type": "string"
+      },
+      "move": {
+       "type": "string"
+      },
+      "source": {
+       "type": "string"
+      },
+      "strength": {
+       "type": "string"
+      }
+     }
+    },
+    "com-b": {
+     "type": "object",
+     "properties": {
+      "stage": {
+       "type": "string"
+      },
+      "move": {
+       "type": "string"
+      },
+      "source": {
+       "type": "string"
+      },
+      "strength": {
+       "type": "string"
+      }
+     }
+    },
+    "social-norms": {
+     "type": "object",
+     "properties": {
+      "stage": {
+       "type": "string"
+      },
+      "move": {
+       "type": "string"
+      },
+      "source": {
+       "type": "string"
+      },
+      "strength": {
+       "type": "string"
+      }
+     }
+    },
+    "spaced-follow-up": {
+     "type": "object",
+     "properties": {
+      "stage": {
+       "type": "string"
+      },
+      "move": {
+       "type": "string"
+      },
+      "source": {
+       "type": "string"
+      },
+      "strength": {
+       "type": "string"
+      }
+     }
+    },
+    "calibration-feedback": {
+     "type": "object",
+     "properties": {
+      "stage": {
+       "type": "string"
+      },
+      "move": {
+       "type": "string"
+      },
+      "source": {
+       "type": "string"
+      },
+      "strength": {
+       "type": "string"
+      }
+     }
+    },
+    "change-management": {
+     "type": "object",
+     "properties": {
+      "stage": {
+       "type": "string"
+      },
+      "move": {
+       "type": "string"
+      },
+      "source": {
+       "type": "string"
+      },
+      "strength": {
+       "type": "string"
+      }
+     }
+    }
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "id",
+  "methods",
+  "min_per_idea",
+  "stages"
+ ]
+}

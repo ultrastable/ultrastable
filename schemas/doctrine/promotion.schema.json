@@ -1,0 +1,40 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/promotion.schema.json",
+ "title": "doctrine/promotion.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "weights_file": {
+   "type": "string"
+  },
+  "outcomes_file": {
+   "type": "string"
+  },
+  "plan_file": {
+   "type": "string"
+  },
+  "gates_allowed": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "channels": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "channels",
+  "gates_allowed",
+  "outcomes_file",
+  "plan_file",
+  "weights_file"
+ ]
+}

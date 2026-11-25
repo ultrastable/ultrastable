@@ -1,0 +1,65 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/cf-posture.schema.json",
+ "title": "doctrine/cf-posture.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "account_id": {
+   "type": "string"
+  },
+  "horizon_days": {
+   "type": "number"
+  },
+  "upload_paths": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "preview_prefixes": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "preview_idle_days": {
+   "type": "number"
+  },
+  "required_alerts": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "rules": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "scan_exclude": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "gateway": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "_doc",
+  "account_id",
+  "gateway",
+  "horizon_days",
+  "preview_idle_days",
+  "preview_prefixes",
+  "required_alerts",
+  "rules",
+  "scan_exclude",
+  "upload_paths"
+ ]
+}

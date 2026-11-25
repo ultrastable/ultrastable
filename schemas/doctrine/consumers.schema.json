@@ -1,0 +1,28 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/consumers.schema.json",
+ "title": "doctrine/consumers.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "roots": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "artifacts": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "artifacts",
+  "roots"
+ ]
+}

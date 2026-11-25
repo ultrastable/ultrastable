@@ -1,0 +1,69 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/idea-bank.schema.json",
+ "title": "doctrine/idea-bank.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "min_domains": {
+   "type": "number"
+  },
+  "max_per_domain": {
+   "type": "number"
+  },
+  "ideas": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "depth_fields": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "refused_domains": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "max_active": {
+   "type": "number"
+  },
+  "retired": {
+   "type": "array"
+  },
+  "max_text": {
+   "type": "number"
+  },
+  "narrow_phrases": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "owner_edits": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "depth_fields",
+  "ideas",
+  "max_active",
+  "max_per_domain",
+  "max_text",
+  "min_domains",
+  "narrow_phrases",
+  "owner_edits",
+  "refused_domains",
+  "retired"
+ ]
+}

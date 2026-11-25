@@ -1,0 +1,99 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/tenant-promotion.schema.json",
+ "title": "doctrine/tenant-promotion.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "version": {
+   "type": "number"
+  },
+  "consent": {
+   "type": "object",
+   "properties": {
+    "at": {
+     "type": "string"
+    },
+    "by": {
+     "type": "string"
+    },
+    "source": {
+     "type": "string"
+    },
+    "scope": {
+     "type": "string"
+    }
+   }
+  },
+  "platform": {
+   "type": "string"
+  },
+  "in_repo": {
+   "type": "object",
+   "properties": {
+    "ultrastable/ultrastable": {
+     "type": "object",
+     "properties": {
+      "shared_module": {
+       "type": "string"
+      },
+      "route": {
+       "type": "string"
+      },
+      "backlink": {
+       "type": "string"
+      }
+     }
+    }
+   }
+  },
+  "tenants": {
+   "type": "object",
+   "properties": {
+    "practical-solutions": {
+     "type": "object",
+     "properties": {
+      "queue": {
+       "type": "string"
+      },
+      "showcase": {
+       "type": "string"
+      }
+     }
+    },
+    "unlearn": {
+     "type": "object",
+     "properties": {
+      "queue": {
+       "type": "string"
+      },
+      "showcase": {
+       "type": "string"
+      }
+     }
+    },
+    "what-works": {
+     "type": "object",
+     "properties": {
+      "queue": {
+       "type": "string"
+      },
+      "showcase": {
+       "type": "string"
+      }
+     }
+    }
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "consent",
+  "in_repo",
+  "platform",
+  "tenants",
+  "version"
+ ]
+}

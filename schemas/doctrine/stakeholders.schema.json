@@ -1,0 +1,71 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/stakeholders.schema.json",
+ "title": "doctrine/stakeholders.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "audiences": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "showcases": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "domains": {
+   "type": "object",
+   "properties": {
+    "io": {
+     "type": "object",
+     "properties": {
+      "host": {
+       "type": "string"
+      },
+      "name": {
+       "type": "string"
+      },
+      "role": {
+       "type": "string"
+      },
+      "audiences": {
+       "type": "array"
+      }
+     }
+    },
+    "org": {
+     "type": "object",
+     "properties": {
+      "host": {
+       "type": "string"
+      },
+      "name": {
+       "type": "string"
+      },
+      "role": {
+       "type": "string"
+      },
+      "audiences": {
+       "type": "array"
+      },
+      "live_home": {
+       "type": "string"
+      }
+     }
+    }
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "audiences",
+  "domains",
+  "showcases"
+ ]
+}

@@ -1,0 +1,152 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/knowledge-graph.schema.json",
+ "title": "doctrine/knowledge-graph.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "rule": {
+   "type": "string"
+  },
+  "core_module": {
+   "type": "string"
+  },
+  "seed_vendor": {
+   "type": "string"
+  },
+  "seed_step": {
+   "type": "string"
+  },
+  "migration": {
+   "type": "string"
+  },
+  "tenant_vendor_path": {
+   "type": "string"
+  },
+  "endpoints": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "rule_files": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "systems": {
+   "type": "object",
+   "properties": {
+    "ultrastable": {
+     "type": "object",
+     "properties": {
+      "state": {
+       "type": "string"
+      },
+      "worker": {
+       "type": "string"
+      },
+      "public_api": {
+       "type": "string"
+      }
+     }
+    },
+    "practical-solutions": {
+     "type": "object",
+     "properties": {
+      "state": {
+       "type": "string"
+      },
+      "engine": {
+       "type": "string"
+      },
+      "vendor": {
+       "type": "string"
+      },
+      "code": {
+       "type": "string"
+      },
+      "probe": {
+       "type": "string"
+      }
+     }
+    },
+    "unlearn": {
+     "type": "object",
+     "properties": {
+      "state": {
+       "type": "string"
+      },
+      "engine": {
+       "type": "string"
+      },
+      "vendor": {
+       "type": "string"
+      },
+      "code": {
+       "type": "string"
+      },
+      "page": {
+       "type": "string"
+      },
+      "probe": {
+       "type": "string"
+      }
+     }
+    },
+    "what-works": {
+     "type": "object",
+     "properties": {
+      "state": {
+       "type": "string"
+      },
+      "item": {
+       "type": "string"
+      },
+      "repo": {
+       "type": "string"
+      },
+      "probe": {
+       "type": "string"
+      }
+     }
+    },
+    "replication-ledger": {
+     "type": "object",
+     "properties": {
+      "state": {
+       "type": "string"
+      },
+      "engine": {
+       "type": "string"
+      },
+      "vendor": {
+       "type": "string"
+      },
+      "code": {
+       "type": "string"
+      },
+      "probe": {
+       "type": "string"
+      }
+     }
+    }
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "core_module",
+  "endpoints",
+  "migration",
+  "rule",
+  "rule_files",
+  "seed_step",
+  "seed_vendor",
+  "systems",
+  "tenant_vendor_path"
+ ]
+}

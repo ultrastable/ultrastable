@@ -1,0 +1,83 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/user-path.schema.json",
+ "title": "doctrine/user-path.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "template": {
+   "type": "string"
+  },
+  "steps": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "done": {
+   "type": "object",
+   "properties": {
+    "title": {
+     "type": "string"
+    },
+    "text": {
+     "type": "string"
+    }
+   }
+  },
+  "_detect": {
+   "type": "string"
+  },
+  "tasks": {
+   "type": "object",
+   "properties": {
+    "_doc": {
+     "type": "string"
+    },
+    "manage": {
+     "type": "object",
+     "properties": {
+      "title": {
+       "type": "string"
+      },
+      "steps": {
+       "type": "array"
+      }
+     }
+    },
+    "change": {
+     "type": "object",
+     "properties": {
+      "title": {
+       "type": "string"
+      },
+      "steps": {
+       "type": "array"
+      }
+     }
+    },
+    "publish": {
+     "type": "object",
+     "properties": {
+      "title": {
+       "type": "string"
+      },
+      "steps": {
+       "type": "array"
+      }
+     }
+    }
+   }
+  }
+ },
+ "required": [
+  "_detect",
+  "_doc",
+  "done",
+  "steps",
+  "tasks",
+  "template"
+ ]
+}

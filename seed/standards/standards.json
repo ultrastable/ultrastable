@@ -1,1000 +1,1142 @@
 {
-  "version": "1.0.0",
-  "checked": "2026-11-14",
-  "stale_after_days": 120,
-  "bodies": [
+ "version": "1.0.0",
+ "checked": "2026-11-14",
+ "stale_after_days": 120,
+ "bodies": [
+  {
+   "id": "aaif",
+   "name": "Agentic AI Foundation (Linux Foundation)",
+   "role": "Hosts MCP, AGENTS.md, goose (2025-12-09) and A2A (2026); Cloudflare, Anthropic, OpenAI, Google, Microsoft, AWS are members."
+  },
+  {
+   "id": "ietf",
+   "name": "IETF",
+   "role": "Well-known URIs, OAuth, API catalog, HTTP message signatures (Web Bot Auth); agent-discovery drafts are early."
+  },
+  {
+   "id": "otel",
+   "name": "OpenTelemetry (CNCF)",
+   "role": "GenAI semantic conventions, still Development."
+  },
+  {
+   "id": "oai",
+   "name": "OpenAPI Initiative and JSON Schema organisation",
+   "role": "HTTP and data description."
+  },
+  {
+   "id": "w3c",
+   "name": "W3C community groups",
+   "role": "WebMCP and browser agent work; watch, do not depend."
+  }
+ ],
+ "entries": [
+  {
+   "id": "mcp",
+   "name": "Model Context Protocol",
+   "body": "Agentic AI Foundation (Linux Foundation)",
+   "status": "stable",
+   "tracked": "2025-11-25 (stable); 2026-07-28 revision (stateless, server/discover) negotiated",
+   "why": "The common way agents call tools; a remote MCP server makes every Ultrastable organisation usable from any MCP client.",
+   "support": "supported",
+   "how": [
+    "seed/worker/src/agentic/acl/mcp.js",
+    "seed/worker/src/agentic/core/tools.js"
+   ],
+   "acl": "seed/worker/src/agentic/acl/mcp.js",
+   "tests": [
     {
-      "id": "aaif",
-      "name": "Agentic AI Foundation (Linux Foundation)",
-      "role": "Hosts MCP, AGENTS.md, goose (2025-12-09) and A2A (2026); Cloudflare, Anthropic, OpenAI, Google, Microsoft, AWS are members."
+     "file": "seed/worker/test/agentic.mcp.test.js",
+     "name": "mcp: initialize negotiates version"
     },
     {
-      "id": "ietf",
-      "name": "IETF",
-      "role": "Well-known URIs, OAuth, API catalog, HTTP message signatures (Web Bot Auth); agent-discovery drafts are early."
+     "file": "seed/worker/test/agentic.mcp.test.js",
+     "name": "mcp: server/discover"
     },
     {
-      "id": "otel",
-      "name": "OpenTelemetry (CNCF)",
-      "role": "GenAI semantic conventions, still Development."
-    },
-    {
-      "id": "oai",
-      "name": "OpenAPI Initiative and JSON Schema organisation",
-      "role": "HTTP and data description."
-    },
-    {
-      "id": "w3c",
-      "name": "W3C community groups",
-      "role": "WebMCP and browser agent work; watch, do not depend."
+     "file": "seed/worker/test/agentic.contract.test.js",
+     "name": "contract: tools match v1 snapshot"
     }
-  ],
-  "entries": [
+   ],
+   "sources": [
     {
-      "id": "mcp",
-      "name": "Model Context Protocol",
-      "body": "Agentic AI Foundation (Linux Foundation)",
-      "status": "stable",
-      "tracked": "2025-11-25 (stable); 2026-07-28 revision (stateless, server/discover) negotiated",
-      "why": "The common way agents call tools; a remote MCP server makes every Ultrastable organisation usable from any MCP client.",
-      "support": "supported",
-      "how": [
-        "seed/worker/src/agentic/acl/mcp.js",
-        "seed/worker/src/agentic/core/tools.js"
-      ],
-      "acl": "seed/worker/src/agentic/acl/mcp.js",
-      "tests": [
-        {
-          "file": "seed/worker/test/agentic.mcp.test.js",
-          "name": "mcp: initialize negotiates version"
-        },
-        {
-          "file": "seed/worker/test/agentic.mcp.test.js",
-          "name": "mcp: server/discover"
-        },
-        {
-          "file": "seed/worker/test/agentic.contract.test.js",
-          "name": "contract: tools match v1 snapshot"
-        }
-      ],
-      "sources": [
-        {
-          "title": "MCP 2026-07-28: what is changing and how to migrate (AAIF)",
-          "url": "https://aaif.io/blog/mcp-2026-07-28-whats-changing-and-how-to-migrate",
-          "published": null,
-          "accessed": "2026-11-11"
-        },
-        {
-          "title": "MCP 2026-07-28 changelog",
-          "url": "https://modelcontextprotocol.net/specification/2026-07-28/changelog",
-          "published": null,
-          "accessed": "2026-11-11"
-        },
-        {
-          "title": "MCP 2025-11-25 changelog",
-          "url": "https://modelcontextprotocol.io/specification/2025-11-25/changelog",
-          "published": "2025-11-25",
-          "accessed": "2026-11-11"
-        }
-      ]
+     "title": "MCP 2026-07-28: what is changing and how to migrate (AAIF)",
+     "url": "https://aaif.io/blog/mcp-2026-07-28-whats-changing-and-how-to-migrate",
+     "published": null,
+     "accessed": "2026-11-11"
     },
     {
-      "id": "mcp-auth",
-      "name": "MCP authorization (OAuth 2.1, protected resource metadata)",
-      "body": "MCP / IETF OAuth WG",
-      "status": "stable",
-      "tracked": "2025-11-25; 2026-07-28 adds RFC 9207 iss validation and prefers Client ID Metadata Documents over Dynamic Client Registration",
-      "why": "Remote MCP servers must not be open; the 401 challenge and resource metadata let any client find the authorization server.",
-      "support": "partial",
-      "how": [
-        "seed/worker/src/agentic/adapters/bearer-auth.js",
-        "seed/worker/src/agentic/acl/mcp.js"
-      ],
-      "acl": "seed/worker/src/agentic/adapters/bearer-auth.js",
-      "tests": [
-        {
-          "file": "seed/worker/test/agentic.mcp.test.js",
-          "name": "mcp: tools/call fails closed"
-        },
-        {
-          "file": "seed/worker/test/agentic.mcp.test.js",
-          "name": "mcp: tools/call with token"
-        },
-        {
-          "file": "seed/worker/test/agentic.discovery.test.js",
-          "name": "discovery: api catalog and protected resource"
-        }
-      ],
-      "gap": "The tenant kit (seed/worker) still validates a static bearer token in a secret binding; its AuthPort takes the same OAuth adapter as ultrastable.io (see mcp-auth-site) and nothing else changes.",
-      "sources": [
-        {
-          "title": "MCP 2026-07-28 changelog",
-          "url": "https://modelcontextprotocol.net/specification/2026-07-28/changelog",
-          "published": null,
-          "accessed": "2026-11-11"
-        },
-        {
-          "title": "Cloudflare: Piecing together the Agent puzzle (MCP, authn/authz, Durable Objects)",
-          "url": "https://blog.cloudflare.com/building-ai-agents-with-mcp-authn-authz-and-durable-objects/",
-          "published": null,
-          "accessed": "2026-11-11"
-        }
-      ]
+     "title": "MCP 2026-07-28 changelog",
+     "url": "https://modelcontextprotocol.net/specification/2026-07-28/changelog",
+     "published": null,
+     "accessed": "2026-11-11"
     },
     {
-      "id": "mcp-auth-site",
-      "name": "MCP authorization on ultrastable.io (OAuth 2.1 server: PKCE, Client ID Metadata Documents, dynamic registration)",
-      "body": "MCP / IETF OAuth WG",
-      "status": "stable",
-      "tracked": "2025-11-25; 2026-07-28 prefers Client ID Metadata Documents over Dynamic Client Registration, requires RFC 9207 iss",
-      "why": "A person never pastes a token: any MCP client finds the authorization server from the 401 challenge (RFC 9728, RFC 8414), identifies itself by metadata URL or registration, and the owner approves once in the browser.",
-      "support": "supported",
-      "how": [
-        "site/oauth.js",
-        "site/agentic.js",
-        "dashboard/worker.js"
-      ],
-      "acl": "site/oauth.js",
-      "tests": [
-        {
-          "file": "site/oauth.test.mjs",
-          "name": "unauthenticated write: 401 with the RFC 9728 challenge"
-        },
-        {
-          "file": "site/oauth.test.mjs",
-          "name": "token: PKCE enforced, code single use"
-        },
-        {
-          "file": "site/oauth.test.mjs",
-          "name": "refresh rotation with reuse detection"
-        },
-        {
-          "file": "site/oauth.test.mjs",
-          "name": "Client ID Metadata Document: fetched, must name itself"
-        }
-      ],
-      "sources": [
-        {
-          "title": "MCP authorization specification",
-          "url": "https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization",
-          "published": null,
-          "accessed": "2026-11-14"
-        }
-      ]
-    },
-    {
-      "id": "mcp-server-card",
-      "name": "MCP server cards (SEP-2127)",
-      "body": "MCP project",
-      "status": "proposal",
-      "tracked": "SEP-2127; path /.well-known/mcp/server-card.json may change",
-      "why": "Lets a client learn a server's endpoint, auth and tools before connecting.",
-      "support": "supported",
-      "how": [
-        "seed/worker/src/agentic/acl/discovery.js"
-      ],
-      "acl": "seed/worker/src/agentic/acl/discovery.js",
-      "tests": [
-        {
-          "file": "seed/worker/test/agentic.discovery.test.js",
-          "name": "discovery: server card"
-        }
-      ],
-      "sources": [
-        {
-          "title": "SEP-2127: MCP Server Cards - HTTP Server Discovery",
-          "url": "https://modelcontextprotocol.info/seps/2127-mcp-server-cards/",
-          "published": null,
-          "accessed": "2026-11-11"
-        }
-      ]
-    },
-    {
-      "id": "mcp-registry",
-      "name": "MCP registry (server.json publication)",
-      "body": "MCP project",
-      "status": "draft",
-      "tracked": "registry preview",
-      "why": "Public discoverability of the server by directory-based clients.",
-      "support": "planned",
-      "tracked_by": "STD-1: publish after the namespace is verified",
-      "acl": "seed/worker/src/agentic/acl/discovery.js",
-      "sources": [
-        {
-          "title": "MCP 2026-07-28 release candidate",
-          "url": "https://blog.modelcontextprotocol.io/posts/2026-07-28-release-candidate/",
-          "published": null,
-          "accessed": "2026-11-11"
-        }
-      ]
-    },
-    {
-      "id": "a2a",
-      "name": "Agent2Agent (A2A) protocol",
-      "body": "Agentic AI Foundation (Linux Foundation)",
-      "status": "stable",
-      "tracked": "v1.0.0 (2026-03-12), v1.0.1 (2026-05-28); agent card at /.well-known/agent-card.json",
-      "why": "Agent-to-agent delegation across vendors; the card lets another agent find this organisation and its skills.",
-      "support": "partial",
-      "how": [
-        "seed/worker/src/agentic/acl/discovery.js"
-      ],
-      "acl": "seed/worker/src/agentic/acl/discovery.js",
-      "tests": [
-        {
-          "file": "seed/worker/test/agentic.discovery.test.js",
-          "name": "discovery: agent card"
-        }
-      ],
-      "gap": "Card is published and honest (interface is MCP). The A2A task interface (send message, tasks) is not served yet; card field names must be re-checked against the v1.0.1 schema when it is added.",
-      "sources": [
-        {
-          "title": "A2A Protocol v1.0 guide",
-          "url": "https://josenobile.pages.dev/guides/a2a-protocol/",
-          "published": "2026-03-12",
-          "accessed": "2026-11-11"
-        },
-        {
-          "title": "A2A agent cards",
-          "url": "https://www.specification.website/spec/agent-readiness/a2a-agent-cards/",
-          "published": null,
-          "accessed": "2026-11-11"
-        }
-      ]
-    },
-    {
-      "id": "agents-md",
-      "name": "AGENTS.md",
-      "body": "Agentic AI Foundation (contributed by OpenAI)",
-      "status": "de-facto",
-      "tracked": "plain markdown convention",
-      "why": "Every coding agent (Claude Code, Codex, Copilot and others) reads it first; one file replaces per-vendor instruction files.",
-      "support": "supported",
-      "how": [
-        "seed/agents/AGENTS.md",
-        "seed/worker/src/agentic/acl/discovery.js"
-      ],
-      "acl": "seed/worker/src/agentic/acl/discovery.js",
-      "tests": [
-        {
-          "file": "seed/worker/test/agentic.discovery.test.js",
-          "name": "discovery: AGENTS.md"
-        }
-      ],
-      "sources": [
-        {
-          "title": "Linux Foundation announces the Agentic AI Foundation",
-          "url": "https://www.linuxfoundation.org/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation",
-          "published": "2025-12-09",
-          "accessed": "2026-11-11"
-        }
-      ]
-    },
-    {
-      "id": "llms-txt",
-      "name": "llms.txt",
-      "body": "Community proposal (llmstxt.org)",
-      "status": "proposal",
-      "tracked": "markdown: H1, blockquote, link lists",
-      "why": "A cheap plain-language index models can read without crawling the whole site.",
-      "support": "supported",
-      "how": [
-        "seed/worker/src/agentic/acl/discovery.js"
-      ],
-      "acl": "seed/worker/src/agentic/acl/discovery.js",
-      "tests": [
-        {
-          "file": "seed/worker/test/agentic.discovery.test.js",
-          "name": "discovery: llms.txt lists every discoverable surface"
-        }
-      ],
-      "sources": [
-        {
-          "title": "Cloudflare Agents llms.txt",
-          "url": "https://developers.cloudflare.com/agents/llms.txt",
-          "published": null,
-          "accessed": "2026-11-11"
-        }
-      ]
-    },
-    {
-      "id": "agent-skills",
-      "name": "Agent Skills (SKILL.md) and discovery index",
-      "body": "Agent Skills open standard; discovery RFC led by Cloudflare",
-      "status": "draft",
-      "tracked": "discovery index v0.2.0 at /.well-known/agent-skills/index.json",
-      "why": "Packages how to operate the organisation as a skill any agent can load, with a digest so it can be verified.",
-      "support": "supported",
-      "how": [
-        "seed/worker/src/agentic/acl/discovery.js"
-      ],
-      "acl": "seed/worker/src/agentic/acl/discovery.js",
-      "tests": [
-        {
-          "file": "seed/worker/test/agentic.discovery.test.js",
-          "name": "discovery: agent skills digest"
-        }
-      ],
-      "sources": [
-        {
-          "title": "Agent Skills discovery",
-          "url": "https://specification.website/spec/agent-readiness/agent-skills-discovery/",
-          "published": null,
-          "accessed": "2026-11-11"
-        },
-        {
-          "title": "Agent Skills",
-          "url": "https://cdn.jsdelivr.net/gh/agentskills/agentskills@main/README.md",
-          "published": null,
-          "accessed": "2026-11-11"
-        }
-      ]
-    },
-    {
-      "id": "well-known",
-      "name": "Well-known URIs (RFC 8615)",
-      "body": "IETF",
-      "status": "stable",
-      "tracked": "RFC 8615 (2019)",
-      "why": "The one place agents look first; every discovery document lives under /.well-known/.",
-      "support": "supported",
-      "how": [
-        "seed/standards/surfaces.json"
-      ],
-      "tests": [
-        {
-          "file": "seed/worker/test/agentic.discovery.test.js",
-          "name": "discovery: well-known paths and json schema register"
-        }
-      ],
-      "sources": [
-        {
-          "title": "RFC 8615",
-          "url": "https://www.rfc-editor.org/rfc/rfc8615",
-          "published": "2019-05-01",
-          "accessed": "2026-11-11"
-        }
-      ]
-    },
-    {
-      "id": "api-catalog",
-      "name": "API catalog (RFC 9727)",
-      "body": "IETF",
-      "status": "stable",
-      "tracked": "RFC 9727 (2025), /.well-known/api-catalog as application/linkset+json",
-      "why": "One document that points to every API and its description.",
-      "support": "supported",
-      "how": [
-        "seed/worker/src/agentic/acl/discovery.js"
-      ],
-      "acl": "seed/worker/src/agentic/acl/discovery.js",
-      "tests": [
-        {
-          "file": "seed/worker/test/agentic.discovery.test.js",
-          "name": "discovery: api catalog and protected resource"
-        }
-      ],
-      "sources": [
-        {
-          "title": "RFC 9727",
-          "url": "https://www.rfc-editor.org/rfc/rfc9727",
-          "published": "2025-06-01",
-          "accessed": "2026-11-11"
-        }
-      ]
-    },
-    {
-      "id": "oauth-prm",
-      "name": "OAuth protected resource metadata (RFC 9728)",
-      "body": "IETF OAuth WG",
-      "status": "stable",
-      "tracked": "RFC 9728 (2025)",
-      "why": "MCP clients use it to find the authorization server for /mcp.",
-      "support": "supported",
-      "how": [
-        "seed/worker/src/agentic/acl/discovery.js"
-      ],
-      "acl": "seed/worker/src/agentic/acl/discovery.js",
-      "tests": [
-        {
-          "file": "seed/worker/test/agentic.discovery.test.js",
-          "name": "discovery: api catalog and protected resource"
-        }
-      ],
-      "sources": [
-        {
-          "title": "RFC 9728",
-          "url": "https://www.rfc-editor.org/rfc/rfc9728",
-          "published": "2025-04-01",
-          "accessed": "2026-11-11"
-        }
-      ]
-    },
-    {
-      "id": "openapi",
-      "name": "OpenAPI 3.1",
-      "body": "OpenAPI Initiative (Linux Foundation)",
-      "status": "stable",
-      "tracked": "3.1.0",
-      "why": "Machine-readable HTTP description generated from the surface registry, so it cannot drift.",
-      "support": "supported",
-      "how": [
-        "seed/worker/src/agentic/acl/discovery.js"
-      ],
-      "acl": "seed/worker/src/agentic/acl/discovery.js",
-      "tests": [
-        {
-          "file": "seed/worker/test/agentic.discovery.test.js",
-          "name": "discovery: openapi"
-        }
-      ],
-      "sources": [
-        {
-          "title": "OpenAPI Specification 3.1.0",
-          "url": "https://spec.openapis.org/oas/v3.1.0",
-          "published": "2021-02-15",
-          "accessed": "2026-11-11"
-        }
-      ]
-    },
-    {
-      "id": "json-schema",
-      "name": "JSON Schema 2020-12",
-      "body": "JSON Schema organisation",
-      "status": "stable",
-      "tracked": "2020-12",
-      "why": "Tool inputs (MCP), the standards register and the surface registry are all JSON Schema, so any validator or model can read them.",
-      "support": "supported",
-      "how": [
-        "seed/worker/src/agentic/core/tools.js",
-        "seed/standards/standards.schema.json"
-      ],
-      "tests": [
-        {
-          "file": "seed/worker/test/agentic.contract.test.js",
-          "name": "contract: tool schemas are JSON Schema 2020-12 objects"
-        },
-        {
-          "file": "seed/worker/test/agentic.discovery.test.js",
-          "name": "discovery: well-known paths and json schema register"
-        }
-      ],
-      "sources": [
-        {
-          "title": "JSON Schema 2020-12",
-          "url": "https://json-schema.org/draft/2020-12",
-          "published": "2020-12-08",
-          "accessed": "2026-11-11"
-        }
-      ]
-    },
-    {
-      "id": "toml",
-      "name": "TOML 1.0 client and platform configuration",
-      "body": "toml-lang (spec); Codex and Cloudflare Wrangler consume it",
-      "status": "stable",
-      "tracked": "TOML 1.0.0; Codex config.toml [mcp_servers]; wrangler accepts TOML or JSONC",
-      "why": "Agent clients (Codex) are configured in TOML; we ship ready client configs and keep platform config in a format the platform accepts.",
-      "support": "supported",
-      "how": [
-        "docs/standards/clients/codex-config.toml",
-        "docs/standards/clients/mcp.json",
-        "seed/worker/wrangler.template.jsonc"
-      ],
-      "tests": [
-        {
-          "file": "tests/foundation/test_standards.py",
-          "name": "test_client_configs_parse_and_point_at_mcp"
-        }
-      ],
-      "sources": [
-        {
-          "title": "TOML 1.0.0",
-          "url": "https://toml.io/en/v1.0.0",
-          "published": "2021-01-12",
-          "accessed": "2026-11-11"
-        },
-        {
-          "title": "Cloudflare Wrangler configuration",
-          "url": "https://developers.cloudflare.com/workers/wrangler/configuration/",
-          "published": null,
-          "accessed": "2026-11-11"
-        }
-      ]
-    },
-    {
-      "id": "otel-genai",
-      "name": "OpenTelemetry GenAI semantic conventions",
-      "body": "OpenTelemetry (CNCF)",
-      "status": "development",
-      "tracked": "gen_ai semconv v1.42.0 (2026-06-12); every gen_ai.* attribute is Development, so names may change",
-      "why": "Tool calls emit execute_tool spans with the standard attribute names, so any observability backend reads them.",
-      "support": "supported",
-      "how": [
-        "seed/worker/src/agentic/adapters/console-telemetry.js",
-        "seed/worker/src/agentic/acl/mcp.js"
-      ],
-      "acl": "seed/worker/src/agentic/adapters/console-telemetry.js",
-      "tests": [
-        {
-          "file": "seed/worker/test/agentic.mcp.test.js",
-          "name": "mcp: OTel execute_tool span"
-        }
-      ],
-      "sources": [
-        {
-          "title": "OpenTelemetry GenAI semantic conventions explained",
-          "url": "https://www.dash0.com/knowledge/opentelemetry-genai-semantic-conventions-explained",
-          "published": null,
-          "accessed": "2026-11-11"
-        },
-        {
-          "title": "Semantic conventions for GenAI agent spans",
-          "url": "https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-agent-spans",
-          "published": null,
-          "accessed": "2026-11-11"
-        }
-      ]
-    },
-    {
-      "id": "cloudflare-agents",
-      "name": "Cloudflare Agents SDK, remote MCP and AI Gateway",
-      "body": "Cloudflare",
-      "status": "stable",
-      "tracked": "agents package; McpAgent on Durable Objects; AI Gateway for model calls",
-      "why": "Our home platform. The core stays portable; a Cloudflare adapter would add McpAgent sessions and route model calls through AI Gateway.",
-      "support": "planned",
-      "tracked_by": "STD-2: McpAgent/Durable Object adapter and AI Gateway for the BS-4 executor; the Worker runs plain fetch handlers today",
-      "acl": "seed/worker/src/agentic/handler.js",
-      "sources": [
-        {
-          "title": "Cloudflare: docs for agents",
-          "url": "https://developers.cloudflare.com/docs-for-agents/",
-          "published": null,
-          "accessed": "2026-11-11"
-        },
-        {
-          "title": "Cloudflare: Building an open agentic internet",
-          "url": "https://blog.cloudflare.com/the-agentic-internet/",
-          "published": "2026-08-06",
-          "accessed": "2026-11-11"
-        }
-      ]
-    },
-    {
-      "id": "web-bot-auth",
-      "name": "Web Bot Auth (signed agents)",
-      "body": "IETF (HTTP Message Signatures based); Cloudflare",
-      "status": "draft",
-      "tracked": "IETF draft; Cloudflare verified bots",
-      "why": "How a site proves a request is from a known agent, and how our agents prove who they are to others.",
-      "support": "supported",
-      "acl": "site/webbotauth.js",
-      "sources": [
-        {
-          "title": "Cloudflare: Web Bot Auth",
-          "url": "https://blog.cloudflare.com/web-bot-auth/",
-          "published": null,
-          "accessed": "2026-11-11"
-        }
-      ],
-      "how": [
-        "site/webbotauth.js",
-        "site/agentic.js"
-      ],
-      "tests": [
-        {
-          "file": "site/webbotauth.test.mjs",
-          "name": "webbotauth: sign, verify and publish directory"
-        }
-      ]
-    },
-    {
-      "id": "x402-pay-per-crawl",
-      "name": "x402 and pay per crawl (payable web)",
-      "body": "x402 (open protocol); Cloudflare Monetization Gateway",
-      "status": "draft",
-      "tracked": "x402",
-      "why": "Lets agents pay for access. Ultrastable moves no money without the owner, so this stays off.",
-      "support": "not_applicable",
-      "reason": "Money movement is identity-bound and irreversible (interrupt gate). Revisit only through a gate card.",
-      "sources": [
-        {
-          "title": "Cloudflare: Building an open agentic internet (payable)",
-          "url": "https://blog.cloudflare.com/the-agentic-internet/",
-          "published": "2026-08-06",
-          "accessed": "2026-11-11"
-        }
-      ]
-    },
-    {
-      "id": "nlweb-webmcp",
-      "name": "NLWeb and WebMCP (browser-side agent tools)",
-      "body": "Microsoft (NLWeb); WebMCP community and browsers",
-      "status": "proposal",
-      "tracked": "WebMCP document.modelContext.registerTool",
-      "why": "Marketing sites could expose actions to browser agents.",
-      "support": "not_applicable",
-      "reason": "The Worker serves no content site; the site repository adopts these when it publishes (tracked in its own register).",
-      "sources": [
-        {
-          "title": "Cloudflare: WebMCP",
-          "url": "https://blog.cloudflare.com/webmcp/",
-          "published": null,
-          "accessed": "2026-11-11"
-        }
-      ]
-    },
-    {
-      "id": "mcp-ema",
-      "name": "MCP enterprise-managed authorization (ID-JAG, XAA)",
-      "body": "MCP project; IETF OAuth WG (draft)",
-      "status": "draft",
-      "tracked": "researched 2026-11-14",
-      "why": "One admin approval instead of per-server consent screens; the click-once experience for organisations.",
-      "support": "planned",
-      "tracked_by": "STD-4: accept ID-JAG assertions on our authorization server and present them as a client; extension is stable in MCP 2026-07-28 but ID-JAG itself is an IETF draft (-04)",
-      "acl": "seed/worker/src/auth/oauth.js",
-      "sources": [
-        {
-          "title": "What are EMA, ID-JAG and XAA",
-          "url": "https://www.cyera.com/blog/ema-id-jag-xaa-token-exchange",
-          "published": null,
-          "accessed": "2026-11-14"
-        }
-      ]
-    },
-    {
-      "id": "oauth-device",
-      "name": "OAuth device authorization grant (RFC 8628) and URL-mode elicitation for consent",
-      "body": "IETF OAuth WG; MCP project",
-      "status": "stable",
-      "tracked": "researched 2026-11-14",
-      "why": "Lets a CLI or headless agent link a service with one click on a phone or browser, never a pasted token.",
-      "support": "planned",
-      "tracked_by": "STD-5: device flow for CLI and headless agents; surface consent URLs through MCP URL elicitation",
-      "acl": "seed/worker/src/auth/oauth.js",
-      "sources": [
-        {
-          "title": "MCP Authorization: OAuth 2.1, PKCE and agent identity",
-          "url": "https://aembit.io/blog/mcp-oauth-2-1-pkce-and-the-future-of-ai-authorization/",
-          "published": null,
-          "accessed": "2026-11-14"
-        }
-      ]
-    },
-    {
-      "id": "ssf-caep",
-      "name": "OpenID Shared Signals Framework, CAEP and RISC",
-      "body": "OpenID Foundation",
-      "status": "stable",
-      "tracked": "researched 2026-11-14",
-      "why": "Real-time revocation: disconnecting a service or a compromised agent kills its sessions at once instead of at token expiry.",
-      "support": "planned",
-      "tracked_by": "STD-6: receive and emit SSF events for connectors and issued tokens",
-      "acl": "seed/worker/src/auth/oauth.js",
-      "sources": [
-        {
-          "title": "AI agent identity standards tracker",
-          "url": "https://nhimg.org/agent-identity-standards-tracker",
-          "published": null,
-          "accessed": "2026-11-14"
-        }
-      ]
-    },
-    {
-      "id": "dpop-rar",
-      "name": "DPoP (RFC 9449), Resource Indicators (RFC 8707) and Rich Authorization Requests (RFC 9396)",
-      "body": "IETF OAuth WG",
-      "status": "stable",
-      "tracked": "researched 2026-11-14",
-      "why": "Sender-constrained tokens and per-action grants so a leaked token is useless and consent is specific.",
-      "support": "planned",
-      "tracked_by": "STD-7: bind issued tokens with DPoP, require resource indicators, express scopes as RAR",
-      "acl": "seed/worker/src/auth/oauth.js",
-      "sources": [
-        {
-          "title": "MCP Authorization specification",
-          "url": "https://www.descope.com/blog/post/mcp-auth-spec",
-          "published": null,
-          "accessed": "2026-11-14"
-        }
-      ]
-    },
-    {
-      "id": "wimse-spiffe",
-      "name": "Workload identity for agents (WIMSE, SPIFFE) and transaction tokens",
-      "body": "IETF WIMSE; CNCF",
-      "status": "draft",
-      "tracked": "researched 2026-11-14",
-      "why": "One verifiable identity per agent and call-chain propagation, the stack that agent-identity guidance converges on.",
-      "support": "planned",
-      "tracked_by": "STD-8: give each virtual agent a durable ID and short-lived credentials per task; carry the chain in transaction tokens",
-      "acl": "seed/worker/src/auth/oauth.js",
-      "sources": [
-        {
-          "title": "Agents are workloads",
-          "url": "https://uberether.com/agents-are-workloads/",
-          "published": null,
-          "accessed": "2026-11-14"
-        }
-      ]
-    },
-    {
-      "id": "authzen",
-      "name": "OpenID AuthZEN (policy decision point API)",
-      "body": "OpenID Foundation",
-      "status": "stable",
-      "tracked": "researched 2026-11-14",
-      "why": "Standard way to ask \"may this agent do this\"; served at /access/v1/evaluation and /access/v1/evaluations from the trust ledger, failing closed.",
-      "support": "supported",
-      "acl": "site/authzen.js",
-      "sources": [
-        {
-          "title": "AI agent identity standards: the 2026 landscape",
-          "url": "http://nhigovernance.com/ai-agents/agent-identity-standards.html",
-          "published": null,
-          "accessed": "2026-11-14"
-        }
-      ],
-      "how": [
-        "site/authzen.js",
-        "site/worker.js"
-      ],
-      "tests": [
-        {
-          "file": "site/authzen.test.mjs",
-          "name": "authzen: ledger decides and fails closed"
-        },
-        {
-          "file": "site/authzen.test.mjs",
-          "name": "worker routes /access/v1/evaluation"
-        }
-      ]
-    },
-    {
-      "id": "a2a-signed",
-      "name": "A2A v1.0 with signed Agent Cards and task lifecycle",
-      "body": "Agentic AI Foundation",
-      "status": "stable",
-      "tracked": "researched 2026-11-14",
-      "why": "Verifiable agent identity and long-running tasks: the v1.0 card carries a JWS signature whose key set the Worker publishes, and the endpoint answers the v1.0 method names.",
-      "support": "supported",
-      "acl": "seed/worker/src/agentic/acl/discovery.js",
-      "sources": [
-        {
-          "title": "A2A passes 150 organizations",
-          "url": "https://www.linuxfoundation.org/press/a2a-protocol-surpasses-150-organizations-lands-in-major-cloud-platforms-and-sees-enterprise-production-use-in-first-year",
-          "published": null,
-          "accessed": "2026-11-14"
-        }
-      ],
-      "how": [
-        "site/agentic.js"
-      ],
-      "tests": [
-        {
-          "file": "site/site.test.mjs",
-          "name": "agent card signature verifies against /.well-known/jwks.json"
-        }
-      ]
-    },
-    {
-      "id": "mcp-apps-agui",
-      "name": "MCP Apps (SEP-1865), AG-UI and A2UI for rich agent surfaces",
-      "body": "MCP project; AG-UI; Google (A2UI)",
-      "status": "draft",
-      "tracked": "researched 2026-11-14",
-      "why": "Lets the dashboard and consent screens render inside any agent host as a click-through surface instead of a pasted link.",
-      "support": "planned",
-      "tracked_by": "STD-10: ship the connect and approve screens as MCP Apps; AG-UI event stream for the dashboard",
-      "acl": "seed/worker/src/agentic/acl/discovery.js",
-      "sources": [
-        {
-          "title": "State of generative UI 2026",
-          "url": "https://www.openui.com/blog/state-of-generative-ui-report",
-          "published": null,
-          "accessed": "2026-11-14"
-        }
-      ]
-    },
-    {
-      "id": "acp-editor",
-      "name": "Agent Client Protocol (editor to coding agent)",
-      "body": "Zed and community",
-      "status": "draft",
-      "tracked": "researched 2026-11-14",
-      "why": "How editors drive coding agents; relevant to the code-agent SOP and handoff.",
-      "support": "planned",
-      "tracked_by": "STD-11: watch; adopt if VS Code or JetBrains ship it for third-party harnesses",
-      "acl": "seed/worker/src/agentic/acl/discovery.js",
-      "sources": [
-        {
-          "title": "Agentic protocols 2026",
-          "url": "https://geraldmorisseau.com/en/agentic-protocols-2026/",
-          "published": null,
-          "accessed": "2026-11-14"
-        }
-      ]
-    },
-    {
-      "id": "ap2-ucp",
-      "name": "AP2 mandates and UCP commerce",
-      "body": "Google, Shopify, Linux Foundation",
-      "status": "draft",
-      "tracked": "researched 2026-11-14",
-      "why": "Signed spending mandates when customers pay through agents; revenue path for the platform.",
-      "support": "planned",
-      "tracked_by": "STD-12: n/a until funding; any payment is identity-bound and stays behind a gate card",
-      "acl": "seed/worker/src/agentic/acl/discovery.js",
-      "sources": [
-        {
-          "title": "Agentic commerce protocols compared",
-          "url": "https://stellagent.ai/insights/mcp-vs-a2a-vs-ap2-protocol-comparison",
-          "published": null,
-          "accessed": "2026-11-14"
-        }
-      ]
-    },
-    {
-      "id": "provenance",
-      "name": "C2PA content credentials (ISO/IEC 21694) and EU AI Act Article 50 marking",
-      "body": "C2PA; EU",
-      "status": "stable",
-      "tracked": "researched 2026-11-14",
-      "why": "Generated artifacts we publish need machine-readable marking; applies to generative output placed on the market from 2026-08-02 (until 2026-12-02 for existing systems).",
-      "support": "planned",
-      "tracked_by": "STD-13: sign published artifacts with content credentials; legal-ip manager confirms scope",
-      "acl": "seed/worker/src/agentic/acl/discovery.js",
-      "sources": [
-        {
-          "title": "EU AI Act and content provenance making C2PA urgent",
-          "url": "https://www.softwareseni.com/eu-ai-act-and-content-provenance-regulations-making-c2pa-urgent-in-2026/",
-          "published": null,
-          "accessed": "2026-11-14"
-        }
-      ]
-    },
-    {
-      "id": "aims-iso",
-      "name": "ISO/IEC 42001 AI management system",
-      "body": "ISO",
-      "status": "stable",
-      "tracked": "researched 2026-11-14",
-      "why": "Customer procurement asks for it; no presumption of conformity under the AI Act yet, so evidence is the value.",
-      "support": "planned",
-      "tracked_by": "STD-14: map existing ledgers (decision log, trust ledger, failure modes) to 42001 controls",
-      "acl": "seed/worker/src/agentic/acl/discovery.js",
-      "sources": [
-        {
-          "title": "ISO 42001 and the EU AI Act control mapping",
-          "url": "https://www.tcsa.in/frameworks/iso-42001/eu-ai-act",
-          "published": null,
-          "accessed": "2026-11-14"
-        }
-      ]
-    },
-    {
-      "id": "webauthn-passkeys",
-      "name": "WebAuthn Level 3 passkeys (FIDO2)",
-      "body": "W3C; FIDO Alliance",
-      "status": "stable",
-      "tracked": "W3C WebAuthn Level 3",
-      "why": "One-tap, phishing-resistant sign-in for the owner and for the OAuth consent screens, with the email code as fallback and first enrolment.",
-      "support": "supported",
-      "how": [
-        "site/passkeys.js",
-        "site/worker.js"
-      ],
-      "tests": [
-        {
-          "file": "site/passkeys.test.mjs",
-          "name": "software authenticator"
-        },
-        {
-          "file": "site/passkeys.test.mjs",
-          "name": "one-tap sign-in"
-        }
-      ],
-      "sources": [
-        {
-          "title": "Web Authentication Level 3",
-          "url": "https://www.w3.org/TR/webauthn-3/",
-          "published": null,
-          "accessed": "2026-11-14"
-        }
-      ]
-    },
-    {
-      "id": "mcp-auth-client",
-      "name": "OAuth 2.1 client for remote MCP servers and service connectors (PKCE, RFC 8414, RFC 8707, CIMD, RFC 7591, RFC 7009)",
-      "body": "MCP / IETF OAuth WG",
-      "status": "stable",
-      "tracked": "2026-11-14: MCP 2026-07-28 prefers Client ID Metadata Documents; dynamic registration kept as fallback until its removal",
-      "support": "supported",
-      "why": "A person links a service by one consent click and a callback; nobody pastes a token. The Worker discovers the authorization server of any remote MCP server, registers itself (CIMD, else DCR), runs auth-code with PKCE S256, seals the tokens per tenant, refreshes and revokes.",
-      "how": [
-        "seed/worker/src/auth/connectors.js",
-        "seed/worker/src/auth/state.js",
-        "seed/worker/src/auth/oauth.js",
-        "seed/worker/src/auth/routes.js"
-      ],
-      "tests": [
-        {
-          "file": "seed/worker/test/connectors.test.js",
-          "name": "remote MCP server links with no pasted token and no owner app (CIMD)"
-        },
-        {
-          "file": "seed/worker/test/connectors.test.js",
-          "name": "remote MCP server links with no pasted token and no owner app (DCR)"
-        },
-        {
-          "file": "seed/worker/test/connectors.test.js",
-          "name": "Google flow: consent, PKCE redirect with signed state, callback exchange, sealed tokens, refresh, revoke"
-        },
-        {
-          "file": "seed/worker/test/connectors.test.js",
-          "name": "our Client ID Metadata Document is served and matches the callback"
-        },
-        {
-          "file": "seed/worker/test/connectors.test.js",
-          "name": "SSRF guard refuses private and non-https servers; no CIMD and no DCR is reported, not guessed"
-        }
-      ],
-      "sources": [
-        {
-          "title": "RFC 8414 OAuth 2.0 Authorization Server Metadata",
-          "url": "https://www.rfc-editor.org/rfc/rfc8414",
-          "published": "2018-06-01",
-          "accessed": "2026-11-14"
-        },
-        {
-          "title": "RFC 7636 PKCE",
-          "url": "https://www.rfc-editor.org/rfc/rfc7636",
-          "published": "2015-09-01",
-          "accessed": "2026-11-14"
-        },
-        {
-          "title": "RFC 8707 Resource Indicators",
-          "url": "https://www.rfc-editor.org/rfc/rfc8707",
-          "published": "2020-02-01",
-          "accessed": "2026-11-14"
-        },
-        {
-          "title": "RFC 7009 Token Revocation",
-          "url": "https://www.rfc-editor.org/rfc/rfc7009",
-          "published": "2013-08-01",
-          "accessed": "2026-11-14"
-        }
-      ]
-    },
-    {
-      "id": "data-portability",
-      "name": "Open-format data export and restore (GDPR Art. 20 style portability)",
-      "body": "EU GDPR Art. 20; Data Transfer Project norms",
-      "status": "stable",
-      "tracked": "ultrastable-export/v1",
-      "why": "A person can take everything held for them as one open JSON file and restore it, with one click and no token.",
-      "support": "supported",
-      "how": [
-        "site/mydata.js",
-        "site/portability.js"
-      ],
-      "acl": "site/mydata.js",
-      "tests": [
-        {
-          "file": "site/mydata.test.mjs",
-          "name": "mydata ok"
-        }
-      ],
-      "sources": [
-        {
-          "title": "GDPR Article 20, right to data portability",
-          "url": "https://gdpr-info.eu/art-20-gdpr/",
-          "published": null,
-          "accessed": "2026-11-14"
-        }
-      ]
+     "title": "MCP 2025-11-25 changelog",
+     "url": "https://modelcontextprotocol.io/specification/2025-11-25/changelog",
+     "published": "2025-11-25",
+     "accessed": "2026-11-11"
     }
-  ]
+   ]
+  },
+  {
+   "id": "mcp-auth",
+   "name": "MCP authorization (OAuth 2.1, protected resource metadata)",
+   "body": "MCP / IETF OAuth WG",
+   "status": "stable",
+   "tracked": "2025-11-25; 2026-07-28 adds RFC 9207 iss validation and prefers Client ID Metadata Documents over Dynamic Client Registration",
+   "why": "Remote MCP servers must not be open; the 401 challenge and resource metadata let any client find the authorization server.",
+   "support": "partial",
+   "how": [
+    "seed/worker/src/agentic/adapters/bearer-auth.js",
+    "seed/worker/src/agentic/acl/mcp.js"
+   ],
+   "acl": "seed/worker/src/agentic/adapters/bearer-auth.js",
+   "tests": [
+    {
+     "file": "seed/worker/test/agentic.mcp.test.js",
+     "name": "mcp: tools/call fails closed"
+    },
+    {
+     "file": "seed/worker/test/agentic.mcp.test.js",
+     "name": "mcp: tools/call with token"
+    },
+    {
+     "file": "seed/worker/test/agentic.discovery.test.js",
+     "name": "discovery: api catalog and protected resource"
+    }
+   ],
+   "gap": "The tenant kit (seed/worker) still validates a static bearer token in a secret binding; its AuthPort takes the same OAuth adapter as ultrastable.io (see mcp-auth-site) and nothing else changes.",
+   "sources": [
+    {
+     "title": "MCP 2026-07-28 changelog",
+     "url": "https://modelcontextprotocol.net/specification/2026-07-28/changelog",
+     "published": null,
+     "accessed": "2026-11-11"
+    },
+    {
+     "title": "Cloudflare: Piecing together the Agent puzzle (MCP, authn/authz, Durable Objects)",
+     "url": "https://blog.cloudflare.com/building-ai-agents-with-mcp-authn-authz-and-durable-objects/",
+     "published": null,
+     "accessed": "2026-11-11"
+    }
+   ]
+  },
+  {
+   "id": "mcp-auth-site",
+   "name": "MCP authorization on ultrastable.io (OAuth 2.1 server: PKCE, Client ID Metadata Documents, dynamic registration)",
+   "body": "MCP / IETF OAuth WG",
+   "status": "stable",
+   "tracked": "2025-11-25; 2026-07-28 prefers Client ID Metadata Documents over Dynamic Client Registration, requires RFC 9207 iss",
+   "why": "A person never pastes a token: any MCP client finds the authorization server from the 401 challenge (RFC 9728, RFC 8414), identifies itself by metadata URL or registration, and the owner approves once in the browser.",
+   "support": "supported",
+   "how": [
+    "site/oauth.js",
+    "site/agentic.js",
+    "dashboard/worker.js"
+   ],
+   "acl": "site/oauth.js",
+   "tests": [
+    {
+     "file": "site/oauth.test.mjs",
+     "name": "unauthenticated write: 401 with the RFC 9728 challenge"
+    },
+    {
+     "file": "site/oauth.test.mjs",
+     "name": "token: PKCE enforced, code single use"
+    },
+    {
+     "file": "site/oauth.test.mjs",
+     "name": "refresh rotation with reuse detection"
+    },
+    {
+     "file": "site/oauth.test.mjs",
+     "name": "Client ID Metadata Document: fetched, must name itself"
+    }
+   ],
+   "sources": [
+    {
+     "title": "MCP authorization specification",
+     "url": "https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization",
+     "published": null,
+     "accessed": "2026-11-14"
+    }
+   ]
+  },
+  {
+   "id": "mcp-server-card",
+   "name": "MCP server cards (SEP-2127)",
+   "body": "MCP project",
+   "status": "proposal",
+   "tracked": "SEP-2127; path /.well-known/mcp/server-card.json may change",
+   "why": "Lets a client learn a server's endpoint, auth and tools before connecting.",
+   "support": "supported",
+   "how": [
+    "seed/worker/src/agentic/acl/discovery.js"
+   ],
+   "acl": "seed/worker/src/agentic/acl/discovery.js",
+   "tests": [
+    {
+     "file": "seed/worker/test/agentic.discovery.test.js",
+     "name": "discovery: server card"
+    }
+   ],
+   "sources": [
+    {
+     "title": "SEP-2127: MCP Server Cards - HTTP Server Discovery",
+     "url": "https://modelcontextprotocol.info/seps/2127-mcp-server-cards/",
+     "published": null,
+     "accessed": "2026-11-11"
+    }
+   ]
+  },
+  {
+   "id": "mcp-registry",
+   "name": "MCP registry (server.json publication)",
+   "body": "MCP project",
+   "status": "draft",
+   "tracked": "registry preview",
+   "why": "Public discoverability of the server by directory-based clients.",
+   "support": "planned",
+   "tracked_by": "STD-1: publish after the namespace is verified",
+   "acl": "seed/worker/src/agentic/acl/discovery.js",
+   "sources": [
+    {
+     "title": "MCP 2026-07-28 release candidate",
+     "url": "https://blog.modelcontextprotocol.io/posts/2026-07-28-release-candidate/",
+     "published": null,
+     "accessed": "2026-11-11"
+    }
+   ]
+  },
+  {
+   "id": "a2a",
+   "name": "Agent2Agent (A2A) protocol",
+   "body": "Agentic AI Foundation (Linux Foundation)",
+   "status": "stable",
+   "tracked": "v1.0.0 (2026-03-12), v1.0.1 (2026-05-28); agent card at /.well-known/agent-card.json",
+   "why": "Agent-to-agent delegation across vendors; the card lets another agent find this organisation and its skills.",
+   "support": "partial",
+   "how": [
+    "seed/worker/src/agentic/acl/discovery.js"
+   ],
+   "acl": "seed/worker/src/agentic/acl/discovery.js",
+   "tests": [
+    {
+     "file": "seed/worker/test/agentic.discovery.test.js",
+     "name": "discovery: agent card"
+    }
+   ],
+   "gap": "Card is published and honest (interface is MCP). The A2A task interface (send message, tasks) is not served yet; card field names must be re-checked against the v1.0.1 schema when it is added.",
+   "sources": [
+    {
+     "title": "A2A Protocol v1.0 guide",
+     "url": "https://josenobile.pages.dev/guides/a2a-protocol/",
+     "published": "2026-03-12",
+     "accessed": "2026-11-11"
+    },
+    {
+     "title": "A2A agent cards",
+     "url": "https://www.specification.website/spec/agent-readiness/a2a-agent-cards/",
+     "published": null,
+     "accessed": "2026-11-11"
+    }
+   ]
+  },
+  {
+   "id": "agents-md",
+   "name": "AGENTS.md",
+   "body": "Agentic AI Foundation (contributed by OpenAI)",
+   "status": "de-facto",
+   "tracked": "plain markdown convention",
+   "why": "Every coding agent (Claude Code, Codex, Copilot and others) reads it first; one file replaces per-vendor instruction files.",
+   "support": "supported",
+   "how": [
+    "seed/agents/AGENTS.md",
+    "seed/worker/src/agentic/acl/discovery.js"
+   ],
+   "acl": "seed/worker/src/agentic/acl/discovery.js",
+   "tests": [
+    {
+     "file": "seed/worker/test/agentic.discovery.test.js",
+     "name": "discovery: AGENTS.md"
+    }
+   ],
+   "sources": [
+    {
+     "title": "Linux Foundation announces the Agentic AI Foundation",
+     "url": "https://www.linuxfoundation.org/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation",
+     "published": "2025-12-09",
+     "accessed": "2026-11-11"
+    }
+   ]
+  },
+  {
+   "id": "llms-txt",
+   "name": "llms.txt",
+   "body": "Community proposal (llmstxt.org)",
+   "status": "proposal",
+   "tracked": "markdown: H1, blockquote, link lists",
+   "why": "A cheap plain-language index models can read without crawling the whole site.",
+   "support": "supported",
+   "how": [
+    "seed/worker/src/agentic/acl/discovery.js"
+   ],
+   "acl": "seed/worker/src/agentic/acl/discovery.js",
+   "tests": [
+    {
+     "file": "seed/worker/test/agentic.discovery.test.js",
+     "name": "discovery: llms.txt lists every discoverable surface"
+    }
+   ],
+   "sources": [
+    {
+     "title": "Cloudflare Agents llms.txt",
+     "url": "https://developers.cloudflare.com/agents/llms.txt",
+     "published": null,
+     "accessed": "2026-11-11"
+    }
+   ]
+  },
+  {
+   "id": "agent-skills",
+   "name": "Agent Skills (SKILL.md) and discovery index",
+   "body": "Agent Skills open standard; discovery RFC led by Cloudflare",
+   "status": "draft",
+   "tracked": "discovery index v0.2.0 at /.well-known/agent-skills/index.json",
+   "why": "Packages how to operate the organisation as a skill any agent can load, with a digest so it can be verified.",
+   "support": "supported",
+   "how": [
+    "seed/worker/src/agentic/acl/discovery.js"
+   ],
+   "acl": "seed/worker/src/agentic/acl/discovery.js",
+   "tests": [
+    {
+     "file": "seed/worker/test/agentic.discovery.test.js",
+     "name": "discovery: agent skills digest"
+    }
+   ],
+   "sources": [
+    {
+     "title": "Agent Skills discovery",
+     "url": "https://specification.website/spec/agent-readiness/agent-skills-discovery/",
+     "published": null,
+     "accessed": "2026-11-11"
+    },
+    {
+     "title": "Agent Skills",
+     "url": "https://cdn.jsdelivr.net/gh/agentskills/agentskills@main/README.md",
+     "published": null,
+     "accessed": "2026-11-11"
+    }
+   ]
+  },
+  {
+   "id": "well-known",
+   "name": "Well-known URIs (RFC 8615)",
+   "body": "IETF",
+   "status": "stable",
+   "tracked": "RFC 8615 (2019)",
+   "why": "The one place agents look first; every discovery document lives under /.well-known/.",
+   "support": "supported",
+   "how": [
+    "seed/standards/surfaces.json"
+   ],
+   "tests": [
+    {
+     "file": "seed/worker/test/agentic.discovery.test.js",
+     "name": "discovery: well-known paths and json schema register"
+    }
+   ],
+   "sources": [
+    {
+     "title": "RFC 8615",
+     "url": "https://www.rfc-editor.org/rfc/rfc8615",
+     "published": "2019-05-01",
+     "accessed": "2026-11-11"
+    }
+   ]
+  },
+  {
+   "id": "api-catalog",
+   "name": "API catalog (RFC 9727)",
+   "body": "IETF",
+   "status": "stable",
+   "tracked": "RFC 9727 (2025), /.well-known/api-catalog as application/linkset+json",
+   "why": "One document that points to every API and its description.",
+   "support": "supported",
+   "how": [
+    "seed/worker/src/agentic/acl/discovery.js"
+   ],
+   "acl": "seed/worker/src/agentic/acl/discovery.js",
+   "tests": [
+    {
+     "file": "seed/worker/test/agentic.discovery.test.js",
+     "name": "discovery: api catalog and protected resource"
+    }
+   ],
+   "sources": [
+    {
+     "title": "RFC 9727",
+     "url": "https://www.rfc-editor.org/rfc/rfc9727",
+     "published": "2025-06-01",
+     "accessed": "2026-11-11"
+    }
+   ]
+  },
+  {
+   "id": "oauth-prm",
+   "name": "OAuth protected resource metadata (RFC 9728)",
+   "body": "IETF OAuth WG",
+   "status": "stable",
+   "tracked": "RFC 9728 (2025)",
+   "why": "MCP clients use it to find the authorization server for /mcp.",
+   "support": "supported",
+   "how": [
+    "seed/worker/src/agentic/acl/discovery.js"
+   ],
+   "acl": "seed/worker/src/agentic/acl/discovery.js",
+   "tests": [
+    {
+     "file": "seed/worker/test/agentic.discovery.test.js",
+     "name": "discovery: api catalog and protected resource"
+    }
+   ],
+   "sources": [
+    {
+     "title": "RFC 9728",
+     "url": "https://www.rfc-editor.org/rfc/rfc9728",
+     "published": "2025-04-01",
+     "accessed": "2026-11-11"
+    }
+   ]
+  },
+  {
+   "id": "openapi",
+   "name": "OpenAPI 3.1",
+   "body": "OpenAPI Initiative (Linux Foundation)",
+   "status": "stable",
+   "tracked": "3.1.0",
+   "why": "Machine-readable HTTP description generated from the surface registry, so it cannot drift.",
+   "support": "supported",
+   "how": [
+    "seed/worker/src/agentic/acl/discovery.js"
+   ],
+   "acl": "seed/worker/src/agentic/acl/discovery.js",
+   "tests": [
+    {
+     "file": "seed/worker/test/agentic.discovery.test.js",
+     "name": "discovery: openapi"
+    }
+   ],
+   "sources": [
+    {
+     "title": "OpenAPI Specification 3.1.0",
+     "url": "https://spec.openapis.org/oas/v3.1.0",
+     "published": "2021-02-15",
+     "accessed": "2026-11-11"
+    }
+   ]
+  },
+  {
+   "id": "json-schema",
+   "name": "JSON Schema 2020-12",
+   "body": "JSON Schema organisation",
+   "status": "stable",
+   "tracked": "2020-12",
+   "why": "Tool inputs (MCP), the standards register and the surface registry are all JSON Schema, so any validator or model can read them.",
+   "support": "supported",
+   "how": [
+    "seed/worker/src/agentic/core/tools.js",
+    "seed/standards/standards.schema.json"
+   ],
+   "tests": [
+    {
+     "file": "seed/worker/test/agentic.contract.test.js",
+     "name": "contract: tool schemas are JSON Schema 2020-12 objects"
+    },
+    {
+     "file": "seed/worker/test/agentic.discovery.test.js",
+     "name": "discovery: well-known paths and json schema register"
+    }
+   ],
+   "sources": [
+    {
+     "title": "JSON Schema 2020-12",
+     "url": "https://json-schema.org/draft/2020-12",
+     "published": "2020-12-08",
+     "accessed": "2026-11-11"
+    }
+   ]
+  },
+  {
+   "id": "toml",
+   "name": "TOML 1.0 client and platform configuration",
+   "body": "toml-lang (spec); Codex and Cloudflare Wrangler consume it",
+   "status": "stable",
+   "tracked": "TOML 1.0.0; Codex config.toml [mcp_servers]; wrangler accepts TOML or JSONC",
+   "why": "Agent clients (Codex) are configured in TOML; we ship ready client configs and keep platform config in a format the platform accepts.",
+   "support": "supported",
+   "how": [
+    "docs/standards/clients/codex-config.toml",
+    "docs/standards/clients/mcp.json",
+    "seed/worker/wrangler.template.jsonc"
+   ],
+   "tests": [
+    {
+     "file": "tests/foundation/test_standards.py",
+     "name": "test_client_configs_parse_and_point_at_mcp"
+    }
+   ],
+   "sources": [
+    {
+     "title": "TOML 1.0.0",
+     "url": "https://toml.io/en/v1.0.0",
+     "published": "2021-01-12",
+     "accessed": "2026-11-11"
+    },
+    {
+     "title": "Cloudflare Wrangler configuration",
+     "url": "https://developers.cloudflare.com/workers/wrangler/configuration/",
+     "published": null,
+     "accessed": "2026-11-11"
+    }
+   ]
+  },
+  {
+   "id": "otel-genai",
+   "name": "OpenTelemetry GenAI semantic conventions",
+   "body": "OpenTelemetry (CNCF)",
+   "status": "development",
+   "tracked": "gen_ai semconv v1.42.0 (2026-06-12); every gen_ai.* attribute is Development, so names may change",
+   "why": "Tool calls emit execute_tool spans with the standard attribute names, so any observability backend reads them.",
+   "support": "supported",
+   "how": [
+    "seed/worker/src/agentic/adapters/console-telemetry.js",
+    "seed/worker/src/agentic/acl/mcp.js"
+   ],
+   "acl": "seed/worker/src/agentic/adapters/console-telemetry.js",
+   "tests": [
+    {
+     "file": "seed/worker/test/agentic.mcp.test.js",
+     "name": "mcp: OTel execute_tool span"
+    }
+   ],
+   "sources": [
+    {
+     "title": "OpenTelemetry GenAI semantic conventions explained",
+     "url": "https://www.dash0.com/knowledge/opentelemetry-genai-semantic-conventions-explained",
+     "published": null,
+     "accessed": "2026-11-11"
+    },
+    {
+     "title": "Semantic conventions for GenAI agent spans",
+     "url": "https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-agent-spans",
+     "published": null,
+     "accessed": "2026-11-11"
+    }
+   ]
+  },
+  {
+   "id": "cloudflare-agents",
+   "name": "Cloudflare Agents SDK, remote MCP and AI Gateway",
+   "body": "Cloudflare",
+   "status": "stable",
+   "tracked": "agents package; McpAgent on Durable Objects; AI Gateway for model calls",
+   "why": "Our home platform. The core stays portable; a Cloudflare adapter would add McpAgent sessions and route model calls through AI Gateway.",
+   "support": "planned",
+   "tracked_by": "STD-2: McpAgent/Durable Object adapter and AI Gateway for the BS-4 executor; the Worker runs plain fetch handlers today",
+   "acl": "seed/worker/src/agentic/handler.js",
+   "sources": [
+    {
+     "title": "Cloudflare: docs for agents",
+     "url": "https://developers.cloudflare.com/docs-for-agents/",
+     "published": null,
+     "accessed": "2026-11-11"
+    },
+    {
+     "title": "Cloudflare: Building an open agentic internet",
+     "url": "https://blog.cloudflare.com/the-agentic-internet/",
+     "published": "2026-08-06",
+     "accessed": "2026-11-11"
+    }
+   ]
+  },
+  {
+   "id": "web-bot-auth",
+   "name": "Web Bot Auth (signed agents)",
+   "body": "IETF (HTTP Message Signatures based); Cloudflare",
+   "status": "draft",
+   "tracked": "IETF draft; Cloudflare verified bots",
+   "why": "How a site proves a request is from a known agent, and how our agents prove who they are to others.",
+   "support": "supported",
+   "acl": "site/webbotauth.js",
+   "sources": [
+    {
+     "title": "Cloudflare: Web Bot Auth",
+     "url": "https://blog.cloudflare.com/web-bot-auth/",
+     "published": null,
+     "accessed": "2026-11-11"
+    }
+   ],
+   "how": [
+    "site/webbotauth.js",
+    "site/agentic.js"
+   ],
+   "tests": [
+    {
+     "file": "site/webbotauth.test.mjs",
+     "name": "webbotauth: sign, verify and publish directory"
+    }
+   ]
+  },
+  {
+   "id": "x402-pay-per-crawl",
+   "name": "x402 and pay per crawl (payable web)",
+   "body": "x402 (open protocol); Cloudflare Monetization Gateway",
+   "status": "draft",
+   "tracked": "x402",
+   "why": "Lets agents pay for access. Ultrastable moves no money without the owner, so this stays off.",
+   "support": "not_applicable",
+   "reason": "Money movement is identity-bound and irreversible (interrupt gate). Revisit only through a gate card.",
+   "sources": [
+    {
+     "title": "Cloudflare: Building an open agentic internet (payable)",
+     "url": "https://blog.cloudflare.com/the-agentic-internet/",
+     "published": "2026-08-06",
+     "accessed": "2026-11-11"
+    }
+   ]
+  },
+  {
+   "id": "nlweb-webmcp",
+   "name": "NLWeb and WebMCP (browser-side agent tools)",
+   "body": "Microsoft (NLWeb); WebMCP community and browsers",
+   "status": "proposal",
+   "tracked": "WebMCP document.modelContext.registerTool",
+   "why": "Marketing sites could expose actions to browser agents.",
+   "support": "not_applicable",
+   "reason": "The Worker serves no content site; the site repository adopts these when it publishes (tracked in its own register).",
+   "sources": [
+    {
+     "title": "Cloudflare: WebMCP",
+     "url": "https://blog.cloudflare.com/webmcp/",
+     "published": null,
+     "accessed": "2026-11-11"
+    }
+   ]
+  },
+  {
+   "id": "mcp-ema",
+   "name": "MCP enterprise-managed authorization (ID-JAG, XAA)",
+   "body": "MCP project; IETF OAuth WG (draft)",
+   "status": "draft",
+   "tracked": "researched 2026-11-14",
+   "why": "One admin approval instead of per-server consent screens; the click-once experience for organisations.",
+   "support": "planned",
+   "tracked_by": "STD-4: accept ID-JAG assertions on our authorization server and present them as a client; extension is stable in MCP 2026-07-28 but ID-JAG itself is an IETF draft (-04)",
+   "acl": "seed/worker/src/auth/oauth.js",
+   "sources": [
+    {
+     "title": "What are EMA, ID-JAG and XAA",
+     "url": "https://www.cyera.com/blog/ema-id-jag-xaa-token-exchange",
+     "published": null,
+     "accessed": "2026-11-14"
+    }
+   ]
+  },
+  {
+   "id": "oauth-device",
+   "name": "OAuth device authorization grant (RFC 8628) and URL-mode elicitation for consent",
+   "body": "IETF OAuth WG; MCP project",
+   "status": "stable",
+   "tracked": "researched 2026-11-14",
+   "why": "Lets a CLI or headless agent link a service with one click on a phone or browser, never a pasted token.",
+   "support": "planned",
+   "tracked_by": "STD-5: device flow for CLI and headless agents; surface consent URLs through MCP URL elicitation",
+   "acl": "seed/worker/src/auth/oauth.js",
+   "sources": [
+    {
+     "title": "MCP Authorization: OAuth 2.1, PKCE and agent identity",
+     "url": "https://aembit.io/blog/mcp-oauth-2-1-pkce-and-the-future-of-ai-authorization/",
+     "published": null,
+     "accessed": "2026-11-14"
+    }
+   ]
+  },
+  {
+   "id": "ssf-caep",
+   "name": "OpenID Shared Signals Framework, CAEP and RISC",
+   "body": "OpenID Foundation",
+   "status": "stable",
+   "tracked": "researched 2026-11-14",
+   "why": "Real-time revocation: disconnecting a service or a compromised agent kills its sessions at once instead of at token expiry.",
+   "support": "planned",
+   "tracked_by": "STD-6: receive and emit SSF events for connectors and issued tokens",
+   "acl": "seed/worker/src/auth/oauth.js",
+   "sources": [
+    {
+     "title": "AI agent identity standards tracker",
+     "url": "https://nhimg.org/agent-identity-standards-tracker",
+     "published": null,
+     "accessed": "2026-11-14"
+    }
+   ]
+  },
+  {
+   "id": "dpop-rar",
+   "name": "DPoP (RFC 9449), Resource Indicators (RFC 8707) and Rich Authorization Requests (RFC 9396)",
+   "body": "IETF OAuth WG",
+   "status": "stable",
+   "tracked": "researched 2026-11-14",
+   "why": "Sender-constrained tokens and per-action grants so a leaked token is useless and consent is specific.",
+   "support": "planned",
+   "tracked_by": "STD-7: bind issued tokens with DPoP, require resource indicators, express scopes as RAR",
+   "acl": "seed/worker/src/auth/oauth.js",
+   "sources": [
+    {
+     "title": "MCP Authorization specification",
+     "url": "https://www.descope.com/blog/post/mcp-auth-spec",
+     "published": null,
+     "accessed": "2026-11-14"
+    }
+   ]
+  },
+  {
+   "id": "wimse-spiffe",
+   "name": "Workload identity for agents (WIMSE, SPIFFE) and transaction tokens",
+   "body": "IETF WIMSE; CNCF",
+   "status": "draft",
+   "tracked": "researched 2026-11-14",
+   "why": "One verifiable identity per agent and call-chain propagation, the stack that agent-identity guidance converges on.",
+   "support": "planned",
+   "tracked_by": "STD-8: give each virtual agent a durable ID and short-lived credentials per task; carry the chain in transaction tokens",
+   "acl": "seed/worker/src/auth/oauth.js",
+   "sources": [
+    {
+     "title": "Agents are workloads",
+     "url": "https://uberether.com/agents-are-workloads/",
+     "published": null,
+     "accessed": "2026-11-14"
+    }
+   ]
+  },
+  {
+   "id": "authzen",
+   "name": "OpenID AuthZEN (policy decision point API)",
+   "body": "OpenID Foundation",
+   "status": "stable",
+   "tracked": "researched 2026-11-14",
+   "why": "Standard way to ask \"may this agent do this\"; served at /access/v1/evaluation and /access/v1/evaluations from the trust ledger, failing closed.",
+   "support": "supported",
+   "acl": "site/authzen.js",
+   "sources": [
+    {
+     "title": "AI agent identity standards: the 2026 landscape",
+     "url": "http://nhigovernance.com/ai-agents/agent-identity-standards.html",
+     "published": null,
+     "accessed": "2026-11-14"
+    }
+   ],
+   "how": [
+    "site/authzen.js",
+    "site/worker.js"
+   ],
+   "tests": [
+    {
+     "file": "site/authzen.test.mjs",
+     "name": "authzen: ledger decides and fails closed"
+    },
+    {
+     "file": "site/authzen.test.mjs",
+     "name": "worker routes /access/v1/evaluation"
+    }
+   ]
+  },
+  {
+   "id": "a2a-signed",
+   "name": "A2A v1.0 with signed Agent Cards and task lifecycle",
+   "body": "Agentic AI Foundation",
+   "status": "stable",
+   "tracked": "researched 2026-11-14",
+   "why": "Verifiable agent identity and long-running tasks: the v1.0 card carries a JWS signature whose key set the Worker publishes, and the endpoint answers the v1.0 method names.",
+   "support": "supported",
+   "acl": "seed/worker/src/agentic/acl/discovery.js",
+   "sources": [
+    {
+     "title": "A2A passes 150 organizations",
+     "url": "https://www.linuxfoundation.org/press/a2a-protocol-surpasses-150-organizations-lands-in-major-cloud-platforms-and-sees-enterprise-production-use-in-first-year",
+     "published": null,
+     "accessed": "2026-11-14"
+    }
+   ],
+   "how": [
+    "site/agentic.js"
+   ],
+   "tests": [
+    {
+     "file": "site/site.test.mjs",
+     "name": "agent card signature verifies against /.well-known/jwks.json"
+    }
+   ]
+  },
+  {
+   "id": "mcp-apps-agui",
+   "name": "MCP Apps (SEP-1865), AG-UI and A2UI for rich agent surfaces",
+   "body": "MCP project; AG-UI; Google (A2UI)",
+   "status": "draft",
+   "tracked": "researched 2026-11-14",
+   "why": "Lets the dashboard and consent screens render inside any agent host as a click-through surface instead of a pasted link.",
+   "support": "planned",
+   "tracked_by": "STD-10: ship the connect and approve screens as MCP Apps; AG-UI event stream for the dashboard",
+   "acl": "seed/worker/src/agentic/acl/discovery.js",
+   "sources": [
+    {
+     "title": "State of generative UI 2026",
+     "url": "https://www.openui.com/blog/state-of-generative-ui-report",
+     "published": null,
+     "accessed": "2026-11-14"
+    }
+   ]
+  },
+  {
+   "id": "acp-editor",
+   "name": "Agent Client Protocol (editor to coding agent)",
+   "body": "Zed and community",
+   "status": "draft",
+   "tracked": "researched 2026-11-14",
+   "why": "How editors drive coding agents; relevant to the code-agent SOP and handoff.",
+   "support": "planned",
+   "tracked_by": "STD-11: watch; adopt if VS Code or JetBrains ship it for third-party harnesses",
+   "acl": "seed/worker/src/agentic/acl/discovery.js",
+   "sources": [
+    {
+     "title": "Agentic protocols 2026",
+     "url": "https://geraldmorisseau.com/en/agentic-protocols-2026/",
+     "published": null,
+     "accessed": "2026-11-14"
+    }
+   ]
+  },
+  {
+   "id": "ap2-ucp",
+   "name": "AP2 mandates and UCP commerce",
+   "body": "Google, Shopify, Linux Foundation",
+   "status": "draft",
+   "tracked": "researched 2026-11-14",
+   "why": "Signed spending mandates when customers pay through agents; revenue path for the platform.",
+   "support": "planned",
+   "tracked_by": "STD-12: n/a until funding; any payment is identity-bound and stays behind a gate card",
+   "acl": "seed/worker/src/agentic/acl/discovery.js",
+   "sources": [
+    {
+     "title": "Agentic commerce protocols compared",
+     "url": "https://stellagent.ai/insights/mcp-vs-a2a-vs-ap2-protocol-comparison",
+     "published": null,
+     "accessed": "2026-11-14"
+    }
+   ]
+  },
+  {
+   "id": "provenance",
+   "name": "C2PA content credentials (ISO/IEC 21694) and EU AI Act Article 50 marking",
+   "body": "C2PA; EU",
+   "status": "stable",
+   "tracked": "researched 2026-11-14",
+   "why": "Generated artifacts we publish need machine-readable marking; applies to generative output placed on the market from 2026-08-02 (until 2026-12-02 for existing systems).",
+   "support": "planned",
+   "tracked_by": "STD-13: sign published artifacts with content credentials; legal-ip manager confirms scope",
+   "acl": "seed/worker/src/agentic/acl/discovery.js",
+   "sources": [
+    {
+     "title": "EU AI Act and content provenance making C2PA urgent",
+     "url": "https://www.softwareseni.com/eu-ai-act-and-content-provenance-regulations-making-c2pa-urgent-in-2026/",
+     "published": null,
+     "accessed": "2026-11-14"
+    }
+   ]
+  },
+  {
+   "id": "aims-iso",
+   "name": "ISO/IEC 42001 AI management system",
+   "body": "ISO",
+   "status": "stable",
+   "tracked": "researched 2026-11-14",
+   "why": "Customer procurement asks for it; no presumption of conformity under the AI Act yet, so evidence is the value.",
+   "support": "planned",
+   "tracked_by": "STD-14: map existing ledgers (decision log, trust ledger, failure modes) to 42001 controls",
+   "acl": "seed/worker/src/agentic/acl/discovery.js",
+   "sources": [
+    {
+     "title": "ISO 42001 and the EU AI Act control mapping",
+     "url": "https://www.tcsa.in/frameworks/iso-42001/eu-ai-act",
+     "published": null,
+     "accessed": "2026-11-14"
+    }
+   ]
+  },
+  {
+   "id": "webauthn-passkeys",
+   "name": "WebAuthn Level 3 passkeys (FIDO2)",
+   "body": "W3C; FIDO Alliance",
+   "status": "stable",
+   "tracked": "W3C WebAuthn Level 3",
+   "why": "One-tap, phishing-resistant sign-in for the owner and for the OAuth consent screens, with the email code as fallback and first enrolment.",
+   "support": "supported",
+   "how": [
+    "site/passkeys.js",
+    "site/worker.js"
+   ],
+   "tests": [
+    {
+     "file": "site/passkeys.test.mjs",
+     "name": "software authenticator"
+    },
+    {
+     "file": "site/passkeys.test.mjs",
+     "name": "one-tap sign-in"
+    }
+   ],
+   "sources": [
+    {
+     "title": "Web Authentication Level 3",
+     "url": "https://www.w3.org/TR/webauthn-3/",
+     "published": null,
+     "accessed": "2026-11-14"
+    }
+   ]
+  },
+  {
+   "id": "mcp-auth-client",
+   "name": "OAuth 2.1 client for remote MCP servers and service connectors (PKCE, RFC 8414, RFC 8707, CIMD, RFC 7591, RFC 7009)",
+   "body": "MCP / IETF OAuth WG",
+   "status": "stable",
+   "tracked": "2026-11-14: MCP 2026-07-28 prefers Client ID Metadata Documents; dynamic registration kept as fallback until its removal",
+   "support": "supported",
+   "why": "A person links a service by one consent click and a callback; nobody pastes a token. The Worker discovers the authorization server of any remote MCP server, registers itself (CIMD, else DCR), runs auth-code with PKCE S256, seals the tokens per tenant, refreshes and revokes.",
+   "how": [
+    "seed/worker/src/auth/connectors.js",
+    "seed/worker/src/auth/state.js",
+    "seed/worker/src/auth/oauth.js",
+    "seed/worker/src/auth/routes.js"
+   ],
+   "tests": [
+    {
+     "file": "seed/worker/test/connectors.test.js",
+     "name": "remote MCP server links with no pasted token and no owner app (CIMD)"
+    },
+    {
+     "file": "seed/worker/test/connectors.test.js",
+     "name": "remote MCP server links with no pasted token and no owner app (DCR)"
+    },
+    {
+     "file": "seed/worker/test/connectors.test.js",
+     "name": "Google flow: consent, PKCE redirect with signed state, callback exchange, sealed tokens, refresh, revoke"
+    },
+    {
+     "file": "seed/worker/test/connectors.test.js",
+     "name": "our Client ID Metadata Document is served and matches the callback"
+    },
+    {
+     "file": "seed/worker/test/connectors.test.js",
+     "name": "SSRF guard refuses private and non-https servers; no CIMD and no DCR is reported, not guessed"
+    }
+   ],
+   "sources": [
+    {
+     "title": "RFC 8414 OAuth 2.0 Authorization Server Metadata",
+     "url": "https://www.rfc-editor.org/rfc/rfc8414",
+     "published": "2018-06-01",
+     "accessed": "2026-11-14"
+    },
+    {
+     "title": "RFC 7636 PKCE",
+     "url": "https://www.rfc-editor.org/rfc/rfc7636",
+     "published": "2015-09-01",
+     "accessed": "2026-11-14"
+    },
+    {
+     "title": "RFC 8707 Resource Indicators",
+     "url": "https://www.rfc-editor.org/rfc/rfc8707",
+     "published": "2020-02-01",
+     "accessed": "2026-11-14"
+    },
+    {
+     "title": "RFC 7009 Token Revocation",
+     "url": "https://www.rfc-editor.org/rfc/rfc7009",
+     "published": "2013-08-01",
+     "accessed": "2026-11-14"
+    }
+   ]
+  },
+  {
+   "id": "data-portability",
+   "name": "Open-format data export and restore (GDPR Art. 20 style portability)",
+   "body": "EU GDPR Art. 20; Data Transfer Project norms",
+   "status": "stable",
+   "tracked": "ultrastable-export/v1",
+   "why": "A person can take everything held for them as one open JSON file and restore it, with one click and no token.",
+   "support": "supported",
+   "how": [
+    "site/mydata.js",
+    "site/portability.js"
+   ],
+   "acl": "site/mydata.js",
+   "tests": [
+    {
+     "file": "site/mydata.test.mjs",
+     "name": "mydata ok"
+    }
+   ],
+   "sources": [
+    {
+     "title": "GDPR Article 20, right to data portability",
+     "url": "https://gdpr-info.eu/art-20-gdpr/",
+     "published": null,
+     "accessed": "2026-11-14"
+    }
+   ]
+  },
+  {
+   "id": "schemastore-catalog",
+   "name": "SchemaStore catalog + JSON Schema for doctrine",
+   "body": "JSON Schema organisation",
+   "status": "de-facto",
+   "tracked": "v1",
+   "why": "Every doctrine file has a draft 2020-12 schema; editors and CI read the same catalog.",
+   "support": "supported",
+   "how": [
+    "foundation/schemas.py",
+    "schemas/catalog.json"
+   ],
+   "tests": [
+    {
+     "file": "tests/foundation/test_schemas.py",
+     "name": "test_every_doctrine_file_validates"
+    }
+   ],
+   "sources": [
+    {
+     "title": "SchemaStore",
+     "url": "https://www.schemastore.org/",
+     "published": "2026-11-25",
+     "accessed": "2026-11-25"
+    }
+   ],
+   "acl": "foundation/schemas.py"
+  },
+  {
+   "id": "cloudevents",
+   "name": "CloudEvents 1.0",
+   "body": "cncf",
+   "status": "stable",
+   "tracked": "current",
+   "why": "One event envelope for every loop-to-loop message.",
+   "support": "planned",
+   "tracked_by": "STANDARDS-FIRST-1",
+   "acl": "seed/standards/standards.json",
+   "sources": [
+    {
+     "title": "CloudEvents 1.0",
+     "url": "https://cloudevents.io/",
+     "published": "2026-11-25",
+     "accessed": "2026-11-25"
+    }
+   ]
+  },
+  {
+   "id": "openslo",
+   "name": "OpenSLO",
+   "body": "openslo",
+   "status": "stable",
+   "tracked": "current",
+   "why": "Essential variables and their bounds as standard SLO files.",
+   "support": "planned",
+   "tracked_by": "STANDARDS-FIRST-1",
+   "acl": "seed/standards/standards.json",
+   "sources": [
+    {
+     "title": "OpenSLO",
+     "url": "https://openslo.com/",
+     "published": "2026-11-25",
+     "accessed": "2026-11-25"
+    }
+   ]
+  },
+  {
+   "id": "opentofu",
+   "name": "OpenTofu",
+   "body": "linux-foundation",
+   "status": "stable",
+   "tracked": "current",
+   "why": "Repos, rulesets, DNS and Workers as code across Cloudflare, GitHub and Google Cloud.",
+   "support": "planned",
+   "tracked_by": "STANDARDS-FIRST-1",
+   "acl": "seed/standards/standards.json",
+   "sources": [
+    {
+     "title": "OpenTofu",
+     "url": "https://opentofu.org/",
+     "published": "2026-11-25",
+     "accessed": "2026-11-25"
+    }
+   ]
+  },
+  {
+   "id": "openfeature",
+   "name": "OpenFeature",
+   "body": "cncf",
+   "status": "stable",
+   "tracked": "current",
+   "why": "Knobs and experiments read through one flag API.",
+   "support": "planned",
+   "tracked_by": "STANDARDS-FIRST-1",
+   "acl": "seed/standards/standards.json",
+   "sources": [
+    {
+     "title": "OpenFeature",
+     "url": "https://openfeature.dev/",
+     "published": "2026-11-25",
+     "accessed": "2026-11-25"
+    }
+   ]
+  },
+  {
+   "id": "slsa-sbom",
+   "name": "SLSA provenance and SPDX SBOM",
+   "body": "openssf",
+   "status": "stable",
+   "tracked": "current",
+   "why": "Signed build provenance and a bill of materials per deploy.",
+   "support": "planned",
+   "tracked_by": "STANDARDS-FIRST-1",
+   "acl": "seed/standards/standards.json",
+   "sources": [
+    {
+     "title": "SLSA provenance and SPDX SBOM",
+     "url": "https://slsa.dev/",
+     "published": "2026-11-25",
+     "accessed": "2026-11-25"
+    }
+   ]
+  },
+  {
+   "id": "conventional-commits",
+   "name": "Conventional Commits + SemVer",
+   "body": "community",
+   "status": "stable",
+   "tracked": "current",
+   "why": "Release notes and versions computed from commit messages.",
+   "support": "planned",
+   "tracked_by": "STANDARDS-FIRST-1",
+   "acl": "seed/standards/standards.json",
+   "sources": [
+    {
+     "title": "Conventional Commits + SemVer",
+     "url": "https://www.conventionalcommits.org/",
+     "published": "2026-11-25",
+     "accessed": "2026-11-25"
+    }
+   ]
+  }
+ ]
 }

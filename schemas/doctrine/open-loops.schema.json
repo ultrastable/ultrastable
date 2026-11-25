@@ -1,0 +1,39 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/open-loops.schema.json",
+ "title": "doctrine/open-loops.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "version": {
+   "type": "string"
+  },
+  "banned_phrases": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "scan_globs": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "gates": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "banned_phrases",
+  "gates",
+  "scan_globs",
+  "version"
+ ]
+}

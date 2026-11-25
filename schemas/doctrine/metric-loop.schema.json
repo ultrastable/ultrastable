@@ -1,0 +1,33 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/metric-loop.schema.json",
+ "title": "doctrine/metric-loop.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "version": {
+   "type": "string"
+  },
+  "efficacy_days": {
+   "type": "number"
+  },
+  "min_move_share": {
+   "type": "number"
+  },
+  "metrics": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "efficacy_days",
+  "metrics",
+  "min_move_share",
+  "version"
+ ]
+}

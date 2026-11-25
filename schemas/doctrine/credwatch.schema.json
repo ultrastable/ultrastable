@@ -1,0 +1,36 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/credwatch.schema.json",
+ "title": "doctrine/credwatch.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "version": {
+   "type": "string"
+  },
+  "warn_days": {
+   "type": "number"
+  },
+  "credentials": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "registrations": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "credentials",
+  "registrations",
+  "version",
+  "warn_days"
+ ]
+}

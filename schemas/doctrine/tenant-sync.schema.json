@@ -1,0 +1,204 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/tenant-sync.schema.json",
+ "title": "doctrine/tenant-sync.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "core": {
+   "type": "object",
+   "properties": {
+    "repo": {
+     "type": "string"
+    },
+    "dir": {
+     "type": "string"
+    },
+    "tool": {
+     "type": "string"
+    }
+   }
+  },
+  "ledger": {
+   "type": "string"
+  },
+  "max_prs_per_day": {
+   "type": "number"
+  },
+  "repos": {
+   "type": "object",
+   "properties": {
+    "ultrastable": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "why": {
+       "type": "string"
+      }
+     }
+    },
+    "practical-solutions": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "clone": {
+       "type": "string"
+      },
+      "pr_repo": {
+       "type": "string"
+      },
+      "vendor_dir": {
+       "type": "string"
+      }
+     }
+    },
+    "ops": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "why": {
+       "type": "string"
+      }
+     }
+    },
+    "workers": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "why": {
+       "type": "string"
+      }
+     }
+    },
+    "spec": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "why": {
+       "type": "string"
+      }
+     }
+    },
+    "seed": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "why": {
+       "type": "string"
+      }
+     }
+    },
+    "license": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "why": {
+       "type": "string"
+      }
+     }
+    },
+    ".github": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "why": {
+       "type": "string"
+      }
+     }
+    },
+    "business": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "why": {
+       "type": "string"
+      }
+     }
+    },
+    "docs": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "why": {
+       "type": "string"
+      }
+     }
+    },
+    "ip": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "why": {
+       "type": "string"
+      }
+     }
+    },
+    "platform": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "why": {
+       "type": "string"
+      }
+     }
+    },
+    "site": {
+     "type": "object",
+     "properties": {
+      "role": {
+       "type": "string"
+      },
+      "why": {
+       "type": "string"
+      }
+     }
+    }
+   }
+  },
+  "future_tenant_rule": {
+   "type": "string"
+  },
+  "drift_max_days": {
+   "type": "number"
+  },
+  "upstream_min_30d": {
+   "type": "number"
+  }
+ },
+ "required": [
+  "_doc",
+  "core",
+  "drift_max_days",
+  "future_tenant_rule",
+  "ledger",
+  "max_prs_per_day",
+  "repos",
+  "upstream_min_30d"
+ ]
+}

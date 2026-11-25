@@ -1,0 +1,127 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/cost.schema.json",
+ "title": "doctrine/cost.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "version": {
+   "type": "string"
+  },
+  "account_id": {
+   "type": "string"
+  },
+  "standing_goal": {
+   "type": "object",
+   "properties": {
+    "id": {
+     "type": "string"
+    },
+    "north_star": {
+     "type": "string"
+    },
+    "measures": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "priority_order": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "budgets": {
+   "type": "object",
+   "properties": {
+    "source": {
+     "type": "string"
+    },
+    "note": {
+     "type": "string"
+    }
+   }
+  },
+  "baseline_2026-11-13": {
+   "type": "object",
+   "properties": {
+    "window": {
+     "type": "string"
+    },
+    "d1_rows_read": {
+     "type": "object",
+     "properties": {
+      "qnfo-audit": {
+       "type": "number"
+      },
+      "living-paper": {
+       "type": "number"
+      },
+      "qnfo-graph": {
+       "type": "number"
+      },
+      "q08-signal": {
+       "type": "number"
+      },
+      "personal-life": {
+       "type": "number"
+      },
+      "q08-trades": {
+       "type": "number"
+      }
+     }
+    },
+    "qnfo_audit_rows_per_read_query": {
+     "type": "number"
+    },
+    "ai_neurons_by_model": {
+     "type": "object",
+     "properties": {
+      "@cf/openai/gpt-oss-120b": {
+       "type": "number"
+      },
+      "@cf/zai-org/glm-5.3": {
+       "type": "number"
+      },
+      "@cf/zai-org/glm-5.3-flash": {
+       "type": "number"
+      },
+      "@cf/moonshotai/kimi-k2.7-code": {
+       "type": "number"
+      },
+      "@cf/moonshotai/kimi-k2.6": {
+       "type": "number"
+      },
+      "@cf/deepseek-ai/deepseek-v4.1-flash-1017": {
+       "type": "number"
+      }
+     }
+    }
+   }
+  },
+  "findings": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "closing_probe": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "_doc",
+  "account_id",
+  "baseline_2026-11-13",
+  "budgets",
+  "closing_probe",
+  "findings",
+  "standing_goal",
+  "version"
+ ]
+}

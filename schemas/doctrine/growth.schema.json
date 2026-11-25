@@ -1,0 +1,106 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/growth.schema.json",
+ "title": "doctrine/growth.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "version": {
+   "type": "string"
+  },
+  "target_growth_share": {
+   "type": "number"
+  },
+  "window_merges": {
+   "type": "number"
+  },
+  "label": {
+   "type": "string"
+  },
+  "start": {
+   "type": "string"
+  },
+  "horizon_days": {
+   "type": "number"
+  },
+  "revise_after_days": {
+   "type": "number"
+  },
+  "experiment_check_after_days": {
+   "type": "number"
+  },
+  "classify": {
+   "type": "object",
+   "properties": {
+    "fix": {
+     "type": "string"
+    },
+    "growth": {
+     "type": "string"
+    }
+   }
+  },
+  "products": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "metrics": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "bank": {
+   "type": "object",
+   "properties": {
+    "pageviews_7d": {
+     "type": "array",
+     "items": {
+      "type": "object"
+     }
+    },
+    "visitors_7d": {
+     "type": "array",
+     "items": {
+      "type": "object"
+     }
+    },
+    "agent_hits_7d": {
+     "type": "array",
+     "items": {
+      "type": "object"
+     }
+    },
+    "pilot_page_views_7d": {
+     "type": "array",
+     "items": {
+      "type": "object"
+     }
+    }
+   }
+  },
+  "owner_note": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "_doc",
+  "bank",
+  "classify",
+  "experiment_check_after_days",
+  "horizon_days",
+  "label",
+  "metrics",
+  "owner_note",
+  "products",
+  "revise_after_days",
+  "start",
+  "target_growth_share",
+  "version",
+  "window_merges"
+ ]
+}

@@ -1,0 +1,83 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/design-experiments.schema.json",
+ "title": "doctrine/design-experiments.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "version": {
+   "type": "string"
+  },
+  "policy": {
+   "type": "object",
+   "properties": {
+    "alpha": {
+     "type": "number"
+    },
+    "min_sample_per_arm": {
+     "type": "number"
+    },
+    "max_days": {
+     "type": "number"
+    },
+    "max_concurrent_per_surface": {
+     "type": "number"
+    },
+    "bucketing": {
+     "type": "string"
+    },
+    "no_peeking": {
+     "type": "string"
+    },
+    "axes_allowed": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "never_a_variant": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "kept_when": {
+     "type": "string"
+    },
+    "statuses": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "sources": {
+     "type": "string"
+    },
+    "after_verdict": {
+     "type": "string"
+    }
+   }
+  },
+  "experiments": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "ideas": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "experiments",
+  "ideas",
+  "policy",
+  "version"
+ ]
+}

@@ -1,0 +1,97 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/rules.schema.json",
+ "title": "doctrine/rules.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "version": {
+   "type": "string"
+  },
+  "workflows": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "interval_h": {
+   "type": "number"
+  },
+  "rules": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "repos": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "org": {
+   "type": "string"
+  },
+  "notice_pattern": {
+   "type": "string"
+  },
+  "secret_patterns": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "secret_exempt_globs": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "qnfo_scan_globs": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "qnfo_exempt_globs": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "qnfo_live_origin": {
+   "type": "string"
+  },
+  "qnfo_live_pages": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "pages_live_urls": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "interval_h",
+  "notice_pattern",
+  "org",
+  "pages_live_urls",
+  "qnfo_exempt_globs",
+  "qnfo_live_origin",
+  "qnfo_live_pages",
+  "qnfo_scan_globs",
+  "repos",
+  "rules",
+  "secret_exempt_globs",
+  "secret_patterns",
+  "version",
+  "workflows"
+ ]
+}

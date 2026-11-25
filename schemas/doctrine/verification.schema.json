@@ -1,0 +1,52 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/verification.schema.json",
+ "title": "doctrine/verification.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "marker": {
+   "type": "string"
+  },
+  "sources": {
+   "type": "object",
+   "properties": {
+    "tla-aws": {
+     "type": "string"
+    },
+    "sel4": {
+     "type": "string"
+    },
+    "compcert": {
+     "type": "string"
+    },
+    "power-of-ten": {
+     "type": "string"
+    },
+    "do-178c": {
+     "type": "string"
+    },
+    "quickcheck": {
+     "type": "string"
+    },
+    "ashby": {
+     "type": "string"
+    }
+   }
+  },
+  "invariants": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "invariants",
+  "marker",
+  "sources"
+ ]
+}

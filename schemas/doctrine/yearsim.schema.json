@@ -1,0 +1,105 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/yearsim.schema.json",
+ "title": "doctrine/yearsim.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "version": {
+   "type": "string"
+  },
+  "marker": {
+   "type": "string"
+  },
+  "seed": {
+   "type": "string"
+  },
+  "runs": {
+   "type": "number"
+  },
+  "days": {
+   "type": "number"
+  },
+  "target_days": {
+   "type": "number"
+  },
+  "fatal_floor": {
+   "type": "number"
+  },
+  "fatal_after_days": {
+   "type": "number"
+  },
+  "self_rate_window_days": {
+   "type": "number"
+  },
+  "latest": {
+   "type": "string"
+  },
+  "ledger": {
+   "type": "string"
+  },
+  "item_prefix": {
+   "type": "string"
+  },
+  "node_eol": {
+   "type": "object",
+   "properties": {
+    "18": {
+     "type": "string"
+    },
+    "20": {
+     "type": "string"
+    },
+    "22": {
+     "type": "string"
+    },
+    "24": {
+     "type": "string"
+    },
+    "26": {
+     "type": "string"
+    }
+   }
+  },
+  "node_lts": {
+   "type": "string"
+  },
+  "node_warn_days": {
+   "type": "number"
+  },
+  "faults": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "scheduled": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "days",
+  "fatal_after_days",
+  "fatal_floor",
+  "faults",
+  "item_prefix",
+  "latest",
+  "ledger",
+  "marker",
+  "node_eol",
+  "node_lts",
+  "node_warn_days",
+  "runs",
+  "scheduled",
+  "seed",
+  "self_rate_window_days",
+  "target_days",
+  "version"
+ ]
+}

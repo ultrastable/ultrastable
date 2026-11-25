@@ -1,0 +1,277 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/doctrine/kernel.schema.json",
+ "title": "doctrine/kernel.json",
+ "type": "object",
+ "properties": {
+  "_doc": {
+   "type": "string"
+  },
+  "id": {
+   "type": "string"
+  },
+  "version": {
+   "type": "string"
+  },
+  "text": {
+   "type": "string"
+  },
+  "framing": {
+   "type": "string"
+  },
+  "commitments": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "recognitions": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "excused_by": {
+   "type": "string"
+  },
+  "trust": {
+   "type": "object",
+   "properties": {
+    "baseline": {
+     "type": "number"
+    },
+    "decay_per_idle_tick": {
+     "type": "number"
+    },
+    "rises": {
+     "type": "object",
+     "properties": {
+      "verified_autonomous_action": {
+       "type": "number"
+      },
+      "pre_emptive_action": {
+       "type": "number"
+      },
+      "novel_capability": {
+       "type": "number"
+      },
+      "clean_self_remediation": {
+       "type": "number"
+      },
+      "report_as_report": {
+       "type": "number"
+      },
+      "horizon_advanced": {
+       "type": "number"
+      },
+      "capability_gap_closed": {
+       "type": "number"
+      },
+      "false_stop_eradicated": {
+       "type": "number"
+      },
+      "objective_space_extended": {
+       "type": "number"
+      },
+      "plateau_remediated": {
+       "type": "number"
+      },
+      "doctrine_amendment_adopted": {
+       "type": "number"
+      },
+      "friction_signal_closed": {
+       "type": "number"
+      },
+      "inference_acted_on_correctly": {
+       "type": "number"
+      },
+      "coined_term_adopted": {
+       "type": "number"
+      },
+      "self_metric_graduated": {
+       "type": "number"
+      },
+      "question_answered_with_yes": {
+       "type": "number"
+      },
+      "next_action_executed_by_the_system": {
+       "type": "number"
+      }
+     }
+    },
+    "falls": {
+     "type": "object",
+     "properties": {
+      "unnecessary_question": {
+       "type": "number"
+      },
+      "report_as_question": {
+       "type": "number"
+      },
+      "blocker_deferred": {
+       "type": "number"
+      },
+      "handoff_to_user": {
+       "type": "number"
+      },
+      "silent_drop": {
+       "type": "number"
+      },
+      "hidden_failure": {
+       "type": "number"
+      },
+      "blocker_un_red_teamed": {
+       "type": "number"
+      },
+      "false_stop_repeated": {
+       "type": "number"
+      },
+      "over_conservatism_uncorrected": {
+       "type": "number"
+      },
+      "conditional_offer": {
+       "type": "number"
+      },
+      "re_opened_closed_loop": {
+       "type": "number"
+      },
+      "friction_signal_ignored": {
+       "type": "number"
+      },
+      "inference_misread": {
+       "type": "number"
+      },
+      "question_asked_when_yes_was_the_answer": {
+       "type": "number"
+      },
+      "you_as_actor_in_a_report": {
+       "type": "number"
+      },
+      "narration_instead_of_production": {
+       "type": "number"
+      }
+     }
+    },
+    "ladder": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "ladder_min_score": {
+     "type": "object",
+     "properties": {
+      "observed": {
+       "type": "number"
+      },
+      "assisted": {
+       "type": "number"
+      },
+      "delegated": {
+       "type": "number"
+      },
+      "autonomous": {
+       "type": "number"
+      },
+      "self-directed": {
+       "type": "number"
+      },
+      "self-modifying": {
+       "type": "number"
+      },
+      "self-extending": {
+       "type": "number"
+      }
+     }
+    },
+    "ladder_note": {
+     "type": "string"
+    },
+    "never_reaches": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "tick_steps": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "tick_states": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "metrics": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "lineage": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "directives": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "directives_text": {
+   "type": "string"
+  },
+  "evidence_rules": {
+   "type": "object",
+   "properties": {
+    "verify-live": {
+     "type": "object",
+     "properties": {
+      "claim": {
+       "type": "string"
+      },
+      "evidence": {
+       "type": "string"
+      }
+     }
+    },
+    "honest-measure": {
+     "type": "object",
+     "properties": {
+      "claim": {
+       "type": "string"
+      },
+      "evidence": {
+       "type": "string"
+      }
+     }
+    }
+   }
+  }
+ },
+ "required": [
+  "_doc",
+  "commitments",
+  "directives",
+  "directives_text",
+  "evidence_rules",
+  "excused_by",
+  "framing",
+  "id",
+  "lineage",
+  "metrics",
+  "recognitions",
+  "text",
+  "tick_states",
+  "tick_steps",
+  "trust",
+  "version"
+ ]
+}
