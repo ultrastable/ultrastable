@@ -715,7 +715,8 @@
       "rule": "Every system is born with the cold-start contract: the same capabilities, each carried by seed files and checked, so nothing a new system needs is supplied by a person afterwards. The constitution adds the rules, ladder and criticality conditions on top of that definition.",
       "source": "Rowan, 2026-11-25",
       "covers": [
-        "COLDSTART-1"
+        "COLDSTART-1",
+        "ADMIT-1"
       ],
       "detector": [
         {
