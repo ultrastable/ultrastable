@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-25-what-works-moved-to-its-own-repository",
+  "kind": "decision",
+  "date": "2026-11-25",
+  "title": "What Works moved to its own repository",
+  "body": "Rowan created ultrastable/what-works (2026-11-25) and asked for it to be public. The tenant folder was split with its history, the core files it reads vendored (tenantrepos --prepare) and a CI workflow added; topology now builds ultrastable-what-works from that repository's main (worker/index.js), the registry state is moved and the worker code left the core. Seedlife and deploy read the repository over raw.githubusercontent.com, so it must be public.",
+  "probe": "grep:doctrine/topology.json::\"repo\": \"ultrastable/what-works\"",
+  "session": "session_0156nqDvibwHjBezJBzy8i3x"
+ },
+ "kind": "decision",
+ "title": "What Works moved to its own repository",
+ "session": "session_0156nqDvibwHjBezJBzy8i3x"
+}
