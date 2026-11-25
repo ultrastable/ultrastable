@@ -32,8 +32,10 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
           LANE_PAT: ${{ secrets.LANE_PAT }}
+      - name: Measure drift and upstream flow (SYNC-BOTH-WAYS-1)
+        run: python3 -m foundation.tenantsync --metrics --apply
       - name: Record the ledger
         run: |
           git config user.name tenant-sync; git config user.email tenant-sync@users.noreply.github.com
-          git add ops/tenant-sync/ledger.jsonl
+          git add ops/tenant-sync/ledger.jsonl ops/tenant-sync/metrics.json docs/issues
           git diff --cached --quiet || (git commit -qm "tenant-sync: ledger" && python3 tools/push_main.py)
