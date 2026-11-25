@@ -7,12 +7,15 @@
    "instances/replication-ledger/worker/site.js",
    "instances/replication-ledger/worker/ledger.js",
    "instances/replication-ledger/worker/standing.js",
+   "instances/replication-ledger/worker/store.js",
+   "instances/replication-ledger/worker/discover.js",
    "instances/replication-ledger/worker/crossref.js",
    "instances/replication-ledger/worker/cli.mjs",
    "instances/replication-ledger/worker/data/findings.json"
   ],
   "tests": [
-   "instances/replication-ledger/worker/ledger.test.mjs"
+   "instances/replication-ledger/worker/ledger.test.mjs",
+   "instances/replication-ledger/worker/discover.test.mjs"
   ]
  },
  "deploy": {
@@ -35,7 +38,7 @@
   "budget": {
    "status": "closed",
    "probe": "cmd:node --test instances/replication-ledger/worker/ledger.test.mjs",
-   "how": "runway.json ai-cost: the ledger needs no model; standings are computed by standing.js"
+   "how": "runway.json ai-cost: at most BEAT.READS model reads an hour on the free Workers AI allowance; standings are computed by standing.js"
   },
   "cost-alerts": {
    "inherit": "cloudflare-alerts"
@@ -54,7 +57,7 @@
   "models": {
    "status": "closed",
    "probe": "cmd:node --test instances/replication-ledger/worker/ledger.test.mjs",
-   "how": "runway.json model-retired: standings need no model; candidate labelling waits when no model answers"
+   "how": "runway.json model-retired: when no model answers, the fixed lexical reader in discover.js files the attempt under the same verbatim-quote guard"
   },
   "health": {
    "status": "closed",
