@@ -863,6 +863,7 @@ export default {
   "memory-fresh",
   "merge-lane",
   "open-loop-sweeper",
+  "openstd",
   "org-profile",
   "orphan-artifacts",
   "outreach-send",
@@ -2226,6 +2227,19 @@ export default {
     ]
    },
    {
+    "closing_probe": "grep:foundation/openstd.py::def drain",
+    "id": "openstd",
+    "kind": "governance",
+    "owner": "operations",
+    "server_owner": "github-actions",
+    "sla": "1d",
+    "summary": "OPEN-STANDARDS-1: formats follow registered open standards. The loop drains the shrink-only baseline a batch a day (JSON Schema on config), records CloudEvents for each run, and cuts a SemVer release with a Keep a Changelog file from Conventional Commits.",
+    "trigger": "daily workflow and on demand",
+    "workflows": [
+     "openstd"
+    ]
+   },
+   {
     "closing_probe": "grep:foundation/temporal.py::def diagnose",
     "id": "temporal",
     "kind": "governance",
@@ -2561,6 +2575,12 @@ export default {
     "id": "mcp-registry",
     "loops": [
      "promote"
+    ]
+   },
+   {
+    "id": "openstd",
+    "loops": [
+     "openstd"
     ]
    },
    {
