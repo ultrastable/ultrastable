@@ -32,8 +32,7 @@
     "seed/worker/src/contract.js": "vendor/ultrastable/contract.js",
     "doctrine/tenant-standard.json": "vendor/ultrastable/tenant-standard.json",
     "foundation/tenantstd.py": "vendor/ultrastable/tools/tenantstd.py",
-    "workers/tools/vendor_sync.mjs": "vendor/ultrastable/tools/vendor_sync.mjs",
-    "scripts/branch_cleanup.py": "vendor/ultrastable/tools/branch_cleanup.py"
+    "workers/tools/vendor_sync.mjs": "vendor/ultrastable/tools/vendor_sync.mjs"
    },
    "worker": "ultrastable-unlearn",
    "ai": true,
@@ -71,7 +70,6 @@
     "doctrine/tenant-standard.json": "vendor/ultrastable/tenant-standard.json",
     "foundation/tenantstd.py": "vendor/ultrastable/tools/tenantstd.py",
     "workers/tools/vendor_sync.mjs": "vendor/ultrastable/tools/vendor_sync.mjs",
-    "scripts/branch_cleanup.py": "vendor/ultrastable/tools/branch_cleanup.py",
     "workers/core/kgraph/insight.js": "vendor/ultrastable/kgraph.js"
    },
    "worker": "ultrastable-what-works",
@@ -108,8 +106,7 @@
     "seed/worker/src/promoqueue.js": "vendor/ultrastable/promoqueue.js",
     "doctrine/tenant-standard.json": "vendor/ultrastable/tenant-standard.json",
     "foundation/tenantstd.py": "vendor/ultrastable/tools/tenantstd.py",
-    "workers/tools/vendor_sync.mjs": "vendor/ultrastable/tools/vendor_sync.mjs",
-    "scripts/branch_cleanup.py": "vendor/ultrastable/tools/branch_cleanup.py"
+    "workers/tools/vendor_sync.mjs": "vendor/ultrastable/tools/vendor_sync.mjs"
    },
    "worker": "ultrastable-replication-ledger",
    "ai": false,
@@ -146,8 +143,7 @@
     "seed/worker/src/promoqueue.js": "vendor/ultrastable/promoqueue.js",
     "doctrine/tenant-standard.json": "vendor/ultrastable/tenant-standard.json",
     "foundation/tenantstd.py": "vendor/ultrastable/tools/tenantstd.py",
-    "workers/tools/vendor_sync.mjs": "vendor/ultrastable/tools/vendor_sync.mjs",
-    "scripts/branch_cleanup.py": "vendor/ultrastable/tools/branch_cleanup.py"
+    "workers/tools/vendor_sync.mjs": "vendor/ultrastable/tools/vendor_sync.mjs"
    },
    "scaffold": {
     "beat_hours": 1,
@@ -173,8 +169,7 @@
     "seed/worker/src/promoqueue.js": "vendor/ultrastable/promoqueue.js",
     "doctrine/tenant-standard.json": "vendor/ultrastable/tenant-standard.json",
     "foundation/tenantstd.py": "vendor/ultrastable/tools/tenantstd.py",
-    "workers/tools/vendor_sync.mjs": "vendor/ultrastable/tools/vendor_sync.mjs",
-    "scripts/branch_cleanup.py": "vendor/ultrastable/tools/branch_cleanup.py"
+    "workers/tools/vendor_sync.mjs": "vendor/ultrastable/tools/vendor_sync.mjs"
    },
    "scaffold": {
     "beat_hours": 24,
@@ -200,8 +195,7 @@
     "seed/worker/src/promoqueue.js": "vendor/ultrastable/promoqueue.js",
     "doctrine/tenant-standard.json": "vendor/ultrastable/tenant-standard.json",
     "foundation/tenantstd.py": "vendor/ultrastable/tools/tenantstd.py",
-    "workers/tools/vendor_sync.mjs": "vendor/ultrastable/tools/vendor_sync.mjs",
-    "scripts/branch_cleanup.py": "vendor/ultrastable/tools/branch_cleanup.py"
+    "workers/tools/vendor_sync.mjs": "vendor/ultrastable/tools/vendor_sync.mjs"
    },
    "scaffold": {
     "beat_hours": 168,

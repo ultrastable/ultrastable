@@ -406,6 +406,9 @@ def scaffold(tenant: Path, slug: str, root: Path | None = None, std: dict | None
             put(rel, json.dumps(new, indent=2, ensure_ascii=False) + "\n", "set keys in")
     for src, dst in sc["copy"].items():
         put(dst, (root / src).read_text(encoding="utf-8"), "copied")
+    for src, dst in (sc.get("copy_if_missing") or {}).items():
+        if not (tenant / dst).exists():
+            put(dst, (root / src).read_text(encoding="utf-8"), "copied")
     if not (tenant / "wrangler.jsonc").exists():
         put("wrangler.jsonc", wrangler(ctx), "wrote")
     lc = _json(tenant / "lifecycle.json")
@@ -449,9 +452,9 @@ def check_core(root: Path | None = None, std: dict | None = None) -> list[str]:
     for f in sc["files"]:
         if not (root / sc["dir"] / (f["path"] + ".tmpl")).is_file():
             bad.append(f"{sc['dir']}/{f['path']}.tmpl: the scaffold has no template for this standard file")
-    scaffolded = {f["path"] for f in sc["files"]} | set(sc["copy"].values()) | set(sc["generated"]) | {"IDEA.md", "instance.json"}
+    scaffolded = {f["path"] for f in sc["files"]} | set(sc["copy"].values()) | set((sc.get("copy_if_missing") or {}).values()) | set(sc["generated"]) | {"IDEA.md", "instance.json"}
     bad += [f"{STD_CORE}: standard file {f['path']} is written by no part of the scaffold" for f in std["files"] if f["path"] not in scaffolded]
-    for src in list(std["vendor"]["base"]) + list(sc["copy"]):
+    for src in list(std["vendor"]["base"]) + list(sc["copy"]) + list(sc.get("copy_if_missing") or {}):
         if not (root / src).is_file():
             bad.append(f"{STD_CORE}: names {src}, which is not in the core")
     for slug, t in tenants(root, std).items():
