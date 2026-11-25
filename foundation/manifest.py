@@ -46,37 +46,33 @@ def resolve(raw: dict) -> dict:
     return m
 
 
+SCHEMA = Path(__file__).resolve().parents[1] / "seed/schemas/instance.schema.json"
+
+
+def _schema_errors(m: dict) -> list[str]:
+    """OPEN-STANDARDS-1: the structure of a manifest is a JSON Schema 2020-12 (seed/schemas/instance.schema.json), validated by
+    the shared engine seed/scripts/stdkit.py; only rules that span fields or scan text stay in code below."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("seed_stdkit", SCHEMA.parents[1] / "scripts/stdkit.py")
+    mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod)
+    return mod.validate(json.loads(SCHEMA.read_text(encoding="utf-8")), m)
+
+
 def validate(raw: dict) -> list[str]:
     p, m = [], resolve(raw)
-    if not re.fullmatch(r"[a-z0-9][a-z0-9-]{1,38}", str(m.get("slug", ""))):
-        p.append("slug must be 2-39 chars of a-z, 0-9, hyphen")
     if not raw.get("name"):
         p.append("name is required")
-    if m["kind"] not in KINDS:
-        p.append(f"kind must be one of {sorted(KINDS)}")
-    if m["runtime"]["provider"] not in RUNTIMES:
-        p.append(f"runtime.provider must be one of {sorted(RUNTIMES)}")
-    if not m["goals"]:
-        p.append("at least one goal (a first outcome) is required")
-    j = m["owner"]["jurisdiction"]
-    if j and not re.fullmatch(r"[A-Z]{2}", j):
-        p.append("owner.jurisdiction must be an ISO 3166-1 alpha-2 code, or empty when unknown")
+    p += [e for e in _schema_errors(m) if not e.startswith("$: missing name") and "'name' is a required" not in e]
     text = json.dumps(raw)
     if SECRET.search(text):
         p.append("manifest contains a secret-shaped string; reference secrets by binding name only")
     if EMAIL.search(text):
         p.append("manifest contains an e-mail address; use owner.contact_binding (a secret-store name)")
-    if not re.fullmatch(r"[A-Z][A-Z0-9_]+", m["owner"]["contact_binding"]):
-        p.append("owner.contact_binding must be an UPPER_SNAKE binding name")
     bb = m["owner"].get("contact_binding_backup", "")
-    if not re.fullmatch(r"[A-Z][A-Z0-9_]+", bb) or bb == m["owner"]["contact_binding"]:
+    if bb and bb == m["owner"]["contact_binding"]:
         p.append("owner.contact_binding_backup must be a second UPPER_SNAKE binding name, different from contact_binding (MAIL-PATHS-1: one sign-in address is a single point of failure; use an address at a different provider)")
-    if m["disclosure"]["gate"] not in ("none", "filed"):
-        p.append("disclosure.gate must be 'none' or 'filed'")
     if m["disclosure"]["gate"] == "filed" and not m["ip"]["priority_filed"] and m["disclosure"]["public_allowed"]:
         p.append("disclosure.public_allowed cannot be true while the filing gate is closed")
-    if m["budget"]["actions_minutes_monthly"] <= 0:
-        p.append("budget.actions_minutes_monthly must be positive")
     return p
 
 
