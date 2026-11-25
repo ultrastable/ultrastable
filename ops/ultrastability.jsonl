@@ -12641,3 +12641,44 @@
 {"at": "2026-11-25T12:43:36Z", "ev": "reading", "ok": true, "seq": 12640, "value": 0.0, "var": "portfolio-board:spend"}
 {"at": "2026-11-25T12:43:36Z", "ev": "reading", "ok": false, "seq": 12641, "unmeasured": true, "value": null, "var": "portfolio-board:claims_drift"}
 {"at": "2026-11-25T12:43:36Z", "ev": "reading", "ok": false, "seq": 12642, "unmeasured": true, "value": null, "var": "portfolio-board:value"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": true, "seq": 12643, "value": 0.0, "var": "spend"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": true, "seq": 12644, "value": 1.0, "var": "deploy_health"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": true, "seq": 12645, "value": 0, "var": "claims_drift"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": false, "seq": 12646, "value": 0.0, "var": "value"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": false, "seq": 12647, "value": 1, "var": "stalled_clocks"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": true, "seq": 12648, "value": 0, "var": "ui_findings"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": true, "seq": 12649, "value": 1.0, "var": "happy_paths"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": true, "seq": 12650, "value": 730, "var": "unattended_horizon"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": false, "seq": 12651, "value": 0.714, "var": "self_shipping"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": true, "seq": 12652, "value": 1.0, "var": "access-check:uptime"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": true, "seq": 12653, "value": 0.0, "var": "access-check:spend"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": false, "seq": 12654, "unmeasured": true, "value": null, "var": "access-check:claims_drift"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": false, "seq": 12655, "value": 0.0, "var": "access-check:value"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": true, "seq": 12656, "value": 1.0, "var": "air-quality:uptime"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": true, "seq": 12657, "value": 0.0, "var": "air-quality:spend"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": false, "seq": 12658, "unmeasured": true, "value": null, "var": "air-quality:claims_drift"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": false, "seq": 12659, "value": 0.0, "var": "air-quality:value"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": true, "seq": 12660, "value": 1.0, "var": "blindspot:uptime"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": true, "seq": 12661, "value": 0.0, "var": "blindspot:spend"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": false, "seq": 12662, "unmeasured": true, "value": null, "var": "blindspot:claims_drift"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": true, "seq": 12663, "value": 2.02, "var": "blindspot:value"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": true, "seq": 12664, "value": 1.0, "var": "country-snapshot:uptime"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": true, "seq": 12665, "value": 0.0, "var": "country-snapshot:spend"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": false, "seq": 12666, "unmeasured": true, "value": null, "var": "country-snapshot:claims_drift"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": false, "seq": 12667, "value": 0.0, "var": "country-snapshot:value"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": true, "seq": 12668, "value": 1.0, "var": "free-tier-meter:uptime"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": true, "seq": 12669, "value": 0.0, "var": "free-tier-meter:spend"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": false, "seq": 12670, "unmeasured": true, "value": null, "var": "free-tier-meter:claims_drift"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": false, "seq": 12671, "unmeasured": true, "value": null, "var": "free-tier-meter:value"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": false, "seq": 12672, "value": 0.0, "var": "loop-ledger:uptime"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": false, "seq": 12673, "unmeasured": true, "value": null, "var": "loop-ledger:spend"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": false, "seq": 12674, "unmeasured": true, "value": null, "var": "loop-ledger:claims_drift"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": false, "seq": 12675, "unmeasured": true, "value": null, "var": "loop-ledger:value"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": true, "seq": 12676, "value": 1.0, "var": "numbers-board:uptime"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": true, "seq": 12677, "value": 0.0, "var": "numbers-board:spend"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": false, "seq": 12678, "unmeasured": true, "value": null, "var": "numbers-board:claims_drift"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": false, "seq": 12679, "unmeasured": true, "value": null, "var": "numbers-board:value"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": true, "seq": 12680, "value": 1.0, "var": "portfolio-board:uptime"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": true, "seq": 12681, "value": 0.0, "var": "portfolio-board:spend"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": false, "seq": 12682, "unmeasured": true, "value": null, "var": "portfolio-board:claims_drift"}
+{"at": "2026-11-25T14:34:31Z", "ev": "reading", "ok": false, "seq": 12683, "unmeasured": true, "value": null, "var": "portfolio-board:value"}
