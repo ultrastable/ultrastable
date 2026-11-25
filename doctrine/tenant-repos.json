@@ -26,6 +26,7 @@
     "doctrine/models.json": "vendor/ultrastable/models.json",
     "seed/worker/src/promoqueue.js": "vendor/ultrastable/promoqueue.js",
     "doctrine/stakeholders.json": "vendor/ultrastable/stakeholders.json",
+    "workers/core/datagraph/index.js": "vendor/ultrastable/datagraph.js",
     "seed/worker/src/knowledge.js": "vendor/ultrastable/knowledge.js"
    },
    "worker": "ultrastable-unlearn",
@@ -60,6 +61,7 @@
     "doctrine/models.json": "vendor/ultrastable/models.json",
     "doctrine/stakeholders.json": "vendor/ultrastable/stakeholders.json",
     "seed/worker/src/promoqueue.js": "vendor/ultrastable/promoqueue.js",
+    "workers/core/datagraph/index.js": "vendor/ultrastable/datagraph.js",
     "seed/worker/src/knowledge.js": "vendor/ultrastable/knowledge.js"
    },
    "worker": "ultrastable-what-works",
@@ -91,6 +93,7 @@
     "README.md"
    ],
    "vendor": {
+    "workers/core/datagraph/index.js": "vendor/ultrastable/datagraph.js",
     "seed/worker/src/knowledge.js": "worker/vendor/knowledge.js"
    },
    "worker": "ultrastable-replication-ledger",

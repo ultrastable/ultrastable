@@ -18,7 +18,6 @@ import { migrateStep } from './migrate.js';
 import { executeStep, claimsReleasedUnworked24h } from './doer.js';
 import { pulseStep, tickCadenceMin } from './pulse.js';
 import { ignitionStep } from './ignition.js';
-import { knowledgeStep } from './kgstep.js';  // KGRAPH-1
 import { ensureSchema as ensureCredentialSchema } from './auth/store.js';  // CONNECTOR-HEALTH-1
 import { OWN_SQL, tenantOf } from './tenant.js';  // Q-TENANT-row-isolation: a runtime acts only on rows with tenant_id NULL (own) or its own slug
 
@@ -458,17 +457,9 @@ export const STEPS = {
 
   // BOOT-KNOWS-1: the stage from bootstrap to criticality, read from the system's own tables; the first unmet stage is IGNITE-<stage>.
   async ignition(db, ctx) { await ignitionStep(db, ctx, ensureItem); },
-
-  // KGRAPH-1: the system's own knowledge graph, rebuilt incrementally once an hour; a failed run is recorded and fails /api/graph/health.
-  async knowledge(db, ctx) {
-    const r = await knowledgeStep(db, ctx, ensureItem, { now: ctx.now || Date.now() });
-    if (r.skipped) return;
-    if (!r.ok) throw new Error(`knowledge graph: ${r.error}`);
-    ctx.notes.push(`knowledge: ${r.nodes} nodes, ${r.edges} links, ${r.communities} clusters, +${r.insights_new} insights, ${r.kept} kept, ${r.dropped} dropped${r.filed.length ? `, filed ${r.filed.join(', ')}` : ''}`);
-  },
 };
 
-export const STEP_ORDER = ['migrate', 'reconcile', 'reap_claims', 'connector_health', 'probe_gates', 'score_predictions', 'measure', 'accrue_trust', 'selfaudit', 'unknowns', 'goals', 'dispatch', 'execute', 'check_plus_share', 'age_sla', 'cost_probe', 'pulse', 'criticality', 'ignition', 'knowledge'];
+export const STEP_ORDER = ['migrate', 'reconcile', 'reap_claims', 'connector_health', 'probe_gates', 'score_predictions', 'measure', 'accrue_trust', 'selfaudit', 'unknowns', 'goals', 'dispatch', 'execute', 'check_plus_share', 'age_sla', 'cost_probe', 'pulse', 'criticality', 'ignition'];
 
 // Q-LESSON-COST-SAMPLE-ACT: while the latest hourly cost sample of any budgeted D1 database is over its max_rows_read_per_hour, the tick runs
 // only these steps. reconcile keeps every item's disposition honest (no silent drops), measure keeps the liveness metrics and the breach visible,

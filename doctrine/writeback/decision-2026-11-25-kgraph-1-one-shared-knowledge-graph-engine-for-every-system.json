@@ -3,12 +3,12 @@
   "id": "decision-2026-11-25-kgraph-1-one-shared-knowledge-graph-engine-for-every-system",
   "kind": "decision",
   "date": "2026-11-25",
-  "title": "KGRAPH-1: one shared knowledge-graph engine for every system",
-  "body": "Every system runs seed/worker/src/knowledge.js on its own clock: incremental D1 sync with provenance, graph analytics and insights whose outcomes calibrate the insight kinds. The platform tick step knowledge covers items, objectives and metrics; tenants vendor the engine (Unlearn first). Research is code: KG_PRACTICES re-measured at /api/graph/method.",
+  "title": "Knowledge graphs: the platform runs DATAGRAPH-1, tenants with domain data run the shared engine",
+  "body": "The platform keeps DATAGRAPH-1 (seed step knowledge-graph, zero-config over every table). Tenants with domain data run seed/worker/src/knowledge.js with their own mappers (built rows in doctrine/knowledge-graph.json, vendored through doctrine/tenant-repos.json). The two engines share kg_* table names with different schemas, so never both on one D1.",
   "probe": "file:seed/worker/src/knowledge.js",
   "session": "session_0156nqDvwrub84GRd3gGvBQy"
  },
  "kind": "decision",
- "title": "KGRAPH-1: one shared knowledge-graph engine for every system",
+ "title": "Knowledge graphs: the platform runs DATAGRAPH-1, tenants with domain data run the shared engine",
  "session": "session_0156nqDvwrub84GRd3gGvBQy"
 }

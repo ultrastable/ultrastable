@@ -1840,6 +1840,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **Every system keeps a knowledge graph of all its data, built and maintained automatically (DATAGRAPH-1, Rowan 2026-11-25).** \"All",
+   "detail": "",
+   "how": "file:seed/worker/src/vendor/core/datagraph.js + file:doctrine/tenant-repos.json + file:seed/worker/src/datagraph.js + file:instances/ultrastable/progress.json + file:doctrine/knowledge-graph.json + file:docs/research/knowledge-graph.md",
+   "id": "cited-29846ff1a5",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Ultrastable runs its own R&D and publishes its own white papers; Ashby's mechanism is code (RESEARCH-1, ASHBY-1, Rowan 2026-11-21).**",
    "detail": "",
    "how": "file:foundation/ultrastability.py + file:foundation/research.py + file:doctrine/research.json + file:site/research.js + file:tests/foundation/test_research.py + file:tests/foundation/test_ultrastability.py",
@@ -1889,15 +1898,6 @@ export default {
    "detail": "",
    "how": "file:seed/scripts/improve.py + file:seed/autonomy/improve.json + file:seed/.github/workflows/improve.yml + file:foundation/improve.py + file:doctrine/improve.json + file:tests/foundation/test_improve.py",
    "id": "cited-3c3d6c30bf",
-   "kind": "claim",
-   "pass": true,
-   "surface": "agents/AGENTS.md"
-  },
-  {
-   "claim": "- **Every system keeps a knowledge graph of all its data, built and maintained by itself (KGRAPH-1, Rowan 2026-11-25).** \"All UltraStable",
-   "detail": "",
-   "how": "file:seed/worker/src/knowledge.js + file:doctrine/knowledge-graph.json + file:seed/worker/test/knowledge.test.js + file:tests/foundation/test_kgcheck.py",
-   "id": "cited-bd5257bc87",
    "kind": "claim",
    "pass": true,
    "surface": "agents/AGENTS.md"
@@ -2533,6 +2533,15 @@ export default {
    "surface": "seed/agents/AGENTS.md"
   },
   {
+   "claim": "- **Every system keeps a knowledge graph of all its data, built and maintained automatically (DATAGRAPH-1, Rowan 2026-11-25).** \"All",
+   "detail": "",
+   "how": "file:seed/worker/src/vendor/core/datagraph.js + file:doctrine/tenant-repos.json + file:seed/worker/src/datagraph.js + file:instances/ultrastable/progress.json + file:doctrine/knowledge-graph.json + file:docs/research/knowledge-graph.md",
+   "id": "mirror-1d1a4fbb93",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
    "claim": "- **Ultrastable runs its own R&D and publishes its own white papers; Ashby's mechanism is code (RESEARCH-1, ASHBY-1, Rowan 2026-11-21).**",
    "detail": "",
    "how": "file:foundation/ultrastability.py + file:foundation/research.py + file:doctrine/research.json + file:site/research.js + file:tests/foundation/test_research.py + file:tests/foundation/test_ultrastability.py",
@@ -2573,15 +2582,6 @@ export default {
    "detail": "",
    "how": "file:seed/scripts/improve.py + file:seed/autonomy/improve.json + file:seed/.github/workflows/improve.yml + file:foundation/improve.py + file:doctrine/improve.json + file:tests/foundation/test_improve.py",
    "id": "mirror-0ea4d489e9",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/agents/AGENTS.md"
-  },
-  {
-   "claim": "- **Every system keeps a knowledge graph of all its data, built and maintained by itself (KGRAPH-1, Rowan 2026-11-25).** \"All UltraStable",
-   "detail": "",
-   "how": "file:seed/worker/src/knowledge.js + file:doctrine/knowledge-graph.json + file:seed/worker/test/knowledge.test.js + file:tests/foundation/test_kgcheck.py",
-   "id": "mirror-acc4975a56",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3253,7 +3253,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 63 Python and 499 Worker tests",
+   "claim": "seed-tests: 63 Python and 505 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3262,7 +3262,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 499 Worker tests",
+   "claim": "seed-worker-tests: 505 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",

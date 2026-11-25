@@ -1,12 +1,12 @@
 {
   "id": "Q-KG-what-works",
-  "title": "Q-KG-what-works: give what-works its self-maintained knowledge graph (KGRAPH-1)",
-  "body": "**Owner:** knowledge\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -m foundation kgraph --list shows `what-works: live`\n**Status:** closed\n\nWhat Works vendors core files already. Add seed/worker/src/knowledge.js to its vendor map, write mappers for its records, run runKg on its clock, serve /api/graph and a live /graph page, then mark it live in doctrine/knowledge-graph.json. Unlearn is the reference tenant (ultrastable/unlearn worker/graph.js).\n\nPrediction: kg_nodes for tenant what-works > 0 within 168 h.\n\nsize: M\n\n**Closing probe:** cmd:python3 -m foundation kgraph --check, with what-works live in doctrine/knowledge-graph.json.\n\n**Evidence:** ultrastable/what-works worker/kg.js runs the shared engine (vendor/ultrastable/knowledge.js) from the hourly beat on the same snapshot as /graph.json and serves /api/graph*; worker/kg.test.mjs passes (44/44 tenant tests); `python3 -m foundation kgraph --check` passes with what-works live (2026-11-25).\n",
+  "title": "Q-KG-what-works: knowledge graph of all what-works data (DATAGRAPH-1)",
+  "body": "**Owner:** executor\n**Trigger:** every executor run; DATAGRAPH-1\n**Done check:** grep:doctrine/knowledge-graph.json::\"what-works\": \\{ \"state\": \"built\"\n**Status:** closed\n\nDATAGRAPH-1 (Rowan, 2026-11-25): every Ultrastable system keeps a knowledge graph of all its data. The platform's seed tick Worker already does (seed/worker/src/datagraph.js). The what-works system runs its own Worker in ultrastable/what-works, so it needs the same thing wired there:\n1. Import the core module from vendor/ultrastable/datagraph.js (vendored by doctrine/tenant-repos.json; source workers/core/datagraph/index.js). Never edit the vendored copy.\n2. On the tenant's own clock (its cron or build step), pass every table or JSON collection it holds to extract(tables), then analyze, predict and insights. Tenants with D1 copy the pattern of seed/worker/src/datagraph.js (bi-temporal kg_nodes and kg_edges, writes only on change); tenants whose data is JSON in the repo build the graph at deploy time.\n3. Serve /api/graph (built, last summary, series) and /api/graph/insights, public view only: counts, orphan findings, and records of kinds that are already public on the tenant's site.\n4. Link the graph's findings back into the tenant's own queue (orphans, link leads), and name the graph on the tenant's front end.\nThen set this system's row in doctrine/knowledge-graph.json to state built.\n\n**Evidence:** ultrastable/what-works worker/kg.js maps the kg/1 snapshot (programmes, outcomes, authors, countries, settings) with the shared engine; the beat runs graphTick; /api/graph served beside /connections; worker/kg.test.mjs. doctrine/knowledge-graph.json row is built.\n",
   "labels": [
-    "p1",
-    "agent-ready",
-    "kgraph"
+    "role:executor",
+    "growth",
+    "datagraph"
   ],
-  "milestone": "Now",
-  "workstream": "Platform"
+  "milestone": "Next",
+  "workstream": "Knowledge graph"
 }

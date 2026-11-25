@@ -280,28 +280,28 @@
       "reason": "CF-ALERTS-1: one row per Cloudflare alert; settling reads the last day per type, so 30 days is ample"
     },
     "kg_nodes": {
-      "keep": "managed",
-      "reason": "KGRAPH-1: pruned by seed/worker/src/knowledge.js runKg (retired facts after retain_days 180, runs after runs_days 90); integer-millisecond time columns"
+      "keep": "state",
+      "reason": "DATAGRAPH-1: one row per record of the system's own data; bi-temporal (valid_to closes a row that left the data), bounded by max_rows_total per pass"
     },
     "kg_edges": {
-      "keep": "managed",
-      "reason": "KGRAPH-1: pruned by seed/worker/src/knowledge.js runKg (retired facts after retain_days 180, runs after runs_days 90); integer-millisecond time columns"
+      "keep": "state",
+      "reason": "DATAGRAPH-1: one row per connection between records, bounded by the nodes; proposed leads are settled kept or rejected within 14 days"
+    },
+    "kg_insights": {
+      "keep": "state",
+      "reason": "DATAGRAPH-1: current insights only; each pass rewrites them and deletes the ones that no longer fire"
     },
     "kg_runs": {
       "keep": "managed",
-      "reason": "KGRAPH-1: pruned by seed/worker/src/knowledge.js runKg (retired facts after retain_days 180, runs after runs_days 90); integer-millisecond time columns"
+      "reason": "DATAGRAPH-1: one row per graph pass, pruned to 400 days by seed/worker/src/datagraph.js"
     },
     "kg_sources": {
       "keep": "managed",
-      "reason": "KGRAPH-1: one row per source record, replaced on each sync; size follows the system's own records"
-    },
-    "kg_insights": {
-      "keep": "managed",
-      "reason": "KGRAPH-1: one row per insight; settled insights are the calibration history the insight weights are computed from"
+      "reason": "Tenant engine seed/worker/src/knowledge.js (DATAGRAPH-1 built rows): one hash per source record; retired rows pruned after retain_days by runKg"
     },
     "kg_state": {
-      "keep": "managed",
-      "reason": "KGRAPH-1: one row per tenant (analysis cache and insight weights)"
+      "keep": "state",
+      "reason": "Tenant engine seed/worker/src/knowledge.js: a handful of keys per tenant (last analysis, kind weights)"
     }
   }
 }

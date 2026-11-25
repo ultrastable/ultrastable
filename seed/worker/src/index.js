@@ -2,7 +2,6 @@
 // Cron fires runTick; GET /health shows the last tick's four-line report.
 // Standard issue: first-party web analytics (analytics/analytics.js): /a.js beacon, /a/e collector, GET /api/analytics (bearer ANALYTICS_TOKEN).
 import { paced } from './pace.js';
-import { handleKg } from './knowledge.js';  // KGRAPH-1
 import { withKnobs, readGoals, registerTenant, reportReadings, knobValues } from './goals.js';  // GOALS-1
 import { tune } from './roi.js';  // BOUNDARIES-1
 import { runTick, lastTickForHealth, METRICS, ensureItem } from './tick.js';
@@ -40,6 +39,7 @@ import { mergeNow, prsForEvent } from './mergenow.js';
 import { refreshLiveChanges, readLiveChanges, refreshFleetChanges, classifyPending } from './livechanges.js'; // LIVE-FRESH-1, SUBSTANCE-1
 import { progressStep, readProgress } from './progress.js'; // PROGRESS-1
 import { stickinessStep, readStickiness, readQueue } from './stickiness.js'; // STICKY-1
+import { datagraphStep, readGraph, readInsights, readNode, searchGraph } from './datagraph.js'; // DATAGRAPH-1
 import { watchFreshness } from './freshness.js'; // LIVE-FRESH-2
 import { watchTenantDeploys } from './tenantdeploy.js'; // TENANT-DEPLOY-1
 import { recordGovernor, readDecisions, safely as decisionSafely } from './decisions.js'; // DECISIONS-1
@@ -67,7 +67,7 @@ import { readIgnition } from './ignition.js';
 import { loopHealth } from './critloop.js';
 import { routeEvent, verifySignature, EVENT_TABLE } from './events.js';
 import { loadAnswers, saveAnswer, nextQuestion, QUESTIONS } from './interview.js';
-import { nowScreen, nextScreen, needsScreen, questionScreen, doneScreen } from './ui.js';
+import { nowScreen, nextScreen, needsScreen, questionScreen, doneScreen, graphScreen } from './ui.js';
 import { handleAnalytics, selfcheck, report, REPORT_CACHE_MINUTES } from '../../analytics/analytics.js';
 import { createAgenticHandler, DEFAULT_IDENTITY } from './agentic/handler.js';
 import { d1Store } from './agentic/adapters/d1-store.js';
@@ -146,6 +146,7 @@ export default {
       await b('fleet-changes', () => refreshFleetChanges({ db: env.DB, token, repos: ((config.progress || {}).systems || []).map(x => x.repo).filter(r => r && r !== main) }));  // PROGRESS-1: the other repositories, at most hourly each
       await b('substance', () => classifyPending({ db: env.DB, token, max: 2 }));  // SUBSTANCE-1: two merged PRs per pass are classified from their diff, so trivial merges never count as progress
       await b('stickiness', () => stickinessStep({ db: env.DB, config, ensureItem }));  // STICKY-1: freshness, breadth, depth and diversity of every system's content; a stale or thin one files STICKY-<system>, and its unpromoted entries become the social queue
+      await b('knowledge-graph', () => datagraphStep({ db: env.DB, config, ensureItem }));  // DATAGRAPH-1: every table of this system's own D1 becomes a graph (rows are nodes, references and mentioned ids are edges), kept bi-temporally; hubs, communities, bridges and orphans are read each pass, Adamic-Adar link leads are settled against later data, and a mostly unconnected kind files KG-ORPHANS-<kind>
       await b('progress', () => progressStep({ db: env.DB, config, token, ensureItem }));  // PROGRESS-1: release cadence monitor; a slow system has its producers dispatched, a stalled one files STALL-<system>
       await b('freshness', () => watchFreshness({ token, repo: main, siteUrl: env.PUBLIC_ORIGIN || 'https://ultrastable.io' }));  // LIVE-FRESH-2: a stale published snapshot re-dispatches its own publisher
       if (new Date().getUTCMinutes() % 30 < 10) await b('tenant-deploy', () => watchTenantDeploys({ token, repo: main }));  // TENANT-DEPLOY-1: a tenant repository's merge ships within the hour (twice an hour, ~4 subrequests)
@@ -272,7 +273,17 @@ export default {
         return Response.json(r, { headers: { 'cache-control': 'no-store' } });
       } catch (e) { return d1Unavailable(e); }
     }
-    if (url.pathname.startsWith('/api/graph')) { try { const r = await handleKg(request, env.DB, { tenant: config.org_slug || '' }); if (r) return r; } catch (e) { return d1Unavailable(e); } }  // KGRAPH-1: the system's knowledge graph, insights, live method and health
+    if (url.pathname === '/api/graph' || url.pathname === '/api/graph/insights' || url.pathname === '/api/graph/node' || url.pathname === '/api/graph/search' || url.pathname === '/graph') {  // DATAGRAPH-1: the knowledge graph's read side (summary, insights and leads, a node with its neighbourhood for retrieval, label search, the page)
+      try {
+        const v = { open: bearerOk(request, env), publicKinds: (config.knowledge_graph && config.knowledge_graph.public_kinds) || [] };  // the owner's bearer sees every record; anyone else sees counts and declared public kinds only
+        const h = { headers: { 'cache-control': v.open ? 'no-store' : 'public, max-age=60', 'access-control-allow-origin': '*' } };
+        if (url.pathname === '/api/graph') return Response.json(await readGraph(env.DB, v), h);
+        if (url.pathname === '/api/graph/insights') return Response.json(await readInsights(env.DB, v), h);
+        if (url.pathname === '/api/graph/search') return Response.json(await searchGraph(env.DB, url.searchParams.get('q'), v), h);
+        if (url.pathname === '/api/graph/node') { const n = await readNode(env.DB, String(url.searchParams.get('id') || ''), { ...v, depth: url.searchParams.get('depth') === '2' ? 2 : 1 }); return n ? Response.json(n, h) : Response.json({ error: 'not_found', message: 'No record with that id is in the public graph.' }, { status: 404 }); }
+        return graphScreen({ graph: await readGraph(env.DB, { publicKinds: v.publicKinds }), insights: await readInsights(env.DB, { publicKinds: v.publicKinds }) });
+      } catch (e) { return d1Unavailable(e); }
+    }
     if (url.pathname === '/api/stickiness') { try { return Response.json(await readStickiness(env.DB), { headers: { 'cache-control': 'public, max-age=60', 'access-control-allow-origin': '*' } }); } catch (e) { return d1Unavailable(e); } }  // STICKY-1
     { const qm = /^\/api\/stickiness\/queue\/([a-z0-9-]{1,60})\.json$/.exec(url.pathname); if (qm) { try { return Response.json(await readQueue(env.DB, qm[1]), { headers: { 'cache-control': 'public, max-age=300' } }); } catch (e) { return d1Unavailable(e); } } }  // STICKY-1: the queue the core social module drains for this system
     if (url.pathname === '/api/progress') { try { return Response.json(await readProgress(env.DB, config), { headers: { 'cache-control': 'public, max-age=60', 'access-control-allow-origin': '*' } }); } catch (e) { return d1Unavailable(e); } }  // PROGRESS-1

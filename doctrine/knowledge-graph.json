@@ -1,14 +1,18 @@
 {
-  "rule": "KGRAPH-1",
-  "said": "All UltraStable deployments and systems shall have a knowledge graph (graph network) to automatically build and maintain a graph of connections for all data. (Rowan, 2026-11-25)",
-  "engine": "seed/worker/src/knowledge.js",
-  "platform": { "step_file": "seed/worker/src/tick.js", "step": "'knowledge'", "routes_file": "seed/worker/src/index.js", "route": "/api/graph" },
-  "consumers": ["foundation/kgcheck.py", "seed/worker/src/kgstep.js"],
-  "systems": {
-    "unlearn": { "state": "live", "vendor": "vendor/ultrastable/knowledge.js", "route": "/api/graph", "page": "/graph" },
-    "practical-solutions": { "state": "live", "vendor": "vendor/seed/knowledge.js", "route": "/api/graph", "repo_change": "ultrastable/practical-solutions worker/src/kg.js" },
-    "what-works": { "state": "live", "vendor": "vendor/ultrastable/knowledge.js", "route": "/api/graph", "page": "/connections" },
-    "replication-ledger": { "state": "live", "vendor": "worker/vendor/knowledge.js", "route": "/api/graph" }
-  },
-  "pending_is_shrink_only": true
+ "_doc": "DATAGRAPH-1 (Rowan, 2026-11-25): \"All Ultrastable deployments and systems shall have a knowledge graph (graph network) to automatically build and maintain a graph of connections for all data.\" Read by foundation/datagraph.py (--check in checks). Every system in instances/ultrastable/progress.json and every tenant in doctrine/tenant-repos.json has a row here. state 'seed-step': the system runs the seed tick Worker, whose step knowledge-graph (seed/worker/src/datagraph.js) builds the graph from every table of its D1. state 'built': a tenant on its own Worker runs a graph already; with 'engine' and 'vendor' it maps its records with the shared engine seed/worker/src/knowledge.js, vendored to 'vendor' through tenant-repos.json. state 'pending': the system runs its own Worker; the core module is vendored into its repository (tenant-repos.json vendor) and the queue item named in 'item' wires it; the item's closing probe reads the system's own /api/graph. Research and design: docs/research/knowledge-graph.md.",
+ "rule": "DATAGRAPH-1",
+ "core_module": "workers/core/datagraph/index.js",
+ "seed_vendor": "seed/worker/src/vendor/core/datagraph.js",
+ "seed_step": "seed/worker/src/datagraph.js",
+ "migration": "seed/worker/migrations/0031_datagraph.sql",
+ "tenant_vendor_path": "vendor/ultrastable/datagraph.js",
+ "endpoints": ["/api/graph", "/api/graph/insights", "/api/graph/node", "/api/graph/search", "/graph"],
+ "rule_files": ["agents/AGENTS.md", "seed/agents/AGENTS.md", "agents/PROJECT-INSTRUCTIONS.md"],
+ "systems": {
+  "ultrastable": { "state": "seed-step", "worker": "ultrastable-tick", "public_api": "https://ultrastable.io/api/graph" },
+  "practical-solutions": { "state": "built", "engine": "seed/worker/src/knowledge.js", "vendor": "vendor/seed/knowledge.js", "code": "ultrastable/practical-solutions worker/src/kg.js", "probe": "https://tenant-ps-web.ultrastable.workers.dev/api/graph/health" },
+  "unlearn": { "state": "built", "engine": "seed/worker/src/knowledge.js", "vendor": "vendor/ultrastable/knowledge.js", "code": "ultrastable/unlearn worker/graph.js", "page": "/graph", "probe": "https://unlearn.ultrastable.org/api/graph/health" },
+  "what-works": { "state": "built", "engine": "seed/worker/src/knowledge.js", "vendor": "vendor/ultrastable/knowledge.js", "code": "ultrastable/what-works worker/kg.js", "page": "/connections", "probe": "https://what-works.ultrastable.org/api/graph/health" },
+  "replication-ledger": { "state": "built", "engine": "seed/worker/src/knowledge.js", "vendor": "worker/vendor/knowledge.js", "code": "instances/replication-ledger/worker/graph.js", "probe": "https://replication-ledger.ultrastable.org/api/graph/health" }
+ }
 }

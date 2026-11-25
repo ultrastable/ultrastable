@@ -295,57 +295,30 @@
    }
   },
   {
-   "id": "kgraph-hourly-agents",
+   "id": "datagraph-agents",
    "source": "agents/AGENTS.md",
-   "quote": "runs step `knowledge` hourly over its own items, objectives and metrics",
+   "quote": "\"All UltraStable deployments and systems shall have a knowledge graph (graph network) to automatically build and maintain a graph of connections for all data.",
    "probe": {
-    "file": "seed/worker/test/knowledge.test.js",
-    "contains": "throttled to once an hour"
+    "file": "seed/worker/test/datagraph.test.js",
+    "contains": "a pass builds the graph from every table with no configuration"
    }
   },
   {
-   "id": "kgraph-hourly-seed",
+   "id": "datagraph-seed-agents",
    "source": "seed/agents/AGENTS.md",
-   "quote": "runs step `knowledge` hourly over its own items, objectives and metrics",
+   "quote": "\"All UltraStable deployments and systems shall have a knowledge graph (graph network) to automatically build and maintain a graph of connections for all data.",
    "probe": {
-    "file": "seed/worker/test/knowledge.test.js",
-    "contains": "throttled to once an hour"
+    "file": "seed/worker/test/datagraph.test.js",
+    "contains": "a pass builds the graph from every table with no configuration"
    }
   },
   {
-   "id": "kgraph-hourly-pi",
+   "id": "datagraph-agents-pi",
    "source": "agents/PROJECT-INSTRUCTIONS.md",
-   "quote": "runs step `knowledge` hourly over its own items, objectives and metrics",
+   "quote": "\"All UltraStable deployments and systems shall have a knowledge graph (graph network) to automatically build and maintain a graph of connections for all data.",
    "probe": {
-    "file": "seed/worker/test/knowledge.test.js",
-    "contains": "throttled to once an hour"
-   }
-  },
-  {
-   "id": "fullstack-agents",
-   "source": "agents/AGENTS.md",
-   "quote": "\"All UltraStable systems shall automatically deploy themselves: repo, back-end, and public-facing Web UI front-end. Ultrastable is a full-stack autonomous development platform/system.\"",
-   "probe": {
-    "file": "tests/foundation/test_tenantrepos.py",
-    "contains": "def test_every_tenant_deploys_a_public_front_end"
-   }
-  },
-  {
-   "id": "fullstack-seed-agents",
-   "source": "seed/agents/AGENTS.md",
-   "quote": "\"All UltraStable systems shall automatically deploy themselves: repo, back-end, and public-facing Web UI front-end. Ultrastable is a full-stack autonomous development platform/system.\"",
-   "probe": {
-    "file": "tests/foundation/test_tenantrepos.py",
-    "contains": "def test_every_tenant_deploys_a_public_front_end"
-   }
-  },
-  {
-   "id": "fullstack-agents-pi",
-   "source": "agents/PROJECT-INSTRUCTIONS.md",
-   "quote": "\"All UltraStable systems shall automatically deploy themselves: repo, back-end, and public-facing Web UI front-end. Ultrastable is a full-stack autonomous development platform/system.\"",
-   "probe": {
-    "file": "tests/foundation/test_tenantrepos.py",
-    "contains": "def test_every_tenant_deploys_a_public_front_end"
+    "file": "seed/worker/test/datagraph.test.js",
+    "contains": "a pass builds the graph from every table with no configuration"
    }
   },
   {

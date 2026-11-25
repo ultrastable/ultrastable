@@ -8,6 +8,10 @@ import { readFileSync } from 'node:fs';
 import { makeDb } from './d1shim.js';
 import * as kg from '../src/knowledge.js';
 
+// A tenant's database: the seed migrations without DATAGRAPH-1's kg_* tables (the two engines never share one database).
+const KG_TABLES = ['kg_nodes', 'kg_edges', 'kg_insights', 'kg_runs', 'kg_sources', 'kg_state'];
+const tenantDb = () => { const d = makeDb(); for (const t of KG_TABLES) d.raw.exec('DROP TABLE IF EXISTS ' + t); return d; };
+
 const mappers = {
   paper: (d, { node, edge }) => {
     const p = node('paper', d.title, { year: d.year });
@@ -49,7 +53,7 @@ test('model extraction keeps only schema triples whose quote is in the text', ()
 });
 
 test('sync is incremental: unchanged records write nothing, changed ones replace, removed ones are retired not deleted', async () => {
-  const db = makeDb(); const t0 = 1_700_000_000_000;
+  const db = tenantDb(); const t0 = 1_700_000_000_000;
   let r = await kg.sync(db, kg.extract(recs(base), mappers), { tenant: 't', now: t0 });
   assert.deepEqual(r, { added: 4, changed: 0, retired: 0, unchanged: 0 });
   r = await kg.sync(db, kg.extract(recs(base), mappers), { tenant: 't', now: t0 + 1 });
@@ -67,7 +71,7 @@ test('sync is incremental: unchanged records write nothing, changed ones replace
 });
 
 test('analytics: pagerank sums to one, communities split the two clusters, Adamic-Adar predicts the shared-author link', async () => {
-  const db = makeDb();
+  const db = tenantDb();
   await kg.sync(db, kg.extract(recs(base), mappers), { tenant: '', now: 1 });
   const g = await kg.load(db, ''), an = kg.analyze(g, spec);
   assert.ok(Math.abs(Object.values(an.rank).reduce((s, x) => s + x, 0) - 1) < 1e-3);
@@ -81,7 +85,7 @@ test('analytics: pagerank sums to one, communities split the two clusters, Adami
 });
 
 test('the insights loop files findings, settles them against the graph, and re-weights kinds from outcomes', async () => {
-  const db = makeDb(), D = 864e5; let now = 1_700_000_000_000;
+  const db = tenantDb(), D = 864e5; let now = 1_700_000_000_000;
   let r = await kg.runKg(db, { tenant: 'u', records: recs(base), mappers, spec, now });
   assert.ok(r.ok, r.error); assert.ok(r.insights_new >= 1);
   const open = await kg.insights(db, 'u');
@@ -108,7 +112,7 @@ test('the insights loop files findings, settles them against the graph, and re-w
 });
 
 test('a failing mapper is recorded on the run, not swallowed', async () => {
-  const db = makeDb();
+  const db = tenantDb();
   const r = await kg.runKg(db, { tenant: 'x', records: [{ type: 'paper', source: 's', data: { title: '', authors: [], topic: 't' } }], mappers, now: 5 });
   assert.equal(r.ok, false); assert.match(r.error, /needs kind and label/);
   assert.equal((await kg.lastRun(db, 'x')).error, r.error);
@@ -116,7 +120,7 @@ test('a failing mapper is recorded on the run, not swallowed', async () => {
 });
 
 test('the JSON routes serve the graph, insights, a node, health and follows', async () => {
-  const db = makeDb(), now = 1_700_000_000_000;
+  const db = tenantDb(), now = 1_700_000_000_000;
   await kg.runKg(db, { tenant: 'r', records: recs(base), mappers, spec, now });
   const get = p => kg.handleKg(new Request('https://x.test' + p), db, { tenant: 'r', now });
   const snap = await (await get('/api/graph.json')).json();
@@ -129,14 +133,8 @@ test('the JSON routes serve the graph, insights, a node, health and follows', as
   assert.equal(await get('/elsewhere'), null);
 });
 
-test('the Worker DDL equals the migration (a deploy ahead of its migration cannot fail)', () => {
-  const sql = readFileSync(new URL('../migrations/0031_knowledge.sql', import.meta.url), 'utf8');
-  for (const q of kg.KG_DDL) assert.ok(sql.includes(q), 'migration lacks: ' + q.slice(0, 60));
-  assert.ok(JSON.parse(readFileSync(new URL('../migrations/index.json', import.meta.url), 'utf8')).includes('0031_knowledge.sql'));
-});
-
 test('the research is live: every practice is measured from the graph, and an empty graph says unmeasured or fails, never holds by default', async () => {
-  const db = makeDb(), now = 1_700_000_000_000;
+  const db = tenantDb(), now = 1_700_000_000_000;
   const empty = await kg.practices(db, 'z', now);
   assert.equal(empty.practices.find(p => p.id === 'fresh').status, 'fails');
   assert.equal(empty.practices.find(p => p.id === 'calibrated-insights').status, 'unmeasured');
@@ -150,25 +148,13 @@ test('the research is live: every practice is measured from the graph, and an em
   assert.equal((await r.json()).practices.length, kg.KG_PRACTICES.length);
 });
 
-test('every seeded system keeps a graph of its own records; an unmeasured objective becomes one KG item, throttled to once an hour', async () => {
-  const { knowledgeStep } = await import('../src/kgstep.js');
-  const db = makeDb(), now = Date.parse('2026-11-25T16:00:00Z');
-  db.raw.exec(`INSERT INTO objectives (id, statement, owner_role) VALUES ('OBJ-1','Readers come back weekly','product-manager'), ('OBJ-2','Costs stay inside budget','operations')`);
-  db.raw.exec(`INSERT INTO metrics (id, objective_id, name, kind, source, spec, op, threshold, owner_role, remedy) VALUES ('M-1','OBJ-2','cost per day','target','sql','SELECT 1','<=',1,'operations','cut cost'), ('M-2',NULL,'return visits','target','sql','SELECT 1','>=',1,'product-manager','grow')`);
-  db.raw.exec(`INSERT INTO items (id, title, owner_role, done_check, project) VALUES ('W-1','Ship the feed','product-manager','feed live','growth')`);
-  const filed = [];
-  const ensureItem = async (_db, it) => { filed.push(it); return true; };
-  const ctx = { config: { org_slug: 'acme' } };
-  const r = await knowledgeStep(db, ctx, ensureItem, { now });
-  assert.ok(r.ok, r.error); assert.ok(r.nodes >= 6);
-  assert.equal(filed.length, 1); assert.match(filed[0].id, /^KG-G-unmeasured-objective-OBJ-1/); assert.match(filed[0].title, /Readers come back weekly/);
-  const ins = await kg.insights(db, 'acme', { kind: 'link' });
-  assert.ok(ins.some(i => i.subject === 'metric:M-2' || i.object === 'metric:M-2'), 'the unattached metric is proposed for the objective its owner holds');
-  assert.deepEqual(await knowledgeStep(db, ctx, ensureItem, { now: now + 60000 }), { skipped: true });
+test('a database that already holds DATAGRAPH-1 tables is refused with a plain reason, never written into', async () => {
+  const db = makeDb();
+  await assert.rejects(kg.runKg(db, { tenant: 't', records: recs(base), mappers, spec, now: 1 }).then(r => { if (r.error) throw new Error(r.error); return r; }), /DATAGRAPH-1/);
 });
 
 test('via_kinds limits the shared neighbours that count as evidence for a predicted link', async () => {
-  const db = makeDb();
+  const db = tenantDb();
   await kg.sync(db, kg.extract(recs(base), mappers), { tenant: 'v', now: 1 });
   const g = await kg.load(db, 'v');
   assert.ok(kg.analyze(g, { ...spec, via_kinds: ['author'] }).links.every(l => l.via.every(v => v.startsWith('author:'))));
@@ -176,7 +162,7 @@ test('via_kinds limits the shared neighbours that count as evidence for a predic
 });
 
 test('zero-config extraction: every table is read, references between rows become edges, private tables and columns are never read', async () => {
-  const db = makeDb();
+  const db = tenantDb();
   db.raw.exec(`CREATE TABLE programmes (id TEXT PRIMARY KEY, name TEXT, owner_email TEXT)`);
   db.raw.exec(`CREATE TABLE trials (id INTEGER PRIMARY KEY, title TEXT, programme TEXT, site_id INTEGER, note TEXT)`);
   db.raw.exec(`CREATE TABLE sites (id INTEGER PRIMARY KEY, name TEXT)`);
