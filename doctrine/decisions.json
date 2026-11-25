@@ -209,6 +209,7 @@
  },
  "gap_item": "Q-DECISION-COVERAGE-1",
  "not_decisions": {
+    "foundation/semrel.py": "plan and classify map Conventional Commit types to a SemVer bump by a fixed table, with no alternatives to weigh",
   "foundation/agents.py": "route_authors maps author names to roles from environment variables, a fixed lookup with no alternatives to weigh",
   "foundation/boundary.py": "decide looks a surface and action up in the boundary policy ledger, a deterministic rule with one allowed answer",
   "foundation/branchsweep.py": "plan_one derives the disposition of a branch from its merge state, a fixed table, and the sweep ledger records every outcome",
