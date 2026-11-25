@@ -37,10 +37,11 @@ GENERATORS = [
     (["python3", "-m", "foundation", "configschema", "--gen"], "."),  # CONFIG-SCHEMA-1: a new config gets its contract
     (["python3", "-m", "foundation", "stdgen", "--gen"], "."),  # STANDARDS-1: Backstage catalog and CycloneDX SBOM follow the registers
     (["python3", "-m", "plugins", "self", "--write"], "seed"),
+    (["python3", "scripts/claims.py", "--fix", "--apply"], "seed"),  # MERGE-NOW-1: the seed's claim register and README counts follow main too (2026-11-25: PRs 2227 and 2289 went red on a stale seed/docs/claims.json after every lane merge)
 ]
 # Files the generators write; the workflow ignores pushes that touch only these, so the bot's own commit cannot retrigger it.
 OUTPUTS = ["doctrine/decision-ledger.json", "ops/provenance.jsonl", "README.md", "platform/adapters/README.md", "site/claims-data.js", "site/dashboard-data.js", "site/self-data.js", "site/trajectory-data.js", "ops/trajectory.json", "ops/trajectory.jsonl",
-           "site/ultrastability-data.js", "site/decisions-data.js", "site/research-data.js", "research/papers/chen-stratton-2026.md", "research/papers/ashby-1952.md", "research/papers/open-loops-2026.md", "research/papers/safety-by-limits-2026.md", "social/calendar.json", "ops/research/prs.json", "ops/thought/log.jsonl", "ops/decisions/outcomes.jsonl", "ops/decisions/rescore.jsonl", "ops/executor-log.jsonl", "instances/ultrastable/own-database.json", "docs/security/multi-tenant-controls.json", "core-contract.json", "doctrine/triggers.json", "seed/self/SELF.md", "seed/self/self.json"]
+           "site/ultrastability-data.js", "site/decisions-data.js", "site/research-data.js", "research/papers/chen-stratton-2026.md", "research/papers/ashby-1952.md", "research/papers/open-loops-2026.md", "research/papers/safety-by-limits-2026.md", "social/calendar.json", "ops/research/prs.json", "ops/thought/log.jsonl", "ops/decisions/outcomes.jsonl", "ops/decisions/rescore.jsonl", "ops/executor-log.jsonl", "instances/ultrastable/own-database.json", "docs/security/multi-tenant-controls.json", "core-contract.json", "doctrine/triggers.json", "seed/self/SELF.md", "seed/self/self.json", "seed/docs/claims.json", "seed/README.md"]
 
 
 def run_all(root: Path = ROOT) -> list[str]:

@@ -27,6 +27,8 @@ on:
       - "research/papers/safety-by-limits-2026.md"
       - "social/calendar.json"
       - "ops/research/prs.json"
+      - "seed/docs/claims.json"
+      - "seed/README.md"
       - "ops/thought/log.jsonl"
       - "ops/decisions/outcomes.jsonl"
       - "ops/decisions/rescore.jsonl"
