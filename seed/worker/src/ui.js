@@ -2,6 +2,8 @@
 // Three bite-sized screens (Now, Next, Needs you) plus a one-question-at-a-time interview with big buttons.
 import { QUESTIONS, PHASES, nextQuestion, progress } from './interview.js';
 
+// DISCOVER-1: every page says it is built on Ultrastable and links the directory of systems built on it
+const FOOTER = '<footer style="max-width:36rem;margin:0 auto;padding:0 16px 2rem;font-size:.9rem">Built on <a href="https://ultrastable.io/">Ultrastable</a> · <a href="https://ultrastable.io/directory">More systems built on it</a> · <a href="/.well-known/ultrastable.json">About this system</a></footer>';
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 const page = (title, body) => `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}</title>
@@ -11,7 +13,7 @@ nav{display:flex;gap:.5rem;position:sticky;top:0;background:var(--bg);padding:.7
 .card{background:var(--card);border-radius:.8rem;padding:1rem;margin:.8rem 0}.mut{color:var(--mut);font-size:.9rem}
 button,.btn{display:block;width:100%;text-align:left;font:inherit;padding:.9rem 1rem;margin:.5rem 0;border-radius:.7rem;border:2px solid var(--ac);background:transparent;color:var(--fg);cursor:pointer;text-decoration:none;box-sizing:border-box}
 .bar{height:.5rem;background:var(--card);border-radius:1rem;overflow:hidden}.bar i{display:block;height:100%;background:var(--ac)}textarea{width:100%;min-height:6rem;font:inherit;box-sizing:border-box;padding:.6rem}</style></head><body>
-<nav><a href="/">Now</a><a href="/next">Next</a><a href="/needs-you">Needs you</a></nav><main>${body}</main></body></html>`;
+<nav><a href="/">Now</a><a href="/next">Next</a><a href="/needs-you">Needs you</a></nav><main>${body}</main>${FOOTER}</body></html>`;
 
 export const html = (title, body, status = 200) => new Response(page(title, body), { status, headers: { 'content-type': 'text/html; charset=utf-8' } });
 

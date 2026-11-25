@@ -10,6 +10,7 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-25
 
+- 2026-11-25: DISCOVER-1 (Rowan): public by default and discoverable. Homepage and /directory list every live tenant from the registries (foundation/discover.py); the seed serves /.well-known/ultrastable.json, a Built on Ultrastable footer and a daily opt-out-able heartbeat; the directory lists external systems only after reading their manifest and drops dead or opted-out ones. Repo visibility in github/org-settings.json: seed public, ops the one private exception. Core repo is public (not private, as old tool memory said).
 - 2026-11-25: Run branch cleanup from the lane's completion sweep (#2115)
 - 2026-11-25: Add What Works, a living atlas of policy evidence, as a tenant (#2108)
 - 2026-11-25: Fix the branch sweep so stale branches actually get deleted (#2111)

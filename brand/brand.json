@@ -29,7 +29,8 @@
     "automation",
     "bootstrapping",
     "self-hosting",
-    "cloudflare-workers"
+    "cloudflare-workers",
+    "ultrastable"
    ],
    "status": "live",
    "visibility": "public",
@@ -47,7 +48,8 @@
     "agent-orchestration",
     "cloudflare-workers",
     "autonomous-agents",
-    "runtime"
+    "runtime",
+    "ultrastable"
    ],
    "status": "retired",
    "visibility": "public",
@@ -66,7 +68,8 @@
     "specifications",
     "architecture",
     "autonomous-agents",
-    "documentation"
+    "documentation",
+    "ultrastable"
    ],
    "status": "retired",
    "visibility": "public",
@@ -82,7 +85,8 @@
     "Go to ultrastable/spec"
    ],
    "topics": [
-    "license"
+    "license",
+    "ultrastable"
    ],
    "status": "retired",
    "visibility": "public",
@@ -118,10 +122,11 @@
     "ai-agents",
     "cloudflare-workers",
     "autonomous-agents",
-    "idea-to-organization"
+    "idea-to-organization",
+    "ultrastable"
    ],
    "status": "live",
-   "visibility": "private",
+   "visibility": "public",
    "holds": "Only the starting kit (seed/ of the main repository): code and agent instructions, no company papers. It is the GitHub template new systems copy (TEMPLATE-CODE-ONLY-1)."
   },
   {
@@ -133,7 +138,8 @@
     "See profile/README.md"
    ],
    "topics": [
-    "community-health"
+    "community-health",
+    "ultrastable"
    ],
    "status": "live",
    "visibility": "public",

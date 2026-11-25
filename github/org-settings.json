@@ -12,9 +12,14 @@
   },
   "repos": {
     "ultrastable/practical-solutions": {
-      "description": null,
-      "homepage": null,
-      "topics": [],
+      "description": "Practical Solutions: evidence-based solutions to pressing global problems, each with its study and cheapest first test. A system running on Ultrastable.",
+      "homepage": "https://ultrastable.org/",
+      "topics": [
+        "autonomous-agents",
+        "built-on-ultrastable",
+        "cloudflare-workers",
+        "ultrastable"
+      ],
       "settings": {
         "has_wiki": false,
         "allow_squash_merge": true,
@@ -24,7 +29,76 @@
         "allow_update_branch": true,
         "delete_branch_on_merge": true,
         "squash_merge_commit_title": "PR_TITLE",
-        "squash_merge_commit_message": "PR_BODY"
+        "squash_merge_commit_message": "PR_BODY",
+        "private": false
+      },
+      "security": {
+        "vulnerability_alerts": true,
+        "automated_security_fixes": true,
+        "secret_scanning": "enabled",
+        "secret_scanning_push_protection": "enabled"
+      },
+      "branch_protection": {
+        "branch": "main",
+        "allow_force_pushes": false,
+        "allow_deletions": false,
+        "required_linear_history": true
+      }
+    },
+    "ultrastable/unlearn": {
+      "description": "Unlearn: popular beliefs and famous findings set against the evidence. A tenant system running on Ultrastable.",
+      "homepage": "https://unlearn.ultrastable.org/",
+      "topics": [
+        "autonomous-agents",
+        "built-on-ultrastable",
+        "cloudflare-workers",
+        "ultrastable"
+      ],
+      "settings": {
+        "has_wiki": false,
+        "allow_squash_merge": true,
+        "allow_merge_commit": false,
+        "allow_rebase_merge": false,
+        "allow_auto_merge": true,
+        "allow_update_branch": true,
+        "delete_branch_on_merge": true,
+        "squash_merge_commit_title": "PR_TITLE",
+        "squash_merge_commit_message": "PR_BODY",
+        "private": false
+      },
+      "security": {
+        "vulnerability_alerts": true,
+        "automated_security_fixes": true,
+        "secret_scanning": "enabled",
+        "secret_scanning_push_protection": "enabled"
+      },
+      "branch_protection": {
+        "branch": "main",
+        "allow_force_pushes": false,
+        "allow_deletions": false,
+        "required_linear_history": true
+      }
+    },
+    "ultrastable/what-works": {
+      "description": "What Works: a tenant system running on Ultrastable.",
+      "homepage": null,
+      "topics": [
+        "autonomous-agents",
+        "built-on-ultrastable",
+        "cloudflare-workers",
+        "ultrastable"
+      ],
+      "settings": {
+        "has_wiki": false,
+        "allow_squash_merge": true,
+        "allow_merge_commit": false,
+        "allow_rebase_merge": false,
+        "allow_auto_merge": true,
+        "allow_update_branch": true,
+        "delete_branch_on_merge": true,
+        "squash_merge_commit_title": "PR_TITLE",
+        "squash_merge_commit_message": "PR_BODY",
+        "private": false
       },
       "security": {
         "vulnerability_alerts": true,
@@ -50,7 +124,8 @@
         "automation",
         "bootstrapping",
         "self-hosting",
-        "cloudflare-workers"
+        "cloudflare-workers",
+        "ultrastable"
       ],
       "settings": {
         "has_issues": true,
@@ -126,7 +201,8 @@
         "agent-orchestration",
         "cloudflare-workers",
         "autonomous-agents",
-        "runtime"
+        "runtime",
+        "ultrastable"
       ],
       "settings": {
         "has_issues": true,
@@ -158,7 +234,8 @@
         "specifications",
         "architecture",
         "autonomous-agents",
-        "documentation"
+        "documentation",
+        "ultrastable"
       ],
       "settings": {
         "has_issues": true,
@@ -187,7 +264,8 @@
       "description": "Retired: the Ultrastable License and commercial terms live in ultrastable/ultrastable (LICENSE, licensing/). Kept public so existing links resolve. Ultrastable is the foundation for any autonomous system.",
       "homepage": "https://ultrastable.io",
       "topics": [
-        "license"
+        "license",
+        "ultrastable"
       ],
       "settings": {
         "has_issues": true,
@@ -226,7 +304,8 @@
         "allow_merge_commit": false,
         "allow_rebase_merge": false,
         "allow_auto_merge": true,
-        "allow_update_branch": true
+        "allow_update_branch": true,
+        "private": true
       },
       "security": {
         "vulnerability_alerts": true,
@@ -239,7 +318,8 @@
         "allow_force_pushes": false,
         "allow_deletions": false,
         "required_linear_history": true
-      }
+      },
+      "_visibility": "kept private: company admin, legal and backup ledgers (TEMPLATE-CODE-ONLY-1); the one marked exception to DISCOVER-1"
     },
     "ultrastable/seed": {
       "description": "The code-only starting kit a new system copies: bootstrapper, Worker, roles and agent instructions. A GitHub template, synced daily from seed/ in ultrastable/ultrastable. Ultrastable is the foundation for any autonomous system.",
@@ -249,7 +329,8 @@
         "ai-agents",
         "cloudflare-workers",
         "autonomous-agents",
-        "idea-to-organization"
+        "idea-to-organization",
+        "ultrastable"
       ],
       "settings": {
         "has_issues": true,
@@ -260,7 +341,8 @@
         "allow_rebase_merge": false,
         "allow_auto_merge": true,
         "allow_update_branch": true,
-        "is_template": true
+        "is_template": true,
+        "private": false
       },
       "security": {
         "vulnerability_alerts": true,
@@ -274,13 +356,15 @@
         "allow_deletions": false,
         "required_linear_history": true
       },
-      "_template": "TEMPLATE-CODE-ONLY-1: the code-only kit is the template new systems copy (set 2026-11-21). Visibility public is gate seed-public-visibility in doctrine/open-loops.json."
+      "_template": "TEMPLATE-CODE-ONLY-1: the code-only kit is the template new systems copy (set 2026-11-21). Visibility public is gate seed-public-visibility in doctrine/open-loops.json.",
+      "_visibility": "DISCOVER-1 (Rowan, 2026-11-25): public by default; scanned for secrets 2026-11-25 (only redaction patterns and test fakes)"
     },
     "ultrastable/.github": {
       "description": "Organization profile and community health defaults. Ultrastable is the foundation for any autonomous system.",
       "homepage": "https://ultrastable.io",
       "topics": [
-        "community-health"
+        "community-health",
+        "ultrastable"
       ],
       "settings": {
         "has_issues": true,
