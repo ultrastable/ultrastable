@@ -8,6 +8,7 @@ import { withStandings, FIELDS } from "./ledger.js";
 import { KINDS, OUTCOMES, STANDINGS, RUBRIC } from "./standing.js";
 import { BEAT } from "./discover.js";
 import { load, beat, freshness, minutesSince } from "./store.js";
+import { graphTick, graphApi } from "./graph.js";
 import { home, fieldPage, findingPage, projectsPage, rubricPage, changesPage, notFound, SITE } from "./site.js";
 
 const json = (body, status = 200) => new Response(JSON.stringify(body, null, 1), { status, headers: { "content-type": "application/json; charset=utf-8", "access-control-allow-origin": "*" } });
@@ -53,7 +54,9 @@ export function route(url, ledger = seed, live = { checks: {}, beats: [], change
   return html(notFound(), 404);
 }
 
-const runBeat = (env, trigger) => beat(env, { trigger }).catch(e => console.error("beat failed", e?.message || e));
+// After each beat the knowledge graph is rebuilt from the ledger as it now stands (KGRAPH-1, graph.js).
+const runBeat = (env, trigger) => beat(env, { trigger }).catch(e => console.error("beat failed", e?.message || e))
+  .then(async r => { try { const { ledger } = await load(env); await graphTick(env.DB, ledger); } catch (e) { console.error("graph failed", e?.message || e); } return r; });
 
 export default {
   async fetch(req, env, ctx) {
@@ -65,7 +68,8 @@ export default {
       const r = age != null && age <= BEAT.SPARK_MIN ? { skipped: "the last beat is recent", last_beat_minutes: age } : await beat(env, { trigger: "watch" }).catch(e => ({ error: String(e?.message || e) }));
       return new Response(JSON.stringify({ ok: !r.error, ...r }), { status: r.error ? 500 : 200, headers: { "content-type": "application/json" } });
     }
-    else if (env?.DB && (age == null || age > BEAT.SPARK_MIN)) ctx?.waitUntil?.(runBeat(env, "spark"));
+    if (env?.DB && new URL(req.url).pathname.startsWith("/api/graph")) return graphApi(req, env.DB);
+    if (env?.DB && (age == null || age > BEAT.SPARK_MIN)) ctx?.waitUntil?.(runBeat(env, "spark"));
     return route(req.url, ledger, live);
   },
   async scheduled(_ev, env, ctx) { ctx.waitUntil(runBeat(env, "cron")); }

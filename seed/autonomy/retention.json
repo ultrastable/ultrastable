@@ -298,6 +298,14 @@
     "kg_vec": {"keep": "state", "reason": "KGRAPH-AI-1: one embedding per live graph node, rewritten when the node changes"},
     "kg_summaries": {"keep": "state", "reason": "KGRAPH-AI-1: one summary per community insight"},
     "kg_ai_cursor": {"keep": "state", "reason": "KGRAPH-AI-1: one cursor row"},
-    "kg_cost": {"keep": "managed", "reason": "KGRAPH-AI-1: one row per day of graph AI cost"}
+    "kg_cost": {"keep": "managed", "reason": "KGRAPH-AI-1: one row per day of graph AI cost"},
+    "kg_sources": {
+      "keep": "managed",
+      "reason": "Tenant engine seed/worker/src/knowledge.js (DATAGRAPH-1 built rows): one hash per source record; retired rows pruned after retain_days by runKg"
+    },
+    "kg_state": {
+      "keep": "state",
+      "reason": "Tenant engine seed/worker/src/knowledge.js: a handful of keys per tenant (last analysis, kind weights)"
+    }
   }
 }

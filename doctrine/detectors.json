@@ -577,6 +577,54 @@
       "owner": "operations",
       "remedy": "Read the tenant's /health and its last beats' reports (error samples per source); fix the tenant repository by PR; the tick's tenant-deploy step ships it."
     },
-    {"id": "static-content", "failure_mode": "fm-static-content", "kind": "command", "run": ["python3", "-m", "foundation", "staticcontent", "--run", "--apply"], "timeout": 300, "root_cause": "a published page is not bound to any loop that regenerates it, so it stopped changing", "owner": "product", "remedy": "Bind the named page to a loop (generated block, feed or live read) in the system that serves it; never edit its text only to change it."}
-]
+    {
+      "id": "static-content",
+      "failure_mode": "fm-static-content",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "staticcontent",
+        "--run",
+        "--apply"
+      ],
+      "timeout": 300,
+      "root_cause": "a published page is not bound to any loop that regenerates it, so it stopped changing",
+      "owner": "product",
+      "remedy": "Bind the named page to a loop (generated block, feed or live read) in the system that serves it; never edit its text only to change it."
+    },
+    {
+      "id": "selftest-data",
+      "failure_mode": "fm-frozen-page",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "selftest",
+        "--data"
+      ],
+      "timeout": 60,
+      "root_cause": "a generator that feeds a public page stopped running, or its output never lands on main",
+      "owner": "operations",
+      "remedy": "Find the generator named in the file header; make the workflow that runs it land the file through scripts/land_data.py, then rerun."
+    },
+    {
+      "id": "selftest-workflows",
+      "failure_mode": "fm-silent-loop-stop",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "selftest",
+        "--workflows"
+      ],
+      "timeout": 240,
+      "root_cause": "a scheduled workflow fails every run or stopped being scheduled, and no check watches it",
+      "owner": "operations",
+      "remedy": "Read the failing run's log, fix the root cause in that repository, and dispatch it once to prove it is green."
+    }
+  ]
 }
