@@ -74,6 +74,12 @@ def check(root=REPO) -> list[str]:
         if st in ("pending", "built") and sid in tenants and tenants[sid].get("state") != "own-repo":
             if (tenants[sid].get("vendor") or {}).get(pol["core_module"]) != pol["tenant_vendor_path"]:
                 bad.append(f"{sid}: doctrine/tenant-repos.json does not vendor {pol['core_module']} to {pol['tenant_vendor_path']}")
+        if st == "built" and row.get("engine"):
+            # a tenant that maps its own records with the shared engine (seed/worker/src/knowledge.js) has it vendored where its row says
+            if not (root / row["engine"]).exists():
+                bad.append(f"{sid}: engine {row['engine']} is missing")
+            if (tenants.get(sid, {}).get("vendor") or {}).get(row["engine"]) != row.get("vendor"):
+                bad.append(f"{sid}: doctrine/tenant-repos.json does not vendor {row['engine']} to {row.get('vendor')}")
     if not (root / RESEARCH).exists():
         bad.append(f"{RESEARCH} is missing")
     for f in pol["rule_files"]:

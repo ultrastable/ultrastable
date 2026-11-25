@@ -6,7 +6,10 @@
    "repo": "ultrastable/practical-solutions",
    "state": "own-repo",
    "why": "created as its own repository from the start",
-   "frontend": "https://tenant-ps-web.ultrastable.workers.dev"
+   "frontend": "https://tenant-ps-web.ultrastable.workers.dev",
+   "vendor": {
+    "seed/worker/src/knowledge.js": "vendor/seed/knowledge.js"
+   }
   },
   "unlearn": {
    "repo": "ultrastable/unlearn",
@@ -23,7 +26,8 @@
     "doctrine/models.json": "vendor/ultrastable/models.json",
     "seed/worker/src/promoqueue.js": "vendor/ultrastable/promoqueue.js",
     "doctrine/stakeholders.json": "vendor/ultrastable/stakeholders.json",
-    "workers/core/datagraph/index.js": "vendor/ultrastable/datagraph.js"
+    "workers/core/datagraph/index.js": "vendor/ultrastable/datagraph.js",
+    "seed/worker/src/knowledge.js": "vendor/ultrastable/knowledge.js"
    },
    "worker": "ultrastable-unlearn",
    "ai": true,
@@ -110,7 +114,8 @@
     "README.md"
    ],
    "vendor": {
-    "workers/core/datagraph/index.js": "vendor/ultrastable/datagraph.js"
+    "workers/core/datagraph/index.js": "vendor/ultrastable/datagraph.js",
+    "seed/worker/src/knowledge.js": "worker/vendor/knowledge.js"
    },
    "worker": "ultrastable-replication-ledger",
    "ai": false,
