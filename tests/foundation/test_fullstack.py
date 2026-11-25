@@ -43,8 +43,10 @@ class FullStack(unittest.TestCase):
         pol = json.loads((d / "doctrine/full-stack.json").read_text())
         pol["systems"]["second-tenant"] = {"backend": "https://x.example/health", "gaps": {"repo": "Q-FULLSTACK-second-tenant", "frontend": "Q-FULLSTACK-second-tenant"}}
         (d / "doctrine/full-stack.json").write_text(json.dumps(pol))
-        self.assertFalse(any(b.startswith("second-tenant") for b in F.check(d)))
+        # The test sets the item's state itself: the live item closes once the gap is filled.
         f = d / "docs/issues/Q-FULLSTACK-second-tenant.json"
+        f.write_text(f.read_text().replace("**Status:** closed", "**Status:** open"))
+        self.assertFalse(any(b.startswith("second-tenant") for b in F.check(d)))
         f.write_text(f.read_text().replace("**Status:** open", "**Status:** closed"))
         self.assertTrue(any("second-tenant: no repo" in b and "closed" in b for b in F.check(d)))
 
