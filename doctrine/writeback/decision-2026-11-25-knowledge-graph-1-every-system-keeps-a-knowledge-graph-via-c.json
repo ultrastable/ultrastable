@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-25-knowledge-graph-1-every-system-keeps-a-knowledge-graph-via-c",
+  "kind": "decision",
+  "date": "2026-11-25",
+  "title": "KNOWLEDGE-GRAPH-1: every system keeps a knowledge graph via core/knowledge",
+  "body": "Rowan 2026-11-25: all deployments have a knowledge graph that builds and maintains connections across their data and yields autonomous insights. Built as workers/core/knowledge (pure run() over tenant records: entity resolution, provenance edges, PageRank, communities, link leads, insights from snapshot diff). core/discover links enter as labelled leads. Practical Solutions is first tenant. Next: run it from the seed tick so new deployments get it without a tenant script.",
+  "probe": "file:workers/core/knowledge/index.js",
+  "session": "session_0156nqDsvaBU1ayzGgUyv8SV"
+ },
+ "kind": "decision",
+ "title": "KNOWLEDGE-GRAPH-1: every system keeps a knowledge graph via core/knowledge",
+ "session": "session_0156nqDsvaBU1ayzGgUyv8SV"
+}

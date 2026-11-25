@@ -185,6 +185,10 @@
       "class": "core",
       "role": "Knowledge graph with provenance whose gaps generate the next questions; tenant-agnostic"
     },
+    "core/knowledge": {
+      "class": "core",
+      "role": "Builds and maintains a provenance-carrying graph of a system's own records (entity resolution, link prediction, communities) and generates insights from each run; tenant-agnostic"
+    },
     "core/ladder": {
       "class": "core",
       "role": "model ladder persistence"
