@@ -1840,24 +1840,6 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
-   "claim": "- **Every repository says where its code runs (LIVE-LINKS-1, Rowan 2026-11-25).** \"If somebody sees the code, then show them where it's",
-   "detail": "",
-   "how": "file:foundation/livelinks.py + file:doctrine/fleet-contract.json + file:doctrine/tenant-repos.json + file:tests/foundation/test_livelinks.py + grep:.github/workflows/checks.yml::foundation[ .]livelinks\\b",
-   "id": "cited-997134914a",
-   "kind": "claim",
-   "pass": true,
-   "surface": "agents/AGENTS.md"
-  },
-  {
-   "claim": "- **One contract for every system; statements hold front to back and back to front (FLEET-CONTRACT-1, Rowan 2026-11-25).** \"Make sure",
-   "detail": "",
-   "how": "file:seed/worker/src/contract.js + file:doctrine/tenant-repos.json + file:doctrine/fleet-contract.json + file:foundation/fleetcontract.py + file:site/contract.js + file:seed/worker/test/contract.test.js",
-   "id": "cited-98686c53a7",
-   "kind": "claim",
-   "pass": true,
-   "surface": "agents/AGENTS.md"
-  },
-  {
    "claim": "- **Every system keeps a knowledge graph of all its data, built and maintained automatically (DATAGRAPH-1, Rowan 2026-11-25).** \"All",
    "detail": "",
    "how": "file:seed/worker/src/vendor/core/datagraph.js + file:doctrine/tenant-repos.json + file:seed/worker/src/datagraph.js + file:instances/ultrastable/progress.json + file:doctrine/knowledge-graph.json + file:docs/research/knowledge-graph.md",
@@ -1943,6 +1925,15 @@ export default {
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
    "id": "cited-95432168bf",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **No made-up numbers (NO-FABRICATION-1, Rowan 2026-11-25).** \"Nothing gets made up. Everything must be completely supported and backed",
+   "detail": "",
+   "how": "file:foundation/claimcode.py + grep:.github/workflows/checks.yml::foundation[ .]claimcode\\b",
+   "id": "cited-e2a1c0be98",
    "kind": "claim",
    "pass": true,
    "surface": "agents/AGENTS.md"
@@ -2560,24 +2551,6 @@ export default {
    "surface": "seed/agents/AGENTS.md"
   },
   {
-   "claim": "- **Every repository says where its code runs (LIVE-LINKS-1, Rowan 2026-11-25).** \"If somebody sees the code, then show them where it's",
-   "detail": "",
-   "how": "file:foundation/livelinks.py + file:doctrine/fleet-contract.json + file:doctrine/tenant-repos.json + file:tests/foundation/test_livelinks.py + grep:.github/workflows/checks.yml::foundation[ .]livelinks\\b",
-   "id": "mirror-3ba315e84d",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/agents/AGENTS.md"
-  },
-  {
-   "claim": "- **One contract for every system; statements hold front to back and back to front (FLEET-CONTRACT-1, Rowan 2026-11-25).** \"Make sure",
-   "detail": "",
-   "how": "file:seed/worker/src/contract.js + file:doctrine/tenant-repos.json + file:doctrine/fleet-contract.json + file:foundation/fleetcontract.py + file:site/contract.js + file:seed/worker/test/contract.test.js",
-   "id": "mirror-b783f29537",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/agents/AGENTS.md"
-  },
-  {
    "claim": "- **Every system keeps a knowledge graph of all its data, built and maintained automatically (DATAGRAPH-1, Rowan 2026-11-25).** \"All",
    "detail": "",
    "how": "file:seed/worker/src/vendor/core/datagraph.js + file:doctrine/tenant-repos.json + file:seed/worker/src/datagraph.js + file:instances/ultrastable/progress.json + file:doctrine/knowledge-graph.json + file:docs/research/knowledge-graph.md",
@@ -2654,6 +2627,15 @@ export default {
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
    "id": "mirror-be5af6748b",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **No made-up numbers (NO-FABRICATION-1, Rowan 2026-11-25).** \"Nothing gets made up. Everything must be completely supported and backed",
+   "detail": "",
+   "how": "file:foundation/claimcode.py + grep:.github/workflows/checks.yml::foundation[ .]claimcode\\b",
+   "id": "mirror-9a507beeee",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3307,7 +3289,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 64 Python and 538 Worker tests",
+   "claim": "seed-tests: 64 Python and 535 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3316,7 +3298,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 538 Worker tests",
+   "claim": "seed-worker-tests: 535 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3352,7 +3334,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 1020",
+   "claim": "live-deploys: 1052",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",
@@ -3557,7 +3539,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 392,
-  "total": 392
+  "pass": 390,
+  "total": 390
  }
 };
