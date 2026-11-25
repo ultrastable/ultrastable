@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """CONFIG-SCHEMA-1 (STANDARDS-1): every JSON config has a JSON Schema 2020-12 contract in a Schema Store catalog, and the check catches drift."""
 import json, shutil, sys, unittest
 from pathlib import Path

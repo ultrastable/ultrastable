@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """STANDARDS-1: Backstage catalog, CycloneDX SBOM and devcontainer are standard files generated from the registers, never typed by hand."""
 import json, sys, unittest
 from pathlib import Path

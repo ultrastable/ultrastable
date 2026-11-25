@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """CONFIG-SCHEMA-1 (STANDARDS-1, Rowan 2026-11-25: "Standards, don't reinvent the wheel. Apply standards."). Ultrastable is the foundation for any
 autonomous system.
 

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """STANDARDS-1 (Rowan 2026-11-25: "Figure out what the standards are and apply them broadly."). Ultrastable is the foundation for any autonomous
 system.
 
