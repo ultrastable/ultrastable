@@ -12,7 +12,7 @@
   "ultrastable": { "state": "seed-step", "worker": "ultrastable-tick", "public_api": "https://ultrastable.io/api/graph" },
   "practical-solutions": { "state": "pending", "item": "Q-KG-practical-solutions", "probe": "https://tenant-ps-web.ultrastable.workers.dev/api/graph" },
   "unlearn": { "state": "pending", "item": "Q-KG-unlearn", "probe": "https://unlearn.ultrastable.org/api/graph" },
-  "what-works": { "state": "pending", "item": "Q-KG-what-works", "probe": "https://what-works.ultrastable.org/api/graph" },
+  "what-works": { "state": "built", "item": "Q-KG-what-works", "repo": "ultrastable/what-works", "probe": "https://what-works.ultrastable.org/api/graph" },
   "replication-ledger": { "state": "pending", "item": "Q-KG-replication-ledger", "probe": null, "probe_from": "the tenant worker route in doctrine/topology.json, once it has one" }
  }
 }
