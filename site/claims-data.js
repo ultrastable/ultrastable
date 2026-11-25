@@ -40,7 +40,7 @@ export default {
    "surface": "site/worker.js"
   },
   {
-   "claim": "a two-family review and scored predictions",
+   "claim": "\u2026a two-family review and scored predictions",
    "detail": "",
    "how": "grep:foundation/agent_ladder.py::reviewer of a family",
    "id": "market-two-family",
@@ -76,7 +76,7 @@ export default {
    "surface": "site/worker.js"
   },
   {
-   "claim": "tools, generated from the code that serves them",
+   "claim": "\u2026tools, generated from the code that serves them",
    "detail": "",
    "how": "grep:site/worker.js::\\[\\.\\.\\.LIVE_TOOLS, \\.\\.\\.TOOLS, \\.\\.\\.WRITE_TOOLS\\]\\.map + grep:site/agentic.js::tools/list.*LIVE_TOOLS, \\.\\.\\.TOOLS, \\.\\.\\.WRITE_TOOLS",
    "id": "llms-tools-generated",
@@ -85,7 +85,7 @@ export default {
    "surface": "site/worker.js"
   },
   {
-   "claim": "One loop, \" + VERIFIED.ledgers.length + \" ledgers (",
+   "claim": "One loop \u2026 ledgers",
    "detail": "",
    "how": "json:doctrine/claims.json::ledgers.0.id==work-claims + file:site/claims-data.js",
    "id": "how-ledgers-count",
@@ -139,7 +139,7 @@ export default {
    "surface": "site/worker.js"
   },
   {
-   "claim": "resource is outside every trust rung",
+   "claim": "\u2026resource is outside every trust rung",
    "detail": "",
    "how": "grep:site/authzen.js::outside every trust rung + grep:site/authzen.test.mjs::secrets are outside every rung",
    "id": "authzen-never-rung",
@@ -337,7 +337,7 @@ export default {
    "surface": "docs/doctrine/VISION.md"
   },
   {
-   "claim": "to use instead\", never a smaller staffing of the same machinery.",
+   "claim": "\u2026to use instead\", never a smaller staffing of the same machinery.",
    "detail": "",
    "how": "grep:tests/test_vision.py::test_camping_app_is_not_staffed + grep:site/worker.js::not_a_fit",
    "id": "curated-e1083562b7",
@@ -409,7 +409,7 @@ export default {
    "surface": "products/gaplint/README.md"
   },
   {
-   "claim": "owner_contact: set-in-secret-store   # never put an email or token in this file",
+   "claim": "\u2026owner_contact: set-in-secret-store # never put an email or token in this file",
    "detail": "",
    "how": "grep:.github/workflows/checks.yml::rules --probe no-secrets + grep:doctrine/rules.json::secret_patterns + grep:products/gaplint/gaplint/rules.py::GL006",
    "id": "curated-35b69b3c85",
@@ -1282,7 +1282,7 @@ export default {
    "surface": "seed/doctrine/VISION.md"
   },
   {
-   "claim": "to use instead\", never a smaller staffing of the same machinery.",
+   "claim": "\u2026to use instead\", never a smaller staffing of the same machinery.",
    "detail": "",
    "how": "grep:tests/test_vision.py::test_camping_app_is_not_staffed + grep:site/worker.js::not_a_fit",
    "id": "curated-0101daddcc",
@@ -1363,7 +1363,7 @@ export default {
    "surface": "seed/self/SELF.md"
   },
   {
-   "claim": "card('c-agents','Agents','Each role picks the top item for its role on its tick. One in-tick doer settles every pick: rules first, then",
+   "claim": "Each role picks the top item for its role on its tick. One in-tick doer settles every pick: rules first, then",
    "detail": "",
    "how": "grep:seed/worker/src/doer.js::export .*executeStep + file:seed/worker/test/doer.test.js + file:seed/worker/src/codeagent.js",
    "id": "curated-d5f8790d12",
@@ -1372,7 +1372,7 @@ export default {
    "surface": "site/controlplane.js"
   },
   {
-   "claim": "const se=sec('Settlement by name','Every change the executor opens ends under the name of its work item: merged, closed, parked, failed or",
+   "claim": "Settlement by name Every change the executor opens ends under the name of its work item: merged, closed, parked, failed or",
    "detail": "",
    "how": "grep:foundation/clockwork.py::settlement + grep:foundation/clock.py::settlement: sla_hours missing + file:tests/foundation/test_clock.py",
    "id": "curated-9c9f481acd",
@@ -1381,7 +1381,7 @@ export default {
    "surface": "site/live.js"
   },
   {
-   "claim": "const ck=sec('Clocks','Every loop is a clock. Status is measured from its recorded beats, never declared: ticking, late, stopped, or idle",
+   "claim": "Every loop is a clock. Status is measured from its recorded beats, never declared: ticking, late, stopped, or idle",
    "detail": "",
    "how": "file:foundation/clock.py + file:doctrine/clocks.json + file:tests/foundation/test_clock.py",
    "id": "curated-15fbc27f5f",
@@ -1507,7 +1507,7 @@ export default {
    "surface": "site/worker.js"
   },
   {
-   "claim": "if (!/box-sizing\\s*:\\s*border-box/i.test(h)) bad.push(\"add *{box-sizing:border-box} so inputs and textareas never overflow their card\");",
+   "claim": "\u2026if (!/box-sizing\\s*:\\s*border-box/i.test(h)) bad.push",
    "detail": "",
    "how": "grep:site/site.test.mjs::assert.match\\(f, /box-sizing/\\) + grep:site/site.test.mjs::assert.deepEqual\\(lint\\(good\\), \\[\\]\\)",
    "id": "curated-0698e7d94e",
@@ -1525,7 +1525,7 @@ export default {
    "surface": "site/worker.js"
   },
   {
-   "claim": "return page(\"What I checked\", \"<div class=\\\"head\\\"><h1>What I checked</h1><p>An independent check of your site against what you asked",
+   "claim": "What I checked > What I checked An independent check of your site against what you asked",
    "detail": "",
    "how": "grep:site/site.test.mjs::No sign-up form + grep:site/site.test.mjs::first view starts the audit",
    "id": "curated-91f7529a09",
@@ -1534,7 +1534,7 @@ export default {
    "surface": "site/worker.js"
   },
   {
-   "claim": "+ card(\"Audits\", row(\"Audited\", d.audits.total) + row(\"Gaps found\", d.audits.gaps) + row(\"Gaps closed automatically\", d.audits.closed) +",
+   "claim": "\u2026d.audits.total) + row Gaps found d.audits.gaps) + row Gaps closed automatically d.audits.closed) +",
    "detail": "",
    "how": "grep:site/site.test.mjs::first view starts the audit, which fixes the critical gap + file:site/site.test.mjs",
    "id": "curated-0d67145802",
@@ -1570,7 +1570,7 @@ export default {
    "surface": "site/worker.js"
   },
   {
-   "claim": "+ \"<div class=\\\"us-grid c2\\\">\" + card(\"Loops\", \"Each loop has a trigger, owner, definition of done, two independent paths and a closing",
+   "claim": "Each loop has a trigger, owner, definition of done, two independent paths and a closing",
    "detail": "",
    "how": "file:foundation/loops.py + grep:.github/workflows/checks.yml::foundation[ .]loops\\b",
    "id": "cited-06c8ef7187",
@@ -1916,6 +1916,15 @@ export default {
    "detail": "",
    "how": "file:seed/.github/workflows/platform-sync.yml + file:tests/foundation/test_improve.py + file:foundation/tenantsync.py + grep:.github/workflows/checks.yml::foundation[ .]tenantsync\\b",
    "id": "cited-0e153ff129",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Red-team the system's own blind spots; the owner should never find a failure first (REDTEAM-1, Rowan 2026-11-25).** \"Audit and",
+   "detail": "",
+   "how": "file:foundation/redteam.py + file:ops/redteam/findings.jsonl + file:tests/foundation/test_redteam.py",
+   "id": "cited-467a38f9b7",
    "kind": "claim",
    "pass": true,
    "surface": "agents/AGENTS.md"
@@ -2614,6 +2623,15 @@ export default {
    "surface": "seed/agents/AGENTS.md"
   },
   {
+   "claim": "- **Red-team the system's own blind spots; the owner should never find a failure first (REDTEAM-1, Rowan 2026-11-25).** \"Audit and",
+   "detail": "",
+   "how": "file:foundation/redteam.py + file:ops/redteam/findings.jsonl + file:tests/foundation/test_redteam.py",
+   "id": "mirror-309506fe16",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
    "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
@@ -3271,7 +3289,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 64 Python and 535 Worker tests",
+   "claim": "\u2026seed-tests: 67 Python and 537 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3280,7 +3298,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 535 Worker tests",
+   "claim": "\u2026seed-worker-tests: 537 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3289,7 +3307,7 @@ export default {
    "surface": "platform/adapters/README.md"
   },
   {
-   "claim": "gcp-tests: 2 tests",
+   "claim": "\u2026gcp-tests: 2 tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"platform/adapters/gcp/test\"]}}",
    "id": "gcp-tests",
@@ -3298,7 +3316,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "gcp-tests-adapters: 2 tests",
+   "claim": "\u2026gcp-tests-adapters: 2 tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"platform/adapters/gcp/test\"]}}",
    "id": "gcp-tests-adapters",
@@ -3307,7 +3325,7 @@ export default {
    "surface": "platform/adapters/README.md"
   },
   {
-   "claim": "core-tests: 44 tests",
+   "claim": "\u2026core-tests: 44 tests",
    "detail": "",
    "how": "generated from code: {\"py\": {\"py_tests\": [\"platform/core/tests\"]}}",
    "id": "core-tests",
@@ -3316,7 +3334,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 1042",
+   "claim": "\u2026live-deploys: 1042",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",
@@ -3325,7 +3343,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "gaplint-tests-readme: 14 tests",
+   "claim": "\u2026gaplint-tests-readme: 14 tests",
    "detail": "",
    "how": "generated from code: {\"n\": {\"py_tests\": [\"products/gaplint/tests\"]}}",
    "id": "gaplint-tests-readme",
@@ -3334,7 +3352,7 @@ export default {
    "surface": "products/gaplint/README.md"
   },
   {
-   "claim": "gaplint-tests-products: 14 tests",
+   "claim": "\u2026gaplint-tests-products: 14 tests",
    "detail": "",
    "how": "generated from code: {\"n\": {\"py_tests\": [\"products/gaplint/tests\"]}}",
    "id": "gaplint-tests-products",
@@ -3343,7 +3361,7 @@ export default {
    "surface": "products/README.md"
   },
   {
-   "claim": "platform-core-tests: 44 tests",
+   "claim": "\u2026platform-core-tests: 44 tests",
    "detail": "",
    "how": "generated from code: {\"n\": {\"py_tests\": [\"platform/core/tests\"]}}",
    "id": "platform-core-tests",
@@ -3352,7 +3370,7 @@ export default {
    "surface": "platform/README.md"
   },
   {
-   "claim": "module: site/claims-data.js is written by foundation/claims.py from doctrine/claims.json",
+   "claim": "\u2026module: site/claims-data.js is written by foundation/claims.py from doctrine/claims.json",
    "detail": "",
    "how": "header names the generator + file:foundation/claims.py + grep:.github/workflows/checks.yml::foundation claims --check",
    "id": "module-claims-data",
@@ -3361,7 +3379,7 @@ export default {
    "surface": "site/claims-data.js"
   },
   {
-   "claim": "module: site/self-data.js is written by foundation/selfmodel.py from doctrine/ultrastability.json, instances/ultrastable/loop-registry.json",
+   "claim": "\u2026module: site/self-data.js is written by foundation/selfmodel.py from doctrine/ultrastability.json, instances/ultrastable/loop-registry.json",
    "detail": "",
    "how": "header names the generator + file:foundation/selfmodel.py + grep:.github/workflows/checks.yml::foundation selfmodel --check + file:tests/foundation/test_selfmodel.py",
    "id": "module-self-data",
@@ -3370,7 +3388,7 @@ export default {
    "surface": "site/self-data.js"
   },
   {
-   "claim": "module: site/dashboard-data.js is written by scripts/build_dashboard.py from doctrine/pilot-model.json",
+   "claim": "\u2026module: site/dashboard-data.js is written by scripts/build_dashboard.py from doctrine/pilot-model.json",
    "detail": "",
    "how": "header names the generator + file:scripts/build_dashboard.py + grep:.github/workflows/checks.yml::build_dashboard.py --check + file:tests/foundation/test_dashboard.py",
    "id": "module-dashboard-data",
@@ -3379,7 +3397,7 @@ export default {
    "surface": "site/dashboard-data.js"
   },
   {
-   "claim": "module: site/roadmap-data.js is written by scripts/build_site_roadmap.py from site/pins.json, docs/issues",
+   "claim": "\u2026module: site/roadmap-data.js is written by scripts/build_site_roadmap.py from site/pins.json, docs/issues",
    "detail": "",
    "how": "header names the generator + file:scripts/build_site_roadmap.py + grep:.github/workflows/checks.yml::build_site_roadmap.py --check + file:tests/foundation/test_site_roadmap.py",
    "id": "module-roadmap-data",
@@ -3388,7 +3406,7 @@ export default {
    "surface": "site/roadmap-data.js"
   },
   {
-   "claim": "module: site/agentdata.js is written by scripts/build_site_agentdata.py from seed/standards/standards.json, doctrine/blindspots.json",
+   "claim": "\u2026module: site/agentdata.js is written by scripts/build_site_agentdata.py from seed/standards/standards.json, doctrine/blindspots.json",
    "detail": "",
    "how": "header names the generator + file:scripts/build_site_agentdata.py + grep:.github/workflows/checks.yml::build_site_agentdata.py --check",
    "id": "module-agentdata",
@@ -3397,7 +3415,7 @@ export default {
    "surface": "site/agentdata.js"
   },
   {
-   "claim": "module: site/platformbrief.js is written by scripts/platform_brief.py from deploy/brief/platform-brief.json",
+   "claim": "\u2026module: site/platformbrief.js is written by scripts/platform_brief.py from deploy/brief/platform-brief.json",
    "detail": "",
    "how": "header names the generator + file:scripts/platform_brief.py + grep:.github/workflows/checks.yml::platform_brief.py --check",
    "id": "module-platformbrief",
@@ -3406,7 +3424,7 @@ export default {
    "surface": "site/platformbrief.js"
   },
   {
-   "claim": "module: site/stakeholders.js is written by scripts/gen_stakeholders.py from doctrine/stakeholders.json",
+   "claim": "\u2026module: site/stakeholders.js is written by scripts/gen_stakeholders.py from doctrine/stakeholders.json",
    "detail": "",
    "how": "header names the generator + file:scripts/gen_stakeholders.py + grep:tests/foundation/test_claims.py::test_every_generated_module_is_current + file:tests/foundation/test_uiux.py",
    "id": "module-stakeholders",
@@ -3415,7 +3433,7 @@ export default {
    "surface": "site/stakeholders.js"
   },
   {
-   "claim": "module: site/userpath.js is written by scripts/gen_userpath.py from doctrine/user-path.json",
+   "claim": "\u2026module: site/userpath.js is written by scripts/gen_userpath.py from doctrine/user-path.json",
    "detail": "",
    "how": "header names the generator + file:scripts/gen_userpath.py + grep:.github/workflows/checks.yml::gen_userpath.py --check",
    "id": "module-userpath",
@@ -3424,7 +3442,7 @@ export default {
    "surface": "site/userpath.js"
   },
   {
-   "claim": "module: site/feed-data.js is written by foundation/reach.py from ops/changelog.json",
+   "claim": "\u2026module: site/feed-data.js is written by foundation/reach.py from ops/changelog.json",
    "detail": "",
    "how": "header names the generator + file:foundation/reach.py + grep:.github/workflows/social-post.yml::foundation reach --run --apply + file:tests/foundation/test_reach.py",
    "id": "module-feed-data",
@@ -3433,7 +3451,7 @@ export default {
    "surface": "site/feed-data.js"
   },
   {
-   "claim": "module: site/research-data.js is written by foundation/research.py from research/studies, doctrine/research.json",
+   "claim": "\u2026module: site/research-data.js is written by foundation/research.py from research/studies, doctrine/research.json",
    "detail": "",
    "how": "header names the generator + file:foundation/research.py + grep:.github/workflows/checks.yml::foundation research --check",
    "id": "module-research-data",
@@ -3442,7 +3460,7 @@ export default {
    "surface": "site/research-data.js"
   },
   {
-   "claim": "ledger: work claims",
+   "claim": "\u2026ledger: work claims",
    "detail": "seed/worker/migrations/0001_init.sql",
    "how": "grep:seed/worker/migrations/0001_init.sql::CREATE TABLE IF NOT EXISTS claims",
    "id": "ledger-work-claims",
@@ -3451,7 +3469,7 @@ export default {
    "surface": "site/worker.js (/how)"
   },
   {
-   "claim": "ledger: predictions",
+   "claim": "\u2026ledger: predictions",
    "detail": "seed/worker/migrations/0001_init.sql",
    "how": "grep:seed/worker/migrations/0001_init.sql::CREATE TABLE IF NOT EXISTS predictions",
    "id": "ledger-predictions",
@@ -3460,7 +3478,7 @@ export default {
    "surface": "site/worker.js (/how)"
   },
   {
-   "claim": "ledger: trust",
+   "claim": "\u2026ledger: trust",
    "detail": "seed/worker/migrations/0001_init.sql",
    "how": "grep:seed/worker/migrations/0001_init.sql::CREATE TABLE IF NOT EXISTS trust_ledger",
    "id": "ledger-trust",
@@ -3469,7 +3487,7 @@ export default {
    "surface": "site/worker.js (/how)"
   },
   {
-   "claim": "ledger: deploys",
+   "claim": "\u2026ledger: deploys",
    "detail": "ops/deploys.jsonl",
    "how": "file:ops/deploys.jsonl",
    "id": "ledger-deploys",
@@ -3478,7 +3496,7 @@ export default {
    "surface": "site/worker.js (/how)"
   },
   {
-   "claim": "ledger: provenance",
+   "claim": "\u2026ledger: provenance",
    "detail": "ops/provenance.jsonl",
    "how": "file:ops/provenance.jsonl",
    "id": "ledger-provenance",
@@ -3521,7 +3539,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 388,
-  "total": 388
+  "pass": 390,
+  "total": 390
  }
 };
