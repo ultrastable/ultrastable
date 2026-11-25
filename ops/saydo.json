@@ -1,7 +1,7 @@
 {
- "at": "2026-11-25T22:01:07Z",
- "gaps": 8,
- "match_share": 0.984,
+ "at": "2026-11-25T22:07:08Z",
+ "gaps": 9,
+ "match_share": 0.982,
  "sources": {
   "changes": [
    {
@@ -718,10 +718,12 @@
    {
     "checks": 1,
     "external": [],
-    "failing": [],
+    "failing": [
+     "python3 -m foundation coldstart --check: doctrine/decision-ledger.json: `python3 -m foundation commands` names no command (no module with main, no argparse entry)"
+    ],
     "id": "COLDSTART-1",
     "missing": [],
-    "ok": true,
+    "ok": false,
     "unmeasured": []
    },
    {
@@ -790,9 +792,7 @@
    {
     "checks": 2,
     "external": [],
-    "failing": [
-     "python3 -m foundation configschema --check: doctrine/admission.json: no schema at doctrine/schemas/admission.schema.json; run `python3 -m foundation configschema --gen`; seed/autonomy/system.json: no schema at seed/autonomy/schemas/system.schem"
-    ],
+    "failing": [],
     "id": "STANDARDS-1",
     "missing": [
      "worker/linked.js"
@@ -938,7 +938,7 @@
     "checks": 1,
     "external": [],
     "failing": [
-     "python3 -m foundation dispose --check: an open item is 80.4 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+     "python3 -m foundation dispose --check: an open item is 80.5 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
     ],
     "id": "DISPOSE-1",
     "missing": [],
@@ -1018,7 +1018,7 @@
    "total": 1
   },
   "rules": {
-   "gaps": 4,
+   "gaps": 5,
    "total": 88
   },
   "year": {
