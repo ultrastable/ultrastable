@@ -1,0 +1,58 @@
+name: ledger-openalex
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# LEDGER-KEYLESS-1: OpenAlex refuses the Replication Ledger Worker (Cloudflare egress, no API key) but answers GitHub's runners. This job asks
+# OpenAlex the beat's own questions for every finding (instances/replication-ledger/worker/openalex-mirror.mjs, same code as the Worker's
+# discover.js), lands the answers as instances/replication-ledger/worker/data/openalex.json on main, and redeploys the ledger Worker so its
+# beat reads them as one more route (mirror.js) through the same verbatim-quote guard. No key, no secret, no person.
+# budget: ~2 min per run, one scheduled run a day (~60 min per month), plus a ~2 min deploy only on days the mirror changed
+# trigger: daily (never faster): OpenAlex's citation graph moves by days, and the Worker's own keyless routes run hourly in between
+# free-alternative: the Worker's hourly beat already reads Europe PMC, Crossref and Semantic Scholar at zero Actions minutes (keyless.js); a cloud-hosted agent session can run the same node script
+on:
+  schedule:
+    - cron: "41 5 * * *"
+  workflow_dispatch: {}
+permissions:
+  id-token: write  # MAIN-WRITER-1: tools/push_main.py presents the run's OIDC token
+  contents: write
+  pull-requests: write  # MAINWRITER-FALLBACK-1: scripts/land_data.py falls back to a pull request
+  actions: write  # dispatches deploy-ultrastable for the ledger Worker; actions_guard cancels a paused run
+concurrency:
+  group: ledger-openalex
+  cancel-in-progress: false
+jobs:
+  mirror:
+    if: ${{ vars.HALT != '1' }}  # HALT-1: the owner's halt (repository variable HALT=1) stops every job
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: main
+      - run: python3 scripts/actions_guard.py ledger-openalex
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with: {node-version: 24}
+      - name: Ask OpenAlex from this runner (no key)
+        run: node instances/replication-ledger/worker/openalex-mirror.mjs
+      - name: Land the mirror on main and redeploy the ledger Worker when it changed
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          f=instances/replication-ledger/worker/data/openalex.json
+          if git diff --quiet -- "$f"; then
+            echo "mirror unchanged; nothing to land"
+          else
+            python3 scripts/land_data.py "ledger-openalex: OpenAlex mirror for the Replication Ledger (LEDGER-KEYLESS-1)" "$f"
+          fi
+          # The deploy follows the file on main, read back from the live Worker: [skip ci] on the data commit keeps the push deploy from
+          # running, and a mirror that went through a pull request reaches main later, so the live /health is compared with main's file.
+          git fetch -q origin main
+          want=$(git show FETCH_HEAD:"$f" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("generated_at") or "")')
+          live=$(curl -fsS --max-time 20 -A "replication-ledger-mirror/1" https://replication-ledger.ultrastable.org/health | python3 -c 'import json,sys; print((json.load(sys.stdin).get("openalex_mirror") or {}).get("generated_at") or "")') || live="unreadable"
+          echo "mirror on main: ${want:-none}; live Worker: ${live:-none}"
+          if [ -n "$want" ] && [ "$want" != "$live" ]; then
+            gh workflow run deploy-ultrastable.yml --ref main -f workers=ultrastable-replication-ledger
+            echo "dispatched deploy of ultrastable-replication-ledger"
+          fi

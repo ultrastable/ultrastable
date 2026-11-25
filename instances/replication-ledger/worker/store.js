@@ -6,10 +6,22 @@
 // (CREATE ... IF NOT EXISTS), so a fresh database needs no migration step and no person.
 
 import seed from "./data/findings.json" with { type: "json" };
+import openalexMirror from "./data/openalex.json" with { type: "json" };
 import { standing } from "./standing.js";
 import { doiKey } from "./ledger.js";
 import { BEAT, checkFinding, discoverFindings, setOpenAlexKey } from "./discover.js";
 import { lookup, check } from "./crossref.js";
+import { discoveredFromMirror } from "./mirror.js";
+
+// The seed's citations: every DOI the beat checks at Crossref (originals, seed replications, projects), each once.
+export function seedCites(s = seed) {
+  const seen = new Set(), out = [];
+  for (const c of [...s.findings.flatMap(f => [f.original, ...(f.replications || []).map(r => r.cite)]), ...(s.projects || []).map(p => p.cite)]) {
+    const k = doiKey(c?.doi);
+    if (k && !seen.has(k)) { seen.add(k); out.push(c); }
+  }
+  return out;
+}
 
 export const SCHEMA = [
   `CREATE TABLE IF NOT EXISTS findings (id TEXT PRIMARY KEY, body TEXT NOT NULL, found_at TEXT NOT NULL)`,
@@ -57,7 +69,7 @@ export async function load(env) {
 export const minutesSince = iso => iso ? Math.round((Date.now() - Date.parse(iso)) / 6e4) : null;
 
 // One beat. Idempotent: every write is keyed (finding, DOI), so a repeated beat files nothing twice.
-export async function beat(env, { trigger = "cron", fetchImpl = fetch, now = new Date().toISOString() } = {}) {
+export async function beat(env, { trigger = "cron", fetchImpl = fetch, now = new Date().toISOString(), mirror = openalexMirror, wait } = {}) {
   const db = env.DB;
   setOpenAlexKey(env.OPENALEX_API_KEY);
   await ensure(db);
@@ -69,12 +81,14 @@ export async function beat(env, { trigger = "cron", fetchImpl = fetch, now = new
   const checks = Object.fromEntries((await all(db, "SELECT finding_id, checked_at FROM checks")).map(r => [r.finding_id, r.checked_at]));
   const order = [...ledger.findings].sort((a, b) => String(checks[a.id] || "").localeCompare(String(checks[b.id] || "")));
   let reads = BEAT.READS;
+  const budget = { calls: BEAT.KEYLESS }, routes = {};
   for (const f of order.slice(0, BEAT.FINDINGS)) {
     try {
       const known = new Set([...(f.replications || []).map(r => doiKey(r.cite?.doi)),
         ...(await all(db, "SELECT doi FROM leads WHERE finding_id = ?", f.id)).map(r => r.doi)].filter(Boolean));
       const before = standing(f.replications);
-      const r = await checkFinding(f, { fetchImpl, ai: env.AI, known, reads });
+      const r = await checkFinding(f, { fetchImpl, ai: env.AI, known, reads, mirror, budget, wait });
+      routes[r.source] = (routes[r.source] || 0) + 1;
       reads -= r.attempts.length + r.leads.length;
       const w = [db.prepare("INSERT OR REPLACE INTO checks (finding_id, checked_at, openalex, retracted, cited_by) VALUES (?, ?, ?, ?, ?)").bind(f.id, now, r.openalex, r.retracted ? 1 : 0, r.cited_by)];
       let reps = [...(f.replications || [])];
@@ -91,13 +105,19 @@ export async function beat(env, { trigger = "cron", fetchImpl = fetch, now = new
     } catch (e) { errors.push(`${f.id}: ${String(e.message || e).slice(0, 160)}`); }
   }
   try {
-    const { found, search } = await discoverFindings(n, { fetchImpl, knownDois: new Set(ledger.findings.map(f => doiKey(f.original?.doi))), knownIds: new Set(ledger.findings.map(f => f.id)) });
+    const known = () => ({ knownDois: new Set(ledger.findings.map(f => doiKey(f.original?.doi))), knownIds: new Set(ledger.findings.map(f => f.id)) });
+    let found, search;
+    try { ({ found, search } = await discoverFindings(n, { fetchImpl, ...known() })); }
+    catch (e) {
+      // OpenAlex refused the search: take the originals the daily runner found with the same code (mirror.js).
+      if (!/^openalex/.test(String(e?.message)) || !mirror?.discovered?.length) throw e;
+      found = discoveredFromMirror(mirror, { ...known(), max: BEAT.DISCOVER }); search = "openalex-mirror";
+    }
     for (const f of found) await db.prepare("INSERT OR IGNORE INTO findings (id, body, found_at) VALUES (?, ?, ?)").bind(f.id, JSON.stringify(f), now).run();
     tally.findings = found.length; tally.search = search;
   } catch (e) { errors.push(`discover: ${String(e.message || e).slice(0, 160)}`); }
   const done = new Set((await all(db, "SELECT doi FROM cites")).map(r => r.doi));
-  const todo = [...seed.findings.flatMap(f => [f.original, ...(f.replications || []).map(r => r.cite)]), ...(seed.projects || []).map(p => p.cite)]
-    .filter(c => c?.doi && !done.has(doiKey(c.doi))).slice(0, BEAT.CROSSREF);
+  const todo = seedCites().filter(c => !done.has(doiKey(c.doi))).slice(0, BEAT.CROSSREF);
   for (const c of todo) {
     try {
       const m = await lookup(c.doi, fetchImpl);
@@ -108,7 +128,7 @@ export async function beat(env, { trigger = "cron", fetchImpl = fetch, now = new
   }
   await db.prepare("UPDATE beats SET ended_at = ?, checked = ?, attempts = ?, leads = ?, findings = ?, cites = ?, errors = ? WHERE n = ?")
     .bind(new Date().toISOString(), tally.checked, tally.attempts, tally.leads, tally.findings, tally.cites, JSON.stringify(errors), n).run();
-  return { n, ...tally, errors };
+  return { n, ...tally, routes, errors };
 }
 
 // Freshness: the oldest finding check, in days. A finding never checked counts from the first beat.

@@ -1,0 +1,188 @@
+{
+ "_doc": "DRIFT-GUARD-1 (Rowan, 2026-11-25: \"Audit and remediate all of your failures and their root causes and fix them all in code. Every single thing, including red teaming your own blind spots.\"). One row per failure of 2026-11-25: what happened, the class it belongs to, its root cause, the fix in code, the check that catches the class and the detector that runs it. Read by foundation/driftguard.py (--check in checks: every incident names a detector in doctrine/detectors.json and a failure mode in doctrine/registers.json, and its code paths exist). The class rows also live in doctrine/rootcauses.json, so a recurrence escalates through foundation/rootcause.py.",
+ "version": "1.0.0",
+ "cron_budget": {
+  "_doc": "Cron Triggers are an account-wide quota (Cloudflare Workers limits: 5 on Free, 1,000 on Paid). The plan is read from instances/ultrastable/instance.json budget.plan. `external` lists schedules on the account that are deployed from outside doctrine/topology.json (a tenant's own pipeline, the uptime and seed workers); --live fails on a schedule declared nowhere.",
+  "limits": {
+   "free": 5,
+   "paid": 1000
+  },
+  "headroom": 0.8,
+  "external": {
+   "tenant-ps-web": [
+    "*/30 * * * *"
+   ],
+   "ultrastable-uptime": [
+    "*/5 * * * *"
+   ],
+   "ultrastable-seed-second-tenant": [
+    "*/10 * * * *"
+   ],
+   "ultrastable-did-it-work": [
+    "17 6 * * *"
+   ]
+  },
+  "pulse_external": [
+   {
+    "id": "tenant-ps-core",
+    "url": "https://ultrastable.org/pulse/watch",
+    "_why": "Practical Solutions' back end is deployed by its own repository; the web Worker serves /pulse/watch through its CORE binding (practical-solutions worker/src/pulse.js)"
+   }
+  ]
+ },
+ "missed_trigger": {
+  "window_hours": 24,
+  "grace_minutes": 20
+ },
+ "empty_loop": {
+  "max_empty_per_branch": 3
+ },
+ "account_drift": {
+  "retired_account_sha256": [
+   "634137bb5e8c5a227b6bfe3f6c6f89b9aa994775c0663a43bd72235f996ea786"
+  ]
+ },
+ "incidents": [
+  {
+   "id": "tenant-repo-private",
+   "what": "ultrastable/replication-ledger was created private while doctrine/tenant-repos.json declared it public, so CI and the deploy could not read it",
+   "class": "declared-live-drift",
+   "root_cause": "a declared fact (visibility) was only applied when a repository was created; nothing read the live value again",
+   "fix": "the tick's repo-visibility loop reads every declared repository hourly with its administration app and sets drift back; ensureTenantRepo applies the declared visibility to an existing repository too",
+   "check": "python3 -m foundation driftguard --visibility-live",
+   "detector": "dg-visibility",
+   "failure_mode": "fm-declared-live-drift",
+   "code": [
+    "seed/worker/src/declared.js",
+    "seed/worker/src/apprepos.js",
+    "seed/worker/test/declared.test.js"
+   ]
+  },
+  {
+   "id": "seed-repo-drift",
+   "what": "red-team find: ultrastable/seed is live and private and is the launch template, while org/repos.json recorded it archived and public",
+   "class": "declared-live-drift",
+   "root_cause": "the org registry was written once and check_org_repos.py --live ran nowhere on a schedule",
+   "fix": "org/repos.json declares the template as kept and public (DISCOVER-1); the visibility loop and the live detector read it daily",
+   "check": "python3 -m foundation driftguard --visibility-live",
+   "detector": "dg-visibility",
+   "failure_mode": "fm-declared-live-drift",
+   "code": [
+    "org/repos.json"
+   ]
+  },
+  {
+   "id": "cron-limit-backend",
+   "what": "Practical Solutions' back end had no schedule: the account hit its cron-trigger limit and the back end's only route to run was its own cron",
+   "class": "single-route-schedule",
+   "root_cause": "every tenant clock depended on its own Cron Trigger, an account-wide quota nobody counted",
+   "fix": "the tick's one cron calls every tenant's POST /pulse/watch hourly (topology `pulse`); crons are counted against the plan's account limit with 20% headroom, and every live schedule must be declared",
+   "check": "python3 -m foundation driftguard --crons --live",
+   "detector": "dg-crons",
+   "failure_mode": "fm-cron-single-route",
+   "code": [
+    "seed/worker/src/declared.js",
+    "deploy/deploy-workers.mjs",
+    "doctrine/topology.json"
+   ]
+  },
+  {
+   "id": "workflow-not-triggered",
+   "what": "tenant-repos.yml did not run after PR 2205 merged a change to its own file",
+   "class": "missed-trigger",
+   "root_cause": "a push made with a workflow run's own token starts no other workflow, and nothing compared pushes on main with the runs they should have started",
+   "fix": "the watchdog lists main's pushes of the last day, matches them to each workflow's push paths, and dispatches a workflow that started no run",
+   "check": "python3 -m foundation driftguard --triggers --apply",
+   "detector": "dg-triggers",
+   "failure_mode": "fm-missed-trigger",
+   "code": [
+    "foundation/driftguard.py",
+    ".github/workflows/watchdog.yml"
+   ]
+  },
+  {
+   "id": "empty-commit-loop",
+   "what": "the merge bot pushed empty commits in a loop (34 in four minutes on one PR, each starting CI)",
+   "class": "empty-loop",
+   "root_cause": "a commit was made without comparing its tree with the head's; each push raised the event that ran the step again",
+   "fix": "MERGENOW-NOOP-1 commits nothing when the tree is unchanged (seed/worker/src/mergenow.js); the detector counts empty commits per branch so any other loop of the same shape is caught",
+   "check": "python3 -m foundation driftguard --empty-commits",
+   "detector": "dg-empty-commits",
+   "failure_mode": "fm-empty-commit-loop",
+   "code": [
+    "seed/worker/src/mergenow.js",
+    "foundation/driftguard.py"
+   ]
+  },
+  {
+   "id": "lane-items-open",
+   "what": "lane items stayed open after their PRs merged",
+   "class": "unverified-claim",
+   "root_cause": "an item's state was set by the step that opened the PR and nothing read the PR's state back",
+   "fix": "PR 2189: the lane closes an item when its PR closes; the handoff closer reads the merge back",
+   "check": "grep:foundation/contracts.py::LANE-FILED-FAIL-1",
+   "detector": "dg-lane-closed",
+   "failure_mode": "fm-lane-item-open",
+   "code": [
+    "foundation/contracts.py",
+    "seed/worker/src/handoff.js"
+   ]
+  },
+  {
+   "id": "retired-account-secret",
+   "what": "the repository's Cloudflare secrets pointed at the retired account",
+   "class": "account-drift",
+   "root_cause": "a credential was moved by hand and nothing compared the account it reaches with the account the topology names",
+   "fix": "the watchdog reads the account the workflows' CLOUDFLARE_API_TOKEN reaches and compares CLOUDFLARE_ACCOUNT_ID by hash with the topology; a retired account fails by name of its hash only",
+   "check": "python3 -m foundation driftguard --accounts-live",
+   "detector": "dg-accounts",
+   "failure_mode": "fm-account-drift",
+   "code": [
+    "foundation/driftguard.py",
+    ".github/workflows/watchdog.yml"
+   ]
+  },
+  {
+   "id": "graph-marked-done",
+   "what": "Practical Solutions' knowledge graph was marked built and had never run",
+   "class": "unverified-claim",
+   "root_cause": "state 'built' was written by the agent that wrote the code; no reading of the live graph decided it",
+   "fix": "a built row must answer its probe URL with at least one node, read daily",
+   "check": "python3 -m foundation driftguard --built-live",
+   "detector": "dg-built-live",
+   "failure_mode": "fm-built-without-evidence",
+   "code": [
+    "foundation/driftguard.py",
+    "doctrine/knowledge-graph.json"
+   ]
+  },
+  {
+   "id": "done-without-live",
+   "what": "work was reported done when only the tick's /health had been checked, which passes whatever the change did",
+   "class": "unverified-claim",
+   "root_cause": "the handoff verify line was copied from a template that reads the tick, not the deployed change",
+   "fix": "checks refuse a PR that deploys a worker and verifies only the tick's /health or nothing",
+   "check": "python3 -m foundation driftguard --handoff-lint",
+   "detector": "dg-handoff-lint",
+   "failure_mode": "fm-built-without-evidence",
+   "code": [
+    "foundation/driftguard.py",
+    ".github/workflows/checks.yml"
+   ]
+  },
+  {
+   "id": "visual-baseline-stale",
+   "what": "every page drifted from a visual baseline taken eight days earlier, so drift findings said nothing about any change",
+   "class": "declared-live-drift",
+   "root_cause": "re-baselining was left to each PR author and nobody did it",
+   "fix": "the weekly UI/UX run rolls a baseline older than visual.max_baseline_days forward after comparing",
+   "check": "grep:scripts/uiux_audit.mjs::--roll-baseline",
+   "detector": "dg-baseline-roll",
+   "failure_mode": "fm-declared-live-drift",
+   "code": [
+    "scripts/uiux_audit.mjs",
+    ".github/workflows/uiux.yml"
+   ]
+  }
+ ]
+}

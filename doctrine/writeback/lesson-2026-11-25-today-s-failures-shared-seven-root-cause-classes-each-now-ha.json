@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-25-today-s-failures-shared-seven-root-cause-classes-each-now-ha",
+  "kind": "lesson",
+  "date": "2026-11-25",
+  "title": "Today's failures shared seven root-cause classes; each now has a check",
+  "body": "DRIFT-GUARD-1 (foundation/driftguard.py, doctrine/driftguard.json): declared-vs-live drift (repo visibility reset hourly by the tick, seed/worker/src/declared.js; stale visual baselines roll forward), single-route schedules (tick pulses every tenant /pulse/watch hourly; crons counted against the plan limit), missed push triggers (dispatched by dg-triggers), empty-commit loops, account drift (retired account by sha256 only), built-without-evidence (graph rows read live; checks refuse a deploy verified only by the tick /health), and hand-kept repo lists (selftest reads org/repos.json and tenant-repos.json).",
+  "probe": "grep:foundation/driftguard.py::DRIFT-GUARD-1",
+  "session": "session_0156nqDtpVMPp6pQZ9ny5wAS"
+ },
+ "kind": "lesson",
+ "title": "Today's failures shared seven root-cause classes; each now has a check",
+ "session": "session_0156nqDtpVMPp6pQZ9ny5wAS"
+}
