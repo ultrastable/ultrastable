@@ -4,7 +4,7 @@
 // system's own records (work items, objectives, metrics, roles) into the shared engine (knowledge.js), once an hour, and turns its sharpest
 // finding into work: an objective no metric measures is a gap, filed as KG-<gap> (at most one a day, inside the originate cap) and closed by
 // the graph itself when the gap is gone. Tenants feed the same engine with their own data (Unlearn: entries, studies, authors, topics).
-import { runKg, insights, KG_DEFAULTS } from './knowledge.js';
+import { runKg, insights, KG_DEFAULTS, tableRecords, TABLE_MAPPERS } from './knowledge.js';
 import { tenantOf } from './tenant.js';
 const all = async (db, sql, ...a) => (await db.prepare(sql).bind(...a).all()).results || [];
 
@@ -42,7 +42,9 @@ export async function knowledgeStep(db, ctx, ensureItem, { now = Date.now(), eve
   const tenant = tenantOf(ctx);
   const last = await db.prepare(`SELECT at FROM kg_runs WHERE tenant = ? ORDER BY at DESC LIMIT 1`).bind(tenant).first().catch(() => null);
   if (last && now - last.at < every_min * 60000) return { skipped: true };
-  const r = await runKg(db, { tenant, records: await systemRecords(db, tenant), mappers: SYSTEM_MAPPERS, spec: { ...KG_DEFAULTS, ...SYSTEM_SPEC, ...((ctx.config && ctx.config.knowledge) || {}) }, now });
+  // the system's own mapped records, plus every other table read with no configuration (zero-config extraction, from DATAGRAPH-1)
+  const records = [...await systemRecords(db, tenant), ...await tableRecords(db, { as: { items: 'item', objectives: 'objective', metrics: 'metric' } })];
+  const r = await runKg(db, { tenant, records, mappers: { ...TABLE_MAPPERS, ...SYSTEM_MAPPERS }, spec: { ...KG_DEFAULTS, ...SYSTEM_SPEC, ...((ctx.config && ctx.config.knowledge) || {}) }, now });
   const filed = [];
   if (r.ok) for (const g of (await insights(db, tenant, { kind: 'gap', limit: 1 }))) {
     const id = `KG-${g.id.replace(/[^A-Za-z0-9_-]+/g, '-')}`.slice(0, 80);

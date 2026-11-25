@@ -174,3 +174,27 @@ test('via_kinds limits the shared neighbours that count as evidence for a predic
   assert.ok(kg.analyze(g, { ...spec, via_kinds: ['author'] }).links.every(l => l.via.every(v => v.startsWith('author:'))));
   assert.equal(kg.analyze(g, { ...spec, via_kinds: ['venue'] }).links.length, 0);
 });
+
+test('zero-config extraction: every table is read, references between rows become edges, private tables and columns are never read', async () => {
+  const db = makeDb();
+  db.raw.exec(`CREATE TABLE programmes (id TEXT PRIMARY KEY, name TEXT, owner_email TEXT)`);
+  db.raw.exec(`CREATE TABLE trials (id INTEGER PRIMARY KEY, title TEXT, programme TEXT, site_id INTEGER, note TEXT)`);
+  db.raw.exec(`CREATE TABLE sites (id INTEGER PRIMARY KEY, name TEXT)`);
+  db.raw.exec(`CREATE TABLE subscribers (id INTEGER PRIMARY KEY, name TEXT)`);
+  db.raw.exec(`INSERT INTO programmes VALUES ('prog-a','Cash transfers','a@b.c'), ('prog-b','School meals','d@e.f')`);
+  db.raw.exec(`INSERT INTO sites VALUES (1,'Kenya'), (2,'Malawi')`);
+  db.raw.exec(`INSERT INTO trials VALUES (1,'GiveDirectly RCT','prog-a',1,'private words'), (2,'Meals trial','prog-b',2,null)`);
+  db.raw.exec(`INSERT INTO subscribers VALUES (1,'A Person')`);
+  const recs = await kg.tableRecords(db, { only: ['programmes', 'trials', 'sites', 'subscribers'] });
+  assert.ok(!recs.some(r => r.data.table === 'subscribers'), 'a table that may hold people is never read');
+  assert.ok(!JSON.stringify(recs).includes('a@b.c') && !JSON.stringify(recs).includes('private words'), 'private columns are never read');
+  const t1 = recs.find(r => r.source === 'row/trials/1');
+  assert.deepEqual(t1.data.refs.map(x => [x.col, x.table, x.key]).sort(), [['programme', 'programmes', 'prog-a'], ['site_id', 'sites', '1']]);
+  await kg.sync(db, kg.extract(recs, kg.TABLE_MAPPERS), { tenant: 'z', now: 1 });
+  const g = await kg.load(db, 'z');
+  assert.ok(g.edges.some(e => e.src === 'trials:1' && e.rel === 'programme' && e.dst === 'programmes:prog-a'));
+  // a table another mapper owns is indexed for pointers but not emitted twice
+  const as = await kg.tableRecords(db, { only: ['programmes', 'trials'], as: { programmes: 'programme' } });
+  assert.ok(!as.some(r => r.data.table === 'programmes'));
+  assert.equal(as.find(r => r.source === 'row/trials/1').data.refs[0].table, 'programme');
+});
