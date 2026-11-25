@@ -81,9 +81,9 @@ Source: instances/ultrastable/loop-registry.json (declared).
 
 ## Proposed further links (leads, not findings)
 
-Found by core/connect on the lexical-512-1mdohfj route; each is a proposal until a study file adopts it.
+Found by core/connect on the lexical-512-s92dt6 route; each is a proposal until a study file adopts it.
 
-- A1 may also relate to AUTO-IMPROVE-1 (similarity 0.117)
+- A1 may also relate to AUTO-IMPROVE-1 (similarity 0.119)
 - A1 may also relate to IGNORANCE-1 (similarity 0.108)
 - A2 may also relate to DESIGN-LANGUAGE-1 (similarity 0.122)
 - A2 may also relate to VISION-1 (similarity 0.111)
