@@ -554,3 +554,4 @@
 {"at": "2026-11-25T14:01:48Z", "day_in": 21, "day_out": 49, "week_in": 449, "week_out": 953, "week_balance": 504, "open": 0, "sla": 1.0, "tipped": false}
 {"at": "2026-11-25T14:11:52Z", "day_in": 21, "day_out": 49, "week_in": 448, "week_out": 953, "week_balance": 505, "open": 0, "sla": 1.0, "tipped": false}
 {"at": "2026-11-25T14:21:46Z", "day_in": 21, "day_out": 49, "week_in": 448, "week_out": 953, "week_balance": 505, "open": 0, "sla": 1.0, "tipped": false}
+{"at": "2026-11-25T14:32:03Z", "day_in": 31, "day_out": 49, "week_in": 458, "week_out": 953, "week_balance": 495, "open": 10, "sla": 1.0, "tipped": false}
