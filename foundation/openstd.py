@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """Open standards on the platform (OPEN-STANDARDS-1, Rowan 2026-11-25). Shim over seed/scripts/openstd.py, the one engine every
 system carries.
 

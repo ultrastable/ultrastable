@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """Open standards engine (OPEN-STANDARDS-1, Rowan 2026-11-25): "Standards, don't reinvent the wheel. Apply standards."
 
 One copy, carried by every system started from the seed; the platform imports it through `foundation/openstd.py`.

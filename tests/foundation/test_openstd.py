@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """OPEN-STANDARDS-1: data files carry JSON Schemas, events are CloudEvents, provenance exports as W3C PROV, the service catalog is
 Backstage catalog-info. Ultrastable is the foundation for any autonomous system."""
 import json

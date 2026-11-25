@@ -45,6 +45,8 @@ def classify(paths, pol: dict) -> list[dict]:
             out.append({"path": p, "kind": "decoy-workflow", "why": "a workflow outside .github/workflows/ is never run"})
         elif p.endswith(ext):
             top = p.split("/", 1)[0] if "/" in p else ""
+            if not top and p in (pol.get("root_data_files") or {}):
+                continue  # a standard descriptor that tools look for at the root (data, not code); each has a reason in the policy
             if not top:
                 out.append({"path": p, "kind": "stray-root", "why": "a code file at the repository root that no code root holds"})
             elif top not in roots:
