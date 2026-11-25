@@ -38,8 +38,18 @@ class TenantRepos(unittest.TestCase):
         errs = tr.check(d)
         self.assertTrue(any("still in the core" in e for e in errs))
         self.assertTrue(any("does not build from o/a" in e for e in errs))
-        d2 = scratch(reg, {"workers": [{"id": "w-a", "main": "worker/index.js", "source": {"repo": "o/a"}}]}, ["instances/a"])
+        d2 = scratch(reg, {"workers": [{"id": "w-a", "state": "live", "routes": ["a.example.org"], "main": "worker/index.js", "source": {"repo": "o/a"}}]}, ["instances/a"])
         self.assertEqual(tr.check(d2), [])
+
+    def test_every_tenant_deploys_a_public_front_end(self):
+        """FULLSTACK-1: repo, back end and a public web UI; a tenant with no deployed front end fails."""
+        reg = {"org": "o", "tenants": {"a": {"repo": "o/a", "state": "own-repo"}, "b": {"repo": "o/b", "state": "own-repo", "worker": "w-b"}}}
+        errs = tr.check(scratch(reg, {"workers": [{"id": "w-b", "state": "live", "main": "worker/index.js"}]}))
+        self.assertTrue(any(e.startswith("a:") and "front end" in e for e in errs))
+        self.assertTrue(any(e.startswith("b:") and "public route" in e for e in errs))
+        reg["tenants"]["a"]["frontend"] = "https://a.example.org"
+        ok = tr.check(scratch(reg, {"workers": [{"id": "w-b", "state": "live", "routes": ["b.example.org"], "main": "worker/index.js"}]}))
+        self.assertEqual(ok, [])
 
     def test_prepare_vendors_core_files_and_rewrites_imports(self):
         d = _repo.scratch()

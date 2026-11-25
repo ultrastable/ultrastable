@@ -31,8 +31,8 @@
  },
  "foundation-tests": {
   "status": "fail",
-  "signature": "8fe5b5d78a2d",
-  "streak": 2,
+  "signature": "93c9aaba2be8",
+  "streak": 1,
   "since": "2026-11-21T13:41:13Z"
  },
  "green-guard": {
@@ -103,7 +103,7 @@
  },
  "seed-autonomous": {
   "status": "fail",
-  "signature": "194b5041856d",
+  "signature": "bffae65cc559",
   "streak": 1,
   "since": "2026-11-24T16:27:15Z"
  },
@@ -158,12 +158,12 @@
  "sla-breach": {
   "status": "fail",
   "signature": "05e04c30c8c9",
-  "streak": 4,
+  "streak": 1,
   "since": "2026-11-21T18:56:59Z"
  },
  "temporal-drift": {
   "status": "fail",
-  "signature": "f0f382958521",
+  "signature": "f5fb09925e0b",
   "streak": 1,
   "since": "2026-11-21T13:41:18Z"
  },

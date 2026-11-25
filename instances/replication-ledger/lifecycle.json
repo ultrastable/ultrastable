@@ -1,9 +1,10 @@
 {
- "_doc": "SEED-LIFECYCLE-1 answers for the Replication Ledger tenant. Safeguards map to instances/replication-ledger/runway.json; read by foundation/seedlife.py. deploy.worker stays empty until the topology entry lands with its own repository (TENANT-REPO-1).",
+ "_doc": "SEED-LIFECYCLE-1 answers for the Replication Ledger tenant. Safeguards map to instances/replication-ledger/runway.json; read by foundation/seedlife.py. Deployed as ultrastable-replication-ledger by deploy-ultrastable (FULLSTACK-1).",
  "slug": "replication-ledger",
  "build": {
   "paths": [
    "instances/replication-ledger/worker/index.js",
+   "instances/replication-ledger/worker/site.js",
    "instances/replication-ledger/worker/ledger.js",
    "instances/replication-ledger/worker/standing.js",
    "instances/replication-ledger/worker/crossref.js",
@@ -15,11 +16,11 @@
   ]
  },
  "deploy": {
-  "worker": ""
+  "worker": "ultrastable-replication-ledger"
  },
  "verify": {
-  "url": "",
-  "expect": ""
+  "url": "https://replication-ledger.ultrastable.org/health",
+  "expect": "\"ok\": true"
  },
  "loops": [
   "replication-ledger-beat"
