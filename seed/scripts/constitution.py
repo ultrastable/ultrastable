@@ -65,6 +65,30 @@ def resolves(root: Path, b: dict, platform: Path | None = None) -> tuple[bool, s
     return False, f"unknown binding {b}"
 
 
+def _validate(v, s: dict, at: str) -> list[str]:
+    """The subset of JSON Schema the constitution uses: type, const, required, properties, items, minItems, pattern."""
+    types = {"object": dict, "array": list, "string": str}
+    e: list[str] = []
+    if "type" in s and not isinstance(v, types[s["type"]]):
+        return [f"{at} should be {s['type']}"]
+    if "const" in s and v != s["const"]:
+        e.append(f"{at} should be {s['const']!r}")
+    if "pattern" in s and not re.search(s["pattern"], v):
+        e.append(f"{at} {v!r} does not match {s['pattern']}")
+    if isinstance(v, dict):
+        e += [f"{at} lacks {k}" for k in s.get("required", []) if k not in v]
+        for k, sub in s.get("properties", {}).items():
+            if k in v:
+                e += _validate(v[k], sub, f"{at}.{k}")
+    if isinstance(v, list):
+        if len(v) < s.get("minItems", 0):
+            e.append(f"{at} needs at least {s['minItems']} item(s)")
+        for i, x in enumerate(v):
+            if "items" in s:
+                e += _validate(x, s["items"], f"{at}[{i}]")
+    return e
+
+
 def _steps(root: Path) -> list[str]:
     t = _read(root, "worker/src/tick.js") or ""
     i = t.find("export const STEPS")
@@ -112,6 +136,14 @@ def check(root: Path = SEED, platform: Path | None = None, instruction_files: li
         ok, why = resolves(root, b, platform)
         if not ok:
             errs.append(f"{where}: {why}")
+
+    # shape: the JSON Schema 2020-12 file named by `$schema` (checked here without a validator dependency: required keys, types, minItems)
+    sp = c.get("$schema")
+    sj = json.loads(_read(root, "doctrine/" + sp) or "null") if sp else None
+    if not sj:
+        errs.append(f"{PATH} names no readable $schema (JSON Schema 2020-12 file beside it)")
+    else:
+        errs += [f"schema: {e}" for e in _validate(c, sj, "constitution")]
 
     # identity
     ident = c["identity"]
