@@ -26,7 +26,8 @@ import { mydata } from "./mydata.js";
 import { authzen } from "./authzen.js";
 import { indexNow, keyFile, SITEMAP_PATHS, webSub, archiveEvidence, reachRows } from "./promote.js";
 import { PRIVACY, ACCESSIBILITY, SECURITY_TXT } from "./legalpages.js";
-import { negotiate, robots, WEBMCP_JS } from "./readiness.js";  // AGENT-READY-2
+import { negotiate, robots, WEBMCP_JS } from "./readiness.js";
+import { register as registerDirectory, recheck as recheckDirectory, listing as directoryListing, CORE as DIR_CORE } from "./directory.js";  // DISCOVER-1  // AGENT-READY-2
 import ROAD from "./roadmap-data.js";
 import DEC from "./decisions-data.js";  // DECISIONS-1: generated from ops/decisions/*.jsonl
 import { leftAloneRoutes } from "./leftalone.js";  // ATTENTION-1
@@ -108,6 +109,7 @@ function home(ux) {
     + examplesSection()
     + "<h2>Who are you?</h2><div class=\"us-grid c3\">" + SH.audiences.map(audienceCard).join("") + "</div>"
     + "<h2>Test cases</h2><div class=\"us-grid c2\">" + SH.showcases.filter(function (c) { return c.status !== "sunsetting"; }).map(caseCard).join("") + "</div><p><a href=\"/showcase\">All test cases, including the earlier testbed</a></p>"
+    + directoryBlock()
     + "<h2>What it is not for</h2><div class=\"us-grid c2\">"
     + card("Not for things you build once and forget", "An invitation, a packing list or a weekend page does not need managers, probes or a paid back end. Use a site builder.")
     + card("Not a substitute for a goal", "It needs setup and commitment: a named objective, a budget and a short list of steps a person always decides. From a bare skeleton it works out the next improvement; it does not invent your purpose.")
@@ -206,6 +208,18 @@ function pilot() {
 function lis(a) { return "<ul>" + a.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>"; }
 function crumbs(items) { return "<nav class=\"crumbs\" aria-label=\"Breadcrumb\">" + items.map(function (i, k) { return k < items.length - 1 ? "<a href=\"" + i[1] + "\">" + esc(i[0]) + "</a> / " : "<span aria-current=\"page\">" + esc(i[0]) + "</span>"; }).join("") + "</nav>"; }
 function domLabel(k) { const x = SH.domains[k]; return x ? x.host : ""; }
+// DISCOVER-1: every system built on Ultrastable, generated from the tenant registry; each links the others through /directory.
+function directoryBlock() { return "<h2>Every system running on Ultrastable</h2><ul class=\"us-dir\">" + DIR_CORE.map(function (c) { return "<li><a href=\"" + esc(c.url) + "\">" + esc(c.name) + "</a>" + (c.repo ? " · <a href=\"" + esc(c.repo) + "\">source</a>" : "") + "</li>"; }).join("") + "</ul><p><a href=\"/directory\">The full directory</a>, including systems other people run on Ultrastable in their own accounts.</p>"; }
+function directoryPage(d) {
+  const row = function (c) { return "<li><a href=\"" + esc(c.url) + "\">" + esc(c.name) + "</a>" + (c.repo ? " · <a href=\"" + esc(c.repo) + "\">source</a>" : "") + (c.summary ? "<br><small>" + esc(c.summary) + "</small>" : "") + "</li>"; };
+  return shell({ path: "/directory", title: "Directory: every system built on Ultrastable", description: "Every public system running on Ultrastable, here and in other people's accounts, with links to each and its source." },
+    crumbs([["Home", "/"], ["Directory", "/directory"]])
+    + "<h1>Every system built on Ultrastable</h1><p>Each system runs its own loops and links back here. Systems are public unless their owner opts out.</p>"
+    + "<h2>Running in this account</h2><ul>" + d.core.map(row).join("") + "</ul>"
+    + "<h2>Running elsewhere</h2>" + (d.external.length ? "<ul>" + d.external.map(row).join("") + "</ul>" : "<p>None listed yet.</p>")
+    + "<h2>Get listed</h2><p>A system started from the Ultrastable seed lists itself: it serves <code>/.well-known/ultrastable.json</code> and checks in once a day. This page reads that file before listing a site and rechecks it daily. Turn it off with <code>ULTRASTABLE_DIRECTORY=off</code>; a site that says noindex is never listed.</p>"
+    + "<script type=\"application/ld+json\">" + JSON.stringify({ "@context": "https://schema.org", "@type": "ItemList", name: "Systems built on Ultrastable", itemListElement: d.core.concat(d.external).map(function (c, i) { return { "@type": "ListItem", position: i + 1, item: { "@type": "SoftwareApplication", name: c.name, url: c.url, applicationCategory: "WebApplication", license: c.license || undefined } }; }) }).replace(/</g, "\\u003c") + "</script>");
+}
 function caseCard(c) { return "<a class=\"card us-case\" href=\"/showcase/" + esc(c.id) + "\"><span class=\"us-tag\">" + esc(c.tag) + "</span> <span class=\"us-tag\">" + esc(domLabel(c.domain)) + "</span><h3 class=\"card-title\">" + esc(c.name) + "</h3><p class=\"meta\">" + esc(c.summary) + "</p><span class=\"us-more\">Read the case</span></a>"; }
 
 function showcase() {
@@ -838,6 +852,7 @@ export async function tick(env, ctx, now) {
   const t = now || new Date(), out = { at: t.toISOString() }, h = await jget(env, "health:models");
   if (!h || t - new Date(h.at) > 23 * 3600e3) out.health = await probeModels(env);
   out.rounds = await changeRounds(env, ctx); out.ideas = (await ideaWork(env)).length; out.deployed = await consumeIdeas(env).catch(e => String(e).slice(0, 120));
+  if (env.DB && t.getUTCMinutes() < 10) out.directory = await recheckDirectory(env, fetch, t).catch(e => "error: " + String(e).slice(0, 80)); /* DISCOVER-1: daily recheck, a few rows a pass */
   { const rec = await indexNow({ host: CANON, fetchFn: fetch, now: t, last: await jget(env, "promote:indexnow") }); if (rec) { await jput(env, "promote:indexnow", rec); out.indexnow = rec.status; } } /* PROMOTE-1 */
   { const ws = await webSub({ host: CANON, fetchFn: fetch, now: t, last: await jget(env, "promote:websub") }); if (ws) { await jput(env, "promote:websub", ws); out.websub = ws.ok; } } /* ATTENTION-1: feed readers get pushed updates */
   { const ar = await archiveEvidence({ host: CANON, fetchFn: fetch, now: t, last: await jget(env, "promote:archive") }); if (ar) { await jput(env, "promote:archive", ar); out.archive = ar.status; } } /* ATTENTION-1: third-party timestamped copies of the record */
@@ -1172,6 +1187,9 @@ const handler = {
       case "/verification": return new Response(shell({ path: "/verification", title: "Verified invariants - Ultrastable", description: "Guarantees model-checked and tied to the deployed code" }, verificationBody()), { headers: HTML });
       case "/api/verification": return new Response(JSON.stringify(verificationJson()), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } });
       case "/showcase": return new Response(showcase(), { headers: HTML });
+      case "/directory": return new Response(directoryPage(await directoryListing(env)), { headers: HTML });  // DISCOVER-1
+      case "/directory.json": return Response.json(await directoryListing(env), { headers: { "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } });
+      case "/api/directory/register": if (request.method === "POST") return registerDirectory(request, env, fetch); return Response.json({ ok: false, error: "use_post" }, { status: 405 });
       case "/family.json": return new Response(JSON.stringify({ family: SH.domains, nav: [["Find your path", "/for"], ["Test cases", "/showcase"], ["Product", "/product"], ["How it works", "/how"], ["Live proof", "/live"], ["Contact", "/contact"]], tokens: { accent_light: "#b83800", accent_dark: "#ff7f4d", base: "https://" + CANON + "/" } }), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } });
       case "/for": return new Response(forIndex(), { headers: HTML });
       case "/claims": return new Response(claimsPage(), { headers: HTML });
