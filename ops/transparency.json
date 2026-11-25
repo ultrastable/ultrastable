@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-25T21:24:14Z",
- "commit": "83435a64",
+ "generated": "2026-11-25T21:38:01Z",
+ "commit": "c20906d2",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 116,
@@ -18,8 +18,8 @@
   "merged_prs_listed": 0,
   "prs_merged_total": 224,
   "prs_merged_unattended": 9,
-  "backlog_open": 56,
-  "backlog_items": 994
+  "backlog_open": 59,
+  "backlog_items": 997
  },
  "unknowns": {
   "units": 138,
@@ -56,13 +56,13 @@
  },
  "throughput": {
   "queue": {
-   "items": 994,
+   "items": 997,
    "by_status": {
     "closed": 929,
-    "open": 56,
+    "open": 59,
     "done": 9
    },
-   "takeable_now": 52
+   "takeable_now": 54
   },
   "merged": {
    "total": 224,
@@ -1945,9 +1945,8 @@
   "executor": {
    "runs": 30,
    "by_conclusion": {
-    "": 1,
-    "success": 27,
-    "failure": 2
+    "failure": 3,
+    "success": 27
    },
    "prs_opened_unattended": 0,
    "prs_merged_unattended": 9,
@@ -2006,7 +2005,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 127.4,
+   "age_s": 79.8,
    "status": "fresh",
    "missed": 0
   },
@@ -2030,7 +2029,7 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 492.4,
+   "age_s": 201.8,
    "status": "fresh",
    "missed": 0
   },
@@ -2038,7 +2037,7 @@
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 20301.4,
+   "age_s": 21120.8,
    "status": "fresh",
    "missed": 0
   }
@@ -2257,7 +2256,7 @@
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-25T21:23:43Z",
+  "generated": "2026-11-25T21:37:27Z",
   "blindspots": {
    "backup": {
     "skipped": "last drill is fresh"
@@ -2283,36 +2282,36 @@
     "baseline": 1310,
     "target": 1500,
     "expected_today": 1404.3,
-    "value": 12097,
+    "value": 12110,
     "behind": false,
-    "progress": 56.77
+    "progress": 56.84
    },
    {
     "id": "visitors_7d",
     "baseline": 564,
     "target": 650,
     "expected_today": 606.7,
-    "value": 3229,
+    "value": 3235,
     "behind": false,
-    "progress": 30.99
+    "progress": 31.06
    },
    {
     "id": "agent_hits_7d",
     "baseline": 817,
     "target": 1000,
-    "expected_today": 907.8,
-    "value": 9586,
+    "expected_today": 907.9,
+    "value": 9601,
     "behind": false,
-    "progress": 47.92
+    "progress": 48.0
    },
    {
     "id": "pilot_page_views_7d",
     "baseline": 326,
     "target": 400,
     "expected_today": 362.7,
-    "value": 3882,
+    "value": 3884,
     "behind": false,
-    "progress": 48.05
+    "progress": 48.08
    }
   ],
   "experiments": [
@@ -2557,33 +2556,33 @@
   },
   "target_growth_share": 0.4,
   "growth_items_takeable": 4,
-  "items_takeable": 52,
+  "items_takeable": 54,
   "metrics": [
    {
     "id": "pageviews_7d",
     "what": "human page views in the last 7 days (first-party, cookieless, bots excluded)",
-    "value": 12098,
+    "value": 12110,
     "target": 1500,
     "breach": false
    },
    {
     "id": "visitors_7d",
     "what": "distinct visitors in the last 7 days",
-    "value": 3229,
+    "value": 3235,
     "target": 650,
     "breach": false
    },
    {
     "id": "agent_hits_7d",
     "what": "requests from bots and agents in the last 7 days (discovery documents, MCP, llms.txt)",
-    "value": 9587,
+    "value": 9601,
     "target": 1000,
     "breach": false
    },
    {
     "id": "pilot_page_views_7d",
     "what": "views of the pilot application page in the last 7 days",
-    "value": 3882,
+    "value": 3884,
     "target": 400,
     "breach": false
    }
@@ -2602,7 +2601,7 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 165.9,
+   "last_beat_age_s": 126.4,
    "expected_interval_s": 21600,
    "beats_24h": 60,
    "expected_24h": 4.0,
@@ -2613,7 +2612,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 20339.9,
+   "last_beat_age_s": 21167.4,
    "expected_interval_s": 86400,
    "beats_24h": 2,
    "expected_24h": 1.0,
@@ -2624,9 +2623,9 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 1722.9,
+   "last_beat_age_s": 5.4,
    "expected_interval_s": 86400,
-   "beats_24h": 13,
+   "beats_24h": 14,
    "expected_24h": 1.0,
    "median_jitter_s": null,
    "status": "ticking"
@@ -2635,7 +2634,7 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 98843.9,
+   "last_beat_age_s": 99671.4,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -2646,7 +2645,7 @@
    "id": "a11y",
    "what": "A11Y-LOOP-1: the weekly accessibility and layout audit of every public page",
    "source": "workflow",
-   "last_beat_age_s": 19416.9,
+   "last_beat_age_s": 20244.4,
    "expected_interval_s": 604800,
    "beats_24h": 1,
    "expected_24h": 0.1,
@@ -2664,7 +2663,7 @@
    "id": "claims",
    "what": "words checked against code and the deployed site",
    "source": "workflow",
-   "last_beat_age_s": 13640.9,
+   "last_beat_age_s": 14468.4,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -2675,7 +2674,7 @@
    "id": "watchdog",
    "what": "RESILIENCE-1: the GitHub watchdog that probes every clock and restarts the stopped ones; the tick Worker dispatches it again when it is older than 12 hours",
    "source": "workflow",
-   "last_beat_age_s": 106.9,
+   "last_beat_age_s": 109.4,
    "expected_interval_s": 43200,
    "beats_24h": 60,
    "expected_24h": 2.0,
@@ -2686,7 +2685,7 @@
    "id": "temporal",
    "what": "the daily trend read: series per component, loop and entry, and what they show",
    "source": "workflow",
-   "last_beat_age_s": 15283.9,
+   "last_beat_age_s": 16111.4,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -2704,7 +2703,7 @@
    "id": "intent-yield",
    "what": "the daily intent yield: every owner directive's own probe, restatements charged to the original, /yield",
    "source": "workflow",
-   "last_beat_age_s": 11982.9,
+   "last_beat_age_s": 12810.4,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -4873,6 +4872,51 @@
  "changes": {
   "commits": [
    {
+    "sha": "c20906d2",
+    "at": "2026-11-25T21:33:43+00:00",
+    "author": "Claude",
+    "subject": "Merge the docs-versus-code audit (RULE-REFS-1); record the day's findings in project memory",
+    "pr": null,
+    "item": "RULE-REFS-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/c20906d23cb13dc66101e22e971c7369f988d946"
+   },
+   {
+    "sha": "f548cf21",
+    "at": "2026-11-25T21:29:45+00:00",
+    "author": "Claude",
+    "subject": "Merge the start paths (CLONE-PATH-1) with the repository standard, managers and fleet map; one cadence rule (daily)",
+    "pr": null,
+    "item": "CLONE-PATH-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/f548cf21994a35d4101979bf62eadabe58f395ff"
+   },
+   {
+    "sha": "a023cf19",
+    "at": "2026-11-25T21:27:01+00:00",
+    "author": "Claude",
+    "subject": "rulerefs: a correction row carries the corrected reference once the rule file is fixed",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/a023cf19884238804fbd3b0059531da319a0f915"
+   },
+   {
+    "sha": "63db2ba9",
+    "at": "2026-11-25T21:25:01+00:00",
+    "author": "Claude",
+    "subject": "Regenerate site/claims-data.js from doctrine/claims.json (python3 -m foundation claims --apply)",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/63db2ba9922ac1a42d415bb4bfaf9d35bff74435"
+   },
+   {
+    "sha": "e6c144df",
+    "at": "2026-11-25T21:25:01+00:00",
+    "author": "Claude",
+    "subject": "Words match code: correct the false site sentences, bind them to tests, shrink the claimcode baseline 119 to 19",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/e6c144df9670c0eec138f734df26e423deda118d"
+   },
+   {
     "sha": "83435a64",
     "at": "2026-11-25T21:15:13+00:00",
     "author": "Claude",
@@ -4898,6 +4942,15 @@
     "pr": null,
     "item": null,
     "url": "https://github.com/ultrastable/ultrastable/commit/eaceb4b8cc9b5b769955e4d5addcf7772bd4549e"
+   },
+   {
+    "sha": "b4569598",
+    "at": "2026-11-25T21:12:01+00:00",
+    "author": "Claude",
+    "subject": "LAUNCH-PATH-1: no dead end at the front door; SEED-HOST-1: a standing seed reaches its own repository",
+    "pr": null,
+    "item": "LAUNCH-PATH-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/b4569598cb21e08cb4a163c9ad1236fbf9fe640c"
    },
    {
     "sha": "50611f87",
@@ -4972,6 +5025,15 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/08bf58ce66c21f9053b4b0a10430512bbffb52a6"
    },
    {
+    "sha": "cc9522f2",
+    "at": "2026-11-25T21:08:11+00:00",
+    "author": "Claude",
+    "subject": "RULE-REFS-1: every path, command, test, workflow and route a rule file names is checked; code nothing names is listed",
+    "pr": null,
+    "item": "RULE-REFS-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/cc9522f28612b7a2e7816d884f0bbf56234b8e9a"
+   },
+   {
     "sha": "841996f9",
     "at": "2026-11-25T21:07:04+00:00",
     "author": "Claude",
@@ -5024,6 +5086,15 @@
     "pr": null,
     "item": "TENANT-STANDARD-1",
     "url": "https://github.com/ultrastable/ultrastable/commit/d121913024dd4436f544ff49462c3673a22259cb"
+   },
+   {
+    "sha": "8710d244",
+    "at": "2026-11-25T21:02:35+00:00",
+    "author": "Claude",
+    "subject": "CLONE-PATH-1: a copied template starts from one form and one link; no key, terminal or file edit is asked of anyone",
+    "pr": null,
+    "item": "CLONE-PATH-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/8710d244e57770ec86aeb194e616617cd86aae07"
    },
    {
     "sha": "5bf68408",
@@ -5159,78 +5230,6 @@
     "pr": 2233,
     "item": null,
     "url": "https://github.com/ultrastable/ultrastable/commit/21a47a06c6275daa2c5b71424941008d2c0f9d6f"
-   },
-   {
-    "sha": "43afc2c9",
-    "at": "2026-11-25T20:55:06+00:00",
-    "author": "Claude",
-    "subject": "Regenerate claim values after merging the lane's commits (test counts)",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/43afc2c9e01a258d2b10197267b233095c0d0866"
-   },
-   {
-    "sha": "7ecf49b6",
-    "at": "2026-11-25T20:54:55+00:00",
-    "author": "Claude",
-    "subject": "Merge branch 'ccr-9ae06d53-4xkyer' of https://github.com/ultrastable/ultrastable into ccr-9ae06d53-4xkyer",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/7ecf49b6e8996055f8b8b842eff681891256348e"
-   },
-   {
-    "sha": "20296631",
-    "at": "2026-11-25T20:54:50+00:00",
-    "author": "Claude",
-    "subject": "Session check runner names Actions-only steps as skipped; first fleet reading recorded; cited claim bound",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/202966313c1524c47949ef7ef2eb2911a6ecf498"
-   },
-   {
-    "sha": "11254403",
-    "at": "2026-11-25T20:53:52+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "queue: closing-probe verdicts for 4 item(s) (QUEUE-PERSIST-1) [skip ci]",
-    "pr": null,
-    "item": "QUEUE-PERSIST-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/11254403bc32f5d7ae2ac9d2a5dbb0955d8c60e0"
-   },
-   {
-    "sha": "c4779b7b",
-    "at": "2026-11-25T20:52:38+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "lane: server-owned loops (SERVER-OWNS-LOOPS-1) [skip ci]",
-    "pr": null,
-    "item": "SERVER-OWNS-LOOPS-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/c4779b7b210f1fd23b45a9ff65785067188987d2"
-   },
-   {
-    "sha": "0625b924",
-    "at": "2026-11-25T20:51:02+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "lane: server-owned loops (SERVER-OWNS-LOOPS-1) [skip ci]",
-    "pr": null,
-    "item": "SERVER-OWNS-LOOPS-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/0625b924e8311beda6bc6fbd442c732a7effcb80"
-   },
-   {
-    "sha": "4f50ee55",
-    "at": "2026-11-25T21:50:53+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "BOOTPROOF-1: seed kernel closure audit and daily scratch bootstrap probe (#2237)",
-    "pr": 2237,
-    "item": "BOOTPROOF-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/4f50ee55f921a4ffc47d619790dbc7485e99504e"
-   },
-   {
-    "sha": "7c09f56d",
-    "at": "2026-11-25T20:49:37+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)",
-    "pr": null,
-    "item": "MERGE-NOW-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/7c09f56d4283a35fcb320f78268397b36fdaf225"
    }
   ],
   "pull_requests": []

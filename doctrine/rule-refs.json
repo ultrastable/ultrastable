@@ -70,11 +70,11 @@
     },
     {
       "ref": "_shared/flow-registry.js",
-      "reason": "The fleet twin in QNFO/qnfo-workers, a repository of another organization; not readable from here, so it is unverified by this check."
+      "reason": "The fleet twin the rule names lives in a repository of another organization; not readable from here, so it is unverified by this check."
     },
     {
       "ref": "migrations/2026-11-14-analytics-loop.sql",
-      "reason": "The fleet twin in QNFO/qnfo-workers, a repository of another organization; not readable from here, so it is unverified by this check."
+      "reason": "The fleet twin the rule names lives in a repository of another organization; not readable from here, so it is unverified by this check."
     },
     {
       "ref": "/connect/google",
