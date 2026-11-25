@@ -215,7 +215,7 @@ export default {
     {
      "finding": "A5",
      "rule": "UIUX-1",
-     "score": 0.11
+     "score": 0.109
     },
     {
      "finding": "A5",
@@ -223,7 +223,7 @@ export default {
      "score": 0.104
     }
    ],
-   "leads_route": "lexical-512-psbn7p",
+   "leads_route": "lexical-512-1bw0wvs",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -511,7 +511,7 @@ export default {
     {
      "finding": "F5",
      "rule": "AUTO-SHIP-CLEAN-1",
-     "score": 0.127
+     "score": 0.128
     },
     {
      "finding": "F7",
@@ -519,7 +519,7 @@ export default {
      "score": 0.138
     }
    ],
-   "leads_route": "lexical-512-1uff4su",
+   "leads_route": "lexical-512-vfog9d",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -730,17 +730,12 @@ export default {
     {
      "finding": "O1",
      "rule": "FLOW-DIRECTIVE-1",
-     "score": 0.145
+     "score": 0.146
     },
     {
      "finding": "O2",
      "rule": "CLOCKWORK-1",
      "score": 0.129
-    },
-    {
-     "finding": "O4",
-     "rule": "PROMOTE-1",
-     "score": 0.113
     },
     {
      "finding": "O5",
@@ -760,10 +755,10 @@ export default {
     {
      "finding": "O6",
      "rule": "INTERVIEW-1",
-     "score": 0.113
+     "score": 0.114
     }
    ],
-   "leads_route": "lexical-512-rzcm16",
+   "leads_route": "lexical-512-1kk99al",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -984,7 +979,7 @@ export default {
     {
      "finding": "S2",
      "rule": "DRAIN-ZERO-1",
-     "score": 0.133
+     "score": 0.132
     },
     {
      "finding": "S3",
@@ -1009,7 +1004,7 @@ export default {
     {
      "finding": "S6",
      "rule": "IGNORANCE-1",
-     "score": 0.129
+     "score": 0.13
     },
     {
      "finding": "S6",
@@ -1017,7 +1012,7 @@ export default {
      "score": 0.115
     }
    ],
-   "leads_route": "lexical-512-1o4knof",
+   "leads_route": "lexical-512-1k1t7mi",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   }
  ],
