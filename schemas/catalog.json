@@ -147,6 +147,14 @@
       "url": "./doctrine/code-agents.schema.json"
     },
     {
+      "name": "doctrine/coldstart.json",
+      "description": "Shape of doctrine/coldstart.json",
+      "fileMatch": [
+        "doctrine/coldstart.json"
+      ],
+      "url": "./doctrine/coldstart.schema.json"
+    },
+    {
       "name": "doctrine/collisions.json",
       "description": "Shape of doctrine/collisions.json",
       "fileMatch": [

@@ -1,0 +1,249 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./doctrine/coldstart.schema.json",
+  "$comment": "inferred by scripts/schemas.py (OPEN-STANDARDS-1); edit freely, --gen never overwrites",
+  "title": "doctrine/coldstart.json",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "_doc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rule": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "seed": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "fleet": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "live": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "status": {
+                "type": "array",
+                "items": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                }
+              },
+              "json": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "html": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "path",
+              "status"
+            ]
+          },
+          "cron": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "step": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "rule",
+          "seed"
+        ]
+      }
+    },
+    "definition": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "platform": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seed": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "stages_from": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "regimes": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "bootstrap_stages": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "required": [
+        "_doc",
+        "bootstrap_stages",
+        "platform",
+        "regimes",
+        "seed",
+        "stages_from"
+      ]
+    },
+    "instructions": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "platform": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seed": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "imports": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "platform_only": {
+          "type": "object",
+          "properties": {
+            "ANALYTICS-LOOP-1": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "ANALYTICS-LOOP-1"
+          ]
+        }
+      },
+      "required": [
+        "_doc",
+        "imports",
+        "platform",
+        "platform_only",
+        "seed"
+      ]
+    },
+    "command_refs": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "globs": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "required": [
+        "_doc",
+        "globs"
+      ]
+    }
+  },
+  "required": [
+    "$schema",
+    "_doc",
+    "capabilities",
+    "command_refs",
+    "definition",
+    "instructions"
+  ]
+}

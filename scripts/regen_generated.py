@@ -17,6 +17,8 @@ ROOT = Path(__file__).resolve().parents[1]
 GENERATORS = [
     (["python3", "-c", "from foundation import writeback; print(writeback.fold())"], "."),  # WRITEBACK-SHARD-1
     (["python3", "-m", "foundation", "claims", "--fix", "--apply"], "."),
+    (["python3", "-m", "foundation", "schemas", "--gen"], "."),  # OPEN-STANDARDS-1: a new config gets its inferred JSON Schema; drift of an existing one still fails `schemas --check`
+    (["python3", "seed/scripts/schemas.py", "--gen", "--root", "seed"], "."),
     (["python3", "scripts/build_dashboard.py"], "."),
     (["python3", "-m", "foundation", "selfmodel", "--apply"], "."),
     (["python3", "-m", "foundation", "trajectory", "--run", "--apply"], "."),  # TRAJECTORY-1: its page data reads git history, so every merge makes it stale until regenerated
