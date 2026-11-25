@@ -1,7 +1,7 @@
 {
   "id": "Q-BLIND-email-authentication",
   "title": "Q-BLIND-email-authentication: close the outreach blind spot email-authentication",
-  "body": "**Owner:** product-manager\n**Trigger:** every blindspots scan\n**Done check:** cmd:python3 -m foundation blindspots --closed email-authentication\n**Prediction:** blindspots_open <= 5 within 168 h\n**Status:** open\n\nWhy the owner would not know to ask: Mail without SPF, DKIM and DMARC lands in spam or is rejected, so outreach silently does nothing.\nAction: publish SPF, DKIM and DMARC records through the Cloudflare API from the tick Worker. The probe in doctrine/blindspots.json passes when it is done.",
+  "body": "**Owner:** product-manager\n**Trigger:** every blindspots scan\n**Done check:** cmd:python3 -m foundation blindspots --closed email-authentication\n**Prediction:** blindspots_open <= 5 within 168 h\n**Status:** closed\n\nWhy the owner would not know to ask: Mail without SPF, DKIM and DMARC lands in spam or is rejected, so outreach silently does nothing.\nAction: publish SPF, DKIM and DMARC records through the Cloudflare API from the tick Worker. The probe in doctrine/blindspots.json passes when it is done.\n\n**Disposition:** shelved (ttl, 2026-11-25T18:13:17Z, DISPOSE-1)\n\n**Evidence:** open 122.0 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
   "labels": [
     "role:product-manager",
     "blindspot"
