@@ -7,28 +7,28 @@
   "external_referrals_7d": 0,
   "social_referrals_7d": 0,
   "search_referrals_7d": 0,
-  "feed_hits_7d": 0,
-  "ps_page_views_7d": 0,
+  "feed_hits_7d": 1,
+  "ps_page_views_7d": 1,
   "posts_published_7d": 0
  },
  "last": {
-  "feed_entries": 40,
-  "at": "2026-11-24T23:54:23.416913+00:00",
+  "feed_entries": 32,
+  "at": "2026-11-25T23:37:59.267966+00:00",
   "added": [
    {
-    "id": "ev:pv-de5f5e28f454",
+    "id": "ev:pv-324cba6ff2ba",
     "arm": "shipped"
    },
    {
-    "id": "ev:pv-3369d298fea7",
+    "id": "ev:pv-23eb90d7f036",
     "arm": "shipped"
    },
    {
-    "id": "ev:pv-9c60f27632e6",
+    "id": "ev:pv-bc71cc2d84f1",
     "arm": "shipped"
    },
    {
-    "id": "ev:pv-cdf66ea71c99",
+    "id": "ev:pv-3433f1a3b69b",
     "arm": "shipped"
    }
   ],
@@ -38,21 +38,21 @@
    "external_referrals_7d": 83,
    "social_referrals_7d": 0,
    "search_referrals_7d": 38,
-   "feed_hits_7d": 8,
-   "ps_page_views_7d": 150,
+   "feed_hits_7d": 10,
+   "ps_page_views_7d": 164,
    "posts_published_7d": 0,
    "suggestions_7d": null
   },
   "breaches": [
+   "external_referrals_7d",
    "social_referrals_7d",
    "search_referrals_7d",
-   "feed_hits_7d",
    "posts_published_7d"
   ],
   "filed": [
+   "Q-REACH-external_referrals_7d",
    "Q-REACH-social_referrals_7d",
    "Q-REACH-search_referrals_7d",
-   "Q-REACH-feed_hits_7d",
    "Q-REACH-posts_published_7d"
   ],
   "channels": {
