@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 # Copyright (c) Ultrastable
-"""SYSTEM-SPEC-1: shim over seed/scripts/system.py, so the platform's queue can run the seed's definition check as an allow-listed probe.
-Ultrastable is the foundation for any autonomous system."""
+"""SYSTEM-SPEC-1: the platform's entry to seed/scripts/system.py, which renders and probes seed/SYSTEM.md (identity, tick, boot stages,
+ignition ladder, criticality numbers and each standing rule's in-kit enforcement). `--rule ID` is the allow-listed closing probe of Q-KIT-<ID>."""
 from __future__ import annotations
 import importlib.util
 from pathlib import Path
