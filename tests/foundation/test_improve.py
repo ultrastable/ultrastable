@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 # Copyright (c) Ultrastable
-import json, subprocess, unittest
+import atexit, json, subprocess, unittest
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 import tempfile, shutil
@@ -10,7 +10,7 @@ REPO = Path(__file__).resolve().parents[2]
 
 
 def sandbox():
-    d = Path(tempfile.mkdtemp())
+    d = Path(tempfile.mkdtemp()); atexit.register(shutil.rmtree, d, True)
     (d / "doctrine").mkdir(); (d / "docs/issues").mkdir(parents=True); (d / "ops/reach").mkdir(parents=True)
     shutil.copy(REPO / improve.CFG, d / improve.CFG)
     subprocess.run(["git", "init", "-q", "-b", "main", str(d)], check=True)
