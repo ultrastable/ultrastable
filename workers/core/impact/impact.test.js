@@ -28,3 +28,11 @@ test('settle grades due items and weights favour levers that worked', () => {
   const s2 = settle([l[1]], { m: 0.5 }, now); assert.equal(s2[0].outcome, 'missed');
   const w = weights([...s, ...s2]); assert.ok(w.good > w.bad);
 });
+test('an item that failed twice is split by its lever into children, never offered whole again', () => {
+  const metrics = [{ id: 'm', value: 1, target: 5 }];
+  const lv = { id: 'L', propose: () => [{ key: 'big', title: 'big', body: 'b' }], split: it => [{ title: 'a', body: 'x' }, { key: 'custom', title: 'b', body: 'y' }] };
+  assert.deepEqual(plan({ metrics, levers: { m: [lv] }, now }).items.map(i => i.key), ['big']);
+  const p = plan({ metrics, levers: { m: [lv] }, failures: { big: 2 }, now });
+  assert.deepEqual(p.items.map(i => i.key).sort(), ['big/1', 'custom']); assert.ok(p.items.every(i => i.parent === 'big'));
+  assert.deepEqual(plan({ metrics, levers: { m: [{ id: 'N', propose: lv.propose }] }, failures: { big: 3 }, now }).items, []);
+});
