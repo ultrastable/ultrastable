@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/crosswalk.schema.json",
+  "title": "crosswalk (doctrine/crosswalk.json)",
+  "description": "Contract for doctrine/crosswalk.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "marker": {
+      "type": "string"
+    },
+    "marker_text": {
+      "type": "string"
+    },
+    "instruction_files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "also_heard": {
+            "type": "array"
+          },
+          "canonical": {
+            "type": "string"
+          },
+          "means": {
+            "type": "string"
+          },
+          "not": {
+            "type": "string"
+          },
+          "say": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "avoided": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "avoided",
+    "entries",
+    "instruction_files",
+    "marker",
+    "marker_text"
+  ]
+}

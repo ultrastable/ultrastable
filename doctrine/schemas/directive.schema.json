@@ -1,0 +1,227 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/directive.schema.json",
+  "title": "directive (doctrine/directive.json)",
+  "description": "Contract for doctrine/directive.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "text": {
+      "type": "string"
+    },
+    "seed_copy": {
+      "type": "string"
+    },
+    "layers_on": {
+      "type": "string"
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "precedence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "clause": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "rank": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "tie_break": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "interrupt_eligible": {
+      "type": "object",
+      "properties": {
+        "reversible": {
+          "type": "boolean"
+        },
+        "identity_bound": {
+          "type": "boolean"
+        },
+        "reversible_path_engineerable": {
+          "type": "boolean"
+        }
+      }
+    },
+    "loop_breaker": {
+      "type": "object",
+      "properties": {
+        "mutate_after": {
+          "type": "number"
+        },
+        "incident_after": {
+          "type": "number"
+        },
+        "mutations": {
+          "type": "array"
+        }
+      }
+    },
+    "provenance_fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "blocker_fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "failure_mode_fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "dispositions": {
+      "type": "object",
+      "properties": {
+        "fixed": {
+          "type": "array"
+        },
+        "backlogged": {
+          "type": "array"
+        },
+        "superseded": {
+          "type": "array"
+        }
+      }
+    },
+    "control_dispositions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "scorecard": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "formula": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "surfaces": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "doc_consumption": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "owner_date": {
+          "type": "string"
+        },
+        "registry": {
+          "type": "string"
+        },
+        "check": {
+          "type": "string"
+        },
+        "rule": {
+          "type": "string"
+        }
+      }
+    },
+    "lint": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "means": {
+            "type": "string"
+          },
+          "patterns": {
+            "type": "array"
+          }
+        }
+      }
+    },
+    "excused_by": {
+      "type": "string"
+    },
+    "instruction_files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "instruction_marker": {
+      "type": "string"
+    },
+    "registers": {
+      "type": "string"
+    },
+    "durable_facts": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "blocker_fields",
+    "control_dispositions",
+    "dispositions",
+    "doc_consumption",
+    "durable_facts",
+    "excused_by",
+    "failure_mode_fields",
+    "id",
+    "instruction_files",
+    "instruction_marker",
+    "interrupt_eligible",
+    "layers_on",
+    "lint",
+    "loop_breaker",
+    "precedence",
+    "provenance_fields",
+    "registers",
+    "scorecard",
+    "sections",
+    "seed_copy",
+    "surfaces",
+    "text",
+    "tie_break",
+    "version"
+  ]
+}

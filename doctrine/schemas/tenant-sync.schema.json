@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/tenant-sync.schema.json",
+  "title": "tenant-sync (doctrine/tenant-sync.json)",
+  "description": "Contract for doctrine/tenant-sync.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "core": {
+      "type": "object",
+      "properties": {
+        "repo": {
+          "type": "string"
+        },
+        "dir": {
+          "type": "string"
+        },
+        "tool": {
+          "type": "string"
+        }
+      }
+    },
+    "ledger": {
+      "type": "string"
+    },
+    "max_prs_per_day": {
+      "type": "number"
+    },
+    "repos": {
+      "type": "object",
+      "properties": {
+        "ultrastable": {
+          "type": "object"
+        },
+        "practical-solutions": {
+          "type": "object"
+        },
+        "ops": {
+          "type": "object"
+        },
+        "workers": {
+          "type": "object"
+        },
+        "spec": {
+          "type": "object"
+        },
+        "seed": {
+          "type": "object"
+        },
+        "license": {
+          "type": "object"
+        },
+        ".github": {
+          "type": "object"
+        },
+        "business": {
+          "type": "object"
+        },
+        "docs": {
+          "type": "object"
+        },
+        "ip": {
+          "type": "object"
+        },
+        "platform": {
+          "type": "object"
+        },
+        "site": {
+          "type": "object"
+        }
+      }
+    },
+    "future_tenant_rule": {
+      "type": "string"
+    },
+    "drift_max_days": {
+      "type": "number"
+    },
+    "upstream_min_30d": {
+      "type": "number"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "core",
+    "drift_max_days",
+    "future_tenant_rule",
+    "ledger",
+    "max_prs_per_day",
+    "repos",
+    "upstream_min_30d"
+  ]
+}

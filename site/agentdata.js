@@ -284,76 +284,76 @@ export default {
     "tracked_by": null
    },
    {
-    "id": "cloudevents",
-    "name": "CloudEvents 1.0",
-    "body": "CNCF",
-    "status": "stable",
-    "support": "partial",
-    "tracked_by": "Q-STD-ledger-cloudevents"
-   },
-   {
-    "id": "w3c-prov",
-    "name": "W3C PROV (PROV-DM, PROV-JSON)",
-    "body": "W3C",
+    "id": "json-schema-config",
+    "name": "JSON Schema 2020-12 contracts for every config, listed in a Schema Store catalog",
+    "body": "JSON Schema organisation; SchemaStore catalog format",
     "status": "stable",
     "support": "supported",
     "tracked_by": null
    },
    {
     "id": "backstage-catalog",
-    "name": "Backstage software catalog (catalog-info.yaml)",
+    "name": "Backstage Software Catalog descriptor (catalog-info.yaml)",
     "body": "CNCF (Backstage)",
+    "status": "de-facto",
+    "support": "supported",
+    "tracked_by": null
+   },
+   {
+    "id": "cyclonedx-sbom",
+    "name": "CycloneDX 1.6 SBOM with package URLs",
+    "body": "OWASP CycloneDX; Ecma TC54 (ECMA-424); purl",
     "status": "stable",
     "support": "supported",
     "tracked_by": null
    },
    {
-    "id": "conventional-commits",
-    "name": "Conventional Commits 1.0",
-    "body": "conventionalcommits.org",
+    "id": "devcontainer",
+    "name": "Development Containers (devcontainer.json)",
+    "body": "Development Containers specification",
     "status": "stable",
-    "support": "partial",
-    "tracked_by": "Q-STD-changelog-semver"
+    "support": "supported",
+    "tracked_by": null
    },
    {
-    "id": "keep-a-changelog-semver",
-    "name": "Keep a Changelog 1.1 and Semantic Versioning 2.0",
-    "body": "keepachangelog.com; semver.org",
+    "id": "cloudevents-webhooks",
+    "name": "CloudEvents 1.0 envelopes signed per Standard Webhooks",
+    "body": "CNCF (CloudEvents); Standard Webhooks",
     "status": "stable",
-    "support": "planned",
-    "tracked_by": "Q-STD-changelog-semver"
+    "support": "supported",
+    "tracked_by": null
    },
    {
-    "id": "w3c-trace-context",
-    "name": "W3C Trace Context (traceparent) with OpenTelemetry traces",
-    "body": "W3C; OpenTelemetry (CNCF)",
+    "id": "conventional-commits-semver",
+    "name": "Conventional Commits and SemVer",
+    "body": "conventionalcommits.org; semver.org",
     "status": "stable",
-    "support": "planned",
-    "tracked_by": "Q-STD-trace-context"
+    "support": "not_applicable",
+    "tracked_by": null
+   },
+   {
+    "id": "opa-rego",
+    "name": "Open Policy Agent (Rego) policy-as-code",
+    "body": "CNCF (Open Policy Agent)",
+    "status": "stable",
+    "support": "not_applicable",
+    "tracked_by": null
    },
    {
     "id": "openfeature",
-    "name": "OpenFeature flag evaluation",
+    "name": "OpenFeature flag evaluation for the goal knobs",
     "body": "CNCF (OpenFeature)",
-    "status": "stable",
+    "status": "draft",
     "support": "planned",
-    "tracked_by": "Q-STD-openfeature"
+    "tracked_by": "Q-STD-OPENFEATURE"
    },
    {
-    "id": "sbom-slsa",
-    "name": "SPDX SBOM and SLSA build provenance",
-    "body": "Linux Foundation (SPDX); OpenSSF (SLSA)",
+    "id": "slsa-provenance",
+    "name": "SLSA v1 build provenance for deploys",
+    "body": "OpenSSF (SLSA)",
     "status": "stable",
     "support": "planned",
-    "tracked_by": "Q-STD-sbom-slsa"
-   },
-   {
-    "id": "datacite-crossref",
-    "name": "DataCite and Crossref metadata for scholarly records",
-    "body": "DataCite; Crossref",
-    "status": "stable",
-    "support": "planned",
-    "tracked_by": "Q-STD-datacite"
+    "tracked_by": "Q-STD-SLSA"
    }
   ]
  },

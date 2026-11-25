@@ -51,9 +51,9 @@ SCHEMA = Path(__file__).resolve().parents[1] / "seed/schemas/instance.schema.jso
 
 def _schema_errors(m: dict) -> list[str]:
     """OPEN-STANDARDS-1: the structure of a manifest is a JSON Schema 2020-12 (seed/schemas/instance.schema.json), validated by
-    the shared engine seed/scripts/openstd.py; only rules that span fields or scan text stay in code below."""
+    the shared engine seed/scripts/stdkit.py; only rules that span fields or scan text stay in code below."""
     import importlib.util
-    spec = importlib.util.spec_from_file_location("seed_openstd", SCHEMA.parents[1] / "scripts/openstd.py")
+    spec = importlib.util.spec_from_file_location("seed_stdkit", SCHEMA.parents[1] / "scripts/stdkit.py")
     mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod)
     return mod.validate(json.loads(SCHEMA.read_text(encoding="utf-8")), m)
 

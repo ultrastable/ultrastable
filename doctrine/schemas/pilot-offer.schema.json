@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/pilot-offer.schema.json",
+  "title": "pilot-offer (doctrine/pilot-offer.json)",
+  "description": "Contract for doctrine/pilot-offer.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "number"
+    },
+    "who_for": {
+      "type": "object",
+      "properties": {
+        "heading": {
+          "type": "string"
+        },
+        "intro": {
+          "type": "string"
+        },
+        "questions": {
+          "type": "array"
+        }
+      }
+    },
+    "includes": {
+      "type": "object",
+      "properties": {
+        "heading": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array"
+        }
+      }
+    },
+    "price": {
+      "type": "object",
+      "properties": {
+        "heading": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "monthly_usd": {},
+        "range_usd": {},
+        "rule": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "tolerance_pct": {},
+        "revised_from": {
+          "type": "string"
+        },
+        "default_in_effect": {
+          "type": "string"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "includes",
+    "price",
+    "version",
+    "who_for"
+  ]
+}

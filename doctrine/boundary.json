@@ -5,7 +5,7 @@
  "instruction_files": ["CLAUDE.md","AGENTS.md","agents/AGENTS.md","agents/PROJECT-INSTRUCTIONS.md","agents/roles/*.md","seed/CLAUDE.md","seed/AGENTS.md","seed/agents/AGENTS.md","seed/agents/roles/*.md",".github/copilot-instructions.md","seed/.github/copilot-instructions.md"],
  "inside": [
   {"id": "repo-working-trees", "what": "clones, branches, build output, scratch", "rebuild": "git clone / git checkout"},
-  {"id": "sandbox-instances", "what": "instances created from instances/<slug>/instance.json in a sandbox account or container", "rebuild": "python3 -m foundation scaffold"},
+  {"id": "sandbox-instances", "what": "instances created from instances/<slug>/instance.json in a sandbox account or container", "rebuild": "python3 -m foundation new-system --manifest instances/<slug>/instance.json --out <dir> --apply"},
   {"id": "derived-data", "what": "generated files, caches, indexes, reports", "rebuild": "the generator named in generated-by"},
   {"id": "agent-sessions", "what": "sessions, threads, worktrees, workers", "rebuild": "the queue and handoff data"}
  ],

@@ -27,6 +27,11 @@
       "id": "w3c",
       "name": "W3C community groups",
       "role": "WebMCP and browser agent work; watch, do not depend."
+    },
+    {
+      "id": "delivery",
+      "name": "Delivery, data and supply-chain standards bodies",
+      "role": "JSON Schema org, CNCF (CloudEvents, OpenTelemetry, Backstage, OpenFeature), OWASP/Ecma (CycloneDX), OpenSSF (SLSA), Development Containers spec, W3C (DCAT, PROV-O)."
     }
   ],
   "entries": [
@@ -443,15 +448,11 @@
       "body": "JSON Schema organisation",
       "status": "stable",
       "tracked": "2020-12",
-      "why": "Every data file the system reads (doctrine, seed config, instance manifests, ledgers) has a JSON Schema matched by a SchemaStore-format catalog, so YAML, JSON and TOML copies validate the same way; tool inputs (MCP), the standards register and the surface registry are JSON Schema too.",
+      "why": "Tool inputs (MCP), the standards register and the surface registry are all JSON Schema, so any validator or model can read them.",
       "support": "supported",
       "how": [
         "seed/worker/src/agentic/core/tools.js",
-        "seed/standards/standards.schema.json",
-        "seed/scripts/openstd.py",
-        "schemas/catalog.json",
-        "seed/schemas/catalog.json",
-        "foundation/manifest.py"
+        "seed/standards/standards.schema.json"
       ],
       "tests": [
         {
@@ -461,10 +462,6 @@
         {
           "file": "seed/worker/test/agentic.discovery.test.js",
           "name": "discovery: well-known paths and json schema register"
-        },
-        {
-          "file": "tests/foundation/test_openstd.py",
-          "name": "test_every_doctrine_file_and_manifest_is_catalogued"
         }
       ],
       "sources": [
@@ -473,12 +470,6 @@
           "url": "https://json-schema.org/draft/2020-12",
           "published": "2020-12-08",
           "accessed": "2026-11-11"
-        },
-        {
-          "title": "SchemaStore catalog format",
-          "url": "https://json.schemastore.org/schema-catalog.json",
-          "published": null,
-          "accessed": "2026-11-25"
         }
       ]
     },
@@ -1011,89 +1002,61 @@
       ]
     },
     {
-      "id": "cloudevents",
-      "name": "CloudEvents 1.0",
-      "body": "CNCF",
+      "id": "json-schema-config",
+      "name": "JSON Schema 2020-12 contracts for every config, listed in a Schema Store catalog",
+      "body": "JSON Schema organisation; SchemaStore catalog format",
       "status": "stable",
-      "tracked": "CloudEvents 1.0.2, JSON event format, HTTP structured mode",
-      "why": "One envelope for events between loops, workers, tenants and webhook subscribers, so any broker, queue or consumer reads them without a custom parser.",
-      "support": "partial",
-      "how": [
-        "seed/worker/src/cloudevents.js",
-        "seed/scripts/openstd.py",
-        "site/webhooks.js",
-        "foundation/provenance.py"
-      ],
-      "gap": "Webhook deliveries and the provenance export are CloudEvents; the other append-only ledgers under ops/ still write their own row shapes (Q-STD-ledger-cloudevents).",
-      "tracked_by": "Q-STD-ledger-cloudevents",
-      "tests": [
-        {
-          "file": "seed/worker/test/cloudevents.test.js",
-          "name": "cloudEvent builds a conforming CloudEvents 1.0 event with a stable id"
-        },
-        {
-          "file": "tests/foundation/test_openstd.py",
-          "name": "test_provenance_row_is_a_conforming_cloudevent"
-        }
-      ],
-      "sources": [
-        {
-          "title": "CloudEvents specification 1.0.2",
-          "url": "https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/spec.md",
-          "published": "2022-02-05",
-          "accessed": "2026-11-25"
-        }
-      ]
-    },
-    {
-      "id": "w3c-prov",
-      "name": "W3C PROV (PROV-DM, PROV-JSON)",
-      "body": "W3C",
-      "status": "stable",
-      "tracked": "PROV-DM Recommendation 2013; PROV-JSON Member Submission",
-      "why": "The provenance ledger exports as standard activities, agents and entities, so lineage tools and auditors read where every change came from.",
+      "tracked": "draft 2020-12; schema-catalog.json version 1",
+      "why": "Every doctrine, seed doctrine and seed autonomy config has a contract any editor, provider or agent can validate without reading the Python that consumes it; a new config gets its contract in the same change (REGEN-1).",
       "support": "supported",
       "how": [
-        "foundation/provenance.py",
-        "seed/scripts/openstd.py"
+        "foundation/configschema.py",
+        "doctrine/schemas/catalog.json",
+        "seed/doctrine/schemas/catalog.json",
+        "seed/autonomy/schemas/catalog.json"
       ],
       "tests": [
         {
-          "file": "tests/foundation/test_openstd.py",
-          "name": "test_provenance_exports_as_prov_json"
+          "file": "tests/foundation/test_configschema.py",
+          "name": "test_every_config_has_a_schema_and_validates"
+        },
+        {
+          "file": "tests/foundation/test_configschema.py",
+          "name": "test_catalog_is_schema_store_format"
         }
       ],
       "sources": [
         {
-          "title": "PROV-DM: The PROV Data Model",
-          "url": "https://www.w3.org/TR/prov-dm/",
-          "published": "2013-04-30",
+          "title": "JSON Schema 2020-12 Core",
+          "url": "https://json-schema.org/draft/2020-12/json-schema-core",
+          "published": "2022-06-16",
           "accessed": "2026-11-25"
         },
         {
-          "title": "PROV-JSON",
-          "url": "https://www.w3.org/submissions/prov-json/",
-          "published": "2013-04-24",
+          "title": "JSON Schema Store catalog",
+          "url": "https://www.schemastore.org/json/",
+          "published": null,
           "accessed": "2026-11-25"
         }
       ]
     },
     {
       "id": "backstage-catalog",
-      "name": "Backstage software catalog (catalog-info.yaml)",
+      "name": "Backstage Software Catalog descriptor (catalog-info.yaml)",
       "body": "CNCF (Backstage)",
-      "status": "stable",
-      "tracked": "backstage.io/v1alpha1 System and Component",
-      "why": "The service catalog is generated from the declared topology in the format developer portals and catalog tools already import.",
+      "status": "de-facto",
+      "tracked": "backstage.io/v1alpha1: Group, Domain, System, Component, Resource, API",
+      "why": "Service identity, ownership and dependencies in the format developer portals and agents read, generated from doctrine/topology.json and doctrine/tenant-repos.json so it cannot drift.",
       "support": "supported",
       "how": [
         "catalog-info.yaml",
-        "foundation/openstd.py"
+        "foundation/stdgen.py"
       ],
+      "acl": "foundation/stdgen.py",
       "tests": [
         {
-          "file": "tests/foundation/test_openstd.py",
-          "name": "test_catalog_info_lists_every_topology_worker"
+          "file": "tests/foundation/test_stdgen.py",
+          "name": "test_backstage_catalog_names_every_worker_store_and_tenant"
         }
       ],
       "sources": [
@@ -1106,47 +1069,109 @@
       ]
     },
     {
-      "id": "conventional-commits",
-      "name": "Conventional Commits 1.0",
-      "body": "conventionalcommits.org",
+      "id": "cyclonedx-sbom",
+      "name": "CycloneDX 1.6 SBOM with package URLs",
+      "body": "OWASP CycloneDX; Ecma TC54 (ECMA-424); purl",
       "status": "stable",
-      "tracked": "1.0.0",
-      "why": "Commit subjects that tools parse (type, scope, breaking marker) feed changelogs and release versions without a custom parser.",
-      "support": "partial",
+      "tracked": "CycloneDX 1.6 JSON; pkg:npm and pkg:github purls",
+      "why": "The supply chain (first-party packages and every GitHub Action by pinned commit) is machine-readable for any scanner; no timestamp, so it changes only when the supply chain does.",
+      "support": "supported",
       "how": [
-        "seed/scripts/openstd.py"
+        "sbom.cdx.json",
+        "foundation/stdgen.py"
       ],
-      "gap": "Loop commits already use `type: subject`; PR titles written by sessions are prose. The share is measured by `openstd --report` (Q-STD-changelog-semver).",
-      "tracked_by": "Q-STD-changelog-semver",
       "tests": [
         {
-          "file": "tests/foundation/test_openstd.py",
-          "name": "test_conventional_commit_subjects"
+          "file": "tests/foundation/test_stdgen.py",
+          "name": "test_cyclonedx_sbom_lists_pinned_actions_and_packages"
         }
       ],
       "sources": [
         {
-          "title": "Conventional Commits 1.0.0",
-          "url": "https://www.conventionalcommits.org/en/v1.0.0/",
+          "title": "CycloneDX 1.6 JSON reference",
+          "url": "https://cyclonedx.org/docs/1.6/json/",
+          "published": "2024-04-09",
+          "accessed": "2026-11-25"
+        },
+        {
+          "title": "Package URL specification",
+          "url": "https://github.com/package-url/purl-spec",
           "published": null,
           "accessed": "2026-11-25"
         }
       ]
     },
     {
-      "id": "keep-a-changelog-semver",
-      "name": "Keep a Changelog 1.1 and Semantic Versioning 2.0",
-      "body": "keepachangelog.com; semver.org",
+      "id": "devcontainer",
+      "name": "Development Containers (devcontainer.json)",
+      "body": "Development Containers specification",
       "status": "stable",
-      "tracked": "KaC 1.1.0; SemVer 2.0.0",
-      "why": "A human- and tool-readable CHANGELOG.md and version numbers derived from Conventional Commits, generated from the provenance changelog rather than typed.",
-      "support": "planned",
-      "tracked_by": "Q-STD-changelog-semver",
-      "acl": "foundation/provenance.py",
+      "tracked": "devcontainer.json with image and features",
+      "why": "Any cloud agent or Codespace gets the same Python 3.12 and Node 24 the checks run on, from one standard file, with no setup steps.",
+      "support": "supported",
+      "how": [
+        ".devcontainer/devcontainer.json"
+      ],
+      "tests": [
+        {
+          "file": "tests/foundation/test_stdgen.py",
+          "name": "test_devcontainer_matches_ci_runtimes"
+        }
+      ],
       "sources": [
         {
-          "title": "Keep a Changelog 1.1.0",
-          "url": "https://keepachangelog.com/en/1.1.0/",
+          "title": "Development Container Specification",
+          "url": "https://containers.dev/implementors/spec/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "cloudevents-webhooks",
+      "name": "CloudEvents 1.0 envelopes signed per Standard Webhooks",
+      "body": "CNCF (CloudEvents); Standard Webhooks",
+      "status": "stable",
+      "tracked": "CloudEvents 1.0 structured JSON; Standard Webhooks v1 HMAC-SHA256",
+      "why": "Every outbound callback is a CloudEvent any consumer can route, and every signature is verifiable with off-the-shelf libraries.",
+      "support": "supported",
+      "how": [
+        "site/webhooks.js"
+      ],
+      "tests": [
+        {
+          "file": "site/webhooks.test.mjs",
+          "name": "application/cloudevents+json"
+        }
+      ],
+      "sources": [
+        {
+          "title": "CloudEvents 1.0.2",
+          "url": "https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/spec.md",
+          "published": "2022-02-05",
+          "accessed": "2026-11-25"
+        },
+        {
+          "title": "Standard Webhooks",
+          "url": "https://www.standardwebhooks.com/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "conventional-commits-semver",
+      "name": "Conventional Commits and SemVer",
+      "body": "conventionalcommits.org; semver.org",
+      "status": "stable",
+      "tracked": "Conventional Commits 1.0.0; SemVer 2.0.0",
+      "why": "Release notes and version bumps derived from commit types.",
+      "support": "not_applicable",
+      "reason": "No package from this repository is published to a registry (no package.json here carries a version), so there is no release for SemVer to number; commits lead with the rule or item id (for example STANDARDS-1:), which the queue and write-back loops key on. Revisit when a package is published.",
+      "sources": [
+        {
+          "title": "Conventional Commits 1.0.0",
+          "url": "https://www.conventionalcommits.org/en/v1.0.0/",
           "published": null,
           "accessed": "2026-11-25"
         },
@@ -1159,33 +1184,32 @@
       ]
     },
     {
-      "id": "w3c-trace-context",
-      "name": "W3C Trace Context (traceparent) with OpenTelemetry traces",
-      "body": "W3C; OpenTelemetry (CNCF)",
+      "id": "opa-rego",
+      "name": "Open Policy Agent (Rego) policy-as-code",
+      "body": "CNCF (Open Policy Agent)",
       "status": "stable",
-      "tracked": "Trace Context Level 1 Recommendation",
-      "why": "One trace id carried from the tick through workers, queues and dispatched workflows, so a loop's whole cycle is one trace in any OpenTelemetry backend.",
-      "support": "planned",
-      "tracked_by": "Q-STD-trace-context",
-      "acl": "seed/worker/src/agentic/adapters/console-telemetry.js",
+      "tracked": "Rego v1",
+      "why": "Policy as code for standing rules and access decisions.",
+      "support": "not_applicable",
+      "reason": "Standing rules are already policy as code: each is a `python3 -m foundation <rule> --check` in checks, and request authorization uses OpenID AuthZEN (entry authzen). A Rego runtime would add a second policy language with no consumer; JSON Schema (entry json-schema-config) covers config shape.",
       "sources": [
         {
-          "title": "Trace Context",
-          "url": "https://www.w3.org/TR/trace-context/",
-          "published": "2021-11-23",
+          "title": "OPA policy language",
+          "url": "https://www.openpolicyagent.org/docs/latest/policy-language/",
+          "published": null,
           "accessed": "2026-11-25"
         }
       ]
     },
     {
       "id": "openfeature",
-      "name": "OpenFeature flag evaluation",
+      "name": "OpenFeature flag evaluation for the goal knobs",
       "body": "CNCF (OpenFeature)",
-      "status": "stable",
-      "tracked": "OpenFeature specification 0.8; flagd flag definition schema",
-      "why": "Knobs and kill switches evaluated through a standard flag API, so any provider (Cloudflare Flagship, flagd) can serve them.",
+      "status": "draft",
+      "tracked": "OpenFeature specification",
+      "why": "The goals loop's knobs (seed/autonomy/goals.json) are feature flags in all but name; exposing them through an OpenFeature provider lets any SDK read them.",
       "support": "planned",
-      "tracked_by": "Q-STD-openfeature",
+      "tracked_by": "Q-STD-OPENFEATURE",
       "acl": "seed/worker/src/goals.js",
       "sources": [
         {
@@ -1197,50 +1221,19 @@
       ]
     },
     {
-      "id": "sbom-slsa",
-      "name": "SPDX SBOM and SLSA build provenance",
-      "body": "Linux Foundation (SPDX); OpenSSF (SLSA)",
+      "id": "slsa-provenance",
+      "name": "SLSA v1 build provenance for deploys",
+      "body": "OpenSSF (SLSA)",
       "status": "stable",
-      "tracked": "SPDX 2.3 (GitHub dependency graph export); SLSA v1.0 build provenance via GitHub artifact attestations",
-      "why": "Every deploy carries a bill of materials and a signed statement of how it was built, which supply-chain tools verify.",
+      "tracked": "SLSA v1.0 provenance (in-toto)",
+      "why": "Each Worker deploy carries a verifiable record of the commit and workflow that built it.",
       "support": "planned",
-      "tracked_by": "Q-STD-sbom-slsa",
-      "acl": ".github/workflows/deploy-ultrastable.yml",
+      "tracked_by": "Q-STD-SLSA",
+      "acl": "deploy/deploy-workers.mjs",
       "sources": [
         {
           "title": "SLSA v1.0",
           "url": "https://slsa.dev/spec/v1.0/",
-          "published": "2023-04-19",
-          "accessed": "2026-11-25"
-        },
-        {
-          "title": "SPDX 2.3",
-          "url": "https://spdx.github.io/spdx-spec/v2.3/",
-          "published": null,
-          "accessed": "2026-11-25"
-        }
-      ]
-    },
-    {
-      "id": "datacite-crossref",
-      "name": "DataCite and Crossref metadata for scholarly records",
-      "body": "DataCite; Crossref",
-      "status": "stable",
-      "tracked": "DataCite Metadata Schema 4.5; Crossref REST API",
-      "why": "The replication ledger reads findings and replications by DOI from Crossref and publishes its records with DataCite-shaped metadata, so citation tools resolve them.",
-      "support": "planned",
-      "tracked_by": "Q-STD-datacite",
-      "acl": "instances/replication-ledger/instance.json",
-      "sources": [
-        {
-          "title": "DataCite Metadata Schema 4.5",
-          "url": "https://schema.datacite.org/meta/kernel-4.5/",
-          "published": "2024-01-22",
-          "accessed": "2026-11-25"
-        },
-        {
-          "title": "Crossref REST API",
-          "url": "https://www.crossref.org/documentation/retrieve-metadata/rest-api/",
           "published": null,
           "accessed": "2026-11-25"
         }

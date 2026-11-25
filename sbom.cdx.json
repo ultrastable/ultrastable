@@ -1,0 +1,161 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "version": 1,
+  "metadata": {
+    "component": {
+      "type": "application",
+      "bom-ref": "pkg:github/ultrastable/ultrastable",
+      "name": "ultrastable",
+      "purl": "pkg:github/ultrastable/ultrastable",
+      "licenses": [
+        {
+          "license": {
+            "id": "LicenseRef-Ultrastable-USL-1.0",
+            "url": "https://github.com/ultrastable/license"
+          }
+        }
+      ]
+    },
+    "tools": {
+      "components": [
+        {
+          "type": "application",
+          "name": "foundation stdgen",
+          "group": "ultrastable"
+        }
+      ]
+    }
+  },
+  "components": [
+    {
+      "type": "application",
+      "bom-ref": "pkg:github/actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+      "name": "actions/checkout",
+      "version": "3d3c42e5aac5ba805825da76410c181273ba90b1",
+      "purl": "pkg:github/actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/actions/checkout"
+        }
+      ],
+      "properties": [
+        {
+          "name": "ultrastable:tag-comment",
+          "value": "v7"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "bom-ref": "pkg:github/actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+      "name": "actions/setup-node",
+      "version": "949feb2413d6458794dcd2491c4babbbce0c15c1",
+      "purl": "pkg:github/actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/actions/setup-node"
+        }
+      ],
+      "properties": [
+        {
+          "name": "ultrastable:tag-comment",
+          "value": "v7"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "bom-ref": "pkg:github/actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
+      "name": "actions/setup-python",
+      "version": "6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
+      "purl": "pkg:github/actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/actions/setup-python"
+        }
+      ],
+      "properties": [
+        {
+          "name": "ultrastable:tag-comment",
+          "value": "v7"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/%40ultrastable/adapter-cloudflare",
+      "name": "@ultrastable/adapter-cloudflare",
+      "purl": "pkg:npm/%40ultrastable/adapter-cloudflare",
+      "scope": "required",
+      "properties": [
+        {
+          "name": "ultrastable:path",
+          "value": "workers/adapters/cloudflare"
+        },
+        {
+          "name": "ultrastable:third-party-dependencies",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/%40ultrastable/core",
+      "name": "@ultrastable/core",
+      "purl": "pkg:npm/%40ultrastable/core",
+      "scope": "required",
+      "properties": [
+        {
+          "name": "ultrastable:path",
+          "value": "workers/core"
+        },
+        {
+          "name": "ultrastable:third-party-dependencies",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/ultrastable-seed-worker",
+      "name": "ultrastable-seed-worker",
+      "purl": "pkg:npm/ultrastable-seed-worker",
+      "scope": "required",
+      "properties": [
+        {
+          "name": "ultrastable:path",
+          "value": "seed/worker"
+        },
+        {
+          "name": "ultrastable:third-party-dependencies",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/ultrastable-workers",
+      "name": "ultrastable-workers",
+      "purl": "pkg:npm/ultrastable-workers",
+      "scope": "required",
+      "properties": [
+        {
+          "name": "ultrastable:path",
+          "value": "workers"
+        },
+        {
+          "name": "ultrastable:third-party-dependencies",
+          "value": "0"
+        }
+      ]
+    }
+  ],
+  "serialNumber": "urn:uuid:904277fa-1221-5ce1-9982-cafe6eb848a1"
+}

@@ -34,7 +34,7 @@ Research date: 2026-11-11. Every entry in the register carries its sources with 
 | API catalog (RFC 9727) | IETF | stable | supported | `discovery: api catalog and protected resource` |
 | OAuth protected resource metadata (RFC 9728) | IETF OAuth WG | stable | supported | `discovery: api catalog and protected resource` |
 | OpenAPI 3.1 | OpenAPI Initiative (Linux Foundation) | stable | supported | `discovery: openapi` |
-| JSON Schema 2020-12 | JSON Schema organisation | stable | supported | `contract: tool schemas are JSON Schema 2020-12 objects`; `discovery: well-known paths and json schema register`; `test_every_doctrine_file_and_manifest_is_catalogued` |
+| JSON Schema 2020-12 | JSON Schema organisation | stable | supported | `contract: tool schemas are JSON Schema 2020-12 objects`; `discovery: well-known paths and json schema register` |
 | TOML 1.0 client and platform configuration | toml-lang (spec); Codex and Cloudflare Wrangler consume it | stable | supported | `test_client_configs_parse_and_point_at_mcp` |
 | OpenTelemetry GenAI semantic conventions | OpenTelemetry (CNCF) | development | supported | `mcp: OTel execute_tool span` |
 | Cloudflare Agents SDK, remote MCP and AI Gateway | Cloudflare | stable | planned | STD-2: McpAgent/Durable Object adapter and AI Gateway for the BS-4 executor; the Worker runs plain fetch handlers today |
@@ -56,15 +56,15 @@ Research date: 2026-11-11. Every entry in the register carries its sources with 
 | WebAuthn Level 3 passkeys (FIDO2) | W3C; FIDO Alliance | stable | supported | `software authenticator`; `one-tap sign-in` |
 | OAuth 2.1 client for remote MCP servers and service connectors (PKCE, RFC 8414, RFC 8707, CIMD, RFC 7591, RFC 7009) | MCP / IETF OAuth WG | stable | supported | `remote MCP server links with no pasted token and no owner app (CIMD)`; `remote MCP server links with no pasted token and no owner app (DCR)`; `Google flow: consent, PKCE redirect with signed state, callback exchange, sealed tokens, refresh, revoke`; `our Client ID Metadata Document is served and matches the callback`; `SSRF guard refuses private and non-https servers; no CIMD and no DCR is reported, not guessed` |
 | Open-format data export and restore (GDPR Art. 20 style portability) | EU GDPR Art. 20; Data Transfer Project norms | stable | supported | `mydata ok` |
-| CloudEvents 1.0 | CNCF | stable | partial | `cloudEvent builds a conforming CloudEvents 1.0 event with a stable id`; `test_provenance_row_is_a_conforming_cloudevent` |
-| W3C PROV (PROV-DM, PROV-JSON) | W3C | stable | supported | `test_provenance_exports_as_prov_json` |
-| Backstage software catalog (catalog-info.yaml) | CNCF (Backstage) | stable | supported | `test_catalog_info_lists_every_topology_worker` |
-| Conventional Commits 1.0 | conventionalcommits.org | stable | partial | `test_conventional_commit_subjects` |
-| Keep a Changelog 1.1 and Semantic Versioning 2.0 | keepachangelog.com; semver.org | stable | planned | Q-STD-changelog-semver |
-| W3C Trace Context (traceparent) with OpenTelemetry traces | W3C; OpenTelemetry (CNCF) | stable | planned | Q-STD-trace-context |
-| OpenFeature flag evaluation | CNCF (OpenFeature) | stable | planned | Q-STD-openfeature |
-| SPDX SBOM and SLSA build provenance | Linux Foundation (SPDX); OpenSSF (SLSA) | stable | planned | Q-STD-sbom-slsa |
-| DataCite and Crossref metadata for scholarly records | DataCite; Crossref | stable | planned | Q-STD-datacite |
+| JSON Schema 2020-12 contracts for every config, listed in a Schema Store catalog | JSON Schema organisation; SchemaStore catalog format | stable | supported | `test_every_config_has_a_schema_and_validates`; `test_catalog_is_schema_store_format` |
+| Backstage Software Catalog descriptor (catalog-info.yaml) | CNCF (Backstage) | de-facto | supported | `test_backstage_catalog_names_every_worker_store_and_tenant` |
+| CycloneDX 1.6 SBOM with package URLs | OWASP CycloneDX; Ecma TC54 (ECMA-424); purl | stable | supported | `test_cyclonedx_sbom_lists_pinned_actions_and_packages` |
+| Development Containers (devcontainer.json) | Development Containers specification | stable | supported | `test_devcontainer_matches_ci_runtimes` |
+| CloudEvents 1.0 envelopes signed per Standard Webhooks | CNCF (CloudEvents); Standard Webhooks | stable | supported | `application/cloudevents+json` |
+| Conventional Commits and SemVer | conventionalcommits.org; semver.org | stable | n/a | No package from this repository is published to a registry (no package.json here carries a version), so there is no release for SemVer to number; commits lead with the rule or item id (for example STANDARDS-1:), which the queue and write-back loops key on. Revisit when a package is published. |
+| Open Policy Agent (Rego) policy-as-code | CNCF (Open Policy Agent) | stable | n/a | Standing rules are already policy as code: each is a `python3 -m foundation <rule> --check` in checks, and request authorization uses OpenID AuthZEN (entry authzen). A Rego runtime would add a second policy language with no consumer; JSON Schema (entry json-schema-config) covers config shape. |
+| OpenFeature flag evaluation for the goal knobs | CNCF (OpenFeature) | draft | planned | Q-STD-OPENFEATURE |
+| SLSA v1 build provenance for deploys | OpenSSF (SLSA) | stable | planned | Q-STD-SLSA |
 
 <!-- standards:end -->
 

@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/criticality.schema.json",
+  "title": "criticality (doctrine/criticality.json)",
+  "description": "Contract for doctrine/criticality.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "window_hours": {
+      "type": "number"
+    },
+    "k_floor": {
+      "type": "number"
+    },
+    "cost_floor": {
+      "type": "number"
+    },
+    "raises_labels": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "raises_id_prefixes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "raises_workstreams": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "stall_item": {
+      "type": "string"
+    },
+    "self_reference": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": "string"
+        },
+        "markers": {
+          "type": "object"
+        },
+        "self_agents_prefixes": {
+          "type": "array"
+        },
+        "self_origins": {
+          "type": "array"
+        },
+        "raises_self_labels": {
+          "type": "array"
+        },
+        "raises_self_id_prefixes": {
+          "type": "array"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "cost_floor",
+    "k_floor",
+    "raises_id_prefixes",
+    "raises_labels",
+    "raises_workstreams",
+    "self_reference",
+    "stall_item",
+    "version",
+    "window_hours"
+  ]
+}
