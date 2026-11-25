@@ -419,6 +419,15 @@
     "file": ".github/workflows/tenant-repos.yml",
     "contains": "python3 -m foundation fleetcontract --live"
    }
+  },
+  {
+   "id": "readme-live-core-deploy",
+   "source": "README.md",
+   "quote": "deployed from this repository's `main` on every merge that changes them",
+   "probe": {
+    "file": ".github/workflows/deploy-ultrastable.yml",
+    "contains": "branches: [main]"
+   }
   }
  ],
  "baseline": [
