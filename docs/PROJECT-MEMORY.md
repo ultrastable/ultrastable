@@ -10,6 +10,7 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-25
 
+- 2026-11-25: TENANT-HEALTH-1 and TENANT-DEPLOY-1: tenant /health parts are read live by detector tenant-health (fm-tenant-unhealthy), and the tick dispatches deploy-ultrastable within the hour of a tenant repository merge (seed/worker/src/tenantdeploy.js). Found on What Works launch: overlapping catch-up beats, OpenAlex 429 and Europe PMC 503 on every call, 0% checked (fixed in ultrastable/what-works #1).
 - 2026-11-25: Run branch cleanup from the lane's completion sweep (#2115)
 - 2026-11-25: Add What Works, a living atlas of policy evidence, as a tenant (#2108)
 - 2026-11-25: Fix the branch sweep so stale branches actually get deleted (#2111)
