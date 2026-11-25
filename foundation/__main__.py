@@ -10,6 +10,8 @@
   python3 -m foundation resilience [--run [--apply]|--report|--check|--probe ID]   every clock keeps ticking; stalled ones are restarted (RESILIENCE-1)
   python3 -m foundation verify [--check|--report]                          VERIFY-1: model-check the core loops and tie the models to the code
   python3 -m foundation ultrastability [--tick [--apply]|--check|--data [--apply]]  Ashby's two loops over essential variables (ULTRASTABILITY-1)
+  python3 -m foundation lessons [--check]  every lesson bound to enforcing code or an open item (LESSONS-1)
+  python3 -m foundation specgate [--check]  work items an agent cannot misread: done check, prediction, out of scope, live proof (SPEC-GATE-1)
   python3 -m foundation criticality [--tick [--apply]|--check|--gate]     the mantra as a computed invariant (CRITICALITY-1)
   python3 -m foundation claimcode [--check|--baseline|--list]                words match code: every number, cadence or guarantee on a public surface is bound to a probe (WORDS-MATCH-CODE-1)
   python3 -m foundation pointclick [--check|--baseline]                    no surface asks a person to handle a token, secret or setting (POINT-AND-CLICK-1)
@@ -28,6 +30,7 @@
   python3 -m foundation failmine [--run [--apply]|--report|--probe HASH|--check]   FAILMINE-1: mine every failure record, classify root causes, register new modes, escalate recurrence
   python3 -m foundation intentyield [--run [--apply]|--probe|--check|--report]   INTENT-YIELD-1: owner directives kept per unit of attention; no counts, no person scored
   python3 -m foundation temporal [--run [--apply]|--settled ID|--probe|--check|--report]   TEMPORAL-1: series per area, loop and entry; hotspots, neglect and stopped loops feed the failure-mode machinery
+  python3 -m foundation bootproof [--check]   BOOTPROOF-1: the seed kernel is closed under bootstrap (instructions, placeholders, secrets, triggers)
   python3 -m foundation seedlaunch [--e2e [--keep]|--fleet|--check]   SEED-LAUNCH-1: every seed built, deployed, year-gated and probed live by the system
   python3 -m foundation discover [--gen|--check|--live]                    DISCOVER-1: every system is listed, cross-linked and findable
   python3 -m foundation cleanroom [--run [--apply] [--ticks N]|--probe ID|--check]   CLEANROOM-1: a sandbox system boots from the seed alone, runs a day, tears down
@@ -77,6 +80,7 @@
   python3 -m foundation rootcause [--run|--check|--report]               ROOTCAUSE-1: every finding traced to its root cause; recurrence escalates to the root
   python3 -m foundation failure_audit [--run|--check]                    FAILURE-AUDIT-1: live detectors for every failure mode; failures file their own issues
   python3 -m foundation flows [--check|--map]                             FLOW-DIRECTIVE-1: every loop declares inflows, outflows and its feedback path
+  python3 -m foundation driftguard [--check|--crons [--live]|--triggers [--apply]|--empty-commits|--accounts-live|--visibility-live|--built-live|--handoff-lint [FILE]]  DRIFT-GUARD-1: each root-cause class of 2026-11-25 has a check
   python3 -m foundation outreach [--rank|--selftest|--check]              OUTREACH-1: replies reward a segment; UCB1 orders the next intro queue
   python3 -m foundation metasignal [--check|--scan F|--ingest F [--apply]]  META-SIGNAL-1: sentiment, frustration, mic events and ideas feed the roadmap
   python3 -m foundation unknowns [--check|--run [--apply]|--answer KEY --verdict V --text T|--status]   UNKNOWNS-1: audit what the system does not know; inverted questions feed the objective space
@@ -211,9 +215,18 @@ def main(argv=None) -> int:
     if _av[:1] == ["rootcause"]:
         from . import rootcause
         return rootcause.main(_av[1:])
+    if _av[:1] == ["driftguard"]:  # DRIFT-GUARD-1
+        from . import driftguard
+        return driftguard.main(_av[1:])
     if _av[:1] == ["selftest"]:  # SELFTEST-1
         from . import selftest
         return selftest.main(_av[1:])
+    if _av[:1] == ["staticcontent"]:  # STATIC-CONTENT-1 (detector static-content was unroutable: SILENT-FAIL-1 routes check)
+        from . import staticcontent
+        return staticcontent.main(_av[1:])
+    if _av[:1] == ["slawatch"]:
+        from . import slawatch
+        return slawatch.main(_av[1:])
     if _av[:1] == ["silentfail"]:  # SILENT-FAIL-1
         from . import silentfail
         return silentfail.main(_av[1:])
@@ -280,6 +293,12 @@ def main(argv=None) -> int:
     if _av[:1] == ["verify"]:
         from . import verify
         return verify.main(_av[1:])
+    if _av[:1] == ["lessons"]:
+        from . import lessons
+        return lessons.main(_av[1:])
+    if _av[:1] == ["specgate"]:
+        from . import specgate
+        return specgate.main(_av[1:])
     if _av[:1] == ["ultrastability"]:
         from . import ultrastability
         return ultrastability.main(_av[1:])
@@ -310,6 +329,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["openloops"]:
         from . import openloops
         return openloops.main(_av[1:])
+    if _av[:1] == ["bootproof"]:
+        from . import bootproof
+        return bootproof.main(_av[1:])
     if _av[:1] == ["seedlaunch"]:
         from . import seedlaunch
         return seedlaunch.main(_av[1:])

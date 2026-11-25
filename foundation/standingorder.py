@@ -116,9 +116,22 @@ def ledger_failures(root, d) -> list[str]:
     return bad
 
 
+def ledger_handoffs(root, d) -> list[str]:
+    """DEPLOY-PREAPPROVED-1: decision rows whose title or body hands a reversible step (a deploy, a merge) back to the owner."""
+    from . import writeback
+    return sorted({r["id"] for r in writeback.ledger_rows(Path(root)) if lint((r.get("title") or "") + "\n" + (r.get("body") or ""), d)})
+
+
+def ledger_handoff_failures(root, d) -> list[str]:
+    now, base = set(ledger_handoffs(root, d)), set(d.get("ledger_handoff_baseline", []))
+    bad = [f"ledger {i}: the decision defers a reversible step to the owner; decide, deploy and verify instead (DEPLOY-PREAPPROVED-1)" for i in sorted(now - base)]
+    bad += [f"ledger_handoff_baseline {i}: no longer defers to the owner or is gone; remove it (shrink-only)" for i in sorted(base - now)]
+    return bad
+
+
 def check(root=REPO) -> list[str]:
     root = Path(root); d = load(root)
-    return instruction_failures(root, d) + ledger_failures(root, d) + report_failures(root, d)
+    return instruction_failures(root, d) + ledger_failures(root, d) + ledger_handoff_failures(root, d) + report_failures(root, d)
 
 
 def write_baseline(root=REPO) -> int:

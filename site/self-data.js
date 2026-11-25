@@ -142,12 +142,6 @@ export default {
     "id": "replication-ledger-beat",
     "source": "d1",
     "what": "Replication Ledger tenant beat (cron 23 * * * * on ultrastable-replication-ledger; a visit sparks one when the last is over two hours old): search OpenAlex for new replications and new landmark findings, file attempts under a verbatim-quote guard, check Crossref, recompute standings and log every move"
-   },
-   {
-    "expected_interval_s": 86400,
-    "id": "cleanroom",
-    "source": "workflow",
-    "what": "the daily clean-room bootstrap: a sandbox system from the seed alone, a simulated day, teardown, and the cross-repository coherence check"
    }
   ],
   "watchdog_escalation": [
@@ -483,6 +477,175 @@ export default {
      ],
      "unit": "substantive server-originated changes a day (14-day mean, at least 10 changed code lines each)",
      "why": "Rowan's biggest goal: the server itself originates and ships substantive changes daily (SELF-REFERENCE-1). Counted from git by foundation/yearsim.py self_commits: executor or own-agent commits on main with at least 10 changed lines of code outside ledgers and generated data. A one-line import removal is upkeep, not a release (NO-TRIVIAL-COMMITS)."
+    },
+    {
+     "id": "owner_interventions",
+     "max": 0,
+     "min": 0,
+     "name": "Owner interventions",
+     "reading": "owner.interventions_7d",
+     "regulators": [
+      "executor",
+      "watchdog"
+     ],
+     "steps": [
+      {
+       "kind": "item",
+       "labels": [
+        "p0",
+        "agent-ready",
+        "raises-self"
+       ],
+       "what": "absorb: turn each recent owner intervention into a variable, bound, detector or rule here, so the same message is not needed again",
+       "workstream": "Ultrastability"
+      },
+      {
+       "kind": "item",
+       "labels": [
+        "p0",
+        "agent-ready",
+        "raises-self"
+       ],
+       "what": "restructure: the intervention kinds that keep recurring get their own essential variable with a ladder",
+       "workstream": "Ultrastability"
+      }
+     ],
+     "unit": "owner-driven thread sessions in 7 days",
+     "why": "Every time Rowan has to notice a problem and redirect the system in chat, he is acting as the second loop. Ultrastable means the system does that itself. Counted from provenance: distinct thread sessions that changed the repository."
+    },
+    {
+     "id": "second_loop_keep_rate",
+     "max": null,
+     "min": 0.25,
+     "name": "Second-loop steps that worked",
+     "reading": "ultra.keep_rate",
+     "regulators": [
+      "watchdog"
+     ],
+     "steps": [
+      {
+       "delta": 1,
+       "file": "doctrine/ultrastability.json",
+       "kind": "param",
+       "max": 8,
+       "min": 2,
+       "path": "settle_ticks",
+       "what": "give a parameter step more ticks before judging it"
+      },
+      {
+       "delta": 1,
+       "file": "doctrine/ultrastability.json",
+       "kind": "param",
+       "max": 6,
+       "min": 2,
+       "path": "patience_ticks",
+       "what": "act only on variables that stay out longer (fewer steps on noise)"
+      },
+      {
+       "kind": "item",
+       "labels": [
+        "p0",
+        "agent-ready",
+        "raises-self"
+       ],
+       "what": "restructure: find the ladders whose steps keep being undone and replace those steps",
+       "workstream": "Ultrastability"
+      }
+     ],
+     "unit": "share of the last 30 verdicts kept",
+     "why": "A slow loop whose changes are all undone is moving, not learning; that was the state before SECOND-LOOP-2."
+    },
+    {
+     "id": "spec_quality",
+     "max": null,
+     "min": 0.9,
+     "name": "Work items an agent cannot misread",
+     "reading": "spec.quality",
+     "regulators": [
+      "executor"
+     ],
+     "steps": [
+      {
+       "kind": "item",
+       "labels": [
+        "p0",
+        "agent-ready",
+        "raises-self"
+       ],
+       "what": "rewrite the open items that miss a part so they pass specgate, from their own source code",
+       "workstream": "Ultrastability"
+      },
+      {
+       "kind": "item",
+       "labels": [
+        "p0",
+        "agent-ready",
+        "raises-self"
+       ],
+       "what": "restructure: make the filer of each failing item write all four parts (fix the writer, not the item)",
+       "workstream": "Ultrastability"
+      }
+     ],
+     "unit": "share of open items with done check, prediction, out-of-scope line and live proof",
+     "why": "unlearn.dev lesson: a vague item gets a plausible wrong fix. An item passes foundation/specgate.py only with all four parts."
+    },
+    {
+     "id": "research_in_code",
+     "max": null,
+     "min": 1.0,
+     "name": "Research findings true in code",
+     "reading": "research.met_share",
+     "regulators": [
+      "executor"
+     ],
+     "steps": [
+      {
+       "kind": "item",
+       "labels": [
+        "p0",
+        "agent-ready",
+        "raises-self"
+       ],
+       "what": "build: for each finding that is not met, change the mechanism it names until its metric meets the target (research files Q-RES items; take them first)",
+       "workstream": "Ultrastability"
+      },
+      {
+       "kind": "item",
+       "labels": [
+        "p0",
+        "agent-ready",
+        "raises-self"
+       ],
+       "what": "restructure: a finding still not met after its items closed gets a new mechanism, a new ladder here, or its paper states the gap with the number",
+       "workstream": "Ultrastability"
+      }
+     ],
+     "unit": "share of findings in every paper whose own measurement meets its target",
+     "why": "RESEARCH-LOOP-1 (Rowan, 2026-11-25): 'make sure your code reflects your own R&D ... that's an open loop too'. Every finding names its mechanism paths and the metric that tests it; research --check fails a missing path, and this variable fails a finding the system does not live up to."
+    },
+    {
+     "id": "lessons_enforced",
+     "max": null,
+     "min": 1.0,
+     "name": "Lessons enforced in code",
+     "reading": "lessons.enforced_share",
+     "regulators": [
+      "executor"
+     ],
+     "steps": [
+      {
+       "kind": "item",
+       "labels": [
+        "p0",
+        "agent-ready",
+        "raises-self"
+       ],
+       "what": "build: take the Q-LESSON items and bind each lesson to a check, variable, detector or test",
+       "workstream": "Ultrastability"
+      }
+     ],
+     "unit": "share of lessons in doctrine/lessons.json bound to a check, variable, detector or test",
+     "why": "LESSONS-1 (Rowan, 2026-11-25): a lesson that lives in chat is learned again the hard way. Each one is bound to code, or carried by an open item until it is."
     }
    ],
    "what": "Ultrastable running on itself (tenant 0)"
@@ -657,7 +820,6 @@ export default {
   "ciwatch",
   "claims",
   "claims-conformance",
-  "cleanroom",
   "code-agents",
   "components",
   "containment-boundary",
@@ -717,6 +879,7 @@ export default {
   "recognition-lint",
   "regen-generated",
   "replication-ledger-beat",
+  "replication-ledger-openalex",
   "research",
   "resilience",
   "retriage",
@@ -2149,16 +2312,16 @@ export default {
     ]
    },
    {
-    "closing_probe": "grep:foundation/cleanroom.py::def run",
-    "id": "cleanroom",
-    "kind": "governance",
-    "owner": "operations",
+    "closing_probe": "grep:instances/replication-ledger/worker/keyless.test.mjs::the OpenAlex mirror a runner landed answers first",
+    "id": "replication-ledger-openalex",
+    "kind": "tick",
+    "owner": "product-manager",
     "server_owner": "github-actions",
     "sla": "1d",
-    "summary": "CLEANROOM-1 and COHERENCE-1: a sandbox system is built from nothing but seed/ and an idea, boots, runs a simulated day and tears itself down; every capability that does not come up with zero human steps becomes a Q-CLEANROOM item. The same run checks that every copy of an instruction or config surface in another repository matches its one source.",
-    "trigger": "daily workflow, every push to main that touches seed/, and on demand",
+    "summary": "LEDGER-KEYLESS-1: OpenAlex refuses the Replication Ledger Worker (Cloudflare egress, no API key). A GitHub runner asks OpenAlex the beat's own questions for every finding and its discovery searches, lands the answers as instances/replication-ledger/worker/data/openalex.json, and redeploys the Worker, whose beat reads them as a route through the same verbatim-quote guard; in between, the beat's keyless routes (Europe PMC, Crossref, Semantic Scholar) answer.",
+    "trigger": "daily workflow ledger-openalex.yml and on demand",
     "workflows": [
-     "cleanroom"
+     "ledger-openalex"
     ]
    }
   ],
@@ -2248,12 +2411,6 @@ export default {
     "id": "claims",
     "loops": [
      "claims-conformance"
-    ]
-   },
-   {
-    "id": "cleanroom",
-    "loops": [
-     "cleanroom"
     ]
    },
    {
@@ -2372,6 +2529,12 @@ export default {
     "id": "lane",
     "loops": [
      "merge-lane"
+    ]
+   },
+   {
+    "id": "ledger-openalex",
+    "loops": [
+     "replication-ledger-openalex"
     ]
    },
    {
@@ -2533,250 +2696,250 @@ export default {
  },
  "readings": {
   "access-check:claims_drift": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "access-check:spend": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
   },
   "access-check:uptime": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "access-check:value": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "air-quality:claims_drift": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "air-quality:spend": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
   },
   "air-quality:uptime": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "air-quality:value": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "blindspot:claims_drift": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "blindspot:spend": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
   },
   "blindspot:uptime": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "blindspot:value": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 2.02
   },
   "claims_drift": {
-   "at": "2026-11-25T20:34:26Z",
-   "in_bounds": true,
+   "at": "2026-11-25T20:45:01Z",
+   "in_bounds": false,
    "unmeasured": false,
-   "value": 0
+   "value": 2
   },
   "country-snapshot:claims_drift": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "country-snapshot:spend": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
   },
   "country-snapshot:uptime": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "country-snapshot:value": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "deploy_health": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "free-tier-meter:claims_drift": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "free-tier-meter:spend": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
   },
   "free-tier-meter:uptime": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "free-tier-meter:value": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "happy_paths": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "loop-ledger:claims_drift": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "loop-ledger:spend": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "loop-ledger:uptime": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "loop-ledger:value": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "numbers-board:claims_drift": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "numbers-board:spend": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
   },
   "numbers-board:uptime": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "numbers-board:value": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "portfolio-board:claims_drift": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "portfolio-board:spend": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
   },
   "portfolio-board:uptime": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "portfolio-board:value": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "self_shipping": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.714
   },
   "spend": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
   },
   "stalled_clocks": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": false,
    "unmeasured": false,
-   "value": 4
+   "value": 5
   },
   "ui_findings": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0
   },
   "unattended_horizon": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 730
   },
   "value": {
-   "at": "2026-11-25T20:34:26Z",
+   "at": "2026-11-25T20:45:01Z",
    "in_bounds": true,
    "unmeasured": false,
-   "value": 1060.0
+   "value": 1100.0
   }
  },
  "self": {
@@ -2818,7 +2981,9 @@ export default {
    "doctrine/spinoff.json:budget.max_launches_per_day",
    "doctrine/spinoff.json:budget.max_live",
    "doctrine/spinoff.json:budget.max_requests_per_app_per_day",
-   "doctrine/spinoff.json:score.min_score"
+   "doctrine/spinoff.json:score.min_score",
+   "doctrine/ultrastability.json:patience_ticks",
+   "doctrine/ultrastability.json:settle_ticks"
   ],
   "patience_ticks": 2,
   "settle_ticks": 3,
