@@ -4957,6 +4957,32 @@
    "body": "scripts/retriage.sh was documented as every 3 h but its cron is weekly (budget), so the rolling Retriage gaps issue (#2032) never refreshed; org-profile-probe is weekly, never closes its own issue and grepped for 'runs itself', a phrase absent from the profile README (#2033). Both now run from the 10-minute fleet clock; scripts/org_profile_probe.sh closes its issue on pass and checks the README headline.",
    "probe": "file:scripts/org_profile_probe.sh",
    "session": "session_0156nqDvX8P4Z5wfkTJvFwh9"
+  },
+  {
+   "id": "decision-2026-11-25-branch-cleanup-1",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "BRANCH-CLEANUP-1",
+   "body": "No branch outlives its PR. branchsweep --remote runs scripts/branch_cleanup.py daily: enforces delete_branch_on_merge and deletes merged or closed PR branches in every fleet repo.",
+   "probe": "file:scripts/branch_cleanup.py",
+   "session": "session_0156nqDsM82hJafZbpixiZx9"
+  },
+  {
+   "id": "decision-2026-11-25-unlearn-now-lives-in-ultrastable-unlearn",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Unlearn now lives in ultrastable/unlearn",
+   "body": "Rowan created the empty repo on 2026-11-25. A code session split instances/unlearn with its history, vendored promoqueue.js, stakeholders.json and models.json, and pushed it. The core keeps only the manifest; topology and system.json name source repo ultrastable/unlearn; seedlife reads build paths from build.repo; the system renderer writes a repo-root wrangler config for tenant workers. The tenant-repos workflow still has no org credential, so future tenant moves need the repo created first.",
+   "probe": "grep:doctrine/topology.json::ultrastable/unlearn"
+  },
+  {
+   "id": "lesson-2026-11-25-a-tenant-move-touches-more-than-the-folder",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "A tenant move touches more than the folder",
+   "body": "Moving Unlearn out broke the decision ledger, the topology main check, system.json, seedlife build paths and a core test that read the tenant's phases. Tenant checks now live in the tenant repo next to the code; core checks read source repos from topology.",
+   "probe": "grep:doctrine/topology.json::ultrastable/unlearn",
+   "session": "session_0156nqDtv3xZHzUu11Sy1geK"
   }
  ]
 }
