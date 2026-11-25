@@ -1615,7 +1615,7 @@ export default {
      },
      "prediction": "owner_interventions_7d <= 0 within 72 h",
      "metric_label": "owner-driven thread sessions that changed the repository in the last 7 days (ops/provenance.jsonl)",
-     "measured": 52,
+     "measured": 54,
      "status": "not-met",
      "n": null,
      "source": "ops/provenance.jsonl, last 7 days",

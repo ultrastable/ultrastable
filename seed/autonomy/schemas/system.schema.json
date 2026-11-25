@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/seed/autonomy/system.schema.json",
+  "title": "system (seed/autonomy/system.json)",
+  "description": "Contract for seed/autonomy/system.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "$schema_version": {
+      "type": "string"
+    },
+    "doc": {
+      "type": "string"
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "clauses": {
+            "type": "array"
+          },
+          "generated": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "not_in_kit_doc": {
+      "type": "string"
+    },
+    "not_in_kit": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "kit_enforcement_doc": {
+      "type": "string"
+    },
+    "kit_enforcement": {
+      "type": "object",
+      "properties": {
+        "CRITICALITY-1": {
+          "type": "array"
+        },
+        "SELF-REFERENCE-1": {
+          "type": "array"
+        },
+        "CLOCKWORK-1": {
+          "type": "array"
+        },
+        "FAILURE-RESOLVE-1": {
+          "type": "array"
+        },
+        "WORDS-MATCH-CODE-1": {
+          "type": "array"
+        },
+        "SUBSTANCE-1": {
+          "type": "array"
+        },
+        "DISPOSE-1": {
+          "type": "array"
+        },
+        "RUNWAY-1": {
+          "type": "array"
+        },
+        "TEMPORAL-1": {
+          "type": "array"
+        },
+        "GROWTH-1": {
+          "type": "array"
+        },
+        "SCOUT-1": {
+          "type": "array"
+        },
+        "RND-1": {
+          "type": "array"
+        },
+        "PROMOTE-1": {
+          "type": "array"
+        },
+        "COMPLETE-1": {
+          "type": "array"
+        },
+        "DRAIN-ALL-1": {
+          "type": "array"
+        },
+        "SESSION-CLOSE-1": {
+          "type": "array"
+        },
+        "TENANT-SYNC-1": {
+          "type": "array"
+        },
+        "NO-OPEN-ITEMS-1": {
+          "type": "array"
+        },
+        "NO-FABRICATION-1": {
+          "type": "array"
+        },
+        "REDTEAM-1": {
+          "type": "array"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "$schema_version",
+    "doc",
+    "kit_enforcement",
+    "kit_enforcement_doc",
+    "not_in_kit",
+    "not_in_kit_doc",
+    "sections"
+  ]
+}
