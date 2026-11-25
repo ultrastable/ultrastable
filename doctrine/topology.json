@@ -315,6 +315,18 @@
       "routes": [
         "what-works.ultrastable.org"
       ]
+    },
+    {
+      "id": "ultrastable-replication-ledger",
+      "state": "live",
+      "role": "Replication Ledger tenant app (moving to ultrastable/replication-ledger): which landmark findings held up when replicated and which failed, across many fields; reader pages with a guess-first reveal and the ledger as JSON, every standing computed at request time; no database, no secret",
+      "main": "instances/replication-ledger/worker/index.js",
+      "compatibility_date": "2026-11-12",
+      "public": false,
+      "bindings": {},
+      "routes": [
+        "replication-ledger.ultrastable.org"
+      ]
     }
   ],
   "edit_path": [

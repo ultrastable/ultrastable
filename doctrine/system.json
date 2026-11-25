@@ -177,6 +177,12 @@
           "AI"
         ]
       }
+    },
+    "ultrastable-replication-ledger": {
+      "main": "instances/replication-ledger/worker/index.js",
+      "role": "Replication Ledger tenant app (moving to ultrastable/replication-ledger): which landmark findings held up when replicated and which failed, across many fields; reader pages with a guess-first reveal and the ledger as JSON, every standing computed at request time; no database, no secret",
+      "crons": [],
+      "bindings": {}
     }
   },
   "edit_path": [

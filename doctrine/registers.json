@@ -481,8 +481,9 @@
       "status": "controlled",
       "cadence_ticks": 1,
       "probe": "grep:tests/foundation/test_tenantrepos.py::class TenantHealth"
-    }
-  ],
+    },
+    {"id": "fm-static-content", "trigger": "a published page's visible text does not change for max_unchanged_days", "symptom": "the system looks frozen to a visitor; content is not autonomous", "blast_radius": "reach, stickiness and the claim that the system runs itself", "detection": "python3 -m foundation staticcontent --run --apply (detector static-content)", "root_cause": "the page is hand-typed or a snapshot with no loop that regenerates it", "remediation": "bind the page to a loop; the detector's Q-AUDIT item names the page", "status": "controlled", "cadence_ticks": 144, "probe": "grep:tests/foundation/test_staticcontent.py::def test_static_page_is_a_finding"}
+],
   "controls": [
     {
       "id": "ctl-interrupt-gate",
