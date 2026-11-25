@@ -38,6 +38,10 @@ for b in $(gh api "repos/$repo/branches" --paginate --jq '.[].name'); do
     t=$(git merge-tree --write-tree origin/main "origin/$b" 2>/dev/null | head -1); rc=${PIPESTATUS[0]}
     if [ "$rc" = 0 ] && [ "$t" = "$(git rev-parse 'origin/main^{tree}')" ]; then
       gh api -X DELETE "repos/$repo/git/refs/heads/$b" >/dev/null && echo "deleted branch $b (content already in main)"
+    elif case "$b" in parked/*) true;; *) false;; esac; then
+      : # PARKED-PR-1: the reaper parked this branch on purpose and filed its backlog item; opening an automerge PR for it made 17 PRs nothing merged
+    elif [ -n "$(gh pr list -R "$repo" --head "$b" --state closed --json headRefOid --jq ".[] | select(.headRefOid==\"$(git rev-parse "origin/$b")\") | .headRefOid" | head -1)" ]; then
+      : # PARKED-PR-1: a PR for exactly this tip was already closed (superseded by the SLA ladder); do not reopen the same loop every day
     elif [ "${opened:=0}" -lt "${AUTOMERGE_CAP:-15}" ]; then
       gh pr create -R "$repo" --base main --head "$b" --title "automerge: $b" \
         --body "BRANCH-AUTOMERGE-1: completion-sweep found unmerged commits on \`$b\` with no PR. The lane merges this when green, reconciles a conflict with main, or supersedes it; the branch is deleted on merge." \

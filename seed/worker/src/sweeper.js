@@ -8,7 +8,7 @@ import { reconcile, makeGh, latency } from './mergenow.js';
 import { prTier, portItemId } from './sla.js';  // SLA-1
 const API = 'https://api.github.com';
 // BRANCH-ROOT-CAUSE-1: `worker/` branches (the Worker executor's own PRs) were never swept, so they sat blocked; every automation prefix is swept.
-const CLIENT_PREFIX = ['claude/', 'agent/', 'worker/', 'dependabot/'];  // DEP-LOOP-1: dependency updates merge on green like any client PR (GREEN-GUARD-1 applies)
+const CLIENT_PREFIX = ['claude/', 'agent/', 'worker/', 'parked/', 'dependabot/'];  // PARKED-PR-1: the branch reaper parks as parked/<name> and the completion sweep opens a PR for it; without this prefix those PRs had no clock (23 overdue, fleet red every 10 min).  // DEP-LOOP-1: dependency updates merge on green like any client PR (GREEN-GUARD-1 applies)
 export async function gh(f, token, method, path, body) {
   const r = await f(API + path, { method, headers: { authorization: 'Bearer ' + token, accept: 'application/vnd.github+json', 'user-agent': 'ultrastable-sweeper', 'content-type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
   const t = await r.text();
