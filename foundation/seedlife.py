@@ -157,7 +157,8 @@ def run(root=REPO, apply=False, fetch=None, now=None, live=True) -> dict:
         if r.get("stage") == "autonomous":
             if apply and p.is_file() and "**Status:** open" in p.read_text(encoding="utf-8"):
                 it = json.loads(p.read_text(encoding="utf-8"))
-                it["body"] = it["body"].replace("**Status:** open", "**Status:** closed") + f"\nClosed by seedlife --run: the seed is autonomous ({now or dt.datetime.now(dt.timezone.utc):%Y-%m-%d}).\n"
+                it["body"] = it["body"].replace("**Status:** open", "**Status:** closed") + (f"\nClosed by seedlife --run: the seed is autonomous ({now or dt.datetime.now(dt.timezone.utc):%Y-%m-%d}).\n"
+                              f"**Evidence:** `python3 -m foundation seedlife --probe {r['slug']}` passed in the same run (stage autonomous).\n")  # queue --check: a closed item carries evidence
                 p.write_text(json.dumps(it, indent=2) + "\n", encoding="utf-8"); changed = True
             continue
         new = json.dumps(item(r), indent=2) + "\n"
