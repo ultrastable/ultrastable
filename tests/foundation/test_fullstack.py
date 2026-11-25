@@ -29,6 +29,15 @@ class FullStack(unittest.TestCase):
         (d / "instances/ultrastable/progress.json").write_text(json.dumps(p))
         self.assertTrue(any("newcomer: no backend" in b for b in F.check(d)))
 
+    def test_a_new_system_is_read_from_its_own_lifecycle(self):
+        d = copy()
+        p = json.loads((d / "instances/ultrastable/progress.json").read_text())
+        p["systems"].append({"id": "newcomer", "repo": "ultrastable/newcomer", "url": "https://newcomer.example"})
+        (d / "instances/ultrastable/progress.json").write_text(json.dumps(p))
+        (d / "instances/newcomer").mkdir(parents=True)
+        (d / "instances/newcomer/lifecycle.json").write_text(json.dumps({"verify": {"url": "https://newcomer.example/health"}}))
+        self.assertFalse(any(b.startswith("newcomer") for b in F.check(d)))
+
     def test_a_gap_needs_an_open_item(self):
         d = copy()
         f = d / "docs/issues/Q-FULLSTACK-second-tenant.json"

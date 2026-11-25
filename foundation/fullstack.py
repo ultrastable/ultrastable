@@ -25,6 +25,14 @@ def _j(root, rel):
     return json.loads((Path(root) / rel).read_text(encoding="utf-8"))
 
 
+def _verify_url(root, sid):
+    """A system's own lifecycle.json names the back-end address its watchdog fetches; a new tenant needs no row here."""
+    f = Path(root) / "instances" / sid / "lifecycle.json"
+    if not f.exists():
+        return None
+    return (json.loads(f.read_text(encoding="utf-8")).get("verify") or {}).get("url")
+
+
 def systems(root=REPO) -> list[dict]:
     """One row per system with whatever parts it declares. A part it does not declare is None."""
     root, pol = Path(root), _j(root, POLICY)
@@ -33,7 +41,7 @@ def systems(root=REPO) -> list[dict]:
         rows.setdefault(slug, {"id": slug, "repo": None, "frontend": None})
     for sid, r in rows.items():
         p = pol.get("systems", {}).get(sid, {})
-        r["backend"] = p.get("backend")
+        r["backend"] = p.get("backend") or _verify_url(root, sid)
         r["repo"] = r["repo"] or p.get("repo")
         r["frontend"] = r["frontend"] or p.get("frontend")
         r["gaps"] = p.get("gaps", {})
