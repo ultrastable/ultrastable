@@ -7,7 +7,7 @@
 // Two routes for the clock: the cron, and a read of /health when the last beat is older than two intervals (runway risk cron-silent).
 import { contractRoute } from "../vendor/ultrastable/contract.js";
 import { promoQueue } from "../vendor/ultrastable/promoqueue.js";
-import { SPEC, SITE, BEAT_HOURS } from "./contract.js";
+import { SPEC, SITE, ID, BEAT_HOURS } from "./contract.js";
 import { ENTRIES, EMPTY_WHY } from "./entries.js";
 import { home, notFound } from "./site.js";
 
@@ -83,8 +83,8 @@ export async function handle(request, env = {}, now = Date.now()) {
   if (p === "/api/graph") return json(graph());
   if (p === "/social-queue.json") {
     // TENANT-PROMO-1: built by the shared queue from what is published; with nothing published there is nothing to post, and the list is empty
-    const q = promoQueue({ tenant: {{json:slug}}, site: SITE, hook: HOOK, items: ENTRIES.map(e => ({ id: e.id, text: e.title, path: "/#" + e.id })), now });
-    return json({ tenant: {{json:slug}}, posts: q.posts || [], refused: q.refused || [], ...(ENTRIES.length ? {} : { why: EMPTY_WHY }) });
+    const q = promoQueue({ tenant: ID.slug, site: SITE, hook: HOOK, items: ENTRIES.map(e => ({ id: e.id, text: e.title, path: "/#" + e.id })), now });
+    return json({ tenant: ID.slug, posts: q.posts || [], refused: q.refused || [], ...(ENTRIES.length ? {} : { why: EMPTY_WHY }) });
   }
   if (p === "/feed.json") return json({ version: "https://jsonfeed.org/version/1.1", title: SPEC.name, home_page_url: SITE + "/", feed_url: SITE + "/feed.json", description: SPEC.summary, items: ENTRIES.map(e => ({ id: SITE + "/#" + e.id, url: SITE + "/#" + e.id, title: e.title, content_text: e.summary || e.title })) });
   if (p === "/robots.txt") return new Response("User-agent: *\nAllow: /\n", { headers: { "content-type": "text/plain; charset=utf-8" } });

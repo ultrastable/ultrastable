@@ -30,7 +30,8 @@ from pathlib import Path
 HERE = Path(__file__).resolve()
 STD_CORE = "doctrine/tenant-standard.json"
 REG = "doctrine/tenant-repos.json"
-BLOCKS = {n: re.compile(r"<!-- ultrastable:" + n + r"[^>]*-->.*?<!-- /ultrastable:" + n + r" -->", re.S) for n in ("standard", "live")}
+BLOCKS = {"standard": re.compile(r"<!-- ultrastable:standard[^>]*-->.*?<!-- /ultrastable:standard -->", re.S),
+          "live": re.compile(r"<!-- live:start[^>]*-->.*?<!-- live:end -->", re.S)}  # the Live block is foundation/livelinks.py's, one format fleetwide
 PLATFORM = "https://ultrastable.io"
 PLACE = re.compile(r"\{\{(json:)?([a-z0-9_]+)\}\}")
 SKIP_DIRS = {".git", "node_modules", "__pycache__"}
@@ -126,46 +127,65 @@ def deployment(slug: str, root: Path) -> tuple[bool, str]:
     return (True, "https://" + w["routes"][0]) if w.get("state") == "live" and w.get("routes") else (False, "")
 
 
-def live_block(ctx: dict) -> str:
-    """The README's Live block (LIVE-LINK-1, Rowan 2026-11-25: "If somebody sees the code, then show them where it's running, show them the URL").
-    Rendered from the registries, never typed: a deployed system links its URL, its health and its statements; a planned one says so and links nothing dead."""
-    core = f"[`{ctx['core_repo']}`](https://github.com/{ctx['core_repo']})"
-    runs = f"- Runs on [Ultrastable]({PLATFORM}) · [more systems built on it]({PLATFORM}/directory)"
-    head = "<!-- ultrastable:live (rendered from the platform's registries by the scaffold; never typed by hand) -->\n## Live\n\n"
-    if ctx["deployed"]:
-        u = ctx["live_url"]
-        body = (f"- **Running at: <{u}/>**\n- Worker: `{ctx['worker']}` on Cloudflare Workers\n"
-                f"- Deployed from: this repository's `main`, built by {core} (workflow `deploy-ultrastable`)\n"
-                f"- Health: <{u}/health> · What the site states and what backs it: <{u}/claims.json>\n")
-    else:
-        body = (f"- **Not deployed yet.** {ctx['name']} is registered on the platform as planned and nothing is running.\n"
-                f"- When it is deployed it runs as the Worker `{ctx['worker']}`, built from this repository's `main` by {core} (workflow `deploy-ultrastable`), and this block is rewritten with its public URL.\n")
-    return head + body + runs + "\n<!-- /ultrastable:live -->"
+def live_block(slug: str, root: Path) -> str:
+    """The README's Live block, in the one format the fleet uses: foundation/livelinks.py (LIVE-LINKS-1) renders it from the registries."""
+    from . import livelinks  # core only: a tenant's vendored copy of this file reads the block, it never writes it
+    return livelinks.block(slug, root).strip()
 
 
-def live_problems(tenant: Path, slug: str, std: dict, root: Path | None) -> list[str]:
-    p = tenant / "README.md"
+def live_problems(tenant: Path, slug: str, std: dict, root: Path | None, ident: dict | None = None) -> list[str]:
+    """LIVE-LINKS-1: the README says where the code runs. In the core the block must equal what livelinks renders from the registries; in the
+    tenant (no registries) it must agree with ultrastable.json: the public URL linked with its health and statements, or Not deployed yet and no host."""
+    p, lv = tenant / "README.md", std["live"]
     m = BLOCKS["live"].search(p.read_text(encoding="utf-8", errors="replace")) if p.is_file() else None
     if not m:
-        return ["live: README.md has no Live block (where the code runs, rendered by the scaffold between the ultrastable:live markers)"]
+        return ["live: README.md has no Live block (where the code runs; written by the scaffold with foundation/livelinks.py between the live:start and live:end markers)"]
     block, bad = m.group(0), []
-    urls = [u.rstrip("/") for u in re.findall(r"https://[^\s<>()\]]+", block) if not u.startswith((PLATFORM, "https://github.com/"))]
-    undeployed = "Not deployed yet" in block
-    bad += [f"live: README.md Live block does not link {u}" for u in (PLATFORM, PLATFORM + "/directory") if u not in block]
+    urls = [u.rstrip("/") for u in re.findall(r"https://[^\s<>()\]|]+", block) if not u.startswith((lv["platform"], "https://github.com/"))]
+    undeployed = lv["undeployed"] in block
+    if lv["platform"] not in block:
+        bad.append(f"live: README.md Live block does not link {lv['platform']}")
     if undeployed and urls:
-        bad.append(f"live: README.md says Not deployed yet and links {urls[0]} (a dead link)")
+        bad.append(f"live: README.md says {lv['undeployed']} and links {urls[0]} (a dead link)")
     if not undeployed:
         if not urls:
             bad.append("live: README.md Live block has no public URL")
         else:
-            bad += [f"live: README.md Live block does not link {urls[0]}{x}" for x in ("/health", "/claims.json") if urls[0] + x not in block]
+            bad += [f"live: README.md Live block does not link {urls[0]}{x}" for x in lv["links"] if urls[0] + x not in block]
+    want = (ident or {}).get("public_url")
+    if ident is not None and (want or "").rstrip("/") != (urls[0] if urls and not undeployed else ""):
+        bad.append(f"live: README.md Live URL is {urls[0] if urls and not undeployed else 'missing'}; ultrastable.json says public_url is {want}")
     if root is not None and slug in (_json(root / REG) or {}).get("tenants", {}):
         dep, url = deployment(slug, root)
         if dep and (undeployed or not urls or urls[0] != url):
             bad.append(f"live: README.md Live URL is {urls[0] if urls and not undeployed else 'missing'}; the registry says {slug} runs at {url}")
         if not dep and not undeployed:
             bad.append(f"live: README.md shows a live URL and the registry has {slug} not deployed")
+        if live_block(slug, root) not in p.read_text(encoding="utf-8"):
+            bad.append(f"live: README.md Live block is not the one the registries render; run python3 -m foundation tenantstd --scaffold on this repository")
     return bad
+
+
+def identity(slug: str, tenant: Path, std: dict, root: Path) -> dict:
+    """The one input object of the scaffold, written as ultrastable.json `identity` (IDENTITY-1): who the system is and where it runs, from the
+    registries. README, package.json, the contract's SPEC and the wrangler reference are rendered from it, never from literals of their own."""
+    row = (_json(root / REG) or {}).get("tenants", {}).get(slug, {}) or {}
+    inst = _json(tenant / "instance.json") or _json(root / "instances" / slug / "instance.json") or {}
+    name = inst.get("name") or slug.replace("-", " ").title()
+    tagline = str((inst.get("brand") or {}).get("tagline") or row.get("description") or name)
+    dep, url = deployment(slug, root)
+    worker = row.get("worker") or f"ultrastable-{slug}"
+    host = std["scaffold"]["defaults"]["host"].replace("{slug}", slug)
+    return {
+        "name": name, "slug": slug,
+        "summary": re.sub(r"\s*Run on Ultrastable, the foundation for any autonomous system\.?\s*$", "", tagline).strip(),
+        "repo": row.get("repo") or f"{std['core_repo'].split('/')[0]}/{slug}",
+        "public_url": url if dep else None, "planned_url": None if dep else f"https://{host}",
+        "license": "LicenseRef-Ultrastable-USL-1.0",
+        "topics": sorted({"ultrastable", "autonomous-system", "cloudflare-workers", *(row.get("topics") or [])}),
+        "layer": "tenant",
+        "runs_as": {"platform": "cloudflare-workers", "worker": worker, "deployed": dep, "deployed_from": "main", "deployed_by": f"{std['core_repo']} deploy-ultrastable"},
+    }
 
 
 def check_tenant(tenant: Path, std: dict | None = None, root: Path | None = None) -> list[str]:
@@ -192,7 +212,16 @@ def check_tenant(tenant: Path, std: dict | None = None, root: Path | None = None
                 want = fill(want) if isinstance(want, str) else want
                 if not _json_rule(_dig(data, key), want):
                     bad.append(f"{f['id']}: {f['path']} `{key}` should be {want!r}, is {json.dumps(_dig(data, key))[:60]}")
-    bad += live_problems(tenant, slug, std, root)
+    ident = (_json(tenant / "ultrastable.json") or {}).get("identity")
+    bad += live_problems(tenant, slug, std, root, ident)
+    if isinstance(ident, dict):
+        bad += [f"identity: ultrastable.json identity has no `{k}`" for k in std["identity"]["keys"] if k not in ident]
+        if ident.get("slug") != slug:
+            bad.append(f"identity: ultrastable.json says slug {ident.get('slug')!r}; instance.json says {slug!r}")
+        if (ident.get("runs_as") or {}).get("worker") != sub["worker"]:
+            bad.append(f"identity: ultrastable.json runs_as.worker should be {sub['worker']}")
+        if root is not None and slug in (_json(root / REG) or {}).get("tenants", {}) and ident != identity(slug, tenant, std, root):
+            bad.append("identity: ultrastable.json identity differs from what the registries say; run python3 -m foundation tenantstd --scaffold on this repository")
     lc, rw, pkg = _json(tenant / "lifecycle.json") or {}, _json(tenant / "runway.json") or {}, _json(tenant / "package.json") or {}
     if lc:
         unanswered = [c for c in std["survival"] if not ((lc.get("survival") or {}).get(c) or {}).keys() & {"inherit", "status"}]
@@ -270,30 +299,21 @@ def _cron(slug: str, hours: int) -> str:
     return f"{minute} * * * *" if hours <= 1 else (f"{minute} {hour} * * *" if hours < 168 else f"{minute} {hour} * * 1")
 
 
-def context(slug: str, tenant: Path, std: dict, root: Path | None) -> dict:
-    """The values every template is rendered with: the registry row, the tenant's own manifest and, when it has one, its topology row."""
-    row = ((_json(root / REG) or {}).get("tenants", {}).get(slug, {}) if root else {}) or {}
-    inst = _json(tenant / "instance.json") or (_json(root / "instances" / slug / "instance.json") if root else None) or {}
-    topo = next((w for w in ((_json(root / "doctrine/topology.json") or {}).get("workers", []) if root else []) if w.get("id") == row.get("worker")), {})
-    sysd = (_json(root / "doctrine/system.json") or {}) if root else {}
+def context(slug: str, tenant: Path, std: dict, root: Path | None, ident: dict | None = None) -> dict:
+    """The values every template is rendered with: the identity (the one input object) plus the tenant's declared options and platform rows."""
+    ident = ident or identity(slug, tenant, std, root)
+    row = (_json(root / REG) or {}).get("tenants", {}).get(slug, {}) or {}
+    topo = next((w for w in (_json(root / "doctrine/topology.json") or {}).get("workers", []) if w.get("id") == ident["runs_as"]["worker"]), {})
+    sysd = _json(root / "doctrine/system.json") or {}
     d, opt = std["scaffold"]["defaults"], row.get("scaffold") or {}
-    name = inst.get("name") or slug.replace("-", " ").title()
-    tagline = str((inst.get("brand") or {}).get("tagline") or row.get("description") or name)
-    summary = re.sub(r"\s*Run on Ultrastable, the foundation for any autonomous system\.?\s*$", "", tagline).strip()
-    worker = row.get("worker") or f"ultrastable-{slug}"
-    dep, live = deployment(slug, root) if root else (False, "")
-    host = (topo.get("routes") or [d["host"].replace("{slug}", slug)])[0]
-    hours = int(opt.get("beat_hours", d["beat_hours"]))
+    hours, h = int(opt.get("beat_hours", d["beat_hours"])), zlib.crc32(slug.encode())
     return {
-        "slug": slug, "name": name, "summary": summary, "repo": row.get("repo") or f"{std['core_repo'].split('/')[0]}/{slug}",
-        "worker": worker, "host": host, "url": (row.get("frontend") or f"https://{host}").rstrip("/"), "d1": f"ultrastable-{slug}",
-        "d1_id": ((sysd.get("resources") or {}).get("d1") or {}).get(slug, {}).get("id", ""),
+        "slug": slug, "name": ident["name"], "summary": ident["summary"], "repo": ident["repo"], "worker": ident["runs_as"]["worker"],
+        "d1": f"ultrastable-{slug}", "d1_id": ((sysd.get("resources") or {}).get("d1") or {}).get(slug, {}).get("id", ""),
         "beat_hours": hours, "cron": (topo.get("crons") or [_cron(slug, hours)])[0], "noun": opt.get("noun", d["noun"]),
         "ai": bool(row.get("ai")), "compatibility_date": topo.get("compatibility_date") or d["compatibility_date"],
         "core_repo": std["core_repo"], "bootstrap_url": std["bootstrap_url"], "vendor": dict(row.get("vendor") or {}),
-        "description": row.get("description") or f"{name}: a tenant system running on Ultrastable.",
-        "deployed": dep, "live_url": live,
-        "sync_cron": f"{zlib.crc32(slug.encode()) % 50 + 5} 5 * * *", "cleanup_cron": f"{zlib.crc32(slug.encode()) % 50 + 5} 4 * * *",
+        "sync_cron": f"{h % 50 + 5} 5 * * *", "cleanup_cron": f"{h % 50 + 5} 4 * * *",
     }
 
 
@@ -312,15 +332,16 @@ def _core_commit(root: Path) -> str:
     return r.stdout.strip() if r.returncode == 0 and r.stdout.strip() else "local"
 
 
-def scaffold(tenant: Path, slug: str, root: Path | None = None, std: dict | None = None) -> list[str]:
+def scaffold(tenant: Path, slug: str, root: Path | None = None, std: dict | None = None, ident: dict | None = None) -> list[str]:
     """Write every standard file into `tenant`. Idempotent: a second run changes nothing. The tenant's own code and words are never overwritten."""
     if std is None or root is None:
         std, root = locate()
     if root is None:
         raise SystemExit("tenantstd: the scaffold runs from the core repository (its templates live in scaffold/tenant)")
     tenant, done = Path(tenant), []
-    sc, ctx = std["scaffold"], context(slug, Path(tenant), std, root)
-    ctx["live_block"] = live_block(ctx)
+    ident = ident or identity(slug, tenant, std, root)
+    sc, ctx = std["scaffold"], context(slug, tenant, std, root, ident)
+    ctx["live_block"] = live_block(slug, root)
     tdir, fresh = root / sc["dir"], not (tenant / "worker/index.js").exists()
 
     def put(rel: str, body: str, what: str):
@@ -335,6 +356,8 @@ def scaffold(tenant: Path, slug: str, root: Path | None = None, std: dict | None
         src = root / "instances" / slug / name
         if src.is_file() and not (tenant / name).exists():
             put(name, src.read_text(encoding="utf-8"), "manifest")
+    cur_id = _json(tenant / "ultrastable.json") or {}
+    put("ultrastable.json", json.dumps({**cur_id, "identity": ident}, indent=1, ensure_ascii=False) + "\n", "identity in")
     for f in sc["files"]:
         rel, mode = f["path"], f["mode"]
         body, p = render((tdir / (rel + ".tmpl")).read_text(encoding="utf-8"), ctx), tenant / rel
@@ -357,7 +380,7 @@ def scaffold(tenant: Path, slug: str, root: Path | None = None, std: dict | None
         elif mode == "json":
             cur, want = (_json(p) or {}) if p.exists() else {}, json.loads(body)
             new = {**want, **cur} if cur else want  # the tenant's own keys and order win; the standard's keys are then set
-            new.update({k: v for k, v in want.items() if k in ("type", "private")})
+            new.update({k: v for k, v in want.items() if k in ("type", "private", "description")})
             new["scripts"] = {**(cur.get("scripts") or {}), "test": want["scripts"]["test"]}
             put(rel, json.dumps(new, indent=2, ensure_ascii=False) + "\n", "set keys in")
     for src, dst in sc["copy"].items():

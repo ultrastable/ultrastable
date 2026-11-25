@@ -72,8 +72,9 @@ class Scaffold(unittest.TestCase):
         block = T.BLOCKS["live"].search(readme).group(0)
         self.assertIn("Not deployed yet", block)
         self.assertNotIn("base-rates.ultrastable.org", readme)
-        self.assertIn("https://ultrastable.io/directory", block)
-        (self.d / "README.md").write_text(readme.replace("- **Not deployed yet.**", "- **Not deployed yet.** See https://base-rates.ultrastable.org/"))
+        self.assertIn("https://ultrastable.io", block)
+        self.assertEqual(block, T.live_block("base-rates", REPO))  # the one format: foundation/livelinks.py
+        (self.d / "README.md").write_text(readme.replace("Not deployed yet.", "Not deployed yet. See https://base-rates.ultrastable.org/"))
         self.assertTrue(any("dead link" in b for b in T.check_tenant(self.d, STD, REPO)))
         (self.d / "README.md").write_text(readme)
 
@@ -90,16 +91,38 @@ class LiveBlock(unittest.TestCase):
         self.assertEqual(T.deployment("base-rates", REPO), (False, ""))
         d = scratch()
         (d / "instance.json").write_text(json.dumps({"slug": "unlearn", "name": "Unlearn"}))
-        ctx = T.context("unlearn", d, STD, REPO)
-        block = T.live_block(ctx)
-        for need in ("<https://unlearn.ultrastable.org/>", "`ultrastable-unlearn`", "deploy-ultrastable", "https://unlearn.ultrastable.org/health", "https://unlearn.ultrastable.org/claims.json", "https://ultrastable.io/directory"):
+        block, ident = T.live_block("unlearn", REPO), T.identity("unlearn", d, STD, REPO)
+        self.assertEqual(ident["public_url"], "https://unlearn.ultrastable.org")
+        self.assertEqual(ident["runs_as"]["worker"], "ultrastable-unlearn")
+        for need in ("(https://unlearn.ultrastable.org/)", "`ultrastable-unlearn`", "https://unlearn.ultrastable.org/health", "https://unlearn.ultrastable.org/claims.json", "https://ultrastable.io/directory"):
             self.assertIn(need, block)
         (d / "README.md").write_text("# Unlearn\n\n" + block + "\n")
-        self.assertEqual(T.live_problems(d, "unlearn", STD, REPO), [])
+        self.assertEqual(T.live_problems(d, "unlearn", STD, REPO, ident), [])
+        self.assertEqual(T.live_problems(d, "unlearn", STD, None, ident), [], "the tenant-side reading, with no registries")
         (d / "README.md").write_text("# Unlearn\n\n" + block.replace("unlearn.ultrastable.org", "unlearn.example.org") + "\n")
         self.assertTrue(any("the registry says unlearn runs at https://unlearn.ultrastable.org" in b for b in T.live_problems(d, "unlearn", STD, REPO)))
+        self.assertTrue(any("ultrastable.json says public_url is https://unlearn.ultrastable.org" in b for b in T.live_problems(d, "unlearn", STD, None, ident)))
         (d / "README.md").write_text("# Unlearn\n\nNo block.\n")
         self.assertTrue(any("no Live block" in b for b in T.live_problems(d, "unlearn", STD, REPO)))
+
+    def test_one_identity_object_is_the_scaffolds_input_and_every_file_reads_it(self):
+        d = planned()
+        ident = json.loads((d / "ultrastable.json").read_text())["identity"]
+        self.assertEqual(sorted(ident), sorted(STD["identity"]["keys"] + ["planned_url", "layer"]))
+        self.assertIsNone(ident["public_url"])
+        self.assertEqual(json.loads((d / "package.json").read_text())["description"], ident["summary"])
+        self.assertIn('import MANIFEST from "../ultrastable.json"', (d / "worker/contract.js").read_text())
+        self.assertIn(f'"name": "{ident["runs_as"]["worker"]}"', (d / "wrangler.jsonc").read_text())
+        e = scratch()
+        for f in (REPO / "instances/base-rates").iterdir():
+            shutil.copy(f, e / f.name)
+        T.scaffold(e, "base-rates", REPO, STD, {**ident, "name": "Renamed Rates", "summary": "A different summary for the test."})
+        self.assertIn("# Renamed Rates", (e / "README.md").read_text())
+        self.assertEqual(json.loads((e / "package.json").read_text())["description"], "A different summary for the test.")
+        self.assertTrue(any("differs from what the registries say" in b for b in T.check_tenant(e, STD, REPO)))
+        ident2 = json.loads((d / "ultrastable.json").read_text()); ident2["identity"]["slug"] = "other"
+        (d / "ultrastable.json").write_text(json.dumps(ident2))
+        self.assertTrue(any("says slug 'other'" in b for b in T.check_tenant(d, STD, None)))
 
     def test_the_block_goes_under_the_title_and_the_tenants_own_words_are_kept(self):
         d = planned()
@@ -107,7 +130,7 @@ class LiveBlock(unittest.TestCase):
         (d / "AGENTS.md").write_text("# Mine\n\n- my rule\n")
         T.scaffold(d, "base-rates", REPO, STD)
         readme = (d / "README.md").read_text()
-        self.assertTrue(readme.startswith("# Mine\n\n<!-- ultrastable:live"))
+        self.assertTrue(readme.startswith("# Mine\n\n<!-- live:start"))
         self.assertIn("My own words.", readme)
         self.assertIn("- my rule", (d / "AGENTS.md").read_text())
         self.assertIn(STD["bootstrap_url"], (d / "AGENTS.md").read_text())

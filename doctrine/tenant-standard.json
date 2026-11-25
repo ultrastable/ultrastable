@@ -6,7 +6,8 @@
  "bootstrap_url": "https://raw.githubusercontent.com/ultrastable/ultrastable/main/agents/AGENTS.md",
  "positioning": "Ultrastable is the foundation for any autonomous system.",
  "files": [
-  {"id": "readme", "path": "README.md", "contains": ["Ultrastable is the foundation for any autonomous system.", "<!-- ultrastable:live", "<!-- /ultrastable:live -->"], "why": "what the system is and where it runs, in the repository a visitor lands on (LIVE-LINK-1)"},
+  {"id": "readme", "path": "README.md", "contains": ["Ultrastable is the foundation for any autonomous system.", "<!-- live:start", "<!-- live:end -->"], "why": "what the system is and where it runs, in the repository a visitor lands on (LIVE-LINKS-1)"},
+  {"id": "identity", "path": "ultrastable.json", "json": {"identity.slug": "{slug}", "identity.name": "*", "identity.repo": "*", "identity.summary": "*"}, "why": "IDENTITY-1: the one manifest of who the system is and where it runs; the README, package.json, the contract's SPEC and the wrangler reference read it"},
   {"id": "license", "path": "LICENSE", "contains": ["SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0"], "why": "a public repository with no licence grants nothing (DISCOVER-1 names the licence in the manifest)"},
   {"id": "agents", "path": "AGENTS.md", "contains": ["Ultrastable is the foundation for any autonomous system.", "{bootstrap_url}", "<!-- ultrastable:standard", "<!-- /ultrastable:standard -->", "vendor/ultrastable/tools/tenantstd.py"], "why": "any code agent starts from the core's current rules, not a stale copy"},
   {"id": "idea", "path": "IDEA.md", "contains": ["# System test"], "why": "the manifest: the idea and its system test (VISION-1)"},
@@ -24,11 +25,14 @@
   {"id": "vendored-from", "path": "vendor/ultrastable/VENDORED_FROM", "why": "the core commit and the hash of every vendored file, so an edited copy is seen offline"}
  ],
  "live": {
-  "_doc": "LIVE-LINK-1 (Rowan, 2026-11-25: \"Make sure all repos have full metadata and readmes and link to their live deploys. If somebody sees the code, then show them where it's running, show them the URL, provide that URL in the README ... what I'm not seeing is where these repos are actually deployed.\"). Every tenant README opens with a Live block between the ultrastable:live markers, rendered by the scaffold from doctrine/tenant-repos.json (`frontend`) or the tenant Worker's doctrine/topology.json route, never typed: the public URL as a link, the Worker it runs as, where it deploys from, its /health and /claims.json, and the platform and its directory. tenantstd fails a README whose Live URL is missing or differs from the registry. A planned tenant says Not deployed yet and links no host.",
+  "_doc": "LIVE-LINKS-1 (Rowan, 2026-11-25: \"Make sure all repos have full metadata and readmes and link to their live deploys. If somebody sees the code, then show them where it's running, show them the URL, provide that URL in the README ... what I'm not seeing is where these repos are actually deployed.\"). Every tenant README carries the Live block right under its title, in the one format foundation/livelinks.py renders from the registries (markers live:start / live:end), never typed: the public URL as a link, its /health and /claims.json, the Worker it runs as and how it gets there, and the platform. The scaffold writes it with livelinks; tenantstd fails a README with no block, a block that differs from the registries' (core side) or from ultrastable.json public_url (tenant side), and a planned tenant that says anything but Not deployed yet or links a host.",
   "platform": "https://ultrastable.io",
-  "directory": "https://ultrastable.io/directory",
   "links": ["/health", "/claims.json"],
   "undeployed": "Not deployed yet"
+ },
+ "identity": {
+  "_doc": "IDENTITY-1: each repository's identity lives in one manifest at its root, ultrastable.json `identity` (schema seed/standards/system.schema.json, reconciled by seed/scripts/surfaces.py). The scaffold takes this one object as its input (foundation/tenantstd.py identity() computes it from doctrine/tenant-repos.json, doctrine/topology.json and the tenant's instance.json), writes it, and renders the README, package.json description, worker/contract.js SPEC and wrangler.jsonc from it. public_url is null while nothing is deployed (planned_url then names the address it will take, and no README links it).",
+  "keys": ["name", "slug", "summary", "repo", "public_url", "license", "topics", "runs_as"]
  },
  "survival": ["credentials", "source-control", "budget", "cost-alerts", "payment", "dependencies", "runtime", "models", "health", "backups", "renewal", "improvement", "privacy"],
  "package": {"dependencies": "none", "why": "zero npm dependencies: nothing to install, nothing to break or be withdrawn (runway risk dependency-drift)"},
@@ -52,7 +56,7 @@
  },
  "scaffold": {
   "dir": "scaffold/tenant",
-  "_doc": "One template per standard file, named <path>.tmpl, rendered with the tenant's own values ({{slug}}, {{name}}, {{json:summary}} ...). mode managed: always written (the platform owns it). block: only the marked block of the file is replaced (AGENTS.md `standard`; README.md `live`, placed right under the title), the tenant's own text around it is kept. json: the named keys are set, every other key is kept. create: written only when the file is missing. starter: the first Worker, written only when the repository has no worker/index.js yet.",
+  "_doc": "One template per standard file, named <path>.tmpl, rendered with the tenant's own values ({{slug}}, {{name}}, {{json:summary}} ...). mode managed: always written (the platform owns it). block: only the marked block of the file is replaced (AGENTS.md `standard`; README.md `live`, the block of foundation/livelinks.py, placed right under the title), the tenant's own text around it is kept. json: the named keys are set, every other key is kept. create: written only when the file is missing. starter: the first Worker, written only when the repository has no worker/index.js yet.",
   "files": [
    {"path": ".github/workflows/ci.yml", "mode": "managed"},
    {"path": ".github/workflows/vendor-sync.yml", "mode": "managed"},
@@ -69,7 +73,7 @@
    {"path": "worker/worker.test.mjs", "mode": "starter"}
   ],
   "copy": {"LICENSE": "LICENSE"},
-  "generated": ["wrangler.jsonc", "vendor/ultrastable/VENDORED_FROM", "lifecycle.json"],
+  "generated": ["ultrastable.json", "wrangler.jsonc", "vendor/ultrastable/VENDORED_FROM", "lifecycle.json"],
   "defaults": {"beat_hours": 1, "noun": "entries", "host": "{slug}.ultrastable.org", "compatibility_date": "2026-11-12"}
  },
  "options": {
