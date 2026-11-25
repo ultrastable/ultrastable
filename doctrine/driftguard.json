@@ -21,7 +21,14 @@
    "ultrastable-did-it-work": [
     "17 6 * * *"
    ]
-  }
+  },
+  "pulse_external": [
+   {
+    "id": "tenant-ps-core",
+    "url": "https://ultrastable.org/pulse/watch",
+    "_why": "Practical Solutions' back end is deployed by its own repository; the web Worker serves /pulse/watch through its CORE binding (practical-solutions worker/src/pulse.js)"
+   }
+  ]
  },
  "missed_trigger": {
   "window_hours": 24,
