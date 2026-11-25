@@ -160,6 +160,12 @@
     {
       "ref": "vendor/ultrastable/",
       "reason": "The one vendor directory of each tenant repository (doctrine/tenant-standard.json); the core is the source of the vendored files, not a holder of that directory."
+    },
+    {
+      "ref": "worker/linked.js",
+      "repo": "what-works",
+      "path": "worker/linked.js",
+      "reason": "What Works' linked-data module lives in its own repository (STANDARDS-1 names it as the example of schema.org, DCAT and PROV-O in a tenant)."
     }
   ],
   "undescribed": {

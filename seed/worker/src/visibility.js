@@ -1,12 +1,18 @@
 // LIVE-1: with PUBLIC_HEALTH_ONLY=1 a runtime answers GET /health (the last tick's report), a public page at / (FULLSTACK-1), the public reads below (COLDSTART-1) and the signed GitHub webhook, and nothing else,
 // so its liveness can be read by a dashboard or a parent system while its backlog, screens and agent surfaces stay private.
-export const PUBLIC_CONTRACT = ['/.well-known/ultrastable.json', '/claims.json', '/social-queue.json', '/api/graph'];
+// COLDSTART-1: the standing rules make some public reads part of every system from birth, health-only or not: the discovery manifest
+// (DISCOVER-1: the directory lists a site only after reading it), the knowledge graph's public view (DATAGRAPH-1: counts and declared public
+// kinds only without the owner's bearer), progress (PROGRESS-1) and stickiness with its social queue (STICKY-1). Each is read-only and shows
+// nothing private. doctrine/coldstart.json names the same paths and `python3 -m foundation coldstart --check` fails when the two differ.
+// FLEET-CONTRACT-1 adds the statements (/claims.json) and the system's own social queue (empty, with the reason, until it has public content).
+export const PUBLIC_CONTRACT = Object.freeze(['/claims.json', '/social-queue.json']);
+export const PUBLIC_READS = Object.freeze(['/.well-known/ultrastable.json', '/api/graph', '/api/graph/insights', '/api/graph/search', '/api/graph/node', '/graph', '/api/progress', '/api/stickiness', ...PUBLIC_CONTRACT]);
+const STICKY_QUEUE = /^\/api\/stickiness\/queue\/[a-z0-9-]{1,60}\.json$/;
 export function hiddenByHealthOnly(env, method, pathname) {
   if (!env || env.PUBLIC_HEALTH_ONLY !== '1') return false;
   if (method === 'GET' && (PUBLIC_READS.includes(pathname) || STICKY_QUEUE.test(pathname))) return false;
   if (pathname === '/health' && method === 'GET') return false;
   if (pathname === '/' && method === 'GET') return false;  // FULLSTACK-1: the public page below; it shows nothing the health report does not
-  if (method === 'GET' && PUBLIC_CONTRACT.includes(pathname)) return false;  // FLEET-CONTRACT-1, DISCOVER-1: the manifest, the statements, the (empty until it has content) social queue and the graph's public view (counts only without the owner's bearer)
   if (pathname === '/hook/github' && method === 'POST') return false;
   if (pathname === '/hook/cloudflare' && method === 'POST') return false;  // CF-ALERTS-1: Cloudflare's alert webhook, verified by its own secret
   if (pathname === '/pulse/watch' && method === 'POST') return false;  // LOOPPROOF-1: the second producer; it only runs a tick when the newest one is stale

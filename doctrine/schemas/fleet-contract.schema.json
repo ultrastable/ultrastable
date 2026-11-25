@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/fleet-contract.schema.json",
+  "title": "fleet-contract (doctrine/fleet-contract.json)",
+  "description": "Contract for doctrine/fleet-contract.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "contract": {
+      "type": "number"
+    },
+    "module": {
+      "type": "string"
+    },
+    "surfaces": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "systems": {
+      "type": "object",
+      "properties": {
+        "ultrastable": {
+          "type": "object"
+        },
+        "second-tenant": {
+          "type": "object"
+        }
+      }
+    },
+    "platform_link": {
+      "type": "string"
+    },
+    "user_agent": {
+      "type": "string"
+    },
+    "max_statements": {
+      "type": "number"
+    },
+    "runs_as": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": "string"
+        },
+        "ultrastable": {
+          "type": "string"
+        },
+        "second-tenant": {
+          "type": "string"
+        },
+        "practical-solutions": {
+          "type": "string"
+        }
+      }
+    },
+    "repos": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": "string"
+        },
+        "ultrastable": {
+          "type": "string"
+        },
+        "second-tenant": {
+          "type": "string"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "contract",
+    "max_statements",
+    "module",
+    "platform_link",
+    "repos",
+    "runs_as",
+    "surfaces",
+    "systems",
+    "user_agent"
+  ]
+}

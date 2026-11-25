@@ -315,6 +315,22 @@
       "url": "durable-facts.schema.json"
     },
     {
+      "name": "fleet-contract.json",
+      "description": "Contract for doctrine/fleet-contract.json",
+      "fileMatch": [
+        "doctrine/fleet-contract.json"
+      ],
+      "url": "fleet-contract.schema.json"
+    },
+    {
+      "name": "fleet-map.json",
+      "description": "Contract for doctrine/fleet-map.json",
+      "fileMatch": [
+        "doctrine/fleet-map.json"
+      ],
+      "url": "fleet-map.schema.json"
+    },
+    {
       "name": "fleet.json",
       "description": "Contract for doctrine/fleet.json",
       "fileMatch": [
@@ -449,6 +465,14 @@
         "doctrine/loop-ownership.json"
       ],
       "url": "loop-ownership.schema.json"
+    },
+    {
+      "name": "managers.json",
+      "description": "Contract for doctrine/managers.json",
+      "fileMatch": [
+        "doctrine/managers.json"
+      ],
+      "url": "managers.schema.json"
     },
     {
       "name": "market-evidence.json",
@@ -681,6 +705,14 @@
         "doctrine/rootcauses.json"
       ],
       "url": "rootcauses.schema.json"
+    },
+    {
+      "name": "rule-refs.json",
+      "description": "Contract for doctrine/rule-refs.json",
+      "fileMatch": [
+        "doctrine/rule-refs.json"
+      ],
+      "url": "rule-refs.schema.json"
     },
     {
       "name": "rules-baseline.json",
@@ -953,6 +985,14 @@
         "doctrine/tenant-repos.json"
       ],
       "url": "tenant-repos.schema.json"
+    },
+    {
+      "name": "tenant-standard.json",
+      "description": "Contract for doctrine/tenant-standard.json",
+      "fileMatch": [
+        "doctrine/tenant-standard.json"
+      ],
+      "url": "tenant-standard.schema.json"
     },
     {
       "name": "tenant-storage.json",
