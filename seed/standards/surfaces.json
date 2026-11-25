@@ -541,6 +541,58 @@
       "reason": "internal feed read by the site worker over a service binding and drained by the social module, not a capability for callers"
     },
     {
+      "id": "graph",
+      "path": "/api/graph",
+      "methods": [
+        "GET"
+      ],
+      "kind": "rest",
+      "audience": "public",
+      "standards": [],
+      "discoverable": false,
+      "description": "The knowledge graph's counts, freshness, growth, insight yield and newest leads (KGRAPH-1).",
+      "reason": "a tenant's own public data view, read by its pages; not a capability for agent callers"
+    },
+    {
+      "id": "graph-export",
+      "path": "/api/graph/export",
+      "methods": [
+        "GET"
+      ],
+      "kind": "rest",
+      "audience": "public",
+      "standards": [],
+      "discoverable": false,
+      "description": "A bounded export of the newest knowledge graph nodes and the links among them, for the public view (KGRAPH-1).",
+      "reason": "a tenant's own public data view, read by its pages; not a capability for agent callers"
+    },
+    {
+      "id": "graph-lead",
+      "path": "/api/graph/lead/{id}",
+      "methods": [
+        "GET"
+      ],
+      "kind": "rest",
+      "audience": "public",
+      "standards": [],
+      "discoverable": false,
+      "description": "One knowledge graph lead and its status; the closing probe of a KG item (KGRAPH-1).",
+      "reason": "a tenant's own public data view, read by its pages; not a capability for agent callers"
+    },
+    {
+      "id": "graph-page",
+      "path": "/graph",
+      "methods": [
+        "GET"
+      ],
+      "kind": "page",
+      "audience": "public",
+      "standards": [],
+      "discoverable": false,
+      "description": "The public view of the knowledge graph (KGRAPH-1).",
+      "reason": "a tenant's own public data view, read by its pages; not a capability for agent callers"
+    },
+    {
       "id": "decisions",
       "path": "/api/decisions",
       "methods": [

@@ -1058,7 +1058,7 @@ export default {
      },
      "prediction": "kg_age_hours <= 36 within 48 h",
      "metric_label": "hours since the core knowledge graph was last rebuilt",
-     "measured": 0.0,
+     "measured": 0.1,
      "status": "met",
      "n": 1,
      "source": "ops/kgraph/core.json at 2026-11-25T16:03:06Z",

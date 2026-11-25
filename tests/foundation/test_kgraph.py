@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """KGRAPH-1: the repository half of the knowledge graph builds, finds leads, files at most the daily cap and settles a lead when the pair is linked."""
 import json, tempfile, unittest
 from pathlib import Path

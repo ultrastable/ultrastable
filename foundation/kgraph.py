@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """KGRAPH-1 (Rowan, 2026-11-25): every Ultrastable system keeps a knowledge graph of all its data and mines it for connections nobody made.
 
 The tick Worker builds the live graph from its D1 records (seed/worker/src/graph.js). This is the repository half, run daily inside the temporal

@@ -22,7 +22,7 @@ Can a system find connections in its own records that nobody asked it to find?. 
 - KGRAPH-1 (`foundation/kgraph.py`): the daily build reads every work item, study and rule, and a probe fails when the graph is over 36 hours old
 - KGRAPH-1 (`seed/worker/src/graph.js`): each tick Worker reads only rows past its cursor and files KG-LAG when it falls behind
 
-**Measured here:** hours since the core knowledge graph was last rebuilt: 0.0 (n = 1). Target <= 36. Verdict: **met**.
+**Measured here:** hours since the core knowledge graph was last rebuilt: 0.1 (n = 1). Target <= 36. Verdict: **met**.
 Source: ops/kgraph/core.json at 2026-11-25T16:03:06Z.
 
 ### K2. It covers what the system knows (systems)

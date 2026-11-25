@@ -3,7 +3,7 @@
 // KGRAPH-1 (Rowan, 2026-11-25): "All Ultrastable deployments and systems shall have a knowledge graph (graph network) to automatically build and maintain a
 // graph of connections for all data." Every seeded system carries this tick step, so a tenant gets its graph with no setup.
 // Ingest: each source (work items, predictions, decisions, metrics) is read past its own rowid cursor, at most `batch` rows a pass, so a pass reads only
-// what changed (QNFO's qnfo-graph read 1.0B D1 rows in 30 days by rescanning; this never rescans). Extract: deterministic, no model: the row itself is a
+// what changed (a graph that rescans its tables on every pass reads billions of rows a month; this never rescans). Extract: deterministic, no model: the row itself is a
 // node, ids and rule tags it mentions (FOO-12, Q-BAR-x) and file paths become nodes with `mentions` edges, a prediction links to its metric. Each node
 // keeps its top terms; when Workers AI is bound and the `embed` knob is on, up to `embed_max` nodes a pass also get a small embedding.
 // Insight: every new node is compared with a bounded pool of recent nodes. A pair that reads alike but has no edge and no shared neighbour is a lead

@@ -293,6 +293,33 @@
     "file": "tests/foundation/test_improve.py",
     "contains": "def test_frontend_and_backend_lanes_every_pass"
    }
+  },
+  {
+   "id": "kgraph-agents",
+   "source": "agents/AGENTS.md",
+   "quote": "\"All UltraStable deployments and systems shall have a knowledge graph (graph network) to automatically build and maintain a graph of connections for all data.\"",
+   "probe": {
+    "file": "seed/worker/test/graph.test.js",
+    "contains": "look-alikes with no link become a lead"
+   }
+  },
+  {
+   "id": "kgraph-agents-pi",
+   "source": "agents/PROJECT-INSTRUCTIONS.md",
+   "quote": "\"All UltraStable deployments and systems shall have a knowledge graph (graph network) to automatically build and maintain a graph of connections for all data.\"",
+   "probe": {
+    "file": "seed/worker/test/graph.test.js",
+    "contains": "look-alikes with no link become a lead"
+   }
+  },
+  {
+   "id": "kgraph-seed-agents",
+   "source": "seed/agents/AGENTS.md",
+   "quote": "\"All UltraStable deployments and systems shall have a knowledge graph (graph network) to automatically build and maintain a graph of connections for all data.\"",
+   "probe": {
+    "file": "seed/worker/test/graph.test.js",
+    "contains": "look-alikes with no link become a lead"
+   }
   }
  ],
  "baseline": [
