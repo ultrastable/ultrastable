@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-25-standards-first-1",
+  "kind": "decision",
+  "date": "2026-11-25",
+  "title": "STANDARDS-FIRST-1",
+  "body": "Doctrine files validated by JSON Schema 2020-12 through a SchemaStore catalog; CloudEvents, OpenSLO, OpenTofu, OpenFeature, SLSA/SBOM and Conventional Commits registered as planned in seed/standards/standards.json.",
+  "probe": "file:foundation/schemas.py"
+ },
+ "kind": "decision",
+ "title": "STANDARDS-FIRST-1",
+ "session": ""
+}
