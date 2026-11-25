@@ -241,6 +241,12 @@ class Boot:
             (found if os.environ.get(c["env"]) else missing).append((name, c))
         self.connectors_present = {n for n, _ in found}
         self.tools = {t: bool(shutil.which(t)) for t in ("git", "node", "npx", "wrangler")}
+        # HOSTED-1 (LAUNCH-PATH-1): a system started by a person with no code agent runs on its host's account. The host deploys it and binds
+        # its models, so no secret is asked of anyone: the missing connectors are recorded as provided, never opened as owner cards.
+        self.hosted_by = self.idea["front"].get("hosted_by", "").strip() if hasattr(self, "idea") else ""
+        if self.hosted_by:
+            names = sorted(n for n, c in missing if not c.get("optional"))
+            return "ok", f"hosted by {self.hosted_by}: runtime and models come from the host ({', '.join(names) or 'nothing missing'}); no secret is asked of the owner"
         for name, c in missing:
             if c.get("optional"):
                 continue
@@ -258,7 +264,7 @@ class Boot:
         tier = [t for t in tiers if self.budget >= t["budget_usd_per_month_min"]][-1]
         aliases = self.config["model_ladder"]["aliases"]
         self.models = {k: aliases[tier[k]] for k in ("doer", "reviewer", "manager")}
-        if self.budget > 0:
+        if self.budget > 0 and not getattr(self, "hosted_by", ""):  # a hosted system spends inside its host's cap; the owner approves nothing
             self.state["gate_cards"].append(self.card(
                 "GATE-BUDGET", f"Approve spending up to {self.budget:g} USD/month on model and runtime usage",
                 "spending money is identity-bound", "free tiers only; the fleet logs cost estimates",

@@ -39,6 +39,8 @@ jobs:
         run: python3 -m foundation provenance --settle-due && python3 -m foundation provenance --changelog --apply
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+      - name: Impact and reach pass (IMPROVE-1)
+        run: python3 -m foundation improve --run --apply
       - name: Product manager pass
         run: python3 -m foundation pm --run --apply --pr
         env:

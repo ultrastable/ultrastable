@@ -1,0 +1,12 @@
+{
+  "id": "Q-LAUNCH-1",
+  "title": "Q-LAUNCH-1: A visitor app's own system ships code to its own repository",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** grep:site/launchpath.test.mjs::its own system ships to its own repository\n**Status:** closed\n\nLAUNCH-PATH-1 deploys a system for every idea typed at ultrastable.io (deploy/launch-apps.mjs) and creates its repository from the seed. The deployed Worker has its database and the account's models but no credential for its repository, so its managers measure and file work and its executor cannot yet open a pull request there. Give each app's Worker an installation token scoped to its one repository (the lane App, minted server-side and sealed in the credential store) and point its executor and merge lane at that repository. Paths: deploy/launch-apps.mjs, deploy/deploy-seed.mjs, seed/worker/src/executor.js, seed/worker/src/auth/.\n\nsize: M\n\n**Closing probe:** a visitor app's repository shows a merged pull request authored by its own Worker within 48 hours of launch; site/launchpath.test.mjs carries the story\n\n**Evidence:** the tick Worker mints a one-hour token for the app's one repository (seed/worker/src/apprepos.js, /host/app-token); the site binds the app's key at deploy (site/deployer.js host_repo); the app's Worker reads it in getToken (seed/worker/src/auth/index.js). Tests: seed/worker/test/apprepos.test.js and the story in site/launchpath.test.mjs. Live proof is the daily launch run.\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "growth"
+  ],
+  "milestone": "Now",
+  "workstream": "Executor queue"
+}

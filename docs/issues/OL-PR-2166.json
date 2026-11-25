@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-2166",
+  "title": "OL-PR-2166: land or supersede pull request #2166 (conflict)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #2166 is conflict\n**Done check:** cmd:python3 -m foundation loopowner --closed 2166\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #2166 (`claude/project-thread-uxa262` at 58f3e73d3a, opened by rwnq8): KGRAPH-1: a knowledge graph in every system, with its own insight loop. The session that opened it is not its closer and is never asked to act. The branch conflicts with main. Merge main into the branch and resolve it, or redo the change from main in a new pull request and close this one as superseded. Files (41): .github/workflows/temporal.yml, README.md, agents/AGENTS.md, agents/PROJECT-INSTRUCTIONS.md, docs/PROJECT-MEMORY.md, docs/issues/Q-KG-7a2c2519a6.json, docs/issues/Q-KG-9eb44e3d13.json, doctrine/claim-code.json, doctrine/claims.json, doctrine/kgraph.json, doctrine/writeback/decision-2026-11-25-kgraph-1-knowledge-graph-in-every-system.json, doctrine/writeback/lesson-2026-11-25-graph-leads-need-template-siblings-excluded.json, foundation/__main__.py, foundation/kgraph.py, foundation/research.py, ops/checks-session.jsonl, ops/kgraph/core.json, ops/kgraph/leads.jsonl, ops/kgraph/series.jsonl, platform/adapters/README.md, research/papers/ashby-1952.md, research/papers/chen-stratton-2026.md, research/papers/knowledge-graph-2026.md, research/papers/open-loops-2026.md, research/papers/safety-by-limits-2026.md, research/studies/knowledge-graph-2026.json, seed/agents/AGENTS.md, seed/autonomy/retention.json, seed/standards/surfaces.json, seed/worker/migrations/0031_graph.sql, seed/worker/migrations/index.json, seed/worker/src/graph.js, seed/worker/src/index.js, seed/worker/test/graph.test.js, site/claims-data.js, site/dashboard-data.js, site/research-data.js, site/self-data.js, site/trajectory-data.js, site/worker.js .... Closing probe: pull request #2166 is merged or closed.",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

@@ -1,0 +1,10 @@
+{
+ "_doc": "STATIC-CONTENT-1 (Rowan, 2026-11-25): static content is not autonomous. Read by foundation/staticcontent.py. A listed page whose visible text has not changed in max_unchanged_days is a finding (detector static-content). Exempt only pages that are meant to stay fixed, each with its reason; making a page change by touching its text is never the fix, binding it to a loop is.",
+ "marker": "STATIC-CONTENT-1",
+ "max_unchanged_days": 14,
+ "max_pages": 60,
+ "exempt": [
+  {"pattern": "/(terms|privacy|license|licence|security|accessibility)(/|$|\\.html)", "reason": "legal and policy text changes by decision, not by a loop"},
+  {"pattern": "/rubric(/|$)", "reason": "a method statement; its verdicts are the live part"}
+ ]
+}

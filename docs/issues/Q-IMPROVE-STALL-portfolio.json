@@ -1,0 +1,15 @@
+{
+  "id": "Q-IMPROVE-STALL-portfolio",
+  "title": "Q-IMPROVE-STALL-portfolio: portfolio manager landed no improvement in 14 days",
+  "body": "**Owner:** portfolio-manager\n**Trigger:** improve --run\n**Done check:** cmd:python3 -m foundation improve --probe tier:portfolio\n**Prediction:** portfolio_merges >= 1 within 336 h\n**Status:** closed\n\nNo merge on main matched this tier's evidence pattern in 14 days. Take the highest-value item for this tier from the queue and ship it; if the queue holds none, file one from doctrine/improve.json.\n\n**Closing probe:** cmd:python3 -m foundation improve --probe tier:portfolio\n\n\n**Vacuous:** 2026-11-25T15:51:35Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n\n\n**Evidence:** closing probe passed (2 consecutive passes after a recorded failure): tier:portfolio: pass\n",
+  "labels": [
+    "p0",
+    "agent-ready",
+    "role:portfolio-manager",
+    "growth",
+    "improve",
+    "stall"
+  ],
+  "milestone": "Now",
+  "workstream": "Growth"
+}

@@ -266,6 +266,87 @@
     "file": "tests/foundation/test_seedadmit.py",
     "contains": "def test_autonomy_is_read_from_the_seed"
    }
+  },
+  {
+   "id": "improve-loop-agents",
+   "source": "agents/AGENTS.md",
+   "quote": "\"Automatically improve impact and reach. An Ultrastable system shall always continue improving entirely on its own, 100% autonomously.\"",
+   "probe": {
+    "file": "tests/foundation/test_improve.py",
+    "contains": "def test_frontend_and_backend_lanes_every_pass"
+   }
+  },
+  {
+   "id": "improve-loop-seed",
+   "source": "seed/agents/AGENTS.md",
+   "quote": "\"Automatically improve impact and reach. An Ultrastable system shall always continue improving entirely on its own, 100% autonomously.\"",
+   "probe": {
+    "file": "tests/foundation/test_improve.py",
+    "contains": "def test_frontend_and_backend_lanes_every_pass"
+   }
+  },
+  {
+   "id": "improve-loop-agents-pi",
+   "source": "agents/PROJECT-INSTRUCTIONS.md",
+   "quote": "\"Automatically improve impact and reach. An Ultrastable system shall always continue improving entirely on its own, 100% autonomously.\"",
+   "probe": {
+    "file": "tests/foundation/test_improve.py",
+    "contains": "def test_frontend_and_backend_lanes_every_pass"
+   }
+  },
+  {
+   "id": "datagraph-agents",
+   "source": "agents/AGENTS.md",
+   "quote": "\"All UltraStable deployments and systems shall have a knowledge graph (graph network) to automatically build and maintain a graph of connections for all data.",
+   "probe": {
+    "file": "seed/worker/test/datagraph.test.js",
+    "contains": "a pass builds the graph from every table with no configuration"
+   }
+  },
+  {
+   "id": "datagraph-seed-agents",
+   "source": "seed/agents/AGENTS.md",
+   "quote": "\"All UltraStable deployments and systems shall have a knowledge graph (graph network) to automatically build and maintain a graph of connections for all data.",
+   "probe": {
+    "file": "seed/worker/test/datagraph.test.js",
+    "contains": "a pass builds the graph from every table with no configuration"
+   }
+  },
+  {
+   "id": "datagraph-agents-pi",
+   "source": "agents/PROJECT-INSTRUCTIONS.md",
+   "quote": "\"All UltraStable deployments and systems shall have a knowledge graph (graph network) to automatically build and maintain a graph of connections for all data.",
+   "probe": {
+    "file": "seed/worker/test/datagraph.test.js",
+    "contains": "a pass builds the graph from every table with no configuration"
+   }
+  },
+  {
+   "id": "sync-both-ways-agents-agents",
+   "source": "agents/AGENTS.md",
+   "quote": "\"Every Ultrastable system shall always improve and update itself and the Ultrastable platform automatically.\"",
+   "probe": {
+    "file": "tests/foundation/test_improve.py",
+    "contains": "class SyncBothWays"
+   }
+  },
+  {
+   "id": "sync-both-ways-seed-agents-agents",
+   "source": "seed/agents/AGENTS.md",
+   "quote": "\"Every Ultrastable system shall always improve and update itself and the Ultrastable platform automatically.\"",
+   "probe": {
+    "file": "tests/foundation/test_improve.py",
+    "contains": "class SyncBothWays"
+   }
+  },
+  {
+   "id": "sync-both-ways-agents-project-instructions",
+   "source": "agents/PROJECT-INSTRUCTIONS.md",
+   "quote": "\"Every Ultrastable system shall always improve and update itself and the Ultrastable platform automatically.\"",
+   "probe": {
+    "file": "tests/foundation/test_improve.py",
+    "contains": "class SyncBothWays"
+   }
   }
  ],
  "baseline": [

@@ -1,0 +1,72 @@
+{
+ "name": "Replication Ledger",
+ "slug": "replication-ledger",
+ "kind": "community",
+ "owner": {
+  "name": "Rowan",
+  "jurisdiction": "NL",
+  "contact_binding": "OWNER_CONTACT",
+  "contact_binding_backup": "OWNER_CONTACT_BACKUP"
+ },
+ "brand": {
+  "public_name": "Replication Ledger",
+  "tagline": "Replication Ledger: which landmark findings held up and which failed, across many fields, updated as replications publish. Run on Ultrastable, the foundation for any autonomous system.",
+  "separate_from": [
+   "Ultrastable",
+   "QNFO",
+   "Practical Solutions",
+   "Unlearn",
+   "What Works"
+  ]
+ },
+ "idea": "An encyclopedic ledger of landmark findings across psychology, medicine, economics, physics, biology and more: each finding's claim, original study and every replication attempt with its kind, outcome and DOI, and a standing computed by one rubric. A weekly beat searches OpenAlex and Crossref for new replications, reanalyses and retractions, recomputes every standing and logs each move with the paper that moved it.",
+ "goals": [
+  "Ledger at least 25 landmark findings in five fields, every attempt cited by DOI, standing computed",
+  "Run every finding's replication search within 30 days, measured at /api/freshness",
+  "Log every change of standing with the paper that moved it, published at /changes"
+ ],
+ "positioning": "Same shape as Unlearn and What Works (guess first, graded evidence, a loop that keeps checking, no accounts or trackers), aimed at research findings themselves: did the result survive when others tried it again. Unlearn's 'Famous findings, retold' topic can link each retold study to its ledger entry. Seeded from the idea bank entry replication-ledger (doctrine/idea-bank.json).",
+ "funding": {
+  "routes": [],
+  "individual_eligible_only": true
+ },
+ "social": {
+  "channels": [],
+  "mode": "dry-run",
+  "via": "core publisher seed/worker/src/social.js within social/gate.json, once the worker is live and its queue is listed there"
+ },
+ "runtime": {
+  "provider": "cloudflare"
+ },
+ "repos": {
+  "org": "ultrastable",
+  "names": [
+   "replication-ledger"
+  ],
+  "canonical": "ultrastable/replication-ledger"
+ },
+ "disclosure": {
+  "public_allowed": true,
+  "gate": "none",
+  "safe_now_only": false
+ },
+ "ip": {
+  "has_invention": false,
+  "priority_filed": false,
+  "has_practitioner": false
+ },
+ "budget": {
+  "usd_per_month": 15,
+  "actions_minutes_monthly": 100
+ },
+ "facts": {
+  "has_institution": false
+ },
+ "system_test": {
+  "loop": "Every week the beat searches OpenAlex and Crossref for new replications, reanalyses and retractions of each finding, files candidates under a verbatim-quote guard, recomputes every standing and logs each move with the paper that moved it.",
+  "measure": "share of findings searched within 30 days, target 1.0; every change of standing logged with a reason; share of citations resolving at Crossref, target 1.0",
+  "upkeep": "replications, reanalyses and retractions publish every week, sources rot, standings must move when the evidence moves, new findings and fields are added",
+  "run_cost": "15 USD a month for the back end"
+ },
+ "origin": "Rowan, project thread 'Build the replication ledger on Ultrastable', 2026-11-25"
+}

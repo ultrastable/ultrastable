@@ -44,6 +44,15 @@ class IdeaBank(unittest.TestCase):
         bank["ideas"] = [dict(bank["ideas"][0], data=[])]
         self.assertTrue(any("data" in e for e in B.validate(bank)))
 
+    def test_breadth_rule_refuses_a_single_field_idea_and_grow_is_shown_the_owner_edits(self):
+        bank = json.loads((ROOT / "doctrine/idea-bank.json").read_text())
+        self.assertTrue(bank["owner_edits"])
+        seen = []
+        B.grow(json.loads(json.dumps(bank)), complete=lambda p: seen.append(p) or None)
+        self.assertIn(bank["owner_edits"][-1]["after"], seen[0])
+        bank["ideas"][0]["text"] = "A ledger for a field of study"
+        self.assertTrue(any("BREADTH-1" in e for e in B.validate(bank)))
+
     def test_grow_admits_only_through_the_gates(self):
         bank = json.loads(B.BANK.read_text())
         good = dict(bank["ideas"][0], id="new-one", domain="health", data=[{"name": "own", "note": "own records"}])

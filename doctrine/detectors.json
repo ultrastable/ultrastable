@@ -560,6 +560,23 @@
       "root_cause": "a seed was deployed with a database and a cron only: no source-control credential and no repository of its own, so every loop that reads or writes a repository fails and the seed stays at ticking",
       "owner": "operations",
       "remedy": "Read the blocking loops in the seed's /health ignition field. Give the generated seed its own repository and a token scoped to that repository only, bound by deploy/deploy-seed.mjs, then let its loops record beats; never accept /health 200 as autonomy and never lower the stage (SEED-AUTONOMY-1)."
-    }
-  ]
+    },
+    {
+      "id": "tenant-health",
+      "failure_mode": "fm-tenant-unhealthy",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "tenantrepos",
+        "--health"
+      ],
+      "timeout": 120,
+      "root_cause": "a tenant worker's clock stopped, or a part it reports (its evidence search, reader or feed) says ok false while the clock still ticks",
+      "owner": "operations",
+      "remedy": "Read the tenant's /health and its last beats' reports (error samples per source); fix the tenant repository by PR; the tick's tenant-deploy step ships it."
+    },
+    {"id": "static-content", "failure_mode": "fm-static-content", "kind": "command", "run": ["python3", "-m", "foundation", "staticcontent", "--run", "--apply"], "timeout": 300, "root_cause": "a published page is not bound to any loop that regenerates it, so it stopped changing", "owner": "product", "remedy": "Bind the named page to a loop (generated block, feed or live read) in the system that serves it; never edit its text only to change it."}
+]
 }

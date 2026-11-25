@@ -1,0 +1,14 @@
+{"at": "2026-11-25T14:32:02.025929+00:00", "event": "filed", "id": "Q-IMPROVE-STALL-portfolio", "metric": null, "baseline": null}
+{"at": "2026-11-25T14:32:02.025929+00:00", "event": "filed", "id": "Q-IMPROVE-SIGNAL-suggestions", "metric": null, "baseline": null}
+{"at": "2026-11-25T14:32:02.025929+00:00", "event": "filed", "id": "Q-IMPROVE-SIGNAL-market", "metric": null, "baseline": null}
+{"at": "2026-11-25T14:32:02.025929+00:00", "event": "filed", "id": "Q-IMPROVE-MARKET", "metric": null, "baseline": null}
+{"at": "2026-11-25T14:32:02.025929+00:00", "event": "filed", "id": "Q-IMPROVE-plus-seed-improve", "metric": "external_referrals_7d", "baseline": 83.0}
+{"at": "2026-11-25T14:32:02.025929+00:00", "event": "filed", "id": "Q-IMPROVE-llms-full", "metric": "external_referrals_7d", "baseline": 83.0}
+{"at": "2026-11-25T14:32:13.890155+00:00", "event": "filed", "id": "Q-IMPROVE-plus-executor-verdicts", "metric": "external_referrals_7d", "baseline": 83.0}
+{"at": "2026-11-25T14:32:13.890155+00:00", "event": "filed", "id": "Q-IMPROVE-impact-page", "metric": "external_referrals_7d", "baseline": 83.0}
+{"at": "2026-11-25T15:23:22.366629+00:00", "event": "filed", "id": "Q-IMPROVE-fe-vitals-beacon", "metric": "uiux:findings_total", "baseline": 0.0, "better": "down"}
+{"at": "2026-11-25T15:23:22.366629+00:00", "event": "filed", "id": "Q-IMPROVE-be-server-timing", "metric": "uiux:findings_total", "baseline": 0.0, "better": "down"}
+{"at": "2026-11-25T15:23:22.366629+00:00", "event": "filed", "id": "Q-IMPROVE-opensearch", "metric": "search_referrals_7d", "baseline": 38.0, "better": "up"}
+{"at": "2026-11-25T15:23:27.137062+00:00", "event": "filed", "id": "Q-IMPROVE-fe-skip-link", "metric": "uiux:findings_total", "baseline": 0.0, "better": "down"}
+{"at": "2026-11-25T15:23:27.137062+00:00", "event": "filed", "id": "Q-IMPROVE-be-early-hints", "metric": "external_referrals_7d", "baseline": 83.0, "better": "up"}
+{"at": "2026-11-25T15:33:34.746296+00:00", "event": "filed", "id": "Q-IMPROVE-SIGNAL-uiux", "metric": null, "baseline": null, "better": "up"}

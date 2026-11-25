@@ -1,0 +1,15 @@
+{
+  "id": "Q-IMPROVE-opensearch",
+  "title": "Q-IMPROVE-opensearch: Add an OpenSearch description so browsers and agents can search the site",
+  "body": "**Owner:** marketing-manager\n**Trigger:** improve --run\n**Done check:** grep:site/worker.js::opensearch\n**Prediction:** search_referrals_7d > 38 within 168 h\n**Status:** open\n\nKind: reach. Baseline search_referrals_7d = 38. Settled 7 days after it closes: kept if search_referrals_7d moved the right way, else replaced.\n\n**Closing probe:** grep:site/worker.js::opensearch\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "role:marketing-manager",
+    "growth",
+    "improve",
+    "reach"
+  ],
+  "milestone": "Now",
+  "workstream": "Growth"
+}

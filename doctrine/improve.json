@@ -1,0 +1,206 @@
+{
+  "rule": "IMPROVE-1 (Rowan, 2026-11-25): \"Automatically improve impact and reach. An Ultrastable system shall always continue improving entirely on its own, 100% autonomously.\" FRONTEND-AUTO-1 (Rowan, 2026-11-25): \"An Ultrastable system shall always automate its back-end and also front-end development.\"",
+  "min_items_per_cycle": 2,
+  "max_open_from_loop": 12,
+  "plus_share": 0.2,
+  "plus_per_cycle": 1,
+  "market_max_age_days": 7,
+  "settle_days": 7,
+  "tiers": [
+    {
+      "id": "portfolio",
+      "window_days": 14,
+      "evidence": "(?i)portfolio|spinoff|tenant|benefit|impact"
+    },
+    {
+      "id": "program",
+      "window_days": 7,
+      "evidence": "(?i)loop|clock|lane|executor|program|improve"
+    },
+    {
+      "id": "project",
+      "window_days": 3,
+      "evidence": "(?i)^(?!.*\\[skip ci\\]).*\\(#\\d+\\)"
+    },
+    {
+      "id": "product",
+      "window_days": 7,
+      "evidence": "(?i)growth|reach|seo|feed|page|site|research|plus|add|ship"
+    }
+  ],
+  "signals": [
+    {
+      "id": "reach",
+      "path": "ops/reach/metrics.jsonl",
+      "key": "external_referrals_7d",
+      "max_age_hours": 48
+    },
+    {
+      "id": "search",
+      "path": "ops/reach/metrics.jsonl",
+      "key": "search_referrals_7d",
+      "max_age_hours": 48
+    },
+    {
+      "id": "social",
+      "path": "ops/reach/metrics.jsonl",
+      "key": "social_referrals_7d",
+      "max_age_hours": 48
+    },
+    {
+      "id": "tenant",
+      "path": "ops/reach/metrics.jsonl",
+      "key": "ps_page_views_7d",
+      "max_age_hours": 48
+    },
+    {
+      "id": "suggestions",
+      "path": "ops/reach/metrics.jsonl",
+      "key": "suggestions_7d",
+      "max_age_hours": 48
+    },
+    {
+      "id": "market",
+      "path": "ops/rnd/log.jsonl",
+      "key": null,
+      "max_age_hours": 168
+    },
+    {
+      "id": "insight",
+      "path": "ops/insight/findings.json",
+      "key": null,
+      "max_age_hours": 72
+    },
+    {
+      "id": "uiux",
+      "path": "ops/uiux/status.json",
+      "key": null,
+      "max_age_hours": 48
+    },
+    {
+      "id": "tenant-sync",
+      "path": "ops/tenant-sync/metrics.json",
+      "key": null,
+      "max_age_hours": 48
+    }
+  ],
+  "bank": [
+    {
+      "id": "llms-full",
+      "kind": "reach",
+      "metric": "external_referrals_7d",
+      "title": "Serve /llms-full.txt so agents can read every public page in one fetch",
+      "probe": "grep:site/worker.js::llms-full.txt"
+    },
+    {
+      "id": "impact-page",
+      "kind": "impact",
+      "metric": "external_referrals_7d",
+      "title": "Publish /impact: public-benefit demos ranked by their BENEFIT-1 score, read live from the idea bank",
+      "probe": "grep:site/worker.js::/impact"
+    },
+    {
+      "id": "opensearch",
+      "kind": "reach",
+      "metric": "search_referrals_7d",
+      "title": "Add an OpenSearch description so browsers and agents can search the site",
+      "probe": "grep:site/worker.js::opensearch"
+    },
+    {
+      "id": "rel-me",
+      "kind": "reach",
+      "metric": "social_referrals_7d",
+      "title": "Add rel=\"me\" links to the owned social accounts so profiles verify the site",
+      "probe": "grep:site/worker.js::rel=\"me\""
+    },
+    {
+      "id": "webmention",
+      "kind": "reach",
+      "metric": "external_referrals_7d",
+      "title": "Accept Webmentions so other sites that link to a paper are recorded as reach",
+      "probe": "grep:site/worker.js::webmention"
+    },
+    {
+      "id": "embed",
+      "kind": "reach",
+      "metric": "external_referrals_7d",
+      "title": "Offer an /embed card of live status that other sites can drop in, linking back",
+      "probe": "grep:site/worker.js::/embed"
+    },
+    {
+      "id": "tenant-reach",
+      "kind": "impact",
+      "metric": "ps_page_views_7d",
+      "title": "Read every tenant's own reach numbers into the core reach ledger, not only Practical Solutions",
+      "probe": "grep:foundation/reach.py::tenant_reach"
+    },
+    {
+      "id": "plus-seed-improve",
+      "kind": "plus",
+      "metric": "external_referrals_7d",
+      "title": "Carry the improve loop in the seed so every new system improves itself from day one",
+      "probe": "file:seed/scripts/improve.py"
+    },
+    {
+      "id": "plus-executor-verdicts",
+      "kind": "plus",
+      "metric": "external_referrals_7d",
+      "title": "Let the executor rank work by the kept rate of past improve verdicts per area",
+      "probe": "grep:foundation/executor.py::improve"
+    },
+    {
+      "id": "fe-vitals-beacon",
+      "kind": "frontend",
+      "metric": "uiux:findings_total",
+      "better": "down",
+      "title": "Report real-user Core Web Vitals (LCP, CLS, INP) through the cookieless beacon so speed is measured, not guessed",
+      "probe": "grep:site/worker.js::PerformanceObserver"
+    },
+    {
+      "id": "fe-skip-link",
+      "kind": "frontend",
+      "metric": "uiux:findings_total",
+      "better": "down",
+      "title": "Add a skip-to-content link on every page so keyboard and screen-reader users reach the content first",
+      "probe": "grep:site/worker.js::skip-link"
+    },
+    {
+      "id": "fe-speculation",
+      "kind": "frontend",
+      "metric": "uiux:findings_total",
+      "better": "down",
+      "title": "Prefetch the next likely page with speculation rules so clicks between core pages feel instant",
+      "probe": "grep:site/worker.js::speculationrules"
+    },
+    {
+      "id": "fe-font-display",
+      "kind": "frontend",
+      "metric": "uiux:findings_total",
+      "better": "down",
+      "title": "Load web fonts with font-display swap so text shows at once on slow phones",
+      "probe": "grep:site/worker.js::font-display"
+    },
+    {
+      "id": "fe-ab-cta",
+      "kind": "frontend",
+      "metric": "external_referrals_7d",
+      "title": "Pre-register an A/B test of the home page's main call to action and let the loop promote the winner",
+      "probe": "grep:doctrine/design-experiments.json::home-cta"
+    },
+    {
+      "id": "be-server-timing",
+      "kind": "backend",
+      "metric": "uiux:findings_total",
+      "better": "down",
+      "title": "Send Server-Timing headers from the site Worker so slow back-end steps show up in every audit",
+      "probe": "grep:site/worker.js::Server-Timing"
+    },
+    {
+      "id": "be-early-hints",
+      "kind": "backend",
+      "metric": "external_referrals_7d",
+      "title": "Send 103 Early Hints for the main stylesheet and script from the site Worker",
+      "probe": "grep:site/worker.js::Link.*rel=preload"
+    }
+  ]
+}

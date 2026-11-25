@@ -302,6 +302,34 @@ export default {
    "domain": "org",
    "home": "https://unlearn.ultrastable.org/",
    "homeLabel": "Open the encyclopedia"
+  },
+  {
+   "id": "what-works",
+   "name": "What Works",
+   "tag": "Public-benefit demo, live",
+   "status": "live",
+   "summary": "A living atlas of what works in public policy. Each programme is graded from its trials by a published rubric, and readers guess the verdict before they see it.",
+   "problem": "Programmes that feel like they should work, such as Scared Straight or D.A.R.E., often did nothing or did harm when they were tested, and the evidence is scattered across journals.",
+   "loop": "On its clock the loop resolves cited studies to a DOI through Crossref and searches OpenAlex and Europe PMC for new trials of each programme. A new trial is read in only when a model's labels are backed by quotes copied word for word from its abstract, and then counts at half weight. Every programme is re-graded and each change of verdict is logged with the study that moved it.",
+   "results": [
+    "Live public site with five policy areas, a guess-first page per programme and the rubric shown in full.",
+    "Grades come from the trials through the rubric code, and re-grades are published at /changes and in the feed.",
+    "Evidence freshness and reader guesses are published live at /api/freshness and /api/metrics on the site."
+   ],
+   "learned": "A fourth system runs on the same loop, ships from its own repository and promotes itself through the same social module as every other tenant.",
+   "links": [
+    {
+     "label": "Operations dashboard",
+     "href": "/ops"
+    },
+    {
+     "label": "Get in touch",
+     "href": "/contact"
+    }
+   ],
+   "domain": "org",
+   "home": "https://what-works.ultrastable.org/",
+   "homeLabel": "Open the atlas"
   }
  ],
  "domains": {

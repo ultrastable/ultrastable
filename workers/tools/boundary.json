@@ -257,6 +257,10 @@
       "class": "core",
       "role": "A reason to come back: freshness, breadth, depth and diversity of content measured per system, a plan to fix a stale or thin one, feeds, a what's-new page and a social queue (STICKY-1)"
     },
+    "core/datagraph": {
+      "class": "core",
+      "role": "A knowledge graph of all of a system's data, built with no configuration: rows as nodes, references and mentioned ids as edges, hubs, communities, bridges, orphans and link leads scored against later data (DATAGRAPH-1)"
+    },
     "core/flowbalance": {
       "class": "core",
       "role": "Issue inflow against closures and SLA ages; supersedes duplicates and batches floods (FLOW-BALANCE-1)"

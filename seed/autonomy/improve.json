@@ -1,0 +1,96 @@
+{
+  "rule": "IMPROVE-1 (Rowan, 2026-11-25): \"Automatically improve impact and reach. An Ultrastable system shall always continue improving entirely on its own, 100% autonomously.\" FRONTEND-AUTO-1 (Rowan, 2026-11-25): \"An Ultrastable system shall always automate its back-end and also front-end development.\"",
+  "min_items_per_cycle": 2,
+  "max_open_from_loop": 8,
+  "plus_share": 0.2,
+  "plus_per_cycle": 1,
+  "market_max_age_days": 7,
+  "settle_days": 7,
+  "tiers": [
+    {
+      "id": "portfolio",
+      "window_days": 14,
+      "evidence": "(?i)portfolio|spinoff|tenant|benefit|impact"
+    },
+    {
+      "id": "program",
+      "window_days": 7,
+      "evidence": "(?i)loop|clock|lane|executor|program|improve"
+    },
+    {
+      "id": "project",
+      "window_days": 3,
+      "evidence": "(?i)^(?!.*\\[skip ci\\]).*\\(#\\d+\\)"
+    },
+    {
+      "id": "product",
+      "window_days": 7,
+      "evidence": "(?i)growth|reach|seo|feed|page|site|research|plus|add|ship"
+    }
+  ],
+  "signals": [
+    {
+      "id": "reach",
+      "path": "ops/reach/metrics.jsonl",
+      "key": "external_referrals_7d",
+      "max_age_hours": 48
+    },
+    {
+      "id": "uiux",
+      "path": "ops/uiux/status.json",
+      "key": null,
+      "max_age_hours": 48
+    },
+    {
+      "id": "market",
+      "path": "ops/rnd/log.jsonl",
+      "key": null,
+      "max_age_hours": 168
+    },
+    {
+      "id": "platform-sync",
+      "path": "ops/platform-sync.json",
+      "key": null,
+      "max_age_hours": 192
+    }
+  ],
+  "bank": [
+    {
+      "id": "fe-a11y",
+      "kind": "frontend",
+      "metric": "uiux:findings_total",
+      "better": "down",
+      "title": "Run the accessibility audit on every page in light and dark and fix the worst finding",
+      "probe": "file:ops/uiux/status.json"
+    },
+    {
+      "id": "fe-vitals",
+      "kind": "frontend",
+      "metric": "uiux:findings_total",
+      "better": "down",
+      "title": "Measure real-user Core Web Vitals through the cookieless beacon",
+      "probe": "grep:analytics/analytics.js::PerformanceObserver"
+    },
+    {
+      "id": "be-health-timing",
+      "kind": "backend",
+      "metric": "external_referrals_7d",
+      "title": "Add Server-Timing to the Worker's main routes so slow steps are visible",
+      "probe": "grep:worker/src/index.js::Server-Timing"
+    },
+    {
+      "id": "reach-feed",
+      "kind": "reach",
+      "metric": "external_referrals_7d",
+      "title": "Publish a JSON Feed of what shipped so readers and agents can follow the system",
+      "probe": "grep:worker/src/index.js::feed.json"
+    },
+    {
+      "id": "plus-improve-bank",
+      "kind": "plus",
+      "metric": "external_referrals_7d",
+      "title": "Grow this bank: add three reach, front-end or back-end ideas drawn from this system's own measures",
+      "probe": "grep:autonomy/improve.json::bank-"
+    }
+  ]
+}

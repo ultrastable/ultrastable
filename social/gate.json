@@ -8,6 +8,7 @@
   "tenant_queues": [
     "https://ultrastable.org/social-queue.json",
     "https://unlearn.ultrastable.org/social-queue.json",
+    "https://what-works.ultrastable.org/social-queue.json",
     "https://ultrastable.io/api/stickiness/queue/practical-solutions.json"
   ]
 }

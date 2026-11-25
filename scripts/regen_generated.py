@@ -19,6 +19,7 @@ GENERATORS = [
     (["python3", "-m", "foundation", "claims", "--fix", "--apply"], "."),
     (["python3", "scripts/build_dashboard.py"], "."),
     (["python3", "-m", "foundation", "selfmodel", "--apply"], "."),
+    (["python3", "-m", "foundation", "trajectory", "--run", "--apply"], "."),  # TRAJECTORY-1: its page data reads git history, so every merge makes it stale until regenerated
     (["python3", "-m", "foundation", "ultrastability", "--data", "--apply"], "."),
     (["python3", "-m", "foundation", "decisions", "--settle", "--apply"], "."),
     (["python3", "-m", "foundation", "decisions", "--page", "--apply"], "."),
@@ -33,7 +34,7 @@ GENERATORS = [
     (["python3", "-m", "plugins", "self", "--write"], "seed"),
 ]
 # Files the generators write; the workflow ignores pushes that touch only these, so the bot's own commit cannot retrigger it.
-OUTPUTS = ["doctrine/decision-ledger.json", "ops/provenance.jsonl", "README.md", "platform/adapters/README.md", "site/claims-data.js", "site/dashboard-data.js", "site/self-data.js",
+OUTPUTS = ["doctrine/decision-ledger.json", "ops/provenance.jsonl", "README.md", "platform/adapters/README.md", "site/claims-data.js", "site/dashboard-data.js", "site/self-data.js", "site/trajectory-data.js", "ops/trajectory.json", "ops/trajectory.jsonl",
            "site/ultrastability-data.js", "site/decisions-data.js", "site/research-data.js", "research/papers/chen-stratton-2026.md", "research/papers/ashby-1952.md", "research/papers/open-loops-2026.md", "research/papers/safety-by-limits-2026.md", "social/calendar.json", "ops/thought/log.jsonl", "ops/decisions/outcomes.jsonl", "ops/decisions/rescore.jsonl", "ops/executor-log.jsonl", "instances/ultrastable/own-database.json", "docs/security/multi-tenant-controls.json", "core-contract.json", "doctrine/triggers.json", "seed/self/SELF.md", "seed/self/self.json"]
 
 

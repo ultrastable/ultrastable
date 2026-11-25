@@ -36,6 +36,24 @@
         "https://unlearn.ultrastable.org/pulse/watch"
       ],
       "idempotent": true
+    },
+    "what-works-beat": {
+      "kind": "http",
+      "why": "POST /pulse/watch runs the What Works beat only when the last one is over two hours old; safe to call by anyone; the custom domain and workers.dev are separate routes to the same Worker",
+      "urls": [
+        "https://ultrastable-what-works.ultrastable.workers.dev/pulse/watch",
+        "https://what-works.ultrastable.org/pulse/watch"
+      ],
+      "idempotent": true
+    },
+    "replication-ledger-beat": {
+      "kind": "http",
+      "why": "POST /pulse/watch runs the Replication Ledger beat only when the last one is over two hours old; safe to call by anyone; a page visit sparks the same beat as a second route",
+      "urls": [
+        "https://ultrastable-replication-ledger.ultrastable.workers.dev/pulse/watch",
+        "https://replication-ledger.ultrastable.org/pulse/watch"
+      ],
+      "idempotent": true
     }
   },
   "watchers": [

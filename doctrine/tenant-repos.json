@@ -5,7 +5,8 @@
   "practical-solutions": {
    "repo": "ultrastable/practical-solutions",
    "state": "own-repo",
-   "why": "created as its own repository from the start; deployed from that repository's own workflow on its own Cloudflare resources, so no core topology entry binds it"
+   "why": "created as its own repository from the start",
+   "frontend": "https://tenant-ps-web.ultrastable.workers.dev"
   },
   "unlearn": {
    "repo": "ultrastable/unlearn",
@@ -21,7 +22,8 @@
    "vendor": {
     "doctrine/models.json": "vendor/ultrastable/models.json",
     "seed/worker/src/promoqueue.js": "vendor/ultrastable/promoqueue.js",
-    "doctrine/stakeholders.json": "vendor/ultrastable/stakeholders.json"
+    "doctrine/stakeholders.json": "vendor/ultrastable/stakeholders.json",
+    "workers/core/datagraph/index.js": "vendor/ultrastable/datagraph.js"
    },
    "worker": "ultrastable-unlearn",
    "ai": true,
@@ -53,7 +55,7 @@
   },
   "what-works": {
    "repo": "ultrastable/what-works",
-   "state": "moving",
+   "state": "moved",
    "source": "instances/what-works",
    "keep_in_core": [
     "IDEA.md",
@@ -65,7 +67,8 @@
    "vendor": {
     "doctrine/models.json": "vendor/ultrastable/models.json",
     "doctrine/stakeholders.json": "vendor/ultrastable/stakeholders.json",
-    "seed/worker/src/promoqueue.js": "vendor/ultrastable/promoqueue.js"
+    "seed/worker/src/promoqueue.js": "vendor/ultrastable/promoqueue.js",
+    "workers/core/datagraph/index.js": "vendor/ultrastable/datagraph.js"
    },
    "worker": "ultrastable-what-works",
    "ai": true,
@@ -86,6 +89,50 @@
    "sandbox": {
     "stores": [
      "ultrastable-what-works"
+    ],
+    "secrets": [],
+    "budget": {
+     "requests_per_day": 20000,
+     "d1_reads_per_day": 500000,
+     "ai_neurons_per_day": 2000
+    }
+   }
+  },
+  "replication-ledger": {
+   "repo": "ultrastable/replication-ledger",
+   "state": "moving",
+   "source": "instances/replication-ledger",
+   "keep_in_core": [
+    "IDEA.md",
+    "instance.json",
+    "lifecycle.json",
+    "runway.json",
+    "README.md"
+   ],
+   "vendor": {
+    "workers/core/datagraph/index.js": "vendor/ultrastable/datagraph.js"
+   },
+   "worker": "ultrastable-replication-ledger",
+   "ai": false,
+   "visibility": "public",
+   "description": "Replication Ledger: which landmark findings held up and which failed, across many fields, updated as replications publish. A tenant system running on Ultrastable.",
+   "write": {
+    "package.json": {
+     "name": "replication-ledger",
+     "private": true,
+     "type": "module",
+     "description": "Replication Ledger: which landmark findings held up and which failed, across many fields. A tenant system running on Ultrastable.",
+     "scripts": {
+      "test": "node --test --no-warnings worker/*.test.mjs",
+      "validate": "node worker/cli.mjs validate",
+      "verify": "node worker/cli.mjs verify"
+     }
+    },
+    "AGENTS.md": "# Replication Ledger: agent instructions\n\n> Ultrastable is the foundation for any autonomous system.\n\nThe Replication Ledger is a tenant system on Ultrastable: which landmark findings held up when replicated and which failed, across many fields. This repository holds its code (`worker/`) and its data (`worker/data/findings.json`). Its manifest (IDEA.md, instance.json, lifecycle.json, runway.json) and the platform rules every agent follows live in the core repository, `ultrastable/ultrastable` (`agents/AGENTS.md`, `instances/replication-ledger/`, `doctrine/tenant-repos.json`).\n\n- Test: `node --test worker/*.test.mjs`. Validate the data: `node worker/cli.mjs validate`. Check every DOI at Crossref: `node worker/cli.mjs verify`.\n- Add a replication: `node worker/cli.mjs add <finding> <doi> --kind K --outcome O [--prereg] --summary \"...\"`; the citation comes from Crossref by DOI and the standing change is logged.\n- Honest standings: every standing is computed by `worker/standing.js`; never type one. Summaries carry no typed numbers.\n- No accounts, no cookies. Nothing here holds a credential.\n"
+   },
+   "sandbox": {
+    "stores": [
+     "ultrastable-replication-ledger"
     ],
     "secrets": [],
     "budget": {
@@ -146,5 +193,16 @@
    "source": "instances/spinoffs",
    "why": "the eight generated *.ultrastable.app apps shared one Worker and one D1 (ultrastable-spinoffs); all eight are retired (spinoffs/registry.json). A new spinoff launches as its own tenant repository; the check fails when a spinoff app is live again."
   }
+ },
+ "visitor_apps": {
+  "_doc": "LAUNCH-PATH-1: an idea typed at ultrastable.io by someone with no code agent. Its launch record lives in the site's store (site/graduate.js); deploy/launch-apps.mjs (run daily by tenant-repos.yml) deploys its own system, creates its repository from the template, files the owner's requests there and invites the owner on request. Visitor apps have no folder under instances/: their manifest is generated from the idea.",
+  "template": "ultrastable/seed",
+  "repo_prefix": "app-",
+  "visibility": "private",
+  "base_manifest": "instances/second-tenant/instance.json",
+  "usd_per_month": 5,
+  "max_apps": 20,
+  "max_deploys_per_run": 2,
+  "full_stack_hours": 48
  }
 }

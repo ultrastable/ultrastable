@@ -85,6 +85,19 @@ def write(root=REPO) -> dict:
     for b in bindings(root):
         if not b["placeholder"] and b["config"] not in retired:
             seen.setdefault(b["id"], []).append(b["config"])
+    known = {x["id"] for x in d["core"]} | {x["id"] for x in d["tenant"]} | {x["id"] for x in d.get("declared_not_present", [])}
+    topo = root / "doctrine/topology.json"
+    if topo.is_file():  # a live D1 store the topology declares and a system config binds is declared here too: the topology is the one source,
+        # so a regeneration (the merge lane takes this file from main and reruns --write) cannot drop a database a branch added
+        for st in json.loads(topo.read_text(encoding="utf-8")).get("stores", {}).get("d1", []):
+            if st.get("state") == "live" and st.get("id") in seen and st["id"] not in known:
+                ws = sorted(w for w in seen[st["id"]] if w.endswith(f"/{st['name']}.wrangler.jsonc"))
+                d["core"].append({"name": st["name"], "id": st["id"], "binding": "DB on the " + (st["name"] + " Worker only" if ws else "Workers that bind it"),
+                                  "holds": st.get("what", ""), "bound_by": []})
+                known.add(st["id"])
+                lv = d.setdefault("live", {}).setdefault("databases", [])
+                if st["id"] not in {x["id"] for x in lv}:  # the id in the topology was read from the account when the store was created
+                    lv.append({"name": st["name"], "id": st["id"], "tables": 0, "note": "id from doctrine/topology.json, which records it from the Cloudflare API at creation; owndb --live confirms it against the account; tables are created by the Worker"})
     for c in d["core"]:
         c["bound_by"] = sorted(seen.get(c["id"], []))
     (root / PATH).write_text(json.dumps(d, indent=1) + "\n", encoding="utf-8")

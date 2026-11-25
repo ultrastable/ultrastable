@@ -36,6 +36,24 @@
    "bound_by": [
     "instances/ultrastable/system/ultrastable-unlearn.wrangler.jsonc"
    ]
+  },
+  {
+   "name": "ultrastable-what-works",
+   "id": "c915e72c-5b9c-45aa-b86e-bbd9e5246755",
+   "binding": "DB on the ultrastable-what-works Worker only",
+   "holds": "the What Works tenant app (ultrastable/what-works): citation checks, leads, grades, grade changes, anonymous guess counts, beats; no personal data",
+   "bound_by": [
+    "instances/ultrastable/system/ultrastable-what-works.wrangler.jsonc"
+   ]
+  },
+  {
+   "name": "ultrastable-replication-ledger",
+   "id": "c59cdeca-7f57-4edd-ac7e-256ab07fab57",
+   "binding": "DB on the ultrastable-replication-ledger Worker only",
+   "holds": "Replication Ledger tenant: discovered findings, machine-read attempts, leads, retraction flags, Crossref checks, standing changes, beats (instances/replication-ledger); created 2026-11-25",
+   "bound_by": [
+    "instances/ultrastable/system/ultrastable-replication-ledger.wrangler.jsonc"
+   ]
   }
  ],
  "tenant": [
@@ -96,6 +114,19 @@
     "tables": 0,
     "read_at": "2026-11-21T20:50:36Z",
     "note": "created that minute through the Cloudflare API from the cloud session; tables are created by the Worker on first request"
+   },
+   {
+    "name": "ultrastable-what-works",
+    "id": "c915e72c-5b9c-45aa-b86e-bbd9e5246755",
+    "tables": 0,
+    "read_at": "2026-11-25T15:00:00Z",
+    "note": "created through the Cloudflare API from the cloud session; tables are created by the Worker on its first beat"
+   },
+   {
+    "name": "ultrastable-replication-ledger",
+    "id": "c59cdeca-7f57-4edd-ac7e-256ab07fab57",
+    "tables": 0,
+    "note": "id from doctrine/topology.json, which records it from the Cloudflare API at creation; owndb --live confirms it against the account; tables are created by the Worker"
    }
   ],
   "finding": "the account holds five databases; the two core databases are bound only by core Workers, each tenant has its own database, and no database of the originating fleet is in the account"
