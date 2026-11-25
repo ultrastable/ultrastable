@@ -2250,6 +2250,19 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-faa1765dd1",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Every system deploys itself in full: repo, back end and a public web UI (FULLSTACK-1, Rowan 2026-11-25).** \"All UltraStable deployments",
+      "probe": [
+        "file:doctrine/tenant-repos.json",
+        "file:doctrine/topology.json",
+        "file:tests/foundation/test_tenantrepos.py",
+        "file:foundation/tenantrepos.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]tenantrepos\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-b765c5605f",
       "surface": "agents/AGENTS.md",
       "text": "- **Everything is traceable, and the database stays small (AUDIT-CHAIN-1, Rowan 2026-11-17).** \"It has to be auditable to be believed ...",
@@ -2339,16 +2352,16 @@
       "bound_by": "cited"
     },
     {
-      "id": "cited-423086c682",
+      "id": "cited-3c3d6c30bf",
       "surface": "agents/AGENTS.md",
-      "text": "- **Every system deploys itself in full: repository, back end, public front end (FULL-STACK-1, Rowan 2026-11-25).** \"All UltraStable",
+      "text": "- **Automate back-end and front-end development; improve on its own (IMPROVE-1, FRONTEND-AUTO-1, Rowan 2026-11-25).** \"Automatically",
       "probe": [
-        "file:instances/ultrastable/progress.json",
-        "file:doctrine/seed-deploys.json",
-        "file:doctrine/full-stack.json",
-        "file:deploy/launch-apps.mjs",
-        "file:foundation/fullstack.py",
-        "file:tests/foundation/test_fullstack.py"
+        "file:seed/scripts/improve.py",
+        "file:seed/autonomy/improve.json",
+        "file:seed/.github/workflows/improve.yml",
+        "file:foundation/improve.py",
+        "file:doctrine/improve.json",
+        "file:tests/foundation/test_improve.py"
       ],
       "bound_by": "cited"
     },
@@ -3126,6 +3139,20 @@
       "of": "cited-46fa451291"
     },
     {
+      "id": "mirror-3ae0f5f6d0",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Every system deploys itself in full: repo, back end and a public web UI (FULLSTACK-1, Rowan 2026-11-25).** \"All UltraStable deployments",
+      "probe": [
+        "file:doctrine/tenant-repos.json",
+        "file:doctrine/topology.json",
+        "file:tests/foundation/test_tenantrepos.py",
+        "file:foundation/tenantrepos.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]tenantrepos\\b"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-faa1765dd1"
+    },
+    {
       "id": "mirror-232a3323fe",
       "surface": "seed/agents/AGENTS.md",
       "text": "- **Everything is traceable, and the database stays small (AUDIT-CHAIN-1, Rowan 2026-11-17).** \"It has to be auditable to be believed ...",
@@ -3209,19 +3236,19 @@
       "of": "cited-be4db6262d"
     },
     {
-      "id": "mirror-4a1adb91b4",
+      "id": "mirror-0ea4d489e9",
       "surface": "seed/agents/AGENTS.md",
-      "text": "- **Every system deploys itself in full: repository, back end, public front end (FULL-STACK-1, Rowan 2026-11-25).** \"All UltraStable",
+      "text": "- **Automate back-end and front-end development; improve on its own (IMPROVE-1, FRONTEND-AUTO-1, Rowan 2026-11-25).** \"Automatically",
       "probe": [
-        "file:instances/ultrastable/progress.json",
-        "file:doctrine/seed-deploys.json",
-        "file:doctrine/full-stack.json",
-        "file:deploy/launch-apps.mjs",
-        "file:foundation/fullstack.py",
-        "file:tests/foundation/test_fullstack.py"
+        "file:seed/scripts/improve.py",
+        "file:seed/autonomy/improve.json",
+        "file:seed/.github/workflows/improve.yml",
+        "file:foundation/improve.py",
+        "file:doctrine/improve.json",
+        "file:tests/foundation/test_improve.py"
       ],
       "bound_by": "mirror",
-      "of": "cited-423086c682"
+      "of": "cited-3c3d6c30bf"
     },
     {
       "id": "mirror-be5af6748b",

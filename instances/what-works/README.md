@@ -9,4 +9,4 @@ Ultrastable runs on itself (`python3 -m foundation selfhost`).
 Its code moves to its own repository, `ultrastable/what-works` (TENANT-REPO-1, `doctrine/tenant-repos.json`); this folder keeps its manifest (IDEA.md, instance.json, lifecycle.json, runway.json).
 
 - Rubric: `worker/grade.js`, rendered at `/rubric`. Curated programmes: `worker/programmes.js`. Re-grade loop: `worker/evidence.js` and `worker/reader.js`.
-- Test: `node --test instances/what-works/worker/*.test.mjs`.
+- Test: `npm test` in https://github.com/ultrastable/what-works (`node --test worker/*.test.mjs`).

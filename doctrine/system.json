@@ -15,6 +15,10 @@
       "unlearn": {
         "name": "ultrastable-unlearn",
         "id": "ef788db7-0a0c-4c5d-921d-18a596a15945"
+      },
+      "what-works": {
+        "name": "ultrastable-what-works",
+        "id": "c915e72c-5b9c-45aa-b86e-bbd9e5246755"
       }
     },
     "kv": {
@@ -154,6 +158,31 @@
           "AI"
         ]
       }
+    },
+    "ultrastable-what-works": {
+      "main": "worker/index.js",
+      "source": {
+        "repo": "ultrastable/what-works",
+        "ref": "main"
+      },
+      "role": "What Works tenant app (ultrastable/what-works): a living atlas of what works in public policy; hourly beat resolves citations, searches OpenAlex and Europe PMC, reads new trials in under a verbatim-quote guard, re-grades every programme and logs each move",
+      "crons": [
+        "17 * * * *"
+      ],
+      "bindings": {
+        "d1": {
+          "DB": "what-works"
+        },
+        "ai": [
+          "AI"
+        ]
+      }
+    },
+    "ultrastable-replication-ledger": {
+      "main": "instances/replication-ledger/worker/index.js",
+      "role": "Replication Ledger tenant app (moving to ultrastable/replication-ledger): which landmark findings held up when replicated and which failed, across many fields; reader pages with a guess-first reveal and the ledger as JSON, every standing computed at request time; no database, no secret",
+      "crons": [],
+      "bindings": {}
     }
   },
   "edit_path": [

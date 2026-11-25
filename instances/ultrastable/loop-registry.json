@@ -4103,6 +4103,39 @@
    ],
    "area": "managers",
    "server_owner": "github-actions"
+  },
+  {
+   "id": "improve",
+   "kind": "plussing",
+   "summary": "IMPROVE-1: files reach, impact and plus work every pass, escalates stalled manager tiers, settles each change on its metric.",
+   "trigger": "daily product-manager workflow",
+   "owner": "product-manager",
+   "closes_by": "system",
+   "sla": "1d",
+   "done": "ops/improve/status.json is younger than a day and every filed item carries a prediction and probe",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "python3 -m foundation improve --run --apply in .github/workflows/product-manager.yml",
+     "class": "free"
+    },
+    {
+     "id": "session",
+     "how": "the same command run by a cloud-hosted agent session from the repository",
+     "class": "session"
+    }
+   ],
+   "closing_probe": "file:foundation/improve.py",
+   "writeback": [
+    "ops/improve/ledger.jsonl",
+    "ops/improve/status.json"
+   ],
+   "system_path": [
+    "foundation/improve.py",
+    "doctrine/improve.json",
+    "tests/foundation/test_improve.py"
+   ],
+   "server_owner": "ultrastable-tick"
   }
  ],
  "launch_registry": "instances/ultrastable/loops.json"

@@ -67,7 +67,7 @@ test("story: a second, wider idea in the owner's raw words launches the same way
   assert.equal(L.PROBE_IDEAS.length, 2); assert.notEqual(L.probeIdea(0), L.probeIdea(864e5), "the daily walk takes the ideas in turn");
   for (const p of L.PROBE_IDEAS) assert.ok(p.startsWith("[launch-path probe] "));
 });
-// FULL-STACK-1: every launched app ends as a public front end, a live back end and a repository; the run goes red when one is still missing after two days.
+// FULLSTACK-1: every launched app ends as a public front end, a live back end and a repository; the run goes red when one is still missing after two days.
 test("story: a launched app has all three parts, and one stuck without a repository is flagged once it is overdue", async () => {
   const w = await world(), { id } = await submit(w, IDEA), out = await w.pass(), r = out.find((x) => x.id === id);
   assert.deepEqual(r.stack, { frontend: true, backend: true, repo: true }); assert.deepEqual(r.missing, []); assert.equal(r.overdue, false);

@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 # Copyright (c) Ultrastable
-"""FULL-STACK-1: every system has a repository, a back end and a public front end, or an open item for the part it lacks."""
+"""FULLSTACK-1: every system has a repository, a back end and a public front end, or an open item for the part it lacks."""
 import json, shutil, tempfile, unittest
 from pathlib import Path
 from foundation import fullstack as F

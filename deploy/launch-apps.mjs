@@ -94,7 +94,7 @@ export async function run({ site, deploySeed, cfg, base, log = console.log, now 
   }
   return out;
 }
-// FULL-STACK-1: every app is three things, a public front end, a live back end and a repository. What a launch still lacks, and whether it is overdue.
+// FULLSTACK-1: every app is three things, a public front end, a live back end and a repository. What a launch still lacks, and whether it is overdue.
 export function stackOf(l, cfg, now = Date.now()) {
   const stack = { frontend: Boolean(l.built), backend: Boolean(l.system), repo: l.state === "repo" || l.state === "handed-over" };
   const missing = Object.keys(stack).filter((k) => !stack[k]), age = (now - Date.parse(l.at || 0)) / 36e5;
@@ -145,7 +145,7 @@ async function main() {
   for (const r of out.filter((x) => x.synthetic)) await site({ op: "drop", id: r.id });
   const rec = { at: new Date().toISOString(), probe, passed: !fail && !out.some((r) => r.error), fail, launches: out.filter((r) => !r.synthetic).length, gate: out.some((r) => r.gate) ? "visitor-app-repos" : null, visitor_steps: 0 };
     const late = out.filter((r) => r.overdue);
-  for (const r of late) console.log("::error::FULL-STACK-1: app " + r.id + " still has no " + r.missing.join(", no ") + " after " + (cfg.full_stack_hours || 48) + " hours");
+  for (const r of late) console.log("::error::FULLSTACK-1: app " + r.id + " still has no " + r.missing.join(", no ") + " after " + (cfg.full_stack_hours || 48) + " hours");
   if (late.length) { rec.passed = false; fail = fail || late.length + " app(s) are missing part of their stack"; }
   rec.fail = fail; rec.full_stack = { apps: out.filter((r) => !r.synthetic).length, complete: out.filter((r) => !r.synthetic && !r.missing.length).length, overdue: late.length };
   if (process.env.LAUNCH_RESULT) writeFileSync(process.env.LAUNCH_RESULT, JSON.stringify(rec) + "\n");

@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 # Copyright (c) Ultrastable
-"""FULL-STACK-1 (Rowan, 2026-11-25): every Ultrastable system deploys itself in full: repository, back end and public web front end.
+"""FULLSTACK-1 (Rowan, 2026-11-25): every Ultrastable system deploys itself in full: repository, back end and public web front end.
 Ultrastable is the foundation for any autonomous system.
 
   python3 -m foundation fullstack --check        every system has all three parts declared, or an open queue item for the part it lacks
@@ -16,7 +16,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 POLICY = "doctrine/full-stack.json"
-RULE = "FULL-STACK-1"
+RULE = "FULLSTACK-1"
 RULE_FILES = ["agents/AGENTS.md", "seed/agents/AGENTS.md", "agents/PROJECT-INSTRUCTIONS.md"]
 PARTS = ("repo", "backend", "frontend")
 
