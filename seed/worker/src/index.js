@@ -63,6 +63,7 @@ import { material as credMaterial } from './auth/store.js';  // HOSTS-1: the App
 import { createHosts, cloudflareHost, githubActionsHost, gcpHost, reporting, onPush, onWorkflowRun, onHostEvent, watchHosts, recordHostEvent, hookSecret, reconcileHooks, githubHookSecrets, verifyAny } from './hosts.js';  // HOSTS-1
 import { beat, watch, readPulse, failed, HEAVY_CADENCE_MIN } from './pulse.js';
 import { decide, healthView, readState } from './cutover.js';
+import { handleAppHost } from './apprepos.js';
 import { readIgnition } from './ignition.js';
 import { loopHealth } from './critloop.js';
 import { routeEvent, verifySignature, EVENT_TABLE } from './events.js';
@@ -183,6 +184,7 @@ export default {
     if (hiddenByHealthOnly(env, request.method, url.pathname)) return new Response('Not found', { status: 404 });
     const au = await handleAuth(request, env, { tenant: env.TENANT || config.org_slug || 'default', name: config.org_slug, repos: config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []) });
     if (au) return au;
+    { const ah = await handleAppHost(request, env, { tenant: env.TENANT || config.org_slug || 'default' }); if (ah) return ah; }  // APP-REPO-1: repositories and one-repository tokens for apps this system hosts
     if (halted(config, env) && (url.pathname === '/hook/github' || url.pathname === '/hook/host' || url.pathname === '/hook/cloudflare' || url.pathname === '/pulse/watch')) return Response.json({ halted: true }, { status: 202 });  // HALT-1
     if (url.pathname === '/hook/cloudflare' && request.method === 'POST') return onCloudflareAlert(request, { db: env.DB, secret: env.CF_ALERT_SECRET, fileItem: (it) => ensureItem(env.DB, it) });  // CF-ALERTS-1: Cloudflare's own alerts become queue items
     if (url.pathname === '/hook/github' && request.method === 'POST') {  // event-driven trigger: signed GitHub webhook wakes a role now

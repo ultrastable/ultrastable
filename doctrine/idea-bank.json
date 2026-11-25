@@ -1,5 +1,5 @@
 {
- "_doc": "IDEA-BANK-1 (Rowan, 2026-11-22: the front-door examples must be diverse and actually buildable). Every idea the front door suggests lives here with its domain, reach and the four system-test answers. scripts/build_idea_bank.py runs each one through the seed's own bootstrap stages (read, qualify, instrument) on a generated IDEA.md, refuses the bank when one fails or when the domains are not diverse, and writes site/idea-bank-data.js, which site/suggest.js and site/interview.js read. DEPTH-1 (Rowan, 2026-11-22: 'the depth of idea, the depth of concept of Unlearn and Practical Solutions'): every idea also names its depth: the corpus it keeps growing, the method that makes it trustworthy, and why a reader comes back. A one-trick idea (a single feed, a single alert) has no corpus and is refused. Edit this file, never the generated one. PUBLIC-GOOD-1 (Rowan, 2026-11-22: 'This is about some kind of bigger good, some kind of public good, something that empowers change ... Go get Squarespace if you want e-commerce'): every idea names the change it empowers (`empowers`); domains in `refused_domains` (selling, shops, orders, cost cutting) are refused. WORLDWIDE-1 (Rowan, 2026-11-22: 'these ideas have to work worldwide ... if you don't have the data to back them up, they're not going to work ... point and click and get running'): every idea lists `data`, the worldwide open sources it runs on (or `own`, the user's own records, which exist anywhere); a source with a probe URL is fetched by `build_idea_bank.py --live` (weekly in scout.yml) and an idea whose sources stop answering is retired. GROW-1: `build_idea_bank.py --grow` asks the model route for a new idea each pass, admits it only through the same gates, and retires the oldest beyond `max_active`, so the set never goes static. One rule with DEPTH-1 for apps: build_idea_bank.py calls foundation/ideas.py depth() on every idea (thesis, corpus, loop, returns, hook, public_good, horizon), mapping depth.method to loop and empowers to public_good.",
+ "_doc": "IDEA-BANK-1 (Rowan, 2026-11-22: the front-door examples must be diverse and actually buildable). Every idea the front door suggests lives here with its domain, reach and the four system-test answers. scripts/build_idea_bank.py runs each one through the seed's own bootstrap stages (read, qualify, instrument) on a generated IDEA.md, refuses the bank when one fails or when the domains are not diverse, and writes site/idea-bank-data.js, which site/suggest.js and site/interview.js read. DEPTH-1 (Rowan, 2026-11-22: 'the depth of idea, the depth of concept of Unlearn and Practical Solutions'): every idea also names its depth: the corpus it keeps growing, the method that makes it trustworthy, and why a reader comes back. A one-trick idea (a single feed, a single alert) has no corpus and is refused. Edit this file, never the generated one. PUBLIC-GOOD-1 (Rowan, 2026-11-22: 'This is about some kind of bigger good, some kind of public good, something that empowers change ... Go get Squarespace if you want e-commerce'): every idea names the change it empowers (`empowers`); domains in `refused_domains` (selling, shops, orders, cost cutting) are refused. WORLDWIDE-1 (Rowan, 2026-11-22: 'these ideas have to work worldwide ... if you don't have the data to back them up, they're not going to work ... point and click and get running'): every idea lists `data`, the worldwide open sources it runs on (or `own`, the user's own records, which exist anywhere); a source with a probe URL is fetched by `build_idea_bank.py --live` (weekly in scout.yml) and an idea whose sources stop answering is retired. GROW-1: `build_idea_bank.py --grow` asks the model route for a new idea each pass, admits it only through the same gates, and retires the oldest beyond `max_active`, so the set never goes static. One rule with DEPTH-1 for apps: build_idea_bank.py calls foundation/ideas.py depth() on every idea (thesis, corpus, loop, returns, hook, public_good, horizon), mapping depth.method to loop and empowers to public_good. BREADTH-1 (Rowan, 2026-11-25, who widened 'a replication ledger for a field' to 'an encyclopedic replication ledger across many fields'): `owner_edits` keeps each edit the owner made to a suggestion with its lesson; --grow shows them to the model as the taste to follow, and an idea whose text holds one of `narrow_phrases` is refused. Text limit is `max_text`.",
  "min_domains": 8,
  "max_per_domain": 3,
  "ideas": [
@@ -36,6 +36,12 @@
     "Grade the best-known programmes in one policy area",
     "Cover every major area and re-grade as trials land",
     "Let any city compare its own programmes against the evidence"
+   ],
+   "change": [
+    "why-it-feels-true",
+    "graded-uncertainty",
+    "easy-attractive-social-timely",
+    "spaced-follow-up"
    ]
   },
   {
@@ -71,6 +77,12 @@
     "Map farms and food banks in one region",
     "Match surplus offers to shortfalls every week",
     "Publish the routing so any region can run it on open map data"
+   ],
+   "change": [
+    "why-it-feels-true",
+    "graded-uncertainty",
+    "easy-attractive-social-timely",
+    "spaced-follow-up"
    ]
   },
   {
@@ -106,6 +118,12 @@
     "Track claims already checked by fact-checkers worldwide",
     "Link variants into one graph and follow re-sharing",
     "Warn readers when a claim they checked comes back changed"
+   ],
+   "change": [
+    "why-it-feels-true",
+    "graded-uncertainty",
+    "easy-attractive-social-timely",
+    "spaced-follow-up"
    ]
   },
   {
@@ -145,20 +163,26 @@
     "Gather evaluated measures for floods",
     "Add heat and drought, graded by outcome",
     "Help any council shortlist measures by cost and evidence"
+   ],
+   "change": [
+    "why-it-feels-true",
+    "graded-uncertainty",
+    "easy-attractive-social-timely",
+    "spaced-follow-up"
    ]
   },
   {
    "id": "replication-ledger",
    "domain": "research",
    "reach": "global",
-   "text": "A replication ledger for a field: which landmark findings held up and which failed, updated as replications publish",
-   "keywords": "research replication science psychology findings papers evidence academic",
+   "text": "An encyclopedic replication ledger across many fields: which landmark findings held up and which failed, updated as replications publish",
+   "keywords": "research replication science psychology findings papers evidence academic medicine economics many fields encyclopedia",
    "loop": "new replications found weekly, each finding's standing updated, citing papers flagged when a finding falls",
    "measure": "findings whose standing was checked in the last 30 days",
    "upkeep": "replications and reanalyses publish every week",
    "budget": 15,
    "depth": {
-    "corpus": "the field's landmark findings, each with every replication attempt",
+    "corpus": "landmark findings across psychology, medicine, economics and more, each with every replication attempt",
     "method": "standing set by replication size and quality, with the reasoning shown",
     "returns": "textbooks and talks keep citing findings whose standing has moved"
    },
@@ -180,6 +204,12 @@
     "Ledger the landmark findings of one field",
     "Flag papers and courses that still cite fallen findings",
     "Extend to every field with replication data"
+   ],
+   "change": [
+    "why-it-feels-true",
+    "graded-uncertainty",
+    "easy-attractive-social-timely",
+    "spaced-follow-up"
    ]
   },
   {
@@ -211,6 +241,12 @@
     "Run a fixed public test suite on each release",
     "Track regressions and publish variance",
     "Let anyone add a test that runs on every future release"
+   ],
+   "change": [
+    "why-it-feels-true",
+    "graded-uncertainty",
+    "easy-attractive-social-timely",
+    "spaced-follow-up"
    ]
   },
   {
@@ -246,6 +282,12 @@
     "Publish one full course with a stuck-point record",
     "Rewrite lessons from each cohort's results",
     "Open the method so any teacher can run it on their own course"
+   ],
+   "change": [
+    "why-it-feels-true",
+    "graded-uncertainty",
+    "easy-attractive-social-timely",
+    "spaced-follow-up"
    ]
   },
   {
@@ -277,6 +319,12 @@
     "Run the club's site with turnout tracking",
     "Test one change a month and keep what works",
     "Share what works across clubs of the same kind"
+   ],
+   "change": [
+    "why-it-feels-true",
+    "graded-uncertainty",
+    "easy-attractive-social-timely",
+    "spaced-follow-up"
    ]
   },
   {
@@ -312,6 +360,12 @@
     "Link one charity's programmes to outcomes",
     "Compare against similar charities' published results",
     "Give funders a live view of outcomes instead of annual reports"
+   ],
+   "change": [
+    "why-it-feels-true",
+    "graded-uncertainty",
+    "easy-attractive-social-timely",
+    "spaced-follow-up"
    ]
   },
   {
@@ -347,6 +401,12 @@
     "Index every open call in one country",
     "Score fit from past awards and draft answers",
     "Cover funders worldwide that publish open data"
+   ],
+   "change": [
+    "why-it-feels-true",
+    "graded-uncertainty",
+    "easy-attractive-social-timely",
+    "spaced-follow-up"
    ]
   },
   {
@@ -378,6 +438,12 @@
     "Log decisions with predictions",
     "Score them as they resolve",
     "Show the person their own patterns of misjudgement"
+   ],
+   "change": [
+    "why-it-feels-true",
+    "graded-uncertainty",
+    "easy-attractive-social-timely",
+    "spaced-follow-up"
    ]
   },
   {
@@ -409,6 +475,12 @@
     "Run one habit test at a time",
     "Keep only what measurably helped",
     "Suggest the next test from what helped people with similar patterns"
+   ],
+   "change": [
+    "why-it-feels-true",
+    "graded-uncertainty",
+    "easy-attractive-social-timely",
+    "spaced-follow-up"
    ]
   },
   {
@@ -448,6 +520,12 @@
     "Tell the stories of one neighbourhood from sources",
     "Correct the record as new documents surface",
     "Let residents add sources that are checked before they appear"
+   ],
+   "change": [
+    "why-it-feels-true",
+    "graded-uncertainty",
+    "easy-attractive-social-timely",
+    "spaced-follow-up"
    ]
   },
   {
@@ -483,6 +561,12 @@
     "Map dependencies and risks for one ecosystem",
     "Propose fixes upstream for the riskiest packages",
     "Cover every major ecosystem and alert the projects affected"
+   ],
+   "change": [
+    "why-it-feels-true",
+    "graded-uncertainty",
+    "easy-attractive-social-timely",
+    "spaced-follow-up"
    ]
   },
   {
@@ -514,6 +598,12 @@
     "Score red flags on one country's open contracts",
     "Follow flagged contracts to delivery and re-score",
     "Cover every country that publishes open contracting data"
+   ],
+   "change": [
+    "why-it-feels-true",
+    "graded-uncertainty",
+    "easy-attractive-social-timely",
+    "spaced-follow-up"
    ]
   }
  ],
@@ -531,5 +621,24 @@
   "sales"
  ],
  "max_active": 24,
- "retired": []
+ "retired": [],
+ "max_text": 140,
+ "narrow_phrases": [
+  "for a field",
+  "for one field",
+  "for a single",
+  "in one field",
+  "for one city",
+  "for a city",
+  "for one country"
+ ],
+ "owner_edits": [
+  {
+   "date": "2026-11-25",
+   "id": "replication-ledger",
+   "before": "A replication ledger for a field: which landmark findings held up and which failed, updated as replications publish",
+   "after": "An encyclopedic replication ledger across many fields: which landmark findings held up and which failed, updated as replications publish",
+   "lesson": "Rowan liked the idea and widened it from one field to many. Prefer broad, multi-domain, encyclopedic, living versions over single-field ones."
+  }
+ ]
 }

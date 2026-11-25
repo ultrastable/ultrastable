@@ -2257,8 +2257,9 @@
         "file:doctrine/tenant-repos.json",
         "file:doctrine/topology.json",
         "file:tests/foundation/test_tenantrepos.py",
-        "file:foundation/tenantrepos.py",
-        "grep:.github/workflows/checks.yml::foundation[ .]tenantrepos\\b"
+        "file:instances/ultrastable/progress.json",
+        "file:doctrine/seed-deploys.json",
+        "file:doctrine/full-stack.json"
       ],
       "bound_by": "cited"
     },
@@ -3172,8 +3173,9 @@
         "file:doctrine/tenant-repos.json",
         "file:doctrine/topology.json",
         "file:tests/foundation/test_tenantrepos.py",
-        "file:foundation/tenantrepos.py",
-        "grep:.github/workflows/checks.yml::foundation[ .]tenantrepos\\b"
+        "file:instances/ultrastable/progress.json",
+        "file:doctrine/seed-deploys.json",
+        "file:doctrine/full-stack.json"
       ],
       "bound_by": "mirror",
       "of": "cited-faa1765dd1"

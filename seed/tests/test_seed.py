@@ -83,6 +83,20 @@ class BootTests(unittest.TestCase):
             for c in cards:
                 self.assertTrue(c["closing_probe"] and c["default_in_effect"])
 
+    def test_hosted_system_asks_its_owner_for_no_secret_and_no_budget_approval(self):
+        # HOSTED-1: a system started from the host's front door by a person with no code agent
+        with tempfile.TemporaryDirectory() as d:
+            copy_seed(Path(d))
+            idea = Path(d) / "IDEA.md"
+            idea.write_text(idea.read_text().replace("slug: example-co", "slug: example-co\nhosted_by: ultrastable", 1))
+            for k in ("CLOUDFLARE_API_TOKEN", "CLOUDFLARE_ACCOUNT_ID", "ANTHROPIC_API_KEY", "GITHUB_TOKEN"):
+                os.environ.pop(k, None)
+            self.assertEqual(bs.main(["--root", d, "--dry-run"]), 0)
+            cards = json.loads((Path(d) / "org/gate-cards.json").read_text())
+            self.assertFalse([c["what"] for c in cards if "GATE-SECRET" in c.get("id", "") or "Set the " in c["what"] or "Approve spending" in c["what"]])
+            log = json.loads((Path(d) / "org/boot-log.json").read_text())
+            self.assertIn("hosted by ultrastable", next(s["detail"] for s in log["stages"] if s["stage"] == "detect"))
+
     def test_outcomes_become_projects_with_managers(self):
         with tempfile.TemporaryDirectory() as d:
             self.boot(Path(d))
