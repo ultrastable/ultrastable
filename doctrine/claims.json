@@ -2286,6 +2286,20 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-29846ff1a5",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Every system keeps a knowledge graph of all its data, built and maintained automatically (DATAGRAPH-1, Rowan 2026-11-25).** \"All",
+      "probe": [
+        "file:seed/worker/src/vendor/core/datagraph.js",
+        "file:doctrine/tenant-repos.json",
+        "file:seed/worker/src/datagraph.js",
+        "file:instances/ultrastable/progress.json",
+        "file:doctrine/knowledge-graph.json",
+        "file:docs/research/knowledge-graph.md"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-0b86697d1d",
       "surface": "agents/AGENTS.md",
       "text": "- **Ultrastable runs its own R&D and publishes its own white papers; Ashby's mechanism is code (RESEARCH-1, ASHBY-1, Rowan 2026-11-21).**",
@@ -3189,6 +3203,21 @@
       ],
       "bound_by": "mirror",
       "of": "cited-d3be926b7b"
+    },
+    {
+      "id": "mirror-1d1a4fbb93",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Every system keeps a knowledge graph of all its data, built and maintained automatically (DATAGRAPH-1, Rowan 2026-11-25).** \"All",
+      "probe": [
+        "file:seed/worker/src/vendor/core/datagraph.js",
+        "file:doctrine/tenant-repos.json",
+        "file:seed/worker/src/datagraph.js",
+        "file:instances/ultrastable/progress.json",
+        "file:doctrine/knowledge-graph.json",
+        "file:docs/research/knowledge-graph.md"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-29846ff1a5"
     },
     {
       "id": "mirror-289b3b8589",

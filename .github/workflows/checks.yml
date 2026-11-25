@@ -129,6 +129,7 @@ jobs:
           python3 -m foundation progress --check
           python3 -m foundation tenantpromo --check
           python3 -m foundation fullstack --check  # FULLSTACK-1: repository, back end and public front end for every system
+          python3 -m foundation datagraph --check
           python3 -m foundation cfposture --check
           python3 -m foundation standingorder --check
           python3 -m foundation rules --check
