@@ -126,15 +126,17 @@
     },
     {
       "name": "seed",
-      "purpose": "Idea-to-organization bootstrapper; superseded by workers/bootstrap and the monorepo seed/.",
-      "disposition": "archive",
-      "merged_into": "workers",
-      "archived": true,
+      "purpose": "Template repository for systems launched at the front door: the tick Worker's administration app generates each visitor app repository from it (APP-REPO-1, seed/worker/src/apprepos.js ensureAppRepo spec.template), and tenant-repos.yml fills new seeds from it.",
+      "disposition": "keep",
+      "archived": false,
       "private": false,
       "created": "2026-11-10",
-      "consumers": [],
-      "last_activity": "2026-11-10",
-      "reason": "SUPERSEDED duplicate; code moved to workers"
+      "consumers": [
+        "seed/worker/src/apprepos.js",
+        ".github/workflows/tenant-repos.yml"
+      ],
+      "last_activity": "2026-11-25",
+      "reason": "Revived 2026-11-25 as the launch template (LAUNCH-PATH-1); public under DISCOVER-1, which keeps only ultrastable/ops private."
     },
     {
       "name": "site",

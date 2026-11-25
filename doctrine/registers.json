@@ -591,16 +591,100 @@
       "probe": "grep:tests/foundation/test_silentfail.py::def test_classes_have_detectors"
     },
     {
-      "id": "fm-blind-spot",
-      "trigger": "a check passes on empty, stale, unscored or vacuous data",
-      "symptom": "the owner finds the failure before any loop",
-      "blast_radius": "every claim and loop that trusts its probe",
-      "detection": "python3 -m foundation redteam --probe",
-      "root_cause": "probes test that a mechanism exists, not that its output is true",
-      "remediation": "adversarial red-team checks per blind-spot class; owner-found failures recorded and mapped to a detector",
+      "id": "fm-declared-live-drift",
+      "trigger": "a fact the repository declares (repository visibility, a registry row, a visual baseline) differs from the live system",
+      "symptom": "a tenant repository private while declared public; CI and deploys cannot read it",
+      "blast_radius": "the tenant's CI, deploy and public directory listing",
+      "detection": "python3 -m foundation driftguard --visibility-live",
+      "root_cause": "declared facts were applied once at creation and never read back",
+      "remediation": "the tick's repo-visibility loop sets drift back hourly; the uiux run rolls stale baselines",
       "status": "controlled",
       "cadence_ticks": 1,
-      "probe": "grep:tests/foundation/test_redteam.py::def test_owner_findings_of_2026_11_25"
+      "probe": "grep:tests/foundation/test_driftguard.py::def test_a_private_repository_declared_public_is_drift"
+    },
+    {
+      "id": "fm-cron-single-route",
+      "trigger": "a tenant back end's only route to run is its own Cron Trigger and the account's trigger limit or a deploy drops it",
+      "symptom": "a back end with no beat for days while its page still serves",
+      "blast_radius": "every tenant back end and the loops reading it",
+      "detection": "python3 -m foundation driftguard --crons --live",
+      "root_cause": "clocks depended on one account-wide quota nobody counted",
+      "remediation": "the tick pulses every tenant's /pulse/watch hourly; crons are counted against the plan limit",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:tests/foundation/test_driftguard.py::def test_a_tenant_whose_only_route_to_run_is_its_own_cron_fails"
+    },
+    {
+      "id": "fm-missed-trigger",
+      "trigger": "a push on main matches a workflow's push paths and starts no run",
+      "symptom": "a workflow that should have run after a merge never did",
+      "blast_radius": "whatever that workflow creates or deploys",
+      "detection": "python3 -m foundation driftguard --triggers",
+      "root_cause": "pushes made with a run's own token start no workflow and nothing compared pushes with runs",
+      "remediation": "the watchdog dispatches a workflow whose matching push started no run",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:tests/foundation/test_driftguard.py::def test_a_matching_push_with_no_run_is_found_and_dispatched"
+    },
+    {
+      "id": "fm-empty-commit-loop",
+      "trigger": "a bot commits without comparing trees and its own push re-triggers it",
+      "symptom": "dozens of empty commits on one branch, each starting CI",
+      "blast_radius": "Actions minutes and the merge lane",
+      "detection": "python3 -m foundation driftguard --empty-commits",
+      "root_cause": "no tree comparison before commit",
+      "remediation": "MERGENOW-NOOP-1; the detector counts empty commits per branch",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:tests/foundation/test_driftguard.py::def test_a_branch_with_a_loop_of_empty_commits_fails"
+    },
+    {
+      "id": "fm-lane-item-open",
+      "trigger": "a lane item's PR merges or closes and the item stays open",
+      "symptom": "queue items open for work already merged",
+      "blast_radius": "queue balance and drain metrics",
+      "detection": "grep:foundation/contracts.py::LANE-FILED-FAIL-1",
+      "root_cause": "the item's state was set when the PR opened and nothing read the PR back",
+      "remediation": "LANE-FILED-FAIL-1 closes OL-PR-<n> by its loopowner --closed probe; the handoff closer reads merges back",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:tests/foundation/test_contracts.py::LANE-FILED-FAIL-1"
+    },
+    {
+      "id": "fm-account-drift",
+      "trigger": "a credential reaches a different Cloudflare account than the topology names",
+      "symptom": "deploys fail or land on a retired account",
+      "blast_radius": "every Worker deploy",
+      "detection": "python3 -m foundation driftguard --accounts-live",
+      "root_cause": "credentials were moved by hand with no comparison to the topology",
+      "remediation": "the watchdog compares the account the token reaches with the topology, by hash for retired ones",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:tests/foundation/test_driftguard.py::def test_a_token_minted_on_another_account_fails"
+    },
+    {
+      "id": "fm-built-without-evidence",
+      "trigger": "a row or report says built or done without a live reading",
+      "symptom": "a graph marked built with no nodes; a PR verified only by the tick's /health",
+      "blast_radius": "every claim of done",
+      "detection": "python3 -m foundation driftguard --built-live",
+      "root_cause": "state was written by the agent that wrote the code",
+      "remediation": "built rows must answer their probe with nodes; checks refuse a deploy verified only by the tick's /health",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:tests/foundation/test_driftguard.py::def test_a_built_graph_with_no_nodes_fails"
+    },
+    {
+      "id": "fm-unverified-citations",
+      "trigger": "the Replication Ledger's beat never checks some seed DOIs at Crossref, or a check finds a mismatched citation",
+      "symptom": "/api/citations reported a count of checks with no total, so a DOI never verified read the same as a verified one",
+      "blast_radius": "every Replication Ledger page that cites a seed paper, and the standings computed from those citations",
+      "detection": "detector replication-ledger-citations: GET https://replication-ledger.ultrastable.org/api/citations answers 503 with ok false after 24 beats while any seed DOI is unchecked or failed",
+      "root_cause": "the citation endpoint counted rows checked instead of comparing them with the seed's DOIs",
+      "remediation": "citations() in instances/replication-ledger/worker/index.js reports total, checked, unchecked and failed against seedCites(); failure-audit files a Q-AUDIT item and the detector is its closing probe",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:instances/replication-ledger/worker/citations.test.mjs::after 24 beats an unchecked seed DOI makes /api/citations answer 503"
     }
   ],
   "controls": [

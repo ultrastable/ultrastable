@@ -80,6 +80,13 @@ class Silent(unittest.TestCase):
         why = " | ".join(x["why"] for x in S.class_findings(d))
         self.assertIn("detector nope is not registered", why); self.assertIn("matches no silent-failure class", why)
 
+    def test_detector_that_cannot_be_routed_is_a_finding(self):
+        d = _repo.scratch()
+        for k, v in {S.CFG: json.dumps({"classes": []}), "doctrine/detectors.json": json.dumps({"detectors": [{"id": "x", "run": ["python3", "-m", "foundation", "nosuch"]}]}),
+                     "doctrine/registers.json": json.dumps({"failure_modes": []}), "foundation/__main__.py": 'if a == ["other"]: pass'}.items():
+            (d / k).parent.mkdir(parents=True, exist_ok=True); (d / k).write_text(v)
+        self.assertIn("nosuch", S.class_findings(d)[0]["why"])
+
     def test_wired_into_checks_and_audit(self):
         self.assertIn("foundation silentfail --check", (ROOT / ".github/workflows/checks.yml").read_text())
         ids = {x["id"] for x in json.loads((ROOT / "doctrine/detectors.json").read_text())["detectors"]}

@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
-  actions: write  # SILENT-FAIL-1: the actions-stuck detector approves or dispatches runs stuck at action_required
+  actions: write  # SILENT-FAIL-1: the actions-stuck detector approves or dispatches runs stuck at action_required; DRIFT-GUARD-1: dg-triggers dispatches a workflow whose matching push on main started no run
   issues: read
   pull-requests: write  # scripts/land_data.py falls back to a pull request when the main writer is refused
   id-token: write  # MAIN-WRITER-1: tools/push_main.py presents the run's OIDC token
@@ -56,17 +56,22 @@ jobs:
           if [ "$(date -u +%u)" = "7" ]; then python3 -m foundation redteam --run --apply --chaos; else python3 -m foundation redteam --run --apply; fi
       - run: python3 -m foundation failure_audit --run
         continue-on-error: true
-        env:
-          GH_TOKEN: ${{ github.token }}
+        env:  # DRIFT-GUARD-1: the live detectors (visibility, crons, accounts, triggers) read with these; without them they report unmeasured
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       - name: Ledger to the evidence branch
         run: |
           git config user.name "ultrastable-audit"
           git config user.email "actions@users.noreply.github.com"
-          git add ops/failure-audit.jsonl
-          if git diff --cached --quiet; then echo "no ledger change"; else
-            git commit -q -m "failure-audit: ledger"
-            git push -q origin HEAD:refs/heads/audit-evidence --force
-            git reset -q --mixed HEAD~1
+          # SILENT-FAIL-1 root cause: the evidence commit used to sit on top of main, so any change to a workflow file on main made the push look like a workflow
+          # update, which a GitHub App token refuses (run 45694466342). The commit now holds only the ledger, built with plumbing: no workflow file can ride along.
+          if [ -f ops/failure-audit.jsonl ]; then
+            blob=$(git hash-object -w ops/failure-audit.jsonl)
+            sub=$(printf '100644 blob %s\tfailure-audit.jsonl\n' "$blob" | git mktree)
+            tree=$(printf '040000 tree %s\tops\n' "$sub" | git mktree)
+            commit=$(git commit-tree "$tree" -m "failure-audit: ledger")
+            git push -q origin "$commit:refs/heads/audit-evidence" --force
           fi
       - name: Findings to main, where the executor takes them
         env:
