@@ -6,6 +6,7 @@
  "kernel_paths": [
   "agents",
   "autonomy",
+  "doctrine",
   "bootstrap",
   "worker",
   "analytics",
