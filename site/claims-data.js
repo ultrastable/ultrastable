@@ -1894,15 +1894,6 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
-   "claim": "- **Every system keeps a knowledge graph of all its data, built and maintained by itself (KGRAPH-1, Rowan 2026-11-25).** \"All UltraStable",
-   "detail": "",
-   "how": "file:seed/worker/src/knowledge.js + file:doctrine/knowledge-graph.json + file:seed/worker/test/knowledge.test.js + file:tests/foundation/test_kgcheck.py",
-   "id": "cited-bd5257bc87",
-   "kind": "claim",
-   "pass": true,
-   "surface": "agents/AGENTS.md"
-  },
-  {
    "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
@@ -2569,15 +2560,6 @@ export default {
    "surface": "seed/agents/AGENTS.md"
   },
   {
-   "claim": "- **Every system keeps a knowledge graph of all its data, built and maintained by itself (KGRAPH-1, Rowan 2026-11-25).** \"All UltraStable",
-   "detail": "",
-   "how": "file:seed/worker/src/knowledge.js + file:doctrine/knowledge-graph.json + file:seed/worker/test/knowledge.test.js + file:tests/foundation/test_kgcheck.py",
-   "id": "mirror-acc4975a56",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/agents/AGENTS.md"
-  },
-  {
    "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
@@ -3235,7 +3217,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 63 Python and 498 Worker tests",
+   "claim": "seed-tests: 63 Python and 487 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3244,7 +3226,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 498 Worker tests",
+   "claim": "seed-worker-tests: 487 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3280,7 +3262,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 937",
+   "claim": "live-deploys: 946",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",
@@ -3485,7 +3467,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 384,
-  "total": 384
+  "pass": 382,
+  "total": 382
  }
 };
