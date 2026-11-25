@@ -34,6 +34,7 @@
   python3 -m foundation collisions [--check|--prs [--pr N]|--claim ID]   COLLISION-1: no two migrations share a number; a PR may not add what an older open PR adds
   python3 -m foundation datagraph [--check|--list|--live]                        DATAGRAPH-1: every system keeps a knowledge graph of all its data
   python3 -m foundation fleetcontract [--check|--live [--apply|--record]|--probe ID|--list]   FLEET-CONTRACT-1: one contract per system; statements hold front to back and back to front
+  python3 -m foundation rulerefs [--check|--list|--reverse|--exec|--live]             RULE-REFS-1: every path, command, test, workflow and endpoint a rule names resolves; code nothing names is listed
   python3 -m foundation tenantpromo [--check|--list]                      TENANT-PROMO-1: every tenant promotes itself (social queue, showcase, cross-links)
   python3 -m foundation progress [--check|--live]                          PROGRESS-1: every system shows substantive progress at every visit; the cadence monitor is wired
   python3 -m foundation cost [--check|--probe|--guard [--apply]]          D1 rows read and AI neurons against budgets (COST-GUARD-1)
@@ -330,6 +331,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["fleetcontract"]:
         from . import fleetcontract
         return fleetcontract.main(_av[1:])
+    if _av[:1] == ["rulerefs"]:
+        from . import rulerefs
+        return rulerefs.main(_av[1:])
     if _av[:1] == ["datagraph"]:
         from . import datagraph
         return datagraph.main(_av[1:])
