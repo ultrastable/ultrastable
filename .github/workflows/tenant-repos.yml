@@ -12,7 +12,7 @@ on:
     - cron: "23 5 * * *"
   push:
     branches: [main]
-    paths: ["doctrine/tenant-repos.json", ".github/workflows/tenant-repos.yml", "deploy/launch-apps.mjs"]
+    paths: ["doctrine/tenant-repos.json", "doctrine/full-stack.json", ".github/workflows/tenant-repos.yml", "deploy/launch-apps.mjs"]
   workflow_dispatch:
 permissions:
   contents: read
@@ -80,6 +80,29 @@ jobs:
             echo "pushed $src with its history to $repo"
           done
           if [ -s /tmp/tenant-repos-failed ]; then echo "::error::tenant repositories not created: $(tr '\n' ' ' </tmp/tenant-repos-failed)"; exit 1; fi
+      - name: Every seed has its own repository, filled from the seed (FULLSTACK-1)
+        # A seed in doctrine/seed-deploys.json whose doctrine/full-stack.json row names a repository gets that repository over the same
+        # credential-free route as a tenant (TENANT-REPO-2). While it is empty it is filled once from seed/; one with history is left alone.
+        if: ${{ !cancelled() }}
+        run: |
+          set -uo pipefail
+          fail=0
+          while read -r id repo; do
+            [ -n "$repo" ] || continue
+            if ! srv="$(node deploy/tenant-repo-token.mjs "$repo" public "An Ultrastable system: $id")"; then echo "::error::no route could create $repo"; fail=1; continue; fi
+            if [ "$srv" = "has-history" ]; then echo "$repo already has history; left as it is"; continue; fi
+            echo "::add-mask::$srv"
+            d="$(mktemp -d)"; cp -a seed/. "$d/"
+            git -C "$d" init -q -b main; git -C "$d" add -A
+            git -C "$d" -c user.name="ultrastable" -c user.email="ultrastable@users.noreply.github.com" commit -q -m "Start from the Ultrastable seed (FULLSTACK-1)"
+            if git -C "$d" push -q "https://x-access-token:${srv}@github.com/${repo}.git" "HEAD:refs/heads/main"; then echo "filled $repo from seed/"; continue; fi
+            # a token without the workflows grant may not push workflow files; the rest still goes, and the miss is said
+            echo "::warning::$repo refused the push with workflow files; pushing without .github/workflows"
+            git -C "$d" rm -rq --cached .github/workflows
+            git -C "$d" -c user.name="ultrastable" -c user.email="ultrastable@users.noreply.github.com" commit -q --amend -m "Start from the Ultrastable seed, without its workflows (FULLSTACK-1)"
+            if git -C "$d" push -q "https://x-access-token:${srv}@github.com/${repo}.git" "HEAD:refs/heads/main"; then echo "filled $repo from seed/ without workflows"; else echo "::error::could not fill $repo"; fail=1; fi
+          done < <(jq -r --slurpfile s doctrine/seed-deploys.json '.systems | to_entries[] | select(.key as $k | $s[0].seeds | index($k)) | select(.value.repo) | "\(.key) \(.value.repo)"' doctrine/full-stack.json)
+          exit $fail
       - name: Launch what visitors asked for, and walk a test idea through the front door (LAUNCH-PATH-1)
         # Someone with no code agent typed an idea at ultrastable.io. This deploys its own system, gives it a repository from the seed, files the
         # owner's plain-words requests there and invites the owner when they asked. The test idea fails the job on any step a visitor would have to do.

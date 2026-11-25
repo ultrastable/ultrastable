@@ -33,6 +33,8 @@ async function world({ admin = true, covers = true } = {}) {
     if ((x = /^\/repos\/[^/]+\/[^/]+\/generate$/.exec(u.pathname))) { if (tok !== "admin-token") return R(403); repos.set(body.owner + "/" + body.name, new Map([["README.md", "seed"]])); return R(201); }
     if ((x = /^\/repos\/([^/]+\/[^/]+)\/contents\/(.+)$/.exec(u.pathname))) { const r = repos.get(x[1]); if (!r || tok !== "code-token" || !github.covers) return R(404); if (method === "GET") return r.has(x[2]) ? R(200, { sha: "s", content: Buffer.from(r.get(x[2])).toString("base64") }) : R(404); r.set(x[2], Buffer.from(body.content, "base64").toString()); return R(201); }
     if ((x = /^\/repos\/([^/]+\/[^/]+)\/collaborators\/(.+)$/.exec(u.pathname))) { invited.push([x[1], x[2]]); return R(201); }
+    if ((x = /^\/orgs\/([^/]+)\/repos$/.exec(u.pathname))) { if (tok !== "admin-token") return R(403); repos.set(x[1] + "/" + body.name, new Map()); return R(201); }
+    if ((x = /^\/repos\/([^/]+\/[^/]+)\/commits$/.exec(u.pathname))) { const r = repos.get(x[1]); if (!r || tok !== "code-token" || !github.covers) return R(404); return r.size ? R(200, [{ sha: "c" }]) : R(409); }
     if ((x = /^\/repos\/([^/]+\/[^/]+)$/.exec(u.pathname))) return repos.has(x[1]) ? R(200) : R(404);
     return R(500, { message: "unexpected " + u.pathname });
   };

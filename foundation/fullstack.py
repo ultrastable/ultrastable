@@ -45,6 +45,7 @@ def systems(root=REPO) -> list[dict]:
         r["repo"] = r["repo"] or p.get("repo")
         r["frontend"] = r["frontend"] or p.get("frontend")
         r["gaps"] = p.get("gaps", {})
+        r["public_repo"] = bool(p.get("public_repo"))
     return list(rows.values())
 
 
@@ -91,6 +92,9 @@ def live(root=REPO, fetch=_fetch) -> list[dict]:
     ua, out = _j(root, POLICY).get("user_agent", "ultrastable-fullstack-probe/1"), []
     for s in systems(root):
         row = {"id": s["id"], "repo": "declared" if s.get("repo") else "missing"}
+        if s.get("repo") and s.get("public_repo"):  # a public repository answers at github.com; declared and never made reads missing
+            st, _, _ = fetch("https://github.com/" + s["repo"], ua)
+            row["repo"] = "live" if st == 200 else f"missing ({st})"
         if s.get("frontend"):
             st, ct, body = fetch(s["frontend"], ua)
             row["frontend"] = "live" if st == 200 and ("html" in ct or "<html" in body.lower()) else f"down ({st})"
