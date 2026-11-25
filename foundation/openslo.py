@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """STANDARDS-FIRST-1: the essential variables in doctrine/ultrastability.json, published as OpenSLO v1 SLO documents
 (slo/essential-variables.yaml), so any OpenSLO tool reads the same bounds the second loop acts on. Generated, never
 hand-edited; `--check` fails when the file is out of step with the doctrine."""

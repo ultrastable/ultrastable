@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """SCHEMA-1 / STANDARDS-FIRST-1: every data file under ROOTS (doctrine, seed/autonomy, the instance manifest) is checked; a new homegrown file there with no schema fails. Every doctrine file is validated against a JSON Schema (draft 2020-12), listed in a SchemaStore-format
 catalog (schemas/catalog.json), so editors, CI and any other tool check the same contract instead of reading
 homegrown shapes by convention. `--infer` writes a starting schema for a doctrine file that has none (types, required
