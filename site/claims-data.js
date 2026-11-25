@@ -3253,7 +3253,25 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 64 Python and 500 Worker tests",
+   "claim": "- **Public by default, discoverable always (DISCOVER-1, Rowan 2026-11-25).** \"The intent is public deployments, public accessibility,",
+   "detail": "",
+   "how": "file:github/org-settings.json + file:doctrine/tenant-repos.json + file:doctrine/topology.json + file:doctrine/stakeholders.json + file:seed/worker/src/discover.js + file:site/directory.js",
+   "id": "cited-988a412a5f",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Public by default, discoverable always (DISCOVER-1, Rowan 2026-11-25).** \"The intent is public deployments, public accessibility,",
+   "detail": "",
+   "how": "file:github/org-settings.json + file:doctrine/tenant-repos.json + file:doctrine/topology.json + file:doctrine/stakeholders.json + file:seed/worker/src/discover.js + file:site/directory.js",
+   "id": "mirror-a4386ccae1",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "seed-tests: 64 Python and 510 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3262,7 +3280,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 500 Worker tests",
+   "claim": "seed-worker-tests: 510 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3503,7 +3521,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 386,
-  "total": 386
+  "pass": 388,
+  "total": 388
  }
 };

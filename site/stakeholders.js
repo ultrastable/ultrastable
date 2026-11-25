@@ -330,6 +330,32 @@ export default {
    "domain": "org",
    "home": "https://what-works.ultrastable.org/",
    "homeLabel": "Open the atlas"
+  },
+  {
+   "id": "replication-ledger",
+   "name": "Replication Ledger",
+   "tag": "Public-benefit demo, live",
+   "status": "live",
+   "summary": "A record of which landmark findings held up when others tried to repeat them, and which did not. Readers guess first, then see the attempts.",
+   "problem": "Famous findings keep getting taught and cited after attempts to repeat them failed.",
+   "loop": "The loop searches OpenAlex and Crossref for new replications, reanalyses and retractions of each finding, files them under a verbatim-quote guard, recomputes the standings with one rubric and logs a move with the paper that moved it.",
+   "results": [
+    "Live public site where each standing comes from the replication attempts on record."
+   ],
+   "learned": "A fifth system runs on the same loop and evidence guard as Unlearn and What Works.",
+   "links": [
+    {
+     "label": "Operations dashboard",
+     "href": "/ops"
+    },
+    {
+     "label": "Get in touch",
+     "href": "/contact"
+    }
+   ],
+   "domain": "org",
+   "home": "https://replication-ledger.ultrastable.org/",
+   "homeLabel": "Open the atlas"
   }
  ],
  "domains": {

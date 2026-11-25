@@ -16,7 +16,7 @@ REPO = Path(__file__).resolve().parents[1]
 CFG, ACCOUNTS = "github/org-settings.json", "deploy/cloudflare-accounts.json"
 GATED_RE = re.compile(r"Upgrade to GitHub (Pro|Team)|not available for this repository|make this repository public")
 SETTING_KEYS = {"has_issues", "has_projects", "has_wiki", "has_discussions", "allow_squash_merge", "allow_merge_commit", "allow_rebase_merge",
-                "allow_auto_merge", "allow_update_branch", "delete_branch_on_merge", "squash_merge_commit_title", "squash_merge_commit_message", "is_template"}
+                "allow_auto_merge", "allow_update_branch", "delete_branch_on_merge", "squash_merge_commit_title", "squash_merge_commit_message", "is_template", "private"}  # DISCOVER-1: visibility is declared per repo
 PROTECT_KEYS = {"allow_force_pushes": "allow_force_pushes", "allow_deletions": "allow_deletions", "required_linear_history": "required_linear_history"}
 
 

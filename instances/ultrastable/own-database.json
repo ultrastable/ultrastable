@@ -54,6 +54,16 @@
    "bound_by": [
     "instances/ultrastable/system/ultrastable-replication-ledger.wrangler.jsonc"
    ]
+  },
+  {
+   "name": "ultrastable-spinoffs",
+   "id": "7daf8b68-8516-42a8-b7c4-68fd00d10e24",
+   "binding": "DB on the ultrastable-spinoffs Worker only",
+   "holds": "spinoff app events (spinoffs/schema.sql); the database in the ultrastable account, created 2026-11-20",
+   "bound_by": [
+    "instances/ultrastable/system/ultrastable-spinoffs.wrangler.jsonc",
+    "spinoffs/wrangler.toml"
+   ]
   }
  ],
  "tenant": [
@@ -125,6 +135,12 @@
    {
     "name": "ultrastable-replication-ledger",
     "id": "c59cdeca-7f57-4edd-ac7e-256ab07fab57",
+    "tables": 0,
+    "note": "id from doctrine/topology.json, which records it from the Cloudflare API at creation; owndb --live confirms it against the account; tables are created by the Worker"
+   },
+   {
+    "name": "ultrastable-spinoffs",
+    "id": "7daf8b68-8516-42a8-b7c4-68fd00d10e24",
     "tables": 0,
     "note": "id from doctrine/topology.json, which records it from the Cloudflare API at creation; owndb --live confirms it against the account; tables are created by the Worker"
    }

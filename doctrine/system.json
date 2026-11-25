@@ -20,6 +20,10 @@
         "name": "ultrastable-what-works",
         "id": "c915e72c-5b9c-45aa-b86e-bbd9e5246755"
       },
+      "spinoffs": {
+        "name": "ultrastable-spinoffs",
+        "id": "7daf8b68-8516-42a8-b7c4-68fd00d10e24"
+      },
       "replication-ledger": {
         "name": "ultrastable-replication-ledger",
         "id": "c59cdeca-7f57-4edd-ac7e-256ab07fab57"
@@ -180,6 +184,16 @@
         "ai": [
           "AI"
         ]
+      }
+    },
+    "ultrastable-spinoffs": {
+      "main": "spinoffs/worker.js",
+      "role": "spinoff apps on *.ultrastable.app (SPINOFF-1): serves the registry bundle, answers 410 for retired apps; the zone route *.ultrastable.app/* names this script (a zone route, not a custom domain: it is not re-attached by the deployer, so the worker is listed as not public)",
+      "crons": [],
+      "bindings": {
+        "d1": {
+          "DB": "spinoffs"
+        }
       }
     },
     "ultrastable-replication-ledger": {

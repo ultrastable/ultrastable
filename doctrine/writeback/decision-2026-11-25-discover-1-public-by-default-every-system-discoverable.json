@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-25-discover-1-public-by-default-every-system-discoverable",
+  "kind": "decision",
+  "date": "2026-11-25",
+  "title": "DISCOVER-1: public by default, every system discoverable",
+  "body": "Every live tenant is listed and cross-linked on ultrastable.io from the registries; seeded systems self-register daily via their public manifest; external listings are verified, rechecked daily and dropped on opt-out, noindex or 3 failures. Only ultrastable/ops stays private.",
+  "probe": "file:foundation/discover.py"
+ },
+ "kind": "decision",
+ "title": "DISCOVER-1: public by default, every system discoverable",
+ "session": ""
+}
