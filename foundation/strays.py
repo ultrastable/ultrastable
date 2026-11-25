@@ -37,6 +37,7 @@ def classify(paths, pol: dict) -> list[dict]:
     """Pure: the findings for a list of repository-relative paths."""
     roots, ext, base = set(pol["code_roots"]), tuple(pol["extensions"]), set(pol.get("baseline") or [])
     templates = set(pol.get("workflow_template_dirs") or [])  # workflows an adapter installs into another repository's .github/workflows/
+    standard_root = {r["path"] for r in pol.get("standard_root_files") or []}  # STANDARDS-1: files a published standard fixes at the root
     out = []
     for p in sorted(paths):
         if p in base:
@@ -45,6 +46,8 @@ def classify(paths, pol: dict) -> list[dict]:
             out.append({"path": p, "kind": "decoy-workflow", "why": "a workflow outside .github/workflows/ is never run"})
         elif p.endswith(ext):
             top = p.split("/", 1)[0] if "/" in p else ""
+            if not top and p in standard_root:
+                continue
             if not top:
                 out.append({"path": p, "kind": "stray-root", "why": "a code file at the repository root that no code root holds"})
             elif top not in roots:

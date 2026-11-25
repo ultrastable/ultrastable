@@ -211,9 +211,11 @@ jobs:
         run: |
           python3 -m foundation upstream contract --check
           python3 -m foundation upstream leaks
-      - name: Agentic standards (register, surfaces, discovery lint; Worker conformance and contract tests)
+      - name: Standards (register, surfaces, discovery lint, config schemas, catalog and SBOM; Worker conformance and contract tests)
         run: |
           python3 -m foundation standards --check
+          python3 -m foundation configschema --check  # CONFIG-SCHEMA-1: every config validates against its JSON Schema contract
+          python3 -m foundation stdgen --check        # STANDARDS-1: Backstage catalog and CycloneDX SBOM match the registers
           (cd seed/worker && node --test --no-warnings test/*.test.js)
   tests-a:
     if: ${{ vars.HALT != '1' && (github.event.pull_request.draft != true) }}  # HALT-1

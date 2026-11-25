@@ -1,0 +1,169 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/clocks.schema.json",
+  "title": "clocks (doctrine/clocks.json)",
+  "description": "Contract for doctrine/clocks.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "account_id": {
+      "type": "string"
+    },
+    "clocks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "column": {
+            "type": "string"
+          },
+          "d1_id": {
+            "type": "string"
+          },
+          "expected_interval_s": {
+            "type": "number"
+          },
+          "health_urls": {
+            "type": "array"
+          },
+          "id": {
+            "type": "string"
+          },
+          "periodic": {
+            "type": "boolean"
+          },
+          "replicas": {
+            "type": "array"
+          },
+          "source": {
+            "type": "string"
+          },
+          "table": {
+            "type": "string"
+          },
+          "what": {
+            "type": "string"
+          },
+          "workflow": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "chain": {
+      "type": "object",
+      "properties": {
+        "workflow": {
+          "type": "string"
+        },
+        "max_runs_per_day": {
+          "type": "number"
+        },
+        "backoff_after_failures": {
+          "type": "number"
+        },
+        "max_runs_per_day_public": {
+          "type": "number"
+        },
+        "max_wakes_per_hour": {
+          "type": "number"
+        }
+      }
+    },
+    "stages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "needs_work": {
+            "type": "boolean"
+          },
+          "sla_s": {
+            "type": "number"
+          },
+          "source": {
+            "type": "string"
+          },
+          "what": {
+            "type": "string"
+          },
+          "workflow": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "escalation": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "missed": {
+            "type": "number"
+          },
+          "what": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "catchup": {
+      "type": "object",
+      "properties": {
+        "max_per_stage_per_day": {
+          "type": "number"
+        },
+        "dispatch": {
+          "type": "object"
+        }
+      }
+    },
+    "settlement": {
+      "type": "object",
+      "properties": {
+        "sla_hours": {
+          "type": "number"
+        },
+        "names": {
+          "type": "array"
+        },
+        "close_comment": {
+          "type": "string"
+        }
+      }
+    },
+    "_doc_replicas": {
+      "type": "string"
+    },
+    "_doc_health": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "_doc_health",
+    "_doc_replicas",
+    "account_id",
+    "catchup",
+    "chain",
+    "clocks",
+    "escalation",
+    "settlement",
+    "stages",
+    "version"
+  ]
+}

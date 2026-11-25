@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/priorities.schema.json",
+  "title": "priorities (doctrine/priorities.json)",
+  "description": "Contract for doctrine/priorities.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "goals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "match": {
+            "type": "array"
+          },
+          "weight": {
+            "type": "number"
+          },
+          "why": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "owner_held_pattern": {
+      "type": "string"
+    },
+    "size_divisor": {
+      "type": "object",
+      "properties": {
+        "S": {
+          "type": "number"
+        },
+        "M": {
+          "type": "number"
+        },
+        "L": {
+          "type": "number"
+        }
+      }
+    },
+    "unblocks_weight": {
+      "type": "number"
+    },
+    "age_weight_per_day": {
+      "type": "number"
+    },
+    "age_cap": {
+      "type": "number"
+    },
+    "label_bonus": {
+      "type": "object",
+      "properties": {
+        "p0": {
+          "type": "number"
+        },
+        "p1": {
+          "type": "number"
+        },
+        "p2": {
+          "type": "number"
+        },
+        "p3": {
+          "type": "number"
+        }
+      }
+    },
+    "pins": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": "string"
+        },
+        "bonus": {
+          "type": "number"
+        },
+        "ids": {
+          "type": "array"
+        }
+      }
+    },
+    "goal_match_fields": {
+      "type": "string"
+    },
+    "secondary_share": {
+      "type": "number"
+    },
+    "pareto_bonus": {
+      "type": "number"
+    },
+    "constraints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "goal": {
+            "type": "string"
+          },
+          "multiplier": {
+            "type": "number"
+          },
+          "why": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "age_cap",
+    "age_weight_per_day",
+    "constraints",
+    "goal_match_fields",
+    "goals",
+    "label_bonus",
+    "owner_held_pattern",
+    "pareto_bonus",
+    "pins",
+    "secondary_share",
+    "size_divisor",
+    "unblocks_weight"
+  ]
+}

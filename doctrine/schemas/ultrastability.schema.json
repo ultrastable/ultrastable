@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/ultrastability.schema.json",
+  "title": "ultrastability (doctrine/ultrastability.json)",
+  "description": "Contract for doctrine/ultrastability.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "marker": {
+      "type": "string"
+    },
+    "credit": {
+      "type": "string"
+    },
+    "ledger": {
+      "type": "string"
+    },
+    "item_prefix": {
+      "type": "string"
+    },
+    "patience_ticks": {
+      "type": "number"
+    },
+    "settle_ticks": {
+      "type": "number"
+    },
+    "scopes": {
+      "type": "object",
+      "properties": {
+        "platform": {
+          "type": "object"
+        },
+        "tenant": {
+          "type": "object"
+        }
+      }
+    },
+    "self": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "is": {
+          "type": "string"
+        },
+        "does": {
+          "type": "array"
+        },
+        "not": {
+          "type": "string"
+        },
+        "boundary_ref": {
+          "type": "string"
+        },
+        "clocks_ref": {
+          "type": "string"
+        },
+        "inheritance": {
+          "type": "object"
+        }
+      }
+    },
+    "item_settle_ticks": {
+      "type": "number"
+    },
+    "_doc_settle": {
+      "type": "string"
+    },
+    "_doc_second_loop_2": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "_doc_second_loop_2",
+    "_doc_settle",
+    "credit",
+    "id",
+    "item_prefix",
+    "item_settle_ticks",
+    "ledger",
+    "marker",
+    "patience_ticks",
+    "scopes",
+    "self",
+    "settle_ticks",
+    "version"
+  ]
+}

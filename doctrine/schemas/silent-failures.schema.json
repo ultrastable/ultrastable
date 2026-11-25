@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/silent-failures.schema.json",
+  "title": "silent-failures (doctrine/silent-failures.json)",
+  "description": "Contract for doctrine/silent-failures.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "bundle": {
+      "type": "object",
+      "properties": {
+        "groups": {
+          "type": "array"
+        },
+        "exclude_suffix": {
+          "type": "array"
+        },
+        "exclude_contains": {
+          "type": "array"
+        },
+        "generated": {
+          "type": "array"
+        }
+      }
+    },
+    "overlap": {
+      "type": "object",
+      "properties": {
+        "module_globs": {
+          "type": "array"
+        },
+        "jaccard": {
+          "type": "number"
+        },
+        "clusters": {
+          "type": "array"
+        },
+        "distinct": {
+          "type": "array"
+        }
+      }
+    },
+    "cite_hosts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "live": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "expect": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ledgers": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "unclassified_ok": {
+      "type": "array"
+    },
+    "classes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "detector": {
+            "type": "string"
+          },
+          "example": {
+            "type": "string"
+          },
+          "failure_mode": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "signatures": {
+            "type": "array"
+          }
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "bundle",
+    "cite_hosts",
+    "classes",
+    "ledgers",
+    "live",
+    "overlap",
+    "unclassified_ok"
+  ]
+}
