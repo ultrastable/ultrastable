@@ -1,0 +1,187 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
+// KGRAPH-1: the shared knowledge-graph engine. Extraction and identity, incremental sync with retirement (no silent drop), analytics,
+// the insights loop (settle and calibrate), the read side, and the DDL kept equal to the migration.
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { makeDb } from './d1shim.js';
+import * as kg from '../src/knowledge.js';
+
+// A tenant's database: the seed migrations without DATAGRAPH-1's kg_* tables (the two engines never share one database).
+const KG_TABLES = ['kg_nodes', 'kg_edges', 'kg_insights', 'kg_runs', 'kg_sources', 'kg_state'];
+const tenantDb = () => { const d = makeDb(); for (const t of KG_TABLES) d.raw.exec('DROP TABLE IF EXISTS ' + t); return d; };
+
+const mappers = {
+  paper: (d, { node, edge }) => {
+    const p = node('paper', d.title, { year: d.year });
+    for (const a of d.authors) edge(p, 'by', node('author', a));
+    edge(p, 'about', node('topic', d.topic));
+  },
+};
+const recs = list => list.map(d => ({ type: 'paper', source: 'paper/' + d.id, data: d }));
+const base = [
+  { id: 1, title: 'Deterrence', year: 2013, authors: ['Nagin'], topic: 'crime' },
+  { id: 2, title: 'Imprisonment and reoffending', year: 2009, authors: ['Nagin', 'Cullen'], topic: 'crime' },
+  { id: 3, title: 'Hot spots', year: 2019, authors: ['Braga'], topic: 'policing' },
+  { id: 4, title: 'Disorder policing', year: 2015, authors: ['Braga', 'Welsh'], topic: 'policing' },
+];
+const spec = { predict: [{ from: 'paper', to: 'paper' }], gaps: [{ id: 'no-topic', kind: 'author', need: { rel: 'by', dir: 'in' }, text: n => `${n.label} has no paper` }], window_days: 1 };
+
+test('identity: case, accents, punctuation and "et al." resolve to one entity; aliases merge', () => {
+  assert.equal(kg.key('The Nagin, et al.'), 'nagin');
+  assert.equal(kg.nodeId('author', 'Guimerà'), kg.nodeId('author', 'guimera'));
+  assert.equal(kg.nodeId('author', 'D. Nagin', { 'author:d nagin': 'author:nagin' }), 'author:nagin');
+  const f = kg.extract(recs(base.slice(0, 1)), mappers);
+  assert.equal(f[0].nodes.length, 3); assert.equal(f[0].edges.length, 2); assert.match(f[0].hash, /^[0-9a-f]{16}$/);
+  assert.equal(kg.extract(recs(base.slice(0, 1)), mappers)[0].hash, f[0].hash, 'hash is stable');
+  assert.throws(() => kg.extract([{ type: 'x', source: 's', data: {} }], mappers), /no mapper/);
+  assert.throws(() => kg.extract([...recs(base.slice(0, 1)), ...recs(base.slice(0, 1))], mappers), /duplicate source/);
+});
+
+test('model extraction keeps only schema triples whose quote is in the text', () => {
+  const text = 'Nagin (2013) found that the certainty of being caught deters far more than severity of punishment.';
+  const schema = { kinds: ['author', 'finding'], rels: ['found'] };
+  const out = JSON.stringify({ triples: [
+    { src: { kind: 'author', label: 'Nagin' }, rel: 'found', dst: { kind: 'finding', label: 'certainty deters' }, quote: 'the certainty of being caught deters far more' },
+    { src: { kind: 'author', label: 'Nagin' }, rel: 'found', dst: { kind: 'finding', label: 'invented' }, quote: 'prison always lowers crime by a large amount' },
+    { src: { kind: 'place', label: 'x' }, rel: 'found', dst: { kind: 'finding', label: 'y' }, quote: 'the certainty of being caught deters far more' }] });
+  const r = kg.checkExtraction('model says: ' + out, text, schema);
+  assert.equal(r.triples.length, 1); assert.equal(r.dropped, 2);
+  assert.equal(kg.checkExtraction('nonsense', text, schema).reason, 'not json');
+  assert.match(kg.extractPrompt(text, schema)[0].content, /Relations: found/);
+});
+
+test('sync is incremental: unchanged records write nothing, changed ones replace, removed ones are retired not deleted', async () => {
+  const db = tenantDb(); const t0 = 1_700_000_000_000;
+  let r = await kg.sync(db, kg.extract(recs(base), mappers), { tenant: 't', now: t0 });
+  assert.deepEqual(r, { added: 4, changed: 0, retired: 0, unchanged: 0 });
+  r = await kg.sync(db, kg.extract(recs(base), mappers), { tenant: 't', now: t0 + 1 });
+  assert.deepEqual(r, { added: 0, changed: 0, retired: 0, unchanged: 4 });
+  const changed = base.map(d => (d.id === 4 ? { ...d, authors: ['Braga', 'Schnell'] } : d)).filter(d => d.id !== 1);
+  r = await kg.sync(db, kg.extract(recs(changed), mappers), { tenant: 't', now: t0 + 2 });
+  assert.deepEqual(r, { added: 0, changed: 1, retired: 1, unchanged: 2 });
+  const g = await kg.load(db, 't');
+  assert.ok(!g.nodes.has('paper:deterrence'), 'a retired record leaves the live graph');
+  assert.ok(g.nodes.has('author:nagin'), 'Nagin is still mentioned by paper 2');
+  assert.ok(g.nodes.has('author:schnell') && !g.nodes.has('author:welsh'));
+  const kept = db.raw.prepare(`SELECT COUNT(*) AS n FROM kg_nodes WHERE tenant='t' AND retired_at IS NOT NULL`).get().n;
+  assert.ok(kept > 0, 'retired facts are kept as history');
+  assert.equal((await kg.load(db, 'other')).nodes.size, 0, 'tenants are isolated');
+});
+
+test('analytics: pagerank sums to one, communities split the two clusters, Adamic-Adar predicts the shared-author link', async () => {
+  const db = tenantDb();
+  await kg.sync(db, kg.extract(recs(base), mappers), { tenant: '', now: 1 });
+  const g = await kg.load(db, ''), an = kg.analyze(g, spec);
+  assert.ok(Math.abs(Object.values(an.rank).reduce((s, x) => s + x, 0) - 1) < 1e-3);
+  assert.equal(an.community['paper:deterrence'], an.community['paper:imprisonment and reoffending']);
+  assert.notEqual(an.community['paper:deterrence'], an.community['paper:hot spots']);
+  assert.ok(an.modularity > 0.3, `modularity ${an.modularity}`);
+  const l = an.links.map(x => [x.a, x.b].sort().join('|'));
+  assert.ok(l.includes('paper:deterrence|paper:imprisonment and reoffending'));
+  assert.ok(!l.some(x => x.includes('deterrence') && x.includes('hot spots')), 'no link across unrelated clusters');
+  assert.deepEqual(an.gaps, []);
+});
+
+test('the insights loop files findings, settles them against the graph, and re-weights kinds from outcomes', async () => {
+  const db = tenantDb(), D = 864e5; let now = 1_700_000_000_000;
+  let r = await kg.runKg(db, { tenant: 'u', records: recs(base), mappers, spec, now });
+  assert.ok(r.ok, r.error); assert.ok(r.insights_new >= 1);
+  const open = await kg.insights(db, 'u');
+  const link = open.find(i => i.kind === 'link');
+  assert.ok(link, 'a predicted link is filed'); assert.match(link.text, /share/);
+  // the predicted link appears in the data: kept on the next beat
+  const linkedBase = [...base, { id: 5, title: 'Deterrence', year: 2013, authors: ['Nagin'], topic: 'crime', cites: true }];
+  const m2 = { paper: (d, h) => { mappers.paper(d, h); if (d.cites) h.edge(h.node('paper', 'Deterrence'), 'cites', h.node('paper', 'Imprisonment and reoffending')); } };
+  now += D / 2;
+  r = await kg.runKg(db, { tenant: 'u', records: recs(linkedBase), mappers: m2, spec, now });
+  assert.ok(r.ok, r.error); assert.ok(r.kept >= 1);
+  assert.equal((await kg.insights(db, 'u', { status: 'kept' })).some(i => i.id === link.id), true);
+  // a second run with nothing new files nothing twice
+  now += D / 2; r = await kg.runKg(db, { tenant: 'u', records: recs(linkedBase), mappers: m2, spec, now });
+  const ids = (await kg.insights(db, 'u', { status: 'any', limit: 500 })).map(i => i.id);
+  assert.equal(new Set(ids).size, ids.length);
+  // follows count as an outcome for a link nobody wrote down
+  assert.equal(kg.judge({ kind: 'link', subject: 'paper:hot spots', object: 'paper:disorder policing', due_at: now + D, follows: 3 }, await kg.load(db, 'u'), { gaps: [], bridges: [] }, { now }), 'kept');
+  assert.deepEqual(kg.calibrate([{ kind: 'link', status: 'kept' }, { kind: 'link', status: 'kept' }]), { link: 1 }, 'no change under the minimum');
+  const w = kg.calibrate([...Array(6)].map((_, i) => ({ kind: 'gap', status: i ? 'dropped' : 'kept' })).concat([...Array(6)].map(() => ({ kind: 'link', status: 'kept' }))));
+  assert.ok(w.gap < 1 && w.link > 1 && w.link <= 1.5 && w.gap >= 0.5);
+  const h = await kg.kgHealth(db, 'u', now);
+  assert.equal(h.ok, true); assert.ok(h.nodes > 0); assert.ok(h.kept_rate > 0);
+});
+
+test('a failing mapper is recorded on the run, not swallowed', async () => {
+  const db = tenantDb();
+  const r = await kg.runKg(db, { tenant: 'x', records: [{ type: 'paper', source: 's', data: { title: '', authors: [], topic: 't' } }], mappers, now: 5 });
+  assert.equal(r.ok, false); assert.match(r.error, /needs kind and label/);
+  assert.equal((await kg.lastRun(db, 'x')).error, r.error);
+  assert.equal((await kg.kgHealth(db, 'x', 5)).ok, false);
+});
+
+test('the JSON routes serve the graph, insights, a node, health and follows', async () => {
+  const db = tenantDb(), now = 1_700_000_000_000;
+  await kg.runKg(db, { tenant: 'r', records: recs(base), mappers, spec, now });
+  const get = p => kg.handleKg(new Request('https://x.test' + p), db, { tenant: 'r', now });
+  const snap = await (await get('/api/graph.json')).json();
+  assert.equal(snap.ok, true); assert.equal(snap.total.nodes, snap.nodes.length); assert.ok(snap.nodes[0].rank > 0);
+  const ins = await (await get('/api/graph/insights')).json(); assert.ok(ins.insights.length >= 1);
+  const nb = await (await get('/api/graph/node?id=author:nagin')).json(); assert.equal(nb.neighbors.length, 2);
+  assert.equal((await get('/api/graph/health')).status, 200);
+  const f = await kg.handleKg(new Request('https://x.test/api/graph/follow', { method: 'POST', body: JSON.stringify({ id: ins.insights[0].id }) }), db, { tenant: 'r' });
+  assert.equal((await f.json()).ok, true);
+  assert.equal(await get('/elsewhere'), null);
+});
+
+test('the research is live: every practice is measured from the graph, and an empty graph says unmeasured or fails, never holds by default', async () => {
+  const db = tenantDb(), now = 1_700_000_000_000;
+  const empty = await kg.practices(db, 'z', now);
+  assert.equal(empty.practices.find(p => p.id === 'fresh').status, 'fails');
+  assert.equal(empty.practices.find(p => p.id === 'calibrated-insights').status, 'unmeasured');
+  await kg.runKg(db, { tenant: 'z', records: recs(base), mappers, spec, now });
+  const p = await kg.practices(db, 'z', now);
+  assert.equal(p.practices.length, kg.KG_PRACTICES.length);
+  for (const id of ['schema-first', 'provenance', 'entity-resolution', 'communities', 'bounded-cost', 'fresh']) assert.equal(p.practices.find(x => x.id === id).status, 'holds', id);
+  for (const x of p.practices) assert.match(x.source.url, /^https:\/\//);
+  const html = kg.methodHtml(p); assert.match(html, /re-checked each time/); assert.doesNotMatch(html, /<script/);
+  const r = await kg.handleKg(new Request('https://x.test/api/graph/method'), db, { tenant: 'z', now });
+  assert.equal((await r.json()).practices.length, kg.KG_PRACTICES.length);
+});
+
+test('a database that already holds DATAGRAPH-1 tables is refused with a plain reason, never written into', async () => {
+  const db = tenantDb();
+  db.raw.exec('CREATE TABLE kg_nodes (id TEXT PRIMARY KEY, kind TEXT NOT NULL, label TEXT, props TEXT, hash TEXT, source TEXT, first_seen TEXT NOT NULL, changed_at TEXT NOT NULL, valid_to TEXT)');  // DATAGRAPH-1's shape
+  await assert.rejects(kg.runKg(db, { tenant: 't', records: recs(base), mappers, spec, now: 1 }).then(r => { if (r.error) throw new Error(r.error); return r; }), /DATAGRAPH-1/);
+});
+
+test('via_kinds limits the shared neighbours that count as evidence for a predicted link', async () => {
+  const db = tenantDb();
+  await kg.sync(db, kg.extract(recs(base), mappers), { tenant: 'v', now: 1 });
+  const g = await kg.load(db, 'v');
+  assert.ok(kg.analyze(g, { ...spec, via_kinds: ['author'] }).links.every(l => l.via.every(v => v.startsWith('author:'))));
+  assert.equal(kg.analyze(g, { ...spec, via_kinds: ['venue'] }).links.length, 0);
+});
+
+test('zero-config extraction: every table is read, references between rows become edges, private tables and columns are never read', async () => {
+  const db = tenantDb();
+  db.raw.exec(`CREATE TABLE programmes (id TEXT PRIMARY KEY, name TEXT, owner_email TEXT)`);
+  db.raw.exec(`CREATE TABLE trials (id INTEGER PRIMARY KEY, title TEXT, programme TEXT, site_id INTEGER, note TEXT)`);
+  db.raw.exec(`CREATE TABLE sites (id INTEGER PRIMARY KEY, name TEXT)`);
+  db.raw.exec(`CREATE TABLE subscribers (id INTEGER PRIMARY KEY, name TEXT)`);
+  db.raw.exec(`INSERT INTO programmes VALUES ('prog-a','Cash transfers','a@b.c'), ('prog-b','School meals','d@e.f')`);
+  db.raw.exec(`INSERT INTO sites VALUES (1,'Kenya'), (2,'Malawi')`);
+  db.raw.exec(`INSERT INTO trials VALUES (1,'GiveDirectly RCT','prog-a',1,'private words'), (2,'Meals trial','prog-b',2,null)`);
+  db.raw.exec(`INSERT INTO subscribers VALUES (1,'A Person')`);
+  const recs = await kg.tableRecords(db, { only: ['programmes', 'trials', 'sites', 'subscribers'] });
+  assert.ok(!recs.some(r => r.data.table === 'subscribers'), 'a table that may hold people is never read');
+  assert.ok(!JSON.stringify(recs).includes('a@b.c') && !JSON.stringify(recs).includes('private words'), 'private columns are never read');
+  const t1 = recs.find(r => r.source === 'row/trials/1');
+  assert.deepEqual(t1.data.refs.map(x => [x.col, x.table, x.key]).sort(), [['programme', 'programmes', 'prog-a'], ['site_id', 'sites', '1']]);
+  await kg.sync(db, kg.extract(recs, kg.TABLE_MAPPERS), { tenant: 'z', now: 1 });
+  const g = await kg.load(db, 'z');
+  assert.ok(g.edges.some(e => e.src === 'trials:1' && e.rel === 'programme' && e.dst === 'programmes:prog-a'));
+  // a table another mapper owns is indexed for pointers but not emitted twice
+  const as = await kg.tableRecords(db, { only: ['programmes', 'trials'], as: { programmes: 'programme' } });
+  assert.ok(!as.some(r => r.data.table === 'programmes'));
+  assert.equal(as.find(r => r.source === 'row/trials/1').data.refs[0].table, 'programme');
+});
