@@ -4,7 +4,7 @@
 export default {
  "apps": {},
  "boards": {},
- "built_at": "2026-11-22T13:12:43Z",
+ "built_at": "2026-11-26T17:17:19Z",
  "caps": {
   "max_launches_per_day": 3,
   "max_launches_per_week": 21,
