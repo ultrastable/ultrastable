@@ -5880,6 +5880,23 @@
    "body": "OPEN-STANDARDS-1: the openstd gate first accepted only a $schema key, while CONFIG-SCHEMA-1 on main declares config schemas through Schema Store catalogs; the gate now accepts either, so two standards checks do not disagree about the same file. A long-lived branch is reconciled with main before each push, because a day of merges added five checks the branch had never run.",
    "probe": "grep:foundation/openstd.py::def catalogued",
    "session": "session_0156nqDvhf9QiAUCtw3GwA14"
+  },
+  {
+   "id": "lesson-2026-11-26-a-pr-bound-and-a-model-free-merge-for-additive-conflicts",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "A PR bound and a model-free merge for additive conflicts",
+   "body": "PRs sat open for hours because lane.sh only labelled conflicted and failed session PRs and waited on a dead executor, and both-sides-additive registry rows counted as conflicts. ADDITIVE-MERGE-1 resolves those without a model; PR-BOUND-1 closes past 30/60 min with the branch kept; detector pr-age-bound fails on any PR open past 2 h.",
+   "probe": "grep:foundation/prbound.py::def read"
+  },
+  {
+   "id": "lesson-2026-11-26-judge-the-code-agent-ladder-by-answers-not-by-runs",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Judge the code-agent ladder by answers, not by runs",
+   "body": "From 2026-11-23 every code-agent rung failed: the site's CF_DEPLOY_TOKEN has no Workers AI permission so /__internal/cf returned 401, and GitHub Models answered 200 OK text/plain. 20 of 21 executor-shelved items in 72 h died that way while clocks read green. Fix: ai/run goes through the site's AI binding; dispose no longer shelves an item for a dead ladder; ladderwatch --check is a live detector (fm-code-ladder-dead).",
+   "probe": "grep:foundation/ladderwatch.py::def read",
+   "session": "session_0156nqDvbXYqh4M3id5voNoB"
   }
  ]
 }
