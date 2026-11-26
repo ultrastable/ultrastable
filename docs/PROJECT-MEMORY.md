@@ -10,6 +10,9 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-26
 
+- 2026-11-26: feat: the adapters and launcher (W08) (#2588)
+- 2026-11-26: Fix async handler, mount route, test wire, update handoff. (#Q-LITE-webmention-wire) (#2589)
+- 2026-11-26: feat: the bootstrapper, its ladder and the owner document (BS) (#2587)
 - 2026-11-26: feat: the console and elicit modules (W07) (#2586)
 - 2026-11-26: feat: the sla, specloop, staff, tenantstore and trust modules (W06) (#2585)
 - 2026-11-26: feat: the predict, remediation, router and signals modules (W05) (#2583)
