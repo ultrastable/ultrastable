@@ -56,6 +56,14 @@ jobs:
         run: |
           python3 -m foundation collisions --check
           python3 -m foundation collisions --prs
+      - name: Every path is classified and a session PR stays inside its size budget (REPO-SHAPE-1)
+        # a 3,000-file, 291,031-line change is unreviewable; state is classified apart from code and an oversize branch splits with `foundation reposhape --split`
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          python3 -m foundation reposhape --check
+          if [ -n "${BASE_SHA:-}" ]; then python3 -m foundation reposhape --pr "${BASE_SHA}...HEAD"; fi
       - name: Workflow minute-budget lint (cheap, runs first)
         run: python3 scripts/lint_workflows.py
       - name: Public docs complete and in sync with the code (DOCS-SYNC-1)

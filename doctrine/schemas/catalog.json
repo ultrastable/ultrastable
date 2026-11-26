@@ -739,6 +739,14 @@
       "url": "registers.schema.json"
     },
     {
+      "name": "repo-shape.json",
+      "description": "Contract for doctrine/repo-shape.json",
+      "fileMatch": [
+        "doctrine/repo-shape.json"
+      ],
+      "url": "repo-shape.schema.json"
+    },
+    {
       "name": "research.json",
       "description": "Contract for doctrine/research.json",
       "fileMatch": [
