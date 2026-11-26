@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """REPO-CONFORM-1: check that a repository carries the machine-readable files in autonomy/repo-conformance.json.
 
 python3 scripts/repoconform.py --check [PATH]   exit 1 and list each missing or empty file
