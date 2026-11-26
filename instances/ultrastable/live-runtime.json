@@ -1,4 +1,5 @@
 {
+  "$schema": "../../schemas/doctrine.schema.json",
  "_doc": "LIVE-1: the deployed runtimes of tenant 0 (Ultrastable on itself) and its first child. Deployed with scripts/deploy_tenant.py from the seed. Read by scripts/build_dashboard.py, the /dashboard live feed and the failure audit. Public exposure is /health only (PUBLIC_HEALTH_ONLY=1); the backlog and agent surfaces stay private. D1 ids are identifiers, not secrets. ACCOUNT-SPLIT-3 (2026-11-18): tenant 0 is the tick worker in the ultrastable account; the retired demo child is no longer listed.",
  "deployed": "2026-11-18",
  "runtimes": [

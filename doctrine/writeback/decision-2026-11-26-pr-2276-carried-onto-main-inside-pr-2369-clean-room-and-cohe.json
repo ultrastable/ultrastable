@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-26-pr-2276-carried-onto-main-inside-pr-2369-clean-room-and-cohe",
+  "kind": "decision",
+  "date": "2026-11-26",
+  "title": "PR 2276 carried onto main inside PR 2369: clean room and coherence kept, its system definition left out",
+  "body": "Carried from PR 2276: CLEANROOM-1 (foundation/cleanroom.py, doctrine/cleanroom.json, cleanroom.yml, platform/selfhost/day.mjs, ops/cleanroom, loop, clock and flow rows, tests), COHERENCE-1 (foundation/coherence.py, doctrine/coherence.json: contradiction lint over instruction surfaces and generated satellite agent files, duplicates, rule reach, enforcement), the contract wording in workers/agents/CONTRACT.md and sync_agent_files.py, the hosted-boot facts in seed/bootstrap/bootstrap.py and the HALT guard on four seed workflows. Left out as superseded: SYSTEM-1 (seed/doctrine/system.json and its SYSTEM.md) by SYSTEM-SPEC-1 and COLDSTART-1; BRANCH-CLEANUP-1 by REPO-STANDARD-1; the org-settings generator by ADMIT-1 and REPO-STANDARD-1; the seed-template remote compare and OL-20261125-2 by FLEET-MAP-1 (fleetmap --drift, template-publish.yml); seed/doctrine/balance.json by seed/autonomy/balance.json; seed/worker/src/stepplan.js by stepPlan in seed/worker/src/tick.js; seed/NOTICE by TEMPLATE-CODE-ONLY-1. The first clean-room run here found that a booted system's SYSTEM.md went stale (org/ paths counted as kit enforcement); seed/scripts/system.py no longer counts them, and cleanroom --run then ran 20 capabilities and 144 ticks and passes.",
+  "probe": "grep:foundation/cleanroom.py::def run",
+  "session": "session_0156nqDufLi3JgDJf3gVw7Fh"
+ },
+ "kind": "decision",
+ "title": "PR 2276 carried onto main inside PR 2369: clean room and coherence kept, its system definition left out",
+ "session": "session_0156nqDufLi3JgDJf3gVw7Fh"
+}

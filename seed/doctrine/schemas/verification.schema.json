@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/seed/doctrine/verification.schema.json",
+  "title": "verification (seed/doctrine/verification.json)",
+  "description": "Contract for seed/doctrine/verification.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "marker": {
+      "type": "string"
+    },
+    "sources": {
+      "type": "object",
+      "properties": {
+        "tla-aws": {
+          "type": "string"
+        },
+        "sel4": {
+          "type": "string"
+        },
+        "compcert": {
+          "type": "string"
+        },
+        "power-of-ten": {
+          "type": "string"
+        },
+        "do-178c": {
+          "type": "string"
+        },
+        "quickcheck": {
+          "type": "string"
+        },
+        "ashby": {
+          "type": "string"
+        }
+      }
+    },
+    "invariants": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "property": {
+            "type": "string"
+          },
+          "source": {
+            "type": "array"
+          }
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "invariants",
+    "marker",
+    "sources"
+  ]
+}

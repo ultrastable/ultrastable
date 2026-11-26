@@ -1,0 +1,11 @@
+{
+  "id": "Q-ULTRA-second_loop_keep_rate-REDESIGN",
+  "title": "Q-ULTRA-second_loop_keep_rate-REDESIGN: every second-order step failed to bring Second-loop steps that worked back in bounds; redesign",
+  "body": "**Owner:** executor\n**Trigger:** ladder exhausted for `second_loop_keep_rate`\n**Done check:** cmd:python3 -m foundation ultrastability --check\n**Status:** open\n\nThe same failure three times is a design defect (GUIDING-DIRECTIVE section 2): change the structure, not the parameter.\n\nsize: L\n\n**Closing probe:** `python3 -m foundation ultrastability --tick` reads `second_loop_keep_rate` inside its bounds.\n\n\n**Vacuous:** 2026-11-26T07:02:06Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n",
+  "labels": [
+    "p0",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Ultrastability"
+}

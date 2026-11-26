@@ -1,4 +1,5 @@
 {
+  "$schema": "../../schemas/doctrine.schema.json",
  "_doc": "LIVENESS-1 (owner, 2026-11-12): is each autonomous code loop actually running? The closing probes in loop-registry.json prove that code exists (file:, grep:); these probes prove that it ran, from evidence the loop itself leaves on a server-side platform. Every system declares its own list in instances/<slug>/liveness.json: what must be running, where its evidence is, and how old that evidence may get. Read by foundation/liveness.py (`python3 -m foundation liveness`), which the daily lane sweep runs; a loop that is not alive becomes a queue item. Evidence kinds: workflow:<file> (latest completed GitHub Actions run), jsonl:<git ref>:<path>:<time field> (newest row of a log on a branch), merged-pr (newest merged pull request).",
  "version": "1.0.0",
  "system": "ultrastable",

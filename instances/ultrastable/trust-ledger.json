@@ -1,1 +1,2 @@
-{"rows": {}, "tick": 0, "transitions": [], "version": 1}
+{
+  "$schema": "../../schemas/doctrine.schema.json","rows": {}, "tick": 0, "transitions": [], "version": 1}

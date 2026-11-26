@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """LADDER-LIVE-1: a dead code-agent ladder fails the check; a dead-ladder failure never shelves an item."""
 import json, tempfile, unittest
 from datetime import datetime, timezone

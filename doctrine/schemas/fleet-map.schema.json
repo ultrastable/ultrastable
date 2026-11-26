@@ -48,6 +48,50 @@
         },
         "never": {
           "type": "array"
+        },
+        "generated": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "path",
+              "reason",
+              "generator"
+            ],
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "reason": {
+                "type": "string"
+              },
+              "generator": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "retired": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "path",
+              "reason",
+              "superseded_by"
+            ],
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "reason": {
+                "type": "string"
+              },
+              "superseded_by": {
+                "type": "string"
+              }
+            }
+          }
         }
       }
     },

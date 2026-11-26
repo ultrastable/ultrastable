@@ -1,4 +1,5 @@
 {
+  "$schema": "../../schemas/doctrine.schema.json",
  "_doc": "Gap register: what Ultrastable still does through tools outside itself, with the plan to close each and a closing probe. `python3 -m foundation selfhost --gaps` prints it; the verifier fails when an outside tool has no gap here, a gap lacks plan or probe, or a closed gap's probe fails. Probe kinds: file:<path> (exists), grep:<path>::<regex> (matches). A gap is closed only when its probe passes (BOOTSTRAP-GAPS rule).",
  "version": "1.0.0",
  "gaps": [

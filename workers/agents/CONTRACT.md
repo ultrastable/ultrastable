@@ -16,12 +16,12 @@ At the start of every session, fetch https://raw.githubusercontent.com/ultrastab
 2. **Claim before you work.** Comment `claim: <your tool or name> <UTC time>` on the item. A live claim by someone else is theirs: review it, do not duplicate it. Release it when you stop, with the next step.
 3. **Branch and draft early.** Branch `agent/<item>-<slug>`; open a draft pull request within minutes. Commit after each stage: unpushed work is lost work.
 4. **The pull request body carries the record** (the template has the fields): `Item:`, `Spec:` (requirement ids), `Prediction:` (`<metric> <op> <number> within <N> h`, or `n/a` with a reason), `Evidence:` (real output, not a description), `Author:`, `Reviewer:`.
-5. **Never review your own work.** The reviewer is a different agent, and where possible a different model, or a person. Say which.
+5. **Never review your own work.** The reviewer is a different agent, a different model where possible, or an automated check. Say which.
 6. **Status labels tell the truth.** A specification may say BUILT only when it names a file that exists and a test that passes. Change the code and its status line together, or file the mismatch as an item. `tools/spec_truth.py` checks this.
-7. **Protect the rules.** Agent instructions, CI workflows, the policy file, the separation guard, SCOPE.md and the license are *protected paths*. Changing them needs a human reviewer, a `Protected-change:` line giving the reason, and one change at a time. Never weaken a guard to make something pass. If a guard breaches after your change, revert first.
+7. **Protect the rules.** Agent instructions, CI workflows, the policy file, the separation guard, SCOPE.md and the license are *protected paths*. Changing them needs a `Protected-change:` line giving the reason, one change at a time, and the automated gates (checks, `python3 -m foundation coherence --check`) passing; no person reviews or approves (CLOSED-LOOP-AXIOM). Never weaken a guard to make something pass. If a guard breaches after your change, revert first.
 8. **Stay in scope.** `SCOPE.md` decides. An out-of-scope request becomes a held item, not work.
 9. **Secrets are never handled.** Refer to them by name. Never print, commit, paste or log a value.
-10. **The interrupt gate is narrow.** Stop only for a step that is both irreversible and bound to a person's identity (money, signing, deleting without a backup, using their accounts). Prepare it, open a decision card, take the next item.
+10. **The interrupt gate is narrow.** Stop only for a step that is both irreversible and bound to a person's identity (money, signing, deleting without a backup, using their accounts). Engineer a reversible path first; if none exists, record a gate card with the default in effect and a closing probe, then take the next item.
 11. **Report in four lines:** what happened, what I decided, what is next, what is open. Leave a handoff note in the item or `docs/handoff/` so the next worker can continue cold.
 12. **Nothing exists only in chat.** If it matters, it is in a commit, an issue, a pull request or a database row before you finish.
 
@@ -43,8 +43,8 @@ You can still work inside the contract. Do what your tool allows and say plainly
 
 | Your tool can | Do this |
 |---|---|
-| Only talk (a chat assistant with no file or network access) | Produce the artifacts as text the person can paste: the patch or file contents, the issue text, the pull request body. List the records still to be created and by whom. Never claim they exist |
-| Read and edit files | Make the change on a branch in the working copy; write the item and pull request text to files for a person to submit |
+| Only talk (a chat assistant with no file or network access) | Produce the artifacts as text: the patch or file contents, the issue text, the pull request body. Say which records do not exist yet; the server-side lane files them from the work order (`/api/v1/work`). Never claim they exist |
+| Read and edit files | Make the change on a branch in the working copy; write the item and pull request text to files; the server-side lane opens and merges them |
 | Use git and the GitHub CLI or API | Do everything in the contract yourself |
 | Call the organization's own interfaces (claims, console, tick) | Use them for items, claims and decisions, in addition to the above |
 
@@ -56,9 +56,9 @@ You can still work inside the contract. Do what your tool allows and say plainly
 | 1 | **The contract and CI** make every change follow the process, whatever the tool | `tools/selfhost_check.py` passes on every pull request; `tools/spec_truth.py` finds no false BUILT |
 | 2 | The organization's own database holds the items, claims and decisions, mirrored with GitHub | Items in the store match open issues |
 | 3 | The Worker's tick dispatches work to agents and scores its own predictions | Ticks run on the self-hosted Cloudflare account; merged pull requests trace to ticks |
-| 4 | Managers and reviewers are scheduled roles; trust is earned per surface | The trust ledger moves; humans merge less |
+| 4 | Managers and reviewers are scheduled roles; trust is earned per surface | The trust ledger moves; the lane merges every green pull request |
 
-Today the repositories are at **stage 1**. Say so; do not claim more.
+The stage is measured, never declared: `python3 -m foundation criticality --check` and `python3 -m foundation cleanroom --run` in `ultrastable/ultrastable` read it from recorded runs. Do not claim more than they show.
 
 ## Code-only order (CODE-ONLY-ORDER, every repo)
 

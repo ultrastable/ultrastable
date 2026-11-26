@@ -10,7 +10,7 @@
   "org-profile": "the organization's public profile and community defaults"
  },
  "template_contents": {
-  "_doc": "TEMPLATE-CODE-ONLY-1: what belongs in ultrastable/seed. It is seed/ of the platform, plus the files in keep. Anything else there is drift: either kernel code to move up into seed/ or a file to delete.",
+  "_doc": "TEMPLATE-CODE-ONLY-1: what belongs in ultrastable/seed. It is seed/ of the platform, plus the files in keep. Anything else there is drift: either kernel code to move up into seed/ or a file to delete. generated: files a generator in seed/ writes from the tree; the template's copy is output, never work to carry up, so a publish replaces it. retired: files the template still holds that seed/ carries under another name; a publish removes them (Q-FLEETMAP-seed).",
   "belongs": [
    "agents/",
    "autonomy/",
@@ -64,6 +64,35 @@
    "brand/",
    "site/",
    "dashboard/"
+  ],
+  "generated": [
+   {
+    "path": "SYSTEM.md",
+    "generator": "scripts/system.py",
+    "reason": "Written by scripts/system.py --write from autonomy/system.json and the code of record; the file itself says not to edit it by hand. The template's copy listed doctrine/balance.json only because the retired duplicate was still there."
+   }
+  ],
+  "retired": [
+   {
+    "path": "doctrine/balance.json",
+    "superseded_by": "autonomy/balance.json",
+    "reason": "The same rules, key for key, as autonomy/balance.json, which has the schema (autonomy/schemas/balance.schema.json). scripts/balance.py reads doctrine/ first, so the duplicate shadowed the config of record."
+   },
+   {
+    "path": "doctrine/system.json",
+    "superseded_by": "autonomy/system.json",
+    "reason": "The first form of the system definition (SYSTEM-1); scripts/system.py reads autonomy/system.json and has no --gen, which this file's own text calls."
+   },
+   {
+    "path": "worker/src/stepplan.js",
+    "superseded_by": "worker/src/tick.js",
+    "reason": "stepPlan and its step lists are defined and exported by tick.js, which never imported this copy; nothing in the kit imports it."
+   },
+   {
+    "path": "worker/test/stepplan.test.js",
+    "superseded_by": "worker/test/tick.test.js",
+    "reason": "Tests the unused copy; tick.test.js tests the stepPlan the tick runs."
+   }
   ]
  },
  "session_repos": {

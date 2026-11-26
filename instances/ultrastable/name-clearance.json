@@ -1,4 +1,5 @@
 {
+  "$schema": "../../schemas/doctrine.schema.json",
  "_doc": "BLINDSPOT-1 need name-clearance, read by the probe fresh:ip/name-clearance.json::at::120::clear in doctrine/blindspots.json and by the ip sweep. A search record, not legal advice: clear means no live identical mark was found in the registers listed under searched; registers under unsearched are a named gap (learned need name-clearance-eu-wipo).",
  "at": "2026-11-20",
  "name": "Ultrastable",

@@ -1,7 +1,9 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """PR-BOUND-1 (2026-11-26): no pull request stays open for hours. Rowan: "Why are PRs open for 10 hours? (or even 1 hour!?)".
 Root cause: the lane labelled a conflicted or failed session PR and waited for the executor, whose model calls were all failing, and nothing
 bounded the wait. This runs model-free from the lane after its merge pass:
-  --apply  closes a PR labelled `conflict` older than conflict_min or `ci-failed` older than failed_min (age = minutes since its last update),
+  --apply  closes a PR labelled `conflict` older than conflict_min or `ci-failed` older than failed_min (age = minutes since it opened: the lane's own labels and comments refresh updatedAt, so that clock never ran out),
            with a comment that names the reason; the branch is kept, so nothing is lost, and the row goes to ops/prbound.jsonl.
   --check  exits 1 while any open PR is older than max_open_h (detector `pr-age-bound`, failure mode fm-pr-stale).
 A PR labelled `hold` is never closed. Read failures are unmeasured, never passed."""
@@ -19,7 +21,7 @@ def read(prs, now=None, conf=CONF):
     for p in prs:
         labels = {l["name"] for l in p.get("labels", [])}
         if "hold" in labels: continue
-        upd = _age_min(p["updatedAt"], now)
+        upd = _age_min(p["createdAt"], now)   # PR-BOUND-2
         if "conflict" in labels and upd >= conf["conflict_min"]:
             close.append((p["number"], f"merge conflict with main unresolved for {int(upd)} min"))
         elif "ci-failed" in labels and upd >= conf["failed_min"]:

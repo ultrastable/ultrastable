@@ -3953,47 +3953,47 @@
    ],
    "server_owner": "github-actions"
   },
+  {
+   "id": "openstd",
+   "kind": "governance",
+   "summary": "OPEN-STANDARDS-1: formats follow registered open standards. The loop drains the shrink-only baseline a batch a day (JSON Schema on config), records CloudEvents for each run, and cuts a SemVer release with a Keep a Changelog file from Conventional Commits.",
+   "trigger": "daily workflow and on demand",
+   "owner": "operations",
+   "closes_by": "system",
+   "sla": "1d",
+   "done": "doctrine/open-standards-baseline.json shrinks or stays empty, ops/openstd/events.jsonl has an event from the last 2 days, and CHANGELOG.md names the current VERSION",
+   "paths": [
     {
-      "id": "openstd",
-      "kind": "governance",
-      "summary": "OPEN-STANDARDS-1: formats follow registered open standards. The loop drains the shrink-only baseline a batch a day (JSON Schema on config), records CloudEvents for each run, and cuts a SemVer release with a Keep a Changelog file from Conventional Commits.",
-      "trigger": "daily workflow and on demand",
-      "owner": "operations",
-      "closes_by": "system",
-      "sla": "1d",
-      "done": "doctrine/open-standards-baseline.json shrinks or stays empty, ops/openstd/events.jsonl has an event from the last 2 days, and CHANGELOG.md names the current VERSION",
-      "paths": [
-        {
-          "id": "github",
-          "how": ".github/workflows/openstd.yml runs python3 -m foundation openstd --drain 25 and semrel --apply",
-          "class": "free"
-        },
-        {
-          "id": "session",
-          "how": "the same commands from a cloud-hosted agent session",
-          "class": "session"
-        }
-      ],
-      "closing_probe": "grep:foundation/openstd.py::def drain",
-      "writeback": [
-        "doctrine",
-        "ops/openstd",
-        "CHANGELOG.md",
-        "VERSION"
-      ],
-      "system_path": [
-        "foundation/openstd.py",
-        "foundation/semrel.py",
-        "doctrine/open-standards.json",
-        "tests/foundation/test_openstd.py",
-        ".github/workflows/openstd.yml"
-      ],
-      "workflows": [
-        "openstd.yml"
-      ],
-      "area": "governance",
-      "server_owner": "github-actions"
+     "id": "github",
+     "how": ".github/workflows/openstd.yml runs python3 -m foundation openstd --drain 25 and semrel --apply",
+     "class": "free"
     },
+    {
+     "id": "session",
+     "how": "the same commands from a cloud-hosted agent session",
+     "class": "session"
+    }
+   ],
+   "closing_probe": "grep:foundation/openstd.py::def drain",
+   "writeback": [
+    "doctrine",
+    "ops/openstd",
+    "CHANGELOG.md",
+    "VERSION"
+   ],
+   "system_path": [
+    "foundation/openstd.py",
+    "foundation/semrel.py",
+    "doctrine/open-standards.json",
+    "tests/foundation/test_openstd.py",
+    ".github/workflows/openstd.yml"
+   ],
+   "workflows": [
+    "openstd.yml"
+   ],
+   "area": "governance",
+   "server_owner": "github-actions"
+  },
   {
    "id": "temporal",
    "kind": "governance",
@@ -4362,6 +4362,47 @@
    "workflows": [
     "supply-chain.yml"
    ],
+   "server_owner": "github-actions"
+  },
+  {
+   "id": "cleanroom",
+   "kind": "governance",
+   "summary": "CLEANROOM-1 and COHERENCE-1: a sandbox system is built from nothing but seed/ and an idea, boots, runs a simulated day and tears itself down; every capability that does not come up with zero human steps becomes a Q-CLEANROOM item. The same run checks that the agent files in the satellite repositories match their generator.",
+   "trigger": "daily workflow, every push to main that touches seed/, and on demand",
+   "owner": "operations",
+   "closes_by": "system",
+   "sla": "1d",
+   "done": "ops/cleanroom/latest.json is under 50 hours old and passed, every finding has a Q-CLEANROOM item, and coherence --check --remote reports no drift",
+   "paths": [
+    {
+     "id": "github",
+     "how": ".github/workflows/cleanroom.yml runs python3 -m foundation cleanroom --run --apply",
+     "class": "free"
+    },
+    {
+     "id": "session",
+     "how": "python3 -m foundation cleanroom --run --apply from a cloud-hosted agent session",
+     "class": "session"
+    }
+   ],
+   "closing_probe": "grep:foundation/cleanroom.py::def run",
+   "writeback": [
+    "ops/cleanroom",
+    "docs/issues"
+   ],
+   "system_path": [
+    "foundation/cleanroom.py",
+    "foundation/coherence.py",
+    "doctrine/cleanroom.json",
+    "doctrine/coherence.json",
+    "platform/selfhost/day.mjs",
+    "tests/foundation/test_cleanroom.py",
+    ".github/workflows/cleanroom.yml"
+   ],
+   "workflows": [
+    "cleanroom.yml"
+   ],
+   "area": "managers",
    "server_owner": "github-actions"
   },
   {
