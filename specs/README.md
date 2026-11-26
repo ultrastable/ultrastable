@@ -3,9 +3,9 @@
 
 # Ultrastable Architectural Specifications
 
-Version 0.1.0 (draft), 2026-11-11.
+Version 0.2.0 (draft), 2026-11-26. First published as 0.1.0 on 2026-11-11.
 
-These documents specify the architecture of Ultrastable, an autonomous development platform: a virtual organization of managers and staff that runs a portfolio of work on a heartbeat, predicts and scores its own decisions, earns autonomy from recorded outcomes, and stops only for steps that cannot be undone. The specifications are source-available and double as a dated public record of the design as of 2026-11-11.
+These documents specify the architecture of Ultrastable, an autonomous development platform: a virtual organization of managers and staff that runs a portfolio of work on a heartbeat, predicts and scores its own decisions, earns autonomy from recorded outcomes, and stops only for steps that cannot be undone. The specifications are source-available and double as a dated public record of the design: 0.1.0 as of 2026-11-11, and each later revision under the version and date in its own header.
 
 ## Index
 
@@ -44,17 +44,29 @@ Each specification ends with a Reference implementation status section using the
 
 | Label | Meaning |
 |---|---|
-| BUILT | Code exists with passing tests, and the file is named. Verified against the code on 2026-11-11 unless stated. |
-| RUNNING | In production in QNFO, the first and so far only installation. Numbers are self-reported by that system and have no outside audit. |
+| BUILT | Code exists with passing tests, and the file is named. That a named path exists is checked on every change (see Checks below); the named test is run by the suite it belongs to. |
+| RUNNING | In production: in QNFO, the first installation, or on Ultrastable's own account where the line says so and names the ledger that shows it. Numbers are self-reported by the system that runs it and have no outside audit. |
 | PLANNED | Designed here, not built. |
 
-A feature may carry more than one label (for example BUILT and RUNNING). Where a document says "described, not evidenced", treat the feature as PLANNED.
+A feature may carry more than one label (for example BUILT and RUNNING). Where a document says "described, not evidenced", treat the feature as PLANNED. A PLANNED line that is tracked names its work item under `docs/issues/`.
+
+Paths in a status section are relative to the tree that holds the code. `core/`, `adapters/`, `tools/`, `packs/` and `tests/` paths are in the `workers/` tree, where the reference implementation was written before it was folded into this repository; `seed/`, `foundation/`, `scripts/`, `doctrine/`, `platform/`, `site/`, `dashboard/` and `tests/foundation/` paths are from the repository root. A line says so where it mixes the two.
+
+## Checks
+
+Three checks keep these documents true to the code, and each runs with the repository's tests:
+
+| Check | What it fails on | Code |
+|---|---|---|
+| Requirement IDs | An ID that is renumbered, removed, reused or defined in the wrong specification (US-00-R11) | `scripts/spec_ids.py --check`, ledger `doctrine/spec-ids.json`, test `tests/foundation/test_spec_ids.py` |
+| Spec truth | A BUILT line that names no path, or a path that does not exist, outside a list that only shrinks (US-00-R12, US-20-R06) | `scripts/spec_truth.py --check`, list `doctrine/spec-truth-baseline.json`, test `tests/foundation/test_spec_truth.py` |
+| Conformance manifest | A requirement in a specification that the manifest does not list, or a requirement marked met whose test is gone or no longer cites it (US-00-R01 to R03) | `workers/core/conformance/cli.js --spec-dir ../specs --check`, test `workers/core/conformance/conformance.test.js` |
 
 ## Conformance levels
 
 | Level | Name | What it means |
 |---|---|---|
-| L1 | Seed | The portable core: schema, seven-step tick, claims with expiry, gate cards, predictions, trust ledger with promotion items. Matches the seed in this project. |
+| L1 | Seed | The portable core: schema, the seven core steps of the tick, claims with expiry, gate cards, predictions, trust ledger with promotion items. Matches the portable core in `workers/core`; the kit every system is seeded from (`seed/`) runs these steps and further ones (US-SPEC-03). |
 | L2 | Managed | L1 plus the managerial layer: risk snapshot, slot allocation, focus, plus loop, decision log, change path with probes and revert, failure-mode register. |
 | L3 | Fleet | L2 plus a multi-worker runtime: schedulers, executors, run ledger, signal boundary, wiring graph, dashboard, report cards. |
 
@@ -62,7 +74,7 @@ A conforming implementation states its level and the requirements it does not me
 
 ## How to cite
 
-Cite as `US-SPEC-<nn> v<version>, <section>` and a requirement as `US-<nn>-R<mm>`, for example "US-06-R04 (US-SPEC-06 v0.1.0)". Requirement IDs are stable: a requirement is never renumbered or reused. A removed requirement keeps its ID with the text "Withdrawn in <version>". Each file carries its version and date in its header block. Because the repository history records every revision, a citation of a version and date identifies exact text.
+Cite as `US-SPEC-<nn> v<version>, <section>` and a requirement as `US-<nn>-R<mm>`, for example "US-06-R04 (US-SPEC-06 v0.1.0)". Requirement IDs are stable: a requirement is never renumbered or reused. A removed requirement keeps its ID with the text "Withdrawn in <version>". Each file carries its version and date in its header block; a file is revised on its own, so versions differ between files and this page's version is that of the index and legend. Because the repository history records every revision, a citation of a version and date identifies exact text.
 
 ## Reading order
 

@@ -106,14 +106,18 @@ These outrank trust: the agent harness's permission checks; classifier and safet
 - **US-06-R17 [L2]** Ladder transitions MUST be recorded with evidence.
 - **US-06-R18 [L2]** Trust MAY multiply a queue item's score by the pair's reliability (US-SPEC-03).
 - **US-06-R19 [L3]** Per-executor trust SHOULD use the minimum of executor and pair rungs.
+- **US-06-R20 [L1]** A threshold crossing that repeats after its earlier ladder item was closed MUST open a new ladder item (for example by a dated id); it MUST NOT be absorbed by the closed one.
+- **US-06-R21 [L2]** Where one database holds rows of several tenants, the trust ledger, gate cards, items and claims MUST carry the tenant in their key, and a runtime MUST read, accrue and close only its own rows.
+- **US-06-R22 [L2]** A linked credential whose silent refresh failed on consecutive attempts MUST become one gate card that carries a consent link, states the default in effect (loops that need the connector skip their step; every other loop runs) and closes itself when a probe reads the connector as healthy again. The card MUST NOT ask a person to copy, paste or mint a secret value.
+- **US-06-R23 [L2]** Trust MUST NOT allow an egress action (credentials, money, the principal's accounts, public publishing, other parties' systems) or a reserved action class at any rung; a decision function MUST deny them at the top rung as at the bottom.
 
 ## 6. Failure modes
 
 | Failure | Effect | Mitigation |
 |---|---|---|
-| One early silent drop demotes forever | Trust never recovers | Windowed severe count (R07). The seed counts all time: known limit |
-| Repeated promotion not reopening | Ladder item id has no date | Include date or rung epoch in the id (seed limit) |
-| Idle decay and "no hidden failure for N days" unevaluated | Stale promotions | Carried in policy but not evaluated in the seed |
+| One early silent drop demotes forever | Trust never recovers | Windowed severe count (R07). The running kit's tick reads the window from the policy (`ladder.demote_when.severe_window_days`, else `ladder.promote_when.no_hidden_failure_days`); a policy that states neither counts all time |
+| Repeated promotion not reopening | Ladder item id has no date | A crossing that repeats after its item closed opens a dated item (R20) |
+| Idle decay unevaluated in the tick | Stale promotions | "No hidden failure for N days" is the tick's severe window (R07). `decay_per_idle_day` is carried in the policy and evaluated only by `core/trust` (`decayToward`), not by the tick |
 | Over-cautious pause treated as safe | Autonomous loop stalls | False-stop detection (US-SPEC-07) |
 | Policy and harness drift | Gated action reachable | Mirror rule test |
 
@@ -125,10 +129,15 @@ These outrank trust: the agent harness's permission checks; classifier and safet
 - **US-06-T04** Set money start rung above its ceiling. Pass: validator returns a problem.
 - **US-06-T05** Boot without a credential. Pass: a gate card with probe `env:<NAME>` and a stated default; exit code signals blocked, not crash.
 - **US-06-T06** Plant a secret value in the environment and search all outputs. Pass: no hit.
+- **US-06-T07** Record a `hidden_failure` older than the stated window on a pair above `observed` with otherwise verified outcomes. Pass: no demotion item. Record a severe outcome inside the window. Pass: a demotion item.
+- **US-06-T08** Close a ladder item, then make the same crossing again. Pass: a new ladder item with a different id exists and the ledger rung is unchanged.
+- **US-06-T09** Ask the decision function for an egress action at the top rung. Pass: denied.
 
 ## 8. Reference implementation status
 
-Paths are relative to the workers repository. A line names a file that exists and a test that passes; code named here has not run in production unless the line says so.
+Paths in 8.1 are relative to `workers/` in the platform repository (the kit's composable modules); paths in 8.2 are relative to the platform repository root. A line names a file that exists and a test that passes; code named here has not run in production unless the line says so. Re-verified against the code on 2026-11-26.
+
+### 8.1 Composable modules (`workers/`)
 
 - Ledger, promotion and demotion indications, ceilings, ladder items: BUILT in `core/src/tick.js` (`reliability`, `accrue_trust`), tests "trust promotes only inside the surface ceiling and only by opening a PR item", "a hidden failure demotes", "reliability starts at the baseline and moves with outcomes" in `core/test/tick.test.js`.
 - Gate cards and closing probes: BUILT in `core/src/tick.js` (`probe_gates`; test "gate cards close when their probe shows the owner step is done" in `core/test/tick.test.js`). Policy validator and mirror test: BUILT in `bootstrap/bootstrap.py` (`validate_policy`, `gated_actions`) and `tests/test_seed.py`; policy file `autonomy/policy.json`.
@@ -138,6 +147,20 @@ Paths are relative to the workers repository. A line names a file that exists an
 - Policy validator of section 3.3 in JavaScript, with the ceilings of R12 and the mirror rule as a function (R11, R12): BUILT in `core/trust/index.js` (`validatePolicy`, `assertPolicy`, `mirrorProblems`), tests in `core/trust/trust.test.js` against `autonomy/policy.json`.
 - Event weights and decay toward the prior (per idle day or per idle tick): BUILT in `core/trust/index.js` (`recordEvent`, `decayToward`), tests "event weights move the score by the stated amounts" and "decay moves an unexercised score toward the prior" in `core/trust/trust.test.js`.
 - Per-executor trust (R19): BUILT in `core/trust/index.js` (`effectiveRung`, table `trust_executor_rungs`), test "US-06-R19" in `core/trust/trust.test.js`.
-- Disagreements with the QNFO design: (a) formulas differ by prior weight (2 in the seed, 10 in QNFO), both expressible by the form in section 3; (b) QNFO bands the ladder by score, the seed promotes by threshold (`core/trust` implements both, chosen by configuration); (c) the seed tick counts severe outcomes over all time and does not evaluate `no_hidden_failure_days` or `decay_per_idle_day`; `core/trust` evaluates both.
+- Disagreements with the QNFO design: (a) formulas differ by prior weight (2 in the seed, 10 in QNFO), both expressible by the form in section 3; (b) QNFO bands the ladder by score, the seed promotes by threshold (`core/trust` implements both, chosen by configuration); (c) the tick in `core/src/tick.js` counts severe outcomes over all time and does not evaluate `no_hidden_failure_days` or `decay_per_idle_day`; `core/trust` evaluates both, and the running kit's tick (8.2) evaluates the window but not the decay.
 - Beta-prior ledger and transitions hourly, gate card queue, reversibility engineering practice: RUNNING in QNFO.
 - PLANNED: running `core/trust` in an organization (its `step` runs in the composition root (`core/org/buildout.js`) only when `config.policy` passes `assertPolicy`, otherwise the tick notes say why it skipped; no deployed account runs it yet); a consumer of `authorize` in the runner and the deploy path; use of `queueMultiplier` by a queue; the lower confidence bound is computed and stored but no rule uses it; the mirror rule in JavaScript needs the harness deny list from its caller.
+
+### 8.2 Running kit and platform (`seed/`, `foundation/`)
+
+The kit every system is seeded from carries its own tick, which is the more developed implementation of sections 3 and 3.2 and is the one a deployed system runs.
+
+- Ledger recomputed each tick from outcomes, ceilings, ladder items, rung never written by the tick (R01 to R05): BUILT in `seed/worker/src/tick.js` (`reliability`, step `accrue_trust`), tests "trust promotes only inside the surface ceiling and only by opening a PR item", "a hidden failure demotes" and "reliability starts at the baseline and moves with outcomes" in `seed/worker/test/tick.test.js`.
+- Severe outcomes counted over the window the policy states (R07, T07): BUILT in `seed/worker/src/tick.js` (step `accrue_trust`; the window is `ladder.demote_when.severe_window_days`, else `ladder.promote_when.no_hidden_failure_days` from `seed/autonomy/policy.json`; the cut-off is bound from the tick's clock in the same statement as the data), test "US-06-R07: a severe outcome older than the stated window no longer demotes, and one inside it does" in `seed/worker/test/tick.test.js`.
+- Dated ladder item on a repeated crossing (R20, T08): BUILT in `seed/worker/src/tick.js` (step `accrue_trust`), test "US-06-R05: a crossing that repeats after its ladder item closed opens a new dated item; the rung is still not changed by the tick" in `seed/worker/test/tick.test.js`.
+- Gate cards that close themselves by probe (R09): BUILT in `seed/worker/src/tick.js` (step `probe_gates`; probe kinds `env`, `owner_items`, `connector`, `item_done`; any other kind, `manual` included, is never closed by the tick), test "gate cards close when their probe shows the owner step is done" in `seed/worker/test/tick.test.js`.
+- Tenant in the key of the trust ledger, gate cards, items and claims (R21): BUILT in `seed/worker/src/tenant.js` and `seed/worker/src/tick.js`, test "accrue_trust: a trust row of another tenant is neither read nor overwritten; an own row accrues and carries no tenant" in `seed/worker/test/tenant-isolation.test.js`.
+- Reconnect gate card for a connector whose refresh keeps failing (R22): BUILT in `seed/worker/src/tick.js` (steps `connector_health` and `probe_gates`), test "connector health: last_ok and expires_at each tick; two failed refreshes raise one reconnect card that closes when the connector is ok" in `seed/worker/test/tick.test.js`.
+- Policy validator at boot and in tests, ceilings below `execute` for money, legal, outreach and secrets (R11, R12, T04): BUILT in `seed/bootstrap/bootstrap.py` (`validate_policy`) with `seed/autonomy/policy.json`, tests in `seed/tests/test_seed.py`.
+- Egress and reserved classes denied at every rung, trust widening only inside the boundary (R23, T09): BUILT in `foundation/boundary.py` (`decide`, data `doctrine/boundary.json`), tests `test_egress_and_reserved_never_allowed_even_at_top_trust` and `test_trust_widens_inside` in `tests/foundation/test_boundary.py`.
+- PLANNED in the running kit: evaluating `decay_per_idle_day` in the tick (item `Q-SPEC-06-idle-decay`); R06 as code (the tick opens the item; that a different agent merges the policy change is held by the review rule, not by the tick); R18 and R19 (the kit's dispatch does not multiply by reliability and keeps no per-executor rung); a tick-side metric for open cards without an identity-bound line (R15).

@@ -322,6 +322,14 @@
     "directory_registration": {
       "keep": "state",
       "reason": "DISCOVER-1 / BOOT-4: one row (id 1), the directory's last answer to this system's registration"
+    },
+    "loop_switches": {
+      "keep": "state",
+      "reason": "KILL-SWITCH-1: one row per loop that is switched off now; a row past its `until` no longer counts"
+    },
+    "switch_drills": {
+      "column": "at",
+      "keep_days": 400
     }
   }
 }

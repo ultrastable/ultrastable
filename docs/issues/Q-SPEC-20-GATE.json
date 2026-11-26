@@ -1,0 +1,12 @@
+{
+  "id": "Q-SPEC-20-GATE",
+  "title": "Q-SPEC-20-GATE: the record check and the protected-path gate run on every pull request of the folded repository (US-20-R03, US-20-R07)",
+  "body": "**Owner:** executor\n**Trigger:** specification audit 2026-11-26 (specs/ against the code)\n**Done check:** cmd:git grep -q scripts/protected_paths.py -- .github/workflows\n**Status:** open\n\nAfter REPOS-1 the workflow that enforced the self-hosting contract sits at `workers/.github/workflows/selfhost.yml`, where the host does not run it, and no root workflow calls `workers/tools/selfhost_check.py` or `scripts/protected_paths.py` (tested in `tests/foundation/test_protected_paths.py`). So Stage 1 of US-SPEC-20 produces no evidence in this repository. (1) Run `scripts/protected_paths.py origin/main` with the pull request body in `PR_BODY` as a step of `.github/workflows/checks.yml`. (2) Run the record check there too, with the bot authors the lane and executor use exempted in data, not by skipping the step. (3) Bring the messages and the label rule of `workers/tools/selfhost_check.py` and `workers/.github/CODEOWNERS` in line with rule 7 of `workers/agents/CONTRACT.md` and US-20-R07 as revised in 0.2.0 (an automated gate, no human reviewer). Then set the PLANNED row of `specs/US-SPEC-20-self-hosting.md` to BUILT with the workflow and test.\n\nsize: M\n\n**Closing probe:** `python3 scripts/protected_paths.py origin/main`\n**Prediction:** merged_prs_without_record_check <= 0 within 336 h\n**Out of scope:** requiring a person's review or approval on any path; weakening or deleting a guard; changing the record fields.\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "raises-self"
+  ],
+  "milestone": "Next",
+  "workstream": "Ultrastability"
+}

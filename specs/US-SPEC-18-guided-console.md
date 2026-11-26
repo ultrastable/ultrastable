@@ -84,6 +84,10 @@ The console's data and actions are a small HTTP interface. It is the same interf
 
 People who are comfortable with code may use an agent against the same records and the same interface. Neither route is privileged; both are logged.
 
+### 7.1 A request in words that is answered, not only filed (added 2026-11-26 from the code)
+
+**US-18-R13.** Where a model is bound, a typed line that is not a registered command MAY be answered by an agent instead of only being filed (R03 still holds for the words). The agent MUST read only through one bounded query over an allow-list of tables and read-only commands; MUST change anything only with a fresh step-up code and only through the same audited, undoable command path a button uses; MUST say whether the session is read-only; MUST be capped per hour; and MUST NOT answer with nothing: when the model returns no text it synthesizes from what its tools returned, and when no model is available it says so in plain words and registered commands still work.
+
 ## 8. Portability
 
 The console is a function from a request and a store handle (US-SPEC-14) to a response. It uses only standard web request and response objects and the store's four operations. It therefore runs unchanged on any platform that can host a web handler and a store: Cloudflare Workers with D1, Google Cloud Run with a SQLite or SQL store, a self-hosted server. Production deployments SHOULD place an identity-aware proxy (for example Cloudflare Access or Google Identity-Aware Proxy) in front of it and treat the console's own access key as the inner lock.
@@ -114,6 +118,7 @@ The console is a function from a request and a store handle (US-SPEC-14) to a re
 
 ## 11. Reference implementation status
 
+Paths are relative to `workers/` unless they begin with `seed/`, `foundation/`, `site/`, `dashboard/`, `tenants/`, `deploy/`, `doctrine/`, `instances/`, `docs/` or `tests/foundation/`, which are relative to the repository root. Rows marked 2026-11-26 were read against the code and their tests were run on that date.
 
 | Capability | Status |
 |---|---|
@@ -124,6 +129,10 @@ The console is a function from a request and a store handle (US-SPEC-14) to a re
 | Elicitation Ask cards as decision cards with the options, "Not sure" and "Tell me more"; each press stored verbatim and written as a record | BUILT (`core/walkthrough/index.js`, `core/walkthrough/walkthrough.test.js`) |
 | Read-back screen: defaults first, each statement correctable by a button, a correction re-runs the affected artifact, an unconfirmed read-back does not hold work | BUILT (`core/walkthrough/index.js`, `core/walkthrough/walkthrough.test.js`) |
 | Per-person profile (metrics shown, detail, language, cadence, extra cards) set from walkthrough answers, refused when it would remove the Needs-you screen, hide a decision card or lengthen a list | BUILT (`core/walkthrough/index.js`, `core/walkthrough/walkthrough.test.js`) |
-| Walkthrough, Ask cards and profile inside the served console page | PLANNED: the module exports its routes and the composed screens, and `core/src/console.js` and the page script in `core/src/console-ui.js` do not call them yet; text is English only |
+| Walkthrough, Ask cards, read-back and profile served inside the signed-in console: the organization mounts the walkthrough routes (`/api/console/walkthrough`, `/api/console/walkthrough/idea`, `/api/console/walkthrough/answer`, `/api/console/readback`, `/console/readback`, `/api/console/profile`) as owner-only handlers and adds the composed `screens` to `GET /api/console` | BUILT 2026-11-26 (`core/org/surfaces.js`, `mounts` and `decorate` in `core/src/console.js`; tests "the routes are owner-only", "walkthrough: the signed-in owner gets step 1" and "the declared routes and steps match what is mounted" in `core/org/surfaces.test.js`) |
+| The page script of the three-screen page calling the walkthrough routes; text in languages other than English | PLANNED: `core/src/console-ui.js` does not call the mounted routes (the read-back has its own page at `/console/readback`), and the walkthrough text is English; `core/i18n/index.js` localizes rendered pages and is not applied to the console; tracked as `docs/issues/Q-SPEC-18-console-page-walkthrough.json` |
+| Help view built from the documentation (US-SPEC-19 R18) | BUILT 2026-11-26 (`core/src/help-data.js`, `core/src/console.js`; test `core/test/help.test.js`) |
+| A request in words answered by an agent on the owner console: bounded read over an allow-list, changes only with a fresh emailed code through the audited command path, never an empty answer, an hourly cap (R13) | BUILT 2026-11-26 on the platform's owner dashboard, which is a different page from the three-screen console (`dashboard/agent.js`, `dashboard/worker.js`; test `dashboard/test/agent.test.mjs`). The three-screen console of `core/src/console.js` files typed text as an item and has no agent |
 | Identity-aware proxy deployment guide | BUILT as data that code runs (`core/doors/proxy-guide.json`, `core/doors/proxy.js`; tests in `core/doors/proxy.test.js`): each step names the check that observes it done, a step the person must do is a decision card that closes when observed, and the signed headers of Cloudflare Access and Google Identity-Aware Proxy are verified |
-| A deployment behind a real identity-aware proxy; the console accepting the Google header as a sign-in | PLANNED: the first needs a live account; for the second the verification is built and the console calls only the Cloudflare Access check today |
+| The console accepting the Google Identity-Aware Proxy header as a sign-in, beside the Cloudflare Access one, when `doors.iap.audience` is configured | BUILT 2026-11-26 (`core/src/console.js` calls `verifyIapJwt` of `core/doors/proxy.js`; test "Google IAP: a request through the configured proxy with a valid signed header signs in" in `core/org/surfaces.test.js`) |
+| A deployment behind a real identity-aware proxy | PLANNED: it needs a live account; no such deployment is recorded in the repository |

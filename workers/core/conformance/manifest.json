@@ -1,10 +1,10 @@
 {
  "implementation": "ultrastable/workers",
  "declared_level": "L1",
- "generated_at": "2026-11-15",
+ "generated_at": "2026-11-26",
  "untagged_level": "L2",
  "spec_versions": {
-  "US-SPEC-00": "0.1.0 (draft)",
+  "US-SPEC-00": "0.2.0 (draft)",
   "US-SPEC-01": "0.1.0 (draft)",
   "US-SPEC-02": "0.1.0 (draft)",
   "US-SPEC-03": "0.1.0 (draft)",
@@ -18,16 +18,16 @@
   "US-SPEC-11": "0.1.0 (draft)",
   "US-SPEC-12": "0.1.0 (draft)",
   "US-SPEC-13": "0.1.0 (draft)",
-  "US-SPEC-14": "0.1.0 (draft)",
+  "US-SPEC-14": "0.2.0 (draft)",
   "US-SPEC-15": "0.1.0 (draft)",
   "US-SPEC-16": "0.1.0 (draft)",
   "US-SPEC-17": "0.1.0 (draft)",
   "US-SPEC-18": "0.1.0 (draft)",
   "US-SPEC-19": "0.1.0 (draft)",
-  "US-SPEC-20": "0.1.0 (draft)",
+  "US-SPEC-20": "0.2.0 (draft)",
   "US-SPEC-21": "0.1.0 (draft)",
-  "US-SPEC-22": "0.1.0 (draft)",
-  "US-SPEC-23": "0.1.0 (draft)",
+  "US-SPEC-22": "0.2.0 (draft)",
+  "US-SPEC-23": "0.2.0 (draft)",
   "US-SPEC-24": "0.1.0 (draft)",
   "US-SPEC-25": "0.1.0 (draft)"
  },
@@ -59,6 +59,16 @@
   },
   {
    "id": "US-00-T04",
+   "spec": "US-SPEC-00",
+   "tests": []
+  },
+  {
+   "id": "US-00-T05",
+   "spec": "US-SPEC-00",
+   "tests": []
+  },
+  {
+   "id": "US-00-T06",
    "spec": "US-SPEC-00",
    "tests": []
   },
@@ -106,6 +116,21 @@
    "tests": []
   },
   {
+   "id": "US-01-T05",
+   "spec": "US-SPEC-01",
+   "tests": []
+  },
+  {
+   "id": "US-01-T06",
+   "spec": "US-SPEC-01",
+   "tests": []
+  },
+  {
+   "id": "US-01-T07",
+   "spec": "US-SPEC-01",
+   "tests": []
+  },
+  {
    "id": "US-02-T01",
    "spec": "US-SPEC-02",
    "tests": [
@@ -137,6 +162,16 @@
   },
   {
    "id": "US-02-T04",
+   "spec": "US-SPEC-02",
+   "tests": []
+  },
+  {
+   "id": "US-02-T05",
+   "spec": "US-SPEC-02",
+   "tests": []
+  },
+  {
+   "id": "US-02-T06",
    "spec": "US-SPEC-02",
    "tests": []
   },
@@ -180,6 +215,26 @@
    ]
   },
   {
+   "id": "US-03-T07",
+   "spec": "US-SPEC-03",
+   "tests": []
+  },
+  {
+   "id": "US-03-T08",
+   "spec": "US-SPEC-03",
+   "tests": []
+  },
+  {
+   "id": "US-03-T09",
+   "spec": "US-SPEC-03",
+   "tests": []
+  },
+  {
+   "id": "US-03-T10",
+   "spec": "US-SPEC-03",
+   "tests": []
+  },
+  {
    "id": "US-04-T01",
    "spec": "US-SPEC-04",
    "tests": [
@@ -218,6 +273,16 @@
      "name": "US-04-T04, US-04-R09: a stale or failed usage reading at the window end is recorded unmeasured (null), never 0, and is not kept"
     }
    ]
+  },
+  {
+   "id": "US-04-T05",
+   "spec": "US-SPEC-04",
+   "tests": []
+  },
+  {
+   "id": "US-04-T06",
+   "spec": "US-SPEC-04",
+   "tests": []
   },
   {
    "id": "US-05-T01",
@@ -268,6 +333,26 @@
    ]
   },
   {
+   "id": "US-05-T05",
+   "spec": "US-SPEC-05",
+   "tests": []
+  },
+  {
+   "id": "US-05-T06",
+   "spec": "US-SPEC-05",
+   "tests": []
+  },
+  {
+   "id": "US-05-T07",
+   "spec": "US-SPEC-05",
+   "tests": []
+  },
+  {
+   "id": "US-05-T08",
+   "spec": "US-SPEC-05",
+   "tests": []
+  },
+  {
    "id": "US-06-T01",
    "spec": "US-SPEC-06",
    "tests": [
@@ -314,6 +399,21 @@
   },
   {
    "id": "US-06-T06",
+   "spec": "US-SPEC-06",
+   "tests": []
+  },
+  {
+   "id": "US-06-T07",
+   "spec": "US-SPEC-06",
+   "tests": []
+  },
+  {
+   "id": "US-06-T08",
+   "spec": "US-SPEC-06",
+   "tests": []
+  },
+  {
+   "id": "US-06-T09",
    "spec": "US-SPEC-06",
    "tests": []
   },
@@ -382,6 +482,21 @@
    ]
   },
   {
+   "id": "US-07-T07",
+   "spec": "US-SPEC-07",
+   "tests": []
+  },
+  {
+   "id": "US-07-T08",
+   "spec": "US-SPEC-07",
+   "tests": []
+  },
+  {
+   "id": "US-07-T09",
+   "spec": "US-SPEC-07",
+   "tests": []
+  },
+  {
    "id": "US-08-T01",
    "spec": "US-SPEC-08",
    "tests": []
@@ -408,6 +523,21 @@
   },
   {
    "id": "US-08-T06",
+   "spec": "US-SPEC-08",
+   "tests": []
+  },
+  {
+   "id": "US-08-T07",
+   "spec": "US-SPEC-08",
+   "tests": []
+  },
+  {
+   "id": "US-08-T08",
+   "spec": "US-SPEC-08",
+   "tests": []
+  },
+  {
+   "id": "US-08-T09",
    "spec": "US-SPEC-08",
    "tests": []
   },
@@ -457,6 +587,21 @@
    ]
   },
   {
+   "id": "US-09-T07",
+   "spec": "US-SPEC-09",
+   "tests": []
+  },
+  {
+   "id": "US-09-T08",
+   "spec": "US-SPEC-09",
+   "tests": []
+  },
+  {
+   "id": "US-09-T09",
+   "spec": "US-SPEC-09",
+   "tests": []
+  },
+  {
    "id": "US-10-T01",
    "spec": "US-SPEC-10",
    "tests": []
@@ -487,6 +632,21 @@
    "tests": []
   },
   {
+   "id": "US-10-T07",
+   "spec": "US-SPEC-10",
+   "tests": []
+  },
+  {
+   "id": "US-10-T08",
+   "spec": "US-SPEC-10",
+   "tests": []
+  },
+  {
+   "id": "US-10-T09",
+   "spec": "US-SPEC-10",
+   "tests": []
+  },
+  {
    "id": "US-11-T01",
    "spec": "US-SPEC-11",
    "tests": [
@@ -513,6 +673,21 @@
   },
   {
    "id": "US-11-T05",
+   "spec": "US-SPEC-11",
+   "tests": []
+  },
+  {
+   "id": "US-11-T06",
+   "spec": "US-SPEC-11",
+   "tests": []
+  },
+  {
+   "id": "US-11-T07",
+   "spec": "US-SPEC-11",
+   "tests": []
+  },
+  {
+   "id": "US-11-T08",
    "spec": "US-SPEC-11",
    "tests": []
   },
@@ -548,6 +723,16 @@
   },
   {
    "id": "US-12-T06",
+   "spec": "US-SPEC-12",
+   "tests": []
+  },
+  {
+   "id": "US-12-T07",
+   "spec": "US-SPEC-12",
+   "tests": []
+  },
+  {
+   "id": "US-12-T08",
    "spec": "US-SPEC-12",
    "tests": []
   },
@@ -614,6 +799,16 @@
    ]
   },
   {
+   "id": "US-13-T06",
+   "spec": "US-SPEC-13",
+   "tests": []
+  },
+  {
+   "id": "US-13-T07",
+   "spec": "US-SPEC-13",
+   "tests": []
+  },
+  {
    "id": "US-14-T01",
    "spec": "US-SPEC-14",
    "tests": [
@@ -650,6 +845,11 @@
   },
   {
    "id": "US-14-T05",
+   "spec": "US-SPEC-14",
+   "tests": []
+  },
+  {
+   "id": "US-14-T06",
    "spec": "US-SPEC-14",
    "tests": []
   },
@@ -720,6 +920,21 @@
      "name": "US-15-R08, T15-6: every deliverable has a closing probe run by a different agent; G3 fails on an unpassed probe, a missing retrospective or an item with no disposition"
     }
    ]
+  },
+  {
+   "id": "T15-7",
+   "spec": "US-SPEC-15",
+   "tests": []
+  },
+  {
+   "id": "T15-8",
+   "spec": "US-SPEC-15",
+   "tests": []
+  },
+  {
+   "id": "T15-9",
+   "spec": "US-SPEC-15",
+   "tests": []
   },
   {
    "id": "T16-1",
@@ -885,6 +1100,21 @@
      "name": "US-17-T06: a count named failed is not a failure; structured errors are"
     }
    ]
+  },
+  {
+   "id": "US-17-T07",
+   "spec": "US-SPEC-17",
+   "tests": []
+  },
+  {
+   "id": "US-17-T08",
+   "spec": "US-SPEC-17",
+   "tests": []
+  },
+  {
+   "id": "US-17-T09",
+   "spec": "US-SPEC-17",
+   "tests": []
   },
   {
    "id": "T18-1",
@@ -1131,6 +1361,26 @@
    ]
   },
   {
+   "id": "T22-6",
+   "spec": "US-SPEC-22",
+   "tests": []
+  },
+  {
+   "id": "T22-7",
+   "spec": "US-SPEC-22",
+   "tests": []
+  },
+  {
+   "id": "T22-8",
+   "spec": "US-SPEC-22",
+   "tests": []
+  },
+  {
+   "id": "T22-9",
+   "spec": "US-SPEC-22",
+   "tests": []
+  },
+  {
    "id": "T23-1",
    "spec": "US-SPEC-23",
    "tests": []
@@ -1162,6 +1412,21 @@
   },
   {
    "id": "T23-6",
+   "spec": "US-SPEC-23",
+   "tests": []
+  },
+  {
+   "id": "T23-7",
+   "spec": "US-SPEC-23",
+   "tests": []
+  },
+  {
+   "id": "T23-8",
+   "spec": "US-SPEC-23",
+   "tests": []
+  },
+  {
+   "id": "T23-9",
    "spec": "US-SPEC-23",
    "tests": []
   },
@@ -1219,6 +1484,21 @@
      "name": "US-24-R20 US-24-T08 the spending-limit probe passes only on an Actions budget of 0 with stop-usage on"
     }
    ]
+  },
+  {
+   "id": "US-24-T09",
+   "spec": "US-SPEC-24",
+   "tests": []
+  },
+  {
+   "id": "US-24-T10",
+   "spec": "US-SPEC-24",
+   "tests": []
+  },
+  {
+   "id": "US-24-T11",
+   "spec": "US-SPEC-24",
+   "tests": []
   }
  ],
  "requirements": [
@@ -1365,6 +1645,26 @@
      "name": "US-00-R10: the shipped catalog asks a person for no architecture, schema or stack choice; every need makes a complete Ask card in plain words (T16-2) and names the artifact it feeds"
     }
    ]
+  },
+  {
+   "id": "US-00-R11",
+   "spec": "US-SPEC-00",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-00-R12",
+   "spec": "US-SPEC-00",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
   },
   {
    "id": "US-01-R01",
@@ -1532,6 +1832,46 @@
    ]
   },
   {
+   "id": "US-01-R12",
+   "spec": "US-SPEC-01",
+   "level": "L1",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "built and tested in the seed tick (seed/worker/test/tenant-isolation.test.js), which this repository's core tick does not carry",
+   "tests": []
+  },
+  {
+   "id": "US-01-R13",
+   "spec": "US-SPEC-01",
+   "level": "L1",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "built and tested in the seed tick (seed/worker/test/migrate.test.js), which this repository's core tick does not carry",
+   "tests": []
+  },
+  {
+   "id": "US-01-R14",
+   "spec": "US-SPEC-01",
+   "level": "L1",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "built and tested in the seed tick (seed/worker/test/migrate.test.js), which this repository's core tick does not carry",
+   "tests": []
+  },
+  {
+   "id": "US-01-R15",
+   "spec": "US-SPEC-01",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "built and tested in the seed tick (seed/worker/test/d1snapshot.test.js), which this repository's core tick does not carry",
+   "tests": []
+  },
+  {
    "id": "US-02-R01",
    "spec": "US-SPEC-02",
    "level": "L1",
@@ -1688,6 +2028,36 @@
    "must": true,
    "status": "deviation",
    "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-02-R13",
+   "spec": "US-SPEC-02",
+   "level": "L1",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "built and tested in the seed tick (seed/worker/test/managers.test.js), which this repository's core tick does not carry",
+   "tests": []
+  },
+  {
+   "id": "US-02-R14",
+   "spec": "US-SPEC-02",
+   "level": "L1",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "built and tested in the seed tick (seed/worker/test/managers.test.js), which this repository's core tick does not carry",
+   "tests": []
+  },
+  {
+   "id": "US-02-R15",
+   "spec": "US-SPEC-02",
+   "level": "L1",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "built and tested in the seed tick (seed/worker/test/tick.test.js), which this repository's core tick does not carry",
    "tests": []
   },
   {
@@ -1885,6 +2255,66 @@
    "must": true,
    "status": "deviation",
    "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-03-R17",
+   "spec": "US-SPEC-03",
+   "level": "L1",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "built and tested in the seed tick (seed/worker/test/tick.test.js), which this repository's core tick does not carry",
+   "tests": []
+  },
+  {
+   "id": "US-03-R18",
+   "spec": "US-SPEC-03",
+   "level": "L1",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "built and tested in the seed tick (seed/worker/test/tick.test.js), which this repository's core tick does not carry",
+   "tests": []
+  },
+  {
+   "id": "US-03-R19",
+   "spec": "US-SPEC-03",
+   "level": "L1",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "built and tested in the seed tick (seed/worker/test/schema-heal.test.js), which this repository's core tick does not carry",
+   "tests": []
+  },
+  {
+   "id": "US-03-R20",
+   "spec": "US-SPEC-03",
+   "level": "L1",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "built and tested in the seed tick (seed/worker/test/tick.test.js), which this repository's core tick does not carry",
+   "tests": []
+  },
+  {
+   "id": "US-03-R21",
+   "spec": "US-SPEC-03",
+   "level": "L1",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "built and tested in the seed tick (seed/worker/test/pulse.test.js), which this repository's core tick does not carry",
+   "tests": []
+  },
+  {
+   "id": "US-03-R22",
+   "spec": "US-SPEC-03",
+   "level": "L1",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "built and tested in the seed tick (seed/worker/test/budget.test.js), which this repository's core tick does not carry",
    "tests": []
   },
   {
@@ -2103,6 +2533,26 @@
    ]
   },
   {
+   "id": "US-04-R15",
+   "spec": "US-SPEC-04",
+   "level": "L1",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "built and tested in the seed tick (seed/worker/test/criticality.test.js), which this repository's core tick does not carry",
+   "tests": []
+  },
+  {
+   "id": "US-04-R16",
+   "spec": "US-SPEC-04",
+   "level": "L1",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "built and tested in the seed tick (seed/worker/test/doer.test.js), which this repository's core tick does not carry",
+   "tests": []
+  },
+  {
    "id": "US-05-R01",
    "spec": "US-SPEC-05",
    "level": "L1",
@@ -2317,6 +2767,56 @@
    "must": true,
    "status": "deviation",
    "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-05-R15",
+   "spec": "US-SPEC-05",
+   "level": "L1",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "built and tested in the seed tick (seed/worker/test/measure.test.js), which this repository's core tick does not carry",
+   "tests": []
+  },
+  {
+   "id": "US-05-R16",
+   "spec": "US-SPEC-05",
+   "level": "L1",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "built and tested in the seed tick (seed/worker/test/measure.test.js), which this repository's core tick does not carry",
+   "tests": []
+  },
+  {
+   "id": "US-05-R17",
+   "spec": "US-SPEC-05",
+   "level": "L1",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "built and tested in the seed tick (seed/worker/test/metricfresh.test.js), which this repository's core tick does not carry",
+   "tests": []
+  },
+  {
+   "id": "US-05-R18",
+   "spec": "US-SPEC-05",
+   "level": "L1",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "built and tested in the seed tick (seed/worker/test/measure.test.js), which this repository's core tick does not carry",
+   "tests": []
+  },
+  {
+   "id": "US-05-R19",
+   "spec": "US-SPEC-05",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "built and tested in the seed tick (seed/worker/test/decisions.test.js), which this repository's core tick does not carry",
    "tests": []
   },
   {
@@ -2600,6 +3100,46 @@
    ]
   },
   {
+   "id": "US-06-R20",
+   "spec": "US-SPEC-06",
+   "level": "L1",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-06-R21",
+   "spec": "US-SPEC-06",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-06-R22",
+   "spec": "US-SPEC-06",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-06-R23",
+   "spec": "US-SPEC-06",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
    "id": "US-07-R01",
    "spec": "US-SPEC-07",
    "level": "L2",
@@ -2862,6 +3402,66 @@
    ]
   },
   {
+   "id": "US-07-R18",
+   "spec": "US-SPEC-07",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-07-R19",
+   "spec": "US-SPEC-07",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-07-R20",
+   "spec": "US-SPEC-07",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-07-R21",
+   "spec": "US-SPEC-07",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-07-R22",
+   "spec": "US-SPEC-07",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-07-R23",
+   "spec": "US-SPEC-07",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
    "id": "US-08-R01",
    "spec": "US-SPEC-08",
    "level": "L1",
@@ -3100,6 +3700,56 @@
      "name": "US-08-R15: idempotency key replays without a second effect and without re-disclosing the token"
     }
    ]
+  },
+  {
+   "id": "US-08-R16",
+   "spec": "US-SPEC-08",
+   "level": "L1",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "built and tested in the seed tick (seed/worker/test/doer.test.js), which this repository's core tick does not carry",
+   "tests": []
+  },
+  {
+   "id": "US-08-R17",
+   "spec": "US-SPEC-08",
+   "level": "L1",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "built and tested in the seed tick (seed/worker/test/tick.test.js), which this repository's core tick does not carry",
+   "tests": []
+  },
+  {
+   "id": "US-08-R18",
+   "spec": "US-SPEC-08",
+   "level": "L1",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "built and tested in the seed tick (seed/worker/test/selfaudit.test.js), which this repository's core tick does not carry",
+   "tests": []
+  },
+  {
+   "id": "US-08-R19",
+   "spec": "US-SPEC-08",
+   "level": "L1",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "built and tested in the seed tick (seed/worker/test/doer.test.js), which this repository's core tick does not carry",
+   "tests": []
+  },
+  {
+   "id": "US-08-R20",
+   "spec": "US-SPEC-08",
+   "level": "L1",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "built and tested in the seed tick (seed/worker/test/doer.test.js), which this repository's core tick does not carry",
+   "tests": []
   },
   {
    "id": "US-09-R01",
@@ -3345,6 +3995,76 @@
    "tests": []
   },
   {
+   "id": "US-09-R16",
+   "spec": "US-SPEC-09",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-09-R17",
+   "spec": "US-SPEC-09",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-09-R18",
+   "spec": "US-SPEC-09",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-09-R19",
+   "spec": "US-SPEC-09",
+   "level": "L2",
+   "tagged": true,
+   "must": false,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-09-R20",
+   "spec": "US-SPEC-09",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-09-R21",
+   "spec": "US-SPEC-09",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-09-R22",
+   "spec": "US-SPEC-09",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
    "id": "US-10-R01",
    "spec": "US-SPEC-10",
    "level": "L1",
@@ -3550,6 +4270,56 @@
    "tests": []
   },
   {
+   "id": "US-10-R16",
+   "spec": "US-SPEC-10",
+   "level": "L1",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-10-R17",
+   "spec": "US-SPEC-10",
+   "level": "L1",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-10-R18",
+   "spec": "US-SPEC-10",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-10-R19",
+   "spec": "US-SPEC-10",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-10-R20",
+   "spec": "US-SPEC-10",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
    "id": "US-11-R01",
    "spec": "US-SPEC-11",
    "level": "L3",
@@ -3738,6 +4508,14 @@
     {
      "file": "core/fleet/fleet.test.js",
      "name": "US-11-R12: collisions per minute are measured from the enabled schedules"
+    },
+    {
+     "file": "core/fleet/fleet.test.js",
+     "name": "US-11-R12: stagger moves periodic schedules apart, keeps period and other fields, and a second run changes nothing"
+    },
+    {
+     "file": "core/fleet/fleet.test.js",
+     "name": "US-11-R12: auto_stagger in step is off by default; on, the step staggers before it dispatches; literals move only when asked"
     }
    ]
   },
@@ -3747,6 +4525,56 @@
    "level": "L3",
    "tagged": true,
    "must": false,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-11-R14",
+   "spec": "US-SPEC-11",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-11-R15",
+   "spec": "US-SPEC-11",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-11-R16",
+   "spec": "US-SPEC-11",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-11-R17",
+   "spec": "US-SPEC-11",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-11-R18",
+   "spec": "US-SPEC-11",
+   "level": "L3",
+   "tagged": true,
+   "must": true,
    "status": "deviation",
    "reason": "no test in this repository cites this requirement",
    "tests": []
@@ -3966,6 +4794,36 @@
    ]
   },
   {
+   "id": "US-12-R15",
+   "spec": "US-SPEC-12",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-12-R16",
+   "spec": "US-SPEC-12",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-12-R17",
+   "spec": "US-SPEC-12",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
    "id": "US-13-R01",
    "spec": "US-SPEC-13",
    "level": "L3",
@@ -4173,6 +5031,56 @@
    ]
   },
   {
+   "id": "US-13-R14",
+   "spec": "US-SPEC-13",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-13-R15",
+   "spec": "US-SPEC-13",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-13-R16",
+   "spec": "US-SPEC-13",
+   "level": "L1",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-13-R17",
+   "spec": "US-SPEC-13",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-13-R18",
+   "spec": "US-SPEC-13",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
    "id": "US-14-R01",
    "spec": "US-SPEC-14",
    "level": "L1",
@@ -4356,6 +5264,16 @@
      "name": "US-14-R11: five role instances dispatching at once never claim one item twice and never exceed their limit"
     }
    ]
+  },
+  {
+   "id": "US-14-R12",
+   "spec": "US-SPEC-14",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
   },
   {
    "id": "US-15-R01",
@@ -4558,6 +5476,36 @@
      "name": "US-15-R14: the portfolio manager does not start a project that would take capacity above the cap; closing a project frees it"
     }
    ]
+  },
+  {
+   "id": "US-15-R15",
+   "spec": "US-SPEC-15",
+   "level": "L2",
+   "tagged": false,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-15-R16",
+   "spec": "US-SPEC-15",
+   "level": "L2",
+   "tagged": false,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-15-R17",
+   "spec": "US-SPEC-15",
+   "level": "L2",
+   "tagged": false,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
   },
   {
    "id": "US-16-R01",
@@ -4838,6 +5786,56 @@
    ]
   },
   {
+   "id": "US-16-R19",
+   "spec": "US-SPEC-16",
+   "level": "L2",
+   "tagged": false,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-16-R20",
+   "spec": "US-SPEC-16",
+   "level": "L2",
+   "tagged": false,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-16-R21",
+   "spec": "US-SPEC-16",
+   "level": "L2",
+   "tagged": false,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-16-R22",
+   "spec": "US-SPEC-16",
+   "level": "L2",
+   "tagged": false,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-16-R23",
+   "spec": "US-SPEC-16",
+   "level": "L2",
+   "tagged": false,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
    "id": "US-17-R01",
    "spec": "US-SPEC-17",
    "level": "L2",
@@ -5061,6 +6059,76 @@
    ]
   },
   {
+   "id": "US-17-R14",
+   "spec": "US-SPEC-17",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-17-R15",
+   "spec": "US-SPEC-17",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-17-R16",
+   "spec": "US-SPEC-17",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-17-R17",
+   "spec": "US-SPEC-17",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-17-R18",
+   "spec": "US-SPEC-17",
+   "level": "L3",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-17-R19",
+   "spec": "US-SPEC-17",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-17-R20",
+   "spec": "US-SPEC-17",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
    "id": "US-18-R01",
    "spec": "US-SPEC-18",
    "level": "L2",
@@ -5247,6 +6315,16 @@
      "name": "US-18-R12: the walkthrough ends by stating exactly what runs and what does not yet, read from the records"
     }
    ]
+  },
+  {
+   "id": "US-18-R13",
+   "spec": "US-SPEC-18",
+   "level": "L2",
+   "tagged": false,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
   },
   {
    "id": "US-19-R01",
@@ -5474,6 +6552,46 @@
    "level": "L2",
    "tagged": false,
    "must": false,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-19-R23",
+   "spec": "US-SPEC-19",
+   "level": "L2",
+   "tagged": false,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-19-R24",
+   "spec": "US-SPEC-19",
+   "level": "L2",
+   "tagged": false,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-19-R25",
+   "spec": "US-SPEC-19",
+   "level": "L2",
+   "tagged": false,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-19-R26",
+   "spec": "US-SPEC-19",
+   "level": "L2",
+   "tagged": false,
+   "must": true,
    "status": "deviation",
    "reason": "no test in this repository cites this requirement",
    "tests": []
@@ -5789,6 +6907,46 @@
    ]
   },
   {
+   "id": "US-21-R15",
+   "spec": "US-SPEC-21",
+   "level": "L2",
+   "tagged": false,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-21-R16",
+   "spec": "US-SPEC-21",
+   "level": "L2",
+   "tagged": false,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-21-R17",
+   "spec": "US-SPEC-21",
+   "level": "L2",
+   "tagged": false,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-21-R18",
+   "spec": "US-SPEC-21",
+   "level": "L2",
+   "tagged": false,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
    "id": "US-22-R01",
    "spec": "US-SPEC-22",
    "level": "L2",
@@ -5936,6 +7094,46 @@
    ]
   },
   {
+   "id": "US-22-R10",
+   "spec": "US-SPEC-22",
+   "level": "L2",
+   "tagged": false,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-22-R11",
+   "spec": "US-SPEC-22",
+   "level": "L2",
+   "tagged": false,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-22-R12",
+   "spec": "US-SPEC-22",
+   "level": "L2",
+   "tagged": false,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-22-R13",
+   "spec": "US-SPEC-22",
+   "level": "L2",
+   "tagged": false,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
    "id": "US-23-R01",
    "spec": "US-SPEC-23",
    "level": "L2",
@@ -6050,6 +7248,36 @@
    "level": "L2",
    "tagged": false,
    "must": false,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-23-R12",
+   "spec": "US-SPEC-23",
+   "level": "L2",
+   "tagged": false,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-23-R13",
+   "spec": "US-SPEC-23",
+   "level": "L2",
+   "tagged": false,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-23-R14",
+   "spec": "US-SPEC-23",
+   "level": "L2",
+   "tagged": false,
+   "must": true,
    "status": "deviation",
    "reason": "no test in this repository cites this requirement",
    "tests": []
@@ -6560,6 +7788,86 @@
      "name": "US-24-R55 a disabled workflow re-enabled from outside is detected from the platform state, filed and asserted again"
     }
    ]
+  },
+  {
+   "id": "US-24-R56",
+   "spec": "US-SPEC-24",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-24-R57",
+   "spec": "US-SPEC-24",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-24-R58",
+   "spec": "US-SPEC-24",
+   "level": "L3",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-24-R59",
+   "spec": "US-SPEC-24",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-24-R60",
+   "spec": "US-SPEC-24",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-24-R61",
+   "spec": "US-SPEC-24",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-24-R62",
+   "spec": "US-SPEC-24",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
+  },
+  {
+   "id": "US-24-R63",
+   "spec": "US-SPEC-24",
+   "level": "L2",
+   "tagged": true,
+   "must": true,
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
   }
  ]
 }

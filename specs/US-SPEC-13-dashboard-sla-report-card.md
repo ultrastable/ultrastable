@@ -42,6 +42,8 @@ flowchart LR
   SW --> IS
 ```
 
+**Owner dashboard.** Beside the operational dashboard there is one page for the principal. Its public side is a generic holding page. Its owner side is reached by a code sent to the owner's address (or the code host's sign-in, checked against organization ownership) and shows status at a glance, the queue of steps only the owner can take, each with one-tap answers, a command line that runs registered commands and hands any other line to a bounded agent that reads through an allow-list and changes nothing without a step-up code, and an audit log. A command that changes something needs a fresh step-up code, is recorded, and can be undone from the log. The page asks only what is still open: a gate whose measured dependencies are all closed is not shown. It answers in plain words when its database is down or at its read limit, and never with an error page. Routes: `/owner`, `/api/owner/state`, `/api/owner/overview`, `/api/owner/run`, `/api/owner/ask`, `/health`.
+
 ## 4. Service-level policy
 
 | Severity | Meaning | Time to resolution |
@@ -59,6 +61,10 @@ for row in open_rows:
     if not exempt(row) and row.due > now + 14d: row.due = now + SEV3_cap
     if row.due < now: raise_priority(row); notify(manager)
 ```
+
+**Change-request service level.** A second table bounds how long a pull request opened by an agent may stay open, in minutes: a green, mergeable one merges within `green_merge_min`; past `act_min` the sweeper reconciles, re-triggers or readies it; past `hard_min` and idle for `idle_min` it is superseded, its branch is kept and one item carries the work onto the main line, so nothing is lost. A merge-ready request is never superseded. The reference values are 3, 15, 60 and 30. Enforcement runs every tick; an independent detector reads every open request and item, whatever its state, and fails when one is past its limit.
+
+**Short-age raise.** Independently of severity, an item still open or ready 120 minutes after it was created is raised to priority 5, and one item per day is filed to find the cause.
 
 **Per-step budgets.** Each stage of each process has a time budget. At the tick, for each step whose elapsed time exceeds budget B: if elapsed <= 2B file one item keyed by (process, step); if elapsed > 2B and no blocking question is open for it, write one question card with the step, elapsed time and closing probe. With B = 4 h, a review step at 5 h files an item and at 9 h writes one blocking question. Each process defines its definition of done once and maps at least two independent paths to it (primary, remediation, workaround); a step with exactly one path is a gap.
 
@@ -85,6 +91,11 @@ for row in open_rows:
 - **US-13-R11 [L3]** Per-step budgets SHOULD exist for every stage; a breach MUST file an item, and a breach of twice the budget MUST produce exactly one blocking question per (process, step).
 - **US-13-R12 [L3]** Each process SHOULD define its done check once and map at least two independent paths to it.
 - **US-13-R13 [L3]** Probe targets SHOULD be validated against routing, so unrouted-but-live workers are not reported down.
+- **US-13-R14 [L2]** An agent-opened change request MUST have a written service level in minutes, enforced every tick: act past the first limit, supersede past the hard limit when idle, and never supersede one that is ready to merge. Superseding MUST keep the branch and file one item that carries the work.
+- **US-13-R15 [L2]** A detector independent of the enforcer MUST read every open change request and item, whatever its state, and fail when one is past its limit.
+- **US-13-R16 [L1]** An item open past 120 minutes MUST be raised in priority, and the cause MUST be filed at most once a day.
+- **US-13-R17 [L2]** A change made from the owner dashboard MUST require a fresh step-up code, MUST be recorded in an audit log and MUST be undoable from it.
+- **US-13-R18 [L2]** The owner dashboard MUST show only steps that are still open, and MUST answer in plain words when its store is unavailable.
 
 ## 7. Failure modes
 
@@ -103,17 +114,24 @@ for row in open_rows:
 - **US-13-T03** Add an open SEV3 row due in 30 days. Pass: due set to now plus the SEV3 cap.
 - **US-13-T04** A step with B = 4 h elapsed 9 h and no open question. Pass: exactly one question card.
 - **US-13-T05** Drop a dimension by 0.6 with no cause. Pass: a work item.
+- **US-13-T06** An agent branch's request open 70 minutes and idle 40, not merge-ready. Pass: tier `supersede`. The same request merge-ready. Pass: tier `ok`.
+- **US-13-T07** An item created 4 hours ago at priority 40. Pass: priority 5 and one cause item for the day; a second tick files no second one.
 
 ## 9. Reference implementation status
 
+Verified against the code on 2026-11-26. Paths that begin `core/` or `adapters/` are under `workers/`; paths that begin `dashboard/`, `seed/`, `foundation/` or `doctrine/` are from the repository root.
 
 - Health route and the four-line tick report: BUILT (`adapters/cloudflare/src/index.js`, `core/src/tick.js`).
-- Product dashboard: BUILT as a module in `core/console-l3/dashboard.js` (tests: `core/console-l3/dashboard.test.js`): the status page, `/api/state`, `/api/refresh`, `/api/integration`, `/api/loop` and `/health`, all rendered from the one state function of `core/console-l3/index.js` that also feeds the digest (US-13-R01, US-13-R02); probe targets are checked against routing so an unrouted target is reported unrouted, not down (US-13-R13). The composition root serves the earlier JSON routes under the console; mounting the status page and the three new routes there is not done yet.
-- Dashboard panels fed by platform analytics (24-hour requests and errors, per-scheduled-worker errors and next runs): PLANNED. They need a live account's analytics; the seed has no such reading.
+- Product dashboard: BUILT as a module in `core/console-l3/dashboard.js` (tests: `core/console-l3/dashboard.test.js`): the status page, `/api/state`, `/api/refresh`, `/api/integration`, `/api/loop` and `/health`, all rendered from the one state function of `core/console-l3/index.js` that also feeds the digest (US-13-R01, US-13-R02); probe targets are checked against routing so an unrouted target is reported unrouted, not down (US-13-R13). The composition root mounts the page and its routes under `/console/dashboard` (`core/org/surfaces.js`: the page, its state, integration, loop and refresh routes and its health route; a cross-origin refresh is refused; tests `core/org/surfaces.test.js`).
+- Dashboard panels fed by platform analytics (24-hour requests and errors, per-scheduled-worker errors and next runs): PLANNED. They need a live account's platform analytics. What exists is a first-party reading: the owner dashboard shows page views, beacon hits and metric breaches from `seed/analytics/analytics.js` (test `dashboard/test/dashboard.test.mjs`).
 - Report cards with evidence, confidence, status and limits; a fall of 0.5 files a work item; the objective function may be proposed and never adopted (US-13-R03 to R06): BUILT in `core/console-l3/index.js` (tests: `core/console-l3/console-l3.test.js`).
 - Fleet dashboard (72 workers, 24-hour request and error totals, flow chains, integration route): RUNNING in QNFO. Autonomy report card scored 3.6 of 5 on 2026-09-10; that figure is the system's own, dated, and not independently verified.
 - Service-level policy and weekly audit: RUNNING as policy in QNFO.
-- Automatic due-date recomputation, the 14-day hard cap with its three exemptions, the acceleration rule, the past-due raise with a notice to the manager, the weekly audit, and the count of items that wait on a person as a metric with target zero (US-13-R07 to R10, US-13-T03): BUILT in `core/sla/index.js` (tests: `core/sla/sla.test.js`). It runs as one `step` per tick, called by the composition root (`workers/core/org/buildout.js`, asserted in `workers/core/org/org.test.js`); the dashboard it feeds is served at `/console/dashboard` (`workers/core/org/surfaces.js`).
+- Automatic due-date recomputation, the 14-day hard cap with its three exemptions, the acceleration rule, the past-due raise with a notice to the manager, the weekly audit, and the count of items that wait on a person as a metric with target zero (US-13-R07 to R10, US-13-T03): BUILT in `core/sla/index.js` (tests: `core/sla/sla.test.js`). It runs as one `step` per tick, called by the composition root (`core/org/buildout.js`, asserted in `core/org/org.test.js`); the dashboard it feeds is served at `/console/dashboard` (`core/org/surfaces.js`).
+- Change-request service level (US-13-R14, T06): BUILT in `seed/worker/src/sla.js` (`prTier`, `portItemId`) with the table `doctrine/sla.json`, applied by `seed/worker/src/sweeper.js` every tick; tests `seed/worker/test/sweeper.test.js`.
+- Independent service-level detector (US-13-R15): BUILT in `foundation/slawatch.py` (tests `tests/foundation/test_slawatch.py`). Item limits by priority and the balance of inflow against closures are in `foundation/balance.py` with `doctrine/balance.json` (tests `tests/foundation/test_balance.py`).
+- Short-age raise (US-13-R16, T07): BUILT in `seed/worker/src/tick.js` (step `age_sla`); test `seed/worker/test/tick.test.js`.
+- Owner dashboard (US-13-R17, US-13-R18): BUILT in `dashboard/worker.js` with `dashboard/agent.js` and `dashboard/provenance.js`; tests `dashboard/test/dashboard.test.mjs`, `dashboard/test/agent.test.mjs`.
 - Per-step budgets and automatic breach procedure (US-13-R11, US-13-R12, US-13-T04): BUILT. `core/sla/index.js` stores process definitions and step runs and reports steps with fewer than two paths; `core/console-l3/index.js` files one item past the budget and exactly one blocking question past twice the budget.
 - Six-term F: BUILT as a computed, stored scalar in `core/sla/index.js` (table `sla_objective`, with the weights in effect and the triad). Three terms are read from L1 tables (loop closure rate, human interventions, throughput); drift count, cost overrun and integration gap are read only when the caller passes a reading and are marked unmeasured otherwise.
 - Calibrated weights for F: PLANNED. The weights are configuration defaults marked uncalibrated; calibrating them needs a history of real cycles.

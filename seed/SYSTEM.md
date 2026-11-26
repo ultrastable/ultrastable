@@ -52,6 +52,7 @@ Tick steps, in order (from `worker/src/tick.js`):
 
 Loops the same cron runs beside the tick (from `worker/src/index.js`):
 
+- `kill-drill`: KILL-SWITCH-1: once a day the global switch is turned on, checked, turned off in every case and the test recorded
 - `credentials`: AUTH-1: refresh runs first so nothing lapses
 - `live-changes`: LIVE-FRESH-2: own early step; inside the sweeper it ran after 32 of 46 subrequests were spent and never wrote, so /live froze
 - `fleet-changes`: PROGRESS-1: the other repositories, at most hourly each

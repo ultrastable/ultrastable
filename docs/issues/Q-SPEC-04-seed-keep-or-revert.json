@@ -1,0 +1,12 @@
+{
+  "id": "Q-SPEC-04-seed-keep-or-revert",
+  "title": "Q-SPEC-04-seed-keep-or-revert: Keep or revert a plus on measured evidence in the seed tick",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** cmd:git grep -q \"US-04-T03\" -- seed/worker/test\n**Status:** open\n\nUS-SPEC-04 (US-04-R06 to R11): the seed tick measures the plus share and emits successors, but stores no baseline when a plus ships and never reverts one on a miss; the full loop is `workers/core/plus`. Load the plus module's step in the seed tick, or port its keep-or-revert rule, so a shipped plus item is settled against its metric and guard after its window, with an unmeasured reading never kept.\n\nsize: L\n\n**Prediction:** spec_quality >= 0.9 within 168 h\n**Out of scope:** the generator that writes a plus, and usage readers that need a live analytics credential.\n\n**Closing probe:** cmd:`git grep -q \"US-04-T03\" -- seed/worker/test` exits 0, and `python3 scripts/spec_ids.py --check` passes with the status line of the specification changed from PLANNED to BUILT naming the file and the test.\n",
+  "labels": [
+    "p2",
+    "agent-ready",
+    "spec"
+  ],
+  "milestone": "Now",
+  "workstream": "Executor queue"
+}

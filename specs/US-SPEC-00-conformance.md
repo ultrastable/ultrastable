@@ -7,15 +7,17 @@
 |---|---|
 | ID | US-SPEC-00 |
 | Title | Conformance, terms and requirement format |
-| Version | 0.1.0 (draft) |
-| Date | 2026-11-11 |
+| Version | 0.2.0 (draft) |
+| Date | 2026-11-26 |
 | Status | Draft |
 
 ## 1. Purpose
 
-This specification fixes the vocabulary, the requirement format, the conformance levels and the test conventions used by US-SPEC-01 to US-SPEC-17. Every other specification is self-contained for its own subsystem but uses the terms defined here.
+This specification fixes the vocabulary, the requirement format, the conformance levels and the test conventions used by US-SPEC-01 to US-SPEC-25. Every other specification is self-contained for its own subsystem but uses the terms defined here.
 
 Related specifications added with this version: US-SPEC-15 (management lifecycle), US-SPEC-16 (ignorance and prompted recall, the elicitation front door of bootstrapping) and US-SPEC-17 (failure modes and remediation). Scope is fixed by `SCOPE.md`; a conforming implementation MUST NOT enable out-of-scope behavior by default (US-00-R09).
+
+Version 0.2.0 adds US-00-R11 and US-00-R12 (the two properties of the specifications themselves that code now checks: stable requirement IDs and BUILT labels that name existing paths), their tests, and the status rows for those checks.
 
 ## 2. Requirement language
 
@@ -74,6 +76,8 @@ A level claim is valid only if every requirement tagged at or below that level i
 
 - **US-00-R09 [L1]** A conforming implementation MUST keep the behaviors that `SCOPE.md` lists as out of scope (business plans, legal filings, advice, outreach, payments, research writing) disabled unless the person enables an opt-in Capability Pack. A pack MUST NOT weaken the interrupt gate or the standing limits (US-SPEC-06).
 - **US-00-R10 [L1]** An implementation serving a non-expert MUST obtain the information it needs by the means of US-SPEC-16 and MUST NOT require the person to supply architecture, schema or stack choices.
+- **US-00-R11 [L2]** A requirement ID MUST NOT be renumbered, removed or reused. A withdrawn requirement MUST keep its line with the text "Withdrawn in <version>". An implementation that publishes these specifications MUST keep a ledger of every ID ever defined, to which entries are only added, and MUST fail a change that breaks this.
+- **US-00-R12 [L2]** A status line labelled BUILT MUST name, in backticks, a path that exists in the implementation. An implementation that publishes these specifications MUST check every such line on every change. Lines that already fail when the check is introduced MAY be held in a list that only shrinks; a new failing line MUST fail the change.
 
 ## 6. Conformance tests
 
@@ -82,6 +86,8 @@ A level claim is valid only if every requirement tagged at or below that level i
 - **US-00-T03** For each RUNNING label, locate a production ledger row or log from the last 7 days. Pass: found. Fail: none.
 
 - **US-00-T04** Ask the system for a business plan with no pack enabled. Pass: it declines, names the reason and the pack that would cover it. Fail: it produces one.
+- **US-00-T05** Renumber one requirement, delete another and define a third in two specifications. Pass: the ID check reports each. Fail: any passes.
+- **US-00-T06** Label a status line BUILT with a path that does not exist, and one with no path. Pass: the status check reports both, and reports nothing for a line whose path exists. Fail: either is missed.
 
 ## 7. Failure modes of this specification
 
@@ -90,13 +96,18 @@ A level claim is valid only if every requirement tagged at or below that level i
 | An implementation labels a design as BUILT | Readers trust an unverified feature | US-00-T02 |
 | Defaults copied as requirements | Brittle systems | US-00-R07 |
 | Self-reported numbers read as audited | False confidence | Legend in the README: RUNNING numbers are self-reported |
+| A requirement is renumbered and old citations point at other text | Citations stop identifying text | US-00-R11, US-00-T05 |
+| A status line keeps saying BUILT after its file is moved or deleted | Readers trust code that is gone | US-00-R12, US-00-T06 |
 
 ## 8. Reference implementation status
 
+Paths in a status section are written relative to the tree that holds the code: `workers/` for `core/`, `adapters/`, `tools/` and `tests/` paths, the repository root for `scripts/`, `foundation/`, `doctrine/`, `seed/`, `platform/` and `specs/` paths (specs/README.md, Status legend).
 
-- Level definitions: BUILT as a runnable conformance suite. `core/conformance/manifest.json` maps every requirement of US-SPEC-00 to US-SPEC-24 to its level and to the tests that cite it, or lists it as a deviation with the reason; `core/conformance/index.js` builds it, states the declaration (level, specification versions, deviation list: US-00-R01, US-00-R02) and checks it against the tree (a requirement labelled met whose test file is gone or no longer cites it fails: US-00-R03); `core/conformance/cli.js` regenerates it, checks it and runs the test files that prove a level (US-00-T01, US-00-T02). Tests: `core/conformance/conformance.test.js`. Requirements of US-SPEC-16 and US-SPEC-18, which carry no level tag, are counted at L2.
+- Level definitions: BUILT as a runnable conformance suite. `core/conformance/manifest.json` maps every requirement of US-SPEC-00 to US-SPEC-24 to its level and to the tests that cite it, or lists it as a deviation with the reason; `core/conformance/index.js` builds it, states the declaration (level, specification versions, deviation list: US-00-R01, US-00-R02) and checks it against the tree (a requirement labelled met whose test file is gone or no longer cites it fails: US-00-R03); `core/conformance/cli.js` regenerates it, checks it and runs the test files that prove a level (US-00-T01, US-00-T02). Tests: `core/conformance/conformance.test.js`, which reads the specifications from `specs/` of the repository the tree is folded into (or from a `spec` checkout beside a standalone one) and fails when a requirement in a specification is missing from the manifest; until 0.2.0 that test looked only for the separate checkout and was skipped. Requirements of US-SPEC-16 and US-SPEC-18, and those written as table rows (US-SPEC-20, 22, 23), carry no level tag and are counted at L2. US-SPEC-25 defines no requirement in the form the manifest reads, so the manifest lists its version and no requirement of it.
 - Declared level of the seed: BUILT as data in `core/conformance/manifest.json`: L1 with a published deviation list. On 2026-11-15, 45 of the 79 L1 requirements were cited by a test and 34 were listed as deviations with the reason "no test in this repository cites this requirement"; a deviation of that kind says the proof is not attached, not that the behavior is absent.
 - L1 conformance tests of US-SPEC-01 and US-SPEC-14 with the requirement ids cited (US-01-T01 to T04, US-14-T01, US-14-T04): BUILT in `core/conformance/l1.test.js`.
+- Stable requirement IDs (US-00-R11, US-00-T05): BUILT in `scripts/spec_ids.py` with the add-only ledger `doctrine/spec-ids.json` (test: `tests/foundation/test_spec_ids.py`). It reads the requirements written as list items (`- **US-<nn>-R<mm>`); the requirements written as table rows in US-SPEC-20, 22 and 23 are held by the conformance manifest above and are not yet in the ledger.
+- BUILT labels name existing paths (US-00-R12, US-00-T06, US-20-R06): BUILT in `scripts/spec_truth.py`, which runs the engine `tools/spec_truth.py` over `specs/` against the `workers/`, root and `seed/` trees and holds the lines that failed when it was wired in the shrink-only `doctrine/spec-truth-baseline.json` (test: `tests/foundation/test_spec_truth.py`). It proves that a named path exists; it does not run the named test (US-00-T02 does, through `core/conformance/cli.js --run`).
 - Certification by a party other than the implementer: PLANNED. The manifest is produced and checked by the implementation itself; an outside audit needs an auditor.
-- US-00-T03 (a production ledger row behind each RUNNING label): PLANNED. Nothing in the seed is labelled RUNNING, and the check needs a production ledger to read.
+- US-00-T03 (a production ledger row behind each RUNNING label): PLANNED. No check reads a ledger row for a RUNNING label yet; the deploy ledger it would read exists (`ops/deploys.jsonl`). Tracked as `docs/issues/Q-SPEC-00-T03.json`.
 - The seed in this project meets most L1 requirements; each specification lists the exceptions, and the deviation list above names every requirement without an attached test.

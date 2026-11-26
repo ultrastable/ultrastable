@@ -88,6 +88,16 @@ With two active schedulers a slot may have duplicate records; the tick takes a w
 
 **Worked example.** `*/10 * * * *` has 6 slots per hour. Scheduler A has records in all 6; B in slots 1, 2, 4, 5, 6. Slot 3 has one record, so no alert; B's reliability is 5 of 6 = 83%. If both are missing in slot 4, a stop alert opens.
 
+**Staggering.** Collisions per minute are measured from the enabled schedules over a window. A schedule whose minute field is periodic (a step that divides 60, or a comma list that is one such progression) can be moved to another phase without changing its period or its other four fields: `*/10` and `3,13,23,33,43,53` fire six times an hour each. The stagger procedure places schedules in name order and gives each periodic schedule the phase that shares the fewest minutes with those already placed; a tie keeps the phase it has, so a second run changes nothing. A single-minute schedule (`0 3 * * *`) names a time of day and is moved only when the caller asks. Applying the plan is a row write per moved schedule (US-11-R04).
+
+### 7.1 Beats, loop clocks and the second producer
+
+The slot count of this section also applies inside one worker that runs several loops on one cron. The kit's form:
+
+1. **Beat.** Every loop runs inside a wrapper that writes a row before the body runs and completes it after. A loop that threw is a row with its error; a loop that never returned is a row left open; a loop that was never called is a missing slot. A loop that returned without doing its work is a failed beat. One loop failing does not stop the loops after it.
+2. **Clock.** One tick step counts, per loop, the completed slots it should have run in over 24 hours against the slots it ran in and the slots that were good, and writes one state per loop: `ticking`, `late` (last run older than 1.5 intervals plus a minute), `stopped` (older than 3 intervals), `failing` (last run failed), `hung` (a run that started and never returned), `never` (declared, watched for more than 2 intervals, no run) or `warming`. A loop with missed slots files `MISSED-<loop>`, which only the same reading closes. A loop on a slower cadence than the tick is judged against its own cadence.
+3. **Second producer.** A clock cannot notice that it has stopped. A second producer on its own schedule calls a watch route; when the newest tick is older than two intervals it runs the tick itself. It leaves a beat on every call, so the tick in turn judges the watchdog: each producer watches the other's silence.
+
 ## 8. Normative requirements
 
 - **US-11-R01 [L3]** Every fleet member MUST satisfy the worker contract of section 4.
@@ -103,6 +113,11 @@ With two active schedulers a slot may have duplicate records; the tick takes a w
 - **US-11-R11 [L3]** A dispatcher SHOULD guard against overlapping runs of one task, for example by a claim before dispatch and a reaper for stale `queued` rows.
 - **US-11-R12 [L3]** Schedules SHOULD be staggered; collisions per minute SHOULD be measured.
 - **US-11-R13 [L3]** A monitor SHOULD be hosted in a different worker than the one that writes the probe table it monitors.
+- **US-11-R14 [L2]** Every loop a worker runs MUST leave a record that is written before the loop body runs and completed after it, so a loop that threw, a loop that never returned and a loop that was never called are three different readings.
+- **US-11-R15 [L2]** A loop that returns without doing its work MUST be recorded as a failed run, not a good one.
+- **US-11-R16 [L2]** The state of each loop MUST be computed from recorded slots against expected slots, never declared, and a loop with missed slots MUST open an item that only the same reading closes.
+- **US-11-R17 [L2]** A second producer MUST run the tick when the newest tick is older than two intervals, and MUST itself leave a record that the tick judges.
+- **US-11-R18 [L3]** A stagger procedure MUST keep each schedule's period and its hour, day and month fields, MUST be idempotent, and MUST NOT move a schedule that names a time of day unless asked.
 
 ## 9. Failure modes
 
@@ -121,12 +136,21 @@ With two active schedulers a slot may have duplicate records; the tick takes a w
 - **US-11-T03** Post an unknown task type. Pass: rejected.
 - **US-11-T04** Remove all records for one slot of a declared procedure. Pass: alert naming procedure and slot.
 - **US-11-T05** Fire the tick from both schedulers in one slot. Pass: one acts, the other ends without acting.
+- **US-11-T06** Stop one loop of several for a window. Pass: its state is no longer `ticking`, `MISSED-<loop>` is filed, the other loops still ran, and the item closes when the loop runs again.
+- **US-11-T07** Let the heartbeat go stale and call the watch route. Pass: the tick runs and its run is in the ledger.
+- **US-11-T08** Stagger two enabled `*/10 * * * *` schedules. Pass: no shared minute, six firings an hour each, and a second run changes nothing.
 
 ## 11. Reference implementation status
 
-- The seed has one cron-driven tick (`adapters/cloudflare/src/index.js` `scheduled`, running `core/src/tick.js`). The fleet runtime below is a module beside it; the composition root does not call it yet, and nothing below is in production use.
+Verified against the code on 2026-11-26. Paths that begin `core/` or `adapters/` are under `workers/`; paths that begin `seed/`, `site/`, `foundation/` or `doctrine/` are from the repository root.
+
+- The seed has one cron-driven tick (`adapters/cloudflare/src/index.js` `scheduled`, running `core/src/tick.js`). The fleet runtime below is a module beside it; the composition root runs its `step` each tick (`core/org/buildout.js`, step `fleet`, on unless `config.fleet.enabled` is false; test `core/org/org.test.js`). No deployed account runs the fleet module.
 - Per-minute dispatcher reading `fleet_crons` (R03, R04, R11), cron matcher (T01), typed executor for `sql`, `http`, `ai` and `workflow` tasks with a run record for every execution (R05), event envelopes validated before writing with rejects stored (R06): BUILT in `core/fleet/index.js` with `core/fleet/migrations/0001_fleet.sql`; tests `core/fleet/fleet.test.js` (T01 to T05 by id). The `ai` task calls a gateway port; no model provider is bundled. Worker contract, dispatcher, executor and a subset run ledger (`fleet_runs`) are RUNNING in QNFO. Native per-worker cron and the dispatcher coexisted there; no measured failover between them is recorded. The dynamic dispatcher and executor were later listed as retired in a QNFO consolidation audit, so redundancy was demonstrated before that date and is not asserted afterward.
-- Worker contract check (R01) and registry-versus-deployment reconciliation into the five states with the ghost, unregistered and unversioned counts (R02): BUILT in `core/fleet/index.js` (`contractGaps`, `register`, `reconcile`; test `core/fleet/fleet.test.js`) against a `deployed.list()` port. The adapter that reads a live platform's deployments is PLANNED: it needs an account. RUNNING in QNFO, where versions were incomplete (in one scan 27 of 79 deployed workers lacked a version) and the contract was enforced only in part.
+- Worker contract check (R01) and registry-versus-deployment reconciliation into the five states with the ghost, unregistered and unversioned counts (R02): BUILT in `core/fleet/index.js` (`contractGaps`, `register`, `reconcile`; test `core/fleet/fleet.test.js`) against a `deployed.list()` port. The adapter that reads a live platform's deployments is PLANNED (item `Q-SPEC-11-deployed-adapter`). RUNNING in QNFO, where versions were incomplete (in one scan 27 of 79 deployed workers lacked a version) and the contract was enforced only in part.
 - Full eleven-column run ledger (`fleet_runs`), accounting invariant as an automatic gate (R07: `recordBatch`, `drain`, `batchGate`), slot-counting dead-man check with single-path and stop alerts and per-scheduler reliability (R08, R09: `deadman`), one acting firing per slot under a work claim (R10: `fireOnce`), collisions per minute (R12: `collisions`) and event-triggered scheduling (`setTrigger`, `emit`): BUILT in `core/fleet/index.js`; tests `core/fleet/fleet.test.js`.
+- Automatic staggering of schedules (R12, R18, T08): BUILT in `core/fleet/index.js` (`minutePhase`, `stagger`; tests `core/fleet/fleet.test.js`). `stagger` returns a plan and writes rows only with `apply`; the fleet `step` applies it each tick only when `config.auto_stagger` is true, which is off by default.
+- Beats, loop clocks and `MISSED-<loop>` items (R14 to R16, T06): BUILT in `seed/worker/src/pulse.js` (`beat`, `judgeLoop`, `pulseStep`) with `seed/worker/migrations/0013_pulse.sql`; tests `seed/worker/test/pulse.test.js`. The kit's scheduled handler runs its loops through `beat` (`seed/worker/src/index.js`).
+- Second producer of the heartbeat (R17, T07): BUILT in `seed/worker/src/pulse.js` (`watch`), served at `POST /pulse/watch` by `seed/worker/src/index.js` and called from the site worker's own cron through a service binding (`site/worker.js`); tests `seed/worker/test/pulse.test.js`. A second watchdog on the code host's scheduler is `seed/worker/src/watchdog.js` (tests `seed/worker/test/watchdog.test.js`).
+- Declared clocks for loops that run outside the worker (expected interval, state measured from recorded beats as ticking, late, stopped or idle): BUILT in `foundation/clock.py` with `doctrine/clocks.json` (tests `tests/foundation/test_clock.py`).
 - R13 (a monitor hosted outside the worker that writes its probe table): BUILT as a detector that refuses to run in the writer, `core/remediation/index.js` (`externalLiveness`, test `core/remediation/remediation.test.js`). Deploying it as a separate worker is PLANNED: it needs a live account.
-- Hot standby: PLANNED. It needs two schedulers deployed on a live account and a measured failover; `fireOnce` and the dead-man check are the parts built toward it. Automatic staggering of schedules (R12) is PLANNED; only the measurement is built.
+- Hot standby of the fleet dispatcher: PLANNED. It needs two schedulers deployed on a live account and a measured failover; `fireOnce` and the dead-man check are the parts built toward it. The second producer above restarts a stale tick; it is not a second dispatcher and no failover time is measured.

@@ -1,0 +1,12 @@
+{
+  "id": "Q-SPEC-14-KIT-SLOT",
+  "title": "Q-SPEC-14-KIT-SLOT: the kit's Worker runs at most one tick per slot (US-14-R03, US-14-R09)",
+  "body": "**Owner:** executor\n**Trigger:** specification audit 2026-11-26 (specs/ against the code)\n**Done check:** cmd:git grep -q sched_slots -- seed/worker/src\n**Status:** open\n\n`workers/adapters/shared/slot.js` (`runOncePerSlot`, table `sched_slots`) deduplicates a scheduler that delivers twice, and both reference handlers use it. The kit's Worker (`seed/worker/src/index.js` scheduled handler) does not: two cron deliveries in one slot run two ticks. Add the slot guard to the kit's scheduled path only (the second producer `POST /pulse/watch` must still be able to run a tick when the heartbeat is stale, and the standby slot of the cutover must be unaffected), create the table through the kit's own schema path, and test it in `seed/worker/test/tick.test.js` or a new test: the same slot twice gives one `tick_runs` row. Then set the row in `specs/US-SPEC-14-portability-seams.md` to BUILT.\n\nsize: M\n\n**Closing probe:** `node seed/worker/test/run.mjs`\n**Prediction:** duplicate_ticks_per_slot <= 0 within 336 h\n**Out of scope:** changing the tick interval; deduplicating the watchdog's own restart tick; any tenant-specific code in the kit.\n",
+  "labels": [
+    "p2",
+    "agent-ready",
+    "raises-self"
+  ],
+  "milestone": "Next",
+  "workstream": "Ultrastability"
+}

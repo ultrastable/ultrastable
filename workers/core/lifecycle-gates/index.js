@@ -8,7 +8,7 @@ import { all, first, run, iso, parseIso, compare, assertReadOnly, ensureItem } f
 import { CATALOG, createProject, submitArtifact, advancePhase } from '../kernel/lifecycle.js';
 
 export const MIGRATIONS_DIR = (() => { try { return fileURLToPath(new URL('./migrations/', import.meta.url)); } catch { return null; } })();
-export const DEFAULTS = { portfolio_cap: null, initiation_threshold: 0.6, require_readiness: true, status_period_h: 168 };
+export const DEFAULTS = { portfolio_cap: null, initiation_threshold: 0.6, require_readiness: true, status_period_h: 168, risk_review_period_h: 168, quality_period_h: 168 };
 const cfg = (c) => ({ ...DEFAULTS, ...(c || {}) });
 const HOUR = 3600e3;
 const filled = (v) => (Array.isArray(v) ? v.length > 0 : v !== null && v !== undefined && String(v).trim() !== '');
@@ -240,6 +240,91 @@ export async function refreshStatusReports(db, { now = Date.now(), config } = {}
   return out;
 }
 
+// ---- A-MON-4 and A-MON-6: the risk and issue review and the quality metrics, kept as artifact records ----
+// A monitoring artifact is one `artifacts` row per project and kind (phase 'monitoring', outside every gate): its reference names the
+// records it was computed from, its evidence is the reading as JSON and updated_at is when it was last produced.
+async function putMonitoring(db, project_id, kind, owner_role, ref, reading, now) {
+  await run(db, `INSERT INTO artifacts (id, project_id, phase, kind, path_or_ref, owner_role, status, produced_by, done_check, done_check_passed, evidence, updated_at)
+      VALUES (?,?,'monitoring',?,?,?,'submitted','lifecycle-step',?,?,?,?)
+      ON CONFLICT(project_id, kind) DO UPDATE SET path_or_ref=excluded.path_or_ref, done_check_passed=excluded.done_check_passed, evidence=excluded.evidence, updated_at=excluded.updated_at`,
+    `${project_id}:${kind}`, project_id, kind, ref, owner_role, 'produced inside its period from the project\'s own records', 1, JSON.stringify(reading), iso(now));
+}
+const lastMonitoring = async (db, project_id, kind) => {
+  const a = await first(db, `SELECT evidence, updated_at FROM artifacts WHERE project_id = ? AND kind = ?`, project_id, kind);
+  if (!a) return null;
+  let reading = null; try { reading = JSON.parse(a.evidence); } catch { reading = null; }
+  return { at: a.updated_at, reading };
+};
+
+/**
+ * A-MON-4: review the project's register. Every open risk without a response, an owner role or a trigger becomes one item for the
+ * project manager; every active issue (a fix item of the project) without a closing probe becomes one item too. The review records how
+ * many risks were added since the one before it, so "new risks added" is a number read from the register and not a claim.
+ */
+export async function reviewRisks(db, { project_id, now = Date.now() }) {
+  const p = await first(db, `SELECT id, program_id FROM kernel_projects WHERE id = ?`, project_id);
+  if (!p) throw new Error('unknown project');
+  const prev = await lastMonitoring(db, project_id, 'A-MON-4');
+  const risks = await all(db, `SELECT * FROM risks WHERE project_id = ? ORDER BY id`, project_id);
+  const open = risks.filter(r => r.status === 'open');
+  const filed = [], incomplete = [];
+  for (const r of open) {
+    const lacks = ['response', 'owner_role', 'trigger'].filter(f => !filled(r[f]));
+    if (!lacks.length) continue;
+    incomplete.push({ id: r.id, lacks });
+    const id = `RISK-${project_id}-${r.id}`;
+    if (await ensureItem(db, { id, title: `Risk ${r.id} of ${project_id} (${r.cause}) lacks ${lacks.join(', ')}`, owner_role: 'project-manager', project: project_id,
+      done_check: `risk ${r.id} has a response, an owner role and a trigger`,
+      closing_probe: `SELECT COUNT(*) AS value FROM risks WHERE id = ${Number(r.id)} AND (status <> 'open' OR (COALESCE(response,'') <> '' AND COALESCE(owner_role,'') <> '' AND COALESCE(trigger,'') <> ''))`, priority: 20 })) filed.push(id);
+  }
+  const issues = await all(db, `SELECT i.id FROM items i WHERE ${SCOPE_SQL} AND i.kind = 'fix' AND i.status NOT IN ('done','superseded','cancelled') AND i.id NOT LIKE 'ISSUE-PROBE-%'
+      AND (i.closing_probe IS NULL OR i.closing_probe = '') ORDER BY i.id`, project_id, p.program_id ?? project_id);
+  for (const i of issues) {
+    const id = `ISSUE-PROBE-${slugId(i.id)}`;
+    if (await ensureItem(db, { id, title: `Issue ${i.id} of ${project_id} has no closing probe`, owner_role: 'project-manager', project: project_id,
+      done_check: `item ${i.id} has a closing probe or has left the active set`,
+      closing_probe: `SELECT COUNT(*) AS value FROM items WHERE id = '${String(i.id).replace(/'/g, "''")}' AND (COALESCE(closing_probe,'') <> '' OR status IN ('done','superseded','cancelled'))`, priority: 20 })) filed.push(id);
+  }
+  const maxId = risks.length ? risks[risks.length - 1].id : 0;
+  const reading = { risks: risks.length, open: open.length, incomplete, new_since_last: prev?.reading ? risks.filter(r => r.id > (prev.reading.max_risk_id ?? 0)).length : risks.length,
+    issues_without_probe: issues.map(i => i.id), filed, max_risk_id: maxId, previous_review: prev?.at ?? null };
+  await putMonitoring(db, project_id, 'A-MON-4', 'project-manager', `risks?project_id=${project_id}`, reading, now);
+  return reading;
+}
+const slugId = s => String(s).replace(/[^A-Za-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 80);
+
+/**
+ * A-MON-6: rework rate (fix items among the project's work and fix items), defects escaped (outcomes recorded as hidden_failure on the
+ * project's items: a failure found after the work was reported done) and probe pass rate (deliverables whose closing probe passed among
+ * those whose probe was run). A ratio with nothing under it is null, which reads as unmeasured and never as zero.
+ */
+export async function qualityMetrics(db, { project_id, now = Date.now() }) {
+  const p = await first(db, `SELECT id, program_id FROM kernel_projects WHERE id = ?`, project_id);
+  if (!p) throw new Error('unknown project');
+  const prog = p.program_id ?? project_id;
+  const n = async (sql, ...a) => (await first(db, sql, ...a)).n;
+  const fix = await n(`SELECT COUNT(*) AS n FROM items i WHERE ${SCOPE_SQL} AND i.kind = 'fix' AND i.id NOT LIKE 'GATE-%'`, project_id, prog);
+  const work = await n(`SELECT COUNT(*) AS n FROM items i WHERE ${SCOPE_SQL} AND i.kind = 'work'`, project_id, prog);
+  const escaped = await n(`SELECT COUNT(*) AS n FROM outcomes o JOIN items i ON i.id = o.item_id WHERE ${SCOPE_SQL} AND o.result = 'hidden_failure'`, project_id, prog);
+  const run_ = await n(`SELECT COUNT(*) AS n FROM lifecycle_deliverables WHERE project_id = ? AND probe_passed IS NOT NULL`, project_id);
+  const passed = await n(`SELECT COUNT(*) AS n FROM lifecycle_deliverables WHERE project_id = ? AND probe_passed = 1`, project_id);
+  const unrun = await n(`SELECT COUNT(*) AS n FROM lifecycle_deliverables WHERE project_id = ? AND probe_passed IS NULL`, project_id);
+  const reading = { rework_rate: work + fix ? fix / (work + fix) : null, fix_items: fix, work_items: work, defects_escaped: escaped,
+    probe_pass_rate: run_ ? passed / run_ : null, probes_run: run_, probes_passed: passed, deliverables_unprobed: unrun };
+  await putMonitoring(db, project_id, 'A-MON-6', 'reviewer', `items,outcomes,lifecycle_deliverables?project_id=${project_id}`, reading, now);
+  return reading;
+}
+// Every project that is not closed gets its register reviewed and its quality metrics read once per period (default: weekly).
+export async function refreshMonitoring(db, { now = Date.now(), config } = {}) {
+  const c = cfg(config), out = { risk_reviews: [], quality: [] };
+  for (const p of await all(db, `SELECT id FROM kernel_projects WHERE current_phase <> 'closed' ORDER BY id`)) {
+    const due = async (kind, period) => { const l = await lastMonitoring(db, p.id, kind); return !l || (now - parseIso(l.at)) / HOUR >= period; };
+    if (await due('A-MON-4', c.risk_review_period_h)) { await reviewRisks(db, { project_id: p.id, now }); out.risk_reviews.push(p.id); }
+    if (await due('A-MON-6', c.quality_period_h)) { await qualityMetrics(db, { project_id: p.id, now }); out.quality.push(p.id); }
+  }
+  return out;
+}
+
 // ---- US-15-R12, T15-4: the scope gate ----
 // The default rules restate the out-of-scope table of SCOPE.md. config.scope_rules replaces them.
 export const SCOPE_RULES = [
@@ -289,6 +374,7 @@ export function lifecycleStep() {
   return { name: 'lifecycle_gates', run: async (db, ctx) => {
     if (ctx.config?.lifecycle?.enabled === false) { ctx.notes?.push('lifecycle: off'); return; }
     const n = await refreshStatusReports(db, { now: typeof ctx.now === 'number' ? ctx.now : Date.now(), config: ctx.config?.lifecycle });
-    ctx.notes?.push(`lifecycle: ${n.length} status report(s)`);
+    const m = await refreshMonitoring(db, { now: typeof ctx.now === 'number' ? ctx.now : Date.now(), config: ctx.config?.lifecycle });
+    ctx.notes?.push(`lifecycle: ${n.length} status report(s), ${m.risk_reviews.length} risk review(s), ${m.quality.length} quality reading(s)`);
   } };
 }

@@ -72,6 +72,12 @@ CREATE TABLE signal_worker_boundary (
 
 **Census.** A table listing each member with measured activity, separating idle from unmeasured. Absence from the monitor's roster is not proof a worker is idle. Measure first by extending the roster; retire only members dead for a period (default 2 days) or that fire and fail.
 
+**Declared flows.** The wiring graph reads what is bound; the flow register states what is meant to move. Every loop declares its typed inflows and outflows, the binding each travels on and its feedback path. The check fails when a registered loop is neither declared nor on a pending list that may only shrink, when an inflow has no producer, when an outflow has no consumer (an outflow to the world names the signal that returns and the loop that consumes it), or when a declared flow lies on no cycle. Each workflow belongs to a loop that declares its flows, and the bindings the flow declares equal the secrets its workflows use.
+
+**Orphan artifacts.** The same join applies to documents and other outputs: an artifact with no code consumer (an instruction import, code or data that names its path, a check, a generator) is an orphan and fails the build. A removed document stays in a ledger with its digest.
+
+**Orphan records.** Within one system's data, rows are nodes and references between them are edges. When most records of one kind connect to nothing, one item is filed for that kind and the same reading closes it.
+
 ## 5. Normative requirements
 
 - **US-12-R01 [L3]** A signal MUST carry an evidential weight; a record without one MUST be treated as noise.
@@ -88,6 +94,9 @@ CREATE TABLE signal_worker_boundary (
 - **US-12-R12 [L3]** The implementation SHOULD detect producer-without-consumer tables from the producer-consumer map.
 - **US-12-R13 [L3]** Idle workers MUST NOT be retired before the monitor roster includes them.
 - **US-12-R14 [L3]** Probe and calibration traffic MUST NOT be counted as external usage.
+- **US-12-R15 [L2]** Every loop MUST declare its inflows, its outflows and its feedback path; an inflow without a producer, an outflow without a consumer, or a declared flow on no cycle MUST fail the build.
+- **US-12-R16 [L2]** A document or other output with no code consumer MUST fail the build; a document's removal MUST be recorded with its digest.
+- **US-12-R17 [L2]** A system SHOULD keep a graph of its own records and MUST file one item per kind whose records mostly connect to nothing, closed only by the same reading.
 
 ## 6. Failure modes
 
@@ -107,12 +116,19 @@ CREATE TABLE signal_worker_boundary (
 - **US-12-T04** Submit a revision with 12 open questions against 12. Pass: rejected.
 - **US-12-T05** Analyze a graph of 80 nodes and 49 edges. Pass: density 0.00775.
 - **US-12-T06** Create a table with a writer and no reader. Pass: reported as a producer without a consumer.
+- **US-12-T07** Declare a loop with an outflow nothing consumes. Pass: the flow check fails and names the outflow.
+- **US-12-T08** Add a document nothing names. Pass: the document audit lists it as an orphan and fails.
 
 ## 8. Reference implementation status
+
+Verified against the code on 2026-11-26. Paths that begin `core/` are under `workers/`; paths that begin `foundation/`, `doctrine/`, `seed/` or `instances/` are from the repository root.
 
 - The signal pipeline and the wiring graph below are modules; the composition root calls their `step` surfaces (`core/org/buildout.js`, steps `signals` and `graph_wiring`; the graph step needs a `metadata` port and records that it skipped without one). No deployed account runs them yet.
 - Signal intake, triage, boundary, synthesis, ignorance audit, strict-shrink refinement, deposit and re-entry (R01 to R07): BUILT in `core/signals/index.js` with `core/signals/migrations/0001_signals.sql`; tests `core/signals/signals.test.js` (T01 to T04 by id). Triage, synthesis and the audit call scorer, synthesizer and auditor ports; no model is bundled. Narrowing is detected against an artifact's listed assertions only. RUNNING in QNFO for its research pipeline, where the boundary table, re-entry and the strict-shrink rule were built in part and operation is not evidenced.
 - Fitness threshold (R08): BUILT as a mechanism in `core/signals/index.js` (`proposeFitnessThreshold`, `triage`; test `core/signals/signals.test.js`): the threshold starts null, triage uses the scorecard while it is null, and a number is written only by a recorded experiment in which fitness-scored triage beat recency-scored triage. The numeric value itself is PLANNED: no experiment has been run, so none is specified.
-- Wiring sweep, graph computation and census (R09 to R11, R13, R14): BUILT in `core/graph/wiring.js` with `core/graph/migrations/0002_wiring.sql`; tests `core/graph/wiring.test.js` (T05 by id), against metadata, registry, roster and activity ports. The adapter that reads a live platform's bindings is PLANNED: it needs an account. RUNNING in QNFO (sweep of 2026-09-09 captured 75 of 76 workers; one failed with a closed connection). Those readings are owner-reported and dated; the sweep file held no cron or route data, so the trigger layer came from registry rows.
+- Wiring sweep, graph computation and census (R09 to R11, R13, R14): BUILT in `core/graph/wiring.js` with `core/graph/migrations/0002_wiring.sql`; tests `core/graph/wiring.test.js` (T05 by id), against metadata, registry, roster and activity ports. The adapter that reads a live platform's bindings is PLANNED (item `Q-SPEC-11-deployed-adapter`). RUNNING in QNFO (sweep of 2026-09-09 captured 75 of 76 workers; one failed with a closed connection). Those readings are owner-reported and dated; the sweep file held no cron or route data, so the trigger layer came from registry rows.
 - Orphan-table join and data-flow edges (R12): BUILT in `core/graph/wiring.js` (`extractTableAccess`, `producerConsumer`, `analyze`; test `core/graph/wiring.test.js`). Table access is read from declared lists and from SQL in script text; SQL assembled at run time is not seen. Data-flow edges are written to the edge table that `core/graph/index.js` `blastRadius` reads.
-- Stem matching for anchors (section 6): PLANNED.
+- Declared flows with producers, consumers and cycles (R15, T07): BUILT in `foundation/flows.py` with `doctrine/flows.json` over `instances/ultrastable/loop-registry.json` (tests `tests/foundation/test_flows.py`); `python3 -m foundation flows --check` runs on every change and `--map` prints the signal graph.
+- Orphan artifacts (R16, T08): BUILT in `foundation/docs_audit.py` (tests `tests/foundation/test_docs_audit.py`) and `foundation/closedloop.py` with `doctrine/consumers.json` (tests `tests/foundation/test_closedloop.py`).
+- Orphan records in a system's own data (R17): BUILT in `seed/worker/src/datagraph.js` (item `KG-ORPHANS-<kind>`; tests `seed/worker/test/datagraph.test.js`).
+- Stem matching for anchors (section 6): PLANNED (item `Q-SPEC-12-stem-matching`). No module matches anchors today; narrowing is detected by normalized substring match of an artifact's listed assertions.

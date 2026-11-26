@@ -5,6 +5,7 @@
 // recorded in the tick's errors and as a backlog item; the remaining steps still run.
 
 import { ensureLedger } from './budget.js';
+import { readSwitches, offReason, ACTION_STEPS } from './switches.js';  // KILL-SWITCH-1
 import { over_budget } from './costsample.js';
 import { beatStats24h } from './beatstats.js';  // READ-BUDGET-9
 import { readSpend, dueEvery } from './spend.js';  // SPEND-SOFT-1
@@ -328,11 +329,16 @@ export const STEPS = {
   // Trust per (surface, action_class) from recorded outcomes; a crossed threshold opens a ladder PR item.
   async accrue_trust(db, ctx) {
     const { trust, ladder } = ctx.config.policy;
+    // US-06-R07: severe outcomes are counted over a stated window, so one early hidden failure does not demote for ever. The window is
+    // ladder.demote_when.severe_window_days, else ladder.promote_when.no_hidden_failure_days (the policy's "no hidden failure for N days");
+    // a policy that states neither, or states 0, counts all time. The cut-off is bound from the tick's clock, in the same statement as the data.
+    const winDays = Number(ladder.demote_when?.severe_window_days ?? ladder.promote_when?.no_hidden_failure_days ?? 0);
+    const since = winDays > 0 ? new Date(ctx.now - winDays * 864e5).toISOString().slice(0, 19).replace('T', ' ') : '';
     const rows = await all(db, `SELECT surface, action_class,
         SUM(CASE WHEN result='verified' THEN 1 ELSE 0 END) AS ok,
-        SUM(CASE WHEN result IN ('hidden_failure','silent_drop') THEN 1 ELSE 0 END) AS severe,
+        SUM(CASE WHEN result IN ('hidden_failure','silent_drop') AND replace(substr(at, 1, 19), 'T', ' ') >= ? THEN 1 ELSE 0 END) AS severe,
         COUNT(*) AS n
-      FROM outcomes GROUP BY surface, action_class`);
+      FROM outcomes GROUP BY surface, action_class`, since);
     for (const r of rows) {
       const rel = reliability(r.ok, r.n, trust);
       const cur = await first(db, `SELECT rung FROM trust_ledger WHERE surface=? AND action_class=? AND ${OWN_SQL()}`, r.surface, r.action_class, tenantOf(ctx));
@@ -350,8 +356,11 @@ export const STEPS = {
       const demote = idx > 0 && (rel < ladder.demote_when.reliability_below || r.severe > 0);
       if (promote || demote) {
         const to = ladder.rungs[promote ? idx + 1 : idx - 1];
+        // US-06-R05: a crossing that repeats after its earlier ladder item was closed opens a new, dated item (the undated id could never reopen).
+        const base = `LADDER-${r.surface}-${r.action_class}-${to}`;
+        const prior = await first(db, `SELECT status FROM items WHERE id = ?`, base);
         const made = await ensureItem(db, {
-          id: `LADDER-${r.surface}-${r.action_class}-${to}`,
+          id: prior && ['done', 'superseded', 'cancelled'].includes(prior.status) ? `${base}-${ctx.nowIso.slice(0, 10)}` : base,
           title: `${promote ? 'Promote' : 'Demote'} ${r.surface}/${r.action_class} from ${rung} to ${to} (reliability ${rel.toFixed(2)} over ${r.n})`,
           kind: 'ladder', owner_role: 'operations',
           done_check: 'PR to autonomy/policy.json merged after review by a different agent',
@@ -549,7 +558,11 @@ export async function runTick(db, { config, env = {}, now = Date.now(), wake = n
     leanFloor = true;
     ctx.notes.push(`lean floor: ${LEAN_WORK_STEPS.join(', ')} run this tick after ${leanSkips} lean tick(s) without them (LEAN-FLOOR-1, at most ${LEAN_WORK_MAX_SKIPS} in a row)`);
   }
+  // KILL-SWITCH-1 (US-09-R01): a switched-off acting step waits; every measuring step still runs. An unreadable switch table stops nothing.
+  let switches = {};
+  try { switches = await readSwitches(db, { env, now }); } catch (e) { ctx.notes.push(`switches unread: ${String(e && e.message).slice(0, 120)}`); }
   for (const name of STEP_ORDER) {
+    if (ACTION_STEPS.includes(name)) { const off = offReason(switches, name); if (off) { ctx.notes.push(`${name} skipped: ${off}`); completed++; continue; } }
     if (name === 'goals' && (lean || degrade) && ctx.config && ctx.config.goals) {  // GOALS-1: a skipped step must never leave the goal tree empty (it was never seeded under degrade), and control still runs once an hour
       try {
         const have = await first(db, `SELECT COUNT(*) AS n FROM goals`).then(r => r.n).catch(() => 0);

@@ -1,0 +1,11 @@
+{
+  "id": "Q-SPEC-14-LIVE-STORES",
+  "title": "Q-SPEC-14-LIVE-STORES: the L1 tick suite on a live Postgres, and the remaining L1 steps on a document store (US-14-T01, US-14-R11)",
+  "body": "**Owner:** executor\n**Trigger:** specification audit 2026-11-26 (specs/ against the code)\n**Done check:** cmd:git ls-files --error-unmatch workers/adapters/postgres/live.test.js\n**Status:** open\n\nTwo PLANNED rows of `specs/US-SPEC-14-portability-seams.md`. (1) `workers/adapters/postgres/index.js` is proven as translated text against a recording client and never against a server: add `workers/adapters/postgres/live.test.js` that runs the L1 tick suite and a claim-contention test over the handle against a Postgres service container, skipped with a stated reason when no server is reachable, and run it in a workflow job that starts the container. (2) `workers/adapters/docdb/index.js` rewrites reconcile, trust and dispatch; rewrite the other five L1 steps and compare each with its SQL step on the same data in `workers/adapters/docdb/docdb.test.js`. Then set both rows to BUILT with the file and test. A hosted document-database driver stays PLANNED: it needs a live account.\n\nsize: M\n\n**Closing probe:** `node --test workers/adapters/postgres/live.test.js workers/adapters/docdb/docdb.test.js`\n**Prediction:** portability_planned_rows <= 3 within 720 h\n**Out of scope:** a hosted document-database account or driver; a managed Postgres for production; changing the core's SQL.\n",
+  "labels": [
+    "p2",
+    "agent-ready"
+  ],
+  "milestone": "Next",
+  "workstream": "Ultrastability"
+}

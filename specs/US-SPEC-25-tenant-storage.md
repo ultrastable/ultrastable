@@ -49,6 +49,9 @@ Normative; ids are stable.
 - **TS-9** Past `maxVectors` a tenant SHOULD be promoted to its own Vectorize index through a `VectorPort`.
 - **TS-10** Self-metered usage SHOULD be cross-checked against the platform's own analytics; a divergence over 20 percent is a finding.
 - **TS-11** Core code MUST NOT import a platform; platform code lives in adapters. The SQLite adapter (`adapters/sqlite/tenant-sqlite.js`) runs the same contract on any host.
+- **TS-12** (added 2026-11-26 from the code) Every deployed tenant Worker MUST bind only its own stores and no core service, and no core Worker may bind a tenant's store. An isolation probe reads the declared topology, prints one line per tenant and fails on any shared binding.
+- **TS-13** (added 2026-11-26 from the code) In the small shared control plane a runtime MUST select, claim, advance, close and count only rows of its own tenant: a row with no tenant is the runtime's own, a row carrying another tenant's id is never acted on, and the predicate adds no query or scan.
+- **TS-14** (added 2026-11-26 from the code) The storage decision, the default budget, the tenant list and the owner's monthly ceiling MUST be declared as data, and a check MUST fail when the declaration is incomplete or when every tenant at its full monthly budget would cost more than the ceiling.
 
 ## 5. Budget profiles and the hard bound
 
@@ -56,7 +59,13 @@ Two profiles (`core/tenantstore/budget.js`). **Free** (the deployed default): pe
 
 ## 6. Conformance and status
 
+Paths are relative to `workers/` unless they begin with `seed/`, `foundation/`, `tenants/`, `doctrine/`, `instances/` or `tests/foundation/`, which are relative to the repository root. Rows marked 2026-11-26 were read against the code and their tests were run on that date.
+
 | Req | Status | Evidence |
 |---|---|---|
-| TS-1 to TS-8, TS-11 | BUILT, and RUNNING on the ultrastable Cloudflare account as `ultrastable-tenants` (self-test passes) | `workers/core/tenantstore/tenantstore.test.js`, `workers/adapters/cloudflare/src/tenant-do.js` (tested against a fake; not deployed to a real account) |
+| TS-1 to TS-8, TS-11 | BUILT; declared live as the Worker `ultrastable-tenants` in `doctrine/topology.json`, whose `/health` runs a self-test the tick reads | `core/tenantstore/store.js`, `core/tenantstore/budget.js`, `core/tenantstore/rollup.js`, `core/tenantstore/vector.js`, `core/tenantstore/spend.js`, test `core/tenantstore/tenantstore.test.js`; adapters `adapters/cloudflare/src/tenant-do.js` (tested against a fake of the Durable Object SQL storage) and `adapters/sqlite/tenant-sqlite.js`. The deployed Worker is built from the copy at `tenants/src/index.js`, `tenants/src/tenant-do.js` and `tenants/tenantstore/` (no `spend.js` there). This audit did not read the live self-test |
 | TS-9, TS-10 | PLANNED | no file yet |
+| TS-10: a reader of the platform's analytics for Durable Object rows and requests, and the check run on a clock | PLANNED | tracked as `docs/issues/Q-SPEC-25-platform-usage-reader.json` |
+| TS-12 | BUILT 2026-11-26 | `foundation/tenantrepos.py` (`isolation`, `--isolation`), `test_sandbox_rejects_shared_stores_services_and_missing_budget` in `tests/foundation/test_tenantrepos.py` |
+| TS-13 | BUILT 2026-11-26 | `seed/worker/src/tenant.js`, test `seed/worker/test/tenant-isolation.test.js` |
+| TS-14 | BUILT 2026-11-26 | `doctrine/tenant-storage.json`, `foundation/tenantstorage.py`, `test_worst_case_is_bounded` in `tests/foundation/test_tenantstorage.py` |

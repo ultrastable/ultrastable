@@ -907,6 +907,14 @@
       "url": "spec-ids.schema.json"
     },
     {
+      "name": "spec-truth-baseline.json",
+      "description": "Contract for doctrine/spec-truth-baseline.json",
+      "fileMatch": [
+        "doctrine/spec-truth-baseline.json"
+      ],
+      "url": "spec-truth-baseline.schema.json"
+    },
+    {
       "name": "specgate.json",
       "description": "Contract for doctrine/specgate.json",
       "fileMatch": [

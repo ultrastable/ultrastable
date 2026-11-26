@@ -73,6 +73,27 @@ flowchart LR
 
 **Worked example (offline simulation).** Idea "Tool Share", budget 50, two outcomes. Dry run: 4 of 7 stages `ok` (read, select, plan, write); detect, provision, start `degraded`; 10 role instances (2*2 + 6); 9 backlog items (KIT-0 to KIT-6, OUT-1, OUT-2); 5 gate cards (four secrets and the budget); exit 0. Ticks run with simulated time at 10-minute steps; `P-KIT-3` is scored at the 13th tick: observed 6, verdict `hit`. The target equals the number of 10-minute intervals in an hour, so one missed tick yields 5 and a miss: the intended sensitivity of a heartbeat probe.
 
+### 5.1 Stages the reference bootstrappers add
+
+The seven stages above are the minimum. Both reference bootstrappers run them in the same relative order, inside the same guard, with further stages between them; a conforming bootstrapper MAY add stages and MUST NOT drop or reorder the seven.
+
+The bootstrapper in `workers/` runs: read, detect, select, cases, plan, write, surfaces, org, scaffold, ladder, provision, start. The kit bootstrapper (`seed/bootstrap/bootstrap.py`) runs: read, constitute, qualify, instrument, detect, select, cases, plan, write, surfaces, org, provision, start, year_gate, verify_live.
+
+| Stage | Behavior |
+|---|---|
+| constitute | Check the constitution file against the code it describes and assemble it for the later stages. A disagreement is `blocked`, with the disagreement as its backlog item. |
+| qualify | Apply the system test to the idea file's `system test` section: a loop it closes, a measure that can be wrong, upkeep that never ends, a running cost the owner accepts, and a stated monthly budget above 0. An idea that misses any of them gets gate card `GATE-FIT` (default "nothing is staffed or provisioned") and the boot stops after this stage: no role is planned and nothing is provisioned. With no idea yet, the stage waits. |
+| instrument | Write one objective per first outcome and the metric set. The measure the owner declared is recorded with source `declared`, which is a breach until a probe reads it. Every system gets the same liveness metrics (heartbeat, acting, closing, verified, no silent drops, pace, cost, storage, instrumented). A child system records its parent and gets a parent-link metric. |
+| cases | Match the starting conditions against a case library: routes around each blocker, at most one owner card per blocker. |
+| surfaces | Health-check every route before relying on it. Recorded, never fatal. |
+| org | Write the organization initialization plan. Applied only with an administrator credential; without one it is a gate card. |
+| scaffold | Generate each target repository's CI and scheduled-cycle workflows from the idea file. |
+| ladder | Try the bootstrap ladder (connect, temporary, scoped token) before provisioning. |
+| year_gate | Run the system's declared fault drills against its real recovery code and simulate years of faults. `blocked` when a declared fault has no exercised drill, or when the simulated 10th-percentile horizon is below the target (default 365 days). |
+| verify_live | In apply mode, probe the deployed runtime's health route until it answers 200, waiting through one full heartbeat interval; `blocked` if it never does. Dry run: `degraded`. |
+
+**Idea intake.** A person need not write the idea file by hand. The kit carries a form in the repository; a server-side workflow writes the idea file from the person's words (`seed/bootstrap/intake.py`), fills the four system-test answers from what the kit itself does, runs the bootstrapper and keeps one plain-words status note current.
+
 ## 6. Lessons as design rules
 
 | Rule | Mechanism |
@@ -112,6 +133,11 @@ flowchart LR
 - **US-10-R13 [L3]** A tenant isolation probe SHOULD run daily per tenant pair; a failure MUST be a severe outcome.
 - **US-10-R15 [L1]** The bootstrapper MUST treat the person as a non-expert: missing information MUST become a question or a stated, reversible default per US-SPEC-16, never a requirement to supply technical detail.
 - **US-10-R14 [L3]** An installer SHOULD verify a bundle digest before applying and MUST stop on mismatch.
+- **US-10-R16 [L1]** A bootstrapper MUST apply the system test before it plans a role or provisions anything. An idea that fails it MUST end the boot with a not-a-fit gate card and no staffing.
+- **US-10-R17 [L1]** A bootstrapper MUST write objectives and metrics at boot: one objective per first outcome, the same liveness metrics for every system, and the owner's declared measure recorded as a breach until a probe reads it.
+- **US-10-R18 [L2]** A boot MUST be refused when a declared fault class has no exercised drill, or when the simulated unattended horizon at the 10th percentile is below the target (default 365 days).
+- **US-10-R19 [L2]** A boot in apply mode MUST NOT be reported done until the deployed runtime's health route answers live.
+- **US-10-R20 [L2]** A bootstrapper SHOULD check its governing definition against the code it describes before any other decision, and MUST block on a disagreement.
 
 ## 9. Failure modes
 
@@ -131,16 +157,30 @@ flowchart LR
 - **US-10-T04** Remove the idea file. Pass: `degraded`, `GATE-IDEA` card.
 - **US-10-T05** Budgets select tiers as in US-09-T05. Outcome count k gives 2k + 6 or 2k + 4 role instances.
 - **US-10-T06** Add a constraint "Nothing public until the owner says so". Pass: KIT-6 exists at priority 5.
+- **US-10-T07** Boot an idea with no system-test answers. Pass: gate card `GATE-FIT`, no roles planned, later stages not run.
+- **US-10-T08** Declare a fault class whose drill exercises nothing. Pass: `year_gate` is `blocked` and names the fault.
+- **US-10-T09** Boot the kit's own example idea. Pass: every liveness metric exists and the declared measure has source `declared`.
 
 ## 11. Reference implementation status
 
-- Bootstrapper (dry-run, plan, write, guards, tiers, gate cards, idempotent seed SQL): BUILT in `bootstrap/bootstrap.py`; 12 Python tests in `tests/test_seed.py` passed on 2026-11-11 (`python -m unittest discover tests`). Dry-run bootstrap completes without credentials.
-- Apply mode (real provisioning on a cloud account): PLANNED as a verified capability. The code is in `bootstrap/bootstrap.py` and its command order is tested with a fake command runner in `tests/test_seed.py` and `tests/test_bootstrap_temporary.py`; it has not been run against a real account as of 2026-11-15, because that needs the owner's cloud credential.
+Verified against the code on 2026-11-26. Paths that begin `core/`, `adapters/`, `tools/`, `bootstrap/` or `tests/` are under `workers/`; paths that begin `seed/`, `deploy/`, `ops/` or `doctrine/` are from the repository root.
+
+- Bootstrapper (dry-run, plan, write, guards, tiers, gate cards, idempotent seed SQL; R01 to R09, T01 to T06): BUILT in `bootstrap/bootstrap.py` (tests `tests/test_seed.py`, run with `python -m unittest discover tests`) and, with the stages of section 5.1, in `seed/bootstrap/bootstrap.py` (tests `seed/tests/test_seed.py`). Dry-run bootstrap completes without credentials.
+- Case library, surface health checks and the organization plan (stages `cases`, `surfaces`, `org`): BUILT in `bootstrap/cases.py` with `bootstrap/cases.json` (tests `tests/test_cases.py`) and in `seed/bootstrap/cases.py` (tests `seed/tests/test_cases.py`, `seed/tests/test_seed.py`).
+- Repository scaffolding and the bootstrap ladder (stages `scaffold`, `ladder`): BUILT in `bootstrap/bootstrap.py` and `bootstrap/ladder.py` (tests `tests/test_scaffold.py`, `tests/test_ladder.py`).
+- Constitution check at boot (US-10-R20): BUILT in `seed/bootstrap/bootstrap.py` (`constitute`) with `seed/scripts/constitution.py` (tests `seed/tests/test_constitution.py`).
+- System test before staffing (US-10-R16, T07): BUILT in `seed/bootstrap/bootstrap.py` (`qualify`; tests `tests/test_vision.py` from the repository root).
+- Objectives and metrics at boot (US-10-R17, T09): BUILT in `seed/bootstrap/bootstrap.py` (`instrument`; tests `tests/test_vision.py` from the repository root).
+- Year gate (US-10-R18, T08): BUILT in `seed/bootstrap/bootstrap.py` (`year_gate`) with `seed/scripts/yearsim.py` and `seed/autonomy/yearsim.json` (tests `seed/tests/test_seed.py`, `seed/tests/test_yearsim.py`).
+- Live health probe after an apply (US-10-R19): BUILT in `seed/bootstrap/bootstrap.py` (`verify_live`). Its network path has no offline test; the deployed-seed route below records the same reading per deploy.
+- Idea intake from a form (section 5.1): BUILT in `seed/bootstrap/intake.py` (tests `seed/tests/test_happy_path.py`).
+- Apply mode of the bootstrapper (the four provisioning commands run by the bootstrapper itself on a cloud account): PLANNED as a verified capability. The code is in `bootstrap/bootstrap.py` and `seed/bootstrap/bootstrap.py`, and its command order is tested with a fake command runner in `tests/test_seed.py` and `tests/test_bootstrap_temporary.py`; no run of it against a real account is recorded.
+- Provisioning a seed on a real account by the platform: BUILT in `deploy/deploy-seed.mjs` with the admission check `foundation/seedadmit.py` (tests `tests/foundation/test_seedadmit.py` from the repository root; the deploy script's own network path has no offline test): each seed listed in `doctrine/seed-deploys.json` is generated, given its database and migrations, uploaded and probed on its health route, and the result is one row of `ops/deploys.jsonl` (kind `seed`). This is a different route from the bootstrapper's own apply mode.
 - Disagreement: the Worker entry point imports a rendered `config.js` that exists only after a bootstrap write.
-- Model-calling executor: BUILT in `core/runner/index.js` (tests `core/runner/runner.test.js`): a doer and a reviewer on different models take a ready item to a draft pull request through the model router; verification is the repository's CI and the runner never merges. It is opt-in (`config.runner.enabled`) and has not run on a live account.
-- Repository creation: PLANNED (KIT-1 awaits a code-host credential that can create repositories; no code creates one).
+- Model-calling executor: BUILT in `core/runner/index.js` (tests `core/runner/runner.test.js`): a doer and a reviewer on different models take a ready item to a draft pull request through the model router; verification is the repository's CI and the runner never merges. It is opt-in (`config.runner.enabled`).
+- Repository creation (KIT-1): BUILT in `seed/worker/src/apprepos.js` (`ensureAppRepo`, `ensureTenantRepo`; tests `seed/worker/test/apprepos.test.js`): the runtime creates a system's repository through a code-host application credential it holds, and applies the repository standard in the same code path. The bootstrapper itself still creates no repository; without that credential KIT-1 stays a gate card.
 - Unified command-line tool: BUILT in `tools/us.mjs` (tests `tools/us.test.mjs`): one entry point that runs bootstrap, install, verify, release, boundary, the test suites and the checks, and returns each script's exit status unchanged.
-- Tenant isolation (section 7): BUILT in `core/tenancy/index.js` (tests `core/tenancy/tenancy.test.js`): levels 1 to 3 with level 2 the default, a tenant-scoped store for level 3, counts-only hourly aggregates with no control-plane read path to tenant items, and the daily isolation canary probe per tenant pair (US-10-R13) whose failure is a severe outcome and a priority-0 item. Tested with in-memory databases and a fake HTTP path; not wired into `core/org` and not run between two live tenants.
+- Tenant isolation (section 7): BUILT in `core/tenancy/index.js` (tests `core/tenancy/tenancy.test.js`): levels 1 to 3 with level 2 the default, a tenant-scoped store for level 3, counts-only hourly aggregates with no control-plane read path to tenant items, and the daily isolation canary probe per tenant pair (US-10-R13) whose failure is a severe outcome and a priority-0 item. Its tick steps are in the list the composition root runs (`core/org/buildout.js`, step `tenancy`; test `core/org/org.test.js`). Tested with in-memory databases and a fake HTTP path; not run between two live tenants.
 - One-command install (section 7): BUILT in `core/install/index.js` and `tools/install.mjs` (tests `core/install/install.test.js`, `tools/install.test.mjs`): preconditions, SHA-256 digest check of bundle and migrations against the manifest with exit 3 on mismatch (US-10-R14), Ed25519 signature of the manifest (`tools/release_bundle.mjs` signs with a key named by environment variable), bootstrap, provision through `adapters/cloudflare/install-adapter.js`, connectors by presence with gate cards, deploy with the health probe, first tick, tenant registration; a re-run performs only the steps whose probes fail. PLANNED: a run of the apply path against a real account, and a signed release (the signing key is the owner's to create).
 - Boundary check (US-10-R11): BUILT in `tools/boundary_check.mjs` with the manifest `tools/boundary.json` (tests `tools/us.test.mjs`, including this repository's own tree): an unclassified component, a classified component that is not live, an unknown class, a missing role, a missing listed path or table each exit 1.
 - Assertion probes (US-10-R12): BUILT in `core/describe/index.js` (tests `core/describe/describe.test.js`): each published statement is a claim with a read-only probe that the probe runner re-checks each period; a failing or stale claim is withdrawn from the served page and files an item.

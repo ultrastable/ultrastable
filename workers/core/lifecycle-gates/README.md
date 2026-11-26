@@ -30,5 +30,5 @@ BUILT means implemented and covered by a passing test in `lifecycle-gates.test.j
 | US-15-R12, T15-4 an out-of-scope request is a scope-gate entry and no item until a recorded decision enables the pack | BUILT | `requestWork`, `decidePack`, `classifyScope`. The classifier is keyword rules restating the table in `SCOPE.md`; an upstream classifier can name the pack directly. Enabling a pack here records the decision; it does not install the pack in `core/packs` |
 | US-15-R14 no start above the portfolio cap | BUILT | `startProject`, `lifecycle_capacity` |
 | T15-1, T15-3, T15-6 through this layer | BUILT | asserted in `lifecycle-gates.test.js` |
-| A-MON-4 risk review, A-MON-6 quality metrics | NOT COVERED | the `risks` table exists in the kernel; no step reviews it |
+| US-15-R15, R16: A-MON-4 risk and issue review, A-MON-6 quality metrics, once per period | BUILT | `reviewRisks`, `qualityMetrics`, `refreshMonitoring`, `lifecycleStep`; each is one `artifacts` row (phase `monitoring`), no new table |
 | G2 "every requirement maps to an item and a probe" | NOT COVERED | the kernel checks that items exist and have closing probes, not the mapping |

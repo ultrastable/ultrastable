@@ -6,7 +6,7 @@
 US-SPEC-00. `manifest.json` maps every requirement of every specification to its level and to the tests that cite it, or lists it as a deviation with the reason. It is generated, then checked on every test run.
 
 ```
-node core/conformance/cli.js --spec-dir ../spec/specs --write --check   # regenerate and verify
+node core/conformance/cli.js --spec-dir ../specs --write --check   # regenerate and verify
 node core/conformance/cli.js --declare                                  # level, versions, deviation list (US-00-T01)
 node core/conformance/cli.js --run L1                                   # run the tests that prove a level (US-00-T02)
 ```
