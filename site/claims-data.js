@@ -2065,6 +2065,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **Large work is planned and worked in steps on the server (ORCHESTRATE-1, Rowan 2026-11-26).** \"Why can't Ultrastable do this entirely on",
+   "detail": "",
+   "how": "file:seed/worker/src/orchestrate.js + file:seed/worker/src/executor.js + file:seed/worker/test/orchestrate.test.js",
+   "id": "cited-ff82585547",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
@@ -2947,6 +2956,15 @@ export default {
    "surface": "seed/agents/AGENTS.md"
   },
   {
+   "claim": "- **Large work is planned and worked in steps on the server (ORCHESTRATE-1, Rowan 2026-11-26).** \"Why can't Ultrastable do this entirely on",
+   "detail": "",
+   "how": "file:seed/worker/src/orchestrate.js + file:seed/worker/src/executor.js + file:seed/worker/test/orchestrate.test.js",
+   "id": "mirror-434e16496c",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
    "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
@@ -3631,7 +3649,7 @@ export default {
    "surface": "seed/tests/fixtures/IDEA.example.md"
   },
   {
-   "claim": "seed-tests: 109 Python and 624 Worker tests",
+   "claim": "seed-tests: 109 Python and 640 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3640,7 +3658,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 624 Worker tests",
+   "claim": "seed-worker-tests: 640 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3899,7 +3917,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 430,
-  "total": 430
+  "pass": 432,
+  "total": 432
  }
 };

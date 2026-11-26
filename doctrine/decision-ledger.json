@@ -5983,6 +5983,22 @@
    "body": "Each watchdog pass re-appended identical route attempts (32736 rows, 6.2MB). record() now appends only on an outcome change; compacted to 477 rows; pathfinder --check unchanged.",
    "probe": "grep:foundation/pathfinder.py::LEDGER-DEDUP-1",
    "session": "session_0156nqDukk9P9sEvpAwpKe2W"
+  },
+  {
+   "id": "decision-2026-11-26-orchestrate-1-large-work-is-planned-and-worked-in-steps-by-t",
+   "kind": "decision",
+   "date": "2026-11-26",
+   "title": "ORCHESTRATE-1: large work is planned and worked in steps by the tick Worker",
+   "body": "An item the single-shot executor fails starts a run in D1 (orch_runs, orch_steps) that the executor step advances one phase a tick: plan, implement in parallel, verify with a model that wrote no step, fix, integrate as one PR. Code seed/worker/src/orchestrate.js, provider worker-orchestrator. (Claude-Session: session_0156nqDsC5ZesQCbC7qUmBkN)",
+   "probe": "grep:seed/worker/src/executor.js::orchestrateProvider"
+  },
+  {
+   "id": "lesson-2026-11-26-a-step-sent-back-by-the-reviewer-must-keep-its-refused-answe",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "A step sent back by the reviewer must keep its refused answer in view",
+   "body": "The first orchestrator build dropped a reset step's change from the overlay, so the fix round saw the file on main and its EDIT blocks failed. The overlay now holds every step's last answer; test 'a reviewer finding sends only the named step back'. (Claude-Session: session_0156nqDsC5ZesQCbC7qUmBkN)",
+   "probe": "grep:seed/worker/src/orchestrate.js::keeps its refused answer"
   }
  ]
 }
