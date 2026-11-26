@@ -6268,6 +6268,14 @@
    "body": "worker.js builds the Worker from a configuration so tests and other hosts do not need the rendered config.js; both schedulers share one guarded tick. Its tests cite US-03-R06 and US-03-R01 and the conformance manifest now records R06 as met.",
    "probe": "file:workers/adapters/cloudflare/src/worker.test.js",
    "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "decision-2026-11-26-phased-large-change-phased-work-1",
+   "kind": "decision",
+   "date": "2026-11-26",
+   "title": "Phased large change (PHASED-WORK-1)",
+   "body": "Audit, coverage, implement, verify (evidence + adversarial, independent of the author), fix, integrate, final gate are data in seed/autonomy/phases.json; scripts/phasework.py plans and advances a run; the tick Worker orchestrator runs two independent reviewers. Session: session_0156nqDsRzjGUMyam7ytKVPj",
+   "probe": "file:seed/scripts/phasework.py"
   }
  ]
 }
