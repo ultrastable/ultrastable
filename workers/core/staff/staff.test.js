@@ -35,7 +35,7 @@ async function staffed(db) {
   return createToolLayer({ db, now: () => NOW });
 }
 
-test('US-02-R05: decision authority is an enumerated list; a role cannot be given an operation above its ceiling', async () => {
+test('US-02-R05, US-02-R16: decision authority is an enumerated list; a role cannot be given an operation above its ceiling', async () => {
   const db = setup();
   const base = { id: 'p', role: 'program-manager', program_id: 'OPS', scope: 's', instruction_source: 'f.md' };
   await assert.rejects(registerPersona(db, { ...base, authority: 'promote' }), /enumerated list/);
@@ -216,7 +216,7 @@ test('US-02-R07: a persona writes exactly one brief per tick it runs, built from
   assert.match(await writeBrief(db, 'pgm-slow', 6, NOW), /nothing needed doing/);
 });
 
-test('US-02-R11: a role filled by a person gets the same action record, prediction, brief and trust outcome, and is never acted for', async () => {
+test('US-02-R11, US-02-R15: a role filled by a person gets the same action record, prediction (decision STAFF-<id>, an unparsable one refused), brief and trust outcome, and is never acted for', async () => {
   const db = setup(); const tools = await staffed(db);
   await registerMetric(db, { id: 'reach_visits', program_id: 'REACH', op: '>=', target: 10, read_probe: `SELECT 12 AS value` });
   await registerPersona(db, { id: 'pgm-reach', role: 'program-manager', program_id: 'REACH', scope: 'program REACH', instruction_source: 'agents/roles/product-manager.md', authority: PM_OPS, filled_by: 'person', holder: 'a-person' });

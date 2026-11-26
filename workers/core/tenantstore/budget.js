@@ -18,6 +18,7 @@ export const FREE_PLAN_BUDGET = Object.freeze({
   day:   { reads: 1_000_000, writes: 15_000, requests: 15_000, vecDims: 100_000_000 },
   month: { reads: 31_000_000, writes: 465_000, requests: 465_000, vecDims: 3_100_000_000 },
   perQueryReads: 50_000,   // one statement may not read more rows than this (stops scans)
+  perQueryWrites: 5_000,   // and may not write more than a third of a day's writes (derived: day.writes / 3, US-25-R15)
   maxStorageBytes: 200_000_000,
   maxVectors: 20_000,
   warnAt: 0.8,
@@ -26,6 +27,7 @@ export const PAID_PLAN_BUDGET = Object.freeze({
   day:   { reads: 20_000_000, writes: 200_000, requests: 200_000, vecDims: 400_000_000 },
   month: { reads: 400_000_000, writes: 3_000_000, requests: 3_000_000, vecDims: 4_000_000_000 },
   perQueryReads: 50_000,
+  perQueryWrites: 66_666,  // derived: day.writes / 3
   maxStorageBytes: 1_073_741_824,
   maxVectors: 20_000,
   warnAt: 0.8,
@@ -48,22 +50,38 @@ export class BudgetGuard {
   constructor(sql, { budget = DEFAULT_BUDGET, now = () => new Date(), flushEvery = 25 } = {}) {
     this.mem = new Map(); this.dirty = new Set(); this.pending = 0; this.flushEvery = flushEvery;
     this.sql = sql; this.budget = { ...DEFAULT_BUDGET, ...budget, day: { ...DEFAULT_BUDGET.day, ...budget.day }, month: { ...DEFAULT_BUDGET.month, ...budget.month } };
+    // A tenant's own day.writes sets its statement write cap unless it states one (a third of a day's writes, US-25-R15).
+    if (budget.perQueryWrites === undefined && budget.day && budget.day.writes !== undefined) this.budget.perQueryWrites = Math.max(1, Math.floor(budget.day.writes / 3));
+    this.halted = null; this.storageBytes = null;     // set by the store: a halt reason (US-25-R13) and a () => bytes reader (US-25-R15)
     this.now = now; this.sql.exec(SCHEMA);
   }
   // Usage is held in memory (a Durable Object is single-threaded and authoritative while alive) and flushed to the _budget table every
   // flushEvery operations, so metering does not itself burn the plan's rows-written allowance. A crash loses at most flushEvery operations.
+  // An object the platform evicts is not a crash: the host calls flush() (the Durable Object adapter arms an alarm after the first unflushed
+  // operation of a burst, US-25-R21), so usage survives an eviction and a new object over the same storage reloads it.
+  hasUnflushed() { return this.dirty.size > 0; }
   _row(period) {
     if (!this.mem.has(period)) this.mem.set(period, { ...(this.sql.exec('SELECT * FROM _budget WHERE period=?', [period]).rows[0] || { period, reads: 0, writes: 0, requests: 0, vec_dims: 0, denied: 0 }) });
     return this.mem.get(period);
   }
   usage() { const t = this.now(); return { day: this._row(dayKey(t)), month: this._row(monthKey(t)) }; }
   check() {
+    if (this.halted) { const e = new Error(`tenant_halted:${this.halted}`); e.code = 'tenant_halted'; e.reason = this.halted; throw e; }
     const t = this.now(), u = this.usage();
     for (const [scope, key, resets] of [['day', dayKey(t), nextDay(t)], ['month', monthKey(t), nextMonth(t)]]) {
       for (const [name, col] of Object.entries(FIELDS)) {
         const used = u[scope][col], max = this.budget[scope][name];
         if (used >= max) { this._deny(key); if (++this.pending >= this.flushEvery) this.flush(); throw new BudgetError(name, scope, used, max, resets); }
       }
+    }
+  }
+  // The same gate for anything that writes (a statement, a vector, a rollup): the budget, then the storage ceiling. Deleting is not gated
+  // by storage, because deleting is how a full store gets back under the ceiling.
+  checkWrite() {
+    this.check();
+    if (this.storageBytes) {
+      const used = this.storageBytes(), max = this.budget.maxStorageBytes;
+      if (used >= max) { const t = this.now(); this._deny(dayKey(t)); if (++this.pending >= this.flushEvery) this.flush(); throw new BudgetError('storage', 'total', used, max, null); }
     }
   }
   record({ reads = 0, writes = 0, requests = 1, vecDims = 0 }) {

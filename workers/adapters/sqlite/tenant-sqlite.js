@@ -5,6 +5,7 @@
 // ({ maxRowsRead, maxRowsWritten }, see core/tenantstore/store.js) runs inside a savepoint and is rolled back when it crosses them, so a
 // refused statement leaves the store as it was (US-25-R03, R15). storageBytes() is the file size (page_count x page_size).
 import { DatabaseSync } from 'node:sqlite';
+import { statementKind } from '../../core/tenantstore/sqlclass.js';
 
 export function openTenantSql(path = ':memory:') {
   const raw = new DatabaseSync(path);
@@ -12,7 +13,8 @@ export function openTenantSql(path = ':memory:') {
     let n = 0;
     for (const p of raw.prepare('EXPLAIN QUERY PLAN ' + text).all(...params)) {
       const m = /^SCAN (?:TABLE )?(\w+)/.exec(p.detail || '');
-      if (m && !m[1].startsWith('sqlite_') && m[1] !== 'CONSTANT') n = Math.max(n, raw.prepare(`SELECT COUNT(*) n FROM "${m[1]}"`).get().n);
+      // A SCAN of a CTE or subquery name is not a table scan (the table it reads is scanned on its own plan line), so only real tables count.
+      if (m && !m[1].startsWith('sqlite_') && m[1] !== 'CONSTANT' && raw.prepare(`SELECT 1 FROM sqlite_master WHERE name = ? AND type IN ('table','view')`).get(m[1])) n = Math.max(n, raw.prepare(`SELECT COUNT(*) n FROM "${m[1]}"`).get().n);
     }
     return n;
   };
@@ -21,7 +23,7 @@ export function openTenantSql(path = ':memory:') {
     storageBytes() { return raw.prepare('PRAGMA page_count').get().page_count * raw.prepare('PRAGMA page_size').get().page_size; },
     exec(text, params = [], limits) {
       const st = raw.prepare(text);
-      const isRead = /^\s*(select|with|pragma|explain)\b/i.test(text);
+      const kind = statementKind(text), isRead = kind === 'read';      // the same classification the store applies (a WITH ... INSERT is DML)
       if (isRead) {
         const rows = st.all(...params).map(r => ({ ...r }));
         let rowsRead = rows.length;
@@ -30,7 +32,7 @@ export function openTenantSql(path = ':memory:') {
       }
       // DDL and writes. Reads a write performs (an UPDATE or DELETE that scans, an INSERT ... SELECT) are counted from the query plan.
       // sqlite reports the previous statement's change count for DDL, so only a DML statement has rows written.
-      const dml = /^\s*(insert|replace|update|delete)\b/i.test(text);
+      const dml = kind === 'dml';
       let scanned = 0;
       if (dml) { try { scanned = scanRows(text, params); } catch { scanned = 0; } }
       const changes = r => (dml ? Number(r.changes) : 0);

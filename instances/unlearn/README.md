@@ -33,7 +33,7 @@ Telling people they are wrong rarely changes a mind, so every entry follows the 
 Play and exploration are learning. Unlearn is not a lesson app. It serves the adult beside a curious child (coach, parent, mentor), because that adult is the one who has to unlearn the reflex to teach.
 
 1. **Log a curiosity.** One line, spoken or typed: "She wants to know why the bread rose." No child account, no child data.
-2. **Get a coaching move, never a lesson.** One of four kinds: a question to ask back, something to try or build, a person or place to go to, a reason to wait and watch. Never an explanation of the answer.
+2. **Get a coaching move, not a lesson.** One of four kinds: a question to ask back, something to try or build, a person or place to go to, a reason to wait and watch. It does not explain the answer.
 3. **Follow up.** At 7 and 14 days Unlearn asks one yes/no: is the child still at it on their own?
 4. **Re-weight.** Moves that keep children going rise; moves that end explorations fall and are retired. Coach notes are read for telling versus asking.
 

@@ -542,7 +542,12 @@
   {
    "id": "US-06-T05",
    "spec": "US-SPEC-06",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/trust/trust.test.js",
+     "name": "US-06-T05, US-06-R09: a card for a missing credential carries probe env:<NAME> and a default; it stays open without the binding, closes itself with it, and the tick throws nothing"
+    }
+   ]
   },
   {
    "id": "US-06-T06",
@@ -1037,6 +1042,10 @@
     {
      "file": "core/sla/sla.test.js",
      "name": "US-13-T04 and R11: step runs are timed from the table; 5 h of a 4 h budget files an item, 9 h exactly one blocking question"
+    },
+    {
+     "file": "core/sla/wiring.test.js",
+     "name": "US-13-R11 and US-13-T04 and US-13-R19 in the wired org: a step 9 h into a 4 h budget files one item and one question"
     }
    ]
   },
@@ -1057,12 +1066,26 @@
   {
    "id": "US-13-T06",
    "spec": "US-SPEC-13",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/sla/sla.test.js",
+     "name": "US-13-T06 and US-13-R16 and US-13-R11: a new over-budget run after the item and question were closed files an item and exactly one new question (through the service-level step)"
+    }
+   ]
   },
   {
    "id": "US-13-T07",
    "spec": "US-SPEC-13",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/sla/wiring.test.js",
+     "name": "US-13-T07 and US-13-R19: the wired org computes the autonomy card and the stored objective on its first tick"
+    },
+    {
+     "file": "core/sla/wiring.test.js",
+     "name": "US-13-T07 and US-13-R19: through buildoutSteps with l3 supplied: the card, F and the step-budget sweep run on a tick (the behaviour the wiring must reach)"
+    }
+   ]
   },
   {
    "id": "US-14-T01",
@@ -2418,7 +2441,7 @@
     },
     {
      "file": "core/staff/staff.test.js",
-     "name": "US-02-R05: decision authority is an enumerated list; a role cannot be given an operation above its ceiling"
+     "name": "US-02-R05, US-02-R16: decision authority is an enumerated list; a role cannot be given an operation above its ceiling"
     },
     {
      "file": "core/staff/staff.test.js",
@@ -2548,7 +2571,7 @@
     },
     {
      "file": "core/staff/staff.test.js",
-     "name": "US-02-R11: a role filled by a person gets the same action record, prediction, brief and trust outcome, and is never acted for"
+     "name": "US-02-R11, US-02-R15: a role filled by a person gets the same action record, prediction (decision STAFF-<id>, an unparsable one refused), brief and trust outcome, and is never acted for"
     }
    ]
   },
@@ -2558,9 +2581,30 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/staff/rolefile.test.js",
+     "name": "US-02-R12, US-02-T09: a role instruction file with a never list naming live claims, secret values and own-work review passes"
+    },
+    {
+     "file": "core/staff/rolefile.test.js",
+     "name": "US-02-R12, US-02-T09: a file with no Never section, or one missing any of the three, is refused and the missing item is named"
+    },
+    {
+     "file": "core/staff/rolefile.test.js",
+     "name": "US-02-R12, US-02-T09: bullets outside the Never section do not satisfy the check, and a wrapped bullet is read as one"
+    },
+    {
+     "file": "core/staff/rolefile.test.js",
+     "name": "US-02-R12, US-02-T09: registerPersona refuses a persona whose instruction file fails the check when the check is on, and never reads a prompt reference"
+    },
+    {
+     "file": "core/staff/rolefile.test.js",
+     "name": "US-02-R12, US-02-T09: checkRoleFiles reports every file, and an unreadable file is a failure, never a pass"
+    }
+   ]
   },
   {
    "id": "US-02-R13",
@@ -2599,6 +2643,10 @@
     {
      "file": "../seed/worker/test/tick.test.js",
      "name": "US-02-R15: a role that is not due is dispatched when an event wakes it, takes only its own item, and stays under its cap"
+    },
+    {
+     "file": "core/staff/staff.test.js",
+     "name": "US-02-R11, US-02-R15: a role filled by a person gets the same action record, prediction (decision STAFF-<id>, an unparsable one refused), brief and trust outcome, and is never acted for"
     }
    ]
   },
@@ -3827,6 +3875,10 @@
     {
      "file": "core/trust/trust.test.js",
      "name": "US-06-R09 a gate card needs a closing probe and a default in effect; the seed tick closes it by probe and never closes a manual one"
+    },
+    {
+     "file": "core/trust/trust.test.js",
+     "name": "US-06-T05, US-06-R09: a card for a missing credential carries probe env:<NAME> and a default; it stays open without the binding, closes itself with it, and the tick throws nothing"
     }
    ]
   },
@@ -4074,9 +4126,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/trust/trust.test.js",
+     "name": "US-06-R23: a denied action is refused even when it is reversible or names a reversible path, and the validator flags the combination"
+    }
+   ]
   },
   {
    "id": "US-07-R01",
@@ -6342,6 +6399,14 @@
     {
      "file": "core/sla/sla.test.js",
      "name": "US-13-T05 and R05: a dimension that falls 0.6 on the recomputed card with no cause becomes a work item; a stated cause does not"
+    },
+    {
+     "file": "core/sla/sla.test.js",
+     "name": "US-13-R05: an exact 0.5 fall between two monthly cards files an item"
+    },
+    {
+     "file": "core/sla/sla.test.js",
+     "name": "US-13-R22: systems card: a fall of 0.5 with no cause files a work item through the same writer (R05)"
     }
    ]
   },
@@ -6357,6 +6422,10 @@
     {
      "file": "core/console-l3/console-l3.test.js",
      "name": "US-13-R06: a change to the objective function can be proposed and is never adopted"
+    },
+    {
+     "file": "core/sla/sla.test.js",
+     "name": "US-13-R06: calibration never writes the weights in effect; calibrated stays false until configuration adopts exactly the proposed weights"
     }
    ]
   },
@@ -6401,7 +6470,11 @@
    "tests": [
     {
      "file": "core/sla/sla.test.js",
-     "name": "US-13-R09: a row past due is raised one priority level and the manager notified, once per missed date"
+     "name": "US-13-R17 and US-13-R09: a row past due is raised one priority level and the manager notified, once per missed date"
+    },
+    {
+     "file": "core/sla/sla.test.js",
+     "name": "US-13-R17 and US-13-R09: a row at priority 0 is noticed once with the words \"already at top priority\"; the priority is not lowered below 0"
     }
    ]
   },
@@ -6417,6 +6490,10 @@
     {
      "file": "core/sla/sla.test.js",
      "name": "US-13-R10: the count of items that wait on a person is a metric with target zero; a breach files one item whose probe closes it"
+    },
+    {
+     "file": "core/sla/sla.test.js",
+     "name": "US-13-R16 and US-13-R10: a breach after the item was closed reopens it, once"
     }
    ]
   },
@@ -6440,6 +6517,14 @@
     {
      "file": "core/sla/sla.test.js",
      "name": "US-13-T04 and R11: step runs are timed from the table; 5 h of a 4 h budget files an item, 9 h exactly one blocking question"
+    },
+    {
+     "file": "core/sla/sla.test.js",
+     "name": "US-13-T06 and US-13-R16 and US-13-R11: a new over-budget run after the item and question were closed files an item and exactly one new question (through the service-level step)"
+    },
+    {
+     "file": "core/sla/sla.test.js",
+     "name": "US-13-R11: a claim with no heartbeat for longer than the claim budget files one item with no hooks installed"
     }
    ]
   },
@@ -6455,6 +6540,10 @@
     {
      "file": "core/sla/sla.test.js",
      "name": "US-13-R12: a process defines its done check once; a step with one path is a gap and is filed once"
+    },
+    {
+     "file": "core/sla/sla.test.js",
+     "name": "US-13-R12: the default processes have a done check and at least two paths per step, so no path gap is filed"
     }
    ]
   },
@@ -6503,9 +6592,22 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/sla/sla.test.js",
+     "name": "US-13-R16 and US-13-R10: a breach after the item was closed reopens it, once"
+    },
+    {
+     "file": "core/sla/sla.test.js",
+     "name": "US-13-R16: weekly audit and path gap items reopen when the finding recurs"
+    },
+    {
+     "file": "core/sla/sla.test.js",
+     "name": "US-13-T06 and US-13-R16 and US-13-R11: a new over-budget run after the item and question were closed files an item and exactly one new question (through the service-level step)"
+    }
+   ]
   },
   {
    "id": "US-13-R17",
@@ -6513,9 +6615,18 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/sla/sla.test.js",
+     "name": "US-13-R17 and US-13-R09: a row past due is raised one priority level and the manager notified, once per missed date"
+    },
+    {
+     "file": "core/sla/sla.test.js",
+     "name": "US-13-R17 and US-13-R09: a row at priority 0 is noticed once with the words \"already at top priority\"; the priority is not lowered below 0"
+    }
+   ]
   },
   {
    "id": "US-13-R18",
@@ -6523,9 +6634,18 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/sla/sla.test.js",
+     "name": "US-13-R18: weekly audit: an open row with neither a due date nor an executor fails and gets one item; the audit is stored"
+    },
+    {
+     "file": "core/sla/sla.test.js",
+     "name": "US-13-R18 and US-13-R19: a failed card or weekly audit leaves its register row due, so the next tick retries; a part after the card that throws files an item and the card is not recorded twice"
+    }
+   ]
   },
   {
    "id": "US-14-R01",
@@ -8417,11 +8537,15 @@
    "tagged": false,
    "must": true,
    "status": "met",
-   "proof": "test file cites it",
+   "proof": "named test",
    "tests": [
     {
-     "file": "../tests/foundation/test_spec_truth.py",
-     "name": null
+     "file": "core/specloop/specloop.test.js",
+     "name": "US-20-R06: parity with tools/spec_backlog.py on the real specifications, when a specification checkout sits beside this one"
+    },
+    {
+     "file": "core/specloop/specloop.test.js",
+     "name": "US-20-R06: the tick counts as many false BUILT lines as tools/spec_truth.py reports (whole, absent and nameless lines)"
     }
    ]
   },

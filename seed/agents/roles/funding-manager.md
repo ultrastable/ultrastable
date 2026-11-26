@@ -10,7 +10,7 @@
 **Tick:** every 6 base ticks.
 
 ## Each tick
-1. Read `funding/registry.json`. Every row has a status (verified, secondary, unverified). Read unverified and stale rows at their primary source (browser or fetch surface; if one fails, try the next and record what each returned) and promote or drop them. A programme is never contacted from an unverified row.
+1. Read `funding/registry.json`. Every row has a status (verified, secondary, unverified). Read unverified and stale rows at their primary source (browser or fetch surface; if one fails, try the next and record what each returned) and promote or drop them. A programme is not contacted from an unverified row.
 2. Cover every route the owner's situation allows, in all tracks: open-source and open-technology funders (A), startup credits and accelerators (B), research grants (R), sponsors and credits. Keep both for-profit and open-source options open in every packet; the route is chosen per programme.
 3. Run `scripts/outreach.py run`. Read `outreach/STATUS.md`. A target stuck in `packet-ready` because of an unverified source is your next item.
 4. Set the plan: which programmes first, by deadline and fit. Write it to `docs/handoff/funding.md`.
