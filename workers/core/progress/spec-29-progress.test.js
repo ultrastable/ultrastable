@@ -29,9 +29,10 @@ test('US-29-R15: a release and a launch always count, a classified change counts
   assert.equal(substantive(ev('1', 1, { title: 'Recorder: new feature' })), true, 'the keywords are whole words');
 });
 
-// A known defect, not a requirement met: the pattern lists `chore\(deps\)` and then requires a word boundary, which cannot fall between `)` and `:` or a space,
-// so a dependency-bump title is not read as bookkeeping when its diff has not been classified. The spec records it (section 7); this test turns green when the pattern is fixed.
-test('a dependency bump title is bookkeeping when its diff has not been classified (defect of the bookkeeping pattern)', { todo: 'core/progress/index.js BOOKKEEPING: `chore\\(deps\\)` is followed by \\b' }, () => {
+// The closing probe of a known defect, PLANNED in section 7 (a todo test is recorded as planned, never as proof): the pattern lists `chore\(deps\)` and then
+// requires a word boundary, which cannot fall between `)` and `:` or a space, so a dependency-bump title is not read as bookkeeping when its diff has not been
+// classified. This test turns green when the pattern is fixed.
+test('US-29-R73: a dependency bump title is bookkeeping when its diff has not been classified', { todo: 'core/progress/index.js BOOKKEEPING: `chore\\(deps\\)` is followed by \\b' }, () => {
   assert.equal(substantive(ev('1', 1, { title: 'chore(deps): bump y' })), false);
 });
 

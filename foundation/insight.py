@@ -4,8 +4,10 @@
 
 SENSE   the last 7 days of every content page against the 7 before (human page views, outside-referred views, distinct visitors); bots and non-content paths are left out.
 DIAGNOSE rising (views at least rise_ratio times the week before and at least the knob), external_pull (outside readers arriving), fading (a page that held the knob and lost most of it).
-ACT     at most max_actions_per_day growth items for rising and external_pull pages, never twice for one page inside cooldown_days (docs/issues/Q-INSIGHT-*.json, the executor takes growth items first).
+ACT     at most max_actions_per_day growth items filed per UTC day for rising and external_pull pages, never twice for one page inside cooldown_days of its last filing
+        (docs/issues/Q-INSIGHT-*.json; foundation/growth.py prefers growth items while the growth share is under its target).
 VERIFY  settle_after_days later each finding is compared with what the page really got: held when the prediction came true, missed otherwise (ops/insight/findings.json is the ledger).
+        A week with no human page view at all is unmeasured, never zero: nothing settles or tunes on it.
 WRITE-BACK the knob rise_min_views goes up when under raise_below of the last settled rising findings held and down when over lower_above did, bounded, once per new settled finding.
 
 Doctrine and thresholds: doctrine/insight.json. Run by foundation/pm.py inside the product manager pass.
@@ -45,15 +47,23 @@ def knob(st: dict, cfg: dict) -> float:
 
 # ---- sources: rows of hits (tests, offline) or the live D1 ----
 
-def _external(ref: str, host: str) -> bool:
+def _ref_host(ref: str) -> str:
+    """The host of a referrer. seed/analytics stores a bare host (and '' for the site itself); a full URL is read too."""
+    ref = (ref or "").strip().lower()
     if not ref:
-        return False
-    h = (urlparse(ref).hostname or "").lower()
+        return ""
+    if "//" in ref:
+        return (urlparse(ref).hostname or "").lower()
+    return ref.split("/")[0].split(":")[0]
+
+
+def _external(ref: str, host: str) -> bool:
+    h, host = _ref_host(ref), (host or "").lower()
     return bool(h) and not (h == host or h.endswith("." + host))
 
 
 class RowsSource:
-    """Hits as dicts {at, host, path, ref, bot, vid, name}; the same shape seed/analytics writes."""
+    """Hits as dicts {at, host, path, ref, bot, vid, name}, `at` in seconds; `ref` a bare host as seed/analytics writes it, or a URL."""
 
     def __init__(self, rows):
         self.rows = rows
@@ -76,9 +86,14 @@ class RowsSource:
     def observed(self, path: str, start: float, end: float) -> int:
         return sum(1 for r in self.rows if r["path"] == path and not r.get("bot") and r.get("name", "pageview") == "pageview" and start <= r["at"] < end)
 
+    def views(self, start: float, end: float) -> int:
+        """Human page views on any path in [start, end): zero means the window holds no reading, not a quiet page."""
+        return sum(1 for r in self.rows if not r.get("bot") and r.get("name", "pageview") == "pageview" and start <= r["at"] < end)
+
 
 class LiveSource:
-    """Aggregated reads of the hits table in D1 over the Cloudflare API (the same call growth.hits_metrics makes)."""
+    """Aggregated reads of the hits table in D1 over the Cloudflare API (the same call growth.hits_metrics makes).
+    seed/analytics writes `at` as Date.now(), in milliseconds, and `ref` as a bare host ('' for the site itself), so every bound is in ms."""
 
     def __init__(self, token: str, acct: str, db: str):
         self.token, self.acct, self.db = token, acct, db
@@ -89,17 +104,26 @@ class LiveSource:
 
     def trends(self, now: float, cfg: dict) -> list[dict]:
         w = cfg["window_days"] * DAY
-        a, b = int(now - w), int(now - 2 * w)
+        a, b, e = _ms(now - w), _ms(now - 2 * w), _ms(now)
         rows = self._q(
             "SELECT path, SUM(CASE WHEN at>=%d THEN 1 ELSE 0 END) AS v7, SUM(CASE WHEN at<%d THEN 1 ELSE 0 END) AS prev7, "
-            "SUM(CASE WHEN at>=%d AND ref<>'' AND ref NOT LIKE '%%'||host||'%%' THEN 1 ELSE 0 END) AS ext7, COUNT(DISTINCT CASE WHEN at>=%d THEN vid END) AS visitors7 "
-            "FROM hits WHERE bot=0 AND name='pageview' AND at>=%d GROUP BY path" % (a, a, a, a, b))
+            "SUM(CASE WHEN at>=%d AND ref<>'' AND lower(ref)<>lower(host) AND lower(ref) NOT LIKE '%%.'||lower(host) THEN 1 ELSE 0 END) AS ext7, "
+            "COUNT(DISTINCT CASE WHEN at>=%d THEN vid END) AS visitors7 "
+            "FROM hits WHERE bot=0 AND name='pageview' AND at>=%d AND at<=%d GROUP BY path" % (a, a, a, a, b, e))
         return [{"path": r["path"], "v7": int(r["v7"] or 0), "prev7": int(r["prev7"] or 0), "ext7": int(r["ext7"] or 0), "visitors7": int(r["visitors7"] or 0)} for r in rows]
 
     def observed(self, path: str, start: float, end: float) -> int:
         p = path.replace("'", "''")
-        r = self._q(f"SELECT COUNT(*) AS n FROM hits WHERE bot=0 AND name='pageview' AND path='{p}' AND at>={int(start)} AND at<{int(end)}")
+        r = self._q(f"SELECT COUNT(*) AS n FROM hits WHERE bot=0 AND name='pageview' AND path='{p}' AND at>={_ms(start)} AND at<{_ms(end)}")
         return int(r[0]["n"]) if r else 0
+
+    def views(self, start: float, end: float) -> int:
+        r = self._q(f"SELECT COUNT(*) AS n FROM hits WHERE bot=0 AND name='pageview' AND at>={_ms(start)} AND at<{_ms(end)}")
+        return int(r[0]["n"]) if r else 0
+
+
+def _ms(t: float) -> int:
+    return int(t * 1000)
 
 
 def source_from_env(cfg: dict, env=None):
@@ -138,11 +162,16 @@ def _day(now: float) -> str:
 # ---- verify and write back ----
 
 def settle(st: dict, source, now: float, cfg: dict) -> list[str]:
+    """A finding settles settle_after_days after it was recorded, against the page's views in the window_days after it.
+    A window in which the source holds no human page view on any path is unmeasured (the collector or the table was down): the finding stays open."""
     done = []
     for f in st["findings"]:
         if f["status"] == "settled" or now - f["at"] < cfg["settle_after_days"] * DAY:
             continue
-        obs = source.observed(f["path"], f["at"], f["at"] + cfg["window_days"] * DAY)
+        start, end = f["at"], f["at"] + cfg["window_days"] * DAY
+        if source.views(start, end) == 0:
+            continue
+        obs = source.observed(f["path"], start, end)
         held = obs <= cfg["fade_hold_ratio"] * f["v7"] if f["kind"] == "fading" else obs >= cfg["hold_ratio"] * f["v7"]
         f.update({"status": "settled", "observed": obs, "outcome": "held" if held else "missed", "settled_at": now})
         done.append(f["id"])
@@ -186,17 +215,24 @@ def _action_text(f: dict) -> tuple[str, str]:
     return what, todo + "\n\n" + pred
 
 
+def _filed_at(f: dict) -> float:
+    """When the finding's item was filed; a finding filed before the time was stored counts from its own time."""
+    return f.get("filed_at") or f["at"]
+
+
 def act(root, st: dict, cfg: dict, now: float, write=True) -> list[str]:
+    """The day's budget counts the items filed on this UTC day (not the findings recorded on it), so a rerun on the same day over a backlog
+    of earlier findings files nothing more; the cooldown of a page runs from the day its last item was filed."""
     from . import pm
     today = _day(now)
-    used = sum(1 for f in st["findings"] if f.get("item") and _day(f["at"]) == today)
+    used = sum(1 for f in st["findings"] if f.get("item") and _day(_filed_at(f)) == today)
     filed = []
     cand = sorted([f for f in st["findings"] if f["status"] == "open" and f["kind"] in ("rising", "external_pull") and not f.get("item")],
                   key=lambda f: f["ext7"] * 3 + f["v7"], reverse=True)
     for f in cand:
         if used >= cfg["max_actions_per_day"]:
             break
-        if any(g.get("item") and g["path"] == f["path"] and now - g["at"] < cfg["cooldown_days"] * DAY for g in st["findings"]):
+        if any(g.get("item") and g["path"] == f["path"] and now - _filed_at(g) < cfg["cooldown_days"] * DAY for g in st["findings"]):
             continue
         what, todo = _action_text(f)
         iid = f"Q-INSIGHT-{f['id']}"
@@ -206,6 +242,7 @@ def act(root, st: dict, cfg: dict, now: float, write=True) -> list[str]:
         if write:
             pm._write_item(root, iid, f"{f['kind'].replace('_', ' ')} on {f['path']}", probe, text, cfg["item"]["labels"], cfg["item"]["workstream"], cfg["item"]["owner"])
         f["item"] = iid
+        f["filed_at"] = now
         f["status"] = "acted"
         used += 1
         filed.append(iid)
@@ -223,11 +260,16 @@ def run(root=REPO, apply=False, now=None, source=None, use_live=True, env=None) 
     source = source or (source_from_env(cfg, env) if use_live else None)
     if source is None:
         return {"generated": _day(now), "measured": False, "why": "no hits source (no CLOUDFLARE_API_TOKEN and no rows)", "filed": []}
+    trends = source.trends(now, cfg)
+    if not any(t["v7"] for t in trends):
+        # BLINDSPOT-RED-1: a reading that is empty is unmeasured, never zero. A week with no human page view on any path means the collector or the
+        # table is down, so nothing is settled, tuned, recorded, filed or written.
+        return {"generated": _day(now), "measured": False, "why": "the hits source holds no human page view in the last %d days" % cfg["window_days"], "filed": []}
     settled = settle(st, source, now, cfg)
     tuned = tune(st, cfg, now)
     m = knob(st, cfg)
     new = []
-    for t in source.trends(now, cfg):
+    for t in trends:
         kind = classify(t, m, cfg)
         if not kind or any(f["path"] == t["path"] and f["kind"] == kind and now - f["at"] < 7 * DAY for f in st["findings"]):
             continue

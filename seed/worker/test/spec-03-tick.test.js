@@ -18,7 +18,7 @@ const MIN = 60e3;
 const get = (db, sql, ...a) => db.raw.prepare(sql).get(...a);
 const at = ms => new Date(ms).toISOString().replace('T', ' ').slice(0, 19);
 
-test('US-03-R17 and US-03-T08: health judges the newest finished tick, so a tick in flight does not fail it, and an unfinished tick older than five minutes does', async () => {
+test('US-03-R20 and US-03-T09: health judges the newest finished tick, so a tick in flight does not fail it, and an unfinished tick older than five minutes does', async () => {
   const db = makeDb();
   await runTick(db, { config, now: T0 });
   db.raw.prepare(`INSERT INTO tick_runs (started_at, steps_total) VALUES (?, ?)`).run('2026-11-10 00:10:00', STEP_ORDER.length);
@@ -29,7 +29,7 @@ test('US-03-R17 and US-03-T08: health judges the newest finished tick, so a tick
   assert.equal(INFLIGHT_MS, 300e3);
 });
 
-test('US-03-R21: a step that throws on a missing table or column is retried once after migrate runs again, with no TICKFAIL; any other error still files one', async () => {
+test('US-03-R19: a step that throws on a missing table or column is retried once after migrate runs again, with no TICKFAIL; any other error still files one', async () => {
   const db = makeDb();
   const orig = { measure: STEPS.measure, migrate: STEPS.migrate };
   let calls = 0, migrates = 0;
@@ -51,7 +51,7 @@ test('US-03-R21: a step that throws on a missing table or column is retried once
   } finally { Object.assign(STEPS, orig); }
 });
 
-test('US-03-R22: under a cost breach the plan defers every step but the essential ones, a deferred step counts as completed, and the deferred steps run again on the first tick of every few hours', async () => {
+test('US-03-R18: under a cost breach the plan defers every step but the essential ones, a deferred step counts as completed, and the deferred steps run again on the first tick of every few hours', async () => {
   assert.deepEqual(COST_ESSENTIAL_STEPS, ['migrate', 'reconcile', 'measure', 'criticality']);
   const quiet = Date.parse('2026-11-10T01:30:00Z'), due = Date.parse('2026-11-10T03:05:00Z');
   assert.equal(LEAN_EVERY_H, 3);
@@ -73,7 +73,7 @@ test('US-03-R22: under a cost breach the plan defers every step but the essentia
   assert.equal(get(full, 'SELECT COUNT(*) AS n FROM claims').n, 1, 'on the due tick the deferred steps run');
 });
 
-test('US-03-R23: a metric with no good reading for twice the tick cadence files STALE-<id>, and a fresh reading closes it', async () => {
+test('US-03-R26: a metric with no good reading for twice the tick cadence files STALE-<id>, and a fresh reading closes it', async () => {
   const db = makeDb();
   db.raw.exec(`INSERT INTO metrics (id,name,kind,source,spec,op,threshold,owner_role,remedy) VALUES ('M-x','x','target','sql','SELECT 0','<=',0,'operations','r')`);
   await runTick(db, { config, now: T0 });
@@ -90,7 +90,7 @@ test('US-03-R23: a metric with no good reading for twice the tick cadence files 
   assert.equal(get(db, "SELECT status FROM items WHERE id='STALE-M-x'").status, 'done');
 });
 
-test('US-03-R24: the system files at most twenty items of its own a day; the refusal is counted, and a new day files again', async () => {
+test('US-03-R22: the system files at most twenty items of its own a day; the refusal is counted, and a new day files again', async () => {
   const db = makeDb();
   const day = Date.parse('2026-11-10T12:00:00Z');
   const file = (n, now) => ensureItem(db, { id: `O-${n}`, title: 't', owner_role: 'operations', done_check: 'x' }, { now });
@@ -104,7 +104,7 @@ test('US-03-R24: the system files at most twenty items of its own a day; the ref
   assert.equal(await file(21, day + 86400e3), true, 'the next day has its own allowance');
 });
 
-test('US-03-R25: an event wakes the role it names out of turn, a role that is switched off in the register is never dispatched, and one tick_every still holds for the rest', async () => {
+test('US-03-R27: an event wakes the role it names out of turn, a role that is switched off in the register is never dispatched, and one tick_every still holds for the rest', async () => {
   const mk = () => { const db = makeDb(); db.raw.exec(`INSERT INTO roles (id, role, tick_every, model) VALUES ('pm-1','portfolio-manager',5,'m'), ('ops-1','operations',5,'m');
     INSERT INTO items (id,title,owner_role,done_check,status) VALUES ('P','p','portfolio-manager','x','ready'), ('O','o','operations','x','ready')`); return db; };
   const claimed = db => db.raw.prepare('SELECT agent FROM claims ORDER BY agent').all().map(r => r.agent);
@@ -119,7 +119,7 @@ test('US-03-R25: an event wakes the role it names out of turn, a role that is sw
   assert.deepEqual(claimed(off), [], 'an off manager is not dispatched even when an event wakes it');
 });
 
-test('US-03-R26: the worker variable HALT wins over the committed halt file in both directions, and the entry points check it before they act', () => {
+test('US-03-R28: the worker variable HALT wins over the committed halt file in both directions, and the entry points check it before they act', () => {
   assert.equal(halted({ halt: { halted: true } }, {}), true);
   assert.equal(halted({ halt: { halted: true } }, { HALT: '0' }), false, 'HALT=0 resumes without a deploy');
   assert.equal(halted({ halt: { halted: false } }, { HALT: 'on' }), true);
@@ -130,7 +130,7 @@ test('US-03-R26: the worker variable HALT wins over the committed halt file in b
   assert.ok((src.match(/halted\(config, env\)/g) || []).length >= 5, 'the schedule, the hooks and the watch route each check it');
 });
 
-test('US-03-R27: the second producer runs a tick only when the newest one is older than two intervals, and leaves its own beat either way', async () => {
+test('US-03-R21: the second producer runs a tick only when the newest one is older than two intervals, and leaves its own beat either way', async () => {
   const db = makeDb();
   await runTick(db, { config, now: T0 });
   let ran = 0;

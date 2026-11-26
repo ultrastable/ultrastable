@@ -45,7 +45,7 @@ export const LIVE_TOOLS = [
 
 // AGENT-HARNESS-1: the one MCP write. Any agent in any harness (VS Code Copilot/Claude/Codex, Cursor, CLI) submits work here; bearer token required, agent and harness required.
 export const WRITE_TOOLS = [{ name: "submit_work", description: "Submit an idea, request, bug or question to Ultrastable's intake. Requires a bearer integration token. State which agent and harness you are so inputs can be compared.",
-  inputSchema: { type: "object", required: ["title"], properties: { title: { type: "string", maxLength: 200 }, detail: { type: "string", maxLength: 4000 }, kind: { type: "string", enum: ["idea", "request", "bug", "question"] }, priority: { type: "integer", minimum: 1, maximum: 90 }, agent: { type: "string", description: "Who is sending, e.g. claude-code, codex, copilot, cursor. Optional with OAuth: defaults to the approved client." }, harness: { type: "string", description: "Where it runs, e.g. vscode-claude, vscode-copilot, cli, cloud. Optional with OAuth." } }, additionalProperties: false },
+  inputSchema: { type: "object", required: ["title"], properties: { title: { type: "string", maxLength: 200 }, detail: { type: "string", maxLength: 4000 }, kind: { type: "string", enum: ["idea", "request", "bug", "question"] }, priority: { type: "integer", minimum: 1, maximum: 90 }, agent: { type: "string", maxLength: 60, description: "Who is sending, e.g. claude-code, codex, copilot, cursor. Optional with OAuth: defaults to the approved client." }, harness: { type: "string", maxLength: 60, description: "Where it runs, e.g. vscode-claude, vscode-copilot, cli, cloud. Optional with OAuth." } }, additionalProperties: false },
   annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false } }];
 
 // AGENT-HARNESS-1: one page, one click per agent host. No tokens: hosts that support MCP authorization sign the person in by browser consent.
@@ -55,7 +55,7 @@ export const CONNECT_HTML = () => { const cfg = JSON.stringify(CONNECT_CFG);
   const links = [["VS Code", "vscode:mcp/install?" + encodeURIComponent(cfg)], ["VS Code Insiders", "vscode-insiders:mcp/install?" + encodeURIComponent(cfg)], ["Cursor", "cursor://anysphere.cursor-deeplink/mcp/install?name=ultrastable&config=" + encodeURIComponent(b64(JSON.stringify({ url: CONNECT_CFG.url })))]];
   return "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Connect your agent to Ultrastable</title><style>body{font:16px system-ui;max-width:40rem;margin:3rem auto;padding:0 1rem}a.b{display:block;margin:.6rem 0;padding:.9rem 1rem;border:1px solid #888;border-radius:.5rem;text-decoration:none;color:inherit}code,pre{background:#8881;padding:.2rem .4rem;border-radius:.3rem}pre{padding:.8rem;overflow:auto}</style></head><body><h1>Connect your agent</h1><p>Click your tool. You sign in once in the browser; nothing to copy or paste.</p>"
     + links.map(([n, h]) => "<a class=\"b\" href=\"" + h.replace(/"/g, "&quot;") + "\">Add to " + n + "</a>").join("")
-    + "<h2>Claude</h2><p>Settings, Connectors, Add custom connector, paste <code>" + CONNECT_CFG.url + "</code> (the one URL; sign-in follows).</p><h2>Codex</h2><pre>codex mcp add ultrastable --url " + CONNECT_CFG.url + "</pre><h2>Any MCP client</h2><pre>{ \"mcpServers\": { \"ultrastable\": { \"url\": \"" + CONNECT_CFG.url + "\" } } }</pre><p><a href=\"/.well-known/agent-card.json\">A2A agent card</a> · <a href=\"/openapi.json\">OpenAPI</a> · <a href=\"/llms.txt\">llms.txt</a></p></body></html>"; };
+    + "<h2>Claude</h2><p>Settings, Connectors, Add custom connector, paste <code>" + CONNECT_CFG.url + "</code> (the one URL; sign-in follows).</p><h2>Claude Code</h2><pre>claude mcp add --transport http ultrastable " + CONNECT_CFG.url + "</pre><h2>Codex</h2><pre>codex mcp add ultrastable --url " + CONNECT_CFG.url + "</pre><h2>Any MCP client</h2><pre>{ \"mcpServers\": { \"ultrastable\": { \"url\": \"" + CONNECT_CFG.url + "\" } } }</pre><p><a href=\"/.well-known/agent-card.json\">A2A agent card</a> · <a href=\"/openapi.json\">OpenAPI</a> · <a href=\"/llms.txt\">llms.txt</a></p></body></html>"; };
 
 async function sha256(text) { const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join(""); }
 
@@ -93,6 +93,8 @@ async function mcp(request, env) {
   if (request.method === "GET") return new Response("Use POST with JSON-RPC 2.0", { status: 405, headers: { allow: "POST", ...CORS } });
   if (request.method !== "POST") return new Response("Method not allowed", { status: 405, headers: { allow: "POST", ...CORS } });
   let m; try { m = await request.json(); } catch (e) { return j({ jsonrpc: "2.0", id: null, error: { code: -32700, message: "Parse error" } }, null, 400); }
+  // A message with a method and no id is a notification, whatever the method: it is acknowledged with 202 and no body, never answered and never run (as the seed's server does).
+  if (m && typeof m === "object" && !Array.isArray(m) && typeof m.method === "string" && m.id === undefined) return new Response(null, { status: 202, headers: CORS });
   const id = m && m.id !== undefined ? m.id : null, ok = result => j({ jsonrpc: "2.0", id, result }), err = (code, message) => j({ jsonrpc: "2.0", id, error: { code, message } });
   switch (m && m.method) {
     case "server/discover": return ok({ supportedVersions: MCP_VERSIONS, capabilities: { tools: { listChanged: false } }, serverInfo: CARD.serverInfo });
@@ -104,8 +106,12 @@ async function mcp(request, env) {
       if ((m.params || {}).name === "submit_work") {
         // MCP-OAUTH-1: an OAuth access token (browser consent, no pasted token) is the normal path; the integration bearer token stays as the legacy path.
         let auth = await verifyAccess(request, env);
-        if (!auth) { const legacy = await authIntegration(request, env); auth = legacy.ok ? { ok: true, name: legacy.name, via: "token" } : { ok: false, status: legacy.status === 503 ? 401 : legacy.status, error: legacy.error }; }
-        if (!auth.ok) return new Response(JSON.stringify({ jsonrpc: "2.0", id, error: { code: -32001, message: auth.error || "unauthorized" } }), { status: auth.status || 401, headers: { ...CORS, "content-type": "application/json; charset=utf-8", "www-authenticate": CHALLENGE(auth.error === "invalid_token" ? "invalid_token" : undefined) } });
+        // RFC 6750 section 3.1: a bearer token that was presented and is neither one of our OAuth tokens nor an integration token is invalid_token (401), like a revoked one;
+        // only a request with no bearer token gets the bare challenge. A valid token of ours that lacks the scope is insufficient_scope (403).
+        if (!auth) { const legacy = await authIntegration(request, env), presented = /^Bearer\s+\S+$/i.test(request.headers.get("authorization") || "");
+          auth = legacy.ok ? { ok: true, name: legacy.name, via: "token" } : presented ? { ok: false, status: 401, error: "invalid_token" } : { ok: false, status: legacy.status === 503 ? 401 : legacy.status, error: legacy.error }; }
+        if (!auth.ok) { const e = auth.error === "invalid_token" || auth.error === "insufficient_scope" ? auth.error : undefined;
+          return new Response(JSON.stringify({ jsonrpc: "2.0", id, error: { code: -32001, message: auth.error || "unauthorized" } }), { status: auth.status || (e === "insufficient_scope" ? 403 : 401), headers: { ...CORS, "content-type": "application/json; charset=utf-8", "www-authenticate": CHALLENGE(e) } }); }
         if (!env.ORG) return ok({ isError: true, content: [{ type: "text", text: "Org database not bound." }] });
         let a = { ...((m.params || {}).arguments || {}) };
         if (auth.via === "oauth") { a.agent = a.agent || auth.agent; a.harness = a.harness || auth.harness; }  // identity comes from the client the owner approved

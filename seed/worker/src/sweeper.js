@@ -72,7 +72,9 @@ export async function sweepOpenLoops({ token, repos = [], fetch: f = fetch, now 
           const c = await gh(f, token, 'PATCH', `/repos/${repo}/pulls/${p.number}`, { state: 'closed' });
           if (c.ok) { (out.superseded ||= []).push(tag); (out.sla_ported ||= []).push({ repo, number: p.number, branch: d.head.ref }); continue; }
         }
-        const hold = d.mergeable_state === 'clean' ? await notGreen(f, token, repo, d.head && d.head.sha, (ff, t, m, path) => gh(ff, t, m, path)) : null;  // GREEN-GUARD-1
+        // HOLD-LABEL-1 (US-33-R13): a pull request labelled `hold` is never merged here; it keeps its clock and its open-loop item below
+        const labelled = [...((d && d.labels) || []), ...(p.labels || [])].some(l => l && l.name === 'hold');
+        const hold = labelled ? 'hold' : d.mergeable_state === 'clean' ? await notGreen(f, token, repo, d.head && d.head.sha, (ff, t, m, path) => gh(ff, t, m, path)) : null;  // GREEN-GUARD-1
         if (hold) out.held = [...(out.held || []), `${tag} ${hold}`];
         if (d.mergeable_state === 'clean' && !hold) {
           const m = await gh(f, token, 'PUT', `/repos/${repo}/pulls/${p.number}/merge`, { merge_method: 'squash' });

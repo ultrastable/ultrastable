@@ -145,27 +145,22 @@
   {
    "id": "US-01-T05",
    "spec": "US-SPEC-01",
-   "tests": [
-    {
-     "file": "../seed/worker/test/spec-01-data-model.test.js",
-     "name": "US-01-T05 and US-01-R12: a migration applies once and is ledgered with its hash; an applied file whose text changed is drift: reported, never re-run, and filed"
-    }
-   ]
+   "tests": []
   },
   {
    "id": "US-01-T06",
    "spec": "US-SPEC-01",
-   "tests": [
-    {
-     "file": "../seed/worker/test/spec-01-data-model.test.js",
-     "name": "US-01-T06 and US-01-R16: a daily copy of every non-secret table is stored, read back whole and counted before it counts as a copy; a copy that does not read back is reported and prunes nothing"
-    }
-   ]
+   "tests": []
   },
   {
    "id": "US-01-T07",
    "spec": "US-SPEC-01",
-   "tests": []
+   "tests": [
+    {
+     "file": "../seed/worker/test/spec-01-data-model.test.js",
+     "name": "US-01-T07 and US-01-R14: a migration applies once and is ledgered with its hash; an applied file whose text changed is drift: reported, never re-run, and filed"
+    }
+   ]
   },
   {
    "id": "US-02-T01",
@@ -210,7 +205,20 @@
   {
    "id": "US-02-T05",
    "spec": "US-SPEC-02",
-   "tests": []
+   "tests": [
+    {
+     "file": "../seed/worker/test/spec-02-managers.test.js",
+     "name": "US-02-R13, US-02-T05: every manager of the register is on by default, and one tick hires each that has no row, idempotently"
+    },
+    {
+     "file": "../seed/worker/test/spec-02-managers.test.js",
+     "name": "US-02-R13, US-02-T05: a manager switched off by data with a reason is not hired and not dispatched, and nothing is deleted"
+    },
+    {
+     "file": "../seed/worker/test/spec-02-managers.test.js",
+     "name": "US-02-R13, US-02-T05: a core manager cannot be switched off, and a switch with no reason is refused"
+    }
+   ]
   },
   {
    "id": "US-02-T06",
@@ -315,17 +323,16 @@
   {
    "id": "US-03-T08",
    "spec": "US-SPEC-03",
-   "tests": [
-    {
-     "file": "../seed/worker/test/spec-03-tick.test.js",
-     "name": "US-03-R17 and US-03-T08: health judges the newest finished tick, so a tick in flight does not fail it, and an unfinished tick older than five minutes does"
-    }
-   ]
+   "tests": []
   },
   {
    "id": "US-03-T09",
    "spec": "US-SPEC-03",
    "tests": [
+    {
+     "file": "../seed/worker/test/spec-03-tick.test.js",
+     "name": "US-03-R20 and US-03-T09: health judges the newest finished tick, so a tick in flight does not fail it, and an unfinished tick older than five minutes does"
+    },
     {
      "file": "../tests/foundation/test_spec_03_kernel_steps.py",
      "name": "test US-03-T09 every kernel step names code that exists"
@@ -333,10 +340,6 @@
     {
      "file": "../tests/foundation/test_spec_03_kernel_steps.py",
      "name": "test US-03-T09 the registry is the one foundation kernel check reads"
-    },
-    {
-     "file": "../tests/foundation/test_spec_03_kernel_steps.py",
-     "name": "test US-03-T09 the specification table of section 5 is the registry"
     }
    ]
   },
@@ -801,17 +804,32 @@
   {
    "id": "US-09-T07",
    "spec": "US-SPEC-09",
-   "tests": []
+   "tests": [
+    {
+     "file": "../seed/worker/test/spec-09-throttle-halt-gate.test.js",
+     "name": "US-09-R17 US-09-T07: HALT=1 stops the cron but its beat, answers /pulse/watch with 202 and reports halted; HALT=0 resumes with no deploy"
+    }
+   ]
   },
   {
    "id": "US-09-T08",
    "spec": "US-SPEC-09",
-   "tests": []
+   "tests": [
+    {
+     "file": "../seed/worker/test/spec-09-throttle-halt-gate.test.js",
+     "name": "US-09-R16 US-09-T08: shares 0.3, 0.6, 0.8 and 1.2 of the soft target give full, ease, throttle and crawl with the knobs of section 3.1"
+    }
+   ]
   },
   {
    "id": "US-09-T09",
    "spec": "US-SPEC-09",
-   "tests": []
+   "tests": [
+    {
+     "file": "../seed/worker/test/spec-09-throttle-halt-gate.test.js",
+     "name": "US-09-R18 US-09-T09: an empty, a truncated and a repeated answer are each rejected before use and counted against that model for that kind"
+    }
+   ]
   },
   {
    "id": "US-10-T01",
@@ -2444,7 +2462,7 @@
    "tests": [
     {
      "file": "../seed/worker/test/spec-01-data-model.test.js",
-     "name": "US-01-T05 and US-01-R12: a migration applies once and is ledgered with its hash; an applied file whose text changed is drift: reported, never re-run, and filed"
+     "name": "US-01-R12: a runtime acts only on rows of its own tenant: another tenant row is never dispatched, and the trust ledger keeps one row per tenant, surface and action class"
     }
    ]
   },
@@ -2474,7 +2492,7 @@
    "tests": [
     {
      "file": "../seed/worker/test/spec-01-data-model.test.js",
-     "name": "US-01-R14: a runtime acts only on rows of its own tenant: another tenant row is never dispatched, and the trust ledger keeps one row per tenant, surface and action class"
+     "name": "US-01-T07 and US-01-R14: a migration applies once and is ledgered with its hash; an applied file whose text changed is drift: reported, never re-run, and filed"
     }
    ]
   },
@@ -2489,7 +2507,7 @@
    "tests": [
     {
      "file": "../seed/worker/test/spec-01-data-model.test.js",
-     "name": "US-01-R15: the queries the tick repeats on its growing tables are served by an index, not a scan"
+     "name": "US-01-T08 and US-01-R15: a daily copy of every non-secret table is stored, read back whole and counted before it counts as a copy; a copy that does not read back is reported and prunes nothing"
     }
    ]
   },
@@ -2759,9 +2777,26 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "built and tested in the seed tick (seed/worker/test/managers.test.js), which this repository's core tick does not carry",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../seed/worker/test/spec-02-managers.test.js",
+     "name": "US-02-R13, US-02-T05: every manager of the register is on by default, and one tick hires each that has no row, idempotently"
+    },
+    {
+     "file": "../seed/worker/test/spec-02-managers.test.js",
+     "name": "US-02-R13, US-02-T05: a manager switched off by data with a reason is not hired and not dispatched, and nothing is deleted"
+    },
+    {
+     "file": "../seed/worker/test/spec-02-managers.test.js",
+     "name": "US-02-R13, US-02-T05: a core manager cannot be switched off, and a switch with no reason is refused"
+    },
+    {
+     "file": "../seed/worker/test/spec-02-managers.test.js",
+     "name": "US-02-R13: the register has at least one core manager and every manager names a cadence"
+    }
+   ]
   },
   {
    "id": "US-02-R14",
@@ -3103,14 +3138,9 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "met",
-   "proof": "named test",
-   "tests": [
-    {
-     "file": "../seed/worker/test/spec-03-tick.test.js",
-     "name": "US-03-R17 and US-03-T08: health judges the newest finished tick, so a tick in flight does not fail it, and an unfinished tick older than five minutes does"
-    }
-   ]
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
   },
   {
    "id": "US-03-R18",
@@ -3121,6 +3151,10 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "../seed/worker/test/spec-03-tick.test.js",
+     "name": "US-03-R18: under a cost breach the plan defers every step but the essential ones, a deferred step counts as completed, and the deferred steps run again on the first tick of every few hours"
+    },
     {
      "file": "core/test/tick.test.js",
      "name": "US-03-T10, US-03-R09 and US-03-R18: with a configuration that omits every limit a role is never given more than three claims and no step fails"
@@ -3149,6 +3183,10 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "../seed/worker/test/spec-03-tick.test.js",
+     "name": "US-03-R19: a step that throws on a missing table or column is retried once after migrate runs again, with no TICKFAIL; any other error still files one"
+    },
+    {
      "file": "core/test/tick.test.js",
      "name": "US-03-R19 and US-03-T07 (issue #173 execute): a dispatched item whose probe passes ends done with evidence in the same tick"
     },
@@ -3176,6 +3214,10 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "../seed/worker/test/spec-03-tick.test.js",
+     "name": "US-03-R20 and US-03-T09: health judges the newest finished tick, so a tick in flight does not fail it, and an unfinished tick older than five minutes does"
+    },
+    {
      "file": "core/test/tick.test.js",
      "name": "US-03-R20 and issue #173: a claim released with no work is recorded, and the item is parked after max_unworked_releases"
     },
@@ -3196,7 +3238,7 @@
    "tests": [
     {
      "file": "../seed/worker/test/spec-03-tick.test.js",
-     "name": "US-03-R21: a step that throws on a missing table or column is retried once after migrate runs again, with no TICKFAIL; any other error still files one"
+     "name": "US-03-R21: the second producer runs a tick only when the newest one is older than two intervals, and leaves its own beat either way"
     }
    ]
   },
@@ -3211,7 +3253,7 @@
    "tests": [
     {
      "file": "../seed/worker/test/spec-03-tick.test.js",
-     "name": "US-03-R22: under a cost breach the plan defers every step but the essential ones, a deferred step counts as completed, and the deferred steps run again on the first tick of every few hours"
+     "name": "US-03-R22: the system files at most twenty items of its own a day; the refusal is counted, and a new day files again"
     },
     {
      "file": "../tests/foundation/test_spec_03_kernel_steps.py",
@@ -3256,6 +3298,14 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "../seed/worker/test/spec-04-plus-share-degrade.test.js",
+     "name": "US-04-R02: while the free tier is degraded the plus share check runs on the first tick of each hour and is deferred on the others, so it is never skipped for good"
+    },
+    {
+     "file": "../seed/worker/test/spec-04-plus-share-degrade.test.js",
+     "name": "US-04-R02: under a cost breach the plus share check runs on the first tick of every third hour"
+    },
+    {
      "file": "../seed/worker/test/tick.test.js",
      "name": "US-04-R02 window: only the 20 most recently closed items are read, and another tenant's done items are not counted"
     },
@@ -3275,9 +3325,18 @@
    "level": "L1",
    "tagged": true,
    "must": false,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../seed/worker/test/spec-04-successors.test.js",
+     "name": "US-04-R03: every closed item proposes one plus, a kind plus item for the same owner with a closing probe, and never two for the same item"
+    },
+    {
+     "file": "../seed/worker/test/spec-04-successors.test.js",
+     "name": "US-04-R03: an item that is itself a successor or an idle repair proposes no plus of its own"
+    }
+   ]
   },
   {
    "id": "US-04-R04",
@@ -5221,6 +5280,10 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "../seed/worker/test/spec-09-caps-ladder.test.js",
+     "name": "US-09-R04: the subrequest meter refuses a call past its cap minus the reserve, and a loop is held to its share"
+    },
+    {
      "file": "core/router/caps/bounds.test.js",
      "name": "US-09-R04: an iteration is refused when its step bound is spent"
     },
@@ -5235,10 +5298,6 @@
     {
      "file": "core/router/caps/bounds.test.js",
      "name": "US-09-R04: an iteration past its wall-clock bound is refused before a provider call (injected clock)"
-    },
-    {
-     "file": "core/router/caps/bounds.test.js",
-     "name": "US-09-R04: an iteration past its spend bound is refused, and the exceeded bound is recorded once"
     }
    ]
   },
@@ -5252,6 +5311,14 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "../seed/worker/test/spec-09-caps-ladder.test.js",
+     "name": "US-09-R05 US-09-R07: past the day allowance the system crawls to one call an hour and is never frozen"
+    },
+    {
+     "file": "../seed/worker/test/spec-09-caps-ladder.test.js",
+     "name": "US-09-R05: a budget of 0 is held inside the free allocation: a governed handle exists and the allowance has no paid part"
+    },
+    {
      "file": "core/router/caps/bounds.test.js",
      "name": "US-09-R05: at a hard cap the router files one priority-0 SPEND item and no paid call, and closes it when spend falls below the cap"
     },
@@ -5262,10 +5329,6 @@
     {
      "file": "core/router/router.test.js",
      "name": "hard cap refuses paid calls and files a gate-style record once (US-09-R05/R06)"
-    },
-    {
-     "file": "core/router/router.test.js",
-     "name": "kill switch for a provider and for all paid calls (US-09-R01/R05)"
     }
    ]
   },
@@ -5298,6 +5361,10 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "../seed/worker/test/spec-09-caps-ladder.test.js",
+     "name": "US-09-R05 US-09-R07: past the day allowance the system crawls to one call an hour and is never frozen"
+    },
+    {
      "file": "core/ladder/ladder.test.js",
      "name": "US-09-T03, US-09-R07 a breached cap steers the task to a free rung and does not end it; with no free rung the task is queued, not failed"
     },
@@ -5312,10 +5379,6 @@
     {
      "file": "core/router/github-models.test.js",
      "name": "US-09-R07: with a hard cap the free github_models rung serves the task and the paid one is never called"
-    },
-    {
-     "file": "core/router/router.test.js",
-     "name": "route maps rung to providers in fallback order (US-09-R07/R08)"
     }
    ]
   },
@@ -5482,6 +5545,10 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "../seed/worker/test/spec-09-caps-ladder.test.js",
+     "name": "US-09-R15: an item dispatched three times with no outcome is blocked and filed as a loop-break item"
+    },
+    {
      "file": "core/router/caps/spec-citations.test.js",
      "name": "US-09-R15 three identical failures inside 24 hours file a root-cause item and open the breaker; two do not; an old one does not count"
     },
@@ -5501,9 +5568,18 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../seed/worker/test/spec-09-throttle-halt-gate.test.js",
+     "name": "US-09-R16 US-09-T08: shares 0.3, 0.6, 0.8 and 1.2 of the soft target give full, ease, throttle and crawl with the knobs of section 3.1"
+    },
+    {
+     "file": "../seed/worker/test/spec-09-throttle-halt-gate.test.js",
+     "name": "US-09-R16: no level stops the clock, the queue, the merge lane or deploys, and the level springs back when use falls"
+    }
+   ]
   },
   {
    "id": "US-09-R17",
@@ -5511,9 +5587,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../seed/worker/test/spec-09-throttle-halt-gate.test.js",
+     "name": "US-09-R17 US-09-T07: HALT=1 stops the cron but its beat, answers /pulse/watch with 202 and reports halted; HALT=0 resumes with no deploy"
+    }
+   ]
   },
   {
    "id": "US-09-R18",
@@ -5521,9 +5602,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../seed/worker/test/spec-09-throttle-halt-gate.test.js",
+     "name": "US-09-R18 US-09-T09: an empty, a truncated and a repeated answer are each rejected before use and counted against that model for that kind"
+    }
+   ]
   },
   {
    "id": "US-09-R19",
@@ -5534,6 +5620,10 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "../seed/worker/test/spec-09-throttle-halt-gate.test.js",
+     "name": "US-09-R19 US-09-T10: an identical call inside the time to live is one model call with no spend, and concurrent identical calls share one call"
+    },
     {
      "file": "core/ladder/fixes.test.js",
      "name": "US-09-R19 an entry whose source changed is a miss and is removed; with the same source an identical call is a hit with no model call"
@@ -5550,6 +5640,10 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "../seed/worker/test/spec-09-throttle-halt-gate.test.js",
+     "name": "US-09-R20 US-09-T11: HTTP 410 or a deprecation error retires the model for seven days, the next rung serves and the failed call is charged nothing"
+    },
+    {
      "file": "core/ladder/router-ports.test.js",
      "name": "US-09-R20 when the model asked for is retired the successor serves and that is no canary of the original"
     }
@@ -5561,9 +5655,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../seed/worker/test/spec-09-throttle-halt-gate.test.js",
+     "name": "US-09-R21: every model call is metered into the ledger before the next call is decided, and the metering bounds the next call"
+    }
+   ]
   },
   {
    "id": "US-09-R22",
@@ -6236,9 +6335,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../seed/worker/test/spec-11-fleet-runtime.test.js",
+     "name": "US-11-R15: a stale heartbeat is run by the second producer and a fresh one is not; every call leaves a record"
+    }
+   ]
   },
   {
    "id": "US-11-R16",
@@ -6256,9 +6360,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../seed/worker/test/spec-11-fleet-runtime.test.js",
+     "name": "US-11-R17: the beat is written before the body runs; a thrown error, a missing credential and ok:false are failed beats; the state names what is wrong"
+    }
+   ]
   },
   {
    "id": "US-11-R18",
@@ -6266,9 +6375,14 @@
    "level": "L3",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../seed/worker/test/spec-11-fleet-runtime.test.js",
+     "name": "US-11-R18: a loop that stops files one item on the second bad reading, only the same reading closes it, and a later stop reopens it"
+    }
+   ]
   },
   {
    "id": "US-12-R01",
@@ -8990,9 +9104,22 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../seed/worker/test/spec-10-repo-creation.test.js",
+     "name": "US-10-R33 / US-19-R24 the host creates the system's repository from the template with the idea written into it and hosted_by set, using its own credentials"
+    },
+    {
+     "file": "../seed/worker/test/spec-10-repo-creation.test.js",
+     "name": "US-10-R33 / US-19-R24 a repository outside the app naming rule is refused before any call, and a second pass writes nothing"
+    },
+    {
+     "file": "../seed/worker/test/spec-10-repo-creation.test.js",
+     "name": "US-19-R24 when the code host refuses a step the answer names what is waited on and the repository that exists stays"
+    }
+   ]
   },
   {
    "id": "US-19-R25",
@@ -10912,9 +11039,14 @@
    "level": "L3",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../seed/worker/test/spec-24-halt-and-beats.test.js",
+     "name": "US-24-R58: every job of every workflow of the platform skips when the repository variable HALT is 1, and a job without the guard is detected"
+    }
+   ]
   },
   {
    "id": "US-24-R59",
@@ -10942,9 +11074,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../seed/worker/test/spec-24-halt-and-beats.test.js",
+     "name": "US-24-R61: a loop writes its beat before its body, so a run that never returns is visible, and the second route runs a tick when the newest is older than two intervals"
+    }
+   ]
   },
   {
    "id": "US-24-R62",

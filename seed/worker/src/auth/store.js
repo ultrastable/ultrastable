@@ -32,7 +32,8 @@ const DDL = [
 ];
 const ready = new WeakMap();
 export function ensureSchema(db) {
-  if (!db || typeof db !== 'object') return Promise.reject(new TypeError('no database is bound'));  // a WeakMap key must be an object; without this the schema promise below is orphaned and surfaces as an unhandled rejection
+  // A missing binding rejects up front: a non-object cannot be a WeakMap key, and starting the DDL first would leave its rejection unobserved (US-30-R30).
+  if (!db || typeof db.prepare !== 'function') return Promise.reject(new Error('credential store unavailable: no database bound'));
   if (!ready.has(db)) ready.set(db, (async () => { for (const q of DDL) await db.prepare(q).run(); })().catch(e => { ready.delete(db); throw e; }));
   return ready.get(db);
 }

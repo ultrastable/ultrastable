@@ -172,6 +172,7 @@ test('US-26-R23: while a spend cap is breached only a cost cut is originated, an
   item(sample, 'U-1', { owner: 'nobody', status: 'open' });  // an unowned backlog would be next in order, but spend is capped
   const s = await stepOf(sample);
   assert.ok(s.cap_breached); assert.equal(s.originated_now.kind, 'cost_cut');
+  assert.equal(sample.raw.prepare("SELECT COUNT(*) n FROM items WHERE id LIKE 'IDLE-%'").get().n, 1, "a collector sample's cap_breached limits origination to cost_cut but does not suppress the idle repair (section 4.3)");
   for (const over of [{ budget: { mode: 'frozen' } }, { budget: { mode: 'crawl' } }, { costBreach: { over: true } }]) {
     const db = makeDb(); const r = await stepOf(db, over);
     assert.ok(r.cap_breached, JSON.stringify(over)); assert.equal(r.originated_now.kind, 'cost_cut');
@@ -268,6 +269,14 @@ test('US-26-R28: a runtime counts and picks only rows that are its own (tenant_i
   const s = await stepOf(db, { dispatched: 1 });
   assert.equal(s.queue_open, 2, 'another tenant\'s ready items are not this queue');
   assert.deepEqual(s.ignition_gaps.map(g => g.link), [], "another tenant's gate card and unowned item are not this runtime's gaps");
+  // the origination predicate reads the same rows: another tenant's unowned item does not make this runtime originate for it, so k_eff under
+  // k_min falls through to the generic item
+  assert.equal(s.originated_now && s.originated_now.kind, 'generic', "another tenant's unowned item is not this runtime's unowned backlog");
+  assert.equal(db.raw.prepare("SELECT COUNT(*) n FROM items WHERE id LIKE 'ORIGIN-unowned_backlog-%'").get().n, 0);
+  item(db, 'U-MINE', { owner: 'nobody', status: 'open', tenant: 'mine' });
+  const own = await stepOf(db, { dispatched: 1, tickId: 2 }, NOW + DAY);
+  assert.equal(own.originated_now && own.originated_now.kind, 'unowned_backlog', "this runtime's own unowned item (its slug) is its unowned backlog");
+  assert.deepEqual(own.ignition_gaps.map(g => g.link), ['items:unowned'], 'the gap and the origination read the same rows');
   const role = { role: 'operations', project: null };
   db.raw.exec("UPDATE items SET priority = 0 WHERE id = 'OTHER'");
   assert.notEqual((await pickForRole(db, role, crit, [], 'mine')).id, 'OTHER');
@@ -410,4 +419,16 @@ test('US-26-R14: /health carries the compact stage reading and /live the full sn
   assert.equal(live.criticality_loop.last_beat, iso(NOW)); assert.equal(typeof live.criticality_loop.age_s, 'number');
   const metric = await (await get(db, '/metrics/criticality.json')).json();
   assert.equal(metric.k_eff, live.k_eff); assert.ok(metric.loop);
+});
+
+test('US-26-R45: the tenant bearer guards the register and report routes only; GET /api/goals/knobs is public, read-only and never cached', async () => {
+  const w = (await app()).worker, env = () => ({ DB: makeDb(), ANALYTICS_TOKEN: 'tok' });
+  const call = (path, init) => w.fetch(new Request('https://spec26.example' + path, init), env(), { waitUntil() {} });
+  for (const path of ['/api/goals/register', '/api/goals/report']) {
+    assert.equal((await call(path, { method: 'POST', body: '{}' })).status, 401, path + ' without the bearer');
+    assert.notEqual((await call(path, { method: 'POST', headers: { authorization: 'Bearer tok' }, body: '{}' })).status, 401, path + ' with it');
+  }
+  const r = await call('/api/goals/knobs?tenant=acme');
+  assert.equal(r.status, 200, 'no bearer needed'); assert.equal(r.headers.get('cache-control'), 'no-store'); assert.equal(r.headers.get('access-control-allow-origin'), '*');
+  assert.deepEqual(await r.json(), {});
 });

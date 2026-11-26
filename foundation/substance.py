@@ -268,11 +268,18 @@ def check_targets(rep: dict, c: dict) -> list[str]:
     return bad
 
 
+CLASSIFIER_KEYS = ("code_ext", "config_globs", "generated_globs", "record_globs")
+
+
 def check(root=REPO) -> list[str]:
+    """Every missing key of the config by name, then each shared vector that no longer holds. Without a classifier key no vector can be
+    classified, so the check returns the names and stops there instead of raising; a missing doc_keys is named and also shows as the vectors it breaks."""
     c, errs = cfg(root), []
-    for k in ("code_ext", "config_globs", "generated_globs", "record_globs", "deploy", "targets"):
+    for k in (*CLASSIFIER_KEYS, "doc_keys", "deploy", "targets"):
         if k not in c:
             errs.append(f"{CONFIG}: missing {k}")
+    if any(k not in c for k in CLASSIFIER_KEYS):
+        return errs
     v = json.loads((Path(root) / VECTORS).read_text(encoding="utf-8"))
     for case in v["cases"]:
         got = classify_file(case["path"], case["status"], case["removed"], case["added"], c)

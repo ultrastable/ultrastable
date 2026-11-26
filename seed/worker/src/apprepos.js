@@ -202,32 +202,32 @@ export async function handleAppHost(request, env, { tenant = 'default', fetch: f
   const url = new URL(request.url);
   if (url.pathname !== '/host/app-repo' && url.pathname !== '/host/app-token' && url.pathname !== '/host/tenant-repo' && url.pathname !== '/host/repo-settings' && url.pathname !== '/host/template-token' && url.pathname !== '/host/repo-deployment') return null;
   if (request.method !== 'POST' || !env.INTERNAL_DEPLOY_KEY) return new Response('Not found', { status: 404 });
-  let b; try { b = await request.json(); } catch { return J({ ok: false, error: 'bad json' }, 400); }
+  // US-31-R36: on the key-gated routes the x-internal-key header is judged before the body is read, so a refused request never gets a 400
+  // that shows the route exists. /host/app-token carries its key in the body; a body that is not a JSON object cannot carry one, so it is a 404.
+  const keyGated = url.pathname !== '/host/app-token';
+  if (keyGated && !same(request.headers.get('x-internal-key'), env.INTERNAL_DEPLOY_KEY)) return new Response('Not found', { status: 404 });
+  let b; try { b = await request.json(); } catch { return keyGated ? J({ ok: false, error: 'bad json' }, 400) : new Response('Not found', { status: 404 }); }
   if (url.pathname === '/host/tenant-repo') {
-    if (!same(request.headers.get('x-internal-key'), env.INTERNAL_DEPLOY_KEY)) return new Response('Not found', { status: 404 });
     const r = await ensureTenantRepo(env.DB, env, tenant, b, { fetch: f, now });
     return J(r, r.ok ? 200 : r.waiting_on ? 409 : 400);
   }
   if (url.pathname === '/host/template-token') {
-    if (!same(request.headers.get('x-internal-key'), env.INTERNAL_DEPLOY_KEY)) return new Response('Not found', { status: 404 });
     const r = await templateToken(env.DB, env, tenant, b, { fetch: f, now });
     return J(r, r.ok ? 200 : r.waiting_on ? 409 : 400);
   }
   if (url.pathname === '/host/repo-settings') {
-    if (!same(request.headers.get('x-internal-key'), env.INTERNAL_DEPLOY_KEY)) return new Response('Not found', { status: 404 });
     const r = await ensureRepoSettings(env.DB, env, tenant, b, { fetch: f, now });
     return J(r, r.ok ? 200 : r.waiting_on ? 409 : 400);
   }
   if (url.pathname === '/host/repo-deployment') {
-    if (!same(request.headers.get('x-internal-key'), env.INTERNAL_DEPLOY_KEY)) return new Response('Not found', { status: 404 });
     const r = await recordDeployment(env.DB, env, tenant, b, { fetch: f, now });
     return J(r, r.ok ? 200 : r.waiting_on ? 409 : 400);
   }
   if (url.pathname === '/host/app-repo') {
-    if (!same(request.headers.get('x-internal-key'), env.INTERNAL_DEPLOY_KEY)) return new Response('Not found', { status: 404 });
     const r = await ensureAppRepo(env.DB, env, tenant, b, { fetch: f, now });
     return J(r, r.ok ? 200 : r.waiting_on ? 409 : 400);
   }
+  if (!b || typeof b !== 'object' || Array.isArray(b)) return new Response('Not found', { status: 404 });
   const repo = String(b.repo || '');
   // SEED-HOST-1: a standing seed's Worker asks for its own repository the same way; the key its host bound at deploy names that one repository.
   const seedOwn = TENANT_REPO.test(repo) && !CORE_REPO.test(repo);

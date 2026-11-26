@@ -92,6 +92,8 @@ export async function runLane({ token, repos = [], fetch: f = fetch, issueWorkfl
           if (!m.ok) { out.held.push(`${repo}#${pr.number} draft`); continue; }
           d = (await gh(f, token, 'GET', `/repos/${repo}/pulls/${pr.number}`, undefined, budget)).json;
         }
+        // HOLD-LABEL-1 (US-33-R13): the label `hold` holds here as on every other merge route; it is read from what is in hand, so it costs no call
+        if ([...(pr.labels || []), ...((d && d.labels) || [])].some(l => l && l.name === 'hold')) { out.held.push(`${repo}#${pr.number} hold`); continue; }
         const comments = (await gh(f, token, 'GET', `/repos/${repo}/issues/${pr.number}/comments?per_page=30`, undefined, budget)).json || [];
         if (comments.some(c => /^HOLD:/.test(c.body || ''))) { out.held.push(`${repo}#${pr.number} HOLD`); continue; }
         let ready = d && d.mergeable_state === 'clean';

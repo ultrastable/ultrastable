@@ -89,6 +89,22 @@ test('an owner act for a remote MCP server links to its consent page with the se
   assert.equal((await ownerActs(db))[0].connect, '/connect/mcp?server=' + encodeURIComponent('https://ex.com/mcp'));
 });
 
+// The generic connector callback records an event for a provider's refusal and a failed token exchange but not for a bad or expired state or a replayed
+// approval (seed/worker/src/auth/connectors.js, the callback section); only the Mastodon and Bluesky callbacks (social.js `refused`) record those. This is the
+// closing probe of the PLANNED part of the specification and stays a todo until the generic callback records both. It deliberately names no requirement id.
+test('the generic connector callback records a failed event for a bad state and for a replayed approval (closing probe of the PLANNED part of the specification)', { todo: 'connectors.js returns failScreen for a bad state and a replay with no store.event' }, async () => {
+  const env = mk({ OAUTH_GOOGLE_CLIENT_ID: 'gid', OAUTH_GOOGLE_CLIENT_SECRET: 'gsec' });
+  const f = async u => String(u) === 'https://oauth2.googleapis.com/token' ? J({ access_token: 'at', refresh_token: 'rt', expires_in: 3600 }) : NF;
+  const loc = new URL((await get(env, '/connect/google/start', f)).headers.get('location')), state = loc.searchParams.get('state');
+  const before = events(env.DB, 'oauth:google').length;
+  await get(env, '/connect/google/callback?code=c&state=' + encodeURIComponent(state.slice(0, -3) + 'aaa'), f);
+  assert.equal(events(env.DB, 'oauth:google').length, before + 1, 'a bad state is recorded');
+  await get(env, '/connect/google/callback?code=c&state=' + encodeURIComponent(state), f);
+  const n = events(env.DB, 'oauth:google').length;
+  await get(env, '/connect/google/callback?code=c&state=' + encodeURIComponent(state), f);
+  assert.equal(events(env.DB, 'oauth:google').length, n + 1, 'a replayed approval is recorded');
+});
+
 test('US-30-R05: the reconnect link of the two GitHub providers is the one GitHub consent page, under the public origin without a trailing slash', () => {
   for (const p of ['github-app', 'github-admin']) assert.equal(reconnectLink({ env: { PUBLIC_ORIGIN: 'https://x.test/' } }, p), 'https://x.test/connect/github');
 });
@@ -299,6 +315,7 @@ test('US-30-R30: a failure inside an auth route is recorded as a credential even
   const ev = events(env.DB, 'github-app').pop(); assert.equal(ev.event, 'failed'); assert.match(ev.detail, /ECONNRESET/, 'the detail is kept for the owner-only record');
   const dead = await handleAuth(new Request(ORIGIN + '/connect/github'), { DB: undefined, CREDENTIAL_KEY: newKey() }, { tenant: 't' });
   assert.equal(dead.status, 502, 'even a missing database ends in a screen');
+  await assert.rejects(store.ensureSchema(undefined), /no database bound/, 'a missing binding is refused up front, so nothing is left running behind the screen');
 });
 
 // ---- 4.4 Consent flows ----------------------------------------------------------------------------------------------------------------------
@@ -430,9 +447,26 @@ test('US-30-R36: the live inventory of the organization\'s GitHub Apps removes e
   assert.equal((await auditApps(db, env, 't', { fetch: f, now: NOW + 21 * 3600e3 })).skipped, undefined);
 });
 
+// The app inventory report is recorded as one credential event, and the store cuts every event detail to 300 characters (R20), so a report of two apps is
+// recorded cut and cannot be parsed back. This is the closing probe of the PLANNED part of the specification (the last sentence of R36, which is a SHOULD)
+// and stays a todo until the whole report is kept where it can be read back. It deliberately names no requirement id.
+test('the app inventory report is recorded whole and parses back (closing probe of the PLANNED part of the specification)', { todo: 'store.event cuts the app-audit report to 300 characters' }, async () => {
+  const env = mk(), db = env.DB, { pkcs8 } = await appKey();
+  for (const role of ['github-app', 'github-admin']) await store.put(db, env, 't', role, { secret: { pem: toPem(pkcs8, 'PRIVATE KEY') }, meta: { app_id: role === 'github-app' ? 7 : 8, installation_id: 9 }, status: 'ok' });
+  const f = async (u, o = {}) => { u = String(u);
+    if (u.endsWith('/app')) return J({ id: 7, slug: 'org-app' }); if (u.includes('/app/installations?')) return J([{ id: 9, account: { login: 'acme' } }, { id: 11, account: { login: 'old' } }, { id: 12, account: { login: 'older' } }]);
+    return J({}, o.method === 'DELETE' ? 204 : 404); };
+  const report = await auditApps(db, env, 't', { fetch: f, now: NOW });
+  assert.ok(JSON.stringify(report).length > 300, 'the report of two apps is longer than one event detail');
+  const ev = events(db, 'github-app').filter(e => e.event === 'app-audit').pop();
+  assert.deepEqual(JSON.parse(ev.detail), report, 'the recorded report reads back whole');
+});
+
 test('US-30-R37: any other service is linked by one consent click, a PKCE redirect with a signed one-time state, a sealed result and a revoking disconnect; a provider with no registered app points at the single owner card, never at a token', async () => {
   const env = mk({ OAUTH_GOOGLE_CLIENT_ID: 'gid', OAUTH_GOOGLE_CLIENT_SECRET: 'gsec' }), seen = { tok: [], revoke: [] };
+  let exchangeStatus = 200;
   const f = async (u, init = {}) => { u = String(u);
+    if (u === 'https://oauth2.googleapis.com/token' && exchangeStatus !== 200) return J({ error: 'invalid_grant' }, exchangeStatus);
     if (u === 'https://oauth2.googleapis.com/token') { seen.tok.push(Object.fromEntries(new URLSearchParams(init.body))); return J({ access_token: 'at-1', refresh_token: 'rt-1', expires_in: 3600 }); }
     if (u === 'https://oauth2.googleapis.com/revoke') { seen.revoke.push(Object.fromEntries(new URLSearchParams(init.body))); return J({}); }
     return NF; };
@@ -448,6 +482,13 @@ test('US-30-R37: any other service is linked by one consent click, a PKCE redire
   assert.match(await bad.text(), /That approval link expired/);
   const denied = await get(env, '/connect/google/callback?error=access_denied&state=' + encodeURIComponent(state), f);
   assert.match(await denied.text(), /The approval was not completed/); assert.equal(events(env.DB, 'oauth:google').pop().detail, 'provider said access_denied');
+  for (const status of [400, 503]) {
+    exchangeStatus = status;
+    const failed = await get(env, '/connect/google/callback?code=abc&state=' + encodeURIComponent(state), f); const ft = await failed.text();
+    assert.match(ft, /The service did not finish the connection/); assert.ok(!/invalid_grant/.test(ft), 'the provider\'s answer stays on the server');
+    const ev = events(env.DB, 'oauth:google').pop(); assert.deepEqual([ev.event, ev.detail], ['failed', 'token exchange HTTP ' + status], 'a failed token exchange is a recorded failed event');
+  }
+  exchangeStatus = 200;
   const ok = await get(env, '/connect/google/callback?code=abc&state=' + encodeURIComponent(state), f);
   assert.equal(ok.status, 200); assert.equal(seen.tok[0].code, 'abc'); assert.equal(seen.tok[0].client_secret, 'gsec');
   const pk = await pkce(); assert.equal(pk.challenge, createHash('sha256').update(pk.verifier).digest('base64url'));
