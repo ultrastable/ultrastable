@@ -1027,7 +1027,6 @@ export default {
   "watchdog",
   "what-works-beat",
   "workers-tests",
-  "worklog",
   "write-back",
   "yearfail"
  ],
@@ -2479,19 +2478,6 @@ export default {
     "workflows": [
      "cleanroom"
     ]
-   },
-   {
-    "closing_probe": "grep:foundation/worklog.py::def reap",
-    "id": "worklog",
-    "kind": "governance",
-    "owner": "operations",
-    "server_owner": "ultrastable-tick",
-    "sla": "1h",
-    "summary": "WORK-RECORD-1: every request and session task is a work issue; records silent past stale_hours go back to the server lane with their next step.",
-    "trigger": "ultrastable-tick dispatch, lane runs, work-issue edits, daily backstop",
-    "workflows": [
-     "worklog"
-    ]
    }
   ],
   "workers": [
@@ -2897,12 +2883,6 @@ export default {
     "id": "workers-tests",
     "loops": [
      "workers-tests"
-    ]
-   },
-   {
-    "id": "worklog",
-    "loops": [
-     "worklog"
     ]
    }
   ]
