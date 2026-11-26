@@ -1,0 +1,11 @@
+{
+ "id": "Q-LEDGER-ultrastability-jsonl",
+ "title": "Q-LEDGER-ultrastability-jsonl: ops/ultrastability.jsonl grows without bound (2.2 MB, 17k rows)",
+ "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -m foundation saydo --check\n**Status:** open\n\nLEDGER-DEDUP-1 fixed ops/paths/attempts.jsonl. ops/ultrastability.jsonl is still appended every watchdog pass and read by foundation/saydo.py and foundation/research.py as row counts over time windows. Keep daily rollups in git that preserve those counts and move or archive the raw rows (D1 or R2, read back before deletion).\n\n**Prediction:** ops/ultrastability.jsonl size <= 400000 bytes within 72 h\n\n**Out of scope:** changing what any detector, claim or ledger reader concludes; deleting history that is not backed up.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation saydo --check` exits 0.\n",
+ "labels": [
+  "p2",
+  "agent-ready"
+ ],
+ "milestone": "Now",
+ "workstream": "Executor queue"
+}

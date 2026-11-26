@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-26-remaining-ledger-churn-is-backlogged",
+  "kind": "lesson",
+  "date": "2026-11-26",
+  "title": "Remaining ledger churn is backlogged",
+  "body": "ultrastability.jsonl and snapshot rewrites filed as Q-LEDGER-ultrastability-jsonl and Q-CHURN-snapshots with probes; not cut blindly because saydo/research/seedlife read them.",
+  "probe": "file:docs/issues/Q-CHURN-snapshots.json",
+  "session": "session_0156nqDukk9P9sEvpAwpKe2W"
+ },
+ "kind": "lesson",
+ "title": "Remaining ledger churn is backlogged",
+ "session": "session_0156nqDukk9P9sEvpAwpKe2W"
+}

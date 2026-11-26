@@ -1,0 +1,11 @@
+{
+ "id": "Q-CHURN-snapshots",
+ "title": "Q-CHURN-snapshots: watchdog rewrites runway.json and site/*-data.js when only timestamps moved",
+ "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -m foundation seedlife --check\n**Status:** open\n\nEach pass rewrites ops/runway.json (30-reading seed_verify window), ops/trajectory.json and site/*-data.js. Write them only when a non-timestamp value changes, per SUBSTANCE-1, keeping the 48 h seed verify reading that foundation/seedlife.py and seed/scripts/seedlife.py read.\n\n**Prediction:** watchdog commits per day that touch only timestamps <= 2 within 72 h\n\n**Out of scope:** changing what any detector, claim or ledger reader concludes; deleting history that is not backed up.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation seedlife --check` exits 0.\n",
+ "labels": [
+  "p2",
+  "agent-ready"
+ ],
+ "milestone": "Now",
+ "workstream": "Executor queue"
+}
