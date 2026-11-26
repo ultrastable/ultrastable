@@ -180,7 +180,7 @@ a rule enforced only by the platform is marked so, and the platform checks it fo
 - **STICKY-1**: Every system gives people a reason to come back. In this kit: `worker/src/stickiness.js`, `worker/src/vendor/core/stickiness.js`, `worker/test/stickiness.test.js`.
 - **DISCOVER-1**: Public by default, discoverable always. In this kit: `worker/src/discover.js`, `worker/test/discover.test.js`.
 - **LAUNCH-PATH-1**: Anyone can launch; no code agent, terminal or key. In this kit: `worker/src/apprepos.js`, `worker/test/apprepos.test.js`.
-- **BREADTH-1**: Suggested ideas are broad and living, not single-field. In this kit: `scripts/humanvoice.py`.
+- **BREADTH-1**: Suggested ideas are broad and living, not single-field. In this kit: checked by the platform.
 - **IMPROVE-1**: Automate back-end and front-end development; improve on its own. In this kit: `.github/workflows/improve.yml`, `autonomy/improve.json`, `scripts/improve.py`.
 - **SYNC-BOTH-WAYS-1**: Every system updates itself and the platform. In this kit: `.github/workflows/platform-sync.yml`.
 - **REDTEAM-1**: Red-team the system's own blind spots; the owner should never find a failure first. In this kit: `scripts/redteam.py`.

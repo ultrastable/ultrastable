@@ -18,5 +18,5 @@
     "replication-ledger.ultrastable.org": "https://replication-ledger.ultrastable.org/health",
     "unlearn.ultrastable.org": "https://unlearn.ultrastable.org/health"
   },
-  "closing_probe": "python3 -m foundation liveclaims --check"
+  "closing_probe": "python3 -m foundation liveclaims --check (also run inside claimcode --check)"
 }

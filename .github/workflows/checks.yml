@@ -56,6 +56,14 @@ jobs:
         run: |
           python3 -m foundation collisions --check
           python3 -m foundation collisions --prs
+      - name: The change is small enough to verify and revert alone (SMALL-CHANGE-1)
+        # ops PR 45 changed 3,194 files, 3,158 of them session scratch copies; a change that size cannot be reviewed, deployed or rolled back on its own
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          if [ -n "${BASE_SHA:-}" ]; then cd seed && python3 scripts/prsize.py --range "${BASE_SHA}...HEAD"; fi
+      - name: No new specification text on the public branch (DISCLOSE-1)
+        run: python3 -m foundation disclosure --check
       - name: Workflow minute-budget lint (cheap, runs first)
         run: python3 scripts/lint_workflows.py
       - name: Public docs complete and in sync with the code (DOCS-SYNC-1)
@@ -206,7 +214,6 @@ jobs:
           python3 -m foundation repostd --check  # REPO-STANDARD-1: one repository standard; the Worker and the kit carry the same one
           python3 -m foundation pointclick --check
           python3 -m foundation claimcode --check
-          python3 -m foundation liveclaims --check
           python3 -m foundation driftguard --check  # DRIFT-GUARD-1: every incident class has a check, detector and failure mode
           python3 -m foundation driftguard --crons  # DRIFT-GUARD-1: crons fit the account's plan limit; every tenant clock has a pulse route
           python3 -m foundation driftguard --handoff-lint  # DRIFT-GUARD-1: a deploy is verified by reading what it deployed, not the tick's /health
