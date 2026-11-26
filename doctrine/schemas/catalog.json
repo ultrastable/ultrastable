@@ -571,6 +571,22 @@
       "url": "open-loops.schema.json"
     },
     {
+      "name": "open-standards-baseline.json",
+      "description": "Contract for doctrine/open-standards-baseline.json",
+      "fileMatch": [
+        "doctrine/open-standards-baseline.json"
+      ],
+      "url": "open-standards-baseline.schema.json"
+    },
+    {
+      "name": "open-standards.json",
+      "description": "Contract for doctrine/open-standards.json",
+      "fileMatch": [
+        "doctrine/open-standards.json"
+      ],
+      "url": "open-standards.schema.json"
+    },
+    {
       "name": "orphans-baseline.json",
       "description": "Contract for doctrine/orphans-baseline.json",
       "fileMatch": [

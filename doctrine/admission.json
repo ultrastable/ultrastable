@@ -1,4 +1,5 @@
 {
+  "$schema": "../schemas/doctrine.schema.json",
   "_doc": "ADMIT-1 (Rowan, 2026-11-25): \"everything has to work together automatically and seamlessly from the beginning ... it has to all bootstrap autonomously.\" One row in doctrine/tenant-repos.json admits a tenant; every registry below is derived from that row, the tenant's instance.json and its doctrine/topology.json worker by foundation/admit.py, so the checks that enumerate tenants from these registries (progress, tenantpromo, fullstack, stickiness, clock, cost guard) see every live tenant. Read by foundation/admit.py: `admit --check` in checks, `admit --apply` in scripts/regen_generated.py on every merge.",
   "version": 1,
   "live_states": ["own-repo", "moving", "moved"],

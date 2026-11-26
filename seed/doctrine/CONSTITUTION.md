@@ -142,3 +142,6 @@ Each rule has a detector that sees it break and a remediation that repairs it, b
 - **every-manager-runs** (Rowan, 2026-11-25): Every manager is a running loop that owns code. The managers a system runs are one register, all on by default; the tick hires any switched-on manager with no runtime row and skips one that is switched off with a reason.
   - detector: `autonomy/managers.json`, `worker/test/managers.test.js`
   - remediation: `worker/src/managers.js`, `foundation/managers.py` (platform)
+- **open-standards** (Rowan, 2026-11-25): Every format the system runs on is an established open standard registered in doctrine/open-standards.json (JSON Schema for config, CloudEvents for event ledgers, OpenAPI for HTTP, Wrangler for infrastructure, Atom and JSON Feed for feeds, MCP and AGENTS.md for agents, and registered planned rows for the rest), a new bespoke format fails CI, and the baseline of older files drains by a daily loop.
+  - detector: `scripts/openstd.py`, `foundation/openstd.py` (platform)
+  - remediation: `scripts/openstd.py`, `foundation/openstd.py` (platform)

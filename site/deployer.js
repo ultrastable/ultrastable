@@ -76,6 +76,14 @@ export const selectOnly = (sql) => /^\s*(select|pragma\s+table_info)\b/i.test(sq
 export async function cfProxy(request, env, f) {
   const method = String(request.headers.get("x-cf-method") || "GET").toUpperCase(), path = String(request.headers.get("x-cf-path") || "");
   if (!cfAllowed(method, path)) return J({ ok: false, error: "not an allowed Cloudflare request: " + method + " " + path.split("?")[0] }, 403);
+  // AI-BINDING-1 (2026-11-26): CF_DEPLOY_TOKEN has no Workers AI permission, so every executor call through here got HTTP 401 for days and the
+  // self-coding loop shipped nothing. Model calls now go through the site's own AI binding, which needs no token.
+  const ai = method === "POST" && /^ai\/run\/(@cf\/[\w.\/-]+)$/.exec(path.split("?")[0]);
+  if (ai && env.AI) {
+    let j; try { j = await request.json(); } catch (e) { return J({ ok: false, error: "bad json" }, 400); }
+    try { return J({ success: true, result: await env.AI.run(ai[1], j), errors: [], messages: [] }); }
+    catch (e) { console.error("ai-binding", ai[1], e && e.message); return J({ success: false, errors: [{ code: "ai_run_failed", message: "the model did not answer; the detail is in the worker log" }] }, 502); }
+  }
   let body = ["GET", "DELETE"].includes(method) ? undefined : request.body;
   if (method === "POST" && /\/query$/.test(path.split("?")[0])) {
     const text = await request.text(); let j; try { j = JSON.parse(text); } catch (e) { return J({ ok: false, error: "bad json" }, 400); }
