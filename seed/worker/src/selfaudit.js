@@ -102,7 +102,14 @@ export async function ingestDeploys(db, { token, repo, fetch: f = fetch }) {
   const r = await f(`https://api.github.com/repos/${repo}/contents/ops/deploys.jsonl`, { headers: { authorization: 'Bearer ' + token, accept: 'application/vnd.github.raw', 'user-agent': 'ultrastable-selfaudit' } });
   if (!r.ok) return { status: `http-${r.status}`, ingested: 0 };
   let n = 0;
-  for (const line of (await r.text()).split('\n')) {
+  // READ-BUDGET-9: the ledger is append-only, so only the lines after the last pass are checked against outcomes. Every pass asked the database
+  // about every line of the file (13,830 single-row reads in 3 h, measured). The mark is the count of complete lines already seen for this
+  // repository; a file that got shorter (rewritten) or an unreadable mark starts a full pass again, and the per-line check keeps that idempotent.
+  const lines = (await r.text()).split('\n'), MARK = 'deploys_ingested', OVERLAP = 20;
+  let start = 0;
+  try { const m = JSON.parse(((await first(db, `SELECT value FROM org WHERE key = ?`, MARK)) || {}).value || 'null'); if (m && m.repo === repo && Number.isInteger(m.lines) && m.lines <= lines.length) start = Math.max(0, m.lines - OVERLAP); }
+  catch (e) { start = 0; }  // allow-silent: no org table or an unreadable mark is a full pass, never a skipped line
+  for (const line of lines.slice(start)) {
     let d; try { d = JSON.parse(line); } catch { continue; }
     if (!d || !d.at || !d.worker || !d.sha) continue;
     const id = `deploy:${d.worker}:${d.sha.slice(0, 12)}`;
@@ -112,5 +119,7 @@ export async function ingestDeploys(db, { token, repo, fetch: f = fetch }) {
       id, ok ? 'verified' : 'failed', `probe:live_matches_commit=${Boolean(d.live_matches_commit)} sha=${d.sha.slice(0, 12)} origin=${String(d.origin || 'unknown').replace(/[^a-z0-9-]/gi, '').slice(0, 24) || 'unknown'}`, String(d.at).replace('T', ' ').slice(0, 19));
     n++;
   }
-  return { status: 'ok', ingested: n };
+  try { await run(db, `INSERT INTO org (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value`, MARK, JSON.stringify({ repo, lines: Math.max(0, lines.length - 1) })); }
+  catch (e) { return { status: 'ok', ingested: n, checked: lines.length - start, mark_error: String(e && e.message).slice(0, 120) }; }  // in the loop's beat; the next pass reads the whole file again
+  return { status: 'ok', ingested: n, checked: lines.length - start };
 }

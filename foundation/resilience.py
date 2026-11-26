@@ -106,8 +106,8 @@ def probe(clock: dict, now: float, beats_of, cfg: dict) -> dict:
         st = "stopped"  # a clock with no beat at all was never started
     elif age <= 1.5 * exp:
         st = "ticking"
-    elif age <= cfg["stalled_after_intervals"] * exp:
-        st = "late"
+    elif age <= float(clock.get("stalled_after_intervals", cfg["stalled_after_intervals"])) * exp:
+        st = "late"  # a clock may set a tighter bound than the default: a weekly loop cannot wait three weeks for its restart
     else:
         st = "stopped"
     if clock.get("idle_when_no_work") and st != "ticking" and C.takeable_count() == 0:
@@ -145,6 +145,15 @@ def _get_json(url):
         return None
 
 
+def run_beats(clock: dict, runs: list[dict]) -> list[float]:
+    """Beats of a workflow clock from its runs. WORK-NOT-PULSE-1: a clock that declares `"beat": "success"` beats only on a run that succeeded (or is
+    still running, so a restart in flight is not restarted again); a run that started and failed did no work and is not a beat. The scout ran on
+    2026-11-24, a later step failed, nothing was committed, and the clock still read ticking: that is the failure this closes."""
+    if clock.get("beat") != "success":
+        return [C._ts(x["createdAt"]) for x in runs]
+    return [C._ts(x["createdAt"]) for x in runs if x.get("conclusion") == "success" or x.get("status") in ("queued", "in_progress", "waiting", "requested", "pending")]
+
+
 def _gh_beats(clock, root=REPO, fetch=None):
     import os
     if clock["source"] == "d1":
@@ -161,10 +170,10 @@ def _gh_beats(clock, root=REPO, fetch=None):
         return beats if read else None
     if clock["source"] == "workflow":
         try:
-            r = subprocess.run(["gh", "run", "list", "--repo", C.GH, "--workflow", clock["workflow"], "--limit", "60", "--json", "createdAt,event,status"], capture_output=True, text=True, timeout=60, encoding="utf-8")
+            r = subprocess.run(["gh", "run", "list", "--repo", C.GH, "--workflow", clock["workflow"], "--limit", "60", "--json", "createdAt,event,status,conclusion"], capture_output=True, text=True, timeout=60, encoding="utf-8")
             if r.returncode:
                 return None  # gh could not read (no token, API error): unmeasured, never a stall and never healthy
-            return [C._ts(x["createdAt"]) for x in json.loads(r.stdout or "[]")]
+            return run_beats(clock, json.loads(r.stdout or "[]"))
         except (OSError, subprocess.SubprocessError, ValueError, KeyError):
             return None
     return None
@@ -226,12 +235,27 @@ def _halted(root) -> str | None:
     return None
 
 
-def _paused(root) -> set:
+def repo_is_public(repo: str | None = None) -> bool:
+    """True only when GitHub says the repository is public; an unreadable answer is not public (the pause stays in force)."""
+    try:
+        r = subprocess.run(["gh", "api", "repos/" + (repo or C.GH), "--jq", ".private"], capture_output=True, text=True, timeout=30, encoding="utf-8")
+    except (OSError, subprocess.SubprocessError):
+        return False
+    return r.returncode == 0 and r.stdout.strip() == "false"
+
+
+def _paused(root, public=None) -> set:
+    """Workflows the Actions budget pauses. The budget guards private-repo minutes: scripts/actions_guard.py lets every workflow of a public repository
+    run, so the watchdog applies the same exemption (PAUSE-PARITY-1). Before this, `paused: true` (set by the budget loop on 2026-11-23) made the watchdog
+    skip the restart of every workflow clock while the workflows themselves were allowed to run. `public` is injected in tests; None asks GitHub."""
     try:
         b = json.loads((Path(root) / "actions-budget.json").read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return set()
-    return {"*"} if b.get("paused") else set(b.get("paused_workflows", []))
+    out = {"*"} if b.get("paused") else set(b.get("paused_workflows", []))
+    if out and (repo_is_public() if public is None else public):
+        return set()
+    return out
 
 
 def restart(clock: dict, cfg: dict, root=REPO, poke=http_poke, dispatch=gh_dispatch) -> dict:
@@ -263,14 +287,15 @@ def _item(root, cfg, clock, verdict, fails) -> str:
     return iid
 
 
-def run(root=REPO, apply=False, now=None, beats_of=None, poke=http_poke, dispatch=gh_dispatch, get=None) -> dict:
+def run(root=REPO, apply=False, now=None, beats_of=None, poke=http_poke, dispatch=gh_dispatch, get=None, public=None) -> dict:
     """One watchdog pass: probe every clock, restart the stopped ones within bounds, escalate the stubborn ones, write the beat."""
     root, cfg = Path(root), load(root)
     now = now or _now()
+    injected = beats_of is not None
     beats_of = beats_of or (lambda c: _gh_beats(c, root))
     rows = ledger.rows(root, cfg["ledger"]) if apply else ledger.rows(root, cfg["ledger"], branch=False)
     out = {"at": _iso(now), "clocks": [], "restarts": [], "escalated": [], "skipped": []}
-    halted, paused = _halted(root), _paused(root)
+    halted, paused = _halted(root), _paused(root, (False if injected else None) if public is None else public)  # injected beats mean a test: never ask GitHub
     new = []
     for clock in all_clocks(root):
         v = probe(clock, now, beats_of, cfg)

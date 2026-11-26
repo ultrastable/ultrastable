@@ -144,6 +144,78 @@ export default {
     "what": "Replication Ledger tenant beat (cron 23 * * * * on ultrastable-replication-ledger; a visit sparks one when the last is over two hours old): search OpenAlex for new replications and new landmark findings, file attempts under a verbatim-quote guard, check Crossref, recompute standings and log every move"
    },
    {
+    "expected_interval_s": 604800,
+    "id": "funding-maintenance",
+    "source": "workflow",
+    "what": "the weekly re-verification of funding registry rows at their primary sources"
+   },
+   {
+    "expected_interval_s": 86400,
+    "id": "cost-guard",
+    "source": "workflow",
+    "what": "the daily cost reading against budgets (D1 rows read, Workers AI neurons) and the criticality log"
+   },
+   {
+    "expected_interval_s": 604800,
+    "id": "backup-drill",
+    "source": "workflow",
+    "what": "the weekly export and restore drill of every D1 database and KV namespace"
+   },
+   {
+    "expected_interval_s": 86400,
+    "id": "social-post",
+    "source": "workflow",
+    "what": "the daily publish of gate-cleared posts and the thought-leadership pass"
+   },
+   {
+    "expected_interval_s": 604800,
+    "id": "demo-video",
+    "source": "workflow",
+    "what": "the weekly rebuild of the demo video from the storyboard (pushes to the storyboard also start it; only scheduled and dispatched runs are beats)"
+   },
+   {
+    "expected_interval_s": 604800,
+    "id": "outreach",
+    "source": "workflow",
+    "what": "the weekly outreach pass: programmes, packets, guard, queue and the intro lane"
+   },
+   {
+    "expected_interval_s": 86400,
+    "id": "spinoff",
+    "source": "workflow",
+    "what": "the daily spinoff pass over the idea queue and the free-tier headroom"
+   },
+   {
+    "expected_interval_s": 86400,
+    "id": "product-manager",
+    "source": "workflow",
+    "what": "the daily product manager pass: growth mix, insight findings, improvement items"
+   },
+   {
+    "expected_interval_s": 86400,
+    "id": "fleet",
+    "source": "workflow",
+    "what": "the daily fleet queue pass across every repository: dispositions, balance, drift (the tick Worker may also dispatch it; every run is a beat)"
+   },
+   {
+    "expected_interval_s": 86400,
+    "id": "issues",
+    "source": "workflow",
+    "what": "the daily issue sweep: triage and SLA (issue events also start the workflow; only scheduled and dispatched runs are beats)"
+   },
+   {
+    "expected_interval_s": 604800,
+    "id": "retriage",
+    "source": "workflow",
+    "what": "the weekly re-triage of open issues"
+   },
+   {
+    "expected_interval_s": 604800,
+    "id": "uiux",
+    "source": "workflow",
+    "what": "UIUX-1: the weekly browser audit of every user page and path"
+   },
+   {
     "expected_interval_s": 86400,
     "id": "cleanroom",
     "source": "workflow",
@@ -846,8 +918,10 @@ export default {
   "failure-audit",
   "findable",
   "first-run",
+  "fleet",
   "fleet-lane",
   "fleet-map",
+  "funding-maintenance",
   "funding-outreach",
   "funding-verify",
   "gap-register",
@@ -862,6 +936,7 @@ export default {
   "intent-yield",
   "issue-loop",
   "issue-triage",
+  "issues",
   "launch",
   "lifecycle",
   "liveness",
@@ -875,11 +950,13 @@ export default {
   "openstd",
   "org-profile",
   "orphan-artifacts",
+  "outreach",
   "outreach-send",
   "planning-roadmap",
   "platform-core-tests",
   "plussing",
   "predict-verify",
+  "product-manager",
   "product-manager-pass",
   "promote",
   "provenance-loop",
@@ -931,6 +1008,7 @@ export default {
   "transparency",
   "triggers",
   "trust-ledger",
+  "uiux",
   "uiux-loop",
   "ultrastability-loop",
   "ultrastable-agents",
@@ -2794,13 +2872,13 @@ export default {
  },
  "readings": {
   "access-check:claims_drift": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "access-check:spend": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
@@ -2812,19 +2890,19 @@ export default {
    "value": 0.0
   },
   "access-check:value": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "air-quality:claims_drift": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "air-quality:spend": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
@@ -2836,19 +2914,19 @@ export default {
    "value": 0.0
   },
   "air-quality:value": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "blindspot:claims_drift": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "blindspot:spend": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
@@ -2860,25 +2938,25 @@ export default {
    "value": 0.0
   },
   "blindspot:value": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 2.02
   },
   "claims_drift": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0
   },
   "country-snapshot:claims_drift": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "country-snapshot:spend": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
@@ -2890,25 +2968,25 @@ export default {
    "value": 0.0
   },
   "country-snapshot:value": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "deploy_health": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "free-tier-meter:claims_drift": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "free-tier-meter:spend": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
@@ -2920,31 +2998,31 @@ export default {
    "value": 0.0
   },
   "free-tier-meter:value": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "happy_paths": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "lessons_enforced": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.692
   },
   "loop-ledger:claims_drift": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "loop-ledger:spend": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
@@ -2956,19 +3034,19 @@ export default {
    "value": 0.0
   },
   "loop-ledger:value": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "numbers-board:claims_drift": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "numbers-board:spend": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
@@ -2980,25 +3058,25 @@ export default {
    "value": 0.0
   },
   "numbers-board:value": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "owner_interventions": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 62
   },
   "portfolio-board:claims_drift": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "portfolio-board:spend": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.0
@@ -3010,61 +3088,61 @@ export default {
    "value": 0.0
   },
   "portfolio-board:value": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "research_in_code": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.621
   },
   "second_loop_keep_rate": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "self_shipping": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.714
   },
   "spec_quality": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": false,
    "unmeasured": false,
-   "value": 0.632
+   "value": 0.667
   },
   "spend": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.805
   },
   "stalled_clocks": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 5
   },
   "ui_findings": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0
   },
   "unattended_horizon": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 730
   },
   "value": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T07:14:55Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 300.621

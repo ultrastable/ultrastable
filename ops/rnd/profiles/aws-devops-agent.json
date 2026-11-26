@@ -1,0 +1,51 @@
+{
+ "capabilities": {
+  "a2a-protocol": "s built-in integrations by securely connecting to your own agents via A2A, private or remote MCP servers, enabling integrations with additional",
+  "agent-memory": "se permission gap that would have failed silently in production and a memory leak in a long-running service. We're now extending it with the agent",
+  "agent-skills": "tools Training &amp; Certification Build and validate your AWS cloud skills and technical expertise Cloud term glossary Learn more about key clou",
+  "autonomous-pr": "ase management capability now runs that review automatically on every pull request across our engineering organization and multiple GitHub organizations",
+  "chat-entry": "itigation steps through your preferred communication channels such as Slack, ServiceNow, and PagerDuty. Proactively prevent future incidents AWS",
+  "cloud-background-agents": "Events and webinars Connect, collaborate, and learn from AWS experts in the cloud computing community Partner Network Collaborate with AWS partners to",
+  "idea-to-deploy": "ream Go beyond watching with guided labs and live Q&amp;A Build &amp; Deploy AI Agents 88% of agent pilots stall. Learn what the rest do different",
+  "incident-investigation": "ships to production with confidence. Post-deployment, it autonomously investigates incidents, provides root cause analysis and mitigation steps, and delivers targ",
+  "mcp-server": "by securely connecting to your own agents via A2A, private or remote MCP servers, enabling integrations with additional tools such as your org",
+  "multi-agent-roles": "k operational metrics and communicate insights with your team. Create custom agents that run on a cadence, like a daily database health report that check",
+  "observability": "to provide actionable recommendations that strengthen four key areas: observability, infrastructure optimization, deployment pipeline enhancement, and ap",
+  "other-cloud": "Frontier agent \u2013 AWS DevOps Agent \u2013 AWS Skip to main content Filter: All English Contact u",
+  "permission-guardrails": "tical verification to assess that infrastructure changes do not drift permissions outside of Well Architected best practices. By understanding your ful",
+  "scheduled-agents": "and mitigation steps, and delivers targeted recommendations to reduce recurring issues. It continuously learns your environment, building deep unders"
+ },
+ "errors": {},
+ "id": "aws-devops-agent",
+ "name": "AWS DevOps Agent",
+ "refreshed_at": "2026-11-26T06:46:33Z",
+ "sha": "aa7e10f109c6",
+ "sources_read": [
+  "https://aws.amazon.com/devops-agent/"
+ ],
+ "taxonomy": [
+  "a2a-protocol",
+  "agent-evals",
+  "agent-memory",
+  "agent-skills",
+  "agents-md",
+  "autonomous-pr",
+  "chat-entry",
+  "cloud-background-agents",
+  "cross-model-review",
+  "durable-execution",
+  "event-triggered-agents",
+  "existing-repo-adoption",
+  "idea-to-deploy",
+  "incident-investigation",
+  "mcp-server",
+  "multi-agent-roles",
+  "observability",
+  "other-cloud",
+  "permission-guardrails",
+  "sandboxed-execution",
+  "scheduled-agents",
+  "self-hostable",
+  "spend-budgets"
+ ]
+}

@@ -1,0 +1,52 @@
+{
+ "capabilities": {
+  "agent-memory": "everything in Free, plus PR reviews, higher rate limits, integration, Knowledge base, linter and SAST tool support, analytics, review fixes, and usage-bas",
+  "autonomous-pr": "New: Triage \u2014 a self-updating cross-repository queue that prioritizes pull requests by value and risk, so you always know what to review next. Explore Tr",
+  "chat-entry": "connections that controls what CodeRabbit Agent can access in a given Slack conversation.`,cta:`Learn about Scopes`,href:`/slack-agent/scopes`,co",
+  "cloud-background-agents": "or a failing CI check into a task that CodeRabbit's agent implements in the cloud, then delivers as a commit or a stacked pull request for you to appro",
+  "cross-model-review": "he plans before it. Capability Essentials Team Advanced Enterprise AI code review, Fix comments, MCP, and built-in Pre-Merge Checks Included Included I",
+  "event-triggered-agents": "es Custom Finishing Touch recipes let you define your own post-review automation. The number of custom recipes you can define per repository depends o",
+  "idea-to-deploy": "grade alone does not enroll you. Trials, CLI/IDE reviews, self-hosted deployments, custom limits, and exemptions are unchanged. For public repositories",
+  "mcp-server": "ricing Review Triage Explain Verify Secure Agents CLI and IDE API and MCP Admin Quickstart Changelog Support Discord Overview Git platforms Ove",
+  "observability": "permissions Multiple organizations Add organizations Set permissions Audit Logs Enterprise SSO Overview Okta SAML Google Workspace Microsoft Entra ID",
+  "other-cloud": "Microsoft Entra ID Other SAML 2.0 providers Self-hosted Git providers Azure DevOps Server SCIM directory sync User management API Self-hosted Cod",
+  "permission-guardrails": "ion administration Seat assignment Role-based access Custom roles and permissions Multiple organizations Add organizations Set permissions Audit Logs E",
+  "sandboxed-execution": "n't just read the code, but runs your app. Verify starts the app in a sandbox, uses the change the way a person would, and reports the bugs it hits",
+  "scheduled-agents": "rics IDE/CLI review metrics Review Usage Data Export Reports Overview Schedule reports Legacy Report Testing Custom reports Organization administrat",
+  "self-hostable": "kta SAML Google Workspace Microsoft Entra ID Other SAML 2.0 providers Self-hosted Git providers Azure DevOps Server SCIM directory sync User management",
+  "spend-budgets": "ume PR review activity, review availability may adjust under the Fair Usage Limits Policy . Enterprise\u2019s 12 reviews per hour is the baseline. Only new E"
+ },
+ "errors": {},
+ "id": "coderabbit",
+ "name": "CodeRabbit",
+ "refreshed_at": "2026-11-26T06:46:33Z",
+ "sha": "3c2841254434",
+ "sources_read": [
+  "https://docs.coderabbit.ai/management/plans"
+ ],
+ "taxonomy": [
+  "a2a-protocol",
+  "agent-evals",
+  "agent-memory",
+  "agent-skills",
+  "agents-md",
+  "autonomous-pr",
+  "chat-entry",
+  "cloud-background-agents",
+  "cross-model-review",
+  "durable-execution",
+  "event-triggered-agents",
+  "existing-repo-adoption",
+  "idea-to-deploy",
+  "incident-investigation",
+  "mcp-server",
+  "multi-agent-roles",
+  "observability",
+  "other-cloud",
+  "permission-guardrails",
+  "sandboxed-execution",
+  "scheduled-agents",
+  "self-hostable",
+  "spend-budgets"
+ ]
+}

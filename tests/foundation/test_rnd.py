@@ -40,6 +40,30 @@ class Rnd(unittest.TestCase):
         self.assertTrue({"sandboxed-execution", "spend-budgets"} <= set(later["rival-one"]["appeared"]))
         self.assertTrue(later["rival-one"]["changed"])
 
+    def test_a_capability_new_to_the_taxonomy_is_not_news(self):
+        d = make(); cfg = R.load(d)
+        R.refresh(d, cfg, lambda u: PAGE_A, NOW, True)
+        cfg["capabilities"].append({"id": "routines-word", "what": "says routines", "component": "loops-autonomy", "rx": "routines", "ours": "file:nope"})
+        (d / R.PATH).write_text(json.dumps(cfg))
+        later = R.refresh(d, R.load(d), lambda u: PAGE_A, NOW + dt.timedelta(days=7), True)
+        self.assertEqual(later["rival-one"]["appeared"], [])  # the page said it all along; only the regex is new
+        self.assertIn("routines-word", R.profiles(d)["rival-one"]["capabilities"])
+        third = R.refresh(d, R.load(d), lambda u: PAGE_B, NOW + dt.timedelta(days=14), True)
+        self.assertTrue({"sandboxed-execution", "spend-budgets"} <= set(third["rival-one"]["appeared"]))
+
+    def test_an_unreachable_source_loses_no_capability(self):
+        d = make(); cfg = R.load(d)
+        cfg["competitors"] = [{"id": "rival-one", "name": "Rival One", "sources": [{"url": "https://x.test/1", "kind": "page"}, {"url": "https://x.test/2", "kind": "page"}]}]
+        (d / R.PATH).write_text(json.dumps(cfg))
+        R.refresh(d, cfg, lambda u: PAGE_A if u.endswith("/1") else "<p>sandbox execution</p>", NOW, True)
+        def f(u):
+            if u.endswith("/2"): raise OSError("403")
+            return PAGE_A
+        later = R.refresh(d, cfg, f, NOW + dt.timedelta(days=7), True)
+        prof = R.profiles(d)["rival-one"]
+        self.assertEqual(later["rival-one"]["lost"], []); self.assertIn("sandboxed-execution", prof["capabilities"])
+        self.assertEqual(prof["sources_read"], ["https://x.test/1"]); self.assertIn("https://x.test/2", prof["errors"])
+
     def test_dead_source_is_recorded(self):
         d = make()
         def f(u):
@@ -67,7 +91,19 @@ class Rnd(unittest.TestCase):
         R.run(d, lambda u: PAGE_A, NOW, True)
         p = d / "docs/issues/Q-RND-GAP-cross-model-review.json"
         self.assertTrue(p.is_file())
-        self.assertIn("**Done check:** file:foundation/rescore.py", json.loads(p.read_text())["body"])
+        body = json.loads(p.read_text())["body"]
+        self.assertIn("**Done check:** cmd:python3 -m foundation rnd --proved cross-model-review", body)
+        self.assertIn("file:foundation/rescore.py", body)
+        from foundation import specgate
+        self.assertEqual(specgate.missing(body), [])  # SPEC-GATE-1: the loop's own filing passes the gate
+        for f in (d / "docs/issues").glob("Q-EXP-*.json"):
+            self.assertEqual(specgate.missing(json.loads(f.read_text())["body"]), [], f.name)
+        gaps = R.metrics(d)["competitor_coverage_gaps"]
+        self.assertGreaterEqual(gaps, 1); self.assertIn(f"competitor_coverage_gaps <= {gaps - 1} within 336 h", body)
+        self.assertFalse(R.probe_ok(d, R.PROVED + "cross-model-review"))
+        (d / "foundation").mkdir(exist_ok=True); (d / "foundation/rescore.py").write_text("# proof\n")
+        self.assertTrue(R.probe_ok(d, R.PROVED + "cross-model-review")); self.assertEqual(R.metrics(d)["competitor_coverage_gaps"], gaps - 1)
+        self.assertTrue(R.probe_ok(d, R.HOLDS + "'file:foundation/rescore.py'")); self.assertFalse(R.probe_ok(d, R.PROVED + "no-such-capability"))
 
     def test_triage_decisions_and_auto_rule(self):
         d = make()
@@ -79,6 +115,19 @@ class Rnd(unittest.TestCase):
         self.assertEqual(out["Q-SCOUT-claude-code-bbbbbbbb"], "adopted")
         self.assertEqual({r["id"] for r in S._rows(d, "adopted.jsonl")}, set(out))
         self.assertEqual(R.triage(d, R.load(d), NOW, True), [])  # decided once
+
+    def test_triage_reads_the_finding_not_the_item_boilerplate(self):
+        from foundation import scout as S
+        src = {"id": "cloudflare-blog", "topic": "agent platform"}
+        e = {"id": "x", "title": "How a WAF helps protect against a Java flaw", "link": "https://example.test/waf", "summary": "A vendor has released rules for matching requests; record the outcome."}
+        it = S.item(src, e, 2.0, ["gap:executor-merged-pr"])
+        text = R.finding_text(it["body"])
+        self.assertIn("WAF", text); self.assertNotIn("Decide:", text); self.assertNotIn("Done check", text)
+        e2 = dict(e, summary="A vendor published rules for matching traffic.")
+        body2 = S.item(src, e2, 2.0, ["gap:executor-merged-pr"])["body"]
+        for word in ("outcome", "adopt", "gap", "decline"):  # words of the item template, present in every finding the scout files
+            self.assertIn(word, S.tokens(body2)); self.assertNotIn(word, S.tokens(R.finding_text(body2)))
+        self.assertEqual(R.finding_text("no header at all"), "no header at all")
 
     def test_recorded_decisions_adopt_into_tasks_and_ship_feeds_back(self):
         d = make()

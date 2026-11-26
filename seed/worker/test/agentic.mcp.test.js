@@ -65,3 +65,32 @@ test('mcp: OTel execute_tool span', async () => {
   assert.equal(spans[0].a['gen_ai.tool.name'], 'ultrastable_tick_status');
   assert.ok(spans[0].a['gen_ai.tool.call.id']);
 });
+
+test('mcp: unsupported version answers UnsupportedProtocolVersionError', async () => {
+  // 2026-07-28 versioning: -32022 with the supported list and the requested value, in the body of a 400, from the header or from _meta
+  const { post } = rig();
+  let res = await post({ jsonrpc: '2.0', id: 7, method: 'tools/list' }, { 'mcp-protocol-version': '1900-01-01' });
+  assert.equal(res.status, 400);
+  let r = await res.json();
+  assert.equal(r.id, 7);
+  assert.equal(r.error.code, -32022);
+  assert.deepEqual(r.error.data, { supported: ['2026-07-28', '2025-11-25', '2025-06-18'], requested: '1900-01-01' });
+  res = await post({ jsonrpc: '2.0', id: 8, method: 'tools/list', params: { _meta: { 'io.modelcontextprotocol/protocolVersion': '1900-01-01' } } });
+  r = await res.json();
+  assert.equal(r.error.code, -32022);
+  assert.equal(r.error.data.requested, '1900-01-01');
+});
+
+test('mcp: a modern request is answered without a handshake and names the server', async () => {
+  const { post } = rig();
+  const meta = { 'io.modelcontextprotocol/protocolVersion': '2026-07-28' };
+  let r = await (await post({ jsonrpc: '2.0', id: 1, method: 'tools/list', params: { _meta: meta } })).json();
+  assert.ok(r.result.tools.length);
+  assert.equal(r.result._meta['io.modelcontextprotocol/serverInfo'].name, 'ultrastable-org');
+  r = await (await post({ jsonrpc: '2.0', id: 2, method: 'tools/call', params: { name: 'ultrastable_tick_status', arguments: {}, _meta: meta } }, { authorization: 'Bearer s3cret' })).json();
+  assert.equal(r.result.isError, false);
+  assert.ok(r.result._meta['io.modelcontextprotocol/serverInfo'].version);
+  // a legacy request keeps its legacy shape: no _meta is added
+  r = await (await post({ jsonrpc: '2.0', id: 3, method: 'tools/list' }, { 'mcp-protocol-version': '2025-11-25' })).json();
+  assert.equal(r.result._meta, undefined);
+});

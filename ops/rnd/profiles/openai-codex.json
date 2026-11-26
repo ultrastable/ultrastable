@@ -1,8 +1,59 @@
 {
- "capabilities": {},
- "errors": {},
+ "capabilities": {
+  "agent-evals": "der Overview Migration guide Node reference Safety in building agents Evals Getting started Working with evals Prompt optimizer External models G",
+  "agent-memory": "ite Usage and cost dots Meet dots Getting started Messaging Tasks and memory Computers and apps Controls ChatGPT Space Overview Getting started Pa",
+  "agent-skills": "ect tools and data MCP servers Secure MCP Tunnel Build tool workflows Skills Tool search Programmatic tool calling Async tool calling Computer and",
+  "agents-md": "fig Reference Environment Variables Sample Config Agent configuration AGENTS.md Subagents Speed Rules Extend ChatGPT and Codex Record &amp; Replay MC",
+  "autonomous-pr": "es and check results, request follow-up changes, and commit or open a pull request when you&#39;re ready. Quickstart Get started with Codex Cloud Choose",
+  "chat-entry": "on Non-interactive mode Third-party integrations GitHub GitLab (Beta) Slack Linear Reference CLI customization Developer commands Developer setti",
+  "cloud-background-agents": "Hooks Environments Modes Local environments Git worktrees Codex Cloud Cloud environments Build with Codex Codex SDK App Server GitHub Action Non-interactive m",
+  "cross-model-review": "indows Desktop app Windows sandbox WSL Overview Development workflows Code review Integrated terminal Extend and automate Build skills Site tools (WebM",
+  "event-triggered-agents": "ackground mode Streaming WebSocket mode Mid-turn steering Multi-agent Webhooks File inputs Compaction Counting tokens SDKs and CLI OpenAI SDK OpenAI",
+  "existing-repo-adoption": "w the results. 01 Prepare your development workflow Let Codex inspect your repositories and prepare their dependencies and tools. Review the checks before pu",
+  "idea-to-deploy": "io &amp; voice Build speech and realtime voice experiences Production Deploy and scale your API integrations API reference Explore endpoints, para",
+  "mcp-server": "nd artifacts Tools and integrations Web search Computer use Functions MCP connections Plugins Vaults Multi-agent Observability and usage Tracin",
+  "multi-agent-roles": "tion state Background mode Streaming WebSocket mode Mid-turn steering Multi-agent Webhooks File inputs Compaction Counting tokens SDKs and CLI OpenAI S",
+  "observability": "rch Computer use Functions MCP connections Plugins Vaults Multi-agent Observability and usage Tracing Errors and recovery API reference Bedrock Managed A",
+  "other-cloud": "ad identity federation Federation rules X.509 certificates Kubernetes AWS Microsoft Azure Google Cloud Oracle Cloud Infrastructure GitHub Actio",
+  "permission-guardrails": "ions Models and providers Running agents Sandbox agents Orchestration Guardrails Results and state Integrations and observability Evaluate agent workf",
+  "sandboxed-execution": "ions Scheduled automations Automatic review Webhooks Environments and sandboxes OpenAI-hosted sandboxes Self-hosted sandboxes Sandbox lifecycle Pre-w",
+  "scheduled-agents": "s Sessions Run and continue sessions Events and items Manage sessions Scheduled automations Automatic review Webhooks Environments and sandboxes Open",
+  "self-hostable": "ic review Webhooks Environments and sandboxes OpenAI-hosted sandboxes Self-hosted sandboxes Sandbox lifecycle Pre-warm sandboxes Sandbox security Files",
+  "spend-budgets": "e GitHub Actions SPIFFE Idira IP egress ranges Operations Rate limits Spend limits Admin APIs Error codes Overview Plugins Sign in with ChatGPT Commerce"
+ },
+ "errors": {
+  "https://github.com/openai/codex/releases.atom": "HTTPError: HTTP Error 403: Forbidden"
+ },
  "id": "openai-codex",
  "name": "OpenAI Codex",
- "refreshed_at": "2026-11-12T20:05:06Z",
- "sha": "ceb5b9679fdc"
+ "refreshed_at": "2026-11-26T06:46:33Z",
+ "sha": "ce8d263d146d",
+ "sources_read": [
+  "https://developers.openai.com/codex/cloud"
+ ],
+ "taxonomy": [
+  "a2a-protocol",
+  "agent-evals",
+  "agent-memory",
+  "agent-skills",
+  "agents-md",
+  "autonomous-pr",
+  "chat-entry",
+  "cloud-background-agents",
+  "cross-model-review",
+  "durable-execution",
+  "event-triggered-agents",
+  "existing-repo-adoption",
+  "idea-to-deploy",
+  "incident-investigation",
+  "mcp-server",
+  "multi-agent-roles",
+  "observability",
+  "other-cloud",
+  "permission-guardrails",
+  "sandboxed-execution",
+  "scheduled-agents",
+  "self-hostable",
+  "spend-budgets"
+ ]
 }

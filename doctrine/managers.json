@@ -1,5 +1,5 @@
 {
- "_doc": "MANAGERS-1 (Rowan, 2026-11-25): \"All of those managers need to own their own code and make sure that all open loops are closed ... operate just like a full-time team\". The platform side of the manager register: for every role file in agents/roles, the code that runs it (`runs`), its clocks (`runtime` is the tick's dispatch beat, roles.last_tick_at, read live by `managers --live`; `clock:<id>` is a clock in doctrine/clocks.json; `workflow:<file>` is a scheduled workflow), a closing probe that is not its own role file (`probe`) and the code that settles what it files (`settles`). Its loops are not listed here: they are the rows of instances/ultrastable/loop-registry.json it owns, and it must own at least one besides role-<id>. Which managers a system runs, and how a deployment switches one off, is seed/autonomy/managers.json (the one register every seeded system carries). `seed_absent` records, with a reason, a platform manager the seed does not carry; `platform_absent` the reverse. Read by foundation/managers.py: `python3 -m foundation managers --check` (in checks), `--report` (the matrix), `--live` (detector managers-live). Ultrastable is the foundation for any autonomous system. `closure` is the reading behind `managers --closure`: a manager with at least min_ended ended items of which more than max_shelved_share ended shelved (closed by the time limit with no fix) files more than it closes. `managers --clocks` lists scheduled manager workflows that are not clocks in doctrine/clocks.json.",
+ "_doc": "MANAGERS-1 (Rowan, 2026-11-25): \"All of those managers need to own their own code and make sure that all open loops are closed ... operate just like a full-time team\". The platform side of the manager register: for every role file in agents/roles, the code that runs it (`runs`), its clocks (`runtime` is the tick's dispatch beat, roles.last_tick_at, read live by `managers --live`; `clock:<id>` is a clock in doctrine/clocks.json; `workflow:<file>` is a scheduled workflow), a closing probe that is not its own role file (`probe`) and the code that settles what it files (`settles`). Its loops are not listed here: they are the rows of instances/ultrastable/loop-registry.json it owns, and it must own at least one besides role-<id>. Which managers a system runs, and how a deployment switches one off, is seed/autonomy/managers.json (the one register every seeded system carries). `seed_absent` records, with a reason, a platform manager the seed does not carry; `platform_absent` the reverse. Read by foundation/managers.py: `python3 -m foundation managers --check` (in checks), `--report` (the matrix), `--live` (detector managers-live). Ultrastable is the foundation for any autonomous system. `closure` is the reading behind `managers --closure`: a manager with at least min_ended ended items of which more than max_shelved_share ended shelved (closed by the time limit with no fix) files more than it closes. `managers --clocks` lists scheduled manager workflows that are not clocks in doctrine/clocks.json. ROLE-ALIGN-1 (Rowan, 2026-11-26: \"What are their roles and how do they align with human software development roles? Implement all automated roles in code.\"): every row also names the human software-organization title the role stands in for (`human_role`), the decisions it makes on its own (`decides`), the ledgers and measurements it reads (`inputs`, paths that exist), the roles it hands work to (`hands_to`) and its `cadence`. `software_roles` is the coverage map: every standard function of a software organization is `covered` by role ids and by code one of those roles owns (in its `runs` or in the system_path of a loop it owns), or is a `gap` with a filed Q-ROLE-* item; `missing` with an `item` records the part of a covered function no code does yet, and `dedicated` names the doctrine/team.json role that takes the function over when its TEAM-1 phase gate opens. `managers --check` enforces all of it and `managers --roles` prints it.",
  "marker": "MANAGERS-1",
  "version": 1,
  "seed_register": "seed/autonomy/managers.json",
@@ -23,7 +23,25 @@
     "workflow:spinoff.yml"
    ],
    "probe": "cmd:python3 -m foundation criticality --check",
-   "settles": "grep:seed/worker/src/tick.js::async reconcile(db, ctx)"
+   "settles": "grep:seed/worker/src/tick.js::async reconcile(db, ctx)",
+   "human_role": "head of engineering / portfolio director",
+   "decides": [
+    "capacity per project",
+    "start, pause or stop a project or spinoff",
+    "rebalance when fix-only cycles crowd out improvements",
+    "keep growth work ahead of fixes when the growth share falls"
+   ],
+   "inputs": [
+    "ops/criticality.jsonl",
+    "ops/spinoff/ledger.jsonl",
+    "seed/autonomy/policy.json"
+   ],
+   "hands_to": [
+    "program-manager",
+    "project-manager",
+    "product-manager"
+   ],
+   "cadence": "every 6 ticks (hourly); spinoff.yml daily"
   },
   "program-manager": {
    "runs": [
@@ -38,7 +56,23 @@
     "workflow:fleet.yml"
    ],
    "probe": "cmd:python3 -m foundation lanewatch --check",
-   "settles": "grep:foundation/queue.py::def close"
+   "settles": "grep:foundation/queue.py::def close",
+   "human_role": "technical program manager",
+   "decides": [
+    "order of items across projects",
+    "deploy-raising and cost-cutting work first while k is under its floor",
+    "the next program item with owner, trigger and probe"
+   ],
+   "inputs": [
+    "ops/criticality.jsonl",
+    "docs/issues",
+    "doctrine/fleet.json"
+   ],
+   "hands_to": [
+    "project-manager",
+    "portfolio-manager"
+   ],
+   "cadence": "every 4 ticks (40 min); fleet.yml daily"
   },
   "project-manager": {
    "runs": [
@@ -53,7 +87,24 @@
     "workflow:retriage.yml"
    ],
    "probe": "cmd:python3 -m foundation dispose --check",
-   "settles": "grep:foundation/dispose.py::def mark_fixed"
+   "settles": "grep:foundation/dispose.py::def mark_fixed",
+   "human_role": "engineering manager / delivery lead",
+   "decides": [
+    "priority and owner label of each new issue",
+    "which ready item is dispatched next",
+    "release of a stale claim",
+    "disposition of an item past its limit (fixed, gate or shelved)"
+   ],
+   "inputs": [
+    "docs/issues",
+    "doctrine/dispose.json",
+    "ops/issue-lifecycle.jsonl"
+   ],
+   "hands_to": [
+    "staff",
+    "reviewer"
+   ],
+   "cadence": "every tick (10 min); issues.yml daily, retriage.yml weekly"
   },
   "product-manager": {
    "runs": [
@@ -69,7 +120,26 @@
     "workflow:product-manager.yml"
    ],
    "probe": "cmd:python3 -m foundation improve --check",
-   "settles": "grep:foundation/insight.py::def settle"
+   "settles": "grep:foundation/insight.py::def settle",
+   "human_role": "product manager",
+   "decides": [
+    "which growth and improvement items are filed",
+    "rank of proposed pluses against the roadmap",
+    "acceptance criteria and prediction of each accepted item",
+    "keep or replace a change once its metric is settled"
+   ],
+   "inputs": [
+    "doctrine/growth.json",
+    "ops/insight/findings.json",
+    "doctrine/scout.json",
+    "doctrine/market.json"
+   ],
+   "hands_to": [
+    "project-manager",
+    "staff",
+    "uiux-manager"
+   ],
+   "cadence": "every 3 ticks (30 min); product-manager.yml daily, scout weekly"
   },
   "staff": {
    "runs": [
@@ -82,7 +152,22 @@
     "clock:executor"
    ],
    "probe": "cmd:python3 -m foundation substance --check",
-   "settles": "grep:seed/worker/src/doer.js::export async function executeStep"
+   "settles": "grep:seed/worker/src/doer.js::export async function executeStep",
+   "human_role": "software engineer",
+   "decides": [
+    "how to build the claimed item",
+    "whether a change is substantive enough to open a pull request",
+    "which plus to propose after a merge"
+   ],
+   "inputs": [
+    "docs/issues",
+    "ops/executor-log.jsonl",
+    "doctrine/substance.json"
+   ],
+   "hands_to": [
+    "reviewer"
+   ],
+   "cadence": "every tick (10 min); executor at least every 6 h while work is takeable"
   },
   "reviewer": {
    "runs": [
@@ -94,7 +179,23 @@
     "runtime"
    ],
    "probe": "cmd:python3 -m foundation loops --verify",
-   "settles": "grep:foundation/mergeaudit.py::def probe"
+   "settles": "grep:foundation/mergeaudit.py::def probe",
+   "human_role": "code reviewer / QA engineer",
+   "decides": [
+    "pass or fail of a claimed result, with evidence",
+    "whether a green pull request merges",
+    "one plus per review"
+   ],
+   "inputs": [
+    "ops/worker-merge-evidence.jsonl",
+    "ops/checks-session.jsonl",
+    "instances/ultrastable/loop-registry.json"
+   ],
+   "hands_to": [
+    "operations",
+    "staff"
+   ],
+   "cadence": "every tick (10 min); checks.yml on every pull request"
   },
   "operations": {
    "runs": [
@@ -108,7 +209,26 @@
     "clock:watchdog"
    ],
    "probe": "cmd:python3 -m foundation clock --check",
-   "settles": "grep:foundation/failure_audit.py::def _close"
+   "settles": "grep:foundation/failure_audit.py::def _close",
+   "human_role": "site reliability engineer / release manager",
+   "decides": [
+    "restart of a stopped clock",
+    "open or close an incident from a detector reading",
+    "merge of a green pull request and refresh of a stale branch",
+    "propose a trust rung change by pull request"
+   ],
+   "inputs": [
+    "doctrine/clocks.json",
+    "doctrine/detectors.json",
+    "ops/resilience.jsonl",
+    "ops/failure-audit-state.json"
+   ],
+   "hands_to": [
+    "staff",
+    "infrastructure-manager",
+    "reviewer"
+   ],
+   "cadence": "every tick (10 min); watchdog every 12 h"
   },
   "infrastructure-manager": {
    "runs": [
@@ -124,7 +244,24 @@
     "workflow:backup-drill.yml"
    ],
    "probe": "cmd:python3 -m foundation topology --check",
-   "settles": "grep:foundation/queue.py::def close"
+   "settles": "grep:foundation/queue.py::def close",
+   "human_role": "platform engineer / FinOps",
+   "decides": [
+    "file each undeclared or drifted Cloudflare resource",
+    "narrow the queue to cost-cutting work on a budget breach",
+    "pass or fail of the weekly backup restore drill"
+   ],
+   "inputs": [
+    "doctrine/topology.json",
+    "ops/cost.jsonl",
+    "ops/deploys.jsonl",
+    "ops/cost-thresholds.json"
+   ],
+   "hands_to": [
+    "operations",
+    "staff"
+   ],
+   "cadence": "every 2 ticks (20 min); cost-guard.yml daily, backup-drill.yml weekly"
   },
   "funding-manager": {
    "runs": [
@@ -136,7 +273,21 @@
     "workflow:funding-maintenance.yml"
    ],
    "probe": "file:scripts/funding_verify.py",
-   "settles": "grep:foundation/queue.py::def close"
+   "settles": "grep:foundation/queue.py::def close",
+   "human_role": "grants / fundraising lead",
+   "decides": [
+    "promote or drop a funding registry row after reading its primary source",
+    "which programmes come first by deadline and fit"
+   ],
+   "inputs": [
+    "instances/ultrastable/funding/registry.json",
+    "outreach/state.json"
+   ],
+   "hands_to": [
+    "outreach-manager",
+    "outreach-coordinator"
+   ],
+   "cadence": "every 6 ticks (hourly); funding-maintenance.yml weekly"
   },
   "outreach-manager": {
    "runs": [
@@ -149,7 +300,24 @@
     "workflow:outreach.yml"
    ],
    "probe": "file:scripts/test_outreach_intro.py",
-   "settles": "grep:scripts/outreach.py::no reply after the last follow-up"
+   "settles": "grep:scripts/outreach.py::no reply after the last follow-up",
+   "human_role": "business development / partnerships outreach",
+   "decides": [
+    "which programme or prospect organization is queued, inside the caps",
+    "follow up or stop after the last follow-up",
+    "suppress a target on opt-out or bounce"
+   ],
+   "inputs": [
+    "outreach/gate.json",
+    "outreach/suppression.json",
+    "outreach/prospects.json",
+    "outreach/state.json"
+   ],
+   "hands_to": [
+    "outreach-coordinator",
+    "funding-manager"
+   ],
+   "cadence": "every 3 ticks (30 min); outreach.yml weekly"
   },
   "outreach-coordinator": {
    "runs": [
@@ -163,7 +331,24 @@
     "workflow:social-post.yml"
    ],
    "probe": "cmd:python3 -m foundation tenantpromo --check",
-   "settles": "grep:seed/worker/src/humans.js::human_inbox"
+   "settles": "grep:seed/worker/src/humans.js::human_inbox",
+   "human_role": "communications coordinator / social media manager",
+   "decides": [
+    "which queued post is published, inside the gate's caps",
+    "which agent owns a target, so nobody is contacted twice",
+    "move a target forward when its deadline nears"
+   ],
+   "inputs": [
+    "social/gate.json",
+    "outreach/state.json",
+    "foundation/data/needs-you.json"
+   ],
+   "hands_to": [
+    "portfolio-manager",
+    "outreach-manager",
+    "marketing-manager"
+   ],
+   "cadence": "every tick (10 min); social-post.yml daily"
   },
   "research-publisher": {
    "runs": [
@@ -176,7 +361,23 @@
     "clock:scout"
    ],
    "probe": "cmd:python3 -m foundation research --check",
-   "settles": "grep:foundation/research.py::def experiments"
+   "settles": "grep:foundation/research.py::def experiments",
+   "human_role": "research lead / technical author",
+   "decides": [
+    "which finding gets an item or an experiment",
+    "settle or reopen an experiment from its measurement",
+    "which paper is regenerated and published"
+   ],
+   "inputs": [
+    "research/studies",
+    "doctrine/research.json",
+    "ops/research"
+   ],
+   "hands_to": [
+    "reviewer",
+    "marketing-manager"
+   ],
+   "cadence": "every 6 ticks (hourly); scout.yml weekly"
   },
   "marketing-manager": {
    "runs": [
@@ -191,7 +392,24 @@
     "workflow:demo-video.yml"
    ],
    "probe": "cmd:python3 -m foundation promote --check",
-   "settles": "grep:foundation/promote.py::def outcome"
+   "settles": "grep:foundation/promote.py::def outcome",
+   "human_role": "marketing manager / developer relations",
+   "decides": [
+    "which channels fit, computed from the fact bank",
+    "re-weight a channel from its recorded outcomes",
+    "which paper becomes the next post"
+   ],
+   "inputs": [
+    "doctrine/promotion.json",
+    "outreach/facts.json",
+    "doctrine/thought.json",
+    "video/storyboard.json"
+   ],
+   "hands_to": [
+    "outreach-coordinator",
+    "product-manager"
+   ],
+   "cadence": "every 6 ticks (hourly); social-post.yml daily, demo-video.yml weekly"
   },
   "legal-ip-manager": {
    "runs": [
@@ -203,7 +421,23 @@
     "runtime"
    ],
    "probe": "cmd:python3 -m foundation publication --check",
-   "settles": "grep:foundation/publication.py::def fix_headers"
+   "settles": "grep:foundation/publication.py::def fix_headers",
+   "human_role": "legal counsel / licence compliance (drafts, never legal advice)",
+   "decides": [
+    "block a public file that lacks its licence, notice or header",
+    "flag a dependency whose licence is outside the policy",
+    "refuse admin material brought back into the template"
+   ],
+   "inputs": [
+    "doctrine/publication.json",
+    "doctrine/dependency-licences.json",
+    "doctrine/template-boundary.json"
+   ],
+   "hands_to": [
+    "staff",
+    "portfolio-manager"
+   ],
+   "cadence": "every 12 ticks (2 h); checks.yml on every pull request"
   },
   "customer-success": {
    "runs": [
@@ -215,7 +449,23 @@
     "runtime"
    ],
    "probe": "cmd:python3 -m foundation seedlife --check",
-   "settles": "grep:foundation/queue.py::def close"
+   "settles": "grep:foundation/queue.py::def close",
+   "human_role": "customer success / support engineer",
+   "decides": [
+    "whether a deployed seed is admitted as running itself",
+    "file the documentation gap behind an unanswered question",
+    "hand feedback that changes ranking to the product manager"
+   ],
+   "inputs": [
+    "doctrine/seed-deploys.json",
+    "doctrine/user-path.json",
+    "ops/seed-launches.jsonl"
+   ],
+   "hands_to": [
+    "product-manager",
+    "staff"
+   ],
+   "cadence": "every 3 ticks (30 min)"
   },
   "org-designer": {
    "runs": [
@@ -227,7 +477,22 @@
     "runtime"
    ],
    "probe": "cmd:python3 -m foundation managers --check",
-   "settles": "grep:seed/worker/src/managers.js::export async function hireStep"
+   "settles": "grep:seed/worker/src/managers.js::export async function hireStep",
+   "human_role": "people operations / org design",
+   "decides": [
+    "which roles a system should run, by phase",
+    "hire a switched-on manager that has no runtime row",
+    "propose a role for a repeated unowned task, by pull request"
+   ],
+   "inputs": [
+    "doctrine/team.json",
+    "doctrine/managers.json",
+    "instances/ultrastable/loop-registry.json"
+   ],
+   "hands_to": [
+    "portfolio-manager"
+   ],
+   "cadence": "every 12 ticks (2 h)"
   },
   "design-manager": {
    "runs": [
@@ -240,7 +505,23 @@
     "clock:a11y"
    ],
    "probe": "cmd:python3 -m foundation design --check",
-   "settles": "grep:foundation/design.py::def evaluate"
+   "settles": "grep:foundation/design.py::def evaluate",
+   "human_role": "design lead / design system owner",
+   "decides": [
+    "the personality of a new system, selected from the library",
+    "the verdict of a design experiment at its planned sample",
+    "which blue-sky idea becomes an experiment"
+   ],
+   "inputs": [
+    "doctrine/design.json",
+    "doctrine/design-experiments.json"
+   ],
+   "hands_to": [
+    "uiux-manager",
+    "staff",
+    "reviewer"
+   ],
+   "cadence": "every 6 ticks (hourly); a11y.yml weekly"
   },
   "uiux-manager": {
    "runs": [
@@ -254,11 +535,315 @@
     "workflow:uiux.yml"
    ],
    "probe": "cmd:python3 -m foundation uiux --check",
-   "settles": "grep:foundation/uiux.py::def settle_experiments"
+   "settles": "grep:foundation/uiux.py::def settle_experiments",
+   "human_role": "UX researcher / UX designer",
+   "decides": [
+    "file one item per audit finding or fallen user path",
+    "keep or drop an A/B arm at its pre-registered sample",
+    "re-baseline the visual fingerprint after an intended redesign"
+   ],
+   "inputs": [
+    "doctrine/uiux.json",
+    "ops/uiux/baseline.json",
+    "doctrine/stakeholders.json",
+    "doctrine/design-experiments.json"
+   ],
+   "hands_to": [
+    "staff",
+    "design-manager",
+    "product-manager"
+   ],
+   "cadence": "every 6 ticks (hourly); uiux.yml weekly"
   }
  },
  "closure": {
   "min_ended": 5,
   "max_shelved_share": 0.5
- }
+ },
+ "software_roles": [
+  {
+   "id": "product-management",
+   "function": "product management",
+   "status": "covered",
+   "roles": [
+    "product-manager"
+   ],
+   "code": [
+    "foundation/pm.py",
+    "foundation/improve.py"
+   ]
+  },
+  {
+   "id": "program-delivery-management",
+   "function": "program and delivery management",
+   "status": "covered",
+   "roles": [
+    "program-manager",
+    "project-manager"
+   ],
+   "code": [
+    "foundation/fleet.py",
+    "foundation/dispose.py"
+   ]
+  },
+  {
+   "id": "engineering-management",
+   "function": "engineering management",
+   "status": "covered",
+   "roles": [
+    "portfolio-manager",
+    "program-manager"
+   ],
+   "code": [
+    "seed/worker/src/tick.js",
+    "seed/worker/src/critloop.js"
+   ]
+  },
+  {
+   "id": "software-engineering",
+   "function": "software engineering",
+   "status": "covered",
+   "roles": [
+    "staff"
+   ],
+   "code": [
+    "foundation/executor.py",
+    "seed/worker/src/doer.js"
+   ]
+  },
+  {
+   "id": "code-review",
+   "function": "code review",
+   "status": "covered",
+   "roles": [
+    "reviewer"
+   ],
+   "code": [
+    "foundation/mergeaudit.py",
+    "seed/worker/src/lane.js"
+   ]
+  },
+  {
+   "id": "qa-test",
+   "function": "QA and test",
+   "status": "covered",
+   "roles": [
+    "reviewer",
+    "infrastructure-manager"
+   ],
+   "code": [
+    ".github/workflows/checks.yml",
+    ".github/workflows/workers-tests.yml"
+   ]
+  },
+  {
+   "id": "release-management",
+   "function": "release management",
+   "status": "covered",
+   "roles": [
+    "operations",
+    "infrastructure-manager"
+   ],
+   "code": [
+    "scripts/lane.sh",
+    "deploy/deploy-site.mjs",
+    "deploy/deploy-workers.mjs"
+   ]
+  },
+  {
+   "id": "sre-operations",
+   "function": "SRE and operations",
+   "status": "covered",
+   "roles": [
+    "operations"
+   ],
+   "code": [
+    "foundation/resilience.py",
+    "foundation/failure_audit.py",
+    "seed/worker/src/sweeper.js"
+   ]
+  },
+  {
+   "id": "platform-infrastructure",
+   "function": "platform and infrastructure",
+   "status": "covered",
+   "roles": [
+    "infrastructure-manager"
+   ],
+   "code": [
+    "foundation/topology.py",
+    "foundation/backup.py"
+   ]
+  },
+  {
+   "id": "security",
+   "function": "security",
+   "status": "covered",
+   "roles": [
+    "staff",
+    "operations"
+   ],
+   "code": [
+    "foundation/supplychain.py",
+    "foundation/boundary.py"
+   ],
+   "dedicated": "security-compliance",
+   "item": "Q-ROLE-security",
+   "missing": "no code reads the repositories' open secret-scanning and Dependabot alerts; the supply-chain loop sits with the staff pool until the security and compliance role is active"
+  },
+  {
+   "id": "data-analytics",
+   "function": "data and analytics",
+   "status": "covered",
+   "roles": [
+    "product-manager",
+    "portfolio-manager"
+   ],
+   "code": [
+    "foundation/insight.py",
+    "seed/worker/src/tick.js"
+   ],
+   "dedicated": "data-analyst"
+  },
+  {
+   "id": "ux-research",
+   "function": "UX research",
+   "status": "covered",
+   "roles": [
+    "uiux-manager"
+   ],
+   "code": [
+    "foundation/uiux.py",
+    "scripts/uiux_audit.mjs"
+   ]
+  },
+  {
+   "id": "ui-design",
+   "function": "UI design",
+   "status": "covered",
+   "roles": [
+    "design-manager"
+   ],
+   "code": [
+    "foundation/design.py",
+    "scripts/a11y_audit.mjs"
+   ]
+  },
+  {
+   "id": "technical-writing",
+   "function": "technical writing and docs",
+   "status": "covered",
+   "roles": [
+    "portfolio-manager",
+    "operations"
+   ],
+   "code": [
+    "foundation/docs_audit.py",
+    "foundation/claims.py",
+    "scripts/regen_generated.py"
+   ]
+  },
+  {
+   "id": "developer-relations",
+   "function": "developer relations",
+   "status": "covered",
+   "roles": [
+    "marketing-manager",
+    "operations"
+   ],
+   "code": [
+    "foundation/promote.py",
+    "doctrine/agent-standards.json"
+   ],
+   "dedicated": "community-manager"
+  },
+  {
+   "id": "marketing",
+   "function": "marketing",
+   "status": "covered",
+   "roles": [
+    "marketing-manager",
+    "outreach-coordinator"
+   ],
+   "code": [
+    "foundation/thought.py",
+    "scripts/social_post.py"
+   ]
+  },
+  {
+   "id": "sales-partnerships",
+   "function": "sales and partnerships",
+   "status": "gap",
+   "roles": [],
+   "code": [],
+   "dedicated": "sales-partnerships",
+   "item": "Q-ROLE-sales-partnerships",
+   "missing": "the outreach manager's intro lane introduces the work to organizations, but no code keeps a lead list with a next step per lead, prepares a discovery call or tracks a partner programme"
+  },
+  {
+   "id": "customer-support-success",
+   "function": "customer support and success",
+   "status": "covered",
+   "roles": [
+    "customer-success"
+   ],
+   "code": [
+    "foundation/seedadmit.py",
+    ".github/workflows/first-run.yml"
+   ]
+  },
+  {
+   "id": "finance-finops",
+   "function": "finance and FinOps",
+   "status": "covered",
+   "roles": [
+    "infrastructure-manager",
+    "operations",
+    "funding-manager"
+   ],
+   "code": [
+    "foundation/cost.py",
+    "scripts/actions_budget.py",
+    "scripts/funding_verify.py"
+   ],
+   "dedicated": "finance-controller"
+  },
+  {
+   "id": "legal-compliance",
+   "function": "legal and compliance",
+   "status": "covered",
+   "roles": [
+    "legal-ip-manager"
+   ],
+   "code": [
+    "foundation/publication.py",
+    "foundation/licences.py"
+   ]
+  },
+  {
+   "id": "people-org-design",
+   "function": "people and org design",
+   "status": "covered",
+   "roles": [
+    "org-designer"
+   ],
+   "code": [
+    "foundation/managers.py",
+    "foundation/team.py"
+   ]
+  },
+  {
+   "id": "research",
+   "function": "research",
+   "status": "covered",
+   "roles": [
+    "research-publisher",
+    "product-manager"
+   ],
+   "code": [
+    "foundation/research.py",
+    "foundation/scout.py"
+   ]
+  }
+ ]
 }

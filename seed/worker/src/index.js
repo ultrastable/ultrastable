@@ -5,7 +5,7 @@ import { paced } from './pace.js';
 import { footerHtml, discoverRoute, seedStatements, seedJsonLd, heartbeat as directoryHeartbeat } from './discover.js';  // DISCOVER-1
 import { withKnobs, readGoals, registerTenant, reportReadings, knobValues } from './goals.js';  // GOALS-1
 import { tune } from './roi.js';  // BOUNDARIES-1
-import { runTick, lastTickForHealth, METRICS, ensureItem } from './tick.js';
+import { runTick, lastTickForHealth, METRICS, ensureItem, wakeAllowed } from './tick.js';
 import { claimsReleasedUnworked24h } from './doer.js';
 import { runExecutor, noteExecutor } from './executor.js';
 import { runLane, githubBudget } from './lane.js';
@@ -219,6 +219,8 @@ export default {
       if (!hit) return Response.json({ routed: false, merge_now: Boolean(mn) }, { status: 202 });
       const ft = await freeTierLevel(env.DB, Date.now(), planOf(config, env)).catch(() => null);  // FREE-TIER-1: an event never wakes an extra tick (model calls, D1 reads) once the day's free allowance is at risk; the 10-minute tick still takes the item
       if (ft && ft.level !== 'ok') return Response.json({ routed: false, throttled: ft.level, ...hit }, { status: 202 });
+      const wk = await wakeAllowed(env.DB, { config, now: Date.now() });  // WAKE-BUDGET-1: at most one woken tick between two cron ticks, none while the rows-read budget is breached
+      if (!wk.ok) return Response.json({ routed: false, throttled: wk.why, ...hit }, { status: 202 });
       const work = aiFor(env).then(g => runTick(env.DB, { config, env: presence(env), wake: hit.role, ai: g.ai, budget: g.state }));
       if (ctx && ctx.waitUntil) ctx.waitUntil(work); else await work;
       return Response.json({ routed: true, ...hit }, { status: 202 });

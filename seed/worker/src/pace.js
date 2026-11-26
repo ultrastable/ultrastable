@@ -27,7 +27,7 @@ export async function strideFor(db, loop, config) {
   if (c.never_pace.includes(loop)) return 1;
   let rows = [];
   try {
-    rows = (await db.prepare(`SELECT ok, detail FROM loop_beats WHERE loop = ? AND finished_at IS NOT NULL AND (detail IS NULL OR (detail NOT LIKE '{"paced"%' AND detail NOT LIKE '{"status":"deferred"%')) ORDER BY id DESC LIMIT ?`)
+    rows = (await db.prepare(`SELECT ok, detail FROM loop_beats WHERE loop = ? AND finished_at IS NOT NULL AND (detail IS NULL OR (detail NOT LIKE '{"paced"%' AND detail NOT LIKE '{"status":"deferred"%')) ORDER BY slot DESC, id DESC LIMIT ?`)  // READ-BUDGET-9: newest first by the (loop, slot) index, so the read stops at the limit; ORDER BY id sorted every beat the loop ever left (1,488 rows a call, measured)
       .bind(loop, c.idle_runs * 4).all()).results || [];
   } catch (e) { console.error('pace', loop, 'stride unread:', e && e.message); return 1; }  // no ledger yet: run
   let idle = 0;

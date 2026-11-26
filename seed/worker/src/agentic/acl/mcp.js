@@ -4,11 +4,17 @@
 import { validateArgs } from '../core/tools.js';
 
 export const MCP_VERSIONS = ['2026-07-28', '2025-11-25', '2025-06-18']; // newest first
-const E = { parse: -32700, request: -32600, method: -32601, params: -32602, internal: -32603 };
+const E = { parse: -32700, request: -32600, method: -32601, params: -32602, internal: -32603, version: -32022 };
+// 2026-07-28 (https://modelcontextprotocol.io/specification/latest/basic/versioning, read 2026-11-26): there is no handshake. Every request declares
+// its version in `_meta` (and, on HTTP, in MCP-Protocol-Version); a version the server does not serve MUST be answered with
+// UnsupportedProtocolVersionError (-32022) whose data lists `supported` and echoes `requested`, so the client can retry without falling back to
+// the legacy handshake. A modern server SHOULD name itself in each result's `_meta`.
+const META = 'io.modelcontextprotocol/';
+export const MODERN_SINCE = '2026-07-28';
 
-const rpc = (id, body, status = 200, headers = {}) =>
+const send = (id, body, status = 200, headers = {}) =>
   new Response(JSON.stringify({ jsonrpc: '2.0', id: id ?? null, ...body }), { status, headers: { 'content-type': 'application/json', ...headers } });
-const fail = (id, code, message, status = 200) => rpc(id, { error: { code, message } }, status);
+const fail = (id, code, message, status = 200) => send(id, { error: { code, message } }, status);
 
 export function toolList(tools) {
   return tools.map(t => ({ name: t.name, description: t.description, inputSchema: t.inputSchema, annotations: { readOnlyHint: true, idempotentHint: true } }));
@@ -19,15 +25,17 @@ export async function handleMcp(request, { tools, ports, env, identity, origin }
   const o = request.headers.get('origin');
   if (o && new URL(o).host !== new URL(request.url).host && !(env?.MCP_ALLOWED_ORIGINS || '').split(',').includes(o))
     return new Response('forbidden origin', { status: 403 });
-  const pv = request.headers.get('mcp-protocol-version');
-  if (pv && !MCP_VERSIONS.includes(pv)) return fail(null, E.request, `unsupported protocol version ${pv}; supported: ${MCP_VERSIONS.join(', ')}`, 400);
-
   let msg;
   try { msg = await request.json(); } catch { return fail(null, E.parse, 'parse error', 400); }
   if (!msg || Array.isArray(msg) || msg.jsonrpc !== '2.0' || typeof msg.method !== 'string') return fail(msg?.id, E.request, 'invalid request', 400);
+  const pv = msg.params?._meta?.[META + 'protocolVersion'] ?? request.headers.get('mcp-protocol-version');
+  if (pv && !MCP_VERSIONS.includes(pv))
+    return send(msg.id, { error: { code: E.version, message: 'Unsupported protocol version', data: { supported: MCP_VERSIONS, requested: String(pv) } } }, 400);
   if (msg.id === undefined) return new Response(null, { status: 202 }); // notification
 
   const serverInfo = { name: identity.slug, title: identity.name, version: identity.version };
+  const modern = typeof pv === 'string' && pv >= MODERN_SINCE;
+  const rpc = (id, body, status = 200, headers = {}) => send(id, modern && body.result ? { result: { ...body.result, _meta: { ...(body.result._meta || {}), [META + 'serverInfo']: serverInfo } } } : body, status, headers);
   const capabilities = { tools: { listChanged: false } };
   switch (msg.method) {
     case 'initialize': {

@@ -1,0 +1,13 @@
+{
+  "id": "Q-EXP-d6b832ee",
+  "title": "Q-EXP-d6b832ee: close the chat-entry gap with a measured change",
+  "body": "**Owner:** product-manager\n**Trigger:** every rnd pass\n**Done check:** cmd:python3 -m foundation rnd --proved chat-entry\n**Prediction:** pageviews_7d >= 1310 within 336 h\n**Status:** open\n\nExperiment from R&D finding `gap:chat-entry`.\nHypothesis: 17 competitors evidence 'work is handed to the agent from a team chat such as Slack'; building it should move the metric\nMetric: pageviews_7d. Ship the smallest change the proof `file:seed/worker/src/chat-intake.js` shows, then compare the metric against its baseline in doctrine/growth.json; a miss reverts the change and lowers the finding's priority.\n\n**Out of scope:** rebuilding a competitor's product, claims about a competitor beyond what its own page states, and any change without a test.\n\n**Closing probe:** cmd:python3 -m foundation rnd --proved chat-entry",
+  "labels": [
+    "role:product-manager",
+    "growth",
+    "rnd",
+    "experiment"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}

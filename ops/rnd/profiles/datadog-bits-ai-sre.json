@@ -1,0 +1,46 @@
+{
+ "capabilities": {
+  "agent-evals": "g Digital Experience Monitoring Security Analytics Compliance for CIS Benchmarks Hybrid Cloud Monitoring Edge Device Monitoring Real-Time BI On-Premis",
+  "chat-entry": "suggested actions Integrate Bits into the tools you already use, like Slack, Jira, ServiceNow, and GitHub { if(play_video) play_video = false })",
+  "event-triggered-agents": "Management Work Management Service Level Objectives Actions Workflow Automation Datadog Apps Event Management Context Graph Internal Developer Portal",
+  "idea-to-deploy": "nt Response Reduce downtime Increase productivity Act with confidence Deploy at scale Resolve incidents faster with autonomous investigations Auto",
+  "incident-investigation": "ement Integrated, streamlined workflows for faster time-to-resolution Incident Response Incident Management Work Management Service Level Objectives Actions",
+  "mcp-server": "ode Bits Security Analyst Datadog for AI Agent Observability AI Guard MCP Server Pup CLI GPU Monitoring Platform Capabilities Built-in features",
+  "observability": "ss' && !mutation.target.classList.contains('show')) { openCategory = 'observability'; } }); }); observer.observe(menu, { attributes: true }); \"> The inte",
+  "other-cloud": "rtainment Technology Gaming Technology Amazon Web Services Monitoring Azure Monitoring Google Cloud Monitoring Oracle Cloud Monitoring Kubernetes",
+  "self-hostable": "g Management Audit Trail Observability Pipelines Error Tracking Bring Your Own Cloud Log Management Sensitive Data Scanner ) 0%, %!s( ) 100%)\"> Infrastruc"
+ },
+ "errors": {},
+ "id": "datadog-bits-ai-sre",
+ "name": "Datadog Bits AI SRE",
+ "refreshed_at": "2026-11-26T06:46:33Z",
+ "sha": "396a2dd76ed2",
+ "sources_read": [
+  "https://www.datadoghq.com/product/ai/bits-ai-sre/"
+ ],
+ "taxonomy": [
+  "a2a-protocol",
+  "agent-evals",
+  "agent-memory",
+  "agent-skills",
+  "agents-md",
+  "autonomous-pr",
+  "chat-entry",
+  "cloud-background-agents",
+  "cross-model-review",
+  "durable-execution",
+  "event-triggered-agents",
+  "existing-repo-adoption",
+  "idea-to-deploy",
+  "incident-investigation",
+  "mcp-server",
+  "multi-agent-roles",
+  "observability",
+  "other-cloud",
+  "permission-guardrails",
+  "sandboxed-execution",
+  "scheduled-agents",
+  "self-hostable",
+  "spend-budgets"
+ ]
+}

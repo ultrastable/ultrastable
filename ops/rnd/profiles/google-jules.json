@@ -1,0 +1,53 @@
+{
+ "capabilities": {
+  "agent-evals": "reliable. To increase transparency and give you more insight into its evaluation process, you can now see the critic\u2019s real-time analysis as it works.",
+  "agent-memory": "02, 2025 Use Environment Variables In Jules Oct 01, 2025 Jules gains memory! Sep 30, 2025 Tell Jules exactly what file to work on using file sele",
+  "agents-md": "s page Overview Login Connect GitHub Starting your first task Include AGENTS.md file Enabling notifications What\u2019s next? On this page Overview Login",
+  "autonomous-pr": "eta! Aug 06, 2025 Environment snapshots for faster tasks Aug 05, 2025 Open A PR directly from Jules Aug 04, 2025 Added Bun runtime support Jul 18, 20",
+  "chat-entry": "le. With the API, you can: Create custom integrations with tools like Slack for \u201cChatOps\u201d workflows, allowing you to assign tasks directly from y",
+  "cloud-background-agents": "first task Section titled \u201cStarting your first task\u201d Jules runs in a virtual machine where it clones your code, installs dependencies, and modifies files.",
+  "cross-model-review": "ut Jules image support. Stacked Diff September 4, 2025 To improve the code review experience, we\u2019ve introduced a new stacked layout for the diff viewer",
+  "event-triggered-agents": "it to GitHub. Scriptable &#x26; Composable: Integrate Jules into your automations by piping in output from other tools like gh, jq, or cat. Interactive",
+  "existing-repo-adoption": "Connect GitHub Section titled \u201cConnect GitHub\u201d Jules needs access to your repositories in order to work. Click Connect to GitHub account. Complete the login",
+  "idea-to-deploy": "utopilot with Scheduled Tasks Dec 10, 2025 Automated fixes for Render deployments Dec 10, 2025 Start from scratch\u2014instantly Nov 20, 2025 Introducing Ge",
+  "incident-investigation": "onsole logs. Jules detects the failure immediately and identifies the root cause. Proactive Fixes: Instead of just alerting you to an error, Jules wri",
+  "mcp-server": "-Fixing CI Failures and configure Jules to commit as you Feb 19, 2026 MCP support comes to Jules Feb 02, 2026 Gemini 3 Flash is now the base mo",
+  "permission-guardrails": "standards, keeping your source code and API keys isolated. Audit Tool Permissions: We verify that each server only requests the specific permissions it",
+  "scheduled-agents": "LI) Integrations Docs Getting Started Environment setup Running tasks Scheduled tasks Suggested tasks Planning Reviewing code Managing tasks and repo",
+  "spend-budgets": ". We\u2019ve decreased the number of failure cases by 2/3 Learn more about usage limits. Improving Stablity May 22, 2025 We\u2019ve been heads down improving stab"
+ },
+ "errors": {},
+ "id": "google-jules",
+ "name": "Jules (Google)",
+ "refreshed_at": "2026-11-26T06:46:33Z",
+ "sha": "5d54b4d2e7fb",
+ "sources_read": [
+  "https://jules.google/docs/",
+  "https://jules.google/docs/changelog/"
+ ],
+ "taxonomy": [
+  "a2a-protocol",
+  "agent-evals",
+  "agent-memory",
+  "agent-skills",
+  "agents-md",
+  "autonomous-pr",
+  "chat-entry",
+  "cloud-background-agents",
+  "cross-model-review",
+  "durable-execution",
+  "event-triggered-agents",
+  "existing-repo-adoption",
+  "idea-to-deploy",
+  "incident-investigation",
+  "mcp-server",
+  "multi-agent-roles",
+  "observability",
+  "other-cloud",
+  "permission-guardrails",
+  "sandboxed-execution",
+  "scheduled-agents",
+  "self-hostable",
+  "spend-budgets"
+ ]
+}

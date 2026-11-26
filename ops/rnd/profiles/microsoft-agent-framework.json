@@ -1,0 +1,45 @@
+{
+ "capabilities": {
+  "agent-evals": "odel providers, agent services, tools, context providers, middleware, evaluation services, and UI frameworks, organized by provider and component. The",
+  "agent-memory": "sks \u2014 planning and todo tracking, context compaction, file access and memory, don't-ask-again tool approval, and observability. Workflows Function",
+  "mcp-server": "nts Individual agents that use LLMs to process inputs, call tools and MCP servers , and generate responses. Supports Microsoft Foundry, Anthrop",
+  "multi-agent-roles": ", middleware, telemetry \u2014 and adds graph-based workflows for explicit multi-agent orchestration. Semantic Kernel and AutoGen pioneered the concepts of",
+  "observability": "ompaction, file access and memory, don't-ask-again tool approval, and observability. Workflows Functional and graph-based workflows that connect agents a",
+  "other-cloud": "vers , and generate responses. Supports Microsoft Foundry, Anthropic, Azure OpenAI, OpenAI, Ollama, and more . Harness Agent An opinionated agent",
+  "permission-guardrails": "graphic boundaries and any related implications, and that appropriate permissions, boundaries and approvals are provisioned. You are responsible for ca",
+  "self-hostable": "oth Semantic Kernel and AutoGen have benefited significantly from the open-source community, and the same is expected for Agent Framework. Microsoft Ag"
+ },
+ "errors": {},
+ "id": "microsoft-agent-framework",
+ "name": "Microsoft Agent Framework (successor to AutoGen and Semantic Kernel agents)",
+ "refreshed_at": "2026-11-26T06:46:33Z",
+ "sha": "d7d51cf98eb3",
+ "sources_read": [
+  "https://learn.microsoft.com/en-us/agent-framework/overview/agent-framework-overview"
+ ],
+ "taxonomy": [
+  "a2a-protocol",
+  "agent-evals",
+  "agent-memory",
+  "agent-skills",
+  "agents-md",
+  "autonomous-pr",
+  "chat-entry",
+  "cloud-background-agents",
+  "cross-model-review",
+  "durable-execution",
+  "event-triggered-agents",
+  "existing-repo-adoption",
+  "idea-to-deploy",
+  "incident-investigation",
+  "mcp-server",
+  "multi-agent-roles",
+  "observability",
+  "other-cloud",
+  "permission-guardrails",
+  "sandboxed-execution",
+  "scheduled-agents",
+  "self-hostable",
+  "spend-budgets"
+ ]
+}

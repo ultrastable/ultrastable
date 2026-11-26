@@ -3622,7 +3622,7 @@ export default {
    "surface": "seed/tests/fixtures/IDEA.example.md"
   },
   {
-   "claim": "seed-tests: 109 Python and 580 Worker tests",
+   "claim": "seed-tests: 109 Python and 605 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3631,7 +3631,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 580 Worker tests",
+   "claim": "seed-worker-tests: 605 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
