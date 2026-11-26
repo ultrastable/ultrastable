@@ -45,6 +45,24 @@
       "max_rows_read_per_hour": 20000,
       "gates_tick": false,
       "note": "TENANT-SANDBOX-1: this tenant's own budget (500k reads a day, doctrine/tenant-repos.json sandbox), sampled hourly apart from the core."
+    },
+    {
+      "id": "ultrastable-base-rates",
+      "account_id": "81e3a4efb4eb66e613529b87682911bb",
+      "database_id": "90a747d3-68ab-4930-9dad-cd7af8fe9385",
+      "database_name": "ultrastable-base-rates",
+      "max_rows_read_per_hour": 20000,
+      "gates_tick": false,
+      "note": "TENANT-SANDBOX-1: this tenant's own budget (doctrine/tenant-repos.json sandbox), sampled hourly apart from the core. Written by ADMIT-1."
+    },
+    {
+      "id": "ultrastable-open-questions",
+      "account_id": "81e3a4efb4eb66e613529b87682911bb",
+      "database_id": "7b50f33e-9493-4536-bcc2-c330dbabb6b6",
+      "database_name": "ultrastable-open-questions",
+      "max_rows_read_per_hour": 20000,
+      "gates_tick": false,
+      "note": "TENANT-SANDBOX-1: this tenant's own budget (doctrine/tenant-repos.json sandbox), sampled hourly apart from the core. Written by ADMIT-1."
     }
   ]
 }

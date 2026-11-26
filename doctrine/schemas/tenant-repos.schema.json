@@ -67,6 +67,7 @@
       "pattern": "(^|/)vendor/"
      }
     },
+    "gh_only": {"type": "object", "description": "GH-ONLY-WATCH-1: the tick dispatches this GitHub-only loop when it goes max_gap_hours without a run, or Pages turns on with nothing published", "properties": {"workflow": {"type": "string"}, "max_gap_hours": {"type": "number"}}, "required": ["workflow"], "additionalProperties": false},
     "sandbox": {
      "type": "object",
      "required": [

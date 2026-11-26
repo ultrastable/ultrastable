@@ -46,3 +46,23 @@ test('each tenant pulse is called once; a stale one runs, a fresh one is skipped
   assert.deepEqual(r.ran, ['a']); assert.deepEqual(r.fresh, ['b']); assert.equal(r.failed.length, 2); assert.equal(r.status, 'failed');
   assert.ok(seen.every(([, m]) => m === 'POST')); assert.equal(seen.length, 3);
 });
+
+test('watchGhOnly dispatches a stale loop and one whose Pages just turned on, and leaves a running one alone', async () => {
+  const { watchGhOnly } = await import('../src/declared.js');
+  const now = Date.parse('2026-11-26T20:00:00Z'), calls = [];
+  const runs = { 'a/stale': '2026-11-26T10:00:00Z', 'a/pages': '2026-11-26T19:00:00Z', 'a/busy': null, 'a/fresh': '2026-11-26T19:30:00Z' };
+  const f = async (url, o = {}) => {
+    calls.push((o.method || 'GET') + ' ' + url);
+    const m = url.match(/repos\/(a\/\w+)\/(.*)$/);
+    if (url === 'https://x.github.io/pages/') return new Response('nope', { status: 404 });
+    if (m && m[2].startsWith('actions/workflows/loop.yml/runs')) return Response.json({ workflow_runs: [runs[m[1]] ? { status: 'completed', created_at: runs[m[1]] } : { status: 'in_progress', created_at: '2026-11-26T19:59:00Z' }] });
+    if (m && m[2] === 'pages') return m[1] === 'a/pages' ? Response.json({ html_url: 'https://x.github.io/pages/' }) : new Response('{}', { status: 404 });
+    if (m && m[2].endsWith('/dispatches')) return new Response(null, { status: 204 });
+    return new Response('{}', { status: 500 });
+  };
+  const r = await watchGhOnly({ token: 't', loops: ['stale', 'pages', 'busy', 'fresh'].map(n => ({ repo: 'a/' + n })), fetchImpl: f, now });
+  assert.deepEqual(r.dispatched.map(x => x.split(':')[0]), ['a/stale', 'a/pages']);
+  assert.equal(r.checked, 4);
+  assert.ok(!calls.some(c => c.includes('a/busy') && c.startsWith('POST')));
+  assert.equal((await watchGhOnly({ token: '' })).status, 'no-token');
+});

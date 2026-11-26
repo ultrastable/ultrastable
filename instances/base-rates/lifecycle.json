@@ -15,11 +15,11 @@
   ]
  },
  "deploy": {
-  "worker": ""
+  "worker": "ultrastable-base-rates"
  },
  "verify": {
-  "url": "",
-  "expect": ""
+  "url": "https://base-rates.ultrastable.org/health",
+  "expect": "\"clock\""
  },
  "loops": [],
  "survival": {

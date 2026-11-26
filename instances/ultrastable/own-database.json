@@ -65,6 +65,24 @@
     "instances/ultrastable/system/ultrastable-spinoffs.wrangler.jsonc",
     "spinoffs/wrangler.toml"
    ]
+  },
+  {
+   "name": "ultrastable-base-rates",
+   "id": "90a747d3-68ab-4930-9dad-cd7af8fe9385",
+   "binding": "DB on the ultrastable-base-rates Worker only",
+   "holds": "base-rates tenant: beats (ultrastable/base-rates); created 2026-11-26",
+   "bound_by": [
+    "instances/ultrastable/system/ultrastable-base-rates.wrangler.jsonc"
+   ]
+  },
+  {
+   "name": "ultrastable-open-questions",
+   "id": "7b50f33e-9493-4536-bcc2-c330dbabb6b6",
+   "binding": "DB on the ultrastable-open-questions Worker only",
+   "holds": "open-questions tenant: beats (ultrastable/open-questions); created 2026-11-26",
+   "bound_by": [
+    "instances/ultrastable/system/ultrastable-open-questions.wrangler.jsonc"
+   ]
   }
  ],
  "tenant": [
@@ -142,6 +160,18 @@
    {
     "name": "ultrastable-spinoffs",
     "id": "7daf8b68-8516-42a8-b7c4-68fd00d10e24",
+    "tables": 0,
+    "note": "id from doctrine/topology.json, which records it from the Cloudflare API at creation; owndb --live confirms it against the account; tables are created by the Worker"
+   },
+   {
+    "name": "ultrastable-base-rates",
+    "id": "90a747d3-68ab-4930-9dad-cd7af8fe9385",
+    "tables": 0,
+    "note": "id from doctrine/topology.json, which records it from the Cloudflare API at creation; owndb --live confirms it against the account; tables are created by the Worker"
+   },
+   {
+    "name": "ultrastable-open-questions",
+    "id": "7b50f33e-9493-4536-bcc2-c330dbabb6b6",
     "tables": 0,
     "note": "id from doctrine/topology.json, which records it from the Cloudflare API at creation; owndb --live confirms it against the account; tables are created by the Worker"
    }

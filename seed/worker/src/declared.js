@@ -59,3 +59,36 @@ export async function pulseTenants({ targets = [], fetchImpl = fetch } = {}) {
   if (out.failed.length) out.status = 'failed';
   return out;
 }
+
+// GH-ONLY-WATCH-1 (2026-11-26): a GitHub-only system's clock is GitHub's cron, which skipped the first scheduled runs of base-rates entirely.
+// Once an hour the tick reads each declared GitHub-only loop (config.gh_only, built from tenant rows with `gh_only` by deploy/deploy-workers.mjs)
+// and dispatches its workflow when (a) no run started in max_gap_hours, or (b) Pages is on but nothing is published yet, so the site goes live
+// the hour Pages is switched on, with no hand-off. A run already queued or in progress is left alone, so the step never stacks runs.
+export async function watchGhOnly({ token, loops = [], fetchImpl = fetch, now = Date.now() } = {}) {
+  if (!token) return { status: 'no-token', why: 'no GitHub token: GitHub-only loops cannot be read or dispatched from here' };
+  const A = gh(fetchImpl, token), out = { status: 'ok', checked: 0, dispatched: [], unmeasured: [] };
+  for (const l of loops.slice(0, 10)) {
+    const repo = String(l.repo || ''), wf = String(l.workflow || 'loop.yml'), gap = Number(l.max_gap_hours) || 7;
+    if (!VIS_REPO.test(repo) || !/^[\w.-]+\.ya?ml$/.test(wf)) { out.unmeasured.push(`${repo}: not a repository and workflow`); continue; }
+    try {
+      const runs = await A('GET', `/repos/${repo}/actions/workflows/${wf}/runs?per_page=1`);
+      if (runs.status !== 200) { out.unmeasured.push(`${repo}: runs HTTP ${runs.status}`); continue; }
+      out.checked++;
+      const last = (runs.json.workflow_runs || [])[0];
+      if (last && last.status !== 'completed') continue;
+      const age = last ? (now - Date.parse(last.created_at)) / 36e5 : Infinity;
+      let why = age > gap ? `no run for ${Number.isFinite(age) ? age.toFixed(1) + ' h' : 'ever'}` : '';
+      if (!why) {
+        const pg = await A('GET', `/repos/${repo}/pages`);
+        if (pg.status === 200 && pg.json.html_url) {
+          const site = await fetchImpl(pg.json.html_url, { headers: { 'user-agent': UA } }).then(r => r.status).catch(() => 0);
+          if (site === 404) why = 'Pages is on and nothing is published yet';
+        }
+      }
+      if (!why) continue;
+      const d = await A('POST', `/repos/${repo}/actions/workflows/${wf}/dispatches`, { ref: 'main' });
+      if (d.status === 204) out.dispatched.push(`${repo}: ${why}`); else out.unmeasured.push(`${repo}: dispatch HTTP ${d.status}`);
+    } catch (e) { out.unmeasured.push(`${repo}: ${String(e && e.message).slice(0, 80)}`); }
+  }
+  return out;
+}

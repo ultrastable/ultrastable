@@ -27,6 +27,14 @@
       "replication-ledger": {
         "name": "ultrastable-replication-ledger",
         "id": "c59cdeca-7f57-4edd-ac7e-256ab07fab57"
+      },
+      "base-rates": {
+        "name": "ultrastable-base-rates",
+        "id": "90a747d3-68ab-4930-9dad-cd7af8fe9385"
+      },
+      "open-questions": {
+        "name": "ultrastable-open-questions",
+        "id": "7b50f33e-9493-4536-bcc2-c330dbabb6b6"
       }
     },
     "kv": {
@@ -200,7 +208,7 @@
       "main": "instances/replication-ledger/worker/index.js",
       "role": "Replication Ledger tenant app (moving to ultrastable/replication-ledger): which landmark findings held up when replicated and which failed, across many fields; hourly beat searches OpenAlex for new replications of every finding and for landmark originals not yet held, files an attempt only under a verbatim-quote guard, checks citations at Crossref, recomputes standings and logs each move; reader pages with a guess-first reveal, /changes and /feed.json",
       "crons": [
-        "23 * * * *"
+        "9 2 * * 1"
       ],
       "bindings": {
         "d1": {
@@ -209,6 +217,38 @@
         "ai": [
           "AI"
         ]
+      }
+    },
+    "ultrastable-base-rates": {
+      "main": "worker/index.js",
+      "source": {
+        "repo": "ultrastable/base-rates",
+        "ref": "main"
+      },
+      "role": "Base Rates tenant app (ultrastable/base-rates): graded base rates from cited sources; hourly beat",
+      "crons": [
+        "8 * * * *"
+      ],
+      "bindings": {
+        "d1": {
+          "DB": "base-rates"
+        }
+      }
+    },
+    "ultrastable-open-questions": {
+      "main": "worker/index.js",
+      "source": {
+        "repo": "ultrastable/open-questions",
+        "ref": "main"
+      },
+      "role": "Open Questions tenant app (ultrastable/open-questions): open research questions from cited sources; hourly beat",
+      "crons": [
+        "9 2 * * 1"
+      ],
+      "bindings": {
+        "d1": {
+          "DB": "open-questions"
+        }
       }
     }
   },

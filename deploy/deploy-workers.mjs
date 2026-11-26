@@ -73,6 +73,7 @@ function declaredLive() {
   const topo = j("../doctrine/topology.json");
   return {
     repo_visibility: [...vis].map(([repo, priv]) => ({ repo, private: priv })),
+    gh_only: Object.values(j("../doctrine/tenant-repos.json").tenants || {}).filter(t => t.gh_only && t.state !== "retired").map(t => ({ repo: t.repo, workflow: t.gh_only.workflow || "loop.yml", max_gap_hours: t.gh_only.max_gap_hours || 7 })),
     tenant_pulse: (topo.workers || []).filter(w => w.state === "live" && w.pulse).map(w => ({ id: w.id, url: w.pulse }))
       // back ends deployed by their own repository (doctrine/driftguard.json cron_budget.pulse_external) get the same second route
       .concat(((JSON.parse(readFileSync(new URL("../doctrine/driftguard.json", import.meta.url), "utf8")).cron_budget || {}).pulse_external || []).map(p => ({ id: p.id, url: p.url }))),
