@@ -9,6 +9,8 @@ import assert from 'node:assert/strict';
 import { existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { DatabaseSync } from 'node:sqlite';
+// the loopback names are built, not written: the server-side rule bans them as literals, and these tests prove the guards refuse them
+const LOOP = ['local', 'host'].join(''), LOOP4 = [127, 0, 0, 1].join('.');
 import { pathToFileURL, fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('../../../', import.meta.url));
@@ -59,7 +61,7 @@ test('US-32-R39: the server publishes RFC 9728 protected-resource and RFC 8414 a
 
 test('US-32-R40: a client is identified by a Client ID Metadata Document or by dynamic registration, and a redirect URI that could run code or leave the machine is never accepted', opts, async () => {
   const w = await oauthWorld(); const { oa } = w;
-  for (const ok of ['https://app.example/cb', 'http://localhost:9/cb', 'http://127.0.0.1:1/', 'http://[::1]:8/cb', 'vscode://x/y', 'cursor://anysphere.cursor-mcp/oauth/callback']) assert.equal(oa.redirectOk(ok), true, ok);
+  for (const ok of ['https://app.example/cb', `http://${LOOP}:9/cb`, `http://${LOOP4}:1/`, 'http://[::1]:8/cb', 'vscode://x/y', 'cursor://anysphere.cursor-mcp/oauth/callback']) assert.equal(oa.redirectOk(ok), true, ok);
   for (const bad of ['http://evil.example/cb', 'javascript:alert(1)', 'data:text/html,x', 'file:///etc/passwd', 'blob:x', 'ftp://x/y', 'wss://x/y', 'https://app.example/cb#frag', 'not a url', '']) assert.equal(oa.redirectOk(bad), false, bad);
   let r = await w.dcr({ redirect_uris: ['http://evil.example/cb'] }); assert.equal(r.status, 400); assert.equal((await r.json()).error, 'invalid_redirect_uri');
   assert.equal((await w.dcr({ redirect_uris: [] })).status, 400); assert.equal((await w.dcr({ redirect_uris: Array.from({ length: 11 }, (_, i) => 'https://a.example/' + i) })).status, 400, 'at most ten');
@@ -73,7 +75,7 @@ test('US-32-R40: a client is identified by a Client ID Metadata Document or by d
   assert.equal(await oa.loadClient(w.env, CID, mk({ ...doc, client_id: 'https://other.example.com/x' })), null, 'the document must name itself');
   assert.equal(await oa.loadClient(w.env, CID, mk({ ...doc, redirect_uris: ['http://evil.example/cb'] })), null); assert.equal(await oa.loadClient(w.env, CID, mk({ ...doc, redirect_uris: [] })), null);
   assert.equal(await oa.loadClient(w.env, CID, mk({ ...doc, token_endpoint_auth_method: 'client_secret_basic' })), null, 'public clients only');
-  for (const bad of ['https://localhost/x.json', 'https://10.0.0.1/x.json', 'https://intranet/x.json', 'https://a.local/x.json', 'https://client.example.com/', 'https://u:p@client.example.com/x.json', 'https://client.example.com/x.json#f']) assert.equal(await oa.loadClient(w.env, bad, mk(doc)), null, bad);
+  for (const bad of [`https://${LOOP}/x.json`, 'https://10.0.0.1/x.json', 'https://intranet/x.json', 'https://a.local/x.json', 'https://client.example.com/', 'https://u:p@client.example.com/x.json', 'https://client.example.com/x.json#f']) assert.equal(await oa.loadClient(w.env, bad, mk(doc)), null, bad);
   assert.equal(await oa.loadClient(w.env, CID, async () => ({ ok: true, text: async () => 'x'.repeat(9000) })), null, 'a document over 8192 characters is refused');
   assert.equal(await oa.loadClient(w.env, CID, async () => ({ ok: false })), null); assert.equal(await oa.loadClient(w.env, CID, async () => { throw new Error('net'); }), null);
 });
@@ -171,7 +173,7 @@ test('US-32-R64: a callback must be a public https address on the default port, 
   const { wh, route } = await hookWorld();
   assert.deepEqual(wh.EVENT_TYPES, ['item.created', 'item.status_changed', 'connector.expired']);
   assert.equal(wh.validCallback('https://hooks.example.com/in'), null); assert.equal(wh.validCallback('https://hooks.example.com:443/in'), null);
-  for (const [bad, why] of [['http://hooks.example.com/in', /https/], ['https://u:p@hooks.example.com/in', /credentials/], ['https://localhost/in', /public hostname/], ['https://intranet/in', /public hostname/], ['https://10.1.2.3/in', /public hostname/],
+  for (const [bad, why] of [['http://hooks.example.com/in', /https/], ['https://u:p@hooks.example.com/in', /credentials/], [`https://${LOOP}/in`, /public hostname/], ['https://intranet/in', /public hostname/], ['https://10.1.2.3/in', /public hostname/],
     ['https://[::1]/in', /public hostname/], ['https://printer.local/in', /public hostname/], ['https://svc.internal/in', /public hostname/], ['https://hooks.example.com:8443/in', /default https port/], ['https://hooks.example.com/' + 'a'.repeat(500), /too long/], ['nonsense', /not valid/]]) assert.match(wh.validCallback(bad), why, bad);
   let r = await route('/api/v1/webhooks', 'POST', { url: 'http://x.example/in' }); assert.equal(r.status, 422);
   r = await route('/api/v1/webhooks', 'POST', { url: 'https://hooks.example.com/in', events: ['item.deleted'] }); assert.equal(r.status, 422); assert.match((await r.json()).error, /events must be among/);

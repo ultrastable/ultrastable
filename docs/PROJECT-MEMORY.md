@@ -10,6 +10,8 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-26
 
+- 2026-11-26: feat(seed): consent links, ensureSchema guard and the first group of specification tests (slice 5 of 10) (#2462)
+- 2026-11-26: feat(workers): consent links, graph and discovery updates, pacing, progress, stickiness and the migration self-apply module (slice 4 of 10) (#2461)
 - 2026-11-26: feat(tenants): deploy base-rates and open-questions Workers from their own repos (#2459)
 - 2026-11-26: feat(workers): staff review and research steps, lifecycle monitoring and closing, plus loop and governance scan (slice 3 of 10) (#2460)
 - 2026-11-26: feat(workers): kernel lifecycle exports, focus log, trust, deploy digest, export and the destructive-migration exporter (slice 2 of 10) (#2457)
