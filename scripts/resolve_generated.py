@@ -18,7 +18,7 @@ for f in list(conf):
             fcntl.flock(lock, fcntl.LOCK_UN)
     elif f.endswith(".jsonl") or f == "docs/PROJECT-MEMORY.md":  # append-only: keep both sides
         t = open(f).read(); open(f, "w").write("\n".join(l for l in t.splitlines() if not re.match(r"^(<<<<<<<|=======|>>>>>>>)", l)) + "\n")
-    elif f in ("ops/transparency.json", "site/dashboard-data.js", "site/claims-data.js", "site/research-data.js", "site/self-data.js", "seed/SYSTEM.md") or f.startswith("research/papers/"):  # papers are rebuilt by `research --page --apply` below   # claims-data.js is rewritten below from the merged doctrine/claims.json
+    elif f in ("ops/transparency.json", "site/dashboard-data.js", "site/claims-data.js", "site/research-data.js", "site/self-data.js", "seed/SYSTEM.md", "seed/docs/claims.json") or f.startswith("research/papers/"):  # papers are rebuilt by `research --page --apply` below   # claims-data.js is rewritten below from the merged doctrine/claims.json
         subprocess.run(["git", "checkout", "--theirs", f])
     else:
         continue
@@ -106,8 +106,78 @@ def claim_blind(path):
     out = CLAIM.sub(lambda m: m.group(1) + vals.get(m.group(1), "") + m.group(3), r.stdout)
     open(path, "w", encoding="utf-8").write(out); CLAIM_BLINDED.append(path); return True
 CLAIM_BLINDED = []
+# ADDITIVE-MERGE-1 (2026-11-26): PRs sat conflicted for hours because both sides appended rows to the same registry (detectors, registers,
+# open-loops, decisions) or bullets to the same list (AGENTS.md). Nothing collided, yet git saw one hunk. Two model-free rules:
+# json_union: a three-way merge of the parsed JSON; lists of {"id":...} rows are unioned by id and a row both sides kept is merged field by field;
+#   the same field edited differently on both sides stays a conflict.
+# additive: a diff3 hunk whose base part is empty (both sides only inserted lines) keeps main's lines, then the PR's. Syntax is checked for .py/.js.
+_MISS = object()
+class _Clash(Exception): pass
+def _stage(path, n):
+    r = subprocess.run(["git", "show", f":{n}:{path}"], capture_output=True, text=True)
+    return None if r.returncode else r.stdout
+def _jmerge(b, o, t):
+    if o == t: return t
+    if b is not _MISS and o == b: return t
+    if b is not _MISS and t == b: return o
+    if isinstance(o, dict) and isinstance(t, dict):
+        bb = b if isinstance(b, dict) else {}
+        out = {}
+        for k in list(t) + [k for k in o if k not in t]:
+            v = _jmerge(bb.get(k, _MISS), o.get(k, _MISS), t.get(k, _MISS))
+            if v is not _MISS: out[k] = v
+        return out
+    if isinstance(o, list) and isinstance(t, list) and all(isinstance(x, dict) and "id" in x for x in o + t):
+        bi = {x["id"]: x for x in b if isinstance(x, dict) and "id" in x} if isinstance(b, list) else {}
+        oi, out = {x["id"]: x for x in o}, []
+        for x in t:   # main's order; a row both sides kept is merged three ways
+            out.append(_jmerge(bi.get(x["id"], _MISS), oi[x["id"]], x) if x["id"] in oi else x)
+        tids = {x["id"] for x in t}
+        out += [x for x in o if x["id"] not in tids and x["id"] not in bi]   # rows the PR added; a row main removed stays removed
+        return out
+    if isinstance(o, list) and isinstance(t, list) and isinstance(b, list) and o[:len(b)] == b and t[:len(b)] == b:
+        return t + [x for x in o[len(b):] if x not in t]   # both appended
+    if o is _MISS and b is not _MISS: return o if t == b else (_ for _ in ()).throw(_Clash())
+    if t is _MISS and b is not _MISS: return t if o == b else (_ for _ in ()).throw(_Clash())
+    raise _Clash()
+def json_union(path):
+    if not path.endswith(".json"): return False
+    st = {n: _stage(path, n) for n in (1, 2, 3)}
+    if st[2] is None or st[3] is None: return False
+    try:
+        b = json.loads(st[1]) if st[1] else _MISS
+        merged = _jmerge(b, json.loads(st[2]), json.loads(st[3]))
+    except (ValueError, _Clash):
+        return False
+    indent = 1 if st[3].startswith("{\n ") and not st[3].startswith("{\n  ") else 2
+    open(path, "w", encoding="utf-8").write(json.dumps(merged, indent=indent, ensure_ascii=False) + "\n"); return True
+D3 = re.compile(r"^<<<<<<< [^\n]*\n(" + _M + r")^\|\|\|\|\|\|\| [^\n]*\n(" + _M + r")^=======\n(" + _M + r")^>>>>>>> [^\n]*\n", re.M)
+def additive(path):
+    import os, tempfile
+    st = {n: _stage(path, n) for n in (1, 2, 3)}
+    if None in st.values(): return False
+    with tempfile.TemporaryDirectory() as d:
+        names = []
+        for n in (2, 1, 3):
+            p = os.path.join(d, str(n)); open(p, "w", encoding="utf-8").write(st[n]); names.append(p)
+        r = subprocess.run(["git", "merge-file", "-p", "--diff3", *names], capture_output=True, text=True)
+    out, bad = r.stdout, []
+    def pick(m):
+        if m.group(2): bad.append(1); return m.group(0)
+        return m.group(3) + m.group(1)        # main's insertion, then the PR's
+    out = D3.sub(pick, out)
+    if bad or re.search(r"^(<<<<<<< |>>>>>>> )", out, re.M): return False
+    if path.endswith(".py"):
+        try: compile(out, path, "exec")
+        except SyntaxError: return False
+    if path.endswith((".js", ".mjs")):
+        with tempfile.NamedTemporaryFile("w", suffix=".mjs", delete=False) as fh: fh.write(out)
+        ok = subprocess.run(["node", "--check", fh.name], capture_output=True).returncode == 0
+        os.unlink(fh.name)
+        if not ok: return False
+    open(path, "w", encoding="utf-8").write(out); return True
 for f in list(conf):
-    if soft(f) or flatten(f) or claim_blind(f):
+    if soft(f) or flatten(f) or claim_blind(f) or json_union(f) or additive(f):
         subprocess.run(["git", "add", f]); conf.remove(f); print("resolved (identical or claim-only)", f)
 # A file that is not in conflict but carries committed markers (it reached main that way) is healed the same way, so the next PR does not inherit it.
 for f in sh("git", "grep", "-l", "-E", "^(<<<<<<< |>>>>>>> )", "--", "*.md").split():

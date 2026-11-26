@@ -816,6 +816,18 @@
       "status": "controlled",
       "cadence_ticks": 1,
       "probe": "grep:foundation/ladderwatch.py::def read"
+    },
+    {
+      "id": "fm-pr-stale",
+      "trigger": "a PR conflicts with main or a check fails and nothing repairs it",
+      "symptom": "pull requests sit open for hours labelled conflict or ci-failed",
+      "blast_radius": "every session and executor change; DRAIN-ZERO-1 open_prs",
+      "detection": "python3 -m foundation prbound --check",
+      "root_cause": "lane.sh only labelled conflicted and failed session PRs; conflicts.py requeued executor PRs only; the executor was dead; both-sides-additive registry rows were treated as real conflicts",
+      "remediation": "ADDITIVE-MERGE-1 in scripts/resolve_generated.py; PR-BOUND-1 prbound --apply from lane.sh",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:foundation/prbound.py::def read"
     }
   ],
   "controls": [

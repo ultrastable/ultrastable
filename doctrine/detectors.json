@@ -1067,6 +1067,22 @@
       "root_cause": "no code-agent rung returns an answer (credential without the permission, provider answering 200 with no body), so the executor ships nothing while its job and the static model-routes check read green",
       "owner": "operations",
       "remedy": "Read the rung errors ladderwatch prints, fix the route (site AI binding, model endpoint) and add a test; never relax the threshold."
+    },
+    {
+      "id": "pr-age-bound",
+      "failure_mode": "fm-pr-stale",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "prbound",
+        "--check"
+      ],
+      "timeout": 60,
+      "root_cause": "the lane labelled a conflicted or failed session PR and handed it to the executor, whose model calls were failing; no age bound existed",
+      "owner": "operations",
+      "remedy": "The lane runs prbound --apply each pass (closes past the bound, branch kept) and resolve_generated merges additive conflicts model-free; never raise the bound to clear a breach."
     }
   ]
 }

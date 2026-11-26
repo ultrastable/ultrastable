@@ -54,6 +54,7 @@
   python3 -m foundation progress [--check|--live]                          PROGRESS-1: every system shows substantive progress at every visit; the cadence monitor is wired
   python3 -m foundation cost [--check|--probe|--guard [--apply]]          D1 rows read and AI neurons against budgets (COST-GUARD-1)
   python3 -m foundation issueloop [--apply|--json]                       ISSUE-LOOP-1: every open issue's probe is run; a passing probe closes it
+  python3 -m foundation prbound [--check|--apply]                        PR-BOUND-1: closes a PR conflicted past 30 min or failed past 60 min (branch kept); --check fails on any PR open past 2 h
   python3 -m foundation ladderwatch [--check|--hours N]                  LADDER-LIVE-1: the code-agent ladder returns answers; fails when executor items are shelved because every rung failed
   python3 -m foundation agewatch [--check]                                 SLA-8H-1: oldest open issue and PR per org repository; fails past 8 hours
   python3 -m foundation ghmirror [--plan|--apply [--max N]|--check]       GH-MIRROR-1: the docs/issues queue mirrored one way onto GitHub Issues, labels, milestones and the board
@@ -511,6 +512,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["liveness"]:
         from . import liveness
         return liveness.main(_av[1:])
+    if _av[:1] == ["prbound"]:
+        from . import prbound
+        return prbound.main(_av[1:])
     if _av[:1] == ["ladderwatch"]:
         from . import ladderwatch
         return ladderwatch.main(_av[1:])
