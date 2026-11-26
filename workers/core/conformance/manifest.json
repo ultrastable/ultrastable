@@ -820,32 +820,62 @@
   {
    "id": "US-10-T01",
    "spec": "US-SPEC-10",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/install/bootstrap-spec10.test.js",
+     "name": "US-10-T01 / US-10-R04: two dry runs write the same files and the seed applied twice changes nothing"
+    }
+   ]
   },
   {
    "id": "US-10-T02",
    "spec": "US-SPEC-10",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/install/bootstrap-spec10.test.js",
+     "name": "US-10-T02 / US-10-R05 / US-10-R02: apply without credentials is a blocked backlog item, a dry run needs none"
+    }
+   ]
   },
   {
    "id": "US-10-T03",
    "spec": "US-SPEC-10",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/install/bootstrap-spec10.test.js",
+     "name": "US-10-T03 / US-10-R03: a planted secret value never reaches a file the bootstrapper writes"
+    }
+   ]
   },
   {
    "id": "US-10-T04",
    "spec": "US-SPEC-10",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/install/bootstrap-spec10.test.js",
+     "name": "US-10-T04 / US-10-R07: a missing idea file degrades the boot into an empty charter and one card"
+    }
+   ]
   },
   {
    "id": "US-10-T05",
    "spec": "US-SPEC-10",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/install/bootstrap-spec10.test.js",
+     "name": "US-10-T05: budget picks the model tier and the role-instance count follows the outcomes"
+    }
+   ]
   },
   {
    "id": "US-10-T06",
    "spec": "US-SPEC-10",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/install/bootstrap-spec10.test.js",
+     "name": "US-10-T06 / US-10-R16: the nothing-public constraint adds KIT-6 at priority 5 and no id repeats in the backlog"
+    }
+   ]
   },
   {
    "id": "US-10-T07",
@@ -1514,7 +1544,12 @@
   {
    "id": "T19-6",
    "spec": "US-SPEC-19",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/install/bootstrap-spec10.test.js",
+     "name": "T19-6 / US-19-R17: the bootstrapped organization has an owner README with its five parts in order, in plain words"
+    }
+   ]
   },
   {
    "id": "T20-1",
@@ -5443,9 +5478,14 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/install/bootstrap-spec10.test.js",
+     "name": "US-10-R01: the stock tree with only IDEA.md replaced boots with no other edit"
+    }
+   ]
   },
   {
    "id": "US-10-R02",
@@ -5453,9 +5493,26 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/install/bootstrap-spec10.test.js",
+     "name": "US-10-T02 / US-10-R05 / US-10-R02: apply without credentials is a blocked backlog item, a dry run needs none"
+    },
+    {
+     "file": "core/install/bootstrap-spec10.test.js",
+     "name": "US-10-R02: an invalid policy blocks the read stage, seeds no trust row above the lowest rung and is never applied"
+    },
+    {
+     "file": "tests/test_bootstrap_hardening.py",
+     "name": "test invalid policy blocks the read stage even without an idea file - US-10-R02: the policy is validated before the idea is considered."
+    },
+    {
+     "file": "tests/test_bootstrap_hardening.py",
+     "name": "test invalid policy seeds nothing above the lowest rung and apply is blocked - US-10-R02: an invalid policy blocks the read stage, the seed never applies it, an"
+    }
+   ]
   },
   {
    "id": "US-10-R03",
@@ -5463,9 +5520,14 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/install/bootstrap-spec10.test.js",
+     "name": "US-10-T03 / US-10-R03: a planted secret value never reaches a file the bootstrapper writes"
+    }
+   ]
   },
   {
    "id": "US-10-R04",
@@ -5473,9 +5535,14 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/install/bootstrap-spec10.test.js",
+     "name": "US-10-T01 / US-10-R04: two dry runs write the same files and the seed applied twice changes nothing"
+    }
+   ]
   },
   {
    "id": "US-10-R05",
@@ -5483,9 +5550,18 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/install/bootstrap-spec10.test.js",
+     "name": "US-10-T02 / US-10-R05 / US-10-R02: apply without credentials is a blocked backlog item, a dry run needs none"
+    },
+    {
+     "file": "tests/test_bootstrap_hardening.py",
+     "name": "test apply with github org and no org token exits 2 not a traceback and writes boot log - US-10-R05: a blocked stage is a backlog item and the boot goes on; it "
+    }
+   ]
   },
   {
    "id": "US-10-R06",
@@ -5493,9 +5569,18 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/install/bootstrap-spec10.test.js",
+     "name": "US-10-R06: every gate card carries a default in effect and a closing probe, in a dry run and in apply"
+    },
+    {
+     "file": "tests/test_bootstrap_hardening.py",
+     "name": "test every gate card in gate cards json is a gate cards row in seed sql - US-10-R06: a card added after write() is seeded too (the ladder card on a machine with"
+    }
+   ]
   },
   {
    "id": "US-10-R07",
@@ -5503,9 +5588,14 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/install/bootstrap-spec10.test.js",
+     "name": "US-10-T04 / US-10-R07: a missing idea file degrades the boot into an empty charter and one card"
+    }
+   ]
   },
   {
    "id": "US-10-R08",
@@ -5513,9 +5603,14 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/install/bootstrap-spec10.test.js",
+     "name": "US-10-R08: the seed predicts six complete ticks in an hour and the thirteenth tick scores it a hit with six observed"
+    }
+   ]
   },
   {
    "id": "US-10-R09",
@@ -5523,9 +5618,14 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/install/bootstrap-spec10.test.js",
+     "name": "US-10-R09: the committed templates hold no tenant value and a second org shows nothing of the first"
+    }
+   ]
   },
   {
    "id": "US-10-R10",
@@ -5536,6 +5636,10 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "core/install/bootstrap-spec10.test.js",
+     "name": "US-10-R10: the reviewer is designated from a different family than the doer when the budget allows two"
+    },
     {
      "file": "core/runner/runner.test.js",
      "name": "US-10-R10 the reviewer is a different family than the doer (real router, fake fetch)"
@@ -5660,9 +5764,30 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/install/bootstrap-spec10.test.js",
+     "name": "US-10-R15: every card has plain words, no card names a variable, and the owner README shows those words"
+    },
+    {
+     "file": "core/install/bootstrap-spec10.test.js",
+     "name": "US-10-R15: the console shows each gate card in the plain-words lines, from the seeded database, with no variable name and no capability jargon"
+    },
+    {
+     "file": "core/install/bootstrap-spec10.test.js",
+     "name": "US-10-R15: the owner README lists the plain-words default for every card, never the capability names"
+    },
+    {
+     "file": "tests/test_bootstrap_hardening.py",
+     "name": "test the seeded gate card rows hold the plain words lines - US-10-R15: the console reads `what` and `default_in_effect` from the table, so those columns hold wh"
+    },
+    {
+     "file": "tests/test_bootstrap_readme.py",
+     "name": "test US-10-R15 readme has no variable names and no developer words outside the help sections"
+    }
+   ]
   },
   {
    "id": "US-10-R16",
@@ -5670,9 +5795,14 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/install/bootstrap-spec10.test.js",
+     "name": "US-10-T06 / US-10-R16: the nothing-public constraint adds KIT-6 at priority 5 and no id repeats in the backlog"
+    }
+   ]
   },
   {
    "id": "US-10-R17",
@@ -8428,11 +8558,23 @@
    "tagged": false,
    "must": true,
    "status": "met",
-   "proof": "test file cites it",
+   "proof": "named test",
    "tests": [
     {
-     "file": "tests/test_owner_readme.py",
-     "name": null
+     "file": "core/install/bootstrap-spec10.test.js",
+     "name": "T19-6 / US-19-R17: the bootstrapped organization has an owner README with its five parts in order, in plain words"
+    },
+    {
+     "file": "tests/test_bootstrap_readme.py",
+     "name": "test US-19-R17 readme has the five parts in order"
+    },
+    {
+     "file": "tests/test_bootstrap_readme.py",
+     "name": "test US-19-R17 cost part states the budget and the free default"
+    },
+    {
+     "file": "tests/test_bootstrap_readme.py",
+     "name": "test US-19-R17 stop part names where to delete it"
     }
    ]
   },
