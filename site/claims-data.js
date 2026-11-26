@@ -3694,7 +3694,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 1270",
+   "claim": "live-deploys: 1281",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",
