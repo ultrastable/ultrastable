@@ -4,72 +4,72 @@ export default {
  "credit": "W. Ross Ashby, Design for a Brain (1952)",
  "now": {
   "claims_drift": {
-   "at": "2026-11-26T00:30:04Z",
+   "at": "2026-11-26T00:36:27Z",
    "ok": true,
    "value": 0
   },
   "deploy_health": {
-   "at": "2026-11-26T00:30:04Z",
+   "at": "2026-11-26T00:36:27Z",
    "ok": true,
    "value": 1.0
   },
   "happy_paths": {
-   "at": "2026-11-26T00:30:04Z",
+   "at": "2026-11-26T00:36:27Z",
    "ok": true,
    "value": 1.0
   },
   "lessons_enforced": {
-   "at": "2026-11-26T00:30:04Z",
+   "at": "2026-11-26T00:36:27Z",
    "ok": false,
    "value": 0.692
   },
   "owner_interventions": {
-   "at": "2026-11-26T00:30:04Z",
+   "at": "2026-11-26T00:36:27Z",
    "ok": false,
    "value": 59
   },
   "research_in_code": {
-   "at": "2026-11-26T00:30:04Z",
+   "at": "2026-11-26T00:36:27Z",
    "ok": false,
    "value": 0.621
   },
   "second_loop_keep_rate": {
-   "at": "2026-11-26T00:30:04Z",
+   "at": "2026-11-26T00:36:27Z",
    "ok": false,
    "value": 0.0
   },
   "self_shipping": {
-   "at": "2026-11-26T00:30:04Z",
+   "at": "2026-11-26T00:36:27Z",
    "ok": false,
    "value": 0.714
   },
   "spec_quality": {
-   "at": "2026-11-26T00:30:04Z",
+   "at": "2026-11-26T00:36:27Z",
    "ok": false,
-   "value": 0.649
+   "value": 0.69
   },
   "spend": {
-   "at": "2026-11-26T00:30:04Z",
+   "at": "2026-11-26T00:36:27Z",
    "ok": true,
    "value": 0.805
   },
   "stalled_clocks": {
-   "at": "2026-11-26T00:30:04Z",
+   "at": "2026-11-26T00:36:27Z",
    "ok": false,
    "value": 5
   },
   "ui_findings": {
-   "at": "2026-11-26T00:30:04Z",
+   "at": "2026-11-26T00:36:27Z",
    "ok": true,
    "value": 0
   },
   "unattended_horizon": {
-   "at": "2026-11-26T00:30:04Z",
+   "at": "2026-11-26T00:36:27Z",
    "ok": true,
    "value": 730
   },
   "value": {
-   "at": "2026-11-26T00:30:04Z",
+   "at": "2026-11-26T00:36:27Z",
    "ok": true,
    "value": 263.354
   }
@@ -382,6 +382,15 @@ export default {
  },
  "self_changes": [
   {
+   "after": 4,
+   "at": "2026-11-26T00:36:27Z",
+   "before": 2,
+   "reading": 0.0,
+   "var": "second_loop_keep_rate",
+   "verdict": "pending",
+   "what": "search: patience_ticks = 4 (untried in this episode)"
+  },
+  {
    "after": 3,
    "at": "2026-11-25T21:59:51Z",
    "before": 2,
@@ -479,15 +488,6 @@ export default {
    "var": "deploy_health",
    "verdict": "reverted",
    "what": "search: goals.#repair-deploys.weight = 30 (untried in this episode)"
-  },
-  {
-   "after": 3,
-   "at": "2026-11-22T04:12:35Z",
-   "before": 5,
-   "reading": 0.714,
-   "var": "self_shipping",
-   "verdict": "reverted",
-   "what": "search: chain.max_runs_per_day = 3 (untried in this episode)"
   }
  ]
 };

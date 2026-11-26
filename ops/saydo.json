@@ -1,5 +1,5 @@
 {
- "at": "2026-11-26T00:31:24Z",
+ "at": "2026-11-26T00:38:22Z",
  "gaps": 7,
  "match_share": 0.987,
  "sources": {
@@ -161,9 +161,9 @@
   ],
   "loops": [
    {
-    "detail": "0 of 98 second-order steps kept in 14 days",
+    "detail": "0 of 99 second-order steps kept in 14 days",
     "id": "second-loop-kept",
-    "judged": 98,
+    "judged": 99,
     "kept": 0,
     "ok": false
    }
@@ -1022,7 +1022,7 @@
     "checks": 1,
     "external": [],
     "failing": [
-     "python3 -m foundation dispose --check: an open item is 82.9 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+     "python3 -m foundation dispose --check: an open item is 83.1 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
     ],
     "id": "DISPOSE-1",
     "missing": [],
