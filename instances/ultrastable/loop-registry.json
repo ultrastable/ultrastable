@@ -788,7 +788,7 @@
    "workflows": [
     "org-manage.yml",
     "org-settings.yml",
-        "pages-enable.yml",
+    "pages-enable.yml",
     "org-profile-probe.yml"
    ],
    "credentials": [
@@ -3954,47 +3954,47 @@
    ],
    "server_owner": "github-actions"
   },
+  {
+   "id": "openstd",
+   "kind": "governance",
+   "summary": "OPEN-STANDARDS-1: formats follow registered open standards. The loop drains the shrink-only baseline a batch a day (JSON Schema on config), records CloudEvents for each run, and cuts a SemVer release with a Keep a Changelog file from Conventional Commits.",
+   "trigger": "daily workflow and on demand",
+   "owner": "operations",
+   "closes_by": "system",
+   "sla": "1d",
+   "done": "doctrine/open-standards-baseline.json shrinks or stays empty, ops/openstd/events.jsonl has an event from the last 2 days, and CHANGELOG.md names the current VERSION",
+   "paths": [
     {
-      "id": "openstd",
-      "kind": "governance",
-      "summary": "OPEN-STANDARDS-1: formats follow registered open standards. The loop drains the shrink-only baseline a batch a day (JSON Schema on config), records CloudEvents for each run, and cuts a SemVer release with a Keep a Changelog file from Conventional Commits.",
-      "trigger": "daily workflow and on demand",
-      "owner": "operations",
-      "closes_by": "system",
-      "sla": "1d",
-      "done": "doctrine/open-standards-baseline.json shrinks or stays empty, ops/openstd/events.jsonl has an event from the last 2 days, and CHANGELOG.md names the current VERSION",
-      "paths": [
-        {
-          "id": "github",
-          "how": ".github/workflows/openstd.yml runs python3 -m foundation openstd --drain 25 and semrel --apply",
-          "class": "free"
-        },
-        {
-          "id": "session",
-          "how": "the same commands from a cloud-hosted agent session",
-          "class": "session"
-        }
-      ],
-      "closing_probe": "grep:foundation/openstd.py::def drain",
-      "writeback": [
-        "doctrine",
-        "ops/openstd",
-        "CHANGELOG.md",
-        "VERSION"
-      ],
-      "system_path": [
-        "foundation/openstd.py",
-        "foundation/semrel.py",
-        "doctrine/open-standards.json",
-        "tests/foundation/test_openstd.py",
-        ".github/workflows/openstd.yml"
-      ],
-      "workflows": [
-        "openstd.yml"
-      ],
-      "area": "governance",
-      "server_owner": "github-actions"
+     "id": "github",
+     "how": ".github/workflows/openstd.yml runs python3 -m foundation openstd --drain 25 and semrel --apply",
+     "class": "free"
     },
+    {
+     "id": "session",
+     "how": "the same commands from a cloud-hosted agent session",
+     "class": "session"
+    }
+   ],
+   "closing_probe": "grep:foundation/openstd.py::def drain",
+   "writeback": [
+    "doctrine",
+    "ops/openstd",
+    "CHANGELOG.md",
+    "VERSION"
+   ],
+   "system_path": [
+    "foundation/openstd.py",
+    "foundation/semrel.py",
+    "doctrine/open-standards.json",
+    "tests/foundation/test_openstd.py",
+    ".github/workflows/openstd.yml"
+   ],
+   "workflows": [
+    "openstd.yml"
+   ],
+   "area": "governance",
+   "server_owner": "github-actions"
+  },
   {
    "id": "temporal",
    "kind": "governance",
@@ -4405,6 +4405,41 @@
    ],
    "area": "managers",
    "server_owner": "github-actions"
+  },
+  {
+   "id": "worklog",
+   "kind": "governance",
+   "summary": "WORK-RECORD-1: every request and session task is a work issue; records silent past stale_hours go back to the server lane with their next step.",
+   "trigger": "ultrastable-tick dispatch, lane runs, work-issue edits, daily backstop",
+   "owner": "operations",
+   "closes_by": "system",
+   "sla": "1h",
+   "done": "worklog reap finds no active record with a heartbeat older than stale_hours",
+   "paths": [
+    {
+     "id": "ci",
+     "how": "python3 -m foundation worklog reap --apply in worklog.yml",
+     "class": "free"
+    },
+    {
+     "id": "session",
+     "how": "python3 -m foundation worklog reap --apply from a cloud-hosted agent session",
+     "class": "session"
+    }
+   ],
+   "closing_probe": "grep:foundation/worklog.py::def reap",
+   "writeback": [
+    "doctrine/worklog.json"
+   ],
+   "system_path": [
+    "foundation/worklog.py",
+    ".github/workflows/worklog.yml"
+   ],
+   "area": "governance",
+   "server_owner": "ultrastable-tick",
+   "workflows": [
+    "worklog.yml"
+   ]
   }
  ],
  "launch_registry": "instances/ultrastable/loops.json"

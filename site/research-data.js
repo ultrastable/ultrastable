@@ -248,7 +248,7 @@ export default {
      "metric_label": "share of registered loops that declare a closing probe and a server-side owner",
      "measured": 1.0,
      "status": "met",
-     "n": 119,
+     "n": 120,
      "source": "instances/ultrastable/loop-registry.json (declared)",
      "item": null
     }
@@ -757,7 +757,7 @@ export default {
      "The system ships its own deploys. Put in place: the tick wakes the executor, whose merged change deploys from the merge commit. Check it with one number, verified deploys the system originated and executed itself (latest criticality tick), and set a limit for it (>= 1 is the limit we use)."
     ],
     "practice_note": [
-     "In our own system, 3 of 6 of these checks pass today. Share of registered loops that declare a closing probe and a server-side owner reads 1.0 (n = 119; source: instances/ultrastable/loop-registry.json (declared)). Median hours from a pull request opening to its merge reads 0.13 (n = 359; source: GitHub REST pulls?state=closed, last 500 closed pull requests, fetched 2026-11-25T21:38:05Z). Share of uploaded deploys proven live against their commit reads 0.999 (n = 890; source: ops/deploys.jsonl (same window)). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+     "In our own system, 3 of 6 of these checks pass today. Share of registered loops that declare a closing probe and a server-side owner reads 1.0 (n = 120; source: instances/ultrastable/loop-registry.json (declared)). Median hours from a pull request opening to its merge reads 0.13 (n = 359; source: GitHub REST pulls?state=closed, last 500 closed pull requests, fetched 2026-11-25T21:38:05Z). Share of uploaded deploys proven live against their commit reads 0.999 (n = 890; source: ops/deploys.jsonl (same window)). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
     ],
     "tradeoffs": [
      "Scale. One organization: 500 closed pull requests (359 merged) over 7.87 days. Our numbers describe this system; they are not a causal estimate and are not compared with the study's effect sizes as if they were.",
@@ -838,7 +838,7 @@ export default {
      "metric_label": "share of registered loops that declare a closing probe and a server-side owner",
      "measured": 1.0,
      "status": "met",
-     "n": 119,
+     "n": 120,
      "source": "instances/ultrastable/loop-registry.json (declared)",
      "item": null
     },
@@ -1291,7 +1291,7 @@ export default {
      "metric_label": "share of registered loops that declare a closing probe and a server-side owner",
      "measured": 1.0,
      "status": "met",
-     "n": 119,
+     "n": 120,
      "source": "instances/ultrastable/loop-registry.json (declared)",
      "item": null
     }
