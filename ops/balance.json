@@ -1,13 +1,13 @@
 {
- "at": "2026-11-26T18:22:27Z",
+ "at": "2026-11-26T18:32:23Z",
  "windows": {
   "day": {
    "days": 1,
-   "filed": 243,
+   "filed": 236,
    "superseded": 0,
-   "net_inflow": 243,
-   "closed": 438,
-   "balance": 195,
+   "net_inflow": 236,
+   "closed": 439,
+   "balance": 203,
    "ok": true
   },
   "week": {
@@ -15,14 +15,14 @@
    "filed": 699,
    "superseded": 1,
    "net_inflow": 698,
-   "closed": 1136,
-   "balance": 438,
+   "closed": 1137,
+   "balance": 439,
    "ok": true
   }
  },
- "open": 46,
+ "open": 45,
  "sla": {
-  "within": 46,
+  "within": 45,
   "breached": 0,
   "compliance": 1.0,
   "oldest_days": 0.2,
@@ -42,28 +42,6 @@
  },
  "filed": null,
  "history": [
-  {
-   "at": "2026-11-26T11:24:29Z",
-   "day_in": 249,
-   "day_out": 389,
-   "week_in": 645,
-   "week_out": 1142,
-   "week_balance": 497,
-   "open": 52,
-   "sla": 1.0,
-   "tipped": false
-  },
-  {
-   "at": "2026-11-26T11:24:37Z",
-   "day_in": 249,
-   "day_out": 389,
-   "week_in": 645,
-   "week_out": 1142,
-   "week_balance": 497,
-   "open": 52,
-   "sla": 1.0,
-   "tipped": false
-  },
   {
    "at": "2026-11-26T11:33:50Z",
    "day_in": 249,
@@ -1029,6 +1007,28 @@
    "week_out": 1136,
    "week_balance": 438,
    "open": 46,
+   "sla": 1.0,
+   "tipped": false
+  },
+  {
+   "at": "2026-11-26T18:32:15Z",
+   "day_in": 236,
+   "day_out": 439,
+   "week_in": 698,
+   "week_out": 1137,
+   "week_balance": 439,
+   "open": 45,
+   "sla": 1.0,
+   "tipped": false
+  },
+  {
+   "at": "2026-11-26T18:32:23Z",
+   "day_in": 236,
+   "day_out": 439,
+   "week_in": 698,
+   "week_out": 1137,
+   "week_balance": 439,
+   "open": 45,
    "sla": 1.0,
    "tipped": false
   }
