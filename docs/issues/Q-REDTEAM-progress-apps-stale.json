@@ -1,7 +1,7 @@
 {
   "id": "Q-REDTEAM-progress-apps-stale",
   "title": "Q-REDTEAM-progress-apps-stale: /progress.json apps block is frozen at 2026-11-17 with live 0 and newest null",
-  "body": "**Owner:** product-manager\n**Trigger:** red-team pass (REDTEAM-1), daily\n**Done check:** cmd:python3 -m foundation redteam --probe\n**Prediction:** redteam_found_30d <= 10 within 72 h\n**Out of scope:** weakening the red-team check or editing page text by hand; fix the producer.\n**Closing probe:** `python3 -m foundation redteam --probe`\n**Status:** open\n\nFound by reading production as a stranger on 2026-11-25. Root cause: the apps block producer stopped; nothing alarms on its age. Fix the producer, not the page text. Closing probe: apps.as_of on /progress.json is under 3 days old.",
+  "body": "**Owner:** product-manager\n**Trigger:** red-team pass (REDTEAM-1), daily\n**Done check:** cmd:python3 -m foundation redteam --probe\n**Prediction:** redteam_found_30d <= 10 within 72 h\n**Out of scope:** weakening the red-team check or editing page text by hand; fix the producer.\n**Closing probe:** `python3 -m foundation redteam --probe`\n**Status:** closed\n\nFound by reading production as a stranger on 2026-11-25. Root cause: the apps block producer stopped; nothing alarms on its age. Fix the producer, not the page text. Closing probe: apps.as_of on /progress.json is under 3 days old.\n\n**Disposition:** shelved (ttl, 2026-11-26T03:14:49Z, DISPOSE-1)\n\n**Evidence:** open 6.0 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
   "status": "open",
   "labels": [
     "role:product-manager",
