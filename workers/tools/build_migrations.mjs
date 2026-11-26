@@ -2,6 +2,9 @@
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
 // Builds adapters/cloudflare/migrations/: every module's migrations concatenated in dependency order as
 // NNNN_<module>_<name>.sql. The output is committed; core/org/migrations.test.js fails if it drifts.
+// Append-only: a file already in the committed directory keeps its number, and a migration that is not there yet takes the next number, in module
+// order. A module that gains a migration therefore adds one file instead of renaming every file after it, so a change stays small (SMALL-CHANGE-1),
+// a database that applied an earlier file never meets it under another name, and the bundle reads like the ledger it is.
 // Usage: node tools/build_migrations.mjs [--config org-config.json] [--check]
 import { readFileSync, readdirSync, writeFileSync, mkdirSync, existsSync, rmSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -10,20 +13,27 @@ import { moduleList } from '../core/org/modules.js';
 
 const ROOT = fileURLToPath(new URL('../', import.meta.url));
 export const OUT_DIR = path.join(ROOT, 'adapters/cloudflare/migrations');
+const keyOf = file => file.replace(/^\d+_/, '');
 
-export function buildMigrations({ root = ROOT, config = {} } = {}) {
+export function buildMigrations({ root = ROOT, config = {}, modules = null, outDir = path.join(root, 'adapters/cloudflare/migrations') } = {}) {
+  const have = existsSync(outDir) ? readdirSync(outDir).filter(x => x.endsWith('.sql')) : [];
+  const taken = new Map(have.map(f => [keyOf(f), parseInt(f, 10)]));
+  let next = Math.max(0, ...taken.values()) + 1;
   const out = [];
-  let n = 0;
-  for (const m of moduleList(config)) {
+  const seen = new Set();
+  for (const m of modules || moduleList(config)) {
     const dir = path.join(root, m.dir);
     if (!existsSync(dir)) throw new Error(`module ${m.id}: no migrations directory ${m.dir}`);
     for (const f of readdirSync(dir).filter(x => x.endsWith('.sql')).sort()) {
       const name = f.replace(/\.sql$/, '').replace(/^\d+_/, '');
-      const file = `${String(++n).padStart(4, '0')}_${m.id}_${name}.sql`;
-      out.push({ file, source: `${m.dir}/${f}`, sql: readFileSync(path.join(dir, f), 'utf8') });
+      const key = `${m.id}_${name}.sql`;
+      if (seen.has(key)) throw new Error(`module ${m.id}: two migrations are named ${name}; a name must be unique inside its module`);
+      seen.add(key);
+      const n = taken.has(key) ? taken.get(key) : next++;
+      out.push({ file: `${String(n).padStart(4, '0')}_${key}`, source: `${m.dir}/${f}`, sql: readFileSync(path.join(dir, f), 'utf8') });
     }
   }
-  return out;
+  return out.sort((x, y) => x.file.localeCompare(y.file));
 }
 
 export function writeMigrations(files, outDir = OUT_DIR) {

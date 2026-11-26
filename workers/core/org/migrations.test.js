@@ -4,9 +4,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { DatabaseSync } from 'node:sqlite';
-import { readdirSync, readFileSync } from 'node:fs';
+import { readdirSync, readFileSync, mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { buildMigrations, OUT_DIR } from '../../tools/build_migrations.mjs';
+import { buildMigrations, writeMigrations, OUT_DIR } from '../../tools/build_migrations.mjs';
 import { MODULES, moduleList } from './modules.js';
 
 test('the committed migrations directory equals the build output (no drift)', () => {
@@ -16,12 +17,28 @@ test('the committed migrations directory equals the build output (no drift)', ()
   for (const b of built) assert.equal(readFileSync(path.join(OUT_DIR, b.file), 'utf8'), b.sql, `${b.file} drifted`);
 });
 
-test('files are numbered in module order and named NNNN_<module>_<name>.sql', () => {
+test('files are numbered 0001 upward without a gap and named NNNN_<module>_<name>.sql', () => {
   const files = buildMigrations().map(b => b.file);
   files.forEach((f, i) => assert.match(f, new RegExp(`^${String(i + 1).padStart(4, '0')}_[a-z_]+_[A-Za-z0-9_]+\.sql$`)));
-  const order = MODULES.map(m => m.id);
-  const seen = files.map(f => order.find(id => f.slice(5).startsWith(id + '_')));
-  assert.deepEqual([...new Set(seen)], order);
+  const ids = MODULES.map(m => m.id);
+  for (const f of files) assert.ok(ids.some(id => f.slice(5).startsWith(id + '_')), `${f} names no module`);
+});
+
+test('the bundle is append-only: a module that gains a migration adds one file and renames none', () => {
+  const root = mkdtempSync(path.join(tmpdir(), 'mig-'));
+  try {
+    const out = path.join(root, 'adapters/cloudflare/migrations');
+    const modules = [{ id: 'one', dir: 'one/migrations' }, { id: 'two', dir: 'two/migrations' }];
+    const put = (dir, name) => { mkdirSync(path.join(root, dir), { recursive: true }); writeFileSync(path.join(root, dir, name), `-- ${dir}/${name}\nSELECT 1;\n`); };
+    put('one/migrations', '0001_a.sql'); put('two/migrations', '0001_b.sql');
+    const first = buildMigrations({ root, outDir: out, modules });
+    assert.deepEqual(first.map(f => f.file), ['0001_one_a.sql', '0002_two_b.sql']);
+    writeMigrations(first, out);
+    put('one/migrations', '0002_c.sql'); // the earlier module gains one: it must not push two_b to 0003
+    const second = buildMigrations({ root, outDir: out, modules });
+    assert.deepEqual(second.map(f => f.file), ['0001_one_a.sql', '0002_two_b.sql', '0003_one_c.sql']);
+    assert.throws(() => { put('one/migrations', '0003_c.sql'); buildMigrations({ root, outDir: out, modules }); }, /two migrations are named c/);
+  } finally { rmSync(root, { recursive: true, force: true }); }
 });
 
 test('pack migrations are added only when listed in config', () => {
