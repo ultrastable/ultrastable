@@ -1,4 +1,5 @@
 {
+  "$schema": "../../schemas/doctrine.schema.json",
   "_doc": "Loop registry: every recurring loop Ultrastable runs on itself, where it runs, how often, its evidence path and closing probe. `python3 -m foundation launch` runs all of them once; every host only schedules that command. Server-side only (owner, 2026-11-12): every host names the platform it runs on in `runs_on`, one of the platforms in doctrine/server-side.json; a host on a person's computer fails `python3 -m foundation serverside --check`. Changed by reviewed PR.",
   "version": "1.0.0",
   "command": "python3 -m foundation launch --commit --push",

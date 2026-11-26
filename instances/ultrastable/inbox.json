@@ -1,4 +1,5 @@
 {
+  "$schema": "../../schemas/doctrine.schema.json",
  "_doc": "Where Ultrastable's mail goes, as data. The cockpit shows it and the test checks every route has a destination, an owner of the follow-up and a closing probe. Recorded 2026-11-10 from docs/ops/OWNER-STEPS.md and HANDOFF.md; the probe is the live check to run, not one this file can run offline. Addresses of people are never stored here: destinations are named by role.",
  "routes": [
   {"address": "pilot@ultrastable.io", "kind": "inbound", "forwards_to": "the owner's verified mailbox (Cloudflare Email Routing rule 'pilot inbox')", "then": "the outreach coordinator reconciles forwarded replies into outreach/state.json and marks each one", "probe": "cockpit probe: send a test mail, see it in the owner's mailbox, see it logged in outreach/log.jsonl"},
