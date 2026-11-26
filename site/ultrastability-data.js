@@ -4,72 +4,72 @@ export default {
  "credit": "W. Ross Ashby, Design for a Brain (1952)",
  "now": {
   "claims_drift": {
-   "at": "2026-11-26T00:58:08Z",
+   "at": "2026-11-26T01:04:35Z",
    "ok": true,
    "value": 0
   },
   "deploy_health": {
-   "at": "2026-11-26T00:58:08Z",
+   "at": "2026-11-26T01:04:35Z",
    "ok": true,
    "value": 1.0
   },
   "happy_paths": {
-   "at": "2026-11-26T00:58:08Z",
+   "at": "2026-11-26T01:04:35Z",
    "ok": true,
    "value": 1.0
   },
   "lessons_enforced": {
-   "at": "2026-11-26T00:58:08Z",
+   "at": "2026-11-26T01:04:35Z",
    "ok": false,
    "value": 0.692
   },
   "owner_interventions": {
-   "at": "2026-11-26T00:58:08Z",
+   "at": "2026-11-26T01:04:35Z",
    "ok": false,
    "value": 59
   },
   "research_in_code": {
-   "at": "2026-11-26T00:58:08Z",
+   "at": "2026-11-26T01:04:35Z",
    "ok": false,
    "value": 0.621
   },
   "second_loop_keep_rate": {
-   "at": "2026-11-26T00:58:08Z",
+   "at": "2026-11-26T01:04:35Z",
    "ok": false,
    "value": 0.0
   },
   "self_shipping": {
-   "at": "2026-11-26T00:58:08Z",
+   "at": "2026-11-26T01:04:35Z",
    "ok": false,
    "value": 0.714
   },
   "spec_quality": {
-   "at": "2026-11-26T00:58:08Z",
+   "at": "2026-11-26T01:04:35Z",
    "ok": false,
-   "value": 0.693
+   "value": 0.69
   },
   "spend": {
-   "at": "2026-11-26T00:58:08Z",
+   "at": "2026-11-26T01:04:35Z",
    "ok": true,
    "value": 0.805
   },
   "stalled_clocks": {
-   "at": "2026-11-26T00:58:08Z",
+   "at": "2026-11-26T01:04:35Z",
    "ok": false,
    "value": 5
   },
   "ui_findings": {
-   "at": "2026-11-26T00:58:08Z",
+   "at": "2026-11-26T01:04:35Z",
    "ok": true,
    "value": 0
   },
   "unattended_horizon": {
-   "at": "2026-11-26T00:58:08Z",
+   "at": "2026-11-26T01:04:35Z",
    "ok": true,
    "value": 730
   },
   "value": {
-   "at": "2026-11-26T00:58:08Z",
+   "at": "2026-11-26T01:04:35Z",
    "ok": true,
    "value": 263.354
   }
@@ -382,12 +382,21 @@ export default {
  },
  "self_changes": [
   {
+   "after": 8,
+   "at": "2026-11-26T01:04:35Z",
+   "before": 3,
+   "reading": 0.0,
+   "var": "second_loop_keep_rate",
+   "verdict": "pending",
+   "what": "search: settle_ticks = 8 (untried in this episode)"
+  },
+  {
    "after": 4,
    "at": "2026-11-26T00:36:27Z",
    "before": 2,
    "reading": 0.0,
    "var": "second_loop_keep_rate",
-   "verdict": "pending",
+   "verdict": "reverted",
    "what": "search: patience_ticks = 4 (untried in this episode)"
   },
   {
@@ -479,15 +488,6 @@ export default {
    "var": "self_shipping",
    "verdict": "reverted",
    "what": "search: goals.#self-shipping.weight = 50 (untried in this episode)"
-  },
-  {
-   "after": 30,
-   "at": "2026-11-22T04:32:33Z",
-   "before": 50,
-   "reading": 0.988,
-   "var": "deploy_health",
-   "verdict": "reverted",
-   "what": "search: goals.#repair-deploys.weight = 30 (untried in this episode)"
   }
  ]
 };
