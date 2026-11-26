@@ -197,7 +197,7 @@ cd seed/worker && npm test            # tick Worker tests
 
 ## Status
 
-Ultrastable runs itself in production on Cloudflare and has <!-- claim:live-deploys -->1124<!-- /claim --> recorded live deploys. The kernel carries <!-- claim:seed-tests -->104 Python and 580 Worker tests<!-- /claim -->, the Python reference runtime <!-- claim:core-tests -->44 tests<!-- /claim --> and the Google Cloud adapter <!-- claim:gcp-tests -->2 tests<!-- /claim -->, all in CI. It is early: there are no outside customers yet, figures on the site are measured by the system itself and not externally audited, and the Google Cloud adapter has not been deployed. Practical Solutions is the first system built on it. What is built, running or planned is tracked per specification in [specs/](specs/README.md) and per item in [ROADMAP.md](ROADMAP.md).
+Ultrastable runs itself in production on Cloudflare and has <!-- claim:live-deploys -->1134<!-- /claim --> recorded live deploys. The kernel carries <!-- claim:seed-tests -->104 Python and 580 Worker tests<!-- /claim -->, the Python reference runtime <!-- claim:core-tests -->44 tests<!-- /claim --> and the Google Cloud adapter <!-- claim:gcp-tests -->2 tests<!-- /claim -->, all in CI. It is early: there are no outside customers yet, figures on the site are measured by the system itself and not externally audited, and the Google Cloud adapter has not been deployed. Practical Solutions is the first system built on it. What is built, running or planned is tracked per specification in [specs/](specs/README.md) and per item in [ROADMAP.md](ROADMAP.md).
 
 Ultrastable is a separate brand from QNFO; QNFO's fleet was the test bed the platform was generalized from.
 
