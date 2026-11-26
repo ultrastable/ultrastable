@@ -6037,6 +6037,15 @@
    "body": "Owner 2026-11-26: the specification should not be up for grabs and the template repository carries only what a new instance needs to deploy. Decision: full specification text, rule narrative and company papers live in private ultrastable/ops (spec/, admin/, no workflow); code, public contracts, definitions, white papers, requirement IDs and conformance counts stay public; the seed is slimmed to the operating agreement plus the generated rules index. What was already public stays public (no history rewrite: the ruleset refuses force pushes). New specification text is never committed to a public branch. Detail and sequence: docs/handoff/disclosure-split.md",
    "probe": "file:foundation/disclosure.py",
    "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "lesson-2026-11-26-oversized-prs-hide-scratch-refuse-them",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Oversized PRs hide scratch; refuse them",
+   "body": "ops PR 45 changed 3,194 files, 3,158 of them session scratch copies. SMALL-CHANGE-1 (seed/scripts/prsize.py, in checks) fails a PR over 60 files or 3,000 lines or carrying wip/ paths. The work was salvaged into ops #46 and kept on archive/pr45-spec-held-work.",
+   "probe": "file:seed/scripts/prsize.py",
+   "session": "session_0156nqDuK44xqnv57kfkBrGR"
   }
  ]
 }
