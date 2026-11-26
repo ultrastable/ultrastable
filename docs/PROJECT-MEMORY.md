@@ -10,6 +10,8 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-26
 
+- 2026-11-26: feat: the steward, principles enforcement and GitHub pull helpers (WI) (#2594)
+- 2026-11-26: feat: the workers tools, gaplint and loop closer (W09) (#2593)
 - 2026-11-26: feat: the adapters and launcher (W08) (#2588)
 - 2026-11-26: Fix async handler, mount route, test wire, update handoff. (#Q-LITE-webmention-wire) (#2589)
 - 2026-11-26: feat: the bootstrapper, its ladder and the owner document (BS) (#2587)
