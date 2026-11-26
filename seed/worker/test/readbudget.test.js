@@ -234,18 +234,36 @@ test('READ-BUDGET-9: the cap on live changes keeps the newest 400 of a repositor
   assert.equal(db.raw.prepare(`SELECT COUNT(*) n FROM live_changes WHERE repo = 'o/other'`).get().n, 1, 'another repository keeps its history');
 });
 
-test('READ-BUDGET-9: the previous criticality window is read once an hour, the current one every tick', async () => {
+test('READ-BUDGET-10: the previous criticality window is read once an hour, the current one once per half hour', async () => {
   const { measureCriticality } = await import('../src/criticality.js');
   const crit = JSON.parse(readFileSync(new URL('../../autonomy/criticality.json', import.meta.url), 'utf8'));
   const db = makeDb(), outcomeReads = seen => seen.filter(e => /FROM outcomes WHERE result=/.test(e.sql)).length;
-  let seen = spy(db); const a = await measureCriticality(db, crit, NOW); const first = outcomeReads(seen);
-  seen = spy(db); const b = await measureCriticality(db, crit, NOW + 600e3); const second = outcomeReads(seen);
-  assert.equal(second * 2, first, 'the second tick of the hour reads one window, not two');
+  const H = Math.floor(NOW / 3600e3) * 3600e3;  // an hour boundary, so the half-hour and hour buckets are known
+  let seen = spy(db); const a = await measureCriticality(db, crit, H + 10e3); const first = outcomeReads(seen);
+  assert.ok(first > 0 && first % 2 === 0, 'the first read counts the current and the previous window');
+  seen = spy(db); const b = await measureCriticality(db, crit, H + 600e3);
+  assert.equal(outcomeReads(seen), 0, 'the next tick of the half hour reads no outcome rows');
   assert.equal(b.k_eff, a.k_eff);
-  seen = spy(db); await measureCriticality(db, crit, NOW + 3600e3);
-  assert.equal(outcomeReads(seen), first, 'a new hour reads the previous window again');
-  seen = spy(db); await measureCriticality(db, { ...crit, window_days: crit.window_days + 1 }, NOW + 3600e3 + 1);
+  seen = spy(db); await measureCriticality(db, crit, H + 1800e3 + 10e3);
+  assert.equal(outcomeReads(seen) * 2, first, 'a new half hour reads the current window only');
+  seen = spy(db); await measureCriticality(db, crit, H + 3600e3 + 10e3);
+  assert.equal(outcomeReads(seen), first, 'a new hour reads both windows again');
+  seen = spy(db); await measureCriticality(db, { ...crit, window_days: crit.window_days + 1 }, H + 3600e3 + 20e3);
   assert.equal(outcomeReads(seen), first, 'changed thresholds are never answered from the old reading');
+});
+
+test('READ-BUDGET-10: the ROI verdict reads seven days of samples once per quarter hour, and a caller with its own clock always reads', async () => {
+  const { readRoi } = await import('../src/roi.js');
+  const db = makeDb(), sampleReads = seen => seen.filter(e => /FROM free_tier_samples/.test(e.sql)).length;
+  let seen = spy(db); const a = await readRoi(db, {}); const first = sampleReads(seen);
+  assert.ok(first > 0, 'the first read aggregates the samples');
+  seen = spy(db); const b = await readRoi(db, {});
+  assert.equal(sampleReads(seen), 0, 'the next read in the quarter hour is one org row');
+  assert.deepEqual(b, a);
+  seen = spy(db); await readRoi(db, { now: new Date(NOW) });
+  assert.equal(sampleReads(seen), first, 'an explicit clock is never answered from the cache');
+  seen = spy(db); await readRoi(db, { cache: false });
+  assert.equal(sampleReads(seen), first, 'cache: false always reads');
 });
 
 test('READ-BUDGET-9: the goals prune is a range on its own index', async () => {
