@@ -6285,6 +6285,15 @@
    "body": "build_migrations.mjs keeps existing file numbers and appends new migrations at the next number. A module gaining a migration used to renumber every later file (about fifty), which made a slice of work with a migration impossible to keep under the 60 file gate and let one database see one migration under two names. The module list already said new modules go last so numbers never shift; the generator now guarantees it.",
    "probe": "file:workers/core/org/migrations.test.js",
    "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "lesson-2026-11-26-slice-w01-of-the-specification-run-s-code-and-tests-shipped-",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Slice W01 of the specification run's code and tests shipped on its own",
+   "body": "feat: the storage adapters, core test helpers and the claims, console-l3 and deploy modules. One cohesive set of files inside the 60 file and 3,000 line bound, applied to the latest main from a private working copy, with generated migrations regenerated append-only.",
+   "probe": "file:workers/adapters/postgres/index.js",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
   }
  ]
 }

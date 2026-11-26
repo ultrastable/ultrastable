@@ -1,0 +1,11 @@
+{
+  "id": "Q-ULTRA-blindspot-spend-2",
+  "title": "Q-ULTRA-blindspot-spend-2: Spend against the declared monthly budget out of bounds: iterate: cut the spend source (blindspot; verb iterate)",
+  "body": "**Owner:** executor\n**Trigger:** essential variable `blindspot:spend` out of bounds (reading 8.491; limits 0 to 1.0)\n**Done check:** cmd:python3 -m foundation ultrastability --check\n**Status:** open\n\nULTRASTABILITY-1 second-order step: iterate: cut the spend source (blindspot; verb iterate). The owner accepted a running cost; past it the system is not viable.\n\n**Prediction:** tenant.spend_vs_budget >= 0 within 72 h\n**Out of scope:** changing the bounds of `spend` or any other essential variable; a step is judged by the reading, never by relaxing the limit.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation ultrastability --tick` reads `spend` inside its bounds.\n\n\n**Vacuous:** 2026-11-26T17:24:44Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n",
+  "labels": [
+    "p1",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Ultrastability"
+}

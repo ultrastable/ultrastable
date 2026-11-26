@@ -17,7 +17,7 @@ const T0 = Date.UTC(2026, 10, 15, 12, 0, 0);
 const H = 3600e3;
 const mk = (config = {}, elicitConfig = {}) => {
   const db = makeDb([dir('../elicit/migrations/'), dir('./migrations/')]); const t = { v: T0 }; const now = () => t.v;
-  const make = () => createWalkthrough({ db, elicit: createElicit({ db, now, config: { daily_cap: 20, ...elicitConfig } }), now, config: { catalog: CATALOG, ...config } });
+  const make = () => createWalkthrough({ db, elicit: createElicit({ db, now, config: { daily_cap: 20, defer_below: 0, ...elicitConfig } }), now, config: { catalog: CATALOG, ...config } });
   return { db, t, wt: make(), make };
 };
 const IDEA = 'I want a weekly pairings page for my chess club members, called "Knight Moves". We can pay $20 a month.';
@@ -156,7 +156,7 @@ test('US-18-R12: the walkthrough ends by stating exactly what runs and what does
   assert.ok(before.runs.some(x => /Your answers are recorded: \d+ of \d+/.test(x)));
   w.db.raw.exec(`INSERT INTO tick_runs (started_at,finished_at,steps_completed,steps_total) VALUES ('2026-11-15 12:00:00','2026-11-15 12:00:01',8,8);
     INSERT INTO items (id,title,owner_role,done_check,status) VALUES ('A','a','staff','x','ready')`);
-  const live = createWalkthrough({ db: w.db, elicit: createElicit({ db: w.db, now: () => w.t.v }), now: () => w.t.v, config: { catalog: CATALOG, working_url: 'https://club.example/' } });
+  const live = createWalkthrough({ db: w.db, elicit: createElicit({ db: w.db, now: () => w.t.v, config: { defer_below: 0 } }), now: () => w.t.v, config: { catalog: CATALOG, working_url: 'https://club.example/' } });
   const after = (await live.current('ana')).works;
   assert.ok(after.runs.includes('The regular check runs: the last one finished at 2026-11-15 12:00:01.'));
   assert.ok(after.runs.includes('Your page is at https://club.example/.')); assert.ok(after.runs.some(x => /1 in hand/.test(x)));
@@ -240,4 +240,57 @@ test('routes: same-origin writes only (US-18-R09), JSON for agents and people al
   assert.equal((await (await call('/api/console/profile', { detail: 'more' })).json()).profile.detail, 'more');
   assert.equal((await (await call('/api/console/profile')).json()).detail, 'more');
   assert.throws(() => createWalkthrough({ db }), /needs register/);
+});
+
+test('US-16-R12: the read-back callback fires exactly once, when the read-back is first shown; US-16-R14: an unconfirmed read-back still lets the walkthrough finish', async () => {
+  const db = makeDb([dir('../elicit/migrations/'), dir('./migrations/')]);
+  const t = { v: T0 }; const shown = []; const confirmed = [];
+  const elicit = createElicit({ db, now: () => t.v, config: { daily_cap: 20, max_open: 20, defer_below: 0 } });
+  const wt = createWalkthrough({ db, elicit, now: () => t.v, config: { catalog: CATALOG, readback_hours: 72 }, onReadbackShown: (project, at, person) => shown.push([project, at, person]), onReadbackConfirmed: (project, at, person) => confirmed.push([project, person]) });
+  assert.equal(wt.elicit, elicit);
+  await wt.submitIdea('ana', IDEA);
+  for (let i = 0; i < 20; i++) { const s = await wt.current('ana'); if (s.kind !== 'ask') break; await wt.answer('ana', s.card.need_id, { choice: s.card.free_text ? 'a name' : s.card.buttons[0], text: s.card.free_text ? 'a name' : undefined }); }
+  assert.equal((await wt.current('ana')).kind, 'readback'); await wt.current('ana'); await wt.current('ana');
+  assert.deepEqual(shown, [['main', T0, 'ana']]);
+  t.v += 73 * 3600e3;
+  assert.equal((await wt.current('ana')).kind, 'done'); assert.equal(shown.length, 1);
+  assert.deepEqual(confirmed, []);
+  await wt.confirmReadBack('ana'); await wt.confirmReadBack('ana');
+  assert.deepEqual(confirmed, [['main', 'ana']], 'confirmation is reported once');
+});
+
+test('T16-1 and US-16-R01: every REQUIRED field of every artifact in every mode is fed by a catalog need or declared as filled by the managers', async () => {
+  const { requiredArtifacts } = await import('../lifecycle-gates/index.js');
+  const fed = new Set(CATALOG.needs.flatMap(n => (n.feeds || []).map(f => f)));
+  const system = new Set((CATALOG.system_fields || []).map(f => `${f.artifact}.${f.field}`));
+  for (const mode of ['predictive', 'agile', 'hybrid']) {
+    const uncovered = requiredArtifacts(mode).flatMap(a => a.fields.map(f => `${a.kind}.${f}`)).filter(f => !fed.has(f) && !system.has(f));
+    assert.deepEqual(uncovered, [], `${mode}: required fields with no need and not system-filled`);
+  }
+  for (const f of fed) { const [kind, ...rest] = f.split('.'); assert.ok(requiredArtifacts('hybrid').some(a => a.kind === kind && a.fields.includes(rest.join('.'))), `${f} names a real required field`); }
+  for (const s of system) assert.ok(!fed.has(s), `${s} is declared system-filled and is also asked`);
+  for (const n of CATALOG.needs.filter(n => ['guard', 'limits'].includes(n.id))) assert.deepEqual(validateCard({ need_id: n.id, question: n.question, why: n.why, cue: n.cue, options: [...n.options, ...EXTRA_OPTIONS], default: n.default, default_consequence: n.default_consequence, reversibility: 'reversible', priority: 1 }), [], n.id);
+});
+
+test('US-18-R18 and US-18 section 6 language: with a dictionary the fixed strings are the dictionary\'s, an unknown or missing key falls back to English per string, a right-to-left language sets the direction; the profile never changes which cards or lists are shown', async () => {
+  const { messagesFor, t, ENGLISH, dirFor } = await import('./i18n.js');
+  const pt = { 'tab.now': 'Agora', 'h.needs': 'Precisa de você', 'b.did': 'Eu fiz', 'bogus.key': 'x', 'b.default': '' };
+  const m = messagesFor('pt-BR', { pt });
+  assert.equal(m.messages['tab.now'], 'Agora'); assert.equal(m.messages['b.did'], 'Eu fiz');
+  assert.equal(m.messages['b.default'], ENGLISH['b.default'], 'an empty string falls back'); assert.equal(m.messages['tab.prog'], ENGLISH['tab.prog']);
+  assert.ok(!('bogus.key' in m.messages)); assert.equal(m.translated, 3); assert.equal(m.dir, 'ltr');
+  assert.equal(messagesFor('xx', { pt }).translated, 0); assert.equal(messagesFor('en').messages['tab.now'], 'Now');
+  assert.equal(dirFor('ar'), 'rtl'); assert.equal(dirFor('he-IL'), 'rtl'); assert.equal(dirFor('pt'), 'ltr');
+  assert.equal(t(messagesFor('en'), 't.more', { n: 4 }), 'And 4 more.'); assert.equal(t(null, 'nope'), 'nope');
+  const { db, wt } = mk({ dictionaries: { pt } }); await wt.submitIdea('ana', IDEA); await wt.current('ana');
+  db.raw.exec(`INSERT INTO tick_runs (started_at,finished_at,steps_completed,steps_total) VALUES ('2026-11-15 12:00:00','2026-11-15 12:00:01',8,8);
+    INSERT INTO gate_cards (id,what,why_gated,default_in_effect,closing_probe) VALUES ('g','Approve','x','waits','manual')`);
+  const raw = await buildConsole(db);
+  const en = await wt.screens('ana', raw);
+  await wt.setProfile('ana', { language: 'pt-BR' });
+  const out = await wt.screens('ana', raw);
+  assert.equal(out.i18n.messages['h.needs'], 'Precisa de você'); assert.equal(en.i18n.messages['h.needs'], 'Needs you');
+  assert.deepEqual(out.needs_you.cards.map(c => c.id), en.needs_you.cards.map(c => c.id)); assert.equal(out.now.working_on.length, en.now.working_on.length);
+  await wt.setProfile('ana', { language: 'ar' });
+  assert.equal((await wt.screens('ana', raw)).i18n.dir, 'rtl');
 });

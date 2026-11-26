@@ -10,6 +10,9 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-26
 
+- 2026-11-26: feat: the storage adapters, core test helpers and the claims, console-l3 and deploy modules (W01) (#2530)
+- 2026-11-26: ZERO-MINUTES-1: worker merged #2529
+- 2026-11-26: tenant-sync: ledger [skip ci] (#2529)
 - 2026-11-26: feat: the Cloudflare migrations bundle is append-only (#2528)
 - 2026-11-26: feat(phasework): phased large change as kernel code (PHASED-WORK-1) (#2517)
 - 2026-11-26: queue: closing-probe verdicts for 22 item(s) (QUEUE-PERSIST-1) (part 2/2) [skip ci]

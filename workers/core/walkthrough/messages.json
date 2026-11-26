@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "about": "US-18 section 6 (language): every fixed string of the console page, keyed, in English. A person's language applies a dictionary of the same keys; a missing key falls back to English for that string alone. Text written by agents and the headline sentence are not in this table and stay as written. Dictionaries are data (config.dictionaries[<lang>]); none is shipped unreviewed, and a machine-made one is marked as such by core/i18n.",
+  "messages": {
+    "tab.now": "Now", "tab.needs": "Needs you", "tab.prog": "Progress", "tab.connect": "Connect", "tab.help": "Help",
+    "h.working": "Working on", "h.stuck": "Stuck", "h.needs": "Needs you", "h.finished": "Finished lately", "h.predicts": "How well it predicts", "h.autonomy": "Where it acts on its own",
+    "b.did": "I did it", "b.default": "Use the default", "b.explain": "What does this mean?", "b.connect": "Add it in Connect", "b.do": "Do it",
+    "t.nothing": "Nothing here.", "t.more": "And {n} more.", "t.donothing": "If you do nothing: ", "t.level": "Level: "
+  }
+}

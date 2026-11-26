@@ -1,7 +1,7 @@
 {
   "id": "Q-SMOKE-buffer-registration",
   "title": "Q-SMOKE-buffer-registration: production does not match the claim (buffer-registration)",
-  "body": "**Owner:** executor\n**Trigger:** smoke-live (daily)\n**Done check:** grep:scripts/smoke_live.py::buffer-registration\n**Status:** closed\n\nSMOKE-LIVE-1: Buffer accepts the app registration the connect flow sends (SOCIAL-MODULE-1)\n\nLive evidence: `HTTP 400; client_id no; body {\"error\":\"invalid_client_metadata\",\"error_description\":\"Invalid public MCP client registration request\"}`\n\nFix the code or the words so production does what is claimed, deploy, and smoke-live closes this.\n\nsize: S\n\n**Closing probe:** workflow smoke-live, check `buffer-registration` = PASS.\n\n\n**Evidence:** closing probe passed (already built: the probe passed from filing and held for 452 passes over 4480 minutes (VACUOUS-CLOSE-1)): grep:scripts/smoke_live.py::buffer-registration\n",
+  "body": "**Owner:** executor\n**Trigger:** smoke-live (daily)\n**Done check:** grep:scripts/smoke_live.py::buffer-registration\n**Status:** closed\n\nSMOKE-LIVE-1: Buffer accepts the app registration the connect flow sends (SOCIAL-MODULE-1)\n\nLive evidence: `HTTP 400; client_id no; body {\"error\":\"invalid_client_metadata\",\"error_description\":\"Invalid public MCP client registration request\"}`\n\nFix the code or the words so production does what is claimed, deploy, and smoke-live closes this.\n\nsize: S\n\n**Closing probe:** workflow smoke-live, check `buffer-registration` = PASS.\n\n\n**Evidence:** closing probe passed (already built: the probe passed from filing and held for 599 passes over 5897 minutes (VACUOUS-CLOSE-1)): grep:scripts/smoke_live.py::buffer-registration\n",
   "labels": [
     "p1",
     "agent-ready"

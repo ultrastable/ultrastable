@@ -54,5 +54,45 @@
     "expect": "contains:What it does not do",
     "max_age_hours": 168,
     "public": 1
+  },
+  {
+    "id": "performance.changes-merged",
+    "text": "As of {date}, {value} changes were merged and verified.",
+    "probe": "sql:SELECT COUNT(*) AS value FROM outcomes WHERE action_class = 'merge' AND result = 'verified'",
+    "expect": ">=0",
+    "max_age_hours": 24,
+    "public": 1
+  },
+  {
+    "id": "performance.changes-rejected",
+    "text": "As of {date}, {value} changes failed their merge and were not accepted.",
+    "probe": "sql:SELECT COUNT(*) AS value FROM outcomes WHERE action_class = 'merge' AND result IN ('failed', 'hidden_failure')",
+    "expect": ">=0",
+    "max_age_hours": 24,
+    "public": 1
+  },
+  {
+    "id": "performance.cost-per-merged-change",
+    "text": "As of {date}, model spend per merged change is {value} US dollars.",
+    "probe": "sql:SELECT ROUND(SUM(c.cost_usd) / NULLIF((SELECT COUNT(*) FROM outcomes WHERE action_class = 'merge' AND result = 'verified'), 0), 4) AS value FROM router_calls c",
+    "expect": ">=0 | unmeasured:quiet",
+    "max_age_hours": 24,
+    "public": 1
+  },
+  {
+    "id": "operation.uptime",
+    "text": "As of {date}, {value} percent of the heartbeat ticks in the last 7 days completed every step.",
+    "probe": "sql:SELECT ROUND(100.0 * SUM(CASE WHEN steps_completed = steps_total THEN 1 ELSE 0 END) / COUNT(*), 1) AS value FROM tick_runs WHERE started_at >= datetime({now}, '-7 days')",
+    "expect": ">=0 | unmeasured:quiet",
+    "max_age_hours": 24,
+    "public": 1
+  },
+  {
+    "id": "limits.open-unknowns",
+    "text": "As of {date}, {value} things the person has not yet answered are open.",
+    "probe": "sql:SELECT COUNT(*) AS value FROM elicit_needs WHERE state IN ('open', 'asked', 'gated')",
+    "expect": ">=0 | unmeasured:quiet",
+    "max_age_hours": 24,
+    "public": 1
   }
 ]
