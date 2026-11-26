@@ -10,7 +10,8 @@ import { createElicit, validateCard } from './index.js';
 const MIG = fileURLToPath(new URL('./migrations/', import.meta.url));
 const T0 = Date.UTC(2026, 10, 12, 12, 0, 0);
 const P = 'demo';
-const mk = (config = {}, t = { v: T0 }) => { const db = makeDb([MIG]); return { db, t, e: createElicit({ db, now: () => t.v, config }) }; };
+// defer_below 0: these tests exercise asking itself; low-priority defaulting (US-16 5.3) has its own test below.
+const mk = (config = {}, t = { v: T0 }) => { const db = makeDb([MIG]); return { db, t, e: createElicit({ db, now: () => t.v, config: { defer_below: 0, ...config } }) }; };
 const need = (id, extra = {}) => ({
   id, label: `Thing ${id}`, artifact: 'charter', question: `Which ${id} do you want?`, why: `This changes the ${id} we build.`, cue: `Similar projects pick the first one.`,
   options: ['first', 'second', 'third'], default: 'first', default_consequence: 'We rebuild one page; change it any time.', ...extra,
@@ -89,7 +90,7 @@ test('R10: an unanswered Ask expires to its default after 72 hours and is logged
   assert.equal(db.raw.prepare('SELECT reason FROM elicit_assumptions').get().reason, 'timeout');
 });
 
-test('R07 and R09: the answer is stored verbatim with channel and time; Tell me more explains and keeps the same card, three times teaches the glossary', async () => {
+test('US-16-R07, US-16-R09 and US-16-R19: the answer is stored verbatim with channel and time; Tell me more explains and keeps the same card, three times teaches the glossary', async () => {
   const { db, e } = mk(); await e.registerNeeds(P, [need('colour')]); await e.nextAsks(P);
   const more = await e.answer(P, 'colour', { choice: 'Tell me more' });
   assert.match(more.explain, /changes the colour/); assert.equal(more.card.need_id, 'colour');
@@ -190,7 +191,7 @@ test('US-16-R03: the glossary maps system terms to the person\'s own words in ev
   assert.deepEqual((await e.glossary()).map(g => [g.term, g.person_term]), [['backend', 'engine room'], ['latency', null]]);
 });
 
-test('US-16-R03: reviewCards reports a stored card whose jargon is neither mapped nor defined', async () => {
+test('US-16-R03 and US-16-R20: reviewCards reports a stored card whose jargon is neither mapped nor defined', async () => {
   const { db, e } = mk({ jargon: ['webhook'] });
   await e.registerNeeds(P, [need('notify')]);
   db.raw.exec(`UPDATE elicit_needs SET question='Which webhook should fire?' WHERE id='notify'`);
@@ -266,4 +267,49 @@ test('section 5.3: a default in effect is logged as a prediction and scored when
   await e.audit(P, {});
   const s = (await db.prepare(`SELECT finding FROM elicit_audit WHERE sweep='surprise'`).all()).results.map(r => r.finding);
   assert.ok(s.some(f => /failed prediction ELICIT-demo-b/.test(f)));
+});
+
+test('US-16-R07: Not sure on an answered need is refused and the stated answer, provenance and answer_text stay', async () => {
+  const { db, e } = mk(); await e.registerNeeds(P, [need('colour'), need('name', { derive_from: 'bakery' })], { idea: 'a bakery' }); await e.nextAsks(P);
+  await e.answer(P, 'colour', { choice: 'third', text: 'the third one' });
+  const r = await e.answer(P, 'colour', { choice: 'Not sure' });
+  assert.equal(r.ok, false); assert.equal(r.refusal, 'already_answered');
+  const row = db.raw.prepare("SELECT state, value, provenance, answer_text FROM elicit_needs WHERE id='colour'").get();
+  assert.deepEqual({ ...row }, { state: 'answered', value: 'third', provenance: 'stated', answer_text: 'the third one' });
+  assert.equal(db.raw.prepare("SELECT COUNT(*) AS n FROM elicit_assumptions WHERE need_id='colour'").get().n, 0);
+  assert.equal((await e.answer(P, 'name', { choice: 'Not sure' })).refusal, 'already_answered', 'a derived value is not replaced by the default either');
+});
+
+test('US-16-R07: a correction for a need with options must be one of the options; a free-text need accepts any non-empty text', async () => {
+  const { e } = mk(); await e.registerNeeds(P, [need('colour'), need('who', { free_text: true, options: [] })]); await e.nextAsks(P);
+  assert.equal((await e.correct(P, 'colour', 'purple')).ok, false);
+  assert.equal((await e.correct(P, 'colour', '  ')).ok, false);
+  assert.equal((await e.correct(P, 'colour', 'second')).ok, true);
+  assert.equal((await e.correct(P, 'who', 'my chess club')).ok, true);
+  assert.equal((await e.readBack(P)).statements.find(s => s.need_id === 'who').value, 'my chess club');
+});
+
+test('US-16-R06: a gate card closed while its need is still gated is reopened by the next pass and closes only when the need is answered', async () => {
+  const { db, e } = mk(); await e.registerNeeds(P, [need('delete', { reversible: false })]); await e.nextAsks(P);
+  db.raw.exec("UPDATE gate_cards SET status='closed', closed_at=datetime('now') WHERE id='elicit-demo-delete'");
+  const cards = await e.nextAsks(P);
+  assert.equal(cards.reopened, 1);
+  assert.equal(db.raw.prepare("SELECT status FROM gate_cards WHERE id='elicit-demo-delete'").get().status, 'open');
+  assert.equal((await e.readiness(P)).g2, false);
+  await e.answer(P, 'delete', { choice: 'second' });
+  assert.equal(db.raw.prepare("SELECT status FROM gate_cards WHERE id='elicit-demo-delete'").get().status, 'closed');
+  assert.equal((await e.nextAsks(P)).reopened, 0);
+});
+
+test('US-16-R10 and US-16-R20: expireAll defaults every project\'s overdue Ask once and reviewAll reports a stored card with undefined jargon across projects', async () => {
+  const { db, t, e } = mk({ jargon: ['webhook'] });
+  await e.registerNeeds('p1', [need('colour')]); await e.registerNeeds('p2', [need('colour')]); await e.nextAsks('p1'); await e.nextAsks('p2');
+  db.raw.exec(`UPDATE elicit_needs SET question='Which webhook should fire?' WHERE project='p2'`);
+  assert.deepEqual(await e.reviewAll(), [{ project: 'p2', need_id: 'colour', problems: ['jargon without definition: webhook'] }]);
+  assert.equal(await e.expireAll(), 0);
+  t.v += 73 * 3600e3;
+  assert.equal(await e.expireAll(), 2); assert.equal(await e.expireAll(), 0);
+  assert.equal(db.raw.prepare("SELECT COUNT(*) AS n FROM elicit_assumptions WHERE reason='timeout'").get().n, 2);
+  assert.deepEqual(await e.reviewAll(), [], 'a defaulted need is no longer a card that would be shown');
+  assert.equal((await e.readiness('p1')).threshold, 0.7);
 });

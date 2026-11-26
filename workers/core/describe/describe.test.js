@@ -10,6 +10,7 @@ import { runTick } from '../src/tick.js';
 import {
   addClaims, runProbes, withdrawStale, buildSelfModel, render, checkVoice, describeOnce, describeExtraSteps, handle,
   assertReadOnlySql, extractClaimIds, publishableClaims, parseScopeMd, defaultCompose,
+  claimsFeed, renderClaimsPage, DEFAULT_VOICE_RULES, effectiveVoiceRules, deriveScopeRules, scopeTerms, checkAgainstRegistry, splitExpect, DESCRIBE_ROUTES,
 } from './index.js';
 import { loadSeedClaims, loadVoiceRules } from './load.js';
 
@@ -307,4 +308,204 @@ test('R01 completeness: every claim id in the registry has a probe kind and expe
   }
   const ids = loadSeedClaims().map(c => c.id);
   for (const k of ['operation.tick-running', 'performance.predictions-scored', 'capabilities.built', 'packs.enabled']) assert.ok(ids.includes(k), k);
+});
+
+// ---------- J-15: the claims feed and the page that re-probes ----------
+
+const get = (ctx, p, method = 'GET') => handle(new Request('https://x.example' + p, { method }), ctx);
+
+test('T22-6 and US-22-R11: the feed omits non-public and withdrawn claims and its claim ids equal /describe.json', async () => {
+  const db = await setup();
+  await addClaims(db, [{ id: 'other.secret', text: 'Private fact.', probe: 'sql:SELECT 1 AS value', expect: '>=0', public: 0 }]);
+  await describeOnce(ports(db, { voiceRules: voice }));
+  const ctx = { db, now: T0 + 1000, specStatus: SPEC, voiceRules: voice };
+  const feed = await (await get(ctx, '/describe/claims.json')).json();
+  assert.ok(!feed.claim_ids.includes('other.secret'), 'a non-public claim is never in the feed');
+  const published = JSON.parse(await (await get(ctx, '/describe.json')).text()).claim_ids;
+  assert.deepEqual(feed.claim_ids, published);
+  const c = feed.claims.find(x => x.id === 'operation.tick-running');
+  assert.deepEqual(Object.keys(c).sort(), ['age_hours', 'evidence', 'expect', 'id', 'last_checked_at', 'last_result', 'max_age_hours', 'probe', 'publishable', 'text']);
+  assert.match(c.probe, /^sql:SELECT COUNT/); assert.equal(c.last_result, 'pass'); assert.equal(c.publishable, true);
+  // three hours later the two-hour claim is stale: it leaves the feed and appears only as a withdrawn id, never as text
+  const later = await (await get({ ...ctx, now: T0 + 3 * H }, '/describe/claims.json')).json();
+  assert.ok(!later.claim_ids.includes('operation.tick-running'));
+  const gone = later.withdrawn.find(w => w.id === 'operation.tick-running');
+  assert.ok(gone); assert.ok(!('text' in gone));
+});
+
+test('US-22-R02: a claim that fails on a live re-probe leaves the feed and the page in the same request', async () => {
+  const db = await setup();
+  await describeOnce(ports(db, { voiceRules: voice }));
+  const down = { fetch: async () => new Response('x', { status: 200 }), readFile: async () => { throw new Error('ENOENT'); }, specStatus: SPEC };
+  const ctx = { db, now: T0 + 600e3, specStatus: SPEC, voiceRules: voice, probe: down, min_probe_interval_seconds: 300 };
+  assert.ok((await (await get(ctx, '/describe/claims.json')).json()).claim_ids.includes('scope.out-of-scope'));
+  const r = await get(ctx, '/describe/claims/probe', 'POST');
+  assert.equal(r.status, 200);
+  const body = await r.json();
+  assert.ok(body.probes.withdrawn.includes('scope.out-of-scope'));
+  assert.ok(!body.feed.claim_ids.includes('scope.out-of-scope'));
+  assert.ok(!extractClaimIds(await (await get(ctx, '/describe')).text()).includes('scope.out-of-scope'), 'the page no longer carries it either');
+  assert.ok(row(db, `SELECT id FROM items WHERE id = 'DESCRIBE-scope.out-of-scope'`), 'a repair item was filed');
+});
+
+test('US-22-R12: a re-probe inside the minimum interval returns 429 and runs no probe; without ports it is 503; GET is 405', async () => {
+  const db = await setup();
+  await runProbes(ports(db));
+  let probes = 0;
+  const counting = { fetch: async () => { probes++; return new Response('ok'); }, readFile, specStatus: SPEC };
+  const ctx = { db, now: T0 + 60e3, probe: counting };
+  const r = await get(ctx, '/describe/claims/probe', 'POST');
+  assert.equal(r.status, 429);
+  assert.equal(r.headers.get('retry-after'), '240');
+  assert.deepEqual(await r.json(), { error: 'too_soon', retry_after_seconds: 240 });
+  assert.equal(probes, 0);
+  assert.equal((await get({ db, now: T0 + 3600e3 }, '/describe/claims/probe', 'POST')).status, 503);
+  assert.equal((await get(ctx, '/describe/claims/probe')).status, 405);
+  assert.equal((await get({ ...ctx, now: T0 + 400e3 }, '/describe/claims/probe', 'POST')).status, 200, 'after the interval it runs');
+});
+
+test('US-22-R12: the claims page escapes claim text and evidence, carries no script, and offers the re-probe only when ports exist', async () => {
+  const feed = { generated_at: 'now', claim_ids: ['x'], claims: [{ id: 'x', text: '<script>alert(1)</script> & "q"', probe: 'sql:SELECT 1', expect: '>=0', last_result: 'pass', last_checked_at: '2026-11-11 10:00:00', age_hours: 1, max_age_hours: 24, evidence: { detail: '<img src=x>' }, publishable: true }], withdrawn: [{ id: 'y<b>', last_result: 'fail', last_checked_at: null, withdrawn: true }] };
+  const html = renderClaimsPage(feed);
+  assert.ok(!/<script|<img|<b>/i.test(html.replace(/<style>[\s\S]*<\/style>/, '')), html);
+  assert.match(html, /&lt;script&gt;/);
+  assert.match(html, /prefers-color-scheme:dark/);
+  assert.match(html, /action="\/describe\/claims\/probe"/);
+  assert.ok(!/<form/.test(renderClaimsPage(feed, { reprobe: false })));
+  const db = await setup();
+  await runProbes(ports(db));
+  const r = await get({ db, now: T0 }, '/describe/claims');
+  assert.match(r.headers.get('content-type'), /text\/html/);
+  assert.match(await r.text(), /operation\.tick-running/);
+});
+
+test('US-22-R04: GET /describe/statement serves the stored short form and every describe route is in DESCRIBE_ROUTES', async () => {
+  const db = await setup();
+  await describeOnce(ports(db, { voiceRules: voice }));
+  const r = await get({ db, now: T0 + 1000, specStatus: SPEC, voiceRules: voice }, '/describe/statement');
+  assert.equal(r.status, 200);
+  assert.match(r.headers.get('content-type'), /text\/plain/);
+  assert.match(await r.text(), /BUILT/);
+  assert.deepEqual([...DESCRIBE_ROUTES].sort(), ['/describe', '/describe.json', '/describe/claims', '/describe/claims.json', '/describe/claims/probe', '/describe/statement', '/llms.txt']);
+});
+
+// ---------- J-16: voice rules with no host injection, SCOPE.md terms, the registry check ----------
+
+test('US-22-R07: DEFAULT_VOICE_RULES equals voice-rules.json', () => {
+  assert.deepEqual(DEFAULT_VOICE_RULES, voice);
+});
+
+test('T22-7: with no injected rules a banned phrase is rejected', async () => {
+  const db = await setup();
+  const compose = ({ claims }) => claims.map(c => c.sentence.replace('the heartbeat completed', 'the revolutionary heartbeat completed')).join(' ');
+  const r = await describeOnce(ports(db, { compose }));   // no voiceRules at all: the defaults apply
+  assert.equal(r.stored, false);
+  assert.ok(r.problems.some(p => p.violations.some(v => v.rule === 'banned_phrase' && v.detail === 'revolutionary')));
+  assert.ok(row(db, `SELECT id FROM items WHERE id LIKE 'DESCRIBE-voice-%'`));
+  assert.deepEqual(effectiveVoiceRules({}, {}).banned, voice.banned);
+  assert.deepEqual(effectiveVoiceRules({ banned: ['x'] }, {}).banned, ['x'], 'injected rules still win');
+});
+
+test('T22-8: a term from the SCOPE.md out-of-scope table is rejected unless its pack is enabled', async () => {
+  const db = await setup();
+  const scope = { out_of_scope: parseScopeMd('# S\n## What it does not do by default\n| Out of scope | Why |\n|---|---|\n| Run a loyalty programme | the loyalty pack is separate |\n| Write a business plan, financial model | different product |\n') };
+  assert.deepEqual(scopeTerms('Write a business plan, financial model'), ['business plan', 'financial model']);
+  assert.deepEqual(scopeTerms('Anything that needs the owner to read or write code.'), []);
+  assert.deepEqual(deriveScopeRules(scope.out_of_scope).map(g => g.pack), ['loyalty', 'drafts']);
+  const claims = await publishableClaims(await (async () => { await runProbes(ports(db)); return db; })(), T0);
+  const text = 'The organization runs a loyalty programme for its members [claim:operation.tick-running].';
+  const rejected = checkVoiceVia(text, claims, scope, []);
+  assert.deepEqual(rejected.violations.map(v => v.rule), ['out_of_scope']);
+  assert.equal(checkVoiceVia(text, claims, scope, ['loyalty']).ok, true, 'enabling the pack lifts the rule');
+  assert.equal(checkVoiceVia('It does not run a loyalty programme [claim:operation.tick-running].', claims, scope, []).ok, true, 'a negation is fine');
+});
+const checkVoiceVia = (text, claims, scope, enabledPacks) => checkVoice(text, claims, effectiveVoiceRules({}, scope), { enabledPacks });
+
+test('US-22-R05: checkAgainstRegistry rejects free text with no claim marker and accepts claim sentences', async () => {
+  const db = await setup();
+  await runProbes(ports(db));
+  const claims = await publishableClaims(db, T0);
+  const good = claims.slice(0, 2).map(c => claimSentenceOf(c)).join(' ');
+  const ok = await checkAgainstRegistry({ db, text: good, now: T0 });
+  assert.equal(ok.ok, true, JSON.stringify(ok.violations));
+  assert.equal(ok.claim_ids.length, 2);
+  const free = await checkAgainstRegistry({ db, text: 'We are the best at everything.', now: T0 });
+  assert.equal(free.ok, false);
+  assert.equal(free.violations[0].rule, 'no_claim');
+  const stale = await checkAgainstRegistry({ db, text: good, now: T0 + 400 * H });
+  assert.equal(stale.ok, false, 'a claim that is no longer publishable is unknown to the check');
+  assert.equal(stale.violations[0].rule, 'unknown_claim');
+});
+import { claimSentence as claimSentenceOf } from './index.js';
+
+// ---------- J-17: self-model facts and the quiet unmeasured claims ----------
+
+test('T22-5: the model lists cost per merged change, merged and rejected counts and uptime with their dates once the tables have rows', async () => {
+  const db = makeDb([MIG, fileURLToPath(new URL('../router/migrations/', import.meta.url)), fileURLToPath(new URL('../elicit/migrations/', import.meta.url))]);
+  await addClaims(db, loadSeedClaims());
+  db.raw.exec(`INSERT INTO tick_runs (started_at, finished_at, steps_completed, steps_total) VALUES ('2026-11-10 09:00:00','2026-11-10 09:00:05',7,7),('2026-11-10 10:00:00','2026-11-10 10:00:05',3,7)`);
+  db.raw.exec(`INSERT INTO outcomes (item_id, surface, action_class, result, at) VALUES ('a','repo','merge','verified','2026-11-10 09:00:00'),('b','repo','merge','verified','2026-11-10 09:00:00'),('c','repo','merge','failed','2026-11-10 09:00:00')`);
+  db.raw.exec(`INSERT INTO router_calls (at, cost_usd, outcome) VALUES ('2026-11-10 09:00:00', 0.5, 'ok'), ('2026-11-10 09:00:00', 0.25, 'ok')`);
+  const r = await runProbes(ports(db));
+  assert.equal(r.unknown, 0, JSON.stringify(r));
+  const model = await buildSelfModel({ db, specStatus: SPEC, now: T0 });
+  assert.equal(model.facts.performance.changes_merged, 2);
+  assert.equal(model.facts.performance.changes_rejected, 1);
+  assert.equal(model.facts.performance.cost_per_merged_change_usd, 0.375);
+  assert.equal(model.facts.operation.uptime_7d_percent, 50);
+  const feed = await claimsFeed(db, T0);
+  const byId = Object.fromEntries(feed.claims.map(c => [c.id, c.text]));
+  assert.match(byId['performance.cost-per-merged-change'], /0\.375 US dollars/);
+  assert.match(byId['performance.changes-merged'], /^As of 2026-11-11, 2 changes were merged and verified/);
+  assert.match(byId['operation.uptime'], /50 percent/);
+});
+
+test('US-22-R10: the cost claim is withdrawn, not published as zero, and files no repair item when nothing merged or the table is absent', async () => {
+  const db = await setup();                     // no router tables at all, no merge outcome
+  const r = await runProbes(ports(db));
+  const c = claimRow(db, 'performance.cost-per-merged-change');
+  assert.equal(c.last_result, 'unknown');
+  assert.equal(c.withdrawn, 1);
+  assert.match(c.evidence, /unmeasured/);
+  assert.ok(!r.filed.some(id => /cost-per-merged|uptime|open-unknowns/.test(id)), 'quiet claims file nothing');
+  assert.equal(row(db, `SELECT COUNT(*) AS n FROM items WHERE id LIKE 'DESCRIBE-performance.cost%'`).n, 0);
+  const model = await buildSelfModel({ db, specStatus: SPEC, now: T0 });
+  assert.equal(model.facts.performance.cost_per_merged_change_usd, null);
+  assert.match(model.facts.not_measured.cost_per_merged_change, /no merged change/);
+  assert.match(model.facts.not_measured.open_unknowns, /unmeasured/);
+  assert.equal(model.facts.limits.open_unknowns, null);
+  assert.ok(!(await publishableClaims(db, T0)).some(x => x.id === 'performance.cost-per-merged-change'));
+  // the same claim without the quiet flag still files its repair item
+  await addClaims(db, [{ id: 'x.loud', text: 'Loud {value}.', probe: 'sql:SELECT value FROM nowhere', expect: '>=0' }]);
+  assert.deepEqual((await runProbes(ports(db))).filed, ['DESCRIBE-x.loud']);
+  assert.deepEqual(splitExpect('>=0 | unmeasured:quiet'), { cond: '>=0', quiet: true });
+  assert.deepEqual(splitExpect('>=0'), { cond: '>=0', quiet: false });
+});
+
+test('seed claims still name no tenant and load once, with the five new self-model claims', () => {
+  const ids = loadSeedClaims().map(c => c.id);
+  for (const k of ['performance.changes-merged', 'performance.changes-rejected', 'performance.cost-per-merged-change', 'operation.uptime', 'limits.open-unknowns']) assert.ok(ids.includes(k), k);
+  assert.equal(new Set(ids).size, ids.length);
+});
+
+test('US-22-R17: drift becomes a repair item whose closing probe is the claim probe: it stays open while the probe fails and closes when it passes', async () => {
+  const db = await setup();
+  let up = false;
+  const fetch = async () => new Response('x', { status: up ? 200 : 503 });
+  await addClaims(db, [{ id: 'operation.site-up', text: 'The site answers.', probe: 'http:https://site.example/health', expect: 'status:200' }]);
+  let r = await runProbes(ports(db, { fetch }));
+  assert.ok(r.filed.includes('DESCRIBE-operation.site-up'));
+  const item = () => row(db, `SELECT status, closing_probe, disposition FROM items WHERE id = 'DESCRIBE-operation.site-up'`);
+  assert.equal(item().closing_probe, 'describe:operation.site-up');
+  assert.equal(item().status, 'ready');
+  await runProbes(ports(db, { fetch, now: T0 + H }));
+  assert.equal(item().status, 'ready', 'still failing: still open, and not filed twice');
+  up = true;
+  await runProbes(ports(db, { fetch, now: T0 + 2 * H }));
+  assert.equal(item().status, 'done');
+  assert.match(item().disposition, /probe passes again/);
+  assert.equal(claimRow(db, 'operation.site-up').withdrawn, 0);
+  up = false;
+  r = await runProbes(ports(db, { fetch, now: T0 + 3 * H }));
+  assert.equal(item().status, 'ready', 'a recurrence reopens the same item');
 });

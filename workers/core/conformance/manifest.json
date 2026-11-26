@@ -856,22 +856,42 @@
   {
    "id": "US-11-T02",
    "spec": "US-SPEC-11",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/fleet/fleet.test.js",
+     "name": "US-11-T02 and US-11-R03: with the executor down the row stays queued, next_fire advances, no re-fire next minute"
+    }
+   ]
   },
   {
    "id": "US-11-T03",
    "spec": "US-SPEC-11",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/fleet/fleet.test.js",
+     "name": "US-11-T03 and US-11-R05: an unknown task type is rejected and still leaves a run record"
+    }
+   ]
   },
   {
    "id": "US-11-T04",
    "spec": "US-SPEC-11",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/fleet/fleet.test.js",
+     "name": "US-11-T04 and US-11-R08: a slot of a declared procedure with no record opens an alert naming procedure and slot"
+    }
+   ]
   },
   {
    "id": "US-11-T05",
    "spec": "US-SPEC-11",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/fleet/fleet.test.js",
+     "name": "US-11-T05 and US-11-R10: the tick fired by both schedulers in one slot acts once; the other ends without acting"
+    }
+   ]
   },
   {
    "id": "US-11-T06",
@@ -1146,8 +1166,16 @@
    "spec": "US-SPEC-16",
    "tests": [
     {
+     "file": "core/elicit/derive.test.js",
+     "name": "T16-1, US-16-R01 and US-16-R21: a need answerable from a record or a tool probe is derived and never asked, with an attempts row per surface"
+    },
+    {
      "file": "core/elicit/elicit.test.js",
      "name": "T16-1 and US-16-R01: register covers the catalog and derives what the idea already answers, so it is not asked"
+    },
+    {
+     "file": "core/walkthrough/walkthrough.test.js",
+     "name": "T16-1 and US-16-R01: every REQUIRED field of every artifact in every mode is fed by a catalog need or declared as filled by the managers"
     }
    ]
   },
@@ -1200,6 +1228,10 @@
    "spec": "US-SPEC-16",
    "tests": [
     {
+     "file": "core/elicit/derive.test.js",
+     "name": "T16-6, US-16-R11 and US-16-R25: every statement of a drafted artifact carries a tag and every default tag links to a live assumption log entry; unsettled needs are open questions, not facts"
+    },
+    {
      "file": "core/elicit/elicit.test.js",
      "name": "T16-6 and US-16-R11: the read-back tags every statement, lists defaults first and links them to assumption log entries"
     }
@@ -1233,6 +1265,14 @@
    "id": "T16-9",
    "spec": "US-SPEC-16",
    "tests": [
+    {
+     "file": "core/elicit/audit-step.test.js",
+     "name": "T16-9 and US-16-R24: the audit with no caller input still leaves evidence for the catalog and analogy sweeps, from the default data"
+    },
+    {
+     "file": "core/elicit/audit-step.test.js",
+     "name": "T16-9: a model of the author's family, or an unknown family when the author's is known, is not accepted as the independent sweep"
+    },
     {
      "file": "core/elicit/elicit.test.js",
      "name": "T16-9: the ignorance audit leaves evidence for all four sweeps; a same-family red team is refused; professional topics become gate cards"
@@ -1349,22 +1389,12 @@
   {
    "id": "T18-5",
    "spec": "US-SPEC-18",
-   "tests": [
-    {
-     "file": "core/walkthrough/console-rules.test.js",
-     "name": "US-18-R03 and T18-5: typed text is stored verbatim and becomes a work item; an out-of-scope request is held and is not dispatchable (US-00-R09)"
-    }
-   ]
+   "tests": []
   },
   {
    "id": "T18-6",
    "spec": "US-SPEC-18",
-   "tests": [
-    {
-     "file": "core/walkthrough/console-rules.test.js",
-     "name": "US-18-R08 and T18-6: the same facts the screens show are served as records at GET /api/console, to a person or an agent alike"
-    }
-   ]
+   "tests": []
   },
   {
    "id": "T18-7",
@@ -1562,23 +1592,42 @@
     {
      "file": "core/describe/describe.test.js",
      "name": "T22-5 and R03: the model lists PLANNED and open risks with the same prominence as capabilities"
+    },
+    {
+     "file": "core/describe/describe.test.js",
+     "name": "T22-5: the model lists cost per merged change, merged and rejected counts and uptime with their dates once the tables have rows"
     }
    ]
   },
   {
    "id": "T22-6",
    "spec": "US-SPEC-22",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/describe/describe.test.js",
+     "name": "T22-6 and US-22-R11: the feed omits non-public and withdrawn claims and its claim ids equal /describe.json"
+    }
+   ]
   },
   {
    "id": "T22-7",
    "spec": "US-SPEC-22",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/describe/describe.test.js",
+     "name": "T22-7: with no injected rules a banned phrase is rejected"
+    }
+   ]
   },
   {
    "id": "T22-8",
    "spec": "US-SPEC-22",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/describe/describe.test.js",
+     "name": "T22-8: a term from the SCOPE.md out-of-scope table is rejected unless its pack is enabled"
+    }
+   ]
   },
   {
    "id": "T22-9",
@@ -1895,10 +1944,6 @@
     {
      "file": "core/conformance/spec-kernel.test.js",
      "name": "US-00-T04 and US-00-R09: a request for a business plan with no pack enabled is declined with its reason and held, not dispatched"
-    },
-    {
-     "file": "core/walkthrough/console-rules.test.js",
-     "name": "US-18-R03 and T18-5: typed text is stored verbatim and becomes a work item; an out-of-scope request is held and is not dispatchable (US-00-R09)"
     }
    ]
   },
@@ -5322,6 +5367,10 @@
     {
      "file": "core/fleet/fleet.test.js",
      "name": "US-11-R01: the worker contract names each unmet part; secret values are refused"
+    },
+    {
+     "file": "core/fleet/fleet.test.js",
+     "name": "US-11-R01 and US-11-R02: reconcile compares the registered crons and reads the deployed {ok} health shape as a status"
     }
    ]
   },
@@ -5337,6 +5386,10 @@
     {
      "file": "core/fleet/fleet.test.js",
      "name": "US-11-R02: deployed state is reconciled against the registry; one state per worker and three drift counts"
+    },
+    {
+     "file": "core/fleet/fleet.test.js",
+     "name": "US-11-R01 and US-11-R02: reconcile compares the registered crons and reads the deployed {ok} health shape as a status"
     }
    ]
   },
@@ -5351,7 +5404,15 @@
    "tests": [
     {
      "file": "core/fleet/fleet.test.js",
-     "name": "US-11-R03 / T02: with the executor down the row stays queued, next_fire advances, no re-fire next minute"
+     "name": "US-11-T02 and US-11-R03: with the executor down the row stays queued, next_fire advances, no re-fire next minute"
+    },
+    {
+     "file": "core/fleet/fleet.test.js",
+     "name": "US-11-R03: with no executor port a due schedule is executed inline and ends ok in the run ledger"
+    },
+    {
+     "file": "core/fleet/fleet.test.js",
+     "name": "US-11-R03 and US-11-R04: an external scheduler drives the dispatcher through an authorized route; schedules finer than the cadence are reported"
     }
    ]
   },
@@ -5367,6 +5428,10 @@
     {
      "file": "core/fleet/fleet.test.js",
      "name": "US-11-R04: a schedule change is a row write; the dispatcher follows the new row without a redeploy"
+    },
+    {
+     "file": "core/fleet/fleet.test.js",
+     "name": "US-11-R03 and US-11-R04: an external scheduler drives the dispatcher through an authorized route; schedules finer than the cadence are reported"
     }
    ]
   },
@@ -5381,7 +5446,7 @@
    "tests": [
     {
      "file": "core/fleet/fleet.test.js",
-     "name": "US-11-R05 / T03: an unknown task type is rejected and still leaves a run record"
+     "name": "US-11-T03 and US-11-R05: an unknown task type is rejected and still leaves a run record"
     },
     {
      "file": "core/fleet/fleet.test.js",
@@ -5390,6 +5455,14 @@
     {
      "file": "core/fleet/fleet.test.js",
      "name": "US-11-R05: results are truncated to 4000 characters and errors to 1000"
+    },
+    {
+     "file": "core/fleet/fleet.test.js",
+     "name": "US-11-R05: a request with an unknown trigger is rejected before it starts and still leaves a failed run row"
+    },
+    {
+     "file": "core/fleet/fleet.test.js",
+     "name": "US-11-R05: the key aliases db and sql are accepted for sql tasks, and a workflow step echoes its name"
     }
    ]
   },
@@ -5434,7 +5507,11 @@
    "tests": [
     {
      "file": "core/fleet/fleet.test.js",
-     "name": "US-11-R08 / T04: a slot of a declared procedure with no record opens an alert naming procedure and slot"
+     "name": "US-11-T04 and US-11-R08: a slot of a declared procedure with no record opens an alert naming procedure and slot"
+    },
+    {
+     "file": "core/fleet/fleet.test.js",
+     "name": "US-11-R08: slots that elapsed while the dead-man check was not running are judged on its next pass, up to the lookback"
     }
    ]
   },
@@ -5464,7 +5541,7 @@
    "tests": [
     {
      "file": "core/fleet/fleet.test.js",
-     "name": "US-11-R10 / T05: the tick fired by both schedulers in one slot acts once; the other ends without acting"
+     "name": "US-11-T05 and US-11-R10: the tick fired by both schedulers in one slot acts once; the other ends without acting"
     },
     {
      "file": "core/fleet/fleet.test.js",
@@ -5484,6 +5561,10 @@
     {
      "file": "core/fleet/fleet.test.js",
      "name": "US-11-R11: a live run of the task blocks a second dispatch; a stale queued row is reaped to failed with an item"
+    },
+    {
+     "file": "core/fleet/fleet.test.js",
+     "name": "US-11-R11: two concurrent dispatchers queue one run of a task; the store enforces it, not a read before the write"
     }
    ]
   },
@@ -5507,6 +5588,14 @@
     {
      "file": "core/fleet/fleet.test.js",
      "name": "US-11-R12: auto_stagger in step is off by default; on, the step staggers before it dispatches; literals move only when asked"
+    },
+    {
+     "file": "core/fleet/fleet.test.js",
+     "name": "US-11-R12: automatic staggering moves minutes within bounds, keeps firings per hour, is idempotent and logs every rewrite"
+    },
+    {
+     "file": "core/fleet/fleet.test.js",
+     "name": "US-11-R12: staggering rewrites a declared procedure with its schedule so the dead-man check expects the new slots; step runs it only when switched on"
     }
    ]
   },
@@ -5516,9 +5605,14 @@
    "level": "L3",
    "tagged": true,
    "must": false,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/fleet/fleet.test.js",
+     "name": "US-11-R13: a monitor refuses to run in the worker that writes its probe table, and fires from outside when the writer stops"
+    }
+   ]
   },
   {
    "id": "US-11-R14",
@@ -5526,9 +5620,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/fleet/fleet.test.js",
+     "name": "US-11-R14: event-triggered scheduling: an accepted event starts its tasks once; rejected and repeated events start nothing"
+    }
+   ]
   },
   {
    "id": "US-11-R15",
@@ -6643,8 +6742,20 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "core/elicit/derive.test.js",
+     "name": "T16-1, US-16-R01 and US-16-R21: a need answerable from a record or a tool probe is derived and never asked, with an attempts row per surface"
+    },
+    {
      "file": "core/elicit/elicit.test.js",
      "name": "T16-1 and US-16-R01: register covers the catalog and derives what the idea already answers, so it is not asked"
+    },
+    {
+     "file": "core/elicit/outcomes.test.js",
+     "name": "T16-10 and US-16-R01: after three agreeing stated answers across projects the fourth project derives the need from the record and does not ask it"
+    },
+    {
+     "file": "core/walkthrough/walkthrough.test.js",
+     "name": "T16-1 and US-16-R01: every REQUIRED field of every artifact in every mode is fed by a catalog need or declared as filled by the managers"
     }
    ]
   },
@@ -6678,7 +6789,7 @@
     },
     {
      "file": "core/elicit/elicit.test.js",
-     "name": "US-16-R03: reviewCards reports a stored card whose jargon is neither mapped nor defined"
+     "name": "US-16-R03 and US-16-R20: reviewCards reports a stored card whose jargon is neither mapped nor defined"
     }
    ]
   },
@@ -6724,6 +6835,10 @@
     {
      "file": "core/elicit/elicit.test.js",
      "name": "T16-4 and US-16-R06: a need that would spend above the cap, or is not reversible, becomes a gate card and is never defaulted"
+    },
+    {
+     "file": "core/elicit/elicit.test.js",
+     "name": "US-16-R06: a gate card closed while its need is still gated is reopened by the next pass and closes only when the need is answered"
     }
    ]
   },
@@ -6738,7 +6853,15 @@
    "tests": [
     {
      "file": "core/elicit/elicit.test.js",
-     "name": "R07 and R09: the answer is stored verbatim with channel and time; Tell me more explains and keeps the same card, three times teaches the glossary"
+     "name": "US-16-R07, US-16-R09 and US-16-R19: the answer is stored verbatim with channel and time; Tell me more explains and keeps the same card, three times teaches the glossary"
+    },
+    {
+     "file": "core/elicit/elicit.test.js",
+     "name": "US-16-R07: Not sure on an answered need is refused and the stated answer, provenance and answer_text stay"
+    },
+    {
+     "file": "core/elicit/elicit.test.js",
+     "name": "US-16-R07: a correction for a need with options must be one of the options; a free-text need accepts any non-empty text"
     },
     {
      "file": "core/walkthrough/walkthrough.test.js",
@@ -6772,7 +6895,7 @@
    "tests": [
     {
      "file": "core/elicit/elicit.test.js",
-     "name": "R07 and R09: the answer is stored verbatim with channel and time; Tell me more explains and keeps the same card, three times teaches the glossary"
+     "name": "US-16-R07, US-16-R09 and US-16-R19: the answer is stored verbatim with channel and time; Tell me more explains and keeps the same card, three times teaches the glossary"
     }
    ]
   },
@@ -6788,6 +6911,10 @@
     {
      "file": "core/elicit/elicit.test.js",
      "name": "R10: an unanswered Ask expires to its default after 72 hours and is logged for revisit"
+    },
+    {
+     "file": "core/elicit/elicit.test.js",
+     "name": "US-16-R10 and US-16-R20: expireAll defaults every project's overdue Ask once and reviewAll reports a stored card with undefined jargon across projects"
     }
    ]
   },
@@ -6800,6 +6927,10 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "core/elicit/derive.test.js",
+     "name": "T16-6, US-16-R11 and US-16-R25: every statement of a drafted artifact carries a tag and every default tag links to a live assumption log entry; unsettled needs are open questions, not facts"
+    },
     {
      "file": "core/elicit/elicit.test.js",
      "name": "T16-6 and US-16-R11: the read-back tags every statement, lists defaults first and links them to assumption log entries"
@@ -6818,6 +6949,10 @@
     {
      "file": "core/walkthrough/walkthrough.test.js",
      "name": "US-SPEC-18 step 4 and US-16-R12: the read-back restates everything with defaults first, each tagged, each correctable"
+    },
+    {
+     "file": "core/walkthrough/walkthrough.test.js",
+     "name": "US-16-R12: the read-back callback fires exactly once, when the read-back is first shown; US-16-R14: an unconfirmed read-back still lets the walkthrough finish"
     }
    ]
   },
@@ -6830,6 +6965,10 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "core/elicit/derive.test.js",
+     "name": "US-16-R13, US-16-R25 and A-INI-4: after a correction the redrafted artifact shows the corrected need as stated, and the assumption log lists every default with its revert path"
+    },
     {
      "file": "core/elicit/elicit.test.js",
      "name": "T16-8 and US-16-R13: a correction in the read-back changes the register and queues a re-run of the affected artifact"
@@ -6848,6 +6987,10 @@
     {
      "file": "core/walkthrough/walkthrough.test.js",
      "name": "US-16-R14: an unconfirmed read-back does not hold work; after its time the walkthrough ends and the read-back is flagged"
+    },
+    {
+     "file": "core/walkthrough/walkthrough.test.js",
+     "name": "US-16-R12: the read-back callback fires exactly once, when the read-back is first shown; US-16-R14: an unconfirmed read-back still lets the walkthrough finish"
     }
    ]
   },
@@ -6875,6 +7018,14 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "core/elicit/derive.test.js",
+     "name": "US-16-R16: with timezone Pacific/Auckland no Ask opens between 22:00 and 07:00 local and opens at 09:00 local; without a time zone nothing is silenced"
+    },
+    {
+     "file": "core/elicit/derive.test.js",
+     "name": "US-16-R26 and US-16-R16: the time zone is part of the profile; a reversible need below defer_below is defaulted without asking and shown first in the read-back"
+    },
     {
      "file": "core/elicit/elicit.test.js",
      "name": "T16-5, US-16-R04 and US-16-R16: at most N Asks are open at once, the rest wait; a daily cap and the quiet period also hold"
@@ -6917,9 +7068,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/elicit/elicit.test.js",
+     "name": "US-16-R07, US-16-R09 and US-16-R19: the answer is stored verbatim with channel and time; Tell me more explains and keeps the same card, three times teaches the glossary"
+    }
+   ]
   },
   {
    "id": "US-16-R20",
@@ -6927,9 +7083,18 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/elicit/elicit.test.js",
+     "name": "US-16-R03 and US-16-R20: reviewCards reports a stored card whose jargon is neither mapped nor defined"
+    },
+    {
+     "file": "core/elicit/elicit.test.js",
+     "name": "US-16-R10 and US-16-R20: expireAll defaults every project's overdue Ask once and reviewAll reports a stored card with undefined jargon across projects"
+    }
+   ]
   },
   {
    "id": "US-16-R21",
@@ -6937,9 +7102,26 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/elicit/derive.test.js",
+     "name": "T16-1, US-16-R01 and US-16-R21: a need answerable from a record or a tool probe is derived and never asked, with an attempts row per surface"
+    },
+    {
+     "file": "core/elicit/derive.test.js",
+     "name": "US-16-R21: research with a source derives with provenance researched and the URL; research without a source is logged no_source and the need stays open"
+    },
+    {
+     "file": "core/elicit/derive.test.js",
+     "name": "US-16-R21: a failing port is logged as an error and the next surface is still tried"
+    },
+    {
+     "file": "core/elicit/derive.test.js",
+     "name": "US-16-R21: with require_exhaustion a need is not asked or gated until every configured surface has an attempt row"
+    }
+   ]
   },
   {
    "id": "US-16-R22",
@@ -6947,9 +7129,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/elicit/derive.test.js",
+     "name": "T16-11 and US-16-R22: a stated answer contradicted by evidence returns to open, keeps its history, lowers readiness and queues a re-run"
+    }
+   ]
   },
   {
    "id": "US-16-R23",
@@ -6957,9 +7144,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/elicit/outcomes.test.js",
+     "name": "T16-10 and US-16-R23: asking a need logs a decision and a parsable prediction with confidence 1 - p_wrong and registers its metric"
+    }
+   ]
   },
   {
    "id": "US-17-R01",
@@ -7279,14 +7471,9 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "met",
-   "proof": "named test",
-   "tests": [
-    {
-     "file": "core/walkthrough/console-rules.test.js",
-     "name": "US-18-R02: every walkthrough step can be completed with no typing: suggestions on the first question, buttons on every card, Not sure on free-text ones"
-    }
-   ]
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
   },
   {
    "id": "US-18-R03",
@@ -7294,14 +7481,9 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "met",
-   "proof": "named test",
-   "tests": [
-    {
-     "file": "core/walkthrough/console-rules.test.js",
-     "name": "US-18-R03 and T18-5: typed text is stored verbatim and becomes a work item; an out-of-scope request is held and is not dispatchable (US-00-R09)"
-    }
-   ]
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
   },
   {
    "id": "US-18-R04",
@@ -7309,14 +7491,9 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "met",
-   "proof": "named test",
-   "tests": [
-    {
-     "file": "core/walkthrough/console-rules.test.js",
-     "name": "US-18-R04: the prompt box comes with at most three suggested requests"
-    }
-   ]
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
   },
   {
    "id": "US-18-R05",
@@ -7369,14 +7546,9 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "met",
-   "proof": "named test",
-   "tests": [
-    {
-     "file": "core/walkthrough/console-rules.test.js",
-     "name": "US-18-R08 and T18-6: the same facts the screens show are served as records at GET /api/console, to a person or an agent alike"
-    }
-   ]
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
   },
   {
    "id": "US-18-R09",
@@ -8143,6 +8315,10 @@
     {
      "file": "core/describe/describe.test.js",
      "name": "T22-1: a failing public claim is absent from the next output and an item is filed (R02)"
+    },
+    {
+     "file": "core/describe/describe.test.js",
+     "name": "US-22-R02: a claim that fails on a live re-probe leaves the feed and the page in the same request"
     }
    ]
   },
@@ -8173,6 +8349,10 @@
     {
      "file": "core/describe/describe.test.js",
      "name": "T22-3 and R04: the three forms contain the same set of claim ids"
+    },
+    {
+     "file": "core/describe/describe.test.js",
+     "name": "US-22-R04: GET /describe/statement serves the stored short form and every describe route is in DESCRIBE_ROUTES"
     }
    ]
   },
@@ -8188,6 +8368,10 @@
     {
      "file": "core/describe/describe.test.js",
      "name": "R05: a compose port may phrase text but cannot add a claim; the loop rejects and files an item"
+    },
+    {
+     "file": "core/describe/describe.test.js",
+     "name": "US-22-R05: checkAgainstRegistry rejects free text with no claim marker and accepts claim sentences"
     }
    ]
   },
@@ -8226,6 +8410,10 @@
     {
      "file": "core/describe/describe.test.js",
      "name": "R07: the checker is injected, so a different agent from the writer can run it"
+    },
+    {
+     "file": "core/describe/describe.test.js",
+     "name": "US-22-R07: DEFAULT_VOICE_RULES equals voice-rules.json"
     }
    ]
   },
@@ -8265,9 +8453,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/describe/describe.test.js",
+     "name": "US-22-R10: the cost claim is withdrawn, not published as zero, and files no repair item when nothing merged or the table is absent"
+    }
+   ]
   },
   {
    "id": "US-22-R11",
@@ -8275,9 +8468,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/describe/describe.test.js",
+     "name": "T22-6 and US-22-R11: the feed omits non-public and withdrawn claims and its claim ids equal /describe.json"
+    }
+   ]
   },
   {
    "id": "US-22-R12",
@@ -8285,9 +8483,18 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/describe/describe.test.js",
+     "name": "US-22-R12: a re-probe inside the minimum interval returns 429 and runs no probe; without ports it is 503; GET is 405"
+    },
+    {
+     "file": "core/describe/describe.test.js",
+     "name": "US-22-R12: the claims page escapes claim text and evidence, carries no script, and offers the re-probe only when ports exist"
+    }
+   ]
   },
   {
    "id": "US-22-R13",

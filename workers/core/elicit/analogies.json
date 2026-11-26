@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "about": "US-16 section 6, analogy sweep: what comparable projects usually need or get wrong. Data, tenant-agnostic. `source` is null unless a real URL is supplied: the audit then records 'no source', never an invented citation. Items on professional topics are risks marked needs_professional and are not gate cards unless blocking is true (the system gives no legal, medical, financial or safety advice).",
+  "items": [
+    { "topic": "security", "item": "Who can change or read what: a contact for reporting a security problem, and access limited to the people who need it", "source": null, "disposition": "need" },
+    { "topic": "accessibility", "item": "Pages that people using a screen reader, a keyboard only or large text can use, with a statement saying so", "source": null, "disposition": "need" },
+    { "topic": "data retention", "item": "How long personal details are kept and how a person asks for them to be removed", "source": null, "disposition": "need" },
+    { "topic": "failure and recovery", "item": "What happens when it breaks, who is told, and a backup that has been restored at least once", "source": null, "disposition": "need" },
+    { "topic": "running cost", "item": "A monthly cost limit and what the system does when it is close to the limit", "source": null, "disposition": "need" },
+    { "topic": "who operates it", "item": "Who looks after it if the owner is away for a long time", "source": null, "disposition": "need" },
+    { "topic": "email authentication", "item": "Mail sent in the project's name that receiving servers can verify", "source": null, "disposition": "risk" },
+    { "topic": "domain renewal", "item": "The web address stays registered: who renews it and when", "source": null, "disposition": "need" },
+    { "topic": "legal notices", "item": "A privacy notice and terms of use for the visitors the idea touches", "source": null, "disposition": "risk", "blocking": false },
+    { "topic": "legal name clearance", "item": "Whether the chosen name is already used by someone else", "source": null, "disposition": "risk", "blocking": false },
+    { "topic": "tax", "item": "Tax obligations if the project takes money or runs as a business", "source": null, "disposition": "risk", "blocking": false },
+    { "topic": "licence of dependencies", "item": "The licences of the software the project is built from allow how it will be used", "source": null, "disposition": "risk", "blocking": false }
+  ]
+}

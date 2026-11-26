@@ -4,7 +4,12 @@
 // US-SPEC-16 R12 to R14). The walkthrough is generated from the needs register (core/elicit), not a fixed wizard: its step is
 // computed from the records every time, so it resumes anywhere (US-18-R11), never waits on one card, and ends by saying exactly
 // what runs and what does not yet (US-18-R12). Every press writes a record (US-18-R01): the answer in the register and a row
-// in console_actions. Ports: db, elicit (createElicit), now, config { project, catalog, readback_hours, working_url }.
+// in console_actions. Ports: db, elicit (createElicit), now, config { project, catalog, readback_hours, working_url }, and the callbacks
+// onReadbackShown(project, atMs, person) and onReadbackConfirmed(project, atMs, person), through which the lifecycle gate learns that the
+// read-back was produced (US-SPEC-15 G2) and confirmed; both default to no-ops.
+import { validTimezone } from '../elicit/index.js';
+import { messagesFor } from './i18n.js';
+
 export const IDEA_QUESTION = 'What do you want to exist, and for whom?';
 export const IDEA_EXAMPLE = 'For example: a page for my chess club that shows who plays whom each week.';
 export const METRICS = ['open', 'done', 'stuck', 'predictions_right', 'waiting_on_you'];
@@ -23,6 +28,7 @@ export function validateProfile(p = {}) {
   for (const k of Object.keys(p)) if (FORBIDDEN.includes(k)) out.push(`a profile may not set ${k}`);
   if (p.detail !== undefined && !DETAIL.includes(p.detail)) out.push('detail must be brief or more');
   if (p.language !== undefined && !/^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$/.test(String(p.language))) out.push('language must be a language tag such as en or pt-BR');
+  if (p.timezone !== undefined && !validTimezone(p.timezone)) out.push('timezone must be a time zone name such as Pacific/Auckland');
   if (p.cadence_minutes !== undefined && !(Number.isInteger(p.cadence_minutes) && p.cadence_minutes >= 1 && p.cadence_minutes <= 10080)) out.push('cadence_minutes must be a whole number from 1 to 10080');
   if (p.metrics !== undefined) {
     if (!Array.isArray(p.metrics) || p.metrics.length < 1 || p.metrics.length > LIST_MAX) out.push(`metrics must list one to ${LIST_MAX} numbers`);
@@ -37,7 +43,7 @@ export function validateProfile(p = {}) {
 
 /** Apply a profile to the three screens (the data of buildConsole in core/src/console.js) and fold in the open Ask cards.
  *  Every open decision card that was in the input is still in the output; lists never exceed three, extras become a count. */
-export function compose(consoleData, profile = {}, askCards = []) {
+export function compose(consoleData, profile = {}, askCards = [], dictionaries = {}) {
   const d = JSON.parse(JSON.stringify(consoleData));
   const numbers = { open: d.now.open, done: d.now.done, stuck: d.now.blocked, predictions_right: d.progress.predictions.hit, waiting_on_you: d.needs_you.cards.length + d.needs_you.more };
   const askShape = c => ({ id: `ask:${c.need_id}`, kind: 'ask', need_id: c.need_id, what: c.question, why: c.why, cue: c.cue,
@@ -51,15 +57,18 @@ export function compose(consoleData, profile = {}, askCards = []) {
   const allCards = [...base, ...asks, ...extra];
   d.needs_you = { cards: allCards.slice(0, LIST_MAX), more: d.needs_you.more + Math.max(0, allCards.length - LIST_MAX) };
   d.now.numbers = (profile.metrics || ['open', 'done', 'stuck']).slice(0, LIST_MAX).map(m => ({ metric: m, value: numbers[m] ?? 0 }));
+  // A list that is cut says how many it left out (US-18-R05): nothing is dropped silently.
+  const cut = (o, key, n, moreKey) => { const removed = Math.max(0, (o[key] || []).length - n); if (removed || o[moreKey] !== undefined) o[moreKey] = (o[moreKey] || 0) + removed; o[key] = (o[key] || []).slice(0, n); };
   if ((profile.detail || 'brief') === 'brief') {
-    d.now.working_on = d.now.working_on.slice(0, 1); d.now.stuck = d.now.stuck.slice(0, LIST_MAX);
-    d.progress.done_lately = d.progress.done_lately.slice(0, 1); d.progress.autonomy = d.progress.autonomy.slice(0, 1);
+    cut(d.now, 'working_on', 1, 'working_on_more'); cut(d.now, 'stuck', LIST_MAX, 'stuck_more');
+    cut(d.progress, 'done_lately', 1, 'done_lately_more'); cut(d.progress, 'autonomy', 1, 'autonomy_more');
   } else {
-    d.now.working_on = d.now.working_on.slice(0, LIST_MAX); d.now.stuck = d.now.stuck.slice(0, LIST_MAX); d.progress.autonomy = d.progress.autonomy.slice(0, LIST_MAX);
+    cut(d.now, 'working_on', LIST_MAX, 'working_on_more'); cut(d.now, 'stuck', LIST_MAX, 'stuck_more'); cut(d.progress, 'autonomy', LIST_MAX, 'autonomy_more');
   }
   const waiting = d.needs_you.cards.length + d.needs_you.more;
   if (d.ok && waiting) d.headline = `Running well. ${waiting} thing${waiting === 1 ? '' : 's'} need${waiting === 1 ? 's' : ''} you.`;
   d.profile = { detail: profile.detail || 'brief', language: profile.language || 'en', cadence_minutes: profile.cadence_minutes || 60 };
+  d.i18n = messagesFor(d.profile.language, dictionaries); // the fixed strings of the page in the person's language, English where a string is missing
   return d;
 }
 
@@ -84,10 +93,10 @@ document.addEventListener('click',function(e){var t=e.target;if(t.id==='ok'){sen
 </script></body></html>`;
 }
 
-export function createWalkthrough({ db, elicit, now = () => Date.now(), config = {} } = {}) {
+export function createWalkthrough({ db, elicit, now = () => Date.now(), config = {}, onReadbackShown = () => {}, onReadbackConfirmed = () => {} } = {}) {
   if (!elicit) throw new Error('the walkthrough is generated from the needs register: pass elicit');
   const clock = typeof now === 'function' ? now : () => now;
-  const cfg = { project: 'main', catalog: { needs: [] }, readback_hours: 72, working_url: null, ...config };
+  const cfg = { project: 'main', catalog: { needs: [] }, readback_hours: 72, working_url: null, dictionaries: {}, ...config };
   const needsCatalog = Array.isArray(cfg.catalog) ? cfg.catalog : cfg.catalog.needs || [];
   const all = async (sql, ...a) => (await db.prepare(sql).bind(...a).all()).results || [];
   const one = (sql, ...a) => db.prepare(sql).bind(...a).first();
@@ -144,6 +153,7 @@ export function createWalkthrough({ db, elicit, now = () => Date.now(), config =
   async function current(person) {
     const st = await state(person);
     if (!st) return { step: 1, of: 5, kind: 'idea', question: IDEA_QUESTION, example: IDEA_EXAMPLE, free_text: true, suggestions: ['A page for my club', 'A tracker I check every day', 'A small shop site that keeps improving'] };
+    await applyTimezone(person);
     const cards = await elicit.nextAsks(st.project);
     const asked = new Set((await all(`SELECT id FROM elicit_needs WHERE project=? AND state='asked'`, st.project)).map(r => r.id));
     const later = (await one(`SELECT COUNT(*) AS n FROM elicit_needs WHERE project=? AND state='open'`, st.project)).n;
@@ -152,7 +162,7 @@ export function createWalkthrough({ db, elicit, now = () => Date.now(), config =
     if (askCard) return { step: 2, of: 5, kind: 'ask', card: { ...askCard, buttons: askCard.options }, remaining: asked.size + later, setup };
     const rb = await readBack(st.project);
     if (!st.readback_confirmed_at) {
-      if (!st.readback_shown_at) { await run(`UPDATE walkthrough_state SET readback_shown_at=? WHERE person=?`, stamp(clock()), person); return { step: 4, of: 5, kind: 'readback', readback: rb, later, setup }; }
+      if (!st.readback_shown_at) { await run(`UPDATE walkthrough_state SET readback_shown_at=? WHERE person=?`, stamp(clock()), person); await onReadbackShown(st.project, clock(), person); return { step: 4, of: 5, kind: 'readback', readback: rb, later, setup }; }
       if (clock() - parse(st.readback_shown_at) < cfg.readback_hours * 3600e3) return { step: 4, of: 5, kind: 'readback', readback: rb, later, setup };
     }
     if (!st.finished_at) await run(`UPDATE walkthrough_state SET finished_at=? WHERE person=?`, stamp(clock()), person);
@@ -189,20 +199,33 @@ export function createWalkthrough({ db, elicit, now = () => Date.now(), config =
   }
   async function confirmReadBack(person) {
     const r = await run(`UPDATE walkthrough_state SET readback_confirmed_at=? WHERE person=? AND readback_confirmed_at IS NULL`, stamp(clock()), person);
-    if (r.meta?.changes) await act('readback_confirmed', person, null);
+    if (r.meta?.changes) { await act('readback_confirmed', person, null); const st = await state(person); await onReadbackConfirmed(st?.project, clock(), person); }
     return { ok: true };
   }
+
+  let settingsTable = null;
+  const hasSettings = async () => (settingsTable ??= Boolean(await one(`SELECT 1 AS x FROM sqlite_master WHERE name='walkthrough_settings'`)));
+  const timezoneOf = async person => ((await hasSettings()) ? (await one(`SELECT timezone FROM walkthrough_settings WHERE person=?`, person))?.timezone : null) || null;
+  /** US-16-R16: the person's time zone, once known, makes the quiet period their local night. */
+  async function applyTimezone(person) { const tz = await timezoneOf(person); if (tz && !elicit.config.quiet) elicit.config.timezone = tz; }
 
   const rowToProfile = r => ({ person: r.person, detail: r.detail, language: r.language, cadence_minutes: r.cadence_minutes, metrics: JSON.parse(r.metrics), extra_cards: JSON.parse(r.extra_cards), source: r.source });
   /** The person's profile; the default composition when none is stored. */
   async function profile(person) {
     const r = await one(`SELECT * FROM walkthrough_profiles WHERE person=?`, person);
-    return r ? rowToProfile(r) : { person, detail: 'brief', language: 'en', cadence_minutes: 60, metrics: ['open', 'done', 'stuck'], extra_cards: [], source: 'default' };
+    const base = r ? rowToProfile(r) : { person, detail: 'brief', language: 'en', cadence_minutes: 60, metrics: ['open', 'done', 'stuck'], extra_cards: [], source: 'default' };
+    return { ...base, timezone: await timezoneOf(person) };
   }
   async function setProfile(person, patch = {}, source = 'person') {
     const problems = validateProfile(patch);
     if (problems.length) return { ok: false, errors: problems };
-    const p = { ...(await profile(person)), ...patch };
+    const { timezone, ...rest } = patch;
+    if (timezone !== undefined) {
+      if (!(await hasSettings())) return { ok: false, errors: ['the time zone setting needs migration 0002_walkthrough_settings.sql'] };
+      await run(`INSERT INTO walkthrough_settings (person, timezone, updated_at) VALUES (?,?,?) ON CONFLICT(person) DO UPDATE SET timezone=excluded.timezone, updated_at=excluded.updated_at`, person, timezone, stamp(clock()));
+      await applyTimezone(person);
+    }
+    const p = { ...(await profile(person)), ...rest };
     await run(`INSERT INTO walkthrough_profiles (person, detail, language, cadence_minutes, metrics, extra_cards, source, updated_at) VALUES (?,?,?,?,?,?,?,?)
       ON CONFLICT(person) DO UPDATE SET detail=excluded.detail, language=excluded.language, cadence_minutes=excluded.cadence_minutes, metrics=excluded.metrics, extra_cards=excluded.extra_cards, source=excluded.source, updated_at=excluded.updated_at`,
     person, p.detail, p.language, p.cadence_minutes, JSON.stringify(p.metrics), JSON.stringify(p.extra_cards), source, stamp(clock()));
@@ -223,10 +246,11 @@ export function createWalkthrough({ db, elicit, now = () => Date.now(), config =
   /** The Ask cards open now, as decision cards for the Needs-you screen. */
   async function askCards(person) {
     const st = await state(person);
+    if (st) await applyTimezone(person);
     return st ? elicit.nextAsks(st.project) : [];
   }
   /** The person's three screens: the console data with their profile applied and their Ask cards folded in. */
-  async function screens(person, consoleData) { return compose(consoleData, await profile(person), await askCards(person)); }
+  async function screens(person, consoleData) { return compose(consoleData, await profile(person), await askCards(person), cfg.dictionaries || {}); }
 
   /** Routes under /api/console (the console signs the person in first and passes who they are):
    *    GET  /api/console/walkthrough            where the person is
@@ -264,5 +288,5 @@ export function createWalkthrough({ db, elicit, now = () => Date.now(), config =
     return json({ error: 'not found' }, 404);
   }
 
-  return { submitIdea, current, answer, readBack, correct, confirmReadBack, profile, setProfile, syncProfile, askCards, screens, setupCards, whatWorks, handle, config: cfg };
+  return { elicit, submitIdea, current, answer, readBack, correct, confirmReadBack, profile, setProfile, syncProfile, askCards, screens, setupCards, whatWorks, handle, config: cfg };
 }
