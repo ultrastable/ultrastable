@@ -141,6 +141,9 @@ Executing produces the deliverables and the evidence. It is where US-SPEC-03 (ti
 | US-15-R12 | A request outside `SCOPE.md` MUST create a scope-gate entry and MUST NOT be worked until a recorded decision enables a Capability Pack. |
 | US-15-R13 | Planning artifacts MAY be lighter in agile mode but MUST NOT be omitted. |
 | US-15-R14 | Portfolio manager MUST NOT start a project that would take total capacity above the portfolio cap. |
+| US-15-R15 | The risk and issue review (A-MON-4) MUST run at least once per period (default weekly) for every project that is not closed. Each open risk without a response, an owner role or a trigger, and each active issue without a closing probe, MUST become one item. The review MUST be a record that states how many risks were added since the review before it. |
+| US-15-R16 | Quality metrics (A-MON-6) MUST be read at least once per period from the project's own records: rework rate, defects escaped and probe pass rate. A ratio with nothing under it MUST be recorded as unmeasured, never as zero. |
+| US-15-R17 | Every manager role MUST be a running loop: a register lists the managers a system runs, all on by default; a manager is switched off only by data with a reason, and a core manager cannot be switched off. The tick MUST hire a switched-on manager that has no runtime row and MUST NOT dispatch to one that is off; nothing is deleted. |
 
 ## 7. How the lifecycle runs on the tick
 
@@ -149,8 +152,9 @@ The tick (US-SPEC-03) is the heartbeat; the lifecycle is what the heartbeat serv
 | Process group | Tick activity |
 |---|---|
 | Initiating, Planning | Reconcile finds a project with an unmet gate and files the missing artifact as an item for its owner role. |
+| All | Reconcile hires every manager the register switches on that has no runtime row. |
 | Executing | Dispatch hands ready items to staff within capacity; claims prevent duplication. |
-| M&C | Score predictions; probe gate cards; reap stale claims; compute variance; refresh the status report. |
+| M&C | Score predictions; probe gate cards; reap stale claims; compute variance; refresh the status report; review the risk register and read the quality metrics once per period. |
 | Closing | When every chartered outcome has a disposition, reconcile opens the closing items. |
 
 ## 8. Records
@@ -166,6 +170,8 @@ A conforming implementation adds the following (names are normative, columns are
 | `change_requests` | id, project_id, summary, effect, decision, decided_by, decided_at, revert_path |
 | `risks` | id, project_id, cause, effect, likelihood, impact, response, owner_role, trigger, status |
 | `lessons` | id, project_id, text, plus_item_id |
+
+The risk and issue review and the quality metrics need no table of their own: each is one `artifacts` row per project (kinds `A-MON-4` and `A-MON-6`, phase `monitoring`, outside every gate) whose reference names the records it was computed from, whose evidence holds the reading and whose update time is when it was last produced.
 
 ## 9. Failure modes
 
@@ -187,14 +193,22 @@ A conforming implementation adds the following (names are normative, columns are
 | T15-4 | An out-of-scope request creates an A-MON-5 entry and no item is dispatched. |
 | T15-5 | Ending an iteration without a retrospective blocks the next iteration. |
 | T15-6 | Closing a project with an open item that has no disposition fails G3. |
+| T15-7 | A project with one open risk that has no response, owner or trigger: the review files exactly one item whose probe fails until the risk is complete, and a second review files nothing new. |
+| T15-8 | A project with three work items, one fix item, two deliverable probes run and one passed: rework rate 0.25, probe pass rate 0.5. With no items and no probes run, both are unmeasured. |
+| T15-9 | A manager added to the register after boot is hired on the next tick; a core manager with an off switch stays on; an off switch with no reason is refused. |
 
 ## 11. Reference implementation status
+
+Verified against the code on 2026-11-26. Paths that begin `core/` are under `workers/`; paths that begin `seed/`, `foundation/` or `doctrine/` are from the repository root.
 
 | Capability | Status |
 |---|---|
 | Work items, triggers, done checks, closing probes, dispositions, claims, gate cards, predictions, trust, status in four lines | BUILT (`core/src/tick.js`, `core/migrations/0001_init.sql`, tests in `core/test/tick.test.js`) |
-| Charters, program and portfolio managers, roadmap, weekly report, management compliance check | RUNNING in QNFO as documents and workers. Generalized in part in `ultrastable/workers`: program charters with primary and guard metrics in `core/kernel/programs.js`, managers with decision authority in `core/staff/index.js`; the weekly report and the compliance check are not |
+| Charters, program and portfolio managers, roadmap, weekly report, management compliance check | RUNNING in QNFO as documents and workers. Generalized in part in `ultrastable/workers`: program charters with primary and guard metrics in `core/kernel/programs.js`, managers with decision authority in `core/staff/index.js`; the weekly report and the compliance check are not. The periodic status report of R10 is the built counterpart of the weekly report |
 | Phase gates G1 to G3, `phases`, `artifacts`, `change_requests`, `risks`, `lessons` tables (R01, R04 to R07, R11, T15-1, T15-2, T15-3, T15-6) | BUILT (`core/kernel/lifecycle.js`, `core/kernel/migrations/0002_lifecycle.sql`, tests in `core/kernel/lifecycle.test.js`). The tick files missing gate artifacts as items |
 | Mode tailoring, iteration records, scope gate (R02, R03, R09, R12, R13, T15-4, T15-5) | BUILT (`core/lifecycle-gates/index.js`, `core/lifecycle-gates/migrations/0001_lifecycle_gates.sql`, tests in `core/lifecycle-gates/lifecycle-gates.test.js`). The scope classifier is keyword rules restating `SCOPE.md`; enabling a pack records the decision and does not install the pack |
 | Deliverable closing probes, status report with predicted versus actual, portfolio cap, the G1 conditions on the charter probe and the readiness score (R08, R10, R14) | BUILT (`core/lifecycle-gates/index.js`, tests in `core/lifecycle-gates/lifecycle-gates.test.js`). The readiness score is a port served by `core/elicit` |
-| Starting the lifecycle step from the composition root, risk review (A-MON-4), quality metrics (A-MON-6), the G2 mapping of every requirement to an item and a probe | `lifecycleStep` BUILT in the list `core/org` runs (`core/org/buildout.js`, `core/org/org.test.js`); risk review and quality metrics PLANNED: the `risks` table has no step that reviews it |
+| Starting the lifecycle step from the composition root | BUILT: `lifecycleStep` is in the list `core/org` runs (`core/org/buildout.js`, `core/org/org.test.js`) |
+| Risk and issue review (A-MON-4) and quality metrics (A-MON-6) on the tick (R15, R16, T15-7, T15-8) | BUILT (`core/lifecycle-gates/index.js`: `reviewRisks`, `qualityMetrics`, `refreshMonitoring`, run by `lifecycleStep`; tests in `core/lifecycle-gates/lifecycle-gates.test.js`). Defects escaped counts outcomes recorded as `hidden_failure` on the project's items |
+| Managers as running loops with a register and switches (R17, T15-9) | BUILT (`seed/worker/src/managers.js` with `seed/autonomy/managers.json`, tests in `seed/worker/test/managers.test.js`; the register check is `foundation/managers.py` with `doctrine/managers.json`, tests in `tests/foundation/test_managers.py`) |
+| The G2 mapping of every requirement to an item and a probe | PLANNED (item `Q-SPEC-15-g2-requirement-map`). G2 checks today that work items exist for the project and that each has a closing probe (`core/kernel/lifecycle.js` `checkGate`); it does not read the requirements of A-PLN-1 one by one |

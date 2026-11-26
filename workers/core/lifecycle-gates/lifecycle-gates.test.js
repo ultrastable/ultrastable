@@ -9,7 +9,9 @@ import { MIGRATIONS_DIR as KERNEL_DIR, CATALOG, reviewArtifact, recordReadback, 
 import {
   MIGRATIONS_DIR, selectMode, requiredArtifacts, cadence, checkForm, submitTailored, startProject, advance, recordDeliverable, runDeliverableProbe,
   startIteration, endIteration, recordRetrospective, setCommunicationPlan, produceStatusReport, refreshStatusReports, classifyScope, decidePack, requestWork, lifecycleStep,
+  reviewRisks, qualityMetrics, refreshMonitoring,
 } from './index.js';
+import { addRisk } from '../kernel/lifecycle.js';
 
 const policy = JSON.parse(readFileSync(new URL('../../autonomy/policy.json', import.meta.url), 'utf8'));
 const config = { org_slug: 't', claim_ttl_minutes: 120, max_wip_per_role: 3, plus_share: 0.2, policy };
@@ -257,4 +259,69 @@ test('US-15-R12, T15-4: an out-of-scope request creates a scope-gate entry with 
   await decidePack(db, { pack: 'business-plan', enabled: false, reason: 'trial over', revert_path: 'decidePack enabled=true', decided_by: 'portfolio-manager', now: NOW });
   assert.equal((await requestWork(db, { id: 'REQ-5', text: 'Another business plan', now: NOW })).accepted, false);
   assert.deepEqual(rows(db, `SELECT pack FROM lifecycle_scope_gate WHERE status = 'held' ORDER BY id`).map(r => r.pack), ['outreach', 'business-plan']);
+});
+
+test('A-MON-4: the risk and issue review files one item per incomplete open risk and per issue without a probe, counts new risks, and is a record', async () => {
+  const db = setup();
+  await startProject(db, { id: 'RK', name: 'rk', override: { mode: 'agile', reason: 'test fixture', decided_by: 'portfolio-manager' }, now: NOW });
+  const full = await addRisk(db, { project_id: 'RK', cause: 'vendor delay', effect: 'schedule slip', likelihood: 3, impact: 4, response: 'second vendor', owner_role: 'project-manager', trigger: 'no delivery by day 10' });
+  const bare = await addRisk(db, { project_id: 'RK', cause: 'key person leaves', effect: 'review stalls' });
+  db.raw.prepare(`INSERT INTO items (id, title, kind, owner_role, done_check, closing_probe, status, project) VALUES ('BUG-1', 'broken form', 'fix', 'staff', 'x', NULL, 'ready', 'RK')`).run();
+  db.raw.prepare(`INSERT INTO items (id, title, kind, owner_role, done_check, closing_probe, status, project) VALUES ('BUG-2', 'slow page', 'fix', 'staff', 'x', 'SELECT 1 AS value', 'ready', 'RK')`).run();
+  const r1 = await reviewRisks(db, { project_id: 'RK', now: NOW });
+  assert.deepEqual([r1.risks, r1.open, r1.new_since_last, r1.previous_review], [2, 2, 2, null]);
+  assert.deepEqual(r1.incomplete, [{ id: bare, lacks: ['response', 'owner_role', 'trigger'] }]);
+  assert.deepEqual(r1.issues_without_probe, ['BUG-1']);
+  assert.deepEqual(r1.filed, [`RISK-RK-${bare}`, 'ISSUE-PROBE-BUG-1']);
+  const it = one(db, `SELECT owner_role, project, closing_probe FROM items WHERE id = ?`, `RISK-RK-${bare}`);
+  assert.deepEqual([it.owner_role, it.project], ['project-manager', 'RK']);
+  assert.equal(one(db, it.closing_probe).value, 0);                                          // the probe is runnable and fails while the risk is incomplete
+  const a = one(db, `SELECT phase, kind, owner_role, path_or_ref, evidence, updated_at FROM artifacts WHERE id = 'RK:A-MON-4'`);
+  assert.deepEqual([a.phase, a.owner_role, a.path_or_ref, a.updated_at], ['monitoring', 'project-manager', 'risks?project_id=RK', ts(NOW)]);
+  assert.equal(JSON.parse(a.evidence).max_risk_id, bare);
+
+  db.raw.prepare(`UPDATE risks SET response = 'cross-train', owner_role = 'project-manager', trigger = 'notice given' WHERE id = ?`).run(bare);
+  await addRisk(db, { project_id: 'RK', cause: 'quota', effect: 'tick stops', response: 'cheaper tier', owner_role: 'operations', trigger: 'spend at 80%' });
+  db.raw.prepare(`UPDATE items SET closing_probe = 'SELECT 1 AS value' WHERE id = 'BUG-1'`).run();
+  const r2 = await reviewRisks(db, { project_id: 'RK', now: NOW + DAY });
+  assert.deepEqual([r2.risks, r2.new_since_last, r2.incomplete, r2.issues_without_probe, r2.filed, r2.previous_review], [3, 1, [], [], [], ts(NOW)]);
+  assert.equal(one(db, it.closing_probe).value, 1);                                          // the same probe passes once the risk is complete
+  assert.equal(one(db, one(db, `SELECT closing_probe FROM items WHERE id = 'ISSUE-PROBE-BUG-1'`).closing_probe).value, 1);
+  assert.equal(one(db, `SELECT COUNT(*) AS n FROM artifacts WHERE project_id = 'RK' AND kind = 'A-MON-4'`).n, 1);   // one record, refreshed
+  assert.equal(full > 0, true);
+  await assert.rejects(reviewRisks(db, { project_id: 'nope', now: NOW }), /unknown project/);
+  // a closed risk is not chased, and the gates do not read monitoring artifacts
+  db.raw.prepare(`INSERT INTO risks (project_id, cause, effect, status) VALUES ('RK', 'old', 'gone', 'closed')`).run();
+  assert.deepEqual((await reviewRisks(db, { project_id: 'RK', now: NOW + 2 * DAY })).incomplete, []);
+});
+
+test('A-MON-6: rework rate, defects escaped and probe pass rate are read from the project records; nothing under a ratio is unmeasured, not zero', async () => {
+  const db = setup();
+  await startProject(db, { id: 'QM', name: 'qm', override: { mode: 'agile', reason: 'test fixture', decided_by: 'portfolio-manager' }, now: NOW });
+  const empty = await qualityMetrics(db, { project_id: 'QM', now: NOW });
+  assert.deepEqual([empty.rework_rate, empty.probe_pass_rate, empty.defects_escaped, empty.probes_run], [null, null, 0, 0]);
+  for (const [id, kind] of [['W-1', 'work'], ['W-2', 'work'], ['W-3', 'work'], ['F-1', 'fix']]) item(db, id, { project: 'QM' }), db.raw.prepare(`UPDATE items SET kind = ? WHERE id = ?`).run(kind, id);
+  item(db, 'OTHER', { project: 'ELSE' });
+  db.raw.prepare(`INSERT INTO outcomes (item_id, agent, surface, action_class, result) VALUES ('W-1', 'a', 's', 'c', 'hidden_failure'), ('W-2', 'a', 's', 'c', 'verified'), ('OTHER', 'a', 's', 'c', 'hidden_failure')`).run();
+  await recordDeliverable(db, { id: 'D-1', project_id: 'QM', path_or_ref: 'src/a.js', closing_probe: 'SELECT 1 AS value', produced_by: 'doer', now: NOW });
+  await recordDeliverable(db, { id: 'D-2', project_id: 'QM', path_or_ref: 'src/b.js', closing_probe: 'SELECT 0 AS value', produced_by: 'doer', now: NOW });
+  await recordDeliverable(db, { id: 'D-3', project_id: 'QM', path_or_ref: 'src/c.js', closing_probe: 'SELECT 1 AS value', produced_by: 'doer', now: NOW });
+  await runDeliverableProbe(db, 'D-1', { runner: 'checker', now: NOW }); await runDeliverableProbe(db, 'D-2', { runner: 'checker', now: NOW });
+  const q = await qualityMetrics(db, { project_id: 'QM', now: NOW + HOUR });
+  assert.deepEqual([q.rework_rate, q.fix_items, q.work_items, q.defects_escaped, q.probe_pass_rate, q.probes_run, q.probes_passed, q.deliverables_unprobed], [0.25, 1, 3, 1, 0.5, 2, 1, 1]);
+  const a = one(db, `SELECT phase, owner_role, evidence, updated_at FROM artifacts WHERE id = 'QM:A-MON-6'`);
+  assert.deepEqual([a.phase, a.owner_role, a.updated_at, JSON.parse(a.evidence).rework_rate], ['monitoring', 'reviewer', ts(NOW + HOUR), 0.25]);
+});
+
+test('A-MON-4, A-MON-6 on the tick: each open project is reviewed once per period and a closed project is left alone', async () => {
+  const db = setup();
+  await startProject(db, { id: 'T1', name: 't1', override: { mode: 'agile', reason: 'test fixture', decided_by: 'portfolio-manager' }, now: NOW });
+  await startProject(db, { id: 'T2', name: 't2', override: { mode: 'agile', reason: 'test fixture', decided_by: 'portfolio-manager' }, now: NOW });
+  db.raw.prepare(`UPDATE kernel_projects SET current_phase = 'closed' WHERE id = 'T2'`).run();
+  assert.deepEqual(await refreshMonitoring(db, { now: NOW }), { risk_reviews: ['T1'], quality: ['T1'] });
+  assert.deepEqual(await refreshMonitoring(db, { now: NOW + DAY }), { risk_reviews: [], quality: [] });
+  assert.deepEqual(await refreshMonitoring(db, { now: NOW + DAY, config: { risk_review_period_h: 12 } }), { risk_reviews: ['T1'], quality: [] });
+  const tick = await runTick(db, { config, now: NOW + 9 * DAY, extraSteps: [lifecycleStep()] });
+  assert.deepEqual(tick.errors, []); assert.match(tick.report, /1 risk review\(s\), 1 quality reading\(s\)/);
+  assert.equal(one(db, `SELECT COUNT(*) AS n FROM artifacts WHERE project_id = 'T2'`).n, 0);
 });

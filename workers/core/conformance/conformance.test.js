@@ -97,7 +97,9 @@ test('US-00-T02 and US-00-R03: every requirement the manifest labels met names a
   for (const f of testFiles(manifest, 'L3')) assert.ok(existsSync(path.join(ROOT, f)), f);
 });
 
-test('the manifest covers every requirement of every specification, at the level the specification tags', { skip: !existsSync(path.join(ROOT, '../spec/specs')) && 'the specifications repository is not checked out beside this one' }, () => {
-  const r = check(manifest, { files: readNamedFiles(manifest), specs: readSpecs(path.join(ROOT, '../spec/specs')), tests: readTests() });
+// The specifications sit in specs/ of the repository this tree is folded into (REPOS-1), or in a `spec` checkout beside a standalone one.
+const SPEC_DIR = ['../specs', '../spec/specs'].map(d => path.join(ROOT, d)).find(d => existsSync(d));
+test('the manifest covers every requirement of every specification, at the level the specification tags', { skip: !SPEC_DIR && 'no specifications directory beside this tree' }, () => {
+  const r = check(manifest, { files: readNamedFiles(manifest), specs: readSpecs(SPEC_DIR), tests: readTests() });
   assert.deepEqual(r.problems, []);
 });

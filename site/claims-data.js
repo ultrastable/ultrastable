@@ -1552,6 +1552,15 @@ export default {
    "surface": "specs/README.md"
   },
   {
+   "claim": "| BUILT | Code exists with passing tests, and the file is named. That a named path exists is checked on every change (see Checks below); the na",
+   "detail": "",
+   "how": "file:scripts/spec_truth.py + grep:tests/foundation/test_spec_truth.py::test_missing_unnamed_and_partly_missing_paths_are_findings + file:doctrine/spec-truth-baseline.json",
+   "id": "curated-d1df284b99",
+   "kind": "claim",
+   "pass": true,
+   "surface": "specs/README.md"
+  },
+  {
    "claim": "It finds its own work in your metrics and failures, hands each task to the coding agent that fits, proves each handed-off change live and rolls it back when the proof fails, and keeps score of how often its decisions were right.",
    "detail": "",
    "how": "file:doctrine/triggers.json + file:foundation/triggers.py + file:seed/worker/src/decisions.js + grep:seed/worker/test/handoff.test.js::a red probe rolls the deploy back and puts the item back to ready + grep:site/deployer.js::/__internal/rollback",
@@ -3622,7 +3631,7 @@ export default {
    "surface": "seed/tests/fixtures/IDEA.example.md"
   },
   {
-   "claim": "seed-tests: 109 Python and 605 Worker tests",
+   "claim": "seed-tests: 109 Python and 624 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3631,7 +3640,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 605 Worker tests",
+   "claim": "seed-worker-tests: 624 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3890,7 +3899,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 429,
-  "total": 429
+  "pass": 430,
+  "total": 430
  }
 };

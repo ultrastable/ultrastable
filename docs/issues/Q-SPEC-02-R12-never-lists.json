@@ -1,0 +1,12 @@
+{
+  "id": "Q-SPEC-02-R12-never-lists",
+  "title": "Q-SPEC-02-R12-never-lists: Give every role file the three-item never list and check it",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** cmd:git grep -q \"US-02-R12\" -- seed/tests tests/foundation\n**Status:** open\n\nUS-SPEC-02 (US-02-R12): every role instruction file must carry a never list naming acting on another agent's live claim, handling secret values and reviewing one's own work. The rules are in `agents/AGENTS.md`; no file in `seed/agents/roles/` names all three and nothing checks it. Add the list through the role-file generator (`python3 -m foundation managers --sync` keeps the generated block) to `agents/roles/` and `seed/agents/roles/`, and add a seed test that reads every role file for the three rules.\n\nsize: M\n\n**Prediction:** spec_quality >= 0.9 within 168 h\n**Out of scope:** rewriting what each role owns or its loops.\n\n**Closing probe:** cmd:`git grep -q \"US-02-R12\" -- seed/tests tests/foundation` exits 0, and `python3 scripts/spec_ids.py --check` passes with the status line of the specification changed from PLANNED to BUILT naming the file and the test.\n",
+  "labels": [
+    "p2",
+    "agent-ready",
+    "spec"
+  ],
+  "milestone": "Now",
+  "workstream": "Executor queue"
+}

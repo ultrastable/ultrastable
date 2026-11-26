@@ -1,0 +1,5 @@
+{
+ "_doc": "SPEC-TRUTH-1: BUILT status lines in specs/ that name a path which does not exist, as of the day the check was wired. Shrink-only: scripts/spec_truth.py --prune removes rows that no longer fail and nothing adds one; ceiling is the most rows this file may hold. Checked by scripts/spec_truth.py --check (tests/foundation/test_spec_truth.py).",
+ "ceiling": 0,
+ "rows": []
+}

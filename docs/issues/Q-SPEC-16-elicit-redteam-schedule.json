@@ -1,0 +1,12 @@
+{
+  "id": "Q-SPEC-16-elicit-redteam-schedule",
+  "title": "Q-SPEC-16-elicit-redteam-schedule: run the elicitation audit's red-team sweep from a second model on the organization's clock, and give system-unknowns a research step with sources",
+  "body": "**Owner:** staff\n**Trigger:** specification audit 2026-11-26: the row is PLANNED in the status table of specs/US-SPEC-16-ignorance-and-prompted-recall.md\n**Done check:** cmd:git grep -q \"elicit audit: the red-team sweep comes from the scheduled second model\" -- workers/core/org/surfaces.test.js\n**Status:** open\n\nUS-SPEC-16 Section 6 wants the red-team sweep answered by a different model family. `workers/core/ignorance/models.js` already calls a second model (GitHub Models or Workers AI) and refuses the author's family, for the organization's open items; `audit` in `workers/core/elicit/index.js` still takes the red-team answer as an input and nothing schedules the two together. Add an org tick step in `workers/core/org/surfaces.js` that runs `audit` for each project with the challenger from `core/ignorance/models.js` as the `redteam` function, falls back to the rule floor when no model answers and records which one answered. For the research half, a step that fills `provenance: researched` only with a source it fetched; a need it cannot source stays open. Add the test named in the done check and move the two rows of the spec to BUILT in the same change.\n\n**Closing probe:** `node --test --no-warnings workers/core/org/surfaces.test.js workers/core/elicit/elicit.test.js`\n**Prediction:** spec16_planned_rows <= 2 within 720 h\n**Out of scope:** a research answer with no fetched source; a red-team answer from the author's own model family; enabling the step in the seed tick Worker (that is row IGN-7 of workers/core/ignorance/README.md).\n",
+  "labels": [
+    "role:staff",
+    "ws:platform",
+    "spec"
+  ],
+  "milestone": "Next",
+  "workstream": "Platform"
+}

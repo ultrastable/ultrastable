@@ -7,13 +7,15 @@
 |---|---|
 | ID | US-SPEC-20 |
 | Title | Self-hosting |
-| Version | 0.1.0 (draft) |
-| Date | 2026-11-11 |
+| Version | 0.2.0 (draft) |
+| Date | 2026-11-26 |
 | Status | Draft |
 
 ## 1. Purpose
 
 **Ultrastable is built by Ultrastable.** The `ultrastable` organization and its repositories are the first organization the product runs. The same items, claims, reviews, predictions, probes and decisions the product sells are how its own code and specifications are changed. This is the proof that the product works, and it is a rule for everyone who touches the project, whatever tool they use: a coding agent, a chat assistant, an IDE helper, or a person.
+
+Version 0.2.0 brings three things up to the code. The protected-path rule (US-20-R07) is an automated gate and no longer a human review, as the closed system requires (US-SPEC-23: no step depends on a person reading, deciding, reviewing or approving). The specifications and the `workers` code now live in one repository (`specs/` and `workers/`), so the spec-truth check runs there over both. The status section says which checks run in that repository's CI and which exist only as code.
 
 This specification defines the self-hosting contract, the ladder by which the project moves from "run by people with agents" to "run by its own heartbeat", the minimum a tool must be able to do, how the project checks itself, and the extra care needed when a system changes its own rules.
 
@@ -22,7 +24,7 @@ This specification defines the self-hosting contract, the ladder by which the pr
 | Term | Definition |
 |---|---|
 | Worker | Any agent, tool or person doing work in the organization |
-| Contract | The twelve rules in `agents/CONTRACT.md`, identical in every repository |
+| Contract | The numbered rules in `agents/CONTRACT.md` (fourteen as of this version), identical in every repository |
 | Item | A work item: an issue with owner role, done check and closing probe |
 | Protected path | A file that defines the rules: agent files, CI workflows, policy, guards, scope, license |
 | Spec truth | The property that no status label in the specifications claims more than the code does |
@@ -37,8 +39,8 @@ This specification defines the self-hosting contract, the ladder by which the pr
 | US-20-R03 | CI MUST refuse a pull request without that record. Only dependency bots are exempt. |
 | US-20-R04 | `Reviewer` MUST differ from `Author`. Where possible the reviewing model differs from the authoring model. |
 | US-20-R05 | `Evidence` MUST quote real output. A description is not evidence. |
-| US-20-R06 | A specification's status label MAY say BUILT only if it names a file that exists and a test that passes. CI MUST report every line that does not (`tools/spec_truth.py`), and each finding MUST become an item. |
-| US-20-R07 | Protected paths MUST require a human reviewer (code ownership), a `Protected-change` line giving the reason, and the label `protected-change`. A worker MUST NOT weaken a guard to make a change pass. If a guard breaches after a change, the change is reverted first. |
+| US-20-R06 | A specification's status label MAY say BUILT only if it names a file that exists and a test that passes. CI MUST report every line that does not (`tools/spec_truth.py`; in the repository that holds the specifications, `scripts/spec_truth.py --check`), and each finding MUST become an item or an entry of a list that only shrinks. |
+| US-20-R07 | A change to a protected path MUST pass an automated protected-path gate: it carries a `Protected-change` line giving the reason, it deletes no guard file, it adds no human approver, and every check is green. The gate MUST NOT wait on a person's review. A worker MUST NOT weaken a guard to make a change pass. If a guard breaches after a change, the change is reverted first. (Revised in 0.2.0: 0.1.0 required a human reviewer and the label `protected-change`.) |
 | US-20-R08 | One change per protected component at a time, so its effect is attributable. |
 | US-20-R09 | The contract MUST NOT depend on any one tool. Where a tool cannot do a step, the contract tells it what to do instead (Section 5). |
 | US-20-R10 | The contract MUST state its stage honestly. |
@@ -51,7 +53,7 @@ This specification defines the self-hosting contract, the ladder by which the pr
 | 1 | The contract and CI make every change follow the process, whatever the tool | Every merged pull request passes the record check; spec truth reports no false BUILT |
 | 2 | The organization's own database holds the items, claims and decisions, mirrored with the issue tracker | Items in the store match open issues |
 | 3 | The Worker's tick dispatches work to agents and scores its own predictions | Ticks run on the self-hosted Cloudflare account; every merged pull request traces to a tick |
-| 4 | Managers and reviewers are scheduled roles; trust is earned per surface | The trust ledger moves; humans merge less |
+| 4 | Managers and reviewers are scheduled roles; trust is earned per surface | The trust ledger moves; the lane merges every green pull request |
 
 | ID | Requirement |
 |---|---|
@@ -63,7 +65,7 @@ This specification defines the self-hosting contract, the ladder by which the pr
 
 | The tool can | It does |
 |---|---|
-| Only talk (no files, no network) | Produce the artifacts as text for a person to paste: patch, issue text, pull request body; list the records still to be created and by whom; never claim they exist |
+| Only talk (no files, no network) | Produce the artifacts as text: patch, issue text, pull request body; say which records do not exist yet (the server-side lane files them from the work order); never claim they exist |
 | Read and edit files | Make the change on a branch in the working copy; write the item and pull request text to files |
 | Use git and the issue tracker | Do everything in the contract |
 | Call the organization's own interfaces | Use them for items, claims and decisions as well |
@@ -76,13 +78,13 @@ This specification defines the self-hosting contract, the ladder by which the pr
 | Spec truth | Count of false BUILT lines (`tools/spec_truth.py`) | 0 |
 | Execution ratio | Merged pull requests that trace to a tick-dispatched item, divided by merged pull requests | Rises with stage |
 | Self-review rate | Pull requests whose reviewer equals the author | 0 |
-| Protected-change reviews | Protected-path changes merged without a human review | 0 |
+| Protected-path gate | Protected-path changes merged without the gate passing | 0 |
 
 ## 7. Failure modes
 
 | Failure | Control |
 |---|---|
-| The system loosens its own rules | R07: protected paths need a human, guards are never weakened, revert first |
+| The system loosens its own rules | R07: protected paths pass the automated gate, guards are never weakened or deleted, revert first |
 | The record becomes ritual (filled in without meaning) | R05, R04, and the reviewer is a different worker |
 | Specifications drift from the code | R06 |
 | A new tool ignores the contract | R01: the contract is in every file any tool reads; CI enforces it regardless |
@@ -96,7 +98,7 @@ This specification defines the self-hosting contract, the ladder by which the pr
 | T20-1 | The generated agent files equal the contract in every repository |
 | T20-2 | A pull request missing any record field fails CI |
 | T20-3 | A pull request whose reviewer equals its author fails CI |
-| T20-4 | A change to a protected path without `Protected-change` and the label fails CI |
+| T20-4 | A change to a protected path without a `Protected-change` line fails the gate, and so does one that deletes a guard file or adds a human approver |
 | T20-5 | A BUILT status line naming a missing file is reported by the spec-truth check |
 | T20-6 | The published stage matches the highest stage whose evidence exists |
 
@@ -104,8 +106,13 @@ This specification defines the self-hosting contract, the ladder by which the pr
 
 | Capability | Status |
 |---|---|
-| The contract, the generated agent files, PR and issue templates, the record check, the spec-truth check, code ownership of protected paths, CI gate | BUILT (`agents/CONTRACT.md`; generator and drift check `tools/sync_agent_files.py`; `.github/pull_request_template.md`, `.github/ISSUE_TEMPLATE/work-item.yml`; record check `tools/selfhost_check.py`; `tools/spec_truth.py`; `.github/CODEOWNERS`; CI gate `.github/workflows/selfhost.yml`; tests `tests/test_selfhost.py`) |
-| Stage 1 in the other repositories (`spec`, `license`, `.github`) | PLANNED: the agent files and templates are rendered into them by `tools/sync_agent_files.py`, but none of the three runs the record check or the spec-truth check in its own CI, so the stage's evidence (every merged pull request passes the record check) does not exist there |
+| The contract, the generated agent files, PR and issue templates, the record check, the spec-truth engine (paths in the `workers/` tree) | BUILT (`agents/CONTRACT.md`; generator and drift check `tools/sync_agent_files.py`; `.github/pull_request_template.md`, `.github/ISSUE_TEMPLATE/work-item.yml`; record check `tools/selfhost_check.py`; `tools/spec_truth.py`; tests `tests/test_selfhost.py`) |
+| Spec truth over the folded repository (US-20-R06, T20-5) | BUILT (`scripts/spec_truth.py` runs the engine over `specs/` against the `workers/`, root and `seed/` trees, with the shrink-only list `doctrine/spec-truth-baseline.json`; test `tests/foundation/test_spec_truth.py`, which the foundation tests step of the repository's checks runs). Before 0.2.0 nothing ran the engine after the specifications were folded in |
+| Automated protected-path gate (US-20-R07, T20-4) | BUILT (`scripts/protected_paths.py`, from the repository root: a `Protected-change` line, no deleted guard file, no added human approver; the guards are protected under their `workers/` paths as well as their standalone ones; test `tests/foundation/test_protected_paths.py`) |
+| The protected-path gate and the record check run on every pull request of the folded repository (US-20-R03, US-20-R07, T20-2, T20-3) | PLANNED: no workflow of the repository runs `scripts/protected_paths.py` or `tools/selfhost_check.py`. The workflow written for it (`.github/workflows/selfhost.yml` in the `workers/` tree) is not run by the host from below `workers/`, so Stage 1's evidence (every merged pull request passes the record check) is not being produced there. Rule 7 of `agents/CONTRACT.md` already states the automated gate; the messages and label rule of `tools/selfhost_check.py` and `.github/CODEOWNERS` in the `workers/` tree still word it as a human review. Tracked as `docs/issues/Q-SPEC-20-GATE.json` |
+| A computed stage reading (US-20-R11, US-20-R13) | BUILT (`foundation/selfhost.py` boots the organization from the repository alone, runs one tick and verifies it, test `tests/foundation/test_selfhost.py`; the kit reads its own ignition stage each tick and serves it on `/health`, `seed/worker/src/ignition.js`, test `seed/worker/test/health-ignition.test.js`) |
+| The stage of Section 4 published from that reading (US-20-R13, T20-6) | PLANNED: the mapping from the ignition stages to the four stages of Section 4 is not written down, so no surface states "Stage n" from evidence |
+| Stage 1 in the other repositories (`license`, `.github`; `spec` is now `specs/` of the main repository) | PLANNED: the agent files and templates are rendered into them by `tools/sync_agent_files.py`, but neither runs the record check in its own CI, so the stage's evidence (every merged pull request passes the record check) does not exist there |
 | Stage 2: items, claims and decisions in the organization's own database, mirrored with the issue tracker | BUILT as code (`core/steward/index.js`, `adapters/github/steward.js`, `adapters/github/stage2.js`; tests `core/steward/steward.test.js`, `adapters/github/steward.test.js`, `adapters/github/stage2.test.js`): items are pushed to issues, claims are mirrored as `claim:` comments, decisions as their own issues, issues that exist only on the tracker are adopted into the store, and the stage's evidence is a probe (`stage2Probe`: items in the store match open issues; an unreadable tracker is unknown, never a match). The stage is not claimed: it is not running on the organization's account and US-20-R11 needs a probe its author did not write |
 | Stage 3: tick-dispatched work on the self-hosted account | PLANNED: it needs ticks running on the self-hosted Cloudflare account and merged pull requests that trace to them. Built toward it: the tick (`core/src/tick.js`) and the runner that opens draft pull requests (`core/runner/index.js`) |
 | Stage 4: scheduled managers and reviewers, earned trust | PLANNED: it needs recorded outcomes on the live account for the trust ledger to move |

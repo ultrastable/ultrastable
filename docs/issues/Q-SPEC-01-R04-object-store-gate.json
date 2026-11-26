@@ -1,0 +1,12 @@
+{
+  "id": "Q-SPEC-01-R04-object-store-gate",
+  "title": "Q-SPEC-01-R04-object-store-gate: Gate a dropping migration on a verified object-store export in the migration runners",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** cmd:git grep -q \"US-01-R04: a dropping migration waits for its verified object-store export\" -- seed/worker/test workers/core/migrations\n**Status:** open\n\nUS-SPEC-01 (US-01-R04): `workers/core/export` exports each affected table to an object store, reads it back and matches row count and hash before a migration that drops or rewrites data is applied, but neither `workers/core/migrations/selfmigrate.js` nor `seed/worker/src/migrate.js` calls it. The seed runner refuses a drop with no in-store copy (`unbackedDrops`); make it also require the verified export when the AUDIT bucket is bound, and cover row rewrites (`UPDATE`, `DELETE`) with the same rule and a baseline for files already applied.\n\nsize: M\n\n**Prediction:** spec_quality >= 0.9 within 168 h\n**Out of scope:** additive migrations, and the daily D1 snapshot (US-01-R15), which stays as it is.\n\n**Closing probe:** cmd:`git grep -q \"US-01-R04: a dropping migration waits for its verified object-store export\" -- seed/worker/test workers/core/migrations` exits 0, and `python3 scripts/spec_ids.py --check` passes with the status line of the specification changed from PLANNED to BUILT naming the file and the test.\n",
+  "labels": [
+    "p2",
+    "agent-ready",
+    "spec"
+  ],
+  "milestone": "Now",
+  "workstream": "Executor queue"
+}

@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/spec-truth-baseline.schema.json",
+  "title": "spec-truth-baseline (doctrine/spec-truth-baseline.json)",
+  "description": "Contract for doctrine/spec-truth-baseline.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "ceiling": {
+      "type": "number"
+    },
+    "rows": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "ceiling",
+    "rows"
+  ]
+}

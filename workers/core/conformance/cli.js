@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
 // The conformance suite runner (US-SPEC-00).
-//   node core/conformance/cli.js --spec-dir ../spec/specs --write        regenerate core/conformance/manifest.json
-//   node core/conformance/cli.js [--spec-dir ../spec/specs] --check      verify the manifest against the tree (exit 1 on a false claim)
+//   node core/conformance/cli.js --spec-dir ../specs --write        regenerate core/conformance/manifest.json
+//   node core/conformance/cli.js [--spec-dir ../specs] --check      verify the manifest against the tree (exit 1 on a false claim)
 //   node core/conformance/cli.js --declare                               print the level, versions and deviation list (US-00-T01)
 //   node core/conformance/cli.js --run [L1|L2|L3]                        run the test files that prove a level (US-00-T02)
 import { readFileSync, readdirSync, writeFileSync, existsSync, statSync } from 'node:fs';

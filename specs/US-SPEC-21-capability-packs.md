@@ -105,6 +105,15 @@ Every call writes one row to `guard_ledger` (pack, channel, kind, recipient hash
 
 **US-21-R14.** The guard MUST be the same code for every pack and every platform.
 
+### 6.1 Requirements added 2026-11-26 from the code
+
+| ID | Requirement |
+|---|---|
+| US-21-R15 | Delivery feedback MUST feed suppression without a person: a hard bounce suppresses that channel for the recipient at once, a complaint or an unsubscribe suppresses every channel and cancels queued sends, soft bounces suppress only at a counted limit inside a window, and a retried event changes nothing. The intake stores hashes, never an address. |
+| US-21-R16 | A pack's own migrations MUST be applied by the host when the pack is enabled, once, with a recorded digest. A migration statement that touches any object outside the pack's own prefix, or that fails, MUST leave the pack disabled and the database unchanged; an applied migration that was edited MUST be refused. |
+| US-21-R17 | The host MUST redact secret values (declared secrets resolved from the environment, secret-looking settings and secret shapes, in raw, URL-encoded and base64 form) from everything a pack loop leaves behind: run rows, tick errors and notes, backlog items, the guard ledger and refusal reasons. |
+| US-21-R18 | Outside the pack host the same boundary holds for the platform's own actions: an egress class (credentials, money, the owner's accounts, public publishing, other people's systems) or a reserved permission MUST be denied to an inside decision at any trust rung, and trust MUST widen only actions inside the boundary. |
+
 ## 7. Packs the first installation proves
 
 | Pack | Class | What it does | Source of knowledge |
@@ -147,9 +156,17 @@ Each pack is a set of agents and loops in the same sense as the core: a loop rea
 
 ## 11. Reference implementation status
 
+Paths are relative to `workers/` unless they begin with `seed/`, `foundation/`, `site/`, `dashboard/`, `tenants/`, `deploy/`, `doctrine/`, `instances/`, `docs/`, `social/` or `tests/foundation/`, which are relative to the repository root. Rows marked 2026-11-26 were read against the code and their tests were run on that date.
+
 | Capability | Status |
 |---|---|
 | Bootstrap plans out-of-scope cases only for enabled packs | BUILT (`bootstrap/cases.py`; tests) |
 | Email, subscriber, social, video, and analytics workers | RUNNING in the first installation; not generalized |
-| Manifest validation, pack registry, enable gate, pack steps, kill switches, outbound guard | BUILT (`core/packs/manifest.js`, `core/packs/index.js`, `core/packs/guard.js`, `core/packs/sandbox.js`, `core/packs/static-check.js`; tests `core/packs/packs.test.js`, `core/packs/sandbox.test.js`, `core/packs/loader.test.js`, covering T21-1 to T21-7). Class D sends go through `core/deploy/packs-route.js` |
+| Manifest validation, pack registry, enable gate, pack steps, kill switches, outbound guard | BUILT (`core/packs/manifest.js`, `core/packs/index.js`, `core/packs/guard.js`, `core/packs/sandbox.js`, `core/packs/static-check.js`; tests `core/packs/packs.test.js`, `core/packs/sandbox.test.js`, `core/packs/loader.test.js`, covering T21-1 to T21-8; T21-8 is the test "T21-8 a secret value never appears in any table" in `core/packs/packs.test.js`, read 2026-11-26). Class D sends go through `core/deploy/packs-route.js` |
 | `email`, `social`, `video`, `cloud`, `drafts` packs (and `analytics`) | BUILT (`packs/email/pack.json`, `packs/social/pack.json`, `packs/video/pack.json`, `packs/cloud/pack.json`, `packs/drafts/pack.json`, `packs/analytics/pack.json`; tests `packs/email/email.test.js`, `packs/social/social.test.js`, `packs/video/video.test.js`, `packs/cloud/cloud.test.js`, `packs/drafts/drafts.test.js`, `packs/analytics/analytics.test.js`), each tested with fake ports and no network. No pack has sent through a live provider from this code: that needs the person's provider credential and their enable decision |
+| Bounce, complaint and unsubscribe intake feeding suppression (R15) | BUILT 2026-11-26 (`core/packs/bounce.js`; test `core/packs/bounce.test.js`) |
+| Pack migrations applied on enable inside the pack's own prefix; packs loaded by a directory scan (R16) | BUILT 2026-11-26 (`core/packs/loader.js`; test `core/packs/loader.test.js`) |
+| Secret redaction in everything a pack loop leaves behind (R17) | BUILT 2026-11-26 (`core/packs/redact.js`; test `core/packs/redact.test.js`) |
+| Boundary decision for the platform's own actions: egress and reserved classes denied at any rung, trust widening inside only (R18) | BUILT 2026-11-26 (`foundation/boundary.py`, `doctrine/boundary.json`; tests `test_egress_and_reserved_never_allowed_even_at_top_trust` and `test_trust_widens_inside` in `tests/foundation/test_boundary.py`) |
+| The platform's own social publishing from the tick Worker under one gate file (kill switch, caps, paused channels, mode) with each post read back before it counts | BUILT 2026-11-26 (`seed/worker/src/social.js`, `seed/worker/src/promoqueue.js`, `social/gate.json`; tests `seed/worker/test/social-connect.test.js`, `seed/worker/test/promoqueue.test.js`). It is a publisher of its own and does not call `guard.send` of `core/packs/guard.js`: R06 and R14 hold for packs, not yet for this path |
+| The platform's social publisher routed through the one outbound guard | PLANNED: tracked as `docs/issues/Q-SPEC-21-social-through-guard.json` |

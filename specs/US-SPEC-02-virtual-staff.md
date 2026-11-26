@@ -24,6 +24,8 @@ Ultrastable staffs an organization with virtual managers and staff, each owning 
 | Lane | A boundary within which a persona acts and outside which it neither writes nor reads. |
 | Brief | A plain-language record of what a persona did and decided on a tick. |
 | Plane | A separated body of state with its own personas (for example an organization plane and a private plane). |
+| Manager register | The one list of the managers a system runs, each with a tick interval, a core flag and an optional off switch with a reason. |
+| Hire | Create the `roles` row of a manager the register switches on. |
 
 ## 3. Hierarchy
 
@@ -73,10 +75,17 @@ flowchart TD
 - **US-02-R10 [L2]** Control-plane files (the tick, policy, governance and permission configuration) MUST NOT be originated by managers. They change only by a reviewed change under a claim (US-SPEC-07).
 - **US-02-R11 [L1]** Any role MAY be filled by a person. The same records, predictions, briefs and trust accounting MUST then apply to that person's decisions.
 - **US-02-R12 [L1]** Every role instruction file MUST include a "never" list that names at least: acting on another agent's live claim, handling secret values, and reviewing one's own work.
+- **US-02-R13 [L1]** Which managers a system runs MUST be one register carried by the system. Every manager in it is on unless a switch turns it off, a switch MUST carry a reason, and a manager marked core MUST NOT be switched off; a refused switch leaves the manager on and is reported.
+- **US-02-R14 [L1]** On every tick, including a tick held lean by a cost level, the implementation MUST hire each manager that is on and has no `roles` row. Dispatch MUST skip a manager that is off. Switching a manager off MUST NOT delete its rows or history.
+- **US-02-R15 [L1]** An event addressed to a role MAY wake that role out of turn; the woken role MUST still obey its work-in-progress cap and the rule of R02.
 
 ## 5. Behavior
 
 A role instance is a row plus an instruction file. On each tick where `tick_number % tick_every = 0`, the dispatcher offers it one ready item for its role (US-SPEC-03). The instance claims the item, acts, records an outcome and a prediction, and hands to a reviewer. Managers differ from staff only in what they own: allocation, ranking and origination instead of execution.
+
+### Manager register (seed)
+
+The seed carries one register of 18 managers, each with an instruction file of the same name. Nine are core (portfolio, program, project and product managers, staff, reviewer, operations, org designer and infrastructure manager) and cannot be switched off; the others (funding, outreach, research publishing, marketing, legal and IP, customer success, design, UI and UX) are on by default and a deployment switches one off by data with a reason. The tick's reconcile step hires from the register, so a manager added to the register after a system booted starts on the next tick with no migration and no person, and a system that booted with part of the team is brought to the full register by one tick. A hired row's `model` is a tier label copied from a comparable row; what actually ran is recorded on the dispatch (US-SPEC-01 section 4.1).
 
 ### Decision authority example
 
@@ -94,6 +103,8 @@ A role instance is a row plus an instruction file. On each tick where `tick_numb
 | Self-review | Defects pass unseen | US-02-R03 |
 | Prompt-only lane separation | A crafted prompt reads another plane | US-02-R09 enforced by tool layer |
 | All aliases map to one model at the lowest budget | Reviewer and doer share a family | Deploy-time check (US-SPEC-14), tier rules (US-SPEC-10) |
+| A role file exists and no role row does | A title with no loop: its items are never dispatched | Hire from the register every tick (R14) |
+| A deployment deletes a manager it does not need | History lost, and no reason recorded | Off switch with a reason; rows kept (R13, R14) |
 
 ## 7. Conformance tests
 
@@ -101,12 +112,20 @@ A role instance is a row plus an instruction file. On each tick where `tick_numb
 - **US-02-T02** Add a role row and an instruction file; run a tick. Pass: the role receives dispatches with no code change. Fail: code change needed.
 - **US-02-T03** Ask a private-plane persona's tool layer for a query over organization-plane item text. Pass: denied. Fail: rows returned.
 - **US-02-T04** Inspect a reviewer assignment where two model families exist. Pass: reviewer family differs from doer. Fail: same family.
+- **US-02-T05** Boot a store with only part of the register hired and run one tick. Pass: every manager that is on has a `roles` row, and a second tick hires nothing. Fail: a manager is missing or duplicated.
+- **US-02-T06** Switch a non-core manager off with a reason and a core manager off, and run a tick. Pass: the first is not hired and, if a row exists, is kept and not dispatched; the second stays on and the refusal is reported. Fail: otherwise.
 
 ## 8. Reference implementation status
 
-- Roles as data: BUILT. The six seed roles (portfolio-manager, project-manager, product-manager, staff, reviewer, operations) have instruction files in `agents/roles/` and are configured in `ultrastable.json`; instances are rows in `roles` created by the bootstrapper (`bootstrap/bootstrap.py`, tests in `tests/test_seed.py`). The dispatcher in `core/src/tick.js` (`dispatch`) filters by `owner_role`; US-02-T01 and US-02-T02 are asserted in `core/staff/staff.test.js`.
+Paths that start with `core/` are in the `workers/` directory; `agents/`, `bootstrap/` and `tests/` exist in both `workers/` and `seed/`; paths that start with `seed/` are from the repository root.
+
+- Roles as data: BUILT. Each role has an instruction file in `agents/roles/` (18 in `seed/agents/roles/`) and is configured in `ultrastable.json`; instances are rows in `roles` created by the bootstrapper (`bootstrap/bootstrap.py`, tests in `tests/test_seed.py`). The dispatchers in `core/src/tick.js` and `seed/worker/src/tick.js` (`dispatch`) filter by `owner_role`; US-02-T01 and US-02-T02 are asserted in `core/staff/staff.test.js`.
+- Manager register, hire and off switch (US-02-R13, R14, US-02-T05, US-02-T06): BUILT in `seed/autonomy/managers.json` and `seed/worker/src/managers.js` (`roster`, `hireStep`, `isOff`), called from the reconcile and dispatch steps of `seed/worker/src/tick.js`; tests in `seed/worker/test/managers.test.js` ("a system that booted with part of the team is brought to the full register by one tick, and stays there", "a deployment switches a manager off by data: it is not hired, an existing row is kept and not dispatched", "safe defaults: a core manager cannot be switched off and an off switch needs a reason").
+- Waking a role out of turn (US-02-R15): BUILT in `seed/worker/src/tick.js` (`dispatch` reads `wake`) and the signed webhook route of `seed/worker/src/index.js`, test "US-02-R15: a role that is not due is dispatched when an event wakes it, takes only its own item, and stays under its cap" in `seed/worker/test/tick.test.js`. The route wakes no extra tick while the free-allowance level is not `ok`; the scheduled tick still takes the item.
 - Reviewer-differs-from-doer: BUILT as tier selection in the bootstrapper (`bootstrap/bootstrap.py`) and as a check at review time in `core/kernel/lifecycle.js` (`reviewArtifact` refuses the same agent, and the same model family when both are known; `core/kernel/lifecycle.test.js`). At the lowest budget tier all aliases coincide, so the family differs only if a second provider is configured (a known limit of the seed).
 - Decision authority lists, persona actions, briefs and tool-layer lane enforcement (US-02-R05 to R10, US-02-T03): BUILT as a module in `core/staff/index.js` with `core/staff/migrations/0001_staff.sql`, tests in `core/staff/staff.test.js`. A persona is a row with an enumerated authority; `act` applies only listed operations, records each with its from value, to value and evidence, and reverses by recording the reverse; `items` and `readStore` refuse another plane from the persona row, not from an argument; `writeBrief` keeps one brief per persona per tick; control-plane paths are refused. Limits: the kernel's slot allocation runs by rule and is logged as the portfolio persona's operation, not gated by its list; the lane holds for callers of the tool layer, so a runtime must hand agents that layer and not the store handle. RUNNING in QNFO (one portfolio manager and five program managers on an hourly tick).
-- Starting the staff step in the composition root (`core/org/buildout.js`, test `core/org/org.test.js` issue #201), on by default: BUILT (`core/org/buildout.js`, `core/org/org.test.js`). Not yet seen running on a deployed account, and no persona rows are seeded by the bootstrapper: PLANNED.
+- Starting the staff step in the composition root, on by default: BUILT in `core/org/buildout.js`, test "issue #201: every build-out step is in extraSteps, runs on by default, and an off switch removes its work" in `core/org/org.test.js`.
+- Persona rows seeded by the bootstrapper, and the staff step seen running on a deployed account: PLANNED. The seed tick dispatches by role row and does not read persona authority lists.
 - Roles filled by people (US-02-R11): BUILT for the records in `core/staff/index.js` (`filled_by: 'person'`: the same action row, prediction, brief and trust outcome; the tick never acts for a person), tests in `core/staff/staff.test.js`.
+- A "never" list in every role file (US-02-R12): PLANNED. The three rules are stated once in the operating agreement every role loads (`agents/AGENTS.md`: a live claim held by another agent is theirs, never handle secret values, never review your own work), and most role files carry a "Never" section of their own; no role file names all three and no check reads them. Work item `Q-SPEC-02-R12-never-lists`.
 - A console screen through which a person performs a role's operations: PLANNED. The tool layer is the interface it would call.

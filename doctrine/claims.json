@@ -1918,6 +1918,17 @@
       "bound_by": "curated"
     },
     {
+      "id": "curated-d1df284b99",
+      "surface": "specs/README.md",
+      "text": "| BUILT | Code exists with passing tests, and the file is named. That a named path exists is checked on every change (see Checks below); the na",
+      "probe": [
+        "file:scripts/spec_truth.py",
+        "grep:tests/foundation/test_spec_truth.py::test_missing_unnamed_and_partly_missing_paths_are_findings",
+        "file:doctrine/spec-truth-baseline.json"
+      ],
+      "bound_by": "curated"
+    },
+    {
       "id": "curated-6b69d08089",
       "surface": "site/worker.js",
       "text": "It finds its own work in your metrics and failures, hands each task to the coding agent that fits, proves each handed-off change live and rolls it back when the proof fails, and keeps score of how often its decisions were right.",

@@ -15,8 +15,8 @@ Implements US-SPEC-25 (tenant storage). One private store per tenant behind a `S
 | TS-6 hot reads from a cache port, stale value served when the budget is spent | BUILT | `store.js` `cached` |
 | TS-7 spend probe and worst-case bound from list prices | BUILT (estimates, see `prices.json` `as_of`) | `spend.js` |
 | TS-8 Durable Object adapter | BUILT against a fake `the Durable Object SQL storage`; NOT deployed to a real account | `adapters/cloudflare/src/tenant-do.js` |
-| TS-9 spill to a per-tenant Vectorize index past `maxVectors` | PLANNED | none yet |
-| TS-10 cross-check of self-metered usage against Cloudflare GraphQL analytics | PLANNED | none yet |
+| TS-9, TS-15 spill to a per-tenant index past `maxVectors` through the `VectorPort` | BUILT against a fake index; no index bound in a deployed Worker | `vector.js` (`promote`, `upsertAny`, `queryAny`), `adapters/cloudflare/src/vectorize-port.js` |
+| TS-10 cross-check of self-metered usage against the platform's analytics | BUILT as the comparison (`crossCheck`); the reader of Cloudflare's analytics is PLANNED | `spend.js` |
 
 Not modelled: Durable Object duration (GB-s) charges and request-unit rounding; the probe is an estimate, never a bill.
 

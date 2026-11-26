@@ -26,7 +26,7 @@ One design: **a tenant's data lives in one private SQLite store behind the `SqlP
 | DO SQLite, one per tenant | rows read 25 B/mo and rows written 50 M/mo included, then USD 0.001 and 1.00 per million; requests 1 M/mo then 0.15 per million; 5 GB then 0.20 per GB-month. Duration (GB-s) is billed while active and not modelled here | queries run in-process next to the data, sub-millisecond for indexed reads; one hop to reach the object | hard: separate object and file per tenant | **chosen** |
 | D1 per tenant | same rows rates; storage 0.75 per GB-month beyond 5 GB; 100,000 databases included | network hop to the database on every query, typically tens of ms | good | fallback and control plane only |
 | One shared D1 | same rates | same hop, plus contention and scans across tenants | none by construction | rejected for tenants (this is how the scans grew) |
-| Vectorize | queried dimensions = (queries + stored vectors) x dimensions, 50 M/mo included then 0.01 per million; stored 10 M included then 0.05 per 100 M; 50,000 indexes included | purpose-built ANN, a service hop | one index per tenant is possible | spill target past `maxVectors`, PLANNED |
+| Vectorize | queried dimensions = (queries + stored vectors) x dimensions, 50 M/mo included then 0.01 per million; stored 10 M included then 0.05 per 100 M; 50,000 indexes included | purpose-built ANN, a service hop | one index per tenant is possible | spill target past `maxVectors` through the `VectorPort` (TS-9): built and tested against a fake index, no index bound in a deployed Worker |
 | Embeddings in the tenant store | rows read, trivial at list prices; CPU is the real cost (about 20,000 x 384 int8 per query, an estimate of tens of ms) | no extra hop | same as the store | **default for up to `maxVectors` (20,000)** |
 | R2 | 0.015 per GB-month, 10 GB free, Class A 4.50 and Class B 0.36 per million, egress free | object latency | per-tenant prefix | blobs, archives, cold rollup history |
 | KV or Cache | reads 10 M/mo then 0.50 per million; writes 1 M/mo then 5.00 per million | edge-local, eventually consistent | per-tenant key prefix | hot read-through only, never the record |
@@ -49,6 +49,10 @@ Normative; ids are stable.
 - **TS-9** Past `maxVectors` a tenant SHOULD be promoted to its own Vectorize index through a `VectorPort`.
 - **TS-10** Self-metered usage SHOULD be cross-checked against the platform's own analytics; a divergence over 20 percent is a finding.
 - **TS-11** Core code MUST NOT import a platform; platform code lives in adapters. The SQLite adapter (`adapters/sqlite/tenant-sqlite.js`) runs the same contract on any host.
+- **TS-12** (added 2026-11-26 from the code) Every deployed tenant Worker MUST bind only its own stores and no core service, and no core Worker may bind a tenant's store. An isolation probe reads the declared topology, prints one line per tenant and fails on any shared binding.
+- **TS-13** (added 2026-11-26 from the code) In the small shared control plane a runtime MUST select, claim, advance, close and count only rows of its own tenant: a row with no tenant is the runtime's own, a row carrying another tenant's id is never acted on, and the predicate adds no query or scan.
+- **TS-14** (added 2026-11-26 from the code) The storage decision, the default budget, the tenant list and the owner's monthly ceiling MUST be declared as data, and a check MUST fail when the declaration is incomplete or when every tenant at its full monthly budget would cost more than the ceiling.
+- **TS-15** (added 2026-11-26 from the code) Promotion to the `VectorPort` (TS-9) MUST copy every stored vector to the port before any in-store row is removed, MUST be idempotent, MUST leave the in-store index whole when the port fails, and port queries MUST be charged against the tenant's vector-dimension budget. With no port, TS-5 holds unchanged.
 
 ## 5. Budget profiles and the hard bound
 
@@ -56,7 +60,14 @@ Two profiles (`core/tenantstore/budget.js`). **Free** (the deployed default): pe
 
 ## 6. Conformance and status
 
+Paths are relative to `workers/` unless they begin with `seed/`, `foundation/`, `tenants/`, `doctrine/`, `instances/` or `tests/foundation/`, which are relative to the repository root. Rows marked 2026-11-26 were read against the code and their tests were run on that date.
+
 | Req | Status | Evidence |
 |---|---|---|
-| TS-1 to TS-8, TS-11 | BUILT, and RUNNING on the ultrastable Cloudflare account as `ultrastable-tenants` (self-test passes) | `workers/core/tenantstore/tenantstore.test.js`, `workers/adapters/cloudflare/src/tenant-do.js` (tested against a fake; not deployed to a real account) |
-| TS-9, TS-10 | PLANNED | no file yet |
+| TS-1 to TS-8, TS-11 | BUILT; declared live as the Worker `ultrastable-tenants` in `doctrine/topology.json`, whose `/health` runs a self-test the tick reads | `core/tenantstore/store.js`, `core/tenantstore/budget.js`, `core/tenantstore/rollup.js`, `core/tenantstore/vector.js`, `core/tenantstore/spend.js`, test `core/tenantstore/tenantstore.test.js`; adapters `adapters/cloudflare/src/tenant-do.js` (tested against a fake of the Durable Object SQL storage) and `adapters/sqlite/tenant-sqlite.js`. The deployed Worker is built from the copy at `tenants/src/index.js`, `tenants/src/tenant-do.js` and `tenants/tenantstore/` (no `spend.js` there). This audit did not read the live self-test |
+| TS-9, TS-15 | BUILT 2026-11-26 against a fake index; no Vectorize index is bound in a deployed Worker, so a deployed tenant still stops at `vector_cap` | `core/tenantstore/vector.js` (`promote`, `upsertAny`, `queryAny`, `removeAny`), `adapters/cloudflare/src/vectorize-port.js` (binding `VEC_<TENANT>`), the three tests named "TS-9" in `core/tenantstore/tenantstore.test.js` |
+| TS-10 | BUILT 2026-11-26 as the comparison: `crossCheck` takes the self-metered and the platform reading, reports a finding per field more than the tolerance apart and reports a field the platform reading lacks as unmeasured | `core/tenantstore/spend.js`, test "TS-10" in `core/tenantstore/tenantstore.test.js` |
+| TS-10: a reader of the platform's analytics for Durable Object rows and requests, and the check run on a clock | PLANNED | tracked as `docs/issues/Q-SPEC-25-platform-usage-reader.json` |
+| TS-12 | BUILT 2026-11-26 | `foundation/tenantrepos.py` (`isolation`, `--isolation`), `test_sandbox_rejects_shared_stores_services_and_missing_budget` in `tests/foundation/test_tenantrepos.py` |
+| TS-13 | BUILT 2026-11-26 | `seed/worker/src/tenant.js`, test `seed/worker/test/tenant-isolation.test.js` |
+| TS-14 | BUILT 2026-11-26 | `doctrine/tenant-storage.json`, `foundation/tenantstorage.py`, `test_worst_case_is_bounded` in `tests/foundation/test_tenantstorage.py` |

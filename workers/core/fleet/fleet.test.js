@@ -264,6 +264,56 @@ test('US-11-R12: collisions per minute are measured from the enabled schedules',
   await assert.rejects(() => fleet.setCron(ctx, { name: 'bad', expr: 'every minute', task_id: 't' }));
 });
 
+test('US-11-R12: stagger moves periodic schedules apart, keeps period and other fields, and a second run changes nothing', async () => {
+  const { ctx } = mk();
+  const win = { from: T('2026-03-02 12:00:00'), to: T('2026-03-03 12:00:00') };
+  await fleet.setCron(ctx, { name: 'a', expr: '*/10 * * * *', task_id: 't' });
+  await fleet.setCron(ctx, { name: 'b', expr: '*/10 * * * *', task_id: 't' });
+  await fleet.setCron(ctx, { name: 'c', expr: '*/15 9-17 * * 1-5', task_id: 't' });
+  await fleet.setCron(ctx, { name: 'daily', expr: '0 3 * * *', task_id: 't' });
+  await fleet.setCron(ctx, { name: 'odd', expr: '5-59 * * * *', task_id: 't', enabled: false });
+  assert.deepEqual(fleet.minutePhase('*/10'), { period: 10, offset: 0 });
+  assert.deepEqual(fleet.minutePhase('3,13,23,33,43,53'), { period: 10, offset: 3 });
+  assert.deepEqual(fleet.minutePhase('7'), { period: 60, offset: 7 });
+  for (const bad of ['*', '*/7', '1,2,4', '0-30', '5,65']) assert.equal(fleet.minutePhase(bad), null);
+  const plan = await fleet.stagger(ctx, win);                                  // a plan writes nothing
+  assert.equal(plan.applied, false);
+  assert.ok(plan.collisions_before > 0);
+  assert.equal((await one(ctx, `SELECT expr FROM fleet_crons WHERE name = 'b'`)).expr, '*/10 * * * *');
+  const done = await fleet.stagger(ctx, { ...win, apply: true });
+  assert.deepEqual([done.collisions_after, done.max_per_minute_after], [0, 1]);
+  assert.deepEqual(done.fixed, ['daily']);                                     // a time of day is not moved unless asked
+  const rows = Object.fromEntries((await all(ctx, `SELECT name, expr, next_fire FROM fleet_crons WHERE enabled = 1`)).map(r => [r.name, r]));
+  assert.equal(rows.a.expr, '1,11,21,31,41,51 * * * *');                       // 0 is taken by the daily job at 03:00
+  assert.equal(rows.b.expr, '2,12,22,32,42,52 * * * *');
+  assert.equal(rows.c.expr.split(' ').slice(1).join(' '), '9-17 * * 1-5');     // only the minute field moves
+  assert.equal(fleet.minutePhase(rows.c.expr.split(' ')[0]).period, 15);
+  assert.equal(rows.daily.expr, '0 3 * * *');
+  assert.equal((await fleet.collisions(ctx, win)).collisions, 0);              // the measurement agrees with the plan
+  assert.equal(fleet.expectedSlots(rows.b.expr, win.from, win.to).length, 144); // six an hour, as before
+  assert.deepEqual((await fleet.stagger(ctx, { ...win, apply: true })).changes, []);
+});
+
+test('US-11-R12: auto_stagger in step is off by default; on, the step staggers before it dispatches; literals move only when asked', async () => {
+  const { ctx } = mk(); inline(ctx);
+  await fleet.setTask(ctx, { id: 't', type: 'sql', definition: { statement: 'SELECT 1 AS x' } });
+  await fleet.setTask(ctx, { id: 'u', type: 'sql', definition: { statement: 'SELECT 2 AS x' } });
+  await fleet.setCron(ctx, { name: 'j', expr: '*/10 * * * *', task_id: 't' });
+  await fleet.setCron(ctx, { name: 'k', expr: '*/10 * * * *', task_id: 'u' });
+  assert.equal((await fleet.step({ ...ctx, config: { enabled: true } })).staggered, undefined);
+  assert.equal((await one(ctx, `SELECT expr FROM fleet_crons WHERE name = 'k'`)).expr, '*/10 * * * *');
+  const s = await fleet.step({ ...ctx, config: { auto_stagger: true } });
+  assert.equal(s.staggered, 1);
+  assert.equal((await one(ctx, `SELECT expr FROM fleet_crons WHERE name = 'k'`)).expr, '1,11,21,31,41,51 * * * *');
+  assert.equal((await fleet.step({ ...ctx, config: { auto_stagger: true } })).staggered, 0);
+  await fleet.setCron(ctx, { name: 'm', expr: '0 3 * * *', task_id: 't' });
+  await fleet.setCron(ctx, { name: 'n', expr: '0 3 * * *', task_id: 'u' });
+  const kept = await fleet.stagger(ctx, {});                                   // two jobs named for 03:00 stay there and still share the minute
+  assert.deepEqual([kept.fixed, kept.collisions_after, kept.max_per_minute_after], [['m', 'n'], 1, 2]);
+  const lit = await fleet.stagger(ctx, { literals: true });
+  assert.deepEqual([lit.fixed, lit.collisions_after, lit.max_per_minute_after], [[], 0, 1]);
+});
+
 const member = (name, over = {}) => ({
   name, purpose: 'p', kind: 'worker', status: 'active', crons: ['*/10 * * * *'], dependencies: [], health_url: '/health', autonomy_level: 'L1', owner: 'operations',
   version: '1.2.0', source_hash: HASH, header: { purpose: 'p', capabilities: ['x'], deploy_method: 'api', canonical_source: `workers/${name}` }, secret_names: ['API_TOKEN'], flags_source: 'kv:flags', ...over,

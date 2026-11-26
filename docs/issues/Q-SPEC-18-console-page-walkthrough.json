@@ -1,0 +1,12 @@
+{
+  "id": "Q-SPEC-18-console-page-walkthrough",
+  "title": "Q-SPEC-18-console-page-walkthrough: the three-screen console page calls the walkthrough routes and renders them in the person's language",
+  "body": "**Owner:** staff\n**Trigger:** specification audit 2026-11-26: the row is PLANNED in the status table of specs/US-SPEC-18-guided-console.md\n**Done check:** cmd:git grep -q \"api/console/walkthrough\" -- workers/core/src/console-ui.js\n**Status:** open\n\nThe walkthrough, Ask cards, read-back and profile are served inside the signed-in console by `workers/core/org/surfaces.js`, and `GET /api/console` carries the composed `screens`, but the page script in `workers/core/src/console-ui.js` never calls them: a person on the page sees the three screens and not the first-run walkthrough (US-SPEC-18 Section 5). Make the page open on the walkthrough until it has ended, render Ask cards as decision cards with their buttons, link the read-back, and apply `workers/core/i18n/index.js` with the profile's language. Dynamic text stays inserted as text (US-18-R10). Add a test in `workers/core/test/console.test.js` that the served page script names the routes and that a first-run owner is shown step 1.\n\n**Closing probe:** `node --test --no-warnings workers/core/test/console.test.js workers/core/org/surfaces.test.js`\n**Prediction:** spec18_planned_rows <= 1 within 720 h\n**Out of scope:** a second console page; loading any script, font or image from another host; a deployment behind a live identity-aware proxy (it needs an account).\n",
+  "labels": [
+    "role:staff",
+    "ws:platform",
+    "spec"
+  ],
+  "milestone": "Next",
+  "workstream": "Platform"
+}

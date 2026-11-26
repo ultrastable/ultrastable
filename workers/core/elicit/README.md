@@ -21,7 +21,7 @@ US-SPEC-16. Tests: `elicit.test.js` (T16-1 to T16-9 and the rules below).
 | US-16-R17 related needs as one card sequence | BUILT (`sequence` on each card) |
 | US-16-R18 no escalation when the person stops answering | BUILT (`fatigue`) |
 | Four-sweep ignorance audit (T16-9) | BUILT (`audit`); the analogy list and the red-team answer are passed in by the caller |
-| Section 5.3 value-of-information estimates scored later like predictions | NOT COVERED: priority is computed and stored, not yet written to the prediction table |
+| Section 5.3, US-16-R19 value-of-information estimates scored later like predictions | BUILT (`scoreDefaults`, `voiCalibration`; a default taken writes `ELICIT-<project>-<need>` to the prediction table) |
 | System-unknown research with cited sources | NOT COVERED: no research step; `provenance: researched` is accepted when a caller supplies it |
 
 Ports: `db`, `now`, `config`. Owner role: portfolio-manager. Closing probe: `node --test core/elicit/elicit.test.js`.

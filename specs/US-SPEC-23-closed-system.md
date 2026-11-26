@@ -7,15 +7,17 @@
 |---|---|
 | ID | US-SPEC-23 |
 | Title | The closed system |
-| Version | 0.1.0 (draft) |
-| Date | 2026-11-11 |
+| Version | 0.2.0 (draft) |
+| Date | 2026-11-26 |
 | Status | Draft |
 
 ## 1. Purpose
 
 This is the definition the other specifications serve. **A system is autonomous if it has self-referential loops and the privilege to close them.** Knowing something and being unable to act on it is useless. Anything that happens outside the system (in a chat thread, in a person's memory, in the private context of a coding agent) is lost, so a conforming system is **closed**: its knowledge, decisions, rules and results live inside it as records.
 
-Terms are defined once, in the principles register (`core/principles/principles.json`, rendered to `docs/GLOSSARY.md`). This specification states what the register and the loops must guarantee.
+Terms are defined once, in the principles register (`core/principles/principles.json`, rendered to `docs/GLOSSARY.md`, in the `workers/` tree) and, for the platform, in `doctrine/glossary.json`, rendered to `GLOSSARY.md`. This specification states what the register and the loops must guarantee.
+
+Version 0.2.0 adds US-23-R12 to US-23-R14, which the platform already enforces in code, and names that code in the status section.
 
 ## 2. Requirements
 
@@ -32,6 +34,9 @@ Terms are defined once, in the principles register (`core/principles/principles.
 | US-23-R09 | **Knowledge flows back.** What an agent learns while working (a failure, a trick, a constraint, an owner's correction) MUST be turned into a change to a record, a rule, a test or a specification as part of closing the item. |
 | US-23-R10 | **External agents are guests.** An external coding agent MAY work inside the system, but its context is not the system's memory. Its work is accepted only as records (commits, issues, pull requests) that the system's own loops can read. |
 | US-23-R11 | **Only identity-bound steps leave the system.** The only permitted exits are steps that are both irreversible and identity-bound, and each exit is itself a gate card that closes when its probe sees the step done. |
+| US-23-R12 | **The server owns every loop.** A client (an external agent, a chat, a person's machine) only produces work. Merge, deploy, probe, close and follow-up filing MUST be done by a server-side process, and every registered loop MUST declare a server-side owner and a server-side path. (Added in 0.2.0.) |
+| US-23-R13 | **Every output has a consumer.** A document, report, card or ledger the system produces MUST name the code that reads it and acts; an artifact no code consumes MUST fail the build. No step may depend on a person reading, deciding, reviewing or approving. (Added in 0.2.0.) |
+| US-23-R14 | **A session writes back before it ends.** A change that carries code MUST carry a record of what was learned or decided (a lesson, decision, open loop or term change) with a probe; an open loop recorded this way MUST name an owner, a trigger and a probe. (Added in 0.2.0.) |
 
 ## 3. Failure modes
 
@@ -43,6 +48,9 @@ Terms are defined once, in the principles register (`core/principles/principles.
 | A directive is stated and never enforced | R07 and the register test |
 | Documents drift from definitions | R08 |
 | A loop sees a problem and is not allowed to act | R06 |
+| Completion is left to the session that opened the work | R12 |
+| A report is written that nothing reads | R13 |
+| A change lands and what was learned stays in the session | R14 |
 
 ## 4. Conformance tests
 
@@ -54,13 +62,24 @@ Terms are defined once, in the principles register (`core/principles/principles.
 | T23-4 | Removing the code that a directive names as its enforcer fails the build. |
 | T23-5 | Editing the glossary document by hand without the register fails the build. |
 | T23-6 | An unenforced directive without a tracking issue fails the build. |
+| T23-7 | A loop with no server-side owner, or whose closing probe names a client session, fails the build. |
+| T23-8 | An artifact with no registered consumer fails the build, and so does a human named as a required approver. |
+| T23-9 | A change with code and no write-back fails the check; an open-loop record without owner, trigger and probe is refused. |
 
 ## 5. Reference implementation status
 
 | Capability | Status |
 |---|---|
-| Loop closer: probes close issues, epics expand and close, open loops labelled (`tools/loop_closer.py`, daily and on push) | BUILT (11 tests) |
-| Principles register, generated glossary, enforcer and tracking checks (`core/principles/`) | BUILT (6 tests) |
+| Loop closer: probes close issues, epics expand and close, open loops labelled (`tools/loop_closer.py`; T23-1 to T23-3) | BUILT (test `tests/test_loop_closer.py`; both in the `workers/` tree, as are the next four rows) |
+| Principles register, generated glossary, enforcer and tracking checks (`core/principles/`; T23-5, T23-6) | BUILT (test `core/principles/principles.test.js`) |
 | Kernel reconcile, failure-mode register and loop breaker; claims; runner | BUILT (`core/kernel`, `core/claims`, `core/runner`) |
 | Open-loop linter for any repository | BUILT (`products/gaplint`) |
 | Directive enforcement for ignorance elicitation and outbound packs | BUILT (`core/principles/enforcement.js`, test `core/principles/enforcement.test.js`): the register marks D-IGNORANCE-ASSUMED, D-SCOPE-AND-PACKS and D-OUTREACH-AS-LOOPS enforced, and each has a check that runs its enforcer against the checkout (`core/elicit/index.js` ask-card rules; `core/packs/manifest.js` and the no-pack-import check over every `packs/` manifest; loops, charter metrics, caps and suppression of the email, social and video packs) |
+| Closure by code in the kit every system runs (R02, R03, R11) | BUILT (`seed/worker/src/tick.js`: `reconcile` reopens an item that left the active set with no disposition and records a `silent_drop`, `probe_gates` closes a gate card when its probe passes; test `seed/worker/test/tick.test.js`; paths in this row and below are from the repository root) |
+| The server owns every loop (R10, R12, T23-7) | BUILT (`foundation/loopowner.py` over `instances/ultrastable/loop-registry.json`; the server side that merges, deploys, probes and closes is `seed/worker/src/sweeper.js` and `seed/worker/src/handoff.js`; tests `tests/foundation/test_server_owns_loops.py`, `seed/worker/test/sweeper.test.js`, `seed/worker/test/handoff.test.js`) |
+| Loop registry: every loop has a trigger, owner, closing probe and write-back (R02, R05) | BUILT (`foundation/loops.py`; test `tests/foundation/test_loops.py`) |
+| Every output has a consumer; no human approver (R13, T23-8) | BUILT (`foundation/closedloop.py` over `doctrine/closed-loop.json` and `doctrine/consumers.json`; test `tests/foundation/test_closedloop.py`) |
+| Write-back before a session ends (R01, R09, R14, T23-9) | BUILT (`foundation/writeback.py`; test `tests/foundation/test_writeback.py`) |
+| Leftovers are closed by evidence or recorded as a gate with a default and a probe (R04, R11) | BUILT (`foundation/openloops.py` over `doctrine/open-loops.json`; test `tests/foundation/test_openloops.py`) |
+| Platform glossary generated from its register (R08, T23-5) | BUILT (`foundation/glossary.py` over `doctrine/glossary.json`, rendered to `GLOSSARY.md`; test `tests/foundation/test_glossary.py`) |
+| Directives as data for the platform (R07, T23-4, T23-6): each standing rule with its enforcing code or its item, checked | BUILT for the kit (`seed/scripts/system.py` with `seed/autonomy/system.json`: a standing rule with no enforcement in the kit and not on the shrink-only list fails; test `seed/tests/test_system.py`) |

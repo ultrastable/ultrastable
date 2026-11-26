@@ -2,6 +2,7 @@
 // Cron fires runTick; GET /health shows the last tick's four-line report.
 // Standard issue: first-party web analytics (analytics/analytics.js): /a.js beacon, /a/e collector, GET /api/analytics (bearer ANALYTICS_TOKEN).
 import { paced } from './pace.js';
+import { readSwitches, offReason, drill, lastDrill } from './switches.js';  // KILL-SWITCH-1
 import { footerHtml, discoverRoute, seedStatements, seedJsonLd, heartbeat as directoryHeartbeat } from './discover.js';  // DISCOVER-1
 import { withKnobs, readGoals, registerTenant, reportReadings, knobValues } from './goals.js';  // GOALS-1
 import { tune } from './roi.js';  // BOUNDARIES-1
@@ -133,7 +134,8 @@ export default {
       const tuningFree = await freeTierLevel(env.DB, Date.now(), planOf(config, env)).then(l => (l && l.resources) ? tune(Object.fromEntries(Object.entries(l.resources).map(([k, r]) => [k, r.frac]))) : null).catch(e => { console.error('tuning unread:', e && e.message); return null; });  // BOUNDARIES-1: applied to every paceable loop below
       const spendNow = await readSpend(env.DB);  // SPEND-SOFT-1: the spend throttle's pace knob stretches idle loops too; the larger stretch wins
       const tuningNow = spendNow.knobs && spendNow.knobs.pace > 1 && (!tuningFree || tuningFree.action !== 'slow' || tuningFree.pace_factor < spendNow.knobs.pace) ? { action: 'slow', pace_factor: spendNow.knobs.pace, text: `spend ${spendNow.level}` } : tuningFree;
-      const b = (loop, fn) => (caps.rotate && loop in LOOP_PHASE && LOOP_PHASE[loop] !== phase && !carried.has(loop)) ? Promise.resolve(undefined) : beat(env.DB, loop, async () => (loop in LOOP_PHASE && await paced(env.DB, loop, cycle, knobConfig, tuningNow)) || guard(loop, fn), { everyMin: loop in LOOP_PHASE && caps.rotate ? HEAVY_CADENCE_MIN : 10 }).then(r => { console.log(loop, JSON.stringify(r === undefined ? null : r)); return r; });
+      const switches = await readSwitches(env.DB, { env }).catch(e => { console.error('switches unread:', e && e.message); return {}; });  // KILL-SWITCH-1: an unreadable table stops nothing
+      const b = (loop, fn) => (caps.rotate && loop in LOOP_PHASE && LOOP_PHASE[loop] !== phase && !carried.has(loop)) ? Promise.resolve(undefined) : beat(env.DB, loop, async () => (offReason(switches, loop) && { switched_off: offReason(switches, loop) }) || (loop in LOOP_PHASE && await paced(env.DB, loop, cycle, knobConfig, tuningNow)) || guard(loop, fn), { everyMin: loop in LOOP_PHASE && caps.rotate ? HEAVY_CADENCE_MIN : 10 }).then(r => { console.log(loop, JSON.stringify(r === undefined ? null : r)); return r; });
       const steps = [], step = (loop, fn) => { steps.push([loop, fn]); };
       const tenant = env.TENANT || config.org_slug || 'default';
       const repos = config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []);
@@ -144,6 +146,7 @@ export default {
       await recordSpend(env.DB, { meters: freeTier.meters, error: freeTier.error || null, config, env, now: new Date() });  // SPEND-SOFT-1: today's estimated bill and the throttle level every later step reads
       if (new Date().getUTCMinutes() < 10) { const g = await roiGate(env.DB, env, config).catch(e => ({ error: String(e && e.message).slice(0, 120) })); if (g && g.error) console.error('roi gate:', g.error); }  // ROI-SELF-1: hourly, the system's own verdict on paying  // READ-BUDGET-8: an item is filed once a day per resource when a free limit is projected to pass 70%
       await decisionSafely(() => recordGovernor(env.DB, freeTier));  // DECISIONS-1: the level just set is a decision, scored at a later sample
+      if ((await lastDrill(env.DB).catch(() => ({ due: false }))).due) await b('kill-drill', () => drill(env.DB, { env }));  // KILL-SWITCH-1: once a day the global switch is turned on, checked, turned off in every case and the test recorded
       await b('credentials', () => refreshDue(env.DB, env));  // AUTH-1: refresh runs first so nothing lapses
       const t = await getToken(env.DB, env, tenant, 'github-app').catch(e => ({ ok: false, error: e && e.message }));  // one token for the lane and the executor, minted from the GitHub App (a bound GITHUB_TOKEN is only a fallback)
       const token = (t && t.ok && t.token) || env.GITHUB_TOKEN || '';

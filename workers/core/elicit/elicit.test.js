@@ -240,3 +240,30 @@ test('US-16-R08: options are neutral: they keep the catalog order, none is pre-s
   assert.equal(card.default, 'in between'); assert.equal(card.default_marked, true);
   assert.ok(!('selected' in card) && !('preselected' in card) && !('recommended' in card));
 });
+
+test('section 5.3: a default in effect is logged as a prediction and scored when the person answers, corrects or the review time passes', async () => {
+  const { e, db, t } = mk({ default_review_hours: 48 });
+  await e.registerNeeds(P, [need('a', { p_wrong: 0.2 }), need('b', { p_wrong: 0.8 }), need('c', { p_wrong: 0.5 })]);
+  await e.nextAsks(P);
+  for (const id of ['a', 'b', 'c']) assert.equal((await e.answer(P, id, { choice: 'Not sure' })).state, 'defaulted');
+  const preds = (await db.prepare(`SELECT id, metric, op, target, due_at, verdict FROM predictions ORDER BY id`).all()).results;
+  assert.deepEqual(preds.map(p => p.id), ['ELICIT-demo-a', 'ELICIT-demo-b', 'ELICIT-demo-c']);
+  assert.equal(preds[0].metric, 'elicit_default_holds:demo:a'); assert.equal(preds[0].verdict, null);
+  assert.equal(preds[0].due_at, new Date(T0 + 48 * 3600e3).toISOString());
+  assert.deepEqual(await e.voiCalibration(P), { scored: 0, pending: 3, wrong: 0, wrong_rate: null, mean_p_wrong: null, brier: null });
+  await e.answer(P, 'a', { choice: 'first' });            // the person picks the default: the prediction held
+  await e.correct(P, 'b', 'second');                      // a read-back correction away from the default: it did not
+  assert.equal(await e.scoreDefaults(P), 0, 'c is not due yet');
+  t.v = T0 + 49 * 3600e3;
+  assert.equal(await e.scoreDefaults(P), 1);
+  const v = Object.fromEntries((await db.prepare(`SELECT id, verdict, observed FROM predictions`).all()).results.map(p => [p.id, [p.verdict, p.observed]]));
+  assert.deepEqual(v, { 'ELICIT-demo-a': ['hit', 1], 'ELICIT-demo-b': ['miss', 0], 'ELICIT-demo-c': ['hit', 1] });
+  const c = await e.voiCalibration(P);
+  assert.equal(c.scored, 3); assert.equal(c.wrong, 1); assert.equal(c.pending, 0);
+  assert.ok(Math.abs(c.wrong_rate - 1 / 3) < 1e-9 && Math.abs(c.mean_p_wrong - 0.5) < 1e-9);
+  assert.ok(Math.abs(c.brier - (0.2 ** 2 + 0.2 ** 2 + 0.5 ** 2) / 3) < 1e-9);
+  // the wrong default is a failed prediction, so the next audit's surprise sweep records it as a lesson
+  await e.audit(P, {});
+  const s = (await db.prepare(`SELECT finding FROM elicit_audit WHERE sweep='surprise'`).all()).results.map(r => r.finding);
+  assert.ok(s.some(f => /failed prediction ELICIT-demo-b/.test(f)));
+});

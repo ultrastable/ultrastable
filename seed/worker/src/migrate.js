@@ -27,6 +27,27 @@ function statements(sql) {
   return out;
 }
 
+// US-01-R04 (EXPORT-BEFORE-DROP-1): a migration may drop a table or a column only when the file is atomic and an earlier statement of the same file copied
+// the whole table (CREATE TABLE <copy> AS SELECT * FROM <table>), so the drop and its copy land together or not at all. A staging table the file itself
+// renames away (the <table>_v2 of a rebuild) holds no data of record and needs no copy. Pure: returns one reason per unbacked drop, [] when the file is safe.
+// Row rewrites (UPDATE, DELETE) are not judged here; the daily D1 snapshot (d1snapshot.js) is their second copy.
+const DROP_TABLE = /^DROP\s+TABLE\s+(?:IF\s+EXISTS\s+)?["`\[]?(\w+)/i, DROP_COLUMN = /^ALTER\s+TABLE\s+["`\[]?(\w+)["`\]]?\s+DROP\s+(?:COLUMN\s+)?["`\[]?(\w+)/i;
+export function unbackedDrops(sql) {
+  const st = statements(sql), atomic = ATOMIC.test(sql), out = [];
+  const renamed = new Set(st.map(s => (/^ALTER\s+TABLE\s+["`\[]?(\w+)["`\]]?\s+RENAME\s+TO\b/i.exec(s) || [])[1]).filter(Boolean).map(t => t.toLowerCase()));
+  const copied = new Set();
+  for (const s of st) {
+    const c = /^CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?\S+\s+AS\s+SELECT\s+\*\s+FROM\s+["`\[]?(\w+)["`\]]?\s*$/i.exec(s);
+    if (c) { copied.add(c[1].toLowerCase()); continue; }
+    const d = DROP_TABLE.exec(s), k = DROP_COLUMN.exec(s), t = ((d || k || [])[1] || '').toLowerCase();
+    if (!t || (d && renamed.has(t))) continue;
+    const what = d ? `table ${t}` : `column ${t}.${k[2]}`;
+    if (!copied.has(t)) out.push(`drops ${what} with no earlier CREATE TABLE <copy> AS SELECT * FROM ${t} in the same file`);
+    else if (!atomic) out.push(`drops ${what} outside one transaction: the file must start with "-- atomic:"`);
+  }
+  return out;
+}
+
 export async function migrateStep(db, ctx, migrations, ensureItem) {
   if (!Array.isArray(migrations) || !migrations.length) return { applied: [], drift: [], failed: [], pending: null };
   await run(db, `CREATE TABLE IF NOT EXISTS _migrations (file TEXT PRIMARY KEY, sha256 TEXT NOT NULL, at TEXT NOT NULL DEFAULT (datetime('now')))`);
@@ -36,6 +57,8 @@ export async function migrateStep(db, ctx, migrations, ensureItem) {
     const h = await sha256(m.sql);
     if (ledger.has(m.file)) { if (ledger.get(m.file) !== h) drift.push(m.file); continue; }
     try {
+      const unsafe = unbackedDrops(m.sql);  // US-01-R04: refused before any statement runs
+      if (unsafe.length) throw new Error(`refused, not applied: ${unsafe.join('; ')}`);
       // MIGRATE-ATOMIC-1 (0027): a file whose first line starts with `-- atomic:` is a table rebuild (copy, drop, rename). Run statement by statement, a failure between
       // the drop and the rename would leave no table; D1's batch is one transaction, so the file applies whole or not at all and a retry starts from the old state.
       if (ATOMIC.test(m.sql)) await db.batch(statements(m.sql).map(s => db.prepare(s)));

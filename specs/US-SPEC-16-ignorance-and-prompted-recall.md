@@ -127,6 +127,18 @@ When the person asks what something means, or answers `Tell me more` three times
 | US-16-R17 | The system MUST batch related Needs into one card sequence rather than interleave. |
 | US-16-R18 | If the person stops answering, the system MUST NOT escalate frequency. It falls back to defaults and shortens the questioning to the priority list. |
 
+### 9.1 Standing ignorance loops (added 2026-11-26 from the code)
+
+Elicitation ends at the planning gate; not-knowing does not. These requirements describe what the reference implementation runs after the first questions are answered.
+
+| ID | Requirement |
+|---|---|
+| US-16-R19 | A default in effect MUST be logged as a prediction that the default holds, and scored: a hit when the person later chooses the default value or its review time passes with the default standing, a miss when the person answers or corrects to another value. The estimated probability of a wrong default (5.3) MUST be comparable with the scored outcomes; with nothing scored the calibration is unmeasured, never zero. |
+| US-16-R20 | What the person has not been told MUST be a computed set (`unknown = known - told`), where known comes from measured sources and told is an append-only log keyed by a fingerprint of the statement. A fact whose text changes is unknown again. The person is never asked what they know. |
+| US-16-R21 | The system MUST question its own loops on a clock: one inverted question per unit and lens, filed as improvement (plus) items within a per-run cap and not repeated inside the cadence. An answer carries evidence and one verdict of `none`, `gap`, `new-objective` or `cannot-know`; "we do not know" is a valid outcome. |
+| US-16-R22 | What every system needs and an owner cannot be expected to ask for MUST be a register of needs, each with a probe. A probe that cannot run is `unmeasured`, never passed; a failed need files its own item; an identity-bound need is a gate with a default in effect. The register only grows. |
+| US-16-R23 | A gap in what is known about a subject MUST leave the open set only by a recorded disposition with evidence, and the accounting MUST balance (entered = open + closed). A model-backed challenge MUST be refused from the author's own model family and MUST degrade to a deterministic rule floor when no model answers. |
+
 ## 10. Failure modes
 
 | Failure | Control |
@@ -156,6 +168,7 @@ When the person asks what something means, or answers `Tell me more` three times
 
 ## 12. Reference implementation status
 
+Paths are relative to `workers/` unless they begin with `seed/`, `foundation/`, `site/`, `dashboard/`, `tenants/`, `deploy/`, `doctrine/`, `instances/`, `docs/` or `tests/foundation/`, which are relative to the repository root. Rows marked 2026-11-26 were read against the code and their tests were run on that date.
 
 | Capability | Status |
 |---|---|
@@ -167,5 +180,11 @@ When the person asks what something means, or answers `Tell me more` three times
 | Read-back with provenance tags and defaults first, corrections that re-run the affected artifact, and the computed readiness score with the G1 and G2 rules (R11 to R13, R15; T16-6 to T16-8) | BUILT (`core/elicit/index.js`, `core/elicit/elicit.test.js`); the read-back screen and R14 are in `core/walkthrough/index.js` (`core/walkthrough/walkthrough.test.js`) |
 | Four-sweep ignorance audit with evidence per sweep, a red-team answer refused from the author's model family, and professional topics turned into gate cards (T16-9) | BUILT (`core/elicit/index.js`, `core/elicit/elicit.test.js`); the analogy list and the red-team answer are inputs the caller supplies |
 | A default needs catalog for a new project | BUILT (`core/walkthrough/catalog.json`, checked card by card in `core/walkthrough/walkthrough.test.js`) |
-| Value-of-information estimates logged and scored like predictions (5.3) | PLANNED: the priority is computed and stored on each need; it is not yet written to the prediction table |
-| Research with cited sources for system-unknowns, and a red-team sweep run by a second model on a schedule | PLANNED: both need a live model endpoint; the module accepts their results and does not produce them |
+| Value-of-information estimates logged and scored like predictions (5.3, R19): each default taken writes a row to the prediction table, an answer or a read-back correction scores it, `scoreDefaults` scores the ones whose review time passed, `voiCalibration` compares the estimated `p_wrong` with the scored outcomes, and a wrong default reaches the next audit's surprise sweep as a failed prediction | BUILT 2026-11-26 (`core/elicit/index.js`; test "section 5.3" in `core/elicit/elicit.test.js`) |
+| Gap registry with dispositions and balanced accounting, miners, red-team with a deterministic floor, a model-backed challenger through GitHub Models or Workers AI that is refused from the author's family, and an opt-in org tick step over the organization's open items (R23) | BUILT 2026-11-26 (`core/ignorance/index.js`, `core/ignorance/models.js`, `core/ignorance/org.js`; tests `core/ignorance/ignorance.test.js`, `core/ignorance/org.test.js`). The model call is tested with an injected endpoint; no live model run is recorded here |
+| Untold facts as a computed set, with the append-only told log (R20) | BUILT 2026-11-26 (`foundation/ignorance.py`; class `Ignorance` in `tests/foundation/test_criticality.py`) |
+| Inverted questions per loop and lens filed as plus items, answers with verdicts, the next pass seeded by the meta-question (R21) | BUILT 2026-11-26 (`foundation/unknowns.py`, `doctrine/unknowns.json`, tick twin `seed/worker/src/unknowns.js`; tests `tests/foundation/test_unknowns.py`, `seed/worker/test/unknowns.test.js`) |
+| Blind-spot register of system needs with probes, sweeps per domain and gates for identity-bound needs (R22) | BUILT 2026-11-26 (`foundation/blindspots.py`, `doctrine/blindspots.json`; test `tests/foundation/test_blindspots.py`) |
+| Research with cited sources for system-unknowns | PLANNED: no research step produces sources; `provenance: researched` is accepted when a caller supplies it |
+| The red-team sweep of the elicitation audit (Section 6) run by a second model on a schedule | PLANNED: the second-model challenger exists for the organization's items (`core/ignorance/models.js`) and `core/elicit/index.js` `audit` still takes the red-team answer as an input; nothing schedules the two together; this row and the one above are tracked as `docs/issues/Q-SPEC-16-elicit-redteam-schedule.json` |
+| The gap registry step enabled in the seed tick Worker | PLANNED (`core/ignorance/README.md` row IGN-7) |

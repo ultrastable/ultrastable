@@ -29,7 +29,7 @@ Ports: `db` (D1-style), `now()`, `config`, optional `fetch`, `ai({model, prompt,
 | US-11-R09 single-path failure distinguished from a stop | BUILT | `deadman` (alert kinds, priorities, per-scheduler reliability) |
 | US-11-R10 one acting firing per slot under a work claim | BUILT | `fireOnce`; T05 |
 | US-11-R11 overlap guard and reaper for stale queued rows | BUILT | `dispatch`, `reapStale` |
-| US-11-R12 collisions per minute measured | BUILT (measurement); automatic staggering is NOT COVERED | `collisions` |
+| US-11-R12 collisions per minute measured; schedules staggered | BUILT. `stagger` plans by default and writes rows with `apply`; `step` applies it only with `config.auto_stagger` | `collisions`, `minutePhase`, `stagger` |
 | US-11-R13 monitor hosted outside the writer of its probe table | NOT COVERED here; the detector is in core/remediation (`externalLiveness`) | |
 | Eleven-column run ledger | BUILT | `fleet_runs` |
 | Event-triggered scheduling | BUILT | `setTrigger`, `emit` |
