@@ -42,6 +42,7 @@ export function settings(policy, config = {}) {
     bands: config.bands || BANDS,
     rungs: l.rungs || [],
     promote: { min_outcomes: l.promote_when?.min_outcomes ?? 10, min_reliability: l.promote_when?.min_reliability ?? 0.8 },
+    promote_on: config.promote_on === 'lower_bound' ? 'lower_bound' : 'score', // 'lower_bound': promotion also needs the Wilson lower bound of ok/n to reach min_reliability
     demote_below: l.demote_when?.reliability_below ?? 0.6,
     ceilings: l.ceiling_by_max_permission || { none: 'observed', propose: 'assisted', execute: 'self-extending' },
     opened_by: config.opened_by || 'operations',
@@ -113,11 +114,13 @@ export async function effectiveRung(db, { surface, action_class, executor = '', 
   return { pair_rung: pair, executor_rung: exec, ceiling, rung: minRung(s, minRung(s, pair, exec), ceiling) };
 }
 
-function indicate(s, current, ceiling, { score, n, severe }) {
+function indicate(s, current, ceiling, { score, n, severe, lower = null }) {
   const i = idx(s, current), c = idx(s, ceiling);
   if (i < 0) return null;
+  // promote_on 'lower_bound': a high score from few outcomes is not enough; the Wilson lower bound must reach the same bar. Demotion is unchanged.
+  const sure = s.promote_on !== 'lower_bound' || (lower !== null && lower >= s.promote.min_reliability);
   if (s.mode === 'banded') {
-    const want = Math.min(idx(s, rungForScore(score, s)), c);
+    const want = sure ? Math.min(idx(s, rungForScore(score, s)), c) : Math.min(idx(s, rungForScore(score, s)), c, i);
     const target = severe > 0 ? Math.min(want, i - 1) : want;
     if (target > i) return { to: s.rungs[i + 1], direction: 'promote' };
     if (target < i && i > 0) return { to: s.rungs[i - 1], direction: 'demote' };
@@ -125,7 +128,7 @@ function indicate(s, current, ceiling, { score, n, severe }) {
   }
   if (i > 0 && (score < s.demote_below || severe > 0)) return { to: s.rungs[i - 1], direction: 'demote' };
   if (i > c) return { to: s.rungs[i - 1], direction: 'demote' }; // a rung above its ceiling is brought back
-  if (i < c && n >= s.promote.min_outcomes && score >= s.promote.min_reliability && severe === 0) return { to: s.rungs[i + 1], direction: 'promote' };
+  if (i < c && n >= s.promote.min_outcomes && score >= s.promote.min_reliability && severe === 0 && sure) return { to: s.rungs[i + 1], direction: 'promote' };
   return null;
 }
 
@@ -169,7 +172,7 @@ export async function recompute(db, { policy, config = {}, now = Date.now() } = 
     const current = r.executor ? await executorRung(db, policy, r.surface, r.action_class, r.executor) : await pairRung(db, policy, r.surface, r.action_class);
     // An executor is never promoted above its pair: its ceiling is the lower of the pair's rung and the surface ceiling.
     const ceiling = r.executor ? minRung(s, await pairRung(db, policy, r.surface, r.action_class), ceilingFor(policy, r.surface, s)) : ceilingFor(policy, r.surface, s);
-    const ind = indicate(s, current, ceiling, { score, n: r.n, severe: r.severe });
+    const ind = indicate(s, current, ceiling, { score, n: r.n, severe: r.severe, lower: wilsonLower(r.ok, r.n) });
     await run(db, `INSERT INTO trust_scores (surface, action_class, executor, ok, n, severe, reliability, event_adjust, idle_units, score, lower_bound, indicated_rung, last_exercised_at, updated_at)
         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
         ON CONFLICT(surface, action_class, executor) DO UPDATE SET ok=excluded.ok, n=excluded.n, severe=excluded.severe, reliability=excluded.reliability,
@@ -237,10 +240,81 @@ export async function applyRungChange(db, { item_id, merged_by, policy, now = Da
   return { applied: true, surface: t.surface, action_class: t.action_class, executor: t.executor, rung: t.to_rung };
 }
 
+/**
+ * US-06-R20: close the ladder loop. `merged` is a port, `async () => [{ item_id, merged_by }]`, that lists the reviewed rung
+ * changes that merged. Each listed item with a proposed transition is applied through applyRungChange (so a merge by the agent
+ * that opened the item, a rung above the ceiling or a rung not on the ladder is refused and recorded). An applied change writes
+ * the rung to the ledger, closes the item with a disposition that names the merging agent and writes one verified `outcomes`
+ * row (surface work_tracker, action class ladder). A refused change leaves the item open with the reason as its blocker.
+ * Calling it again with the same list changes nothing: an applied item is not applied twice and an unchanged refusal is not
+ * logged twice. An item the port lists that has no transition is reported, never invented.
+ */
+export async function settleLadder(db, { policy, merged, now = Date.now() } = {}) {
+  const out = { applied: [], refused: [], unknown: [] };
+  if (typeof merged !== 'function') return out;
+  const nowIso = iso(now);
+  for (const m of (await merged()) || []) {
+    if (!m || !m.item_id) continue;
+    const item = await first(db, `SELECT id, status FROM items WHERE id = ?`, m.item_id);
+    const done = await first(db, `SELECT * FROM trust_transitions WHERE item_id = ? AND status = 'applied' ORDER BY id DESC LIMIT 1`, m.item_id);
+    if (done) { // applied earlier: make sure the item is closed (a crash between the two writes leaves it open), then stop
+      if (item && !TERMINAL.includes(item.status)) await closeLadderItem(db, m.item_id, done, done.merged_by || m.merged_by, nowIso);
+      continue;
+    }
+    if (!(await first(db, `SELECT 1 AS x FROM trust_transitions WHERE item_id = ? AND status = 'proposed'`, m.item_id))) { out.unknown.push(m.item_id); continue; }
+    const prior = await first(db, `SELECT merged_by, reason FROM trust_transitions WHERE item_id = ? AND status = 'refused' ORDER BY id DESC LIMIT 1`, m.item_id);
+    if (prior && prior.merged_by === (m.merged_by ?? null)) { out.refused.push({ item_id: m.item_id, reason: prior.reason }); continue; } // the same refusal, already recorded
+    const r = await applyRungChange(db, { item_id: m.item_id, merged_by: m.merged_by, policy, now });
+    if (r.applied) {
+      const t = await first(db, `SELECT * FROM trust_transitions WHERE item_id = ? AND status = 'applied' ORDER BY id DESC LIMIT 1`, m.item_id);
+      if (item) await closeLadderItem(db, m.item_id, t, m.merged_by, nowIso);
+      out.applied.push({ item_id: m.item_id, surface: r.surface, action_class: r.action_class, executor: r.executor, rung: r.rung, merged_by: m.merged_by });
+    } else {
+      if (item && !TERMINAL.includes(item.status)) await run(db, `UPDATE items SET blocker = ?, updated_at = ? WHERE id = ?`, String(r.reason).slice(0, 300), nowIso, m.item_id);
+      out.refused.push({ item_id: m.item_id, reason: r.reason });
+    }
+  }
+  return out;
+}
+
+async function closeLadderItem(db, itemId, t, mergedBy, nowIso) {
+  const who = `${t.surface}/${t.action_class}${t.executor ? ` (executor ${t.executor})` : ''}`;
+  await run(db, `UPDATE items SET status = 'done', blocker = NULL, updated_at = ?,
+      disposition = ? WHERE id = ? AND status NOT IN ('done','superseded','cancelled')`,
+    nowIso, `done: ${who} now ${t.to_rung} (transition ${t.id}, merged by ${mergedBy})`.slice(0, 300), itemId);
+  await run(db, `DELETE FROM claims WHERE item_id = ?`, itemId);
+  if (!(await first(db, `SELECT 1 AS x FROM outcomes WHERE item_id = ? AND surface = 'work_tracker' AND action_class = 'ladder'`, itemId))) {
+    await run(db, `INSERT INTO outcomes (item_id, agent, surface, action_class, result, evidence, at) VALUES (?,?,'work_tracker','ladder','verified',?,?)`,
+      itemId, mergedBy ?? null, `ladder change ${t.from_rung} to ${t.to_rung} for ${who} merged by ${mergedBy}`.slice(0, 300), nowIso);
+  }
+}
+
 /** US-06-R18: the factor a queue item's score may be multiplied by. A pair never scored is at the baseline. */
 export async function queueMultiplier(db, { surface, action_class, policy }) {
   const r = await first(db, `SELECT score FROM trust_scores WHERE surface=? AND action_class=? AND executor=''`, surface, action_class);
   return r ? r.score : settings(policy).baseline;
+}
+
+/**
+ * US-06-R18: rank queue items by trust. `items` is [{ id, score, surface, action_class }]; each score is multiplied by the score
+ * of its (surface, action class) pair, the baseline for a pair never scored. The pairs are read together (one query per 40
+ * distinct pairs, never one per item). Returns a copy ordered by the multiplied score, highest first, ties in input order, each
+ * item with its `factor` and `ranked_score`. Nothing is written.
+ */
+export async function rankItems(db, items, { policy, now = Date.now() } = {}) {
+  void now;
+  const baseline = settings(policy).baseline;
+  const pairs = [...new Map(items.filter(i => i.surface && i.action_class).map(i => [`${i.surface}\u0000${i.action_class}`, [i.surface, i.action_class]])).values()];
+  const factor = new Map();
+  for (let at = 0; at < pairs.length; at += 40) {
+    const chunk = pairs.slice(at, at + 40);
+    const rows = await all(db, `SELECT surface, action_class, score FROM trust_scores WHERE executor = '' AND (${chunk.map(() => '(surface = ? AND action_class = ?)').join(' OR ')})`, ...chunk.flat());
+    for (const r of rows) factor.set(`${r.surface}\u0000${r.action_class}`, r.score);
+  }
+  return items.map((it, order) => {
+    const f = factor.has(`${it.surface}\u0000${it.action_class}`) ? factor.get(`${it.surface}\u0000${it.action_class}`) : baseline;
+    return { ...it, factor: f, ranked_score: (Number(it.score) || 0) * f, order };
+  }).sort((a, b) => b.ranked_score - a.ranked_score || a.order - b.order).map(({ order, ...it }) => it);
 }
 
 // ---- Policy as data (section 3.3) ----
@@ -285,14 +359,27 @@ export function assertPolicy(policy) {
   return policy;
 }
 
-/** Mirror rule: every harness_deny pattern of a gated or denied action must be in the harness deny list. Returns the missing ones. */
-export function mirrorProblems(policy, harnessDeny = []) {
+/**
+ * Mirror rule (US-06-R12): every harness_deny pattern of a gated or denied action must be in the harness deny list, and a gated
+ * action (irreversible and identity-bound) on a surface reachable through a shell command must name at least one pattern.
+ * `harnessDeny` is the deny list of the harness's settings file (see harnessDenyFrom). Returns the problems.
+ */
+export function mirrorProblems(policy, harnessDeny = [], { shell_surfaces = ['repo', 'runtime', 'secrets'] } = {}) {
   const have = new Set(harnessDeny);
   const out = [];
   for (const [name, sf] of Object.entries(policy.surfaces || {})) for (const [an, a] of Object.entries(sf.actions || {})) {
     for (const pat of a.harness_deny || []) if (!have.has(pat)) out.push(`${name}.${an}: ${pat}`);
+    if (shell_surfaces.includes(name) && a.reversible === false && a.identity_bound === true && !(a.harness_deny || []).length) {
+      out.push(`${name}.${an}: a gated action reachable through a shell command names no harness_deny pattern`);
+    }
   }
   return out;
+}
+
+/** The deny list of a harness settings file (`permissions.deny`), or an empty list when the file states none. */
+export function harnessDenyFrom(settings) {
+  const d = settings && settings.permissions && settings.permissions.deny;
+  return Array.isArray(d) ? d : [];
 }
 
 // ---- Standing limits and refusals (section 4) ----
@@ -403,6 +490,21 @@ export async function authorize(db, a, { policy, now = Date.now(), config = {} }
   return { allowed: true, via, override: a.override === 'allow' ? 'honored' : undefined };
 }
 
+/**
+ * US-06-R21: the port core/deploy asks before it publishes. `authorizer({ surface, action_class, target, executor })` runs
+ * authorize() with the rung the action needs (default `assisted`) and returns { allowed, reason, gate_card, next }. `limits`
+ * and `condition` may be values or functions of the request (the checks that refused this change, and the text they saw);
+ * `reversible_forms` is passed through. core/deploy never imports this module: the composition root hands it the function.
+ */
+export function deployAuthorizer({ db, policy, required_rung = 'assisted', now = () => Date.now(), config = {}, limits, condition, reversible_forms } = {}) {
+  const val = (v, req) => (typeof v === 'function' ? v(req) : v);
+  return async (req) => {
+    const r = await authorize(db, { surface: req.surface, action_class: req.action_class, target: req.target, executor: req.executor || undefined, required_rung,
+      limits: val(limits, req), condition: val(condition, req), reversible_forms: val(reversible_forms, req) }, { policy, now: now(), config });
+    return { allowed: Boolean(r.allowed), reason: r.reason || r.refused || (r.via ? `allowed: ${r.via}` : undefined), refused: r.refused, gate_card: r.gate_card, next: r.next, rung: r.rung };
+  };
+}
+
 // ---- Gate cards (section 3.2) ----
 
 /**
@@ -481,11 +583,34 @@ export async function adoptDefault(db, q, { now = Date.now(), execute } = {}) {
     report: verified ? `Done: ${q.recommended_default}. Revert: ${q.revert_path}.` : `Open: ${q.recommended_default} was attempted and not verified (${(res && res.evidence) || 'no evidence'}).` };
 }
 
-/** One guarded pass for a tick: validate the policy, recompute scores and proposals, reroute cards that are not identity-bound. */
-export async function step({ db, policy, config = {}, now = Date.now() } = {}) {
+/**
+ * US-06-R15: the trigger on the count of open cards without an identity-bound line. A count above zero files one work item per
+ * day, closed by a query the tick can run; the card itself is rerouted by rerouteUnbound(). Returns { cards_without_identity_line, filed }.
+ */
+export async function checkHealth(db, { now = Date.now(), config = {} } = {}) {
+  const n = await cardsWithoutIdentityLine(db);
+  const filed = [];
+  if (n > 0) {
+    const nowIso = iso(now), id = `TRUST-cards-without-identity-line-${nowIso.slice(0, 10)}`;
+    if (!(await first(db, `SELECT 1 AS x FROM items WHERE id = ?`, id))) {
+      await run(db, `INSERT INTO items (id, title, kind, owner_role, done_check, closing_probe, priority, status, created_at, updated_at) VALUES (?,?,'fix',?,?,?,5,'ready',?,?)`,
+        id, `${n} open gate card(s) carry no identity-bound line: reroute them to the staff`, config.reroute_role || 'operations', 'cards_without_identity_line = 0',
+        `SELECT CASE WHEN COUNT(*) = 0 THEN 1 ELSE 0 END FROM gate_cards g LEFT JOIN trust_gate_meta m ON m.card_id = g.id WHERE g.status = 'open' AND COALESCE(m.identity_bound_line, '') = '' AND g.closing_probe NOT LIKE 'env:%'`, nowIso, nowIso);
+      filed.push(id);
+    }
+  }
+  return { cards_without_identity_line: n, filed };
+}
+
+/** One guarded pass for a tick: validate the policy, apply the rung changes that merged, recompute scores and proposals, reroute cards that are not identity-bound. */
+export async function step({ db, policy, config = {}, now = Date.now(), merged } = {}) {
   assertPolicy(policy);
+  const settled = await settleLadder(db, { policy, merged, now }); // before recompute, so a rung a merge applied is the rung recompute reads
   const rows = await recompute(db, { policy, config, now });
+  const health = await checkHealth(db, { now, config }); // measured before the reroute, which is what brings the count back to zero
   const rerouted = await rerouteUnbound(db, { now, config });
   return { pairs: rows.filter(r => !r.executor).length, executors: rows.filter(r => r.executor).length, proposed: rows.filter(r => r.item).map(r => r.item),
+    ...(typeof merged === 'function' ? { settled: { applied: settled.applied.length, refused: settled.refused.length } } : {}),
+    ...(health.filed.length ? { filed: health.filed } : {}),
     rerouted: rerouted.length, cards_without_identity_line: await cardsWithoutIdentityLine(db) };
 }
