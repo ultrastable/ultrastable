@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-26-executor-closed-q-ultra-spec-quality-redesign-redesign-spec-",
+  "kind": "decision",
+  "date": "2026-11-26",
+  "title": "Executor closed Q-ULTRA-spec_quality-REDESIGN: Redesign spec_quality ladder structure from linear to cyclic to enforce automatic bound corre",
+  "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: tests/ultrastability/test_spec_quality_bounds.py.",
+  "probe": "file:tests/ultrastability/test_spec_quality_bounds.py"
+ },
+ "kind": "decision",
+ "title": "Executor closed Q-ULTRA-spec_quality-REDESIGN: Redesign spec_quality ladder structure from linear to cyclic to enforce automatic bound corre",
+ "session": ""
+}
