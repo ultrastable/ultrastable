@@ -24,7 +24,12 @@ button.alt{background:transparent;color:var(--fg);border-color:var(--line)}butto
 </style></head><body><main>
 <h1>Say what you want.</h1>
 <p>Ultrastable works out what it needs to know, writes the plans, and builds and runs it. No code, no terminal. This page puts a live preview of your idea online so you can see it. It takes about two minutes.</p>
-<p class="mut">It runs on Cloudflare, and a free preview needs no account. By default Ultrastable does not write business plans, file legal documents, give legal or financial advice, or run marketing.</p>
+<ul class="mut" id="facts">
+<li><b>What it covers.</b> It runs on Cloudflare, and a free preview needs no account. By default Ultrastable does not write business plans, file legal documents, give legal or financial advice, or run marketing.</li>
+<li><b>Why Cloudflare Workers.</b> Ultrastable runs on Cloudflare Workers because a free account stops at its limits instead of billing you, and one account holds everything it needs. <a href="https://github.com/ultrastable/workers/blob/main/docs/why-cloudflare.md" target="_blank" rel="noopener">Read why, and when it is not the right choice</a>.</li>
+<li><b>What it costs.</b> The preview is free. If you keep it, the Cloudflare free plan stops at its daily limits, and model spending stays at zero unless you approve more.</li>
+<li><b>What this page is for.</b> It is only needed to start. Afterwards you use your organization's own console.</li>
+</ul>
 
 <section id="s1" class="card">
   <label for="idea">What do you want to exist, and who is it for?</label>
@@ -55,6 +60,7 @@ button.alt{background:transparent;color:var(--fg);border-color:var(--line)}butto
 <section id="s4" class="card" hidden>
   <h2 style="margin-top:0">Your preview is online</h2>
   <p><a id="url" target="_blank" rel="noopener"></a></p>
+  <p id="verif" class="mut"></p>
   <p>To open it, use this key. <b>It is shown once. Copy it now.</b></p>
   <p class="key" id="key"></p>
   <button id="copykey" class="alt">Copy the key</button>
@@ -63,7 +69,7 @@ button.alt{background:transparent;color:var(--fg);border-color:var(--line)}butto
   <p><a id="claim" target="_blank" rel="noopener">Open my private link</a> <span class="mut">(do not share it: anyone with it can take your preview)</span></p>
   <h2>What this preview can and cannot do yet</h2>
   <ul id="notes"></ul>
-  <details><summary>What was put online</summary><p class="mut">The released Ultrastable program with fingerprint <span id="sha"></span>, a small database holding what you said, and a three-screen console.</p></details>
+  <details><summary>What was put online</summary><p class="mut">The released Ultrastable program with fingerprint <span id="sha"></span>, a small database holding what you said, and a simple console.</p></details>
 </section>
 
 <section id="s5" class="card err" hidden><p id="errmsg"></p><button id="retry" class="alt">Try again</button></section>
@@ -88,7 +94,7 @@ $('go').onclick=function(){show(3);$('status').textContent='Asking Cloudflare fo
     return solve(c).then(function(cp){return {challengeToken:c.challengeToken,solution:{checkpoints:cp}}})})
   .then(function(proof){$('status').textContent='Putting your preview online';$('substatus').textContent='Creating a small database, loading what you said, starting the console.';var a=words();
     return fetch('/api/provision',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({proof:proof,idea:a.idea,outcomes:a.outcomes,limit:a.limit,acceptedCloudflareTerms:$('tos').checked,acceptedLicense:$('lic').checked,turnstile:TS_TOKEN})}).then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j.error||'Something went wrong.');return j})})})
-  .then(function(r){$('url').textContent=r.url;$('url').href=r.url;$('key').textContent=r.consoleKey;$('claim').href=r.claimUrl;$('sha').textContent=String(r.bundleSha256||'').slice(0,12);
+  .then(function(r){$('url').textContent=r.url;$('url').href=r.url;var v=r.verification||{};$('verif').textContent=v.status==='verified'?'Read from outside: '+v.reason+'.':'This preview has not been verified yet: '+(v.reason||'it could not be read from outside')+'.';$('key').textContent=r.consoleKey;$('claim').href=r.claimUrl;$('sha').textContent=String(r.bundleSha256||'').slice(0,12);
     $('notes').textContent='';(r.notes||[]).forEach(function(n){var li=document.createElement('li');li.textContent=n;$('notes').appendChild(li)});
     $('copykey').onclick=function(){navigator.clipboard&&navigator.clipboard.writeText(r.consoleKey);$('copykey').textContent='Copied'};show(4)})
   .catch(function(e){fail(e.message||'Something went wrong. Nothing was kept. You can try again.')})};

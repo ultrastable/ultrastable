@@ -36,6 +36,12 @@ function ensureMigrated(db, dir = MIGRATIONS) {
 export function createServer({ db, config, env = process.env, now = () => Date.now(), org: orgOpts = {} }) {
   ensureMigrated(db);
   const org = createOrg({ db, env, config, now, ...orgOpts }); // the same composition root as the Worker
+  // US-14-R10 at deploy time: a revision whose reviewer and doer resolve to one family while two are available never starts, so Cloud Run
+  // never marks it ready and the deployer's probe rolls traffic back. The tick step `modelport` keeps checking every tick after that.
+  if (config.modelport?.aliases) {
+    const check = org.models.deployCheck();
+    if (!check.ok) throw new Error(`modelport deploy check failed: ${check.errors.join('; ')}`);
+  }
   return http.createServer(async (req, res) => {
     const send = (code, body) => { res.writeHead(code, { 'content-type': 'application/json' }); res.end(JSON.stringify(body)); };
     try {

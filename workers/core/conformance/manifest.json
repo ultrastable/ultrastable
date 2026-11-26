@@ -1138,12 +1138,21 @@
   {
    "id": "US-14-T02",
    "spec": "US-SPEC-14",
-   "tests": []
+   "tests": [
+    {
+     "file": "adapters/gcp/test/provision.test.js",
+     "name": "US-14-T02: the bootstrap plan's data steps (create the store, apply the migrations, load seed.sql) are done by the SQLite adapter's provision stage"
+    }
+   ]
   },
   {
    "id": "US-14-T03",
    "spec": "US-SPEC-14",
    "tests": [
+    {
+     "file": "adapters/gcp/test/slot.test.js",
+     "name": "US-14-T03: the Cloud Run /tick request sent twice in one slot leaves one tick row; the next slot runs"
+    },
     {
      "file": "adapters/shared/slot.test.js",
      "name": "US-14-T03 and R09: the scheduler request sent twice in one slot leaves one tick row for the slot"
@@ -1163,7 +1172,12 @@
   {
    "id": "US-14-T05",
    "spec": "US-SPEC-14",
-   "tests": []
+   "tests": [
+    {
+     "file": "adapters/gcp/test/ports.test.js",
+     "name": "US-14-T05 and US-14-R08: a failing probe rolls Cloud Run traffic back to the previous revision"
+    }
+   ]
   },
   {
    "id": "US-14-T06",
@@ -1519,22 +1533,42 @@
   {
    "id": "T19-1",
    "spec": "US-SPEC-19",
-   "tests": []
+   "tests": [
+    {
+     "file": "apps/launcher/test/spec19.test.mjs",
+     "name": "T19-1 / US-19-R01: a person with only a browser reaches a live preview, and no visible step names a terminal"
+    }
+   ]
   },
   {
    "id": "T19-2",
    "spec": "US-SPEC-19",
-   "tests": []
+   "tests": [
+    {
+     "file": "apps/launcher/test/spec19.test.mjs",
+     "name": "T19-2 / US-19-R06: nothing is created without the person accepting Cloudflare terms and the safety check, and the acceptance is passed on"
+    }
+   ]
   },
   {
    "id": "T19-3",
    "spec": "US-SPEC-19",
-   "tests": []
+   "tests": [
+    {
+     "file": "apps/launcher/test/spec19.test.mjs",
+     "name": "T19-3 / US-19-R07: the claim link is in the HTTP response only: no log line, no storage, no page, no error"
+    }
+   ]
   },
   {
    "id": "T19-4",
    "spec": "US-SPEC-19",
-   "tests": []
+   "tests": [
+    {
+     "file": "apps/launcher/test/spec19.test.mjs",
+     "name": "T19-4 / T19-7 / US-19-R03 / US-19-R14 / US-19-R32: a challenge page or a foreign address is never \"verified\"; the door says \"not verified\""
+    }
+   ]
   },
   {
    "id": "T19-5",
@@ -5873,6 +5907,10 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "adapters/cloudflare/src/metadata.test.js",
+     "name": "US-11-R02: the deployed port carries version and health from each registered health URL, the module hash and the schedules, and an unreachable health is not healthy"
+    },
+    {
      "file": "core/fleet/fleet.test.js",
      "name": "US-11-R02: deployed state is reconciled against the registry; one state per worker and three drift counts"
     },
@@ -6296,6 +6334,22 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "adapters/cloudflare/src/metadata.test.js",
+     "name": "US-12-R09: every binding type is read from the platform API and mapped to the graph's types; secret and variable values never leave the reading"
+    },
+    {
+     "file": "adapters/cloudflare/src/metadata.test.js",
+     "name": "US-12-R09 and US-12-R10: the sweep over the adapter fills the wiring graph; a worker whose read fails is listed under errors and excluded from the counts"
+    },
+    {
+     "file": "adapters/cloudflare/src/metadata.test.js",
+     "name": "US-12-R09: an unreadable queue list leaves queue consumers empty and says so; a missing credential fails plainly"
+    },
+    {
+     "file": "adapters/cloudflare/src/metadata.test.js",
+     "name": "US-12-R09: with no token the gateway route reads the inventory under the run's identity token"
+    },
+    {
      "file": "core/graph/wiring.test.js",
      "name": "US-12-R09 / R10: the sweep reads the metadata port; an errored worker is listed under errors and excluded from counts"
     }
@@ -6310,6 +6364,10 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "adapters/cloudflare/src/metadata.test.js",
+     "name": "US-12-R09 and US-12-R10: the sweep over the adapter fills the wiring graph; a worker whose read fails is listed under errors and excluded from the counts"
+    },
     {
      "file": "core/graph/wiring.test.js",
      "name": "US-12-R09 / R10: the sweep reads the metadata port; an errored worker is listed under errors and excluded from counts"
@@ -6829,6 +6887,18 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "adapters/gcp/test/deploy-script.test.js",
+     "name": "US-14-R03: the deploy script pins one instance, binds secret access for the service account and keeps the Cloud Scheduler OIDC identity"
+    },
+    {
+     "file": "adapters/gcp/test/deploy-script.test.js",
+     "name": "US-14-R03: the CronJob manifest forbids concurrent ticks, runs every ten minutes and reads the token from a secret, never from the manifest"
+    },
+    {
+     "file": "adapters/gcp/test/deploy-script.test.js",
+     "name": "US-14-R03 and US-14-R16: the uptime check is created with the service-agent OIDC token after the invoker binding; a refused creation stops the script with a non-zero status"
+    },
+    {
      "file": "adapters/shared/slot.test.js",
      "name": "US-14-R03: two instances receiving the same firing at once run one tick between them"
     },
@@ -6847,6 +6917,10 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "adapters/gcp/test/deploy-script.test.js",
+     "name": "US-14-R04: the script never prints the tick token and runs the model-port check before it deploys"
+    },
     {
      "file": "core/conformance/l1.test.js",
      "name": "US-01-T04, US-14-T04, US-14-R04 and US-01-R06: the core is given a presence map; a secret value is in no row the tick wrote"
@@ -6936,6 +7010,22 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "adapters/gcp/test/deployer.test.js",
+     "name": "US-14-R08: the canary path puts 10 percent on a tagged new revision and the rest on the live one, returns the tagged URL to probe, then promotes or rolls back"
+    },
+    {
+     "file": "adapters/gcp/test/deployer.test.js",
+     "name": "US-14-R08: a canary whose new revision never became ready throws and shifts no traffic"
+    },
+    {
+     "file": "adapters/gcp/test/ports.test.js",
+     "name": "US-14-R08: a passing probe keeps the Cloud Run revision and releases the lock"
+    },
+    {
+     "file": "adapters/gcp/test/ports.test.js",
+     "name": "US-14-T05 and US-14-R08: a failing probe rolls Cloud Run traffic back to the previous revision"
+    },
+    {
      "file": "core/deploy/deploy.test.js",
      "name": "US-07-R12 / US-14-R08: failing probe rolls back automatically and records why"
     }
@@ -6965,6 +7055,10 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "adapters/gcp/test/gcp.test.js",
+     "name": "US-14-R10 and US-14-R16: the Cloud Run server refuses to start when reviewer and doer resolve to one family while two are available"
+    },
     {
      "file": "core/modelport/modelport.test.js",
      "name": "US-14-R10: the deploy check fails when reviewer and doer resolve to one family while two are available"
@@ -7001,8 +7095,16 @@
      "name": "US-14-R11: five role instances dispatching at once never claim one item twice and never exceed their limit"
     },
     {
-     "file": "adapters/postgres/live.test.js",
-     "name": "US-14-R11: twenty-five concurrent claimers over two connections produce exactly one claim"
+     "file": "adapters/docdb/docdb.test.js",
+     "name": "US-14-R11: a reaper and a claimer running at once never leave an item both claimed and ready"
+    },
+    {
+     "file": "adapters/docdb/firestore.test.js",
+     "name": "US-14-R11: fifty concurrent claimers over the Firestore REST driver and its fake server produce one winner"
+    },
+    {
+     "file": "adapters/docdb/firestore.test.js",
+     "name": "US-14-R11: concurrent dispatchers claim different items and never the same one twice; the transaction sees its own writes"
     }
    ]
   },
@@ -8392,9 +8494,18 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "apps/launcher/test/launcher.test.mjs",
+     "name": "US-19-R01 / US-19-R05 the page is plain words: no terminal, both agreements unticked, no innerHTML, no third-party scripts"
+    },
+    {
+     "file": "apps/launcher/test/spec19.test.mjs",
+     "name": "T19-1 / US-19-R01: a person with only a browser reaches a live preview, and no visible step names a terminal"
+    }
+   ]
   },
   {
    "id": "US-19-R02",
@@ -8402,9 +8513,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "apps/launcher/test/spec19.test.mjs",
+     "name": "US-19-R02: the first screen offers no agent or developer path as a step; the pointer to one is a footer line"
+    }
+   ]
   },
   {
    "id": "US-19-R03",
@@ -8412,9 +8528,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "apps/launcher/test/spec19.test.mjs",
+     "name": "T19-4 / T19-7 / US-19-R03 / US-19-R14 / US-19-R32: a challenge page or a foreign address is never \"verified\"; the door says \"not verified\""
+    }
+   ]
   },
   {
    "id": "US-19-R04",
@@ -8422,9 +8543,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "apps/launcher/test/spec19.test.mjs",
+     "name": "US-19-R04: before the first question the page states scope, the platform and why, what it costs, and that it is needed only to start"
+    }
+   ]
   },
   {
    "id": "US-19-R05",
@@ -8432,9 +8558,22 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "apps/launcher/test/launcher.test.mjs",
+     "name": "US-19-R01 / US-19-R05 the page is plain words: no terminal, both agreements unticked, no innerHTML, no third-party scripts"
+    },
+    {
+     "file": "apps/launcher/test/launcher.test.mjs",
+     "name": "US-19-R05 / US-19-R06 provisioning endpoint: same-origin only, both agreements required, then it works"
+    },
+    {
+     "file": "apps/launcher/test/spec19.test.mjs",
+     "name": "US-19-R05: neither agreement is pre-ticked, the licence is summarised, and an unconfirmed licence is refused before any call"
+    }
+   ]
   },
   {
    "id": "US-19-R06",
@@ -8442,9 +8581,22 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "apps/launcher/test/launcher.test.mjs",
+     "name": "US-19-R05 / US-19-R06 provisioning endpoint: same-origin only, both agreements required, then it works"
+    },
+    {
+     "file": "apps/launcher/test/provision.test.mjs",
+     "name": "US-19-R06 refuses to create anything unless the person accepted the terms, and needs the safety check"
+    },
+    {
+     "file": "apps/launcher/test/spec19.test.mjs",
+     "name": "T19-2 / US-19-R06: nothing is created without the person accepting Cloudflare terms and the safety check, and the acceptance is passed on"
+    }
+   ]
   },
   {
    "id": "US-19-R07",
@@ -8456,8 +8608,16 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "apps/launcher/test/launcher.test.mjs",
+     "name": "US-19-R07 / US-19-R09 / US-19-R27 page headers: CSP locks it down, nothing is cached"
+    },
+    {
      "file": "apps/launcher/test/provision.test.mjs",
      "name": "nothing is written to the console or logs during provisioning (US-19-R07)"
+    },
+    {
+     "file": "apps/launcher/test/spec19.test.mjs",
+     "name": "T19-3 / US-19-R07: the claim link is in the HTTP response only: no log line, no storage, no page, no error"
     }
    ]
   },
@@ -8467,9 +8627,18 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "apps/launcher/test/launcher.test.mjs",
+     "name": "US-19-R08 no personal data is stored: the launcher has no bindings to write to and logs nothing"
+    },
+    {
+     "file": "apps/launcher/test/spec19.test.mjs",
+     "name": "US-19-R08: the launcher stores nothing about the person: no bindings to write to, and the idea goes only into the preview database"
+    }
+   ]
   },
   {
    "id": "US-19-R09",
@@ -8477,9 +8646,30 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "apps/launcher/test/launcher.test.mjs",
+     "name": "US-19-R07 / US-19-R09 / US-19-R27 page headers: CSP locks it down, nothing is cached"
+    },
+    {
+     "file": "apps/launcher/test/launcher.test.mjs",
+     "name": "US-19-R09 abuse hooks: a rate limiter that says no stops the request before any outside call; a failed robot check too"
+    },
+    {
+     "file": "apps/launcher/test/spec19.test.mjs",
+     "name": "US-19-R09: a refused rate limit, a failed robot check, a spent daily cap and an unready public mode each stop the request before anything is created"
+    },
+    {
+     "file": "apps/launcher/test/turnstile.test.mjs",
+     "name": "US-19-R09 / US-19-R26 spend cap: N attempts per UTC day, then refused; a new day resets; only integers are stored"
+    },
+    {
+     "file": "apps/launcher/test/turnstile.test.mjs",
+     "name": "US-19-R09 worker: robot check gates provisioning; a good token plus cap room provisions; no personal data or claim link leaks"
+    }
+   ]
   },
   {
    "id": "US-19-R10",
@@ -8487,9 +8677,22 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "apps/launcher/test/bundle-fresh.test.mjs",
+     "name": "US-19-R10 the committed bundle is self-consistent: its hash is the hash of its bytes"
+    },
+    {
+     "file": "apps/launcher/test/bundle-fresh.test.mjs",
+     "name": "T19-8 US-19-R10 the committed bundle matches its source closure: no file the preview Worker imports changed since it was built"
+    },
+    {
+     "file": "apps/launcher/test/bundle-fresh.test.mjs",
+     "name": "US-19-R10 the recorded closure is complete: every module the bundler included is a file in the closure"
+    }
+   ]
   },
   {
    "id": "US-19-R11",
@@ -8497,9 +8700,26 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "apps/launcher/test/claim-probes.test.mjs",
+     "name": "US-19-R11 once the address is known one more statement gives the CLAIM and HEARTBEAT cards an http probe on /health, and no secret is in it"
+    },
+    {
+     "file": "apps/launcher/test/claim-probes.test.mjs",
+     "name": "US-19-R11 the cards say in plain words what is already done and what staying means, and a database that runs the statement ends with both probes"
+    },
+    {
+     "file": "apps/launcher/test/claim-probes.test.mjs",
+     "name": "US-19-R11 an unclaimed (challenged) preview keeps the cards open and a claimed one closes them, through the owner-step watcher"
+    },
+    {
+     "file": "apps/launcher/test/claim-probes.test.mjs",
+     "name": "US-19-R11 if the probe statement is refused the preview is kept, the cards stay manual, and the result says why without a secret"
+    }
+   ]
   },
   {
    "id": "US-19-R12",
@@ -8527,9 +8747,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "apps/launcher/test/spec19.test.mjs",
+     "name": "T19-4 / T19-7 / US-19-R03 / US-19-R14 / US-19-R32: a challenge page or a foreign address is never \"verified\"; the door says \"not verified\""
+    }
+   ]
   },
   {
    "id": "US-19-R15",
@@ -8680,9 +8905,18 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "apps/launcher/test/pow.test.mjs",
+     "name": "US-19-R25 the in-page SHA-256 chain equals the published reference algorithm"
+    },
+    {
+     "file": "apps/launcher/test/pow.test.mjs",
+     "name": "US-19-R25 out-of-bounds or malformed challenges are refused before any work"
+    }
+   ]
   },
   {
    "id": "US-19-R26",
@@ -8690,9 +8924,18 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "apps/launcher/test/turnstile.test.mjs",
+     "name": "US-19-R09 / US-19-R26 spend cap: N attempts per UTC day, then refused; a new day resets; only integers are stored"
+    },
+    {
+     "file": "apps/launcher/test/turnstile.test.mjs",
+     "name": "US-19-R09 / US-19-R26 LAUNCHER_MODE=public refuses to serve until robot check, rate limit and cap are all configured"
+    }
+   ]
   },
   {
    "id": "US-20-R01",

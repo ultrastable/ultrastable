@@ -3,7 +3,7 @@
 // Door A launcher Worker (US-SPEC-19). Serves the page and two small endpoints. Stores nothing about the visitor.
 // Abuse controls are layered and optional by binding: a rate limiter (RATE_LIMITER) and a Turnstile check (TURNSTILE_SECRET).
 import { launcherPage } from './page.js';
-import { fetchChallenge, provision, ProvisionError } from './provision.js';
+import { fetchChallenge, provision, ProvisionError, verifyPreview } from './provision.js';
 import { verifyTurnstile, validSiteKey } from './turnstile.js';
 import { takeCap } from './cap.js';
 import { BUNDLE, BUNDLE_SHA256, MIGRATIONS_SQL, COMPATIBILITY_DATE } from './bundle.generated.js';
@@ -42,6 +42,7 @@ export default {
         const r = await provision({
           proof: b.proof, acceptedCloudflareTerms: b.acceptedCloudflareTerms === true,
           answers: { idea: b.idea, outcomes: b.outcomes, limit: b.limit, orgName: b.orgName },
+          verify: u => verifyPreview(u),
           release: { bundle: BUNDLE, bundleSha256: BUNDLE_SHA256, migrationsSql: MIGRATIONS_SQL, compatibilityDate: COMPATIBILITY_DATE },
         });
         return json(r);

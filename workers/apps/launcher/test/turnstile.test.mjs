@@ -47,7 +47,7 @@ function fakeCapNamespace() {
   return { mem, idFromName: n => n, get: () => ({ fetch: (u, init) => obj.fetch(new Request(u, init)) }) };
 }
 
-test('spend cap: N attempts per UTC day, then refused; a new day resets; only integers are stored', async () => {
+test('US-19-R09 / US-19-R26 spend cap: N attempts per UTC day, then refused; a new day resets; only integers are stored', async () => {
   const ns = fakeCapNamespace();
   const env = { PROVISION_CAP: ns, DAILY_PROVISION_CAP: '2' };
   const day1 = Date.parse('2026-11-12T10:00:00Z'), day2 = Date.parse('2026-11-13T00:00:01Z');
@@ -80,7 +80,7 @@ function fakeWorld(verifyAnswer, seen) {
 const body = (extra = {}) => ({ proof: { challengeToken: 'ct', solution: { checkpoints: 'AAAA' } }, idea: 'A neighbourhood tool library for borrowing tools', outcomes: ['Book a drill'], limit: 0, acceptedCloudflareTerms: true, acceptedLicense: true, turnstile: 'good-token', ...extra });
 const post = (b, headers = {}) => new Request(U + '/api/provision', { method: 'POST', headers: { 'content-type': 'application/json', origin: U, 'cf-connecting-ip': '203.0.113.9', ...headers }, body: JSON.stringify(b) });
 
-test('worker: robot check gates provisioning; a good token plus cap room provisions; no personal data or claim link leaks', async () => {
+test('US-19-R09 worker: robot check gates provisioning; a good token plus cap room provisions; no personal data or claim link leaks', async () => {
   const seen = [];
   const restore = fakeWorld({ success: true, action: 'provision', hostname: 'launch.example' }, seen);
   const logged = [];
@@ -104,7 +104,7 @@ test('worker: robot check gates provisioning; a good token plus cap room provisi
   } finally { for (const [m, o] of spies) console[m] = o; restore(); }
 });
 
-test('a rejected token and an unreachable siteverify both stop the request before anything is created', async () => {
+test('US-19-R09 a rejected token and an unreachable siteverify both stop the request before anything is created', async () => {
   for (const answer of [{ success: false }, new Error('down')]) {
     const seen = [];
     const restore = fakeWorld(answer, seen);
@@ -116,7 +116,7 @@ test('a rejected token and an unreachable siteverify both stop the request befor
   }
 });
 
-test('LAUNCHER_MODE=public refuses to serve until robot check, rate limit and cap are all configured', async () => {
+test('US-19-R09 / US-19-R26 LAUNCHER_MODE=public refuses to serve until robot check, rate limit and cap are all configured', async () => {
   const full = { LAUNCHER_MODE: 'public', TURNSTILE_SECRET: SECRET, TURNSTILE_SITE_KEY: '0x4AAAA-key', RATE_LIMITER: { limit: async () => ({ success: true }) }, PROVISION_CAP: fakeCapNamespace() };
   for (const missing of ['TURNSTILE_SECRET', 'TURNSTILE_SITE_KEY', 'RATE_LIMITER', 'PROVISION_CAP']) {
     const env = { ...full }; delete env[missing];

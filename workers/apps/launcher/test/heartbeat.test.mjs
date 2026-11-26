@@ -15,7 +15,7 @@ function fakeDo(env) {
 }
 const health = async (env) => (await worker.fetch(new Request('https://x.test/health'), env)).json();
 
-test('/health reports last_tick null before the first alarm and arms the alarm', async () => {
+test('US-19-R28 /health reports last_tick null before the first alarm and arms the alarm', async () => {
   const env = { DB: makeDb(), ORG_SLUG: 'x' };
   const w = fakeDo(env);
   const h = await health(env);
@@ -23,7 +23,7 @@ test('/health reports last_tick null before the first alarm and arms the alarm',
   assert.ok(w.alarmAt() > Date.now(), 'alarm armed in the future');
 });
 
-test('the alarm runs the real tick, records last_tick, and re-arms itself', async () => {
+test('US-19-R28 the alarm runs the real tick, records last_tick, and re-arms itself', async () => {
   const env = { DB: makeDb(), ORG_SLUG: 'x' };
   const w = fakeDo(env);
   await health(env);
@@ -38,7 +38,7 @@ test('the alarm runs the real tick, records last_tick, and re-arms itself', asyn
   assert.equal(env.DB.raw.prepare('SELECT COUNT(*) AS n FROM tick_runs').get().n, 2, 'tick_runs advances');
 });
 
-test('a failing database never stops the heartbeat: the error is recorded and the alarm is re-armed', async () => {
+test('US-19-R28 a failing database never stops the heartbeat: the error is recorded and the alarm is re-armed', async () => {
   const env = { DB: { prepare() { throw new Error('db down'); } }, ORG_SLUG: 'x' };
   const w = fakeDo(env);
   await w.obj.alarm();
