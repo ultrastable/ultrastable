@@ -1,1 +1,61 @@
-{}
+{
+ "practical-solutions": {
+  "feeds": [
+   "https://ultrastable.org/feed.xml"
+  ],
+  "gaps": [],
+  "pinged": {
+   "https://ultrastable.org/feed.xml": 204
+  },
+  "url": "https://ultrastable.org/"
+ },
+ "replication-ledger": {
+  "feeds": [],
+  "gaps": [
+   "schema.org JSON-LD",
+   "feed link",
+   "robots.txt names no sitemap",
+   "no sitemap.xml with urls",
+   "no llms.txt"
+  ],
+  "pinged": {},
+  "url": "https://replication-ledger.ultrastable.org/"
+ },
+ "ultrastable": {
+  "feeds": [],
+  "gaps": [
+   "feed link",
+   "robots.txt blocks every crawler"
+  ],
+  "pinged": {},
+  "url": "https://ultrastable.io/"
+ },
+ "unlearn": {
+  "feeds": [
+   "https://unlearn.ultrastable.org/feed.xml",
+   "https://unlearn.ultrastable.org/feed.json"
+  ],
+  "gaps": [
+   "Open Graph title",
+   "schema.org JSON-LD",
+   "no llms.txt"
+  ],
+  "pinged": {
+   "https://unlearn.ultrastable.org/feed.json": 204,
+   "https://unlearn.ultrastable.org/feed.xml": 204
+  },
+  "url": "https://unlearn.ultrastable.org/"
+ },
+ "what-works": {
+  "feeds": [
+   "https://what-works.ultrastable.org/feed.json"
+  ],
+  "gaps": [
+   "no llms.txt"
+  ],
+  "pinged": {
+   "https://what-works.ultrastable.org/feed.json": 204
+  },
+  "url": "https://what-works.ultrastable.org/"
+ }
+}
