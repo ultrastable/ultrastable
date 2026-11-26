@@ -1,7 +1,7 @@
 {
   "id": "Q-CIFAIL-mergeaudit-2589",
   "title": "Q-CIFAIL-mergeaudit-2589: PR #2589 merged without a green checks run",
-  "body": "**Owner:** staff\n**Trigger:** every lane pass\n**Done check:** cmd:python3 -m foundation mergeaudit --probe 2589\n**Status:** open\n\nMERGE-AUDIT-1: PR #2589 (Fix async handler, mount route, test wire, update handoff. (#Q-LITE-webmention-wire)) merged at 2026-11-26T23:12:58Z with its `checks` run at `failure` on head a36d151. Some merge path skipped the green gate.\n\nFix what that run caught on main (run the failed step from .github/workflows/checks.yml locally), then confirm a later merged PR passed `checks`. Do not weaken a check.",
+  "body": "**Owner:** staff\n**Trigger:** every lane pass\n**Done check:** cmd:python3 -m foundation mergeaudit --probe 2589\n**Status:** closed\n\nMERGE-AUDIT-1: PR #2589 (Fix async handler, mount route, test wire, update handoff. (#Q-LITE-webmention-wire)) merged at 2026-11-26T23:12:58Z with its `checks` run at `failure` on head a36d151. Some merge path skipped the green gate.\n\nFix what that run caught on main (run the failed step from .github/workflows/checks.yml locally), then confirm a later merged PR passed `checks`. Do not weaken a check.\n\n**Evidence:** closing probe passed (2 consecutive passes after a recorded failure): green since\n",
   "labels": [
     "role:staff",
     "ci-failure"
