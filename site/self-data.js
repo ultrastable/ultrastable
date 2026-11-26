@@ -1012,7 +1012,9 @@ export default {
   "uiux-loop",
   "ultrastability-loop",
   "ultrastable-agents",
+  "ultrastable-base-rates",
   "ultrastable-dashboard",
+  "ultrastable-open-questions",
   "ultrastable-replication-ledger",
   "ultrastable-site",
   "ultrastable-spinoffs",
@@ -2513,6 +2515,14 @@ export default {
    },
    {
     "id": "ultrastable-replication-ledger",
+    "state": "live"
+   },
+   {
+    "id": "ultrastable-base-rates",
+    "state": "live"
+   },
+   {
+    "id": "ultrastable-open-questions",
     "state": "live"
    }
   ],

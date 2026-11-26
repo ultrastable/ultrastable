@@ -127,6 +127,32 @@ spec:
 apiVersion: "backstage.io/v1alpha1"
 kind: "Resource"
 metadata:
+  name: "ultrastable-base-rates"
+  description: "base-rates tenant: beats (ultrastable/base-rates); created 2026-11-26"
+  tags:
+    - "cloudflare"
+    - "d1"
+spec:
+  type: "database"
+  owner: "group:ultrastable"
+  system: "ultrastable"
+---
+apiVersion: "backstage.io/v1alpha1"
+kind: "Resource"
+metadata:
+  name: "ultrastable-open-questions"
+  description: "open-questions tenant: beats (ultrastable/open-questions); created 2026-11-26"
+  tags:
+    - "cloudflare"
+    - "d1"
+spec:
+  type: "database"
+  owner: "group:ultrastable"
+  system: "ultrastable"
+---
+apiVersion: "backstage.io/v1alpha1"
+kind: "Resource"
+metadata:
   name: "ultrastable-site-assets"
   description: "site images and built-site state"
   tags:
@@ -406,6 +432,48 @@ spec:
     - "resource:ultrastable-replication-ledger"
 ---
 apiVersion: "backstage.io/v1alpha1"
+kind: "Component"
+metadata:
+  name: "ultrastable-base-rates"
+  description: "Base Rates tenant app (ultrastable/base-rates): graded base rates from cited sources; hourly beat"
+  tags:
+    - "cloudflare-workers"
+  annotations:
+    backstage.io/source-location: "url:https://github.com/ultrastable/ultrastable/tree/main/worker/index.js"
+    github.com/project-slug: "ultrastable/base-rates"
+  links:
+    - url: "https://base-rates.ultrastable.org"
+      title: "base-rates.ultrastable.org"
+spec:
+  type: "service"
+  lifecycle: "production"
+  owner: "group:ultrastable"
+  system: "base-rates"
+  dependsOn:
+    - "resource:ultrastable-base-rates"
+---
+apiVersion: "backstage.io/v1alpha1"
+kind: "Component"
+metadata:
+  name: "ultrastable-open-questions"
+  description: "Open Questions tenant app (ultrastable/open-questions): open research questions from cited sources; hourly beat"
+  tags:
+    - "cloudflare-workers"
+  annotations:
+    backstage.io/source-location: "url:https://github.com/ultrastable/ultrastable/tree/main/worker/index.js"
+    github.com/project-slug: "ultrastable/open-questions"
+  links:
+    - url: "https://open-questions.ultrastable.org"
+      title: "open-questions.ultrastable.org"
+spec:
+  type: "service"
+  lifecycle: "production"
+  owner: "group:ultrastable"
+  system: "open-questions"
+  dependsOn:
+    - "resource:ultrastable-open-questions"
+---
+apiVersion: "backstage.io/v1alpha1"
 kind: "System"
 metadata:
   name: "practical-solutions"
@@ -456,7 +524,7 @@ apiVersion: "backstage.io/v1alpha1"
 kind: "System"
 metadata:
   name: "base-rates"
-  description: "nothing is deployed; its repository is filled from the one scaffold (TENANT-STANDARD-1: a minimal full-stack Worker with the fleet contract and a clock) and it stays planned until the platform registers and deploys its Worker (Q-SEED-base-rates)"
+  description: "its own repository holds the code; the platform deploys its Worker from main through doctrine/topology.json, and the row turns own-repo once a deploy row and a live verify read exist (Q-SEED-base-rates)"
   annotations:
     github.com/project-slug: "ultrastable/base-rates"
 spec:
@@ -478,7 +546,7 @@ apiVersion: "backstage.io/v1alpha1"
 kind: "System"
 metadata:
   name: "open-questions"
-  description: "nothing is deployed; its repository is filled from the one scaffold (TENANT-STANDARD-1: a minimal full-stack Worker with the fleet contract and a clock) and it stays planned until the platform registers and deploys its Worker (Q-SEED-open-questions)"
+  description: "its own repository holds the code; the platform deploys its Worker from main through doctrine/topology.json, and the row turns own-repo once a deploy row and a live verify read exist (Q-SEED-open-questions)"
   annotations:
     github.com/project-slug: "ultrastable/open-questions"
 spec:

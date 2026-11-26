@@ -6118,6 +6118,23 @@
    "body": "feat(workers): kernel lifecycle exports, focus log and step evidence, trust, deploy digest, export and predict updates, and the destructive-migration exporter. One cohesive set of files inside the 60 file and 3,000 line bound, applied to the latest main with a three-way patch and checked locally before the push.",
    "probe": "file:workers/core/_shared/spec-27-linalg.test.js",
    "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "lesson-2026-11-26-pages-needs-an-admin-credential-our-automation-lacks-ship-gi",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Pages needs an admin credential our automation lacks; ship GitHub-only front ends as Workers",
+   "body": "The administration App answers 403 on /repos/*/pages, LANE_APP and LANE_PAT are unbound. A GitHub-only system's front end ships through the platform's own Worker deploy: topology row plus D1 store, built from the system's own repo.",
+   "probe": "file:seed/worker/src/declared.js"
+  },
+  {
+   "id": "lesson-2026-11-26-slice-s02-staff-lifecycle-plus-governance-of-the-specificati",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Slice S02-staff-lifecycle-plus-governance of the specification work shipped on its own",
+   "body": "feat(workers): staff review and research steps, lifecycle monitoring and closing, plus loop and governance scan. One cohesive set of files inside the 60 file and 3,000 line bound, applied to the latest main with a three-way patch and checked locally before the push.",
+   "probe": "file:workers/core/governance/amend.js",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
   }
  ]
 }
