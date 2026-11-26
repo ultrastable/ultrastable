@@ -1,0 +1,11 @@
+{
+  "id": "Q-KERNEL-modules",
+  "title": "Q-KERNEL-modules: modules ship by version and pin, each from its own repository",
+  "body": "**Owner:** executor\n**Trigger:** REPO-SHAPE-1 is built (#2444); 64 of 82 `workers/core` modules already carry their own README and tests\n**Done check:** cmd:test -s doctrine/modules.lock\n**Status:** open\n\nGroup `workers/core` into about ten repositories along the audit clusters, each split with full history (`git subtree split`), each with its own version, CI and conformance slice. The kernel loads them through `core/org/modules.js` pinned by `modules.lock` (version and hash); a release is a lock bump the lane opens, canaries on a tick and merges or reverts. The monorepo stays the source of record for a group until that group's repository is.\n\n**Prediction:** modules_pinned >= 1 within 168 h\n**Out of scope:** deleting any file or history (every move keeps full history); changing a module's behaviour; the private specification (DISCLOSE-1).\n\nsize: L\n\n**Closing probe:** cmd:test -s doctrine/modules.lock exits 0 on main. It exits 1 today: no module is pinned yet.\n",
+  "labels": [
+    "p1",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}
