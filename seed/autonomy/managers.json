@@ -219,7 +219,7 @@
    "tick_every": 12,
    "count": 1,
    "for": "licence, notices and third-party licence compliance. Switch off only for a system that ships no code or content to others.",
-   "human_role": "legal counsel / licence compliance (drafts, never legal advice)",
+   "human_role": "legal counsel / licence compliance (drafts, not legal advice)",
    "decides": [
     "block a public file that lacks its licence, notice or header",
     "flag a dependency whose licence is outside the policy",

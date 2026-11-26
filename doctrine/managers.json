@@ -422,7 +422,7 @@
    ],
    "probe": "cmd:python3 -m foundation publication --check",
    "settles": "grep:foundation/publication.py::def fix_headers",
-   "human_role": "legal counsel / licence compliance (drafts, never legal advice)",
+   "human_role": "legal counsel / licence compliance (drafts, not legal advice)",
    "decides": [
     "block a public file that lacks its licence, notice or header",
     "flag a dependency whose licence is outside the policy",
