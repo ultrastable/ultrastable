@@ -124,3 +124,20 @@ class Rnd(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class PlugIn(unittest.TestCase):
+    """BORROW-1: plugged-in competitor workers are data the check validates."""
+
+    def test_rows_valid(self):
+        from foundation import rnd
+        cfg = rnd.load()
+        self.assertTrue(any(c.get("plug_in") for c in cfg["competitors"]))
+        for c in cfg["competitors"]:
+            self.assertEqual(rnd.plug_in_problems(c), [], c["id"])
+
+    def test_live_without_wiring_fails(self):
+        from foundation import rnd
+        row = {"id": "x", "plug_in": {"role": "reviewer", "status": "live", "default": "ours",
+               "source": "https://example.com", "probe": "file:does/not/exist"}}
+        self.assertTrue(any("says live" in b for b in rnd.plug_in_problems(row)))

@@ -5855,6 +5855,22 @@
    "body": "After the first template publish the seed repository failed its own tests. Causes in the core's kit: two Worker tests read deploy/ and site/ without being on the monorepo-only register, and improve.yml and redteam.yml committed docs/issues without the balance gate the kit's own balance check requires. The publish also holds back files that differ in the copy, so a half-updated template is possible; that drift is tracked as Q-FLEETMAP-seed. Fix: the platform-only assertions are their own registered tests, both workflows pass the gate, and a kit test fails any test that reads above the kit unregistered.",
    "probe": "grep:seed/tests/test_seed.py::KitTestsAreSelfContained",
    "session": "session_0156nqDufLi3JgDJf3gVw7Fh"
+  },
+  {
+   "id": "decision-2026-11-26-borrow-1-plug-in-competitors",
+   "kind": "decision",
+   "date": "2026-11-26",
+   "title": "BORROW-1 plug in competitors",
+   "body": "Competitors' best steps are plug_in rows in doctrine/competitors.json, staged with our own worker as default. Devin declined, no free tier. Our repos are source-available, so OSS free tiers likely do not apply.",
+   "probe": "grep:foundation/rnd.py::def plug_in_problems"
+  },
+  {
+   "id": "lesson-2026-11-26-second-loop-kept-no-step",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Second loop kept no step",
+   "body": "Evidence: ops/ultrastability.jsonl held 107 verdicts, all reverted, because a step counted only on a full return to bounds. Fix: settle_verdict now keeps a step that closed at least min_progress of its gap; tests/foundation/test_ultrastability.py SettleProgress.",
+   "probe": "grep:foundation/ultrastability.py::def progressed"
   }
  ]
 }
