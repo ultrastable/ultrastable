@@ -3478,42 +3478,6 @@ export default {
    "surface": "seed/agents/roles/project-manager.md"
   },
   {
-   "claim": "Code is all that matters: the result of your work is merged, tested, deployed code and a recorded probe. Never rely on user impact,",
-   "detail": "",
-   "how": "grep:products/gaplint/gaplint/rules.py::GL003 + grep:gaplint.json::agent_rules + grep:.github/workflows/checks.yml::python3 -m gaplint",
-   "id": "mirror-8b4324e096",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/agents/roles/qa-engineer.md"
-  },
-  {
-   "claim": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
-   "detail": "",
-   "how": "file:foundation/closedloop.py + grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b",
-   "id": "mirror-58c9a94a71",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/agents/roles/qa-engineer.md"
-  },
-  {
-   "claim": "> BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository",
-   "detail": "",
-   "how": "file:foundation/boundary.py + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b",
-   "id": "mirror-24c3f4468c",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/agents/roles/qa-engineer.md"
-  },
-  {
-   "claim": "> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or",
-   "detail": "",
-   "how": "file:foundation/lanewatch.py + file:foundation/crosswalk.py + grep:.github/workflows/checks.yml::foundation[ .]crosswalk\\b",
-   "id": "mirror-f12364bde8",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/agents/roles/qa-engineer.md"
-  },
-  {
    "claim": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
    "detail": "",
    "how": "file:foundation/closedloop.py + grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b",
@@ -3566,78 +3530,6 @@ export default {
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/roles/reviewer.md"
-  },
-  {
-   "claim": "Code is all that matters: the result of your work is merged, tested, deployed code and a recorded probe. Never rely on user impact,",
-   "detail": "",
-   "how": "grep:products/gaplint/gaplint/rules.py::GL003 + grep:gaplint.json::agent_rules + grep:.github/workflows/checks.yml::python3 -m gaplint",
-   "id": "mirror-bfe1c1968c",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/agents/roles/security-engineer.md"
-  },
-  {
-   "claim": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
-   "detail": "",
-   "how": "file:foundation/closedloop.py + grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b",
-   "id": "mirror-776c65e567",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/agents/roles/security-engineer.md"
-  },
-  {
-   "claim": "> BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository",
-   "detail": "",
-   "how": "file:foundation/boundary.py + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b",
-   "id": "mirror-1c85e7b449",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/agents/roles/security-engineer.md"
-  },
-  {
-   "claim": "> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or",
-   "detail": "",
-   "how": "file:foundation/lanewatch.py + file:foundation/crosswalk.py + grep:.github/workflows/checks.yml::foundation[ .]crosswalk\\b",
-   "id": "mirror-3cc38c5c7b",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/agents/roles/security-engineer.md"
-  },
-  {
-   "claim": "Code is all that matters: the result of your work is merged, tested, deployed code and a recorded probe. Never rely on user impact,",
-   "detail": "",
-   "how": "grep:products/gaplint/gaplint/rules.py::GL003 + grep:gaplint.json::agent_rules + grep:.github/workflows/checks.yml::python3 -m gaplint",
-   "id": "mirror-73942db732",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/agents/roles/sre.md"
-  },
-  {
-   "claim": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
-   "detail": "",
-   "how": "file:foundation/closedloop.py + grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b",
-   "id": "mirror-9b515b9ca1",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/agents/roles/sre.md"
-  },
-  {
-   "claim": "> BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository",
-   "detail": "",
-   "how": "file:foundation/boundary.py + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b",
-   "id": "mirror-7277a34fcd",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/agents/roles/sre.md"
-  },
-  {
-   "claim": "> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or",
-   "detail": "",
-   "how": "file:foundation/lanewatch.py + file:foundation/crosswalk.py + grep:.github/workflows/checks.yml::foundation[ .]crosswalk\\b",
-   "id": "mirror-eafd376384",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/agents/roles/sre.md"
   },
   {
    "claim": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
@@ -3712,7 +3604,7 @@ export default {
    "surface": "seed/tests/fixtures/IDEA.example.md"
   },
   {
-   "claim": "seed-tests: 104 Python and 585 Worker tests",
+   "claim": "seed-tests: 104 Python and 580 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3721,7 +3613,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 585 Worker tests",
+   "claim": "seed-worker-tests: 580 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3757,7 +3649,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 1134",
+   "claim": "live-deploys: 1154",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",
@@ -3980,7 +3872,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 439,
-  "total": 439
+  "pass": 427,
+  "total": 427
  }
 };

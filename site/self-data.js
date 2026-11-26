@@ -878,7 +878,6 @@ export default {
   "provenance-loop",
   "public-transparency",
   "publication-guard",
-  "qa-engineer-duty",
   "qnfo-sauce",
   "recognition-lint",
   "regen-generated",
@@ -901,16 +900,12 @@ export default {
   "role-product-manager",
   "role-program-manager",
   "role-project-manager",
-  "role-qa-engineer",
   "role-research-publisher",
   "role-reviewer",
-  "role-security-engineer",
-  "role-sre",
   "role-staff",
   "role-uiux-manager",
   "running-system",
   "scout",
-  "security-engineer-duty",
   "seed-launch",
   "server-side-only",
   "session-reaper",
@@ -918,7 +913,6 @@ export default {
   "smoke-live",
   "social-post",
   "spinoff",
-  "sre-duty",
   "strange-loop-hygiene",
   "supply-chain",
   "temporal",
@@ -2383,72 +2377,6 @@ export default {
     "workflows": [
      "supply-chain"
     ]
-   },
-   {
-    "closing_probe": "grep:seed/worker/src/roleduties.js::export async function settle",
-    "id": "qa-engineer-duty",
-    "kind": "manager",
-    "owner": "qa-engineer",
-    "server_owner": "ultrastable-tick",
-    "sla": "1h",
-    "summary": "ROLE-DUTIES-1: the qa engineer duty `unverified-done`: closed work is really verified: every item closed in the last 24 hours has a verified outcome from an independent probe (human analogue: QA or test engineer).",
-    "trigger": "hourly inside the tick step role_duties of ultrastable-tick",
-    "workflows": []
-   },
-   {
-    "closing_probe": "file:agents/roles/qa-engineer.md",
-    "id": "role-qa-engineer",
-    "kind": "manager",
-    "owner": "qa-engineer",
-    "server_owner": "ultrastable-tick",
-    "sla": "1 tick",
-    "summary": "QA engineer: closed work is really verified: every item closed in the last 24 hours has a verified outcome from an independent probe (human analogue: QA or test engineer)",
-    "trigger": "each tick of the qa-engineer role (tick_every 1)",
-    "workflows": []
-   },
-   {
-    "closing_probe": "grep:seed/worker/src/roleduties.js::export async function settle",
-    "id": "sre-duty",
-    "kind": "manager",
-    "owner": "sre",
-    "server_owner": "ultrastable-tick",
-    "sla": "1h",
-    "summary": "ROLE-DUTIES-1: the site reliability engineer duty `tick-health`: the heartbeat and the services it runs stay up: every tick completes every step and no slot is missed (human analogue: SRE or on-call engineer).",
-    "trigger": "hourly inside the tick step role_duties of ultrastable-tick",
-    "workflows": []
-   },
-   {
-    "closing_probe": "file:agents/roles/sre.md",
-    "id": "role-sre",
-    "kind": "manager",
-    "owner": "sre",
-    "server_owner": "ultrastable-tick",
-    "sla": "1 tick",
-    "summary": "Site reliability engineer: the heartbeat and the services it runs stay up: every tick completes every step and no slot is missed (human analogue: SRE or on-call engineer)",
-    "trigger": "each tick of the sre role (tick_every 1)",
-    "workflows": []
-   },
-   {
-    "closing_probe": "grep:seed/worker/src/roleduties.js::export async function settle",
-    "id": "security-engineer-duty",
-    "kind": "manager",
-    "owner": "security-engineer",
-    "server_owner": "ultrastable-tick",
-    "sla": "1h",
-    "summary": "ROLE-DUTIES-1: the security engineer duty `secret-items`: secrets, tokens and vulnerabilities never sit unattended: any open item about them older than 48 hours is raised and closed with evidence (human analogue: security or AppSec engineer).",
-    "trigger": "hourly inside the tick step role_duties of ultrastable-tick",
-    "workflows": []
-   },
-   {
-    "closing_probe": "file:agents/roles/security-engineer.md",
-    "id": "role-security-engineer",
-    "kind": "manager",
-    "owner": "security-engineer",
-    "server_owner": "ultrastable-tick",
-    "sla": "1 tick",
-    "summary": "Security engineer: secrets, tokens and vulnerabilities never sit unattended: any open item about them older than 48 hours is raised and closed with evidence (human analogue: security or AppSec engineer)",
-    "trigger": "each tick of the security-engineer role (tick_every 1)",
-    "workflows": []
    }
   ],
   "workers": [
