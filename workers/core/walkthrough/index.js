@@ -46,7 +46,7 @@ export function validateProfile(p = {}) {
 export function compose(consoleData, profile = {}, askCards = [], dictionaries = {}) {
   const d = JSON.parse(JSON.stringify(consoleData));
   const numbers = { open: d.now.open, done: d.now.done, stuck: d.now.blocked, predictions_right: d.progress.predictions.hit, waiting_on_you: d.needs_you.cards.length + d.needs_you.more };
-  const askShape = c => ({ id: `ask:${c.need_id}`, kind: 'ask', need_id: c.need_id, what: c.question, why: c.why, cue: c.cue,
+  const askShape = c => ({ id: `ask:${c.need_id}`, kind: 'ask', need_id: c.need_id, what: c.question, why: c.why, cue: c.cue, changed: c.changed || null,
     default_in_effect: c.default == null ? 'work that depends on this waits; other work continues' : `we use "${c.default}"; ${c.default_consequence}`,
     buttons: c.default == null ? c.options.filter(o => o !== 'Not sure') : c.options, free_text: !!c.free_text, definitions: c.definitions || {}, reversibility: c.reversibility });
   const needOf = card => /^elicit_answered:[^:]*:(.+)$/.exec(card.closing_probe || '')?.[1];
@@ -88,7 +88,7 @@ export function renderReadBack(rb, { action = '/api/console/readback' } = {}) {
 <ul>${rb.statements.map(row).join('')}</ul>
 <p><button id="ok" data-action="confirm">This is right</button></p><p id="say" role="status"></p>
 <script>
-(function(){var A=${JSON.stringify(String(action))};function send(b){return fetch(A,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(b)}).then(function(r){return r.json()}).then(function(j){document.getElementById('say').textContent=j.message||j.error||'Saved.';if(j.reload)location.reload()})}
+(function(){var A=${JSON.stringify(String(action))};function send(b){if(!window.confirm('Please confirm.'))return Promise.resolve();b.confirm=true;return fetch(A,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(b)}).then(function(r){return r.json()}).then(function(j){document.getElementById('say').textContent=j.message||j.error||'Saved.';if(j.reload)location.reload()})}
 document.addEventListener('click',function(e){var t=e.target;if(t.id==='ok'){send({confirm_readback:true});return}if(!t.classList||!t.classList.contains('fix'))return;var v=t.getAttribute('data-value');if(t.getAttribute('data-input')){var i=document.querySelector('input[data-for="'+t.getAttribute('data-need')+'"]');v=i?i.value:''}if(v)send({need_id:t.getAttribute('data-need'),value:v})})})();
 </script></body></html>`;
 }
@@ -124,7 +124,7 @@ export function createWalkthrough({ db, elicit, now = () => Date.now(), config =
     const shape = c => {
       const need = /^elicit_answered:[^:]*:(.+)$/.exec(c.closing_probe)?.[1];
       const ask = need ? askCards.find(a => a.need_id === need) : null;
-      if (ask) return { id: c.id, kind: 'ask', need_id: need, what: ask.question, why: ask.why, cue: ask.cue, default_in_effect: c.default_in_effect, buttons: ask.options.filter(o => o !== 'Not sure') };
+      if (ask) return { id: c.id, kind: 'ask', need_id: need, what: ask.question, why: ask.why, cue: ask.cue, changed: ask.changed || null, default_in_effect: c.default_in_effect, buttons: ask.options.filter(o => o !== 'Not sure') };
       return { id: c.id, what: c.what, default_in_effect: c.default_in_effect, kind: c.closing_probe.startsWith('env:') ? 'secret' : 'manual' };
     };
     return { cards: cards.slice(0, LIST_MAX).map(shape), more: Math.max(0, cards.length - LIST_MAX) };

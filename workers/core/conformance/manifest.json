@@ -1447,6 +1447,10 @@
    "spec": "US-SPEC-18",
    "tests": [
     {
+     "file": "core/walkthrough/console-rules.test.js",
+     "name": "T18-3 and US-18-R05: with 7 working, 7 stuck and 9 finished every list shows three (five finished) and an exact count of the rest"
+    },
+    {
      "file": "core/walkthrough/walkthrough.test.js",
      "name": "US-18-R05 and T18-3 with a profile: Ask cards join Needs you, no open decision card is hidden, lists hold at most three and extras become a count"
     }
@@ -7386,6 +7390,14 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "core/elicit/duties-step.test.js",
+     "name": "US-16-R10: the tick step defaults every overdue Ask in every project with nobody opening the walkthrough, and only the overdue ones"
+    },
+    {
+     "file": "core/elicit/duties-step.test.js",
+     "name": "US-16-R10: a duty that throws is noted and the others still run"
+    },
+    {
      "file": "core/elicit/elicit.test.js",
      "name": "R10: an unanswered Ask expires to its default after 72 hours and is logged for revisit"
     },
@@ -7564,6 +7576,10 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "core/elicit/duties-step.test.js",
+     "name": "US-16-R20: the tick step finds a card that would leak jargon before a person sees it and files one item per card, once"
+    },
+    {
      "file": "core/elicit/elicit.test.js",
      "name": "US-16-R03 and US-16-R20: reviewCards reports a stored card whose jargon is neither mapped nor defined"
     },
@@ -7597,6 +7613,10 @@
     {
      "file": "core/elicit/derive.test.js",
      "name": "US-16-R21: with require_exhaustion a need is not asked or gated until every configured surface has an attempt row"
+    },
+    {
+     "file": "core/elicit/derive.test.js",
+     "name": "US-16-R21: a value that evidence contradicted is not derived again while the need is open, but another value is"
     }
    ]
   },
@@ -7612,6 +7632,18 @@
     {
      "file": "core/elicit/derive.test.js",
      "name": "T16-11 and US-16-R22: a stated answer contradicted by evidence returns to open, keeps its history, lowers readiness and queues a re-run"
+    },
+    {
+     "file": "core/walkthrough/changed-line.test.js",
+     "name": "US-16-R22: the walkthrough card of a reopened Need carries the plain line \"This changed: ...\" and an untouched Need carries none"
+    },
+    {
+     "file": "core/walkthrough/changed-line.test.js",
+     "name": "US-16-R22: the Needs-you card built from a reopened Need keeps the line, and so does a gate card that stands for it"
+    },
+    {
+     "file": "core/walkthrough/changed-line.test.js",
+     "name": "US-16-R22: the console page draws the \"This changed\" line on its own line on the Needs-you card and on the walkthrough step, and nothing when there is none"
     }
    ]
   },
@@ -8028,6 +8060,14 @@
     {
      "file": "core/walkthrough/console-rules.test.js",
      "name": "US-18-R03 and T18-5: typed text is stored verbatim and becomes a work item; an out-of-scope request is held and is not dispatchable (US-00-R09)"
+    },
+    {
+     "file": "core/walkthrough/console-rules.test.js",
+     "name": "US-18-R03: a 3000-character request is stored verbatim; 4001 is refused with a message and nothing is stored"
+    },
+    {
+     "file": "core/walkthrough/console-rules.test.js",
+     "name": "US-18-R03 and US-18-R04: typing a question the screens already answer returns the answer from the records, is stored verbatim as a question and creates no item; anything else still becomes work"
     }
    ]
   },
@@ -8043,6 +8083,14 @@
     {
      "file": "core/walkthrough/console-rules.test.js",
      "name": "US-18-R04: the prompt box comes with at most three suggested requests"
+    },
+    {
+     "file": "core/walkthrough/console-rules.test.js",
+     "name": "US-18-R04: suggestions are drawn from the state and never exceed three; a surface at observed or assisted is not listed as acting on its own"
+    },
+    {
+     "file": "core/walkthrough/console-rules.test.js",
+     "name": "US-18-R03 and US-18-R04: typing a question the screens already answer returns the answer from the records, is stored verbatim as a question and creates no item; anything else still becomes work"
     }
    ]
   },
@@ -8056,6 +8104,14 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "core/walkthrough/console-rules.test.js",
+     "name": "T18-3 and US-18-R05: with 7 working, 7 stuck and 9 finished every list shows three (five finished) and an exact count of the rest"
+    },
+    {
+     "file": "core/walkthrough/console-rules.test.js",
+     "name": "US-18-R05: compose at brief detail keeps counts equal to what it removed; nothing is dropped silently"
+    },
+    {
      "file": "core/walkthrough/walkthrough.test.js",
      "name": "US-18-R05 and T18-3 with a profile: Ask cards join Needs you, no open decision card is hidden, lists hold at most three and extras become a count"
     }
@@ -8068,11 +8124,11 @@
    "tagged": false,
    "must": true,
    "status": "met",
-   "proof": "test file cites it",
+   "proof": "named test",
    "tests": [
     {
-     "file": "core/doors/proxy.test.js",
-     "name": null
+     "file": "core/walkthrough/console-rules.test.js",
+     "name": "US-18-R06: no string shown on Now, Needs you or Progress contains a role id, surface and action class, rung name or item id; an unknown role still reads as words; raw ids stay under raw"
     }
    ]
   },
@@ -8103,6 +8159,10 @@
     {
      "file": "core/walkthrough/console-rules.test.js",
      "name": "US-18-R08 and T18-6: the same facts the screens show are served as records at GET /api/console, to a person or an agent alike"
+    },
+    {
+     "file": "core/walkthrough/console-rules.test.js",
+     "name": "US-18-R08: an owner gets the rows of items and console_actions with their verbatim text; paging by next returns every row once; secrets and unknown tables are never served"
     }
    ]
   },
@@ -8116,12 +8176,24 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "core/doors/console-mounted-writes.test.js",
+     "name": "US-18-R09 and R15: a mounted write from another origin, from no origin, or from a viewer is refused before any confirm or change"
+    },
+    {
      "file": "core/doors/proxy.test.js",
      "name": "US-18-R09: steps a person must do are decision cards that close when the step is observed done, never by the console setting anything"
     },
     {
-     "file": "core/walkthrough/walkthrough.test.js",
-     "name": "routes: same-origin writes only (US-18-R09), JSON for agents and people alike (section 7), the screen as HTML"
+     "file": "core/walkthrough/console-rules.test.js",
+     "name": "T18-8 and US-18-R09: pressing I did it or Use the default on an elicit gate card changes nothing, explains, and only answering the need closes the card"
+    },
+    {
+     "file": "core/walkthrough/console-rules.test.js",
+     "name": "US-18-R09: explain on every card kind returns plain text and writes no console_actions row, even when signed in with a session"
+    },
+    {
+     "file": "core/walkthrough/console-rules.test.js",
+     "name": "US-18-R21 and US-18-R09: a card with an open owner link carries it and the page renders one button for it; a link with an unsafe scheme is not offered; without the table the card is unchanged"
     }
    ]
   },

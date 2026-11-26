@@ -11,7 +11,7 @@ import { modelFor } from '../ignorance/org.js';
 export const DEFAULT_ANALOGIES = ANALOGIES.items;
 export const MODEL_ROUTE_ITEM = 'ELICIT-AUDIT-MODEL-ROUTE';
 // The closing probe of that item and of the live act in US-16-R24: a red-team sweep recorded a known family that is not the rule floor.
-export const MODEL_ROUTE_PROBE = `SELECT COUNT(*) FROM elicit_audit WHERE sweep='redteam' AND evidence LIKE 'model family: %' AND evidence NOT LIKE '%unknown%' AND evidence NOT LIKE '%none%'`;
+export const MODEL_ROUTE_PROBE = `SELECT COUNT(*) FROM elicit_audit WHERE sweep='redteam' AND evidence LIKE 'model family: %' AND evidence NOT LIKE '%unknown%' AND evidence NOT LIKE '%none%' AND evidence NOT LIKE '%unverified%'`;
 const all = async (db, sql, ...a) => (await db.prepare(sql).bind(...a).all()).results || [];
 const one = (db, sql, ...a) => db.prepare(sql).bind(...a).first();
 
