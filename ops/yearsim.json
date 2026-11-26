@@ -1,5 +1,5 @@
 {
- "at": "2026-11-26T14:34:14Z",
+ "at": "2026-11-26T14:38:23Z",
  "days": 730,
  "drills": {
   "actions-billing": {
@@ -145,7 +145,7 @@
  "release_horizon_p10": 730,
  "runs": 200,
  "self_commits": {
-  "all": 16,
+  "all": 15,
   "latest": [
    {
     "lines": 18,
@@ -173,11 +173,11 @@
     "title": "Add functionality to agents/spinoff_sweep.py to detect and delete idle us-idea-* Workers when their "
    }
   ],
-  "substantive": 10,
+  "substantive": 9,
   "window_days": 14
  },
- "self_rate_per_day": 0.714,
- "self_releases_year_p50": 180.6,
+ "self_rate_per_day": 0.643,
+ "self_releases_year_p50": 162.6,
  "sensitivity": {
   "base": {
    "p10": 730,
