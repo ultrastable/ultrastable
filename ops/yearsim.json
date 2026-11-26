@@ -1,5 +1,5 @@
 {
- "at": "2026-11-26T19:16:41Z",
+ "at": "2026-11-26T19:25:42Z",
  "days": 730,
  "drills": {
   "actions-billing": {
@@ -145,8 +145,13 @@
  "release_horizon_p10": 730,
  "runs": 200,
  "self_commits": {
-  "all": 15,
+  "all": 16,
   "latest": [
+   {
+    "lines": 66,
+    "sha": "8481e6057fe6",
+    "title": "Implement inbound webmention receiver in lite.js to record external referrals as reach (#Q-IMPROVE-w"
+   },
    {
     "lines": 18,
     "sha": "96e38e8c0ab1",
@@ -166,18 +171,13 @@
     "lines": 97,
     "sha": "1380548609e6",
     "title": "Implement mergeaudit probe script to verify PR merging commits pass checks and enforce consistent me"
-   },
-   {
-    "lines": 138,
-    "sha": "490ddca85a1f",
-    "title": "Add functionality to agents/spinoff_sweep.py to detect and delete idle us-idea-* Workers when their "
    }
   ],
-  "substantive": 9,
+  "substantive": 10,
   "window_days": 14
  },
- "self_rate_per_day": 0.643,
- "self_releases_year_p50": 162.6,
+ "self_rate_per_day": 0.714,
+ "self_releases_year_p50": 180.6,
  "sensitivity": {
   "base": {
    "p10": 730,

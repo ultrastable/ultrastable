@@ -1,9 +1,17 @@
 {
- "at": "2026-11-26T19:18:08Z",
- "gaps": 7,
- "match_share": 0.987,
+ "at": "2026-11-26T19:27:09Z",
+ "gaps": 8,
+ "match_share": 0.986,
  "sources": {
   "changes": [
+   {
+    "did": [
+     "site/lite.js"
+    ],
+    "id": "8481e6057fe6",
+    "ok": true,
+    "said": "Implement inbound webmention receiver in lite.js to record external referrals as reach (#Q-IMPROVE-webmention) (#2566)"
+   },
    {
     "did": [
      "foundation/mergeaudit.py",
@@ -582,10 +590,12 @@
    {
     "checks": 1,
     "external": [],
-    "failing": [],
+    "failing": [
+     "python3 -m foundation rulerefs --check: FAIL /webmention: site route no page links and no doc names (RULE-REFS-1: write the words, or add the owner, in the same change); rulerefs: 1508 references, 1456 resolve, 52 external with a reason, 0 "
+    ],
     "id": "RULE-REFS-1",
     "missing": [],
-    "ok": true,
+    "ok": false,
     "unmeasured": []
    },
    {
@@ -1066,7 +1076,7 @@
     "checks": 1,
     "external": [],
     "failing": [
-     "python3 -m foundation dispose --check: an open item is 101.7 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+     "python3 -m foundation dispose --check: an open item is 101.9 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
     ],
     "id": "DISPOSE-1",
     "missing": [],
@@ -1126,7 +1136,7 @@
     "ok": true
    },
    {
-    "detail": "0.643 substantive server-originated changes a day (target 1)",
+    "detail": "0.714 substantive server-originated changes a day (target 1)",
     "id": "ships-daily",
     "ok": false
    }
@@ -1135,7 +1145,7 @@
  "summary": {
   "changes": {
    "gaps": 1,
-   "total": 15
+   "total": 16
   },
   "claims": {
    "gaps": 0,
@@ -1146,7 +1156,7 @@
    "total": 1
   },
   "rules": {
-   "gaps": 4,
+   "gaps": 5,
    "total": 104
   },
   "year": {
@@ -1154,5 +1164,5 @@
    "total": 2
   }
  },
- "total": 554
+ "total": 555
 }
