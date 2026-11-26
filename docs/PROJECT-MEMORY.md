@@ -10,6 +10,11 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-26
 
+- 2026-11-26: feat(rnd): plug in competitors' best steps as workers (BORROW-1) (#2366)
+- 2026-11-26: queue: closing-probe verdicts for 26 item(s) (QUEUE-PERSIST-1) (part 2/2) [skip ci]
+- 2026-11-26: queue: closing-probe verdicts for 26 item(s) (QUEUE-PERSIST-1) (part 1/2) [skip ci]
+- 2026-11-26: queue: closing-probe verdicts for 27 item(s) (QUEUE-PERSIST-1) (part 2/2) [skip ci]
+- 2026-11-26: queue: closing-probe verdicts for 27 item(s) (QUEUE-PERSIST-1) (part 1/2) [skip ci]
 - 2026-11-26: fix: the kit passes its own suites as a standalone template; a shelved item keeps its lesson tracked (#2365)
 - 2026-11-26: queue: closing-probe verdicts for 11 item(s) (QUEUE-PERSIST-1) [skip ci]
 - 2026-11-26: queue: closing-probe verdicts for 16 item(s) (QUEUE-PERSIST-1) [skip ci]
