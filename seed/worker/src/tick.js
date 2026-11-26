@@ -163,7 +163,8 @@ export const LIVENESS = [
 // CONNECTOR-HEALTH-1: the consent page a reconnect card links to. Both GitHub credentials share one screen.
 export function reconnectLink(ctx, provider) {
   const origin = String((ctx.env && ctx.env.PUBLIC_ORIGIN) || '').replace(/\/$/, '');
-  return `${origin}/connect/${String(provider).startsWith('github') ? 'github' : encodeURIComponent(provider)}`;
+  const name = String(provider).replace(/^oauth:/, '');  // credential rows carry the oauth: prefix; the consent routes do not
+  return `${origin}/connect/${name.startsWith('github') ? 'github' : name.startsWith('mcp:') ? 'mcp' : encodeURIComponent(name)}`;
 }
 
 export const STEPS = {
