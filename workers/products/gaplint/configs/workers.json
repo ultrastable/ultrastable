@@ -1,0 +1,17 @@
+{
+  "_note": "gaplint configuration for ultrastable/workers itself (US-23-R04, US-23-R07). It names the rules and phrases this repository's contract (agents/CONTRACT.md, rendered into AGENTS.md) really carries. GL007 is off: the memory file of the organization lives in the platform repository, not here. A finding is cleared by fixing the file, never by editing this list.",
+  "rules": ["GL001", "GL002", "GL003", "GL004", "GL006", "GL010"],
+  "agent_rules": {
+    "files": ["AGENTS.md"],
+    "required": {
+      "work is an item": "Work is an item",
+      "nothing exists only in chat": "Nothing exists only in chat",
+      "never review your own work": "Never review your own work",
+      "self-closed loops": "SELF-CLOSED-LOOPS-1",
+      "closed-loop axiom": "CLOSED-LOOP-AXIOM",
+      "code-only order": "CODE-ONLY-ORDER",
+      "secrets are never handled": "Secrets are never handled"
+    }
+  },
+  "self_closed": { "required_in": ["AGENTS.md", "agents/CONTRACT.md"], "scan": ["docs/handoff/*.md"] }
+}

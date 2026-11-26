@@ -15,7 +15,7 @@ const SKIP = new Set(['node_modules', '.git', '__pycache__']);
 export function scanFiles(root) {
   const out = [];
   const walk = d => { for (const n of readdirSync(d)) { if (SKIP.has(n)) continue; const p = path.join(d, n), st = statSync(p);
-    if (st.isDirectory()) walk(p); else if (/\.(m?js)$/.test(n)) out.push({ path: path.relative(root, p).split(path.sep).join('/'), text: readFileSync(p, 'utf8') }); } };
+    if (st.isDirectory()) walk(p); else if (/\.([mc]?[jt]sx?|py)$/.test(n)) out.push({ path: path.relative(root, p).split(path.sep).join('/'), text: readFileSync(p, 'utf8') }); } };
   walk(root); return out;
 }
 export function graphDb() {

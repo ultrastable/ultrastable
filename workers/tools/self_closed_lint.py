@@ -57,7 +57,11 @@ def main():
     elif sh("git", "rev-parse", "--verify", base).returncode != 0:
         fail.append(f"base {base} not found, so the added-line scan cannot run (fetch it, or pass --no-diff to check instruction files only)")
     else:
-        d = sh("git", "diff", "-U0", f"{base}...HEAD").stdout.splitlines()
+        diff = sh("git", "diff", "-U0", f"{base}...HEAD")
+        if diff.returncode != 0:
+            # US-20-R16: a diff that cannot be computed (no merge base, shallow history) is a failure, never a pass.
+            fail.append(f"git diff {base}...HEAD failed (exit {diff.returncode}), so the added-line scan cannot run: {diff.stderr.strip()[:200]}")
+        d = diff.stdout.splitlines()
         cur = None
         for l in d:
             if l.startswith("+++ b/"):
@@ -73,4 +77,5 @@ def main():
     sys.exit(1 if fail else 0)
 
 
-main()
+if __name__ == "__main__":
+    main()

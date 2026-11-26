@@ -55,3 +55,9 @@ test('US-31-R23: a file the registry names wins over the recorded path of the sa
     assert.equal(q.sha, 'main');
   } finally { console.warn = origWarn; }
 });
+
+test('US-31-R62: the text-form reader of vendor_sync.mjs reads a JSON-form VENDORED_FROM as an empty record (observed behaviour, named in the requirement)', () => {
+  const json = JSON.stringify({ schema: 'vendored-from/1', source: 'ultrastable/workers', commit: 'c1', files: { 'core/x.js': 'a'.repeat(64) } }, null, 1);
+  assert.deepEqual(parseRecord(json), {});
+  assert.deepEqual(parseRecord('ultrastable/ultrastable@c1\nseed/a.js -> vendor/ultrastable/a.js sha256:' + 'b'.repeat(64) + '\n'), { 'seed/a.js': 'vendor/ultrastable/a.js' }, 'the text form is the one it reads');
+});

@@ -109,5 +109,65 @@ class Rules(unittest.TestCase):
         self.assertEqual(main([d2.name]), 1)
 
 
+class SelfClosed(unittest.TestCase):
+    """GL010 (SELF-CLOSED-LOOPS-1), US-23-R04: agent files carry the rule; handoff files do not wait on a person."""
+
+    def cfg(self, d, **extra):
+        cfg = load(Path(d.name))
+        cfg["rules"] = ["GL010"]
+        cfg["self_closed"] = {"required_in": ["agents/AGENTS.md"], "scan": ["docs/handoff/*.md"], **extra}
+        return cfg
+
+    def test_a_missing_rule_and_text_that_waits_on_a_person_are_flagged(self):
+        d = make({"agents/AGENTS.md": "x\n", "docs/handoff/a.md": "pending owner decision on X\n"})
+        self.assertEqual([f.rule for f in run(Path(d.name), self.cfg(d))], ["GL010", "GL010"])
+
+    def test_a_clean_repository_passes_and_an_identity_gate_line_is_exempt(self):
+        d = make({"agents/AGENTS.md": "SELF-CLOSED-LOOPS-1\n", "docs/handoff/a.md": "system proceeds on the default\nIC-GATE-001: pending owner decision on signing\n"})
+        self.assertEqual(list(run(Path(d.name), self.cfg(d))), [])
+
+    def test_owner_to_decide_is_matched(self):
+        d = make({"agents/AGENTS.md": "SELF-CLOSED-LOOPS-1\n", "docs/handoff/a.md": "waiting for the owner to decide\nleft for the owner to approve\n"})
+        self.assertEqual(len(list(run(Path(d.name), self.cfg(d)))), 2)
+
+    def test_gl010_is_off_by_default_and_named_in_the_rule_table(self):
+        from gaplint.rules import RULES
+        self.assertIn("GL010", RULES)
+        self.assertNotIn("GL010", load(Path(tempfile.mkdtemp()))["rules"])
+
+
+class AutonomyLine(unittest.TestCase):
+    """GL008: with a doctrine file that carries an `autonomy` block, the autonomy line must be present in its files."""
+
+    def test_the_autonomy_line_is_required_where_the_doctrine_says(self):
+        doctrine = {"tagline": "Ultrastable is the foundation for any autonomous system", "pattern": r"foundation\s+for\s+any\s+autonomous\s+system",
+                    "inject": {"md_files": ["README.md"], "check_only": []},
+                    "autonomy": {"tagline": "A system is autonomous if it has self-referential loops", "pattern": r"self-referential\s+loops", "md_files": ["README.md"], "check_only": []}}
+        d = make({"doctrine/positioning.json": json.dumps(doctrine), "README.md": "Ultrastable is the foundation for any autonomous system.\n"})
+        cfg = load(Path(d.name)); cfg["rules"] = ["GL008"]; cfg["tagline"]["doctrine"] = "doctrine/positioning.json"
+        found = list(run(Path(d.name), cfg))
+        self.assertEqual([(f.rule, f.message[:21]) for f in found], [("GL008", "autonomy line missing")])
+        (Path(d.name) / "README.md").write_text("Ultrastable is the foundation for any autonomous system. It has self-referential loops.\n", encoding="utf-8")
+        self.assertEqual(list(run(Path(d.name), cfg)), [])
+
+
+class SelfApplication(unittest.TestCase):
+    """US-23-R04, US-23-R07: gaplint run on the checkout it ships in, with the configuration that names what this repository's contract carries."""
+    ROOT = Path(__file__).resolve().parents[3]
+
+    def test_gaplint_with_configs_workers_exits_0_on_this_checkout(self):
+        cfg = Path(__file__).resolve().parents[1] / "configs" / "workers.json"
+        if not (self.ROOT / "agents" / "CONTRACT.md").exists():
+            self.skipTest("not inside the workers checkout")
+        self.assertEqual(main([str(self.ROOT), "--config", str(cfg)]), 0)
+
+    def test_the_workers_configuration_fails_when_the_contract_loses_a_rule(self):
+        cfg = Path(__file__).resolve().parents[1] / "configs" / "workers.json"
+        d = make({"AGENTS.md": "Work is an item. Nothing exists only in chat.\n", "agents/CONTRACT.md": "x\n"})
+        found = list(run(Path(d.name), load(Path(d.name), cfg)))
+        self.assertTrue(any(f.rule == "GL003" for f in found))
+        self.assertTrue(any(f.rule == "GL010" for f in found))
+
+
 if __name__ == "__main__":
     unittest.main()

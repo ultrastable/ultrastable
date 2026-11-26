@@ -14,6 +14,10 @@ Rules (each is enforced by code, and each outcome is written back to the tracker
       box ticked closes itself.
   L4  An issue whose linked pull request has had no update for the stale period is labelled `stalled`.
   L5  The run writes a summary of open loops by rule; the exit status is 1 while any open loop remains past the grace period.
+  L6  US-23-R06, privilege to close: a loop that can detect a defect but is not permitted to act is itself an open loop. When the token
+      cannot read what an open issue's probe needs (Actions runs for ci_green, releases for release_exists), the closer files exactly one
+      `CAPABILITY GAP: <what> cannot be read by the loop closer` issue per gap (deduplicated by title across open and closed, reopened
+      when the gap recurs) whose closing probe (`ci_readable`, `releases_readable`) passes once the read works; the exit status is 1 while a gap exists.
 
   python tools/loop_closer.py --repo OWNER/REPO [--apply] [--grace-hours 24] [--stale-days 7]
 
@@ -40,6 +44,7 @@ class Gh:
 
     def __init__(self, repo: str):
         self.repo = repo
+        self.unreadable: dict[str, str] = {}  # what this token cannot read, with the reason (US-23-R06)
 
     def _run(self, *args, data: str | None = None) -> str:
         out = subprocess.run(["gh", *args], input=data, capture_output=True, text=True, check=True)
@@ -62,17 +67,25 @@ class Gh:
         try:
             j = self._run("run", "list", "-R", self.repo, "-w", workflow, "-b", branch, "--limit", "10", "--json", "status,conclusion")
         except subprocess.CalledProcessError as e:
-            print(f"latest_ci unavailable ({(e.stderr or '').strip()[:200]}); ci_green probes are skipped this run", file=sys.stderr)
+            why = (e.stderr or "").strip()[:200] or "gh run list failed"
+            print(f"latest_ci unavailable ({why}); ci_green probes cannot be evaluated: a capability gap is filed (US-23-R06)", file=sys.stderr)
+            self.unreadable["ci"] = why
             return None
+        self.unreadable.pop("ci", None)
         done = [r for r in json.loads(j) if r.get("status") == "completed"]
         return done[0]["conclusion"] if done else None
 
     def release_tags(self) -> set[str] | None:
         """Tags of published releases, or None when the list cannot be read."""
         try:
-            return {r["tagName"] for r in json.loads(self._run("release", "list", "-R", self.repo, "--limit", "100", "--json", "tagName"))}
-        except subprocess.CalledProcessError:
+            tags = {r["tagName"] for r in json.loads(self._run("release", "list", "-R", self.repo, "--limit", "100", "--json", "tagName"))}
+        except subprocess.CalledProcessError as e:
+            self.unreadable["releases"] = (e.stderr or "").strip()[:200] or "gh release list failed"
             return None
+        self.unreadable.pop("releases", None)
+        return tags
+
+    def reopen(self, n: int, text: str): self._run("issue", "reopen", str(n), "-R", self.repo, "--comment", text)
 
     def comment(self, n: int, text: str): self._run("issue", "comment", str(n), "-R", self.repo, "--body", text)
     def close(self, n: int, text: str): self._run("issue", "close", str(n), "-R", self.repo, "--reason", "completed", "--comment", text)
@@ -121,12 +134,62 @@ def linked_prs(n: int, prs: dict[int, dict]) -> list[dict]:
     return [p for p in prs.values() if pat.search(p.get("body") or "")]
 
 
+GAPS = {
+    # probe kind that needs the capability -> (key in gh.unreadable, what cannot be read, the issue's closing probe kind)
+    "ci_green": ("ci", "the Actions runs of main", "ci_readable"),
+    "release_exists": ("releases", "the published releases", "releases_readable"),
+}
+GAP_TITLE = "CAPABILITY GAP: {what} cannot be read by the loop closer"
+
+
+def capability_gaps(gh, issues: dict[int, dict], tags) -> list[dict]:
+    """US-23-R06: the capabilities an open issue's probe needs and this token lacks. One gap per capability, however many issues need it."""
+    unreadable = dict(getattr(gh, "unreadable", {}) or {})
+    if tags is None and hasattr(gh, "release_tags") and "releases" not in unreadable and not hasattr(gh, "unreadable"):
+        unreadable["releases"] = "release list not readable"
+    found: dict[str, dict] = {}
+    for n, i in issues.items():
+        if i["state"].upper() != "OPEN":
+            continue
+        m = PROBE.search(i.get("body") or "")
+        spec = GAPS.get(m.group(1).lower()) if m else None
+        if spec and spec[0] in unreadable and spec[0] not in found:
+            found[spec[0]] = {"capability": spec[0], "what": spec[1], "probe": spec[2], "reason": unreadable[spec[0]], "needed_by": []}
+        if spec and spec[0] in found:
+            found[spec[0]]["needed_by"].append(n)
+    return list(found.values())
+
+
+def file_gaps(gh, gaps: list[dict], issues: dict[int, dict], apply: bool) -> list:
+    """One issue per gap: found by title among open and closed (reopened when closed), else created. Dry run files nothing."""
+    out = []
+    for g in gaps:
+        title = GAP_TITLE.format(what=g["what"])
+        existing = [i for i in issues.values() if i["title"] == title]
+        open_ = [i for i in existing if i["state"].upper() == "OPEN"]
+        if open_:
+            out.append((g["capability"], open_[0]["number"], "already filed"))
+            continue
+        body = (f"The loop closer's token cannot read {g['what']} ({g['reason']}). Probes that need it ({', '.join('#%d' % n for n in g['needed_by'])}) "
+                f"are never evaluated, so those loops cannot close. Give the loops workflow the permission it lacks (for example `actions: read`).\n\n"
+                f"Closing probe: {g['probe']}:{g['capability']}")
+        if not apply:
+            out.append((g["capability"], -1, "would file"))
+        elif existing and hasattr(gh, "reopen"):
+            gh.reopen(existing[0]["number"], "The capability gap has recurred: " + g["reason"])
+            out.append((g["capability"], existing[0]["number"], "reopened"))
+        else:
+            out.append((g["capability"], gh.create(title, body), "filed"))
+    return out
+
+
 def run(gh, root: Path, apply: bool, now: dt.datetime, grace_h: float, stale_d: float) -> dict:
     issues = {i["number"]: i for i in gh.issues()}
     prs = {p["number"]: p for p in gh.prs()}
-    result = {"closed": [], "open_loop": [], "stalled": [], "children": [], "epics_closed": [], "ticked": [], "incidents": []}
+    result = {"closed": [], "open_loop": [], "stalled": [], "children": [], "epics_closed": [], "ticked": [], "incidents": [], "capability_gaps": [], "gap_issues": []}
     ci = gh.latest_ci("main") if hasattr(gh, "latest_ci") else None
     tags = gh.release_tags() if hasattr(gh, "release_tags") else None
+    unreadable = getattr(gh, "unreadable", {}) or {}
     names = lambda i: {l["name"] for l in i.get("labels", [])}  # noqa: E731
 
     for n, i in sorted(issues.items()):
@@ -171,6 +234,10 @@ def run(gh, root: Path, apply: bool, now: dt.datetime, grace_h: float, stale_d: 
         if probe:
             if probe.group(1).lower() == "ci_green":
                 ok, ev = (ci == "success"), f"latest ci run on main: {ci}"
+            elif probe.group(1).lower() == "ci_readable":
+                ok, ev = ("ci" not in unreadable and hasattr(gh, "latest_ci")), "the Actions runs of main are readable" if "ci" not in unreadable else "Actions runs still unreadable"
+            elif probe.group(1).lower() == "releases_readable":
+                ok, ev = (tags is not None), "the published releases are readable" if tags is not None else "releases still unreadable"
             elif probe.group(1).lower() == "release_exists":
                 tag = probe.group(2).strip().strip("`")
                 ok, ev = (tags is not None and tag in tags), f"release {tag} {'published' if tags is not None and tag in tags else 'not found'}"
@@ -194,21 +261,32 @@ def run(gh, root: Path, apply: bool, now: dt.datetime, grace_h: float, stale_d: 
             result["stalled"].append((n, f"pull request #{live[0]['number']} idle {stale_d:g}+ days"))
             if apply and LABEL_STALLED not in names(i):
                 gh.label(n, LABEL_STALLED)
+    gaps = capability_gaps(gh, issues, tags)
+    result["capability_gaps"] = [(g["capability"], g["reason"]) for g in gaps]
+    result["gap_issues"] = file_gaps(gh, gaps, issues, apply)
     incident_title = "INCIDENT: ci is red on main"
-    open_incident = any(i["state"].upper() == "OPEN" and i["title"].startswith(incident_title) for i in issues.values())
+    incidents = [i for i in issues.values() if i["title"].startswith(incident_title)]
+    open_incident = any(i["state"].upper() == "OPEN" for i in incidents)
     if ci not in (None, "success", "cancelled", "skipped") and not open_incident:
         result["incidents"].append(ci)
         if apply:
-            gh.create(incident_title, f"The latest completed ci run on main concluded: {ci}. Fix main before anything else merges." + chr(10) + chr(10) + "Closing probe: ci_green:main")
+            closed_before = sorted((i for i in incidents if i["state"].upper() != "OPEN"), key=lambda i: i["number"])
+            if closed_before and hasattr(gh, "reopen"):
+                # US-23-R12: a recurrence reopens the earlier incident instead of filing a second one.
+                gh.reopen(closed_before[-1]["number"], f"The incident has recurred: the latest completed ci run on main concluded {ci}.")
+            else:
+                gh.create(incident_title, f"The latest completed ci run on main concluded: {ci}. Fix main before anything else merges." + chr(10) + chr(10) + "Closing probe: ci_green:main")
     return result
 
 
 def summary(r: dict) -> str:
     lines = [f"closed by probe: {len(r['closed'])}", f"open loops: {len(r['open_loop'])}", f"stalled: {len(r['stalled'])}",
-             f"child issues filed from epics: {len(r['children'])}", f"epic boxes ticked: {len(r['ticked'])}", f"epics closed: {len(r['epics_closed'])}", f"incidents opened: {len(r['incidents'])}"]
+             f"child issues filed from epics: {len(r['children'])}", f"epic boxes ticked: {len(r['ticked'])}", f"epics closed: {len(r['epics_closed'])}", f"incidents opened: {len(r['incidents'])}", f"capability gaps: {len(r['capability_gaps'])}"]
     for kind in ("open_loop", "stalled"):
         for n, why in r[kind]:
             lines.append(f"  #{n} [{kind}] {why}")
+    for cap, why in r["capability_gaps"]:
+        lines.append(f"  [capability-gap] {cap}: {why}")
     return "\n".join(lines)
 
 
@@ -225,7 +303,7 @@ def main(argv=None) -> int:
         gh.ensure_label(LABEL_OPEN, "B60205"); gh.ensure_label(LABEL_STALLED, "FBCA04")
     r = run(gh, Path(a.root), a.apply, dt.datetime.now(dt.timezone.utc), a.grace_hours, a.stale_days)
     print(summary(r))
-    return 1 if r["open_loop"] else 0
+    return 1 if (r["open_loop"] or r["capability_gaps"]) else 0
 
 
 if __name__ == "__main__":

@@ -28,6 +28,7 @@ test('US-01-R04: the Python classifier reaches the same verdict as core/export o
     `DROP TABLE IF EXISTS items; ALTER TABLE roles DROP COLUMN model; -- DELETE FROM org\nDELETE FROM claims WHERE 1; UPDATE "outcomes" SET result='x'; ALTER TABLE org RENAME TO org2;`,
     `CREATE TRIGGER t AFTER INSERT ON a BEGIN UPDATE a SET id = CASE WHEN id > 1 THEN 1 ELSE 0 END; DELETE FROM b; END; CREATE TABLE c (x TEXT DEFAULT ';--');`,
     `/* DROP TABLE x; */ REPLACE INTO t VALUES (1); INSERT OR REPLACE INTO u VALUES (2); TRUNCATE TABLE v; UPDATE OR IGNORE w SET a = 'it''s;';`,
+    `DROP TABLE main.a; DELETE FROM "main"."b"; DELETE FROM other.c; WITH g AS (SELECT 1) DELETE FROM d WHERE id IN (SELECT * FROM g); INSERT INTO e VALUES (1) ON CONFLICT(x) DO UPDATE SET x = 2; INSERT INTO f VALUES (1) ON CONFLICT DO NOTHING;`,
   ];
   const dirs = [path.join(ROOT, 'core/migrations'), path.join(ROOT, 'adapters/shared/migrations')];
   for (const m of readdirSync(path.join(ROOT, 'core'))) dirs.push(path.join(ROOT, 'core', m, 'migrations'));
@@ -103,7 +104,7 @@ test('US-01-R04: --d1 prints the wrangler export before the destructive file, re
     assert.ok(!lines.slice(0, exp).some(l => /0002_drop/.test(l)));
     // a shim for npx: `d1 export` writes the dump (or an empty file when EMPTY=1), anything else succeeds
     const bin = path.join(root, 'bin'); mkdirSync(bin);
-    writeFileSync(path.join(bin, 'npx'), `#!/bin/sh\nout=""; prev=""; for a in "$@"; do [ "$prev" = "--output" ] && out="$a"; prev="$a"; done\nif [ "$3" = "export" ] && [ -n "$out" ]; then if [ "$EMPTY" = "1" ]; then : > "$out"; else echo "CREATE TABLE org (key TEXT);" > "$out"; fi; fi\nexit 0\n`);
+    writeFileSync(path.join(bin, 'npx'), `#!/bin/sh\nout=""; prev=""; for a in "$@"; do [ "$prev" = "--output" ] && out="$a"; prev="$a"; done\nif [ "$3" = "export" ] && [ -n "$out" ]; then if [ "$EMPTY" = "1" ]; then : > "$out"; else echo "CREATE TABLE org (key TEXT);" > "$out"; fi; fi\nif [ "$3" = "execute" ]; then case "$*" in *--json*) if [ "$MISSING" = "1" ]; then echo '[{"results":[]}]'; else echo '[{"results":[{"name":"org"}]}]'; fi;; esac; fi\nexit 0\n`);
     chmodSync(path.join(bin, 'npx'), 0o755);
     const env = { ...process.env, PATH: `${bin}:${process.env.PATH}` };
     const ran = py(['--d1', 'my-db', '--run', '--dir', dir, '--export-dir', out], { env });
@@ -111,5 +112,26 @@ test('US-01-R04: --d1 prints the wrangler export before the destructive file, re
     assert.ok(statSync(path.join(out, '0002_drop.sql', 'org.sql')).size > 0);
     const empty = py(['--d1', 'my-db', '--run', '--dir', dir, '--export-dir', path.join(root, 'exports2')], { env: { ...env, EMPTY: '1' } });
     assert.equal(empty.status, 1); assert.match(empty.stderr, /export of org before 0002_drop\.sql is missing or empty; migration refused/);
+    // a table that is not on the remote database yet has nothing to lose: no export is attempted, and the file still runs
+    const none = py(['--d1', 'my-db', '--run', '--dir', dir, '--export-dir', path.join(root, 'exports3')], { env: { ...env, MISSING: '1' } });
+    assert.equal(none.status, 0, none.stderr);
+    assert.ok(!existsSync(path.join(root, 'exports3', '0002_drop.sql', 'org.sql')), 'no export of a table that is not there');
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+test('US-01-R04: apply_migrations.py reads a schema-qualified drop as the table it names and exports it first; a table in another schema is refused', () => {
+  const root = scratch();
+  try {
+    const db = path.join(root, 'local.db'); const out = path.join(root, 'exports');
+    const dir = migDir(root, { '0001_org.sql': FILES['0001_org.sql'], '0002_drop.sql': `DROP TABLE main.org;` });
+    const bare = py(['--sqlite', db, '--dir', dir]);
+    assert.notEqual(bare.status, 0, 'a qualified drop is destructive and needs --export-dir');
+    assert.match(bare.stderr, /0002_drop\.sql: destructive migration/);
+    const ok = py(['--sqlite', db, '--dir', dir, '--export-dir', out]);
+    assert.equal(ok.status, 0, ok.stderr);
+    assert.ok(readdirSync(path.join(out, '0002_drop.sql')).some(n => n.startsWith('org-')), 'the table was exported before it was dropped');
+    const attached = migDir(path.join(root, 'b'), { '0001_x.sql': `DELETE FROM other.org;` });
+    const refused = py(['--sqlite', path.join(root, 'b.db'), '--dir', attached, '--export-dir', path.join(root, 'exports-b')]);
+    assert.notEqual(refused.status, 0); assert.match(refused.stderr, /other\.org is in another schema/);
   } finally { rmSync(root, { recursive: true, force: true }); }
 });
