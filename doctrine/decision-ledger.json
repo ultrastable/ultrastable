@@ -6364,6 +6364,15 @@
    "body": "Absolute words (never) in role files and the unlearn README counted as unbound statements and pushed the budget to 11 of 10. Reworded three lines instead of raising the budget.",
    "probe": "file:tests/foundation/test_claims.py",
    "session": "session_0156nqDrC72mK9k9fb63twpf"
+  },
+  {
+   "id": "lesson-2026-11-26-slice-w05-of-the-specification-run-s-code-and-tests-shipped-",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Slice W05 of the specification run's code and tests shipped on its own",
+   "body": "feat: the predict, remediation, router and signals modules (W05). One cohesive set of files inside the 60 file and 3,000 line bound, applied to the latest main from a private working copy, with generated migrations regenerated append-only.",
+   "probe": "file:workers/core/predict/audit.js",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
   }
  ]
 }
