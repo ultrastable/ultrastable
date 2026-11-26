@@ -1,25 +1,7 @@
 {
   "$schema": "../schemas/doctrine.schema.json",
   "_doc": "OPEN-STANDARDS-1 shrink-only baseline: files that predate the standard. Drain it; never add to it.",
-  "config": [
-    "instances/qnfo/dependencies.json",
-    "instances/qnfo/foundation-loops.json",
-    "instances/ultrastable/child-link.json",
-    "instances/ultrastable/cost-budgets.json",
-    "instances/ultrastable/dependencies.json",
-    "instances/ultrastable/failure-modes.json",
-    "instances/ultrastable/gaps.json",
-    "instances/ultrastable/improvements.json",
-    "instances/ultrastable/inbox.json",
-    "instances/ultrastable/live-runtime.json",
-    "instances/ultrastable/liveness.json",
-    "instances/ultrastable/loops.json",
-    "instances/ultrastable/name-clearance.json",
-    "instances/ultrastable/objectives.json",
-    "instances/ultrastable/own-database.json",
-    "instances/ultrastable/selfhost.json",
-    "instances/ultrastable/trust-ledger.json"
-  ],
+  "config": [],
   "ledgers": [
     "doctrine/probe-log.jsonl",
     "ops/agent-cost.jsonl",

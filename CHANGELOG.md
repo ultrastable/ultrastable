@@ -4,6 +4,21 @@ generated-by: python3 -m foundation semrel --apply
 
 All notable changes, in the Keep a Changelog 1.1 format; versions follow Semantic Versioning 2.0.
 
+## [0.1.0] - 2026-11-26
+
+### Added
+
+- plug in competitors' best steps as workers (BORROW-1) (#2366)
+
+### Changed
+
+- OPEN-STANDARDS-1: open standards registry and gate (#2260)
+
+### Fixed
+
+- the kit passes its own suites as a standalone template; a shelved item keeps its lesson tracked (#2365)
+- bounded self-migration, write routes answer a read with 405, the org's security policy meets the repository standard (#2355)
+
 ## [0.1.0] - 2026-11-25
 
 ### Changed
