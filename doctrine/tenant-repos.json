@@ -161,6 +161,10 @@
      "d1_reads_per_day": 200000,
      "ai_neurons_per_day": 1
     }
+   },
+   "gh_only": {
+    "workflow": "loop.yml",
+    "max_gap_hours": 7
    }
   },
   "did-it-work": {
@@ -225,6 +229,10 @@
      "d1_reads_per_day": 200000,
      "ai_neurons_per_day": 1
     }
+   },
+   "gh_only": {
+    "workflow": "loop.yml",
+    "max_gap_hours": 7
    }
   },
   "spinoffs": {

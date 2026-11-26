@@ -67,7 +67,7 @@ import { createHosts, cloudflareHost, githubActionsHost, gcpHost, reporting, onP
 import { beat, watch, readPulse, failed, HEAVY_CADENCE_MIN } from './pulse.js';
 import { decide, healthView, readState } from './cutover.js';
 import { handleAppHost } from './apprepos.js';
-import { reconcileVisibility, pulseTenants } from './declared.js';  // DECLARED-LIVE-1
+import { reconcileVisibility, pulseTenants, watchGhOnly } from './declared.js';  // DECLARED-LIVE-1
 import { readIgnition } from './ignition.js';
 import { loopHealth } from './critloop.js';
 import { routeEvent, verifySignature, EVENT_TABLE } from './events.js';
@@ -158,6 +158,7 @@ export default {
       await b('graph-ai', () => graphAiStep({ db: env.DB, ai: gov.ai || null, config, spend: spendNow, ensureItem }));  // KGRAPH-AI-1: embeddings, extracted relations and community summaries on new graph nodes, scaled by the spend throttle
       await b('progress', () => progressStep({ db: env.DB, config, token, ensureItem }));  // PROGRESS-1: release cadence monitor; a slow system has its producers dispatched, a stalled one files STALL-<system>
       await b('freshness', () => watchFreshness({ token, repo: main, siteUrl: env.PUBLIC_ORIGIN || 'https://ultrastable.io' }));  // LIVE-FRESH-2: a stale published snapshot re-dispatches its own publisher
+      if (new Date().getUTCMinutes() < 10) await b('gh-only', () => watchGhOnly({ token, loops: config.gh_only || [] }));  // GH-ONLY-WATCH-1: GitHub-only loops get a second clock and go live the hour Pages turns on
       if (new Date().getUTCMinutes() % 30 < 10) await b('tenant-deploy', () => watchTenantDeploys({ token, repo: main }));  // TENANT-DEPLOY-1: a tenant repository's merge ships within the hour (twice an hour, ~4 subrequests)
       if (new Date().getUTCMinutes() < 10) {  // DECLARED-LIVE-1: hourly, from this one cron
         await b('tenant-pulse', async () => { const r = await pulseTenants({ targets: config.tenant_pulse || [] }); await declaredItems(env.DB, 'PULSE', r.failed, (config.tenant_pulse || []).map(x => x.id)); return r; });  // every tenant back end has a second route to run besides its own cron
