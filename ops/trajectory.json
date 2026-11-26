@@ -44,7 +44,7 @@
   {
    "area": "doctrine",
    "quiet_days": 0,
-   "recent7": 41776,
+   "recent7": 41800,
    "series": [
     0,
     0,
@@ -75,12 +75,12 @@
     0,
     0,
     0,
-    41776
+    41800
    ],
    "share_recent": 0.123,
    "share_trend": 0.123,
-   "slope": 269.5226,
-   "total": 41776
+   "slope": 269.6774,
+   "total": 41800
   },
   {
    "area": "foundation",
@@ -126,7 +126,7 @@
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 27109,
+   "recent7": 27074,
    "series": [
     0,
     0,
@@ -157,12 +157,12 @@
     0,
     0,
     0,
-    27109
+    27074
    ],
    "share_recent": 0.08,
    "share_trend": 0.08,
-   "slope": 174.8968,
-   "total": 27109
+   "slope": 174.671,
+   "total": 27074
   },
   {
    "area": "seed/worker",
@@ -1026,7 +1026,7 @@
    "total": 1419
   }
  ],
- "at": "2026-11-26T12:13:08Z",
+ "at": "2026-11-26T12:15:15Z",
  "days": 30,
  "files": [],
  "findings": [
@@ -1095,8 +1095,8 @@
    0,
    69
   ],
-  "closed": 1212,
-  "opened": 1281
+  "closed": 1216,
+  "opened": 1285
  },
  "loops": [
   {
@@ -1634,7 +1634,7 @@
   {
    "loop": "provenance",
    "quiet_days": 0,
-   "rows": 245,
+   "rows": 246,
    "series": [
     0,
     0,
@@ -1665,9 +1665,9 @@
     3,
     1,
     153,
-    21
+    22
    ],
-   "slope": 1.3764
+   "slope": 1.3829
   },
   {
    "loop": "resilience",
@@ -1824,7 +1824,7 @@
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 422,
+   "rows": 423,
    "series": [
     0,
     0,
@@ -1855,9 +1855,9 @@
     80,
     55,
     88,
-    82
+    83
    ],
-   "slope": 2.3172
+   "slope": 2.3237
   },
   {
    "loop": "ultrastability",
