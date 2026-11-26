@@ -1,0 +1,11 @@
+{
+  "id": "Q-CIFAIL-github-openstd",
+  "title": "Q-CIFAIL-github-openstd: openstd is failing in ultrastable/.github",
+  "body": "**Owner:** staff\n**Trigger:** every executor run and every ciwatch run\n**Done check:** cmd:python3 -m foundation ciwatch --probe ultrastable/.github openstd\n**Status:** open\n\nCIWATCH-1: workflow `openstd` in ultrastable/.github is red on its default branch (failure, 2026-11-26T23:04:46Z): https://github.com/ultrastable/.github/actions/runs/45908735834\n\nFix the root cause in the repository where the defect lives; do not skip or weaken the check. Failed log tail:\n\n```\nopenstd\tRun python3 tools/openstd.py\t\ufeff2026-11-26T23:04:50.7164001Z ##[group]Run python3 tools/openstd.py\nopenstd\tRun python3 tools/openstd.py\t2026-11-26T23:04:50.7164403Z ^[[36;1mpython3 tools/openstd.py^[[0m\nopenstd\tRun python3 tools/openstd.py\t2026-11-26T23:04:50.7201406Z shell: /usr/bin/bash -e {0}\nopenstd\tRun python3 tools/openstd.py\t2026-11-26T23:04:50.7201717Z ##[endgroup]\nopenstd\tRun python3 tools/openstd.py\t2026-11-26T23:04:50.7857907Z new bespoke format: .editorconfig (file type with no registered standard); declare the standard in doctrine/open-standards.json or meet it now\nopenstd\tRun python3 tools/openstd.py\t2026-11-26T23:04:50.7959594Z ##[error]Process completed with exit code 1.\n```",
+  "labels": [
+    "role:staff",
+    "ci-failure"
+  ],
+  "milestone": "Now",
+  "workstream": "Reliability"
+}

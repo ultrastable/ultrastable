@@ -5,8 +5,8 @@
 The fixture repeats the 2026-11-26 incident: the queue closed Q-LESSON-no-date-bombs as fixed on the done check `lessons --check`,
 which passes exactly while the item is held, and closing it turned the same check red on main.
 """
-import json, tempfile, unittest
-from pathlib import Path
+import json, unittest
+import _repo  # noqa: E402
 from foundation import lessons as L
 
 
@@ -21,7 +21,7 @@ def body(done, status="open", disposition=None):
 
 class Lessons(unittest.TestCase):
     def repo(self, item_body, enforced=False):
-        d = Path(tempfile.mkdtemp())
+        d = _repo.scratch()
         (d / "doctrine").mkdir()
         (d / "docs/issues").mkdir(parents=True)
         (d / ".github/workflows").mkdir(parents=True)
