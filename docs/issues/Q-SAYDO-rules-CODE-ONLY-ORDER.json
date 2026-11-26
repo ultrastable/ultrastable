@@ -1,0 +1,12 @@
+{
+  "id": "Q-SAYDO-rules-CODE-ONLY-ORDER",
+  "title": "Q-SAYDO-rules-CODE-ONLY-ORDER: says CODE-ONLY-ORDER, does not do it",
+  "body": "**Owner:** executor\n**Trigger:** say-do check (SAY-DO-1) on the watchdog run\n**Done check:** cmd:python3 -m foundation saydo --probe rules:CODE-ONLY-ORDER\n**Status:** open\n\nThe system states `CODE-ONLY-ORDER` (rules) and its code does not do it: python3 -m foundation standingorder --check: ledger decision-2026-11-26-disclose-1-the-full-specification-is-private-the-working-pro: decision recorded without a code consumer (probe must name an existing code or data file); make code consume it\n\nChange the code to do what the statement says, or change the statement to what the code does; never weaken the probe.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation saydo --probe rules:CODE-ONLY-ORDER` exits 0.\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "say-do"
+  ],
+  "milestone": "Now",
+  "workstream": "Ultrastability"
+}
