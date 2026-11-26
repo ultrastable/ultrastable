@@ -1,0 +1,11 @@
+{
+  "id": "Q-CIFAIL-mergeaudit-2529",
+  "title": "Q-CIFAIL-mergeaudit-2529: PR #2529 merged without a green checks run",
+  "body": "**Owner:** staff\n**Trigger:** every lane pass\n**Done check:** cmd:python3 -m foundation mergeaudit --probe 2529\n**Status:** open\n\nMERGE-AUDIT-1: PR #2529 (tenant-sync: ledger [skip ci]) merged at 2026-11-26T16:58:07Z with its `checks` run at `missing` on head 755d9d5. Some merge path skipped the green gate.\n\nFix what that run caught on main (run the failed step from .github/workflows/checks.yml locally), then confirm a later merged PR passed `checks`. Do not weaken a check.",
+  "labels": [
+    "role:staff",
+    "ci-failure"
+  ],
+  "milestone": "Now",
+  "workstream": "Reliability"
+}
