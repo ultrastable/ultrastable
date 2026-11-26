@@ -17,29 +17,36 @@ await router.setSwitch('all', true, 'drill');
 // fetch-style: handle(request, { router }) serves GET /spend?period=, POST /route
 ```
 
-Configuration: see `example-config.json` (generic `provider-a`/`provider-b`). Migration: `migrations/0001_router.sql` (`router_calls`, `router_switches`, `router_gate_records`).
+Configuration: see `example-config.json` (generic `provider-a`/`provider-b`). A provider with `kind: "github_models"` (`key_env` names the repository token, optional `org` and `max_prompt_chars`) is the free rung on the code host. Migrations: see the table below.
 
 ## Requirement status
 
+BUILT means implemented here, or in the module named, and covered by a passing test. Every model port is a fake in the tests; nothing here is RUNNING.
+
 | Requirement | Status | Where |
 |---|---|---|
-| US-09-R01 per-loop on/off row | PLANNED | Router provides provider and global switches; per-loop rows belong to the tick |
-| US-09-R02 global switch stops claims and leases | NOT COVERED | Claim service is another module; router honors `all` for paid calls |
-| US-09-R03 bounded drill | PLANNED | `setSwitch` exists; no drill runner |
-| US-09-R04 per-iteration bounds | PLANNED | Only `max_tokens` default is applied |
-| US-09-R05 no paid call while a cap is breached | BUILT | hard cap refuses, files `router_gate_records` row |
-| US-09-R06 never raise a cap or clear a breach by deletion | BUILT | Router never writes caps or deletes calls |
-| US-09-R07 cap steers down, never ends task while free path exists | BUILT | soft cap steps down one rung; hard cap serves only free models |
-| US-09-R08 capability first | BUILT | model `capabilities` list is the passed-canary set |
-| US-09-R09 escalation on measured signal | BUILT in `core/ladder` (`cascade`) | Here provider errors fall back in order; rung escalation with a retry bound is the ladder module |
-| US-09-R10 cost/escalation/cache/tool-call metrics | BUILT (cost, tokens, latency, outcome) / PLANNED (rest) | `router_calls`, `spend()` |
-| US-09-R11 model floor guard | PLANNED | |
-| US-09-R12 decision-model agreement gate | BUILT in `core/ladder` (`admit`, table `ladder_model_admission`) | Not consulted by `route` here: the caller asks `core/ladder` which models are admitted |
+| US-09-R01 per-loop on/off row, actions stop and measurement continues | BUILT | `caps/index.js` (`setSwitch`, `isOn`, `guardLoop`), `caps/caps.test.js`. Wiring each loop of `core/org` through `guardLoop` is the composition root's change (PLANNED). Other switches: provider and global rows here, `core/claims`, `core/deploy`, `core/ghcost` |
+| US-09-R02 global switch stops claims, renewals, deploy and secret leases | BUILT in `core/claims` (`killed()`); `caps/index.js` `killSwitchPort` feeds it and the router | `core/claims/claims.test.js`, `caps/caps.test.js` (T02) |
+| US-09-R03 bounded drill that ends with the switch off, with an age metric | BUILT | `caps/index.js` (`drill`, `drillAgeHours`; a drill refuses to run while the global switch is already on), `caps/caps.test.js`, `recurrence.test.js`. Running it on a schedule in an organization is PLANNED |
+| US-09-R04 per-iteration bounds on steps, tokens, wall-clock time and spend | BUILT | `caps/bounds.js` (`createBounds`), `router.call({ bounds, deadline_ms })`, `caps/bounds.test.js` |
+| US-09-R05 no paid call while a cap is breached; the overage is the top task | BUILT | hard cap refuses, files a `router_gate_records` row and a priority-0 `SPEND-<scope>` item, closed when spend is below the cap |
+| US-09-R06 never raise a cap or clear a breach by deletion | BUILT | Router never writes caps or deletes calls (`caps/spec-citations.test.js`) |
+| US-09-R07 cap steers down, never ends task while free path exists | BUILT | soft cap steps down one rung; hard cap serves only free models. The runner's own cap guard (`core/runner/selfdoer.js`) is another module and still skips a step at its USD cap |
+| US-09-R08 capability first | BUILT | model `capabilities` list is the passed-canary set; with a `matrix` port (`createRouter({ matrix })`) only admitted models of `request.task_class` are offered (`caps/upstream.test.js`) |
+| US-09-R09 escalation on measured signal | BUILT in `core/ladder` (`cascade`) | Here provider errors fall back in order; a retired model (HTTP 410) is skipped for 7 days and its provider's next rung serves |
+| US-09-R10 cost/escalation/cache/tool-call metrics | BUILT | `router_calls`, `spend()`; `core/ladder` (`costPerTask`, `cacheHitRate`, `toolCallValidity`) |
+| US-09-R11 model floor guard | BUILT in `core/ladder/floorguard.js` (source and bundle) | |
+| US-09-R12 decision-model agreement gate | BUILT in `core/ladder` (`admit`, table `ladder_model_admission`) | The router consults the matrix through the `matrix` port |
 | US-09-R13 review and proposal in different families | BUILT | reviewer excludes doer families of the same `item_id`; refuses with `no_distinct_family` |
-| US-09-R14 tier from budget | BUILT | `selectTier(budget, tiers)` |
-| US-09-R15 loop breaker | NOT COVERED | |
+| US-09-R14 tier from budget | BUILT | `selectTier(budget, tiers)`; all three columns asserted in `caps/spec-citations.test.js` (T05) |
+| US-09-R15 loop breaker | BUILT in `core/kernel/failure.js` (`recordAttempt`) | cited by `caps/spec-citations.test.js` |
+| Resolved upstream and the inverted-guard check | BUILT | table `router_upstream`, `caps/upstream.js` (`guardAllowed`, `costChangeProbe`, `mismatches`) |
+| Infrastructure calibration: EMA baselines, adaptive thresholds, daily, weekly stress and monthly cleanup, verified reversible adjustments | BUILT | `calibration.js`, `calibration.test.js`; see `CALIBRATION.md` |
+| GitHub Models free rung | BUILT | `providers/github-models.js`, `github-models.test.js` |
 
-Not built: L0 deterministic handlers, L1 cache, ensemble, distillation. Draft-then-verify, the persisted capability matrix, shadow sampling, the demotion step and the cost-per-task view are in `core/ladder` (see its README); `router.route` still reads capabilities from configuration and does not read that matrix.
+Layers in this repository: draft-then-verify, the persisted capability matrix, shadow sampling, the demotion step, the L0 handler registry, the L1 semantic cache, the L4 free-only ensemble, the L5 exemplar bank, the L7 budget scheduler and the cost-per-task view are in `core/ladder` (see its README); L1 exact cache with dedupe is `core/airouter`. A trained distilled specialist stays PLANNED.
+
+Migrations: `core/router/migrations/0001_router.sql`, `core/router/migrations/0002_calibration.sql`, `core/router/migrations/0003_upstream.sql`, `core/router/migrations/0004_baseline.sql`; `core/router/caps/migrations/0001_caps.sql` is a module of its own that the composition root registers.
 
 ## Workers AI provider (keyless first rung)
 

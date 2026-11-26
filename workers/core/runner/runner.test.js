@@ -170,7 +170,7 @@ test('invalid doer JSON is retried, then refused after the limit', async () => {
   assert.match(parseDoerOutput('{"summary":"s","files":[],"x":1}', { max_files: 5, max_file_bytes: 10 }).error, /unexpected keys/);
 });
 
-test('the reviewer is a different family than the doer (real router, fake fetch)', async () => {
+test('US-10-R10 the reviewer is a different family than the doer (real router, fake fetch)', async () => {
   const config = JSON.parse(readFileSync(new URL('../router/example-config.json', import.meta.url), 'utf8'));
   const env = { PROVIDER_A_API_KEY: 'sk-test-aaaa1111', PROVIDER_B_API_KEY: 'sk-test-bbbb2222' };
   const text = { doer: goodPatch(), reviewer: approve };

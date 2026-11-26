@@ -4,5 +4,6 @@
 import * as openai from './openai.js';
 import * as anthropic from './anthropic.js';
 import * as workers_ai from './workers-ai.js';
+import * as github_models from './github-models.js';
 
-export const ADAPTERS = { openai, anthropic, workers_ai };
+export const ADAPTERS = { openai, anthropic, workers_ai, github_models };

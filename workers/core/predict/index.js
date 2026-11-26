@@ -429,3 +429,4 @@ export async function step({ db, now = Date.now(), metrics = {}, read, config = 
   const h = await checkHealth(db, { now, config: config.health });
   return { scored: scored.length, hits: scored.filter(s => s.matched).length, retested: retested.length, health: h };
 }
+export { exportForAudit, recordAudit, auditAgreement } from './audit.js';

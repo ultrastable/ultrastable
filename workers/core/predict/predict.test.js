@@ -66,7 +66,7 @@ test('US-05-R01 a prediction without a metric, operator, target or due time is n
   assert.deepEqual({ ...one(db, `SELECT origin, due_at FROM predict_predictions WHERE id='ok'`) }, { origin: 'seeded', due_at: '2026-11-11 12:00:00' });
 });
 
-test('US-05-T01, US-05-R02 a due prediction items_done >= 1 with one done item scores hit, observed 1, and writes an outcome row; one not yet due is left alone', async () => {
+test('US-05-T01, US-05-R02, US-05-R15 a due prediction items_done >= 1 with one done item scores hit, observed 1, and writes an outcome row and a seed outcomes row that feeds the trust ledger; one not yet due is left alone', async () => {
   const db = mk();
   item(db, 'I1', 'done', 'done: observed');
   await P.registerMetric(db, { name: 'items_done', read_sql: `SELECT COUNT(*) FROM items WHERE status='done'` });

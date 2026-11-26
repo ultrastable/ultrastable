@@ -6,7 +6,8 @@
 // and closure of a fix on production evidence only. The register, contracts and breaker themselves are core/kernel/failure.js.
 // Ports only: ctx = { db, now(), config, probeDb?, rosters?: { registry(), live(), scanner?(), probes?(), emitters?() },
 //                     ledgers?: [{ name, read(cursor) -> [{id, target, error, ok, at}] }], stores? }.
-import { registerFailureMode, recordAttempt, canAttempt } from '../kernel/failure.js';
+import { registerFailureMode, recordAttempt, canAttempt, pruneHits } from '../kernel/failure.js';
+import { assertReadOnly } from '../kernel/util.js';
 export { visibilityRatio } from '../claims/gate.js'; // US-17-R11: one implementation, in core/claims
 
 const DEFAULTS = {
@@ -56,7 +57,8 @@ export async function statusView(ctx) {
   return {
     at: iso(now), modes, open_breakers: breakers,
     totals: { modes: modes.length, armed: count(m => m.status === 'armed'), probation: count(m => m.status === 'probation'), firing: count(m => m.firing), stale: count(m => m.stale),
-      open_remediations: count(m => m.remediation && m.remediation.status === 'open'), needs_human: count(m => m.remediation && m.remediation.status === 'needs_human'), open_breakers: breakers.length },
+      open_remediations: count(m => m.remediation && m.remediation.status === 'open'), needs_human: count(m => m.remediation && m.remediation.status === 'needs_human'),
+      exhausted: count(m => m.remediation && m.remediation.status === 'exhausted'), open_breakers: breakers.length },
   };
 }
 
@@ -68,20 +70,53 @@ export function frozenSql({ table, ts_column = 'ts', interval_min }) {
   // julianday reads 'YYYY-MM-DD HH:MM:SS' and the T form alike, so the statement needs no string rewriting of the timestamp
   return `SELECT (julianday('now') - julianday(MAX(${ident(ts_column)}))) * 1440.0 / ${Number(interval_min)} AS value, 2.0 AS expected FROM ${ident(table)}`;
 }
-/** FM-MASKED: rows whose status says ok while the payload says ok false or names an error or exception. Structured match, not substring. */
+/**
+ * FM-MASKED: rows whose status says ok while the payload says it failed. The statement is the structured classifier of
+ * core/kernel/failure.js (`payloadIsFailure`, US-17-T06) written in SQL, so the two cannot disagree: a JSON object whose `ok` or
+ * `success` is the literal false, whose `error` is a non-empty string, an object or an array, or whose `exception` is a
+ * non-empty string. A number named failed, an empty error string and a numeric 0 are not failures (US-17-R19).
+ */
 export function maskedSql({ table, status_column = 'status', payload_column = 'payload', ok_value = 'ok' }) {
   const p = ident(payload_column);
-  return `SELECT COUNT(*) AS value FROM ${ident(table)} WHERE ${ident(status_column)} = '${ident(ok_value)}' AND json_valid(${p}) AND (json_extract(${p}, '$.ok') = 0
-    OR json_extract(${p}, '$.success') = 0 OR json_type(${p}, '$.error') IN ('text','object') OR json_type(${p}, '$.exception') = 'text')`;
+  return `SELECT COUNT(*) AS value FROM ${ident(table)} WHERE ${ident(status_column)} = '${ident(ok_value)}' AND json_valid(${p}) AND json_type(${p}) = 'object' AND (
+    json_type(${p}, '$.ok') = 'false' OR json_type(${p}, '$.success') = 'false'
+    OR (json_type(${p}, '$.error') = 'text' AND json_extract(${p}, '$.error') <> '') OR json_type(${p}, '$.error') IN ('object','array')
+    OR (json_type(${p}, '$.exception') = 'text' AND json_extract(${p}, '$.exception') <> ''))`;
+}
+/**
+ * FM-COVERAGE, probe-log form (US-17-R20): how many of the registered names the probe log named inside the window, over how many are
+ * registered. The clock is read in the same statement as the data (US-17-R02). Fires when value < 0.8 * expected. `expected` is a
+ * number, or the registry is a table (`registry_table`, `registry_column`) counted in the same statement.
+ * With a registry table the numerator counts only log names that are in the registry: a name the log carries that nothing registered
+ * (a ghost) cannot stand in for a registered name that stopped reporting (that mismatch is FM-ROSTER's to report). With only a numeric
+ * `expected` there is no registry to test against, so every distinct name in the window counts and ghost names inflate the numerator.
+ */
+export function coverageSql({ table, name_column = 'name', ts_column = 'ts', window_min = 60, registry_table = null, registry_column = null, expected = null }) {
+  if (!(Number(window_min) > 0)) throw new Error('window_min must be positive');
+  let exp, known = '';
+  if (registry_table) {
+    const rc = ident(registry_column || name_column);
+    exp = `(SELECT COUNT(DISTINCT ${rc}) FROM ${ident(registry_table)})`;
+    known = ` AND ${ident(name_column)} IN (SELECT ${rc} FROM ${ident(registry_table)})`;
+  } else if (Number.isFinite(Number(expected)) && expected !== null) exp = String(Number(expected));
+  else throw new Error('name the registry table or the expected count');
+  return `SELECT COUNT(DISTINCT ${ident(name_column)}) AS value, ${exp} AS expected FROM ${ident(table)} WHERE (julianday('now') - julianday(${ident(ts_column)})) * 1440.0 <= ${Number(window_min)}${known}`;
+}
+/** The closing probe of FM-COVERAGE: the share of the registered names seen (1 when none are registered). Passes at 0.8 or more. */
+export function coverageRatioSql(opts) {
+  return `SELECT CASE WHEN expected > 0 THEN value * 1.0 / expected ELSE 1.0 END AS value FROM (${coverageSql(opts)})`;
 }
 const UNACCOUNTED_SQL = `SELECT COALESCE(SUM(scanned - executed - failed - needs_human - no_action), 0) AS value FROM kernel_loop_runs WHERE id IN (SELECT MAX(id) FROM kernel_loop_runs GROUP BY loop)`;
-const retrySql = (k, hours) => `SELECT COUNT(*) AS value FROM (SELECT target, signature FROM kernel_attempts WHERE ok = 0 AND at >= datetime('now', '-${Number(hours)} hours') GROUP BY target, signature HAVING COUNT(*) > ${Number(k)})`;
+// FM-UNBOUNDED-RETRY (US-17-R20): one (target, error signature) failed more than k times in the window since its last success or
+// source change (ok 1 and ok 2 in kernel_attempts), that is, retried past the breaker bound with no state change in between.
+const retrySql = (k, hours) => `SELECT COUNT(*) AS value FROM (SELECT a.target, a.signature FROM kernel_attempts a WHERE a.ok = 0 AND a.at >= datetime('now', '-${Number(hours)} hours')
+  AND a.id > COALESCE((SELECT MAX(b.id) FROM kernel_attempts b WHERE b.target = a.target AND b.signature = a.signature AND b.ok <> 0), 0) GROUP BY a.target, a.signature HAVING COUNT(*) > ${Number(k)})`;
 
 /**
  * Register the standard failure modes in the kernel register, each with a detector, a severity and a full contract
  * (owner, doer, trigger, closing probe, retry bound, deadline). `frozen` and `masked` name the tables to watch.
  */
-export async function installStandard(ctx, { frozen = [], masked = [], contract = {} } = {}) {
+export async function installStandard(ctx, { frozen = [], masked = [], coverage = [], contract = {} } = {}) {
   const c = cfg(ctx), base = { owner: c.owner_role, doer: c.doer, trigger: 'on_fire', max_attempts: 3, backoff_h: [1, 4, 24], deadline_h: 72, ...contract };
   const defs = [
     { id: 'FM-UNACCOUNTED', name: 'scanned minus the sum of outcome buckets', surface: 'loops', severity: 5, detector_sql: UNACCOUNTED_SQL, fire_when: 'value > 0', contract: { ...base, closing_probe: UNACCOUNTED_SQL, pass: '= 0' } },
@@ -89,6 +124,8 @@ export async function installStandard(ctx, { frozen = [], masked = [], contract 
       contract: { ...base, closing_probe: retrySql(c.breaker_k, c.breaker_window_h), pass: '= 0' } },
     ...frozen.map(f => ({ id: `FM-FROZEN-${slug(f.table)}`, name: `${f.table} stopped being written`, surface: f.table, severity: f.severity ?? 4, interval_h: f.interval_min / 60,
       detector_sql: frozenSql(f), fire_when: 'value > 2', contract: { ...base, closing_probe: frozenSql(f), pass: '<= 2' } })),
+    ...coverage.map(v => ({ id: `FM-COVERAGE-${slug(v.table)}`, name: `${v.table} names fewer registered names than expected`, surface: v.table, severity: v.severity ?? 4, interval_h: (v.window_min ?? 60) / 60,
+      detector_sql: coverageSql(v), fire_when: 'value < 0.8*expected', contract: { ...base, closing_probe: coverageRatioSql(v), pass: '>= 0.8' } })),
     ...masked.map(m => ({ id: `FM-MASKED-${slug(m.table)}`, name: `${m.table} rows report ok over a failing payload`, surface: m.table, severity: m.severity ?? 4,
       detector_sql: maskedSql(m), fire_when: 'value > 0', contract: { ...base, closing_probe: maskedSql(m), pass: '= 0' } })),
   ];
@@ -153,6 +190,51 @@ export async function externalLiveness(ctx, { table, ts_column = 'ts', interval_
       `${table} has a row newer than ${c.stale_intervals} intervals of ${interval_min} minutes`, frozenSql({ table, ts_column, interval_min }), 0);
   }
   return { ok: true, detector: name, host: c.host, writer, value, fired, evidence, item_id };
+}
+
+/**
+ * The credential-free route of the same detector (US-17-R10): read a JSON health endpoint, take the newest write time from the
+ * body (`ts_path`, dotted) and the clock from the Date header of that same response (US-17-R02), and fire on a non-200 answer, an
+ * unreadable body, a missing time or an age over `stale_intervals` of `interval_min`. A GitHub Actions run on its built-in token can
+ * make this call from outside the writer with nothing to mint. Port: ctx.fetch(url) -> { status, headers.get(name), json() }.
+ * Without a Date header the host clock is used and the evidence says so.
+ */
+export async function httpLiveness(ctx, { url, ts_path = 'ts', interval_min, writer, name = null } = {}) {
+  const c = cfg(ctx), det = name || `LIVENESS-${slug(String(url).replace(/^https?:\/\//, ''))}`;
+  if (!writer) throw new Error('name the worker that writes the probe');
+  if (!(Number(interval_min) > 0)) throw new Error('interval_min must be positive');
+  if (typeof ctx.fetch !== 'function') throw new Error('httpLiveness needs the fetch port');
+  if (writer === c.host) {
+    await hit(ctx, det, null, null, false, `refused: hosted in ${c.host}, the writer of ${url}`);
+    await openItem(ctx, `${det}-SAME-HOST`, `The liveness detector for ${url} is hosted in its writer ${writer}`, `the detector runs in a worker other than ${writer}`, `remediation_hits: a ${det} row with host other than ${writer}`, 5);
+    return { ok: false, reason: 'same_host', host: c.host, writer };
+  }
+  let value = null, evidence = null, fired = false;
+  try {
+    const res = await ctx.fetch(url);
+    if (!res || res.status !== 200) { fired = true; evidence = `HTTP ${res ? res.status : 'no response'} from ${url}`; }
+    else {
+      const body = await res.json();
+      const at = String(ts_path).split('.').reduce((o, k) => (o == null ? undefined : o[k]), body);
+      const dateHeader = res.headers && typeof res.headers.get === 'function' ? res.headers.get('date') : null;
+      const written = at == null ? NaN : (typeof at === 'number' ? at : Date.parse(String(at).includes('T') ? String(at) : String(at).replace(' ', 'T') + 'Z'));
+      const clock = dateHeader ? Date.parse(dateHeader) : nowMs(ctx);
+      if (!Number.isFinite(written)) { fired = true; evidence = `${url} answered without a readable time at ${ts_path}`; }
+      else {
+        value = (clock - written) / 60000 / interval_min;
+        fired = value > c.stale_intervals;
+        if (!dateHeader) evidence = 'no Date header: the host clock was used';
+        if (fired) evidence = `${url}: newest write ${value.toFixed(2)} intervals old${evidence ? `; ${evidence}` : ''}`;
+      }
+    }
+  } catch (e) { fired = true; evidence = `${url} unreadable: ${String((e && e.message) || e).slice(0, 200)}`; }
+  await hit(ctx, det, value, c.stale_intervals, fired, evidence);
+  let item_id = null;
+  if (fired) {
+    item_id = `${det}-STOPPED`;
+    await openItem(ctx, item_id, `${writer} stopped writing the probe behind ${url}: ${evidence}`, `${url} reports a write newer than ${c.stale_intervals} intervals of ${interval_min} minutes`, `GET ${url} returns ${ts_path} newer than ${c.stale_intervals * interval_min} minutes`, 0);
+  }
+  return { ok: true, detector: det, host: c.host, writer, value, fired, evidence, item_id };
 }
 
 // ---- silent-drop reconciliation across loops ---------------------------------------------------
@@ -265,6 +347,86 @@ export async function rosterReconcile(ctx, sets = null) {
   return { fired: total > 0, differences: total, ...diff };
 }
 
+// ---- FM-SHADOW and FM-STALE-PREDICATE, from ports (US-17-R20) ----------------------------------
+
+const readPort = async (ctx, name, given) => {
+  if (given) return { ok: true, rows: given };
+  if (typeof ctx[name] !== 'function') return { ok: false, error: `no ${name} port` };
+  try { return { ok: true, rows: (await ctx[name]()) || [] }; } catch (e) { return { ok: false, error: `${name} unreadable: ${String((e && e.message) || e).slice(0, 200)}` }; }
+};
+
+/**
+ * FM-SHADOW: the deployer's candidate list for one worker, in resolver order (`rank`, lowest wins). A worker whose winning
+ * candidate is older than another candidate with different content is serving stale code from a path that hides the newer
+ * one. Fires with the shadowing path named and the remedy (tombstone it). Ports: ctx.candidates() -> [{ worker, source, hash, at, rank }].
+ * An unreadable list fires: not knowing is not a pass.
+ */
+export async function shadowReconcile(ctx, candidates = null) {
+  const read = await readPort(ctx, 'candidates', candidates);
+  if (!read.ok) { await hit(ctx, 'FM-SHADOW', null, 0, true, read.error); return { fired: true, unreadable: true, reason: read.error, shadowed: [] }; }
+  const by = new Map();
+  for (const c of read.rows) { if (!by.has(c.worker)) by.set(c.worker, []); by.get(c.worker).push(c); }
+  const shadowed = [];
+  for (const [worker, list] of [...by.entries()].sort((a, b) => String(a[0]).localeCompare(String(b[0])))) {
+    const winner = [...list].sort((a, b) => a.rank - b.rank)[0];
+    const newer = list.filter(c => c.rank > winner.rank && c.hash !== winner.hash && parseIso(c.at) > parseIso(winner.at)).sort((a, b) => a.rank - b.rank);
+    if (newer.length) shadowed.push({ worker, serving: winner.source, serving_at: winner.at, hidden: newer.map(n => ({ source: n.source, at: n.at })) });
+  }
+  for (const w of shadowed) await openItem(ctx, `SHADOW-${slug(w.worker)}`, `${w.worker} is served from ${w.serving} (${w.serving_at}), which shadows newer code in ${w.hidden.map(h => h.source).join(', ')}: tombstone ${w.serving}`,
+    `${w.worker} resolves to its newest candidate`, `shadow reconciliation lists no shadowed candidate for ${w.worker}`, 1);
+  await hit(ctx, 'FM-SHADOW', shadowed.length, 0, shadowed.length > 0, shadowed.length ? shadowed.map(w => `${w.worker} via ${w.serving}`).join('; ') : null);
+  await run(ctx.db, `INSERT INTO remediation_reconciliations (at, kind, balanced, detail) VALUES (?, 'shadow', ?, ?)`, iso(nowMs(ctx)), shadowed.length === 0 ? 1 : 0, JSON.stringify({ shadowed, workers: by.size }));
+  return { fired: shadowed.length > 0, unreadable: false, shadowed, workers: by.size };
+}
+
+/**
+ * FM-STALE-PREDICATE: an alarm names a population (for example "496 rows stuck in state new") and its definition is a statement
+ * that is no longer true of the live data. Each alarm's population is recounted by a read-only statement and compared with the
+ * number the alarm names; a relative difference above `stale_predicate_tolerance` (default 0.25) fires. Ports:
+ * ctx.alarms() -> [{ id, named_population, recount_sql | recount() }]. An alarm that cannot be recounted fires.
+ */
+export async function stalePredicates(ctx, alarms = null) {
+  const c = cfg(ctx), tol = c.stale_predicate_tolerance ?? 0.25;
+  const read = await readPort(ctx, 'alarms', alarms);
+  if (!read.ok) { await hit(ctx, 'FM-STALE-PREDICATE', null, 0, true, read.error); return { fired: true, unreadable: true, reason: read.error, stale: [] }; }
+  const stale = [];
+  for (const a of read.rows) {
+    let live = null, error = null;
+    try {
+      if (typeof a.recount === 'function') live = Number(await a.recount());
+      else { const row = await first(ctx.probeDb || ctx.db, assertReadOnly(a.recount_sql)); live = row ? Number(row.value ?? Object.values(row)[0]) : null; }
+      if (live === null || Number.isNaN(live)) error = 'recount returned no number';
+    } catch (e) { error = `recount failed: ${String((e && e.message) || e).slice(0, 160)}`; }
+    const named = Number(a.named_population);
+    const off = error === null ? Math.abs(named - live) / Math.max(named, live, 1) : null;
+    if (error !== null || off > tol) stale.push({ alarm: a.id, named, live, error });
+  }
+  for (const a of stale) await openItem(ctx, `STALEPRED-${slug(a.alarm)}`, a.error ? `Alarm ${a.alarm} cannot be recounted: ${a.error}` : `Alarm ${a.alarm} names ${a.named} rows and the live recount is ${a.live}: its predicate is stale`,
+    `alarm ${a.alarm} names the population it actually matches`, `recount of ${a.alarm} is within ${tol * 100}% of the population it names`, 1);
+  await hit(ctx, 'FM-STALE-PREDICATE', stale.length, 0, stale.length > 0, stale.length ? stale.map(a => `${a.alarm}: names ${a.named}, live ${a.live ?? 'unreadable'}`).join('; ') : null);
+  await run(ctx.db, `INSERT INTO remediation_reconciliations (at, kind, balanced, detail) VALUES (?, 'stale_predicate', ?, ?)`, iso(nowMs(ctx)), stale.length === 0 ? 1 : 0, JSON.stringify({ stale, alarms: read.rows.length }));
+  return { fired: stale.length > 0, unreadable: false, stale, alarms: read.rows.length };
+}
+
+// ---- retention (US-17-R24) ----------------------------------------------------------------------
+
+/**
+ * Prune this module's append-only tables and the kernel register's (core/kernel/failure.js pruneHits) by age. The newest hit of every
+ * detector is kept; sightings (their counts drive registration), the item ledger (it restores vanished items) and the cursors are state, not history,
+ * and are never pruned.
+ */
+export async function prune(ctx, { keep_days } = {}) {
+  const days = Number(keep_days ?? cfg(ctx).prune_keep_days ?? 30);
+  if (!(days >= 0)) throw new Error('keep_days must be a non-negative number');
+  const cutoff = iso(nowMs(ctx) - days * 86400000);
+  const out = { cutoff, keep_days: days };
+  out.hits = (await run(ctx.db, `DELETE FROM remediation_hits WHERE ts < ? AND id NOT IN (SELECT MAX(id) FROM remediation_hits GROUP BY detector)`, cutoff)).meta.changes;
+  out.sighting_log = (await run(ctx.db, `DELETE FROM remediation_sighting_log WHERE at < ?`, cutoff)).meta.changes;
+  out.reconciliations = (await run(ctx.db, `DELETE FROM remediation_reconciliations WHERE at < ? AND id NOT IN (SELECT MAX(id) FROM remediation_reconciliations GROUP BY kind)`, cutoff)).meta.changes;
+  out.kernel = await pruneHits(ctx.db, { keep_days: days, now: nowMs(ctx) });
+  return out;
+}
+
 // ---- a breaker for a ledger whose writer has none (US-17-R08) ----------------------------------
 
 /**
@@ -278,14 +440,14 @@ export async function breakerFromLedger(ctx, ledger) {
   const rows = (await ledger.read(cur ? cur.cursor : null)) || [];
   const opened = [];
   for (const r of rows) {
-    const res = await recordAttempt(ctx.db, { target: String(r.target), signature: String(r.error || 'ok').slice(0, 200), ok: !!r.ok, now: r.at ? parseIso(r.at) : nowMs(ctx),
+    const res = await recordAttempt(ctx.db, { target: String(r.target), signature: String(r.error || 'ok').slice(0, 200), ok: !!r.ok, now: r.at ? parseIso(r.at) : nowMs(ctx), source_hash: r.source_hash ?? null,
       k: c.breaker_k, window_h: c.breaker_window_h, half_open_h: c.half_open_h });
     if (res.state === 'open' && res.root_item_id) opened.push({ target: r.target, signature: r.error, root_item_id: res.root_item_id, half_open_at: res.half_open_at });
     await run(ctx.db, `INSERT INTO remediation_cursors (ledger, cursor) VALUES (?,?) ON CONFLICT(ledger) DO UPDATE SET cursor = excluded.cursor`, ledger.name, String(r.id));
   }
   return { ledger: ledger.name, read: rows.length, opened };
 }
-export const retryAllowed = (ctx, target, error) => canAttempt(ctx.db, String(target), String(error).slice(0, 200), nowMs(ctx));
+export const retryAllowed = (ctx, target, error, { source_hash = null } = {}) => canAttempt(ctx.db, String(target), String(error).slice(0, 200), nowMs(ctx), { source_hash });
 
 // ---- a repository fix closes on production evidence (US-17-R13) --------------------------------
 
@@ -316,6 +478,16 @@ export async function step(ctx) {
   for (const l of c.liveness || []) { const r = await externalLiveness(ctx, l); out.liveness.push({ table: l.table, fired: !!r.fired, reason: r.reason || null }); }
   out.breakers_opened = 0;
   for (const l of ctx.ledgers || []) out.breakers_opened += (await breakerFromLedger(ctx, l)).opened.length;
+  // the two port-based detectors run when the host supplies their ports; an idle tick keeps the shape it always had
+  if (typeof ctx.candidates === 'function') out.shadowed = (await shadowReconcile(ctx)).shadowed.length;
+  if (typeof ctx.alarms === 'function') out.stale_predicates = (await stalePredicates(ctx)).stale.length;
+  const last = await first(ctx.db, `SELECT MAX(at) AS at FROM remediation_reconciliations WHERE kind = 'prune'`);
+  if (!last || !last.at || nowMs(ctx) - parseIso(last.at) >= 86400000) {            // retention, at most once a day (US-17-R24)
+    const p = await prune(ctx);
+    await run(ctx.db, `INSERT INTO remediation_reconciliations (at, kind, balanced, detail) VALUES (?, 'prune', 1, ?)`, iso(nowMs(ctx)), JSON.stringify(p));
+    const k = p.kernel, deleted = p.hits + p.sighting_log + p.reconciliations + k.hits + k.attempts + k.loop_runs + k.remediations;
+    if (deleted > 0) out.pruned = p;
+  }
   return out;
 }
 const json = (body, code = 200) => new Response(JSON.stringify(body), { status: code, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' } });

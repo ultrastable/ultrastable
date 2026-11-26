@@ -1,0 +1,16 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
+// Template for the second worker that hosts the external liveness detector (US-SPEC-17 R10). Placeholders only: no account id,
+// database id or secret belongs in this file. The entry module is the adapter's (it exports livenessWorker from
+// core/remediation/liveness-host.js with its own bindings). The watcher owns DB; PROBE_DB is the writer's database, read only.
+{
+  "name": "<system>-liveness-watcher",
+  "main": "<adapter entry that exports livenessWorker(...)>",
+  "compatibility_date": "<YYYY-MM-DD>",
+  "triggers": { "crons": ["*/15 * * * *"] },
+  "d1_databases": [
+    { "binding": "DB", "database_name": "<system>-liveness", "database_id": "<watcher database id>" },
+    { "binding": "PROBE_DB", "database_name": "<writer database name>", "database_id": "<writer database id>" }
+  ],
+  "vars": { "LIVENESS_HOST": "<system>-liveness-watcher" }
+}

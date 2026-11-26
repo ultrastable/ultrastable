@@ -13,7 +13,7 @@ export const AUDIT_QUESTIONS = [
 ];
 const DEFAULTS = {
   accept_at: 0.6, log_at: 0.3, disagreement: 0.4, domains: [], audit_questions: AUDIT_QUESTIONS,
-  min_experiment_n: 30, triage_batch: 50, reentry_states: ['published', 'distributed'],
+  min_experiment_n: 30, triage_batch: 50, reentry_states: ['published', 'distributed'], experiment_window: 200,
 };
 export const cfg = ctx => ({ ...DEFAULTS, ...(ctx.config || {}) });
 function nowMs(ctx) {
@@ -28,6 +28,38 @@ const first = async (db, sql, ...a) => (await db.prepare(sql).bind(...a).first()
 const run = (db, sql, ...a) => db.prepare(sql).bind(...a).run();
 const isWeight = w => typeof w === 'number' && Number.isFinite(w) && w >= 0 && w <= 1;
 const norm = s => String(s).replace(/\s+/g, ' ').trim().toLowerCase();
+
+// ---- assertion presence on word stems (US-12-R20) ----------------------------------------------
+
+const SUFFIXES = ['ations', 'ation', 'ments', 'ment', 'nesses', 'ness', 'ings', 'ing', 'edly', 'ed', 'ly', 'es', 'ers', 'er', 's'];
+/** A deterministic suffix stripper: plurals and -ed -ing -ly -ation -ness -ment forms meet at one stem. Tokens with digits are never altered. */
+export function stem(word) {
+  const w = String(word).toLowerCase();
+  if (/\p{N}/u.test(w) || w.length <= 3) return w;
+  let t = w;
+  if (t.endsWith('ies') && t.length > 4) t = `${t.slice(0, -3)}y`;
+  else for (const suf of SUFFIXES) {
+    if (!t.endsWith(suf) || t.length - suf.length < 3) continue;
+    if (suf === 's' && t.endsWith('ss')) continue;
+    t = t.slice(0, -suf.length); break;
+  }
+  return t.endsWith('e') && t.length > 3 ? t.slice(0, -1) : t;
+}
+// A number keeps what changes its meaning: a leading sign, a trailing percent sign and a comparison operator directly before it,
+// so -5, 5, 5% and >5 are four different tokens. A hyphen between digits (a range such as 5-10) is not a sign.
+const NUM = String.raw`\p{N}+(?:[.,]\p{N}+)*`;
+const TOKEN_RE = new RegExp(String.raw`(?:[<>]=?|!=)\s*[-+]?${NUM}(?:\s?%)?|(?<![\p{L}\p{N}])[-+]${NUM}(?:\s?%)?|${NUM}(?:\s?%)?|\p{L}+`, 'gu');
+export const stemWords = text => (String(text).toLowerCase().replace(/\u2212/g, '-').replace(/\u2265/g, '>=').replace(/\u2264/g, '<=').replace(/\u2260/g, '!=')
+  .match(TOKEN_RE) || []).map(t => stem(t.replace(/\s+/g, '')));
+/** True when the assertion's stems occur as one contiguous run in the content's stems; numbers must match exactly, with their sign, percent sign and comparison operator. */
+export function assertionPresent(content, assertion) {
+  const need = stemWords(assertion);
+  if (!need.length) return norm(content).includes(norm(assertion));
+  const have = stemWords(content);
+  for (let i = 0; i + need.length <= have.length; i++) if (need.every((w, j) => have[i + j] === w)) return true;
+  return false;
+}
+const sameAssertion = (a, b) => stemWords(a).join(' ') === stemWords(b).join(' ');
 const list = s => { try { const v = JSON.parse(s); return Array.isArray(v) ? v : null; } catch { return null; } };
 async function incident(ctx, kind, o = {}) {
   await run(ctx.db, `INSERT INTO signals_incidents (at, kind, worker, source, domain, ref, detail) VALUES (?,?,?,?,?,?,?)`,
@@ -70,6 +102,41 @@ export async function proposeFitnessThreshold(ctx, { threshold, n, fitness_yield
   return { adopted, reason, threshold: await fitnessThreshold(ctx) };
 }
 
+/**
+ * What each triaged signal's artifacts later closed (US-12-R21): the sum of (before_count - after_count) over the accepted
+ * strict-shrink revisions of every artifact built from the signal. A signal none of whose artifacts has been revised stays unrealized (null).
+ */
+export async function realize(ctx) {
+  const reductions = new Map();
+  for (const a of await all(ctx.db, `SELECT id, source_signals FROM signals_artifacts`)) {
+    const revs = await all(ctx.db, `SELECT accepted, reason, before_count, after_count FROM signals_revisions WHERE artifact_id = ?`, a.id);
+    if (!revs.length) continue;
+    const got = revs.filter(r => r.accepted && r.reason === 'strict_shrink').reduce((n, r) => n + (r.before_count - r.after_count), 0);
+    for (const sid of list(a.source_signals) || []) reductions.set(sid, (reductions.get(sid) || 0) + got);
+  }
+  let updated = 0;
+  for (const [sid, v] of reductions) updated += (await run(ctx.db, `UPDATE signals_effort SET realized_reduction = ? WHERE signal_id = ? AND (realized_reduction IS NULL OR realized_reduction <> ?)`, v, sid, v)).meta.changes;
+  return { realized: reductions.size, updated };
+}
+/**
+ * The experiment of the section 3 fitness rule, computed from recorded outcomes: over the newest realized signals, a fitness pick
+ * (the top k by expected reduction per unit of effort) against a recency pick (the newest k), each scored by the open questions its
+ * artifacts closed per unit of effort. The proposed threshold is the lowest fitness score among the fitness picks; `proposeFitnessThreshold`
+ * decides whether it is adopted. With no realized signal nothing is recorded: there is nothing to measure.
+ */
+export async function runFitnessExperiment(ctx, { k } = {}) {
+  const c = cfg(ctx);
+  const rows = await all(ctx.db, `SELECT signal_id, expected_reduction, effort, realized_reduction FROM signals_effort WHERE realized_reduction IS NOT NULL AND effort > 0 ORDER BY recorded_at DESC, rowid DESC LIMIT ?`, c.experiment_window);
+  if (!rows.length) return { skipped: 'no_realized_signals' };
+  const n = rows.length, pick = Math.max(1, Math.min(k ?? Math.floor(n / 2), n));
+  const score = r => r.expected_reduction / r.effort;
+  const yieldOf = rs => { const e = rs.reduce((x, r) => x + r.effort, 0); return e > 0 ? rs.reduce((x, r) => x + r.realized_reduction, 0) / e : 0; };
+  const fitnessPick = [...rows].sort((x, y) => score(y) - score(x)).slice(0, pick), recencyPick = rows.slice(0, pick);
+  const threshold = Math.min(...fitnessPick.map(score));
+  const r = await proposeFitnessThreshold(ctx, { threshold, n, fitness_yield: yieldOf(fitnessPick), recency_yield: yieldOf(recencyPick) });
+  return { ...r, n, k: pick, proposed_threshold: threshold, fitness_yield: yieldOf(fitnessPick), recency_yield: yieldOf(recencyPick) };
+}
+
 // ---- L1 triage ---------------------------------------------------------------------------------
 
 const clamp = v => Math.max(0, Math.min(1, Number(v)));
@@ -85,9 +152,14 @@ export async function triage(ctx) {
   if (!useFitness && scorers.length < 2) return { ...out, skipped: 'scorecard_needs_two_models' };
   out.method = useFitness ? 'fitness' : 'scorecard';
   for (const s of await all(ctx.db, `SELECT * FROM signals_signals WHERE status = 'proposed' ORDER BY ts, id LIMIT ?`, c.triage_batch)) {
-    let score, decision;
+    let score, decision, f = null;
+    // US-12-R21: what the fitness port expected is recorded for every triaged signal, also while the scorecard decides, so the experiment has data.
+    if (typeof ctx.fitness === 'function') {
+      f = await ctx.fitness(s);
+      if (f && Number.isFinite(Number(f.expected_reduction)) && Number.isFinite(Number(f.effort)))
+        await run(ctx.db, `INSERT OR IGNORE INTO signals_effort (signal_id, expected_reduction, effort, recorded_at) VALUES (?,?,?,?)`, s.id, Number(f.expected_reduction), Number(f.effort), iso(nowMs(ctx)));
+    }
     if (useFitness) {
-      const f = await ctx.fitness(s);
       score = Number(f.effort) > 0 ? Number(f.expected_reduction) / Number(f.effort) : 0;
       decision = score > threshold ? 'ACCEPT' : score > 0 ? 'LOG' : 'IGNORE';
     } else {
@@ -148,7 +220,7 @@ export async function synthesize(ctx, { worker, signal_ids, id, type = 'note' })
   if (!a || !a.title || !a.content) throw new Error('synthesis must return a title and content');
   const at = iso(nowMs(ctx)), artifactId = id || `art-${at.replace(/[- :]/g, '')}-${(await first(ctx.db, `SELECT COUNT(*) AS n FROM signals_artifacts`)).n + 1}`;
   const assertions = (a.assertions || []).map(String);
-  const lost = assertions.filter(x => !norm(a.content).includes(norm(x)));
+  const lost = assertions.filter(x => !assertionPresent(a.content, x));
   if (lost.length) throw new Error('every assertion must appear in the content');
   await run(ctx.db, `INSERT INTO signals_artifacts (id, type, title, abstract, content, assertions, source_signals, made_by, created_at) VALUES (?,?,?,?,?,?,?,?,?)`,
     artifactId, type, String(a.title), a.abstract ?? null, String(a.content), JSON.stringify(assertions), JSON.stringify(used.map(s => s.id)), worker, at);
@@ -186,8 +258,17 @@ export async function revise(ctx, artifact_id, { content, open_questions = null,
     return { accepted, reason, before: before ? before.length : null, after };
   };
   if (!before) return book(false, 'not_audited', 0, 'U(a) is not recorded: audit the artifact first');
+  if (Array.isArray(assertions)) {
+    // A listed assertion must be present in the revised content, as at synthesis: a phantom one would be stored and make every later revision read as narrowing.
+    const phantom = assertions.map(String).filter(x => !assertionPresent(content, x));
+    if (phantom.length) {
+      await incident(ctx, 'phantom_assertion', { ref: artifact_id, detail: `${phantom.length} listed assertion(s) not in the revised content: ${phantom.map(r => r.slice(0, 60)).join(' | ')}` });
+      return book(false, 'assertion_not_in_content', before.length, `${phantom.length} listed assertion(s) not in the content`);
+    }
+  }
   let after = open_questions;
-  if (!Array.isArray(after)) {
+  const supplied = Array.isArray(after);
+  if (!supplied) {
     if (typeof ctx.auditor !== 'function') throw new Error('a revision needs its open questions or an auditor port');
     after = [];
     for (const q of cfg(ctx).audit_questions) if (!(await ctx.auditor({ ...a, content }, q))) after.push(q);
@@ -195,9 +276,14 @@ export async function revise(ctx, artifact_id, { content, open_questions = null,
   const was = new Set(before);
   const strict = after.length < before.length && after.every(q => was.has(q));
   if (!strict) return book(false, 'no_shrink', after.length, after.some(q => !was.has(q)) ? 'the revision reopened or added a question' : null);
+  if (supplied && typeof ctx.auditor === 'function') {
+    // US-12-R19: a caller-supplied list may not claim a shrink the auditor does not see. Every question the auditor still finds open must be in it.
+    const claimed = new Set(after), disagree = [];
+    for (const q of cfg(ctx).audit_questions) if (!claimed.has(q) && !(await ctx.auditor({ ...a, content }, q))) disagree.push(q);
+    if (disagree.length) return book(false, 'audit_disagrees', after.length, `the auditor still finds ${disagree.length} question(s) open that the revision omitted: ${disagree.map(d => d.slice(0, 40)).join(' | ')}`);
+  }
   const kept = Array.isArray(assertions) ? assertions.map(String) : list(a.assertions) || [];
-  const body = norm(content);
-  const removed = (list(a.assertions) || []).filter(x => !body.includes(norm(x)) || !kept.some(k => norm(k) === norm(x)));
+  const removed = (list(a.assertions) || []).filter(x => !assertionPresent(content, x) || !kept.some(k => sameAssertion(k, x)));
   if (removed.length) {
     await incident(ctx, 'narrowing', { ref: artifact_id, detail: `${removed.length} result-asserting statement(s) removed: ${removed.map(r => r.slice(0, 60)).join(' | ')}` });
     return book(false, 'narrowing', after.length, `${removed.length} assertion(s) removed`);
@@ -272,5 +358,6 @@ export async function status(ctx) {
 export async function step(ctx) {
   if (cfg(ctx).enabled === false) return { enabled: false };
   const re = await reenter(ctx);
-  return { reentered: re.entered.length, logged: re.logged.length, triage: await triage(ctx) };
+  const tr = await triage(ctx);
+  return { reentered: re.entered.length, logged: re.logged.length, triage: tr, realized: (await realize(ctx)).updated };
 }
