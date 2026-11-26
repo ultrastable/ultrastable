@@ -29,11 +29,15 @@ jobs:
           LANE_APP_ID: ${{ secrets.LANE_APP_ID }}
           LANE_APP_PRIVATE_KEY: ${{ secrets.LANE_APP_PRIVATE_KEY }}
           ORG_ADMIN_TOKEN: ${{ secrets.ORG_ADMIN_TOKEN }}
+          LANE_PAT: ${{ secrets.LANE_PAT }}
           REPOS: ${{ inputs.repos }}
         run: |
           set -uo pipefail
+          # Order: org admin token, then the lane App, then LANE_PAT (bound here; the App secrets were not, run 45817599969).
           tok="${ORG_ADMIN_TOKEN:-}"
-          if [ -z "$tok" ]; then tok="$(python3 scripts/lane_credential.py org-token)" || { echo "::error::no org credential"; exit 1; }; fi
+          if [ -z "$tok" ] && [ -n "${LANE_APP_ID:-}" ]; then tok="$(python3 scripts/lane_credential.py org-token)" || tok=""; fi
+          [ -z "$tok" ] && tok="${LANE_PAT:-}"
+          [ -n "$tok" ] || { echo "::error::no org credential (ORG_ADMIN_TOKEN, lane App or LANE_PAT)"; exit 1; }
           echo "::add-mask::$tok"
           bad=0
           for r in $REPOS; do
