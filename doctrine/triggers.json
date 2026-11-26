@@ -420,6 +420,12 @@
     "41 6 * * *"
    ]
   },
+  "pages-enable.yml": {
+   "events": [
+    "workflow_dispatch"
+   ],
+   "crons": []
+  },
   "platform-core.yml": {
    "events": [
     "pull_request",
