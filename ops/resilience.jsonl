@@ -437,3 +437,7 @@
 {"age_s": null, "at": "2026-11-26T08:06:36Z", "clock": "replication-ledger-beat", "detail": "ultrastable-replication-ledger.ultrastable.workers.dev=200", "kind": "restart", "ok": true, "route": "http", "seq": 435}
 {"age_s": null, "at": "2026-11-26T08:06:36Z", "clock": "wf:ledger-openalex", "detail": "https://github.com/ultrastable/ultrastable/actions/runs/45780502343", "kind": "restart", "ok": true, "route": "workflow_dispatch", "seq": 436}
 {"at": "2026-11-26T08:06:36Z", "clocks": 46, "kind": "beat", "seq": 437, "stalled": 4, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:ledger-openalex"], "unmeasured": 0}
+{"age_s": null, "at": "2026-11-26T08:14:12Z", "clock": "unlearn-beat", "detail": "ultrastable-unlearn.ultrastable.workers.dev=200", "kind": "restart", "ok": true, "route": "http", "seq": 438}
+{"age_s": null, "at": "2026-11-26T08:14:12Z", "clock": "what-works-beat", "detail": "ultrastable-what-works.ultrastable.workers.dev=200", "kind": "restart", "ok": true, "route": "http", "seq": 439}
+{"age_s": null, "at": "2026-11-26T08:14:12Z", "clock": "replication-ledger-beat", "detail": "ultrastable-replication-ledger.ultrastable.workers.dev=200", "kind": "restart", "ok": true, "route": "http", "seq": 440}
+{"at": "2026-11-26T08:14:12Z", "clocks": 46, "kind": "beat", "seq": 441, "stalled": 3, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat"], "unmeasured": 0}
