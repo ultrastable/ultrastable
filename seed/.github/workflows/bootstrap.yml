@@ -30,12 +30,12 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       GITHUB_TOKEN: ${{ github.token }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Is there anything left to start?
         id: need
         run: |
           if [ "${{ github.event_name }}" = "schedule" ] && ! python3 bootstrap/intake.py --root . --needs-run; then echo "run=0" >> "$GITHUB_OUTPUT"; else echo "run=1" >> "$GITHUB_OUTPUT"; fi
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         if: steps.need.outputs.run == '1'
         with: { node-version: 24 }
       - name: Take the idea from the form
