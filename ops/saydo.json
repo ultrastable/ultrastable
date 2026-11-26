@@ -1,7 +1,7 @@
 {
- "at": "2026-11-26T12:36:58Z",
- "gaps": 8,
- "match_share": 0.986,
+ "at": "2026-11-26T12:47:29Z",
+ "gaps": 7,
+ "match_share": 0.987,
  "sources": {
   "changes": [
    {
@@ -1012,12 +1012,10 @@
    {
     "checks": 1,
     "external": [],
-    "failing": [
-     "python3 -m foundation standingorder --check: ledger decision-2026-11-26-disclose-1-the-full-specification-is-private-the-working-pro: decision recorded without a code consumer (probe must name an existing code or data file); make code consume it"
-    ],
+    "failing": [],
     "id": "CODE-ONLY-ORDER",
     "missing": [],
-    "ok": false,
+    "ok": true,
     "unmeasured": []
    },
    {
@@ -1051,7 +1049,7 @@
     "checks": 1,
     "external": [],
     "failing": [
-     "python3 -m foundation dispose --check: an open item is 95.0 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+     "python3 -m foundation dispose --check: an open item is 95.2 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
     ],
     "id": "DISPOSE-1",
     "missing": [],
@@ -1131,7 +1129,7 @@
    "total": 1
   },
   "rules": {
-   "gaps": 5,
+   "gaps": 4,
    "total": 101
   },
   "year": {
