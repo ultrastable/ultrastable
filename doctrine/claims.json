@@ -2616,6 +2616,17 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-ff82585547",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Large work is planned and worked in steps on the server (ORCHESTRATE-1, Rowan 2026-11-26).** \"Why can't Ultrastable do this entirely on",
+      "probe": [
+        "file:seed/worker/src/orchestrate.js",
+        "file:seed/worker/src/executor.js",
+        "file:seed/worker/test/orchestrate.test.js"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-95432168bf",
       "surface": "agents/AGENTS.md",
       "text": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
@@ -3816,6 +3827,18 @@
       ],
       "bound_by": "mirror",
       "of": "cited-6ab268273b"
+    },
+    {
+      "id": "mirror-434e16496c",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Large work is planned and worked in steps on the server (ORCHESTRATE-1, Rowan 2026-11-26).** \"Why can't Ultrastable do this entirely on",
+      "probe": [
+        "file:seed/worker/src/orchestrate.js",
+        "file:seed/worker/src/executor.js",
+        "file:seed/worker/test/orchestrate.test.js"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-ff82585547"
     },
     {
       "id": "mirror-be5af6748b",

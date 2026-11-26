@@ -650,11 +650,11 @@ export default {
      "id": "roadmap",
      "title": "Roadmap",
      "source": "docs/issues",
-     "headline": "1280 issue files, 31 without a runnable probe (shrink-only)",
+     "headline": "1280 issue files, 29 without a runnable probe (shrink-only)",
      "rows": [
       [
        "open issues without a probe",
-       31
+       29
       ],
       [
        "issue files",

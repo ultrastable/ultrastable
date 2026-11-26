@@ -2065,6 +2065,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **Large work is planned and worked in steps on the server (ORCHESTRATE-1, Rowan 2026-11-26).** \"Why can't Ultrastable do this entirely on",
+   "detail": "",
+   "how": "file:seed/worker/src/orchestrate.js + file:seed/worker/src/executor.js + file:seed/worker/test/orchestrate.test.js",
+   "id": "cited-ff82585547",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
@@ -2942,6 +2951,15 @@ export default {
    "detail": "",
    "how": "file:.github/workflows/cleanroom.yml + file:platform/selfhost/day.mjs + file:doctrine/cleanroom.json + file:seed/scripts/humanvoice.py + file:doctrine/coherence.json + file:workers/tools/sync_agent_files.py",
    "id": "mirror-e2926e7423",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Large work is planned and worked in steps on the server (ORCHESTRATE-1, Rowan 2026-11-26).** \"Why can't Ultrastable do this entirely on",
+   "detail": "",
+   "how": "file:seed/worker/src/orchestrate.js + file:seed/worker/src/executor.js + file:seed/worker/test/orchestrate.test.js",
+   "id": "mirror-434e16496c",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3899,7 +3917,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 430,
-  "total": 430
+  "pass": 432,
+  "total": 432
  }
 };
