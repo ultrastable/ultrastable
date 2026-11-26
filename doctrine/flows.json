@@ -16,7 +16,8 @@
     "ext.unlearn_readers": "readers of the Unlearn encyclopedia: their anonymous guesses and 'did this change your view' taps per entry (no identifier stored)",
     "ext.unlearn_literature": "new systematic reviews and DOI records published on Europe PMC and Crossref, read by the Unlearn evidence step",
     "ext.ledger_literature": "replication papers and their citation records published on OpenAlex, read from a GitHub runner by the Replication Ledger's OpenAlex mirror (OpenAlex refuses the Worker without a key)",
-    "ext.supply_chain": "OpenSSF Scorecard results and the SPDX SBOM GitHub's dependency graph exports for this repository (read weekly by supply-chain.yml)"
+    "ext.supply_chain": "OpenSSF Scorecard results and the SPDX SBOM GitHub's dependency graph exports for this repository (read weekly by supply-chain.yml)",
+    "ext.config_files": "configuration and ledger files that any worker or person commits to the repositories (read by openstd.yml against doctrine/open-standards.json)"
   },
   "flows": {
     "qnfo-sauce": {
@@ -2605,6 +2606,28 @@
       ],
       "feedback": "each Scorecard check under the floor and each package outside the licence policy is filed as a Q-STD-SC-* item; the fix lands, the next weekly reading is the item's closing probe, so a check that recovers closes its item and one that does not stays on the executor's queue",
       "bindings": []
+    },
+    "openstd": {
+      "inflows": [
+        {
+          "signal": "config.files",
+          "via": "git:main"
+        },
+        {
+          "signal": "cloudevent.recorded",
+          "via": "git:ops/openstd/events.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "cloudevent.recorded",
+          "via": "git:ops/openstd/events.jsonl"
+        }
+      ],
+      "feedback": "each drain shrinks the baseline and the next check fails on any file the drain missed; a baseline that stops shrinking files a Q-STD item through the failure-mode audit",
+      "bindings": [
+        "LANE_PAT"
+      ]
     }
   },
   "implicit_producers": {
@@ -2619,7 +2642,8 @@
     "unlearn.reader_taps": "ext.unlearn_readers",
     "unlearn.literature": "ext.unlearn_literature",
     "ledger.literature": "ext.ledger_literature",
-    "supplychain.reading": "ext.supply_chain"
+    "supplychain.reading": "ext.supply_chain",
+    "config.files": "ext.config_files"
   },
   "pending": []
 }

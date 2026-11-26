@@ -1,4 +1,5 @@
 {
+  "$schema": "../../schemas/doctrine.schema.json",
   "_doc": "STATIC-CONTENT-1 for every system (Rowan, 2026-11-25: \"Static content is NOT autonomous and is contrary to the objective of an Ultrastable system.\"). Read by scripts/staticcontent.py. `urls` are the public pages the system serves (the boot fills the first from the deployed Worker url); a page whose visible text has not changed in `max_unchanged_days` is a finding, and the fix is to bind the page to a loop (a generated block, a feed, a live read), never to touch the text. A page meant to stay fixed is exempt with a reason.",
   "max_unchanged_days": 14,
   "urls": [],
