@@ -228,6 +228,7 @@
  },
  "gap_item": "Q-DECISION-COVERAGE-1",
  "not_decisions": {
+  "foundation/reposhape.py": "plan batches a branch's changed files by class and path under a fixed size budget; the split is a deterministic computation with no alternatives to weigh",
   "foundation/semrel.py": "plan and classify map Conventional Commit types to a SemVer bump by a fixed table, with no alternatives to weigh",
   "foundation/agents.py": "route_authors maps author names to roles from environment variables, a fixed lookup with no alternatives to weigh",
   "foundation/repostd.py": "classify and desired compute a fixed standard: a branch's class from its pull requests and a repository's settings from one default block; nothing is weighed or chosen",
