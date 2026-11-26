@@ -125,7 +125,7 @@ test('US-33-R30: the gate judges a pull request on its diff alone: file count, s
   assert.deepEqual(evaluate([file('a.js')]), { ok: true, bad: [] });
   assert.match(evaluate(Array.from({ length: 61 }, (_, i) => file(`f${i}.js`))).bad[0], /^61 files exceeds 60$/);
   assert.match(evaluate([file('a.js', 'x'.repeat(MAX_ADDED_BYTES + 1))]).bad.at(-1), /diff larger than the gate limit/);
-  for (const secret of ['-----BEGIN RSA PRIVATE KEY-----', 'ghp_' + 'a'.repeat(36), 'AKIA' + 'A'.repeat(16), 'sk-ant-' + 'b'.repeat(24)]) assert.deepEqual(evaluate([file('a.js', '+' + secret)]).bad, ['a.js: secret-like content']);
+  for (const secret of ['-----BEGIN ' + 'RSA PRIVATE KEY-----', 'ghp_' + 'a'.repeat(36), 'AKIA' + 'A'.repeat(16), 'sk-ant-' + 'b'.repeat(24)]) assert.deepEqual(evaluate([file('a.js', '+' + secret)]).bad, ['a.js: secret-like content']);
   assert.equal(evaluate([file('a.js', ' context line ' + 'AKIA' + 'A'.repeat(16))]).ok, true, 'only an added line counts');
   const wf = file('.github/workflows/x.yml');
   assert.match(evaluate([wf]).bad[0], /^\.github\/workflows\/x\.yml: protected path without a Protected-change: line$/); assert.equal(evaluate([wf], { body: 'Protected-change: new job' }).ok, true);
