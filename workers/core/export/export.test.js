@@ -98,3 +98,28 @@ test('US-01-R04: statements handed in with a migration (a caller ledger row) lan
   assert.equal((await refused.ex.applyMigration('0016_refused', `DROP TABLE org;`, { also: ledgerRow(refused.db, '0016_refused') })).applied, false);
   assert.equal(rows(refused.db), 0, 'a refused migration records nothing'); assert.equal(hasOrg(refused.db), 1);
 });
+
+test('US-01-R04: a schema-qualified table, a quoted schema, a CTE delete and an upsert are classified by their table, and the export runs before the drop', async () => {
+  assert.deepEqual(classify('DROP TABLE main.items;').tables, ['items']);
+  assert.deepEqual(classify('DELETE FROM "main"."items" WHERE 1;').tables, ['items']);
+  assert.deepEqual(classify('ALTER TABLE temp.items RENAME TO old;').tables, ['items']);
+  assert.deepEqual(classify('WITH gone AS (SELECT id FROM items WHERE 0) DELETE FROM items WHERE id IN (SELECT id FROM gone);').tables, ['items']);
+  assert.deepEqual(classify("INSERT INTO org (key, value) VALUES ('a', 'b') ON CONFLICT(key) DO UPDATE SET value = excluded.value;").tables, ['org']);
+  assert.equal(classify("INSERT INTO org (key, value) VALUES ('a', 'b') ON CONFLICT(key) DO NOTHING;").destructive, false, 'an insert that leaves existing rows alone is additive');
+  const { db, store, ex } = setup();
+  db.raw.exec(`INSERT INTO org (key, value) VALUES ('name', 'Example')`);
+  const r = await ex.applyMigration('0011_qualified', `DROP TABLE main.org;`);
+  assert.equal(r.applied, true);
+  assert.equal(r.exports.length, 1, 'the table behind the schema prefix was exported, not read as "nothing to lose"');
+  assert.deepEqual(await ex.readExport((await ex.ledger())[0].object_key), [{ key: 'name', value: 'Example' }]);
+  assert.equal(store.m.size, 1);
+});
+
+test('US-01-R04: a table in an attached schema cannot be exported here, so the migration is refused and the store is untouched', async () => {
+  const { db, ex } = setup();
+  db.raw.exec(`INSERT INTO org (key, value) VALUES ('name', 'Example')`);
+  const r = await ex.applyMigration('0012_attached', `DELETE FROM other.org;`);
+  assert.equal(r.applied, false); assert.equal(r.refusal, 'table_unresolved');
+  assert.equal(count(db, `SELECT COUNT(*) AS n FROM org`), 1);
+  assert.equal(db.raw.prepare(`SELECT outcome FROM export_migrations WHERE name='0012_attached'`).get().outcome, 'refused');
+});

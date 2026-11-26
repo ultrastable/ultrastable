@@ -1,3 +1,4 @@
+import os
 # SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 # Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
 """US-19-R19: requirement ids cited in code exist in the specifications."""
@@ -56,9 +57,10 @@ class ReqIds(unittest.TestCase):
             self.assertEqual(req_ids.main(["--spec-dir", tempfile.mkdtemp(), "--code-dir", str(ROOT / "tools")]), 2)
 
     def test_us_19_r19_this_repository_cites_only_defined_ids(self):
-        specs = ROOT.parent / "spec" / "specs"
-        if not any(specs.glob("US-SPEC-*.md")):
-            self.skipTest("the specifications repository is not checked out beside this one")
+        env = os.environ.get("ULTRASTABLE_SPEC_DIR")
+        specs = Path(env) if env and any(Path(env).glob("US-SPEC-*.md")) else None
+        if specs is None:
+            self.skipTest("the specification is private (DISCLOSE-1): set ULTRASTABLE_SPEC_DIR to measure this")
         self.assertEqual(req_ids.undefined(specs, ROOT), [])
 
 

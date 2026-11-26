@@ -5,27 +5,34 @@ Goal: a person has an idea. Everything else starts from it, server-side, without
 ## The chain
 
 ```
-IDEA.md ─► read ─► detect ─► select ─► plan ─► write ─► provision ─► start ─► tick, tick, tick
- (human)   (seed)  creds,    model     roles,   org/     D1, Worker   cron     (server, forever)
-                   tools     tier      backlog, files    deploy       armed
-                                       gates
+IDEA.md ─► read ─► detect ─► select ─► cases ─► plan ─► write ─► surfaces ─► org ─► scaffold ─► ladder ─► provision ─► start
+ (human)   (seed)  creds,    model     routes   roles,  org/     routes      org     CI and      which     D1, Worker   first tick
+                   tools     tier      round    backlog files    health      plan    cycle       Cloudflare deploy      armed
+                                       blockers gates                                  workflows   route
 ```
 
-After `start`, the Worker's cron fires `runTick` every 10 minutes. Managers and staff are role rows in D1 with a model and a tick interval; each tick claims and dispatches items. Nothing needs a laptop.
+After `start`, the Worker's clock fires `runTick` every 10 minutes: a cron trigger, or on an account that refuses or never fires cron triggers a Durable Object alarm (`adapters/cloudflare/src/heartbeat.js`, rung 3 of [BOOTSTRAP-LADDER.md](BOOTSTRAP-LADDER.md)). Managers and staff are role rows in D1 with a model and a tick interval; each tick claims and dispatches items. Nothing needs a laptop.
+
+The platform's own seed kernel (`seed/bootstrap/bootstrap.py` in the monorepo) runs fifteen stages: it adds `constitute`, `qualify` (refuses an idea that fails the system test before anything is staffed), `instrument` (objectives and metrics), `year_gate` (a simulated year of faults) and `verify_live` and has no `scaffold` or `ladder`. This repository's bootstrapper is the extracted reference; every stage below is its own.
 
 ## Stages
 
 | Stage | Input | Output | If it fails |
 |---|---|---|---|
-| read | `IDEA.md`, `ultrastable.json`, `autonomy/policy.json` | parsed idea; policy validated (`validate_policy`) | missing IDEA.md: degrade to an empty charter and open a gate card; invalid policy: block |
-| detect | environment | which connector secrets are set (never their values), which tools exist | each missing secret becomes a gate card with an `env:NAME` closing probe |
-| select | budget in IDEA.md | model for doer, reviewer, manager | budget 0 uses the smallest tier |
-| plan | the above | role instances (one project manager and product manager per outcome), kit backlog `KIT-0..6`, outcome items `OUT-n`, predictions | |
-| write | plan | `org/` files, `adapters/cloudflare/wrangler.jsonc`, `adapters/cloudflare/src/config.js`, `org/seed.sql` | |
-| provision | `--apply`, Cloudflare credentials | D1 created or found, migrations applied, seed SQL executed, Worker deployed | blocked: a backlog item `BOOT-PROVISION` with the exact error |
-| start | | Worker cron armed | KIT-3 closes only when six complete ticks are seen in an hour |
+| read | `IDEA.md`, `ultrastable.json`, `autonomy/policy.json` | parsed idea; policy validated (`validate_policy`) before the idea is considered | missing IDEA.md: degrade to an empty charter and open a gate card; invalid policy: block, with or without an idea |
+| detect | environment | which connector secrets are set (never their values), which tools exist | each missing secret becomes a gate card with an `env:NAME` closing probe and a plain-words line |
+| select | budget in IDEA.md | model for doer, reviewer, manager; the reviewer from a different model family than the doer when the budget allows two | budget 0 uses the smallest tier and says that doer and reviewer share a family |
+| cases | the facts the idea and environment state | routes round each known blocker from `bootstrap/cases.json`, at most one owner card per blocker, in `org/bootstrap-cases.json` | |
+| plan | the above | role instances (one project manager and product manager per outcome), kit backlog `KIT-0..KIT-5` and `KIT-7` (and `KIT-6` when the idea says nothing may be public), outcome items `OUT-n`, predictions | |
+| write | plan | `org/` files including the owner `README.md`, `adapters/cloudflare/wrangler.jsonc`, `adapters/cloudflare/src/config.js`, `org/seed.sql` | |
+| surfaces | the machine | which routes work (disk, git, `gh`, org token, Cloudflare token), recorded | never fatal |
+| org | the code-host organization named by the idea or config | the plan to create and set up its repositories; applied only with an organization token | a card, never a stop |
+| scaffold | the idea's repositories, runtime and cycle command | CI and cycle workflows for each repository | |
+| ladder | the machine's Cloudflare sign-in | the first working route: connect, temporary account, scoped token, with every refusal recorded in `org/ladder.json` | one plain-words card when no route works |
+| provision | `--apply` and a route | D1 created or found, migrations applied, seed SQL executed, Worker deployed (alarm tick when cron is refused) | blocked: a backlog item `BOOT-PROVISION` with the exact error |
+| start | | the clock armed | KIT-3 closes only when six complete ticks are seen in an hour |
 
-The same command is safe to run repeatedly: seed rows use `INSERT OR IGNORE`, D1 creation looks for an existing database first.
+The same command is safe to run repeatedly: seed rows use `INSERT OR IGNORE`, D1 creation looks for an existing database first. A card added after the seed was written (the ladder card, the organization card) is written to `org/gate-cards.json` and `org/seed.sql` together. `--temporary` targets a temporary Cloudflare account (no cron, the alarm heartbeat, no database id).
 
 ## The tick (what the server does forever)
 
@@ -51,8 +58,8 @@ Everything an agent may do is in `autonomy/policy.json`:
 
 Add a role: a file in `agents/roles/`, an entry in `ultrastable.json`, a PR. Add a surface: an entry in `autonomy/policy.json` with ceilings and actions, a PR. Other runtimes (GCP Cloud Run + Scheduler + Firestore, AWS, self-hosted) reimplement `provision` and `start`; the tick logic, schema and policy are runtime-neutral.
 
-## Not done yet (tracked in the roadmap)
+## What is built, and what is not done yet
 
-- Model calls: the tick dispatches items to roles; the executor that calls a model with the role file and the item (and reports back through outcomes) is the next increment (PL-7).
-- Repo creation and protection (KIT-1) needs a GitHub token; the seed lists it as a gate card until provided.
-- First real `--apply` against a Cloudflare account has not been run; only the dry run, the tick logic and the policy are tested.
+- Model calls: built in `core/runner`: it takes an item to a draft pull request with a doer and a reviewer from different model families, never merges, and is off until enabled (`runner.enabled`).
+- Repository creation and protection: built in the platform host (`seed/worker/src/apprepos.js` in the monorepo, which creates a system's repository from the template with the host's own GitHub App); this repository's bootstrapper plans it in the `org` stage and lists the credential as a card.
+- A real `--apply` against a Cloudflare account: run once on 2026-11-12 on a reference account with throwaway resources, ending in a verified organization ticking from the alarm heartbeat (`org/bootstrap-live-trial.json`). Still open: a separate fresh account with no help, cron-mode ticking (the cron registered and never fired in that trial), and the `--temporary` path on a real temporary account.

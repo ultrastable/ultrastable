@@ -5,7 +5,10 @@
 // Ports: db (store handle), store (object store: put(key, text), get(key) -> { text() } | string | null; an R2 bucket fits),
 // now. Nothing here deletes an export.
 const stamp = ms => new Date(ms).toISOString().replace('T', ' ').slice(0, 19);
-const IDENT = `["\`\\[]?([A-Za-z_][A-Za-z0-9_]*)["\`\\]]?`;
+// An identifier, optionally schema-qualified (`main.items`, "main"."items"): group 1 is the schema when written, group 2 the table. Without the schema
+// part, `DROP TABLE main.items` read as a table called `main`, found no such table and was applied with nothing exported.
+const ID = `["\`\\[]?([A-Za-z_][A-Za-z0-9_]*)["\`\\]]?`;
+const IDENT = `(?:${ID}\\s*\\.\\s*)?${ID}`;
 const RULES = [
   [new RegExp(`^DROP\\s+TABLE\\s+(?:IF\\s+EXISTS\\s+)?${IDENT}`, 'i'), 'drop table'],
   [new RegExp(`^ALTER\\s+TABLE\\s+${IDENT}\\s+DROP\\b`, 'i'), 'drop column'],
@@ -13,8 +16,16 @@ const RULES = [
   [new RegExp(`^DELETE\\s+FROM\\s+${IDENT}`, 'i'), 'delete rows'],
   [new RegExp(`^UPDATE\\s+(?:OR\\s+\\w+\\s+)?${IDENT}`, 'i'), 'rewrite rows'],
   [new RegExp(`^(?:INSERT\\s+OR\\s+REPLACE|REPLACE)\\s+INTO\\s+${IDENT}`, 'i'), 'replace rows'],
+  [new RegExp(`^INSERT\\s+INTO\\s+${IDENT}[\\s\\S]*?\\bON\\s+CONFLICT\\b[\\s\\S]*?\\bDO\\s+UPDATE\\b`, 'i'), 'upsert rows'],
   [new RegExp(`^TRUNCATE\\s+(?:TABLE\\s+)?${IDENT}`, 'i'), 'truncate'],
 ];
+// A statement that starts with a common table expression (`WITH x AS (...) DELETE FROM t`) is judged by the statement after the list.
+const CTE_TAIL = /\)\s*(?=(?:DELETE\s+FROM|UPDATE\b|REPLACE\s+INTO|INSERT\s+(?:OR\s+REPLACE\s+)?INTO)\b)/i;
+const stripCte = st => {
+  if (!/^WITH\b/i.test(st)) return st;
+  const m = CTE_TAIL.exec(st);
+  return m ? st.slice(m.index + 1).trim() : st;
+};
 
 /** Split a migration into statements. Understands quotes, line and block comments, and trigger bodies (BEGIN ... END). */
 export function splitStatements(sql) {
@@ -49,9 +60,15 @@ export function classify(sql) {
   const findings = [];
   for (const st of splitStatements(sql)) {
     if (/^CREATE\s+(TEMP\w*\s+)?TRIGGER\b/i.test(st)) continue;
+    const body = stripCte(st);
     for (const [re, kind] of RULES) {
-      const m = re.exec(st);
-      if (m) { findings.push({ table: m[1], kind, statement: st.replace(/\s+/g, ' ').slice(0, 160) }); break; }
+      const m = re.exec(body);
+      if (m) {
+        // a table in the main or temp schema is the bare name; one in an attached schema keeps its schema, so the exporter cannot resolve it and refuses
+        const schema = m[1] && !/^(main|temp)$/i.test(m[1]) ? m[1] : null;
+        findings.push({ table: schema ? `${schema}.${m[2]}` : m[2], kind, statement: st.replace(/\s+/g, ' ').slice(0, 160) });
+        break;
+      }
     }
   }
   return { destructive: findings.length > 0, tables: [...new Set(findings.map(f => f.table))], findings };
@@ -110,6 +127,12 @@ export function createExporter({ db, store, now = () => Date.now(), config = {} 
     const exports = [];
     if (c.destructive) {
       for (const t of c.tables) {
+        if (t.includes('.')) { // a table of an attached schema cannot be exported here: refuse, never read it as "nothing to lose"
+          const reason = `${t} is in another schema and cannot be exported, so the migration is refused`;
+          await run(`INSERT INTO export_migrations (name, destructive, tables, outcome, reason, at) VALUES (?,?,?,?,?,?)
+            ON CONFLICT(name) DO UPDATE SET outcome=excluded.outcome, reason=excluded.reason, at=excluded.at`, name, 1, JSON.stringify(c.tables), 'refused', reason, stamp(clock()));
+          return { ok: false, applied: false, refusal: 'table_unresolved', reason, exports, findings: c.findings };
+        }
         const exists = await one(`SELECT name FROM sqlite_master WHERE type='table' AND name=?`, t).catch(() => ({ name: t }));
         if (!exists) continue; // nothing to lose: the table is not there
         const e = await exportTable(t, { migration: name });

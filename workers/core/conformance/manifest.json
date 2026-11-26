@@ -81,10 +81,6 @@
     {
      "file": "core/conformance/spec-kernel.test.js",
      "name": "US-00-T04 and US-00-R09: a request for a business plan with no pack enabled is declined with its reason and held, not dispatched"
-    },
-    {
-     "file": "core/conformance/spec-kernel.test.js",
-     "name": "US-00-T04 (todo): the decline names the pack that would cover the request"
     }
    ]
   },
@@ -1072,10 +1068,6 @@
     {
      "file": "core/sla/sla.test.js",
      "name": "US-13-T04 and R11: step runs are timed from the table; 5 h of a 4 h budget files an item, 9 h exactly one blocking question"
-    },
-    {
-     "file": "core/sla/wiring.test.js",
-     "name": "US-13-R11 and US-13-T04 and US-13-R19 in the wired org: a step 9 h into a 4 h budget files one item and one question"
     }
    ]
   },
@@ -1107,10 +1099,6 @@
    "id": "US-13-T07",
    "spec": "US-SPEC-13",
    "tests": [
-    {
-     "file": "core/sla/wiring.test.js",
-     "name": "US-13-T07 and US-13-R19: the wired org computes the autonomy card and the stored objective on its first tick"
-    },
     {
      "file": "core/sla/wiring.test.js",
      "name": "US-13-T07 and US-13-R19: through buildoutSteps with l3 supplied: the card, F and the step-budget sweep run on a tick (the behaviour the wiring must reach)"
@@ -1573,7 +1561,20 @@
   {
    "id": "T19-5",
    "spec": "US-SPEC-19",
-   "tests": []
+   "tests": [
+    {
+     "file": "tools/release_bundle.test.mjs",
+     "name": "T19-5 US-19-R16: the manifest of the committed bundle carries the very hash the launcher shows, and the installer accepts it"
+    },
+    {
+     "file": "tools/release_bundle.test.mjs",
+     "name": "T19-5 US-19-R16: a bundle whose bytes differ from the published hash is refused, whichever part changed"
+    },
+    {
+     "file": "tools/release_bundle.test.mjs",
+     "name": "T19-5 US-19-R16: main writes bundle.js, migrations.sql, manifest.json and manifest.sig whose hashes equal the generated bundle"
+    }
+   ]
   },
   {
    "id": "T19-6",
@@ -1896,12 +1897,22 @@
   {
    "id": "US-24-T09",
    "spec": "US-SPEC-24",
-   "tests": []
+   "tests": [
+    {
+     "file": "tests/test_workflow_lint.py",
+     "name": "test US-24-T09 US-24-R57 a six job matrix pr concurrency without cancel a self hosted runner and two write jobs are w10 w12 w13 w14"
+    }
+   ]
   },
   {
    "id": "US-24-T10",
    "spec": "US-SPEC-24",
-   "tests": []
+   "tests": [
+    {
+     "file": "tests/test_workflow_lint.py",
+     "name": "test US-24-T10 US-24-R12 allow timeout raises the cap to 60 and needs a reason"
+    }
+   ]
   },
   {
    "id": "US-24-T11",
@@ -8772,9 +8783,30 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "tools/release_bundle.test.mjs",
+     "name": "T19-5 US-19-R16: the manifest of the committed bundle carries the very hash the launcher shows, and the installer accepts it"
+    },
+    {
+     "file": "tools/release_bundle.test.mjs",
+     "name": "T19-5 US-19-R16: a bundle whose bytes differ from the published hash is refused, whichever part changed"
+    },
+    {
+     "file": "tools/release_bundle.test.mjs",
+     "name": "US-19-R30 US-19-R16: a signed manifest verifies with the public key and a manifest changed after signing does not"
+    },
+    {
+     "file": "tools/release_bundle.test.mjs",
+     "name": "T19-5 US-19-R16: main writes bundle.js, migrations.sql, manifest.json and manifest.sig whose hashes equal the generated bundle"
+    },
+    {
+     "file": "tools/verify_release.test.mjs",
+     "name": "US-19-R16 a published release verifies: hashes, version, products and permissions"
+    }
+   ]
   },
   {
    "id": "US-19-R17",
@@ -8943,9 +8975,22 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "tests/test_selfhost.py",
+     "name": "test US-20-R01 check fails on a hand edited agent file"
+    },
+    {
+     "file": "tests/test_selfhost.py",
+     "name": "test US-20-R01 the selfhost workflow is generated for spec license dotgithub and not for workers"
+    },
+    {
+     "file": "tests/test_selfhost.py",
+     "name": "test US-20-R01 the generated workflow passes the workflow lint in strict mode"
+    }
+   ]
   },
   {
    "id": "US-20-R02",
@@ -8953,9 +8998,30 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "tests/test_selfhost.py",
+     "name": "test US-20-R02 a complete record passes"
+    },
+    {
+     "file": "tests/test_selfhost.py",
+     "name": "test T20 2 US-20-R02 a missing item is refused"
+    },
+    {
+     "file": "tests/test_selfhost.py",
+     "name": "test US-20-R02 prediction must be checkable or na with a reason"
+    },
+    {
+     "file": "tests/test_selfhost.py",
+     "name": "test US-20-R02 US-20-R03 US-20-R05 a blank field does not take the next line as its value"
+    },
+    {
+     "file": "tests/test_selfhost.py",
+     "name": "test US-20-R02 the pull request template carries the six record fields"
+    }
+   ]
   },
   {
    "id": "US-20-R03",
@@ -8963,9 +9029,18 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "tests/test_selfhost.py",
+     "name": "test US-20-R02 US-20-R03 US-20-R05 a blank field does not take the next line as its value"
+    },
+    {
+     "file": "tests/test_selfhost.py",
+     "name": "test US-20-R03 dependency bots are exempt"
+    }
+   ]
   },
   {
    "id": "US-20-R04",
@@ -8973,9 +9048,18 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "tests/test_selfhost.py",
+     "name": "test T20 3 US-20-R04 never review your own work"
+    },
+    {
+     "file": "tests/test_selfhost.py",
+     "name": "test US-20-R04 reviewer variants with punctuation are the same reviewer"
+    }
+   ]
   },
   {
    "id": "US-20-R05",
@@ -8983,9 +9067,18 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "tests/test_selfhost.py",
+     "name": "test US-20-R02 US-20-R03 US-20-R05 a blank field does not take the next line as its value"
+    },
+    {
+     "file": "tests/test_selfhost.py",
+     "name": "test US-20-R05 evidence must be real output"
+    }
+   ]
   },
   {
    "id": "US-20-R06",
@@ -9003,6 +9096,18 @@
     {
      "file": "core/specloop/specloop.test.js",
      "name": "US-20-R06: the tick counts as many false BUILT lines as tools/spec_truth.py reports (whole, absent and nameless lines)"
+    },
+    {
+     "file": "tests/test_selfhost.py",
+     "name": "test T20 5 US-20-R06 finds false built labels only in the status section"
+    },
+    {
+     "file": "tests/test_selfhost.py",
+     "name": "test US-20-R06 several code directories are searched"
+    },
+    {
+     "file": "tests/test_selfhost.py",
+     "name": "test US-20-R06 a built line naming code but no test is reported with tests flag"
     }
    ]
   },
@@ -9013,11 +9118,19 @@
    "tagged": false,
    "must": true,
    "status": "met",
-   "proof": "test file cites it",
+   "proof": "named test",
    "tests": [
     {
-     "file": "../tests/foundation/test_protected_paths.py",
-     "name": null
+     "file": "tests/test_selfhost.py",
+     "name": "test T20 4 US-20-R07 protected paths need a reason and the label"
+    },
+    {
+     "file": "tests/test_selfhost.py",
+     "name": "test US-20-R07 the guard files themselves are protected"
+    },
+    {
+     "file": "tests/test_selfhost.py",
+     "name": "test US-20-R07 every codeowners path is protected"
     }
    ]
   },
@@ -9027,9 +9140,14 @@
    "level": "L2",
    "tagged": false,
    "must": false,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "tests/test_selfhost.py",
+     "name": "test T20 8 US-20-R08 a second open pr on the same protected group is reported"
+    }
+   ]
   },
   {
    "id": "US-20-R09",
@@ -9037,9 +9155,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "tests/test_selfhost.py",
+     "name": "test US-20-R09 contract carries the tool cannot do all table"
+    }
+   ]
   },
   {
    "id": "US-20-R10",
@@ -9047,9 +9170,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "test file cites it",
+   "tests": [
+    {
+     "file": "tests/test_selfhost.py",
+     "name": null
+    }
+   ]
   },
   {
    "id": "US-20-R11",
@@ -9738,9 +9866,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "tests/test_loop_closer.py",
+     "name": "test US-23-R02 a linked pull request is a closed loop"
+    }
+   ]
   },
   {
    "id": "US-23-R03",
@@ -9748,9 +9881,30 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "tests/test_loop_closer.py",
+     "name": "test T23 1 US-23-R03 probe pr merged closes with evidence"
+    },
+    {
+     "file": "tests/test_loop_closer.py",
+     "name": "test US-23-R03 probe file exists checks the checkout and refuses escape"
+    },
+    {
+     "file": "tests/test_loop_closer.py",
+     "name": "test US-23-R03 unknown probe is not evaluable and not closed"
+    },
+    {
+     "file": "tests/test_loop_closer.py",
+     "name": "test T23 3 US-23-R03 epic ticks closed children and closes itself when all are ticked"
+    },
+    {
+     "file": "tests/test_loop_closer.py",
+     "name": "test US-23-R03 dry run changes nothing"
+    }
+   ]
   },
   {
    "id": "US-23-R04",
@@ -9758,9 +9912,30 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "tests/test_loop_closer.py",
+     "name": "test T23 2 US-23-R04 issue with no probe and no pr is an open loop and gets labelled"
+    },
+    {
+     "file": "tests/test_loop_closer.py",
+     "name": "test US-23-R04 grace period protects a new issue"
+    },
+    {
+     "file": "tests/test_loop_closer.py",
+     "name": "test T23 3 US-23-R04 epic files a child for each unlinked item and rewrites the epic"
+    },
+    {
+     "file": "tests/test_loop_closer.py",
+     "name": "test US-23-R04 stale pull request labels the issue"
+    },
+    {
+     "file": "tests/test_loop_closer.py",
+     "name": "test US-23-R04 exit status is one while an open loop remains"
+    }
+   ]
   },
   {
    "id": "US-23-R05",
@@ -9778,9 +9953,30 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "tests/test_loop_closer.py",
+     "name": "test US-23-R06 returns none instead of raising and records why"
+    },
+    {
+     "file": "tests/test_loop_closer.py",
+     "name": "test T23 7 US-23-R06 US-23-R17 a closer that cannot read actions files one capability gap"
+    },
+    {
+     "file": "tests/test_loop_closer.py",
+     "name": "test US-23-R06 US-23-R17 the gap issue is deduplicated and closes by its probe"
+    },
+    {
+     "file": "tests/test_loop_closer.py",
+     "name": "test US-23-R06 US-23-R17 a closed gap that recurs is reopened not duplicated"
+    },
+    {
+     "file": "tests/test_loop_closer.py",
+     "name": "test US-23-R06 dry run files nothing"
+    }
+   ]
   },
   {
    "id": "US-23-R07",
@@ -9847,9 +10043,18 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "tests/test_loop_closer.py",
+     "name": "test T23 8 US-23-R12 a red main opens one incident and a green main closes it by probe"
+    },
+    {
+     "file": "tests/test_loop_closer.py",
+     "name": "test US-23-R12 a recurring red main reopens the closed incident instead of filing a second"
+    }
+   ]
   },
   {
    "id": "US-23-R13",
@@ -9963,11 +10168,11 @@
    "tagged": true,
    "must": true,
    "status": "met",
-   "proof": "test file cites it",
+   "proof": "named test",
    "tests": [
     {
-     "file": "../tests/foundation/test_lint_workflows.py",
-     "name": null
+     "file": "tests/test_workflow_lint.py",
+     "name": "test US-24-R11 pull request concurrency without cancel in progress is w12"
     }
    ]
   },
@@ -9977,9 +10182,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "tests/test_workflow_lint.py",
+     "name": "test US-24-T10 US-24-R12 allow timeout raises the cap to 60 and needs a reason"
+    }
+   ]
   },
   {
    "id": "US-24-R13",
@@ -9987,9 +10197,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "tests/test_workflow_lint.py",
+     "name": "test US-24-R13 pull request workflow without path filter is w11 and the exemption comment passes"
+    }
+   ]
   },
   {
    "id": "US-24-R14",
@@ -10007,9 +10222,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "tests/test_workflow_lint.py",
+     "name": "test US-24-R15 matrix over four jobs is w10"
+    }
+   ]
   },
   {
    "id": "US-24-R16",
@@ -10017,9 +10237,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "tests/test_workflow_lint.py",
+     "name": "test US-24-R16 self hosted and larger runners are w13"
+    }
+   ]
   },
   {
    "id": "US-24-R17",
@@ -10027,9 +10252,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "tests/test_workflow_lint.py",
+     "name": "test US-24-R17 missing cache with a lock file is w15"
+    }
+   ]
   },
   {
    "id": "US-24-R18",
@@ -10104,6 +10334,18 @@
     {
      "file": "core/ghcost/ghcost.test.js",
      "name": "US-24-R21 one ledger row per repository and month, published once when the month is over"
+    },
+    {
+     "file": "tests/test_actions_budget.py",
+     "name": "test US-24-R21 every repository row carries a decision"
+    },
+    {
+     "file": "tests/test_actions_budget.py",
+     "name": "test US-24-R21 the platform budget schema loads"
+    },
+    {
+     "file": "tests/test_actions_budget.py",
+     "name": "test US-24-R21 the shipped roster names every workers workflow"
     }
    ]
   },
@@ -10165,6 +10407,10 @@
     {
      "file": "core/ghcost/ghcost.test.js",
      "name": "US-24-R24 a disable that does not read back is a priority-0 item, not an assumed success"
+    },
+    {
+     "file": "tests/test_actions_budget.py",
+     "name": "test US-24-R24 essential workflow listed as non essential is kept by the python tool"
     }
    ]
   },
@@ -10282,9 +10528,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "tests/test_workflow_lint.py",
+     "name": "test US-24-R42 top level write scope on a multi job workflow is w14 and single job is exempt"
+    }
+   ]
   },
   {
    "id": "US-24-R43",
@@ -10307,9 +10558,14 @@
    "level": "L3",
    "tagged": true,
    "must": false,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "tests/test_workflow_lint.py",
+     "name": "test US-24-R44 require second route flag"
+    }
+   ]
   },
   {
    "id": "US-24-R50",
@@ -10423,9 +10679,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "tests/test_workflow_lint.py",
+     "name": "test US-24-R56 require headers flag"
+    }
+   ]
   },
   {
    "id": "US-24-R57",
@@ -10433,9 +10694,18 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "tests/test_workflow_lint.py",
+     "name": "test US-24-T09 US-24-R57 a six job matrix pr concurrency without cancel a self hosted runner and two write jobs are w10 w12 w13 w14"
+    },
+    {
+     "file": "tests/test_workflow_lint.py",
+     "name": "test US-24-R57 the opt in rules w11 and w17 are enforced when asked and quiet otherwise"
+    }
+   ]
   },
   {
    "id": "US-24-R58",

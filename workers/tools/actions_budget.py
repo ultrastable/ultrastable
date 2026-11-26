@@ -26,11 +26,26 @@ DEFAULT_BUDGET = Path(__file__).resolve().parent.parent / "ops" / "actions-budge
 
 
 def load_budget(path) -> dict:
+    """Read the budget file. Two schemas name the same limits and both load unchanged (US-24-R21): this tool's
+    `monthly_minutes_total`, `thresholds`, `essential_workflows`, `non_essential_workflows`, and the platform file
+    `actions-budget.json` (`monthly_free_minutes`, `warn_at_pct`, `pause_at_pct`, `essential`, `paused_workflows`, `paused`)."""
     b = json.loads(Path(path).read_text(encoding="utf8"))
+    if "monthly_minutes_total" not in b and "monthly_free_minutes" in b:
+        b["monthly_minutes_total"] = b["monthly_free_minutes"]
+    if "thresholds" not in b and ("warn_at_pct" in b or "pause_at_pct" in b):
+        b["thresholds"] = [float(b.get("warn_at_pct", 50)) / 100, float(b.get("pause_at_pct", 80)) / 100]
+    if "essential_workflows" not in b and isinstance(b.get("essential"), list):
+        b["essential_workflows"] = list(b["essential"])
+    if b.get("paused_workflows"):
+        b["non_essential_workflows"] = list(dict.fromkeys([*b.get("non_essential_workflows", []), *b["paused_workflows"]]))
+    b["paused"] = b.get("paused") is True
+    if "default_per_repo" not in b and not b.get("per_repo") and b.get("monthly_minutes_total"):
+        b["default_per_repo"] = b["monthly_minutes_total"]  # one number only: no repository may use more than the total
     b.setdefault("linux_minute_rate_usd", 0.006)
     b.setdefault("thresholds", [0.5, 0.8])
     b.setdefault("per_repo", {})
     b.setdefault("non_essential_workflows", [])
+    b.setdefault("essential_workflows", [])
     return b
 
 
@@ -55,22 +70,26 @@ def decide(per_repo: dict, budget: dict) -> dict:
     total_budget = float(budget["monthly_minutes_total"])
     total = sum(per_repo.values())
     rows, level = [], 0  # 0 ok, 1 warn50, 2 warn80, 3 over
+    names = ["ok", "warn50", "warn80", "over"]
+    rank = lambda r: 3 if r >= 1 else 2 if r >= hi else 1 if r >= lo else 0  # noqa: E731
     for repo in sorted(set(per_repo) | set(budget["per_repo"])):
         cap = float(budget["per_repo"].get(repo, budget.get("default_per_repo", 0)))
         used = per_repo.get(repo, 0.0)
         ratio = used / cap if cap else (1.0 if used else 0.0)
-        rows.append({"repo": repo, "used": round(used, 1), "budget": cap, "ratio": round(ratio, 3)})
-        level = max(level, 3 if ratio >= 1 else 2 if ratio >= hi else 1 if ratio >= lo else 0)
+        rows.append({"repo": repo, "used": round(used, 1), "budget": cap, "ratio": round(ratio, 3), "decision": names[rank(ratio)]})
+        level = max(level, rank(ratio))
     tratio = total / total_budget if total_budget else 1.0
-    level = max(level, 3 if tratio >= 1 else 2 if tratio >= hi else 1 if tratio >= lo else 0)
-    name = ["ok", "warn50", "warn80", "over"][level]
+    total_decision = names[rank(tratio)]
+    level = max(level, rank(tratio))
+    name = names[level]
+    keep = set(budget.get("essential_workflows", []))  # an essential workflow listed as non-essential by mistake is never disabled
     pct = {"warn50": int(lo * 100), "warn80": int(hi * 100)}
     return {
         "decision": name, "exit_code": {0: 0, 1: 1, 2: 1, 3: 2}[level],
-        "total_used": round(total, 1), "total_budget": total_budget, "total_ratio": round(tratio, 3),
+        "total_used": round(total, 1), "total_budget": total_budget, "total_ratio": round(tratio, 3), "total_decision": total_decision,
         "repos": rows,
         "threshold_pct": pct.get(name),
-        "disable_workflows": list(budget["non_essential_workflows"]) if name == "over" else [],
+        "disable_workflows": [w for w in budget["non_essential_workflows"] if w not in keep] if name == "over" else [],
         "over_repos": [r["repo"] for r in rows if r["ratio"] >= 1],
     }
 

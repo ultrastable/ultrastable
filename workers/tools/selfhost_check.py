@@ -6,25 +6,46 @@
   python tools/selfhost_check.py --body-file pr.md --author someone --files "a.py,b.md" [--labels "x,y"]
 
 Exit 0 when the pull request carries the record the contract asks for, 1 with the list of problems otherwise.
-Bots that only bump dependencies are exempt by login. Stdlib only.
+Exempt authors are data (EXEMPT_AUTHORS: the dependency bot and the workflow-generated change login). Stdlib only.
+
+Automated protected-path gate (US-20-R07, US-20-R08, CLOSED-LOOP-AXIOM; parity with the platform's scripts/protected_paths.py):
+  --name-status FILE      `git diff --name-status` output: deleting a guard file fails
+  --codeowners-diff FILE  diff of .github/CODEOWNERS: with --closed-loop, adding a human approver line fails
+  --other-prs FILE        JSON [{"number": n, "files": [...]}] of the other open pull requests (US-20-R08): a second open
+                          pull request on the same protected group is reported; --number N names this pull request
 """
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import sys
 from pathlib import Path
 
+# One list of protected paths (US-20-R07). A trailing slash is a directory. Every path in .github/CODEOWNERS is covered by it.
 PROTECTED = (
-    "AGENTS.md", "CLAUDE.md", "GEMINI.md", ".github/", ".cursor/", "autonomy/policy.json", "SCOPE.md", "LICENSE",
+    "AGENTS.md", "CLAUDE.md", "GEMINI.md", ".github/", ".cursor/", "autonomy/", "self/", "SCOPE.md", "LICENSE",
     "COMMERCIAL-TERMS.md", "core/test/no-qnfo.test.js", "agents/CONTRACT.md", "tools/selfhost_check.py", "tools/spec_truth.py",
+    "tools/sync_agent_files.py", "tools/sync_agent_bootstrap.py", "tools/self_closed_lint.py",
 )
+# Guard files: deleting one is never a protected change that passes (US-20-R07).
+GUARDS = ("tools/selfhost_check.py", "tools/spec_truth.py", "core/test/no-qnfo.test.js")
+# Protected groups: one open change per group at a time so its effect is attributable (US-20-R08).
+GROUPS = {
+    "agent-instructions": ("AGENTS.md", "CLAUDE.md", "GEMINI.md", ".cursor/", "agents/CONTRACT.md", ".github/copilot-instructions.md",
+                           "tools/sync_agent_files.py", "tools/sync_agent_bootstrap.py", "tools/self_closed_lint.py"),
+    "ci-workflows": (".github/workflows/", ".github/CODEOWNERS", ".github/pull_request_template.md", ".github/ISSUE_TEMPLATE/"),
+    "policy-and-autonomy": ("autonomy/", "self/"),
+    "guards": ("core/test/no-qnfo.test.js", "tools/selfhost_check.py", "tools/spec_truth.py"),
+    "scope-and-license": ("SCOPE.md", "LICENSE", "COMMERCIAL-TERMS.md"),
+}
+# Exempt authors (US-20-R03, US-20-R15): the dependency bot, and the login the workflow-generated agent-file refresh runs as.
 EXEMPT_AUTHORS = ("dependabot[bot]", "github-actions[bot]")
 PREDICTION = re.compile(r"^[A-Za-z_][\w.]*\s*(>=|<=|>|<|=)\s*-?\d+(\.\d+)?\s+within\s+\d+\s*h\b", re.I)
 
 
 def field(body: str, name: str) -> str | None:
-    m = re.search(rf"^\s*[-*]?\s*\**{re.escape(name)}\**:\s*(.+?)\s*$", body, re.I | re.M)
+    m = re.search(rf"^\s*[-*]?\s*\**{re.escape(name)}\**:[ \t]*(.+?)[ \t]*$", body, re.I | re.M)
     return m.group(1).strip() if m else None
 
 
@@ -32,8 +53,63 @@ def is_placeholder(v: str | None) -> bool:
     return v is None or not v.strip() or bool(re.fullmatch(r"[<\[].*[>\]]|todo|tbd|\.\.\.|-", v.strip(), re.I))
 
 
+def _under(f: str, p: str) -> bool:
+    return f == p or (p.endswith("/") and f.startswith(p))
+
+
 def protected(files: list[str]) -> list[str]:
-    return [f for f in files if any(f == p or (p.endswith("/") and f.startswith(p)) for p in PROTECTED)]
+    return [f for f in files if any(_under(f, p) for p in PROTECTED)]
+
+
+def party(s: str | None) -> str:
+    """Normalise an Author or Reviewer for comparison: case, punctuation and spacing do not make a different party."""
+    return re.sub(r"[^a-z0-9]+", "", (s or "").lower())
+
+
+def codeowners_paths(text: str) -> list[str]:
+    """The paths a CODEOWNERS file assigns, without the leading slash (a directory keeps its trailing slash)."""
+    out = []
+    for line in text.splitlines():
+        line = line.split("#", 1)[0].strip()
+        if line:
+            out.append(line.split()[0].lstrip("/"))
+    return out
+
+
+def deleted_guards(name_status: str) -> list[str]:
+    """Guard files deleted (or renamed away) in `git diff --name-status` output."""
+    bad = []
+    for line in name_status.splitlines():
+        parts = line.split("\t")
+        if len(parts) >= 2 and parts[0][:1] in ("D", "R") and parts[1] in GUARDS:
+            bad.append(parts[1])
+    return bad
+
+
+def added_human_approver(codeowners_diff: str) -> list[str]:
+    """Lines a diff of .github/CODEOWNERS adds that name a human (@user) as an approver."""
+    return [l[1:].strip() for l in codeowners_diff.splitlines() if re.match(r"^\+[^+#\s]+\s+@\w", l)]
+
+
+def groups_of(files: list[str]) -> dict[str, list[str]]:
+    out: dict[str, list[str]] = {}
+    for f in files:
+        for g, paths in GROUPS.items():
+            if any(_under(f, p) for p in paths):
+                out.setdefault(g, []).append(f)
+    return out
+
+
+def overlapping(files: list[str], other_prs: list[dict], me: int | None = None) -> list[str]:
+    """US-20-R08: report another open pull request that touches a protected group this one touches."""
+    mine = groups_of(files)
+    problems = []
+    for pr in other_prs:
+        if me is not None and pr.get("number") == me:
+            continue
+        for g in sorted(set(mine) & set(groups_of(list(pr.get("files", []))))):
+            problems.append(f"One change per protected component at a time: pull request #{pr.get('number')} also touches {g} (" + ", ".join(sorted(set(mine[g]))[:3]) + "). Merge or close one first.")
+    return problems
 
 
 def check(body: str, author: str, files: list[str], labels: list[str]) -> list[str]:
@@ -57,7 +133,7 @@ def check(body: str, author: str, files: list[str], labels: list[str]) -> list[s
         problems.append("Author: must name who or what wrote this (a tool and model, or a person).")
     if is_placeholder(r):
         problems.append("Reviewer: must name a different agent, model or person who reviews it.")
-    elif not is_placeholder(a) and a.strip().lower() == r.strip().lower():
+    elif not is_placeholder(a) and party(a) == party(r):
         problems.append("Reviewer: must differ from Author. Never review your own work.")
     hits = protected(files)
     if hits:
@@ -75,11 +151,24 @@ def main(argv=None) -> int:
     ap.add_argument("--author", required=True)
     ap.add_argument("--files", default="", help="comma-separated changed paths")
     ap.add_argument("--labels", default="", help="comma-separated labels")
+    ap.add_argument("--name-status", type=Path, help="git diff --name-status output (guard deletion check)")
+    ap.add_argument("--codeowners-diff", type=Path, help="diff of .github/CODEOWNERS")
+    ap.add_argument("--closed-loop", action="store_true", help="refuse a human approver added to CODEOWNERS (the automated gate replaces human approval)")
+    ap.add_argument("--other-prs", type=Path, help="JSON list of the other open pull requests: [{number, files}]")
+    ap.add_argument("--number", type=int, default=None, help="this pull request's number (excluded from --other-prs)")
     a = ap.parse_args(argv)
     body = a.body_file.read_text(encoding="utf-8") if a.body_file.exists() else ""
     files = [f.strip() for f in a.files.split(",") if f.strip()]
     labels = [l.strip() for l in a.labels.split(",") if l.strip()]
     problems = check(body, a.author, files, labels)
+    exempt = a.author.lower() in EXEMPT_AUTHORS
+    if not exempt:
+        if a.name_status and a.name_status.exists():
+            problems += [f"{g}: a guard file is deleted; guards are never weakened to make a change pass (revert first)." for g in deleted_guards(a.name_status.read_text(encoding="utf-8"))]
+        if a.closed_loop and a.codeowners_diff and a.codeowners_diff.exists():
+            problems += [f"CODEOWNERS: a human approver was added ({l}); the automated gate replaces human approval (CLOSED-LOOP-AXIOM)." for l in added_human_approver(a.codeowners_diff.read_text(encoding="utf-8"))]
+        if a.other_prs and a.other_prs.exists():
+            problems += overlapping(files, json.loads(a.other_prs.read_text(encoding="utf-8")), a.number)
     if problems:
         print("This pull request does not yet follow the self-hosting contract (agents/CONTRACT.md):", file=sys.stderr)
         for p in problems:

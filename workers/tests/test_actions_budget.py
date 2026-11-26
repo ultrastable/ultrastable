@@ -72,6 +72,39 @@ class BudgetTests(unittest.TestCase):
         self.assertIn("pages.yml", card["default_in_effect"])
         self.assertEqual(code, 2)
 
+    def test_us_24_r24_essential_workflow_listed_as_non_essential_is_kept_by_the_python_tool(self):
+        b = {**BUDGET, "non_essential_workflows": ["pages.yml", "ci.yml:test"], "essential_workflows": ["ci.yml:test"]}
+        d = ab.decide({"workers": 600}, ab.load_budget(self._write(b)))
+        self.assertEqual((d["decision"], d["disable_workflows"]), ("over", ["pages.yml"]))
+
+    def test_us_24_r21_every_repository_row_carries_a_decision(self):
+        code, d = run([item("workers", 250), item("spec", 10)])
+        self.assertEqual({r["repo"]: r["decision"] for r in d["repos"]}, {"spec": "ok", "workers": "warn50"})
+        self.assertEqual(d["total_decision"], "ok")
+
+    def test_us_24_r21_the_platform_budget_schema_loads(self):
+        platform = json.loads((ROOT.parent / "actions-budget.json").read_text(encoding="utf8"))
+        for k in ("monthly_free_minutes", "warn_at_pct", "pause_at_pct", "essential", "paused_workflows", "paused"):
+            self.assertIn(k, platform)  # the exact keys the platform file uses
+        b = ab.load_budget(ROOT.parent / "actions-budget.json")
+        self.assertEqual((b["monthly_minutes_total"], b["thresholds"], b["paused"]), (2000, [0.6, 0.85], True))
+        self.assertEqual(b["essential_workflows"], platform["essential"])
+        d = ab.decide({"x": 1300}, b)
+        self.assertEqual((d["decision"], d["exit_code"]), ("warn50", 1))  # 65 percent of 2000 is past the 60 percent warning
+
+    def test_us_24_r21_the_shipped_roster_names_every_workers_workflow(self):
+        b = ab.load_budget(ROOT / "ops/actions-budget.json")
+        rostered = {w.split(":")[0] for w in b["essential_workflows"] + b["non_essential_workflows"]}
+        shipped = {p.name for p in (ROOT / ".github/workflows").glob("*.yml")}
+        self.assertEqual(shipped - rostered, set())
+
+    @staticmethod
+    def _write(budget):
+        d = tempfile.mkdtemp()
+        p = Path(d) / "b.json"
+        p.write_text(json.dumps(budget))
+        return p
+
     def test_shipped_budget_file_is_valid(self):
         b = ab.load_budget(ROOT / "ops/actions-budget.json")
         self.assertEqual(b["thresholds"], [0.5, 0.8])

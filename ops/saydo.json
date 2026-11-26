@@ -1,9 +1,18 @@
 {
- "at": "2026-11-26T22:57:13Z",
+ "at": "2026-11-26T23:17:00Z",
  "gaps": 7,
  "match_share": 0.987,
  "sources": {
   "changes": [
+   {
+    "did": [
+     "site/lite.js",
+     "tests/site-lite-webmention.test.js"
+    ],
+    "id": "8d56a9a5d45a",
+    "ok": true,
+    "said": "Fix async handler, mount route, test wire, update handoff. (#Q-LITE-webmention-wire) (#2589)"
+   },
    {
     "did": [
      "site/lite.js"
@@ -1074,7 +1083,7 @@
     "checks": 1,
     "external": [],
     "failing": [
-     "python3 -m foundation dispose --check: an open item is 105.4 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+     "python3 -m foundation dispose --check: an open item is 105.7 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
     ],
     "id": "DISPOSE-1",
     "missing": [],
@@ -1134,7 +1143,7 @@
     "ok": true
    },
    {
-    "detail": "0.714 substantive server-originated changes a day (target 1)",
+    "detail": "0.786 substantive server-originated changes a day (target 1)",
     "id": "ships-daily",
     "ok": false
    }
@@ -1143,7 +1152,7 @@
  "summary": {
   "changes": {
    "gaps": 1,
-   "total": 16
+   "total": 17
   },
   "claims": {
    "gaps": 0,
@@ -1162,5 +1171,5 @@
    "total": 2
   }
  },
- "total": 555
+ "total": 556
 }

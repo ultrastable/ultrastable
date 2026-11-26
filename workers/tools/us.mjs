@@ -13,6 +13,7 @@ export const COMMANDS = {
   install: { run: 'node', script: 'tools/install.mjs', about: 'One-command install: verify the released bundle, bootstrap, provision, deploy, register; re-run to upgrade' },
   verify: { run: 'node', script: 'agent-setup/verify.mjs', about: 'The closing probe every door ends at: is the organization at this address verified' },
   release: { run: 'node', script: 'tools/release_bundle.mjs', about: 'Build the deployable bundle with its SHA-256 manifest (and a signature with --sign-key-env)' },
+  'verify-release': { run: 'node', script: 'tools/verify_release.mjs', about: 'Verify a published release: recompute its hashes, check its manifest and signature, and the fingerprint a launcher shows' },
   boundary: { run: 'node', script: 'tools/boundary_check.mjs', about: 'Fail when a component is unclassified or a classified component is not live' },
   test: { run: 'node', script: 'tools/run-suites.mjs', about: 'Run every test suite from one list' },
   'spec-truth': { run: 'python', script: 'tools/spec_truth.py', about: 'Report specification status lines that claim code which is not there' },

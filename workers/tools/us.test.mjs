@@ -25,7 +25,7 @@ test('US-SPEC-10 unified command-line tool: every command names a script that ex
   assert.equal(lines[0], usage());
 });
 
-test('US-SPEC-10 unified command-line tool: arguments pass through, the exit status comes back unchanged, an unknown command is 2', () => {
+test('US-10-R32 unified command-line tool: arguments pass through, the exit status comes back unchanged, an unknown command is 2', () => {
   const seen = [];
   const spawn = (bin, args) => { seen.push([bin, args]); return { status: 3 }; };
   assert.equal(main(['install', '--slug', 'x'], { spawn, log: () => {}, env: {} }), 3);
@@ -40,7 +40,7 @@ test('US-SPEC-10 unified command-line tool: arguments pass through, the exit sta
   assert.equal(main(['test'], { spawn: () => ({ error: new Error('ENOENT') }), log: () => {} }), 127);
 });
 
-test('US-SPEC-10 unified command-line tool: a real run returns the real exit status of the script it starts', () => {
+test('US-10-R32 unified command-line tool: a real run returns the real exit status of the script it starts', () => {
   const d = mkdtempSync(path.join(tmpdir(), 'us-'));
   writeFileSync(path.join(d, 'bad.yml'), 'name: x\non:\n  push:\njobs:\n  t:\n    runs-on: ubuntu-latest\n    steps:\n      - run: echo hi\n');
   const r = spawnSync(process.execPath, [path.join(ROOT, 'tools/us.mjs'), 'lint-workflows', path.join(d, 'bad.yml')], { encoding: 'utf8' });

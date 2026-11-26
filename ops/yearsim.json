@@ -1,5 +1,5 @@
 {
- "at": "2026-11-26T22:55:39Z",
+ "at": "2026-11-26T23:15:25Z",
  "days": 730,
  "drills": {
   "actions-billing": {
@@ -128,9 +128,9 @@
   }
  ],
  "horizon": {
-  "capacity_year_p50": 0.706,
+  "capacity_year_p50": 0.693,
   "killers": {
-   "token-revoked": 12
+   "token-revoked": 16
   },
   "p10": 730,
   "p50": 730,
@@ -139,12 +139,19 @@
  },
  "marker": "YEAR-SIM-1",
  "meets_target": true,
- "rates_observed": [],
+ "rates_observed": [
+  "merge-conflict"
+ ],
  "release_horizon_p10": 730,
  "runs": 200,
  "self_commits": {
-  "all": 16,
+  "all": 17,
   "latest": [
+   {
+    "lines": 42,
+    "sha": "8d56a9a5d45a",
+    "title": "Fix async handler, mount route, test wire, update handoff. (#Q-LITE-webmention-wire) (#2589)"
+   },
    {
     "lines": 66,
     "sha": "8481e6057fe6",
@@ -164,68 +171,63 @@
     "lines": 19,
     "sha": "a085f5107c39",
     "title": "Modify resolve_generated.py to handle concurrent writes to generated files by using a locking mechan"
-   },
-   {
-    "lines": 97,
-    "sha": "1380548609e6",
-    "title": "Implement mergeaudit probe script to verify PR merging commits pass checks and enforce consistent me"
    }
   ],
-  "substantive": 10,
+  "substantive": 11,
   "window_days": 14
  },
- "self_rate_per_day": 0.714,
- "self_releases_year_p50": 184.0,
+ "self_rate_per_day": 0.786,
+ "self_releases_year_p50": 198.8,
  "sensitivity": {
   "base": {
    "p10": 730,
-   "survive_year": 0.983
+   "survive_year": 1.0
   },
   "ranked": [
    {
     "effect": {
      "0.5": {
-      "d_survive": 0.017,
+      "d_survive": 0.0,
       "p10": 730,
       "survive_year": 1.0
      },
      "2.0": {
-      "d_survive": -0.033,
-      "p10": 604,
-      "survive_year": 0.95
+      "d_survive": -0.083,
+      "p10": 415,
+      "survive_year": 0.917
      }
     },
-    "id": "scheduler-silent",
-    "rate": 52,
+    "id": "token-revoked",
+    "rate": 1,
+    "swing": 0.083
+   },
+   {
+    "effect": {
+     "0.5": {
+      "d_survive": -0.033,
+      "p10": 648,
+      "survive_year": 0.967
+     },
+     "2.0": {
+      "d_survive": 0.0,
+      "p10": 669,
+      "survive_year": 1.0
+     }
+    },
+    "id": "merge-conflict",
+    "rate": 150.3,
     "swing": 0.033
    },
    {
     "effect": {
      "0.5": {
-      "d_survive": 0.017,
+      "d_survive": -0.017,
       "p10": 730,
-      "survive_year": 1.0
+      "survive_year": 0.983
      },
      "2.0": {
       "d_survive": 0.0,
-      "p10": 715,
-      "survive_year": 0.983
-     }
-    },
-    "id": "actions-billing",
-    "rate": 4,
-    "swing": 0.017
-   },
-   {
-    "effect": {
-     "0.5": {
-      "d_survive": 0.017,
-      "p10": 730,
-      "survive_year": 1.0
-     },
-     "2.0": {
-      "d_survive": 0.017,
-      "p10": 730,
+      "p10": 613,
       "survive_year": 1.0
      }
     },
@@ -236,14 +238,14 @@
    {
     "effect": {
      "0.5": {
-      "d_survive": 0.017,
+      "d_survive": 0.0,
       "p10": 730,
       "survive_year": 1.0
      },
      "2.0": {
-      "d_survive": -0.016,
-      "p10": 730,
-      "survive_year": 0.967
+      "d_survive": -0.017,
+      "p10": 714,
+      "survive_year": 0.983
      }
     },
     "id": "ai-quota",
@@ -253,99 +255,82 @@
    {
     "effect": {
      "0.5": {
-      "d_survive": 0.017,
+      "d_survive": 0.0,
+      "p10": 719,
+      "survive_year": 1.0
+     },
+     "2.0": {
+      "d_survive": -0.017,
+      "p10": 662,
+      "survive_year": 0.983
+     }
+    },
+    "id": "github-down",
+    "rate": 3,
+    "swing": 0.017
+   },
+   {
+    "effect": {
+     "0.5": {
+      "d_survive": 0.0,
       "p10": 730,
       "survive_year": 1.0
      },
      "2.0": {
-      "d_survive": 0.017,
-      "p10": 730,
+      "d_survive": 0.0,
+      "p10": 724,
+      "survive_year": 1.0
+     }
+    },
+    "id": "actions-billing",
+    "rate": 4,
+    "swing": 0.0
+   },
+   {
+    "effect": {
+     "0.5": {
+      "d_survive": 0.0,
+      "p10": 720,
+      "survive_year": 1.0
+     },
+     "2.0": {
+      "d_survive": 0.0,
+      "p10": 724,
       "survive_year": 1.0
      }
     },
     "id": "cloudflare-incident",
     "rate": 4,
-    "swing": 0.017
+    "swing": 0.0
    },
    {
     "effect": {
      "0.5": {
-      "d_survive": 0.017,
+      "d_survive": 0.0,
       "p10": 730,
       "survive_year": 1.0
      },
      "2.0": {
-      "d_survive": 0.017,
-      "p10": 671,
+      "d_survive": 0.0,
+      "p10": 730,
       "survive_year": 1.0
      }
     },
     "id": "cost-spike",
     "rate": 6,
-    "swing": 0.017
-   },
-   {
-    "effect": {
-     "0.5": {
-      "d_survive": 0.017,
-      "p10": 730,
-      "survive_year": 1.0
-     },
-     "2.0": {
-      "d_survive": 0.017,
-      "p10": 730,
-      "survive_year": 1.0
-     }
-    },
-    "id": "merge-conflict",
-    "rate": 200,
-    "swing": 0.017
-   },
-   {
-    "effect": {
-     "0.5": {
-      "d_survive": 0.017,
-      "p10": 730,
-      "survive_year": 1.0
-     },
-     "2.0": {
-      "d_survive": 0.017,
-      "p10": 730,
-      "survive_year": 1.0
-     }
-    },
-    "id": "model-retirement",
-    "rate": 6,
-    "swing": 0.017
-   },
-   {
-    "effect": {
-     "0.5": {
-      "d_survive": 0.017,
-      "p10": 730,
-      "survive_year": 1.0
-     },
-     "2.0": {
-      "d_survive": -0.016,
-      "p10": 511,
-      "survive_year": 0.967
-     }
-    },
-    "id": "token-revoked",
-    "rate": 1,
-    "swing": 0.017
+    "swing": 0.0
    },
    {
     "effect": {
      "0.5": {
       "d_survive": 0.0,
       "p10": 730,
-      "survive_year": 0.983
+      "survive_year": 1.0
      },
      "2.0": {
       "d_survive": 0.0,
       "p10": 730,
-      "survive_year": 0.983
+      "survive_year": 1.0
      }
     },
     "id": "dependency-break",
@@ -356,30 +341,47 @@
     "effect": {
      "0.5": {
       "d_survive": 0.0,
-      "p10": 730,
-      "survive_year": 0.983
+      "p10": 709,
+      "survive_year": 1.0
      },
      "2.0": {
       "d_survive": 0.0,
       "p10": 730,
-      "survive_year": 0.983
+      "survive_year": 1.0
      }
     },
-    "id": "github-down",
-    "rate": 3,
+    "id": "model-retirement",
+    "rate": 6,
+    "swing": 0.0
+   },
+   {
+    "effect": {
+     "0.5": {
+      "d_survive": 0.0,
+      "p10": 730,
+      "survive_year": 1.0
+     },
+     "2.0": {
+      "d_survive": 0.0,
+      "p10": 649,
+      "survive_year": 1.0
+     }
+    },
+    "id": "scheduler-silent",
+    "rate": 52,
     "swing": 0.0
    }
   ],
   "runs": 60
  },
  "strict": {
-  "capacity_year_p50": 0.498,
+  "capacity_year_p50": 0.463,
   "killers": {
-   "domain-renewal": 75,
-   "token-revoked": 125
+   "domain-renewal": 68,
+   "token-revoked": 132
   },
-  "p10": 50,
-  "p50": 233,
+  "p10": 33,
+  "p50": 218,
   "p90": 349,
   "survive_year": 0.0
  },
