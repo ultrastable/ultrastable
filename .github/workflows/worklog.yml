@@ -1,0 +1,31 @@
+name: worklog
+# WORK-RECORD-1: re-dispatches work records whose owning session went silent, so nothing restarts from scratch.
+# budget: ~1 min x 30 per month
+# trigger: daily and dispatch; stale_hours is 6, a daily pass catches every silent record within a day
+# free-alternative: run `python3 -m foundation worklog reap --apply` from the Cloudflare tick or a cloud-hosted agent session
+on:
+  schedule:
+    - cron: "41 7 * * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+concurrency:
+  group: worklog
+  cancel-in-progress: false
+jobs:
+  reap:
+    if: ${{ vars.HALT != '1' }}  # HALT-1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - run: python3 -m foundation worklog backfill --apply
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - run: python3 -m foundation worklog reap --apply
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - run: python3 -m foundation worklog list
+        env:
+          GH_TOKEN: ${{ github.token }}
