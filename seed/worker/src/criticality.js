@@ -38,25 +38,46 @@ export function computeKEff(cur, prev, t) {
   };
 }
 
-async function windowFigures(db, t, from, to) {
-  const s = await first(db, `SELECT COALESCE(SUM(deploys_ok),0) AS ok, COALESCE(SUM(deploys_fail),0) AS fail, COALESCE(SUM(spend_units),0) AS spend,
-      COALESCE(SUM(human_touches),0) AS human, COALESCE(MAX(cap_breached),0) AS cap, COUNT(*) AS n FROM criticality_samples WHERE at >= ? AND at < ?`, iso(from), iso(to));
+// READ-BUDGET-10: the three outcome counts of a window of days read about 1,600 index rows each and ran about nine times a tick (89,000 rows an hour
+// measured, 2026-11-26), yet they move by minutes against a window of days. The current window's counts are kept in one org row per half hour, under the
+// thresholds they were read with; a new half hour, changed thresholds or an unreadable row reads them again. Spend, dispatches, items and gate cards stay live.
+const OUTCOME_CACHE_MS = 1800e3;
+async function outcomeCounts(db, t, from, to, cacheKey) {
   const cls = t.deploy.action_classes, sur = t.deploy.surfaces;
   const scope = `action_class IN (${marks(cls)}) AND surface IN (${marks(sur)})`;
-  const v = await first(db, `SELECT COUNT(*) AS n FROM outcomes WHERE result='verified' AND at >= ? AND at < ? AND ${scope} AND evidence LIKE ?`,
-    iso(from), iso(to), ...cls, ...sur, t.deploy.verifier_evidence_prefix + '%');
-  const f = await first(db, `SELECT COUNT(*) AS n FROM outcomes WHERE result IN ('failed','hidden_failure') AND at >= ? AND at < ? AND ${scope}`,
-    iso(from), iso(to), ...cls, ...sur);
   const origins = (t.self && t.self.origins) || [];
-  const sv = origins.length ? await first(db, `SELECT COUNT(*) AS n FROM outcomes WHERE result='verified' AND at >= ? AND at < ? AND ${scope} AND (${origins.map(() => 'evidence LIKE ?').join(' OR ')})`,
-    iso(from), iso(to), ...cls, ...sur, ...origins.map(o => `${t.deploy.verifier_evidence_prefix}% origin=${o}`)) : { n: 0 };
+  const read = async () => {
+    const v = await first(db, `SELECT COUNT(*) AS n FROM outcomes WHERE result='verified' AND at >= ? AND at < ? AND ${scope} AND evidence LIKE ?`,
+      iso(from), iso(to), ...cls, ...sur, t.deploy.verifier_evidence_prefix + '%');
+    const f = await first(db, `SELECT COUNT(*) AS n FROM outcomes WHERE result IN ('failed','hidden_failure') AND at >= ? AND at < ? AND ${scope}`,
+      iso(from), iso(to), ...cls, ...sur);
+    const sv = origins.length ? await first(db, `SELECT COUNT(*) AS n FROM outcomes WHERE result='verified' AND at >= ? AND at < ? AND ${scope} AND (${origins.map(() => 'evidence LIKE ?').join(' OR ')})`,
+      iso(from), iso(to), ...cls, ...sur, ...origins.map(o => `${t.deploy.verifier_evidence_prefix}% origin=${o}`)) : { n: 0 };
+    return { v: v.n, f: f.n, sv: sv.n };
+  };
+  if (!cacheKey) return read();
+  const bucket = Math.floor(to / OUTCOME_CACHE_MS), sig = JSON.stringify([bucket, to - from, t.deploy, t.self || null]);
+  try {
+    const c = JSON.parse(((await first(db, `SELECT value FROM org WHERE key = ?`, cacheKey)) || {}).value || 'null');
+    if (c && c.sig === sig && c.fig) return c.fig;
+  } catch (e) { /* allow-silent: an unreadable cache row is a fresh read below */ }
+  const fig = await read();
+  try { await db.prepare(`INSERT INTO org (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value`).bind(cacheKey, JSON.stringify({ sig, fig })).run(); }
+  catch (e) { /* allow-silent: a cache write miss only costs the next call one more read */ console.error('criticality: outcome counts not cached:', e && e.message); }
+  return fig;
+}
+
+async function windowFigures(db, t, from, to, cacheKey = null) {
+  const s = await first(db, `SELECT COALESCE(SUM(deploys_ok),0) AS ok, COALESCE(SUM(deploys_fail),0) AS fail, COALESCE(SUM(spend_units),0) AS spend,
+      COALESCE(SUM(human_touches),0) AS human, COALESCE(MAX(cap_breached),0) AS cap, COUNT(*) AS n FROM criticality_samples WHERE at >= ? AND at < ?`, iso(from), iso(to));
+  const { v, f, sv } = await outcomeCounts(db, t, from, to, cacheKey);
   const pre = t.originated.id_prefixes.map(() => 'id LIKE ?').join(' OR ');
   const o = await first(db, `SELECT COUNT(*) AS n FROM items WHERE created_at >= ? AND created_at < ? AND (${pre})`,
     iso(from), iso(to), ...t.originated.id_prefixes.map(p => p + '%'));
   const d = await first(db, `SELECT COUNT(*) AS n FROM dispatches WHERE at >= ? AND at < ?`, iso(from), iso(to));
   const g = await first(db, `SELECT COUNT(*) AS n FROM gate_cards WHERE closed_at IS NULL OR closed_at >= ?`, iso(from)); // an open or recently closed card is owner attention
   return {
-    n: s.n, cap: Boolean(s.cap), deploys: s.ok + v.n, self: sv.n, fail: s.fail + f.n, originated: o.n,
+    n: s.n, cap: Boolean(s.cap), deploys: s.ok + v, self: sv, fail: s.fail + f, originated: o.n,
     spend: s.spend + d.n * t.dispatch_spend_units, human: s.human + g.n,
   };
 }
@@ -79,7 +100,7 @@ async function prevWindow(db, t, now, span) {
 
 export async function measureCriticality(db, t, now) {
   const span = t.window_days * 86400e3;
-  const cur = await windowFigures(db, t, now - span, now + 1000);
+  const cur = await windowFigures(db, t, now - span, now + 1000, 'criticality_cur_outcomes');
   const prev = await prevWindow(db, t, now, span);
   const hasPrev = prev.n > 0 || prev.deploys + prev.fail > 0;
   const r = computeKEff(cur, hasPrev ? prev : null, t);
