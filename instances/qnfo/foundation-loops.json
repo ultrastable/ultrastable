@@ -1,4 +1,5 @@
 {
+  "$schema": "../../schemas/doctrine.schema.json",
   "_doc": "QNFO runs on Ultrastable: the foundation loops (doctrine/qnfo-port.json) this instance runs, and the QNFO-side code that satisfies each in the QNFO/qnfo-workers checkout. `python3 -m foundation sauce --check` fails a loop id the foundation does not know; `python3 -m foundation sauce --parity qnfo <qnfo-workers checkout>` fails when an impl path is missing there or a mechanism the foundation marks ported is not declared here (the sync that keeps the instance on the foundation runs it).",
   "instance": "qnfo",
   "runs_on": "ultrastable",

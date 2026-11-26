@@ -1,4 +1,5 @@
 {
+  "$schema": "../../schemas/doctrine.schema.json",
  "_doc": "OWN-DB-1 (Q-GAP-core-separation): the core's databases, the tenant databases the core never binds, and the live reading this rests on. Checked by `python3 -m foundation owndb --check` (checks.yml) and `--live` (rule own-database in doctrine/rules.json); `bound_by` is written by `owndb --write`. The originating fleet's database ids are the forbidden patterns of doctrine/single-account.json.",
  "version": "1.0.0",
  "account": {
