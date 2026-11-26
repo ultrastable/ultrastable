@@ -31,5 +31,6 @@
  "0029_pr_latency.sql",
  "0030_stickiness.sql",
  "0031_datagraph.sql",
- "0032_read_indexes_5.sql"
+ "0032_read_indexes_5.sql",
+ "0033_orchestrate.sql"
 ]
