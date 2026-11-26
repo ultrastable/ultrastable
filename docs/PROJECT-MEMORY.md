@@ -9,6 +9,9 @@
 This file is the single source of truth for project memory. Chat memory, tool memory and platform memory stores are read-only pointers to this file and are never edited as a record. Every session starts by reading this file and ends by updating it. Nothing is done until it is deployed end to end; every open item is an issue or an owner card with a default in effect and a closing probe.
 
 Last updated: 2026-11-26
+- 2026-11-26: tick read budget (TICK-READS-1): beat statistics, read indexes (migration 0032), a wake budget on /hook/github and a lean floor, so dispatch and execute run again after five lean ticks; the managers had been starved by permanent lean mode.
+- 2026-11-26: market research repaired and refreshed: scout steps run after an earlier failure, scout beats count successes only, competitor register and Q-GAP items updated, A2A adapter and agent-skill validator in the kit.
+- 2026-11-26: ROLE-ALIGN-1: every role in doctrine/managers.json names its human counterpart, decisions, reads and hand-offs; software_roles coverage map; Q-ROLE-sales-partnerships and Q-ROLE-security filed; manager workflows have declared clocks.
 
 - 2026-11-26: CLEANROOM-1 and COHERENCE-1 carried from the stuck PR 2276 onto main inside PR 2369: `foundation/cleanroom.py` boots a sandbox from seed/ alone, runs 144 ticks and tears it down (daily, cleanroom.yml); `foundation/coherence.py` lints instruction surfaces and generated agent files against the closed-loop axiom. Left out as superseded: its SYSTEM-1 (`seed/doctrine/system.json`) by SYSTEM-SPEC-1 and COLDSTART-1, its org-settings generator by ADMIT-1 and REPO-STANDARD-1, its seed-template compare by FLEET-MAP-1. The clean room's first run found that a booted system's SYSTEM.md went stale (org/ paths counted as kit enforcement); fixed in `seed/scripts/system.py`.
 - 2026-11-26: fix(lane): PR age bound from open time; fix main red (openstd land, post hook) (#2380)
