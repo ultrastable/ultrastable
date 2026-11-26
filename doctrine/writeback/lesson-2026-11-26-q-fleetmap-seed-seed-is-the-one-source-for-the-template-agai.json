@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-26-q-fleetmap-seed-seed-is-the-one-source-for-the-template-agai",
+  "kind": "lesson",
+  "date": "2026-11-26",
+  "title": "Q-FLEETMAP-seed: seed/ is the one source for the template again",
+  "body": "ultrastable/seed held 12 files seed/ lacked and 3 files it had regenerated from its own state (README.md, SYSTEM.md, docs/claims.json), so every publish held files back. Carried up into seed/: the daily balance workflow and its test, the VERIFY-1 model checker (scripts/verify.py, scripts/verify_spend.mjs, doctrine/verification.json, its test) and the human-voice lint with its config. Not carried, because seed/ already holds them under another name: doctrine/balance.json (autonomy/balance.json), doctrine/system.json (autonomy/system.json), worker/src/stepplan.js and its test (tick.js and tick.test.js). Those four are template_contents.retired in doctrine/fleet-map.json and a publish removes them; SYSTEM.md is template_contents.generated, so the generator's output replaces the template's copy. NOTICE, COMMERCIAL-TERMS.md, SECURITY.md and kit-sync.yml stay template-only in keep. fleetmap --check proves each retired or generated entry is one exact path with a reason and a seed/ file behind it. Lesson: a copy that keeps a duplicate of a renamed file regenerates different output from the same generator, so a never-delete publisher needs a declared way to retire a path.",
+  "probe": "grep:doctrine/fleet-map.json::\"retired\"",
+  "session": "session_0156nqDufLi3JgDJf3gVw7Fh"
+ },
+ "kind": "lesson",
+ "title": "Q-FLEETMAP-seed: seed/ is the one source for the template again",
+ "session": "session_0156nqDufLi3JgDJf3gVw7Fh"
+}

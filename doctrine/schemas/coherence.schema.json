@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/coherence.schema.json",
+  "title": "coherence (doctrine/coherence.json)",
+  "description": "Contract for doctrine/coherence.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "number"
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "imports": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "instruction_surfaces": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "contradictions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "pattern": {
+            "type": "string"
+          },
+          "why": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "platform_only_rules": {
+      "type": "array"
+    },
+    "enforcement_ok_without_path": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "_platform_only_why": {
+      "type": "object",
+      "properties": {}
+    },
+    "_enforcement_elsewhere_why": {
+      "type": "string"
+    },
+    "retired_copies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "_retired_why": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "_enforcement_elsewhere_why",
+    "_platform_only_why",
+    "_retired_why",
+    "contradictions",
+    "enforcement_ok_without_path",
+    "imports",
+    "instruction_surfaces",
+    "platform_only_rules",
+    "retired_copies",
+    "sources",
+    "version"
+  ]
+}
