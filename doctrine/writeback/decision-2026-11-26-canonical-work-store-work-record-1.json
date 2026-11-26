@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-26-canonical-work-store-work-record-1",
+  "kind": "decision",
+  "date": "2026-11-26",
+  "title": "Canonical work store (WORK-RECORD-1)",
+  "body": "Every request and session task is a GitHub issue labelled work with a JSON record; worklog reap re-dispatches silent records to the server lane. Session: session_0156nqDuWYsmUNpsKjgCnMH5",
+  "probe": "file:foundation/worklog.py"
+ },
+ "kind": "decision",
+ "title": "Canonical work store (WORK-RECORD-1)",
+ "session": ""
+}
