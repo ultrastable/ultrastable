@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -109,15 +110,15 @@ def sql(its: list[dict]) -> str:
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("--spec-dir", type=Path, required=True)
+    ap.add_argument("--spec-dir", type=Path, default=os.environ.get("ULTRASTABLE_SPEC_DIR") or None, help="the specification directory; defaults to ULTRASTABLE_SPEC_DIR (the specification is private, DISCLOSE-1)")
     g = ap.add_mutually_exclusive_group()
     g.add_argument("--summary", action="store_true")
     g.add_argument("--json", action="store_true")
     g.add_argument("--sql", action="store_true")
     a = ap.parse_args(argv)
-    rows = collect(a.spec_dir)
+    rows = collect(a.spec_dir) if a.spec_dir else []
     if not rows:
-        print("no status rows found; is --spec-dir the specs directory?", file=sys.stderr)
+        print(f"spec_backlog: unmeasured, no status rows in {a.spec_dir} (DISCLOSE-1: set ULTRASTABLE_SPEC_DIR to the private specification)", file=sys.stderr)
         return 2
     if a.sql:
         sys.stdout.write(sql(items(rows)))
