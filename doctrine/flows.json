@@ -2649,6 +2649,26 @@
       "bindings": [
         "LANE_PAT"
       ]
+    },
+    "worklog": {
+      "inflows": [
+        {
+          "signal": "work.records",
+          "via": "api:github"
+        },
+        {
+          "signal": "session.ledger",
+          "via": "file"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "work.records",
+          "via": "api:github"
+        }
+      ],
+      "feedback": "a record it hands back is resumed by the lane, whose heartbeat it reads on the next pass",
+      "bindings": []
     }
   },
   "implicit_producers": {

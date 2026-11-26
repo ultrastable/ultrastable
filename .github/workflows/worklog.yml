@@ -1,0 +1,39 @@
+name: worklog
+# WORK-RECORD-1: re-dispatches work records whose owning session went silent, so nothing restarts from scratch.
+# budget: ~1 min per tick; public repository, so Actions minutes are free
+# trigger: the tick Worker's ultrastable-tick repository_dispatch (sent when it wakes the Actions route), every lane run and every work-issue edit; daily cron is the backstop.
+#          stale_hours is 1, so a silent record is handed back on the next of those events after an hour of quiet
+# free-alternative: run `python3 -m foundation worklog reap --apply` from the Cloudflare tick or a cloud-hosted agent session
+on:
+  schedule:
+    - cron: "41 7 * * *"
+  repository_dispatch:
+    types: [ultrastable-tick]
+  workflow_run:
+    workflows: [lane]
+    types: [completed]
+  issues:
+    types: [opened, edited]
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+concurrency:
+  group: worklog
+  cancel-in-progress: true
+jobs:
+  reap:
+    if: ${{ vars.HALT != '1' && (github.event_name != 'issues' || contains(github.event.issue.labels.*.name, 'work')) }}  # HALT-1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - run: python3 -m foundation worklog backfill --apply
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - run: python3 -m foundation worklog reap --apply
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - run: python3 -m foundation worklog list --plans
+        env:
+          GH_TOKEN: ${{ github.token }}
