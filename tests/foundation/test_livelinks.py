@@ -25,7 +25,7 @@ class LiveLinks(unittest.TestCase):
         self.assertTrue(b.startswith(L.START) and b.rstrip().endswith(L.END))
 
     def test_a_system_with_nothing_deployed_says_so_and_shows_no_dead_link(self):
-        b = L.block("base-rates", REPO)
+        b = L.block("did-it-work", REPO)
         self.assertIn("Not deployed yet", b)
         self.assertNotIn("/health", b)
 
