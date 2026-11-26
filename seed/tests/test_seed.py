@@ -231,3 +231,26 @@ class GhAdminOrgTests(unittest.TestCase):
     def test_a_sign_in_on_a_host_that_is_not_server_side_is_not_a_route(self):
         self.assertFalse(self._run(0, "Token scopes: 'admin:org', 'repo'", env={}))
         self.assertTrue(self._run(0, "Token scopes: 'admin:org', 'repo'", env={"CLAUDE_CODE_REMOTE": "true"}))
+
+
+class KitTestsAreSelfContained(unittest.TestCase):
+    """SEED-SELFCONTAINED-1: the published template failed its own Worker suite because two tests read platform files (deploy/, site/) and were
+    not on the monorepo-only register. A kit test that reaches above the kit is registered there, guarded by existsSync, or tolerant of ENOENT."""
+
+    def test_every_test_that_reads_above_the_kit_is_registered_or_guarded(self):
+        import json as _json, re as _re
+        t = ROOT / "worker" / "test"
+        only = _json.loads((t / "monorepo-only.json").read_text(encoding="utf-8"))
+        title = _re.compile(r"test\(\s*'([^']*)'")
+        loose = []
+        for f in sorted(t.glob("*.test.js")):
+            s = f.read_text(encoding="utf-8")
+            if "../../../" not in s or f.name in only["files"] or "existsSync(" in s or "'ENOENT'" in s:
+                continue
+            for block in _re.split(r"(?m)^(?=test\()", s):
+                if "../../../" not in block:
+                    continue
+                m = title.match(block)
+                if not m or not any(x in m.group(1) for x in only["tests"]):
+                    loose.append(f"{f.name}: {m.group(1)[:70] if m else 'an import above the tests'}")
+        self.assertEqual(loose, [])
