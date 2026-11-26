@@ -4,7 +4,7 @@
   "kind": "lesson",
   "date": "2026-11-26",
   "title": "Slice S07b-shipplan of the specification work shipped on its own",
-  "body": "feat: SHIP-PLAN-1, the canonical record of built but unmerged work. One cohesive set of files inside the 60 file and 3,000 line bound, applied to the latest main with a three-way patch and checked locally before the push.",
+  "body": "feat: SHIP-PLAN-1, the canonical record of built but unmerged work, and the plans surface registration. One cohesive set of files inside the 60 file and 3,000 line bound, applied to the latest main with a three-way patch and checked locally before the push.",
   "probe": "file:doctrine/ship-plan.json",
   "session": "session_0156nqDroaiS542i2iu8RdAL"
  },

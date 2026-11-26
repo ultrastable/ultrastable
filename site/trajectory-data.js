@@ -38,14 +38,14 @@ export default {
     0,
     81810
    ],
-   "share_recent": 0.231,
-   "share_trend": 0.231,
+   "share_recent": 0.23,
+   "share_trend": 0.23,
    "total": 81810
   },
   {
    "area": "doctrine",
    "quiet_days": 0,
-   "recent7": 42335,
+   "recent7": 42344,
    "series": [
     0,
     0,
@@ -76,11 +76,11 @@ export default {
     0,
     0,
     0,
-    42335
+    42344
    ],
-   "share_recent": 0.12,
-   "share_trend": 0.12,
-   "total": 42335
+   "share_recent": 0.119,
+   "share_trend": 0.119,
+   "total": 42344
   },
   {
    "area": "foundation",
@@ -118,9 +118,49 @@ export default {
     0,
     41804
    ],
-   "share_recent": 0.118,
-   "share_trend": 0.118,
+   "share_recent": 0.117,
+   "share_trend": 0.117,
    "total": 41804
+  },
+  {
+   "area": "seed/worker",
+   "quiet_days": 0,
+   "recent7": 27362,
+   "series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    27362
+   ],
+   "share_recent": 0.077,
+   "share_trend": 0.077,
+   "total": 27362
   },
   {
    "area": "site",
@@ -158,54 +198,14 @@ export default {
     0,
     27138
    ],
-   "share_recent": 0.077,
-   "share_trend": 0.077,
+   "share_recent": 0.076,
+   "share_trend": 0.076,
    "total": 27138
-  },
-  {
-   "area": "seed/worker",
-   "quiet_days": 0,
-   "recent7": 26073,
-   "series": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    26073
-   ],
-   "share_recent": 0.074,
-   "share_trend": 0.074,
-   "total": 26073
   },
   {
    "area": "tests/foundation",
    "quiet_days": 0,
-   "recent7": 17295,
+   "recent7": 18422,
    "series": [
     0,
     0,
@@ -236,11 +236,11 @@ export default {
     0,
     0,
     0,
-    17295
+    18422
    ],
-   "share_recent": 0.049,
-   "share_trend": 0.049,
-   "total": 17295
+   "share_recent": 0.052,
+   "share_trend": 0.052,
+   "total": 18422
   },
   {
    "area": "doctrine/schemas",
@@ -278,8 +278,8 @@ export default {
     0,
     17253
    ],
-   "share_recent": 0.049,
-   "share_trend": 0.049,
+   "share_recent": 0.048,
+   "share_trend": 0.048,
    "total": 17253
   },
   {
@@ -323,7 +323,7 @@ export default {
    "total": 16928
   }
  ],
- "at": "2026-11-26T13:35:22Z",
+ "at": "2026-11-26T13:44:46Z",
  "days": 30,
  "findings": [
   {
@@ -389,16 +389,16 @@ export default {
    0,
    0,
    0,
-   57
+   63
   ],
-  "closed": 1233,
-  "opened": 1290
+  "closed": 1229,
+  "opened": 1292
  },
  "loops": [
   {
    "loop": "ultrastability",
    "quiet_days": 0,
-   "rows": 18048,
+   "rows": 18086,
    "series": [
     0,
     0,
@@ -429,13 +429,13 @@ export default {
     3322,
     2312,
     2535,
-    3075
+    3113
    ]
   },
   {
    "loop": "deploys",
    "quiet_days": 0,
-   "rows": 1284,
+   "rows": 1296,
    "series": [
     0,
     0,
@@ -466,7 +466,7 @@ export default {
     14,
     0,
     212,
-    158
+    170
    ]
   },
   {
@@ -546,7 +546,7 @@ export default {
   {
    "loop": "resilience",
    "quiet_days": 0,
-   "rows": 474,
+   "rows": 475,
    "series": [
     0,
     0,
@@ -577,13 +577,13 @@ export default {
     80,
     55,
     62,
-    91
+    92
    ]
   },
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 441,
+   "rows": 443,
    "series": [
     0,
     0,
@@ -614,13 +614,13 @@ export default {
     80,
     55,
     88,
-    101
+    103
    ]
   },
   {
    "loop": "yearsim",
    "quiet_days": 0,
-   "rows": 398,
+   "rows": 399,
    "series": [
     0,
     0,
@@ -651,13 +651,13 @@ export default {
     80,
     55,
     62,
-    80
+    81
    ]
   },
   {
    "loop": "saydo",
    "quiet_days": 0,
-   "rows": 397,
+   "rows": 398,
    "series": [
     0,
     0,
@@ -688,7 +688,7 @@ export default {
     80,
     55,
     62,
-    80
+    81
    ]
   }
  ],
