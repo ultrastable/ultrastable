@@ -1,58 +1,57 @@
 {
  "targets": {
   "external_referrals_7d": 94,
-  "ps_page_views_7d": 78
+  "ps_page_views_7d": 98,
+  "feed_hits_7d": 12
  },
  "met_runs": {
   "external_referrals_7d": 0,
   "social_referrals_7d": 0,
-  "search_referrals_7d": 0,
-  "feed_hits_7d": 1,
-  "ps_page_views_7d": 1,
+  "search_referrals_7d": 1,
+  "feed_hits_7d": 0,
+  "ps_page_views_7d": 0,
   "posts_published_7d": 0
  },
  "last": {
-  "feed_entries": 32,
-  "at": "2026-11-25T23:37:59.267966+00:00",
+  "feed_entries": 40,
+  "at": "2026-11-26T23:52:30.442150+00:00",
   "added": [
    {
-    "id": "ev:pv-324cba6ff2ba",
+    "id": "ev:pv-d0b0fd1082a0",
     "arm": "shipped"
    },
    {
-    "id": "ev:pv-23eb90d7f036",
+    "id": "ev:pv-504bf3710667",
     "arm": "shipped"
    },
    {
-    "id": "ev:pv-bc71cc2d84f1",
+    "id": "ev:pv-e947ff4830d9",
     "arm": "shipped"
    },
    {
-    "id": "ev:pv-3433f1a3b69b",
+    "id": "ev:pv-25c55d099e37",
     "arm": "shipped"
    }
   ],
   "metrics_error": "HTTPError: HTTP Error 403: Forbidden",
   "metrics_route": "site",
   "metrics": {
-   "external_referrals_7d": 83,
+   "external_referrals_7d": 88,
    "social_referrals_7d": 0,
-   "search_referrals_7d": 38,
-   "feed_hits_7d": 10,
-   "ps_page_views_7d": 164,
+   "search_referrals_7d": 43,
+   "feed_hits_7d": 16,
+   "ps_page_views_7d": 210,
    "posts_published_7d": 0,
    "suggestions_7d": null
   },
   "breaches": [
    "external_referrals_7d",
    "social_referrals_7d",
-   "search_referrals_7d",
    "posts_published_7d"
   ],
   "filed": [
    "Q-REACH-external_referrals_7d",
    "Q-REACH-social_referrals_7d",
-   "Q-REACH-search_referrals_7d",
    "Q-REACH-posts_published_7d"
   ],
   "channels": {
