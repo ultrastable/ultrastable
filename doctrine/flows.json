@@ -533,6 +533,8 @@
       ],
       "feedback": "the probe's state is read by the dashboard snapshot and a drift becomes a probe item",
       "bindings": [
+        "LANE_APP_ID",
+        "LANE_APP_PRIVATE_KEY",
         "ORG_ADMIN_TOKEN"
       ]
     },
