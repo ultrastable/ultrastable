@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-2369",
+  "title": "OL-PR-2369: land or supersede pull request #2369 (conflict)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #2369 is conflict\n**Done check:** cmd:python3 -m foundation loopowner --closed 2369\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #2369 (`ccr-9ae06d53-4xkyer` at 3b3c7b3802, opened by rwnq8): fix: make seed/ the one source for the template again (Q-FLEETMAP-seed). The session that opened it is not its closer and is never asked to act. The branch conflicts with main. Merge main into the branch and resolve it, or redo the change from main in a new pull request and close this one as superseded. Files (18): doctrine/fleet-map.json, doctrine/schemas/fleet-map.schema.json, doctrine/writeback/lesson-2026-11-26-q-fleetmap-seed-seed-is-the-one-source-for-the-template-agai.json, foundation/fleetmap.py, seed/.github/workflows/balance.yml, seed/docs/claims.json, seed/doctrine/humanvoice.json, seed/doctrine/schemas/catalog.json, seed/doctrine/schemas/humanvoice.schema.json, seed/doctrine/schemas/verification.schema.json, seed/doctrine/verification.json, seed/scripts/humanvoice.py, seed/scripts/verify.py, seed/scripts/verify_spend.mjs, seed/tests/test_balance.py, seed/tests/test_verify.py, site/claims-data.js, tests/foundation/test_fleetmap.py.\n\n**Prediction:** open_prs <= 0 within 24 h\n**Out of scope:** changing what pull request #2369 does; land it as written or carry it onto main unchanged.\n\n**Closing probe:** `python3 -m foundation loopowner --closed 2369` exits 0 (pull request #2369 is merged or closed).",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
