@@ -109,7 +109,7 @@ test('US-14-T01 and US-14-R07: the L1 tick runs every step over the adapter stor
   assert.equal(db.raw.prepare(`SELECT verdict FROM predictions WHERE id='P'`).get().verdict, 'hit');
 });
 
-test('US-14-T04, US-14-R04 and US-01-R06: the core is given a presence map; a secret value is in no row the tick wrote', async () => {
+test('US-01-T04, US-14-T04, US-14-R04 and US-01-R06: the core is given a presence map; a secret value is in no row the tick wrote', async () => {
   const SECRET = 'planted-value-4f9a2c7e1b';
   const map = presence({ SOME_KEY: SECRET, EMPTY: '', DB: { prepare() {} } });
   assert.equal(map.SOME_KEY, true); assert.ok(!map.EMPTY); assert.ok(!JSON.stringify(map).includes(SECRET));
@@ -146,4 +146,37 @@ test('US-SPEC-01 section 4.2 and US-00-R06: the published mapping of renamed tab
   for (const [record, reason] of Object.entries(map.missing)) { assert.ok(reason.length > 20, record); assert.ok(!names.has(record)); }
   const spec = ['management_personas', 'program_charters', 'program_risk_now', 'portfolio_allocations', 'program_focus', 'program_focus_log', 'issue_priority_scores', 'queue_pulls', 'persona_actions', 'persona_briefs', 'decision_log', 'decision_predictions', 'decision_outcomes', 'trust_transitions', 'product_registry', 'plus_ledger', 'work_claims', 'human_actions', 'failure_modes', 'failure_mode_hits', 'false_stop_register', 'false_stop_phrases', 'false_stop_hits', 'doctrine_proposals', 'ops_config', 'metric_registry', 'metric_triggers', 'model_task_matrix', 'model_admission'];
   for (const r of spec) assert.ok(map.records[r] || map.missing[r], `${r} is mapped or listed as missing`);
+});
+
+const SEED_MIGRATIONS = path.join(ROOT, '../seed/worker/migrations');
+
+test('US-00-R06: every seed table the published mapping names exists once the seed migrations are applied', { skip: !existsSync(SEED_MIGRATIONS) && 'the seed is not checked out beside this repository (../seed/worker/migrations): the mapping of the seed schema is not checked here' }, () => {
+  const map = JSON.parse(readFileSync(path.join(ROOT, 'core/conformance/l2-records.json'), 'utf8'));
+  const raw = new DatabaseSync(':memory:');
+  for (const f of readdirSync(SEED_MIGRATIONS).filter(n => n.endsWith('.sql')).sort()) raw.exec(readFileSync(path.join(SEED_MIGRATIONS, f), 'utf8'));
+  const names = new Set(raw.prepare(`SELECT name FROM sqlite_master WHERE type IN ('table','view')`).all().map(r => r.name));
+  assert.ok(Object.keys(map.seed.records).length >= 5);
+  const spec = new Set([...Object.keys(map.records), ...Object.keys(map.missing)]);
+  for (const [record, tables] of Object.entries(map.seed.records)) {
+    assert.ok(spec.has(record), `${record} is a record of section 4.2`);
+    for (const t of tables) assert.ok(names.has(t), `${record} -> ${t}`);
+  }
+  assert.deepEqual(raw.prepare(`SELECT name FROM pragma_table_info('decision_log')`).all().map(r => r.name).filter(c => ['predicted', 'measured', 'hit'].includes(c)).sort(), ['hit', 'measured', 'predicted'], 'the seed decision log keeps the prediction and the scored outcome');
+});
+
+test('US-00-R06: a record the router carries as configuration names that configuration and the table that logs each call, and both exist', () => {
+  const map = JSON.parse(readFileSync(path.join(ROOT, 'core/conformance/l2-records.json'), 'utf8'));
+  const raw = new DatabaseSync(':memory:');
+  for (const f of readdirSync(path.join(ROOT, 'core/router/migrations')).filter(n => n.endsWith('.sql')).sort()) raw.exec(readFileSync(path.join(ROOT, 'core/router/migrations', f), 'utf8'));
+  const [record, m] = Object.entries(map.mapped_by_config)[0];
+  assert.equal(record, 'model_task_matrix'); assert.ok(map.missing[record], 'the record is still listed as having no table of its own');
+  const router = readFileSync(path.join(ROOT, 'core/router/router.js'), 'utf8');
+  assert.ok(/config\.rungs/.test(router) && /config\.providers/.test(router), 'the configuration the mapping names is what the router reads');
+  for (const t of m.log) { const have = raw.prepare(`SELECT name FROM pragma_table_info(?)`).all(t).map(r => r.name); assert.ok(have.length, t); for (const c of m.log_columns) assert.ok(have.includes(c), `${t}.${c}`); }
+});
+
+test('US-00-R06: program_focus_log is mapped to the table that keeps the history of focus sets, so no record of section 4.2 is left without a table or a stated reason', () => {
+  const map = JSON.parse(readFileSync(path.join(ROOT, 'core/conformance/l2-records.json'), 'utf8'));
+  assert.deepEqual(map.records.program_focus_log, ['kernel_focus_log']);
+  assert.ok(!map.missing.program_focus_log);
 });

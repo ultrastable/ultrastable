@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """US-SPEC-03: the L3 kernel step list is an executable registry (doctrine/kernel.json), the specification's section 5 table is that registry, and the
 seed runtime tick's step table in section 3.4 is the code's own step list. Words match code (CLAIMS-1): none of the tables below is typed apart from the
 code it describes, and this test fails when one drifts.

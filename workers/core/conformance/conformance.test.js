@@ -6,7 +6,9 @@ import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import { parseSpecs, scanTests, buildManifest, declaration, levels, check, testFiles, LEVELS } from './index.js';
-import { ROOT, MANIFEST, readSpecs, readTests, readNamedFiles } from './cli.js';
+import { mkdtempSync, mkdirSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { ROOT, MANIFEST, readSpecs, readTests, readNamedFiles, specDir, coverageNotice } from './cli.js';
 
 const SPEC = { file: 'US-SPEC-90-example.md', text: `# US-SPEC-90: Example
 | Field | Value |
@@ -51,7 +53,7 @@ test('tests are matched to requirements by the ids their titles cite, in full or
   assert.equal(c['US-90-R05'], undefined);
 });
 
-test('US-00-R01 and US-00-R02: the declaration names the level, each specification version and every requirement not met, with its reason', () => {
+test('US-00-R01, US-00-R02 and US-00-R12: the declaration names the level, each specification version and every requirement not met, with its reason', () => {
   const m = buildManifest({ specs: [SPEC], tests: TESTS, declared: 'L2', reasons: { 'US-90-R05': 'needs a live account' } });
   const d = declaration(m);
   assert.equal(d.level, 'L2'); assert.deepEqual(d.spec_versions, { 'US-SPEC-90': '0.3.0 (draft)' });
@@ -63,10 +65,10 @@ test('US-00-R01 and US-00-R02: the declaration names the level, each specificati
   assert.equal(buildManifest({ specs: [SPEC], tests: [] }).requirements.every(r => r.status === 'deviation' && r.reason), true);
 });
 
-test('US-00-R03: the checker rejects an overstated manifest: a met with no test, a test file that is gone, a test that no longer cites it, a deviation with no reason', () => {
+test('US-00-R03 and US-00-R12: the checker rejects an overstated manifest: a met with no test, a test file that is gone, a test that no longer cites it, a deviation with no reason', () => {
   const m = buildManifest({ specs: [SPEC], tests: TESTS, declared: 'L2', reasons: { 'US-90-R05': 'needs a live account' } });
   const files = Object.fromEntries(TESTS.map(t => [t.path, t.text]));
-  assert.deepEqual(check(m, { files, specs: [SPEC], tests: TESTS }), { ok: true, problems: [], stale: [] });
+  assert.deepEqual(check(m, { files, specs: [SPEC], tests: TESTS }), { ok: true, problems: [], stale: [], unverified: [] });
   assert.match(check(m, { files: { 'core/b/b.test.js': TESTS[1].text } }).problems[0], /US-90-R01: test file core\/a\/a\.test\.js does not exist/);
   const renamed = { ...files, 'core/a/a.test.js': TESTS[0].text.replace('US-90-R01: does', 'does') };
   assert.ok(check(m, { files: renamed }).problems.some(p => /US-90-R01: core\/a\/a\.test\.js no longer cites it/.test(p)));
@@ -97,9 +99,35 @@ test('US-00-T02 and US-00-R03: every requirement the manifest labels met names a
   for (const f of testFiles(manifest, 'L3')) assert.ok(existsSync(path.join(ROOT, f)), f);
 });
 
-// The specifications sit in specs/ of the repository this tree is folded into (REPOS-1), or in a `spec` checkout beside a standalone one.
-const SPEC_DIR = ['../specs', '../spec/specs'].map(d => path.join(ROOT, d)).find(d => existsSync(d));
-test('the manifest covers every requirement of every specification, at the level the specification tags', { skip: !SPEC_DIR && 'no specifications directory beside this tree' }, () => {
-  const r = check(manifest, { files: readNamedFiles(manifest), specs: readSpecs(SPEC_DIR), tests: readTests() });
+const SPECS = specDir();
+
+test('US-00-R03: the spec-coverage check runs when the specifications sit at ../specs, ../spec/specs or US_SPEC_DIR', () => {
+  const tmp = mkdtempSync(path.join(tmpdir(), 'us-spec-dir-'));
+  const layout = (name, ...specParts) => { const root = path.join(tmp, name, 'root'); mkdirSync(root, { recursive: true }); if (specParts.length) mkdirSync(path.join(tmp, name, ...specParts), { recursive: true }); return root; };
+  try {
+    assert.equal(specDir({ env: {}, root: layout('bare') }), null, 'no layout matches');
+    const mono = layout('mono', 'specs');
+    assert.equal(specDir({ env: {}, root: mono }), path.join(mono, '../specs'), 'the monorepo layout: <root>/../specs');
+    const extracted = layout('extracted', 'spec', 'specs');
+    assert.equal(specDir({ env: {}, root: extracted }), path.join(extracted, '../spec/specs'), 'the extracted layout: <root>/../spec/specs');
+    const elsewhere = path.join(tmp, 'elsewhere'); mkdirSync(elsewhere);
+    assert.equal(specDir({ env: { US_SPEC_DIR: elsewhere }, root: mono }), elsewhere, 'US_SPEC_DIR wins over the layouts');
+    assert.equal(specDir({ explicit: path.join(mono, '../specs'), env: { US_SPEC_DIR: elsewhere }, root: mono }), path.join(mono, '../specs'), 'an explicit --spec-dir wins over everything');
+    assert.equal(specDir({ env: { US_SPEC_DIR: path.join(tmp, 'missing') }, root: layout('bare2') }), null, 'a directory that does not exist is never returned');
+  } finally { rmSync(tmp, { recursive: true, force: true }); }
+});
+
+test('US-00-R03: with no specification directory the coverage check says it was not run, and the checker never reports coverage it did not read', () => {
+  assert.match(coverageNotice(null), /NOT checked/);
+  assert.equal(coverageNotice('/some/dir'), null);
+  // check() without specs verifies the claims against the tests only: it cannot report a requirement missing from the manifest
+  const extra = { file: 'US-SPEC-90-example.md', text: SPEC.text + '\n- **US-90-R06 [L1]** A new rule MUST hold.\n' };
+  const m = buildManifest({ specs: [SPEC], tests: TESTS });
+  assert.deepEqual(check(m, { files: Object.fromEntries(TESTS.map(t => [t.path, t.text])) }).problems, []);
+  assert.ok(check(m, { files: Object.fromEntries(TESTS.map(t => [t.path, t.text])), specs: [extra] }).problems.includes('US-90-R06 is in the specification and not in the manifest'));
+});
+
+test('the manifest covers every requirement of every specification, at the level the specification tags', { skip: !SPECS && 'no specification directory: set US_SPEC_DIR or check the specifications out at ../specs or ../spec/specs' }, () => {
+  const r = check(manifest, { files: readNamedFiles(manifest), specs: readSpecs(SPECS), tests: readTests() });
   assert.deepEqual(r.problems, []);
 });

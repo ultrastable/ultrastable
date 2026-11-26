@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 # Copyright (c) Ultrastable
 """MANAGERS-1: every manager role is a running loop that owns code; every loop has a manager; the seed carries every platform manager."""
-import json, shutil, unittest
+import json, re, shutil, unittest
 from pathlib import Path
 from foundation import managers as M
 from _repo import scratch
@@ -245,12 +245,13 @@ class Alignment(unittest.TestCase):
         d = copy()
         p = d / "docs/issues/Q-ROLE-sales-partnerships.json"
         j = json.loads(p.read_text())
-        open_body = j["body"]
-        j["body"] = open_body.replace("**Status:** open", "**Status:** closed") + "\n**Disposition:** shelved (ttl)\n"
+        # the queue loop moves a real item between states, so the test sets the state itself instead of assuming the item is open
+        base_body = re.sub(r"\n\*\*Disposition:\*\*[^\n]*", "", re.sub(r"\*\*Status:\*\*[^\n]*", "**Status:** closed", j["body"]))
+        j["body"] = base_body + "\n**Disposition:** shelved (ttl)\n"
         p.write_text(json.dumps(j))
         self.assertEqual(M.item_state(d, "Q-ROLE-sales-partnerships"), "shelved")
         self.assertEqual(M.check(d), [])
-        j["body"] = open_body.replace("**Status:** open", "**Status:** closed") + "\n**Disposition:** fixed (probe)\n"
+        j["body"] = base_body + "\n**Disposition:** fixed (probe)\n"
         p.write_text(json.dumps(j))
         self.assertTrue(any("ended fixed" in b for b in M.check(d)))
 

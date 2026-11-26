@@ -49,18 +49,44 @@
     {
      "file": "core/conformance/conformance.test.js",
      "name": "US-00-T02 and US-00-R03: every requirement the manifest labels met names a test file that exists and still cites it"
+    },
+    {
+     "file": "core/conformance/scan-python.test.js",
+     "name": "US-00-T02: the proof files run with the right runner, each Python suite from the directory it expects, and a failing Python proof fails the run"
     }
    ]
   },
   {
    "id": "US-00-T03",
    "spec": "US-SPEC-00",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/conformance/running.test.js",
+     "name": "US-00-T03: the labels are the status lines that label a component RUNNING, not a sentence that mentions the word or says there is none"
+    },
+    {
+     "file": "core/conformance/running.test.js",
+     "name": "US-00-T03: a RUNNING label with a ledger row from the last 7 days is found; one with only older rows is missing"
+    },
+    {
+     "file": "core/conformance/running.test.js",
+     "name": "US-00-T03: an unreadable or absent ledger makes every label unmeasured, never found"
+    }
+   ]
   },
   {
    "id": "US-00-T04",
    "spec": "US-SPEC-00",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/conformance/spec-kernel.test.js",
+     "name": "US-00-T04 and US-00-R09: a request for a business plan with no pack enabled is declined with its reason and held, not dispatched"
+    },
+    {
+     "file": "core/conformance/spec-kernel.test.js",
+     "name": "US-00-T04 (todo): the decline names the pack that would cover the request"
+    }
+   ]
   },
   {
    "id": "US-00-T05",
@@ -113,17 +139,32 @@
   {
    "id": "US-01-T04",
    "spec": "US-SPEC-01",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/conformance/l1.test.js",
+     "name": "US-01-T04, US-14-T04, US-14-R04 and US-01-R06: the core is given a presence map; a secret value is in no row the tick wrote"
+    }
+   ]
   },
   {
    "id": "US-01-T05",
    "spec": "US-SPEC-01",
-   "tests": []
+   "tests": [
+    {
+     "file": "../seed/worker/test/spec-01-data-model.test.js",
+     "name": "US-01-T05 and US-01-R12: a migration applies once and is ledgered with its hash; an applied file whose text changed is drift: reported, never re-run, and filed"
+    }
+   ]
   },
   {
    "id": "US-01-T06",
    "spec": "US-SPEC-01",
-   "tests": []
+   "tests": [
+    {
+     "file": "../seed/worker/test/spec-01-data-model.test.js",
+     "name": "US-01-T06 and US-01-R16: a daily copy of every non-secret table is stored, read back whole and counted before it counts as a copy; a copy that does not read back is reported and prunes nothing"
+    }
+   ]
   },
   {
    "id": "US-01-T07",
@@ -136,7 +177,7 @@
    "tests": [
     {
      "file": "core/staff/staff.test.js",
-     "name": "US-02-T01, US-02-T02: dispatch goes by owner_role, and a new role row is dispatched with no code change"
+     "name": "US-02-T01, US-02-T02, US-02-R02, US-02-R04: dispatch goes by owner_role, and a new role row is dispatched with no code change"
     }
    ]
   },
@@ -146,7 +187,7 @@
    "tests": [
     {
      "file": "core/staff/staff.test.js",
-     "name": "US-02-T01, US-02-T02: dispatch goes by owner_role, and a new role row is dispatched with no code change"
+     "name": "US-02-T01, US-02-T02, US-02-R02, US-02-R04: dispatch goes by owner_role, and a new role row is dispatched with no code change"
     }
    ]
   },
@@ -163,7 +204,12 @@
   {
    "id": "US-02-T04",
    "spec": "US-SPEC-02",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/staff/review.test.js",
+     "name": "US-02-R03, US-02-T04: with two families configured the router gives a reviewer a family other than the doer's, and the review refuses the doer's family"
+    }
+   ]
   },
   {
    "id": "US-02-T05",
@@ -173,22 +219,50 @@
   {
    "id": "US-02-T06",
    "spec": "US-SPEC-02",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/staff/staff.test.js",
+     "name": "US-02-R14, US-02-T06: a refusal is recorded with its kind (authority, lane, control_plane, precondition), changes nothing, and a quiet duty leaves no row for a failed precondition"
+    }
+   ]
   },
   {
    "id": "US-03-T01",
    "spec": "US-SPEC-03",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-T01 and US-03-R05: a tick on a seeded store completes every step, with no error, and the stored report starts with Happened"
+    }
+   ]
   },
   {
    "id": "US-03-T02",
    "spec": "US-SPEC-03",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-R03, US-03-R04 and US-03-T02: a failing step never kills the tick and becomes a backlog item"
+    },
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-T02: dropping predictions leaves seven steps complete and exactly one TICKFAIL-score_predictions item (priority 0, owner operations), also after a second tick"
+    }
+   ]
   },
   {
    "id": "US-03-T03",
    "spec": "US-SPEC-03",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-T03 and US-03-R07: a tick runs every step and dispatches in priority order; the item whose trigger is not done stays open"
+    },
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-T03: with A ready, B open and C triggered by A, dispatch claims A only and C stays open"
+    }
+   ]
   },
   {
    "id": "US-03-T04",
@@ -198,7 +272,12 @@
   {
    "id": "US-03-T05",
    "spec": "US-SPEC-03",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-R08 and US-03-T05: a prediction naming an unknown metric, an unknown operator or an inherited property is scored miss with no observed value"
+    }
+   ]
   },
   {
    "id": "US-03-T06",
@@ -217,22 +296,62 @@
   {
    "id": "US-03-T07",
    "spec": "US-SPEC-03",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-R19 and US-03-T07 (issue #173 execute): a dispatched item whose probe passes ends done with evidence in the same tick"
+    },
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-R19 and US-03-T07 (issue #173 execute): a failing probe parks the item with a reason, and it closes by itself when the probe passes"
+    },
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-R19 and US-03-T07 (issue #173 execute): an item with no machine-readable probe keeps its claim for an outside executor; a worked claim is not touched"
+    }
+   ]
   },
   {
    "id": "US-03-T08",
    "spec": "US-SPEC-03",
-   "tests": []
+   "tests": [
+    {
+     "file": "../seed/worker/test/spec-03-tick.test.js",
+     "name": "US-03-R17 and US-03-T08: health judges the newest finished tick, so a tick in flight does not fail it, and an unfinished tick older than five minutes does"
+    }
+   ]
   },
   {
    "id": "US-03-T09",
    "spec": "US-SPEC-03",
-   "tests": []
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_03_kernel_steps.py",
+     "name": "test US-03-T09 every kernel step names code that exists"
+    },
+    {
+     "file": "../tests/foundation/test_spec_03_kernel_steps.py",
+     "name": "test US-03-T09 the registry is the one foundation kernel check reads"
+    },
+    {
+     "file": "../tests/foundation/test_spec_03_kernel_steps.py",
+     "name": "test US-03-T09 the specification table of section 5 is the registry"
+    }
+   ]
   },
   {
    "id": "US-03-T10",
    "spec": "US-SPEC-03",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-T10, US-03-R09 and US-03-R18: with a configuration that omits every limit a role is never given more than three claims and no step fails"
+    },
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-T10, US-03-R03 and US-03-R18, US-00-R07: a claim older than the default 120 minutes is released with no TICKFAIL when claim_ttl_minutes is omitted"
+    }
+   ]
   },
   {
    "id": "US-04-T01",
@@ -240,7 +359,11 @@
    "tests": [
     {
      "file": "core/plus/plus.test.js",
-     "name": "US-04-T01: 20 done items with 1 plus opens one REBALANCE item for the portfolio manager at priority 5"
+     "name": "US-04-T01, US-04-R02: 20 done items with 1 plus opens one REBALANCE item for the portfolio manager at priority 5"
+    },
+    {
+     "file": "../seed/worker/test/tick.test.js",
+     "name": "US-04-T01: 1 plus in the last 20 done items is under half the target, so one REBALANCE item opens for the portfolio manager at priority 5"
     }
    ]
   },
@@ -250,7 +373,11 @@
    "tests": [
     {
      "file": "core/plus/plus.test.js",
-     "name": "US-04-T02: 9 done items open no rebalance item; 20 with a healthy plus share open none either"
+     "name": "US-04-T02, US-04-R02: 9 done items open no rebalance item; 20 with a healthy plus share open none either"
+    },
+    {
+     "file": "../seed/worker/test/tick.test.js",
+     "name": "US-04-T02: fewer than 10 done items is too few to judge, and a share at the target opens nothing"
     }
    ]
   },
@@ -277,12 +404,22 @@
   {
    "id": "US-04-T05",
    "spec": "US-SPEC-04",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/plus/plus.test.js",
+     "name": "US-04-T05, US-04-R15: an unmeasured plus stays shipped with an item through the grace period, then is reverted and counts as a miss"
+    }
+   ]
   },
   {
    "id": "US-04-T06",
    "spec": "US-SPEC-04",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/plus/plus.test.js",
+     "name": "US-04-T06, US-04-R16: the daily cap counts plus rows created today, independent of the managers' origination cap"
+    }
+   ]
   },
   {
    "id": "US-05-T01",
@@ -335,7 +472,12 @@
   {
    "id": "US-05-T05",
    "spec": "US-SPEC-05",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/predict/predict.test.js",
+     "name": "US-05-R17, US-05-T05: the fail condition and the null expectation are evaluated: a reading of 3 reaches observed, -1 records a failure, 0 matches the null expectation"
+    }
+   ]
   },
   {
    "id": "US-05-T06",
@@ -405,7 +547,12 @@
   {
    "id": "US-06-T07",
    "spec": "US-SPEC-06",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/trust/ladder-loop.test.js",
+     "name": "US-06-R20, US-06-T07: 12 scored predictions become outcomes, the tick proposes the ladder item, the merge by a different agent applies it (decision to rung, one database); the same agent is refused"
+    }
+   ]
   },
   {
    "id": "US-06-T08",
@@ -433,7 +580,7 @@
    "tests": [
     {
      "file": "core/governance/governance.test.js",
-     "name": "US-07-T02 \"I can\\'t push; the token has no access.\" with no surface list records a deduction; with surfaces each is enumerated and tested"
+     "name": "US-07-T02 \"I can't push; the token has no access.\" with no surface list records a deduction; with surfaces each is enumerated and tested"
     }
    ]
   },
@@ -484,7 +631,12 @@
   {
    "id": "US-07-T07",
    "spec": "US-SPEC-07",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/deploy/mergeguard.test.js",
+     "name": "US-07-R18, US-07-T07: a hold marker, a queued required check, an empty list on a fresh head, an unreadable answer and a failed check each refuse; a new push with green required checks allows"
+    }
+   ]
   },
   {
    "id": "US-07-T08",
@@ -544,7 +696,12 @@
   {
    "id": "US-09-T01",
    "spec": "US-SPEC-09",
-   "tests": []
+   "tests": [
+    {
+     "file": "../seed/worker/test/switches.test.js",
+     "name": "US-09-R01, US-09-T01: a switched-off acting step writes no action row; every measuring step still runs"
+    }
+   ]
   },
   {
    "id": "US-09-T02",
@@ -839,7 +996,7 @@
    "tests": [
     {
      "file": "core/conformance/l1.test.js",
-     "name": "US-14-T04, US-14-R04 and US-01-R06: the core is given a presence map; a secret value is in no row the tick wrote"
+     "name": "US-01-T04, US-14-T04, US-14-R04 and US-01-R06: the core is given a presence map; a secret value is in no row the tick wrote"
     }
    ]
   },
@@ -1272,7 +1429,7 @@
    "tests": [
     {
      "file": "core/packs/packs.test.js",
-     "name": "T21-5 tripping one pack\\'s switch stops that pack and no other; global and channel switches also hold"
+     "name": "T21-5 tripping one pack's switch stops that pack and no other; global and channel switches also hold"
     }
    ]
   },
@@ -1513,7 +1670,7 @@
    "tests": [
     {
      "file": "core/conformance/conformance.test.js",
-     "name": "US-00-R01 and US-00-R02: the declaration names the level, each specification version and every requirement not met, with its reason"
+     "name": "US-00-R01, US-00-R02 and US-00-R12: the declaration names the level, each specification version and every requirement not met, with its reason"
     }
    ]
   },
@@ -1528,7 +1685,7 @@
    "tests": [
     {
      "file": "core/conformance/conformance.test.js",
-     "name": "US-00-R01 and US-00-R02: the declaration names the level, each specification version and every requirement not met, with its reason"
+     "name": "US-00-R01, US-00-R02 and US-00-R12: the declaration names the level, each specification version and every requirement not met, with its reason"
     }
    ]
   },
@@ -1542,12 +1699,24 @@
    "proof": "named test",
    "tests": [
     {
-     "file": "core/conformance/conformance.test.js",
-     "name": "US-00-R03: the checker rejects an overstated manifest: a met with no test, a test file that is gone, a test that no longer cites it, a deviation with no reason"
+     "file": "core/conformance/attest.test.js",
+     "name": "US-00-R03: an attestation by another party, over untouched files and signed, verifies and is certified; the verifier rebuilt the counts itself"
     },
     {
-     "file": "core/conformance/conformance.test.js",
-     "name": "US-00-T02 and US-00-R03: every requirement the manifest labels met names a test file that exists and still cites it"
+     "file": "core/conformance/attest.test.js",
+     "name": "US-00-R03: tampering with a specification, a test file or the declaration fails verification"
+    },
+    {
+     "file": "core/conformance/attest.test.js",
+     "name": "US-00-R03: an attestation by the implementer is never reported certified, even over untouched files with a valid signature"
+    },
+    {
+     "file": "core/conformance/attest.test.js",
+     "name": "US-00-R03: with no signature check, or a failing one, the attestation is never certified"
+    },
+    {
+     "file": "core/conformance/attest.test.js",
+     "name": "US-00-R03: the verifier rebuilds the manifest itself and does not trust the one in the attestation: a forged claim of a test that does not cite it is caught"
     }
    ]
   },
@@ -1557,9 +1726,26 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/conformance/spec-kernel.test.js",
+     "name": "US-00-R04: a probe that errors or returns no row stores the reading as unmeasured (null) with the failure as its evidence, never as 0"
+    },
+    {
+     "file": "core/conformance/spec-kernel.test.js",
+     "name": "US-00-R04: a reading older than the metric allows is unmeasured in the trigger view, not the last value carried forward"
+    },
+    {
+     "file": "core/conformance/spec-kernel.test.js",
+     "name": "US-00-R04: a tick probe that cannot be read reports the error as its detail and does not pass; the evidence quotes what was read"
+    },
+    {
+     "file": "core/kernel/l2.test.js",
+     "name": "US-03-R11 and US-00-R04: the evidence of a failed L1 step is the error the step threw, and a clean step quotes what it reported"
+    }
+   ]
   },
   {
    "id": "US-00-R05",
@@ -1573,6 +1759,10 @@
     {
      "file": "core/conformance/l1.test.js",
      "name": "US-01-R11, US-00-R05 and US-14-R06: every time the tick stores is YYYY-MM-DD HH:MM:SS in UTC and orders correctly as a string"
+    },
+    {
+     "file": "core/conformance/running.test.js",
+     "name": "US-00-R05 and US-00-T03: ledger and clock are compared as YYYY-MM-DD HH:MM:SS strings; the window edge counts, a future row and a row that is not a time do not"
     }
    ]
   },
@@ -1588,6 +1778,22 @@
     {
      "file": "core/conformance/l1.test.js",
      "name": "US-SPEC-01 section 4.2 and US-00-R06: the published mapping of renamed tables holds: every L2 record it names exists in the seed once every module migration is applied"
+    },
+    {
+     "file": "core/conformance/l1.test.js",
+     "name": "US-00-R06: every seed table the published mapping names exists once the seed migrations are applied"
+    },
+    {
+     "file": "core/conformance/l1.test.js",
+     "name": "US-00-R06: a record the router carries as configuration names that configuration and the table that logs each call, and both exist"
+    },
+    {
+     "file": "core/conformance/l1.test.js",
+     "name": "US-00-R06: program_focus_log is mapped to the table that keeps the history of focus sets, so no record of section 4.2 is left without a table or a stated reason"
+    },
+    {
+     "file": "core/conformance/scan-python.test.js",
+     "name": "US-00-R06: a Python test whose method name or docstring cites a requirement attaches to that requirement"
     }
    ]
   },
@@ -1603,6 +1809,14 @@
     {
      "file": "core/sla/sla.test.js",
      "name": "US-00-R07: the service-level numbers are defaults; other values may be set, and the values in effect are recorded in configuration"
+    },
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-T10, US-03-R03 and US-03-R18, US-00-R07: a claim older than the default 120 minutes is released with no TICKFAIL when claim_ttl_minutes is omitted"
+    },
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-00-R07 and US-03-R18: a configured value overrides the default, an undefined value does not, and the caller configuration object is not changed"
     }
    ]
   },
@@ -1612,9 +1826,14 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/conformance/spec-kernel.test.js",
+     "name": "US-00-R08 and US-06-R13: a standing limit wins over the rung, the reliability and an allow override"
+    }
+   ]
   },
   {
    "id": "US-00-R09",
@@ -1625,6 +1844,10 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "core/conformance/spec-kernel.test.js",
+     "name": "US-00-T04 and US-00-R09: a request for a business plan with no pack enabled is declined with its reason and held, not dispatched"
+    },
     {
      "file": "core/walkthrough/console-rules.test.js",
      "name": "US-18-R03 and T18-5: typed text is stored verbatim and becomes a work item; an out-of-scope request is held and is not dispatchable (US-00-R09)"
@@ -1652,9 +1875,18 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_00_ids.py",
+     "name": "test US-00-R11 a requirement is never renumbered reused or dropped"
+    },
+    {
+     "file": "../tests/foundation/test_spec_00_ids.py",
+     "name": "test US-00-R11 the requirements of this repository are all stable or awaiting their record - a requirement added since the ledger was last written is \"defined b"
+    }
+   ]
   },
   {
    "id": "US-00-R12",
@@ -1662,9 +1894,18 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/conformance/conformance.test.js",
+     "name": "US-00-R01, US-00-R02 and US-00-R12: the declaration names the level, each specification version and every requirement not met, with its reason"
+    },
+    {
+     "file": "core/conformance/conformance.test.js",
+     "name": "US-00-R03 and US-00-R12: the checker rejects an overstated manifest: a met with no test, a test file that is gone, a test that no longer cites it, a deviation with no reason"
+    }
+   ]
   },
   {
    "id": "US-01-R01",
@@ -1725,24 +1966,24 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "../seed/worker/test/migrate.test.js",
+     "name": "US-01-R04: every shipped migration is additive, or copies the whole table in the same atomic file before it drops it"
+    },
+    {
+     "file": "../seed/worker/test/migrate.test.js",
+     "name": "US-01-R04: the tick refuses a migration that drops a table with no copy: nothing runs, the table and its rows stay, an item is filed"
+    },
+    {
      "file": "core/conformance/l1.test.js",
      "name": "US-01-T01 and US-01-R04: applying the L1 migration a second time changes nothing"
     },
     {
-     "file": "core/export/export.test.js",
-     "name": "US-01-R04: classify finds drops and rewrites, and leaves additive statements, views, indexes and trigger bodies alone"
+     "file": "core/export/apply-migrations.test.js",
+     "name": "US-01-R04: the Python classifier reaches the same verdict as core/export on every migration shipped here and on the hard cases"
     },
     {
-     "file": "core/export/export.test.js",
-     "name": "US-01-R04: every migration shipped in this repository is additive"
-    },
-    {
-     "file": "core/export/export.test.js",
-     "name": "US-01-R04: an additive migration is applied with no export"
-    },
-    {
-     "file": "core/export/export.test.js",
-     "name": "US-01-R04: a destructive migration is preceded by an export that is verified readable, then applied"
+     "file": "core/export/apply-migrations.test.js",
+     "name": "US-01-R04: apply_migrations.py with a destructive file and no --export-dir exits non-zero and names the file, and the data is untouched"
     }
    ]
   },
@@ -1752,9 +1993,14 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "test file cites it",
+   "tests": [
+    {
+     "file": "core/conformance/scan-python.test.js",
+     "name": null
+    }
+   ]
   },
   {
    "id": "US-01-R06",
@@ -1767,7 +2013,7 @@
    "tests": [
     {
      "file": "core/conformance/l1.test.js",
-     "name": "US-14-T04, US-14-R04 and US-01-R06: the core is given a presence map; a secret value is in no row the tick wrote"
+     "name": "US-01-T04, US-14-T04, US-14-R04 and US-01-R06: the core is given a presence map; a secret value is in no row the tick wrote"
     }
    ]
   },
@@ -1792,9 +2038,26 @@
    "level": "L2",
    "tagged": true,
    "must": false,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/kernel/programs.test.js",
+     "name": "US-01-R08 and US-03 s4: the first focus set writes one kernel_focus_log row holding the ranked item ids in order and the tick that wrote it"
+    },
+    {
+     "file": "core/kernel/programs.test.js",
+     "name": "US-01-R08: an unchanged focus set writes no new row; a changed set writes one, and a shrunken set is logged too"
+    },
+    {
+     "file": "core/kernel/programs.test.js",
+     "name": "US-01-R08: a program whose set is unchanged does not log while another program that changed does"
+    },
+    {
+     "file": "core/kernel/programs.test.js",
+     "name": "US-01-R08: a database without the focus-log table still gets its focus; the missing table is said in the tick notes, and is an error for a caller that gave no place for notes"
+    }
+   ]
   },
   {
    "id": "US-01-R09",
@@ -1802,9 +2065,18 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../seed/worker/test/spec-01-data-model.test.js",
+     "name": "US-01-R09: a metric outside its healthy condition files BREACH-<id> (priority 0 for liveness, 5 otherwise) and closes it with a disposition when the probe passes again"
+    },
+    {
+     "file": "../seed/worker/test/spec-01-data-model.test.js",
+     "name": "US-01-R09: a declared metric with no probe is a breach and not a pass, and a new system has grace_hours before a metric can breach"
+    }
+   ]
   },
   {
    "id": "US-01-R10",
@@ -1812,9 +2084,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/conformance/spec-kernel.test.js",
+     "name": "US-01-R10: a decision is stored with its prediction, authority and revert path before it runs, and one without any of the three is refused"
+    }
+   ]
   },
   {
    "id": "US-01-R11",
@@ -1837,9 +2114,14 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "built and tested in the seed tick (seed/worker/test/tenant-isolation.test.js), which this repository's core tick does not carry",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../seed/worker/test/spec-01-data-model.test.js",
+     "name": "US-01-T05 and US-01-R12: a migration applies once and is ledgered with its hash; an applied file whose text changed is drift: reported, never re-run, and filed"
+    }
+   ]
   },
   {
    "id": "US-01-R13",
@@ -1847,9 +2129,14 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "built and tested in the seed tick (seed/worker/test/migrate.test.js), which this repository's core tick does not carry",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../seed/worker/test/spec-01-data-model.test.js",
+     "name": "US-01-R13: a table rebuild marked atomic applies as one all-or-nothing batch, and a failing rebuild leaves the old table and no ledger row"
+    }
+   ]
   },
   {
    "id": "US-01-R14",
@@ -1857,9 +2144,14 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "built and tested in the seed tick (seed/worker/test/migrate.test.js), which this repository's core tick does not carry",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../seed/worker/test/spec-01-data-model.test.js",
+     "name": "US-01-R14: a runtime acts only on rows of its own tenant: another tenant row is never dispatched, and the trust ledger keeps one row per tenant, surface and action class"
+    }
+   ]
   },
   {
    "id": "US-01-R15",
@@ -1867,9 +2159,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "built and tested in the seed tick (seed/worker/test/d1snapshot.test.js), which this repository's core tick does not carry",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../seed/worker/test/spec-01-data-model.test.js",
+     "name": "US-01-R15: the queries the tick repeats on its growing tables are served by an index, not a scan"
+    }
+   ]
   },
   {
    "id": "US-02-R01",
@@ -1877,9 +2174,18 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/staff/roles.test.js",
+     "name": "US-02-R01: a role is a record naming role, scope and instruction source, and the roles table carries a tick interval and a model"
+    },
+    {
+     "file": "core/staff/roles.test.js",
+     "name": "US-02-R01: a role with tick_every 3 is dispatched only on ticks divisible by 3"
+    }
+   ]
   },
   {
    "id": "US-02-R02",
@@ -1887,9 +2193,14 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/staff/staff.test.js",
+     "name": "US-02-T01, US-02-T02, US-02-R02, US-02-R04: dispatch goes by owner_role, and a new role row is dispatched with no code change"
+    }
+   ]
   },
   {
    "id": "US-02-R03",
@@ -1897,9 +2208,30 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/kernel/lifecycle.test.js",
+     "name": "US-15-R07, US-02-R03: model families are resolved from the id, not from its first token"
+    },
+    {
+     "file": "core/staff/review.test.js",
+     "name": "US-02-R03, US-02-T08: a review by an agent that claimed, was dispatched, recorded an outcome or leads the doer line of the item is refused"
+    },
+    {
+     "file": "core/staff/review.test.js",
+     "name": "US-02-R03: a manager operation or an earlier review on the item does not make its actor a doer"
+    },
+    {
+     "file": "core/staff/review.test.js",
+     "name": "US-02-R03, US-02-T04: with two families configured the router gives a reviewer a family other than the doer's, and the review refuses the doer's family"
+    },
+    {
+     "file": "core/staff/review.test.js",
+     "name": "US-02-R03: families are resolved from the model id, a port, or the families the doer calls recorded; a model of unknown family is not guessed"
+    }
+   ]
   },
   {
    "id": "US-02-R04",
@@ -1907,9 +2239,14 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/staff/staff.test.js",
+     "name": "US-02-T01, US-02-T02, US-02-R02, US-02-R04: dispatch goes by owner_role, and a new role row is dispatched with no code change"
+    }
+   ]
   },
   {
    "id": "US-02-R05",
@@ -1920,6 +2257,10 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "core/staff/seed.test.js",
+     "name": "US-02-R05: staffProbe reports personas and the latest tick's briefs from the store, writes nothing, and answers on an empty store"
+    },
     {
      "file": "core/staff/staff.test.js",
      "name": "US-02-R05: decision authority is an enumerated list; a role cannot be given an operation above its ceiling"
@@ -1942,6 +2283,18 @@
     {
      "file": "core/staff/staff.test.js",
      "name": "US-02-R06: an operation is recorded with identifier, item, from, to and evidence, and is reversed by recording the reverse"
+    },
+    {
+     "file": "core/staff/staff.test.js",
+     "name": "US-02-R06, US-02-T07: an originated item is reversed by cancelling it with a disposition, once, and the reverse row links both ways"
+    },
+    {
+     "file": "core/staff/staff.test.js",
+     "name": "US-02-R06, US-02-T07: an allocation cannot be reversed and the refusal says why; it is recorded, not an opaque error"
+    },
+    {
+     "file": "core/staff/staff.test.js",
+     "name": "US-02-R06, US-02-T07: reversing a supersede or close restores the claim the operation removed"
     }
    ]
   },
@@ -1969,6 +2322,10 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "core/staff/research.test.js",
+     "name": "US-02-R19, US-02-R08: a research agent reply with the five fields files one roadmap item for the program"
+    },
     {
      "file": "core/staff/staff.test.js",
      "name": "US-02-R08: a program manager acts in its own program only; a portfolio manager demotes machine-filed criticals across programs and closes nothing"
@@ -2000,6 +2357,22 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "core/staff/controlplane.test.js",
+     "name": "US-02-R10: the guards the repository protects and every implementation of the tick are control-plane paths; ordinary specs and modules are not"
+    },
+    {
+     "file": "core/staff/controlplane.test.js",
+     "name": "US-02-R10: control_plane_extra appends to the defaults; control_plane replaces them"
+    },
+    {
+     "file": "core/staff/controlplane.test.js",
+     "name": "US-02-R10: assign_doer and originate refuse a guard file with a control_plane denial"
+    },
+    {
+     "file": "core/staff/research.test.js",
+     "name": "US-02-R19, US-02-R10: a reply naming a control-plane file, missing a field or with an anchor that occurs twice is refused by origination, with a record"
+    },
+    {
      "file": "core/staff/staff.test.js",
      "name": "US-02-R10 and assign doer: a control-plane path is refused; the anchor must occur exactly once in the target"
     }
@@ -2014,6 +2387,10 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "core/staff/screen.test.js",
+     "name": "US-02-R18, US-02-R11: a person performs a role's operation through the screen and the records match an agent's"
+    },
     {
      "file": "core/staff/staff.test.js",
      "name": "US-02-R11: a role filled by a person gets the same action record, prediction, brief and trust outcome, and is never acted for"
@@ -2046,9 +2423,14 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "built and tested in the seed tick (seed/worker/test/managers.test.js), which this repository's core tick does not carry",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/staff/staff.test.js",
+     "name": "US-02-R14, US-02-T06: a refusal is recorded with its kind (authority, lane, control_plane, precondition), changes nothing, and a quiet duty leaves no row for a failed precondition"
+    }
+   ]
   },
   {
    "id": "US-02-R15",
@@ -2056,9 +2438,14 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "built and tested in the seed tick (seed/worker/test/tick.test.js), which this repository's core tick does not carry",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../seed/worker/test/tick.test.js",
+     "name": "US-02-R15: a role that is not due is dispatched when an event wakes it, takes only its own item, and stays under its cap"
+    }
+   ]
   },
   {
    "id": "US-03-R01",
@@ -2066,9 +2453,14 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-R01: one function runs the tick over any store handle: the node:sqlite test shim and the SQLite adapter produce the same tick_runs row"
+    }
+   ]
   },
   {
    "id": "US-03-R02",
@@ -2076,9 +2468,14 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-R02: the tick_runs row exists before the first step runs, unfinished, with the step count already set"
+    }
+   ]
   },
   {
    "id": "US-03-R03",
@@ -2086,9 +2483,22 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-R03, US-03-R04 and US-03-T02: a failing step never kills the tick and becomes a backlog item"
+    },
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-R03: after a step fails the later steps still run: dispatch still claims the top item"
+    },
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-T10, US-03-R03 and US-03-R18, US-00-R07: a claim older than the default 120 minutes is released with no TICKFAIL when claim_ttl_minutes is omitted"
+    }
+   ]
   },
   {
    "id": "US-03-R04",
@@ -2096,9 +2506,22 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-R03, US-03-R04 and US-03-T02: a failing step never kills the tick and becomes a backlog item"
+    },
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-R04 and US-03-R19 (issue #173 execute): a TICKFAIL item closes when a later tick completes the step, and an unreadable SELECT probe parks instead of throwing"
+    },
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-R04: TICKFAIL-<step>-<hour> is filed once per hour, a new hour files a new one, and a store that refuses the filing does not stop the tick"
+    }
+   ]
   },
   {
    "id": "US-03-R05",
@@ -2106,9 +2529,18 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-T01 and US-03-R05: a tick on a seeded store completes every step, with no error, and the stored report starts with Happened"
+    },
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-R05: the report is four lines (Happened, Decided, Next, Open), stored as written, and the Open line carries the errors"
+    }
+   ]
   },
   {
    "id": "US-03-R06",
@@ -2126,9 +2558,18 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-T03 and US-03-R07: a tick runs every step and dispatches in priority order; the item whose trigger is not done stays open"
+    },
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-R07: the order is fixed: reconcile before dispatch, score_predictions before accrue_trust, and extra steps run after the L1 steps"
+    }
+   ]
   },
   {
    "id": "US-03-R08",
@@ -2136,9 +2577,14 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-R08 and US-03-T05: a prediction naming an unknown metric, an unknown operator or an inherited property is scored miss with no observed value"
+    }
+   ]
   },
   {
    "id": "US-03-R09",
@@ -2146,9 +2592,22 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-R09: an item addressed to one role instance is dispatched to that instance, not left ready for ever"
+    },
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-R09: a role runs only on its tick_every, never beyond its work-in-progress cap, and an item that already has a claim is not dispatched again"
+    },
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-T10, US-03-R09 and US-03-R18: with a configuration that omits every limit a role is never given more than three claims and no step fails"
+    }
+   ]
   },
   {
    "id": "US-03-R10",
@@ -2156,9 +2615,14 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-R10: the tick never edits the policy: with a deeply frozen policy it completes, opens a LADDER item and leaves the policy and the rung as they were"
+    }
+   ]
   },
   {
    "id": "US-03-R11",
@@ -2180,6 +2644,14 @@
     {
      "file": "core/kernel/l2.test.js",
      "name": "a previous slot with missing evidence rows is detected as a failure (US-03-R11)"
+    },
+    {
+     "file": "core/kernel/l2.test.js",
+     "name": "US-03-R11: a tick that ran without L2 followed by a tick with L2 files no L2MISSING item"
+    },
+    {
+     "file": "core/kernel/l2.test.js",
+     "name": "US-03-R11: a tick skipped because kernel.enabled is false is not reported as missing evidence on the tick after it is re-enabled"
     }
    ]
   },
@@ -2263,9 +2735,14 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "built and tested in the seed tick (seed/worker/test/tick.test.js), which this repository's core tick does not carry",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../seed/worker/test/spec-03-tick.test.js",
+     "name": "US-03-R17 and US-03-T08: health judges the newest finished tick, so a tick in flight does not fail it, and an unfinished tick older than five minutes does"
+    }
+   ]
   },
   {
    "id": "US-03-R18",
@@ -2273,9 +2750,26 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "built and tested in the seed tick (seed/worker/test/tick.test.js), which this repository's core tick does not carry",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-T10, US-03-R09 and US-03-R18: with a configuration that omits every limit a role is never given more than three claims and no step fails"
+    },
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-T10, US-03-R03 and US-03-R18, US-00-R07: a claim older than the default 120 minutes is released with no TICKFAIL when claim_ttl_minutes is omitted"
+    },
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-00-R07 and US-03-R18: a configured value overrides the default, an undefined value does not, and the caller configuration object is not changed"
+    },
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-R18: an omitted plus_share still opens the rebalance item (the default 20 percent applies)"
+    }
+   ]
   },
   {
    "id": "US-03-R19",
@@ -2283,9 +2777,26 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "built and tested in the seed tick (seed/worker/test/schema-heal.test.js), which this repository's core tick does not carry",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-R19 and US-03-T07 (issue #173 execute): a dispatched item whose probe passes ends done with evidence in the same tick"
+    },
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-R19 and US-03-T07 (issue #173 execute): a failing probe parks the item with a reason, and it closes by itself when the probe passes"
+    },
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-R19 and US-03-T07 (issue #173 execute): an item with no machine-readable probe keeps its claim for an outside executor; a worked claim is not touched"
+    },
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-R04 and US-03-R19 (issue #173 execute): a TICKFAIL item closes when a later tick completes the step, and an unreadable SELECT probe parks instead of throwing"
+    }
+   ]
   },
   {
    "id": "US-03-R20",
@@ -2293,9 +2804,18 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "built and tested in the seed tick (seed/worker/test/tick.test.js), which this repository's core tick does not carry",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-R20 and issue #173: a claim released with no work is recorded, and the item is parked after max_unworked_releases"
+    },
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-R20 and issue #173: a claim that was heartbeated is released without an unworked outcome"
+    }
+   ]
   },
   {
    "id": "US-03-R21",
@@ -2303,9 +2823,14 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "built and tested in the seed tick (seed/worker/test/pulse.test.js), which this repository's core tick does not carry",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../seed/worker/test/spec-03-tick.test.js",
+     "name": "US-03-R21: a step that throws on a missing table or column is retried once after migrate runs again, with no TICKFAIL; any other error still files one"
+    }
+   ]
   },
   {
    "id": "US-03-R22",
@@ -2313,9 +2838,22 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "built and tested in the seed tick (seed/worker/test/budget.test.js), which this repository's core tick does not carry",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../seed/worker/test/spec-03-tick.test.js",
+     "name": "US-03-R22: under a cost breach the plan defers every step but the essential ones, a deferred step counts as completed, and the deferred steps run again on the first tick of every few hours"
+    },
+    {
+     "file": "../tests/foundation/test_spec_03_kernel_steps.py",
+     "name": "test US-03-R22 the specification table of the seed tick is the code"
+    },
+    {
+     "file": "../tests/foundation/test_spec_03_kernel_steps.py",
+     "name": "test US-03-R22 the deferral constants the specification states are the code values"
+    }
+   ]
   },
   {
    "id": "US-04-R01",
@@ -2329,6 +2867,14 @@
     {
      "file": "core/plus/plus.test.js",
      "name": "US-04-R01, US-04-R05: the reserved share is configuration, is lowered only by a row with an expiry, and risk cannot take it"
+    },
+    {
+     "file": "core/plus/plus.test.js",
+     "name": "US-04-T07, US-04-R01, US-04-R05: allocation in a ticked org reserves the plus slots, and risk cannot take them"
+    },
+    {
+     "file": "core/plus/plus.test.js",
+     "name": "US-04-R01: adoptProducts registers a product once with the default measures and never overwrites a registered one; the step adopts on a tick"
     }
    ]
   },
@@ -2338,9 +2884,22 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../seed/worker/test/tick.test.js",
+     "name": "US-04-R02 window: only the 20 most recently closed items are read, and another tenant's done items are not counted"
+    },
+    {
+     "file": "core/plus/plus.test.js",
+     "name": "US-04-T01, US-04-R02: 20 done items with 1 plus opens one REBALANCE item for the portfolio manager at priority 5"
+    },
+    {
+     "file": "core/plus/plus.test.js",
+     "name": "US-04-T02, US-04-R02: 9 done items open no rebalance item; 20 with a healthy plus share open none either"
+    }
+   ]
   },
   {
    "id": "US-04-R03",
@@ -2358,9 +2917,14 @@
    "level": "L1",
    "tagged": true,
    "must": false,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/staff/review.test.js",
+     "name": "US-04-R04: a passing review carries a plus filed as a kind plus item with its expected value; one that proposes none is listed by the detector"
+    }
+   ]
   },
   {
    "id": "US-04-R05",
@@ -2374,6 +2938,10 @@
     {
      "file": "core/plus/plus.test.js",
      "name": "US-04-R01, US-04-R05: the reserved share is configuration, is lowered only by a row with an expiry, and risk cannot take it"
+    },
+    {
+     "file": "core/plus/plus.test.js",
+     "name": "US-04-T07, US-04-R01, US-04-R05: allocation in a ticked org reserves the plus slots, and risk cannot take them"
     }
    ]
   },
@@ -2389,6 +2957,14 @@
     {
      "file": "core/plus/plus.test.js",
      "name": "US-04-R06, R07, R08: a plus states its prediction first, is additive, reversible and single, has a separate guard, and is filed as a work item with a doer line"
+    },
+    {
+     "file": "core/plus/propose.test.js",
+     "name": "US-04-R19, US-04-R06: a proposer reply with a stated prediction, guard, angle, doer and revert path is filed as a plus, before the change is made"
+    },
+    {
+     "file": "core/plus/propose.test.js",
+     "name": "US-04-R06, US-04-R19: a plus must be additive and a single change; a simplify cycle may remove"
     }
    ]
   },
@@ -2427,6 +3003,10 @@
     {
      "file": "core/plus/plus.test.js",
      "name": "US-04-R08: a gain in the outcome with a worse guard is reverted at priority 0, not kept"
+    },
+    {
+     "file": "core/plus/propose.test.js",
+     "name": "US-04-R08, US-04-R19: a reply whose guard equals its outcome measure, or names an unmeasured measure, is refused"
     }
    ]
   },
@@ -2450,6 +3030,14 @@
     {
      "file": "core/plus/plus.test.js",
      "name": "US-04-R14, R09: usage comes through a reader port; machine requests counted with human ones are labelled; a failing reader stores null"
+    },
+    {
+     "file": "core/plus/plus.test.js",
+     "name": "US-04-R09, US-04-R13: plusProbe reports the plus loop from its own tables, read-only, with unmeasured products counted as unmeasured, not as zero"
+    },
+    {
+     "file": "core/plus/readers.test.js",
+     "name": "US-04-R14, US-04-R09: the first-party reader counts human pageviews in the window, labels them, and stores null when the table is missing"
     }
    ]
   },
@@ -2469,6 +3057,10 @@
     {
      "file": "core/plus/plus.test.js",
      "name": "US-04-R10: three misses in a row set rest_until; a product at rest is not selected and takes no plus"
+    },
+    {
+     "file": "core/plus/propose.test.js",
+     "name": "US-04-R10, US-04-R19: a reply that repeats the angle that missed is refused and the writing falls back to a work item"
     }
    ]
   },
@@ -2514,6 +3106,10 @@
     {
      "file": "core/plus/plus.test.js",
      "name": "weekly digest and US-04-R13: one row per product per week with shipped, kept and reverted; unmeasured usage and a stale digest raise items"
+    },
+    {
+     "file": "core/plus/plus.test.js",
+     "name": "US-04-R09, US-04-R13: plusProbe reports the plus loop from its own tables, read-only, with unmeasured products counted as unmeasured, not as zero"
     }
    ]
   },
@@ -2529,6 +3125,18 @@
     {
      "file": "core/plus/plus.test.js",
      "name": "US-04-R14, R09: usage comes through a reader port; machine requests counted with human ones are labelled; a failing reader stores null"
+    },
+    {
+     "file": "core/plus/readers.test.js",
+     "name": "US-04-R14, US-04-R09: the first-party reader counts human pageviews in the window, labels them, and stores null when the table is missing"
+    },
+    {
+     "file": "core/plus/readers.test.js",
+     "name": "US-04-R14: a reader that cannot separate machine requests is labelled machine and human together"
+    },
+    {
+     "file": "core/plus/readers.test.js",
+     "name": "US-04-R09, US-04-R14: composed readers use the first-party one when it answers and the platform one only when it does not"
     }
    ]
   },
@@ -2538,9 +3146,14 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "built and tested in the seed tick (seed/worker/test/criticality.test.js), which this repository's core tick does not carry",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/plus/plus.test.js",
+     "name": "US-04-T05, US-04-R15: an unmeasured plus stays shipped with an item through the grace period, then is reverted and counts as a miss"
+    }
+   ]
   },
   {
    "id": "US-04-R16",
@@ -2548,9 +3161,14 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "built and tested in the seed tick (seed/worker/test/doer.test.js), which this repository's core tick does not carry",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/plus/plus.test.js",
+     "name": "US-04-T06, US-04-R16: the daily cap counts plus rows created today, independent of the managers' origination cap"
+    }
+   ]
   },
   {
    "id": "US-05-R01",
@@ -2754,6 +3372,10 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "core/deploy/deploy.test.js",
+     "name": "US-05-R13, US-06-R21: a stated confidence that clears the threshold uncorrected but not after the stored correction refuses the deploy"
+    },
+    {
      "file": "core/predict/predict.test.js",
      "name": "US-05-R13 binned calibration: 40 predictions at 0.85 matched 28 times give h = 0.70 and the confidence cap falls by 0.15"
     }
@@ -2795,9 +3417,18 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "built and tested in the seed tick (seed/worker/test/metricfresh.test.js), which this repository's core tick does not carry",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/predict/predict.test.js",
+     "name": "US-05-R17, US-05-T05: the fail condition and the null expectation are evaluated: a reading of 3 reaches observed, -1 records a failure, 0 matches the null expectation"
+    },
+    {
+     "file": "core/predict/predict.test.js",
+     "name": "US-05-R17: a null expectation that is the pass condition, in the same words or with the same operator and number, is refused at record time"
+    }
+   ]
   },
   {
    "id": "US-05-R18",
@@ -2861,6 +3492,10 @@
     {
      "file": "core/trust/trust.test.js",
      "name": "US-06-T01, US-06-R02, US-06-R03 reliability with no outcomes is the baseline; the formula takes its prior from the policy"
+    },
+    {
+     "file": "core/trust/trust.test.js",
+     "name": "US-06-R03: promote_on lower_bound also needs the Wilson lower bound of ok/n to reach the bar: 12 of 12 promotes by score and not by lower bound, 20 of 20 does both"
     }
    ]
   },
@@ -2888,6 +3523,10 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "../seed/worker/test/tick.test.js",
+     "name": "US-06-R05: a crossing that repeats after its ladder item closed opens a new dated item; the rung is still not changed by the tick"
+    },
     {
      "file": "core/trust/trust.test.js",
      "name": "US-06-R01, US-06-T02, US-06-R05 12 verified outcomes on a propose-ceiling surface open a LADDER-*-assisted item; the rung is not changed"
@@ -2919,6 +3558,10 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "../seed/worker/test/tick.test.js",
+     "name": "US-06-R07: a severe outcome older than the stated window no longer demotes, and one inside it does"
+    },
+    {
      "file": "core/trust/trust.test.js",
      "name": "US-06-T03, US-06-R07 one hidden_failure on a pair above observed opens a demotion item at priority 0; outside the stated window it no longer demotes"
     }
@@ -2933,6 +3576,10 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "core/deploy/deploy.test.js",
+     "name": "US-06-R21, US-06-R08: an irreversible, identity-bound class yields a gate card and publishes nothing"
+    },
     {
      "file": "core/trust/trust.test.js",
      "name": "US-06-R08 an irreversible, identity-bound action is not executable at any rung: it produces one gate card and nothing else stops"
@@ -2991,6 +3638,10 @@
     {
      "file": "core/trust/trust.test.js",
      "name": "US-06-R11, US-06-T04, US-06-R12 the validator passes the shipped policy and returns a problem for each fault of section 3.3; an invalid policy blocks"
+    },
+    {
+     "file": "core/trust/trust.test.js",
+     "name": "US-06-R12, mirror rule: the shipped policy against the harness settings file reports no problem; a missing pattern, or a shell-reachable gated action with no harness_deny, is reported"
     }
    ]
   },
@@ -3003,6 +3654,14 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "core/conformance/spec-kernel.test.js",
+     "name": "US-00-R08 and US-06-R13: a standing limit wins over the rung, the reliability and an allow override"
+    },
+    {
+     "file": "core/deploy/deploy.test.js",
+     "name": "US-06-R13, US-06-R21: a standing-limit refusal is recorded and the same deploy is not resubmitted"
+    },
     {
      "file": "core/trust/trust.test.js",
      "name": "US-06-R13 standing limits take precedence over rung and score, and over an allow override"
@@ -3036,6 +3695,10 @@
     {
      "file": "core/trust/trust.test.js",
      "name": "US-06-R15 a step with no identity-bound line is rerouted to the staff, and the count of such open cards returns to zero"
+    },
+    {
+     "file": "core/trust/trust.test.js",
+     "name": "US-06-R15: an open card with no identity-bound line files one item per day, closed by a query the tick can run once the card is rerouted"
     }
    ]
   },
@@ -3081,6 +3744,10 @@
     {
      "file": "core/trust/trust.test.js",
      "name": "US-06-R18 the queue multiplier is the pair score, or the baseline for a pair never scored"
+    },
+    {
+     "file": "core/trust/trust.test.js",
+     "name": "US-06-R18: rankItems multiplies each score by its pair score, uses the baseline for an unscored pair, reads the pairs together and keeps ties in input order"
     }
    ]
   },
@@ -3105,9 +3772,18 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/trust/ladder-loop.test.js",
+     "name": "US-06-R20, US-06-T07: 12 scored predictions become outcomes, the tick proposes the ladder item, the merge by a different agent applies it (decision to rung, one database); the same agent is refused"
+    },
+    {
+     "file": "core/trust/ladder-loop.test.js",
+     "name": "US-06-R20: settleLadder with no port changes nothing; an item with no proposed transition is reported, not invented; a rung above the ceiling is refused with the reason as the blocker; a crash between the two writes is repaired"
+    }
+   ]
   },
   {
    "id": "US-06-R21",
@@ -3115,9 +3791,30 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/deploy/deploy.test.js",
+     "name": "US-06-R21: a deploy is refused with the reason and a ledger row when the rung is below the one required, and published when it is at or above"
+    },
+    {
+     "file": "core/deploy/deploy.test.js",
+     "name": "US-06-R21: an authorizer that throws or answers anything but allowed refuses: unknown is not allowed"
+    },
+    {
+     "file": "core/deploy/deploy.test.js",
+     "name": "US-06-R21, US-06-R08: an irreversible, identity-bound class yields a gate card and publishes nothing"
+    },
+    {
+     "file": "core/deploy/deploy.test.js",
+     "name": "US-06-R13, US-06-R21: a standing-limit refusal is recorded and the same deploy is not resubmitted"
+    },
+    {
+     "file": "core/deploy/deploy.test.js",
+     "name": "US-05-R13, US-06-R21: a stated confidence that clears the threshold uncorrected but not after the stored correction refuses the deploy"
+    }
+   ]
   },
   {
    "id": "US-06-R22",
@@ -3185,6 +3882,14 @@
     {
      "file": "core/governance/governance.test.js",
      "name": "US-07-T03, US-07-R03, US-07-R04 an amendment that removes a commitment or weakens a protected limit is rejected at red-team by code, with no replay"
+    },
+    {
+     "file": "core/governance/governance.test.js",
+     "name": "US-07-R03, US-07-R04: removing a phrase from, or weakening the weight of, a commitment's signature is rejected at red-team by code with no replay and no model call"
+    },
+    {
+     "file": "core/governance/governance.test.js",
+     "name": "US-07-R03: a commitment's signature may still be strengthened, and a change set that leaves it with no route is refused"
     }
    ]
   },
@@ -3200,6 +3905,10 @@
     {
      "file": "core/governance/governance.test.js",
      "name": "US-07-T03, US-07-R03, US-07-R04 an amendment that removes a commitment or weakens a protected limit is rejected at red-team by code, with no replay"
+    },
+    {
+     "file": "core/governance/governance.test.js",
+     "name": "US-07-R03, US-07-R04: removing a phrase from, or weakening the weight of, a commitment's signature is rejected at red-team by code with no replay and no model call"
     }
    ]
   },
@@ -3298,6 +4007,10 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "core/deploy/mergeguard.test.js",
+     "name": "US-07-R11, US-07-R18: the guard decides from verified findings through mergeAllowed, never from a reviewer verdict"
+    },
+    {
      "file": "core/deploy/review.test.js",
      "name": "US-07-R11 the hold is computed by code from verified findings: a model verdict is ignored and the diff travels as data"
     }
@@ -3338,6 +4051,22 @@
     {
      "file": "core/deploy/deploy.test.js",
      "name": "artifact digest mismatch is refused (US-07-R13)"
+    },
+    {
+     "file": "core/deploy/deploy.test.js",
+     "name": "US-07-R13: a live digest that equals the published digest keeps the deploy and is recorded as a match"
+    },
+    {
+     "file": "core/deploy/deploy.test.js",
+     "name": "US-07-R13: a live digest that differs from the published digest reverts the deploy and records artifact:digest failed"
+    },
+    {
+     "file": "core/deploy/deploy.test.js",
+     "name": "US-07-R13: a deployer with no liveDigest keeps working and records the comparison as skipped, never as a match"
+    },
+    {
+     "file": "core/deploy/deploy.test.js",
+     "name": "US-07-R13: a per-file digest map is compared file by file (the platform deploy script's rule); a different shape is skipped, an unreadable digest is retried inside the window"
     }
    ]
   },
@@ -3407,9 +4136,22 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/deploy/mergeguard.test.js",
+     "name": "US-07-R18, US-07-T07: a hold marker, a queued required check, an empty list on a fresh head, an unreadable answer and a failed check each refuse; a new push with green required checks allows"
+    },
+    {
+     "file": "core/deploy/mergeguard.test.js",
+     "name": "US-07-R18: an unreadable review gate holds, and the merge lane's own check can be ignored by name"
+    },
+    {
+     "file": "core/deploy/mergeguard.test.js",
+     "name": "US-07-R11, US-07-R18: the guard decides from verified findings through mergeAllowed, never from a reviewer verdict"
+    }
+   ]
   },
   {
    "id": "US-07-R19",
@@ -3447,9 +4189,22 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/governance/governance.test.js",
+     "name": "US-07-R22: a false-stop rate above 0 over 10 or more scans files one item per rate and day, and not a second one the same day; its closing probe is a query the tick can run"
+    },
+    {
+     "file": "core/governance/governance.test.js",
+     "name": "US-07-R22: with fewer scans than min_scans the rates are unmeasured and nothing is filed; the step reports them"
+    },
+    {
+     "file": "core/governance/governance.test.js",
+     "name": "US-07-R22: the self-adoption rate is adoptions over adoptions plus deferral hits; it files when under target, is unmeasured with no observations or no trust module, and has a tolerance"
+    }
+   ]
   },
   {
    "id": "US-07-R23",
@@ -3717,9 +4472,18 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "built and tested in the seed tick (seed/worker/test/tick.test.js), which this repository's core tick does not carry",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../seed/worker/test/tick.test.js",
+     "name": "US-08-R17: an item open or ready past 120 minutes is raised to priority 5 and one AGE-120M item a day names the cause to find; a younger or more urgent item is left alone"
+    },
+    {
+     "file": "../seed/worker/test/tick.test.js",
+     "name": "US-08-R17: with nothing past 120 minutes no cause item is filed"
+    }
+   ]
   },
   {
    "id": "US-08-R18",
@@ -3761,6 +4525,18 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "../seed/worker/test/switches.test.js",
+     "name": "US-09-R01, US-09-T01: a switched-off acting step writes no action row; every measuring step still runs"
+    },
+    {
+     "file": "../seed/worker/test/switches.test.js",
+     "name": "US-09-R01: only acting steps can be switched off in the tick; a row for a measuring step changes nothing"
+    },
+    {
+     "file": "../seed/worker/test/switches.test.js",
+     "name": "US-09-R01: a switched-off loop leaves its beat (measurement) and its body does not run"
+    },
+    {
      "file": "core/router/router.test.js",
      "name": "kill switch for a provider and for all paid calls (US-09-R01/R05)"
     }
@@ -3790,6 +4566,18 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "../seed/worker/test/switches.test.js",
+     "name": "US-09-R03: the drill proves refusal, turns the switch off, proves resumption and records the test"
+    },
+    {
+     "file": "../seed/worker/test/switches.test.js",
+     "name": "US-09-R03: the switch is turned off in every case, including an error inside the drill, and the failed drill is recorded"
+    },
+    {
+     "file": "../seed/worker/test/switches.test.js",
+     "name": "US-09-R03: if the row cannot be deleted it still ends by itself inside the bound"
+    },
     {
      "file": "core/ghcost/ghcost.test.js",
      "name": "US-24-R25 US-09-R03 a drill records the test and turns the switch off in every case, also when the platform fails"
@@ -5140,7 +5928,7 @@
    "tests": [
     {
      "file": "core/conformance/l1.test.js",
-     "name": "US-14-T04, US-14-R04 and US-01-R06: the core is given a presence map; a secret value is in no row the tick wrote"
+     "name": "US-01-T04, US-14-T04, US-14-R04 and US-01-R06: the core is given a presence map; a secret value is in no row the tick wrote"
     },
     {
      "file": "core/modelport/modelport.test.js",
@@ -5291,6 +6079,10 @@
     {
      "file": "core/lifecycle-gates/lifecycle-gates.test.js",
      "name": "US-15-R01, US-15-R02: a project starts with the rule's mode and its reason; an override is a recorded decision"
+    },
+    {
+     "file": "core/lifecycle-gates/lifecycle-gates.test.js",
+     "name": "US-15-R01, US-15-R05: outcomes are adopted once as hybrid projects, never above the portfolio cap, and the system-test refusal precedes them in the seed"
     }
    ]
   },
@@ -5349,9 +6141,26 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/kernel/lifecycle.test.js",
+     "name": "US-15-R05: phase theater: an artifact that fails its done check, is chat, or is empty does not satisfy the gate"
+    },
+    {
+     "file": "core/lifecycle-gates/lifecycle-gates.test.js",
+     "name": "US-15-R01, US-15-R05: outcomes are adopted once as hybrid projects, never above the portfolio cap, and the system-test refusal precedes them in the seed"
+    },
+    {
+     "file": "core/lifecycle-gates/lifecycle-gates.test.js",
+     "name": "US-15-R05, US-15-R07: a drafted artifact is a record with a form check, lists every default taken for the person, and is never marked reviewed by its producer"
+    },
+    {
+     "file": "core/lifecycle-gates/lifecycle-gates.test.js",
+     "name": "US-15-R05: the lifecycle step drafts the initiation artifacts of an initiating project from the readback port, once"
+    }
+   ]
   },
   {
    "id": "US-15-R06",
@@ -5359,9 +6168,14 @@
    "level": "L2",
    "tagged": false,
    "must": false,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/kernel/lifecycle.test.js",
+     "name": "US-15-T3, US-15-R06: a change to the charter after G1 is a change request with a revert path; it is not applied until decided"
+    }
+   ]
   },
   {
    "id": "US-15-R07",
@@ -5369,9 +6183,22 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/kernel/lifecycle.test.js",
+     "name": "US-15-T2, US-15-R07: a reviewer equal to the doer, or from the same model family, is rejected"
+    },
+    {
+     "file": "core/kernel/lifecycle.test.js",
+     "name": "US-15-R07, US-02-R03: model families are resolved from the id, not from its first token"
+    },
+    {
+     "file": "core/lifecycle-gates/lifecycle-gates.test.js",
+     "name": "US-15-R05, US-15-R07: a drafted artifact is a record with a form check, lists every default taken for the person, and is never marked reviewed by its producer"
+    }
+   ]
   },
   {
    "id": "US-15-R08",
@@ -5415,6 +6242,18 @@
     {
      "file": "core/lifecycle-gates/lifecycle-gates.test.js",
      "name": "US-15-R10: the status report is four lines with metric values against targets and predicted versus actual, produced on the communication plan's period"
+    },
+    {
+     "file": "core/lifecycle-gates/lifecycle-gates.test.js",
+     "name": "US-15-R10, US-15-R15, US-15-R18: the lifecycle step adopts outcomes, files gate items, closes and archives, and reports each in the tick notes without erroring"
+    },
+    {
+     "file": "core/lifecycle-gates/lifecycle-gates.test.js",
+     "name": "US-15-R19, US-15-R10: the status report lists items past their SLA by priority band and labels capacity over, within, under or unmeasured"
+    },
+    {
+     "file": "core/lifecycle-gates/lifecycle-gates.test.js",
+     "name": "US-15-R10, US-15-R15: lifecycleProbe reports the lifecycle from its own tables, read-only, and answers on an empty store"
     }
    ]
   },
@@ -5424,9 +6263,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/kernel/lifecycle.test.js",
+     "name": "US-15-T6, US-15-R11: closing with an item that has no disposition fails G3; with dispositions it passes"
+    }
+   ]
   },
   {
    "id": "US-15-R12",
@@ -5483,9 +6327,30 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/lifecycle-gates/lifecycle-gates.test.js",
+     "name": "US-15-R15, US-15-T07: a risk review reads every trigger probe, marks a fired risk triggered and files it for its owner once, and flags what the register and the issues lack"
+    },
+    {
+     "file": "core/lifecycle-gates/lifecycle-gates.test.js",
+     "name": "US-15-R15, US-15-T07: a register not reviewed inside the communication period files one review item, numbered after the reviews so far"
+    },
+    {
+     "file": "core/lifecycle-gates/lifecycle-gates.test.js",
+     "name": "US-15-R15, US-15-R16: the compliance report files one item per finding for its owner role, closes it when the finding clears, and is idempotent"
+    },
+    {
+     "file": "core/lifecycle-gates/lifecycle-gates.test.js",
+     "name": "US-15-R10, US-15-R15, US-15-R18: the lifecycle step adopts outcomes, files gate items, closes and archives, and reports each in the tick notes without erroring"
+    },
+    {
+     "file": "core/lifecycle-gates/lifecycle-gates.test.js",
+     "name": "US-15-R10, US-15-R15: lifecycleProbe reports the lifecycle from its own tables, read-only, and answers on an empty store"
+    }
+   ]
   },
   {
    "id": "US-15-R16",
@@ -5493,9 +6358,18 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/lifecycle-gates/lifecycle-gates.test.js",
+     "name": "US-15-R16, US-15-T07: quality metrics are null when unmeasured and never 0, and match the stated formulas on seeded data"
+    },
+    {
+     "file": "core/lifecycle-gates/lifecycle-gates.test.js",
+     "name": "US-15-R15, US-15-R16: the compliance report files one item per finding for its owner role, closes it when the finding clears, and is idempotent"
+    }
+   ]
   },
   {
    "id": "US-15-R17",
@@ -5503,9 +6377,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/lifecycle-gates/lifecycle-gates.test.js",
+     "name": "US-15-R17, US-15-T08: a requirement with no mapped item, a mapped item that is not the project's or has no closing probe, or an item with a dangling trigger blocks G2 and files an item"
+    }
+   ]
   },
   {
    "id": "US-16-R01",
@@ -6497,9 +7376,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "test file cites it",
+   "tests": [
+    {
+     "file": "tests/test_owner_readme.py",
+     "name": null
+    }
+   ]
   },
   {
    "id": "US-19-R18",
@@ -6522,9 +7406,30 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "tests/test_req_ids.py",
+     "name": "test US-19-R19 a cited id that no specification defines is reported with its files"
+    },
+    {
+     "file": "tests/test_req_ids.py",
+     "name": "test US-19-R19 strict mode exits 1 and a clean tree exits 0"
+    },
+    {
+     "file": "tests/test_req_ids.py",
+     "name": "test US-19-R19 a listed fixture file is exempt and every listed file exists with a reason"
+    },
+    {
+     "file": "tests/test_req_ids.py",
+     "name": "test US-19-R19 a missing specification directory is an error not a pass"
+    },
+    {
+     "file": "tests/test_req_ids.py",
+     "name": "test US-19-R19 this repository cites only defined ids"
+    }
+   ]
   },
   {
    "id": "US-19-R20",
@@ -6652,9 +7557,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "test file cites it",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_truth.py",
+     "name": null
+    }
+   ]
   },
   {
    "id": "US-20-R07",
@@ -6662,9 +7572,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "test file cites it",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_protected_paths.py",
+     "name": null
+    }
+   ]
   },
   {
    "id": "US-20-R08",
@@ -7373,9 +8288,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "test file cites it",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_lint_workflows.py",
+     "name": null
+    }
+   ]
   },
   {
    "id": "US-24-R12",
@@ -7443,9 +8363,30 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "tests/test_workflow_sha_pin.py",
+     "name": "test US-24-R18 tag passes by default and is w09 when sha is required"
+    },
+    {
+     "file": "tests/test_workflow_sha_pin.py",
+     "name": "test US-24-R18 full sha passes and a short sha does not"
+    },
+    {
+     "file": "tests/test_workflow_sha_pin.py",
+     "name": "test US-24-R18 branch ref stays w06 and local actions are exempt"
+    },
+    {
+     "file": "tests/test_workflow_sha_pin.py",
+     "name": "test US-24-R18 cli gate and report"
+    },
+    {
+     "file": "tests/test_workflow_sha_pin.py",
+     "name": "test US-24-R18 real workflows have no branch refs and the report runs"
+    }
+   ]
   },
   {
    "id": "US-24-R19",
@@ -7453,9 +8394,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "test file cites it",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_lint_workflows.py",
+     "name": null
+    }
+   ]
   },
   {
    "id": "US-24-R20",
