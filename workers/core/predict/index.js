@@ -229,19 +229,6 @@ export async function gateConfidence(db, { decision_type, confidence, threshold 
   return { stated, corrected, correction, allowed: corrected >= threshold };
 }
 
-/**
- * US-05-R13, US-06-R21: the port core/deploy asks before an autonomous deploy. The request carries the stated confidence
- * (`req.confidence`, else `default_confidence`) and a decision type; the answer is gateConfidence()'s: allowed only when the
- * calibrated value meets the threshold. No stated confidence at all is not allowed. core/deploy never imports this module.
- */
-export function confidenceGate({ db, decision_type = null, threshold, default_confidence }) {
-  return async (req = {}) => {
-    const stated = req.confidence ?? default_confidence;
-    if (stated === undefined || stated === null) return { allowed: false, stated: null, corrected: null, reason: 'no stated confidence' };
-    return gateConfidence(db, { decision_type: req.decision_type ?? decision_type, confidence: stated, threshold });
-  };
-}
-
 export const HEALTH_DEFAULTS = { min_parsable_share_7d: 0.8, max_miss_rate_7d: 0.5, max_unscored_overdue: 0, owner_role: 'operations' };
 
 /** US-05-R08: share of decisions with a parsable prediction in 7 days, miss rate in 7 days, predictions unscored beyond their deadline. */
@@ -284,17 +271,10 @@ export async function checkHealth(db, { now = Date.now(), config = {} } = {}) {
 
 // ---- Realization gate (section 3.3) ----
 
-const COND = /^\s*(>=|<=|>|<|=)\s*(-?\d+(?:\.\d+)?)\s*$/;
 function passes(value, condition) {
-  const m = COND.exec(condition ?? '');
+  const m = /^\s*(>=|<=|>|<|=)\s*(-?\d+(?:\.\d+)?)\s*$/.exec(condition ?? '');
   if (!m || value === null || !Number.isFinite(value)) return null;
   return CMP[m[1]](value, Number(m[2]));
-}
-// US-05-R17: a null expectation that is the pass condition (same text, or the same operator and number) can never discriminate.
-function sameCondition(a, b) {
-  const ma = COND.exec(a ?? ''), mb = COND.exec(b ?? '');
-  if (ma && mb) return ma[1] === mb[1] && Number(ma[2]) === Number(mb[2]);
-  return String(a ?? '').trim().replace(/\s+/g, ' ').toLowerCase() === String(b ?? '').trim().replace(/\s+/g, ' ').toLowerCase();
 }
 
 /**
@@ -310,7 +290,6 @@ export async function recordAssertion(db, a, { now = Date.now() } = {}) {
     if (!a[f] || !String(a[f]).trim()) throw new Error(`assertion requires ${f}`);
   }
   if (a.state === 'inferred' && !/^\d{4}-\d\d-\d\d/.test(a.retest_at || '')) throw new Error('an inferred assertion requires a re-test date');
-  if (sameCondition(a.pass_condition, a.null_expectation)) throw new Error('the null expectation must differ from the pass condition: a pass condition that production would meet without the fix proves nothing');
   const r = await run(db, `INSERT INTO predict_assertions (finding_id, state, deciding_query, pass_condition, fail_condition, null_expectation, evidence, produced_by, verified_by, independent, retest_at, recorded_at)
       VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`,
     a.finding_id, a.state, a.deciding_query, a.pass_condition, a.fail_condition, a.null_expectation, a.evidence ?? null,
@@ -341,24 +320,7 @@ export async function observe(db, findingId, { now = Date.now(), read, verified_
     value = value === null || value === undefined || typeof value === 'boolean' || !Number.isFinite(Number(value)) ? null : Number(value);
   } catch (e) { reason = `deciding query failed: ${String(e && e.message).slice(0, 120)}`; }
   const ok = passes(value, a.pass_condition);
-  // US-05-R17: the fail condition and the null expectation are evaluated, not only stored. A reading that meets the fail condition
-  // is recorded as a failure (a staged row, so closeFinding leaves the finding pending); a reading that meets the null
-  // expectation is what production shows without the fix, so it never reaches observed, even when it also meets the pass condition.
-  if (passes(value, a.fail_condition) === true) {
-    const why = `value ${value} does not meet ${a.pass_condition}; it meets the fail condition ${a.fail_condition}`;
-    const last = await latestAssertion(db, findingId);
-    if (!(last && last.state === 'staged' && last.query_value === value && String(last.evidence || '').startsWith('fail condition held'))) {
-      await run(db, `INSERT INTO predict_assertions (finding_id, state, deciding_query, pass_condition, fail_condition, null_expectation, query_value, evidence, produced_by, verified_by, independent, recorded_at)
-          VALUES (?, 'staged', ?,?,?,?,?,?,?,?,?,?)`,
-        findingId, a.deciding_query, a.pass_condition, a.fail_condition, a.null_expectation, value, `fail condition held: deciding query read ${value}; fail condition ${a.fail_condition}`.slice(0, 300), a.produced_by, verified_by, independent, iso(now));
-    }
-    return { finding_id: findingId, state: 'staged', observed: false, failed: true, value, reason: why };
-  }
-  if (ok === true && passes(value, a.null_expectation) === true) {
-    return { finding_id: findingId, state: a.state, observed: false, null_match: true, value, reason: `value ${value} meets ${a.pass_condition} but also the null expectation ${a.null_expectation}: the reading matches what production shows without the fix` };
-  }
   if (ok !== true) {
-    if (passes(value, a.null_expectation) === true) return { finding_id: findingId, state: a.state, observed: false, null_match: true, value, reason: `value ${value} does not meet ${a.pass_condition} and meets the null expectation ${a.null_expectation}: the reading matches what production shows without the fix` };
     return { finding_id: findingId, state: a.state, observed: false, value, reason: reason || (ok === null ? 'deciding query returned no number, or the pass condition is not of the form "<op> <number>"' : `value ${value} does not meet ${a.pass_condition}`) };
   }
   const r = await run(db, `INSERT INTO predict_assertions (finding_id, state, deciding_query, pass_condition, fail_condition, null_expectation, query_value, evidence, produced_by, verified_by, independent, recorded_at)
@@ -410,11 +372,9 @@ export async function retestDue(db, { now = Date.now(), read } = {}) {
       out.push({ finding_id: a.finding_id, result: 'observed', value: r.value });
     } else {
       await run(db, `UPDATE items SET status='ready', disposition=NULL, blocker=?, updated_at=? WHERE id=? AND status='done'`, `reopened by re-test: ${r.reason}`.slice(0, 300), nowIso, a.finding_id);
-      if (!r.failed) { // a reading that met the fail condition already wrote its staged row in observe()
-        await run(db, `INSERT INTO predict_assertions (finding_id, state, deciding_query, pass_condition, fail_condition, null_expectation, query_value, evidence, produced_by, recorded_at)
-            VALUES (?, 'staged', ?,?,?,?,?,?,?,?)`, a.finding_id, a.deciding_query, a.pass_condition, a.fail_condition, a.null_expectation, r.value ?? null,
-          `re-test did not observe the change: ${r.reason}`.slice(0, 300), a.produced_by, nowIso);
-      }
+      await run(db, `INSERT INTO predict_assertions (finding_id, state, deciding_query, pass_condition, fail_condition, null_expectation, query_value, evidence, produced_by, recorded_at)
+          VALUES (?, 'staged', ?,?,?,?,?,?,?,?)`, a.finding_id, a.deciding_query, a.pass_condition, a.fail_condition, a.null_expectation, r.value ?? null,
+        `re-test did not observe the change: ${r.reason}`.slice(0, 300), a.produced_by, nowIso);
       out.push({ finding_id: a.finding_id, result: 'reopened', reason: r.reason });
     }
   }

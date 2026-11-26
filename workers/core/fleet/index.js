@@ -11,7 +11,7 @@ export const VERSION = '0.1.0';
 const DEFAULTS = {
   worker: 'fleet', scheduler_name: 'dispatcher', queued_ttl_minutes: 15, running_ttl_minutes: 60,
   max_tokens: 1024, allowed_models: [], reconcile_every_minutes: 60, deadman_window_minutes: 60,
-  tick_procedure: null, tick_scheduler: 'platform-cron', alert_role: 'operations', result_chars: 4000, error_chars: 1000,
+  tick_procedure: null, auto_stagger: false, stagger_literals: false, tick_scheduler: 'platform-cron', alert_role: 'operations', result_chars: 4000, error_chars: 1000,
 };
 export const cfg = ctx => ({ ...DEFAULTS, ...(ctx.config || {}) });
 export const TRIGGERS = ['cron', 'http', 'event', 'manual'];
@@ -84,6 +84,57 @@ export async function collisions(ctx, { from, to } = {}) {
     for (const t of expectedSlots(c.expr, start, end)) per.set(t, [...(per.get(t) || []), c.name]);
   const minutes = [...per.entries()].filter(([, n]) => n.length > 1).sort((a, b) => a[0] - b[0]).map(([t, names]) => ({ minute: iso(t), names }));
   return { from: iso(start), to: iso(end), fired_minutes: per.size, collisions: minutes.length, max_per_minute: Math.max(0, ...[...per.values()].map(n => n.length)), minutes };
+}
+
+// The period and phase of a minute field: a step term with n dividing 60, a comma list that is one such progression, or a single literal (period 60).
+export function minutePhase(field) {
+  const f = String(field);
+  let m = /^\*\/(\d+)$/.exec(f);
+  if (m) { const n = Number(m[1]); return n > 1 && 60 % n === 0 ? { period: n, offset: 0 } : null; }
+  if (!/^\d+(,\d+)*$/.test(f)) return null;
+  const v = [...new Set(f.split(',').map(Number))].sort((a, b) => a - b);
+  if (v.some(x => x > 59)) return null;
+  if (v.length === 1) return { period: 60, offset: v[0] };
+  const n = v[1] - v[0];
+  if (n < 2 || 60 % n !== 0 || v.length !== 60 / n || v[0] >= n || v.some((x, i) => x !== v[0] + i * n)) return null;
+  return { period: n, offset: v[0] };
+}
+const withPhase = (period, offset) => (period === 60 ? String(offset) : offset === 0 ? `*/${period}` : Array.from({ length: 60 / period }, (_, i) => offset + i * period).join(','));
+
+/**
+ * US-11-R12: stagger the enabled schedules. A schedule whose minute field is periodic keeps its period and its other four fields and is
+ * moved to the phase that shares the fewest minutes with the schedules already placed; a tie keeps the phase it has. Schedules are placed
+ * in name order, so the result is the same on every run and a second run changes nothing. A single-minute schedule (`0 3 * * *`) names a
+ * time of day and is moved only with `literals: true`. `apply` writes the rows (a schedule change is a row write, US-11-R04).
+ */
+export async function stagger(ctx, { from, to, apply = false, literals = false } = {}) {
+  const start = from ?? Math.floor(nowMs(ctx) / (60 * MINUTE)) * 60 * MINUTE, end = to ?? start + 24 * 60 * MINUTE;
+  const before = await collisions(ctx, { from: start, to: end });
+  const load = new Map(), changes = [], fixed = [];
+  const place = slots => { for (const t of slots) load.set(t, (load.get(t) || 0) + 1); };
+  const rows = await all(ctx.db, `SELECT name, expr, task_id FROM fleet_crons WHERE enabled = 1 ORDER BY name`);
+  for (const c of rows) {
+    const f = parseCron(c.expr), ph = f && minutePhase(f[0]);
+    if (!ph || (ph.period === 60 && !literals)) { fixed.push(c.name); place(expectedSlots(c.expr, start, end)); }
+  }
+  for (const c of rows) {
+    if (fixed.includes(c.name)) continue;
+    const f = parseCron(c.expr), ph = minutePhase(f[0]);
+    let best = null;
+    for (let i = 0; i < ph.period; i++) {
+      const offset = (ph.offset + i) % ph.period;   // the present phase is tried first, so it wins a tie
+      const expr = [withPhase(ph.period, offset), ...f.slice(1)].join(' ');
+      const slots = expectedSlots(expr, start, end), cost = slots.reduce((n, t) => n + (load.get(t) || 0), 0);
+      if (!best || cost < best.cost) best = { expr, slots, cost };
+      if (cost === 0) break;
+    }
+    place(best.slots);
+    if (best.expr !== c.expr) changes.push({ name: c.name, from: c.expr, to: best.expr });
+  }
+  if (apply) for (const ch of changes) { const c = rows.find(r => r.name === ch.name); await setCron(ctx, { name: c.name, expr: ch.to, task_id: c.task_id }); }
+  const shared = [...load.values()].filter(n => n > 1);
+  return { from: iso(start), to: iso(end), applied: Boolean(apply), changes, fixed, collisions_before: before.collisions, max_per_minute_before: before.max_per_minute,
+    collisions_after: shared.length, max_per_minute_after: Math.max(0, ...load.values()) };
 }
 
 // ---- schedule and task rows (US-11-R04) --------------------------------------------------------
@@ -546,7 +597,10 @@ export async function status(ctx) {
 export async function step(ctx) {
   const c = cfg(ctx);
   if (c.enabled === false) return { enabled: false };
-  const out = { dispatch: await dispatch(ctx), reaped: (await reapStale(ctx)).reaped, deadman: (await deadman(ctx)).alerts.length };
+  const out = {};
+  // US-11-R12: with `auto_stagger` on, schedules are moved apart before anything is dispatched; a staggered set is left as it is.
+  if (c.auto_stagger === true) { const g = await stagger(ctx, { apply: true, literals: c.stagger_literals === true }); out.staggered = g.changes.length; }
+  Object.assign(out, { dispatch: await dispatch(ctx), reaped: (await reapStale(ctx)).reaped, deadman: (await deadman(ctx)).alerts.length });
   if (ctx.deployed) {
     const last = await first(ctx.db, `SELECT at FROM fleet_reconciliations ORDER BY id DESC LIMIT 1`);
     if (!last || nowMs(ctx) - parseIso(last.at) >= c.reconcile_every_minutes * MINUTE) { const r = await reconcile(ctx); out.reconcile = r.counts; }

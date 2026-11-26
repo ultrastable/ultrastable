@@ -1,0 +1,43 @@
+{
+ "capabilities": {
+  "agent-skills": "with images Make visual edits Use preview controls Use Code view Use skills Security Chat tools Design system Overview Add your design system Vie",
+  "event-triggered-agents": "abled\":false,\"feature_enabled\":true},\"impressionData\":false},{\"name\":\"automations-pr-grouping\",\"enabled\":true,\"variant\":{\"name\":\"disabled\",\"enabled\":fa",
+  "existing-repo-adoption": "unctional app. To learn more, see Use Google Stitch designs in Bolt . Import a GitHub repository. Load an existing repository as a Bolt project. To learn m",
+  "idea-to-deploy": "am Team templates Troubleshooting Overview Bolt issues Preview issues Publishing issues Sharing issues Integrations issues Database issues Domain issu",
+  "mcp-server": "for hosting Stripe for payments Supabase for databases Connect to an MCP server Settings Overview Account settings Workspace settings Project",
+  "self-hostable": "\":\"Tokens\",\"href\":\"/account/tokens\"},{\"title\":\"Bolt Forge: build with open-source AI models in Bolt\",\"sidebarTitle\":\"Bolt Forge\",\"href\":\"/account/bolt-"
+ },
+ "errors": {},
+ "id": "bolt",
+ "name": "Bolt",
+ "refreshed_at": "2026-11-26T06:46:33Z",
+ "sha": "d6fe5dd8fef2",
+ "sources_read": [
+  "https://support.bolt.new/building/intro-bolt"
+ ],
+ "taxonomy": [
+  "a2a-protocol",
+  "agent-evals",
+  "agent-memory",
+  "agent-skills",
+  "agents-md",
+  "autonomous-pr",
+  "chat-entry",
+  "cloud-background-agents",
+  "cross-model-review",
+  "durable-execution",
+  "event-triggered-agents",
+  "existing-repo-adoption",
+  "idea-to-deploy",
+  "incident-investigation",
+  "mcp-server",
+  "multi-agent-roles",
+  "observability",
+  "other-cloud",
+  "permission-guardrails",
+  "sandboxed-execution",
+  "scheduled-agents",
+  "self-hostable",
+  "spend-budgets"
+ ]
+}

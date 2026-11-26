@@ -21,15 +21,15 @@ Research date: 2026-11-11. Every entry in the register carries its sources with 
 
 | Standard | Body | Status | Support | Decision | Proof (test) |
 |---|---|---|---|---|---|
-| Model Context Protocol | Agentic AI Foundation (Linux Foundation) | stable | supported | adopt now | `mcp: initialize negotiates version`; `mcp: server/discover`; `contract: tools match v1 snapshot` |
+| Model Context Protocol | Agentic AI Foundation (Linux Foundation) | stable | supported | adopt now | `mcp: initialize negotiates version`; `mcp: server/discover`; `contract: tools match v1 snapshot`; `mcp: unsupported version answers UnsupportedProtocolVersionError`; `mcp: a modern request is answered without a handshake and names the server` |
 | MCP authorization (OAuth 2.1, protected resource metadata) | MCP / IETF OAuth WG | stable | partial |  | `mcp: tools/call fails closed`; `mcp: tools/call with token`; `discovery: api catalog and protected resource` |
 | MCP authorization on ultrastable.io (OAuth 2.1 server: PKCE, Client ID Metadata Documents, dynamic registration) | MCP / IETF OAuth WG | stable | supported |  | `unauthenticated write: 401 with the RFC 9728 challenge`; `token: PKCE enforced, code single use`; `refresh rotation with reuse detection`; `Client ID Metadata Document: fetched, must name itself` |
 | MCP server cards (SEP-2127) | MCP project | proposal | supported |  | `discovery: server card` |
 | MCP registry (server.json publication) | MCP project | draft | planned |  | STD-1: publish after the namespace is verified |
-| Agent2Agent (A2A) protocol | Agentic AI Foundation (Linux Foundation) | stable | partial | adopt now | `discovery: agent card` |
+| Agent2Agent (A2A) protocol | Agentic AI Foundation (Linux Foundation) | stable | supported | adopt now | `discovery: agent card`; `a2a: SendMessage runs the named skill and answers with an agent Message`; `a2a: version is required and a version not served answers VersionNotSupportedError`; `a2a: no task is created, so task methods and streaming answer the specification errors` |
 | AGENTS.md | Agentic AI Foundation (contributed by OpenAI) | de-facto | supported | adopt now | `discovery: AGENTS.md` |
 | llms.txt | Community proposal (llmstxt.org) | proposal | supported | adopt now | `discovery: llms.txt lists every discoverable surface` |
-| Agent Skills (SKILL.md) and discovery index | Agent Skills open standard; discovery RFC led by Cloudflare | draft | supported |  | `discovery: agent skills digest` |
+| Agent Skills (SKILL.md) and discovery index | Agent Skills open standard; discovery RFC led by Cloudflare | draft | supported | adopt now | `discovery: agent skills digest`; `discovery: skill conforms to the Agent Skills specification` |
 | Well-known URIs (RFC 8615) | IETF | stable | supported | adopt now | `discovery: well-known paths and json schema register` |
 | API catalog (RFC 9727) | IETF | stable | supported |  | `discovery: api catalog and protected resource` |
 | OAuth protected resource metadata (RFC 9728) | IETF OAuth WG | stable | supported |  | `discovery: api catalog and protected resource` |

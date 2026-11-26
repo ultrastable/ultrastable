@@ -1,0 +1,53 @@
+{
+ "capabilities": {
+  "agent-memory": "vin CLI Advanced Capabilities Dynamic Workflows Product Guides Skills Memory Plugins Plugin MCP servers Set up your plugin ecosystem Session Insig",
+  "agent-skills": "MCP Devin CLI Advanced Capabilities Dynamic Workflows Product Guides Skills Memory Plugins Plugin MCP servers Set up your plugin ecosystem Sessio",
+  "agents-md": "in Outposts Index a Repository VPN configuration Knowledge Onboarding AGENTS.md Migrate from other agents Working with Devin Devin Bots Devin Review",
+  "autonomous-pr": "itLab Bitbucket Linear Jira Databricks MongoDB PagerDuty Pylon GitHub Pull Request Templates Self-Hosted SCM &amp; Artifacts Admin Security at Cognition",
+  "chat-entry": "esponding to bots Invite your Team Integrations Integrations Overview Slack Microsoft Teams GitHub GitLab Bitbucket Linear Jira Databricks MongoD",
+  "cloud-background-agents": "ef\":\"/work-with-devin/devin-handoff\"},{\"title\":\"Local Hands for Devin Cloud Sessions\",\"sidebarTitle\":\"Local Hands\",\"icon\":\"laptop\",\"href\":\"/work-with-devi",
+  "event-triggered-agents": "les Cloud Authentication with OIDC Creating Playbooks Using Playbooks Automations Oncall Auto-triage Scheduled Sessions Devin Apps Responding to bots I",
+  "idea-to-deploy": "easy to verify \u2014 e.g. checking that CI passes or testing an automatic deployment. For harder tasks, break them into well-scoped steps and provide rele",
+  "incident-investigation": "thentication with OIDC Creating Playbooks Using Playbooks Automations Oncall Auto-triage Scheduled Sessions Devin Apps Responding to bots Invite y",
+  "mcp-server": "epWiki Devin Security Code Scans Hand off to cloud Devins Local Hands MCP (Model Context Protocol) Marketplace DeepWiki MCP Devin MCP Devin CLI",
+  "observability": "itle\":\"Cloud sessions\",\"href\":\"/sdk/guides/cloud-sessions\"},{\"title\":\"Trace Devin SDK sessions to Langfuse\",\"sidebarTitle\":\"Tracing\",\"href\":\"/sdk",
+  "permission-guardrails": "sh If your company is already working with Cognition, you can request permissions from your Administrator or Cognition directly and access Devin via th",
+  "scheduled-agents": "IDC Creating Playbooks Using Playbooks Automations Oncall Auto-triage Scheduled Sessions Devin Apps Responding to bots Invite your Team Integrations",
+  "self-hostable": "controls for when reviews run. Similar to DeepWiki, Devin Review for open source repos will remain free. We want customers to have much better control",
+  "spend-budgets": "message\",\"href\":\"/work-with-devin/bots/imessage\"},{\"title\":\"Devin Bot usage limits\",\"sidebarTitle\":\"Usage limits\",\"icon\":\"gauge\",\"href\":\"/work-with-devi"
+ },
+ "errors": {},
+ "id": "devin",
+ "name": "Devin (Cognition)",
+ "refreshed_at": "2026-11-26T06:46:33Z",
+ "sha": "e4a22bc0d636",
+ "sources_read": [
+  "https://www.cognition.ai/blog/new-self-serve-plans-for-devin",
+  "https://docs.devin.ai/get-started/devin-intro"
+ ],
+ "taxonomy": [
+  "a2a-protocol",
+  "agent-evals",
+  "agent-memory",
+  "agent-skills",
+  "agents-md",
+  "autonomous-pr",
+  "chat-entry",
+  "cloud-background-agents",
+  "cross-model-review",
+  "durable-execution",
+  "event-triggered-agents",
+  "existing-repo-adoption",
+  "idea-to-deploy",
+  "incident-investigation",
+  "mcp-server",
+  "multi-agent-roles",
+  "observability",
+  "other-cloud",
+  "permission-guardrails",
+  "sandboxed-execution",
+  "scheduled-agents",
+  "self-hostable",
+  "spend-budgets"
+ ]
+}

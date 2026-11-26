@@ -503,6 +503,15 @@
     "file": "seed/ultrastable.json",
     "contains": "\"plus_share\": 0.2"
    }
+  },
+  {
+   "id": "orchestrate-one-phase-a-tick",
+   "source": "agents/AGENTS.md",
+   "quote": "advances it one phase a tick",
+   "probe": {
+    "file": "seed/worker/src/orchestrate.js",
+    "contains": "One tick, one phase of the oldest unfinished run"
+   }
   }
  ],
  "baseline": [

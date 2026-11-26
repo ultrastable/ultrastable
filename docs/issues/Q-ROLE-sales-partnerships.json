@@ -1,0 +1,14 @@
+{
+  "id": "Q-ROLE-sales-partnerships",
+  "title": "Q-ROLE-sales-partnerships: sales and partnerships has no automated role and no code",
+  "body": "**Owner:** portfolio-manager\n**Trigger:** phase 2 gate passes (python3 -m foundation team --gate)\n**Done check:** cmd:git ls-files --error-unmatch agents/roles/sales-partnerships.md\n**Status:** open\n\nROLE-ALIGN-1, MANAGERS-1, TEAM-1. The coverage map in doctrine/managers.json (`software_roles`, id `sales-partnerships`) is a gap: the outreach manager's intro lane (scripts/outreach_intro.py) introduces the work to organizations, and nothing keeps a lead list with a next step per lead, prepares a discovery call or tracks a partner programme. The role is defined in doctrine/team.json (phase 2, metric leads_with_next_step) and its activation item OL-ROLE-sales-partnerships ended shelved.\n\nWhen the phase 2 gate of `python3 -m foundation team --gate` is open, run `python3 -m foundation team --apply` (role files, seed role, loop entry), give the role a row in doctrine/managers.json (runs, clock, probe, settles, human_role, decides, inputs, hands_to, cadence) and in seed/autonomy/managers.json, and set the `sales-partnerships` row of `software_roles` to covered with the code the role owns.\n\nsize: M\n\n**Closing probe:** cmd:git ls-files --error-unmatch agents/roles/sales-partnerships.md\n\n**Prediction:** spec_quality >= 0.7 within 336 h (read by `python3 -m foundation specgate --report`; this item closing by its done check keeps the share of well-specified open items at or above today's reading)\n\n**Out of scope:** activating the role ahead of its phase gate, creating the phase 1 handoff files only to open the gate, contacting a person outside the outreach caps and suppression rules, or any statement or commitment in the owner's name.\n",
+  "labels": [
+    "role:portfolio-manager",
+    "p2",
+    "agent-ready",
+    "managers",
+    "team"
+  ],
+  "milestone": "Next",
+  "workstream": "Virtual team"
+}

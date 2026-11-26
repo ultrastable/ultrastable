@@ -11,6 +11,7 @@ export const DDL = [
 export const POINTS = {
   'ai-router': { metric: 'reply_pass_rate', op: '>=', target: 1 },
   'free-tier-governor': { metric: 'worst_resource_share', op: '<', target: 0.95 },
+  'orchestrator-plan': { metric: 'run_integrated', op: '>=', target: 1 },
 };
 const OPS = { '>=': (a, b) => a >= b, '<': (a, b) => a < b };
 const ensured = new WeakSet();
@@ -36,6 +37,21 @@ export async function recordRoute(db, { kind, model, ok, now = Date.now() }) {
   const s = await db.prepare('SELECT calls, passes FROM airouter_stats WHERE kind=?1 AND model=?2').bind(kind, model).first().catch(() => null);
   if (s && s.calls - 1 >= 8) { predicted = (s.passes - (ok ? 1 : 0)) / (s.calls - 1); basis = `learned pass rate over ${s.calls - 1} calls`; }
   return logDecision(db, { point: 'ai-router', chosen: model + ' for ' + kind, predicted, basis, measured: ok ? 1 : 0, now });
+}
+
+// DECISION-METRIC: orchestrator-plan
+// Orchestrator (ORCHESTRATE-1): one decision per accepted plan. predicted = the share of earlier planned runs that ended in a PR (0.5 prior until 4 are
+// settled); measured = 1 when this run opened its PR, 0 when it ended failed. `chosen` is the run id, so the settle finds its own row.
+export async function recordPlan(db, { run, steps, now = Date.now() }) {
+  await ensure(db);
+  const s = await db.prepare('SELECT COUNT(*) AS n, COALESCE(SUM(measured), 0) AS ok FROM decision_log WHERE point=?1 AND settled_at IS NOT NULL').bind('orchestrator-plan').first().catch(() => null);
+  const known = s && s.n >= 4;
+  return logDecision(db, { point: 'orchestrator-plan', chosen: run, predicted: known ? s.ok / s.n : 0.5, basis: `${steps} steps; ${known ? `share of ${s.n} settled runs that opened a PR` : 'prior (fewer than 4 settled runs)'}`, now });
+}
+export async function settlePlan(db, { run, ok, now = Date.now() }) {
+  await ensure(db);
+  const r = await db.prepare('UPDATE decision_log SET measured=?1, hit=?1, settled_at=?2 WHERE point=?3 AND chosen=?4 AND settled_at IS NULL').bind(ok ? 1 : 0, now, 'orchestrator-plan', String(run).slice(0, 80)).run();
+  return (r && r.meta && r.meta.changes) || 0;
 }
 
 // DECISION-METRIC: free-tier-governor

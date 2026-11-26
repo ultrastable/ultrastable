@@ -107,7 +107,7 @@ export async function runNative(env, { fetchImpl = fetch, agent = runCodeAgent, 
   return { ok: true, detail: 'idle: repo queue worked and no needs-code item in the backlog' + (last && last.note ? ' (' + last.note + ')' : '') };
 }
 
-function github(env, fetchImpl) {
+export function github(env, fetchImpl) {
   const repo = env.GITHUB_REPO || 'ultrastable/ultrastable';
   const call = async (method, path, body) => {
     const r = await fetchImpl(API + path, { method, headers: { authorization: 'Bearer ' + env.GITHUB_DISPATCH_TOKEN, accept: 'application/vnd.github+json', 'user-agent': 'ultrastable-native-executor', 'content-type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
@@ -118,7 +118,7 @@ function github(env, fetchImpl) {
   return { repo, call, file };
 }
 
-async function openPr({ repo, call, file }, { id, branch, change, title, extraBody = '' }) {
+export async function openPr({ repo, call, file }, { id, branch, change, title, extraBody = '' }) {
   const main = await call('GET', `/repos/${repo}/git/ref/heads/main`);
   if (!main.ok) return { ok: false, detail: 'cannot read main ref ' + main.status };
   const mk = await call('POST', `/repos/${repo}/git/refs`, { ref: `refs/heads/${branch}`, sha: main.json.object.sha });

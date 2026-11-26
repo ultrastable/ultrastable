@@ -10,6 +10,8 @@ seed. Ultrastable is the foundation for any autonomous system.
   python3 -m foundation managers --sync      rewrite the generated `What you own` block of every role file from the register and the loop registry
   python3 -m foundation managers --clocks    scheduled manager workflows that are not clocks in doctrine/clocks.json (exit 1 while any is left)
   python3 -m foundation managers --closure   per manager, how its ended items ended; exit 1 when one mostly ends shelved (files more than it closes)
+  python3 -m foundation managers --roles     ROLE-ALIGN-1: each role with the human software-organization title it stands in for, what it decides and whom it
+                                             hands to, then every software function with the roles and code that cover it, or its gap item (JSON with --json)
   python3 -m foundation managers --live      read the runtime (public GET, no credential): every switched-on manager is hired and its dispatch beat
                                              is inside its cadence; exit 1 names the missing, late and stopped ones (detector managers-live)
 
@@ -23,6 +25,11 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 POLICY = "doctrine/managers.json"
+ALIGN = ("human_role", "decides", "inputs", "hands_to", "cadence")  # ROLE-ALIGN-1: what a role stands in for, decides, reads and hands on
+SEED_ALIGN = ("human_role", "decides", "hands_to")  # the part a seeded system carries; `inputs` are platform paths
+FUNCTIONS = ("product-management", "program-delivery-management", "engineering-management", "software-engineering", "code-review", "qa-test", "release-management",
+             "sre-operations", "platform-infrastructure", "security", "data-analytics", "ux-research", "ui-design", "technical-writing", "developer-relations",
+             "marketing", "sales-partnerships", "customer-support-success", "finance-finops", "legal-compliance", "people-org-design", "research")
 TREES = {"platform": "agents/roles", "seed": "seed/agents/roles"}
 CLOCK_KINDS = ("runtime", "clock", "workflow")
 
@@ -73,6 +80,118 @@ def _clock_ok(root, spec: str, clocks: set, seeded: set, rid: str) -> str:
         f = Path(root) / ".github/workflows" / rest
         return "" if f.is_file() and re.search(r"^\s*schedule:", f.read_text(encoding="utf-8"), re.M) else f"workflow {rest} does not exist or has no schedule"
     return f"unknown clock kind {kind!r} (use {', '.join(CLOCK_KINDS)})"
+
+
+def _texts(v) -> bool:
+    return isinstance(v, list) and bool(v) and all(isinstance(x, str) and x.strip() for x in v)
+
+
+def align_problems(root, rid: str, r: dict, known: set) -> list[str]:
+    """ROLE-ALIGN-1: a role says which human role it stands in for, what it decides alone, what it reads and whom it hands to; all of it resolves."""
+    root, bad = Path(root), []
+    if not str(r.get("human_role", "")).strip():
+        bad.append(f"{rid}: no human_role: nothing says which software-organization role it stands in for")
+    if not _texts(r.get("decides")):
+        bad.append(f"{rid}: decides is missing or empty: a role that decides nothing is a title")
+    if not str(r.get("cadence", "")).strip():
+        bad.append(f"{rid}: no cadence")
+    if not _texts(r.get("inputs")):
+        bad.append(f"{rid}: inputs is missing or empty: it decides from no measurement or ledger")
+    for p in r.get("inputs") or []:
+        if not (root / str(p)).exists():
+            bad.append(f"{rid}: input {p} does not exist")
+    if not _texts(r.get("hands_to")):
+        bad.append(f"{rid}: hands_to is missing or empty: its work reaches nobody")
+    for h in r.get("hands_to") or []:
+        if h not in known:
+            bad.append(f"{rid}: hands_to {h}, which is not a role")
+        elif h == rid:
+            bad.append(f"{rid}: hands_to itself")
+    return bad
+
+
+def owned_paths(root, pol=None) -> dict[str, set]:
+    """Per role, the code it owns: its `runs` and the system_path of every loop it owns."""
+    pol = pol or _j(root, POLICY)
+    out = {rid: set(r.get("runs", [])) for rid, r in pol.get("roles", {}).items()}
+    for owner, ls in loops_of(root).items():
+        for l in ls:
+            out.setdefault(owner, set()).update(l.get("system_path") or [])
+    return out
+
+
+def item_state(root, iid: str) -> str:
+    """missing, open, fixed, or the recorded disposition (shelved, gate: its closing probe still runs on every fleet pass)."""
+    f = Path(root) / "docs/issues" / f"{iid}.json"
+    try:
+        body = json.loads(f.read_text(encoding="utf-8")).get("body") or ""
+    except (OSError, ValueError, AttributeError):
+        return "missing"
+    st, d = re.search(r"\*\*Status:\*\*\s*(\w+)", body), re.search(r"\*\*Disposition:\*\*\s*([a-z]+)", body)
+    return "open" if st and st.group(1) == "open" else (d.group(1) if d else "closed")
+
+
+def coverage_problems(root, pol: dict, known: set) -> list[str]:
+    """ROLE-ALIGN-1: every standard function of a software organization is covered by roles and by code one of them owns, or is a gap with a
+    filed Q-ROLE-* item. An item that ended fixed no longer stands for a gap: the function is then recorded as covered, with its code."""
+    root, bad = Path(root), []
+    rows = pol.get("software_roles") or []
+    ids = [f.get("id") for f in rows]
+    for m in FUNCTIONS:
+        if m not in ids:
+            bad.append(f"software_roles: the function {m} is not in the coverage map: nothing says who does it")
+    if len(ids) != len(set(ids)):
+        bad.append("software_roles: duplicate function id")
+    owned = owned_paths(root, pol)
+    try:
+        planned = set(_j(root, "doctrine/team.json").get("roles", {}))
+    except (OSError, ValueError):
+        planned = set()
+    for f in rows:
+        fid, roles, code, st = f.get("id"), f.get("roles") or [], f.get("code") or [], f.get("status")
+        for r in roles:
+            if r not in known:
+                bad.append(f"software_roles {fid}: {r} is not a role")
+        if st == "covered":
+            if not roles or not code:
+                bad.append(f"software_roles {fid}: covered needs at least one role and one code path that does the work")
+            for p in code:
+                if not (root / p).exists():
+                    bad.append(f"software_roles {fid}: code {p} does not exist")
+                elif not any(p in owned.get(r, ()) for r in roles):
+                    bad.append(f"software_roles {fid}: {p} is owned by none of {', '.join(roles)} (not in a role's runs or in the system_path of a loop it owns)")
+            for r in roles:
+                if r in known and not any(p in owned.get(r, ()) for p in code):
+                    bad.append(f"software_roles {fid}: {r} is named and owns none of the listed code")
+        elif st == "gap":
+            if not f.get("item") or not str(f.get("missing", "")).strip():
+                bad.append(f"software_roles {fid}: a gap needs `missing` (what no code does) and a filed Q-ROLE-* item")
+        else:
+            bad.append(f"software_roles {fid}: status must be covered or gap")
+        if f.get("missing") and not f.get("item"):
+            bad.append(f"software_roles {fid}: `missing` with no item: a known hole nobody is asked to close")
+        if f.get("item"):
+            iid = str(f["item"])
+            state = item_state(root, iid)
+            if not iid.startswith("Q-ROLE-"):
+                bad.append(f"software_roles {fid}: item {iid} is not a Q-ROLE-* item")
+            elif state == "missing":
+                bad.append(f"software_roles {fid}: item {iid} is not filed in docs/issues")
+            elif state == "fixed":
+                bad.append(f"software_roles {fid}: item {iid} ended fixed: record the function as covered with the code that does it and drop `missing` and `item`")
+        if f.get("dedicated") and f["dedicated"] not in planned | known:
+            bad.append(f"software_roles {fid}: dedicated role {f['dedicated']} is in neither doctrine/team.json nor agents/roles")
+    return bad
+
+
+def alignment(root=REPO) -> dict:
+    """The role alignment and the coverage map, as one reading (`managers --roles`)."""
+    root = Path(root)
+    pol = _j(root, POLICY)
+    roles = [{"role": rid, **{k: r.get(k) for k in ALIGN}} for rid, r in pol.get("roles", {}).items()]
+    fns = [{**f, **({"item_state": item_state(root, f["item"])} if f.get("item") else {})} for f in pol.get("software_roles") or []]
+    return {"roles": roles, "functions": fns, "covered": sum(f.get("status") == "covered" for f in fns), "gaps": [f["id"] for f in fns if f.get("status") == "gap"],
+            "partial": [f["id"] for f in fns if f.get("status") == "covered" and f.get("missing")]}
 
 
 def seed_roster(reg: dict) -> list[dict]:
@@ -127,9 +246,11 @@ def check(root=REPO) -> list[str]:
         ok, why = _spec_ok(root, r.get("settles", "")) if r.get("settles") else (False, "no code settles what it files: a manager that only files items never closes a loop")
         if not ok:
             bad.append(f"{rid}: settles: {why}")
+        bad += align_problems(root, rid, r, set(platform))
     for rid in sorted(set(rows) - set(platform)):
         bad.append(f"{rid}: row in {POLICY} with no role file in {TREES['platform']}")
     known = set(platform)
+    bad += coverage_problems(root, pol, known)
     for owner, ls in sorted(owned.items()):
         if owner not in known:
             bad.append(f"loop(s) {', '.join(l['id'] for l in ls)}: owner {owner or '(none)'} is not a manager role: an ownerless loop is closed by nobody")
@@ -158,6 +279,9 @@ def check(root=REPO) -> list[str]:
             bad.append(f"{m['id']}: seed register row needs default on|off and `for` (what it serves, when to switch it off)")
         if m.get("core") and m.get("default") != "on":
             bad.append(f"{m['id']}: a core manager must default on")
+        for k in SEED_ALIGN:  # one truth: a seeded system is told the same alignment the platform checks
+            if m["id"] in rows and m.get(k) != rows[m["id"]].get(k):
+                bad.append(f"{m['id']}: {k} differs between the seed register and {POLICY}")
     for rid in sorted(set(cfg) - seeded):
         bad.append(f"{rid}: in seed/ultrastable.json roles and not in the seed register")
     for m in seed_roster(reg):
@@ -182,14 +306,26 @@ BEGIN, END = "<!-- managers:begin (generated by python3 -m foundation managers -
 def role_block(root, rid: str, tree: str) -> str:
     """What the role file tells the agent that takes the role: the loops and code it owns. The seed copy names only what a seeded system holds."""
     root = Path(root)
+
+    def stands(r: dict, seed: bool) -> str:
+        if not r.get("human_role"):
+            return ""
+        lines = [f"- **Stands in for:** {r['human_role']}", f"- **Decides on its own:** {'; '.join(r.get('decides') or [])}"]
+        if not seed:
+            lines.append(f"- **Reads:** {', '.join(f'`{x}`' for x in r.get('inputs') or [])}")
+        lines.append(f"- **Hands work to:** {', '.join(f'`{x}`' for x in r.get('hands_to') or [])}")
+        if not seed and r.get("cadence"):
+            lines.append(f"- **Cadence:** {r['cadence']}")
+        return "\n".join(lines) + "\n"
     if tree == "seed":
+        row = next((m for m in _j(root, _j(root, POLICY)["seed_register"]).get("managers", []) if m["id"] == rid), {})
         body = ("## What you own (MANAGERS-1)\nYou are a manager in this system's register, `autonomy/managers.json`: the tick hires you while you are switched on there and dispatches "
                 "you the ready items whose owner is your role. You own those items and the code they change until each closing probe passes. A manager that only files items closes "
-                "no loop: every item you file carries a closing probe, and you settle it (fixed, superseded with evidence, or a gate with its default in effect).")
+                "no loop: every item you file carries a closing probe, and you settle it (fixed, superseded with evidence, or a gate with its default in effect).\n" + stands(row, True).rstrip("\n"))
     else:
         r = _j(root, POLICY)["roles"][rid]
         loops = [l["id"] for l in loops_of(root).get(rid, []) if l["id"] != f"role-{rid}"]
-        body = ("## What you own (MANAGERS-1)\nYou are a running loop, not a title. You own this code and close what it opens.\n"
+        body = ("## What you own (MANAGERS-1)\nYou are a running loop, not a title. You own this code and close what it opens.\n" + stands(r, False) +
                 f"- **Loops** (`instances/ultrastable/loop-registry.json`): {', '.join(f'`{x}`' for x in loops)}\n"
                 f"- **Code:** {', '.join(f'`{x}`' for x in r['runs'])}\n"
                 f"- **Clock:** {', '.join(f'`{x}`' for x in r['clock'])} (`runtime` is your dispatch beat on the tick; `python3 -m foundation managers --live` reads it)\n"
@@ -342,6 +478,16 @@ def main(argv=None) -> int:
         for f in sync_roles():
             print("wrote " + f)
         return 0
+    if "--roles" in argv:
+        a = alignment()
+        if "--json" in argv:
+            print(json.dumps(a, indent=1)); return 0
+        for r in a["roles"]:
+            print(f"{r['role']}: {r['human_role']}\n    decides: {'; '.join(r['decides'] or [])}\n    hands to: {', '.join(r['hands_to'] or [])}; {r['cadence']}")
+        for f in a["functions"]:
+            print(f"{f['status']:<8} {f['function']}: " + (", ".join(f["roles"]) + " (" + ", ".join(f["code"]) + ")" if f["status"] == "covered" else f.get("missing", "")) + (f" [{f['item']}: {f['item_state']}]" if f.get("item") else ""))
+        print(json.dumps({"roles": len(a["roles"]), "functions": len(a["functions"]), "covered": a["covered"], "gaps": a["gaps"], "partial": a["partial"]}))
+        return 0
     if "--clocks" in argv:
         rows = unclocked()
         for r in rows:
@@ -359,7 +505,7 @@ def main(argv=None) -> int:
     bad = check()
     for b in bad:
         print("FAIL " + b)
-    print("managers ok: every role is a loop with code, a clock, a probe and a settler; every loop has a manager; the seed carries every manager" if not bad else f"managers: {len(bad)} problems")
+    print("managers ok: every role is a loop with code, a clock, a probe and a settler, and names its human counterpart, decisions, inputs and hand-offs; every loop has a manager; every software function is covered or has a Q-ROLE item; the seed carries every manager" if not bad else f"managers: {len(bad)} problems")
     return 1 if bad else 0
 
 

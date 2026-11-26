@@ -115,6 +115,14 @@
       "url": "claims.schema.json"
     },
     {
+      "name": "cleanroom.json",
+      "description": "Contract for doctrine/cleanroom.json",
+      "fileMatch": [
+        "doctrine/cleanroom.json"
+      ],
+      "url": "cleanroom.schema.json"
+    },
+    {
       "name": "clocks.json",
       "description": "Contract for doctrine/clocks.json",
       "fileMatch": [
@@ -137,6 +145,14 @@
         "doctrine/code-agents.json"
       ],
       "url": "code-agents.schema.json"
+    },
+    {
+      "name": "coherence.json",
+      "description": "Contract for doctrine/coherence.json",
+      "fileMatch": [
+        "doctrine/coherence.json"
+      ],
+      "url": "coherence.schema.json"
     },
     {
       "name": "coldstart.json",
@@ -305,6 +321,14 @@
         "doctrine/directive.json"
       ],
       "url": "directive.schema.json"
+    },
+    {
+      "name": "disclosure.json",
+      "description": "Contract for doctrine/disclosure.json",
+      "fileMatch": [
+        "doctrine/disclosure.json"
+      ],
+      "url": "disclosure.schema.json"
     },
     {
       "name": "dispose.json",
@@ -889,6 +913,14 @@
         "doctrine/spec-ids.json"
       ],
       "url": "spec-ids.schema.json"
+    },
+    {
+      "name": "spec-truth-baseline.json",
+      "description": "Contract for doctrine/spec-truth-baseline.json",
+      "fileMatch": [
+        "doctrine/spec-truth-baseline.json"
+      ],
+      "url": "spec-truth-baseline.schema.json"
     },
     {
       "name": "specgate.json",

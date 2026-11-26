@@ -1,0 +1,49 @@
+{
+ "capabilities": {
+  "agent-memory": "ests or, when configured, executes mitigations. For example, during a memory-related incident, SRE Agent can: Detect memory trends : Query Applica",
+  "agent-skills": "ement services. Extend it with permitted Azure CLI operations through skills, approved runbooks, or custom agents. Use agent hooks to add governan",
+  "chat-entry": "Model Context Protocol (MCP) servers Communication and notifications: Microsoft Teams Outlook Depending on your configuration, Azure SRE Agent also offers",
+  "event-triggered-agents": "compare current issues with previous investigations, and run governed automation within configured permissions, run modes, and policies. What you can",
+  "idea-to-deploy": "ntify a memory trend that began 40 minutes before the alert Correlate deployments : Link the trend to a GitHub repository deployment event two hours ea",
+  "incident-investigation": "modes, and policies. What you can do Azure SRE Agent helps your team investigate incidents and respond faster. It gathers context, identifies probable causes, a",
+  "mcp-server": "tegrations for scenarios that require code rather than configuration. MCP servers : Connect to preconfigured partner connectors for observabili",
+  "multi-agent-roles": "permitted Azure CLI operations through skills, approved runbooks, or custom agents. Use agent hooks to add governance checkpoints that can allow or bloc",
+  "observability": ", and repositories. Azure SRE Agent connects to your Azure resources, observability tools, incident platforms, and source code repositories so you can in",
+  "other-cloud": "Overview of Azure SRE Agent | Microsoft Learn Skip to main content Skip to Ask Learn ch",
+  "permission-guardrails": "revious investigations, and run governed automation within configured permissions, run modes, and policies. What you can do Azure SRE Agent helps your",
+  "scheduled-agents": "s, identifies probable root cause, and proposes mitigations. Automate scheduled workflows : Schedule proactive health checks, compliance sweeps, and"
+ },
+ "errors": {},
+ "id": "azure-sre-agent",
+ "name": "Azure SRE Agent",
+ "refreshed_at": "2026-11-26T06:46:33Z",
+ "sha": "2e37c42da73d",
+ "sources_read": [
+  "https://learn.microsoft.com/en-us/azure/sre-agent/overview"
+ ],
+ "taxonomy": [
+  "a2a-protocol",
+  "agent-evals",
+  "agent-memory",
+  "agent-skills",
+  "agents-md",
+  "autonomous-pr",
+  "chat-entry",
+  "cloud-background-agents",
+  "cross-model-review",
+  "durable-execution",
+  "event-triggered-agents",
+  "existing-repo-adoption",
+  "idea-to-deploy",
+  "incident-investigation",
+  "mcp-server",
+  "multi-agent-roles",
+  "observability",
+  "other-cloud",
+  "permission-guardrails",
+  "sandboxed-execution",
+  "scheduled-agents",
+  "self-hostable",
+  "spend-budgets"
+ ]
+}

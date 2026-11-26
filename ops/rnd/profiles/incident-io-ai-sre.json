@@ -1,0 +1,42 @@
+{
+ "capabilities": {
+  "autonomous-pr": "hout you The only change Investigations can make to your systems is a pull request you review and merge yourself. Reduce the cost of incidents The cost",
+  "idea-to-deploy": "elevant context your team has ever produced Reasons across telemetry, deployments, code, and incident history Uses an adversarial agent to challenge it",
+  "incident-investigation": "AI SRE for root cause analysis | incident.io Headed to Vegas? Let\u2019s meet up! incident.io Br",
+  "observability": "tions starts debugging the moment you declare an incident, connecting telemetry, code changes, and incident history to surface the root cause in minu",
+  "sandboxed-execution": "ith another customer. SOC 2 compliant Code analysis runs in isolated, sandboxed containers torn down after use, and we redact sensitive data before i"
+ },
+ "errors": {},
+ "id": "incident-io-ai-sre",
+ "name": "incident.io AI SRE",
+ "refreshed_at": "2026-11-26T06:46:33Z",
+ "sha": "3df79735701d",
+ "sources_read": [
+  "https://incident.io/ai-sre"
+ ],
+ "taxonomy": [
+  "a2a-protocol",
+  "agent-evals",
+  "agent-memory",
+  "agent-skills",
+  "agents-md",
+  "autonomous-pr",
+  "chat-entry",
+  "cloud-background-agents",
+  "cross-model-review",
+  "durable-execution",
+  "event-triggered-agents",
+  "existing-repo-adoption",
+  "idea-to-deploy",
+  "incident-investigation",
+  "mcp-server",
+  "multi-agent-roles",
+  "observability",
+  "other-cloud",
+  "permission-guardrails",
+  "sandboxed-execution",
+  "scheduled-agents",
+  "self-hostable",
+  "spend-budgets"
+ ]
+}

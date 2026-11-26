@@ -5,8 +5,10 @@
 import { probe } from './codeagent.js';
 import { ensureItem } from './tick.js';
 import { nativeProvider } from './nativeexec.js';
+import { orchestrateProvider } from './orchestrate.js';
 export const PROVIDERS = [
   nativeProvider,  // ZERO-MINUTES-1: first choice, no Actions minutes; the Actions dispatch below is the fallback when this one is unavailable or fails
+  orchestrateProvider,  // ORCHESTRATE-1: an item the single-shot lane failed is planned into steps, worked in parallel, reviewed by another model and integrated as one PR, one phase a tick
   {
     id: 'github-actions',
     available: env => Boolean(env.GITHUB_DISPATCH_TOKEN && env.GITHUB_REPO),

@@ -50,7 +50,7 @@ export function applyGlossary(card, entries = []) {
 
 export function createElicit({ db, now = () => Date.now(), config = {} } = {}) {
   const clock = typeof now === 'function' ? now : () => now;
-  const cfg = { max_open: 3, daily_cap: 5, quiet: null, expiry_hours: 72, spend_cap_usd: 0, defer_below: 0, g1_threshold: 0.7, jargon: DEFAULT_JARGON, fatigue_after: 3, priority_list: 3, ...config };
+  const cfg = { max_open: 3, daily_cap: 5, quiet: null, expiry_hours: 72, spend_cap_usd: 0, defer_below: 0, g1_threshold: 0.7, jargon: DEFAULT_JARGON, fatigue_after: 3, priority_list: 3, default_review_hours: 720, ...config };
   const all = async (sql, ...a) => (await db.prepare(sql).bind(...a).all()).results || [];
   const one = (sql, ...a) => db.prepare(sql).bind(...a).first();
   const run = (sql, ...a) => db.prepare(sql).bind(...a).run();
@@ -75,7 +75,17 @@ export function createElicit({ db, now = () => Date.now(), config = {} } = {}) {
     await run(`UPDATE elicit_needs SET state='defaulted', value=?, provenance='default', answered_at=?, revisit='at the next demonstration or review' WHERE project=? AND id=?`, n.default_value, t, n.project, n.id);
     await run(`INSERT INTO elicit_assumptions (project, need_id, value, reason, revisit_trigger, created_at) VALUES (?,?,?,?,?,?)`,
       n.project, n.id, n.default_value, reason, 'revisit at the next demonstration or review, or when the person answers', t);
+    await predictDefault(n);
   }
+
+  // Section 5.3: a default in effect is a prediction that the default holds. It is written to the prediction table when the default
+  // is taken and scored when the person answers or corrects (hit when they choose the default value, miss otherwise) or when its
+  // review time passes with the default still standing. p_wrong on the need is the estimate the score is compared with.
+  const predId = n => `ELICIT-${n.project}-${n.id}`;
+  const predictDefault = n => run(`INSERT OR IGNORE INTO predictions (id, item_id, metric, op, target, due_at) VALUES (?,?,?,?,?,?)`,
+    predId(n), null, `elicit_default_holds:${n.project}:${n.id}`, '=', 1, iso(clock() + cfg.default_review_hours * 3600e3));
+  const scoreDefault = (n, value) => run(`UPDATE predictions SET observed=?, verdict=? WHERE id=? AND verdict IS NULL`,
+    String(value) === String(n.default_value) ? 1 : 0, String(value) === String(n.default_value) ? 'hit' : 'miss', predId(n));
 
   /** US-16-R17: related needs are asked as one sequence, not interleaved. Groups are the artifacts the needs feed; the group
    *  holding the most valuable need goes first, and inside a group the order is by value of information. */
@@ -208,7 +218,30 @@ export function createElicit({ db, now = () => Date.now(), config = {} } = {}) {
       await run(`UPDATE elicit_needs SET state='answered', value=?, provenance='stated', answer_text=?, channel=?, answered_at=?, revisit=NULL WHERE project=? AND id=?`, value, text ?? String(choice), channel, iso(clock()), project, id);
       await run(`UPDATE elicit_assumptions SET superseded_at=? WHERE project=? AND need_id=? AND superseded_at IS NULL`, iso(clock()), project, id);
       await run(`UPDATE gate_cards SET status='closed', closed_at=datetime('now') WHERE id=? AND status='open'`, gateId(project, id));
+      if (n.state === 'defaulted') await scoreDefault(n, value);
       return { ok: true, state: 'answered', value };
+    },
+
+    /** Section 5.3: score the defaults whose review time has passed with the default still in effect (the prediction held). */
+    async scoreDefaults(project) {
+      let n = 0;
+      for (const r of await all(`SELECT * FROM elicit_needs WHERE project=? AND state='defaulted'`, project)) {
+        const res = await run(`UPDATE predictions SET observed=1, verdict='hit' WHERE id=? AND verdict IS NULL AND due_at<=?`, predId(r), iso(clock()));
+        n += res?.meta?.changes || 0;
+      }
+      return n;
+    },
+
+    /** Section 5.3: how good were the value-of-information estimates? Over the scored defaults: the share that turned out wrong against the
+     *  mean estimated p_wrong, and the Brier score of the estimate. With nothing scored the rates are null (unmeasured), never 0. */
+    async voiCalibration(project) {
+      const rows = await all(`SELECT n.id, n.p_wrong, n.priority, p.verdict FROM elicit_needs n JOIN predictions p ON p.id = 'ELICIT-' || n.project || '-' || n.id WHERE n.project=? AND p.verdict IS NOT NULL`, project);
+      const pending = (await one(`SELECT COUNT(*) AS n FROM elicit_needs n JOIN predictions p ON p.id = 'ELICIT-' || n.project || '-' || n.id WHERE n.project=? AND p.verdict IS NULL`, project)).n;
+      if (!rows.length) return { scored: 0, pending, wrong: 0, wrong_rate: null, mean_p_wrong: null, brier: null };
+      const wrong = rows.filter(r => r.verdict === 'miss').length;
+      const mean = rows.reduce((a, r) => a + r.p_wrong, 0) / rows.length;
+      const brier = rows.reduce((a, r) => a + (r.p_wrong - (r.verdict === 'miss' ? 1 : 0)) ** 2, 0) / rows.length;
+      return { scored: rows.length, pending, wrong, wrong_rate: wrong / rows.length, mean_p_wrong: mean, brier };
     },
 
     /** Computed, never asserted (US-16-R15). G1 needs g1_threshold; G2 needs every MUST need satisfied and every non-reversible one answered or derived (T16-7). */
@@ -238,6 +271,7 @@ export function createElicit({ db, now = () => Date.now(), config = {} } = {}) {
       if (!n) return { ok: false, error: 'no such need' };
       await run(`UPDATE elicit_needs SET state='answered', value=?, provenance='stated', answer_text=?, channel=?, answered_at=?, revisit=NULL WHERE project=? AND id=?`, String(value), text ?? String(value), channel, iso(clock()), project, id);
       await run(`UPDATE elicit_assumptions SET superseded_at=? WHERE project=? AND need_id=? AND superseded_at IS NULL`, iso(clock()), project, id);
+      if (n.state === 'defaulted') await scoreDefault(n, value);
       const itemId = `ELICIT-RERUN-${project}-${n.artifact}`.toUpperCase().replace(/[^A-Z0-9-]+/g, '-');
       await run(`INSERT INTO items (id, title, kind, project, owner_role, done_check, closing_probe, priority, status) VALUES (?,?,'work',?,'portfolio-manager',?,'manual',15,'open')
         ON CONFLICT(id) DO UPDATE SET status='open', updated_at=datetime('now')`, itemId, `Re-run ${n.artifact}: the person corrected "${n.label}"`, project, `${n.artifact} regenerated from the corrected need ${id}`);

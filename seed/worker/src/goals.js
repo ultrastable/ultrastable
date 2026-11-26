@@ -12,12 +12,14 @@
 // their knob values from GET /api/goals/knobs?tenant=<id> and apply them in their own code. Tenant-specific configuration stays in the tenant; core stores only
 // ids, bounds and values. Config: seed/autonomy/goals.json (config.goals). Page: /goals on the site, data at /api/goals.
 import { record } from './auditchain.js';
+import { beatStats24h } from './beatstats.js';  // READ-BUDGET-9
 import { dampedCooldown, errorBudget } from './control.js';  // CONTROL-1: knob damping, goal error budgets
 export const DDL = [
   `CREATE TABLE IF NOT EXISTS goals (id TEXT PRIMARY KEY, tenant TEXT NOT NULL DEFAULT 'core', parent_id TEXT, level TEXT NOT NULL, statement TEXT NOT NULL, source TEXT NOT NULL DEFAULT 'none', spec TEXT, unit TEXT, op TEXT, target REAL, deadline TEXT, status TEXT NOT NULL DEFAULT 'active', origin TEXT NOT NULL DEFAULT 'seed', last_value REAL, last_at INTEGER, met INTEGER NOT NULL DEFAULT 0, streak INTEGER NOT NULL DEFAULT 0, achieved_at INTEGER, stretch_id TEXT, missed_at INTEGER, retired_reason TEXT, created_at INTEGER NOT NULL)`,
   `CREATE INDEX IF NOT EXISTS goals_tenant ON goals (tenant, status)`,
   `CREATE TABLE IF NOT EXISTS goal_samples (goal_id TEXT NOT NULL, at INTEGER NOT NULL, value REAL NOT NULL)`,
   `CREATE INDEX IF NOT EXISTS goal_samples_goal_at ON goal_samples (goal_id, at)`,
+  `CREATE INDEX IF NOT EXISTS goal_samples_at ON goal_samples (at)`,  // READ-BUDGET-9: the step's own prune (DELETE ... WHERE at < ?) walked every sample; (goal_id, at) cannot answer a range on at alone
   `CREATE TABLE IF NOT EXISTS goal_knobs (id TEXT PRIMARY KEY, goal_id TEXT NOT NULL, tenant TEXT NOT NULL DEFAULT 'core', what TEXT, config_path TEXT, value REAL NOT NULL, default_value REAL NOT NULL, min REAL NOT NULL, max REAL NOT NULL, step REAL NOT NULL, effect INTEGER NOT NULL DEFAULT 1, cooldown_h REAL NOT NULL DEFAULT 24, review_h REAL NOT NULL DEFAULT 24, last_changed_at INTEGER, hold_dir INTEGER, hold_until INTEGER)`,
   `CREATE TABLE IF NOT EXISTS goal_adjustments (id INTEGER PRIMARY KEY AUTOINCREMENT, at INTEGER NOT NULL, knob_id TEXT NOT NULL, goal_id TEXT NOT NULL, old REAL NOT NULL, new REAL NOT NULL, why TEXT, prediction TEXT, baseline REAL, review_after INTEGER NOT NULL, reviewed_at INTEGER, kept INTEGER, measured REAL)`,
   `CREATE INDEX IF NOT EXISTS goal_adjustments_at ON goal_adjustments (at)`,
@@ -246,7 +248,7 @@ export async function readGoals(db, { builtins = {}, loops = true, now = Date.no
   const knobs = await all(db, 'SELECT * FROM goal_knobs ORDER BY tenant, id');
   const adj = await all(db, 'SELECT * FROM goal_adjustments ORDER BY id DESC LIMIT 40');
   let beats = [];
-  if (loops) beats = await all(db, `SELECT loop, COUNT(*) AS runs, SUM(CASE WHEN ok=1 THEN 1 ELSE 0 END) AS ok_runs, SUM(CASE WHEN ok=1 AND detail IS NOT NULL AND detail NOT IN ('null','{}','[]') AND detail NOT LIKE '{"paced"%' THEN 1 ELSE 0 END) AS acted, MAX(CASE WHEN ok=1 THEN finished_at END) AS last_ok, MAX(started_at) AS last_start FROM loop_beats WHERE started_at >= ? GROUP BY loop ORDER BY loop`, new Date(now - 86400e3).toISOString().slice(0, 19).replace('T', ' ')).catch(() => []);
+  if (loops) beats = await beatStats24h(db, now).then(r => r.loops).catch(() => []);  // READ-BUDGET-9: the shared cached reading, not a 24 h scan per page view
   return {
     as_of: new Date(now).toISOString(),
     slo: { objective: slo, period_d: 14, method: 'multiwindow burn rate, Site Reliability Workbook ch. 5 (CONTROL-1)' },

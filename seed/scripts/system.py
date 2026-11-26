@@ -155,7 +155,10 @@ def rules(root: Path) -> list[dict]:
                 continue
             if "/" in c and re.match(r"^[\w./*-]+$", c) and not c.startswith(("http", "/")):
                 rel = c[5:] if c.startswith("seed/") else c
-                ((here if (root / rel).exists() or (root / rel.rstrip("/")).exists() else elsewhere)).append(rel)
+                # CLEANROOM-1 finding: org/ and ops/ are written by a boot and by the running loops, so they are never kit enforcement; counting
+                # them made SYSTEM.md stale in every freshly booted system (org/owner-status.json appeared and the citation list changed).
+                runtime = rel.startswith(("org/", "ops/"))
+                ((here if not runtime and ((root / rel).exists() or (root / rel.rstrip("/")).exists()) else elsewhere)).append(rel)
             elif c.startswith("node --test "):
                 rel = c.split()[-1]
                 rel = rel[5:] if rel.startswith("seed/") else rel

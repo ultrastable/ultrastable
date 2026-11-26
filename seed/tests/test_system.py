@@ -35,6 +35,12 @@ class SystemSpec(unittest.TestCase):
         shutil.copytree(KIT, dst, ignore=shutil.ignore_patterns("node_modules", "__pycache__", "org"))
         return dst
 
+    def test_files_a_boot_writes_do_not_make_the_definition_stale(self):
+        k = self._copy()  # CLEANROOM-1 finding: org/owner-status.json appears at boot and used to change a rule's citation list
+        (k / "org").mkdir(exist_ok=True)
+        (k / "org" / "owner-status.json").write_text("{}\n")
+        self.assertEqual(system.check(k), [])
+
     def test_a_clause_whose_code_is_gone_fails(self):
         k = self._copy()
         (k / "worker" / "src" / "ignition.js").write_text("// removed\n")

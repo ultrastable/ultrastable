@@ -56,7 +56,9 @@
       "source": "workflow",
       "workflow": "scout",
       "expected_interval_s": 604800,
-      "periodic": true
+      "periodic": true,
+      "beat": "success",
+      "stalled_after_intervals": 1.5
     },
     {
       "id": "a11y",
@@ -180,6 +182,118 @@
         "https://ultrastable-replication-ledger.ultrastable.workers.dev/health",
         "https://replication-ledger.ultrastable.org/health"
       ]
+    },
+    {
+      "id": "funding-maintenance",
+      "what": "the weekly re-verification of funding registry rows at their primary sources",
+      "source": "workflow",
+      "workflow": "funding-maintenance",
+      "expected_interval_s": 604800,
+      "periodic": true
+    },
+    {
+      "id": "cost-guard",
+      "what": "the daily cost reading against budgets (D1 rows read, Workers AI neurons) and the criticality log",
+      "source": "workflow",
+      "workflow": "cost-guard",
+      "expected_interval_s": 86400,
+      "periodic": true
+    },
+    {
+      "id": "backup-drill",
+      "what": "the weekly export and restore drill of every D1 database and KV namespace",
+      "source": "workflow",
+      "workflow": "backup-drill",
+      "expected_interval_s": 604800,
+      "periodic": true
+    },
+    {
+      "id": "social-post",
+      "what": "the daily publish of gate-cleared posts and the thought-leadership pass",
+      "source": "workflow",
+      "workflow": "social-post",
+      "expected_interval_s": 86400,
+      "periodic": true
+    },
+    {
+      "id": "demo-video",
+      "what": "the weekly rebuild of the demo video from the storyboard (pushes to the storyboard also start it; only scheduled and dispatched runs are beats)",
+      "source": "workflow",
+      "workflow": "demo-video",
+      "expected_interval_s": 604800,
+      "periodic": true,
+      "events": [
+        "schedule",
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "id": "outreach",
+      "what": "the weekly outreach pass: programmes, packets, guard, queue and the intro lane",
+      "source": "workflow",
+      "workflow": "outreach",
+      "expected_interval_s": 604800,
+      "periodic": true
+    },
+    {
+      "id": "spinoff",
+      "what": "the daily spinoff pass over the idea queue and the free-tier headroom",
+      "source": "workflow",
+      "workflow": "spinoff",
+      "expected_interval_s": 86400,
+      "periodic": true
+    },
+    {
+      "id": "product-manager",
+      "what": "the daily product manager pass: growth mix, insight findings, improvement items",
+      "source": "workflow",
+      "workflow": "product-manager",
+      "expected_interval_s": 86400,
+      "periodic": true
+    },
+    {
+      "id": "fleet",
+      "what": "the daily fleet queue pass across every repository: dispositions, balance, drift (the tick Worker may also dispatch it; every run is a beat)",
+      "source": "workflow",
+      "workflow": "fleet",
+      "expected_interval_s": 86400,
+      "periodic": false
+    },
+    {
+      "id": "issues",
+      "what": "the daily issue sweep: triage and SLA (issue events also start the workflow; only scheduled and dispatched runs are beats)",
+      "source": "workflow",
+      "workflow": "issues",
+      "expected_interval_s": 86400,
+      "periodic": true,
+      "events": [
+        "schedule",
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "id": "retriage",
+      "what": "the weekly re-triage of open issues",
+      "source": "workflow",
+      "workflow": "retriage",
+      "expected_interval_s": 604800,
+      "periodic": true
+    },
+    {
+      "id": "uiux",
+      "what": "UIUX-1: the weekly browser audit of every user page and path",
+      "source": "workflow",
+      "workflow": "uiux",
+      "expected_interval_s": 604800,
+      "periodic": true
+    },
+    {
+      "id": "cleanroom",
+      "what": "the daily clean-room bootstrap: a sandbox system from the seed alone, a simulated day, teardown, and the satellite agent-file coherence check",
+      "source": "workflow",
+      "workflow": "cleanroom",
+      "expected_interval_s": 86400,
+      "periodic": true
     }
   ],
   "chain": {

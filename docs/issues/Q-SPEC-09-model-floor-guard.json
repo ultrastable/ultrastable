@@ -1,0 +1,11 @@
+{
+  "id": "Q-SPEC-09-model-floor-guard",
+  "title": "Q-SPEC-09-model-floor-guard: model floor guard over source and deployed bundles, and the standards gate (US-09-R11)",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** cmd:git grep -q US-09-R11 -- foundation tests/foundation\n**Status:** open\n\nspecs/US-SPEC-09-caps-kill-switches-model-ladder.md lists as PLANNED in both status sections: no code scans every Worker's source and its deployed bundle for a banned model class, and no code checks the output and context minimums of section 5. foundation/modelwatch.py only finds retired model ids.\n\nAdd a floor list and an exemption registry as data, a guard that strips comment-only lines and the list's own declarations, matches source files and the deployed bundle read back from the host, exits 1 and files one item per Worker on a hit, and a standards check of every configured model's limits. Wire it as a failure-audit detector and add tests named for US-09-R11. Then move the lines to BUILT.\n\n**Prediction:** floor_guard_tests_named >= 1 within 336 h (the number of lines the done check finds; 0 today)\n**Out of scope:** changing which models the system routes to, or removing a model from doctrine/models.json.\n\nsize: M\n\n**Closing probe:** cmd:git grep -q US-09-R11 -- foundation tests/foundation (exit 0): a guard and its test name the requirement. `python3 -m foundation failure_audit --check` still passes.\n",
+  "labels": [
+    "p2",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Executor queue"
+}

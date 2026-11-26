@@ -1,0 +1,11 @@
+{
+  "id": "Q-SPEC-06-idle-decay",
+  "title": "Q-SPEC-06-idle-decay: the kit's tick evaluates decay_per_idle_day (US-SPEC-06 section 8.2)",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** cmd:git grep -q decay_per_idle_day -- seed/worker/src/tick.js\n**Status:** open\n\nspecs/US-SPEC-06-trust-and-interrupt-gate.md section 8.2 lists as PLANNED: `trust.decay_per_idle_day` is carried in seed/autonomy/policy.json and evaluated only by workers/core/trust (`decayToward`); the tick a deployed system runs (seed/worker/src/tick.js, step `accrue_trust`) never reads it, so a pair nobody exercises keeps its reliability for ever.\n\nIn `accrue_trust`, move the reliability of a pair with no outcome in the last day toward `trust.baseline` by `trust.decay_per_idle_day` per idle day (idle days read from the newest outcome's `at`, clock bound in the same statement), keep the rung untouched (US-06-R05), add a test in seed/worker/test/tick.test.js named for US-06 and move the line in section 8.2 from PLANNED to BUILT.\n\n**Prediction:** tick_reads_decay_per_idle_day >= 1 within 336 h (the number of lines the done check finds; 0 today)\n**Out of scope:** changing the policy numbers, the rung of any pair, or workers/core/trust.\n\nsize: S\n\n**Closing probe:** cmd:git grep -q decay_per_idle_day -- seed/worker/src/tick.js (exit 0): the tick reads the decay. The new test passes in `cd seed/worker && node test/run.mjs`.\n",
+  "labels": [
+    "p2",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Executor queue"
+}

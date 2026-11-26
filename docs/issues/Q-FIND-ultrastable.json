@@ -1,0 +1,11 @@
+{
+  "id": "Q-FIND-ultrastable",
+  "title": "Q-FIND-ultrastable: make https://ultrastable.io/ findable (2 gaps)",
+  "body": "**Owner:** executor\n**Trigger:** findable workflow, daily\n**Done check:** cmd:python3 -m foundation findable --probe ultrastable\n**Prediction:** findable_gaps <= 0 within 168 h\n**Out of scope:** paid listings, new accounts, and any page that is not this property's own\n**Closing probe:** cmd:python3 -m foundation findable --probe ultrastable\n**Status:** open\n\nhttps://ultrastable.io/ is missing what search engines and AI agents read: feed link; robots.txt blocks every crawler. Fix the property's own pages (shared seed modules first, so every system gets it). Closed by the same daily reading.",
+  "status": "open",
+  "labels": [
+    "role:executor",
+    "growth"
+  ],
+  "milestone": "Now"
+}

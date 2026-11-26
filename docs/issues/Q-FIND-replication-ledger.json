@@ -1,0 +1,11 @@
+{
+  "id": "Q-FIND-replication-ledger",
+  "title": "Q-FIND-replication-ledger: make https://replication-ledger.ultrastable.org/ findable (5 gaps)",
+  "body": "**Owner:** executor\n**Trigger:** findable workflow, daily\n**Done check:** cmd:python3 -m foundation findable --probe replication-ledger\n**Prediction:** findable_gaps <= 0 within 168 h\n**Out of scope:** paid listings, new accounts, and any page that is not this property's own\n**Closing probe:** cmd:python3 -m foundation findable --probe replication-ledger\n**Status:** open\n\nhttps://replication-ledger.ultrastable.org/ is missing what search engines and AI agents read: schema.org JSON-LD; feed link; robots.txt names no sitemap; no sitemap.xml with urls; no llms.txt. Fix the property's own pages (shared seed modules first, so every system gets it). Closed by the same daily reading.",
+  "status": "open",
+  "labels": [
+    "role:executor",
+    "growth"
+  ],
+  "milestone": "Now"
+}

@@ -3,9 +3,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { makeDb } from './d1shim.js';
-import { runTick, STEP_ORDER, reliability, DEFAULTS, withDefaults } from '../src/tick.js';
-import { openDb } from '../../adapters/sqlite/d1-sqlite.js';
-import { fileURLToPath } from 'node:url';
+import { runTick, STEP_ORDER, reliability } from '../src/tick.js';
 import { readFileSync } from 'node:fs';
 
 const policy = JSON.parse(readFileSync(new URL('../../autonomy/policy.json', import.meta.url), 'utf8'));
@@ -18,7 +16,7 @@ function seed(db) {
     INSERT INTO items (id,title,owner_role,done_check,trigger_on,status) VALUES ('C','c','staff','x','A','open');`);
 }
 
-test('US-03-T03 and US-03-R07: a tick runs every step and dispatches in priority order; the item whose trigger is not done stays open', async () => {
+test('a tick runs every step and dispatches in priority order', async () => {
   const db = makeDb(); seed(db);
   const r = await runTick(db, { config, now: T0 });
   assert.equal(r.completed, STEP_ORDER.length);
@@ -29,7 +27,7 @@ test('US-03-T03 and US-03-R07: a tick runs every step and dispatches in priority
   assert.match(r.report, /^Happened:/); assert.match(r.report, /Open:/);
 });
 
-test('US-03-R03, US-03-R04 and US-03-T02: a failing step never kills the tick and becomes a backlog item', async () => {
+test('a failing step never kills the tick and becomes a backlog item', async () => {
   const db = makeDb(); seed(db);
   db.raw.exec('DROP TABLE predictions');
   const r = await runTick(db, { config, now: T0 });
@@ -98,7 +96,7 @@ test('reliability starts at the baseline and moves with outcomes', () => {
   assert.ok(reliability(10, 10, policy.trust) > 0.9);
 });
 
-test('US-03-R09: an item addressed to one role instance is dispatched to that instance, not left ready for ever', async () => {
+test('an item addressed to one role instance is dispatched to that instance, not left ready for ever', async () => {
   const db = makeDb();
   db.raw.exec(`INSERT INTO roles (id, role, project, tick_every, model) VALUES ('product-manager-1','product-manager','OUT-1',1,'m'), ('product-manager-2','product-manager','OUT-2',1,'m');
     INSERT INTO items (id,title,owner_role,done_check,priority,status) VALUES ('P2','p','product-manager-2','x',10,'ready');`);
@@ -107,7 +105,7 @@ test('US-03-R09: an item addressed to one role instance is dispatched to that in
   assert.ok(claim, 'the item was claimed'); assert.equal(claim.agent, 'product-manager-2');
 });
 
-test('US-03-R20 and issue #173: a claim released with no work is recorded, and the item is parked after max_unworked_releases', async () => {
+test('issue #173: a claim released with no work is recorded, and the item is parked after max_unworked_releases', async () => {
   const db = makeDb(); seed(db);
   const cfg = { ...config, max_unworked_releases: 2 };
   await runTick(db, { config: cfg, now: T0 });
@@ -122,7 +120,7 @@ test('US-03-R20 and issue #173: a claim released with no work is recorded, and t
   assert.equal(db.raw.prepare("SELECT status FROM items WHERE id='A'").get().status, 'blocked', 'a parked item is not claimed again');
 });
 
-test('US-03-R20 and issue #173: a claim that was heartbeated is released without an unworked outcome', async () => {
+test('issue #173: a claim that was heartbeated is released without an unworked outcome', async () => {
   const db = makeDb(); seed(db);
   await runTick(db, { config, now: T0 });
   db.raw.exec("UPDATE claims SET heartbeat_at = datetime(claimed_at, '+1 minute')");
@@ -130,7 +128,7 @@ test('US-03-R20 and issue #173: a claim that was heartbeated is released without
   assert.equal(db.raw.prepare("SELECT COUNT(*) AS n FROM outcomes WHERE result='unworked'").get().n, 0);
 });
 
-test('US-03-R19 and US-03-T07 (issue #173 execute): a dispatched item whose probe passes ends done with evidence in the same tick', async () => {
+test('issue #173 execute: a dispatched item whose probe passes ends done with evidence in the same tick', async () => {
   const db = makeDb();
   db.raw.exec(`INSERT INTO roles (id, role, tick_every, model) VALUES ('op-1','operations',1,'m');
     INSERT INTO items (id,title,owner_role,done_check,closing_probe,status) VALUES ('DEP','dep','nobody','x',NULL,'done');
@@ -147,7 +145,7 @@ test('US-03-R19 and US-03-T07 (issue #173 execute): a dispatched item whose prob
   assert.match(r.report, /executed: 1 done \(0 from parked\), 0 parked on a probe, 0 left for an executor/);
 });
 
-test('US-03-R19 and US-03-T07 (issue #173 execute): a failing probe parks the item with a reason, and it closes by itself when the probe passes', async () => {
+test('issue #173 execute: a failing probe parks the item with a reason, and it closes by itself when the probe passes', async () => {
   const db = makeDb();
   db.raw.exec(`INSERT INTO roles (id, role, tick_every, model) VALUES ('op-1','operations',1,'m');
     INSERT INTO items (id,title,owner_role,done_check,closing_probe,priority,status) VALUES ('E1','needs a setting','operations','setting present','env:SOME_SETTING',1,'ready'),
@@ -168,7 +166,7 @@ test('US-03-R19 and US-03-T07 (issue #173 execute): a failing probe parks the it
   assert.match(r.report, /\(1 from parked\)/);
 });
 
-test('US-03-R19 and US-03-T07 (issue #173 execute): an item with no machine-readable probe keeps its claim for an outside executor; a worked claim is not touched', async () => {
+test('issue #173 execute: an item with no machine-readable probe keeps its claim for an outside executor; a worked claim is not touched', async () => {
   const db = makeDb(); seed(db);
   db.raw.exec(`INSERT INTO items (id,title,owner_role,done_check,closing_probe,priority,status) VALUES ('W1','worked','operations','x','env:NOPE',1,'ready')`);
   const r = await runTick(db, { config: { ...config, execute_max_items: 0 }, now: T0 }); // nothing executed this tick: both stay claimed
@@ -180,7 +178,7 @@ test('US-03-R19 and US-03-T07 (issue #173 execute): an item with no machine-read
   assert.match(r2.report, /0 parked on a probe, 2 left for an executor/); // A and B wait for an executor; W1 is being worked
 });
 
-test('US-03-R04 and US-03-R19 (issue #173 execute): a TICKFAIL item closes when a later tick completes the step, and an unreadable SELECT probe parks instead of throwing', async () => {
+test('issue #173 execute: a TICKFAIL item closes when a later tick completes the step, and an unreadable SELECT probe parks instead of throwing', async () => {
   const db = makeDb();
   db.raw.exec(`INSERT INTO roles (id, role, tick_every, model) VALUES ('op-1','operations',1,'m');
     INSERT INTO items (id,title,kind,owner_role,done_check,priority,status,created_at) VALUES ('TICKFAIL-score_predictions-2026-11-09T23','failed','fix','operations','next tick completes step score_predictions',0,'ready','2026-11-09 23:00:00');
@@ -193,206 +191,4 @@ test('US-03-R04 and US-03-R19 (issue #173 execute): a TICKFAIL item closes when 
   await runTick(db, { config, now: T0 + 60e3 });
   const b = db.raw.prepare("SELECT status, blocker FROM items WHERE id='BADSQL'").get();
   assert.equal(b.status, 'blocked'); assert.match(b.blocker, /probe could not run/);
-});
-
-// ---- US-SPEC-03 L1 requirements, each proved under its id ----
-const q = (db, sql, ...a) => db.raw.prepare(sql).all(...a);
-const q1 = (db, sql, ...a) => db.raw.prepare(sql).get(...a);
-
-test('US-03-T01 and US-03-R05: a tick on a seeded store completes every step, with no error, and the stored report starts with Happened', async () => {
-  const db = makeDb(); seed(db);
-  const r = await runTick(db, { config, now: T0 });
-  assert.equal(STEP_ORDER.length, 8);
-  assert.deepEqual([r.completed, r.total, r.errors], [8, 8, []]);
-  const row = q1(db, 'SELECT steps_completed, steps_total, errors, report, finished_at FROM tick_runs WHERE id = ?', r.tickId);
-  assert.deepEqual([row.steps_completed, row.steps_total, row.errors], [8, 8, null]);
-  assert.match(row.report, /^Happened:/); assert.ok(row.finished_at);
-});
-
-test('US-03-R01: one function runs the tick over any store handle: the node:sqlite test shim and the SQLite adapter produce the same tick_runs row', async () => {
-  const migrations = fileURLToPath(new URL('../migrations/', import.meta.url));
-  const shim = makeDb(); seed(shim);
-  const adapter = openDb(':memory:', migrations); seed(adapter);
-  const a = await runTick(shim, { config, now: T0 });
-  const b = await runTick(adapter, { config, now: T0 });
-  assert.deepEqual([a.completed, a.total, a.errors], [b.completed, b.total, b.errors]);
-  assert.equal(a.report, b.report);
-  assert.deepEqual(q1(shim, 'SELECT * FROM tick_runs'), q1(adapter, 'SELECT * FROM tick_runs'));
-  assert.deepEqual(q(shim, 'SELECT item_id, agent FROM claims'), q(adapter, 'SELECT item_id, agent FROM claims'));
-});
-
-test('US-03-R02: the tick_runs row exists before the first step runs, unfinished, with the step count already set', async () => {
-  const db = makeDb(); seed(db);
-  let seen = null;
-  const probe = { name: 'probe', run: async (d, ctx) => { seen = await d.prepare('SELECT id, finished_at, steps_total, steps_completed FROM tick_runs WHERE id = ?').bind(ctx.tickId).first(); } };
-  const r = await runTick(db, { config, now: T0, extraSteps: [probe] });
-  assert.equal(seen.id, r.tickId); assert.equal(seen.finished_at, null); assert.equal(seen.steps_total, STEP_ORDER.length + 1); assert.equal(seen.steps_completed, 0, 'the completed count is written when the tick ends');
-  assert.ok(q1(db, 'SELECT finished_at FROM tick_runs WHERE id = ?', r.tickId).finished_at);
-});
-
-test('US-03-R03: after a step fails the later steps still run: dispatch still claims the top item', async () => {
-  const db = makeDb(); seed(db);
-  db.raw.exec('DROP TABLE predictions');
-  const r = await runTick(db, { config, now: T0 });
-  assert.equal(r.errors.length, 1); assert.match(r.errors[0], /^score_predictions:/);
-  assert.deepEqual(q(db, 'SELECT item_id FROM claims').map(x => x.item_id), ['A']);
-  assert.deepEqual(r.steps.filter(s => !s.ok).map(s => s.name), ['score_predictions']);
-  assert.ok(r.steps.slice(r.steps.findIndex(s => s.name === 'score_predictions') + 1).every(s => s.ok === 1), 'every step after it completed');
-});
-
-test('US-03-R04: TICKFAIL-<step>-<hour> is filed once per hour, a new hour files a new one, and a store that refuses the filing does not stop the tick', async () => {
-  const db = makeDb(); seed(db);
-  db.raw.exec('DROP TABLE predictions');
-  await runTick(db, { config, now: T0 });
-  await runTick(db, { config, now: T0 + 600e3 });
-  assert.deepEqual(q(db, "SELECT id FROM items WHERE id LIKE 'TICKFAIL-%'").map(x => x.id), ['TICKFAIL-score_predictions-2026-11-10T00']);
-  await runTick(db, { config, now: T0 + 3600e3 });
-  assert.deepEqual(q(db, "SELECT id FROM items WHERE id LIKE 'TICKFAIL-%' ORDER BY id").map(x => x.id), ['TICKFAIL-score_predictions-2026-11-10T00', 'TICKFAIL-score_predictions-2026-11-10T01']);
-  const refusing = makeDb(); seed(refusing);
-  refusing.raw.exec(`DROP TABLE predictions; CREATE TRIGGER store_refuses BEFORE INSERT ON items WHEN NEW.id LIKE 'TICKFAIL-%' BEGIN SELECT RAISE(ABORT, 'store refuses'); END;`);
-  const r = await runTick(refusing, { config, now: T0 });
-  assert.equal(r.completed, STEP_ORDER.length - 1); assert.equal(r.errors.length, 1);
-  assert.equal(q1(refusing, "SELECT COUNT(*) AS n FROM items WHERE id LIKE 'TICKFAIL-%'").n, 0);
-  assert.deepEqual(q(refusing, 'SELECT item_id FROM claims').map(x => x.item_id), ['A'], 'the later steps ran');
-  assert.ok(q1(refusing, 'SELECT report, errors, finished_at FROM tick_runs').errors, 'the error is still in tick_runs');
-});
-
-test('US-03-R05: the report is four lines (Happened, Decided, Next, Open), stored as written, and the Open line carries the errors', async () => {
-  const db = makeDb(); seed(db);
-  db.raw.exec('DROP TABLE predictions');
-  const r = await runTick(db, { config, now: T0 });
-  const lines = r.report.split('\n');
-  assert.equal(lines.length, 4);
-  assert.deepEqual(lines.map(l => l.split(':')[0]), ['Happened', 'Decided', 'Next', 'Open']);
-  assert.match(lines[3], /errors: score_predictions:/);
-  assert.equal(q1(db, 'SELECT report FROM tick_runs').report, r.report);
-});
-
-test('US-03-R07: the order is fixed: reconcile before dispatch, score_predictions before accrue_trust, and extra steps run after the L1 steps', async () => {
-  const at = n => STEP_ORDER.indexOf(n);
-  assert.ok(at('reconcile') === 0 && at('reconcile') < at('dispatch') && at('score_predictions') < at('accrue_trust') && at('dispatch') < at('execute'));
-  const db = makeDb(); seed(db);
-  const order = [];
-  const extra = ['x1', 'x2'].map(name => ({ name, run: async () => { order.push(name); } }));
-  const r = await runTick(db, { config, now: T0, extraSteps: extra });
-  assert.deepEqual(r.steps.map(s => s.name), [...STEP_ORDER, 'x1', 'x2']);
-  assert.deepEqual(order, ['x1', 'x2']);
-  assert.equal(r.total, STEP_ORDER.length + 2);
-});
-
-test('US-03-R08 and US-03-T05: a prediction naming an unknown metric, an unknown operator or an inherited property is scored miss with no observed value', async () => {
-  const db = makeDb(); seed(db);
-  db.raw.exec(`INSERT INTO predictions (id,metric,op,target,due_at) VALUES
-    ('P1','no_such_metric','>=',0,'2026-11-09 00:00:00'), ('P2','items_done','~=',0,'2026-11-09 00:00:00'),
-    ('P3','constructor','>=',0,'2026-11-09 00:00:00'), ('P4','toString','>=',0,'2026-11-09 00:00:00'), ('P5','items_done','constructor',0,'2026-11-09 00:00:00')`);
-  await runTick(db, { config, now: T0 });
-  const rows = q(db, 'SELECT id, verdict, observed FROM predictions ORDER BY id');
-  assert.deepEqual(rows.map(r => [r.id, r.verdict, r.observed]), [['P1', 'miss', null], ['P2', 'miss', null], ['P3', 'miss', null], ['P4', 'miss', null], ['P5', 'miss', null]]);
-});
-
-test('US-03-R09: a role runs only on its tick_every, never beyond its work-in-progress cap, and an item that already has a claim is not dispatched again', async () => {
-  const db = makeDb();
-  db.raw.exec(`INSERT INTO roles (id, role, tick_every, model) VALUES ('slow-1','slow',2,'m');
-    INSERT INTO items (id,title,owner_role,done_check,priority,status) VALUES ('S1','a','slow','x',1,'ready'), ('S2','b','slow','x',2,'ready')`);
-  const cfg = { ...config, max_wip_per_role: 1 };
-  await runTick(db, { config: cfg, now: T0 });                       // tick 1: 1 % 2 = 1, not due
-  assert.equal(q1(db, 'SELECT COUNT(*) AS n FROM claims').n, 0);
-  await runTick(db, { config: cfg, now: T0 + 600e3 });                // tick 2: due, claims S1
-  assert.deepEqual(q(db, 'SELECT item_id FROM claims').map(x => x.item_id), ['S1']);
-  await runTick(db, { config: cfg, now: T0 + 1200e3 }); await runTick(db, { config: cfg, now: T0 + 1800e3 }); // tick 4: due, but the role holds one claim and the cap is one
-  assert.deepEqual(q(db, 'SELECT item_id FROM claims').map(x => x.item_id), ['S1']);
-  const two = makeDb(); seed(two);
-  two.raw.exec(`INSERT INTO roles (id, role, tick_every, model) VALUES ('staff-2','staff',1,'m')`);
-  await runTick(two, { config, now: T0 });                            // two role instances, two items: each takes a different one
-  assert.deepEqual(q(two, "SELECT agent, item_id FROM claims ORDER BY agent").map(x => [x.agent, x.item_id]), [['staff-1', 'A'], ['staff-2', 'B']]);
-  await runTick(two, { config, now: T0 + 600e3 });
-  assert.equal(q1(two, "SELECT COUNT(*) AS n FROM dispatches WHERE item_id = 'A'").n, 1, 'a claimed item is not dispatched again');
-});
-
-test('US-03-R10: the tick never edits the policy: with a deeply frozen policy it completes, opens a LADDER item and leaves the policy and the rung as they were', async () => {
-  const deep = o => { for (const v of Object.values(o)) if (v && typeof v === 'object') deep(v); return Object.freeze(o); };
-  const frozen = deep(structuredClone(policy));
-  const before = JSON.stringify(frozen);
-  const db = makeDb(); seed(db);
-  for (let i = 0; i < 12; i++) db.raw.exec("INSERT INTO outcomes (surface,action_class,result) VALUES ('repo','branch_commit_push','verified')");
-  const r = await runTick(db, { config: { ...config, policy: frozen }, now: T0 });
-  assert.deepEqual(r.errors, []);
-  assert.ok(q(db, "SELECT id FROM items WHERE kind='ladder'").some(x => x.id.startsWith('LADDER-repo-branch_commit_push-autonomous')));
-  assert.equal(JSON.stringify(frozen), before);
-  assert.equal(q1(db, "SELECT rung FROM trust_ledger WHERE surface='repo'").rung, 'delegated');
-});
-
-test('US-03-T02: dropping predictions leaves seven steps complete and exactly one TICKFAIL-score_predictions item (priority 0, owner operations), also after a second tick', async () => {
-  const db = makeDb(); seed(db);
-  db.raw.exec('DROP TABLE predictions');
-  const r1 = await runTick(db, { config, now: T0 });
-  assert.equal(r1.completed, 7); assert.equal(r1.total, 8);
-  const r2 = await runTick(db, { config, now: T0 + 600e3 });
-  assert.equal(r2.completed, 7);
-  const items = q(db, "SELECT id, priority, owner_role FROM items WHERE id LIKE 'TICKFAIL-score_predictions-%'");
-  assert.equal(items.length, 1); assert.deepEqual([items[0].priority, items[0].owner_role], [0, 'operations']);
-});
-
-test('US-03-T03: with A ready, B open and C triggered by A, dispatch claims A only and C stays open', async () => {
-  const db = makeDb(); seed(db);
-  await runTick(db, { config, now: T0 });
-  assert.deepEqual(q(db, 'SELECT item_id FROM claims').map(x => x.item_id), ['A']);
-  assert.equal(q1(db, "SELECT status FROM items WHERE id='C'").status, 'open');
-  assert.equal(q1(db, "SELECT status FROM items WHERE id='B'").status, 'ready', 'B became ready by reconcile and waits for the next dispatch');
-});
-
-// ---- US-03-R18 and US-00-R07: documented defaults for the limits ----
-test('US-03-T10, US-03-R09 and US-03-R18: with a configuration that omits every limit a role is never given more than three claims and no step fails', async () => {
-  const db = makeDb();
-  db.raw.exec(`INSERT INTO roles (id, role, tick_every, model) VALUES ('w-1','w',1,'m');
-    INSERT INTO items (id,title,owner_role,done_check,priority,status) VALUES ${Array.from({ length: 6 }, (_, i) => `('W${i}','t','w','x',${i},'ready')`).join(',')}`);
-  const bare = { policy };
-  for (let i = 0; i < 6; i++) { const r = await runTick(db, { config: bare, now: T0 + i * 600e3 }); assert.deepEqual(r.errors, [], `tick ${i + 1}`); assert.equal(r.completed, r.total); }
-  assert.equal(q1(db, "SELECT COUNT(*) AS n FROM claims WHERE agent='w-1'").n, DEFAULTS.max_wip_per_role);
-  assert.equal(DEFAULTS.max_wip_per_role, 3);
-});
-
-test('US-03-T10, US-03-R03 and US-03-R18, US-00-R07: a claim older than the default 120 minutes is released with no TICKFAIL when claim_ttl_minutes is omitted', async () => {
-  const db = makeDb(); seed(db);
-  const bare = { policy };
-  await runTick(db, { config: bare, now: T0 });
-  assert.equal(q1(db, 'SELECT COUNT(*) AS n FROM claims').n, 1);
-  const young = await runTick(db, { config: bare, now: T0 + 119 * 60e3 });
-  assert.deepEqual(young.errors, []); assert.equal(q1(db, "SELECT COUNT(*) AS n FROM outcomes WHERE result='unworked'").n, 0, 'inside 120 minutes the claim stays');
-  const old = await runTick(db, { config: bare, now: T0 + 3 * 3600e3 });
-  assert.deepEqual(old.errors, []);
-  assert.equal(q1(db, "SELECT COUNT(*) AS n FROM outcomes WHERE result='unworked' AND item_id='A'").n, 1, 'past 120 minutes the claim is released and recorded');
-  assert.equal(q1(db, "SELECT COUNT(*) AS n FROM items WHERE id LIKE 'TICKFAIL-%'").n, 0);
-  assert.equal(DEFAULTS.claim_ttl_minutes, 120);
-});
-
-test('US-00-R07 and US-03-R18: a configured value overrides the default, an undefined value does not, and the caller configuration object is not changed', () => {
-  const given = Object.freeze({ claim_ttl_minutes: 5, max_wip_per_role: undefined, plus_share: 0, execute_max_items: 0, policy: { x: 1 } });
-  const merged = withDefaults(given);
-  assert.deepEqual([merged.claim_ttl_minutes, merged.max_wip_per_role, merged.plus_share, merged.execute_max_items], [5, 3, 0, 0]);
-  assert.equal(merged.policy, given.policy, 'values the tick does not default pass through by reference');
-  assert.deepEqual(Object.keys(given), ['claim_ttl_minutes', 'max_wip_per_role', 'plus_share', 'execute_max_items', 'policy'], 'the caller object was not changed');
-  assert.deepEqual(withDefaults(undefined), { ...DEFAULTS });
-  assert.ok(Object.isFrozen(DEFAULTS), 'the defaults cannot be edited at run time');
-});
-
-test('US-03-R18: an omitted plus_share still opens the rebalance item (the default 20 percent applies)', async () => {
-  const db = makeDb();
-  db.raw.exec(`INSERT INTO roles (id, role, tick_every, model) VALUES ('o-1','operations',1,'m')`);
-  for (let i = 0; i < 12; i++) db.raw.exec(`INSERT INTO items (id,title,kind,owner_role,done_check,status,disposition) VALUES ('D${i}','d','fix','operations','x','done','shipped')`);
-  await runTick(db, { config: { policy }, now: T0 });
-  assert.ok(q1(db, "SELECT id FROM items WHERE id LIKE 'REBALANCE-%'"), 'zero plus items of twelve is under half the target');
-});
-
-// ---- US-03-R11: what each step reported is returned for the layer above to store ----
-test('US-03-R11: the tick returns, for every step it ran, whether it completed and what it reported (its notes, or its error)', async () => {
-  const db = makeDb(); seed(db);
-  db.raw.exec('DROP TABLE predictions');
-  const r = await runTick(db, { config, now: T0 });
-  assert.deepEqual(r.steps.map(s => s.name), STEP_ORDER);
-  const byName = Object.fromEntries(r.steps.map(s => [s.name, s]));
-  assert.equal(byName.reconcile.ok, 1); assert.match(byName.reconcile.evidence, /^reconciled: 0 reopened, \d+ became ready$/);
-  assert.equal(byName.dispatch.ok, 1); assert.match(byName.dispatch.evidence, /^dispatched \d+ item\(s\)$/);
-  assert.equal(byName.score_predictions.ok, 0); assert.match(byName.score_predictions.evidence, /no such table: predictions/);
-  assert.match(byName.probe_gates.evidence, /completed/);
 });

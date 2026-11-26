@@ -113,11 +113,10 @@ export async function allocate(db, { tickId, now, config = {} }) {
 
 // Step 310: tier 0 serves the charter's primary metric, 1 a guard metric, 2 critical, 3 high, 4 other.
 // Within a tier, items with no doer rank first, then priority, then age.
-export async function setFocus(db, { tickId, now, config = {}, notes = null }) {
+export async function setFocus(db, { tickId, now, config = {} }) {
   const highMax = config.high_priority_max ?? 10;
   const allocs = await all(db, `SELECT * FROM kernel_allocations WHERE tick_id = ? AND slots > 0`, tickId);
   const result = {};
-  const changed = [];
   for (const a of allocs) {
     const prog = await first(db, `SELECT * FROM kernel_programs WHERE id = ?`, a.program_id);
     const guardIds = (await all(db, `SELECT id FROM kernel_metrics WHERE kind = 'guard' AND program_id = ?`, a.program_id)).map(r => r.id);
@@ -129,26 +128,10 @@ export async function setFocus(db, { tickId, now, config = {}, notes = null }) {
         : i.critical || i.priority <= 0 ? 2 : i.priority <= highMax ? 3 : 4;
       return { ...i, tier, has_doer: i.doer || i.claimed ? 1 : 0 };
     }).sort((x, y) => x.tier - y.tier || x.has_doer - y.has_doer || x.priority - y.priority || String(x.created_at).localeCompare(String(y.created_at)) || x.id.localeCompare(y.id));
-    const before = (await all(db, `SELECT item_id FROM kernel_focus WHERE program_id = ? ORDER BY rank`, a.program_id)).map(r => r.item_id);
     await run(db, `DELETE FROM kernel_focus WHERE program_id = ?`, a.program_id);
     ranked.slice(0, a.slots).forEach((i, n) => { result[a.program_id] = result[a.program_id] || []; result[a.program_id].push(i.id); });
     for (const [n, i] of ranked.slice(0, a.slots).entries()) {
       await run(db, `INSERT INTO kernel_focus (program_id, item_id, rank, tier, has_doer, tick_id) VALUES (?,?,?,?,?,?)`, a.program_id, i.id, n + 1, i.tier, i.has_doer, tickId);
-    }
-    const after = ranked.slice(0, a.slots).map(i => i.id);
-    if (before.length !== after.length || before.some((id, n) => id !== after[n])) changed.push({ program_id: a.program_id, after });
-  }
-  // US-01 section 4.2 program_focus_log: one row per program whose ranked set changed, written after every program's focus is set, so a failure to
-  // log (a database that has not yet applied 0003_focus_log.sql) fails the step visibly and never leaves a program without its focus.
-  // A database that has not applied 0003_focus_log.sql yet (migrations apply a few at a time) still gets its focus; the missing table is said in the
-  // tick report when the caller gives a place for notes, and is an error when it does not.
-  for (const ch of changed) {
-    try {
-      await run(db, `INSERT INTO kernel_focus_log (tick_id, program_id, items_json, count, at) VALUES (?,?,?,?,?)`, tickId, ch.program_id, JSON.stringify(ch.after), ch.after.length, iso(now));
-    } catch (e) {
-      if (!notes || !/no such table/i.test(String(e && e.message))) throw e;
-      notes.push('kernel_focus_log is missing: 0003_focus_log.sql is not applied yet, so the focus history is not recorded');
-      break;
     }
   }
   return result;

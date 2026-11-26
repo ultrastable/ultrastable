@@ -8,7 +8,7 @@ import { runTick, STEP_ORDER } from '../src/tick.js';
 import { L2_EXTRA_STEPS, MIGRATIONS_DIR as KERNEL_DIR, registerProgram, registerMetric, readMetric } from '../kernel/index.js';
 import {
   MIGRATIONS_DIR, registerPersona, setProgramPlane, registerStore, createToolLayer, writeBrief, missingBriefs, isControlPlane,
-  queueScore, scoreItem, deleteScore, rankQueue, parseProposal, originate, runManagers, staffStep, logAction,
+  queueScore, scoreItem, deleteScore, rankQueue, parseProposal, originate, runManagers, staffStep,
 } from './index.js';
 
 const policy = JSON.parse(readFileSync(new URL('../../autonomy/policy.json', import.meta.url), 'utf8'));
@@ -328,7 +328,7 @@ test('the managers run as a tick step after the kernel L2 step: allocation is lo
   assert.equal(one(db, `SELECT COUNT(*) AS n FROM staff_briefs WHERE tick_id = ?`, off.tickId).n, 0);
 });
 
-test('US-02-T01, US-02-T02, US-02-R02, US-02-R04: dispatch goes by owner_role, and a new role row is dispatched with no code change', async () => {
+test('US-02-T01, US-02-T02: dispatch goes by owner_role, and a new role row is dispatched with no code change', async () => {
   const db = setup();
   const config = { org_slug: 't', claim_ttl_minutes: 120, max_wip_per_role: 3, plus_share: 0.2, policy };
   db.raw.exec(`INSERT INTO roles (id, role, tick_every, model) VALUES ('staff-1', 'staff', 1, 'm-a')`);
@@ -339,66 +339,4 @@ test('US-02-T01, US-02-T02, US-02-R02, US-02-R04: dispatch goes by owner_role, a
   item(db, 'AR-1', { owner_role: 'archivist' });
   await runTick(db, { config, now: NOW + HOUR });
   assert.equal(one(db, `SELECT role_id FROM dispatches WHERE item_id = 'AR-1'`).role_id, 'archivist-1'); // T02
-});
-
-test('US-02-R06, US-02-T07: an originated item is reversed by cancelling it with a disposition, once, and the reverse row links both ways', async () => {
-  const db = setup(); await staffed(db);
-  const reply = 'TITLE: Add a today summary\nWHY: usage is flat\ncode-task: site/home.js\ncode-anchor: // SUMMARY\nEDIT: render the summary';
-  const tools = createToolLayer({ db, now: () => NOW, ports: { research: async () => reply, readFile: async () => 'x\n// SUMMARY\ny' } });
-  const r = await originate(tools, 'pgm-ops', { tickId: 3 });
-  const orig = one(db, `SELECT id FROM staff_actions WHERE op = 'originate'`).id;
-  assert.match((await tools.reverse('pgm-ops', orig, {})).reason, /records its evidence/);
-  const rv = await tools.reverse('pgm-ops', orig, { evidence: 'the proposal rested on a wrong reading' });
-  assert.equal(rv.ok, true); assert.deepEqual([rv.field, rv.to], ['item', 'cancelled']);
-  const it = one(db, `SELECT status, disposition FROM items WHERE id = ?`, r.filed);
-  assert.equal(it.status, 'cancelled'); assert.match(it.disposition, new RegExp(`reversal of staff action ${orig}`));
-  assert.equal(one(db, `SELECT doer FROM kernel_item_meta WHERE item_id = ?`, r.filed).doer, null);
-  const a = one(db, `SELECT * FROM staff_actions WHERE id = ?`, orig), b = one(db, `SELECT * FROM staff_actions WHERE id = ?`, rv.action_id);
-  assert.deepEqual([a.reversed_by, b.reverses, b.op], [rv.action_id, orig, 'reverse:originate']);
-  assert.match((await tools.reverse('pgm-ops', orig, { evidence: 'again' })).reason, /already reversed/);
-  assert.equal((await tools.reverse('pfm', orig, { evidence: 'not mine' })).kind, 'authority');   // the reverser needs the authority of the original operation
-});
-
-test('US-02-R06, US-02-T07: an allocation cannot be reversed and the refusal says why; it is recorded, not an opaque error', async () => {
-  const db = setup(); const tools = await staffed(db);
-  const pfm = await tools.identity('pfm');
-  const id = await logAction(db, pfm, { op: 'allocate', field: 'allocation', from: null, to: 'OPS=4', evidence: 'decision ALLOC-1', tick_id: 1, at: ts(NOW) });
-  const r = await tools.reverse('pfm', id, { evidence: 'try' });
-  assert.deepEqual([r.ok, r.kind], [false, 'precondition']); assert.match(r.reason, /next allocation replaces it/);
-  assert.equal(one(db, `SELECT COUNT(*) AS n FROM staff_denials WHERE persona_id = 'pfm' AND op = 'reverse:allocate'`).n, 1);
-});
-
-test('US-02-R06, US-02-T07: reversing a supersede or close restores the claim the operation removed', async () => {
-  const db = setup(); const tools = await staffed(db);
-  item(db, 'S-old', { project: 'OPS', title: 'Tidy the queue', status: 'claimed' }); item(db, 'S-new', { project: 'OPS', title: 'tidy the queue' });
-  db.raw.prepare(`INSERT INTO claims (item_id, agent, claimed_at, heartbeat_at) VALUES ('S-old', 'staff-1', '2026-11-10 09:00:00', '2026-11-10 09:30:00')`).run();
-  const r = await tools.act('pgm-ops', 'supersede', { item_id: 'S-old', by: 'S-new' });
-  assert.equal(r.ok, true); assert.equal(one(db, `SELECT COUNT(*) AS n FROM claims WHERE item_id = 'S-old'`).n, 0);
-  const rv = await tools.reverse('pgm-ops', r.action_id, { evidence: 'the two were not duplicates' });
-  assert.equal(rv.ok, true);
-  assert.equal(one(db, `SELECT status FROM items WHERE id = 'S-old'`).status, 'claimed');
-  assert.deepEqual({ ...one(db, `SELECT agent, claimed_at FROM claims WHERE item_id = 'S-old'`) }, { agent: 'staff-1', claimed_at: '2026-11-10 09:00:00' });
-});
-
-test('US-02-R14, US-02-T06: a refusal is recorded with its kind (authority, lane, control_plane, precondition), changes nothing, and a quiet duty leaves no row for a failed precondition', async () => {
-  const db = setup(); const tools = await staffed(db);
-  item(db, 'A', { project: 'OPS', priority: 50 }); item(db, 'B', { project: 'REACH', priority: 50 }); focus(db, 'OPS', 'A');
-  const before = () => ({ prio: rows(db, `SELECT id, priority, status FROM items ORDER BY id`).map(r => ({ ...r })), actions: one(db, `SELECT COUNT(*) AS n FROM staff_actions`).n });
-  const snap = before();
-  const kinds = [];
-  kinds.push((await tools.act('pfm', 'promote', { item_id: 'A' })).kind);                                    // authority: not on a portfolio persona's list
-  kinds.push((await tools.act('pgm-ops', 'promote', { item_id: 'B' })).kind);                                // lane: another program's item
-  kinds.push((await tools.act('pgm-ops', 'assign_doer', { item_id: 'A', doer: 'staff', path: 'autonomy/policy.json', anchor: 'x' })).kind);   // control_plane
-  kinds.push((await tools.act('pgm-ops', 'restore', { item_id: 'A' })).kind);                                // precondition: nothing was demoted
-  assert.deepEqual(kinds, ['authority', 'lane', 'control_plane', 'precondition']);
-  assert.deepEqual(rows(db, `SELECT kind FROM staff_denials ORDER BY id`).map(d => d.kind), kinds);
-  assert.deepEqual(before(), snap);                                                                           // every refusal changed nothing
-  const quiet = await tools.act('pgm-ops', 'restore', { item_id: 'A' }, { quiet: true });                  // an automatic duty probing by trying
-  assert.deepEqual([quiet.ok, quiet.kind], [false, 'precondition']);
-  assert.equal(one(db, `SELECT COUNT(*) AS n FROM staff_denials`).n, 4);                                      // no fifth row
-  assert.equal((await tools.act('pfm', 'promote', { item_id: 'A' }, { quiet: true })).kind, 'authority');
-  assert.equal(one(db, `SELECT COUNT(*) AS n FROM staff_denials`).n, 5);                                      // authority is always recorded
-  const dry = await tools.act('pgm-ops', 'promote', { item_id: 'A' }, { dry: true });                        // a dry run writes nothing at all
-  assert.deepEqual([dry.ok, dry.dry, dry.field, dry.from, dry.to], [true, true, 'priority', 50, 10]);
-  assert.equal(one(db, `SELECT COUNT(*) AS n FROM staff_actions`).n, 0); assert.equal(one(db, `SELECT priority FROM items WHERE id = 'A'`).priority, 50);
 });

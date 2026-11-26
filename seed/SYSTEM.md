@@ -52,6 +52,7 @@ Tick steps, in order (from `worker/src/tick.js`):
 
 Loops the same cron runs beside the tick (from `worker/src/index.js`):
 
+- `kill-drill`: KILL-SWITCH-1: once a day the global switch is turned on, checked, turned off in every case and the test recorded
 - `credentials`: AUTH-1: refresh runs first so nothing lapses
 - `live-changes`: LIVE-FRESH-2: own early step; inside the sweeper it ran after 32 of 46 subrequests were spent and never wrote, so /live froze
 - `fleet-changes`: PROGRESS-1: the other repositories, at most hourly each
@@ -116,7 +117,7 @@ Criticality numbers (from `autonomy/criticality.json`): window 14 days, k_min 1,
 
 ## Standing rules
 
-93 standing rules from `agents/AGENTS.md`, each with the enforcement it cites. "In this kit" names code this repository runs;
+95 standing rules from `agents/AGENTS.md`, each with the enforcement it cites. "In this kit" names code this repository runs;
 a rule enforced only by the platform is marked so, and the platform checks it for every system it hosts.
 
 - **USER-BACKEND-1**: The user does the idea; the system does the backend; one fix improves every system. In this kit: `doctrine/user-backend.json`, `worker/src/errors.js`, `worker/test/errors.test.js`.
@@ -193,6 +194,8 @@ a rule enforced only by the platform is marked so, and the platform checks it fo
 - **OPEN-STANDARDS-1**: Open standards, never a home-grown format. In this kit: `autonomy/`, `doctrine/`, `doctrine/open-standards-baseline.json`, `doctrine/open-standards.json`.
 - **BOOT-ACCEPT-1**: Every surface works together from the first deploy; one command proves it. In this kit: `worker/src/visibility.js`, `worker/test/bootaccept.test.js`.
 - **SYSTEM-SPEC-1**: Every system carries its own definition, generated from its code. In this kit: `autonomy/system.json`, `scripts/system.py`, `tests/test_system.py`.
+- **CLEANROOM-1**: A fresh seed proves the whole; no surface contradicts the axiom. In this kit: ``, `scripts/humanvoice.py`, `tests/test_system.py`.
+- **ORCHESTRATE-1**: Large work is planned and worked in steps on the server. In this kit: `worker/src/executor.js`, `worker/src/orchestrate.js`, `worker/test/orchestrate.test.js`.
 - **DOC-CONSUMED-1**: Every document is consumed by code. In this kit: checked by the platform.
 - **CLOSED-LOOP-1**: Closed loops only; nobody reads, reviews or decides. In this kit: `autonomy/policy.json`.
 - **NO-FABRICATION-1**: No made-up numbers. In this kit: `doctrine/claims.json`, `scripts/claims.py`.

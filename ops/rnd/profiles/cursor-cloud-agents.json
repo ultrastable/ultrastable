@@ -1,0 +1,49 @@
+{
+ "capabilities": {
+  "agent-skills": "Debugging Design Mode Tools Security Customize Overview Plugins Rules Skills Subagents Hooks MCP Cloud Agents Overview Setup Builds Apps Capabilit",
+  "autonomous-pr": "eate a repository Mirror GitHub Clone, Push &amp; Pull CloneKit in CI Pull requests Code Tours Browse &amp; Search Agents and Automations Apps Settings A",
+  "chat-entry": "rch Agents and Automations Apps Settings Access Policies Integrations Slack Microsoft Teams Jira Linear Notion GitHub GitLab Azure DevOps Bitbuck",
+  "cloud-background-agents": "Cloud Agents | Cursor Docs Skip to main content Cursor Logo Docs API Learn Help Se",
+  "event-triggered-agents": "Builds Apps Capabilities Best Practices Choose Where Cloud Agents Run Automations Bugbot Security Review Vulnerability Remediation PR Routing &amp; App",
+  "existing-repo-adoption": "tions. How it works Repository provider connection Cloud agents clone your repo from GitHub, GitLab, Azure DevOps Services, or Bitbucket Cloud and wo",
+  "mcp-server": "ools Security Customize Overview Plugins Rules Skills Subagents Hooks MCP Cloud Agents Overview Setup Builds Apps Capabilities Best Practices C",
+  "multi-agent-roles": "ng Design Mode Tools Security Customize Overview Plugins Rules Skills Subagents Hooks MCP Cloud Agents Overview Setup Builds Apps Capabilities Best P",
+  "other-cloud": "s Integrations Slack Microsoft Teams Jira Linear Notion GitHub GitLab Azure DevOps Bitbucket JetBrains Xcode Tailscale Deeplinks SDK TypeScript P",
+  "permission-guardrails": "s, or Bitbucket account. Check that you have the necessary repository permissions. You need a plan that includes Cloud Agents: Premium and higher, Team",
+  "self-hostable": "bility Remediation PR Routing &amp; Approval Rollouts Mobile Security Self-Hosted Machines Settings API Origin Overview CLI Create a repository Mirror",
+  "spend-budgets": "dow can increase token usage and costs. You&#x27;ll be asked to set a spend limit when you first start using them. Troubleshooting Agent runs are not s"
+ },
+ "errors": {},
+ "id": "cursor-cloud-agents",
+ "name": "Cursor cloud agents (formerly background agents)",
+ "refreshed_at": "2026-11-26T06:46:33Z",
+ "sha": "d2bf85fc4d71",
+ "sources_read": [
+  "https://cursor.com/docs/cloud-agent"
+ ],
+ "taxonomy": [
+  "a2a-protocol",
+  "agent-evals",
+  "agent-memory",
+  "agent-skills",
+  "agents-md",
+  "autonomous-pr",
+  "chat-entry",
+  "cloud-background-agents",
+  "cross-model-review",
+  "durable-execution",
+  "event-triggered-agents",
+  "existing-repo-adoption",
+  "idea-to-deploy",
+  "incident-investigation",
+  "mcp-server",
+  "multi-agent-roles",
+  "observability",
+  "other-cloud",
+  "permission-guardrails",
+  "sandboxed-execution",
+  "scheduled-agents",
+  "self-hostable",
+  "spend-budgets"
+ ]
+}

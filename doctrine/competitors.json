@@ -1,6 +1,6 @@
 {
  "_doc": "RND-1 (owner, 2026-11-12): research, development and competitive analysis are the product manager's job, run as code. Each competitor has a profile refreshed on its cadence from the pages and feeds listed here; a profile records which capabilities (the taxonomy below) the sources evidence, with the matching sentence. foundation/rnd.py diffs profiles against the last refresh (a capability that appeared or vanished is a finding), diffs the market against what this repository proves (`ours` probes), proposes experiments from findings and adopts scout items into executor tasks. `ours` is a probe spec (file: or grep:) that passes only when the capability exists here; a capability evidenced by at least min_competitors competitors that this repository lacks is a gap and becomes a queue item. Sources are public pages read over https; a dead source is recorded, never swallowed.",
- "version": "1.0.0",
+ "version": "1.1.0",
  "min_competitors": 2,
  "cadence_days": 7,
  "max_experiments_per_run": 3,
@@ -9,7 +9,10 @@
   "mcp-server": "agent_hits_7d",
   "idea-to-deploy": "pilot_page_views_7d",
   "existing-repo-adoption": "pageviews_7d",
-  "default": "pageviews_7d"
+  "default": "pageviews_7d",
+  "a2a-protocol": "agent_hits_7d",
+  "agent-skills": "agent_hits_7d",
+  "agents-md": "agent_hits_7d"
  },
  "capabilities": [
   {
@@ -106,6 +109,78 @@
    "rx": "\\b(AWS|GCP|Azure|multi-cloud|Vercel)\\b",
    "ours": "file:docs/bootstrapping/other-cloud-proof.json",
    "gap": "other-cloud-proof"
+  },
+  {
+   "id": "cloud-background-agents",
+   "what": "the agent works in a vendor-hosted cloud environment while the person is away",
+   "component": "loops-autonomy",
+   "rx": "\\b(background agents?|cloud agents?|cloud (environment|sandbox|VM|session)s?|in the cloud|remote (agents?|sessions?|environments?)|asynchronous(ly)? (coding|agent|task)\\w*|virtual machines?)\\b",
+   "ours": "file:.github/workflows/executor.yml"
+  },
+  {
+   "id": "event-triggered-agents",
+   "what": "an agent run started by a webhook, an API call or a repository event",
+   "component": "loops-autonomy",
+   "rx": "\\b(webhooks?|API triggers?|triggered (by|via|from)|event[- ]driven|automations?)\\b",
+   "ours": "grep:seed/worker/src/index.js::/hook/github"
+  },
+  {
+   "id": "a2a-protocol",
+   "what": "agents hand work to each other over the Agent2Agent protocol",
+   "component": "agents-roles",
+   "rx": "\\b(A2A|Agent2Agent|agent[- ]to[- ]agent)\\b",
+   "ours": "file:seed/worker/src/agentic/acl/a2a.js"
+  },
+  {
+   "id": "agent-skills",
+   "what": "packaged skills (SKILL.md) an agent loads on demand",
+   "component": "agents-roles",
+   "rx": "\\b(agent skills?|SKILL\\.md|skills)\\b",
+   "ours": "grep:seed/worker/src/agentic/acl/discovery.js::export function skillProblems"
+  },
+  {
+   "id": "agents-md",
+   "what": "reads an AGENTS.md instruction file from the repository",
+   "component": "code-repo",
+   "rx": "\\bAGENTS\\.md\\b",
+   "ours": "file:AGENTS.md"
+  },
+  {
+   "id": "durable-execution",
+   "what": "an agent run survives a crash or restart and resumes from its last completed step",
+   "component": "operations",
+   "rx": "\\b(durable execution|durable (agents?|runtime)|checkpointers?|checkpointing|recoverable execution|fault tolerance|recovery after eviction)\\b",
+   "ours": "file:seed/worker/src/checkpoint.js",
+   "gap": "durable-agent-runs"
+  },
+  {
+   "id": "incident-investigation",
+   "what": "an agent investigates an alert or incident and names a root cause",
+   "component": "operations",
+   "rx": "\\b(root[- ]cause\\w*|RCA|incident (response|resolution|investigation)s?|investigat\\w+ (incidents?|alerts?)|on-?call|MTTR)\\b",
+   "ours": "grep:foundation/failure_audit.py::suspects"
+  },
+  {
+   "id": "agent-evals",
+   "what": "agents are scored on evaluations before a change ships",
+   "component": "verification",
+   "rx": "\\b(evals?|evaluations?|benchmarks?)\\b",
+   "ours": "file:foundation/evals.py"
+  },
+  {
+   "id": "agent-memory",
+   "what": "the agent keeps memory or knowledge across sessions",
+   "component": "agents-roles",
+   "rx": "\\b(memory|memories|knowledge base|remembers?)\\b",
+   "ours": "file:foundation/kb.py"
+  },
+  {
+   "id": "chat-entry",
+   "what": "work is handed to the agent from a team chat such as Slack",
+   "component": "idea-intake",
+   "rx": "(?<![-\\w\\\"])(Slack(?! (Community|group|channel|community)\\b)(?![\\w\\\"-])|Microsoft Teams)",
+   "ours": "file:seed/worker/src/chat-intake.js",
+   "gap": "chat-entry"
   }
  ],
  "competitors": [
@@ -115,7 +190,9 @@
    "sources": [
     {
      "url": "https://docs.github.com/copilot/concepts/coding-agent/about-copilot-coding-agent",
-     "kind": "page"
+     "kind": "page",
+     "read": "2026-11-26",
+     "basis": "stated by vendor"
     }
    ],
    "plug_in": {
@@ -133,11 +210,19 @@
    "sources": [
     {
      "url": "https://code.claude.com/docs/en/routines.md",
-     "kind": "page"
+     "kind": "page",
+     "read": "2026-11-26",
+     "basis": "stated by vendor"
     },
     {
      "url": "https://github.com/anthropics/claude-code/releases.atom",
      "kind": "atom"
+    },
+    {
+     "url": "https://code.claude.com/docs/en/claude-code-on-the-web.md",
+     "kind": "page",
+     "read": "2026-11-26",
+     "basis": "stated by vendor"
     }
    ]
   },
@@ -168,6 +253,12 @@
     {
      "url": "https://factory.com/news/factory-is-ga",
      "kind": "page"
+    },
+    {
+     "url": "https://docs.factory.ai/welcome",
+     "kind": "page",
+     "read": "2026-11-26",
+     "basis": "stated by vendor"
     }
    ]
   },
@@ -178,6 +269,12 @@
     {
      "url": "https://github.com/openai/codex/releases.atom",
      "kind": "atom"
+    },
+    {
+     "url": "https://developers.openai.com/codex/cloud",
+     "kind": "page",
+     "read": "2026-11-26",
+     "basis": "stated by vendor"
     }
    ]
   },
@@ -198,6 +295,12 @@
     {
      "url": "https://github.com/langchain-ai/langgraph/releases.atom",
      "kind": "atom"
+    },
+    {
+     "url": "https://docs.langchain.com/oss/python/langgraph/overview",
+     "kind": "page",
+     "read": "2026-11-26",
+     "basis": "stated by vendor"
     }
    ]
   },
@@ -248,6 +351,12 @@
     {
      "url": "https://www.cognition.ai/blog/new-self-serve-plans-for-devin",
      "kind": "page"
+    },
+    {
+     "url": "https://docs.devin.ai/get-started/devin-intro",
+     "kind": "page",
+     "read": "2026-11-26",
+     "basis": "stated by vendor"
     }
    ],
    "plug_in": {
@@ -277,7 +386,252 @@
     "probe": "grep:.github/workflows/checks.yml::pr-agent",
     "source": "https://github.blog/ai-and-ml/llms/solving-the-inference-problem-for-open-source-ai-projects-with-github-models/"
    }
+  },
+  {
+   "id": "cursor-cloud-agents",
+   "name": "Cursor cloud agents (formerly background agents)",
+   "segment": "coding agent, cloud mode",
+   "added": "2026-11-26",
+   "sources": [
+    {
+     "url": "https://cursor.com/docs/cloud-agent",
+     "kind": "page",
+     "read": "2026-11-26",
+     "basis": "stated by vendor"
+    }
+   ]
+  },
+  {
+   "id": "google-jules",
+   "name": "Jules (Google)",
+   "segment": "coding agent, cloud mode",
+   "added": "2026-11-26",
+   "sources": [
+    {
+     "url": "https://jules.google/docs/",
+     "kind": "page",
+     "read": "2026-11-26",
+     "basis": "stated by vendor"
+    },
+    {
+     "url": "https://jules.google/docs/changelog/",
+     "kind": "page",
+     "read": "2026-11-26",
+     "basis": "stated by vendor"
+    }
+   ]
+  },
+  {
+   "id": "amp",
+   "name": "Amp",
+   "segment": "coding agent",
+   "added": "2026-11-26",
+   "sources": [
+    {
+     "url": "https://ampcode.com/manual",
+     "kind": "page",
+     "read": "2026-11-26",
+     "basis": "stated by vendor"
+    }
+   ]
+  },
+  {
+   "id": "replit-agent",
+   "name": "Replit Agent",
+   "segment": "app builder",
+   "added": "2026-11-26",
+   "sources": [
+    {
+     "url": "https://docs.replit.com/replitai/agent",
+     "kind": "page",
+     "read": "2026-11-26",
+     "basis": "stated by vendor"
+    }
+   ]
+  },
+  {
+   "id": "lovable",
+   "name": "Lovable",
+   "segment": "app builder",
+   "added": "2026-11-26",
+   "sources": [
+    {
+     "url": "https://docs.lovable.dev/introduction/welcome",
+     "kind": "page",
+     "read": "2026-11-26",
+     "basis": "stated by vendor"
+    }
+   ]
+  },
+  {
+   "id": "bolt",
+   "name": "Bolt",
+   "segment": "app builder",
+   "added": "2026-11-26",
+   "sources": [
+    {
+     "url": "https://support.bolt.new/building/intro-bolt",
+     "kind": "page",
+     "read": "2026-11-26",
+     "basis": "stated by vendor"
+    }
+   ]
+  },
+  {
+   "id": "v0",
+   "name": "v0 (Vercel)",
+   "segment": "app builder",
+   "added": "2026-11-26",
+   "sources": [
+    {
+     "url": "https://v0.app/docs/introduction",
+     "kind": "page",
+     "read": "2026-11-26",
+     "basis": "stated by vendor"
+    }
+   ]
+  },
+  {
+   "id": "crewai",
+   "name": "CrewAI",
+   "segment": "agent orchestration framework",
+   "added": "2026-11-26",
+   "sources": [
+    {
+     "url": "https://docs.crewai.com/en/introduction",
+     "kind": "page",
+     "read": "2026-11-26",
+     "basis": "stated by vendor"
+    }
+   ]
+  },
+  {
+   "id": "microsoft-agent-framework",
+   "name": "Microsoft Agent Framework (successor to AutoGen and Semantic Kernel agents)",
+   "segment": "agent orchestration framework",
+   "added": "2026-11-26",
+   "sources": [
+    {
+     "url": "https://learn.microsoft.com/en-us/agent-framework/overview/agent-framework-overview",
+     "kind": "page",
+     "read": "2026-11-26",
+     "basis": "stated by vendor"
+    }
+   ]
+  },
+  {
+   "id": "openai-agents-sdk",
+   "name": "OpenAI Agents SDK",
+   "segment": "agent orchestration framework",
+   "added": "2026-11-26",
+   "sources": [
+    {
+     "url": "https://openai.github.io/openai-agents-python/",
+     "kind": "page",
+     "read": "2026-11-26",
+     "basis": "stated by vendor"
+    }
+   ]
+  },
+  {
+   "id": "cloudflare-agents-sdk",
+   "name": "Cloudflare Agents SDK",
+   "segment": "agent platform",
+   "added": "2026-11-26",
+   "sources": [
+    {
+     "url": "https://developers.cloudflare.com/agents/",
+     "kind": "page",
+     "read": "2026-11-26",
+     "basis": "stated by vendor"
+    }
+   ]
+  },
+  {
+   "id": "temporal",
+   "name": "Temporal",
+   "segment": "durable execution platform",
+   "added": "2026-11-26",
+   "sources": [
+    {
+     "url": "https://temporal.io/solutions/ai",
+     "kind": "page",
+     "read": "2026-11-26",
+     "basis": "stated by vendor"
+    }
+   ]
+  },
+  {
+   "id": "resolve-ai",
+   "name": "Resolve AI",
+   "segment": "AI SRE",
+   "added": "2026-11-26",
+   "sources": [
+    {
+     "url": "https://resolve.ai/",
+     "kind": "page",
+     "read": "2026-11-26",
+     "basis": "stated by vendor"
+    }
+   ]
+  },
+  {
+   "id": "datadog-bits-ai-sre",
+   "name": "Datadog Bits AI SRE",
+   "segment": "AI SRE",
+   "added": "2026-11-26",
+   "sources": [
+    {
+     "url": "https://www.datadoghq.com/product/ai/bits-ai-sre/",
+     "kind": "page",
+     "read": "2026-11-26",
+     "basis": "stated by vendor"
+    }
+   ]
+  },
+  {
+   "id": "incident-io-ai-sre",
+   "name": "incident.io AI SRE",
+   "segment": "AI SRE",
+   "added": "2026-11-26",
+   "sources": [
+    {
+     "url": "https://incident.io/ai-sre",
+     "kind": "page",
+     "read": "2026-11-26",
+     "basis": "stated by vendor"
+    }
+   ]
+  },
+  {
+   "id": "aws-devops-agent",
+   "name": "AWS DevOps Agent",
+   "segment": "AI SRE",
+   "added": "2026-11-26",
+   "sources": [
+    {
+     "url": "https://aws.amazon.com/devops-agent/",
+     "kind": "page",
+     "read": "2026-11-26",
+     "basis": "stated by vendor"
+    }
+   ]
+  },
+  {
+   "id": "azure-sre-agent",
+   "name": "Azure SRE Agent",
+   "segment": "AI SRE",
+   "added": "2026-11-26",
+   "sources": [
+    {
+     "url": "https://learn.microsoft.com/en-us/azure/sre-agent/overview",
+     "kind": "page",
+     "read": "2026-11-26",
+     "basis": "stated by vendor"
+    }
+   ]
   }
  ],
- "_plug_in_doc": "BORROW-1 (Rowan, 2026-11-26): where a competitor does one step better than we do, plug it in as a worker instead of rebuilding it. A competitor's plug_in names the role it would fill, its status (staged until an account exists, live once a probe shows it running, declined with a reason), the default in effect meanwhile (always our own worker, so nothing waits) and a file:/grep: probe that passes only when it is wired in. Free tiers only, or cost inside the soft daily throttle. rnd --check validates every row."
+ "_plug_in_doc": "BORROW-1 (Rowan, 2026-11-26): where a competitor does one step better than we do, plug it in as a worker instead of rebuilding it. A competitor's plug_in names the role it would fill, its status (staged until an account exists, live once a probe shows it running, declined with a reason), the default in effect meanwhile (always our own worker, so nothing waits) and a file:/grep: probe that passes only when it is wired in. Free tiers only, or cost inside the soft daily throttle. rnd --check validates every row.",
+ "_sources_doc": "A source may carry `read` (the date a person or session last read the page) and `basis` (`stated by vendor`: the page is the vendor's own, so a capability found on it is what the vendor says, never a judgement of quality). The loop's own reading of each page, with the sentence that evidences each capability, is in ops/rnd/profiles/<id>.json with `refreshed_at`."
 }

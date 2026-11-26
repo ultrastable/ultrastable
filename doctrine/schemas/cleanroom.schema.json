@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/cleanroom.schema.json",
+  "title": "cleanroom (doctrine/cleanroom.json)",
+  "description": "Contract for doctrine/cleanroom.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "number"
+    },
+    "ticks": {
+      "type": "number"
+    },
+    "idea": {
+      "type": "string"
+    },
+    "secret_words": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "check": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "paths": {
+            "type": "array"
+          },
+          "what": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "min_sandbox_stage": {
+      "type": "string"
+    },
+    "_criticality_doc": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_criticality_doc",
+    "_doc",
+    "capabilities",
+    "idea",
+    "min_sandbox_stage",
+    "secret_words",
+    "ticks",
+    "version"
+  ]
+}

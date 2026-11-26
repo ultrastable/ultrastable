@@ -1,0 +1,43 @@
+{
+ "capabilities": {
+  "durable-execution": "and length of time. Reliably complete complex work at any scale with Durable Execution. Get Started for Free Watch a Demo Install the Temporal CLI and start",
+  "idea-to-deploy": "Temporal Start building your next app Temporal Cloud docs Production deployments Temporal 101 Temporal 102 Introduction to Temporal Cloud Community Jo",
+  "mcp-server": "ucinations and rate limiting. Scale to millions of agents. Learn more MCP Write Durable Tools with Temporal to improve reliability and context",
+  "observability": "AI Built On Durable Execution Workflow engine Development primitives Observability and scale Workflow engine Write durable workflows as code Workflows-a",
+  "other-cloud": "Temporal Workflows with Langfuse Learn More Integration AI AI SDK by Vercel View Integration Integration AI Braintrust AI Observability View Inte",
+  "scheduled-agents": "ctions across LLMs and gather data across multiple datastores. Easily schedule document ingestion. Context engineering Orchestrate reliable data eng"
+ },
+ "errors": {},
+ "id": "temporal",
+ "name": "Temporal",
+ "refreshed_at": "2026-11-26T06:46:33Z",
+ "sha": "11b37d33fa18",
+ "sources_read": [
+  "https://temporal.io/solutions/ai"
+ ],
+ "taxonomy": [
+  "a2a-protocol",
+  "agent-evals",
+  "agent-memory",
+  "agent-skills",
+  "agents-md",
+  "autonomous-pr",
+  "chat-entry",
+  "cloud-background-agents",
+  "cross-model-review",
+  "durable-execution",
+  "event-triggered-agents",
+  "existing-repo-adoption",
+  "idea-to-deploy",
+  "incident-investigation",
+  "mcp-server",
+  "multi-agent-roles",
+  "observability",
+  "other-cloud",
+  "permission-guardrails",
+  "sandboxed-execution",
+  "scheduled-agents",
+  "self-hostable",
+  "spend-budgets"
+ ]
+}

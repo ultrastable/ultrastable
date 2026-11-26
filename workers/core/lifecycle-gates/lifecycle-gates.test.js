@@ -5,13 +5,13 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { makeDb } from '../_shared/testdb.js';
 import { runTick } from '../src/tick.js';
-import { MIGRATIONS_DIR as KERNEL_DIR, CATALOG, reviewArtifact, recordReadback, registerMetric, readMetric, recordDecision, evaluateDecision, amendArtifact, decideChangeRequest, addRisk, advancePhase, checkGate, lifecycleGaps } from '../kernel/index.js';
-import { OUT_OF_SCOPE } from '../src/console.js';
+import { MIGRATIONS_DIR as KERNEL_DIR, CATALOG, reviewArtifact, recordReadback, registerMetric, readMetric, recordDecision, evaluateDecision, amendArtifact } from '../kernel/index.js';
 import {
   MIGRATIONS_DIR, selectMode, requiredArtifacts, cadence, checkForm, submitTailored, startProject, advance, recordDeliverable, runDeliverableProbe,
   startIteration, endIteration, recordRetrospective, setCommunicationPlan, produceStatusReport, refreshStatusReports, classifyScope, decidePack, requestWork, lifecycleStep,
-  openClosing, archiveProject, archiveClosed, recordRiskReview, riskReviewDue, evaluateRisks, computeQuality, complianceReport, adoptOutcomes, draftArtifacts, lifecycleProbe, itemsLate, capacityVariance,
+  reviewRisks, qualityMetrics, refreshMonitoring,
 } from './index.js';
+import { addRisk } from '../kernel/lifecycle.js';
 
 const policy = JSON.parse(readFileSync(new URL('../../autonomy/policy.json', import.meta.url), 'utf8'));
 const config = { org_slug: 't', claim_ttl_minutes: 120, max_wip_per_role: 3, plus_share: 0.2, policy };
@@ -32,14 +32,12 @@ const CONTENT = {
   'A-PLN-6': { capacity_per_role: { staff: 2 }, plus_share: 0.2, spend_cap: '20 USD a month' },
   'A-PLN-9': { what: 'the four-line report', period_h: 24, form: 'console' },
 };
-const contentFor = (mode, kind, id = 'P') => kind === 'A-PLN-1'
-  ? { in_scope: 'a booking page', out_of_scope: 'card payments', requirements: [{ id: 'REQ-1', text: 'a visitor can book a slot', testable: true, items: [`${id}-W1`] }] }
-  : CONTENT[kind] ?? (kind === 'A-PLN-5'
+const contentFor = (mode, kind) => CONTENT[kind] ?? (kind === 'A-PLN-5'
   ? { predictive: { milestones: [{ name: 'launch', date: '2026-12-01' }], dependencies: ['B-1 before B-2'] }, agile: { iteration_days: 7, forecast: '3 iterations' }, hybrid: { milestones: [{ name: 'launch', date: '2026-12-01' }], iteration_days: 7 } }[mode]
   : { note: `${kind} record` });
 async function fill(db, project, phase, mode, { skip = [] } = {}) {
   for (const c of CATALOG.filter(c => c.phase === phase && !skip.includes(c.kind))) {
-    await submitTailored(db, { project_id: project, kind: c.kind, path_or_ref: `docs/${project}/${c.kind}.md`, content: contentFor(mode, c.kind, project), produced_by: 'doer-1', produced_model: 'alpha-1', now: NOW });
+    await submitTailored(db, { project_id: project, kind: c.kind, path_or_ref: `docs/${project}/${c.kind}.md`, content: contentFor(mode, c.kind), produced_by: 'doer-1', produced_model: 'alpha-1', now: NOW });
     await reviewArtifact(db, { project_id: project, kind: c.kind, reviewer: 'reviewer-1', reviewer_model: 'beta-1', verdict: 'approved', evidence: 'read and checked' });
   }
 }
@@ -263,314 +261,67 @@ test('US-15-R12, T15-4: an out-of-scope request creates a scope-gate entry with 
   assert.deepEqual(rows(db, `SELECT pack FROM lifecycle_scope_gate WHERE status = 'held' ORDER BY id`).map(r => r.pack), ['outreach', 'business-plan']);
 });
 
-// ---- US-15-R17, R20: the gate conditions are one enforcement point ----
-async function toPlanning(db, id, { skipPlanning = [] } = {}) {
-  await startProject(db, { id, name: id, override: { mode: 'hybrid', reason: 'test fixture', decided_by: 'portfolio-manager' }, now: NOW });
-  await fill(db, id, 'initiating', 'hybrid');
-  assert.equal((await advance(db, id, 'planning', { readiness: async () => 0.9, now: NOW })).ok, true);
-  await fill(db, id, 'planning', 'hybrid', { skip: ['A-PLN-1', ...skipPlanning] });
-  await recordReadback(db, id, NOW);
-}
-const putRequirements = async (db, id, requirements) => {
-  await submitTailored(db, { project_id: id, kind: 'A-PLN-1', path_or_ref: `docs/${id}/A-PLN-1.md`, content: { in_scope: 'a booking page', out_of_scope: 'payments', requirements }, produced_by: 'doer-1', produced_model: 'alpha-1', now: NOW });
-  await reviewArtifact(db, { project_id: id, kind: 'A-PLN-1', reviewer: 'reviewer-1', reviewer_model: 'beta-1', verdict: 'approved' });
-};
-
-test('US-15-R17, US-15-T08: a requirement with no mapped item, a mapped item that is not the project\'s or has no closing probe, or an item with a dangling trigger blocks G2 and files an item', async () => {
-  const db = setup(); await toPlanning(db, 'M');
-  item(db, 'M-W1', { project: 'M' }); item(db, 'M-W2', { project: 'M' }); item(db, 'OTHER-1', { project: 'OTHER' });
-  db.raw.exec(`UPDATE items SET closing_probe = NULL WHERE id = 'M-W2'`);
-  const gate = async () => advance(db, 'M', 'executing', { now: NOW });
-  await putRequirements(db, 'M', []);
-  assert.match((await gate()).reasons[0], /A-PLN-1 lists no requirement/);
-  await putRequirements(db, 'M', [{ id: 'REQ-1', text: 'a visitor can book', testable: true, items: [] }, { id: 'REQ-2', text: 'a visitor gets a mail', testable: true, items: ['M-W1', 'OTHER-1', 'M-W2'] }]);
-  const r = await gate();
-  assert.equal(r.ok, false);
-  assert.deepEqual(r.reasons, ['requirement REQ-1 maps to no item', 'requirement REQ-2 names item OTHER-1, which is not an item of M', 'item M-W2 of requirement REQ-2 has no closing probe']);
-  assert.deepEqual(r.filed.sort(), ['GATE-M-executing-map-REQ-1', 'GATE-M-executing-map-REQ-2-OTHER-1', 'GATE-M-executing-probe-REQ-2-M-W2']);
-  assert.deepEqual(rows(db, `SELECT id, owner_role FROM items WHERE id LIKE 'GATE-M-executing-%' AND id <> 'GATE-M-executing-requirement-map' ORDER BY id`).map(i => [i.id, i.owner_role]),
-    [['GATE-M-executing-map-REQ-1', 'product-manager'], ['GATE-M-executing-map-REQ-2-OTHER-1', 'product-manager'], ['GATE-M-executing-probe-REQ-2-M-W2', 'project-manager']]);
-  assert.equal(one(db, `SELECT current_phase FROM kernel_projects WHERE id = 'M'`).current_phase, 'planning');
-  db.raw.exec(`UPDATE items SET closing_probe = 'probe' WHERE id = 'M-W2'; UPDATE items SET trigger_on = 'GHOST' WHERE id = 'M-W2'`);
-  await putRequirements(db, 'M', [{ id: 'REQ-1', text: 'a visitor can book', testable: true, items: ['M-W1'] }, { id: 'REQ-2', text: 'a visitor gets a mail', testable: true, items: ['M-W2'] }]);
-  assert.deepEqual((await gate()).reasons, ['item M-W2 is triggered by GHOST, which does not exist']);
-  db.raw.exec(`UPDATE items SET trigger_on = 'M-W1' WHERE id = 'M-W2'`);
-  assert.deepEqual(await gate(), { ok: true, phase: 'executing' });
-  // the form check refuses a requirement without an id or text, and two with one id
-  assert.match(checkForm('hybrid', 'A-PLN-1', { in_scope: 'x', out_of_scope: 'y', requirements: [{ id: 'R', text: '' }] }).problems[0], /lacks an id or its text/);
-  assert.match(checkForm('hybrid', 'A-PLN-1', { in_scope: 'x', out_of_scope: 'y', requirements: [{ id: 'R', text: 'a' }, { id: 'R', text: 'b' }] }).problems[0], /share an id/);
-  assert.deepEqual(checkForm('hybrid', 'A-PLN-1', { in_scope: 'x' }).missing, ['out_of_scope', 'requirements']);
-});
-
-test('US-15-R20, US-15-T11: the kernel advancePhase enforces the G1 conditions that advance does; a caller cannot switch them off', async () => {
+test('A-MON-4: the risk and issue review files one item per incomplete open risk and per issue without a probe, counts new risks, and is a record', async () => {
   const db = setup();
-  await startProject(db, { id: 'Q', name: 'q', now: NOW });
-  for (const c of CATALOG.filter(c => c.phase === 'initiating')) {
-    await submitTailored(db, { project_id: 'Q', kind: c.kind, path_or_ref: `docs/Q/${c.kind}.md`, content: c.kind === 'A-INI-2' ? { ...CHARTER, definition_of_done_probe: 'looks good' } : contentFor('hybrid', c.kind), produced_by: 'doer-1', now: NOW });
-    await reviewArtifact(db, { project_id: 'Q', kind: c.kind, reviewer: 'reviewer-1', verdict: 'approved' });
-  }
-  const direct = await advancePhase(db, 'Q', 'planning', { readiness: async () => 1, extras: false, now: NOW });          // the kernel call, not advance()
-  assert.deepEqual([direct.ok, direct.filed], [false, ['GATE-Q-planning-charter-probe']]);
-  const chk = await checkGate(db, 'Q', 'G1', { readiness: async () => 1 });
-  assert.deepEqual([chk.pass, chk.extras.map(e => e[0])], [false, ['charter-probe']]);
-  assert.equal(one(db, `SELECT current_phase FROM kernel_projects WHERE id = 'Q'`).current_phase, 'initiating');
-  await startProject(db, { id: 'P', name: 'p', now: NOW }); await fill(db, 'P', 'initiating', 'hybrid');
-  assert.deepEqual((await advancePhase(db, 'P', 'planning', { now: NOW })).filed, ['GATE-P-planning-readiness']);                   // no readiness port: not a pass
-  assert.match((await advancePhase(db, 'P', 'planning', { readiness: async () => 0.2, now: NOW })).reasons[0], /0.20 is under the initiation threshold 0.6/);
-  assert.deepEqual(await advancePhase(db, 'P', 'planning', { readiness: async () => 0.2, config: { require_readiness: false }, now: NOW }), { ok: true, phase: 'planning' });
+  await startProject(db, { id: 'RK', name: 'rk', override: { mode: 'agile', reason: 'test fixture', decided_by: 'portfolio-manager' }, now: NOW });
+  const full = await addRisk(db, { project_id: 'RK', cause: 'vendor delay', effect: 'schedule slip', likelihood: 3, impact: 4, response: 'second vendor', owner_role: 'project-manager', trigger: 'no delivery by day 10' });
+  const bare = await addRisk(db, { project_id: 'RK', cause: 'key person leaves', effect: 'review stalls' });
+  db.raw.prepare(`INSERT INTO items (id, title, kind, owner_role, done_check, closing_probe, status, project) VALUES ('BUG-1', 'broken form', 'fix', 'staff', 'x', NULL, 'ready', 'RK')`).run();
+  db.raw.prepare(`INSERT INTO items (id, title, kind, owner_role, done_check, closing_probe, status, project) VALUES ('BUG-2', 'slow page', 'fix', 'staff', 'x', 'SELECT 1 AS value', 'ready', 'RK')`).run();
+  const r1 = await reviewRisks(db, { project_id: 'RK', now: NOW });
+  assert.deepEqual([r1.risks, r1.open, r1.new_since_last, r1.previous_review], [2, 2, 2, null]);
+  assert.deepEqual(r1.incomplete, [{ id: bare, lacks: ['response', 'owner_role', 'trigger'] }]);
+  assert.deepEqual(r1.issues_without_probe, ['BUG-1']);
+  assert.deepEqual(r1.filed, [`RISK-RK-${bare}`, 'ISSUE-PROBE-BUG-1']);
+  const it = one(db, `SELECT owner_role, project, closing_probe FROM items WHERE id = ?`, `RISK-RK-${bare}`);
+  assert.deepEqual([it.owner_role, it.project], ['project-manager', 'RK']);
+  assert.equal(one(db, it.closing_probe).value, 0);                                          // the probe is runnable and fails while the risk is incomplete
+  const a = one(db, `SELECT phase, kind, owner_role, path_or_ref, evidence, updated_at FROM artifacts WHERE id = 'RK:A-MON-4'`);
+  assert.deepEqual([a.phase, a.owner_role, a.path_or_ref, a.updated_at], ['monitoring', 'project-manager', 'risks?project_id=RK', ts(NOW)]);
+  assert.equal(JSON.parse(a.evidence).max_risk_id, bare);
+
+  db.raw.prepare(`UPDATE risks SET response = 'cross-train', owner_role = 'project-manager', trigger = 'notice given' WHERE id = ?`).run(bare);
+  await addRisk(db, { project_id: 'RK', cause: 'quota', effect: 'tick stops', response: 'cheaper tier', owner_role: 'operations', trigger: 'spend at 80%' });
+  db.raw.prepare(`UPDATE items SET closing_probe = 'SELECT 1 AS value' WHERE id = 'BUG-1'`).run();
+  const r2 = await reviewRisks(db, { project_id: 'RK', now: NOW + DAY });
+  assert.deepEqual([r2.risks, r2.new_since_last, r2.incomplete, r2.issues_without_probe, r2.filed, r2.previous_review], [3, 1, [], [], [], ts(NOW)]);
+  assert.equal(one(db, it.closing_probe).value, 1);                                          // the same probe passes once the risk is complete
+  assert.equal(one(db, one(db, `SELECT closing_probe FROM items WHERE id = 'ISSUE-PROBE-BUG-1'`).closing_probe).value, 1);
+  assert.equal(one(db, `SELECT COUNT(*) AS n FROM artifacts WHERE project_id = 'RK' AND kind = 'A-MON-4'`).n, 1);   // one record, refreshed
+  assert.equal(full > 0, true);
+  await assert.rejects(reviewRisks(db, { project_id: 'nope', now: NOW }), /unknown project/);
+  // a closed risk is not chased, and the gates do not read monitoring artifacts
+  db.raw.prepare(`INSERT INTO risks (project_id, cause, effect, status) VALUES ('RK', 'old', 'gone', 'closed')`).run();
+  assert.deepEqual((await reviewRisks(db, { project_id: 'RK', now: NOW + 2 * DAY })).incomplete, []);
 });
 
-test('US-15-R20, US-15-T11: the kernel advancePhase enforces the G3 conditions too (an unpassed deliverable probe, a missing retrospective)', async () => {
-  const db = setup(); await executing(db, 'AG', 'agile');
-  await recordDeliverable(db, { id: 'D1', project_id: 'AG', path_or_ref: 'site/book.js', produced_by: 'doer-1', closing_probe: `SELECT v AS value FROM t_vals WHERE k = 'live'`, now: NOW });
-  const it = await startIteration(db, { project_id: 'AG', goal: 'g', items: ['AG-W1'], now: NOW }); await endIteration(db, it.id, { demo_result: 'shown', now: NOW });
-  assert.equal((await advancePhase(db, 'AG', 'closing', { now: NOW })).ok, true);
-  await fill(db, 'AG', 'closing', 'agile'); db.raw.exec(`UPDATE items SET status = 'done', disposition = 'done' WHERE project = 'AG' AND id NOT LIKE 'GATE-%'`);
-  const r = await advancePhase(db, 'AG', 'closed', { now: NOW });
-  assert.equal(r.ok, false); assert.deepEqual(r.filed.sort(), ['GATE-AG-closed-deliverable-probes', 'GATE-AG-closed-retrospective']);
-});
-
-// ---- US-15-R18: closing opens by itself, and the record is archived ----
-test('US-15-R18, US-15-T09: closing opens by itself when every chartered outcome has a disposition, monitoring items do not hold it open, and the closing artifacts are filed', async () => {
-  const db = setup(); await executing(db, 'AG', 'agile');
-  assert.deepEqual(await openClosing(db, { now: NOW }), []);                                                    // AG-W1 has no disposition yet
-  db.raw.prepare(`INSERT INTO items (id, title, owner_role, done_check, status, project) VALUES ('RISKREVIEW-AG-1', 'r', 'project-manager', 'x', 'ready', 'AG')`).run();
-  db.raw.exec(`UPDATE items SET status = 'done', disposition = 'done' WHERE id = 'AG-W1'`);
-  assert.deepEqual(await openClosing(db, { now: NOW }), ['AG']);
-  assert.equal(one(db, `SELECT current_phase FROM kernel_projects WHERE id = 'AG'`).current_phase, 'closing');
-  assert.deepEqual({ ...one(db, `SELECT status, disposition FROM items WHERE id = 'RISKREVIEW-AG-1'`) }, { status: 'superseded', disposition: 'superseded: the project is closing' });   // never dropped silently
-  const filed = await lifecycleGaps(db);
-  assert.deepEqual(filed.sort(), ['GATE-AG-A-CLO-1', 'GATE-AG-A-CLO-2', 'GATE-AG-A-CLO-3', 'GATE-AG-A-CLO-4', 'GATE-AG-A-CLO-5']);
-  assert.deepEqual(await openClosing(db, { now: NOW }), []);                                                    // already closing: nothing to do
-  const db2 = setup(); await startProject(db2, { id: 'E', name: 'e', now: NOW });
-  assert.deepEqual(await openClosing(db2, { now: NOW }), []);                                                   // an initiating project, or one with no items, never closes by this rule
-});
-
-test('US-15-R18: archiving a closed project releases its claims, records what was retained once, and refuses a project that is not closed', async () => {
-  const db = setup(); await executing(db, 'AG', 'agile');
-  await assert.rejects(archiveProject(db, 'AG', { now: NOW }), /only a closed project is archived; AG is in executing/);
-  db.raw.exec(`UPDATE items SET status = 'done', disposition = 'done' WHERE id = 'AG-W1'`);
-  db.raw.exec(`INSERT INTO claims (item_id, agent) VALUES ('AG-W1', 'staff-1')`);
-  await lessonAndClose(db);
-  const a = await archiveProject(db, 'AG', { now: NOW + HOUR, by: 'operations' });
-  assert.deepEqual([a.archived, a.items_total, a.items_done, a.claims_released], [true, 2, 2, 1]);   // AG-W1 and the lesson's plus item
-  assert.equal(a.records.artifacts.length, CATALOG.length);                                                       // every catalog artifact the project submitted
-  assert.equal(one(db, `SELECT COUNT(*) AS n FROM claims WHERE item_id = 'AG-W1'`).n, 0);
-  assert.equal(a.records.lessons.length, 1);
-  const again = await archiveProject(db, 'AG', { now: NOW + 2 * HOUR });
-  assert.deepEqual([again.archived, again.existing, again.archived_at], [false, true, ts(NOW + HOUR)]);
-  assert.equal(one(db, `SELECT COUNT(*) AS n FROM lifecycle_archive`).n, 1);
-  assert.deepEqual(await archiveClosed(db, { now: NOW }), []);
-});
-async function lessonAndClose(db) {
-  const { addLesson } = await import('../kernel/index.js');
-  await addLesson(db, { project_id: 'AG', text: 'keep demos short' });
-  db.raw.exec(`UPDATE items SET status = 'done', disposition = 'done' WHERE project = 'AG' AND id NOT LIKE 'GATE-%'`);
-  assert.equal((await advance(db, 'AG', 'closing', { now: NOW })).ok, true); await fill(db, 'AG', 'closing', 'agile');
-  assert.deepEqual(await advance(db, 'AG', 'closed', { now: NOW }), { ok: true, phase: 'closed' });
-}
-
-// ---- US-15-R15, R16: risk and issue review, quality metrics, compliance ----
-test('US-15-R15, US-15-T07: a risk review reads every trigger probe, marks a fired risk triggered and files it for its owner once, and flags what the register and the issues lack', async () => {
-  const db = setup(); await executing(db, 'AG', 'agile');
-  const a = await addRisk(db, { project_id: 'AG', cause: 'the mail service is down', effect: 'no confirmations', likelihood: 2, impact: 3, response: 'fall back to the page', owner_role: 'operations', trigger: `SELECT v AS value FROM t_vals WHERE k = 'mail_down'` });
-  const b = await addRisk(db, { project_id: 'AG', cause: 'users complain', effect: 'churn', trigger: 'when users complain' });
-  const c = await addRisk(db, { project_id: 'AG', cause: 'a probe that errors', effect: 'unknown', response: 'fix it', owner_role: 'operations', trigger: 'SELECT nope FROM missing_table' });
-  db.raw.prepare(`INSERT INTO items (id, title, kind, owner_role, done_check, closing_probe, status, project) VALUES ('FIX-1', 'broken link', 'fix', 'staff', 'x', NULL, 'ready', 'AG')`).run();
-  const r1 = await recordRiskReview(db, { project_id: 'AG', reviewer: 'project-manager-1', now: NOW });
-  assert.deepEqual(r1.triggered, []); assert.equal(r1.open_risks, 3);
-  assert.deepEqual(r1.flagged.map(f => [f.kind, f.id, f.why.split(':')[0]]), [['risk', c, 'the trigger probe fails'], ['risk', b, 'lacks response, owner_role'], ['issue', 'FIX-1', 'lacks closing probe']]);
-  assert.deepEqual(rows(db, `SELECT id, owner_role FROM items WHERE id LIKE 'RISKFIX-%' OR id LIKE 'ISSUEPROBE-%' ORDER BY id`).map(i => [i.id, i.owner_role]), [[`ISSUEPROBE-FIX-1`, 'project-manager'], [`RISKFIX-AG-${b}`, 'project-manager']]);
-  db.raw.exec(`INSERT INTO t_vals VALUES ('mail_down', 1)`);
-  const r2 = await recordRiskReview(db, { project_id: 'AG', reviewer: 'project-manager-1', new_risks: [{ cause: 'a new one', effect: 'e', response: 'r', owner_role: 'operations', trigger: 'watch it' }], now: NOW + HOUR });
-  assert.deepEqual(r2.triggered, [a]); assert.equal(r2.open_risks, 4);
-  assert.equal(one(db, `SELECT status FROM risks WHERE id = ?`, a).status, 'triggered');
-  assert.deepEqual({ ...one(db, `SELECT owner_role, priority, done_check FROM items WHERE id = ?`, `RISK-AG-${a}`) }, { owner_role: 'operations', priority: 10, done_check: 'fall back to the page' });
-  assert.deepEqual((await evaluateRisks(db, { project_id: 'AG', now: NOW + 2 * HOUR })).triggered, []);          // a risk that already fired does not file again
-  assert.equal(one(db, `SELECT COUNT(*) AS n FROM lifecycle_risk_reviews WHERE project_id = 'AG'`).n, 2);
-  await assert.rejects(recordRiskReview(db, { project_id: 'AG', reviewer: '', now: NOW }), /names its reviewer/); await assert.rejects(recordRiskReview(db, { project_id: 'NOPE', reviewer: 'x' }), /unknown project/);
-});
-
-test('US-15-R15, US-15-T07: a register not reviewed inside the communication period files one review item, numbered after the reviews so far', async () => {
-  const db = setup(); await executing(db, 'AG', 'agile', NOW);                                                   // the plan says every 24 h
-  assert.deepEqual(await riskReviewDue(db, { now: NOW + 23 * HOUR }), []);
-  assert.deepEqual(await riskReviewDue(db, { now: NOW + 25 * HOUR }), ['RISKREVIEW-AG-1']);
-  assert.deepEqual(await riskReviewDue(db, { now: NOW + 26 * HOUR }), []);                                      // once
-  assert.equal(one(db, `SELECT owner_role FROM items WHERE id = 'RISKREVIEW-AG-1'`).owner_role, 'project-manager');
-  await recordRiskReview(db, { project_id: 'AG', reviewer: 'project-manager-1', now: NOW + 26 * HOUR });
-  assert.deepEqual(await riskReviewDue(db, { now: NOW + 40 * HOUR }), []);
-  assert.deepEqual(await riskReviewDue(db, { now: NOW + 51 * HOUR }), ['RISKREVIEW-AG-2']);
-  const init = setup(); await startProject(init, { id: 'I', name: 'i', now: NOW });
-  assert.deepEqual(await riskReviewDue(init, { now: NOW + 30 * DAY }), []);                                      // an initiating project has no register to review yet
-});
-
-test('US-15-R16, US-15-T07: quality metrics are null when unmeasured and never 0, and match the stated formulas on seeded data', async () => {
-  const db = setup(); await startProject(db, { id: 'Z', name: 'z', now: NOW });
-  const none = await computeQuality(db, 'Z', { now: NOW });
-  assert.deepEqual([none.rework_rate, none.defects_escaped, none.probe_pass_rate], [null, null, null]);
-  assert.match((await produceStatusReport(db, { project_id: 'Z', now: NOW })).text, /quality: rework unmeasured, escaped unmeasured, probes passed unmeasured/);
-  // two reviewed artifacts, one rejected, two deliverable probes (one passed, one failed), two fix items after the first pass
-  for (const k of ['A-INI-1', 'A-INI-2', 'A-INI-3']) await submitTailored(db, { project_id: 'Z', kind: k, path_or_ref: `docs/Z/${k}.md`, content: contentFor('hybrid', k), produced_by: 'doer-1', produced_model: 'alpha-1', now: NOW });
-  await reviewArtifact(db, { project_id: 'Z', kind: 'A-INI-1', reviewer: 'reviewer-1', reviewer_model: 'beta-1', verdict: 'approved' });
-  await reviewArtifact(db, { project_id: 'Z', kind: 'A-INI-2', reviewer: 'reviewer-1', reviewer_model: 'beta-1', verdict: 'approved' });
-  await reviewArtifact(db, { project_id: 'Z', kind: 'A-INI-3', reviewer: 'reviewer-1', reviewer_model: 'beta-1', verdict: 'rejected' });
-  db.raw.exec(`INSERT INTO t_vals VALUES ('ok1', 1), ('ok2', 0)`);
-  for (const id of ['D1', 'D2']) await recordDeliverable(db, { id, project_id: 'Z', path_or_ref: `site/${id}.js`, produced_by: 'doer-1', closing_probe: `SELECT v AS value FROM t_vals WHERE k = '${id === 'D1' ? 'ok1' : 'ok2'}'`, now: NOW });
-  for (const id of ['D1', 'D2']) await runDeliverableProbe(db, id, { runner: 'reviewer-1', now: NOW });
-  const fix = (id, at) => db.raw.prepare(`INSERT INTO items (id, title, kind, owner_role, done_check, closing_probe, status, project, created_at) VALUES (?, ?, 'fix', 'staff', 'x', 'p', 'ready', 'Z', ?)`).run(id, id, ts(at));
-  fix('F-before', NOW - HOUR); fix('F-after-1', NOW + HOUR); fix('F-after-2', NOW + 2 * HOUR);
-  const q = await computeQuality(db, 'Z', { now: NOW + 3 * HOUR });
-  assert.deepEqual([q.rework_rate, q.defects_escaped, q.probe_pass_rate], [0.4, 2, 0.5]);                       // (1 rejected + 1 failed probe + 0) / (3 reviewed + 2 probes + 0)
-  assert.deepEqual({ ...q.inputs }, { rejected: 1, reviewed: 3, probes_run: 2, probes_passed: 1, decisions_reverted: 0, decisions_scored: 0, escaped_since: ts(NOW) });
-  assert.match((await produceStatusReport(db, { project_id: 'Z', now: NOW + 4 * HOUR })).text, /quality: rework 0.40, escaped 2, probes passed 0.50/);
-  assert.equal(one(db, `SELECT COUNT(*) AS n FROM lifecycle_quality WHERE project_id = 'Z'`).n, 2);
-});
-
-test('US-15-R15, US-15-R16: the compliance report files one item per finding for its owner role, closes it when the finding clears, and is idempotent', async () => {
-  const db = setup(); await executing(db, 'AG', 'agile', NOW);
-  const t = NOW + 3 * DAY;                                                                                         // 72 h: three periods of 24 h
-  const r1 = await complianceReport(db, { project_id: 'AG', now: t });
-  assert.deepEqual(r1.findings.map(f => f.slug), ['status-report', 'risk-review', 'quality-metrics']);
-  assert.deepEqual(rows(db, `SELECT id, owner_role FROM items WHERE id LIKE 'COMPLIANCE-AG-%' ORDER BY id`).map(i => [i.id, i.owner_role]),
-    [['COMPLIANCE-AG-quality-metrics', 'reviewer'], ['COMPLIANCE-AG-risk-review', 'project-manager'], ['COMPLIANCE-AG-status-report', 'project-manager']]);
-  assert.deepEqual((await complianceReport(db, { project_id: 'AG', now: t })).filed, []);                          // idempotent
-  await produceStatusReport(db, { project_id: 'AG', now: t }); await recordRiskReview(db, { project_id: 'AG', reviewer: 'project-manager-1', now: t }); await computeQuality(db, 'AG', { now: t });
-  const r2 = await complianceReport(db, { project_id: 'AG', now: t + HOUR });
-  assert.deepEqual([r2.findings, r2.closed.sort()], [[], ['COMPLIANCE-AG-quality-metrics', 'COMPLIANCE-AG-risk-review', 'COMPLIANCE-AG-status-report']]);
-  assert.deepEqual({ ...one(db, `SELECT status, disposition FROM items WHERE id = 'COMPLIANCE-AG-status-report'`) }, { status: 'done', disposition: 'done: the finding cleared' });
-  // a change request with no decision is a finding; approving it sends the artifact back to review, which is a finding until a different agent reviews it
-  const cr = await amendArtifact(db, { project_id: 'AG', kind: 'A-INI-2', new_ref: 'docs/AG/charter-v2.md', summary: 'raise the cap', revert_path: 'restore the first charter', requested_by: 'project-manager', now: t });
-  assert.deepEqual((await complianceReport(db, { project_id: 'AG', now: t + HOUR })).findings.map(f => f.slug), [`change-request-${cr.change_request_id}`]);
-  await decideChangeRequest(db, cr.change_request_id, { decision: 'approved', decided_by: 'portfolio-manager', now: t });
-  assert.deepEqual((await complianceReport(db, { project_id: 'AG', now: t + HOUR })).findings.map(f => f.slug), ['review-A-INI-2']);
-  await assert.rejects(complianceReport(db, { project_id: 'NOPE' }), /unknown project/);
-});
-
-test('US-15-R10, US-15-R15, US-15-R18: the lifecycle step adopts outcomes, files gate items, closes and archives, and reports each in the tick notes without erroring', async () => {
+test('A-MON-6: rework rate, defects escaped and probe pass rate are read from the project records; nothing under a ratio is unmeasured, not zero', async () => {
   const db = setup();
-  db.raw.exec(`INSERT INTO roles (id, role, project, tick_every, model) VALUES ('project-manager-1', 'project-manager', 'OUT-1', 1, 'm'), ('product-manager-1', 'product-manager', 'OUT-1', 3, 'm'), ('operations-1', 'operations', NULL, 1, 'm')`);
-  const r = await runTick(db, { config, now: NOW, extraSteps: [lifecycleStep()] });
-  assert.deepEqual(r.errors, []); assert.match(r.report, /lifecycle: 0 status report\(s\), adopted OUT-1, \d+ gate item\(s\)/);
-  assert.equal(one(db, `SELECT delivery_mode FROM kernel_projects WHERE id = 'OUT-1'`).delivery_mode, 'hybrid');
-  assert.equal(one(db, `SELECT COUNT(*) AS n FROM kernel_projects`).n, 1);
-  assert.equal(one(db, `SELECT COUNT(*) AS n FROM kernel_programs WHERE id = 'OUT-1'`).n, 1);
-  assert.equal(one(db, `SELECT COUNT(*) AS n FROM items WHERE id LIKE 'GATE-OUT-1-A-INI-%'`).n, 6);
-  assert.equal(one(db, `SELECT COUNT(*) AS n FROM items WHERE id = 'GATE-OUT-1-planning-charter-probe'`).n, 1);       // the registered G1 conditions are filed too
-  assert.equal(one(db, `SELECT COUNT(*) AS n FROM items WHERE id = 'GATE-OUT-1-planning-readiness'`).n, 0);           // an unwired readiness port is not a gap anything can close
-  const again = await runTick(db, { config, now: NOW + HOUR, extraSteps: [lifecycleStep()] });
-  assert.deepEqual(again.errors, []); assert.doesNotMatch(again.report, /adopted/);
-  const off = setup(); off.raw.exec(`INSERT INTO roles (id, role, project, tick_every, model) VALUES ('pm-1', 'project-manager', 'OUT-9', 1, 'm')`);
-  await runTick(off, { config: { ...config, lifecycle: { auto_start: false } }, now: NOW, extraSteps: [lifecycleStep()] });
-  assert.equal(one(off, `SELECT COUNT(*) AS n FROM kernel_projects`).n, 0);
+  await startProject(db, { id: 'QM', name: 'qm', override: { mode: 'agile', reason: 'test fixture', decided_by: 'portfolio-manager' }, now: NOW });
+  const empty = await qualityMetrics(db, { project_id: 'QM', now: NOW });
+  assert.deepEqual([empty.rework_rate, empty.probe_pass_rate, empty.defects_escaped, empty.probes_run], [null, null, 0, 0]);
+  for (const [id, kind] of [['W-1', 'work'], ['W-2', 'work'], ['W-3', 'work'], ['F-1', 'fix']]) item(db, id, { project: 'QM' }), db.raw.prepare(`UPDATE items SET kind = ? WHERE id = ?`).run(kind, id);
+  item(db, 'OTHER', { project: 'ELSE' });
+  db.raw.prepare(`INSERT INTO outcomes (item_id, agent, surface, action_class, result) VALUES ('W-1', 'a', 's', 'c', 'hidden_failure'), ('W-2', 'a', 's', 'c', 'verified'), ('OTHER', 'a', 's', 'c', 'hidden_failure')`).run();
+  await recordDeliverable(db, { id: 'D-1', project_id: 'QM', path_or_ref: 'src/a.js', closing_probe: 'SELECT 1 AS value', produced_by: 'doer', now: NOW });
+  await recordDeliverable(db, { id: 'D-2', project_id: 'QM', path_or_ref: 'src/b.js', closing_probe: 'SELECT 0 AS value', produced_by: 'doer', now: NOW });
+  await recordDeliverable(db, { id: 'D-3', project_id: 'QM', path_or_ref: 'src/c.js', closing_probe: 'SELECT 1 AS value', produced_by: 'doer', now: NOW });
+  await runDeliverableProbe(db, 'D-1', { runner: 'checker', now: NOW }); await runDeliverableProbe(db, 'D-2', { runner: 'checker', now: NOW });
+  const q = await qualityMetrics(db, { project_id: 'QM', now: NOW + HOUR });
+  assert.deepEqual([q.rework_rate, q.fix_items, q.work_items, q.defects_escaped, q.probe_pass_rate, q.probes_run, q.probes_passed, q.deliverables_unprobed], [0.25, 1, 3, 1, 0.5, 2, 1, 1]);
+  const a = one(db, `SELECT phase, owner_role, evidence, updated_at FROM artifacts WHERE id = 'QM:A-MON-6'`);
+  assert.deepEqual([a.phase, a.owner_role, a.updated_at, JSON.parse(a.evidence).rework_rate], ['monitoring', 'reviewer', ts(NOW + HOUR), 0.25]);
 });
 
-// ---- US-15-R19: variance beyond the predictions ----
-test('US-15-R19, US-15-R10: the status report lists items past their SLA by priority band and labels capacity over, within, under or unmeasured', async () => {
-  const db = setup(); await startProject(db, { id: 'CP', name: 'cp', capacity: 2, now: NOW - 20 * DAY });
-  const mk = (id, priority, ageDays, status = 'ready') => db.raw.prepare(`INSERT INTO items (id, title, owner_role, done_check, priority, status, project, created_at) VALUES (?,?,?,?,?,?,?,?)`).run(id, id, 'staff', 'x', priority, status, 'CP', ts(NOW - ageDays * DAY));
-  mk('P0-late', 0, 3); mk('P0-ok', 0, 1); mk('P1-late', 5, 8); mk('P1-ok', 10, 6); mk('DEF-ok', 50, 13); mk('DEF-late', 50, 15); mk('DONE-old', 0, 30, 'done');
-  const late = await itemsLate(db, { project_id: 'CP', now: NOW });
-  assert.deepEqual(late.map(l => [l.id, l.age_days, l.sla_days]).sort(), [['DEF-late', 15, 14], ['P0-late', 3, 2], ['P1-late', 8, 7]]);
-  const claim = (id) => db.raw.prepare(`INSERT INTO claims (item_id, agent) VALUES (?, 'staff-1')`).run(id);
-  assert.deepEqual((await capacityVariance(db, { project_id: 'CP', since: ts(NOW - 20 * DAY) })).verdict, 'under');   // 0 of 2 in flight
-  claim('P0-ok'); claim('P1-ok'); assert.deepEqual(await capacityVariance(db, { project_id: 'CP', since: ts(NOW - 20 * DAY) }), { planned: 2, in_flight: 2, verdict: 'within' });
-  claim('DEF-ok'); assert.equal((await capacityVariance(db, { project_id: 'CP', since: ts(NOW - 20 * DAY) })).verdict, 'over');
-  const rep = await produceStatusReport(db, { project_id: 'CP', now: NOW });
-  assert.match(rep.text.split('\n')[3], /3 item\(s\) past their SLA, capacity over/);
-  const v = one(db, `SELECT * FROM lifecycle_variance WHERE report_id = ?`, rep.id);
-  assert.deepEqual([JSON.parse(v.items_late).length, v.capacity_planned, v.capacity_in_flight, v.capacity_verdict], [3, 2, 3, 'over']);
-  // no capacity planned: unmeasured, never within
-  await startProject(db, { id: 'NP', name: 'np', now: NOW });
-  const np = await produceStatusReport(db, { project_id: 'NP', now: NOW });
-  assert.deepEqual([np.capacity.verdict, np.capacity.planned, np.items_late], ['unmeasured', null, []]);
-});
-
-// ---- US-15-R21: one scope classifier, and the pack host decides enablement ----
-test('US-15-T10, US-15-R21: the lifecycle classifier covers every phrase the console\'s own table covers', () => {
-  const phrases = ['write the business plan', 'a financial model', 'a pitch deck', 'we are fundraising', 'find investors', 'a funding application', 'a funding round', 'file a patent', 'a trademark for the name',
-    'copyright filing', 'copyright registration', 'legal advice', 'tax advice', 'investment advice', 'medical advice', 'a marketing campaign', 'social media posts', 'a social media account', 'cold email', 'cold outreach', 'an ad campaign'];
-  for (const ph of phrases) {
-    assert.ok(OUT_OF_SCOPE.some(([re]) => re.test(ph)), `the console table covers ${ph}`);                            // the premise: the phrase is one the console refuses
-    assert.equal(classifyScope(ph).in_scope, false, `the lifecycle classifier covers ${ph}`);
-  }
-  assert.deepEqual(classifyScope('Add a booking form to the home page'), { in_scope: true });
-  assert.deepEqual(classifyScope('Update the opening hours'), { in_scope: true });
-});
-
-test('US-15-R21, US-15-T10: a request for a pack the pack host has enabled is accepted; a refusal from the host keeps the request held with the reason; the host\'s decision id is recorded', async () => {
-  const db = setup(); const enabled = new Set(); const calls = [];
-  const packs = { isEnabled: async (id) => enabled.has(id), enable: async (id, a) => { calls.push([id, a]); return a.cardText === 'I understand' ? (enabled.add(id), { ok: true, decision_id: 'PD-9' }) : { ok: false, reason: 'card_text_mismatch' }; }, disable: async (id) => { enabled.delete(id); } };
-  const held = await requestWork(db, { id: 'REQ-1', text: 'Write a business plan for the shop', now: NOW }, { packs });
-  assert.equal(held.accepted, false);
-  const refused = await decidePack(db, { pack: 'business-plan', enabled: true, reason: 'the person asked', revert_path: 'disable it', decided_by: 'portfolio-manager', card_text: 'ok', now: NOW }, { packs });
-  assert.deepEqual([refused.refused, refused.released], ['card_text_mismatch', []]);
-  assert.equal(one(db, `SELECT COUNT(*) AS n FROM lifecycle_scope_decisions`).n, 0);                               // no decision was recorded
-  assert.equal(one(db, `SELECT status FROM lifecycle_scope_gate WHERE id = ?`, held.scope_gate_id).status, 'held');
-  const ok = await decidePack(db, { pack: 'business-plan', enabled: true, reason: 'the person asked', revert_path: 'disable it', decided_by: 'portfolio-manager', card_text: 'I understand', now: NOW }, { packs });
-  assert.deepEqual(ok.released, [`SCOPED-${held.scope_gate_id}`]); assert.deepEqual(calls.at(-1), ['business-plan', { by: 'portfolio-manager', cardText: 'I understand' }]);
-  assert.match(one(db, `SELECT reason FROM lifecycle_scope_decisions WHERE pack = 'business-plan'`).reason, /the person asked \(pack host decision PD-9\)/);
-  enabled.add('outreach');                                                                                          // enabled in the host, never decided here
-  assert.deepEqual(await requestWork(db, { id: 'REQ-2', text: 'Run our marketing on three channels', now: NOW }, { packs }), { accepted: true, item_id: 'REQ-2', pack: 'outreach' });
-  assert.equal((await requestWork(db, { id: 'REQ-3', text: 'Run our marketing on three channels', now: NOW })).accepted, false);   // without the host port the old rule holds
-  await decidePack(db, { pack: 'business-plan', enabled: false, reason: 'trial over', revert_path: 'enable it', decided_by: 'portfolio-manager', now: NOW }, { packs });
-  assert.equal(enabled.has('business-plan'), false);
-});
-
-// ---- US-15-R05, R22: drafted artifacts come from the person's answers and are never reviewed by their producer ----
-test('US-15-R01, US-15-R05: outcomes are adopted once as hybrid projects, never above the portfolio cap, and the system-test refusal precedes them in the seed', async () => {
+test('A-MON-4, A-MON-6 on the tick: each open project is reviewed once per period and a closed project is left alone', async () => {
   const db = setup();
-  db.raw.exec(`INSERT INTO roles (id, role, project, tick_every, model) VALUES ('pm-1', 'project-manager', 'OUT-1', 1, 'm'), ('pd-1', 'product-manager', 'OUT-1', 1, 'm'), ('pm-2', 'project-manager', 'OUT-2', 1, 'm'), ('op-1', 'operations', NULL, 1, 'm')`);
-  const cap = { portfolio_cap: 1, default_capacity: 1 };
-  const a = await adoptOutcomes(db, { now: NOW, config: cap });
-  assert.deepEqual(a.adopted, ['OUT-1']); assert.deepEqual(a.held.map(h => [h.project, h.item_id]), [['OUT-2', 'CAPACITY-OUT-2']]);
-  assert.equal(one(db, `SELECT COUNT(*) AS n FROM kernel_projects WHERE id = 'OUT-2'`).n, 0);
-  const free = await adoptOutcomes(db, { now: NOW, config: {} });
-  assert.deepEqual(free.adopted, ['OUT-2']); assert.deepEqual((await adoptOutcomes(db, { now: NOW, config: {} })).adopted, []);   // once
-  const d = one(db, `SELECT mode, rule_mode, decided_by FROM lifecycle_mode_decisions WHERE project_id = 'OUT-1'`);
-  assert.deepEqual({ ...d }, { mode: 'hybrid', rule_mode: 'hybrid', decided_by: 'selection rule' });
-  assert.equal(one(db, `SELECT program_id FROM kernel_projects WHERE id = 'OUT-1'`).program_id, 'OUT-1');
-  assert.deepEqual(await adoptOutcomes(db, { config: { auto_start: false } }), { adopted: [], skipped: 'config.lifecycle.auto_start is false' });
-});
-
-test('US-15-R05, US-15-R07: a drafted artifact is a record with a form check, lists every default taken for the person, and is never marked reviewed by its producer', async () => {
-  const db = setup(); await startProject(db, { id: 'P', name: 'p', now: NOW });
-  const readback = [{ need_id: 'audience', value: 'my clients' }, { need_id: 'first_outcome', value: 'a booking page' },
-    { need_id: 'constraints', value: 'no card payments', assumption: true, default_consequence: 'we start without payments' }];
-  const r = await draftArtifacts(db, { project_id: 'P', readback, fields: { want: 'I want people to book me online' }, now: NOW });
-  assert.deepEqual(r.drafted.map(d => [d.kind, d.ok]), [['A-INI-1', true], ['A-INI-4', true], ['A-INI-6', true]]);
-  assert.deepEqual({ ...JSON.parse(one(db, `SELECT content FROM lifecycle_artifact_content WHERE project_id = 'P' AND kind = 'A-INI-1'`).content) },
-    { want_verbatim: 'I want people to book me online', for_whom: 'my clients', first_outcomes: ['a booking page'], constraints: 'no card payments' });
-  assert.deepEqual(JSON.parse(one(db, `SELECT content FROM lifecycle_artifact_content WHERE project_id = 'P' AND kind = 'A-INI-4'`).content).assumptions,
-    [{ need: 'constraints', assumed: 'no card payments', consequence: 'we start without payments', revert_path: 'ask again: change the answer for constraints' }]);
-  for (const k of ['A-INI-1', 'A-INI-4', 'A-INI-6']) { const a = one(db, `SELECT status, reviewed_by, produced_by, done_check_passed FROM artifacts WHERE project_id = 'P' AND kind = ?`, k); assert.deepEqual([a.status, a.reviewed_by, a.produced_by, a.done_check_passed], ['submitted', null, 'system', 1], k); }
-  // an answer nobody gave is left empty and the form check says so; nothing is invented
-  await startProject(db, { id: 'Q', name: 'q', now: NOW });
-  const q = await draftArtifacts(db, { project_id: 'Q', readback: [{ need_id: 'audience', value: 'members' }], fields: { want: 'a club site' }, now: NOW });
-  assert.deepEqual(q.drafted[0], { kind: 'A-INI-1', ok: false, missing: ['first_outcomes', 'constraints'] });
-  assert.equal(one(db, `SELECT done_check_passed FROM artifacts WHERE project_id = 'Q' AND kind = 'A-INI-1'`).done_check_passed, 0);
-  await assert.rejects(draftArtifacts(db, { project_id: 'NOPE' }), /unknown project/);
-});
-
-test('US-15-R05: the lifecycle step drafts the initiation artifacts of an initiating project from the readback port, once', async () => {
-  const db = setup(); await startProject(db, { id: 'P', name: 'p', now: NOW });
-  let calls = 0;
-  const readback = async () => { calls++; return { readback: [{ need_id: 'audience', value: 'clients' }, { need_id: 'first_outcome', value: 'bookings' }, { need_id: 'constraints', value: 'none', assumption: true }], fields: { want: 'book me' } }; };
-  const r = await runTick(db, { config, now: NOW, extraSteps: [lifecycleStep({ readback })] });
-  assert.deepEqual(r.errors, []); assert.equal(one(db, `SELECT status FROM artifacts WHERE project_id = 'P' AND kind = 'A-INI-1'`).status, 'submitted');
-  await runTick(db, { config, now: NOW + HOUR, extraSteps: [lifecycleStep({ readback })] });
-  assert.equal(calls, 1);                                                                                           // A-INI-1 exists now: not drafted again
-  const failing = setup(); await startProject(failing, { id: 'F', name: 'f', now: NOW });
-  const bad = await runTick(failing, { config, now: NOW, extraSteps: [lifecycleStep({ readback: async () => { throw new Error('elicit down'); } })] });
-  assert.deepEqual(bad.errors, []);                                                                                 // a port that fails drafts nothing and never errors the tick
-});
-
-test('US-15-R10, US-15-R15: lifecycleProbe reports the lifecycle from its own tables, read-only, and answers on an empty store', async () => {
-  const db = setup();
-  assert.deepEqual(await lifecycleProbe(db, { now: NOW }), { projects: 0, by_phase: {}, status_report_age_h: null, open_gate_items: 0, archived: 0 });
-  await executing(db, 'AG', 'agile', NOW); await produceStatusReport(db, { project_id: 'AG', now: NOW });
-  const count = () => ['kernel_projects', 'lifecycle_status_reports', 'items', 'lifecycle_archive'].map(t => one(db, `SELECT COUNT(*) AS n FROM ${t}`).n);
-  const before = count();
-  const p = await lifecycleProbe(db, { now: NOW + 5 * HOUR });
-  assert.deepEqual(count(), before);
-  assert.deepEqual([p.projects, p.by_phase, p.status_report_age_h], [1, { executing: 1 }, 5]);
+  await startProject(db, { id: 'T1', name: 't1', override: { mode: 'agile', reason: 'test fixture', decided_by: 'portfolio-manager' }, now: NOW });
+  await startProject(db, { id: 'T2', name: 't2', override: { mode: 'agile', reason: 'test fixture', decided_by: 'portfolio-manager' }, now: NOW });
+  db.raw.prepare(`UPDATE kernel_projects SET current_phase = 'closed' WHERE id = 'T2'`).run();
+  assert.deepEqual(await refreshMonitoring(db, { now: NOW }), { risk_reviews: ['T1'], quality: ['T1'] });
+  assert.deepEqual(await refreshMonitoring(db, { now: NOW + DAY }), { risk_reviews: [], quality: [] });
+  assert.deepEqual(await refreshMonitoring(db, { now: NOW + DAY, config: { risk_review_period_h: 12 } }), { risk_reviews: ['T1'], quality: [] });
+  const tick = await runTick(db, { config, now: NOW + 9 * DAY, extraSteps: [lifecycleStep()] });
+  assert.deepEqual(tick.errors, []); assert.match(tick.report, /1 risk review\(s\), 1 quality reading\(s\)/);
+  assert.equal(one(db, `SELECT COUNT(*) AS n FROM artifacts WHERE project_id = 'T2'`).n, 0);
 });

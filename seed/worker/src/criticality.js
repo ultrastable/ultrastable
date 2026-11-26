@@ -61,10 +61,26 @@ async function windowFigures(db, t, from, to) {
   };
 }
 
+// READ-BUDGET-9: the previous window (now - 2 spans .. now - 1 span) moves by ten minutes a tick and its rows are weeks old, yet it was counted
+// again every tick with the same seven reads as the current one (about 2,100 rows a tick, measured). Its figures are kept in one org row for the
+// clock hour they were read in, under the thresholds they were read with; a new hour, changed thresholds or an unreadable row reads them again.
+async function prevWindow(db, t, now, span) {
+  const KEY = 'criticality_prev_window', hour = Math.floor(now / 3600e3);
+  const sig = JSON.stringify([span, t.deploy, t.originated, t.self || null, t.dispatch_spend_units]);
+  try {
+    const c = JSON.parse(((await first(db, `SELECT value FROM org WHERE key = ?`, KEY)) || {}).value || 'null');
+    if (c && c.hour === hour && c.sig === sig && c.fig) return c.fig;
+  } catch (e) { /* allow-silent: an unreadable cache row is a fresh read below */ }
+  const fig = await windowFigures(db, t, now - 2 * span, now - span);
+  try { await db.prepare(`INSERT INTO org (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value`).bind(KEY, JSON.stringify({ hour, sig, fig })).run(); }
+  catch (e) { /* allow-silent: a cache write miss only costs the next tick one more read of the previous window */ console.error('criticality: previous window not cached:', e && e.message); }
+  return fig;
+}
+
 export async function measureCriticality(db, t, now) {
   const span = t.window_days * 86400e3;
   const cur = await windowFigures(db, t, now - span, now + 1000);
-  const prev = await windowFigures(db, t, now - 2 * span, now - span);
+  const prev = await prevWindow(db, t, now, span);
   const hasPrev = prev.n > 0 || prev.deploys + prev.fail > 0;
   const r = computeKEff(cur, hasPrev ? prev : null, t);
   return { ...r, cap_breached: cur.cap, window_days: t.window_days, k_min: t.k_min, at: iso(now) };
@@ -86,7 +102,7 @@ export async function originate(db, t, m, ctx, ensureItem) {
   for (const kind of order) {
     if (!(await CANDIDATES[kind](m, t, db))) continue;
     const pre = `ORIGIN-${kind}-${day}`;
-    const open = await first(db, `SELECT id FROM items WHERE id LIKE ? AND status NOT IN ('done','superseded','cancelled') LIMIT 1`, pre + '%');
+    const open = await first(db, `SELECT id FROM items WHERE id >= ? AND id < ? AND status NOT IN ('done','superseded','cancelled') LIMIT 1`, pre, pre + '\uffff');  // READ-BUDGET-9: a primary-key range; LIKE cannot use the index and read every item (578 rows a call, measured)
     if (open) return { kind, id: open.id, created: false }; // today's item for this problem is still at the head
     const id = `${pre}-t${ctx.tickId}`; // a closed one is replaced by a fresh one: the queue may never stay empty
     await ensureItem(db, {

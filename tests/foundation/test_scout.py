@@ -36,7 +36,12 @@ class Scout(unittest.TestCase):
     def test_run_files_only_over_threshold_and_is_idempotent(self):
         d = make(SRC); row = S.run(d, fetch, apply=True)
         self.assertEqual(row["scanned"], 3); self.assertTrue(row["filed"]); self.assertFalse(any("typo" in i.lower() for i in row["filed"]))
-        it = json.loads((d / "docs/issues" / (row["filed"][0] + ".json")).read_text()); self.assertIn("growth", it["labels"]); self.assertIn("Done check:** grep:ops/scout/adopted.jsonl", it["body"])
+        it = json.loads((d / "docs/issues" / (row["filed"][0] + ".json")).read_text()); self.assertIn("growth", it["labels"]); self.assertIn(f"Done check:** cmd:python3 -m foundation scout --decided {it['id']}", it["body"])
+        from foundation import specgate
+        self.assertEqual(specgate.missing(it["body"]), [])  # SPEC-GATE-1: the loop's own filing passes the gate (done check, prediction, out of scope, closing probe)
+        self.assertFalse(S.has_outcome(d, it["id"])); self.assertEqual(S.metrics(d)["scout_undecided"], len(row["filed"]))
+        S.adopt(d, it["id"], "declined", "not relevant")
+        self.assertTrue(S.has_outcome(d, it["id"])); self.assertEqual(S.metrics(d)["scout_undecided"], len(row["filed"]) - 1)
         again = S.run(d, fetch, apply=True); self.assertEqual((again["scanned"], again["filed"]), (0, []))
         self.assertEqual(len((d / "ops/scout/log.jsonl").read_text().splitlines()), 2)
 
@@ -71,6 +76,37 @@ class Scout(unittest.TestCase):
             if url.endswith("/a"): raise OSError("down")
             return RSS
         row = S.run(d, bad, apply=True); self.assertIn("feed-one", row["errors"]); self.assertTrue(row["filed"])
+
+    def test_an_unreachable_source_is_unmeasured_not_quiet(self):
+        d = make(SRC)
+        def refused(url, timeout=30):
+            if url.endswith("/a"):
+                raise OSError("HTTP Error 403: Forbidden")
+            return "<rss><channel></channel></rss>"
+        for _ in range(S.load(d)["weight"]["quiet_passes"]):
+            row = S.run(d, refused, apply=True)
+        w = json.loads((d / "ops/scout/weights.json").read_text())
+        self.assertEqual(row["unreachable"], ["feed-one"]); self.assertEqual(row["read"], 1)
+        self.assertEqual((w["feed-one"]["quiet"], w["feed-one"]["weight"]), (0, 1.0))  # never read: no decay
+        self.assertLess(w["blog"]["weight"], 1.0)  # read and silent for quiet_passes passes: decays
+
+    def test_outcome_only_reweight_counts_no_quiet_pass(self):
+        d = make(SRC); cfg = S.load(d)
+        w = S.reweight(d, cfg, {}, {}, count_quiet=False)
+        self.assertEqual({k: v["quiet"] for k, v in w.items()}, {"feed-one": 0, "blog": 0})
+
+    def test_a_gzip_body_is_read_as_text(self):
+        import gzip, zlib
+        page = "<html>Jules runs scheduled tasks in a cloud VM</html>"
+        self.assertEqual(S.decode(gzip.compress(page.encode()), "gzip"), page)
+        self.assertEqual(S.decode(gzip.compress(page.encode()), ""), page)  # no header, gzip magic bytes
+        self.assertEqual(S.decode(zlib.compress(page.encode()), "deflate"), page)
+        self.assertEqual(S.decode(page.encode(), ""), page)
+
+    def test_common_words_do_not_match_a_gap(self):
+        tg = [{"kind": "gap", "id": "durable-agent-runs", "tokens": S.tokens("An agent run that survives a restart and resumes here; each has its own"), "text": "x"}]
+        e = {"title": "Five new vulnerabilities, and how the proxy protects origins", "summary": "Here is how they work and why each origin has protection when it runs."}
+        self.assertEqual(S.score(e, tg, [], 1.0), (0.0, []))
 
     def test_adopt_requires_reason(self):
         with self.assertRaises(ValueError): S.adopt(make(SRC), "Q-SCOUT-x", "adopted", " ")

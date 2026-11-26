@@ -661,7 +661,8 @@
         "RND-1",
         "SCOUT-1",
         "RESEARCH-1",
-        "SUBSTANCE-1"
+        "SUBSTANCE-1",
+        "ORCHESTRATE-1"
       ],
       "detector": [
         {
@@ -719,7 +720,9 @@
         "COLDSTART-1",
         "ADMIT-1",
         "SYSTEM-SPEC-1",
-        "BOOT-ACCEPT-1"
+        "BOOT-ACCEPT-1",
+        "CLEANROOM-1",
+        "COHERENCE-1"
       ],
       "detector": [
         {

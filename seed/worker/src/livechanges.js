@@ -15,7 +15,7 @@ export async function refreshLiveChanges({ db, token, repo, fetch: f = fetch, no
   // SUBSTANCE-1: an upsert, not INSERT OR REPLACE, so the substance verdict a later pass wrote is kept when the PR is seen again
   const stmts = prs.map(p => db.prepare('INSERT INTO live_changes (n, repo, title, by_origin, merged_at, url) VALUES (?,?,?,?,?,?) ON CONFLICT(repo, n) DO UPDATE SET title=excluded.title, by_origin=excluded.by_origin, merged_at=excluded.merged_at, url=excluded.url').bind(p.number, repo, String(p.title).slice(0, 300), origin(p), p.merged_at, p.html_url));
   stmts.push(db.prepare('INSERT OR REPLACE INTO live_changes_meta (repo, refreshed_at) VALUES (?,?)').bind(repo, new Date(now).toISOString()));
-  stmts.push(db.prepare('DELETE FROM live_changes WHERE repo = ? AND rowid NOT IN (SELECT rowid FROM live_changes WHERE repo = ? ORDER BY merged_at DESC LIMIT 400)').bind(repo, repo));  // PROGRESS-1: the cap is per repository, so one busy repository never evicts another's history
+  stmts.push(db.prepare('DELETE FROM live_changes WHERE repo = ? AND merged_at < (SELECT merged_at FROM live_changes WHERE repo = ? ORDER BY merged_at DESC LIMIT 1 OFFSET 399)').bind(repo, repo));  // READ-BUDGET-9: one walk of the (repo, merged_at) index to the 400th row, then a range; rows that share the 400th row's instant are kept  // PROGRESS-1: the cap is per repository, so one busy repository never evicts another's history
   await db.batch(stmts);
   return { status: 'ok', merged_seen: prs.length };
 }
@@ -65,10 +65,22 @@ export async function classifyPending({ db, token, max = 2, fetch: f = fetch }) 
 }
 
 // repo: the one repository /live shows. Without it, every cached repository is returned (the first deploys cached only one).
+// READ-BUDGET-9: the site asks for this on every /live and /api/freshness request through its service binding (about 115 calls an hour, 705 rows
+// each, measured), while the rows change only when a pass refreshes them or classifies a pending one. The answer is kept per isolate and served
+// again while two cheap readings are unchanged: the refresh time (one row) and the count of rows still waiting for a verdict (the partial index
+// live_changes_pending, so only pending rows are read). Either one moving reads the table again.
+const liveCache = new WeakMap();  // db binding -> Map(repo -> { stamp, out })
 export async function readLiveChanges(db, repo = null) {
   const meta = repo ? await db.prepare('SELECT MAX(refreshed_at) AS at FROM live_changes_meta WHERE repo = ?').bind(repo).first() : await db.prepare('SELECT MAX(refreshed_at) AS at FROM live_changes_meta').first();
   await ensureSubstance(db);
+  const pending = await db.prepare('SELECT COUNT(*) AS n FROM live_changes WHERE substance IS NULL').first();
+  const stamp = `${(meta && meta.at) || ''}|${pending ? pending.n : ''}`, key = repo || '*';
+  let byRepo = liveCache.get(db); if (!byRepo) { byRepo = new Map(); liveCache.set(db, byRepo); }
+  const hit = byRepo.get(key);
+  if (hit && hit.stamp === stamp && meta && meta.at) return hit.out;
   const q = repo ? db.prepare('SELECT n, title, by_origin, merged_at, url, substance FROM live_changes WHERE repo = ? ORDER BY merged_at DESC LIMIT 400').bind(repo) : db.prepare('SELECT n, title, by_origin, merged_at, url, substance FROM live_changes ORDER BY merged_at DESC LIMIT 400');
   const rows = (await q.all()).results || [];
-  return { refreshed_at: (meta && meta.at) || null, changes: rows.map(x => ({ n: x.n, title: x.title, by: x.by_origin, merged_at: x.merged_at, url: x.url, substance: x.substance || null })) };
+  const out = { refreshed_at: (meta && meta.at) || null, changes: rows.map(x => ({ n: x.n, title: x.title, by: x.by_origin, merged_at: x.merged_at, url: x.url, substance: x.substance || null })) };
+  byRepo.set(key, { stamp, out });
+  return out;
 }

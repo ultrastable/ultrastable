@@ -85,7 +85,7 @@ def ping(feed: str) -> int:
 
 
 def item(pid: str, r: dict) -> dict:
-    body = (f"**Owner:** executor\n**Trigger:** findable workflow, daily\n**Done check:** python3 -m foundation findable --probe {pid}\n**Status:** open\n\n"
+    body = (f"**Owner:** executor\n**Trigger:** findable workflow, daily\n**Done check:** cmd:python3 -m foundation findable --probe {pid}\n**Prediction:** findable_gaps <= 0 within 168 h\n**Out of scope:** paid listings, new accounts, and any page that is not this property's own\n**Closing probe:** cmd:python3 -m foundation findable --probe {pid}\n**Status:** open\n\n"
             f"{r['url']} is missing what search engines and AI agents read: " + "; ".join(r["gaps"]) +
             ". Fix the property's own pages (shared seed modules first, so every system gets it). Closed by the same daily reading.")
     return {"id": f"Q-FIND-{pid}", "title": f"Q-FIND-{pid}: make {r['url']} findable ({len(r['gaps'])} gaps)", "body": body,

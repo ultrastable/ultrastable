@@ -1,0 +1,12 @@
+{
+  "id": "Q-SPEC-03-R16-slot-claim",
+  "title": "Q-SPEC-03-R16-slot-claim: A duplicate firing of the tick ends without acting",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** cmd:git grep -q \"US-03-R16\" -- seed/worker/test\n**Status:** open\n\nUS-SPEC-03 (US-03-R16): the cron and the second producer (`POST /pulse/watch`, `seed/worker/src/pulse.js` `watch`) can both start a tick for one slot; `watch` only checks that the newest tick is older than two intervals and takes no claim. Take a claim on the slot (one row per slot, inserted before the steps run) so the second firing leaves a beat and returns without running a step.\n\nsize: S\n\n**Prediction:** spec_quality >= 0.9 within 168 h\n**Out of scope:** path-level claims with tokens and fences (Q-SPEC-08-seed-fenced-claims).\n\n**Closing probe:** cmd:`git grep -q \"US-03-R16\" -- seed/worker/test` exits 0, and `python3 scripts/spec_ids.py --check` passes with the status line of the specification changed from PLANNED to BUILT naming the file and the test.\n",
+  "labels": [
+    "p2",
+    "agent-ready",
+    "spec"
+  ],
+  "milestone": "Now",
+  "workstream": "Executor queue"
+}

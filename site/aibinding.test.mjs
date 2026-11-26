@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
 // AI-BINDING-1: model calls through /__internal/cf use the AI binding, so a deploy token without Workers AI permission cannot 401 the executor.
 import { test } from "node:test";
 import assert from "node:assert/strict";

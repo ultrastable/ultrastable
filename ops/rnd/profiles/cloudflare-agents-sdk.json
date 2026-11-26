@@ -1,0 +1,47 @@
+{
+ "capabilities": {
+  "agent-skills": "your Agents Concepts What are agents? Harness Tools Sessions Context Agent Skills Calling LLMs Using Agents with Workflows Agentic patterns Overview Hu",
+  "chat-entry": "s Build and host AI agents on Cloudflare. Connect chat, voice, email, Slack, and webhooks to a durable agent, and give it tools such as a workspa",
+  "durable-execution": "s on Cloudflare. Connect chat, voice, email, Slack, and webhooks to a durable agent, and give it tools such as a workspace, a browser, web search, MCP se",
+  "event-triggered-agents": "host AI agents on Cloudflare. Connect chat, voice, email, Slack, and webhooks to a durable agent, and give it tools such as a workspace, a browser,",
+  "idea-to-deploy": "ge, real-time connections, scheduled work, and recoverable execution. Deploy once and Cloudflare runs your agents across its global network, scali",
+  "mcp-server": "agent, and give it tools such as a workspace, a browser, web search, MCP servers, and payments. When you host agents on Cloudflare, each agent",
+  "multi-agent-roles": "ycle hooks Client tools Messengers Channels Scheduled tasks Workflows Sub-agent RPC and programmatic turns Programmatic submissions Durable recovery",
+  "observability": "e Sandbox Browser Web fetch Web search MCP servers AI Search Payments Observability Logs \u00b7 metrics \u00b7 traces Agents on Cloudflare are composed from four p",
+  "sandboxed-execution": "ts Scheduler MCP client Harnesses Pi OpenCode Think Tools 8 Workspace Sandbox Browser Web fetch Web search MCP servers AI Search Payments Observabi",
+  "scheduled-agents": "ent has a durable identity, local SQL storage, real-time connections, scheduled work, and recoverable execution. Deploy once and Cloudflare runs your"
+ },
+ "errors": {},
+ "id": "cloudflare-agents-sdk",
+ "name": "Cloudflare Agents SDK",
+ "refreshed_at": "2026-11-26T06:46:33Z",
+ "sha": "55b709101a67",
+ "sources_read": [
+  "https://developers.cloudflare.com/agents/"
+ ],
+ "taxonomy": [
+  "a2a-protocol",
+  "agent-evals",
+  "agent-memory",
+  "agent-skills",
+  "agents-md",
+  "autonomous-pr",
+  "chat-entry",
+  "cloud-background-agents",
+  "cross-model-review",
+  "durable-execution",
+  "event-triggered-agents",
+  "existing-repo-adoption",
+  "idea-to-deploy",
+  "incident-investigation",
+  "mcp-server",
+  "multi-agent-roles",
+  "observability",
+  "other-cloud",
+  "permission-guardrails",
+  "sandboxed-execution",
+  "scheduled-agents",
+  "self-hostable",
+  "spend-budgets"
+ ]
+}

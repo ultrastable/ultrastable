@@ -25,6 +25,7 @@ Allocation by risk alone gives no capacity to healthy products: all capacity dra
 | Guard measure | A separate output-quality measure that must not worsen when the outcome measure rises. |
 | Simplify pass | A cycle whose plus removes complexity. |
 | Rest | A period during which a product receives no plus after repeated misses. |
+| Successor | The plus item a closed item emits: name the next improvement this unlocks and file it. |
 
 ## 3. Behavior
 
@@ -52,7 +53,9 @@ flowchart TD
 
 **Digest.** A weekly row lists pluses shipped, kept and reverted per product. A plus never produces a question to the principal.
 
-**Plus share check (L1).** Over the last 20 done items, if at least 10 exist and the plus share is below half the target (default target 0.2, so below 0.10), open `REBALANCE-<date>` for the portfolio manager at priority 5. Example: 1 plus in 20 is 0.05, which opens it.
+**Plus share check (L1).** Over the last 20 done items, if at least 10 exist and the plus share is below half the target (default target 0.2, so below 0.10), open `REBALANCE-<date>` for the portfolio manager at priority 5. Example: 1 plus in 20 is 0.05, which opens it. Exactly half the target (2 in 20) does not. The window is the 20 most recently closed items of the runtime's own tenant; at most one rebalance item is opened per day, deduplicated by identifier.
+
+**Successors (L1, seed).** Each tick, while k_eff is at or below its upper bound, up to a configured batch (3 in the seed) of done items that have no successor each emit one plus item `NEXT-<id>` for the same owner role at the same priority, with closing probe `successor:<id>`. The doer closes a `NEXT-<id>` item by asking a model for one concrete, small, probe-checkable improvement and filing it as `PLUS-<id>` (kind `plus`, priority 30) for a role that exists; an invalid answer parks the item with the reason, and with no model the item waits. Above the upper bound no successor is emitted, so filing cannot run away. Questions the system asks about its own open items (US-SPEC-16) are also filed as plus items, so they count toward the plus share when they close.
 
 ## 4. Normative requirements
 
@@ -70,6 +73,8 @@ flowchart TD
 - **US-04-R12 [L2]** A step only the principal can take MUST become one gate card and MUST NOT be a question.
 - **US-04-R13 [L2]** A detector SHOULD raise an item when a product's usage is unmeasured or the weekly digest is stale.
 - **US-04-R14 [L2]** Where a platform counts machine requests with human ones, the usage measure MUST be labelled as such.
+- **US-04-R15 [L1]** An implementation that emits successors MUST emit at most one per closed item, MUST bound the number emitted per tick, and MUST stop emitting while its criticality reading is above the upper bound.
+- **US-04-R16 [L1]** A successor item MUST close only when a new item with an owner role that exists, a done check and a closing probe has been filed. An answer that lacks one MUST park the successor with the reason and MUST NOT file an item.
 
 ## 5. Data
 
@@ -84,6 +89,8 @@ flowchart TD
 | Starvation under high risk | Reserved share (R05) |
 | No data | Measurement kind and unmeasured-as-null (R09) |
 | Fix-only streak | Rebalance item (R02) |
+| Successors filed without bound | Batch per tick and the upper bound on k_eff (R15); the daily origination cap (US-03-R22) |
+| A model names a successor with no done check or a role nobody holds | Parked with the reason, nothing filed (R16) |
 
 ## 7. Conformance tests
 
@@ -91,11 +98,19 @@ flowchart TD
 - **US-04-T02** Seed 9 done items. Pass: no rebalance item (too few).
 - **US-04-T03 [L2]** Ship a plus with usage +13.7% and a non-worse guard. Pass: status `kept`, `misses_in_row = 0`. Fail: otherwise.
 - **US-04-T04 [L2]** Make the usage reading stale at the window end. Pass: outcome recorded unmeasured, not kept.
+- **US-04-T05** Close items on an empty queue and run ticks. Pass: each closed item has at most one `NEXT-<id>` item, no tick emits more than the batch, and with k_eff above the upper bound none is emitted.
+- **US-04-T06** Dispatch a `NEXT-<id>` item to the doer with a model that answers a valid item, then one that answers without a done check. Pass: the first files `PLUS-<id>` and is done; the second is parked with the reason and files nothing.
 
 ## 8. Reference implementation status
 
-- Plus-share check (US-04-R02): BUILT in `core/src/tick.js` (`check_plus_share`), target from `ultrastable.json` (`capacity.plus_share` 0.2). US-04-T01 and US-04-T02 are asserted in `core/plus/plus.test.js`.
+Paths that start with `core/` are in the `workers/` directory; paths that start with `seed/` are from the repository root.
+
+- Plus-share check (US-04-R02, US-04-T01, US-04-T02): BUILT in `core/src/tick.js` and `seed/worker/src/tick.js` (`check_plus_share`), target from `ultrastable.json` (`capacity.plus_share` 0.2). Asserted for the core tick in `core/plus/plus.test.js` and for the seed tick in `seed/worker/test/tick.test.js` ("US-04-T01", "US-04-T02" and "US-04-R02 window", which also shows that another tenant's done items are not counted).
+- Successors (US-04-R03, R15, R16, US-04-T05, US-04-T06): BUILT in `seed/worker/src/criticality.js` (`emitSuccessors`, batch and identifier prefix from `seed/autonomy/criticality.json`) and `seed/worker/src/doer.js` (`successor`), tests "ignition from nothing: the queue never empties, every closed item emits a successor, and the reaction does not run away" and "control rod: above k_max no successors are emitted" in `seed/worker/test/criticality.test.js`, and "successor items are filed through Workers AI and the NEXT item is done" and "an invalid model answer parks the item with the reason" in `seed/worker/test/doer.test.js`. The successor carries no expected value (R03 asks for one), and the model that writes it needs the platform's AI binding.
+- Additive reviews (US-04-R04): PLANNED as a check. The rule is stated in the operating agreement (`agents/AGENTS.md` section 6); nothing reads a review for its plus.
 - Reserved share, product registry, keep or revert, simplify pass, rest after misses, weekly digest (US-04-R01, R05 to R13, US-04-T03, US-04-T04): BUILT as a module in `core/plus/index.js` with `core/plus/migrations/0001_plus.sql`, tests in `core/plus/plus.test.js`. The share is lowered only by a row with an expiry, and `core/kernel/programs.js` takes the reserved slots off before it reads risk; a plus states its prediction, guard, angle, doer and revert path before it is filed as a work item; baselines are stored at shipping; an unmeasured reading is null and never kept; a miss files a revert item, and three in a row set `rest_until`; every fifth cycle is a simplify pass. The spec's `product_registry` table is named `plus_product_registry` there. RUNNING in QNFO (daily cap of 3 pluses taken from the managers' origination cap).
-- The plus step in the composition root (`core/org/buildout.js`, test `core/org/org.test.js` issue #201), on by default: BUILT (`core/org/buildout.js`, `core/org/org.test.js`). A generator that writes the plus: PLANNED. The proposer is a port; without one, writing the plus is filed as a work item for the product manager. Step 404 reads usage, guard, open fix items and earlier outcomes; usage by section, slow routes, feedback and comparable products are not read.
+- The plus step in the composition root, on by default: BUILT in `core/org/buildout.js`, test "issue #201: every build-out step is in extraSteps, runs on by default, and an off switch removes its work" in `core/org/org.test.js`.
+- Keep or revert in the seed tick: PLANNED. The seed measures the share and emits successors; it does not store baselines for a plus or revert one on a miss. Its goals step keeps or reverts its own knob moves by the same rule (`seed/worker/src/goals.js`), which is not the product plus loop. Work item `Q-SPEC-04-seed-keep-or-revert`.
+- A generator that writes the plus in `workers/`: PLANNED. The proposer is a port; without one, writing the plus is filed as a work item for the product manager. Step 404 reads usage, guard, open fix items and earlier outcomes; usage by section, slow routes, feedback and comparable products are not read.
 - Usage measurement, the record side (US-04-R09, R14): BUILT in `core/plus/index.js` (`measureUsage`, `recordReading`; a failed read is null, and a count that includes machine requests is labelled), tests in `core/plus/plus.test.js`.
-- Usage-measurement from platform analytics: RUNNING in QNFO. In `ultrastable/workers` the reader that calls a platform's analytics is PLANNED: it needs a live account and its credential. The port it would fill is `reader` of `plusStep`.
+- Usage-measurement from platform analytics: RUNNING in QNFO. In `workers/` the reader that calls a platform's analytics is PLANNED: it needs a live account and its credential. The port it would fill is `reader` of `plusStep`.

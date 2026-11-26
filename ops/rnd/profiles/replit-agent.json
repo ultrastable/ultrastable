@@ -1,0 +1,43 @@
+{
+ "capabilities": {
+  "agent-skills": "e Git pane Checkpoints File History Disaster Recovery Secrets Secrets Agent Skills Agent Skills Agent Customization Skills directory Workspace tools She",
+  "chat-entry": "t.md Dependencies Ports Developer Frameworks Platforms ChatGPT Claude Slack Mobile App Desktop App Troubleshooting Mobile app Additional Resource",
+  "event-triggered-agents": "abled\":false,\"feature_enabled\":true},\"impressionData\":false},{\"name\":\"automations-pr-grouping\",\"enabled\":true,\"variant\":{\"name\":\"disabled\",\"enabled\":fa",
+  "idea-to-deploy": "Replit Planning Agent Modes Model selector App Testing General Agent Publishing Overview After you publish Custom Domains Access Feedback widget Depl",
+  "mcp-server": "grations Connectors Custom connectors AI Plaid Shopify Open in Replit MCP &amp; API MCP list Replit MCP server Git Using the Git pane Checkpoin",
+  "scheduled-agents": "space geography Workspace Settings Model controls Admin API Chats and routines Chats Missions Routines Missions vs. Routines vs. Tasks Sharing chats"
+ },
+ "errors": {},
+ "id": "replit-agent",
+ "name": "Replit Agent",
+ "refreshed_at": "2026-11-26T06:46:33Z",
+ "sha": "54e8fcd4087a",
+ "sources_read": [
+  "https://docs.replit.com/replitai/agent"
+ ],
+ "taxonomy": [
+  "a2a-protocol",
+  "agent-evals",
+  "agent-memory",
+  "agent-skills",
+  "agents-md",
+  "autonomous-pr",
+  "chat-entry",
+  "cloud-background-agents",
+  "cross-model-review",
+  "durable-execution",
+  "event-triggered-agents",
+  "existing-repo-adoption",
+  "idea-to-deploy",
+  "incident-investigation",
+  "mcp-server",
+  "multi-agent-roles",
+  "observability",
+  "other-cloud",
+  "permission-guardrails",
+  "sandboxed-execution",
+  "scheduled-agents",
+  "self-hostable",
+  "spend-budgets"
+ ]
+}

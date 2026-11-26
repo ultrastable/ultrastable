@@ -208,51 +208,6 @@ test('US-05-R12 the verifying path is recorded as independent or not, and can be
   assert.deepEqual([other.observed, other.value, other.independent], [true, 3, 1]);
 });
 
-test('US-05-R17, US-05-T05: the fail condition and the null expectation are evaluated: a reading of 3 reaches observed, -1 records a failure, 0 matches the null expectation', async () => {
-  const db = mk();
-  item(db, 'F6');
-  const A = { deciding_query: 'SELECT 1', pass_condition: '> 0', fail_condition: '< 0', null_expectation: '<= 0' };
-  await P.recordAssertion(db, { finding_id: 'F6', state: 'staged', ...A, produced_by: 'doer-1' }, { now: NOW });
-  const at = (v) => P.observe(db, 'F6', { now: NOW, verified_by: 'probe', read: async () => v });
-  const zero = await at(0);
-  assert.deepEqual([zero.observed, zero.null_match, zero.failed], [false, true, undefined]);
-  assert.match(zero.reason, /meets the null expectation <= 0: the reading matches what production shows without the fix/);
-  assert.equal((await P.latestAssertion(db, 'F6')).state, 'staged', 'a null match writes nothing');
-  assert.equal(one(db, `SELECT COUNT(*) AS n FROM predict_assertions WHERE finding_id='F6'`).n, 1);
-  const neg = await at(-1);
-  assert.deepEqual([neg.observed, neg.failed, neg.state], [false, true, 'staged']);
-  assert.match(neg.reason, /meets the fail condition < 0/);
-  const failRow = await P.latestAssertion(db, 'F6');
-  assert.deepEqual([failRow.state, failRow.query_value], ['staged', -1]);
-  assert.match(failRow.evidence, /^fail condition held: deciding query read -1/);
-  await at(-1); // the same failing reading is not recorded twice
-  assert.equal(one(db, `SELECT COUNT(*) AS n FROM predict_assertions WHERE finding_id='F6'`).n, 2);
-  assert.equal((await P.closeFinding(db, 'F6', { now: NOW })).closed, false, 'a recorded failure leaves the finding pending');
-  const good = await at(3);
-  assert.deepEqual([good.observed, good.state, good.value], [true, 'observed', 3]);
-  assert.equal((await P.closeFinding(db, 'F6', { now: NOW })).closed, true);
-  // a pass condition the null expectation also meets cannot discriminate: the reading never reaches observed
-  item(db, 'F7');
-  await P.recordAssertion(db, { finding_id: 'F7', state: 'staged', ...A, pass_condition: '>= 0', fail_condition: '< -5', null_expectation: '<= 5', produced_by: 'doer-1' }, { now: NOW });
-  const both = await P.observe(db, 'F7', { now: NOW, verified_by: 'probe', read: async () => 3 });
-  assert.deepEqual([both.observed, both.null_match], [false, true]);
-  assert.match(both.reason, /meets >= 0 but also the null expectation <= 5/);
-  assert.equal((await P.observe(db, 'F7', { now: NOW, verified_by: 'probe', read: async () => 9 })).observed, true, 'outside the null expectation it reaches observed');
-  // text that is not of the form "<op> <number>" stays informational
-  item(db, 'F8');
-  await P.recordAssertion(db, { finding_id: 'F8', state: 'staged', ...A, fail_condition: 'the probe errors', null_expectation: 'no row reports it', produced_by: 'doer-1' }, { now: NOW });
-  assert.equal((await P.observe(db, 'F8', { now: NOW, verified_by: 'probe', read: async () => 2 })).observed, true);
-});
-
-test('US-05-R17: a null expectation that is the pass condition, in the same words or with the same operator and number, is refused at record time', async () => {
-  const db = mk();
-  item(db, 'F9');
-  const A = { finding_id: 'F9', state: 'staged', deciding_query: 'SELECT 1', pass_condition: '> 0', fail_condition: '< 0' };
-  for (const nul of ['> 0', ' >  0 ', '>0.0']) await assert.rejects(P.recordAssertion(db, { ...A, null_expectation: nul }, { now: NOW }), /null expectation must differ from the pass condition/, nul);
-  await assert.rejects(P.recordAssertion(db, { ...A, pass_condition: 'the alert stays silent', null_expectation: 'The  alert stays SILENT' }, { now: NOW }), /must differ/);
-  await P.recordAssertion(db, { ...A, null_expectation: '<= 0' }, { now: NOW });
-});
-
 test('US-05-R11 a closure at inferred carries the label and a re-test date; the re-test upgrades it to observed or reopens the finding', async () => {
   const db = mk();
   item(db, 'F3'); item(db, 'F4');

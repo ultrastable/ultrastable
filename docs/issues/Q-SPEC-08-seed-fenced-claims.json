@@ -1,0 +1,12 @@
+{
+  "id": "Q-SPEC-08-seed-fenced-claims",
+  "title": "Q-SPEC-08-seed-fenced-claims: Tokens, expiry and fences on claims in the seed tick",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** cmd:git grep -q \"US-08-T05\" -- seed/worker/test\n**Status:** open\n\nUS-SPEC-08 (US-08-R06 to R08): the seed tick's `claims` table is per item with no token, expiry column or fence, and no step renews the heartbeat; `workers/core/claims` has all of them and is not loaded by the seed Worker. Use the claims module for the seed's dispatch and doer so a holder that wakes after its expiry is refused by its stale fence, and a waiting item's claim is renewed while its doer still retries it within the loop-breaker's bound.\n\nsize: L\n\n**Prediction:** spec_quality >= 0.9 within 168 h\n**Out of scope:** the accounting gate and the visibility ratio, which already run as a step of the composition root.\n\n**Closing probe:** cmd:`git grep -q \"US-08-T05\" -- seed/worker/test` exits 0, and `python3 scripts/spec_ids.py --check` passes with the status line of the specification changed from PLANNED to BUILT naming the file and the test.\n",
+  "labels": [
+    "p2",
+    "agent-ready",
+    "spec"
+  ],
+  "milestone": "Now",
+  "workstream": "Executor queue"
+}

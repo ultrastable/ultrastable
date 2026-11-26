@@ -1,0 +1,11 @@
+{
+  "id": "Q-SPEC-12-stem-matching",
+  "title": "Q-SPEC-12-stem-matching: Stem matching for anchors in the signal pipeline",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** cmd:git grep -q \"export function stem\" -- workers/core/signals/index.js\n**Status:** open\n\nUS-SPEC-12 section 6 lists the failure 'whole-word match fails on word stems' with the mitigation 'stem matching', and its status section lists it PLANNED. workers/core/signals/index.js matches an artifact's assertions by normalized substring only (`norm(content).includes(norm(assertion))` in `synthesize` and `revise`), so an assertion restated with another word form (reduces, reduced) reads as removed and is logged as narrowing. Add a small suffix stemmer (`stem`), compare assertions token by token on stems, keep the exact-substring result as the first test, and add a case to workers/core/signals/signals.test.js where a re-inflected assertion is kept and a dropped one is still narrowing.\n\nsize: S\n**Out of scope:** language detection, a model call, any change to the strict-shrink rule (US-12-R07).\n\nPrediction: spec_quality >= 0.9 within 336 h\n\n**Closing probe:** cmd:git grep -q \"stem\" -- workers/core/signals/signals.test.js and the status row of US-SPEC-12 for stem matching reads BUILT with the file and its test.\n",
+  "labels": [
+    "p3",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Executor queue"
+}

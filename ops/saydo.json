@@ -1,7 +1,7 @@
 {
- "at": "2026-11-26T07:09:55Z",
- "gaps": 7,
- "match_share": 0.987,
+ "at": "2026-11-26T12:36:58Z",
+ "gaps": 8,
+ "match_share": 0.986,
  "sources": {
   "changes": [
    {
@@ -156,14 +156,14 @@
     "drift": 0,
     "id": "claims-total",
     "ok": true,
-    "total": 427
+    "total": 432
    }
   ],
   "loops": [
    {
-    "detail": "0 of 109 second-order steps kept in 14 days",
+    "detail": "0 of 116 second-order steps kept in 14 days",
     "id": "second-loop-kept",
-    "judged": 109,
+    "judged": 116,
     "kept": 0,
     "ok": false
    }
@@ -849,6 +849,24 @@
     "checks": 1,
     "external": [],
     "failing": [],
+    "id": "CLEANROOM-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "ORCHESTRATE-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
     "id": "DOC-CONSUMED-1",
     "missing": [],
     "ok": true,
@@ -994,10 +1012,12 @@
    {
     "checks": 1,
     "external": [],
-    "failing": [],
+    "failing": [
+     "python3 -m foundation standingorder --check: ledger decision-2026-11-26-disclose-1-the-full-specification-is-private-the-working-pro: decision recorded without a code consumer (probe must name an existing code or data file); make code consume it"
+    ],
     "id": "CODE-ONLY-ORDER",
     "missing": [],
-    "ok": true,
+    "ok": false,
     "unmeasured": []
    },
    {
@@ -1031,7 +1051,7 @@
     "checks": 1,
     "external": [],
     "failing": [
-     "python3 -m foundation dispose --check: an open item is 89.6 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+     "python3 -m foundation dispose --check: an open item is 95.0 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
     ],
     "id": "DISPOSE-1",
     "missing": [],
@@ -1104,20 +1124,20 @@
   },
   "claims": {
    "gaps": 0,
-   "total": 427
+   "total": 432
   },
   "loops": {
    "gaps": 1,
    "total": 1
   },
   "rules": {
-   "gaps": 4,
-   "total": 99
+   "gaps": 5,
+   "total": 101
   },
   "year": {
    "gaps": 1,
    "total": 2
   }
  },
- "total": 545
+ "total": 552
 }

@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/seed/autonomy/prsize.schema.json",
+  "title": "prsize (seed/autonomy/prsize.json)",
+  "description": "Contract for seed/autonomy/prsize.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "rule": {
+      "type": "string"
+    },
+    "max_files": {
+      "type": "number"
+    },
+    "max_lines": {
+      "type": "number"
+    },
+    "ignore": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "banned": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "split_hint": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "banned",
+    "ignore",
+    "max_files",
+    "max_lines",
+    "rule",
+    "split_hint"
+  ]
+}

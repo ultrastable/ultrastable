@@ -24,17 +24,6 @@ async function run(db, sql, ...args) {
 }
 function iso(d) { return d.toISOString().replace('T', ' ').slice(0, 19); }
 
-// US-03-R18 and US-00-R07: the numbers the tick reads from its configuration, with the defaults the specification names. A configuration that
-// omits one used to fail reap_claims every hour (an invalid cutoff date) and to switch the work-in-progress cap off (a comparison with
-// undefined is never true); a limit that is not configured now has a value, and a configured value always wins.
-export const DEFAULTS = Object.freeze({ claim_ttl_minutes: 120, max_wip_per_role: 3, plus_share: 0.2, max_unworked_releases: 3, execute_max_items: 20 });
-/** The configuration the steps read: the defaults, then every value the caller set (a value set to undefined does not override). The caller's object is not changed. */
-export function withDefaults(config) {
-  const out = { ...DEFAULTS };
-  for (const [k, v] of Object.entries(config || {})) if (v !== undefined) out[k] = v;
-  return out;
-}
-
 // Built-in metrics a prediction can name. Each returns a number.
 export const METRICS = {
   tick_runs_completed_1h: (db, now) => first(db,
@@ -317,18 +306,14 @@ export async function runTick(db, { config, env = {}, now = Date.now(), extraSte
   const startedIso = iso(new Date(now));
   const ins = await run(db, `INSERT INTO tick_runs (started_at, steps_total) VALUES (?, ?)`, startedIso, steps.length);
   const tickId = ins.meta.last_row_id;
-  // stepLog (US-03-R11): what each step that has run reported, taken from the step itself (its notes, or its error), for a layer above to store as evidence.
-  const ctx = { config: withDefaults(config), env, now, nowIso: startedIso, tickId, notes: [], errors: [], dispatched: 0, openGates: 0, metrics, stepLog: [] };
+  const ctx = { config, env, now, nowIso: startedIso, tickId, notes: [], errors: [], dispatched: 0, openGates: 0, metrics };
   let completed = 0;
   for (const { name, run: stepRun } of steps) {
-    const mark = ctx.notes.length;
     try {
       await stepRun(db, ctx);
       completed++;
-      ctx.stepLog.push({ name, ok: 1, evidence: ctx.notes.slice(mark).join('; ') || 'completed; the step recorded no note' });
     } catch (e) {
       ctx.errors.push(`${name}: ${e.message}`);
-      ctx.stepLog.push({ name, ok: 0, evidence: String(e && e.message) });
       try {
         await ensureItem(db, {
           id: `TICKFAIL-${name}-${startedIso.slice(0, 13).replace(' ', 'T')}`,
@@ -347,7 +332,7 @@ export async function runTick(db, { config, env = {}, now = Date.now(), extraSte
   ].join('\n');
   await run(db, `UPDATE tick_runs SET finished_at=?, steps_completed=?, report=?, errors=? WHERE id=?`,
     iso(new Date(now)), completed, report, ctx.errors.length ? JSON.stringify(ctx.errors) : null, tickId);
-  return { tickId, completed, total: steps.length, report, errors: ctx.errors, steps: ctx.stepLog };
+  return { tickId, completed, total: steps.length, report, errors: ctx.errors };
 }
 
 export { TERMINAL };

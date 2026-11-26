@@ -1,0 +1,44 @@
+{
+ "capabilities": {
+  "agent-evals": "per investigation ResolveAI 50% Frontier model 100% Frontier research Evals and training help ResolveAI SRE-1 to be at the frontier Reflective le",
+  "event-triggered-agents": "Digital SREs for all production work Build custom SRE agents for any automation you need, fully managed for you. Operational tasks Resolve shields hu",
+  "incident-investigation": "nts solved ResolveAI 63% Codex 31% Claude Code 29% Latency 2 x faster RCA Minutes to reach the coding agents\u2019 best pass rate ResolveAI 4.9 min",
+  "multi-agent-roles": "eet your stack where it is Security Enterprise-grade by default Build custom agents Custom agents Agents for your workflows Browse All resources Every gu",
+  "other-cloud": "ls Customer isolated: data stays scoped to your org Meet ResolveAI at AWS re:Invent, Booth #1845 \u00b7 Nov 30 \u2013 Dec 4 \u2022 Book a meeting Product Pric",
+  "permission-guardrails": "ts as root problems get fixed Closes the loop on its own, within your guardrails On the critical path for all your reliability work Closes pages and c",
+  "scheduled-agents": "n minutes, not hours. Incidents 03 Issues Fix underlying issues Fixes recurring issues by finding root problems and giving the production context to"
+ },
+ "errors": {},
+ "id": "resolve-ai",
+ "name": "Resolve AI",
+ "refreshed_at": "2026-11-26T06:46:33Z",
+ "sha": "c36e13e387cf",
+ "sources_read": [
+  "https://resolve.ai/"
+ ],
+ "taxonomy": [
+  "a2a-protocol",
+  "agent-evals",
+  "agent-memory",
+  "agent-skills",
+  "agents-md",
+  "autonomous-pr",
+  "chat-entry",
+  "cloud-background-agents",
+  "cross-model-review",
+  "durable-execution",
+  "event-triggered-agents",
+  "existing-repo-adoption",
+  "idea-to-deploy",
+  "incident-investigation",
+  "mcp-server",
+  "multi-agent-roles",
+  "observability",
+  "other-cloud",
+  "permission-guardrails",
+  "sandboxed-execution",
+  "scheduled-agents",
+  "self-hostable",
+  "spend-budgets"
+ ]
+}

@@ -89,6 +89,38 @@ test('a hidden failure demotes', async () => {
   assert.ok(db.raw.prepare("SELECT id FROM items WHERE id LIKE 'LADDER-repo-merge_pr_green-delegated'").get());
 });
 
+test('US-06-R07: a severe outcome older than the stated window no longer demotes, and one inside it does', async () => {
+  const days = policy.ladder.promote_when.no_hidden_failure_days;
+  const at = (d) => new Date(T0 - d * 864e5).toISOString().slice(0, 19).replace('T', ' ');
+  const db = makeDb(); seed(db);
+  db.raw.exec("INSERT INTO trust_ledger (surface,action_class,rung,reliability) VALUES ('repo','merge_pr_green','autonomous',0.9)");
+  for (let i = 0; i < 12; i++) db.raw.exec("INSERT INTO outcomes (surface,action_class,result) VALUES ('repo','merge_pr_green','verified')");
+  db.raw.prepare("INSERT INTO outcomes (surface,action_class,result,at) VALUES ('repo','merge_pr_green','hidden_failure',?)").run(at(days + 1));
+  await runTick(db, { config, now: T0 });
+  assert.equal(db.raw.prepare("SELECT id FROM items WHERE id LIKE 'LADDER-repo-merge_pr_green-delegated%'").get(), undefined);
+  db.raw.prepare("INSERT INTO outcomes (surface,action_class,result,at) VALUES ('repo','merge_pr_green','silent_drop',?)").run(at(days - 1));
+  await runTick(db, { config, now: T0 + 600e3 });
+  assert.ok(db.raw.prepare("SELECT id FROM items WHERE id = 'LADDER-repo-merge_pr_green-delegated'").get());
+  // a policy that states no window counts all time, as before
+  const allTime = structuredClone(policy); delete allTime.ladder.promote_when.no_hidden_failure_days;
+  const db2 = makeDb(); seed(db2);
+  db2.raw.exec("INSERT INTO trust_ledger (surface,action_class,rung,reliability) VALUES ('repo','merge_pr_green','autonomous',0.9)");
+  for (let i = 0; i < 12; i++) db2.raw.exec("INSERT INTO outcomes (surface,action_class,result) VALUES ('repo','merge_pr_green','verified')");
+  db2.raw.prepare("INSERT INTO outcomes (surface,action_class,result,at) VALUES ('repo','merge_pr_green','hidden_failure',?)").run(at(400));
+  await runTick(db2, { config: { ...config, policy: allTime }, now: T0 });
+  assert.ok(db2.raw.prepare("SELECT id FROM items WHERE id = 'LADDER-repo-merge_pr_green-delegated'").get());
+});
+
+test('US-06-R05: a crossing that repeats after its ladder item closed opens a new dated item; the rung is still not changed by the tick', async () => {
+  const db = makeDb(); seed(db);
+  db.raw.exec("INSERT INTO trust_ledger (surface,action_class,rung,reliability) VALUES ('repo','merge_pr_green','autonomous',0.9)");
+  db.raw.exec("INSERT INTO items (id,title,kind,owner_role,done_check,status,disposition) VALUES ('LADDER-repo-merge_pr_green-delegated','old','ladder','operations','x','done','fixed: earlier demotion merged')");
+  db.raw.prepare("INSERT INTO outcomes (surface,action_class,result,at) VALUES ('repo','merge_pr_green','hidden_failure',?)").run(new Date(T0 - 3600e3).toISOString().slice(0, 19).replace('T', ' '));
+  await runTick(db, { config, now: T0 });
+  assert.ok(db.raw.prepare("SELECT id FROM items WHERE id = 'LADDER-repo-merge_pr_green-delegated-2026-11-10' AND status <> 'done'").get());
+  assert.equal(db.raw.prepare("SELECT rung FROM trust_ledger WHERE surface='repo' AND action_class='merge_pr_green'").get().rung, 'autonomous');
+});
+
 test('reliability starts at the baseline and moves with outcomes', () => {
   assert.equal(reliability(0, 0, policy.trust), 0.5);
   assert.ok(reliability(10, 10, policy.trust) > 0.9);
@@ -197,4 +229,102 @@ test('SPEND-SOFT-1: no step is skipped for good; lean defers to every 3 h, spend
   assert.equal(stepPlan('pulse', { spend: { level: 'throttle', knobs: { wide_every_h: 1 } }, now: off }), 'defer');
   assert.equal(stepPlan('pulse', { spend: { level: 'throttle', knobs: { wide_every_h: 1 } }, now: on }), 'run');
   assert.equal(stepPlan('pulse', { spend: { level: 'ease', knobs: {} }, now: off }), 'run');
+});
+
+// US-SPEC-04 section 3 (plus share check) on the seed tick: US-04-T01 and US-04-T02.
+function doneItems(db, n, plus) {
+  const ins = db.raw.prepare(`INSERT INTO items (id,title,kind,owner_role,done_check,status,disposition,updated_at) VALUES (?,?,?,?,?,'done','done: probe passed',?)`);
+  for (let i = 0; i < n; i++) ins.run(`D${String(i).padStart(2, '0')}`, 'd', i < plus ? 'plus' : 'fix', 'staff', 'x', `2026-11-09 ${String(i).padStart(2, '0')}:00:00`);
+}
+
+test('US-04-T01: 1 plus in the last 20 done items is under half the target, so one REBALANCE item opens for the portfolio manager at priority 5', async () => {
+  const db = makeDb(); doneItems(db, 20, 1);
+  const r = await runTick(db, { config, now: T0 });
+  assert.deepEqual(r.errors, []);
+  const rows = db.raw.prepare("SELECT id, kind, owner_role, priority, status FROM items WHERE id LIKE 'REBALANCE-%'").all();
+  assert.deepEqual(rows.map(x => ({ ...x })), [{ id: 'REBALANCE-2026-11-10', kind: 'fix', owner_role: 'portfolio-manager', priority: 5, status: 'ready' }]);
+  await runTick(db, { config, now: T0 + 600e3 });
+  assert.equal(db.raw.prepare("SELECT COUNT(*) AS n FROM items WHERE id LIKE 'REBALANCE-%'").get().n, 1, 'one per day, deduplicated by identifier');
+});
+
+test('US-04-T02: fewer than 10 done items is too few to judge, and a share at the target opens nothing', async () => {
+  const few = makeDb(); doneItems(few, 9, 0);
+  await runTick(few, { config, now: T0 });
+  assert.equal(few.raw.prepare("SELECT COUNT(*) AS n FROM items WHERE id LIKE 'REBALANCE-%'").get().n, 0);
+  const ok = makeDb(); doneItems(ok, 20, 4);
+  await runTick(ok, { config, now: T0 });
+  assert.equal(ok.raw.prepare("SELECT COUNT(*) AS n FROM items WHERE id LIKE 'REBALANCE-%'").get().n, 0);
+  const edge = makeDb(); doneItems(edge, 20, 2);  // 0.10 is half of 0.2: not below it
+  await runTick(edge, { config, now: T0 });
+  assert.equal(edge.raw.prepare("SELECT COUNT(*) AS n FROM items WHERE id LIKE 'REBALANCE-%'").get().n, 0);
+});
+
+test('US-04-R02 window: only the 20 most recently closed items are read, and another tenant\'s done items are not counted', async () => {
+  const db = makeDb(); doneItems(db, 20, 0);
+  const old = db.raw.prepare(`INSERT INTO items (id,title,kind,owner_role,done_check,status,disposition,updated_at) VALUES (?,?,'plus','staff','x','done','done: old','2026-10-01 00:00:00')`);
+  for (let i = 0; i < 10; i++) old.run(`OLD${i}`, 'old plus');
+  const other = db.raw.prepare(`INSERT INTO items (id,title,kind,owner_role,done_check,status,disposition,updated_at,tenant_id) VALUES (?,?,'plus','staff','x','done','done: theirs','2026-11-09 23:59:00','other')`);
+  for (let i = 0; i < 10; i++) other.run(`FOREIGN${i}`, 'their plus');
+  await runTick(db, { config, now: T0 });
+  assert.equal(db.raw.prepare("SELECT COUNT(*) AS n FROM items WHERE id LIKE 'REBALANCE-%'").get().n, 1);
+});
+
+// US-SPEC-08 (US-08-R17): nothing ages silently in the seed tick.
+test('US-08-R17: an item open or ready past 120 minutes is raised to priority 5 and one AGE-120M item a day names the cause to find; a younger or more urgent item is left alone', async () => {
+  const db = makeDb();
+  db.raw.exec(`INSERT INTO items (id,title,owner_role,done_check,priority,status,created_at) VALUES
+    ('OLD','old','nobody','x',40,'ready','2026-11-09 21:00:00'), ('URGENT','urgent','nobody','x',1,'ready','2026-11-09 21:00:00'),
+    ('YOUNG','young','nobody','x',40,'ready','2026-11-09 23:30:00'), ('PARKED','parked','nobody','x',40,'blocked','2026-11-09 21:00:00')`);
+  const r = await runTick(db, { config, now: T0 });
+  assert.deepEqual(r.errors, []);
+  const p = id => db.raw.prepare('SELECT priority FROM items WHERE id=?').get(id).priority;
+  assert.deepEqual([p('OLD'), p('URGENT'), p('YOUNG'), p('PARKED')], [5, 1, 40, 40]);
+  const cause = db.raw.prepare("SELECT owner_role, priority, title FROM items WHERE id='AGE-120M-2026-11-10'").get();
+  assert.equal(cause.owner_role, 'operations'); assert.equal(cause.priority, 5); assert.match(cause.title, /^2 item\(s\) open past 120 minutes/);
+  assert.match(r.report, /over_120m: 2 item\(s\) raised, cause item filed/);
+  await runTick(db, { config, now: T0 + 600e3 });
+  assert.equal(db.raw.prepare("SELECT COUNT(*) AS n FROM items WHERE id LIKE 'AGE-120M-%'").get().n, 1);
+});
+
+test('US-08-R17: with nothing past 120 minutes no cause item is filed', async () => {
+  const db = makeDb();
+  db.raw.exec(`INSERT INTO items (id,title,owner_role,done_check,priority,status,created_at) VALUES ('YOUNG','young','nobody','x',40,'ready','2026-11-09 23:30:00')`);
+  await runTick(db, { config, now: T0 });
+  assert.equal(db.raw.prepare("SELECT COUNT(*) AS n FROM items WHERE id LIKE 'AGE-120M-%'").get().n, 0);
+});
+
+// US-SPEC-02 (US-02-R15): an event wakes its role out of turn; the role's own items and its work-in-progress cap still rule.
+test('US-02-R15: a role that is not due is dispatched when an event wakes it, takes only its own item, and stays under its cap', async () => {
+  const setup = () => { const db = makeDb(); db.raw.exec(`INSERT INTO roles (id, role, tick_every, model) VALUES ('pm-1','portfolio-manager',6,'m'), ('staff-1','staff',6,'m');
+    INSERT INTO items (id,title,owner_role,done_check,priority,status) VALUES ('P1','p','portfolio-manager','x',10,'ready'), ('S1','s','staff','x',1,'ready');`); return db; };
+  const claimed = db => db.raw.prepare('SELECT item_id, agent FROM claims ORDER BY item_id').all().map(x => ({ ...x }));
+  const quiet = setup();
+  await runTick(quiet, { config, now: T0 });
+  assert.deepEqual(claimed(quiet), [], 'tick 1 of a role that ticks every 6: not due, nothing dispatched');
+  const woken = setup();
+  await runTick(woken, { config, now: T0, wake: 'portfolio-manager' });
+  assert.deepEqual(claimed(woken), [{ item_id: 'P1', agent: 'pm-1' }], 'the woken role takes its own item; the staff item waits for staff');
+  const full = setup();
+  full.raw.exec(`INSERT INTO items (id,title,owner_role,done_check,status) VALUES ('W1','w','portfolio-manager','x','claimed'), ('W2','w','portfolio-manager','x','claimed'), ('W3','w','portfolio-manager','x','claimed');
+    INSERT INTO claims (item_id, agent, claimed_at, heartbeat_at) VALUES ('W1','pm-1','2026-11-09 23:59:00','2026-11-09 23:59:00'), ('W2','pm-1','2026-11-09 23:59:00','2026-11-09 23:59:00'), ('W3','pm-1','2026-11-09 23:59:00','2026-11-09 23:59:00')`);
+  await runTick(full, { config: { ...config, doer_max_items: 0 }, now: T0, wake: 'portfolio-manager' });
+  assert.equal(full.raw.prepare("SELECT status FROM items WHERE id='P1'").get().status, 'ready', 'at the cap a woken role takes nothing more');
+});
+
+test('age_sla (SLA-120M): an item open past 120 minutes is raised to priority 5 and the cause is filed once a day; a newer item is left alone', async () => {
+  const db = makeDb();
+  db.raw.exec(`INSERT INTO roles (id, role, tick_every, model) VALUES ('op-1','operations',1,'m');
+    INSERT INTO items (id,title,owner_role,done_check,priority,status,disposition,created_at) VALUES
+      ('OLD','old','nobody','x',40,'open',NULL,'2026-11-09 20:00:00'), ('OLDTOP','old and already first','nobody','x',2,'ready',NULL,'2026-11-09 20:00:00'),
+      ('NEW','new','nobody','x',40,'open',NULL,'2026-11-09 23:00:00'), ('CLOSED','closed with its disposition','nobody','x',40,'done','fixed','2026-11-09 20:00:00');`);
+  const r = await runTick(db, { config, now: T0 });
+  assert.deepEqual(r.errors, []);
+  const pri = id => db.raw.prepare('SELECT priority FROM items WHERE id = ?').get(id).priority;
+  assert.deepEqual([pri('OLD'), pri('OLDTOP'), pri('NEW'), pri('CLOSED')], [5, 2, 40, 40]);
+  const cause = db.raw.prepare(`SELECT title, owner_role, priority, kind FROM items WHERE id = 'AGE-120M-2026-11-10'`).get();
+  assert.deepEqual([cause.owner_role, cause.priority, cause.kind], ['operations', 5, 'fix']);
+  assert.match(cause.title, /^2 item\(s\) open past 120 minutes/);
+  assert.match(r.report, /over_120m: 2 item\(s\) raised, cause item filed/);
+  await runTick(db, { config, now: T0 + 10 * 60e3 });
+  assert.equal(db.raw.prepare(`SELECT COUNT(*) AS n FROM items WHERE id LIKE 'AGE-120M-%'`).get().n, 1);   // once a day, not once a tick
 });

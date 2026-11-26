@@ -6,7 +6,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { makeDb } from './d1shim.js';
 import { ensureItem } from '../src/tick.js';
-import { migrateStep } from '../src/migrate.js';
+import { migrateStep, unbackedDrops } from '../src/migrate.js';
 
 const dir = new URL('../migrations/', import.meta.url);
 const files = () => readdirSync(dir).filter(f => f.endsWith('.sql')).sort().map(file => ({ file, sql: readFileSync(new URL(file, dir), 'utf8') }));
@@ -49,4 +49,29 @@ test('a failing migration stops the run, is reported and counted pending', async
 
 test('without a migration list the step does nothing', async () => {
   assert.deepEqual(await migrateStep(makeDb(), ctx(), null, ensureItem), { applied: [], drift: [], failed: [], pending: null });
+});
+
+test('US-01-R04: every shipped migration is additive, or copies the whole table in the same atomic file before it drops it', () => {
+  for (const m of files()) assert.deepEqual(unbackedDrops(m.sql), [], m.file);
+  const rebuild = files().find(m => /^DROP\s+TABLE\s+trust_ledger\s*;/mi.test(m.sql));
+  assert.ok(rebuild, 'the trust ledger rebuild is the shipped case of a drop with its copy');
+  assert.equal(unbackedDrops(rebuild.sql.replace(/^CREATE TABLE IF NOT EXISTS \w+ AS SELECT \* FROM trust_ledger;$/m, '')).length, 1, 'the same file without its copy is refused');
+  assert.equal(unbackedDrops(rebuild.sql.replace(/^-- atomic:.*$/m, '-- not one transaction')).length, 1, 'the same file outside one transaction is refused');
+  assert.deepEqual(unbackedDrops('CREATE TABLE t_v2 (a);\nDROP TABLE IF EXISTS t_v2;\nALTER TABLE t_v2 RENAME TO t;'), [], 'a staging table the file renames away holds no data of record');
+  assert.equal(unbackedDrops('-- atomic: x\nCREATE TABLE keep AS SELECT * FROM items;\nALTER TABLE items DROP COLUMN blocker;').length, 0);
+  assert.equal(unbackedDrops('ALTER TABLE items DROP COLUMN blocker;').length, 1);
+  assert.deepEqual(unbackedDrops('DROP INDEX IF EXISTS idx_items_status;\nCREATE TRIGGER tr AFTER INSERT ON items BEGIN\n  DELETE FROM claims WHERE item_id = NEW.id;\nEND;'), [], 'indexes and trigger bodies are not data drops');
+});
+
+test('US-01-R04: the tick refuses a migration that drops a table with no copy: nothing runs, the table and its rows stay, an item is filed', async () => {
+  const db = makeDb(); const c = ctx(); const ms = files();
+  await migrateStep(db, c, ms, ensureItem);
+  db.raw.exec(`INSERT INTO items (id, title, owner_role, done_check) VALUES ('KEEP-1', 'kept', 'staff', 'x')`);
+  const r = await migrateStep(db, c, [...ms, { file: '9998_drop.sql', sql: 'CREATE TABLE IF NOT EXISTS ran_first (a);\nDROP TABLE items;' }], ensureItem);
+  assert.deepEqual(r.failed, ['9998_drop.sql']);
+  assert.equal(db.raw.prepare(`SELECT COUNT(*) AS n FROM items WHERE id='KEEP-1'`).get().n, 1);
+  assert.equal(db.raw.prepare(`SELECT name FROM sqlite_master WHERE name='ran_first'`).get(), undefined, 'no statement of a refused file runs');
+  assert.equal(db.raw.prepare(`SELECT file FROM _migrations WHERE file='9998_drop.sql'`).get(), undefined);
+  assert.ok(c.notes.some(n => /9998_drop\.sql failed: refused, not applied: drops table items/.test(n)));
+  assert.ok(db.raw.prepare(`SELECT id FROM items WHERE id='MIGRATION-9998_drop'`).get());
 });

@@ -1,13 +1,53 @@
 {
  "capabilities": {
+  "agent-memory": "local and cloud execution without breaking stride. Org and User-level Memory: Captures decisions, docs, and run-books so every Droid remembers you",
+  "agent-skills": "&amp; Safety Customize the Harness AGENTS.md Connectors MCP Subagents Skills Custom Slash Commands Plugins Troubleshoot plugins Hooks Factory Ente",
+  "agents-md": "ompute Model Independence Autonomy &amp; Safety Customize the Harness AGENTS.md Connectors MCP Subagents Skills Custom Slash Commands Plugins Trouble",
+  "chat-entry": "ndling prioritization and assignment. 5. Create Product Specs Go from Slack conversation to product spec in no time. 6. Review PRs Get thorough,",
+  "cloud-background-agents": ", and delegate your first task from the terminal. Nothing to install: cloud session sync and Droid Computers make your sessions available from any browse",
+  "cross-model-review": "minal. Run the quickstart Ship Code Faster Automate the Full SDLC Put code review, QA, and documentation on autopilot across your repos. Explore Automa",
+  "event-triggered-agents": "Plans &amp; Pricing Available Models Contact Support Product Surfaces Automations Platform Capabilities Agent Readiness Agent Effectiveness Workstreams",
   "existing-repo-adoption": "actory\u2019s Droids are live today. Spin up your first workspace, connect your repos, and ship. Sign Up Now Ready to build the software of the future? Sta",
+  "idea-to-deploy": "Explore Automations Automate the Full SDLC Plan an Enterprise Rollout Deploy, secure, govern, and observe Droid across your organization. Review t",
+  "incident-investigation": "production-ready features from a ticket, spec, or prompt. 2. Resolve On-Call Incidents Triage alerts, perform root cause analysis, and troubleshoo",
   "mcp-server": "architecture diagrams, tickets, and code that you do. We also support MCP to bring your own context. Local and Remote: Pair-program interactive",
+  "multi-agent-roles": "Autonomy &amp; Safety Customize the Harness AGENTS.md Connectors MCP Subagents Skills Custom Slash Commands Plugins Troubleshoot plugins Hooks Facto",
+  "observability": "on. Factory Enterprise : deployment patterns, security, identity, and telemetry for a managed fleet. API Reference : drive sessions, computers, wikis",
   "permission-guardrails": "nomous and Safe: Factory\u2019s agents come with fine-grained controls and guardrails so you can feel comfortable letting Agents work for you. Pricing that",
   "self-hostable": "rrow Right Icon Resources News Events Case Studies Docs Contact Sales Open Source Factory for Science Company Careers Enterprise Security Trust Center"
  },
  "errors": {},
  "id": "factory",
  "name": "Factory",
- "refreshed_at": "2026-11-12T20:05:06Z",
- "sha": "b1c2b1238018"
+ "refreshed_at": "2026-11-26T06:46:33Z",
+ "sha": "562ec90eef8d",
+ "sources_read": [
+  "https://factory.com/news/factory-is-ga",
+  "https://docs.factory.ai/welcome"
+ ],
+ "taxonomy": [
+  "a2a-protocol",
+  "agent-evals",
+  "agent-memory",
+  "agent-skills",
+  "agents-md",
+  "autonomous-pr",
+  "chat-entry",
+  "cloud-background-agents",
+  "cross-model-review",
+  "durable-execution",
+  "event-triggered-agents",
+  "existing-repo-adoption",
+  "idea-to-deploy",
+  "incident-investigation",
+  "mcp-server",
+  "multi-agent-roles",
+  "observability",
+  "other-cloud",
+  "permission-guardrails",
+  "sandboxed-execution",
+  "scheduled-agents",
+  "self-hostable",
+  "spend-budgets"
+ ]
 }

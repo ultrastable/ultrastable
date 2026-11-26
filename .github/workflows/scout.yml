@@ -1,6 +1,6 @@
 name: scout
 # budget: ~2 min x 4/month
-# trigger: weekly; releases and posts of the leading agent platforms move over days, so a faster event buys nothing; dispatch on demand
+# trigger: weekly; releases and posts of the leading agent platforms move over days, so a faster event buys nothing; dispatch on demand; second route: the watchdog dispatches this workflow when no run has succeeded for 1.5 intervals (doctrine/clocks.json `scout`: beat success)
 # free-alternative: a cloud-hosted agent session runs `python3 -m foundation scout --run --apply`
 on:
   schedule: [{cron: "23 6 * * 2"}]
@@ -31,6 +31,9 @@ jobs:
         env: {GITHUB_TOKEN: "${{ github.token }}"}
         run: python3 scripts/build_idea_bank.py --live --grow
       - name: Commit findings, state and the pass log
+        # SCOUT-COMMIT-1: runs when an earlier step failed too. On 2026-11-24 the idea-bank step exited 1 after the scout and R&D passes had finished,
+        # this step was skipped and a week of findings was discarded. The failed step still turns the run red; what the other steps wrote is kept.
+        if: ${{ !cancelled() }}
         run: |
           git config user.name "ultrastable-scout"; git config user.email "actions@users.noreply.github.com"
           python3 -m foundation balance --gate --apply  # FLOW-BALANCE-1: the one filing gate before any item lands

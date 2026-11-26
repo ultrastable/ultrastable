@@ -6,7 +6,6 @@ import { all, first, iso, parseIso, TERMINAL_SQL } from '../kernel/util.js';
 import { createToolLayer, writeBrief, normTitle, isMachineFiled, logAction } from './index.js';
 import { scoreItem } from './score.js';
 import { originate } from './originate.js';
-import { seedPersonas } from './seed.js';
 
 const IN_PROGRAM = `(i.project = ? OR i.project IN (SELECT id FROM kernel_projects WHERE program_id = ?))`;
 const ACTIVE = `i.status NOT IN ${TERMINAL_SQL}`;
@@ -85,16 +84,13 @@ export async function runManagers(db, ctx = {}) {
   return out;
 }
 
-// Tick step for the composition root: runTick(db, { extraSteps: [...L2_EXTRA_STEPS, staffStep({ readFile, research, instructionFor, instructionExists })] }).
+// Tick step for the composition root: runTick(db, { extraSteps: [...L2_EXTRA_STEPS, staffStep({ readFile, research })] }).
 // It runs after the kernel's 'l2' step, which writes the allocation and focus rows the managers read.
 export function staffStep(ports = {}) {
   return { name: 'staff', run: async (db, ctx) => {
     if (ctx.config?.staff?.enabled === false || ctx.config?.kernel?.manager_ops === false) { ctx.notes?.push('staff: manager operations off'); return; }
-    const now = typeof ctx.now === 'number' ? ctx.now : parseIso(ctx.nowIso);
-    // US-02-R17: default personas for the portfolio and every registered program, never over an existing persona.
-    const seeded = await seedPersonas(db, { now, config: ctx.config, ports });
-    const r = await runManagers(db, { tickId: ctx.tickId, now, config: ctx.config, ports });
-    ctx.notes?.push(`staff: ${r.personas} persona(s), ${r.briefs} brief(s)${seeded.seeded?.length ? `, seeded ${seeded.seeded.join(' ')}` : ''}`);
+    const r = await runManagers(db, { tickId: ctx.tickId, now: typeof ctx.now === 'number' ? ctx.now : parseIso(ctx.nowIso), config: ctx.config, ports });
+    ctx.notes?.push(`staff: ${r.personas} persona(s), ${r.briefs} brief(s)`);
     if (r.errors.length) throw new Error(r.errors.join(' | '));
   } };
 }

@@ -1918,6 +1918,17 @@
       "bound_by": "curated"
     },
     {
+      "id": "curated-d1df284b99",
+      "surface": "specs/README.md",
+      "text": "| BUILT | Code exists with passing tests, and the file is named. That a named path exists is checked on every change (see Checks below); the na",
+      "probe": [
+        "file:scripts/spec_truth.py",
+        "grep:tests/foundation/test_spec_truth.py::test_missing_unnamed_and_partly_missing_paths_are_findings",
+        "file:doctrine/spec-truth-baseline.json"
+      ],
+      "bound_by": "curated"
+    },
+    {
       "id": "curated-6b69d08089",
       "surface": "site/worker.js",
       "text": "It finds its own work in your metrics and failures, hands each task to the coding agent that fits, proves each handed-off change live and rolls it back when the proof fails, and keeps score of how often its decisions were right.",
@@ -2587,6 +2598,31 @@
         "file:tests/foundation/test_bootaccept.py",
         "file:seed/worker/test/bootaccept.test.js",
         "file:foundation/bootaccept.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-6ab268273b",
+      "surface": "agents/AGENTS.md",
+      "text": "- **A fresh seed proves the whole; no surface contradicts the axiom (CLEANROOM-1, COHERENCE-1, Rowan 2026-11-25).** \"All surfaces, all",
+      "probe": [
+        "file:.github/workflows/cleanroom.yml",
+        "file:platform/selfhost/day.mjs",
+        "file:doctrine/cleanroom.json",
+        "file:seed/scripts/humanvoice.py",
+        "file:doctrine/coherence.json",
+        "file:workers/tools/sync_agent_files.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-ff82585547",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Large work is planned and worked in steps on the server (ORCHESTRATE-1, Rowan 2026-11-26).** \"Why can't Ultrastable do this entirely on",
+      "probe": [
+        "file:seed/worker/src/orchestrate.js",
+        "file:seed/worker/src/executor.js",
+        "file:seed/worker/test/orchestrate.test.js"
       ],
       "bound_by": "cited"
     },
@@ -3776,6 +3812,33 @@
       ],
       "bound_by": "mirror",
       "of": "cited-c2464a2c9f"
+    },
+    {
+      "id": "mirror-e2926e7423",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **A fresh seed proves the whole; no surface contradicts the axiom (CLEANROOM-1, COHERENCE-1, Rowan 2026-11-25).** \"All surfaces, all",
+      "probe": [
+        "file:.github/workflows/cleanroom.yml",
+        "file:platform/selfhost/day.mjs",
+        "file:doctrine/cleanroom.json",
+        "file:seed/scripts/humanvoice.py",
+        "file:doctrine/coherence.json",
+        "file:workers/tools/sync_agent_files.py"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-6ab268273b"
+    },
+    {
+      "id": "mirror-434e16496c",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Large work is planned and worked in steps on the server (ORCHESTRATE-1, Rowan 2026-11-26).** \"Why can't Ultrastable do this entirely on",
+      "probe": [
+        "file:seed/worker/src/orchestrate.js",
+        "file:seed/worker/src/executor.js",
+        "file:seed/worker/test/orchestrate.test.js"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-ff82585547"
     },
     {
       "id": "mirror-be5af6748b",

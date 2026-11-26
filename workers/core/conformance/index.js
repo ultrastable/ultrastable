@@ -3,7 +3,7 @@
 // Conformance (US-SPEC-00): the level declaration, the map from every requirement to the tests that prove it, and the
 // deviation list, as data a checker verifies. Pure functions over text: the caller reads the files (cli.js does, for Node).
 //   parseSpecs   specification texts -> requirements with their level tag, conformance-test ids and versions
-//   scanTests    test file texts -> which test cites which requirement (JavaScript: a test title; Python: a unittest method name or docstring)
+//   scanTests    test file texts -> which test cites which requirement
 //   buildManifest  the two together: each requirement is `met` (with its tests) or a `deviation` (with the reason)
 //   declaration  the published level, specification versions and deviation list (US-00-R01, US-00-R02, US-00-T01)
 //   check        a manifest against the tree: a `met` whose test file is gone or no longer cites it is a false claim (US-00-R03)
@@ -35,29 +35,6 @@ export function parseSpecs(specs) {
   return { versions, requirements: [...requirements.values()].sort((a, b) => a.id.localeCompare(b.id)), tests: [...tests.values()] };
 }
 
-const JS_TITLE = /\b(?:test|it)\(\s*(['"`])((?:\\.|(?!\1)[^\\])*)\1/g;
-
-/** A unittest method name as a title the citation rules read: test_us_01_r05_and_r06_x -> `test US-01-R05 and R06 x`. */
-export function pythonName(name) {
-  return name.replace(/_/g, ' ').replace(/\bus (\d\d) ([rt])(\d\d)\b/gi, (_m, nn, k, mm) => `US-${nn}-${k.toUpperCase()}${mm}`).replace(/\b([rt])(\d\d)\b/gi, (_m, k, mm) => `${k.toUpperCase()}${mm}`);
-}
-
-/** The titles of the tests in a Python file: for each `def test...` its name (as pythonName) followed by its docstring, or by its first comment
- *  line when it has no docstring. A requirement is cited by a test when the name or the docstring names it (US-00-R03). */
-export function pythonTitles(text) {
-  const lines = text.split('\n'); const out = [];
-  for (let i = 0; i < lines.length; i++) {
-    const m = /^\s*(?:async\s+)?def\s+(test\w*)\s*\(/.exec(lines[i]);
-    if (!m) continue;
-    let j = i; while (j < lines.length - 1 && !/:\s*(?:#.*)?$/.test(lines[j])) j++;   // the signature may span lines
-    const body = lines.slice(j + 1, j + 40).join('\n');
-    const doc = /^\s*(?:[rRuU])?("""|''')([\s\S]*?)\1/.exec(body)?.[2] ?? /^\s*#\s*(.*)/.exec(body)?.[1] ?? '';
-    out.push(`${pythonName(m[1])}${doc ? ` - ${doc.replace(/\s+/g, ' ').trim()}` : ''}`.slice(0, 160));
-  }
-  return out;
-}
-const titlesOf = (path, text) => (/\.py$/.test(path) ? pythonTitles(text) : [...text.matchAll(JS_TITLE)].map(m => m[2].replace(/\\(['"`])/g, '$1')));
-
 /** files: [{ path, text }] -> { 'US-NN-RMM': [{ file, name }] }. A requirement counts as cited by a test when the test's title
  *  names it, in full (`US-13-R07`) or short (`R07`, resolved by the nearest full id in the title, else by the one
  *  specification the file is about). A citation only in a comment is recorded with name null. */
@@ -68,7 +45,7 @@ export function scanTests(files) {
     const head = text.split('\n').slice(0, 12).join('\n');
     const about = [...new Set([...head.matchAll(/US-SPEC-(\d\d)/g)].map(m => m[1]))];
     const primary = about.length ? about[0] : null;
-    const titles = titlesOf(path, text);
+    const titles = [...text.matchAll(/\b(?:test|it)\(\s*(['"`])((?:\\.|(?!\1)[^\\])*)\1/g)].map(m => m[2].replace(/\\(['"`])/g, '$1'));
     const inTitle = new Set();
     for (const name of titles) {
       let near = [...name.matchAll(/US-(?:SPEC-)?(\d\d)/g)].map(m => ({ at: m.index, nn: m[1] }));
@@ -88,8 +65,8 @@ export function scanTests(files) {
 export function scanConformanceTests(files) {
   const out = {};
   for (const { path, text } of files) {
-    for (const name of titlesOf(path, text)) {
-      for (const t of name.matchAll(TEST_ID)) (out[t[0]] ||= []).push({ file: path, name });
+    for (const m of text.matchAll(/\b(?:test|it)\(\s*(['"`])((?:\\.|(?!\1)[^\\])*)\1/g)) {
+      for (const t of m[2].matchAll(TEST_ID)) (out[t[0]] ||= []).push({ file: path, name: m[2] });
     }
   }
   return out;
@@ -135,13 +112,10 @@ export function declaration(manifest) {
 }
 
 /** Check a manifest against the tree. files: { path: text } for the test files it names (a missing key means the file is gone);
- *  specs (optional): the specification texts, to prove the manifest covers every requirement. `absentRoots`: directories (as the manifest
- *  writes them, for example '../seed/worker/test') that this checkout does not have: a proof under one cannot be read here, so it is
- *  listed in `unverified` and is neither a false claim nor a checked one (the extracted repository has no seed beside it).
- *  Returns { ok, problems, stale, unverified }. A problem is a false or missing claim; `stale` lists deviations a test now cites
- *  (the manifest may be regenerated to claim them). */
-export function check(manifest, { files = {}, specs = null, tests = null, absentRoots = [] } = {}) {
-  const problems = []; const stale = []; const unverified = [];
+ *  specs (optional): the specification texts, to prove the manifest covers every requirement. Returns { ok, problems, stale }.
+ *  A problem is a false or missing claim; `stale` lists deviations a test now cites (the manifest may be regenerated to claim them). */
+export function check(manifest, { files = {}, specs = null, tests = null } = {}) {
+  const problems = []; const stale = [];
   if (!LEVELS.includes(manifest.declared_level)) problems.push(`declared_level must be one of ${LEVELS.join(', ')}`);
   if (!manifest.spec_versions || !Object.keys(manifest.spec_versions).length) problems.push('the manifest names no specification versions (US-00-R01)');
   const seen = new Set();
@@ -153,12 +127,7 @@ export function check(manifest, { files = {}, specs = null, tests = null, absent
     if (!r.tests?.length) { problems.push(`${r.id}: labelled met but names no test (US-00-R03)`); continue; }
     for (const t of r.tests) {
       const text = files[t.file];
-      if (text === undefined) {
-        const root = absentRoots.find(a => t.file.startsWith(a.replace(/\/$/, '') + '/'));
-        if (root) unverified.push(`${r.id}: ${t.file} (root ${root} is not present here)`);
-        else problems.push(`${r.id}: test file ${t.file} does not exist`);
-        continue;
-      }
+      if (text === undefined) { problems.push(`${r.id}: test file ${t.file} does not exist`); continue; }
       const again = scanTests([{ path: t.file, text }])[r.id] || [];
       if (!again.length) problems.push(`${r.id}: ${t.file} no longer cites it`);
       else if (t.name !== null && !again.some(a => a.name === t.name)) problems.push(`${r.id}: ${t.file} has no test named "${t.name.slice(0, 80)}"`);
@@ -175,7 +144,7 @@ export function check(manifest, { files = {}, specs = null, tests = null, absent
     for (const [spec, v] of Object.entries(parsed.versions)) if (manifest.spec_versions[spec] !== v) problems.push(`${spec}: version ${manifest.spec_versions[spec] ?? 'missing'} in the manifest, ${v} in the specification`);
   }
   if (tests) { const cited = scanTests(tests); for (const r of manifest.requirements) if (r.status === 'deviation' && cited[r.id]?.length) stale.push(r.id); }
-  return { ok: problems.length === 0, problems, stale, unverified };
+  return { ok: problems.length === 0, problems, stale };
 }
 
 /** The distinct test files that prove a level (US-00-T02 runs these). */

@@ -4,81 +4,81 @@ export default {
  "credit": "W. Ross Ashby, Design for a Brain (1952)",
  "now": {
   "claims_drift": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T12:35:38Z",
    "ok": true,
    "value": 0
   },
   "deploy_health": {
-   "at": "2026-11-26T07:08:36Z",
-   "ok": true,
-   "value": 1.0
+   "at": "2026-11-26T12:35:38Z",
+   "ok": false,
+   "value": 0.983
   },
   "happy_paths": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T12:35:38Z",
    "ok": true,
    "value": 1.0
   },
   "lessons_enforced": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T12:35:38Z",
    "ok": false,
    "value": 0.692
   },
   "owner_interventions": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T12:35:38Z",
    "ok": false,
-   "value": 62
+   "value": 67
   },
   "research_in_code": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T12:35:38Z",
    "ok": false,
    "value": 0.621
   },
   "second_loop_keep_rate": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T12:35:38Z",
    "ok": false,
    "value": 0.0
   },
   "self_shipping": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T12:35:38Z",
    "ok": false,
    "value": 0.714
   },
   "spec_quality": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T12:35:38Z",
    "ok": false,
-   "value": 0.632
+   "value": 0.85
   },
   "spend": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T12:35:38Z",
    "ok": true,
    "value": 0.805
   },
   "stalled_clocks": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T12:35:38Z",
    "ok": false,
-   "value": 5
+   "value": 3
   },
   "ui_findings": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T12:35:38Z",
    "ok": true,
    "value": 0
   },
   "unattended_horizon": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T12:35:38Z",
    "ok": true,
    "value": 730
   },
   "value": {
-   "at": "2026-11-26T07:08:36Z",
+   "at": "2026-11-26T12:35:38Z",
    "ok": true,
-   "value": 300.621
+   "value": 359.006
   }
  },
  "readiness": {
-  "bounds": 0.5,
+  "bounds": 0.429,
   "horizon": 1.0,
   "learning": 0.5,
-  "score": 25
+  "score": 21
  },
  "scopes": {
   "platform": {
@@ -382,6 +382,60 @@ export default {
  },
  "self_changes": [
   {
+   "after": 30,
+   "at": "2026-11-26T10:55:20Z",
+   "before": 50,
+   "reading": 0.986,
+   "var": "deploy_health",
+   "verdict": "reverted",
+   "what": "search: goals.#repair-deploys.weight = 30 (untried in this episode)"
+  },
+  {
+   "after": 90,
+   "at": "2026-11-26T10:24:56Z",
+   "before": 50,
+   "reading": 0.989,
+   "var": "deploy_health",
+   "verdict": "reverted",
+   "what": "search: goals.#repair-deploys.weight = 90 (untried in this episode)"
+  },
+  {
+   "after": 130,
+   "at": "2026-11-26T09:55:27Z",
+   "before": 50,
+   "reading": 0.989,
+   "var": "deploy_health",
+   "verdict": "reverted",
+   "what": "search: goals.#repair-deploys.weight = 130 (untried in this episode)"
+  },
+  {
+   "after": 150,
+   "at": "2026-11-26T09:25:54Z",
+   "before": 50,
+   "reading": 0.989,
+   "var": "deploy_health",
+   "verdict": "reverted",
+   "what": "search: goals.#repair-deploys.weight = 150 (untried in this episode)"
+  },
+  {
+   "after": 110,
+   "at": "2026-11-26T08:55:10Z",
+   "before": 50,
+   "reading": 0.989,
+   "var": "deploy_health",
+   "verdict": "reverted",
+   "what": "search: goals.#repair-deploys.weight = 110 (untried in this episode)"
+  },
+  {
+   "after": 70,
+   "at": "2026-11-26T08:15:07Z",
+   "before": 50,
+   "reading": 0.996,
+   "var": "deploy_health",
+   "verdict": "reverted",
+   "what": "shift executor capacity to deploy repairs (raise the repair-deploys weight)"
+  },
+  {
    "after": 6,
    "at": "2026-11-26T06:14:45Z",
    "before": 2,
@@ -434,60 +488,6 @@ export default {
    "var": "second_loop_keep_rate",
    "verdict": "reverted",
    "what": "search: settle_ticks = 5 (untried in this episode)"
-  },
-  {
-   "after": 8,
-   "at": "2026-11-26T01:04:35Z",
-   "before": 3,
-   "reading": 0.0,
-   "var": "second_loop_keep_rate",
-   "verdict": "reverted",
-   "what": "search: settle_ticks = 8 (untried in this episode)"
-  },
-  {
-   "after": 4,
-   "at": "2026-11-26T00:36:27Z",
-   "before": 2,
-   "reading": 0.0,
-   "var": "second_loop_keep_rate",
-   "verdict": "reverted",
-   "what": "search: patience_ticks = 4 (untried in this episode)"
-  },
-  {
-   "after": 3,
-   "at": "2026-11-25T21:59:51Z",
-   "before": 2,
-   "reading": 0.0,
-   "var": "second_loop_keep_rate",
-   "verdict": "reverted",
-   "what": "act only on variables that stay out longer (fewer steps on noise)"
-  },
-  {
-   "after": 4,
-   "at": "2026-11-25T21:16:36Z",
-   "before": 3,
-   "reading": 0.0,
-   "var": "second_loop_keep_rate",
-   "verdict": "reverted",
-   "what": "give a parameter step more ticks before judging it"
-  },
-  {
-   "after": 8,
-   "at": "2026-11-24T19:14:07Z",
-   "before": 5,
-   "reading": 0.0,
-   "var": "value",
-   "verdict": "reverted",
-   "what": "search: chain.max_runs_per_day = 8 (untried in this episode)"
-  },
-  {
-   "after": 1,
-   "at": "2026-11-24T18:44:00Z",
-   "before": 5,
-   "reading": 0.0,
-   "var": "value",
-   "verdict": "reverted",
-   "what": "search: chain.max_runs_per_day = 1 (untried in this episode)"
   }
  ]
 };

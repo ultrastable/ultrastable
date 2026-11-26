@@ -220,48 +220,6 @@ test('US-07-T03, US-07-R03, US-07-R04 an amendment that removes a commitment or 
   assert.equal(attacked, 1);
 });
 
-test('US-07-R03, US-07-R04: removing a phrase from, or weakening the weight of, a commitment\'s signature is rejected at red-team by code with no replay and no model call', async () => {
-  const db = await mk();
-  let attacked = 0;
-  const redteam = { family: 'family-b', attack: async () => { attacked++; return { harm: false }; } };
-  const cases = [
-    ['W1', 'Drop one trigger phrase.', [{ op: 'remove_phrase', pattern_key: 'conditional_offer', phrase: 'if you want' }], /removing a phrase from conditional_offer weakens the enforcement of commitment affirmative-adoption/],
-    ['W2', 'Stop deducting for offers.', [{ op: 'set_weight', pattern_key: 'conditional_offer', weight: 0 }], /setting the weight of conditional_offer to 0 from -0\.05 weakens the enforcement of commitment affirmative-adoption/],
-    ['W3', 'Deduct less for offers.', [{ op: 'set_weight', pattern_key: 'conditional_offer', weight: -0.01 }], /weakens the enforcement of commitment affirmative-adoption/],
-    ['W4', 'A weight with no number.', [{ op: 'set_weight', pattern_key: 'menu' }], /setting the weight of menu to undefined/],
-    ['W5', 'Two small changes together.', [{ op: 'add_phrase', pattern_key: 'narration', phrase: 'one approach would be' }, { op: 'remove_phrase', pattern_key: 'narration', phrase: 'the fix is to' }], /removing a phrase from narration weakens/],
-  ];
-  for (const [id, rule_text, changes, why] of cases) {
-    await G.propose(db, { id, rule_text, changes, ...AUTHOR }, { now: NOW });
-    const r = await G.redTeam(db, id, { redteam, now: NOW });
-    assert.equal(r.status, 'rejected', id); assert.match(r.reason, why, id);
-    assert.equal((await G.replay(db, id, { now: NOW })).status, 'rejected');
-    assert.equal(one(db, `SELECT replay FROM governance_proposals WHERE id=?`, id).replay, null, `${id} is never replayed`);
-  }
-  assert.equal(attacked, 0, 'no model is called for a rejected amendment');
-  assert.equal(one(db, `SELECT COUNT(*) AS n FROM governance_false_stop_phrases WHERE pattern_key='conditional_offer'`).n, 6, 'the register is untouched');
-  // a signature that enforces no commitment may still lose a phrase or be re-weighted
-  await G.propose(db, { id: 'W6', rule_text: 'Narrow the blocker shape.', changes: [{ op: 'remove_phrase', pattern_key: 'blocker_no_surfaces', phrase: 'refused' }, { op: 'set_weight', pattern_key: 'blocker_no_surfaces', weight: -0.05 }], ...AUTHOR }, { now: NOW });
-  assert.equal((await G.redTeam(db, 'W6', { redteam, now: NOW })).status, 'redteamed');
-  assert.deepEqual(await G.protectedProblems(db, { rule_text: 'x', changes: [{ op: 'set_weight', pattern_key: 'blocker_no_surfaces', weight: 0 }] }), [], 'a signature with no commitment may be re-weighted');
-});
-
-test('US-07-R03: a commitment\'s signature may still be strengthened, and a change set that leaves it with no route is refused', async () => {
-  const db = await mk();
-  const ok = await G.protectedProblems(db, { rule_text: 'Catch another way of offering.', changes: [
-    { op: 'add_phrase', pattern_key: 'conditional_offer', phrase: 'happy to proceed' },
-    { op: 'set_weight', pattern_key: 'conditional_offer', weight: -0.10 }] });
-  assert.deepEqual(ok, [], 'add_phrase and a more negative weight stay proposable');
-  await G.propose(db, { id: 'S1', rule_text: 'Catch another way of offering.', changes: [{ op: 'add_phrase', pattern_key: 'conditional_offer', phrase: 'happy to proceed' }], ...AUTHOR }, { now: NOW });
-  assert.equal((await G.redTeam(db, 'S1', { redteam: safeRedteam, now: NOW })).status, 'redteamed');
-  // a commitment-bearing signature with phrases whose last phrase is removed has no route (the per-operation rule also fires)
-  db.raw.prepare(`INSERT INTO governance_false_stop_register (pattern_key, pattern, cause_class, detection_heuristic, auto_remediation, commitment) VALUES ('lone','Lone phrase','x','phrase','y','interrupt-gate')`).run();
-  db.raw.prepare(`INSERT INTO governance_false_stop_phrases (pattern_key, phrase) VALUES ('lone','only phrase')`).run();
-  const problems = await G.protectedProblems(db, { rule_text: 'x', changes: [{ op: 'remove_phrase', pattern_key: 'lone', phrase: 'only phrase' }] });
-  assert.ok(problems.some(p => /removing a phrase from lone weakens/.test(p)));
-  assert.ok(problems.some(p => /lone with no phrase and no classifier or state route/.test(p)));
-});
-
 test('US-07-R02 red-team is a second model of a different family; a found harm rejects; without a red-team nothing is adoptable', async () => {
   const db = await mk();
   const change = [{ op: 'add_phrase', pattern_key: 'narration', phrase: 'one approach would be' }];
@@ -415,70 +373,4 @@ test('section 3.2 similarity: 10 tokens sharing 6 with a 14-token goal give Jacc
   const s = G.similarity(a, b);
   assert.ok(Math.abs(s.jaccard - 6 / 18) < 1e-9 && s.containment === 0.6);
   assert.ok(Math.abs(G.scoreGoal({ falsifiability: 1, leverage: 0.5, novelty: 0 }) - 0.6) < 1e-9);
-});
-
-// ---- US-07-R22: triggers on the recognition rates and the self-adoption rate ----
-const WIN7 = `datetime('now', '-7 days')`;
-const at = (probe, fromMs) => probe.split(WIN7).join(`'${new Date(fromMs).toISOString().replace('T', ' ').slice(0, 19)}'`); // the probe reads the clock of the tick that runs it; fix it here
-async function mkBare() { const db = makeDb([MIG]); await G.seedRegister(db, { now: NOW - 30 * DAY }); return db; } // no trust tables: the self-adoption rate is unmeasured here
-async function scans(db, n, offers) {
-  for (let i = 0; i < n; i++) await G.recognize(db, { draft: i < offers ? 'The fix is merged. Shall I continue' : 'The fix is merged and the probe passes.', source: `doer-${i % 3}` }, { now: NOW - H * (n - i) });
-}
-
-test('US-07-R22: a false-stop rate above 0 over 10 or more scans files one item per rate and day, and not a second one the same day; its closing probe is a query the tick can run', async () => {
-  const db = await mkBare();
-  await scans(db, 12, 3);
-  const r = await G.checkRates(db, { now: NOW });
-  assert.deepEqual([r.measured, r.scans, r.breaches.sort()], [true, 12, ['conditional_offer_rate', 'false_stop_rate']]);
-  assert.deepEqual(r.filed.sort(), ['GOV-conditional-offer-rate-2026-11-11', 'GOV-false-stop-rate-2026-11-11']);
-  assert.deepEqual((await G.checkRates(db, { now: NOW })).filed, [], 'one item per number and day');
-  assert.equal((await G.checkRates(db, { now: NOW + DAY })).filed.length, 2, 'the next day files again while the rate stands');
-  const it = one(db, `SELECT kind, owner_role, status, done_check, closing_probe, title FROM items WHERE id='GOV-false-stop-rate-2026-11-11'`);
-  assert.deepEqual([it.kind, it.owner_role, it.status, it.done_check], ['fix', 'operations', 'ready', 'false_stop_rate <= 0']);
-  assert.match(it.title, /false_stop_rate 25% over 7 days is above its target 0% \(12 scans\)/);
-  // the probe: 0 while hits stand in the window, 1 once a window holds none
-  assert.equal(Object.values(one(db, at(it.closing_probe, NOW - 7 * DAY)))[0], 0);
-  assert.equal(Object.values(one(db, at(it.closing_probe, NOW + DAY)))[0], 1);
-  assert.ok([0, 1].includes(Object.values(one(db, it.closing_probe))[0]), 'the stored probe runs as written');
-  // a signature with a target above zero is breached only above that target
-  const lax = await mkBare(); await scans(lax, 12, 3);
-  const l = await G.checkRates(lax, { now: NOW, config: { targets: { false_stop_rate: 0.3, conditional_offer_rate: 0.1 } } });
-  assert.deepEqual(l.breaches, ['conditional_offer_rate']);
-});
-
-test('US-07-R22: with fewer scans than min_scans the rates are unmeasured and nothing is filed; the step reports them', async () => {
-  const db = await mkBare();
-  await scans(db, 5, 5);
-  const r = await G.checkRates(db, { now: NOW });
-  assert.deepEqual([r.measured, r.breaches, r.filed], [false, [], []]);
-  assert.equal(one(db, `SELECT COUNT(*) AS n FROM items WHERE id LIKE 'GOV-%'`).n, 0);
-  assert.equal((await G.checkRates(db, { now: NOW, config: { min_scans: 5 } })).filed.length, 2, 'the floor is configuration');
-  const s = await G.step({ db, now: NOW });
-  assert.deepEqual([s.rates_measured, s.rate_items], [false, []]);
-  const many = await mkBare(); await scans(many, 12, 4);
-  const m = await G.step({ db: many, now: NOW });
-  assert.deepEqual([m.rates_measured, m.rate_items.sort()], [true, ['GOV-conditional-offer-rate-2026-11-11', 'GOV-false-stop-rate-2026-11-11']]);
-});
-
-test('US-07-R22: the self-adoption rate is adoptions over adoptions plus deferral hits; it files when under target, is unmeasured with no observations or no trust module, and has a tolerance', async () => {
-  const db = await mk();
-  const adopt = (i) => Trust.adoptDefault(db, { question: `q${i}`, recommended_default: `do ${i}`, revert_path: 'undo', reversible: true, in_scope: true, surface: 'repo', action_class: 'open_pr' }, { now: NOW - H, execute: async () => ({ verified: true, evidence: 'ok' }) });
-  assert.equal(await G.selfAdoptionRate(db, { now: NOW }), null, 'no observation: unmeasured, not zero');
-  for (let i = 0; i < 3; i++) await adopt(i);
-  assert.deepEqual(await G.selfAdoptionRate(db, { now: NOW }), { rate: 1, adopted: 3, deferred: 0 });
-  assert.deepEqual((await G.checkRates(db, { now: NOW })).filed, [], 'at target: nothing filed');
-  await G.recognize(db, { draft: 'Shall I continue', source: 'doer-1' }, { now: NOW - 2 * H });
-  const r = await G.checkRates(db, { now: NOW });
-  assert.deepEqual([r.self_adoption.rate, r.self_adoption.adopted, r.self_adoption.deferred], [0.75, 3, 1]);
-  assert.deepEqual(r.filed, ['GOV-self-adoption-2026-11-11']);
-  const it = one(db, `SELECT done_check, closing_probe FROM items WHERE id='GOV-self-adoption-2026-11-11'`);
-  assert.equal(it.done_check, 'self_adoption_rate >= 1');
-  assert.equal(Object.values(one(db, at(it.closing_probe, NOW - 7 * DAY)))[0], 0);
-  assert.equal(Object.values(one(db, at(it.closing_probe, NOW + DAY)))[0], 1, 'a window with no adoption and no deferral measures nothing: the probe is not red');
-  assert.equal(Object.values(one(db, at(it.closing_probe, NOW - 90 * 60e3)))[0], 1, 'a window that holds only adoptions (the deferral is older) is green');
-  assert.equal(await G.selfAdoptionRate(db, { now: NOW + 8 * DAY }), null);
-  const tol = await G.checkRates(db, { now: NOW + 2 * DAY, config: { min_self_adoption: 0.8, self_adoption_tolerance: 0.1 } });
-  assert.deepEqual(tol.breaches.filter(b => b === 'self_adoption_rate'), [], '0.75 is within 0.8 minus 0.1');
-  const bare = makeDb([MIG]); // a database without the trust tables
-  assert.equal(await G.selfAdoptionRate(bare, { now: NOW }), null);
 });

@@ -103,7 +103,7 @@ def check(root=REPO) -> list[str]:
         shelved = bool(it) and re.search(r"^\*\*Disposition:\*\*\s*shelved", it["json"].get("body", ""), re.M)
         if state[g["id"]] == "open" and (not it or (it["status"] != "open" and not shelved)):
             bad.append(f"gap {g['id']}: open with no open queue item {GAP_ID(g)} (run market --sync)")
-        if it and it["probe"] != g["closing_probe"]:
+        if it and not same_probe(it["probe"], g["closing_probe"]):
             bad.append(f"gap {g['id']}: queue probe differs from the gap's closing probe")
     for p in sorted((root / "site").glob("*.js")) + [root / "site/site.test.mjs"]:
         t = p.read_text(encoding="utf-8") if p.is_file() else ""
@@ -113,14 +113,34 @@ def check(root=REPO) -> list[str]:
     return bad
 
 
+def wrapped(probe: str) -> str:
+    """A gap's file: or grep: proof as the runnable command SPEC-GATE-1 asks of a new item's done check."""
+    return f"cmd:python3 -m foundation rnd --holds '{probe}'"
+
+
+def same_probe(item_probe: str, gap_probe: str) -> bool:
+    return item_probe in (gap_probe, wrapped(gap_probe))
+
+
+def open_gaps(root=REPO, d=None) -> int:
+    """`market_open_gaps`: gaps in the register whose closing probe does not hold yet. The number the gap items predict."""
+    from . import selfhost
+    d = d or load(root)
+    return sum(1 for g in d["gaps"] if not selfhost.probe(Path(root), g["closing_probe"]))
+
+
 def sync(root=REPO) -> list[str]:
     root, d, out = Path(root), load(root), []
     have = {i["id"] for i in queue.items(root)}
     for g in d["gaps"]:
         if GAP_ID(g) in have:
             continue
-        body = (f"**Owner:** {g['owner']}\n**Trigger:** every executor run\n**Done check:** {g['closing_probe']}\n**Status:** open\n\n"
-                f"Gap in component `{g['component']}`: {g['title']}. {g['why']} Source: doctrine/market.json (MARKET-1).")
+        # SPEC-GATE-1: the gap item is filed complete (runnable done check, a prediction on a number this module measures, an out-of-scope line, a closing
+        # probe), so the gate that reads new items passes what this loop files.
+        probe = wrapped(g["closing_probe"])
+        body = (f"**Owner:** {g['owner']}\n**Trigger:** every executor run\n**Done check:** {probe}\n**Prediction:** market_open_gaps <= {open_gaps(root, d) - 1} within 720 h\n**Status:** open\n\n"
+                f"Gap in component `{g['component']}`: {g['title']}. {g['why']} Source: doctrine/market.json (MARKET-1). The proof is `{g['closing_probe']}`, shipped with a test.\n\n"
+                f"**Out of scope:** any other gap in the register, and a proof file with no behaviour and no test behind it.\n\n**Closing probe:** {probe}")
         j = {"id": GAP_ID(g), "title": f"{GAP_ID(g)}: {g['title']}", "body": body, "labels": [f"role:{g['owner']}", "gap"], "milestone": "Next", "workstream": "Gaps"}
         (root / "docs/issues" / f"{GAP_ID(g)}.json").write_text(json.dumps(j, indent=2) + "\n", encoding="utf-8")
         out.append(GAP_ID(g))
@@ -147,6 +167,8 @@ def main(argv) -> int:
         print("\n".join(sync()) or "queue already has every gap"); return 0
     if a == "--report":
         print(report()); return 0
+    if a == "--metrics":
+        print(json.dumps({"market_open_gaps": open_gaps(), "market_gaps": len(load()["gaps"])})); return 0
     bad = check()
     print("\n".join("market: " + b for b in bad) or "market ok"); return 1 if bad else 0
 

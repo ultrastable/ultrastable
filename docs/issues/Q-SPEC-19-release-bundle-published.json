@@ -1,0 +1,12 @@
+{
+  "id": "Q-SPEC-19-release-bundle-published",
+  "title": "Q-SPEC-19-release-bundle-published: CI attaches the deployable bundle, its hash and its product list to each tagged release (US-19-R16, T19-5)",
+  "body": "**Owner:** staff\n**Trigger:** specification audit 2026-11-26: the row is PLANNED in the status table of specs/US-SPEC-19-front-door.md (inside the released-bundle row)\n**Done check:** cmd:git grep -q \"release_bundle.mjs\" -- workers/.github/workflows/release.yml\n**Status:** open\n\n`workers/tools/release_bundle.mjs` builds the bundle, the migrations and a manifest with the SHA-256 of each, and the launcher shows that hash, but `workers/.github/workflows/release.yml` creates the tag and the release without building or attaching it, so T19-5 (the released hash equals the published hash) has nothing published to compare with. Add a step that runs the builder and uploads its output with `gh release upload`, keeping the header comments, the timeout and the concurrency group. The workflow is a protected path: one change, with its `Protected-change:` line, passed by the automated gates. Then move the row of the spec to BUILT.\n\n**Closing probe:** `node --test --no-warnings workers/tools/release_bundle.test.mjs`\n**Prediction:** spec19_release_bundle_published >= 1 within 720 h\n**Out of scope:** building code at request time in the launcher (US-19-R10); a schedule on the release workflow; publishing from any ref that has no green test check.\n",
+  "labels": [
+    "role:staff",
+    "ws:platform",
+    "spec"
+  ],
+  "milestone": "Next",
+  "workstream": "Platform"
+}

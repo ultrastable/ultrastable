@@ -1,0 +1,12 @@
+{
+  "id": "Q-SPEC-01-focus-log",
+  "title": "Q-SPEC-01-focus-log: Keep the history of focus sets (program_focus_log)",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** cmd:git grep -q \"kernel_focus_log\" -- workers/core/kernel/migrations workers/core/conformance/l2-records.json\n**Status:** open\n\nUS-SPEC-01 section 4.2: `workers/core/kernel` keeps the current focus set in `kernel_focus` with the tick that wrote it and no history of earlier sets, so `workers/core/conformance/l2-records.json` lists `program_focus_log` as missing. Append each replaced focus set to a log table in the kernel module's own migration, bounded by retention, and map the record in `l2-records.json`.\n\nsize: S\n\n**Prediction:** spec_quality >= 0.9 within 168 h\n**Out of scope:** changing how the focus set is ranked or allocated.\n\n**Closing probe:** cmd:`git grep -q \"kernel_focus_log\" -- workers/core/kernel/migrations workers/core/conformance/l2-records.json` exits 0, and `python3 scripts/spec_ids.py --check` passes with the status line of the specification changed from PLANNED to BUILT naming the file and the test.\n",
+  "labels": [
+    "p2",
+    "agent-ready",
+    "spec"
+  ],
+  "milestone": "Now",
+  "workstream": "Executor queue"
+}

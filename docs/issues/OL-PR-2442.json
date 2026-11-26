@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-2442",
+  "title": "OL-PR-2442: land or supersede pull request #2442 (conflict)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #2442 is conflict\n**Done check:** cmd:python3 -m foundation loopowner --closed 2442\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #2442 (`claude/project-thread-3myk6l` at 21ca147d37, opened by rwnq8): fix(pages-enable): fall back to LANE_PAT. The session that opened it is not its closer and is never asked to act. The branch conflicts with main. Merge main into the branch and resolve it, or redo the change from main in a new pull request and close this one as superseded. Files (8): .github/workflows/pages-enable.yml, doctrine/decision-ledger.json, doctrine/flows.json, doctrine/writeback/decision-2026-11-26-gh-only-1-pages-is-turned-on-by-the-administration-app.json, doctrine/writeback/lesson-2026-11-26-lane-app-secrets-are-not-bound-in-the-core-repo.json, seed/worker/src/repostandard.js, seed/worker/test/apprepos.test.js, site/graduate.js.\n\n**Prediction:** open_prs <= 0 within 24 h\n**Out of scope:** changing what pull request #2442 does; land it as written or carry it onto main unchanged.\n\n**Closing probe:** `python3 -m foundation loopowner --closed 2442` exits 0 (pull request #2442 is merged or closed).",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

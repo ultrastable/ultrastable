@@ -1,0 +1,11 @@
+{
+  "id": "Q-SPEC-17-kit-remediation-contract",
+  "title": "Q-SPEC-17-kit-remediation-contract: retry bound, backoff, deadline and a half-open probe on the kit's failure items (US-17-R04, R07, R08, R09)",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** cmd:git grep -q max_attempts -- seed/worker/src/selfaudit.js\n**Status:** open\n\nspecs/US-SPEC-17-failure-modes-and-remediation.md section 10.2 lists as PLANNED: the kit's failure items (seed/worker/src/selfaudit.js) carry owner role, done check and closing probe, but no `max_attempts`, backoff or deadline; an exhausted item is not escalated through the gate or reassigned; the loop breaker schedules no half-open probe; a detector whose firings are never confirmed is not put on probation. All four are built and tested in workers/core/kernel/failure.js and not used by the tick a deployed system runs.\n\nCarry the contract fields on the register's modes in seed/autonomy/failure-modes.json (with its schema), have `selfAuditStep` and `loopBreak` honour them (retry at the next backoff step, reassign or gate after the bound, one scheduled retry after the breaker opens, probation by confirmed share), without a new table where the items table can hold the state, and add tests named for the four requirements. Then move the lines in section 10.2 to BUILT.\n\n**Prediction:** selfaudit_reads_max_attempts >= 1 within 336 h (the number of lines the done check finds; 0 today)\n**Out of scope:** weakening or removing any probe in seed/autonomy/failure-modes.json, or changing workers/core/kernel/failure.js.\n\nsize: M\n\n**Closing probe:** cmd:git grep -q max_attempts -- seed/worker/src/selfaudit.js (exit 0): the kit reads the retry bound. Its tests pass in `cd seed/worker && node test/run.mjs`.\n",
+  "labels": [
+    "p2",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Executor queue"
+}

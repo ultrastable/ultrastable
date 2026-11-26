@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { kdb, item, one, rows } from './testkit.js';
 import {
   CATALOG, createProject, submitArtifact, reviewArtifact, recordReadback, checkGate, advancePhase, amendArtifact, decideChangeRequest,
-  addRisk, addLesson, lifecycleGaps, modelFamily, registerGateExtra, gateExtraNames,
+  addRisk, addLesson, lifecycleGaps,
 } from './lifecycle.js';
 
 async function project(db, id = 'p1', mode = 'hybrid') {
@@ -74,7 +74,7 @@ test('a phase gate refuses to pass without reviewed artifacts (conformance)', as
   assert.equal(one(db, `SELECT owner_role FROM items WHERE id='GATE-p1-A-INI-1-review'`).owner_role, 'reviewer');
 });
 
-test('US-15-R05: phase theater: an artifact that fails its done check, is chat, or is empty does not satisfy the gate', async () => {
+test('phase theater: an artifact that fails its done check, is chat, or is empty does not satisfy the gate', async () => {
   const db = kdb(); await project(db);
   await assert.rejects(produce(db, 'p1', 'A-INI-1', { path_or_ref: 'chat: see above' }), /not chat/);
   await assert.rejects(produce(db, 'p1', 'A-INI-1', { path_or_ref: '' }), /not chat|file or record/);
@@ -85,7 +85,7 @@ test('US-15-R05: phase theater: an artifact that fails its done check, is chat, 
   assert.deepEqual(g.failing, ['A-INI-2']); assert.equal(g.pass, false);
 });
 
-test('US-15-T2, US-15-R07: a reviewer equal to the doer, or from the same model family, is rejected', async () => {
+test('US-15-T2: a reviewer equal to the doer, or from the same model family, is rejected', async () => {
   const db = kdb(); await project(db);
   await produce(db, 'p1', 'A-INI-1');
   await assert.rejects(reviewArtifact(db, { project_id: 'p1', kind: 'A-INI-1', reviewer: 'doer-1', verdict: 'approved' }), /differ from doer/);
@@ -111,7 +111,7 @@ test('G2 also needs the read-back, work items, and a closing probe on every item
   assert.equal((await checkGate(db, 'p1', 'G2')).pass, true);
 });
 
-test('US-15-T3, US-15-R06: a change to the charter after G1 is a change request with a revert path; it is not applied until decided', async () => {
+test('US-15-T3: a change to the charter after G1 is a change request with a revert path; it is not applied until decided', async () => {
   const db = kdb(); await project(db); await throughG1(db);
   await assert.rejects(produce(db, 'p1', 'A-INI-2'), /amendArtifact|gate already passed/);
   await assert.rejects(amendArtifact(db, { project_id: 'p1', kind: 'A-INI-2', new_ref: 'records/charter-v2.md', summary: 'raise cap', requested_by: 'pm' }), /revert path/);
@@ -134,7 +134,7 @@ test('before its gate an artifact may be edited directly', async () => {
   assert.equal(one(db, `SELECT COUNT(*) AS n FROM change_requests`).n, 0);
 });
 
-test('US-15-T6, US-15-R11: closing with an item that has no disposition fails G3; with dispositions it passes', async () => {
+test('US-15-T6: closing with an item that has no disposition fails G3; with dispositions it passes', async () => {
   const db = kdb(); await project(db); await throughG1(db); await throughG2(db);
   assert.equal((await advancePhase(db, 'p1', 'closing')).ok, true);
   item(db, 'W2', { project: 'p1' }); db.raw.exec(`UPDATE items SET disposition = 'delivered: probe ok' WHERE id = 'W1'`);
@@ -161,37 +161,4 @@ test('the tick activity files missing gate artifacts for every project (US-15 s7
   const db = kdb(); await project(db, 'a'); await project(db, 'b', 'agile');
   assert.equal((await lifecycleGaps(db)).length, 12);
   assert.equal((await lifecycleGaps(db)).length, 0);
-});
-
-test('US-15-R07, US-02-R03: model families are resolved from the id, not from its first token', async () => {
-  assert.notEqual(modelFamily('@cf/meta/llama-3.1-8b-instruct'), modelFamily('@cf/mistral/mistral-7b-instruct'));   // both began with '@cf'
-  assert.equal(modelFamily('gpt-5'), modelFamily('o3'));                                                           // one vendor, two prefixes
-  assert.equal(modelFamily('llama-3-70b'), modelFamily('meta-llama-3'));
-  assert.equal(modelFamily('claude-haiku-5-5'), modelFamily('claude-opus-5-5'));
-  assert.equal(modelFamily('alpha-1'), modelFamily('alpha-2'));                                                    // an unknown vendor keeps the first-token rule
-  assert.notEqual(modelFamily('alpha-1'), modelFamily('beta-1'));
-  assert.equal(modelFamily(null), null);
-  assert.equal(modelFamily('x-1', { familyOf: () => 'Zeta' }), 'zeta');                                            // a port wins
-  const db = kdb(); await project(db);
-  await produce(db, 'p1', 'A-INI-1', { produced_model: '@cf/meta/llama-3.1-8b-instruct' });
-  await reviewArtifact(db, { project_id: 'p1', kind: 'A-INI-1', reviewer: 'reviewer-1', reviewer_model: '@cf/mistral/mistral-7b-instruct', verdict: 'approved' });   // accepted: different vendors
-  await produce(db, 'p1', 'A-INI-2', { produced_model: 'gpt-5' });
-  await assert.rejects(reviewArtifact(db, { project_id: 'p1', kind: 'A-INI-2', reviewer: 'reviewer-1', reviewer_model: 'o3', verdict: 'approved' }), /model family/);
-  await assert.rejects(reviewArtifact(db, { project_id: 'p1', kind: 'A-INI-2', reviewer: 'reviewer-1', reviewer_model: 'x-9', familyOf: (m) => (m === 'x-9' ? 'openai' : null), verdict: 'approved' }), /model family/);
-});
-
-test('US-15-R20: a condition registered for a gate is run by advancePhase and checkGate, replaced by name, and refused for an unknown gate', async () => {
-  const db = kdb(); await project(db); await produceAndReview(db, 'p1', 'initiating');
-  assert.throws(() => registerGateExtra('G9', 'x', async () => []), /G1, G2 or G3/); assert.throws(() => registerGateExtra('G1', '', async () => []), /name and a function/);
-  registerGateExtra('G1', 'fixture-condition', async (_db, id, opts) => [['fixture', 'reviewer', `fixture condition not met for ${id} (${opts.note ?? 'no note'})`]]);
-  assert.deepEqual(gateExtraNames('G1'), ['fixture-condition']);
-  const r = await advancePhase(db, 'p1', 'planning', { note: 'n1', extras: false });                  // extras:false does not switch a registered condition off
-  assert.equal(r.ok, false); assert.deepEqual(r.reasons, ['fixture condition not met for p1 (n1)']); assert.deepEqual(r.filed, ['GATE-p1-planning-fixture']);
-  assert.equal(one(db, `SELECT owner_role FROM items WHERE id = 'GATE-p1-planning-fixture'`).owner_role, 'reviewer');
-  const g = await checkGate(db, 'p1', 'G1'); assert.deepEqual([g.pass, g.extras.length], [false, 1]);
-  assert.equal((await checkGate(db, 'p1', 'G1', { extras: false })).pass, true);                      // the artifact conditions alone
-  assert.deepEqual(await lifecycleGaps(db), []);                                                       // the kernel's own step files artifact gaps only
-  assert.deepEqual(await lifecycleGaps(db, { extras: true }), []);                                    // and the item already exists
-  registerGateExtra('G1', 'fixture-condition', async () => []);                                         // replaced by name
-  assert.deepEqual(gateExtraNames('G1'), ['fixture-condition']); assert.deepEqual(await advancePhase(db, 'p1', 'planning'), { ok: true, phase: 'planning' });
 });

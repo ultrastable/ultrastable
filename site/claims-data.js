@@ -1552,6 +1552,15 @@ export default {
    "surface": "specs/README.md"
   },
   {
+   "claim": "| BUILT | Code exists with passing tests, and the file is named. That a named path exists is checked on every change (see Checks below); the na",
+   "detail": "",
+   "how": "file:scripts/spec_truth.py + grep:tests/foundation/test_spec_truth.py::test_missing_unnamed_and_partly_missing_paths_are_findings + file:doctrine/spec-truth-baseline.json",
+   "id": "curated-d1df284b99",
+   "kind": "claim",
+   "pass": true,
+   "surface": "specs/README.md"
+  },
+  {
    "claim": "It finds its own work in your metrics and failures, hands each task to the coding agent that fits, proves each handed-off change live and rolls it back when the proof fails, and keeps score of how often its decisions were right.",
    "detail": "",
    "how": "file:doctrine/triggers.json + file:foundation/triggers.py + file:seed/worker/src/decisions.js + grep:seed/worker/test/handoff.test.js::a red probe rolls the deploy back and puts the item back to ready + grep:site/deployer.js::/__internal/rollback",
@@ -2042,6 +2051,24 @@ export default {
    "detail": "",
    "how": "file:seed/worker/src/visibility.js + file:doctrine/open-loops.json + file:tests/foundation/test_bootaccept.py + file:seed/worker/test/bootaccept.test.js + file:foundation/bootaccept.py",
    "id": "cited-c2464a2c9f",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **A fresh seed proves the whole; no surface contradicts the axiom (CLEANROOM-1, COHERENCE-1, Rowan 2026-11-25).** \"All surfaces, all",
+   "detail": "",
+   "how": "file:.github/workflows/cleanroom.yml + file:platform/selfhost/day.mjs + file:doctrine/cleanroom.json + file:seed/scripts/humanvoice.py + file:doctrine/coherence.json + file:workers/tools/sync_agent_files.py",
+   "id": "cited-6ab268273b",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Large work is planned and worked in steps on the server (ORCHESTRATE-1, Rowan 2026-11-26).** \"Why can't Ultrastable do this entirely on",
+   "detail": "",
+   "how": "file:seed/worker/src/orchestrate.js + file:seed/worker/src/executor.js + file:seed/worker/test/orchestrate.test.js",
+   "id": "cited-ff82585547",
    "kind": "claim",
    "pass": true,
    "surface": "agents/AGENTS.md"
@@ -2920,6 +2947,24 @@ export default {
    "surface": "seed/agents/AGENTS.md"
   },
   {
+   "claim": "- **A fresh seed proves the whole; no surface contradicts the axiom (CLEANROOM-1, COHERENCE-1, Rowan 2026-11-25).** \"All surfaces, all",
+   "detail": "",
+   "how": "file:.github/workflows/cleanroom.yml + file:platform/selfhost/day.mjs + file:doctrine/cleanroom.json + file:seed/scripts/humanvoice.py + file:doctrine/coherence.json + file:workers/tools/sync_agent_files.py",
+   "id": "mirror-e2926e7423",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Large work is planned and worked in steps on the server (ORCHESTRATE-1, Rowan 2026-11-26).** \"Why can't Ultrastable do this entirely on",
+   "detail": "",
+   "how": "file:seed/worker/src/orchestrate.js + file:seed/worker/src/executor.js + file:seed/worker/test/orchestrate.test.js",
+   "id": "mirror-434e16496c",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
    "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
@@ -3604,7 +3649,7 @@ export default {
    "surface": "seed/tests/fixtures/IDEA.example.md"
   },
   {
-   "claim": "seed-tests: 104 Python and 705 Worker tests",
+   "claim": "seed-tests: 114 Python and 640 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3613,7 +3658,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 705 Worker tests",
+   "claim": "seed-worker-tests: 640 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3649,7 +3694,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 1154",
+   "claim": "live-deploys: 1201",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",
@@ -3872,7 +3917,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 427,
-  "total": 427
+  "pass": 432,
+  "total": 432
  }
 };

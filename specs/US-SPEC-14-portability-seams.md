@@ -7,8 +7,8 @@
 |---|---|
 | ID | US-SPEC-14 |
 | Title | Portability seams: Store, Scheduler, Secrets, Models, Role runtime (Cloudflare reference and other adapters) |
-| Version | 0.1.0 (draft) |
-| Date | 2026-11-11 |
+| Version | 0.2.0 (draft) |
+| Date | 2026-11-26 |
 | Status | Draft |
 
 ## 1. Purpose
@@ -48,7 +48,9 @@ flowchart TD
 
 ## 4. Adapter details
 
-**Scheduler duplicates.** A scheduler can deliver twice. An adapter migration adds `slot INTEGER UNIQUE` to `tick_runs`; the handler inserts `now / 600000` as the slot and returns if the insert conflicts.
+**Scheduler duplicates.** A scheduler can deliver twice. An adapter migration adds a table `sched_slots` keyed by slot number (the slot is `now / 600000` at the default interval); the handler inserts the slot and returns without running a tick if the insert conflicts. The slot is kept in its own table and not as a unique column on `tick_runs`, because a unique column cannot be added to another module's table idempotently.
+
+**Scheduler silence.** A scheduler can also fail to deliver. A second producer, on a different trigger from the first, reads the newest tick and runs one when it is older than two intervals; what it did is recorded as a beat of its own, so a watcher that stops is itself seen.
 
 **Store dialect (Postgres-class).** A shim translates `?` to `$n`, `INSERT OR IGNORE` to `ON CONFLICT DO NOTHING`, `datetime('now')` to `now()` stored as text in `YYYY-MM-DD HH:MM:SS` (so string comparisons hold), `AUTOINCREMENT` to `BIGSERIAL` and `last_row_id` to `RETURNING id`. The aggregations and the `NOT IN` dispatch query map directly. **Document database:** each table is a collection keyed by primary key; claim uniqueness comes from a create-only write keyed by item id; dispatch is an indexed query on (status, owner_role, priority) followed by a transactional claim; reconcile, trust and dispatch steps are rewritten and the conformance tests re-run.
 
@@ -71,6 +73,7 @@ flowchart TD
 - **US-14-R09 [L3]** A scheduler adapter that may deliver twice MUST deduplicate by slot.
 - **US-14-R10 [L3]** The model port MUST fail at deploy time if reviewer and doer resolve to one family when two are available.
 - **US-14-R11 [L3]** An adapter on a scale-out store MUST demonstrate claim correctness under contention.
+- **US-14-R12 [L2]** The scheduler port MUST have a second producer on an independent trigger that runs a tick when the newest tick is older than two intervals, and MUST record each of its own runs.
 
 ## 6. Failure modes
 
@@ -78,6 +81,7 @@ flowchart TD
 |---|---|---|
 | SQL dialect differences | Core queries fail | Shim; conformance tests |
 | Double delivery | Two ticks in one slot | Slot uniqueness |
+| The scheduler stops delivering | No tick, and nothing inside the system notices | Second producer (US-14-R12) |
 | Single-writer store with many instances | Lost writes | Pin to one instance |
 | Long-lived keys in workflows | Credential exposure | Workload identity federation |
 
@@ -88,19 +92,23 @@ flowchart TD
 - **US-14-T03** Send the scheduler's request twice in one slot. Pass: one tick row for the slot.
 - **US-14-T04** Set a secret and read the presence map. Pass: `true` for the name, no value in any log.
 - **US-14-T05 [L3]** Deploy a version failing a prior-passing probe. Pass: reverted.
+- **US-14-T06 [L2]** Leave the newest tick older than two intervals and call the second producer. Pass: one new tick row and one beat of the second producer; called again at once, it runs no tick.
 
 ## 8. Reference implementation status
 
+Paths under `core/` and `adapters/` are in the `workers/` tree; paths under `seed/`, `platform/`, `foundation/`, `doctrine/`, `ops/` and `tests/foundation/` are from the repository root.
 
-- Cloudflare reference (Worker with cron, D1 store, health route): BUILT as `adapters/cloudflare/src/index.js`, `core/src/tick.js`, `adapters/cloudflare/wrangler.template.jsonc`; RUNNING in QNFO in its own form. A real deployment of the seed to a cloud account has not been run as of 2026-11-11.
-- Store port over SQLite: BUILT in `adapters/sqlite/d1-sqlite.js` (a file or in-memory database behind the store handle), with the test helpers `core/test/d1shim.js` and `core/_shared/testdb.js`; the same `runTick` runs on D1-shaped SQLite. `core/conformance/l1.test.js` runs the L1 tick over the adapter's handle and checks the handle's contract (US-14-R02, US-14-R06, US-14-R07, US-14-T01).
+- Cloudflare reference (Worker with cron, D1 store, health route): BUILT as `adapters/cloudflare/src/index.js`, `core/src/tick.js`, `adapters/cloudflare/wrangler.template.jsonc` (tests: `adapters/cloudflare/src/heartbeat.test.js`, `core/conformance/l1.test.js`); RUNNING in QNFO in its own form.
+- Cloudflare reference of the kit every system is seeded from: BUILT as `seed/worker/src/index.js` (scheduled handler, `/health`, `/pulse/watch`), `seed/worker/src/tick.js` and `seed/worker/wrangler.template.jsonc` (tests: `seed/worker/test/tick.test.js`, `seed/worker/test/health-ignition.test.js`); `/health` answers 503 until a tick has completed every step (US-14-R05). RUNNING on Ultrastable's own Cloudflare account as the Worker `ultrastable-tick` (`doctrine/topology.json`; each deploy and its live read-back is a row of `ops/deploys.jsonl`). This replaces the 0.1.0 statement that no deployment of the seed to a cloud account had been run.
+- Second producer (US-14-R12, US-14-T06): BUILT in `seed/worker/src/pulse.js` (`watch`, served as `POST /pulse/watch` by `seed/worker/src/index.js`; test: `seed/worker/test/pulse.test.js`, "watchdog: a stale heartbeat is restarted by the second producer"). The `workers/` reference adapters have no second producer.
+- Store port over SQLite: BUILT in `adapters/sqlite/d1-sqlite.js` (a file or in-memory database behind the store handle), with the test helpers `core/test/d1shim.js` and `core/_shared/testdb.js`; the same `runTick` runs on D1-shaped SQLite. The kit's own tick runs on a SQLite file the same way: `platform/adapters/sqlite/d1-sqlite.js` and `platform/selfhost/tick.mjs`, driven by `foundation/selfhost.py` (test: `tests/foundation/test_selfhost.py`). `core/conformance/l1.test.js` runs the L1 tick over the adapter's handle and checks the handle's contract (US-14-R02, US-14-R06, US-14-R07, US-14-T01).
 - Presence-only secrets: BUILT (`presence()` in `core/org/index.js`; US-14-T04 in `core/conformance/l1.test.js`).
-- Cloud Run adapter (token-gated `/tick`, `/health`, the guided console of US-SPEC-18, SQLite volume): BUILT in `adapters/gcp/` (`server.js`, `Dockerfile`, `deploy.sh`), 3 tests passing on 2026-11-11 after a Windows path fix (`fileURLToPath`). Not deployed on a Google Cloud project.
+- Cloud Run adapter (token-gated `/tick`, `/health`, the guided console of US-SPEC-18, SQLite volume): BUILT in `adapters/gcp/` (`server.js`, `Dockerfile`, `deploy.sh`, and the deploy port `deployer.js`); tests: `adapters/gcp/test/gcp.test.js`, `adapters/gcp/test/ports.test.js`, `adapters/gcp/test/deployer.test.js`. Not deployed on a Google Cloud project.
 - Postgres dialect shim: BUILT in `adapters/postgres/index.js` (tests: `adapters/postgres/postgres.test.js`): `?` to `$n`, `INSERT OR IGNORE` to `ON CONFLICT DO NOTHING`, `datetime('now')` to UTC text in `YYYY-MM-DD HH:MM:SS`, `AUTOINCREMENT` to `BIGSERIAL`, `last_row_id` from `RETURNING id`, and the store handle over any client with `query(text, params)`. The whole L1 migration and every statement of `core/src/tick.js` are translated in the tests; the handle is exercised against a recording client.
-- The L1 tick suite and claim contention on a live Postgres (US-14-T01 and US-14-R11 for this adapter): PLANNED. No Postgres server or driver is available to the test run, so the shim is proven as text and not yet against a server.
+- The L1 tick suite and claim contention on a live Postgres (US-14-T01 and US-14-R11 for this adapter): PLANNED. No Postgres server or driver is available to the test run, so the shim is proven as text and not yet against a server. Tracked as `docs/issues/Q-SPEC-14-LIVE-STORES.json`.
 - Document-database adapter: BUILT in `adapters/docdb/index.js` (tests: `adapters/docdb/docdb.test.js`): the document port, a reference in-memory store, claim uniqueness by a create-only write keyed by item id, dispatch as an indexed query followed by a transactional claim, and the reconcile, trust and dispatch steps rewritten and compared with the SQL steps on the same data; claim correctness under contention is shown on the reference store (US-14-R11).
-- Document-database driver for a hosted service, and the other five L1 steps on a document store: PLANNED. A hosted driver needs a live account; the remaining steps are not rewritten.
+- Document-database driver for a hosted service, and the other five L1 steps on a document store: PLANNED. A hosted driver needs a live account; the remaining steps are not rewritten. Tracked as `docs/issues/Q-SPEC-14-LIVE-STORES.json`.
 - Model port and role runtime: BUILT in `core/modelport/index.js` (tests: `core/modelport/modelport.test.js`): aliases resolved to endpoints that return a completion and token counts, the deploy-time check that fails when reviewer and doer resolve to one family while two are available (US-14-R10), and an in-process role runtime with one leased instance per role row that works queued dispatch rows.
 - Role runtime on Durable Objects, container jobs or an agent engine, and the container variant: PLANNED. Each needs a live account; they implement the same three calls as the in-process runtime.
-- Slot uniqueness migration: BUILT as `adapters/shared/migrations/0001_sched_slots.sql` and `adapters/shared/slot.js` (tests: `adapters/shared/slot.test.js`, US-14-R03, US-14-R09, US-14-T03). The slot is kept in its own table `sched_slots` (slot number, tick run id) instead of a unique column on `tick_runs`, because a unique column cannot be added to another module's table idempotently. The Cloudflare and Cloud Run handlers do not call `runOncePerSlot` yet.
+- Slot uniqueness migration: BUILT as `adapters/shared/migrations/0001_sched_slots.sql` and `adapters/shared/slot.js` (tests: `adapters/shared/slot.test.js`, US-14-R03, US-14-R09, US-14-T03). The slot is kept in its own table `sched_slots` (slot number, tick run id) instead of a unique column on `tick_runs`, because a unique column cannot be added to another module's table idempotently. Both reference handlers run their tick through it: `scheduledTick` in `core/org/surfaces.js` calls `runOncePerSlot`, and `adapters/cloudflare/src/index.js` and `adapters/gcp/server.js` call `scheduledTick` (test: `core/org/surfaces.test.js`). The kit's Worker (`seed/worker/src/index.js`) does not deduplicate by slot, so the kit does not meet US-14-R09: PLANNED, tracked as `docs/issues/Q-SPEC-14-KIT-SLOT.json`. Its `pulse` step counts the slots each loop ran in, which shows a missed slot and not a doubled one.
 - Disagreement: the schema uses SQLite-dialect defaults (`datetime('now')`, `AUTOINCREMENT`), so a Postgres port requires the shim above; the shim translates them and has not run against a server.

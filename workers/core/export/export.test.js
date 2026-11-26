@@ -80,21 +80,3 @@ test('an empty table exports and verifies; a table that does not exist needs no 
   assert.equal(r.applied, true); assert.equal(r.exports.length, 0);
   await assert.rejects(() => ex.exportTable('org; DROP TABLE org'), /not a table name/);
 });
-
-test('US-01-R04: statements handed in with a migration (a caller ledger row) land with it in one batch when the store has batch(), in order when it has not, and never when the export is refused', async () => {
-  const batched = (db) => Object.assign(db, { batches: 0, async batch(list) { this.batches++; db.raw.exec('BEGIN'); try { for (const s of list) await s.run(); db.raw.exec('COMMIT'); } catch (e) { db.raw.exec('ROLLBACK'); throw e; } } });
-  const ledgerRow = (db, name) => { db.raw.exec(`CREATE TABLE IF NOT EXISTS mig_ledger (name TEXT PRIMARY KEY)`); return [db.prepare(`INSERT INTO mig_ledger (name) VALUES (?)`).bind(name)]; };
-  const rows = (db) => count(db, `SELECT COUNT(*) AS n FROM mig_ledger`), hasOrg = (db) => count(db, `SELECT COUNT(*) AS n FROM sqlite_master WHERE name='org'`);
-  const a = setup(); batched(a.db);
-  assert.equal((await a.ex.applyMigration('0013_drop', `DROP TABLE org;`, { also: ledgerRow(a.db, '0013_drop') })).applied, true);
-  assert.equal(a.db.batches, 1, 'the migration and its ledger row were one call'); assert.equal(rows(a.db), 1); assert.equal(hasOrg(a.db), 0);
-  const half = setup(); batched(half.db);
-  await assert.rejects(() => half.ex.applyMigration('0014_half', `DROP TABLE org; INSERT INTO table_that_is_not_there (x) VALUES (1);`, { also: ledgerRow(half.db, '0014_half') }));
-  assert.equal(rows(half.db), 0, 'the ledger row did not land without the migration'); assert.equal(hasOrg(half.db), 1, 'the drop was rolled back with the failing statement');
-  const plain = setup();
-  assert.equal((await plain.ex.applyMigration('0015_plain', `CREATE TABLE IF NOT EXISTS extra_two (x);`, { also: ledgerRow(plain.db, '0015_plain') })).applied, true);
-  assert.equal(rows(plain.db), 1, 'without batch() the statements run in order');
-  const refused = setup(null); refused.db.raw.exec(`INSERT INTO org (key, value) VALUES ('a','b')`);
-  assert.equal((await refused.ex.applyMigration('0016_refused', `DROP TABLE org;`, { also: ledgerRow(refused.db, '0016_refused') })).applied, false);
-  assert.equal(rows(refused.db), 0, 'a refused migration records nothing'); assert.equal(hasOrg(refused.db), 1);
-});

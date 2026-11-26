@@ -5,11 +5,10 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { makeDb } from '../_shared/testdb.js';
 import { runTick, STEP_ORDER } from '../src/tick.js';
-import { MIGRATIONS_DIR as KERNEL_DIR, registerProgram, snapshotRisk, allocate, L2_EXTRA_STEPS } from '../kernel/index.js';
+import { MIGRATIONS_DIR as KERNEL_DIR, registerProgram, snapshotRisk, allocate } from '../kernel/index.js';
 import {
   MIGRATIONS_DIR, registerProduct, reduceShare, effectiveShare, capacity, recordReading, latestReading, measureUsage, selectDue, cycleKind,
   gatherEvidence, proposePlus, shipPlus, decidePlus, decideDue, principalStep, runCycle, weeklyDigest, detect, plusStep,
-  plusSlotsConfig, adoptProducts, plusProbe, EVIDENCE_SOURCES,
 } from './index.js';
 
 const policy = JSON.parse(readFileSync(new URL('../../autonomy/policy.json', import.meta.url), 'utf8'));
@@ -29,7 +28,7 @@ const read = (db, usage, guard, now, product = 'desk') => Promise.all([
 const plus = (o = {}) => ({ product: 'desk', title: 'Add a today summary', evidence: 'usage flat for 3 weeks', prediction: { metric: 'requests_per_day', direction: 'up', size: 0.10 },
   additive: true, changes: 1, revert_path: 'remove the summary block', doer: 'staff: site/home.js', angle: 'summary on the home page', ...o });
 
-test('US-04-T01, US-04-R02: 20 done items with 1 plus opens one REBALANCE item for the portfolio manager at priority 5', async () => {
+test('US-04-T01: 20 done items with 1 plus opens one REBALANCE item for the portfolio manager at priority 5', async () => {
   const db = makeDb([MIGRATIONS_DIR]); done(db, 19, 'work'); done(db, 1, 'plus');
   const r = await runTick(db, { config, now: NOW }); assert.deepEqual(r.errors, []);
   await runTick(db, { config, now: NOW + HOUR });                                            // the same day: still one
@@ -38,7 +37,7 @@ test('US-04-T01, US-04-R02: 20 done items with 1 plus opens one REBALANCE item f
   assert.deepEqual([it[0].id, it[0].owner_role, it[0].priority], ['REBALANCE-2026-11-09', 'portfolio-manager', 5]);
 });
 
-test('US-04-T02, US-04-R02: 9 done items open no rebalance item; 20 with a healthy plus share open none either', async () => {
+test('US-04-T02: 9 done items open no rebalance item; 20 with a healthy plus share open none either', async () => {
   const db = makeDb([MIGRATIONS_DIR]); done(db, 9, 'work');
   await runTick(db, { config, now: NOW });
   assert.equal(one(db, `SELECT COUNT(*) AS n FROM items WHERE id LIKE 'REBALANCE-%'`).n, 0);
@@ -294,126 +293,4 @@ test('the plus loop runs as a tick step: reads usage, starts a cycle, writes the
   assert.equal(one(db, `SELECT COUNT(*) AS n FROM plus_digest`).n, 2);
   const off = await runTick(db, { config: { ...config, plus: { enabled: false } }, now: NOW + 8 * DAY, extraSteps: [step] });
   assert.match(off.report, /plus: off/);
-});
-
-test('US-04-T07, US-04-R01, US-04-R05: allocation in a ticked org reserves the plus slots, and risk cannot take them', async () => {
-  const db = makeDb([KERNEL_DIR, MIGRATIONS_DIR]);
-  await registerProgram(db, { id: 'OPS', name: 'ops' }); await registerProgram(db, { id: 'REACH', name: 'reach' });
-  const itm = (id, project, status = 'ready') => db.raw.prepare(`INSERT INTO items (id, title, owner_role, done_check, priority, status, project) VALUES (?,?,?,?,?,?,?)`).run(id, 't', 'nobody', 'x', 0, status, project);
-  for (let i = 0; i < 3; i++) itm(`OPS-${i}`, 'OPS'); itm('REACH-0', 'REACH');
-  const slots = async (tick) => one(db, `SELECT COALESCE(SUM(slots), 0) AS n FROM kernel_allocations WHERE tick_id = ?`, tick).n;
-  const tickAt = async (at, cfg) => (await runTick(db, { config: { ...config, plus: cfg, kernel: await plusSlotsConfig(db, { config: { plus: cfg, kernel: { slots: 25 } }, now: at, kernel: { slots: 25 } }) }, now: at, extraSteps: L2_EXTRA_STEPS })).tickId;
-  const t1 = await tickAt(NOW, undefined);
-  assert.equal(await slots(t1), 20);                                                          // 25 less the 5 reserved at the default 20%
-  for (let i = 0; i < 30; i++) itm(`OPS-x${i}`, 'OPS', 'blocked');                          // ten times the risk
-  const t2 = await tickAt(NOW + HOUR, undefined);
-  assert.equal(await slots(t2), 20);                                                          // the reserve did not move to repair
-  await reduceShare(db, { share: 0.08, reason: 'incident week', expires_at: ts(NOW + 2 * DAY), now: NOW });
-  const t3 = await tickAt(NOW + DAY, undefined);
-  assert.equal(await slots(t3), 23);                                                          // 2 reserved while the row stands
-  const t4 = await tickAt(NOW + 3 * DAY, undefined);
-  assert.equal(await slots(t4), 20);                                                          // the row expired: the share is back
-  assert.equal((await plusSlotsConfig(db, { config: { plus: { plus_share: 0 } }, now: NOW + 3 * DAY })).plus_slots, 0);   // a share of 0 reserves none
-  assert.deepEqual(await plusSlotsConfig(db, { config: {}, now: NOW + 3 * DAY, kernel: { slots: 10, manager_ops: true } }), { slots: 10, manager_ops: true, plus_slots: 2 });
-});
-
-test('US-04-R01: adoptProducts registers a product once with the default measures and never overwrites a registered one; the step adopts on a tick', async () => {
-  const db = makeDb([MIGRATIONS_DIR]);
-  const source = async () => [{ product: 'desk', host: 'desk.example', program: 'REACH' }, { product: 'blog', host: 'blog.example', usage_metric: 'sessions_per_day', quality_measure: 'bounce_rate', quality_direction: 'lower' }, { host: 'x' }];
-  assert.deepEqual(await adoptProducts(db, { source, now: NOW }), ['desk', 'blog']);
-  assert.deepEqual({ ...one(db, `SELECT usage_metric, quality_measure, quality_direction, host, program FROM plus_product_registry WHERE product = 'desk'`) },
-    { usage_metric: 'requests_per_day', quality_measure: 'error_page_rate', quality_direction: 'lower', host: 'desk.example', program: 'REACH' });
-  await db.prepare(`UPDATE plus_product_registry SET quality_measure = 'custom_guard' WHERE product = 'desk'`).bind().run();
-  assert.deepEqual(await adoptProducts(db, { source, now: NOW + HOUR }), []);
-  assert.equal(one(db, `SELECT quality_measure FROM plus_product_registry WHERE product = 'desk'`).quality_measure, 'custom_guard');
-  assert.deepEqual(await adoptProducts(db, {}), []);
-  const db2 = makeDb([MIGRATIONS_DIR]);
-  const r = await runTick(db2, { config, now: NOW, extraSteps: [plusStep({ adopt: source })] });
-  assert.deepEqual(r.errors, []); assert.match(r.report, /adopted desk blog/);
-  assert.equal(one(db2, `SELECT COUNT(*) AS n FROM plus_product_registry`).n, 2);
-});
-
-test('US-04-R18: step 404 evidence includes every supplied source and lists a failing, empty or missing source as unavailable, never as an empty list', async () => {
-  const db = makeDb([MIGRATIONS_DIR]); await product(db); await read(db, 1240, 0.8, NOW);
-  const sources = { feedback: async () => [{ label: 'a visitor wrote', note: 'the summary is hard to find' }], comparables: async () => { throw new Error('rate limited'); }, principal_asks: async () => [], owed_notes: async () => [{ label: 'owed note', value: 1 }] };
-  const ev = await gatherEvidence(db, 'desk', { now: NOW, sources });
-  assert.deepEqual(ev.feedback, [{ label: 'a visitor wrote', note: 'the summary is hard to find' }]); assert.deepEqual(ev.owed_notes, [{ label: 'owed note', value: 1 }]);
-  assert.equal('comparables' in ev, false); assert.equal('principal_asks' in ev, false); assert.equal('sections' in ev, false);
-  const why = Object.fromEntries(ev.unavailable.map(u => [u.source, u.why]));
-  assert.match(why.comparables, /rate limited/); assert.match(why.principal_asks, /no rows/); assert.match(why.sections, /no source is configured|no rows/);
-  assert.deepEqual(Object.keys(ev.source_status).sort(), [...EVIDENCE_SOURCES].sort());
-  assert.deepEqual([ev.source_status.feedback, ev.source_status.comparables, ev.source_status.principal_asks], ['present', 'unavailable', 'unavailable']);
-});
-
-test('US-04-R18: fresh usage_section and slow_route readings become evidence by default, and stale or failed ones do not', async () => {
-  const db = makeDb([MIGRATIONS_DIR]); await product(db); await read(db, 1240, 0.8, NOW);
-  await recordReading(db, { product: 'desk', measure: 'usage_section:/pricing', value: 400, label: 'views', now: NOW - HOUR });
-  await recordReading(db, { product: 'desk', measure: 'usage_section:/old', value: 9, now: NOW - 5 * DAY });            // stale (default 48 h)
-  await recordReading(db, { product: 'desk', measure: 'usage_section:/failed', value: null, now: NOW - HOUR });            // a failed read
-  await recordReading(db, { product: 'desk', measure: 'slow_route:/search', value: 2300, now: NOW - HOUR });
-  await recordReading(db, { product: 'desk', measure: 'slow_route:/search', value: 1900, now: NOW - 60 * 1000 });           // the latest wins
-  const ev = await gatherEvidence(db, 'desk', { now: NOW });
-  assert.deepEqual(ev.sections, [{ label: '/pricing', value: 400, note: 'views' }]);
-  assert.deepEqual(ev.slow_routes, [{ label: '/search', value: 1900, note: undefined }].map(r => ({ ...r })));
-  assert.equal(ev.source_status.sections, 'present');
-  const stale = await gatherEvidence(db, 'desk', { now: NOW + 10 * DAY });
-  assert.equal('sections' in stale, false); assert.equal(stale.source_status.sections, 'unavailable');
-  // runCycle hands the sources to the proposer through the evidence
-  await registerProduct(db, { product: 'blog', usage_metric: 'requests_per_day', quality_measure: 'error_page_rate', now: NOW - 30 * DAY });
-  await read(db, 5, 0.1, NOW, 'blog');
-  let seen = null;
-  await runCycle(db, { now: NOW, propose: async ({ product, evidence }) => { if (product === 'blog') seen = evidence; return null; }, sources: { feedback: async () => [{ label: 'x' }] } });
-  assert.deepEqual(seen.feedback, [{ label: 'x' }]);
-});
-
-test('US-04-T05, US-04-R15: an unmeasured plus stays shipped with an item through the grace period, then is reverted and counts as a miss', async () => {
-  const db = makeDb([MIGRATIONS_DIR]); await product(db); await read(db, 1240, 0.8, NOW);
-  const a = await proposePlus(db, plus({ now: NOW }));
-  await shipPlus(db, a.id, { evidence: 'deploy probed', now: NOW });
-  const due = NOW + 7 * DAY;
-  const g = await decidePlus(db, a.id, { now: due + HOUR });                                                         // no reading since: inside the grace
-  assert.deepEqual([g.status, g.verdict, g.outcome], ['shipped', 'unmeasured', null]);
-  assert.equal(one(db, `SELECT status FROM items WHERE id = ?`, `PLUSMEASURE-${a.id}`).status, 'ready');
-  assert.equal(one(db, `SELECT misses_in_row FROM plus_product_registry WHERE product = 'desk'`).misses_in_row, 0);
-  const late = await decidePlus(db, a.id, { now: due + 8 * DAY });                                                   // grace (168 h) is over
-  assert.deepEqual([late.status, late.verdict, late.misses_in_row], ['reverted', 'unmeasured', 1]);
-  assert.equal(one(db, `SELECT priority FROM items WHERE id = ?`, `PLUSREVERT-${a.id}`).priority, 5);
-});
-
-test('US-04-T06, US-04-R16: the daily cap counts plus rows created today, independent of the managers\' origination cap', async () => {
-  const db = makeDb([MIGRATIONS_DIR]);
-  for (const n of ['a', 'b', 'c']) { await registerProduct(db, { product: n, program: 'P', usage_metric: 'requests_per_day', quality_measure: 'error_page_rate', now: NOW - 30 * DAY }); await read(db, 100, 0.5, NOW, n); }
-  let calls = 0;
-  const propose = async ({ product }) => { calls++; return plus({ title: `plus for ${product}`, angle: product }); };
-  const cyc = await runCycle(db, { now: NOW, config: { daily_cap: 2 }, propose });
-  assert.equal(calls, 2); assert.deepEqual(cyc.map(r => r.issue_id ? 'filed' : 'capped'), ['filed', 'filed', 'capped']);
-  assert.match(cyc[2].skipped, /daily cap of 2/);
-  const next = await runCycle(db, { now: NOW + DAY, config: { daily_cap: 2 }, propose });                           // a new day: the count restarts
-  assert.equal(next.filter(r => r.skipped).length, 0 + next.filter(r => r.skipped).length); assert.ok(calls >= 3);
-});
-
-test('US-04-R17: a kept plus seeds the next proposal and the next plus is written onto that seed row', async () => {
-  const db = makeDb([MIGRATIONS_DIR]); await product(db); await read(db, 1240, 0.8, NOW);
-  const a = await proposePlus(db, plus({ now: NOW })); await shipPlus(db, a.id, { evidence: 'ok', now: NOW });
-  await read(db, 1410, 0.7, NOW + 7 * DAY);
-  const k = await decidePlus(db, a.id, { now: NOW + 7 * DAY });
-  assert.ok(k.seeded); assert.match(one(db, `SELECT title FROM plus_ledger WHERE id = ?`, k.seeded).title, /^Build on: /);
-  assert.equal((await gatherEvidence(db, 'desk', { now: NOW + 8 * DAY })).seed.id, k.seeded);
-  const b = await proposePlus(db, plus({ title: 'Add the links', angle: 'links', now: NOW + 8 * DAY }));
-  assert.equal(b.id, k.seeded); assert.equal(one(db, `SELECT status FROM plus_ledger WHERE id = ?`, b.id).status, 'filed');
-});
-
-test('US-04-R09, US-04-R13: plusProbe reports the plus loop from its own tables, read-only, with unmeasured products counted as unmeasured, not as zero', async () => {
-  const db = makeDb([MIGRATIONS_DIR]);
-  const empty = await plusProbe(db, { now: NOW });
-  assert.deepEqual([empty.products, empty.active, empty.with_usage_reading, empty.in_flight, empty.digest_age_h, empty.share], [0, 0, 0, 0, null, 0.2]);
-  await product(db); await registerProduct(db, { product: 'blog', usage_metric: 'requests_per_day', quality_measure: 'error_page_rate', now: NOW - 30 * DAY });
-  await read(db, 1240, 0.8, NOW);
-  const a = await proposePlus(db, plus({ now: NOW }));
-  await weeklyDigest(db, { now: NOW });
-  const before = ['plus_product_registry', 'plus_ledger', 'plus_readings', 'plus_digest', 'items'].map(t => one(db, `SELECT COUNT(*) AS n FROM ${t}`).n);
-  const p = await plusProbe(db, { now: NOW + DAY });
-  assert.deepEqual(['plus_product_registry', 'plus_ledger', 'plus_readings', 'plus_digest', 'items'].map(t => one(db, `SELECT COUNT(*) AS n FROM ${t}`).n), before);
-  assert.deepEqual([p.products, p.active, p.with_usage_reading, p.unmeasured, p.in_flight, p.digest_age_h], [2, 2, 1, 1, 1, 24]);
-  assert.ok(a.id);
 });
