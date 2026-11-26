@@ -5,7 +5,7 @@
   "date": "2026-11-26",
   "title": "KERNEL-1: a deployable kernel, independently versioned modules, and state that is not code",
   "body": "Owner 2026-11-26: thousands of files in one change is unsustainable. Decision: three homes. Kernel (seed): tick Worker core, bootstrap, defaults, modules.lock. Modules: each workers/core package in about ten repositories, pinned by version and hash. State: queue items, ledgers and generated data in D1 and the private ledger, not in code history. Repository shape is an essential variable the second loop reads; the lane bounds a change to one module. Nothing deleted; history kept. Measured: 4,662 tracked files, 1,241 queue items as files, 273 of the last 300 commits on main loop-written. Detail: docs/handoff/kernel-split.md",
-  "probe": "file:docs/handoff/kernel-split.md",
+  "probe": "file:docs/issues/Q-KERNEL-modules.json",
   "session": "session_0156nqDroaiS542i2iu8RdAL"
  },
  "kind": "decision",
