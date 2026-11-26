@@ -540,6 +540,7 @@
       "bindings": [
         "LANE_APP_ID",
         "LANE_APP_PRIVATE_KEY",
+        "LANE_PAT",
         "ORG_ADMIN_TOKEN"
       ]
     },

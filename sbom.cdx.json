@@ -127,9 +127,9 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40ultrastable/core",
+      "bom-ref": "pkg:npm/%40ultrastable/core@0.1.0",
       "name": "@ultrastable/core",
-      "purl": "pkg:npm/%40ultrastable/core",
+      "purl": "pkg:npm/%40ultrastable/core@0.1.0",
       "scope": "required",
       "properties": [
         {
@@ -140,7 +140,8 @@
           "name": "ultrastable:third-party-dependencies",
           "value": "0"
         }
-      ]
+      ],
+      "version": "0.1.0"
     },
     {
       "type": "library",
@@ -177,5 +178,5 @@
       ]
     }
   ],
-  "serialNumber": "urn:uuid:576b795a-321c-58cb-b7b3-c28a4b166ad0"
+  "serialNumber": "urn:uuid:07c2ea35-f83e-5d6f-b3fa-c2f68139cf6e"
 }

@@ -76,6 +76,14 @@ export async function applyStandard(A, repo, live, spec = {}) {
     const have = Array.isArray(live.topics) ? [...live.topics].sort().join(',') : null;
     if (have !== [...topics].sort().join(',')) { if (step('topics', await A('PUT', `/repos/${repo}/topics`, { names: topics }), [200])) out.changed.push('topics'); }
   }
+  // GH-ONLY-1: a system that runs on GitHub alone asks for Pages built by its own workflow (spec.pages === 'workflow'). A repository's own
+  // GITHUB_TOKEN is refused this call, so the administration app turns it on once; an existing site is left as it is.
+  if (spec.pages === 'workflow') {
+    const pg = await A('GET', `/repos/${repo}/pages`);
+    if (pg.status === 404) { if (step('pages', await A('POST', `/repos/${repo}/pages`, { build_type: 'workflow' }), [201])) out.changed.push('pages'); }
+    else if (pg.status === 200 && pg.json && pg.json.build_type !== 'workflow') { if (step('pages build_type', await A('PUT', `/repos/${repo}/pages`, { build_type: 'workflow' }), [204])) out.changed.push('pages_build_type'); }
+    else if (pg.status !== 200) step('pages read', pg, [200]);
+  }
   if (willBePrivate) { for (const k of ['security', 'ruleset']) if (S.private_plan_gated.includes(k)) out.gated.push(k); return { ...out, ok: !out.refused.length }; }
   if (S.security.vulnerability_alerts) { const seen = await A('GET', `/repos/${repo}/vulnerability-alerts`); if (seen.status !== 204) { if (step('vulnerability alerts', await A('PUT', `/repos/${repo}/vulnerability-alerts`), [204])) out.changed.push('vulnerability_alerts'); } }
   const sa = live.security_and_analysis || {}, sec = {};

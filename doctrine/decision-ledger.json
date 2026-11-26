@@ -6037,6 +6037,33 @@
    "body": "Owner 2026-11-26: the specification should not be up for grabs and the template repository carries only what a new instance needs to deploy. Decision: full specification text, rule narrative and company papers live in private ultrastable/ops (spec/, admin/, no workflow); code, public contracts, definitions, white papers, requirement IDs and conformance counts stay public; the seed is slimmed to the operating agreement plus the generated rules index. What was already public stays public (no history rewrite: the ruleset refuses force pushes). New specification text is never committed to a public branch. Detail and sequence: docs/handoff/disclosure-split.md",
    "probe": "file:foundation/disclosure.py",
    "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "lesson-2026-11-26-oversized-prs-hide-scratch-refuse-them",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Oversized PRs hide scratch; refuse them",
+   "body": "ops PR 45 changed 3,194 files, 3,158 of them session scratch copies. SMALL-CHANGE-1 (seed/scripts/prsize.py, in checks) fails a PR over 60 files or 3,000 lines or carrying wip/ paths. The work was salvaged into ops #46 and kept on archive/pr45-spec-held-work.",
+   "probe": "file:seed/scripts/prsize.py",
+   "session": "session_0156nqDuK44xqnv57kfkBrGR"
+  },
+  {
+   "id": "decision-2026-11-26-gh-only-1-pages-is-turned-on-by-the-administration-app",
+   "kind": "decision",
+   "date": "2026-11-26",
+   "title": "GH-ONLY-1: Pages is turned on by the administration app",
+   "body": "No org credential is bound in the core repository's Actions, so pages-enable.yml falls back to the OIDC route: repo-settings with pages=workflow, applied by applyStandard in seed/worker/src/repostandard.js.",
+   "probe": "grep:seed/worker/src/repostandard.js::spec.pages === 'workflow'",
+   "session": "session_0156nqDvAsinuzbSTMG33HRB"
+  },
+  {
+   "id": "lesson-2026-11-26-lane-app-secrets-are-not-bound-in-the-core-repo",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Lane App secrets are not bound in the core repo",
+   "body": "pages-enable run 45817599969 failed: LANE_APP_ID and LANE_APP_PRIVATE_KEY are empty there, while LANE_PAT is bound. Workflows needing an org credential fall back to LANE_PAT.",
+   "probe": "file:.github/workflows/pages-enable.yml",
+   "session": "session_0156nqDvAsinuzbSTMG33HRB"
   }
  ]
 }
