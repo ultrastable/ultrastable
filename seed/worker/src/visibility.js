@@ -6,7 +6,7 @@
 // nothing private. doctrine/coldstart.json names the same paths and `python3 -m foundation coldstart --check` fails when the two differ.
 // FLEET-CONTRACT-1 adds the statements (/claims.json) and the system's own social queue (empty, with the reason, until it has public content).
 export const PUBLIC_CONTRACT = Object.freeze(['/claims.json', '/social-queue.json']);
-export const PUBLIC_READS = Object.freeze(['/.well-known/ultrastable.json', '/api/graph', '/api/graph/insights', '/api/graph/search', '/api/graph/node', '/graph', '/api/progress', '/api/stickiness', ...PUBLIC_CONTRACT]);
+export const PUBLIC_READS = Object.freeze(['/.well-known/ultrastable.json', '/api/graph', '/api/graph/insights', '/api/graph/search', '/api/graph/node', '/graph', '/api/progress', '/api/stickiness', '/api/plans', ...PUBLIC_CONTRACT]);
 const STICKY_QUEUE = /^\/api\/stickiness\/queue\/[a-z0-9-]{1,60}\.json$/;
 export function hiddenByHealthOnly(env, method, pathname) {
   if (!env || env.PUBLIC_HEALTH_ONLY !== '1') return false;
