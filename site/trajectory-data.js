@@ -38,14 +38,14 @@ export default {
     0,
     81810
    ],
-   "share_recent": 0.228,
-   "share_trend": 0.228,
+   "share_recent": 0.226,
+   "share_trend": 0.226,
    "total": 81810
   },
   {
    "area": "doctrine",
    "quiet_days": 0,
-   "recent7": 42503,
+   "recent7": 42512,
    "series": [
     0,
     0,
@@ -76,11 +76,11 @@ export default {
     0,
     0,
     0,
-    42503
+    42512
    ],
-   "share_recent": 0.118,
-   "share_trend": 0.118,
-   "total": 42503
+   "share_recent": 0.117,
+   "share_trend": 0.117,
+   "total": 42512
   },
   {
    "area": "foundation",
@@ -118,8 +118,8 @@ export default {
     0,
     41867
    ],
-   "share_recent": 0.117,
-   "share_trend": 0.117,
+   "share_recent": 0.116,
+   "share_trend": 0.116,
    "total": 41867
   },
   {
@@ -165,7 +165,7 @@ export default {
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 27138,
+   "recent7": 27096,
    "series": [
     0,
     0,
@@ -196,16 +196,16 @@ export default {
     0,
     0,
     0,
-    27138
+    27096
    ],
-   "share_recent": 0.076,
-   "share_trend": 0.076,
-   "total": 27138
+   "share_recent": 0.075,
+   "share_trend": 0.075,
+   "total": 27096
   },
   {
    "area": "tests/foundation",
    "quiet_days": 0,
-   "recent7": 21036,
+   "recent7": 23745,
    "series": [
     0,
     0,
@@ -236,11 +236,11 @@ export default {
     0,
     0,
     0,
-    21036
+    23745
    ],
-   "share_recent": 0.059,
-   "share_trend": 0.059,
-   "total": 21036
+   "share_recent": 0.066,
+   "share_trend": 0.066,
+   "total": 23745
   },
   {
    "area": "doctrine/schemas",
@@ -323,7 +323,7 @@ export default {
    "total": 16928
   }
  ],
- "at": "2026-11-26T14:07:28Z",
+ "at": "2026-11-26T14:12:50Z",
  "days": 30,
  "findings": [
   {
@@ -389,9 +389,9 @@ export default {
    0,
    0,
    0,
-   69
+   51
   ],
-  "closed": 1232,
+  "closed": 1250,
   "opened": 1301
  },
  "loops": [
@@ -583,7 +583,7 @@ export default {
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 447,
+   "rows": 448,
    "series": [
     0,
     0,
@@ -614,7 +614,7 @@ export default {
     80,
     55,
     88,
-    107
+    108
    ]
   },
   {

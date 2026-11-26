@@ -36,15 +36,15 @@
     0,
     81810
    ],
-   "share_recent": 0.228,
-   "share_trend": 0.228,
+   "share_recent": 0.226,
+   "share_trend": 0.226,
    "slope": 527.8065,
    "total": 81810
   },
   {
    "area": "doctrine",
    "quiet_days": 0,
-   "recent7": 42503,
+   "recent7": 42512,
    "series": [
     0,
     0,
@@ -75,12 +75,12 @@
     0,
     0,
     0,
-    42503
+    42512
    ],
-   "share_recent": 0.118,
-   "share_trend": 0.118,
-   "slope": 274.2129,
-   "total": 42503
+   "share_recent": 0.117,
+   "share_trend": 0.117,
+   "slope": 274.271,
+   "total": 42512
   },
   {
    "area": "foundation",
@@ -118,8 +118,8 @@
     0,
     41867
    ],
-   "share_recent": 0.117,
-   "share_trend": 0.117,
+   "share_recent": 0.116,
+   "share_trend": 0.116,
    "slope": 270.1097,
    "total": 41867
   },
@@ -167,7 +167,7 @@
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 27138,
+   "recent7": 27096,
    "series": [
     0,
     0,
@@ -198,17 +198,17 @@
     0,
     0,
     0,
-    27138
+    27096
    ],
-   "share_recent": 0.076,
-   "share_trend": 0.076,
-   "slope": 175.0839,
-   "total": 27138
+   "share_recent": 0.075,
+   "share_trend": 0.075,
+   "slope": 174.8129,
+   "total": 27096
   },
   {
    "area": "tests/foundation",
    "quiet_days": 0,
-   "recent7": 21036,
+   "recent7": 23745,
    "series": [
     0,
     0,
@@ -239,12 +239,12 @@
     0,
     0,
     0,
-    21036
+    23745
    ],
-   "share_recent": 0.059,
-   "share_trend": 0.059,
-   "slope": 135.7161,
-   "total": 21036
+   "share_recent": 0.066,
+   "share_trend": 0.066,
+   "slope": 153.1935,
+   "total": 23745
   },
   {
    "area": "doctrine/schemas",
@@ -774,8 +774,8 @@
     0,
     2697
    ],
-   "share_recent": 0.008,
-   "share_trend": 0.008,
+   "share_recent": 0.007,
+   "share_trend": 0.007,
    "slope": 17.4,
    "total": 2697
   },
@@ -1026,7 +1026,7 @@
    "total": 1419
   }
  ],
- "at": "2026-11-26T14:07:28Z",
+ "at": "2026-11-26T14:12:50Z",
  "days": 30,
  "files": [],
  "findings": [
@@ -1093,9 +1093,9 @@
    0,
    0,
    0,
-   69
+   51
   ],
-  "closed": 1232,
+  "closed": 1250,
   "opened": 1301
  },
  "loops": [
@@ -1634,7 +1634,7 @@
   {
    "loop": "provenance",
    "quiet_days": 0,
-   "rows": 265,
+   "rows": 266,
    "series": [
     0,
     0,
@@ -1665,9 +1665,9 @@
     3,
     1,
     153,
-    41
+    42
    ],
-   "slope": 1.5055
+   "slope": 1.5119
   },
   {
    "loop": "resilience",
@@ -1824,7 +1824,7 @@
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 447,
+   "rows": 448,
    "series": [
     0,
     0,
@@ -1855,9 +1855,9 @@
     80,
     55,
     88,
-    107
+    108
    ],
-   "slope": 2.4785
+   "slope": 2.485
   },
   {
    "loop": "ultrastability",
