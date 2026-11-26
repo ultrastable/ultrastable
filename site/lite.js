@@ -4,7 +4,7 @@
  * ultrastable-lite: lightweight request filtering and handlers (ULTRASTABLE-LITE-1, 2026-11-26).
  * Handles webmentions and other direct site operations.
  */
-export function lite(request, env) {
+export async function lite(request, env) {
   const url = new URL(request.url);
   
   // Handle WebMentions for reach tracking (Q-IMPROVE-webmention)
