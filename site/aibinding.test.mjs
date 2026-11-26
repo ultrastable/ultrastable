@@ -17,9 +17,9 @@ test("ai/run goes through env.AI and never calls the API with the deploy token",
   assert.equal(fetched, false);
 });
 
-test("a binding error is a 502 with the reason, not a silent pass", async () => {
+test("a binding error is a 502 with a plain error code, not a silent pass", async () => {
   const env = { CF_ACCOUNT_ID: "a", CF_DEPLOY_TOKEN: "t", AI: { run: async () => { throw new Error("5028 model deprecated"); } } };
   const r = await cfProxy(req("ai/run/@cf/x/y", {}), env, async () => new Response("{}"));
   assert.equal(r.status, 502);
-  assert.match((await r.json()).errors[0].message, /5028/);
+  assert.equal((await r.json()).errors[0].code, "ai_run_failed");
 });
