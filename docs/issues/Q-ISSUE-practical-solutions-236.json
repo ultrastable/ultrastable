@@ -1,0 +1,11 @@
+{
+  "id": "Q-ISSUE-practical-solutions-236",
+  "title": "Q-ISSUE-practical-solutions-236: Impact: what keeps \"The graduation approach: a bundle of an asset, training, savings and coaching\" from ready to implement",
+  "body": "**Owner:** executor\n**Trigger:** issueloop, daily\n**Done check:** cmd:python3 -m foundation issueloop --closed ultrastable/practical-solutions#236\n**Status:** open\n\nISSUE-LOOP-1: ultrastable/practical-solutions#236 (Impact: what keeps \"The graduation approach: a bundle of an asset, training, savings and coaching\" from ready to implement) is unprobed: no probe line in the body. Fix it in code and close it, or add a `Closing probe:` line the loop can run (file, grep, allow-listed cmd, or GET url expect \"text\").\n\nsize: S\n",
+  "labels": [
+    "p2",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Issues"
+}

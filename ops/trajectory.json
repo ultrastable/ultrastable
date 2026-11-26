@@ -36,15 +36,15 @@
     17148,
     4398
    ],
-   "share_recent": 0.199,
-   "share_trend": 0.194,
+   "share_recent": 0.197,
+   "share_trend": 0.193,
    "slope": 410.6836,
    "total": 131611
   },
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 97303,
+   "recent7": 97391,
    "series": [
     0,
     0,
@@ -75,17 +75,17 @@
     2446,
     1383,
     30834,
-    39173
+    39261
    ],
-   "share_recent": 0.294,
-   "share_trend": 0.18,
-   "slope": 579.6118,
-   "total": 112137
+   "share_recent": 0.292,
+   "share_trend": 0.179,
+   "slope": 580.1795,
+   "total": 112225
   },
   {
    "area": "workers",
    "quiet_days": 0,
-   "recent7": 16802,
+   "recent7": 19440,
    "series": [
     0,
     0,
@@ -116,12 +116,12 @@
     0,
     0,
     894,
-    13577
+    16215
    ],
-   "share_recent": 0.051,
-   "share_trend": 0.148,
-   "slope": 276.9284,
-   "total": 87995
+   "share_recent": 0.058,
+   "share_trend": 0.152,
+   "slope": 293.9477,
+   "total": 90633
   },
   {
    "area": "foundation",
@@ -159,7 +159,7 @@
     8601,
     2203
    ],
-   "share_recent": 0.07,
+   "share_recent": 0.069,
    "share_trend": 0.048,
    "slope": 142.2456,
    "total": 45686
@@ -364,7 +364,7 @@
     3825,
     7523
    ],
-   "share_recent": 0.049,
+   "share_recent": 0.048,
    "share_trend": 0.029,
    "slope": 100.0036,
    "total": 24560
@@ -651,7 +651,7 @@
     2227,
     124
    ],
-   "share_recent": 0.008,
+   "share_recent": 0.007,
    "share_trend": 0.002,
    "slope": 21.8091,
    "total": 6864
@@ -692,7 +692,7 @@
     2015,
     1006
    ],
-   "share_recent": 0.015,
+   "share_recent": 0.014,
    "share_trend": 0.004,
    "slope": 27.3355,
    "total": 6393
@@ -1026,7 +1026,7 @@
    "total": 3671
   }
  ],
- "at": "2026-11-26T17:36:46Z",
+ "at": "2026-11-26T17:49:20Z",
  "days": 30,
  "files": [
   {
@@ -1084,43 +1084,49 @@
    "why": "site's share of attention moved 18 points between the first and second half of the window"
   },
   {
-   "evidence": "quiet_days 7; system change in the last 7 days 330544",
+   "evidence": "share 0% then 15%",
+   "id": "workers",
+   "kind": "drift",
+   "why": "workers's share of attention moved 15 points between the first and second half of the window"
+  },
+  {
+   "evidence": "quiet_days 7; system change in the last 7 days 333270",
    "id": "GLOSSARY.md",
    "kind": "neglected",
    "why": "GLOSSARY.md had 961 lines of change, then nothing for 7 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 8; system change in the last 7 days 330544",
+   "evidence": "quiet_days 8; system change in the last 7 days 333270",
    "id": "docs/ops",
    "kind": "neglected",
    "why": "docs/ops had 396 lines of change, then nothing for 8 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 10; system change in the last 7 days 330544",
+   "evidence": "quiet_days 10; system change in the last 7 days 333270",
    "id": "docs/architecture",
    "kind": "neglected",
    "why": "docs/architecture had 192 lines of change, then nothing for 10 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 9; system change in the last 7 days 330544",
+   "evidence": "quiet_days 9; system change in the last 7 days 333270",
    "id": "seed/self",
    "kind": "neglected",
    "why": "seed/self had 151 lines of change, then nothing for 9 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 11; system change in the last 7 days 330544",
+   "evidence": "quiet_days 11; system change in the last 7 days 333270",
    "id": "seed/outreach",
    "kind": "neglected",
    "why": "seed/outreach had 139 lines of change, then nothing for 11 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 13; system change in the last 7 days 330544",
+   "evidence": "quiet_days 13; system change in the last 7 days 333270",
    "id": "docs/runbooks",
    "kind": "neglected",
    "why": "docs/runbooks had 134 lines of change, then nothing for 13 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 8; system change in the last 7 days 330544",
+   "evidence": "quiet_days 8; system change in the last 7 days 333270",
    "id": "HANDOFF.md",
    "kind": "neglected",
    "why": "HANDOFF.md had 51 lines of change, then nothing for 8 days while the rest of the system moved"
@@ -1212,10 +1218,10 @@
    -907,
    -1222,
    -1649,
-   -2324
+   -2315
   ],
-  "closed": 3663,
-  "opened": 1339
+  "closed": 3671,
+  "opened": 1356
  },
  "loops": [
   {
@@ -1753,7 +1759,7 @@
   {
    "loop": "provenance",
    "quiet_days": 0,
-   "rows": 275,
+   "rows": 316,
    "series": [
     0,
     0,
@@ -1784,14 +1790,14 @@
     3,
     1,
     153,
-    51
+    92
    ],
-   "slope": 1.57
+   "slope": 1.8345
   },
   {
    "loop": "resilience",
    "quiet_days": 0,
-   "rows": 501,
+   "rows": 502,
    "series": [
     0,
     0,
@@ -1822,14 +1828,14 @@
     80,
     55,
     62,
-    118
+    119
    ],
-   "slope": 2.6489
+   "slope": 2.6554
   },
   {
    "loop": "saydo",
    "quiet_days": 0,
-   "rows": 424,
+   "rows": 425,
    "series": [
     0,
     0,
@@ -1860,9 +1866,9 @@
     80,
     55,
     62,
-    107
+    108
    ],
-   "slope": 2.335
+   "slope": 2.3415
   },
   {
    "loop": "seed-launches",
@@ -1943,7 +1949,7 @@
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 480,
+   "rows": 481,
    "series": [
     0,
     0,
@@ -1974,14 +1980,14 @@
     80,
     55,
     88,
-    140
+    141
    ],
-   "slope": 2.6914
+   "slope": 2.6979
   },
   {
    "loop": "ultrastability",
    "quiet_days": 0,
-   "rows": 19136,
+   "rows": 19174,
    "series": [
     0,
     0,
@@ -2012,9 +2018,9 @@
     3322,
     2312,
     2535,
-    4163
+    4201
    ],
-   "slope": 102.5397
+   "slope": 102.7849
   },
   {
    "loop": "worker-merge-evidence",
@@ -2057,7 +2063,7 @@
   {
    "loop": "yearsim",
    "quiet_days": 0,
-   "rows": 425,
+   "rows": 426,
    "series": [
     0,
     0,
@@ -2088,9 +2094,9 @@
     80,
     55,
     62,
-    107
+    108
    ],
-   "slope": 2.3393
+   "slope": 2.3457
   }
  ],
  "observed": {

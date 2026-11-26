@@ -35,3 +35,4 @@ export async function step({ db, now = Date.now(), generate, redteam, evaluate, 
     rate_items: triggers.filed, rates_measured: triggers.measured, self_adoption: triggers.self_adoption,
     ...(scanned ? { scan: scanned } : {}), ...(cycle ? { goal_cycle: { signals: cycle.signals, adopted: cycle.adopted.length, rejected: cycle.rejected.length, errors: cycle.errors } } : {}) };
 }
+export { createModelPorts } from './model-ports.js';

@@ -1,5 +1,5 @@
 {
-  "at": "2026-11-25T17:57:24.615232+00:00",
+  "at": "2026-11-26T17:43:08.417992+00:00",
   "signals": [
     {
       "id": "reach",
@@ -26,7 +26,7 @@
       "id": "tenant",
       "path": "ops/reach/metrics.jsonl",
       "state": "ok",
-      "value": 150,
+      "value": 164,
       "age_h": 18.1
     },
     {
@@ -39,9 +39,9 @@
     {
       "id": "market",
       "path": "ops/rnd/log.jsonl",
-      "state": "stale",
-      "value": 3,
-      "age_h": 193.7
+      "state": "ok",
+      "value": 4,
+      "age_h": 10.9
     },
     {
       "id": "insight",
@@ -55,46 +55,46 @@
       "path": "ops/uiux/status.json",
       "state": "ok",
       "value": 1,
-      "age_h": 0.6
+      "age_h": 23.8
     },
     {
       "id": "tenant-sync",
       "path": "ops/tenant-sync/metrics.json",
       "state": "ok",
       "value": 1,
-      "age_h": 0.5
+      "age_h": 0.6
     }
   ],
   "tiers": [
     {
       "id": "portfolio",
       "window_days": 14,
-      "merges": 64,
+      "merges": 67,
       "alive": true
     },
     {
       "id": "program",
       "window_days": 7,
-      "merges": 51,
+      "merges": 49,
       "alive": true
     },
     {
       "id": "project",
       "window_days": 3,
-      "merges": 51,
+      "merges": 115,
       "alive": true
     },
     {
       "id": "product",
       "window_days": 7,
-      "merges": 40,
+      "merges": 48,
       "alive": true
     }
   ],
-  "open": 6,
+  "open": 0,
   "filed": [
-    "Q-IMPROVE-fe-speculation",
-    "Q-IMPROVE-rel-me"
+    "Q-IMPROVE-fe-font-display",
+    "Q-IMPROVE-webmention"
   ],
   "settle": []
 }

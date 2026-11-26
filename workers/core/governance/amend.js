@@ -120,6 +120,8 @@ export async function redTeam(db, id, { redteam, now = Date.now() } = {}) {
   if (p.status !== 'generated') return { id, status: p.status, reason: 'proposal is not at the generated stage' };
   const problems = await protectedProblems(db, p);
   if (problems.length) return reject(db, id, `protected set: ${problems.join('; ')}`, now, { redteam: { by: 'code', problems } });
+  // `redteam` is { family, attack } or a function (proposal) => { family, attack } | null, so a port that must choose its model by the author's family can (model-ports.js).
+  if (typeof redteam === 'function') { try { redteam = await redteam(p); } catch (e) { return { id, status: p.status, reason: `red-team outage: ${String(e && e.message).slice(0, 120)}` }; } }
   if (!redteam || typeof redteam.attack !== 'function' || !redteam.family) return { id, status: p.status, reason: 'no red-team model: the proposal waits and cannot be adopted' };
   if (redteam.family === p.author_family) return { id, status: p.status, reason: 'red-team model must be of a different family from the author' };
   let res;

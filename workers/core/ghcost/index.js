@@ -6,13 +6,27 @@
 // repos?, every_ticks?, month?, tick_interval_minutes?, unread_limit? }. Nothing here raises a budget (US-24-R24).
 import { iso, nowMs, all, first, run, cfg, fileItem, closeItem, openCard, recordProbe } from './util.js';
 import { githubPort } from './github.js';
+import { recordSample } from './samples.js';
+import { settingsDue } from './settings.js';
 
 export const MIGRATIONS_DIR = new URL('./migrations/', import.meta.url);
 const LEVELS = ['ok', 'warn50', 'warn80', 'over'];
 
+/**
+ * The budget file as the watchdog reads it. Two schemas name the same limits and both are accepted unchanged (US-24-R21: one
+ * budget, one number, whichever file holds it): this module's `monthly_minutes_total`, `thresholds`, `essential_workflows`,
+ * `non_essential_workflows`, and the platform file `actions-budget.json` (`monthly_free_minutes`, `warn_at_pct`, `pause_at_pct`,
+ * `essential`, `paused_workflows`, `paused`). `paused: true` means the kill switch is on.
+ */
 export function normalizeBudget(b) {
-  if (!b || !(Number(b.monthly_minutes_total) > 0)) throw new Error('ghcost: config.ghcost.budget.monthly_minutes_total is required');
-  return { linux_minute_rate_usd: 0.006, thresholds: [0.5, 0.8], per_repo: {}, default_per_repo: 0, non_essential_workflows: [], essential_workflows: [], ...b };
+  const x = { ...(b || {}) };
+  if (x.monthly_minutes_total == null && x.monthly_free_minutes != null) x.monthly_minutes_total = x.monthly_free_minutes;
+  if (!x.thresholds && (x.warn_at_pct != null || x.pause_at_pct != null)) x.thresholds = [Number(x.warn_at_pct ?? 50) / 100, Number(x.pause_at_pct ?? 80) / 100];
+  if (!x.essential_workflows && Array.isArray(x.essential)) x.essential_workflows = x.essential;
+  if (Array.isArray(x.paused_workflows) && x.paused_workflows.length) x.non_essential_workflows = [...new Set([...(x.non_essential_workflows || []), ...x.paused_workflows])];
+  if (x.default_per_repo == null && !Object.keys(x.per_repo || {}).length && Number(x.monthly_minutes_total) > 0) x.default_per_repo = Number(x.monthly_minutes_total); // one number only: no repository may use more than the total
+  if (!(Number(x.monthly_minutes_total) > 0)) throw new Error('ghcost: config.ghcost.budget.monthly_minutes_total is required');
+  return { linux_minute_rate_usd: 0.006, thresholds: [0.5, 0.8], per_repo: {}, default_per_repo: 0, non_essential_workflows: [], essential_workflows: [], paused: false, ...x, paused: x.paused === true };
 }
 
 /** Linux-equivalent Actions minutes per repository for `month` (YYYY-MM). Rows that are not Actions minutes are ignored (US-24-R22). */
@@ -67,7 +81,7 @@ export async function enforce(ctx) {
   const out = { desired_disabled: 0, changed: 0, drift: 0, unverified: 0, rows: [] };
   for (const repo of targetRepos(c, budget)) {
     for (const workflow of nonEssential(budget)) {
-      const reason = sw?.is_on ? 'kill_switch' : (overAll || overRepos.has(repo)) ? 'over' : null;
+      const reason = (sw?.is_on || budget.paused) ? 'kill_switch' : (overAll || overRepos.has(repo)) ? 'over' : null;
       const prev = await first(db, `SELECT desired, observed FROM ghcost_workflows WHERE repo=? AND workflow=?`, repo, workflow);
       if (!reason && !prev) continue; // never touched and nothing asks for it: leave the platform as it is
       const desired = reason ? 'disabled' : 'enabled';
@@ -155,6 +169,14 @@ export async function watchdog(ctx) {
         done_check: 'a watchdog run reads the billing usage endpoint', closing_probe: "ghcost_probes: latest probe='watchdog' is pass", priority: 5 }, ts);
     }
     return { decision: 'unmeasured', exit_code: 1, error: String(e?.message || e) };
+  }
+  // US-24-R22: the billing response is sampled (names hashed) and its shape probed. A shape that would read as zero minutes is
+  // never decided on: the previous ledger decision stands and the run reports `unmeasured`.
+  const shape = await recordSample(db, 'usage', report, ts, { source: ctx.github?.name === 'github' ? 'live' : 'fixture' });
+  if (shape.result === 'drift' && shape.blocking) {
+    const prev = await first(db, `SELECT decision FROM ghcost_ledger WHERE repo='(total)' ORDER BY month DESC LIMIT 1`);
+    await recordProbe(db, 'watchdog', 'unknown', `shape drift: ${shape.evidence}`, ts);
+    return { decision: 'unmeasured', exit_code: 1, error: `shape drift: ${shape.evidence}`, previous_decision: prev?.decision ?? null };
   }
   const d = decide(minutesByRepo(report, month, budget), budget);
   const buckets = Object.fromEntries(LEVELS.map(l => [l, d.repos.filter(r => r.decision === l).length]));
@@ -263,12 +285,32 @@ export function ghcostSteps(ports = {}) {
     const ctx = { db, now: tick.now, config: tick.config, github, publish: ports.publish };
     const w = await watchdog(ctx), s = await spendingLimitProbe(ctx), p = await publishDue(ctx);
     tick.notes?.push(`ghcost: ${w.decision}, spending limit ${s.result}${p.length ? `, ledger published for ${p.join(', ')}` : ''}`);
+    // The settings probe (US-24-R30 to R32) rides this step, daily by default, so no step is added to the tick (core/org lists them).
+    const st = await settingsDue(ctx, tick);
+    if (st) tick.notes?.push(`ghcost settings: ${st.failing.length} failing, ${st.unknown.length} unreadable`);
   } }];
 }
 
+/**
+ * The dead-man route (US-24-R51, R44): GET or POST /ghcost/deadman, for a second trigger that is not the scheduler it checks
+ * (the site Worker's cron, an uptime probe, a workflow). Default deny: the host must supply `ctx.authorize(request)`. The check
+ * reads tick_runs only; it never runs or imports the tick.
+ */
+async function deadmanRoute(request, ctx) {
+  const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { 'content-type': 'application/json' } });
+  if (request.method !== 'GET' && request.method !== 'POST') return json({ error: 'method_not_allowed' }, 405);
+  let ok = false;
+  try { ok = typeof ctx.authorize === 'function' && (await ctx.authorize(request)) === true; } catch { ok = false; }
+  if (!ok) return json({ error: 'unauthorized' }, 401);
+  const r = await deadman(ctx);
+  return json({ result: r.result, last_tick: r.last_tick ?? null, missed_slots: r.missed_slots ?? 0, item: r.item ?? null }, r.result === 'pass' ? 200 : 503);
+}
+
 /** Read-only routes: GET /ghcost/ledger?month=YYYY-MM (JSON) and /ghcost/ledger.md. Returns null for any other path. */
-export async function handle(request, { db, now = Date.now() }) {
+export async function handle(request, ctx) {
+  const { db, now = Date.now() } = ctx;
   const url = new URL(request.url);
+  if (url.pathname === '/ghcost/deadman') return deadmanRoute(request, ctx);
   if (request.method !== 'GET' || !url.pathname.startsWith('/ghcost/ledger')) return null;
   const month = url.searchParams.get('month') || iso(typeof now === 'function' ? now() : now).slice(0, 7);
   if (!/^\d{4}-\d{2}$/.test(month)) return new Response(JSON.stringify({ error: 'bad_month' }), { status: 400, headers: { 'content-type': 'application/json' } });
@@ -279,4 +321,7 @@ export async function handle(request, { db, now = Date.now() }) {
 
 export { githubPort };
 export * from './census.js';
+export * from './samples.js';
+export * from './settings.js';
+export * from './projects.js';
 export * from './public.js';

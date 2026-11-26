@@ -941,7 +941,12 @@
   {
    "id": "US-12-T06",
    "spec": "US-SPEC-12",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/graph/wiring.test.js",
+     "name": "US-12-T06, US-12-R12 and US-12-R17: orphan-table join finds a producer without a consumer; data-flow edges connect a writer to its readers and blast radius follows them"
+    }
+   ]
   },
   {
    "id": "US-12-T07",
@@ -1389,12 +1394,22 @@
   {
    "id": "T18-5",
    "spec": "US-SPEC-18",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/walkthrough/console-rules.test.js",
+     "name": "US-18-R03 and T18-5: typed text is stored verbatim and becomes a work item; an out-of-scope request is held and is not dispatchable (US-00-R09)"
+    }
+   ]
   },
   {
    "id": "T18-6",
    "spec": "US-SPEC-18",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/walkthrough/console-rules.test.js",
+     "name": "US-18-R08 and T18-6: the same facts the screens show are served as records at GET /api/console, to a person or an agent alike"
+    }
+   ]
   },
   {
    "id": "T18-7",
@@ -1944,6 +1959,10 @@
     {
      "file": "core/conformance/spec-kernel.test.js",
      "name": "US-00-T04 and US-00-R09: a request for a business plan with no pack enabled is declined with its reason and held, not dispatched"
+    },
+    {
+     "file": "core/walkthrough/console-rules.test.js",
+     "name": "US-18-R03 and T18-5: typed text is stored verbatim and becomes a work item; an out-of-scope request is held and is not dispatchable (US-00-R09)"
     }
    ]
   },
@@ -3498,9 +3517,18 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/kernel/metrics-decisions.test.js",
+     "name": "US-05-R14: trigger state is computed by the view, never stored (US-03, US-05)"
+    },
+    {
+     "file": "core/kernel/metrics-decisions.test.js",
+     "name": "US-05-R14: the view reads the clock in the same statement as the reading, so an ageing reading flips to unmeasured with no write"
+    }
+   ]
   },
   {
    "id": "US-05-R15",
@@ -3518,9 +3546,26 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "built and tested in the seed tick (seed/worker/test/measure.test.js), which this repository's core tick does not carry",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/kernel/metrics-decisions.test.js",
+     "name": "US-05-R16: a target gain with every guard intact is kept"
+    },
+    {
+     "file": "core/kernel/metrics-decisions.test.js",
+     "name": "US-05-R16: a breached guard metric blocks a target-metric gain from being kept (conformance)"
+    },
+    {
+     "file": "core/kernel/metrics-decisions.test.js",
+     "name": "US-05-R16: a guard that worsened but is still on target also blocks the gain"
+    },
+    {
+     "file": "core/kernel/metrics-decisions.test.js",
+     "name": "US-05-R16: a missed prediction is reverted; an unmeasured target is not kept"
+    }
+   ]
   },
   {
    "id": "US-05-R17",
@@ -3983,6 +4028,18 @@
     {
      "file": "core/governance/governance.test.js",
      "name": "US-07-R02, US-07-R01 replay against stored scans and ticks: an amendment that catches missed false stops and worsens nothing is adopted by review, the version increments and lineage rows are written"
+    },
+    {
+     "file": "core/governance/model-ports.test.js",
+     "name": "US-07-R02: a proposal authored by one family is red-teamed through the router by a different family"
+    },
+    {
+     "file": "core/governance/model-ports.test.js",
+     "name": "US-07-R02: with only one family configured the proposal waits: no red-team model, and no reply is taken from the author's family"
+    },
+    {
+     "file": "core/governance/model-ports.test.js",
+     "name": "US-07-R02: a hand-raised proposal whose stored author family is the first candidate is red-teamed by the other family"
     }
    ]
   },
@@ -4255,6 +4312,10 @@
     {
      "file": "core/governance/governance.test.js",
      "name": "US-07-R17 the pre-emission filter returns a revision request at most R times (default 2), then the engine handles what still hits"
+    },
+    {
+     "file": "core/governance/model-ports.test.js",
+     "name": "US-07-R17: preEmit with the revise port returns a rewritten draft that carries no hit"
     }
    ]
   },
@@ -4371,9 +4432,26 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/governance/scan.test.js",
+     "name": "US-07-R23: a draft from a declared source is scanned once across two passes, and a clean draft is scanned too"
+    },
+    {
+     "file": "core/governance/scan.test.js",
+     "name": "US-07-R23: a source that throws is reported and the other sources still run; the same ref in two sources is scanned once each"
+    },
+    {
+     "file": "core/governance/scan.test.js",
+     "name": "US-07-R23: the limit truncates openly: a draft past the limit is listed, not marked scanned, and the next pass takes it"
+    },
+    {
+     "file": "core/governance/scan.test.js",
+     "name": "US-07-R23: step() runs the scan when sources are declared and reports it"
+    }
+   ]
   },
   {
    "id": "US-08-R01",
@@ -5233,9 +5311,26 @@
    "level": "L2",
    "tagged": true,
    "must": false,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/install/assertion-probes-spec10.test.js",
+     "name": "US-10-R12: a probe reads and never writes: only one SELECT is accepted as a sql probe"
+    },
+    {
+     "file": "core/install/assertion-probes-spec10.test.js",
+     "name": "US-10-R12: a claim that stops being true is withdrawn from the next served output and files an item with an owner and a closing probe"
+    },
+    {
+     "file": "core/install/assertion-probes-spec10.test.js",
+     "name": "US-10-R12: a claim not re-checked within its freshness limit is not published, and viewing re-renders without it"
+    },
+    {
+     "file": "core/install/assertion-probes-spec10.test.js",
+     "name": "US-10-R12: a later pass in which the probe passes again reinstates the claim"
+    }
+   ]
   },
   {
    "id": "US-10-R13",
@@ -5835,6 +5930,10 @@
     {
      "file": "core/graph/wiring.test.js",
      "name": "US-12-R11: the analyzer labels islands, sinks, sources, unresolved targets and the three drift counts"
+    },
+    {
+     "file": "core/graph/wiring.test.js",
+     "name": "US-12-R11: directed density stays within 0 and 1 when edges reach registered workers that were not swept"
     }
    ]
   },
@@ -5849,7 +5948,11 @@
    "tests": [
     {
      "file": "core/graph/wiring.test.js",
-     "name": "US-12-R12: orphan-table join finds a producer without a consumer; data-flow edges connect a writer to its readers"
+     "name": "US-12-T06, US-12-R12 and US-12-R17: orphan-table join finds a producer without a consumer; data-flow edges connect a writer to its readers and blast radius follows them"
+    },
+    {
+     "file": "core/graph/wiring.test.js",
+     "name": "US-12-R12: comments and prose are not read as table access; SQL inside strings still is"
     }
    ]
   },
@@ -5889,9 +5992,22 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/graph/graph.test.js",
+     "name": "US-12-R15: no single route: a failing source is reported, the other still builds the graph"
+    },
+    {
+     "file": "core/graph/graph.test.js",
+     "name": "US-12-R15: re-ingesting a file replaces only its own source's edges and keeps declared edges"
+    },
+    {
+     "file": "core/graph/graph.test.js",
+     "name": "US-12-R15: Python relative imports, TypeScript type imports and dynamic import() are topology edges"
+    }
+   ]
   },
   {
    "id": "US-12-R16",
@@ -5899,9 +6015,22 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/graph/graph.test.js",
+     "name": "US-12-R16: blast radius is transitive and cycle safe"
+    },
+    {
+     "file": "core/graph/graph.test.js",
+     "name": "US-12-R16: the bound stops the walk, the result says it truncated, and a node already visited is not counted twice"
+    },
+    {
+     "file": "core/graph/graph.test.js",
+     "name": "US-12-R16: blast radius follows Python, TypeScript and extensionless importers back to the changed file"
+    }
+   ]
   },
   {
    "id": "US-12-R17",
@@ -5909,9 +6038,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/graph/wiring.test.js",
+     "name": "US-12-T06, US-12-R12 and US-12-R17: orphan-table join finds a producer without a consumer; data-flow edges connect a writer to its readers and blast radius follows them"
+    }
+   ]
   },
   {
    "id": "US-13-R01",
@@ -6820,6 +6954,10 @@
     {
      "file": "core/elicit/elicit.test.js",
      "name": "T16-3 and US-16-R05: Not sure produces the default, an assumption log entry and a revisit trigger"
+    },
+    {
+     "file": "core/ignorance/org.test.js",
+     "name": "US-16-R05 and IGN-6: every defaulted need yields one untested-assumption gap; answering it closes the gap with the answer as evidence and the registry audit stays balanced"
     }
    ]
   },
@@ -7163,6 +7301,10 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R01: every erroring run still writes its hit row"
+    },
+    {
      "file": "core/remediation/remediation.test.js",
      "name": "US-17-R01 / R03 / R04: the standard detectors register with severity and a full contract, and each run writes one hit row"
     }
@@ -7224,6 +7366,10 @@
      "name": "a failure mode without a detector, severity or contract field cannot be registered (US-17-R03/R04)"
     },
     {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R04: without the state tables a relapse inside the same clock hour opens a new remediation under a fresh item id"
+    },
+    {
      "file": "core/remediation/remediation.test.js",
      "name": "US-17-R01 / R03 / R04: the standard detectors register with severity and a full contract, and each run writes one hit row"
     }
@@ -7260,6 +7406,10 @@
     {
      "file": "core/kernel/failure.test.js",
      "name": "the consumer books exactly one bucket per scanned item and closes only when the closing probe passes (US-17-R05/R06)"
+    },
+    {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R06: a doer that throws leaves its message in the remediation evidence"
     }
    ]
   },
@@ -7281,6 +7431,10 @@
      "name": "an interrupt-eligible item goes through the gate card after max_attempts (US-17-R07)"
     },
     {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R07: when no alternate doer remains an ESCALATE item is filed once and the remediation is exhausted"
+    },
+    {
      "file": "core/kernel/kernel.test.js",
      "name": "exhausted contract: interrupt-eligible goes to a gate card, otherwise is reassigned (US-17-R07)"
     }
@@ -7295,6 +7449,10 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R08: a failed half-open probe doubles the interval, a failure recorded before the half-open time does not"
+    },
     {
      "file": "core/remediation/remediation.test.js",
      "name": "US-17-T03 / R08: a ledger whose writer has no breaker gets one; 26 hourly identical failures become 3 attempts"
@@ -7313,6 +7471,18 @@
     {
      "file": "core/kernel/failure.test.js",
      "name": "US-17-R09: a detector mostly refuted by verification goes to probation and stops opening items"
+    },
+    {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R09: ten firings whose verify_probe passes (the problem was not there) put the detector in probation without any manual confirmFiring call"
+    },
+    {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R09: firings whose verify_probe still fails are confirmed and the detector stays armed"
+    },
+    {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R09: a probation detector keeps writing hit rows and opens no item"
     }
    ]
   },
@@ -7386,9 +7556,22 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R14: two consecutive runs of a detector over a missing table open DETECTOR-BROKEN-<id> once"
+    },
+    {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R14: one erroring run followed by a good run opens nothing"
+    },
+    {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R14: the item closes with a disposition when the detector returns a value again, and reopens if it breaks again"
+    }
+   ]
   },
   {
    "id": "US-17-R15",
@@ -7396,9 +7579,22 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R15: with due_only a detector with interval_h 1 run twice 10 minutes apart writes one hit row; 61 minutes later it writes a second"
+    },
+    {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R15: without due_only every call writes a row as before"
+    },
+    {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R15: a due_only run that skipped everything still lets detectStaleDetectors fire after 2 intervals of silence"
+    }
+   ]
   },
   {
    "id": "US-17-R16",
@@ -7406,9 +7602,18 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R16: a closed remediation whose detector fires again is reopened and counts one relapse"
+    },
+    {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R16: a closure outside the relapse window is a new remediation, not a reopen"
+    }
+   ]
   },
   {
    "id": "US-17-R17",
@@ -7416,9 +7621,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R17: after three relapses closure needs two consecutive passes of the closing probe"
+    }
+   ]
   },
   {
    "id": "US-17-R18",
@@ -7426,9 +7636,18 @@
    "level": "L3",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R18: after 3 failures, a success and one new failure inside the window the breaker stays closed"
+    },
+    {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R18: a changed source_hash re-arms an open breaker and the next attempt is allowed"
+    }
+   ]
   },
   {
    "id": "US-17-R19",
@@ -7471,9 +7690,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/walkthrough/console-rules.test.js",
+     "name": "US-18-R02: every walkthrough step can be completed with no typing: suggestions on the first question, buttons on every card, Not sure on free-text ones"
+    }
+   ]
   },
   {
    "id": "US-18-R03",
@@ -7481,9 +7705,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/walkthrough/console-rules.test.js",
+     "name": "US-18-R03 and T18-5: typed text is stored verbatim and becomes a work item; an out-of-scope request is held and is not dispatchable (US-00-R09)"
+    }
+   ]
   },
   {
    "id": "US-18-R04",
@@ -7491,9 +7720,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/walkthrough/console-rules.test.js",
+     "name": "US-18-R04: the prompt box comes with at most three suggested requests"
+    }
+   ]
   },
   {
    "id": "US-18-R05",
@@ -7546,9 +7780,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/walkthrough/console-rules.test.js",
+     "name": "US-18-R08 and T18-6: the same facts the screens show are served as records at GET /api/console, to a person or an agent alike"
+    }
+   ]
   },
   {
    "id": "US-18-R09",

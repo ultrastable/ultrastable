@@ -9,10 +9,698 @@
   "external": "a signal from outside (scout finding, funder reply, competitor change)"
  },
  "counts_by_origin": {
-  "owner": 29,
-  "agent": 17
+  "agent": 42,
+  "owner": 39,
+  "loop": 4,
+  "system": 2
  },
  "entries": [
+  {
+   "id": "pv-d0b0fd1082a0",
+   "at": "2026-11-26T17:02:39Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "feat: the storage adapters, core test helpers and the claims, console-l3 and deploy modules (W01) (#2530)",
+   "affected": [
+    "doctrine",
+    "workers"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-59c3a3221847",
+   "at": "2026-11-26T16:58:09Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "commit",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "ZERO-MINUTES-1: worker merged #2529",
+   "affected": [
+    "ops"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-504bf3710667",
+   "at": "2026-11-26T16:49:34Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "feat: the Cloudflare migrations bundle is append-only (#2528)",
+   "affected": [
+    "doctrine",
+    "workers"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-e947ff4830d9",
+   "at": "2026-11-26T16:39:12Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "feat(phasework): phased large change as kernel code (PHASED-WORK-1) (#2517)",
+   "affected": [
+    "README.md",
+    "agents",
+    "doctrine",
+    "foundation",
+    "platform",
+    "seed"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-25c55d099e37",
+   "at": "2026-11-26T15:52:24Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "branchsweep: merge the branches main lacks (#2518)",
+   "affected": [
+    "ops"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-8f4e92962bc3",
+   "at": "2026-11-26T14:46:34Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "feat: the Cloudflare Worker is built from a configuration (US-03-R16) (#2515)",
+   "affected": [
+    "doctrine",
+    "workers"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-2bfbc67959c9",
+   "at": "2026-11-26T14:36:49Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "feat: the specification tools run without the private specification and say unmeasured (DISCLOSE-1) (#2512)",
+   "affected": [
+    "doctrine",
+    "foundation",
+    "tests",
+    "workers"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-320155eb61d8",
+   "at": "2026-11-26T14:35:29Z",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "fix(airouter): read reasoning-only replies and say why a reply was empty (AIROUTER-EMPTY-2) (#2508)",
+   "affected": [
+    "doctrine",
+    "seed",
+    "workers"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-54afc2892faa",
+   "at": "2026-11-26T14:28:58Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "docs: conformance manifest, kernel split decision and the disclosure line (slice 11 of 11) (#2503)",
+   "affected": [
+    "docs",
+    "doctrine",
+    "tests",
+    "workers"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-2ede19b95e0a",
+   "at": "2026-11-26T14:14:46Z",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "feat(worklog): canonical server-side work store (WORK-RECORD-1) (#2478)",
+   "affected": [
+    ".github",
+    "agents",
+    "doctrine",
+    "foundation",
+    "instances",
+    "seed"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-e97163749e11",
+   "at": "2026-11-26T14:10:34Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "test: foundation tests for the specification requirements, part 2 (slice 10 of 11) (#2501)",
+   "affected": [
+    "doctrine",
+    "tests"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-80c07fe193e5",
+   "at": "2026-11-26T14:04:30Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "test: foundation tests for the specification requirements, part 1 (slice 9 of 11) (#2499)",
+   "affected": [
+    "doctrine",
+    "tests"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-e8b031ebdc62",
+   "at": "2026-11-26T13:55:21Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "feat: SHIP-PLAN-1, the canonical record of built but unmerged work (slice 8 of 11) (#2481)",
+   "affected": [
+    "docs",
+    "doctrine",
+    "foundation",
+    "seed",
+    "site",
+    "tests"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-91652670c339",
+   "at": "2026-11-26T13:41:53Z",
+   "tenant": "ultrastable",
+   "origin": "loop",
+   "channel": "pr",
+   "actor": "executor",
+   "kind": "change",
+   "summary": "feat(tests): the last seed specification tests and the first foundation specification tests (slice 7 of 10) (#2464)",
+   "affected": [
+    "doctrine",
+    "seed",
+    "tests"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-86135688f085",
+   "at": "2026-11-26T13:41:46Z",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "feat(seed): goal planner breaks the worst vital into small tasks (PLAN-1) (#2466)",
+   "affected": [
+    "doctrine",
+    "seed"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-a2d681948a26",
+   "at": "2026-11-26T13:35:09Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "perf(tick): cache the two repeated whole-window D1 scans that hold the tick lean (READ-BUDGET-10) (#2465)",
+   "affected": [
+    "doctrine",
+    "seed"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-994248a57fdc",
+   "at": "2026-11-26T13:25:39Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "feat(seed): the second group of specification tests (slice 6 of 10) (#2463)",
+   "affected": [
+    "doctrine",
+    "seed"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-9f5321518004",
+   "at": "2026-11-26T13:17:29Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "feat(seed): consent links, ensureSchema guard and the first group of specification tests (slice 5 of 10) (#2462)",
+   "affected": [
+    "doctrine",
+    "seed"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-d4cad84b120a",
+   "at": "2026-11-26T13:09:21Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "feat(workers): consent links, graph and discovery updates, pacing, progress, stickiness and the migration self-apply module (slice 4 of 10) (#2461)",
+   "affected": [
+    "doctrine",
+    "workers"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-3c3f81a52656",
+   "at": "2026-11-26T13:05:53Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "feat(tenants): deploy base-rates and open-questions Workers from their own repos (#2459)",
+   "affected": [
+    "deploy",
+    "doctrine",
+    "instances",
+    "seed"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-78364613c861",
+   "at": "2026-11-26T13:04:26Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "feat(workers): staff review and research steps, lifecycle monitoring and closing, plus loop and governance scan (slice 3 of 10) (#2460)",
+   "affected": [
+    "doctrine",
+    "workers"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-c76eface9913",
+   "at": "2026-11-26T12:58:17Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "feat(workers): kernel lifecycle exports, focus log, trust, deploy digest, export and the destructive-migration exporter (slice 2 of 10) (#2457)",
+   "affected": [
+    "doctrine",
+    "workers"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-8060bff8c63d",
+   "at": "2026-11-26T12:53:32Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "feat(workers): migrations for the staff claims, focus log, lifecycle monitoring and governance scan (slice 1 of 10) (#2453)",
+   "affected": [
+    "doctrine",
+    "workers"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-322a45c6719f",
+   "at": "2026-11-26T12:53:21Z",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "fix(loops): unblock the code agent and measure every clock (LOOP-SHIP-1, CLOCK-MEASURED-1) (#2449)",
+   "affected": [
+    "doctrine",
+    "foundation",
+    "seed",
+    "tests",
+    "workers"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-b50b7bf8802b",
+   "at": "2026-11-26T12:49:48Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "feat(repo): classify every path, bound a session PR, split oversize work and keep the original (REPO-SHAPE-1) (#2444)",
+   "affected": [
+    ".github",
+    "agents",
+    "docs",
+    "doctrine",
+    "foundation",
+    "seed"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-d2ce8f85e598",
+   "at": "2026-11-26T12:49:46Z",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "feat: show only ideas a live system proves; block copy that promises features not live (#2452)",
+   "affected": [
+    "doctrine",
+    "foundation",
+    "scripts",
+    "seed",
+    "site",
+    "tests"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-6f12c9fcdaa6",
+   "at": "2026-11-26T12:44:08Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "fix(pages-enable): fall back to LANE_PAT (#2442)",
+   "affected": [
+    ".github",
+    "doctrine",
+    "seed",
+    "site"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-7fdd739c0365",
+   "at": "2026-11-26T12:36:20Z",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "feat(seed): refuse oversized changes (SMALL-CHANGE-1) (#2443)",
+   "affected": [
+    ".github",
+    "doctrine",
+    "foundation",
+    "seed",
+    "tests",
+    "workers"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-bbfecf83ecf7",
+   "at": "2026-11-26T12:14:11Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "docs: DISCLOSE-1, the full specification is private and the template carries only what a deploy needs (#2438)",
+   "affected": [
+    "docs",
+    "doctrine"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-471be7c1f1cb",
+   "at": "2026-11-26T12:12:55Z",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "feat(github): pages-enable workflow for GitHub-only systems (#2440)",
+   "affected": [
+    ".github",
+    "doctrine",
+    "instances"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-53a7e8f022d7",
+   "at": "2026-11-26T12:07:37Z",
+   "tenant": "ultrastable",
+   "origin": "loop",
+   "channel": "pr",
+   "actor": "executor",
+   "kind": "change",
+   "summary": "fix(tick): index the D1 readers that hold the tick lean (READ-BUDGET-10) (#2439)",
+   "affected": [
+    "doctrine",
+    "seed"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-459684e05bd6",
+   "at": "2026-11-26T10:21:52Z",
+   "tenant": "ultrastable",
+   "origin": "loop",
+   "channel": "pr",
+   "actor": "executor",
+   "kind": "change",
+   "summary": "feat(executor): plan, fan out, review and integrate large items in the tick Worker (ORCHESTRATE-1) (#2432)",
+   "affected": [
+    "agents",
+    "docs",
+    "doctrine",
+    "ops",
+    "research",
+    "seed"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-7849aa38ea27",
+   "at": "2026-11-26T10:03:21Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "fix(pathfinder): record route attempts only when the outcome changes (LEDGER-DEDUP-1) (#2433)",
+   "affected": [
+    "doctrine",
+    "foundation",
+    "ops",
+    "tests"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-b713e2a4f4c8",
+   "at": "2026-11-26T08:12:11Z",
+   "tenant": "ultrastable",
+   "origin": "system",
+   "channel": "pr",
+   "actor": "bootstrap",
+   "kind": "change",
+   "summary": "feat(specs): audit all 26 specifications against the code; build the contained gaps; check BUILT labels (SPEC-TRUTH-1) (#2390)",
+   "affected": [
+    "README.md",
+    "docs",
+    "doctrine",
+    "foundation",
+    "platform",
+    "research"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-23fb0a254a30",
+   "at": "2026-11-26T07:52:55Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "feat: tick read budget, market research refresh, manager roles aligned with human roles (ROLE-ALIGN-1) (#2388)",
+   "affected": [
+    ".github",
+    "README.md",
+    "agents",
+    "docs",
+    "doctrine",
+    "foundation"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-afaa78546b3d",
+   "at": "2026-11-26T07:20:44Z",
+   "tenant": "ultrastable",
+   "origin": "system",
+   "channel": "pr",
+   "actor": "bootstrap",
+   "kind": "change",
+   "summary": "fix: seed/ is the one source for the template again; carry the clean room and coherence check from #2276 (Q-FLEETMAP-seed, CLEANROOM-1, COHERENCE-1) (#2369)",
+   "affected": [
+    ".github",
+    "README.md",
+    "agents",
+    "docs",
+    "doctrine",
+    "foundation"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-2b9a7b02558b",
+   "at": "2026-11-26T07:01:24Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "fix(lane): PR age bound from open time; fix main red (openstd land, post hook) (#2380)",
+   "affected": [
+    ".github",
+    "doctrine",
+    "foundation",
+    "instances",
+    "ops",
+    "tests"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-8b1f9d959e2c",
+   "at": "2026-11-26T06:41:08Z",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "fix(executor): model calls through the site AI binding, and a detector for a dead code-agent ladder (#2368)",
+   "affected": [
+    "doctrine",
+    "foundation",
+    "scripts",
+    "seed",
+    "site",
+    "tests"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-abcfd9a8b90c",
+   "at": "2026-11-26T06:39:31Z",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "OPEN-STANDARDS-1: open standards registry and gate (#2260)",
+   "affected": [
+    ".github",
+    "CHANGELOG.md",
+    "VERSION",
+    "agents",
+    "docs",
+    "doctrine"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-99772e058c2d",
+   "at": "2026-11-26T06:21:32Z",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "feat(rnd): plug in competitors' best steps as workers (BORROW-1) (#2366)",
+   "affected": [
+    "doctrine",
+    "foundation",
+    "tests"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-7eeb4add11e9",
+   "at": "2026-11-26T03:52:38Z",
+   "tenant": "ultrastable",
+   "origin": "loop",
+   "channel": "pr",
+   "actor": "executor",
+   "kind": "change",
+   "summary": "fix: the kit passes its own suites as a standalone template; a shelved item keeps its lesson tracked (#2365)",
+   "affected": [
+    "README.md",
+    "doctrine",
+    "foundation",
+    "ops",
+    "platform",
+    "research"
+   ],
+   "effect": "kept"
+  },
   {
    "id": "pv-324cba6ff2ba",
    "at": "2026-11-25T18:18:50+01:00",
