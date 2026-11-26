@@ -67,8 +67,8 @@ class FleetContract(unittest.TestCase):
 
     def test_every_live_tenant_is_read(self):
         ids = {s["id"] for s in F.systems(REPO)}
-        self.assertTrue({"ultrastable", "practical-solutions", "unlearn", "what-works", "replication-ledger"} <= ids)
-        self.assertFalse({"base-rates", "spinoffs"} & ids, "planned and retired tenants have nothing deployed to read")
+        self.assertTrue({"ultrastable", "practical-solutions", "unlearn", "what-works", "replication-ledger", "base-rates", "open-questions"} <= ids)
+        self.assertFalse({"spinoffs"} & ids, "planned and retired tenants have nothing deployed to read")
         self.assertTrue(all(s["origin"] and s["origin"].startswith("https://") for s in F.systems(REPO)))
 
     def test_a_system_that_backs_every_statement_passes(self):
