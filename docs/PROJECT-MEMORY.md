@@ -8,8 +8,12 @@
 
 This file is the single source of truth for project memory. Chat memory, tool memory and platform memory stores are read-only pointers to this file and are never edited as a record. Every session starts by reading this file and ends by updating it. Nothing is done until it is deployed end to end; every open item is an issue or an owner card with a default in effect and a closing probe.
 
-Last updated: 2026-11-25
+Last updated: 2026-11-26
 
+- 2026-11-26: fix: the kit passes its own suites as a standalone template; a shelved item keeps its lesson tracked (#2365)
+- 2026-11-26: queue: closing-probe verdicts for 11 item(s) (QUEUE-PERSIST-1) [skip ci]
+- 2026-11-26: queue: closing-probe verdicts for 16 item(s) (QUEUE-PERSIST-1) [skip ci]
+- 2026-11-26: queue: closing-probe verdicts for 14 item(s) (QUEUE-PERSIST-1) [skip ci]
 - 2026-11-25: fix: bounded self-migration, write routes answer a read with 405, the org's security policy meets the repository standard (#2355)
 - 2026-11-25: chore(seed-launch): record seed launch and bootstrap acceptance (SEED-LAUNCH-1, BOOT-ACCEPT-1) [skip ci]
 - 2026-11-25: Blind-spot red team (BLINDSPOT-RED-1). Found and fixed: cost probe measured no D1 database (read a thresholds file that never existed); cost level scored probe rows as 0 (measured Workers AI use 0.805 of the free budget); ultrastable.io feed had empty texts and was frozen since 2026-11-17 (feed-data.js never committed). New detectors: cost-runaway, d1-growth (`cost --guard`), credential-expiry (`credwatch --ledger`, now watching the tick Worker's administration App via a dry read), content-drift (`contentdrift --live`). SPOF register adds spof-admin-app.
