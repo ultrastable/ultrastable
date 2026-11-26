@@ -27,7 +27,9 @@ const enc = new TextEncoder();
 export async function cacheKey(kind, prompt) { const b = await crypto.subtle.digest('SHA-256', enc.encode(kind + '\n' + prompt)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join(''); }
 
 const choice = o => o?.choices?.[0]?.message?.content ?? o?.choices?.[0]?.text;
-export function textOf(out) { const r = out && (out.response ?? out.result ?? choice(out)); return (r && typeof r === 'object' ? JSON.stringify(r) : String(r ?? '')).trim(); }
+// AIROUTER-EMPTY-1: a reasoning model (glm-4.7-flash) can answer with response "" and the text in choices; '??' stopped at the empty string,
+// so 21 good-cost replies in three days were scored 'empty reply'. Take the first non-empty field instead.
+export function textOf(out) { for (const r of [out?.response, out?.result, choice(out)]) { if (r == null) continue; const t = (typeof r === 'object' ? JSON.stringify(r) : String(r)).trim(); if (t) return t; } return ''; }
 // Deterministic reply check (same signals as the tick's REPLY-GATE-1): returns a reason or null.
 export function replyProblem(res, text) {
   const t = String(text || '').trim();
