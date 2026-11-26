@@ -1,0 +1,132 @@
+{
+ "$schema": "schemas/ship-plan.schema.json",
+ "_doc": "KERNEL-1 / SMALL-CHANGE-1: the canonical, server-side record of the specification work that is built but not all merged, so that no session ending loses it. Each entry lists a marker file that exists on main when the entry has landed; python3 -m foundation shipplan --status reads it, --next names what to do, --check fails until every entry has landed. The unmerged code lives in the private ultrastable/ops repository under wip/ (PR 47); nothing here is deployed.",
+ "store": {
+  "repository": "ultrastable/ops",
+  "bundle": "wip/code/ship-code-2026-11-26.bundle",
+  "slicing": "wip/code/slicing/",
+  "workflow": "wip/session-2026-11-26/workflow/",
+  "held_adapter": "wip/session-2026-11-26/held/",
+  "inflight": "wip/inflight/",
+  "base": "5ba092fc29ec039737186f34bd46ec06cedc970d",
+  "full": "560eb3188b7f6c10f67b59c7afee4a6b853a7335"
+ },
+ "slices": [
+  {
+   "id": "S01",
+   "list": "S01-migrations",
+   "title": "Module migrations and the generated bundle",
+   "pr": 2453,
+   "markers": [
+    "workers/adapters/cloudflare/migrations/0009_kernel_focus_log.sql"
+   ]
+  },
+  {
+   "id": "S03",
+   "list": "S03-core-a",
+   "title": "Kernel exports, trust, deploy digest, export, predict and the destructive-migration exporter",
+   "pr": 2457,
+   "markers": [
+    "workers/core/_shared/spec-27-linalg.test.js"
+   ]
+  },
+  {
+   "id": "S02",
+   "list": "S02-staff-lifecycle-plus-governance",
+   "title": "Staff review and research, lifecycle monitoring and closing, plus loop, governance scan",
+   "pr": 2460,
+   "markers": [
+    "workers/core/governance/scan.js"
+   ]
+  },
+  {
+   "id": "S04",
+   "list": "S04-core-b",
+   "title": "Consent links, graph, discovery, pacing, progress, stickiness, migration self-apply",
+   "pr": 2461,
+   "markers": [
+    "workers/adapters/mcp/spec-32-mcp.test.js"
+   ]
+  },
+  {
+   "id": "S05",
+   "list": "S05-seed-tests-1",
+   "title": "Seed fixes and the first seed specification tests",
+   "pr": 2462,
+   "markers": [
+    "seed/worker/test/spec-01-data-model.test.js"
+   ]
+  },
+  {
+   "id": "S06",
+   "list": "S06-seed-tests-2",
+   "title": "Second group of seed specification tests",
+   "pr": 2463,
+   "markers": [
+    "seed/worker/test/spec-29-stickiness-loop.test.js"
+   ]
+  },
+  {
+   "id": "S07",
+   "list": "S07-tests-3",
+   "title": "Last seed specification tests and first foundation specification tests",
+   "pr": 2464,
+   "markers": [
+    "seed/worker/test/spec-33-executors.test.js"
+   ]
+  },
+  {
+   "id": "S08",
+   "list": "S08-foundation-tests-1",
+   "title": "Foundation specification tests, group 1",
+   "pr": null,
+   "markers": [
+    "tests/foundation/test_reposhape.py"
+   ]
+  },
+  {
+   "id": "S09",
+   "list": "S09-foundation-tests-2",
+   "title": "Foundation specification tests, group 2",
+   "pr": null,
+   "markers": [
+    "tests/foundation/test_spec_29_content.py"
+   ]
+  },
+  {
+   "id": "S11",
+   "list": "S11-conformance-docs",
+   "title": "Conformance manifest, conformance tooling and docs (last: the manifest needs every test merged)",
+   "pr": null,
+   "markers": [
+    "docs/handoff/kernel-split.md"
+   ]
+  }
+ ],
+ "remaining": [
+  {
+   "id": "workflow-output",
+   "what": "The resumed specification run's output (clusters C to K, the 8 new specifications' requirements, fixes, integration) is verified, sliced and shipped; the specifications go to the private repository",
+   "markers": [
+    "docs/handoff/spec-workflow-result.md"
+   ],
+   "item": "Q-SHIP-workflow"
+  },
+  {
+   "id": "cloudflare-adapter",
+   "what": "The unfinished Cloudflare adapter entry (worker.js and its tests) is finished and shipped",
+   "markers": [
+    "workers/adapters/cloudflare/src/worker.js"
+   ],
+   "item": "Q-SHIP-adapter"
+  },
+  {
+   "id": "spec-optional-tests",
+   "what": "Foundation tests that read the private specification text skip or run in registry mode when it is absent",
+   "markers": [
+    "tests/foundation/test_spec_optional.py"
+   ],
+   "item": "Q-DISCLOSE-spec-tooling"
+  }
+ ]
+}

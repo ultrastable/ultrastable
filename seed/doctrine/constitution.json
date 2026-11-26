@@ -89,6 +89,7 @@
       "selfaudit": "every failure mode in autonomy/failure-modes.json is probed; red files FM-<id>",
       "migrate": "schema migrations apply in order, once",
       "goals": "goals are measured and at most one knob moves one step per cooldown",
+      "plan": "the goal furthest out of bounds is broken into small items (audit, implement, verify, fix, integrate, gate) and read again after review_h",
       "unknowns": "the system asks itself what it does not know and files the answer as work",
       "dispatch": "ready items go to the role that owns them",
       "execute": "claimed items are worked, opened as pull requests and merged by the server",
