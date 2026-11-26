@@ -18,3 +18,10 @@ test('LOOP-SHIP-1: the code agent is not held to the free-tier neuron cap', () =
   assert.equal(codeNeuronCap({ AI_CODE_NEURONS_DAY: '50000' }), 50000);
   assert.ok(codeNeuronCap({}) > 8000);
 });
+
+test('AIROUTER-EMPTY-2: reasoning-only replies are read, and an empty reply names its shape', () => {
+  const res = { choices: [{ message: { content: null, reasoning_content: '{"files":[]}' }, finish_reason: 'stop' }] };
+  assert.equal(textOf(res), '{"files":[]}');
+  assert.equal(replyProblem({}, ''), 'empty reply');
+  assert.match(replyProblem({ choices: [{ message: {}, finish_reason: 'stop' }] }, ''), /^empty reply \(keys: choices; finish: stop/);
+});
