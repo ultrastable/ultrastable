@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-26-plan-1-goal-planner",
+  "kind": "decision",
+  "date": "2026-11-26",
+  "title": "PLAN-1 goal planner",
+  "body": "Goals out of bounds become task trees (audit, implement, verify, fix, integrate, gate) run by the tick step plan; the planner turns knobs itself and gates each plan on a fresh reading; three misses file one incident.",
+  "probe": "file:seed/worker/src/planner.js"
+ },
+ "kind": "decision",
+ "title": "PLAN-1 goal planner",
+ "session": ""
+}
