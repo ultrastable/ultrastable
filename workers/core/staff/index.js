@@ -6,6 +6,7 @@
 import { fileURLToPath } from 'node:url';
 import { all, first, run, iso, parseIso, compare, TERMINAL_SQL } from '../kernel/util.js';
 import { recordDecision, parsePrediction } from '../kernel/decisions.js';
+import { checkRoleInstruction } from './rolefile.js';
 
 export const MIGRATIONS_DIR = (() => { try { return fileURLToPath(new URL('./migrations/', import.meta.url)); } catch { return null; } })();
 
@@ -21,7 +22,13 @@ const PROGRAM_ONLY = ['promote', 'restore', 'close_with_evidence', 'supersede', 
 export const DEFAULTS = {
   high_priority_max: 10, demote_to: 20, demote_after_h: 24, close_min_age_h: 1, default_trust: 0.5,
   machine_prefixes: ['TICKFAIL-', 'BREACH-', 'REVERT-', 'L2MISSING-', 'GATE-', 'FM-', 'LADDER-', 'REBALANCE-'],
-  control_plane: ['core/src/tick.js', 'core/kernel/index.js', 'autonomy/', '.github/', 'agents/', 'AGENTS.md', 'CLAUDE.md', 'GEMINI.md', 'SCOPE.md', 'LICENSE', 'ultrastable.json'],
+  // US-02-R10: the tick (every implementation of it), policy, governance and permission configuration, the instruction files, and the
+  // guards the repository protects (scripts/protected_paths.py, workers/AGENTS.md rule 7). control_plane replaces this list; control_plane_extra adds to it.
+  control_plane: ['core/src/tick.js', 'core/kernel/index.js', 'autonomy/', '.github/', 'agents/', 'AGENTS.md', 'CLAUDE.md', 'GEMINI.md', 'SCOPE.md', 'LICENSE', 'ultrastable.json',
+    'tools/spec_truth.py', 'tools/selfhost_check.py', 'core/test/no-qnfo.test.js', 'scripts/protected_paths.py',
+    'core/org/index.js', 'core/org/buildout.js', 'adapters/cloudflare/src/index.js', 'adapters/cloudflare/src/heartbeat.js',
+    'runtimes/python/ultrastable/engine.py', 'seed/worker/src/tick.js', 'worker/src/tick.js'],
+  control_plane_extra: [],
   roadmap_min: 3, origination_daily_cap: 4,
 };
 const cfg = (c) => ({ ...DEFAULTS, ...(c || {}) });
@@ -32,11 +39,16 @@ export function isControlPlane(path, config) {
   const p = String(path || '').replace(/\\/g, '/').replace(/^\.\//, '');
   if (!p) return false;
   if (/(^|\/)(policy|policies|governance|permissions?)(\.|\/|$)/i.test(p)) return true;
-  return cfg(config).control_plane.some(c => (c.endsWith('/') ? p.startsWith(c) || p.includes(`/${c}`) : p === c || p.endsWith(`/${c}`)));
+  const k = cfg(config);
+  return [...k.control_plane, ...(k.control_plane_extra || [])].some(c => (c.endsWith('/') ? p.startsWith(c) || p.includes(`/${c}`) : p === c || p.endsWith(`/${c}`)));
 }
 
 // US-02-R01, R05: a persona is a record naming role, scope and instruction source, with an enumerated authority.
-export async function registerPersona(db, p) {
+// opts (US-02-R12): { readInstruction(path) -> text, requireNeverList }. With requireNeverList on (config.staff.require_never_list), a persona
+// whose instruction source is a file is refused unless that file carries the never list of core/staff/rolefile.js; with no reader the
+// check cannot run and the registration is refused (an unreadable file is never a pass). A prompt reference (not a path) is not a file.
+const looksLikeFile = (s) => /[\/]/.test(s) || /\.(md|txt)$/i.test(s);
+export async function registerPersona(db, p, opts = {}) {
   for (const f of ['id', 'role', 'scope', 'instruction_source']) if (!p[f] || !String(p[f]).trim()) throw new Error(`persona requires ${f}`);
   if (!Array.isArray(p.authority) || !p.authority.length) throw new Error('decision authority must be an enumerated list');
   const unknown = p.authority.filter(o => !OPERATIONS.includes(o));
@@ -46,6 +58,12 @@ export async function registerPersona(db, p) {
   if (over.length) throw new Error(`role ${p.role} may not hold: ${over.join(', ')}`);
   if (p.authority.some(o => PROGRAM_ONLY.includes(o)) && !p.program_id) throw new Error('a persona with program operations needs program_id');
   if (!['agent', 'person'].includes(p.filled_by || 'agent')) throw new Error('filled_by must be agent or person');
+  if (opts.requireNeverList && looksLikeFile(String(p.instruction_source))) {
+    if (typeof opts.readInstruction !== 'function') throw new Error('the never-list check needs a readInstruction port (US-02-R12)');
+    let text; try { text = await opts.readInstruction(p.instruction_source); } catch (e) { throw new Error(`cannot read ${p.instruction_source}: ${e.message}`); }
+    const r = checkRoleInstruction(text);
+    if (!r.ok) throw new Error(`${p.instruction_source} has no complete never list (US-02-R12): ${r.has_section ? `missing ${r.missing.join(', ')}` : 'no Never section'}`);
+  }
   await run(db, `INSERT INTO staff_personas (id, role, plane, program_id, scope, charter, instruction_source, authority, filled_by, holder, tick_every, status, created_at)
       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
       ON CONFLICT(id) DO UPDATE SET role=excluded.role, plane=excluded.plane, program_id=excluded.program_id, scope=excluded.scope, charter=excluded.charter,
@@ -182,10 +200,12 @@ export function createToolLayer({ db, now = () => Date.now(), config = {}, ports
 
   // Apply one operation. Order of checks: the persona is active, the operation is on its list, the item is in its plane,
   // the item is in its program (program operations), then the operation's own preconditions.
-  async function act(personaId, op, args = {}, { tickId = null, quiet = false } = {}) {
+  // dry: check everything and write nothing (no action row, no denial row); a refusal comes back as { ok: false, kind, reason }. The person
+  // screen (core/staff/screen.js) uses it to show the operations that would be accepted now.
+  async function act(personaId, op, args = {}, { tickId = null, quiet = false, dry = false } = {}) {
     const pz = await identity(personaId), t = now(), nowIso = iso(t);
     // quiet: an automatic duty that probes by trying leaves no row for a failed precondition; authority and lane refusals always do.
-    const refuse = (z, o, target, kind, reason, tk) => (quiet && kind === 'precondition' ? { ok: false, denied: true, kind, reason } : refuseRow(z, o, target, kind, reason, tk));
+    const refuse = (z, o, target, kind, reason, tk) => (dry || (quiet && kind === 'precondition') ? { ok: false, denied: true, kind, reason } : refuseRow(z, o, target, kind, reason, tk));
     if (pz.status !== 'active') return refuse(pz, op, args.item_id, 'authority', 'persona is not active', tickId);
     if (!pz.authority.includes(op)) return refuse(pz, op, args.item_id, 'authority', `${op} is not in the decision authority of ${pz.id}`, tickId);
     const handler = HANDLERS[op];
@@ -199,9 +219,14 @@ export function createToolLayer({ db, now = () => Date.now(), config = {}, ports
     let ch;
     try { ch = await handler(db, pz, it, args, c, t, ports); }
     catch (e) { if (e instanceof Refusal) return refuse(pz, op, it.id, e.kind, e.message, tickId); throw e; }
+    if (dry) return { ok: true, dry: true, item_id: it.id, field: ch.field, from: ch.from, to: ch.to, evidence: ch.evidence };
+    // A status that ends the item removes its claim; keep the claim so a reversal can restore it (US-02-R06).
+    const endsItem = ch.field === 'status' && ['done', 'superseded', 'cancelled'].includes(ch.to);
+    const claim = endsItem ? await first(db, `SELECT agent, claimed_at, heartbeat_at FROM claims WHERE item_id = ?`, it.id) : null;
     await writeField(db, it.id, ch.field, ch.to, nowIso, ch.disposition ?? null);
     const verified = String(await readField(db, it.id, ch.field)) === String(ch.to); // read back through a separate statement
     const id = await logAction(db, pz, { op, item_id: it.id, ...ch, tick_id: tickId, at: nowIso });
+    if (claim) await run(db, `INSERT INTO staff_action_claims (action_id, item_id, agent, claimed_at, heartbeat_at) VALUES (?,?,?,?,?)`, id, it.id, claim.agent, claim.claimed_at, claim.heartbeat_at ?? null);
     if (ch.reverses) await run(db, `UPDATE staff_actions SET reversed_by = ? WHERE id = ?`, id, ch.reverses);
     // US-02-R11: the same trust accounting whoever fills the role.
     await run(db, `INSERT INTO outcomes (item_id, agent, surface, action_class, result, evidence, at) VALUES (?,?,?,?,?,?,?)`,
@@ -226,11 +251,31 @@ export function createToolLayer({ db, now = () => Date.now(), config = {}, ports
     if (!pz.authority.includes(op)) return refuse(pz, `reverse:${op}`, a.item_id, 'authority', `${op} is not in the decision authority of ${pz.id}`, tickId);
     if (!evidence) return refuse(pz, `reverse:${op}`, a.item_id, 'precondition', 'a reversal records its evidence', tickId);
     if (a.reversed_by) return refuse(pz, `reverse:${op}`, a.item_id, 'precondition', `already reversed by action ${a.reversed_by}`, tickId);
+    // The kernel's allocation is replaced by the next allocation, not restored: say so as a recorded, countable refusal.
+    if (a.field === 'allocation') return refuse(pz, `reverse:${op}`, a.item_id, 'precondition', "an allocation cannot be reversed: the kernel's next allocation replaces it (US-02-R06)", tickId);
+    // An originated item is reversed by cancelling it with a disposition, so it leaves the active set accountably (US-02-R06, US-08).
+    if (a.field === 'item' && op === 'originate') {
+      const it = a.item_id ? await itemView(db, a.item_id) : null;
+      if (!it) return refuse(pz, `reverse:${op}`, a.item_id, 'precondition', 'the originated item no longer exists', tickId);
+      if (it.plane !== pz.plane || it.program_id !== pz.program_id) return refuse(pz, `reverse:${op}`, it.id, 'lane', 'item is outside the lane of this persona', tickId);
+      if (['done', 'superseded', 'cancelled'].includes(it.status)) return refuse(pz, `reverse:${op}`, it.id, 'precondition', `item is already ${it.status}`, tickId);
+      await writeField(db, it.id, 'status', 'cancelled', nowIso, `cancelled: reversal of staff action ${a.id}`);
+      await run(db, `UPDATE kernel_item_meta SET doer = NULL WHERE item_id = ? AND doer LIKE 'code-task:%'`, it.id);
+      await run(db, `UPDATE staff_originations SET reason = ? WHERE item_id = ?`, `reversed by staff action (see action ${a.id})`, it.id);
+      const rid = await logAction(db, pz, { op: `reverse:${op}`, item_id: it.id, field: 'item', from: a.to_value, to: 'cancelled', evidence, tick_id: tickId, reverses: a.id, at: nowIso });
+      await run(db, `UPDATE staff_actions SET reversed_by = ? WHERE id = ?`, rid, a.id);
+      return { ok: true, action_id: rid, item_id: it.id, field: 'item', from: a.to_value, to: 'cancelled' };
+    }
     if (!a.item_id || !['priority', 'status', 'doer'].includes(a.field)) return refuse(pz, `reverse:${op}`, a.item_id, 'precondition', 'this action has no item field to restore', tickId);
     const it = await itemView(db, a.item_id);
     if (it.plane !== pz.plane || (PROGRAM_ONLY.includes(op) && it.program_id !== pz.program_id)) return refuse(pz, `reverse:${op}`, it.id, 'lane', 'item is outside the lane of this persona', tickId);
     const back = a.field === 'priority' ? Number(a.from_value) : a.from_value;
     await writeField(db, it.id, a.field, back, nowIso, null);
+    // The claim the original operation removed comes back with the item (US-02-R06): a reversal leaves the item as it was found.
+    if (a.field === 'status' && !['done', 'superseded', 'cancelled'].includes(back)) {
+      const kept = await first(db, `SELECT * FROM staff_action_claims WHERE action_id = ?`, a.id);
+      if (kept) await run(db, `INSERT OR IGNORE INTO claims (item_id, agent, claimed_at, heartbeat_at) VALUES (?,?,?,?)`, it.id, kept.agent, kept.claimed_at, kept.heartbeat_at ?? nowIso);
+    }
     const id = await logAction(db, pz, { op: `reverse:${op}`, item_id: it.id, field: a.field, from: a.to_value, to: a.from_value, evidence, tick_id: tickId, reverses: a.id, at: nowIso });
     await run(db, `UPDATE staff_actions SET reversed_by = ? WHERE id = ?`, id, a.id);
     return { ok: true, action_id: id, item_id: it.id, field: a.field, from: a.to_value, to: a.from_value };
@@ -286,3 +331,8 @@ export { day as dayOf, cfg as staffConfig, norm as normTitle, isMachineFiled, pl
 export * from './score.js';
 export * from './originate.js';
 export * from './tick.js';
+export * from './seed.js';
+export * from './rolefile.js';
+export * from './review.js';
+export * from './research.js';
+export * from './screen.js';
