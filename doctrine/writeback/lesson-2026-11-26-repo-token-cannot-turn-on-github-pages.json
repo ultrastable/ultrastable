@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-26-repo-token-cannot-turn-on-github-pages",
+  "kind": "lesson",
+  "date": "2026-11-26",
+  "title": "Repo token cannot turn on GitHub Pages",
+  "body": "A repository's own GITHUB_TOKEN gets 'Resource not accessible by integration' from configure-pages enablement. pages-enable.yml turns Pages on (build_type=workflow) with the lane App token, so GitHub-only tenants such as base-rates and open-questions can publish without an owner step.",
+  "probe": "file:.github/workflows/pages-enable.yml",
+  "session": "session_0156nqDvAsinuzbSTMG33HRB"
+ },
+ "kind": "lesson",
+ "title": "Repo token cannot turn on GitHub Pages",
+ "session": "session_0156nqDvAsinuzbSTMG33HRB"
+}

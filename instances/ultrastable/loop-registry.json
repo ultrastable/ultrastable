@@ -788,6 +788,7 @@
    "workflows": [
     "org-manage.yml",
     "org-settings.yml",
+        "pages-enable.yml",
     "org-profile-probe.yml"
    ],
    "credentials": [
