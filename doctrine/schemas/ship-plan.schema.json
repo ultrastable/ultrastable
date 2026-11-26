@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/ship-plan.schema.json",
+  "title": "Ship plan",
+  "description": "SHIP-PLAN-1: the record of built but unmerged work, one entry per slice or unfinished piece, each with marker files that exist on main once it has landed.",
+  "type": "object",
+  "required": ["store", "slices", "remaining"],
+  "properties": {
+    "$schema": {"type": "string"},
+    "_doc": {"type": "string"},
+    "store": {"type": "object", "required": ["repository", "bundle", "slicing"], "properties": {"repository": {"type": "string"}, "bundle": {"type": "string"}, "slicing": {"type": "string"}, "workflow": {"type": "string"}, "held_adapter": {"type": "string"}, "inflight": {"type": "string"}, "base": {"type": "string"}, "full": {"type": "string"}}},
+    "slices": {"type": "array", "items": {"type": "object", "required": ["id", "markers"], "properties": {"id": {"type": "string"}, "list": {"type": "string"}, "title": {"type": "string"}, "pr": {"type": ["integer", "null"]}, "markers": {"type": "array", "minItems": 1, "items": {"type": "string"}}}}},
+    "remaining": {"type": "array", "items": {"type": "object", "required": ["id", "what", "markers"], "properties": {"id": {"type": "string"}, "what": {"type": "string"}, "markers": {"type": "array", "minItems": 1, "items": {"type": "string"}}, "item": {"type": "string"}}}}
+  }
+}

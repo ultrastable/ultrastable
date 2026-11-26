@@ -899,6 +899,14 @@
       "url": "sessions.schema.json"
     },
     {
+      "name": "ship-plan.json",
+      "description": "Contract for doctrine/ship-plan.json",
+      "fileMatch": [
+        "doctrine/ship-plan.json"
+      ],
+      "url": "ship-plan.schema.json"
+    },
+    {
       "name": "silent-failures.json",
       "description": "Contract for doctrine/silent-failures.json",
       "fileMatch": [

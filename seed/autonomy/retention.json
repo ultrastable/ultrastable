@@ -338,6 +338,16 @@
     "switch_drills": {
       "column": "at",
       "keep_days": 400
+    },
+    "plans": {
+      "column": "created_at",
+      "unit": "ms",
+      "keep_days": 90,
+      "reason": "PLAN-1: one row per goal plan; the gate reads the last plan of a goal and the next plan mutates its approach from the earlier attempts, so 90 days of attempts is ample"
+    },
+    "plan_tasks": {
+      "keep": "managed",
+      "reason": "PLAN-1: edges from a plan to its items; the items carry their own retention and the rows are only read while their plan is live"
     }
   }
 }

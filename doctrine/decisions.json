@@ -223,6 +223,7 @@
   "foundation/uiux.py": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
   "seed/worker/src/budget.js": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
   "seed/worker/src/cutover.js": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
+  "seed/worker/src/planner.js": "decision-shaped function with no declared metric yet; the plan verdict (kept or missed) is already recorded in the plans table; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
   "seed/worker/src/pr-executor.js": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
   "seed/worker/src/unknowns.js": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)"
  },
