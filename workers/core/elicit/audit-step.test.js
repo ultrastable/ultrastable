@@ -79,10 +79,42 @@ test('T16-9: a model of the author\'s family, or an unknown family when the auth
   const unknown = await e.audit(P, { redteam: async () => ({ points: [] }), author_family: 'family-a' });
   assert.equal(unknown.independent, false); assert.equal(unknown.complete, false);
   assert.match(db.raw.prepare("SELECT evidence FROM elicit_audit WHERE sweep='redteam' ORDER BY id DESC LIMIT 1").get().evidence, /unverified independence/);
+  // US-16 section 6 (R24): independence is a known family that is not the author's. With the author's family unknown nothing can be called independent.
   const noAuthor = await e.audit(P, { redteam: async () => ({ family: 'x', points: [] }) });
-  assert.equal(noAuthor.independent, true);
+  assert.equal(noAuthor.independent, false); assert.equal(noAuthor.complete, false);
+  assert.match(db.raw.prepare("SELECT evidence FROM elicit_audit WHERE sweep='redteam' ORDER BY id DESC LIMIT 1").get().evidence, /author family unknown; unverified independence/);
+  assert.equal(db.raw.prepare(MODEL_ROUTE_PROBE).get()['COUNT(*)'], 0, 'an unverified family never satisfies the live probe');
   const failing = elicitAuditStep({ db, elicit: e, catalog: CATALOG, model: async () => { throw new Error('endpoint down'); }, author_family: 'family-a' });
   await e.nextAsks(P); await e.answer(P, 'a', { choice: 'second' });
   const notes = await stepRun(failing, db);
   assert.match(notes.join(' '), /model route failed \(endpoint down\); the rule floor ran instead/);
+});
+
+test('US-16-R24: the author\'s family is compared as a name, not a spelling: another case or stray spaces are still the author\'s family', async () => {
+  const { db, e } = mk(); await e.registerNeeds(P, [{ id: 'a', label: 'A', artifact: 'A-INI-2', question: 'Which a?', why: 'It changes a.', cue: 'Most pick first.', options: ['first', 'second'], default: 'first', default_consequence: 'redo a' }]);
+  for (const spelled of ['Claude', ' claude ', 'CLAUDE']) {
+    await assert.rejects(() => e.audit(P, { redteam: async () => ({ family: spelled, points: [] }), author_family: 'claude' }), /different model family/, `"${spelled}" is the author's family`);
+    await assert.rejects(() => e.audit(P, { redteam: async () => ({ family: 'claude', points: [] }), author_family: spelled }), /different model family/, `an author written "${spelled}" is the same family`);
+  }
+  assert.equal(db.raw.prepare("SELECT COUNT(*) AS n FROM elicit_audit WHERE sweep='redteam'").get().n, 0, 'a refused sweep leaves no independent-looking row');
+  const ok = await e.audit(P, { analogies: [{ item: 'who recovers it when it breaks' }], redteam: async () => ({ family: ' Gemma ', points: [] }), author_family: 'Claude' });
+  assert.equal(ok.independent, true); assert.equal(ok.complete, true);
+  assert.match(db.raw.prepare("SELECT evidence FROM elicit_audit WHERE sweep='redteam' ORDER BY id DESC LIMIT 1").get().evidence, /^model family: Gemma$/);
+  const none = await e.audit(P, { required_fields: [] });
+  assert.equal(none.independent, false, 'with no red-team sweep nothing is independent'); assert.ok(none.missing_sweeps.includes('redteam'));
+});
+
+test('T16-12 and US-16-R24: a failed prediction graded after the last audit makes an audit due and becomes one lesson, though its due time is older than that audit', async () => {
+  const { db, t, e } = mk(); await e.registerNeeds(P, [{ id: 'a', label: 'A', artifact: 'A-INI-2', question: 'Which a?', why: 'It changes a.', cue: 'Most pick first.', options: ['first', 'second'], default: 'first', default_consequence: 'redo a' }]);
+  await e.nextAsks(P); await e.answer(P, 'a', { choice: 'second' });
+  db.raw.prepare("INSERT INTO predictions (id, metric, op, target, due_at) VALUES ('7', 'plan_holds', '>=', 1, ?)").run('2026-11-12 11:00:00');
+  await e.audit(P, { trigger: 'g1' }); // the audit runs at 12:00, after the due time and before the grade
+  assert.deepEqual(await auditDue({ db, elicit: e }, P), { due: false, reason: null });
+  db.raw.prepare("UPDATE predictions SET verdict='miss' WHERE id='7'").run();
+  t.v += 3600e3;
+  assert.equal((await e.surprisesSince(P)).length, 1);
+  assert.deepEqual(await auditDue({ db, elicit: e }, P), { due: true, reason: 'surprise' });
+  await e.audit(P, { trigger: 'surprise' });
+  assert.equal(db.raw.prepare("SELECT COUNT(*) AS n FROM elicit_audit WHERE finding LIKE 'failed prediction 7:%'").get().n, 1);
+  assert.deepEqual(await auditDue({ db, elicit: e }, P), { due: false, reason: null }, 'a miss becomes a lesson once');
 });

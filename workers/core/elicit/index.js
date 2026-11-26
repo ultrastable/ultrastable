@@ -18,6 +18,8 @@ export const validTimezone = tz => { try { new Intl.DateTimeFormat('en', { timeZ
 const SATISFIED = ['answered', 'defaulted', 'derived'];
 const words = s => String(s || '').trim().split(/\s+/).filter(Boolean);
 const iso = ms => new Date(ms).toISOString();
+/** A model family as a comparable name: trimmed and lower-cased; '' when none is given. */
+const familyOf = f => String(f ?? '').trim().toLowerCase();
 const priorityOf = n => Number(n.p_wrong) * Number(n.rework) * Number(n.dependents);
 
 /** Problems with an Ask card, or [] (US-16-R02, R03, section 5.1, T16-2). `defines` lists jargon terms the card explains itself. */
@@ -85,7 +87,9 @@ export function createElicit({ db, now = () => Date.now(), config = {}, predict 
     const since = lastRun ? lastRun.replace('T', ' ').slice(0, 19) : null;
     const lessoned = new Set((await all(`SELECT finding FROM elicit_audit WHERE project=? AND sweep='surprise' AND finding LIKE 'failed prediction %'`, project)).map(r => /^failed prediction (\S+):/.exec(r.finding)?.[1]));
     return [
-      ...await all(`SELECT id, metric FROM predictions WHERE verdict IS NOT NULL AND verdict <> 'hit' AND (? IS NULL OR due_at > ?)`, since, since).catch(() => []),
+      // The legacy table has no scored_at, and a prediction is graded after its due_at (so after an audit that ran in between): it is read whole and the lessoned set below
+      // keeps a miss from becoming a lesson twice.
+      ...await all(`SELECT id, metric FROM predictions WHERE verdict IS NOT NULL AND verdict <> 'hit'`).catch(() => []),
       ...((await hasTable('predict_predictions')) ? await all(`SELECT id, subject AS metric FROM predict_predictions WHERE matched = 0 AND (? IS NULL OR scored_at > ?)`, since, since) : []),
     ].filter(m => !lessoned.has(m.id));
   }
@@ -493,13 +497,17 @@ export function createElicit({ db, now = () => Date.now(), config = {}, predict 
         }
       }
       if (analogies.length) ran.add('analogy');
-      let independent = true;
+      let independent = false; // no red-team sweep ran, so none was independent
       if (typeof redteam === 'function') {
         const r = await redteam({ project, needs: await all(`SELECT id, label, value, provenance FROM elicit_needs WHERE project=?`, project) });
-        if (author_family && r?.family && r.family === author_family) throw new Error('red-team sweep must come from a different model family than the author');
-        // US-16 section 6: an independent sweep is one whose family is known and is not the author's. An unknown family, or the rule floor, is recorded as such and never as independence.
-        independent = !(author_family && !r?.family) && !r?.floor;
-        const ev = r?.floor ? 'model family: none (rule floor); no independent model available' : `model family: ${r?.family || 'unknown'}${independent ? '' : '; unverified independence'}`;
+        // Families compare as names, not as spellings: "Claude" and " claude " are one family.
+        const authorFam = familyOf(author_family); const gotFam = familyOf(r?.family);
+        if (authorFam && gotFam && authorFam === gotFam) throw new Error('red-team sweep must come from a different model family than the author');
+        // US-16 section 6: an independent sweep is one whose family is known and is not the author's. An unknown family (the reviewer's or the author's), or the rule floor, is
+        // recorded as such and never as independence.
+        independent = Boolean(authorFam && gotFam) && !r?.floor;
+        const why = authorFam ? '; unverified independence' : '; author family unknown; unverified independence';
+        const ev = r?.floor ? 'model family: none (rule floor); no independent model available' : `model family: ${gotFam ? String(r.family).trim() : 'unknown'}${independent ? '' : why}`;
         await add('redteam', `question: ${r?.question || 'what would make this fail or harm someone that the person has not mentioned?'}`, 'dismissed', ev);
         for (const pt of r?.points || []) await add('redteam', pt.point, pt.disposition || 'risk', ev);
         ran.add('redteam');

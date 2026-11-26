@@ -6,9 +6,9 @@ Plain-language help for the person who owns the organization. The console Help t
 
 Your organization is a team of software workers that plan, build and check work on your behalf. They run by themselves on a schedule. This console shows what they are doing and the few things only you can do.
 
-## The four screens
+## The screens
 
-Now shows what is being worked on and what is stuck. Needs you lists the decisions and steps only a person can take. Progress shows what was finished lately and how often the system's own predictions came true. Connect is where you add the keys that let the workers use outside services.
+There are five. Now shows what is being worked on and what is stuck. Needs you lists the decisions and steps only a person can take. Progress shows what was finished lately and how often the system's own predictions came true. Connect is where you add the keys that let the workers use outside services. Help, where you are now, explains each of them.
 
 ## What does "Needs you" mean
 
@@ -16,7 +16,7 @@ Each card is one thing the workers cannot or should not do for you, such as payi
 
 ## Keys and secrets
 
-A key is a private code from another service. Paste it once in Connect. It is stored privately and never shown again, not even to you. If a key is lost or leaked, paste a new one in the same place and the old one stops working.
+Some outside services need a private code from you. When one does, the Connect screen asks for it in one box and says which service it is for. It is stored privately and never shown again, not even to you. If one is lost or leaked, give a new one in the same place and the old one stops working.
 
 ## Asking for something
 

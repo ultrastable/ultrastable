@@ -24,7 +24,7 @@ async function run(db, sql, ...args) {
 }
 function iso(d) { return d.toISOString().replace('T', ' ').slice(0, 19); }
 
-// US-03-R18 and US-00-R07: the numbers the tick reads from its configuration, with the defaults the specification names. A configuration that
+// US-03-R23 and US-00-R07: the numbers the tick reads from its configuration, with the defaults the specification names. A configuration that
 // omits one used to fail reap_claims every hour (an invalid cutoff date) and to switch the work-in-progress cap off (a comparison with
 // undefined is never true); a limit that is not configured now has a value, and a configured value always wins.
 export const DEFAULTS = Object.freeze({ claim_ttl_minutes: 120, max_wip_per_role: 3, plus_share: 0.2, max_unworked_releases: 3, execute_max_items: 20 });

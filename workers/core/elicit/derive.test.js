@@ -156,3 +156,17 @@ test('US-16-R13, US-16-R25 and A-INI-4: after a correction the redrafted artifac
   assert.match(db.raw.prepare("SELECT done_check FROM items WHERE id='ELICIT-RERUN-DEMO-CHARTER'").get().done_check, /lintDraft/);
   assert.equal((await e.draft(P, 'A-INI-4')).artifact, 'A-INI-4');
 });
+
+test('US-16-R21: a value that evidence contradicted is not derived again while the need is open, but another value is', async () => {
+  const { db, e } = mk(); await e.registerNeeds(P, [need('a')]);
+  await e.derive(P, { records: { a: async () => 'third' } });
+  await e.contradict(P, 'a', { evidence: 'the record was stale' }); // back to open, not yet asked
+  assert.equal(db.raw.prepare("SELECT state FROM elicit_needs WHERE id='a'").get().state, 'open');
+  const again = await e.derive(P, { records: { a: async () => 'third' } });
+  assert.equal(again.derived.length, 0, 'the same ruled-out value from the same source is refused');
+  assert.equal(db.raw.prepare("SELECT state FROM elicit_needs WHERE id='a'").get().state, 'open');
+  assert.deepEqual(attempts(db, 'a').filter(x => x.startsWith('record')).slice(-1), ['record:miss']);
+  assert.match(db.raw.prepare("SELECT detail FROM elicit_derivations WHERE need_id='a' AND surface='record' ORDER BY id DESC LIMIT 1").get().detail, /later contradicted by evidence/);
+  const other = await e.derive(P, { records: { a: async () => 'second' } });
+  assert.deepEqual(other.derived.map(d => d.value), ['second'], 'a different value is accepted');
+});
