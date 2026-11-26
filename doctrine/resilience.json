@@ -54,6 +54,24 @@
         "https://replication-ledger.ultrastable.org/pulse/watch"
       ],
       "idempotent": true
+    },
+    "base-rates-beat": {
+      "kind": "http",
+      "why": "POST /pulse/watch runs the Base Rates beat when the last one is over two intervals old; safe to call by anyone; the custom domain and workers.dev are separate routes to the same Worker",
+      "urls": [
+        "https://ultrastable-base-rates.ultrastable.workers.dev/pulse/watch",
+        "https://base-rates.ultrastable.org/pulse/watch"
+      ],
+      "idempotent": true
+    },
+    "open-questions-beat": {
+      "kind": "http",
+      "why": "POST /pulse/watch runs the Open Questions beat when the last one is over two intervals old; safe to call by anyone; the custom domain and workers.dev are separate routes to the same Worker",
+      "urls": [
+        "https://ultrastable-open-questions.ultrastable.workers.dev/pulse/watch",
+        "https://open-questions.ultrastable.org/pulse/watch"
+      ],
+      "idempotent": true
     }
   },
   "watchers": [
