@@ -10,7 +10,7 @@ REPO = Path(__file__).resolve().parents[2]
 STD = json.loads((REPO / T.STD_CORE).read_text())
 
 
-def planned(slug="base-rates"):
+def planned(slug="did-it-work"):
     """A new tenant's repository as tenant-repos.yml makes it: the split of its manifest folder, then the scaffold."""
     d = scratch()
     for f in (REPO / "instances" / slug).iterdir():
@@ -65,16 +65,16 @@ class Scaffold(unittest.TestCase):
         for p in self.d.rglob("*"):
             if p.is_file() and "vendor" not in p.parts:
                 self.assertIsNone(T.PLACE.search(p.read_text()), p)
-        self.assertEqual(T.scaffold(self.d, "base-rates", REPO, STD), [])
+        self.assertEqual(T.scaffold(self.d, "did-it-work", REPO, STD), [])
 
     def test_a_planned_tenant_says_not_deployed_and_links_no_host(self):
         readme = (self.d / "README.md").read_text()
         block = T.BLOCKS["live"].search(readme).group(0)
         self.assertIn("Not deployed yet", block)
-        self.assertNotIn("base-rates.ultrastable.org", readme)
+        self.assertNotIn("did-it-work.ultrastable.org", readme)
         self.assertIn("https://ultrastable.io", block)
-        self.assertEqual(block, T.live_block("base-rates", REPO))  # the one format: foundation/livelinks.py
-        (self.d / "README.md").write_text(readme.replace("Not deployed yet.", "Not deployed yet. See https://base-rates.ultrastable.org/"))
+        self.assertEqual(block, T.live_block("did-it-work", REPO))  # the one format: foundation/livelinks.py
+        (self.d / "README.md").write_text(readme.replace("Not deployed yet.", "Not deployed yet. See https://did-it-work.ultrastable.org/"))
         self.assertTrue(any("dead link" in b for b in T.check_tenant(self.d, STD, REPO)))
         (self.d / "README.md").write_text(readme)
 
@@ -88,7 +88,7 @@ class Scaffold(unittest.TestCase):
 class LiveBlock(unittest.TestCase):
     def test_a_deployed_tenant_links_its_url_from_the_registry_and_a_wrong_or_missing_url_fails(self):
         self.assertEqual(T.deployment("unlearn", REPO), (True, "https://unlearn.ultrastable.org"))
-        self.assertEqual(T.deployment("base-rates", REPO), (False, ""))
+        self.assertEqual(T.deployment("did-it-work", REPO), (False, ""))
         d = scratch()
         (d / "instance.json").write_text(json.dumps({"slug": "unlearn", "name": "Unlearn"}))
         block, ident = T.live_block("unlearn", REPO), T.identity("unlearn", d, STD, REPO)
@@ -112,14 +112,14 @@ class LiveBlock(unittest.TestCase):
         self.assertIsNone(ident["public_url"]); self.assertEqual(ident["runs_as"], []); self.assertEqual(ident["status"], "planned")
         self.assertEqual(json.loads((d / "package.json").read_text())["description"], ident["summary"])
         self.assertIn('import MANIFEST from "../ultrastable.json"', (d / "worker/contract.js").read_text())
-        self.assertIn('"name": "ultrastable-base-rates"', (d / "wrangler.jsonc").read_text())
+        self.assertIn('"name": "ultrastable-did-it-work"', (d / "wrangler.jsonc").read_text())
         e = scratch()
-        for f in (REPO / "instances/base-rates").iterdir():
+        for f in (REPO / "instances/did-it-work").iterdir():
             shutil.copy(f, e / f.name)
-        T.scaffold(e, "base-rates", REPO, STD, {**ident, "name": "Renamed Rates", "summary": "A different summary for the test."})
+        T.scaffold(e, "did-it-work", REPO, STD, {**ident, "name": "Renamed Rates", "summary": "A different summary for the test."})
         self.assertIn("# Renamed Rates", (e / "README.md").read_text())
         self.assertEqual(json.loads((e / "package.json").read_text())["description"], "A different summary for the test.")
-        self.assertEqual(T.scaffold(e, "base-rates", REPO, STD), [], "the identity the repository carries is the input of the next run")
+        self.assertEqual(T.scaffold(e, "did-it-work", REPO, STD), [], "the identity the repository carries is the input of the next run")
         bad_id = {**ident, "public_url": "https://x.example.org", "runs_as": [{"name": "other-worker"}]}
         (e / "ultrastable.json").write_text(json.dumps({"identity": bad_id}))
         got = "\n".join(T.check_tenant(e, STD, REPO))
@@ -132,7 +132,7 @@ class LiveBlock(unittest.TestCase):
         d = planned()
         (d / "README.md").write_text("# Mine\n\nMy own words.\n")
         (d / "AGENTS.md").write_text("# Mine\n\n- my rule\n")
-        T.scaffold(d, "base-rates", REPO, STD)
+        T.scaffold(d, "did-it-work", REPO, STD)
         readme = (d / "README.md").read_text()
         self.assertTrue(readme.startswith("# Mine\n\n<!-- live:start"))
         self.assertIn("My own words.", readme)
@@ -167,12 +167,12 @@ class Reading(unittest.TestCase):
     def test_live_reads_each_registered_repository_and_an_unreadable_one_fails(self):
         good = planned()
         def clone(repo, dest):
-            if repo.endswith("/base-rates"):
+            if repo.endswith("/did-it-work"):
                 shutil.copytree(good, dest)
                 return True
             return False
         res = T.live(REPO, STD, clone)
-        self.assertEqual(res["base-rates"], [])
+        self.assertEqual(res["did-it-work"], [])
         self.assertIn("could not be read", res["unlearn"][0])
         self.assertNotIn("practical-solutions", res)  # exempt with a reason, measured not enforced
 
