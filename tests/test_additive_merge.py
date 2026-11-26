@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """ADDITIVE-MERGE-1: both sides appending registry rows or list lines is not a conflict."""
 import json, os, subprocess, sys, tempfile, unittest
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

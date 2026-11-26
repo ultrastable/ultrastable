@@ -105,6 +105,16 @@ class Check(World):
         self.assertIn("seed/admin/ is admin or platform material", errs)
         self.assertIn("seed/notes/ is not listed in template_contents.belongs", errs)
 
+    def test_a_retired_or_generated_entry_must_be_exact_reasoned_and_true(self):
+        self.map["template_contents"]["retired"] = [{"path": "worker/a.js", "superseded_by": "worker/a.js", "reason": "still there"}, {"path": "worker/", "reason": "a folder"},
+                                                    {"path": "worker/gone.js", "superseded_by": "worker/nowhere.js", "reason": "names nothing"}]
+        self.map["template_contents"]["generated"] = [{"path": "worker/a.js", "generator": "scripts/none.py", "reason": "no generator"}, {"path": "worker/a.js", "generator": "worker/a.js"}]
+        self.save()
+        errs = "\n".join(fm.check(self.core))
+        for want in ("retired names worker/a.js, which seed/ still holds", "one exact file path with a reason: {'path': 'worker/'", "superseded_by must name the seed/ file",
+                     "generated worker/a.js: the file and its generator must both be in seed/", "one exact file path with a reason: {'path': 'worker/a.js', 'generator': 'worker/a.js'}"):
+            self.assertIn(want, errs)
+
 
 class Drift(World):
     def test_an_exact_copy_reads_equal_and_kept_files_are_not_extra(self):
@@ -197,6 +207,23 @@ class Publish(World):
         (self.core / "seed/worker/a.js").write_text("three\n")  # not committed: only the stamp can vouch for the mirror's copy
         rep = fm.publish(self.core, self.mirror, "seed", [], apply=True)
         self.assertEqual((rep["updated"], rep["conflicts"]), (["worker/a.js"], []))
+
+    def test_a_retired_file_is_removed_and_a_generated_one_replaced_only_when_declared(self):
+        (self.mirror / "worker/a.js").write_text("generated from the template's own state\n")
+        (self.mirror / "worker/old-name.js").write_text("x\n")
+        (self.mirror / "worker/only-here.js").write_text("x\n")
+        dry = fm.publish(self.core, self.mirror, "seed", [], apply=False, retired=["worker/old-name.js"], generated=["worker/a.js"])
+        self.assertEqual((dry["updated"], dry["conflicts"], dry["retired"], dry["extra"]), (["worker/a.js"], [], ["worker/old-name.js"], ["worker/only-here.js"]))
+        self.assertTrue((self.mirror / "worker/old-name.js").exists())  # a dry run removes nothing
+        fm.publish(self.core, self.mirror, "seed", [], apply=True, retired=["worker/old-name.js"], generated=["worker/a.js"])
+        self.assertFalse((self.mirror / "worker/old-name.js").exists())
+        self.assertTrue((self.mirror / "worker/only-here.js").exists())  # an undeclared file is still never deleted
+        self.assertEqual((self.mirror / "worker/a.js").read_text(), "two\n")
+
+    def test_a_retired_path_the_source_still_holds_is_never_removed(self):
+        rep = fm.publish(self.core, self.mirror, "seed", [], apply=True, retired=["worker/a.js"])
+        self.assertEqual(rep["retired"], [])
+        self.assertTrue((self.mirror / "worker/a.js").exists())
 
     def test_a_dry_run_changes_nothing(self):
         fm.publish(self.core, self.mirror, "seed", [], apply=False)

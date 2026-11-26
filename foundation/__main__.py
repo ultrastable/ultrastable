@@ -40,6 +40,8 @@
   python3 -m foundation seedlaunch [--e2e [--keep]|--fleet|--check]   SEED-LAUNCH-1: every seed built, deployed, year-gated and probed live by the system
   python3 -m foundation repostd [--check|--plan|--live|--apply|--branches]   REPO-STANDARD-1: one repository standard for every repository of the org
   python3 -m foundation discover [--gen|--check|--live]                    DISCOVER-1: every system is listed, cross-linked and findable
+  python3 -m foundation cleanroom [--run [--apply] [--ticks N]|--probe ID|--check]   CLEANROOM-1: a sandbox system boots from the seed alone, runs a day, tears down
+  python3 -m foundation coherence [--check [--remote]|--report]   COHERENCE-1: no instruction surface or generated agent file contradicts the closed-loop axiom; every rule names code and reaches the seed
   python3 -m foundation fullstack [--check|--live|--probe ID|--list]        FULLSTACK-1: every system has a repository, a back end and a public front end
   python3 -m foundation collisions [--check|--prs [--pr N]|--claim ID]   COLLISION-1: no two migrations share a number; a PR may not add what an older open PR adds
   python3 -m foundation datagraph [--check|--list|--live]                        DATAGRAPH-1: every system keeps a knowledge graph of all its data
@@ -395,6 +397,12 @@ def main(argv=None) -> int:
     if _av[:1] == ["discover"]:
         from . import discover
         return discover.main(_av[1:])
+    if _av[:1] == ["cleanroom"]:
+        from . import cleanroom
+        return cleanroom.main(_av[1:])
+    if _av[:1] == ["coherence"]:
+        from . import coherence
+        return coherence.main(_av[1:])
     if _av[:1] == ["fullstack"]:
         from . import fullstack
         return fullstack.main(_av[1:])

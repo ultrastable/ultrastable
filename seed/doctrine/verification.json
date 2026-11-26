@@ -1,0 +1,109 @@
+{
+ "_doc": "VERIFY-1 (Rowan, 2026-11-21): lessons from formally verified and critical-infrastructure code, applied as checks. Every invariant names the model that checks it (foundation/verify.py), the property, the code conformance probe or runtime monitor that ties the model to the deployed code, and its source. Read by foundation/verify.py; `python3 -m foundation verify --check` runs in `checks`. Coverage = invariants model-checked and tied to code / all invariants, written to ops/verification.json.",
+ "marker": "VERIFY-1",
+ "sources": {
+  "tla-aws": "C. Newcombe et al., How Amazon Web Services Uses Formal Methods, CACM 58(4), 2015",
+  "sel4": "G. Klein et al., seL4: Formal Verification of an OS Kernel, SOSP 2009 (proof tied to the implementation)",
+  "compcert": "X. Leroy, Formal verification of a realistic compiler, CACM 52(7), 2009",
+  "power-of-ten": "G. Holzmann, The Power of Ten: Rules for Developing Safety-Critical Code, IEEE Computer 39(6), 2006 (rule 2: bounded loops; rule 5: assertions)",
+  "do-178c": "RTCA DO-178C, Software Considerations in Airborne Systems (requirements-to-test traceability)",
+  "quickcheck": "K. Claessen, J. Hughes, QuickCheck: property-based testing, ICFP 2000",
+  "ashby": "W. R. Ashby, Design for a Brain, 1952"
+ },
+ "invariants": [
+  {
+   "id": "soft-cap-never-halts",
+   "model": "governor",
+   "property": "essential-loops-run-in-every-band",
+   "conformance": "spend-conformance",
+   "monitor": null,
+   "source": [
+    "tla-aws",
+    "quickcheck"
+   ]
+  },
+  {
+   "id": "throttle-springs-back",
+   "model": "governor",
+   "property": "goal-always-reachable",
+   "conformance": "spend-conformance",
+   "monitor": null,
+   "source": [
+    "tla-aws"
+   ]
+  },
+  {
+   "id": "merge-only-from-green",
+   "model": "merge-lane",
+   "property": "merge-only-from-green",
+   "conformance": null,
+   "monitor": "python3 -m foundation mergeaudit --check",
+   "source": [
+    "tla-aws",
+    "do-178c"
+   ]
+  },
+  {
+   "id": "no-pr-stalls",
+   "model": "merge-lane",
+   "property": "goal-always-reachable",
+   "conformance": null,
+   "monitor": "python3 -m foundation lanewatch --check",
+   "source": [
+    "tla-aws"
+   ]
+  },
+  {
+   "id": "lane-retries-bounded",
+   "model": "merge-lane",
+   "property": "retry-bounded",
+   "conformance": "lane-conformance",
+   "monitor": null,
+   "source": [
+    "power-of-ten"
+   ]
+  },
+  {
+   "id": "second-loop-never-gives-up",
+   "model": "second-loop",
+   "property": "goal-always-reachable",
+   "conformance": null,
+   "monitor": "python3 -m foundation ultrastability --check",
+   "source": [
+    "ashby",
+    "tla-aws"
+   ]
+  },
+  {
+   "id": "bounds-never-edited-to-clear",
+   "model": "second-loop",
+   "property": "bounds-never-edited",
+   "conformance": null,
+   "monitor": "python3 -m foundation ultrastability --check",
+   "source": [
+    "ashby"
+   ]
+  },
+  {
+   "id": "one-halt-stops-everything",
+   "model": "halt",
+   "property": "halt-stops-everything",
+   "conformance": "tick-conformance",
+   "monitor": "node --test seed/worker/test/budget.test.js",
+   "source": [
+    "power-of-ten",
+    "do-178c"
+   ]
+  },
+  {
+   "id": "essential-steps-every-tick",
+   "model": "halt",
+   "property": "no-halt-runs-every-essential-step",
+   "conformance": "tick-conformance",
+   "monitor": null,
+   "source": [
+    "tla-aws"
+   ]
+  }
+ ]
+}

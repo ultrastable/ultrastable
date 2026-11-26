@@ -1,0 +1,31 @@
+name: balance
+# budget: ~1 min per day
+# trigger: daily schedule; the work queue's second loop (FLOW-BALANCE-1) must measure inflow against closures at least once a day
+# free-alternative: `python3 scripts/balance.py --run --apply` from the tick Worker's executor or a cloud-hosted agent routine
+on:
+  schedule:
+    - cron: "17 5 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: balance
+  cancel-in-progress: false
+jobs:
+  balance:
+    if: ${{ vars.HALT != '1' && !github.event.repository.is_template && github.repository != 'ultrastable/seed' }}  # HALT-1; TEMPLATE-CODE-ONLY-1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0  # the item dates come from git history; a shallow clone is reported unmeasured
+      - name: Measure inflow against closures and SLA; consolidate and throttle when tipped
+        run: python3 scripts/balance.py --gate --apply && python3 scripts/balance.py --run --apply
+      - name: Land the result
+        run: |
+          git config user.name ultrastable-balance; git config user.email balance@users.noreply.github.com
+          git add docs/issues ops/balance.json ops/balance.jsonl
+          if git diff --cached --quiet; then echo "nothing changed"; exit 0; fi
+          git commit -qm "balance: inflow vs closures and SLA (FLOW-BALANCE-1)"
+          git push

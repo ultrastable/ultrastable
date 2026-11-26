@@ -141,6 +141,8 @@ jobs:
           python3 -m foundation progress --check
           python3 -m foundation tenantpromo --check
           python3 -m foundation discover --check  # DISCOVER-1: every live tenant listed and cross-linked; the seed serves its manifest, footer and heartbeat
+          python3 -m foundation coherence --check  # COHERENCE-1: no instruction surface contradicts the closed-loop axiom; every rule names code and reaches the seed
+          python3 -m foundation cleanroom --check  # CLEANROOM-1: the clean-room bootstrap is wired and scheduled
           python3 -m foundation fullstack --check  # FULLSTACK-1: repository, back end and public front end for every system
           python3 -m foundation fleetcontract --check  # FLEET-CONTRACT-1: every live system carries the one contract module; one surface list
           python3 -m foundation tenantstd --check  # TENANT-STANDARD-1: every tenant vendors the standard's base files; one scaffold writes every standard file
