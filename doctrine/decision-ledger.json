@@ -6294,6 +6294,23 @@
    "body": "feat: the storage adapters, core test helpers and the claims, console-l3 and deploy modules. One cohesive set of files inside the 60 file and 3,000 line bound, applied to the latest main from a private working copy, with generated migrations regenerated append-only.",
    "probe": "file:workers/adapters/postgres/index.js",
    "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "decision-2026-11-26-product-manager-pass-2026112617-0-item-s-filed",
+   "kind": "decision",
+   "date": "2026-11-26",
+   "title": "Product manager pass 2026112617: 0 item(s) filed",
+   "body": "Growth and repair items, experiment verdicts and knob review recorded in ops/growth/pm-report.json by foundation/pm.py; tests pass.",
+   "probe": "file:foundation/pm.py"
+  },
+  {
+   "id": "lesson-2026-11-26-slice-w02-of-the-specification-run-s-code-and-tests-shipped-",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Slice W02 of the specification run's code and tests shipped on its own",
+   "body": "The describe, doors, elicit and fleet modules. Where main and the run had each built the same requirement (US-11-R12 staggering, US-16 section 5.3 default scoring) both are kept: stagger and staggerHourly in fleet, the prediction-table scorer and the outcome learner in elicit; unifying each pair is open work. Three tests that need later slices (walkthrough, src/console) ship with them.",
+   "probe": "file:workers/core/describe/index.js",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
   }
  ]
 }
