@@ -29,26 +29,33 @@ ${identity.stability_line}
 - Read state before acting: \`ultrastable_dashboard_state\`, \`ultrastable_tick_status\`, \`ultrastable_loop_registry\`, \`ultrastable_glossary_lookup\`.
 - Work is claimed, verified and reported through the repositories and the work tracker, never only in chat. If it is not in code, it does not exist.
 - Never handle secret values; reference bindings by name.
+- Agents that speak A2A 1.0 send \`SendMessage\` to ${origin}/a2a (header \`A2A-Version: 1.0\`); each skill on the agent card is one read-only tool.
 - Discovery: ${origin}/llms.txt, ${origin}/.well-known/agent-card.json, ${origin}/.well-known/mcp/server-card.json, ${origin}/openapi.json.
 - Standards this service is held to: ${origin}/standards.json.
 `;
 }
 
+// A2A 1.0 AgentCard (specification section 4.4.1, read 2026-11-26). Required: name, description, supportedInterfaces, version, capabilities,
+// defaultInputModes, defaultOutputModes, skills. The first interface is the preferred one (section 8.3.1): the A2A JSON-RPC binding at /a2a,
+// served by acl/a2a.js; the MCP server is listed second as a custom binding. Security is the 1.0 shape: a named scheme wrapping
+// httpAuthSecurityScheme, and securityRequirements naming it (the 0.3 `security` list and top-level `url`/`protocolVersion` are gone).
+export const A2A_CARD_REQUIRED = ['name', 'description', 'supportedInterfaces', 'version', 'capabilities', 'defaultInputModes', 'defaultOutputModes', 'skills'];
 export function agentCard({ identity, origin, tools }) {
   return {
-    protocolVersion: A2A_VERSION,
     name: identity.name,
     description: identity.description,
+    supportedInterfaces: [
+      { url: `${origin}/a2a`, protocolBinding: 'JSONRPC', protocolVersion: A2A_VERSION },
+      { url: `${origin}/mcp`, protocolBinding: 'MCP', protocolVersion: MCP_VERSIONS[0] },
+    ],
     version: identity.version,
-    url: origin,
-    // Honest interface list: tools are served over MCP today; the A2A task interface is tracked as a gap in the standards register.
-    supportedInterfaces: [{ url: `${origin}/mcp`, protocolBinding: 'MCP', protocolVersion: MCP_VERSIONS[0] }],
-    capabilities: { streaming: false, pushNotifications: false },
-    defaultInputModes: ['application/json'],
+    documentationUrl: `${origin}/openapi.json`,
+    capabilities: { streaming: false, pushNotifications: false, extendedAgentCard: false },
+    securitySchemes: { bearer: { httpAuthSecurityScheme: { scheme: 'Bearer' } } },
+    securityRequirements: [{ schemes: { bearer: { list: [] } } }],
+    defaultInputModes: ['application/json', 'text/plain'],
     defaultOutputModes: ['application/json'],
-    securitySchemes: { bearer: { type: 'http', scheme: 'bearer' } },
-    security: [{ bearer: [] }],
-    skills: tools.map(t => ({ id: t.name, name: t.name, description: t.description, tags: ['ultrastable'] })),
+    skills: tools.map(t => ({ id: t.name, name: t.name, description: t.description, tags: ['ultrastable', 'read-only'] })),
   };
 }
 
@@ -64,10 +71,36 @@ export function mcpServerCard({ identity, origin, tools }) {
   };
 }
 
+// Agent Skills specification (https://agentskills.io/specification, read 2026-11-26). `name`: 1-64 characters, lowercase letters, digits and
+// hyphens, no leading, trailing or consecutive hyphen, equal to the parent directory name. `description`: 1-1024 characters, what the skill does
+// and when to use it. The frontmatter is YAML, so a description is one plain scalar: it may not hold ": " or " #", or start with a YAML indicator.
+export function skillProblems(md, dir) {
+  const bad = [], m = /^---\n([\s\S]*?)\n---\n/.exec(md);
+  if (!m) return ['SKILL.md does not start with a YAML frontmatter block'];
+  const f = {};
+  for (const line of m[1].split('\n')) {
+    const k = /^([A-Za-z][A-Za-z0-9-]*):(?: (.*))?$/.exec(line);
+    if (!k) { bad.push(`frontmatter line is not "key: value": ${line.slice(0, 40)}`); continue; }
+    f[k[1]] = (k[2] ?? '').trim();
+  }
+  const name = f.name ?? '', desc = f.description ?? '';
+  if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(name) || name.length > 64) bad.push(`name "${name}" is not 1-64 lowercase letters, digits and single hyphens`);
+  if (dir !== undefined && name !== dir) bad.push(`name "${name}" does not match its directory "${dir}"`);
+  if (!desc || desc.length > 1024) bad.push(`description is ${desc.length} characters; the specification allows 1-1024`);
+  if (/: | #/.test(desc) || /^[-?:,\[\]{}#&*!|>'"%@`]/.test(desc)) bad.push('description is not a plain YAML scalar (it holds ": " or " #", or starts with an indicator)');
+  if (f.compatibility !== undefined && (!f.compatibility || f.compatibility.length > 500)) bad.push('compatibility must be 1-500 characters');
+  for (const k of Object.keys(f)) if (!['name', 'description', 'license', 'compatibility', 'metadata', 'allowed-tools'].includes(k)) bad.push(`unknown frontmatter field ${k}`);
+  if (!md.slice(m[0].length).trim()) bad.push('SKILL.md has no instructions after the frontmatter');
+  return bad;
+}
+
+const plain = s => String(s).replace(/:\s/g, ', ').replace(/\s#/g, ' ').replace(/\s+/g, ' ').trim();
+
 export function skillMd({ identity, origin }) {
   return `---
 name: ${SKILL_NAME}
-description: Operate ${identity.name} through its MCP tools: read dashboard and tick state, look up loops and glossary terms, and check the standards register. Use when asked about this organisation's state or how to work with it.
+description: ${plain(`Operate ${identity.name} through its MCP tools, which read dashboard and tick state, look up loops and glossary terms, and check the standards register. Use when asked about this organisation's state or how to work with it.`).slice(0, 1024)}
+compatibility: Needs network access to ${origin} and an MCP or A2A client.
 ---
 
 # Operate ${identity.name}
@@ -77,6 +110,8 @@ description: Operate ${identity.name} through its MCP tools: read dashboard and 
 3. Call \`ultrastable_tick_status\` to confirm the last tick completed every step.
 4. Use \`ultrastable_loop_registry\` and \`ultrastable_glossary_lookup\` for vocabulary before writing anything.
 5. Record every result in the repositories, not in chat.
+
+An agent that speaks A2A instead sends \`SendMessage\` to ${origin}/a2a with the header \`A2A-Version: 1.0\` and a data part \`{"skill": "<tool name>", "arguments": {}}\`; the skills are listed in ${origin}/.well-known/agent-card.json.
 `;
 }
 

@@ -1,0 +1,49 @@
+{
+ "capabilities": {
+  "agent-evals": "Neatlogs Integration OpenLIT Integration Opik Integration Patronus AI Evaluation Portkey Integration Weave Integration TrueFoundry Integration Learn O",
+  "agent-memory": "nowledge Skills LLMs Files Artifacts Processes Collaboration Training Memory Reasoning Planning Testing CLI Tools Event Listeners Checkpointing MC",
+  "agent-skills": "log Website Forum Blog CrewGPT Get Started Introduction Build with AI Skills Installation Quickstart Guides Strategy Agents Crews Flows Frontend T",
+  "durable-execution": "Training Memory Reasoning Planning Testing CLI Tools Event Listeners Checkpointing MCP Integration MCP Servers as Tools in CrewAI MCP DSL Integration St",
+  "event-triggered-agents": "&amp; Data AI &amp; Machine Learning Cloud &amp; Storage Integrations Automation Observability CrewAI Tracing Overview Arize Phoenix Braintrust Datado",
+  "idea-to-deploy": "can handle long-running processes and complex logic. Autonomous Crews Deploy teams of agents that can plan, execute, and collaborate to achieve hi",
+  "mcp-server": "ry Reasoning Planning Testing CLI Tools Event Listeners Checkpointing MCP Integration MCP Servers as Tools in CrewAI MCP DSL Integration Stdio",
+  "multi-agent-roles": "metry Telemetry Get Started Introduction Copy page Copy page Build AI agent teams that work together to tackle complex tasks Copy page Copy page What i",
+  "observability": "AI &amp; Machine Learning Cloud &amp; Storage Integrations Automation Observability CrewAI Tracing Overview Arize Phoenix Braintrust Datadog Integration",
+  "other-cloud": "5/en/tools/cloud-storage/overview\"},{\"title\":\"S3 Reader Tool\",\"icon\":\"aws\",\"mode\":\"wide\",\"href\":\"/v1.15.45/en/tools/cloud-storage/s3readertool\"",
+  "sandboxed-execution": "ef\":\"/v1.15.45/en/tools/ai-ml/codeinterpretertool\"},{\"title\":\"Daytona Sandbox Tools\",\"icon\":\"box\",\"mode\":\"wide\",\"href\":\"/v1.15.45/en/tools/ai-ml/da",
+  "self-hostable": "mplex tasks Copy page Copy page What is CrewAI? CrewAI is the leading open-source framework for orchestrating autonomous AI agents and building complex"
+ },
+ "errors": {},
+ "id": "crewai",
+ "name": "CrewAI",
+ "refreshed_at": "2026-11-26T06:46:33Z",
+ "sha": "1e0b180b9834",
+ "sources_read": [
+  "https://docs.crewai.com/en/introduction"
+ ],
+ "taxonomy": [
+  "a2a-protocol",
+  "agent-evals",
+  "agent-memory",
+  "agent-skills",
+  "agents-md",
+  "autonomous-pr",
+  "chat-entry",
+  "cloud-background-agents",
+  "cross-model-review",
+  "durable-execution",
+  "event-triggered-agents",
+  "existing-repo-adoption",
+  "idea-to-deploy",
+  "incident-investigation",
+  "mcp-server",
+  "multi-agent-roles",
+  "observability",
+  "other-cloud",
+  "permission-guardrails",
+  "sandboxed-execution",
+  "scheduled-agents",
+  "self-hostable",
+  "spend-budgets"
+ ]
+}

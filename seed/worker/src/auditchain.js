@@ -84,7 +84,12 @@ export function githubSink({ token, repo, prefix = '', fetchFn = fetch, branch =
 export async function seal(db, sinks, { now = Date.now(), hotDays = HOT_DAYS, maxRows = SEAL_MAX_ROWS } = {}) {
   if (!sinks || !sinks.length) return { sealed: 0, skipped: 'no archive sink bound; hot rows are kept, nothing is deleted' };
   const cutoff = now - hotDays * 864e5;
-  const rows = await all(db, 'SELECT * FROM audit_log WHERE seq > ?1 AND rec < ?2 ORDER BY seq LIMIT ?3', (await first(db, 'SELECT COALESCE(MAX(seq_to),0) AS s FROM audit_segments')).s, cutoff, maxRows);
+  const sealedTo = (await first(db, 'SELECT COALESCE(MAX(seq_to),0) AS s FROM audit_segments')).s;
+  // READ-BUDGET-9: rec is the time a row was appended, so it grows with seq. When the oldest unsealed row is still hot nothing is due, and one
+  // row answers that; the query below read every hot row on every pass to learn the same (643 rows a run, 27 runs an hour, measured).
+  const oldest = await first(db, 'SELECT rec FROM audit_log WHERE seq > ?1 ORDER BY seq LIMIT 1', sealedTo);
+  if (!oldest || oldest.rec >= cutoff) return { sealed: 0, skipped: 'nothing older than ' + hotDays + ' days' };
+  const rows = await all(db, 'SELECT * FROM audit_log WHERE seq > ?1 AND rec < ?2 ORDER BY seq LIMIT ?3', sealedTo, cutoff, maxRows);
   if (!rows.length) return { sealed: 0, skipped: 'nothing older than ' + hotDays + ' days' };
   const prevSeg = await first(db, 'SELECT last_hash, chain, seq_to FROM audit_segments ORDER BY seq_from DESC LIMIT 1');
   const startPrev = prevSeg ? prevSeg.last_hash : GENESIS;

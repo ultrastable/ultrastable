@@ -5,20 +5,25 @@
                                                  file Q-SCOUT-<id> growth items over the threshold, log the pass, re-weight the sources; --apply writes
   python3 -m foundation scout --adopt ID --outcome adopted|declined --reason TEXT   record what the executor did with a finding (the item's closing probe)
   python3 -m foundation scout --report           sources with weight, findings filed and adoption rate
+  python3 -m foundation scout --decided ID       exit 0 once an outcome is recorded for the finding (the item's done check and closing probe)
+  python3 -m foundation scout --metrics          scout_undecided and scout_sources_unreachable, the numbers the scout's items predict
 
 State: ops/scout/seen.json (entry ids already scored), ops/scout/weights.json (per-source weight and quiet passes), ops/scout/log.jsonl (one row per pass),
 ops/scout/adopted.jsonl (outcomes). The feedback: an adopted finding raises its source's weight, a source with no filing in `quiet_passes` passes decays,
 so each pass reads better sources than the last. Fetching is injected so tests use recorded feeds; the weekly workflow fetches the live feeds.
 """
 from __future__ import annotations
-import datetime as dt, hashlib, json, re, sys, urllib.request
+import datetime as dt, gzip, hashlib, json, re, sys, urllib.request, zlib
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 PATH, STATE = "doctrine/scout.json", "ops/scout"
 NS = {"a": "http://www.w3.org/2005/Atom"}
-STOP = {"the", "and", "for", "with", "from", "that", "this", "into", "build", "make", "your", "are", "not", "can", "use", "its", "any", "per"}
+STOP = {"the", "and", "for", "with", "from", "that", "this", "into", "build", "make", "your", "are", "not", "can", "use", "its", "any", "per",
+        # STOP-WORDS-1: words every post and every gap share; on 2026-11-26 `here`, `run` and a vendor name matched an nginx advisory to a product gap
+        "here", "has", "have", "how", "new", "run", "runs", "each", "own", "their", "them", "when", "than", "does", "only", "more", "most", "what", "why",
+        "who", "all", "was", "were", "will", "you", "our", "these", "those", "they", "but", "let", "lets", "one", "two", "today", "now", "yet", "still"}
 
 
 def load(root=REPO) -> dict:
@@ -42,10 +47,20 @@ def _rows(root, name) -> list[dict]:
     return out
 
 
+def decode(body: bytes, encoding: str = "") -> str:
+    """Page bytes as text. Some hosts answer gzip although none was asked for (jules.google did on 2026-11-26); read undecoded, such a page is noise
+    in which no capability is ever found, which the profile would record as a competitor having none (GZIP-READ-1)."""
+    if "gzip" in (encoding or "").lower() or body[:2] == b"\x1f\x8b":
+        body = gzip.decompress(body)
+    elif "deflate" in (encoding or "").lower():
+        body = zlib.decompress(body, -zlib.MAX_WBITS) if body[:1] != b"\x78" else zlib.decompress(body)
+    return body.decode("utf-8", "replace")
+
+
 def http(url: str, timeout=30) -> str:
-    req = urllib.request.Request(url, headers={"user-agent": "ultrastable-scout/1"})
+    req = urllib.request.Request(url, headers={"user-agent": "ultrastable-scout/1", "accept-encoding": "gzip, identity"})
     with urllib.request.urlopen(req, timeout=timeout) as r:
-        return r.read().decode("utf-8", "replace")
+        return decode(r.read(), r.headers.get("content-encoding") or "")
 
 
 def parse(kind: str, text: str) -> list[dict]:
@@ -96,10 +111,11 @@ def item_id(src: str, e: dict) -> str:
 def item(src: dict, e: dict, sc: float, why: list[str]) -> dict:
     iid = item_id(src["id"], e)
     return {"id": iid, "title": f"{iid}: {e['title'][:80]} ({src['id']})",
-            "body": f"**Owner:** product-manager\n**Trigger:** every scout pass\n**Done check:** grep:ops/scout/adopted.jsonl::\"id\": \"{iid}\"\n**Prediction:** adoption_outcomes_recorded >= 1 within 336 h\n**Status:** open\n\n"
+            "body": f"**Owner:** product-manager\n**Trigger:** every scout pass\n**Done check:** cmd:python3 -m foundation scout --decided {iid}\n**Prediction:** scout_undecided <= 0 within 336 h\n**Status:** open\n\n"
                     f"Scout finding from {src['id']} ({src['topic']}), score {sc}, matched {', '.join(why[:6])}.\n{e['title']}\n{e['link']}\n\n{e['summary'][:300]}\n\n"
                     + (f"This is a new version of a standard the system has adopted (`{src['standard']}` in seed/standards/standards.json). Read what changed, make the code that implements the standard conform, update the row's `tracked` version and `audited` date, and keep its probes passing (`python3 -m foundation standards --check`).\n\n" if src.get("standard") else "")
-                    + f"Decide: adopt (ship the change that closes a gap or adds the capability) or decline with a reason, then record `python3 -m foundation scout --adopt {iid} --outcome adopted|declined --reason ...`. The outcome re-weights this source.",
+                    + f"Decide: adopt (ship the change that closes a gap or adds the capability) or decline with a reason, then record `python3 -m foundation scout --adopt {iid} --outcome adopted|declined --reason ...`. The outcome re-weights this source."
+                    + f"\n\n**Out of scope:** work the release note does not name, and a decision recorded without a reason.\n\n**Closing probe:** cmd:python3 -m foundation scout --decided {iid}",
             "labels": ["role:product-manager", "growth", "scout"], "milestone": "Next", "workstream": "Growth"}
 
 
@@ -109,13 +125,17 @@ def src_of(iid: str, cfg: dict) -> str:
     return max(hit, key=len) if hit else ""
 
 
-def reweight(root, cfg, weights: dict, filed_by_src: dict) -> dict:
+def reweight(root, cfg, weights: dict, filed_by_src: dict, unreachable=(), count_quiet=True) -> dict:
+    """`unreachable` are the sources this pass could not read. An unread source is unmeasured: it is not a quiet pass and does not decay (UNREACHABLE-1);
+    only a source that was read and filed nothing counts toward `quiet_passes`. `count_quiet=False` applies recorded outcomes only: the R&D pass
+    re-weights after the scout pass of the same run, and counting that as a second quiet pass decayed every source twice as fast as declared."""
     w, adopted = cfg["weight"], {}
     for r in _rows(root, "adopted.jsonl"):
         adopted.setdefault(src_of(r["id"], cfg), []).append(r.get("outcome"))
     for s in cfg["sources"]:
         st = weights.setdefault(s["id"], {"weight": w["initial"], "quiet": 0, "counted": 0})
-        st["quiet"] = 0 if filed_by_src.get(s["id"]) else st["quiet"] + 1
+        if count_quiet:
+            st["quiet"] = 0 if filed_by_src.get(s["id"]) else st["quiet"] + (0 if s["id"] in unreachable else 1)
         outs = adopted.get(s["id"], [])
         new = [o for o in outs[st["counted"]:]]
         for o in new:
@@ -161,8 +181,9 @@ def run(root=REPO, fetch=http, now=None, apply=False) -> dict:
     for it in filed:
         k = src_of(it["id"], cfg)
         by_src[k] = by_src.get(k, 0) + 1
-    weights = reweight(root, cfg, weights, by_src)
+    weights = reweight(root, cfg, weights, by_src, set(errors))
     row = {"at": now.strftime("%Y-%m-%dT%H:%M:%SZ"), "scanned": scanned, "candidates": len(cands), "filed": [i["id"] for i in filed], "errors": errors,
+           "unreachable": sorted(errors), "read": len(cfg["sources"]) - len(errors),
            "weights": {k: v["weight"] for k, v in weights.items()}}
     if apply:
         base = Path(root) / STATE; base.mkdir(parents=True, exist_ok=True)
@@ -184,6 +205,21 @@ def adopt(root, iid: str, outcome: str, reason: str, now=None) -> dict:
     with open(base / "adopted.jsonl", "a", encoding="utf-8") as f:
         f.write(json.dumps(row) + "\n")
     return row
+
+
+def has_outcome(root, iid: str) -> bool:
+    """SPEC-GATE-1 closing probe of a finding: an outcome (adopted or declined, with its reason) is on record for it."""
+    return any(r.get("id") == iid for r in _rows(root, "adopted.jsonl"))
+
+
+def metrics(root=REPO) -> dict:
+    """What the scout's own items predict: `scout_undecided` (filed findings with no recorded outcome) and `scout_sources_unreachable`
+    (sources the newest pass could not read; unmeasured, never quiet)."""
+    done = {r.get("id") for r in _rows(root, "adopted.jsonl")}
+    filed = [f.stem for f in sorted((Path(root) / "docs/issues").glob("Q-SCOUT-*.json"))]
+    log = _rows(root, "log.jsonl")
+    return {"scout_undecided": sum(i not in done for i in filed), "scout_sources_unreachable": len((log[-1].get("errors") or {}) if log else {}),
+            "scout_last_pass": log[-1]["at"] if log else None}
 
 
 def report(root=REPO) -> dict:
@@ -221,6 +257,11 @@ def main(argv: list[str]) -> int:
         print(json.dumps(adopt(REPO, a[i + 1], a[a.index("--outcome") + 1], a[a.index("--reason") + 1]))); return 0
     if "--run" in a:
         print(json.dumps(run(apply="--apply" in a), indent=1)); return 0
+    if "--decided" in a:
+        iid = a[a.index("--decided") + 1]; ok = has_outcome(REPO, iid)
+        print(f"{iid}: {'decided' if ok else 'no outcome recorded'}"); return 0 if ok else 1
+    if "--metrics" in a:
+        print(json.dumps(metrics(), indent=1)); return 0
     if "--report" in a:
         print(json.dumps(report(), indent=1)); return 0
     bad = check(); print("\n".join(bad) or "scout ok"); return 1 if bad else 0

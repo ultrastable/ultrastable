@@ -20,6 +20,22 @@
       "description": "Remote MCP server (Streamable HTTP, JSON responses). Tools: tick status, loop registry, glossary, dashboard state, standards register."
     },
     {
+      "id": "a2a",
+      "path": "/a2a",
+      "methods": [
+        "POST"
+      ],
+      "kind": "rest",
+      "audience": "agent",
+      "standards": [
+        "a2a",
+        "json-schema",
+        "otel-genai"
+      ],
+      "discoverable": true,
+      "description": "A2A 1.0 JSON-RPC interface (header A2A-Version: 1.0). SendMessage runs one read-only skill from the agent card and answers with a Message; no task is created."
+    },
+    {
       "id": "health",
       "path": "/health",
       "methods": [

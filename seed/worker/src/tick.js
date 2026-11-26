@@ -6,6 +6,7 @@
 
 import { ensureLedger } from './budget.js';
 import { over_budget } from './costsample.js';
+import { beatStats24h } from './beatstats.js';  // READ-BUDGET-9
 import { readSpend, dueEvery } from './spend.js';  // SPEND-SOFT-1
 import { planOf } from './budget.js';  // PLAN-1
 import { freeTierLevel } from './freetier.js';  // FREE-TIER-1: the daily account-wide free-plan level gates the tick  // Q-LESSON-COST-SAMPLE-ACT: a D1 rows-read breach holds the tick lean  // ORIGINATE-CAP-1: the daily cap is counted in the budget ledger
@@ -49,16 +50,14 @@ export const METRICS = {
   // PACE-1: speed is measured, not asserted. beats_24h is how many loop runs the clock recorded; beats_productive_share_24h is the share of
   // them that finished ok and returned something (an empty result {}, [] or null is an idle run). Both read loop_beats; a Worker whose table does
   // not exist yet reports 0, never throws.
-  beats_24h: (db, now) => first(db, `SELECT COUNT(*) AS n FROM loop_beats WHERE started_at >= ?`, iso(new Date(now - 86400e3))).then(r => r.n).catch(() => 0),
-  beats_productive_share_24h: (db, now) => first(db,
-    `SELECT COUNT(*) AS n, SUM(CASE WHEN ok = 1 AND detail IS NOT NULL AND detail NOT IN ('null','{}','[]') AND detail NOT LIKE '{"paced"%' THEN 1 ELSE 0 END) AS p FROM loop_beats WHERE started_at >= ?`,
-    iso(new Date(now - 86400e3))).then(r => (r.n ? Math.round(1000 * (r.p || 0) / r.n) / 1000 : 0)).catch(() => 0),
+  // READ-BUDGET-9: the three loop_beats metrics share one cached reading (beatstats.js) instead of one 24 h scan each, every tick.
+  beats_24h: (db, now) => beatStats24h(db, now).then(r => r.n).catch(() => 0),
+  beats_productive_share_24h: (db, now) => beatStats24h(db, now).then(r => (r.n ? Math.round(1000 * r.productive / r.n) / 1000 : 0)).catch(() => 0),
   // PACE-2: cost per day against the free plan. The largest share of any free daily limit used today (freetier.js samples; 1 = the whole free day).
   // No fresh sample is 0 here and stays visible as its own breach in freetier.js, never as a healthy cost.
   free_tier_peak_share: (db, now) => freeTierLevel(db, now).then(l => Math.round(1000 * Math.max(0, ...Object.values((l && l.resources) || {}).map(r => Number(r.frac)).filter(Number.isFinite))) / 1000).catch(() => 0),
   // GOALS-1: the share of loops that closed (an ok run in at least 90% of their runs) in the last 24 h. A loop with no run is not counted: pulse.js reports the missing ones.
-  loops_closing_share_24h: (db, now) => first(db, `SELECT COUNT(*) AS n, SUM(CASE WHEN good >= 0.9 THEN 1 ELSE 0 END) AS c FROM (SELECT loop, 1.0 * SUM(CASE WHEN ok = 1 THEN 1 ELSE 0 END) / COUNT(*) AS good FROM loop_beats WHERE started_at >= ? AND finished_at IS NOT NULL GROUP BY loop)`,
-    iso(new Date(now - 86400e3))).then(r => (r.n ? Math.round(1000 * (r.c || 0) / r.n) / 1000 : 0)).catch(() => 0),
+  loops_closing_share_24h: (db, now) => beatStats24h(db, now).then(r => { const f = r.loops.filter(l => l.finished > 0); return f.length ? Math.round(1000 * f.filter(l => l.ok_runs / l.finished >= 0.9).length / f.length) / 1000 : 0; }).catch(() => 0),
   goal_tenants: (db) => first(db, `SELECT COUNT(DISTINCT tenant) AS n FROM goals WHERE tenant != 'core' AND status = 'active'`).then(r => r.n).catch(() => 0),
   items_done: (db, now, tenant) => first(db, `SELECT COUNT(*) AS n FROM items WHERE status='done' AND ${OWN_SQL()}`, tenantOf(tenant)).then(r => r.n),
   open_gate_cards: (db, now, tenant) => first(db, `SELECT COUNT(*) AS n FROM gate_cards WHERE status='open' AND ${OWN_SQL()}`, tenantOf(tenant)).then(r => r.n),
@@ -492,10 +491,32 @@ export const COST_ESSENTIAL_STEPS = ['migrate', 'reconcile', 'measure', 'critica
 // are already limited by the AI governor.
 export const SPEND_KEEP_STEPS = [...COST_ESSENTIAL_STEPS, 'reap_claims', 'dispatch', 'execute'];
 export const LEAN_EVERY_H = 3;
+// LEAN-FLOOR-1 (2026-11-26): a breach that lasts must not starve the queue. Lean deferred reap_claims, dispatch and execute to one tick in
+// three hours; with the rows-read sample over budget for days every tick reported "dispatched 0 item(s)" and no manager role was ever handed
+// work. The count of consecutive lean ticks that skipped the work steps is kept in org.lean_work_skips; once it passes LEAN_WORK_MAX_SKIPS the
+// next lean tick runs the three work steps (and only those on top of the essential ones), says so in its report and starts the count again.
+// At the 10-minute cron that is the work steps about once an hour, however long the breach lasts.
+export const LEAN_WORK_STEPS = ['reap_claims', 'dispatch', 'execute'];
+export const LEAN_WORK_MAX_SKIPS = 5;
+// WAKE-BUDGET-1 (2026-11-26): an event may wake at most one extra tick between two cron ticks, and none while the rows-read budget is breached.
+// Measured on the live org database: 20 to 34 ticks an hour against 6 cron slots (252 in the hour from 21:00 UTC on 2026-11-25), each a full
+// pass of reconcile, measure and criticality; that multiplier, not table size, took the sample to 10M rows/h. The item the event names is still
+// taken by the next cron tick. Returns { ok, why }.
+export const WAKE_MIN_GAP_MS = 5 * 60e3;
+export async function wakeAllowed(db, { config = {}, now = Date.now() } = {}) {
+  try {
+    const c = await over_budget(db, config.cost_budgets, now);
+    if (c.over) return { ok: false, why: 'cost-breach' };
+    const last = await first(db, `SELECT started_at FROM tick_runs ORDER BY id DESC LIMIT 1`);
+    const age = last && last.started_at ? now - Date.parse(String(last.started_at).replace(' ', 'T') + 'Z') : Infinity;
+    if (age < WAKE_MIN_GAP_MS) return { ok: false, why: `tick-${Math.max(0, Math.round(age / 1000))}s-ago` };
+    return { ok: true, why: null };
+  } catch (e) { return { ok: false, why: 'unread: ' + String(e && e.message).slice(0, 80) }; }  // a database that cannot be read is not woken harder; the cron tick still runs
+}
 // Pure: what a tick does with one step given the levels. 'run' or 'defer' (a deferred step counts as completed: a decision, not a failure).
-export function stepPlan(name, { lean = false, degrade = false, spend = null, now = Date.now() } = {}) {
+export function stepPlan(name, { lean = false, degrade = false, spend = null, now = Date.now(), leanFloor = false } = {}) {
   const sl = spend && spend.level, k = (spend && spend.knobs) || {};
-  if (lean && !COST_ESSENTIAL_STEPS.includes(name)) return dueEvery(LEAN_EVERY_H, now) ? 'run' : 'defer';
+  if (lean && !COST_ESSENTIAL_STEPS.includes(name)) return (dueEvery(LEAN_EVERY_H, now) || (leanFloor && LEAN_WORK_STEPS.includes(name))) ? 'run' : 'defer';  // LEAN-FLOOR-1
   if (sl === 'crawl' && !SPEND_KEEP_STEPS.includes(name)) return dueEvery(k.extra_every_h || LEAN_EVERY_H, now) ? 'run' : 'defer';
   if ((degrade || sl === 'throttle' || sl === 'crawl') && FREE_TIER_WIDE_STEPS.includes(name)) return dueEvery(Math.max(1, k.wide_every_h || 1), now) ? 'run' : 'defer';
   return 'run';
@@ -521,6 +542,13 @@ export async function runTick(db, { config, env = {}, now = Date.now(), wake = n
     ctx.notes.push(`cost breach: ${b.map(x => `${x.target} read ${x.rows_read_1h} rows/h > ${x.max_rows_read_per_hour}`).join(', ')}; skipped non-essential steps (${STEP_ORDER.filter(n => !COST_ESSENTIAL_STEPS.includes(n)).join(', ')})`);
     try { await run(db, `INSERT INTO org (key, value) VALUES ('cost_breach', ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value`, JSON.stringify({ at: startedIso, until: iso(new Date(now + 3600e3)), breaches: b })); } catch (e) { ctx.errors.push(`cost_breach record: ${String(e && e.message).slice(0, 120)}`); }
   }
+  // LEAN-FLOOR-1: one org row read by primary key; written back only when the count changes.
+  let leanSkips = 0, leanFloor = false, workRan = false;
+  try { leanSkips = Number(((await first(db, `SELECT value FROM org WHERE key = 'lean_work_skips'`)) || {}).value) || 0; } catch (e) { ctx.notes.push(`lean count unread: ${String(e && e.message).slice(0, 80)}`); }
+  if (lean && leanSkips >= LEAN_WORK_MAX_SKIPS && !dueEvery(LEAN_EVERY_H, now)) {
+    leanFloor = true;
+    ctx.notes.push(`lean floor: ${LEAN_WORK_STEPS.join(', ')} run this tick after ${leanSkips} lean tick(s) without them (LEAN-FLOOR-1, at most ${LEAN_WORK_MAX_SKIPS} in a row)`);
+  }
   for (const name of STEP_ORDER) {
     if (name === 'goals' && (lean || degrade) && ctx.config && ctx.config.goals) {  // GOALS-1: a skipped step must never leave the goal tree empty (it was never seeded under degrade), and control still runs once an hour
       try {
@@ -529,7 +557,8 @@ export async function runTick(db, { config, env = {}, now = Date.now(), wake = n
       } catch (e) { ctx.errors.push(`goals seed: ${String(e && e.message).slice(0, 120)}`); }
       if (new Date(now).getUTCMinutes() < 10) { try { await STEPS[name](db, ctx); } catch (e) { ctx.errors.push(`goals: ${String(e && e.message).slice(0, 160)}`); } completed++; continue; }  // one tick in six, lean or degraded: the control step at a sixth of the reads, so a cost breach cannot freeze the knobs that answer it
     }
-    if (stepPlan(name, { lean, degrade, spend: ctx.spend, now }) === 'defer') { completed++; continue; }
+    if (stepPlan(name, { lean, degrade, spend: ctx.spend, now, leanFloor }) === 'defer') { completed++; continue; }
+    if (name === 'dispatch') workRan = true;
     try {
       try {
         await STEPS[name](db, ctx);
@@ -553,6 +582,8 @@ export async function runTick(db, { config, env = {}, now = Date.now(), wake = n
       } catch { /* the database itself is down; the error is still in tick_runs */ }
     }
   }
+  const nextSkips = lean && !workRan ? leanSkips + 1 : 0;
+  if (nextSkips !== leanSkips) { try { await run(db, `INSERT INTO org (key, value) VALUES ('lean_work_skips', ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value`, String(nextSkips)); } catch (e) { ctx.errors.push(`lean count: ${String(e && e.message).slice(0, 120)}`); } }
   const open = await first(db, `SELECT COUNT(*) AS n FROM items WHERE status NOT IN ('done','superseded','cancelled') AND ${OWN_SQL()}`, tenantOf(ctx));
   const report = [
     `Happened: tick ${tickId} ran ${completed}/${STEP_ORDER.length} steps; ${ctx.notes.join('; ') || 'no changes'}.`,

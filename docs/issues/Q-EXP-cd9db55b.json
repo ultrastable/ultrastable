@@ -1,0 +1,13 @@
+{
+  "id": "Q-EXP-cd9db55b",
+  "title": "Q-EXP-cd9db55b: close the durable-execution gap with a measured change",
+  "body": "**Owner:** product-manager\n**Trigger:** every rnd pass\n**Done check:** cmd:python3 -m foundation rnd --proved durable-execution\n**Prediction:** pageviews_7d >= 1310 within 336 h\n**Status:** open\n\nExperiment from R&D finding `gap:durable-execution`.\nHypothesis: 5 competitors evidence 'an agent run survives a crash or restart and resumes from its last completed step'; building it should move the metric\nMetric: pageviews_7d. Ship the smallest change the proof `file:seed/worker/src/checkpoint.js` shows, then compare the metric against its baseline in doctrine/growth.json; a miss reverts the change and lowers the finding's priority.\n\n**Out of scope:** rebuilding a competitor's product, claims about a competitor beyond what its own page states, and any change without a test.\n\n**Closing probe:** cmd:python3 -m foundation rnd --proved durable-execution",
+  "labels": [
+    "role:product-manager",
+    "growth",
+    "rnd",
+    "experiment"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}

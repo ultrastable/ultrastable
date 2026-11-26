@@ -1,0 +1,44 @@
+{
+ "capabilities": {
+  "agent-evals": "gging, and monitoring workflows, with support for the OpenAI suite of evaluation, fine-tuning, and distillation tools. Agents SDK or Responses API? Th",
+  "agent-memory": "ts Quickstart Concepts Sandbox clients Build a sandbox provider Agent memory Realtime agents Realtime agents Quickstart Transport Guide Voice agen",
+  "agent-skills": "bilities Capabilities Capabilities Capability Filesystem Shell Memory Skills Compaction Sandbox clients SandboxSession SandboxSessionState Unix lo",
+  "mcp-server": "on Encrypted session Context management Usage Model context protocol (MCP) Tracing Testing Agent visualization REPL utility Release process/cha",
+  "observability": "servers MCP util MCP manager Tracing Tracing Tracing module Creating traces/spans Traces Spans Processor interface Processors Scope Setup Span da",
+  "permission-guardrails": "de Voice agents Voice agents Quickstart Pipeline Tracing Models Tools Guardrails Running agents Streaming Agent orchestration Handoffs Results Human-i",
+  "sandboxed-execution": "your path Quickstart Configuration Documentation Documentation Agents Sandbox agents Sandbox agents Quickstart Concepts Sandbox clients Build a san"
+ },
+ "errors": {},
+ "id": "openai-agents-sdk",
+ "name": "OpenAI Agents SDK",
+ "refreshed_at": "2026-11-26T06:46:33Z",
+ "sha": "852e4be72737",
+ "sources_read": [
+  "https://openai.github.io/openai-agents-python/"
+ ],
+ "taxonomy": [
+  "a2a-protocol",
+  "agent-evals",
+  "agent-memory",
+  "agent-skills",
+  "agents-md",
+  "autonomous-pr",
+  "chat-entry",
+  "cloud-background-agents",
+  "cross-model-review",
+  "durable-execution",
+  "event-triggered-agents",
+  "existing-repo-adoption",
+  "idea-to-deploy",
+  "incident-investigation",
+  "mcp-server",
+  "multi-agent-roles",
+  "observability",
+  "other-cloud",
+  "permission-guardrails",
+  "sandboxed-execution",
+  "scheduled-agents",
+  "self-hostable",
+  "spend-budgets"
+ ]
+}

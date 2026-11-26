@@ -5,6 +5,9 @@
                                                  repository proves, file gap items, propose experiments, triage open scout findings into executor tasks, score
                                                  shipped and stalled work, re-weight scout sources and recompute item priorities; --apply writes
   python3 -m foundation rnd --report             profiles, market coverage and priorities
+  python3 -m foundation rnd --proved CAPABILITY  exit 0 once this repository's proof of the capability exists (done check of the gap and experiment items)
+  python3 -m foundation rnd --holds SPEC         exit 0 when a file: or grep: proof holds (done check of an adopted task)
+  python3 -m foundation rnd --metrics            competitor_coverage_gaps, adoption_shipped and the other numbers the loop's items predict
 
 Data: doctrine/competitors.json (capability taxonomy, competitors, cadence), ops/rnd/profiles/<id>.json (capabilities each competitor evidences, with the sentence),
 ops/rnd/log.jsonl (one row per pass), ops/rnd/experiments.jsonl, ops/rnd/outcomes.jsonl, ops/rnd/priorities.json (read by foundation/growth.py prefer),
@@ -18,6 +21,10 @@ from . import scout
 
 REPO = Path(__file__).resolve().parents[1]
 PATH, STATE = "doctrine/competitors.json", "ops/rnd"
+
+
+PROVED, HOLDS = "cmd:python3 -m foundation rnd --proved ", "cmd:python3 -m foundation rnd --holds "
+SCOPE = "**Out of scope:** rebuilding a competitor's product, claims about a competitor beyond what its own page states, and any change without a test."
 
 
 def load(root=REPO) -> dict:
@@ -52,6 +59,11 @@ def _ts(now) -> str:
 
 def probe_ok(root, spec: str) -> bool:
     root = Path(root)
+    if spec.startswith(PROVED):  # the done check this loop writes on its own items, answered here without a subprocess
+        c = next((x for x in load(root)["capabilities"] if x["id"] == spec[len(PROVED):].strip()), None)
+        return bool(c) and probe_ok(root, c["ours"])
+    if spec.startswith(HOLDS):
+        return probe_ok(root, spec[len(HOLDS):].strip().strip("'\""))
     if spec.startswith("file:"):
         return (root / spec[5:]).is_file()
     if spec.startswith("grep:"):
@@ -88,6 +100,11 @@ def due(profile: dict | None, comp: dict, cfg: dict, now) -> bool:
 def refresh(root, cfg, fetch, now, apply) -> dict:
     """Refresh every due competitor profile. Returns {id: {changed, appeared, lost, errors, skipped}}."""
     res = {}
+    # TAXONOMY-NEW-1: a capability is news only if the loop could already see it. One added to the taxonomy today matches pages that have said it for
+    # months; reading that as "the competitor added it" filed three experiments on 2026-11-26, two of them shipped the moment they were filed.
+    known = set()
+    for old in profiles(root).values():
+        known |= set(old.get("taxonomy") or old.get("capabilities", {}))
     for comp in cfg["competitors"]:
         p = Path(root) / STATE / "profiles" / (comp["id"] + ".json")
         old = json.loads(p.read_text(encoding="utf-8")) if p.is_file() else None
@@ -103,8 +120,14 @@ def refresh(root, cfg, fetch, now, apply) -> dict:
             res[comp["id"]] = {"errors": errors, "changed": False, "appeared": [], "lost": []}; continue
         caps = detect(text, cfg["capabilities"])
         before = set((old or {}).get("capabilities", {}))
-        new = {"id": comp["id"], "name": comp["name"], "refreshed_at": _ts(now), "sha": hashlib.sha1(text.encode()).hexdigest()[:12], "capabilities": caps, "errors": errors}
-        res[comp["id"]] = {"changed": bool(old) and old.get("sha") != new["sha"], "appeared": sorted(set(caps) - before) if old else [], "lost": sorted(before - set(caps)) if old else [], "errors": errors}
+        new = {"id": comp["id"], "name": comp["name"], "refreshed_at": _ts(now), "sha": hashlib.sha1(text.encode()).hexdigest()[:12], "capabilities": caps, "errors": errors,
+               "taxonomy": sorted(c["id"] for c in cfg["capabilities"]), "sources_read": [s["url"] for s in comp["sources"] if s["url"] not in errors]}
+        # a source that could not be read is unmeasured: a capability only it evidenced is carried forward, never reported as lost
+        if old and errors:
+            for k, v in old.get("capabilities", {}).items():
+                new["capabilities"].setdefault(k, v)
+        caps = new["capabilities"]
+        res[comp["id"]] = {"changed": bool(old) and old.get("sha") != new["sha"], "appeared": sorted(c for c in set(caps) - before if c in known) if old else [], "lost": sorted(before - set(caps)) if old else [], "errors": errors}
         if apply:
             p.parent.mkdir(parents=True, exist_ok=True)
             p.write_text(json.dumps(new, indent=1, sort_keys=True) + "\n", encoding="utf-8")
@@ -142,9 +165,10 @@ def file_gaps(root, cfg, cov, apply) -> list[str]:
         if c["gap"] and (Path(root) / "docs/issues" / f"Q-GAP-{c['gap']}.json").exists():
             out.append("Q-GAP-" + c["gap"]); continue  # carried by the existing item; priorities() raises it
         iid = "Q-RND-GAP-" + c["id"]
-        body = (f"**Owner:** product-manager\n**Trigger:** every rnd pass\n**Done check:** {c['ours_probe']}\n**Prediction:** competitor_coverage_gap_{c['id']} <= 0 within 336 h\n**Status:** open\n\n"
-                f"R&D finding: {len(c['competitors'])} competitors ({', '.join(c['competitors'])}) evidence the capability `{c['id']}` ({next(x['what'] for x in cfg['capabilities'] if x['id'] == c['id'])}) and this repository has no proof of it. "
-                f"Build it with a test; the done check passes once the proof exists.")
+        open_gaps = sum(1 for x in cov if not x["ours"] and len(x["competitors"]) >= cfg["min_competitors"])
+        body = (f"**Owner:** product-manager\n**Trigger:** every rnd pass\n**Done check:** {PROVED}{c['id']}\n**Prediction:** competitor_coverage_gaps <= {open_gaps - 1} within 336 h\n**Status:** open\n\n"
+                f"R&D finding: {len(c['competitors'])} competitors ({', '.join(c['competitors'])}) evidence the capability `{c['id']}` ({next(x['what'] for x in cfg['capabilities'] if x['id'] == c['id'])}) on their own pages (sentence and source per competitor in ops/rnd/profiles/) and this repository has no proof of it. "
+                f"Build it with a test; the done check passes once the proof `{c['ours_probe']}` exists.\n\n{SCOPE}\n\n**Closing probe:** {PROVED}{c['id']}")
         if apply:
             _issue(root, iid, f"close the competitive gap: {c['id']}", body, ["role:product-manager", "growth", "rnd"])
         out.append(iid)
@@ -160,12 +184,14 @@ def propose_experiments(root, cfg, findings, apply, now) -> list[str]:
         if eid in seen or len(out) >= cfg["max_experiments_per_run"]:
             continue
         metric = cfg["metric_for"].get(f["capability"], cfg["metric_for"]["default"])
-        row = {"at": _ts(now), "id": eid, "finding": f["key"], "hypothesis": f["hypothesis"], "metric": metric, "prediction": f"{metric} >= baseline within 336 h", "probe": f["probe"]}
+        base = next((m.get("baseline") for m in json.loads((Path(root) / "doctrine/growth.json").read_text(encoding="utf-8"))["metrics"] if m["id"] == metric), None)
+        row = {"at": _ts(now), "id": eid, "finding": f["key"], "hypothesis": f["hypothesis"], "metric": metric, "prediction": f"{metric} >= {base if isinstance(base, (int, float)) else 0} within 336 h", "probe": f["probe"]}
         out.append(eid)
         if apply:
             _append(root, "experiments.jsonl", row)
-            body = (f"**Owner:** product-manager\n**Trigger:** every rnd pass\n**Done check:** {f['probe']}\n**Prediction:** {row['prediction']}\n**Status:** open\n\n"
-                    f"Experiment from R&D finding `{f['key']}`.\nHypothesis: {f['hypothesis']}\nMetric: {metric}. Ship the smallest change the done check proves, then compare the metric against its baseline in doctrine/growth.json; a miss reverts the change and lowers the finding's priority.")
+            body = (f"**Owner:** product-manager\n**Trigger:** every rnd pass\n**Done check:** {PROVED}{f['capability']}\n**Prediction:** {row['prediction']}\n**Status:** open\n\n"
+                    f"Experiment from R&D finding `{f['key']}`.\nHypothesis: {f['hypothesis']}\nMetric: {metric}. Ship the smallest change the proof `{f['probe']}` shows, then compare the metric against its baseline in doctrine/growth.json; a miss reverts the change and lowers the finding's priority."
+                    f"\n\n{SCOPE}\n\n**Closing probe:** {PROVED}{f['capability']}")
             _issue(root, eid, f["title"], body, ["role:product-manager", "growth", "rnd", "experiment"])
     return out
 
@@ -180,6 +206,13 @@ def _open_scout(root) -> list[dict]:
     return out
 
 
+def finding_text(body: str) -> str:
+    """The finding's own words: the release note between the item's header and its `Decide:` instruction. The header and the instruction are the same in
+    every item (they say `outcome`, `gap`, `adopted`), so counting them matched a WAF advisory to the executor-merged-pr gap on 2026-11-26 (TRIAGE-TEXT-1)."""
+    m = re.search(r"Scout finding from [^\n]*\n(.*?)(?:\n\nThis is a new version of a standard|\n\nDecide:|\Z)", body, re.S)
+    return m.group(1) if m else body
+
+
 def triage(root, cfg, now, apply) -> list[dict]:
     """Decide every open scout finding. A decision in ops/rnd/triage.json wins; without one a finding matching a gap with at least 3 shared tokens is adopted (linked to
     that gap's item), any other is declined with its reason. Adopting files an executor task (Q-ADOPT-*) unless a gap item already carries the work."""
@@ -190,14 +223,14 @@ def triage(root, cfg, now, apply) -> list[dict]:
         if not d:
             m = re.search(r"matched ([^\n]*)", it["body"]); gaps = [x[4:] for x in (m.group(1).split(", ") if m else []) if x.startswith("gap:")]
             g = next((g for g in market["gaps"] if g["id"] in gaps), None)
-            shared = len(scout.tokens(it["body"]) & scout.tokens(g["title"] + " " + g.get("why", ""))) if g else 0
+            shared = len(scout.tokens(finding_text(it["body"])) & scout.tokens(g["title"] + " " + g.get("why", ""))) if g else 0
             d = ({"outcome": "adopted", "reason": f"matches open gap {g['id']} ({shared} shared terms)", "task": "Q-GAP-" + g["id"]} if g and shared >= 3 else
                  {"outcome": "declined", "reason": "no open gap shares three or more terms with this release note"})
         row = {"id": it["id"], **d}
         if apply:
             scout.adopt(root, it["id"], d["outcome"], d["reason"], now)
             if d["outcome"] == "adopted" and d.get("probe") and d.get("task", "").startswith("Q-ADOPT-"):
-                _issue(root, d["task"], d["title"], f"**Owner:** product-manager\n**Trigger:** every rnd pass\n**Done check:** {d['probe']}\n**Prediction:** adoption_shipped >= 1 within 336 h\n**Status:** open\n\n{d['body']}\n\nAdopted from {it['id']}: {d['reason']}", ["role:product-manager", "growth", "rnd", "adopted"])
+                _issue(root, d["task"], d["title"], f"**Owner:** product-manager\n**Trigger:** every rnd pass\n**Done check:** {HOLDS}'{d['probe']}'\n**Prediction:** adoption_shipped >= 1 within 336 h\n**Status:** open\n\n{d['body']}\n\nAdopted from {it['id']}: {d['reason']}\n\n{SCOPE}\n\n**Closing probe:** {HOLDS}'{d['probe']}'", ["role:product-manager", "growth", "rnd", "adopted"])
         out.append(row)
     return out
 
@@ -289,6 +322,10 @@ def run(root=REPO, fetch=scout.http, now=None, apply=False) -> dict:
     for cid, r in ref.items():
         for cap in r.get("appeared", []):
             c = next(x for x in cfg["capabilities"] if x["id"] == cap)
+            if probe_ok(root, c["ours"]):
+                continue  # already proven here: there is nothing to ship, so no experiment is filed
+            if c.get("gap") and (Path(root) / "docs/issues" / f"Q-GAP-{c['gap']}.json").exists():
+                continue  # the gap's own item carries the work and priorities() raises it; a second item for the same proof is a duplicate
             findings.append({"key": f"{cid}:{cap}", "capability": cap, "title": f"respond to {cid} adding {cap}", "hypothesis": f"{cid} now evidences '{c['what']}'; shipping our proof of it keeps the product at parity", "probe": c["ours"]})
     for c in cov:
         if not c["ours"] and len(c["competitors"]) >= cfg["min_competitors"]:
@@ -301,7 +338,7 @@ def run(root=REPO, fetch=scout.http, now=None, apply=False) -> dict:
     if apply:
         scfg = scout.load(root)
         w = scout._j(root, "weights.json", {})
-        w = scout.reweight(root, scfg, w, {})
+        w = scout.reweight(root, scfg, w, {}, count_quiet=False)  # outcomes only; the scout pass already counted this week
         (Path(root) / "ops/scout/weights.json").write_text(json.dumps(w, indent=1, sort_keys=True) + "\n", encoding="utf-8")
     pr = priorities(root, cfg, cov)
     row = {"at": _ts(now), "refreshed": [k for k, v in ref.items() if not v.get("skipped")], "errors": {k: v["errors"] for k, v in ref.items() if v.get("errors")},
@@ -314,9 +351,21 @@ def run(root=REPO, fetch=scout.http, now=None, apply=False) -> dict:
     return row
 
 
+def metrics(root=REPO) -> dict:
+    """The numbers this loop's own items predict, measured from its data: `competitor_coverage_gaps` (capabilities at least min_competitors evidence
+    that this repository does not prove), `adoption_shipped` (adopted tasks whose proof exists), and how much of the register is profiled or unread."""
+    cfg, profs, log = load(root), profiles(root), _rows(root, "log.jsonl")
+    cov = coverage(root, cfg, profs)
+    return {"competitor_coverage_gaps": sum(1 for c in cov if not c["ours"] and len(c["competitors"]) >= cfg["min_competitors"]),
+            "capabilities": len(cov), "competitors": len(cfg["competitors"]), "competitors_profiled": sum(1 for c in cfg["competitors"] if c["id"] in profs),
+            "competitor_sources_unreachable": sum(len(v) for v in ((log[-1].get("errors") or {}).values() if log else [])),
+            "adoption_shipped": sum(1 for r in _rows(root, "outcomes.jsonl") if r.get("outcome") == "shipped" and r.get("id", "").startswith("Q-ADOPT-")),
+            "rnd_last_pass": log[-1]["at"] if log else None}
+
+
 def report(root=REPO) -> dict:
     cfg = load(root)
-    return {"coverage": coverage(root, cfg, profiles(root)), "priorities": _read(root, "priorities.json", {}), "passes": len(_rows(root, "log.jsonl"))}
+    return {"coverage": coverage(root, cfg, profiles(root)), "priorities": _read(root, "priorities.json", {}), "passes": len(_rows(root, "log.jsonl")), "metrics": metrics(root)}
 
 
 def plug_in_problems(c: dict, root=REPO) -> list[str]:
@@ -372,6 +421,12 @@ def main(argv: list[str]) -> int:
         print(json.dumps(run(apply="--apply" in a), indent=1)); return 0
     if "--report" in a:
         print(json.dumps(report(), indent=1)); return 0
+    for flag, pre in (("--proved", PROVED), ("--holds", HOLDS)):  # SPEC-GATE-1: the done check and closing probe this loop writes on the items it files
+        if flag in a:
+            arg = a[a.index(flag) + 1]; ok = probe_ok(REPO, pre + arg)
+            print(f"{arg}: {'proved' if ok else 'not proved'}"); return 0 if ok else 1
+    if "--metrics" in a:
+        print(json.dumps(metrics(), indent=1)); return 0
     bad = check(); print("\n".join(bad) or "rnd ok"); return 1 if bad else 0
 
 

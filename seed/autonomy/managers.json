@@ -1,5 +1,5 @@
 {
- "_doc": "MANAGERS-1: the one register of managers a system runs. Every system made from the seed carries this file; the tick's reconcile step (worker/src/managers.js) hires every manager that is on and has no runtime row, the dispatch step skips a manager that is off, and the bootstrap hires from the same list. A deployment with different needs changes `switch` only: {\"<manager id>\": {\"state\": \"off\", \"reason\": \"...\"}}. A core manager cannot be switched off; an off switch needs a reason; with no switch every manager is on, which is the safe default (an idle manager costs one small read per tick; a missing manager leaves its items undispatched). tick_every and count equal seed/ultrastable.json roles (checked by `python3 -m foundation managers --check` on the platform). Ultrastable is the foundation for any autonomous system.",
+ "_doc": "MANAGERS-1: the one register of managers a system runs. Every system made from the seed carries this file; the tick's reconcile step (worker/src/managers.js) hires every manager that is on and has no runtime row, the dispatch step skips a manager that is off, and the bootstrap hires from the same list. A deployment with different needs changes `switch` only: {\"<manager id>\": {\"state\": \"off\", \"reason\": \"...\"}}. A core manager cannot be switched off; an off switch needs a reason; with no switch every manager is on, which is the safe default (an idle manager costs one small read per tick; a missing manager leaves its items undispatched). tick_every and count equal seed/ultrastable.json roles (checked by `python3 -m foundation managers --check` on the platform). Ultrastable is the foundation for any autonomous system. ROLE-ALIGN-1: each manager also names the human software-organization title it stands in for (`human_role`), the decisions it makes on its own (`decides`) and the managers it hands work to (`hands_to`); the platform checks they equal its own register, and each role file's generated block shows them.",
  "marker": "MANAGERS-1",
  "version": 1,
  "beat": {
@@ -14,7 +14,19 @@
    "default": "on",
    "tick_every": 6,
    "count": 1,
-   "for": "allocation across every project; the tick heartbeat. Every system has one."
+   "for": "allocation across every project; the tick heartbeat. Every system has one.",
+   "human_role": "head of engineering / portfolio director",
+   "decides": [
+    "capacity per project",
+    "start, pause or stop a project or spinoff",
+    "rebalance when fix-only cycles crowd out improvements",
+    "keep growth work ahead of fixes when the growth share falls"
+   ],
+   "hands_to": [
+    "program-manager",
+    "project-manager",
+    "product-manager"
+   ]
   },
   {
    "id": "project-manager",
@@ -22,7 +34,18 @@
    "default": "on",
    "tick_every": 1,
    "count": "per_outcome",
-   "for": "delivery of one outcome: triage, done checks, closing items."
+   "for": "delivery of one outcome: triage, done checks, closing items.",
+   "human_role": "engineering manager / delivery lead",
+   "decides": [
+    "priority and owner label of each new issue",
+    "which ready item is dispatched next",
+    "release of a stale claim",
+    "disposition of an item past its limit (fixed, gate or shelved)"
+   ],
+   "hands_to": [
+    "staff",
+    "reviewer"
+   ]
   },
   {
    "id": "product-manager",
@@ -30,7 +53,19 @@
    "default": "on",
    "tick_every": 3,
    "count": "per_outcome",
-   "for": "the backlog a bare idea does not come with: growth, measures, scouting, improvement items."
+   "for": "the backlog a bare idea does not come with: growth, measures, scouting, improvement items.",
+   "human_role": "product manager",
+   "decides": [
+    "which growth and improvement items are filed",
+    "rank of proposed pluses against the roadmap",
+    "acceptance criteria and prediction of each accepted item",
+    "keep or replace a change once its metric is settled"
+   ],
+   "hands_to": [
+    "project-manager",
+    "staff",
+    "uiux-manager"
+   ]
   },
   {
    "id": "staff",
@@ -38,7 +73,16 @@
    "default": "on",
    "tick_every": 1,
    "count": "pool",
-   "for": "execution of claimed items."
+   "for": "execution of claimed items.",
+   "human_role": "software engineer",
+   "decides": [
+    "how to build the claimed item",
+    "whether a change is substantive enough to open a pull request",
+    "which plus to propose after a merge"
+   ],
+   "hands_to": [
+    "reviewer"
+   ]
   },
   {
    "id": "reviewer",
@@ -46,7 +90,17 @@
    "default": "on",
    "tick_every": 1,
    "count": "pool",
-   "for": "independent verification of every claimed result."
+   "for": "independent verification of every claimed result.",
+   "human_role": "code reviewer / QA engineer",
+   "decides": [
+    "pass or fail of a claimed result, with evidence",
+    "whether a green pull request merges",
+    "one plus per review"
+   ],
+   "hands_to": [
+    "operations",
+    "staff"
+   ]
   },
   {
    "id": "operations",
@@ -54,7 +108,19 @@
    "default": "on",
    "tick_every": 1,
    "count": 1,
-   "for": "the tick, workflows, budgets, deploys and settings."
+   "for": "the tick, workflows, budgets, deploys and settings.",
+   "human_role": "site reliability engineer / release manager",
+   "decides": [
+    "restart of a stopped clock",
+    "open or close an incident from a detector reading",
+    "merge of a green pull request and refresh of a stale branch",
+    "propose a trust rung change by pull request"
+   ],
+   "hands_to": [
+    "staff",
+    "infrastructure-manager",
+    "reviewer"
+   ]
   },
   {
    "id": "funding-manager",
@@ -62,7 +128,16 @@
    "default": "on",
    "tick_every": 6,
    "count": 1,
-   "for": "funding registry and applications. Switch off for a system whose owner pays its running cost and seeks no funding."
+   "for": "funding registry and applications. Switch off for a system whose owner pays its running cost and seeks no funding.",
+   "human_role": "grants / fundraising lead",
+   "decides": [
+    "promote or drop a funding registry row after reading its primary source",
+    "which programmes come first by deadline and fit"
+   ],
+   "hands_to": [
+    "outreach-manager",
+    "outreach-coordinator"
+   ]
   },
   {
    "id": "outreach-manager",
@@ -70,7 +145,17 @@
    "default": "on",
    "tick_every": 3,
    "count": 1,
-   "for": "introducing the work to organizations. Switch off for a private or personal system with no public audience."
+   "for": "introducing the work to organizations. Switch off for a private or personal system with no public audience.",
+   "human_role": "business development / partnerships outreach",
+   "decides": [
+    "which programme or prospect organization is queued, inside the caps",
+    "follow up or stop after the last follow-up",
+    "suppress a target on opt-out or bounce"
+   ],
+   "hands_to": [
+    "outreach-coordinator",
+    "funding-manager"
+   ]
   },
   {
    "id": "outreach-coordinator",
@@ -78,7 +163,18 @@
    "default": "on",
    "tick_every": 1,
    "count": 1,
-   "for": "the outreach calendar and the social queue. Switch off together with the outreach manager."
+   "for": "the outreach calendar and the social queue. Switch off together with the outreach manager.",
+   "human_role": "communications coordinator / social media manager",
+   "decides": [
+    "which queued post is published, inside the gate's caps",
+    "which agent owns a target, so nobody is contacted twice",
+    "move a target forward when its deadline nears"
+   ],
+   "hands_to": [
+    "portfolio-manager",
+    "outreach-manager",
+    "marketing-manager"
+   ]
   },
   {
    "id": "research-publisher",
@@ -86,7 +182,17 @@
    "default": "on",
    "tick_every": 6,
    "count": 1,
-   "for": "research and white papers. Switch off for a system that publishes no findings."
+   "for": "research and white papers. Switch off for a system that publishes no findings.",
+   "human_role": "research lead / technical author",
+   "decides": [
+    "which finding gets an item or an experiment",
+    "settle or reopen an experiment from its measurement",
+    "which paper is regenerated and published"
+   ],
+   "hands_to": [
+    "reviewer",
+    "marketing-manager"
+   ]
   },
   {
    "id": "marketing-manager",
@@ -94,7 +200,17 @@
    "default": "on",
    "tick_every": 6,
    "count": 1,
-   "for": "story, site copy, search and social presence. Switch off for a system with no public front end to promote."
+   "for": "story, site copy, search and social presence. Switch off for a system with no public front end to promote.",
+   "human_role": "marketing manager / developer relations",
+   "decides": [
+    "which channels fit, computed from the fact bank",
+    "re-weight a channel from its recorded outcomes",
+    "which paper becomes the next post"
+   ],
+   "hands_to": [
+    "outreach-coordinator",
+    "product-manager"
+   ]
   },
   {
    "id": "legal-ip-manager",
@@ -102,7 +218,17 @@
    "default": "on",
    "tick_every": 12,
    "count": 1,
-   "for": "licence, notices and third-party licence compliance. Switch off only for a system that ships no code or content to others."
+   "for": "licence, notices and third-party licence compliance. Switch off only for a system that ships no code or content to others.",
+   "human_role": "legal counsel / licence compliance (drafts, never legal advice)",
+   "decides": [
+    "block a public file that lacks its licence, notice or header",
+    "flag a dependency whose licence is outside the policy",
+    "refuse admin material brought back into the template"
+   ],
+   "hands_to": [
+    "staff",
+    "portfolio-manager"
+   ]
   },
   {
    "id": "customer-success",
@@ -110,7 +236,17 @@
    "default": "on",
    "tick_every": 3,
    "count": 1,
-   "for": "onboarding and support intake. Switch off for a system with one user who is its owner."
+   "for": "onboarding and support intake. Switch off for a system with one user who is its owner.",
+   "human_role": "customer success / support engineer",
+   "decides": [
+    "whether a deployed seed is admitted as running itself",
+    "file the documentation gap behind an unanswered question",
+    "hand feedback that changes ranking to the product manager"
+   ],
+   "hands_to": [
+    "product-manager",
+    "staff"
+   ]
   },
   {
    "id": "org-designer",
@@ -118,7 +254,16 @@
    "default": "on",
    "tick_every": 12,
    "count": 1,
-   "for": "which managers this system runs: keeps this register true and hires what is switched on."
+   "for": "which managers this system runs: keeps this register true and hires what is switched on.",
+   "human_role": "people operations / org design",
+   "decides": [
+    "which roles a system should run, by phase",
+    "hire a switched-on manager that has no runtime row",
+    "propose a role for a repeated unowned task, by pull request"
+   ],
+   "hands_to": [
+    "portfolio-manager"
+   ]
   },
   {
    "id": "program-manager",
@@ -126,7 +271,17 @@
    "default": "on",
    "tick_every": 4,
    "count": 1,
-   "for": "sequencing across projects under the portfolio constraint; deploy-raising and cost-cutting work first when k is under its floor."
+   "for": "sequencing across projects under the portfolio constraint; deploy-raising and cost-cutting work first when k is under its floor.",
+   "human_role": "technical program manager",
+   "decides": [
+    "order of items across projects",
+    "deploy-raising and cost-cutting work first while k is under its floor",
+    "the next program item with owner, trigger and probe"
+   ],
+   "hands_to": [
+    "project-manager",
+    "portfolio-manager"
+   ]
   },
   {
    "id": "infrastructure-manager",
@@ -134,7 +289,17 @@
    "default": "on",
    "tick_every": 2,
    "count": 1,
-   "for": "hosting resources, bindings, cost budgets and deploys."
+   "for": "hosting resources, bindings, cost budgets and deploys.",
+   "human_role": "platform engineer / FinOps",
+   "decides": [
+    "file each undeclared or drifted Cloudflare resource",
+    "narrow the queue to cost-cutting work on a budget breach",
+    "pass or fail of the weekly backup restore drill"
+   ],
+   "hands_to": [
+    "operations",
+    "staff"
+   ]
   },
   {
    "id": "design-manager",
@@ -142,7 +307,18 @@
    "default": "on",
    "tick_every": 6,
    "count": 1,
-   "for": "the design language and its experiments. Switch off for a system with no user interface."
+   "for": "the design language and its experiments. Switch off for a system with no user interface.",
+   "human_role": "design lead / design system owner",
+   "decides": [
+    "the personality of a new system, selected from the library",
+    "the verdict of a design experiment at its planned sample",
+    "which blue-sky idea becomes an experiment"
+   ],
+   "hands_to": [
+    "uiux-manager",
+    "staff",
+    "reviewer"
+   ]
   },
   {
    "id": "uiux-manager",
@@ -150,7 +326,18 @@
    "default": "on",
    "tick_every": 6,
    "count": 1,
-   "for": "the audited front end and its user paths. Switch off for a system with no user interface."
+   "for": "the audited front end and its user paths. Switch off for a system with no user interface.",
+   "human_role": "UX researcher / UX designer",
+   "decides": [
+    "file one item per audit finding or fallen user path",
+    "keep or drop an A/B arm at its pre-registered sample",
+    "re-baseline the visual fingerprint after an intended redesign"
+   ],
+   "hands_to": [
+    "staff",
+    "design-manager",
+    "product-manager"
+   ]
   }
  ],
  "switch": {}

@@ -1,6 +1,6 @@
 {
   "version": "1.1.0",
-  "checked": "2026-11-25",
+  "checked": "2026-11-26",
   "stale_after_days": 120,
   "bodies": [
     {
@@ -55,7 +55,7 @@
       "name": "Model Context Protocol",
       "body": "Agentic AI Foundation (Linux Foundation)",
       "status": "stable",
-      "tracked": "2025-11-25 (stable); 2026-07-28 revision (stateless, server/discover) negotiated",
+      "tracked": "2026-07-28 (latest on modelcontextprotocol.io, read 2026-11-26): per-request version in _meta, UnsupportedProtocolVersionError, server/discover; 2025-11-25 and 2025-06-18 handshake still answered",
       "why": "The common way agents call tools; a remote MCP server makes every Ultrastable organisation usable from any MCP client.",
       "support": "supported",
       "how": [
@@ -75,9 +75,29 @@
         {
           "file": "seed/worker/test/agentic.contract.test.js",
           "name": "contract: tools match v1 snapshot"
+        },
+        {
+          "file": "seed/worker/test/agentic.mcp.test.js",
+          "name": "mcp: unsupported version answers UnsupportedProtocolVersionError"
+        },
+        {
+          "file": "seed/worker/test/agentic.mcp.test.js",
+          "name": "mcp: a modern request is answered without a handshake and names the server"
         }
       ],
       "sources": [
+        {
+          "title": "MCP specification 2026-07-28: Versioning and Compatibility (per-request version, UnsupportedProtocolVersionError -32022)",
+          "url": "https://modelcontextprotocol.io/specification/latest/basic/versioning",
+          "published": null,
+          "accessed": "2026-11-26"
+        },
+        {
+          "title": "MCP specification 2026-07-28: Key Changes",
+          "url": "https://modelcontextprotocol.io/specification/latest/changelog",
+          "published": null,
+          "accessed": "2026-11-26"
+        },
         {
           "title": "MCP 2026-07-28: what is changing and how to migrate (AAIF)",
           "url": "https://aaif.io/blog/mcp-2026-07-28-whats-changing-and-how-to-migrate",
@@ -112,7 +132,7 @@
           "content_type": "json"
         }
       ],
-      "audited": "2026-11-25"
+      "audited": "2026-11-26"
     },
     {
       "id": "mcp-auth",
@@ -249,21 +269,45 @@
       "name": "Agent2Agent (A2A) protocol",
       "body": "Agentic AI Foundation (Linux Foundation)",
       "status": "stable",
-      "tracked": "v1.0.0 (2026-03-12), v1.0.1 (2026-05-28); agent card at /.well-known/agent-card.json",
+      "tracked": "v1.0.0 (latest released version on a2a-protocol.org, read 2026-11-26); agent card at /.well-known/agent-card.json; JSON-RPC binding at /a2a",
       "why": "Agent-to-agent delegation across vendors; the card lets another agent find this organisation and its skills.",
-      "support": "partial",
+      "support": "supported",
       "how": [
-        "seed/worker/src/agentic/acl/discovery.js"
+        "seed/worker/src/agentic/acl/discovery.js",
+        "seed/worker/src/agentic/acl/a2a.js"
       ],
       "acl": "seed/worker/src/agentic/acl/discovery.js",
       "tests": [
         {
           "file": "seed/worker/test/agentic.discovery.test.js",
           "name": "discovery: agent card"
+        },
+        {
+          "file": "seed/worker/test/agentic.a2a.test.js",
+          "name": "a2a: SendMessage runs the named skill and answers with an agent Message"
+        },
+        {
+          "file": "seed/worker/test/agentic.a2a.test.js",
+          "name": "a2a: version is required and a version not served answers VersionNotSupportedError"
+        },
+        {
+          "file": "seed/worker/test/agentic.a2a.test.js",
+          "name": "a2a: no task is created, so task methods and streaming answer the specification errors"
         }
       ],
-      "gap": "Card is published and honest (interface is MCP). The A2A task interface (send message, tasks) is not served yet; card field names must be re-checked against the v1.0.1 schema when it is added.",
       "sources": [
+        {
+          "title": "Agent2Agent (A2A) Protocol Specification, latest released version 1.0.0 (sections 3.6, 4.1.4, 4.4.1, 5.4, 8.5, 9.4)",
+          "url": "https://a2a-protocol.org/latest/specification/",
+          "published": null,
+          "accessed": "2026-11-26"
+        },
+        {
+          "title": "Agent Discovery in A2A",
+          "url": "https://a2a-protocol.org/latest/topics/agent-discovery/",
+          "published": null,
+          "accessed": "2026-11-26"
+        },
         {
           "title": "A2A Protocol v1.0 guide",
           "url": "https://josenobile.pages.dev/guides/a2a-protocol/",
@@ -278,14 +322,16 @@
         }
       ],
       "decision": "adopt-now",
-      "adoption": "partial",
-      "conformance": "Serve the A2A task interface beside the card when another agent needs to delegate to a system.",
-      "cost": "M the task interface; none for the card",
+      "adoption": "adopted",
+      "conformance": "The card carries the 1.0 required fields and security shape, and the JSON-RPC binding answers SendMessage with a Message for each read-only skill. Not served, and answered with the specification errors: tasks, streaming, push notifications, the gRPC and HTTP+JSON bindings, card signatures.",
+      "cost": "none for what is served; M for a task interface when a system has work another agent may hand over",
       "probes": [
-        "grep:seed/worker/src/agentic/acl/discovery.js::agent-card"
+        "grep:seed/worker/src/agentic/acl/discovery.js::A2A_CARD_REQUIRED",
+        "file:seed/worker/src/agentic/acl/a2a.js",
+        "grep:seed/standards/surfaces.json::\"/a2a\""
       ],
       "watch": "a2a-spec",
-      "audited": "2026-11-25"
+      "audited": "2026-11-26"
     },
     {
       "id": "agents-md",
@@ -373,7 +419,7 @@
       "name": "Agent Skills (SKILL.md) and discovery index",
       "body": "Agent Skills open standard; discovery RFC led by Cloudflare",
       "status": "draft",
-      "tracked": "discovery index v0.2.0 at /.well-known/agent-skills/index.json",
+      "tracked": "SKILL.md frontmatter rules of agentskills.io/specification (read 2026-11-26); discovery index v0.2.0 at /.well-known/agent-skills/index.json",
       "why": "Packages how to operate the organisation as a skill any agent can load, with a digest so it can be verified.",
       "support": "supported",
       "how": [
@@ -384,9 +430,19 @@
         {
           "file": "seed/worker/test/agentic.discovery.test.js",
           "name": "discovery: agent skills digest"
+        },
+        {
+          "file": "seed/worker/test/agentic.discovery.test.js",
+          "name": "discovery: skill conforms to the Agent Skills specification"
         }
       ],
       "sources": [
+        {
+          "title": "Agent Skills specification (SKILL.md format: name, description, optional fields)",
+          "url": "https://agentskills.io/specification",
+          "published": null,
+          "accessed": "2026-11-26"
+        },
         {
           "title": "Agent Skills discovery",
           "url": "https://specification.website/spec/agent-readiness/agent-skills-discovery/",
@@ -399,7 +455,16 @@
           "published": null,
           "accessed": "2026-11-11"
         }
-      ]
+      ],
+      "decision": "adopt-now",
+      "adoption": "adopted",
+      "conformance": "Nothing for the skill file: every served SKILL.md is checked against the specification (name and description rules, name equal to its directory, plain YAML frontmatter). The discovery index is still a draft and may move.",
+      "cost": "none",
+      "probes": [
+        "grep:seed/worker/src/agentic/acl/discovery.js::export function skillProblems",
+        "grep:seed/standards/surfaces.json::/.well-known/agent-skills/"
+      ],
+      "audited": "2026-11-26"
     },
     {
       "id": "well-known",
@@ -2453,5 +2518,5 @@
       "audited": "2026-11-25"
     }
   ],
-  "undecided_ceiling": 28
+  "undecided_ceiling": 27
 }

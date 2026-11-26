@@ -1,0 +1,47 @@
+{
+ "capabilities": {
+  "a2a-protocol": "les &amp; Attachments Portals &amp; Desktop macOS Satellites Profiles Agent to Agent Automations &amp; Webhooks Self-Hosted Boxes Overview Apps Overview m",
+  "agent-skills": "Workspaces Multiplayer Huddle Customize Plugins Global Plugins &amp; Skills Skills MCP AGENTS.md Model Routing CLI Getting Started Keybindings Ex",
+  "agents-md": "layer Huddle Customize Plugins Global Plugins &amp; Skills Skills MCP AGENTS.md Model Routing CLI Getting Started Keybindings Execute Mode Clone Repo",
+  "chat-entry": "Overview macOS iPhone &amp; iPad Android Windows Linux Puck Meet Puck Slack Integration Collaborate Workspaces Multiplayer Huddle Customize Plugi",
+  "cloud-background-agents": "tart without one. 4 Run an Agent in an Orb Give Amp a task in a fresh cloud environment with your project ready. 5 Get the Amp Apps Install Amp on your Mac,",
+  "event-triggered-agents": "hments Portals &amp; Desktop macOS Satellites Profiles Agent to Agent Automations &amp; Webhooks Self-Hosted Boxes Overview Apps Overview macOS iPhone",
+  "mcp-server": "ltiplayer Huddle Customize Plugins Global Plugins &amp; Skills Skills MCP AGENTS.md Model Routing CLI Getting Started Keybindings Execute Mode",
+  "multi-agent-roles": ". Ctrl+K Sign In Get Started Introduction Model Selector Models &amp; Subagents Prompting Tools Threads Projects Spaces Web Use Integrations Pricing",
+  "permission-guardrails": "rt Getting Help Bug Reports &amp; Diagnostics Enterprise MCP Registry Allowlist Thread Visibility Workspace Entitlements Allowed Models Minimal Data",
+  "self-hostable": "p macOS Satellites Profiles Agent to Agent Automations &amp; Webhooks Self-Hosted Boxes Overview Apps Overview macOS iPhone &amp; iPad Android Windows"
+ },
+ "errors": {},
+ "id": "amp",
+ "name": "Amp",
+ "refreshed_at": "2026-11-26T06:46:33Z",
+ "sha": "efb53842ec14",
+ "sources_read": [
+  "https://ampcode.com/manual"
+ ],
+ "taxonomy": [
+  "a2a-protocol",
+  "agent-evals",
+  "agent-memory",
+  "agent-skills",
+  "agents-md",
+  "autonomous-pr",
+  "chat-entry",
+  "cloud-background-agents",
+  "cross-model-review",
+  "durable-execution",
+  "event-triggered-agents",
+  "existing-repo-adoption",
+  "idea-to-deploy",
+  "incident-investigation",
+  "mcp-server",
+  "multi-agent-roles",
+  "observability",
+  "other-cloud",
+  "permission-guardrails",
+  "sandboxed-execution",
+  "scheduled-agents",
+  "self-hostable",
+  "spend-budgets"
+ ]
+}

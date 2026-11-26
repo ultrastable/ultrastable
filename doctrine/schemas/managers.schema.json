@@ -41,60 +41,52 @@
     },
     "roles": {
       "type": "object",
-      "properties": {
-        "portfolio-manager": {
-          "type": "object"
-        },
-        "program-manager": {
-          "type": "object"
-        },
-        "project-manager": {
-          "type": "object"
-        },
-        "product-manager": {
-          "type": "object"
-        },
-        "staff": {
-          "type": "object"
-        },
-        "reviewer": {
-          "type": "object"
-        },
-        "operations": {
-          "type": "object"
-        },
-        "infrastructure-manager": {
-          "type": "object"
-        },
-        "funding-manager": {
-          "type": "object"
-        },
-        "outreach-manager": {
-          "type": "object"
-        },
-        "outreach-coordinator": {
-          "type": "object"
-        },
-        "research-publisher": {
-          "type": "object"
-        },
-        "marketing-manager": {
-          "type": "object"
-        },
-        "legal-ip-manager": {
-          "type": "object"
-        },
-        "customer-success": {
-          "type": "object"
-        },
-        "org-designer": {
-          "type": "object"
-        },
-        "design-manager": {
-          "type": "object"
-        },
-        "uiux-manager": {
-          "type": "object"
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "runs",
+          "clock",
+          "probe",
+          "settles",
+          "human_role",
+          "decides",
+          "inputs",
+          "hands_to",
+          "cadence"
+        ],
+        "properties": {
+          "human_role": {
+            "type": "string",
+            "minLength": 1
+          },
+          "decides": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "inputs": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "hands_to": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "cadence": {
+            "type": "string",
+            "minLength": 1
+          }
         }
       }
     },
@@ -111,6 +103,60 @@
     },
     "$schema": {
       "type": "string"
+    },
+    "software_roles": {
+      "type": "array",
+      "minItems": 22,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "function",
+          "status",
+          "roles",
+          "code"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
+          "function": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "enum": [
+              "covered",
+              "gap"
+            ]
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "code": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "dedicated": {
+            "type": "string"
+          },
+          "item": {
+            "type": "string",
+            "pattern": "^Q-ROLE-[A-Za-z0-9-]+$"
+          },
+          "missing": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
     }
   },
   "required": [
@@ -122,6 +168,7 @@
     "roles",
     "seed_absent",
     "seed_register",
+    "software_roles",
     "version"
   ]
 }

@@ -1,0 +1,14 @@
+{
+  "id": "Q-ROLE-security",
+  "title": "Q-ROLE-security: no loop reads open secret-scanning and Dependabot alerts, and security has no role of its own",
+  "body": "**Owner:** operations\n**Trigger:** executor tick, driver order\n**Done check:** cmd:git grep -q -e dependabot/alerts -e secret-scanning/alerts -- foundation scripts seed/worker/src\n**Status:** open\n\nROLE-ALIGN-1, MANAGERS-1. The coverage map in doctrine/managers.json (`software_roles`, id `security`) records what does security work today: foundation/supplychain.py (OpenSSF Scorecard and SBOM licences, loop `supply-chain`, owned by the staff pool) and foundation/boundary.py (loop `containment-boundary`, operations). REPO-STANDARD-1 switches secret scanning and security alerts on for every repository, and no code in foundation, scripts or the tick Worker reads the open alerts back, so an open alert is seen by no loop.\n\nAdd a reader to foundation/supplychain.py (or a sibling module the same loop runs in supply-chain.yml) that lists open secret-scanning and Dependabot alerts per repository through the GitHub REST API with the workflow's own token, reports a repository it cannot read as unmeasured and never as 0, and files one item per open alert with the next reading as its closing probe. Then remove `missing` and `item` from the `security` row. The dedicated security and compliance role (doctrine/team.json, phase 2) takes the loop over when its TEAM-1 gate opens (`python3 -m foundation team --apply`).\n\nsize: M\n\n**Closing probe:** cmd:git grep -q -e dependabot/alerts -e secret-scanning/alerts -- foundation scripts seed/worker/src\n\n**Prediction:** spec_quality >= 0.7 within 336 h (read by `python3 -m foundation specgate --report`; this item closing by its done check keeps the share of well-specified open items at or above today's reading)\n\n**Out of scope:** activating the security-compliance role ahead of its phase gate, changing the Scorecard floor in doctrine/scorecard.json, or dismissing an alert to clear the reading.\n",
+  "labels": [
+    "role:operations",
+    "p1",
+    "agent-ready",
+    "managers",
+    "security"
+  ],
+  "milestone": "Next",
+  "workstream": "Virtual team"
+}

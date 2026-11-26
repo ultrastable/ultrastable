@@ -1,0 +1,50 @@
+{
+ "capabilities": {
+  "agent-evals": "edule a demo with our team Customers Success stories and case studies Benchmarks Performance metrics and comparisons Security Security practices and c",
+  "agent-memory": "e Security Review Learning &amp; Custom Context Greptile CLI Partners Knowledge Base Docs Comprehensive documentation and guides Greptile Examples See Gre",
+  "autonomous-pr": "es and compliance The AI Code Reviewer AI agents that review and test pull requests with full context of the codebase. Contact sales Start now onboard wi",
+  "cross-model-review": "AI Code Review | Greptile | Catch More Bugs Introducing a new way to review your PRs",
+  "existing-repo-adoption": "arn more How it works STEP 01 Indexes your codebase Builds a graph of your repo - files, functions, and dependencies. STEP 02 Swarm of agents review",
+  "idea-to-deploy": "Learn more Ways Greptile plugs into your workflow 01 Fix in your IDE One-click send issue context to Claude Code, Cursor, Codex, or Devin 02 Greptil",
+  "mcp-server": "end issue context to Claude Code, Cursor, Codex, or Devin 02 Greptile MCP Connect Greptile to any AI agent to share comment context. 03 Claude",
+  "observability": "endent audits, reports available on request. 03 Enterprise Ready SSO, audit logs, dedicated support. James Reggio CTO \u00b7 Brex We&#x27;ve tried more cod",
+  "permission-guardrails": "he open-source application . A repository owner or administrator with permission to install apps must complete the application and setup. How does Gre",
+  "sandboxed-execution": "UCING TREX ] Autonomously Test Every PR TREX runs your PR branch in a sandbox to catch the bugs that only show up at runtime. Explore TREX TEST \u00b7 R",
+  "scheduled-agents": "Examples See Greptile catching bugs in large OS repos. Contact sales Schedule a demo with our team Customers Success stories and case studies Bench",
+  "self-hostable": "ses across defense, healthcare, and financial services. Learn more 01 Self-Hosted Deployment Host Greptile in your own air-gapped environment. 02 SOC 2"
+ },
+ "errors": {},
+ "id": "greptile",
+ "name": "Greptile",
+ "refreshed_at": "2026-11-26T06:46:33Z",
+ "sha": "33fccf75fd76",
+ "sources_read": [
+  "https://www.greptile.com/",
+  "https://www.greptile.com/open-source"
+ ],
+ "taxonomy": [
+  "a2a-protocol",
+  "agent-evals",
+  "agent-memory",
+  "agent-skills",
+  "agents-md",
+  "autonomous-pr",
+  "chat-entry",
+  "cloud-background-agents",
+  "cross-model-review",
+  "durable-execution",
+  "event-triggered-agents",
+  "existing-repo-adoption",
+  "idea-to-deploy",
+  "incident-investigation",
+  "mcp-server",
+  "multi-agent-roles",
+  "observability",
+  "other-cloud",
+  "permission-guardrails",
+  "sandboxed-execution",
+  "scheduled-agents",
+  "self-hostable",
+  "spend-budgets"
+ ]
+}

@@ -1,13 +1,18 @@
 {
  "capabilities": {
+  "agent-memory": "ext Prompt engineering Context management Custom instructions Copilot Memory Copilot Dreaming Prompt files Repository indexing Spaces Customizatio",
+  "agent-skills": "es Repository indexing Spaces Customizations Comparing customizations Agent skills Assisted permissions Custom agents MCP Connectors Hooks Extensions Pl",
   "autonomous-pr": "gent sessions Copilot code review Review Copilot output Watch and fix pull requests Copilot in your IDE Set up Copilot Install Copilot extension Configur",
+  "chat-entry": "iew Dynamic workflows Copilot integrations Integrate cloud agent with Slack Integrate cloud agent with Teams Integrate cloud agent with Jira Inte",
+  "cloud-background-agents": "s Add repository instructions Add organization instructions Customize cloud agent Personalize cloud sessions Create custom agents Add agent skills Use",
   "cross-model-review": "pinion Researching with agents Agent-powered workflows and operations Code review About automations Rationale, confidence, and approvals Dynamic workfl",
+  "event-triggered-agents": "with agents Agent-powered workflows and operations Code review About automations Rationale, confidence, and approvals Dynamic workflows Agentic Workfl",
   "existing-repo-adoption": "s Create mock objects Create end-to-end tests Analyze security Secure your repository Manage dependency updates Find vulnerabilities Customization library",
   "idea-to-deploy": "anage enterprise policies Use enterprise managed settings Get started Deploy managed settings Enterprise team overrides Manage plugins and marketp",
   "mcp-server": "paring customizations Agent skills Assisted permissions Custom agents MCP Connectors Hooks Extensions Plugins LSP servers Models Overview Copil",
   "multi-agent-roles": "omizations Comparing customizations Agent skills Assisted permissions Custom agents MCP Connectors Hooks Extensions Plugins LSP servers Models Overview C",
   "observability": "mitted User Prompt Transformed Integrations Microsoft Agent Framework Observability Opentelemetry Set up Copilot SDK Azure Managed Identity Backend Servi",
-  "other-cloud": "rosoft Agent Framework Observability Opentelemetry Set up Copilot SDK Azure Managed Identity Backend Services Bundled CLI Choosing A Setup Path G",
+  "other-cloud": "View and fix security alerts Managing issues and pull requests Manage Azure DevOps work Automations Add LLM models Open with deep links Copilot S",
   "permission-guardrails": "Spaces Customizations Comparing customizations Agent skills Assisted permissions Custom agents MCP Connectors Hooks Extensions Plugins LSP servers Mod",
   "sandboxed-execution": "governance, and network settings Content exclusion Session data Local sandboxing Understanding local sandboxing Cloud sandboxes Risks and mitigations",
   "scheduled-agents": "ata Automate with Copilot CLI Quickstart Run the CLI programmatically Schedule prompts Automate with Actions Customize Copilot CLI Overview Add cust",
@@ -17,6 +22,34 @@
  "errors": {},
  "id": "github-copilot-agent",
  "name": "GitHub Copilot coding agent",
- "refreshed_at": "2026-11-12T20:05:06Z",
- "sha": "abdfbdec20bd"
+ "refreshed_at": "2026-11-26T06:46:33Z",
+ "sha": "6585bb167e57",
+ "sources_read": [
+  "https://docs.github.com/copilot/concepts/coding-agent/about-copilot-coding-agent"
+ ],
+ "taxonomy": [
+  "a2a-protocol",
+  "agent-evals",
+  "agent-memory",
+  "agent-skills",
+  "agents-md",
+  "autonomous-pr",
+  "chat-entry",
+  "cloud-background-agents",
+  "cross-model-review",
+  "durable-execution",
+  "event-triggered-agents",
+  "existing-repo-adoption",
+  "idea-to-deploy",
+  "incident-investigation",
+  "mcp-server",
+  "multi-agent-roles",
+  "observability",
+  "other-cloud",
+  "permission-guardrails",
+  "sandboxed-execution",
+  "scheduled-agents",
+  "self-hostable",
+  "spend-budgets"
+ ]
 }

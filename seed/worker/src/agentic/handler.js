@@ -5,6 +5,7 @@ import standards from '../../../standards/standards.json' with { type: 'json' };
 import { TOOLS } from './core/tools.js';
 import { assertPort, STORE_METHODS, REGISTRIES_METHODS, AUTH_METHODS, TELEMETRY_METHODS } from './core/ports.js';
 import { handleMcp } from './acl/mcp.js';
+import { handleA2a } from './acl/a2a.js';
 import * as D from './acl/discovery.js';
 
 export const CONTRACT_VERSION = surfacesDoc.contract_version;
@@ -39,6 +40,7 @@ export function createAgenticHandler({ store, registries, auth, telemetry, ident
     const ctx = { identity, origin: url.origin, surfaces: SURFACES, tools: TOOLS, env };
     switch (surface.id) {
       case 'mcp': return handleMcp(request, { tools: TOOLS, ports, env, identity, origin: url.origin });
+      case 'a2a': return handleA2a(request, { tools: TOOLS, ports, env, identity, origin: url.origin });
       case 'llms-txt': return text(D.llmsTxt(ctx), 'text/plain');
       case 'agents-md': return text(D.agentsMd(ctx), 'text/markdown');
       case 'agent-card': return json(D.agentCard(ctx));

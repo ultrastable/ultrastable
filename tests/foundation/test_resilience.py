@@ -52,9 +52,16 @@ class T(unittest.TestCase):
         self.assertEqual(r["restarts"], []); self.assertEqual(r["beat"]["stalled"], 0)
         self.assertEqual(R.stalled_reading(self.d, NOW + 60), 0)
 
+    def test_a_declared_manager_workflow_clock_is_restarted_under_its_own_id(self):
+        """MANAGERS-1: a scheduled manager workflow declared in doctrine/clocks.json keeps the watchdog's restart, under its declared id."""
+        ids = {c["id"] for c in R.all_clocks(self.d)}
+        self.assertIn("cost-guard", ids); self.assertNotIn("wf:cost-guard", ids)
+        r = self.run_({"cost-guard"})
+        self.assertEqual(self.runs, ["cost-guard"]); self.assertEqual(r["restarts"][0]["route"], "workflow_dispatch")
+
     def test_stalled_workflow_is_dispatched_and_recorded(self):
-        r = self.run_({"wf:cost-guard"})
-        self.assertEqual(self.runs, ["cost-guard"]); self.assertTrue(r["restarts"][0]["ok"]); self.assertEqual(r["beat"]["stalled"], 1)
+        r = self.run_({"wf:failure-audit"})
+        self.assertEqual(self.runs, ["failure-audit"]); self.assertTrue(r["restarts"][0]["ok"]); self.assertEqual(r["beat"]["stalled"], 1)
         rows = [json.loads(x) for x in (self.d / "ops/resilience.jsonl").read_text().splitlines()]
         self.assertEqual([x["kind"] for x in rows], ["restart", "beat"])
 
@@ -66,12 +73,12 @@ class T(unittest.TestCase):
 
     def test_restart_is_bounded_per_day_and_escalates_after_failures(self):
         for i in range(3):
-            self.run_({"wf:cost-guard"}, dispatch_ok=False, now=NOW + i * 600)
+            self.run_({"wf:failure-audit"}, dispatch_ok=False, now=NOW + i * 600)
         self.assertEqual(len(self.runs), 3)
-        r = self.run_({"wf:cost-guard"}, dispatch_ok=False, now=NOW + 3000)
+        r = self.run_({"wf:failure-audit"}, dispatch_ok=False, now=NOW + 3000)
         self.assertEqual(len(self.runs), 3); self.assertIn("cap", r["skipped"][0]["why"])  # the fourth is over the daily cap
-        item = json.loads((self.d / "docs/issues/Q-STALL-wf-cost-guard.json").read_text())
-        self.assertIn("p0", item["labels"]); self.assertIn("resilience --probe wf:cost-guard", item["body"])
+        item = json.loads((self.d / "docs/issues/Q-STALL-wf-failure-audit.json").read_text())
+        self.assertIn("p0", item["labels"]); self.assertIn("resilience --probe wf:failure-audit", item["body"])
 
     def test_unmeasured_is_never_restarted_and_never_healthy(self):
         r = R.run(self.d, True, NOW, lambda c: None, lambda u: 200, lambda w, root=None: (True, ""))
@@ -82,7 +89,7 @@ class T(unittest.TestCase):
 
     def test_halt_stops_restarts(self):
         (self.d / "ops/halt.json").write_text('{"halt": true}')
-        r = self.run_({"wf:cost-guard"})
+        r = self.run_({"wf:failure-audit"})
         self.assertEqual(self.runs, []); self.assertIn("halt", r["skipped"][0]["why"])
 
     def test_silent_watchdog_reads_unmeasured(self):
@@ -126,7 +133,7 @@ class Truth(T):
     def test_unchanged_run_is_not_committed(self):
         self.run_(set())
         self.assertFalse(self.run_(set(), now=NOW + 60)["changed"])
-        self.assertTrue(self.run_({"wf:cost-guard"}, now=NOW + 120)["changed"])
+        self.assertTrue(self.run_({"wf:failure-audit"}, now=NOW + 120)["changed"])
 
     def test_repo_d1_clocks_are_in_the_ultrastable_account_only(self):
         # SINGLE-ACCOUNT-1 (2026-11-18): the quniverse standby replica is gone; every beat source is in the ultrastable account.
@@ -160,3 +167,47 @@ class SiteProbe(unittest.TestCase):
         calls.clear()
         good = R.site_probes(cfg, [], 1.0, True, None, get=lambda u: 200, dispatch=lambda r, w: calls.append(1))
         self.assertTrue(good[0]["ok"]); self.assertEqual(calls, [])
+
+
+class WorkNotPulse(T):
+    """A failed run is not a beat, a weekly loop restarts inside two weeks, and the budget pause exempts a public repository."""
+    DAY = 86400
+
+    def test_failed_run_is_not_a_beat_for_a_success_clock(self):
+        iso = lambda t: R._iso(t)
+        runs = [{"createdAt": iso(NOW - 2 * self.DAY), "status": "completed", "conclusion": "failure"},
+                {"createdAt": iso(NOW - 9 * self.DAY), "status": "completed", "conclusion": "success"}]
+        scout = next(c for c in R.all_clocks(REPO) if c["id"] == "scout")
+        self.assertEqual(scout["beat"], "success")
+        self.assertEqual(R.run_beats(scout, runs), [NOW - 9 * self.DAY])
+        self.assertEqual(len(R.run_beats({"id": "x"}, runs)), 2)  # a clock that does not ask keeps counting every run
+        running = [{"createdAt": iso(NOW - 60), "status": "in_progress", "conclusion": ""}]
+        self.assertEqual(len(R.run_beats(scout, running)), 1)  # a restart in flight is not restarted again
+
+    def test_scout_is_restarted_after_one_and_a_half_intervals_without_a_success(self):
+        cfg = R.load(REPO)
+        scout = next(c for c in R.all_clocks(REPO) if c["id"] == "scout")
+        self.assertEqual(R.probe(scout, NOW, lambda c: [NOW - 9 * self.DAY], cfg)["status"], "ticking")
+        self.assertEqual(R.probe(scout, NOW, lambda c: [NOW - 11 * self.DAY], cfg)["status"], "stopped")
+        other = {"id": "o", "source": "workflow", "expected_interval_s": 7 * self.DAY}
+        self.assertEqual(R.probe(other, NOW, lambda c: [NOW - 11 * self.DAY], cfg)["status"], "late")  # the default bound is unchanged
+        def beats(c):
+            return [NOW - 11 * self.DAY] if c["id"] == "scout" else [NOW - 5]
+        r = R.run(self.d, True, NOW, beats, lambda u: 200, lambda w, root=None: (self.runs.append(w) or (True, "ok")))
+        self.assertEqual(self.runs, ["scout"]); self.assertEqual(r["beat"]["stalled_ids"], ["scout"])
+
+    def test_budget_pause_exempts_a_public_repository_only(self):
+        (self.d / "actions-budget.json").write_text(json.dumps({"paused": True, "paused_workflows": []}))
+        self.assertEqual(R._paused(self.d, public=False), {"*"})
+        self.assertEqual(R._paused(self.d, public=True), set())
+        beats = self.beats({"wf:failure-audit"})
+        dispatch = lambda w, root=None: (self.runs.append(w) or (True, "ok"))
+        r = R.run(self.d, True, NOW, beats, lambda u: 200, dispatch, public=False)
+        self.assertEqual(self.runs, []); self.assertEqual(r["skipped"][0]["why"], "paused by actions-budget.json")
+        r = R.run(self.d, True, NOW + 1, beats, lambda u: 200, dispatch, public=True)
+        self.assertEqual(self.runs, ["failure-audit"])
+
+    def test_scout_commit_step_runs_after_a_failed_step(self):
+        y = (REPO / ".github/workflows/scout.yml").read_text(encoding="utf-8")
+        tail = y[y.index("- name: Commit findings"):]
+        self.assertIn("if: ${{ !cancelled() }}", tail.split("run:")[0])

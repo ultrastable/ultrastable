@@ -121,7 +121,7 @@ export async function recordSweep(db, out, at = new Date().toISOString().replace
     for (const c of PR_LATENCY_DDL) await db.prepare(c).run().catch(x => { if (!/duplicate column/i.test(String(x && x.message))) throw x; });
     await ins();
   }
-  await db.prepare(`DELETE FROM sweeper_runs WHERE id NOT IN (SELECT id FROM sweeper_runs ORDER BY id DESC LIMIT 500)`).run();
+  await db.prepare(`DELETE FROM sweeper_runs WHERE id <= (SELECT MAX(id) FROM sweeper_runs) - 500`).run();  // READ-BUDGET-9: a primary-key range, not NOT IN over the whole table (1,003 rows a run, measured); ids only grow, so at most the newest 500 stay
 }
 export async function lastSweep(db) { return (await db.prepare(`SELECT at, status, merged, filed, released, errors, open_loop_age_hours, merge_p50_min, merge_p95_min, oldest_open_pr_min, stalled_prs FROM sweeper_runs ORDER BY id DESC LIMIT 1`).first()) || null; }
 

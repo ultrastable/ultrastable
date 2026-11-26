@@ -7,7 +7,7 @@ from foundation import managers as M
 from _repo import scratch
 
 REPO = Path(__file__).resolve().parents[2]
-FILES = [M.POLICY, "seed/autonomy/managers.json", "seed/ultrastable.json", "instances/ultrastable/loop-registry.json", "doctrine/clocks.json", "seed/worker/src/tick.js"]
+FILES = [M.POLICY, "seed/autonomy/managers.json", "seed/ultrastable.json", "instances/ultrastable/loop-registry.json", "doctrine/clocks.json", "seed/worker/src/tick.js", "doctrine/team.json"]
 
 
 def copy():
@@ -25,7 +25,16 @@ def copy():
         for p in specs:
             (d / p).parent.mkdir(parents=True, exist_ok=True)
             shutil.copy(REPO / p, d / p)
-    (d / "docs/issues").mkdir(parents=True)
+        for p in r["inputs"]:  # ROLE-ALIGN-1: an input only has to exist
+            (d / p).parent.mkdir(parents=True, exist_ok=True)
+            (d / p).mkdir(exist_ok=True) if (REPO / p).is_dir() else (d / p).touch()
+    (d / "docs/issues").mkdir(parents=True, exist_ok=True)
+    for f in pol["software_roles"]:
+        for p in f["code"]:
+            (d / p).parent.mkdir(parents=True, exist_ok=True)
+            (d / p).touch()
+        if f.get("item"):
+            shutil.copy(REPO / "docs/issues" / (f["item"] + ".json"), d / "docs/issues" / (f["item"] + ".json"))
     return d
 
 
@@ -178,6 +187,84 @@ class Matrix(unittest.TestCase):
         clocks = {c.get("workflow") for c in json.loads((REPO / "doctrine/clocks.json").read_text())["clocks"]}
         self.assertTrue(all(r["workflow"][:-4] not in clocks for r in rows))
         self.assertNotIn({"role": "design-manager", "workflow": "a11y.yml"}, rows)
+
+
+class Alignment(unittest.TestCase):
+    """ROLE-ALIGN-1: every role names its human counterpart, its decisions, its inputs and its hand-offs; every software function has an owner or an item."""
+
+    def bad(self, fn, rel=M.POLICY):
+        d = copy()
+        edit(d, rel, fn)
+        return M.check(d)
+
+    def test_every_role_is_aligned_and_every_function_is_in_the_map(self):
+        a = M.alignment(REPO)
+        self.assertEqual(len(a["roles"]), len(M.role_files(REPO, "platform")))
+        self.assertTrue(all(r[k] for r in a["roles"] for k in M.ALIGN))
+        self.assertEqual(sorted(f["id"] for f in a["functions"]), sorted(M.FUNCTIONS))
+        self.assertEqual(a["covered"] + len(a["gaps"]), len(M.FUNCTIONS))
+
+    def test_a_role_missing_an_alignment_field_fails(self):
+        for k, needle in (("human_role", "no human_role"), ("decides", "decides is missing"), ("inputs", "inputs is missing"), ("hands_to", "hands_to is missing"), ("cadence", "no cadence")):
+            with self.subTest(k):
+                self.assertTrue(any("staff" in b and needle in b for b in self.bad(lambda j: j["roles"]["staff"].pop(k))))
+
+    def test_an_input_that_does_not_exist_fails(self):
+        self.assertTrue(any("reviewer: input ops/no-such-ledger.jsonl does not exist" in b for b in self.bad(lambda j: j["roles"]["reviewer"]["inputs"].append("ops/no-such-ledger.jsonl"))))
+
+    def test_a_hand_off_to_nobody_or_to_itself_fails(self):
+        self.assertTrue(any("hands_to chief-of-vibes, which is not a role" in b for b in self.bad(lambda j: j["roles"]["staff"]["hands_to"].append("chief-of-vibes"))))
+        self.assertTrue(any("staff: hands_to itself" in b for b in self.bad(lambda j: j["roles"]["staff"]["hands_to"].append("staff"))))
+
+    def test_the_seed_register_tells_the_same_alignment(self):
+        def drift(j):
+            next(m for m in j["managers"] if m["id"] == "reviewer")["human_role"] = "something else"
+        self.assertTrue(any("reviewer: human_role differs" in b for b in self.bad(drift, "seed/autonomy/managers.json")))
+
+    def test_a_function_left_out_of_the_map_fails(self):
+        def drop(j):
+            j["software_roles"] = [f for f in j["software_roles"] if f["id"] != "qa-test"]
+        self.assertTrue(any("the function qa-test is not in the coverage map" in b for b in self.bad(drop)))
+
+    def row(self, j, fid):
+        return next(f for f in j["software_roles"] if f["id"] == fid)
+
+    def test_covered_needs_a_role_that_owns_the_code(self):
+        self.assertTrue(any("code-review" in b and "covered needs at least one role and one code path" in b for b in self.bad(lambda j: self.row(j, "code-review").update(code=[]))))
+        self.assertTrue(any("code-review" in b and "foundation/pm.py is owned by none of reviewer" in b for b in self.bad(lambda j: self.row(j, "code-review")["code"].append("foundation/pm.py"))))
+        self.assertTrue(any("code-review" in b and "funding-manager is named and owns none" in b for b in self.bad(lambda j: self.row(j, "code-review")["roles"].append("funding-manager"))))
+        self.assertTrue(any("code-review" in b and "nobody is not a role" in b for b in self.bad(lambda j: self.row(j, "code-review")["roles"].append("nobody"))))
+
+    def test_a_gap_needs_a_filed_item(self):
+        self.assertTrue(any("sales-partnerships" in b and "a gap needs" in b for b in self.bad(lambda j: self.row(j, "sales-partnerships").pop("item"))))
+        self.assertTrue(any("Q-ROLE-nowhere is not filed" in b for b in self.bad(lambda j: self.row(j, "sales-partnerships").update(item="Q-ROLE-nowhere"))))
+        self.assertTrue(any("Q-MANAGERS-clocks is not a Q-ROLE-* item" in b for b in self.bad(lambda j: self.row(j, "sales-partnerships").update(item="Q-MANAGERS-clocks"))))
+        self.assertTrue(any("`missing` with no item" in b for b in self.bad(lambda j: self.row(j, "security").pop("item"))))
+
+    def test_a_shelved_item_still_stands_for_its_gap_and_a_fixed_one_does_not(self):
+        d = copy()
+        p = d / "docs/issues/Q-ROLE-sales-partnerships.json"
+        j = json.loads(p.read_text())
+        open_body = j["body"]
+        j["body"] = open_body.replace("**Status:** open", "**Status:** closed") + "\n**Disposition:** shelved (ttl)\n"
+        p.write_text(json.dumps(j))
+        self.assertEqual(M.item_state(d, "Q-ROLE-sales-partnerships"), "shelved")
+        self.assertEqual(M.check(d), [])
+        j["body"] = open_body.replace("**Status:** open", "**Status:** closed") + "\n**Disposition:** fixed (probe)\n"
+        p.write_text(json.dumps(j))
+        self.assertTrue(any("ended fixed" in b for b in M.check(d)))
+
+    def test_the_role_file_block_shows_the_alignment(self):
+        r = json.loads((REPO / M.POLICY).read_text())["roles"]["reviewer"]
+        for tree in ("platform", "seed"):
+            block = M.role_block(REPO, "reviewer", tree)
+            self.assertIn("**Stands in for:** " + r["human_role"], block)
+            self.assertIn(r["decides"][0], block)
+            self.assertIn("`operations`", block)
+        self.assertIn("**Reads:**", M.role_block(REPO, "reviewer", "platform"))
+
+    def test_every_scheduled_manager_workflow_is_a_clock(self):
+        self.assertEqual(M.unclocked(REPO), [])
 
 
 if __name__ == "__main__":

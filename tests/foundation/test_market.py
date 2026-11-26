@@ -29,7 +29,7 @@ class Market(unittest.TestCase):
         d = market.load(REPO); have = {i["id"]: i for i in queue.items(REPO)}
         for g in d["gaps"]:
             it = have[market.GAP_ID(g)]
-            self.assertEqual(it["probe"], g["closing_probe"]); self.assertIn(it["status"], ("open", "closed"))
+            self.assertTrue(market.same_probe(it["probe"], g["closing_probe"]), it["probe"]); self.assertIn(it["status"], ("open", "closed"))
 
     def test_every_competitor_claim_has_a_source_and_a_date(self):
         d = market.load(REPO); self.assertRegex(d["checked"], r"^\d{4}-\d{2}-\d{2}$")
@@ -47,6 +47,10 @@ class Market(unittest.TestCase):
         t = _copy(); (t / "docs/issues/Q-GAP-second-installation.json").unlink()
         self.assertTrue(any("second-installation" in b for b in market.check(t)))
         self.assertEqual(market.sync(t), ["Q-GAP-second-installation"]); self.assertEqual(market.check(t), [])
+        from foundation import specgate
+        body = json.loads((t / "docs/issues/Q-GAP-second-installation.json").read_text())["body"]
+        self.assertEqual(specgate.missing(body), [])  # SPEC-GATE-1: a synced gap item passes the gate
+        self.assertIn(f"market_open_gaps <= {market.open_gaps(t) - 1} within 720 h", body)
 
     def test_a_gap_that_closes_needs_no_manual_edit(self):
         t = _copy(); (t / "foundation/adopt.py").write_text("# adopt\n")

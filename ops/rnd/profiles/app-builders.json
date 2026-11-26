@@ -8,6 +8,34 @@
  "errors": {},
  "id": "app-builders",
  "name": "Lovable, Bolt.new, v0, Replit, Base44",
- "refreshed_at": "2026-11-12T20:05:06Z",
- "sha": "c0c7393d4926"
+ "refreshed_at": "2026-11-26T06:46:33Z",
+ "sha": "c0c7393d4926",
+ "sources_read": [
+  "https://www.ionos.com/digitalguide/websites/web-development/best-ai-app-builder.md"
+ ],
+ "taxonomy": [
+  "a2a-protocol",
+  "agent-evals",
+  "agent-memory",
+  "agent-skills",
+  "agents-md",
+  "autonomous-pr",
+  "chat-entry",
+  "cloud-background-agents",
+  "cross-model-review",
+  "durable-execution",
+  "event-triggered-agents",
+  "existing-repo-adoption",
+  "idea-to-deploy",
+  "incident-investigation",
+  "mcp-server",
+  "multi-agent-roles",
+  "observability",
+  "other-cloud",
+  "permission-guardrails",
+  "sandboxed-execution",
+  "scheduled-agents",
+  "self-hostable",
+  "spend-budgets"
+ ]
 }

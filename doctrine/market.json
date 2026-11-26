@@ -1,6 +1,6 @@
 {
   "_doc": "MARKET-1 (owner, 2026-11-12): components, competitor coverage, users, stories and objections as data. Every feature claim has a proof probe and a test; every gap has a closing probe and becomes a queue item (docs/issues/Q-GAP-*.json) the executor works; the build fails if a claimed feature loses its proof or a gap quietly closes. INTERNAL: confidentiality rules apply, nothing here is published on the site. Competitor facts come only from the sources listed, read 2026-11-12; 'none-found' means the source was silent, not that the capability is absent. Read by foundation/market.py.",
-  "checked": "2026-11-12",
+  "checked": "2026-11-26",
   "visibility": "internal",
   "sources": {
     "appbuilders": {
@@ -30,6 +30,101 @@
     "githubagents": {
       "url": "https://github.blog/changelog/2026-02-26-claude-and-codex-now-available-for-copilot-business-pro-users/",
       "what": "GitHub changelog: Claude and Codex available for Copilot Business and Pro (read at title level only)"
+    },
+    "a2a-spec": {
+      "url": "https://a2a-protocol.org/latest/specification/",
+      "what": "A2A Protocol Specification; states latest released version 1.0.0, agent card fields and the JSON-RPC binding",
+      "read": "2026-11-26"
+    },
+    "mcp-versioning": {
+      "url": "https://modelcontextprotocol.io/specification/latest/basic/versioning",
+      "what": "MCP specification 2026-07-28, versioning: per-request version, UnsupportedProtocolVersionError -32022, server/discover",
+      "read": "2026-11-26"
+    },
+    "agentskills-spec": {
+      "url": "https://agentskills.io/specification",
+      "what": "Agent Skills specification: SKILL.md frontmatter rules",
+      "read": "2026-11-26"
+    },
+    "agents-md": {
+      "url": "https://agents.md/",
+      "what": "AGENTS.md format site; states use by over 60k open-source projects and lists compatible agents (stated by the site)",
+      "read": "2026-11-26"
+    },
+    "cursor-cloud": {
+      "url": "https://cursor.com/docs/cloud-agent",
+      "what": "Cursor docs: cloud agents run in isolated VMs in the cloud with full development environments (stated by vendor)",
+      "read": "2026-11-26"
+    },
+    "codex-cloud": {
+      "url": "https://developers.openai.com/codex/cloud",
+      "what": "OpenAI Codex cloud docs: coding tasks worked through in the cloud, reviewed from web, mobile or desktop (stated by vendor)",
+      "read": "2026-11-26"
+    },
+    "claude-web": {
+      "url": "https://code.claude.com/docs/en/claude-code-on-the-web.md",
+      "what": "Claude Code on the web docs: cloud sessions from browser, mobile, desktop and terminal (stated by vendor)",
+      "read": "2026-11-26"
+    },
+    "jules": {
+      "url": "https://jules.google/docs/",
+      "what": "Jules docs: scheduled tasks, suggested tasks, AGENTS.md, REST API (stated by vendor)",
+      "read": "2026-11-26"
+    },
+    "devin-docs": {
+      "url": "https://docs.devin.ai/get-started/devin-intro",
+      "what": "Devin docs: described as an autonomous AI software engineer that can write, run and test code (stated by vendor)",
+      "read": "2026-11-26"
+    },
+    "langgraph-docs": {
+      "url": "https://docs.langchain.com/oss/python/langgraph/overview",
+      "what": "LangGraph docs: orchestration framework and runtime for long-running, stateful agents; durable execution, streaming, human-in-the-loop (stated by vendor)",
+      "read": "2026-11-26"
+    },
+    "cf-agents": {
+      "url": "https://developers.cloudflare.com/agents/",
+      "what": "Cloudflare Agents docs: durable identity, local SQL storage, scheduled work, recoverable execution; channels chat, email, voice, Slack, webhook (stated by vendor)",
+      "read": "2026-11-26"
+    },
+    "temporal-ai": {
+      "url": "https://temporal.io/solutions/ai",
+      "what": "Temporal AI page: Durable Execution for AI apps and agents (stated by vendor)",
+      "read": "2026-11-26"
+    },
+    "crewai-docs": {
+      "url": "https://docs.crewai.com/en/introduction",
+      "what": "CrewAI docs: open-source framework for orchestrating autonomous AI agents; Crews and Flows; checkpointing (stated by vendor)",
+      "read": "2026-11-26"
+    },
+    "ms-agent-framework": {
+      "url": "https://learn.microsoft.com/en-us/agent-framework/overview/agent-framework-overview",
+      "what": "Microsoft Agent Framework overview: agents, harness agent, graph-based workflows, MCP servers (stated by vendor)",
+      "read": "2026-11-26"
+    },
+    "resolve-ai": {
+      "url": "https://resolve.ai/",
+      "what": "Resolve AI home page: AI SRE that holds the pager and escalates with a root cause (stated by vendor; its percentages are the vendor's own and are not repeated here)",
+      "read": "2026-11-26"
+    },
+    "incident-io": {
+      "url": "https://incident.io/ai-sre",
+      "what": "incident.io AI SRE page: investigation starts when an incident is declared and names a root cause with sources (stated by vendor)",
+      "read": "2026-11-26"
+    },
+    "aws-devops-agent": {
+      "url": "https://aws.amazon.com/devops-agent/",
+      "what": "AWS DevOps Agent page: reviews release readiness and investigates incidents autonomously (stated by vendor)",
+      "read": "2026-11-26"
+    },
+    "azure-sre-agent": {
+      "url": "https://learn.microsoft.com/en-us/azure/sre-agent/overview",
+      "what": "Azure SRE Agent overview: automates incident response through skills, runbooks and custom agents, with approval for some actions (stated by vendor)",
+      "read": "2026-11-26"
+    },
+    "datadog-bits": {
+      "url": "https://www.datadoghq.com/product/ai/bits-ai-sre/",
+      "what": "Datadog Bits Investigation page: autonomous alert investigations by an always-on SRE agent (stated by vendor)",
+      "read": "2026-11-26"
     }
   },
   "components": [
@@ -508,6 +603,61 @@
       "closing_probe": "file:docs/bootstrapping/other-cloud-proof.json",
       "component": "portability",
       "owner": "operations"
+    },
+    {
+      "id": "durable-agent-runs",
+      "title": "An agent run that survives a restart and resumes from its last completed step",
+      "why": "A claimed item whose agent dies part-way is released by reap_claims and started again from the beginning; nothing resumes from the last completed step.",
+      "closing_probe": "file:seed/worker/src/checkpoint.js",
+      "component": "operations",
+      "owner": "operations",
+      "sources": [
+        "cf-agents",
+        "langgraph-docs",
+        "temporal-ai",
+        "crewai-docs"
+      ],
+      "read": "2026-11-26",
+      "evidence": "Cloudflare Agents (recoverable execution), LangGraph (durable execution, checkpointers), Temporal (Durable Execution) and CrewAI (checkpointing) each state it on their own pages, read 2026-11-26."
+    },
+    {
+      "id": "chat-entry",
+      "title": "Hand a task to the system from a team chat",
+      "why": "Work enters through the front door, the repository form, the work API and the owner console; a team chat is not an entry point.",
+      "closing_probe": "file:seed/worker/src/chat-intake.js",
+      "component": "idea-intake",
+      "owner": "staff",
+      "sources": [
+        "devin-docs",
+        "cursor-cloud",
+        "codex-cloud"
+      ],
+      "read": "2026-11-26",
+      "evidence": "Devin, GitHub Copilot cloud agent, Cursor, Codex, Lovable and v0 each list a Slack or Teams integration on their own pages, read 2026-11-26."
+    },
+    {
+      "id": "site-agent-protocol-parity",
+      "title": "The platform site answers MCP and A2A the way the kit now does",
+      "why": "The kit answers an unsupported MCP version with UnsupportedProtocolVersionError (-32022) and serves an A2A 1.0 card without legacy fields; site/agentic.js still answers -32600 and its card carries the 0.3 fields url, preferredTransport and additionalInterfaces.",
+      "evidence": "MCP 2026-07-28 versioning page and A2A 1.0 specification section 4.4.1, read 2026-11-26.",
+      "closing_probe": "grep:site/agentic.js::-32022",
+      "component": "agents-roles",
+      "owner": "staff",
+      "sources": [
+        "mcp-versioning",
+        "a2a-spec"
+      ],
+      "read": "2026-11-26"
+    },
+    {
+      "id": "capability-evidence-precision",
+      "title": "Competitor capabilities are evidenced by a sentence of the page body, not by a navigation word",
+      "why": "The R&D taxonomy matches one regular expression per capability over the whole page text, so a menu entry such as \"Azure DevOps\" or \"Pull requests\" counts as evidence of other-cloud or autonomous-pr; 2026-11-26 profiles show both.",
+      "evidence": "ops/rnd/profiles/cursor-cloud-agents.json and ops/rnd/profiles/resolve-ai.json, refreshed 2026-11-26.",
+      "closing_probe": "grep:foundation/rnd.py::def body_text",
+      "component": "verification",
+      "owner": "reviewer",
+      "read": "2026-11-26"
     }
   ],
   "users": [
@@ -644,6 +794,36 @@
             "engineer-lane"
           ],
           "gaps": []
+        },
+        {
+          "id": "s14",
+          "story": "As an engineer, an agent run that dies part-way resumes from its last completed step, so a long task is not started over.",
+          "features": [
+            "claims"
+          ],
+          "gaps": [
+            "durable-agent-runs"
+          ]
+        },
+        {
+          "id": "s15",
+          "story": "As an engineer, I hand a task to the system from the team chat I already use.",
+          "features": [
+            "engineer-lane"
+          ],
+          "gaps": [
+            "chat-entry"
+          ]
+        },
+        {
+          "id": "s16",
+          "story": "As an engineer, my MCP or A2A client gets the same answers from the platform site as from any system built with the kit.",
+          "features": [
+            "engineer-lane"
+          ],
+          "gaps": [
+            "site-agent-protocol-parity"
+          ]
         }
       ]
     },
@@ -661,7 +841,8 @@
           ],
           "gaps": [
             "cross-model-rescoring",
-            "second-installation"
+            "second-installation",
+            "capability-evidence-precision"
           ]
         },
         {

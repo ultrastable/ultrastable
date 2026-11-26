@@ -1,0 +1,11 @@
+{
+  "id": "Q-GAP-site-agent-protocol-parity",
+  "title": "Q-GAP-site-agent-protocol-parity: The platform site answers MCP and A2A the way the kit now does",
+  "body": "**Owner:** staff\n**Trigger:** every executor run\n**Done check:** cmd:python3 -m foundation rnd --holds 'grep:site/agentic.js::-32022'\n**Prediction:** market_open_gaps <= 5 within 720 h\n**Status:** open\n\nGap in component `agents-roles`: The platform site answers MCP and A2A the way the kit now does. The kit answers an unsupported MCP version with UnsupportedProtocolVersionError (-32022) and serves an A2A 1.0 card without legacy fields; site/agentic.js still answers -32600 and its card carries the 0.3 fields url, preferredTransport and additionalInterfaces. Source: doctrine/market.json (MARKET-1). The proof is `grep:site/agentic.js::-32022`, shipped with a test.\n\n**Out of scope:** any other gap in the register, and a proof file with no behaviour and no test behind it.\n\n**Closing probe:** cmd:python3 -m foundation rnd --holds 'grep:site/agentic.js::-32022'",
+  "labels": [
+    "role:staff",
+    "gap"
+  ],
+  "milestone": "Next",
+  "workstream": "Gaps"
+}

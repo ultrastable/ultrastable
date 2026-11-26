@@ -1,0 +1,11 @@
+{
+  "id": "Q-GAP-capability-evidence-precision",
+  "title": "Q-GAP-capability-evidence-precision: Competitor capabilities are evidenced by a sentence of the page body, not by a navigation word",
+  "body": "**Owner:** reviewer\n**Trigger:** every executor run\n**Done check:** cmd:python3 -m foundation rnd --holds 'grep:foundation/rnd.py::def body_text'\n**Prediction:** market_open_gaps <= 5 within 720 h\n**Status:** open\n\nGap in component `verification`: Competitor capabilities are evidenced by a sentence of the page body, not by a navigation word. The R&D taxonomy matches one regular expression per capability over the whole page text, so a menu entry such as \"Azure DevOps\" or \"Pull requests\" counts as evidence of other-cloud or autonomous-pr; 2026-11-26 profiles show both. Source: doctrine/market.json (MARKET-1). The proof is `grep:foundation/rnd.py::def body_text`, shipped with a test.\n\n**Out of scope:** any other gap in the register, and a proof file with no behaviour and no test behind it.\n\n**Closing probe:** cmd:python3 -m foundation rnd --holds 'grep:foundation/rnd.py::def body_text'",
+  "labels": [
+    "role:reviewer",
+    "gap"
+  ],
+  "milestone": "Next",
+  "workstream": "Gaps"
+}
