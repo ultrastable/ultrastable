@@ -144,6 +144,78 @@ export default {
     "what": "Replication Ledger tenant beat (cron 23 * * * * on ultrastable-replication-ledger; a visit sparks one when the last is over two hours old): search OpenAlex for new replications and new landmark findings, file attempts under a verbatim-quote guard, check Crossref, recompute standings and log every move"
    },
    {
+    "expected_interval_s": 604800,
+    "id": "funding-maintenance",
+    "source": "workflow",
+    "what": "the weekly re-verification of funding registry rows at their primary sources"
+   },
+   {
+    "expected_interval_s": 86400,
+    "id": "cost-guard",
+    "source": "workflow",
+    "what": "the daily cost reading against budgets (D1 rows read, Workers AI neurons) and the criticality log"
+   },
+   {
+    "expected_interval_s": 604800,
+    "id": "backup-drill",
+    "source": "workflow",
+    "what": "the weekly export and restore drill of every D1 database and KV namespace"
+   },
+   {
+    "expected_interval_s": 86400,
+    "id": "social-post",
+    "source": "workflow",
+    "what": "the daily publish of gate-cleared posts and the thought-leadership pass"
+   },
+   {
+    "expected_interval_s": 604800,
+    "id": "demo-video",
+    "source": "workflow",
+    "what": "the weekly rebuild of the demo video from the storyboard (pushes to the storyboard also start it; only scheduled and dispatched runs are beats)"
+   },
+   {
+    "expected_interval_s": 604800,
+    "id": "outreach",
+    "source": "workflow",
+    "what": "the weekly outreach pass: programmes, packets, guard, queue and the intro lane"
+   },
+   {
+    "expected_interval_s": 86400,
+    "id": "spinoff",
+    "source": "workflow",
+    "what": "the daily spinoff pass over the idea queue and the free-tier headroom"
+   },
+   {
+    "expected_interval_s": 86400,
+    "id": "product-manager",
+    "source": "workflow",
+    "what": "the daily product manager pass: growth mix, insight findings, improvement items"
+   },
+   {
+    "expected_interval_s": 86400,
+    "id": "fleet",
+    "source": "workflow",
+    "what": "the daily fleet queue pass across every repository: dispositions, balance, drift (the tick Worker may also dispatch it; every run is a beat)"
+   },
+   {
+    "expected_interval_s": 86400,
+    "id": "issues",
+    "source": "workflow",
+    "what": "the daily issue sweep: triage and SLA (issue events also start the workflow; only scheduled and dispatched runs are beats)"
+   },
+   {
+    "expected_interval_s": 604800,
+    "id": "retriage",
+    "source": "workflow",
+    "what": "the weekly re-triage of open issues"
+   },
+   {
+    "expected_interval_s": 604800,
+    "id": "uiux",
+    "source": "workflow",
+    "what": "UIUX-1: the weekly browser audit of every user page and path"
+   },
+   {
     "expected_interval_s": 86400,
     "id": "cleanroom",
     "source": "workflow",
@@ -846,8 +918,10 @@ export default {
   "failure-audit",
   "findable",
   "first-run",
+  "fleet",
   "fleet-lane",
   "fleet-map",
+  "funding-maintenance",
   "funding-outreach",
   "funding-verify",
   "gap-register",
@@ -862,6 +936,7 @@ export default {
   "intent-yield",
   "issue-loop",
   "issue-triage",
+  "issues",
   "launch",
   "lifecycle",
   "liveness",
@@ -875,17 +950,18 @@ export default {
   "openstd",
   "org-profile",
   "orphan-artifacts",
+  "outreach",
   "outreach-send",
   "planning-roadmap",
   "platform-core-tests",
   "plussing",
   "predict-verify",
+  "product-manager",
   "product-manager-pass",
   "promote",
   "provenance-loop",
   "public-transparency",
   "publication-guard",
-  "qa-engineer-duty",
   "qnfo-sauce",
   "recognition-lint",
   "regen-generated",
@@ -908,16 +984,12 @@ export default {
   "role-product-manager",
   "role-program-manager",
   "role-project-manager",
-  "role-qa-engineer",
   "role-research-publisher",
   "role-reviewer",
-  "role-security-engineer",
-  "role-sre",
   "role-staff",
   "role-uiux-manager",
   "running-system",
   "scout",
-  "security-engineer-duty",
   "seed-launch",
   "server-side-only",
   "session-reaper",
@@ -925,7 +997,6 @@ export default {
   "smoke-live",
   "social-post",
   "spinoff",
-  "sre-duty",
   "strange-loop-hygiene",
   "supply-chain",
   "temporal",
@@ -937,6 +1008,7 @@ export default {
   "transparency",
   "triggers",
   "trust-ledger",
+  "uiux",
   "uiux-loop",
   "ultrastability-loop",
   "ultrastable-agents",
@@ -2403,72 +2475,6 @@ export default {
     "workflows": [
      "cleanroom"
     ]
-   },
-   {
-    "closing_probe": "grep:seed/worker/src/roleduties.js::export async function settle",
-    "id": "qa-engineer-duty",
-    "kind": "manager",
-    "owner": "qa-engineer",
-    "server_owner": "ultrastable-tick",
-    "sla": "1h",
-    "summary": "ROLE-DUTIES-1: the qa engineer duty `unverified-done`: closed work is really verified: every item closed in the last 24 hours has a verified outcome from an independent probe (human analogue: QA or test engineer).",
-    "trigger": "hourly inside the tick step role_duties of ultrastable-tick",
-    "workflows": []
-   },
-   {
-    "closing_probe": "file:agents/roles/qa-engineer.md",
-    "id": "role-qa-engineer",
-    "kind": "manager",
-    "owner": "qa-engineer",
-    "server_owner": "ultrastable-tick",
-    "sla": "1 tick",
-    "summary": "QA engineer: closed work is really verified: every item closed in the last 24 hours has a verified outcome from an independent probe (human analogue: QA or test engineer)",
-    "trigger": "each tick of the qa-engineer role (tick_every 1)",
-    "workflows": []
-   },
-   {
-    "closing_probe": "grep:seed/worker/src/roleduties.js::export async function settle",
-    "id": "sre-duty",
-    "kind": "manager",
-    "owner": "sre",
-    "server_owner": "ultrastable-tick",
-    "sla": "1h",
-    "summary": "ROLE-DUTIES-1: the site reliability engineer duty `tick-health`: the heartbeat and the services it runs stay up: every tick completes every step and no slot is missed (human analogue: SRE or on-call engineer).",
-    "trigger": "hourly inside the tick step role_duties of ultrastable-tick",
-    "workflows": []
-   },
-   {
-    "closing_probe": "file:agents/roles/sre.md",
-    "id": "role-sre",
-    "kind": "manager",
-    "owner": "sre",
-    "server_owner": "ultrastable-tick",
-    "sla": "1 tick",
-    "summary": "Site reliability engineer: the heartbeat and the services it runs stay up: every tick completes every step and no slot is missed (human analogue: SRE or on-call engineer)",
-    "trigger": "each tick of the sre role (tick_every 1)",
-    "workflows": []
-   },
-   {
-    "closing_probe": "grep:seed/worker/src/roleduties.js::export async function settle",
-    "id": "security-engineer-duty",
-    "kind": "manager",
-    "owner": "security-engineer",
-    "server_owner": "ultrastable-tick",
-    "sla": "1h",
-    "summary": "ROLE-DUTIES-1: the security engineer duty `secret-items`: secrets, tokens and vulnerabilities never sit unattended: any open item about them older than 48 hours is raised and closed with evidence (human analogue: security or AppSec engineer).",
-    "trigger": "hourly inside the tick step role_duties of ultrastable-tick",
-    "workflows": []
-   },
-   {
-    "closing_probe": "file:agents/roles/security-engineer.md",
-    "id": "role-security-engineer",
-    "kind": "manager",
-    "owner": "security-engineer",
-    "server_owner": "ultrastable-tick",
-    "sla": "1 tick",
-    "summary": "Security engineer: secrets, tokens and vulnerabilities never sit unattended: any open item about them older than 48 hours is raised and closed with evidence (human analogue: security or AppSec engineer)",
-    "trigger": "each tick of the security-engineer role (tick_every 1)",
-    "workflows": []
    }
   ],
   "workers": [
