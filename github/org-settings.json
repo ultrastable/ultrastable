@@ -147,6 +147,74 @@
         "required_linear_history": true
       }
     },
+    "ultrastable/base-rates": {
+      "description": "Base Rates: a tenant system running on Ultrastable.",
+      "homepage": "https://base-rates.ultrastable.org/",
+      "topics": [
+        "autonomous-agents",
+        "built-on-ultrastable",
+        "cloudflare-workers",
+        "ultrastable"
+      ],
+      "settings": {
+        "has_wiki": false,
+        "allow_squash_merge": true,
+        "allow_merge_commit": false,
+        "allow_rebase_merge": false,
+        "allow_auto_merge": true,
+        "allow_update_branch": true,
+        "delete_branch_on_merge": true,
+        "squash_merge_commit_title": "PR_TITLE",
+        "squash_merge_commit_message": "PR_BODY",
+        "private": false
+      },
+      "security": {
+        "vulnerability_alerts": true,
+        "automated_security_fixes": true,
+        "secret_scanning": "enabled",
+        "secret_scanning_push_protection": "enabled"
+      },
+      "branch_protection": {
+        "branch": "main",
+        "allow_force_pushes": false,
+        "allow_deletions": false,
+        "required_linear_history": true
+      }
+    },
+    "ultrastable/open-questions": {
+      "description": "Open Questions: a tenant system running on Ultrastable.",
+      "homepage": "https://open-questions.ultrastable.org/",
+      "topics": [
+        "autonomous-agents",
+        "built-on-ultrastable",
+        "cloudflare-workers",
+        "ultrastable"
+      ],
+      "settings": {
+        "has_wiki": false,
+        "allow_squash_merge": true,
+        "allow_merge_commit": false,
+        "allow_rebase_merge": false,
+        "allow_auto_merge": true,
+        "allow_update_branch": true,
+        "delete_branch_on_merge": true,
+        "squash_merge_commit_title": "PR_TITLE",
+        "squash_merge_commit_message": "PR_BODY",
+        "private": false
+      },
+      "security": {
+        "vulnerability_alerts": true,
+        "automated_security_fixes": true,
+        "secret_scanning": "enabled",
+        "secret_scanning_push_protection": "enabled"
+      },
+      "branch_protection": {
+        "branch": "main",
+        "allow_force_pushes": false,
+        "allow_deletions": false,
+        "required_linear_history": true
+      }
+    },
     "ultrastable/ultrastable": {
       "description": "The main repository: the platform, the website, the owner dashboard, the doctrine, the docs and the seed/ kit that ultrastable/seed publishes. Ultrastable is the foundation for any autonomous system.",
       "homepage": "https://ultrastable.io",

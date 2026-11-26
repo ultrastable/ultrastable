@@ -10,6 +10,8 @@
     "https://unlearn.ultrastable.org/social-queue.json",
     "https://what-works.ultrastable.org/social-queue.json",
     "https://replication-ledger.ultrastable.org/social-queue.json",
-    "https://ultrastable.io/api/stickiness/queue/practical-solutions.json"
+    "https://ultrastable.io/api/stickiness/queue/practical-solutions.json",
+    "https://base-rates.ultrastable.org/social-queue.json",
+    "https://open-questions.ultrastable.org/social-queue.json"
   ]
 }

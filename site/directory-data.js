@@ -45,5 +45,23 @@ export default [
   "license": "LicenseRef-Ultrastable-USL-1.0",
   "kind": "tenant",
   "summary": "A record of which landmark findings held up when others tried to repeat them, and which did not. Readers guess first, then see the attempts."
+ },
+ {
+  "id": "base-rates",
+  "name": "Base Rates",
+  "url": "https://base-rates.ultrastable.org/",
+  "repo": "https://github.com/ultrastable/base-rates",
+  "license": "LicenseRef-Ultrastable-USL-1.0",
+  "kind": "tenant",
+  "summary": "Base Rates: a tenant system running on Ultrastable."
+ },
+ {
+  "id": "open-questions",
+  "name": "Open Questions",
+  "url": "https://open-questions.ultrastable.org/",
+  "repo": "https://github.com/ultrastable/open-questions",
+  "license": "LicenseRef-Ultrastable-USL-1.0",
+  "kind": "tenant",
+  "summary": "Open Questions: a tenant system running on Ultrastable."
  }
 ];

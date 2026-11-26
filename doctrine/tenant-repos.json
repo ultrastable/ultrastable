@@ -127,7 +127,7 @@
   },
   "base-rates": {
    "repo": "ultrastable/base-rates",
-   "state": "planned",
+   "state": "own-repo",
    "source": "instances/base-rates",
    "keep_in_core": [
     "IDEA.md",
@@ -195,7 +195,7 @@
   },
   "open-questions": {
    "repo": "ultrastable/open-questions",
-   "state": "planned",
+   "state": "own-repo",
    "source": "instances/open-questions",
    "keep_in_core": [
     "IDEA.md",
