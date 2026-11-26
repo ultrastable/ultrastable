@@ -6400,6 +6400,32 @@
    "body": "feat: the bootstrapper, its ladder and the owner document (BS). One cohesive set of files inside the 60 file and 3,000 line bound, applied to the latest main from a private working copy, with generated migrations regenerated append-only.",
    "probe": "file:workers/core/install/bootstrap-spec10.test.js",
    "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "decision-2026-11-26-executor-closed-q-lite-webmention-wire-fix-async-handler-mou",
+   "kind": "decision",
+   "date": "2026-11-26",
+   "title": "Executor closed Q-LITE-webmention-wire: Fix async handler, mount route, test wire, update handoff.",
+   "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: tests/site-lite-webmention.test.js, site/lite.js.",
+   "probe": "file:tests/site-lite-webmention.test.js"
+  },
+  {
+   "id": "lesson-2026-11-26-a-queue-item-must-not-close-on-a-check-that-passes-because-t",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "A queue item must not close on a check that passes because the item is held",
+   "body": "Q-LESSON-no-date-bombs had the done check lessons --check, which passes exactly while the item is held; the queue closed it as fixed on that pass and the same check turned main red. Each lesson item now closes only on lessons --probe <id>, which fails until a binding lands, and lessons --check refuses any other done check.",
+   "probe": "file:foundation/lessons.py",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "lesson-2026-11-26-slice-w08-of-the-specification-run-s-code-and-tests-shipped-",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Slice W08 of the specification run's code and tests shipped on its own",
+   "body": "feat: the adapters and launcher (W08). One cohesive set of files inside the 60 file and 3,000 line bound, applied to the latest main from a private working copy, with generated migrations regenerated append-only.",
+   "probe": "file:workers/adapters/cloudflare/src/heartbeat.test.js",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
   }
  ]
 }
