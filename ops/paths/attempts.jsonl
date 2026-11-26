@@ -476,3 +476,5 @@
 {"at": "2026-11-24T22:04:00+00:00", "ask": "ledger:executor:pr-outcome", "class": "prior-working-config", "route": "regress:foundation/executor.py", "ok": false, "detail": "0 suspect commits since 96e38e8c0ab1"}
 {"at": "2026-11-24T22:04:01+00:00", "ask": "ledger:executor:pr-outcome", "class": "prior-working-config", "route": "regress:foundation/executor.py", "ok": false, "detail": "0 suspect commits since 61808a25d06d"}
 {"at": "2026-11-26T12:55:23+00:00", "ask": "ledger:clocks:all", "class": "prior-working-config", "route": "regress:foundation/clock.py", "ok": true, "detail": "1 suspect commits since add800e814fc"}
+{"at": "2026-11-26T17:01:43+00:00", "ask": "ledger:executor:pr-outcome", "class": "prior-working-config", "route": "regress:foundation/executor.py", "ok": false, "detail": "0 suspect commits since 72ae63aafb33"}
+{"at": "2026-11-26T17:01:44+00:00", "ask": "ledger:deploys:ultrastable-seed-second-tenant", "class": "prior-working-config", "route": "regress:deploy/deploy-workers.mjs", "ok": true, "detail": "1 suspect commits since 44e1ee44a95f"}
