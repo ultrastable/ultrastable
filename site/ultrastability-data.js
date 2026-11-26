@@ -4,72 +4,72 @@ export default {
  "credit": "W. Ross Ashby, Design for a Brain (1952)",
  "now": {
   "claims_drift": {
-   "at": "2026-11-26T09:15:03Z",
+   "at": "2026-11-26T09:25:54Z",
    "ok": true,
    "value": 0
   },
   "deploy_health": {
-   "at": "2026-11-26T09:15:03Z",
+   "at": "2026-11-26T09:25:54Z",
    "ok": false,
    "value": 0.989
   },
   "happy_paths": {
-   "at": "2026-11-26T09:15:03Z",
+   "at": "2026-11-26T09:25:54Z",
    "ok": true,
    "value": 1.0
   },
   "lessons_enforced": {
-   "at": "2026-11-26T09:15:03Z",
+   "at": "2026-11-26T09:25:54Z",
    "ok": false,
    "value": 0.692
   },
   "owner_interventions": {
-   "at": "2026-11-26T09:15:03Z",
+   "at": "2026-11-26T09:25:54Z",
    "ok": false,
    "value": 62
   },
   "research_in_code": {
-   "at": "2026-11-26T09:15:03Z",
+   "at": "2026-11-26T09:25:54Z",
    "ok": false,
    "value": 0.621
   },
   "second_loop_keep_rate": {
-   "at": "2026-11-26T09:15:03Z",
+   "at": "2026-11-26T09:25:54Z",
    "ok": false,
    "value": 0.0
   },
   "self_shipping": {
-   "at": "2026-11-26T09:15:03Z",
+   "at": "2026-11-26T09:25:54Z",
    "ok": false,
    "value": 0.714
   },
   "spec_quality": {
-   "at": "2026-11-26T09:15:03Z",
+   "at": "2026-11-26T09:25:54Z",
    "ok": false,
    "value": 0.868
   },
   "spend": {
-   "at": "2026-11-26T09:15:03Z",
+   "at": "2026-11-26T09:25:54Z",
    "ok": true,
    "value": 0.805
   },
   "stalled_clocks": {
-   "at": "2026-11-26T09:15:03Z",
+   "at": "2026-11-26T09:25:54Z",
    "ok": false,
    "value": 3
   },
   "ui_findings": {
-   "at": "2026-11-26T09:15:03Z",
+   "at": "2026-11-26T09:25:54Z",
    "ok": true,
    "value": 0
   },
   "unattended_horizon": {
-   "at": "2026-11-26T09:15:03Z",
+   "at": "2026-11-26T09:25:54Z",
    "ok": true,
    "value": 730
   },
   "value": {
-   "at": "2026-11-26T09:15:03Z",
+   "at": "2026-11-26T09:25:54Z",
    "ok": true,
    "value": 336.646
   }
@@ -382,12 +382,21 @@ export default {
  },
  "self_changes": [
   {
+   "after": 150,
+   "at": "2026-11-26T09:25:54Z",
+   "before": 50,
+   "reading": 0.989,
+   "var": "deploy_health",
+   "verdict": "pending",
+   "what": "search: goals.#repair-deploys.weight = 150 (untried in this episode)"
+  },
+  {
    "after": 110,
    "at": "2026-11-26T08:55:10Z",
    "before": 50,
    "reading": 0.989,
    "var": "deploy_health",
-   "verdict": "pending",
+   "verdict": "reverted",
    "what": "search: goals.#repair-deploys.weight = 110 (untried in this episode)"
   },
   {
@@ -479,15 +488,6 @@ export default {
    "var": "second_loop_keep_rate",
    "verdict": "reverted",
    "what": "act only on variables that stay out longer (fewer steps on noise)"
-  },
-  {
-   "after": 4,
-   "at": "2026-11-25T21:16:36Z",
-   "before": 3,
-   "reading": 0.0,
-   "var": "second_loop_keep_rate",
-   "verdict": "reverted",
-   "what": "give a parameter step more ticks before judging it"
   }
  ]
 };
