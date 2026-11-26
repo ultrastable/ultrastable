@@ -37,20 +37,3 @@ export function probe(snapshots, { ceilingUsd = 8, dayOfMonth, daysInMonth = 30,
   const top = [...snapshots].sort((a, b) => b.month.reads - a.month.reads).slice(0, 3).map(s => s.tenantId);
   return { status, ceilingUsd, projectedUsd: Number(projected.total.toFixed(2)), parts: projected.parts, topReaders: top, estimate: true, pricesAsOf: p.as_of };
 }
-
-// TS-10: self-metered usage against the platform's own analytics for the same tenant and period. Both readings are passed in (the
-// platform one comes from an adapter); a field the platform reading lacks is unmeasured, never equal. A relative divergence above the
-// tolerance (20 percent by default) is a finding, whichever side is larger.
-export function crossCheck(selfMetered, platform, { tolerance = 0.2, fields = ['reads', 'writes', 'requests'] } = {}) {
-  const findings = [], unmeasured = [], compared = [];
-  for (const f of fields) {
-    const mine = Number(selfMetered?.[f]), theirs = platform?.[f];
-    if (theirs === undefined || theirs === null || !Number.isFinite(Number(theirs)) || !Number.isFinite(mine)) { unmeasured.push(f); continue; }
-    const base = Math.max(mine, Number(theirs));
-    const divergence = base ? Math.abs(mine - Number(theirs)) / base : 0;
-    compared.push({ field: f, self: mine, platform: Number(theirs), divergence });
-    if (divergence > tolerance) findings.push({ field: f, self: mine, platform: Number(theirs), divergence, direction: mine < Number(theirs) ? 'under_metered' : 'over_metered' });
-  }
-  const status = findings.length ? 'diverged' : unmeasured.length ? 'unmeasured' : 'ok';
-  return { status, ok: status === 'ok', tolerance, compared, findings, unmeasured };
-}

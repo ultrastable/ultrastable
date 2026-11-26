@@ -11,11 +11,11 @@ import { Rollups } from './rollup.js';
 const isWrite = (t) => !/^\s*(select|with|pragma|explain)\b/i.test(t);
 
 export class TenantStore {
-  constructor({ tenantId, sql, budget = DEFAULT_BUDGET, now = () => new Date(), cache = null, vectorPort = null }) {
+  constructor({ tenantId, sql, budget = DEFAULT_BUDGET, now = () => new Date(), cache = null }) {
     if (!tenantId) throw new Error('tenantId required');
     this.tenantId = tenantId; this.sql = sql; this.cache = cache;
     this.guard = new BudgetGuard(sql, { budget, now });
-    this.vectors = new VectorIndex(sql, this.guard, vectorPort);
+    this.vectors = new VectorIndex(sql, this.guard);
     this.rollups = new Rollups(sql, this.guard, now);
   }
   // Metered statement. Refuses when the budget is spent or when one statement read more rows than perQueryReads (a scan).
@@ -40,6 +40,6 @@ export class TenantStore {
       throw e;
     }
   }
-  status() { return { tenantId: this.tenantId, ...this.guard.snapshot(), vectors: this.vectors.count(), vectorsPromoted: this.vectors.promoted() }; }
+  status() { return { tenantId: this.tenantId, ...this.guard.snapshot(), vectors: this.vectors.count() }; }
 }
 export { BudgetError, DEFAULT_BUDGET };

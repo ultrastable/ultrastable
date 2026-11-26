@@ -4,7 +4,6 @@
 // Cloudflare-only imports live here, never in core/. The DO reports rowsRead/rowsWritten per cursor, which feeds the BudgetGuard.
 // STATUS: tested against a fake ctx.storage.sql (tenant-do.test.js); NOT yet deployed to a real account.
 import { TenantStore, DEFAULT_BUDGET } from '../../../core/tenantstore/store.js';
-import { vectorPortFor } from './vectorize-port.js';
 
 // Wraps ctx.storage.sql. A SELECT is drained row by row and aborted once the cursor's rowsRead passes the per-query cap, so a runaway scan stops early.
 export function doSqlPort(sqlStorage, perQueryReads = DEFAULT_BUDGET.perQueryReads) {
@@ -26,7 +25,7 @@ export const makeTenantDO = (Base) => class TenantDO extends Base {
     this.budgetFor = env.TENANT_BUDGETS ? JSON.parse(env.TENANT_BUDGETS) : {};
   }
   store(tenantId) {
-    if (!this._store) this._store = new TenantStore({ tenantId, sql: doSqlPort(this.ctx.storage.sql, (this.budgetFor[tenantId] || DEFAULT_BUDGET).perQueryReads), budget: this.budgetFor[tenantId] || DEFAULT_BUDGET, cache: this.env.HOT_KV || null, vectorPort: vectorPortFor(this.env, tenantId) });
+    if (!this._store) this._store = new TenantStore({ tenantId, sql: doSqlPort(this.ctx.storage.sql, (this.budgetFor[tenantId] || DEFAULT_BUDGET).perQueryReads), budget: this.budgetFor[tenantId] || DEFAULT_BUDGET, cache: this.env.HOT_KV || null });
     return this._store;
   }
   // RPC methods (Workers RPC): the caller never gets raw SQL access across tenants because it can only reach its own stub.
@@ -36,13 +35,8 @@ export const makeTenantDO = (Base) => class TenantDO extends Base {
     catch (e) { return { ok: false, error: { code: e.code || 'error', message: String(e.message || e), limit: e.limit, period: e.period, resetsAt: e.resetsAt } }; }
   }
   query(tenantId, text, params) { return this._do(tenantId, s => s.query(text, params)); }
-  // TS-9: the vector calls spill to the tenant's own Vectorize index (binding VEC_<TENANT>) past maxVectors; with no binding they behave as before.
-  async _doAsync(tenantId, fn) {
-    try { return { ok: true, value: await fn(this.store(tenantId)) }; }
-    catch (e) { return { ok: false, error: { code: e.code || 'error', message: String(e.message || e), limit: e.limit, period: e.period, resetsAt: e.resetsAt } }; }
-  }
-  vectorUpsert(tenantId, id, v, o) { return this._doAsync(tenantId, async s => (await s.vectors.upsertAny(id, v, o)).where); }
-  vectorQuery(tenantId, v, o) { return this._doAsync(tenantId, s => s.vectors.queryAny(v, o)); }
+  vectorUpsert(tenantId, id, v, o) { return this._do(tenantId, s => s.vectors.upsert(id, v, o) ?? true); }
+  vectorQuery(tenantId, v, o) { return this._do(tenantId, s => s.vectors.query(v, o)); }
   rollupAdd(tenantId, name, key, d) { return this._do(tenantId, s => s.rollups.add(name, key, d) ?? true); }
   rollupGet(tenantId, name, key) { return this._do(tenantId, s => s.rollups.get(name, key)); }
   status(tenantId) { return this._do(tenantId, s => ({ ...s.status(), storageBytes: this.ctx.storage.sql.databaseSize })); }
