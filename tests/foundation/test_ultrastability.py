@@ -282,3 +282,16 @@ class Lessons(unittest.TestCase):
                 item.write_text(json.dumps({"id": "Q-LESSON-x", "body": f"**Status:** {status}\n\n{disp}\n"}))
                 errs = [e for e in lessons.report(d)["errors"] if "missing or closed" in e]
                 self.assertEqual(errs == [], held, (status, disp))
+
+
+class SettleProgress(unittest.TestCase):
+    """SETTLE-PROGRESS-1: a step that closes part of the gap is kept, a step that does nothing is still undone."""
+
+    def test_partial_progress_kept(self):
+        from foundation import ultrastability as u
+        c, v = {"settle_ticks": 3, "min_progress": 0.1}, {"min": 0.5, "max": None}
+        step = {"kind": "param", "value": 0.1}
+        self.assertEqual(u.settle_verdict(".", c, step, False, 3, v, 0.3), "kept")
+        self.assertEqual(u.settle_verdict(".", c, step, False, 3, v, 0.1), "reverted")
+        self.assertIsNone(u.settle_verdict(".", c, step, False, 1, v, 0.3))
+        self.assertEqual(u.settle_verdict(".", c, {"kind": "param", "value": None}, False, 3, v, 0.3), "reverted")
