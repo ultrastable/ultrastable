@@ -6,7 +6,7 @@ import { cfg, fileItem } from './lib.js';
 
 const norm = t => String(t ?? '').replace(/\s+/g, ' ').trim();
 
-export async function verifyLoop({ db, ctx, now, settings }) {
+export async function verifyLoop({ db, ctx, now, settings, guard }) {
   const s = cfg(settings);
   const channel = s.ports.channel;
   if (!channel) throw new Error('social channel port is not configured');
@@ -22,10 +22,12 @@ export async function verifyLoop({ db, ctx, now, settings }) {
     if (post && post.state !== 'pending' && (post.text === undefined || norm(post.text) === norm(r.text))) {
       await run(db, `UPDATE social_queue SET verify_status = 'verified', verified_at = ?, verify_attempts = ?, url = COALESCE(?, url) WHERE id = ?`, iso(now()), attempts, post.url ?? null, r.id);
       ok++;
+      if (guard && guard.outcome) await guard.outcome({ kind: 'post', event: 'verified', ref: `social-${r.id}` });   // US-21-R17: earned trust
     } else if (attempts >= s.verify_attempts || (post && post.state === 'pending')) {
       await run(db, `UPDATE social_queue SET verify_status = 'failed', verify_attempts = ? WHERE id = ?`, attempts, r.id);
       await fileItem(db, `SOCIALVERIFY-${r.id}`, `Social post ${r.id} could not be verified after publishing${error ? ` (${error.slice(0, 80)})` : ''}`, `post ${r.id} read back through the channel, or removed from the record with the reason`);
       failed++;
+      if (guard && guard.outcome) await guard.outcome({ kind: 'post', event: 'failed', ref: `social-${r.id}` });
     } else {
       await run(db, `UPDATE social_queue SET verify_attempts = ? WHERE id = ?`, attempts, r.id);
       waiting++;

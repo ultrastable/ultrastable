@@ -45,7 +45,7 @@ export async function applyLoop({ db, ctx, now, settings, guard }) {
     await run(db, `UPDATE cloud_requests SET attempts = attempts + 1 WHERE id = ?`, r.id);
     const res = await guard.send({ channel: CHANNEL, kind: 'deploy', recipient: `${r.provider}:${r.unit}`, content: JSON.stringify({ provider: r.provider, unit: r.unit, version: r.version }),
       idempotencyKey: r.idem_key });
-    if (res.decision === 'sent') { notes.push(`${r.unit}@${r.version} deployed`); continue; }
+    if (res.decision === 'sent') { notes.push(`${r.unit}@${r.version} deployed`); if (guard.outcome) await guard.outcome({ kind: 'deploy', event: 'verified', ref: r.idem_key }); continue; }
     if (res.decision === 'queued_for_approval') {
       await run(db, `UPDATE cloud_requests SET status = 'awaiting_approval', guard_queue_id = ?, card_id = ?, guard_reason = ? WHERE id = ?`, res.queueId, res.cardId, res.reason, r.id);
       notes.push(`${r.unit}@${r.version} waits on decision card ${res.cardId}`);
@@ -55,6 +55,7 @@ export async function applyLoop({ db, ctx, now, settings, guard }) {
       break;
     } else if (res.reason.startsWith('delivery_failed')) {                 // deploy ran and recorded its own result on the request
       notes.push(`${r.unit}@${r.version} ${res.reason.slice(0, 60)}`);
+      if (guard.outcome) await guard.outcome({ kind: 'deploy', event: 'failed', ref: r.idem_key });
     } else {
       await run(db, `UPDATE cloud_requests SET status = 'refused', guard_reason = ?, finished_at = ? WHERE id = ?`, res.reason, iso(now()), r.id);
       notes.push(`${r.unit}@${r.version} refused: ${res.reason}`);

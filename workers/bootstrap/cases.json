@@ -43,8 +43,10 @@
       "owner_card": {
         "id": "FILE-PRIORITY",
         "what": "File the priority application (sign and pay)",
+        "say": "Sign and pay for the first filing that protects your idea",
         "why": "signing and paying are the owner's legal and financial acts",
         "default": "no filing; every public output stays generic",
+        "say_default": "nothing is filed and everything the system publishes stays general",
         "probe": "filing receipt recorded in ip/evidence-log.md"
       },
       "pack": "patent"
@@ -73,8 +75,10 @@
       "owner_card": {
         "id": "FILE-PRIORITY",
         "what": "File the priority application (sign and pay), by portal when it works, else on paper or at the alternative office",
+        "say": "Sign and pay for the first filing that protects your idea",
         "why": "signing and paying are the owner's acts",
         "default": "no filing",
+        "say_default": "nothing is filed and everything the system publishes stays general",
         "probe": "filing receipt recorded in ip/evidence-log.md"
       },
       "pack": "patent"
@@ -98,8 +102,10 @@
       "owner_card": {
         "id": "ENTITY",
         "what": "Choose and register the owning entity and assign the IP to it",
+        "say": "Choose the legal owner of your work (you or a company you set up)",
         "why": "a legal act with the owner's identity and money",
         "default": "projects run in the owner's own name; entity-only programmes stay deferred",
+        "say_default": "your work stays in your own name and programmes that need a company wait",
         "probe": "entity name set in LICENSE and applicant.json"
       },
       "pack": "business"
@@ -142,8 +148,10 @@
       "owner_card": {
         "id": "ACCOUNTS",
         "what": "Create the listed accounts in the owner's name and store tokens as secrets by binding name",
+        "say": "Open the listed accounts in your name so the system can post for you",
         "why": "creating an account in the owner's name is an identity-bound act",
         "default": "posting and portal submissions stay dry-run",
+        "say_default": "the system posts and submits nothing for you",
         "probe": "the first run logs posted or sent"
       },
       "pack": "outreach"
@@ -171,8 +179,10 @@
       "owner_card": {
         "id": "ORG-TOKEN",
         "what": "Mint the org admin token with the listed scopes",
+        "say": "Allow the system to set up your code-host organization",
         "why": "minting the owner's credential is identity-bound",
         "default": "profile content staged in the repo only",
+        "say_default": "the organization's public profile is prepared but not published",
         "probe": "org-manage probe passes"
       }
     },
@@ -195,8 +205,10 @@
       "owner_card": {
         "id": "OUT-SENDER",
         "what": "Register one mailbox for outreach and store its delivery endpoint as secrets",
+        "say": "Connect one mailbox the system may send introductions from",
         "why": "creating a sending identity is the owner's act",
         "default": "dry-run",
+        "say_default": "the system sends no introductions",
         "probe": "a run logs sent for an e-mail-route target"
       },
       "pack": "outreach"

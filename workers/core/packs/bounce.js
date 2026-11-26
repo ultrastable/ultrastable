@@ -33,7 +33,7 @@ export const PARSERS = {
   },
 };
 
-export function createBounceIntake({ db, guard, now = Date.now, config = {} }) {
+export function createBounceIntake({ db, guard, now = Date.now, config = {}, onEvent = null }) {
   const softLimit = config.soft_limit ?? 3;
   const softWindowMs = (config.soft_window_days ?? 7) * 86400e3;
   const hashOf = r => sha256(`bounce|${norm(r)}`);
@@ -43,8 +43,15 @@ export function createBounceIntake({ db, guard, now = Date.now, config = {} }) {
       iso(now()), ev.pack ?? null, ev.channel, rh, ev.kind, ev.eventId ?? null, action);
   }
 
-  // One normalized event. Returns { ok, action } or { ok: false, reason }.
+  // One normalized event. Returns { ok, action } or { ok: false, reason }. A non-duplicate event is then offered to onEvent(event, result),
+  // which hands it to the packs that declare a bounce hook (US-21-R21); a failure there never changes the suppression already applied.
   async function ingestOne(ev) {
+    const r = await apply(ev);
+    if (onEvent && r.ok && r.action !== 'duplicate') { try { await onEvent(ev, r); } catch (e) { r.hook_error = String(e && e.message).slice(0, 200); } }   // the host files hook failures itself; the suppression stays applied
+    return r;
+  }
+
+  async function apply(ev) {
     if (!ev || !ev.channel || !String(ev.recipient ?? '').trim()) return { ok: false, reason: 'channel_and_recipient_required' };
     if (!KINDS.includes(ev.kind)) return { ok: false, reason: 'unknown_kind' };
     const rh = await hashOf(ev.recipient);
