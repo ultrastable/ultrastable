@@ -91,6 +91,14 @@
       "url": "policy.schema.json"
     },
     {
+      "name": "prsize.json",
+      "description": "Contract for seed/autonomy/prsize.json",
+      "fileMatch": [
+        "seed/autonomy/prsize.json"
+      ],
+      "url": "prsize.schema.json"
+    },
+    {
       "name": "retention.json",
       "description": "Contract for seed/autonomy/retention.json",
       "fileMatch": [
