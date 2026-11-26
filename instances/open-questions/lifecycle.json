@@ -15,11 +15,11 @@
   ]
  },
  "deploy": {
-  "worker": ""
+  "worker": "ultrastable-open-questions"
  },
  "verify": {
-  "url": "",
-  "expect": ""
+  "url": "https://open-questions.ultrastable.org/health",
+  "expect": "\"clock\""
  },
  "loops": [],
  "survival": {

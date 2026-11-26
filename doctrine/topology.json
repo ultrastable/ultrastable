@@ -46,6 +46,20 @@
         "state": "live",
         "what": "Replication Ledger tenant: discovered findings, machine-read attempts, leads, retraction flags, Crossref checks, standing changes, beats (instances/replication-ledger); created 2026-11-25",
         "key": "replication-ledger"
+      },
+      {
+        "name": "ultrastable-base-rates",
+        "id": "90a747d3-68ab-4930-9dad-cd7af8fe9385",
+        "state": "live",
+        "what": "base-rates tenant: beats (ultrastable/base-rates); created 2026-11-26",
+        "key": "base-rates"
+      },
+      {
+        "name": "ultrastable-open-questions",
+        "id": "7b50f33e-9493-4536-bcc2-c330dbabb6b6",
+        "state": "live",
+        "what": "open-questions tenant: beats (ultrastable/open-questions); created 2026-11-26",
+        "key": "open-questions"
       }
     ],
     "kv": [
@@ -353,7 +367,7 @@
       "main": "instances/replication-ledger/worker/index.js",
       "compatibility_date": "2026-11-12",
       "crons": [
-        "23 * * * *"
+        "9 2 * * 1"
       ],
       "public": false,
       "bindings": {
@@ -366,6 +380,54 @@
       },
       "routes": [
         "replication-ledger.ultrastable.org"
+      ]
+    },
+    {
+      "id": "ultrastable-base-rates",
+      "pulse": "https://base-rates.ultrastable.org/health",
+      "state": "live",
+      "role": "Base Rates tenant app (ultrastable/base-rates): graded base rates from cited sources; hourly beat",
+      "main": "worker/index.js",
+      "source": {
+        "repo": "ultrastable/base-rates",
+        "ref": "main"
+      },
+      "compatibility_date": "2026-11-12",
+      "crons": [
+        "8 * * * *"
+      ],
+      "public": true,
+      "bindings": {
+        "d1": {
+          "DB": "ultrastable-base-rates"
+        }
+      },
+      "routes": [
+        "base-rates.ultrastable.org"
+      ]
+    },
+    {
+      "id": "ultrastable-open-questions",
+      "pulse": "https://open-questions.ultrastable.org/health",
+      "state": "live",
+      "role": "Open Questions tenant app (ultrastable/open-questions): open research questions from cited sources; hourly beat",
+      "main": "worker/index.js",
+      "source": {
+        "repo": "ultrastable/open-questions",
+        "ref": "main"
+      },
+      "compatibility_date": "2026-11-12",
+      "crons": [
+        "9 2 * * 1"
+      ],
+      "public": true,
+      "bindings": {
+        "d1": {
+          "DB": "ultrastable-open-questions"
+        }
+      },
+      "routes": [
+        "open-questions.ultrastable.org"
       ]
     }
   ],

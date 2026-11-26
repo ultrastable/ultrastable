@@ -6,7 +6,7 @@
    "repo": "ultrastable/practical-solutions",
    "state": "own-repo",
    "why": "created as its own repository from the start",
-      "description": "Practical Solutions: evidence-based solutions to pressing global problems, each with its study and cheapest first test. A system running on Ultrastable.",
+   "description": "Practical Solutions: evidence-based solutions to pressing global problems, each with its study and cheapest first test. A system running on Ultrastable.",
    "frontend": "https://ultrastable.org",
    "vendor": {
     "seed/worker/src/knowledge.js": "vendor/seed/knowledge.js",
@@ -138,7 +138,7 @@
    ],
    "visibility": "public",
    "description": "Base Rates: a tenant system running on Ultrastable.",
-   "why": "nothing is deployed; its repository is filled from the one scaffold (TENANT-STANDARD-1: a minimal full-stack Worker with the fleet contract and a clock) and it stays planned until the platform registers and deploys its Worker (Q-SEED-base-rates)",
+   "why": "its own repository holds the code; the platform deploys its Worker from main through doctrine/topology.json, and the row turns own-repo once a deploy row and a live verify read exist (Q-SEED-base-rates)",
    "vendor": {
     "seed/worker/src/contract.js": "vendor/ultrastable/contract.js",
     "seed/worker/src/promoqueue.js": "vendor/ultrastable/promoqueue.js",
@@ -149,6 +149,18 @@
    "scaffold": {
     "beat_hours": 1,
     "noun": "base rates"
+   },
+   "worker": "ultrastable-base-rates",
+   "sandbox": {
+    "stores": [
+     "ultrastable-base-rates"
+    ],
+    "secrets": [],
+    "budget": {
+     "requests_per_day": 20000,
+     "d1_reads_per_day": 200000,
+     "ai_neurons_per_day": 1
+    }
    }
   },
   "did-it-work": {
@@ -190,7 +202,7 @@
    ],
    "visibility": "public",
    "description": "Open Questions: a tenant system running on Ultrastable.",
-   "why": "nothing is deployed; its repository is filled from the one scaffold (TENANT-STANDARD-1: a minimal full-stack Worker with the fleet contract and a clock) and it stays planned until the platform registers and deploys its Worker (Q-SEED-open-questions)",
+   "why": "its own repository holds the code; the platform deploys its Worker from main through doctrine/topology.json, and the row turns own-repo once a deploy row and a live verify read exist (Q-SEED-open-questions)",
    "vendor": {
     "seed/worker/src/contract.js": "vendor/ultrastable/contract.js",
     "seed/worker/src/promoqueue.js": "vendor/ultrastable/promoqueue.js",
@@ -201,6 +213,18 @@
    "scaffold": {
     "beat_hours": 168,
     "noun": "open questions"
+   },
+   "worker": "ultrastable-open-questions",
+   "sandbox": {
+    "stores": [
+     "ultrastable-open-questions"
+    ],
+    "secrets": [],
+    "budget": {
+     "requests_per_day": 20000,
+     "d1_reads_per_day": 200000,
+     "ai_neurons_per_day": 1
+    }
    }
   },
   "spinoffs": {
