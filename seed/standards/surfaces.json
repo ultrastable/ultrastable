@@ -750,6 +750,19 @@
       "discoverable": false,
       "description": "The knowledge graph of this system's data in plain words: size, what the system noticed, most connected records, how connected each kind is (DATAGRAPH-1).",
       "reason": "served by the tick Worker; the site serves /api/graph and /api/graph/insights publicly over a service binding"
+    },
+    {
+      "id": "plans",
+      "path": "/api/plans",
+      "methods": [
+        "GET"
+      ],
+      "kind": "rest",
+      "audience": "public",
+      "standards": [],
+      "discoverable": false,
+      "description": "PLAN-1: the goal planner's plans and their tasks; worklog list --plans joins work records to them (WORK-RECORD-1).",
+      "reason": "internal feed read by the worklog loop and the dashboard; it reports state and enables nothing"
     }
   ]
 }
