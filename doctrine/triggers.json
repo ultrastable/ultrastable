@@ -187,6 +187,15 @@
     "41 6 * * *"
    ]
   },
+  "cleanroom.yml": {
+   "events": [
+    "push",
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "47 6 * * *"
+   ]
+  },
   "cost-guard.yml": {
    "events": [
     "workflow_dispatch"

@@ -2047,6 +2047,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **A fresh seed proves the whole; no surface contradicts the axiom (CLEANROOM-1, COHERENCE-1, Rowan 2026-11-25).** \"All surfaces, all",
+   "detail": "",
+   "how": "file:.github/workflows/cleanroom.yml + file:platform/selfhost/day.mjs + file:doctrine/cleanroom.json + file:seed/scripts/humanvoice.py + file:doctrine/coherence.json + file:workers/tools/sync_agent_files.py",
+   "id": "cited-6ab268273b",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
@@ -2920,6 +2929,15 @@ export default {
    "surface": "seed/agents/AGENTS.md"
   },
   {
+   "claim": "- **A fresh seed proves the whole; no surface contradicts the axiom (CLEANROOM-1, COHERENCE-1, Rowan 2026-11-25).** \"All surfaces, all",
+   "detail": "",
+   "how": "file:.github/workflows/cleanroom.yml + file:platform/selfhost/day.mjs + file:doctrine/cleanroom.json + file:seed/scripts/humanvoice.py + file:doctrine/coherence.json + file:workers/tools/sync_agent_files.py",
+   "id": "mirror-e2926e7423",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
    "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
@@ -3604,7 +3622,7 @@ export default {
    "surface": "seed/tests/fixtures/IDEA.example.md"
   },
   {
-   "claim": "seed-tests: 104 Python and 580 Worker tests",
+   "claim": "seed-tests: 109 Python and 580 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3872,7 +3890,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 427,
-  "total": 427
+  "pass": 429,
+  "total": 429
  }
 };
