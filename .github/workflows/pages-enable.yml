@@ -14,6 +14,7 @@ on:
         required: true
 permissions:
   contents: read
+  id-token: write  # REPO-SETTINGS-1: the credential-free route through the tick Worker's administration app
 concurrency:
   group: pages-enable
   cancel-in-progress: false
@@ -33,11 +34,19 @@ jobs:
           REPOS: ${{ inputs.repos }}
         run: |
           set -uo pipefail
-          # Order: org admin token, then the lane App, then LANE_PAT (bound here; the App secrets were not, run 45817599969).
+          # Order: org admin token, lane App, LANE_PAT, then the Worker route (none of the three was bound, runs 45817599969 and 45819492862).
           tok="${ORG_ADMIN_TOKEN:-}"
           if [ -z "$tok" ] && [ -n "${LANE_APP_ID:-}" ]; then tok="$(python3 scripts/lane_credential.py org-token)" || tok=""; fi
           [ -z "$tok" ] && tok="${LANE_PAT:-}"
-          [ -n "$tok" ] || { echo "::error::no org credential (ORG_ADMIN_TOKEN, lane App or LANE_PAT)"; exit 1; }
+          if [ -z "$tok" ]; then
+            # No org credential is bound in this repository: the tick Worker's administration app does it (OIDC, no stored key).
+            bad=0
+            for r in $REPOS; do
+              [[ "$r" =~ ^ultrastable/[A-Za-z0-9._-]+$ ]] || { echo "::error::refused $r (only ultrastable/*)"; bad=1; continue; }
+              node deploy/repo-settings.mjs "$r" '{"pages":"workflow"}' || bad=1
+            done
+            exit $bad
+          fi
           echo "::add-mask::$tok"
           bad=0
           for r in $REPOS; do
