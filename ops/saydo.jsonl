@@ -341,3 +341,4 @@
 {"at": "2026-11-26T03:56:15Z", "match_share": 0.987, "summary": {"changes": {"gaps": 1, "total": 16}, "claims": {"gaps": 0, "total": 425}, "loops": {"gaps": 1, "total": 1}, "rules": {"gaps": 4, "total": 98}, "year": {"gaps": 1, "total": 2}}}
 {"at": "2026-11-26T04:06:54Z", "match_share": 0.987, "summary": {"changes": {"gaps": 1, "total": 16}, "claims": {"gaps": 0, "total": 425}, "loops": {"gaps": 1, "total": 1}, "rules": {"gaps": 4, "total": 98}, "year": {"gaps": 1, "total": 2}}}
 {"at": "2026-11-26T04:16:01Z", "match_share": 0.987, "summary": {"changes": {"gaps": 1, "total": 16}, "claims": {"gaps": 0, "total": 425}, "loops": {"gaps": 1, "total": 1}, "rules": {"gaps": 4, "total": 98}, "year": {"gaps": 1, "total": 2}}}
+{"at": "2026-11-26T04:26:15Z", "match_share": 0.987, "summary": {"changes": {"gaps": 1, "total": 16}, "claims": {"gaps": 0, "total": 425}, "loops": {"gaps": 1, "total": 1}, "rules": {"gaps": 4, "total": 98}, "year": {"gaps": 1, "total": 2}}}
