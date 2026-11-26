@@ -1505,3 +1505,4 @@
 {"age_days": 0.6, "at": "2026-11-26T13:11:10Z", "disposition": "shelved", "evidence": "open 13.8 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-FLEETMAP-seed", "rule": "ttl", "status_before": "open"}
 {"age_days": 0.9, "at": "2026-11-26T13:11:10Z", "disposition": "shelved", "evidence": "open 20.4 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-SYNC-DRIFT-practical-solutions", "rule": "ttl", "status_before": "open"}
 {"age_days": 0.3, "at": "2026-11-26T13:11:10Z", "disposition": "shelved", "evidence": "open 6.2 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-ULTRA-second_loop_keep_rate-REDESIGN", "rule": "ttl", "status_before": "open"}
+{"age_days": 0.9, "at": "2026-11-26T13:17:05Z", "disposition": "shelved", "evidence": "open 20.5 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-SYNC-DRIFT-practical-solutions", "rule": "ttl", "status_before": "open"}
