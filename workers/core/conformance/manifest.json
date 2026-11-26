@@ -4968,6 +4968,10 @@
      "name": "US-09-T03, US-09-R07 a breached cap steers the task to a free rung and does not end it; with no free rung the task is queued, not failed"
     },
     {
+     "file": "core/ladder/layers.test.js",
+     "name": "US-09-R07 with a scheduler that reports a breach the cascade serves the free rung and never ends the task"
+    },
+    {
      "file": "core/router/router.test.js",
      "name": "route maps rung to providers in fallback order (US-09-R07/R08)"
     },
@@ -4978,10 +4982,6 @@
     {
      "file": "core/router/router.test.js",
      "name": "soft cap steers down one rung (US-09-R07, T03)"
-    },
-    {
-     "file": "core/router/router.test.js",
-     "name": "hard cap still serves a free rung: a cap never ends a task while a free path exists (US-09-R07)"
     }
    ]
   },
@@ -5020,6 +5020,10 @@
     {
      "file": "core/ladder/ladder.test.js",
      "name": "US-09-R09 escalation moves one rung per measured failure, records the signal in the attempt row, is bounded, and a failed task is filed, not retried"
+    },
+    {
+     "file": "core/ladder/layers.test.js",
+     "name": "US-09-R09: a dead transport rung falls through to the next rung without spending an escalation attempt, and the loop still terminates"
     }
    ]
   },
@@ -5032,6 +5036,10 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "core/ladder/layers.test.js",
+     "name": "US-09-R10: cache hit rate and tool-call validity rate are computed per task class"
+    },
     {
      "file": "core/router/router.test.js",
      "name": "cost, tokens, latency and outcome are recorded per call (US-09-R10)"
@@ -5048,8 +5056,24 @@
    "proof": "named test",
    "tests": [
     {
-     "file": "core/ladder/ladder.test.js",
-     "name": "US-09-R11 floor: a model of a banned class is rejected at the floor with the reason and never reaches the canary"
+     "file": "core/ladder/fixes.test.js",
+     "name": "US-09-R11: a banned model written as a plain string is a finding; only the list between the markers and a marked line are skipped"
+    },
+    {
+     "file": "core/ladder/fixes.test.js",
+     "name": "US-09-R11: an exemption row naming the whole model id covers the finding for its role and never for a reader-facing role"
+    },
+    {
+     "file": "core/ladder/floorguard.test.js",
+     "name": "US-09-R11: a banned model pattern in a worker source files an item and exits 1"
+    },
+    {
+     "file": "core/ladder/floorguard.test.js",
+     "name": "US-09-R11: a banned pattern only in the deployed bundle is found (the concurrent redeploy case)"
+    },
+    {
+     "file": "core/ladder/floorguard.test.js",
+     "name": "US-09-R11: comment-only lines, the banned list own declarations and marked lines are skipped"
     }
    ]
   },
@@ -5144,9 +5168,14 @@
    "level": "L2",
    "tagged": true,
    "must": false,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/ladder/fixes.test.js",
+     "name": "US-09-R19 an entry whose source changed is a miss and is removed; with the same source an identical call is a hit with no model call"
+    }
+   ]
   },
   {
    "id": "US-09-R20",
@@ -6393,6 +6422,10 @@
     {
      "file": "core/modelport/modelport.test.js",
      "name": "US-14-R04: the port sees only whether a key is present; a missing key makes the alias unusable"
+    },
+    {
+     "file": "core/modelport/modelport.test.js",
+     "name": "US-14-R04: an endpoint failure never contains the token value, and a missing project, region or token is named"
     }
    ]
   },
@@ -6507,6 +6540,14 @@
     {
      "file": "core/modelport/modelport.test.js",
      "name": "US-14-R10: with one family available the check passes with a warning; a second family whose key is absent does not count"
+    },
+    {
+     "file": "core/modelport/modelport.test.js",
+     "name": "US-14-R10 and US-14-R16: the command line check prints the same errors as deployCheck and exits 1; a good config exits 0"
+    },
+    {
+     "file": "core/modelport/modelport.test.js",
+     "name": "US-14-R10: a Vertex alias and a Workers AI alias are two families and the check passes with a reviewer on the other"
     }
    ]
   },

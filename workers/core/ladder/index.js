@@ -124,7 +124,7 @@ async function fileItem(db, id, title, done, nowIso, priority = 10) {
     id, String(title).slice(0, 300), done, priority, nowIso, nowIso);
   return id;
 }
-const attempt = (db, a, nowIso) => run(db, `INSERT INTO ladder_attempts (task_id, task_class, layer, rung, model, cost, verified, signal, steered, at) VALUES (?,?,?,?,?,?,?,?,?,?)`,
+export const attempt = (db, a, nowIso) => run(db, `INSERT INTO ladder_attempts (task_id, task_class, layer, rung, model, cost, verified, signal, steered, at) VALUES (?,?,?,?,?,?,?,?,?,?)`,
   a.task_id, a.task_class, a.layer, a.rung ?? null, a.model ?? null, a.cost || 0, a.verified ? 1 : 0, a.signal ?? null, a.steered ? 1 : 0, nowIso);
 
 /**
@@ -134,32 +134,44 @@ const attempt = (db, a, nowIso) => run(db, `INSERT INTO ladder_attempts (task_id
  * that has a free path.
  *   run: async (row) => ({ output, cost? })     validate: (output) => ({ ok, signal? })
  */
-export async function cascade(db, { task_id, task_class, need = {}, run: runModel, validate, maxRetries = 2, capBreached = false }, { now = Date.now() } = {}) {
+export async function cascade(db, { task_id, task_class, need = {}, run: runModel, validate, maxRetries = 2, capBreached = false, scheduler = null, onQueue = null, payload = null }, { now = Date.now() } = {}) {
   const nowIso = iso(now);
   let rows = await candidates(db, { task_class, need });
   if (!rows.length) return { ok: false, refusal: 'no_capable_model', attempts: 0 };
+  // L7: the budget scheduler (./layers.js budgetScheduler) may say the class or the organization cap is breached.
+  let plan = null;
+  if (scheduler && !capBreached) { plan = await scheduler({ task_class, task_id }); capBreached = !!plan?.capBreached; }
   let steered = false;
   if (capBreached) {
     const free = rows.filter(r => r.unit_cost === 0);
     if (free.length) { rows = free; steered = true; }
-    else return { ok: false, refusal: 'cap_breached_no_free_rung', queued: true, attempts: 0 }; // degradation order: queue for the next window
+    else { // degradation order: queue for the next window
+      if (onQueue) await onQueue({ task_id, task_class, payload, not_before: plan?.queue_until ?? null });
+      return { ok: false, refusal: 'cap_breached_no_free_rung', queued: true, queue_until: plan?.queue_until ?? null, attempts: 0 };
+    }
   }
   const rungs = [...new Set(rows.map(r => r.rung))];
-  let attempts = 0, last = null;
-  for (let i = 0; i < rungs.length && attempts <= maxRetries; i++) {
-    const row = rows.find(r => r.rung === rungs[i]);
-    attempts++;
+  // LADDER-FALLTHROUGH-1: a dead transport (a provider error) does not spend the escalation attempt. The model is marked down for
+  // the rest of this call and the next row serves, so a dead rung falls through; each row is tried at most once, so it terminates.
+  const down = new Set();
+  let attempts = 0, last = null, i = 0;
+  while (i < rungs.length && attempts <= maxRetries) {
+    const row = rows.find(r => r.rung === rungs[i] && !down.has(r.model));
+    if (!row) { i++; continue; }
     let out = null, v;
     try { out = await runModel(row); v = validate(out.output); }
     catch (e) { v = { ok: false, signal: 'provider_error', detail: String(e && e.message).slice(0, 120) }; }
     const cost = (out && typeof out.cost === 'number') ? out.cost : row.unit_cost;
     const signal = v.ok ? null : v.signal;
-    await attempt(db, { task_id, task_class, layer: 'cascade', rung: row.rung, model: row.model, cost, verified: v.ok, signal, steered }, nowIso);
-    if (v.ok) return { ok: true, output: out.output, model: row.model, rung: row.rung, attempts, steered };
+    await attempt(db, { task_id, task_class, layer: 'cascade', rung: row.rung, model: row.model, cost: out ? cost : 0, verified: v.ok, signal, steered }, nowIso);
     last = { model: row.model, rung: row.rung, signal };
+    if (v.ok) return { ok: true, output: out.output, model: row.model, rung: row.rung, attempts: attempts + 1, steered };
+    if (signal === 'provider_error') { down.add(row.model); continue; }
+    attempts++;
     if (!ESCALATION_SIGNALS.includes(signal)) break; // no measured signal: no escalation
+    i++;
   }
-  const item = await fileItem(db, `TASKFAIL-${task_id}`, `Task ${task_id} (${task_class}) failed after ${attempts} attempt(s); last: ${last.model} ${last.signal || 'no measured signal'}`,
+  const item = await fileItem(db, `TASKFAIL-${task_id}`, `Task ${task_id} (${task_class}) failed after ${attempts} attempt(s); last: ${last ? `${last.model} ${last.signal || 'no measured signal'}` : 'no model could be reached'}`,
     `task ${task_id} produces an output that passes validation`, nowIso);
   return { ok: false, refusal: 'failed', item, attempts, last, steered };
 }
@@ -248,8 +260,27 @@ export async function monitor(db, { now = Date.now(), margin = 0.05, window = 20
   return out;
 }
 
-/** One guarded pass for a tick: the demotion step. Scheduled canaries and shadow answers are recorded by their callers. */
-export async function step({ db, now = Date.now(), config = {} } = {}) {
-  const demoted = await monitor(db, { now, ...config });
-  return { demoted: demoted.length, items: demoted.map(d => d.item) };
+/**
+ * One guarded pass for a tick: the demotion step, the standards gate over `config.standards_models` (after every model change, so
+ * every tick) and, when the host supplies the ports, the scheduled canaries and shadow answers (see ./schedule.js). A port the
+ * host did not supply is reported in `notes`, never silently skipped.
+ */
+export async function step({ db, now = Date.now(), config = {}, ports = {} } = {}) {
+  const { standards_models, standards_layers, canary_every_h, shadow_rate, max_per_tick, ...monitorOptions } = config;
+  const demoted = await monitor(db, { now, ...monitorOptions });
+  const out = { demoted: demoted.length, items: demoted.map(d => d.item), notes: [] };
+  if (Array.isArray(standards_models)) { const { standardsRun } = await import('./standards.js'); const s = await standardsRun(db, { models: standards_models, layers: standards_layers, now }); out.standards = { ok: s.ok, violations: s.violations.length }; }
+  if (canary_every_h != null || shadow_rate != null || ports.canary || ports.answer) {
+    const { canaryRun, shadowRun } = await import('./schedule.js');
+    const c = await canaryRun({ db, now, canary: ports.canary, every_h: canary_every_h, max: max_per_tick });
+    const sh = await shadowRun({ db, now, answer: ports.answer, label: ports.label, decisions: ports.decisions, rate: shadow_rate, max: max_per_tick });
+    out.canary = c; out.shadow = sh; out.notes.push(...c.notes, ...sh.notes);
+  }
+  return out;
 }
+
+// Attempt rows are written by the layer modules too (./layers.js, ./exemplars.js); they import this name.
+export { attempt as recordAttempt };
+// Guards with no dependency on this module. ./cache.js, ./layers.js, ./exemplars.js and ./schedule.js are imported by path.
+export * from './floorguard.js';
+export * from './standards.js';
