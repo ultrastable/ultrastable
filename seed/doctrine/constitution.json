@@ -951,6 +951,34 @@
           "has": "def reap"
         }
       ]
+    },
+    {
+      "id": "phased-large-change",
+      "rule": "Any change too large for one author runs one phased shape: audit, coverage, implement, verify by an evidence and an adversarial reader who did not write it, fix only what was found, integrate, and a final gate on the whole change. The shape is data a session, a workflow or the Worker all follow.",
+      "source": "Rowan, 2026-11-26",
+      "covers": [
+        "PHASED-WORK-1"
+      ],
+      "detector": [
+        {
+          "file": "autonomy/phases.json",
+          "has": "final_gate"
+        },
+        {
+          "file": "worker/src/orchestrate.js",
+          "has": "adversarial"
+        }
+      ],
+      "remediation": [
+        {
+          "file": "scripts/phasework.py",
+          "has": "def validate"
+        },
+        {
+          "file": "worker/src/orchestrate.js",
+          "has": "REVIEWERS"
+        }
+      ]
     }
   ]
 }

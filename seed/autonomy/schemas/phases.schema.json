@@ -1,0 +1,10 @@
+{"$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object", "required": ["rule", "phases", "limits"],
+ "properties": {"rule": {"type": "string"}, "doc": {"type": "string"},
+  "phases": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["id", "fan_out", "writes", "needs", "does", "exit"],
+   "properties": {"id": {"type": "string"}, "fan_out": {"enum": ["one", "per_slice", "per_gap", "per_slice_pair", "per_finding"]}, "writes": {"type": "boolean"},
+    "needs": {"type": "array", "items": {"type": "string"}}, "independent": {"type": "boolean"}, "reviewers": {"type": "array", "items": {"type": "string"}},
+    "max_rounds": {"type": "integer", "minimum": 1}, "gate": {"type": "string"}, "does": {"type": "string"}, "exit": {"type": "string"}}}},
+  "limits": {"type": "object", "required": ["parallel", "max_slices", "max_fix_rounds", "max_attempts"], "properties": {"parallel": {"type": "integer", "minimum": 1},
+   "max_slices": {"type": "integer", "minimum": 1}, "max_fix_rounds": {"type": "integer", "minimum": 1}, "max_attempts": {"type": "integer", "minimum": 1}}},
+  "server_phases": {"type": "object", "additionalProperties": {"type": "array", "items": {"type": "string"}}},
+  "instruction_files": {"type": "array", "items": {"type": "string"}}}}

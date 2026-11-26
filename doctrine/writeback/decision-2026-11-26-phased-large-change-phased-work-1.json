@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-26-phased-large-change-phased-work-1",
+  "kind": "decision",
+  "date": "2026-11-26",
+  "title": "Phased large change (PHASED-WORK-1)",
+  "body": "Audit, coverage, implement, verify (evidence + adversarial, independent of the author), fix, integrate, final gate are data in seed/autonomy/phases.json; scripts/phasework.py plans and advances a run; the tick Worker orchestrator runs two independent reviewers.",
+  "probe": "file:seed/scripts/phasework.py"
+ },
+ "kind": "decision",
+ "title": "Phased large change (PHASED-WORK-1)",
+ "session": ""
+}

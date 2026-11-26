@@ -83,6 +83,14 @@
       "url": "pace.schema.json"
     },
     {
+      "name": "phases.json",
+      "description": "Contract for seed/autonomy/phases.json",
+      "fileMatch": [
+        "seed/autonomy/phases.json"
+      ],
+      "url": "phases.schema.json"
+    },
+    {
       "name": "policy.json",
       "description": "Contract for seed/autonomy/policy.json",
       "fileMatch": [
