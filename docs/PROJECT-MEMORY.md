@@ -10,6 +10,8 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-26
 
+- 2026-11-26: feat: the ladder and modelport modules (W04) (#2581)
+- 2026-11-26: feat: the capability packs, with their channels, manifests and probes (PK) (#2576)
 - 2026-11-26: feat: the ghcost, governance, graph, ignorance, install and kernel modules (W03) (#2575)
 - 2026-11-26: Implement inbound webmention receiver in lite.js to record external referrals as reach (#Q-IMPROVE-webmention) (#2566)
 - 2026-11-26: findable: reading and queue items (FINDABLE-1) [skip ci]
