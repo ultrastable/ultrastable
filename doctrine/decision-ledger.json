@@ -6223,6 +6223,24 @@
    "title": "Canonical work store (WORK-RECORD-1)",
    "body": "Every request and session task is a GitHub issue labelled work with a JSON record; worklog reap re-dispatches silent records to the server lane. Session: session_0156nqDuWYsmUNpsKjgCnMH5",
    "probe": "file:foundation/worklog.py"
+  },
+  {
+   "id": "decision-2026-11-26-kernel-1-a-deployable-kernel-independently-versioned-modules",
+   "kind": "decision",
+   "date": "2026-11-26",
+   "title": "KERNEL-1: a deployable kernel, independently versioned modules, and state that is not code",
+   "body": "Owner 2026-11-26: thousands of files in one change is unsustainable. Decision: three homes. Kernel (seed): tick Worker core, bootstrap, defaults, modules.lock. Modules: each workers/core package in about ten repositories, pinned by version and hash. State: queue items, ledgers and generated data in D1 and the private ledger, not in code history. Repository shape is an essential variable the second loop reads; the lane bounds a change to one module. Nothing deleted; history kept. Measured: 4,662 tracked files, 1,241 queue items as files, 273 of the last 300 commits on main loop-written. Detail: docs/handoff/kernel-split.md",
+   "probe": "file:docs/issues/Q-KERNEL-modules.json",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "lesson-2026-11-26-slice-s11-conformance-docs-of-the-specification-work-shipped",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Slice S11-conformance-docs of the specification work shipped on its own",
+   "body": "The conformance manifest and tests, the DISCLOSE-1 and KERNEL-1 decisions and the kernel split design. REPO-SHAPE-1 (#2444) was built on main meanwhile, so its version prevails and three drafted items are superseded with evidence in docs/handoff/kernel-split.md; Q-KERNEL-modules remains.",
+   "probe": "file:workers/core/conformance/manifest.json",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
   }
  ]
 }
