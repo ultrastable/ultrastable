@@ -5871,6 +5871,15 @@
    "title": "Second loop kept no step",
    "body": "Evidence: ops/ultrastability.jsonl held 107 verdicts, all reverted, because a step counted only on a full return to bounds. Fix: settle_verdict now keeps a step that closed at least min_progress of its gap; tests/foundation/test_ultrastability.py SettleProgress.",
    "probe": "grep:foundation/ultrastability.py::def progressed"
+  },
+  {
+   "id": "lesson-2026-11-26-a-new-gate-must-read-the-standards-already-adopted-on-main",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "A new gate must read the standards already adopted on main",
+   "body": "OPEN-STANDARDS-1: the openstd gate first accepted only a $schema key, while CONFIG-SCHEMA-1 on main declares config schemas through Schema Store catalogs; the gate now accepts either, so two standards checks do not disagree about the same file. A long-lived branch is reconciled with main before each push, because a day of merges added five checks the branch had never run.",
+   "probe": "grep:foundation/openstd.py::def catalogued",
+   "session": "session_0156nqDvhf9QiAUCtw3GwA14"
   }
  ]
 }
