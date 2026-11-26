@@ -206,4 +206,6 @@ def gate_card(result: dict) -> dict | None:
         "default_in_effect": "dry run; every other stage continues",
         "prepared_by_fleet": "bootstrap/ladder.py tried every rung; reasons are in org/ladder.json",
         "closing_probe": "org/ladder.json route is not null",
+        "say": "Say which hosting account the system may use" if guard.get("mismatch") else "Sign in to your hosting account so the system can run it",
+        "say_default": "the system is prepared but not switched on; everything else carries on",
     }
