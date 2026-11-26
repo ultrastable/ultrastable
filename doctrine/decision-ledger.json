@@ -5999,6 +5999,15 @@
    "title": "A step sent back by the reviewer must keep its refused answer in view",
    "body": "The first orchestrator build dropped a reset step's change from the overlay, so the fix round saw the file on main and its EDIT blocks failed. The overlay now holds every step's last answer; test 'a reviewer finding sends only the named step back'. (Claude-Session: session_0156nqDsC5ZesQCbC7qUmBkN)",
    "probe": "grep:seed/worker/src/orchestrate.js::keeps its refused answer"
+  },
+  {
+   "id": "lesson-2026-11-26-a-pr-that-deploys-the-tick-worker-needs-a-verify-line-and-he",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "A PR that deploys the tick Worker needs a verify line, and /health has no executor field",
+   "body": "Hosted CI refused ORCHESTRATE-1 with 'deploys ultrastable-tick with no verify line' because the Handoff block lacked one. The tick's /health (ok, org, last_tick, cutover, ignition) does not expose the executor, so the only accepted line reads steps_total and proves the redeploy, not the orchestrator. A live reading of orch_runs needs an endpoint; filed against OL-20261126-1. Also: live ticks skip the execute step on a cost breach, so the orchestrator waits for a non-lean tick. (Claude-Session: session_0156nqDsC5ZesQCbC7qUmBkN)",
+   "probe": "grep:foundation/driftguard.py::with no verify line",
+   "session": "session_0156nqDsC5ZesQCbC7qUmBkN"
   }
  ]
 }
