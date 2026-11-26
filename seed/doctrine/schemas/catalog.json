@@ -27,6 +27,14 @@
       "url": "constitution.schema.json"
     },
     {
+      "name": "humanvoice.json",
+      "description": "Contract for seed/doctrine/humanvoice.json",
+      "fileMatch": [
+        "seed/doctrine/humanvoice.json"
+      ],
+      "url": "humanvoice.schema.json"
+    },
+    {
       "name": "readmes.json",
       "description": "Contract for seed/doctrine/readmes.json",
       "fileMatch": [
@@ -49,6 +57,14 @@
         "seed/doctrine/user-backend.json"
       ],
       "url": "user-backend.schema.json"
+    },
+    {
+      "name": "verification.json",
+      "description": "Contract for seed/doctrine/verification.json",
+      "fileMatch": [
+        "seed/doctrine/verification.json"
+      ],
+      "url": "verification.schema.json"
     }
   ]
 }
