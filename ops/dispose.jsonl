@@ -1296,3 +1296,4 @@
 {"age_days": 0.5, "at": "2026-11-26T03:44:52Z", "disposition": "shelved", "evidence": "open 11.8 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-SEED-replication-ledger", "rule": "ttl", "status_before": "open"}
 {"age_days": 0.3, "at": "2026-11-26T03:44:52Z", "disposition": "shelved", "evidence": "open 6.1 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-STD-OPENFEATURE", "rule": "ttl", "status_before": "open"}
 {"age_days": 0.3, "at": "2026-11-26T03:44:52Z", "disposition": "shelved", "evidence": "open 6.1 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-STD-SLSA", "rule": "ttl", "status_before": "open"}
+{"age_days": 0.3, "at": "2026-11-26T03:54:53Z", "disposition": "shelved", "evidence": "open 6.1 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-SAYDO-rules-STANDARDS-1", "rule": "ttl", "status_before": "open"}
