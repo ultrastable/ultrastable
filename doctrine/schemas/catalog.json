@@ -1203,6 +1203,22 @@
       "url": "verification.schema.json"
     },
     {
+      "name": "work-backfill.json",
+      "description": "Contract for doctrine/work-backfill.json",
+      "fileMatch": [
+        "doctrine/work-backfill.json"
+      ],
+      "url": "work-backfill.schema.json"
+    },
+    {
+      "name": "worklog.json",
+      "description": "Contract for doctrine/worklog.json",
+      "fileMatch": [
+        "doctrine/worklog.json"
+      ],
+      "url": "worklog.schema.json"
+    },
+    {
       "name": "yearfail.json",
       "description": "Contract for doctrine/yearfail.json",
       "fileMatch": [

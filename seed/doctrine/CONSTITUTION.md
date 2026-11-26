@@ -146,3 +146,6 @@ Each rule has a detector that sees it break and a remediation that repairs it, b
 - **open-standards** (Rowan, 2026-11-25): Every format the system runs on is an established open standard registered in doctrine/open-standards.json (JSON Schema for config, CloudEvents for event ledgers, OpenAPI for HTTP, Wrangler for infrastructure, Atom and JSON Feed for feeds, MCP and AGENTS.md for agents, and registered planned rows for the rest), a new bespoke format fails CI, and the baseline of older files drains by a daily loop.
   - detector: `scripts/openstd.py`, `foundation/openstd.py` (platform)
   - remediation: `scripts/openstd.py`, `foundation/openstd.py` (platform)
+- **one-work-record** (Rowan, 2026-11-26): Every request and every task a session or loop starts has one server-side work record (goal, owner, state, done check, PRs, next step, heartbeat) outside any chat or session; a record whose owner goes silent is handed back to the server lane to resume from its next step.
+  - detector: `agents/AGENTS.md`, `foundation/worklog.py` (platform)
+  - remediation: `agents/AGENTS.md`, `foundation/worklog.py` (platform)
