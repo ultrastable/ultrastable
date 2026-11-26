@@ -102,3 +102,21 @@ class SpecTruth(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class SpecTruthPlanned(unittest.TestCase):
+    def test_planned_line_is_flagged_once_its_built_when_target_exists(self):
+        with tempfile.TemporaryDirectory() as d:
+            specs, code = Path(d) / "specs", Path(d) / "code"
+            (code / "core").mkdir(parents=True)
+            specs.mkdir()
+            (specs / "US-SPEC-97-x.md").write_text(
+                "## 1. Reference implementation status\n\n"
+                "- Adapter: PLANNED, built when: `core/adapter.js`.\n"
+                "- Fetcher: PLANNED, built when: `core/a.js::fetchUsage`.\n", encoding="utf-8")
+            self.assertEqual(st.findings(specs, code), [])
+            (code / "core" / "adapter.js").write_text("x")
+            (code / "core" / "a.js").write_text("export function other() {}")
+            self.assertEqual([x["line"] for x in st.findings(specs, code)], [3])
+            (code / "core" / "a.js").write_text("export async function fetchUsage() {}")
+            self.assertEqual(len(st.findings(specs, code)), 2)

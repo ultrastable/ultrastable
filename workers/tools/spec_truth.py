@@ -37,6 +37,21 @@ def candidate_paths(text: str) -> list[str]:
     return out
 
 
+BUILT_WHEN = re.compile(r"built when:\s*`([^`\n]+)`", re.I)
+
+
+def planned_target_exists(code_dir, target: str) -> bool:
+    if "::" not in target:
+        return exists(code_dir, target)
+    rel, rx = target.split("::", 1)
+    dirs = code_dir if isinstance(code_dir, (list, tuple)) else [code_dir]
+    for d in dirs:
+        f = Path(d) / rel
+        if f.is_file() and re.search(rx, f.read_text(encoding="utf-8", errors="replace")):
+            return True
+    return False
+
+
 def exists(code_dir, rel: str) -> bool:
     if isinstance(code_dir, (list, tuple)):
         return any(exists(d, rel) for d in code_dir)
@@ -62,6 +77,11 @@ def findings(spec_dir: Path, code_dir) -> list[dict]:
             if not inside:
                 continue
             labels = [(m.start(), m.group(1)) for m in re.finditer(r"\b(BUILT|RUNNING|PLANNED)\b", line)]
+            # The reverse direction: a PLANNED line may say what would prove it built, as `built when: <path>` (backticked
+            # path, or grep form `path::regex`). Once that exists the line is stale and the spec must be updated.
+            for target in BUILT_WHEN.findall(line):
+                if planned_target_exists(code_dir, target.strip()):
+                    out.append({"spec": spec.name, "line": n, "problem": "labelled PLANNED but its built-when target now exists", "missing": [target.strip()], "text": line.strip()[:200]})
             if not labels or min(labels)[1] != "BUILT":  # the first label in the line is its status
                 continue
             paths = candidate_paths(line)
@@ -86,7 +106,7 @@ def main(argv=None) -> int:
     if a.json:
         print(json.dumps(f, indent=2))
     else:
-        print(f"{len(f)} BUILT status line(s) do not match the code")
+        print(f"{len(f)} status line(s) do not match the code")
         for x in f:
             print(f"  {x['spec']}:{x['line']}: {x['problem']}" + (f" {x['missing']}" if x.get("missing") else ""))
     return 1 if (a.strict and f) else 0

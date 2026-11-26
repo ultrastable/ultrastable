@@ -4,6 +4,7 @@
 // Cloudflare-only imports live here, never in core/. The DO reports rowsRead/rowsWritten per cursor, which feeds the BudgetGuard.
 // STATUS: tested against a fake ctx.storage.sql (tenant-do.test.js); NOT yet deployed to a real account.
 import { TenantStore, DEFAULT_BUDGET } from '../../../core/tenantstore/store.js';
+import { vectorizePort } from './vectorize-port.js';
 
 // Wraps ctx.storage.sql. A SELECT is drained row by row and aborted once the cursor's rowsRead passes the per-query cap, so a runaway scan stops early.
 export function doSqlPort(sqlStorage, perQueryReads = DEFAULT_BUDGET.perQueryReads) {
@@ -25,7 +26,7 @@ export const makeTenantDO = (Base) => class TenantDO extends Base {
     this.budgetFor = env.TENANT_BUDGETS ? JSON.parse(env.TENANT_BUDGETS) : {};
   }
   store(tenantId) {
-    if (!this._store) this._store = new TenantStore({ tenantId, sql: doSqlPort(this.ctx.storage.sql, (this.budgetFor[tenantId] || DEFAULT_BUDGET).perQueryReads), budget: this.budgetFor[tenantId] || DEFAULT_BUDGET, cache: this.env.HOT_KV || null });
+    if (!this._store) this._store = new TenantStore({ tenantId, sql: doSqlPort(this.ctx.storage.sql, (this.budgetFor[tenantId] || DEFAULT_BUDGET).perQueryReads), budget: this.budgetFor[tenantId] || DEFAULT_BUDGET, cache: this.env.HOT_KV || null, vectorPort: this.env.VECTORIZE ? vectorizePort(this.env.VECTORIZE, tenantId) : null });
     return this._store;
   }
   // RPC methods (Workers RPC): the caller never gets raw SQL access across tenants because it can only reach its own stub.

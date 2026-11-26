@@ -11,18 +11,27 @@ import { moduleList } from '../core/org/modules.js';
 const ROOT = fileURLToPath(new URL('../', import.meta.url));
 export const OUT_DIR = path.join(ROOT, 'adapters/cloudflare/migrations');
 
-export function buildMigrations({ root = ROOT, config = {} } = {}) {
-  const out = [];
-  let n = 0;
+// Append-only numbering: a file already committed keeps its number, because a deployed database records applied migrations
+// by file name and a renumbered file would be applied again. A migration added later to an earlier module gets the next
+// free number at the end instead of shifting every file after it.
+export function buildMigrations({ root = ROOT, config = {}, outDir = OUT_DIR } = {}) {
+  const committed = new Map();
+  if (existsSync(outDir)) for (const f of readdirSync(outDir).filter(x => /^\d{4}_.+\.sql$/.test(x))) committed.set(f.slice(5), f);
+  const kept = [], added = [];
   for (const m of moduleList(config)) {
     const dir = path.join(root, m.dir);
     if (!existsSync(dir)) throw new Error(`module ${m.id}: no migrations directory ${m.dir}`);
     for (const f of readdirSync(dir).filter(x => x.endsWith('.sql')).sort()) {
       const name = f.replace(/\.sql$/, '').replace(/^\d+_/, '');
-      const file = `${String(++n).padStart(4, '0')}_${m.id}_${name}.sql`;
-      out.push({ file, source: `${m.dir}/${f}`, sql: readFileSync(path.join(dir, f), 'utf8') });
+      const tail = `${m.id}_${name}.sql`;
+      const entry = { tail, source: `${m.dir}/${f}`, sql: readFileSync(path.join(dir, f), 'utf8') };
+      if (committed.has(tail)) kept.push({ ...entry, file: committed.get(tail) }); else added.push(entry);
     }
   }
+  kept.sort((a, b) => a.file.localeCompare(b.file));
+  let n = kept.length;
+  const out = kept.map(({ tail, ...e }) => e);
+  for (const { tail, ...e } of added) out.push({ ...e, file: `${String(++n).padStart(4, '0')}_${tail}` });
   return out;
 }
 

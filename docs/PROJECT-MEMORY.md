@@ -902,4 +902,4 @@ Rowan: "these are grave shortcomings of the ultra-stable system ... something's 
 
 ## 2026-11-26: specs audited against code (SPEC-TRUTH-1)
 - All 26 specs under `specs/` read against the code. Built: `program_focus_log` (`workers/core/kernel/migrations/0003_focus_log.sql`), TS-9 vector promotion and TS-10 usage cross-check (`workers/core/tenantstore/`). Spec lines that lagged the platform now name its code (repository creation, watchdog liveness, Stage 3 executor deploys, first-party analytics).
-- `checks.yml` runs `workers/tools/spec_truth.py --strict` over `specs/`, so a BUILT line naming missing code fails CI. Open loop `OL-20261126-1`: the Cloudflare migration bundle does not carry 0003 yet.
+- `checks.yml` runs `workers/tools/spec_truth.py --strict` over `specs/`: a BUILT line naming missing code fails, and so does a PLANNED line whose `built when:` target exists. The migration builder now numbers append-only (a deployed D1 records migrations by file name), so focus history ships as `0056_kernel_focus_log.sql`. `ultrastable/spec` stays retired; its README points here.

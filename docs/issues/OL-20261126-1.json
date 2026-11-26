@@ -1,11 +1,12 @@
 {
   "id": "OL-20261126-1",
   "title": "OL-20261126-1: Cloudflare migration bundle lacks kernel 0003_focus_log",
-  "body": "**Owner:** platform-engineer\n**Trigger:** next change to workers/tools/build_migrations.mjs\n**Done check:** cmd:node --test workers/core/conformance/l1.test.js\n**Prediction:** bundle_missing_kernel_focus_log <= 0 within 168 h\n**Out of scope:** renumbering migrations already applied to a deployed database.\n**Closing probe:** `node --test workers/core/org/migrations.test.js` (the committed migrations directory equals the build output)\n**Status:** open\n\nworkers/adapters/cloudflare/migrations has drift on main (that tools test fails before this change). A rebuild renumbers 46 files, so 0003_focus_log.sql is held out of the bundle until it can be added without renumbering; setFocus skips the log when the table is absent.",
+  "body": "**Owner:** platform-engineer\n**Trigger:** next change to workers/tools/build_migrations.mjs\n**Done check:** cmd:node --test workers/core/conformance/l1.test.js\n**Prediction:** bundle_missing_kernel_focus_log <= 0 within 168 h\n**Out of scope:** renumbering migrations already applied to a deployed database.\n**Closing probe:** `node --test workers/core/org/migrations.test.js` (the committed migrations directory equals the build output)\n**Status:** done: the builder numbers append-only, so 0003_focus_log ships as 0056_kernel_focus_log.sql and no committed file is renamed\n\nworkers/adapters/cloudflare/migrations has drift on main (that tools test fails before this change). A rebuild renumbers 46 files, so 0003_focus_log.sql is held out of the bundle until it can be added without renumbering; setFocus skips the log when the table is absent.",
   "labels": [
     "role:platform-engineer",
     "open-loop"
   ],
   "milestone": "Now",
-  "workstream": "Open loops"
+  "workstream": "Open loops",
+  "state": "closed"
 }

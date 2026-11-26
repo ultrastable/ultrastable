@@ -16,12 +16,16 @@ test('the committed migrations directory equals the build output (no drift)', ()
   for (const b of built) assert.equal(readFileSync(path.join(OUT_DIR, b.file), 'utf8'), b.sql, `${b.file} drifted`);
 });
 
-test('files are numbered in module order and named NNNN_<module>_<name>.sql', () => {
+test('files are numbered 1..N, named NNNN_<module>_<name>.sql, and every module appears', () => {
   const files = buildMigrations().map(b => b.file);
   files.forEach((f, i) => assert.match(f, new RegExp(`^${String(i + 1).padStart(4, '0')}_[a-z_]+_[A-Za-z0-9_]+\.sql$`)));
-  const order = MODULES.map(m => m.id);
-  const seen = files.map(f => order.find(id => f.slice(5).startsWith(id + '_')));
-  assert.deepEqual([...new Set(seen)], order);
+  for (const id of MODULES.map(m => m.id)) assert.ok(files.some(f => f.slice(5).startsWith(id + '_')), id);
+});
+
+test('numbering is append-only: a migration added to an earlier module goes last and renumbers nothing', () => {
+  const files = buildMigrations().map(b => b.file);
+  const committed = readdirSync(OUT_DIR).filter(f => f.endsWith('.sql')).sort();
+  for (const f of committed) assert.ok(files.includes(f), `${f} kept its name`);
 });
 
 test('pack migrations are added only when listed in config', () => {

@@ -48,6 +48,8 @@ Each specification ends with a Reference implementation status section using the
 | RUNNING | In production in QNFO, the first and so far only installation. Numbers are self-reported by that system and have no outside audit. |
 | PLANNED | Designed here, not built. |
 
+A PLANNED line may end with `built when: <path>` (or `<path>::<regex>`), naming what would exist once it is built. `workers/tools/spec_truth.py --strict` runs in CI and fails on a BUILT line whose named code is missing and on a PLANNED line whose built-when target now exists, so the spec has to be updated in the same change as the code.
+
 A feature may carry more than one label (for example BUILT and RUNNING). Where a document says "described, not evidenced", treat the feature as PLANNED.
 
 ## Conformance levels

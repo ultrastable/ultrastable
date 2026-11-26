@@ -127,3 +127,18 @@ test('TS-10: self-metered usage diverging over 20 percent from platform analytic
   assert.equal(r.ok, false);
   assert.deepEqual(r.findings.map(f => [f.metric, f.kind]), [['reads', 'divergence'], ['requests', 'unmeasured']]);
 });
+
+test('TS-9: the Vectorize port keeps each tenant in its own namespace and strips the id prefix on the way back', async () => {
+  const { vectorizePort } = await import('../../adapters/cloudflare/src/vectorize-port.js');
+  const calls = [];
+  const index = {
+    async upsert(v) { calls.push(['upsert', v[0]]); },
+    async query(values, o) { calls.push(['query', o]); return { matches: [{ id: 'acme:b', score: 0.9, metadata: { meta: '{"t":1}' } }] }; },
+  };
+  const p = vectorizePort(index, 'acme');
+  await p.upsert('b', [0, 1], { ns: 'n1', meta: { t: 1 } });
+  assert.equal(calls[0][1].namespace, 'acme:n1');
+  assert.equal(calls[0][1].id, 'acme:b');
+  assert.deepEqual(await p.query([0, 1], { k: 3, ns: 'n1' }), [{ id: 'b', score: 0.9, meta: { t: 1 } }]);
+  assert.equal(calls[1][1].namespace, 'acme:n1');
+});
