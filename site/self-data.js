@@ -142,12 +142,6 @@ export default {
     "id": "replication-ledger-beat",
     "source": "d1",
     "what": "Replication Ledger tenant beat (cron 23 * * * * on ultrastable-replication-ledger; a visit sparks one when the last is over two hours old): search OpenAlex for new replications and new landmark findings, file attempts under a verbatim-quote guard, check Crossref, recompute standings and log every move"
-   },
-   {
-    "expected_interval_s": 86400,
-    "id": "cleanroom",
-    "source": "workflow",
-    "what": "the daily clean-room bootstrap: a sandbox system from the seed alone, a simulated day, teardown, and the satellite agent-file coherence check"
    }
   ],
   "watchdog_escalation": [
@@ -826,7 +820,6 @@ export default {
   "ciwatch",
   "claims",
   "claims-conformance",
-  "cleanroom",
   "code-agents",
   "components",
   "containment-boundary",
@@ -2384,19 +2377,6 @@ export default {
     "workflows": [
      "supply-chain"
     ]
-   },
-   {
-    "closing_probe": "grep:foundation/cleanroom.py::def run",
-    "id": "cleanroom",
-    "kind": "governance",
-    "owner": "operations",
-    "server_owner": "github-actions",
-    "sla": "1d",
-    "summary": "CLEANROOM-1 and COHERENCE-1: a sandbox system is built from nothing but seed/ and an idea, boots, runs a simulated day and tears itself down; every capability that does not come up with zero human steps becomes a Q-CLEANROOM item. The same run checks that the agent files in the satellite repositories match their generator.",
-    "trigger": "daily workflow, every push to main that touches seed/, and on demand",
-    "workflows": [
-     "cleanroom"
-    ]
    }
   ],
   "workers": [
@@ -2485,12 +2465,6 @@ export default {
     "id": "claims",
     "loops": [
      "claims-conformance"
-    ]
-   },
-   {
-    "id": "cleanroom",
-    "loops": [
-     "cleanroom"
     ]
    },
    {
