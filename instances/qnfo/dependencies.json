@@ -1,4 +1,5 @@
 {
+  "$schema": "../../schemas/doctrine.schema.json",
  "instance": "qnfo",
  "dependencies": [
   {

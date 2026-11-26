@@ -4,74 +4,74 @@ export default {
  "credit": "W. Ross Ashby, Design for a Brain (1952)",
  "now": {
   "claims_drift": {
-   "at": "2026-11-26T06:35:10Z",
+   "at": "2026-11-26T06:58:54Z",
    "ok": true,
    "value": 0
   },
   "deploy_health": {
-   "at": "2026-11-26T06:35:10Z",
+   "at": "2026-11-26T06:58:54Z",
    "ok": true,
    "value": 1.0
   },
   "happy_paths": {
-   "at": "2026-11-26T06:35:10Z",
+   "at": "2026-11-26T06:58:54Z",
    "ok": true,
    "value": 1.0
   },
   "lessons_enforced": {
-   "at": "2026-11-26T06:35:10Z",
+   "at": "2026-11-26T06:58:54Z",
    "ok": false,
    "value": 0.692
   },
   "owner_interventions": {
-   "at": "2026-11-26T06:35:10Z",
+   "at": "2026-11-26T06:58:54Z",
    "ok": false,
-   "value": 60
+   "value": 62
   },
   "research_in_code": {
-   "at": "2026-11-26T06:35:10Z",
+   "at": "2026-11-26T06:58:54Z",
    "ok": false,
    "value": 0.621
   },
   "second_loop_keep_rate": {
-   "at": "2026-11-26T06:35:10Z",
+   "at": "2026-11-26T06:58:54Z",
    "ok": false,
    "value": 0.0
   },
   "self_shipping": {
-   "at": "2026-11-26T06:35:10Z",
+   "at": "2026-11-26T06:58:54Z",
    "ok": false,
    "value": 0.714
   },
   "spec_quality": {
-   "at": "2026-11-26T06:35:10Z",
+   "at": "2026-11-26T06:58:54Z",
    "ok": false,
-   "value": 0.0
+   "value": 0.688
   },
   "spend": {
-   "at": "2026-11-26T06:35:10Z",
+   "at": "2026-11-26T06:58:54Z",
    "ok": true,
    "value": 0.805
   },
   "stalled_clocks": {
-   "at": "2026-11-26T06:35:10Z",
+   "at": "2026-11-26T06:58:54Z",
    "ok": false,
    "value": 5
   },
   "ui_findings": {
-   "at": "2026-11-26T06:35:10Z",
+   "at": "2026-11-26T06:58:54Z",
    "ok": true,
    "value": 0
   },
   "unattended_horizon": {
-   "at": "2026-11-26T06:35:10Z",
+   "at": "2026-11-26T06:58:54Z",
    "ok": true,
    "value": 730
   },
   "value": {
-   "at": "2026-11-26T06:35:10Z",
+   "at": "2026-11-26T06:58:54Z",
    "ok": true,
-   "value": 275.776
+   "value": 300.621
   }
  },
  "readiness": {
@@ -387,7 +387,7 @@ export default {
    "before": 2,
    "reading": 0.0,
    "var": "second_loop_keep_rate",
-   "verdict": "pending",
+   "verdict": "reverted",
    "what": "search: patience_ticks = 6 (untried in this episode)"
   },
   {

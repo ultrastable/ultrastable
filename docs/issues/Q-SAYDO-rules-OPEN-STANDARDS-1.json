@@ -1,0 +1,12 @@
+{
+  "id": "Q-SAYDO-rules-OPEN-STANDARDS-1",
+  "title": "Q-SAYDO-rules-OPEN-STANDARDS-1: says OPEN-STANDARDS-1, does not do it",
+  "body": "**Owner:** executor\n**Trigger:** say-do check (SAY-DO-1) on the watchdog run\n**Done check:** cmd:python3 -m foundation saydo --probe rules:OPEN-STANDARDS-1\n**Status:** open\n\nThe system states `OPEN-STANDARDS-1` (rules) and its code does not do it: python3 -m foundation openstd --check: new bespoke format: instances/qnfo/dependencies.json (config file without $schema); declare the standard in doctrine/open-standards.json or meet it now; new bespoke format: instances/qnfo/foundation-l\n\nChange the code to do what the statement says, or change the statement to what the code does; never weaken the probe.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation saydo --probe rules:OPEN-STANDARDS-1` exits 0.\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "say-do"
+  ],
+  "milestone": "Now",
+  "workstream": "Ultrastability"
+}

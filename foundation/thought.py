@@ -73,7 +73,8 @@ def pieces(paper: dict, study: dict, cfg: dict) -> dict:
     tail = f"{hk['short']} {url}"
     room = lim - len(head) - len(tail) - 2
     out["bluesky"] = f"{head}\n{fact}\n{tail}" if len(fact) <= room else f"{head}\n{tail}"
-    out["mastodon"] = _clip(f"Common belief: {mp['belief']}\n\nWhat this system's own records show: {score} {fact}\n\n{hk['medium']} {ps['url']}", cfg["channels"]["mastodon"]["limit"] - len(url) - 2) + f"\n\n{url}"
+    tail = f"\n\n{hk['medium']} {ps['url']}\n\n{url}"   # THOUGHT-CLIP-1: the hook and spotlight are never clipped; the measured part is
+    out["mastodon"] = _clip(f"Common belief: {mp['belief']}\n\nWhat this system's own records show: {score} {fact}", cfg["channels"]["mastodon"]["limit"] - len(tail)) + tail
     rows = []
     fs = paper["findings"]
     pick = [f for f in fs if f["status"] == "met"][: cfg["max_findings_long"] - 1] + [f for f in fs if f["status"] != "met"][:1]
