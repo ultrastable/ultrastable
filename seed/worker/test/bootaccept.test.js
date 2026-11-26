@@ -35,6 +35,9 @@ test('BOOT-ACCEPT-1: a deployed seed names its URL and repository in its manifes
   assert.equal(m.url, 'https://ultrastable-seed-x.ultrastable.workers.dev');
   assert.equal(m.repo, 'https://github.com/ultrastable/x');
   assert.equal(manifest({ PUBLIC_REPO: 'a/b', GITHUB_REPOS: 'c/d' }, {}).repo, 'https://github.com/c/d', 'the real repo list wins');
+});
+
+test('BOOT-ACCEPT-1: the platform deploy sets the bindings the manifest reads', () => {
   const dep = readFileSync(new URL('../../../deploy/deploy-seed.mjs', import.meta.url), 'utf8');
   for (const b of ['name: "PUBLIC_URL"', 'name: "PUBLIC_REPO"', 'registerDirectory(url)']) assert.ok(dep.includes(b), 'deploy-seed.mjs: ' + b);
 });

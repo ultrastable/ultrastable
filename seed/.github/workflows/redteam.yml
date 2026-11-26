@@ -26,6 +26,7 @@ jobs:
           FRONTEND: ${{ vars.PUBLIC_URL }}
         run: |
           if [ -n "$FRONTEND" ]; then python3 scripts/redteam.py --run --apply --url "$FRONTEND"; else python3 scripts/redteam.py --run --apply; fi
+          python3 scripts/balance.py --gate --apply  # FLOW-BALANCE-1: one filing gate before docs/issues lands
       - name: Open the findings as a pull request
         env:
           GH_TOKEN: ${{ github.token }}

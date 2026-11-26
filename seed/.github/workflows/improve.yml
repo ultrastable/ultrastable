@@ -24,7 +24,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Improvement pass
-        run: python3 scripts/improve.py --run --apply
+        run: python3 scripts/improve.py --run --apply && python3 scripts/balance.py --gate --apply  # FLOW-BALANCE-1: one filing gate before docs/issues lands
       - name: Open the filed work as a pull request
         env:
           GH_TOKEN: ${{ github.token }}
