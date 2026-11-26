@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-26-gh-only-1-pages-is-turned-on-by-the-administration-app",
+  "kind": "decision",
+  "date": "2026-11-26",
+  "title": "GH-ONLY-1: Pages is turned on by the administration app",
+  "body": "No org credential is bound in the core repository's Actions, so pages-enable.yml falls back to the OIDC route: repo-settings with pages=workflow, applied by applyStandard in seed/worker/src/repostandard.js.",
+  "probe": "grep:seed/worker/src/repostandard.js::spec.pages === 'workflow'",
+  "session": "session_0156nqDvAsinuzbSTMG33HRB"
+ },
+ "kind": "decision",
+ "title": "GH-ONLY-1: Pages is turned on by the administration app",
+ "session": "session_0156nqDvAsinuzbSTMG33HRB"
+}

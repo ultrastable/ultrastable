@@ -305,3 +305,16 @@ test('the template route hands a token for the template repository only, behind 
   const ok = await handleAppHost(new Request('https://t/host/template-token', { method: 'POST', headers: { 'x-internal-key': w.env.INTERNAL_DEPLOY_KEY }, body: '{"repo":"ultrastable/seed"}' }), { ...w.env, DB: w.db }, { tenant: T, fetch: w.f });
   assert.equal(ok.status, 200); assert.equal((await ok.json()).token, 'scoped:seed');
 });
+
+// GH-ONLY-1: spec.pages turns Pages on with a workflow build, once.
+test('applyStandard turns Pages on when asked and leaves an existing site alone', async () => {
+  const { applyStandard } = await import('../src/repostandard.js');
+  const calls = [];
+  const mk = pagesStatus => async (m, path, body) => { calls.push([m, path, body]); if (path.endsWith('/pages') && m === 'GET') return { status: pagesStatus, json: pagesStatus === 200 ? { build_type: 'workflow' } : {} }; if (path.endsWith('/pages') && m === 'POST') return { status: 201, json: {} }; return { status: m === 'GET' ? 404 : 200, json: {} }; };
+  const r = await applyStandard(mk(404), 'ultrastable/x', { private: false }, { pages: 'workflow' });
+  assert.ok(r.changed.includes('pages'));
+  assert.ok(calls.some(c => c[0] === 'POST' && c[1] === '/repos/ultrastable/x/pages' && c[2].build_type === 'workflow'));
+  calls.length = 0;
+  const r2 = await applyStandard(mk(200), 'ultrastable/x', { private: false }, { pages: 'workflow' });
+  assert.ok(!r2.changed.includes('pages') && !calls.some(c => c[0] === 'POST' && c[1].endsWith('/pages')));
+});
