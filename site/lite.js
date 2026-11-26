@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
 /**
  * ultrastable-lite: lightweight request filtering and handlers (ULTRASTABLE-LITE-1, 2026-11-26).
  * Handles webmentions and other direct site operations.
