@@ -1,7 +1,7 @@
 {
 "schema": "research-prs/1",
 "source": "GitHub REST pulls?state=closed, last 500 closed pull requests",
-"fetched_at": "2026-11-26T21:45:17Z",
+"fetched_at": "2026-11-26T21:44:41Z",
 "note": "author: session = a code agent session under the owner's account (outside input); system-actions / system-app = opened by the system's own workflows or GitHub App",
 "prs": [
 {

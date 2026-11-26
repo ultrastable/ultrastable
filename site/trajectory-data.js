@@ -5,7 +5,7 @@ export default {
   {
    "area": "workers",
    "quiet_days": 0,
-   "recent7": 89625,
+   "recent7": 91887,
    "series": [
     0,
     0,
@@ -36,11 +36,11 @@ export default {
     0,
     0,
     0,
-    89625
+    91887
    ],
-   "share_recent": 0.238,
-   "share_trend": 0.238,
-   "total": 89625
+   "share_recent": 0.245,
+   "share_trend": 0.245,
+   "total": 91887
   },
   {
    "area": "doctrine",
@@ -118,14 +118,14 @@ export default {
     0,
     42212
    ],
-   "share_recent": 0.112,
-   "share_trend": 0.112,
+   "share_recent": 0.113,
+   "share_trend": 0.113,
    "total": 42212
   },
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 31236,
+   "recent7": 28088,
    "series": [
     0,
     0,
@@ -156,11 +156,11 @@ export default {
     0,
     0,
     0,
-    31236
+    28088
    ],
-   "share_recent": 0.083,
-   "share_trend": 0.083,
-   "total": 31236
+   "share_recent": 0.075,
+   "share_trend": 0.075,
+   "total": 28088
   },
   {
    "area": "seed/worker",
@@ -238,8 +238,8 @@ export default {
     0,
     23866
    ],
-   "share_recent": 0.063,
-   "share_trend": 0.063,
+   "share_recent": 0.064,
+   "share_trend": 0.064,
    "total": 23866
   },
   {
@@ -323,7 +323,7 @@ export default {
    "total": 17295
   }
  ],
- "at": "2026-11-26T21:45:12Z",
+ "at": "2026-11-26T21:44:38Z",
  "days": 30,
  "findings": [
   {
@@ -389,9 +389,9 @@ export default {
    0,
    0,
    0,
-   -87
+   61
   ],
-  "closed": 1443,
+  "closed": 1295,
   "opened": 1356
  },
  "loops": [
@@ -435,7 +435,7 @@ export default {
   {
    "loop": "deploys",
    "quiet_days": 0,
-   "rows": 1358,
+   "rows": 1370,
    "series": [
     0,
     0,
@@ -466,7 +466,7 @@ export default {
     14,
     0,
     212,
-    232
+    244
    ]
   },
   {
