@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-26-disclose-1-the-full-specification-is-private-the-working-pro",
+  "kind": "decision",
+  "date": "2026-11-26",
+  "title": "DISCLOSE-1: the full specification is private; the working product and the template stay public",
+  "body": "Owner 2026-11-26: the specification should not be up for grabs and the template repository carries only what a new instance needs to deploy. Decision: full specification text, rule narrative and company papers live in private ultrastable/ops (spec/, admin/, no workflow); code, public contracts, definitions, white papers, requirement IDs and conformance counts stay public; the seed is slimmed to the operating agreement plus the generated rules index. What was already public stays public (no history rewrite: the ruleset refuses force pushes). New specification text is never committed to a public branch. Detail and sequence: docs/handoff/disclosure-split.md",
+  "probe": "file:docs/handoff/disclosure-split.md",
+  "session": "session_0156nqDroaiS542i2iu8RdAL"
+ },
+ "kind": "decision",
+ "title": "DISCLOSE-1: the full specification is private; the working product and the template stay public",
+ "session": "session_0156nqDroaiS542i2iu8RdAL"
+}
