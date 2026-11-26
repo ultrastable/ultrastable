@@ -1,7 +1,7 @@
 {
- "at": "2026-11-26T13:43:51Z",
- "gaps": 7,
- "match_share": 0.987,
+ "at": "2026-11-26T13:51:18Z",
+ "gaps": 9,
+ "match_share": 0.984,
  "sources": {
   "changes": [
    {
@@ -601,10 +601,12 @@
    {
     "checks": 2,
     "external": [],
-    "failing": [],
+    "failing": [
+     "python3 -m foundation standards --check: seed/worker/src/index.js serves /api/plans, which is not registered in seed/standards/surfaces.json (new surface without discovery)"
+    ],
     "id": "STANDARDS-FIRST-1",
     "missing": [],
-    "ok": true,
+    "ok": false,
     "unmeasured": []
    },
    {
@@ -637,10 +639,12 @@
    {
     "checks": 1,
     "external": [],
-    "failing": [],
+    "failing": [
+     "python3 -m foundation decisions --check: seed/worker/src/planner.js: has a decision-shaped function with no declared metric; add `DECISION-METRIC: <point>` (and register the point) or, if it is not a decision, list it with a reason"
+    ],
     "id": "DECISIONS-1",
     "missing": [],
-    "ok": true,
+    "ok": false,
     "unmeasured": []
    },
    {
@@ -1058,7 +1062,7 @@
     "checks": 1,
     "external": [],
     "failing": [
-     "python3 -m foundation dispose --check: an open item is 96.2 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+     "python3 -m foundation dispose --check: an open item is 96.3 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
     ],
     "id": "DISPOSE-1",
     "missing": [],
@@ -1138,7 +1142,7 @@
    "total": 1
   },
   "rules": {
-   "gaps": 4,
+   "gaps": 6,
    "total": 102
   },
   "year": {
