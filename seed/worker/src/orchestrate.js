@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) Ultrastable
-// SPDX-License-Identifier: LicenseRef-Ultrastable-1.0
 // ORCHESTRATE-1 (Rowan 2026-11-26): "Why can't Ultrastable do this entirely on its own from managers/agents without any user input, 100% server-side?"
 // The single-shot executor (nativeexec.js) gives one item to one model call and takes at most three whole files back, so anything larger fails its guards
 // and is retried the same way. This module is the missing layer: a run that survives across ticks in D1 and moves through the phases a code agent
