@@ -1,0 +1,47 @@
+name: pages-enable
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# GH-ONLY-1: a system that runs on GitHub alone (Actions, Issues, Models, Pages) needs Pages switched on once, and a repository's own
+# GITHUB_TOKEN is refused that call ("Resource not accessible by integration", base-rates run 45815868265). The lane App's installation
+# token can. This turns Pages on with build_type "workflow" for each repository named, and is a no-op where it is already on.
+# budget: under 1 min per run; dispatch only
+# trigger: workflow_dispatch from the session or loop that ships a GitHub-only system
+# free-alternative: the same POST /repos/{repo}/pages from any session holding an org-admin credential
+on:
+  workflow_dispatch:
+    inputs:
+      repos:
+        description: "space-separated owner/name list"
+        required: true
+permissions:
+  contents: read
+concurrency:
+  group: pages-enable
+  cancel-in-progress: false
+jobs:
+  enable:
+    if: ${{ vars.HALT != '1' }}  # HALT-1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Turn on Pages (workflow build) for each repository
+        env:
+          LANE_APP_ID: ${{ secrets.LANE_APP_ID }}
+          LANE_APP_PRIVATE_KEY: ${{ secrets.LANE_APP_PRIVATE_KEY }}
+          ORG_ADMIN_TOKEN: ${{ secrets.ORG_ADMIN_TOKEN }}
+          REPOS: ${{ inputs.repos }}
+        run: |
+          set -uo pipefail
+          tok="${ORG_ADMIN_TOKEN:-}"
+          if [ -z "$tok" ]; then tok="$(python3 scripts/lane_credential.py org-token)" || { echo "::error::no org credential"; exit 1; }; fi
+          echo "::add-mask::$tok"
+          bad=0
+          for r in $REPOS; do
+            [[ "$r" =~ ^ultrastable/[A-Za-z0-9._-]+$ ]] || { echo "::error::refused $r (only ultrastable/*)"; bad=1; continue; }
+            if GH_TOKEN="$tok" gh api "repos/$r/pages" >/dev/null 2>&1; then
+              GH_TOKEN="$tok" gh api -X PUT "repos/$r/pages" -f build_type=workflow && echo "$r: Pages already on, build_type workflow"
+            else
+              GH_TOKEN="$tok" gh api -X POST "repos/$r/pages" -f build_type=workflow && echo "$r: Pages turned on" || { echo "::error::$r: refused"; bad=1; }
+            fi
+          done
+          exit $bad
