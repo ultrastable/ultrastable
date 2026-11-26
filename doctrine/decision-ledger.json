@@ -5913,6 +5913,32 @@
    "title": "A PR age bound measured from updatedAt never runs out",
    "body": "The lane's own labels and comments refresh updatedAt every pass, so prbound closed nothing on its first live run (stale 8.9 to 10.8 h, closable []). The bound now counts from createdAt. Session: session_0156nqDvbXYqh4M3id5voNoB",
    "probe": "grep:foundation/prbound.py::PR-BOUND-2"
+  },
+  {
+   "id": "decision-2026-11-26-pr-2276-carried-onto-main-inside-pr-2369-clean-room-and-cohe",
+   "kind": "decision",
+   "date": "2026-11-26",
+   "title": "PR 2276 carried onto main inside PR 2369: clean room and coherence kept, its system definition left out",
+   "body": "Carried from PR 2276: CLEANROOM-1 (foundation/cleanroom.py, doctrine/cleanroom.json, cleanroom.yml, platform/selfhost/day.mjs, ops/cleanroom, loop, clock and flow rows, tests), COHERENCE-1 (foundation/coherence.py, doctrine/coherence.json: contradiction lint over instruction surfaces and generated satellite agent files, duplicates, rule reach, enforcement), the contract wording in workers/agents/CONTRACT.md and sync_agent_files.py, the hosted-boot facts in seed/bootstrap/bootstrap.py and the HALT guard on four seed workflows. Left out as superseded: SYSTEM-1 (seed/doctrine/system.json and its SYSTEM.md) by SYSTEM-SPEC-1 and COLDSTART-1; BRANCH-CLEANUP-1 by REPO-STANDARD-1; the org-settings generator by ADMIT-1 and REPO-STANDARD-1; the seed-template remote compare and OL-20261125-2 by FLEET-MAP-1 (fleetmap --drift, template-publish.yml); seed/doctrine/balance.json by seed/autonomy/balance.json; seed/worker/src/stepplan.js by stepPlan in seed/worker/src/tick.js; seed/NOTICE by TEMPLATE-CODE-ONLY-1. The first clean-room run here found that a booted system's SYSTEM.md went stale (org/ paths counted as kit enforcement); seed/scripts/system.py no longer counts them, and cleanroom --run then ran 20 capabilities and 144 ticks and passes.",
+   "probe": "grep:foundation/cleanroom.py::def run",
+   "session": "session_0156nqDufLi3JgDJf3gVw7Fh"
+  },
+  {
+   "id": "lesson-2026-11-25-copies-drift-silently-unless-one-source-generates-them-and-a",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Copies drift silently unless one source generates them and a check compares",
+   "body": "On 2026-11-25 the seed template was 132 files behind seed/ (kit-sync never copies workflows), satellite agent files told agents a human must review protected changes, two tenant repos had no settings entry, a hosted boot still asked for three tokens, six seed workflows ignored HALT. Fix: seed/doctrine/system.json as the one definition, coherence --check in checks, a daily clean room. Limit: a sandbox reaches 'ticking' only; critical needs real deploys and is read from live systems.",
+   "probe": "file:foundation/coherence.py"
+  },
+  {
+   "id": "lesson-2026-11-26-q-fleetmap-seed-seed-is-the-one-source-for-the-template-agai",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Q-FLEETMAP-seed: seed/ is the one source for the template again",
+   "body": "ultrastable/seed held 12 files seed/ lacked and 3 files it had regenerated from its own state (README.md, SYSTEM.md, docs/claims.json), so every publish held files back. Carried up into seed/: the daily balance workflow and its test, the VERIFY-1 model checker (scripts/verify.py, scripts/verify_spend.mjs, doctrine/verification.json, its test) and the human-voice lint with its config. Not carried, because seed/ already holds them under another name: doctrine/balance.json (autonomy/balance.json), doctrine/system.json (autonomy/system.json), worker/src/stepplan.js and its test (tick.js and tick.test.js). Those four are template_contents.retired in doctrine/fleet-map.json and a publish removes them; SYSTEM.md is template_contents.generated, so the generator's output replaces the template's copy. NOTICE, COMMERCIAL-TERMS.md, SECURITY.md and kit-sync.yml stay template-only in keep. fleetmap --check proves each retired or generated entry is one exact path with a reason and a seed/ file behind it. Lesson: a copy that keeps a duplicate of a renamed file regenerates different output from the same generator, so a never-delete publisher needs a declared way to retire a path.",
+   "probe": "grep:doctrine/fleet-map.json::\"retired\"",
+   "session": "session_0156nqDufLi3JgDJf3gVw7Fh"
   }
  ]
 }
