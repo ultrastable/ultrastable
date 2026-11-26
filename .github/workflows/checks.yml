@@ -206,6 +206,7 @@ jobs:
           python3 -m foundation repostd --check  # REPO-STANDARD-1: one repository standard; the Worker and the kit carry the same one
           python3 -m foundation pointclick --check
           python3 -m foundation claimcode --check
+          python3 -m foundation liveclaims --check
           python3 -m foundation driftguard --check  # DRIFT-GUARD-1: every incident class has a check, detector and failure mode
           python3 -m foundation driftguard --crons  # DRIFT-GUARD-1: crons fit the account's plan limit; every tenant clock has a pulse route
           python3 -m foundation driftguard --handoff-lint  # DRIFT-GUARD-1: a deploy is verified by reading what it deployed, not the tick's /health

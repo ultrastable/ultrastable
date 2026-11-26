@@ -523,7 +523,7 @@ const MAX_QS = 4;
 const FOLLOW_UPS = [
   { ask: /add or save|their own information|sign-up/i, on: "yes", q: "Should what people add be visible to every visitor, not just themselves?", cue: "Yes for a shared list or guestbook; no for private notes." },
   { ask: /add or save|their own information|sign-up/i, on: "no", q: "Is it mainly something people read and look at?", cue: "For example an information page, a menu or a price list." },
-  { ask: /visible to every visitor/i, on: "yes", q: "Should someone be able to remove a wrong entry?", cue: "We will add a delete button next to each entry." },
+  { ask: /visible to every visitor/i, on: "yes", q: "Should someone be able to remove a wrong entry?", cue: "Each entry gets a delete button." },
   { ask: /phone/i, on: "yes", q: "Will people use it outdoors or on the move?", cue: "We will use larger text and higher contrast." },
   { ask: /phone/i, on: "no", q: "Will people mostly use it on a large screen or a laptop?", cue: "We will use the wider layout first." },
   { ask: /read and look at/i, on: "yes", q: "Does it need to stay up to date with prices, hours or dates?", cue: "We will put those in one easy place to change." }];
