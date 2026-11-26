@@ -6426,6 +6426,15 @@
    "body": "feat: the adapters and launcher (W08). One cohesive set of files inside the 60 file and 3,000 line bound, applied to the latest main from a private working copy, with generated migrations regenerated append-only.",
    "probe": "file:workers/adapters/cloudflare/src/heartbeat.test.js",
    "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "lesson-2026-11-26-slice-w09-of-the-specification-run-s-code-and-tests-shipped-",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Slice W09 of the specification run's code and tests shipped on its own",
+   "body": "feat: the workers tools, gaplint and loop closer (W09). One cohesive set of files inside the 60 file and 3,000 line bound, applied to the latest main from a private working copy, with generated migrations regenerated append-only.",
+   "probe": "file:workers/tools/fleet_graph.mjs",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
   }
  ]
 }
