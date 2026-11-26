@@ -1,0 +1,36 @@
+{
+  "$comment": "SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0. Copyright (c) 2026 Rowan Brad Quni-Gudzinas. The orchestrator row of the Scheduler port (US-SPEC-14 section 3): a Kubernetes CronJob that posts the tick every 10 minutes with the shared token from a secret. concurrencyPolicy Forbid is one tick at a time (US-14-R03); the slot guard in the Worker handler still refuses a duplicate. Apply with kubectl apply -f; set SERVICE_URL and the secret name for the cluster.",
+  "apiVersion": "batch/v1",
+  "kind": "CronJob",
+  "metadata": { "name": "ultrastable-tick", "labels": { "app": "ultrastable" } },
+  "spec": {
+    "schedule": "*/10 * * * *",
+    "concurrencyPolicy": "Forbid",
+    "startingDeadlineSeconds": 120,
+    "successfulJobsHistoryLimit": 3,
+    "failedJobsHistoryLimit": 3,
+    "jobTemplate": {
+      "spec": {
+        "backoffLimit": 1,
+        "activeDeadlineSeconds": 300,
+        "template": {
+          "spec": {
+            "restartPolicy": "Never",
+            "containers": [
+              {
+                "name": "tick",
+                "image": "curlimages/curl:8.10.1",
+                "args": ["--fail", "--silent", "--show-error", "--max-time", "120", "-X", "POST", "-H", "X-Tick-Token: $(TICK_TOKEN)", "$(SERVICE_URL)/tick"],
+                "env": [
+                  { "name": "TICK_TOKEN", "valueFrom": { "secretKeyRef": { "name": "ultrastable-tick-token", "key": "token" } } },
+                  { "name": "SERVICE_URL", "value": "https://ultrastable-tick.example.run.app" }
+                ],
+                "resources": { "requests": { "cpu": "10m", "memory": "16Mi" }, "limits": { "cpu": "100m", "memory": "64Mi" } }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

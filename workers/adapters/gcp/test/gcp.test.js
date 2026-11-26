@@ -52,3 +52,15 @@ test('the guided console runs on the Cloud Run adapter too: off without a key, o
   assert.equal(db.raw.prepare('SELECT COUNT(*) AS n FROM console_actions').get().n, 1);
   srv.close(); db.close();
 });
+
+test('US-14-R10 and US-14-R16: the Cloud Run server refuses to start when reviewer and doer resolve to one family while two are available', () => {
+  const aliases = { small: { endpoint: 'edge', model: 'm1', family: 'family-a' }, medium: { endpoint: 'edge', model: 'm2', family: 'family-a' }, large: { endpoint: 'hosted', model: 'm3', family: 'family-b' } };
+  const endpoints = { edge: async () => ({ text: '', tokens_in: 0, tokens_out: 0 }), hosted: async () => ({ text: '', tokens_in: 0, tokens_out: 0 }) };
+  const mk = roles => {
+    const db = openDb(':memory:', MIG);
+    try { return createServer({ db, config: { ...loadConfig({}), modelport: { aliases, roles } }, env: {}, org: { endpoints } }); } finally { db.close(); }
+  };
+  assert.throws(() => mk({ doer: 'medium', reviewer: 'small' }), /modelport deploy check failed: reviewer and doer both resolve to family family-a/);
+  const ok = mk({ doer: 'medium', reviewer: 'large' });
+  assert.equal(typeof ok.listen, 'function', 'a good configuration starts');
+});

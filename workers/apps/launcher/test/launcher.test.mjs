@@ -13,7 +13,7 @@ import { launcherPage } from '../src/page.js';
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const U = 'https://launch.example';
 
-test('the page is plain words: no terminal, both agreements unticked, no innerHTML, no third-party scripts', () => {
+test('US-19-R01 / US-19-R05 the page is plain words: no terminal, both agreements unticked, no innerHTML, no third-party scripts', () => {
   const html = launcherPage({ bundleSha256: 'a'.repeat(64) });
   assert.match(html, /Say what you want/);
   assert.match(html, /free for non-commercial use/i);
@@ -26,12 +26,22 @@ test('the page is plain words: no terminal, both agreements unticked, no innerHT
   assert.match(html, /id="go" disabled/);
 });
 
-test('page headers: CSP locks it down, nothing is cached', async () => {
+test('US-19-R07 / US-19-R09 / US-19-R27 page headers: CSP locks it down, nothing is cached', async () => {
   const r = await launcher.fetch(new Request(U + '/'), {});
   assert.equal(r.status, 200);
   const csp = r.headers.get('content-security-policy');
   assert.match(csp, /default-src 'none'/); assert.match(csp, /worker-src blob:/); assert.match(csp, /connect-src 'self'/); assert.match(csp, /frame-ancestors 'none'/);
   assert.equal(r.headers.get('cache-control'), 'no-store');
+  assert.equal(r.headers.get('referrer-policy'), 'no-referrer');
+});
+
+test('US-19-R27 the whole content security policy is exactly the directives the spec lists, with and without the robot check', async () => {
+  const plain = (await launcher.fetch(new Request(U + '/'), {})).headers.get('content-security-policy');
+  assert.equal(plain, "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'self'; worker-src blob:; img-src 'self' data:; form-action 'none'; base-uri 'none'; frame-ancestors 'none'");
+  const widget = (await launcher.fetch(new Request(U + '/'), { TURNSTILE_SITE_KEY: '0x4AAAAAAAAAAAAAAAAAAAAA' })).headers.get('content-security-policy');
+  assert.match(widget, /script-src 'unsafe-inline' https:\/\/challenges\.cloudflare\.com;/);
+  assert.match(widget, /frame-src https:\/\/challenges\.cloudflare\.com; form-action 'none'/);
+  assert.equal(widget.replace(' https://challenges.cloudflare.com;', ';').replace('frame-src https://challenges.cloudflare.com; ', ''), plain, 'nothing else changes when the robot check is on');
 });
 
 function withFakeCloudflare(fn) {
@@ -52,7 +62,7 @@ function withFakeCloudflare(fn) {
 const body = (extra = {}) => ({ proof: { challengeToken: 'ct', solution: { checkpoints: 'AAAA' } }, idea: 'A neighbourhood tool library for borrowing tools', outcomes: ['Book a drill'], limit: 0, acceptedCloudflareTerms: true, acceptedLicense: true, ...extra });
 const post = (b, origin = U) => new Request(U + '/api/provision', { method: 'POST', headers: { 'content-type': 'application/json', ...(origin ? { origin } : {}) }, body: JSON.stringify(b) });
 
-test('provisioning endpoint: same-origin only, both agreements required, then it works', async () => {
+test('US-19-R05 / US-19-R06 provisioning endpoint: same-origin only, both agreements required, then it works', async () => {
   await withFakeCloudflare(async (calls) => {
     assert.equal((await launcher.fetch(post(body(), null), {})).status, 403);
     assert.equal((await launcher.fetch(post(body(), 'https://evil.example'), {})).status, 403);
@@ -68,7 +78,7 @@ test('provisioning endpoint: same-origin only, both agreements required, then it
   });
 });
 
-test('abuse hooks: a rate limiter that says no stops the request before any outside call; a failed robot check too', async () => {
+test('US-19-R09 abuse hooks: a rate limiter that says no stops the request before any outside call; a failed robot check too', async () => {
   await withFakeCloudflare(async (calls) => {
     const env = { RATE_LIMITER: { limit: async () => ({ success: false }) } };
     assert.equal((await launcher.fetch(post(body()), env)).status, 429);
@@ -79,7 +89,7 @@ test('abuse hooks: a rate limiter that says no stops the request before any outs
   });
 });
 
-test('no personal data is stored: the launcher has no bindings to write to and logs nothing', async () => {
+test('US-19-R08 no personal data is stored: the launcher has no bindings to write to and logs nothing', async () => {
   const src = ['index.js', 'provision.js'].map(f => readFileSync(path.join(HERE, '..', 'src', f), 'utf8')).join('\n');
   assert.doesNotMatch(src, /console\.(log|info|warn|error)/);
   assert.doesNotMatch(src, /env\.(DB|KV|BUCKET|STORE)\b|\.put\(|localStorage|document\.cookie/);

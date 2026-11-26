@@ -13,7 +13,7 @@ function world(tick) {
   return { obj, storage, env, alarmAt: () => alarm };
 }
 
-test('the alarm runs one tick of the org, records it and re-arms itself', async () => {
+test('US-10-R27 the alarm runs one tick of the org, records it and re-arms itself', async () => {
   let ticks = 0;
   const w = world(async () => { ticks += 1; });
   await w.obj.alarm(); await w.obj.alarm();
@@ -22,7 +22,7 @@ test('the alarm runs one tick of the org, records it and re-arms itself', async 
   assert.ok(w.alarmAt() > Date.now() && w.alarmAt() <= Date.now() + TICK_EVERY_MS);
 });
 
-test('a failing tick is recorded and the heartbeat still re-arms', async () => {
+test('US-10-R27 a failing tick is recorded and the heartbeat still re-arms', async () => {
   const w = world(async () => { throw new Error('db down'); });
   await w.obj.alarm();
   assert.match((await w.storage.get('last_error')).message, /db down/);

@@ -30,9 +30,16 @@ export function buildSeedSql({ idea, outcomes, limit }, { orgName, slug, now = n
   outcomes.forEach((o, i) => {
     out.push(`INSERT OR IGNORE INTO items (id, title, kind, project, owner_role, done_check, closing_probe, priority, status) VALUES (${q(`OUT-${i + 1}`)}, ${q(o)}, 'work', ${q(`outcome-${i + 1}`)}, 'product-manager', ${q('You can see it working and it has been checked by someone other than the one who built it')}, 'manual', ${20 + i}, 'open');`);
   });
-  const card = (id, what, why, def, probe) => out.push(`INSERT OR IGNORE INTO gate_cards (id, what, why_gated, default_in_effect, prepared_by_fleet, closing_probe) VALUES (${q(id)}, ${q(what)}, ${q(why)}, ${q(def)}, ${q('The preview is online so you can see it.')}, ${q(probe)});`);
+  const card = (id, what, why, def, probe) => out.push(`INSERT OR IGNORE INTO gate_cards (id, what, why_gated, default_in_effect, prepared_by_fleet, closing_probe) VALUES (${q(id)}, ${q(what)}, ${q(why)}, ${q(def)}, ${q('The preview is online so you can see it, its key is set and its heartbeat runs every 5 minutes.')}, ${q(probe)});`);
   card('CLAIM', 'Keep this preview: sign in to Cloudflare, or create a free account, using the private link you were given', 'Only you can sign in or create an account in your name', 'The preview is deleted automatically after about an hour', 'manual');
-  card('HEARTBEAT', 'Start the scheduled heartbeat once you have claimed this preview', 'A preview cannot run scheduled work; a normal account can', 'The preview shows what you asked for but does not work on it by itself', 'manual');
+  card('HEARTBEAT', 'Keep the heartbeat going after the first hour: the preview already wakes itself every 5 minutes, and keeping it lets it carry on', 'A preview is deleted after about an hour; only you can keep it by signing in', 'The heartbeat stops when the preview is deleted, and the console you saw stays as a record of this hour', 'manual');
   if (limit > 0) card('LIMIT', `Approve spending up to ${limit} USD a month on AI models`, 'Spending is yours to approve', 'Spending stays at zero and only free models are used', 'manual');
   return out.join('\n') + '\n';
+}
+
+/** US-19-R11: once the address is known, the two cards a person closes by keeping the preview carry a machine probe instead of 'manual'. The probe is
+ *  the grammar core/runner/ownerwatch.js evaluates (`http:<url>` is true when a plain GET answers 2xx). A preview behind Cloudflare's safety page
+ *  answers automated clients with a refusal until it is claimed, so the probe stays false until then. One statement; the address holds no secret. */
+export function claimProbeSql(url) {
+  return `UPDATE gate_cards SET closing_probe = ${q(`http:${url}/health`)} WHERE id IN ('CLAIM', 'HEARTBEAT');`;
 }

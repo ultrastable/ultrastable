@@ -14,7 +14,7 @@ function reference(seed, k, g) {
   return Buffer.concat(cps);
 }
 
-test('the in-page SHA-256 chain equals the published reference algorithm', () => {
+test('US-19-R25 the in-page SHA-256 chain equals the published reference algorithm', () => {
   for (const [k, g] of [[1, 1], [3, 5], [7, 13], [20, 100]]) {
     const seed = randomBytes(32);
     assert.equal(Buffer.from(sha256ChainCheckpoints(seed, k, g)).toString('hex'), reference(seed, k, g).toString('hex'), `k=${k} g=${g}`);
@@ -30,7 +30,7 @@ test('solveChallenge decodes the base64url seed and returns standard base64 chec
   assert.equal(r.solution.checkpoints, reference(seed, 4, 9).toString('base64'));
 });
 
-test('out-of-bounds or malformed challenges are refused before any work', () => {
+test('US-19-R25 out-of-bounds or malformed challenges are refused before any work', () => {
   const seed = randomBytes(32).toString('base64url');
   assert.throws(() => solveChallenge({ challengeToken: 't', seed, k: 0, g: 5 }), /bounds/);
   assert.throws(() => solveChallenge({ challengeToken: 't', seed, k: 8001, g: 8000 }), /bounds/);
