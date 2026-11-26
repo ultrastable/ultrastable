@@ -1,23 +1,95 @@
 {
- "at": "2026-11-25T16:05:09Z",
- "open_ignition_gaps": 5,
+ "at": "2026-11-26T15:47:44Z",
+ "open_ignition_gaps": 20,
  "gaps": [
   {
-   "link": "item Q-METRIC-K relapsed after it closed",
+   "link": "item PORT-BRANCH-parked-claude-project-thread-qe98f0-b relapsed after it closed",
    "owner": "executor",
-   "closing_probe": "contracts: Q-METRIC-K passes over the hold",
+   "closing_probe": "contracts: PORT-BRANCH-parked-claude-project-thread-qe98f0-b passes over the hold",
    "source": "contracts"
   },
   {
-   "link": "item Q-RULE-no-merge-over-red-mergeaudit relapsed after it closed",
+   "link": "item Q-CIFAIL-ultrastable-executor relapsed after it closed",
    "owner": "executor",
-   "closing_probe": "contracts: Q-RULE-no-merge-over-red-mergeaudit passes over the hold",
+   "closing_probe": "contracts: Q-CIFAIL-ultrastable-executor passes over the hold",
    "source": "contracts"
   },
   {
-   "link": "item Q-SUBST-red-pr-latency relapsed after it closed",
+   "link": "item Q-RES-open-loops-2026-O4 relapsed after it closed",
    "owner": "executor",
-   "closing_probe": "contracts: Q-SUBST-red-pr-latency passes over the hold",
+   "closing_probe": "contracts: Q-RES-open-loops-2026-O4 passes over the hold",
+   "source": "contracts"
+  },
+  {
+   "link": "item Q-TEMPORAL-d01db32c1b relapsed after it closed",
+   "owner": "executor",
+   "closing_probe": "contracts: Q-TEMPORAL-d01db32c1b passes over the hold",
+   "source": "contracts"
+  },
+  {
+   "link": "item Q-TEMPORAL-e32a734d41 relapsed after it closed",
+   "owner": "executor",
+   "closing_probe": "contracts: Q-TEMPORAL-e32a734d41 passes over the hold",
+   "source": "contracts"
+  },
+  {
+   "link": "item Q-TRAJ-hotspot-foundation-__main__-py relapsed after it closed",
+   "owner": "executor",
+   "closing_probe": "contracts: Q-TRAJ-hotspot-foundation-__main__-py passes over the hold",
+   "source": "contracts"
+  },
+  {
+   "link": "item Q-SAYDO-rules-CLAIMS-1 has no machine-executable closing probe",
+   "owner": "operations",
+   "closing_probe": "contracts: Q-SAYDO-rules-CLAIMS-1 probe verdict is pass or fail",
+   "source": "contracts"
+  },
+  {
+   "link": "item Q-SAYDO-rules-CLONE-PATH-1 has no machine-executable closing probe",
+   "owner": "operations",
+   "closing_probe": "contracts: Q-SAYDO-rules-CLONE-PATH-1 probe verdict is pass or fail",
+   "source": "contracts"
+  },
+  {
+   "link": "item Q-SAYDO-rules-CODE-ONLY-ORDER has no machine-executable closing probe",
+   "owner": "operations",
+   "closing_probe": "contracts: Q-SAYDO-rules-CODE-ONLY-ORDER probe verdict is pass or fail",
+   "source": "contracts"
+  },
+  {
+   "link": "item Q-SAYDO-rules-COLDSTART-1 has no machine-executable closing probe",
+   "owner": "operations",
+   "closing_probe": "contracts: Q-SAYDO-rules-COLDSTART-1 probe verdict is pass or fail",
+   "source": "contracts"
+  },
+  {
+   "link": "item Q-SAYDO-rules-DATAGRAPH-1 has no machine-executable closing probe",
+   "owner": "operations",
+   "closing_probe": "contracts: Q-SAYDO-rules-DATAGRAPH-1 probe verdict is pass or fail",
+   "source": "contracts"
+  },
+  {
+   "link": "item Q-SAYDO-rules-DECISIONS-1 has no machine-executable closing probe",
+   "owner": "operations",
+   "closing_probe": "contracts: Q-SAYDO-rules-DECISIONS-1 probe verdict is pass or fail",
+   "source": "contracts"
+  },
+  {
+   "link": "item Q-SAYDO-rules-OPEN-STANDARDS-1 has no machine-executable closing probe",
+   "owner": "operations",
+   "closing_probe": "contracts: Q-SAYDO-rules-OPEN-STANDARDS-1 probe verdict is pass or fail",
+   "source": "contracts"
+  },
+  {
+   "link": "item Q-SAYDO-rules-STANDARDS-1 has no machine-executable closing probe",
+   "owner": "operations",
+   "closing_probe": "contracts: Q-SAYDO-rules-STANDARDS-1 probe verdict is pass or fail",
+   "source": "contracts"
+  },
+  {
+   "link": "item Q-SAYDO-rules-STANDARDS-FIRST-1 has no machine-executable closing probe",
+   "owner": "operations",
+   "closing_probe": "contracts: Q-SAYDO-rules-STANDARDS-FIRST-1 probe verdict is pass or fail",
    "source": "contracts"
   },
   {
@@ -27,7 +99,25 @@
    "source": "throughput"
   },
   {
+   "link": "guard normalized_cost worsened while k improved",
+   "owner": "operations",
+   "closing_probe": "metricloop: no guard regression on the next pass",
+   "source": "metricloop"
+  },
+  {
    "link": "guard relapse_rate_7d worsened while k improved",
+   "owner": "operations",
+   "closing_probe": "metricloop: no guard regression on the next pass",
+   "source": "metricloop"
+  },
+  {
+   "link": "guard normalized_cost worsened while open_items improved",
+   "owner": "operations",
+   "closing_probe": "metricloop: no guard regression on the next pass",
+   "source": "metricloop"
+  },
+  {
+   "link": "guard relapse_rate_7d worsened while open_items improved",
    "owner": "operations",
    "closing_probe": "metricloop: no guard regression on the next pass",
    "source": "metricloop"
