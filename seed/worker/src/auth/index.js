@@ -85,9 +85,11 @@ export const isDead = r => r.status === 'failed' && /refresh HTTP 40[01]|consent
 // OWNER-ACTS-1: the acts that need a person's sign-in, read from live credential rows instead of a typed list. No secret leaves: provider, reason, link.
 export async function ownerActs(db) {
   await store.ensureSchema(db);
-  const rows = (await db.prepare('SELECT tenant, provider, status, last_error, updated_at FROM credentials').all()).results || [];
-  const link = p => p === 'oauth:mastodon' ? '/connect/mastodon/start?instance=mstdn.science' : '/connect/' + p.replace(/^oauth:/, '').replace(/^github-.*/, 'github');  // SOCIAL-MODULE-1: one link for Mastodon, the instance is part of it
-  const acts = rows.filter(isDead).map(r => ({ id: 'signin:' + r.provider, tenant: r.tenant, provider: r.provider, reason: r.last_error, since: r.updated_at, connect: link(r.provider) }));
+  const rows = (await db.prepare('SELECT tenant, provider, status, last_error, updated_at, meta FROM credentials').all()).results || [];
+  const metaOf = r => { try { return typeof r.meta === 'string' ? JSON.parse(r.meta) : (r.meta || {}); } catch { return {}; } };
+  const link = (p, r) => { const m = r ? metaOf(r) : {}; if (m.kind === 'mcp' && m.server) return '/connect/mcp?server=' + encodeURIComponent(m.server); return link0(p); };  // a remote MCP server is reconnected by its own address
+  const link0 = p => p === 'oauth:mastodon' ? '/connect/mastodon/start?instance=mstdn.science' : '/connect/' + p.replace(/^oauth:/, '').replace(/^github-.*/, 'github');  // SOCIAL-MODULE-1: one link for Mastodon, the instance is part of it
+  const acts = rows.filter(isDead).map(r => ({ id: 'signin:' + r.provider, tenant: r.tenant, provider: r.provider, reason: r.last_error, since: r.updated_at, connect: link(r.provider, r) }));
   return acts;
 }
 

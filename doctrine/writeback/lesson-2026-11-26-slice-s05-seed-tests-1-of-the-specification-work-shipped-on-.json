@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-26-slice-s05-seed-tests-1-of-the-specification-work-shipped-on-",
+  "kind": "lesson",
+  "date": "2026-11-26",
+  "title": "Slice S05-seed-tests-1 of the specification work shipped on its own",
+  "body": "feat(seed): consent links, ensureSchema guard and the first group of specification tests. One cohesive set of files inside the 60 file and 3,000 line bound, applied to the latest main with a three-way patch and checked locally before the push.",
+  "probe": "file:seed/worker/src/auth/index.js",
+  "session": "session_0156nqDroaiS542i2iu8RdAL"
+ },
+ "kind": "lesson",
+ "title": "Slice S05-seed-tests-1 of the specification work shipped on its own",
+ "session": "session_0156nqDroaiS542i2iu8RdAL"
+}
