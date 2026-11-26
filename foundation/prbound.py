@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """PR-BOUND-1 (2026-11-26): no pull request stays open for hours. Rowan: "Why are PRs open for 10 hours? (or even 1 hour!?)".
 Root cause: the lane labelled a conflicted or failed session PR and waited for the executor, whose model calls were all failing, and nothing
 bounded the wait. This runs model-free from the lane after its merge pass:
