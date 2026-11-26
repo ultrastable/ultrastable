@@ -10,6 +10,9 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-26
 
+- 2026-11-26: feat(seed): refuse oversized changes (SMALL-CHANGE-1) (#2443)
+- 2026-11-26: docs: DISCLOSE-1, the full specification is private and the template carries only what a deploy needs (#2438)
+- 2026-11-26: feat(github): pages-enable workflow for GitHub-only systems (#2440)
 - 2026-11-26: fix(tick): index the D1 readers that hold the tick lean (READ-BUDGET-10) (#2439)
 - 2026-11-26: ORCHESTRATE-1 (PR 2432): an item the single-shot Worker executor fails starts a run kept in D1 (`orch_runs`, `orch_steps`, migration 0033) that the executor step advances one phase a tick: plan into at most six steps, work independent steps together, review with a model that wrote no step, fix the named steps, open one PR (`seed/worker/src/orchestrate.js`, provider `worker-orchestrator`). Each accepted plan is a scored decision (`orchestrator-plan`). Not yet deployed or run against a live model. Still open as OL-20261126-1: no step executes code before the PR, and every call is a free Workers AI model because the paid rung is capped at 0.
 
