@@ -6082,6 +6082,33 @@
    "body": "Evidence: python3 -m foundation reposhape --report on main reads 4,548 tracked files, 482 in the kernel (seed/) and 1,489 in state (queue items, ledgers, packets), a state share of 0.3274 against a budget of 0.25. Decision: every path has a class in doctrine/repo-shape.json; state moves to D1 items, the evidence branches and R2 under Q-SHAPE-state-out-of-git (one area per PR, archived before it leaves main, closing probe reposhape --probe state); the size of a change is gated once, by SMALL-CHANGE-1 (seed/scripts/prsize.py), and an oversize branch is carried by reposhape --split as a stack of in-budget branches sized from the same config, with the original kept. No work is deleted, and the full specification move stays with the DISCLOSE-1 session.",
    "probe": "grep:foundation/reposhape.py::def apply_split",
    "session": "session_0156nqDr9ZUpSg4xzL3vBZus"
+  },
+  {
+   "id": "lesson-2026-11-26-five-clocks-read-unmeasured-because-their-only-route-needed-",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Five clocks read unmeasured because their only route needed a Cloudflare token",
+   "body": "The transparency run had no usable CLOUDFLARE_API_TOKEN, so D1 clocks published 'unmeasured'. Clocks now fall back to the Worker's public /health; detector clock-measured (fm-loop-unmeasured) files Q-AUDIT whenever the published record holds an unmeasured clock.",
+   "probe": "file:tests/foundation/test_clock_measured.py",
+   "session": "session_0156nqDvhFqKM9k59M8vrcqM"
+  },
+  {
+   "id": "lesson-2026-11-26-loops-merged-nothing-because-the-code-agent-ran-on-a-free-pl",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Loops merged nothing because the code agent ran on a free-plan neuron cap",
+   "body": "2026-11-26: all 6 orchestrator runs failed with 'daily free neurons used' (8,123 spent vs an 8,000 default cap) on a Workers Paid account, and glm-4.7-flash replies with response '' were scored empty because textOf used ??. The code agent now has its own cap (AI_CODE_NEURONS_DAY, default 150000) and textOf takes the first non-empty field.",
+   "probe": "file:seed/worker/test/loopship.test.js",
+   "session": "session_0156nqDvhFqKM9k59M8vrcqM"
+  },
+  {
+   "id": "lesson-2026-11-26-slice-s01-migrations-of-the-specification-work-shipped-on-it",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Slice S01-migrations of the specification work shipped on its own",
+   "body": "feat(workers): migrations for the staff claims, focus log, lifecycle monitoring and governance scan. One cohesive set of files inside the 60 file and 3,000 line bound, applied to the latest main with a three-way patch and checked locally before the push.",
+   "probe": "file:workers/adapters/cloudflare/migrations/0009_kernel_focus_log.sql",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
   }
  ]
 }

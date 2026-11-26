@@ -64,11 +64,33 @@ export async function protectedProblems(db, proposal) {
   for (const c of changes) {
     const target = String(c.target || '');
     if (/^(commitment|protected):/.test(target)) reasons.push(`change ${c.op} targets ${target}`);
-    if (c.op === 'deactivate_pattern' || c.op === 'remove_phrase') {
-      const row = await first(db, `SELECT commitment FROM governance_false_stop_register WHERE pattern_key = ?`, c.pattern_key);
-      if (row && row.commitment && c.op === 'deactivate_pattern') reasons.push(`deactivating ${c.pattern_key} removes the enforcement of commitment ${row.commitment}`);
+    // US-07-R03: a signature that enforces a commitment is part of the commitment. Deactivating it, removing a phrase from it
+    // and moving its weight toward zero (or above) each weaken the enforcement; adding a phrase or a more negative weight does not.
+    if (c.op === 'deactivate_pattern' || c.op === 'remove_phrase' || c.op === 'set_weight') {
+      const row = await first(db, `SELECT commitment, weight FROM governance_false_stop_register WHERE pattern_key = ?`, c.pattern_key);
+      if (row && row.commitment) {
+        if (c.op === 'deactivate_pattern') reasons.push(`deactivating ${c.pattern_key} removes the enforcement of commitment ${row.commitment}`);
+        else if (c.op === 'remove_phrase') reasons.push(`removing a phrase from ${c.pattern_key} weakens the enforcement of commitment ${row.commitment}`);
+        else if (typeof c.weight !== 'number' || !Number.isFinite(c.weight) || c.weight > row.weight) {
+          reasons.push(`setting the weight of ${c.pattern_key} to ${c.weight} from ${row.weight} weakens the enforcement of commitment ${row.commitment}`);
+        }
+      }
     }
     if (c.op === 'set_weight' && typeof c.weight === 'number' && c.weight > 0) reasons.push(`a recognition weight above zero rewards the false stop ${c.pattern_key}`);
+  }
+  // US-07-R03: whatever the individual changes say, the change set must not leave a commitment-bearing signature with no
+  // phrase and no non-phrase route (classifier or state), because such a signature can no longer fire.
+  const registerChanges = changes.filter(c => REGISTER_OPS.includes(c.op));
+  if (registerChanges.length) {
+    let before, after = null;
+    try { before = await registerRows(db); after = applyToRows(before, registerChanges); } catch { after = null; } // an unappliable change is reported by replay
+    if (after) {
+      for (const r of after) {
+        if (!r.commitment || !r.active || r.detection_heuristic !== 'phrase' || r.phrases.length) continue;
+        if (before.some(b => b.pattern_key === r.pattern_key && !b.phrases.length)) continue; // it was already unreachable; not this change
+        reasons.push(`the change leaves ${r.pattern_key} with no phrase and no classifier or state route, so commitment ${r.commitment} would no longer be enforced`);
+      }
+    }
   }
   for (const sentence of text.split(/(?<=[.!?;])\s+|\n/)) {
     if (!WEAKEN.test(sentence)) continue;
