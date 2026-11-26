@@ -62,6 +62,8 @@ jobs:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
           if [ -n "${BASE_SHA:-}" ]; then cd seed && python3 scripts/prsize.py --range "${BASE_SHA}...HEAD"; fi
+      - name: No new specification text on the public branch (DISCLOSE-1)
+        run: python3 -m foundation disclosure --check
       - name: Workflow minute-budget lint (cheap, runs first)
         run: python3 scripts/lint_workflows.py
       - name: Public docs complete and in sync with the code (DOCS-SYNC-1)

@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/disclosure.schema.json",
+  "title": "disclosure (doctrine/disclosure.json)",
+  "description": "Contract for doctrine/disclosure.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "rule": {
+      "type": "string"
+    },
+    "public_spec_dir": {
+      "type": "string"
+    },
+    "baseline": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "baseline",
+    "public_spec_dir",
+    "rule"
+  ]
+}
