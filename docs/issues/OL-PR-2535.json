@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-2535",
+  "title": "OL-PR-2535: land or supersede pull request #2535 (ci-failed)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #2535 is ci-failed\n**Done check:** cmd:python3 -m foundation loopowner --closed 2535\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #2535 (`agent/spinoff-45866292402` at e0461f6ab8, opened by app/github-actions): spinoff: portfolio tick. The session that opened it is not its closer and is never asked to act. A check failed on the head commit. Read the failing run, then land the same change so that every check passes: push a fix to the branch, or open a new pull request from main that carries the change and close this one as superseded. Failed checks: checks, fast. Files (6): ops/decisions/ledger.jsonl, ops/spinoff/ledger.jsonl, ops/spinoff/queue.jsonl, site/spinoff-roadmap-data.js, spinoffs/registry.js, spinoffs/registry.json.\n\n**Prediction:** open_prs <= 0 within 24 h\n**Out of scope:** changing what pull request #2535 does; land it as written or carry it onto main unchanged.\n\n**Closing probe:** `python3 -m foundation loopowner --closed 2535` exits 0 (pull request #2535 is merged or closed).",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
