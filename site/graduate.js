@@ -156,7 +156,7 @@ export async function launchesInternal(request, env) {
   if (b.op === "repo-settings") {  // REPO-STANDARD-1: the credential-free route to the whole repository standard; the tick validates every field again
     if (!env.TICK || !env.INTERNAL_DEPLOY_KEY) return J({ ok: false, waiting_on: "host-binding", error: "the site has no route to the tick Worker" }, 409);
     const spec = { repo: String(b.repo || ""), description: typeof b.description === "string" ? b.description.slice(0, 300) : undefined, homepage: typeof b.homepage === "string" ? b.homepage.slice(0, 200) : undefined,
-      topics: Array.isArray(b.topics) ? b.topics.slice(0, 20).map(String) : undefined, visibility: b.visibility === "public" ? "public" : undefined, public: b.public === true, dry: b.dry === true };
+      topics: Array.isArray(b.topics) ? b.topics.slice(0, 20).map(String) : undefined, visibility: b.visibility === "public" ? "public" : undefined, public: b.public === true, dry: b.dry === true, pages: b.pages === "workflow" ? "workflow" : undefined };
     const r = await env.TICK.fetch(new Request("https://tick.internal/host/repo-settings", { method: "POST", headers: { "content-type": "application/json", "x-internal-key": env.INTERNAL_DEPLOY_KEY }, body: JSON.stringify(spec) }));
     return J((await r.json().catch(() => null)) || { ok: false, error: "tick Worker answered HTTP " + r.status }, r.status);
   }
