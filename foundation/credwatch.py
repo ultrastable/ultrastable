@@ -4,6 +4,9 @@
 
   python3 -m foundation credwatch --run [--apply] [--changed-file F]   probe each one; --apply writes ops/credwatch.json and files or closes Q-CRED items
   python3 -m foundation credwatch --check                             doctrine/credwatch.json is well formed
+  python3 -m foundation credwatch --ledger                            CRED-EXPIRY-1 (detector credential-expiry): the recorded states in
+                                                                      ops/credwatch.json; fails on a required credential not ok, any expiry
+                                                                      inside warn_days, or a credential the doctrine names that was never recorded
 
 A Cloudflare token is asked about itself (GET /user/tokens/verify returns status and expires_on); a GitHub token's expiry is the response header
 github-authentication-token-expiration; a registration's expiry is data. A value is read from the environment by name and never printed or stored.
@@ -46,6 +49,9 @@ def probe(cred: dict, env=os.environ, http=_http) -> dict:
     if cred["kind"] == "cloudflare-worker-token":  # CF-ROUTE-1: the credential is the site Worker's; the check is whether it can read the account, through the OIDC route
         from . import workerroute
         return workerroute.reaches_account(env) if workerroute.available(env) else {"state": "unmeasured", "expires": None}
+    if cred["kind"] == "worker-github-app":  # APP-CRED-WATCH-1: the tick Worker's administration App, read through the same OIDC route
+        from . import workerroute
+        return workerroute.admin_app(env) if workerroute.available(env) else {"state": "unmeasured", "expires": None}
     tok = env.get(cred["name"], "")
     if not tok:
         return {"state": "unbound", "expires": None}
@@ -123,10 +129,29 @@ def probe_recorded(name: str, root=REPO) -> int:
     return 0 if st == "ok" else 1
 
 
+def ledger(root=REPO, today=None) -> list[str]:
+    root, c = Path(root), cfg(root)
+    today = today or dt.datetime.now(dt.timezone.utc).date()
+    p = root / "ops/credwatch.json"
+    rows = {r["name"]: r for r in (json.loads(p.read_text(encoding="utf-8"))["rows"] if p.exists() else [])}
+    bad = []
+    for cred in c["credentials"]:
+        r = rows.get(cred["name"])
+        if r is None:
+            bad.append(f"{cred['name']}: never recorded by credwatch --run (unmeasured)")
+        elif r["state"] != "ok" and not cred.get("optional"):
+            bad.append(f"{cred['name']}: {r['state']}")
+    for name, r in rows.items():
+        e = _date(r.get("expires"))
+        if e and (e - today).days <= c["warn_days"]:
+            bad.append(f"{name}: expires {e.isoformat()} ({(e - today).days} days left, warning window {c['warn_days']})")
+    return bad
+
+
 def check(root=REPO) -> list[str]:
     c, bad = cfg(root), []
     for cred in c["credentials"]:
-        if cred.get("kind") not in ("cloudflare-token", "github-token", "cloudflare-worker-token") or not cred.get("name") or not cred.get("used_by"):
+        if cred.get("kind") not in ("cloudflare-token", "github-token", "cloudflare-worker-token", "worker-github-app") or not cred.get("name") or not cred.get("used_by"):
             bad.append(f"credential {cred.get('name')}: needs name, kind and used_by")
     for r in c["registrations"]:
         if not _date(r.get("expires")):
@@ -139,6 +164,10 @@ def main(argv=None) -> int:
     if "--check" in argv:
         bad = check()
         print("\n".join(bad) or "credwatch ok")
+        return 1 if bad else 0
+    if "--ledger" in argv:
+        bad = ledger()
+        print("\n".join(bad) or "credwatch ledger ok: every required credential ok, nothing inside its warning window")
         return 1 if bad else 0
     if "--probe" in argv:
         return probe_recorded(argv[argv.index("--probe") + 1])

@@ -233,6 +233,10 @@
       "class": "core",
       "role": "Owner action page: every thing only the owner can do is one sign-in and one click (OAuth, atproto OAuth, review links), tenant-agnostic (OWNERLINK-1)"
     },
+    "core/impact": {
+      "class": "core",
+      "role": "closed loop that raises a system's own impact and reach metrics: series, plateau detection, lever planning, prediction settling (IMPACT-LOOP-1)"
+    },
     "core/pace": {
       "class": "core",
       "role": "speed at near-zero cost: cadence plan, progress per run, cost per day, reach per cost ranking"
@@ -252,6 +256,10 @@
     "core/stickiness": {
       "class": "core",
       "role": "A reason to come back: freshness, breadth, depth and diversity of content measured per system, a plan to fix a stale or thin one, feeds, a what's-new page and a social queue (STICKY-1)"
+    },
+    "core/datagraph": {
+      "class": "core",
+      "role": "A knowledge graph of all of a system's data, built with no configuration: rows as nodes, references and mentioned ids as edges, hubs, communities, bridges, orphans and link leads scored against later data (DATAGRAPH-1)"
     },
     "core/flowbalance": {
       "class": "core",

@@ -15,6 +15,15 @@ const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const verifyOnly = process.argv.includes("--verify"), dryRun = process.argv.includes("--dry-run");  // --dry-run: generate, bootstrap and bundle, never call the site
 const OUT = process.env.SEED_DEPLOY_OUT || "/tmp/seed-deploy";
 const cfg = JSON.parse(readFileSync(new URL("../doctrine/seed-deploys.json", import.meta.url), "utf8"));
+// BOOT-ACCEPT-1: the repository each standing seed declares (doctrine/full-stack.json), named in its discovery manifest from the first deploy.
+const stackOf = (() => { try { const j = JSON.parse(readFileSync(new URL("../doctrine/full-stack.json", import.meta.url), "utf8")); return j.systems || j.declared || {}; } catch (e) { console.log("::warning::full-stack.json unreadable: " + e.message); return {}; } })();
+const DIRECTORY = process.env.DIRECTORY_URL || "https://ultrastable.io";
+// DISCOVER-1 from minute one: the seed's own heartbeat registers once a day at 03:00 UTC, so a new system would wait up to a day to be findable.
+// The deploy registers it at once; the directory reads the system's own manifest before listing it, so this cannot list anything untrue.
+async function registerDirectory(url) {
+  try { const r = await fetch(DIRECTORY + "/api/directory/register", { method: "POST", headers: { "content-type": "application/json", "user-agent": "ultrastable-seed-deploy/1" }, body: JSON.stringify({ url }) }); const j = await r.json().catch(() => ({})); return { status: r.status, listed: Boolean(j.listed), why: j.why || j.error || null }; }
+  catch (e) { return { status: 0, listed: false, why: String(e.message || e).slice(0, 160) }; }
+}
 const sh = (cmd, args, opts = {}) => execFileSync(cmd, args, { stdio: ["ignore", "pipe", "inherit"], encoding: "utf8", ...opts });
 async function oidc() {
   const u = process.env.ACTIONS_ID_TOKEN_REQUEST_URL, t = process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
@@ -44,15 +53,25 @@ async function probe(url) {
   }
   return { ok: false, last };
 }
+const repoOf = (slug, hostRepo) => { const r = hostRepo || (stackOf[slug] && stackOf[slug].repo) || ""; return /^[\w.-]+\/[\w.-]+$/.test(r) ? r : null; };
 const gitsha = process.env.GITHUB_SHA || sh("git", ["rev-parse", "HEAD"], { cwd: ROOT }).trim();
 const rows = [];
-for (const slug of cfg.seeds) {
+// LAUNCH-PATH-1: a visitor's app is deployed by the same route. deploy/launch-apps.mjs passes its manifest in SEED_EXTRA ([{slug, instance, ai}]);
+// with SEED_ONLY_EXTRA=1 the standing seeds are left alone, and SEED_RESULT names a file that receives the rows (nothing is appended to the ledger).
+const extra = JSON.parse(process.env.SEED_EXTRA || "[]"), onlyExtra = process.env.SEED_ONLY_EXTRA === "1";
+// SEED-HOST-1: a standing seed whose manifest names its own repository (ultrastable/<slug>) is deployed with the account's models and the host's
+// token route to that one repository, as a visitor's app is. Without them its Worker held no GitHub sign-in and every loop that reads or writes
+// the repository failed (second-tenant stood at ignition stage "ticking" for that reason); nobody is asked to connect anything.
+const ownRepo = (slug) => { try { const c = JSON.parse(readFileSync(`${ROOT}instances/${slug}/instance.json`, "utf8")).repos.canonical; return c === "ultrastable/" + slug ? c : undefined; } catch (e) { console.log(`::warning::${slug}: manifest unreadable for its repository: ${e.message}`); return undefined; } };
+const todo = (onlyExtra ? [] : cfg.seeds.map(slug => ({ slug, instance: `instances/${slug}/instance.json`, ai: true, host_repo: ownRepo(slug) }))).concat(extra);
+for (const { slug, instance, ai, host_repo } of todo) {
+  if (!/^[a-z0-9-]{1,35}$/.test(slug)) throw new Error("seed slug not allowed: " + slug);
   const name = `ultrastable-seed-${slug}`, url = SITE.replace("ultrastable-site", name);
   let row = { at: new Date().toISOString(), kind: "seed", worker: name, slug, url, sha: gitsha };
   try {
     if (!verifyOnly) {
       const out = `${OUT}/${slug}`; rmSync(out, { recursive: true, force: true }); mkdirSync(out, { recursive: true });
-      const raw = sh("python3", ["-m", "foundation", "seedadmit", "--onboard", `instances/${slug}/instance.json`, "--out", out], { cwd: ROOT });
+      const raw = sh("python3", ["-m", "foundation", "seedadmit", "--onboard", instance, "--out", out], { cwd: ROOT });
       const rep = JSON.parse(raw.slice(raw.indexOf("{")));
       if (rep.admission !== "admitted") throw new Error(`not admitted: ${(rep.reasons || []).join("; ")}`);
       row.admission = rep.admission; row.year_p10 = rep.year && rep.year.p10;
@@ -65,19 +84,21 @@ for (const slug of cfg.seeds) {
       sh("python3", ["bootstrap/bootstrap.py", "--root", ".", "--dry-run"], { cwd: out });
       if (existsSync(`${out}/org/seed.sql`)) migrations.push(sqlRow("zz-seed.sql", readFileSync(`${out}/org/seed.sql`, "utf8")));  // org, roles and metrics rows
       const mods = await collectModules(async p => readFileSync(`${out}/${p}`, "utf8"), "worker/src/index.js");
-      if (dryRun) { console.log(`PREPARED ${slug}: ${mods.length} modules, ${migrations.length} migrations`); continue; }
+      if (dryRun) { console.log(`PREPARED ${slug}: ${mods.length} modules, ${migrations.length} migrations`); rows.push({ ...row, prepared: true, modules: mods.length, live_ok: true }); continue; }
       const db = await site("/__internal/seed-d1", { name, migrations });
       const up = await site("/__internal/deploy", {
-        name, main: mods[0].name, modules: mods.map(({ name: n, src, type }) => ({ name: n, src, type })), compatibility_date: "2026-11-12", workers_dev: true, crons: ["*/10 * * * *"],
-        bindings: [{ type: "d1", name: "DB", id: db.uuid }, { type: "plain_text", name: "PUBLIC_HEALTH_ONLY", text: "1" }],
+        name, main: mods[0].name, modules: mods.map(({ name: n, src, type }) => ({ name: n, src, type })), compatibility_date: "2026-11-12", workers_dev: true, crons: ["*/10 * * * *"], ...(host_repo ? { host_repo } : {}),
+        bindings: [{ type: "d1", name: "DB", id: db.uuid }, { type: "plain_text", name: "PUBLIC_HEALTH_ONLY", text: "1" }, { type: "plain_text", name: "PUBLIC_URL", text: url }].concat(repoOf(slug, host_repo) ? [{ type: "plain_text", name: "PUBLIC_REPO", text: repoOf(slug, host_repo) }] : []).concat(ai ? [{ type: "ai", name: "AI" }] : []),  // a visitor's app gets the account's own models: no key for anyone to mint
       });
       row.version = up.version || ""; row.migrations_applied = db.applied.length;
     }
     const p = await probe(url);
     row = { ...row, uploaded: !verifyOnly, live_ok: p.ok, live_matches_commit: !verifyOnly && p.ok, status: p.status || 0, ...(p.ok ? {} : { error: "health: " + p.last }) };
+    if (p.ok && !dryRun) row.directory = await registerDirectory(url);  // recorded, read by foundation/bootaccept.py; a refusal says why
   } catch (e) { row = { ...row, live_ok: false, error: String(e.message).slice(0, 300) }; }
   console.log(row.live_ok ? "OK    " : "FAIL  ", name, row.live_ok ? url + "/health" : row.error || "no health");
   rows.push(row);
-  if (!verifyOnly) appendFileSync(new URL("../ops/deploys.jsonl", import.meta.url), JSON.stringify(row) + "\n");
+  if (!verifyOnly && !onlyExtra) appendFileSync(new URL("../ops/deploys.jsonl", import.meta.url), JSON.stringify(row) + "\n");
 }
+if (process.env.SEED_RESULT) writeFileSync(process.env.SEED_RESULT, JSON.stringify(rows));
 process.exit(rows.every(r => r.live_ok) ? 0 : 1);

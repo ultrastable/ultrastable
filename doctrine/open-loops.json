@@ -452,6 +452,11 @@
      "s": "construct the capability",
      "class": "construct",
      "na": "sudo mode is a passkey challenge GitHub issues to the owner's authenticator and cannot be built around; the default below is in effect"
+    },
+    {
+     "s": "REPO-STANDARD-1 (2026-11-25): PATCH private=false by the tick Worker's administration App, sent only for repositories named under visibility.make_public in github/repo-standard.json (seed)",
+     "result": "built (applyStandard, tested against a faked GitHub); not yet exercised live. The earlier note that the App has no scope for visibility was never tested against the API: changing visibility is covered by Administration: write, and the passkey challenge belongs to the web page, not to the REST call. Until it is read back, seed stays private WITH nine workflows, which the Free plan bills; repostd --live reports it red",
+     "class": "construct"
     }
    ],
    "reason": "changing a repository's visibility needs GitHub sudo mode, which only the owner's passkey or authenticator code opens",
@@ -495,6 +500,115 @@
    "reason": "creating a repository in the org needs an org-scoped credential (a token or an App with administration write) that only an org owner can bind",
    "default": "Unlearn keeps its code under instances/unlearn and deploy-ultrastable builds and deploys it from this repository; tenant-repos.yml retries daily and creates the repository with its history the first time any of the three routes is bound",
    "probe": "cmd:python3 -m foundation tenantrepos --probe unlearn"
+  },
+  {
+   "id": "visitor-app-repos",
+   "surfaces": [
+    {
+     "s": "the tick Worker's own credential store, read from D1 ultrastable-org on 2026-11-25",
+     "result": "it holds a live administration-only App token (github-admin, refreshed hourly) and the code App token (github-app, writing to main the same hour); the earlier gate tenant-repo-unlearn recorded this route as not tried",
+     "class": "sibling-workers"
+    },
+    {
+     "s": "built on that: seed/worker/src/apprepos.js creates the repository with the administration App and writes to it with the code App; deploy/launch-apps.mjs reaches it through the site worker",
+     "result": "passes against a faked GitHub (seed/worker/test/apprepos.test.js, site/launchpath.test.mjs); GitHub's real answer to creating a repository with this App is first read on the daily run after deploy",
+     "class": "construct"
+    },
+    {
+     "s": "ORG_ADMIN_TOKEN, LANE_PAT and the lane App in tenant-repos.yml",
+     "result": "all three were unbound on 2026-11-22 (gate tenant-repo-unlearn); no longer used for visitor apps",
+     "class": "existing-credentials"
+    },
+    {
+     "s": "GITHUB_TOKEN of the workflow",
+     "result": "scoped to this repository only; GitHub does not let it create a repository in the org",
+     "class": "alternate-channel"
+    },
+    {
+     "s": "route around the repository: deploy the visitor's system from the kernel through the site worker's OIDC route",
+     "result": "built; a dry run on 2026-11-25 admitted the policy atlas idea (year p10 730 days) and bundled 97 modules with no credential",
+     "class": "alternate-channel"
+    },
+    {
+     "s": "git history of tenant-repos.yml",
+     "na": "no visitor app repository has been created before this change, so there is no working configuration to restore",
+     "class": "prior-working-config"
+    }
+   ],
+   "reason": "whether GitHub lets the administration App create a repository in the org, and whether the code App's installation covers a repository created after it was installed, is only known from GitHub's live answer; if either is refused the remaining act is the owner's one click at /connect/github-admin or /connect/repos",
+   "default": "every visitor app is live at ultrastable.io/s/<id> and gets its own deployed system; its change requests and ownership request are kept in its launch record with the exact thing waited on (admin-app, admin-app-scope, code-app-scope); each daily run tries again and finishes the repository the first time GitHub allows it",
+   "probe": "cmd:node deploy/launch-apps.mjs --routes"
+  },
+  {
+   "id": "org-admin-settings",
+   "surfaces": [
+    {
+     "s": "ORG_ADMIN_TOKEN in org-settings.yml",
+     "result": "unbound; the weekly run was red on every run since 2026-11-16 with nothing it could act on",
+     "class": "existing-credentials"
+    },
+    {
+     "s": "GITHUB_TOKEN of the workflow",
+     "result": "may not change repository settings or org fields",
+     "class": "alternate-channel"
+    },
+    {
+     "s": "the tick Worker's credential store (D1 ultrastable-org), read 2026-11-25",
+     "result": "holds a live administration-only App token (github-admin), the same one that now creates tenant repositories (TENANT-REPO-2)",
+     "class": "sibling-workers"
+    },
+    {
+     "s": "the tick Worker's administration App (github-admin), reached over the site's OIDC route",
+     "result": "built (seed/worker/src/apprepos.js ensureRepoSettings, deploy/repo-settings.mjs): sets delete_branch_on_merge and allow_auto_merge on every org repository; used by org-settings.yml and scripts/branch_cleanup.py when the token is absent",
+     "class": "construct"
+    },
+    {
+     "s": "git history of org-settings.yml",
+     "na": "the workflow has never run green; there is no working configuration to restore",
+     "class": "prior-working-config"
+    },
+    {
+     "s": "REPO-STANDARD-1 (2026-11-25): the same administration App, now asked for the whole standard on every repository GitHub lists (seed/worker/src/repostandard.js applyStandard; foundation/repostd.py --apply in org-settings.yml, daily)",
+     "result": "built and tested against a faked GitHub (seed/worker/test/apprepos.test.js, tests/foundation/test_repostd.py); GitHub's real answer to the App writing description, homepage, topics, security settings and a ruleset is first read on the run after deploy; a refused step is printed by name and the run is red",
+     "class": "construct"
+    }
+   ],
+   "reason": "org profile fields (name, blog, default permission) need an org-admin credential that only the owner can mint; every repository-level setting is in reach of the administration App",
+   "default": "every repository GitHub lists is put on the one standard (github/repo-standard.json: squash-only merges, auto-merge, delete_branch_on_merge, security, main ruleset, computed description, homepage and topics) by the admin App each day and when a repository is created; `python3 -m foundation repostd --live` reads it back and says what is unmeasured; org profile fields stay as they are on GitHub",
+   "probe": "cmd:python3 scripts/branch_cleanup.py --check"
+  },
+  {
+   "id": "repo-deployments-grant",
+   "surfaces": [
+    {
+     "s": "the run's own GITHUB_TOKEN in deploy-ultrastable.yml, with permissions deployments: write",
+     "result": "writes the Deployment and its status (environment production, environment_url) on ultrastable/ultrastable; it cannot write on another repository",
+     "class": "existing-credentials"
+    },
+    {
+     "s": "the tick Worker's code App (github-app), asked for a one-hour token for the one tenant repository with deployments: write (seed/worker/src/apprepos.js recordDeployment, reached over the site's OIDC route, op repo-deployment)",
+     "result": "built and tested against a faked GitHub (seed/worker/test/apprepos.test.js, test/record-deployments.test.mjs); whether the App's installation carries the Deployments: write grant is first read on the deploy after merge; when it does not, GitHub answers 422 and the route returns waiting_on code-app-scope with that sentence",
+     "class": "sibling-workers"
+    },
+    {
+     "s": "the tick Worker's administration App (github-admin)",
+     "na": "administration-only by design (REPOS-1); the Deployments API is not under Administration",
+     "class": "alternate-channel"
+    },
+    {
+     "s": "git history",
+     "na": "no deploy path has ever recorded a GitHub Deployment; there is no earlier configuration to restore",
+     "class": "prior-working-config"
+    },
+    {
+     "s": "route around it: the repository's About website (homepage) is set to the live URL by the administration App (REPO-STANDARD-1)",
+     "result": "built; this is the default in effect, and it shows where the code runs on the repository page without the Deployments grant",
+     "class": "construct"
+    }
+   ],
+   "reason": "adding a permission (Deployments: write) to the org's GitHub App is accepted on GitHub by the org owner's own account; no code can accept it",
+   "default": "every repository's About website is its live URL (repostd --apply, daily); the core repository's Deployments panel is written by the deploy run's own token; a tenant repository's panel is written as soon as the App carries the grant, with no further change",
+   "probe": "cmd:python3 -m foundation repostd --check"
   }
  ]
 }

@@ -73,7 +73,26 @@ def record_verify(root: Path, cfg: dict, slug: str, row: dict, keep: int = 30) -
         f.write(json.dumps(row, separators=(",", ":")) + "\n")
 
 
-def resolves(root: Path, probe) -> bool:
+def _remote_has(repo: str, path: str, _seen: dict = {}) -> bool:
+    """TENANT-REPO-1: a tenant whose code lives in its own public repository names it as build.repo; its paths are read there."""
+    key = (repo, path)
+    if key not in _seen:
+        import urllib.request
+        req = urllib.request.Request(f"https://raw.githubusercontent.com/{repo}/main/{path}", method="HEAD", headers={"user-agent": "ultrastable-seedlife"})
+        try:
+            with urllib.request.urlopen(req, timeout=15) as r:
+                _seen[key] = r.status == 200
+        except Exception as e:  # logged, never hidden: an unreachable path counts as missing
+            print(f"seedlife: {repo}/{path} unreadable: {e}", file=sys.stderr)
+            _seen[key] = False
+    return _seen[key]
+
+
+def exists(root: Path, p: str, repo: str = "") -> bool:
+    return _remote_has(repo, p) if repo else (root / p).exists()
+
+
+def resolves(root: Path, probe, repo: str = "") -> bool:
     """file:PATH exists, or cmd:python3 -m foundation MOD ... / cmd:python3 scripts/X.py ... names a module that exists."""
     kind, _, arg = str(probe or "").partition(":")
     if kind == "file":
@@ -85,7 +104,7 @@ def resolves(root: Path, probe) -> bool:
         if a[:1] == ["python3"] and len(a) > 1 and a[1].endswith(".py"):
             return (root / a[1]).is_file()
         if a[:2] == ["node", "--test"] and len(a) > 2:
-            return all((root / x).is_file() for x in a[2:])
+            return all(exists(root, x, repo) for x in a[2:])
     return False
 
 
@@ -143,7 +162,7 @@ def evaluate(root, seed_dir, lc_path, cfg: dict, core: dict, now=None) -> dict:
     stage = "planned"
     b = lc.get("build") or {}
     paths, tests = b.get("paths") or [], b.get("tests") or []
-    miss = [p for p in paths + tests if not (root / p).exists()]
+    miss = [p for p in paths + tests if not exists(root, p, b.get("repo", ""))]
     if not paths or not tests or miss:
         need.append("build: code paths and tests exist" + (f" (missing: {', '.join(miss)})" if miss else "" if paths and tests else " (none named)"))
         return done(stage, "built")
@@ -191,7 +210,7 @@ def check_lifecycle(root, lc: dict, cfg: dict, core: dict, where: str) -> list[s
         s = a.get("status")
         if s not in ANSWERS:
             bad.append(f"{where}: {k} needs a status in {ANSWERS} or inherit"); continue
-        if s == "closed" and not resolves(root, a.get("probe")):
+        if s == "closed" and not resolves(root, a.get("probe"), (lc.get("build") or {}).get("repo", "")):
             bad.append(f"{where}: {k} is closed but its probe `{a.get('probe')}` does not resolve")
         if s == "n/a" and len(str(a.get("why", ""))) < 12:
             bad.append(f"{where}: {k} is n/a and needs a reason")

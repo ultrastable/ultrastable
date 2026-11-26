@@ -28,20 +28,30 @@ function listPage(d) {
     + `<p class="muted">Generated ${esc(d.as_of)} from the system's ledgers.</p>`;
 }
 
+// WHITEPAPER-2: a white paper, not a research paper: summary, problem, approach, practice, trade-offs, next steps, references. No forced tables.
+const SEC = [["summary", "Executive summary"], ["problem", "1. The problem"], ["approach", "2. The approach"], ["practice", "3. Putting it into practice"],
+  ["tradeoffs", "4. Trade-offs and limits"], ["action", "5. Next steps"]];
+const link = t => esc(t).replace(/(https:\/\/[^\s<]+)/g, '<a href="$1">$1</a>');
 function paperPage(p, asOf) {
-  const fs = p.findings.map(f => `<article class="card"><h3>${esc(f.id)}. ${esc(f.concern)} <span class="muted">(${esc(f.perspective)})</span></h3>`
-    + `<p><strong>The study:</strong> ${esc(f.claim)}</p><p><strong>How Ultrastable answers it:</strong></p><ul>${f.mechanisms.map(m => `<li>${esc(m.rule)} (<code>${esc(m.path)}</code>): ${esc(m.how)}</li>`).join("")}</ul>`
-    + `<p><strong>Measured here:</strong> ${esc(f.metric_label)}: ${esc(fmt(f.measured))} (n = ${esc(f.n)}). Target ${esc(f.target.op)} ${esc(f.target.value)}. <strong>${esc(BADGE[f.status])}</strong>${f.item ? ` · open item <code>${esc(f.item)}</code>` : ""}</p>`
-    + `<p class="muted">Source: ${esc(f.source)}</p></article>`).join("");
-  const leads = p.leads.length ? `<section><h2>Proposed further links</h2><p class="muted">Leads from the connection engine; each is a proposal until a study file adopts it.</p><ul>${p.leads.map(l => `<li>${esc(l.finding)} may also relate to ${esc(l.rule)}</li>`).join("")}</ul></section>` : "";
-  return `<div class="head"><p><a href="/research">Research</a></p><h1>${esc(p.title)}</h1><p>${esc(p.abstract)}</p>${share(p)}</div>`
-    + `<section><h2>The study</h2><p>${esc(p.study.title)}. ${esc(p.study.authors.join(", "))}, ${esc(p.study.institution)}; ${esc(p.study.kind)}, version ${esc(p.study.version)}.</p><p>${esc(p.study.data)}</p></section>`
-    + `<section><h2>Findings, mechanisms and measurements</h2>${fs}</section>`
-    + `<section><h2>Limits</h2><ul>${p.limits.map(x => `<li>${esc(x)}</li>`).join("")}</ul></section>` + leads
-    + `<section><h2>Method</h2><p>${esc(p.method)}</p></section>` + HOOK + `<p class="muted">Generated ${esc(asOf)}. JSON: <a href="/api/research/${esc(p.slug)}">/api/research/${esc(p.slug)}</a></p>`;
+  const s = p.sections || {};
+  const body = SEC.map(([k, h]) => `<section><h2>${h}</h2>`
+    + (k === "tradeoffs" || k === "action" ? `<ul>${(s[k] || []).map(x => `<li>${link(x)}</li>`).join("")}</ul>` : (s[k] || []).map(x => `<p>${esc(x)}</p>`).join(""))
+    + (s[k + "_list"] ? `<ol>${s[k + "_list"].map(x => `<li>${esc(x)}</li>`).join("")}</ol>` : "")
+    + (s[k + "_note"] || []).map(x => `<p>${esc(x)}</p>`).join("") + `</section>`).join("");
+  const refs = `<section><h2>References</h2><ol>${(p.references || []).map(r => `<li>${esc(r.text)}${r.url ? ` <a href="${esc(r.url)}">${esc(r.url)}</a>` : ""}</li>`).join("")}</ol></section>`;
+  return `<article class="paper"><div class="head"><p><a href="/research">Research</a> / White paper</p><h1>${esc(p.title)}</h1><p class="muted">An Ultrastable white paper · updated ${esc(asOf)}</p>${share(p)}</div>`
+    + body + refs + HOOK + `<p class="muted">Generated from the system's own records. JSON: <a href="/api/research/${esc(p.slug)}">/api/research/${esc(p.slug)}</a></p></article>`;
 }
 
 // THOUGHT-1: a feed of the papers, so readers and aggregators follow them with no account; an entry's id changes when its measured result does.
+// REACH-PAPERS-1: schema.org ScholarlyArticle on every paper, so search engines and scholar indexes read title, date and author.
+export function jsonld(p, asOf, origin = "https://ultrastable.io") {
+  const ld = { "@context": "https://schema.org", "@type": "ScholarlyArticle", headline: p.title, abstract: p.abstract, url: origin + "/research/" + p.slug,
+    datePublished: asOf, dateModified: asOf, author: { "@type": "Organization", name: "Ultrastable", url: origin }, publisher: { "@type": "Organization", name: "Ultrastable" },
+    isAccessibleForFree: true, inLanguage: "en" };
+  return '<script type="application/ld+json">' + JSON.stringify(ld).replace(/</g, "\\u003c") + "</script>";
+}
+
 export function atom(d, origin = "https://ultrastable.io") {
   const x = s => esc(s);
   const entries = d.papers.map(p => `<entry><id>${x(origin)}/research/${x(p.slug)}#${x(p.met)}of${x(p.total)}</id><title>${x(p.title)}</title><link href="${x(origin)}/research/${x(p.slug)}"/><updated>${x(d.as_of)}</updated><summary>${x(p.abstract)} Ultrastable runs on Ultrastable; Practical Solutions (https://ultrastable.org) is one system it runs.</summary></entry>`).join("");
@@ -63,7 +73,7 @@ export function researchRoutes(u, shell, HTML, data = DATA) {
   if (m) {
     const paper = data.papers.find(x => x.slug === m[1]);
     if (!paper) return null;
-    return new Response(shell({ path: p, title: paper.title + " - Ultrastable", description: paper.abstract.slice(0, 200) }, paperPage(paper, data.as_of)), { headers: { ...HTML, "Cache-Control": "public, max-age=300" } });
+    return new Response(shell({ path: p, title: paper.title + " - Ultrastable", description: paper.abstract.slice(0, 200) }, paperPage(paper, data.as_of) + jsonld(paper, data.as_of)), { headers: { ...HTML, "Cache-Control": "public, max-age=300" } });
   }
   return null;
 }

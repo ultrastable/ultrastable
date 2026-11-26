@@ -1,0 +1,15 @@
+{
+  "id": "Q-IMPROVE-MARKET",
+  "title": "Q-IMPROVE-MARKET: market research pass is overdue",
+  "body": "**Owner:** product-manager\n**Trigger:** improve --run\n**Done check:** cmd:python3 -m foundation improve --probe signal:market\n**Prediction:** signal_market_ok == 1 within 168 h\n**Status:** closed\n\nRun `python3 -m foundation rnd --run --apply` and `python3 -m foundation scout --run --apply`; every finding becomes a Q-RND, Q-EXP or Q-ADOPT item.\n\n**Closing probe:** cmd:python3 -m foundation improve --probe signal:market\n\n**Disposition:** shelved (executor-failed, 2026-11-25T18:13:17Z, DISPOSE-1)\n\n**Evidence:** the executor failed 3 consecutive runs on this item; last reason: RuntimeError: checks failed after 3 attempts: the reply was not valid JSON with a files list: RuntimeError: every code agent rung failed: workers-ai-glm: HTTPError: HTTP Error 401: Unauthorized | github-models-gpt: RuntimeError: non-JSON re. Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "role:product-manager",
+    "growth",
+    "improve",
+    "market"
+  ],
+  "milestone": "Now",
+  "workstream": "Growth"
+}

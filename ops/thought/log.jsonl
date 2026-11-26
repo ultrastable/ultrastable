@@ -1,2 +1,4 @@
 {"at": "2026-11-21T10:23:46Z", "id": "paper:ashby-1952:3of5:2026-11-21", "paper": "ashby-1952", "state": "3of5", "channels": ["bluesky", "mastodon", "linkedin"], "prediction": "paper_referrals >= 1 within 168 h"}
 {"at": "2026-11-24T02:13:54Z", "id": "paper:ashby-1952:4of5:2026-11-24", "paper": "ashby-1952", "state": "4of5", "channels": ["bluesky", "mastodon", "linkedin"], "prediction": "paper_referrals >= 1 within 168 h"}
+{"at": "2026-11-25T20:02:10Z", "id": "paper:chen-stratton-2026:5of7:2026-11-25", "paper": "chen-stratton-2026", "state": "5of7", "channels": ["bluesky", "mastodon", "linkedin"], "prediction": "paper_referrals >= 1 within 168 h"}
+{"at": "2026-11-26T03:55:13Z", "id": "paper:open-loops-2026:3of6:2026-11-26", "paper": "open-loops-2026", "state": "3of6", "channels": ["bluesky", "mastodon", "linkedin"], "prediction": "social_referrals_7d >= 1 within 168 h"}

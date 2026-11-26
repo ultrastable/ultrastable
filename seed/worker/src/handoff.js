@@ -67,13 +67,16 @@ export async function runProbe(spec, f = fetch) {
 }
 
 import { record } from './auditchain.js';
+import { envelope } from './cloudevents.js';
+export const handoffEvent = (id, state, detail, tenant = handoffTenant) => envelope({ area: 'handoff', event: state, source: '/tenants/' + (tenant || 'ultrastable') + '/loops/handoff', subject: String(id), data: { state, detail: detail ? String(detail).slice(0, 300) : null } });
 import { tenantOf } from './tenant.js';  // Q-TENANT-row-isolation: a handoff block can name any item id; only this runtime's own items (tenant_id NULL or its slug) are advanced or closed
 let handoffTenant = '';
 async function event(db, id, state, detail) {
   await db.prepare("UPDATE handoffs SET state = ?, detail = ?, updated_at = datetime('now') WHERE id = ?").bind(state, detail || null, id).run();
   await db.prepare('INSERT INTO handoff_events (handoff_id, state, detail) VALUES (?, ?, ?)').bind(id, state, detail || null).run();
   // AUDIT-CHAIN-1: every merge, deploy, probe and rollback also lands in the tamper-evident trail (a failure here is logged, never hidden)
-  await record(db, { kind: 'handoff:' + state, actor: 'handoff', ref: String(id), summary: String(detail || state).slice(0, 300), data: { state } }).catch(e => console.error('audit record', e && e.message));
+  // STANDARDS-FIRST-1: the event between loops is a CloudEvents 1.0 envelope (io.ultrastable.handoff.<state>); rows written before it hold { state } and stay readable (unwrap)
+  await record(db, { kind: 'handoff:' + state, actor: 'handoff', ref: String(id), summary: String(detail || state).slice(0, 300), data: handoffEvent(id, state, detail) }).catch(e => console.error('audit record', e && e.message));
 }
 async function say(f, token, repo, pr, text) { await gh(f, token, 'POST', `/repos/${repo}/issues/${pr}/comments`, { body: 'Ultrastable (server side, HANDOFF-1): ' + text }); }
 async function setItem(db, item, status, blocker) {
@@ -324,7 +327,7 @@ export async function tickConfigSource(read) {
   const j = async (p) => JSON.parse(await read(p));
   const pol = await j('seed/autonomy/policy.json'), fm = await j('seed/autonomy/failure-modes.json'), ifm = await j('instances/ultrastable/failure-modes.json');
   fm.modes = [...fm.modes, ...ifm.modes];
-  const cfg = { org_slug: 'ultrastable', claim_ttl_minutes: 120, max_wip_per_role: 3, plus_share: 0.2, policy: { trust: pol.trust, ladder: pol.ladder, surfaces: pol.surfaces }, criticality: await j('seed/autonomy/criticality.json'), failure_modes: fm, migrations: await Promise.all((await j('seed/worker/migrations/index.json')).map(async f => ({ file: f, sql: await read('seed/worker/migrations/' + f) }))), unknowns: await j('doctrine/unknowns.json').catch(() => null), cost_budgets: (await j('instances/ultrastable/cost-budgets.json')).budgets, budget: await j('instances/ultrastable/instance.json').then(m => m.budget || {}, () => ({})), retention: await j('seed/autonomy/retention.json').catch(() => null), halt: await j('ops/halt.json').catch(() => null), pace: await j('seed/autonomy/pace.json').catch(() => null), goals: await j('seed/autonomy/goals.json').catch(() => null), seed_metrics: await j('instances/ultrastable/objectives.json').then(o => o.metrics || [], () => []), progress: await j('instances/ultrastable/progress.json').catch(() => null) };  // HALT-1  // RETENTION-1  // SPEND-GOVERNOR-1: no manifest means budget 0, the free-tier default
+  const cfg = { org_slug: 'ultrastable', claim_ttl_minutes: 120, max_wip_per_role: 3, plus_share: 0.2, policy: { trust: pol.trust, ladder: pol.ladder, surfaces: pol.surfaces }, criticality: await j('seed/autonomy/criticality.json'), failure_modes: fm, migrations: await Promise.all((await j('seed/worker/migrations/index.json')).map(async f => ({ file: f, sql: await read('seed/worker/migrations/' + f) }))), unknowns: await j('doctrine/unknowns.json').catch(() => null), cost_budgets: (await j('instances/ultrastable/cost-budgets.json')).budgets, budget: await j('instances/ultrastable/instance.json').then(m => m.budget || {}, () => ({})), retention: await j('seed/autonomy/retention.json').catch(() => null), halt: await j('ops/halt.json').catch(() => null), pace: await j('seed/autonomy/pace.json').catch(() => null), goals: await j('seed/autonomy/goals.json').catch(() => null), seed_metrics: await j('instances/ultrastable/objectives.json').then(o => o.metrics || [], () => []), progress: await j('instances/ultrastable/progress.json').catch(() => null), managers: await j('seed/autonomy/managers.json').catch(() => null) };  // MANAGERS-1  // HALT-1  // RETENTION-1  // SPEND-GOVERNOR-1: no manifest means budget 0, the free-tier default
   return '// Generated on the server path (HANDOFF-1) from seed/autonomy at the deploy commit. Do not edit.\nexport default ' + JSON.stringify(cfg) + ';\n';
 }
 // generated: optional overrides for build-time paths not in git, mapped to their source text.

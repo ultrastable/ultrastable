@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/seed/doctrine/standing-order.schema.json",
+  "title": "standing-order (seed/doctrine/standing-order.json)",
+  "description": "Contract for seed/doctrine/standing-order.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "marker": {
+      "type": "string"
+    },
+    "order": {
+      "type": "string"
+    },
+    "instruction_files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "optional_instruction_files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "directive_section": {
+      "type": "string"
+    },
+    "directive_files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "policy_files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "policy_key": {
+      "type": "string"
+    },
+    "inherited_by_tenants": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "ledger": {
+      "type": "string"
+    },
+    "ledger_consumer_suffixes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "ledger_baseline": {
+      "type": "string"
+    },
+    "prompt_sources": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "report_globs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "lint_exempt": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "excused_by": {
+      "type": "string"
+    },
+    "decision_handoff": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "patterns": {
+            "type": "array"
+          }
+        }
+      }
+    },
+    "_doc_ledger_handoff": {
+      "type": "string"
+    },
+    "ledger_handoff_baseline": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "_doc_ledger_handoff",
+    "decision_handoff",
+    "directive_files",
+    "directive_section",
+    "excused_by",
+    "id",
+    "inherited_by_tenants",
+    "instruction_files",
+    "ledger",
+    "ledger_baseline",
+    "ledger_consumer_suffixes",
+    "ledger_handoff_baseline",
+    "lint_exempt",
+    "marker",
+    "optional_instruction_files",
+    "order",
+    "policy_files",
+    "policy_key",
+    "prompt_sources",
+    "report_globs",
+    "version"
+  ]
+}

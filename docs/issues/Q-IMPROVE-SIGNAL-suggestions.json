@@ -1,0 +1,15 @@
+{
+  "id": "Q-IMPROVE-SIGNAL-suggestions",
+  "title": "Q-IMPROVE-SIGNAL-suggestions: suggestions signal is unmeasured",
+  "body": "**Owner:** product-manager\n**Trigger:** improve --run\n**Done check:** cmd:python3 -m foundation improve --probe signal:suggestions\n**Prediction:** signal_suggestions_ok == 1 within 72 h\n**Status:** closed\n\nops/reach/metrics.jsonl is unmeasured. A signal nobody reads is a blind spot, not a quiet week. Restore the producer or give it a second route.\n\n**Closing probe:** cmd:python3 -m foundation improve --probe signal:suggestions\n\n**Disposition:** shelved (executor-failed, 2026-11-25T19:32:51Z, DISPOSE-1)\n\n**Evidence:** the executor failed 3 consecutive runs on this item; last reason: RuntimeError: checks failed after 3 attempts: the reply was not valid JSON with a files list: RuntimeError: every code agent rung failed: workers-ai-glm: HTTPError: HTTP Error 401: Unauthorized | github-models-gpt: RuntimeError: non-JSON re. Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "role:product-manager",
+    "growth",
+    "improve",
+    "signal"
+  ],
+  "milestone": "Now",
+  "workstream": "Growth"
+}

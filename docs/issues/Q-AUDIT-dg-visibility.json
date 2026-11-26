@@ -1,0 +1,14 @@
+{
+  "id": "Q-AUDIT-dg-visibility",
+  "title": "Q-AUDIT-dg-visibility: fm-declared-live-drift failing (fail): The tick's repo-visibility loop sets it back; if it reports refused, give the administration app access to that repository.",
+  "body": "**Owner:** operations\n**Trigger:** the daily failure audit files it; the executor takes it in driver order\n**Done check:** cmd:python3 -m foundation failure_audit --probe dg-visibility\n**Status:** closed\n\nFailure mode `fm-declared-live-drift` detected by `dg-visibility`, failing since 2026-11-25T21:07:20Z.\nEvidence: x ultrastable/seed: unreadable to this token; a private repository or a missing one (HTTP 404), declared public\n\nSignature: c12868ece903 (disposition: fix).\nSuspected root cause: a repository's live visibility differs from org/repos.json or doctrine/tenant-repos.json\nRemedy: The tick's repo-visibility loop sets it back; if it reports refused, give the administration app access to that repository.\nFix the earliest cause, so the detector passes; do not weaken or remove the detector.\n\n**Closing probe:** cmd:python3 -m foundation failure_audit --probe dg-visibility\n\n**Disposition:** shelved (ttl, 2026-11-26T03:14:49Z, DISPOSE-1)\n\n**Evidence:** open 6.1 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "labels": [
+    "role:operations",
+    "audit",
+    "fix",
+    "agent-ready",
+    "p1"
+  ],
+  "milestone": "Now",
+  "workstream": "Failure modes"
+}

@@ -9,610 +9,203 @@
   "external": "a signal from outside (scout finding, funder reply, competitor change)"
  },
  "counts_by_origin": {
-  "loop": 37,
-  "owner": 26,
-  "agent": 14,
-  "system": 3
+  "owner": 29,
+  "agent": 17
  },
  "entries": [
   {
-   "id": "pv-e2d51559748e",
-   "at": "2026-11-21T14:55:00Z",
-   "tenant": "ultrastable",
-   "origin": "loop",
-   "channel": "loop-run",
-   "actor": "spinoff",
-   "kind": "decision",
-   "summary": "launched loop-ledger.ultrastable.app: score 11.74 (reach 3, impact 3) from needs ; prediction board_age_hours <= 30 within 48 h",
-   "affected": [
-    "instances/spinoffs/loop-ledger"
-   ],
-   "effect": "pending"
-  },
-  {
-   "id": "pv-4de97b0168dd",
-   "at": "2026-11-21T14:55:00Z",
-   "tenant": "ultrastable",
-   "origin": "loop",
-   "channel": "loop-run",
-   "actor": "spinoff",
-   "kind": "decision",
-   "summary": "portfolio-board: keep (showcase board kept while its facts are fresh and its cost is inside the headroom)",
-   "affected": [],
-   "effect": "pending"
-  },
-  {
-   "id": "pv-34d9dd9abb91",
-   "at": "2026-11-21T14:55:00Z",
-   "tenant": "ultrastable",
-   "origin": "loop",
-   "channel": "loop-run",
-   "actor": "spinoff",
-   "kind": "decision",
-   "summary": "numbers-board: keep (showcase board kept while its facts are fresh and its cost is inside the headroom)",
-   "affected": [],
-   "effect": "pending"
-  },
-  {
-   "id": "pv-20d17a6997f8",
-   "at": "2026-11-21T14:55:00Z",
-   "tenant": "ultrastable",
-   "origin": "loop",
-   "channel": "loop-run",
-   "actor": "spinoff",
-   "kind": "decision",
-   "summary": "free-tier-meter: keep (showcase board kept while its facts are fresh and its cost is inside the headroom)",
-   "affected": [],
-   "effect": "pending"
-  },
-  {
-   "id": "pv-84e6b22a158a",
-   "at": "2026-11-21T14:55:00Z",
-   "tenant": "ultrastable",
-   "origin": "loop",
-   "channel": "loop-run",
-   "actor": "spinoff",
-   "kind": "decision",
-   "summary": "country-snapshot: keep (age 1d under the 14d trial)",
-   "affected": [],
-   "effect": "pending"
-  },
-  {
-   "id": "pv-b34fa8e12e80",
-   "at": "2026-11-21T14:55:00Z",
-   "tenant": "ultrastable",
-   "origin": "loop",
-   "channel": "loop-run",
-   "actor": "spinoff",
-   "kind": "decision",
-   "summary": "blindspot: keep (age 3d under the 14d trial)",
-   "affected": [],
-   "effect": "pending"
-  },
-  {
-   "id": "pv-0aa04496ee8d",
-   "at": "2026-11-21T14:55:00Z",
-   "tenant": "ultrastable",
-   "origin": "loop",
-   "channel": "loop-run",
-   "actor": "spinoff",
-   "kind": "decision",
-   "summary": "air-quality: keep (age 2d under the 14d trial)",
-   "affected": [],
-   "effect": "pending"
-  },
-  {
-   "id": "pv-03597049deeb",
-   "at": "2026-11-21T14:55:00Z",
-   "tenant": "ultrastable",
-   "origin": "loop",
-   "channel": "loop-run",
-   "actor": "spinoff",
-   "kind": "decision",
-   "summary": "access-check: keep (age 1d under the 14d trial)",
-   "affected": [],
-   "effect": "pending"
-  },
-  {
-   "id": "pv-d35ffc6f37ae",
-   "at": "2026-11-20T15:43:17Z",
-   "tenant": "ultrastable",
-   "origin": "loop",
-   "channel": "loop-run",
-   "actor": "spinoff",
-   "kind": "decision",
-   "summary": "portfolio-board: keep (showcase board kept while its facts are fresh and its cost is inside the headroom)",
-   "affected": [],
-   "effect": "pending"
-  },
-  {
-   "id": "pv-11be791df8de",
-   "at": "2026-11-20T15:43:17Z",
-   "tenant": "ultrastable",
-   "origin": "loop",
-   "channel": "loop-run",
-   "actor": "spinoff",
-   "kind": "decision",
-   "summary": "numbers-board: keep (showcase board kept while its facts are fresh and its cost is inside the headroom)",
-   "affected": [],
-   "effect": "pending"
-  },
-  {
-   "id": "pv-6aeb20ece2ba",
-   "at": "2026-11-20T15:43:17Z",
-   "tenant": "ultrastable",
-   "origin": "loop",
-   "channel": "loop-run",
-   "actor": "spinoff",
-   "kind": "decision",
-   "summary": "free-tier-meter: keep (showcase board kept while its facts are fresh and its cost is inside the headroom)",
-   "affected": [],
-   "effect": "pending"
-  },
-  {
-   "id": "pv-5bf31ebc4ed7",
-   "at": "2026-11-20T15:43:17Z",
-   "tenant": "ultrastable",
-   "origin": "loop",
-   "channel": "loop-run",
-   "actor": "spinoff",
-   "kind": "decision",
-   "summary": "country-snapshot: keep (age 0d under the 14d trial)",
-   "affected": [],
-   "effect": "pending"
-  },
-  {
-   "id": "pv-f059cae48ea9",
-   "at": "2026-11-20T15:43:17Z",
-   "tenant": "ultrastable",
-   "origin": "loop",
-   "channel": "loop-run",
-   "actor": "spinoff",
-   "kind": "decision",
-   "summary": "blindspot: keep (age 2d under the 14d trial)",
-   "affected": [],
-   "effect": "pending"
-  },
-  {
-   "id": "pv-6f58e5488394",
-   "at": "2026-11-20T15:43:17Z",
-   "tenant": "ultrastable",
-   "origin": "loop",
-   "channel": "loop-run",
-   "actor": "spinoff",
-   "kind": "decision",
-   "summary": "air-quality: keep (age 1d under the 14d trial)",
-   "affected": [],
-   "effect": "pending"
-  },
-  {
-   "id": "pv-478068655778",
-   "at": "2026-11-20T15:43:17Z",
-   "tenant": "ultrastable",
-   "origin": "loop",
-   "channel": "loop-run",
-   "actor": "spinoff",
-   "kind": "decision",
-   "summary": "access-check: keep (age 0d under the 14d trial)",
-   "affected": [],
-   "effect": "pending"
-  },
-  {
-   "id": "pv-411536229dc1",
-   "at": "2026-11-19T16:00:14Z",
-   "tenant": "ultrastable",
-   "origin": "loop",
-   "channel": "loop-run",
-   "actor": "spinoff",
-   "kind": "decision",
-   "summary": "launched free-tier-meter.ultrastable.app: score 13.85 (reach 4, impact 3) from needs ; prediction board_age_hours <= 30 within 48 h",
-   "affected": [
-    "instances/spinoffs/free-tier-meter"
-   ],
-   "effect": "pending"
-  },
-  {
-   "id": "pv-f1d50096ef59",
-   "at": "2026-11-19T16:00:14Z",
-   "tenant": "ultrastable",
-   "origin": "loop",
-   "channel": "loop-run",
-   "actor": "spinoff",
-   "kind": "decision",
-   "summary": "launched country-snapshot.ultrastable.app: score 15.38 (reach 4, impact 4) from needs ; prediction board_age_hours <= 30 within 48 h",
-   "affected": [
-    "instances/spinoffs/country-snapshot"
-   ],
-   "effect": "pending"
-  },
-  {
-   "id": "pv-c554c08cd7a3",
-   "at": "2026-11-19T16:00:14Z",
-   "tenant": "ultrastable",
-   "origin": "loop",
-   "channel": "loop-run",
-   "actor": "spinoff",
-   "kind": "decision",
-   "summary": "launched access-check.ultrastable.app: score 16.0 (reach 4, impact 4) from needs ; prediction board_age_hours <= 30 within 48 h",
-   "affected": [
-    "instances/spinoffs/access-check"
-   ],
-   "effect": "pending"
-  },
-  {
-   "id": "pv-d1c9bf12679c",
-   "at": "2026-11-19T16:00:14Z",
-   "tenant": "ultrastable",
-   "origin": "loop",
-   "channel": "loop-run",
-   "actor": "spinoff",
-   "kind": "decision",
-   "summary": "portfolio-board: keep (showcase board kept while its facts are fresh and its cost is inside the headroom)",
-   "affected": [],
-   "effect": "pending"
-  },
-  {
-   "id": "pv-2d61bd7669c0",
-   "at": "2026-11-19T16:00:14Z",
-   "tenant": "ultrastable",
-   "origin": "loop",
-   "channel": "loop-run",
-   "actor": "spinoff",
-   "kind": "decision",
-   "summary": "numbers-board: keep (showcase board kept while its facts are fresh and its cost is inside the headroom)",
-   "affected": [],
-   "effect": "pending"
-  },
-  {
-   "id": "pv-d3c809a03fdf",
-   "at": "2026-11-19T16:00:14Z",
-   "tenant": "ultrastable",
-   "origin": "loop",
-   "channel": "loop-run",
-   "actor": "spinoff",
-   "kind": "decision",
-   "summary": "blindspot: keep (age 2d under the 14d trial)",
-   "affected": [],
-   "effect": "pending"
-  },
-  {
-   "id": "pv-ea1eb36ba899",
-   "at": "2026-11-19T16:00:14Z",
-   "tenant": "ultrastable",
-   "origin": "loop",
-   "channel": "loop-run",
-   "actor": "spinoff",
-   "kind": "decision",
-   "summary": "air-quality: keep (age 1d under the 14d trial)",
-   "affected": [],
-   "effect": "pending"
-  },
-  {
-   "id": "pv-843fb9282e33",
-   "at": "2026-11-18T15:56:55Z",
-   "tenant": "ultrastable",
-   "origin": "loop",
-   "channel": "loop-run",
-   "actor": "spinoff",
-   "kind": "decision",
-   "summary": "launched air-quality.ultrastable.app: score 20.0 (reach 4, impact 5) from needs ; prediction board_age_hours <= 30 within 48 h",
-   "affected": [
-    "instances/spinoffs/air-quality"
-   ],
-   "effect": "pending"
-  },
-  {
-   "id": "pv-56648945b251",
-   "at": "2026-11-18T15:56:55Z",
-   "tenant": "ultrastable",
-   "origin": "loop",
-   "channel": "loop-run",
-   "actor": "spinoff",
-   "kind": "decision",
-   "summary": "portfolio-board: keep (showcase board kept while its facts are fresh and its cost is inside the headroom)",
-   "affected": [],
-   "effect": "pending"
-  },
-  {
-   "id": "pv-b4899512d1d5",
-   "at": "2026-11-18T15:56:55Z",
-   "tenant": "ultrastable",
-   "origin": "loop",
-   "channel": "loop-run",
-   "actor": "spinoff",
-   "kind": "decision",
-   "summary": "numbers-board: keep (showcase board kept while its facts are fresh and its cost is inside the headroom)",
-   "affected": [],
-   "effect": "pending"
-  },
-  {
-   "id": "pv-801b9cc8c09c",
-   "at": "2026-11-18T15:56:55Z",
-   "tenant": "ultrastable",
-   "origin": "loop",
-   "channel": "loop-run",
-   "actor": "spinoff",
-   "kind": "decision",
-   "summary": "blindspot: keep (age 1d under the 14d trial)",
-   "affected": [],
-   "effect": "pending"
-  },
-  {
-   "id": "pv-831df3c89486",
-   "at": "2026-11-17T21:21:28Z",
-   "tenant": "ultrastable",
-   "origin": "loop",
-   "channel": "loop-run",
-   "actor": "spinoff",
-   "kind": "decision",
-   "summary": "launched portfolio-board.ultrastable.app: score 15.0 (reach 4, impact 3) from needs ; prediction board_age_hours <= 30 within 48 h",
-   "affected": [
-    "instances/spinoffs/portfolio-board"
-   ],
-   "effect": "pending"
-  },
-  {
-   "id": "pv-fe609d4fdcfc",
-   "at": "2026-11-17T21:21:28Z",
-   "tenant": "ultrastable",
-   "origin": "loop",
-   "channel": "loop-run",
-   "actor": "spinoff",
-   "kind": "decision",
-   "summary": "launched numbers-board.ultrastable.app: score 15.0 (reach 4, impact 3) from needs ; prediction board_age_hours <= 30 within 48 h",
-   "affected": [
-    "instances/spinoffs/numbers-board"
-   ],
-   "effect": "pending"
-  },
-  {
-   "id": "pv-dc647756aa63",
-   "at": "2026-11-17T16:10:23Z",
-   "tenant": "ultrastable",
-   "origin": "loop",
-   "channel": "loop-run",
-   "actor": "spinoff",
-   "kind": "decision",
-   "summary": "blindspot: keep (age 0d under the 14d trial)",
-   "affected": [],
-   "effect": "pending"
-  },
-  {
-   "id": "pv-9d0ec8116fbe",
-   "at": "2026-11-17T15:45:58Z",
-   "tenant": "ultrastable",
-   "origin": "loop",
-   "channel": "loop-run",
-   "actor": "spinoff",
-   "kind": "decision",
-   "summary": "launched blindspot.ultrastable.app: score 10.0 (reach 5, impact 4) from needs security-contact, email-authentication, privacy-notice, terms-of-use, accessibility-statement, footer-links; prediction ve",
-   "affected": [
-    "instances/spinoffs/blindspot"
-   ],
-   "effect": "pending"
-  },
-  {
-   "id": "pv-5cef1ac32309",
-   "at": "2026-11-17T15:22:07+01:00",
+   "id": "pv-324cba6ff2ba",
+   "at": "2026-11-25T18:18:50+01:00",
    "tenant": "ultrastable",
    "origin": "owner",
    "channel": "pr",
    "actor": "owner",
    "kind": "change",
-   "summary": "REPO-MOVE-1: record the Practical Solutions move and gateway fix (#477)",
+   "summary": "Daily self-test for silent loops and frozen pages; unfreeze /balance and /changelog (SELFTEST-1) (#2185)",
    "affected": [
-    "docs",
-    "site"
+    ".github",
+    "doctrine",
+    "foundation",
+    "ops",
+    "tests"
    ],
    "effect": "kept"
   },
   {
-   "id": "pv-350da2c5447e",
-   "at": "2026-11-17T15:14:31+01:00",
+   "id": "pv-23eb90d7f036",
+   "at": "2026-11-25T17:51:35Z",
    "tenant": "ultrastable",
-   "origin": "loop",
+   "origin": "owner",
    "channel": "pr",
-   "actor": "executor",
+   "actor": "owner",
    "kind": "change",
-   "summary": "SUBREQUEST-ROTATION-2: executor runs alone, four phases (#476)",
+   "summary": "FULLSTACK-1: a public page and its own repository for every seed (#2184)",
    "affected": [
+    ".github",
+    "agents",
     "docs",
     "doctrine",
-    "ops",
-    "scripts",
+    "foundation",
     "seed"
    ],
    "effect": "kept"
   },
   {
-   "id": "pv-74f3090e23be",
-   "at": "2026-11-17T15:01:48+01:00",
-   "tenant": "ultrastable",
-   "origin": "owner",
-   "channel": "pr",
-   "actor": "owner",
-   "kind": "change",
-   "summary": "FAMILY-2: link Practical Solutions at ultrastable.org (#475)",
-   "affected": [
-    "docs",
-    "doctrine",
-    "foundation",
-    "site"
-   ],
-   "effect": "kept"
-  },
-  {
-   "id": "pv-b7d4df30b41e",
-   "at": "2026-11-17T14:58:19Z",
+   "id": "pv-2b7e35583635",
+   "at": "2026-11-25T17:49:50Z",
    "tenant": "ultrastable",
    "origin": "agent",
    "channel": "pr",
    "actor": "claude-code",
    "kind": "change",
-   "summary": "GATE-403-474: file the gate 403 item (#478)",
+   "summary": "Replication Ledger: read replications from Europe PMC when OpenAlex refuses (#2201)",
    "affected": [
-    "docs",
-    "site"
-   ],
-   "effect": "kept"
-  },
-  {
-   "id": "pv-100f600942c1",
-   "at": "2026-11-17T14:55:09+01:00",
-   "tenant": "ultrastable",
-   "origin": "owner",
-   "channel": "pr",
-   "actor": "owner",
-   "kind": "change",
-   "summary": "Two-domain family model and Practical Solutions copy (#473)",
-   "affected": [
-    "docs",
     "doctrine",
-    "site"
+    "instances"
    ],
    "effect": "kept"
   },
   {
-   "id": "pv-1b6445f8c196",
-   "at": "2026-11-17T14:52:12+01:00",
+   "id": "pv-bc71cc2d84f1",
+   "at": "2026-11-25T17:35:57Z",
    "tenant": "ultrastable",
-   "origin": "owner",
+   "origin": "agent",
    "channel": "pr",
-   "actor": "owner",
+   "actor": "claude-code",
    "kind": "change",
-   "summary": "Brand separation: QNFO only as the earlier testbed case study (#472)",
-   "affected": [
-    "docs",
-    "doctrine",
-    "site"
-   ],
-   "effect": "kept"
-  },
-  {
-   "id": "pv-61fed64d577f",
-   "at": "2026-11-17T14:50:36+01:00",
-   "tenant": "ultrastable",
-   "origin": "owner",
-   "channel": "pr",
-   "actor": "owner",
-   "kind": "change",
-   "summary": "Dashboard accent, audit it, deploy-site stops failing on a skipped deploy (#471)",
+   "summary": "Create tenant repositories with the platform's own administration app; read Practical Solutions' real back end (TENANT-REPO-2) (#2179)",
    "affected": [
     ".github",
-    "dashboard",
-    "docs",
-    "scripts"
-   ],
-   "effect": "kept"
-  },
-  {
-   "id": "pv-9a78ea309e1a",
-   "at": "2026-11-17T14:49:54+01:00",
-   "tenant": "ultrastable",
-   "origin": "owner",
-   "channel": "pr",
-   "actor": "owner",
-   "kind": "change",
-   "summary": "SUBREQUEST-ROTATION-1: heavy GitHub loops rotate over three ticks (#464)",
-   "affected": [
-    "docs",
+    "deploy",
     "doctrine",
-    "ops",
-    "scripts",
     "seed",
     "site"
    ],
    "effect": "kept"
   },
   {
-   "id": "pv-208b78abd256",
-   "at": "2026-11-17T14:48:44+01:00",
+   "id": "pv-3433f1a3b69b",
+   "at": "2026-11-25T17:32:12Z",
    "tenant": "ultrastable",
    "origin": "owner",
    "channel": "pr",
    "actor": "owner",
    "kind": "change",
-   "summary": "A11y loop: axe audit of every page; fix accent contrast (#470)",
+   "summary": "Sandbox every deployment as a tenant with its own repo (#2116)",
    "affected": [
-    ".github",
-    "docs",
+    "agents",
     "doctrine",
+    "foundation",
     "instances",
-    "scripts",
-    "site"
+    "seed",
+    "tests"
    ],
    "effect": "kept"
   },
   {
-   "id": "pv-01440b8b280a",
-   "at": "2026-11-17T14:43:19+01:00",
+   "id": "pv-62e68ab175be",
+   "at": "2026-11-25T17:31:54Z",
    "tenant": "ultrastable",
    "origin": "owner",
    "channel": "pr",
    "actor": "owner",
    "kind": "change",
-   "summary": "Regenerate stale dashboard data (#469)",
-   "affected": [
-    "site"
-   ],
-   "effect": "kept"
-  },
-  {
-   "id": "pv-a81038208038",
-   "at": "2026-11-17T14:42:36+01:00",
-   "tenant": "ultrastable",
-   "origin": "owner",
-   "channel": "pr",
-   "actor": "owner",
-   "kind": "change",
-   "summary": "Stakeholder-driven site: audience paths and case-study template (#468)",
+   "summary": "Close lane items when their PR closes; site search, llms-full, Server-Timing, Early Hints (#2189)",
    "affected": [
     "docs",
     "doctrine",
-    "scripts",
-    "site"
+    "foundation",
+    "ops",
+    "site",
+    "tests"
    ],
    "effect": "kept"
   },
   {
-   "id": "pv-7c20853b6120",
-   "at": "2026-11-17T14:39:37+01:00",
+   "id": "pv-08eeb3db709c",
+   "at": "2026-11-25T17:31:24Z",
    "tenant": "ultrastable",
-   "origin": "owner",
-   "channel": "pr",
-   "actor": "owner",
+   "origin": "agent",
+   "channel": "commit",
+   "actor": "claude-code",
    "kind": "change",
-   "summary": "Showcase: measured D1 read figures (#466)",
+   "summary": "ZERO-MINUTES-1: worker merged #2191",
    "affected": [
-    "site"
+    "ops"
    ],
    "effect": "kept"
   },
   {
-   "id": "pv-2f4054bea167",
-   "at": "2026-11-17T14:38:08+01:00",
+   "id": "pv-eb08efc349a4",
+   "at": "2026-11-25T17:31:20Z",
    "tenant": "ultrastable",
-   "origin": "owner",
+   "origin": "agent",
    "channel": "pr",
-   "actor": "owner",
+   "actor": "claude-code",
    "kind": "change",
-   "summary": "Showcase QNFO and Practical Solutions; one-loop positioning (#465)",
+   "summary": "Replication Ledger: name the knowledge graph on the front end (/graph) (#2191)",
+   "affected": [
+    "doctrine",
+    "instances"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-5d259c3606d7",
+   "at": "2026-11-25T17:31:15Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "commit",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "ZERO-MINUTES-1: worker merged #2193",
+   "affected": [
+    "ops"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-600573b8acec",
+   "at": "2026-11-25T17:31:12Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "Seed graph step never SELECTs secret-shaped or platform tables (DATAGRAPH-1) (#2193)",
+   "affected": [
+    "doctrine",
+    "seed"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-4dd1d9c53731",
+   "at": "2026-11-25T17:29:42Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "KGRAPH-AI-1: Workers AI layer on the knowledge graph (#2183)",
    "affected": [
     "docs",
     "doctrine",
-    "site"
+    "foundation",
+    "research",
+    "seed"
    ],
    "effect": "kept"
   },
   {
-   "id": "pv-071ac43851b3",
-   "at": "2026-11-17T14:34:35+01:00",
+   "id": "pv-aa25a4f5a737",
+   "at": "2026-11-25T17:29:25Z",
    "tenant": "ultrastable",
-   "origin": "owner",
+   "origin": "agent",
    "channel": "pr",
-   "actor": "owner",
+   "actor": "claude-code",
    "kind": "change",
-   "summary": "Close superseded IP/filing items and regenerate the queue (#463)",
+   "summary": "Product manager pass: 0 growth and repair item(s) filed (#2192)",
    "affected": [
     "docs",
     "doctrine",
@@ -621,18 +214,351 @@
    "effect": "kept"
   },
   {
-   "id": "pv-811c537ee25d",
-   "at": "2026-11-17T14:31:18+01:00",
+   "id": "pv-5dc67595200a",
+   "at": "2026-11-25T17:29:11Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "Knowledge graph skips underscore bookkeeping tables (DATAGRAPH-1) (#2190)",
+   "affected": [
+    "doctrine",
+    "seed",
+    "workers"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-bb139214dc5d",
+   "at": "2026-11-25T17:19:41Z",
    "tenant": "ultrastable",
    "origin": "owner",
    "channel": "pr",
    "actor": "owner",
    "kind": "change",
-   "summary": "License-only IP stance: retire patent gating and filing items (#461)",
+   "summary": "Let product-manager PRs pass CI: test_pm stops reading the live queue (#2186)",
+   "affected": [
+    "doctrine",
+    "tests"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-6ccc54d46835",
+   "at": "2026-11-25T17:18:04Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "Knowledge graphs: tenants map their own records with the shared engine (DATAGRAPH-1 built rows) (#2151)",
+   "affected": [
+    "README.md",
+    "agents",
+    "docs",
+    "doctrine",
+    "foundation",
+    "instances"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-bbbbd8f544bb",
+   "at": "2026-11-25T17:07:37Z",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "List and cross-link every Ultrastable system; let seeded systems register themselves (DISCOVER-1) (#2132)",
    "affected": [
     ".github",
+    "README.md",
+    "agents",
     "brand",
-    "dashboard",
+    "docs",
+    "doctrine"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-8f1e3040a86d",
+   "at": "2026-11-25T17:06:36Z",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "Repair five red loops: self-coding models, spinoff deploy, UI audit of retired apps, ciwatch push, checksrun timeout (#2165)",
+   "affected": [
+    ".github",
+    "docs",
+    "doctrine",
+    "foundation",
+    "instances",
+    "scripts"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-b353f2f233b4",
+   "at": "2026-11-25T17:00:37+01:00",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "Keep tenant redeploys running when another tenant's repo cannot be created; judge Unlearn on its own feeds (#2133)",
+   "affected": [
+    ".github",
+    "doctrine",
+    "instances"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-208aa9c7f8d0",
+   "at": "2026-11-25T16:56:09Z",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "LAUNCH-PATH-1: anyone can launch an idea with no code agent (#2112)",
+   "affected": [
+    ".github",
+    "README.md",
+    "agents",
+    "deploy",
+    "docs",
+    "doctrine"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-1d5173738307",
+   "at": "2026-11-25T16:50:59Z",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "DATAGRAPH-1: every system keeps a knowledge graph of all its data (#2158)",
+   "affected": [
+    ".github",
+    "README.md",
+    "agents",
+    "docs",
+    "doctrine",
+    "foundation"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-2a74b74f4ae3",
+   "at": "2026-11-25T16:45:30Z",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "Keep generated data fresh, and make every system update itself and the platform (SYNC-BOTH-WAYS-1) (#2123)",
+   "affected": [
+    ".github",
+    "agents",
+    "docs",
+    "doctrine",
+    "foundation",
+    "ops"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-f04ec82b727a",
+   "at": "2026-11-25T16:37:27Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "Replication Ledger: OpenAlex polite pool and one 429 retry (#2160)",
+   "affected": [
+    "docs",
+    "doctrine",
+    "foundation",
+    "instances",
+    "site",
+    "tests"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-9d8d86ea9785",
+   "at": "2026-11-25T16:21:10Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "Register What Works for progress, stickiness, the showcase and the social queue (#2124)",
+   "affected": [],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-0a5831ee9d64",
+   "at": "2026-11-25T16:21:01Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "Replication Ledger keeps itself current: hourly discovery beat (#2150)",
+   "affected": [
+    "doctrine",
+    "foundation",
+    "instances",
+    "site",
+    "tests"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-5f77f027e2ba",
+   "at": "2026-11-25T16:20:26Z",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "Read every tenant's health parts live and ship tenant merges within the hour (TENANT-HEALTH-1, TENANT-DEPLOY-1) (#2134)",
+   "affected": [
+    "README.md",
+    "doctrine",
+    "foundation",
+    "platform",
+    "seed",
+    "tests"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-51ae6cc0bffb",
+   "at": "2026-11-25T16:10:11Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "Register What Works for progress, stickiness, the showcase and the social queue (#2124)",
+   "affected": [
+    "doctrine",
+    "instances",
+    "site",
+    "social"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-21f40357bd05",
+   "at": "2026-11-25T16:09:17Z",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "org profile probe: no pipe into grep -q (SLA-ISSUE-1) (#2122)",
+   "affected": [],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-f440a3505fce",
+   "at": "2026-11-25T16:08:47Z",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "Replication Ledger front end, deployed by the platform; FULLSTACK-1 for every tenant (#2127)",
+   "affected": [],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-ce2517bbea2c",
+   "at": "2026-11-25T16:08:15Z",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "STATIC-CONTENT-1: a page that never changes is a failure mode (#2145)",
+   "affected": [
+    "doctrine",
+    "foundation",
+    "tests"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-40b4cfab2c79",
+   "at": "2026-11-25T16:05:17Z",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "Replication Ledger front end, deployed by the platform; FULLSTACK-1 for every tenant (#2127)",
+   "affected": [
+    ".github",
+    "agents",
+    "doctrine",
+    "foundation",
+    "instances",
+    "seed"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-ca537e9f4817",
+   "at": "2026-11-25T16:01:32Z",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "org profile probe: no pipe into grep -q (SLA-ISSUE-1) (#2122)",
+   "affected": [
+    "doctrine",
+    "scripts"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-80ade69cb68d",
+   "at": "2026-11-25T15:48:07Z",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "Turn on auto-merge and auto-delete in every repo by default (#2121)",
+   "affected": [
+    "docs",
+    "doctrine",
+    "scripts"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-9bb0f2fef5ea",
+   "at": "2026-11-25T15:42:35Z",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "Replication Ledger: first slice as its own tenant (TENANT-REPO-1) (#2119)",
+   "affected": [
     "docs",
     "doctrine",
     "instances"
@@ -640,582 +566,207 @@
    "effect": "kept"
   },
   {
-   "id": "pv-4e9813889cbc",
-   "at": "2026-11-17T14:28:43+01:00",
+   "id": "pv-7f1d60305ad3",
+   "at": "2026-11-25T15:42:23Z",
    "tenant": "ultrastable",
    "origin": "owner",
    "channel": "pr",
    "actor": "owner",
    "kind": "change",
-   "summary": "Record freeze lift and no-patent confirmation (#459)",
-   "affected": [
-    "docs",
-    "doctrine"
-   ],
-   "effect": "kept"
-  },
-  {
-   "id": "pv-17dea0266b40",
-   "at": "2026-11-17T14:15:27Z",
-   "tenant": "ultrastable",
-   "origin": "agent",
-   "channel": "commit",
-   "actor": "claude-code",
-   "kind": "change",
-   "summary": "lane: server-owned loops (SERVER-OWNS-LOOPS-1)",
-   "affected": [
-    "docs",
-    "site"
-   ],
-   "effect": "kept"
-  },
-  {
-   "id": "pv-76062770a418",
-   "at": "2026-11-17T13:44:46Z",
-   "tenant": "ultrastable",
-   "origin": "agent",
-   "channel": "commit",
-   "actor": "claude-code",
-   "kind": "change",
-   "summary": "lane: server-owned loops (SERVER-OWNS-LOOPS-1)",
-   "affected": [
-    "docs",
-    "site"
-   ],
-   "effect": "kept"
-  },
-  {
-   "id": "pv-04fd8bd4b357",
-   "at": "2026-11-17T13:28:55Z",
-   "tenant": "ultrastable",
-   "origin": "agent",
-   "channel": "commit",
-   "actor": "claude-code",
-   "kind": "change",
-   "summary": "lane: server-owned loops (SERVER-OWNS-LOOPS-1)",
-   "affected": [
-    "docs",
-    "site"
-   ],
-   "effect": "kept"
-  },
-  {
-   "id": "pv-c60c45a25bbc",
-   "at": "2026-11-17T11:56:19+01:00",
-   "tenant": "ultrastable",
-   "origin": "owner",
-   "channel": "pr",
-   "actor": "owner",
-   "kind": "change",
-   "summary": "READ-BUDGET-2: open loop for the tick Worker's heavy D1 reads (#457)",
-   "affected": [
-    "docs",
-    "site"
-   ],
-   "effect": "kept"
-  },
-  {
-   "id": "pv-fe7dd8fa2061",
-   "at": "2026-11-17T01:17:39+01:00",
-   "tenant": "ultrastable",
-   "origin": "owner",
-   "channel": "pr",
-   "actor": "owner",
-   "kind": "change",
-   "summary": "Doer: accept object model replies, skip plan-blocked models (#456)",
-   "affected": [
-    "seed"
-   ],
-   "effect": "kept"
-  },
-  {
-   "id": "pv-c8347b76357d",
-   "at": "2026-11-16T16:21:26Z",
-   "tenant": "ultrastable",
-   "origin": "agent",
-   "channel": "commit",
-   "actor": "claude-code",
-   "kind": "change",
-   "summary": "actions-budget: pause non-essential workflows (projected minutes near the free quota)",
-   "affected": [
-    "actions-budget.json"
-   ],
-   "effect": "kept"
-  },
-  {
-   "id": "pv-815ca42cf610",
-   "at": "2026-11-16T16:07:19Z",
-   "tenant": "ultrastable",
-   "origin": "agent",
-   "channel": "commit",
-   "actor": "claude-code",
-   "kind": "change",
-   "summary": "outreach: record run state",
-   "affected": [
-    "dashboard",
-    "outreach"
-   ],
-   "effect": "kept"
-  },
-  {
-   "id": "pv-0675e0ab23f4",
-   "at": "2026-11-16T15:56:52Z",
-   "tenant": "ultrastable",
-   "origin": "agent",
-   "channel": "commit",
-   "actor": "claude-code",
-   "kind": "change",
-   "summary": "index: refresh issues-by-area and IP register from issues",
-   "affected": [
-    "docs"
-   ],
-   "effect": "kept"
-  },
-  {
-   "id": "pv-de5f5e28f454",
-   "at": "2026-11-16T13:58:56Z",
-   "tenant": "ultrastable",
-   "origin": "agent",
-   "channel": "pr",
-   "actor": "claude-code",
-   "kind": "change",
-   "summary": "branchsweep: merge the branches main lacks (#455)",
-   "affected": [
-    "backlog",
-    "docs",
-    "ops",
-    "site"
-   ],
-   "effect": "kept"
-  },
-  {
-   "id": "pv-3369d298fea7",
-   "at": "2026-11-16T13:19:28+01:00",
-   "tenant": "ultrastable",
-   "origin": "owner",
-   "channel": "pr",
-   "actor": "owner",
-   "kind": "change",
-   "summary": "Regenerate stale dashboard data (red on main) (#454)",
-   "affected": [
-    "doctrine",
-    "site",
-    "tests"
-   ],
-   "effect": "kept"
-  },
-  {
-   "id": "pv-9c60f27632e6",
-   "at": "2026-11-16T13:12:04+01:00",
-   "tenant": "ultrastable",
-   "origin": "owner",
-   "channel": "pr",
-   "actor": "owner",
-   "kind": "change",
-   "summary": "CODE-ONLY-ORDER: cover agent prompts and PR bodies; fix docs_audit and SPDX failures (#453)",
-   "affected": [
-    ".github",
-    "doctrine",
-    "foundation",
-    "ops",
-    "seed",
-    "tests"
-   ],
-   "effect": "kept"
-  },
-  {
-   "id": "pv-cdf66ea71c99",
-   "at": "2026-11-16T13:09:37+01:00",
-   "tenant": "ultrastable",
-   "origin": "owner",
-   "channel": "pr",
-   "actor": "owner",
-   "kind": "change",
-   "summary": "Tenant store: docs-audit fix, deployment record, topology follow-up (#452)",
-   "affected": [
-    "docs",
-    "foundation"
-   ],
-   "effect": "kept"
-  },
-  {
-   "id": "pv-563568f0db92",
-   "at": "2026-11-16T13:05:25+01:00",
-   "tenant": "ultrastable",
-   "origin": "owner",
-   "channel": "pr",
-   "actor": "owner",
-   "kind": "change",
-   "summary": "CODE-ONLY-ORDER: decisions live in code, enforced by check and inherited by tenants (#451)",
-   "affected": [
-    ".github",
-    "AGENTS.md",
-    "agents",
-    "docs",
-    "doctrine",
-    "foundation"
-   ],
-   "effect": "kept"
-  },
-  {
-   "id": "pv-333e4eb5d2c0",
-   "at": "2026-11-16T12:10:58Z",
-   "tenant": "ultrastable",
-   "origin": "owner",
-   "channel": "pr",
-   "actor": "owner",
-   "kind": "change",
-   "summary": "OWNER-DASH-3: owner page never blank at the D1 cap, plain-language status, DB-down mail (#450)",
-   "affected": [
-    "dashboard",
-    "doctrine",
-    "foundation",
-    "seed",
-    "site",
-    "tests"
-   ],
-   "effect": "kept"
-  },
-  {
-   "id": "pv-fe1258e055e6",
-   "at": "2026-11-16T12:06:49Z",
-   "tenant": "ultrastable",
-   "origin": "agent",
-   "channel": "commit",
-   "actor": "claude-code",
-   "kind": "change",
-   "summary": "lane: server-owned loops (SERVER-OWNS-LOOPS-1)",
-   "affected": [
-    "docs",
-    "site"
-   ],
-   "effect": "kept"
-  },
-  {
-   "id": "pv-2aa5f918a5ff",
-   "at": "2026-11-16T12:00:50Z",
-   "tenant": "ultrastable",
-   "origin": "owner",
-   "channel": "pr",
-   "actor": "owner",
-   "kind": "change",
-   "summary": "TENANT-STORAGE-1: decision, budgets, QNFO migration plan and check (#448)",
-   "affected": [
-    "docs",
-    "doctrine",
-    "foundation",
-    "tests"
-   ],
-   "effect": "kept"
-  },
-  {
-   "id": "pv-5607771f8feb",
-   "at": "2026-11-16T12:00:29Z",
-   "tenant": "ultrastable",
-   "origin": "owner",
-   "channel": "pr",
-   "actor": "owner",
-   "kind": "change",
-   "summary": "OWNER-DASH-2: owner dashboard shows what needs you, tenant status and paid options (#449)",
-   "affected": [
-    "dashboard",
-    "doctrine",
-    "foundation"
-   ],
-   "effect": "kept"
-  },
-  {
-   "id": "pv-0d5580a43f81",
-   "at": "2026-11-16T10:52:56+01:00",
-   "tenant": "ultrastable",
-   "origin": "system",
-   "channel": "pr",
-   "actor": "bootstrap",
-   "kind": "change",
-   "summary": "Six fleet lessons in code: vacuous close, metric freshness, model-edit gate, silent catch, version-proven deploys, GitHub budget (#447)",
-   "affected": [
-    "deploy",
-    "docs",
-    "doctrine",
-    "foundation",
-    "ops",
-    "seed"
-   ],
-   "effect": "kept"
-  },
-  {
-   "id": "pv-37e54a47f6f1",
-   "at": "2026-11-16T10:37:55+01:00",
-   "tenant": "ultrastable",
-   "origin": "agent",
-   "channel": "pr",
-   "actor": "claude-code",
-   "kind": "change",
-   "summary": "Q-LESSON-COST-SAMPLE-ACT + Q-LESSON-CRED-SCOPE: a D1 cost breach acts; scopes are an allowlist; auth paths are canonical (#446)",
-   "affected": [
-    "docs",
-    "ops",
-    "seed"
-   ],
-   "effect": "kept"
-  },
-  {
-   "id": "pv-effbb8f93e81",
-   "at": "2026-11-16T10:29:09+01:00",
-   "tenant": "ultrastable",
-   "origin": "loop",
-   "channel": "pr",
-   "actor": "executor",
-   "kind": "change",
-   "summary": "HALT-1: one halt stops every recurring and self-triggering path; nothing is exempt (#445)",
+   "summary": "Improve loop that always has work, with front-end and back-end lanes, in every system (IMPROVE-1, FRONTEND-AUTO-1) (#2099)",
    "affected": [
     ".github",
     "agents",
-    "dashboard",
-    "deploy",
+    "docs",
     "doctrine",
+    "foundation",
+    "instances"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-f5764ff1c40a",
+   "at": "2026-11-25T15:41:15Z",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "Deploy What Works: Worker, D1 and route in the topology (#2113)",
+   "affected": [
+    "doctrine",
+    "instances"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-56d45f9f8020",
+   "at": "2026-11-25T15:41:02Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "commit",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "ZERO-MINUTES-1: worker merged #2118",
+   "affected": [
     "ops"
    ],
    "effect": "kept"
   },
   {
-   "id": "pv-dd4a0e00c4db",
-   "at": "2026-11-16T10:23:18+01:00",
-   "tenant": "ultrastable",
-   "origin": "agent",
-   "channel": "pr",
-   "actor": "claude-code",
-   "kind": "change",
-   "summary": "D1-LIMIT-503: /health and /api/budget answer 503 with a code at the D1 daily read limit (#444)",
-   "affected": [
-    "doctrine",
-    "ops",
-    "seed",
-    "site"
-   ],
-   "effect": "kept"
-  },
-  {
-   "id": "pv-6f3cf04728e8",
-   "at": "2026-11-16T10:12:41+01:00",
-   "tenant": "ultrastable",
-   "origin": "agent",
-   "channel": "pr",
-   "actor": "claude-code",
-   "kind": "change",
-   "summary": "RETENTION-1 + LESSONS-1: declared retention; every model call metered; self-originated work capped (#443)",
-   "affected": [
-    "dashboard",
-    "deploy",
-    "docs",
-    "doctrine",
-    "ops",
-    "seed"
-   ],
-   "effect": "kept"
-  },
-  {
-   "id": "pv-2db4899a31f6",
-   "at": "2026-11-16T10:08:36+01:00",
+   "id": "pv-292519ac76bb",
+   "at": "2026-11-25T15:40:59Z",
    "tenant": "ultrastable",
    "origin": "owner",
    "channel": "pr",
    "actor": "owner",
    "kind": "change",
-   "summary": "/ops: report the D1 daily read limit plainly (#442)",
+   "summary": "Branch cleanup: keep evidence branches, skip repos it cannot read (#2118)",
    "affected": [
-    "site"
-   ],
-   "effect": "kept"
-  },
-  {
-   "id": "pv-1eb533b1efa5",
-   "at": "2026-11-16T10:06:13+01:00",
-   "tenant": "ultrastable",
-   "origin": "owner",
-   "channel": "pr",
-   "actor": "owner",
-   "kind": "change",
-   "summary": "ACCOUNT-SPLIT-3: stop red deploys against the retired Cloudflare account (#441)",
-   "affected": [
-    "deploy",
-    "docs"
-   ],
-   "effect": "kept"
-  },
-  {
-   "id": "pv-116bfdb5e51d",
-   "at": "2026-11-16T10:06:07+01:00",
-   "tenant": "ultrastable",
-   "origin": "owner",
-   "channel": "pr",
-   "actor": "owner",
-   "kind": "change",
-   "summary": "Fix /ops blank page; site copy audit (#440)",
-   "affected": [
-    "docs",
-    "site"
-   ],
-   "effect": "kept"
-  },
-  {
-   "id": "pv-4142c2d9dd09",
-   "at": "2026-11-16T09:59:46+01:00",
-   "tenant": "ultrastable",
-   "origin": "loop",
-   "channel": "pr",
-   "actor": "executor",
-   "kind": "change",
-   "summary": "READ-BUDGET-1 + SPEND-GOVERNOR-1: fit the free plan; the owner's monthly budget is a hard ceiling (#439)",
-   "affected": [
-    ".github",
-    "NEEDS-YOU.md",
-    "dashboard",
-    "deploy",
-    "docs",
-    "doctrine"
-   ],
-   "effect": "kept"
-  },
-  {
-   "id": "pv-d6db000d3c4e",
-   "at": "2026-11-15T22:17:38+01:00",
-   "tenant": "ultrastable",
-   "origin": "loop",
-   "channel": "pr",
-   "actor": "executor",
-   "kind": "change",
-   "summary": "BOOTSTRAP-AUDIT-1: every deployment builds its own parked work (#438)",
-   "affected": [
-    ".github",
     "doctrine",
-    "scripts",
-    "seed",
-    "site",
-    "tests"
-   ],
-   "effect": "kept"
-  },
-  {
-   "id": "pv-90465fa9ad78",
-   "at": "2026-11-15T22:14:45+01:00",
-   "tenant": "ultrastable",
-   "origin": "loop",
-   "channel": "pr",
-   "actor": "executor",
-   "kind": "change",
-   "summary": "PUBLIC-MINUTES-1: the builder's daily cap follows repository visibility (#437)",
-   "affected": [
-    "docs",
-    "doctrine",
-    "foundation",
-    "site",
-    "tests"
-   ],
-   "effect": "kept"
-  },
-  {
-   "id": "pv-b9cb1a7ceb83",
-   "at": "2026-11-15T22:12:04+01:00",
-   "tenant": "ultrastable",
-   "origin": "loop",
-   "channel": "pr",
-   "actor": "executor",
-   "kind": "change",
-   "summary": "ACCOUNT-SPLIT-2: topology moves to the ultrastable account; remove the orphan spec (#436)",
-   "affected": [
-    "deploy",
-    "docs",
-    "doctrine",
-    "instances",
-    "ops",
-    "seed"
-   ],
-   "effect": "kept"
-  },
-  {
-   "id": "pv-f215fa50af48",
-   "at": "2026-11-15T22:10:19+01:00",
-   "tenant": "ultrastable",
-   "origin": "system",
-   "channel": "pr",
-   "actor": "bootstrap",
-   "kind": "change",
-   "summary": "LOOPPROOF-1 follow-up: declare the watchdog's cadence; dashboard cron as the fast producer (#428)",
-   "affected": [
-    "dashboard",
-    "docs",
-    "doctrine",
-    "instances",
-    "ops",
-    "seed"
-   ],
-   "effect": "kept"
-  },
-  {
-   "id": "pv-886bca770b96",
-   "at": "2026-11-15T22:06:21+01:00",
-   "tenant": "ultrastable",
-   "origin": "loop",
-   "channel": "pr",
-   "actor": "executor",
-   "kind": "change",
-   "summary": "LANE-RED-1: the lane holds a PR whose checks ran and failed; native executor refuses narration-only changes (#434)",
-   "affected": [
-    "backlog",
-    "deploy",
-    "docs",
-    "doctrine",
-    "ops",
     "scripts"
    ],
    "effect": "kept"
   },
   {
-   "id": "pv-a47b1944d5c9",
-   "at": "2026-11-15T21:56:05+01:00",
+   "id": "pv-391c427e132a",
+   "at": "2026-11-25T15:31:17Z",
    "tenant": "ultrastable",
-   "origin": "system",
+   "origin": "owner",
    "channel": "pr",
-   "actor": "bootstrap",
+   "actor": "owner",
    "kind": "change",
-   "summary": "DEPLOY-OIDC-1: deploy the ultrastable account from Actions via OIDC; never upload to the retired account (#435)",
+   "summary": "Run branch cleanup from the lane's completion sweep (#2115)",
    "affected": [
-    ".gitattributes",
-    ".github",
-    ".gitignore",
-    "AGENTS.md",
-    "CITATION.cff",
-    "CLAUDE.md"
+    "doctrine",
+    "scripts"
    ],
    "effect": "kept"
   },
   {
-   "id": "pv-a3f19b79c570",
-   "at": "2026-11-15T20:57:38Z",
+   "id": "pv-c473606580a4",
+   "at": "2026-11-25T15:15:03Z",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "Add What Works, a living atlas of policy evidence, as a tenant (#2108)",
+   "affected": [
+    "doctrine",
+    "instances"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-65d6143ee673",
+   "at": "2026-11-25T15:14:23Z",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "Fix the branch sweep so stale branches actually get deleted (#2111)",
+   "affected": [
+    "doctrine",
+    "foundation"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-0d7b366890ed",
+   "at": "2026-11-25T15:11:14Z",
    "tenant": "ultrastable",
    "origin": "agent",
    "channel": "commit",
    "actor": "claude-code",
    "kind": "change",
-   "summary": "lane: server-owned loops (SERVER-OWNS-LOOPS-1)",
-   "affected": [
-    "docs",
-    "site"
-   ],
-   "effect": "kept"
-  },
-  {
-   "id": "pv-93a272776bb3",
-   "at": "2026-11-15T20:56:21Z",
-   "tenant": "ultrastable",
-   "origin": "agent",
-   "channel": "commit",
-   "actor": "claude-code",
-   "kind": "change",
-   "summary": "deploy-workers: record live-verified deploy",
+   "summary": "ZERO-MINUTES-1: worker merged #2110",
    "affected": [
     "ops"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-9373e690adc0",
+   "at": "2026-11-25T15:11:11Z",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "org profile probe: find its issue by exact title (SLA-ISSUE-1) (#2110)",
+   "affected": [
+    "doctrine",
+    "scripts"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-9e4d29cd17b0",
+   "at": "2026-11-25T14:59:09Z",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "Delete every branch once its PR is merged or closed (#2103)",
+   "affected": [
+    "docs",
+    "doctrine",
+    "foundation",
+    "scripts",
+    "site",
+    "tests"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-37de9ab5381b",
+   "at": "2026-11-25T14:56:00Z",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "Move Unlearn's code to its own repo (#2101)",
+   "affected": [
+    ".github",
+    "doctrine",
+    "foundation",
+    "instances",
+    "ops",
+    "seed"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-ac5f1b6ad896",
+   "at": "2026-11-25T14:46:02Z",
+   "tenant": "ultrastable",
+   "origin": "agent",
+   "channel": "pr",
+   "actor": "claude-code",
+   "kind": "change",
+   "summary": "Bump the actions group with 2 updates (#2045)",
+   "affected": [
+    ".github"
+   ],
+   "effect": "kept"
+  },
+  {
+   "id": "pv-98f6b6c59c6f",
+   "at": "2026-11-25T14:44:01Z",
+   "tenant": "ultrastable",
+   "origin": "owner",
+   "channel": "pr",
+   "actor": "owner",
+   "kind": "change",
+   "summary": "Run retriage and the org profile probe on the fleet clock (SLA-ISSUE-1) (#2100)",
+   "affected": [
+    ".github",
+    "doctrine",
+    "scripts"
    ],
    "effect": "kept"
   }

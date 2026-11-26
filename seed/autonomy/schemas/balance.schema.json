@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/seed/autonomy/balance.schema.json",
+  "title": "balance (seed/autonomy/balance.json)",
+  "description": "Contract for seed/autonomy/balance.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "sla_days": {
+      "type": "object",
+      "properties": {
+        "p0": {
+          "type": "number"
+        },
+        "p1": {
+          "type": "number"
+        },
+        "default": {
+          "type": "number"
+        }
+      }
+    },
+    "windows": {
+      "type": "object",
+      "properties": {
+        "day": {
+          "type": "number"
+        },
+        "week": {
+          "type": "number"
+        }
+      }
+    },
+    "family": {
+      "type": "string"
+    },
+    "batch_threshold": {
+      "type": "number"
+    },
+    "batch_window_days": {
+      "type": "number"
+    },
+    "batch_exclude": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "max_supersede_per_pass": {
+      "type": "number"
+    },
+    "throttle": {
+      "type": "object",
+      "properties": {
+        "daily_quota_floor": {
+          "type": "number"
+        },
+        "quota_share_of_weekly_outflow": {
+          "type": "number"
+        }
+      }
+    },
+    "boost": {
+      "type": "object",
+      "properties": {
+        "normal": {
+          "type": "number"
+        },
+        "tipped": {
+          "type": "number"
+        },
+        "max": {
+          "type": "number"
+        }
+      }
+    },
+    "final_statuses": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "counts_as_closure": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "never_closure": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "_batch_exclude_doc": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_batch_exclude_doc",
+    "_doc",
+    "batch_exclude",
+    "batch_threshold",
+    "batch_window_days",
+    "boost",
+    "counts_as_closure",
+    "family",
+    "final_statuses",
+    "max_supersede_per_pass",
+    "never_closure",
+    "sla_days",
+    "throttle",
+    "version",
+    "windows"
+  ]
+}

@@ -15,7 +15,6 @@ class TenantPromo(unittest.TestCase):
         for f in FILES:
             (self.tmp / f).parent.mkdir(parents=True, exist_ok=True)
             shutil.copy(REPO / f, self.tmp / f)
-        shutil.copytree(REPO / "instances/unlearn/worker", self.tmp / "instances/unlearn/worker")
 
     def edit(self, rel, fn):
         p = self.tmp / rel
@@ -38,11 +37,6 @@ class TenantPromo(unittest.TestCase):
         self.edit("doctrine/stakeholders.json", lambda d: d.__setitem__("showcases", [c for c in d["showcases"] if c["id"] != "unlearn"]))
         self.assertTrue(any("unlearn" in b and "showcase" in b for b in tenantpromo.check(self.tmp)))
 
-    def test_in_repo_tenant_needs_route(self):
-        (self.tmp / "instances/unlearn/worker/promote.js").unlink()
-        p = self.tmp / "instances/unlearn/worker/index.js"
-        p.write_text(p.read_text().replace("/social-queue.json", "/x.json"))
-        self.assertTrue(any("social queue route" in b for b in tenantpromo.check(self.tmp)))
 
 
 if __name__ == "__main__":

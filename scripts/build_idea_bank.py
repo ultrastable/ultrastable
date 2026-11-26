@@ -37,7 +37,7 @@ def as_app(i):
     d = i.get("depth") or {}
     return {"name": i.get("text"), "tagline": i.get("text"), "thesis": i.get("thesis"), "corpus": d.get("corpus"),
             "loop": i.get("loop") or d.get("method"), "returns": d.get("returns"), "hook": i.get("hook"),
-            "public_good": i.get("empowers"), "horizon": i.get("horizon")}
+            "public_good": i.get("empowers"), "horizon": i.get("horizon"), "change": i.get("change")}  # CHANGE-1
 
 
 def idea_md(i):
@@ -79,8 +79,11 @@ def validate(bank):
         data = i.get("data") or []
         if not data or not all(d.get("name") and (d.get("probe", "").startswith("https://") or (d["name"] == "own" and d.get("note"))) for d in data):
             errs.append(f"{i.get('id')}: data missing (WORLDWIDE-1: name the worldwide open source with an https probe, or own records)")
-        if len(i.get("text", "")) > 120:
-            errs.append(f"{i['id']}: text over 120 characters")
+        if len(i.get("text", "")) > bank.get("max_text", 120):
+            errs.append(f"{i['id']}: text over {bank.get('max_text', 120)} characters")
+        narrow = [n for n in bank.get("narrow_phrases", []) if n in i.get("text", "").lower()]
+        if narrow:  # BREADTH-1: the owner widens single-field ideas, so the bank refuses them
+            errs.append(f"{i['id']}: too narrow ({narrow[0]!r}); BREADTH-1 wants many fields or places, not one")
     dom = Counter(i["domain"] for i in ideas)
     if len(dom) < bank["min_domains"]:
         errs.append(f"only {len(dom)} domains, need {bank['min_domains']}")
@@ -124,8 +127,8 @@ at the depth of an evidence encyclopedia (Unlearn) or a practical-solutions atla
 trustworthy, a reason to come back. Never commerce, shops, orders, sales or cost cutting. It must work worldwide on open data that
 exists today (give real https URLs of public APIs or datasets that answer without a key) or on the user's own records ("own").
 It must be surprising and interesting, different from every existing idea and domain listed below.
-Reply with only a JSON object with keys: id (kebab-case), domain, reach ("global"), text (under 120 characters, plain words),
-keywords, thesis, hook, horizon (list of 3 phases), loop, measure, upkeep, budget (USD per month, number), depth {corpus, method, returns}, empowers (every text field at least 40 characters),
+Reply with only a JSON object with keys: id (kebab-case), domain, reach ("global"), text (under 120 characters, plain words, spanning many fields or places and never a single one),
+keywords, thesis, hook, horizon (list of 3 phases), loop, measure, upkeep, budget (USD per month, number), depth {corpus, method, returns}, change (list of 3 or 4 of: why-it-feels-true, guess-first, graded-uncertainty, outside-view, fact-myth-fallacy, easy-attractive-social-timely, implementation-intention, spaced-follow-up; at least one from each of the first two, middle three and next two), empowers (every text field at least 40 characters),
 data [{name, probe}] (or {name: "own", note}).
 Existing ideas:
 """
@@ -138,7 +141,9 @@ def grow(bank, complete=None):
         from foundation import agents
         complete = lambda p: agents.complete(p)[0]
     have = "\n".join(f"- [{i['domain']}] {i['text']}" for i in bank["ideas"] + [r["idea"] for r in bank["retired"][-20:]])
-    cand = complete(GROW_PROMPT + have)
+    taste = "".join(f"\nThe owner changed \"{e['before']}\" to \"{e['after']}\". {e['lesson']}" for e in bank.get("owner_edits", [])[-8:])
+    prompt = GROW_PROMPT.replace("Existing ideas:", "Taste to follow (BREADTH-1):" + taste + "\nExisting ideas:") if taste else GROW_PROMPT
+    cand = complete(prompt + have)
     if not isinstance(cand, dict) or any(cand.get("id") == i["id"] for i in bank["ideas"]):
         return False, "no new idea returned"
     cand["added"] = __import__("datetime").date.today().isoformat()

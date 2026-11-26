@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/flows-external.schema.json",
+  "title": "flows-external (doctrine/flows-external.json)",
+  "description": "Contract for doctrine/flows-external.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "flows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "inflows": {
+            "type": "array"
+          },
+          "name": {
+            "type": "string"
+          },
+          "outflows": {
+            "type": "array"
+          },
+          "signal": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "flows"
+  ]
+}

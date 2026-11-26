@@ -12,6 +12,7 @@ permissions:
   contents: write
   pull-requests: write
   actions: write
+  id-token: write  # MAIN-WRITER-1: scripts/land_data.py presents the run's OIDC token
 concurrency:
   group: product-manager
   cancel-in-progress: false
@@ -39,6 +40,13 @@ jobs:
         run: python3 -m foundation provenance --settle-due && python3 -m foundation provenance --changelog --apply
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+      - name: Changelog to main through the main writer (SELFTEST-1)
+        # The changelog only travelled inside the pass's pull request, which went red and was superseded, so /changelog froze at 2026-11-21.
+        run: python3 scripts/land_data.py "provenance - public changelog (CHANGELOG-FRESH-1)" ops/changelog.json ops/provenance.jsonl
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+      - name: Impact and reach pass (IMPROVE-1)
+        run: python3 -m foundation improve --run --apply
       - name: Product manager pass
         run: python3 -m foundation pm --run --apply --pr
         env:

@@ -1,0 +1,12 @@
+{
+  "id": "Q-SAYDO-rules-COLDSTART-1",
+  "title": "Q-SAYDO-rules-COLDSTART-1: says COLDSTART-1, does not do it",
+  "body": "**Owner:** executor\n**Trigger:** say-do check (SAY-DO-1) on the watchdog run\n**Done check:** cmd:python3 -m foundation saydo --probe rules:COLDSTART-1\n**Status:** closed\n\nThe system states `COLDSTART-1` (rules) and its code does not do it: python3 -m foundation coldstart --check: doctrine/decision-ledger.json: `python3 -m foundation commands` names no command (no module with main, no argparse entry)\n\nChange the code to do what the statement says, or change the statement to what the code does; never weaken the probe.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation saydo --probe rules:COLDSTART-1` exits 0.\n\n**Evidence:** say-do check at 2026-11-25T22:16:27Z: the statement matches its code or is no longer stated.\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "say-do"
+  ],
+  "milestone": "Now",
+  "workstream": "Ultrastability"
+}

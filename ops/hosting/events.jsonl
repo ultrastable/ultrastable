@@ -11,3 +11,5 @@
 {"at":"2026-11-21T16:57:22.003Z","kind":"host-state","host":"cloudflare-gateway","subject":"ops/hosting/state.json","summary":"runtime state written back to the repository","data":{"scripts":1,"at":"2026-11-21T16:57:22.003Z"}}
 {"at":"2026-11-22T09:11:53.330Z","kind":"host-expect","subject":"ultrastable-deploy-gateway","summary":"deploy recorded as expected","data":{"sha256":"03f3500a6dc39fa40fd6935ad726cd0049360fc9d453ee136dacc1fc62002d96"}}
 {"at":"2026-11-22T09:12:10.304Z","kind":"host-state","host":"cloudflare-gateway","subject":"ops/hosting/state.json","summary":"runtime state written back to the repository","data":{"scripts":1,"at":"2026-11-22T09:12:10.304Z"}}
+{"at":"2026-11-25T14:46:18.531Z","kind":"host-expect","subject":"ultrastable-deploy-gateway","summary":"deploy recorded as expected","data":{"sha256":"03f3500a6dc39fa40fd6935ad726cd0049360fc9d453ee136dacc1fc62002d96"}}
+{"at":"2026-11-25T14:46:43.526Z","kind":"host-state","host":"cloudflare-gateway","subject":"ops/hosting/state.json","summary":"runtime state written back to the repository","data":{"scripts":1,"at":"2026-11-25T14:46:43.526Z"}}

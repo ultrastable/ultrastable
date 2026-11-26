@@ -1,0 +1,11 @@
+{
+  "id": "Q-RULEREFS-seed-rules",
+  "title": "Q-RULEREFS-seed-rules: the seed's rule file names 353 files and commands a seeded system does not carry",
+  "body": "**Owner:** executor\n**Trigger:** rulerefs audit 2026-11-25 (RULE-REFS-1), every change through checks\n**Done check:** cmd:python3 -m foundation rulerefs --seed\n**Status:** closed\n\ncode-task: repo=ultrastable/ultrastable path=seed/agents/AGENTS.md\nseed/agents/AGENTS.md is the rule file every deployment's agents read. Resolved against the seed alone, 353 of its 446 file and command references do not exist there: every `python3 -m foundation ...` command (the seed has no foundation package), tests/foundation/*, site/*, dashboard/*, most doctrine/*.json. A seeded system is told to run checks it cannot run, so those rules are words with no code in that deployment. Fix per rule, in driver order: carry the engine in the seed (as seed/scripts/yearsim.py, seedlife.py, improve.py, claims.py already do) and name the seed's own path and command in the seed's copy of the rule, or state in the seed's copy that the rule is enforced by the platform and name the platform probe that covers the seeded system. Never delete a rule to make the count fall.\n\nsize: L\n\n**Closing probe:** `python3 -m foundation rulerefs --seed` exits 0 (it lists each missing reference with its line).\n\n\n**Prediction:** spec_quality >= 0.7 within 336 h (read by `python3 -m foundation specgate --report`; this item closing by its done check keeps the share of well-specified open items at or above today's reading)\n\n**Out of scope:** deleting the rule that names the reference, or adding the reference to the excuse list in doctrine/rule-refs.json.\n\n**Disposition:** shelved (ttl, 2026-11-26T05:33:04Z, DISPOSE-1)\n\n**Evidence:** open 6.1 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "labels": [
+    "p1",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Words match code"
+}

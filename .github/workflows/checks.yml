@@ -9,6 +9,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  pull-requests: read  # COLLISION-1: reads the other open PRs' files
 concurrency:
   group: checks-${{ github.ref }}
   cancel-in-progress: true
@@ -47,6 +48,14 @@ jobs:
           if [ -n "${BASE_SHA:-}" ]; then python3 -m foundation substance --gate --executor --range "${BASE_SHA}...HEAD"
           elif [ "${EVENT:-}" = "workflow_dispatch" ] && [[ "${REF_NAME:-}" == agent/* ]]; then  # the executor dispatches checks on its own agent/ branch
             git fetch -q origin main && PR_BODY="Executor run (dispatched checks)" python3 -m foundation substance --gate --executor --range "origin/main...HEAD"; fi
+      - name: No clash with an older open PR or a reused migration number (COLLISION-1)
+        # the knowledge-graph directive reached several sessions and five competing PRs clashed on a migration number, /api/graph and a check command
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          python3 -m foundation collisions --check
+          python3 -m foundation collisions --prs
       - name: Workflow minute-budget lint (cheap, runs first)
         run: python3 scripts/lint_workflows.py
       - name: Public docs complete and in sync with the code (DOCS-SYNC-1)
@@ -65,7 +74,7 @@ jobs:
           node --test demos/test/*.test.mjs
           node --test test/cost-probe.test.mjs
           node --test test/plan-limits.test.mjs
-          node --test --no-warnings instances/unlearn/worker/*.test.mjs
+          node --test test/record-deployments.test.mjs
           node --test --no-warnings tests/test_sweeper.js
           node --test --no-warnings dashboard/test/*.test.mjs
           bash scripts/site_tests.sh  # GATE-PARITY-1: runs site/*.test.mjs, the gate deploy-site runs before it deploys
@@ -110,6 +119,8 @@ jobs:
         run: ./scripts/regen_generated.sh
       - name: Doctrine check (positioning and code-is-the-only-memory, from doctrine/positioning.json)
         run: python3 -m foundation doctrine --check
+      - name: Seed kernel is closed under bootstrap (BOOTPROOF-1)
+        run: python3 -m foundation bootproof
       - name: Pins (every status pin and roadmap item on the site is computed from code, proofs and probe-backed issues)
         run: python3 -m foundation pins --check
       - name: Action pins (every `uses:` is a full commit SHA, shrink-only baseline, PINS-1 supply chain)
@@ -129,6 +140,18 @@ jobs:
           python3 -m foundation strays --check
           python3 -m foundation progress --check
           python3 -m foundation tenantpromo --check
+          python3 -m foundation discover --check  # DISCOVER-1: every live tenant listed and cross-linked; the seed serves its manifest, footer and heartbeat
+          python3 -m foundation fullstack --check  # FULLSTACK-1: repository, back end and public front end for every system
+          python3 -m foundation fleetcontract --check  # FLEET-CONTRACT-1: every live system carries the one contract module; one surface list
+          python3 -m foundation tenantstd --check  # TENANT-STANDARD-1: every tenant vendors the standard's base files; one scaffold writes every standard file
+          python3 -m foundation fleetmap --check  # FLEET-MAP-1: every repository of the org is one row; every copy names its source and its sync
+          python3 -m foundation surfaces --check  # SYSTEM-MANIFEST-1: the kernel manifest is valid and every surface equals what it renders
+          python3 -m foundation livelinks --check  # LIVE-LINKS-1: the README names where the platform and every system run
+          python3 -m foundation managers --check  # MANAGERS-1: every role is a loop with code, a clock, a probe and a settler; every loop has a manager; the seed carries every manager
+          python3 -m foundation rulerefs --check  # RULE-REFS-1: every path, command, test, workflow and route the rule files name resolves
+          python3 -m foundation datagraph --check
+          python3 -m foundation openstd --check  # OPEN-STANDARDS-1: registered open standards; no new bespoke format
+          python3 -m foundation coldstart --check  # COLDSTART-1: the seed carries every capability a system owes from birth; named commands resolve; agent files agree
           python3 -m foundation cfposture --check
           python3 -m foundation standingorder --check
           python3 -m foundation rules --check
@@ -171,13 +194,21 @@ jobs:
           python3 -m foundation flows --check
           python3 -m foundation criticality --check
           python3 -m foundation ultrastability --check
+          python3 -m foundation specgate --check  # SPEC-GATE-1: new items carry done check, prediction, out of scope, live proof
+          python3 -m foundation lessons --check  # LESSONS-1: every lesson enforced in code or carried by an open item
           python3 -m foundation verify --check
           python3 -m foundation selfmodel --check
           python3 -m foundation cost --check
           python3 -m foundation loopowner --check
           python3 -m foundation tenantrepos --check  # TENANT-REPO-1: tenant code lives in its own repository
+          python3 -m foundation repostd --check  # REPO-STANDARD-1: one repository standard; the Worker and the kit carry the same one
           python3 -m foundation pointclick --check
           python3 -m foundation claimcode --check
+          python3 -m foundation driftguard --check  # DRIFT-GUARD-1: every incident class has a check, detector and failure mode
+          python3 -m foundation driftguard --crons  # DRIFT-GUARD-1: crons fit the account's plan limit; every tenant clock has a pulse route
+          python3 -m foundation driftguard --handoff-lint  # DRIFT-GUARD-1: a deploy is verified by reading what it deployed, not the tick's /health
+          python3 -m foundation silentfail --check  # SILENT-FAIL-1: Worker bundle, duplicate modules, silent-failure classes
+          printf '%s' "$PR_BODY" > "$RUNNER_TEMP/pr_body.txt" && python3 -m foundation silentfail --cite "$RUNNER_TEMP/pr_body.txt"  # a done claim cites a live reading
           python3 -m foundation directive --lint HANDOFF.md docs/lessons/*.md
           python3 -m foundation writeback check --base "origin/${{ github.base_ref || 'main' }}"
           python3 -m foundation needsyou --check
@@ -188,9 +219,11 @@ jobs:
         run: |
           python3 -m foundation upstream contract --check
           python3 -m foundation upstream leaks
-      - name: Agentic standards (register, surfaces, discovery lint; Worker conformance and contract tests)
+      - name: Standards (register, surfaces, discovery lint, config schemas, catalog and SBOM; Worker conformance and contract tests)
         run: |
           python3 -m foundation standards --check
+          python3 -m foundation configschema --check  # CONFIG-SCHEMA-1: every config validates against its JSON Schema contract
+          python3 -m foundation stdgen --check        # STANDARDS-1: Backstage catalog and CycloneDX SBOM match the registers
           (cd seed/worker && node --test --no-warnings test/*.test.js)
   tests-a:
     if: ${{ vars.HALT != '1' && (github.event.pull_request.draft != true) }}  # HALT-1
@@ -244,10 +277,15 @@ jobs:
         run: python3 scripts/build_site_roadmap.py --check
       - name: Words match code, CLAIMS-1, both directions
         run: python3 -m foundation claims --check
+      - name: The seed carries its own definition and passes its own tests, as a new system would (SYSTEM-SPEC-1)
+        # The platform edits seed/ on every change, yet never ran the seed's Python suite; a new system was the first to find a break.
+        run: cd seed && python3 scripts/system.py --check && python3 -m unittest discover tests
       - name: Proof surfaces own data only (PROOF-OWN-1)
         run: python3 -m foundation proofown --check
       - name: Tenant sync registry, TENANT-SYNC-1
         run: python3 -m foundation.tenantsync --check
+      - name: Tenant admission, ADMIT-1 (one tenant-repos row; every registry derived)
+        run: python3 -m foundation admit --check
       - name: Agent data is current
         run: python3 scripts/build_site_agentdata.py --check
       - name: Platform brief is current

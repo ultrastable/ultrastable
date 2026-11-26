@@ -4387,7 +4387,7 @@
    "date": "2026-11-21",
    "title": "Unlearn phase 1 runs as its own Worker with no secrets",
    "body": "ultrastable-unlearn: one Worker, one D1, one hourly cron, zero dependencies, library-first moves so no model or credential can stop it; a visit catches up a silent cron; runway.json maps 12 year-long risks to tested safeguards.",
-   "probe": "file:instances/unlearn/worker/worker.test.mjs",
+   "probe": "grep:doctrine/tenant-repos.json::\"state\": \"moved\"",
    "session": "session_0156nqDtYB5VwjCzYcyHVqNp"
   },
   {
@@ -4600,7 +4600,7 @@
    "date": "2026-11-22",
    "title": "Unlearn research principles carried in code",
    "body": "Each principle in instances/unlearn/phases.json names a probe; phase 1 ships the help ladder, who-led measure and wide-walls measure; phase 3 principles (fade support, sandbox) wait for phase 3 gates.",
-   "probe": "grep:tests/foundation/test_unlearn.py::test_principles_are_in_code"
+   "probe": "grep:doctrine/tenant-repos.json::\"state\": \"moved\""
   },
   {
    "id": "decision-2026-11-22-cloudflare-alerts-reach-the-tick-cloudflare-alerts-closed",
@@ -4727,7 +4727,7 @@
    "date": "2026-11-22",
    "title": "Unlearn becomes an evidence encyclopedia of beliefs to unlearn",
    "body": "Rowan found the coaching-only Unlearn too unstructured. The tenant is now a clickable, encyclopedic site of popular beliefs the evidence contradicts, modelled on Practical Solutions, with each entry in a guided debunking order and an hourly evidence loop (Crossref DOIs, Europe PMC new reviews, freshness, review queue). The coaching tool stays at /coach.",
-   "probe": "grep:instances/unlearn/worker/entries.js::export const FORMAT"
+   "probe": "grep:doctrine/tenant-repos.json::\"state\": \"moved\""
   },
   {
    "id": "decision-2026-11-22-unlearn-improves-itself-grounded-review-labels-automatic-re-",
@@ -4735,7 +4735,7 @@
    "date": "2026-11-22",
    "title": "Unlearn improves itself: grounded review labels, automatic re-grading, Lab discovery, wording trials",
    "body": "Rowan asked to grow Unlearn and make it run and improve automatically. Decision: a model may only label or re-word, never add facts; every label or draft must quote a sentence present in the abstract it read, re-words may add no number or name, entries' cited sources are never changed by a model, drafts live on /lab and are never published as entries, and wording trials need 40 answers per arm and a two-proportion z of 1.96 to replace the original.",
-   "probe": "grep:instances/unlearn/worker/lab.js::export function grounded",
+   "probe": "grep:doctrine/tenant-repos.json::\"state\": \"moved\"",
    "session": "session_0156nqDvj2EuthJ3xYxicfND"
   },
   {
@@ -4744,7 +4744,7 @@
    "date": "2026-11-22",
    "title": "Unlearn tells famous-finding-retold stories by itself and gives readers a reason to come back daily",
    "body": "Rowan wants far more narrative-vs-later-evidence entries, automated, and a sticky site that runs a year unattended. Decision: a retold topic with then/now timelines graded honestly; a second daily discovery search for replications and re-analyses; drafts reach their own page only after reader votes and only with an index citation, always labelled a draft from one paper; a myth of the day cycle, an Atom feed and a browser-only streak bring readers back without accounts or cookies.",
-   "probe": "grep:instances/unlearn/worker/lab.js::export const RETOLD_QUERY",
+   "probe": "grep:doctrine/tenant-repos.json::\"state\": \"moved\"",
    "session": "session_0156nqDvj2EuthJ3xYxicfND"
   },
   {
@@ -4860,7 +4860,7 @@
    "date": "2026-11-22",
    "title": "Unlearn change layer: graded practices with private trials",
    "body": "Rowan asked for evidence-based change, not only debunking. Practices are full graded entries with a trial kit; all personal trial data stays in the reader's browser; the server counts anonymous events per practice and re-orders suggested if-then plans by keep rate; oversold claims (power posing, ego depletion, growth mindset) get no kit; the Lab drafts candidate practices from intervention reviews under the same grounding guards.",
-   "probe": "file:instances/unlearn/worker/change.js",
+   "probe": "grep:doctrine/tenant-repos.json::\"state\": \"moved\"",
    "session": "session_0156nqDvj2EuthJ3xYxicfND"
   },
   {
@@ -4923,6 +4923,980 @@
    "body": "test_stages_advance_only_with_evidence called seedlife.probe with the real clock against a verify written at a fixed 2026-11-21 NOW; once 48 h passed the test failed on every PR (red tests-a, unrelated to the diff). probe now takes now= and the test passes the fixture clock.",
    "probe": "grep:tests/foundation/test_seedlife.py::probe\\(\"s1\", self.root, NOW\\)",
    "session": "session_0156nqDvX8P4Z5wfkTJvFwh9"
+  },
+  {
+   "id": "decision-2026-11-25-impact-loop-1-generic-impact-and-reach-loop-in-core-impact",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "IMPACT-LOOP-1: generic impact and reach loop in core/impact",
+   "body": "core/impact records metric series, detects plateaus, plans bounded lever items with predictions and settles them; tenants declare metrics and levers. Practical Solutions is the first consumer.",
+   "probe": "file:workers/core/impact/index.js",
+   "session": "session_0156nqDrqL9XCgR639FAfNMv"
+  },
+  {
+   "id": "decision-2026-11-25-growth-metrics-read-through-the-site-worker-not-a-token-in-a",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Growth metrics read through the site Worker, not a token in Actions",
+   "body": "GROWTH-HITS-1 (2026-11-25, Session: session_0156nqDvJ5oNPSCVZzS8cYKL): the Cloudflare token never reached Actions, so growth metrics were empty for days. The site Worker already binds the analytics D1, so it serves the four 7-day aggregates at /api/growth/hits and foundation/growth.py falls back to it when no token is present. No credential crosses into Actions.",
+   "probe": "grep:site/worker.js::GROWTH-HITS-1"
+  },
+  {
+   "id": "lesson-2026-11-25-the-live-page-showed-0-merged-prs",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "The live page showed 0 merged PRs",
+   "body": "LIVE-COUNT-1 (2026-11-25, Session: session_0156nqDvJ5oNPSCVZzS8cYKL): /live How much code ships read 0 in every row. The snapshot builds it from one gh pr list GraphQL call; when that call fails or times out, _sh returns empty and 0 is published as fact. A REST fallback now fills the count, and transparency --probe-merged fails the workflow when /live shows 0 while GitHub has merges in the last 7 days.",
+   "probe": "grep:foundation/transparency.py::LIVE-COUNT-1"
+  },
+  {
+   "id": "lesson-2026-11-25-retriage-and-org-profile-probe-ran-weekly-their-issues-sat-o",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "retriage and org-profile probe ran weekly; their issues sat open for days (SLA-ISSUE-1)",
+   "body": "scripts/retriage.sh was documented as every 3 h but its cron is weekly (budget), so the rolling Retriage gaps issue (#2032) never refreshed; org-profile-probe is weekly, never closes its own issue and grepped for 'runs itself', a phrase absent from the profile README (#2033). Both now run from the 10-minute fleet clock; scripts/org_profile_probe.sh closes its issue on pass and checks the README headline.",
+   "probe": "file:scripts/org_profile_probe.sh",
+   "session": "session_0156nqDvX8P4Z5wfkTJvFwh9"
+  },
+  {
+   "id": "decision-2026-11-25-branch-cleanup-1",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "BRANCH-CLEANUP-1",
+   "body": "No branch outlives its PR. branchsweep --remote runs scripts/branch_cleanup.py daily: enforces delete_branch_on_merge and deletes merged or closed PR branches in every fleet repo.",
+   "probe": "file:scripts/branch_cleanup.py",
+   "session": "session_0156nqDsM82hJafZbpixiZx9"
+  },
+  {
+   "id": "decision-2026-11-25-unlearn-now-lives-in-ultrastable-unlearn",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Unlearn now lives in ultrastable/unlearn",
+   "body": "Rowan created the empty repo on 2026-11-25. A code session split instances/unlearn with its history, vendored promoqueue.js, stakeholders.json and models.json, and pushed it. The core keeps only the manifest; topology and system.json name source repo ultrastable/unlearn; seedlife reads build paths from build.repo; the system renderer writes a repo-root wrangler config for tenant workers. The tenant-repos workflow still has no org credential, so future tenant moves need the repo created first.",
+   "probe": "grep:doctrine/topology.json::ultrastable/unlearn"
+  },
+  {
+   "id": "lesson-2026-11-25-a-tenant-move-touches-more-than-the-folder",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "A tenant move touches more than the folder",
+   "body": "Moving Unlearn out broke the decision ledger, the topology main check, system.json, seedlife build paths and a core test that read the tenant's phases. Tenant checks now live in the tenant repo next to the code; core checks read source repos from topology.",
+   "probe": "grep:doctrine/topology.json::ultrastable/unlearn",
+   "session": "session_0156nqDtv3xZHzUu11Sy1geK"
+  },
+  {
+   "id": "lesson-2026-11-25-gh-issue-search-read-a-title-prefix-as-a-qualifier",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "gh issue search read a title prefix as a qualifier",
+   "body": "org_profile_probe.sh found its issue with --search 'org-profile-probe: ... in:title'; the leading org-profile-probe: is parsed as a search qualifier, so a passing probe never closed issue 2107 and failing runs could file duplicates. It now matches the exact title over the open list.",
+   "probe": "grep:scripts/org_profile_probe.sh::select\\(.title",
+   "session": "session_0156nqDvX8P4Z5wfkTJvFwh9"
+  },
+  {
+   "id": "lesson-2026-11-25-branchsweep-modify-delete-conflict",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "branchsweep modify/delete conflict",
+   "body": "branchsweep failed daily on a modify/delete conflict (checkout --ours had no ours stage), so its remote cleanup step never ran. Main's deletion now wins.",
+   "probe": "grep:foundation/branchsweep.py::modify/delete",
+   "session": "session_0156nqDsM82hJafZbpixiZx9"
+  },
+  {
+   "id": "decision-2026-11-25-branch-cleanup-runs-in-the-lane",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "branch cleanup runs in the lane",
+   "body": "scripts/branch_cleanup.py runs from the lane's completion sweep on every scheduled lane pass, as a second route beside branchsweep --remote.",
+   "probe": "grep:scripts/completion_sweep.sh::BRANCH-CLEANUP-1",
+   "session": "session_0156nqDsM82hJafZbpixiZx9"
+  },
+  {
+   "id": "decision-2026-11-25-what-works-tenant-grades-computed-deploy-after-owner-go-ahea",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "What Works tenant: grades computed, deploy after owner go-ahead",
+   "body": "New tenant what-works (policy evidence atlas). Grades come only from worker/grade.js over curated and read-in trials; a model may only label design and direction with verbatim abstract quotes. Code registered to move to ultrastable/what-works. Worker, D1 and route are added to doctrine/topology.json once the owner confirms the production deploy.",
+   "probe": "grep:doctrine/tenant-repos.json::ultrastable/what-works"
+  },
+  {
+   "id": "lesson-2026-11-25-branch-cleanup-keeps-evidence-branches",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "branch cleanup keeps evidence branches",
+   "body": "Ledger branches named *-evidence are kept by branch_cleanup.py, and each repo is handled on its own so one 404 does not end the pass.",
+   "probe": "grep:scripts/branch_cleanup.py::-evidence",
+   "session": "session_0156nqDsM82hJafZbpixiZx9"
+  },
+  {
+   "id": "decision-2026-11-25-deploy-what-works-worker-d1-and-route-in-the-topology",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Deploy What Works: Worker, D1 and route in the topology",
+   "body": "Rowan approved the deploy (2026-11-25). D1 ultrastable-what-works (c915e72c) created in the ultrastable account; Worker ultrastable-what-works builds from instances/what-works/worker while the tenant is moving to ultrastable/what-works; cron 17 * * * *; route what-works.ultrastable.org; clock what-works-beat with a /pulse/watch restart route; loop what-works-beat owned by the Worker.",
+   "probe": "grep:doctrine/topology.json::ultrastable-what-works"
+  },
+  {
+   "id": "decision-2026-11-25-frontend-auto-1-front-end-and-back-end-lanes-in-the-improve-",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "FRONTEND-AUTO-1: front-end and back-end lanes in the improve loop, engine in the seed",
+   "body": "seed/scripts/improve.py is the engine every system carries; each pass files one front-end and one back-end item; front-end items carry the UI/UX audit, Core Web Vitals and human-voice gate; lower-is-better metrics settle correctly.",
+   "probe": "file:seed/scripts/improve.py",
+   "session": "session_0156nqDs42dQamHBbr9uK8E2"
+  },
+  {
+   "id": "decision-2026-11-25-improve-1-impact-and-reach-loop-always-has-work",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "IMPROVE-1: impact and reach loop always has work",
+   "body": "foundation/improve.py runs daily in product-manager.yml: reach, impact and protected plus items every pass, missing signals are defects, market pass when R&D is stale, p0 stall per manager tier, closed items settled on their metric after 7 days.",
+   "probe": "file:foundation/improve.py",
+   "session": "session_0156nqDs42dQamHBbr9uK8E2"
+  },
+  {
+   "id": "decision-2026-11-25-replication-ledger-seeded-as-a-moving-tenant-tenant-repo-1",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Replication Ledger seeded as a moving tenant (TENANT-REPO-1)",
+   "body": "Rowan 2026-11-25 asked for an encyclopedic replication ledger across fields, and restated that every Ultrastable deployment has its own GitHub repo and runs sandboxed as a tenant app. instances/replication-ledger holds the manifest plus a first-slice worker (data model, computed standing rubric, Crossref-backed add/verify CLI, 25 findings in 5 fields, 6 replication projects); doctrine/tenant-repos.json registers it as moving so tenant-repos.yml creates ultrastable/replication-ledger from the folder's history. Seed DOIs are unchecked until Q-RLEDGER-VERIFY: this session had no route to Crossref.",
+   "probe": "grep:doctrine/tenant-repos.json::\"replication-ledger\""
+  },
+  {
+   "id": "decision-2026-11-25-what-works-moved-to-its-own-repository",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "What Works moved to its own repository",
+   "body": "Rowan created ultrastable/what-works (2026-11-25) and asked for it to be public. The tenant folder was split with its history, the core files it reads vendored (tenantrepos --prepare) and a CI workflow added; topology now builds ultrastable-what-works from that repository's main (worker/index.js), the registry state is moved and the worker code left the core. Seedlife and deploy read the repository over raw.githubusercontent.com, so it must be public.",
+   "probe": "grep:doctrine/topology.json::\"repo\": \"ultrastable/what-works\"",
+   "session": "session_0156nqDvibwHjBezJBzy8i3x"
+  },
+  {
+   "id": "decision-2026-11-25-auto-merge-default-1",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "AUTO-MERGE-DEFAULT-1",
+   "body": "branch_cleanup.py sets allow_auto_merge and delete_branch_on_merge on every fleet repo and every tenant repo listed in doctrine/tenant-repos.json, from the lane's completion sweep.",
+   "probe": "grep:scripts/branch_cleanup.py::allow_auto_merge",
+   "session": "session_0156nqDsM82hJafZbpixiZx9"
+  },
+  {
+   "id": "decision-2026-11-25-unlearn-is-judged-on-its-own-feeds",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Unlearn is judged on its own feeds",
+   "body": "progress.json's Unlearn row read ultrastable.io's feed and healed with ci.yml, which ships nothing. It now reads unlearn.ultrastable.org/feed.xml, heals with vendor-sync.yml then ci.yml, and declares a stickiness block on the new JSON Feed (ultrastable/unlearn#2).",
+   "probe": "grep:instances/ultrastable/progress.json::unlearn.ultrastable.org/feed.json",
+   "session": "session_0156nqDuaQoFBGSV57Y6JNRx"
+  },
+  {
+   "id": "lesson-2026-11-25-one-tenant-s-missing-credential-stopped-every-tenant-s-redep",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "One tenant's missing credential stopped every tenant's redeploy",
+   "body": "tenant-repos.yml exited on the first tenant it could not create (replication-ledger, no ORG_ADMIN_TOKEN/LANE_PAT/lane App in this repo) and the redeploy step had no if, so moved tenants such as Unlearn were never redeployed by it. Now each tenant failure is recorded and skipped, the run still fails at the end, and the redeploy step runs unless cancelled.",
+   "probe": "grep:.github/workflows/tenant-repos.yml::!cancelled()",
+   "session": "session_0156nqDuaQoFBGSV57Y6JNRx"
+  },
+  {
+   "id": "decision-2026-11-25-fullstack-1-every-system-deploys-repo-back-end-and-a-public-",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "FULLSTACK-1: every system deploys repo, back end and a public web UI",
+   "body": "Rowan 2026-11-25 asked that every Ultrastable system deploy its repo, back end and public web UI by itself. tenantrepos --check now fails a registered tenant with no public front end (a live topology Worker with a route, or an https frontend); deploy-ultrastable redeploys tenant code still moving in instances/*/worker. The Replication Ledger gains reader pages in worker/site.js and the topology Worker ultrastable-replication-ledger with route replication-ledger.ultrastable.org; seedlife verifies its /health after the deploy.",
+   "probe": "grep:foundation/tenantrepos.py::FULLSTACK-1",
+   "session": "session_0156nqDsz4YUXpAoqH9CX7mq"
+  },
+  {
+   "id": "decision-2026-11-25-replication-ledger-keeps-itself-current-the-hourly-discovery",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Replication Ledger keeps itself current: the hourly discovery beat is the core",
+   "body": "Rowan, 2026-11-25: static content is not autonomous and is contrary to the objective of an Ultrastable system. The hand-written findings are now only the ledger's seed. instances/replication-ledger/worker/discover.js and store.js run an hourly beat (cron 23 * * * *, plus a spark from any request when the last beat is over two hours old). It searches OpenAlex for works citing each original that report a replication, files a kind and outcome only under a verbatim-quote guard (Workers AI, then a fixed lexical reader), keeps everything else as leads, finds landmark originals not yet held from recent replication papers' references, flags retractions and checks seed citations at Crossref. Each standing move is a standing_changes row served at /changes and /feed.json; /api/freshness answers 503 when a finding goes unchecked for thirty days. State is kept in D1 ultrastable-replication-ledger, whose schema the Worker creates itself. Probe: node --test instances/replication-ledger/worker/discover.test.mjs. Residual risk: the OpenAlex query syntax was exercised only against a fake in tests, because this session's egress refuses api.openalex.org; /api/beats records each beat's errors so the first live beat shows any mismatch.",
+   "probe": "grep:instances/replication-ledger/worker/discover.test.mjs::one beat files the attempt",
+   "session": "https://claude.ai/code/session_0156nqDsz4YUXpAoqH9CX7mq"
+  },
+  {
+   "id": "decision-2026-11-25-static-content-1-a-page-that-never-changes-is-a-failure-mode",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "STATIC-CONTENT-1: a page that never changes is a failure mode",
+   "body": "Rowan 2026-11-25: static content is not autonomous. foundation/staticcontent.py hashes each system's sitemap pages daily into ops/static-content.json and the static-content detector fails when a page is unchanged for max_unchanged_days; a young ledger is unmeasured, never a pass.",
+   "probe": "grep:tests/foundation/test_staticcontent.py::def test_static_page_is_a_finding",
+   "session": "session_0156nqDvX8P4Z5wfkTJvFwh9"
+  },
+  {
+   "id": "lesson-2026-11-25-org-profile-probe-grep-q-in-a-pipe-under-pipefail-reads-a-pa",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "org profile probe: grep -q in a pipe under pipefail reads a pass as a failure",
+   "body": "echo page | grep -q dies of SIGPIPE under pipefail on a large page; use a here-string.",
+   "probe": "grep:scripts/org_profile_probe.sh::<<<",
+   "session": "session_0156nqDvX8P4Z5wfkTJvFwh9"
+  },
+  {
+   "id": "lesson-2026-11-25-tenant-liveness-hid-a-dead-loop-what-works-launch",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Tenant liveness hid a dead loop (What Works launch)",
+   "body": "On What Works' launch /health said ok while every OpenAlex call answered 429 and every Europe PMC call 503, so no programme was ever checked; overlapping catch-up beats from visits caused the burst and duplicate first grades. Liveness must report each part of the loop with its own ok, and the platform reads every tenant's parts live (tenantrepos --health, detector tenant-health). A tenant merge now ships within the hour via the tick's tenant-deploy step.",
+   "probe": "grep:tests/foundation/test_tenantrepos.py::class TenantHealth"
+  },
+  {
+   "id": "lesson-2026-11-25-what-works-went-live-repo-creation-and-visibility-still-need",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "What Works went live; repo creation and visibility still needed the owner",
+   "body": "What Works is live at what-works.ultrastable.org (deploy 2026-11-25 15:42 UTC, custom domain attached although deploy-ultrastable reports ultrastable.org routes unreadable). Two steps needed Rowan: creating ultrastable/what-works and making it public, because tenant-repos.yml has none of its three credential routes bound (same gap as tenant-repo-unlearn). Tenant repos must be public: seedlife and deploy read them over raw.githubusercontent.com. This change adds What Works to progress, stickiness, the showcase and the social queue (TENANT-PROMO-1).",
+   "probe": "grep:instances/ultrastable/progress.json::\"id\": \"what-works\"",
+   "session": "session_0156nqDvibwHjBezJBzy8i3x"
+  },
+  {
+   "id": "lesson-2026-11-25-workers-calling-openalex-need-the-polite-pool-closed-seed-it",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Workers calling OpenAlex need the polite pool; closed seed items need evidence",
+   "body": "The Replication Ledger's first live beat (beat 1, 2026-11-25 16:21 UTC, /api/beats) got HTTP 429 from OpenAlex on every call: Workers share outbound addresses and anonymous calls are limited by address. discover.js oa() now sends the project's published contact (security.txt address) as mailto, which OpenAlex serves from its polite pool, and retries a 429 once. Second lesson: seedlife --run closed Q-SEED-what-works with no Evidence line, which turned closedloop --check red on main; it now writes the probe it passed as Evidence. Probe: node --test instances/replication-ledger/worker/ and tests/foundation/test_seedlife.py. Residual risk: whether the polite pool clears the 429 is known only after the next live beat.",
+   "probe": "grep:instances/replication-ledger/worker/discover.js::mailto=",
+   "session": "https://claude.ai/code/session_0156nqDsz4YUXpAoqH9CX7mq"
+  },
+  {
+   "id": "decision-2026-11-25-breadth-1-owner-edits-to-suggestions-steer-the-idea-bank",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "BREADTH-1: owner edits to suggestions steer the idea bank",
+   "body": "The owner's edit to a front-door suggestion is stored in owner_edits in doctrine/idea-bank.json and shown to the grow prompt; build_idea_bank.py validate() now turns away ideas that hold a narrow phrase. Verified by tests/test_idea_bank.py.",
+   "probe": "grep:doctrine/idea-bank.json::owner_edits",
+   "session": "session_0156nqDrbe8Pmy5MPH111zRn"
+  },
+  {
+   "id": "decision-2026-11-25-datagraph-1-every-system-keeps-a-knowledge-graph-of-all-its-",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "DATAGRAPH-1: every system keeps a knowledge graph of all its data",
+   "body": "Owner directive 2026-11-25. Built as core/datagraph (deterministic extraction from the data: rows are nodes, key-equal values and ids in text are edges), the seed tick step knowledge-graph (bi-temporal D1 storage, hash-diff writes, PageRank, communities, bridges, orphans, Adamic-Adar leads settled against later data, calibrated kind weights, KG-ORPHANS items), a privacy-gated read side (/api/graph*, /graph), and doctrine/knowledge-graph.json with foundation/datagraph.py --check covering every system. LLM extraction and Leiden are upgrade paths, not the default: schema-first extraction and topology heuristics are cheaper and competitive. Research: docs/research/knowledge-graph.md.",
+   "probe": "file:doctrine/knowledge-graph.json",
+   "session": "https://claude.ai/code/session_0156nqDvcxMuXbDzftceaEZU"
+  },
+  {
+   "id": "decision-2026-11-25-discover-1-public-by-default-every-system-discoverable",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "DISCOVER-1: public by default, every system discoverable",
+   "body": "Every live tenant is listed and cross-linked on ultrastable.io from the registries; seeded systems self-register daily via their public manifest; external listings are verified, rechecked daily and dropped on opt-out, noindex or 3 failures. Only ultrastable/ops stays private.",
+   "probe": "file:foundation/discover.py"
+  },
+  {
+   "id": "decision-2026-11-25-full-stack-1-repository-back-end-and-public-front-end-for-ev",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "FULLSTACK-1: repository, back end and public front end for every system",
+   "body": "Every system is checked for all three parts by foundation/fullstack.py: check runs in checks, live runs daily in tenant-repos.yml. Verified by tests/foundation/test_fullstack.py. The second-tenant seed has a back end only and carries Q-FULLSTACK-second-tenant.",
+   "probe": "file:foundation/fullstack.py",
+   "session": "session_0156nqDrbe8Pmy5MPH111zRn"
+  },
+  {
+   "id": "decision-2026-11-25-kgraph-1-one-shared-knowledge-graph-engine-for-every-system",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Knowledge graphs: the platform runs DATAGRAPH-1, tenants with domain data run the shared engine",
+   "body": "The platform keeps DATAGRAPH-1 (seed step knowledge-graph, zero-config over every table). Tenants with domain data run seed/worker/src/knowledge.js with their own mappers (built rows in doctrine/knowledge-graph.json, vendored through doctrine/tenant-repos.json). The two engines share kg_* table names with different schemas, so never both on one D1.",
+   "probe": "file:seed/worker/src/knowledge.js",
+   "session": "session_0156nqDvwrub84GRd3gGvBQy"
+  },
+  {
+   "id": "decision-2026-11-25-launch-path-1-a-visitor-with-no-code-agent-launches-from-one",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "LAUNCH-PATH-1: a visitor with no code agent launches from one form post",
+   "body": "An idea typed at ultrastable.io gets a launch record (site/graduate.js). deploy/launch-apps.mjs, run daily by tenant-repos.yml, deploys the idea's own system through the site worker's OIDC route, creates its repository from ultrastable/seed, files the owner's plain-words requests there and invites the owner on request. Without an org credential the app stays live and managed and the repository waits (gate visitor-app-repos). A test idea walks the front door on every run. Still open: Q-LAUNCH-1, Q-LAUNCH-2.",
+   "probe": "grep:deploy/launch-apps.mjs::LAUNCH-PATH-1"
+  },
+  {
+   "id": "decision-2026-11-25-sync-both-ways-1-tenants-pull-the-platform-and-lift-general-",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "SYNC-BOTH-WAYS-1: tenants pull the platform and lift general code up",
+   "body": "tenantsync now opens its pull requests over REST with the token passed in, clones ultrastable/practical-solutions, measures days behind per tenant and lifts reaching the core, and files Q-SYNC items with their own probes. Seeded systems also pull the kernel weekly with their own token.",
+   "probe": "grep:foundation/tenantsync.py::SYNC-BOTH-WAYS-1",
+   "session": "session_0156nqDs42dQamHBbr9uK8E2"
+  },
+  {
+   "id": "decision-2026-11-25-workers-ai-for-the-executor-goes-through-the-site-worker-s-o",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Workers AI for the executor goes through the site Worker's OIDC route (AI-OIDC-1)",
+   "body": "The repo's Cloudflare secrets name the retired account and cfaccount strips them, so every workers-ai rung was unavailable. With id-token: write, a workers-ai rung with no Cloudflare secret calls /__internal/cf with ai/run/@cf/<model>, an allow-listed path in site/deployer.js.",
+   "probe": "grep:site/deployer.js::AI-OIDC-1",
+   "session": "session_0156nqDuo7mxQbyexaaJm48F"
+  },
+  {
+   "id": "lesson-2026-11-25-a-graph-of-all-data-is-a-disclosure-surface",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "A graph of all data is a disclosure surface",
+   "body": "Joining every table links records that were separate, and the platform D1 holds people's replies and owner answers. Personal and secret tables are excluded at extraction, and the public read view shows only counts, orphan findings and kinds a system declares public; the owner bearer sees the rest.",
+   "probe": "grep:workers/core/datagraph/index.js::inbox\\|answer\\|interview"
+  },
+  {
+   "id": "lesson-2026-11-25-a-second-route-written-in-one-entry-point-is-dead-if-the-loo",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "A second route written in one entry point is dead if the loop calls another",
+   "body": "MODELS-ORG-1 added the GitHub Models org-endpoint fallback in agents.invoke, but the executor calls agent_ladder.transport, which built and sent the request itself, so the fallback never ran and every executor run failed on 200 text/plain OK. Both now go through agents.request.",
+   "probe": "grep:foundation/agent_ladder.py::agents\\.request\\(",
+   "session": "session_0156nqDuo7mxQbyexaaJm48F"
+  },
+  {
+   "id": "lesson-2026-11-25-a-test-must-not-read-the-live-queue-it-is-testing",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "A test must not read the live queue it is testing",
+   "body": "Session: session_0156nqDu4uGc3HMjQ8qCqHyK. test_pm GrowthStarve read main's docs/issues, so it failed whenever the product manager had already filed growth items, which is every product-manager PR. Patch queue reads in tests.",
+   "probe": "grep:tests/foundation/test_pm.py::SELFTEST-1"
+  },
+  {
+   "id": "lesson-2026-11-25-a-visitor-app-needs-a-repo-token-scoped-to-its-one-repositor",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "A visitor app needs a repo token scoped to its one repository",
+   "body": "The app's own Worker asks its host (the tick Worker) for a one-hour installation token limited to its repository, proved by an HMAC key the deployer binds. No app holds an org-wide credential.",
+   "probe": "grep:seed/worker/src/apprepos.js::scopedToken",
+   "session": "session_0156nqDrbe8Pmy5MPH111zRn"
+  },
+  {
+   "id": "lesson-2026-11-25-discover-1-probe-caught-two-new-tenants",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "DISCOVER-1 probe caught two new tenants",
+   "body": "discover --check failed twice when a tenant went live without a showcase (What Works, Replication Ledger). Both were added. Next: file the showcase automatically from the tenant's IDEA.md. Session: session_0156nqDvKe54xZ9t3tXhvDPH. The red suites on this branch were fixed by Session: session_0156nqDu4uGc3HMjQ8qCqHyK (commit a176393f).",
+   "probe": "file:foundation/discover.py",
+   "session": "session_0156nqDvKe54xZ9t3tXhvDPH"
+  },
+  {
+   "id": "lesson-2026-11-25-generated-trajectory-data-must-be-regenerated-on-merge-and-l",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Generated trajectory data must be regenerated on merge and landed by the watchdog",
+   "body": "test_trajectory went red on main because the watchdog wrote ops/trajectory.* but never landed site/trajectory-data.js, and regen-generated did not run the trajectory generator.",
+   "probe": "grep:scripts/regen_generated.py::trajectory",
+   "session": "session_0156nqDs42dQamHBbr9uK8E2"
+  },
+  {
+   "id": "lesson-2026-11-25-merge-now-reconcile-looped-on-a-code-conflict-pushing-empty-",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "MERGE-NOW reconcile looped on a code conflict, pushing empty commits",
+   "body": "On a PR with a hand-written conflict, mergenow.reconcile set generated files to main's copy even when they already matched, committed the unchanged tree, failed the merge with 409, and the synchronize event from its own commit ran it again: 34 empty commits in four minutes on #2165, each starting CI. It now commits only when the new tree differs from the head tree.",
+   "probe": "grep:seed/worker/src/mergenow.js::MERGENOW-NOOP-1",
+   "session": "claude-code"
+  },
+  {
+   "id": "lesson-2026-11-25-silent-loops-and-frozen-pages-a-green-run-is-not-a-landed-re",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Silent loops and frozen pages: a green run is not a landed result",
+   "body": "Session: session_0156nqDu4uGc3HMjQ8qCqHyK. 2026-11-25 audit: seed kit-sync failed every scheduled run for 3 days unseen; /balance froze because only balance --gate ran; /changelog froze because it rode the product-manager PR, which went red and was superseded. foundation/selftest.py now checks every scheduled workflow in the org and every generated site data stamp, as failure-audit detectors.",
+   "probe": "file:foundation/selftest.py"
+  },
+  {
+   "id": "lesson-2026-11-25-spinoffs-deployed-with-retired-account-secrets-for-4-days-sp",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "spinoffs deployed with retired-account secrets for 4 days (SPINOFF-DEPLOY-2)",
+   "body": "spinoff.yml ran wrangler with CLOUDFLARE_* repo secrets (retired account) and a D1 id that only exists there; it failed daily from 2026-11-21 and the live worker kept serving retired apps. ultrastable-spinoffs is now in doctrine/topology.json, deploys through deploy-oidc.mjs, and deploy-ultrastable watches spinoffs/**. The uiux live audit reads retirement from spinoffs/registry.json.",
+   "probe": "grep:.github/workflows/spinoff.yml::SPINOFF-DEPLOY-2",
+   "session": "session_0156nqDuo7mxQbyexaaJm48F"
+  },
+  {
+   "id": "lesson-2026-11-25-the-credential-everyone-said-was-missing-was-already-in-the-",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "The credential everyone said was missing was already in the tick Worker",
+   "body": "Three gates said no credential could create an org repository. The tick Worker's sealed store held a live administration App token the whole time; the gate listed that route as not tried. Read the credential store before recording a credential gate (PATHFINDER-1). APP-REPO-1 uses it.",
+   "probe": "grep:seed/worker/src/apprepos.js::APP-REPO-1"
+  },
+  {
+   "id": "lesson-2026-11-25-the-seed-asked-a-hosted-owner-for-cloud-and-model-keys",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "The seed asked a hosted owner for cloud and model keys",
+   "body": "Walking the policy atlas idea through the seed's bootstrap opened cards asking the owner to set CLOUDFLARE_API_TOKEN and ANTHROPIC_API_KEY and to approve spending. A person with no code agent cannot do that. IDEA.md now takes hosted_by; the host deploys and binds models and the bootstrap opens no secret or budget card (HOSTED-1).",
+   "probe": "grep:seed/bootstrap/bootstrap.py::HOSTED-1"
+  },
+  {
+   "id": "lesson-2026-11-25-graph-skips-underscore-bookkeeping-tables",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Graph skips underscore bookkeeping tables",
+   "body": "DATAGRAPH-1: tables whose name starts with an underscore (_migrations, _copy_progress, _cf_KV) are D1 and migration bookkeeping, not system data; read into the graph they only produced orphan findings and the item KG-ORPHANS-_copy_progress. SKIP_TABLE now drops every leading-underscore table; the step closes that item on its next pass when the finding stops firing.",
+   "probe": "grep:workers/core/datagraph/index.js::SKIP_TABLE = /\\^\\(sqlite_\\|_\\|",
+   "session": "https://claude.ai/code/session_0156nqDvcxMuXbDzftceaEZU"
+  },
+  {
+   "id": "decision-2026-11-25-every-deployment-is-a-sandboxed-tenant-with-its-own-repo",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Every deployment is a sandboxed tenant with its own repo",
+   "body": "what-works moving; base-rates, did-it-work, open-questions planned; spinoffs retired. Tenant workers bind only their own stores, no core services or secrets, with a sampled daily budget. Repo creation waits on an org-scoped credential (sibling thread owns that route); tenant-repos.yml creates the four repos once one binds.",
+   "probe": "grep:foundation/tenantrepos.py::def isolation"
+  },
+  {
+   "id": "decision-2026-11-25-graph-ai-layer-on-datagraph-1-tables",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Graph AI layer on DATAGRAPH-1 tables",
+   "body": "KGRAPH-AI-1: embeddings, extracted relations, community summaries and a cost probe (/api/graph/ai) run on DATAGRAPH-1's tables. PR 2166 was closed as a duplicate of PR 2158 because it reused kg_nodes/kg_edges with a different schema.",
+   "probe": "file:seed/worker/src/graphai.js"
+  },
+  {
+   "id": "decision-2026-11-25-product-manager-pass-2026112517-0-item-s-filed",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Product manager pass 2026112517: 0 item(s) filed",
+   "body": "Growth and repair items, experiment verdicts and knob review recorded in ops/growth/pm-report.json by foundation/pm.py; tests pass.",
+   "probe": "file:foundation/pm.py"
+  },
+  {
+   "id": "decision-2026-11-25-replication-ledger-names-its-knowledge-graph-on-the-front-en",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Replication Ledger names its knowledge graph on the front end",
+   "body": "The /graph page (Connections in the nav) shows the shared engine's live measurements, open insights and method from D1 on every request; with no reading yet it says so. My own parallel graph engine (PR 2191 first version) was dropped for the merged KGRAPH engine from PR 2151.",
+   "probe": "grep:instances/replication-ledger/worker/site.js::export function graphPage",
+   "session": "https://claude.ai/code/session_0156nqDsz4YUXpAoqH9CX7mq"
+  },
+  {
+   "id": "decision-2026-11-25-site-serves-llms-full-txt-site-search-with-opensearch-server",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Site serves llms-full.txt, site search with OpenSearch, Server-Timing and a preload Link",
+   "body": "Five improve items closed in code: the skip link carries class skip-link, /llms-full.txt and /search read the text of every public page rendered by the same handler (cached an hour per isolate), /opensearch.xml describes /search, every response carries Server-Timing and every HTML page a preload Link for the favicon Cloudflare can send as a 103 Early Hint.",
+   "probe": "file:site/pagetext.test.mjs",
+   "session": "claude-code"
+  },
+  {
+   "id": "lesson-2026-11-25-graph-step-must-not-select-tables-core-drops-by-name",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Graph step must not SELECT tables core drops by name",
+   "body": "What Works' live beat logged '_cf_KV: access prohibited' because the datagraph step read every D1 table before core/datagraph dropped secret-shaped and platform ones. Filter by SKIP_TABLE before reading (pass the table on empty so it is still reported as dropped). Several parallel sessions also built DATAGRAPH-1 at once (#2151, #2157, #2158, #2166): check open PRs for the same directive before starting.",
+   "probe": "grep:seed/worker/src/datagraph.js::if \\(SKIP_TABLE\\.test\\(name\\)\\)",
+   "session": "session_0156nqDryMqrcf3FtGVreZkf"
+  },
+  {
+   "id": "lesson-2026-11-25-lane-pr-items-stayed-open-a-day-after-their-pr-closed",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Lane PR items stayed open a day after their PR closed",
+   "body": "OL-PR-n items were marked vacuous when the PR merged before any queue pass saw the probe fail, so they stayed open for the 24 h vacuous hold. The lane's filing is the recorded failure (contracts.filed_on_failure); queue.run also survives a shallow checkout where balance is unmeasured.",
+   "probe": "grep:foundation/contracts.py::LANE-FILED-FAIL-1",
+   "session": "claude-code"
+  },
+  {
+   "id": "lesson-2026-11-25-sandbox-check-found-unbudgeted-tenants-on-merge",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Sandbox check found unbudgeted tenants on merge",
+   "body": "Merging main brought replication-ledger and what-works D1s with no sandbox or sampled budget; the isolation check caught both. Planned and retired tenants are exempt from the full-stack rule.",
+   "probe": "grep:foundation/tenantrepos.py::def isolation",
+   "session": "session_0156nqDtZYBcuUWAFffTDjya"
+  },
+  {
+   "id": "decision-2026-11-25-tenant-repositories-are-created-by-the-platform-s-own-admini",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Tenant repositories are created by the platform's own administration app (TENANT-REPO-2)",
+   "body": "Evidence: tenant-repos.yml run 45659451015 failed with 'no credential could create ultrastable/replication-ledger' because ORG_ADMIN_TOKEN, LANE_PAT and the lane App are unbound. Decision: a fourth route with no stored credential. deploy/tenant-repo-token.mjs asks the site over GitHub OIDC (op tenant-repo), the site asks the tick at /host/tenant-repo, the tick creates the repository with the administration app and returns a one-hour code-app token for that one repository only while it has no commit. Tested by seed/worker/test/apprepos.test.js (11 pass). The live probe is the next tenant-repos.yml run creating ultrastable/replication-ledger. Also: doctrine/full-stack.json now reads Practical Solutions' back end at tenant-ps-core (agencies.json answered 200 in Workers logs), not tenant-ps-web/health (404).",
+   "probe": "grep:seed/worker/src/apprepos.js::ensureTenantRepo",
+   "session": "session_0156nqDvGPcBsDy63L214bPa"
+  },
+  {
+   "id": "lesson-2026-11-25-openalex-refuses-workers-even-in-the-polite-pool-europe-pmc-",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "OpenAlex refuses Workers even in the polite pool; Europe PMC is the second route",
+   "body": "Beat 2 (17:23 UTC, after the mailto polite-pool fix) still got HTTP 429 on every OpenAlex call from the ultrastable-replication-ledger Worker: OpenAlex limits by address and Workers share theirs. checkFinding now falls back to Europe PMC (CITES search, no key) and reads its records with the same verbatim-quote reader; the OpenAlex error now carries the response text so the cause is visible on /api/beats.",
+   "probe": "file:instances/replication-ledger/worker/epmc.js",
+   "session": "https://claude.ai/code/session_0156nqDsz4YUXpAoqH9CX7mq"
+  },
+  {
+   "id": "lesson-2026-11-25-the-tenant-repos-workflow-holds-no-org-credential-the-tick-w",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "The tenant-repos workflow holds no org credential; the tick Worker makes the repository",
+   "body": "First live run after LAUNCH-PATH-1: ORG_ADMIN_TOKEN, LANE_PAT and the lane App secrets are all empty in tenant-repos.yml, so replication-ledger and second-tenant got no repository. TENANT-REPO-2: the workflow presents its OIDC token to the site worker and the tick Worker's admin and code Apps create the repository; a one-hour push token comes back only while the repository has no commit. A health-only seed now serves a public page at /. fullstack --live fetches a public repository at github.com so declared-and-never-made reads missing.",
+   "probe": "grep:seed/worker/src/apprepos.js::ensureTenantRepo",
+   "session": "session_0156nqDrbe8Pmy5MPH111zRn"
+  },
+  {
+   "id": "lesson-2026-11-25-a-push-from-a-worktree-of-the-actions-checkout-uses-the-run-",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "A push from a worktree of the Actions checkout uses the run's own token, not the token in the URL",
+   "body": "tenant-repos run 45669164019: ultrastable/base-rates was created by the platform route, then the push of its split failed with 'Permission denied to github-actions[bot]'. actions/checkout stores an http extraheader in the repository config and a worktree shares it, so it overrides the token in the push URL. The push now clears that header. The seed step was unaffected because it pushes from a fresh git init. Same run: second-tenant repository created and filled, front-door walk passed with 0 visitor steps, fullstack --live read 5 of 5 systems complete.",
+   "probe": "grep:.github/workflows/tenant-repos.yml::extraheader=",
+   "session": "session_0156nqDrbe8Pmy5MPH111zRn"
+  },
+  {
+   "id": "lesson-2026-11-25-a-checkout-s-stored-token-wins-over-the-token-in-a-push-url",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "A checkout's stored token wins over the token in a push URL",
+   "body": "actions/checkout stores GITHUB_TOKEN as an http extraheader for github.com, and a later git push to an x-access-token URL still sends that header, so GitHub reads the push as github-actions[bot]. Evidence: tenant-repos run 45669381614 held a one-repo token from the platform route (TENANT-REPO-2) and its push to base-rates answered 403. Fixed in the same change: the job sets persist-credentials false and records a failed push per repository, then goes on; the workflow lint passes and the next tenant-repos run is the live probe. Session: session_0156nqDvGPcBsDy63L214bPa",
+   "probe": "grep:.github/workflows/tenant-repos.yml::persist-credentials: false"
+  },
+  {
+   "id": "lesson-2026-11-25-openalex-now-needs-an-api-key-europe-pmc-carries-the-ledger-",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "OpenAlex now needs an API key; Europe PMC carries the ledger meanwhile",
+   "body": "Beat 3 showed the cause in OpenAlex's own words: 'Insufficient budget. This request has no API key'. The mailto polite pool no longer helps. Europe PMC answered (power-posing checked, 6 leads refused by the verbatim-quote rule because they do not say they replicate). Europe PMC is now read most-cited first, and originals it does not hold are searched by name. The Worker reads OPENALEX_API_KEY when one is bound.",
+   "probe": "grep:instances/replication-ledger/worker/discover.js::OPENALEX_API_KEY",
+   "session": "https://claude.ai/code/session_0156nqDsz4YUXpAoqH9CX7mq"
+  },
+  {
+   "id": "decision-2026-11-25-impact-loop-1-oversized-items-split-after-two-failures",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "IMPACT-LOOP-1: oversized items split after two failures",
+   "body": "core/impact plan() takes failures and a lever split(); an item failed twice is replaced by its children.",
+   "probe": "grep:workers/core/impact/index.js::split_after",
+   "session": "session_0156nqDrqL9XCgR639FAfNMv"
+  },
+  {
+   "id": "lesson-2026-11-25-papers-were-invisible-to-search-and-mostly-unposted",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Papers were invisible to search and mostly unposted",
+   "body": "REACH-PAPERS-1: research papers were missing from the sitemap and IndexNow and had no structured data; only the Ashby paper was posted because cadence was 3 days and changed-state reposts went first; Mastodon engagement was never read because relay rows are named relay:mastodon. All four fixed in this change; postfeedback tests pass (19) and thought --run now schedules chen-stratton-2026.",
+   "probe": "grep:site/promote.js::REACH-PAPERS-1",
+   "session": "session_0156nqDuQXEUhGCq6LkokuuL"
+  },
+  {
+   "id": "decision-2026-11-25-every-fleet-property-is-read-daily-for-search-and-ai-discove",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Every fleet property is read daily for search and AI discoverability",
+   "body": "FINDABLE-1 (Rowan 2026-11-25): no Zenodo or DOIs. Reach comes from open standards: robots, sitemap, llms.txt, meta, canonical, Open Graph, JSON-LD and feeds on every property in the directory, read daily by foundation/findable.py; gaps become Q-FIND items and feeds are pinged to the WebSub hub. Tests: tests/foundation/test_findable.py 4 pass.",
+   "probe": "grep:foundation/findable.py::def home_gaps",
+   "session": "session_0156nqDuQXEUhGCq6LkokuuL"
+  },
+  {
+   "id": "decision-2026-11-25-papers-are-full-white-papers-with-a-publishing-gate",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Papers are full white papers with a publishing gate",
+   "body": "WHITEPAPER-1 (Rowan 2026-11-25): papers read as white papers, with numbered sections (introduction, background, method, results with a table, discussion, limitations, conclusion) and numbered references cited in the text, assembled from the study file and live measurements. research.gate() holds back a paper missing a section, a citation or a measured result; research --check fails on it. /research is linked from the header, footer, homepage and the family nav tenants read. Tests: test_research 9 pass, site tests 71 pass.",
+   "probe": "grep:foundation/research.py::def gate",
+   "session": "session_0156nqDuQXEUhGCq6LkokuuL"
+  },
+  {
+   "id": "decision-2026-11-25-silent-fail-1-silent-failure-classes-are-data-with-detectors",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "SILENT-FAIL-1: silent-failure classes are data with detectors",
+   "body": "Classes live in doctrine/silent-failures.json, each bound to a detector. Worker bundle, duplicate-module and live-citation checks run in checks. An incident matching no class is a finding. A Status: done claim cites a server-side Live: GET line.",
+   "probe": "file:foundation/silentfail.py",
+   "session": "session_0156nqDuMYtda8kTyfqmpNJk"
+  },
+  {
+   "id": "decision-2026-11-25-white-papers-not-research-papers-no-number-without-a-source",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "White papers, not research papers; no number without a source",
+   "body": "WHITEPAPER-2 and NO-MADE-UP-NUMBERS-1 (Rowan 2026-11-25): papers are executive summary, problem, approach, putting it into practice, trade-offs, next steps and references; no forced results table. Live numbers appear only where a reading exists, each with its source. research.gate() blocks a paper with a number that traces to no measurement, study file or cited reference; a test injects 47% and the gate blocks it. Social posts already pass thought.guard, which blocks numbers not in the paper's data.",
+   "probe": "grep:foundation/research.py::def unsourced",
+   "session": "session_0156nqDuQXEUhGCq6LkokuuL"
+  },
+  {
+   "id": "decision-2026-11-25-deploys-read-every-knowledge-graph-back-repo-settings-go-thr",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Deploys read every knowledge graph back; repo settings go through the admin App",
+   "body": "datagraph --live runs after each deploy and daily. org-settings no longer goes red without ORG_ADMIN_TOKEN: the admin App sets delete_branch_on_merge and allow_auto_merge; the rest is gate org-admin-settings.",
+   "probe": "grep:foundation/datagraph.py::def live",
+   "session": "session_0156nqDrE184nXAFKcTRxk26"
+  },
+  {
+   "id": "lesson-2026-11-25-a-directive-given-to-several-sessions-needs-a-claim-and-a-co",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "A directive given to several sessions needs a claim and a collision gate",
+   "body": "DATAGRAPH-1 reached several sessions at once; six PRs (2135, 2151, 2157, 2158, 2166, 2187) clashed on migration 0031, /api/graph and the datagraph command. collisions --prs now refuses the newer PR and collisions --claim is SOP step take.",
+   "probe": "file:foundation/collisions.py",
+   "session": "session_0156nqDrE184nXAFKcTRxk26"
+  },
+  {
+   "id": "lesson-2026-11-25-every-github-merge-path-retries-5xx-and-reads-back-the-merge",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Every GitHub merge path retries 5xx and reads back the merge",
+   "body": "Merges failed on GitHub 5xx with only manual retry; four separate gh helpers had no retry. seed/worker/src/ghfetch.js is the one shared fetch.",
+   "probe": "file:seed/worker/src/ghfetch.js",
+   "session": "session_0156nqDrE184nXAFKcTRxk26"
+  },
+  {
+   "id": "decision-2026-11-25-ultrastable-seed-is-kept-public-and-is-the-launch-template",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "ultrastable/seed is kept, public, and is the launch template",
+   "body": "org/repos.json said archived; live it is the template visitor app repos are generated from. Registry now says keep/public (DISCOVER-1). Visitor app repos stay private unless declared public, because they hold visitor idea text.",
+   "probe": "grep:org/repos.json::Revived 2026-11-25 as the launch template",
+   "session": "session_0156nqDtpVMPp6pQZ9ny5wAS"
+  },
+  {
+   "id": "lesson-2026-11-25-openalex-refuses-cloudflare-workers-without-a-key-give-the-l",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "OpenAlex refuses Cloudflare Workers without a key; give the ledger keyless routes and a second egress",
+   "body": "LEDGER-KEYLESS-1: OpenAlex answers 429 'Insufficient budget. This request has no API key' to the Replication Ledger Worker, and Europe PMC covers only biomedicine. The beat now tries, after OpenAlex refuses: the OpenAlex mirror a GitHub runner lands daily (data/openalex.json via ledger-openalex.yml, same openalexCandidates and discoverFindings code, zero subrequests), Europe PMC, then Crossref works search and Semantic Scholar paper search (keyless.js, one shared BEAT.KEYLESS call budget per beat, a record kept only when it names the finding). Every record goes through the same reader and verbatim-quote guard. /api/citations now reports total, checked and unchecked against the seed DOIs and answers 503 after 24 beats when any is unchecked or failed (detector replication-ledger-citations, fm-unverified-citations), so never-verified no longer reads as verified.",
+   "probe": "grep:instances/replication-ledger/worker/keyless.test.mjs::the OpenAlex mirror a runner landed answers first",
+   "session": "session_0156nqDtpVMPp6pQZ9ny5wAS"
+  },
+  {
+   "id": "lesson-2026-11-25-today-s-failures-shared-seven-root-cause-classes-each-now-ha",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Today's failures shared seven root-cause classes; each now has a check",
+   "body": "DRIFT-GUARD-1 (foundation/driftguard.py, doctrine/driftguard.json): declared-vs-live drift (repo visibility reset hourly by the tick, seed/worker/src/declared.js; stale visual baselines roll forward), single-route schedules (tick pulses every tenant /pulse/watch hourly; crons counted against the plan limit), missed push triggers (dispatched by dg-triggers), empty-commit loops, account drift (retired account by sha256 only), built-without-evidence (graph rows read live; checks refuse a deploy verified only by the tick /health), and hand-kept repo lists (selftest reads org/repos.json and tenant-repos.json).",
+   "probe": "grep:foundation/driftguard.py::DRIFT-GUARD-1",
+   "session": "session_0156nqDtpVMPp6pQZ9ny5wAS"
+  },
+  {
+   "id": "lesson-2026-11-25-an-empty-check-run-list-is-not-green",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "An empty check-run list is not green",
+   "body": "what-works#8 was merged by the lane 7 s after opening, before its ci and citations runs existed; citations then failed. greenguard.notGreen now holds when a suite is queued or a fresh head has no suite (NO-RUNS-NOT-GREEN-1).",
+   "probe": "file:seed/worker/src/greenguard.js",
+   "session": "session_0156nqDtbnNSagT7p6jpUTuY"
+  },
+  {
+   "id": "lesson-2026-11-25-launch-day-failures-are-root-caused-in-code-work-not-pulse-d",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Launch-day failures are root-caused in code: work not pulse, duplicate PRs, ledger deferrals, word claims",
+   "body": "Audit 2026-11-25: the What Works reader had read nothing (gpt-oss spent its 400-token cap reasoning, every reply empty, logged not JSON) while /health said ticking; four sessions built knowledge-graph engines in parallel; a decision row deferred a pre-approved deploy to the owner; showcase copy said five policy areas (code: twelve). Guards: duplicate PRs are COLLISION-1 (foundation/collisions.py, built in parallel by another session; this session's overlap.py was dropped for it), standingorder ledger lint, claimcode word-number patterns, what-works rootcause tests and work-based /health.",
+   "probe": "file:foundation/standingorder.py"
+  },
+  {
+   "id": "lesson-2026-11-25-evidence-branch-commits-must-hold-only-the-ledger",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Evidence branch commits must hold only the ledger",
+   "body": "The failure-audit evidence push failed because its commit sat on main and so carried a workflow-file change, which a GitHub App token refuses. The commit is now built with plumbing and holds only ops/failure-audit.jsonl. A detector whose command is not routed in foundation/__main__.py is now a finding (staticcontent and slawatch were unroutable).",
+   "probe": "file:foundation/silentfail.py",
+   "session": "session_0156nqDuMYtda8kTyfqmpNJk"
+  },
+  {
+   "id": "decision-2026-11-25-bootproof-1-seed-kernel-closure-audit-and-daily-scratch-boot",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "BOOTPROOF-1: seed kernel closure audit and daily scratch bootstrap",
+   "body": "foundation/bootproof.py audits seed/ as a fresh checkout (imports, wrangler placeholders, migrations, secrets with degrade and acquire routes, triggers); seedlaunch --e2e-scratch deploys a never-used slug through OIDC daily. Migration 0010 duplicate grandfathered, shrink-only. Scratch teardown still missing (site worker has no delete endpoint).",
+   "probe": "file:foundation/bootproof.py",
+   "session": "session_0156nqDspb"
+  },
+  {
+   "id": "decision-2026-11-25-second-loop-measured-on-itself-second-loop-2-spec-gate-1-res",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Second loop measured on itself (SECOND-LOOP-2, SPEC-GATE-1, RESEARCH-LOOP-1)",
+   "body": "Rowan 2026-11-25: the slow loop existed but every verdict was a revert and Rowan did its job in chat. Added variables owner_interventions, second_loop_keep_rate, spec_quality, research_in_code; common-mode sensor guard; spec gate in the seed; readiness score and self-change log on /ultrastability; paper second-loop-2026.",
+   "probe": "grep:foundation/ultrastability.py::def keep_rate",
+   "session": "session_0156nqDvpqV1qd6Epa67tywp"
+  },
+  {
+   "id": "decision-2026-11-25-coldstart-1-one-cold-start-contract-every-system-carries-fro",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "COLDSTART-1: one cold-start contract every system carries from birth",
+   "body": "Rowan 2026-11-25: everything must bootstrap fully autonomously from a cold start. doctrine/coldstart.json lists the capabilities a system owes from birth (repo, back end, front end, clock, discovery, knowledge graph, progress, live content, self-improvement, platform sync, year unattended, goals, instructions); coldstart --check proves the seed carries them, that every named foundation command resolves and that the platform and seed agent files agree; seedlaunch --e2e-oidc probes every live path on the fresh seed. Root causes removed: health-only seeds hid /.well-known/ultrastable.json, /api/graph, /api/progress and /api/stickiness (now PUBLIC_READS in seed/worker/src/visibility.js); the CLI dispatched only hand-listed modules, so detector static-content could not run (any module with main now resolves); duplicate and missing rule bullets in the agent files. Probe: python3 -m foundation coldstart --check passes; tests/foundation/test_coldstart.py.",
+   "probe": "grep:foundation/coldstart.py::def check\\("
+  },
+  {
+   "id": "decision-2026-11-25-standards-1-apply-published-standards-instead-of-home-grown-",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "STANDARDS-1: apply published standards instead of home-grown formats",
+   "body": "Every JSON config has a JSON Schema 2020-12 contract in a Schema Store catalog (configschema), catalog-info.yaml (Backstage) and sbom.cdx.json (CycloneDX 1.6) are generated from the registers (stdgen), devcontainer.json gives cloud agents the checks' runtimes, and the standards register records supported, planned (OpenFeature, SLSA, with items) and not-applicable choices (Rego, Conventional Commits/SemVer, with reasons). What Works publishes schema.org ClaimReview, ISO 3166, DCAT, PROV-O and OpenAPI.",
+   "probe": "grep:.github/workflows/checks.yml::configschema --check"
+  },
+  {
+   "id": "lesson-2026-11-25-a-standard-file-the-standard-fixes-at-the-root-needs-an-expl",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "A standard file the standard fixes at the root needs an explicit allowance, and a register a site serves needs its generator in REGEN-1",
+   "body": "catalog-info.yaml failed STRAYS-1 as a root code file (now doctrine/strays.json standard_root_files), and editing seed/standards/standards.json left site/agentdata.js stale because neither regen list rebuilt it (now in both).",
+   "probe": "grep:scripts/regen_generated.sh::build_site_agentdata",
+   "session": "session_0156nqDriSf7RENkyFHy7NoW"
+  },
+  {
+   "id": "lesson-2026-11-25-owner-found-9-failures-before-any-loop-redteam-1",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Owner found 9 failures before any loop (REDTEAM-1)",
+   "body": "Probes checked that mechanisms exist, not that their output is true. Classes: vacuous, stale, unscored, phantom, timebomb, undetected, starved, credential. foundation/redteam.py tests each adversarially; owner_found_30d is the metric.",
+   "probe": "file:foundation/redteam.py",
+   "session": "session_0156nqDrAs7rUXpvph8XjAkz"
+  },
+  {
+   "id": "decision-2026-11-25-the-seed-carries-the-definition-of-an-ultrastable-system-enf",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "The seed's definition of a system is COLDSTART-1; SYSTEM-1 folded into it",
+   "body": "SYSTEM-1 (a generated seed/doctrine/SYSTEM.md from a separate contract) duplicated COLDSTART-1 (#2245), which merged first with the same purpose: one canonical SYSTEM.md in platform and seed, imported by both CLAUDE.md files, checked by foundation coldstart --check against the ignition ladder, bootstrap stages and capabilities. The duplicate contract was removed; M-storage liveness and ADMIT-1 stay.",
+   "probe": "file:doctrine/coldstart.json"
+  },
+  {
+   "id": "lesson-2026-11-25-tenant-checks-read-progress-json-not-the-tenant-registry-so-",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Tenant checks read progress.json, not the tenant registry, so a live tenant escaped all of them (ADMIT-1)",
+   "body": "Replication Ledger was live with a worker, a beat clock and a showcase but had no progress row, so progress, tenantpromo, fullstack and stickiness never looked at it. Fix: foundation/admit.py derives every registry row from the doctrine/tenant-repos.json row; admit --check in checks, admit --apply in regen_generated. Also: the front door's first build failed whenever the AI allowance was in crawl mode (LAUNCH-PATH-1 probe red); site/worker.js builds a no-model draft. org-settings was red only on archived repos; apprepos.js skips archived and not-yet-created repos. D1 size had no guard; M-storage liveness metric in every seed.",
+   "probe": "file:foundation/admit.py"
+  },
+  {
+   "id": "decision-2026-11-25-open-standards-1-one-standards-kit-for-json-schema-cloudeven",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "OPEN-STANDARDS-1: one standards kit for JSON Schema, CloudEvents, W3C PROV; manifest structure is a schema",
+   "body": "Four sessions from four projects opened overlapping standards PRs (#2259 doctrine schemas, #2260 registry and gate, #2273 config schemas and Backstage, #2274 this). Per COLLISION-1 this PR keeps only what none of the others adds: seed/scripts/stdkit.py (JSON Schema validation with a stdlib fallback, CloudEvents 1.0, PROV-JSON, Conventional Commits), its JS twin seed/worker/src/cloudevents.js, the instance manifest's structural rules moved into seed/schemas/instance.schema.json, and provenance exports as W3C PROV and CloudEvents. The doctrine schema catalog and Backstage descriptor come from the older PRs.",
+   "probe": "grep:foundation/manifest.py::seed_stdkit",
+   "session": "session_0156nqDsyGRG1TdtTGodgits"
+  },
+  {
+   "id": "decision-2026-11-25-the-seed-carries-its-own-definition-generated-from-its-code",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "The seed carries its own definition, generated from its code",
+   "body": "Found: seed/ had 72 standing rules and no single definition of what an Ultrastable system is, how it runs, bootstraps and reaches criticality; its instructions cited about 40 python3 -m foundation commands that a seeded system does not have, and checks.yml never ran seed/tests. Built seed/SYSTEM.md, generated by seed/scripts/system.py from seed/autonomy/system.json and the code of record, loaded first by CLAUDE.md and AGENTS.md; seed/tests/test_system.py passes (7) and the seed suite passes (82). 16 rules remain enforced only by the platform: not_in_kit, shrink-only, one Q-KIT item each. SYSTEM-SPEC-1.",
+   "probe": "grep:seed/scripts/system.py::def check"
+  },
+  {
+   "id": "lesson-2026-11-25-a-surface-proved-alone-is-not-proved",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "A surface proved alone is not proved",
+   "body": "Found: seed/worker/src/visibility.js answered 404 for /.well-known/ultrastable.json and /api/graph whenever PUBLIC_HEALTH_ONLY=1, which deploy/deploy-seed.mjs sets on every seed and visitor app, and deploy-seed bound no PUBLIC_URL, so manifest() returned url null. Fixed in code with PUBLIC_READS, the footer and the bindings; seed/worker tests pass (546) and tests/foundation/test_bootaccept.py passes (13). Residual risk until bootaccept --run in seed-launch.yml has probed the live seeds; ledger ops/boot-accept.jsonl. BOOT-ACCEPT-1.",
+   "probe": "grep:seed/worker/src/visibility.js::PUBLIC_READS"
+  },
+  {
+   "id": "lesson-2026-11-25-check-merged-main-for-a-same-directive-pr-before-adding-a-pa",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Check merged main for a same-directive PR before adding a parallel definition",
+   "body": "SYSTEM-1 and COLDSTART-1 answered the same owner message in two threads; the later one was folded into the earlier on merge. collisions --claim <ID> catches same-id work only, so a directive answered under two ids slips through.",
+   "probe": "file:doctrine/coldstart.json",
+   "session": "session_0156nqDrmKoDzyTndxNktxWH"
+  },
+  {
+   "id": "decision-2026-11-25-constitution-1-the-seed-states-what-an-ultrastable-system-is",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "CONSTITUTION-1: the seed states what an ultrastable system is, as code",
+   "body": "Rowan 2026-11-25: the core template must say what an ultrastable system is, how it runs, bootstraps, becomes autonomous and reaches criticality, so the owner never supplies it by chat. seed/doctrine/constitution.json is the statement; seed/scripts/constitution.py checks it against the tick steps, boot stages, ladder rungs, ignition stages and criticality conditions in code; each rule names a detector and a remediation that exist; bootstrap stage constitute assembles org/constitution.json; CLAUDE.md imports the generated prose; a standing rule with no entry fails CI. Remaining unmapped product-feature rules are a shrink-only baseline drained by Q-CONSTITUTION-DRAIN.",
+   "probe": "file:seed/doctrine/constitution.json",
+   "session": "session_0156nqDrw4gPrPVFvZNWQFzs"
+  },
+  {
+   "id": "decision-2026-11-25-supply-chain-posture-is-a-weekly-loop-on-open-standards",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Supply-chain posture is a weekly loop on open standards",
+   "body": "OpenSSF Scorecard and the SPDX SBOM from GitHub's dependency graph are read weekly by supply-chain.yml and summarised by foundation/supplychain.py; checks under the floor in doctrine/scorecard.json and packages outside the licence policy become Q-STD-SC-* items closed by the next reading. Settings were renamed from doctrine/open-standards.json to avoid COLLISION-1 with PR #2260, which owns that path.",
+   "probe": "file:foundation/supplychain.py",
+   "session": "session_0156nqDudxrbHqznYEuTrpLY"
+  },
+  {
+   "id": "lesson-2026-11-25-a-merge-by-the-built-in-token-fires-no-push-workflow",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "A merge by the built-in token fires no push workflow",
+   "body": "Bot merges (GitHub auto-merge enabled by github-actions, or the lane) left every on-push workflow silent after #2243: seed-launch and three deploys never ran. scripts/postmerge_dispatch.py reads each workflow's own push paths and the lane dispatches what a merge touched; tests pass in tests/foundation/test_postmerge_dispatch.py; residual risk: a PR merged more than 6 h before the lane's next pass is not caught.",
+   "probe": "grep:.github/workflows/lane.yml::postmerge_dispatch.py --apply",
+   "session": "session_0156nqDtbnNSagT7p6jpUTuY"
+  },
+  {
+   "id": "lesson-2026-11-25-a-newborn-system-waited-until-03-00-utc-to-ask-the-directory",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "A newborn system waited until 03:00 UTC to ask the directory to list it",
+   "body": "BOOT-4 says every system is listed from its first deploy, but the seed's directory heartbeat only fired in the 03:00 UTC window, so the first live acceptance run (seed-launch 45709149770) passed six of seven layers and failed discovery for second-tenant. The heartbeat now registers from birth, hourly until listed, and keeps the directory's answer in directory_registration; bootaccept --run registers by a second route and names the directory's reason when it still refuses.",
+   "probe": "grep:seed/worker/src/discover.js::directory_registration"
+  },
+  {
+   "id": "lesson-2026-11-25-the-directory-register-route-was-dead-behind-the-site-worker",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "The directory register route was dead behind the site worker's GET-only gate",
+   "body": "POST /api/directory/register was a case inside the switch that runs after the site worker rejects every non-GET/HEAD with 405, so no seed heartbeat ever reached register() and the directory had 0 external rows. The second live bootaccept run named it (register answered HTTP 405). The route now sits before the gate, a worker-level test POSTs it, and a guard fails any POST branch written after the gate.",
+   "probe": "grep:site/directory.test.mjs::no POST route in the site worker sits after",
+   "session": "session_0156nqDtbnNSagT7p6jpUTuY"
+  },
+  {
+   "id": "decision-2026-11-25-watch-the-administration-app-as-a-credential",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "Watch the administration App as a credential",
+   "body": "The tick Worker's administration App creates tenant and visitor repositories and sets repo settings when ORG_ADMIN_TOKEN is absent, so it is a SPOF (spof-admin-app) and a credwatch row (GITHUB_ADMIN_APP) probed daily with a dry repo-settings read through the site Worker's OIDC route; nothing is written by the probe.",
+   "probe": "grep:doctrine/credwatch.json::GITHUB_ADMIN_APP"
+  },
+  {
+   "id": "lesson-2026-11-25-an-empty-reading-is-unmeasured-never-zero",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "An empty reading is unmeasured, never zero",
+   "body": "Red-team pass 2026-11-25: the cost probe recorded d1: [] for weeks because run() read data/cost-thresholds.json, which never existed, and foundation/cost.py scored probe rows as 0 while the measured Workers AI use was 0.805 of the free budget (source: ops/cost.jsonl, 2026-11-24 row); the platform feed had empty texts and stopped updating on 2026-11-17 because site/feed-data.js was regenerated but never committed. Detectors cost-runaway, d1-growth, credential-expiry and content-drift now fail on these.",
+   "probe": "grep:doctrine/detectors.json::content-drift"
+  },
+  {
+   "id": "decision-2026-11-25-fleet-contract-1-one-contract-per-system-statements-checked-",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "FLEET-CONTRACT-1: one contract per system, statements checked front to back and back to front",
+   "body": "The platform, every seed and every tenant serve the same surfaces and declare each statement once as sentence, page and endpoint in the shared seed/worker/src/contract.js; foundation/fleetcontract.py reads every live system daily and as the failure-audit detector fleet-contract. Tests pass: seed/worker/test/contract.test.js, site/contract.test.mjs, tests/foundation/test_fleetcontract.py. Source: Rowan 2026-11-25.",
+   "probe": "file:foundation/fleetcontract.py",
+   "session": "session_0156nqDufLi3JgDJf3gVw7Fh"
+  },
+  {
+   "id": "decision-2026-11-25-standards-first-1-standards-are-measured-rows-with-a-decisio",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "STANDARDS-FIRST-1: standards are measured rows with a decision; events, errors, configs, page markup and repository descriptors follow them",
+   "body": "Rowan, 2026-11-25: 'Standards, don't reinvent the wheel. Apply standards. Figure out what the standards are and apply them broadly.' The existing register (seed/standards/standards.json) now carries, per audited row, the homegrown equivalent, the measured adoption, what conformance changes, the cost, a decision (adopt now, adopt later with a filed item, decline with a reason and the condition that reopens it) and probes that standards --check runs. Adopted by code: JSON Schema for configs (foundation/schemas.py, doctrine/schemas/index.json, shrink-only baseline), CloudEvents 1.0 on handoff and provenance writes, RFC 9457 on the shared error path, schema.org JSON-LD from the shared contract module, catalog-info.yaml from the manifest reconciler, Conventional Commits header lint on generated titles. Declined after evaluation: Terraform/OpenTofu, OPA, OTLP export, OpenSLO, AsyncAPI, SBOM (each row says why and when to look again). A failing row files through detectors standards-register and standards-live; a new release of an adopted standard is filed by the scout from its release feed.",
+   "probe": "grep:foundation/standards.py::def audit\\(root, reg\\)",
+   "session": "session_0156nqDufLi3JgDJf3gVw7Fh"
+  },
+  {
+   "id": "decision-2026-11-25-tenant-standard-1-one-standard-one-scaffold-and-one-check-fo",
+   "kind": "decision",
+   "date": "2026-11-25",
+   "title": "TENANT-STANDARD-1: one standard, one scaffold and one check for every tenant repository",
+   "body": "A tenant repository's contents are data in doctrine/tenant-standard.json. One scaffold (scaffold/tenant, foundation/tenantstd.py, called by tenantrepos prepare) writes every standard file from one identity object, saved as ultrastable.json. One check reads it: tenantstd in checks, in tenant-repos.yml against each repository's main, and vendored into each tenant's ci.yml. Verified by tests/foundation/test_tenantstd.py, which scaffolds a tenant and runs its Worker tests.",
+   "probe": "file:foundation/tenantstd.py"
+  },
+  {
+   "id": "lesson-2026-11-25-a-role-whose-only-loop-is-probed-by-its-own-role-file-is-a-t",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "A role whose only loop is probed by its own role file is a title, not a manager",
+   "body": "MANAGERS-1, measured 2026-11-25: all 18 roles had a role-<id> loop whose closing probe was file:agents/roles/<id>.md, which proves only that a file exists. Four (program-manager, research-publisher, legal-ip-manager, org-designer) owned nothing else; the loop fleet-lane had owner system. Live, https://ultrastable.io/api/v1/agents showed 9 of 18 managers with no runtime row (the roles table is written once at bootstrap and was never reconciled with the roster) and the other 9 with a dispatch beat 2.8 h old because a D1 rows-read breach holds dispatch to once per 3 h. Fix in code: doctrine/managers.json and seed/autonomy/managers.json (one register, switched by data), seed/worker/src/managers.js hireStep in the tick's reconcile step, python3 -m foundation managers --check in checks, detector managers-live.",
+   "probe": "grep:foundation/managers.py::def check",
+   "session": "claude-code-managers"
+  },
+  {
+   "id": "lesson-2026-11-25-a-rule-about-live-systems-is-only-true-when-a-live-reading-s",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "A rule about live systems is only true when a live reading says so: DISCOVER-1 and the tenant claims rule were false in production",
+   "body": "The health-only gate hid the seed manifest, no seed had PUBLIC_URL bound, three tenants served no /claims.json and Replication Ledger still ran from the core copy. Repository checks were green throughout because none fetched the live surfaces. fleetcontract --live now does, for every system; the first reading ran on 2026-11-25 and named each gap.",
+   "probe": "grep:tests/foundation/test_fleetcontract.py::def test_missing_surfaces_an_unwell_system_and_a_foreign_manifest_fail",
+   "session": "session_0156nqDufLi3JgDJf3gVw7Fh"
+  },
+  {
+   "id": "lesson-2026-11-25-clone-path-1-a-copied-template-starts-from-one-form-and-one-",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "CLONE-PATH-1: a copied template starts from one form and one link",
+   "body": "Lesson: a start path is only walked when a test walks it as a person with no developer skill. Found that way: gate cards naming keys to set, a README of terminal commands, a red run for every copy with no hosting sign-in, the template example staffed as the owner's idea, the interview's IDEA.md turned away as not a fit, kernel tests failing once IDEA.md held a real idea, a front-door build failure ending in a start-over link. Changed on branch local/bootstrap, not deployed and not verified live: evidence is seed/tests/test_happy_path.py (13 pass) and site/launchpath.test.mjs (18 pass) run in a cloud session on 2026-11-25; the live proof is the next tenant-repos run of deploy/launch-apps.mjs --probe.",
+   "probe": "file:seed/tests/test_happy_path.py"
+  },
+  {
+   "id": "lesson-2026-11-25-merging-a-moving-main-with-a-prefer-ours-strategy-left-the-s",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Merging a moving main with a prefer-ours strategy left the seed Worker calling a list it no longer defined",
+   "body": "Three merges of the lane's commits used -X ours and kept older versions of files main had since changed (the visibility gate, the cold-start check, a claim probe). Only running every suite and the regeneration step with its warnings found them; tests pass on the repaired tree. For a branch the lane also writes to, merge without a side preference and resolve by reading both.",
+   "probe": "grep:seed/worker/src/visibility.js::export const PUBLIC_READS",
+   "session": "session_0156nqDufLi3JgDJf3gVw7Fh"
+  },
+  {
+   "id": "lesson-2026-11-25-practical-solutions-health-was-404-a-worker-cannot-fetch-a-s",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "Practical Solutions /health was 404: a Worker cannot fetch a sibling Worker's workers.dev address (Cloudflare 1042); use the service binding",
+   "body": "tenant-ps-web proxied /health, /ps/briefs and /ps/criticality with a plain fetch to tenant-ps-core.ultrastable.workers.dev. Cloudflare refuses that inside one account. The front end now computes its own health and uses env.CORE for the rest.",
+   "probe": "grep:seed/worker/src/contract.js::id: 'health', path: '/health'",
+   "session": "session_0156nqDufLi3JgDJf3gVw7Fh"
+  },
+  {
+   "id": "lesson-2026-11-25-rule-refs-1-a-claim-bound-to-a-file-nothing-runs-is-not-boun",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "RULE-REFS-1: a claim bound to a file nothing runs is not bound",
+   "body": "Audit 2026-11-25. The public revert claim was bound to site/probes.json (mode revert), which no workflow or deploy script reads; rollback exists on the handoff path only. The claimcode baseline held 119 rows of which 87 were dead or already bound. Four site comments said loopback is rejected on lines that accept it. The seed rule file names 353 of 446 files and commands the seed does not carry. Check: foundation/rulerefs.py resolves every reference the rule files name; a probe must name code that executes the behaviour (a test), never a config file alone.",
+   "probe": "file:foundation/rulerefs.py",
+   "session": "rulerefs-audit"
+  },
+  {
+   "id": "lesson-2026-11-25-the-session-check-runner-read-two-actions-only-steps-as-fail",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "The session check runner read two Actions-only steps as failures on every run and started a half-hour run on --help",
+   "body": "checksrun now names steps that read other jobs' results or need GITHUB_REPOSITORY as skipped, never failed or passed, prints its help without running, and refuses an unknown argument. Tests pass: tests/foundation/test_checksrun.py (4).",
+   "probe": "grep:tests/foundation/test_checksrun.py::def test_help_and_unknown_arguments_run_nothing",
+   "session": "session_0156nqDufLi3JgDJf3gVw7Fh"
+  },
+  {
+   "id": "lesson-2026-11-25-a-health-route-that-answers-is-not-a-healthy-system-the-prac",
+   "kind": "lesson",
+   "date": "2026-11-25",
+   "title": "A health route that answers is not a healthy system: the Practical Solutions backend was 23 migrations behind",
+   "body": "Reading the fleet contract live after the deploy showed Practical Solutions /health 503. Root cause: the deploy's D1 migration step stopped at an old numbering (the vendor renumbered its files), so the live database lacked 23 additive migrations and the backend tick failed 12 of 41 steps on missing tables; the old /health had reported ok. Fix: the tenant's self-apply list carries them, the shared applier applies each migration as one batched call and at most four per run, and a tenant test fails any migration that is on neither the deploy ledger nor the self-apply list. Also from the same live reading: write routes a page posts to answer a read with 405 (the site answered 404), and a community health file served from the org's .github repository satisfies the repository standard.",
+   "probe": "grep:workers/core/migrations/selfmigrate.js::MIGRATE-GAP-1"
+  },
+  {
+   "id": "lesson-2026-11-26-the-published-template-must-pass-its-own-suites-standalone-t",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "The published template must pass its own suites standalone: two kit tests read platform files, and two kit workflows skipped the filing gate",
+   "body": "After the first template publish the seed repository failed its own tests. Causes in the core's kit: two Worker tests read deploy/ and site/ without being on the monorepo-only register, and improve.yml and redteam.yml committed docs/issues without the balance gate the kit's own balance check requires. The publish also holds back files that differ in the copy, so a half-updated template is possible; that drift is tracked as Q-FLEETMAP-seed. Fix: the platform-only assertions are their own registered tests, both workflows pass the gate, and a kit test fails any test that reads above the kit unregistered.",
+   "probe": "grep:seed/tests/test_seed.py::KitTestsAreSelfContained",
+   "session": "session_0156nqDufLi3JgDJf3gVw7Fh"
+  },
+  {
+   "id": "decision-2026-11-26-borrow-1-plug-in-competitors",
+   "kind": "decision",
+   "date": "2026-11-26",
+   "title": "BORROW-1 plug in competitors",
+   "body": "Competitors' best steps are plug_in rows in doctrine/competitors.json, staged with our own worker as default. Devin declined, no free tier. Our repos are source-available, so OSS free tiers likely do not apply.",
+   "probe": "grep:foundation/rnd.py::def plug_in_problems"
+  },
+  {
+   "id": "lesson-2026-11-26-second-loop-kept-no-step",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Second loop kept no step",
+   "body": "Evidence: ops/ultrastability.jsonl held 107 verdicts, all reverted, because a step counted only on a full return to bounds. Fix: settle_verdict now keeps a step that closed at least min_progress of its gap; tests/foundation/test_ultrastability.py SettleProgress.",
+   "probe": "grep:foundation/ultrastability.py::def progressed"
+  },
+  {
+   "id": "lesson-2026-11-26-a-new-gate-must-read-the-standards-already-adopted-on-main",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "A new gate must read the standards already adopted on main",
+   "body": "OPEN-STANDARDS-1: the openstd gate first accepted only a $schema key, while CONFIG-SCHEMA-1 on main declares config schemas through Schema Store catalogs; the gate now accepts either, so two standards checks do not disagree about the same file. A long-lived branch is reconciled with main before each push, because a day of merges added five checks the branch had never run.",
+   "probe": "grep:foundation/openstd.py::def catalogued",
+   "session": "session_0156nqDvhf9QiAUCtw3GwA14"
+  },
+  {
+   "id": "lesson-2026-11-26-a-pr-bound-and-a-model-free-merge-for-additive-conflicts",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "A PR bound and a model-free merge for additive conflicts",
+   "body": "PRs sat open for hours because lane.sh only labelled conflicted and failed session PRs and waited on a dead executor, and both-sides-additive registry rows counted as conflicts. ADDITIVE-MERGE-1 resolves those without a model; PR-BOUND-1 closes past 30/60 min with the branch kept; detector pr-age-bound fails on any PR open past 2 h.",
+   "probe": "grep:foundation/prbound.py::def read"
+  },
+  {
+   "id": "lesson-2026-11-26-judge-the-code-agent-ladder-by-answers-not-by-runs",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Judge the code-agent ladder by answers, not by runs",
+   "body": "From 2026-11-23 every code-agent rung failed: the site's CF_DEPLOY_TOKEN has no Workers AI permission so /__internal/cf returned 401, and GitHub Models answered 200 OK text/plain. 20 of 21 executor-shelved items in 72 h died that way while clocks read green. Fix: ai/run goes through the site's AI binding; dispose no longer shelves an item for a dead ladder; ladderwatch --check is a live detector (fm-code-ladder-dead).",
+   "probe": "grep:foundation/ladderwatch.py::def read",
+   "session": "session_0156nqDvbXYqh4M3id5voNoB"
   }
  ]
 }

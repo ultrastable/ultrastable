@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/pathfinder.schema.json",
+  "title": "pathfinder (doctrine/pathfinder.json)",
+  "description": "Contract for doctrine/pathfinder.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "surface_classes": {
+      "type": "object",
+      "properties": {
+        "existing-credentials": {
+          "type": "string"
+        },
+        "prior-working-config": {
+          "type": "string"
+        },
+        "sibling-workers": {
+          "type": "string"
+        },
+        "alternate-channel": {
+          "type": "string"
+        },
+        "construct": {
+          "type": "string"
+        }
+      }
+    },
+    "route_kinds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "asks": {
+      "type": "object",
+      "properties": {}
+    },
+    "integrations": {
+      "type": "array"
+    },
+    "grandfathered_gates": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "derive": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": "string"
+        },
+        "surfaces": {
+          "type": "object"
+        },
+        "gate_asks": {
+          "type": "object"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "asks",
+    "derive",
+    "grandfathered_gates",
+    "integrations",
+    "route_kinds",
+    "surface_classes",
+    "version"
+  ]
+}

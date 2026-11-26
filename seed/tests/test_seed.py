@@ -10,6 +10,9 @@ SETTINGS = json.loads((ROOT / ".claude/settings.json").read_text())
 
 def copy_seed(dst: Path):
     shutil.copytree(ROOT, dst, dirs_exist_ok=True, ignore=shutil.ignore_patterns(".git", "org", "node_modules", "__pycache__", "config.js", "wrangler.jsonc"))
+    # The tests boot a fixed example, never the system's own IDEA.md: in a real system that file holds its owner's idea, and the kernel's tests
+    # must still pass there (they run before every boot in .github/workflows/bootstrap.yml).
+    shutil.copy(ROOT / "tests/fixtures/IDEA.example.md", dst / "IDEA.md")
 
 
 class PolicyTests(unittest.TestCase):
@@ -79,9 +82,24 @@ class BootTests(unittest.TestCase):
             for f in ("charter.md", "roles.json", "backlog.json", "gate-cards.json", "seed.sql", "boot-log.json"):
                 self.assertTrue((org / f).exists(), f)
             cards = json.loads((org / "gate-cards.json").read_text())
-            self.assertTrue(any("CLOUDFLARE_API_TOKEN" in c["what"] for c in cards))
+            self.assertTrue(any(c["id"] == "GATE-RUNTIME" and c["connect"].startswith("https://") for c in cards))  # one card, one link; no key is named for a person to make
+            self.assertFalse([c["what"] for c in cards if "TOKEN" in c["what"] or "secret" in c["what"].lower()])
             for c in cards:
                 self.assertTrue(c["closing_probe"] and c["default_in_effect"])
+
+    def test_hosted_system_asks_its_owner_for_no_secret_and_no_budget_approval(self):
+        # HOSTED-1: a system started from the host's front door by a person with no code agent
+        with tempfile.TemporaryDirectory() as d:
+            copy_seed(Path(d))
+            idea = Path(d) / "IDEA.md"
+            idea.write_text(idea.read_text().replace("slug: example-co", "slug: example-co\nhosted_by: ultrastable", 1))
+            for k in ("CLOUDFLARE_API_TOKEN", "CLOUDFLARE_ACCOUNT_ID", "ANTHROPIC_API_KEY", "GITHUB_TOKEN"):
+                os.environ.pop(k, None)
+            self.assertEqual(bs.main(["--root", d, "--dry-run"]), 0)
+            cards = json.loads((Path(d) / "org/gate-cards.json").read_text())
+            self.assertFalse([c["what"] for c in cards if "GATE-SECRET" in c.get("id", "") or "Set the " in c["what"] or "Approve spending" in c["what"]])
+            log = json.loads((Path(d) / "org/boot-log.json").read_text())
+            self.assertIn("hosted by ultrastable", next(s["detail"] for s in log["stages"] if s["stage"] == "detect"))
 
     def test_outcomes_become_projects_with_managers(self):
         with tempfile.TemporaryDirectory() as d:
@@ -213,3 +231,26 @@ class GhAdminOrgTests(unittest.TestCase):
     def test_a_sign_in_on_a_host_that_is_not_server_side_is_not_a_route(self):
         self.assertFalse(self._run(0, "Token scopes: 'admin:org', 'repo'", env={}))
         self.assertTrue(self._run(0, "Token scopes: 'admin:org', 'repo'", env={"CLAUDE_CODE_REMOTE": "true"}))
+
+
+class KitTestsAreSelfContained(unittest.TestCase):
+    """SEED-SELFCONTAINED-1: the published template failed its own Worker suite because two tests read platform files (deploy/, site/) and were
+    not on the monorepo-only register. A kit test that reaches above the kit is registered there, guarded by existsSync, or tolerant of ENOENT."""
+
+    def test_every_test_that_reads_above_the_kit_is_registered_or_guarded(self):
+        import json as _json, re as _re
+        t = ROOT / "worker" / "test"
+        only = _json.loads((t / "monorepo-only.json").read_text(encoding="utf-8"))
+        title = _re.compile(r"test\(\s*'([^']*)'")
+        loose = []
+        for f in sorted(t.glob("*.test.js")):
+            s = f.read_text(encoding="utf-8")
+            if "../../../" not in s or f.name in only["files"] or "existsSync(" in s or "'ENOENT'" in s:
+                continue
+            for block in _re.split(r"(?m)^(?=test\()", s):
+                if "../../../" not in block:
+                    continue
+                m = title.match(block)
+                if not m or not any(x in m.group(1) for x in only["tests"]):
+                    loose.append(f"{f.name}: {m.group(1)[:70] if m else 'an import above the tests'}")
+        self.assertEqual(loose, [])

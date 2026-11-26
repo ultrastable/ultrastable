@@ -17,7 +17,7 @@ function fake(st) {
     if (m === 'GET' && path.includes('/files')) return R(st.files || []);
     if (m === 'GET' && path.includes('/contents/')) { const ref = decodeURIComponent(path.split('ref=')[1]); const p = decodeURI(path.split('/contents/')[1].split('?')[0]); const t = (st.contents[ref] || {})[p]; return t == null ? R({}, false, 404) : R({ encoding: 'base64', content: enc(t), sha: `${ref}:${p}` }); }
     if (m === 'GET' && path.includes('/git/commits/')) return R({ tree: { sha: 'T0' } });
-    if (m === 'POST' && path.endsWith('/git/trees')) return R({ sha: 'T1' });
+    if (m === 'POST' && path.endsWith('/git/trees')) return R({ sha: st.treeSha || 'T1' });
     if (m === 'POST' && path.endsWith('/git/commits')) return R({ sha: 'C1' });
     if (m === 'PATCH' && path.includes('/git/refs/')) return R({});
     if (m === 'POST' && path.endsWith('/merges')) return R(null, st.mergesStatus !== 409, st.mergesStatus || 201);
@@ -65,6 +65,14 @@ test('a real code conflict is reported, never forced', async () => {
   const { f } = fake({ pr: { ...base, mergeable_state: 'dirty' }, files: [{ filename: 'src/a.js' }], contents: {}, mergesStatus: 409 });
   const r = await reconcile(makeGh(f, 't'), 'o/r', { ...base });
   assert.equal(r.result, 'code-conflict');
+});
+test('a reconcile that changes nothing pushes no commit (MERGENOW-NOOP-1)', async () => {
+  const gen = GENERATED[0];
+  const { f, calls } = fake({ pr: { ...base, mergeable_state: 'dirty' }, files: [{ filename: gen, status: 'modified' }], contents: { main: { [gen]: 'G' } }, treeSha: 'T0', mergesStatus: 409 });
+  const r = await reconcile(makeGh(f, 't'), 'o/r', { ...base });
+  assert.equal(r.result, 'code-conflict'); assert.equal(r.stripped, 0);
+  assert.ok(!calls.some(c => c.startsWith('POST /repos/o/r/git/commits')), 'no empty commit');
+  assert.ok(!calls.some(c => c.startsWith('PATCH /repos/o/r/git/refs/')), 'branch not moved');
 });
 test('a behind PR is updated from main', async () => {
   const { f } = fake({ pr: { ...base, mergeable_state: 'behind' } });

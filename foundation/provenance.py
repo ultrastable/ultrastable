@@ -3,7 +3,10 @@
 """PROVENANCE-1: where every input and change came from, what it touched, what it did. Ultrastable is the foundation for any autonomous system.
 
   python3 -m foundation provenance [--check | --record JSON | --settle ID kept|reverted|none [NOTE] | --ingest-git [--since REV] [--apply]
-                                    | --timeline [--tenant T] [--origin C] | --changelog [--apply] | --lessons | --signal]
+                                    | --timeline [--tenant T] [--origin C] | --changelog [--apply] | --lessons | --signal
+                                    | --prov [--tenant T] | --cloudevents [--tenant T]]
+STANDARDS  OPEN-STANDARDS-1: `--prov` exports the ledger as W3C PROV-JSON and `--cloudevents` as CloudEvents 1.0 JSON Lines, through the
+        shared engine seed/scripts/stdkit.py, so any PROV or CloudEvents consumer reads it without a custom parser.
 
 SCHEMA  one JSON row per fact in ops/provenance.jsonl (append-only, event-sourced through foundation/ledger.py): id, at, tenant, origin {class, actor, channel},
         kind, summary, ref, affected[], effect {status, metric, note}, public, parent. A settlement row names its parent and carries the measured effect.
@@ -69,12 +72,21 @@ def make(origin: dict, kind: str, summary: str, *, tenant="ultrastable", ref="",
     return row
 
 
+def envelope(row: dict) -> dict:
+    """STANDARDS-FIRST-1: a provenance fact travels as a CloudEvents 1.0 envelope (type io.ultrastable.provenance.<kind>, the row as data).
+    The event id is the row's content hash, so the same fact is the same event wherever it is replayed."""
+    from . import cloudevents
+    o = row["origin"]
+    return cloudevents.event("provenance", row["kind"], f"/tenants/{row['tenant']}/origins/{o['class']}/{re.sub(r'[^A-Za-z0-9._~-]+', '-', o['actor'])}", row,
+                             subject=row.get("ref") or None, id=row["id"], time=row["at"] if re.match(r"^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?(Z|[+-]\d\d:\d\d)$", row["at"]) else False)
+
+
 def record(root, row_or_origin, *a, **kw) -> dict:
     """Append one row (a dict from make(), or the make() arguments). Identical rows are not written twice."""
     row = row_or_origin if isinstance(row_or_origin, dict) and "id" in row_or_origin else make(row_or_origin, *a, **kw)
     led = Path(root) / load(root)["ledger"]
     led.parent.mkdir(parents=True, exist_ok=True)
-    line = json.dumps(row, sort_keys=True, ensure_ascii=False)
+    line = json.dumps(envelope(row), sort_keys=True, ensure_ascii=False)
     if led.is_file() and any(l == line for l in led.read_text(encoding="utf-8").splitlines()):
         return row
     with led.open("a", encoding="utf-8", newline="\n") as f:
@@ -267,6 +279,28 @@ def check(root=REPO) -> list:
     return bad
 
 
+def _stdkit():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("seed_stdkit", REPO / "seed/scripts/stdkit.py")
+    mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod)
+    return mod
+
+
+def to_cloudevent(row: dict) -> dict:
+    """One provenance row as a CloudEvents 1.0 event: type io.ultrastable.provenance.<kind>, source /<tenant>/<origin class>/<actor>."""
+    o = row.get("origin") or {}
+    src = "/" + "/".join(re.sub(r"[^A-Za-z0-9._-]+", "-", str(x)) for x in (row.get("tenant") or "ultrastable", o.get("class") or "unknown", o.get("actor") or "unknown"))
+    kind = re.sub(r"[^a-z0-9.]+", "-", str(row.get("kind") or "change").lower())
+    return _stdkit().cloudevent(f"io.ultrastable.provenance.{kind}", src, row, subject=str(row.get("ref") or "")[:200],
+                                 id_=str(row.get("id") or ""), time=str(row.get("at") or ""),
+                                 dataschema="https://ultrastable.io/schemas/seed/provenance-row.schema.json")
+
+
+def to_prov(rows: list) -> dict:
+    """The ledger as a W3C PROV-JSON document (activities, agents, generated entities, informing activities)."""
+    return _stdkit().prov_document(rows)
+
+
 def main(argv) -> int:
     a, root = list(argv), REPO
     flag = lambda f: f in a
@@ -294,6 +328,13 @@ def main(argv) -> int:
         print(push(root, val("--push") if val("--push", ) and val("--push").startswith("http") else "https://ultrastable.io/api/fleet/provenance"), "rows pushed"); return 0
     if flag("--settle-due"):
         print(len(settle_due(root)), "settled"); return 0
+    if flag("--prov") or flag("--cloudevents"):
+        rows = [r for r in entries(root) if not val("--tenant") or r.get("tenant") == val("--tenant")]
+        if flag("--prov"):
+            print(json.dumps(to_prov(rows), indent=1)); return 0
+        for r in rows:
+            print(json.dumps(to_cloudevent(r), sort_keys=True))
+        return 0
     if flag("--lessons"):
         print(json.dumps(lessons(root), indent=1)); return 0
     if flag("--signal"):

@@ -1,7 +1,7 @@
 {
   "id": "Q-RULE-front-end-matches-back-end-claims",
   "title": "Q-RULE-front-end-matches-back-end-claims: standing rule front-end-matches-back-end violated (claims)",
-  "body": "**Owner:** staff\n**Trigger:** every lane pass (rules --run --due)\n**Done check:** cmd:python3 -m foundation claims --check\n**Status:** open\n\nRULES-1: the standing rule `front-end-matches-back-end` is violated: Words match code: every public statement is bound to a probe of the running code (CLAIMS-1, WORDS-MATCH-CODE-1).\nProbe `claims` says: claims: 376 verified of 378; 2 drift\n\nFix the cause in code so the probe passes; the tick re-runs it every pass. Never weaken the probe or the registry.",
+  "body": "**Owner:** staff\n**Trigger:** every lane pass (rules --run --due)\n**Done check:** cmd:python3 -m foundation claims --check\n**Status:** closed\n\nRULES-1: the standing rule `front-end-matches-back-end` is violated: Words match code: every public statement is bound to a probe of the running code (CLAIMS-1, WORDS-MATCH-CODE-1).\nProbe `claims` says: claims: 376 verified of 378; 2 drift\n\nFix the cause in code so the probe passes; the tick re-runs it every pass. Never weaken the probe or the registry.\n\n**Vacuous:** 2026-11-25T14:31:47Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n\n\n**Evidence:** closing probe passed (2 consecutive passes after a recorded failure): claims: 388 verified of 388; 0 drift\n",
   "labels": [
     "role:staff",
     "ci-failure"

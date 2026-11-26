@@ -17,6 +17,7 @@ import { pilotOffer } from "./pilotoffer.js"; // PILOT-OFFER-1
 import { connectAgentPage } from "./connectagent.js";
 import { agentic, withLinks, CONTENT_SIGNAL, TOOLS, LIVE_TOOLS, WRITE_TOOLS } from "./agentic.js";
 import VERIFIED from "./claims-data.js";
+import { contractRoutes, platformStatements } from "./contract.js";  // FLEET-CONTRACT-1
 import ULTRA from "./ultrastability-data.js";
 import { verificationBody, verificationJson } from "./verification.js";
 import { experimentFor, slotText, exposureName } from "./uiux.js"; // UIUX-1: A/B experiments on path steps
@@ -26,7 +27,8 @@ import { mydata } from "./mydata.js";
 import { authzen } from "./authzen.js";
 import { indexNow, keyFile, SITEMAP_PATHS, webSub, archiveEvidence, reachRows } from "./promote.js";
 import { PRIVACY, ACCESSIBILITY, SECURITY_TXT } from "./legalpages.js";
-import { negotiate, robots, WEBMCP_JS } from "./readiness.js";  // AGENT-READY-2
+import { negotiate, robots, WEBMCP_JS } from "./readiness.js";
+import { register as registerDirectory, recheck as recheckDirectory, listing as directoryListing, CORE as DIR_CORE } from "./directory.js";  // DISCOVER-1  // AGENT-READY-2
 import ROAD from "./roadmap-data.js";
 import DEC from "./decisions-data.js";  // DECISIONS-1: generated from ops/decisions/*.jsonl
 import { leftAloneRoutes } from "./leftalone.js";  // ATTENTION-1
@@ -47,6 +49,7 @@ import { webhooksRoute, tickWebhooks } from "./webhooks.js"; // WEBHOOKS-1
 import { siteFeed, siteBadge, insights as siteInsights, insightsBody, viewedRecently, upkeepRound, recordVersion, restore as restoreVersion, versions as siteVersions, historyBody } from "./upkeep.js"; // SITE-UPKEEP-1
 import { connectionsRoute } from "./connections.js"; // CONNECTIONS-1
 import { internalDeploy } from "./deployer.js";
+import * as GRAD from "./graduate.js";  // LAUNCH-PATH-1
 import { zoneCutover } from "./zonecutover.js"; // ZONE-CUTOVER-1: attaches domains the tick a moved zone turns active
 var VERSION = "0.15.1";
 const CANON = "ultrastable.io";
@@ -56,8 +59,26 @@ const BASE = ":root{color-scheme:light dark;--bg:#f6f1e7;--sf:#fffdf8;--sf2:#efe
 + "*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 'IBM Plex Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif}a{color:var(--ac)}h1{font-family:Fraunces,Georgia,serif;font-size:28px;line-height:1.2;margin:0 0 8px}h2{font-size:20px;margin:28px 0 8px}h3{margin:0;font-size:17px}p{margin:0 0 12px}"
 + ".top{position:sticky;top:0;background:var(--sf);border-bottom:1px solid var(--line);z-index:5}.top-in{max-width:960px;margin:0 auto;padding:8px 16px;display:flex;align-items:center;gap:8px;min-height:60px}.brand{font-weight:700;font-size:18px;color:var(--ink);text-decoration:none;margin-right:auto}"
 + ".main{max-width:960px;margin:0 auto;padding:20px 16px 64px}.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:44px;padding:10px 18px;border-radius:6px;border:1px solid var(--line);background:var(--sf);color:var(--ink);font:600 16px system-ui;text-decoration:none}.btn-primary{background:var(--ac);border-color:var(--ac);color:var(--on)}.btn-quiet{border-color:transparent;background:transparent;color:var(--ac)}"
-+ ".skip{position:absolute;left:-9999px}.skip:focus{left:16px;top:8px;background:var(--sf);padding:8px}:focus-visible{outline:3px solid var(--ac);outline-offset:2px}.card{background:var(--sf);border:1px solid var(--line);border-radius:8px;padding:16px;margin:0 0 12px}.meta,small{color:var(--ink2);font-size:14px}.head p{color:var(--ink2)}"
++ ".skip-link{position:absolute;left:-9999px}.skip-link:focus{left:16px;top:8px;background:var(--sf);padding:8px}:focus-visible{outline:3px solid var(--ac);outline-offset:2px}.card{background:var(--sf);border:1px solid var(--line);border-radius:8px;padding:16px;margin:0 0 12px}.meta,small{color:var(--ink2);font-size:14px}.head p{color:var(--ink2)}"
 + "@media(max-width:640px){.hide-sm{display:none!important}h1{font-size:24px}}";
+// REDTEAM-1: the public text of a claim. The register keeps the exact quote for binding; a quote cut from code keeps only its prose, tags dropped,
+// and a quote that starts mid-sentence is marked with an ellipsis.
+export function publicText(q) {
+  let t = String(q || "");
+  if (/" ?\+|\+ ?"|^\s*(const|return|let|if|card)\b|\bcard\(|\bsec\(|\.push\(|^\s*\+/.test(t)) {
+    const out = [];
+    for (const seg of t.replace(/\\"/g, '"').split(/["']/)) {
+      if (/^\s*\+[^\n]*\+\s*$/.test(seg)) out.push("\u2026");
+      else if ((/[A-Za-z]{2,}[ ,.][A-Za-z ]/.test(seg) || (out.length && out[out.length - 1] === "\u2026" && /[A-Za-z]{3,}/.test(seg))) && !/^[\w-]+ c?\d+$/.test(seg.trim()) && !/[{};=]|\b(const|return|function)\b|^\s*[\w.]+\(/.test(seg))
+        out.push(seg.replace(/<[^>]*>/g, " ").replace(/^[\s,(]+|[\s,(]+$/g, ""));
+    }
+    while (out.length && out[out.length - 1] === "\u2026") out.pop();
+    t = out.filter(Boolean).join(" ") || "(generated from code; see the probe)";
+  }
+  t = t.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim();
+  return /^[a-z]/.test(t) ? "\u2026" + t : t;
+}
+function atCommit() { const c = String(VERIFIED.commit || ""); return /^[0-9a-f]{7,40}$/.test(c) ? " at commit " + esc(c) : " on every merge"; }
 function dsEsc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
 function dsHead(title, description, extraCss) {
   return "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>" + dsEsc(title) + "</title><meta name=\"description\" content=\"" + dsEsc(description) + "\"><style>" + BASE + "\n" + (extraCss || "") + "</style>";
@@ -72,7 +93,8 @@ const CSS = [
   ".us-table th{font-size:14px;color:var(--ink2)}.us-wrap{overflow-x:auto;max-width:100%}.us-table td,.us-table th{overflow-wrap:anywhere;word-break:break-word;min-width:56px}@media(max-width:640px){.us-table td,.us-table th{padding:8px 6px;font-size:14px}}.us-us td{background:var(--soft);font-weight:600}",
   ".us-foot{border-top:1px solid var(--line);margin-top:32px;padding-top:16px;color:var(--ink2);font-size:14px}",
   ".us-case{display:block;text-decoration:none;color:inherit}.us-case:hover,.us-case:focus-visible{border-color:var(--accent,currentColor)}.us-tag{display:inline-block;font-size:14px;color:var(--ink2);border:1px solid var(--line);border-radius:999px;padding:2px 10px;margin-bottom:6px}.us-more{display:inline-block;margin-top:8px;font-weight:600;min-height:44px;line-height:44px}.us-note{border-left:4px solid var(--ac);background:var(--sf);padding:10px 14px;border-radius:6px}.crumbs{font-size:14px;color:var(--ink2);margin:8px 0}.us-stories li,.us-path li{margin:8px 0}.us-path a{display:inline-block;min-height:44px;line-height:44px}",
-  ".us-pass{color:var(--good);font-weight:700}.us-fail{color:var(--bad);font-weight:700}"
+  ".us-pass{color:var(--good);font-weight:700}.us-fail{color:var(--bad);font-weight:700}",
+  ".us-q{display:block;width:100%;min-height:44px;font:16px system-ui;padding:8px;margin:8px 0}"
 ].join("\n") + "\n" + IV.CSS;
 
 function esc(s) { return dsEsc(s); }
@@ -80,11 +102,11 @@ function esc(s) { return dsEsc(s); }
 function shell(opts, body) {
   const url = "https://" + CANON + opts.path;
   return "<!doctype html><html lang=\"en\"><head>" + dsHead(opts.title, opts.description, CSS)
-    + "<link rel=\"icon\" href=\"/favicon.svg\" type=\"image/svg+xml\"><meta property=\"og:image\" content=\"https://" + CANON + "/social-card.png\"><meta property=\"og:image:width\" content=\"640\"><meta property=\"og:image:height\" content=\"320\"><meta property=\"og:image:alt\" content=\"Coding agents write code. Ultrastable runs the system.\"><meta property=\"og:site_name\" content=\"Ultrastable\"><meta name=\"twitter:card\" content=\"summary_large_image\"><meta name=\"twitter:title\" content=\"" + esc(opts.title) + "\"><meta name=\"twitter:description\" content=\"" + esc(opts.description) + "\"><meta name=\"twitter:image\" content=\"https://" + CANON + "/social-card.png\"><meta name=\"theme-color\" content=\"#12342A\"><link rel=\"apple-touch-icon\" href=\"/apple-touch-icon.png\"><link rel=\"canonical\" href=\"" + url + "\"><meta property=\"og:title\" content=\"" + esc(opts.title) + "\"><meta property=\"og:description\" content=\"" + esc(opts.description) + "\"><meta property=\"og:type\" content=\"website\"><meta property=\"og:url\" content=\"" + url + "\">"
-    + "</head><body><a class=\"skip\" href=\"#main\">Skip to content</a>"
-    + "<header class=\"top\"><div class=\"top-in\"><a class=\"brand\" href=\"/\"><img src=\"/favicon.svg\" alt=\"\" width=\"28\" height=\"28\" style=\"vertical-align:middle;margin-right:8px\">ultrastable</a><a class=\"btn btn-quiet hide-sm\" href=\"/for\">Find your path</a><a class=\"btn btn-quiet\" href=\"/showcase\">Test cases</a><a class=\"btn btn-quiet hide-sm\" href=\"/product\">Product</a><a class=\"btn btn-quiet hide-sm\" href=\"/how\">How it works</a><a class=\"btn btn-quiet\" href=\"/live\">Live proof</a><a class=\"btn btn-quiet\" href=\"/progress\">What's new</a><a class=\"btn btn-quiet hide-sm\" href=\"/engineers\">Engineers</a><a class=\"btn btn-quiet hide-sm\" href=\"/contact\">Contact</a></div></header>"
+    + "<link rel=\"icon\" href=\"/favicon.svg\" type=\"image/svg+xml\"><link rel=\"search\" type=\"application/opensearchdescription+xml\" title=\"Ultrastable\" href=\"/opensearch.xml\"><meta property=\"og:image\" content=\"https://" + CANON + "/social-card.png\"><meta property=\"og:image:width\" content=\"640\"><meta property=\"og:image:height\" content=\"320\"><meta property=\"og:image:alt\" content=\"Coding agents write code. Ultrastable runs the system.\"><meta property=\"og:site_name\" content=\"Ultrastable\"><meta name=\"twitter:card\" content=\"summary_large_image\"><meta name=\"twitter:title\" content=\"" + esc(opts.title) + "\"><meta name=\"twitter:description\" content=\"" + esc(opts.description) + "\"><meta name=\"twitter:image\" content=\"https://" + CANON + "/social-card.png\"><meta name=\"theme-color\" content=\"#12342A\"><link rel=\"apple-touch-icon\" href=\"/apple-touch-icon.png\"><link rel=\"canonical\" href=\"" + url + "\"><meta property=\"og:title\" content=\"" + esc(opts.title) + "\"><meta property=\"og:description\" content=\"" + esc(opts.description) + "\"><meta property=\"og:type\" content=\"website\"><meta property=\"og:url\" content=\"" + url + "\">"
+    + "</head><body><a class=\"skip-link\" href=\"#main\">Skip to content</a>"
+    + "<header class=\"top\"><div class=\"top-in\"><a class=\"brand\" href=\"/\"><img src=\"/favicon.svg\" alt=\"\" width=\"28\" height=\"28\" style=\"vertical-align:middle;margin-right:8px\">ultrastable</a><a class=\"btn btn-quiet hide-sm\" href=\"/for\">Find your path</a><a class=\"btn btn-quiet\" href=\"/showcase\">Test cases</a><a class=\"btn btn-quiet hide-sm\" href=\"/product\">Product</a><a class=\"btn btn-quiet hide-sm\" href=\"/how\">How it works</a><a class=\"btn btn-quiet\" href=\"/research\">Research</a><a class=\"btn btn-quiet\" href=\"/live\">Live proof</a><a class=\"btn btn-quiet\" href=\"/progress\">What's new</a><a class=\"btn btn-quiet hide-sm\" href=\"/engineers\">Engineers</a><a class=\"btn btn-quiet hide-sm\" href=\"/contact\">Contact</a></div></header>"
     + "<main class=\"main\" id=\"main\">" + body
-    + "<div class=\"us-foot\">Ultrastable is an early-stage product. Figures on this site come from a live system's own records. <a href=\"/live\">See the checks</a> · <a href=\"/progress\">What shipped</a> · <a href=\"/product\">Product</a> · <a href=\"/team\">Team</a> · <a href=\"/faq\">FAQ</a> · <a href=\"/privacy\">Privacy</a> · <a href=\"/accessibility\">Accessibility</a> · <a href=\"/contact\">Contact</a> · <a href=\"/llms.txt\">llms.txt</a></div>"
+    + "<div class=\"us-foot\">Ultrastable is an early-stage product. Figures on this site come from a live system's own records. <a href=\"/live\">See the checks</a> · <a href=\"/progress\">What shipped</a> · <a href=\"/research\">White papers</a> · <a href=\"/research.atom\">Papers feed</a> · <a href=\"/product\">Product</a> · <a href=\"/team\">Team</a> · <a href=\"/faq\">FAQ</a> · <a href=\"/privacy\">Privacy</a> · <a href=\"/accessibility\">Accessibility</a> · <a href=\"/contact\">Contact</a> · <a href=\"/llms.txt\">llms.txt</a></div>"
     + "<div class=\"us-foot\" id=\"family\">The Ultrastable family: <a href=\"https://" + CANON + "/\">" + esc(SH.domains.io.host) + "</a> (platform and product) · <a href=\"/showcase/practical-solutions\">" + esc(SH.domains.org.host) + "</a> (public-benefit demos) · <a href=\"/family.json\">family.json</a></div>"
     + "<div class=\"us-foot\" id=\"credit\">Directed by <a href=\"https://rwnq8.github.io/ultrastable/\">Rowan Brad Quni-Gudzinas</a>, founder and director of Ultrastable. <a href=\"https://rwnq8.github.io\">Website</a> · <a href=\"https://github.com/rwnq8\">GitHub</a> · <a href=\"https://www.linkedin.com/in/rowan-quni\">LinkedIn</a></div>"
     + "<script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"WebSite\",\"name\":\"Ultrastable\",\"url\":\"https://ultrastable.io\",\"creator\":{\"@type\":\"Person\",\"name\":\"Rowan Brad Quni-Gudzinas\",\"jobTitle\":\"Founder and Director, Ultrastable\",\"url\":\"https://rwnq8.github.io\",\"sameAs\":[\"https://orcid.org/0009-0002-4317-5604\",\"https://github.com/rwnq8\",\"https://www.linkedin.com/in/rowan-quni\"]}}</script></main><script src=\"/webmcp.js\" defer></script></body></html>";
@@ -93,26 +115,27 @@ function shell(opts, body) {
 function statusLine() {
   // Own records only (PROOF-OWN-1): the count comes from Ultrastable's verified-claims register, never from another system.
   const t = VERIFIED.summary;
-  return t.pass + " of " + t.total + " claims verified against code at commit " + esc(VERIFIED.commit) + ".";
+  return t.pass + " of " + t.total + " claims verified against code" + atCommit() + ".";
 }
 
 function home(ux) {
   return shell({ path: "/", title: "Ultrastable: the foundation for any autonomous system", description: "Ultrastable is the foundation for any autonomous system. Vibe coding writes the code you ask for. Ultrastable decides what to build next, ships it, proves it live and keeps score of how often it was right." },
     "<section class=\"us-hero\"><h1>Start with a bare idea. We keep improving it.</h1><p class=\"us-lede\">Vibe coding stops at a thin first draft and a coding agent waits to be told what to do. Behind the scenes, Ultrastable's portfolio, program and product managers measure what you run, decide what to improve next and keep shipping it, on a back end you budget for. Ultrastable is the foundation for any autonomous system.</p>"
     + IV.askBar("Tell me what is on your mind…")
-    + "<div class=\"us-actions\"><a class=\"btn\" href=\"/setup\">" + esc(slotText("home.setup_label", "primary_label", "Set up my own", ux)) + "</a><a class=\"btn\" href=\"/live\">See the live proof</a></div>"
+    + "<div class=\"us-actions\"><a class=\"btn\" href=\"/setup\">" + esc(slotText("home.setup_label", "primary_label", "Set up my own", ux)) + "</a><a class=\"btn\" href=\"/live\">See the live proof</a><a class=\"btn btn-quiet\" href=\"/research\">Read the white papers</a></div>"
     + "<div class=\"us-status\" role=\"status\">" + statusLine() + "</div></section>"
-    + "<div class=\"us-lane\"><h2>Already comfortable with code?</h2><p class=\"us-tagline\">A system is autonomous if it has self-referential loops and the ability to close them. Coding agents write code. Ultrastable runs the system. Ultrastable runs on itself.</p><p class=\"us-lede\">It finds its own work in your metrics and failures, hands each task to the coding agent that fits, proves every change live with an automatic revert, and keeps score of how often its decisions were right.</p><p>You do not have to answer questions. The loops, virtual managers, agents and plussing budget are all there to use, with an honest list of what is live, in testing, and not built yet.</p><div class=\"us-actions\"><a class=\"btn\" href=\"/engineers\">Go straight to the engine</a></div></div>"
+    + "<div class=\"us-lane\"><h2>Already comfortable with code?</h2><p class=\"us-tagline\">A system is autonomous if it has self-referential loops and the ability to close them. Coding agents write code. Ultrastable runs the system. Ultrastable runs on itself.</p><p class=\"us-lede\">It finds its own work in your metrics and failures, hands each task to the coding agent that fits, proves each handed-off change live and rolls it back when the proof fails, and keeps score of how often its decisions were right.</p><p>You do not have to answer questions. The loops, virtual managers, agents and plussing budget are all there to use, with an honest list of what is live, in testing, and not built yet.</p><div class=\"us-actions\"><a class=\"btn\" href=\"/engineers\">Go straight to the engine</a></div></div>"
     + examplesSection()
     + "<h2>Who are you?</h2><div class=\"us-grid c3\">" + SH.audiences.map(audienceCard).join("") + "</div>"
     + "<h2>Test cases</h2><div class=\"us-grid c2\">" + SH.showcases.filter(function (c) { return c.status !== "sunsetting"; }).map(caseCard).join("") + "</div><p><a href=\"/showcase\">All test cases, including the earlier testbed</a></p>"
+    + directoryBlock()
     + "<h2>What it is not for</h2><div class=\"us-grid c2\">"
     + card("Not for things you build once and forget", "An invitation, a packing list or a weekend page does not need managers, probes or a paid back end. Use a site builder.")
     + card("Not a substitute for a goal", "It needs setup and commitment: a named objective, a budget and a short list of steps a person always decides. From a bare skeleton it works out the next improvement; it does not invent your purpose.")
     + "</div>"
     + "<h2>What is different</h2><div class=\"us-grid c3\">"
     + card("It chooses the work", "Metrics breach, a trigger files an issue, a coding agent opens the pull request. A person sets direction and reads reports.")
-    + card("It proves every change", "Each deploy declares probes. A probe that passed before and fails after reverts the push on its own.")
+    + card("It proves every change", "Each handed-off change declares a live check. When the check fails after the deploy, the deploy is rolled back on its own and the work item goes back to the queue.")
     + card("It keeps score", "Every decision logs a prediction first. The outcome is scored later, so you can see how often the system was right.")
     + "</div>"
     + "<h2>It questions what it does not know</h2><p>Improving only what is known makes the solution space smaller each time. So the managers also audit their own ignorance: every loop is asked inverted questions (what if the opposite were true, what would a world look like where this was false, what are we pretending not to know) drawn from the Universal Ignorance Audit, pre-mortems and red teaming. Each answer, including 'we cannot know', is recorded, and a gap found becomes a new objective. Coverage and findings are on the <a href=\"/live\">live page</a>.</p>"
@@ -165,22 +188,30 @@ function bound(v) { return v.min !== null && v.max !== null ? (v.min === v.max ?
 
 function ultrastability() {
   const P = ULTRA.scopes.platform, T = ULTRA.scopes.tenant;
-  const row = function (v) { return "<tr><td>" + esc(v.name) + "</td><td>" + esc(bound(v)) + " " + esc(v.unit) + "</td><td>" + esc(v.steps.join("; ")) + "</td></tr>"; };
+  const now = ULTRA.now || {}, R = ULTRA.readiness;
+  // NUMFMT-1: a reading is shown to three significant figures; the ledger keeps the full value
+  const reads = function (v) { const n = now[v.id]; return n ? (n.value === null ? "unmeasured" : esc(String(typeof n.value === "number" && Number.isFinite(n.value) ? Number(n.value.toPrecision(3)) : n.value)) + (n.ok ? " (in bounds)" : " (out of bounds)")) : "no reading yet"; };
+  const row = function (v) { return "<tr><td>" + esc(v.name) + "</td><td>" + esc(bound(v)) + " " + esc(v.unit) + "</td><td>" + reads(v) + "</td><td>" + esc(v.steps.join("; ")) + "</td></tr>"; };
   return "<h2 id=\"why-ultrastable\">Why ultrastable</h2>"
     + "<p>A system is ultrastable, in W. Ross Ashby's sense, when two loops keep its essential variables inside bounds: a fast loop that corrects disturbance, and a slow loop that changes the system itself when the fast loop cannot.</p>"
-    + "<p>The fast loop is the probes, the cost check, the claims check and the executor. The slow loop reads the same variables every tick, and when one has been out of bounds for two ticks in a row it takes one discrete step on that variable's ladder, keeps the step only if the variable comes back, and otherwise undoes it and takes the next.</p>"
+    + "<p>The fast loop is the probes, the cost check, the claims check and the executor. The slow loop reads the same variables every tick, and when one has stayed out of bounds for as many ticks in a row as its patience setting (patience_ticks, which the loop tunes itself) it takes one discrete step on that variable's ladder, keeps the step only if the variable comes back, and otherwise undoes it and takes the next.</p>"
+    + (R ? "<p id=\"one-year\"><strong>One-year readiness: " + esc(String(R.score)) + " of 100.</strong> It multiplies three parts: the simulated unattended horizon against a year (" + esc(String(R.horizon)) + "), the share of essential variables in bounds at the last tick (" + esc(String(R.bounds)) + "), and how often the slow loop's own changes worked (" + esc(String(R.learning)) + "). A person stepping in to redirect the system counts against it.</p>" : "")
     + "<p>The essential variables of " + esc(P.what) + " (" + esc(P.status) + "):</p>"
-    + "<div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Variable</th><th>Bounds</th><th>Second-order steps, in order</th></tr></thead><tbody>" + P.variables.map(row).join("") + "</tbody></table></div>"
+    + "<div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Variable</th><th>Bounds</th><th>Last reading</th><th>Second-order steps, in order</th></tr></thead><tbody>" + P.variables.map(row).join("") + "</tbody></table></div>"
     + "<p>" + esc(T.what) + " (" + esc(T.status) + "): " + T.variables.map(function (v) { return esc(v.name.toLowerCase()); }).join(", ") + ".</p>"
     + "<p>The system describes itself in code: what it is, its regulators, its variables and bounds, its clocks and its boundary are served as JSON at <a href=\"/self\">/self</a>.</p>"
+    + (ULTRA.self_changes && ULTRA.self_changes.length ? "<h3 id=\"self-changes\">Changes the slow loop made to itself</h3><div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>When</th><th>Variable</th><th>Change</th><th>Before</th><th>After</th><th>Verdict</th></tr></thead><tbody>"
+      + ULTRA.self_changes.map(function (c) { return "<tr><td>" + esc(c.at) + "</td><td>" + esc(c.var) + "</td><td>" + esc(c.what) + "</td><td>" + esc(String(c.before)) + "</td><td>" + esc(String(c.after)) + "</td><td>" + esc(c.verdict) + "</td></tr>"; }).join("") + "</tbody></table></div>" : "")
+    + "<p class=\"meta\">Every reading above is the last row for that variable in <a href=\"https://github.com/ultrastable/ultrastable/blob/main/ops/ultrastability.jsonl\">ops/ultrastability.jsonl</a>, computed by <a href=\"https://github.com/ultrastable/ultrastable/blob/main/foundation/ultrastability.py\">foundation/ultrastability.py</a>. Nothing on this page is typed by hand.</p>"
     + "<p class=\"meta\">After " + esc(ULTRA.credit) + ". Every reading, step and verdict is a row in the ultrastability ledger and a provenance row.</p>";
 }
 
 function claimsPage() {
   const rows = VERIFIED.claims.map(function (c) { return "<tr><td class=\"" + (c.pass ? "us-pass" : "us-fail") + "\">" + (c.pass ? "Verified" : "Drift") + "</td><td>" + esc(c.claim) + "<br><small>" + esc(c.surface) + " · " + esc(c.how) + (c.detail ? " · " + esc(c.detail) : "") + "</small></td></tr>"; }).join("");
-  return shell({ path: "/claims", title: "Verified claims: Ultrastable words matched to code", description: "Every statement on the Ultrastable surfaces is bound to a probe in the code, checked on every change and daily against the live site." },
+  return shell({ path: "/claims", title: "Verified claims: Ultrastable words matched to code", description: "Statements on the Ultrastable surfaces are bound to probes in the code, checked on every change and daily against the live site; the share bound is measured and the rest is listed." },
     "<div class=\"head\"><h1>Verified claims</h1><p id=\"st\" role=\"status\">" + VERIFIED.summary.pass + " of " + VERIFIED.summary.total + " claims verified against code at commit " + esc(VERIFIED.commit) + ". Words must match code; a claim that stops matching fails the build and files its own fix item.</p></div>"
     + "<div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Status</th><th>Claim, surface and probe</th></tr></thead><tbody>" + rows + "</tbody></table></div>"
+    + platformStatements()
     + "<p class=\"meta\">Machine form: <a href=\"/api/claims\">/api/claims</a>. Registry: doctrine/claims.json; checker: python3 -m foundation claims --check. Generated copy (counts, tool lists) is rewritten from code, so it cannot drift; the reverse direction (shipped behaviour that no surface describes) is checked too.</p>");
 }
 
@@ -198,12 +229,24 @@ function pilot() {
     + "<h2 id=\"apply\">Apply</h2><form id=\"pf\" class=\"card\" method=\"post\" action=\"/api/pilot\">" + [["system", g.apply_fields[0]], ["keeps_doing", g.apply_fields[1]], ["measure", g.apply_fields[2]], ["budget", g.apply_fields[3]], ["runs_on", g.apply_fields[4]], ["contact", "How we reach you (email)"]].map(function (x) { return "<p><label>" + esc(x[1]) + "<br><textarea name=\"" + x[0] + "\" rows=\"2\" maxlength=\"1500\" style=\"width:100%\"" + (x[0] === "contact" ? "" : " required") + "></textarea></label></p>"; }).join("") + "<p><button class=\"btn btn-primary\" type=\"submit\">Send application</button></p><p id=\"pr\" class=\"meta\" role=\"status\"></p></form>"
     + "<script>document.getElementById('pf').addEventListener('submit',function(e){e.preventDefault();var f=e.target;fetch('/api/pilot',{method:'POST',body:new FormData(f),headers:{accept:'application/json'}}).then(function(r){return r.json()}).then(function(j){document.getElementById('pr').textContent=j.message||j.error||'Something went wrong.'}).catch(function(){document.getElementById('pr').textContent='Could not send; use the email link.'})})</script>"
     + "<div class=\"us-actions\"><a class=\"btn\" href=\"" + href + "\">Or apply by email</a><a class=\"btn\" href=\"/dashboard\">See the dashboard</a></div>"
-    + "<p class=\"meta\">Replies come from a person within two working days. The form above is the interview: it scores your answers against the four system-test questions.</p>");
+    + "<p class=\"meta\">Your answers are scored and stored when you apply; to reach a person, email the pilot team. The form above is the interview: it scores your answers against the four system-test questions.</p>");
 }
 
 function lis(a) { return "<ul>" + a.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>"; }
 function crumbs(items) { return "<nav class=\"crumbs\" aria-label=\"Breadcrumb\">" + items.map(function (i, k) { return k < items.length - 1 ? "<a href=\"" + i[1] + "\">" + esc(i[0]) + "</a> / " : "<span aria-current=\"page\">" + esc(i[0]) + "</span>"; }).join("") + "</nav>"; }
 function domLabel(k) { const x = SH.domains[k]; return x ? x.host : ""; }
+// DISCOVER-1: every system built on Ultrastable, generated from the tenant registry; each links the others through /directory.
+function directoryBlock() { return "<h2>Every system running on Ultrastable</h2><ul class=\"us-dir\">" + DIR_CORE.map(function (c) { return "<li><a href=\"" + esc(c.url) + "\">" + esc(c.name) + "</a>" + (c.repo ? " · <a href=\"" + esc(c.repo) + "\">source</a>" : "") + "</li>"; }).join("") + "</ul><p><a href=\"/directory\">The full directory</a>, including systems other people run on Ultrastable in their own accounts.</p>"; }
+function directoryPage(d) {
+  const row = function (c) { return "<li><a href=\"" + esc(c.url) + "\">" + esc(c.name) + "</a>" + (c.repo ? " · <a href=\"" + esc(c.repo) + "\">source</a>" : "") + (c.summary ? "<br><small>" + esc(c.summary) + "</small>" : "") + "</li>"; };
+  return shell({ path: "/directory", title: "Directory: every system built on Ultrastable", description: "Every public system running on Ultrastable, here and in other people's accounts, with links to each and its source." },
+    crumbs([["Home", "/"], ["Directory", "/directory"]])
+    + "<h1>Every system built on Ultrastable</h1><p>Each system runs its own loops and links back here. Systems are public unless their owner opts out.</p>"
+    + "<h2>Running in this account</h2><ul>" + d.core.map(row).join("") + "</ul>"
+    + "<h2>Running elsewhere</h2>" + (d.external.length ? "<ul>" + d.external.map(row).join("") + "</ul>" : "<p>None listed yet.</p>")
+    + "<h2>Get listed</h2><p>A system started from the Ultrastable seed lists itself: it serves <code>/.well-known/ultrastable.json</code> asks to be listed on its first tick and then checks in once a day. This page reads that file before listing a site and rechecks it daily. Turn it off with <code>ULTRASTABLE_DIRECTORY=off</code>; a site that says noindex is never listed.</p>"
+    + "<script type=\"application/ld+json\">" + JSON.stringify({ "@context": "https://schema.org", "@type": "ItemList", name: "Systems built on Ultrastable", itemListElement: d.core.concat(d.external).map(function (c, i) { return { "@type": "ListItem", position: i + 1, item: { "@type": "SoftwareApplication", name: c.name, url: c.url, applicationCategory: "WebApplication", license: c.license || undefined } }; }) }).replace(/</g, "\\u003c") + "</script>");
+}
 function caseCard(c) { return "<a class=\"card us-case\" href=\"/showcase/" + esc(c.id) + "\"><span class=\"us-tag\">" + esc(c.tag) + "</span> <span class=\"us-tag\">" + esc(domLabel(c.domain)) + "</span><h3 class=\"card-title\">" + esc(c.name) + "</h3><p class=\"meta\">" + esc(c.summary) + "</p><span class=\"us-more\">Read the case</span></a>"; }
 
 function showcase() {
@@ -212,7 +255,7 @@ function showcase() {
     + "<div class=\"head\"><h1>Test cases</h1><p>Ultrastable is an autonomous development platform. What it develops (code, practical solutions) and how it develops itself are one loop.</p></div>"
     + "<div class=\"us-grid c2\">" + SH.showcases.map(caseCard).join("") + "</div>"
     + "<h2>One loop, not two</h2><p>The loop that finds a failing probe in a product, files the work, hands it to an agent, proves the change live and scores its own prediction is the same loop that improves Ultrastable. Each fix to the loop improves every system, and each system's problems improve the loop. It keeps closing its own loops, including the loop that watches the loops (a strange loop, in Hofstadter's sense).</p>"
-    + "<h2>How we test it</h2>" + lis(["Every claim on this site is a query against a live record: see Live proof.", "Each decision logs a prediction first (metric, comparison, number, hours) and is scored later.", "Changes are proven live after deploy and revert on regression.", "The same checks run on the platform and on each product, so a pass means the same thing everywhere."])
+    + "<h2>How we test it</h2>" + lis(["Claims on this site are bound to probes in the code and re-checked on every change: see the claims page.", "Each decision logs a prediction first (metric, comparison, number, hours) and is scored later.", "Handed-off changes are proven live after deploy and rolled back when the proof fails.", "The same checks run on the platform and on each product, so a pass means the same thing everywhere."])
     + "<p class=\"meta\">Early stage. Estimates are labelled as estimates. The code is source-available under the Ultrastable License: free for non-commercial use, a commercial licence for commercial use. <a href=\"/how#gaps\">Read the gaps.</a></p>"
     + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/for\">Find your path</a><a class=\"btn\" href=\"/how\">How it works</a></div>");
 }
@@ -260,10 +303,10 @@ function product() {
     + "<h2>What it does</h2><div class=\"us-grid c3\">"
     + card("Chooses the work", "Reads your metrics and failures, files the issues, and orders them so the most valuable work goes first.")
     + card("Hands it to an agent", "Gives each task to one coding agent at a time, so two agents never work the same item.")
-    + card("Checks the result", "Every change is checked after it ships and rolled back automatically if something that worked before now fails.")
+    + card("Checks the result", "A handed-off change is checked live after it ships and rolled back automatically if the check fails.")
     + "</div>"
     + "<h2>Who it is for</h2><p>Small engineering teams that run many services and want problems found and fixed without a person choosing every task. Teams that need an audit trail of what their agents changed and why.</p>"
-    + "<h2>What a pilot includes</h2><ul><li>The loop installed on one repository of yours.</li><li>Issues filed from your own metrics, with a check that proves each fix.</li><li>A written record of every decision and how it turned out.</li><li>A named contact who replies within two working days.</li></ul>"
+    + "<h2>What a pilot includes</h2><ul><li>The loop installed on one repository of yours.</li><li>Issues filed from your own metrics, with a check that proves each fix.</li><li>A written record of every decision and how it turned out.</li><li>A named contact you can email.</li></ul>"
     + "<h2>Status</h2><p>Early stage. The loop runs in production today on one installation; a second, independent installation and a packaged installer are the next milestones. Pricing is not set; pilots are free. <a href=\"/how#gaps\">Read the honest gaps.</a></p>"
     + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/pilot\">Join the pilot</a><a class=\"btn\" href=\"/faq\">Read the FAQ</a></div>");
 }
@@ -278,7 +321,7 @@ function team() {
     + card("Product manager", "Owns the product pages, customer conversations and the pilot programme.")
     + card("Operations and reviewers", "Run deploys and monitoring, and review each change independently of the agent that wrote it.")
     + "</div>"
-    + "<h2>How we work</h2><p>Plans, decisions and results are written down in version control, not in chat. Work is claimed before it starts, checked after it ships, and every claim on this site can be traced to a record.</p>"
+    + "<h2>How we work</h2><p>Plans, decisions and results are written down in version control, not in chat. Work is claimed before it starts and checked after it ships, and the claims on this site are bound to probes in the code.</p>"
     + "<h2>Open roles</h2><p>We are looking for an operator or co-founder with commercial and go-to-market experience, and for design partners. <a href=\"/contact\">Get in touch.</a></p>");
 }
 
@@ -298,7 +341,7 @@ function faq() {
     ["Is Ultrastable another coding agent?", "No. It is the layer around the agents you already use. It decides what to work on, assigns it, checks the result and keeps score."],
     ["Which agents and platforms does it work with?", "Open models, GitHub Copilot and Claude Code take work through the same ledger. It runs on Cloudflare today and is designed to run on other clouds."],
     ["Who decides what gets built?", "The system proposes work from your metrics and failures. A person sets direction and reads reports, and approves only steps that cannot be undone."],
-    ["What if a change breaks something?", "Each change declares checks that must keep passing. If one that passed before now fails, the change is rolled back automatically and an issue is filed."],
+    ["What if a change breaks something?", "A handed-off change declares a live check. If the check fails after the deploy, the deploy is rolled back automatically and the work item goes back to the queue."],
     ["Do I have to give it access to everything?", "No. A pilot covers one repository, with the permissions you grant. Secrets are never stored in the repository."],
     ["What does it cost?", "Pilots are free. Pricing is not set yet and will be published here before any paid plan starts."],
     ["Is it production ready?", "It runs in production on one installation today. It is early-stage: there is no packaged installer yet and a second independent installation is the next milestone."],
@@ -541,9 +584,35 @@ async function audit(env, id, brief, html) {
 async function build(env, id, brief, prev, change) {
   try {
     await env.ASSETS.put("brief:" + id, JSON.stringify({ brief, change: change || null }));
-    { const before = await env.ASSETS.get("site:" + id); const html = await aiHtml(env, brief, prev, change); if (before) await recordVersion(env, id, before, change ? "you asked: " + String(change).slice(0, 100) : "rebuilt"); await env.ASSETS.put("site:" + id, html); } await env.ASSETS.put("state:" + id, "ready"); // SITE-UPKEEP-1: the page before each change is kept
+    { const before = await env.ASSETS.get("site:" + id); const html = await aiHtml(env, brief, prev, change); if (before) await recordVersion(env, id, before, change ? "you asked: " + String(change).slice(0, 100) : "rebuilt"); await env.ASSETS.put("site:" + id, html); await env.ASSETS.delete("draft:" + id); } await env.ASSETS.put("state:" + id, "ready"); // SITE-UPKEEP-1: the page before each change is kept
     await env.ASSETS.delete("audit:" + id);
-  } catch (e) { console.error("build failed", id, String(e)); await env.ASSETS.put("state:" + id, "failed"); }
+  } catch (e) {
+    console.error("build failed", id, String(e));
+    // SPEND-SOFT-1 at the front door (ADMIT-1, 2026-11-25): when the day's model allowance is spent the budget crawls at one call an hour, and every
+    // first build failed ("the page was not built: failed", LAUNCH-PATH-1 probe red). A first build now always yields a page: a deterministic draft
+    // from the visitor's own words, saved and marked so the next build or change request replaces it with a model-built page. A change to an
+    // existing page still reports failed, so the person is told it did not happen.
+    if (!prev && !(await env.ASSETS.get("site:" + id))) {
+      await env.ASSETS.put("site:" + id, draftHtml(brief)); await env.ASSETS.put("draft:" + id, String(e).slice(0, 200));
+      await env.ASSETS.put("state:" + id, "ready"); return;
+    }
+    if (await env.ASSETS.get("draft:" + id)) { await env.ASSETS.put("state:" + id, "ready"); return; }  // a retry of a draft that failed again: the draft stays the page, and the next pass tries again
+    await env.ASSETS.put("state:" + id, "failed");
+  }
+}
+// The no-model first draft: the idea and what the person said, plus a notes area that keeps what they type. Passes lint() by construction.
+export function draftHtml(brief) {
+  const b = String(brief || ""), idea = (/^Idea:\s*(.+)$/m.exec(b) || [])[1] || "Your new site";
+  const said = b.split("\n").map(l => /^- (.+?) (YES|NO)$/.exec(l)).filter(Boolean).map(m => (m[2] === "YES" ? "Yes: " : "No: ") + m[1]).slice(0, 12);
+  return "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>" + esc(idea.slice(0, 80)) + "</title>"
+    + "<style>" + BASE + "*{box-sizing:border-box}body{margin:0;font:16px/1.6 system-ui,sans-serif;background:var(--bg);color:var(--ink)}main{max-width:720px;margin:0 auto;padding:24px 16px}"
+    + ".card{background:var(--sf);border:1px solid var(--line);border-radius:12px;padding:16px;margin:16px 0}textarea{width:100%;min-height:140px;font:inherit;padding:10px}"
+    + "button{min-height:44px;padding:0 18px;font:inherit;border-radius:8px;border:0;background:var(--ac);color:var(--on)}</style></head><body><main>"
+    + "<h1>" + esc(idea) + "</h1><p>This is the first draft of this site. It is being built out by itself.</p>"
+    + (said.length ? "<div class=\"card\"><h2>What it is built around</h2><ul>" + said.map(x => "<li>" + esc(x) + "</li>").join("") + "</ul></div>" : "")
+    + "<div class=\"card\"><h2>Notes</h2><label for=\"n\">Anything you want to keep here</label><textarea id=\"n\"></textarea><p><button id=\"s\" type=\"button\">Save</button> <span id=\"m\">Nothing saved yet.</span></p></div>"
+    + "</main><script>var mem='';function g(){try{return localStorage.getItem('notes')||''}catch(e){return mem}}function p(v){try{localStorage.setItem('notes',v)}catch(e){mem=v}}"
+    + "var n=document.getElementById('n');n.value=g();document.getElementById('s').addEventListener('click',function(){p(n.value);document.getElementById('m').textContent='Saved.'});</script></body></html>";
 }
 // Each stage runs in its own request so it gets its own time budget (waitUntil is capped at about 30 s): build, then audit and at most one fix.
 async function ensureAudit(env, ctx, id) {
@@ -630,7 +699,7 @@ async function pilotApplication(request, env) {
   const lim = await limited(request, env); if (lim) return lim;
   const id = newId();
   await env.ASSETS.put("pilot:" + new Date().toISOString() + ":" + id, JSON.stringify({ a: a, fit: r.fit, checks: r.checks }), { expirationTtl: 31536000 });
-  return json({ id: id, fit: r.fit, checks: r.checks, message: r.fit ? "Thank you. This reads as a fit for the system test; a person replies within two working days." : "Thank you. As written this does not yet pass the system test (a loop to close, a measure that can be wrong, upkeep that never ends, a monthly budget). Tell us more and apply again." }, 201);
+  return json({ id: id, fit: r.fit, checks: r.checks, message: r.fit ? "Thank you. This reads as a fit for the system test; your answers are scored and stored. Email the pilot team to start the conversation." : "Thank you. As written this does not yet pass the system test (a loop to close, a measure that can be wrong, upkeep that never ends, a monthly budget). Tell us more and apply again." }, 201);
 }
 
 async function takeIdea(request, env, ctx) {
@@ -643,16 +712,17 @@ async function takeIdea(request, env, ctx) {
   }
   const lim = await limited(request, env); if (lim) return lim;
   const id = newId(); await env.ASSETS.put("idea:" + new Date().toISOString() + ":" + id, idea);
+  const grad = await GRAD.enqueue(env, id, idea), mine = (r) => { const h = new Headers(r.headers); h.append("Set-Cookie", GRAD.setCookie(grad)); return new Response(r.body, { status: r.status, headers: h }); };  // LAUNCH-PATH-1: the launch record, and the browser that made it
   const profText = String(f.get("profile") || "").slice(0, 2000); let profOk = false;
   const wantsJson = (request.headers.get("accept") || "").includes("application/json");
   if (profText) { try { JSON.parse(profText); await env.ASSETS.put("profile:" + id, profText, { expirationTtl: 31536000 }); profOk = true; } catch (e) { console.error("bad profile dropped", String(e)); } }
   // INTERVIEW-1: the on-page interview already asked its questions, so build now; without it (no JavaScript) the server-side questions run.
   // INTERVIEW-2: the chat thread asked its questions in the conversation and wants JSON, not a redirect; the build then runs from /s/<id>/status.
-  if (profOk && wantsJson) { await store(env, id, idea, null, null); return json({ id, state: "building" }); }
-  if (profOk) return launch(env, ctx, id, idea, null, null);
+  if (profOk && wantsJson) { await store(env, id, idea, null, null); return mine(json({ id, state: "building" })); }
+  if (profOk) return mine(await launch(env, ctx, id, idea, null, null));
   await jput(env, "ask:" + id, { idea, qs: await questionsFor(env, idea), ans: [] });
   await env.ASSETS.put("state:" + id, "asking");
-  return goto(id, "/ask");
+  return mine(goto(id, "/ask"));
 }
 async function takeAnswer(request, env, ctx) {
   const f = await request.formData().catch(() => null), id = f && String(f.get("id") || ""), v = f && String(f.get("a") || "");
@@ -669,18 +739,26 @@ async function takeChange(request, env, ctx) {
   if (!prev || !change) return new Response(start("That site was not found."), { status: 404, headers: HTML });
   const lim = await limited(request, env); if (lim) return lim;
   const a = await jget(env, "ask:" + id), brief = a ? briefOf(a) : ((await jget(env, "brief:" + id)) || {}).brief || "";
+  await GRAD.steer(env, id, change);  // LAUNCH-PATH-1: the same words become a work item in the app's own repository
   if ((request.headers.get("accept") || "").includes("application/json")) { await store(env, id, brief, prev, change); return json({ id, state: "building" }); }
   return launch(env, ctx, id, brief, prev, change);
 }
 const li = (xs) => xs.length ? "<ul>" + xs.map(x => "<li>" + esc(x) + "</li>").join("") + "</ul>" : "<p class=\"meta\">Nothing to list.</p>";
 async function siteRoutes(u, env, ctx, request, own) {
-  const m = /^\/s\/([a-f0-9]{10})(\/make|\/change|\/ask|\/review|\/status|\/history|\/insights|\/feed\.xml|\/badge\.svg|\/api)?$/.exec(u.pathname);
+  const m = /^\/s\/([a-f0-9]{10})(\/make|\/change|\/own|\/launch|\/ask|\/review|\/status|\/history|\/insights|\/feed\.xml|\/badge\.svg|\/api)?$/.exec(u.pathname);
   if (!m || !env || !env.ASSETS) return null;
   if (m[2] === "/api") return siteApi(request, env, m[1]);
   const id = m[1]; let st = await env.ASSETS.get("state:" + id); const page = (t, b) => new Response(shell({ path: u.pathname, title: t + " - Ultrastable", description: t }, b), { headers: HTML });
   if (!st) return new Response(start("That site was not found."), { status: 404, headers: HTML });
   if (st === "building" && Date.now() - Number(await env.ASSETS.get("since:" + id) || 0) > 150000) { st = "failed"; await env.ASSETS.put("state:" + id, "failed"); }
+  if ((st === "failed" || (st === "ready" && await env.ASSETS.get("draft:" + id))) && await GRAD.requeueBuild(env, id)) st = "building";  // LAUNCH-PATH-1: a failed build is queued again from the kept idea (graduate.js requeueBuild)
   if (st === "ready" && (!m[2] || m[2] === "/review")) await ensureAudit(env, ctx, id);
+  if (m[2] === "/own" || m[2] === "/launch") {  // LAUNCH-PATH-1: where the app is, what was asked for, and taking it over; /launch is the same record as JSON with no idea text
+    const rec = (await GRAD.getLaunch(env, id)) || await GRAD.enqueue(env, id, ((await jget(env, "brief:" + id)) || {}).brief || "");  // an app made before this path existed joins it on first visit
+    if (m[2] === "/launch") return json(Object.assign({ site: st }, GRAD.publicView(rec)));
+    if (request.method === "POST") { const r = await GRAD.requestOwnership(request, env, id); if (!r.ok) return new Response(shell({ path: u.pathname, title: "Not yet - Ultrastable", description: r.say }, "<div class=\"head\"><h1>Not yet</h1><p>" + esc(r.say) + "</p></div><div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/s/" + id + "/own\">Back</a></div>"), { status: r.status, headers: HTML }); return Response.redirect("https://" + CANON + "/s/" + id + "/own", 303); }
+    return page("Your app", GRAD.ownBody(rec, CANON, GRAD.cookieOf(request, id) === rec.key));
+  }
   if (m[2] === "/feed.xml") return new Response(siteFeed(id, await siteVersions(env, id), "https://" + CANON, (/<title>([^<]*)<\/title>/i.exec(await env.ASSETS.get("site:" + id) || "") || [])[1]), { headers: { "content-type": "application/atom+xml; charset=utf-8", "cache-control": "public, max-age=900" } }); // SITE-FEED-1
   if (m[2] === "/badge.svg") return new Response(siteBadge(await siteVersions(env, id)), { headers: { "content-type": "image/svg+xml", "cache-control": "public, max-age=900" } });
   if (m[2] === "/insights") return page("Who visits your site", insightsBody(id, env.DB ? await siteInsights(env.DB, id).catch((e) => { console.error("insights failed", String(e).slice(0, 100)); return { views7: 0, views30: 0, visitors7: 0, refs: [], countries: [], devices: [] }; }) : { views7: 0, views30: 0, visitors7: 0, refs: [], countries: [], devices: [] })); // SITE-INSIGHTS-1
@@ -712,7 +790,7 @@ async function siteRoutes(u, env, ctx, request, own) {
     let cur = st;
     if (cur === "building") cur = await resume(env, id);
     if (cur === "ready") return Response.redirect("https://" + CANON + "/s/" + id, 302);
-    const msg = cur === "failed" ? "<p>That did not work this time. <a href=\"/start\">Try again</a>.</p>" : "<p>Building your site. This takes about half a minute. This page updates by itself.</p><meta http-equiv=\"refresh\" content=\"4\">";
+    const msg = cur === "failed" ? "<p>Building it did not work this time. Your idea is saved and we try again by ourselves in a few minutes. This page updates when it is ready; you do not need to do anything.</p><meta http-equiv=\"refresh\" content=\"120\">" : "<p>Building your site. This takes about half a minute. This page updates by itself.</p><meta http-equiv=\"refresh\" content=\"4\">";
     return page("Building", "<div class=\"head\"><h1>" + (cur === "failed" ? "Something went wrong" : "Building...") + "</h1></div>" + msg);
   }
   if (st === "asking") return Response.redirect("https://" + CANON + "/s/" + id + "/ask", 302);
@@ -721,7 +799,7 @@ async function siteRoutes(u, env, ctx, request, own) {
   const lk = (h, t) => "<a href=\"https://" + CANON + "/s/" + id + h + "\" style=\"background:#111;color:#fff;padding:10px 14px;border-radius:999px;text-decoration:none;margin-left:6px\" target=\"_top\">" + t + "</a>";
   // BLINDSPOT-1 legal sweep 2026-11-20 (EU AI Act Article 50, in force 2026-08-02): a page the system wrote says so, to a person (the bar) and to a machine (the generator meta tag).
   const aiMark = "<meta name=\"generator\" content=\"Ultrastable (AI-generated page)\">";
-  const bar = "<div style=\"position:fixed;right:12px;bottom:12px;z-index:99999;font:14px system-ui\"><span style=\"background:#fff;color:#111;padding:10px 14px;border-radius:999px;border:1px solid #111\">Written by AI</span>" + lk("/review", "What I checked") + lk("/change", "Change something") + lk("/history", "History") + lk("/insights", "Visitors") + "</div>";
+  const bar = "<div style=\"position:fixed;right:12px;bottom:12px;z-index:99999;font:14px system-ui\"><span style=\"background:#fff;color:#111;padding:10px 14px;border-radius:999px;border:1px solid #111\">Written by AI</span>" + lk("/review", "What I checked") + lk("/change", "Change something") + lk("/history", "History") + lk("/insights", "Visitors") + lk("/own", "Your app") + "</div>";
   const html = (await env.ASSETS.get("site:" + id) || "").replace(/<\/body>/i, bar + "</body>");
   if (env.DB && request && request.method === "GET" && ctx && ctx.waitUntil) ctx.waitUntil(record(env, request, { host: CANON, path: "/s/" + id, ref: request.headers.get("referer"), name: "site-view" }).catch((e) => console.error("site view not counted", String(e).slice(0, 100)))); // SITE-INSIGHTS-1
   const us = aiMark + usClient(host, id), html1 = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, (m) => m + us) : /<html[^>]*>/i.test(html) ? html.replace(/<html[^>]*>/i, (m) => m + us) : us + html;
@@ -828,6 +906,7 @@ export async function tick(env, ctx, now) {
   const t = now || new Date(), out = { at: t.toISOString() }, h = await jget(env, "health:models");
   if (!h || t - new Date(h.at) > 23 * 3600e3) out.health = await probeModels(env);
   out.rounds = await changeRounds(env, ctx); out.ideas = (await ideaWork(env)).length; out.deployed = await consumeIdeas(env).catch(e => String(e).slice(0, 120));
+  if (env.DB && t.getUTCMinutes() < 10) out.directory = await recheckDirectory(env, fetch, t).catch(e => "error: " + String(e).slice(0, 80)); /* DISCOVER-1: daily recheck, a few rows a pass */
   { const rec = await indexNow({ host: CANON, fetchFn: fetch, now: t, last: await jget(env, "promote:indexnow") }); if (rec) { await jput(env, "promote:indexnow", rec); out.indexnow = rec.status; } } /* PROMOTE-1 */
   { const ws = await webSub({ host: CANON, fetchFn: fetch, now: t, last: await jget(env, "promote:websub") }); if (ws) { await jput(env, "promote:websub", ws); out.websub = ws.ok; } } /* ATTENTION-1: feed readers get pushed updates */
   { const ar = await archiveEvidence({ host: CANON, fetchFn: fetch, now: t, last: await jget(env, "promote:archive") }); if (ar) { await jput(env, "promote:archive", ar); out.archive = ar.status; } } /* ATTENTION-1: third-party timestamped copies of the record */
@@ -1004,7 +1083,7 @@ async function dashboard(tenantId) {
 }
 function contact() {
   return shell({ path: "/contact", title: "Contact Ultrastable", description: "How to reach the Ultrastable team about pilots, partnerships and press." },
-    "<div class=\"head\"><h1>Contact</h1><p>One address; a person replies within two working days.</p></div>"
+    "<div class=\"head\"><h1>Contact</h1><p>One address for everything.</p></div>"
     + "<div class=\"card\"><h3 class=\"card-title\">Pilots, partnerships and press</h3><p class=\"meta\"><a href=\"mailto:" + PILOT_MAIL + "\">" + PILOT_MAIL + "</a></p></div>"
     + "<div class=\"card\"><h3 class=\"card-title\">Online</h3><p class=\"meta\">ultrastable.io. The source is open; the Ultrastable License governs use.</p></div>"
     + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/pilot\">Join the pilot</a></div>");
@@ -1041,6 +1120,52 @@ async function metaIngest(request, env) {
   return Response.json({ ok: true });
 }
 
+// LLMS-FULL-1 and OPENSEARCH-1: the text of every public page, rendered by this same handler (so it is the page, not a copy of it), read once an
+// hour per isolate. /llms-full.txt serves it to agents in one fetch; /search matches it for people and browsers (described at /opensearch.xml).
+const FULL_PATHS = ["/", "/how", "/product", "/for", "/showcase", "/engineers", "/roadmap", "/decisions", "/goals", "/org", "/claims", "/team", "/faq", "/pilot", "/start", "/privacy", "/accessibility", "/contact"];
+let PAGE_TEXT = null;
+export function pageText(html) {
+  const h = String(html), t = /<title>([^<]*)<\/title>/i.exec(h), m = /<main[^>]*>([\s\S]*?)<\/main>/i.exec(h);
+  const txt = (m ? m[1] : h).replace(/<(script|style)[\s\S]*?<\/\1>/gi, " ").replace(/<br\s*\/?>|<\/(p|li|h[1-6]|tr|div)>/gi, "\n").replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&#39;/g, "'").replace(/&amp;/g, "&")
+    .split("\n").map(l => l.replace(/\s+/g, " ").trim()).filter(Boolean).join("\n");
+  return { title: t ? t[1].replace(/&amp;/g, "&").trim() : "", text: txt };
+}
+async function pageTexts(env, ctx) {
+  if (PAGE_TEXT && Date.now() - PAGE_TEXT.at < 3600e3) return PAGE_TEXT.pages;
+  const pages = [];
+  for (const p of FULL_PATHS) {
+    try {  // the user agent marks this as a bot, so the analytics collector skips these internal renders
+      const r = await handler.fetch(new Request("https://" + CANON + p, { headers: { "user-agent": "ultrastable-pagetext/1 (bot)" } }), env, ctx);
+      if (r.ok && (r.headers.get("content-type") || "").includes("text/html")) pages.push({ path: p, ...pageText(await r.text()) });
+    } catch (e) { console.error("pagetext", p, String(e)); }
+  }
+  PAGE_TEXT = { at: Date.now(), pages };
+  return pages;
+}
+async function llmsFull(env, ctx) {
+  const pages = await pageTexts(env, ctx);
+  return LLMS + "\n\n# Full text of every public page (" + pages.length + " pages, rendered by the site Worker)\n" + pages.map(function (p) { return "\n\n## " + (p.title || p.path) + "\n\nURL: https://" + CANON + p.path + "\n\n" + p.text; }).join("");
+}
+const OPENSEARCH = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><OpenSearchDescription xmlns=\"http://a9.com/-/spec/opensearch/1.1/\"><ShortName>Ultrastable</ShortName><Description>Search the Ultrastable site</Description><InputEncoding>UTF-8</InputEncoding><Image width=\"16\" height=\"16\" type=\"image/svg+xml\">https://" + CANON + "/favicon.svg</Image><Url type=\"text/html\" method=\"get\" template=\"https://" + CANON + "/search?q={searchTerms}\"/></OpenSearchDescription>";
+export function searchPages(pages, q) {
+  const words = String(q).toLowerCase().split(/\s+/).filter(w => w.length > 1).slice(0, 8);
+  if (!words.length) return [];
+  return pages.map(function (p) {
+    const hay = (p.title + "\n" + p.text).toLowerCase(); let score = 0;
+    for (const w of words) { let i = -1, n = 0; while ((i = hay.indexOf(w, i + 1)) !== -1 && n < 50) n++; if (!n) return null; score += n + (p.title.toLowerCase().includes(w) ? 10 : 0); }
+    const at = hay.indexOf(words[0]), from = Math.max(0, at - 80);
+    return { path: p.path, title: p.title, score, snippet: (from ? "... " : "") + (p.title + "\n" + p.text).slice(from, from + 220).replace(/\n/g, " ") + " ..." };
+  }).filter(Boolean).sort((a, b) => b.score - a.score);
+}
+async function searchPage(env, ctx, q) {
+  q = String(q).slice(0, 120);
+  const hits = q ? searchPages(await pageTexts(env, ctx), q) : [];
+  const form = "<form action=\"/search\" method=\"get\" role=\"search\" class=\"card\"><label for=\"sq\">Search this site</label><br><input id=\"sq\" name=\"q\" type=\"search\" value=\"" + esc(q) + "\" class=\"us-q\"><button class=\"btn\" type=\"submit\">Search</button></form>";
+  const list = !q ? "" : hits.length ? "<p>" + hits.length + " page" + (hits.length === 1 ? "" : "s") + " match.</p>" + hits.map(function (h) { return "<div class=\"card\"><a href=\"" + esc(h.path) + "\"><strong>" + esc(h.title || h.path) + "</strong></a><p class=\"meta\">" + esc(h.snippet) + "</p></div>"; }).join("") : "<p>No page matches that. Try fewer words.</p>";
+  return shell({ path: "/search", title: "Search - Ultrastable", description: "Search every public page of the Ultrastable site." }, "<div class=\"head\"><h1>Search</h1></div>" + form + list);
+}
+
 const handler = {
   async fetch(request, env, ctx) {
     const u = new URL(request.url);
@@ -1069,6 +1194,9 @@ const handler = {
     if (host === "ultrastable.net") return Response.redirect("https://" + CANON + "/live", 301);
     if (u.hostname === "www." + CANON) return Response.redirect("https://" + CANON + u.pathname, 301);
     const an = env && env.DB ? await handleAnalytics(request, env, { hosts: [CANON] }) : null; if (an) return an;
+    // FLEET-CONTRACT-1: a write route a page posts to answers a read with 405 and says which method it takes, never 404, so the front-to-back
+    // reading (every /api path a page names resolves) holds for forms and beacons too.
+    if ((request.method === "GET" || request.method === "HEAD") && (u.pathname === "/api/meta/ingest" || u.pathname === "/api/idea")) return new Response(JSON.stringify({ type: "about:blank", title: "Method Not Allowed", status: 405, detail: "This route takes POST." }), { status: 405, headers: { "content-type": "application/problem+json", allow: "POST" } });
     if (request.method === "POST" && u.pathname === "/api/meta/ingest") return metaIngest(request, env); // META-SIGNAL-1
     if (request.method === "GET" && u.pathname === "/api/suggest") return suggestions(u, env);
     { const cn = await connectionsRoute(request, env); if (cn) return cn; } // CONNECTIONS-1: /connections and the owner-only /connect/* consent flow
@@ -1077,7 +1205,10 @@ const handler = {
     if (u.pathname === "/agents/scoreboard") return Response.redirect("https://" + CANON + "/api/v1/agents/scoreboard", 302);  // AGENT-SCOREBOARD-1: agent_scoreboard per agent and harness (site/controlplane.js agentScoreboard)
     { const cp = await controlPlane(request, env, ctx); if (cp) return cp; } // CONTROL-PLANE-1: /api/v1
     if (u.pathname === "/feed.xml" || u.pathname === "/feed.json") { if (env && env.DB) { try { ctx.waitUntil(record(env, request, { host: CANON, path: u.pathname, ref: "", name: "feed" })); } catch (e) { console.error("feed hit", String(e && e.message)); } } return u.pathname === "/feed.xml" ? feedResponse(CANON) : jsonFeedResponse(CANON); } // REACH-1; STICKY-1: a feed request is counted server-side (name "feed", daily-rotating id, no cookie), so the number of daily feed readers is measured
+    if (request.method === "GET") { const fc = await contractRoutes(u, env); if (fc) return fc; }  // FLEET-CONTRACT-1: the platform serves the contract it reads from every tenant
+    if (u.pathname === "/api/graph" || u.pathname === "/api/graph/insights") { let j = { error: "tick worker not reachable" }, st = 503; try { if (env && env.TICK) { const r = await env.TICK.fetch(new Request("https://tick.internal" + u.pathname)); j = await r.json(); st = r.status; } } catch (e) { console.error("api/graph", String(e && e.message)); } return new Response(JSON.stringify(j), { status: st, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } }); } // DATAGRAPH-1: the public view of the knowledge graph of the platform's own data (counts, series, orphan findings; no record a visitor may not see)
     if (u.pathname === "/api/stickiness" || /^\/api\/stickiness\/queue\/[a-z0-9-]{1,60}\.json$/.test(u.pathname)) { let j = { error: "tick worker not reachable" }, st = 503; try { if (env && env.TICK) { const r = await env.TICK.fetch(new Request("https://tick.internal" + u.pathname)); j = await r.json(); st = r.status; } } catch (e) { console.error("api/stickiness", String(e && e.message)); } return new Response(JSON.stringify(j), { status: st, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } }); } // STICKY-1: the judged content state and the social queue the core social module drains
+    if (request.method === "GET" && u.pathname === "/api/growth/hits") return growthHits(env); // GROWTH-HITS-1: aggregate counts only, read by foundation/growth.py so Actions needs no Cloudflare token
     if (u.pathname === "/api/reach") { const v = await jget(env, "promote:reach"); return Response.json(v || { rows: null, error: "not measured yet" }, { status: v ? 200 : 503, headers: { "cache-control": "public, max-age=600", "access-control-allow-origin": "*" } }); } // ATTENTION-1: aggregate counts only
     { const pr = await progressRoutes(u, env, shell, HTML, CANON); if (pr) return pr; } // PROGRESS-1
     { const ys = yearRoutes(u, shell, HTML); if (ys) return ys; } // YEAR-SIM-1: /year, /year.json
@@ -1101,6 +1232,7 @@ const handler = {
     if (request.method === "POST" && u.pathname === "/api/org") return orgSetup(request, env); // ORG-THREAD-1
     { const sr = await siteRoutes(u, env, ctx, request); if (sr) return sr; }
     if (request.method === "GET" && u.pathname.replace(/\/$/, "") === "/status") return new Response(await statusPage(env), { headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" } });
+    if (request.method === "POST" && u.pathname === "/api/directory/register") return registerDirectory(request, env, fetch);  // DISCOVER-1: a seed's heartbeat; it was dead behind the 405 below until BOOT-ACCEPT-1 read it live
     if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method not allowed", { status: 405 });
     const PAGES = ["/", "/engineers", "/dashboard", "/roadmap", "/decisions", "/goals", "/org", "/how", "/showcase", "/for", "/claims", "/product", "/team", "/faq", "/contact", "/pilot", "/start", "/setup", "/ops", "/privacy", "/accessibility"], pth = u.pathname.replace(/\/$/, "") || "/";
     if (env && env.DB && request.method === "GET" && (PAGES.includes(pth) || /^\/(for|showcase)\/[a-z0-9-]+$/.test(pth))) { /* UIUX-1: audience and case pages are path steps, so they are counted too */ const w = record(env, request, { host: CANON, path: pth, ref: request.headers.get("referer") }).catch(e => console.error("analytics", e && e.message)); if (ctx && ctx.waitUntil) ctx.waitUntil(w); }
@@ -1114,12 +1246,15 @@ const handler = {
       case "/verification": return new Response(shell({ path: "/verification", title: "Verified invariants - Ultrastable", description: "Guarantees model-checked and tied to the deployed code" }, verificationBody()), { headers: HTML });
       case "/api/verification": return new Response(JSON.stringify(verificationJson()), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } });
       case "/showcase": return new Response(showcase(), { headers: HTML });
-      case "/family.json": return new Response(JSON.stringify({ family: SH.domains, nav: [["Find your path", "/for"], ["Test cases", "/showcase"], ["Product", "/product"], ["How it works", "/how"], ["Live proof", "/live"], ["Contact", "/contact"]], tokens: { accent_light: "#b83800", accent_dark: "#ff7f4d", base: "https://" + CANON + "/" } }), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } });
+      case "/directory": return new Response(directoryPage(await directoryListing(env)), { headers: HTML });  // DISCOVER-1
+      case "/directory.json": return Response.json(await directoryListing(env), { headers: { "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } });
+      case "/api/directory/register": return Response.json({ ok: false, error: "use_post" }, { status: 405 });
+      case "/family.json": return new Response(JSON.stringify({ family: SH.domains, nav: [["Find your path", "/for"], ["Test cases", "/showcase"], ["Product", "/product"], ["How it works", "/how"], ["Live proof", "/live"], ["Research", "/research"], ["Contact", "/contact"]], tokens: { accent_light: "#b83800", accent_dark: "#ff7f4d", base: "https://" + CANON + "/" } }), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } });
       case "/for": return new Response(forIndex(), { headers: HTML });
       case "/claims": return new Response(claimsPage(), { headers: HTML });
       case "/changelog": case "/api/changelog": if (u.hostname === "dashboard.ultrastable.io") return new Response("changelog unavailable", { status: 503, headers: { "retry-after": "60" } }); /* CHANGELOG-LOOP-1: this host is served by this worker, so a redirect to itself looped; OWNER_PATH forwards to the dashboard worker first */ return Response.redirect("https://dashboard.ultrastable.io" + pth + u.search, 302); // PROVENANCE-1: the public changelog is served by the dashboard worker
       case "/self": case "/.well-known/ultrastable": return new Response(JSON.stringify(SELF, null, 1), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300", "Link": "</self>; rel=\"describedby\"" } });
-      case "/api/claims": return new Response(JSON.stringify(VERIFIED), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } });
+      case "/api/claims": return new Response(JSON.stringify({ ...VERIFIED, claims: VERIFIED.claims.map(function (c) { return { ...c, claim: publicText(c.claim), quote: c.claim }; }) }), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } });
       case "/product": return new Response(product(), { headers: HTML });
       case "/team": return new Response(team(), { headers: HTML });
       case "/org": return new Response(org(), { headers: HTML });
@@ -1149,6 +1284,9 @@ const handler = {
       case "/robots.txt": return new Response(ROBOTS, { headers: { "Content-Type": "text/plain" } });
       case "/connect-agent": return new Response(connectAgentPage(), { headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "public, max-age=300" } });
       case "/llms.txt": return new Response(LLMS, { headers: { "Content-Type": "text/plain; charset=utf-8" } });
+      case "/llms-full.txt": return new Response(await llmsFull(env, ctx), { headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "public, max-age=3600", "Access-Control-Allow-Origin": "*" } });  // LLMS-FULL-1
+      case "/opensearch.xml": return new Response(OPENSEARCH, { headers: { "Content-Type": "application/opensearchdescription+xml; charset=utf-8", "Cache-Control": "public, max-age=86400" } });  // OPENSEARCH-1
+      case "/search": return new Response(await searchPage(env, ctx, u.searchParams.get("q") || ""), { headers: { ...HTML, "Cache-Control": "public, max-age=300", "X-Robots-Tag": "noindex" } });  // OPENSEARCH-1
       case "/sitemap.xml": return new Response("<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">" + SITEMAP_PATHS.map(function (p) { return "<url><loc>https://" + CANON + p + "</loc></url>"; }).join("") + "</urlset>", { headers: { "Content-Type": "application/xml" } });
       default: return new Response(shell({ path: u.pathname, title: "Not found - Ultrastable", description: "Page not found." }, "<div class=\"head\"><h1>Not found</h1><p>That page does not exist. <a href=\"/\">Go to the home page</a>.</p></div>"), { status: 404, headers: HTML });
     }
@@ -1175,4 +1313,36 @@ export function forwardTo(request, upstream) {
   const h = new Headers(request.headers); h.set("x-forwarded-host", u.host); h.set("x-forwarded-proto", "https");
   return fetch(new Request(new URL(u.pathname + u.search, t), { method: request.method, headers: h, body: ["GET", "HEAD"].includes(request.method) ? undefined : request.body, redirect: "manual" }));
 }
-export default { async scheduled(event, env, ctx) { if (env && env.UPSTREAM_ORIGIN) return; if (halted(null, env)) return; /* HALT-1 */ env = budgetEnv(env, SHARES.site); ctx.waitUntil(tick(env, ctx).catch(e => console.error("tick failed", String(e)))); }, async fetch(request, env, ctx) { { const dropped = hookEventFilter(request); if (dropped) return dropped; } /* FREE-TIER-1 */ if (env && env.UPSTREAM_ORIGIN) { const fw = forwardTo(request, env.UPSTREAM_ORIGIN); if (fw) return fw; } env = budgetEnv(env, SHARES.site); { const idp = await internalDeploy(request, env || {}); if (idp) return idp; } /* HANDOFF-1 */ if (request.method === "POST" && new URL(request.url).pathname === "/pulse/watch") { const w = await watchTick(env); return Response.json({ ok: w.status === "ok", via: "ultrastable-site", ...w }, { status: w.status === "ok" ? 200 : 503 }); } /* SINGLE-ACCOUNT-1: the second, independent restart route for the tick, inside the ultrastable account */ /* OWNER-ROUTE-1: owner paths are tested before AUTH_PATH, because /connect/github-signin also matches /connect/<provider> and would land on the tick Worker's placeholder */ if (env && env.OWNER && OWNER_PATH.test(new URL(request.url).pathname.replace(/\/$/, ""))) return env.OWNER.fetch(request); if (env && env.TICK && AUTH_PATH.test(new URL(request.url).pathname)) { try { return await env.TICK.fetch(request); } catch (e) { return new Response('<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width"><title>Connect</title><body style="font:16px system-ui;max-width:32rem;margin:4rem auto;padding:0 1rem"><h1>One moment</h1><p>The connection service is restarting. <a href="/connect/github">Try again</a>.</p>', { status: 503, headers: { 'content-type': 'text/html; charset=utf-8', 'retry-after': '10' } }); } } { const kf = keyFile(new URL(request.url).pathname); if (kf) return kf; } { const pk = await passkeys(request, env); if (pk) return pk; } { const z = await authzen(request, env); if (z) return z; } const a = await agentic(request, env); if (a) return a; if (new URL(request.url).pathname === "/webmcp.js") return new Response(WEBMCP_JS, { headers: { "content-type": "text/javascript; charset=utf-8", "cache-control": "public, max-age=300", "x-content-type-options": "nosniff" } }); return negotiate(withLinks(await handler.fetch(request, env, ctx), request), request); } };
+const entry = { async scheduled(event, env, ctx) { if (env && env.UPSTREAM_ORIGIN) return; if (halted(null, env)) return; /* HALT-1 */ env = budgetEnv(env, SHARES.site); ctx.waitUntil(tick(env, ctx).catch(e => console.error("tick failed", String(e)))); }, async fetch(request, env, ctx) { { const dropped = hookEventFilter(request); if (dropped) return dropped; } /* FREE-TIER-1 */ if (env && env.UPSTREAM_ORIGIN) { const fw = forwardTo(request, env.UPSTREAM_ORIGIN); if (fw) return fw; } env = budgetEnv(env, SHARES.site); { const idp = await internalDeploy(request, env || {}); if (idp) return idp; } /* HANDOFF-1 */ if (request.method === "POST" && new URL(request.url).pathname === "/pulse/watch") { const w = await watchTick(env); return Response.json({ ok: w.status === "ok", via: "ultrastable-site", ...w }, { status: w.status === "ok" ? 200 : 503 }); } /* SINGLE-ACCOUNT-1: the second, independent restart route for the tick, inside the ultrastable account */ /* OWNER-ROUTE-1: owner paths are tested before AUTH_PATH, because /connect/github-signin also matches /connect/<provider> and would land on the tick Worker's placeholder */ if (env && env.OWNER && OWNER_PATH.test(new URL(request.url).pathname.replace(/\/$/, ""))) return env.OWNER.fetch(request); if (env && env.TICK && AUTH_PATH.test(new URL(request.url).pathname)) { try { return await env.TICK.fetch(request); } catch (e) { return new Response('<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width"><title>Connect</title><body style="font:16px system-ui;max-width:32rem;margin:4rem auto;padding:0 1rem"><h1>One moment</h1><p>The connection service is restarting. <a href="/connect/github">Try again</a>.</p>', { status: 503, headers: { 'content-type': 'text/html; charset=utf-8', 'retry-after': '10' } }); } } { const kf = keyFile(new URL(request.url).pathname); if (kf) return kf; } { const pk = await passkeys(request, env); if (pk) return pk; } { const z = await authzen(request, env); if (z) return z; } const a = await agentic(request, env); if (a) return a; if (new URL(request.url).pathname === "/webmcp.js") return new Response(WEBMCP_JS, { headers: { "content-type": "text/javascript; charset=utf-8", "cache-control": "public, max-age=300", "x-content-type-options": "nosniff" } }); return negotiate(withLinks(await handler.fetch(request, env, ctx), request), request); } };
+
+
+// GROWTH-HITS-1 (2026-11-25): the product manager runs in Actions, which had no Cloudflare token, so every growth metric read empty and it filed nothing.
+// The Worker already holds the analytics database; it serves the four 7-day aggregates (no paths, no visitor ids), cached for 10 minutes.
+export async function growthHits(env, now = Date.now()) {
+  const h = { "content-type": "application/json", "cache-control": "public, max-age=600", "access-control-allow-origin": "*" };
+  if (!env || !env.DB) return new Response(JSON.stringify({ error: "no analytics database" }), { status: 503, headers: h });
+  const w = Math.floor(now / 1000) - 7 * 86400;
+  try {
+    const one = (sql) => env.DB.prepare(sql).bind(w).first();
+    const [a, b, c] = await Promise.all([
+      one("SELECT COUNT(*) AS pv, COUNT(DISTINCT vid) AS v FROM hits WHERE bot=0 AND name='pageview' AND at>=?"),
+      one("SELECT COUNT(*) AS n FROM hits WHERE bot=1 AND at>=?"),
+      one("SELECT COUNT(*) AS n FROM hits WHERE bot=0 AND name='pageview' AND path LIKE '/pilot%' AND at>=?"),
+    ]);
+    return new Response(JSON.stringify({ pageviews_7d: a.pv, visitors_7d: a.v, agent_hits_7d: b.n, pilot_page_views_7d: c.n, window_days: 7 }), { headers: h });
+  } catch (e) {
+    console.error("api/growth/hits", String(e && e.message));
+    return new Response(JSON.stringify({ error: "analytics read failed" }), { status: 503, headers: h });
+  }
+}
+
+// SERVER-TIMING-1 and EARLY-HINTS-1: every response says how long the Worker took (Server-Timing, read by the UI/UX audit and any browser's
+// developer tools), and every page names the one image all pages draw above the fold as a preload Link, which Cloudflare turns into a 103 Early Hint.
+export function timed(res, t0, now = Date.now()) {
+  if (!res || res.status === 101 || res.webSocket) return res;
+  const r = new Response(res.body, res);
+  r.headers.append("Server-Timing", "worker;dur=" + Math.max(0, now - t0) + ";desc=\"site worker\"");
+  if ((r.headers.get("content-type") || "").includes("text/html")) r.headers.append("Link", "</favicon.svg>; rel=preload; as=image; type=\"image/svg+xml\"");
+  return r;
+}
+export default { scheduled: entry.scheduled, async fetch(request, env, ctx) { const t0 = Date.now(); return timed(await entry.fetch(request, env, ctx), t0); } };

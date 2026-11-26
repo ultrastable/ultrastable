@@ -28,3 +28,4 @@
 {"at": "2026-11-25T00:03:02Z", "decided_at": "2026-11-17T15:45:58Z", "hit": true, "id": "d-091eb4b00797", "measured": 3.0, "point": "spinoff-launch", "predicted": 5.0}
 {"at": "2026-11-25T00:03:02Z", "decided_at": "2026-11-17T21:21:28Z", "hit": false, "id": "d-bb127e562ff9", "measured": 0.0, "point": "spinoff-launch", "predicted": 4.0}
 {"at": "2026-11-25T00:03:02Z", "decided_at": "2026-11-17T21:21:28Z", "hit": false, "id": "d-b743f9eb5366", "measured": 0.0, "point": "spinoff-launch", "predicted": 4.0}
+{"at": "2026-11-25T16:00:58Z", "decided_at": "2026-11-18T15:56:55Z", "hit": true, "id": "d-22b2882e1711", "measured": 7.0, "point": "spinoff-launch", "predicted": 4.0}

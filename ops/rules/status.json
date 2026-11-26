@@ -1,5 +1,5 @@
 {
- "at": "2026-11-25T14:23:16Z",
+ "at": "2026-11-26T03:54:05Z",
  "probes": {
   "closed-loops/closedloop": {
    "status": "ok",
@@ -32,10 +32,10 @@
    "item": null
   },
   "front-end-matches-back-end/claims": {
-   "status": "violated",
-   "detail": "claims: 376 verified of 378; 2 drift",
+   "status": "ok",
+   "detail": "claims: 425 verified of 425; 0 drift",
    "fixed": false,
-   "item": "Q-RULE-front-end-matches-back-end-claims"
+   "item": null
   },
   "front-end-matches-back-end/claimcode": {
    "status": "ok",
@@ -105,7 +105,7 @@
   },
   "license-notice/license-fleet": {
    "status": "unmeasured",
-   "detail": "seed: GitHub unreadable",
+   "detail": "ops: GitHub unreadable",
    "fixed": false,
    "item": null
   },
@@ -129,7 +129,7 @@
   },
   "clock-never-stops/clock": {
    "status": "ok",
-   "detail": "clock ok: tick-heartbeat, executor, transparency, deploy-site, scout, a11y, criticality-loop, claims, watchdog, temporal, unlearn-beat, intent-yield",
+   "detail": "clock ok: tick-heartbeat, executor, transparency, deploy-site, scout, a11y, criticality-loop, claims, watchdog, temporal, unlearn-beat, intent-yield, what-works",
    "fixed": false,
    "item": null
   },
@@ -218,9 +218,7 @@
    "item": null
   }
  },
- "filed": [
-  "Q-RULE-front-end-matches-back-end-claims"
- ],
+ "filed": [],
  "rules": {
   "closed-loops": {
    "status": "enforced",
@@ -237,7 +235,7 @@
    "statement": "No decision, question or step is handed to the owner; agents decide, deploy and verify (GUIDING-DIRECTIVE, CODE-ONLY-ORDER)."
   },
   "front-end-matches-back-end": {
-   "status": "violated",
+   "status": "unmeasured",
    "ci": 2,
    "probes": 4,
    "gaps": [

@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/supply-chain.schema.json",
+  "title": "supply-chain (doctrine/supply-chain.json)",
+  "description": "Contract for doctrine/supply-chain.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "rule": {
+      "type": "string"
+    },
+    "about": {
+      "type": "string"
+    },
+    "unpinned_baseline": {
+      "type": "number"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "about",
+    "rule",
+    "unpinned_baseline"
+  ]
+}

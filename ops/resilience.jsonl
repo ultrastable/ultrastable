@@ -324,3 +324,100 @@
 {"at": "2026-11-25T08:03:04Z", "clocks": 38, "kind": "beat", "seq": 323, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
 {"at": "2026-11-25T10:43:00Z", "clocks": 38, "kind": "beat", "seq": 324, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
 {"at": "2026-11-25T12:42:45Z", "clocks": 38, "kind": "beat", "seq": 325, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
+{"at": "2026-11-25T14:33:40Z", "clocks": 38, "kind": "beat", "seq": 326, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
+{"at": "2026-11-25T14:43:16Z", "clocks": 38, "kind": "beat", "seq": 327, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
+{"at": "2026-11-25T14:53:31Z", "clocks": 38, "kind": "beat", "seq": 328, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
+{"at": "2026-11-25T15:03:45Z", "clocks": 38, "kind": "beat", "seq": 329, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
+{"at": "2026-11-25T15:13:36Z", "clocks": 38, "kind": "beat", "seq": 330, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
+{"at": "2026-11-25T15:22:56Z", "clocks": 38, "kind": "beat", "seq": 331, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
+{"at": "2026-11-25T15:33:50Z", "clocks": 38, "kind": "beat", "seq": 332, "stalled": 1, "stalled_ids": ["unlearn-beat"], "unmeasured": 0}
+{"at": "2026-11-25T15:43:02Z", "clocks": 39, "kind": "beat", "seq": 333, "stalled": 2, "stalled_ids": ["unlearn-beat", "what-works-beat"], "unmeasured": 0}
+{"at": "2026-11-25T15:53:31Z", "clocks": 39, "kind": "beat", "seq": 334, "stalled": 2, "stalled_ids": ["unlearn-beat", "what-works-beat"], "unmeasured": 0}
+{"at": "2026-11-25T16:04:00Z", "clocks": 39, "kind": "beat", "seq": 335, "stalled": 2, "stalled_ids": ["unlearn-beat", "what-works-beat"], "unmeasured": 0}
+{"at": "2026-11-25T16:08:21Z", "clocks": 39, "kind": "beat", "seq": 336, "stalled": 2, "stalled_ids": ["unlearn-beat", "what-works-beat"], "unmeasured": 0}
+{"at": "2026-11-25T16:13:25Z", "clocks": 39, "kind": "beat", "seq": 337, "stalled": 2, "stalled_ids": ["unlearn-beat", "what-works-beat"], "unmeasured": 0}
+{"at": "2026-11-25T16:23:27Z", "clocks": 40, "kind": "beat", "seq": 338, "stalled": 3, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat"], "unmeasured": 0}
+{"at": "2026-11-25T16:34:14Z", "clocks": 40, "kind": "beat", "seq": 339, "stalled": 3, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat"], "unmeasured": 0}
+{"at": "2026-11-25T16:43:58Z", "clocks": 40, "kind": "beat", "seq": 340, "stalled": 3, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat"], "unmeasured": 0}
+{"at": "2026-11-25T17:26:22Z", "clocks": 40, "kind": "beat", "seq": 341, "stalled": 3, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat"], "unmeasured": 0}
+{"at": "2026-11-25T17:33:40Z", "clocks": 40, "kind": "beat", "seq": 342, "stalled": 3, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat"], "unmeasured": 0}
+{"at": "2026-11-25T17:43:34Z", "clocks": 40, "kind": "beat", "seq": 343, "stalled": 3, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat"], "unmeasured": 0}
+{"at": "2026-11-25T17:53:17Z", "clocks": 40, "kind": "beat", "seq": 344, "stalled": 3, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat"], "unmeasured": 0}
+{"at": "2026-11-25T18:03:28Z", "clocks": 40, "kind": "beat", "seq": 345, "stalled": 3, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat"], "unmeasured": 0}
+{"at": "2026-11-25T18:13:55Z", "clocks": 40, "kind": "beat", "seq": 346, "stalled": 3, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat"], "unmeasured": 0}
+{"at": "2026-11-25T18:23:13Z", "clocks": 40, "kind": "beat", "seq": 347, "stalled": 3, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat"], "unmeasured": 0}
+{"at": "2026-11-25T18:33:25Z", "clocks": 40, "kind": "beat", "seq": 348, "stalled": 3, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat"], "unmeasured": 0}
+{"at": "2026-11-25T18:42:55Z", "clocks": 40, "kind": "beat", "seq": 349, "stalled": 3, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat"], "unmeasured": 0}
+{"at": "2026-11-25T18:49:10Z", "clocks": 40, "kind": "beat", "seq": 350, "stalled": 3, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat"], "unmeasured": 0}
+{"at": "2026-11-25T18:53:59Z", "clocks": 40, "kind": "beat", "seq": 351, "stalled": 3, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat"], "unmeasured": 0}
+{"at": "2026-11-25T19:03:39Z", "clocks": 40, "kind": "beat", "seq": 352, "stalled": 3, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat"], "unmeasured": 0}
+{"at": "2026-11-25T19:13:38Z", "clocks": 40, "kind": "beat", "seq": 353, "stalled": 3, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat"], "unmeasured": 0}
+{"at": "2026-11-25T19:23:58Z", "clocks": 40, "kind": "beat", "seq": 354, "stalled": 3, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat"], "unmeasured": 0}
+{"at": "2026-11-25T19:33:31Z", "clocks": 40, "kind": "beat", "seq": 355, "stalled": 3, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat"], "unmeasured": 0}
+{"at": "2026-11-25T19:43:43Z", "clocks": 40, "kind": "beat", "seq": 356, "stalled": 3, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat"], "unmeasured": 0}
+{"at": "2026-11-25T19:53:23Z", "clocks": 40, "kind": "beat", "seq": 357, "stalled": 3, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat"], "unmeasured": 0}
+{"at": "2026-11-25T20:03:50Z", "clocks": 40, "kind": "beat", "seq": 358, "stalled": 3, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat"], "unmeasured": 0}
+{"at": "2026-11-25T20:13:35Z", "clocks": 40, "kind": "beat", "seq": 359, "stalled": 3, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat"], "unmeasured": 0}
+{"at": "2026-11-25T20:23:26Z", "clocks": 41, "kind": "beat", "seq": 360, "stalled": 4, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable"], "unmeasured": 0}
+{"at": "2026-11-25T20:33:29Z", "clocks": 41, "kind": "beat", "seq": 361, "stalled": 4, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable"], "unmeasured": 0}
+{"at": "2026-11-25T20:43:58Z", "clocks": 42, "kind": "beat", "seq": 362, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-25T20:53:44Z", "clocks": 42, "kind": "beat", "seq": 363, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-25T21:03:53Z", "clocks": 42, "kind": "beat", "seq": 364, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-25T21:15:43Z", "clocks": 42, "kind": "beat", "seq": 365, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-25T21:25:16Z", "clocks": 42, "kind": "beat", "seq": 366, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-25T21:33:49Z", "clocks": 42, "kind": "beat", "seq": 367, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-25T21:43:33Z", "clocks": 42, "kind": "beat", "seq": 368, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-25T21:58:47Z", "clocks": 42, "kind": "beat", "seq": 369, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-25T22:04:44Z", "clocks": 42, "kind": "beat", "seq": 370, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-25T22:13:39Z", "clocks": 42, "kind": "beat", "seq": 371, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-25T22:23:38Z", "clocks": 42, "kind": "beat", "seq": 372, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-25T22:34:26Z", "clocks": 42, "kind": "beat", "seq": 373, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-25T22:43:26Z", "clocks": 42, "kind": "beat", "seq": 374, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-25T22:54:00Z", "clocks": 42, "kind": "beat", "seq": 375, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-25T23:03:29Z", "clocks": 42, "kind": "beat", "seq": 376, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-25T23:13:42Z", "clocks": 42, "kind": "beat", "seq": 377, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-25T23:23:50Z", "clocks": 42, "kind": "beat", "seq": 378, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-25T23:33:58Z", "clocks": 43, "kind": "beat", "seq": 379, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-25T23:43:51Z", "clocks": 43, "kind": "beat", "seq": 380, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-25T23:53:46Z", "clocks": 43, "kind": "beat", "seq": 381, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-25T23:53:46Z", "clocks": 43, "kind": "beat", "seq": 381, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T00:07:33Z", "clocks": 43, "kind": "beat", "seq": 382, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T00:20:13Z", "clocks": 43, "kind": "beat", "seq": 383, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T00:29:12Z", "clocks": 43, "kind": "beat", "seq": 384, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T00:35:19Z", "clocks": 43, "kind": "beat", "seq": 385, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T00:46:33Z", "clocks": 43, "kind": "beat", "seq": 386, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T00:57:05Z", "clocks": 43, "kind": "beat", "seq": 387, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T01:03:25Z", "clocks": 43, "kind": "beat", "seq": 388, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T01:13:39Z", "clocks": 43, "kind": "beat", "seq": 389, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T01:23:59Z", "clocks": 43, "kind": "beat", "seq": 390, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T01:33:48Z", "clocks": 43, "kind": "beat", "seq": 391, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T01:44:17Z", "clocks": 43, "kind": "beat", "seq": 392, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T01:53:40Z", "clocks": 43, "kind": "beat", "seq": 393, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T02:03:30Z", "clocks": 43, "kind": "beat", "seq": 394, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T02:13:20Z", "clocks": 43, "kind": "beat", "seq": 395, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T02:23:56Z", "clocks": 43, "kind": "beat", "seq": 396, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T02:34:08Z", "clocks": 43, "kind": "beat", "seq": 397, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T02:44:42Z", "clocks": 43, "kind": "beat", "seq": 398, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T02:53:49Z", "clocks": 43, "kind": "beat", "seq": 399, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T03:04:25Z", "clocks": 43, "kind": "beat", "seq": 400, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T03:13:47Z", "clocks": 43, "kind": "beat", "seq": 401, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T03:23:47Z", "clocks": 43, "kind": "beat", "seq": 402, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T03:34:33Z", "clocks": 43, "kind": "beat", "seq": 403, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T03:44:07Z", "clocks": 43, "kind": "beat", "seq": 404, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T03:53:49Z", "clocks": 43, "kind": "beat", "seq": 405, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T04:03:57Z", "clocks": 43, "kind": "beat", "seq": 406, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T04:13:46Z", "clocks": 43, "kind": "beat", "seq": 407, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T04:23:45Z", "clocks": 43, "kind": "beat", "seq": 408, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T04:33:25Z", "clocks": 43, "kind": "beat", "seq": 409, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T04:43:49Z", "clocks": 43, "kind": "beat", "seq": 410, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T04:53:49Z", "clocks": 43, "kind": "beat", "seq": 411, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T05:03:42Z", "clocks": 43, "kind": "beat", "seq": 412, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T05:14:35Z", "clocks": 43, "kind": "beat", "seq": 413, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T05:23:28Z", "clocks": 43, "kind": "beat", "seq": 414, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T05:33:39Z", "clocks": 43, "kind": "beat", "seq": 415, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T05:43:40Z", "clocks": 43, "kind": "beat", "seq": 416, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T05:54:15Z", "clocks": 43, "kind": "beat", "seq": 417, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T06:04:07Z", "clocks": 43, "kind": "beat", "seq": 418, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T06:13:52Z", "clocks": 43, "kind": "beat", "seq": 419, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T06:23:20Z", "clocks": 43, "kind": "beat", "seq": 420, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T06:34:02Z", "clocks": 43, "kind": "beat", "seq": 421, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}

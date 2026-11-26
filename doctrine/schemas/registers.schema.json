@@ -1,0 +1,249 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/registers.schema.json",
+ "title": "SPOF, failure-mode and control registers (guiding directive sections 12, 13, 16)",
+ "$defs": {
+  "role": {
+   "enum": [
+    "customer-success",
+    "design-manager",
+    "funding-manager",
+    "infrastructure-manager",
+    "legal-ip-manager",
+    "marketing-manager",
+    "operations",
+    "org-designer",
+    "outreach-coordinator",
+    "outreach-manager",
+    "portfolio-manager",
+    "product-manager",
+    "program-manager",
+    "project-manager",
+    "research-publisher",
+    "reviewer",
+    "staff",
+    "uiux-manager"
+   ]
+  }
+ },
+ "type": "object",
+ "required": [
+  "version",
+  "spofs",
+  "failure_modes",
+  "controls"
+ ],
+ "properties": {
+  "version": {
+   "type": "string",
+   "pattern": "^\\d+\\.\\d+\\.\\d+$"
+  },
+  "spofs": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "id",
+     "kind",
+     "what",
+     "owner",
+     "trigger",
+     "remediation",
+     "status",
+     "second_path_exercised",
+     "probe"
+    ],
+    "properties": {
+     "what": {
+      "type": "string",
+      "minLength": 1
+     },
+     "trigger": {
+      "type": "string",
+      "minLength": 1
+     },
+     "remediation": {
+      "type": "string",
+      "minLength": 1
+     },
+     "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+     },
+     "kind": {
+      "enum": [
+       "credential",
+       "host",
+       "approval",
+       "assumption",
+       "component",
+       "path",
+       "person"
+      ]
+     },
+     "owner": {
+      "$ref": "#/$defs/role"
+     },
+     "status": {
+      "enum": [
+       "mitigated",
+       "remediated",
+       "backlogged"
+      ]
+     },
+     "second_path_exercised": {
+      "type": [
+       "boolean",
+       "string"
+      ]
+     },
+     "probe": {
+      "type": "string",
+      "pattern": "^(file|grep|cmd|json|glob|http|test):.+"
+     },
+     "backlog": {
+      "type": "object"
+     }
+    },
+    "additionalProperties": false,
+    "patternProperties": {
+     "^_": true
+    }
+   }
+  },
+  "failure_modes": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "id",
+     "trigger",
+     "symptom",
+     "blast_radius",
+     "detection",
+     "root_cause",
+     "remediation",
+     "status",
+     "cadence_ticks",
+     "probe"
+    ],
+    "properties": {
+     "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+     },
+     "trigger": {
+      "type": "string",
+      "minLength": 1
+     },
+     "symptom": {
+      "type": "string",
+      "minLength": 1
+     },
+     "blast_radius": {
+      "type": "string",
+      "minLength": 1
+     },
+     "detection": {
+      "type": "string",
+      "minLength": 1
+     },
+     "root_cause": {
+      "type": "string",
+      "minLength": 1
+     },
+     "remediation": {
+      "type": "string",
+      "minLength": 1
+     },
+     "status": {
+      "enum": [
+       "controlled",
+       "open"
+      ]
+     },
+     "cadence_ticks": {
+      "type": "integer",
+      "minimum": 1
+     },
+     "probe": {
+      "type": "string",
+      "pattern": "^(file|grep|cmd|json|glob|http|test):.+"
+     }
+    },
+    "additionalProperties": false,
+    "patternProperties": {
+     "^_": true
+    }
+   },
+   "minItems": 1
+  },
+  "controls": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "id",
+     "kind",
+     "what",
+     "disposition",
+     "critical_path",
+     "note",
+     "alternate",
+     "probe"
+    ],
+    "properties": {
+     "what": {
+      "type": "string",
+      "minLength": 1
+     },
+     "note": {
+      "type": "string",
+      "minLength": 1
+     },
+     "alternate": {
+      "type": "string",
+      "minLength": 1
+     },
+     "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+     },
+     "kind": {
+      "enum": [
+       "hold",
+       "gate",
+       "kill-switch",
+       "filter",
+       "approval",
+       "pause"
+      ]
+     },
+     "disposition": {
+      "enum": [
+       "remove",
+       "demote",
+       "replace",
+       "keep"
+      ]
+     },
+     "critical_path": {
+      "type": "boolean"
+     },
+     "probe": {
+      "type": "string",
+      "pattern": "^(file|grep|cmd|json|glob|http|test):.+"
+     },
+     "replacement": {
+      "type": "string",
+      "minLength": 1
+     }
+    },
+    "additionalProperties": false,
+    "patternProperties": {
+     "^_": true
+    }
+   }
+  }
+ }
+}

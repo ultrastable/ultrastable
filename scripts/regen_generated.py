@@ -19,22 +19,28 @@ GENERATORS = [
     (["python3", "-m", "foundation", "claims", "--fix", "--apply"], "."),
     (["python3", "scripts/build_dashboard.py"], "."),
     (["python3", "-m", "foundation", "selfmodel", "--apply"], "."),
+    (["python3", "-m", "foundation", "trajectory", "--run", "--apply"], "."),  # TRAJECTORY-1: its page data reads git history, so every merge makes it stale until regenerated
     (["python3", "-m", "foundation", "ultrastability", "--data", "--apply"], "."),
     (["python3", "-m", "foundation", "decisions", "--settle", "--apply"], "."),
     (["python3", "-m", "foundation", "decisions", "--page", "--apply"], "."),
+    (["python3", "-m", "foundation", "research", "--refresh-prs-if-stale"], "."),  # REDTEAM-1: the papers' merge-time source refreshes at most daily
     (["python3", "-m", "foundation", "research", "--page", "--apply"], "."),  # RESEARCH-1: white papers from the ledgers this merge changed
     (["python3", "-m", "foundation", "thought", "--run", "--apply"], "."),  # THOUGHT-1: second route (besides social-post) that schedules the next paper piece; cadence-guarded, so most runs add nothing
     (["python3", "-m", "foundation", "rescore", "--run", "--apply"], "."),  # RESCORE-1: held-out graders re-score what settle just scored
     (["python3", "-m", "foundation", "executor", "--fold", "--apply"], "."),  # PR-OUTCOME-1: what became of each pull request the executor opened
+    (["python3", "-m", "foundation", "admit", "--apply"], "."),  # ADMIT-1: a new doctrine/tenant-repos.json row writes the tenant's rows in every registry
     (["python3", "-m", "foundation", "owndb", "--write"], "."),  # OWN-DB-1
     (["python3", "-m", "foundation", "tenantcontrols", "--write"], "."),  # TENANT-CONTROLS-1
     (["python3", "-m", "foundation", "upstream", "contract", "--apply"], "."),
     (["python3", "-m", "foundation", "triggers", "--sync"], "."),
+    (["python3", "scripts/build_site_agentdata.py"], "."),  # STANDARDS-1: the site serves the standards register; an edit to it left agentdata.js stale (#2273)
+    (["python3", "-m", "foundation", "configschema", "--gen"], "."),  # CONFIG-SCHEMA-1: a new config gets its contract
+    (["python3", "-m", "foundation", "stdgen", "--gen"], "."),  # STANDARDS-1: Backstage catalog and CycloneDX SBOM follow the registers
     (["python3", "-m", "plugins", "self", "--write"], "seed"),
 ]
 # Files the generators write; the workflow ignores pushes that touch only these, so the bot's own commit cannot retrigger it.
-OUTPUTS = ["doctrine/decision-ledger.json", "ops/provenance.jsonl", "README.md", "platform/adapters/README.md", "site/claims-data.js", "site/dashboard-data.js", "site/self-data.js",
-           "site/ultrastability-data.js", "site/decisions-data.js", "site/research-data.js", "research/papers/chen-stratton-2026.md", "research/papers/ashby-1952.md", "research/papers/open-loops-2026.md", "research/papers/safety-by-limits-2026.md", "social/calendar.json", "ops/thought/log.jsonl", "ops/decisions/outcomes.jsonl", "ops/decisions/rescore.jsonl", "ops/executor-log.jsonl", "instances/ultrastable/own-database.json", "docs/security/multi-tenant-controls.json", "core-contract.json", "doctrine/triggers.json", "seed/self/SELF.md", "seed/self/self.json"]
+OUTPUTS = ["doctrine/decision-ledger.json", "ops/provenance.jsonl", "README.md", "platform/adapters/README.md", "site/claims-data.js", "site/dashboard-data.js", "site/self-data.js", "site/trajectory-data.js", "ops/trajectory.json", "ops/trajectory.jsonl",
+           "site/ultrastability-data.js", "site/decisions-data.js", "site/research-data.js", "research/papers/chen-stratton-2026.md", "research/papers/ashby-1952.md", "research/papers/open-loops-2026.md", "research/papers/safety-by-limits-2026.md", "social/calendar.json", "ops/research/prs.json", "ops/thought/log.jsonl", "ops/decisions/outcomes.jsonl", "ops/decisions/rescore.jsonl", "ops/executor-log.jsonl", "instances/ultrastable/own-database.json", "docs/security/multi-tenant-controls.json", "core-contract.json", "doctrine/triggers.json", "seed/self/SELF.md", "seed/self/self.json"]
 
 
 def run_all(root: Path = ROOT) -> list[str]:

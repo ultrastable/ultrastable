@@ -6,9 +6,13 @@
 export const GENERATED = [
   "doctrine/decision-ledger.json",
   "ops/provenance.jsonl",
+  "ops/research/prs.json",
   "site/claims-data.js",
   "site/dashboard-data.js",
   "site/self-data.js",
+  "site/trajectory-data.js",
+  "ops/trajectory.json",
+  "ops/trajectory.jsonl",
   "site/ultrastability-data.js",
   "site/decisions-data.js",
   "site/research-data.js",

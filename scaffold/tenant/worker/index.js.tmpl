@@ -1,0 +1,97 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
+// {{name}}: one Worker, back end and public front end (FULLSTACK-1). Ultrastable is the foundation for any autonomous system.
+// It serves the fleet contract (/, /.well-known/ultrastable.json, /claims.json, /health, /social-queue.json, /api/graph), the published list and
+// its own clock. The beat is the loop's first step: it records that it ran and how many {{noun}} it saw, and removes old beats. What the loop
+// does to each entry (re-reading its sources) is added with the first entry, as a step of the same beat.
+// Two routes for the clock: the cron, and a read of /health when the last beat is older than two intervals (runway risk cron-silent).
+import { contractRoute } from "../vendor/ultrastable/contract.js";
+import { promoQueue } from "../vendor/ultrastable/promoqueue.js";
+import { SPEC, SITE, ID, BEAT_HOURS } from "./contract.js";
+import { ENTRIES, EMPTY_WHY } from "./entries.js";
+import { home, notFound } from "./site.js";
+
+const HOUR = 3600000, KEEP_DAYS = 90;
+export const HOOK = SPEC.name + " runs on Ultrastable.";
+const json = (body, status = 200, cache = "public, max-age=300") => new Response(JSON.stringify(body, null, 1), { status, headers: { "content-type": "application/json; charset=utf-8", "cache-control": cache, "access-control-allow-origin": "*" } });
+const html = (body, status = 200) => new Response(body, { status, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=300" } });
+const halted = env => String(env.HALT || "") === "1";
+
+async function ready(env) {
+  await env.DB.prepare("CREATE TABLE IF NOT EXISTS beats (at INTEGER PRIMARY KEY, entries INTEGER NOT NULL, note TEXT NOT NULL)").run();
+}
+async function beats(env, limit = 24) {
+  if (!env.DB) return [];
+  await ready(env);
+  return (await env.DB.prepare("SELECT at, entries, note FROM beats ORDER BY at DESC LIMIT ?1").bind(limit).all()).results || [];
+}
+
+// One beat. Returns what it did; a halted platform or a missing database is said, never hidden.
+export async function beat(env, now = Date.now()) {
+  if (halted(env)) return { ran: false, why: "halted" };
+  if (!env.DB) return { ran: false, why: "no database bound" };
+  await ready(env);
+  const note = ENTRIES.length ? "entries seen; the source re-read step is not built yet" : "no entries yet";
+  await env.DB.prepare("INSERT OR REPLACE INTO beats (at, entries, note) VALUES (?1, ?2, ?3)").bind(now, ENTRIES.length, note).run();
+  const gone = await env.DB.prepare("DELETE FROM beats WHERE at < ?1").bind(now - KEEP_DAYS * 24 * HOUR).run();
+  return { ran: true, at: now, entries: ENTRIES.length, removed: Number(gone?.meta?.changes || 0) };
+}
+
+async function health(env, now) {
+  const base = { system: SPEC.name, stage: ENTRIES.length ? "publishing" : "clock-only", blocks_next: ENTRIES.length ? null : EMPTY_WHY, entries: ENTRIES.length, halted: halted(env) };
+  if (!env.DB) return json({ ok: false, ...base, clock: "stopped", last_error: "no database bound" }, 503, "no-store");
+  try {
+    let last = (await beats(env, 1))[0] || null;
+    if (!halted(env) && (!last || now - last.at > 2 * BEAT_HOURS * HOUR)) { await beat(env, now); last = (await beats(env, 1))[0] || null; }
+    const fresh = !!last && now - last.at <= 2 * BEAT_HOURS * HOUR;
+    return json({ ok: fresh, ...base, clock: fresh ? "ticking" : "stopped", every_hours: BEAT_HOURS, last_beat: last ? new Date(last.at).toISOString() : null, last_error: null }, fresh ? 200 : 503, "no-store");
+  } catch (e) {
+    return json({ ok: false, ...base, clock: "stopped", last_error: String(e && e.message || e).slice(0, 200) }, 503, "no-store");
+  }
+}
+
+// The graph of what is published: one node per entry and per source, one edge per citation. Empty with the reason while nothing is published.
+export function graph() {
+  const nodes = [], edges = [];
+  for (const e of ENTRIES) {
+    nodes.push({ id: "entry:" + e.id, kind: "entry", label: e.title });
+    for (const s of e.sources || []) {
+      const sid = "source:" + s.doi;
+      if (!nodes.some(n => n.id === sid)) nodes.push({ id: sid, kind: "source", label: s.title });
+      edges.push({ from: "entry:" + e.id, to: sid, kind: "cites" });
+    }
+  }
+  return { system: SPEC.name, built_from: "/api/entries.json", counts: { nodes: nodes.length, edges: edges.length }, nodes, edges, ...(nodes.length ? {} : { why: EMPTY_WHY }) };
+}
+
+export async function handle(request, env = {}, now = Date.now()) {
+  const url = new URL(request.url), p = url.pathname.replace(/\/+$/, "") || "/";
+  const fromContract = contractRoute(p, SPEC);
+  if (fromContract) return fromContract;
+  if (request.method !== "GET" && request.method !== "HEAD") return json({ error: "method_not_allowed" }, 405, "no-store");
+  if (p === "/health") return health(env, now);
+  if (p === "/") {
+    let last = null, why = "";
+    try { last = (await beats(env, 1))[0] || null; if (!env.DB) why = "The clock has no database yet."; } catch (e) { why = "The clock could not be read just now."; }
+    return html(home({ last, why }));
+  }
+  if (p === "/api/beats") {
+    try { const rows = await beats(env); return json({ every_hours: BEAT_HOURS, count: rows.length, beats: rows.map(b => ({ at: new Date(b.at).toISOString(), entries: b.entries, note: b.note })), ...(env.DB ? {} : { why: "no database bound" }) }); }
+    catch (e) { return json({ every_hours: BEAT_HOURS, count: 0, beats: [], why: "the beat ledger could not be read" }); }
+  }
+  if (p === "/api/entries.json") return json({ count: ENTRIES.length, entries: ENTRIES, ...(ENTRIES.length ? {} : { why: EMPTY_WHY }) });
+  if (p === "/api/graph") return json(graph());
+  if (p === "/social-queue.json") {
+    // TENANT-PROMO-1: built by the shared queue from what is published; with nothing published there is nothing to post, and the list is empty
+    const q = promoQueue({ tenant: ID.slug, site: SITE, hook: HOOK, items: ENTRIES.map(e => ({ id: e.id, text: e.title, path: "/#" + e.id })), now });
+    return json({ tenant: ID.slug, posts: q.posts || [], refused: q.refused || [], ...(ENTRIES.length ? {} : { why: EMPTY_WHY }) });
+  }
+  if (p === "/feed.json") return json({ version: "https://jsonfeed.org/version/1.1", title: SPEC.name, home_page_url: SITE + "/", feed_url: SITE + "/feed.json", description: SPEC.summary, items: ENTRIES.map(e => ({ id: SITE + "/#" + e.id, url: SITE + "/#" + e.id, title: e.title, content_text: e.summary || e.title })) });
+  if (p === "/robots.txt") return new Response("User-agent: *\nAllow: /\n", { headers: { "content-type": "text/plain; charset=utf-8" } });
+  return html(notFound(), 404);
+}
+
+export default {
+  fetch: (request, env) => handle(request, env),
+  scheduled: (event, env, ctx) => ctx.waitUntil(beat(env)),
+};

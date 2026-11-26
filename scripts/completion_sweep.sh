@@ -58,4 +58,7 @@ fi
 left_prs=$(gh pr list -R "$repo" --state open --json number,updatedAt --jq '[.[] | select((now - (.updatedAt|fromdateiso8601)) > 86400)] | length')
 if [ "$issues_on" != false ]; then left_issues=$(gh issue list -R "$repo" --state open --label done --json number --jq length); else left_issues="off (items are docs/issues; python3 -m foundation queue --run closes them)"; fi
 echo "cycle_metric leftover_after_sweep prs_idle_over_1d=${left_prs:-?} done_issues=${left_issues:-?}"
+# BRANCH-CLEANUP-1 (Rowan, 2026-11-25): no branch outlives its PR in any fleet repo; delete_branch_on_merge is enforced. A failure is logged, never swallowed.
+BRANCH_CLEANUP_REPOS="ultrastable seed workers spec license ops practical-solutions .github unlearn" python3 scripts/branch_cleanup.py --apply \
+  || echo "::warning::BRANCH-CLEANUP-1: branch_cleanup.py reported errors (see output above)"
 safe_exit

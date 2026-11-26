@@ -69,6 +69,10 @@
   "pypi:pyyaml": {
    "spdx": "MIT",
    "source": "https://pypi.org/pypi/PyYAML/json"
+  },
+  "action:ossf/scorecard-action": {
+   "spdx": "Apache-2.0",
+   "source": "https://github.com/ossf/scorecard-action/blob/main/LICENSE"
   }
  },
  "inventory": [
@@ -107,6 +111,16 @@
    ]
   },
   {
+   "name": "ossf/scorecard-action",
+   "eco": "action",
+   "use": "tool",
+   "spdx": "Apache-2.0",
+   "verdict": "ok",
+   "where": [
+    ".github/workflows/supply-chain.yml"
+   ]
+  },
+  {
    "name": "axe-core",
    "eco": "npm",
    "use": "tool",
@@ -137,16 +151,6 @@
    "where": [
     ".github/workflows/a11y.yml",
     ".github/workflows/uiux.yml"
-   ]
-  },
-  {
-   "name": "wrangler",
-   "eco": "npm",
-   "use": "tool",
-   "spdx": "MIT OR Apache-2.0",
-   "verdict": "ok",
-   "where": [
-    ".github/workflows/spinoff.yml"
    ]
   },
   {

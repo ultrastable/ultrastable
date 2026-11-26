@@ -37,48 +37,13 @@ class Unlearn(unittest.TestCase):
             self.assertIn("system test passed", stages["qualify"]["detail"])
             self.assertIn("3 objective(s)", stages["instrument"]["detail"])
 
-    def test_phases_are_gated(self):
-        d = json.loads((INST / "phases.json").read_text())
-        self.assertEqual(len(d["principles"]), 11)
-        ph = d["phases"]
-        self.assertEqual([p["id"] for p in ph], [1, 2, 3])
-        for p in ph[:2]:
-            self.assertTrue(p["exit_gates"], p["name"])
-            for g in p["exit_gates"]:
-                self.assertIn(g["op"], (">=", "<=", "=="))
-        self.assertTrue(ph[0]["child_data"].startswith("none"))
-        kids = ph[2]
-        for need in ("dpia_complete", "parental_consent_flow", "retention_policy_published", "no_companion_persona"):
-            self.assertIn(need, kids["prerequisites"])
-        self.assertIn("default_in_effect", kids["identity_bound_gate"])
-
-    def test_principles_are_in_code(self):
-        """Each research principle names the code that carries it; phase 3 principles name a phase 3 ship (not built before its gates)."""
-        d = json.loads((INST / "phases.json").read_text())
-        tests = (INST / "worker/worker.test.mjs").read_text()
-        kids = d["phases"][2]["ships"]
-        for p in d["principles"]:
-            kind, _, rest = p["probe"].partition(":")
-            if kind == "test":
-                self.assertEqual(p["phase"], 1, p["id"])
-                self.assertIn("test('" + rest + "'", tests, p["id"])
-            elif kind == "grep":
-                path, _, needle = rest.partition("::")
-                self.assertIn(needle, (ROOT / path).read_text(), p["id"])
-            elif kind == "phase3":
-                self.assertEqual(p["phase"], 3, p["id"])
-                self.assertIn(rest, kids, p["id"])
-            else:
-                self.fail("unknown probe kind " + kind)
-
     def test_runway_probes_hold(self):
         d = json.loads((INST / "runway.json").read_text())
         self.assertGreaterEqual(d["target_days"], 365)
-        tests = (INST / "worker/worker.test.mjs").read_text()
         for r in d["risks"]:
             kind, _, rest = r["probe"].partition(":")
             if kind == "test":
-                self.assertIn("test('" + rest + "'", tests, r["id"])
+                continue  # carried by worker/manifest.test.mjs in ultrastable/unlearn, next to the tests it names
             elif kind == "file":
                 self.assertTrue((ROOT / rest).exists(), r["id"])
             elif kind == "grep":

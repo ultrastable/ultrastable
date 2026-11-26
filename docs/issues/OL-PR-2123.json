@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-2123",
+  "title": "OL-PR-2123: land or supersede pull request #2123 (conflict)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #2123 is conflict\n**Done check:** cmd:python3 -m foundation loopowner --closed 2123\n**Status:** closed\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #2123 (`claude/project-thread-y5unc5` at d3cb5f076f, opened by rwnq8): Keep generated data fresh, and make every system update itself and the platform (SYNC-BOTH-WAYS-1). The session that opened it is not its closer and is never asked to act. The branch conflicts with main. Merge main into the branch and resolve it, or redo the change from main in a new pull request and close this one as superseded. Files (24): .github/workflows/regen-generated.yml, .github/workflows/tenant-sync.yml, .github/workflows/watchdog.yml, agents/AGENTS.md, agents/PROJECT-INSTRUCTIONS.md, docs/issues/Q-SYNC-DRIFT-practical-solutions.json, doctrine/claim-code.json, doctrine/claims.json, doctrine/improve.json, doctrine/tenant-sync.json, doctrine/writeback/decision-2026-11-25-sync-both-ways-1-tenants-pull-the-platform-and-lift-general-.json, doctrine/writeback/lesson-2026-11-25-generated-trajectory-data-must-be-regenerated-on-merge-and-l.json, foundation/__main__.py, foundation/tenantsync.py, ops/tenant-sync/metrics.json, ops/trajectory.json, ops/trajectory.jsonl, scripts/regen_generated.py, seed/.github/workflows/platform-sync.yml, seed/agents/AGENTS.md, seed/autonomy/improve.json, seed/worker/src/generated.js, site/trajectory-data.js, tests/foundation/test_improve.py.\n\n**Prediction:** open_prs <= 0 within 24 h\n**Out of scope:** changing what pull request #2123 does; land it as written or carry it onto main unchanged.\n\n**Closing probe:** `python3 -m foundation loopowner --closed 2123` exits 0 (pull request #2123 is merged or closed).\n\n**Evidence:** closing probe passed (2 consecutive passes after a recorded failure): pull request is merged\n",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

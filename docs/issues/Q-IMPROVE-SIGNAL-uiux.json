@@ -1,0 +1,15 @@
+{
+  "id": "Q-IMPROVE-SIGNAL-uiux",
+  "title": "Q-IMPROVE-SIGNAL-uiux: uiux signal is stale",
+  "body": "**Owner:** product-manager\n**Trigger:** improve --run\n**Done check:** cmd:python3 -m foundation improve --probe signal:uiux\n**Prediction:** signal_uiux_ok == 1 within 72 h\n**Status:** closed\n\nops/uiux/status.json is stale. A signal nobody reads is a blind spot, not a quiet week. Restore the producer or give it a second route.\n\n**Closing probe:** cmd:python3 -m foundation improve --probe signal:uiux\n\n\n**Evidence:** closing probe passed (2 consecutive passes after a recorded failure): signal:uiux: pass\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "role:product-manager",
+    "growth",
+    "improve",
+    "signal"
+  ],
+  "milestone": "Now",
+  "workstream": "Growth"
+}

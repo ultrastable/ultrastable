@@ -1,0 +1,220 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/detectors.schema.json",
+ "title": "Failure-mode detectors (FAILURE-RESOLVE-1)",
+ "$defs": {
+  "role": {
+   "enum": [
+    "customer-success",
+    "design-manager",
+    "funding-manager",
+    "infrastructure-manager",
+    "legal-ip-manager",
+    "marketing-manager",
+    "operations",
+    "org-designer",
+    "outreach-coordinator",
+    "outreach-manager",
+    "portfolio-manager",
+    "product-manager",
+    "program-manager",
+    "project-manager",
+    "research-publisher",
+    "reviewer",
+    "staff",
+    "uiux-manager"
+   ]
+  },
+  "command": {
+   "type": "object",
+   "required": [
+    "id",
+    "failure_mode",
+    "kind",
+    "run",
+    "timeout",
+    "root_cause",
+    "owner",
+    "remedy"
+   ],
+   "properties": {
+    "id": {
+     "type": "string",
+     "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "failure_mode": {
+     "type": "string",
+     "pattern": "^fm-[a-z0-9-]+$|^[a-z0-9-]+$"
+    },
+    "kind": {
+     "const": "command"
+    },
+    "run": {
+     "type": "array",
+     "items": {
+      "type": "string",
+      "minLength": 1
+     },
+     "minItems": 1
+    },
+    "timeout": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 3600
+    },
+    "cwd": {
+     "type": "string",
+     "minLength": 1
+    },
+    "root_cause": {
+     "type": "string",
+     "minLength": 20
+    },
+    "owner": {
+     "$ref": "#/$defs/role"
+    },
+    "remedy": {
+     "type": "string",
+     "minLength": 20
+    }
+   },
+   "additionalProperties": false,
+   "patternProperties": {
+    "^_": true
+   }
+  },
+  "http": {
+   "type": "object",
+   "required": [
+    "id",
+    "failure_mode",
+    "kind",
+    "url",
+    "timeout",
+    "root_cause",
+    "owner",
+    "remedy"
+   ],
+   "properties": {
+    "id": {
+     "type": "string",
+     "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "failure_mode": {
+     "type": "string",
+     "minLength": 1
+    },
+    "kind": {
+     "const": "http"
+    },
+    "url": {
+     "type": "string",
+     "pattern": "^https://[^\\s]+$"
+    },
+    "json_ok": {
+     "type": "boolean"
+    },
+    "timeout": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 120
+    },
+    "root_cause": {
+     "type": "string",
+     "minLength": 20
+    },
+    "owner": {
+     "$ref": "#/$defs/role"
+    },
+    "remedy": {
+     "type": "string",
+     "minLength": 20
+    }
+   },
+   "additionalProperties": false,
+   "patternProperties": {
+    "^_": true
+   }
+  },
+  "probe": {
+   "type": "object",
+   "required": [
+    "id",
+    "failure_mode",
+    "kind",
+    "spec",
+    "root_cause",
+    "owner",
+    "remedy"
+   ],
+   "properties": {
+    "id": {
+     "type": "string",
+     "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "failure_mode": {
+     "type": "string",
+     "minLength": 1
+    },
+    "kind": {
+     "const": "probe"
+    },
+    "spec": {
+     "type": "string",
+     "pattern": "^(file|grep|cmd|json|glob|http|test):.+"
+    },
+    "timeout": {
+     "type": "integer"
+    },
+    "root_cause": {
+     "type": "string",
+     "minLength": 20
+    },
+    "owner": {
+     "$ref": "#/$defs/role"
+    },
+    "remedy": {
+     "type": "string",
+     "minLength": 20
+    }
+   },
+   "additionalProperties": false,
+   "patternProperties": {
+    "^_": true
+   }
+  }
+ },
+ "type": "object",
+ "required": [
+  "version",
+  "workflow",
+  "detectors"
+ ],
+ "properties": {
+  "version": {
+   "type": "string",
+   "pattern": "^\\d+\\.\\d+\\.\\d+$"
+  },
+  "workflow": {
+   "type": "string",
+   "pattern": "\\.yml$"
+  },
+  "detectors": {
+   "type": "array",
+   "items": {
+    "oneOf": [
+     {
+      "$ref": "#/$defs/command"
+     },
+     {
+      "$ref": "#/$defs/http"
+     },
+     {
+      "$ref": "#/$defs/probe"
+     }
+    ]
+   },
+   "minItems": 1
+  }
+ }
+}

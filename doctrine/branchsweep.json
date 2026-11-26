@@ -90,7 +90,12 @@
     "ultrastable/ultrastable",
     "ultrastable/workers",
     "ultrastable/ops",
-    "ultrastable/practical-solutions"
+    "ultrastable/practical-solutions",
+    "ultrastable/seed",
+    "ultrastable/spec",
+    "ultrastable/license",
+    "ultrastable/.github",
+    "ultrastable/unlearn"
   ],
   "budget_seconds": 600,
   "carried": {
@@ -105,5 +110,11 @@
     "residue_suffixes": [
       "-data.js"
     ]
+  },
+  "branch_cleanup": {
+    "rule": "BRANCH-CLEANUP-1 (Rowan, 2026-11-25): no branch outlives its pull request in any Ultrastable repository; delete_branch_on_merge is enforced on every fleet repo; AUTO-MERGE-DEFAULT-1 (Rowan, 2026-11-25): allow_auto_merge is on in every repo too, and every tenant repo in doctrine/tenant-repos.json gets both settings as soon as it exists",
+    "code": "scripts/branch_cleanup.py",
+    "run_by": "branchsweep --remote (daily branchsweep workflow, LANE_PAT)",
+    "probe": "python3 scripts/branch_cleanup.py --check"
   }
 }

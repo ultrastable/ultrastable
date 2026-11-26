@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/seed/autonomy/default-policy-pack.schema.json",
+  "title": "default-policy-pack (seed/autonomy/default-policy-pack.json)",
+  "description": "Contract for seed/autonomy/default-policy-pack.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "$schema_version": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "doc": {
+      "type": "string"
+    },
+    "applies_to": {
+      "type": "string"
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "ceiling": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "say": {
+            "type": "string"
+          },
+          "surfaces": {
+            "type": "array"
+          },
+          "uses": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "defaults": {
+      "type": "object",
+      "properties": {
+        "monthly_budget_usd": {
+          "type": "number"
+        },
+        "start_rung": {
+          "type": "string"
+        },
+        "work_hours": {
+          "type": "string"
+        },
+        "tick_every_minutes": {
+          "type": "number"
+        },
+        "report": {
+          "type": "string"
+        }
+      }
+    },
+    "buyer_may_change": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "buyer_may_not_change": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "$schema_version",
+    "applies_to",
+    "buyer_may_change",
+    "buyer_may_not_change",
+    "defaults",
+    "doc",
+    "id",
+    "rules"
+  ]
+}

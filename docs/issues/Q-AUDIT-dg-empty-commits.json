@@ -1,0 +1,14 @@
+{
+  "id": "Q-AUDIT-dg-empty-commits",
+  "title": "Q-AUDIT-dg-empty-commits: fm-empty-commit-loop failing (fail): Find the committing step on the named branch and compare its tree with the head before committing (MERGENOW-NOOP-1 pattern).",
+  "body": "**Owner:** operations\n**Trigger:** the daily failure audit files it; the executor takes it in driver order\n**Done check:** cmd:python3 -m foundation failure_audit --probe dg-empty-commits\n**Status:** closed\n\nFailure mode `fm-empty-commit-loop` detected by `dg-empty-commits`, failing since 2026-11-25T21:07:40Z.\nEvidence: OW-NOOP-1)\nx refs/remotes/origin/parked/claude/project-thread-c0qfjl: 25 empty commits in 24 h (a loop pushing a tree equal to its parent; MERGENOW-NOOP-1)\nx refs/remotes/origin/parked/claude/project-thread-cfzjwj: 5 empty commits in 24 h (a loop pushing a tree equal to its parent; MERGENOW-NOOP-1)\n\nSignature: 96f48bc7994d (disposition: fix).\nSuspected root cause: a bot commits without comparing trees\nRemedy: Find the committing step on the named branch and compare its tree with the head before committing (MERGENOW-NOOP-1 pattern).\nFix the earliest cause, so the detector passes; do not weaken or remove the detector.\n\n**Closing probe:** cmd:python3 -m foundation failure_audit --probe dg-empty-commits\n\n**Disposition:** shelved (ttl, 2026-11-26T03:14:49Z, DISPOSE-1)\n\n**Evidence:** open 6.1 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "labels": [
+    "role:operations",
+    "audit",
+    "fix",
+    "agent-ready",
+    "p1"
+  ],
+  "milestone": "Now",
+  "workstream": "Failure modes"
+}

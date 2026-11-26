@@ -1,0 +1,22 @@
+{
+ "repo": "ultrastable/seed",
+ "description": "The code-only kernel a new autonomous system starts from: bootstrapper, tick Worker, roles, agent instructions and the loops that take it to criticality. A copy of seed/ in the Ultrastable platform.",
+ "homepage": "",
+ "topics": [
+  "autonomous-agents",
+  "cloudflare-workers",
+  "template",
+  "ultrastable"
+ ],
+ "settings": {
+  "has_wiki": false,
+  "allow_squash_merge": true,
+  "allow_merge_commit": false,
+  "allow_rebase_merge": false,
+  "allow_auto_merge": true,
+  "allow_update_branch": true,
+  "delete_branch_on_merge": true,
+  "private": false,
+  "is_template": true
+ }
+}

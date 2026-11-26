@@ -1,0 +1,233 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/tenant-repos.schema.json",
+ "title": "Tenant repositories (TENANT-REPO-1, TENANT-SANDBOX-1, FULLSTACK-1)",
+ "$defs": {
+  "tenant": {
+   "type": "object",
+   "required": [
+    "repo",
+    "state"
+   ],
+   "properties": {
+    "repo": {
+     "type": "string",
+     "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"
+    },
+    "state": {
+     "enum": [
+      "own-repo",
+      "moving",
+      "moved",
+      "planned",
+      "retired"
+     ]
+    },
+    "source": {
+     "type": "string",
+     "minLength": 1
+    },
+    "why": {
+     "type": "string",
+     "minLength": 1
+    },
+    "frontend": {
+     "type": "string",
+     "pattern": "^https://[^\\s]+$"
+    },
+    "worker": {
+     "type": "string",
+     "pattern": "^(ultrastable|tenant)-[a-z0-9-]+$"
+    },
+    "ai": {
+     "type": "boolean"
+    },
+    "visibility": {
+     "enum": [
+      "public",
+      "private"
+     ]
+    },
+    "description": {
+     "type": "string",
+     "minLength": 20,
+     "maxLength": 350
+    },
+    "keep_in_core": {
+     "type": "array",
+     "items": {
+      "type": "string",
+      "minLength": 1
+     }
+    },
+    "vendor": {
+     "type": "object",
+     "additionalProperties": {
+      "type": "string",
+      "pattern": "(^|/)vendor/"
+     }
+    },
+    "sandbox": {
+     "type": "object",
+     "required": [
+      "stores",
+      "secrets",
+      "budget"
+     ],
+     "properties": {
+      "stores": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "pattern": "^ultrastable-"
+       }
+      },
+      "secrets": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "pattern": "^[A-Z][A-Z0-9_]*$"
+       }
+      },
+      "budget": {
+       "type": "object",
+       "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+       }
+      }
+     },
+     "additionalProperties": false,
+     "patternProperties": {
+      "^_": true
+     }
+    },
+    "scaffold": {
+     "type": "object",
+     "required": [
+      "beat_hours",
+      "noun"
+     ],
+     "properties": {
+      "beat_hours": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "noun": {
+       "type": "string",
+       "minLength": 1
+      }
+     }
+    }
+   },
+   "additionalProperties": false,
+   "patternProperties": {
+    "^_": true
+   },
+   "allOf": [
+    {
+     "anyOf": [
+      {
+       "properties": {
+        "state": {
+         "enum": [
+          "moving",
+          "moved",
+          "planned"
+         ]
+        }
+       },
+       "required": [
+        "visibility",
+        "description",
+        "source",
+        "keep_in_core",
+        "vendor"
+       ]
+      },
+      {
+       "properties": {
+        "state": {
+         "enum": [
+          "own-repo",
+          "retired"
+         ]
+        }
+       }
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "type": "object",
+ "required": [
+  "org",
+  "tenants",
+  "visitor_apps"
+ ],
+ "properties": {
+  "org": {
+   "type": "string",
+   "pattern": "^[a-z0-9][a-z0-9-]*$"
+  },
+  "tenants": {
+   "type": "object",
+   "patternProperties": {
+    "^[a-z0-9][a-z0-9-]*$": {
+     "$ref": "#/$defs/tenant"
+    }
+   },
+   "additionalProperties": false
+  },
+  "visitor_apps": {
+   "type": "object",
+   "required": [
+    "template",
+    "repo_prefix",
+    "visibility",
+    "base_manifest",
+    "usd_per_month",
+    "max_apps",
+    "max_deploys_per_run",
+    "full_stack_hours"
+   ],
+   "properties": {
+    "repo_prefix": {
+     "type": "string",
+     "minLength": 1
+    },
+    "base_manifest": {
+     "type": "string",
+     "minLength": 1
+    },
+    "template": {
+     "type": "string",
+     "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"
+    },
+    "visibility": {
+     "enum": [
+      "public",
+      "private"
+     ]
+    },
+    "usd_per_month": {
+     "type": "number",
+     "minimum": 0
+    },
+    "max_apps": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "max_deploys_per_run": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "full_stack_hours": {
+     "type": "integer",
+     "minimum": 1
+    }
+   }
+  }
+ }
+}

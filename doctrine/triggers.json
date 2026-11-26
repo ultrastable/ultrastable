@@ -257,6 +257,14 @@
     "41 5 * * *"
    ]
   },
+  "findable.yml": {
+   "events": [
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "41 7 * * *"
+   ]
+  },
   "first-run.yml": {
    "events": [
     "push",
@@ -333,6 +341,14 @@
     "11 5 * * *"
    ]
   },
+  "ledger-openalex.yml": {
+   "events": [
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "41 5 * * *"
+   ]
+  },
   "loop.yml": {
    "events": [
     "workflow_dispatch"
@@ -347,6 +363,14 @@
     "workflow_dispatch"
    ],
    "crons": []
+  },
+  "openstd.yml": {
+   "events": [
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "41 5 * * *"
+   ]
   },
   "org-manage.yml": {
    "events": [
@@ -364,10 +388,11 @@
   },
   "org-settings.yml": {
    "events": [
+    "push",
     "workflow_dispatch"
    ],
    "crons": [
-    "17 5 * * 1"
+    "17 5 * * *"
    ]
   },
   "outreach.yml": {
@@ -426,10 +451,11 @@
   },
   "seed-launch.yml": {
    "events": [
+    "push",
     "workflow_dispatch"
    ],
    "crons": [
-    "23 7 * * 1"
+    "23 7 * * *"
    ]
   },
   "sessions.yml": {
@@ -462,6 +488,23 @@
    ],
    "crons": [
     "41 6 * * *"
+   ]
+  },
+  "supply-chain.yml": {
+   "events": [
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "41 5 * * 3"
+   ]
+  },
+  "template-publish.yml": {
+   "events": [
+    "push",
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "37 4 * * *"
    ]
   },
   "temporal.yml": {

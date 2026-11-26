@@ -1,0 +1,14 @@
+{
+  "id": "Q-AUDIT-dg-built-live",
+  "title": "Q-AUDIT-dg-built-live: fm-built-without-evidence failing (fail): Run the tenant's graph step and set the row back to pending until its probe shows nodes.",
+  "body": "**Owner:** product\n**Trigger:** the daily failure audit files it; the executor takes it in driver order\n**Done check:** cmd:python3 -m foundation failure_audit --probe dg-built-live\n**Status:** closed\n\nFailure mode `fm-built-without-evidence` detected by `dg-built-live`, failing since 2026-11-25T21:07:45Z.\nEvidence: x what-works: marked built, https://what-works.ultrastable.org/api/graph reports no nodes (the graph never ran)\n\nSignature: d25f28dd36b5 (disposition: fix).\nSuspected root cause: a knowledge-graph row is built but its probe answers no nodes\nRemedy: Run the tenant's graph step and set the row back to pending until its probe shows nodes.\nFix the earliest cause, so the detector passes; do not weaken or remove the detector.\n\n**Closing probe:** cmd:python3 -m foundation failure_audit --probe dg-built-live\n\n**Disposition:** shelved (ttl, 2026-11-26T03:14:49Z, DISPOSE-1)\n\n**Evidence:** open 6.1 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "labels": [
+    "role:product",
+    "audit",
+    "fix",
+    "agent-ready",
+    "p1"
+  ],
+  "milestone": "Now",
+  "workstream": "Failure modes"
+}

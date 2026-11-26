@@ -74,6 +74,23 @@ def hits_metrics(token: str, acct: str, db: str, now: float | None = None) -> di
     return {"pageviews_7d": a["pv"], "visitors_7d": a["v"], "agent_hits_7d": b["n"], "pilot_page_views_7d": c["n"]}
 
 
+HITS_URL = "https://ultrastable.io/api/growth/hits"
+
+
+def hits_public(url=HITS_URL, fetch=None) -> dict:
+    import json as _j, urllib.request
+    if fetch is None:
+        req = urllib.request.Request(url, headers={"user-agent": "ultrastable-growth/1"})
+        with urllib.request.urlopen(req, timeout=20) as r:
+            body = _j.loads(r.read())
+    else:
+        body = fetch(url)
+    keys = ("pageviews_7d", "visitors_7d", "agent_hits_7d", "pilot_page_views_7d")
+    if not all(isinstance(body.get(k), int) for k in keys):
+        raise ValueError("hits endpoint answered without counts")
+    return {k: body[k] for k in keys}
+
+
 def evaluate(metrics: dict, cfg=None) -> list[dict]:
     cfg = cfg or load()
     out = []
@@ -100,6 +117,11 @@ def snapshot(root=REPO, use_live=True, env=None) -> dict:
             metrics = hits_metrics(env["CLOUDFLARE_API_TOKEN"], "81e3a4efb4eb66e613529b87682911bb", "5cd83b52-864a-4510-b062-fc0d9402d06c")
         except Exception as e:  # recorded: an unmeasured metric is a finding
             d["metrics_error"] = type(e).__name__ + ": " + str(e)[:120]
+    if use_live and not metrics:  # GROWTH-HITS-1: second route, no credential: the site Worker serves the same aggregates from its own D1 binding
+        try:
+            metrics = hits_public()
+        except Exception as e:  # recorded: an unmeasured metric is a finding
+            d["metrics_error"] = (d.get("metrics_error", "") + " | public: " + type(e).__name__ + ": " + str(e)[:120]).strip(" |")
     d["metrics"] = evaluate(metrics, cfg)
     d["breaches"] = [m["id"] for m in d["metrics"] if m["breach"]]
     return d

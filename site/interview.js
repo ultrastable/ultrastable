@@ -63,6 +63,8 @@ export const JS = String.raw`(function () {
     { id: 'depth', q: 'Quick and simple first, or thorough and polished?', o: [['A', 'Quick first', 'a quick, simple first version'], ['B', 'Thorough', 'a thorough, polished version']], k: { A: /\b(quick|simple|fast|prototype|rough)\b/, B: /\b(polish|thorough|complete|professional|full)\b/ } }
   ];
   var S = { text: '', ans: {}, phase: 'idea', cur: null, id: null, busy: false, seed: Math.floor(Math.random() * 1e9), shown: [], pool: [] };
+  // CLONE-PATH-1: a system started from the template arrives here by one link with its idea already written (?idea=...); nobody types it twice.
+  try { var pre = new URLSearchParams(location.search).get('idea'); if (pre && inp && !inp.value) inp.value = pre.slice(0, 1500); } catch (e) { console.error('idea prefill', e); }
   var YES = /^(yes|yeah|yep|yup|sure|ok|okay|correct|right|true|definitely|please|of course)\b/, NO = /^(no|nope|nah|not|never|don'?t)\b/;
   function el(tag, cls, txt) { var n = document.createElement(tag); if (cls) n.className = cls; if (txt != null) n.textContent = txt; return n; }
   function scroll() { try { form.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } catch (e) { } }
@@ -176,7 +178,7 @@ export const JS = String.raw`(function () {
   function poll(id, li, n) {
     return fetch('/s/' + id + '/status', { headers: { Accept: 'application/json' } }).then(function (r) { return r.json(); }).then(function (d) {
       if (d.state === 'ready') { mark(li, true, 'Your site is written'); return audited(id, 0); }
-      if (d.state === 'failed' || n > 8) { mark(li, false, 'The site could not be written this time'); return fail(); }
+      if (d.state === 'failed' || n > 8) { mark(li, false, 'The site could not be written this time. Your idea is saved and it is tried again by itself'); var keep = el('p'), a = el('a', null, 'Keep this page: it updates when your site is ready'); a.href = '/s/' + id + '/make'; keep.appendChild(a); say('bot', keep); return fail(); }
       return new Promise(function (ok) { setTimeout(ok, 1500); }).then(function () { return poll(id, li, n + 1); });
     }).catch(function () { mark(li, false, 'Lost the connection'); fail(); });
   }

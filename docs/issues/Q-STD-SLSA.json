@@ -1,0 +1,14 @@
+{
+  "id": "Q-STD-SLSA",
+  "title": "Q-STD-SLSA: attach SLSA v1 build provenance to every Worker deploy",
+  "body": "**Owner:** platform-engineer\n**Trigger:** standards register entry slsa-provenance is planned (STANDARDS-1)\n**Done check:** cmd:python3 -m foundation standards --probe slsa-provenance\n**Prediction:** standards_supported_share >= 0.8 within 336 h\n**Status:** closed\n\n`deploy/deploy-workers.mjs` records each deploy in `ops/deploys.jsonl`. Emit an in-toto statement with a SLSA v1 provenance predicate for each uploaded Worker bundle (subject: bundle sha256; buildDefinition: repository, commit, workflow; runDetails: run id), store it beside the deploy row, and attest it with GitHub artifact attestations where the deploy runs in Actions. Add a test that checks the statement shape, then mark the register entry `supported`.\n\n**Out of scope:** signing with a key a person must mint, or changing how or when Workers deploy.\n\n**Closing probe:** cmd:python3 -m foundation standards --probe slsa-provenance\n\n**Disposition:** shelved (ttl, 2026-11-26T03:44:52Z, DISPOSE-1)\n\n**Evidence:** open 6.1 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "labels": [
+    "p2",
+    "agent-ready",
+    "role:platform-engineer",
+    "standards",
+    "supply-chain"
+  ],
+  "milestone": "Next",
+  "workstream": "Platform"
+}

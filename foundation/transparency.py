@@ -130,6 +130,22 @@ def _gh_json(root, *args):
         return []
 
 
+def merged_rest(root, pages=3):
+    """Merged PRs over the REST list endpoint (no GraphQL). Lines are not in that endpoint, so they count as 0 here; the PR count and dates are exact."""
+    out = []
+    for page in range(1, pages + 1):
+        raw = _sh(root, "gh", "api", f"repos/{GH}/pulls?state=closed&sort=updated&direction=desc&per_page=100&page={page}", timeout=120)
+        try:
+            rows = json.loads(raw or "[]")
+        except ValueError:
+            rows = []
+        if not rows:
+            break
+        out += [{"number": r["number"], "title": r["title"], "headRefName": (r.get("head") or {}).get("ref", ""), "mergedAt": r["merged_at"], "createdAt": r["created_at"],
+                 "additions": 0, "deletions": 0, "body": r.get("body") or "", "url": r["html_url"]} for r in rows if r.get("merged_at")]
+    return out
+
+
 def throughput(root, use_gh=True):
     """How much code the system actually ships, and who ships it. Unattended = PRs opened by the server-side executor (body says 'Executor run');
     everything else on agent/* or claude/* branches is an interactive agent session."""
@@ -151,6 +167,10 @@ def throughput(root, use_gh=True):
     if not use_gh:
         return out
     prs = _gh_json(root, "pr", "list", "--repo", GH, "--state", "merged", "--limit", "300", "--json", "number,title,headRefName,mergedAt,createdAt,additions,deletions,body,url")
+    src = "graphql"
+    if not prs:  # LIVE-COUNT-1 (2026-11-25): the GraphQL list came back empty and /live showed 0 merged PRs while dozens merged; REST is the second route
+        prs, src = merged_rest(root), "rest"
+    out["merged_source"] = src
     origin = {"unattended executor": [0, 0, 0], "agent session": [0, 0, 0], "bot": [0, 0, 0], "other": [0, 0, 0]}
     day, hours = {}, []
     for p in prs:
@@ -312,8 +332,25 @@ def loop(root=REPO) -> dict:
     return {"loop": "transparency", "ok": True, "bytes": out.stat().st_size, "loops_with_evidence": snap["scoreboard"]["loops_with_evidence"], **pub}
 
 
+def probe_merged(root=REPO, live=None, rest=None) -> int:
+    """LIVE-COUNT-1 probe: fails when /live shows 0 merged PRs while GitHub's REST list has merges in the last 7 days."""
+    import urllib.request
+    if live is None:
+        req = urllib.request.Request("https://ultrastable.io/api/live", headers={"user-agent": "ultrastable-transparency/1"})
+        with urllib.request.urlopen(req, timeout=30) as r:
+            live = json.loads(r.read())
+    shown = (((live.get("snapshot") or live).get("throughput") or {}).get("merged") or {}).get("total") or 0
+    cut = datetime.now(timezone.utc).timestamp() - 7 * 86400
+    rows = merged_rest(root, pages=1) if rest is None else rest
+    recent = sum(1 for p in rows if datetime.fromisoformat(p["mergedAt"].replace("Z", "+00:00")).timestamp() >= cut)
+    print(json.dumps({"live_total": shown, "github_merged_7d": recent}))
+    return 1 if recent and not shown else 0
+
+
 def main(argv) -> int:
     a = list(argv)
+    if "--probe-merged" in a:
+        return probe_merged()
     out = a[a.index("--out") + 1] if "--out" in a else None
     sq = a[a.index("--sql") + 1] if "--sql" in a else None
     snap = snapshot(REPO, use_gh="--no-gh" not in a)

@@ -38,10 +38,10 @@ export function redirectOk(u) {
   let x; try { x = new URL(u); } catch (e) { return false; }
   if (x.hash) return false;
   if (x.protocol === "https:") return true;
-  if (x.protocol === "http:") return ["localhost", "127.0.0.1", "[::1]"].includes(x.hostname); // server-side only: SSRF guard, loopback is rejected, never a host
+  if (x.protocol === "http:") return ["localhost", "127.0.0.1", "[::1]"].includes(x.hostname); // server-side only: an http redirect is accepted for a native OAuth client's loopback address alone (RFC 8252); the system runs nothing there
   return /^[a-z][a-z0-9+.-]*:$/.test(x.protocol) && !["javascript:", "data:", "file:", "blob:", "about:", "vbscript:", "ftp:", "ws:", "wss:"].includes(x.protocol);
 }
-const privateHost = h => h === "localhost" || /^\[/.test(h) || /^\d+\.\d+\.\d+\.\d+$/.test(h) || !h.includes(".") || /\.(local|internal|localhost)$/.test(h); // server-side only: SSRF guard, loopback is rejected, never a host
+const privateHost = h => h === "localhost" || /^\[/.test(h) || /^\d+\.\d+\.\d+\.\d+$/.test(h) || !h.includes(".") || /\.(local|internal|localhost)$/.test(h); // server-side only: SSRF guard, a loopback, private or bare host is refused as a fetch target
 
 export async function register(request, env, now = Date.now()) {
   let b; try { b = await request.json(); } catch (e) { return oerr("invalid_client_metadata", "body must be JSON"); }

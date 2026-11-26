@@ -11,6 +11,7 @@
 // Every call is counted against the invocation's subrequest budget (Workers Free: 50 per invocation).
 import { notGreen } from './greenguard.js';
 import { GENERATED } from './generated.js';
+import { ghFetch, mergedAnyway } from './ghfetch.js';  // GH-RETRY-1
 
 const API = 'https://api.github.com';
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
@@ -20,7 +21,7 @@ export function makeGh(f, token, cap = 40) {
   const gh = async (method, path, body) => {
     if (calls >= cap) return { ok: false, status: 0, json: null, stopped: true };
     calls++;
-    const r = await f(API + path, { method, headers: { authorization: 'Bearer ' + token, accept: 'application/vnd.github+json', 'user-agent': 'ultrastable-mergenow', 'content-type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
+    const r = await ghFetch(f, API + path, { method, headers: { authorization: 'Bearer ' + token, accept: 'application/vnd.github+json', 'user-agent': 'ultrastable-mergenow', 'content-type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
     const t = await r.text(); let json = null; try { json = t ? JSON.parse(t) : null; } catch { json = t; }
     return { ok: r.ok, status: r.status, json };
   };
@@ -63,19 +64,25 @@ export async function reconcile(gh, repo, pr, { generated = GENERATED } = {}) {
       if (t !== a.text) tree.push({ path: p, mode: '100644', type: 'blob', content: t });
     }
   }
+  let head = null, nt = null;
   if (tree.length) {
-    const head = await gh('GET', `/repos/${repo}/git/commits/${pr.head.sha}`);
+    head = await gh('GET', `/repos/${repo}/git/commits/${pr.head.sha}`);
     if (!head.ok) return { result: 'error', why: `head ${head.status}` };
-    const nt = await gh('POST', `/repos/${repo}/git/trees`, { base_tree: head.json.tree.sha, tree });
+    nt = await gh('POST', `/repos/${repo}/git/trees`, { base_tree: head.json.tree.sha, tree });
     if (!nt.ok) return { result: 'error', why: `tree ${nt.status}` };
+  }
+  // MERGENOW-NOOP-1: a tree equal to the head's tree changes nothing. Committing it anyway pushed an empty commit, which raised a synchronize
+  // event, which ran this again: 34 empty commits in four minutes on one PR, each starting a full CI run. Nothing changed, so nothing is committed.
+  if (tree.length && nt.json.sha !== head.json.tree.sha) {
     const c = await gh('POST', `/repos/${repo}/git/commits`, { message: 'MERGE-NOW-1: generated files and claim values follow main (regenerated after merge)', tree: nt.json.sha, parents: [pr.head.sha] });
     if (!c.ok) return { result: 'error', why: `commit ${c.status}` };
     const u = await gh('PATCH', `/repos/${repo}/git/refs/heads/${encodeURIComponent(pr.head.ref)}`, { sha: c.json.sha, force: false });
     if (!u.ok) return { result: 'error', why: `ref ${u.status}` };
   }
   const mg = await gh('POST', `/repos/${repo}/merges`, { base: pr.head.ref, head: 'main', commit_message: `MERGE-NOW-1: merge main into ${pr.head.ref}` });
-  if (mg.ok || mg.status === 204) return { result: 'resolved', stripped: tree.length };
-  if (mg.status === 409) return { result: 'code-conflict', stripped: tree.length };
+  const stripped = tree.length && nt && nt.json.sha !== head.json.tree.sha ? tree.length : 0;
+  if (mg.ok || mg.status === 204) return { result: 'resolved', stripped };
+  if (mg.status === 409) return { result: 'code-conflict', stripped };
   return { result: 'error', why: `merges ${mg.status}` };
 }
 
@@ -120,6 +127,7 @@ export async function mergeNow({ token, repo, numbers = null, fetch: f = fetch, 
     const hold = await notGreen(f, token, repo, d.head.sha, (ff, t, m, path) => gh(m, path));  // GREEN-GUARD-1
     if (hold) { out.held.push(`${tag} ${hold}`); continue; }
     const m = await gh('PUT', `/repos/${repo}/pulls/${n}/merge`, { merge_method: 'squash', sha: d.head.sha });
+    if (!m.ok && !m.stopped && await mergedAnyway(gh, repo, n, m.status)) m.ok = true;  // GH-RETRY-1
     (m.ok ? out.merged : out.errors).push(m.ok ? tag : `${tag} merge ${m.status} ${(m.json && m.json.message || '').slice(0, 80)}`);
   }
   out.calls = gh.calls();

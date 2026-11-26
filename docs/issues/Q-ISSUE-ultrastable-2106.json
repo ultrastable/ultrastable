@@ -1,0 +1,11 @@
+{
+  "id": "Q-ISSUE-ultrastable-2106",
+  "title": "Q-ISSUE-ultrastable-2106: Retriage gaps",
+  "body": "**Owner:** executor\n**Trigger:** issueloop, daily\n**Done check:** cmd:python3 -m foundation issueloop --closed ultrastable/ultrastable#2106\n**Status:** closed\n\nISSUE-LOOP-1: ultrastable/ultrastable#2106 (Retriage gaps) is unprobed: no probe line in the body. Fix it in code and close it, or add a `Closing probe:` line the loop can run (file, grep, allow-listed cmd, or GET url expect \"text\").\n\nsize: S\n\n**Disposition:** shelved (ttl, 2026-11-26T00:08:01Z, DISPOSE-1)\n\n**Evidence:** open 6.2 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "labels": [
+    "p2",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Issues"
+}

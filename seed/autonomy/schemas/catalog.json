@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json.schemastore.org/schema-catalog.json",
+  "version": 1,
+  "schemas": [
+    {
+      "name": "balance.json",
+      "description": "Contract for seed/autonomy/balance.json",
+      "fileMatch": [
+        "seed/autonomy/balance.json"
+      ],
+      "url": "balance.schema.json"
+    },
+    {
+      "name": "cost-budgets.json",
+      "description": "Contract for seed/autonomy/cost-budgets.json",
+      "fileMatch": [
+        "seed/autonomy/cost-budgets.json"
+      ],
+      "url": "cost-budgets.schema.json"
+    },
+    {
+      "name": "criticality.json",
+      "description": "Contract for seed/autonomy/criticality.json",
+      "fileMatch": [
+        "seed/autonomy/criticality.json"
+      ],
+      "url": "criticality.schema.json"
+    },
+    {
+      "name": "default-policy-pack.json",
+      "description": "Contract for seed/autonomy/default-policy-pack.json",
+      "fileMatch": [
+        "seed/autonomy/default-policy-pack.json"
+      ],
+      "url": "default-policy-pack.schema.json"
+    },
+    {
+      "name": "failure-modes.json",
+      "description": "Contract for seed/autonomy/failure-modes.json",
+      "fileMatch": [
+        "seed/autonomy/failure-modes.json"
+      ],
+      "url": "failure-modes.schema.json"
+    },
+    {
+      "name": "goals.json",
+      "description": "Contract for seed/autonomy/goals.json",
+      "fileMatch": [
+        "seed/autonomy/goals.json"
+      ],
+      "url": "goals.schema.json"
+    },
+    {
+      "name": "improve.json",
+      "description": "Contract for seed/autonomy/improve.json",
+      "fileMatch": [
+        "seed/autonomy/improve.json"
+      ],
+      "url": "improve.schema.json"
+    },
+    {
+      "name": "kit.json",
+      "description": "Contract for seed/autonomy/kit.json",
+      "fileMatch": [
+        "seed/autonomy/kit.json"
+      ],
+      "url": "kit.schema.json"
+    },
+    {
+      "name": "managers.json",
+      "description": "Contract for seed/autonomy/managers.json",
+      "fileMatch": [
+        "seed/autonomy/managers.json"
+      ],
+      "url": "managers.schema.json"
+    },
+    {
+      "name": "pace.json",
+      "description": "Contract for seed/autonomy/pace.json",
+      "fileMatch": [
+        "seed/autonomy/pace.json"
+      ],
+      "url": "pace.schema.json"
+    },
+    {
+      "name": "policy.json",
+      "description": "Contract for seed/autonomy/policy.json",
+      "fileMatch": [
+        "seed/autonomy/policy.json"
+      ],
+      "url": "policy.schema.json"
+    },
+    {
+      "name": "retention.json",
+      "description": "Contract for seed/autonomy/retention.json",
+      "fileMatch": [
+        "seed/autonomy/retention.json"
+      ],
+      "url": "retention.schema.json"
+    },
+    {
+      "name": "seed-lifecycle.json",
+      "description": "Contract for seed/autonomy/seed-lifecycle.json",
+      "fileMatch": [
+        "seed/autonomy/seed-lifecycle.json"
+      ],
+      "url": "seed-lifecycle.schema.json"
+    },
+    {
+      "name": "static-content.json",
+      "description": "Contract for seed/autonomy/static-content.json",
+      "fileMatch": [
+        "seed/autonomy/static-content.json"
+      ],
+      "url": "static-content.schema.json"
+    },
+    {
+      "name": "system.json",
+      "description": "Contract for seed/autonomy/system.json",
+      "fileMatch": [
+        "seed/autonomy/system.json"
+      ],
+      "url": "system.schema.json"
+    },
+    {
+      "name": "yearsim.json",
+      "description": "Contract for seed/autonomy/yearsim.json",
+      "fileMatch": [
+        "seed/autonomy/yearsim.json"
+      ],
+      "url": "yearsim.schema.json"
+    }
+  ]
+}

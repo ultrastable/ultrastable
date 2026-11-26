@@ -1,0 +1,269 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/lifecycle.schema.json",
+ "title": "Seed lifecycle evidence: instances/<slug>/lifecycle.json (SEED-LIFECYCLE-1)",
+ "$defs": {
+  "answer": {
+   "oneOf": [
+    {
+     "type": "object",
+     "required": [
+      "inherit"
+     ],
+     "properties": {
+      "inherit": {
+       "type": "string",
+       "minLength": 1
+      }
+     },
+     "additionalProperties": false,
+     "patternProperties": {
+      "^_": true
+     }
+    },
+    {
+     "type": "object",
+     "required": [
+      "status",
+      "probe",
+      "how"
+     ],
+     "properties": {
+      "status": {
+       "const": "closed"
+      },
+      "probe": {
+       "type": "string",
+       "minLength": 1
+      },
+      "how": {
+       "type": "string",
+       "minLength": 1
+      }
+     },
+     "additionalProperties": false,
+     "patternProperties": {
+      "^_": true
+     }
+    },
+    {
+     "type": "object",
+     "required": [
+      "status",
+      "reason"
+     ],
+     "properties": {
+      "status": {
+       "const": "n/a"
+      },
+      "reason": {
+       "type": "string",
+       "minLength": 1
+      }
+     },
+     "additionalProperties": false,
+     "patternProperties": {
+      "^_": true
+     }
+    },
+    {
+     "type": "object",
+     "required": [
+      "status",
+      "item"
+     ],
+     "properties": {
+      "status": {
+       "const": "open"
+      },
+      "item": {
+       "type": "string",
+       "pattern": "^[A-Z][A-Za-z0-9-]+$"
+      },
+      "how": {
+       "type": "string",
+       "minLength": 1
+      }
+     },
+     "additionalProperties": false,
+     "patternProperties": {
+      "^_": true
+     }
+    },
+    {
+     "type": "object",
+     "required": [
+      "status",
+      "default",
+      "link"
+     ],
+     "properties": {
+      "default": {
+       "type": "string",
+       "minLength": 1
+      },
+      "link": {
+       "type": "string",
+       "minLength": 1
+      },
+      "status": {
+       "const": "gate"
+      }
+     }
+    }
+   ]
+  }
+ },
+ "type": "object",
+ "required": [
+  "slug",
+  "build",
+  "deploy",
+  "verify",
+  "loops",
+  "survival"
+ ],
+ "properties": {
+  "slug": {
+   "type": "string",
+   "pattern": "^[a-z0-9][a-z0-9-]*$"
+  },
+  "build": {
+   "type": "object",
+   "required": [
+    "paths",
+    "tests"
+   ],
+   "properties": {
+    "repo": {
+     "type": "string",
+     "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"
+    },
+    "paths": {
+     "type": "array",
+     "items": {
+      "type": "string",
+      "minLength": 1
+     }
+    },
+    "tests": {
+     "type": "array",
+     "items": {
+      "type": "string",
+      "minLength": 1
+     }
+    }
+   },
+   "additionalProperties": false,
+   "patternProperties": {
+    "^_": true
+   }
+  },
+  "deploy": {
+   "type": "object",
+   "required": [
+    "worker"
+   ],
+   "properties": {
+    "worker": {
+     "type": "string",
+     "pattern": "^([a-z0-9][a-z0-9-]*)?$"
+    }
+   },
+   "additionalProperties": false,
+   "patternProperties": {
+    "^_": true
+   }
+  },
+  "verify": {
+   "type": "object",
+   "required": [
+    "url",
+    "expect"
+   ],
+   "properties": {
+    "url": {
+     "type": "string",
+     "pattern": "^(https://[^\\s]+)?$"
+    },
+    "expect": {
+     "type": "string"
+    }
+   },
+   "additionalProperties": false,
+   "patternProperties": {
+    "^_": true
+   }
+  },
+  "loops": {
+   "type": "array",
+   "items": {
+    "type": "string",
+    "minLength": 1
+   }
+  },
+  "survival": {
+   "type": "object",
+   "required": [
+    "credentials",
+    "source-control",
+    "budget",
+    "cost-alerts",
+    "payment",
+    "dependencies",
+    "runtime",
+    "models",
+    "health",
+    "backups",
+    "renewal",
+    "improvement",
+    "privacy"
+   ],
+   "properties": {
+    "credentials": {
+     "$ref": "#/$defs/answer"
+    },
+    "source-control": {
+     "$ref": "#/$defs/answer"
+    },
+    "budget": {
+     "$ref": "#/$defs/answer"
+    },
+    "cost-alerts": {
+     "$ref": "#/$defs/answer"
+    },
+    "payment": {
+     "$ref": "#/$defs/answer"
+    },
+    "dependencies": {
+     "$ref": "#/$defs/answer"
+    },
+    "runtime": {
+     "$ref": "#/$defs/answer"
+    },
+    "models": {
+     "$ref": "#/$defs/answer"
+    },
+    "health": {
+     "$ref": "#/$defs/answer"
+    },
+    "backups": {
+     "$ref": "#/$defs/answer"
+    },
+    "renewal": {
+     "$ref": "#/$defs/answer"
+    },
+    "improvement": {
+     "$ref": "#/$defs/answer"
+    },
+    "privacy": {
+     "$ref": "#/$defs/answer"
+    }
+   },
+   "additionalProperties": false,
+   "patternProperties": {
+    "^_": true
+   }
+  }
+ }
+}

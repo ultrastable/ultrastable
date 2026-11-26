@@ -1,0 +1,350 @@
+{
+ "_doc": "The replication ledger's findings. Each finding is one claim, its original study and every replication attempt filed so far. No standing is typed here: standing.js computes it from the attempts. Citations carry a DOI wherever one exists, checked against Crossref by `node worker/cli.mjs verify`; new attempts are appended with `node worker/cli.mjs add`, never by hand-editing a standing. Summaries are plain words with no numbers: a number enters only from the source itself.",
+ "version": 1,
+ "findings": [
+  {
+   "id": "ego-depletion", "field": "psychology", "topic": "Self-control",
+   "name": "Ego depletion",
+   "claim": "Exerting self-control on one task drains a limited resource, so self-control on a following task is weaker.",
+   "original": { "authors": "Baumeister RF, Bratslavsky E, Muraven M, Tice DM", "year": 1998, "title": "Ego depletion: is the active self a limited resource?", "venue": "Journal of Personality and Social Psychology", "doi": "10.1037/0022-3514.74.5.1252" },
+   "query": "\"ego depletion\" replication",
+   "replications": [
+    { "kind": "multisite", "preregistered": true, "outcome": "failed", "added": "2026-11-25",
+      "cite": { "authors": "Hagger MS, Chatzisarantis NLD, Alberts H, et al.", "year": 2016, "title": "A multilab preregistered replication of the ego-depletion effect", "venue": "Perspectives on Psychological Science", "doi": "10.1177/1745691616652873" },
+      "summary": "Across many laboratories following one preregistered protocol, the depletion effect was close to zero." },
+    { "kind": "multisite", "preregistered": true, "outcome": "failed", "added": "2026-11-25",
+      "cite": { "authors": "Vohs KD, Schmeichel BJ, Lohmann S, et al.", "year": 2021, "title": "A multisite preregistered paradigmatic test of the ego-depletion effect", "venue": "Psychological Science", "doi": "10.1177/0956797621989733" },
+      "summary": "A second multisite test, designed with proponents of the effect, again found an effect near zero." }
+   ]
+  },
+  {
+   "id": "facial-feedback-pen", "field": "psychology", "topic": "Emotion",
+   "name": "Facial feedback (pen in the mouth)",
+   "claim": "Holding a pen in the teeth, which forces a smile, makes cartoons seem funnier than holding it in the lips.",
+   "original": { "authors": "Strack F, Martin LL, Stepper S", "year": 1988, "title": "Inhibiting and facilitating conditions of the human smile: a nonobtrusive test of the facial feedback hypothesis", "venue": "Journal of Personality and Social Psychology", "doi": "10.1037/0022-3514.54.5.768" },
+   "query": "\"facial feedback\" replication",
+   "replications": [
+    { "kind": "multisite", "preregistered": true, "outcome": "failed", "added": "2026-11-25",
+      "cite": { "authors": "Wagenmakers EJ, Beek T, Dijkhoff L, et al.", "year": 2016, "title": "Registered Replication Report: Strack, Martin, & Stepper (1988)", "venue": "Perspectives on Psychological Science", "doi": "10.1177/1745691616674458" },
+      "summary": "Seventeen laboratories ran the original pen procedure and together found no reliable difference in rated funniness." },
+    { "kind": "multisite", "preregistered": true, "outcome": "mixed", "added": "2026-11-25",
+      "cite": { "authors": "Coles NA, March DS, Marmolejo-Ramos F, et al.", "year": 2022, "title": "A multi-lab test of the facial feedback hypothesis by the Many Smiles Collaboration", "venue": "Nature Human Behaviour", "doi": "10.1038/s41562-022-01458-9" },
+      "summary": "Posed smiling raised reported happiness in some tasks but not all, so whether facial feedback shows up depends on how the expression is produced." }
+   ]
+  },
+  {
+   "id": "power-posing", "field": "psychology", "topic": "Social behaviour",
+   "name": "Power posing",
+   "claim": "Holding an expansive 'power pose' for a couple of minutes raises testosterone, lowers cortisol and increases risk taking.",
+   "original": { "authors": "Carney DR, Cuddy AJC, Yap AJ", "year": 2010, "title": "Power posing: brief nonverbal displays affect neuroendocrine levels and risk tolerance", "venue": "Psychological Science", "doi": "10.1177/0956797610383437" },
+   "query": "\"power posing\" replication hormones",
+   "replications": [
+    { "kind": "direct", "preregistered": false, "outcome": "failed", "added": "2026-11-25",
+      "cite": { "authors": "Ranehill E, Dreber A, Johannesson M, Leiberg S, Sul S, Weber RA", "year": 2015, "title": "Assessing the robustness of power posing: no effect on hormones and risk tolerance in a large sample of men and women", "venue": "Psychological Science", "doi": "10.1177/0956797614553946" },
+      "summary": "In a much larger sample, power poses changed neither hormone levels nor risk taking, though people reported feeling more powerful." }
+   ]
+  },
+  {
+   "id": "elderly-priming", "field": "psychology", "topic": "Social priming",
+   "name": "Elderly priming (slow walking)",
+   "claim": "Unscrambling sentences with words about old age makes people walk more slowly down a corridor afterwards.",
+   "original": { "authors": "Bargh JA, Chen M, Burrows L", "year": 1996, "title": "Automaticity of social behavior: direct effects of trait construct and stereotype activation on action", "venue": "Journal of Personality and Social Psychology", "doi": "10.1037/0022-3514.71.2.230" },
+   "query": "elderly priming walking speed replication",
+   "replications": [
+    { "kind": "direct", "preregistered": false, "outcome": "failed", "added": "2026-11-25",
+      "cite": { "authors": "Doyen S, Klein O, Pichon CL, Cleeremans A", "year": 2012, "title": "Behavioral priming: it's all in the mind, but whose mind?", "venue": "PLoS ONE", "doi": "10.1371/journal.pone.0029081" },
+      "summary": "Timed by infrared sensors, primed participants did not walk more slowly; slowing appeared only when the experimenters expected it." }
+   ]
+  },
+  {
+   "id": "anchoring", "field": "psychology", "topic": "Judgment",
+   "name": "Anchoring",
+   "claim": "An arbitrary number shown before an estimate pulls the estimate toward it.",
+   "original": { "authors": "Tversky A, Kahneman D", "year": 1974, "title": "Judgment under uncertainty: heuristics and biases", "venue": "Science", "doi": "10.1126/science.185.4157.1124" },
+   "query": "anchoring effect replication many labs",
+   "replications": [
+    { "kind": "multisite", "preregistered": true, "outcome": "held", "added": "2026-11-25",
+      "cite": { "authors": "Klein RA, Ratliff KA, Vianello M, et al.", "year": 2014, "title": "Investigating variation in replicability: a \"many labs\" replication project", "venue": "Social Psychology", "doi": "10.1027/1864-9335/a000178" },
+      "summary": "Anchoring replicated strongly in nearly every one of the many participating samples." }
+   ]
+  },
+  {
+   "id": "framing-gain-loss", "field": "psychology", "topic": "Judgment",
+   "name": "Gain and loss framing",
+   "claim": "People choose the sure option when outcomes are framed as lives saved and the gamble when the same outcomes are framed as lives lost.",
+   "original": { "authors": "Tversky A, Kahneman D", "year": 1981, "title": "The framing of decisions and the psychology of choice", "venue": "Science", "doi": "10.1126/science.7455683" },
+   "query": "framing effect \"asian disease\" replication",
+   "replications": [
+    { "kind": "multisite", "preregistered": true, "outcome": "held", "added": "2026-11-25",
+      "cite": { "authors": "Klein RA, Ratliff KA, Vianello M, et al.", "year": 2014, "title": "Investigating variation in replicability: a \"many labs\" replication project", "venue": "Social Psychology", "doi": "10.1027/1864-9335/a000178" },
+      "summary": "The framing effect replicated across the participating samples." }
+   ]
+  },
+  {
+   "id": "testing-effect", "field": "psychology", "topic": "Learning",
+   "name": "The testing effect",
+   "claim": "Practising retrieval by testing yourself leads to better long-term retention than spending the same time restudying.",
+   "original": { "authors": "Roediger HL, Karpicke JD", "year": 2006, "title": "Test-enhanced learning: taking memory tests improves long-term retention", "venue": "Psychological Science", "doi": "10.1111/j.1467-9280.2006.01693.x" },
+   "query": "testing effect retrieval practice meta-analysis",
+   "replications": [
+    { "kind": "meta-analysis", "preregistered": false, "outcome": "held", "added": "2026-11-25",
+      "cite": { "authors": "Rowland CA", "year": 2014, "title": "The effect of testing versus restudy on retention: a meta-analytic review of the testing effect", "venue": "Psychological Bulletin", "doi": "10.1037/a0037559" },
+      "summary": "Across many experiments, testing beat restudying for later retention, with the size of the benefit depending on conditions such as feedback." }
+   ]
+  },
+  {
+   "id": "marshmallow-test", "field": "psychology", "topic": "Development",
+   "name": "The marshmallow test predicts later success",
+   "claim": "How long a preschooler waits for a second treat predicts their later academic competence.",
+   "original": { "authors": "Shoda Y, Mischel W, Peake PK", "year": 1990, "title": "Predicting adolescent cognitive and self-regulatory competencies from preschool delay of gratification: identifying diagnostic conditions", "venue": "Developmental Psychology", "doi": "10.1037/0012-1649.26.6.978" },
+   "query": "delay of gratification marshmallow later outcomes replication",
+   "replications": [
+    { "kind": "conceptual", "preregistered": false, "outcome": "smaller", "added": "2026-11-25",
+      "cite": { "authors": "Watts TW, Duncan GJ, Quan H", "year": 2018, "title": "Revisiting the marshmallow test: a conceptual replication investigating links between early delay of gratification and later outcomes", "venue": "Psychological Science", "doi": "10.1177/0956797618761661" },
+      "summary": "In a larger and more diverse sample, the link with later achievement was much smaller and shrank further once family background and early ability were accounted for." }
+   ]
+  },
+  {
+   "id": "milgram-obedience", "field": "psychology", "topic": "Social behaviour",
+   "name": "Obedience to authority (Milgram)",
+   "claim": "Most ordinary people will follow an experimenter's instructions to give what they believe are painful electric shocks to another person.",
+   "original": { "authors": "Milgram S", "year": 1963, "title": "Behavioral study of obedience", "venue": "Journal of Abnormal and Social Psychology", "doi": "10.1037/h0040525" },
+   "query": "Milgram obedience replication",
+   "replications": [
+    { "kind": "direct", "preregistered": false, "outcome": "held", "added": "2026-11-25",
+      "cite": { "authors": "Burger JM", "year": 2009, "title": "Replicating Milgram: would people still obey today?", "venue": "American Psychologist", "doi": "10.1037/a0010932" },
+      "summary": "A partial replication that stopped at an earlier point for ethical reasons found obedience rates only slightly below Milgram's." },
+    { "kind": "direct", "preregistered": false, "outcome": "held", "added": "2026-11-25",
+      "cite": { "authors": "Doliński D, Grzyb T, Folwarczny M, et al.", "year": 2017, "title": "Would you deliver an electric shock in 2015? Obedience in the experimental paradigm developed by Stanley Milgram in the 50 years following the original studies", "venue": "Social Psychological and Personality Science", "doi": "10.1177/1948550617693060" },
+      "summary": "A Polish replication of the shortened procedure again found that most participants obeyed." }
+   ]
+  },
+  {
+   "id": "stanford-prison", "field": "psychology", "topic": "Social behaviour",
+   "name": "Stanford prison experiment",
+   "claim": "Ordinary people assigned the role of guard will spontaneously become abusive toward people assigned the role of prisoner.",
+   "original": { "authors": "Haney C, Banks C, Zimbardo P", "year": 1973, "title": "Interpersonal dynamics in a simulated prison", "venue": "International Journal of Criminology and Penology", "doi": null, "note": "no DOI registered for this journal" },
+   "query": "Stanford prison experiment replication tyranny",
+   "replications": [
+    { "kind": "conceptual", "preregistered": false, "outcome": "failed", "added": "2026-11-25",
+      "cite": { "authors": "Reicher S, Haslam SA", "year": 2006, "title": "Rethinking the psychology of tyranny: the BBC prison study", "venue": "British Journal of Social Psychology", "doi": "10.1348/014466605X48998" },
+      "summary": "In a televised prison study without instructions to be tough, guards did not slide into tyranny on their own; group identification shaped what happened." }
+   ]
+  },
+  {
+   "id": "hrt-heart", "field": "medicine", "topic": "Cardiology",
+   "name": "Hormone therapy protects the heart",
+   "claim": "Postmenopausal hormone therapy lowers the risk of coronary heart disease.",
+   "original": { "authors": "Stampfer MJ, Colditz GA, Willett WC, et al.", "year": 1991, "title": "Postmenopausal estrogen therapy and cardiovascular disease: ten-year follow-up from the Nurses' Health Study", "venue": "New England Journal of Medicine", "doi": "10.1056/NEJM199109123251102" },
+   "query": "hormone replacement therapy coronary heart disease randomized trial",
+   "replications": [
+    { "kind": "rct", "preregistered": true, "outcome": "failed", "added": "2026-11-25",
+      "cite": { "authors": "Hulley S, Grady D, Bush T, et al.", "year": 1998, "title": "Randomized trial of estrogen plus progestin for secondary prevention of coronary heart disease in postmenopausal women", "venue": "JAMA", "doi": "10.1001/jama.280.7.605" },
+      "summary": "In women with existing heart disease, hormone therapy did not reduce coronary events." },
+    { "kind": "rct", "preregistered": true, "outcome": "failed", "added": "2026-11-25",
+      "cite": { "authors": "Writing Group for the Women's Health Initiative Investigators", "year": 2002, "title": "Risks and benefits of estrogen plus progestin in healthy postmenopausal women: principal results from the Women's Health Initiative randomized controlled trial", "venue": "JAMA", "doi": "10.1001/jama.288.3.321" },
+      "summary": "The large randomized trial was stopped early: coronary heart disease was more common, not less, among women given hormones." }
+   ]
+  },
+  {
+   "id": "beta-carotene-cancer", "field": "medicine", "topic": "Oncology",
+   "name": "Beta-carotene prevents lung cancer",
+   "claim": "Eating more beta-carotene, or taking it as a supplement, lowers the risk of cancer, especially lung cancer.",
+   "original": { "authors": "Peto R, Doll R, Buckley JD, Sporn MB", "year": 1981, "title": "Can dietary beta-carotene materially reduce human cancer rates?", "venue": "Nature", "doi": "10.1038/290201a0" },
+   "query": "beta-carotene supplementation lung cancer randomized trial",
+   "replications": [
+    { "kind": "rct", "preregistered": true, "outcome": "failed", "added": "2026-11-25",
+      "cite": { "authors": "Alpha-Tocopherol, Beta Carotene Cancer Prevention Study Group", "year": 1994, "title": "The effect of vitamin E and beta carotene on the incidence of lung cancer and other cancers in male smokers", "venue": "New England Journal of Medicine", "doi": "10.1056/NEJM199404143301501" },
+      "summary": "Among male smokers, beta-carotene supplements were followed by more lung cancer, not less." },
+    { "kind": "rct", "preregistered": true, "outcome": "failed", "added": "2026-11-25",
+      "cite": { "authors": "Omenn GS, Goodman GE, Thornquist MD, et al.", "year": 1996, "title": "Effects of a combination of beta carotene and vitamin A on lung cancer and cardiovascular disease", "venue": "New England Journal of Medicine", "doi": "10.1056/NEJM199605023341802" },
+      "summary": "The CARET trial was stopped early because the supplement group had more lung cancer and more deaths." }
+   ]
+  },
+  {
+   "id": "vitamin-e-heart", "field": "medicine", "topic": "Cardiology",
+   "name": "Vitamin E protects the heart",
+   "claim": "Taking vitamin E supplements lowers the risk of coronary heart disease.",
+   "original": { "authors": "Stampfer MJ, Hennekens CH, Manson JE, Colditz GA, Rosner B, Willett WC", "year": 1993, "title": "Vitamin E consumption and the risk of coronary disease in women", "venue": "New England Journal of Medicine", "doi": "10.1056/NEJM199305203282003" },
+   "query": "vitamin E supplementation cardiovascular randomized trial",
+   "replications": [
+    { "kind": "rct", "preregistered": true, "outcome": "failed", "added": "2026-11-25",
+      "cite": { "authors": "Heart Outcomes Prevention Evaluation Study Investigators; Yusuf S, Dagenais G, Pogue J, Bosch J, Sleight P", "year": 2000, "title": "Vitamin E supplementation and cardiovascular events in high-risk patients", "venue": "New England Journal of Medicine", "doi": "10.1056/NEJM200001203420302" },
+      "summary": "In people at high cardiovascular risk, vitamin E had no apparent effect on heart attacks, strokes or cardiovascular death." }
+   ]
+  },
+  {
+   "id": "statins-mortality", "field": "medicine", "topic": "Cardiology",
+   "name": "Statins reduce deaths in people with heart disease",
+   "claim": "Lowering cholesterol with a statin reduces deaths and major coronary events in people with coronary heart disease.",
+   "original": { "authors": "Scandinavian Simvastatin Survival Study Group", "year": 1994, "title": "Randomised trial of cholesterol lowering in 4444 patients with coronary heart disease: the Scandinavian Simvastatin Survival Study (4S)", "venue": "The Lancet", "doi": "10.1016/S0140-6736(94)90566-5" },
+   "query": "statin randomized trial mortality meta-analysis",
+   "replications": [
+    { "kind": "rct", "preregistered": true, "outcome": "held", "added": "2026-11-25",
+      "cite": { "authors": "Heart Protection Study Collaborative Group", "year": 2002, "title": "MRC/BHF Heart Protection Study of cholesterol lowering with simvastatin in 20,536 high-risk individuals: a randomised placebo-controlled trial", "venue": "The Lancet", "doi": "10.1016/S0140-6736(02)09327-3" },
+      "summary": "A much larger trial in high-risk people found fewer deaths and fewer major vascular events with simvastatin." },
+    { "kind": "meta-analysis", "preregistered": false, "outcome": "held", "added": "2026-11-25",
+      "cite": { "authors": "Cholesterol Treatment Trialists' (CTT) Collaboration", "year": 2010, "title": "Efficacy and safety of more intensive lowering of LDL cholesterol: a meta-analysis of data from 170,000 participants in 26 randomised trials", "venue": "The Lancet", "doi": "10.1016/S0140-6736(10)61350-5" },
+      "summary": "Pooling the randomised trials, lowering LDL cholesterol with statins reduced major vascular events." }
+   ]
+  },
+  {
+   "id": "hydroxychloroquine-covid", "field": "medicine", "topic": "Infectious disease",
+   "name": "Hydroxychloroquine treats COVID-19",
+   "claim": "Hydroxychloroquine helps patients with COVID-19 clear the virus and recover.",
+   "original": { "authors": "Gautret P, Lagier JC, Parola P, et al.", "year": 2020, "title": "Hydroxychloroquine and azithromycin as a treatment of COVID-19: results of an open-label non-randomized clinical trial", "venue": "International Journal of Antimicrobial Agents", "doi": "10.1016/j.ijantimicag.2020.105949" },
+   "query": "hydroxychloroquine COVID-19 randomized trial",
+   "replications": [
+    { "kind": "rct", "preregistered": true, "outcome": "failed", "added": "2026-11-25",
+      "cite": { "authors": "RECOVERY Collaborative Group", "year": 2020, "title": "Effect of hydroxychloroquine in hospitalized patients with Covid-19", "venue": "New England Journal of Medicine", "doi": "10.1056/NEJMoa2022926" },
+      "summary": "In a large randomized trial of hospitalized patients, hydroxychloroquine did not lower deaths." }
+   ]
+  },
+  {
+   "id": "dexamethasone-covid", "field": "medicine", "topic": "Infectious disease",
+   "name": "Dexamethasone saves lives in severe COVID-19",
+   "claim": "Dexamethasone lowers deaths among hospitalized COVID-19 patients who need oxygen or ventilation.",
+   "original": { "authors": "RECOVERY Collaborative Group", "year": 2021, "title": "Dexamethasone in hospitalized patients with Covid-19", "venue": "New England Journal of Medicine", "doi": "10.1056/NEJMoa2021436" },
+   "query": "corticosteroids COVID-19 mortality meta-analysis",
+   "replications": [
+    { "kind": "meta-analysis", "preregistered": true, "outcome": "held", "added": "2026-11-25",
+      "cite": { "authors": "WHO Rapid Evidence Appraisal for COVID-19 Therapies (REACT) Working Group", "year": 2020, "title": "Association between administration of systemic corticosteroids and mortality among critically ill patients with COVID-19: a meta-analysis", "venue": "JAMA", "doi": "10.1001/jama.2020.17023" },
+      "summary": "A prospective meta-analysis of randomized trials found lower mortality with corticosteroids in critically ill patients." }
+   ]
+  },
+  {
+   "id": "debt-growth-threshold", "field": "economics", "topic": "Macroeconomics",
+   "name": "Growth falls sharply above 90% public debt",
+   "claim": "Countries whose public debt exceeds about 90 percent of GDP see much slower economic growth.",
+   "original": { "authors": "Reinhart CM, Rogoff KS", "year": 2010, "title": "Growth in a time of debt", "venue": "American Economic Review", "doi": "10.1257/aer.100.2.573" },
+   "query": "public debt growth threshold Reinhart Rogoff reanalysis",
+   "replications": [
+    { "kind": "reanalysis", "preregistered": false, "outcome": "failed", "added": "2026-11-25",
+      "cite": { "authors": "Herndon T, Ash M, Pollin R", "year": 2014, "title": "Does high public debt consistently stifle economic growth? A critique of Reinhart and Rogoff", "venue": "Cambridge Journal of Economics", "doi": "10.1093/cje/bet075" },
+      "summary": "Reanalysing the same data, with a spreadsheet error, selective exclusions and the weighting corrected, found no sharp drop in growth above the threshold." }
+   ]
+  },
+  {
+   "id": "microcredit-consumption", "field": "economics", "topic": "Development",
+   "name": "Microcredit lifts household consumption",
+   "claim": "Small loans to poor households, especially to women, raise household consumption.",
+   "original": { "authors": "Pitt MM, Khandker SR", "year": 1998, "title": "The impact of group-based credit programs on poor households in Bangladesh: does the gender of participants matter?", "venue": "Journal of Political Economy", "doi": "10.1086/250037" },
+   "query": "microcredit randomized evaluation consumption",
+   "replications": [
+    { "kind": "reanalysis", "preregistered": false, "outcome": "failed", "added": "2026-11-25",
+      "cite": { "authors": "Roodman D, Morduch J", "year": 2014, "title": "The impact of microcredit on the poor in Bangladesh: revisiting the evidence", "venue": "Journal of Development Studies", "doi": "10.1080/00220388.2013.858122" },
+      "summary": "Replicating the analysis on the original data, the authors could not support the conclusion that the loans raised consumption." },
+    { "kind": "meta-analysis", "preregistered": false, "outcome": "smaller", "added": "2026-11-25",
+      "cite": { "authors": "Banerjee A, Karlan D, Zinman J", "year": 2015, "title": "Six randomized evaluations of microcredit: introduction and further steps", "venue": "American Economic Journal: Applied Economics", "doi": "10.1257/app.20140287" },
+      "summary": "Six randomized evaluations on several continents found modestly positive but not transformative effects, with no clear rise in average consumption." }
+   ]
+  },
+  {
+   "id": "minimum-wage-nj", "field": "economics", "topic": "Labour",
+   "name": "A minimum wage rise did not cut fast-food jobs",
+   "claim": "New Jersey's 1992 minimum wage increase did not reduce employment in fast-food restaurants compared with neighbouring Pennsylvania.",
+   "original": { "authors": "Card D, Krueger AB", "year": 1994, "title": "Minimum wages and employment: a case study of the fast-food industry in New Jersey and Pennsylvania", "venue": "American Economic Review", "doi": null, "url": "https://www.jstor.org/stable/2118030", "note": "AER issues of 1994 carry no DOI" },
+   "query": "New Jersey minimum wage fast food employment Card Krueger",
+   "replications": [
+    { "kind": "reanalysis", "preregistered": false, "outcome": "failed", "added": "2026-11-25",
+      "cite": { "authors": "Neumark D, Wascher W", "year": 2000, "title": "Minimum wages and employment: a case study of the fast-food industry in New Jersey and Pennsylvania: comment", "venue": "American Economic Review", "doi": "10.1257/aer.90.5.1362" },
+      "summary": "Using restaurants' own payroll records instead of a phone survey, the comment found employment fell in New Jersey relative to Pennsylvania." },
+    { "kind": "reanalysis", "preregistered": false, "outcome": "held", "added": "2026-11-25",
+      "cite": { "authors": "Card D, Krueger AB", "year": 2000, "title": "Minimum wages and employment: a case study of the fast-food industry in New Jersey and Pennsylvania: reply", "venue": "American Economic Review", "doi": "10.1257/aer.90.5.1397" },
+      "summary": "Using official employment records for the same period, the reply again found no fall in New Jersey employment relative to Pennsylvania." }
+   ]
+  },
+  {
+   "id": "deworming-schooling", "field": "economics", "topic": "Development",
+   "name": "School deworming raises attendance",
+   "claim": "Treating schoolchildren for intestinal worms raises school attendance, including among untreated children nearby.",
+   "original": { "authors": "Miguel E, Kremer M", "year": 2004, "title": "Worms: identifying impacts on education and health in the presence of treatment externalities", "venue": "Econometrica", "doi": "10.1111/j.1468-0262.2004.00481.x" },
+   "query": "deworming school attendance Kenya replication",
+   "replications": [
+    { "kind": "reanalysis", "preregistered": false, "outcome": "mixed", "added": "2026-11-25",
+      "cite": { "authors": "Aiken AM, Davey C, Hargreaves JR, Hayes RJ", "year": 2015, "title": "Re-analysis of health and educational impacts of a school-based deworming programme in western Kenya: a pure replication", "venue": "International Journal of Epidemiology", "doi": "10.1093/ije/dyv127" },
+      "summary": "Rerunning the original analysis found coding errors; with them corrected, some effects held while the spillover effect on nearby schools largely did not." },
+    { "kind": "reanalysis", "preregistered": true, "outcome": "mixed", "added": "2026-11-25",
+      "cite": { "authors": "Davey C, Aiken AM, Hayes RJ, Hargreaves JR", "year": 2015, "title": "Re-analysis of health and educational impacts of a school-based deworming programme in western Kenya: a statistical replication of a cluster quasi-randomized stepped-wedge trial", "venue": "International Journal of Epidemiology", "doi": "10.1093/ije/dyv128" },
+      "summary": "Analysing the data with epidemiological methods set out in advance, the attendance effect depended on analytic choices and was weaker under some of them." }
+   ]
+  },
+  {
+   "id": "cold-fusion", "field": "physics", "topic": "Nuclear physics",
+   "name": "Cold fusion",
+   "claim": "Electrolysis of heavy water with a palladium electrode at room temperature produces nuclear fusion and excess heat.",
+   "original": { "authors": "Fleischmann M, Pons S", "year": 1989, "title": "Electrochemically induced nuclear fusion of deuterium", "venue": "Journal of Electroanalytical Chemistry and Interfacial Electrochemistry", "doi": "10.1016/0022-0728(89)80006-3" },
+   "query": "cold fusion palladium deuterium replication",
+   "replications": [
+    { "kind": "direct", "preregistered": false, "outcome": "failed", "added": "2026-11-25",
+      "cite": { "authors": "Lewis NS, Barnes CA, Heben MJ, et al.", "year": 1989, "title": "Searches for low-temperature nuclear fusion of deuterium in palladium", "venue": "Nature", "doi": "10.1038/340525a0" },
+      "summary": "Careful calorimetry and searches for neutrons, gamma rays and tritium found no evidence of fusion or excess heat." }
+   ]
+  },
+  {
+   "id": "ftl-neutrinos", "field": "physics", "topic": "Particle physics",
+   "name": "Faster-than-light neutrinos",
+   "claim": "Neutrinos sent from CERN to Gran Sasso arrived slightly faster than light would.",
+   "original": { "authors": "OPERA Collaboration; Adam T, et al.", "year": 2011, "title": "Measurement of the neutrino velocity with the OPERA detector in the CNGS beam", "venue": "arXiv", "doi": null, "url": "https://arxiv.org/abs/1109.4897v1", "note": "first version of the preprint, as announced; later versions corrected the result" },
+   "query": "neutrino velocity CNGS measurement",
+   "replications": [
+    { "kind": "direct", "preregistered": false, "outcome": "failed", "added": "2026-11-25",
+      "cite": { "authors": "ICARUS Collaboration; Antonello M, et al.", "year": 2012, "title": "Measurement of the neutrino velocity with the ICARUS detector at the CNGS beam", "venue": "Physics Letters B", "doi": "10.1016/j.physletb.2012.05.033" },
+      "summary": "An independent detector on the same beam found neutrino arrival times consistent with the speed of light; the original anomaly was traced to equipment faults." }
+   ]
+  },
+  {
+   "id": "higgs-boson", "field": "physics", "topic": "Particle physics",
+   "name": "Discovery of a Higgs-like boson",
+   "claim": "A new boson with a mass near 125 GeV, consistent with the Standard Model Higgs boson, is produced at the Large Hadron Collider.",
+   "original": { "authors": "ATLAS Collaboration", "year": 2012, "title": "Observation of a new particle in the search for the Standard Model Higgs boson with the ATLAS detector at the LHC", "venue": "Physics Letters B", "doi": "10.1016/j.physletb.2012.08.020" },
+   "query": "Higgs boson observation independent confirmation",
+   "replications": [
+    { "kind": "direct", "preregistered": false, "outcome": "held", "added": "2026-11-25",
+      "cite": { "authors": "CMS Collaboration", "year": 2012, "title": "Observation of a new boson at a mass of 125 GeV with the CMS experiment at the LHC", "venue": "Physics Letters B", "doi": "10.1016/j.physletb.2012.08.021" },
+      "summary": "An independent detector and team observed the same new particle at the same mass." }
+   ]
+  },
+  {
+   "id": "stap-cells", "field": "biology", "topic": "Stem cells",
+   "name": "STAP cells",
+   "claim": "Exposing ordinary body cells to a mild stress such as acid turns them into pluripotent stem cells.",
+   "original": { "authors": "Obokata H, Wakayama T, Sasai Y, et al.", "year": 2014, "title": "Stimulus-triggered fate conversion of somatic cells into pluripotency", "venue": "Nature", "doi": "10.1038/nature12968", "note": "retracted by the journal in 2014" },
+   "query": "STAP cells replication",
+   "replications": [
+    { "kind": "multisite", "preregistered": false, "outcome": "failed", "added": "2026-11-25",
+      "cite": { "authors": "De Los Angeles A, Ferrari F, Fujiwara Y, et al.", "year": 2015, "title": "Failure to replicate the STAP cell phenomenon", "venue": "Nature", "doi": "10.1038/nature15513" },
+      "summary": "Many attempts across several laboratories produced no pluripotent cells by the published method." }
+   ]
+  },
+  {
+   "id": "arsenic-life", "field": "biology", "topic": "Microbiology",
+   "name": "Arsenic life",
+   "claim": "The bacterium GFAJ-1 can substitute arsenic for phosphorus and build it into its DNA.",
+   "original": { "authors": "Wolfe-Simon F, Blum JS, Kulp TR, et al.", "year": 2011, "title": "A bacterium that can grow by using arsenic instead of phosphorus", "venue": "Science", "doi": "10.1126/science.1197258" },
+   "query": "GFAJ-1 arsenate DNA",
+   "replications": [
+    { "kind": "direct", "preregistered": false, "outcome": "failed", "added": "2026-11-25",
+      "cite": { "authors": "Reaves ML, Sinha S, Rabinowitz JD, Kruglyak L, Redfield RJ", "year": 2012, "title": "Absence of detectable arsenate in DNA from arsenate-grown GFAJ-1 cells", "venue": "Science", "doi": "10.1126/science.1219861" },
+      "summary": "Purified DNA from cells grown with arsenate contained no detectable arsenate." },
+    { "kind": "direct", "preregistered": false, "outcome": "failed", "added": "2026-11-25",
+      "cite": { "authors": "Erb TJ, Kiefer P, Hattendorf B, Günther D, Vorholt JA", "year": 2012, "title": "GFAJ-1 is an arsenate-resistant, phosphate-dependent organism", "venue": "Science", "doi": "10.1126/science.1218455" },
+      "summary": "The bacterium still needed phosphate to grow; it tolerated arsenate rather than using it in place of phosphorus." }
+   ]
+  }
+ ],
+ "projects": [
+  { "id": "rpp-psychology", "field": "psychology", "what": "Replicated 100 studies from three psychology journals",
+    "cite": { "authors": "Open Science Collaboration", "year": 2015, "title": "Estimating the reproducibility of psychological science", "venue": "Science", "doi": "10.1126/science.aac4716" } },
+  { "id": "many-labs-2", "field": "psychology", "what": "Replicated 28 classic and contemporary findings across many samples and settings",
+    "cite": { "authors": "Klein RA, Vianello M, Hasselman F, et al.", "year": 2018, "title": "Many Labs 2: investigating variation in replicability across samples and settings", "venue": "Advances in Methods and Practices in Psychological Science", "doi": "10.1177/2515245918810225" } },
+  { "id": "ee-rp", "field": "economics", "what": "Replicated 18 laboratory experiments in economics",
+    "cite": { "authors": "Camerer CF, Dreber A, Forsell E, et al.", "year": 2016, "title": "Evaluating replicability of laboratory experiments in economics", "venue": "Science", "doi": "10.1126/science.aaf0918" } },
+  { "id": "ss-rp", "field": "social-science", "what": "Replicated 21 social science experiments published in Nature and Science",
+    "cite": { "authors": "Camerer CF, Dreber A, Holzmeister F, et al.", "year": 2018, "title": "Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015", "venue": "Nature Human Behaviour", "doi": "10.1038/s41562-018-0399-z" } },
+  { "id": "rp-cb", "field": "biology", "what": "Attempted to replicate experiments from high-impact preclinical cancer biology papers",
+    "cite": { "authors": "Errington TM, Mathur M, Soderberg CK, et al.", "year": 2021, "title": "Investigating the replicability of preclinical cancer biology", "venue": "eLife", "doi": "10.7554/eLife.71601" } },
+  { "id": "contradicted-clinical", "field": "medicine", "what": "Followed up highly cited clinical studies to see how often later research contradicted or weakened them",
+    "cite": { "authors": "Ioannidis JPA", "year": 2005, "title": "Contradicted and initially stronger effects in highly cited clinical research", "venue": "JAMA", "doi": "10.1001/jama.294.2.218" } }
+ ]
+}

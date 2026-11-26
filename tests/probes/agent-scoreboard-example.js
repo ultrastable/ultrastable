@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
 import {describe, it, expect} from 'vitest';
 
 describe('Agent Scoreboard Mandatory Probe', () => {

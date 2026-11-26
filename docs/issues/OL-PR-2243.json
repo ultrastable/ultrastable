@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-2243",
+  "title": "OL-PR-2243: land or supersede pull request #2243 (ci-failed)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #2243 is ci-failed\n**Done check:** cmd:python3 -m foundation loopowner --closed 2243\n**Status:** closed\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #2243 (`claude/project-thread-a3fnhp` at 3b3e7b42eb, opened by rwnq8): Every surface works together from the first deploy; one command proves it. The session that opened it is not its closer and is never asked to act. A check failed on the head commit. Read the failing run, then land the same change so that every check passes: push a fix to the branch, or open a new pull request from main that carries the change and close this one as superseded. Failed checks: tests-a. Files (17): .github/workflows/seed-launch.yml, agents/AGENTS.md, agents/PROJECT-INSTRUCTIONS.md, deploy/deploy-seed.mjs, doctrine/claim-code.json, doctrine/detectors.json, doctrine/registers.json, doctrine/writeback/lesson-2026-11-25-a-surface-proved-alone-is-not-proved.json, foundation/__main__.py, foundation/bootaccept.py, seed/agents/AGENTS.md, seed/worker/src/discover.js, seed/worker/src/index.js, seed/worker/src/visibility.js, seed/worker/test/bootaccept.test.js, seed/worker/test/measure.test.js, tests/foundation/test_bootaccept.py. Closing probe: pull request #2243 is merged or closed.\n\n**Evidence:** closing probe passed (2 consecutive passes after a recorded failure): pull request is merged\n",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

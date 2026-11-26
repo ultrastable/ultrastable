@@ -2,6 +2,8 @@
 // Three bite-sized screens (Now, Next, Needs you) plus a one-question-at-a-time interview with big buttons.
 import { QUESTIONS, PHASES, nextQuestion, progress } from './interview.js';
 
+// DISCOVER-1: every page says it is built on Ultrastable and links the directory of systems built on it
+const FOOTER = '<footer style="max-width:36rem;margin:0 auto;padding:0 16px 2rem;font-size:.9rem">Built on <a href="https://ultrastable.io/">Ultrastable</a> · <a href="https://ultrastable.io/directory">More systems built on it</a> · <a href="/.well-known/ultrastable.json">About this system</a></footer>';
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 const page = (title, body) => `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}</title>
@@ -11,7 +13,7 @@ nav{display:flex;gap:.5rem;position:sticky;top:0;background:var(--bg);padding:.7
 .card{background:var(--card);border-radius:.8rem;padding:1rem;margin:.8rem 0}.mut{color:var(--mut);font-size:.9rem}
 button,.btn{display:block;width:100%;text-align:left;font:inherit;padding:.9rem 1rem;margin:.5rem 0;border-radius:.7rem;border:2px solid var(--ac);background:transparent;color:var(--fg);cursor:pointer;text-decoration:none;box-sizing:border-box}
 .bar{height:.5rem;background:var(--card);border-radius:1rem;overflow:hidden}.bar i{display:block;height:100%;background:var(--ac)}textarea{width:100%;min-height:6rem;font:inherit;box-sizing:border-box;padding:.6rem}</style></head><body>
-<nav><a href="/">Now</a><a href="/next">Next</a><a href="/needs-you">Needs you</a></nav><main>${body}</main></body></html>`;
+<nav><a href="/">Now</a><a href="/next">Next</a><a href="/needs-you">Needs you</a></nav><main>${body}</main>${FOOTER}</body></html>`;
 
 export const html = (title, body, status = 200) => new Response(page(title, body), { status, headers: { 'content-type': 'text/html; charset=utf-8' } });
 
@@ -47,3 +49,19 @@ export function questionScreen(q, answers) {
 export const doneScreen = () => page_('Done', '<h1>Thank you</h1><p>The managers have what they need to draft the charter and the specification.</p><a class="btn" href="/">See where things stand</a>');
 
 function page_(title, body) { return html(title, body); }
+
+// DATAGRAPH-1: the knowledge graph of this system's own data, in plain words. Every number comes from the last pass of the tick step (kg_runs).
+export function graphScreen({ graph, insights }) {
+  const l = graph && graph.last;
+  if (!l) return page_('Connections', '<h1>Connections in this system\'s data</h1><div class="card">The first map of connections is built on the next pass of the system\'s clock. Nothing to show yet.</div>');
+  const kinds = Object.entries(l.by_kind || {}).sort((a, b) => b[1].nodes - a[1].nodes).slice(0, 12)
+    .map(([k, b]) => `<p>${esc(k)} <span class="mut">${b.nodes} records, ${b.orphans} not connected</span></p><div class="bar"><i style="width:${b.nodes ? Math.round(100 * (b.nodes - b.orphans) / b.nodes) : 0}%"></i></div>`).join('');
+  const hubs = (l.hubs || []).slice(0, 5).map(h => `<p>${esc(h.label)} <span class="mut">${esc(h.kind)}, ${h.degree} links</span></p>`).join('') || '<p class="mut">None yet.</p>';
+  const ins = ((insights && insights.insights) || []).slice(0, 6).map(i => `<div class="card">${esc(i.text)}<div class="mut">${esc(i.kind)}${i.item_id ? ', work item ' + esc(i.item_id) : ''}</div></div>`).join('') || '<div class="card">No findings on the last pass.</div>';
+  return page_('Connections', `<h1>Connections in this system's data</h1>
+<div class="card"><b>${l.nodes} records, ${l.edges} links, ${l.communities ? l.communities.length : 0} clusters</b><div class="mut">Built ${esc(l.at)} from ${l.tables} tables. ${l.proposals ? l.proposals.kept + ' suggested links confirmed by later data, ' + l.proposals.dropped + ' dropped.' : ''}</div></div>
+<h2>What the system noticed</h2>${ins}
+<div class="card"><b>Most connected</b>${hubs}</div>
+<div class="card"><b>How connected each kind of record is</b>${kinds}</div>
+<p class="mut">Machine-readable: <a href="/api/graph">/api/graph</a>, <a href="/api/graph/insights">/api/graph/insights</a>, /api/graph/node?id=, /api/graph/search?q=</p>`);
+}

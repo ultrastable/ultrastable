@@ -20,6 +20,7 @@ from __future__ import annotations
 import json, re, sys, urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
+from . import cloudevents
 
 REPO = Path(__file__).resolve().parents[1]
 PATH = "doctrine/ultrastability.json"
@@ -50,7 +51,115 @@ def readings(root=REPO) -> dict:
     from . import resilience, uiux
     return {"yearsim.horizon_p10": yearsim_reading(root), "yearsim.self_rate": yearsim_field(root, "self_rate_per_day"),
             "criticality.cost": cost, "criticality.verified_share": round(verified, 3), "claims.drift": drift, "criticality.k": c["k"], "resilience.stalled": resilience.stalled_reading(root),
-            "uiux.findings": uiux.status_reading(root, "findings_blocking"), "uiux.happy_paths": uiux.status_reading(root, "happy_path_pass_share")}
+            "uiux.findings": uiux.status_reading(root, "findings_blocking"), "uiux.happy_paths": uiux.status_reading(root, "happy_path_pass_share"),
+            "owner.interventions_7d": owner_interventions(root), "ultra.keep_rate": keep_rate(root), "spec.quality": spec_quality(root),
+            "research.met_share": research_met(root), "lessons.enforced_share": lessons_share(root)}
+
+
+def lessons_share(root):
+    """LESSONS-1: share of recorded lessons bound to code that enforces them."""
+    from . import lessons
+    try:
+        return lessons.report(root)["share"]
+    except (OSError, ValueError, KeyError):
+        return None
+
+
+def research_met(root):
+    """RESEARCH-LOOP-1: the share of findings in every published paper whose own measurement meets its target. A paper that says the system
+    does something it does not is out of bounds here, and the ladder builds the mechanism, never edits the paper to match."""
+    from . import research
+    try:
+        return research.measures(root)["research_findings_met_share"]["value"]
+    except (OSError, ValueError, KeyError) as e:
+        print(f"ultrastability: research reading failed: {e}", file=sys.stderr)
+        return None
+
+
+def owner_interventions(root, now=None, days=7):
+    """SECOND-LOOP-2: how often a person had to act as the second loop. Each owner-driven thread session that changed the repository in the
+    window is one intervention (provenance rows with origin channel thread, counted by distinct actor). Target 0: a system that needs its owner
+    to notice and redirect it is not ultrastable. None when the provenance ledger cannot be read."""
+    p = Path(root) / "ops/provenance.jsonl"
+    try:
+        lines = p.read_text(encoding="utf-8").splitlines()
+    except OSError:
+        return None
+    from datetime import timedelta
+    cut = ((now or datetime.now(timezone.utc)) - timedelta(days=days)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    actors = set()
+    for l in lines:
+        try:
+            r = cloudevents.unwrap(json.loads(l))
+        except ValueError:
+            continue
+        o = r.get("origin") or {}
+        if r.get("at", "") >= cut and (o.get("class") == "owner" or o.get("channel") == "thread"):
+            actors.add(o.get("actor") or r.get("id"))
+    return len(actors)
+
+
+def keep_rate(root, last=30, least=5):
+    """SECOND-LOOP-2: the second loop judged by its own outcomes. Share of its last `last` verdicts that were kept. A loop whose every step is
+    reverted is moving, not learning. None until `least` verdicts exist."""
+    try:
+        rows = [json.loads(l) for l in (Path(root) / load(root)["ledger"]).read_text(encoding="utf-8").splitlines() if '"verdict"' in l]
+    except (OSError, ValueError):
+        return None
+    v = [r for r in rows if r.get("ev") == "verdict"][-last:]
+    return round(sum(r.get("verdict") == "kept" for r in v) / len(v), 3) if len(v) >= least else None
+
+
+def spec_quality(root):
+    from . import specgate
+    try:
+        return specgate.quality(root)
+    except (OSError, ValueError, KeyError):
+        return None
+
+
+def common_mode(targets, least=3) -> set:
+    """SECOND-LOOP-2: when every tenant reads the same out-of-bounds value on one variable, the fault is in the sensor or the shared path, not in
+    each tenant. Stepping on each tenant (retire, rebuild) would act on the wrong system, so those keys are held and one measurement item is filed."""
+    by = {}
+    for key, v, value in targets:
+        if ":" in key:
+            by.setdefault(v["id"], []).append((key, v, value))
+    held = set()
+    for vid, rows in by.items():
+        vals = {x[2] for x in rows}
+        if len(rows) >= least and len(vals) == 1 and None not in vals and not in_bounds(rows[0][1], rows[0][2]):
+            held |= {x[0] for x in rows}
+    return held
+
+
+def readiness(root=REPO, last=None) -> dict:
+    """ONE-YEAR-READY-1: one number for "could this run a year with nobody touching it". The product of three parts, each 0 to 1:
+    horizon (simulated 10th-percentile unattended days / 365, capped at 1), bounds (share of platform essential variables in bounds now;
+    unmeasured counts as out) and learning (0.5 + 0.5 x the second loop's keep rate, 0.5 when it has no verdicts yet)."""
+    c = load(root)
+    last = last if last is not None else last_readings(root)
+    vs = c["scopes"]["platform"]["variables"]
+    inb = sum(1 for v in vs if (last.get(v["id"]) or {}).get("ok")) / len(vs)
+    h = (last.get("unattended_horizon") or {}).get("value")
+    hz = min(1.0, h / 365) if isinstance(h, (int, float)) else 0.0
+    kr = (last.get("second_loop_keep_rate") or {}).get("value")
+    learn = 0.5 + 0.5 * kr if isinstance(kr, (int, float)) else 0.5
+    return {"score": round(100 * hz * inb * learn), "horizon": round(hz, 3), "bounds": round(inb, 3), "learning": round(learn, 3)}
+
+
+def last_readings(root=REPO) -> dict:
+    out = {}
+    try:
+        for l in (Path(root) / load(root)["ledger"]).read_text(encoding="utf-8").splitlines():
+            if '"reading"' not in l:
+                continue
+            r = json.loads(l)
+            if r.get("ev") == "reading" and ":" not in r.get("var", ""):
+                out[r["var"]] = {"value": r.get("value"), "ok": bool(r.get("ok")), "at": r.get("at")}
+    except (OSError, ValueError):
+        pass
+    return out
 
 
 def yearsim_reading(root, now=None, max_age_days=3):
@@ -234,6 +343,11 @@ def _slug(key: str) -> str:
     return re.sub(r"[^A-Za-z0-9_-]+", "-", key)
 
 
+def _predict(v, hours=72) -> str:
+    """SPEC-GATE-1: every item the second loop files carries the metric it should move, in the form the scorer reads."""
+    return f"{v['reading']} >= {v['min']} within {hours} h" if v.get("min") is not None else f"{v['reading']} <= {v['max']} within {hours} h"
+
+
 def _item(root, c, key, v, idx, step, value) -> str:
     iid = f"{c['item_prefix']}-{_slug(key)}-{idx + 1}"
     if step["kind"] == "spinoff":
@@ -242,6 +356,7 @@ def _item(root, c, key, v, idx, step, value) -> str:
     if not p.exists():
         body = (f"**Owner:** executor\n**Trigger:** essential variable `{key}` out of bounds (reading {value}; limits {v.get('min')} to {v.get('max')})\n"
                 f"**Done check:** cmd:python3 -m foundation ultrastability --check\n**Status:** open\n\nULTRASTABILITY-1 second-order step: {step['what']}. {v['why']}\n\n"
+                f"**Prediction:** {_predict(v)}\n**Out of scope:** changing the bounds of `{v['id']}` or any other essential variable; a step is judged by the reading, never by relaxing the limit.\n\n"
                 f"size: M\n\n**Closing probe:** `python3 -m foundation ultrastability --tick` reads `{v['id']}` inside its bounds.\n")
         p.write_text(json.dumps({"id": iid, "title": f"{iid}: {v['name']} out of bounds: {step['what']}", "body": body, "labels": step["labels"], "milestone": "Now", "workstream": step["workstream"]}, indent=2) + "\n", encoding="utf-8")
     return iid
@@ -263,6 +378,13 @@ def tick(root=REPO, apply=False, now=None, read=None, tenants=True, fetch=None) 
     for slug, tv in (tenant_readings(root, fetch) if tenants else {}).items():
         for v in c["scopes"]["tenant"]["variables"]:
             targets.append((f"{slug}:{v['id']}", v, tv.get(v["id"])))
+    held = common_mode(targets)
+    out["common_mode"] = sorted(held)
+    for key in held:  # one sensor fault, one item; no per-tenant step until the reading differs between tenants
+        out["variables"][key] = {"value": dict((k, x) for k, _, x in targets)[key], "ok": False, "common_mode": True}
+    if held and apply:
+        _common(root, c, sorted(held))
+    targets = [t for t in targets if t[0] not in held]
     for key, v, value in targets:
         if value is None:  # unmeasured is never in bounds and never a reason to act: one item names what cannot be read
             out["unmeasured"].append(key)
@@ -295,7 +417,7 @@ def tick(root=REPO, apply=False, now=None, read=None, tenants=True, fetch=None) 
         entry = {"value": value, "ok": ok, "consecutive_out": consecutive}
         if pending:
             since = len(hist) - pending["n"] + 1
-            verdict = settle_verdict(root, c, pending, ok, since)
+            verdict = settle_verdict(root, c, pending, ok, since, v, value)
             if verdict:
                 vr = {"at": now, "ev": "verdict", "var": key, "step_id": pending["id"], "verdict": verdict, "value": value}
                 if verdict == "reverted" and pending["kind"] == "param" and apply:
@@ -343,11 +465,31 @@ def tick(root=REPO, apply=False, now=None, read=None, tenants=True, fetch=None) 
     return out
 
 
-def settle_verdict(root, c, pending, ok, since):
+def gap(v: dict, value):
+    """Distance from bounds (0 when inside, None when unmeasured)."""
+    if value is None:
+        return None
+    lo, hi = v.get("min"), v.get("max")
+    return max((lo - value) if lo is not None else 0, (value - hi) if hi is not None else 0, 0)
+
+
+def progressed(c, v, pending, value) -> bool:
+    """SETTLE-PROGRESS-1 (2026-11-26): a step that closed at least min_progress of the gap it started from is working; undoing it throws the
+    gain away. 107 of 107 verdicts to 2026-11-26 were reverts because only a full return to bounds counted, including steps on slow, windowed
+    readings that cannot reach bounds within settle_ticks."""
+    if not v:
+        return False
+    g0, g1 = gap(v, pending.get("value")), gap(v, value)
+    return bool(g0) and g1 is not None and (g0 - g1) >= c.get("min_progress", 0.1) * g0
+
+
+def settle_verdict(root, c, pending, ok, since, v=None, value=None):
     """SECOND-LOOP-SETTLE-1: kept the moment the variable is back in bounds. A param acts at once, so it is undone after settle_ticks readings.
     An item or spinoff step is work that has to be done first: it is undone only when its item reached a final status and the variable is
     still out, or after item_settle_ticks readings (judging it after 3 readings reverted 14 of 14 before any could act)."""
     if ok:
+        return "kept"
+    if (pending.get("kind") == "param" and since >= c["settle_ticks"] or pending.get("kind") != "param") and progressed(c, v, pending, value):
         return "kept"
     if pending.get("kind") == "param":
         return "reverted" if since >= c["settle_ticks"] else None
@@ -413,6 +555,14 @@ def _unmeasured(root, c, key, v):
         p.write_text(json.dumps({"id": iid, "title": f"{iid}: essential variable {key} cannot be read", "body": f"**Owner:** executor\n**Trigger:** `{key}` has no fresh reading (source {v['reading']})\n**Done check:** cmd:python3 -m foundation ultrastability --status\n**Status:** open\n\nAn unmeasured variable is never in bounds and never a reason to change the system. Make the reading (probe, writer or fresh ledger row) so the loop can judge it.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation ultrastability --status` shows `{key}` with a value.\n", "labels": ["p1", "agent-ready"], "milestone": "Now", "workstream": "Ultrastability"}, indent=2) + "\n", encoding="utf-8")
 
 
+def _common(root, c, keys):
+    vid = keys[0].split(":", 1)[1]
+    iid = f"{c['item_prefix']}-{_slug(vid)}-COMMON-MODE"
+    p = Path(root) / "docs/issues" / (iid + ".json")
+    if not p.exists():
+        p.write_text(json.dumps({"id": iid, "title": f"{iid}: every tenant reads the same out-of-bounds {vid}; fix the reading, not the tenants", "body": f"**Owner:** executor\n**Trigger:** {len(keys)} tenants read one identical out-of-bounds value for `{vid}` ({', '.join(keys[:6])})\n**Done check:** cmd:python3 -m foundation ultrastability --status\n**Status:** open\n\nThe second loop holds its per-tenant steps on this variable (SECOND-LOOP-2 common_mode): the fault is in the shared probe or path.\n\n**Prediction:** tenant.{vid}_distinct_values >= 2 within 72 h\n**Out of scope:** retiring, rebuilding or changing any single tenant.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation ultrastability --status` shows no key in common_mode.\n", "labels": ["p0", "agent-ready"], "milestone": "Now", "workstream": "Ultrastability"}, indent=2) + "\n", encoding="utf-8")
+
+
 def _unregistered(root, c, key, lost):
     iid = f"{c['item_prefix']}-{_slug(key)}-UNREGISTERED"
     p = Path(root) / "docs/issues" / (iid + ".json")
@@ -472,13 +622,26 @@ def check(root=REPO) -> list[str]:
                         errs.append(f"{scope}.{v['id']} step verb {st['verb']!r} is not in foundation/spinoff.py")
                 elif st["kind"] != "item":
                     errs.append(f"{scope}.{v['id']} unknown step kind {st['kind']}")
-    if (root / DATA).is_file() and (root / DATA).read_text(encoding="utf-8") != render(root):
+    if (root / DATA).is_file() and _declared(_parse(root)) != _declared(data(root)):  # the readings part moves with every tick; only the declaration must match
         errs.append(f"{DATA} is stale: run ultrastability --data --apply")
     return errs
 
 
+def _declared(d) -> dict:
+    return {k: v for k, v in (d or {}).items() if k not in ("now", "readiness", "self_changes")}
+
+
+def _parse(root):
+    t = (Path(root) / DATA).read_text(encoding="utf-8")
+    try:
+        return json.loads(t[t.index("export default ") + len("export default "):].rstrip().rstrip(";"))
+    except ValueError:
+        return None
+
+
 def readings_keys():
-    return ("yearsim.horizon_p10", "yearsim.self_rate", "criticality.cost", "criticality.verified_share", "claims.drift", "criticality.k", "resilience.stalled", "uiux.findings", "uiux.happy_paths")
+    return ("yearsim.horizon_p10", "yearsim.self_rate", "criticality.cost", "criticality.verified_share", "claims.drift", "criticality.k", "resilience.stalled", "uiux.findings", "uiux.happy_paths",
+            "owner.interventions_7d", "ultra.keep_rate", "spec.quality", "research.met_share", "lessons.enforced_share")
 
 
 def data(root=REPO) -> dict:
@@ -488,7 +651,23 @@ def data(root=REPO) -> dict:
         d["scopes"][name] = {"status": s["status"], "what": s["what"], "variables": [
             {"id": v["id"], "name": v["name"], "min": v["min"], "max": v["max"], "unit": v["unit"], "why": v["why"], "first_order": v["first_order"], "steps": [st["what"] for st in v["ladder"]]}
             for v in s["variables"]]}
+    last = last_readings(root)  # ONE-YEAR-READY-1: the page shows what the variables read at the last tick, regenerated with the ledger
+    d["now"] = {v["id"]: last.get(v["id"]) for v in c["scopes"]["platform"]["variables"]}
+    d["readiness"] = readiness(root, last)
+    d["self_changes"] = self_changes(root)
     return d
+
+
+def self_changes(root=REPO, last=12) -> list:
+    """SECOND-LOOP-2: the latest parameter changes the slow loop made to itself, each with the value before and after and its verdict."""
+    try:
+        rows = [json.loads(l) for l in (Path(root) / load(root)["ledger"]).read_text(encoding="utf-8").splitlines() if '"step"' in l or '"verdict"' in l]
+    except (OSError, ValueError):
+        return []
+    verdict = {r["step_id"]: r.get("verdict") for r in rows if r.get("ev") == "verdict"}
+    steps = [r for r in rows if r.get("ev") == "step" and r.get("kind") == "param" and ":" not in r.get("var", "")]
+    return [{"at": r["at"], "var": r["var"], "what": r["what"], "before": r.get("before"), "after": r.get("after"), "reading": r.get("value"),
+             "verdict": verdict.get(r["id"], "pending")} for r in steps[-last:]][::-1]
 
 
 def render(root=REPO) -> str:

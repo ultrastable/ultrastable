@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/open-loops.schema.json",
+  "title": "open-loops (doctrine/open-loops.json)",
+  "description": "Contract for doctrine/open-loops.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "banned_phrases": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "scan_globs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "gates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "closed": {
+            "type": "string"
+          },
+          "default": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array"
+          },
+          "owner_decision": {
+            "type": "string"
+          },
+          "probe": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "reopen": {
+            "type": "string"
+          },
+          "surfaces": {
+            "type": "array"
+          }
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "banned_phrases",
+    "gates",
+    "scan_globs",
+    "version"
+  ]
+}

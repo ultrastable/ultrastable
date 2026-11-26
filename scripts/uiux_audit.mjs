@@ -157,7 +157,13 @@ const fingerprints = {}, perf = {}, pathResults = [];
 let hosts = [""], audited = 0;
 if (LIVE) {
   hosts = CFG.surfaces.hosts.map(h => "https://" + h);
-  try { const led = readFileSync(here(CFG.surfaces.tenants_from), "utf8").split("\n").filter(Boolean).map(l => JSON.parse(l)); const by = {}; for (const r of led) if (r.slug) by[r.slug] = { ...by[r.slug], ...r }; for (const a of Object.values(by)) if (a.url && a.event !== "retire") hosts.push(a.url.replace(/\/$/, "")); } catch (e) { console.error("no tenant ledger: tenant apps not audited"); }
+  // UIUX-RETIRED-1: a retired app answers 410 by design and is not a page a person lands on. Retirement is read from the registry the spinoffs
+  // Worker serves (spinoffs/registry.json `retired`, written by `ideas --retire`) and from any retire row; the ledger's last row (often a promote)
+  // never re-opens it. Hosts are deduplicated so one app is audited once per viewport.
+  let retired = new Set();
+  try { retired = new Set(JSON.parse(readFileSync(here("spinoffs/registry.json"), "utf8")).retired || []); } catch (e) { console.error("spinoffs/registry.json unreadable: retired apps not excluded:", e.message); }
+  try { const led = readFileSync(here(CFG.surfaces.tenants_from), "utf8").split("\n").filter(Boolean).map(l => JSON.parse(l)); const by = {}; for (const r of led) if (r.slug) { by[r.slug] = { ...by[r.slug], ...r }; if (r.event === "retire") retired.add(r.slug); } for (const a of Object.values(by)) if (a.url && !retired.has(a.slug)) hosts.push(a.url.replace(/\/$/, "")); } catch (e) { console.error("no tenant ledger: tenant apps not audited"); }
+  hosts = [...new Set(hosts)];
 }
 for (const host of hosts) {
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } }); await wire(ctx);
@@ -184,6 +190,16 @@ if (!LIVE) {
       if (sim < CFG.visual.min_similarity) add("visual-drift", k.split("@")[0], k.split("@")[1], "layout-or-style-changed", `similarity ${sim.toFixed(2)} < ${CFG.visual.min_similarity}`);
     }
   } else console.error("no visual baseline yet: run with --rebaseline once");
+  // DECLARED-LIVE-1 (baseline roll): a baseline is a reading of main, not a monument. It went stale for a week (taken 2026-11-17, every page
+  // drifted after many merges, so the drift findings said nothing about any one change). With --roll-baseline, a baseline older than
+  // visual.max_baseline_days is replaced after this run's comparison, so drift is reported once against the previous window and the next run
+  // compares against this one. Findings of this run are already recorded above; nothing is hidden.
+  const rollDays = CFG.visual.max_baseline_days || 7;
+  if (flag("--roll-baseline") && !flag("--rebaseline") && (!existsSync(basePath) || (Date.now() - Date.parse(JSON.parse(readFileSync(basePath, "utf8")).at || 0)) > rollDays * 864e5)) {
+    mkdirSync(fileURLToPath(here("ops/uiux")), { recursive: true });
+    writeFileSync(basePath, JSON.stringify({ at: new Date().toISOString(), fingerprints }, null, 0) + "\n");
+    console.log(`baseline older than ${rollDays} days: rolled forward for`, Object.keys(fingerprints).length, "page views");
+  }
 }
 
 const report = { at: new Date().toISOString(), mode: LIVE ? "live" : "offline", pages: audited, hosts: LIVE ? hosts : [ORIGIN], axe: !!axeSrc, findings, paths: pathResults, perf };

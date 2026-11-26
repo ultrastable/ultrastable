@@ -1,0 +1,11 @@
+{
+  "id": "Q-CIFAIL-mergeaudit-2203",
+  "title": "Q-CIFAIL-mergeaudit-2203: PR #2203 merged without a green checks run",
+  "body": "**Owner:** staff\n**Trigger:** every lane pass\n**Done check:** cmd:python3 -m foundation mergeaudit --probe 2203\n**Status:** closed\n\nMERGE-AUDIT-1: PR #2203 (Product manager pass: 0 growth and repair item(s) filed) merged at 2026-11-25T18:04:11Z with its `checks` run at `failure` on head f24d01a. Some merge path skipped the green gate.\n\nFix what that run caught on main (run the failed step from .github/workflows/checks.yml locally), then confirm a later merged PR passed `checks`. Do not weaken a check.\n\n**Vacuous:** 2026-11-25T18:21:38Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n\n**Disposition:** shelved (executor-failed, 2026-11-25T18:48:32Z, DISPOSE-1)\n\n**Evidence:** the executor failed 3 consecutive runs on this item; last reason: RuntimeError: checks failed after 3 attempts: the reply was not valid JSON with a files list: RuntimeError: every code agent rung failed: workers-ai-glm: HTTPError: HTTP Error 401: Unauthorized | github-models-gpt: RuntimeError: non-JSON re. Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "labels": [
+    "role:staff",
+    "ci-failure"
+  ],
+  "milestone": "Now",
+  "workstream": "Reliability"
+}

@@ -15,6 +15,18 @@
       "unlearn": {
         "name": "ultrastable-unlearn",
         "id": "ef788db7-0a0c-4c5d-921d-18a596a15945"
+      },
+      "what-works": {
+        "name": "ultrastable-what-works",
+        "id": "c915e72c-5b9c-45aa-b86e-bbd9e5246755"
+      },
+      "spinoffs": {
+        "name": "ultrastable-spinoffs",
+        "id": "7daf8b68-8516-42a8-b7c4-68fd00d10e24"
+      },
+      "replication-ledger": {
+        "name": "ultrastable-replication-ledger",
+        "id": "c59cdeca-7f57-4edd-ac7e-256ab07fab57"
       }
     },
     "kv": {
@@ -137,14 +149,62 @@
       "bindings": {}
     },
     "ultrastable-unlearn": {
-      "main": "instances/unlearn/worker/index.js",
-      "role": "Unlearn tenant app (instances/unlearn): coaching moves for the adult beside a curious child; hourly beat re-learns move weights, measures, opens the next phase when its gates hold, prunes by retention",
+      "main": "worker/index.js",
+      "source": {
+        "repo": "ultrastable/unlearn",
+        "ref": "main"
+      },
+      "role": "Unlearn tenant app (ultrastable/unlearn): coaching moves for the adult beside a curious child; hourly beat re-learns move weights, measures, opens the next phase when its gates hold, prunes by retention",
       "crons": [
         "41 * * * *"
       ],
       "bindings": {
         "d1": {
           "DB": "unlearn"
+        },
+        "ai": [
+          "AI"
+        ]
+      }
+    },
+    "ultrastable-what-works": {
+      "main": "worker/index.js",
+      "source": {
+        "repo": "ultrastable/what-works",
+        "ref": "main"
+      },
+      "role": "What Works tenant app (ultrastable/what-works): a living atlas of what works in public policy; hourly beat resolves citations, searches OpenAlex, Europe PMC and Crossref, reads new trials in under a verbatim-quote guard, re-grades every programme and logs each move",
+      "crons": [
+        "17 * * * *"
+      ],
+      "bindings": {
+        "d1": {
+          "DB": "what-works"
+        },
+        "ai": [
+          "AI"
+        ]
+      }
+    },
+    "ultrastable-spinoffs": {
+      "main": "spinoffs/worker.js",
+      "role": "spinoff apps on *.ultrastable.app (SPINOFF-1): serves the registry bundle, answers 410 for retired apps; the zone route *.ultrastable.app/* names this script (a zone route, not a custom domain: it is not re-attached by the deployer, so the worker is listed as not public)",
+      "crons": [],
+      "bindings": {
+        "d1": {
+          "DB": "spinoffs"
+        }
+      }
+    },
+    "ultrastable-replication-ledger": {
+      "main": "instances/replication-ledger/worker/index.js",
+      "role": "Replication Ledger tenant app (moving to ultrastable/replication-ledger): which landmark findings held up when replicated and which failed, across many fields; hourly beat searches OpenAlex for new replications of every finding and for landmark originals not yet held, files an attempt only under a verbatim-quote guard, checks citations at Crossref, recomputes standings and logs each move; reader pages with a guess-first reveal, /changes and /feed.json",
+      "crons": [
+        "23 * * * *"
+      ],
+      "bindings": {
+        "d1": {
+          "DB": "replication-ledger"
         },
         "ai": [
           "AI"

@@ -28,7 +28,7 @@ f.onchange=async()=>{try{const t=await f.files[0].text();const r=await fetch('/m
 export async function mydata(request, env, subject = currentSubject) {
   const u = new URL(request.url), p = u.pathname.replace(/\/$/, "");
   if (p !== "/my-data" && p !== "/my-data/export" && p !== "/my-data/import") return null;
-  if (u.hostname !== "ultrastable.io" && u.hostname !== "www.ultrastable.io" && !u.hostname.endsWith(".workers.dev") && u.hostname !== "localhost") return null; // server-side only: SSRF guard, loopback is rejected, never a host
+  if (u.hostname !== "ultrastable.io" && u.hostname !== "www.ultrastable.io" && !u.hostname.endsWith(".workers.dev") && u.hostname !== "localhost") return null; // server-side only: the hosts this route answers on; localhost is the Worker runtime's own test origin and the system hosts nothing there
   const s = await subject(request, env);
   if (p === "/my-data") { if (request.method !== "GET") return j({ error: "use GET" }, 405); return new Response(page(!!s), { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } }); }
   if (!s) return j({ error: "sign in first" }, 401);

@@ -18,7 +18,8 @@ def load(root=REPO) -> dict:
 
 def render_worker(d: dict, name: str) -> dict:
     w, b, res = d["workers"][name], d["workers"][name]["bindings"], d["resources"]
-    c = {"name": name, "main": "../../../" + w["main"], "compatibility_date": d["compatibility_date"], "workers_dev": False, "observability": {"enabled": True}}
+    c = {"name": name, "main": (w["main"] if w.get("source") else "../../../" + w["main"]),  # TENANT-REPO-1: a tenant config sits at its own repository root
+         "compatibility_date": d["compatibility_date"], "workers_dev": False, "observability": {"enabled": True}}
     if w["crons"]:
         c["triggers"] = {"crons": w["crons"]}
     if b.get("d1"):
@@ -56,7 +57,7 @@ def check(root=REPO) -> list[str]:
         p = root / OUT / f"{n}.wrangler.jsonc"
         if not p.is_file() or p.read_text(encoding="utf-8") != text(render_worker(d, n)):
             bad.append(f"{n}: rendered config missing or stale; run python3 -m foundation system --render")
-        if not (root / w["main"]).is_file():
+        if not w.get("source") and not (root / w["main"]).is_file():
             bad.append(f"{n}: main {w['main']} does not exist")
         for k, s in w["bindings"].get("services", {}).items():
             if s not in d["workers"]:

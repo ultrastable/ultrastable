@@ -1,18 +1,25 @@
 name: org-settings
-# budget: ~1 min per owner dispatch
-# trigger: weekly drift probe (platform settings drift slowly; daily adds minutes for no signal) plus dispatch for apply
-# free-alternative: run `scripts/apply_github_settings.sh` from a cloud-hosted agent session with the admin token bound
-# Applies github/org-settings.json (org profile fields, repo description/homepage/topics, merge and
-# security settings, main-branch protection). Needs ORG_ADMIN_TOKEN (docs/ops/ORG-TOKEN.md).
-# Without the token the run is red with an explicit gate message; that is the recorded state of BG-22.
+# budget: ~2 min per run, once a day (~60 min per month)
+# trigger: daily (repositories are created on any day and a new one must be on the standard within a day; weekly left five repositories without merge rules), a push that changes the standard or a registry, and dispatch
+# free-alternative: run `python3 -m foundation repostd --apply` from a cloud-hosted agent session, or let the tick Worker apply the standard when it creates a repository (seed/worker/src/repostandard.js)
+# REPO-STANDARD-1 (Rowan, 2026-11-25: "even the repos aren't being created correctly ... standardized and consistent"): puts EVERY repository GitHub
+# lists in the org on the one standard in github/repo-standard.json: merge rules, delete_branch_on_merge, auto-merge, security, the main ruleset,
+# and the computed description, homepage (where it runs) and topics. Rows in github/org-settings.json are overrides only.
+# Credentials: ORG_ADMIN_TOKEN when bound; without it (it has never been bound) every repository goes through the platform's own administration app
+# (deploy/repo-settings.mjs over this run's OIDC token). A refused call is printed, the run is red and ciwatch files it; nothing is skipped quietly.
+# Org profile fields still need the org-admin token: gate org-admin-settings in doctrine/open-loops.json (default in effect, probe there).
 on:
   schedule:
-    - cron: '17 5 * * 1'
+    - cron: '17 5 * * *'
+  push:
+    branches: [main]
+    paths: ["github/repo-standard.json", "github/org-settings.json", "doctrine/tenant-repos.json", "doctrine/full-stack.json", "foundation/repostd.py", ".github/workflows/org-settings.yml"]
   workflow_dispatch:
     inputs:
       mode: {description: "apply | probe", required: true, default: apply}
 permissions:
   contents: read
+  id-token: write  # REPO-SETTINGS-1: the administration-app route when ORG_ADMIN_TOKEN is not bound
 concurrency: {group: org-settings, cancel-in-progress: false}
 jobs:
   run:
@@ -21,9 +28,25 @@ jobs:
     timeout-minutes: 10
     env:
       GH_TOKEN: ${{ secrets.ORG_ADMIN_TOKEN || github.token }}
+      HAS_ADMIN: ${{ secrets.ORG_ADMIN_TOKEN != '' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with: {node-version: 24}
+      - name: The standard is whole before anything is applied
+        run: python3 -m foundation repostd --check
+      - name: Every repository of the org on the standard (REPO-STANDARD-1)
+        if: ${{ (inputs.mode || 'apply') != 'probe' }}
+        run: python3 -m foundation repostd --apply
+      - name: Read it back - what each repository still lacks (unmeasured is said, never passed)
+        if: ${{ !cancelled() }}
+        run: |
+          rc=0; python3 -m foundation repostd --live || rc=$?
+          if [ "$rc" = 2 ]; then echo "::warning::some repositories or fields could not be read with this run's credential (listed above as unmeasured)"; exit 0; fi
+          exit $rc
       - name: Platform audit (probe, then fix drift)
+        if: env.HAS_ADMIN == 'true'
         run: python3 -m foundation platformaudit ${{ (inputs.mode || 'apply') == 'probe' && '--probe' || '--apply' }}
-      - name: Apply or probe
+      - name: Org profile fields and override rows (needs the org-admin token)
+        if: env.HAS_ADMIN == 'true'
         run: bash scripts/apply_github_settings.sh "${{ inputs.mode || 'apply' }}"

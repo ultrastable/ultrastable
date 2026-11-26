@@ -1,0 +1,15 @@
+{
+  "id": "Q-IMPROVE-llms-full",
+  "title": "Q-IMPROVE-llms-full: Serve /llms-full.txt so agents can read every public page in one fetch",
+  "body": "**Owner:** marketing-manager\n**Trigger:** improve --run\n**Done check:** grep:site/worker.js::llms-full.txt\n**Prediction:** external_referrals_7d > 83 within 168 h\n**Status:** closed\n\nKind: reach. Baseline external_referrals_7d = 83. Settled 7 days after it closes: kept if external_referrals_7d rose, else replaced.\n\n**Closing probe:** grep:site/worker.js::llms-full.txt\n\n\n**Evidence:** closing probe passed (2 consecutive passes after a recorded failure): grep:site/worker.js::llms-full.txt\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "role:marketing-manager",
+    "growth",
+    "improve",
+    "reach"
+  ],
+  "milestone": "Now",
+  "workstream": "Growth"
+}

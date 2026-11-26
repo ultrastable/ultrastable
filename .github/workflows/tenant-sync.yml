@@ -32,8 +32,21 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
           LANE_PAT: ${{ secrets.LANE_PAT }}
+      - name: Measure drift and upstream flow (SYNC-BOTH-WAYS-1)
+        run: python3 -m foundation.tenantsync --metrics --apply
+      - name: Read every copy against its source (FLEET-MAP-1)
+        # the template, every seeded system, every tenant's vendored files and every instruction file: equal, drifted or unmeasured, never
+        # assumed. One Q-FLEETMAP-<repo> item per copy that is not equal, closed by the same reading; the step itself stays green so the
+        # ledger below is still written, and the items are the alarm.
+        run: |
+          python3 -m foundation fleetmap --drift --apply || echo "::warning::fleetmap, at least one copy is not equal to its source (items filed)"
+        env:
+          GH_TOKEN: ${{ github.token }}
       - name: Record the ledger
         run: |
           git config user.name tenant-sync; git config user.email tenant-sync@users.noreply.github.com
-          git add ops/tenant-sync/ledger.jsonl
+          python3 -m foundation balance --gate --apply  # FLOW-BALANCE-1: the one filing gate before any item lands
+          if [ -f ops/balance-held.jsonl ]; then git add ops/balance-held.jsonl; fi
+          if [ -f ops/fleet-map.json ]; then git add ops/fleet-map.json; fi
+          git add ops/tenant-sync/ledger.jsonl ops/tenant-sync/metrics.json docs/issues
           git diff --cached --quiet || (git commit -qm "tenant-sync: ledger" && python3 tools/push_main.py)

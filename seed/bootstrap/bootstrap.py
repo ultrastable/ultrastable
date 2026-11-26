@@ -4,6 +4,7 @@
 Stages (the AIOS boot chain, moved from a laptop to a server):
 
   read      IDEA.md + ultrastable.json + autonomy/policy.json   (AIOS: GRUB -> kernel)
+  constitute doctrine/constitution.json checked against the code and assembled: what the system is, how it runs, its ladder and its rules (CONSTITUTION-1)
   qualify   the system test (doctrine/VISION.md): not a fit means no roles, no repos, nothing provisioned
   instrument objectives -> metrics -> probes: what the agents work toward and how the clock proves it is turning (OBJECTIVES-1)
   detect    which connectors have credentials, which tools exist (AIOS: RAM, CPU, disk)
@@ -42,6 +43,7 @@ VERSION = "0.1.0"
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import cases as case_library  # noqa: E402  (bootstrap case library, bootstrap/cases.json)
+import intake  # noqa: E402  (CLONE-PATH-1: the idea in plain words, and what the person is told)
 
 
 # ---------------------------------------------------------------- helpers
@@ -106,8 +108,8 @@ def fill(template: str, values: dict) -> str:
 
 
 class Boot:
-    def __init__(self, root: Path, out: Path, apply: bool):
-        self.root, self.out, self.apply = root, out, apply
+    def __init__(self, root: Path, out: Path, apply: bool, real: bool = False):
+        self.root, self.out, self.apply, self.real = root, out, apply, real
         self.log: list[dict] = []
         self.state: dict = {"blocked_items": [], "gate_cards": []}
 
@@ -150,7 +152,19 @@ class Boot:
                 "Only the owner knows the idea", "the org boots with no outcomes and waits",
                 "IDEA.md template", "item_done:KIT-0"))
             return "degraded", "IDEA.md missing; booting with an empty charter"
-        self.idea = parse_idea(idea_path.read_text())
+        text = idea_path.read_text()
+        if self.real and intake.is_template(text):
+            # CLONE-PATH-1: in a person's own system the example the template ships with is not an idea. Nothing is staffed for "Example Co";
+            # the system waits for the person's own words and gives them the one place to type them.
+            self.idea = parse_idea("---\norg_name: Unnamed\n---\n# Idea\n\n# First outcomes\n")
+            self.org_name, self.slug, self.outcomes, self.budget = "Your system", "unnamed", [], 0.0
+            self.waiting_for_idea = True
+            self.state["gate_cards"].append(self.card("GATE-IDEA", "Say what your system should do",
+                "Only the owner knows the idea", "nothing is staffed or started; the form stays open and is checked on every run",
+                "a form with one question, in the repository itself", "IDEA.md no longer holds the template's example",
+                connect=intake.form_link()))
+            return "degraded", "IDEA.md still holds the template's example; waiting for the owner's own idea (one form, one question)"
+        self.idea = parse_idea(text)
         f = self.idea["front"]
         self.org_name = f.get("org_name") or "Unnamed org"
         self.slug = slugify(f.get("slug") or self.org_name)
@@ -160,6 +174,23 @@ class Boot:
         if problems:
             return "blocked", "policy invalid: " + "; ".join(problems)
         return "ok", f"org '{self.org_name}', {len(self.outcomes)} outcome(s), budget {self.budget:g} USD/month"
+
+    def constitute(self):
+        """CONSTITUTION-1: the system reads what it is before it decides anything. The constitution (doctrine/constitution.json) is checked against the
+        code it describes and assembled into org/constitution.json (rungs, tick steps, detectors, criticality conditions) for the stages after it.
+        A system whose code and constitution disagree is blocked here, with the disagreement as its backlog item, instead of booting into drift."""
+        sys.path.insert(0, str(self.root / "scripts"))
+        try:
+            import constitution  # noqa: E402  (the seed's portable engine)
+        finally:
+            sys.path.pop(0)
+        errs = constitution.check(self.root, instruction_files=["AGENTS.md", "agents/AGENTS.md"])
+        self.out.mkdir(parents=True, exist_ok=True)
+        (self.out / "constitution.json").write_text(json.dumps(constitution.assemble(self.root), indent=1) + "\n")
+        if errs:
+            return "blocked", f"{len(errs)} constitution disagreement(s): " + "; ".join(errs[:3])
+        c = constitution.load(self.root)
+        return "ok", f"constitution {c['version']}: {len(c['rules'])} rules, each with a detector and a remediation in code"
 
     SYSTEM_TEST = (("loop", "a loop it closes"), ("measure", "a measure that can be wrong"),
                    ("upkeep", "upkeep that never ends"), ("run cost", "a running cost the owner accepts"))
@@ -201,6 +232,8 @@ class Boot:
          "operations", "Most loop runs return nothing. Lengthen the cadence of idle loops and shorten productive ones (core/pace plan)."),
         ("M-cost", "largest share of a free daily limit used today (1 = the whole free day)", "free_tier_peak_share", "<=", 0.8, 0,
          "operations", "A free daily limit is nearly spent. Lengthen idle loops (pace.json) and cut the heaviest reader before the plan sheds work."),
+        ("M-storage", "share of the per-database size limit this D1 uses (1 = full: every write refused)", "db_size_share", "<=", 0.6, 0,
+         "operations", "The database is past 60% of its size limit. Check retention (autonomy/retention.json), seal and prune the audit chain, and move bulk history to R2 before writes are refused."),
         ("M-instrumented", "objectives without a probe-backed target metric", "objectives_without_probe", "<=", 0, 1,
          "product-manager", "Ask what the owner would check to know this objective is being met, then insert a target metric with a builtin, sql or http probe."),
     )
@@ -241,14 +274,31 @@ class Boot:
             (found if os.environ.get(c["env"]) else missing).append((name, c))
         self.connectors_present = {n for n, _ in found}
         self.tools = {t: bool(shutil.which(t)) for t in ("git", "node", "npx", "wrangler")}
-        for name, c in missing:
-            if c.get("optional"):
+        # HOSTED-1 (LAUNCH-PATH-1): a system started by a person with no code agent runs on its host's account. The host deploys it and binds
+        # its models, so no secret is asked of anyone: the missing connectors are recorded as provided, never opened as owner cards.
+        self.hosted_by = self.idea["front"].get("hosted_by", "").strip() if hasattr(self, "idea") else ""
+        if self.hosted_by:
+            names = sorted(n for n, c in missing if not c.get("optional"))
+            return "ok", f"hosted by {self.hosted_by}: runtime and models come from the host ({', '.join(names) or 'nothing missing'}); no secret is asked of the owner"
+        # POINT-AND-CLICK-1: no card names a key for a person to make or store. A system with no hosting sign-in gets ONE card with one
+        # link (run it on the platform's own account, where nobody mints anything); the plan is kept and the start is tried again daily.
+        needed = [(name, c) for name, c in missing if not c.get("optional")]
+        runtime = [name for name, c in needed if "runtime" in c["required_for"]]
+        if runtime:
+            self.state["gate_cards"].append(self.card(
+                "GATE-RUNTIME", "Your system has no place to run yet",
+                "signing in to a hosting account is the owner's own act",
+                "the plan and the first work items are kept in the repository and the start is tried again every day",
+                "everything is planned and tested; the only thing missing is where it runs", "boot-log.json stage provision ok",
+                connect=self.host_link()))
+        for name, c in needed:
+            if name in runtime:
                 continue
             self.state["gate_cards"].append(self.card(
-                f"GATE-SECRET-{c['env']}",
-                f"Set the {c['env']} secret (connector '{name}', needed for {', '.join(c['required_for'])})",
-                "a credential only the owner can mint", f"{', '.join(c['required_for'])} stay in dry-run",
-                "the binding name is already in config; only the value is missing", f"env:{c['env']}"))
+                f"GATE-CONNECT-{name}", f"Connect {name.replace('_', ' ')} ({', '.join(c['required_for'])})",
+                "a sign-in only the owner can give", f"{', '.join(c['required_for'])} stay in dry-run",
+                "the sign-in page is served by the system itself; nothing is typed or stored by hand", f"connector:{name}",
+                connect="/connect"))
         detail = f"connectors present: {sorted(self.connectors_present) or 'none'}; tools: " + \
                  ", ".join(f"{t}={'yes' if ok else 'no'}" for t, ok in self.tools.items())
         return ("ok" if not missing else "degraded"), detail
@@ -258,7 +308,7 @@ class Boot:
         tier = [t for t in tiers if self.budget >= t["budget_usd_per_month_min"]][-1]
         aliases = self.config["model_ladder"]["aliases"]
         self.models = {k: aliases[tier[k]] for k in ("doer", "reviewer", "manager")}
-        if self.budget > 0:
+        if self.budget > 0 and not getattr(self, "hosted_by", ""):  # a hosted system spends inside its host's cap; the owner approves nothing
             self.state["gate_cards"].append(self.card(
                 "GATE-BUDGET", f"Approve spending up to {self.budget:g} USD/month on model and runtime usage",
                 "spending money is identity-bound", "free tiers only; the fleet logs cost estimates",
@@ -281,14 +331,21 @@ class Boot:
         for c in plan["cards"]:
             self.state["gate_cards"].append(self.card(
                 f"CASE-{c['id']}", c["what"], c["why"], c["default"],
-                "routes for " + ", ".join(c["cases"]) + " are in org/bootstrap-cases.json", c["probe"]))
+                "routes for " + ", ".join(c["cases"]) + " are in org/bootstrap-cases.json", c["probe"], connect=c.get("connect")))
         self.out.mkdir(parents=True, exist_ok=True)
         (self.out / "bootstrap-cases.json").write_text(json.dumps({"facts": facts, **plan}, indent=2) + "\n")
         return "ok", f"{len(plan['applicable'])} case(s) matched, {len(plan['cards'])} owner card(s), {len(plan['assumed'])} fact(s) assumed"
 
     def plan(self):
         roles = []
+        reg = self.root / "autonomy" / "managers.json"  # MANAGERS-1: the one register; a deployment switches a manager off there, with a reason
+        self.managers = json.loads(reg.read_text(encoding="utf-8")) if reg.exists() else None
+        core = {m["id"] for m in (self.managers or {}).get("managers", []) if m.get("core")}
+        off = {k for k, v in ((self.managers or {}).get("switch") or {}).items()
+               if k not in core and isinstance(v, dict) and v.get("state") == "off" and str(v.get("reason", "")).strip()}
         for r in self.config["roles"]:
+            if r["id"] in off:
+                continue
             model = self.models["manager"] if r["id"].endswith("manager") else \
                 self.models["reviewer"] if r["id"] == "reviewer" else self.models["doer"]
             if r["count"] == "per_outcome":
@@ -378,9 +435,11 @@ class Boot:
             "claim_ttl_minutes": 120,
             "max_wip_per_role": self.config["capacity"]["max_wip_per_role"],
             "plus_share": self.config["capacity"]["plus_share"],
+            **({"identity": self.config["identity"]} if (self.config.get("identity") or {}).get("layer") not in (None, "template") else {}),  # SYSTEM-MANIFEST-1
             "policy": {k: self.policy[k] for k in ("trust", "ladder", "surfaces")},
             "criticality": json.loads((self.root / "autonomy" / "criticality.json").read_text()),
             "failure_modes": json.loads((self.root / "autonomy" / "failure-modes.json").read_text()),
+            "managers": getattr(self, "managers", None),
         }
         (worker / "src" / "config.js").write_text(
             "// Generated by bootstrap/bootstrap.py from ultrastable.json and autonomy/policy.json. Do not edit.\n"
@@ -472,12 +531,12 @@ class Boot:
         if not self.apply:
             return "degraded", f"dry run: {len(plan)} org steps planned (see boot-log.json org_plan)"
         if not self.state.get("surfaces", {}).get("org_admin_token"):
-            self.state["gate_cards"].append({
-                "id": "GATE-ORG-TOKEN", "line": "IDENTITY-BOUND: mint ORG_ADMIN_TOKEN (docs/ops/ORG-TOKEN.md)",
-                "default_in_effect": "holding page only; all non-org stages continue",
-                "closing_probe": "org-init workflow succeeds; curl https://github.com/" + name + " shows the profile"})
-            return "blocked", "no org-admin token: gate card opened, run the org-init workflow once it exists"
-        return "ok", "org token present: run the org-init workflow (.github/workflows/org-init.yml)"
+            self.state["gate_cards"].append(self.card(
+                "GATE-ORG-TOKEN", "Allow the system to set up its GitHub organization", "only the owner can approve access to their organization",
+                "holding page only; all non-org stages continue", "one approval page served by the system itself",
+                "the organization set-up run succeeds; https://github.com/" + name + " shows the profile", connect="/connect/github-admin"))
+            return "blocked", "no organization approval yet: one card with one link; the organization set-up runs by itself after every boot and finishes when the approval exists"
+        return "ok", "organization approval present: the organization set-up runs by itself after this boot (.github/workflows/org-init.yml)"
 
     def provision(self):
         plan = [
@@ -491,9 +550,11 @@ class Boot:
             return "degraded", "dry run: planned " + str(len(plan)) + " commands (see boot-log.json provision_plan)"
         need = {"cloudflare", "cloudflare_account"} - self.connectors_present
         if need:
-            return "blocked", f"missing connector credentials: {sorted(need)} (gate cards opened)"
+            self.state["waiting"] = "runtime"
+            return "blocked", f"no hosting sign-in yet ({sorted(need)}): one card with one link (GATE-RUNTIME); tried again on the next run"
         if not self.tools.get("npx"):
-            return "blocked", "npx not found; install Node.js 20+"
+            self.state["waiting"] = "retry"
+            return "blocked", "this host has no Node.js, so nothing can be deployed from it; the server-side run (GitHub Actions) has it and deploys"
         worker = self.root / "worker"
         existing = self.run(["npx", "wrangler", "d1", "list", "--json"], worker)
         db_id = None
@@ -511,6 +572,64 @@ class Boot:
         for cmd in plan[1:]:
             self.run(cmd, worker)
         return "ok", f"D1 {self.runtime['d1_database']} ({db_id}) migrated and seeded; Worker deployed"
+
+    # What a failed start means for the person, by what the host answered. Each ends with the system still acting: none is a dead end.
+    FAILURES = (
+        ("quota", re.compile(r"quota|limit|exceeded|too many|\b10037\b|\b7500\b|\b429\b", re.I)),
+        ("signin", re.compile(r"authenticat|unauthori[sz]ed|\b10000\b|\b9109\b|\b401\b|\b403\b|invalid.{0,20}(token|credential)", re.I)),
+    )
+
+    def classify(self, detail: str) -> str:
+        return next((k for k, rx in self.FAILURES if rx.search(detail or "")), "retry")
+
+    def host_link(self) -> str:
+        """The one link of a system with nowhere to run: the platform's own front door, with the idea already filled in."""
+        from urllib.parse import quote
+        prose = self.idea["sections"].get("idea", {}).get("prose", "") if hasattr(self, "idea") else ""
+        return "https://ultrastable.io/start" + ("?idea=" + quote(prose[:600]) if prose else "")
+
+    def owner_status(self) -> dict:
+        """CLONE-PATH-1 + USER-BACKEND-1: what the person is told, in plain words: what happened, what the system is doing about it, and at most
+        one link. Backend detail stays in boot-log.json. Written to org/owner-status.json; bootstrap/intake.py posts it on the person's thread."""
+        stages = {s["stage"]: s for s in self.log}
+        prov, live = stages.get("provision", {}), stages.get("verify_live", {})
+        retry = "The start is tried again every day and after every change, and this note is updated when it changes."
+        st = {"state": "planned", "headline": "being set up", "link": None, "manual_steps": 0}
+        if getattr(self, "waiting_for_idea", False) or not hasattr(self, "idea"):
+            st.update(state="waiting-for-idea", headline="tell it your idea", say="Your system is ready to start. It needs one thing from you: what it should do, in your own words.",
+                      doing="Nothing is built until you say. The form has one question; everything after that is done for you.",
+                      link=intake.form_link(), link_words="Tell it your idea")
+        elif not getattr(self, "fit", False):
+            st.update(state="not-a-fit", headline="not a fit yet", say="This idea reads like a one-off: something made once and not run again. Ultrastable is for things that keep running and keep being improved.",
+                      doing="Nothing was started and nothing costs anything. Describe something that has to keep running and it starts from there.",
+                      link=intake.form_link(), link_words="Describe it again")
+        elif live.get("status") == "ok" or (prov.get("status") == "ok" and live.get("status") == "degraded"):
+            st.update(state="live", headline="it is running", say="Your system is running. Its managers work on a clock: they measure it, decide what to improve and do the work.",
+                      doing="It checks its own health every ten minutes and files its own repairs.", live_url=(self.state.get("live_url") or "").replace("/health", "") or None)
+        elif prov.get("status") == "ok":
+            st.update(state="starting", headline="starting", say="Your system is deployed and starting up. Its first full cycle has not finished yet.",
+                      doing="It is checked again on the next run. " + retry)
+        elif self.state.get("waiting") == "runtime" or (not self.apply and any(c["id"] == "GATE-RUNTIME" for c in self.state["gate_cards"])):
+            st.update(state="needs-home", headline="planned; needs a place to run", say="Your system is planned: its managers, first work items and checks are written down. It does not have a place to run yet.",
+                      doing="One click runs it on Ultrastable's own account, with nothing to set up. Until then the plan is kept and " + retry[0].lower() + retry[1:],
+                      link=self.host_link(), link_words="Run it for me")
+        elif prov.get("status") == "blocked":
+            kind = self.classify(prov.get("detail", ""))
+            if kind == "quota":
+                st.update(state="retrying", headline="waiting for room", say="The hosting account has no room for one more system right now.",
+                          doing="Nothing is lost. " + retry)
+            elif kind == "signin":
+                st.update(state="retrying", headline="sign-in ran out", say="The hosting sign-in this system was given no longer works.",
+                          doing="The plan is kept. One click runs it on Ultrastable's own account instead. " + retry, link=self.host_link(), link_words="Run it for me")
+            else:
+                st.update(state="retrying", headline="a step failed on our side", say="A step failed on our side while starting your system.",
+                          doing="It has been recorded as a repair item. " + retry)
+        elif live.get("status") == "blocked":
+            st.update(state="retrying", headline="starting slowly", say="Your system was deployed but did not answer in time.", doing="It is checked again on the next run. " + retry)
+        else:
+            st.update(say="Your system is planned: its managers, first work items and checks are written down.", doing=retry)
+        st["cards_with_links"] = sorted(c["id"] for c in self.state["gate_cards"] if c.get("connect"))
+        return st
 
     def start(self):
         if not self.apply:
@@ -579,9 +698,13 @@ class Boot:
         return p.stdout
 
     @staticmethod
-    def card(id_, what, why, default, prepared, probe):
-        return {"id": id_, "what": what, "why_gated": why, "default_in_effect": default,
-                "prepared_by_fleet": prepared, "closing_probe": probe}
+    def card(id_, what, why, default, prepared, probe, connect=None):
+        """CONNECT-LINK-1: a card the owner must act on carries one link (`connect`): a full address, or a path on the system's own address."""
+        c = {"id": id_, "what": what, "why_gated": why, "default_in_effect": default,
+             "prepared_by_fleet": prepared, "closing_probe": probe}
+        if connect:
+            c["connect"] = connect
+        return c
 
     def finalize(self):
         """Stages after 'plan' may have blocked; record those as backlog items too (nothing drops silently)."""
@@ -601,8 +724,10 @@ class Boot:
             f"Happened: seed {VERSION} booted '{getattr(self, 'org_name', '?')}' ({'apply' if self.apply else 'dry run'}): "
             f"{ok}/{len(self.log)} stages ok" + (f", blocked: {', '.join(blocked)}" if blocked else "") + ".",
             f"Decided: {len(getattr(self, 'roles', []))} role instances on models {getattr(self, 'models', {})}.",
-            "Next: " + ("the Worker cron runs the tick every 10 minutes." if self.apply and not blocked
-                        else "run with --apply once the gate cards below are closed."),
+            "Next: " + ("the boot starts by itself when the owner's idea arrives through the form." if getattr(self, "waiting_for_idea", False)
+                        else "nothing is started; the boot runs again when the idea describes something that keeps running." if not getattr(self, "fit", False)
+                        else "the Worker cron runs the tick every 10 minutes." if self.apply and not blocked
+                        else "the server-side boot (.github/workflows/bootstrap.yml) runs again every day and on every change; each card below is one link, and its default is in effect meanwhile."),
             f"Open: {len(getattr(self, 'items', []))} backlog item(s), {len(self.state['gate_cards'])} gate card(s): "
             + "; ".join(c["what"] for c in self.state["gate_cards"]) + ".",
         ]
@@ -677,10 +802,11 @@ def main(argv=None) -> int:
     mode.add_argument("--apply", action="store_true", help="also provision Cloudflare and deploy")
     ap.add_argument("--root", type=Path, default=ROOT)
     ap.add_argument("--out", type=Path, default=None, help="output folder (default <root>/org)")
+    ap.add_argument("--real", action="store_true", help="a person's own system (the seed's workflow passes it): the template's example idea is never staffed")
     a = ap.parse_args(argv)
     root = a.root.resolve()
-    boot = Boot(root, (a.out or root / "org").resolve(), apply=a.apply)
-    for name in ("read", "qualify", "instrument", "detect", "select", "cases", "plan", "write", "surfaces", "org", "provision", "start", "year_gate", "verify_live"):
+    boot = Boot(root, (a.out or root / "org").resolve(), apply=a.apply, real=a.real)
+    for name in ("read", "constitute", "qualify", "instrument", "detect", "select", "cases", "plan", "write", "surfaces", "org", "provision", "start", "year_gate", "verify_live"):
         st = boot.guard(name, getattr(boot, name))
         if name == "read" and st == "blocked" and not hasattr(boot, "idea"):
             break  # nothing to plan from; the report says why
@@ -695,10 +821,14 @@ def main(argv=None) -> int:
          "surfaces": boot.state.get("surfaces", {}), "org_plan": boot.state.get("org_plan", []),
          "year": boot.state.get("year"), "live_url": boot.state.get("live_url")}, indent=2) + "\n")
     (boot.out / "boot-report.md").write_text(rep + "\n")
+    status = boot.owner_status()
+    (boot.out / "owner-status.json").write_text(json.dumps(status, indent=1) + "\n")
     gc = boot.out / "gate-cards.json"
     if not gc.exists():  # stages after qualify may not have run; the cards still must land
         gc.write_text(json.dumps(boot.state["gate_cards"], indent=2) + "\n")
     print(rep)
+    if a.real and status["state"] != "retrying":
+        return 0  # waiting for the idea, not a fit, planned with one link, starting or live: recorded states with the system still acting, not a failed run
     return 0 if all(s["status"] != "blocked" for s in boot.log) else 2
 
 

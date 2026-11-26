@@ -1,6 +1,6 @@
 {
-  "version": "1.0.0",
-  "checked": "2026-11-14",
+  "version": "1.1.0",
+  "checked": "2026-11-25",
   "stale_after_days": 120,
   "bodies": [
     {
@@ -27,6 +27,26 @@
       "id": "w3c",
       "name": "W3C community groups",
       "role": "WebMCP and browser agent work; watch, do not depend."
+    },
+    {
+      "id": "delivery",
+      "name": "Delivery, data and supply-chain standards bodies",
+      "role": "JSON Schema org, CNCF (CloudEvents, OpenTelemetry, Backstage, OpenFeature), OWASP/Ecma (CycloneDX), OpenSSF (SLSA), Development Containers spec, W3C (DCAT, PROV-O)."
+    },
+    {
+      "id": "cncf",
+      "name": "Cloud Native Computing Foundation",
+      "role": "CloudEvents, OpenTelemetry, Open Policy Agent, Backstage: the envelope, telemetry, policy and catalog formats other tools read."
+    },
+    {
+      "id": "openssf",
+      "name": "Open Source Security Foundation",
+      "role": "SLSA build provenance and the Scorecard checks; supply-chain practice the build is measured against."
+    },
+    {
+      "id": "rfc",
+      "name": "IETF RFC series",
+      "role": "Problem details (RFC 9457), security.txt (RFC 9116), robots (RFC 9309), Atom (RFC 4287): small, stable formats at the HTTP boundary."
     }
   ],
   "entries": [
@@ -76,7 +96,23 @@
           "published": "2025-11-25",
           "accessed": "2026-11-11"
         }
-      ]
+      ],
+      "decision": "adopt-now",
+      "adoption": "adopted",
+      "conformance": "Nothing: the tool surface is MCP, behind one anti-corruption file.",
+      "cost": "none",
+      "probes": [
+        "file:seed/worker/src/agentic/acl/mcp.js",
+        "file:seed/worker/contract/mcp-tools.v1.json"
+      ],
+      "watch": "mcp-spec",
+      "live": [
+        {
+          "url": "https://ultrastable.io/.well-known/mcp/server-card.json",
+          "content_type": "json"
+        }
+      ],
+      "audited": "2026-11-25"
     },
     {
       "id": "mcp-auth",
@@ -240,7 +276,16 @@
           "published": null,
           "accessed": "2026-11-11"
         }
-      ]
+      ],
+      "decision": "adopt-now",
+      "adoption": "partial",
+      "conformance": "Serve the A2A task interface beside the card when another agent needs to delegate to a system.",
+      "cost": "M the task interface; none for the card",
+      "probes": [
+        "grep:seed/worker/src/agentic/acl/discovery.js::agent-card"
+      ],
+      "watch": "a2a-spec",
+      "audited": "2026-11-25"
     },
     {
       "id": "agents-md",
@@ -268,7 +313,17 @@
           "published": "2025-12-09",
           "accessed": "2026-11-11"
         }
-      ]
+      ],
+      "decision": "adopt-now",
+      "adoption": "adopted",
+      "conformance": "Nothing: AGENTS.md is the one instruction file; CLAUDE.md and the Copilot file import it.",
+      "cost": "none",
+      "probes": [
+        "file:AGENTS.md",
+        "file:seed/AGENTS.md",
+        "grep:CLAUDE.md::@agents/AGENTS.md"
+      ],
+      "audited": "2026-11-25"
     },
     {
       "id": "llms-txt",
@@ -295,7 +350,23 @@
           "published": null,
           "accessed": "2026-11-11"
         }
-      ]
+      ],
+      "decision": "adopt-now",
+      "adoption": "adopted",
+      "conformance": "Nothing.",
+      "cost": "none",
+      "probes": [
+        "grep:seed/standards/surfaces.json::/llms.txt"
+      ],
+      "live": [
+        {
+          "url": "https://ultrastable.io/llms.txt",
+          "contains": [
+            "Ultrastable"
+          ]
+        }
+      ],
+      "audited": "2026-11-25"
     },
     {
       "id": "agent-skills",
@@ -354,7 +425,15 @@
           "published": "2019-05-01",
           "accessed": "2026-11-11"
         }
-      ]
+      ],
+      "decision": "adopt-now",
+      "adoption": "adopted",
+      "conformance": "Nothing: every discovery document is under /.well-known/.",
+      "cost": "none",
+      "probes": [
+        "grep:seed/standards/surfaces.json::/.well-known/"
+      ],
+      "audited": "2026-11-25"
     },
     {
       "id": "api-catalog",
@@ -435,7 +514,26 @@
           "published": "2021-02-15",
           "accessed": "2026-11-11"
         }
-      ]
+      ],
+      "decision": "adopt-now",
+      "adoption": "adopted",
+      "conformance": "Outbound webhook events are not yet listed under the OpenAPI 3.1 `webhooks` key; that key is chosen over a separate AsyncAPI document (row asyncapi).",
+      "cost": "S",
+      "probes": [
+        "grep:seed/worker/src/agentic/acl/discovery.js::openapi",
+        "grep:site/controlplane.js::openapi"
+      ],
+      "watch": "openapi-spec",
+      "live": [
+        {
+          "url": "https://ultrastable.io/openapi.json",
+          "json_keys": [
+            "openapi",
+            "paths"
+          ]
+        }
+      ],
+      "audited": "2026-11-25"
     },
     {
       "id": "json-schema",
@@ -534,7 +632,16 @@
           "published": null,
           "accessed": "2026-11-11"
         }
-      ]
+      ],
+      "decision": "adopt-now",
+      "adoption": "adopted",
+      "conformance": "Nothing for tool-call spans: attribute names are the convention's. Export of metrics, logs and traces is row opentelemetry.",
+      "cost": "none",
+      "probes": [
+        "file:seed/worker/src/agentic/adapters/console-telemetry.js"
+      ],
+      "watch": "otel-semconv",
+      "audited": "2026-11-25"
     },
     {
       "id": "cloudflare-agents",
@@ -995,6 +1102,1356 @@
           "accessed": "2026-11-14"
         }
       ]
+    },
+    {
+      "id": "json-schema-config",
+      "name": "JSON Schema 2020-12 contracts for every config, listed in a Schema Store catalog",
+      "body": "JSON Schema organisation; SchemaStore catalog format",
+      "status": "stable",
+      "tracked": "draft 2020-12; schema-catalog.json version 1",
+      "why": "Every doctrine, seed doctrine and seed autonomy config has a contract any editor, provider or agent can validate without reading the Python that consumes it; a new config gets its contract in the same change (REGEN-1).",
+      "support": "supported",
+      "how": [
+        "foundation/configschema.py",
+        "doctrine/schemas/catalog.json",
+        "seed/doctrine/schemas/catalog.json",
+        "seed/autonomy/schemas/catalog.json",
+        "foundation/schemas.py",
+        "instances/schemas/catalog.json",
+        "seed/standards/catalog.json"
+      ],
+      "tests": [
+        {
+          "file": "tests/foundation/test_configschema.py",
+          "name": "test_every_config_has_a_schema_and_validates"
+        },
+        {
+          "file": "tests/foundation/test_configschema.py",
+          "name": "test_catalog_is_schema_store_format"
+        },
+        {
+          "file": "tests/foundation/test_schemas.py",
+          "name": "test_a_detector_owned_by_a_role_that_does_not_exist_is_refused"
+        },
+        {
+          "file": "tests/foundation/test_schemas.py",
+          "name": "test_a_schema_using_a_keyword_the_validator_does_not_run_is_refused"
+        }
+      ],
+      "sources": [
+        {
+          "title": "JSON Schema 2020-12 Core",
+          "url": "https://json-schema.org/draft/2020-12/json-schema-core",
+          "published": "2022-06-16",
+          "accessed": "2026-11-25"
+        },
+        {
+          "title": "JSON Schema Store catalog",
+          "url": "https://www.schemastore.org/json/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "adopt-now",
+      "adoption": "adopted",
+      "homegrown": [
+        "foundation/tenantstd.py",
+        "foundation/failure_audit.py",
+        "foundation/loops.py"
+      ],
+      "conformance": "Every config has a contract (CONFIG-SCHEMA-1 generates a floor for each). STANDARDS-FIRST-1 adds hand-tightened contracts for the load-bearing files (tenant repositories, topology, fleet contract, tenant standard, detectors, registers, claims, claim-code, clocks, loop registry, progress, every instance, lifecycle and runway file, the seed's ultrastable.json, this register and the surface registry): closed vocabularies as enums, ids and probes as patterns, unknown keys refused on row objects. The key checks spread through the loading modules can be retired file by file as each contract is tightened.",
+      "cost": "S per file to tighten a generated floor",
+      "probes": [
+        "schemas",
+        "file:doctrine/schemas/catalog.json",
+        "file:instances/schemas/catalog.json",
+        "file:seed/standards/catalog.json"
+      ],
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "backstage-catalog",
+      "name": "Backstage Software Catalog descriptor (catalog-info.yaml)",
+      "body": "CNCF (Backstage)",
+      "status": "de-facto",
+      "tracked": "backstage.io/v1alpha1: Group, Domain, System, Component, Resource, API",
+      "why": "Service identity, ownership and dependencies in the format developer portals and agents read, generated from doctrine/topology.json and doctrine/tenant-repos.json so it cannot drift.",
+      "support": "supported",
+      "how": [
+        "catalog-info.yaml",
+        "foundation/stdgen.py",
+        "seed/scripts/surfaces.py",
+        "seed/catalog-info.yaml"
+      ],
+      "acl": "foundation/stdgen.py",
+      "tests": [
+        {
+          "file": "tests/foundation/test_stdgen.py",
+          "name": "test_backstage_catalog_names_every_worker_store_and_tenant"
+        },
+        {
+          "file": "seed/tests/test_surfaces.py",
+          "name": "test_catalog_info_is_a_backstage_component_built_from_the_manifest"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Backstage descriptor format",
+          "url": "https://backstage.io/docs/features/software-catalog/descriptor-format",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "adopt-now",
+      "adoption": "adopted",
+      "homegrown": [
+        "foundation/livelinks.py",
+        "doctrine/fleet-map.json"
+      ],
+      "conformance": "The platform repository's catalog (every Worker, store and tenant) is generated from the registers by foundation/stdgen.py (STANDARDS-1). STANDARDS-FIRST-1 adds the per-repository descriptor: the manifest reconciler every system carries renders a Component for its own repository from its ultrastable.json identity, beside publiccode.yml and CITATION.cff; each tenant repository gets the file the first time the reconciler renders there (Q-FLEETMAP items). No Backstage instance is run: the file is the adoption.",
+      "cost": "S",
+      "probes": [
+        "file:catalog-info.yaml",
+        "grep:seed/catalog-info.yaml::kind: Component",
+        "grep:seed/scripts/surfaces.py::out\\[\"catalog-info.yaml\"\\] = catalog\\(i, st\\)"
+      ],
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "cyclonedx-sbom",
+      "name": "CycloneDX 1.6 SBOM with package URLs",
+      "body": "OWASP CycloneDX; Ecma TC54 (ECMA-424); purl",
+      "status": "stable",
+      "tracked": "CycloneDX 1.6 JSON; pkg:npm and pkg:github purls",
+      "why": "The supply chain (first-party packages and every GitHub Action by pinned commit) is machine-readable for any scanner; no timestamp, so it changes only when the supply chain does.",
+      "support": "supported",
+      "how": [
+        "sbom.cdx.json",
+        "foundation/stdgen.py"
+      ],
+      "tests": [
+        {
+          "file": "tests/foundation/test_stdgen.py",
+          "name": "test_cyclonedx_sbom_lists_pinned_actions_and_packages"
+        }
+      ],
+      "sources": [
+        {
+          "title": "CycloneDX 1.6 JSON reference",
+          "url": "https://cyclonedx.org/docs/1.6/json/",
+          "published": "2024-04-09",
+          "accessed": "2026-11-25"
+        },
+        {
+          "title": "Package URL specification",
+          "url": "https://github.com/package-url/purl-spec",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "adopt-now",
+      "adoption": "adopted",
+      "conformance": "Nothing: generated from the pinned actions and package manifests (STANDARDS-1).",
+      "cost": "none",
+      "probes": [
+        "file:sbom.cdx.json",
+        "grep:foundation/stdgen.py::def sbom"
+      ],
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "devcontainer",
+      "name": "Development Containers (devcontainer.json)",
+      "body": "Development Containers specification",
+      "status": "stable",
+      "tracked": "devcontainer.json with image and features",
+      "why": "Any cloud agent or Codespace gets the same Python 3.12 and Node 24 the checks run on, from one standard file, with no setup steps.",
+      "support": "supported",
+      "how": [
+        ".devcontainer/devcontainer.json"
+      ],
+      "tests": [
+        {
+          "file": "tests/foundation/test_stdgen.py",
+          "name": "test_devcontainer_matches_ci_runtimes"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Development Container Specification",
+          "url": "https://containers.dev/implementors/spec/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "adopt-now",
+      "adoption": "adopted",
+      "conformance": "Nothing.",
+      "cost": "none",
+      "probes": [
+        "file:.devcontainer/devcontainer.json"
+      ],
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "cloudevents-webhooks",
+      "name": "CloudEvents 1.0 envelopes signed per Standard Webhooks",
+      "body": "CNCF (CloudEvents); Standard Webhooks",
+      "status": "stable",
+      "tracked": "CloudEvents 1.0 structured JSON; Standard Webhooks v1 HMAC-SHA256",
+      "why": "Every outbound callback is a CloudEvent any consumer can route, and every signature is verifiable with off-the-shelf libraries.",
+      "support": "supported",
+      "how": [
+        "site/webhooks.js",
+        "seed/worker/src/cloudevents.js"
+      ],
+      "tests": [
+        {
+          "file": "site/webhooks.test.mjs",
+          "name": "application/cloudevents+json"
+        }
+      ],
+      "sources": [
+        {
+          "title": "CloudEvents 1.0.2",
+          "url": "https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/spec.md",
+          "published": "2022-02-05",
+          "accessed": "2026-11-25"
+        },
+        {
+          "title": "Standard Webhooks",
+          "url": "https://www.standardwebhooks.com/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "adopt-now",
+      "adoption": "adopted",
+      "conformance": "Nothing for outbound callbacks; they now build their envelope with the shared helper. Events between loops are row cloudevents.",
+      "cost": "none",
+      "probes": [
+        "grep:site/webhooks.js::import \\{ envelope"
+      ],
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "conventional-commits-semver",
+      "name": "Conventional Commits and SemVer",
+      "body": "conventionalcommits.org; semver.org",
+      "status": "stable",
+      "tracked": "Conventional Commits 1.0.0; SemVer 2.0.0",
+      "why": "Release notes and version bumps derived from commit types.",
+      "support": "partial",
+      "sources": [
+        {
+          "title": "Conventional Commits 1.0.0",
+          "url": "https://www.conventionalcommits.org/en/v1.0.0/",
+          "published": null,
+          "accessed": "2026-11-25"
+        },
+        {
+          "title": "Semantic Versioning 2.0.0",
+          "url": "https://semver.org/spec/v2.0.0.html",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "how": [
+        "foundation/commitlint.py",
+        "doctrine/commit-convention.json",
+        "seed/standards/surfaces.json",
+        "foundation/standards.py"
+      ],
+      "tests": [
+        {
+          "file": "tests/foundation/test_commitlint.py",
+          "name": "test_the_repository_passes_and_reads_real_generators"
+        },
+        {
+          "file": "tests/foundation/test_commitlint.py",
+          "name": "test_the_baseline_only_shrinks"
+        },
+        {
+          "file": "seed/worker/test/agentic.contract.test.js",
+          "name": "contract: tools match v1 snapshot"
+        }
+      ],
+      "gap": "Measured on 2026-11-25: 0 of the last 200 commits in any of the 11 repositories use the feat/fix vocabulary. The commits the system writes itself already have the header shape `<loop>: <description>` (watchdog:, queue:, lane:, deploy-ultrastable:), and the lint now holds every generator a workflow or script contains to it; 8 generator titles are on the shrink-only baseline because another program or record matches their text (Q-STD-conventional-commits). Titles written by people and code agents for a pull request lead with the rule or item id, which the queue and write-back loops key on, and stay that way: the public changelog is built from provenance rows, not from commit types. SemVer is in force where a version is a promise to a consumer (the HTTP and MCP contract_version, whose major is compared by standards --check); repository releases are not numbered because no package is published, tenants pin the core by commit hash and the seed's one tag is a calendar date.",
+      "tracked_by": "Q-STD-conventional-commits",
+      "decision": "adopt-now",
+      "adoption": "partial",
+      "homegrown": [
+        "foundation/provenance.py",
+        "workers/tools/tenant_sync.py"
+      ],
+      "conformance": "Every title a generator writes parses as `<type>[(scope)][!]: <description>`, the type being the loop. Requiring feat/fix on pull requests, or a SemVer release train, would produce types and numbers nothing reads; revisit when a package is published.",
+      "cost": "S (lint and five generator titles, done); S more for the eight baseline titles and their readers",
+      "probes": [
+        "commits",
+        "file:doctrine/commit-convention.json",
+        "grep:seed/standards/surfaces.json::\"contract_version\": \"\\d+\\.\\d+\\.\\d+\""
+      ],
+      "watch": "conventional-commits-spec",
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "opa-rego",
+      "name": "Open Policy Agent (Rego) policy-as-code",
+      "body": "CNCF (Open Policy Agent)",
+      "status": "stable",
+      "tracked": "Rego v1",
+      "why": "Policy as code for standing rules and access decisions.",
+      "support": "not_applicable",
+      "reason": "Evaluated for real. OPA is a Go binary or a WebAssembly bundle that the same binary must compile in CI; either way a third-party runtime enters the seed, which carries none. The policies here are already code and data with tests, evaluated where the decision is made: seed/autonomy/policy.json and seed/autonomy/default-policy-pack.json (limits and protected paths), the Worker's diff gate, and about a hundred `python3 -m foundation <rule> --check` rules in CI; request authorization uses OpenID AuthZEN (entry authzen). They are path globs, thresholds and file probes, not the cross-service authorization logic Rego is for. A Rego export of the policy files was weighed: nothing would evaluate it, so it would restate rules in a second language that could drift from the one that runs.",
+      "sources": [
+        {
+          "title": "OPA policy language",
+          "url": "https://www.openpolicyagent.org/docs/latest/policy-language/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "decline",
+      "adoption": "homegrown",
+      "homegrown": [
+        "seed/autonomy/policy.json",
+        "seed/autonomy/default-policy-pack.json",
+        "seed/worker/src/sweeper.js"
+      ],
+      "revisit": "When a customer requires their organisation's OPA to approve agent actions, or the same policy must be enforced outside Ultrastable's own code (another company's CI or gateway). The decision point is already one function per gate, so an OPA call can be added there.",
+      "conformance": "Full: Rego bundles evaluated by OPA (WASM in the Worker, binary in CI). Export: the policy files rendered as a Rego data bundle.",
+      "cost": "L for full adoption (new runtime in the seed); S for an export nothing reads",
+      "probes": [
+        "file:seed/autonomy/policy.json",
+        "file:seed/autonomy/default-policy-pack.json",
+        "absent:**/*.rego"
+      ],
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "openfeature",
+      "name": "OpenFeature flag evaluation for the goal knobs",
+      "body": "CNCF (OpenFeature)",
+      "status": "draft",
+      "tracked": "OpenFeature specification",
+      "why": "The goals loop's knobs (seed/autonomy/goals.json) are feature flags in all but name; exposing them through an OpenFeature provider lets any SDK read them.",
+      "support": "planned",
+      "tracked_by": "Q-STD-OPENFEATURE",
+      "acl": "seed/worker/src/goals.js",
+      "sources": [
+        {
+          "title": "OpenFeature specification",
+          "url": "https://openfeature.dev/specification/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "adopt-later",
+      "adoption": "homegrown",
+      "homegrown": [
+        "seed/worker/src/goals.js",
+        "seed/autonomy/goals.json"
+      ],
+      "conformance": "The goal knobs are read through an OpenFeature provider (Q-STD-OPENFEATURE).",
+      "cost": "M",
+      "probes": [
+        "file:seed/worker/src/goals.js"
+      ],
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "slsa-provenance",
+      "name": "SLSA v1 build provenance for deploys",
+      "body": "OpenSSF (SLSA)",
+      "status": "stable",
+      "tracked": "SLSA v1.0 provenance (in-toto)",
+      "why": "Each Worker deploy carries a verifiable record of the commit and workflow that built it.",
+      "support": "planned",
+      "tracked_by": "Q-STD-SLSA",
+      "acl": "deploy/deploy-workers.mjs",
+      "sources": [
+        {
+          "title": "SLSA v1.0",
+          "url": "https://slsa.dev/spec/v1.0/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "adopt-later",
+      "adoption": "homegrown",
+      "homegrown": [
+        "foundation/actionpins.py",
+        "doctrine/supply-chain.json",
+        "ops/deploys.jsonl",
+        "seed/worker/src/auditchain.js"
+      ],
+      "conformance": "Each Worker deploy also writes a signed build-provenance attestation for the uploaded bundle (Q-STD-SLSA). Today the same facts are recorded unsigned: every deploy row names its commit and the live version, actions are pinned by commit, and the audit chain hashes each row.",
+      "cost": "M (deploys go through the site Worker's deploy endpoint, so the bundle digest has to be returned to the workflow that attests it)",
+      "probes": [
+        "file:foundation/actionpins.py",
+        "file:ops/deploys.jsonl"
+      ],
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "cloudevents",
+      "name": "CloudEvents 1.0 for events between loops",
+      "body": "Cloud Native Computing Foundation",
+      "status": "stable",
+      "tracked": "1.0.2",
+      "why": "One envelope for an event passing between loops, Workers and other people's systems, so a consumer reads id, source, type and time the same way whoever wrote it.",
+      "support": "partial",
+      "how": [
+        "seed/worker/src/cloudevents.js",
+        "foundation/cloudevents.py",
+        "seed/worker/src/handoff.js",
+        "foundation/provenance.py",
+        "foundation/ledger.py",
+        "site/webhooks.js"
+      ],
+      "acl": "seed/worker/src/cloudevents.js",
+      "tests": [
+        {
+          "file": "seed/worker/test/cloudevents.test.js",
+          "name": "cloudevents: shared vectors, valid events conform"
+        },
+        {
+          "file": "seed/worker/test/cloudevents.test.js",
+          "name": "cloudevents: a handoff state change is a conformant event that fits the audit row"
+        },
+        {
+          "file": "tests/foundation/test_cloudevents.py",
+          "name": "test_a_new_provenance_row_is_written_as_a_cloudevent"
+        },
+        {
+          "file": "tests/foundation/test_cloudevents.py",
+          "name": "test_old_rows_and_new_envelopes_read_as_one_ledger"
+        }
+      ],
+      "gap": "New handoff events (audit chain) and new provenance rows are envelopes built by one shared helper (outbound webhooks, row cloudevents-webhooks, use the same helper). The other ops/*.jsonl ledgers, the D1 handoff_events and provenance tables and the dashboard's POST /api/fleet/provenance body keep their own row shapes; Q-STD-cloudevents moves them as each is next changed. History is not rewritten: foundation/ledger.py reads both.",
+      "tracked_by": "Q-STD-cloudevents",
+      "sources": [
+        {
+          "title": "CloudEvents specification 1.0.2 (CNCF)",
+          "url": "https://cloudevents.io/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "adopt-now",
+      "adoption": "partial",
+      "homegrown": [
+        "ops/provenance.jsonl",
+        "seed/worker/migrations/0010_handoffs.sql",
+        "dashboard/provenance.js"
+      ],
+      "conformance": "Every event written between loops carries specversion, id, source, a reverse-DNS type io.ultrastable.<area>.<event>, time, subject and data; readers unwrap, so old rows stay valid.",
+      "cost": "S per ledger (wrap on write; the shared reader already unwraps)",
+      "probes": [
+        "file:seed/standards/cloudevents-vectors.json",
+        "grep:seed/worker/src/handoff.js::handoffEvent\\(id, state, detail\\)",
+        "grep:foundation/provenance.py::json\\.dumps\\(envelope\\(row\\)",
+        "grep:foundation/ledger.py::cloudevents\\.unwrap"
+      ],
+      "watch": "cloudevents-spec",
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "rfc9457-problem",
+      "name": "Problem Details for HTTP APIs (RFC 9457)",
+      "body": "IETF",
+      "status": "stable",
+      "tracked": "RFC 9457 (2023-07), obsoletes RFC 7807",
+      "why": "An error body every HTTP client library and agent already knows how to read: type, title, status, detail, instance.",
+      "support": "partial",
+      "how": [
+        "seed/worker/src/errors.js"
+      ],
+      "tests": [
+        {
+          "file": "seed/worker/test/errors.test.js",
+          "name": "errors: userJson answers application/problem+json with type, title, status, detail and instance beside code and error"
+        },
+        {
+          "file": "seed/worker/test/errors.test.js",
+          "name": "errors: a deliberate message keeps its code as the problem type and the title is stable for the code"
+        }
+      ],
+      "gap": "The shared error path (userError, userJson) answers application/problem+json and keeps `code` and `error`. Routes that build an error body by hand (json({ error }, 4xx) in site/worker.js, site/controlplane.js, dashboard/worker.js and seed/worker/src/index.js) do not pass through it yet; Q-STD-rfc9457-problem routes them through the shared path.",
+      "tracked_by": "Q-STD-rfc9457-problem",
+      "sources": [
+        {
+          "title": "RFC 9457: Problem Details for HTTP APIs",
+          "url": "https://www.rfc-editor.org/rfc/rfc9457",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "adopt-now",
+      "adoption": "partial",
+      "homegrown": [
+        "seed/worker/src/errors.js"
+      ],
+      "conformance": "Error responses gain type (a stable tag URI per code), title, status, detail and instance, with content type application/problem+json; `instance` is also written on the owner-only backend record, so what a person was shown can be traced.",
+      "cost": "S for the shared path (done); M to route the hand-built error bodies through it",
+      "probes": [
+        "grep:seed/worker/src/errors.js::application/problem\\+json",
+        "grep:seed/worker/src/errors.js::export function problem"
+      ],
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "schema-org-jsonld",
+      "name": "schema.org as JSON-LD",
+      "body": "schema.org community (W3C community group)",
+      "status": "stable",
+      "tracked": "JSON-LD 1.1; schema.org vocabulary",
+      "why": "Search engines and agents read what a page is (a site, an application, an article, a list) from one block instead of guessing from the HTML.",
+      "support": "partial",
+      "how": [
+        "seed/worker/src/contract.js",
+        "seed/worker/src/visibility.js",
+        "seed/worker/src/discover.js",
+        "scaffold/tenant/worker/site.js.tmpl",
+        "site/research.js",
+        "site/worker.js",
+        "workers/core/ui/html.js"
+      ],
+      "tests": [
+        {
+          "file": "seed/worker/test/contract.test.js",
+          "name": "JSON-LD: a page carries one schema.org WebSite whose facts are the spec the page renders"
+        },
+        {
+          "file": "seed/worker/test/contract.test.js",
+          "name": "JSON-LD: the seed public page carries the markup for its own spec"
+        },
+        {
+          "file": "scaffold/tenant/worker/worker.test.mjs.tmpl",
+          "name": "the home page says what the system is as schema.org JSON-LD, from the same spec the page shows"
+        }
+      ],
+      "gap": "Generated from page data on the seed's public page, every scaffolded tenant's home page, the site's home page (WebSite), the showcase (ItemList) and each research paper. Not yet on the site's /claims page (a Dataset) or on the pages tenants wrote before the shared helper (Unlearn, What Works, Replication Ledger, Practical Solutions); those arrive with each tenant's next vendor sync of seed/worker/src/contract.js.",
+      "sources": [
+        {
+          "title": "schema.org: getting started",
+          "url": "https://schema.org/docs/gs.html",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "adopt-now",
+      "adoption": "partial",
+      "homegrown": [],
+      "conformance": "Each page states its own facts once more as JSON-LD built from the same object the page renders, so the markup cannot claim what the page does not show.",
+      "cost": "S per page type",
+      "probes": [
+        "grep:seed/worker/src/contract.js::export function linkedData",
+        "grep:seed/worker/src/index.js::head: seedJsonLd",
+        "grep:scaffold/tenant/worker/site.js.tmpl::jsonLd\\(SPEC\\)",
+        "grep:site/research.js::application/ld\\+json"
+      ],
+      "watch": "schemaorg",
+      "live": [
+        {
+          "url": "https://ultrastable.io/",
+          "contains": [
+            "application/ld+json",
+            "https://schema.org"
+          ]
+        }
+      ],
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "publiccode-yml",
+      "name": "publiccode.yml",
+      "body": "publiccode.yml working group (Team Digitale, Italy; Foundation for Public Code)",
+      "status": "stable",
+      "tracked": "0.4",
+      "why": "A machine-readable description of a piece of software that public catalogues crawl; it also serves as the plain metadata file for anyone listing the system.",
+      "support": "partial",
+      "how": [
+        "seed/scripts/surfaces.py",
+        "seed/publiccode.yml"
+      ],
+      "tests": [
+        {
+          "file": "seed/tests/test_surfaces.py",
+          "name": "test_publiccode_citation_and_plans_carry_the_manifest"
+        }
+      ],
+      "gap": "Rendered for the seed template by the manifest reconciler (SYSTEM-MANIFEST-1); the platform repository and the tenants get theirs when the reconciler renders there (Q-FLEETMAP items).",
+      "sources": [
+        {
+          "title": "publiccode.yml standard",
+          "url": "https://yml.publiccode.tools/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "adopt-now",
+      "adoption": "partial",
+      "homegrown": [],
+      "conformance": "Nothing more in the emitter; the remaining repositories render it.",
+      "cost": "none (already rendered by code)",
+      "probes": [
+        "grep:seed/publiccode.yml::publiccodeYmlVersion",
+        "grep:seed/scripts/surfaces.py::def publiccode"
+      ],
+      "watch": "publiccode-spec",
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "citation-cff",
+      "name": "Citation File Format (CITATION.cff)",
+      "body": "Citation File Format project",
+      "status": "stable",
+      "tracked": "1.2.0",
+      "why": "Says how to cite the work; GitHub and reference managers read it.",
+      "support": "supported",
+      "how": [
+        "CITATION.cff",
+        "seed/CITATION.cff",
+        "seed/scripts/surfaces.py"
+      ],
+      "tests": [
+        {
+          "file": "seed/tests/test_surfaces.py",
+          "name": "test_publiccode_citation_and_plans_carry_the_manifest"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Citation File Format",
+          "url": "https://citation-file-format.github.io/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "adopt-now",
+      "adoption": "adopted",
+      "homegrown": [],
+      "conformance": "Nothing.",
+      "cost": "none",
+      "probes": [
+        "grep:CITATION.cff::cff-version: 1\\.2\\.0",
+        "grep:seed/CITATION.cff::cff-version"
+      ],
+      "watch": "cff-spec",
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "dependabot",
+      "name": "Automated dependency updates (Dependabot)",
+      "body": "GitHub",
+      "status": "stable",
+      "tracked": "dependabot.yml version 2",
+      "why": "Dependencies and pinned actions are updated by pull requests the merge lane tests and merges, with nobody watching for releases.",
+      "support": "partial",
+      "how": [
+        ".github/dependabot.yml",
+        "seed/worker/src/sweeper.js"
+      ],
+      "tests": [
+        {
+          "file": "tests/foundation/test_schemas.py",
+          "name": "test_dependabot_covers_actions_and_every_package_manifest_directory"
+        }
+      ],
+      "gap": "Measured on 2026-11-25: the platform repository has .github/dependabot.yml (GitHub Actions weekly, each npm directory monthly); the other 10 repositories (seed, ops, second-tenant, practical-solutions, unlearn, what-works, replication-ledger, base-rates, did-it-work, open-questions) have none, and neither the seed template nor scaffold/tenant carries one, so a new system starts without it. Their workflows pin actions by commit, which then never move. Q-STD-dependabot adds the file to the seed and the tenant scaffold. Renovate is not added: one updater per repository.",
+      "tracked_by": "Q-STD-dependabot",
+      "sources": [
+        {
+          "title": "Dependabot options reference",
+          "url": "https://docs.github.com/en/code-security/dependabot/working-with-dependabot/dependabot-options-reference",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "adopt-now",
+      "adoption": "partial",
+      "homegrown": [],
+      "conformance": "Every repository carries dependabot.yml for the ecosystems it has (at least github-actions).",
+      "cost": "S (one templated file in seed/ and scaffold/tenant/, required by the repository standard)",
+      "probes": [
+        "grep:.github/dependabot.yml::package-ecosystem: github-actions",
+        "grep:.github/dependabot.yml::package-ecosystem: npm"
+      ],
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "oidc",
+      "name": "OpenID Connect (workload identity for deploys)",
+      "body": "OpenID Foundation",
+      "status": "stable",
+      "tracked": "OpenID Connect Core 1.0; GitHub Actions OIDC",
+      "why": "A workflow proves which repository and branch it is with a short-lived signed token, so no long-lived deploy secret is stored.",
+      "support": "supported",
+      "how": [
+        "seed/worker/src/maincommit.js",
+        "site/deployer.js",
+        "deploy/tenant-repo-token.mjs"
+      ],
+      "tests": [
+        {
+          "file": "seed/worker/test/maincommit.test.js",
+          "name": "MAIN-WRITER-1: a token for another audience or repository is refused before any key lookup"
+        }
+      ],
+      "sources": [
+        {
+          "title": "OpenID Connect Core 1.0",
+          "url": "https://openid.net/specs/openid-connect-core-1_0.html",
+          "published": null,
+          "accessed": "2026-11-25"
+        },
+        {
+          "title": "GitHub: security hardening with OpenID Connect",
+          "url": "https://docs.github.com/en/actions/security-for-github-actions/security-hardening-your-deployments/about-security-hardening-with-openid-connect",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "adopt-now",
+      "adoption": "adopted",
+      "homegrown": [],
+      "conformance": "Nothing.",
+      "cost": "none",
+      "probes": [
+        "grep:seed/worker/src/maincommit.js::verifyOidc",
+        "glob:.github/workflows/deploy-*.yml"
+      ],
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "spdx-reuse",
+      "name": "SPDX licence identifiers and REUSE",
+      "body": "Linux Foundation (SPDX); FSFE (REUSE)",
+      "status": "stable",
+      "tracked": "SPDX 2.3 identifiers; REUSE 3.3",
+      "why": "Every file says its licence in one machine-readable line.",
+      "support": "partial",
+      "how": [
+        "LICENSE",
+        "seed/worker/src/contract.js"
+      ],
+      "tests": [
+        {
+          "file": "tests/foundation/test_schemas.py",
+          "name": "test_shared_modules_carry_an_spdx_identifier"
+        }
+      ],
+      "gap": "SPDX-License-Identifier headers are on 1006 of 1408 code files (measured 2026-11-25) and the manifest's `license` is an SPDX expression. Full REUSE compliance (a LICENSES/ directory holding the LicenseRef text and a header or REUSE.toml entry for every file) is not met and its checker is a third-party tool the build does not install.",
+      "sources": [
+        {
+          "title": "REUSE specification 3.3",
+          "url": "https://reuse.software/spec-3.3/",
+          "published": null,
+          "accessed": "2026-11-25"
+        },
+        {
+          "title": "SPDX specifications",
+          "url": "https://spdx.dev/use/specifications/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "adopt-now",
+      "adoption": "partial",
+      "homegrown": [],
+      "conformance": "Headers on the remaining files and a LICENSES/ directory; worth doing when the licence changes to an open one and outside reuse begins.",
+      "cost": "S",
+      "probes": [
+        "grep:seed/worker/src/errors.js::SPDX-License-Identifier",
+        "grep:foundation/schemas.py::SPDX-License-Identifier",
+        "file:LICENSE"
+      ],
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "security-txt",
+      "name": "security.txt (RFC 9116)",
+      "body": "IETF",
+      "status": "stable",
+      "tracked": "RFC 9116",
+      "why": "Tells a researcher where to report a vulnerability, at the address scanners already look.",
+      "support": "partial",
+      "how": [
+        "site/worker.js"
+      ],
+      "tests": [
+        {
+          "file": "site/site.test.mjs",
+          "name": "security.txt"
+        }
+      ],
+      "gap": "Served by ultrastable.io. The seed Worker does not serve /.well-known/security.txt, so a tenant's own domain has none; the tenant's blind-spot register (doctrine/blindspots.json, need security contact) files it per system.",
+      "sources": [
+        {
+          "title": "RFC 9116: A File Format to Aid in Security Vulnerability Disclosure",
+          "url": "https://www.rfc-editor.org/rfc/rfc9116",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "adopt-now",
+      "adoption": "partial",
+      "homegrown": [],
+      "conformance": "The seed Worker serves the file from the owner's contact binding.",
+      "cost": "S",
+      "probes": [
+        "grep:site/worker.js::security\\.txt"
+      ],
+      "live": [
+        {
+          "url": "https://ultrastable.io/.well-known/security.txt",
+          "contains": [
+            "Contact:",
+            "Expires:"
+          ]
+        }
+      ],
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "feeds",
+      "name": "JSON Feed 1.1 and Atom (RFC 4287)",
+      "body": "jsonfeed.org; IETF",
+      "status": "stable",
+      "tracked": "JSON Feed 1.1; RFC 4287",
+      "why": "What a system published, in the two formats every reader and the platform's own stickiness and progress loops consume.",
+      "support": "supported",
+      "how": [
+        "seed/worker/src/vendor/core/stickiness.js",
+        "scaffold/tenant/worker/index.js.tmpl",
+        "site/worker.js"
+      ],
+      "tests": [
+        {
+          "file": "seed/worker/test/stickiness.test.js",
+          "name": "toJsonFeed"
+        },
+        {
+          "file": "site/site.test.mjs",
+          "name": "https://ultrastable.io/feed.xml"
+        }
+      ],
+      "sources": [
+        {
+          "title": "JSON Feed 1.1",
+          "url": "https://www.jsonfeed.org/version/1.1/",
+          "published": null,
+          "accessed": "2026-11-25"
+        },
+        {
+          "title": "RFC 4287: The Atom Syndication Format",
+          "url": "https://www.rfc-editor.org/rfc/rfc4287",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "adopt-now",
+      "adoption": "adopted",
+      "homegrown": [],
+      "conformance": "Nothing.",
+      "cost": "none",
+      "probes": [
+        "grep:scaffold/tenant/worker/site.js.tmpl::application/feed\\+json",
+        "grep:site/worker.js::/feed\\.json"
+      ],
+      "live": [
+        {
+          "url": "https://ultrastable.io/feed.json",
+          "json_keys": [
+            "version",
+            "items"
+          ]
+        }
+      ],
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "robots-sitemaps",
+      "name": "Robots Exclusion Protocol (RFC 9309) and Sitemaps",
+      "body": "IETF; sitemaps.org",
+      "status": "stable",
+      "tracked": "RFC 9309; Sitemaps 0.9",
+      "why": "Crawlers and AI agents are told what they may read and are given every public page.",
+      "support": "supported",
+      "how": [
+        "site/worker.js",
+        "site/promote.js"
+      ],
+      "tests": [
+        {
+          "file": "site/site.test.mjs",
+          "name": "https://ultrastable.io/sitemap.xml"
+        },
+        {
+          "file": "site/site.test.mjs",
+          "name": "https://ultrastable.io/robots.txt"
+        }
+      ],
+      "sources": [
+        {
+          "title": "RFC 9309: Robots Exclusion Protocol",
+          "url": "https://www.rfc-editor.org/rfc/rfc9309",
+          "published": null,
+          "accessed": "2026-11-25"
+        },
+        {
+          "title": "Sitemaps XML format",
+          "url": "https://www.sitemaps.org/protocol.html",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "adopt-now",
+      "adoption": "adopted",
+      "homegrown": [],
+      "conformance": "Nothing.",
+      "cost": "none",
+      "probes": [
+        "grep:site/worker.js::/sitemap\\.xml",
+        "grep:site/worker.js::/robots\\.txt"
+      ],
+      "live": [
+        {
+          "url": "https://ultrastable.io/robots.txt",
+          "contains": [
+            "Sitemap:"
+          ]
+        },
+        {
+          "url": "https://ultrastable.io/sitemap.xml",
+          "contains": [
+            "<urlset"
+          ]
+        }
+      ],
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "wcag",
+      "name": "Web Content Accessibility Guidelines 2.2, level AA",
+      "body": "W3C",
+      "status": "stable",
+      "tracked": "WCAG 2.2",
+      "why": "Pages people with a disability can use; also the measurable floor for the design language.",
+      "support": "partial",
+      "how": [
+        "foundation/design.py",
+        "scripts/uiux_audit.mjs",
+        "workers/core/ui/audit.js"
+      ],
+      "tests": [
+        {
+          "file": "tests/foundation/test_design.py",
+          "name": "test_declaration_is_complete_and_every_pair_passes"
+        },
+        {
+          "file": "tests/foundation/test_design.py",
+          "name": "test_a_broken_neutral_is_caught"
+        }
+      ],
+      "gap": "Contrast in light and dark, 44 px targets, focus ring, reduced motion and page structure are checked by code on every theme and audited page. Criteria that need a person or assistive technology (meaningful alternative text, reading order of complex content) are not machine-checked; the accessibility statement says so.",
+      "sources": [
+        {
+          "title": "Web Content Accessibility Guidelines (WCAG) 2.2",
+          "url": "https://www.w3.org/TR/WCAG22/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "adopt-now",
+      "adoption": "partial",
+      "homegrown": [],
+      "conformance": "Nothing in the automated part.",
+      "cost": "none",
+      "probes": [
+        "grep:foundation/design.py::def contrast",
+        "file:scripts/uiux_audit.mjs"
+      ],
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "w3c-prov",
+      "name": "W3C PROV (PROV-O as JSON-LD)",
+      "body": "W3C",
+      "status": "stable",
+      "tracked": "PROV-O Recommendation (2013)",
+      "why": "A lineage vocabulary (entity, activity, agent) that knowledge-graph and research tools read; the system's provenance rows already say who did what to which file.",
+      "support": "planned",
+      "tracked_by": "Q-STD-w3c-prov",
+      "sources": [
+        {
+          "title": "PROV-O: The PROV Ontology",
+          "url": "https://www.w3.org/TR/prov-o/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "adopt-later",
+      "adoption": "homegrown",
+      "homegrown": [
+        "foundation/provenance.py",
+        "doctrine/provenance.json",
+        "ops/changelog.json",
+        "seed/worker/src/datagraph.js"
+      ],
+      "conformance": "The public changelog (/changelog, built from provenance rows marked public) is also served as PROV-O JSON-LD: kind becomes a prov:Activity, origin.actor a prov:Agent, each affected path a prov:Entity. Internal rows and the D1 graph keep their shape; the mapping is an export at the public boundary.",
+      "cost": "S (one mapping function and one route; the fields map one to one)",
+      "probes": [
+        "grep:foundation/provenance.py::def public_view",
+        "grep:doctrine/provenance.json::origin_classes"
+      ],
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "openssf-scorecard",
+      "name": "OpenSSF Scorecard",
+      "body": "Open Source Security Foundation",
+      "status": "stable",
+      "tracked": "Scorecard checks v5",
+      "why": "An outside, comparable reading of the repositories' security practice (pinned dependencies, token permissions, branch protection, dangerous workflows).",
+      "support": "planned",
+      "tracked_by": "Q-STD-openssf-scorecard",
+      "sources": [
+        {
+          "title": "OpenSSF Scorecard",
+          "url": "https://scorecard.dev/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "adopt-later",
+      "adoption": "homegrown",
+      "homegrown": [
+        "foundation/actionpins.py",
+        "scripts/lint_workflows.py"
+      ],
+      "conformance": "A weekly workflow runs the Scorecard action on the public repositories and the failure-audit detector reads the published score, so a falling check becomes a queue item. The system's own lints already cover pinning and workflow permissions; Scorecard adds the outside view and the checks nobody here wrote.",
+      "cost": "S (one pinned third-party action in CI only, about 2 workflow minutes a week on public repositories; nothing is added to any runtime)",
+      "probes": [
+        "file:scripts/lint_workflows.py",
+        "file:doctrine/supply-chain.json"
+      ],
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "asyncapi",
+      "name": "AsyncAPI 3.0",
+      "body": "AsyncAPI Initiative (Linux Foundation)",
+      "status": "stable",
+      "tracked": "3.0.0",
+      "why": "Describes message channels (queues, streams, webhooks) the way OpenAPI describes HTTP.",
+      "support": "not_applicable",
+      "reason": "The only messages another party receives are outbound webhooks, and OpenAPI 3.1 (already generated) has a `webhooks` section for exactly that; the queues and D1 ledgers between loops are internal and are now described by their CloudEvents types. A second description document for one webhook channel would be a file with no reader.",
+      "revisit": "When a message broker or stream is offered to systems outside the org (a public queue, a websocket or an event stream).",
+      "sources": [
+        {
+          "title": "AsyncAPI 3.0.0 specification",
+          "url": "https://www.asyncapi.com/docs/reference/specification/v3.0.0",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "decline",
+      "adoption": "not-applicable",
+      "homegrown": [
+        "site/webhooks.js",
+        "site/controlplane.js"
+      ],
+      "conformance": "An asyncapi.json listing the webhook channel and the io.ultrastable.* event types.",
+      "cost": "S",
+      "probes": [
+        "grep:site/webhooks.js::TYPE_PREFIX \\+ e\\.type",
+        "absent:**/asyncapi.json"
+      ],
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "opentelemetry",
+      "name": "OpenTelemetry metrics, logs and traces (OTLP export)",
+      "body": "OpenTelemetry (CNCF)",
+      "status": "stable",
+      "tracked": "OTLP 1.x",
+      "why": "Telemetry any observability backend can ingest without an adapter.",
+      "support": "not_applicable",
+      "reason": "Exporting needs somewhere to send it: an observability backend is a paid or third-party service with its own credential, and the rule is zero third-party runtime dependencies and nothing a person must mint. What exists is read by the system's own loops and public pages: tick_runs and the ledgers in D1 and ops/, the clocks in doctrine/clocks.json and /health. The naming half of the standard is adopted (row otel-genai: tool-call spans use the convention's attribute names behind a telemetry port).",
+      "revisit": "When an owner connects an observability backend (one /connect link). Cloudflare Workers can then export traces and logs over OTLP by configuration, and the telemetry port in seed/worker/src/agentic/core/ports.js takes an OTLP adapter with no change to callers.",
+      "sources": [
+        {
+          "title": "OpenTelemetry Protocol (OTLP) specification",
+          "url": "https://opentelemetry.io/docs/specs/otlp/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "decline",
+      "adoption": "homegrown",
+      "homegrown": [
+        "seed/worker/src/agentic/adapters/console-telemetry.js",
+        "seed/worker/src/agentic/core/ports.js",
+        "doctrine/clocks.json",
+        "ops/criticality.jsonl"
+      ],
+      "conformance": "An OTLP exporter adapter and a configured destination.",
+      "cost": "M plus a running backend",
+      "probes": [
+        "file:seed/worker/src/agentic/core/ports.js",
+        "absent:seed/worker/src/agentic/adapters/otlp*.js"
+      ],
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "openslo",
+      "name": "OpenSLO",
+      "body": "OpenSLO project",
+      "status": "stable",
+      "tracked": "v1",
+      "why": "Service-level objectives as YAML that SLO tools evaluate against a metrics backend.",
+      "support": "not_applicable",
+      "reason": "OpenSLO files are input for an SLO engine that queries a metrics backend; the system has neither (see row opentelemetry). Its objectives are already data that its own code evaluates on every tick: each loop's expected interval and stage deadline in doctrine/clocks.json, each queue priority's deadline in doctrine/balance.json, each goal's target in seed/autonomy/goals.json. Rewriting them as OpenSLO YAML would produce files nothing evaluates.",
+      "revisit": "When telemetry is exported to a backend that an OpenSLO-reading tool queries.",
+      "sources": [
+        {
+          "title": "OpenSLO",
+          "url": "https://openslo.com/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "decline",
+      "adoption": "homegrown",
+      "homegrown": [
+        "doctrine/clocks.json",
+        "doctrine/balance.json",
+        "seed/autonomy/goals.json",
+        "foundation/clock.py"
+      ],
+      "conformance": "An export of clocks, deadlines and goals as OpenSLO SLO objects.",
+      "cost": "S to export; the engine and backend it needs are the real cost",
+      "probes": [
+        "file:doctrine/clocks.json",
+        "absent:**/*.openslo.yaml"
+      ],
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "terraform-opentofu",
+      "name": "Terraform / OpenTofu (infrastructure as code)",
+      "body": "OpenTofu (Linux Foundation); HashiCorp",
+      "status": "stable",
+      "tracked": "OpenTofu 1.x; Terraform JSON configuration syntax",
+      "why": "One declarative description of infrastructure that works across cloud providers.",
+      "support": "not_applicable",
+      "reason": "Evaluated for real. Running it needs three things the system is built not to have: a binary installed in CI (a third-party runtime in the deploy path), a state file kept somewhere and locked (a new store that, if lost or stale, blocks every deploy: a single point of failure), and a Cloudflare API token with account-wide rights stored where the workflow can read it. Today no such token exists: Actions prove who they are with OIDC and the site Worker, which holds the credential, performs the deploy. The declarative description already exists and is already reconciled by code on every merge: doctrine/topology.json lists every Worker, binding, route and store, validated by a JSON Schema, and deploy/deploy-workers.mjs makes the account match it and probes the result. A Terraform JSON export of topology.json was also weighed: it is about 60 lines to write, but nothing would run it, so it would be a file with no reader that could silently drift.",
+      "revisit": "When a second runtime provider ships (seed/ultrastable.json lists gcp-cloud-run, aws-lambda and self-hosted as later), or a customer must manage their system from their own Terraform. At that point emit Terraform JSON from topology.json as a generated, drift-checked file; full adoption (state and plan/apply in CI) only if the customer runs it on their side.",
+      "sources": [
+        {
+          "title": "OpenTofu: JSON configuration syntax",
+          "url": "https://opentofu.org/docs/language/syntax/json/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "decline",
+      "adoption": "homegrown",
+      "homegrown": [
+        "doctrine/topology.json",
+        "doctrine/schemas/topology.schema.json",
+        "deploy/deploy-workers.mjs",
+        "site/deployer.js"
+      ],
+      "conformance": "Full: state backend, provider credential and plan/apply in CI replacing the deployer. Export: a generated main.tf.json from topology.json.",
+      "cost": "L for full adoption (and it adds a stored admin credential); S for the export",
+      "probes": [
+        "file:doctrine/topology.json",
+        "file:doctrine/schemas/topology.schema.json",
+        "absent:**/*.tf",
+        "absent:**/*.tf.json"
+      ],
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "editorconfig",
+      "name": "EditorConfig",
+      "body": "editorconfig.org",
+      "status": "de-facto",
+      "tracked": "spec 0.17",
+      "why": "Every editor and coding agent writes line endings, charset and indentation the same way.",
+      "support": "supported",
+      "how": [
+        ".editorconfig",
+        "seed/.editorconfig"
+      ],
+      "acl": ".editorconfig",
+      "tests": [
+        {
+          "file": "tests/foundation/test_open_standards.py",
+          "name": "test_editorconfig_present"
+        }
+      ],
+      "sources": [
+        {
+          "title": "EditorConfig specification",
+          "url": "https://spec.editorconfig.org/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "adopt-now",
+      "adoption": "adopted",
+      "conformance": "Nothing further: it is in force in the files named under how.",
+      "cost": "none",
+      "probes": [
+        "file:.editorconfig",
+        "file:seed/.editorconfig"
+      ],
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "spdx-sbom",
+      "name": "SPDX 2.3 SBOM from the dependency graph",
+      "body": "Linux Foundation (ISO/IEC 5962)",
+      "status": "stable",
+      "tracked": "SPDX-2.3 via GitHub dependency graph export",
+      "why": "GitHub's own view of the dependencies, read weekly against the licence policy in doctrine/dependency-licences.json; complements the CycloneDX SBOM generated from the registers.",
+      "support": "supported",
+      "how": [
+        ".github/workflows/supply-chain.yml",
+        "foundation/supplychain.py"
+      ],
+      "tests": [
+        {
+          "file": "tests/foundation/test_open_standards.py",
+          "name": "test_supply_chain_loop_files_and_closes"
+        }
+      ],
+      "sources": [
+        {
+          "title": "SPDX 2.3",
+          "url": "https://spdx.github.io/spdx-spec/v2.3/",
+          "published": null,
+          "accessed": "2026-11-25"
+        },
+        {
+          "title": "Export an SBOM from the dependency graph",
+          "url": "https://docs.github.com/en/rest/dependency-graph/sboms",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "adopt-now",
+      "adoption": "adopted",
+      "conformance": "Nothing further: it is in force in the files named under how.",
+      "cost": "none",
+      "probes": [
+        "file:.github/workflows/supply-chain.yml",
+        "file:foundation/supplychain.py"
+      ],
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "json-feed",
+      "name": "JSON Feed 1.1 and RSS 2.0",
+      "body": "jsonfeed.org; RSS Advisory Board",
+      "status": "stable",
+      "tracked": "JSON Feed 1.1",
+      "why": "What a system ships is published as feeds any reader or aggregator consumes; the stickiness loop measures freshness from the same feed.",
+      "support": "supported",
+      "how": [
+        "workers/core/feed/index.js",
+        "workers/core/stickiness/index.js"
+      ],
+      "tests": [
+        {
+          "file": "workers/core/feed/feed.test.js",
+          "name": "feed renders escaped RSS and JSON Feed from described changes"
+        }
+      ],
+      "sources": [
+        {
+          "title": "JSON Feed 1.1",
+          "url": "https://www.jsonfeed.org/version/1.1/",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "adopt-now",
+      "adoption": "adopted",
+      "conformance": "Nothing further: it is in force in the files named under how.",
+      "cost": "none",
+      "probes": [
+        "file:workers/core/feed/index.js",
+        "file:workers/core/stickiness/index.js"
+      ],
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "schema-org-kg",
+      "name": "Knowledge graph served as JSON-LD (schema.org)",
+      "body": "W3C / schema.org",
+      "status": "stable",
+      "tracked": "JSON-LD 1.1",
+      "why": "Every system's /api/graph readable by any linked-data tool, not only by our own pages.",
+      "support": "planned",
+      "tracked_by": "STD-7",
+      "acl": "seed/worker/src/datagraph.js",
+      "sources": [
+        {
+          "title": "JSON-LD 1.1",
+          "url": "https://www.w3.org/TR/json-ld11/",
+          "published": "2020-07-16",
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "adopt-later",
+      "adoption": "homegrown",
+      "conformance": "/api/graph is also served as schema.org JSON-LD, so any linked-data tool reads it (STD-7).",
+      "cost": "M",
+      "probes": [
+        "file:seed/worker/src/datagraph.js"
+      ],
+      "homegrown": [
+        "seed/worker/src/datagraph.js",
+        "seed/worker/src/knowledge.js"
+      ],
+      "audited": "2026-11-25"
+    },
+    {
+      "id": "reusable-workflows",
+      "name": "Reusable GitHub Actions workflows shared by every tenant",
+      "body": "GitHub",
+      "status": "stable",
+      "tracked": "workflow_call",
+      "why": "Tenants call the platform's checks, deploy and supply-chain workflows instead of carrying copies that drift.",
+      "support": "planned",
+      "tracked_by": "STD-9",
+      "acl": "seed/.github/workflows/bootstrap.yml",
+      "sources": [
+        {
+          "title": "Reusing workflows",
+          "url": "https://docs.github.com/en/actions/sharing-automations/reusing-workflows",
+          "published": null,
+          "accessed": "2026-11-25"
+        }
+      ],
+      "decision": "adopt-later",
+      "adoption": "homegrown",
+      "conformance": "Tenants call the platform's workflows with `uses:` instead of carrying scaffolded copies (STD-9).",
+      "cost": "M",
+      "probes": [
+        "file:foundation/tenantstd.py"
+      ],
+      "homegrown": [
+        "scaffold/tenant",
+        "workers/tools/vendor_sync.mjs"
+      ],
+      "audited": "2026-11-25"
     }
-  ]
+  ],
+  "undecided_ceiling": 28
 }

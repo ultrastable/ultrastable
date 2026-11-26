@@ -1,0 +1,463 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/topology.schema.json",
+ "title": "Cloudflare topology: stores and Workers",
+ "type": "object",
+ "required": [
+  "version",
+  "account_id",
+  "prefix",
+  "stores",
+  "workers",
+  "edit_path",
+  "deploy_counter",
+  "system_compatibility_date"
+ ],
+ "properties": {
+  "deploy_counter": {
+   "type": "string",
+   "minLength": 1
+  },
+  "version": {
+   "type": "string",
+   "pattern": "^\\d+\\.\\d+\\.\\d+$"
+  },
+  "account_id": {
+   "type": "string",
+   "pattern": "^[0-9a-f]{32}$"
+  },
+  "prefix": {
+   "type": "string",
+   "minLength": 1
+  },
+  "system_compatibility_date": {
+   "type": "string",
+   "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+  },
+  "edit_path": {
+   "type": "array",
+   "items": {
+    "type": "string",
+    "minLength": 1
+   },
+   "minItems": 1
+  },
+  "stores": {
+   "type": "object",
+   "required": [
+    "d1",
+    "kv",
+    "r2",
+    "queues",
+    "vectorize",
+    "workflows"
+   ],
+   "properties": {
+    "d1": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "name",
+       "state",
+       "what",
+       "id",
+       "key"
+      ],
+      "properties": {
+       "name": {
+        "type": "string",
+        "pattern": "^ultrastable-"
+       },
+       "state": {
+        "enum": [
+         "live",
+         "planned",
+         "retired"
+        ]
+       },
+       "what": {
+        "type": "string",
+        "minLength": 1
+       },
+       "key": {
+        "type": "string",
+        "minLength": 1
+       },
+       "id": {
+        "type": "string",
+        "minLength": 1
+       }
+      }
+     }
+    },
+    "kv": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "name",
+       "state",
+       "what",
+       "key"
+      ],
+      "properties": {
+       "name": {
+        "type": "string",
+        "pattern": "^ultrastable-"
+       },
+       "state": {
+        "enum": [
+         "live",
+         "planned",
+         "retired"
+        ]
+       },
+       "what": {
+        "type": "string",
+        "minLength": 1
+       },
+       "key": {
+        "type": "string",
+        "minLength": 1
+       },
+       "id": {
+        "type": "string",
+        "minLength": 1
+       }
+      }
+     }
+    },
+    "r2": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "name",
+       "state",
+       "what"
+      ],
+      "properties": {
+       "name": {
+        "type": "string",
+        "pattern": "^ultrastable-"
+       },
+       "state": {
+        "enum": [
+         "live",
+         "planned",
+         "retired"
+        ]
+       },
+       "what": {
+        "type": "string",
+        "minLength": 1
+       },
+       "key": {
+        "type": "string",
+        "minLength": 1
+       },
+       "id": {
+        "type": "string",
+        "minLength": 1
+       }
+      }
+     }
+    },
+    "queues": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "name",
+       "state",
+       "what",
+       "key"
+      ],
+      "properties": {
+       "name": {
+        "type": "string",
+        "pattern": "^ultrastable-"
+       },
+       "state": {
+        "enum": [
+         "live",
+         "planned",
+         "retired"
+        ]
+       },
+       "what": {
+        "type": "string",
+        "minLength": 1
+       },
+       "key": {
+        "type": "string",
+        "minLength": 1
+       },
+       "id": {
+        "type": "string",
+        "minLength": 1
+       }
+      }
+     }
+    },
+    "vectorize": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "name",
+       "state",
+       "what",
+       "key"
+      ],
+      "properties": {
+       "name": {
+        "type": "string",
+        "pattern": "^ultrastable-"
+       },
+       "state": {
+        "enum": [
+         "live",
+         "planned",
+         "retired"
+        ]
+       },
+       "what": {
+        "type": "string",
+        "minLength": 1
+       },
+       "key": {
+        "type": "string",
+        "minLength": 1
+       },
+       "id": {
+        "type": "string",
+        "minLength": 1
+       },
+       "dimensions": {
+        "type": "integer",
+        "minimum": 1
+       },
+       "metric": {
+        "enum": [
+         "cosine",
+         "euclidean",
+         "dot-product"
+        ]
+       }
+      }
+     }
+    },
+    "workflows": {
+     "type": "array",
+     "items": {
+      "type": "object"
+     }
+    }
+   },
+   "additionalProperties": false,
+   "patternProperties": {
+    "^_": true
+   }
+  },
+  "workers": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "id",
+     "state",
+     "role",
+     "main",
+     "compatibility_date",
+     "public",
+     "bindings"
+    ],
+    "properties": {
+     "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+     },
+     "state": {
+      "enum": [
+       "live",
+       "planned",
+       "retired"
+      ]
+     },
+     "role": {
+      "type": "string",
+      "minLength": 1
+     },
+     "main": {
+      "type": "string",
+      "pattern": "\\.(js|mjs|ts)$"
+     },
+     "compatibility_date": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+     },
+     "public": {
+      "type": "boolean"
+     },
+     "crons": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "pattern": "^\\S+ \\S+ \\S+ \\S+ \\S+$"
+      }
+     },
+     "routes": {
+      "type": "array",
+      "items": {
+       "type": [
+        "string",
+        "object"
+       ]
+      }
+     },
+     "pulse": {
+      "type": [
+       "string",
+       "object",
+       "boolean"
+      ]
+     },
+     "source": {
+      "type": "object",
+      "required": [
+       "repo",
+       "ref"
+      ],
+      "properties": {
+       "repo": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"
+       },
+       "ref": {
+        "type": "string",
+        "minLength": 1
+       }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+       "^_": true
+      }
+     },
+     "bindings": {
+      "type": "object",
+      "required": [],
+      "properties": {
+       "d1": {
+        "type": "object",
+        "additionalProperties": {
+         "type": "string",
+         "minLength": 1
+        }
+       },
+       "kv": {
+        "type": "object",
+        "additionalProperties": {
+         "type": "string",
+         "minLength": 1
+        }
+       },
+       "r2": {
+        "type": "object",
+        "additionalProperties": {
+         "type": "string",
+         "minLength": 1
+        }
+       },
+       "vectorize": {
+        "type": "object",
+        "additionalProperties": {
+         "type": "string",
+         "minLength": 1
+        }
+       },
+       "services": {
+        "type": "object",
+        "additionalProperties": {
+         "type": "string",
+         "minLength": 1
+        }
+       },
+       "queues_producer": {
+        "type": "object",
+        "additionalProperties": {
+         "type": "string",
+         "minLength": 1
+        }
+       },
+       "vars": {
+        "type": "object",
+        "additionalProperties": {
+         "type": "string",
+         "minLength": 1
+        }
+       },
+       "ai": {
+        "type": "array",
+        "items": {
+         "type": "string",
+         "minLength": 1
+        }
+       },
+       "secrets": {
+        "type": "array",
+        "items": {
+         "type": "string",
+         "pattern": "^[A-Z][A-Z0-9_]*$"
+        },
+        "uniqueItems": true
+       },
+       "queues_consumer": {
+        "type": "array",
+        "items": {
+         "type": "string",
+         "minLength": 1
+        }
+       },
+       "send_email": {
+        "type": [
+         "array",
+         "object"
+        ]
+       },
+       "var_names": {
+        "type": "array",
+        "items": {
+         "type": "string",
+         "minLength": 1
+        }
+       },
+       "durable_objects": {
+        "type": [
+         "array",
+         "object"
+        ]
+       },
+       "migrations": {
+        "type": [
+         "array",
+         "object"
+        ]
+       }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+       "^_": true
+      }
+     }
+    },
+    "additionalProperties": false,
+    "patternProperties": {
+     "^_": true
+    }
+   },
+   "minItems": 1
+  }
+ }
+}

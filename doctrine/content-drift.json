@@ -1,0 +1,30 @@
+{
+ "_doc": "CONTENT-DRIFT-1 (2026-11-25): systems that write their own content (STATIC-CONTENT-1) can drift into empty, cut-off, templated or duplicate entries with no person reading them. foundation/contentdrift.py --live reads the newest entries of every content_feed in instances/ultrastable/progress.json and fails when the share of bad entries is above max_bad_share or a feed cannot be read. Consumers: foundation/contentdrift.py, doctrine/detectors.json (content-drift), tests/foundation/test_contentdrift.py. Placeholders match case-sensitively and as whole words, so 'maintenance' never reads as NaN.",
+ "version": "1.0.0",
+ "newest": 20,
+ "min_chars": 80,
+ "max_bad_share": 0.2,
+ "placeholders": [
+  "undefined",
+  "[object Object]",
+  "NaN",
+  "lorem ipsum",
+  "Lorem ipsum",
+  "TODO",
+  "{{",
+  "}}",
+  "As an AI",
+  "as an AI language model"
+ ],
+ "slop": [
+  "delve",
+  "tapestry",
+  "game-changer",
+  "game changer",
+  "revolutionize",
+  "in today's fast-paced",
+  "it's not just",
+  "cutting-edge",
+  "seamless"
+ ]
+}

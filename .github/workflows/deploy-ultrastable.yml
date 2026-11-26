@@ -2,12 +2,12 @@ name: deploy-ultrastable
 # DEPLOY-OIDC-1: merge -> deploy of every live platform worker into the ultrastable Cloudflare account, authenticated by this run's GitHub
 # OIDC token (no stored Cloudflare secret; site/deployer.js verifies the token names this repository's main branch).
 # budget: ~2 min per run, only when worker behaviour changes (SUBSTANCE-1: a push of regenerated data, ledgers or literal churn skips the deploy in ~20 s unless the live deploy is older than doctrine/substance.json deploy.max_age_hours)
-# trigger: push to main on worker sources, and manual dispatch; never faster than the merge rate
+# trigger: push to main on worker sources (tenant code still moving into its own repository included, FULLSTACK-1), and manual dispatch; never faster than the merge rate
 # free-alternative: the tick's handoff loop deploys the same modules through the same endpoint (seed/worker/src/handoff.js) once it holds a GitHub credential
 on:
   push:
     branches: [main]
-    paths: ["seed/worker/**", "site/**", "dashboard/**", "instances/unlearn/worker/**", "instances/unlearn/phases.json", "doctrine/topology.json", "seed/autonomy/**", "seed/analytics/**", "deploy/deploy-oidc.mjs", ".github/workflows/deploy-ultrastable.yml"]
+    paths: ["seed/worker/**", "site/**", "spinoffs/**", "dashboard/**", "doctrine/topology.json", "seed/autonomy/**", "seed/analytics/**", "instances/*/worker/**", "deploy/deploy-oidc.mjs", ".github/workflows/deploy-ultrastable.yml"]
   workflow_dispatch:
     inputs:
       workers:
@@ -17,6 +17,7 @@ on:
 permissions:
   contents: write  # DEPLOY-RECORD-1: the record step commits ops/deploys.jsonl
   id-token: write
+  deployments: write  # DEPLOY-VISIBLE-1: the deploy is recorded as a GitHub Deployment with its live URL
 concurrency: {group: deploy-ultrastable, cancel-in-progress: false}
 jobs:
   deploy:
@@ -32,7 +33,7 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" != "push" ]; then echo "deploy=true" >> "$GITHUB_OUTPUT"; exit 0; fi
           python3 -m foundation substance --deploy-gate --range "${{ github.event.before }}..${{ github.sha }}" \
-            --paths 'seed/worker/**' 'site/**' 'dashboard/**' 'instances/unlearn/worker/**' 'instances/unlearn/phases.json' 'doctrine/topology.json' 'seed/autonomy/**' 'seed/analytics/**' 'deploy/deploy-oidc.mjs' '.github/workflows/deploy-ultrastable.yml'
+            --paths 'seed/worker/**' 'site/**' 'spinoffs/**' 'dashboard/**' 'doctrine/topology.json' 'seed/autonomy/**' 'seed/analytics/**' 'instances/*/worker/**' 'deploy/deploy-oidc.mjs' '.github/workflows/deploy-ultrastable.yml'
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         if: steps.gate.outputs.deploy == 'true'
         with: {node-version: 24}
@@ -41,6 +42,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: node deploy/deploy-oidc.mjs "${{ inputs.workers }}"
+      - name: Every system's knowledge graph answers live after the deploy (DATAGRAPH-LIVE-1)
+        # a deploy was once called done while two tenants' graphs were never read back; the read is part of the deploy, a red one goes to ciwatch
+        if: steps.gate.outputs.deploy == 'true'
+        run: python3 -m foundation datagraph --live
       - name: Record the verified deploy (DEPLOY-RECORD-1)
         if: steps.gate.outputs.deploy == 'true'
         run: |

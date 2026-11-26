@@ -1,15 +1,21 @@
 {
- "_doc": "TENANT-REPO-1 (Rowan, 2026-11-22: \"This is an app, a tenant, so it needs its own repo.\"): every tenant app lives in its own repository of the org; this repository keeps only its manifest (IDEA.md, instance.json, lifecycle.json, runway.json, README pointer). Read by foundation/tenantrepos.py (--check in checks) and by .github/workflows/tenant-repos.yml, which creates a missing repository from the tenant's folder with its history. The tenant's Worker is deployed by deploy-ultrastable, which builds it from the tenant repository named as `source` in doctrine/topology.json.",
+ "_doc": "TENANT-REPO-1 (Rowan, 2026-11-22: \"This is an app, a tenant, so it needs its own repo.\"): every tenant app lives in its own repository of the org; this repository keeps only its manifest (IDEA.md, instance.json, lifecycle.json, runway.json, README pointer). Read by foundation/tenantrepos.py (--check in checks) and by .github/workflows/tenant-repos.yml, which creates a missing repository from the tenant's folder with its history. The tenant's Worker is deployed by deploy-ultrastable, which builds it from the tenant repository named as `source` in doctrine/topology.json. TENANT-SANDBOX-1 (Rowan, 2026-11-25: \"All UltraStable deployments shall have their own GitHub repo and shall be sandboxed as tenant apps.\"): every tenant with a worker carries `sandbox` (its own stores named ultrastable-<slug>*, its own secret names, a daily budget whose D1 part is sampled by the tick through instances/ultrastable/cost-budgets.json); `tenantrepos --isolation` is the probe. States planned (manifest only; its repository is created before its first code, by the same workflow) and retired (no live deployment). TENANT-STANDARD-1: a repository's files come from the one scaffold (scaffold/tenant, written by foundation/tenantstd.py when --prepare runs), never from hand-typed blobs here; `vendor` always carries the base files of doctrine/tenant-standard.json and `scaffold` holds a tenant's declared options (beat_hours, noun).",
  "org": "ultrastable",
  "tenants": {
   "practical-solutions": {
    "repo": "ultrastable/practical-solutions",
    "state": "own-repo",
-   "why": "created as its own repository from the start"
+   "why": "created as its own repository from the start",
+      "description": "Practical Solutions: evidence-based solutions to pressing global problems, each with its study and cheapest first test. A system running on Ultrastable.",
+   "frontend": "https://ultrastable.org",
+   "vendor": {
+    "seed/worker/src/knowledge.js": "vendor/seed/knowledge.js",
+    "seed/worker/src/contract.js": "vendor/seed/contract.js"
+   }
   },
   "unlearn": {
    "repo": "ultrastable/unlearn",
-   "state": "moving",
+   "state": "moved",
    "source": "instances/unlearn",
    "keep_in_core": [
     "IDEA.md",
@@ -19,24 +25,201 @@
     "README.md"
    ],
    "vendor": {
-    "doctrine/models.json": "vendor/ultrastable/models.json"
+    "doctrine/models.json": "vendor/ultrastable/models.json",
+    "seed/worker/src/promoqueue.js": "vendor/ultrastable/promoqueue.js",
+    "doctrine/stakeholders.json": "vendor/ultrastable/stakeholders.json",
+    "workers/core/datagraph/index.js": "vendor/ultrastable/datagraph.js",
+    "seed/worker/src/knowledge.js": "vendor/ultrastable/knowledge.js",
+    "seed/worker/src/contract.js": "vendor/ultrastable/contract.js",
+    "doctrine/tenant-standard.json": "vendor/ultrastable/tenant-standard.json",
+    "foundation/tenantstd.py": "vendor/ultrastable/tools/tenantstd.py",
+    "workers/tools/vendor_sync.mjs": "vendor/ultrastable/tools/vendor_sync.mjs"
    },
    "worker": "ultrastable-unlearn",
    "ai": true,
    "visibility": "public",
    "description": "Unlearn: popular beliefs and famous findings set against the evidence. A tenant system running on Ultrastable.",
-   "write": {
-    "package.json": {
-     "name": "unlearn",
-     "private": true,
-     "type": "module",
-     "description": "Unlearn: popular beliefs and famous findings set against the evidence. A tenant system running on Ultrastable.",
-     "scripts": {
-      "test": "node --test --no-warnings worker/*.test.mjs"
-     }
-    },
-    "AGENTS.md": "# Unlearn: agent instructions\n\n> Ultrastable is the foundation for any autonomous system.\n\nUnlearn is a tenant system on Ultrastable. This repository holds its code: the evidence encyclopedia and its loops (`worker/`), the coaching\ntool's phases (`phases.json`), and core files it reads, vendored under `vendor/ultrastable/`. Its manifest (IDEA.md, instance.json,\nlifecycle.json, runway.json) and the platform rules every agent follows live in the core repository, `ultrastable/ultrastable`\n(`agents/AGENTS.md`, `instances/unlearn/`, `doctrine/tenant-repos.json`).\n\n- Test: `node --test worker/*.test.mjs` (CI runs it on every pull request).\n- Deploy: the platform builds this repository's `main` into the `ultrastable-unlearn` Worker (D1 `ultrastable-unlearn`, Workers AI, hourly\n  cron, `unlearn.ultrastable.org`). Nothing here holds a credential.\n- Honest grading: nothing publishes on an unverified citation; a model may only label or re-word, never add a number, a name or a source.\n- No child accounts and no child data; no cookies; reader taps are anonymous counts.\n"
+   "sandbox": {
+    "stores": [
+     "ultrastable-unlearn"
+    ],
+    "secrets": [],
+    "budget": {
+     "requests_per_day": 20000,
+     "d1_reads_per_day": 500000,
+     "ai_neurons_per_day": 2000
+    }
    }
+  },
+  "what-works": {
+   "repo": "ultrastable/what-works",
+   "state": "moved",
+   "source": "instances/what-works",
+   "keep_in_core": [
+    "IDEA.md",
+    "instance.json",
+    "lifecycle.json",
+    "runway.json",
+    "README.md"
+   ],
+   "vendor": {
+    "doctrine/models.json": "vendor/ultrastable/models.json",
+    "doctrine/stakeholders.json": "vendor/ultrastable/stakeholders.json",
+    "seed/worker/src/promoqueue.js": "vendor/ultrastable/promoqueue.js",
+    "workers/core/datagraph/index.js": "vendor/ultrastable/datagraph.js",
+    "seed/worker/src/contract.js": "vendor/ultrastable/contract.js",
+    "doctrine/tenant-standard.json": "vendor/ultrastable/tenant-standard.json",
+    "foundation/tenantstd.py": "vendor/ultrastable/tools/tenantstd.py",
+    "workers/tools/vendor_sync.mjs": "vendor/ultrastable/tools/vendor_sync.mjs",
+    "workers/core/kgraph/insight.js": "vendor/ultrastable/kgraph.js"
+   },
+   "worker": "ultrastable-what-works",
+   "ai": true,
+   "visibility": "public",
+   "description": "What Works: a living atlas of what works in public policy, every programme graded by its trials and re-graded as evidence lands. A tenant system running on Ultrastable.",
+   "sandbox": {
+    "stores": [
+     "ultrastable-what-works"
+    ],
+    "secrets": [],
+    "budget": {
+     "requests_per_day": 20000,
+     "d1_reads_per_day": 500000,
+     "ai_neurons_per_day": 2000
+    }
+   }
+  },
+  "replication-ledger": {
+   "repo": "ultrastable/replication-ledger",
+   "state": "moving",
+   "source": "instances/replication-ledger",
+   "keep_in_core": [
+    "IDEA.md",
+    "instance.json",
+    "lifecycle.json",
+    "runway.json",
+    "README.md"
+   ],
+   "vendor": {
+    "workers/core/datagraph/index.js": "vendor/ultrastable/datagraph.js",
+    "seed/worker/src/knowledge.js": "worker/vendor/knowledge.js",
+    "seed/worker/src/contract.js": "vendor/ultrastable/contract.js",
+    "seed/worker/src/promoqueue.js": "vendor/ultrastable/promoqueue.js",
+    "doctrine/tenant-standard.json": "vendor/ultrastable/tenant-standard.json",
+    "foundation/tenantstd.py": "vendor/ultrastable/tools/tenantstd.py",
+    "workers/tools/vendor_sync.mjs": "vendor/ultrastable/tools/vendor_sync.mjs"
+   },
+   "worker": "ultrastable-replication-ledger",
+   "ai": false,
+   "visibility": "public",
+   "description": "Replication Ledger: which landmark findings held up and which failed, across many fields, updated as replications publish. A tenant system running on Ultrastable.",
+   "sandbox": {
+    "stores": [
+     "ultrastable-replication-ledger"
+    ],
+    "secrets": [],
+    "budget": {
+     "requests_per_day": 20000,
+     "d1_reads_per_day": 500000,
+     "ai_neurons_per_day": 2000
+    }
+   }
+  },
+  "base-rates": {
+   "repo": "ultrastable/base-rates",
+   "state": "planned",
+   "source": "instances/base-rates",
+   "keep_in_core": [
+    "IDEA.md",
+    "instance.json",
+    "lifecycle.json",
+    "runway.json",
+    "README.md"
+   ],
+   "visibility": "public",
+   "description": "Base Rates: a tenant system running on Ultrastable.",
+   "why": "nothing is deployed; its repository is filled from the one scaffold (TENANT-STANDARD-1: a minimal full-stack Worker with the fleet contract and a clock) and it stays planned until the platform registers and deploys its Worker (Q-SEED-base-rates)",
+   "vendor": {
+    "seed/worker/src/contract.js": "vendor/ultrastable/contract.js",
+    "seed/worker/src/promoqueue.js": "vendor/ultrastable/promoqueue.js",
+    "doctrine/tenant-standard.json": "vendor/ultrastable/tenant-standard.json",
+    "foundation/tenantstd.py": "vendor/ultrastable/tools/tenantstd.py",
+    "workers/tools/vendor_sync.mjs": "vendor/ultrastable/tools/vendor_sync.mjs"
+   },
+   "scaffold": {
+    "beat_hours": 1,
+    "noun": "base rates"
+   }
+  },
+  "did-it-work": {
+   "repo": "ultrastable/did-it-work",
+   "state": "planned",
+   "source": "instances/did-it-work",
+   "keep_in_core": [
+    "IDEA.md",
+    "instance.json",
+    "lifecycle.json",
+    "runway.json",
+    "README.md"
+   ],
+   "visibility": "public",
+   "description": "Did It Work: a tenant system running on Ultrastable.",
+   "why": "nothing is deployed; its repository is filled from the one scaffold (TENANT-STANDARD-1: a minimal full-stack Worker with the fleet contract and a clock) and it stays planned until the platform registers and deploys its Worker (Q-SEED-did-it-work)",
+   "vendor": {
+    "seed/worker/src/contract.js": "vendor/ultrastable/contract.js",
+    "seed/worker/src/promoqueue.js": "vendor/ultrastable/promoqueue.js",
+    "doctrine/tenant-standard.json": "vendor/ultrastable/tenant-standard.json",
+    "foundation/tenantstd.py": "vendor/ultrastable/tools/tenantstd.py",
+    "workers/tools/vendor_sync.mjs": "vendor/ultrastable/tools/vendor_sync.mjs"
+   },
+   "scaffold": {
+    "beat_hours": 24,
+    "noun": "cases"
+   }
+  },
+  "open-questions": {
+   "repo": "ultrastable/open-questions",
+   "state": "planned",
+   "source": "instances/open-questions",
+   "keep_in_core": [
+    "IDEA.md",
+    "instance.json",
+    "lifecycle.json",
+    "runway.json",
+    "README.md"
+   ],
+   "visibility": "public",
+   "description": "Open Questions: a tenant system running on Ultrastable.",
+   "why": "nothing is deployed; its repository is filled from the one scaffold (TENANT-STANDARD-1: a minimal full-stack Worker with the fleet contract and a clock) and it stays planned until the platform registers and deploys its Worker (Q-SEED-open-questions)",
+   "vendor": {
+    "seed/worker/src/contract.js": "vendor/ultrastable/contract.js",
+    "seed/worker/src/promoqueue.js": "vendor/ultrastable/promoqueue.js",
+    "doctrine/tenant-standard.json": "vendor/ultrastable/tenant-standard.json",
+    "foundation/tenantstd.py": "vendor/ultrastable/tools/tenantstd.py",
+    "workers/tools/vendor_sync.mjs": "vendor/ultrastable/tools/vendor_sync.mjs"
+   },
+   "scaffold": {
+    "beat_hours": 168,
+    "noun": "open questions"
+   }
+  },
+  "spinoffs": {
+   "repo": "ultrastable/spinoffs",
+   "state": "retired",
+   "source": "instances/spinoffs",
+   "why": "the eight generated *.ultrastable.app apps shared one Worker and one D1 (ultrastable-spinoffs); all eight are retired (spinoffs/registry.json). A new spinoff launches as its own tenant repository; the check fails when a spinoff app is live again."
   }
+ },
+ "visitor_apps": {
+  "_doc": "LAUNCH-PATH-1: an idea typed at ultrastable.io by someone with no code agent. Its launch record lives in the site's store (site/graduate.js); deploy/launch-apps.mjs (run daily by tenant-repos.yml) deploys its own system, creates its repository from the template, files the owner's requests there and invites the owner on request. Visitor apps have no folder under instances/: their manifest is generated from the idea.",
+  "template": "ultrastable/seed",
+  "repo_prefix": "app-",
+  "visibility": "public",
+  "_visibility": "REPO-STANDARD-1: an app repository is made from the seed template and carries its workflows; a private repository with workflows is billed for Actions minutes, so it is public (seed/worker/src/apprepos.js ensureAppRepo)",
+  "base_manifest": "instances/second-tenant/instance.json",
+  "usd_per_month": 5,
+  "max_apps": 20,
+  "max_deploys_per_run": 2,
+  "full_stack_hours": 48
  }
 }

@@ -1,0 +1,7 @@
+{
+ "_doc": "COLLISION-1 (Rowan, 2026-11-25): parallel sessions never build the same thing twice. Read by foundation/collisions.py. baseline_duplicates: migration numbers that two files already share on main, per directory; shrink-only (the check fails when a listed duplicate is gone so the entry is removed, and fails on any new duplicate). The migrator applies files in name order and records each by name, so the existing pair is safe; a new pair is refused.",
+ "rule": "COLLISION-1",
+ "baseline_duplicates": {
+  "seed/worker/migrations": ["0010"]
+ }
+}
