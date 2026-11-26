@@ -45,7 +45,7 @@ export default {
   {
    "area": "doctrine",
    "quiet_days": 0,
-   "recent7": 42512,
+   "recent7": 42567,
    "series": [
     0,
     0,
@@ -76,16 +76,16 @@ export default {
     0,
     0,
     0,
-    42512
+    42567
    ],
    "share_recent": 0.117,
    "share_trend": 0.117,
-   "total": 42512
+   "total": 42567
   },
   {
    "area": "foundation",
    "quiet_days": 0,
-   "recent7": 41867,
+   "recent7": 42136,
    "series": [
     0,
     0,
@@ -116,11 +116,11 @@ export default {
     0,
     0,
     0,
-    41867
+    42136
    ],
    "share_recent": 0.116,
    "share_trend": 0.116,
-   "total": 41867
+   "total": 42136
   },
   {
    "area": "seed/worker",
@@ -205,7 +205,7 @@ export default {
   {
    "area": "tests/foundation",
    "quiet_days": 0,
-   "recent7": 23745,
+   "recent7": 23788,
    "series": [
     0,
     0,
@@ -236,16 +236,16 @@ export default {
     0,
     0,
     0,
-    23745
+    23788
    ],
    "share_recent": 0.066,
    "share_trend": 0.066,
-   "total": 23745
+   "total": 23788
   },
   {
    "area": "doctrine/schemas",
    "quiet_days": 0,
-   "recent7": 17276,
+   "recent7": 17295,
    "series": [
     0,
     0,
@@ -276,16 +276,16 @@ export default {
     0,
     0,
     0,
-    17276
+    17295
    ],
    "share_recent": 0.048,
    "share_trend": 0.048,
-   "total": 17276
+   "total": 17295
   },
   {
    "area": "instances",
    "quiet_days": 0,
-   "recent7": 16928,
+   "recent7": 16963,
    "series": [
     0,
     0,
@@ -316,14 +316,14 @@ export default {
     0,
     0,
     0,
-    16928
+    16963
    ],
    "share_recent": 0.047,
    "share_trend": 0.047,
-   "total": 16928
+   "total": 16963
   }
  ],
- "at": "2026-11-26T14:12:50Z",
+ "at": "2026-11-26T14:16:40Z",
  "days": 30,
  "findings": [
   {
@@ -389,10 +389,10 @@ export default {
    0,
    0,
    0,
-   51
+   53
   ],
   "closed": 1250,
-  "opened": 1301
+  "opened": 1303
  },
  "loops": [
   {
@@ -583,7 +583,7 @@ export default {
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 448,
+   "rows": 449,
    "series": [
     0,
     0,
@@ -614,7 +614,7 @@ export default {
     80,
     55,
     88,
-    108
+    109
    ]
   },
   {
