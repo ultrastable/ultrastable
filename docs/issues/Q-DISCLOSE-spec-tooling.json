@@ -1,0 +1,11 @@
+{
+  "id": "Q-DISCLOSE-spec-tooling",
+  "title": "Q-DISCLOSE-spec-tooling: specification tooling runs with or without the private specification",
+  "body": "**Owner:** executor\n**Trigger:** Q-DISCLOSE-check; public CI has no private specification to read\n**Done check:** cmd:python3 -m foundation disclosure --tooling\n**Status:** open\n\n`scripts/spec_ids.py`, `scripts/check_license.py`, `workers/tools/spec_truth.py`, `workers/tools/req_ids.py`, `workers/tools/spec_backlog.py` and `workers/core/conformance/cli.js` read the specification directory from `ULTRASTABLE_SPEC_DIR` (or their existing flag). With the directory present they run in full mode and change nothing about today's checks. With it absent they run in registry mode: requirement IDs against `doctrine/spec-ids.json` and the committed conformance manifest, and every check that needs the text reports `unmeasured`, never `ok`. `disclosure --tooling` runs each tool against an empty directory and requires every one to exit without a traceback and without a false pass.\n\n**Prediction:** disclosure.spec_tools_failing_without_spec <= 0 within 72 h\n**Out of scope:** rewriting git history (the ruleset refuses force pushes); changing the platform's agents/AGENTS.md, which every repository fetches by public URL (AGENT-BOOTSTRAP-1); moving the company papers already in ultrastable/ops admin/. Weakening any requirement or any probe to make a tool pass.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation disclosure --tooling` exits 0 on main. It fails today: the command does not exist.\n",
+  "labels": [
+    "p1",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}
