@@ -1,7 +1,7 @@
 {
   "id": "Q-KG-open-questions",
   "title": "Q-KG-open-questions: knowledge graph of all open-questions data (DATAGRAPH-1)",
-  "body": "**Owner:** executor\n**Trigger:** every executor run; DATAGRAPH-1\n**Done check:** grep:doctrine/knowledge-graph.json::\"open-questions\": \\{ \"state\": \"built\"\n**Status:** open\n\nDATAGRAPH-1: open-questions runs its own Worker in ultrastable/open-questions. Map its entries with the shared engine seed/worker/src/knowledge.js (vendored, never edited), serve /api/graph and /api/graph/health from that map, then set this row to built.\n\n**Prediction:** kg_systems_built >= 1 more within 168 h\n**Out of scope:** changing the entry format or the loop.\n**Closing probe:** GET https://open-questions.ultrastable.org/api/graph/health expect 200\n",
+  "body": "**Owner:** executor\n**Trigger:** every executor run; DATAGRAPH-1\n**Done check:** GET https://open-questions.ultrastable.org/api/graph/health\n**Status:** open\n\nDATAGRAPH-1: open-questions runs its own Worker in ultrastable/open-questions. Map its entries with the shared engine seed/worker/src/knowledge.js (vendored, never edited), serve /api/graph and /api/graph/health from that map, then set this row to built.\n\n**Prediction:** kg_systems_built >= 6 within 168 h\n**Out of scope:** changing the entry format or the loop.\n**Closing probe:** GET https://open-questions.ultrastable.org/api/graph/health expect 200\n",
   "labels": [
     "role:executor",
     "growth",

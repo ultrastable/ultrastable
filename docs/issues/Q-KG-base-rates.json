@@ -1,7 +1,7 @@
 {
   "id": "Q-KG-base-rates",
   "title": "Q-KG-base-rates: knowledge graph of all base-rates data (DATAGRAPH-1)",
-  "body": "**Owner:** executor\n**Trigger:** every executor run; DATAGRAPH-1\n**Done check:** grep:doctrine/knowledge-graph.json::\"base-rates\": \\{ \"state\": \"built\"\n**Status:** open\n\nDATAGRAPH-1: base-rates runs its own Worker in ultrastable/base-rates. Map its entries with the shared engine seed/worker/src/knowledge.js (vendored, never edited), serve /api/graph and /api/graph/health from that map, then set this row to built.\n\n**Prediction:** kg_systems_built >= 1 more within 168 h\n**Out of scope:** changing the entry format or the loop.\n**Closing probe:** GET https://base-rates.ultrastable.org/api/graph/health expect 200\n",
+  "body": "**Owner:** executor\n**Trigger:** every executor run; DATAGRAPH-1\n**Done check:** GET https://base-rates.ultrastable.org/api/graph/health\n**Status:** open\n\nDATAGRAPH-1: base-rates runs its own Worker in ultrastable/base-rates. Map its entries with the shared engine seed/worker/src/knowledge.js (vendored, never edited), serve /api/graph and /api/graph/health from that map, then set this row to built.\n\n**Prediction:** kg_systems_built >= 6 within 168 h\n**Out of scope:** changing the entry format or the loop.\n**Closing probe:** GET https://base-rates.ultrastable.org/api/graph/health expect 200\n",
   "labels": [
     "role:executor",
     "growth",
