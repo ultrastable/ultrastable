@@ -417,7 +417,7 @@ def tick(root=REPO, apply=False, now=None, read=None, tenants=True, fetch=None) 
         entry = {"value": value, "ok": ok, "consecutive_out": consecutive}
         if pending:
             since = len(hist) - pending["n"] + 1
-            verdict = settle_verdict(root, c, pending, ok, since)
+            verdict = settle_verdict(root, c, pending, ok, since, v, value)
             if verdict:
                 vr = {"at": now, "ev": "verdict", "var": key, "step_id": pending["id"], "verdict": verdict, "value": value}
                 if verdict == "reverted" and pending["kind"] == "param" and apply:
@@ -465,11 +465,31 @@ def tick(root=REPO, apply=False, now=None, read=None, tenants=True, fetch=None) 
     return out
 
 
-def settle_verdict(root, c, pending, ok, since):
+def gap(v: dict, value):
+    """Distance from bounds (0 when inside, None when unmeasured)."""
+    if value is None:
+        return None
+    lo, hi = v.get("min"), v.get("max")
+    return max((lo - value) if lo is not None else 0, (value - hi) if hi is not None else 0, 0)
+
+
+def progressed(c, v, pending, value) -> bool:
+    """SETTLE-PROGRESS-1 (2026-11-26): a step that closed at least min_progress of the gap it started from is working; undoing it throws the
+    gain away. 107 of 107 verdicts to 2026-11-26 were reverts because only a full return to bounds counted, including steps on slow, windowed
+    readings that cannot reach bounds within settle_ticks."""
+    if not v:
+        return False
+    g0, g1 = gap(v, pending.get("value")), gap(v, value)
+    return bool(g0) and g1 is not None and (g0 - g1) >= c.get("min_progress", 0.1) * g0
+
+
+def settle_verdict(root, c, pending, ok, since, v=None, value=None):
     """SECOND-LOOP-SETTLE-1: kept the moment the variable is back in bounds. A param acts at once, so it is undone after settle_ticks readings.
     An item or spinoff step is work that has to be done first: it is undone only when its item reached a final status and the variable is
     still out, or after item_settle_ticks readings (judging it after 3 readings reverted 14 of 14 before any could act)."""
     if ok:
+        return "kept"
+    if (pending.get("kind") == "param" and since >= c["settle_ticks"] or pending.get("kind") != "param") and progressed(c, v, pending, value):
         return "kept"
     if pending.get("kind") == "param":
         return "reverted" if since >= c["settle_ticks"] else None

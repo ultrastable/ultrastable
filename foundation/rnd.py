@@ -319,6 +319,29 @@ def report(root=REPO) -> dict:
     return {"coverage": coverage(root, cfg, profiles(root)), "priorities": _read(root, "priorities.json", {}), "passes": len(_rows(root, "log.jsonl"))}
 
 
+def plug_in_problems(c: dict, root=REPO) -> list[str]:
+    """BORROW-1: a competitor's best step is plugged in as a worker, never rebuilt; every row says who covers it meanwhile."""
+    p = c.get("plug_in")
+    if not p: return []
+    bad, cid = [], c["id"]
+    if p.get("role") not in ("reviewer", "executor", "builder", "observer"): bad.append(f"{cid}: plug_in role {p.get('role')} unknown")
+    if p.get("status") not in ("staged", "live", "declined"): bad.append(f"{cid}: plug_in status {p.get('status')} unknown")
+    if not p.get("default"): bad.append(f"{cid}: plug_in has no default in effect")
+    if not str(p.get("source", "")).startswith("https://"): bad.append(f"{cid}: plug_in cost needs an https source")
+    probe = str(p.get("probe", ""))
+    if not probe.startswith(("file:", "grep:")): bad.append(f"{cid}: plug_in probe must be file: or grep:")
+    if p.get("status") == "declined" and not p.get("reason"): bad.append(f"{cid}: declined plug_in needs a reason")
+    if p.get("status") == "live" and not _probe_ok(root, probe): bad.append(f"{cid}: plug_in says live but {probe} fails")
+    return bad
+
+
+def _probe_ok(root, spec: str) -> bool:
+    if spec.startswith("file:"): return (Path(root) / spec[5:]).exists()
+    path, _, rx = spec[5:].partition("::")
+    f = Path(root) / path
+    return f.exists() and re.search(rx, f.read_text(encoding="utf-8", errors="replace")) is not None
+
+
 def check(root=REPO) -> list[str]:
     cfg, bad = load(root), []
     mk = json.loads((Path(root) / "doctrine/market.json").read_text(encoding="utf-8"))
@@ -336,6 +359,7 @@ def check(root=REPO) -> list[str]:
     for c in cfg["competitors"]:
         for s in c["sources"]:
             if not s["url"].startswith("https://") or s["kind"] not in ("page", "atom"): bad.append(f"{c['id']}: bad source {s}")
+        bad += plug_in_problems(c, root)
     for n in ("triage.json", "priorities.json"):
         try: _read(root, n, {})
         except ValueError: bad.append(f"ops/rnd/{n} does not parse")
