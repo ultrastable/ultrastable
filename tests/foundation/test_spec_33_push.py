@@ -4,6 +4,7 @@
 it takes when the Worker route cannot start. The git repository is a scratch one and every network call is replaced; nothing here reaches GitHub or the Worker."""
 import base64, importlib.util, io, json, os, shutil, subprocess, sys, tempfile, unittest, urllib.error
 from pathlib import Path
+from _repo import scratch  # removed when the test ends (the repo-cleanup guard bans a bare mkdtemp)
 from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -18,7 +19,7 @@ def sh(cwd, *a):
 
 class Writer(unittest.TestCase):
     def repo(self):
-        d = Path(tempfile.mkdtemp(prefix="ultrastable-test-spec33-push-"))
+        d = scratch()
         self.addCleanup(shutil.rmtree, d, True)
         sh(d, "init", "-q", "-b", "main")
         (d / "ops").mkdir()

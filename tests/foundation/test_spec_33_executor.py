@@ -5,6 +5,7 @@ agent, the self-code loop, the mechanical fixes, the CI watch and the queue-to-i
 repository. Each test names the requirement it proves."""
 import datetime as dt, json, os, shutil, subprocess, sys, tempfile, unittest, urllib.error
 from pathlib import Path
+from _repo import scratch  # removed when the test ends (the repo-cleanup guard bans a bare mkdtemp)
 from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -18,7 +19,7 @@ ALL = {**CF, "GITHUB_TOKEN": "g", "ANTHROPIC_API_KEY": "k"}
 
 
 def tmp(test):
-    d = Path(tempfile.mkdtemp(prefix="ultrastable-test-spec33-"))
+    d = scratch()
     test.addCleanup(shutil.rmtree, d, True)
     return d
 

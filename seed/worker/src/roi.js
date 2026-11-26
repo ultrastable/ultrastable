@@ -98,7 +98,27 @@ export function analyze({ days, refused = 0, storage_gb = 0, mode = 'free-only',
     prices: { checked: P.checked, sources: P.sources } };
 }
 
-export async function readRoi(db, { env = {}, config = {}, now = new Date() } = {}) {
+// READ-BUDGET-10: this reads seven days of every free-tier resource's samples (about 2,100 rows a resource, 102,000 rows an hour measured on 2026-11-26)
+// and /api/roi is public. The verdict moves by the day, so a read without an explicit clock is served from one org row for ROI_CACHE_MS; a caller that
+// passes `now` (a test, a replay) or `cache: false` always reads the samples.
+export const ROI_CACHE_MS = 900e3;
+export async function readRoi(db, { env = {}, config = {}, now = null, cache = true } = {}) {
+  const useCache = cache && !now;
+  if (useCache) {
+    try {
+      const c = JSON.parse(((await db.prepare(`SELECT value FROM org WHERE key = 'roi_cache'`).first()) || {}).value || 'null');
+      if (c && c.at && Date.now() - c.at < ROI_CACHE_MS && c.result) return c.result;
+    } catch (e) { /* allow-silent: an unreadable cache row is a fresh read below */ }
+  }
+  const result = await computeRoi(db, { env, config, now: now || new Date() });
+  if (useCache) {
+    try { await db.prepare(`INSERT INTO org (key, value) VALUES ('roi_cache', ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value`).bind(JSON.stringify({ at: Date.now(), result })).run(); }
+    catch (e) { /* allow-silent: a cache write miss only costs the next call one more read */ console.error('roi: not cached:', e && e.message); }
+  }
+  return result;
+}
+
+async function computeRoi(db, { env, config, now }) {
   const since = new Date(now - 7 * 864e5).toISOString().replace('T', ' ').slice(0, 10);
   const byDay = {};
   for (const [k, l] of Object.entries(FREE_LIMITS)) {

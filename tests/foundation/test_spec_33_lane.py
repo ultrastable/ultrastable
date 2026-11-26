@@ -5,6 +5,7 @@ life, the sweeps of sessions and branches, post-merge dispatch, the checks run, 
 fake; every git repository is a scratch one. Each test names the requirement it proves."""
 import datetime as dt, json, os, shutil, subprocess, sys, tempfile, unittest
 from pathlib import Path
+from _repo import scratch  # removed when the test ends (the repo-cleanup guard bans a bare mkdtemp)
 from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -22,7 +23,7 @@ iso = lambda minutes: (NOW - dt.timedelta(minutes=minutes)).strftime("%Y-%m-%dT%
 
 
 def tmp(test):
-    d = Path(tempfile.mkdtemp(prefix="ultrastable-test-spec33-"))
+    d = scratch()
     test.addCleanup(shutil.rmtree, d, True)
     return d
 
