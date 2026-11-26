@@ -659,15 +659,10 @@ async function resume(env, id) {
 // SUGGEST-1: ideas that rotate and respond to what is typed. A bound model proposes follow-ups first; the bank in suggest.js is the floor.
 async function suggestions(u, env) {
   const q = (u.searchParams.get("q") || "").slice(0, 200), seen = (u.searchParams.get("seen") || "").split("|").filter(Boolean).slice(0, 12), n = Math.min(6, Number(u.searchParams.get("n")) || 4), seed = Number(u.searchParams.get("seed")) || Date.now();
-  let out = [];
-  if (env && env.AI && q.trim().split(/\s+/).length >= 3) {
-    try {
-      const a = await aiJson(env, ASKERS, "You suggest follow-on ideas for someone who is describing a project in a few words. Reply with only a JSON array of 4 short plain-language idea strings, each under 60 characters, each a different useful direction related to what they said. No jargon.", q, 200);
-      out = (Array.isArray(a) ? a : []).filter(x => typeof x === "string" && x.length < 80).slice(0, n);
-    } catch (e) { console.error("suggest model failed", String(e)); }
-  }
-  for (const t of SG.suggest(q, seen.concat(out), seed, n)) if (out.length < n) out.push(t);
-  return json({ s: out, q });
+  // LIVE-EXAMPLE-1 (Rowan, 2026-11-26): only ideas a deployed system proves are suggested, each with the address that proves it;
+  // model-written ideas were removed because nothing showed they could be built.
+  const out = SG.suggest(q, seen, seed, n);
+  return json({ s: out, ex: Object.fromEntries(out.map(t => [t, SG.example(t)]).filter(e => e[1])), q });
 }
 // VISION-1 (docs/doctrine/VISION.md): the system test at the front door. Only definite one-offs are refused, so an unusual system is never blocked;
 // the interview that follows still asks for the loop, the measure, the upkeep and the budget. Closing probe: grep:site/worker.js::systemTest.

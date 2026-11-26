@@ -1,13 +1,13 @@
 {
  "_doc": "IDEA-BANK-1 (Rowan, 2026-11-22: the front-door examples must be diverse and actually buildable). Every idea the front door suggests lives here with its domain, reach and the four system-test answers. scripts/build_idea_bank.py runs each one through the seed's own bootstrap stages (read, qualify, instrument) on a generated IDEA.md, refuses the bank when one fails or when the domains are not diverse, and writes site/idea-bank-data.js, which site/suggest.js and site/interview.js read. DEPTH-1 (Rowan, 2026-11-22: 'the depth of idea, the depth of concept of Unlearn and Practical Solutions'): every idea also names its depth: the corpus it keeps growing, the method that makes it trustworthy, and why a reader comes back. A one-trick idea (a single feed, a single alert) has no corpus and is refused. Edit this file, never the generated one. PUBLIC-GOOD-1 (Rowan, 2026-11-22: 'This is about some kind of bigger good, some kind of public good, something that empowers change ... Go get Squarespace if you want e-commerce'): every idea names the change it empowers (`empowers`); domains in `refused_domains` (selling, shops, orders, cost cutting) are refused. WORLDWIDE-1 (Rowan, 2026-11-22: 'these ideas have to work worldwide ... if you don't have the data to back them up, they're not going to work ... point and click and get running'): every idea lists `data`, the worldwide open sources it runs on (or `own`, the user's own records, which exist anywhere); a source with a probe URL is fetched by `build_idea_bank.py --live` (weekly in scout.yml) and an idea whose sources stop answering is retired. GROW-1: `build_idea_bank.py --grow` asks the model route for a new idea each pass, admits it only through the same gates, and retires the oldest beyond `max_active`, so the set never goes static. One rule with DEPTH-1 for apps: build_idea_bank.py calls foundation/ideas.py depth() on every idea (thesis, corpus, loop, returns, hook, public_good, horizon), mapping depth.method to loop and empowers to public_good. BREADTH-1 (Rowan, 2026-11-25, who widened 'a replication ledger for a field' to 'an encyclopedic replication ledger across many fields'): `owner_edits` keeps each edit the owner made to a suggestion with its lesson; --grow shows them to the model as the taste to follow, and an idea whose text holds one of `narrow_phrases` is refused. Text limit is `max_text`.",
- "min_domains": 8,
+ "min_domains": 3,
  "max_per_domain": 3,
  "ideas": [
   {
    "id": "what-works-policy",
    "domain": "public benefit",
    "reach": "global",
-   "text": "A living atlas of what works in public policy: every programme graded by its trials and re-graded as evidence lands",
+   "text": "A living atlas of what works in public policy: programmes graded by their published trials, re-graded when new trials land",
    "keywords": "policy government programme evidence trials what works social public research",
    "loop": "new trials and reviews found weekly, each programme's grade revised, readers' questions turned into new entries",
    "measure": "programmes whose evidence was checked in the last 30 days, target all",
@@ -33,149 +33,28 @@
    "thesis": "Many popular public programmes do not do what people believe, and the trials can say which ones do",
    "hook": "Guess whether a famous programme worked, then see what its trials found",
    "horizon": [
-    "Grade the best-known programmes in one policy area",
-    "Cover every major area and re-grade as trials land",
-    "Let any city compare its own programmes against the evidence"
+    "Grade the best-known programmes that have published trials",
+    "Re-grade each programme when a new trial or review lands",
+    "Add policy areas as their trial evidence is collected"
    ],
    "change": [
     "why-it-feels-true",
     "graded-uncertainty",
     "easy-attractive-social-timely",
     "spaced-follow-up"
-   ]
-  },
-  {
-   "id": "food-system-map",
-   "domain": "public benefit",
-   "reach": "local",
-   "text": "A regional food-system map: farms, food banks, prices and gaps, used every week to route surplus to where it is short",
-   "keywords": "food bank farms surplus hunger prices region supply charity community",
-   "loop": "listings and prices refreshed weekly, gaps computed, surplus offers matched to shortfalls and the match followed up",
-   "measure": "surplus offered that reached a food bank within 48 hours",
-   "upkeep": "farms, prices and needs change every week",
-   "budget": 10,
-   "depth": {
-    "corpus": "every farm, food bank and pantry in a region with stock, hours and needs",
-    "method": "each listing confirmed at its source on a schedule; unconfirmed rows are marked",
-    "returns": "new surplus and new shortfalls every week"
-   },
-   "empowers": "gets surplus food to people who are short of it",
-   "data": [
-    {
-     "name": "OpenStreetMap food banks (amenity=food_bank)",
-     "probe": "https://overpass-api.de/api/status"
-    },
-    {
-     "name": "FAOSTAT food prices",
-     "probe": "https://www.fao.org/faostat/en/"
-    }
    ],
-   "added": "2026-11-22",
-   "thesis": "Food goes to waste a few miles from people who are short of it because nobody can see both at once",
-   "hook": "See on a map where surplus sits today and which pantry nearby is running short",
-   "horizon": [
-    "Map farms and food banks in one region",
-    "Match surplus offers to shortfalls every week",
-    "Publish the routing so any region can run it on open map data"
-   ],
-   "change": [
-    "why-it-feels-true",
-    "graded-uncertainty",
-    "easy-attractive-social-timely",
-    "spaced-follow-up"
-   ]
-  },
-  {
-   "id": "claim-tracker",
-   "domain": "media",
-   "reach": "global",
-   "text": "A claim tracker that follows viral claims, links each to its evidence and updates the verdict when evidence moves",
-   "keywords": "misinformation fact check claims news viral evidence media truth",
-   "loop": "new claims picked up daily, matched to existing entries or opened, verdicts revised when new evidence appears",
-   "measure": "verdicts revised within 7 days of new evidence",
-   "upkeep": "new claims appear every day and old ones resurface",
-   "budget": 15,
-   "depth": {
-    "corpus": "a growing graph of claims, their variants and the evidence on each",
-    "method": "verdicts graded by evidence strength, with what would change them",
-    "returns": "the same claims come back in new forms, and the record follows them"
-   },
-   "empowers": "lets anyone check a claim before passing it on",
-   "data": [
-    {
-     "name": "Google Fact Check Tools (ClaimReview, worldwide fact-checkers)",
-     "probe": "https://toolbox.google.com/factcheck/explorer"
-    },
-    {
-     "name": "OpenAlex scholarly index",
-     "probe": "https://api.openalex.org/works?per-page=1"
-    }
-   ],
-   "added": "2026-11-22",
-   "thesis": "Viral claims outrun their corrections because nobody tracks a claim across all its variants",
-   "hook": "Paste something you saw shared and see its whole history and the evidence on it",
-   "horizon": [
-    "Track claims already checked by fact-checkers worldwide",
-    "Link variants into one graph and follow re-sharing",
-    "Warn readers when a claim they checked comes back changed"
-   ],
-   "change": [
-    "why-it-feels-true",
-    "graded-uncertainty",
-    "easy-attractive-social-timely",
-    "spaced-follow-up"
-   ]
-  },
-  {
-   "id": "adaptation-atlas",
-   "domain": "environment",
-   "reach": "global",
-   "text": "An atlas of climate adaptation: which flood, heat and drought measures worked where, graded by what happened after",
-   "keywords": "climate adaptation flood heat drought resilience city environment evidence",
-   "loop": "case studies and evaluations gathered monthly, each measure re-graded, cities' questions answered from the atlas",
-   "measure": "measures with an outcome evaluation attached",
-   "upkeep": "new projects and evaluations every month",
-   "budget": 10,
-   "depth": {
-    "corpus": "measures from cities worldwide with their costs and measured results",
-    "method": "results graded by evaluation design; untested claims are marked as such",
-    "returns": "each season's floods and heatwaves add evidence, so councils check again before every budget"
-   },
-   "empowers": "helps towns spend scarce money on measures that protect people",
-   "data": [
-    {
-     "name": "ReliefWeb disasters and evaluations",
-     "probe": "https://api.reliefweb.int/v1/reports?limit=1"
-    },
-    {
-     "name": "Copernicus Climate Data Store",
-     "probe": "https://cds.climate.copernicus.eu/"
-    },
-    {
-     "name": "OpenAlex evaluations",
-     "probe": "https://api.openalex.org/works?search=climate%20adaptation%20evaluation&per-page=1"
-    }
-   ],
-   "added": "2026-11-22",
-   "thesis": "Towns copy flood and heat measures that sound good without knowing which ones actually protected people",
-   "hook": "Pick your town's risk and see which measures elsewhere really cut the damage",
-   "horizon": [
-    "Gather evaluated measures for floods",
-    "Add heat and drought, graded by outcome",
-    "Help any council shortlist measures by cost and evidence"
-   ],
-   "change": [
-    "why-it-feels-true",
-    "graded-uncertainty",
-    "easy-attractive-social-timely",
-    "spaced-follow-up"
-   ]
+   "example": {
+    "name": "What Works",
+    "url": "https://what-works.ultrastable.org",
+    "probe": "https://what-works.ultrastable.org/health",
+    "repo": "ultrastable/what-works"
+   }
   },
   {
    "id": "replication-ledger",
    "domain": "research",
    "reach": "global",
-   "text": "An encyclopedic replication ledger across many fields: which landmark findings held up and which failed, updated as replications publish",
+   "text": "A replication ledger across psychology, medicine and economics: which landmark findings held up when repeated",
    "keywords": "research replication science psychology findings papers evidence academic medicine economics many fields encyclopedia",
    "loop": "new replications found weekly, each finding's standing updated, citing papers flagged when a finding falls",
    "measure": "findings whose standing was checked in the last 30 days",
@@ -201,410 +80,69 @@
    "thesis": "A large share of famous findings did not hold up when repeated, yet they are still taught and cited",
    "hook": "Guess whether a textbook finding survived replication, then see the record",
    "horizon": [
-    "Ledger the landmark findings of one field",
-    "Flag papers and courses that still cite fallen findings",
-    "Extend to every field with replication data"
+    "Ledger the best-known findings that have a published replication",
+    "Flag papers and courses that still cite failed findings",
+    "Add each field as its replication data becomes available"
    ],
    "change": [
     "why-it-feels-true",
     "graded-uncertainty",
     "easy-attractive-social-timely",
     "spaced-follow-up"
-   ]
+   ],
+   "example": {
+    "name": "Replication Ledger",
+    "url": "https://replication-ledger.ultrastable.org",
+    "probe": "https://replication-ledger.ultrastable.org/health",
+    "repo": "ultrastable/replication-ledger"
+   }
   },
   {
-   "id": "model-evals",
-   "domain": "research",
    "reach": "global",
-   "text": "A model evaluation harness that re-tests every new AI model release against its own history",
-   "keywords": "model evaluation benchmark regression ai release llm",
-   "loop": "each release run through the same tests, scores compared with history, regressions filed",
-   "measure": "regressions found before a release is adopted",
-   "upkeep": "models and providers release new versions every month",
-   "budget": 25,
-   "depth": {
-    "corpus": "a growing suite of tests and every score every model has had",
-    "method": "fixed tests, repeated runs and published variance",
-    "returns": "every new model release is a new comparison against the whole history of scores"
-   },
-   "empowers": "gives the public an independent record of how AI models really behave",
-   "data": [
-    {
-     "name": "Hugging Face model hub",
-     "probe": "https://huggingface.co/api/models?limit=1"
-    }
-   ],
-   "added": "2026-11-22",
-   "thesis": "Claims about AI models drift from what the models actually do from release to release",
-   "hook": "Pick two models and see how they really compare on the same tests over time",
-   "horizon": [
-    "Run a fixed public test suite on each release",
-    "Track regressions and publish variance",
-    "Let anyone add a test that runs on every future release"
-   ],
+   "budget": 5,
    "change": [
     "why-it-feels-true",
     "graded-uncertainty",
     "easy-attractive-social-timely",
     "spaced-follow-up"
-   ]
-  },
-  {
-   "id": "open-curriculum",
+   ],
+   "id": "unlearn",
    "domain": "education",
-   "reach": "global",
-   "text": "A free open curriculum that rewrites each lesson from where learners actually get stuck",
-   "keywords": "curriculum education learning lessons school students teachers course open",
-   "loop": "learner answers read after each unit, the lesson with the most stuck points rewritten, the change measured on the next cohort",
-   "measure": "share of learners who pass each unit's check, target rising per cohort",
-   "upkeep": "every cohort shows new stuck points",
-   "budget": 15,
+   "text": "An evidence encyclopedia of popular beliefs that studies contradict, each source graded by study design",
+   "keywords": "beliefs myths evidence encyclopedia debunking education psychology policing learning",
+   "loop": "every hour sources are resolved to DOIs and new systematic reviews are searched for each entry; entries are queued for re-grading when reviews pile up",
+   "measure": "share of entries whose evidence was checked within 7 days, target all",
+   "upkeep": "new reviews and trials publish every week, links and DOIs rot, and entries need re-grading",
    "depth": {
-    "corpus": "a full course of lessons, exercises and the record of where people stumbled",
-    "method": "each rewrite is an experiment kept only if the next cohort does better",
-    "returns": "learners move unit by unit, and teachers reuse it every term"
+    "corpus": "popular beliefs in six topics, each with its graded sources and what works instead",
+    "method": "every source graded by study design (strong, moderate, mixed, limited), grade shown on the entry",
+    "returns": "entries are re-graded as reviews land, so a teacher or journalist can cite the current reading"
    },
-   "empowers": "gives any learner a free course that keeps getting better",
+   "empowers": "gives teachers, journalists and policy staff a cited, graded summary to point people to",
    "data": [
     {
-     "name": "own",
-     "note": "learners' own answers"
+     "name": "OpenAlex scholarly index",
+     "probe": "https://api.openalex.org/works?per-page=1"
     },
     {
-     "name": "Wikidata (concepts and prerequisites)",
-     "probe": "https://www.wikidata.org/w/api.php?action=query&format=json"
+     "name": "Crossref",
+     "probe": "https://api.crossref.org/works?rows=1"
     }
    ],
-   "added": "2026-11-22",
-   "thesis": "Courses stay the same while learners keep getting stuck at the same places year after year",
-   "hook": "Take a two-minute check and see the lesson rewritten for exactly where you got stuck",
+   "added": "2026-11-26",
+   "thesis": "Telling people they are wrong rarely changes a mind; starting from why a belief feels true does better",
+   "hook": "Guess what the evidence says about a common belief, then see the graded sources",
    "horizon": [
-    "Publish one full course with a stuck-point record",
-    "Rewrite lessons from each cohort's results",
-    "Open the method so any teacher can run it on their own course"
+    "Cover the beliefs already in the six topics",
+    "Re-grade entries as new reviews publish",
+    "Add beliefs readers ask about most"
    ],
-   "change": [
-    "why-it-feels-true",
-    "graded-uncertainty",
-    "easy-attractive-social-timely",
-    "spaced-follow-up"
-   ]
-  },
-  {
-   "id": "club-hub",
-   "domain": "community",
-   "reach": "local",
-   "text": "A website for our club or association that learns what brings members back and grows the features they use",
-   "keywords": "club association website members community society group sports events",
-   "loop": "visits, sign-ups and event turnout read weekly, the feature or page members use least improved, turnout read again",
-   "measure": "members who return each month and event turnout",
-   "upkeep": "events, members and season plans change all year",
-   "budget": 10,
-   "depth": {
-    "corpus": "years of events, members' turnout and what each change to the site did",
-    "method": "each change is predicted and kept only if return visits or turnout rose",
-    "returns": "members come back for every event, and the club's record keeps growing"
-   },
-   "empowers": "keeps volunteer-run community groups alive and growing",
-   "data": [
-    {
-     "name": "own",
-     "note": "the club's own first-party, cookieless site analytics"
-    }
-   ],
-   "added": "2026-11-22",
-   "thesis": "Volunteer-run groups fade because nobody can see what actually brings members back",
-   "hook": "See this month's turnout and which change last month brought people back",
-   "horizon": [
-    "Run the club's site with turnout tracking",
-    "Test one change a month and keep what works",
-    "Share what works across clubs of the same kind"
-   ],
-   "change": [
-    "why-it-feels-true",
-    "graded-uncertainty",
-    "easy-attractive-social-timely",
-    "spaced-follow-up"
-   ]
-  },
-  {
-   "id": "impact-ledger",
-   "domain": "nonprofit",
-   "reach": "global",
-   "text": "An impact ledger for a charity that links every programme to its outcomes and shows funders what each donation changed",
-   "keywords": "charity nonprofit impact outcomes funders donors programme evaluation",
-   "loop": "programme data read monthly, outcomes recomputed, the weakest programme flagged with what similar charities do",
-   "measure": "programmes with a measured outcome, target all",
-   "upkeep": "programmes, people served and funders change every year",
-   "budget": 10,
-   "depth": {
-    "corpus": "every programme, its spend and the outcomes it produced over the years",
-    "method": "outcomes compared with a baseline, uncertainty stated",
-    "returns": "each reporting cycle and funding round draws on it"
-   },
-   "empowers": "moves donations toward what actually helps people",
-   "data": [
-    {
-     "name": "own",
-     "note": "the charity's own programme records"
-    },
-    {
-     "name": "IATI aid activity data",
-     "probe": "https://iatistandard.org/en/"
-    }
-   ],
-   "added": "2026-11-22",
-   "thesis": "Donations follow stories more than outcomes because outcomes are rarely shown plainly",
-   "hook": "See what a single donation changed, in numbers, for a real programme",
-   "horizon": [
-    "Link one charity's programmes to outcomes",
-    "Compare against similar charities' published results",
-    "Give funders a live view of outcomes instead of annual reports"
-   ],
-   "change": [
-    "why-it-feels-true",
-    "graded-uncertainty",
-    "easy-attractive-social-timely",
-    "spaced-follow-up"
-   ]
-  },
-  {
-   "id": "grants-atlas",
-   "domain": "nonprofit",
-   "reach": "global",
-   "text": "A funding atlas for small charities: every open call, how well it fits and a drafted answer, kept current",
-   "keywords": "grants funding proposals deadlines nonprofit fundraiser charity",
-   "loop": "funder pages read weekly, matching calls filed with a draft, outcomes recorded to sharpen the fit score",
-   "measure": "matching calls missed before their deadline, target 0",
-   "upkeep": "funders open and close calls all year",
-   "budget": 15,
-   "depth": {
-    "corpus": "every funder and call, with past awards and what won",
-    "method": "fit scored from past awards; drafts reuse answers that succeeded",
-    "returns": "new calls open every week, and each charity's past wins sharpen its next match"
-   },
-   "empowers": "gets funding to small charities that cannot afford a fundraiser",
-   "data": [
-    {
-     "name": "IATI funders and activities",
-     "probe": "https://iatistandard.org/en/"
-    },
-    {
-     "name": "OpenAlex funders",
-     "probe": "https://api.openalex.org/funders?per-page=1"
-    }
-   ],
-   "added": "2026-11-22",
-   "thesis": "Small charities miss funding they qualify for because finding and answering calls takes staff they do not have",
-   "hook": "See the open calls your charity fits today, each with a drafted answer",
-   "horizon": [
-    "Index every open call in one country",
-    "Score fit from past awards and draft answers",
-    "Cover funders worldwide that publish open data"
-   ],
-   "change": [
-    "why-it-feels-true",
-    "graded-uncertainty",
-    "easy-attractive-social-timely",
-    "spaced-follow-up"
-   ]
-  },
-  {
-   "id": "decision-journal",
-   "domain": "personal",
-   "reach": "global",
-   "text": "A decision journal that records each big choice, its reasons and how it turned out, and learns what I misjudge",
-   "keywords": "decisions journal personal reflection choices life habits memory",
-   "loop": "each decision logged with a prediction, revisited when it resolves, my blind spots summarised quarterly",
-   "measure": "share of predictions that came true, per quarter",
-   "upkeep": "new decisions keep coming",
-   "budget": 5,
-   "depth": {
-    "corpus": "years of my own decisions, predictions and outcomes",
-    "method": "every decision carries a prediction that is scored later",
-    "returns": "every new choice is checked against my own track record"
-   },
-   "empowers": "helps a person learn from their own choices instead of repeating mistakes",
-   "data": [
-    {
-     "name": "own",
-     "note": "the person's own decisions and predictions"
-    }
-   ],
-   "added": "2026-11-22",
-   "thesis": "People repeat the same misjudgements because they never score their past predictions",
-   "hook": "Write down one decision and a prediction, and get asked how it turned out later",
-   "horizon": [
-    "Log decisions with predictions",
-    "Score them as they resolve",
-    "Show the person their own patterns of misjudgement"
-   ],
-   "change": [
-    "why-it-feels-true",
-    "graded-uncertainty",
-    "easy-attractive-social-timely",
-    "spaced-follow-up"
-   ]
-  },
-  {
-   "id": "self-experiments",
-   "domain": "personal",
-   "reach": "global",
-   "text": "A personal experiments log that turns my habits into small tests and keeps only what measurably helps",
-   "keywords": "habits sleep fitness personal experiments health log routine",
-   "loop": "one change tried for two weeks, the measure compared with the baseline, kept or dropped, the next test chosen",
-   "measure": "experiments that measurably helped, per quarter",
-   "upkeep": "life, seasons and goals change",
-   "budget": 5,
-   "depth": {
-    "corpus": "every habit I have tried, with its before-and-after numbers",
-    "method": "baseline, one change at a time, a fixed test window",
-    "returns": "there is always a next test, and the person's own record of what worked keeps growing"
-   },
-   "empowers": "helps a person find what really improves their life, by evidence instead of hype",
-   "data": [
-    {
-     "name": "own",
-     "note": "the person's own habit and health measurements"
-    }
-   ],
-   "added": "2026-11-22",
-   "thesis": "Most habit advice is untested for the person following it, and only a personal test can tell",
-   "hook": "Pick one habit and see your two-week before-and-after numbers",
-   "horizon": [
-    "Run one habit test at a time",
-    "Keep only what measurably helped",
-    "Suggest the next test from what helped people with similar patterns"
-   ],
-   "change": [
-    "why-it-feels-true",
-    "graded-uncertainty",
-    "easy-attractive-social-timely",
-    "spaced-follow-up"
-   ]
-  },
-  {
-   "id": "city-history",
-   "domain": "creative",
-   "reach": "local",
-   "text": "A living history of a city told from its archives, adding sources and correcting the record as documents surface",
-   "keywords": "history city archives local heritage stories writing creative museum",
-   "loop": "archives searched monthly, new sources attached, stories revised where a document changes the account",
-   "measure": "claims in each story tied to a cited source, target all",
-   "upkeep": "archives digitise new material every month",
-   "budget": 10,
-   "depth": {
-    "corpus": "a growing set of stories, places and people, each tied to sources",
-    "method": "every claim cites its document; disputed points show both sides",
-    "returns": "new stories and corrections arrive every month"
-   },
-   "empowers": "gives a community an accurate, shared record of its own past",
-   "data": [
-    {
-     "name": "Europeana cultural heritage",
-     "probe": "https://www.europeana.eu/"
-    },
-    {
-     "name": "Internet Archive",
-     "probe": "https://archive.org/advancedsearch.php?q=city&rows=1&output=json"
-    },
-    {
-     "name": "Wikimedia Commons",
-     "probe": "https://commons.wikimedia.org/w/api.php?action=query&format=json"
-    }
-   ],
-   "added": "2026-11-22",
-   "thesis": "A city's popular history drifts from its archives, and the record can be corrected source by source",
-   "hook": "Pick a street and see what the archives say happened there, with the documents",
-   "horizon": [
-    "Tell the stories of one neighbourhood from sources",
-    "Correct the record as new documents surface",
-    "Let residents add sources that are checked before they appear"
-   ],
-   "change": [
-    "why-it-feels-true",
-    "graded-uncertainty",
-    "easy-attractive-social-timely",
-    "spaced-follow-up"
-   ]
-  },
-  {
-   "id": "dependency-watch",
-   "domain": "software",
-   "reach": "global",
-   "text": "An open-source dependency watch that maps who relies on what, flags risky packages and proposes fixes upstream",
-   "keywords": "open source dependencies packages security maintainers supply chain software",
-   "loop": "the dependency graph rebuilt weekly, risks scored, fixes proposed to the projects that can make them",
-   "measure": "high-risk dependencies with a proposed fix",
-   "upkeep": "new releases and new risks every day",
-   "budget": 15,
-   "depth": {
-    "corpus": "a map of packages, maintainers and the projects that depend on them",
-    "method": "risk scored from maintenance, security history and reach",
-    "returns": "the dependency graph changes with every release, and new risks appear every day"
-   },
-   "empowers": "protects the open-source commons that public services run on",
-   "data": [
-    {
-     "name": "OSV vulnerability database",
-     "probe": "https://api.osv.dev/v1/vulns/GHSA-jfh8-c2jp-5v3q"
-    },
-    {
-     "name": "deps.dev dependency graph",
-     "probe": "https://deps.dev/"
-    }
-   ],
-   "added": "2026-11-22",
-   "thesis": "Public services rest on open-source packages kept alive by a handful of unpaid people nobody can see",
-   "hook": "Enter a project and see the fragile packages its users depend on without knowing",
-   "horizon": [
-    "Map dependencies and risks for one ecosystem",
-    "Propose fixes upstream for the riskiest packages",
-    "Cover every major ecosystem and alert the projects affected"
-   ],
-   "change": [
-    "why-it-feels-true",
-    "graded-uncertainty",
-    "easy-attractive-social-timely",
-    "spaced-follow-up"
-   ]
-  },
-  {
-   "id": "contracts-watch",
-   "domain": "civic",
-   "reach": "global",
-   "text": "A public-contracts watch that follows government tenders and awards and flags the ones that look rigged",
-   "keywords": "government contracts procurement tenders corruption spending accountability civic",
-   "loop": "new tenders and awards read daily, red flags scored, flagged contracts followed to delivery and the flags re-scored",
-   "measure": "flagged contracts later confirmed as problems, against false flags",
-   "upkeep": "governments publish new tenders every day",
-   "budget": 10,
-   "depth": {
-    "corpus": "every published tender, bidder and award in the jurisdictions with open data",
-    "method": "red flags from published procurement-risk indicators, each shown with its evidence",
-    "returns": "new contracts every day and a growing record of who won what"
-   },
-   "empowers": "lets citizens and journalists see where public money goes and who gets it",
-   "data": [
-    {
-     "name": "Open Contracting data registry (OCDS, 50+ countries)",
-     "probe": "https://data.open-contracting.org/"
-    }
-   ],
-   "added": "2026-11-22",
-   "thesis": "Rigged public tenders leave patterns in open data that citizens can see if someone looks",
-   "hook": "See which contracts near you show red flags, and why",
-   "horizon": [
-    "Score red flags on one country's open contracts",
-    "Follow flagged contracts to delivery and re-score",
-    "Cover every country that publishes open contracting data"
-   ],
-   "change": [
-    "why-it-feels-true",
-    "graded-uncertainty",
-    "easy-attractive-social-timely",
-    "spaced-follow-up"
-   ]
+   "example": {
+    "name": "Unlearn",
+    "url": "https://unlearn.ultrastable.org",
+    "probe": "https://unlearn.ultrastable.org/health",
+    "repo": "ultrastable/unlearn"
+   }
   }
  ],
  "depth_fields": [
@@ -621,7 +159,581 @@
   "sales"
  ],
  "max_active": 24,
- "retired": [],
+ "retired": [
+  {
+   "id": "food-system-map",
+   "why": "LIVE-EXAMPLE-1 (Rowan, 2026-11-26): no live system built on Ultrastable proves this idea yet",
+   "idea": {
+    "id": "food-system-map",
+    "domain": "public benefit",
+    "reach": "local",
+    "text": "A regional food-system map: farms, food banks, prices and gaps, used every week to route surplus to where it is short",
+    "keywords": "food bank farms surplus hunger prices region supply charity community",
+    "loop": "listings and prices refreshed weekly, gaps computed, surplus offers matched to shortfalls and the match followed up",
+    "measure": "surplus offered that reached a food bank within 48 hours",
+    "upkeep": "farms, prices and needs change every week",
+    "budget": 10,
+    "depth": {
+     "corpus": "every farm, food bank and pantry in a region with stock, hours and needs",
+     "method": "each listing confirmed at its source on a schedule; unconfirmed rows are marked",
+     "returns": "new surplus and new shortfalls every week"
+    },
+    "empowers": "gets surplus food to people who are short of it",
+    "data": [
+     {
+      "name": "OpenStreetMap food banks (amenity=food_bank)",
+      "probe": "https://overpass-api.de/api/status"
+     },
+     {
+      "name": "FAOSTAT food prices",
+      "probe": "https://www.fao.org/faostat/en/"
+     }
+    ],
+    "added": "2026-11-22",
+    "thesis": "Food goes to waste a few miles from people who are short of it because nobody can see both at once",
+    "hook": "See on a map where surplus sits today and which pantry nearby is running short",
+    "horizon": [
+     "Map farms and food banks in one region",
+     "Match surplus offers to shortfalls every week",
+     "Publish the routing so any region can run it on open map data"
+    ],
+    "change": [
+     "why-it-feels-true",
+     "graded-uncertainty",
+     "easy-attractive-social-timely",
+     "spaced-follow-up"
+    ]
+   }
+  },
+  {
+   "id": "claim-tracker",
+   "why": "LIVE-EXAMPLE-1 (Rowan, 2026-11-26): no live system built on Ultrastable proves this idea yet",
+   "idea": {
+    "id": "claim-tracker",
+    "domain": "media",
+    "reach": "global",
+    "text": "A claim tracker that follows viral claims, links each to its evidence and updates the verdict when evidence moves",
+    "keywords": "misinformation fact check claims news viral evidence media truth",
+    "loop": "new claims picked up daily, matched to existing entries or opened, verdicts revised when new evidence appears",
+    "measure": "verdicts revised within 7 days of new evidence",
+    "upkeep": "new claims appear every day and old ones resurface",
+    "budget": 15,
+    "depth": {
+     "corpus": "a growing graph of claims, their variants and the evidence on each",
+     "method": "verdicts graded by evidence strength, with what would change them",
+     "returns": "the same claims come back in new forms, and the record follows them"
+    },
+    "empowers": "lets anyone check a claim before passing it on",
+    "data": [
+     {
+      "name": "Google Fact Check Tools (ClaimReview, worldwide fact-checkers)",
+      "probe": "https://toolbox.google.com/factcheck/explorer"
+     },
+     {
+      "name": "OpenAlex scholarly index",
+      "probe": "https://api.openalex.org/works?per-page=1"
+     }
+    ],
+    "added": "2026-11-22",
+    "thesis": "Viral claims outrun their corrections because nobody tracks a claim across all its variants",
+    "hook": "Paste something you saw shared and see its whole history and the evidence on it",
+    "horizon": [
+     "Track claims already checked by fact-checkers worldwide",
+     "Link variants into one graph and follow re-sharing",
+     "Warn readers when a claim they checked comes back changed"
+    ],
+    "change": [
+     "why-it-feels-true",
+     "graded-uncertainty",
+     "easy-attractive-social-timely",
+     "spaced-follow-up"
+    ]
+   }
+  },
+  {
+   "id": "adaptation-atlas",
+   "why": "LIVE-EXAMPLE-1 (Rowan, 2026-11-26): no live system built on Ultrastable proves this idea yet",
+   "idea": {
+    "id": "adaptation-atlas",
+    "domain": "environment",
+    "reach": "global",
+    "text": "An atlas of climate adaptation: which flood, heat and drought measures worked where, graded by what happened after",
+    "keywords": "climate adaptation flood heat drought resilience city environment evidence",
+    "loop": "case studies and evaluations gathered monthly, each measure re-graded, cities' questions answered from the atlas",
+    "measure": "measures with an outcome evaluation attached",
+    "upkeep": "new projects and evaluations every month",
+    "budget": 10,
+    "depth": {
+     "corpus": "measures from cities worldwide with their costs and measured results",
+     "method": "results graded by evaluation design; untested claims are marked as such",
+     "returns": "each season's floods and heatwaves add evidence, so councils check again before every budget"
+    },
+    "empowers": "helps towns spend scarce money on measures that protect people",
+    "data": [
+     {
+      "name": "ReliefWeb disasters and evaluations",
+      "probe": "https://api.reliefweb.int/v1/reports?limit=1"
+     },
+     {
+      "name": "Copernicus Climate Data Store",
+      "probe": "https://cds.climate.copernicus.eu/"
+     },
+     {
+      "name": "OpenAlex evaluations",
+      "probe": "https://api.openalex.org/works?search=climate%20adaptation%20evaluation&per-page=1"
+     }
+    ],
+    "added": "2026-11-22",
+    "thesis": "Towns copy flood and heat measures that sound good without knowing which ones actually protected people",
+    "hook": "Pick your town's risk and see which measures elsewhere really cut the damage",
+    "horizon": [
+     "Gather evaluated measures for floods",
+     "Add heat and drought, graded by outcome",
+     "Help any council shortlist measures by cost and evidence"
+    ],
+    "change": [
+     "why-it-feels-true",
+     "graded-uncertainty",
+     "easy-attractive-social-timely",
+     "spaced-follow-up"
+    ]
+   }
+  },
+  {
+   "id": "model-evals",
+   "why": "LIVE-EXAMPLE-1 (Rowan, 2026-11-26): no live system built on Ultrastable proves this idea yet",
+   "idea": {
+    "id": "model-evals",
+    "domain": "research",
+    "reach": "global",
+    "text": "A model evaluation harness that re-tests every new AI model release against its own history",
+    "keywords": "model evaluation benchmark regression ai release llm",
+    "loop": "each release run through the same tests, scores compared with history, regressions filed",
+    "measure": "regressions found before a release is adopted",
+    "upkeep": "models and providers release new versions every month",
+    "budget": 25,
+    "depth": {
+     "corpus": "a growing suite of tests and every score every model has had",
+     "method": "fixed tests, repeated runs and published variance",
+     "returns": "every new model release is a new comparison against the whole history of scores"
+    },
+    "empowers": "gives the public an independent record of how AI models really behave",
+    "data": [
+     {
+      "name": "Hugging Face model hub",
+      "probe": "https://huggingface.co/api/models?limit=1"
+     }
+    ],
+    "added": "2026-11-22",
+    "thesis": "Claims about AI models drift from what the models actually do from release to release",
+    "hook": "Pick two models and see how they really compare on the same tests over time",
+    "horizon": [
+     "Run a fixed public test suite on each release",
+     "Track regressions and publish variance",
+     "Let anyone add a test that runs on every future release"
+    ],
+    "change": [
+     "why-it-feels-true",
+     "graded-uncertainty",
+     "easy-attractive-social-timely",
+     "spaced-follow-up"
+    ]
+   }
+  },
+  {
+   "id": "open-curriculum",
+   "why": "LIVE-EXAMPLE-1 (Rowan, 2026-11-26): no live system built on Ultrastable proves this idea yet",
+   "idea": {
+    "id": "open-curriculum",
+    "domain": "education",
+    "reach": "global",
+    "text": "A free open curriculum that rewrites each lesson from where learners actually get stuck",
+    "keywords": "curriculum education learning lessons school students teachers course open",
+    "loop": "learner answers read after each unit, the lesson with the most stuck points rewritten, the change measured on the next cohort",
+    "measure": "share of learners who pass each unit's check, target rising per cohort",
+    "upkeep": "every cohort shows new stuck points",
+    "budget": 15,
+    "depth": {
+     "corpus": "a full course of lessons, exercises and the record of where people stumbled",
+     "method": "each rewrite is an experiment kept only if the next cohort does better",
+     "returns": "learners move unit by unit, and teachers reuse it every term"
+    },
+    "empowers": "gives any learner a free course that keeps getting better",
+    "data": [
+     {
+      "name": "own",
+      "note": "learners' own answers"
+     },
+     {
+      "name": "Wikidata (concepts and prerequisites)",
+      "probe": "https://www.wikidata.org/w/api.php?action=query&format=json"
+     }
+    ],
+    "added": "2026-11-22",
+    "thesis": "Courses stay the same while learners keep getting stuck at the same places year after year",
+    "hook": "Take a two-minute check and see the lesson rewritten for exactly where you got stuck",
+    "horizon": [
+     "Publish one full course with a stuck-point record",
+     "Rewrite lessons from each cohort's results",
+     "Open the method so any teacher can run it on their own course"
+    ],
+    "change": [
+     "why-it-feels-true",
+     "graded-uncertainty",
+     "easy-attractive-social-timely",
+     "spaced-follow-up"
+    ]
+   }
+  },
+  {
+   "id": "club-hub",
+   "why": "LIVE-EXAMPLE-1 (Rowan, 2026-11-26): no live system built on Ultrastable proves this idea yet",
+   "idea": {
+    "id": "club-hub",
+    "domain": "community",
+    "reach": "local",
+    "text": "A website for our club or association that learns what brings members back and grows the features they use",
+    "keywords": "club association website members community society group sports events",
+    "loop": "visits, sign-ups and event turnout read weekly, the feature or page members use least improved, turnout read again",
+    "measure": "members who return each month and event turnout",
+    "upkeep": "events, members and season plans change all year",
+    "budget": 10,
+    "depth": {
+     "corpus": "years of events, members' turnout and what each change to the site did",
+     "method": "each change is predicted and kept only if return visits or turnout rose",
+     "returns": "members come back for every event, and the club's record keeps growing"
+    },
+    "empowers": "keeps volunteer-run community groups alive and growing",
+    "data": [
+     {
+      "name": "own",
+      "note": "the club's own first-party, cookieless site analytics"
+     }
+    ],
+    "added": "2026-11-22",
+    "thesis": "Volunteer-run groups fade because nobody can see what actually brings members back",
+    "hook": "See this month's turnout and which change last month brought people back",
+    "horizon": [
+     "Run the club's site with turnout tracking",
+     "Test one change a month and keep what works",
+     "Share what works across clubs of the same kind"
+    ],
+    "change": [
+     "why-it-feels-true",
+     "graded-uncertainty",
+     "easy-attractive-social-timely",
+     "spaced-follow-up"
+    ]
+   }
+  },
+  {
+   "id": "impact-ledger",
+   "why": "LIVE-EXAMPLE-1 (Rowan, 2026-11-26): no live system built on Ultrastable proves this idea yet",
+   "idea": {
+    "id": "impact-ledger",
+    "domain": "nonprofit",
+    "reach": "global",
+    "text": "An impact ledger for a charity that links every programme to its outcomes and shows funders what each donation changed",
+    "keywords": "charity nonprofit impact outcomes funders donors programme evaluation",
+    "loop": "programme data read monthly, outcomes recomputed, the weakest programme flagged with what similar charities do",
+    "measure": "programmes with a measured outcome, target all",
+    "upkeep": "programmes, people served and funders change every year",
+    "budget": 10,
+    "depth": {
+     "corpus": "every programme, its spend and the outcomes it produced over the years",
+     "method": "outcomes compared with a baseline, uncertainty stated",
+     "returns": "each reporting cycle and funding round draws on it"
+    },
+    "empowers": "moves donations toward what actually helps people",
+    "data": [
+     {
+      "name": "own",
+      "note": "the charity's own programme records"
+     },
+     {
+      "name": "IATI aid activity data",
+      "probe": "https://iatistandard.org/en/"
+     }
+    ],
+    "added": "2026-11-22",
+    "thesis": "Donations follow stories more than outcomes because outcomes are rarely shown plainly",
+    "hook": "See what a single donation changed, in numbers, for a real programme",
+    "horizon": [
+     "Link one charity's programmes to outcomes",
+     "Compare against similar charities' published results",
+     "Give funders a live view of outcomes instead of annual reports"
+    ],
+    "change": [
+     "why-it-feels-true",
+     "graded-uncertainty",
+     "easy-attractive-social-timely",
+     "spaced-follow-up"
+    ]
+   }
+  },
+  {
+   "id": "grants-atlas",
+   "why": "LIVE-EXAMPLE-1 (Rowan, 2026-11-26): no live system built on Ultrastable proves this idea yet",
+   "idea": {
+    "id": "grants-atlas",
+    "domain": "nonprofit",
+    "reach": "global",
+    "text": "A funding atlas for small charities: every open call, how well it fits and a drafted answer, kept current",
+    "keywords": "grants funding proposals deadlines nonprofit fundraiser charity",
+    "loop": "funder pages read weekly, matching calls filed with a draft, outcomes recorded to sharpen the fit score",
+    "measure": "matching calls missed before their deadline, target 0",
+    "upkeep": "funders open and close calls all year",
+    "budget": 15,
+    "depth": {
+     "corpus": "every funder and call, with past awards and what won",
+     "method": "fit scored from past awards; drafts reuse answers that succeeded",
+     "returns": "new calls open every week, and each charity's past wins sharpen its next match"
+    },
+    "empowers": "gets funding to small charities that cannot afford a fundraiser",
+    "data": [
+     {
+      "name": "IATI funders and activities",
+      "probe": "https://iatistandard.org/en/"
+     },
+     {
+      "name": "OpenAlex funders",
+      "probe": "https://api.openalex.org/funders?per-page=1"
+     }
+    ],
+    "added": "2026-11-22",
+    "thesis": "Small charities miss funding they qualify for because finding and answering calls takes staff they do not have",
+    "hook": "See the open calls your charity fits today, each with a drafted answer",
+    "horizon": [
+     "Index every open call in one country",
+     "Score fit from past awards and draft answers",
+     "Cover funders worldwide that publish open data"
+    ],
+    "change": [
+     "why-it-feels-true",
+     "graded-uncertainty",
+     "easy-attractive-social-timely",
+     "spaced-follow-up"
+    ]
+   }
+  },
+  {
+   "id": "decision-journal",
+   "why": "LIVE-EXAMPLE-1 (Rowan, 2026-11-26): no live system built on Ultrastable proves this idea yet",
+   "idea": {
+    "id": "decision-journal",
+    "domain": "personal",
+    "reach": "global",
+    "text": "A decision journal that records each big choice, its reasons and how it turned out, and learns what I misjudge",
+    "keywords": "decisions journal personal reflection choices life habits memory",
+    "loop": "each decision logged with a prediction, revisited when it resolves, my blind spots summarised quarterly",
+    "measure": "share of predictions that came true, per quarter",
+    "upkeep": "new decisions keep coming",
+    "budget": 5,
+    "depth": {
+     "corpus": "years of my own decisions, predictions and outcomes",
+     "method": "every decision carries a prediction that is scored later",
+     "returns": "every new choice is checked against my own track record"
+    },
+    "empowers": "helps a person learn from their own choices instead of repeating mistakes",
+    "data": [
+     {
+      "name": "own",
+      "note": "the person's own decisions and predictions"
+     }
+    ],
+    "added": "2026-11-22",
+    "thesis": "People repeat the same misjudgements because they never score their past predictions",
+    "hook": "Write down one decision and a prediction, and get asked how it turned out later",
+    "horizon": [
+     "Log decisions with predictions",
+     "Score them as they resolve",
+     "Show the person their own patterns of misjudgement"
+    ],
+    "change": [
+     "why-it-feels-true",
+     "graded-uncertainty",
+     "easy-attractive-social-timely",
+     "spaced-follow-up"
+    ]
+   }
+  },
+  {
+   "id": "self-experiments",
+   "why": "LIVE-EXAMPLE-1 (Rowan, 2026-11-26): no live system built on Ultrastable proves this idea yet",
+   "idea": {
+    "id": "self-experiments",
+    "domain": "personal",
+    "reach": "global",
+    "text": "A personal experiments log that turns my habits into small tests and keeps only what measurably helps",
+    "keywords": "habits sleep fitness personal experiments health log routine",
+    "loop": "one change tried for two weeks, the measure compared with the baseline, kept or dropped, the next test chosen",
+    "measure": "experiments that measurably helped, per quarter",
+    "upkeep": "life, seasons and goals change",
+    "budget": 5,
+    "depth": {
+     "corpus": "every habit I have tried, with its before-and-after numbers",
+     "method": "baseline, one change at a time, a fixed test window",
+     "returns": "there is always a next test, and the person's own record of what worked keeps growing"
+    },
+    "empowers": "helps a person find what really improves their life, by evidence instead of hype",
+    "data": [
+     {
+      "name": "own",
+      "note": "the person's own habit and health measurements"
+     }
+    ],
+    "added": "2026-11-22",
+    "thesis": "Most habit advice is untested for the person following it, and only a personal test can tell",
+    "hook": "Pick one habit and see your two-week before-and-after numbers",
+    "horizon": [
+     "Run one habit test at a time",
+     "Keep only what measurably helped",
+     "Suggest the next test from what helped people with similar patterns"
+    ],
+    "change": [
+     "why-it-feels-true",
+     "graded-uncertainty",
+     "easy-attractive-social-timely",
+     "spaced-follow-up"
+    ]
+   }
+  },
+  {
+   "id": "city-history",
+   "why": "LIVE-EXAMPLE-1 (Rowan, 2026-11-26): no live system built on Ultrastable proves this idea yet",
+   "idea": {
+    "id": "city-history",
+    "domain": "creative",
+    "reach": "local",
+    "text": "A living history of a city told from its archives, adding sources and correcting the record as documents surface",
+    "keywords": "history city archives local heritage stories writing creative museum",
+    "loop": "archives searched monthly, new sources attached, stories revised where a document changes the account",
+    "measure": "claims in each story tied to a cited source, target all",
+    "upkeep": "archives digitise new material every month",
+    "budget": 10,
+    "depth": {
+     "corpus": "a growing set of stories, places and people, each tied to sources",
+     "method": "every claim cites its document; disputed points show both sides",
+     "returns": "new stories and corrections arrive every month"
+    },
+    "empowers": "gives a community an accurate, shared record of its own past",
+    "data": [
+     {
+      "name": "Europeana cultural heritage",
+      "probe": "https://www.europeana.eu/"
+     },
+     {
+      "name": "Internet Archive",
+      "probe": "https://archive.org/advancedsearch.php?q=city&rows=1&output=json"
+     },
+     {
+      "name": "Wikimedia Commons",
+      "probe": "https://commons.wikimedia.org/w/api.php?action=query&format=json"
+     }
+    ],
+    "added": "2026-11-22",
+    "thesis": "A city's popular history drifts from its archives, and the record can be corrected source by source",
+    "hook": "Pick a street and see what the archives say happened there, with the documents",
+    "horizon": [
+     "Tell the stories of one neighbourhood from sources",
+     "Correct the record as new documents surface",
+     "Let residents add sources that are checked before they appear"
+    ],
+    "change": [
+     "why-it-feels-true",
+     "graded-uncertainty",
+     "easy-attractive-social-timely",
+     "spaced-follow-up"
+    ]
+   }
+  },
+  {
+   "id": "dependency-watch",
+   "why": "LIVE-EXAMPLE-1 (Rowan, 2026-11-26): no live system built on Ultrastable proves this idea yet",
+   "idea": {
+    "id": "dependency-watch",
+    "domain": "software",
+    "reach": "global",
+    "text": "An open-source dependency watch that maps who relies on what, flags risky packages and proposes fixes upstream",
+    "keywords": "open source dependencies packages security maintainers supply chain software",
+    "loop": "the dependency graph rebuilt weekly, risks scored, fixes proposed to the projects that can make them",
+    "measure": "high-risk dependencies with a proposed fix",
+    "upkeep": "new releases and new risks every day",
+    "budget": 15,
+    "depth": {
+     "corpus": "a map of packages, maintainers and the projects that depend on them",
+     "method": "risk scored from maintenance, security history and reach",
+     "returns": "the dependency graph changes with every release, and new risks appear every day"
+    },
+    "empowers": "protects the open-source commons that public services run on",
+    "data": [
+     {
+      "name": "OSV vulnerability database",
+      "probe": "https://api.osv.dev/v1/vulns/GHSA-jfh8-c2jp-5v3q"
+     },
+     {
+      "name": "deps.dev dependency graph",
+      "probe": "https://deps.dev/"
+     }
+    ],
+    "added": "2026-11-22",
+    "thesis": "Public services rest on open-source packages kept alive by a handful of unpaid people nobody can see",
+    "hook": "Enter a project and see the fragile packages its users depend on without knowing",
+    "horizon": [
+     "Map dependencies and risks for one ecosystem",
+     "Propose fixes upstream for the riskiest packages",
+     "Cover every major ecosystem and alert the projects affected"
+    ],
+    "change": [
+     "why-it-feels-true",
+     "graded-uncertainty",
+     "easy-attractive-social-timely",
+     "spaced-follow-up"
+    ]
+   }
+  },
+  {
+   "id": "contracts-watch",
+   "why": "LIVE-EXAMPLE-1 (Rowan, 2026-11-26): no live system built on Ultrastable proves this idea yet",
+   "idea": {
+    "id": "contracts-watch",
+    "domain": "civic",
+    "reach": "global",
+    "text": "A public-contracts watch that follows government tenders and awards and flags the ones that look rigged",
+    "keywords": "government contracts procurement tenders corruption spending accountability civic",
+    "loop": "new tenders and awards read daily, red flags scored, flagged contracts followed to delivery and the flags re-scored",
+    "measure": "flagged contracts later confirmed as problems, against false flags",
+    "upkeep": "governments publish new tenders every day",
+    "budget": 10,
+    "depth": {
+     "corpus": "every published tender, bidder and award in the jurisdictions with open data",
+     "method": "red flags from published procurement-risk indicators, each shown with its evidence",
+     "returns": "new contracts every day and a growing record of who won what"
+    },
+    "empowers": "lets citizens and journalists see where public money goes and who gets it",
+    "data": [
+     {
+      "name": "Open Contracting data registry (OCDS, 50+ countries)",
+      "probe": "https://data.open-contracting.org/"
+     }
+    ],
+    "added": "2026-11-22",
+    "thesis": "Rigged public tenders leave patterns in open data that citizens can see if someone looks",
+    "hook": "See which contracts near you show red flags, and why",
+    "horizon": [
+     "Score red flags on one country's open contracts",
+     "Follow flagged contracts to delivery and re-score",
+     "Cover every country that publishes open contracting data"
+    ],
+    "change": [
+     "why-it-feels-true",
+     "graded-uncertainty",
+     "easy-attractive-social-timely",
+     "spaced-follow-up"
+    ]
+   }
+  }
+ ],
  "max_text": 140,
  "narrow_phrases": [
   "for a field",
@@ -640,5 +752,6 @@
    "after": "An encyclopedic replication ledger across many fields: which landmark findings held up and which failed, updated as replications publish",
    "lesson": "Rowan liked the idea and widened it from one field to many. Prefer broad, multi-domain, encyclopedic, living versions over single-field ones."
   }
- ]
+ ],
+ "live_example_rule": "LIVE-EXAMPLE-1 (Rowan, 2026-11-26: 'make sure you're saying things you will actually build and can actually build ... All product, no pitch. No hyperbole anywhere.'): an idea reaches the front door only with an example: a deployed system on Ultrastable (name, url, https probe, repo registered in doctrine/tenant-repos.json). build_idea_bank.py --check refuses an idea without one; --live fetches each example probe, retires an idea whose example does not answer, and promotes a retired idea whose example now answers. --grow cannot add an idea that has no live example."
 }

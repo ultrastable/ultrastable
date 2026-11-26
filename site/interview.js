@@ -84,11 +84,12 @@ export const JS = String.raw`(function () {
 
   // ---- suggestions: rotate by themselves, and re-rank as the person types ----
   var FALL = ${JSON.stringify(IB.FALLBACK)};
+  var EX = ${JSON.stringify(Object.fromEntries(IB.BANK.map(function (b) { return [b[0], b[4]]; })))};
   function recent() { try { return JSON.parse(localStorage.getItem('us.recent') || '[]'); } catch (e) { return []; } }
   function remember(t) { try { var r = recent().filter(function (x) { return x !== t; }); r.unshift(t); localStorage.setItem('us.recent', JSON.stringify(r.slice(0, 5))); } catch (e) { } }
   function fetchSug(q, cb) {
     var url = '/api/suggest?n=4&seed=' + (S.seed++) + '&q=' + encodeURIComponent(q.slice(0, 200)) + '&seen=' + encodeURIComponent(S.shown.slice(-8).join('|'));
-    fetch(url).then(function (r) { return r.json(); }).then(function (d) { cb(Array.isArray(d.s) && d.s.length ? d.s : null); }).catch(function () { cb(null); });
+    fetch(url).then(function (r) { return r.json(); }).then(function (d) { S.ex = d.ex || S.ex || {}; cb(Array.isArray(d.s) && d.s.length ? d.s : null); }).catch(function () { cb(null); });
   }
   function drawSug(list) {
     if (S.phase !== 'idea') { sug.hidden = true; return; }
@@ -96,7 +97,7 @@ export const JS = String.raw`(function () {
     setTimeout(function () {
       sug.textContent = ''; var r = recent()[0];
       if (r && !inp.value) { var c = el('button', 'us-chip pick', 'Pick up: ' + (r.length > 44 ? r.slice(0, 44) + '…' : r)); c.type = 'button'; c.onclick = function () { begin(r); }; sug.appendChild(c); }
-      list.forEach(function (t) { if (S.shown.indexOf(t) < 0) S.shown.push(t); var c = el('button', 'us-chip', t); c.type = 'button'; c.onclick = function () { begin(t); }; sug.appendChild(c); });
+      list.forEach(function (t) { if (S.shown.indexOf(t) < 0) S.shown.push(t); var c = el('button', 'us-chip', t); c.type = 'button'; c.onclick = function () { begin(t); }; sug.appendChild(c); var x = (S.ex || EX)[t]; if (x) { var a = el('a', 'us-live', 'See it running'); a.href = x; a.rel = 'noopener'; sug.appendChild(a); } });
       S.pool = list; sug.classList.remove('fade');
     }, 200);
   }

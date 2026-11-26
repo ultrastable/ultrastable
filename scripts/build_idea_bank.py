@@ -84,6 +84,13 @@ def validate(bank):
         narrow = [n for n in bank.get("narrow_phrases", []) if n in i.get("text", "").lower()]
         if narrow:  # BREADTH-1: the owner widens single-field ideas, so the bank refuses them
             errs.append(f"{i['id']}: too narrow ({narrow[0]!r}); BREADTH-1 wants many fields or places, not one")
+    repos = {t.get("repo") for t in json.loads((ROOT / "doctrine" / "tenant-repos.json").read_text())["tenants"].values()}
+    for i in ideas:  # LIVE-EXAMPLE-1: no idea on the front door without a deployed system that proves it
+        ex = i.get("example") or {}
+        if not (ex.get("name") and str(ex.get("url", "")).startswith("https://") and str(ex.get("probe", "")).startswith("https://")):
+            errs.append(f"{i.get('id')}: no live example (LIVE-EXAMPLE-1: name, https url and https probe of a deployed system)")
+        elif ex.get("repo") not in repos:
+            errs.append(f"{i.get('id')}: example repo {ex.get('repo')!r} is not a tenant in doctrine/tenant-repos.json")
     dom = Counter(i["domain"] for i in ideas)
     if len(dom) < bank["min_domains"]:
         errs.append(f"only {len(dom)} domains, need {bank['min_domains']}")
@@ -111,6 +118,17 @@ def probe(url, timeout=15):
 def live(bank):
     """WORLDWIDE-1: an idea with probed sources keeps its place only while at least one still answers."""
     keep, changed = [], False
+    for r in list(bank["retired"]):  # LIVE-EXAMPLE-1: a retired idea whose example now answers comes back
+        ex = (r.get("idea") or {}).get("example") or {}
+        if r.get("why", "").startswith("LIVE-EXAMPLE-1") and ex.get("probe") and probe(ex["probe"]):
+            bank["retired"].remove(r); bank["ideas"].append(r["idea"]); changed = True
+            print(f"promoted {r['id']}: example {ex['url']} answers")
+    for i in list(bank["ideas"]):
+        ex = i.get("example") or {}
+        if not ex.get("probe") or not probe(ex["probe"]):
+            bank["ideas"].remove(i); changed = True
+            bank["retired"].append({"id": i["id"], "why": "LIVE-EXAMPLE-1: example did not answer its probe", "idea": i})
+            print(f"retired {i['id']}: example did not answer")
     for i in bank["ideas"]:
         urls = [d["probe"] for d in i.get("data", []) if d.get("probe")]
         if urls and not any(probe(u) for u in urls):
@@ -129,7 +147,8 @@ exists today (give real https URLs of public APIs or datasets that answer withou
 It must be surprising and interesting, different from every existing idea and domain listed below.
 Reply with only a JSON object with keys: id (kebab-case), domain, reach ("global"), text (under 120 characters, plain words, spanning many fields or places and never a single one),
 keywords, thesis, hook, horizon (list of 3 phases), loop, measure, upkeep, budget (USD per month, number), depth {corpus, method, returns}, change (list of 3 or 4 of: why-it-feels-true, guess-first, graded-uncertainty, outside-view, fact-myth-fallacy, easy-attractive-social-timely, implementation-intention, spaced-follow-up; at least one from each of the first two, middle three and next two), empowers (every text field at least 40 characters),
-data [{name, probe}] (or {name: "own", note}).
+data [{name, probe}] (or {name: "own", note}),
+example {name, url, probe, repo}: a system already deployed on Ultrastable that proves the idea (LIVE-EXAMPLE-1); without one the idea is refused.
 Existing ideas:
 """
 
@@ -162,7 +181,7 @@ def grow(bank, complete=None):
 
 
 def render(bank):
-    rows = [[i["text"], i["keywords"], i["domain"], i["reach"]] for i in bank["ideas"]]
+    rows = [[i["text"], i["keywords"], i["domain"], i["reach"], i["example"]["url"]] for i in bank["ideas"]]
     # One per domain, public-benefit reach first, for the no-network fallback chips.
     seen, fall = set(), []
     for i in sorted(bank["ideas"], key=lambda i: i["reach"] != "global"):

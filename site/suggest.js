@@ -30,4 +30,6 @@ export function suggest(q, seen, seed, n) {
   return picked.slice(0, want).map((x) => x.t);
 }
 
-export default { BANK, suggest };
+// LIVE-EXAMPLE-1: the deployed system that proves an idea (column 5 of the generated bank).
+export function example(text) { const b = BANK.find((r) => r[0] === text); return b && b[4] ? b[4] : null; }
+export default { BANK, suggest, example };
