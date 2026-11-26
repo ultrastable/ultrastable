@@ -39,9 +39,9 @@ class Scout(unittest.TestCase):
         it = json.loads((d / "docs/issues" / (row["filed"][0] + ".json")).read_text()); self.assertIn("growth", it["labels"]); self.assertIn(f"Done check:** cmd:python3 -m foundation scout --decided {it['id']}", it["body"])
         from foundation import specgate
         self.assertEqual(specgate.missing(it["body"]), [])  # SPEC-GATE-1: the loop's own filing passes the gate (done check, prediction, out of scope, closing probe)
-        self.assertFalse(S.decided(d, it["id"])); self.assertEqual(S.metrics(d)["scout_undecided"], len(row["filed"]))
+        self.assertFalse(S.has_outcome(d, it["id"])); self.assertEqual(S.metrics(d)["scout_undecided"], len(row["filed"]))
         S.adopt(d, it["id"], "declined", "not relevant")
-        self.assertTrue(S.decided(d, it["id"])); self.assertEqual(S.metrics(d)["scout_undecided"], len(row["filed"]) - 1)
+        self.assertTrue(S.has_outcome(d, it["id"])); self.assertEqual(S.metrics(d)["scout_undecided"], len(row["filed"]) - 1)
         again = S.run(d, fetch, apply=True); self.assertEqual((again["scanned"], again["filed"]), (0, []))
         self.assertEqual(len((d / "ops/scout/log.jsonl").read_text().splitlines()), 2)
 

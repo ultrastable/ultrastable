@@ -207,7 +207,7 @@ def adopt(root, iid: str, outcome: str, reason: str, now=None) -> dict:
     return row
 
 
-def decided(root, iid: str) -> bool:
+def has_outcome(root, iid: str) -> bool:
     """SPEC-GATE-1 closing probe of a finding: an outcome (adopted or declined, with its reason) is on record for it."""
     return any(r.get("id") == iid for r in _rows(root, "adopted.jsonl"))
 
@@ -258,7 +258,7 @@ def main(argv: list[str]) -> int:
     if "--run" in a:
         print(json.dumps(run(apply="--apply" in a), indent=1)); return 0
     if "--decided" in a:
-        iid = a[a.index("--decided") + 1]; ok = decided(REPO, iid)
+        iid = a[a.index("--decided") + 1]; ok = has_outcome(REPO, iid)
         print(f"{iid}: {'decided' if ok else 'no outcome recorded'}"); return 0 if ok else 1
     if "--metrics" in a:
         print(json.dumps(metrics(), indent=1)); return 0
