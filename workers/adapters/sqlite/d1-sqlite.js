@@ -6,14 +6,9 @@
 import { DatabaseSync } from 'node:sqlite';
 import { readFileSync, readdirSync } from 'node:fs';
 
-export function openDb(path, migrationsDir) {
-  const raw = new DatabaseSync(path);
-  raw.exec(`PRAGMA journal_mode=${process.env.ULTRASTABLE_JOURNAL || 'DELETE'}; PRAGMA busy_timeout=5000;`); // DELETE, not WAL: WAL needs shared memory that network volumes lack
-  if (migrationsDir) {
-    for (const f of readdirSync(migrationsDir).filter(n => n.endsWith('.sql')).sort()) {
-      raw.exec(readFileSync(`${migrationsDir}/${f}`, 'utf8')); // migrations are additive and idempotent
-    }
-  }
+/** The D1-shaped handle over an open DatabaseSync. Every SQLite-backed handle in the repository is built here (the file store, the
+ *  in-memory test stores of core/test/d1shim.js and core/_shared/testdb.js), so the tests exercise the adapter's own handle (US-14-R07). */
+export function wrapSqlite(raw) {
   return {
     raw,
     prepare(sql) {
@@ -29,4 +24,15 @@ export function openDb(path, migrationsDir) {
     },
     close() { raw.close(); },
   };
+}
+
+export function openDb(path, migrationsDir) {
+  const raw = new DatabaseSync(path);
+  raw.exec(`PRAGMA journal_mode=${process.env.ULTRASTABLE_JOURNAL || 'DELETE'}; PRAGMA busy_timeout=5000;`); // DELETE, not WAL: WAL needs shared memory that network volumes lack
+  if (migrationsDir) {
+    for (const f of readdirSync(migrationsDir).filter(n => n.endsWith('.sql')).sort()) {
+      raw.exec(readFileSync(`${migrationsDir}/${f}`, 'utf8')); // migrations are additive and idempotent
+    }
+  }
+  return wrapSqlite(raw);
 }

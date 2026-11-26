@@ -86,3 +86,120 @@ test('US-13-R13: a probe whose target is not routed is reported unrouted, not do
   const r = classifyProbes(probes, ['api.example', 'https://other.example/v2'], { api: { ok: true, status: 200 }, old: { ok: false, status: 404 }, sub: { ok: false, status: 500 }, bad: { ok: false } });
   assert.deepEqual(r.map(x => [x.id, x.state]), [['api', 'up'], ['old', 'unrouted'], ['sub', 'down'], ['bad', 'unrouted'], ['quiet', 'unknown']]);
 });
+
+test('US-13-R21: /health returns 503 with a stalled verdict and its reason when the newest check is older than the bound', async () => {
+  const { db, dash } = mk();
+  db.raw.exec(`DELETE FROM tick_runs; INSERT INTO tick_runs (started_at,finished_at,steps_completed,steps_total) VALUES ('2026-11-14 11:00:00','2026-11-14 11:00:01',8,8)`);
+  const r = await get(dash, '/health');
+  assert.equal(r.status, 503);
+  const body = await r.json();
+  assert.equal(body.verdict, 'stalled'); assert.match(body.reasons[0], /newest check is \d+ minutes old/); assert.equal(body.ok, true);
+});
+
+test('US-13-R13: the dashboard never probes or reports down a target that is not routed', async () => {
+  const called = [];
+  const probe = async url => { called.push(url); return url.includes('bad.example') ? { ok: false, status: 500 } : url.includes('gone.example') ? { ok: false, status: null, dns: true } : { ok: true, status: 200 }; };
+  const db = makeDb([dir('./migrations/'), dir('../sla/migrations/')]);
+  const l3 = createConsoleL3({ db, now: () => T0 });
+  const config = { routes: ['api.example', 'bad.example', 'gone.example'], probes: [
+    { id: 'api', url: 'https://api.example/health' }, { id: 'old', url: 'https://old.example/health' }, { id: 'bad', url: 'https://bad.example/health' }, { id: 'gone', url: 'https://gone.example/health' }] };
+  const dash = createDashboard({ db, l3, probe, now: () => T0, config });
+  const r = await (await get(dash, '/api/probes')).json();
+  assert.deepEqual(r.results.map(x => [x.id, x.state]), [['api', 'up'], ['old', 'unrouted'], ['bad', 'down'], ['gone', 'dns']]);
+  assert.ok(!called.some(u => u.includes('old.example')), 'an unrouted target is never called');
+  assert.equal(r.results.find(x => x.id === 'bad').status, 500);
+  const html = await (await get(dash, '/')).text();
+  assert.match(html, /<td>old<\/td><td>unrouted<\/td>/); assert.ok(!/<td>old<\/td><td>down/.test(html));
+});
+
+test('/api/probes lists up, down, unrouted, dns and unknown; with no routing known no target is called or called unrouted', async () => {
+  const called = [];
+  const db = makeDb([dir('./migrations/'), dir('../graph/migrations/')]);
+  const l3 = createConsoleL3({ db, now: () => T0 });
+  const config = { probes: [{ id: 'api', url: 'https://api.example/health' }] };
+  const dash = createDashboard({ db, l3, probe: async u => { called.push(u); return { ok: true, status: 200 }; }, now: () => T0, config });
+  assert.deepEqual((await (await get(dash, '/api/probes')).json()).results, [{ id: 'api', url: 'https://api.example/health', state: 'unknown', status: null }]);
+  assert.equal(called.length, 0);
+  // routes now come from the latest wiring sweep
+  db.raw.exec(`INSERT INTO graph_wiring_sweeps (generated, worker_count, errors, workers) VALUES ('t', 1, '[]', '[{"name":"api","routes":["api.example/*"]}]')`);
+  assert.equal((await (await get(dash, '/api/probes')).json()).results[0].state, 'up');
+  // a probe that throws with a name-resolution error is dns, and a silent probe port leaves the target unknown
+  const dns = createDashboard({ db, l3, probe: async () => { const e = new Error('getaddrinfo ENOTFOUND api.example'); e.code = 'ENOTFOUND'; throw e; }, now: () => T0, config });
+  assert.equal((await (await get(dns, '/api/probes')).json()).results[0].state, 'dns');
+  const none = createDashboard({ db, l3, now: () => T0, config });
+  assert.equal((await (await get(none, '/api/probes')).json()).results[0].state, 'unknown');
+});
+
+const mkPanels = ({ analytics = null, tracker = null } = {}) => {
+  const db = makeDb([dir('./migrations/'), dir('../sla/migrations/'), dir('../fleet/migrations/'), dir('../audit/migrations/'), dir('../graph/migrations/')]);
+  const l3 = createConsoleL3({ db, now: () => T0, config: { version: '2.0.0' }, tracker });
+  db.raw.exec(`
+    INSERT INTO tick_runs (started_at,finished_at,steps_completed,steps_total) VALUES ('2026-11-15 11:50:00','2026-11-15 11:50:01',8,8);
+    INSERT INTO items (id,title,owner_role,kind,done_check,status) VALUES ('A','a','staff','work','x','ready'),('B','b','staff','fix','x','open'),('C','c','ops','work','x','done');
+    INSERT INTO fleet_runs (worker, trigger, status, queued_at, ts_start) VALUES ('w-ok','cron','ok','2026-11-15 10:00:00','2026-11-15 10:00:01'),('w-ok','cron','failed','2026-11-15 11:00:00','2026-11-15 11:00:01'),('w-old','cron','ok','2026-11-10 10:00:00','2026-11-10 10:00:01');
+    INSERT INTO fleet_crons (name, expr, task_id, enabled, next_fire) VALUES ('w-ok','*/10 * * * *','t1',1,'2026-11-15 12:10:00'),('w-quiet','0 * * * *','t2',1,'2026-11-15 13:00:00'),('w-off','0 * * * *','t3',0,'2026-11-15 13:00:00');
+    INSERT INTO graph_wiring_sweeps (generated, worker_count, errors, workers) VALUES ('t',1,'[]','[]');
+    INSERT INTO graph_wiring_analyses (sweep_id, at, nodes, edges, density, islands, sinks, sources, unresolved, ghosts, unregistered, unversioned, data_flow_edges, islands_with_data_flow, orphan_tables, integration_score, detail) VALUES (1,'2026-11-15 11:00:00',10,12,0.1,1,2,3,0,2,3,1,4,0,2,0.82,'{}');
+    INSERT INTO audit_events (seq, day, at, actor, kind, summary, prev, hash) VALUES (1,'2026-11-15','2026-11-15T11:00:00Z','x','deploy','s','0','abcdef1234567890');`);
+  return { db, l3, dash: createDashboard({ db, l3, analytics, now: () => T0 }) };
+};
+
+test('the dashboard shows per-worker runs, failures and next runs from fleet_runs and fleet_crons; a run outside 24 hours is not counted', async () => {
+  const { dash } = mkPanels();
+  const r = (await (await get(dash, '/api/runs')).json()).runs;
+  assert.deepEqual(r.workers, [{ worker: 'w-ok', runs: 2, failed: 1, last_status: 'failed' }]);
+  assert.deepEqual(r.next.map(c => [c.name, c.next_fire]), [['w-ok', '2026-11-15 12:10:00'], ['w-quiet', '2026-11-15 13:00:00']], 'next runs come from fleet_crons for every enabled cron');
+  const html = await (await get(dash, '/')).text();
+  assert.match(html, /<td>w-ok<\/td><td>2<\/td><td>1<\/td><td>failed<\/td>/);
+});
+
+test('drift divergence comes from the latest wiring analysis and says not measured when none exists; the audit panel reads the chain head', async () => {
+  const { dash } = mkPanels();
+  const s = await dash.state();
+  assert.deepEqual([s.panels.drift.ghosts, s.panels.drift.unregistered, s.panels.drift.orphan_tables, s.panels.drift.integration_score], [2, 3, 2, 0.82]);
+  assert.deepEqual([s.panels.audit.events, s.panels.audit.head_seq, s.panels.audit.head_hash, s.panels.audit.chain_verified], [1, 1, 'abcdef123456', false]);
+  assert.deepEqual((await (await get(dash, '/api/audit')).json()).head_hash, 'abcdef123456');
+  const bare = mk({ graph: false });                            // no graph, audit or fleet tables at all
+  const b = await bare.dash.state();
+  assert.deepEqual([b.panels.drift.available, b.panels.audit.available, b.panels.runs.available], [false, false, false]);
+  assert.match(await (await get(bare.dash, '/')).text(), /<h2>Drift<\/h2><p><small>not measured<\/small><\/p>/);
+});
+
+test('open work by role is counted, and the tracker port adds its open issues; a failing tracker is unavailable, not zero', async () => {
+  const tracker = { openIssues: async () => ({ issues: [{ number: '1' }, { number: '2' }, { number: '3' }], complete: true }) };
+  const a = (await mkPanels({ tracker }).dash.state()).panels.agent_issues;
+  assert.equal(a.open, 2); assert.deepEqual(a.by_role, [{ role: 'staff', kind: 'fix', n: 1 }, { role: 'staff', kind: 'work', n: 1 }]);
+  assert.deepEqual(a.tracker, { available: true, count: 3, complete: true });
+  const bad = (await mkPanels({ tracker: { openIssues: async () => { throw new Error('403 from the tracker'); } } }).dash.state()).panels.agent_issues.tracker;
+  assert.equal(bad.available, false); assert.match(bad.reason, /403/);
+  assert.equal((await mkPanels().dash.state()).panels.agent_issues.tracker.available, false);
+});
+
+test('US-13-R02: the digest words the same panels the page shows', async () => {
+  const tracker = { openIssues: async () => ({ issues: [{ number: '1' }], complete: false }) };
+  const { l3, dash } = mkPanels({ tracker });
+  const d = await l3.digest(); const s = await dash.state();
+  assert.deepEqual(d.panels, s.panels);
+  assert.match(d.text, /Open issues on the tracker: 1 \(the read was cut off\)/); assert.match(d.text, /2 named but not registered, 3 registered but unnamed, integration score 0.82/);
+  assert.match(d.text, /Runs in 24 hours: 2, 1 failed/);
+  assert.ok(!/Not measured here/.test(d.text));
+  assert.match((await mk({ graph: false }).l3.digest()).text, /Not measured here: audit, drift, runs\./);
+});
+
+test('US-13-R24: the analytics panel shows requests and errors per script from the port and not measured when the port fails; next runs join by name', async () => {
+  const asked = [];
+  const analytics = async w => { asked.push(w); return { measured: true, by_script: { 'w-ok': { requests: 900, errors: 12, cpu_ms: 40 }, 'other': { requests: 5000, errors: 0 } } }; };
+  const { dash } = mkPanels({ analytics });
+  const s = await dash.state();
+  assert.deepEqual([s.analytics.measured, s.analytics.requests, s.analytics.errors], [true, 5900, 12]);
+  assert.deepEqual(s.analytics.by_script.map(r => r.name), ['other', 'w-ok']);
+  assert.deepEqual(s.analytics.scheduled, [{ name: 'w-ok', next_fire: '2026-11-15 12:10:00', requests: 900, errors: 12 }, { name: 'w-quiet', next_fire: '2026-11-15 13:00:00', requests: null, errors: null }]);
+  assert.equal(asked[0].to, new Date(T0).toISOString()); assert.equal(asked[0].from, new Date(T0 - 864e5).toISOString());
+  const html = await (await get(dash, '/')).text();
+  assert.match(html, /5900 requests, 12 errors/); assert.match(html, /<td>w-quiet<\/td><td>2026-11-15 13:00:00<\/td><td><small>not measured<\/small><\/td>/);
+  for (const bad of [async () => { throw new Error('GraphQL 403'); }, async () => ({ measured: true }), async () => ({ measured: true, by_script: { x: { requests: 'many', errors: 1 } } }), null]) {
+    const r = (await mkPanels({ analytics: bad }).dash.state()).analytics;
+    assert.equal(r.measured, false); assert.ok(r.reason); assert.ok(!('requests' in r), 'no number is invented for a missing reading');
+  }
+  assert.match(await (await get(mkPanels({ analytics: async () => { throw new Error('GraphQL 403'); } }).dash, '/')).text(), /not measured<\/small> \(GraphQL 403\)/);
+});

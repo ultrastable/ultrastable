@@ -3,7 +3,12 @@
 // Product dashboard (US-SPEC-13 section 3): `/` status page, `/api/state`, `/api/refresh`, `/api/integration`, `/api/loop`,
 // `/health`. The page, the JSON and the digest are rendered from one state object (US-13-R02). The page loads nothing from
 // another host and every dynamic value is escaped. Probe targets are checked against routing before a worker is called down
-// (US-13-R13). Ports: db, l3 (createConsoleL3), sla (createSla, optional), now. Auth is the caller's job.
+// (US-13-R13): configured probes ({ id, url }) are matched to the routes in config.routes or in the latest wiring sweep, a probe port
+// (`probe`: async url => { ok, status, dns? }) is called only for a routed target, and the result is up, down, dns, unrouted or unknown.
+// The panels (audit, open work and issues, drift divergence, per-worker runs and next runs) come from l3.panels(), the function the digest
+// reads too; the 24-hour requests and errors come from an analytics port (analytics.js) and read "not measured" without one (US-13-R24).
+// Ports: db, l3 (createConsoleL3), sla (createSla, optional), probe (optional), analytics (optional), now. Auth is the caller's job.
+import { readAnalytics, scheduledRows } from './analytics.js';
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' } });
 
@@ -16,12 +21,12 @@ export function classifyProbes(probes = [], routes = [], results = {}) {
   };
   return probes.map(p => {
     const res = results[p.id];
-    const state = !routed(p.url) ? 'unrouted' : !res ? 'unknown' : res.ok ? 'up' : 'down';
+    const state = !routed(p.url) ? 'unrouted' : !res ? 'unknown' : res.ok ? 'up' : res.dns ? 'dns' : 'down';
     return { id: p.id, url: p.url, state, status: res?.status ?? null };
   });
 }
 
-export function createDashboard({ db, l3, sla = null, now = () => Date.now(), config = {} } = {}) {
+export function createDashboard({ db, l3, sla = null, probe = null, analytics = null, now = () => Date.now(), config = {} } = {}) {
   const clock = typeof now === 'function' ? now : () => now;
   const all = async (sql, ...a) => (await db.prepare(sql).bind(...a).all()).results || [];
   const one = (sql, ...a) => db.prepare(sql).bind(...a).first();
@@ -53,12 +58,53 @@ export function createDashboard({ db, l3, sla = null, now = () => Date.now(), co
     return { available: true, registered: n, live: n - islands.length, edges: edges.length, islands, sinks, density: n > 1 ? Math.round((edges.length / (n * (n - 1))) * 1e4) / 1e4 : 0, drift };
   }
 
+  /** Hostnames and host/path prefixes that are routed: config.routes, else the routes of the latest wiring sweep, else null (not known). */
+  async function knownRoutes() {
+    if (Array.isArray(config.routes)) return config.routes;
+    if (!(await has('graph_wiring_sweeps'))) return null;
+    const sweep = await one(`SELECT workers FROM graph_wiring_sweeps ORDER BY id DESC LIMIT 1`);
+    if (!sweep) return null;
+    try { return JSON.parse(sweep.workers).flatMap(w => w.routes || []); } catch { return null; }
+  }
+
+  /** Configured probes classified against routing (US-13-R13). A target that is not routed is never called and never reported down;
+   *  when routing itself is not known every target is `unknown`, because nothing can say it is unrouted. */
+  async function probes() {
+    const list = config.probes || [];
+    if (!list.length) return { configured: 0, routes_known: null, results: [] };
+    const routes = await knownRoutes();
+    if (!routes) return { configured: list.length, routes_known: false, results: list.map(p => ({ id: p.id, url: p.url, state: 'unknown', status: null })) };
+    const timeout = config.probe_timeout_ms ?? 3000;
+    const results = {};
+    const targets = classifyProbes(list, routes, {});
+    await Promise.all(targets.filter(t => t.state !== 'unrouted' && probe).map(async t => {
+      try { results[t.id] = await Promise.race([probe(t.url), new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), timeout).unref?.())]); }
+      catch (e) { results[t.id] = { ok: false, status: null, dns: /ENOTFOUND|EAI_AGAIN|getaddrinfo|dns/i.test(`${e?.code || ''} ${e?.cause?.code || ''} ${e?.message || ''}`) }; }
+    }));
+    return { configured: list.length, routes_known: true, results: classifyProbes(list, routes, results) };
+  }
+
   /** The one state every surface below is rendered from. */
   async function state() {
     const base = await l3.state();
     const card = await l3.reportCard(config.card_name || 'autonomy');
-    return { ...base, loop: await loop(), integration: await integration(), service_levels: sla ? await sla.summary() : null,
+    const panels = await l3.panels();
+    const reading = await readAnalytics(analytics, { from: new Date(clock() - 864e5).toISOString(), to: new Date(clock()).toISOString(), timeout_ms: config.analytics_timeout_ms });
+    return { ...base, panels, analytics: { ...reading, scheduled: scheduledRows(reading, panels.runs.next) }, loop: await loop(), integration: await integration(), probes: await probes(), service_levels: sla ? await sla.summary() : null,
       report_card: card ? { name: card.name, at: card.at, overall: card.overall, limits: card.limits, scores: card.scores } : null };
+  }
+
+  const nm = '<small>not measured</small>';
+  function renderPanels(s) {
+    const p = s.panels; const a = s.analytics; if (!p) return '';
+    const tr = (...c) => `<tr>${c.map(x => `<td>${x}</td>`).join('')}</tr>`;
+    const parts = [];
+    parts.push(`<h2>Requests and errors, last 24 hours</h2>${a?.measured ? `<p>${esc(a.requests)} requests, ${esc(a.errors)} errors.</p><table><tr><th>Worker</th><th>Requests</th><th>Errors</th></tr>${a.by_script.map(r => tr(esc(r.name), esc(r.requests), esc(r.errors))).join('')}</table>` : `<p>${nm}${a?.reason ? ` (${esc(a.reason)})` : ''}</p>`}`);
+    parts.push(`<h2>Runs and next runs</h2>${p.runs.available ? `${p.runs.workers.length ? `<table><tr><th>Worker</th><th>Runs</th><th>Failed</th><th>Last</th></tr>${p.runs.workers.map(w => tr(esc(w.worker), esc(w.runs), esc(w.failed), esc(w.last_status ?? ''))).join('')}</table>` : '<p>No runs in the last 24 hours.</p>'}${p.runs.next.length ? `<table><tr><th>Schedule</th><th>Next run</th><th>Errors</th></tr>${(a?.scheduled || p.runs.next).map(r => tr(esc(r.name), esc(r.next_fire ?? 'not set'), r.errors == null ? nm : esc(r.errors))).join('')}</table>` : ''}${p.runs.loops.length ? `<table><tr><th>Loop</th><th>State</th><th>Ran of expected</th></tr>${p.runs.loops.map(l => tr(esc(l.loop), esc(l.state), `${esc(l.ran_24h)} of ${esc(l.expected_24h)}`)).join('')}</table>` : ''}` : `<p>${nm}</p>`}`);
+    parts.push(`<h2>Open work by role</h2><p>${esc(p.agent_issues.open)} open${p.agent_issues.tracker.available ? `; ${esc(p.agent_issues.tracker.count)} open on the tracker${p.agent_issues.tracker.complete ? '' : ' (read cut off)'}` : '; tracker ' + nm}.</p>${p.agent_issues.by_role.length ? `<table><tr><th>Role</th><th>Kind</th><th>Open</th></tr>${p.agent_issues.by_role.map(r => tr(esc(r.role), esc(r.kind), esc(r.n))).join('')}</table>` : ''}`);
+    parts.push(`<h2>Drift</h2>${p.drift.available ? `<p>${esc(p.drift.ghosts)} named but not registered, ${esc(p.drift.unregistered)} registered but unnamed, ${esc(p.drift.unversioned)} unversioned, ${esc(p.drift.orphan_tables)} tables nothing uses; integration score ${esc(p.drift.integration_score)} (${esc(p.drift.at)}).</p>` : `<p>${nm}</p>`}`);
+    parts.push(`<h2>Audit</h2>${p.audit.available ? `<p>${esc(p.audit.events)} events in the hot chain, head ${esc(p.audit.head_hash ?? 'none')}, ${esc(p.audit.days_rolled)} days sealed${p.audit.last_rolled_day ? ` (latest ${esc(p.audit.last_rolled_day)})` : ''}. <small>The chain is verified by the audit route, not by this page.</small></p>` : `<p>${nm}</p>`}`);
+    return parts.join('\n');
   }
 
   function render(s) {
@@ -72,6 +118,8 @@ export function createDashboard({ db, l3, sla = null, now = () => Date.now(), co
 <h2>Last check</h2><ul>${li([`ran at ${esc(s.loop.last_execute_at ?? 'never')}`, `${esc(s.loop.scanned)} scanned, ${esc(s.loop.executed)} acted on, ${esc(s.loop.failed)} failed, ${esc(s.loop.needs_human)} need a person, ${esc(s.loop.no_action)} no action`])}</ul>
 <h2>Decisions waiting</h2>${s.gate_cards.list.length ? `<ul>${li(s.gate_cards.list.map(c => `${esc(c.what)} <small>(if nothing is done: ${esc(c.default_in_effect)})</small>`))}</ul>` : '<p>None.</p>'}
 ${sl ? `<h2>Due dates</h2><table><tr><th>Severity</th><th>Open</th><th>Past due</th></tr>${sl.by_severity.map(r => `<tr><td>${esc(r.severity)}</td><td>${esc(r.n)}</td><td>${esc(r.past_due || 0)}</td></tr>`).join('')}</table>` : ''}
+${s.probes?.configured ? `<h2>Probes</h2><table><tr><th>Target</th><th>State</th></tr>${s.probes.results.map(r => `<tr><td>${esc(r.id)}</td><td>${esc(r.state)}${r.status ? ` (${esc(r.status)})` : ''}</td></tr>`).join('')}</table>${s.probes.routes_known === false ? '<p><small>Routing is not known, so no target was called.</small></p>' : ''}` : ''}
+${renderPanels(s)}
 <h2>Wiring</h2><p>${s.integration.available ? `${esc(s.integration.registered)} registered, ${esc(s.integration.live)} connected, ${esc(s.integration.islands.length)} unconnected, ${esc(s.integration.drift.length)} named but not registered.` : 'No wiring graph is stored yet.'}</p>
 ${s.report_card ? `<h2>Report card: ${esc(s.report_card.overall?.toFixed(2))} of 5</h2><p><small>${esc(s.report_card.limits)}</small></p><table><tr><th>Dimension</th><th>Score</th><th>Evidence</th><th>Confidence</th></tr>${s.report_card.scores.map(r => `<tr><td>${esc(r.dimension)}</td><td>${esc(r.score)}</td><td>${esc(r.evidence)}</td><td>${esc(r.confidence)}</td></tr>`).join('')}</table>` : ''}
 <p><small>Predictions called right: ${esc(s.predictions.hit)} of ${esc(s.predictions.scored)}. The same numbers are at /api/state.</small></p></body></html>`;
@@ -92,9 +140,12 @@ ${s.report_card ? `<h2>Report card: ${esc(s.report_card.overall?.toFixed(2))} of
     if (p === '/api/state') return json(await state());
     if (p === '/api/integration') return json(await integration());
     if (p === '/api/loop') return json(await loop());
-    if (p === '/health') { const h = await l3.health(); return json(h, h.ok ? 200 : 503); }
+    if (p === '/api/runs') { const s = await state(); return json({ runs: s.panels.runs, analytics: s.analytics }); }
+    if (p === '/api/audit') return json((await l3.panels()).audit);
+    if (p === '/api/probes') return json(await probes());
+    if (p === '/health') { const h = await l3.health(); return json(h, h.ok && h.verdict !== 'stalled' ? 200 : 503); }
     return null;
   }
 
-  return { state, loop, integration, render, handle, at: () => clock() };
+  return { state, loop, integration, probes, render, handle, at: () => clock() };
 }

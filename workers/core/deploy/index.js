@@ -234,3 +234,4 @@ export function createDeploy({ db, deployer, fetch: fetchPort, now = () => Date.
 
 export { dbLock, runProbes };
 export { createMergeGuard } from './mergeguard.js';
+export { reviewersFromRouter } from './review-ports.js';

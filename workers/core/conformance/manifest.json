@@ -547,7 +547,12 @@
   {
    "id": "US-06-T06",
    "spec": "US-SPEC-06",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/deploy/deploy.test.js",
+     "name": "US-06-R10, US-06-T06: no secret value is stored anywhere, even if an error message carries it; the presence of the binding is recorded, never its value"
+    }
+   ]
   },
   {
    "id": "US-06-T07",
@@ -656,32 +661,62 @@
   {
    "id": "US-08-T01",
    "spec": "US-SPEC-08",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/claims/claims.test.js",
+     "name": "US-08-R01 / US-08-T01: at most one live claim per item; second is rejected"
+    }
+   ]
   },
   {
    "id": "US-08-T02",
    "spec": "US-SPEC-08",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/claims/claims.test.js",
+     "name": "US-08-R02 / US-08-T02: expired claim is reaped and the item returns to ready (alongside the seed tick reaper)"
+    }
+   ]
   },
   {
    "id": "US-08-T03",
    "spec": "US-SPEC-08",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/claims/claims.test.js",
+     "name": "US-08-R04 / US-08-T03: item done with no disposition is reopened with one silent_drop"
+    }
+   ]
   },
   {
    "id": "US-08-T04",
    "spec": "US-SPEC-08",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/claims/claims.test.js",
+     "name": "US-08-R03 / US-08-T04: an item whose trigger is not done cannot be claimed"
+    }
+   ]
   },
   {
    "id": "US-08-T05",
    "spec": "US-SPEC-08",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/claims/claims.test.js",
+     "name": "US-08-R07 / US-08-R08 / US-08-T05: fence is previous+1; a stale holder is rejected by check"
+    }
+   ]
   },
   {
    "id": "US-08-T06",
    "spec": "US-SPEC-08",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/claims/claims.test.js",
+     "name": "US-08-R11 / US-08-T06: a loop that scans 25 and books 0 opens an incident and reopens 25 items"
+    }
+   ]
   },
   {
    "id": "US-08-T07",
@@ -975,8 +1010,16 @@
    "spec": "US-SPEC-14",
    "tests": [
     {
-     "file": "core/conformance/l1.test.js",
-     "name": "US-14-T01 and US-14-R07: the L1 tick runs every step over the adapter store handle and dispatches in priority order"
+     "file": "adapters/postgres/live.test.js",
+     "name": "US-14-T01: the L1 tick over a live Postgres ends in the same state as over SQLite"
+    },
+    {
+     "file": "adapters/shared/store-suite.test.js",
+     "name": "US-14-T01 and US-14-R07: the L1 tick suite passes over the SQLite adapter's own handle"
+    },
+    {
+     "file": "adapters/shared/store-suite.test.js",
+     "name": "US-14-T01 and US-14-R07: the same suite passes with every statement also translated by the Postgres shim, and the translations are Postgres"
     }
    ]
   },
@@ -3630,9 +3673,14 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/deploy/deploy.test.js",
+     "name": "US-06-R10, US-06-T06: no secret value is stored anywhere, even if an error message carries it; the presence of the binding is recorded, never its value"
+    }
+   ]
   },
   {
    "id": "US-06-R11",
@@ -4015,6 +4063,14 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "core/deploy/review-ports.test.js",
+     "name": "US-07-R10: reviewersFromRouter yields one reviewer per usable provider with its family, and the gate picks two disjoint families, neither the author's"
+    },
+    {
+     "file": "core/deploy/review-ports.test.js",
+     "name": "US-07-R10: three families give two reviewers, neither the author's; a provider without a key is left out of the roster"
+    },
+    {
      "file": "core/deploy/review.test.js",
      "name": "US-07-R10 the two reviewers are of disjoint families, neither the author family; a roster that cannot supply them is refused"
     }
@@ -4032,6 +4088,10 @@
     {
      "file": "core/deploy/mergeguard.test.js",
      "name": "US-07-R11, US-07-R18: the guard decides from verified findings through mergeAllowed, never from a reviewer verdict"
+    },
+    {
+     "file": "core/deploy/review-ports.test.js",
+     "name": "US-07-R11: the router refuses a reviewer of the family that wrote the change on the same item; that is a logged outage, and the other reviewer's verified finding still holds"
     },
     {
      "file": "core/deploy/review.test.js",
@@ -4182,9 +4242,26 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/deploy/deploy.test.js",
+     "name": "US-07-R19: a stale expectedVersion is refused, nothing is published and the refused ledger row carries the reason"
+    },
+    {
+     "file": "core/deploy/deploy.test.js",
+     "name": "US-07-R19: loop breaker: N consecutive reverts trip a gate-style record and further deploys are refused until closed"
+    },
+    {
+     "file": "core/deploy/deploy.test.js",
+     "name": "US-07-R19: a kept deploy resets the breaker count"
+    },
+    {
+     "file": "core/deploy/deploy.test.js",
+     "name": "US-07-R19, US-09-R02: the kill switch refuses deploys, via config row or injected port"
+    }
+   ]
   },
   {
    "id": "US-07-R20",
@@ -4192,9 +4269,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/deploy/deploy.test.js",
+     "name": "US-07-R20: an unverifiable rollback opens a gate record and reports failed"
+    }
+   ]
   },
   {
    "id": "US-07-R21",
@@ -4202,9 +4284,18 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/deploy/deploy.test.js",
+     "name": "US-07-R21: unlogged mutation: reconcile files a record when live differs from the ledger"
+    },
+    {
+     "file": "core/deploy/deploy.test.js",
+     "name": "US-07-R21: after a revert, reconcile expects the prior version"
+    }
+   ]
   },
   {
    "id": "US-07-R22",
@@ -4250,7 +4341,7 @@
    "tests": [
     {
      "file": "core/claims/claims.test.js",
-     "name": "US-08-R01 / T01: at most one live claim per item; second is rejected"
+     "name": "US-08-R01 / US-08-T01: at most one live claim per item; second is rejected"
     }
    ]
   },
@@ -4265,7 +4356,7 @@
    "tests": [
     {
      "file": "core/claims/claims.test.js",
-     "name": "US-08-R02 / T02: expired claim is reaped and the item returns to ready (alongside the seed tick reaper)"
+     "name": "US-08-R02 / US-08-T02: expired claim is reaped and the item returns to ready (alongside the seed tick reaper)"
     }
    ]
   },
@@ -4280,7 +4371,19 @@
    "tests": [
     {
      "file": "core/claims/claims.test.js",
-     "name": "US-08-R03 / T04: an item whose trigger is not done cannot be claimed"
+     "name": "US-08-R03 / US-08-T04: an item whose trigger is not done cannot be claimed"
+    },
+    {
+     "file": "core/claims/triggers.test.js",
+     "name": "US-08-R03: a ready item whose trigger item is reopened is demoted to open by the claims step and cannot be claimed or dispatched"
+    },
+    {
+     "file": "core/claims/triggers.test.js",
+     "name": "US-08-R03: an item whose trigger is done without a disposition is not released"
+    },
+    {
+     "file": "core/claims/triggers.test.js",
+     "name": "US-08-R03: a single-id trigger behaves as before: not done refuses, done admits, a claimed item is never demoted"
     }
    ]
   },
@@ -4295,7 +4398,7 @@
    "tests": [
     {
      "file": "core/claims/claims.test.js",
-     "name": "US-08-R04 / T03: item done with no disposition is reopened with one silent_drop"
+     "name": "US-08-R04 / US-08-T03: item done with no disposition is reopened with one silent_drop"
     }
    ]
   },
@@ -4305,9 +4408,14 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/claims/triggers.test.js",
+     "name": "US-08-R05: a gate card closes itself when its closing probe passes (env: and item_done:), and open cards stay open"
+    }
+   ]
   },
   {
    "id": "US-08-R06",
@@ -4335,7 +4443,7 @@
    "tests": [
     {
      "file": "core/claims/claims.test.js",
-     "name": "US-08-R07 / R08 / T05: fence is previous+1; a stale holder is rejected by check"
+     "name": "US-08-R07 / US-08-R08 / US-08-T05: fence is previous+1; a stale holder is rejected by check"
     },
     {
      "file": "core/claims/gate.test.js",
@@ -4354,7 +4462,11 @@
    "tests": [
     {
      "file": "core/claims/claims.test.js",
-     "name": "US-08-R07 / R08 / T05: fence is previous+1; a stale holder is rejected by check"
+     "name": "US-08-R07 / US-08-R08 / US-08-T05: fence is previous+1; a stale holder is rejected by check"
+    },
+    {
+     "file": "core/claims/claims.test.js",
+     "name": "US-08-R08: a refused write records a write-refused event without any token"
     }
    ]
   },
@@ -4403,7 +4515,7 @@
    "tests": [
     {
      "file": "core/claims/claims.test.js",
-     "name": "US-08-R11 / T06: a loop that scans 25 and books 0 opens an incident and reopens 25 items"
+     "name": "US-08-R11 / US-08-T06: a loop that scans 25 and books 0 opens an incident and reopens 25 items"
     },
     {
      "file": "core/claims/gate.test.js",
@@ -4416,6 +4528,10 @@
     {
      "file": "core/claims/gate.test.js",
      "name": "US-08-R11: a count-only gap (scanned 25, booked 0) closes the loop gate; closing needs a disposition; cycles are refused"
+    },
+    {
+     "file": "core/claims/stores.test.js",
+     "name": "US-08-R11: a paged store with 3 pages is read completely and counted once per key"
     }
    ]
   },
@@ -4461,6 +4577,10 @@
     {
      "file": "core/claims/claims.test.js",
      "name": "US-08-R14: an identity-bound step becomes one gate card and leaves the doer path; others are rerouted"
+    },
+    {
+     "file": "core/claims/identity.test.js",
+     "name": "US-08-R14: a card with neither a line, an env probe nor a pattern is rerouted as before"
     }
    ]
   },
@@ -4485,9 +4605,26 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "built and tested in the seed tick (seed/worker/test/doer.test.js), which this repository's core tick does not carry",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/claims/triggers.test.js",
+     "name": "US-08-R16: a trigger is one item, a comma list of items, or gate:<card>"
+    },
+    {
+     "file": "core/claims/triggers.test.js",
+     "name": "US-08-R16: a trigger naming two items becomes ready only when both are done with a disposition"
+    },
+    {
+     "file": "core/claims/triggers.test.js",
+     "name": "US-08-R16: a trigger gate:<card> waits for the card to close, then the item becomes ready"
+    },
+    {
+     "file": "core/claims/triggers.test.js",
+     "name": "US-08-R16: the trigger step reads in a number of statements that does not grow with the number of triggered items"
+    }
+   ]
   },
   {
    "id": "US-08-R17",
@@ -4505,6 +4642,14 @@
     {
      "file": "../seed/worker/test/tick.test.js",
      "name": "US-08-R17: with nothing past 120 minutes no cause item is filed"
+    },
+    {
+     "file": "core/claims/triggers.test.js",
+     "name": "US-08-R17: an item held by gate card G returns to ready with its blocker cleared when G closes"
+    },
+    {
+     "file": "core/claims/triggers.test.js",
+     "name": "US-08-R17: an item blocked with another blocker text is never released by the step"
     }
    ]
   },
@@ -4514,9 +4659,14 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "built and tested in the seed tick (seed/worker/test/selfaudit.test.js), which this repository's core tick does not carry",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/claims/claims.test.js",
+     "name": "US-08-R18: with the kill switch on, check answers invalid with reason kill-switch, guardedWrite refuses and the router answers 503"
+    }
+   ]
   },
   {
    "id": "US-08-R19",
@@ -4524,9 +4674,30 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "built and tested in the seed tick (seed/worker/test/doer.test.js), which this repository's core tick does not carry",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/claims/claims.test.js",
+     "name": "US-08-R19: a claim linked to a merged pull request is released at once with outcome merged and the item returns to ready"
+    },
+    {
+     "file": "core/claims/claims.test.js",
+     "name": "US-08-R19: a claim linked to a pull request closed 10 minutes ago is kept; after 30 minutes it is released as closed"
+    },
+    {
+     "file": "core/claims/claims.test.js",
+     "name": "US-08-R19: a claim on an open pull request or with no link is never touched"
+    },
+    {
+     "file": "core/claims/claims.test.js",
+     "name": "US-08-R19: an unreadable pull request releases nothing and is reported as unmeasured"
+    },
+    {
+     "file": "core/claims/claims.test.js",
+     "name": "US-08-R19: releaseForPull ends the claims of one pull request directly"
+    }
+   ]
   },
   {
    "id": "US-08-R20",
@@ -4534,9 +4705,18 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "built and tested in the seed tick (seed/worker/test/doer.test.js), which this repository's core tick does not carry",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/claims/claims.test.js",
+     "name": "US-08-R20: a claim released with no heartbeat is recorded as an unworked release, and the item is parked after max_unworked_releases"
+    },
+    {
+     "file": "core/claims/claims.test.js",
+     "name": "US-08-R20: a claim that was heartbeated is released without an unworked outcome"
+    }
+   ]
   },
   {
    "id": "US-09-R01",
@@ -4576,7 +4756,7 @@
    "tests": [
     {
      "file": "core/deploy/deploy.test.js",
-     "name": "kill switch refuses deploys (US-09-R02), via config row or injected port"
+     "name": "US-07-R19, US-09-R02: the kill switch refuses deploys, via config row or injected port"
     }
    ]
   },
@@ -5665,6 +5845,10 @@
     {
      "file": "core/console-l3/dashboard.test.js",
      "name": "US-13-R02: the status page, /api/state and the digest are computed from the same state"
+    },
+    {
+     "file": "core/console-l3/dashboard.test.js",
+     "name": "US-13-R02: the digest words the same panels the page shows"
     }
    ]
   },
@@ -5710,6 +5894,10 @@
     {
      "file": "core/console-l3/console-l3.test.js",
      "name": "US-13-T05 and R05: a fall of 0.6 with no cause files a work item; with a cause, or a fall of 0.4, it does not"
+    },
+    {
+     "file": "core/console-l3/console-l3.test.js",
+     "name": "US-13-R05: a fall of exactly 0.5 in one-decimal scores files an item (2.3 to 1.8, 0.7 to 0.2, 1.4 to 0.9, 4.1 to 3.6); 0.4 and a stated cause do not"
     },
     {
      "file": "core/sla/sla.test.js",
@@ -5806,6 +5994,10 @@
      "name": "US-13-T04 and R11: a step at 5 h of a 4 h budget files an item; at 9 h exactly one question, never a second"
     },
     {
+     "file": "core/console-l3/console-l3.test.js",
+     "name": "US-13-R11: a new over-budget run after the item and question were closed files an item and exactly one new question; the same run twice files one"
+    },
+    {
      "file": "core/sla/sla.test.js",
      "name": "US-13-T04 and R11: step runs are timed from the table; 5 h of a 4 h budget files an item, 9 h exactly one blocking question"
     }
@@ -5838,6 +6030,10 @@
     {
      "file": "core/console-l3/dashboard.test.js",
      "name": "US-13-R13: a probe whose target is not routed is reported unrouted, not down"
+    },
+    {
+     "file": "core/console-l3/dashboard.test.js",
+     "name": "US-13-R13: the dashboard never probes or reports down a target that is not routed"
     }
    ]
   },
@@ -5920,6 +6116,10 @@
      "name": "US-14-R02: the store handle offers prepare().bind().all()/first()/run() with meta.changes and meta.last_row_id"
     },
     {
+     "file": "adapters/sqlite/d1-sqlite.test.js",
+     "name": "US-14-R02: the handle offers prepare().bind().all/first/run with D1-shaped results and run meta"
+    },
+    {
      "file": "core/conformance/l1.test.js",
      "name": "US-14-R02: the SQLite adapter store handle supports prepare().bind().all()/first()/run() with meta.changes and meta.last_row_id"
     }
@@ -5937,6 +6137,10 @@
     {
      "file": "adapters/shared/slot.test.js",
      "name": "US-14-R03: two instances receiving the same firing at once run one tick between them"
+    },
+    {
+     "file": "adapters/shared/slot.test.js",
+     "name": "US-14-R03: a tick still running when the next slot starts is not overlapped; a claim abandoned past the bound is taken over"
     }
    ]
   },
@@ -5988,6 +6192,14 @@
      "name": "US-14-R06 dialect: datetime(now) becomes UTC text in YYYY-MM-DD HH:MM:SS so string comparison still orders time"
     },
     {
+     "file": "adapters/sqlite/d1-sqlite.test.js",
+     "name": "US-14-R06: the handle keeps journal mode DELETE unless ULTRASTABLE_JOURNAL says otherwise, with a 5000 ms busy timeout"
+    },
+    {
+     "file": "adapters/sqlite/d1-sqlite.test.js",
+     "name": "US-14-R06: migrations are applied in file order and applying the same directory twice leaves one set of tables and the same rows"
+    },
+    {
      "file": "core/conformance/l1.test.js",
      "name": "US-01-R11, US-00-R05 and US-14-R06: every time the tick stores is YYYY-MM-DD HH:MM:SS in UTC and orders correctly as a string"
     }
@@ -6002,6 +6214,14 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "adapters/shared/store-suite.test.js",
+     "name": "US-14-T01 and US-14-R07: the L1 tick suite passes over the SQLite adapter's own handle"
+    },
+    {
+     "file": "adapters/shared/store-suite.test.js",
+     "name": "US-14-T01 and US-14-R07: the same suite passes with every statement also translated by the Postgres shim, and the translations are Postgres"
+    },
     {
      "file": "core/conformance/l1.test.js",
      "name": "US-14-T01 and US-14-R07: the L1 tick runs every step over the adapter store handle and dispatches in priority order"
@@ -6073,6 +6293,10 @@
     {
      "file": "adapters/docdb/docdb.test.js",
      "name": "US-14-R11: five role instances dispatching at once never claim one item twice and never exceed their limit"
+    },
+    {
+     "file": "adapters/postgres/live.test.js",
+     "name": "US-14-R11: twenty-five concurrent claimers over two connections produce exactly one claim"
     }
    ]
   },
@@ -6924,6 +7148,10 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "core/claims/stores.test.js",
+     "name": "US-17-R11: 303 open in a hidden store against 12 visible fires through pagedStore stores (all 315 over visible 12 is 26.25)"
+    },
     {
      "file": "core/remediation/remediation.test.js",
      "name": "US-17-R11: the visibility ratio across issue stores fires above its threshold (303 hidden against 12 visible)"

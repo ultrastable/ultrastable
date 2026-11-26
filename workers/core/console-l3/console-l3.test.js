@@ -117,3 +117,61 @@ test('console wiring: /api/console/fleet/* needs sign-in and serves the L3 route
   assert.equal((await handleConsole(new Request('https://x.example/api/console/fleet/zzz', { headers: { cookie } }), env, o)).status, 404);
   assert.equal((await (await handleConsole(new Request('https://x.example/api/console/fleet/digest', { headers: { cookie } }), env, o)).json()).state.items.total, 4);
 });
+
+test('US-13-R05: a fall of exactly 0.5 in one-decimal scores files an item (2.3 to 1.8, 0.7 to 0.2, 1.4 to 0.9, 4.1 to 3.6); 0.4 and a stated cause do not', async () => {
+  for (const [from, to] of [[2.3, 1.8], [0.7, 0.2], [1.4, 0.9], [4.1, 3.6]]) {
+    const { l3 } = mk();
+    await l3.recordCard({ name: 'autonomy', rubric: 'r1', limits: LIMITS, scores: [good('loops', from)] });
+    const r = await l3.recordCard({ name: 'autonomy', rubric: 'r1', limits: LIMITS, scores: [good('loops', to)] });
+    assert.deepEqual(r.items, ['L3-DROP-AUTONOMY-LOOPS'], `${from} to ${to}`);
+  }
+  const { l3 } = mk();
+  await l3.recordCard({ name: 'autonomy', rubric: 'r1', limits: LIMITS, scores: [good('a', 2.3), good('b', 2.3)] });
+  const r = await l3.recordCard({ name: 'autonomy', rubric: 'r1', limits: LIMITS, scores: [good('a', 1.9), good('b', 1.8, { cause: 'the window was empty this month' })] });
+  assert.deepEqual(r.items, []);
+});
+
+test('US-13-R11: a new over-budget run after the item and question were closed files an item and exactly one new question; the same run twice files one', async () => {
+  const { db, t, l3 } = mk();
+  const H = 3600e3;
+  const run1 = { process: 'review', step: 'check', started_at: T0 - 9 * H, budget_hours: 4 };
+  assert.deepEqual((await l3.sweepStepBudgets([run1])).changed.map(f => f.kind), ['item', 'question']);
+  assert.deepEqual((await l3.sweepStepBudgets([run1])).changed, [], 'the same run swept again changes nothing');
+  // the breach is handled: item done, question closed
+  db.raw.exec(`UPDATE items SET status='done', disposition='budget justified' WHERE id='STEPBUDGET-REVIEW-CHECK'; UPDATE gate_cards SET status='closed' WHERE id LIKE 'stepq-review-check%'`);
+  // a later run of the same step breaches again
+  t.v = T0 + 30 * H;
+  const run2 = { process: 'review', step: 'check', started_at: t.v - 9 * H, budget_hours: 4 };
+  assert.deepEqual((await l3.sweepStepBudgets([run2])).changed.map(f => f.kind), ['item', 'question']);
+  assert.equal(db.raw.prepare(`SELECT status FROM items WHERE id='STEPBUDGET-REVIEW-CHECK'`).get().status, 'open');
+  assert.equal(db.raw.prepare(`SELECT COUNT(*) AS n FROM gate_cards WHERE id LIKE 'stepq-review-check%'`).get().n, 2);
+  assert.equal(db.raw.prepare(`SELECT COUNT(*) AS n FROM gate_cards WHERE id LIKE 'stepq-review-check%' AND status='open'`).get().n, 1);
+  await l3.sweepStepBudgets([run2]);
+  assert.equal(db.raw.prepare(`SELECT COUNT(*) AS n FROM gate_cards WHERE id LIKE 'stepq-review-check%'`).get().n, 2);
+});
+
+test('US-13-R21: a last tick older than the staleness bound is stalled, not healthy, even when it finished every step', async () => {
+  const { db, t, l3 } = mk();
+  db.raw.exec(`INSERT INTO tick_runs (started_at,finished_at,steps_completed,steps_total) VALUES ('2026-11-12 11:59:00','2026-11-12 11:59:01',8,8)`);
+  const fresh = await l3.health();
+  assert.equal(fresh.verdict, 'healthy'); assert.equal(fresh.healthy, true); assert.deepEqual(fresh.reasons, []); assert.equal(fresh.tick_age_s, 59);
+  t.v = T0 + 20 * 60e3;                                     // 20 minutes later: inside the 25-minute bound
+  assert.equal((await l3.health()).verdict, 'healthy');
+  t.v = T0 + 40 * 60e3;                                     // 40 minutes after the check started; a week of silence would read the same: the clock has stopped
+  const stale = await l3.health();
+  assert.equal(stale.verdict, 'stalled'); assert.equal(stale.healthy, false); assert.match(stale.reasons[0], /newest check is 41 minutes old; the bound is 25/);
+  assert.equal(stale.ok, true, 'ok keeps its first meaning: the last check finished all its steps');
+  const res = await l3.handle(new Request('https://x.example/health'));
+  assert.equal(res.status, 503); assert.equal((await res.json()).verdict, 'stalled');
+});
+
+test('US-13-R21: no check ever is stalled; an unfinished check, recorded errors, all-queued dispatches and a decision waiting on a person are degraded with their reasons', async () => {
+  const { db, l3 } = mk();
+  assert.deepEqual([(await l3.health()).verdict, (await l3.health()).reasons], ['stalled', ['no check has ever run']]);
+  db.raw.exec(`INSERT INTO tick_runs (started_at,finished_at,steps_completed,steps_total,errors) VALUES ('2026-11-12 11:59:00','2026-11-12 11:59:01',7,8,'["fleet: boom"]');
+    INSERT INTO dispatches (tick_id, role_id, item_id, model, status) VALUES (1,'r','A','small','queued'),(1,'r','B','small','queued');
+    INSERT INTO gate_cards (id,what,why_gated,default_in_effect,closing_probe) VALUES ('G1','Approve','money','zero','manual')`);
+  const h = await l3.health();
+  assert.equal(h.verdict, 'degraded'); assert.equal(h.ok, false);
+  assert.deepEqual(h.reasons, ['the last check did not finish all its steps', 'the last check recorded 1 error(s)', 'every dispatch of the last check is still queued', '1 item(s) wait on a person']);
+});
