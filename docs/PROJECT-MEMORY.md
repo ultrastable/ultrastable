@@ -10,6 +10,9 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-26
 
+- 2026-11-26: feat: the ghcost, governance, graph, ignorance, install and kernel modules (W03) (#2575)
+- 2026-11-26: Implement inbound webmention receiver in lite.js to record external referrals as reach (#Q-IMPROVE-webmention) (#2566)
+- 2026-11-26: findable: reading and queue items (FINDABLE-1) [skip ci]
 - 2026-11-26: feat: the describe, doors, elicit, fleet and walkthrough modules (W02) (#2544)
 - 2026-11-26: queue: closing-probe verdicts for 15 item(s) (QUEUE-PERSIST-1) [skip ci]
 - 2026-11-26: feat: the storage adapters, core test helpers and the claims, console-l3 and deploy modules (W01) (#2530)
