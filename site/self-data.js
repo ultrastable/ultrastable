@@ -220,6 +220,18 @@ export default {
     "id": "cleanroom",
     "source": "workflow",
     "what": "the daily clean-room bootstrap: a sandbox system from the seed alone, a simulated day, teardown, and the satellite agent-file coherence check"
+   },
+   {
+    "expected_interval_s": 3600,
+    "id": "base-rates-beat",
+    "source": "d1",
+    "what": "Base Rates tenant beat (cron 8 * * * * on ultrastable-base-rates)"
+   },
+   {
+    "expected_interval_s": 3600,
+    "id": "open-questions-beat",
+    "source": "d1",
+    "what": "Open Questions tenant beat (cron 9 2 * * 1 on ultrastable-open-questions)"
    }
   ],
   "watchdog_escalation": [
@@ -891,6 +903,7 @@ export default {
   "agent-executor",
   "agent-interop",
   "backup-drill",
+  "base-rates-beat",
   "blindspots",
   "branch-reaper",
   "branch-sweep",
@@ -947,6 +960,7 @@ export default {
   "memory-fresh",
   "merge-lane",
   "open-loop-sweeper",
+  "open-questions-beat",
   "openstd",
   "org-profile",
   "orphan-artifacts",

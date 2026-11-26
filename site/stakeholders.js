@@ -362,20 +362,52 @@ export default {
    "name": "Base Rates",
    "tag": "Tenant system, live",
    "status": "live",
-   "summary": "Base Rates: a tenant system running on Ultrastable.",
+   "summary": "Before you decide, see what usually happens: graded base rates for life, work and policy choices.",
    "domain": "org",
    "home": "https://base-rates.ultrastable.org/",
-   "homeLabel": "Open Base Rates"
+   "homeLabel": "Open Base Rates",
+   "problem": "People and institutions predict from the story in front of them and ignore how often such things usually go.",
+   "loop": "On its clock the loop searches Crossref for studies that report a base rate, drafts an entry with a model, keeps it only when a verbatim quote from the source backs the number, and republishes the site.",
+   "results": [
+    "Live public site where each base rate comes with the source and the quote behind it."
+   ],
+   "learned": "A GitHub-only loop and a Cloudflare Worker can run the same system; the Worker serves it when GitHub Pages is not switched on.",
+   "links": [
+    {
+     "label": "Operations dashboard",
+     "href": "/ops"
+    },
+    {
+     "label": "Get in touch",
+     "href": "/contact"
+    }
+   ]
   },
   {
    "id": "open-questions",
    "name": "Open Questions",
    "tag": "Tenant system, live",
    "status": "live",
-   "summary": "Open Questions: a tenant system running on Ultrastable.",
+   "summary": "What science honestly does not know yet: the big open questions and where the evidence leans today.",
    "domain": "org",
    "home": "https://open-questions.ultrastable.org/",
-   "homeLabel": "Open Open Questions"
+   "homeLabel": "Open Open Questions",
+   "problem": "A map of open questions, with where the evidence leans and how fast it moves, is missing from public knowledge.",
+   "loop": "On its clock the loop searches Crossref for new work on each open question, drafts an entry with a model, keeps it only when a verbatim quote backs it, and republishes the site.",
+   "results": [
+    "Live public site where each open question lists the sources on record and where they lean."
+   ],
+   "learned": "The same loop and quote guard as Base Rates runs a second subject with no new code in the core.",
+   "links": [
+    {
+     "label": "Operations dashboard",
+     "href": "/ops"
+    },
+    {
+     "label": "Get in touch",
+     "href": "/contact"
+    }
+   ]
   }
  ],
  "domains": {
