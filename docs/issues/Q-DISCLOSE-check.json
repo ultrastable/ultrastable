@@ -1,0 +1,11 @@
+{
+  "id": "Q-DISCLOSE-check",
+  "title": "Q-DISCLOSE-check: one check holds the disclosure line (DISCLOSE-1)",
+  "body": "**Owner:** executor\n**Trigger:** DISCLOSE-1 recorded (docs/handoff/disclosure-split.md); the full specification must not live in a public tree\n**Done check:** cmd:python3 -m foundation disclosure --check\n**Status:** open\n\nAdd `doctrine/disclosure.json` (tiers, the repository map, the paths each public repository may not hold, with a reason each) and `foundation/disclosure.py` (`python3 -m foundation disclosure --check`), wired into `checks` beside `template --check`. The check fails when a public tree holds `specs/US-SPEC-*.md`, when a path of the private tier appears in the seed, and reports the private copy in `ultrastable/ops` `spec/` as unmeasured, never as passed, when it cannot be read. Public `specs/` keeps only a synopsis `README.md` (title and one line per specification, the status legend, the citation format). Spec text is exported to `ultrastable/ops` `spec/` before it leaves the public tree.\n\n**Prediction:** disclosure.public_private_paths <= 0 within 72 h\n**Out of scope:** rewriting git history (the ruleset refuses force pushes); changing the platform's agents/AGENTS.md, which every repository fetches by public URL (AGENT-BOOTSTRAP-1); moving the company papers already in ultrastable/ops admin/.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation disclosure --check` exits 0 on main. It fails today: the command does not exist.\n",
+  "labels": [
+    "p1",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}
