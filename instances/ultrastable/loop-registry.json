@@ -3953,6 +3953,47 @@
    ],
    "server_owner": "github-actions"
   },
+    {
+      "id": "openstd",
+      "kind": "governance",
+      "summary": "OPEN-STANDARDS-1: formats follow registered open standards. The loop drains the shrink-only baseline a batch a day (JSON Schema on config), records CloudEvents for each run, and cuts a SemVer release with a Keep a Changelog file from Conventional Commits.",
+      "trigger": "daily workflow and on demand",
+      "owner": "operations",
+      "closes_by": "system",
+      "sla": "1d",
+      "done": "doctrine/open-standards-baseline.json shrinks or stays empty, ops/openstd/events.jsonl has an event from the last 2 days, and CHANGELOG.md names the current VERSION",
+      "paths": [
+        {
+          "id": "github",
+          "how": ".github/workflows/openstd.yml runs python3 -m foundation openstd --drain 25 and semrel --apply",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "the same commands from a cloud-hosted agent session",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "grep:foundation/openstd.py::def drain",
+      "writeback": [
+        "doctrine",
+        "ops/openstd",
+        "CHANGELOG.md",
+        "VERSION"
+      ],
+      "system_path": [
+        "foundation/openstd.py",
+        "foundation/semrel.py",
+        "doctrine/open-standards.json",
+        "tests/foundation/test_openstd.py",
+        ".github/workflows/openstd.yml"
+      ],
+      "workflows": [
+        "openstd.yml"
+      ],
+      "area": "governance",
+      "server_owner": "github-actions"
+    },
   {
    "id": "temporal",
    "kind": "governance",

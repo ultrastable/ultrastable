@@ -2565,6 +2565,19 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-897a8cdffd",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Open standards, never a home-grown format (OPEN-STANDARDS-1, Rowan 2026-11-25).** \"Standards, don't reinvent the wheel. Apply standards",
+      "probe": [
+        "file:foundation/openstd.py",
+        "file:doctrine/open-standards.json",
+        "file:doctrine/open-standards-baseline.json",
+        "file:tests/foundation/test_openstd.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]openstd\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-c2464a2c9f",
       "surface": "agents/AGENTS.md",
       "text": "- **Every surface works together from the first deploy; one command proves it (BOOT-ACCEPT-1, Rowan 2026-11-25).** \"All surfaces, all",
@@ -3735,6 +3748,20 @@
       ],
       "bound_by": "mirror",
       "of": "cited-badeab1b44"
+    },
+    {
+      "id": "mirror-79e254f607",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Open standards, never a home-grown format (OPEN-STANDARDS-1, Rowan 2026-11-25).** \"Standards, don't reinvent the wheel. Apply standards",
+      "probe": [
+        "file:foundation/openstd.py",
+        "file:doctrine/open-standards.json",
+        "file:doctrine/open-standards-baseline.json",
+        "file:tests/foundation/test_openstd.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]openstd\\b"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-897a8cdffd"
     },
     {
       "id": "mirror-bda521b8b7",

@@ -83,7 +83,8 @@ def decide(it: dict, age_days: float | None, fails: int, c: dict, last_detail: s
     if re.search(c["owner_bound"], it["owner"] + " " + " ".join(it["labels"]), re.I):
         return "gate", "owner-bound", (f"owner field '{it['owner'] or 'label'}' binds this to the owner's own account, money or signature, which no server-side loop holds. "
                                        f"Default in effect: {c['gate_default']}.")
-    if fails >= c["fail_limit"]:
+    # LADDER-LIVE-1: a run that failed because no model answered says nothing about the item; shelving on it turned a dead ladder into 20 silent drops.
+    if fails >= c["fail_limit"] and "every code agent rung failed" not in last_detail:
         return "shelved", "executor-failed", f"the executor failed {fails} consecutive runs on this item" + (f"; last reason: {last_detail[:240]}" if last_detail else "") + "."
     lim = ttl_days(c)
     if age_days is not None and age_days >= lim:

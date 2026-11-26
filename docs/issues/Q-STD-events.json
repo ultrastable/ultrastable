@@ -1,0 +1,11 @@
+{
+  "id": "Q-STD-events",
+  "title": "Q-STD-events: Emit CloudEvents between surfaces",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -m foundation openstd --probe events-between-surfaces\n**Status:** open\n\nOPEN-STANDARDS-1 (Rowan, 2026-11-25): wrap /api/live/changes and handoff events in CloudEvents 1.0 envelopes in seed/worker (cloudevent shape from foundation/openstd.py), with a test.\n\nsize: M\n**Out of scope:** new formats not in doctrine/open-standards.json.\n\nPrediction: open_standards_adopted_rows >= 10 within 168 h\n\n**Closing probe:** python3 -m foundation openstd --check passes and the registry row for events-between-surfaces reads adopted with evidence files that exist.\n",
+  "labels": [
+    "p2",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Executor queue"
+}
