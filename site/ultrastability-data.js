@@ -4,72 +4,72 @@ export default {
  "credit": "W. Ross Ashby, Design for a Brain (1952)",
  "now": {
   "claims_drift": {
-   "at": "2026-11-26T11:15:38Z",
+   "at": "2026-11-26T11:26:05Z",
    "ok": true,
    "value": 0
   },
   "deploy_health": {
-   "at": "2026-11-26T11:15:38Z",
+   "at": "2026-11-26T11:26:05Z",
    "ok": false,
    "value": 0.986
   },
   "happy_paths": {
-   "at": "2026-11-26T11:15:38Z",
+   "at": "2026-11-26T11:26:05Z",
    "ok": true,
    "value": 1.0
   },
   "lessons_enforced": {
-   "at": "2026-11-26T11:15:38Z",
+   "at": "2026-11-26T11:26:05Z",
    "ok": false,
    "value": 0.692
   },
   "owner_interventions": {
-   "at": "2026-11-26T11:15:38Z",
+   "at": "2026-11-26T11:26:05Z",
    "ok": false,
    "value": 64
   },
   "research_in_code": {
-   "at": "2026-11-26T11:15:38Z",
+   "at": "2026-11-26T11:26:05Z",
    "ok": false,
    "value": 0.621
   },
   "second_loop_keep_rate": {
-   "at": "2026-11-26T11:15:38Z",
+   "at": "2026-11-26T11:26:05Z",
    "ok": false,
    "value": 0.0
   },
   "self_shipping": {
-   "at": "2026-11-26T11:15:38Z",
+   "at": "2026-11-26T11:26:05Z",
    "ok": false,
    "value": 0.714
   },
   "spec_quality": {
-   "at": "2026-11-26T11:15:38Z",
+   "at": "2026-11-26T11:26:05Z",
    "ok": false,
    "value": 0.875
   },
   "spend": {
-   "at": "2026-11-26T11:15:38Z",
+   "at": "2026-11-26T11:26:05Z",
    "ok": true,
    "value": 0.805
   },
   "stalled_clocks": {
-   "at": "2026-11-26T11:15:38Z",
+   "at": "2026-11-26T11:26:05Z",
    "ok": false,
    "value": 3
   },
   "ui_findings": {
-   "at": "2026-11-26T11:15:38Z",
+   "at": "2026-11-26T11:26:05Z",
    "ok": true,
    "value": 0
   },
   "unattended_horizon": {
-   "at": "2026-11-26T11:15:38Z",
+   "at": "2026-11-26T11:26:05Z",
    "ok": true,
    "value": 730
   },
   "value": {
-   "at": "2026-11-26T11:15:38Z",
+   "at": "2026-11-26T11:26:05Z",
    "ok": true,
    "value": 347.826
   }
@@ -387,7 +387,7 @@ export default {
    "before": 50,
    "reading": 0.986,
    "var": "deploy_health",
-   "verdict": "pending",
+   "verdict": "reverted",
    "what": "search: goals.#repair-deploys.weight = 30 (untried in this episode)"
   },
   {
