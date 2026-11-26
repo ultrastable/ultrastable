@@ -5897,6 +5897,22 @@
    "body": "From 2026-11-23 every code-agent rung failed: the site's CF_DEPLOY_TOKEN has no Workers AI permission so /__internal/cf returned 401, and GitHub Models answered 200 OK text/plain. 20 of 21 executor-shelved items in 72 h died that way while clocks read green. Fix: ai/run goes through the site's AI binding; dispose no longer shelves an item for a dead ladder; ladderwatch --check is a live detector (fm-code-ladder-dead).",
    "probe": "grep:foundation/ladderwatch.py::def read",
    "session": "session_0156nqDvbXYqh4M3id5voNoB"
+  },
+  {
+   "id": "lesson-2026-11-26-a-drain-that-lands-only-its-ledger-turns-main-red",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "A drain that lands only its ledger turns main red",
+   "body": "The openstd drain added $schema to 17 instance files and shrank the baseline, but its land step committed only doctrine, ops and the changelog, so main lost the conversions and failed test_openstd on every PR. The land step now includes every file the drain touched. Also THOUGHT-CLIP-1: the Mastodon post clipped the hook and spotlight when the measured text was long; only the measured part is clipped now. Session: session_0156nqDvbXYqh4M3id5voNoB",
+   "probe": "grep:.github/workflows/openstd.yml::OPENSTD-LAND-1"
+  },
+  {
+   "id": "lesson-2026-11-26-a-pr-age-bound-measured-from-updatedat-never-runs-out",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "A PR age bound measured from updatedAt never runs out",
+   "body": "The lane's own labels and comments refresh updatedAt every pass, so prbound closed nothing on its first live run (stale 8.9 to 10.8 h, closable []). The bound now counts from createdAt. Session: session_0156nqDvbXYqh4M3id5voNoB",
+   "probe": "grep:foundation/prbound.py::PR-BOUND-2"
   }
  ]
 }
