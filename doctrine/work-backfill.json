@@ -1,0 +1,14 @@
+{
+ "$schema": "./schemas/work-backfill.schema.json",
+ "note": "Unfinished asks from 2026-11-26, filed once into the work store by `worklog backfill --apply` (deduplicated by ref).",
+ "items": [
+  {"ref": "WR-gh-only-pages", "goal": "Base Rates and Open Questions live on GitHub Pages (GH-ONLY-WATCH-1)", "done": "GET https://ultrastable.github.io/base-rates/ and /open-questions/ answer 200", "next": "land PR 2440 (pages-enable.yml via lane App token), then run it for both repos", "prs": ["https://github.com/ultrastable/ultrastable/pull/2440"]},
+  {"ref": "WR-ops-pr-46", "goal": "Land ops PR 46", "done": "ultrastable/ops PR 46 merged or closed as superseded with the carrying PR named", "next": "read its checks, merge main in, merge", "prs": ["https://github.com/ultrastable/ops/pull/46"]},
+  {"ref": "WR-core-package", "goal": "Extract the core package so org/surfaces.js imports it instead of copies", "done": "org/surfaces.js imports from the core package and its tests pass", "next": "list the local imports in org/surfaces.js and move them behind one package entry"},
+  {"ref": "WR-ts9-vectorize", "goal": "TS-9: Vectorize wired live", "done": "a live endpoint returns nearest neighbours read from the Vectorize index", "next": "bind the index in wrangler config and add a live probe"},
+  {"ref": "WR-ts10-usage", "goal": "TS-10: usage cross-check wired live", "done": "the usage cross-check runs on the tick and records a reading against Cloudflare's own usage numbers", "next": "call it from the tick and store the reading"},
+  {"ref": "WR-issue-2450", "goal": "Self-describe then self-audit loop (issue 2450)", "done": "issue 2450 closed by a loop that publishes a live self-description and files audit gaps", "next": "connect to the planner (/api/plans, PR 2466)", "prs": ["https://github.com/ultrastable/ultrastable/issues/2450", "https://github.com/ultrastable/ultrastable/pull/2466"]},
+  {"ref": "WR-demo-loop-merges", "goal": "Verify loop-originated merges rise on /demo after PR 2449", "done": "/demo shows more loop-originated merges in the 7 days after PR 2449 merged than in the 7 days before", "next": "read /demo, compare windows", "prs": ["https://github.com/ultrastable/ultrastable/pull/2449"]},
+  {"ref": "WR-lane-remerge", "goal": "Stop the merge lane re-merging main into a PR and cancelling its running checks", "done": "no lane run in 3 days cancels a check run on a PR it then merges main into", "next": "find the re-merge path in seed/worker/src/lane.js and skip PRs with checks in progress"}
+ ]
+}

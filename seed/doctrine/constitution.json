@@ -921,6 +921,36 @@
           "has": "--drain"
         }
       ]
+    },
+    {
+      "id": "one-work-record",
+      "rule": "Every request and every task a session or loop starts has one server-side work record (goal, owner, state, done check, PRs, next step, heartbeat) outside any chat or session; a record whose owner goes silent is handed back to the server lane to resume from its next step.",
+      "source": "Rowan, 2026-11-26",
+      "covers": [
+        "WORK-RECORD-1"
+      ],
+      "detector": [
+        {
+          "file": "agents/AGENTS.md",
+          "has": "WORK-RECORD-1"
+        },
+        {
+          "platform": true,
+          "file": "foundation/worklog.py",
+          "has": "def stale"
+        }
+      ],
+      "remediation": [
+        {
+          "file": "agents/AGENTS.md",
+          "has": "worklog reap --apply"
+        },
+        {
+          "platform": true,
+          "file": "foundation/worklog.py",
+          "has": "def reap"
+        }
+      ]
     }
   ]
 }
