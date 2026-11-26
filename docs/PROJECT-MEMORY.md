@@ -10,6 +10,7 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-26
 
+- 2026-11-26: fix(pages-enable): fall back to LANE_PAT (#2442)
 - 2026-11-26: feat(seed): refuse oversized changes (SMALL-CHANGE-1) (#2443)
 - 2026-11-26: docs: DISCLOSE-1, the full specification is private and the template carries only what a deploy needs (#2438)
 - 2026-11-26: feat(github): pages-enable workflow for GitHub-only systems (#2440)
