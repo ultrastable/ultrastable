@@ -1,7 +1,7 @@
 {
- "at": "2026-11-26T07:00:15Z",
- "gaps": 8,
- "match_share": 0.985,
+ "at": "2026-11-26T07:09:55Z",
+ "gaps": 7,
+ "match_share": 0.987,
  "sources": {
   "changes": [
    {
@@ -821,12 +821,10 @@
    {
     "checks": 1,
     "external": [],
-    "failing": [
-     "python3 -m foundation openstd --check: new bespoke format: instances/qnfo/dependencies.json (config file without $schema); declare the standard in doctrine/open-standards.json or meet it now; new bespoke format: instances/qnfo/foundation-l"
-    ],
+    "failing": [],
     "id": "OPEN-STANDARDS-1",
     "missing": [],
-    "ok": false,
+    "ok": true,
     "unmeasured": []
    },
    {
@@ -1033,7 +1031,7 @@
     "checks": 1,
     "external": [],
     "failing": [
-     "python3 -m foundation dispose --check: an open item is 89.4 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+     "python3 -m foundation dispose --check: an open item is 89.6 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
     ],
     "id": "DISPOSE-1",
     "missing": [],
@@ -1113,7 +1111,7 @@
    "total": 1
   },
   "rules": {
-   "gaps": 5,
+   "gaps": 4,
    "total": 99
   },
   "year": {
