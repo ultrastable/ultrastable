@@ -1555,7 +1555,7 @@ export default {
      "Limits on everything that matters. Put in place: the check fails a variable with no limits. Check it with one number, share of declared essential variables that have limits (doctrine/ultrastability.json), and set a limit for it (>= 1.0 is the limit we use)."
     ],
     "practice_note": [
-     "In our own system, 1 of 5 of these checks pass today. Owner-driven thread sessions that changed the repository in the last 7 days (ops/provenance.jsonl) reads 62 (n = None; source: ops/provenance.jsonl, last 7 days). Share of second-order steps that brought the variable back inside its limits and were kept reads 0.0 (n = 109; source: ops/ultrastability.jsonl verdicts). Share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py) reads 0.55 (n = None; source: foundation/specgate.py over docs/issues). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+     "In our own system, 1 of 5 of these checks pass today. Owner-driven thread sessions that changed the repository in the last 7 days (ops/provenance.jsonl) reads 62 (n = None; source: ops/provenance.jsonl, last 7 days). Share of second-order steps that brought the variable back inside its limits and were kept reads 0.0 (n = 109; source: ops/ultrastability.jsonl verdicts). Share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py) reads 0.611 (n = None; source: foundation/specgate.py over docs/issues). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
     ],
     "tradeoffs": [
      "Source. Own R&D question set, regenerated from this system's records, version 2026-11-25."
@@ -1677,7 +1677,7 @@ export default {
      },
      "prediction": "spec_quality >= 0.9 within 72 h",
      "metric_label": "share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py)",
-     "measured": 0.55,
+     "measured": 0.611,
      "status": "not-met",
      "n": null,
      "source": "foundation/specgate.py over docs/issues",
@@ -1708,9 +1708,9 @@ export default {
      },
      "prediction": "research_findings_met_share >= 1.0 within 72 h",
      "metric_label": "share of every finding in every paper whose own measurement meets its target, excluding this metric (RESEARCH-LOOP-1)",
-     "measured": 0.618,
+     "measured": 0.621,
      "status": "not-met",
-     "n": 34,
+     "n": 29,
      "source": "research/studies, each finding measured as above",
      "item": "Q-RES-second-loop-2026-S4"
     },
@@ -1775,305 +1775,6 @@ export default {
    ],
    "leads_route": "lexical-512-11pm05x",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
-  },
-  {
-   "study_id": "unlearn-dev-2026",
-   "slug": "unlearn-dev-2026",
-   "order": 5,
-   "title": "Direct the work, don't type it: what a course catalog for AI-era engineers says about a system that runs itself",
-   "sections": {
-    "summary": [
-     "Many people believe that with AI agents, the hard part of building software is writing the code, and the skill to learn is a tool. This paper argues otherwise: the code is the cheap half. The work is the spec, the boundary and the check. A person can learn those calls, and a system can encode them: every item says what done means, what is out of scope and what number should move.",
-     "unlearn.dev teaches people the calls that sit around an AI agent: what to build, what to leave out, what to reject. Ultrastable makes the same calls with code. We take each lesson, name the old idea it repeats (Toyota's stop-the-line, lean's build-measure-learn, continuous discovery, eval-driven AI work, Ashby's requisite variety) and test whether this system already does it. Where it does not, the gap is a number.",
-     "It is written for people who build or run AI systems and want them to keep working without someone watching. It names 5 concrete problems, the mechanism that answers each one, and how to put that mechanism in place."
-    ],
-    "problem": [
-     "The site's pitch is \"Direct AI. Don't get led by it.\" Agents made typing nearly free, so the skill left is deciding what to build, writing it down so an agent cannot misread it, saying what not to build, and rejecting output that only looks right. Not related to Ultrastable's own Unlearn tenant, which is an evidence encyclopedia of popular beliefs. [1]",
-     "This matters now because the usual answer, the skill is the tool; the work is the code, sends teams after the wrong fix. A better model or another reviewer does not close a loop that nothing checks.",
-     "The problems in detail:"
-    ],
-    "problem_list": [
-     "A spec an agent can't misread. Course: plan before you prompt; turn a vague idea into a spec with roles and constraints so the agent \"doesn't have to guess\". Same idea as lean's hypothesis-first build and eval-driven AI work. Test: every open work item names its done check and a prediction that can fail. [1]",
-     "Say what must not be built. Course: write down what the system must not build and what a feature excludes, so the agent does not wander. Same idea as scope boundaries in Shape Up and Toyota's standard work. Test: open items carry an Out of scope line. [1]",
-     "Code that looks right. Course: \"AI code looks right, and that's what makes it dangerous\"; review by claim, verify, trace, with a second agent. Same idea as Toyota's stop-the-line and Ashby's point that only variety can absorb variety: the check has to be as varied as the change. Test: deploys proven live against their commit. [1]",
-     "From seems fine to measured. Course: test AI features with evals, from \"seems fine\" to measured quality. Same idea as continuous discovery and kaizen: no change without a number to judge it. Test: every loop declares a closing probe. [1]",
-     "An agent you can walk away from. Course: small focused branches, guardrails and hooks before the agent writes code, so its work can be left alone. Test: few changes on main have to be reverted. [1]"
-    ],
-    "approach": [
-     "The approach follows Ashby's ultrastable system [2]: a first loop acts on the world, and a second loop changes the first loop's settings whenever a variable that matters leaves its limits, and keeps changing them until it is back inside.",
-     "Ultrastable is that design as working code [3]. For each problem above it uses a specific mechanism:"
-    ],
-    "approach_list": [
-     "A spec an agent can't misread: each decision logs a prediction that is scored later (DECISIONS-1, `foundation/decisions.py`); the lane's own items now carry a prediction (UNLEARN-DEV-1, `foundation/loopowner.py`)",
-     "Say what must not be built: standing-rule items say the rule and its probe are out of scope (UNLEARN-DEV-1, `foundation/rules.py`); lane items limit the fix to the pull request's own diff (UNLEARN-DEV-1, `foundation/loopowner.py`)",
-     "Code that looks right: a merged change is deployed and its verify line is fetched before the item closes (HANDOFF-1, `seed/worker/src/handoff.js`); each claim is tied to a probe (SAY-DO-1, `foundation/saydo.py`)",
-     "From seems fine to measured: each loop names its closing probe (CLOCKWORK-1, `instances/ultrastable/loop-registry.json`)",
-     "An agent you can walk away from: trivial changes never open a pull request (SUBSTANCE-1, `foundation/substance.py`); a red main is bisected and the smallest revert applied (RUNWAY-1, `foundation/redmain.py`)"
-    ],
-    "practice": [
-     "To apply this to your own system, one step per problem:"
-    ],
-    "practice_list": [
-     "A spec an agent can't misread. Put in place: each decision logs a prediction that is scored later. Check it with one number, share of open work items (docs/issues) that carry both a done check and a checkable prediction, and set a limit for it (>= 0.9 is the limit we use).",
-     "Say what must not be built. Put in place: standing-rule items say the rule and its probe are out of scope. Check it with one number, share of open work items (docs/issues) that say what the change must not touch (an Out of scope line), and set a limit for it (>= 0.5 is the limit we use).",
-     "Code that looks right. Put in place: a merged change is deployed and its verify line is fetched before the item closes. Check it with one number, share of uploaded deploys proven live against their commit, and set a limit for it (>= 0.95 is the limit we use).",
-     "From seems fine to measured. Put in place: each loop names its closing probe. Check it with one number, share of registered loops that declare a closing probe and a server-side owner, and set a limit for it (>= 1.0 is the limit we use).",
-     "An agent you can walk away from. Put in place: trivial changes never open a pull request. Check it with one number, commits on main whose subject starts with Revert, per merged pull request in the window, and set a limit for it (<= 0.05 is the limit we use)."
-    ],
-    "practice_note": [
-     "In our own system, 4 of 5 of these checks pass today. Share of open work items (docs/issues) that carry both a done check and a checkable prediction reads 0.25 (n = 20; source: docs/issues/*.json (open items)). Share of open work items (docs/issues) that say what the change must not touch (an Out of scope line) reads 0.55 (n = 20; source: docs/issues/*.json (open items)). Share of uploaded deploys proven live against their commit reads 0.999 (n = 890; source: ops/deploys.jsonl (same window)). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
-    ],
-    "tradeoffs": [
-     "Scale. One organization: 500 closed pull requests (359 merged) over 7.87 days. Our numbers describe this system; they are not a causal estimate and are not compared with the study's effect sizes as if they were.",
-     "Who wrote the changes. 87% of merged pull requests in the window were opened by code agent sessions run under the owner's account, not by the system's own loops. The latest criticality tick puts the system in the subcritical regime with 0 self-originated deploys, so most of the work measured here was started from outside.",
-     "Review by construction. Ultrastable has no human review step, so a short open-to-merge time is partly a consequence of the design. The real test of the design is quality: the revert and deploy-verification findings, which can fail.",
-     "Revert share counts commits whose subject starts with Revert; a fix that undoes a change without that word is not counted, so the figure is a lower bound.",
-     "Source. Commercial course catalog read as a practitioner source (not peer reviewed; course claims and survey figures are self-reported), version 2026-11-25 (catalog read: 20 live courses, 4 read lesson by lesson); its findings may change in later versions."
-    ],
-    "action": [
-     "Read the code that does this; it is source-available: https://github.com/ultrastable/ultrastable",
-     "Start a system of your own on the same foundation: https://ultrastable.io/start",
-     "Follow new papers by feed: https://ultrastable.io/research.atom"
-    ]
-   },
-   "references": [
-    {
-     "key": "unlearn-dev-2026",
-     "text": "Alex Garrett-Smith (curriculum lead) (2026-11-25 (catalog read: 20 live courses, 4 read lesson by lesson)). Unlearn: developer education for the AI era (unlearn.dev course catalog). BitterBrains (unlearn.dev); commercial course catalog read as a practitioner source (not peer reviewed; course claims and survey figures are self-reported).",
-     "url": null
-    },
-    {
-     "key": "ashby1952",
-     "text": "Ashby, W. R. (1952; corrected 1954). Design for a Brain: The Origin of Adaptive Behaviour. John Wiley & Sons, New York.",
-     "url": "https://archive.org/details/designforbrain00ashb"
-    },
-    {
-     "key": "ultrastable",
-     "text": "Ultrastable (2026). Source code, ledgers and loop registry of the Ultrastable system. Read for this paper at the date of generation.",
-     "url": "https://github.com/ultrastable/ultrastable"
-    }
-   ],
-   "derived": [
-    87,
-    0
-   ],
-   "study": {
-    "title": "Unlearn: developer education for the AI era (unlearn.dev course catalog)",
-    "authors": [
-     "Alex Garrett-Smith (curriculum lead)"
-    ],
-    "institution": "BitterBrains (unlearn.dev)",
-    "kind": "commercial course catalog read as a practitioner source (not peer reviewed; course claims and survey figures are self-reported)",
-    "version": "2026-11-25 (catalog read: 20 live courses, 4 read lesson by lesson)",
-    "data": "Public course pages at unlearn.dev: the catalog, and the lesson lists of Spec a Product Before AI Builds It, Design a Feature AI Can Execute Without Guessing, Build Features with an AI Agent, and Reviewing AI-Written Code",
-    "summary": "The site's pitch is \"Direct AI. Don't get led by it.\" Agents made typing nearly free, so the skill left is deciding what to build, writing it down so an agent cannot misread it, saying what not to build, and rejecting output that only looks right. Not related to Ultrastable's own Unlearn tenant, which is an evidence encyclopedia of popular beliefs."
-   },
-   "abstract": "Alex Garrett-Smith (curriculum lead) (BitterBrains (unlearn.dev)): The site's pitch is \"Direct AI. Don't get led by it.\" Agents made typing nearly free, so the skill left is deciding what to build, writing it down so an agent cannot misread it, saying what not to build, and rejecting output that only looks right. Not related to Ultrastable's own Unlearn tenant, which is an evidence encyclopedia of popular beliefs. unlearn.dev teaches people the calls that sit around an AI agent: what to build, what to leave out, what to reject. Ultrastable makes the same calls with code. We take each lesson, name the old idea it repeats (Toyota's stop-the-line, lean's build-measure-learn, continuous discovery, eval-driven AI work, Ashby's requisite variety) and test whether this system already does it. Where it does not, the gap is a number. 4 of 5 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.",
-   "window": {
-    "start": "2026-11-18T00:41:56Z",
-    "end": "2026-11-25T21:37:43Z",
-    "days": 7.87,
-    "prs": 500,
-    "merged": 359,
-    "regime": "subcritical",
-    "k_self": 0.0,
-    "as_of": "2026-11-26T06:43:36.886Z"
-   },
-   "findings": [
-    {
-     "id": "U1",
-     "concern": "A spec an agent can't misread",
-     "claim": "Course: plan before you prompt; turn a vague idea into a spec with roles and constraints so the agent \"doesn't have to guess\". Same idea as lean's hypothesis-first build and eval-driven AI work. Test: every open work item names its done check and a prediction that can fail.",
-     "where": "Spec a Product Before AI Builds It; Design a Feature AI Can Execute Without Guessing",
-     "perspective": "product",
-     "mechanisms": [
-      {
-       "rule": "DECISIONS-1",
-       "path": "foundation/decisions.py",
-       "how": "each decision logs a prediction that is scored later"
-      },
-      {
-       "rule": "UNLEARN-DEV-1",
-       "path": "foundation/loopowner.py",
-       "how": "the lane's own items now carry a prediction"
-      }
-     ],
-     "metric": "item_prediction_share",
-     "target": {
-      "op": ">=",
-      "value": 0.9
-     },
-     "prediction": "item_prediction_share >= 0.9 within 336 h",
-     "metric_label": "share of open work items (docs/issues) that carry both a done check and a checkable prediction",
-     "measured": 0.25,
-     "status": "not-met",
-     "n": 20,
-     "source": "docs/issues/*.json (open items)",
-     "item": "Q-RES-unlearn-dev-2026-U1"
-    },
-    {
-     "id": "U2",
-     "concern": "Say what must not be built",
-     "claim": "Course: write down what the system must not build and what a feature excludes, so the agent does not wander. Same idea as scope boundaries in Shape Up and Toyota's standard work. Test: open items carry an Out of scope line.",
-     "where": "Spec a Product (what not to build); Design a Feature (scoping out); A Coding Agent You Can Walk Away From",
-     "perspective": "quality",
-     "mechanisms": [
-      {
-       "rule": "UNLEARN-DEV-1",
-       "path": "foundation/rules.py",
-       "how": "standing-rule items say the rule and its probe are out of scope"
-      },
-      {
-       "rule": "UNLEARN-DEV-1",
-       "path": "foundation/loopowner.py",
-       "how": "lane items limit the fix to the pull request's own diff"
-      }
-     ],
-     "metric": "item_out_of_scope_share",
-     "target": {
-      "op": ">=",
-      "value": 0.5
-     },
-     "prediction": "item_out_of_scope_share >= 0.5 within 336 h",
-     "metric_label": "share of open work items (docs/issues) that say what the change must not touch (an Out of scope line)",
-     "measured": 0.55,
-     "status": "met",
-     "n": 20,
-     "source": "docs/issues/*.json (open items)",
-     "item": null
-    },
-    {
-     "id": "U3",
-     "concern": "Code that looks right",
-     "claim": "Course: \"AI code looks right, and that's what makes it dangerous\"; review by claim, verify, trace, with a second agent. Same idea as Toyota's stop-the-line and Ashby's point that only variety can absorb variety: the check has to be as varied as the change. Test: deploys proven live against their commit.",
-     "where": "Reviewing AI-Written Code; Build Features with an AI Agent (local review by a second agent)",
-     "perspective": "quality",
-     "mechanisms": [
-      {
-       "rule": "HANDOFF-1",
-       "path": "seed/worker/src/handoff.js",
-       "how": "a merged change is deployed and its verify line is fetched before the item closes"
-      },
-      {
-       "rule": "SAY-DO-1",
-       "path": "foundation/saydo.py",
-       "how": "each claim is tied to a probe"
-      }
-     ],
-     "metric": "deploy_verified_share",
-     "target": {
-      "op": ">=",
-      "value": 0.95
-     },
-     "prediction": "deploy_verified_share >= 0.95 within 168 h",
-     "metric_label": "share of uploaded deploys proven live against their commit",
-     "measured": 0.999,
-     "status": "met",
-     "n": 890,
-     "source": "ops/deploys.jsonl (same window)",
-     "item": null
-    },
-    {
-     "id": "U4",
-     "concern": "From seems fine to measured",
-     "claim": "Course: test AI features with evals, from \"seems fine\" to measured quality. Same idea as continuous discovery and kaizen: no change without a number to judge it. Test: every loop declares a closing probe.",
-     "where": "Test AI Features with Evals",
-     "perspective": "systems",
-     "mechanisms": [
-      {
-       "rule": "CLOCKWORK-1",
-       "path": "instances/ultrastable/loop-registry.json",
-       "how": "each loop names its closing probe"
-      }
-     ],
-     "metric": "loops_closing_probe_share",
-     "target": {
-      "op": ">=",
-      "value": 1.0
-     },
-     "prediction": "loops_closing_probe_share >= 1 within 168 h",
-     "metric_label": "share of registered loops that declare a closing probe and a server-side owner",
-     "measured": 1.0,
-     "status": "met",
-     "n": 118,
-     "source": "instances/ultrastable/loop-registry.json (declared)",
-     "item": null
-    },
-    {
-     "id": "U5",
-     "concern": "An agent you can walk away from",
-     "claim": "Course: small focused branches, guardrails and hooks before the agent writes code, so its work can be left alone. Test: few changes on main have to be reverted.",
-     "where": "Build Features with an AI Agent; A Coding Agent You Can Walk Away From",
-     "perspective": "systems",
-     "mechanisms": [
-      {
-       "rule": "SUBSTANCE-1",
-       "path": "foundation/substance.py",
-       "how": "trivial changes never open a pull request"
-      },
-      {
-       "rule": "RUNWAY-1",
-       "path": "foundation/redmain.py",
-       "how": "a red main is bisected and the smallest revert applied"
-      }
-     ],
-     "metric": "revert_share",
-     "target": {
-      "op": "<=",
-      "value": 0.05
-     },
-     "prediction": "revert_share <= 0.05 within 336 h",
-     "metric_label": "commits on main whose subject starts with Revert, per merged pull request in the window",
-     "measured": 0.0,
-     "status": "met",
-     "n": 359,
-     "source": "git log of main, subjects starting with Revert",
-     "item": null
-    }
-   ],
-   "met": 4,
-   "total": 5,
-   "limits": [
-    "Scale. One organization: 500 closed pull requests (359 merged) over 7.87 days. Our numbers describe this system; they are not a causal estimate and are not compared with the study's effect sizes as if they were.",
-    "Who wrote the changes. 87% of merged pull requests in the window were opened by code agent sessions run under the owner's account, not by the system's own loops. The latest criticality tick puts the system in the subcritical regime with 0 self-originated deploys, so most of the work measured here was started from outside.",
-    "Review by construction. Ultrastable has no human review step, so a short open-to-merge time is partly a consequence of the design. The real test of the design is quality: the revert and deploy-verification findings, which can fail.",
-    "Revert share counts commits whose subject starts with Revert; a fix that undoes a change without that word is not counted, so the figure is a lower bound.",
-    "Source. Commercial course catalog read as a practitioner source (not peer reviewed; course claims and survey figures are self-reported), version 2026-11-25 (catalog read: 20 live courses, 4 read lesson by lesson); its findings may change in later versions."
-   ],
-   "leads": [
-    {
-     "finding": "U1",
-     "rule": "SPEC-GATE-1",
-     "score": 0.119
-    },
-    {
-     "finding": "U2",
-     "rule": "META-SIGNAL-1",
-     "score": 0.137
-    },
-    {
-     "finding": "U2",
-     "rule": "VISION-1",
-     "score": 0.128
-    },
-    {
-     "finding": "U3",
-     "rule": "PROVENANCE-1",
-     "score": 0.125
-    },
-    {
-     "finding": "U4",
-     "rule": "DECISIONS-1",
-     "score": 0.142
-    },
-    {
-     "finding": "U5",
-     "rule": "THOUGHT-1",
-     "score": 0.113
-    }
-   ],
-   "leads_route": "lexical-512-bupjub",
-   "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   }
  ],
  "perspectives": {
@@ -2084,8 +1785,7 @@ export default {
   "security": false,
   "cost": false,
   "reliability": true,
-  "systems": true,
-  "product": true
+  "systems": true
  },
  "questions": [
   {
