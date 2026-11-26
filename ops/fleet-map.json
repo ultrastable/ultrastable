@@ -1,6 +1,6 @@
 {
  "rule": "FLEET-MAP-1",
- "at": "2026-11-25T23:57:25Z",
+ "at": "2026-11-26T07:22:55Z",
  "repos": {
   "ultrastable/ultrastable": {
    "status": "not-a-copy",
@@ -13,16 +13,16 @@
   "ultrastable/seed": {
    "status": "drifted",
    "how": "github",
-   "differ": 59,
-   "missing": 66,
-   "extra": 12,
+   "differ": 13,
+   "missing": 2,
+   "extra": 4,
    "notes": []
   },
   "ultrastable/second-tenant": {
    "status": "drifted",
    "how": "github",
-   "differ": 55,
-   "missing": 56,
+   "differ": 56,
+   "missing": 64,
    "extra": 0,
    "notes": [
     "ultrastable.lock.json is missing: the kernel sync treats every changed file as a local edit and updates nothing"
