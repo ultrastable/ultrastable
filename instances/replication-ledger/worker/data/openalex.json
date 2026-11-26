@@ -1,14 +1,14 @@
 {
  "_doc": "Written by openalex-mirror.mjs on a GitHub runner (workflow ledger-openalex.yml), read by the Worker's beat when OpenAlex refuses it (mirror.js). Do not edit by hand.",
  "version": 1,
- "generated_at": "2026-11-26T08:14:35.868Z",
+ "generated_at": "2026-11-26T15:46:12.749Z",
  "route": "github-actions",
  "findings": {
   "ego-depletion": {
    "doi": "10.1037/0022-3514.74.5.1252",
    "openalex": "https://openalex.org/W2123817056",
    "is_retracted": false,
-   "cited_by_count": 6611,
+   "cited_by_count": 6634,
    "works": [
     {
      "id": "https://openalex.org/W7238751062",
@@ -169,7 +169,7 @@
    "doi": "10.1037/0022-3514.54.5.768",
    "openalex": "https://openalex.org/W2169284121",
    "is_retracted": false,
-   "cited_by_count": 2221,
+   "cited_by_count": 2223,
    "works": [
     {
      "id": "https://openalex.org/W7222897309",
@@ -325,7 +325,7 @@
    "doi": "10.1177/0956797610383437",
    "openalex": "https://openalex.org/W2152928398",
    "is_retracted": false,
-   "cited_by_count": 1227,
+   "cited_by_count": 1229,
    "works": [
     {
      "id": "https://openalex.org/W7239408936",
@@ -488,7 +488,7 @@
    "doi": "10.1037/0022-3514.71.2.230",
    "openalex": "https://openalex.org/W4249924107",
    "is_retracted": false,
-   "cited_by_count": 4016,
+   "cited_by_count": 4045,
    "works": [
     {
      "id": "https://openalex.org/W7233553129",
@@ -639,7 +639,7 @@
    "doi": "10.1126/science.185.4157.1124",
    "openalex": "https://openalex.org/W4292157289",
    "is_retracted": false,
-   "cited_by_count": 41220,
+   "cited_by_count": 41547,
    "works": [
     {
      "id": "https://openalex.org/W7239360975",
@@ -785,7 +785,7 @@
      "publication_year": 2026,
      "authors": [
       "Matt Caldwell",
-      "Antony Darby",
+      "Antony Peter Darby",
       "Will Hawkins",
       "Thomas Rodding Kjeldsen"
      ],
@@ -798,7 +798,7 @@
    "doi": "10.1126/science.7455683",
    "openalex": "https://openalex.org/W2096452841",
    "is_retracted": false,
-   "cited_by_count": 22461,
+   "cited_by_count": 22542,
    "works": [
     {
      "id": "https://openalex.org/W7237332307",
@@ -887,7 +887,7 @@
      "title": "The Use and Usefulness of Corporate Sustainability Information",
      "publication_year": 2026,
      "authors": [
-      "Tyson Hayes Timmer"
+      "Tyson Timmer"
      ],
      "venue": "eScholarship (California Digital Library)",
      "abstract": "Sustainability disclosures are more common than ever. Yet whether they are actually useful remains an open question. This dissertation examines that question across three studies spanning different audiences, methods, and sustainability domains.The first study systematically reviews how business journal articles engage with third-party sustainability measures in sustainability-financial performance linking research. The review identifies two sources of uncertainty that limit confidence in these measures: the quality of underlying data and how data is aggregated. Methodological rigor is bimodal; researchers either scrutinize multiple dimensions of measurement quality or none at all, and choices about data quality and aggregation are shown to be related to reported financial performance relationships. The study offers practical recommendations for improving rigor and transparency in corporate sustainability research. The second study examines how job applicants price corporate sustainability signals as part of their compensation using a choice-based conjoint experiment (N = 249) analyzed via Hierarchical Bayes. Drawing on Herzberg's hygiene-motivator distinction, the study finds two distinct asymmetries. Within domains, penalties for withdrawal exceed rewards for proactive investment. Across domains, climate commitments tied to managerial incentives generate a reliable compensation discount while equivalently structured diversity commitments do not. These patterns are consistent with diversity functioning as hygiene factor and climate functioning as prestige motivators. The third study employs a randomized between-subjects survey experiment with 516 retail investors to examine whether financial or impact framing of corporate sustainability strategies shifts investor sustainability judgments. Despite perceiving financial framing, retail investors showed no meaningful differences in perceived importance ratings or investor materiality assessments across framing conditions. Political ideology emerged as the dominant predictor of sustainability importance judgments and the strongest covariate predictor of investor materiality assessments, replicating across three independent samples. The findings challenge the assumption embedded in global disclosure frameworks that strategic framing shapes how retail investors receive sustainability information. Across three audiences and three methods, the dissertation finds that sustainability information does not operate uniformly. Its usefulness depends on who receives it, how it is disaggregated, and what psychological register it activates. These findings carry direct implications for how sustainability measures are constructed, disclosed, and regulated."
@@ -965,7 +965,7 @@
    "doi": "10.1111/j.1467-9280.2006.01693.x",
    "openalex": "https://openalex.org/W2163569782",
    "is_retracted": false,
-   "cited_by_count": 4045,
+   "cited_by_count": 4051,
    "works": [
     {
      "id": "https://openalex.org/W7237225438",
@@ -1133,7 +1133,7 @@
    "doi": "10.1037/0012-1649.26.6.978",
    "openalex": "https://openalex.org/W2033674186",
    "is_retracted": false,
-   "cited_by_count": 1576,
+   "cited_by_count": 1578,
    "works": [
     {
      "id": "https://openalex.org/W7203635371",
@@ -1294,7 +1294,7 @@
    "doi": "10.1037/h0040525",
    "openalex": "https://openalex.org/W1969900674",
    "is_retracted": false,
-   "cited_by_count": 6494,
+   "cited_by_count": 6509,
    "works": [
     {
      "id": "https://openalex.org/W4399934621",
@@ -1452,7 +1452,7 @@
    "doi": "10.1056/NEJM199109123251102",
    "openalex": "https://openalex.org/W2972867833",
    "is_retracted": false,
-   "cited_by_count": 2167,
+   "cited_by_count": 2172,
    "works": [
     {
      "id": "https://openalex.org/W7203778790",
@@ -1629,7 +1629,7 @@
    "doi": "10.1038/290201a0",
    "openalex": "https://openalex.org/W2004794022",
    "is_retracted": false,
-   "cited_by_count": 1691,
+   "cited_by_count": 1694,
    "works": [
     {
      "id": "https://openalex.org/W4389861075",
@@ -1644,7 +1644,7 @@
       "Kirsten Brandt"
      ],
      "venue": "Critical Reviews in Food Science and Nutrition",
-     "abstract": "Carrots are main dietary sources of several potential anti-cancer compounds, including polyacetylenes, while β-carotene has shown no benefits in controlled cancer trials. Accordingly, associations between carrot intake and cancer incidence were quantified, where necessary using α-carotene as a non-causal biomarker of carrot consumption, by searching for studies published before June 2022 reporting risk estimates for relationships of cancer incidence with carrot intake or α-carotene intake or α-carotene plasma concentration, supplemented with hand searches of included studies and reviews. Meta-analyses comparing highest and lowest reported intakes in prospective studies using a random-effects model estimated summary relative risks (RRs) with 95% confidence intervals (CIs), separately for carrot intake or α-carotene plasma concentration, and the corresponding dose-responses. Of 198 observational studies, in 50 prospective studies with 52000 cases recording carrot intake, the cancer-risk was substantially reduced (RR 0.90, 95% CI 0.87–0.94, p ˂ 0·00004). In 30 prospective studies with 9331 cases reporting plasma α-carotene levels, summary RR was 0.80 (0.72–0.89, p ˂ 0·00006). For both exposure types, inter-study heterogeneity was moderate, interaction with cancer types insignificant, and the dose-response significant (p ˂ 0·01). In conclusion, carrot consumption is robustly associated with decreased cancer-risk; carrot consumption should be encouraged, and the causal mechanisms further investigated."
+     "abstract": "Carrots are main dietary sources of several potential anti-cancer compounds, including polyacetylenes, while β-carotene has shown no benefits in controlled cancer trials. Accordingly, associations between carrot intake and cancer incidence were quantified, where necessary using α-carotene as a non-causal biomarker of carrot consumption, by searching for studies published before June 2022 reporting risk estimates for relationships of cancer incidence with carrot intake or α-carotene intake or α-carotene plasma concentration, supplemented with hand searches of included studies and reviews. Meta-analyses comparing highest and lowest reported intakes in prospective studies using a random-effects model estimated summary relative risks (RRs) with 95% confidence intervals (CIs), separately for carrot intake or α-carotene plasma concentration, and the corresponding dose-responses. Of 198 observational studies, in 50 prospective studies with 52000 cases recording carrot intake, the cancer-risk was substantially reduced (RR 0.90, 95% CI 0.87-0.94, p ˂ 0·00004). In 30 prospective studies with 9331 cases reporting plasma α-carotene levels, summary RR was 0.80 (0.72-0.89, p ˂ 0·00006). For both exposure types, inter-study heterogeneity was moderate, interaction with cancer types insignificant, and the dose-response significant (p ˂ 0·01). In conclusion, carrot consumption is robustly associated with decreased cancer-risk; carrot consumption should be encouraged, and the causal mechanisms further investigated."
     },
     {
      "id": "https://openalex.org/W4206760537",
@@ -1790,7 +1790,7 @@
    "doi": "10.1056/NEJM199305203282003",
    "openalex": "https://openalex.org/W2334903440",
    "is_retracted": false,
-   "cited_by_count": 2153,
+   "cited_by_count": 2155,
    "works": [
     {
      "id": "https://openalex.org/W4407280144",
@@ -1966,7 +1966,7 @@
    "doi": "10.1016/S0140-6736(94)90566-5",
    "openalex": "https://openalex.org/W4246764494",
    "is_retracted": false,
-   "cited_by_count": 6818,
+   "cited_by_count": 6851,
    "works": [
     {
      "id": "https://openalex.org/W7223688410",
@@ -2161,7 +2161,7 @@
    "doi": "10.1016/j.ijantimicag.2020.105949",
    "openalex": "https://openalex.org/W3010930696",
    "is_retracted": true,
-   "cited_by_count": 5583,
+   "cited_by_count": 5593,
    "works": [
     {
      "id": "https://openalex.org/W7165726859",
@@ -2342,7 +2342,7 @@
    "doi": "10.1056/NEJMoa2021436",
    "openalex": "https://openalex.org/W3042270788",
    "is_retracted": false,
-   "cited_by_count": 11850,
+   "cited_by_count": 11872,
    "works": [
     {
      "id": "https://openalex.org/W7171489707",
@@ -2455,6 +2455,22 @@
      "abstract": "Purpose of the work. This article aims to analyse the health-promoting benefits of Ceylon cinnamon (Cinnamomum verum J. Presl) and evaluate its therapeutic value in contemporary medical and dietary contexts. It also discusses potential applications in preventing and supporting the treatment of metabolic, cardiovascular, neoplastic, neurodegenerative and infectious diseases, as well as digestive and skeletal system disorders. Additionally, the study assesses the safety of using cinnamon in various pharmaceutical and dietary forms. Methodology. A review of the available scientific literature was conducted to obtain comprehensive information on the medicinal properties and potential applications of Ceylon cinnamon. The analysis included the following databases: PubMed Central, Scopus, ResearchGate, Web of Science, ScienceDirect, Ovid Technologies and Google Scholar. A total of 139 scientific articles and eight monographs were included in the review. The analysed materials comprised original research articles, systematic reviews, meta-analyses and experimental and clinical reports, which addressed the effects of the chemical compounds present in cinnamon on its therapeutic properties. Source selection was based on publication recency, methodological quality, and the clinical relevance of the reported findings. Scientific novelty. This work offers a novel perspective on the health benefits of C. verum, highlighting its potential as an adjunctive therapy for cancer, metabolic, infectious and neurodegenerative diseases. The article presents research findings that indicate the broad spectrum of activity of the bioactive compounds found in cinnamon, and their potential application in clinical practice. Particular attention is given to the molecular mechanisms of phytochemical action and the use of modern technologies to enhance bioavailability and therapeutic efficacy, such as nanoparticles and mucoadhesive gels. Combining botanical, pharmacological, and clinical knowledge using an interdisciplinary approach enabled a holistic assessment of the therapeutic potential of Ceylon cinnamon. Conclusions. Cinnamon has been used in Asian cuisine for several thousand years, not only as a spice, but also as a medicinal ingredient. It is characterised by its rich phytochemistry and wide range of health-promoting effects. C. verum alleviates disorders of the digestive, urinary and skeletal systems, and exhibits strong antioxidant and anti-inflammatory properties. Available data suggest that it may support the treatment of numerous diseases, including cancer, due to its antioxidant content and ability to modulate inflammatory processes. Its documented biological activities – anti-inflammatory, antiviral, antibacterial, antiparasitic, anti-obesity and antineurodegenerative – have a beneficial impact on human health. Compounds present in cinnamon essential oils improve tissue insulin sensitivity, reduce blood glucose and lipid levels, and inhibit the development of neoplastic and infectious processes. The use of modern delivery systems for bioactive substances, such as nanoparticles and mucoadhesive gels, can significantly increase the bioavailability and therapeutic efficacy of cinnamon while reducing its toxicity to normal cells. Furthermore, taking cinnamon supplements at doses of 1-6 g per day has been shown to have the most favourable health effects. Products derived from the bark, leaves and roots of the cinnamon tree are used in herbal medicine, cosmetology and the food and beverage industry."
     },
     {
+     "id": "https://openalex.org/W7204549970",
+     "doi": "https://doi.org/10.1038/s41598-026-68899-4",
+     "title": "Indirect comparison of prevalence, risk factors, and mortality in COVID 19 versus influenza associated pulmonary aspergillosis in critically ill adults",
+     "publication_year": 2026,
+     "authors": [
+      "Abdullah A. Awadh",
+      "Awadh Alhawiti",
+      "Ahmed Meny",
+      "Abdulmajeed M. Alshehri",
+      "Mohammad S. Alhazmi",
+      "Omar A. Arzoun"
+     ],
+     "venue": "Scientific Reports",
+     "abstract": "Invasive pulmonary aspergillosis is a severe complication of viral pneumonia in critically ill patients. COVID-19–associated pulmonary aspergillosis (CAPA) and influenza-associated pulmonary aspergillosis (IAPA) are increasingly recognized as significant contributors to morbidity and mortality in intensive care units (ICUs). However, no study has systematically compared their prevalence, risk factor profiles, and attributable mortality within a single evidence synthesis. We therefore undertook an indirect comparative meta-analysis, in which CAPA and IAPA estimates were pooled separately and then contrasted indirectly, rather than compared head-to-head within the same patients. We searched PubMed/MEDLINE, Embase, Cochrane Library, Scopus, and Web of Science from inception to March 31, 2025. Eligible studies were observational cohort or case-control studies reporting on CAPA or IAPA in adult ICU patients. Pooled prevalence estimates were calculated using the Freeman–Tukey double arcsine transformation with DerSimonian–Laird random-effects models. Risk factors and attributable mortality were pooled as odds ratios (ORs) with 95% confidence intervals (CIs). All-cause mortality was the only mortality outcome analysed and is referred to as such throughout. CAPA and IAPA were not compared at the individual-patient level; instead, separately pooled estimates were contrasted indirectly using tests for subgroup differences, and 95% prediction intervals, together with the between-study variance τ², were derived for all pooled estimates. The study was registered with PROSPERO (CRD420261365038) and reported in accordance with the PRISMA 2020 and MOOSE guidelines. A total of 89 studies (68 CAPA, 21 IAPA) encompassing 19,482 critically ill patients were included. The pooled prevalence of CAPA in ICU patients was 10.2% (95% CI 8.1–12.6%; I² = 87%; τ² = 0.004; 95% prediction interval 3.7–19.6%), compared with 19.4% (95% CI 14.8–24.6%; I² = 83%; τ² = 0.004; 95% prediction interval 10.2–30.8%) for IAPA ( p < 0.001). Pooled all-cause mortality was 51.2% (95% CI 44.8–57.5%; 95% prediction interval 31.3–70.9%) for CAPA and 51.8% (95% CI 43.1–60.4%; 95% prediction interval 36.6–66.9%) for IAPA ( p = 0.92). Attributable mortality ORs were 2.65 (2.04–3.45) for CAPA and 2.44 (1.75–3.40) for IAPA ( p = 0.68). The separately pooled prevalence of IAPA was nearly two-fold higher than that of CAPA in ICU patients, yet both conditions were associated with all-cause mortality exceeding 50%. These findings underscore the need for routine fungal surveillance protocols in patients with severe influenza and COVID-19. Because the comparison between CAPA and IAPA was indirect and based on observational studies, the reported associations should be interpreted as hypothesis-generating rather than causal."
+    },
+    {
      "id": "https://openalex.org/W7204474567",
      "doi": "https://doi.org/10.23889/ijpds.v11i1.3201",
      "title": "The Need for Fully-Effective Federated Analytics of Data Sources for Clinical Trials",
@@ -2504,23 +2520,6 @@
      ],
      "venue": "Journal of Clinical Epidemiology",
      "abstract": "OBJECTIVES: The reliability of confirmatory clinical trials (ie, the post-trial probability) depends on the pretrial probability. During the COVID-19 pandemic, many early COVID-19 confirmatory trials were launched despite limited phase II evidence and weak mechanistic or preclinical support. Whether this accelerated development strategy reduced the reliability of therapeutic evidence remains uncertain. STUDY DESIGN AND SETTING: Overall empirical pretrial plausibility was estimated at the trial level as the proportion of early randomized trials evaluating interventions that were ultimately considered effective in the reference network meta-analysis. For each trial, counterfactual statistical power was estimated using the reported sample size and the number of events. Bayes' theorem was used to calculate the post-trial probability of efficacy, based on sensitivity (ie, trial power), specificity (ie, 1 minus 0.025), and empirical pretrial plausibility. We then compared the positive predictive values (PPVs) of COVID-19 and non-COVID-19 development pipelines. RESULTS: Of the 463 early trials evaluating 150 candidate molecules, 51 assessed interventions ultimately supported by the reference network meta-analysis, corresponding to an empirical trial-level pretrial plausibility of 11%. The median power of COVID-19 trials was 9% (min-max: 6%-100%). Accordingly, the probability that a statistically significant result reflected true efficacy was 31% (20%-83%), compared to 97% for non-COVID-19 trials characterized by the conventional phase II to phase III success benchmark of 50%. With an empirical pretrial plausibility of 11%, a replication framework consisting of two independent, 80% powered trials yielded a PPV of 99.2%. This contrasts with a single 90% to 95% powered trial, which yielded a PPV of 81% to 82%. CONCLUSION: The early COVID-19 trial ecosystem was frequently underpowered and conducted under conditions of low pretrial plausibility, resulting in lower post-trial probabilities of true efficacy than in conventional development pathways. These findings highlight the need for stronger pretrial evidence, coordinated trial prioritization, and replication-oriented strategies in future pandemic responses. PLAIN LANGUAGE SUMMARY: During the COVID-19 pandemic, hundreds of clinical trials were launched within a very short period to identify effective treatments. Many of these studies started before strong laboratory data, animal studies, or early clinical trial results were available. At the same time, many trials enrolled only small numbers of patients, making them less able to reliably detect true treatment effects. In this study, we examined how these conditions may have affected the reliability of COVID-19 treatment research. Using data from more than 400 randomized trials, we estimated how often a statistically significant result was likely to reflect a truly effective treatment. We found that when treatments are tested with limited supporting evidence and low-powered studies, positive trial results are more likely to be misleading or difficult to reproduce. We also explored alternative research strategies. Our findings suggest that repeating smaller but well-designed independent trials may provide more reliable evidence than relying on a single large trial, especially when the initial evidence supporting a treatment is weak. These results highlight the importance of carefully selecting candidate treatments before launching large confirmatory trials during future pandemics. Coordinated international research strategies, adaptive platform trials, and simplified large-scale studies such as the RECOVERY trial may help produce more reliable evidence while avoiding unnecessary duplication and waste of resources."
-    },
-    {
-     "id": "https://openalex.org/W7172449959",
-     "doi": "https://doi.org/10.1177/20499361261468451",
-     "title": "Adjunctive corticosteroids in non-HIV immunocompromised patients with Pneumocystis jirovecii pneumonia: a systematic review and meta-analysis",
-     "publication_year": 2026,
-     "authors": [
-      "Gustavo Rosales-Chávez",
-      "Pedro Martínez-Ayala",
-      "Mauricio Alfredo Ambriz-Alarcón",
-      "Brian Rafael Rubio-Mora",
-      "Judith Carolina De Arcos-Jiménez",
-      "Ana María López Yáñez",
-      "Alejandro Marín-Castañeda-Barón"
-     ],
-     "venue": "Therapeutic Advances in Infectious Disease",
-     "abstract": "Background: Pneumocystis jirovecii pneumonia (PJP) in non-HIV immunocompromised adults carries 30%-60% mortality. Adjunctive corticosteroids are standard in HIV-PJP but remain contested in non-HIV PJP. Objectives: To determine whether adjunctive corticosteroids reduce mortality and invasive mechanical ventilation (IMV) in non-HIV PJP, and whether effect estimates differ between randomized and observational study designs. Design: Systematic review and meta-analysis. Data sources and methods: Six databases and two trial registers were searched from inception to February 7, 2026. Randomized and observational studies comparing adjunctive corticosteroids versus no corticosteroids or placebo in non-HIV adults with PJP were eligible. Random-effects meta-analyses (restricted maximum likelihood) of two co-primary outcomes included subgroup, sensitivity, E-value, and Grading of Recommendations Assessment analyses. Results: Twenty-eight studies were included (one randomized controlled trial (RCT), 27 observational; ∼ 5300 patients): 22 contributed corticosteroid-versus-no-corticosteroid comparisons and six contributed dose-comparison data only. Evidence was discordant by design (interaction p = 0 . 006 ): the RCT showed lower IMV (hazard ratio (HR) 0.36, 95% CI 0.14-0.90) and lower 90-day mortality (HR 0.59, 0.37-0.93); regression-adjusted observational studies suggested harm (odds ratio (OR) 1.56, 1.10-2.22); propensity-based estimates were null-compatible. Pre-specified mortality pools were non-significant short-term (OR 1.22, 0.88-1.70) and intermediate-term (OR 1.39, 0.85-2.29). Secondary infections ( k = 4 ): OR 1.04 (0.63-1.72); RCT 0.59 (0.32-1.06). E-values for RCT effects (3.44 IMV; 2.24 mortality) exceeded the 1.81 E-value of the adjusted observational mortality pool. Certainty was very low for pooled mortality and moderate for RCT outcomes. Conclusion: Reliable inference rests on the single RCT rather than the pooled observational estimate, which is discordant by design and most consistent with confounding by indication. In the RCT, corticosteroids did not significantly reduce 28-day mortality but lowered IMV and 90-day mortality and sped respiratory recovery, without clear excess secondary infections (low certainty). Corticosteroids may be considered for severe respiratory failure using the PIC (ClinicalTrials.gov NCT02944045) protocol; adequately powered confirmatory trials are needed. Trial registration: PROSPERO CRD420261304396."
     }
    ]
   },
@@ -2528,7 +2527,7 @@
    "doi": "10.1257/aer.100.2.573",
    "openalex": "https://openalex.org/W2157028860",
    "is_retracted": false,
-   "cited_by_count": 4392,
+   "cited_by_count": 4421,
    "works": [
     {
      "id": "https://openalex.org/W7215108259",
@@ -2681,7 +2680,7 @@
    "doi": "10.1086/250037",
    "openalex": "https://openalex.org/W2152534713",
    "is_retracted": false,
-   "cited_by_count": 2292,
+   "cited_by_count": 2310,
    "works": [
     {
      "id": "https://openalex.org/W7166876262",
@@ -2833,7 +2832,7 @@
    "doi": "10.1111/j.1468-0262.2004.00481.x",
    "openalex": "https://openalex.org/W2104972618",
    "is_retracted": false,
-   "cited_by_count": 2747,
+   "cited_by_count": 2769,
    "works": [
     {
      "id": "https://openalex.org/W7214730992",
@@ -2998,7 +2997,7 @@
    "doi": "10.1016/0022-0728(89)80006-3",
    "openalex": "https://openalex.org/W2131132747",
    "is_retracted": false,
-   "cited_by_count": 1401,
+   "cited_by_count": 1402,
    "works": [
     {
      "id": "https://openalex.org/W7167022911",
@@ -3153,7 +3152,7 @@
    "doi": "10.1016/j.physletb.2012.08.020",
    "openalex": "https://openalex.org/W1858542512",
    "is_retracted": false,
-   "cited_by_count": 17141,
+   "cited_by_count": 17185,
    "works": [
     {
      "id": "https://openalex.org/W7118561163",
@@ -3361,7 +3360,7 @@
       "Noor Shamkhi"
      ],
      "venue": "Figshare",
-     "abstract": "Telomeres are repetitive sequences located at the ends of human chromosomes. During DNA replication, DNA polymerase is unable to fully replicate telomeric DNA causing a progressive reduction in telomere length with each cell division. Consequently, telomeres shorten with age and when telomere length reaches a critical length the cell becomes dysfunctional or senescent. Increasing numbers of senescent cells results in reduced organ function and telomere length has been associated with age-associated diseases including cardiovascular disease and cancer. Telomere length is highly heritable and genome-wide association studies have identified several loci that associate with telomere length. Interestingly, two of these loci do not contain genes with known roles in telomere maintenance.\\nIn this study, CRISPR/Cas9 genome editing was used to knockout telomere length associated genes in human induced pluripotent stem cells (hiPSCs) with the ultimate aim of definitively linking a novel telomere length associated gene to telomere maintenance. CRISPR/Cas9 was used to create hiPSCs with no telomerase activity by knocking out TERT, which encodes the catalytic subunit of telomerase. Telomere length was maintained in control iPSCs, but reduced by approximately 1% per day during extended culture of TERT knockout hiPSCs. Flow cytometric analysis of mutant hiPSCs revealed that they continued to express markers of pluripotency but had increased expression of a differentiation marker. Next, CRISPR/Cas9 was used to generate mutations in the candidate telomere maintenance genes ACYP2 and TSPYL6, however, no difference in telomere length was observed after extended culture of hiPSCs carrying mutations in either gene.\\nIn conclusion, CRISPR/Cas9 genome editing was successfully used to generate mutant hiPSCs for TERT, which resulted in telomere shortening and for two candidate telomere maintenance genes, which had no effect on telomere length. Further analysis will be required to determine which gene mediates the association with telomere length at the ACYP2 locus."
+     "abstract": "Telomeres are repetitive sequences located at the ends of human chromosomes. During DNA replication, DNA polymerase is unable to fully replicate telomeric DNA causing a progressive reduction in telomere length with each cell division. Consequently, telomeres shorten with age and when telomere length reaches a critical length the cell becomes dysfunctional or senescent. Increasing numbers of senescent cells results in reduced organ function and telomere length has been associated with age-associated diseases including cardiovascular disease and cancer. Telomere length is highly heritable and genome-wide association studies have identified several loci that associate with telomere length. Interestingly, two of these loci do not contain genes with known roles in telomere maintenance. In this study, CRISPR/Cas9 genome editing was used to knockout telomere length associated genes in human induced pluripotent stem cells (hiPSCs) with the ultimate aim of definitively linking a novel telomere length associated gene to telomere maintenance. CRISPR/Cas9 was used to create hiPSCs with no telomerase activity by knocking out TERT, which encodes the catalytic subunit of telomerase. Telomere length was maintained in control iPSCs, but reduced by approximately 1% per day during extended culture of TERT knockout hiPSCs. Flow cytometric analysis of mutant hiPSCs revealed that they continued to express markers of pluripotency but had increased expression of a differentiation marker. Next, CRISPR/Cas9 was used to generate mutations in the candidate telomere maintenance genes ACYP2 and TSPYL6, however, no difference in telomere length was observed after extended culture of hiPSCs carrying mutations in either gene. In conclusion, CRISPR/Cas9 genome editing was successfully used to generate mutant hiPSCs for TERT, which resulted in telomere shortening and for two candidate telomere maintenance genes, which had no effect on telomere length. Further analysis will be required to determine which gene mediates the association with telomere length at the ACYP2 locus."
     },
     {
      "id": "https://openalex.org/W2605293247",
@@ -3466,7 +3465,7 @@
    "doi": "10.1126/science.1197258",
    "openalex": "https://openalex.org/W2135819747",
    "is_retracted": true,
-   "cited_by_count": 523,
+   "cited_by_count": 524,
    "works": [
     {
      "id": "https://openalex.org/W4408029754",
@@ -3609,171 +3608,791 @@
      "abstract": "A recent finding of a bacterial strain (GFAJ-1) that can rely on arsenic instead of phosphorus raised the questions of if and how arsenate can replace phosphate in biomolecules that are essential to sustain cell life. Apart from questions related to chemical stability, there are those of the structural and functional consequences of phosphate-arsenate substitutions in vital nucleotides in GFAJ1-like cells. In this study we selected three types of molecules (ATP/ADP as energy source and replication regulation; DNA-protein complexes for DNA replication and transcription initiation; and a tRNA-protein complex and ribosome for protein synthesis) to computationally probe if arsenate nucleotides can retain the structural and functional features of phosphate nucleotides. Hydrolysis of adenosine triarsenate provides 2-3 kcal/mol less energy than ATP hydrolysis. Arsenate DNA/RNA interacts with proteins slightly less strongly than phosphate DNA/RNA, mainly due to the weaker electrostatic interactions of arsenate. We observed that the weaker arsenate RNA-protein interactions may hamper rRNA assembly into a functional ribosome. We further compared the experimental EXAFS spectra of the arsenic bacteria with theoretical EXAFS spectra for arsenate DNA and rRNA. Our results demonstrate that while it is possible that dried GFAJ-1 cells contain linear arsenate DNA, the arsenate 70S ribosome does not contribute to the main arsenate depository in the GFAJ-1 cell. Our study indicates that evolution has optimized the inter-relationship between proteins and DNA/RNA, which requires overall changes at the molecular and systems biology levels when replacing phosphate by arsenate."
     }
    ]
+  },
+  "highly-accurate-protein-structure-prediction": {
+   "doi": "10.1038/s41586-021-03819-2",
+   "openalex": "https://openalex.org/W3177828909",
+   "is_retracted": false,
+   "cited_by_count": 51531,
+   "works": [
+    {
+     "id": "https://openalex.org/W7239737848",
+     "doi": "https://doi.org/10.3390/ph19121880",
+     "title": "Pharmacophore-Guided Drug Repurposing Identifies Galicaftor as a Potential Ligand for Pseudouridine Synthase 7",
+     "publication_year": 2026,
+     "authors": [
+      "Carlos Martínez-Conde",
+      "Kevin E. Lugo-Garcia",
+      "Fernando Daniel Prieto-Martínez",
+      "Aliesha González‐Arenas",
+      "Luis Córdova-Bahena",
+      "Marco Antonio Velasco-Velázquez"
+     ],
+     "venue": "Pharmaceuticals",
+     "abstract": "Background/Objectives: Pseudouridine synthase 7 (PUS7) supports tumor growth in glioblastoma, neuroblastoma, and other malignancies through catalysis-dependent mechanisms. Although PUS7 is a potential pharmacological target for cancer therapy, only a few small-molecule inhibitors have been reported, and their binding modes remain experimentally unresolved. This study aimed to identify approved and investigational drugs with the potential to bind to the PUS7 catalytic site. Methods: Unresolved regions of the crystal structure of human PUS7 (PDB ID: 5KKP) were reconstructed using homology modeling. Conformational variability of the apo enzyme was investigated using molecular dynamics (MD) simulations, free-energy surface analysis, and robust Perron cluster analysis. A dynamic target-based pharmacophore was generated and used to screen the DrugBank library. The stability of the resulting pharmacophore-matched compounds as PUS7 binders was assessed using MD simulations and MM-PBSA analysis. Results: Four metastable states of PUS7 were identified and used to characterize a consistently identified pocket within the catalytic domain. This pocket was then used to construct an ensemble pharmacophore comprising five features, with occupancies ranging from 11% to 74%. Nine compounds were selected through pharmacophore screening. Galicaftor and canfosfamide exhibited favorable MM-PBSA binding free energy estimates; however, only galicaftor maintained consistent binding poses within the PUS7 catalytic cavity across independent MD replicates. Conclusions: Galicaftor is a potential binder of the PUS7 catalytic cavity. This compound is a candidate for drug repurposing and warrants experimental evaluation to determine its interactions with PUS7."
+    },
+    {
+     "id": "https://openalex.org/W7133244826",
+     "doi": "https://doi.org/10.1371/journal.ppat.1014786",
+     "title": "Noncanonical P gene mRNA editing in Cedar virus generates a U protein that is required for efficient virion production",
+     "publication_year": 2026,
+     "authors": [
+      "Henriette Schwotzer",
+      "Patricia Schupp",
+      "Richard Küchler",
+      "Dmitry S. Ushakov",
+      "Gang Pei",
+      "Laura Rzepa",
+      "Sandra Diederich"
+     ],
+     "venue": "PLoS Pathogens",
+     "abstract": "Highly pathogenic Hendra and Nipah viruses encode accessory P gene products (C, V and W) that antagonize innate immunity and contribute to pathogenicity. Cedar virus (CedV), an apathogenic bat-borne henipavirus, is presumed to lack P gene mRNA editing and therefore is unable to express V and W proteins. Here, we identify CedV peptides originating from a frameshifted P gene open reading frame and demonstrate a previously unrecognized, noncanonical editing site at a homopolymeric adenine tract that introduces single-nucleotide A or G insertion. This mRNA editing produces a protein that we refer to as U protein, whose C-terminal domain shares sequence and predicted structural features with those of the henipavirus V protein. Recombinant CedV mutants defective in mRNA editing were only recoverable by trans-complementation and showed markedly reduced release of infectious virus in cell culture and attenuated replication in mice lacking type I interferon receptor. Our data revise the CedV gene expression models and reveal a noncanonical editing mechanism that supports the production of a U protein critical for efficient infectious virus release. These results expand the fundamental concepts of paramyxovirus gene expression and reveal an unexpected requirement for P-gene editing in efficient infectious-virus production, with implications for the evaluation of potentially high-consequence paramyxoviruses."
+    },
+    {
+     "id": "https://openalex.org/W7238799506",
+     "doi": "https://doi.org/10.1016/j.antiviral.2026.106577",
+     "title": "Replicon-based antiviral screening identifies Simeprevir and Mosnodenvir as inhibitors of Kyasanur Forest Disease virus",
+     "publication_year": 2026,
+     "authors": [
+      "Tanvi Sharad",
+      "Aditi Kanojia",
+      "Murtaj Ahamed SK",
+      "Varun Kailaje",
+      "Gudepalya Renukaiah Rudramurthy",
+      "Chandra Sekhar Gudla",
+      "Shridhar Narayanan"
+     ],
+     "venue": "Antiviral Research",
+     "abstract": ""
+    },
+    {
+     "id": "https://openalex.org/W7238821712",
+     "doi": "https://doi.org/10.1016/j.indcrop.2026.124827",
+     "title": "From decoction assembly to precision-oriented delivery: Antiviral roles of supramolecular complexes in traditional chinese medicine and food–medicine homology systems",
+     "publication_year": 2026,
+     "authors": [
+      "Jia-You Xing",
+      "Yu-Xin Xiang",
+      "Chen Yao",
+      "Heng Wang",
+      "Wei-Fei Lu",
+      "Yu-Jie Guo",
+      "Guo-Yu Yang"
+     ],
+     "venue": "Industrial Crops and Products",
+     "abstract": "Existing antiviral therapies are constrained by viral mutation, resistance, and adverse effects. Traditional Chinese medicine (TCM) and food–medicine homology (FMH) resources provide alternative therapeutic avenues, yet modern pharmacological studies frequently attribute their efficacy to isolated monomeric compounds. This reductionist perspective neglects the supramolecular assemblies formed by polyphenols, polysaccharides, proteins, and other constituents via non-covalent interactions during decoction, processing, and gastrointestinal digestion. Because such assemblies alter apparent solubility, surface charge and interfacial behaviour, they may change the chemical form in which a constituent actually reaches the mucosa, and therefore the activity attributable to a given marker compound. This review examines antiviral TCM from a supramolecular perspective. We detail the formation of these assemblies during traditional preparation and digestion, and delineate their mechanisms across the viral life cycle, including entry blockade, replication inhibition, and gut–lung mucosal defense. Furthermore, the functional properties of TCM-derived natural nanoparticles and carrier-free delivery systems are evaluated. Classical compatibility principles and processing detoxification are reconceptualized as testable structure–function relationships. Current methodological limitations in structural characterization, safety evaluation, and multi-omics integration are critically discussed. Treating the assembled state as a defined experimental variable, rather than as an uncontrolled feature of the extract, is a prerequisite for moving from empirical formulation to structure–function-guided antiviral pharmacology."
+    },
+    {
+     "id": "https://openalex.org/W7237338910",
+     "doi": "https://doi.org/10.1038/s41598-026-81067-y",
+     "title": "Exploring conjugation between Streptomyces as a tool to mobilize biosynthetic gene clusters",
+     "publication_year": 2026,
+     "authors": [
+      "Kateryna Bahriichuk",
+      "Viktoriia Rudenko",
+      "Anastasiia Botserovska",
+      "Sofiia Melnyk",
+      "Yuriy V. Rebets",
+      "Andriy N. Luzhetskyy",
+      "Bohdan O. Ostash"
+     ],
+     "venue": "Scientific Reports",
+     "abstract": "Streptomyces bacteria harbor conjugative plasmids and integrative conjugative elements that employ a unique mode of DNA transfer. It minimally requires a single FtsK-like motor protein, TraB, and a cis -acting sequence recognized by TraB, clt. Notably, clt -like sequences (clc) are also scattered over Streptomyces chromosomes, driving the co-transfer of their macrofragments along with the plasmid. This could be used to facilitate the exchange of genetic material between different streptomycete strains and even species, thus creating new opportunities for natural product discovery. Here we explored several possible avenues of use of conjugation in the context of the popular chassis strain Streptomyces albidoflavus J1074, such as plasmid and chromosomal marker mobilization, and ability to transfer across species. First, among several clc types being screened in silico, the one for TraB encoded by plasmid pIJ101 was the most abundant. Second, TraB-mediated transfer of replicative (pIJ101-based) plasmid occurred at a frequency of 10% of recipient spore titer. The efficiency of inheritance of the chromosomal marker, distant to the conjugative plasmid location within the genome, was about four orders of magnitude lower. The developed methods might be useful to produce novel J1074 genotypes. Finally, we show that the removal of native plasmid-encoded clt site and repressor gene korA led to further drop (down to 10 − 6) in conjugation efficiency, albeit did not abrogate it completely. Hence, the prospects of chromosomal clc sites for gene transfer across species deserve more attention. We discuss the challenges associated with this genetic system and possible avenues for improvement, in the context of ongoing chassis-centered natural product discovery endeavors."
+    },
+    {
+     "id": "https://openalex.org/W7237047929",
+     "doi": "https://doi.org/10.3389/fsysb.2026.1968124",
+     "title": "Design and proof of concept of a CRISPR/Cas13a-catalytic hairpin assembly framework for circulating microRNA detection in sepsis",
+     "publication_year": 2026,
+     "authors": [
+      "Despina Panteleon",
+      "Maria-Nikolina Kerpinioti",
+      "Irene Pierrakea",
+      "Maria Electra Pavli",
+      "Spiros Giannopoulos",
+      "Nefeli Zormpa-Sfaellou",
+      "Konstantinos Anastasopoulos"
+     ],
+     "venue": "Frontiers in Systems Biology",
+     "abstract": "Sepsis remains a leading cause of mortality worldwide, largely because early diagnosis is slow. Current biomarkers such as C-reactive protein and procalcitonin lack specificity and need up to 24 h to peak, delaying diagnosis in a condition where each hour increases mortality risk. Circulating microRNAs are promising early biomarkers, reflecting rapid molecular changes in the host response to infection. We propose a diagnostic framework combining CRISPR/Cas13a molecular recognition with a Catalytic Hairpin Assembly amplification circuit. Cas13a is programmed to recognize a short microRNA; on activation it cleaves a synthetic substrate collaterally, releasing an initiator that triggers an enzyme-free amplification cascade. In a proof-of-concept experiment a complete redesigned hairpin set (H0, H1 and H2) raised the share of the hairpin pool migrating as the H1-H2 duplex from approximately 34% to approximately 90% relative to a published set used in the same architecture, measured as band intensity in parallel lanes of a single gel. This is reported as a preliminary observation: the comparison rests on technical replicates of one reaction and lacks the no-target control that would establish target-dependent operation of the complete cascade. The system is designed for integration into a portable microneedle-microfluidic biosensor that would permit minimally invasive, serial sampling with an end-to-end assay time of approximately 4 h per measurement; that device has not been built and is described here as a specification. The two microRNAs were chosen by exhaustive screening of a public whole-blood cohort. They separate septic patients from healthy volunteers well (ROC-AUC 0.95) but separate them from patients with non-infectious inflammation poorly (ROC-AUC 0.64), and no panel of up to 263 curated microRNAs improved on that second figure, which is the comparison that matters clinically. That evidence comes from whole blood, a cell-associated compartment, whereas the proposed device would sample interstitial fluid, which is cell-free; performance in the intended sample therefore remains an open question. This article presents a hypothesis and a design, together with the computational and bench evidence that bears on them. No sensitivity, specificity or clinical performance is claimed, and the experiments that would test the proposal are set out explicitly."
+    },
+    {
+     "id": "https://openalex.org/W7166724106",
+     "doi": "https://doi.org/10.1242/jcs.265154",
+     "title": "AlphaFold-Multimer reveals diverse cyclin-CDK substrate docking interactions",
+     "publication_year": 2026,
+     "authors": [
+      "Sarah Willich",
+      "Nitin Kapadia",
+      "Paul Nurse"
+     ],
+     "venue": "Journal of Cell Science",
+     "abstract": "Cyclin-dependent kinases (CDKs) control eukaryotic cell-cycle progression by phosphorylating specific substrates with substrate recognition often involving cyclin-specific docking interactions. However, in minimal cell cycle control systems driven by a single cyclin-CDK complex, how docking interactions contribute to the differential timing of substrate phosphorylation remains unclear. Here, we used AlphaFold-Multimer to systematically predict interactions between the fission yeast mitotic cyclin-CDK fusion Cdc13-L-Cdc2 and its known in vivo CDK substrates. We found that many substrates are predicted to interact with the cyclin hydrophobic patch, and have identified a previously uncharacterised docking motif, [FVIPWGLAM](x)xER[LMV] (ERL motif), with features consistent with an atypical RxL motif. We show that ERL motifs can functionally substitute for canonical RxL motifs to promote phosphorylation of a model CDK substrate by Cdc13-Cdc2, while the S-phase cyclin-CDK Cig2-Cdc2 was found to preferentially phosphorylate substrates containing canonical RxL motifs. Interestingly, Cdc13-L-Cdc2 was not predicted to bind DNA replication substrates preferentially over mitotic substrates, suggesting that other mechanisms underlie the temporal ordering of CDK substrate phosphorylation. These results reveal that cyclin-CDK-substrate interactions are more diverse than previously thought."
+    },
+    {
+     "id": "https://openalex.org/W7236628954",
+     "doi": "https://doi.org/10.1073/pnas.2624265123",
+     "title": "Authentic structure of the CCHFV RNA–nucleoprotein complex at near-atomic resolution",
+     "publication_year": 2026,
+     "authors": [
+      "Zidan Song",
+      "Nan Zhang",
+      "Fan Wu",
+      "Wentao Ni",
+      "Yixiao Liu",
+      "Dongdong Sun",
+      "Bowen Zhang"
+     ],
+     "venue": "Proceedings of the National Academy of Sciences",
+     "abstract": "Crimean-Congo hemorrhagic fever virus (CCHFV) poses a major public health threat without approved vaccines or antivirals. Its ribonucleoprotein (RNP) is essential for replication, but its native architecture and RNA packaging remain elusive. Here, we combine AI-based structural prediction with cryo-electron microscopy to resolve the native structure of the CCHFV RNP purified from CCHFV-infected cells. We report a 3.87 Å structure of a single-turn RNP, and local refinement yielded a 3.55 Å structure of two adjacent NP protomers with continuous RNA. This represents the highest-resolution authentic RNP structure reported among segmented negative-strand RNA viruses (sNSVs), and provides the structural basis for CCHFV RNP assembly. Together with mutational analyses, these findings define the molecular basis of RNA encapsidation and NP oligomerization in the native CCHFV RNP. Our findings provide a hybrid structural framework integrating AI and experimental approaches for understanding genome organization in sNSVs and offer a foundation for future antiviral development."
+    },
+    {
+     "id": "https://openalex.org/W7234708319",
+     "doi": "https://doi.org/10.1186/s43042-026-00924-7",
+     "title": "RhoH dysregulations in human diseases: a systematic review",
+     "publication_year": 2026,
+     "authors": [
+      "Keat Chuan Saw",
+      "Nurul Syafawani Fizal",
+      "Syafinaz Amin Nordin",
+      "Saiful Effendi Syafruddin",
+      "Ana Masara Ahmad Mokhtar"
+     ],
+     "venue": "Egyptian Journal of Medical Human Genetics",
+     "abstract": "RhoH is an atypical Rho GTPase that primarily regulates immunological functions in T-cells. Dysregulation of RhoH has been implicated in various diseases, particularly hematological cancers such as lymphoma and leukemia. However, recent studies have also identified aberrant RhoH expression in non-hematological conditions, including systemic lupus erythematosus (SLE), chronic psoriasis, and epithelial cancer cell lines, despite RhoH being predominantly expressed in hematopoietic cells. Despite these findings, there has been limited systematic review of RhoH dysregulation across different human diseases. To address this gap, this systematic literature review (SLR) investigates the characteristics of RhoH dysregulation in both cancerous and non-cancerous human diseases, regardless of their hematological nature. Following the PRISMA (Preferred Reporting Items for Systematic Reviews and Meta-Analyses) guidelines, we conducted a thorough search of three major scientific databases: PubMed, Scopus and Web of Science, to identify relevant articles for analysis. The review focuses on two key themes: (1) the types of human diseases associated with RhoH dysregulation and (2) the specific characteristics of RhoH dysregulation. This comprehensive review enhances our understanding of the diverse diseases linked to RhoH dysregulation, providing a foundation for future research into its underlying mechanisms in signalling and disease pathogenesis."
+    },
+    {
+     "id": "https://openalex.org/W7234184842",
+     "doi": "https://doi.org/10.64898/2026.11.13.763891",
+     "title": "Parasite-induced ER-PVM contacts promote CERT-dependent ceramide delivery to the apicomplexan vacuole",
+     "publication_year": 2026,
+     "authors": [
+      "VAISAK MOHAN",
+      "Ilaksha Pahwa",
+      "Veeda Narahari",
+      "Ajmal P Mustafa",
+      "Purvit Bhatia",
+      "Sahoo Parnika",
+      "Usha Krishna"
+     ],
+     "venue": "bioRxiv (Cold Spring Harbor Laboratory)",
+     "abstract": "Apicomplexan parasites rely on host lipids for replication, yet how host transport machinery is coupled to the parasitophorous vacuole membrane (PVM) remains unresolved. Here, we uncover a host-parasite membrane contact site mechanism driving ceramide delivery to the vacuole. Host ceramide transfer protein (CERT) targets the PVM via its PH domain, cooperating with host VAP-B to promote sphingolipid accumulation and support Toxoplasma and Plasmodium development. By combining VAP-B proximity labeling with FFAT motif predictions, we identified TgVPS13 as a parasite-encoded FFAT effector that physically engages host VAP-B at the host-parasite interface. Conditional depletion of TgVPS13 markedly reduces vacuolar sphingolipid enrichment, partially impairs host CERT recruitment at the PVM, disrupts intravacuolar parasite organization, and severely restricts replication. Together, these findings establish a model in which TgVPS13-VAP-B tethering creates ER-PVM proximity, organizing a functional contact site that optimizes CERT-mediated ceramide transfer for efficient host lipid acquisition."
+    },
+    {
+     "id": "https://openalex.org/W7226982826",
+     "doi": "https://doi.org/10.1007/s11274-026-05392-0",
+     "title": "An AI-designed, recombinantly produced FtsZ-directed peptide with in vitro activity against pan-drug-resistant clinical isolates",
+     "publication_year": 2026,
+     "authors": [
+      "Yousif I. Yousif",
+      "Lina Qays Yaseen",
+      "Ahmed AbdulJabbar Suleiman"
+     ],
+     "venue": "World Journal of Microbiology and Biotechnology",
+     "abstract": ""
+    },
+    {
+     "id": "https://openalex.org/W7225870716",
+     "doi": "https://doi.org/10.64898/2026.11.09.765507",
+     "title": "Proteome-wide reanalysis identifies coverage and error-rate limits on acquired lysines in cancer",
+     "publication_year": 2026,
+     "authors": [
+      "Rajib Molla",
+      "Sona Tiwari",
+      "Ayan Mukherjee",
+      "Md Khaled Hossain",
+      "Mikail E. Abbasov"
+     ],
+     "venue": "bioRxiv (Cold Spring Harbor Laboratory)",
+     "abstract": "Missense mutation in cancer creates acquired lysines, residues present in tumor cells and absent from normal cells in the same patient. The class holds 295,411 sites across 20,365 genes and falls on driver hotspots more often than other substitutions (odds ratio 1.68). Yet re-searching 42 proteomic experiments with a mutation-aware database recovers the mutant peptide in 0.63% of 8,470 site-in-cell-line observations, because a new lysine is a new cleavage site and the peptide it creates runs 6 residues against 13 for the wild type. Reported error rates do not hold either. Burden-matched entrapment puts the realized false-discovery proportion at 4.70% before score filtering, against 1% reported. Measured by competitive activity-based protein profiling across four cell lines, ligandability reproduces at the site level, no compound descriptor tested predicts it, and structure predicts it poorly at AUC 0.617. Acquired lysines are structurally ordinary, so the barrier is detection rather than chemistry."
+    }
+   ]
+  },
+  "diagnosis-dementia-due-alzheimer-s": {
+   "doi": "10.1016/j.jalz.2011.03.005",
+   "openalex": "https://openalex.org/W2115017507",
+   "is_retracted": false,
+   "cited_by_count": 17840,
+   "works": [
+    {
+     "id": "https://openalex.org/W7233584635",
+     "doi": "https://doi.org/10.1016/j.neurobiolaging.2026.11.002",
+     "title": "Effects of temporal and parietal cortex non-invasive brain stimulation on memory in healthy older adults, mild cognitive impairment, and Alzheimer's disease: A systematic review and meta-analysis",
+     "publication_year": 2026,
+     "authors": [
+      "Joana Macedo",
+      "Marta Almeida",
+      "Rafael Ribeiro",
+      "M.J. Lázaro Álvarez",
+      "Filipa Ribeiro"
+     ],
+     "venue": "Neurobiology of Aging",
+     "abstract": "Memory decline is a common cognitive complaint among healthy older adults, mild cognitive impairment (MCI) and Alzheimer's disease (AD). Non-invasive brain stimulation (NIBS) has been investigated as a promising approach for enhancing memory. While most studies target the dorsolateral prefrontal cortex, interest is growing in stimulating temporal and parietal areas due to their involvement in episodic and associative memory. This systematic review and meta-analysis evaluated the effects of temporo-parietal NIBS on memory in healthy older adults and patients with MCI and AD. Nineteen studies were included in the systematic review, of which 12 provided data for random-effects meta-analysis. Effects were expressed as Hedges' g, comparing active and sham stimulation. Overall, NIBS significantly improved memory performance (g = 0.67, 95% CI 0.27, 1.07). Analyses stratified by stimulation modality showed a significant effect for transcranial alternating current stimulation (tACS) (g = 0.81, 95% CI 0.08, 1.53), whereas repetitive transcranial magnetic stimulation (rTMS) did not reach statistical significance (g = 0.60, 95% CI -0.0003, 1.19). The difference between modalities was not significant (p = 0.54). Additional analyses showed significant improvements in episodic memory across healthy older adults and patients with MCI and AD (g = 0.60, 95% CI 0.19, 1.01) and in patients with MCI and AD alone (g = 0.61, 95% CI 0.17, 1.06). rTMS did not significantly improve episodic memory in MCI and AD (g = 0.62, 95% CI -0.08, 1.31). These findings suggest potential memory benefits, but substantial heterogeneity and very low certainty of evidence warrant cautious interpretation."
+    },
+    {
+     "id": "https://openalex.org/W7151036061",
+     "doi": "https://doi.org/10.1159/ned/adwag061",
+     "title": "Systematic Review of Population-Based Studies of Prevalence and Incidence of Aging-Associated Neurodegenerative Diseases in Russia",
+     "publication_year": 2026,
+     "authors": [
+      "Artemiy Okhotin",
+      "Irina Vladimirovna Gorbunova",
+      "Anton Bolshakov"
+     ],
+     "venue": "Neuroepidemiology",
+     "abstract": "AIM: To systematically review population-based studies reporting the prevalence or incidence of dementia, cognitive dysfunction, and Parkinson's disease among adults aged 50 years and older in Russia. SUBJECTS AND METHODS: We searched MEDLINE, Scopus, Embase, and eLibrary from inception to January 2025, supplemented by grey-literature searches and citation checking. Cross-sectional and cohort studies reporting population-based prevalence or incidence estimates were eligible. Convenience samples from healthcare institutions and institutionalised populations without a population denominator were excluded, whereas population-based administrative records were eligible. Risk of bias was assessed using the RoB-PrevMH tool. For studies using MMSE or Mini-Cog, projected dementia prevalence was calculated by adjusting screen-positive proportions for test sensitivity and specificity. Prevalence estimates were synthesised by inverse-variance meta-analysis on the logit scale, stratified by age group and ascertainment method. Random-effects estimates were considered primary; incidence estimates were not pooled. RESULTS: Twenty papers describing 17 distinct study populations met the inclusion criteria: 11 papers reported cognitive outcomes and 9 reported Parkinson's disease. Direct expert-diagnosis estimates of dementia prevalence were available from two older studies and ranged from 6.7% to 10.5% in adults older than 60 years. Registered prevalence based on administrative data was substantially lower, at approximately 0.5-0.6%. Screen-positive proportions based on MMSE or Mini-Cog ranged from 3.1% to 81.5%. After adjustment for test sensitivity and specificity, projected dementia prevalence reached 81.6% in a single Mini-Cog stratum aged 75-84 years; the random-effects pooled estimate for the nominal 75-84-year group was 54.1% (95% CI 18-87). Two screening strata were incompatible with the assumed test-accuracy parameters. Administrative estimates of Parkinson's disease prevalence ranged from 0.017% to 0.29%; the only neurologist-assessed population study reported 0.31%. CONCLUSION: Estimates varied markedly according to age, study design, and ascertainment method. Administrative data probably underestimate disease prevalence, whereas estimates derived from single cognitive screening tests are sensitive to assumptions about diagnostic accuracy. Available studies are regionally restricted and methodologically heterogeneous and do not provide reliable national prevalence or incidence estimates. Population-based longitudinal studies using validated diagnostic methods are needed to support health policy in Russia."
+    },
+    {
+     "id": "https://openalex.org/W7225619811",
+     "doi": "https://doi.org/10.1016/j.arr.2026.103442",
+     "title": "Effects of probiotics/synbiotic interventions on cognitive dysfunction in Alzheimer's or MCI: A systematic review and meta‑analysis of randomized controlled trials",
+     "publication_year": 2026,
+     "authors": [
+      "梦雨 张",
+      "Haoyue Zhang",
+      "Bingmeng Fu",
+      "Dengfeng Xu"
+     ],
+     "venue": "Ageing Research Reviews",
+     "abstract": ""
+    },
+    {
+     "id": "https://openalex.org/W7225625265",
+     "doi": "https://doi.org/10.1016/j.jpsychires.2026.11.005",
+     "title": "Posttraumatic stress disorder and risk of all-cause dementia: A systematic review and meta-regression analysis of between-study heterogeneity",
+     "publication_year": 2026,
+     "authors": [
+      "João Evangelista da Costa",
+      "Luisa Alencar Santos Lage",
+      "Luís Gabriel de Sousa Fontenele",
+      "Isabela Malerba Pinheiro",
+      "Clara de Oliveira",
+      "Beatriz Gonçalves da Silva Miroski Gerente",
+      "William Berger"
+     ],
+     "venue": "Journal of Psychiatric Research",
+     "abstract": "BACKGROUND: Posttraumatic stress disorder (PTSD) has been associated with later-life dementia, but longitudinal evidence remains heterogeneous. We evaluated the association between PTSD and incident all-cause dementia and explored sources of between-study variability. METHODS: This systematic review, meta-analysis and meta-regression followed PRISMA 2020 and was registered in PROSPERO (CRD420251184132). We searched Scopus, PubMed/MEDLINE, Web of Science, PsycINFO and PTSDpubs for longitudinal cohort studies comparing incident dementia in individuals with and without PTSD. Hazard ratios (HRs) and odds ratios (ORs) were pooled separately. Subgroup analyses, leave-one-out analyses, meta-regression and publication-bias assessment were performed. FINDINGS: Thirteen longitudinal studies were included; 10 contributed to the HR meta-analysis, with a reported source-cohort population of 1,825,386. PTSD was associated with incident dementia in HR-based analyses (pooled HR, 1.75; 95% CI, 1.39-2.20; I2 = 83.7%) and OR-based analyses (pooled OR, 2.49; 95% CI, 1.68-3.67; I2 = 84.2%). Leave-one-out analyses supported robustness. Weighted mean age explained 70.76% of between-study heterogeneity and remained significant in the multivariable model, together with follow-up duration. The full model explained 86.76% of residual heterogeneity. INTERPRETATION: PTSD was associated with incident all-cause dementia despite substantial heterogeneity. Baseline age and follow-up duration may partly explain between-study variability. These observational findings establish an association, not that PTSD causes dementia."
+    },
+    {
+     "id": "https://openalex.org/W7160736780",
+     "doi": "https://doi.org/10.1007/s11065-026-09718-5",
+     "title": "Effectiveness of Verbal Fluency Tests for Detecting Cognitive Decline in Adults with Alzheimer’s Dementia and Frontotemporal Dementia: A Three-Level Meta-Analysis",
+     "publication_year": 2026,
+     "authors": [
+      "C. Y. G. Chang",
+      "Amie M. Foran",
+      "Mike W.‐L. Cheung"
+     ],
+     "venue": "Neuropsychology Review",
+     "abstract": "As our population ages, the prevalence of dementia, including Alzheimer's dementia (AD) and frontotemporal dementia (FTD), is increasing. Early dementia diagnoses facilitate access to interventions when they are most effective for prolonging and improving life. Verbal fluency tests (e.g., FAS and Animal Fluency) can aid in the diagnosis of AD and FTD through detecting declines in executive functioning and language. These tests may be particularly useful for diagnosing the behavioural variant of FTD (bvFTD), which is associated with declines in executive functioning. A systematic search of Embase, PsycINFO, PubMed, MEDLINE, CINHAL, and AgeLine identified 127 peer-reviewed studies published from January 2010 to July 2024, which compared FAS and Animal Fluency Test performances of people with AD or FTD to cognitively-healthy controls. Hedges' g effect sizes determined the effectiveness of three common score types (Total, Intrusion, Perseveration) for AD/FTD combined, AD and combined FTD subtypes, and AD and FTD subtypes (e.g., bvFTD). FAS and Animal Fluency Total Scores were the most reported and effective for detecting cognitive decline in these dementias combined (g = -1.31 and g = -1.95, respectively), but similar effects were seen for AD and bvFTD. The pattern of effects was not influenced by patient characteristics and remained consistent when only low risk-of-bias studies were analysed. However, significant publication bias may have inflated the effects for AD. Overall, the FAS and Animal Fluency Total Scores can effectively detect cognitive decline in both AD and FTD, although they cannot be recommended for differentiating between AD and bvFTD."
+    },
+    {
+     "id": "https://openalex.org/W7238770199",
+     "doi": "https://doi.org/10.1177/25424823261508410",
+     "title": "From prospective memory to episodic future thinking in Alzheimer's disease and semantic dementia: A first comparative study",
+     "publication_year": 2026,
+     "authors": [
+      "Valentina La Corte",
+      "Agnès Michon",
+      "Sophie Ferrieux",
+      "Aurélie Funkiewiez",
+      "Lucie Delefosse",
+      "Bruno Dubois",
+      "Marc Teichmann"
+     ],
+     "venue": "Journal of Alzheimer s Disease Reports",
+     "abstract": "Background Future-oriented cognition relies on prospective memory (PM), the ability to carry out intended actions, and episodic future thinking (EFT), the mental simulation of personal future events. How their breakdown relates to specific memory system failures in neurodegenerative diseases remains poorly understood. Objective To compare PM and EFT profiles, and their relationship as a function of temporal distance, in patients with Alzheimer's disease (AD) and semantic dementia (SD). Methods Ten patients with AD, ten with SD and 14 healthy controls completed an immersive virtual reality task assessing episodic memory and four PM conditions (time-based, semantically linked, non-linked and enacted event-based), and the Temporally Extended TEMPau task, assessing past and future episodic thinking at three temporal distances (one week, one year, five years). Results AD patients showed a generalized PM deficit and reduced EFT for near and intermediate timeframes, whereas distant EFT was relatively preserved. SD patients showed preserved time-based PM, a disproportionate failure for semantically linked event-based PM, milder impairment in non-linked conditions, and impaired EFT for intermediate and distant periods, with preserved near-future thinking. Although factual recall was preserved in SD, contextual binding and recognition were impaired. Neither group differed from controls on enacted PM. In the pooled sample, PM correlated with near-future EFT only, an association not replicated within groups. Conclusions Episodic and semantic memory appear to differentially support PM and EFT depending on temporal distance, with implications for the differential diagnosis and cognitive modeling of future-oriented processes in dementia."
+    },
+    {
+     "id": "https://openalex.org/W7223673135",
+     "doi": "https://doi.org/10.3390/biomedicines14112444",
+     "title": "Genome-Wide Genotype Resource and Exploratory Association Analysis of Alzheimer’s Disease in a Kazakh Population: A Case–Control Study",
+     "publication_year": 2026,
+     "authors": [
+      "Aiym Kaiyrlykyzy",
+      "Aygerim Serikzhan",
+      "Aliya Kassenova",
+      "Aigul Sharip",
+      "Dinara Alzhanova",
+      "Laura Yeszhanova",
+      "Leyla Djansugurova"
+     ],
+     "venue": "Biomedicines",
+     "abstract": "Background/Objectives: Alzheimer’s disease (AD) has a substantial genetic component, yet Central Asian populations remain markedly underrepresented in genomic studies of the disease. Methods: to address this gap, we generated array-based genotype data using an immune-focused genotyping platform from a Kazakh AD case–control cohort and performed an exploratory association analysis. Following quality control, 180 individuals of Kazakh ancestry, including 92 individuals with AD and 88 cognitively normal controls, were analyzed. Population structure was assessed using principal component analysis, and association testing was performed using covariate-adjusted logistic regression under an additive model (primary analysis), with case–control tests under several genetic models as secondary analyses. Results: no variant reached study-wide significance; however, several exploratory association signals (p < 1 × 10−4) were identified, including variants on chromosome 9p24 and in ADARB2, MAST4, and ADAM23, which remained nominally associated after adjustment for sex, age, and principal components. In addition, APOE ε4 carrier status was evaluated in cases and controls. The proportion of APOE ε4 carriers was numerically higher among individuals with AD than among controls (40.7% vs. 26.6%), although the difference did not reach statistical significance (p = 0.074). These findings should be considered hypothesis-generating and require replication in larger independent cohorts. Conclusions: this study provides one of the first immune-focused array-based genotype datasets for AD in a Central Asian population. The publicly available genotype data and association results provide a foundation for future replication, meta-analysis, and comparative population-genetic studies of AD across diverse ancestry groups."
+    },
+    {
+     "id": "https://openalex.org/W7223182043",
+     "doi": "https://doi.org/10.3389/fnagi.2026.1921894",
+     "title": "Reduced weighted permutation entropy in visual-temporal cortex and altered resting-state brain dynamics in Alzheimer’s disease",
+     "publication_year": 2026,
+     "authors": [
+      "Wenjing Zhao",
+      "Yuhong Huang",
+      "Hongyi Li",
+      "Wei Jian",
+      "Ziqi Wang",
+      "Tingting Wang",
+      "Xue Qiu"
+     ],
+     "venue": "Frontiers in Aging Neuroscience",
+     "abstract": "Background: Alzheimer's disease (AD) is increasingly recognized as a disorder of distributed neural dynamics. Resting-state fMRI combined with signal-complexity measures may provide new insights into alterations in spontaneous brain activity. This study investigated whether weighted permutation entropy (WPE), an amplitude-sensitive measure of temporal complexity, could identify regional abnormalities in AD and characterize their temporal and network-level features. Methods: Twenty patients with AD and twenty-four healthy controls underwent resting-state fMRI. Regional WPE was calculated using the Brainnetome atlas. Group comparisons included age, sex, years of education, and mean framewise displacement as covariates. Brainnetome findings were evaluated at an exploratory uncorrected threshold of p < 0.001 and checked against Bonferroni correction across 246 regions. Selected regions were used for secondary seed-based functional connectivity analysis. Four complexity-drop cascade intervals were compared without multiplicity correction. Sensitivity analyses examined window length, AAL parcellation, and cascade recruitment thresholds of 8, 10, and 12 regions; Fourier-surrogate analyses provided an additional model-based assessment. Results: At the exploratory Brainnetome threshold, AD was associated with lower WPE in two right inferior temporal subregions and one left fusiform subregion; these findings did not survive Bonferroni correction across 246 regions. The AAL analysis showed a similar regional pattern under FDR correction (q < 0.05). Secondary seed-based analyses identified increased connectivity with visual, parietal, and sensorimotor regions. Longer Peak-to-End and Start-to-End cascade intervals were observed in AD at nominal p < 0.05, without correction across the four interval tests. The overall pattern of subsequent cascade analyses was retained at the 8- and 12-region thresholds. Conclusion: This small-sample study suggests that AD is associated with regional WPE differences, altered connectivity, and possible prolongation of complexity-drop cascades. The exploratory Brainnetome and temporal findings, together with within-sample AAL convergence, motivate independent replication with prespecified multiplicity control. These measures do not yet establish a clinical biomarker or a specific physiological mechanism."
+    },
+    {
+     "id": "https://openalex.org/W7143449631",
+     "doi": "https://doi.org/10.1002/dad2.70506",
+     "title": "Cognitive and brain reserve in bilingual speakers with clinical AD variants",
+     "publication_year": 2026,
+     "authors": [
+      "Nicoletta Biondo",
+      "John Matthew Suntay",
+      "Maria Luisa Mandelli",
+      "Muskaan Sandhu",
+      "Jeanine Sandra Estaban",
+      "Janhavi Pillai",
+      "Eugenie Mamuyac"
+     ],
+     "venue": "Alzheimer s & Dementia Diagnosis Assessment & Disease Monitoring",
+     "abstract": "INTRODUCTION: Bilingualism may confer resilience through enhanced neural integrity. However, evidence for its neuroprotective effect is mixed, and studies across Alzheimer's disease (AD) variants are limited. This study examined gray matter volume (GMV) differences between bilinguals and monolinguals with amnestic AD and logopenic variant primary progressive aphasia (lvPPA). METHODS: In 125 amnestic AD and 78 lvPPA participants with neuropsychological assessments and structural magnetic resonance imaging, we analyzed GMV differences between monolinguals and bilinguals within each variant, adjusting for demographic covariates. RESULTS: In amnestic AD, bilinguals showed lower GMV than monolinguals in several regions, including bilateral fusiform and right occipital regions, after correction for multiple comparisons. In lvPPA, regional differences did not survive correction for multiple comparisons, although at the nominal threshold, bilinguals showed lower GMV in temporal and occipital regions and greater GMV in inferior parietal regions. Cognitive performance was comparable between monolinguals and bilinguals within each group. DISCUSSION: Comparable cognitive performance despite lower GMV is consistent with a potential role of bilingualism in cognitive reserve. The observed regional patterns in lvPPA are exploratory and require replication in a larger sample."
+    },
+    {
+     "id": "https://openalex.org/W7223558303",
+     "doi": "https://doi.org/10.1002/alz.71930",
+     "title": "Blood transcriptomic signatures of vascular risk in Alzheimer's disease",
+     "publication_year": 2026,
+     "authors": [
+      "Sang‐Won Han",
+      "Young Ho Park",
+      "Jung‐Min Pyun",
+      "Jiyun Hwang",
+      "Jeong Su Park",
+      "SangYun Kim",
+      "Kwangsik T. Nho"
+     ],
+     "venue": "Alzheimer s & Dementia",
+     "abstract": "INTRODUCTION: Lifestyle and environmental factors contributing to cardiovascular risk are components of the exposome, yet molecular signatures associated with cumulative cardiovascular risk in Alzheimer's disease (AD) remain incompletely understood. METHODS: We analyzed blood-based transcriptomics data from two independent cohorts: Seoul National University Bundang Hospital (SNUBH; N = 148, Korean) and Alzheimer's Disease Neuroimaging Initiative (ADNI; N = 743, predominantly European ancestry). Framingham cardiovascular risk score (FRS)-associated co-expression network modules were identified, followed by pathway-based enrichment, hub gene-based participant stratification, and bidirectional cross-cohort discovery-replication analyses. RESULTS: Two co-expression modules were associated with FRS in SNUBH, and six in ADNI. Bidirectional analyses identified two preserved modules with consistent module-FRS associations across cohorts, enriched in pathways implicated in cellular responses to exposure, including RNA-protein homeostasis, mitochondrial function, and hematopoietic processes. Hub genes in the two modules stratified participants into molecularly distinct subgroups concordant with clinical FRS categories. DISCUSSION: FRS-associated molecular pathways were identified and warrant further investigation as potential targets for risk modification."
+    },
+    {
+     "id": "https://openalex.org/W7223889781",
+     "doi": "https://doi.org/10.1136/bmjopen-2026-121221",
+     "title": "Mapping the evidence on the use of Alzheimer’s disease staging criteria (2011–2026): a scoping review to prioritise action for guidelines – protocol",
+     "publication_year": 2026,
+     "authors": [
+      "Nazmul Islam",
+      "Farid Foroutan",
+      "Theodore M. Johnson",
+      "Amanda G Smith",
+      "Clifford R. Jack",
+      "Ozioma C. Okonkwo",
+      "Sebastian Palmqvist"
+     ],
+     "venue": "BMJ Open",
+     "abstract": "ABSTRACT: INTRODUCTION: Alzheimer’s disease (AD) staging has evolved rapidly with the introduction of biological definitions, expanded biomarker modalities and updated diagnostic frameworks. Multiple staging criteria are now used across research and clinical settings yet their real-world application remains unclear. Differences in healthcare infrastructure, biomarker availability and study purpose may influence how these criteria are implemented. This scoping review aims to systematically map how AD biological and clinical staging criteria have been used since 2011, characterise their application across study types and settings, and identify gaps that may inform future research and guideline development. METHODS AND ANALYSIS: We will conduct a scoping review using the methodological framework proposed by Arksey and O’Malley and enhanced by Levac et al, and will report it according to the Preferred Reporting Items for Systematic reviews and Meta-Analyses extension for Scoping Reviews (PRISMA-ScR) guideline. We will search MEDLINE, Embase, Cochrane Central, PsycINFO and Scopus supplemented by forward-citation and backward-citation tracking using Web of Science. The review will begin in October 2026, with the baseline review complete by March 2027 and will be maintained as a living review. Two reviewers will independently screen titles/abstracts and full texts, extract data using a piloted charting form and resolve disagreements through discussion or a third reviewer. We will map study characteristics, staging criteria used, biomarker and clinical measures applied, outcomes assessed and how studies have examined progression or transitions between stages. We will also conduct a gap analysis to identify underexplored populations, outcomes and applications, with an expert panel convened by the Alzheimer’s Association reviewing and validating the identified gaps. Findings will be summarised descriptively using tables, figures and visualisations. ETHICS AND DISSEMINATION: This review does not require ethics approval because it uses published data. We will disseminate the findings through peer-reviewed publication, conference presentations, webinars and plain-language summaries for people living with AD and their families. We will also share results with guideline developers and other stakeholders to support future evidence-based recommendations."
+    },
+    {
+     "id": "https://openalex.org/W7214727797",
+     "doi": "https://doi.org/10.1177/13872877261490130",
+     "title": "A single-center open-label, randomized, parallel-group controlled clinical trial on the long-term effect of the treatment with EGb 761 in blood markers of inflammation and neurodegeneration in patients with mild cognitive impairment: ACE-2020-EGb 761",
+     "publication_year": 2026,
+     "authors": [
+      "Xavier Morató",
+      "Marta Marquié",
+      "Juan Pablo Tartari",
+      "Asunción Lafuente",
+      "María Eugenia Sáez",
+      "Laia Montoliu‐Gaya",
+      "Hanna Huber"
+     ],
+     "venue": "Journal of Alzheimer s Disease",
+     "abstract": "BackgroundNeuroinflammation plays a central role in Alzheimer's disease (AD) pathology and other dementias. EGb 761, a standardized Ginkgo biloba extract, has shown potential anti-inflammatory and neuroprotective properties.ObjectiveThis study evaluated the effects of EGb 761 on plasma proteins related to inflammation and neurodegeneration, cognitive performance, and core AD biomarkers in individuals with mild cognitive impairment (MCI).MethodsWe conducted a 12-month randomized, controlled, open-label clinical trial with a 12-month extension phase in 100 patients with MCI recruited at a single center. During the first 12 months, participants were randomly assigned to EGb 761 or no treatment. In the extension phase, all participants received EGb 761 for an additional 12 months. Plasma samples were collected at baseline and at 6-month intervals throughout both phases. Inflammatory and neurological proteomic profiles were assessed using the Olink Inflammation and Neurology panels. AD biomarkers including Aβ40, Aβ42, Aβ42/40 ratio, GFAP, NfL, and pTau231 were measured in plasma. Clinical, neurological, and neuropsychological assessments were performed at each visit.ResultsEGb 761 was associated with nominally significant longitudinal decreases in 15 plasma proteins linked to innate immunity and axon guidance, replicated in the delayed-start group.ConclusionsEGb 761 exposure is associated with longitudinal modulation of serum markers associated with systemic inflammation and neurodegeneration in MCI. Larger placebo-controlled biomarker-driven trials are warranted to confirm whether this translates into clinically meaningful neuroprotection.Trial registration:Registro Español de estudios clínicos (REec) 2020-003776-41, ClinicalTrials.gov NCT05594355, https://clinicaltrials.gov/study/NCT05594355."
+    }
+   ]
+  },
+  "prevalence-characteristics-clinical-diagnosis-maturity": {
+   "doi": "10.1210/jc.2013-1279",
+   "openalex": "https://openalex.org/W2062206625",
+   "is_retracted": false,
+   "cited_by_count": 451,
+   "works": [
+    {
+     "id": "https://openalex.org/W7221119443",
+     "doi": "https://doi.org/10.3390/ijms27208966",
+     "title": "Integrative Bioinformatics Analysis Incorporating Artificial Intelligence and Machine Learning Identifies Putative Pathogenic HNF1B Missense Variants Associated with HNF1B-MODY",
+     "publication_year": 2026,
+     "authors": [
+      "Hitham Aldharee"
+     ],
+     "venue": "International Journal of Molecular Sciences",
+     "abstract": "Maturity-onset diabetes of the young type 5 (MODY5 or HNF1B-MODY) is a rare form of diabetes caused by variants in HNF1B. Patients with MODY5 exhibit high blood sugar levels and symptoms commonly associated with both type 1 and type 2 diabetes (T1D, T2D), along with kidney and pancreatic issues. Nonetheless, diagnosis, treatment and management approaches depend on specific genotype-phenotype associations. Interpretation of HNF1B missense variants remains challenging because of conflicting classifications and limited clinical evidence. This study aimed to improve the interpretation of HNF1B missense variants with conflicting evidence regarding pathogenicity and thereby advance the genetic and molecular understanding of HNF1B-MODY. An integrative computational approach combining artificial intelligence (AI), machine learning (ML), and conventional bioinformatic tools, including Panther, SIFT, SNAP2, Meta-SNP, PhD-SNP, PolyPhen-2, and AlphaMissense, was used to identify deleterious missense variants in the HNF1B gene. The variants were further processed to determine their effects on protein conformation, stability, function, and conservation across species. Among 982 reported variants retrieved from the ClinVar database, 368 were classified as missense. Only 47 missense variants were labelled with conflicting classification and reported with clinical uncertainty. Consensus analysis by all tools identified five candidate variants (His153Arg, Asn298Asp, Arg303His, Lys305Glu, and Val458Gly), representing 10.6% (5/47) as potentially pathogenic. AlphaMissense classified all five as likely pathogenic, with scores ranging from 0.8921 to 1.000. Secondary structure analysis indicates that the His153Arg, Asn298Asp, Arg303His, and Lys305Glu variants are in the helical region, while the Val458Gly variant is located within the coil region. Interestingly, all five filtered variants are predicted by the I-Mutant and MuPro tools to reduce protein stability. The three-dimensional (3D) protein structures were constructed using the Deep Learning-Based Iterative Threading Assembly Refinement (D-I-TASSER) tool and visualised by UCSF Chimera. Structural modelling showed similarity between the mutant and wild-type models, with RMSD values ranging from 0.77 to 1.36 Å. The multiple sequence alignments show that amino acids at variant sites across all variants are highly conserved among species. These findings show that combining traditional bioinformatics with artificial intelligence and machine learning improves the interpretation of HNF1B missense variants with clinical uncertainty. Integrating computational predictions with structural, evolutionary, and clinical data provides a framework for prioritising variants for further functional and clinical investigation."
+    },
+    {
+     "id": "https://openalex.org/W4414600722",
+     "doi": "https://doi.org/10.1101/2025.09.28.25336826",
+     "title": "Epistatic contributions to human traits via transcription factor mechanisms",
+     "publication_year": 2025,
+     "authors": [
+      "Breeshey Roskams-Hieter",
+      "Olivier Labayle",
+      "Kelsey Tetley-Campbell",
+      "Mark J. van der Laan",
+      "Chris P. Ponting",
+      "Sjoerd Viktor Beentjes",
+      "Ava Khamseh"
+     ],
+     "venue": "medRxiv",
+     "abstract": "Epistasis causes an individual's genetic background to modulate a DNA variant's effect on trait [1-6]. Epistatic interactions among different loci in human complex traits are expected to be widespread but have not been found [7]. This could be due to small interaction effect sizes, the statistical complexity of estimating interactions that is higher than marginal variant effects, and a substantial multiple testing burden in a genome-wide scan [8-11]. Targeting interacting variants that contribute to the same biological pathway could lighten this burden. Here we combined Targeted Machine Learning [12, 13] with experimentally verified differential binding variants across 9 nuclear hormone receptors (NHR) to identify 535 two-point DNA variant-variant and 185 three-point variant-variant-sex NHR interactions among 768 traits in the UK Biobank (UKB) at a false discovery rate per trait of less than 0.05. Significance testing combined k allele-specific components into a Hotelling's T 2 test of Average Interaction Effect estimates at pairs/triples of loci ( k ≤ 4 or k ≤ 8 for 2- or 3-point interactions, respectively). Nearly a third of 2-point interactions replicated, as they involved the same DNA-binding site and human trait but different trans-acting DNA variants. These epistatic mechanisms of altered transcription factor binding provide both plausible molecular mechanisms of action, and insight into sex-biased genetic risk, for diverse human traits and diseases."
+    },
+    {
+     "id": "https://openalex.org/W4399070415",
+     "doi": "https://doi.org/10.1159/000539542",
+     "title": "Variants of Unknown Significance in Maturity-Onset Diabetes of the Young: High Rate of Conundrum Resolution via Variants of Unknown Significance Reanalysis",
+     "publication_year": 2024,
+     "authors": [
+      "Guido Alarcon",
+      "Glenn A. Maston",
+      "Carol A. Hoffman",
+      "Jennifer Ellen Posey",
+      "MARIA JOSE REDONDO",
+      "Mustafa Tosur"
+     ],
+     "venue": "Hormone Research in Paediatrics",
+     "abstract": "INTRODUCTION: In the era of next-generation sequencing, clinicians frequently encounter variants of unknown significance (VUS) in genetic testing. VUS may be reclassified over time as genetic knowledge grows. We know little about how best to approach VUS in the maturity-onset diabetes of the young (MODY). Therefore, our study aimed to determine the utility of reanalysis of previous VUS results in genetic confirmation of MODY. METHODS: A single-center retrospective chart review identified 85 subjects with a MODY clinical diagnosis. We reanalyzed genetic testing in 10 subjects with 14 unique VUS on MODY genes that was performed >3 years before the study. Demographic, clinical, and biochemical data was collected for those individuals. RESULTS: After reanalysis, 43% (6/14) of the gene variants were reclassified to a different category: 7% (1/14) were \"likely pathogenic\" and 36% (5/14) were \"benign\" or \"likely benign.\" The reclassified pathogenic variant was in HNF1A and all reclassified benign variants were in HNF1A, HNF1B and PDX1. The median time between MODY testing and reclassification was 8 years (range: 4-10 years). CONCLUSION: In sum, iterative reanalyzing the genetic data from VUS found during MODY testing may provide high-yield diagnostic information. Further studies are warranted to identify the optimal time and frequency for such analyses."
+    },
+    {
+     "id": "https://openalex.org/W4388752607",
+     "doi": "https://doi.org/10.2196/47430",
+     "title": "The Reporting Quality of Machine Learning Studies on Pediatric Diabetes Mellitus: Systematic Review",
+     "publication_year": 2024,
+     "authors": [
+      "Zsombor Zrubka",
+      "Gábor Kertész",
+      "László Gulàcsi",
+      "János Tibor Czere",
+      "Áron Hölgyesi",
+      "Hossein Motahari-Nezhad",
+      "Amir Hosein Mosavi"
+     ],
+     "venue": "Journal of Medical Internet Research",
+     "abstract": "BACKGROUND: Diabetes mellitus (DM) is a major health concern among children with the widespread adoption of advanced technologies. However, concerns are growing about the transparency, replicability, biasedness, and overall validity of artificial intelligence studies in medicine. OBJECTIVE: We aimed to systematically review the reporting quality of machine learning (ML) studies of pediatric DM using the Minimum Information About Clinical Artificial Intelligence Modelling (MI-CLAIM) checklist, a general reporting guideline for medical artificial intelligence studies. METHODS: We searched the PubMed and Web of Science databases from 2016 to 2020. Studies were included if the use of ML was reported in children with DM aged 2 to 18 years, including studies on complications, screening studies, and in silico samples. In studies following the ML workflow of training, validation, and testing of results, reporting quality was assessed via MI-CLAIM by consensus judgments of independent reviewer pairs. Positive answers to the 17 binary items regarding sufficient reporting were qualitatively summarized and counted as a proxy measure of reporting quality. The synthesis of results included testing the association of reporting quality with publication and data type, participants (human or in silico), research goals, level of code sharing, and the scientific field of publication (medical or engineering), as well as with expert judgments of clinical impact and reproducibility. RESULTS: After screening 1043 records, 28 studies were included. The sample size of the training cohort ranged from 5 to 561. Six studies featured only in silico patients. The reporting quality was low, with great variation among the 21 studies assessed using MI-CLAIM. The number of items with sufficient reporting ranged from 4 to 12 (mean 7.43, SD 2.62). The items on research questions and data characterization were reported adequately most often, whereas items on patient characteristics and model examination were reported adequately least often. The representativeness of the training and test cohorts to real-world settings and the adequacy of model performance evaluation were the most difficult to judge. Reporting quality improved over time (r=0.50; P=.02); it was higher than average in prognostic biomarker and risk factor studies (P=.04) and lower in noninvasive hypoglycemia detection studies (P=.006), higher in studies published in medical versus engineering journals (P=.004), and higher in studies sharing any code of the ML pipeline versus not sharing (P=.003). The association between expert judgments and MI-CLAIM ratings was not significant. CONCLUSIONS: The reporting quality of ML studies in the pediatric population with DM was generally low. Important details for clinicians, such as patient characteristics; comparison with the state-of-the-art solution; and model examination for valid, unbiased, and robust results, were often the weak points of reporting. To assess their clinical utility, the reporting standards of ML studies must evolve, and algorithms for this challenging population must become more transparent and replicable."
+    },
+    {
+     "id": "https://openalex.org/W4378172178",
+     "doi": "https://doi.org/10.1111/1753-0407.13390",
+     "title": "Insights from basic adjunctive examinations of GCK‐MODY , HNF1A‐MODY , and type 2 diabetes: A systemic review and meta‐analysis",
+     "publication_year": 2023,
+     "authors": [
+      "Jing Liu",
+      "Xinhua Xiao",
+      "Qian Zhang",
+      "Miao Yu"
+     ],
+     "venue": "Journal of Diabetes",
+     "abstract": "BACKGROUND: Glucokinase maturity-onset diabetes of the young (GCK-MODY) is difficult to distinguish from other diabetic forms. This article aims to characterize the differences in results from routine examinations between GCK-MODY and hepatocyte nuclear factor 1-α (HNF1A)-MODY or type 2 diabetes (T2D) patients in different periods of diabetes. METHODS: Ovid Medline, Embase, and the Cochrane Library were searched up until October 9, 2022 for articles containing baseline characteristics of GCK-MODY, HNF1A-MOFY, and T2D, excluding pregnant women. The pooled standardized mean differences were derived using a random-effects model. RESULTS: Compared to HNF1A-MODY, GCK-MODY patients had lower indicators of glucose metabolism. Total triglycerides (TG) (-0.93 [-1.66, -0.21] mmol/l) were consistently lower in GCK-MODY patients in the all-family-members subgroup analysis. Compared to T2D, GCK-MODY patients were younger at diagnosis and had lower body mass index (BMI), lower high-sensitivity C-reactive protein (hsCRP) (-0.60 [-0.75, -0.44] mg/l), lower fasting C-peptide (FCP), and lower 2-hour postprandial glucose (2-h PG). Indicators of glycated hemoglobin (HbA1c) and fasting blood glucose (FPG) were consistently lower in subgroup studies with all family members of GCK-MODY patients as well. CONCLUSIONS: Lower HbA1c, FPG, 2-h PG, and change in 2-h PG may help to diagnose GCK-MODY differentially from HNF1A-MODY at an early stage, and lower TG may strengthen such a diagnosis in the follow-up stages. Younger age combined with lower BMI, FCP, hsCRP, and 2-h PG may be useful to distinguish GCK-MODY from MODY-like T2D, whereas results of glucose metabolism indicators such as HbA1c and FPG may not help physicians until after a long follow-up period."
+    },
+    {
+     "id": "https://openalex.org/W4281661731",
+     "doi": "https://doi.org/10.1016/j.jpeds.2022.05.044",
+     "title": "The Genetics of Type 2 Diabetes in Youth: Where We Are and the Road Ahead",
+     "publication_year": 2022,
+     "authors": [
+      "Shylaja Srinivasan",
+      "Jennifer N. Todd"
+     ],
+     "venue": "The Journal of Pediatrics",
+     "abstract": "The incidence of type 2 diabetes (T2D) is on the rise in youth in the US1Dabelea D. Mayer-Davis E.J. Saydah S. Imperatore G. Linder B. Divers J. et al.Prevalence of type 1 and type 2 diabetes among children and adolescents from 2001 to 2009.JAMA. 2014; 311: 1778-1786Crossref PubMed Scopus (933) Google Scholar,2Mayer-Davis E.J. Dabelea D. Lawrence J.M. Incidence trends of type 1 and type 2 diabetes among youths, 2002-2012.N Engl J Med. 2017; 377: 301Crossref PubMed Scopus (7) Google Scholar and worldwide.3Pinhas-Hamiel O. Zeitler P. The global spread of type 2 diabetes mellitus in children and adolescents.J Pediatr. 2005; 146: 693-700Abstract Full Text Full Text PDF PubMed Scopus (484) Google Scholar T2D is characterized by hyperglycemia from a combination of insulin resistance and relative deficiency of insulin secretion. The contribution of insulin resistance to diabetes pathogenesis explains the clinical association of diabetes with obesity and, subsequently, the coincidence of increasing T2D prevalence with increasing prevalence and severity of obesity in children.4Skinner A.C. Ravanbakht S.N. Skelton J.A. Perrin E.M. Armstrong S.C. Prevalence of obesity and severe obesity in US children, 1999-2016.Pediatrics. 2018; 141: e20173459Crossref PubMed Scopus (783) Google Scholar Differences have been described in the natural history of youth-onset T2D and adult-onset T2D. Compared with adults, T2D in youth appears to progress more rapidly, with higher rates of metformin treatment failure and more rapid rates of beta cell decline.5Zeitler P. Hirst K. Pyle L. Linder B. Copeland K. et al.TODAY Study GroupA clinical trial to maintain glycemic control in youth with type 2 diabetes.N Engl J Med. 2012; 366: 2247-2256Crossref PubMed Scopus (597) Google Scholar, 6Bacha F. Pyle L. Nadeau K. Cuttler L. Goland R. Haymond M. et al.Determinants of glycemic control in youth with type 2 diabetes at randomization in the TODAY study.Pediatr Diabetes. 2012; 13: 376-383Crossref PubMed Scopus (33) Google Scholar, 7Narasimhan S. Weinstock R.S. Youth-onset type 2 diabetes mellitus: lessons learned from the TODAY study.Mayo Clin Proc. 2014; 89: 806-816Abstract Full Text Full Text PDF PubMed Scopus (63) Google ScholarThe presence of diabetes encumbers those affected with a long-term burden of chronic disease and an increased risk of cardiovascular and microvascular complications. This risk increases with the duration of the disease, putting children with T2D at extremely high risk for complications. Follow-up data from both the SEARCH for Diabetes in Youth study and the Treatment Options for Diabetes in Youth (TODAY) trial have found a substantial presence of diabetes complications as early as adolescence and young adulthood.8TODAY Study GroupRapid rise in hypertension and nephropathy in youth with type 2 diabetes: the TODAY clinical trial.Diabetes Care. 2013; 36: 1735-1741Crossref PubMed Scopus (188) Google Scholar, 9TODAY Study GroupLipid and inflammatory cardiovascular risk worsens over 3 years in youth with type 2 diabetes: the TODAY clinical trial.Diabetes Care. 2013; 36: 1758-1764Crossref PubMed Scopus (122) Google Scholar, 10Maahs D.M. Snively B.M. Bell R.A. Dolan L. Hirsch I. Imperatore G. et al.Higher prevalence of elevated albumin excretion in youth with type 2 than type 1 diabetes: the SEARCH for Diabetes in Youth study.Diabetes Care. 2007; 30: 2593-2598Crossref PubMed Scopus (126) Google Scholar, 11Mayer-Davis E.J. Davis C. Saadine J. D'Agostino Jr., R.B. Dabelea D. Dolan L. et al.Diabetic retinopathy in the SEARCH for Diabetes in Youth cohort: a pilot study.Diabet Med. 2012; 29: 1148-1152Crossref PubMed Scopus (55) Google Scholar Moreover, the prevalence of complications and overall mortality are higher in youth with T2D compared with adults with T2D or even youth with type 1 diabetes.12Constantino M.I. Molyneaux L. Limacher-Gisler F. Al-Saeed A. Luo C. Wu T. et al.Long-term complications and mortality in young-onset diabetes: type 2 diabete"
+    },
+    {
+     "id": "https://openalex.org/W4226417591",
+     "doi": "https://doi.org/10.1007/s40200-022-00975-8",
+     "title": "Meta-analysis of HNF1A-MODY3 variants among human population",
+     "publication_year": 2022,
+     "authors": [
+      "Rachna Behl",
+      "Nishtha Malhotra",
+      "Vinay Joshi",
+      "Shruti Poojary",
+      "Sanniya Middha",
+      "Shalini Gupta",
+      "Arinola B. Olaonipekun"
+     ],
+     "venue": "Journal of Diabetes & Metabolic Disorders",
+     "abstract": "BackgroundPreviously, numerous case-control studies have highlighted variants responsible for Maturity onset diabetes of young (MODY). However, these studies have been conducted among diverse populations and hence yielded contradictory results. We, therefore, performed a meta-analysis to precisely find the association of SNPs with the disease for the HNF1A gene.ObjectiveMeta-analysis of clinically defined studies deciphering mutations in the HNF1A gene responsible for the development of MODY3 was conducted among various populations to determine associations using statistical approaches. MethodsThe curation of 505 research articles published between the years 2000-2021 was carried out. Visualization of data-related protocols and statistical-analysis were conducted, which led to the identification of highly prevalent mutations among different populations (majorly Europe). Further comparison between the frequencies of the control (healthy population) and test (diseased population) dataset generated through curation was performed.ResultsWe identified nine MODY3 mutations (rs587776825, rs1169288, rs1800574, rs2464196, rs137853244, rs137853238, rs587780357, rs137853240 and rs137853243) at the genome-wide significance level (p<5.0×10–8). The present study confirmed that the data does not follow a normal distribution. Further, the data was confirmed to be a more homogenous type with frequencies having a significant association with the disease.Conclusion﻿This meta-analysis found significant associations of mutations in HNF1A with MODY3, consistent with previous studies. Our findings should help elucidate the mutations in a compiled form responsible for causing MODY3."
+    }
+   ]
+  },
+  "cosmological-implications-baryon-acoustic-oscillation": {
+   "doi": "10.1103/physrevd.92.123516",
+   "openalex": "https://openalex.org/W1819346083",
+   "is_retracted": false,
+   "cited_by_count": 857,
+   "works": [
+    {
+     "id": "https://openalex.org/W7162268638",
+     "doi": "https://doi.org/10.1051/0004-6361/202660781",
+     "title": "Euclid preparation: CXII. Baryon acoustic oscillations extraction techniques: comparison and optimisation",
+     "publication_year": 2026,
+     "authors": [
+      "E Sarpa",
+      "A. Veropalumbo",
+      "M. Bonici",
+      "M. Kärcher",
+      "M. Crocce",
+      "E. Sefusatti",
+      "Edoardo Maragliano"
+     ],
+     "venue": "Astronomy and Astrophysics",
+     "abstract": "We present the first end-to-end validation of the Euclid baryon acoustic oscillation (BAO) analysis pipeline, encompassing density-field reconstruction, two-point correlation function measurement, and cosmological parameter inference. Using eight Euclid -like mock catalogues extracted from each of the four snapshots of the Flagship 1 (FS1) simulation, which is designed to replicate the statistical properties of the first Euclid data release (DR1), we assessed the performance of the two standard BAO reconstruction methods based on the Zeldovich approximation, R EC S YM and R EC I SO, in four redshift snapshots (0.9 ≤ z ≤ 1.8). The pipeline introduces several methodological advances: an emulator-based model evaluator (Bora.jl) combined with a Hamiltonian Monte Carlo sampler (NUTS), achieving a speed-up of more than 500 times relative to standard Monte Carlo Markov chains, and a semi-analytical covariance estimator (BeXiCov+WinCov) that enables robust error estimates with only eight mock realisations and remains stable under variations in the fiducial cosmology. Together, these components ensure computational efficiency while significantly reducing the risk of underestimating the parameter uncertainties. The two reconstruction schemes yield unbiased BAO measurements for all redshifts and user-defined choices, including the smoothing scale and fiducial cosmology. In each snapshot, reconstruction enhances the figure of merit for {Ω m, H 0 r s } by a factor of ∼3, which is equivalent to tripling the effective survey volume. When we combined the four redshift bins, the improvement remained substantial, with BAO-only constraints reaching ∼10% precision on Ω m and ∼3% on H 0 r s. The results from R EC S YM and R EC I SO are consistent within the uncertainties, but we recommend R EC S YM during testing because its sensitivity to covariance variations is lower. These findings establish the accuracy, robustness, and scalability of the Euclid BAO pipeline for DR1 and provide a solid foundation for future cosmological analyses."
+    },
+    {
+     "id": "https://openalex.org/W2984117898",
+     "doi": "https://doi.org/10.1088/1475-7516/2021/10/043",
+     "title": "Novel constraints on the particle nature of dark matter from stellar streams",
+     "publication_year": 2021,
+     "authors": [
+      "Nilanjan Banik",
+      "Jo Bovy",
+      "Gianfranco Bertone",
+      "Denis Erkal",
+      "Thomas J. L. de Boer"
+     ],
+     "venue": "Journal of Cosmology and Astroparticle Physics",
+     "abstract": "Tidal streams are highly sensitive to perturbations from passing dark matter (DM) subhalos and thus provide a means of measuring their abundance. In a recent paper, we analyzed the distribution of stars along the GD-1 stream with a combination of data from the Gaia satellite and the Pan-STARRS survey, and we demonstrated that the population of DM subhalos predicted by the cold dark matter (CDM) paradigm are necessary and sufficient to explain the perturbations observed in the linear density of stars. In this paper, we use the measurements of the subhalo mass function (SHMF) from the GD-1 data combined with a similar analysis of the Pal 5 stream to provide novel constraints on alternative DM scenarios that predict a suppression of the SHMF on scales smaller than the mass of dwarf galaxies, marginalizing over uncertainties in the slope and normalization of the unsuppressed SHMF and the susceptibility of DM subhalos in the inner Milky Way to tidal disruption. In particular, we derive a 95% lower limit on the mass of warm dark matter (WDM) thermal relics m WDM > 3.6 keV from streams alone that strengthens to m WDM > 6.2 keV when adding dwarf satellite counts. Similarly, we constrain the axion mass in ultra-light (\"fuzzy\") dark matter (FDM) models to be m FDM > 1.4 × 10 -21 eV from streams alone or m FDM > 2.2 × 10 -21 eV when adding dwarf satellite counts. Because we make use of simple approximate forms of the streams' SHMF measurement, our analysis is easy to replicate with other alternative DM models that lead to a suppression of the SHMF."
+    },
+    {
+     "id": "https://openalex.org/W1762152001",
+     "doi": "https://doi.org/10.1088/1475-7516/2015/06/049",
+     "title": "A divergence-free parametrization for dynamical dark energy",
+     "publication_year": 2015,
+     "authors": [
+      "Özgür Akarsu",
+      "Tekin Dereli",
+      "Jose Alberto Vazquez"
+     ],
+     "venue": "Journal of Cosmology and Astroparticle Physics",
+     "abstract": "We introduce a new parametrization for the dark energy, led by the same idea to the linear expansion of the equation of state in scale factor a and in redshift z , which diverges neither in the past nor future and contains the same number of degrees of freedom with the former two. We present constraints of the cosmological parameters using the most updated baryon acoustic oscillation (BAO) measurements along with cosmic microwave background (CMB) data and a recent reanalysis of Type Ia supernova (SN) data. This new parametrization allowed us to carry out successive observational analyses by decreasing its degrees of freedom systematically until ending up with a dynamical dark energy model that has the same number of parameters with ΛCDM . We found that the dark energy source with a dynamical equation of state parameter equal −2/3 at the early universe and −1 today fits the data slightly better than Λ."
+    }
+   ]
+  },
+  "individual-differences-creativity-personality-story": {
+   "doi": "10.1002/per.409",
+   "openalex": "https://openalex.org/W2041351660",
+   "is_retracted": false,
+   "cited_by_count": 425,
+   "works": [
+    {
+     "id": "https://openalex.org/W4394011278",
+     "doi": "https://doi.org/10.1002/rev3.3470",
+     "title": "The association between boredom and creativity in educational contexts: A scoping review on research approaches and empirical findings",
+     "publication_year": 2024,
+     "authors": [
+      "Anke Zeißig",
+      "Julia Kansok‐Dusche",
+      "Saskia M. Fischer",
+      "Julia Moeller",
+      "Ludwig Bilz"
+     ],
+     "venue": "Review of Education",
+     "abstract": "Assumptions around the association between boredom and creativity are contentious. Although studies suggest positive effects of boredom, it is also considered a negative predictor of creativity. Researchers also assume that creativity reduces boredom, but boredom can also occur during creative tasks. In this review, we identify and systematise the empirical evidence available to date on the association between creativity and boredom in educational contexts. The string‐guided electronic search yielded 2849 publications. Nineteen publications based on 27 empirical studies met the inclusion criteria. Two reviewers extracted definitions, theories, methods, operationalisations, measurement instruments, and outcomes from the studies using a coding scheme. We identified a range of different theoretical and methodological approaches. The largest cache of empirical evidence was obtained from experimental and quasi‐experimental studies (five positive associations, four negative, two contradictory, and three insignificant results). Correlation studies identified three negative, one contradictory, and seven insignificant correlations between boredom and creativity. In addition, two studies with exploratory, statistically not relevant results contributed to the body of research. The results from the identified and evaluated studies argue both for and against the sensitivity of creative processes in relation to boredom—but a clear causal, positive or negative effect of boredom on creativity is not currently supported by the empirical evidence available. Previous research has also not yet demonstrated an apparent effect of creative states or traits on academic boredom. Future research should aim to explore under what circumstances different relationships between boredom and creativity can be observed and reliably replicated."
+    },
+    {
+     "id": "https://openalex.org/W4384899037",
+     "doi": "https://doi.org/10.1016/j.paid.2023.112338",
+     "title": "The Big Five and divergent thinking: A meta-analysis",
+     "publication_year": 2023,
+     "authors": [
+      "Katalin Grajzel",
+      "Selçuk Acar",
+      "Gage Singer"
+     ],
+     "venue": "Personality and Individual Differences",
+     "abstract": ""
+    },
+    {
+     "id": "https://openalex.org/W2346184691",
+     "doi": "https://doi.org/10.1037/aca0000035",
+     "title": "The big five, the huge two, and creative self-beliefs: A meta-analysis.",
+     "publication_year": 2016,
+     "authors": [
+      "Maciej Karwowski",
+      "Izabela Lebuda"
+     ],
+     "venue": "Psychology of Aesthetics Creativity and the Arts",
+     "abstract": "This article reports a meta-analysis of the relationships between creative self-beliefs (CSBs)—a broad set of characteristics including creative self-efficacy, creative personal identity, and self-rated creativity—and the Big Five (openness, conscientiousness, extraversion, agreeableness, and neurot"
+    },
+    {
+     "id": "https://openalex.org/W562828861",
+     "doi": "https://doi.org/10.25148/etd.fi15032130",
+     "title": "Work Creativity as a Dimension of Job Performance",
+     "publication_year": 2015,
+     "authors": [
+      "Angela C. Reaves"
+     ],
+     "venue": "FIU - Digital Commons (Florida International University)",
+     "abstract": "To stay competitive, many employers are looking for creative and innovative employees to add value to their organization. However, current models of job performance overlook creative performance as an important criterion to measure in the workplace. The purpose of this dissertation is to conduct two separate but related studies on creative performance that aim to provide support that creative performance should be included in models of job performance, and ultimately included in performance evaluations in organizations. Study 1 is a meta-analysis on the relationship between creative performance and task performance, and the relationship between creative performance and organizational citizenship behavior (OCB). Overall, I found support for a medium to large corrected correlation for both the creative performance-task performance (ρ = .51) and creative performance-OCB (ρ = .49) relationships. Further, I also found that both rating-source and study location were significant moderators. Study 2 is a process model that includes creative performance alongside task performance and OCB as the outcome variables. I test a model in which both individual differences (specifically: conscientiousness, extraversion, proactive personality, and self-efficacy) and job characteristics (autonomy, feedback, and supervisor support) predict creative performance, task performance, and OCB through engagement as a mediator. In a sample of 299 employed individuals, I found that all the individual differences and job characteristics were positively correlated with all three performance criteria. I also looked at these relationships in a multiple regression framework and most of the individual differences and job characteristics still predicted the performance criteria. In the mediation analyses, I found support for engagement as a significant mediator of the individual differences-performance and job characteristics-performance relationships. Taken together, Study 1 and Study 2 support the notion that creative performance should be included in models of job performance. Implications for both researchers and practitioners alike are discussed."
+    },
+    {
+     "id": "https://openalex.org/W2269912847",
+     "doi": null,
+     "title": "Creative We Stand: Exploring the Links between American National Identity, Multicultural Exposure and Creativity.",
+     "publication_year": 2013,
+     "authors": [
+      "Cathleen Clerkin"
+     ],
+     "venue": "Deep Blue (University of Michigan)",
+     "abstract": "Previous research has established a positive relationship between multicultural exposure and creativity (e.g., Leung & Chiu, 2010; Maddux, Adam, & Galinsky, 2010). However, little research has explored how identification with one’s home nation may influence this relationship. Across three studies, I demonstrate that differences in national identity can both facilitate and inhibit creative performance. Study one surveyed participants across two creativity tasks and a self-report measure of national glorification and national attachment. National glorification is characterized as a tendency to view one’s home nation as superior to other nations; in contrast, national attachment is simply a love of country (Roccas, Klar, & Liviatan, 2006). Study two implemented a longitudinal design to survey participants’ level of glorification and creativity both before and after they completed cultural immersion projects abroad. Study three replicates and extends Study 2 by examining both glorification and attachment among students who participated in a variety of study abroad programs. Results across the studies showed that glorification negatively predicted creativity, while attachment positively predicted creativity, controlling for individual differences. Moreover, glorification negatively predicted change in creativity after multicultural exposure, while attachment positively predicted change in creativity following multicultural exposure, controlling for differences in cultural immersion/study abroad programs and personal need for structure. These studies have important theoretical and practical implications. Firstly, these findings show that individual differences in national identity play a critical role in the relationship between multiculturalism and creativity. Second, these studies fill an important gap in the existing literature by using longitudinal field studies, thus providing both pre and post travel measures of creativity. Third, the practical implications of this line of research speak directly to the psychological costs and benefits of international travel within business and educational contexts. The current findings clearly show that not everyone is equally poised to reap the benefits of multicultural experiences. Further, the findings suggest that training directed to individual differences of national identity may help facilitate positive psychological outcomes following exposure to other cultures."
+    },
+    {
+     "id": "https://openalex.org/W2087686267",
+     "doi": "https://doi.org/10.1016/j.jrp.2010.05.003",
+     "title": "Tell me a story and I will tell you who you are! Lens model analyses of personality and creative writing",
+     "publication_year": 2010,
+     "authors": [
+      "Albrecht C. P. Küfner",
+      "Mitja D. Back",
+      "Steffen Nestler",
+      "Boris Egloff"
+     ],
+     "venue": "Journal of Research in Personality",
+     "abstract": ""
+    },
+    {
+     "id": "https://openalex.org/W2040408755",
+     "doi": "https://doi.org/10.1080/10400410802633400",
+     "title": "The Effect Size of Variables Associated With Creativity: A Meta-Analysis",
+     "publication_year": 2009,
+     "authors": [
+      "Hsen-Hsing Ma"
+     ],
+     "venue": "Creativity Research Journal",
+     "abstract": "The main purpose of this study was to use meta-analysis to investigate the mean effect size of relevant variables associated with creative person, process, product, and environment. Altogether, 2,013 effect sizes from 111 studies were analyzed. The unweighted grand mean effect size of the 111 studies was 0.69, with a standard deviation (SD) of 0.63. Such result was significantly different from 0 at t (110) = 11.52, p < .01. When the averaged effect size of each study was weighted with the sample size of that study, the weighted grand mean effect size was 0.72. The important findings were: (a) the mean effect sizes associated with problem-solving creativity and verbal creativity were significantly larger than those associated with emotional creativity and nonverbal creativity, (b) variables having a large mean effect size were prestige of honors/awards, working circumstances favorable for creativity, defining problem, and retrieving knowledge, (c) most of the mean effect sizes of the problem solving procedures on the measures of problem solving exceeded the medium (0.5) of Cohen's guidelines. Areas to be further explored are suggested."
+    },
+    {
+     "id": "https://openalex.org/W2799529499",
+     "doi": null,
+     "title": "Creativity or creativities: A study of domain generality and specificity",
+     "publication_year": 2005,
+     "authors": [
+      "Zorana Ivčević"
+     ],
+     "venue": "University of New Hampshire Scholars Repository (University of New Hampshire at Manchester)",
+     "abstract": "A series of studies investigated domain generality and specificity in creativity. Preliminary studies developed behavior report measures based on act-frequency and life-space approaches. The main studies examined two aspects of generality and specificity in creativity. A first group of studies analyzed the structure of creative behavior and the second group of studies concerned personality correlates of creativity. Dimensions of creative behavior were identified in a factor analysis of behavior reports and referred to creative life-style, arts, and intellectual achievement. Moreover, these dimensions were replicated in college students and professional adults. Groups of individuals with similar patterns of behavior were identified in a cluster analysis and described as conventional, everyday creative, artist, scholar, and renaissance people. A systems approach to personality was employed to select creativity relevant traits based on prior research and theories of creativity. Selected traits concerned global personality, emotions and motivation, cognition, social expression, and self-regulation. Creative behaviors were related to multiple areas in personality, which supported conceptions of creativity as a syndrome requiring multiple resources in the person (Amabile, 1996; Mumford & Gustafson, 1988; Sternberg & Lubart, 1995). Regression and discriminant function analyses showed that it was possible to identify both traits general to different dimensions and patterns in creativity and traits that are specific to one dimension or pattern in creative behavior."
+    },
+    {
+     "id": "https://openalex.org/W2169135103",
+     "doi": "https://doi.org/10.1016/s0191-8869(02)00358-6",
+     "title": "A meta-analytically derived nomological network of procrastination",
+     "publication_year": 2003,
+     "authors": [
+      "Wendelien van Eerde"
+     ],
+     "venue": "Personality and Individual Differences",
+     "abstract": ""
+    }
+   ]
+  },
+  "when-does-pretraining-help-assessing": {
+   "doi": "10.1145/3462757.3466088",
+   "openalex": "https://openalex.org/W3186492090",
+   "is_retracted": false,
+   "cited_by_count": 493,
+   "works": [
+    {
+     "id": "https://openalex.org/W7225223693",
+     "doi": "https://doi.org/10.48550/arxiv.2611.04192",
+     "title": "Where Did the Update Go? Certifying Declared Change Envelopes for Model Updates",
+     "publication_year": 2026,
+     "authors": [
+      "Muhammad Usama",
+      "Muhammad Saad Qadir"
+     ],
+     "venue": "arXiv",
+     "abstract": "Deployed language models are updated continually, and regulators increasingly accept changes that were declared in advance. Showing that an update changed behavior only where it was declared to is a different statistical problem from bounding how much it changed: a useful update is meant to change some decisions, so global disagreement and regression bounds cannot certify it. We formalize the problem with declared change envelopes. Before training, the developer commits to a region of inputs, and every decision that changes outside it counts as leakage. Leakage compares two models, so it can be certified from unlabeled traffic with anytime-valid tests whose sample cost we bound from above and below, and per-update certificates compose into a bound on lifetime drift outside all declared scopes. We measure leakage for LoRA and full fine-tuning, preference optimization, reinforcement learning, and knowledge editing on models from 1.5B to 72B parameters. Narrow updates leak widely: domain and policy LoRA updates keep only about 7-36% of the decisions they change inside the declared scope. Across 256 trained variants, leakage tracks the update's KL divergence to the incumbent on out-of-scope inputs (Spearman 0.94). None of the customary remedies we tested makes a rule-like update certifiable without giving up much of its intended change. Distilling the incumbent's decisions on unlabeled prompts in the deployment format does: anchored LoRA, GRPO, and (at a small learning rate) full fine-tuning updates certify 5% leakage from a few hundred to a few thousand unlabeled samples, and the certificates replicate on held-out traffic and on written answers. The certificates cover decision-like outputs only; on open-ended chat, re-batching alone changes 11-21% of responses and no update certifies. Code: https://github.com/Usama1002/declared-change-envelopes"
+    },
+    {
+     "id": "https://openalex.org/W7226027947",
+     "doi": "https://doi.org/10.1109/icsit70359.2026.11765476",
+     "title": "LegalEase: An Agentic AI-Based Contract Risk Analyzer",
+     "publication_year": 2026,
+     "authors": [
+      "Roshni S. Khedgaonkar",
+      "Shambhavi Krishnan",
+      "Harish Jaju",
+      "Krushna Kendre",
+      "Sarthak Kasar",
+      "Shrikant B. Ardhapurkar"
+     ],
+     "venue": "International Conference on Sustainability, Innovation & Technology (ICSIT)",
+     "abstract": "Reviewing contracts is too slow and complex for anyone not from a legal background. Complex legal language often leads to overlooked risks and misinterpretation of critical terms. This paper presents LegalEase, a contract risk analysis tool where six AI agents collaborate - reading the uploaded file, segmenting it into clauses, detecting risk, checking compliance, computing scores and generating a report. The system runs on Meta's LLaMA 3.3 70B model through the Groq API. It employs a five-factor weighted score to assess clauses for their degree of risk (low, medium and high). Evaluation with respect to Naive Bayes, KNN, SVM, Random Forest, Logistic Regression and LegalBERT found that the approach proposed here provided an F1-score of 85.1%, outperforming all baselines. All the test contracts were processed in under 30. LegalEase is designed to make contract risk analysis transparent, affordable and accessible to non-legal users such as students, freelancers and small business owners."
+    },
+    {
+     "id": "https://openalex.org/W7170196886",
+     "doi": "https://doi.org/10.7488/era/7468",
+     "title": "Learning to understand entities in legal texts",
+     "publication_year": 2026,
+     "authors": [
+      "Claire Barale"
+     ],
+     "venue": "ERA",
+     "abstract": "Entities such as people, dates, and organizations shape meaning in text. As discrete semantic units, entities map natural language to structured knowledge and offer an observable, discrete unit to evaluate a system’s understanding and reasoning abilities. Legal information is primarily presented in writing, offering a promising application for natural language processing. While language models have achieved state-of-the-art results in several downstream tasks, they often underperform in specialized fields like law, which have distinct language patterns and limited representation in training data. Using language technologies in legal contexts poses additional challenges due to the high stakes involved. This thesis studies structured semantic representation for natural legal language understanding using neural language models. Our overarching hypothesis is that advancements in legal natural language processing rely not only on increasing the amount of legal pretraining data, but on creating structured representations and considering linguistic specificities of legal language. The core contribution of the thesis is a detailed evaluation of how language models process legal language in information extraction tasks, using entities as units. We examine how language models handle the specific characteristics and structures of legal language and provide insights into effective strategies for modelling it. First, we evaluate language models to analyse the legal knowledge they retain during pretraining. Results show low performance and highlight the difficulty of acquiring and retrieving domain-specific knowledge. Second, we propose a scalable and replicable methodology for extracting fine-grained legal entity types. We demonstrate that an entity-centric representation of legal texts is effective for downstream applications such as legal research and for improving the faithfulness of generated legal summaries. Third, we propose a benchmark to compare the abilities of language models to infer temporal relationships between events in legal and narrative texts. Results show that while models perform better with legal event ordering than narrative texts, performance is constrained by the complexities of legal language, which are disproportionately associated with reasoning errors. Overall, our results show that language models demonstrate promising legal information extraction potential but struggle to capture the complexities of legal language."
+    },
+    {
+     "id": "https://openalex.org/W7159575262",
+     "doi": "https://doi.org/10.21203/rs.3.rs-8985237/v1",
+     "title": "Do Large Language Models Replicate Value-Laden Judicial Reasoning? Evidence from Domestic Violence Adjudication in China",
+     "publication_year": 2026,
+     "authors": [
+      "Yidan Huang",
+      "Long Chen",
+      "Sirui Han",
+      "Yike Guo"
+     ],
+     "venue": "Research Square",
+     "abstract": "Large language models are increasingly deployed in quasi-adjudicative legal settings, yet the field lacks a validated framework for empirically assessing judicial quality in value-intensive domains. This Article introduces and validates DV-JusticeBench, an expert-annotated benchmark and reproducible four-stage evaluation framework designed to measure the quality of value-laden judicial reasoning. Constructed from 108 authentic Chinese domestic violence cases (2023–2025) and 540 structured dispute-centered questions, the framework operationalizes adjudicative quality across five analytically distinct dimensions: normative-basis relevance, subsumption-chain coherence, value balancing and empathy alignment, evidentiary fact coverage, and outcome–remedy alignment. Structured scoring rubrics ensure transparency, replicability, and cross-model comparability. Evaluating six frontier LLMs serves as a proof of concept for the framework’s measurement capacity. The results reveal systematic tensions between affective responsiveness and doctrinal discipline, including mismanagement of contested facts and overreliance on surface forensic cues. By demonstrating how value-dense adjudication can be decomposed and empirically measured, this study provides a generalizable framework for assessing AI-assisted judicial reasoning, with direct implications for the governance of AI deployment in courts and the design of institutional quality-control mechanisms for legal AI systems."
+    },
+    {
+     "id": "https://openalex.org/W7221130150",
+     "doi": "https://doi.org/10.18653/2026.nllp-1.42",
+     "title": "Cited but Not Consulted: A Counterfactual Audit of Legal Chain-of-Thought Faithfulness",
+     "publication_year": 2026,
+     "authors": [
+      "Saisab Sadhu",
+      "Shreeyans Arora",
+      "Pratinav Seth"
+     ],
+     "venue": "Natural Legal Language Processing Workshop (NLLP)",
+     "abstract": "Large language models increasingly justify legal decisions by naming the statute or precedent behind a verdict, treated as evidence the decision follows from it. We test this directly: holding case facts fixed, we substitute the named legal authority for an unrelated one and decode a model’s evolving verdict from its hidden states. Across seven open-weight models (8B–70B) and four benchmarks spanning judicial and contractual reasoning, when explicitly required to justify a verdict by naming the governing authority, models name the correct one in 66.7%–100% of generations, while the verdict changing when the authority changes is far less consistent: 0.0%–21.7% on CaseHOLD, 30.0%–76.7% on ECHR and SCOTUS, and 43.3%–50.0% on ContractNLI. Neither scale nor a purpose-built legal-reasoning model (a best-effort LoRA reproduction; Section 6) closes this gap. A red-teaming evaluation on five core models finds compliance with an adversarial instruction hidden in the case facts (73.3%–96.4%) exceeds verdict-swap sensitivity by a wide margin, holding without exception regardless of cross-model ranking. Naming a legal authority is thus a poor proxy for a verdict’s dependence on it, and the same verdict remains separately vulnerable to adversarial manipulation; both findings replicate across checks ruling out prompt-wording noise and confounded sampling, and bear directly on using generated legal explanations as compliance or audit artefacts."
+    },
+    {
+     "id": "https://openalex.org/W4416988514",
+     "doi": "https://doi.org/10.3233/faia251578",
+     "title": "Does ChatGPT Understand the Law? A Case Study on Road Homicide in Italy",
+     "publication_year": 2025,
+     "authors": [
+      "Grazia Garzo",
+      "Alessandro Palumbo"
+     ],
+     "venue": "Frontiers in artificial intelligence and applications",
+     "abstract": "This manuscript proposes a structured methodology and a replicable framework for empirically assessing the argumentative and interpretative capabilities of Large Language Models (LLMs) in the field of justice. As a demonstrative case, the framework is applied to the specific offence of vehicular homicide under Italian law, using GPT-4o as the tested model. The evaluation is structured in two complementary phases. The first phase investigates the model’s conceptual understanding in isolation: 60 legal concepts were tested through targeted prompts eliciting definitions, legal nuances, and illustrative examples. The responses were scored to assess the model’s abstract comprehension of core legal notions. The second phase evaluates the model’s ability to recognize, interpret, and apply these same legal concepts within real judicial reasoning. The model was provided with complete rulings from the Italian Court of Cassation and asked to summarize the decisions, identify the ratio decidendi, and reconstruct the legal reasoning underlying the Court’s conclusions. Outputs from both phases were assessed by a legal expert, who evaluated coherence, conceptual depth, and interpretative accuracy. The results highlight some correlation between the model’s prior conceptual grounding and its ability to understand and replicate complex judicial reasoning. These findings underscore the importance of expert oversight in any forensic or judicial application of LLMs. Beyond the specific case of vehicular homicide, the study proposes a generalizable framework for evaluating the legal reasoning capabilities of AI systems across different domains."
+    },
+    {
+     "id": "https://openalex.org/W7106254300",
+     "doi": "https://doi.org/10.48550/arxiv.2511.16544",
+     "title": "WER is Unaware: Assessing How ASR Errors Distort Clinical Understanding in Patient Facing Dialogue",
+     "publication_year": 2025,
+     "authors": [
+      "Ellis, Zachary",
+      "Joselowitz, Jared",
+      "Deo, Yash",
+      "He, Yajie",
+      "Kalygina, Anna",
+      "Higham, Aisling",
+      "Rahimzadeh, Mana"
+     ],
+     "venue": "White Rose Research Online (University of Leeds, The University of Sheffield, University of York)",
+     "abstract": "As Automatic Speech Recognition (ASR) is increasingly deployed in clinical dialogue, standard evaluations still rely heavily on Word Error Rate (WER). This paper challenges that standard, investigating whether WER or other common metrics correlate with the clinical impact of transcription errors. We establish a gold-standard benchmark by having expert clinicians compare ground-truth utterances to their ASR-generated counterparts, labeling the clinical impact of any discrepancies found in two distinct doctor-patient dialogue datasets. Our analysis reveals that WER and a comprehensive suite of existing metrics correlate poorly with the clinician-assigned risk labels (No, Minimal, or Significant Impact). To bridge this evaluation gap, we introduce an LLM-as-a-Judge, programmatically optimized using GEPA through DSPy to replicate expert clinical assessment. The optimized judge (Gemini-2.5-Pro) achieves human-comparable performance, obtaining 90% accuracy and a strong Cohen's kappa of 0.816. This work provides a validated, automated framework for moving ASR evaluation beyond simple textual fidelity to a necessary, scalable assessment of safety in clinical dialogue."
+    }
+   ]
   }
  },
- "discovered": [
-  {
-   "id": "highly-accurate-protein-structure-prediction",
-   "field": "biology",
-   "topic": "Protein Structure and Dynamics",
-   "name": "Highly accurate protein structure prediction with AlphaFold",
-   "claim": "Proteins are essential to life, and understanding their structure can facilitate a mechanistic understanding of their function.",
-   "claim_quoted": true,
-   "original": {
-    "authors": "John Jumper, Richard Evans, Alexander Pritzel, et al.",
-    "year": 2021,
-    "title": "Highly accurate protein structure prediction with AlphaFold",
-    "venue": "Nature",
-    "doi": "10.1038/s41586-021-03819-2",
-    "url": "https://openalex.org/W3177828909"
-   },
-   "query": "\"Highly accurate protein structure prediction with AlphaFold\" replication",
-   "discovered": true,
-   "via": {
-    "authors": "Josh Abramson, Jonas Adler, Jack Dunger, et al.",
-    "year": 2024,
-    "title": "Accurate structure prediction of biomolecular interactions with AlphaFold 3",
-    "venue": "Nature",
-    "doi": "10.1038/s41586-024-07487-w",
-    "url": "https://openalex.org/W4396721167"
-   },
-   "replications": []
-  },
-  {
-   "id": "diagnosis-dementia-due-alzheimer-s",
-   "field": "medicine",
-   "topic": "Dementia and Cognitive Impairment Research",
-   "name": "The diagnosis of dementia due to Alzheimer's disease: Recommendations from the National Institute on Aging‐Alzheimer's Association workgroups on diagnostic guidelines for Alzheimer's disease",
-   "claim": "The National Institute on Aging and the Alzheimer's Association charged a workgroup with the task of revising the 1984 criteria for Alzheimer's disease (AD) dementia.",
-   "claim_quoted": true,
-   "original": {
-    "authors": "Guy Mead McKhann, David S. Knopman, Howard Mark Chertkow, et al.",
-    "year": 2011,
-    "title": "The diagnosis of dementia due to Alzheimer's disease: Recommendations from the National Institute on Aging‐Alzheimer's Association workgroups on diagnostic guidelines for Alzheimer's disease",
-    "venue": "Alzheimer s & Dementia",
-    "doi": "10.1016/j.jalz.2011.03.005",
-    "url": "https://openalex.org/W2115017507"
-   },
-   "query": "\"The diagnosis of dementia due to Alzheimer's disease: Recommendations from the National Institute on Aging‐Alzheimer's Association workgroups on diagnostic guidelines for Alzheimer's disease\" replication",
-   "discovered": true,
-   "via": {
-    "authors": "Clifford R. Jack, Jeffrey Scott Andrews, Thomas G. Beach, et al.",
-    "year": 2024,
-    "title": "Revised criteria for diagnosis and staging of Alzheimer's disease: Alzheimer's Association Workgroup",
-    "venue": "Alzheimer s & Dementia",
-    "doi": "10.1002/alz.13859",
-    "url": "https://openalex.org/W4400089962"
-   },
-   "replications": []
-  },
-  {
-   "id": "prevalence-characteristics-clinical-diagnosis-maturity",
-   "field": "biology",
-   "topic": "Diabetes and associated disorders",
-   "name": "Prevalence, Characteristics and Clinical Diagnosis of Maturity Onset Diabetes of the Young Due to Mutations in HNF1A, HNF4A, and Glucokinase: Results From the SEARCH for Diabetes in Youth",
-   "claim": "AIMS: Our study aims were to determine the frequency of MODY mutations (HNF1A, HNF4A, glucokinase) in a diverse population of youth with diabetes and to assess how well clinical features identify youth with maturity-onset diabetes of the young (MODY).",
-   "claim_quoted": true,
-   "original": {
-    "authors": "Catherine Pihoker, Lisa K. Gilliam, Sian Ellard, et al.",
-    "year": 2013,
-    "title": "Prevalence, Characteristics and Clinical Diagnosis of Maturity Onset Diabetes of the Young Due to Mutations in HNF1A, HNF4A, and Glucokinase: Results From the SEARCH for Diabetes in Youth",
-    "venue": "The Journal of Clinical Endocrinology & Metabolism",
-    "doi": "10.1210/jc.2013-1279",
-    "url": "https://openalex.org/W2062206625"
-   },
-   "query": "\"Prevalence, Characteristics and Clinical Diagnosis of Maturity Onset Diabetes of the Young Due to Mutations in HNF1A, HNF4A, and Glucokinase: Results From the SEARCH for Diabetes in Youth\" replication",
-   "discovered": true,
-   "via": {
-    "authors": "Nuha A. ElSayed, Grazia Aleppo, Raveendhara R. Bannuru, et al.",
-    "year": 2023,
-    "title": "2. Diagnosis and Classification of Diabetes: Standards of Care in Diabetes—2024",
-    "venue": "Diabetes Care",
-    "doi": "10.2337/dc24-s002",
-    "url": "https://openalex.org/W4389560718"
-   },
-   "replications": []
-  },
-  {
-   "id": "cosmological-implications-baryon-acoustic-oscillation",
-   "field": "physics",
-   "topic": "Cosmology and Gravitation Theories",
-   "name": "Cosmological implications of baryon acoustic oscillation measurements",
-   "claim": "We derive constraints on cosmological parameters and tests of dark energy models from the combination of baryon acoustic oscillation (BAO) measurements with cosmic microwave background (CMB) data and a recent reanalysis of Type Ia supernova (SN) data.",
-   "claim_quoted": true,
-   "original": {
-    "authors": "É. Aubourg, S. Bailey, Julian Bautista, et al.",
-    "year": 2015,
-    "title": "Cosmological implications of baryon acoustic oscillation measurements",
-    "venue": "Physical review. D. Particles, fields, gravitation, and cosmology/Physical review. D. Particles and fields",
-    "doi": "10.1103/physrevd.92.123516",
-    "url": "https://openalex.org/W1819346083"
-   },
-   "query": "\"Cosmological implications of baryon acoustic oscillation measurements\" replication",
-   "discovered": true,
-   "via": {
-    "authors": "A. G. Adame, J. Aguilar, Steven P. Ahlen, et al.",
-    "year": 2025,
-    "title": "DESI 2024 VI: cosmological constraints from the measurements of baryon acoustic oscillations",
-    "venue": "Journal of Cosmology and Astroparticle Physics",
-    "doi": "10.1088/1475-7516/2025/02/021",
-    "url": "https://openalex.org/W4394029306"
-   },
-   "replications": []
-  },
-  {
-   "id": "individual-differences-creativity-personality-story",
-   "field": "psychology",
-   "topic": "Creativity in Education and Neuroscience",
-   "name": "Individual differences in creativity: personality, story writing, and hobbies",
-   "claim": "This study investigated the relationship between creativity and personality among college students from a variety of major fields of study.",
-   "claim_quoted": true,
-   "original": {
-    "authors": "Uwe Wolfradt, Jean E. Pretz",
-    "year": 2001,
-    "title": "Individual differences in creativity: personality, story writing, and hobbies",
-    "venue": "European Journal of Personality",
-    "doi": "10.1002/per.409",
-    "url": "https://openalex.org/W2041351660"
-   },
-   "query": "\"Individual differences in creativity: personality, story writing, and hobbies\" replication",
-   "discovered": true,
-   "via": {
-    "authors": "Anil Rajnikant Doshi, Oliver Hauser",
-    "year": 2024,
-    "title": "Generative AI enhances individual creativity but reduces the collective diversity of novel content",
-    "venue": "Science Advances",
-    "doi": "10.1126/sciadv.adn5290",
-    "url": "https://openalex.org/W4400578758"
-   },
-   "replications": []
-  },
-  {
-   "id": "when-does-pretraining-help-assessing",
-   "field": "social-science",
-   "topic": "Artificial Intelligence in Law",
-   "name": "When does pretraining help? assessing self-supervised learning for law and the CaseHOLD dataset of 53,000+ legal holdings",
-   "claim": "While self-supervised learning has made rapid advances in natural language processing, it remains unclear when researchers should engage in resource-intensive domain-specific pretraining (domain pretraining).",
-   "claim_quoted": true,
-   "original": {
-    "authors": "Lucia Zheng, Neel Guha, Brandon Anderson, Peter Henderson, Daniel E. Ho",
-    "year": 2021,
-    "title": "When does pretraining help? assessing self-supervised learning for law and the CaseHOLD dataset of 53,000+ legal holdings",
-    "venue": "International Conference on Artificial Intelligence and Law",
-    "doi": "10.1145/3462757.3466088",
-    "url": "https://openalex.org/W3186492090"
-   },
-   "query": "\"When does pretraining help? assessing self-supervised learning for law and the CaseHOLD dataset of 53,000+ legal holdings\" replication",
-   "discovered": true,
-   "via": {
-    "authors": "Varun Magesh, Faiz Surani, Matthew Dahl, Mirac Süzgün, Christopher D. Manning, Daniel E. Ho",
-    "year": 2025,
-    "title": "Hallucination‐Free? Assessing the Reliability of Leading AI Legal Research Tools",
-    "venue": "Journal of Empirical Legal Studies",
-    "doi": "10.1111/jels.12413",
-    "url": "https://openalex.org/W4409716856"
-   },
-   "replications": []
-  }
- ],
+ "discovered": [],
  "errors": []
 }
