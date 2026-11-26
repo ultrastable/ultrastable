@@ -323,6 +323,14 @@
       "url": "directive.schema.json"
     },
     {
+      "name": "disclosure.json",
+      "description": "Contract for doctrine/disclosure.json",
+      "fileMatch": [
+        "doctrine/disclosure.json"
+      ],
+      "url": "disclosure.schema.json"
+    },
+    {
       "name": "dispose.json",
       "description": "Contract for doctrine/dispose.json",
       "fileMatch": [
