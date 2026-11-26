@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 import json, sys, unittest
 from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent

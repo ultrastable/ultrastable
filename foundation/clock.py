@@ -10,7 +10,7 @@ that ends with takeable work left wakes the next one with the workflow's own tok
 doctrine/clocks.json and by the Actions budget guard, and it backs off after repeated failures so a broken change cannot burn the month's minutes.
 """
 from __future__ import annotations
-import json, os, statistics, subprocess, sys, urllib.request
+import json, os, statistics, subprocess, sys, urllib.request, urllib.error
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -78,6 +78,46 @@ def d1_beats_any(c: dict, token: str, acct: str) -> list[float]:
     return out
 
 
+def _dig(d, path: str):
+    for k in path.split("."):
+        d = d.get(k) if isinstance(d, dict) else None
+    return d
+
+
+def health_beats(c: dict, now: float) -> list[float]:
+    """CLOCK-HEALTH-1: the credential-free route for a d1 clock. The Worker's own public /health states its newest beat, so a host with no
+    Cloudflare token still measures the clock (five clocks read 'unmeasured' on /demo for that reason alone). Only the newest beat is known,
+    so beats_24h from this route counts at most one."""
+    h = c["health"]
+    req = urllib.request.Request(h["url"], headers={"user-agent": "ultrastable-clock/1 (+https://ultrastable.io)", "accept": "application/json"})
+    try:
+        with urllib.request.urlopen(req, timeout=30) as r:
+            body = json.loads(r.read())
+    except urllib.error.HTTPError as e:  # 503 still carries the JSON body (a late clock answers 503)
+        body = json.loads(e.read() or b"{}")
+    if h.get("at"):
+        v = _dig(body, h["at"])
+        if v is None:
+            raise RuntimeError(f"/health has no {h['at']}")
+        return [_ts(v) if isinstance(v, str) else float(v) / (1000 if float(v) > 1e11 else 1)]
+    v = _dig(body, h["age_min"])
+    if v is None:
+        raise RuntimeError(f"/health has no {h['age_min']}")
+    return [now - float(v) * 60]
+
+
+def unmeasured(root=REPO) -> list[str]:
+    """CLOCK-MEASURED-1: every clock in the published record has a real reading. An unmeasured clock is a finding, not a neutral state."""
+    p = Path(root) / "ops" / "transparency.json"
+    try:
+        rows = json.loads(p.read_text(encoding="utf-8")).get("clocks") or []
+    except (OSError, ValueError) as e:
+        return [f"ops/transparency.json unreadable: {e}"]
+    if not rows:
+        return ["ops/transparency.json carries no clocks"]
+    return [f"{r.get('id')}: unmeasured ({r.get('why') or 'no reason given'})" for r in rows if not r.get("status") or r.get("status") == "unmeasured"]
+
+
 def gh_run_beats(workflow: str, root=REPO, events=None) -> list[float]:
     try:
         r = subprocess.run(["gh", "run", "list", "--repo", GH, "--workflow", workflow, "--limit", "60", "--json", "createdAt,event"], capture_output=True, text=True, timeout=60, encoding="utf-8")
@@ -102,9 +142,12 @@ def report(root=REPO, now: float | None = None, env=None) -> list[dict]:
         row = {"id": c["id"], "what": c["what"], "source": c["source"]}
         try:
             if c["source"] == "d1":
-                if not tok:
-                    out.append({**row, "status": "unmeasured", "why": "no CLOUDFLARE_API_TOKEN on this host"}); continue
-                beats = d1_beats_any(c, tok, acct)
+                if tok:
+                    beats = d1_beats_any(c, tok, acct)
+                elif c.get("health"):
+                    beats, row["route"] = health_beats(c, now), "health"
+                else:
+                    out.append({**row, "status": "unmeasured", "why": "no CLOUDFLARE_API_TOKEN on this host and no health route declared"}); continue
             elif c["source"] == "workflow":
                 beats = gh_run_beats(c["workflow"], root, c.get("events"))
             else:
@@ -270,6 +313,10 @@ def main(argv) -> int:
         else:
             print(json.dumps(clockwork.heal(apply="--apply" in a), indent=1))
         return 0
+    if "--measured" in a:
+        bad = unmeasured()
+        print("\n".join(bad) if bad else "every clock measured")
+        return 1 if bad else 0
     if "--chain" in a:
         res = chain(apply="--apply" in a)
         print(json.dumps(res))

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """SMALL-CHANGE-1: refuse a change too large to verify or revert on its own.
 
 Usage: python3 scripts/prsize.py --range BASE...HEAD [--config autonomy/prsize.json]

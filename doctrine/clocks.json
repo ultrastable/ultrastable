@@ -21,7 +21,11 @@
       ],
       "health_urls": [
         "https://ultrastable-tick.ultrastable.workers.dev/health"
-      ]
+      ],
+      "health": {
+        "url": "https://ultrastable-tick.ultrastable.workers.dev/health",
+        "at": "last_tick.started_at"
+      }
     },
     {
       "id": "executor",
@@ -131,7 +135,11 @@
       "health_urls": [
         "https://ultrastable-unlearn.ultrastable.workers.dev/health",
         "https://unlearn.ultrastable.org/health"
-      ]
+      ],
+      "health": {
+        "url": "https://unlearn.ultrastable.org/health",
+        "age_min": "last_beat_minutes_ago"
+      }
     },
     {
       "id": "intent-yield",
@@ -160,7 +168,11 @@
       "health_urls": [
         "https://ultrastable-what-works.ultrastable.workers.dev/health",
         "https://what-works.ultrastable.org/health"
-      ]
+      ],
+      "health": {
+        "url": "https://what-works.ultrastable.org/health",
+        "age_min": "last_beat_minutes_ago"
+      }
     },
     {
       "id": "replication-ledger-beat",
@@ -181,7 +193,11 @@
       "health_urls": [
         "https://ultrastable-replication-ledger.ultrastable.workers.dev/health",
         "https://replication-ledger.ultrastable.org/health"
-      ]
+      ],
+      "health": {
+        "url": "https://replication-ledger.ultrastable.org/health",
+        "age_min": "last_beat_minutes_ago"
+      }
     },
     {
       "id": "funding-maintenance",

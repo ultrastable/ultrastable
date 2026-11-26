@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-26-loops-merged-nothing-because-the-code-agent-ran-on-a-free-pl",
+  "kind": "lesson",
+  "date": "2026-11-26",
+  "title": "Loops merged nothing because the code agent ran on a free-plan neuron cap",
+  "body": "2026-11-26: all 6 orchestrator runs failed with 'daily free neurons used' (8,123 spent vs an 8,000 default cap) on a Workers Paid account, and glm-4.7-flash replies with response '' were scored empty because textOf used ??. The code agent now has its own cap (AI_CODE_NEURONS_DAY, default 150000) and textOf takes the first non-empty field.",
+  "probe": "file:seed/worker/test/loopship.test.js",
+  "session": "session_0156nqDvhFqKM9k59M8vrcqM"
+ },
+ "kind": "lesson",
+ "title": "Loops merged nothing because the code agent ran on a free-plan neuron cap",
+ "session": "session_0156nqDvhFqKM9k59M8vrcqM"
+}

@@ -159,6 +159,25 @@
          "type": "string",
          "pattern": "^https://[^\\s]+$"
         }
+       },
+       "health": {
+        "type": "object",
+        "required": [
+         "url"
+        ],
+        "properties": {
+         "url": {
+          "type": "string",
+          "pattern": "^https://[^\\s]+$"
+         },
+         "at": {
+          "type": "string"
+         },
+         "age_min": {
+          "type": "string"
+         }
+        },
+        "additionalProperties": false
        }
       },
       "additionalProperties": false,

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """DISCLOSE-1: no new specification text on the public branch.
 
 `python3 -m foundation disclosure --check` fails when specs/ holds a US-SPEC file that is not in the
