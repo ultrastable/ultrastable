@@ -53,7 +53,7 @@ export default [
   "repo": "https://github.com/ultrastable/base-rates",
   "license": "LicenseRef-Ultrastable-USL-1.0",
   "kind": "tenant",
-  "summary": "Base Rates: a tenant system running on Ultrastable."
+  "summary": "Before you decide, see what usually happens: graded base rates for life, work and policy choices."
  },
  {
   "id": "open-questions",
@@ -62,6 +62,6 @@ export default [
   "repo": "https://github.com/ultrastable/open-questions",
   "license": "LicenseRef-Ultrastable-USL-1.0",
   "kind": "tenant",
-  "summary": "Open Questions: a tenant system running on Ultrastable."
+  "summary": "What science honestly does not know yet: the big open questions and where the evidence leans today."
  }
 ];
