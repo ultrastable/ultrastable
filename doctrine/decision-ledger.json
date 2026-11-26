@@ -6171,6 +6171,23 @@
    "body": "Evidence: after the 0034 indexes the org D1 read about 182k rows an hour against the 120k cap (D1 query analytics, 2026-11-26 13:27 UTC). The ROI verdict re-aggregated seven days of free_tier_samples per resource on every read (102k rows an hour; /api/roi is public) and the criticality window counted its outcomes about nine times a tick (89k rows an hour). An index leaves an aggregate as long as it was; a cache shortens it. Decision: roi_cache (15 minutes) and criticality_cur_outcomes (half hour, keyed by the thresholds) are single org rows, and the cap stays where it is.",
    "probe": "grep:seed/worker/src/roi.js::ROI_CACHE_MS",
    "session": "session_0156nqDr9ZUpSg4xzL3vBZus"
+  },
+  {
+   "id": "decision-2026-11-26-plan-1-goal-planner",
+   "kind": "decision",
+   "date": "2026-11-26",
+   "title": "PLAN-1 goal planner",
+   "body": "Goals out of bounds become task trees (audit, implement, verify, fix, integrate, gate) run by the tick step plan; the planner turns knobs itself and gates each plan on a fresh reading; three misses file one incident.",
+   "probe": "file:seed/worker/src/planner.js"
+  },
+  {
+   "id": "lesson-2026-11-26-slice-s07-tests-3-of-the-specification-work-shipped-on-its-o",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Slice S07-tests-3 of the specification work shipped on its own",
+   "body": "feat(tests): the last seed specification tests and the first foundation specification tests. One cohesive set of files inside the 60 file and 3,000 line bound, applied to the latest main with a three-way patch and checked locally before the push.",
+   "probe": "file:seed/worker/test/spec-33-executors.test.js",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
   }
  ]
 }

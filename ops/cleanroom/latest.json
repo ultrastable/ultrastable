@@ -1,13 +1,13 @@
 {
- "at": "2026-11-26T13:28:15Z",
+ "at": "2026-11-26T13:44:37Z",
  "ticks": 144,
- "passed": true,
+ "passed": false,
  "results": [
   {
    "id": "boot",
    "what": "the bootstrap runs every stage without a blocked one",
-   "ok": true,
-   "evidence": "15 stages, none blocked"
+   "ok": false,
+   "evidence": "constitute: 1 constitution disagreement(s): run_loop.tick_steps: constitution says ['reconcile', 'reap_claims', 'connector_health', 'probe_gates', 'measure', 'score_predictions', 'accrue_trust', 'selfaudit', 'migrate', 'goals', 'unknowns', 'dispatch', 'execute', 'check_plus_share', 'age_sla', 'cost_probe', 'criticality', 'pulse', 'ignition'] but the code has ['reconcile', 'reap_claims', 'connector_health', 'probe_gates', 'measure', 'score_predictions', 'accrue_trust', 'selfaudit', 'migrate', 'goals', 'plan', 'unknowns', 'dispatch', 'execute', 'check_plus_share', 'age_sla', 'cost_probe', 'criticality', 'pulse', 'ignition']"
   },
   {
    "id": "no-human-steps",
@@ -124,5 +124,7 @@
    "evidence": "sandbox deleted"
   }
  ],
- "findings": []
+ "findings": [
+  "boot"
+ ]
 }

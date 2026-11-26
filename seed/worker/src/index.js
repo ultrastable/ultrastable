@@ -4,6 +4,7 @@
 import { paced } from './pace.js';
 import { readSwitches, offReason, drill, lastDrill } from './switches.js';  // KILL-SWITCH-1
 import { footerHtml, discoverRoute, seedStatements, seedJsonLd, heartbeat as directoryHeartbeat } from './discover.js';  // DISCOVER-1
+import { readPlans } from './planner.js';  // PLAN-1
 import { withKnobs, readGoals, registerTenant, reportReadings, knobValues } from './goals.js';  // GOALS-1
 import { tune } from './roi.js';  // BOUNDARIES-1
 import { runTick, lastTickForHealth, METRICS, ensureItem, wakeAllowed } from './tick.js';
@@ -309,6 +310,9 @@ export default {
     if (url.pathname === '/api/live/changes') { try { const rs = config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []); return Response.json(await readLiveChanges(env.DB, rs.find(r => r.endsWith('/ultrastable')) || rs[0] || null), { headers: { 'cache-control': 'public, max-age=60' } }); } catch (e) { return d1Unavailable(e); } }  // LIVE-FRESH-1
     if (url.pathname === '/api/roi') { try { return Response.json(await readRoi(env.DB, { env, config }), { headers: { 'cache-control': 'public, max-age=300', 'access-control-allow-origin': '*' } }); } catch (e) { return d1Unavailable(e); } }  // ROI-1
     if (url.pathname === '/api/decisions') { try { return Response.json(await readDecisions(env.DB), { headers: { 'cache-control': 'public, max-age=60', 'access-control-allow-origin': '*' } }); } catch (e) { return d1Unavailable(e); } }  // DECISIONS-1
+    if (url.pathname === '/api/plans' && request.method === 'GET') {  // PLAN-1: every plan, its task tree and its gate verdict
+      return new Response(JSON.stringify(await readPlans(env.DB)), { headers: { 'content-type': 'application/json', 'cache-control': 'max-age=60' } });
+    }
     if (url.pathname === '/api/goals' && request.method === 'GET') {  // GOALS-READS-1: readGoals scans 14 days of samples and the loop beats (tens of thousands of D1 rows read), so the answer is cached at the edge for 10 minutes and a failed refresh serves the last good copy
       const cache = typeof caches !== 'undefined' ? caches.default : null, key = new Request(url.origin + '/api/goals', { method: 'GET' });
       try { const hit = cache && await cache.match(key); if (hit) return hit; } catch (e) { /* allow-silent: a cache read miss falls through to the D1 read below */ console.error('goals cache read failed', String(e)); }
