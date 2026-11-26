@@ -1,0 +1,11 @@
+{
+  "id": "Q-FIND-what-works",
+  "title": "Q-FIND-what-works: make https://what-works.ultrastable.org/ findable (1 gaps)",
+  "body": "**Owner:** executor\n**Trigger:** findable workflow, daily\n**Done check:** python3 -m foundation findable --probe what-works\n**Status:** open\n\nhttps://what-works.ultrastable.org/ is missing what search engines and AI agents read: no llms.txt. Fix the property's own pages (shared seed modules first, so every system gets it). Closed by the same daily reading.",
+  "status": "open",
+  "labels": [
+    "role:executor",
+    "growth"
+  ],
+  "milestone": "Now"
+}
