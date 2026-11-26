@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
 // ORCHESTRATE-1: an item the single-shot executor failed is planned, worked in parallel steps across ticks, reviewed by another model, fixed and
 // integrated as one PR, with no session and no person in the path.
 import test from 'node:test';
