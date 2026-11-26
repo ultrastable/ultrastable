@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-2441",
+  "title": "OL-PR-2441: land or supersede pull request #2441 (ci-failed)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #2441 is ci-failed\n**Done check:** cmd:python3 -m foundation loopowner --closed 2441\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #2441 (`agent/data-54b7007176` at 098a860a46, opened by app/ultrastable-209646): regen-generated: refresh generated data after merge (REGEN-GENERATED-1) [skip ci]. The session that opened it is not its closer and is never asked to act. A check failed on the head commit. Read the failing run, then land the same change so that every check passes: push a fix to the branch, or open a new pull request from main that carries the change and close this one as superseded. Failed checks: checks, foundation, tests-a.\n\n**Prediction:** open_prs <= 0 within 24 h\n**Out of scope:** changing what pull request #2441 does; land it as written or carry it onto main unchanged.\n\n**Closing probe:** `python3 -m foundation loopowner --closed 2441` exits 0 (pull request #2441 is merged or closed).",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
