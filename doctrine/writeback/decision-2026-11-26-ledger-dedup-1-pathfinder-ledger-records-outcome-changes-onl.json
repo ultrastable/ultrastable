@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-26-ledger-dedup-1-pathfinder-ledger-records-outcome-changes-onl",
+  "kind": "decision",
+  "date": "2026-11-26",
+  "title": "LEDGER-DEDUP-1: pathfinder ledger records outcome changes only",
+  "body": "Each watchdog pass re-appended identical route attempts (32736 rows, 6.2MB). record() now appends only on an outcome change; compacted to 477 rows; pathfinder --check unchanged.",
+  "probe": "grep:foundation/pathfinder.py::LEDGER-DEDUP-1",
+  "session": "session_0156nqDukk9P9sEvpAwpKe2W"
+ },
+ "kind": "decision",
+ "title": "LEDGER-DEDUP-1: pathfinder ledger records outcome changes only",
+ "session": "session_0156nqDukk9P9sEvpAwpKe2W"
+}

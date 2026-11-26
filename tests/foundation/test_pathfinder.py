@@ -49,6 +49,13 @@ class Pathfinder(unittest.TestCase):
         self.assertEqual(len(P.attempts(d)), 3)
         self.assertIn("alternate-channel", r["classes_missing"])
 
+    def test_unchanged_outcome_is_not_rerecorded_and_compact_keeps_flips(self):
+        d, _ = repo({"asks": {"post": {"existing-credentials": ["env:A"]}}})
+        for env in ({}, {}, {"A": "1"}, {"A": "1"}, {}):
+            P.resolve("post", d, env=env)
+        self.assertEqual([r["ok"] for r in P.attempts(d)], [False, True, False])
+        self.assertEqual(P.compact(d), (3, 3))
+
     def test_regress_lists_suspects_for_failing_probe(self):
         d, _ = repo({"integrations": [{"id": "bsky", "files": ["w/bsky.js"], "probe": "env:BSKY_SESSION", "last_good": "abc"}]})
         out = P.regress(d, run={}, git=lambda root, f, since=None: ["1a2b3c client type change"])
