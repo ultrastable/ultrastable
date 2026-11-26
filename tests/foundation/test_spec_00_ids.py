@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """US-SPEC-00: requirement identifiers are stable (US-00-R11) and a BUILT label is machine-checked against the tree (US-00-R13).
 
 The fixtures use a specification number no real specification has (77), so this file cites no real requirement by accident.
