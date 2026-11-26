@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-26-github-only-tenants-serve-their-front-end-on-their-worker-fr",
+  "kind": "lesson",
+  "date": "2026-11-26",
+  "title": "GitHub-only tenants serve their front end on their Worker from birth",
+  "body": "Surfaces tested for switching GitHub Pages on: repo token (403), lane admin App (403, no Pages grant), gh-pages push by the repo token (branch pushed, Pages API 403). The tenant's Cloudflare Worker serves the site at its ultrastable.org address from the first deploy, and loop.yml keeps gh-pages current so Pages serves it the day a grant exists.",
+  "probe": "file:doctrine/knowledge-graph.json"
+ },
+ "kind": "lesson",
+ "title": "GitHub-only tenants serve their front end on their Worker from birth",
+ "session": ""
+}
