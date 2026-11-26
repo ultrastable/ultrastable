@@ -761,6 +761,19 @@
       "audience": "public",
       "standards": [],
       "discoverable": false,
+      "description": "Every plan the goal planner keeps, its task tree and its gate verdict (PLAN-1).",
+      "reason": "read of the goal planner's plans for the site worker and the owner screen (PLAN-1); not advertised to agents"
+    },
+    {
+      "id": "plans",
+      "path": "/api/plans",
+      "methods": [
+        "GET"
+      ],
+      "kind": "rest",
+      "audience": "public",
+      "standards": [],
+      "discoverable": false,
       "description": "PLAN-1: the goal planner's plans and their tasks; worklog list --plans joins work records to them (WORK-RECORD-1).",
       "reason": "internal feed read by the worklog loop and the dashboard; it reports state and enables nothing"
     }
