@@ -588,17 +588,6 @@
     "workflow_dispatch"
    ],
    "crons": []
-  },
-  "worklog.yml": {
-   "events": [
-    "issues",
-    "repository_dispatch",
-    "workflow_dispatch",
-    "workflow_run"
-   ],
-   "crons": [
-    "41 7 * * *"
-   ]
   }
  }
 }
