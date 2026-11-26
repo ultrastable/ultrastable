@@ -16,6 +16,7 @@ import { pickForRole } from './critloop.js';
 import { selfAuditStep, loopBreak } from './selfaudit.js';
 import { unknownsStep } from './unknowns.js';
 import { goalsStep, seedGoals } from './goals.js';  // GOALS-1
+import { planStep } from './planner.js';  // PLAN-1
 import { migrateStep } from './migrate.js';
 import { executeStep, claimsReleasedUnworked24h } from './doer.js';
 import { pulseStep, tickCadenceMin } from './pulse.js';
@@ -391,6 +392,14 @@ export const STEPS = {
     ctx.notes.push(`goals: ${r.read} read, ${r.met} met, ${r.off} off target${r.adjusted.length ? `, moved ${r.adjusted.map(a => `${a.knob} ${a.old}->${a.new}`).join(', ')}` : ''}${r.reviewed.length ? `, reviewed ${r.reviewed.length}` : ''}${r.stretch.length ? `, proposed ${r.stretch.join(', ')}` : ''}${r.retired.length ? `, retired ${r.retired.join(', ')}` : ''}`);
   },
 
+  // PLAN-1: turn the goal furthest out of bounds into a task tree (audit > implement > verify > fix > integrate > gate), advance live plans, turn
+  // knobs itself, and gate each plan on a fresh reading of its goal. "Better" means a measured goal moved toward its target.
+  async plan(db, ctx) {
+    if (!ctx.config.goals) { ctx.notes.push('plan: no goals configured'); return; }
+    const r = await planStep(db, ctx, ctx.config.planner, { builtins: METRICS, ensureItem });
+    ctx.notes.push(`plan: ${r.started ? 'started ' + r.started : 'none started'}${r.promoted.length ? `, ready ${r.promoted.length}` : ''}${(r.turned || []).length ? `, turned ${r.turned.join(', ')}` : ''}${r.fixes.length ? `, fix ${r.fixes.join(', ')}` : ''}${r.closed.length ? `, closed ${r.closed.map(c => c.plan + ' ' + c.verdict).join(', ')}` : ''}`);
+  },
+
   async unknowns(db, ctx) {
     if (!ctx.config.unknowns) { ctx.notes.push('unknowns: no doctrine configured'); return; }
     const r = await unknownsStep(db, ctx, ctx.config.unknowns, ensureItem);
@@ -485,7 +494,7 @@ export const STEPS = {
   async ignition(db, ctx) { await ignitionStep(db, ctx, ensureItem); },
 };
 
-export const STEP_ORDER = ['migrate', 'reconcile', 'reap_claims', 'connector_health', 'probe_gates', 'score_predictions', 'measure', 'accrue_trust', 'selfaudit', 'unknowns', 'goals', 'dispatch', 'execute', 'check_plus_share', 'age_sla', 'cost_probe', 'pulse', 'criticality', 'ignition'];
+export const STEP_ORDER = ['migrate', 'reconcile', 'reap_claims', 'connector_health', 'probe_gates', 'score_predictions', 'measure', 'accrue_trust', 'selfaudit', 'unknowns', 'goals', 'plan', 'dispatch', 'execute', 'check_plus_share', 'age_sla', 'cost_probe', 'pulse', 'criticality', 'ignition'];
 
 // Q-LESSON-COST-SAMPLE-ACT: while the latest hourly cost sample of any budgeted D1 database is over its max_rows_read_per_hour, the tick runs
 // only these steps. reconcile keeps every item's disposition honest (no silent drops), measure keeps the liveness metrics and the breach visible,
@@ -493,7 +502,7 @@ export const STEP_ORDER = ['migrate', 'reconcile', 'reap_claims', 'connector_hea
 // other step either reads wide (probe_gates, score_predictions, accrue_trust, selfaudit, pulse, ignition, check_plus_share) or starts new work
 // that reads more (reap_claims feeds dispatch, dispatch, execute), so it waits for the hour to pass. A skipped step counts as completed: it is
 // a decision, not a failure, so the health probe and the ignition streak stay green.
-export const FREE_TIER_WIDE_STEPS = ['probe_gates', 'score_predictions', 'accrue_trust', 'selfaudit', 'pulse', 'ignition', 'check_plus_share', 'goals', 'age_sla', 'cost_probe'];  // FREE-TIER-1
+export const FREE_TIER_WIDE_STEPS = ['probe_gates', 'score_predictions', 'accrue_trust', 'selfaudit', 'pulse', 'ignition', 'check_plus_share', 'goals', 'plan', 'age_sla', 'cost_probe'];  // FREE-TIER-1
 export const COST_ESSENTIAL_STEPS = ['migrate', 'reconcile', 'measure', 'criticality'];
 // SPEND-SOFT-1 (Rowan, 2026-11-21: "systems should never have hard stops"): no step is skipped for good. Under lean (a cost breach or the free
 // tier at shed) or spend crawl the other steps still run on the first tick of every few hours; under degrade or spend throttle the wide readers
