@@ -1,7 +1,7 @@
 {
- "at": "2026-11-26T07:00:15Z",
- "gaps": 8,
- "match_share": 0.985,
+ "at": "2026-11-26T07:14:42Z",
+ "gaps": 6,
+ "match_share": 0.989,
  "sources": {
   "changes": [
    {
@@ -156,7 +156,7 @@
     "drift": 0,
     "id": "claims-total",
     "ok": true,
-    "total": 427
+    "total": 429
    }
   ],
   "loops": [
@@ -195,7 +195,7 @@
     "missing": [],
     "ok": true,
     "unmeasured": [
-     "python3 -m foundation lanewatch --check:     GH_TOKEN: ${{ github.token }}"
+     "python3 -m foundation lanewatch --check: lanewatch: gh failed: OST /repos/{owner}/{repo}/pulls/{n}/ccr/comments/{comment_id}/resolve (or /unresolve), PUT or DELETE /repos/{owner}/{repo}/pulls/{n}/ccr/auto_merge, POST /repos/{owner}/{repo}/pu"
     ]
    },
    {
@@ -821,12 +821,10 @@
    {
     "checks": 1,
     "external": [],
-    "failing": [
-     "python3 -m foundation openstd --check: new bespoke format: instances/qnfo/dependencies.json (config file without $schema); declare the standard in doctrine/open-standards.json or meet it now; new bespoke format: instances/qnfo/foundation-l"
-    ],
+    "failing": [],
     "id": "OPEN-STANDARDS-1",
     "missing": [],
-    "ok": false,
+    "ok": true,
     "unmeasured": []
    },
    {
@@ -843,6 +841,15 @@
     "external": [],
     "failing": [],
     "id": "SYSTEM-SPEC-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "CLEANROOM-1",
     "missing": [],
     "ok": true,
     "unmeasured": []
@@ -990,7 +997,7 @@
     "missing": [],
     "ok": true,
     "unmeasured": [
-     "python3 -m foundation lanewatch --check:     GH_TOKEN: ${{ github.token }}"
+     "python3 -m foundation lanewatch --check: lanewatch: gh failed: OST /repos/{owner}/{repo}/pulls/{n}/ccr/comments/{comment_id}/resolve (or /unresolve), PUT or DELETE /repos/{owner}/{repo}/pulls/{n}/ccr/auto_merge, POST /repos/{owner}/{repo}/pu"
     ]
    },
    {
@@ -1032,12 +1039,10 @@
    {
     "checks": 1,
     "external": [],
-    "failing": [
-     "python3 -m foundation dispose --check: an open item is 89.4 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
-    ],
+    "failing": [],
     "id": "DISPOSE-1",
     "missing": [],
-    "ok": false,
+    "ok": true,
     "unmeasured": []
    },
    {
@@ -1106,20 +1111,20 @@
   },
   "claims": {
    "gaps": 0,
-   "total": 427
+   "total": 429
   },
   "loops": {
    "gaps": 1,
    "total": 1
   },
   "rules": {
-   "gaps": 5,
-   "total": 99
+   "gaps": 3,
+   "total": 100
   },
   "year": {
    "gaps": 1,
    "total": 2
   }
  },
- "total": 545
+ "total": 548
 }
