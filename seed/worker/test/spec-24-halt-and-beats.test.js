@@ -4,33 +4,40 @@
 // R58 (every workflow job honours the halt), R61 (a beat before the body, judged against expected slots, a second route watching).
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { makeDb } from './d1shim.js';
 import { beat, watch } from '../src/pulse.js';
 
-const WORKFLOWS = new URL('../../../.github/workflows/', import.meta.url);
+// The kit's own workflows are always read; the platform's are read too when this kit sits inside the monorepo (SEED-SELFCONTAINED-1).
+const KIT_WORKFLOWS = new URL('../../.github/workflows/', import.meta.url);
+const PLATFORM_WORKFLOWS = new URL('../../../.github/workflows/', import.meta.url);
 const T0 = Date.parse('2026-11-10T00:00:00Z'), MIN = 60e3;
 
 // Jobs of a workflow file and how many of them skip when the repository variable HALT is 1 (the rule plan-limits.test.mjs holds at the root).
 function haltCoverage(text) {
   const jobs = text.split(/^jobs:\s*$/m)[1] || '';
   const ids = [...jobs.matchAll(/^  ([A-Za-z0-9_-]+):\s*$/gm)].map(m => m[1]);
-  const guarded = (jobs.match(/^    if: \$\{\{ vars\.HALT != '1'/gm) || []).length;
+  // A job is guarded when its own if: condition carries the halt clause, alone or beside other conditions.
+  const guarded = (jobs.match(/^    if: \$\{\{[^\n]*\bvars\.HALT != '1'/gm) || []).length;
   return { jobs: ids.length, guarded };
 }
 
-test('US-24-R58: every job of every workflow of the platform skips when the repository variable HALT is 1, and a job without the guard is detected', () => {
+test('US-24-R58: every job of every workflow of the kit, and of the platform when present, skips when the repository variable HALT is 1, and a job without the guard is detected', () => {
   const bad = [];
   let files = 0;
-  for (const f of readdirSync(WORKFLOWS).filter(x => /\.ya?ml$/.test(x))) {
-    files++;
-    const c = haltCoverage(readFileSync(new URL(f, WORKFLOWS), 'utf8'));
-    if (c.jobs !== c.guarded) bad.push(`${f}: ${c.guarded} of ${c.jobs} jobs guarded`);
+  for (const dir of [KIT_WORKFLOWS, ...(existsSync(PLATFORM_WORKFLOWS) ? [PLATFORM_WORKFLOWS] : [])]) {
+    for (const f of readdirSync(dir).filter(x => /\.ya?ml$/.test(x))) {
+      files++;
+      const c = haltCoverage(readFileSync(new URL(f, dir), 'utf8'));
+      if (c.jobs !== c.guarded) bad.push(`${f}: ${c.guarded} of ${c.jobs} jobs guarded`);
+    }
   }
-  assert.ok(files > 0, 'the platform workflows were read');
+  assert.ok(files > 0, 'the workflows were read');
   assert.deepEqual(bad, []);
   const unguarded = "jobs:\n  a:\n    if: ${{ vars.HALT != '1' }}\n    runs-on: ubuntu-latest\n  b:\n    runs-on: ubuntu-latest\n";
   assert.deepEqual(haltCoverage(unguarded), { jobs: 2, guarded: 1 }, 'the check this test applies fails on a new unguarded job');
+  const compound = "jobs:\n  a:\n    if: ${{ !github.event.repository.is_template && vars.HALT != '1' }}\n    runs-on: ubuntu-latest\n  b:\n    if: ${{ github.event_name == 'push' }}\n    runs-on: ubuntu-latest\n";
+  assert.deepEqual(haltCoverage(compound), { jobs: 2, guarded: 1 }, 'a halt clause beside other conditions guards its job; a condition without it does not');
 });
 
 test('US-24-R61: a loop writes its beat before its body, so a run that never returns is visible, and the second route runs a tick when the newest is older than two intervals', async () => {

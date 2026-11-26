@@ -554,6 +554,42 @@
    "state": "3of6",
    "source": "site/research-data.js",
    "url": "https://ultrastable.io/research/open-loops-2026"
+  },
+  {
+   "id": "ev:pv-d0b0fd1082a0",
+   "date": "2026-11-26",
+   "text": "Shipped by the system itself: feat: the storage adapters, core test helpers and the claims, console-l3 and deploy modules (W01). https://ultrastable.io/live",
+   "source": "ops/changelog.json",
+   "arm": "shipped",
+   "kind": "event",
+   "tag": "EVENT"
+  },
+  {
+   "id": "ev:pv-504bf3710667",
+   "date": "2026-11-26",
+   "text": "Shipped by the system itself: feat: the Cloudflare migrations bundle is append-only. https://ultrastable.io/live",
+   "source": "ops/changelog.json",
+   "arm": "shipped",
+   "kind": "event",
+   "tag": "EVENT"
+  },
+  {
+   "id": "ev:pv-e947ff4830d9",
+   "date": "2026-11-26",
+   "text": "Shipped by the system itself: feat(phasework): phased large change as kernel code (PHASED-WORK-1). https://ultrastable.io/live",
+   "source": "ops/changelog.json",
+   "arm": "shipped",
+   "kind": "event",
+   "tag": "EVENT"
+  },
+  {
+   "id": "ev:pv-25c55d099e37",
+   "date": "2026-11-26",
+   "text": "Shipped by the system itself: branchsweep: merge the branches main lacks. https://ultrastable.io/live",
+   "source": "ops/changelog.json",
+   "arm": "shipped",
+   "kind": "event",
+   "tag": "EVENT"
   }
  ]
 }
