@@ -1,10 +1,10 @@
 {
- "at": "2026-11-25T23:57:22.518119+00:00",
+ "at": "2026-11-26T07:22:52.418744+00:00",
  "tenants": {
   "practical-solutions": {
    "status": "needs-pr",
-   "drift_files": 11,
-   "days_behind": 8.2,
+   "drift_files": 13,
+   "days_behind": 8.5,
    "ok": false
   }
  },

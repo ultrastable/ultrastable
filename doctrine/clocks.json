@@ -180,6 +180,14 @@
         "https://ultrastable-replication-ledger.ultrastable.workers.dev/health",
         "https://replication-ledger.ultrastable.org/health"
       ]
+    },
+    {
+      "id": "cleanroom",
+      "what": "the daily clean-room bootstrap: a sandbox system from the seed alone, a simulated day, teardown, and the satellite agent-file coherence check",
+      "source": "workflow",
+      "workflow": "cleanroom",
+      "expected_interval_s": 86400,
+      "periodic": true
     }
   ],
   "chain": {

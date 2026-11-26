@@ -10,6 +10,7 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-26
 
+- 2026-11-26: CLEANROOM-1 and COHERENCE-1 carried from the stuck PR 2276 onto main inside PR 2369: `foundation/cleanroom.py` boots a sandbox from seed/ alone, runs 144 ticks and tears it down (daily, cleanroom.yml); `foundation/coherence.py` lints instruction surfaces and generated agent files against the closed-loop axiom. Left out as superseded: its SYSTEM-1 (`seed/doctrine/system.json`) by SYSTEM-SPEC-1 and COLDSTART-1, its org-settings generator by ADMIT-1 and REPO-STANDARD-1, its seed-template compare by FLEET-MAP-1. The clean room's first run found that a booted system's SYSTEM.md went stale (org/ paths counted as kit enforcement); fixed in `seed/scripts/system.py`.
 - 2026-11-26: fix(lane): PR age bound from open time; fix main red (openstd land, post hook) (#2380)
 - 2026-11-26: fix(executor): model calls through the site AI binding, and a detector for a dead code-agent ladder (#2368)
 - 2026-11-26: chore(openstd): baseline batch, events and release notes (OPEN-STANDARDS-1) [skip ci]

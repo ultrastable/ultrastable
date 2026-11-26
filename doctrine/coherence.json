@@ -1,0 +1,69 @@
+{
+  "_doc": "COHERENCE-1 (Rowan, 2026-11-25): 'all surfaces, all files, all code, all instructions, everything has to work together automatically and seamlessly from the beginning.' Read by foundation/coherence.py. Every instruction surface, and every agent file workers/tools/sync_agent_files.py generates for another repository, is linted for phrases that contradict the closed-loop axiom; every rule in agents/AGENTS.md must name code that enforces it and must reach the seed copy unless it is listed platform-only. What other checks already own is not repeated here: the seed template against seed/ is FLEET-MAP-1 (fleetmap --drift, template-publish.yml), repository settings are REPO-STANDARD-1 and ADMIT-1 (repostd, admit), the definition of a system is SYSTEM-SPEC-1 and COLDSTART-1. Baselines are shrink-only: an entry may be removed when it is fixed, never added.",
+  "version": 1,
+  "sources": [
+    {
+      "id": "agent-contract",
+      "source": "workers/agents/CONTRACT.md",
+      "generator": "workers/tools/sync_agent_files.py",
+      "copies": {
+        "spec": "ultrastable/spec",
+        "license": "ultrastable/license",
+        ".github": "ultrastable/.github"
+      },
+      "synced_by": "each copy repository's agent-files workflow pulls the generator from main daily and opens a pull request its lane merges"
+    }
+  ],
+  "imports": [
+    "CLAUDE.md",
+    "seed/CLAUDE.md"
+  ],
+  "instruction_surfaces": [
+    "agents/AGENTS.md",
+    "seed/agents/AGENTS.md",
+    "agents/PROJECT-INSTRUCTIONS.md",
+    "workers/agents/CONTRACT.md",
+    "agents/roles/*.md",
+    "seed/agents/roles/*.md"
+  ],
+  "contradictions": [
+    {
+      "pattern": "needs a human reviewer",
+      "why": "CLOSED-LOOP-AXIOM: human-approval controls are replaced by automated gates"
+    },
+    {
+      "pattern": "protected change with a human reviewer",
+      "why": "CLOSED-LOOP-AXIOM: a legal act is a gate card with a default in effect, not a waiting review"
+    },
+    {
+      "pattern": "(?i)please review",
+      "why": "SELF-CLOSED-LOOPS-1: nothing waits on a person reading"
+    },
+    {
+      "pattern": "(?i)wait(ing)? for (a |the )?(human )?(review|approval)",
+      "why": "MERGE-NOW: a green PR merges itself"
+    },
+    {
+      "pattern": "List the records still to be created and by whom",
+      "why": "IC-ACTOR-001: the fleet is the actor of every next step"
+    },
+    {
+      "pattern": "humans merge less",
+      "why": "CLOSED-LOOP-AXIOM: no person merges; the lane does"
+    }
+  ],
+  "platform_only_rules": [],
+  "enforcement_ok_without_path": [
+    "INFO-USEFUL-1",
+    "DURABLE-STORAGE-1",
+    "SURFACE-AUDIT-1"
+  ],
+  "_platform_only_why": {},
+  "_enforcement_elsewhere_why": "enforced in rwnq8/resume (scripts/check_decisions.py, scripts/audit_surfaces.py), a repository outside this org that this check cannot read",
+  "retired_copies": [
+    "workers",
+    "spec",
+    "license"
+  ],
+  "_retired_why": "archived repositories (REPOS-1): pushes are refused with 403; their code and text live here"
+}

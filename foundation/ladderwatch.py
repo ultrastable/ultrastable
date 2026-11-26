@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """LADDER-LIVE-1: the self-coding executor is judged by whether its model calls return answers, not by whether its job ran.
 
 From 2026-11-23 to 2026-11-26 every code-agent rung failed (Workers AI HTTP 401 through the site route, GitHub Models HTTP 200 "OK" text/plain),

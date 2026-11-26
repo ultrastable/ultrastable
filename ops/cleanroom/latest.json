@@ -1,0 +1,128 @@
+{
+ "at": "2026-11-26T07:22:56Z",
+ "ticks": 144,
+ "passed": true,
+ "results": [
+  {
+   "id": "boot",
+   "what": "the bootstrap runs every stage without a blocked one",
+   "ok": true,
+   "evidence": "15 stages, none blocked"
+  },
+  {
+   "id": "no-human-steps",
+   "what": "a hosted boot opens no card that asks a person for a secret, token or key",
+   "ok": true,
+   "evidence": "1 gate card(s), none asks a person for a secret"
+  },
+  {
+   "id": "repo-settings",
+   "what": "the repository resets its own settings (delete branch on merge) and cleans branches",
+   "ok": true,
+   "evidence": "present"
+  },
+  {
+   "id": "workflows",
+   "what": "every workflow declares budget, trigger, free alternative and a timeout, and honours HALT",
+   "ok": true,
+   "evidence": "every workflow declares budget, trigger, free alternative, timeout and honours HALT"
+  },
+  {
+   "id": "credentials",
+   "what": "credentials come through the platform's own path (host or consent screen), never pasted",
+   "ok": true,
+   "evidence": "present"
+  },
+  {
+   "id": "cloudflare",
+   "what": "D1, Worker and cron are declared and the provision plan is written",
+   "ok": true,
+   "evidence": "4 provision command(s) planned"
+  },
+  {
+   "id": "back-end",
+   "what": "the tick Worker and its loops exist",
+   "ok": true,
+   "evidence": "present"
+  },
+  {
+   "id": "front-end",
+   "what": "a public page is served at /",
+   "ok": true,
+   "evidence": "present"
+  },
+  {
+   "id": "managers",
+   "what": "portfolio, product and project managers and a reviewer are staffed",
+   "ok": true,
+   "evidence": "18 role kind(s) staffed"
+  },
+  {
+   "id": "probes",
+   "what": "objectives and the liveness metrics are seeded",
+   "ok": true,
+   "evidence": "3 objective(s), 12 metric(s)"
+  },
+  {
+   "id": "knowledge-graph",
+   "what": "the system keeps a knowledge graph of its own data",
+   "ok": true,
+   "evidence": "present"
+  },
+  {
+   "id": "discoverable",
+   "what": "the system serves its manifest and joins the directory",
+   "ok": true,
+   "evidence": "present"
+  },
+  {
+   "id": "red-team",
+   "what": "the system questions what it does not know (inverted lenses, pre-mortem, red team)",
+   "ok": true,
+   "evidence": "present"
+  },
+  {
+   "id": "improve",
+   "what": "the system files its own improvement and research work",
+   "ok": true,
+   "evidence": "present"
+  },
+  {
+   "id": "year-gate",
+   "what": "every declared fault has an exercised drill",
+   "ok": true,
+   "evidence": "year gate: horizon p10 730 >= 365 days (200 simulated years)"
+  },
+  {
+   "id": "definition",
+   "what": "the booted seed still meets its own definition (SYSTEM-SPEC-1: scripts/system.py --check against autonomy/system.json): SYSTEM.md is current, every clause's probe passes and every standing rule has its enforcement",
+   "ok": true,
+   "evidence": "system spec ok"
+  },
+  {
+   "id": "human-voice",
+   "what": "what the seed publishes for people passes the human-voice lint",
+   "ok": true,
+   "evidence": "humanvoice: ok"
+  },
+  {
+   "id": "day",
+   "what": "a simulated day of ticks runs with no error",
+   "ok": true,
+   "evidence": "{\"ticks\": 144, \"completed\": 144, \"errors\": [], \"error_count\": 0, \"tick_runs\": 144, \"ignition\": {\"stage\": \"ticking\", \"since\": \"2026-01-05 01:00:00\", \"at\": \"2026-01-05 23:50:00\", \"bootstrapped\": false, \"bootstrapped_since\": null, \"critical\": false, \"critical_since\": null, \"k_streak\": 0, \"tick_streak\": 143, \"blocking\": {\"stage\": \"looping\", \"why\": \"not ticking: credentials (never), executor (never), g"
+  },
+  {
+   "id": "ignition",
+   "what": "after a simulated day the system has computed its own ignition stage from evidence and is at least ticking; what blocks the next stage is named",
+   "ok": true,
+   "evidence": "stage ticking (sandbox floor ticking); next blocked: looping: not ticking: credentials (never), executor (never), gate (never), lane (never), handoffs (never), issuesync (never), repo-access (never), sweeper (never), deploy-evidence (never), watchdog-gh (never),"
+  },
+  {
+   "id": "teardown",
+   "what": "the sandbox is torn down and leaves nothing behind",
+   "ok": true,
+   "evidence": "sandbox deleted"
+  }
+ ],
+ "findings": []
+}

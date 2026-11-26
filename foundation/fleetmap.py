@@ -145,6 +145,19 @@ def check(root=REPO) -> list[str]:
     for d in tc.get("never", []):
         if (root / "seed" / d).exists():
             errs.append(f"seed/{d} is admin or platform material and may not be in the template (TEMPLATE-CODE-ONLY-1)")
+    for kind in ("retired", "generated"):  # the two exceptions to "a publish never overwrites or deletes": each is exact, reasoned and provable
+        for e in tc.get(kind, []):
+            path = e.get("path", "") if isinstance(e, dict) else ""
+            if not path or path.endswith("/") or not str(e.get("reason", "")).strip():
+                errs.append(f"template_contents.{kind}: every entry is one exact file path with a reason: {e}")
+            elif kind == "retired" and (root / "seed" / path).exists():
+                errs.append(f"template_contents.retired names {path}, which seed/ still holds: a retired file is one the source no longer has")
+            elif kind == "retired" and not (root / "seed" / str(e.get("superseded_by", "\0"))).is_file():
+                errs.append(f"template_contents.retired {path}: superseded_by must name the seed/ file that carries it now")
+            elif kind == "generated" and not ((root / "seed" / path).is_file() and (root / "seed" / str(e.get("generator", "\0"))).is_file()):
+                errs.append(f"template_contents.generated {path}: the file and its generator must both be in seed/")
+            elif _under(path, tc.get("keep", [])):
+                errs.append(f"template_contents.{kind} names {path}, which keep also lists")
     known = set(tc.get("belongs", []))
     for p in sorted((root / "seed").iterdir()) if (root / "seed").is_dir() else []:
         name = p.name + ("/" if p.is_dir() else "")
@@ -223,10 +236,13 @@ def history_blobs(root, rel: str) -> set:
 STAMP = ".ultrastable/published.json"
 
 
-def publish(root, mirror, source="seed", keep=(), apply=False, source_sha="") -> dict:
+def publish(root, mirror, source="seed", keep=(), apply=False, source_sha="", retired=(), generated=()) -> dict:
     """Copy source/ of this checkout into a clone of its mirror without ever overwriting work done in the mirror. A mirror file is replaced only
     when it is what the last publish wrote (the stamp) or an older version of the source file (git history); anything else was edited in the
-    mirror and is a conflict to carry up into the source. Files only the mirror holds are reported, never deleted."""
+    mirror and is a conflict to carry up into the source. Files only the mirror holds are reported, never deleted. Two declared exceptions
+    (template_contents in doctrine/fleet-map.json, a reason per entry, proved by --check): a `generated` path is written by a generator from the
+    tree, so the mirror's copy is never work to carry up and the source's copy replaces it; a `retired` path was superseded in the source under
+    another name, the source no longer holds it, and the mirror's leftover copy is removed."""
     root, mirror = Path(root), Path(mirror)
     sp = mirror / STAMP
     stamp = json.loads(sp.read_text(encoding="utf-8")).get("digests", {}) if sp.exists() else {}
@@ -240,7 +256,7 @@ def publish(root, mirror, source="seed", keep=(), apply=False, source_sha="") ->
             rep["same"] += 1
             digests[p] = sha
             continue
-        elif stamp.get(p) == cur[p] or cur[p] in history_blobs(root, f"{source}/{p}"):
+        elif stamp.get(p) == cur[p] or p in generated or cur[p] in history_blobs(root, f"{source}/{p}"):
             rep["updated"].append(p)
         else:
             rep["conflicts"].append(p)
@@ -251,7 +267,10 @@ def publish(root, mirror, source="seed", keep=(), apply=False, source_sha="") ->
         if apply:
             (mirror / p).parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(root / source / p, mirror / p)
-    rep["extra"] = sorted(p for p in cur if p not in src and p != STAMP and not _under(p, keep))
+    rep["retired"] = sorted(p for p in cur if p not in src and p in retired)
+    for p in rep["retired"] if apply else []:
+        (mirror / p).unlink()
+    rep["extra"] = sorted(p for p in cur if p not in src and p != STAMP and not _under(p, keep) and p not in retired)
     if apply and (rep["added"] or rep["updated"] or not sp.exists()):
         sp.parent.mkdir(parents=True, exist_ok=True)
         sp.write_text(json.dumps({"rule": RULE, "source": f"ultrastable/ultrastable {source}/", "source_sha": source_sha, "digests": dict(sorted(digests.items()))}, indent=1) + "\n", encoding="utf-8")
@@ -596,7 +615,9 @@ def main(argv=None) -> int:
         s = next(x for x in row["synced_from"] if x["kind"] == "tree")
         keep = list(s.get("keep") or []) + (m["template_contents"]["keep"] if s.get("keep_from") else [])
         sha = subprocess.run(["git", "-C", str(REPO), "rev-parse", "--short", "HEAD"], capture_output=True, text=True).stdout.strip()
-        rep = publish(REPO, mirror, s["source"], keep, apply="--apply" in av, source_sha=sha)
+        tc = m["template_contents"] if s.get("keep_from") else {}
+        rep = publish(REPO, mirror, s["source"], keep, apply="--apply" in av, source_sha=sha,
+                      retired=[e["path"] for e in tc.get("retired", [])], generated=[e["path"] for e in tc.get("generated", [])])
         print(json.dumps({k: (v if isinstance(v, int) else len(v)) for k, v in rep.items()}))
         for k in ("conflicts", "extra"):
             for p in rep[k]:
