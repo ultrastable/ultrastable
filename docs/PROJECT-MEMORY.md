@@ -10,6 +10,9 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-26
 
+- 2026-11-26: docs: conformance manifest, kernel split decision and the disclosure line (slice 11 of 11) (#2503)
+- 2026-11-26: queue: closing-probe verdicts for 32 item(s) (QUEUE-PERSIST-1) (part 2/2) [skip ci]
+- 2026-11-26: queue: closing-probe verdicts for 32 item(s) (QUEUE-PERSIST-1) (part 1/2) [skip ci]
 - 2026-11-26: queue: closing-probe verdicts for 21 item(s) (QUEUE-PERSIST-1) (part 2/2) [skip ci]
 - 2026-11-26: queue: closing-probe verdicts for 21 item(s) (QUEUE-PERSIST-1) (part 1/2) [skip ci]
 - 2026-11-26: test: foundation tests for the specification requirements, part 2 (slice 10 of 11) (#2501)
