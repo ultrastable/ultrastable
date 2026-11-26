@@ -54,11 +54,13 @@
   },
   "base-rates": {
    "state": "pending",
-   "item": "Q-KG-base-rates"
+   "item": "Q-KG-base-rates",
+   "probe": "https://base-rates.ultrastable.org/api/graph"
   },
   "open-questions": {
    "state": "pending",
-   "item": "Q-KG-open-questions"
+   "item": "Q-KG-open-questions",
+   "probe": "https://open-questions.ultrastable.org/api/graph"
   }
  }
 }
