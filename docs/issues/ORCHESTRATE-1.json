@@ -1,0 +1,11 @@
+{
+  "id": "ORCHESTRATE-1",
+  "title": "ORCHESTRATE-1: the tick Worker plans, fans out, reviews and integrates items the single-shot executor fails",
+  "body": "**Owner:** operations\n**Trigger:** an item whose blocker starts with 'needs-code: worker-native attempt failed'\n**Done check:** cmd:git grep -q orchestrateProvider -- seed/worker/src/executor.js\n**Closing probe:** `node --test seed/worker/test/orchestrate.test.js` exits 0\n**Prediction:** orch_runs_done >= 1 within 168 h\n**Out of scope:** running code in a sandbox before the PR and a paid model rung (OL-20261126-1)\n**Status:** open\n\nA run kept in D1 (orch_runs, orch_steps) advances one phase a tick: plan, implement in parallel, verify with a model that wrote no step, fix, integrate as one PR. Code seed/worker/src/orchestrate.js.",
+  "labels": [
+    "role:operations",
+    "raises-self"
+  ],
+  "milestone": "Now",
+  "workstream": "Executor"
+}

@@ -254,6 +254,14 @@
       "keep": "state",
       "reason": "GOALS-1: one row per knob with its current value; bounded by the tenant limit of 80"
     },
+    "orch_runs": {
+      "keep": "state",
+      "reason": "ORCHESTRATE-1: one row per planned run, at most two per work item; the record of what the orchestrator did with it"
+    },
+    "orch_steps": {
+      "keep": "state",
+      "reason": "ORCHESTRATE-1: at most six rows per run; a finished step holds the files the run's PR carries"
+    },
     "stickiness_state": {
       "keep": "state",
       "reason": "STICKY-1: one row per system, rewritten every pass by the tick step stickiness"
