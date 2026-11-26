@@ -1,7 +1,7 @@
 {
   "id": "Q-FLEETMAP-seed",
-  "title": "Q-FLEETMAP-seed: ultrastable/seed is not equal to its source (2 file(s) differ, 0 missing, 0 only in the copy)",
-  "body": "**Owner:** operations\n**Trigger:** fleetmap --drift --apply (daily in tenant-sync.yml)\n**Done check:** cmd:python3 -m foundation fleetmap --probe seed\n**Prediction:** fleet_map_drifted_repos <= 0 within 168 h\n**Status:** closed\n\nultrastable/seed is a copy and is not equal to its source (FLEET-MAP-1): 2 file(s) differ, 0 missing, 0 only in the copy.\n\n- differ: README.md, docs/claims.json\n\nFix the sync named in doctrine/fleet-map.json for this repository (never copy by hand), then the same reading closes this item.\n\n**Closing probe:** cmd:python3 -m foundation fleetmap --probe seed\n\n**Disposition:** shelved (ttl, 2026-11-26T15:17:59Z, DISPOSE-1)\n\n**Evidence:** open 15.9 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "title": "Q-FLEETMAP-seed: ultrastable/seed is not equal to its source (1 file(s) differ, 0 missing, 0 only in the copy)",
+  "body": "**Owner:** operations\n**Trigger:** fleetmap --drift --apply (daily in tenant-sync.yml)\n**Done check:** cmd:python3 -m foundation fleetmap --probe seed\n**Prediction:** fleet_map_drifted_repos <= 0 within 168 h\n**Status:** open\n\nultrastable/seed is a copy and is not equal to its source (FLEET-MAP-1): 1 file(s) differ, 0 missing, 0 only in the copy.\n\n- differ: SECURITY.md\n\nFix the sync named in doctrine/fleet-map.json for this repository (never copy by hand), then the same reading closes this item.\n\n**Closing probe:** cmd:python3 -m foundation fleetmap --probe seed\n",
   "labels": [
     "p1",
     "agent-ready",
