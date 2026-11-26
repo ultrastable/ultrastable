@@ -62,9 +62,39 @@ def record(root, ask: str, cls: str, route: str, ok: bool, detail: str, now=None
     row = {"at": (now or datetime.datetime.now(datetime.timezone.utc)).isoformat(timespec="seconds"), "ask": ask, "class": cls, "route": route, "ok": ok, "detail": detail}
     p = Path(root) / LEDGER
     p.parent.mkdir(parents=True, exist_ok=True)
+    last = _last_outcomes(p)
+    if last.get(_key(row)) == (ok, detail):  # LEDGER-DEDUP-1: an unchanged outcome is already on record; only a change is a new row
+        return row
     with p.open("a", encoding="utf-8") as f:
         f.write(json.dumps(row) + "\n")
     return row
+
+
+def _key(r) -> tuple:
+    return (r["ask"], r["class"], r["route"])
+
+
+def _last_outcomes(p: Path) -> dict:
+    out = {}
+    if p.is_file():
+        for l in p.read_text(encoding="utf-8").splitlines():
+            if l.strip():
+                r = json.loads(l)
+                out[_key(r)] = (r["ok"], r["detail"])
+    return out
+
+
+def compact(root=ROOT) -> tuple[int, int]:
+    """Keep only rows where a route's outcome changed (first sighting and every flip). Readers need the classes attempted per ask, which survive."""
+    p = Path(root) / LEDGER
+    rows, kept, last = attempts(root), [], {}
+    for r in rows:
+        o = (r["ok"], r["detail"])
+        if last.get(_key(r)) != o:
+            kept.append(r)
+            last[_key(r)] = o
+    p.write_text("".join(json.dumps(r) + "\n" for r in kept), encoding="utf-8")
+    return len(rows), len(kept)
 
 
 def try_route(route: str, root=ROOT, env=None, fetch=None, git=None) -> tuple[bool, str]:
@@ -166,6 +196,10 @@ def check(root=ROOT) -> list[str]:
 
 def main(argv=None) -> int:
     a = list(sys.argv[1:] if argv is None else argv)
+    if a[:1] == ["--compact"]:
+        before, after = compact()
+        print(f"pathfinder: compacted {LEDGER} {before} -> {after} rows")
+        return 0
     if a[:1] == ["--resolve"] and len(a) > 1:
         r = resolve(a[1])
         print(json.dumps(r))
