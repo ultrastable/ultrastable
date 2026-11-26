@@ -200,12 +200,12 @@ class WorkNotPulse(T):
         (self.d / "actions-budget.json").write_text(json.dumps({"paused": True, "paused_workflows": []}))
         self.assertEqual(R._paused(self.d, public=False), {"*"})
         self.assertEqual(R._paused(self.d, public=True), set())
-        beats = self.beats({"wf:cost-guard"})
+        beats = self.beats({"wf:failure-audit"})
         dispatch = lambda w, root=None: (self.runs.append(w) or (True, "ok"))
         r = R.run(self.d, True, NOW, beats, lambda u: 200, dispatch, public=False)
         self.assertEqual(self.runs, []); self.assertEqual(r["skipped"][0]["why"], "paused by actions-budget.json")
         r = R.run(self.d, True, NOW + 1, beats, lambda u: 200, dispatch, public=True)
-        self.assertEqual(self.runs, ["cost-guard"])
+        self.assertEqual(self.runs, ["failure-audit"])
 
     def test_scout_commit_step_runs_after_a_failed_step(self):
         y = (REPO / ".github/workflows/scout.yml").read_text(encoding="utf-8")
