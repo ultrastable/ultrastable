@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-26-repo-conform-1-seed-checks-machine-readable-repo-files",
+  "kind": "decision",
+  "date": "2026-11-26",
+  "title": "REPO-CONFORM-1: seed checks machine-readable repo files",
+  "body": "Seed carries autonomy/repo-conformance.json and scripts/repoconform.py, run by the seed unittest suite. Next: same check on every org repo (issue 2577). Lesson: checks.yml is on the worker-gate deny list, so wire new checks through the seed test suite.",
+  "probe": "file:seed/scripts/repoconform.py",
+  "session": "session_0156nqDrC72mK9k9fb63twpf"
+ },
+ "kind": "decision",
+ "title": "REPO-CONFORM-1: seed checks machine-readable repo files",
+ "session": "session_0156nqDrC72mK9k9fb63twpf"
+}

@@ -107,6 +107,14 @@
       "url": "prsize.schema.json"
     },
     {
+      "name": "repo-conformance.json",
+      "description": "Contract for seed/autonomy/repo-conformance.json",
+      "fileMatch": [
+        "seed/autonomy/repo-conformance.json"
+      ],
+      "url": "repo-conformance.schema.json"
+    },
+    {
       "name": "retention.json",
       "description": "Contract for seed/autonomy/retention.json",
       "fileMatch": [

@@ -12,6 +12,11 @@
  "template_contents": {
   "_doc": "TEMPLATE-CODE-ONLY-1: what belongs in ultrastable/seed. It is seed/ of the platform, plus the files in keep. Anything else there is drift: either kernel code to move up into seed/ or a file to delete. generated: files a generator in seed/ writes from the tree; the template's copy is output, never work to carry up, so a publish replaces it. retired: files the template still holds that seed/ carries under another name; a publish removes them (Q-FLEETMAP-seed).",
   "belongs": [
+   "CHANGELOG.md",
+   "CONTRIBUTING.md",
+   "REUSE.toml",
+   "SECURITY.md",
+   "llms.txt",
    "agents/",
    "autonomy/",
    "bootstrap/",
