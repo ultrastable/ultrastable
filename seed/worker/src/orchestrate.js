@@ -18,6 +18,11 @@ import { tenantOf } from './tenant.js';
 import { recordPlan, settlePlan, safely } from './decisions.js';
 
 export const MAX_STEPS = 6, PARALLEL = 3, MAX_ATTEMPTS = 2, MAX_ROUNDS = 2, MAX_RUNS_PER_ITEM = 2, STEP_FILES = 3, RUN_FILES = 12, STALE_MS = 6 * 3600000;
+// PHASED-WORK-1: the phases of autonomy/phases.json this Worker runs, by the phase of orch_runs it is in (scripts/phasework.py --check reads this map).
+// plan covers audit and coverage (the planner is shown the repository and names what each step must touch), integrate covers the final gate (the PR's
+// own checks, held by greenguard.js, are the full gate: nothing merges on a partial one). new_specs and fix are the same implement step with a different brief.
+export const PHASES = { 'plan': ['audit', 'coverage'], 'implement': ['implement'], 'verify': ['verify'], 'integrate': ['integrate', 'final_gate'] };
+export const REVIEWERS = ['evidence', 'adversarial'];
 export const TRIGGER = 'needs-code: worker-native attempt failed';
 const SHOWN = 16000;
 
@@ -82,7 +87,9 @@ export const stepPrompt = (r, s, others, files, needs) => `You are one code agen
   + `\nReply in exactly this format and nothing else:\n${BLOCK_FORMAT}\n`
   + (s.asked ? '' : 'If you cannot do the step without reading another existing file, reply instead with one JSON object only: {"need":["relative/path"]} (at most two paths, asked once).\n');
 
-export const reviewPrompt = (r, steps, files) => 'You are the independent reviewer of a change other agents wrote. Judge only whether the change is correct and does what the item asks; do not ask for style changes.\n\n'
+export const reviewPrompt = (r, steps, files, mode = 'evidence') => 'You are the independent reviewer of a change other agents wrote. Judge only whether the change is correct and does what the item asks; do not ask for style changes.\n'
+  + (mode === 'adversarial' ? 'You are the ADVERSARIAL reviewer: assume the change is wrong, look for the input, edge case, missing test or broken caller that proves it, and name it.\n\n'
+    : 'You are the EVIDENCE reviewer: check each claim of the change against the files shown and the done check, and name any claim the files do not support.\n\n')
   + `ITEM ${r.item}: ${r.title}\n${(r.body || '').slice(0, 2000)}\n\nSTEPS:\n${steps.map(s => `${s.n}. ${s.title} -> ${s.paths.join(', ')}`).join('\n')}\n\n`
   + `FILES AFTER THE CHANGE:\n${files.map(f => show(f.path, f.content.length > 7000 ? f.content.slice(0, 7000) : f.content)).join('\n')}\n`
   + 'Answer with one JSON object only: {"ok":boolean,"findings":[{"step":number,"problem":string}]}. "ok" is true when nothing would break and the done check would pass; '
@@ -210,24 +217,33 @@ export const reviewers = authors => { const other = ADAPTERS.filter(a => !author
 
 async function verify(env, db, r, now, agent) {
   const ss = await steps(db, r.id), files = [...overlay(ss).values()];
-  let out;
-  try { out = await agent(env, reviewPrompt(r, ss, files), reviewers(ss.map(s => s.adapter))); if (typeof out.ok !== 'boolean') throw new Error('the reviewer gave no verdict'); }
-  catch (e) {
+  // PHASED-WORK-1: two readers, an evidence one and an adversarial one, neither of whom wrote a step and, when another exists, not the same model twice.
+  const outs = [], used = [];
+  try {
+    for (const mode of REVIEWERS) {
+      const pool = reviewers(ss.map(s => s.adapter)), fresh = pool.filter(a => !used.includes(a.id));
+      const out = await agent(env, reviewPrompt(r, ss, files, mode), fresh.length ? fresh : pool);
+      if (typeof out.ok !== 'boolean') throw new Error(`the ${mode} reviewer gave no verdict`);
+      if (out.adapter) used.push(out.adapter);
+      outs.push({ mode, out });
+    }
+  } catch (e) {
     if (r.attempts + 1 < MAX_ATTEMPTS) return retry(db, r, now, String(e && e.message));
     // No reviewer answered twice. The change is not called reviewed: the PR says so and the repository's checks stay the gate.
     await touch(db, r, now, { phase: 'integrate', attempts: 0, review: 'not run: ' + String(e && e.message).slice(0, 160) });
     return { ok: true, detail: `${r.item}: no reviewer answered; integrating with the review recorded as not run` };
   }
-  const found = (Array.isArray(out.findings) ? out.findings : []).filter(f => f && ss.some(s => s.n === Number(f.step)) && String(f.problem || '').trim());
-  if (out.ok || !found.length) {
-    await touch(db, r, now, { phase: 'integrate', attempts: 0, review: `passed by ${out.adapter || 'reviewer'} after ${r.round} fix round(s)` });
-    return { ok: true, detail: `${r.item}: review passed after ${r.round} fix round(s)` };
+  const found = outs.flatMap(({ mode, out }) => (Array.isArray(out.findings) ? out.findings : []).filter(f => f && ss.some(s => s.n === Number(f.step)) && String(f.problem || '').trim()).map(f => ({ ...f, mode })));
+  const blocked = outs.some(({ out }) => !out.ok) && found.length;
+  if (!blocked) {
+    await touch(db, r, now, { phase: 'integrate', attempts: 0, review: `passed by ${outs.map(o => `${o.mode}:${o.out.adapter || 'reviewer'}`).join(' + ')} after ${r.round} fix round(s)` });
+    return { ok: true, detail: `${r.item}: evidence and adversarial review passed after ${r.round} fix round(s)` };
   }
-  const text = found.map(f => `step ${Number(f.step)}: ${String(f.problem).slice(0, 300)}`).join('; ');
+  const text = found.map(f => `step ${Number(f.step)} (${f.mode}): ${String(f.problem).slice(0, 300)}`).join('; ');
   if (r.round >= MAX_ROUNDS) return fail(db, r, now, `review findings survived ${MAX_ROUNDS} fix rounds: ${text}`);
   for (const n of new Set(found.map(f => Number(f.step)))) await run(db, "UPDATE orch_steps SET status = 'pending', attempts = 0, findings = ? WHERE run = ? AND n = ?", found.filter(f => Number(f.step) === n).map(f => String(f.problem).slice(0, 600)).join('\n'), r.id, n);
   await touch(db, r, now, { phase: 'implement', attempts: 0, round: r.round + 1, detail: `fix round ${r.round + 1}: ${text}`.slice(0, 400) });
-  return { ok: true, detail: `${r.item}: reviewer refused ${found.length} point(s); fix round ${r.round}` };
+  return { ok: true, detail: `${r.item}: reviewers refused ${found.length} point(s); fix round ${r.round}` };
 }
 
 async function integrate(db, gh, r, now) {

@@ -41,12 +41,12 @@ const ANSWERS = {
   3: { files: [{ path: 'seed/worker/test/sum.test.js', content: "import { sum } from '../src/sum.js';\nif (sum(1, 2) !== 3) throw new Error('sum');\n" }] },
 };
 // A scripted team: the planner, one author per step and a reviewer, told apart by the prompt each role is given.
-function team({ review = [{ ok: true, findings: [] }], answers = ANSWERS, plan = PLAN } = {}) {
-  const calls = [], inFlight = { now: 0, max: 0 };
+function team({ review = [{ ok: true, findings: [] }], advert = null, answers = ANSWERS, plan = PLAN } = {}) {
+  const calls = [], inFlight = { now: 0, max: 0 }; let last = null;
   const agent = async (env, prompt, adapters) => {
     inFlight.max = Math.max(inFlight.max, ++inFlight.now); await new Promise(r => setTimeout(r, 2)); inFlight.now--;
     if (prompt.startsWith('You are the planning manager')) { calls.push('plan'); return { ...plan, adapter: 'a-plan' }; }
-    if (prompt.startsWith('You are the independent reviewer')) { calls.push('review'); const v = review.length > 1 ? review.shift() : review[0]; if (v instanceof Error) throw v; return { ...v, adapter: (adapters || [{ id: 'r' }])[0].id, prompt }; }
+    if (prompt.startsWith('You are the independent reviewer')) { calls.push('review'); const adv = prompt.includes('ADVERSARIAL reviewer'); const v = adv ? (advert ? (advert.length > 1 ? advert.shift() : advert[0]) : last) : (last = review.length > 1 ? review.shift() : review[0]); if (v instanceof Error) throw v; return { ...v, adapter: (adapters || [{ id: 'r' }])[0].id, prompt }; }
     const n = Number(/YOUR STEP (\d+)/.exec(prompt)[1]); calls.push('step ' + n);
     const a = typeof answers[n] === 'function' ? answers[n](prompt) : answers[n];
     return { ...a, adapter: ADAPTERS[0].id };
@@ -91,7 +91,7 @@ test('the reviewer is never a model that wrote a step while another exists', () 
 test('a failed single-shot item is planned, worked in parallel, reviewed and opened as one PR', async () => {
   const { db, env } = setup(), gh = fakeGh(), t = team();
   const out = await drive(env, { fetchImpl: gh.f, agent: t.agent });
-  assert.deepEqual(t.calls, ['plan', 'step 1', 'step 2', 'step 3', 'review']);
+  assert.deepEqual(t.calls, ['plan', 'step 1', 'step 2', 'step 3', 'review', 'review']);
   assert.equal(t.inFlight.max, 2, 'steps 1 and 2 ran together');
   assert.match(out[1].detail, /worked 2 step\(s\) together/);
   assert.equal(out.at(-1).pr, 'https://github.com/o/r/pull/9');
@@ -124,7 +124,7 @@ test('a reviewer finding sends only the named step back, with the finding, and t
   const answers = { ...ANSWERS, 2: p => ({ files: [{ path: 'seed/worker/src/product.js', ...(p.includes('A REVIEWER REFUSED') ? { edits: [{ find: 'a + b', replace: 'a * b' }] } : { content: 'export const product = (a, b) => a + b;\n' }) }] }) };
   const t = team({ answers, review: [{ ok: false, findings: [{ step: 2, problem: 'product adds instead of multiplying' }] }, { ok: true }] });
   const out = await drive(env, { fetchImpl: gh.f, agent: t.agent });
-  assert.deepEqual(t.calls, ['plan', 'step 1', 'step 2', 'step 3', 'review', 'step 2', 'review']);
+  assert.deepEqual(t.calls, ['plan', 'step 1', 'step 2', 'step 3', 'review', 'review', 'step 2', 'review', 'review']);
   assert.equal(gh.written['seed/worker/src/product.js'], 'export const product = (a, b) => a * b;\n');
   assert.match(out.at(-1).detail, /1 fix round/);
 });
@@ -187,4 +187,14 @@ test('the provider needs the model, the repository token and the database, and i
   const db = makeDb();
   assert.equal(orchestrateProvider.available({ AI: {}, GITHUB_DISPATCH_TOKEN: 't', DB: db }), true);
   assert.equal((await advance({ DB: db, AI: {}, GITHUB_DISPATCH_TOKEN: 't', GITHUB_REPO: 'o/r' }, { fetchImpl: fakeGh().f })).idle, true);
+});
+
+test('PHASED-WORK-1: a finding from the adversarial reviewer alone sends the step back, and both reviewers run again after the fix', async () => {
+  const { env } = setup(), gh = fakeGh();
+  const answers = { ...ANSWERS, 2: p => ({ files: [{ path: 'seed/worker/src/product.js', ...(p.includes('A REVIEWER REFUSED') ? { edits: [{ find: 'a + b', replace: 'a * b' }] } : { content: 'export const product = (a, b) => a + b;\n' }) }] }) };
+  const t = team({ answers, review: [{ ok: true, findings: [] }], advert: [{ ok: false, findings: [{ step: 2, problem: 'product adds' }] }, { ok: true, findings: [] }] });
+  const out = await drive(env, { fetchImpl: gh.f, agent: t.agent });
+  assert.deepEqual(t.calls, ['plan', 'step 1', 'step 2', 'step 3', 'review', 'review', 'step 2', 'review', 'review']);
+  assert.equal(gh.written['seed/worker/src/product.js'], 'export const product = (a, b) => a * b;\n');
+  assert.match(out.at(-1).detail, /1 fix round/);
 });

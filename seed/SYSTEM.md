@@ -119,7 +119,7 @@ Criticality numbers (from `autonomy/criticality.json`): window 14 days, k_min 1,
 
 ## Standing rules
 
-97 standing rules from `agents/AGENTS.md`, each with the enforcement it cites. "In this kit" names code this repository runs;
+98 standing rules from `agents/AGENTS.md`, each with the enforcement it cites. "In this kit" names code this repository runs;
 a rule enforced only by the platform is marked so, and the platform checks it for every system it hosts.
 
 - **USER-BACKEND-1**: The user does the idea; the system does the backend; one fix improves every system. In this kit: `doctrine/user-backend.json`, `worker/src/errors.js`, `worker/test/errors.test.js`.
@@ -200,6 +200,7 @@ a rule enforced only by the platform is marked so, and the platform checks it fo
 - **CLEANROOM-1**: A fresh seed proves the whole; no surface contradicts the axiom. In this kit: ``, `scripts/humanvoice.py`, `tests/test_system.py`.
 - **ORCHESTRATE-1**: Large work is planned and worked in steps on the server. In this kit: `worker/src/executor.js`, `worker/src/orchestrate.js`, `worker/test/orchestrate.test.js`.
 - **WORK-RECORD-1**: Every piece of work has one server-side record. In this kit: checked by the platform.
+- **PHASED-WORK-1**: Large change is phased: audit, coverage, implement, verify, fix, integrate, final gate. In this kit: `autonomy/phases.json`, `scripts/phasework.py`, `tests/test_phasework.py`, `worker/src/orchestrate.js`.
 - **DOC-CONSUMED-1**: Every document is consumed by code. In this kit: checked by the platform.
 - **CLOSED-LOOP-1**: Closed loops only; nobody reads, reviews or decides. In this kit: `autonomy/policy.json`.
 - **NO-FABRICATION-1**: No made-up numbers. In this kit: `doctrine/claims.json`, `scripts/claims.py`.

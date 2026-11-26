@@ -91,6 +91,7 @@
   python3 -m foundation team [--gate|--check|--apply|--recommend --manifest F]   the phased virtual team (doctrine/team.json)
   python3 -m foundation publication [--check|--baseline|--history DIR]   PUBLICATION-GUARD-1: license, notice files, no case collisions, SPDX ratchet, no private data
   python3 -m foundation pins [--check|--apply|--report]                  PINS-1: every status pin and roadmap item on the site is computed from code, proofs and issues
+  python3 -m foundation phasework [new|next|done|status|--check]  PHASED-WORK-1: audit, coverage, implement, verify, fix, integrate, final gate
   python3 -m foundation worklog [start|beat|finish|list|reap|backfill|--check]   WORK-RECORD-1: the canonical work store (GitHub issues labelled work)
   python3 -m foundation agentwork [--apply|--probe-kill|--check]            AGENT-WORK-1: caps and kill switch for the Actions code agent; files Q-UNK work
   python3 -m foundation decisions [--check|--settle|--backfill|--probe|--status|--page|--baseline] [--apply]  DECISIONS-1: every decision logs its metric, predicted effect and measured outcome; /decisions
@@ -238,6 +239,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["pins"]:
         from . import pins
         return pins.main(_av[1:])
+    if _av[:1] == ["phasework"]:
+        from . import phasework
+        return phasework.main(_av[1:])
     if _av[:1] == ["worklog"]:
         from . import worklog
         return worklog.main(_av[1:])

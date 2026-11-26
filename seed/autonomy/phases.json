@@ -1,0 +1,40 @@
+{
+ "$schema": "./schemas/phases.schema.json",
+ "rule": "PHASED-WORK-1",
+ "doc": "The phases every large change moves through, in order. A phase fans out into agents; an agent ends done or failed; a phase ends when its exit holds. Read by scripts/phasework.py and checked against worker/src/orchestrate.js.",
+ "phases": [
+  {"id": "audit", "fan_out": "per_slice", "writes": false, "needs": [],
+   "does": "One reader per subsystem compares what the spec says with what the code does and records the gap, with file and line.",
+   "exit": "every slice has an audit record"},
+  {"id": "coverage", "fan_out": "one", "writes": false, "needs": ["audit"],
+   "does": "One agent inventories every subsystem the slices do not cover, so nothing unspecified is missed.",
+   "exit": "the inventory names every uncovered subsystem or says there is none"},
+  {"id": "implement", "fan_out": "per_slice", "writes": true, "needs": ["audit", "coverage"],
+   "does": "One author per slice builds code where the spec leads and updates the spec where it lags, writing only that slice's files.",
+   "exit": "every slice has a change"},
+  {"id": "new_specs", "fan_out": "per_gap", "writes": true, "needs": ["coverage"],
+   "does": "One author per uncovered subsystem writes the spec it lacks. Runs beside implement.",
+   "exit": "every gap has a spec"},
+  {"id": "verify", "fan_out": "per_slice_pair", "writes": false, "needs": ["implement", "new_specs"], "independent": true,
+   "reviewers": ["evidence", "adversarial"],
+   "does": "Two readers per slice, neither of whom wrote it. Evidence re-runs the claim through another path; adversarial tries to break it.",
+   "exit": "both reviewers passed every slice, or findings were raised"},
+  {"id": "fix", "fan_out": "per_finding", "writes": true, "needs": ["verify"], "max_rounds": 2,
+   "does": "Only the slices with findings are worked again with the finding attached, then verified again. A third round ends the run.",
+   "exit": "no open finding"},
+  {"id": "integrate", "fan_out": "one", "writes": true, "needs": ["verify"],
+   "does": "Every slice lands on one branch as one change with a Handoff block.",
+   "exit": "one change exists"},
+  {"id": "final_gate", "fan_out": "one", "writes": false, "needs": ["integrate"], "gate": "full",
+   "does": "The whole repository check runs on the integrated change. Red returns the run to fix; nothing merges on a partial gate.",
+   "exit": "the full gate passed on the integrated change"}
+ ],
+ "limits": {"parallel": 10, "max_slices": 11, "max_fix_rounds": 2, "max_attempts": 2},
+ "server_phases": {
+  "plan": ["audit", "coverage"],
+  "implement": ["implement"],
+  "verify": ["verify"],
+  "integrate": ["integrate", "final_gate"]
+ },
+ "instruction_files": ["agents/AGENTS.md"]
+}
