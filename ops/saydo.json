@@ -1,7 +1,7 @@
 {
- "at": "2026-11-26T20:27:34Z",
- "gaps": 8,
- "match_share": 0.986,
+ "at": "2026-11-26T20:37:27Z",
+ "gaps": 7,
+ "match_share": 0.987,
  "sources": {
   "changes": [
    {
@@ -590,12 +590,10 @@
    {
     "checks": 1,
     "external": [],
-    "failing": [
-     "python3 -m foundation rulerefs --check: FAIL /webmention: site route no page links and no doc names (RULE-REFS-1: write the words, or add the owner, in the same change); rulerefs: 1508 references, 1456 resolve, 52 external with a reason, 0 "
-    ],
+    "failing": [],
     "id": "RULE-REFS-1",
     "missing": [],
-    "ok": false,
+    "ok": true,
     "unmeasured": []
    },
    {
@@ -1076,7 +1074,7 @@
     "checks": 1,
     "external": [],
     "failing": [
-     "python3 -m foundation dispose --check: an open item is 102.9 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+     "python3 -m foundation dispose --check: an open item is 103.0 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
     ],
     "id": "DISPOSE-1",
     "missing": [],
@@ -1156,7 +1154,7 @@
    "total": 1
   },
   "rules": {
-   "gaps": 5,
+   "gaps": 4,
    "total": 104
   },
   "year": {
