@@ -100,8 +100,8 @@ Each is the owner's instruction, kept with the code that enforces it. A directiv
 
 | Id | In the owner's words | Status | Enforced by |
 |---|---|---|---|
-| D-NOTHING-IN-CHAT | Nothing can stay in a chat thread. All of your Claude Code stuff needs to be in the repo. | enforced | `agents/AGENTS.md`, `tools/loop_closer.py`, `.github/workflows/loops.yml` |
-| D-NO-OPEN-LOOPS | No open loops. Everything must have a closure and a loop. Self-referential closure. | enforced | `tools/loop_closer.py`, `tests/test_loop_closer.py`, `products/gaplint/gaplint`, `core/kernel/index.js` |
+| D-NOTHING-IN-CHAT | Nothing can stay in a chat thread. All of your Claude Code stuff needs to be in the repo. | enforced | `agents/AGENTS.md`, `tools/loop_closer.py`, `.github/workflows/loops.yml`, `core/principles/enforcement.js` |
+| D-NO-OPEN-LOOPS | No open loops. Everything must have a closure and a loop. Self-referential closure. | enforced | `tools/loop_closer.py`, `tests/test_loop_closer.py`, `products/gaplint/gaplint`, `core/kernel/index.js`, `core/principles/enforcement.js` |
 | D-AUTONOMY-IS-LOOPS | A system is autonomous if it has self-referential loops and the ability to close those loops. | enforced | `core/kernel/index.js`, `core/claims/index.js`, `core/runner/index.js`, `autonomy/policy.json` |
 | D-NO-CODE-FOR-THE-PERSON | Never have to write a line of code. Never have to look under the hood. The front end is your back end. | enforced | `core/src/console.js`, `core/test/console.test.js` |
 | D-BOOTSTRAP | Bootstrapping is super important. Start from nothing. | enforced | `bootstrap/bootstrap.py`, `self/IDEA.md` |
@@ -109,7 +109,7 @@ Each is the owner's instruction, kept with the code that enforces it. A directiv
 | D-SCOPE-AND-PACKS | Know what our core mission is and what boundaries we're willing to push that out to. Talking about it is totally insufficient. It has to be implemented in code. | enforced | `bootstrap/cases.py`, `SCOPE.md`, `core/packs/manifest.js`, `core/packs/guard.js`, `core/packs/packs.test.js`, `core/principles/enforcement.js`, `core/principles/enforcement.test.js` |
 | D-OUTREACH-AS-LOOPS | Outreach, marketing and branding all need to be managers, part of the plussing and part of the code loops. | enforced | `packs/email/pack.json`, `packs/social/pack.json`, `packs/video/pack.json`, `core/packs/index.js`, `core/principles/enforcement.js`, `core/principles/enforcement.test.js` |
 | D-SEPARATE-FROM-FIRST-INSTALLATION | I need the code base for Ultrastable to start being completely separate from the first installation. | enforced | `core/test/no-qnfo.test.js` |
-| D-RUN-ON-ITSELF | We need to run Ultrastable on Ultrastable infrastructure. | partial | `self/ultrastable.json`, `tools/spec_backlog.py`; tracked by #13 |
+| D-RUN-ON-ITSELF | We need to run Ultrastable on Ultrastable infrastructure. | partial | `self/ultrastable.json`, `tools/spec_backlog.py`, `core/specloop/index.js`, `core/runner/selfdoer.js`, `adapters/github/stage2.js`, `core/steward/stage.js`; tracked by #13 |
 | D-PLATFORM-AGNOSTIC | Starting with Cloudflare, but it would work with Google Cloud Platform too, and in theory could work with any platform. | enforced | `adapters/gcp/server.js`, `adapters/gcp/test/gcp.test.js` |
 | D-LICENSE-HYBRID | Non-commercial is free, but any kind of money-making commercial use needs a license. | enforced | `LICENSE`, `COMMERCIAL-TERMS.md` |
 | D-BITE-SIZED-CONSOLE | Three screens, bite-sized information, buttons or things to click; don't assume they know what to type. | enforced | `core/test/console.test.js` |

@@ -3,33 +3,16 @@
 // Issue-ledger steward: mirrors work items to every configured sink and flags items that break the item format.
 // Ports: ctx = { db, now(), config, sinks }. sinks is an ORDERED LIST of { name, upsert(item, prevRef) -> { ref } }: each item goes to
 // EVERY sink independently (no single route), a failing sink is recorded per item and retried next sweep, and never blocks the others.
-const iso = ms => new Date(ms).toISOString().replace('T', ' ').slice(0, 19);
-const nowMs = ctx => { const v = ctx.now(); return v instanceof Date ? v.getTime() : v; };
-async function sha(text) { const b = new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text))); return [...b].map(x => x.toString(16).padStart(2, '0')).join(''); }
+import { mirror as coreMirror, hygiene as coreHygiene } from '../../core/steward/index.js';
 
+// US-SPEC-20 R11 / J-23: one implementation of the mirror, the item hash and the hygiene rule, in core/steward/index.js. This adapter
+// used to carry its own copy, which could drift from the core's; it now re-exports them (an adapter may import core, never the reverse).
 /** Hygiene: an item must carry an owner role, a done check and a closing probe (docs item format). */
-export const hygiene = item => ['owner_role', 'done_check', 'closing_probe'].filter(k => !String(item[k] ?? '').trim());
+export const hygiene = coreHygiene;
 
+/** Push every changed item to every sink (core/steward mirror). `limit` is the batch size, as before. */
 export async function mirror(ctx, { limit = 50 } = {}) {
-  const ts = iso(nowMs(ctx)), out = { synced: 0, failed: 0, skipped: 0, flagged: [] };
-  const items = (await ctx.db.prepare('SELECT * FROM items ORDER BY updated_at DESC LIMIT ?').bind(limit).all()).results;
-  for (const it of items) {
-    const missing = hygiene(it); if (missing.length) out.flagged.push({ id: it.id, missing });
-    const hash = await sha(JSON.stringify([it.title, it.status, it.disposition, it.owner_role, it.closing_probe, it.done_check, it.priority]));
-    for (const s of ctx.sinks || []) {
-      const prev = await ctx.db.prepare('SELECT ref, hash FROM steward_mirror WHERE item_id = ? AND sink = ?').bind(it.id, s.name).first();
-      if (prev && prev.hash === hash) { out.skipped++; continue; }
-      try {
-        const r = await s.upsert(it, prev?.ref ?? null);
-        await ctx.db.prepare('INSERT INTO steward_mirror (item_id, sink, ref, hash, synced_at) VALUES (?,?,?,?,?) ON CONFLICT(item_id, sink) DO UPDATE SET ref=excluded.ref, hash=excluded.hash, synced_at=excluded.synced_at, last_error=NULL')
-          .bind(it.id, s.name, r?.ref ?? null, hash, ts).run(); out.synced++;
-      } catch (e) {
-        await ctx.db.prepare('INSERT INTO steward_mirror (item_id, sink, hash, synced_at, last_error) VALUES (?,?,?,?,?) ON CONFLICT(item_id, sink) DO UPDATE SET last_error=excluded.last_error')
-          .bind(it.id, s.name, 'unsynced', ts, String(e?.message || e).slice(0, 200)).run(); out.failed++;
-      }
-    }
-  }
-  return out;
+  return coreMirror({ ...ctx, config: { ...(ctx.config || {}), batch: limit } });
 }
 
 /** Sink 1: GitHub issues over REST. Token read from env at request time, never stored or logged. */

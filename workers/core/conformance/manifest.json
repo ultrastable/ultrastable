@@ -1589,32 +1589,66 @@
   {
    "id": "T20-1",
    "spec": "US-SPEC-20",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/steward/selfhost-contract.test.js",
+     "name": "T20-1 and US-20-R01: the generated agent files equal the contract in this repository, and a hand edit is detected"
+    }
+   ]
   },
   {
    "id": "T20-2",
    "spec": "US-SPEC-20",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/steward/selfhost-contract.test.js",
+     "name": "T20-2 and US-20-R03: a pull request missing any record field fails the check"
+    }
+   ]
   },
   {
    "id": "T20-3",
    "spec": "US-SPEC-20",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/steward/selfhost-contract.test.js",
+     "name": "T20-3 and US-20-R04: a pull request whose reviewer equals its author fails, however the name is punctuated"
+    }
+   ]
   },
   {
    "id": "T20-4",
    "spec": "US-SPEC-20",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/steward/selfhost-contract.test.js",
+     "name": "T20-4 and US-20-R07: a change to a protected path without Protected-change and the label fails the check; with both it passes"
+    }
+   ]
   },
   {
    "id": "T20-5",
    "spec": "US-SPEC-20",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/steward/selfhost-contract.test.js",
+     "name": "T20-5 and US-20-R06: a BUILT status line naming a missing file is reported by the spec-truth check, and --strict exits 1"
+    }
+   ]
   },
   {
    "id": "T20-6",
    "spec": "US-SPEC-20",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/steward/selfhost-contract.test.js",
+     "name": "T20-6 and US-20-R10: the published stage matches the highest stage whose evidence exists; a higher claim is reported"
+    },
+    {
+     "file": "core/steward/stage.test.js",
+     "name": "US-20-R10 and T20-6: a published stage above the computed stage is reported and an equal or lower one is accepted"
+    }
+   ]
   },
   {
    "id": "T21-1",
@@ -1792,17 +1826,32 @@
   {
    "id": "T23-1",
    "spec": "US-SPEC-23",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/principles/closed-system.test.js",
+     "name": "T23-1 and US-23-R03: an issue with a passing closing probe is closed by the closer with the evidence recorded"
+    }
+   ]
   },
   {
    "id": "T23-2",
    "spec": "US-SPEC-23",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/principles/closed-system.test.js",
+     "name": "T23-2 and US-23-R04: an issue with no probe and no linked pull request past its grace period is labelled and reported"
+    }
+   ]
   },
   {
    "id": "T23-3",
    "spec": "US-SPEC-23",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/principles/closed-system.test.js",
+     "name": "T23-3 and US-23-R04: an epic files and tracks a child for each of its items and closes when all are closed"
+    }
+   ]
   },
   {
    "id": "T23-4",
@@ -1811,18 +1860,32 @@
     {
      "file": "core/principles/enforcement.test.js",
      "name": "T23-4 (US-SPEC-23) removing the code a directive names as its enforcer fails: the check module is itself a named enforcer that must exist"
+    },
+    {
+     "file": "core/principles/enforcement.test.js",
+     "name": "T23-4: removing core/steward/stage.js (an enforcer of D-RUN-ON-ITSELF) fails the vanished-enforcer check"
     }
    ]
   },
   {
    "id": "T23-5",
    "spec": "US-SPEC-23",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/principles/closed-system.test.js",
+     "name": "T23-5 and US-23-R08: editing the generated glossary document by hand, without the register, is detected as drift"
+    }
+   ]
   },
   {
    "id": "T23-6",
    "spec": "US-SPEC-23",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/principles/closed-system.test.js",
+     "name": "T23-6 and US-23-R07: an unenforced directive without a tracking issue fails validation, and with one it passes"
+    }
+   ]
   },
   {
    "id": "T23-7",
@@ -8979,6 +9042,10 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "core/steward/selfhost-contract.test.js",
+     "name": "T20-1 and US-20-R01: the generated agent files equal the contract in this repository, and a hand edit is detected"
+    },
+    {
      "file": "tests/test_selfhost.py",
      "name": "test US-20-R01 check fails on a hand edited agent file"
     },
@@ -9002,24 +9069,24 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "adapters/github/pulls.test.js",
+     "name": "US-20-R02: merged pull requests are read with their files and labels; closed-unmerged ones are left out"
+    },
+    {
+     "file": "core/steward/measures.test.js",
+     "name": "US-20-R02: a merged PR without Item is not counted as covered"
+    },
+    {
+     "file": "core/steward/measures.test.js",
+     "name": "US-20-R02, US-20-R03, US-20-R05: a blank Evidence or Reviewer field does not take the next line as its value"
+    },
+    {
+     "file": "core/steward/selfhost-contract.test.js",
+     "name": "US-20-R02: a pull request with the full record passes the check, with its six fields named in the template"
+    },
+    {
      "file": "tests/test_selfhost.py",
      "name": "test US-20-R02 a complete record passes"
-    },
-    {
-     "file": "tests/test_selfhost.py",
-     "name": "test T20 2 US-20-R02 a missing item is refused"
-    },
-    {
-     "file": "tests/test_selfhost.py",
-     "name": "test US-20-R02 prediction must be checkable or na with a reason"
-    },
-    {
-     "file": "tests/test_selfhost.py",
-     "name": "test US-20-R02 US-20-R03 US-20-R05 a blank field does not take the next line as its value"
-    },
-    {
-     "file": "tests/test_selfhost.py",
-     "name": "test US-20-R02 the pull request template carries the six record fields"
     }
    ]
   },
@@ -9032,6 +9099,14 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "core/steward/measures.test.js",
+     "name": "US-20-R02, US-20-R03, US-20-R05: a blank Evidence or Reviewer field does not take the next line as its value"
+    },
+    {
+     "file": "core/steward/selfhost-contract.test.js",
+     "name": "T20-2 and US-20-R03: a pull request missing any record field fails the check"
+    },
     {
      "file": "tests/test_selfhost.py",
      "name": "test US-20-R02 US-20-R03 US-20-R05 a blank field does not take the next line as its value"
@@ -9052,6 +9127,14 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "core/steward/measures.test.js",
+     "name": "US-20-R04: a PR whose reviewer equals its author after normalisation counts in the self-review rate"
+    },
+    {
+     "file": "core/steward/selfhost-contract.test.js",
+     "name": "T20-3 and US-20-R04: a pull request whose reviewer equals its author fails, however the name is punctuated"
+    },
+    {
      "file": "tests/test_selfhost.py",
      "name": "test T20 3 US-20-R04 never review your own work"
     },
@@ -9070,6 +9153,14 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "core/steward/measures.test.js",
+     "name": "US-20-R02, US-20-R03, US-20-R05: a blank Evidence or Reviewer field does not take the next line as its value"
+    },
+    {
+     "file": "core/steward/selfhost-contract.test.js",
+     "name": "US-20-R05: evidence that describes instead of quoting output is refused"
+    },
     {
      "file": "tests/test_selfhost.py",
      "name": "test US-20-R02 US-20-R03 US-20-R05 a blank field does not take the next line as its value"
@@ -9098,16 +9189,16 @@
      "name": "US-20-R06: the tick counts as many false BUILT lines as tools/spec_truth.py reports (whole, absent and nameless lines)"
     },
     {
+     "file": "core/steward/selfhost-contract.test.js",
+     "name": "T20-5 and US-20-R06: a BUILT status line naming a missing file is reported by the spec-truth check, and --strict exits 1"
+    },
+    {
      "file": "tests/test_selfhost.py",
      "name": "test T20 5 US-20-R06 finds false built labels only in the status section"
     },
     {
      "file": "tests/test_selfhost.py",
      "name": "test US-20-R06 several code directories are searched"
-    },
-    {
-     "file": "tests/test_selfhost.py",
-     "name": "test US-20-R06 a built line naming code but no test is reported with tests flag"
     }
    ]
   },
@@ -9120,6 +9211,14 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "core/steward/measures.test.js",
+     "name": "US-20-R07: a merged PR touching AGENTS.md without Protected-change is counted"
+    },
+    {
+     "file": "core/steward/selfhost-contract.test.js",
+     "name": "T20-4 and US-20-R07: a change to a protected path without Protected-change and the label fails the check; with both it passes"
+    },
     {
      "file": "tests/test_selfhost.py",
      "name": "test T20 4 US-20-R07 protected paths need a reason and the label"
@@ -9144,6 +9243,10 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "core/steward/selfhost-contract.test.js",
+     "name": "T20-8 and US-20-R08: a second open pull request on the same protected component is reported"
+    },
+    {
      "file": "tests/test_selfhost.py",
      "name": "test T20 8 US-20-R08 a second open pr on the same protected group is reported"
     }
@@ -9159,6 +9262,10 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "core/steward/selfhost-contract.test.js",
+     "name": "US-20-R09: the contract does not depend on any one tool: it tells a tool that can only talk what to do"
+    },
+    {
      "file": "tests/test_selfhost.py",
      "name": "test US-20-R09 contract carries the tool cannot do all table"
     }
@@ -9171,11 +9278,15 @@
    "tagged": false,
    "must": true,
    "status": "met",
-   "proof": "test file cites it",
+   "proof": "named test",
    "tests": [
     {
-     "file": "tests/test_selfhost.py",
-     "name": null
+     "file": "core/steward/selfhost-contract.test.js",
+     "name": "T20-6 and US-20-R10: the published stage matches the highest stage whose evidence exists; a higher claim is reported"
+    },
+    {
+     "file": "core/steward/stage.test.js",
+     "name": "US-20-R10 and T20-6: a published stage above the computed stage is reported and an equal or lower one is accepted"
     }
    ]
   },
@@ -9191,6 +9302,22 @@
     {
      "file": "adapters/github/stage2.test.js",
      "name": "US-20-R11 an unreadable or partly read tracker is unknown, never a match; the token is read by name"
+    },
+    {
+     "file": "adapters/github/steward.test.js",
+     "name": "US-20-R11: the adapter and the core mirror write identical hashes for the same item (one implementation)"
+    },
+    {
+     "file": "core/steward/selfhost-contract.test.js",
+     "name": "US-20-R11: a stage is claimed only when a probe its author did not write confirms it"
+    },
+    {
+     "file": "core/steward/stage.test.js",
+     "name": "US-20-R11: stage 2 is unknown, not claimed, when the tracker cannot be read"
+    },
+    {
+     "file": "core/steward/stage.test.js",
+     "name": "US-20-R11: a probe written by the stage author is evidence but the stage is not claimed"
     }
    ]
   },
@@ -9200,9 +9327,22 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/steward/selfhost-contract.test.js",
+     "name": "US-20-R12: moving up a stage does not remove a lower stage's check: a lost stage 1 drops everything above it"
+    },
+    {
+     "file": "core/steward/stage.test.js",
+     "name": "US-20-R12: losing stage 2 evidence drops a computed stage 3 to 1"
+    },
+    {
+     "file": "core/steward/stage.test.js",
+     "name": "US-20-R12: stage 3 is never reported while stage 2 does not hold"
+    }
+   ]
   },
   {
    "id": "US-20-R13",
@@ -9210,9 +9350,18 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/steward/selfhost-contract.test.js",
+     "name": "US-20-R13: the project publishes its current stage and may not describe itself as higher"
+    },
+    {
+     "file": "core/steward/stage.test.js",
+     "name": "US-20-R13: parsePublishedStage reads the contract stage line and a measured declaration"
+    }
+   ]
   },
   {
    "id": "US-21-R01",
@@ -9856,9 +10005,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/principles/closed-system.test.js",
+     "name": "US-23-R01: a decision written as a row reaches the tracker as its own issue in the same sweep, so it is not only in a conversation"
+    }
+   ]
   },
   {
    "id": "US-23-R02",
@@ -9869,6 +10023,10 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "core/principles/closed-system.test.js",
+     "name": "US-23-R02: an issue with a linked pull request or a probe is a closed loop (and one with neither is not)"
+    },
     {
      "file": "tests/test_loop_closer.py",
      "name": "test US-23-R02 a linked pull request is a closed loop"
@@ -9885,6 +10043,14 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "core/principles/closed-system.test.js",
+     "name": "T23-1 and US-23-R03: an issue with a passing closing probe is closed by the closer with the evidence recorded"
+    },
+    {
+     "file": "core/principles/closed-system.test.js",
+     "name": "US-23-R03: a mirror of claims is idempotent (closure by code never re-posts what already exists)"
+    },
+    {
      "file": "tests/test_loop_closer.py",
      "name": "test T23 1 US-23-R03 probe pr merged closes with evidence"
     },
@@ -9895,14 +10061,6 @@
     {
      "file": "tests/test_loop_closer.py",
      "name": "test US-23-R03 unknown probe is not evaluable and not closed"
-    },
-    {
-     "file": "tests/test_loop_closer.py",
-     "name": "test T23 3 US-23-R03 epic ticks closed children and closes itself when all are ticked"
-    },
-    {
-     "file": "tests/test_loop_closer.py",
-     "name": "test US-23-R03 dry run changes nothing"
     }
    ]
   },
@@ -9916,6 +10074,14 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "core/principles/closed-system.test.js",
+     "name": "T23-2 and US-23-R04: an issue with no probe and no linked pull request past its grace period is labelled and reported"
+    },
+    {
+     "file": "core/principles/closed-system.test.js",
+     "name": "T23-3 and US-23-R04: an epic files and tracks a child for each of its items and closes when all are closed"
+    },
+    {
      "file": "tests/test_loop_closer.py",
      "name": "test T23 2 US-23-R04 issue with no probe and no pr is an open loop and gets labelled"
     },
@@ -9926,14 +10092,6 @@
     {
      "file": "tests/test_loop_closer.py",
      "name": "test T23 3 US-23-R04 epic files a child for each unlinked item and rewrites the epic"
-    },
-    {
-     "file": "tests/test_loop_closer.py",
-     "name": "test US-23-R04 stale pull request labels the issue"
-    },
-    {
-     "file": "tests/test_loop_closer.py",
-     "name": "test US-23-R04 exit status is one while an open loop remains"
     }
    ]
   },
@@ -9943,9 +10101,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/principles/closed-system.test.js",
+     "name": "US-23-R05: the system reads its own backlog, predictions, outcomes and trust, so managers can act on what the loops produced"
+    }
+   ]
   },
   {
    "id": "US-23-R06",
@@ -9956,6 +10119,10 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "core/principles/closed-system.test.js",
+     "name": "US-23-R06: a loop that can detect a defect but cannot read what it needs files exactly one capability gap, closed by its probe"
+    },
     {
      "file": "tests/test_loop_closer.py",
      "name": "test US-23-R06 returns none instead of raising and records why"
@@ -9971,10 +10138,6 @@
     {
      "file": "tests/test_loop_closer.py",
      "name": "test US-23-R06 US-23-R17 a closed gap that recurs is reopened not duplicated"
-    },
-    {
-     "file": "tests/test_loop_closer.py",
-     "name": "test US-23-R06 dry run files nothing"
     }
    ]
   },
@@ -9988,12 +10151,24 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "core/principles/closed-system.test.js",
+     "name": "US-23-R07: a directive with neither an enforcer nor a tracking issue is an open loop the register refuses"
+    },
+    {
+     "file": "core/principles/closed-system.test.js",
+     "name": "T23-6 and US-23-R07: an unenforced directive without a tracking issue fails validation, and with one it passes"
+    },
+    {
      "file": "core/principles/enforcement.test.js",
      "name": "US-23-R07 the directives for ignorance elicitation and outbound packs are enforced: their checks pass on this checkout"
     },
     {
      "file": "core/principles/enforcement.test.js",
      "name": "US-23-R07 a directive called enforced without naming its check is reported"
+    },
+    {
+     "file": "core/principles/enforcement.test.js",
+     "name": "US-23-R07: D-NO-OPEN-LOOPS is executed on this checkout (gaplint with the workers configuration and the loop closer tests) and passes"
     }
    ]
   },
@@ -10003,9 +10178,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/principles/closed-system.test.js",
+     "name": "T23-5 and US-23-R08: editing the generated glossary document by hand, without the register, is detected as drift"
+    }
+   ]
   },
   {
    "id": "US-23-R09",
@@ -10013,9 +10193,18 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/principles/closed-system.test.js",
+     "name": "US-23-R09: what a session learns is written back as a record: the register carries the failures with the code that keeps each from recurring"
+    },
+    {
+     "file": "core/principles/enforcement.test.js",
+     "name": "US-23-R09: D-NOTHING-IN-CHAT holds on this checkout and fails when the rule, the workflow or the closer disappears"
+    }
+   ]
   },
   {
    "id": "US-23-R10",
@@ -10023,9 +10212,14 @@
    "level": "L2",
    "tagged": false,
    "must": false,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/principles/closed-system.test.js",
+     "name": "US-23-R10: an external agent's work is accepted only as a record: an issue that exists only on the tracker is adopted as an item, nothing else crosses"
+    }
+   ]
   },
   {
    "id": "US-23-R11",
@@ -10033,9 +10227,14 @@
    "level": "L2",
    "tagged": false,
    "must": false,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/principles/closed-system.test.js",
+     "name": "US-23-R11: the only exit is an identity-bound gate card, and it closes when its probe sees the step done"
+    }
+   ]
   },
   {
    "id": "US-23-R12",

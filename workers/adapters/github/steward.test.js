@@ -39,3 +39,19 @@ test('github sink creates then updates; token never appears in an error', async 
   const m = githubMergeHost({ fetch: async () => new Response('', { status: 405 }), repo: 'o/r', env: { VCS_TOKEN: 'x' } });
   assert.deepEqual(await m.merge({ pr: 1 }), { merged: false, reason: 'http 405' });
 });
+
+test('US-20-R11: the adapter and the core mirror write identical hashes for the same item (one implementation)', async () => {
+  const { mirror: coreMirror, itemHash } = await import('../../core/steward/index.js');
+  const a = mk([fileSink({ writeFile: async () => {} })]), b = mk([fileSink({ writeFile: async () => {} })]);
+  await add(a, 'C-1'); await add(b, 'C-1');
+  await mirror(a); await coreMirror({ ...b, config: {} });
+  const ha = a.db.raw.prepare("SELECT hash FROM steward_mirror WHERE item_id='C-1'").get().hash;
+  const hb = b.db.raw.prepare("SELECT hash FROM steward_mirror WHERE item_id='C-1'").get().hash;
+  assert.equal(ha, hb);
+  assert.equal(ha, await itemHash(a.db.raw.prepare("SELECT * FROM items WHERE id='C-1'").get()));
+});
+test('the adapter keeps its limit option: only that many items are mirrored per sweep', async () => {
+  const ctx = mk([fileSink({ writeFile: async () => {} })]);
+  for (const id of ['L-1', 'L-2', 'L-3']) await add(ctx, id);
+  assert.equal((await mirror(ctx, { limit: 2 })).synced, 2);
+});

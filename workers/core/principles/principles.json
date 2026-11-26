@@ -334,6 +334,10 @@
         {
           "kind": "file",
           "path": ".github/workflows/loops.yml"
+        },
+        {
+          "kind": "file",
+          "path": "core/principles/enforcement.js"
         }
       ]
     },
@@ -359,6 +363,10 @@
         {
           "kind": "file",
           "path": "core/kernel/index.js"
+        },
+        {
+          "kind": "file",
+          "path": "core/principles/enforcement.js"
         }
       ]
     },
@@ -547,6 +555,22 @@
         {
           "kind": "file",
           "path": "tools/spec_backlog.py"
+        },
+        {
+          "kind": "file",
+          "path": "core/specloop/index.js"
+        },
+        {
+          "kind": "file",
+          "path": "core/runner/selfdoer.js"
+        },
+        {
+          "kind": "file",
+          "path": "adapters/github/stage2.js"
+        },
+        {
+          "kind": "file",
+          "path": "core/steward/stage.js"
         }
       ]
     },
