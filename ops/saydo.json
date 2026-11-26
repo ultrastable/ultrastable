@@ -1,7 +1,7 @@
 {
- "at": "2026-11-26T06:36:41Z",
- "gaps": 7,
- "match_share": 0.987,
+ "at": "2026-11-26T07:00:15Z",
+ "gaps": 8,
+ "match_share": 0.985,
  "sources": {
   "changes": [
    {
@@ -156,14 +156,14 @@
     "drift": 0,
     "id": "claims-total",
     "ok": true,
-    "total": 425
+    "total": 427
    }
   ],
   "loops": [
    {
-    "detail": "0 of 108 second-order steps kept in 14 days",
+    "detail": "0 of 109 second-order steps kept in 14 days",
     "id": "second-loop-kept",
-    "judged": 108,
+    "judged": 109,
     "kept": 0,
     "ok": false
    }
@@ -819,6 +819,17 @@
     "unmeasured": []
    },
    {
+    "checks": 1,
+    "external": [],
+    "failing": [
+     "python3 -m foundation openstd --check: new bespoke format: instances/qnfo/dependencies.json (config file without $schema); declare the standard in doctrine/open-standards.json or meet it now; new bespoke format: instances/qnfo/foundation-l"
+    ],
+    "id": "OPEN-STANDARDS-1",
+    "missing": [],
+    "ok": false,
+    "unmeasured": []
+   },
+   {
     "checks": 0,
     "external": [],
     "failing": [],
@@ -1022,7 +1033,7 @@
     "checks": 1,
     "external": [],
     "failing": [
-     "python3 -m foundation dispose --check: an open item is 89.0 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+     "python3 -m foundation dispose --check: an open item is 89.4 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
     ],
     "id": "DISPOSE-1",
     "missing": [],
@@ -1095,20 +1106,20 @@
   },
   "claims": {
    "gaps": 0,
-   "total": 425
+   "total": 427
   },
   "loops": {
    "gaps": 1,
    "total": 1
   },
   "rules": {
-   "gaps": 4,
-   "total": 98
+   "gaps": 5,
+   "total": 99
   },
   "year": {
    "gaps": 1,
    "total": 2
   }
  },
- "total": 542
+ "total": 545
 }
