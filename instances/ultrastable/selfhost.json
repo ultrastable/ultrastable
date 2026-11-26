@@ -1,4 +1,5 @@
 {
+  "$schema": "../../schemas/doctrine.schema.json",
   "_doc": "Ultrastable runs on itself. Every process Ultrastable itself performs is listed here with the files in this repository that hold it (system_path) and every tool it touches (tools). A tool is `system` (this repo's own code) or an id in platform/adapters/registry.json. `python3 -m foundation selfhost --verify` fails on a missing path, an unregistered tool, an outside tool with no gap entry, or an outside tool name found in workflows and scripts that the registry does not record. Changed only by a reviewed PR.",
   "id": "selfhost",
   "version": "1.0.0",

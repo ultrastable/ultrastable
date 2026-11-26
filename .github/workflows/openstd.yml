@@ -32,7 +32,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
         run: |
-          python3 scripts/land_data.py "chore(openstd): baseline batch, events and release notes (OPEN-STANDARDS-1)" doctrine ops/openstd CHANGELOG.md VERSION
+          python3 scripts/land_data.py "chore(openstd): baseline batch, events and release notes (OPEN-STANDARDS-1)" doctrine ops/openstd CHANGELOG.md VERSION $(git diff --name-only)  # OPENSTD-LAND-1: the files the drain converted land with the shrunk baseline, or main goes red
       - name: Tag the release
         run: |
           v="v$(cat VERSION)"

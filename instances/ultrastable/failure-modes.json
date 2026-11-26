@@ -1,4 +1,5 @@
 {
+  "$schema": "../../schemas/doctrine.schema.json",
   "doc": "Instance failure modes, merged after seed/autonomy/failure-modes.json by deploy/deploy-workers.mjs (COSTGUARD-1).",
   "modes": [
     {

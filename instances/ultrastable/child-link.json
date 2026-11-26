@@ -1,4 +1,5 @@
 {
+  "$schema": "../../schemas/doctrine.schema.json",
  "_doc": "Q-LAYER-child-reporting: the first working parent-child link (doctrine/pilot-model.json layers). The child answers the child health contract at /health; the parent reads it with the http metric M-child-blindspot-link (instances/ultrastable/objectives.json) and a silent child breaches there.",
  "parent": "ultrastable",
  "level": 1,

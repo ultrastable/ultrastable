@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-26-a-drain-that-lands-only-its-ledger-turns-main-red",
+  "kind": "lesson",
+  "date": "2026-11-26",
+  "title": "A drain that lands only its ledger turns main red",
+  "body": "The openstd drain added $schema to 17 instance files and shrank the baseline, but its land step committed only doctrine, ops and the changelog, so main lost the conversions and failed test_openstd on every PR. The land step now includes every file the drain touched. Also THOUGHT-CLIP-1: the Mastodon post clipped the hook and spotlight when the measured text was long; only the measured part is clipped now. Session: session_0156nqDvbXYqh4M3id5voNoB",
+  "probe": "grep:.github/workflows/openstd.yml::OPENSTD-LAND-1"
+ },
+ "kind": "lesson",
+ "title": "A drain that lands only its ledger turns main red",
+ "session": "session_0156nqDvbXYqh4M3id5voNoB"
+}

@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-26-a-pr-age-bound-measured-from-updatedat-never-runs-out",
+  "kind": "lesson",
+  "date": "2026-11-26",
+  "title": "A PR age bound measured from updatedAt never runs out",
+  "body": "The lane's own labels and comments refresh updatedAt every pass, so prbound closed nothing on its first live run (stale 8.9 to 10.8 h, closable []). The bound now counts from createdAt. Session: session_0156nqDvbXYqh4M3id5voNoB",
+  "probe": "grep:foundation/prbound.py::PR-BOUND-2"
+ },
+ "kind": "lesson",
+ "title": "A PR age bound measured from updatedAt never runs out",
+ "session": "session_0156nqDvbXYqh4M3id5voNoB"
+}

@@ -1,4 +1,5 @@
 {
+  "$schema": "../../schemas/doctrine.schema.json",
  "_doc": "OBJECTIVES-1 for Ultrastable itself: the same objective and metric rows bootstrap seeds for any system, so Ultrastable is measured by its own mechanism. Seeded into the self-host database by foundation/selfhost.py; read-only evidence in this file.",
  "objectives": [
   {
