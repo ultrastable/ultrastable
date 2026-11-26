@@ -106,3 +106,15 @@ def tiny_repo() -> Path:
     (d / "README.md").write_text("x\n")
     git(d, "add", "."); git(d, "commit", "-q", "-m", "base")
     return d
+
+
+def spec_files(pattern: str):
+    """DISCLOSE-1: the full specification is private. A test that compares specification text with code reads it from the directory named by
+    ULTRASTABLE_SPEC_DIR (the private ultrastable/ops spec/ checkout) and is skipped where that directory is not mounted, as in public CI."""
+    d = os.environ.get("ULTRASTABLE_SPEC_DIR")
+    if not d or not Path(d).is_dir():
+        raise unittest.SkipTest("the full specification is private (DISCLOSE-1): set ULTRASTABLE_SPEC_DIR to run this test")
+    found = sorted(Path(d).glob(pattern))
+    if not found:
+        raise unittest.SkipTest(f"no {pattern} in ULTRASTABLE_SPEC_DIR")
+    return found
