@@ -19,6 +19,7 @@ import { executeStep, claimsReleasedUnworked24h } from './doer.js';
 import { pulseStep, tickCadenceMin } from './pulse.js';
 import { ignitionStep } from './ignition.js';
 import { ensureSchema as ensureCredentialSchema } from './auth/store.js';  // CONNECTOR-HEALTH-1
+import { roleDutiesStep } from './roleduties.js';  // ROLE-DUTIES-1, ROLE-IDLE-1
 import { hireStep, isOff } from './managers.js';  // MANAGERS-1: the register hires; an off manager is not dispatched
 import { OWN_SQL, tenantOf } from './tenant.js';  // Q-TENANT-row-isolation: a runtime acts only on rows with tenant_id NULL (own) or its own slug
 
@@ -389,6 +390,10 @@ export const STEPS = {
   },
 
   // Roles whose tick is due pull the top ready item for their role and get a dispatch row.
+  // ROLE-DUTIES-1: every manager role runs its own duty hourly (no model), files one item when its reading is out of bounds and settles it
+  // when clear; ROLE-IDLE-1 names any switched-on role with no dispatch and no beat in idle_hours.
+  async role_duties(db, ctx) { await roleDutiesStep(db, ctx, ensureItem); },
+
   async dispatch(db, ctx) {
     const roles = await all(db, `SELECT * FROM roles`);
     let n = 0;
@@ -476,7 +481,7 @@ export const STEPS = {
   async ignition(db, ctx) { await ignitionStep(db, ctx, ensureItem); },
 };
 
-export const STEP_ORDER = ['migrate', 'reconcile', 'reap_claims', 'connector_health', 'probe_gates', 'score_predictions', 'measure', 'accrue_trust', 'selfaudit', 'unknowns', 'goals', 'dispatch', 'execute', 'check_plus_share', 'age_sla', 'cost_probe', 'pulse', 'criticality', 'ignition'];
+export const STEP_ORDER = ['migrate', 'reconcile', 'reap_claims', 'connector_health', 'probe_gates', 'score_predictions', 'measure', 'accrue_trust', 'selfaudit', 'unknowns', 'goals', 'role_duties', 'dispatch', 'execute', 'check_plus_share', 'age_sla', 'cost_probe', 'pulse', 'criticality', 'ignition'];
 
 // Q-LESSON-COST-SAMPLE-ACT: while the latest hourly cost sample of any budgeted D1 database is over its max_rows_read_per_hour, the tick runs
 // only these steps. reconcile keeps every item's disposition honest (no silent drops), measure keeps the liveness metrics and the breach visible,
@@ -484,7 +489,7 @@ export const STEP_ORDER = ['migrate', 'reconcile', 'reap_claims', 'connector_hea
 // other step either reads wide (probe_gates, score_predictions, accrue_trust, selfaudit, pulse, ignition, check_plus_share) or starts new work
 // that reads more (reap_claims feeds dispatch, dispatch, execute), so it waits for the hour to pass. A skipped step counts as completed: it is
 // a decision, not a failure, so the health probe and the ignition streak stay green.
-export const FREE_TIER_WIDE_STEPS = ['probe_gates', 'score_predictions', 'accrue_trust', 'selfaudit', 'pulse', 'ignition', 'check_plus_share', 'goals', 'age_sla', 'cost_probe'];  // FREE-TIER-1
+export const FREE_TIER_WIDE_STEPS = ['role_duties', 'probe_gates', 'score_predictions', 'accrue_trust', 'selfaudit', 'pulse', 'ignition', 'check_plus_share', 'goals', 'age_sla', 'cost_probe'];  // FREE-TIER-1
 export const COST_ESSENTIAL_STEPS = ['migrate', 'reconcile', 'measure', 'criticality'];
 // SPEND-SOFT-1 (Rowan, 2026-11-21: "systems should never have hard stops"): no step is skipped for good. Under lean (a cost breach or the free
 // tier at shed) or spend crawl the other steps still run on the first tick of every few hours; under degrade or spend throttle the wide readers

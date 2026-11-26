@@ -19,8 +19,11 @@
     "product-manager",
     "program-manager",
     "project-manager",
+    "qa-engineer",
     "research-publisher",
     "reviewer",
+    "security-engineer",
+    "sre",
     "staff",
     "uiux-manager"
    ]

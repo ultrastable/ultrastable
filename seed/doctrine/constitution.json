@@ -90,6 +90,7 @@
       "migrate": "schema migrations apply in order, once",
       "goals": "goals are measured and at most one knob moves one step per cooldown",
       "unknowns": "the system asks itself what it does not know and files the answer as work",
+      "role_duties": "every manager role runs its hourly duty, files one item when its reading is out of bounds, settles it when clear, and an idle role is named",
       "dispatch": "ready items go to the role that owns them",
       "execute": "claimed items are worked, opened as pull requests and merged by the server",
       "check_plus_share": "a share of capacity goes to improvements",

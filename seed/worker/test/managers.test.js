@@ -28,7 +28,7 @@ test('a system that booted with part of the team is brought to the full register
   assert.deepEqual(roles(db), register.managers.map(m => m.id).sort());
   assert.equal(db.raw.prepare("SELECT model FROM roles WHERE role='program-manager'").get().model, 'mgr-tier');
   assert.equal(db.raw.prepare("SELECT model FROM roles WHERE role='reviewer'").get().model, 'doer-tier');
-  assert.match(r.report, /hired 16 manager\(s\) from the register/);
+  assert.match(r.report, /hired 19 manager\(s\) from the register/);
   const n = db.raw.prepare('SELECT COUNT(*) AS n FROM roles').get().n;
   await runTick(db, { config: { ...base, managers: register }, now: T0 + 600e3 });
   assert.equal(db.raw.prepare('SELECT COUNT(*) AS n FROM roles').get().n, n, 'hiring is idempotent');

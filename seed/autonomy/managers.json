@@ -151,6 +151,30 @@
    "tick_every": 6,
    "count": 1,
    "for": "the audited front end and its user paths. Switch off for a system with no user interface."
+  },
+  {
+   "id": "qa-engineer",
+   "core": false,
+   "default": "on",
+   "tick_every": 1,
+   "count": 1,
+   "for": "closed work is really verified: every item closed in the last 24 hours has a verified outcome from an independent probe. Switch off only for a system with no code or no secrets to guard."
+  },
+  {
+   "id": "sre",
+   "core": false,
+   "default": "on",
+   "tick_every": 1,
+   "count": 1,
+   "for": "the heartbeat and the services it runs stay up: every tick completes every step and no slot is missed. Switch off only for a system with no code or no secrets to guard."
+  },
+  {
+   "id": "security-engineer",
+   "core": false,
+   "default": "on",
+   "tick_every": 1,
+   "count": 1,
+   "for": "secrets, tokens and vulnerabilities never sit unattended: any open item about them older than 48 hours is raised and closed with evidence. Switch off only for a system with no code or no secrets to guard."
   }
  ],
  "switch": {}

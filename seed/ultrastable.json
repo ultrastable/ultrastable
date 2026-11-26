@@ -140,6 +140,24 @@
       "count": 1,
       "instructions": "agents/roles/uiux-manager.md",
       "tick_every": 6
+    },
+    {
+      "id": "qa-engineer",
+      "count": 1,
+      "instructions": "agents/roles/qa-engineer.md",
+      "tick_every": 1
+    },
+    {
+      "id": "sre",
+      "count": 1,
+      "instructions": "agents/roles/sre.md",
+      "tick_every": 1
+    },
+    {
+      "id": "security-engineer",
+      "count": 1,
+      "instructions": "agents/roles/security-engineer.md",
+      "tick_every": 1
     }
   ],
   "model_ladder": {

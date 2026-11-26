@@ -255,6 +255,36 @@
    ],
    "probe": "cmd:python3 -m foundation uiux --check",
    "settles": "grep:foundation/uiux.py::def settle_experiments"
+  },
+  "qa-engineer": {
+   "runs": [
+    "seed/worker/src/roleduties.js"
+   ],
+   "clock": [
+    "runtime"
+   ],
+   "probe": "grep:seed/worker/test/roleduties.test.js::ROLE-DUTIES-1",
+   "settles": "grep:seed/worker/src/roleduties.js::export async function settle"
+  },
+  "sre": {
+   "runs": [
+    "seed/worker/src/roleduties.js"
+   ],
+   "clock": [
+    "runtime"
+   ],
+   "probe": "grep:seed/worker/test/roleduties.test.js::ROLE-DUTIES-1",
+   "settles": "grep:seed/worker/src/roleduties.js::export async function settle"
+  },
+  "security-engineer": {
+   "runs": [
+    "seed/worker/src/roleduties.js"
+   ],
+   "clock": [
+    "runtime"
+   ],
+   "probe": "grep:seed/worker/test/roleduties.test.js::ROLE-DUTIES-1",
+   "settles": "grep:seed/worker/src/roleduties.js::export async function settle"
   }
  },
  "closure": {

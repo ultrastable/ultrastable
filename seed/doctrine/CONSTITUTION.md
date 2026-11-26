@@ -37,14 +37,15 @@ Tick steps, in order:
 9. `migrate`: schema migrations apply in order, once
 10. `goals`: goals are measured and at most one knob moves one step per cooldown
 11. `unknowns`: the system asks itself what it does not know and files the answer as work
-12. `dispatch`: ready items go to the role that owns them
-13. `execute`: claimed items are worked, opened as pull requests and merged by the server
-14. `check_plus_share`: a share of capacity goes to improvements
-15. `age_sla`: an item past its SLA is escalated, never ignored
-16. `cost_probe`: spend is sampled against the budget
-17. `criticality`: k_eff is computed from verified deploys over cost and human touches
-18. `pulse`: the system publishes what it did, from its own tables
-19. `ignition`: the system reads its own stage from bootstrap to self-sustaining
+12. `role_duties`: every manager role runs its hourly duty, files one item when its reading is out of bounds, settles it when clear, and an idle role is named
+13. `dispatch`: ready items go to the role that owns them
+14. `execute`: claimed items are worked, opened as pull requests and merged by the server
+15. `check_plus_share`: a share of capacity goes to improvements
+16. `age_sla`: an item past its SLA is escalated, never ignored
+17. `cost_probe`: spend is sampled against the budget
+18. `criticality`: k_eff is computed from verified deploys over cost and human touches
+19. `pulse`: the system publishes what it did, from its own tables
+20. `ignition`: the system reads its own stage from bootstrap to self-sustaining
 
 Detectors: every failure mode has a read-only probe (1 = healthy); a red probe files FM-<id> that closes only when the probe is green.
 Executor: work is taken in driver order, built on a branch, opened as a pull request and merged by the server when its checks are green; a client session only produces.

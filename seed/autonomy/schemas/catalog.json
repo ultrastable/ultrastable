@@ -75,6 +75,14 @@
       "url": "managers.schema.json"
     },
     {
+      "name": "market.json",
+      "description": "Contract for seed/autonomy/market.json",
+      "fileMatch": [
+        "seed/autonomy/market.json"
+      ],
+      "url": "market.schema.json"
+    },
+    {
       "name": "pace.json",
       "description": "Contract for seed/autonomy/pace.json",
       "fileMatch": [

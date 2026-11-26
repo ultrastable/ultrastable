@@ -1,0 +1,104 @@
+{
+ "_doc": "ROLE-DUTIES-1: the competitor sources the product manager's market-research duty reads, one per hour in turn (seed/worker/src/roleduties.js). Every URL is a public page or feed the competitor publishes; a change files a MKT-* item that names the source. Copied from doctrine/competitors.json on the platform; a system adds its own market here. Ultrastable is the foundation for any autonomous system.",
+ "marker": "ROLE-DUTIES-1",
+ "competitors": [
+  {
+   "id": "github-copilot-agent",
+   "name": "GitHub Copilot coding agent",
+   "sources": [
+    {
+     "url": "https://docs.github.com/copilot/concepts/coding-agent/about-copilot-coding-agent",
+     "kind": "page"
+    }
+   ]
+  },
+  {
+   "id": "claude-code",
+   "name": "Claude Code (routines and releases)",
+   "sources": [
+    {
+     "url": "https://code.claude.com/docs/en/routines.md",
+     "kind": "page"
+    },
+    {
+     "url": "https://github.com/anthropics/claude-code/releases.atom",
+     "kind": "atom"
+    }
+   ]
+  },
+  {
+   "id": "factory",
+   "name": "Factory",
+   "sources": [
+    {
+     "url": "https://factory.com/news/factory-is-ga",
+     "kind": "page"
+    }
+   ]
+  },
+  {
+   "id": "openai-codex",
+   "name": "OpenAI Codex",
+   "sources": [
+    {
+     "url": "https://github.com/openai/codex/releases.atom",
+     "kind": "atom"
+    }
+   ]
+  },
+  {
+   "id": "openhands",
+   "name": "OpenHands",
+   "sources": [
+    {
+     "url": "https://github.com/All-Hands-AI/OpenHands/releases.atom",
+     "kind": "atom"
+    }
+   ]
+  },
+  {
+   "id": "greptile",
+   "name": "Greptile",
+   "sources": [
+    {
+     "url": "https://www.greptile.com/",
+     "kind": "page"
+    },
+    {
+     "url": "https://www.greptile.com/open-source",
+     "kind": "page"
+    }
+   ]
+  },
+  {
+   "id": "coderabbit",
+   "name": "CodeRabbit",
+   "sources": [
+    {
+     "url": "https://docs.coderabbit.ai/management/plans",
+     "kind": "page"
+    }
+   ]
+  },
+  {
+   "id": "devin",
+   "name": "Devin (Cognition)",
+   "sources": [
+    {
+     "url": "https://www.cognition.ai/blog/new-self-serve-plans-for-devin",
+     "kind": "page"
+    }
+   ]
+  },
+  {
+   "id": "pr-agent",
+   "name": "PR-Agent (open source, self-hosted)",
+   "sources": [
+    {
+     "url": "https://github.com/The-PR-Agent/pr-agent",
+     "kind": "page"
+    }
+   ]
+  }
+ ]
+}

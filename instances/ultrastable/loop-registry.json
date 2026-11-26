@@ -4322,6 +4322,210 @@
     "supply-chain.yml"
    ],
    "server_owner": "github-actions"
+  },
+  {
+   "id": "qa-engineer-duty",
+   "kind": "manager",
+   "summary": "ROLE-DUTIES-1: the qa engineer duty `unverified-done`: closed work is really verified: every item closed in the last 24 hours has a verified outcome from an independent probe (human analogue: QA or test engineer).",
+   "trigger": "hourly inside the tick step role_duties of ultrastable-tick",
+   "owner": "qa-engineer",
+   "closes_by": "system",
+   "sla": "1h",
+   "done": "a role_beats row for qa-engineer in the last hour, and no open QA-UNVERIFIED-* item while the reading is in bounds",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "tick step role_duties (seed/worker/src/roleduties.js) on the Worker cron",
+     "class": "free"
+    },
+    {
+     "id": "session",
+     "how": "node --test seed/worker/test/roleduties.test.js and the same query run from a cloud session",
+     "class": "session"
+    }
+   ],
+   "closing_probe": "grep:seed/worker/src/roleduties.js::export async function settle",
+   "cycle_metric": "unverified-done",
+   "last_plus": "the reading is stored each hour in role_beats so the next run is comparable",
+   "writeback": [
+    "seed/worker/src/roleduties.js"
+   ],
+   "system_path": [
+    "seed/worker/src/roleduties.js",
+    "seed/worker/test/roleduties.test.js",
+    "agents/roles/qa-engineer.md"
+   ],
+   "server_owner": "ultrastable-tick"
+  },
+  {
+   "id": "role-qa-engineer",
+   "kind": "manager",
+   "summary": "QA engineer: closed work is really verified: every item closed in the last 24 hours has a verified outcome from an independent probe (human analogue: QA or test engineer)",
+   "trigger": "each tick of the qa-engineer role (tick_every 1)",
+   "owner": "qa-engineer",
+   "closes_by": "system",
+   "sla": "1 tick",
+   "done": "the closing probe passes and the result is recorded at the write-back target",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "the loop's own workflow or command",
+     "class": "free"
+    },
+    {
+     "id": "session",
+     "how": "the same command run by a cloud-hosted agent session from the repository",
+     "class": "session"
+    }
+   ],
+   "closing_probe": "file:agents/roles/qa-engineer.md",
+   "writeback": [
+    "docs/issues",
+    "docs/handoff"
+   ],
+   "system_path": [
+    "agents/roles/qa-engineer.md",
+    "seed/agents/roles/qa-engineer.md",
+    "doctrine/team.json",
+    "foundation/team.py"
+   ],
+   "server_owner": "ultrastable-tick"
+  },
+  {
+   "id": "sre-duty",
+   "kind": "manager",
+   "summary": "ROLE-DUTIES-1: the site reliability engineer duty `tick-health`: the heartbeat and the services it runs stay up: every tick completes every step and no slot is missed (human analogue: SRE or on-call engineer).",
+   "trigger": "hourly inside the tick step role_duties of ultrastable-tick",
+   "owner": "sre",
+   "closes_by": "system",
+   "sla": "1h",
+   "done": "a role_beats row for sre in the last hour, and no open SRE-TICK-* item while the reading is in bounds",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "tick step role_duties (seed/worker/src/roleduties.js) on the Worker cron",
+     "class": "free"
+    },
+    {
+     "id": "session",
+     "how": "node --test seed/worker/test/roleduties.test.js and the same query run from a cloud session",
+     "class": "session"
+    }
+   ],
+   "closing_probe": "grep:seed/worker/src/roleduties.js::export async function settle",
+   "cycle_metric": "tick-health",
+   "last_plus": "the reading is stored each hour in role_beats so the next run is comparable",
+   "writeback": [
+    "seed/worker/src/roleduties.js"
+   ],
+   "system_path": [
+    "seed/worker/src/roleduties.js",
+    "seed/worker/test/roleduties.test.js",
+    "agents/roles/sre.md"
+   ],
+   "server_owner": "ultrastable-tick"
+  },
+  {
+   "id": "role-sre",
+   "kind": "manager",
+   "summary": "Site reliability engineer: the heartbeat and the services it runs stay up: every tick completes every step and no slot is missed (human analogue: SRE or on-call engineer)",
+   "trigger": "each tick of the sre role (tick_every 1)",
+   "owner": "sre",
+   "closes_by": "system",
+   "sla": "1 tick",
+   "done": "the closing probe passes and the result is recorded at the write-back target",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "the loop's own workflow or command",
+     "class": "free"
+    },
+    {
+     "id": "session",
+     "how": "the same command run by a cloud-hosted agent session from the repository",
+     "class": "session"
+    }
+   ],
+   "closing_probe": "file:agents/roles/sre.md",
+   "writeback": [
+    "docs/issues",
+    "docs/handoff"
+   ],
+   "system_path": [
+    "agents/roles/sre.md",
+    "seed/agents/roles/sre.md",
+    "doctrine/team.json",
+    "foundation/team.py"
+   ],
+   "server_owner": "ultrastable-tick"
+  },
+  {
+   "id": "security-engineer-duty",
+   "kind": "manager",
+   "summary": "ROLE-DUTIES-1: the security engineer duty `secret-items`: secrets, tokens and vulnerabilities never sit unattended: any open item about them older than 48 hours is raised and closed with evidence (human analogue: security or AppSec engineer).",
+   "trigger": "hourly inside the tick step role_duties of ultrastable-tick",
+   "owner": "security-engineer",
+   "closes_by": "system",
+   "sla": "1h",
+   "done": "a role_beats row for security-engineer in the last hour, and no open SEC-STALE-* item while the reading is in bounds",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "tick step role_duties (seed/worker/src/roleduties.js) on the Worker cron",
+     "class": "free"
+    },
+    {
+     "id": "session",
+     "how": "node --test seed/worker/test/roleduties.test.js and the same query run from a cloud session",
+     "class": "session"
+    }
+   ],
+   "closing_probe": "grep:seed/worker/src/roleduties.js::export async function settle",
+   "cycle_metric": "secret-items",
+   "last_plus": "the reading is stored each hour in role_beats so the next run is comparable",
+   "writeback": [
+    "seed/worker/src/roleduties.js"
+   ],
+   "system_path": [
+    "seed/worker/src/roleduties.js",
+    "seed/worker/test/roleduties.test.js",
+    "agents/roles/security-engineer.md"
+   ],
+   "server_owner": "ultrastable-tick"
+  },
+  {
+   "id": "role-security-engineer",
+   "kind": "manager",
+   "summary": "Security engineer: secrets, tokens and vulnerabilities never sit unattended: any open item about them older than 48 hours is raised and closed with evidence (human analogue: security or AppSec engineer)",
+   "trigger": "each tick of the security-engineer role (tick_every 1)",
+   "owner": "security-engineer",
+   "closes_by": "system",
+   "sla": "1 tick",
+   "done": "the closing probe passes and the result is recorded at the write-back target",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "the loop's own workflow or command",
+     "class": "free"
+    },
+    {
+     "id": "session",
+     "how": "the same command run by a cloud-hosted agent session from the repository",
+     "class": "session"
+    }
+   ],
+   "closing_probe": "file:agents/roles/security-engineer.md",
+   "writeback": [
+    "docs/issues",
+    "docs/handoff"
+   ],
+   "system_path": [
+    "agents/roles/security-engineer.md",
+    "seed/agents/roles/security-engineer.md",
+    "doctrine/team.json",
+    "foundation/team.py"
+   ],
+   "server_owner": "ultrastable-tick"
   }
  ],
  "launch_registry": "instances/ultrastable/loops.json"

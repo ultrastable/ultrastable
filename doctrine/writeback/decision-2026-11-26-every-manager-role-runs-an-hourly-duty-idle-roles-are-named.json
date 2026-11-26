@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-26-every-manager-role-runs-an-hourly-duty-idle-roles-are-named",
+  "kind": "decision",
+  "date": "2026-11-26",
+  "title": "Every manager role runs an hourly duty; idle roles are named",
+  "body": "Live read 2026-11-26: tick ran, but in 24 h only operations, product and portfolio took work; 127 items parked blocked (loop-breaker, needs-code). Added ROLE-DUTIES-1 (seed/worker/src/roleduties.js, tick step role_duties): portfolio blocked share, program stale blocked, project loop-breaker rescope, product market research (one cited competitor source per hour from seed/autonomy/market.json, change files MKT-*), qa unverified closes, sre tick health, security stale secret items. ROLE-IDLE-1 names roles with no dispatch and no beat in 24 h. New roles qa-engineer, sre, security-engineer.",
+  "probe": "grep:seed/worker/src/roleduties.js::export async function roleDutiesStep"
+ },
+ "kind": "decision",
+ "title": "Every manager role runs an hourly duty; idle roles are named",
+ "session": ""
+}
