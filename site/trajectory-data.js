@@ -45,7 +45,7 @@ export default {
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 74235,
+   "recent7": 74341,
    "series": [
     0,
     0,
@@ -76,11 +76,11 @@ export default {
     2446,
     1383,
     30834,
-    16105
+    16211
    ],
    "share_recent": 0.269,
    "share_trend": 0.156,
-   "total": 89069
+   "total": 89175
   },
   {
    "area": "workers",
@@ -323,7 +323,7 @@ export default {
    "total": 18695
   }
  ],
- "at": "2026-11-26T10:57:26Z",
+ "at": "2026-11-26T11:08:33Z",
  "days": 30,
  "findings": [
   {
@@ -339,43 +339,43 @@ export default {
    "why": "site's share of attention moved 16 points between the first and second half of the window"
   },
   {
-   "evidence": "quiet_days 7; system change in the last 7 days 275803",
+   "evidence": "quiet_days 7; system change in the last 7 days 275909",
    "id": "GLOSSARY.md",
    "kind": "neglected",
    "why": "GLOSSARY.md had 961 lines of change, then nothing for 7 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 8; system change in the last 7 days 275803",
+   "evidence": "quiet_days 8; system change in the last 7 days 275909",
    "id": "docs/ops",
    "kind": "neglected",
    "why": "docs/ops had 396 lines of change, then nothing for 8 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 10; system change in the last 7 days 275803",
+   "evidence": "quiet_days 10; system change in the last 7 days 275909",
    "id": "docs/architecture",
    "kind": "neglected",
    "why": "docs/architecture had 192 lines of change, then nothing for 10 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 9; system change in the last 7 days 275803",
+   "evidence": "quiet_days 9; system change in the last 7 days 275909",
    "id": "seed/self",
    "kind": "neglected",
    "why": "seed/self had 151 lines of change, then nothing for 9 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 11; system change in the last 7 days 275803",
+   "evidence": "quiet_days 11; system change in the last 7 days 275909",
    "id": "seed/outreach",
    "kind": "neglected",
    "why": "seed/outreach had 139 lines of change, then nothing for 11 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 13; system change in the last 7 days 275803",
+   "evidence": "quiet_days 13; system change in the last 7 days 275909",
    "id": "docs/runbooks",
    "kind": "neglected",
    "why": "docs/runbooks had 134 lines of change, then nothing for 13 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 8; system change in the last 7 days 275803",
+   "evidence": "quiet_days 8; system change in the last 7 days 275909",
    "id": "HANDOFF.md",
    "kind": "neglected",
    "why": "HANDOFF.md had 51 lines of change, then nothing for 8 days while the rest of the system moved"
@@ -431,16 +431,16 @@ export default {
    -907,
    -1222,
    -1649,
-   -2024
+   -2028
   ],
-  "closed": 3317,
+  "closed": 3321,
   "opened": 1293
  },
  "loops": [
   {
    "loop": "ultrastability",
    "quiet_days": 0,
-   "rows": 17477,
+   "rows": 17515,
    "series": [
     0,
     0,
@@ -471,7 +471,7 @@ export default {
     3322,
     2312,
     2535,
-    2504
+    2542
    ]
   },
   {
@@ -588,7 +588,7 @@ export default {
   {
    "loop": "resilience",
    "quiet_days": 0,
-   "rows": 459,
+   "rows": 460,
    "series": [
     0,
     0,
@@ -619,13 +619,13 @@ export default {
     80,
     55,
     62,
-    76
+    77
    ]
   },
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 414,
+   "rows": 415,
    "series": [
     0,
     0,
@@ -656,13 +656,13 @@ export default {
     80,
     55,
     88,
-    74
+    75
    ]
   },
   {
    "loop": "yearsim",
    "quiet_days": 0,
-   "rows": 383,
+   "rows": 384,
    "series": [
     0,
     0,
@@ -693,13 +693,13 @@ export default {
     80,
     55,
     62,
-    65
+    66
    ]
   },
   {
    "loop": "saydo",
    "quiet_days": 0,
-   "rows": 382,
+   "rows": 383,
    "series": [
     0,
     0,
@@ -730,7 +730,7 @@ export default {
     80,
     55,
     62,
-    65
+    66
    ]
   }
  ],
