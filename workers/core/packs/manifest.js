@@ -16,6 +16,13 @@ export const OUT_OF_BOUNDS = [
   ['other_credentials', /\b(store|stores|storing|enter|enters|entering|collect|collects|collecting)\s+(another|other|someone|users?'?s?)\s+(person'?s?\s+)?(passwords?|credentials)/i],
 ];
 
+// Added from the plugin tier's SCOPE.json (seed/plugins/SCOPE.json out_of_bounds items 10 and 11). The first applies to class D packs only:
+// a pack that operates a provider account may create and change what it manages, never delete what it did not create (US-21-R24).
+export const OUT_OF_BOUNDS_BY_CLASS = {
+  D: [['delete_unowned_resources', /\b(delete|deletes|deleting|destroy|destroys|destroying|terminate|terminates|terminating|wipe|wipes|wiping)\b[^.;]{0,40}\b(resources?|servers?|buckets?|databases?|data|instances?|accounts?|zones?|records?|projects?|workers?)\b/i]],
+};
+export const PERSONAL_ACCOUNT = ['personal_account', /\b(post|posts|posting|send|sends|sending|publish|publishes|publishing)\b[^.;]{0,30}\b(from|to|on)\b[^.;]{0,20}\b(the\s+owner'?s?|a\s+person'?s?|your|their|personal)\s+(personal\s+)?(accounts?|profiles?|mailbox|inbox)/i];
+
 const TLDS = new Set(['com', 'org', 'net', 'io', 'dev', 'app', 'ai', 'co', 'us', 'uk', 'de', 'fr', 'eu', 'info', 'biz', 'xyz', 'cloud', 'edu', 'gov', 'me', 'tv']);
 const PLACEHOLDER = /(^|\.)(example(\.(com|org|net))?|test|invalid|localhost)$/i;
 const HEX32 = /\b[0-9a-f]{32}\b/i;
@@ -54,7 +61,7 @@ export function validateManifest(m, { tenantNames = [], readProbeCheck = null } 
   else {
     if (!isStrList(s.does) || !s.does.length) e.push('scope.does must be a non-empty list of plain-words strings');
     if (!isStrList(s.does_not) || !s.does_not.length) e.push('scope.does_not must be a non-empty list (it names the adjacent Section 3 items)');
-    for (const line of isStrList(s.does) ? s.does : []) for (const [name, re] of OUT_OF_BOUNDS) {
+    for (const line of isStrList(s.does) ? s.does : []) for (const [name, re] of [...OUT_OF_BOUNDS, PERSONAL_ACCOUNT, ...(OUT_OF_BOUNDS_BY_CLASS[m.class] || [])]) {
       if (re.test(line)) e.push(`scope.does is out of bounds (${name}): "${line.slice(0, 80)}" (US-SPEC-21 s3)`);
     }
   }
@@ -110,9 +117,23 @@ export function validateManifest(m, { tenantNames = [], readProbeCheck = null } 
       const cap = o.caps && o.caps[ch];
       if (!cap || !Number.isInteger(cap.per_day) || cap.per_day < 0 || !Number.isInteger(cap.per_week) || cap.per_week < 0) e.push(`outbound.caps.${ch} needs integer per_day and per_week`);
     }
+    if (o.hosts !== undefined) {
+      if (!Array.isArray(o.hosts) || !o.hosts.length) e.push('outbound.hosts must be a non-empty list of host names when present (US-21-R16)');
+      else for (const h of o.hosts) if (!isStr(h) || !/^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/i.test(h)) e.push(`outbound.hosts entries are bare host names, no scheme, path or port (got "${String(h).slice(0, 30)}") (US-21-R16)`);
+    }
     if (!CONSENT_MODES.includes(o.consent)) e.push(`outbound.consent must be one of ${CONSENT_MODES.join(', ')}`);
     if (o.suppression !== true) e.push('outbound.suppression must be true (US-21-R13)');
     if (!APPROVAL_MODES.includes(o.approval)) e.push(`outbound.approval must be one of ${APPROVAL_MODES.join(', ')}`);
+  }
+  if (m.covers !== undefined && (!isStrList(m.covers) || m.covers.some(t => !/^[a-z]+$/.test(t)))) e.push('covers must be a list of lower-case words naming bootstrap case tags');
+  if (m.hooks !== undefined) {
+    if (!m.hooks || typeof m.hooks !== 'object' || Array.isArray(m.hooks)) e.push('hooks must be an object');
+    else for (const [k, v] of Object.entries(m.hooks)) {
+      if (k !== 'bounce') { e.push(`hooks.${k} is not a known hook (known: bounce)`); continue; }
+      const en = parseEntry(v);
+      if (!en || !isStr(en.module)) e.push('hooks.bounce.entry is required (module and export)');
+      else if (/^([a-z]:|[\\/])/i.test(en.module) || en.module.split(/[\\/]/).includes('..') || !/\.(m?js)$/.test(en.module)) e.push('hooks.bounce must be a .js file inside the pack directory');
+    }
   }
   if (m.migrations !== undefined && !isStrList(m.migrations)) e.push('migrations must be a list of file paths');
   if (!isStr(m.enable_gate)) e.push('missing required field: enable_gate (the plain-words card the person sees)');

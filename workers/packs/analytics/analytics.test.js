@@ -46,7 +46,7 @@ test('manifest is valid, class A with no outbound, analytics_ prefixed tables, p
   const db = makeDb([KERNEL_DIR, MIGRATIONS_DIR, MIG]);
   const sql = readFileSync(new URL('./migrations/0001_analytics.sql', import.meta.url), 'utf8');
   db.raw.exec(sql); db.raw.exec(sql);
-  assert.deepEqual(rows(db, `SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'analytics_%'`).map(r => r.name).sort(), ['analytics_daily', 'analytics_events', 'analytics_metrics', 'analytics_sources']);
+  assert.deepEqual(rows(db, `SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'analytics_%'`).map(r => r.name).sort(), ['analytics_daily', 'analytics_events', 'analytics_metrics', 'analytics_search', 'analytics_sources']);
   for (const g of [...m.charter.guard_metrics, m.charter.primary_metric]) db.raw.prepare(g.read_probe).get();
 });
 
@@ -113,4 +113,98 @@ test('metrics loop records the counts; the primary probe reads the rollup', asyn
   const m = one(db, `SELECT * FROM analytics_metrics`);
   assert.equal(m.pageviews_7d, 1); assert.equal(m.visitors_today, 1); assert.equal(m.raw_events, 1);
   assert.equal(typeof one(db, loadManifest(DIR).charter.primary_metric.read_probe).value, 'number');
+});
+
+// ---- US-SPEC-21 s7: search presence through a read-only port ----
+const YESTERDAY = new Date(T0 - D).toISOString().slice(0, 10);          // relative to the clock the test runs on, so the report window never ages out from under it
+const searchRows = [
+  { date: YESTERDAY, page: '/about', clicks: 5, impressions: 120, position: 3.2 },
+  { date: YESTERDAY, page: 'https://example.org/blog/', clicks: 2, impressions: 40, position: 8 },
+  { date: YESTERDAY, page: '/search?q=secret+query', clicks: 9, impressions: 9, position: 1 },
+  { date: YESTERDAY, page: 'https://other.example.net/x', clicks: 1, impressions: 1, position: 1 },
+  { date: 'bad-date', page: '/x', clicks: 1, impressions: 1 },
+];
+async function searchSetup(port) {
+  const db = makeDb([KERNEL_DIR, MIGRATIONS_DIR, MIG]);
+  const calls = [];
+  const settings = { ...S, ports: port === undefined ? {} : { search_analytics: async a => { calls.push(a); return port(a); } } };
+  const packs = createPacks({ db, now: () => T0, config: { packs: { analytics: settings } }, channels: {} });
+  const m = loadManifest(DIR);
+  assert.deepEqual((await packs.register(m, { dir: DIR })).errors, undefined);
+  assert.equal((await packs.enablePack('analytics', { by: 'owner', cardText: m.enable_gate })).ok, true);
+  const run = async () => { const step = (await packs.packSteps()).find(x => x.name === 'pack:analytics:search'); const ctx = { tickId: 24, errors: [], notes: [], now: T0 }; await step.run(db, ctx); return ctx; };
+  return { db, run, calls };
+}
+
+test('US-SPEC-21 s7 analytics: the search loop stores clicks and impressions per page and day, idempotently', async () => {
+  const { db, run, calls } = await searchSetup(async () => searchRows);
+  const ctx = await run(); await run();
+  assert.deepEqual(ctx.errors, []);
+  assert.deepEqual(calls[0].hosts, ['example.org']);
+  assert.deepEqual(rows(db, `SELECT day, page, clicks, impressions, position FROM analytics_search ORDER BY page`), [
+    { day: YESTERDAY, page: '/about', clicks: 5, impressions: 120, position: 3.2 },
+    { day: YESTERDAY, page: '/blog', clicks: 2, impressions: 40, position: 8 },
+  ]);
+  assert.match(ctx.notes.join('|'), /2 row\(s\) stored, 3 dropped/);
+});
+
+test('US-SPEC-21 s7 analytics: rows with query strings are dropped, so no search query text or identifier is ever stored', async () => {
+  const { db, run } = await searchSetup(async () => searchRows);
+  await run();
+  const dump = JSON.stringify(rows(db, `SELECT * FROM analytics_search`));
+  assert.ok(!dump.includes('secret'));
+  assert.equal(one(db, `SELECT COUNT(*) n FROM analytics_search WHERE page LIKE '%?%' OR page LIKE '%#%'`).n, 0);
+});
+
+test('US-SPEC-21 s7 analytics: a failing search port files an item and the tick completes; no port configured stores nothing and says so', async () => {
+  const bad = await searchSetup(async () => { throw new Error('search provider down'); });
+  const ctx = await bad.run();
+  assert.match(ctx.errors.join('|'), /search provider down/);
+  assert.equal(one(bad.db, `SELECT COUNT(*) n FROM items WHERE id LIKE 'PACKFAIL-analytics-search-%'`).n, 1);
+  const none = await searchSetup(undefined);
+  const c2 = await none.run();
+  assert.deepEqual(c2.errors, []); assert.match(c2.notes.join('|'), /port not configured/);
+  assert.equal(one(none.db, `SELECT COUNT(*) n FROM analytics_search`).n, 0);
+});
+
+test('US-SPEC-21 s7 analytics: report includes the top search pages and a secret salt may come from the presence-only accessor', async () => {
+  const { db, run } = await searchSetup(async () => searchRows);
+  await run();
+  const r = await report({ db, now: () => T0, days: 7 });
+  assert.deepEqual(r.top_search.map(x => x.page), ['/about', '/blog']);
+  const secrets = { get: n => (n === 'ANALYTICS_SALT' ? 'salt-from-env-value' : undefined) };
+  assert.deepEqual(await recordPageview({ db, now: () => T0, settings: { own_hosts: ['example.org'] }, secrets, request: req() }), { recorded: true });
+});
+
+test('US-SPEC-21 s7 analytics: rows for one page and day are summed, not overwritten, and a foreign host is dropped', async () => {
+  const dup = [
+    { date: YESTERDAY, page: '/a', clicks: 10, impressions: 100, position: 3 },
+    { date: YESTERDAY, page: '/a/', clicks: 5, impressions: 40, position: 4 },
+    { date: YESTERDAY, page: 'https://example.org/a', clicks: 2, impressions: 10, position: 6 },
+    { date: YESTERDAY, page: 'https://other.example.org.evil.example/a', clicks: 7, impressions: 9, position: 2 },
+  ];
+  const { db, run } = await searchSetup(async () => dup);
+  const ctx = await run(); await run();
+  const got = rows(db, `SELECT day, page, clicks, impressions, position FROM analytics_search ORDER BY page`);
+  assert.equal(got.length, 1);
+  assert.deepEqual([got[0].page, got[0].clicks, got[0].impressions], ['/a', 17, 150]);
+  assert.ok(Math.abs(got[0].position - (3 * 100 + 4 * 40 + 6 * 10) / 150) < 1e-9, 'position is the impression-weighted mean');
+  assert.match(ctx.notes.join('|'), /1 row\(s\) stored, 1 dropped/);
+});
+
+test('US-SPEC-21 s7 analytics: with no own_hosts an absolute URL is dropped rather than filed under a path of this site; a relative path is kept', async () => {
+  const db = makeDb([KERNEL_DIR, MIGRATIONS_DIR, MIG]);
+  const settings = { salt: 'test-salt-value', own_hosts: [], ports: { search_analytics: async () => [
+    { date: YESTERDAY, page: '/a', clicks: 1, impressions: 2, position: 1 },
+    { date: YESTERDAY, page: 'https://other.example.org/a', clicks: 7, impressions: 9, position: 2 },
+  ] } };
+  const packs = createPacks({ db, now: () => T0, config: { packs: { analytics: settings } }, channels: {} });
+  const m = loadManifest(DIR);
+  assert.deepEqual((await packs.register(m, { dir: DIR })).errors, undefined);
+  assert.equal((await packs.enablePack('analytics', { by: 'owner', cardText: m.enable_gate })).ok, true);
+  const step = (await packs.packSteps()).find(x => x.name === 'pack:analytics:search');
+  const ctx = { tickId: 24, errors: [], notes: [], now: T0 };
+  await step.run(db, ctx);
+  assert.deepEqual(ctx.errors, []);
+  assert.deepEqual(rows(db, `SELECT page, clicks FROM analytics_search`), [{ page: '/a', clicks: 1 }], ctx.notes.join('|'));
 });

@@ -1,8 +1,9 @@
 {
   "id": "drafts",
   "name": "Draft documents",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "class": "C",
+  "covers": ["patent", "business"],
   "scope": {
     "does": [
       "Keeps first drafts of plans, technical descriptions and legal-style documents that a person asked for, with every version stored",

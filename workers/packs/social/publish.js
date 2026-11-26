@@ -10,15 +10,19 @@ export const CHANNEL = 'social';
 const TRANSIENT = /^(cap_per_day|cap_per_week|kill_switch_\w+|pack_disabled|delivery_failed.*)$/;
 
 // The guard's channel port for 'social': the guard hands it only text, so links come from the text and a thread parent from the queue.
-export function guardPort({ db, channel, maxLength = 300 }) {
+// linkCard({ url, text }) -> { title, description } turns the first link in a post into a card (Bluesky app.bsky.embed.external); the channel checks its host.
+export function guardPort({ db, channel, maxLength = 300, linkCard = null }) {
   return {
     maxLength,
     async send({ content, idempotencyKey }) {
       const row = await first(db, `SELECT reply_to FROM social_queue WHERE idem_key = ?`, idempotencyKey);
-      const res = await channel.post({ text: content, links: findUrls(content).map(u => u.url), replyTo: row?.reply_to || undefined });
+      const urls = findUrls(content).map(u => u.url);
+      const embed = linkCard && urls[0] ? { uri: urls[0], ...linkCard({ url: urls[0], text: content }) } : undefined;
+      const res = await channel.post({ text: content, links: urls, replyTo: row?.reply_to || undefined, ...(embed ? { embed } : {}) });
       if (res?.url) await run(db, `UPDATE social_queue SET url = ? WHERE idem_key = ?`, res.url, idempotencyKey);
       return { id: res.id };
     },
+    ...(typeof channel.probe === 'function' ? { probe: () => channel.probe() } : {}),   // US-21-R25: read-only, never posts
   };
 }
 

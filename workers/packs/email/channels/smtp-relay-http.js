@@ -9,7 +9,16 @@ export function smtpRelayHttp({ fetch: doFetch, config = {}, env = {} }) {
   const authHeader = config.authHeader || 'authorization';
   const scheme = config.authScheme === undefined ? 'Bearer' : config.authScheme;
   const idField = config.idField || 'id';
+  const verify = config.verifyEndpoint && /^https:\/\//.test(String(config.verifyEndpoint)) ? config.verifyEndpoint : null;
   return {
+    // US-21-R25: read-only, and only when the host names a verification endpoint (a GET that does not send).
+    ...(verify ? { async probe() {
+      const token = env.EMAIL_PROVIDER_TOKEN;
+      if (!token) throw new Error('EMAIL_PROVIDER_TOKEN is not set');
+      const res = await doFetch(verify, { method: 'GET', headers: { [authHeader]: scheme ? `${scheme} ${token}` : token } });
+      if (!res.ok) throw new Error(`relay verify status ${res.status}`);
+      return { ok: true, detail: 'relay reachable' };
+    } } : {}),
     async deliver({ to, subject, text, html, headers }) {
       const token = env.EMAIL_PROVIDER_TOKEN;
       if (!token) throw new Error('EMAIL_PROVIDER_TOKEN is not set');

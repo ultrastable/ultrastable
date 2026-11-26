@@ -183,7 +183,7 @@ test('below the act rung a post is queued as a decision card showing its text; a
   const card = one(db, `SELECT * FROM gate_cards WHERE id = ?`, r.card_id);
   assert.ok(card.what.includes(`Ran 42 ticks (as of ${new Date(T0).toISOString().slice(0, 10)})`));
   await loop('publish');                                                                     // no second card for the same post
-  assert.equal(rows(db, `SELECT * FROM gate_cards`).length, 1);
+  assert.equal(rows(db, `SELECT * FROM gate_cards WHERE id LIKE 'guard-approve-%'`).length, 1);              // the live-trial card (US-21-R25) is a separate card
   const out = await guard.approve(r.guard_queue_id, { by: 'owner' });
   assert.equal(out.decision, 'sent');
   await loop('publish');                                                                     // reconcile records it

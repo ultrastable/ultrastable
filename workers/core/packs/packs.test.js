@@ -3,7 +3,7 @@
 // Tests for core/packs (US-SPEC-21: R01-R14, T21-1..T21-8). Fake channel port, no network.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, mkdtempSync, mkdirSync, writeFileSync } from 'node:fs';
+import { readFileSync, readdirSync, mkdtempSync, mkdirSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -50,11 +50,11 @@ test('migration is idempotent and every table is packs_ or guard_ prefixed', () 
   const sql = readFileSync(new URL('./migrations/0001_packs.sql', import.meta.url), 'utf8');
   db.raw.exec(sql); db.raw.exec(sql);
   const names = rows(db, `SELECT name FROM sqlite_master WHERE type='table' AND (name LIKE 'packs_%' OR name LIKE 'guard_%')`).map(r => r.name).sort();
-  assert.deepEqual(names, ['guard_bounces', 'guard_consent', 'guard_ledger', 'guard_queue', 'guard_suppression', 'packs_migrations', 'packs_registry', 'packs_runs', 'packs_switches']);
+  assert.deepEqual(names, ['guard_bounces', 'guard_consent', 'guard_inflight', 'guard_ledger', 'guard_queue', 'guard_suppression', 'packs_actions', 'packs_migrations', 'packs_probes', 'packs_registry', 'packs_runs', 'packs_switches']);
 });
 
 // ---- T21-1: inert until enabled; decision recorded; disable stops loops (R01, R04) ----
-test('T21-1 a pack is inert until enabled; enabling records who, when and the card text; disabling stops the loops', async () => {
+test('T21-1 US-21-R01 US-21-R04 a pack is inert until enabled; enabling records who, when and the card text; disabling stops the loops', async () => {
   const { db, packs, channel, guard } = setup();
   await packs.register(exampleManifest(), { dir: EXAMPLE_DIR });
   assert.equal((await packs.packSteps()).length, 0);                                  // registered is not enabled
@@ -117,7 +117,7 @@ test('re-registering an enabled pack with a changed manifest is refused', async 
 });
 
 // ---- T21-2: manifest refusals (R02, R11) ----
-test('T21-2 manifest validation refuses missing fields, class C outbound, out-of-bounds scope, outbound without a block, tenant names', () => {
+test('T21-2 US-21-R02 US-21-R11 manifest validation refuses missing fields, class C outbound, out-of-bounds scope, outbound without a block, tenant names', () => {
   assert.deepEqual(validateManifest(exampleManifest()), []);
   const bad = (mut, re, opts) => {
     const m = exampleManifest(); mut(m);
@@ -158,7 +158,7 @@ test('register stores nothing for an invalid manifest', async () => {
 });
 
 // ---- T21-3: refusals recorded in the ledger (R06, R13) ----
-test('T21-3 no consent, suppressed, over cap and duplicate sends are not delivered and the ledger says why', async () => {
+test('T21-3 US-21-R06 US-21-R13 no consent, suppressed, over cap and duplicate sends are not delivered and the ledger says why', async () => {
   const { db, packs, guard, channel } = setup();
   await enable(packs);
   assert.equal((await guard.send(msg())).reason, 'no_consent');
@@ -206,7 +206,7 @@ test('content rules: empty, over the channel limit, secret patterns, missing sen
 });
 
 // ---- T21-4: approval by rung (s6) ----
-test('T21-4 below the act rung an action is queued as a decision card and not sent; approving delivers it', async () => {
+test('T21-4 US-21-R06 below the act rung an action is queued as a decision card and not sent; approving delivers it', async () => {
   const { db, packs, guard, channel } = setup({ rung: 'assisted' });
   await enable(packs); await consented(guard);
   const r = await guard.send(msg());
@@ -252,11 +252,11 @@ test('an outbound.approval of always queues even at a high rung', async () => {
   await packs.register(m, { dir: EXAMPLE_DIR }); await packs.enablePack('example', { by: 'owner', cardText: m.enable_gate });
   await consented(guard);
   assert.equal((await guard.send(msg())).decision, 'queued_for_approval');
-  assert.equal(one(db, `SELECT COUNT(*) n FROM gate_cards`).n, 1);
+  assert.equal(one(db, `SELECT COUNT(*) n FROM gate_cards WHERE id LIKE 'guard-approve-%'`).n, 1);   // the live-trial card of US-21-R25 is a separate card
 });
 
 // ---- T21-5: kill switches (R07) ----
-test('T21-5 tripping one pack\'s switch stops that pack and no other; global and channel switches also hold', async () => {
+test('T21-5 US-21-R07 tripping one pack\'s switch stops that pack and no other; global and channel switches also hold', async () => {
   const { db, packs, guard, channel } = setup();
   await enable(packs); await consented(guard);
   // a second pack, same shape, to prove isolation
@@ -291,7 +291,7 @@ test('T21-5 tripping one pack\'s switch stops that pack and no other; global and
 });
 
 // ---- T21-6: a throwing step files an item, the tick completes (R05) ----
-test('T21-6 a pack step that throws or hangs files an item and the tick completes', async () => {
+test('T21-6 US-21-R05 a pack step that throws or hangs files an item and the tick completes', async () => {
   const dir = mkdtempSync(path.join(tmpdir(), 'pack-throw-'));
   mkdirSync(path.join(dir, 'p'));
   writeFileSync(path.join(dir, 'p', 'boom.mjs'), `export async function run() { throw new Error('kaboom'); }\nexport async function slow() { await new Promise(r => setTimeout(r, 2000)); }\n`);
@@ -310,7 +310,7 @@ test('T21-6 a pack step that throws or hangs files an item and the tick complete
   assert.deepEqual(rows(db, `SELECT loop_id, outcome FROM packs_runs ORDER BY id`).map(x => `${x.loop_id}:${x.outcome}`), ['boom:error', 'slow:timeout']);
 });
 
-test('every_ticks gates a loop and runs are counted', async () => {
+test('US-21-R05 every_ticks gates a loop and runs are counted', async () => {
   const { db, packs, guard } = setup();
   const m = exampleManifest(); m.loops[0].every_ticks = 3;
   await packs.register(m, { dir: EXAMPLE_DIR }); await packs.enablePack('example', { by: 'owner', cardText: m.enable_gate });
@@ -321,7 +321,7 @@ test('every_ticks gates a loop and runs are counted', async () => {
 });
 
 // ---- class rules (R12) ----
-test('T21 class C can never send, even if a manifest is forced into the registry; class D must route through deploy', async () => {
+test('T21 US-21-R12 class C can never send, even if a manifest is forced into the registry; class D must route through deploy', async () => {
   const { db, guard } = setup({ rung: 'autonomous' });
   const base = exampleManifest();
   for (const cls of ['C', 'D']) {
@@ -355,7 +355,7 @@ test('a delivery failure is a refusal with the provider error, and does not burn
 });
 
 // ---- T21-8: secrets (R09) ----
-test('T21-8 a secret value never appears in any table; the ledger holds hashes, not recipients or content', async () => {
+test('T21-8 US-21-R09 a secret value never appears in any table; the ledger holds hashes, not recipients or content', async () => {
   const { db, packs, guard } = setup();
   await enable(packs); await consented(guard);
   const secret = 'ghp_' + 'Q'.repeat(36);
@@ -402,11 +402,11 @@ test('consent: single opt-in grant, revoke, and consent mode none needs no recor
 });
 
 // ---- R03 / T21-7: static check ----
-test('T21-7 no core or adapter module imports a pack module (static check over core/ and adapters/)', () => {
+test('T21-7 US-21-R03 no core or adapter module imports a pack module (static check over core/ and adapters/)', () => {
   assert.deepEqual(assertCoreImportsNoPacks(ROOT), []);
 });
 
-test('T21-7 the static check catches a core file importing a pack, static or dynamic', () => {
+test('T21-7 US-21-R03 the static check catches a core file importing a pack, static or dynamic', () => {
   const root = mkdtempSync(path.join(tmpdir(), 'core-'));
   mkdirSync(path.join(root, 'core', 'packs', 'foo'), { recursive: true });
   writeFileSync(path.join(root, 'core', 'packs', 'foo', 'pack.json'), '{}');
@@ -422,6 +422,69 @@ test('R14 one guard implementation: packs get a bound view of it, with no way to
   const { packs, guard } = setup();
   await enable(packs);
   const view = packs.boundGuard('example');
-  assert.deepEqual(Object.keys(view).sort(), ['consent', 'send', 'stats', 'suppress', 'unsubscribe']);
+  assert.deepEqual(Object.keys(view).sort(), ['consent', 'outcome', 'send', 'stats', 'suppress', 'unsubscribe']);
   assert.equal(typeof guard.approve, 'function'); assert.equal(view.approve, undefined);  // a pack cannot approve its own queue
+});
+
+// ---- US-21-R02 and s11: a manifest says which bootstrap cases it covers (U-K-24) ----
+test('US-21-R02 every case tag in bootstrap/cases.json is covered by a shipped pack or listed as unmapped', () => {
+  const cases = JSON.parse(readFileSync(new URL('../../bootstrap/cases.json', import.meta.url), 'utf8')).cases || [];
+  const tags = new Set(cases.map(c => c.pack).filter(Boolean));
+  const covered = new Set();
+  for (const e of readdirSync(path.join(ROOT, 'packs'), { withFileTypes: true }).filter(x => x.isDirectory())) for (const t of loadManifest(path.join(ROOT, 'packs', e.name)).covers || []) covered.add(t);
+  const UNMAPPED = ['research'];                         // no shipped pack does research; its cases stay out of scope until one does
+  assert.deepEqual([...tags].filter(t => !covered.has(t) && !UNMAPPED.includes(t)), []);
+  assert.deepEqual(UNMAPPED.filter(t => covered.has(t)), [], 'an unmapped tag that a pack now covers must leave the list');
+});
+
+// ---------------- US-21-R14: a send is reserved before the provider is called ----------------
+function slowChannel(ms = 5) {
+  const c = { sent: [], calls: 0 };
+  c.send = async (m) => { c.calls++; await new Promise(r => setTimeout(r, ms)); c.sent.push(m); return { id: `prov-${c.sent.length}` }; };
+  return c;
+}
+
+test('US-21-R14: three simultaneous sends with one idempotency key deliver once and refuse the others as duplicates', async () => {
+  const channel = slowChannel(), { db, guard, packs } = setup({ channel });
+  await enable(packs); await consented(guard);
+  const out = await Promise.all([1, 2, 3].map(() => guard.send(msg({ idempotencyKey: 'same' }))));
+  assert.deepEqual(out.map(r => r.decision).sort(), ['refused', 'refused', 'sent']);
+  assert.ok(out.filter(r => r.decision === 'refused').every(r => r.reason === 'duplicate_idempotency_key'));
+  assert.equal(channel.calls, 1, 'the provider was called once');
+  assert.equal(one(db, `SELECT COUNT(*) n FROM guard_inflight`).n, 0, 'the reservation is released when the delivery ends');
+});
+
+test('US-21-R14: simultaneous sends with different keys cannot pass a cap together (per_day is 2)', async () => {
+  const channel = slowChannel(), { guard, packs } = setup({ channel });
+  await enable(packs); await consented(guard);
+  const out = await Promise.all(['a', 'b', 'c', 'd'].map(k => guard.send(msg({ idempotencyKey: k }))));
+  assert.equal(out.filter(r => r.decision === 'sent').length, 2);
+  assert.ok(out.filter(r => r.decision === 'refused').every(r => r.reason === 'cap_per_day'), JSON.stringify(out.map(r => r.reason)));
+  assert.equal(channel.calls, 2);
+});
+
+test('US-21-R14: a failed delivery releases its reservation so the key can be retried, and a stale reservation (a crash) stops blocking after inflight_ttl_ms', async () => {
+  const flaky = { n: 0, send: async () => { if (flaky.n++ === 0) throw new Error('provider down'); return { id: 'ok' }; } };
+  const { db, guard, packs, clock } = setup({ channel: flaky, config: { inflight_ttl_ms: 60000 } });
+  await enable(packs); await consented(guard);
+  assert.match((await guard.send(msg({ idempotencyKey: 'r1' }))).reason, /^delivery_failed/);
+  assert.equal(one(db, `SELECT COUNT(*) n FROM guard_inflight`).n, 0);
+  assert.equal((await guard.send(msg({ idempotencyKey: 'r1' }))).decision, 'sent');
+  const { iso } = await import('../kernel/util.js');
+  db.raw.prepare(`INSERT INTO guard_inflight (pack, idem_key, channel, at) VALUES ('example','crashed','fake',?)`).run(iso(clock.t));
+  assert.equal((await guard.send(msg({ idempotencyKey: 'crashed' }))).reason, 'duplicate_idempotency_key', 'a fresh reservation blocks its key');
+  clock.t += 120000;
+  assert.equal((await guard.send(msg({ idempotencyKey: 'crashed' }))).decision, 'sent', 'after the ttl it no longer does');
+});
+
+test('US-21-R14: approving the same queued entry twice at once delivers once', async () => {
+  const channel = slowChannel(), { db, guard, packs } = setup({ channel, rung: 'assisted' });
+  await enable(packs); await consented(guard);
+  const q = await guard.send(msg({ idempotencyKey: 'q1' }));
+  assert.equal(q.decision, 'queued_for_approval');
+  const out = await Promise.all([guard.approve(q.queueId, { by: 'a' }), guard.approve(q.queueId, { by: 'b' })]);
+  assert.equal(out.filter(r => r.decision === 'sent').length, 1, JSON.stringify(out));
+  assert.equal(out.find(r => r.decision !== 'sent').reason, 'decision_in_progress');
+  assert.equal(channel.calls, 1);
+  assert.equal(one(db, `SELECT status FROM guard_queue WHERE id = ?`, q.queueId).status, 'sent', 'the entry keeps the status of the decision that delivered it');
 });

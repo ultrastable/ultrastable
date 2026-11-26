@@ -131,14 +131,15 @@ export function createEmail({ db, guard, now = Date.now, config = {}, env = {} }
     return { ok: true, known: true };
   }
 
-  // type: 'hard' | 'soft' | 'complaint'. Hard bounces and complaints suppress at once; a soft bounce suppresses on the third in 30 days.
-  async function recordBounce({ address, type = 'hard' } = {}) {
+  // type: 'hard' | 'soft' | 'complaint'. Hard bounces and complaints suppress at once; a soft bounce suppresses on the third in 30 days,
+  // unless the core intake already decided (decided: true, US-21-R21), which is mirrored here without a second count.
+  async function recordBounce({ address, type = 'hard', decided = false } = {}) {
     const a = normEmail(address);
     if (!validEmail(a)) return { ok: false, reason: 'invalid_address' };
     const eh = await emailHash(a);
     const kind = type === 'complaint' ? 'complaint' : type === 'soft' ? 'soft_bounce' : 'hard_bounce';
     await q.run(`INSERT INTO email_events (email_hash, type, at) VALUES (?,?,?)`, eh, kind, iso(now()));
-    if (type === 'soft') {
+    if (type === 'soft' && !decided) {
       const n = (await q.first(`SELECT COUNT(*) AS n FROM email_events WHERE email_hash = ? AND type = 'soft_bounce' AND at > ?`, eh, iso(now() - 30 * 86400e3))).n;
       if (n < 3) return { ok: true, suppressed: false };
     }

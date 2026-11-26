@@ -7,7 +7,8 @@ import { linkFacets } from '../text.js';
 export const SECRET_NAMES = ['BLUESKY_IDENTIFIER', 'BLUESKY_APP_PASSWORD'];
 export const credentialsPresent = (env = {}, names = SECRET_NAMES) => ({ ok: names.every(n => !!env[n]), missing: names.filter(n => !env[n]) });
 
-export function createBlueskyChannel({ fetch, env = {}, service, webBase, now = () => Date.now(), identifierEnv = SECRET_NAMES[0], passwordEnv = SECRET_NAMES[1] }) {
+// embedHosts: hosts a link card may point at (the pack's allowlist); with none configured a card is refused (US-21-R24: no link off the allowlist).
+export function createBlueskyChannel({ fetch, env = {}, service, webBase, now = () => Date.now(), identifierEnv = SECRET_NAMES[0], passwordEnv = SECRET_NAMES[1], embedHosts = [] }) {
   if (!service) throw new Error('service (the PDS base URL) is required');
   const base = service.replace(/\/+$/, '');
   let session = null;
@@ -49,8 +50,20 @@ export function createBlueskyChannel({ fetch, env = {}, service, webBase, now = 
 
   return {
     name: 'bluesky',
-    async post({ text, links = [], replyTo }) {
+    // US-21-R25: read-only. Signs in and reads the session back; never creates a record.
+    async probe() {
+      await login();
+      const { res, data } = await xrpc('GET', 'com.atproto.server.getSession');
+      if (!res.ok) throw fail('getSession', res, data);
+      return { ok: true, detail: 'session readable' };
+    },
+    async post({ text, links = [], replyTo, embed }) {
       const record = { $type: 'app.bsky.feed.post', text, createdAt: new Date(now()).toISOString() };
+      if (embed) {                                                  // a link card, as scripts/social_post.py attaches one (app.bsky.embed.external)
+        let u; try { u = new URL(embed.uri); } catch { throw new Error('embed_uri_invalid'); }
+        if (u.protocol !== 'https:' || !embedHosts.some(h => u.hostname === h || u.hostname.endsWith(`.${h}`))) throw new Error(`embed_uri_not_allowed: ${u.hostname}`);
+        record.embed = { $type: 'app.bsky.embed.external', external: { uri: embed.uri, title: String(embed.title || '').slice(0, 300), description: String(embed.description || '').slice(0, 1000) } };
+      }
       const facets = linkFacets(text).filter(f => !links.length || links.includes(f.features[0].uri));
       if (facets.length) record.facets = facets;
       if (replyTo) {
