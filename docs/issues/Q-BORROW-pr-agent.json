@@ -1,0 +1,9 @@
+{
+  "id": "Q-BORROW-pr-agent",
+  "title": "Q-BORROW-pr-agent: run PR-Agent as a reviewer in the merge lane",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -m foundation rnd --plugged pr-agent\n**Status:** open\n\nBORROW-1 (Rowan, 2026-11-26): plug in a competitor's best step instead of rebuilding it. Add a workflow `.github/workflows/pr-agent.yml` that runs the open-source PR-Agent action (https://github.com/The-PR-Agent/pr-agent) on pull requests, with model calls on GitHub Models through the built-in token (no stored key), the budget headers `scripts/lint_workflows.py` requires, a timeout, a concurrency group and the HALT guard. Its review is advisory: it never blocks a merge. Then set the `pr-agent` row in doctrine/competitors.json to `\"status\": \"live\"` with probe `file:.github/workflows/pr-agent.yml` in the same change.\n\n**Closing probe:** cmd:python3 -m foundation rnd --plugged pr-agent\n\n**Prediction:** spec_quality >= 0.7 within 336 h (read by `python3 -m foundation specgate --report`)\n\n**Out of scope:** paid reviewers, any stored API key, or making the review a required check.\n",
+  "labels": [
+    "growth",
+    "agent-ready"
+  ]
+}

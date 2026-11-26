@@ -370,6 +370,11 @@ def main(argv: list[str]) -> int:
     a = list(argv)
     if "--run" in a:
         print(json.dumps(run(apply="--apply" in a), indent=1)); return 0
+    if "--plugged" in a:  # BORROW-1: closing probe for a plug-in item, passes only when the worker is wired in
+        cid = a[a.index("--plugged") + 1]
+        c = next((x for x in load()["competitors"] if x["id"] == cid and x.get("plug_in")), None)
+        ok = bool(c) and c["plug_in"]["status"] == "live" and _probe_ok(REPO, c["plug_in"]["probe"])
+        print(f"{cid}: {'plugged in' if ok else 'not plugged in'}"); return 0 if ok else 1
     if "--report" in a:
         print(json.dumps(report(), indent=1)); return 0
     bad = check(); print("\n".join(bad) or "rnd ok"); return 1 if bad else 0

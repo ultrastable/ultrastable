@@ -1,0 +1,9 @@
+{
+  "id": "Q-BORROW-compare-page",
+  "title": "Q-BORROW-compare-page: publish a sourced comparison page at /compare",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** cmd:grep -q /compare site/worker.js\n**Status:** open\n\nRender a page at /compare from doctrine/competitors.json: each competitor's name, the capabilities its profile in ops/rnd/profiles/ evidences with the source link, and its plug_in row (role, status, default). Every sentence comes from the data; no number without a source (NO-FABRICATION-1). Register the route as a claim and add a test in site/site.test.mjs that the page lists every competitor id.\n\n**Closing probe:** cmd:grep -q /compare site/worker.js\n\n**Prediction:** spec_quality >= 0.7 within 336 h (read by `python3 -m foundation specgate --report`)\n\n**Out of scope:** hand-typed claims about competitors, rankings, or pricing figures.\n",
+  "labels": [
+    "growth",
+    "agent-ready"
+  ]
+}

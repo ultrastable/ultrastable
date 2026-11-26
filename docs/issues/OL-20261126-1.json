@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261126-1",
+  "title": "OL-20261126-1: PR-Agent reviewer and compare page queued",
+  "body": "**Owner:** executor\n**Trigger:** executor tick\n**Done check:** cmd:python3 -m foundation rnd --plugged pr-agent\n**Status:** open\n\nSession: session_0156nqDuXvUhE9U5C8z9dacv. Evidence: docs/issues/Q-BORROW-pr-agent.json and Q-BORROW-compare-page.json, each closed by its own probe.",
+  "labels": [
+    "role:executor",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
