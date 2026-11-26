@@ -9,6 +9,8 @@
 This file is the single source of truth for project memory. Chat memory, tool memory and platform memory stores are read-only pointers to this file and are never edited as a record. Every session starts by reading this file and ends by updating it. Nothing is done until it is deployed end to end; every open item is an issue or an owner card with a default in effect and a closing probe.
 
 Last updated: 2026-11-26
+
+- 2026-11-26: fix(tick): index the D1 readers that hold the tick lean (READ-BUDGET-10) (#2439)
 - 2026-11-26: ORCHESTRATE-1 (PR 2432): an item the single-shot Worker executor fails starts a run kept in D1 (`orch_runs`, `orch_steps`, migration 0033) that the executor step advances one phase a tick: plan into at most six steps, work independent steps together, review with a model that wrote no step, fix the named steps, open one PR (`seed/worker/src/orchestrate.js`, provider `worker-orchestrator`). Each accepted plan is a scored decision (`orchestrator-plan`). Not yet deployed or run against a live model. Still open as OL-20261126-1: no step executes code before the PR, and every call is a free Workers AI model because the paid rung is capped at 0.
 
 - 2026-11-26: ledger-openalex: OpenAlex mirror for the Replication Ledger (LEDGER-KEYLESS-1) [skip ci]
