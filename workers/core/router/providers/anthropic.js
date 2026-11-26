@@ -26,5 +26,6 @@ export function parseResponse(json) {
     tool_calls: blocks.filter(b => b.type === 'tool_use'),
     tokens_in: Number(json?.usage?.input_tokens) || 0,
     tokens_out: Number(json?.usage?.output_tokens) || 0,
+    resolved_model: typeof json?.model === 'string' ? json.model : null, // what the provider says it served
   };
 }

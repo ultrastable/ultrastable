@@ -24,7 +24,12 @@ function scrub(text, env, config) {
   return s.slice(0, 300);
 }
 
-export function createRouter({ db, fetch, now = () => Date.now(), config, env = {}, ai = null }) {
+// A model the provider says is gone (HTTP 410, or an error naming a deprecation) is skipped for this long; its successor is the
+// next configured rung of the same provider. A call refused before any model ran costs nothing.
+const RETIRE_MS = 7 * 24 * 3600 * 1000;
+const isGone = msg => /http 410|deprecat|retired|\b5028\b/i.test(String(msg || ''));
+
+export function createRouter({ db, fetch, now = () => Date.now(), config, env = {}, ai = null, killSwitch = null, matrix = null }) {
   const rungs = config.rungs || ['small', 'medium', 'large'];
   const providers = config.providers || {};
   const order = config.fallbacks || Object.keys(providers);
@@ -49,8 +54,11 @@ export function createRouter({ db, fetch, now = () => Date.now(), config, env = 
                ON CONFLICT(name) DO UPDATE SET is_on=excluded.is_on, reason=excluded.reason, set_at=excluded.set_at`,
       name, on ? 1 : 0, reason, iso(now()));
   }
+  // A `model:<id>` switch is a retirement and lapses after retire_ms; every other switch stays until it is released.
   async function engagedSwitches() {
-    return new Set((await all(`SELECT name FROM router_switches WHERE is_on = 1`)).map(r => r.name));
+    const t = now(), keep = config.retire_ms ?? RETIRE_MS;
+    return new Set((await all(`SELECT name, set_at FROM router_switches WHERE is_on = 1`))
+      .filter(r => !String(r.name).startsWith('model:') || !r.set_at || Date.parse(r.set_at.replace(' ', 'T') + 'Z') + keep > t).map(r => r.name));
   }
 
   // 'ok' | 'soft' | 'hard' for a role, with the binding cap.
@@ -82,11 +90,12 @@ export function createRouter({ db, fetch, now = () => Date.now(), config, env = 
   }
 
   async function record(row) {
-    await run(`INSERT INTO router_calls (at, role, item_id, kind, rung_requested, rung_used, provider, model, family,
+    const res = await run(`INSERT INTO router_calls (at, role, item_id, kind, rung_requested, rung_used, provider, model, family,
                tokens_in, tokens_out, cost_usd, latency_ms, outcome, error, steered) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
       iso(now()), row.role ?? null, row.item_id ?? null, row.kind ?? 'other', row.rung_requested ?? null, row.rung_used ?? null,
       row.provider ?? null, row.model ?? null, row.family ?? null, row.tokens_in || 0, row.tokens_out || 0,
       row.cost_usd || 0, row.latency_ms || 0, row.outcome, row.error ? scrub(row.error, env, config) : null, row.steered ? 1 : 0);
+    return res.meta?.last_row_id ?? null;
   }
 
   async function fileGateRecord(what, why, scope) {
@@ -98,6 +107,28 @@ export function createRouter({ db, fetch, now = () => Date.now(), config, env = 
     return r.meta.last_row_id;
   }
 
+  // US-09-R05: while a hard cap is breached, reducing the overage is the top task: one priority-0 item per capped scope, closed
+  // by the same reading (spend below the cap) on a later route call. The item is data, not an instruction to a person.
+  const spendItemId = cap => 'SPEND-' + `${cap.scope}:${cap.role || ''}:${cap.period}`.replace(/[^\w.:-]/g, '_');
+  async function fileSpendItem(cap, spent) {
+    await run(`INSERT OR IGNORE INTO items (id, title, kind, owner_role, done_check, closing_probe, priority, status, created_at, updated_at) VALUES (?,?,?,?,?,?,0,'open',?,?)`,
+      spendItemId(cap), `Spend ${spent} reached the hard cap ${cap.hard_usd} (${cap.scope} ${cap.role || ''} ${cap.period}): reduce the overage`, 'fix', config.spend_owner_role || 'operations',
+      'router spend(period) is below the hard cap', 'router spend(period) below the hard cap', iso(now()), iso(now()));
+    // A later breach of the same scope reopens the item the earlier recovery closed: the fixed id would otherwise swallow every breach after the first.
+    await run(`UPDATE items SET status='open', disposition=NULL, updated_at=? WHERE id=? AND status='done'`, iso(now()), spendItemId(cap));
+  }
+  async function closeSpendItems(role) {
+    const open = await all(`SELECT id FROM items WHERE id LIKE 'SPEND-%' AND status NOT IN ('done','superseded','cancelled')`);
+    if (!open.length) return;
+    for (const cap of config.caps || []) {
+      if (cap.hard_usd == null || (cap.scope === 'role' && cap.role !== role)) continue;
+      const id = spendItemId(cap);
+      if (!open.some(o => o.id === id)) continue;
+      const s = await spend(cap.period, cap.scope === 'role' ? { role: cap.role } : {});
+      if (s.usd < cap.hard_usd) await run(`UPDATE items SET status='done', disposition=?, updated_at=? WHERE id=? AND status NOT IN ('done','superseded','cancelled')`, `spend ${s.usd} is below the hard cap ${cap.hard_usd}`, iso(now()), id);
+    }
+  }
+
   // Decide rung and candidates without calling anything.
   async function route(request = {}) {
     const role = request.role || null;
@@ -105,14 +136,23 @@ export function createRouter({ db, fetch, now = () => Date.now(), config, env = 
     const need = request.capabilities || [];
     if (!rungs.includes(wanted)) return { ok: false, refusal: 'unknown_rung', rung_requested: wanted };
     const sw = await engagedSwitches();
-    if (sw.has('all')) return { ok: false, refusal: 'kill_switch_all', rung_requested: wanted };
+    // The global switch of core/router/caps is read through a port, so the claim service, the deploy path and the router stop together.
+    if (sw.has('all') || (typeof killSwitch === 'function' && await killSwitch())) return { ok: false, refusal: 'kill_switch_all', rung_requested: wanted };
 
     const cs = await capState(role);
+    if (cs.state === 'hard') await fileSpendItem(cs.cap, cs.spent); else await closeSpendItems(role);
     let idx = rungs.indexOf(wanted), steered = false;
     if (cs.state === 'soft' && idx > 0) { idx -= 1; steered = true; }
     const freeOnly = cs.state === 'hard';
     const exclude = request.kind === 'reviewer' ? await doerFamilies(request.item_id) : new Set();
     const list = request.providers || order;
+    // US-09-R08, capability first: with a matrix port the models offered for a class are the admitted ones that passed their canaries.
+    // No port, no task_class, or an empty answer falls back to the configured capabilities, and the plan says so.
+    let allowed = null, matrixState = 'none';
+    if (matrix && request.task_class) {
+      const adm = await matrix({ task_class: request.task_class, need: request.need || {} });
+      if (Array.isArray(adm) && adm.length) { allowed = new Set(adm.map(r => r.model)); matrixState = 'applied'; }
+    }
     let sawFamilyBlock = false, sawPaidBlock = false, sawRoleBlock = false;
 
     const build = (i) => {
@@ -122,11 +162,17 @@ export function createRouter({ db, fetch, now = () => Date.now(), config, env = 
         if (!p || sw.has('provider:' + name)) continue;
         if (!usable(p)) continue;
         if (!roleAllowed(p, role)) { sawRoleBlock = true; continue; }
-        const m = p.models?.[rungs[i]];
+        let m = p.models?.[rungs[i]], successor_of = null, usedRung = rungs[i];
+        // A retired model gives way to the next configured rung of the same provider.
+        if (m && sw.has('model:' + m.id)) {
+          successor_of = m.id; m = null;
+          for (let j = i + 1; j < rungs.length && !m; j++) { const c = p.models?.[rungs[j]]; if (c && !sw.has('model:' + c.id)) { m = c; usedRung = rungs[j]; } }
+        }
         if (!m || !need.every(c => (m.capabilities || []).includes(c))) continue;
+        if (allowed && !allowed.has(m.id)) continue;
         if (exclude.has(p.family)) { sawFamilyBlock = true; continue; }
         if (freeOnly && !isFree(m)) { sawPaidBlock = true; continue; }
-        out.push({ provider: name, model: m.id, family: p.family, rung: rungs[i] });
+        out.push({ provider: name, model: m.id, family: p.family, rung: usedRung, ...(successor_of ? { successor_of } : {}) });
       }
       return out;
     };
@@ -144,10 +190,19 @@ export function createRouter({ db, fetch, now = () => Date.now(), config, env = 
       if (sawRoleBlock) return { ok: false, refusal: 'role_not_allowed', rung_requested: wanted };
       return { ok: false, refusal: sawFamilyBlock ? 'no_distinct_family' : 'no_capable_provider', rung_requested: wanted };
     }
-    return { ok: true, rung_requested: wanted, rung: candidates[0].rung, steered, cap_state: cs.state, candidates };
+    return { ok: true, rung_requested: wanted, rung: candidates[0].rung, steered, cap_state: cs.state, matrix: matrixState, candidates };
   }
 
   async function call(request = {}) {
+    // US-09-R04: one iteration is bounded in steps, tokens, wall-clock time and spend (core/router/caps/bounds.js). A spent bound
+    // refuses before any provider is called, whatever the cap state is.
+    const bounds = request.bounds || null;
+    let spentBound = bounds ? bounds.check() : { ok: true };
+    if (spentBound.ok && request.deadline_ms != null && now() >= request.deadline_ms) spentBound = { ok: false, exceeded: 'wall' };
+    if (!spentBound.ok) {
+      await record({ role: request.role, item_id: request.item_id, kind: request.kind, rung_requested: request.rung || 'small', outcome: 'refused', error: 'bound_exceeded:' + spentBound.exceeded });
+      return { ok: false, refusal: 'bound_exceeded', exceeded: spentBound.exceeded, attempts: [] };
+    }
     const plan = await route(request);
     if (!plan.ok) {
       await record({ role: request.role, item_id: request.item_id, kind: request.kind, rung_requested: plan.rung_requested, outcome: 'refused', error: plan.refusal });
@@ -162,21 +217,41 @@ export function createRouter({ db, fetch, now = () => Date.now(), config, env = 
       const t0 = now();
       try {
         if (!adapter) throw new Error('no adapter for kind ' + p.kind);
-        const req = { ...request, max_tokens: request.max_tokens || config.default_max_tokens || 1024 };
+        const room = bounds ? bounds.check().remaining.tokens : Infinity;
+        const req = { ...request, max_tokens: Math.max(1, Math.min(request.max_tokens || config.default_max_tokens || 1024, config.max_tokens_per_call || Infinity, room)) };
+        delete req.bounds;
         let out;
         if (adapter.keyless) out = await adapter.invoke(ai, p, model, req);
         else {
-          const { url, init } = adapter.buildRequest(p, model, req, env[p.key_env]);
-          const res = await fetch(url, init);
-          if (!res.ok) throw new Error('http ' + res.status);
-          out = adapter.parseResponse(await res.json());
+          const key = env[p.key_env];
+          const { url, init } = adapter.buildRequest(p, model, req, key);
+          let res = await fetch(url, init);
+          if (!res.ok) {
+            // The body of a refusal that says a model is gone is kept (scrubbed when stored) so the retirement can be recognised.
+            const note = [400, 404, 410].includes(res.status) ? ': ' + String(await res.text().catch(() => '')).slice(0, 160) : '';
+            throw new Error('http ' + res.status + note);
+          }
+          let json;
+          try { json = await res.json(); } catch (e) { if (!adapter.shouldFallback) throw e; json = null; }
+          // An adapter may name a second endpoint for a 200 answer that is not a completion (MODELS-ORG-1).
+          if (adapter.shouldFallback?.(json)) {
+            const fb = adapter.fallbackRequest?.(p, model, req, key);
+            if (!fb) throw new Error('empty answer');
+            res = await fetch(fb.url, fb.init);
+            if (!res.ok) throw new Error('http ' + res.status);
+            json = await res.json();
+          }
+          out = adapter.parseResponse(json);
         }
         const cost = modelCost(model, out.tokens_in, out.tokens_out);
-        await record({ ...base, tokens_in: out.tokens_in, tokens_out: out.tokens_out, cost_usd: cost, latency_ms: now() - t0, outcome: 'ok' });
+        if (bounds) bounds.charge({ steps: 1, tokens: out.tokens_in + out.tokens_out, usd: cost });
+        const callId = await record({ ...base, tokens_in: out.tokens_in, tokens_out: out.tokens_out, cost_usd: cost, latency_ms: now() - t0, outcome: 'ok' });
+        if (out.resolved_model) await run(`INSERT INTO router_upstream (call_id, at, provider, requested, resolved) VALUES (?,?,?,?,?)`, callId, iso(now()), c.provider, c.model, out.resolved_model);
         return { ok: true, provider: c.provider, model: c.model, rung: c.rung, steered: base.steered, text: out.text, tool_calls: out.tool_calls, tokens_in: out.tokens_in, tokens_out: out.tokens_out, cost_usd: cost, attempts };
       } catch (e) {
         const msg = scrub(e?.message, env, config);
-        attempts.push({ provider: c.provider, error: msg });
+        if (isGone(msg)) await setSwitch('model:' + c.model, true, 'retired: ' + msg.slice(0, 120)); // skipped for retire_ms; the next candidate serves
+        attempts.push({ provider: c.provider, error: msg, ...(isGone(msg) ? { retired: c.model } : {}) });
         await record({ ...base, latency_ms: now() - t0, outcome: 'error', error: msg });
       }
     }

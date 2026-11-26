@@ -5,7 +5,7 @@ export default {
   {
    "area": "doctrine",
    "quiet_days": 0,
-   "recent7": 65727,
+   "recent7": 65736,
    "series": [
     0,
     0,
@@ -36,16 +36,16 @@ export default {
     83,
     2,
     17148,
-    4432
+    4441
    ],
-   "share_recent": 0.192,
+   "share_recent": 0.191,
    "share_trend": 0.189,
-   "total": 131645
+   "total": 131654
   },
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 102164,
+   "recent7": 103392,
    "series": [
     0,
     0,
@@ -76,11 +76,11 @@ export default {
     2446,
     1383,
     30834,
-    44034
+    45262
    ],
-   "share_recent": 0.299,
-   "share_trend": 0.184,
-   "total": 116998
+   "share_recent": 0.301,
+   "share_trend": 0.186,
+   "total": 118226
   },
   {
    "area": "workers",
@@ -118,7 +118,7 @@ export default {
     894,
     20297
    ],
-   "share_recent": 0.069,
+   "share_recent": 0.068,
    "share_trend": 0.156,
    "total": 94715
   },
@@ -159,7 +159,7 @@ export default {
     2203
    ],
    "share_recent": 0.067,
-   "share_trend": 0.047,
+   "share_trend": 0.046,
    "total": 45686
   },
   {
@@ -278,7 +278,7 @@ export default {
     3778,
     8630
    ],
-   "share_recent": 0.05,
+   "share_recent": 0.049,
    "share_trend": 0.038,
    "total": 29256
   },
@@ -323,7 +323,7 @@ export default {
    "total": 24560
   }
  ],
- "at": "2026-11-26T21:47:12Z",
+ "at": "2026-11-26T21:58:15Z",
  "days": 30,
  "findings": [
   {
@@ -333,10 +333,16 @@ export default {
    "why": "doctrine's share of attention moved 19 points between the first and second half of the window"
   },
   {
+   "evidence": "recent7 103392 lines, prior weekly mean 4514.7",
+   "id": "site",
+   "kind": "hotspot",
+   "why": "site drew 30% of the last week's change, 22.9x its earlier weekly pace"
+  },
+  {
    "evidence": "share 1% then 19%",
    "id": "site",
    "kind": "drift",
-   "why": "site's share of attention moved 18 points between the first and second half of the window"
+   "why": "site's share of attention moved 19 points between the first and second half of the window"
   },
   {
    "evidence": "share 0% then 16%",
@@ -345,43 +351,43 @@ export default {
    "why": "workers's share of attention moved 16 points between the first and second half of the window"
   },
   {
-   "evidence": "quiet_days 7; system change in the last 7 days 342174",
+   "evidence": "quiet_days 7; system change in the last 7 days 343425",
    "id": "GLOSSARY.md",
    "kind": "neglected",
    "why": "GLOSSARY.md had 961 lines of change, then nothing for 7 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 8; system change in the last 7 days 342174",
+   "evidence": "quiet_days 8; system change in the last 7 days 343425",
    "id": "docs/ops",
    "kind": "neglected",
    "why": "docs/ops had 396 lines of change, then nothing for 8 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 10; system change in the last 7 days 342174",
+   "evidence": "quiet_days 10; system change in the last 7 days 343425",
    "id": "docs/architecture",
    "kind": "neglected",
    "why": "docs/architecture had 192 lines of change, then nothing for 10 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 9; system change in the last 7 days 342174",
+   "evidence": "quiet_days 9; system change in the last 7 days 343425",
    "id": "seed/self",
    "kind": "neglected",
    "why": "seed/self had 151 lines of change, then nothing for 9 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 11; system change in the last 7 days 342174",
+   "evidence": "quiet_days 11; system change in the last 7 days 343425",
    "id": "seed/outreach",
    "kind": "neglected",
    "why": "seed/outreach had 139 lines of change, then nothing for 11 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 13; system change in the last 7 days 342174",
+   "evidence": "quiet_days 13; system change in the last 7 days 343425",
    "id": "docs/runbooks",
    "kind": "neglected",
    "why": "docs/runbooks had 134 lines of change, then nothing for 13 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 8; system change in the last 7 days 342174",
+   "evidence": "quiet_days 8; system change in the last 7 days 343425",
    "id": "HANDOFF.md",
    "kind": "neglected",
    "why": "HANDOFF.md had 51 lines of change, then nothing for 8 days while the rest of the system moved"
@@ -391,12 +397,6 @@ export default {
    "id": "agents/AGENTS.md",
    "kind": "hotspot",
    "why": "agents/AGENTS.md was rewritten on 16 of 30 days"
-  },
-  {
-   "evidence": "days with changes: 16",
-   "id": "seed/agents/AGENTS.md",
-   "kind": "hotspot",
-   "why": "seed/agents/AGENTS.md was rewritten on 16 of 30 days"
   }
  ],
  "history_days": 17,
@@ -431,16 +431,16 @@ export default {
    -907,
    -1222,
    -1649,
-   -2486
+   -2495
   ],
-  "closed": 3855,
-  "opened": 1369
+  "closed": 3865,
+  "opened": 1370
  },
  "loops": [
   {
    "loop": "ultrastability",
    "quiet_days": 0,
-   "rows": 20068,
+   "rows": 20106,
    "series": [
     0,
     0,
@@ -471,7 +471,7 @@ export default {
     3322,
     2312,
     2535,
-    5095
+    5133
    ]
   },
   {
@@ -588,7 +588,7 @@ export default {
   {
    "loop": "resilience",
    "quiet_days": 0,
-   "rows": 525,
+   "rows": 526,
    "series": [
     0,
     0,
@@ -619,13 +619,13 @@ export default {
     80,
     55,
     62,
-    142
+    143
    ]
   },
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 506,
+   "rows": 508,
    "series": [
     0,
     0,
@@ -656,13 +656,13 @@ export default {
     80,
     55,
     88,
-    166
+    168
    ]
   },
   {
    "loop": "yearsim",
    "quiet_days": 0,
-   "rows": 449,
+   "rows": 450,
    "series": [
     0,
     0,
@@ -693,13 +693,13 @@ export default {
     80,
     55,
     62,
-    131
+    132
    ]
   },
   {
    "loop": "saydo",
    "quiet_days": 0,
-   "rows": 448,
+   "rows": 449,
    "series": [
     0,
     0,
@@ -730,7 +730,7 @@ export default {
     80,
     55,
     62,
-    131
+    132
    ]
   }
  ],

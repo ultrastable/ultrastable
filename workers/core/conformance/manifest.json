@@ -432,7 +432,7 @@
    "tests": [
     {
      "file": "core/predict/predict.test.js",
-     "name": "US-05-T01, US-05-R02 a due prediction items_done >= 1 with one done item scores hit, observed 1, and writes an outcome row; one not yet due is left alone"
+     "name": "US-05-T01, US-05-R02, US-05-R15 a due prediction items_done >= 1 with one done item scores hit, observed 1, and writes an outcome row and a seed outcomes row that feeds the trust ledger; one not yet due is left alone"
     }
    ]
   },
@@ -738,6 +738,10 @@
    "spec": "US-SPEC-09",
    "tests": [
     {
+     "file": "core/router/caps/caps.test.js",
+     "name": "US-09-T01 US-09-R01: with a loop switch on no action row is written and measurement rows continue"
+    },
+    {
      "file": "../seed/worker/test/switches.test.js",
      "name": "US-09-R01, US-09-T01: a switched-off acting step writes no action row; every measuring step still runs"
     }
@@ -746,7 +750,12 @@
   {
    "id": "US-09-T02",
    "spec": "US-SPEC-09",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/router/caps/caps.test.js",
+     "name": "US-09-T02 US-09-R02: with the global switch on the claim service refuses work, secret and deploy acquire and renewal with the observation event; off, the next claim is granted"
+    }
+   ]
   },
   {
    "id": "US-09-T03",
@@ -771,7 +780,12 @@
   {
    "id": "US-09-T05",
    "spec": "US-SPEC-09",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/router/caps/spec-citations.test.js",
+     "name": "US-09-T05 US-09-R14 tier selection gives doer, manager and reviewer for budgets 0, 49.99, 50 and 500"
+    }
+   ]
   },
   {
    "id": "US-09-T06",
@@ -911,22 +925,42 @@
   {
    "id": "US-12-T01",
    "spec": "US-SPEC-12",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/signals/signals.test.js",
+     "name": "US-12-T01, US-12-R02 and US-12-R03: no boundary row denies and writes an incident; the worker carries on with its other signals"
+    }
+   ]
   },
   {
    "id": "US-12-T02",
    "spec": "US-SPEC-12",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/signals/signals.test.js",
+     "name": "US-12-T02 and US-12-R04: re-entry run twice on one artifact writes one signal"
+    }
+   ]
   },
   {
    "id": "US-12-T03",
    "spec": "US-SPEC-12",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/signals/signals.test.js",
+     "name": "US-12-T03 and US-12-R05: an artifact with U(a) empty or unrecorded re-enters with weight 0 and status logged"
+    }
+   ]
   },
   {
    "id": "US-12-T04",
    "spec": "US-SPEC-12",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/signals/signals.test.js",
+     "name": "US-12-T04 and US-12-R07: 15 to 12 is accepted, 12 against 12 is rejected, 9 by narrowing is logged as a violation and rejected"
+    }
+   ]
   },
   {
    "id": "US-12-T05",
@@ -1339,7 +1373,12 @@
   {
    "id": "US-17-T05",
    "spec": "US-SPEC-17",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/remediation/remediation.test.js",
+     "name": "US-17-T05: alerts from a name absent from the registry and the live list make roster reconciliation fire"
+    }
+   ]
   },
   {
    "id": "US-17-T06",
@@ -1348,6 +1387,10 @@
     {
      "file": "core/kernel/failure.test.js",
      "name": "US-17-T06: a count named failed is not a failure; structured errors are"
+    },
+    {
+     "file": "core/remediation/remediation.test.js",
+     "name": "US-17-T06: FM-MASKED SQL and payloadIsFailure agree on a shared corpus of payloads"
     }
    ]
   },
@@ -3325,8 +3368,12 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "core/predict/org-wiring.test.js",
+     "name": "US-05-R02, US-05-R15, US-06-R20: one organization tick scores a due decision, writes the outcome the trust step reads, and proposes the ladder item"
+    },
+    {
      "file": "core/predict/predict.test.js",
-     "name": "US-05-T01, US-05-R02 a due prediction items_done >= 1 with one done item scores hit, observed 1, and writes an outcome row; one not yet due is left alone"
+     "name": "US-05-T01, US-05-R02, US-05-R15 a due prediction items_done >= 1 with one done item scores hit, observed 1, and writes an outcome row and a seed outcomes row that feeds the trust ledger; one not yet due is left alone"
     }
    ]
   },
@@ -3536,9 +3583,18 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "built and tested in the seed tick (seed/worker/test/measure.test.js), which this repository's core tick does not carry",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/predict/org-wiring.test.js",
+     "name": "US-05-R02, US-05-R15, US-06-R20: one organization tick scores a due decision, writes the outcome the trust step reads, and proposes the ladder item"
+    },
+    {
+     "file": "core/predict/predict.test.js",
+     "name": "US-05-T01, US-05-R02, US-05-R15 a due prediction items_done >= 1 with one done item scores hit, observed 1, and writes an outcome row and a seed outcomes row that feeds the trust ledger; one not yet due is left alone"
+    }
+   ]
   },
   {
    "id": "US-05-R16",
@@ -3592,9 +3648,26 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "built and tested in the seed tick (seed/worker/test/measure.test.js), which this repository's core tick does not carry",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/predict/audit.test.js",
+     "name": "US-05-R18: the migration is idempotent and the audit table is predict_ prefixed"
+    },
+    {
+     "file": "core/predict/audit.test.js",
+     "name": "US-05-R18: the export gives an outside party the scored rows with the decision text and revert path, and its hash is stable for the same rows"
+    },
+    {
+     "file": "core/predict/audit.test.js",
+     "name": "US-05-R18: an auditor equal to the decision actor is refused, and an unscored prediction cannot be audited"
+    },
+    {
+     "file": "core/predict/audit.test.js",
+     "name": "US-05-R18: a disagreeing verdict files one item with its probe; an agreeing one files nothing; agreement is counted per auditor and cannot-tell counts for neither side"
+    }
+   ]
   },
   {
    "id": "US-05-R19",
@@ -3782,6 +3855,10 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "core/predict/org-wiring.test.js",
+     "name": "US-06-R11: an invalid policy leaves the trust step skipped with its reason while predict and governance still run"
+    },
+    {
      "file": "core/trust/trust.test.js",
      "name": "US-06-R11, US-06-T04, US-06-R12 the validator passes the shipped policy and returns a problem for each fault of section 3.3; an invalid policy blocks"
     }
@@ -3936,6 +4013,10 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "core/predict/org-wiring.test.js",
+     "name": "US-05-R02, US-05-R15, US-06-R20: one organization tick scores a due decision, writes the outcome the trust step reads, and proposes the ladder item"
+    },
     {
      "file": "core/trust/ladder-loop.test.js",
      "name": "US-06-R20, US-06-T07: 12 scored predictions become outcomes, the tick proposes the ladder item, the merge by a different agent applies it (decision to rung, one database); the same agent is refused"
@@ -4423,6 +4504,10 @@
     {
      "file": "core/governance/governance.test.js",
      "name": "US-07-R22: the self-adoption rate is adoptions over adoptions plus deferral hits; it files when under target, is unmeasured with no observations or no trust module, and has a tolerance"
+    },
+    {
+     "file": "core/predict/org-wiring.test.js",
+     "name": "US-07-R22: the same tick runs the governance step with no model port: the register is seeded and the rates are reported as unmeasured, not filed"
     }
    ]
   },
@@ -4863,8 +4948,12 @@
      "name": "US-09-R01: a switched-off loop leaves its beat (measurement) and its body does not run"
     },
     {
-     "file": "core/router/router.test.js",
-     "name": "kill switch for a provider and for all paid calls (US-09-R01/R05)"
+     "file": "core/router/caps/caps.test.js",
+     "name": "US-09-T01 US-09-R01: with a loop switch on no action row is written and measurement rows continue"
+    },
+    {
+     "file": "core/router/caps/caps.test.js",
+     "name": "US-09-R01: the global switch stops every guarded loop actions and not its measurement"
     }
    ]
   },
@@ -4880,6 +4969,10 @@
     {
      "file": "core/deploy/deploy.test.js",
      "name": "US-07-R19, US-09-R02: the kill switch refuses deploys, via config row or injected port"
+    },
+    {
+     "file": "core/router/caps/caps.test.js",
+     "name": "US-09-T02 US-09-R02: with the global switch on the claim service refuses work, secret and deploy acquire and renewal with the observation event; off, the next claim is granted"
     }
    ]
   },
@@ -4907,6 +5000,10 @@
     {
      "file": "core/ghcost/ghcost.test.js",
      "name": "US-24-R25 US-09-R03 a drill records the test and turns the switch off in every case, also when the platform fails"
+    },
+    {
+     "file": "core/router/caps/caps.test.js",
+     "name": "US-09-R03: a drill of the global switch refuses every path, turns the switch off, proves resumption and records the test"
     }
    ]
   },
@@ -4916,9 +5013,30 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/router/caps/bounds.test.js",
+     "name": "US-09-R04: an iteration is refused when its step bound is spent"
+    },
+    {
+     "file": "core/router/caps/bounds.test.js",
+     "name": "US-09-R04: an iteration is refused when its token bound is spent and max_tokens is clamped to what remains"
+    },
+    {
+     "file": "core/router/caps/bounds.test.js",
+     "name": "US-09-R04: config.max_tokens_per_call caps every call"
+    },
+    {
+     "file": "core/router/caps/bounds.test.js",
+     "name": "US-09-R04: an iteration past its wall-clock bound is refused before a provider call (injected clock)"
+    },
+    {
+     "file": "core/router/caps/bounds.test.js",
+     "name": "US-09-R04: an iteration past its spend bound is refused, and the exceeded bound is recorded once"
+    }
+   ]
   },
   {
    "id": "US-09-R05",
@@ -4929,6 +5047,14 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "core/router/caps/bounds.test.js",
+     "name": "US-09-R05: at a hard cap the router files one priority-0 SPEND item and no paid call, and closes it when spend falls below the cap"
+    },
+    {
+     "file": "core/router/recurrence.test.js",
+     "name": "US-09-R05: a hard cap that recovers and is breached again reopens its SPEND item as the top item"
+    },
     {
      "file": "core/router/router.test.js",
      "name": "hard cap refuses paid calls and files a gate-style record once (US-09-R05/R06)"
@@ -4948,6 +5074,10 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "core/router/caps/spec-citations.test.js",
+     "name": "US-09-R06 a hard cap refusal never raises a cap or deletes a call row"
+    },
     {
      "file": "core/router/router.test.js",
      "name": "hard cap refuses paid calls and files a gate-style record once (US-09-R05/R06)"
@@ -4972,16 +5102,16 @@
      "name": "US-09-R07 with a scheduler that reports a breach the cascade serves the free rung and never ends the task"
     },
     {
+     "file": "core/router/caps/bounds.test.js",
+     "name": "US-09-R07: bounds never end a task that has a free rung under a spend cap"
+    },
+    {
+     "file": "core/router/github-models.test.js",
+     "name": "US-09-R07: with a hard cap the free github_models rung serves the task and the paid one is never called"
+    },
+    {
      "file": "core/router/router.test.js",
      "name": "route maps rung to providers in fallback order (US-09-R07/R08)"
-    },
-    {
-     "file": "core/router/router.test.js",
-     "name": "fallback order: first provider errors, second serves (US-09-R07)"
-    },
-    {
-     "file": "core/router/router.test.js",
-     "name": "soft cap steers down one rung (US-09-R07, T03)"
     }
    ]
   },
@@ -4999,12 +5129,20 @@
      "name": "US-09-T04, US-09-R08 capability first: a model with canary_tool_calls = 0 is refused for a class that needs tool calls, whatever its price"
     },
     {
-     "file": "core/router/router.test.js",
-     "name": "route maps rung to providers in fallback order (US-09-R07/R08)"
+     "file": "core/ladder/router-ports.test.js",
+     "name": "US-09-R08 a scheduled canary through the router pins the model asked for, records tool-call and schema results and files no item"
+    },
+    {
+     "file": "core/ladder/router-ports.test.js",
+     "name": "US-09-R08 a model that answers without a tool call fails its tool canary; twice in a row demotes it"
+    },
+    {
+     "file": "core/router/caps/upstream.test.js",
+     "name": "US-09-R08: with a matrix port the router offers only models admitted and canary-passing for the class"
     },
     {
      "file": "core/router/router.test.js",
-     "name": "capability gate: models without the capability are never routed (US-09-R08, T04)"
+     "name": "route maps rung to providers in fallback order (US-09-R07/R08)"
     }
    ]
   },
@@ -5024,6 +5162,10 @@
     {
      "file": "core/ladder/layers.test.js",
      "name": "US-09-R09: a dead transport rung falls through to the next rung without spending an escalation attempt, and the loop still terminates"
+    },
+    {
+     "file": "core/ladder/router-ports.test.js",
+     "name": "US-09-R09 an unreachable provider, a refused call and a successor answering are errors on the port, never a failed canary"
     }
    ]
   },
@@ -5117,6 +5259,10 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "core/router/caps/spec-citations.test.js",
+     "name": "US-09-T05 US-09-R14 tier selection gives doer, manager and reviewer for budgets 0, 49.99, 50 and 500"
+    },
+    {
      "file": "core/router/router.test.js",
      "name": "tier selection from budget (US-09-R14, T05)"
     }
@@ -5128,9 +5274,22 @@
    "level": "L3",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/router/caps/spec-citations.test.js",
+     "name": "US-09-R15 three identical failures inside 24 hours file a root-cause item and open the breaker; two do not; an old one does not count"
+    },
+    {
+     "file": "core/router/recurrence.test.js",
+     "name": "US-09-R15 CAL-<provider> is reopened when a provider fails again after it recovered"
+    },
+    {
+     "file": "core/router/recurrence.test.js",
+     "name": "US-09-R15 CAL-LAT-<provider> is reopened when a latency anomaly recurs after the item was closed"
+    }
+   ]
   },
   {
    "id": "US-09-R16",
@@ -5183,9 +5342,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/ladder/router-ports.test.js",
+     "name": "US-09-R20 when the model asked for is retired the successor serves and that is no canary of the original"
+    }
+   ]
   },
   {
    "id": "US-09-R21",
@@ -5203,9 +5367,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/router/caps/spec-citations.test.js",
+     "name": "US-09-R22 a keyless provider never serves a role the configuration does not allow it, the refusal names role_not_allowed, and configuration can allow it"
+    }
+   ]
   },
   {
    "id": "US-10-R01",
@@ -5303,9 +5472,14 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/runner/runner.test.js",
+     "name": "US-10-R10 the reviewer is a different family than the doer (real router, fake fetch)"
+    }
+   ]
   },
   {
    "id": "US-10-R11",
@@ -5819,7 +5993,7 @@
    "tests": [
     {
      "file": "core/signals/signals.test.js",
-     "name": "US-12-R02 / R03 / T01: no boundary row denies and writes an incident; the worker carries on with its other signals"
+     "name": "US-12-T01, US-12-R02 and US-12-R03: no boundary row denies and writes an incident; the worker carries on with its other signals"
     }
    ]
   },
@@ -5834,7 +6008,7 @@
    "tests": [
     {
      "file": "core/signals/signals.test.js",
-     "name": "US-12-R02 / R03 / T01: no boundary row denies and writes an incident; the worker carries on with its other signals"
+     "name": "US-12-T01, US-12-R02 and US-12-R03: no boundary row denies and writes an incident; the worker carries on with its other signals"
     }
    ]
   },
@@ -5849,7 +6023,7 @@
    "tests": [
     {
      "file": "core/signals/signals.test.js",
-     "name": "US-12-R04 / T02: re-entry run twice on one artifact writes one signal"
+     "name": "US-12-T02 and US-12-R04: re-entry run twice on one artifact writes one signal"
     }
    ]
   },
@@ -5864,7 +6038,7 @@
    "tests": [
     {
      "file": "core/signals/signals.test.js",
-     "name": "US-12-R05 / T03: an artifact with U(a) empty or unrecorded re-enters with weight 0 and status logged"
+     "name": "US-12-T03 and US-12-R05: an artifact with U(a) empty or unrecorded re-enters with weight 0 and status logged"
     }
    ]
   },
@@ -5894,11 +6068,15 @@
    "tests": [
     {
      "file": "core/signals/signals.test.js",
-     "name": "US-12-R07 / T04: 15 to 12 is accepted, 12 against 12 is rejected, 9 by narrowing is logged as a violation and rejected"
+     "name": "US-12-T04 and US-12-R07: 15 to 12 is accepted, 12 against 12 is rejected, 9 by narrowing is logged as a violation and rejected"
     },
     {
      "file": "core/signals/signals.test.js",
      "name": "US-12-R07: fewer questions is not a shrink when a closed question is reopened; an unaudited artifact cannot be revised"
+    },
+    {
+     "file": "core/signals/signals.test.js",
+     "name": "US-12-R07: a revision listing an assertion that is not in its content is rejected as an incident and stores nothing"
     }
    ]
   },
@@ -7359,6 +7537,14 @@
     {
      "file": "core/remediation/remediation.test.js",
      "name": "US-17-T02 / R02: FM-FROZEN reads the clock in the same statement as the data and fires when writes stop"
+    },
+    {
+     "file": "core/remediation/remediation.test.js",
+     "name": "US-17-R02: coverageSql reads the clock inside the statement (a row far in the future changes the reading without an injected now)"
+    },
+    {
+     "file": "core/remediation/remediation.test.js",
+     "name": "US-17-R02: httpLiveness takes the clock from the same response as the data"
     }
    ]
   },
@@ -7462,6 +7648,10 @@
     {
      "file": "core/kernel/kernel.test.js",
      "name": "exhausted contract: interrupt-eligible goes to a gate card, otherwise is reassigned (US-17-R07)"
+    },
+    {
+     "file": "core/remediation/remediation.test.js",
+     "name": "US-17-R07: statusView counts exhausted remediations beside needs_human"
     }
    ]
   },
@@ -7507,6 +7697,22 @@
     {
      "file": "core/remediation/remediation.test.js",
      "name": "US-17-R10: the liveness detector refuses to run inside the writer of the probe table, and fires from outside when writes stop"
+    },
+    {
+     "file": "core/remediation/remediation.test.js",
+     "name": "US-17-R10: a host built with writer equal to its own name refuses to run and files LIVENESS-<name>-SAME-HOST"
+    },
+    {
+     "file": "core/remediation/remediation.test.js",
+     "name": "US-17-R10: a watcher with its own database and a probeDb to the writer fires when the writer stops writing for 3 intervals, and its hit rows are in the watcher not the writer"
+    },
+    {
+     "file": "core/remediation/remediation.test.js",
+     "name": "US-17-R10: httpLiveness fires on a stale timestamp, on HTTP 500 and on an unreadable body, and passes on a fresh one"
+    },
+    {
+     "file": "core/remediation/remediation.test.js",
+     "name": "US-17-R10: livenessWorker builds a host per request from its environment bindings"
     }
    ]
   },
@@ -7605,9 +7811,14 @@
    "level": "L3",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/remediation/remediation.test.js",
+     "name": "US-17-R18: breakerFromLedger passes a row source_hash so a changed source re-arms the writer retry"
+    }
+   ]
   },
   {
    "id": "US-17-R19",
@@ -7615,9 +7826,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/remediation/remediation.test.js",
+     "name": "US-17-R19: an ok row whose error is an empty string is not counted by FM-MASKED; a numeric 0 success is not a failure either"
+    }
+   ]
   },
   {
    "id": "US-17-R20",
@@ -7625,9 +7841,30 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/remediation/remediation.test.js",
+     "name": "US-17-R20: FM-COVERAGE fires when the probe log names 10 of 82 registered names in the last hour (0.12 < 0.8) and not at 70 of 82"
+    },
+    {
+     "file": "core/remediation/remediation.test.js",
+     "name": "US-17-R20: FM-COVERAGE counts only registered names, so 80 ghost names in the probe log do not hide 95 of 100 registered names that stopped reporting"
+    },
+    {
+     "file": "core/remediation/remediation.test.js",
+     "name": "US-17-R20: FM-SHADOW fires for two candidates of one worker with different hashes and a stale earlier candidate, and not when the hashes are equal"
+    },
+    {
+     "file": "core/remediation/remediation.test.js",
+     "name": "US-17-R20: FM-STALE-PREDICATE fires for an alarm naming 496 stuck rows while the recount is 0, and not when the recount matches"
+    },
+    {
+     "file": "core/remediation/remediation.test.js",
+     "name": "US-17-R20: an unreadable candidates or alarms port fires instead of passing"
+    }
+   ]
   },
   {
    "id": "US-18-R01",
@@ -9558,6 +9795,10 @@
     {
      "file": "core/ghcost/ghcost.test.js",
      "name": "US-24-R53 the code-host port bounds its retries, reads the token by name and never puts it in an error"
+    },
+    {
+     "file": "core/router/caps/upstream.test.js",
+     "name": "US-24-R53: a guard whose resolved target is dearer than the status quo is refused; one never probed is refused too"
     }
    ]
   },
@@ -9573,6 +9814,10 @@
     {
      "file": "core/ghcost/ghcost.test.js",
      "name": "US-24-R54 every repository scanned lands in exactly one outcome bucket"
+    },
+    {
+     "file": "core/router/caps/spec-citations.test.js",
+     "name": "US-24-R54 a consumer that scanned 25 items and booked 0 raises an incident, and a balanced run does not"
     }
    ]
   },

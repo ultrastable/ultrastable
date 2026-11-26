@@ -6337,6 +6337,15 @@
    "body": "feat: the capability packs, with their channels, manifests and probes (PK). One cohesive set of files inside the 60 file and 3,000 line bound, applied to the latest main from a private working copy, with generated migrations regenerated append-only.",
    "probe": "file:workers/core/packs/bounce.js",
    "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "lesson-2026-11-26-slice-w04-of-the-specification-run-s-code-and-tests-shipped-",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Slice W04 of the specification run's code and tests shipped on its own",
+   "body": "feat: the ladder and modelport modules (W04). One cohesive set of files inside the 60 file and 3,000 line bound, applied to the latest main from a private working copy, with generated migrations regenerated append-only.",
+   "probe": "file:workers/core/ladder/cache.js",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
   }
  ]
 }

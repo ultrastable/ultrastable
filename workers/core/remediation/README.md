@@ -12,24 +12,28 @@ await remediation.installStandard(ctx, { frozen: [{ table: 'probe_log', interval
 await remediation.step(ctx);
 ```
 
-Migration: `migrations/0001_remediation.sql` (tables `remediation_*`; apply after the kernel and claims migrations). Tests: `remediation.test.js`.
+Migrations: `migrations/0001_remediation.sql` (tables `remediation_*`; apply after the kernel and claims migrations) and `migrations/0002_state.sql` (relapse counts, firing links, pass streaks, breaker sources and log). The kernel code guards every read of the second file's tables, so a store with only the kernel migrations still works, without relapse counting. Tests: `remediation.test.js`, `../kernel/failure.test.js`.
+
+The second-worker host of the liveness detector is `liveness-host.js` (`createLivenessHost`, `livenessWorker`) with `wrangler.liveness.template.jsonc` (placeholders only). Its credential-free route is `httpLiveness`: read a health endpoint, take the clock from the same response.
 
 ## Requirements
 
 | ID | Status | Where |
 |---|---|---|
 | US-17-R01 one hit row per run | BUILT in the kernel for registered detectors; BUILT here for the detectors this module hosts | `remediation_hits` |
-| US-17-R02 clock in the same statement as the data | BUILT | `frozenSql` |
+| US-17-R02 clock in the same statement as the data | BUILT | `frozenSql`, `coverageSql` |
 | US-17-R03 detector and severity; found twice without a detector is registered | BUILT | `installStandard`, `reportFailure` |
 | US-17-R04 to R09 contract, consumer, closing probe, escalation, breaker, probation | BUILT in the kernel | `../kernel/failure.js`, `../kernel/failure.test.js` |
-| US-17-R08 breaker for a ledger whose writer has none | BUILT | `breakerFromLedger`, `retryAllowed` |
-| US-17-R10 one detector hosted outside the writer of its probe table | BUILT as a check that refuses to run in the writer and reads through a `probeDb` port. Deploying it as a second worker is the installer's step and is NOT COVERED | `externalLiveness` |
+| US-17-R08, R18 breaker for a ledger whose writer has none, re-armed by a changed source hash | BUILT | `breakerFromLedger`, `retryAllowed` |
+| US-17-R10 one detector hosted outside the writer of its probe table | BUILT: `externalLiveness` refuses to run in the writer, `httpLiveness` needs no credential, `liveness-host.js` is the deployable host. Deploying the second Worker is PLANNED (a live account) | `externalLiveness`, `httpLiveness`, `liveness-host.js` |
 | US-17-R11 visibility ratio across issue stores | BUILT in core/claims, exported here | `../claims/gate.js` |
 | US-17-R12 roster reconciliation with the emitter set | BUILT | `rosterReconcile`, `observedEmitters` |
 | US-17-R13 a repository fix is not closed on repository evidence alone | BUILT | `closeFix` |
-| Status view over the register | BUILT | `statusView`, route GET /failure-modes/status |
+| US-17-R19 FM-MASKED equals the structured classifier | BUILT | `maskedSql` |
+| US-17-R20 FM-COVERAGE, FM-SHADOW, FM-STALE-PREDICATE | BUILT: coverage as a registrable detector, shadow and stale predicate as port checks (`candidates`, `alarms`) that fire when unreadable. No module in this repository produces a candidate list or alarm definitions | `coverageSql`, `shadowReconcile`, `stalePredicates` |
+| US-17-R24 retention | BUILT | `prune`, `../kernel/failure.js` `pruneHits` |
+| Status view over the register | BUILT | `statusView` (counts `exhausted`), route GET /failure-modes/status |
 | Silent-drop reconciliation across loops | BUILT for the run ledgers of core/kernel, core/claims and core/fleet | `reconcileLoops` |
 | entered = open + closed + superseded | BUILT: a vanished item is restored from an append-only ledger, an undisposed one reopened | `reconcileItems` |
-| FM-COVERAGE, FM-SHADOW, FM-STALE-PREDICATE | NOT COVERED: they need a probe log, a deployer's candidate list and alarm definitions that no module here writes | |
 
 Limit: detector statements that read time use the store's own clock, as the spec requires, so they are not driven by the injected `now`.
