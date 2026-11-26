@@ -1,7 +1,7 @@
 {
   "id": "Q-SAYDO-rules-DECISIONS-1",
   "title": "Q-SAYDO-rules-DECISIONS-1: says DECISIONS-1, does not do it",
-  "body": "**Owner:** executor\n**Trigger:** say-do check (SAY-DO-1) on the watchdog run\n**Done check:** cmd:python3 -m foundation saydo --probe rules:DECISIONS-1\n**Status:** open\n\nThe system states `DECISIONS-1` (rules) and its code does not do it: python3 -m foundation decisions --check: seed/worker/src/planner.js: has a decision-shaped function with no declared metric; add `DECISION-METRIC: <point>` (and register the point) or, if it is not a decision, list it with a reason\n\nChange the code to do what the statement says, or change the statement to what the code does; never weaken the probe.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation saydo --probe rules:DECISIONS-1` exits 0.\n",
+  "body": "**Owner:** executor\n**Trigger:** say-do check (SAY-DO-1) on the watchdog run\n**Done check:** cmd:python3 -m foundation saydo --probe rules:DECISIONS-1\n**Status:** closed\n\nThe system states `DECISIONS-1` (rules) and its code does not do it: python3 -m foundation decisions --check: seed/worker/src/planner.js: has a decision-shaped function with no declared metric; add `DECISION-METRIC: <point>` (and register the point) or, if it is not a decision, list it with a reason\n\nChange the code to do what the statement says, or change the statement to what the code does; never weaken the probe.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation saydo --probe rules:DECISIONS-1` exits 0.\n\n**Evidence:** say-do check at 2026-11-26T14:03:21Z: the statement matches its code or is no longer stated.\n",
   "labels": [
     "p1",
     "agent-ready",
