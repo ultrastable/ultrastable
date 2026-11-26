@@ -57,6 +57,29 @@ export async function capacity(db, { T = 25, now = Date.now(), config } = {}) {
   return { ...s, total: T, plus_slots, repair_slots: T - plus_slots };
 }
 
+// US-04-R01, R05: the kernel's allocation (core/kernel/programs.js) takes config.kernel.plus_slots off the slots before it reads risk.
+// The composition root builds the kernel's config through this, so the reserved share reaches allocation on a composed deployment:
+//   config.kernel = await plusSlotsConfig(db, { config, now }).
+export async function plusSlotsConfig(db, { config = {}, now = Date.now(), kernel = config.kernel || {} } = {}) {
+  const c = await capacity(db, { T: kernel.slots ?? 25, now, config: config.plus });
+  return { ...kernel, plus_slots: c.plus_slots };
+}
+
+// US-04-R01: a product that exists in the host's own records is registered once, with the worked example's measures unless it names
+// its own, and a registered product is never overwritten. source() -> [{ product, host?, program?, usage_metric?, quality_measure?, quality_direction? }].
+export const PRODUCT_DEFAULTS = { usage_metric: 'requests_per_day', quality_measure: 'error_page_rate', quality_direction: 'lower' };
+export async function adoptProducts(db, { source, now = Date.now(), defaults = {} } = {}) {
+  if (typeof source !== 'function') return [];
+  const d = { ...PRODUCT_DEFAULTS, ...defaults }, adopted = [];
+  for (const p of (await source()) || []) {
+    if (!p?.product || await getProduct(db, p.product)) continue;
+    await registerProduct(db, { host: p.host ?? null, program: p.program ?? null, usage_metric: p.usage_metric || d.usage_metric, quality_measure: p.quality_measure || d.quality_measure,
+      quality_direction: p.quality_direction || d.quality_direction, product: p.product, now });
+    adopted.push(p.product);
+  }
+  return adopted;
+}
+
 // ---- Readings (US-04-R09, R14) ----
 export async function recordReading(db, { product, measure, value, window = null, label = null, evidence = null, now = Date.now() }) {
   const p = await getProduct(db, product);
@@ -118,7 +141,32 @@ export async function cycleKind(db, p, { now = Date.now(), config } = {}) {
 }
 
 // Step 404: evidence from the store only. Nothing here asks the principal.
-export async function gatherEvidence(db, product, { now = Date.now(), config } = {}) {
+// US-04-R18: the sources beyond the product's own rows. A source is an optional async function (product) -> [{ label, value?, note? }]. One
+// that is absent, throws or returns nothing is listed in `unavailable` with the reason and its key is left out: an empty reading is
+// unmeasured, never an empty list that reads as 'nothing to see'. sections and slow_routes also read plus_readings by default, so
+// producers that already record readings (first-party analytics, the UI audit) feed them without a credential.
+export const EVIDENCE_SOURCES = ['sections', 'slow_routes', 'feedback', 'comparables', 'principal_asks', 'owed_notes'];
+const READING_PREFIX = { sections: 'usage_section:', slow_routes: 'slow_route:' };
+async function readingsWithPrefix(db, product, prefix, { now, maxAgeH }) {
+  const rows = await all(db, `SELECT measure, value, label, read_at FROM plus_readings WHERE product = ? AND measure LIKE ? AND id IN
+      (SELECT MAX(id) FROM plus_readings WHERE product = ? AND measure LIKE ? GROUP BY measure) ORDER BY measure`, product, `${prefix}%`, product, `${prefix}%`);
+  return rows.filter(r => r.value !== null && (now - parseIso(r.read_at)) / HOUR <= maxAgeH).map(r => ({ label: r.measure.slice(prefix.length), value: r.value, note: r.label ?? undefined }));
+}
+async function gatherSources(db, product, { now, maxAgeH, sources = {} }) {
+  const out = {}, unavailable = [], status = {};
+  for (const name of EVIDENCE_SOURCES) {
+    let rows = null, why = null;
+    try {
+      if (typeof sources[name] === 'function') rows = await sources[name](product);
+      else if (READING_PREFIX[name]) rows = await readingsWithPrefix(db, product, READING_PREFIX[name], { now, maxAgeH });
+      else why = 'no source is configured';
+    } catch (e) { why = `the source failed: ${e.message}`; }
+    if (!why && (!Array.isArray(rows) || !rows.length)) why = Array.isArray(rows) ? 'the source returned no rows' : 'the source returned no list';
+    if (why) { unavailable.push({ source: name, why }); status[name] = 'unavailable'; } else { out[name] = rows; status[name] = 'present'; }
+  }
+  return { out, unavailable, status };
+}
+export async function gatherEvidence(db, product, { now = Date.now(), config, sources } = {}) {
   const p = await getProduct(db, product), c = cfg(config);
   const usage = await latestReading(db, product, p.usage_metric, { now, maxAgeH: c.reading_max_age_h });
   const guard = await latestReading(db, product, p.quality_measure, { now, maxAgeH: c.reading_max_age_h });
@@ -126,8 +174,10 @@ export async function gatherEvidence(db, product, { now = Date.now(), config } =
   const kept = await first(db, `SELECT id, title FROM plus_ledger WHERE product = ? AND status = 'kept' AND kind IN ('plus','simplify') ORDER BY id DESC LIMIT 1`, product);
   const missed = await all(db, `SELECT id, title, angle, verdict FROM plus_ledger WHERE product = ? AND status = 'reverted' ORDER BY id DESC LIMIT 3`, product);
   const seed = await first(db, `SELECT id, title, evidence FROM plus_ledger WHERE product = ? AND status = 'proposed' ORDER BY id DESC LIMIT 1`, product);
+  const extra = await gatherSources(db, product, { now, maxAgeH: c.reading_max_age_h, sources });
   return { product, usage: { measure: p.usage_metric, value: usage.value, label: usage.label ?? p.usage_label, note: usage.why }, guard: { measure: p.quality_measure, value: guard.value, note: guard.why },
-    friction, last_kept: kept, recent_misses: missed, avoid_angle: p.misses_in_row > 0 ? (missed[0]?.angle ?? null) : null, seed };
+    friction, last_kept: kept, recent_misses: missed, avoid_angle: p.misses_in_row > 0 ? (missed[0]?.angle ?? null) : null, seed,
+    ...extra.out, unavailable: extra.unavailable, source_status: extra.status };
 }
 
 // ---- Steps 406, 408: one plus, with a prediction, filed as an ordinary work item with a doer line ----
@@ -253,7 +303,7 @@ export async function principalStep(db, plusId, g) {
 // ---- One cycle (steps 402 to 408) ----
 // propose({ product, kind, evidence }) -> the fields of proposePlus, or null. Without it (or when its plus is refused) the
 // writing of the plus is itself filed as an ordinary item for the product manager. Bounded by the daily cap.
-export async function runCycle(db, { now = Date.now(), config, propose = null } = {}) {
+export async function runCycle(db, { now = Date.now(), config, propose = null, sources = undefined } = {}) {
   const c = cfg(config), today = iso(now).slice(0, 10), out = [];
   let left = c.daily_cap - (await first(db, `SELECT COUNT(*) AS n FROM plus_ledger WHERE kind IN ('plus','simplify') AND status <> 'proposed' AND substr(created_at, 1, 10) = ?`, today)).n;
   for (const p of await selectDue(db, { now })) {
@@ -270,7 +320,7 @@ export async function runCycle(db, { now = Date.now(), config, propose = null } 
       continue;
     }
     if (left <= 0) { out.push({ product: p.product, kind, skipped: `daily cap of ${c.daily_cap} reached` }); continue; }
-    const evidence = await gatherEvidence(db, p.product, { now, config });
+    const evidence = await gatherEvidence(db, p.product, { now, config, sources });
     let refused = null;
     if (propose) {
       try {
@@ -319,19 +369,39 @@ export async function detect(db, { now = Date.now(), config } = {}) {
   return filed;
 }
 
-// Tick step for the composition root: plusStep({ reader, propose }). Order: read usage, decide what is due, start cycles,
+// Tick step for the composition root: plusStep({ reader, propose, adopt, sources }). Order: read usage, decide what is due, start cycles,
 // write the digest when the last one is 7 days old, then run the detectors (a digest that still is stale is then a real fault).
 export function plusStep(ports = {}) {
   return { name: 'plus', run: async (db, ctx) => {
     const config = ctx.config?.plus;
     if (config?.enabled === false) { ctx.notes?.push('plus: off'); return; }
     const now = typeof ctx.now === 'number' ? ctx.now : Date.now();
+    const adopted = ports.adopt ? await adoptProducts(db, { source: ports.adopt, now, defaults: config?.product_defaults }) : [];
     if (ports.reader) await measureUsage(db, { reader: ports.reader, now });
     const decided = await decideDue(db, { now, config });
-    const cycles = await runCycle(db, { now, config, propose: ports.propose });
+    const cycles = await runCycle(db, { now, config, propose: ports.propose, sources: ports.sources });
     const last = (await first(db, `SELECT MAX(at) AS at FROM plus_digest`))?.at;
     if (!last || now - parseIso(last) >= 7 * 24 * HOUR) await weeklyDigest(db, { now });
     const found = await detect(db, { now, config });
-    ctx.notes?.push(`plus: ${decided.length} decided, ${cycles.length} cycle(s), ${found.length} detector item(s)`);
+    ctx.notes?.push(`plus: ${decided.length} decided, ${cycles.length} cycle(s), ${found.length} detector item(s)${adopted.length ? `, adopted ${adopted.join(' ')}` : ''}`);
   } };
 }
+
+// US-04-R09, R13: what a deployed account shows about the plus loop, from its own tables, read-only. A count the store cannot answer is
+// null, never 0 (an unmeasured product is counted as unmeasured, not as a product with usage 0).
+export async function plusProbe(db, { now = Date.now(), config } = {}) {
+  const c = cfg(config), n = async (sql, ...a) => { try { return (await first(db, sql, ...a))?.n ?? null; } catch { return null; } };
+  const last = await (async () => { try { return (await first(db, `SELECT MAX(at) AS at FROM plus_digest`))?.at ?? null; } catch { return null; } })();
+  return {
+    products: await n(`SELECT COUNT(*) AS n FROM plus_product_registry`),
+    active: await n(`SELECT COUNT(*) AS n FROM plus_product_registry WHERE state = 'active'`),
+    with_usage_reading: await n(`SELECT COUNT(*) AS n FROM plus_product_registry WHERE usage_value IS NOT NULL AND usage_read_at > ?`, iso(now - c.reading_max_age_h * HOUR)),
+    unmeasured: await n(`SELECT COUNT(*) AS n FROM plus_product_registry WHERE state = 'active' AND (usage_value IS NULL OR usage_read_at <= ?)`, iso(now - c.reading_max_age_h * HOUR)),
+    in_flight: await n(`SELECT COUNT(*) AS n FROM plus_ledger WHERE status IN ${IN_FLIGHT} AND kind <> 'revert'`),
+    digest_age_h: last ? Math.round((now - parseIso(last)) / HOUR * 10) / 10 : null,
+    share: (await effectiveShare(db, { now, config })).share,
+  };
+}
+
+export * from './propose.js';
+export * from './readers.js';

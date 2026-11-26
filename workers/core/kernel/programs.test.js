@@ -91,3 +91,61 @@ test('manager operations can be switched off while measurement continues (US-03-
   await runL2(db, off);
   assert.equal(one(db, `SELECT COUNT(*) AS n FROM kernel_step_evidence WHERE tick_id=4`).n, 0);
 });
+
+// ---- US-01 section 4.2 program_focus_log: the history of focus sets ----
+const log = (db) => rows(db, `SELECT tick_id, program_id, items_json, count FROM kernel_focus_log ORDER BY id`);
+
+test('US-01-R08 and US-03 s4: the first focus set writes one kernel_focus_log row holding the ranked item ids in order and the tick that wrote it', async () => {
+  const db = await world();
+  const now = Date.now();
+  await snapshotRisk(db, { tickId: 1, now }); await allocate(db, { tickId: 1, now });
+  await setFocus(db, { tickId: 1, now });
+  const l = log(db);
+  assert.equal(l.length, 1);
+  assert.deepEqual([l[0].tick_id, l[0].program_id, l[0].count], [1, 'P1', 5]);
+  assert.deepEqual(JSON.parse(l[0].items_json), ['B', 'A', 'E', 'C', 'D']);
+});
+
+test('US-01-R08: an unchanged focus set writes no new row; a changed set writes one, and a shrunken set is logged too', async () => {
+  const db = await world();
+  const t = Date.now();
+  const tick = async (id) => { await snapshotRisk(db, { tickId: id, now: t }); await allocate(db, { tickId: id, now: t }); return setFocus(db, { tickId: id, now: t }); };
+  await tick(1); await tick(2); await tick(3);
+  assert.equal(log(db).length, 1, 'three ticks, one set: one row');
+  item(db, 'F', { project: 'P1', priority: 0 });                                  // a new critical item takes the top of the ranking
+  await tick(4);
+  const l = log(db);
+  assert.equal(l.length, 2); assert.equal(l[1].tick_id, 4);
+  assert.equal(JSON.parse(l[1].items_json)[2], 'F', 'the new item entered the set (tier 2, after the primary-metric items)');
+  db.raw.exec(`UPDATE items SET status = 'done', disposition = 'shipped' WHERE project = 'P1' AND id <> 'A'`);
+  await tick(5);
+  const last = log(db).at(-1);
+  assert.deepEqual([last.tick_id, last.count, last.items_json], [5, 1, '["A"]']);
+});
+
+test('US-01-R08: a program whose set is unchanged does not log while another program that changed does', async () => {
+  const db = await world();
+  await registerProgram(db, { id: 'P2', name: 'Other' });
+  item(db, 'X', { project: 'P2' });
+  const t = Date.now();
+  const tick = async (id) => { await snapshotRisk(db, { tickId: id, now: t }); await allocate(db, { tickId: id, now: t }); return setFocus(db, { tickId: id, now: t }); };
+  await tick(1);
+  assert.deepEqual(log(db).map(r => r.program_id).sort(), ['P1', 'P2']);
+  item(db, 'Y', { project: 'P2', priority: 0 });
+  await tick(2);
+  assert.deepEqual(log(db).slice(2).map(r => [r.program_id, r.tick_id]), [['P2', 2]]);
+});
+
+test('US-01-R08: a database without the focus-log table still gets its focus; the missing table is said in the tick notes, and is an error for a caller that gave no place for notes', async () => {
+  const db = await world();
+  db.raw.exec('DROP TABLE kernel_focus_log');
+  const now = Date.now(); const notes = [];
+  await snapshotRisk(db, { tickId: 1, now }); await allocate(db, { tickId: 1, now });
+  const focus = await setFocus(db, { tickId: 1, now, notes });
+  assert.deepEqual(focus.P1, ['B', 'A', 'E', 'C', 'D']);
+  assert.equal(one(db, `SELECT COUNT(*) AS n FROM kernel_focus`).n, 5);
+  assert.deepEqual(notes, ['kernel_focus_log is missing: 0003_focus_log.sql is not applied yet, so the focus history is not recorded']);
+  await snapshotRisk(db, { tickId: 2, now }); await allocate(db, { tickId: 2, now });
+  item(db, 'Z', { project: 'P1', priority: 0 });
+  await assert.rejects(() => setFocus(db, { tickId: 2, now }), /no such table: kernel_focus_log/);
+});

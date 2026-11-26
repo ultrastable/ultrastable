@@ -5,10 +5,14 @@
 // another agent runs, the status report on the communication plan's period, and the scope gate.
 import { fileURLToPath } from 'node:url';
 import { all, first, run, iso, parseIso, compare, assertReadOnly, ensureItem } from '../kernel/util.js';
-import { CATALOG, createProject, submitArtifact, advancePhase } from '../kernel/lifecycle.js';
+import { CATALOG, createProject, submitArtifact, advancePhase, registerGateExtra, lifecycleGaps } from '../kernel/lifecycle.js';
+import { DEFAULTS as FLOW } from '../flowbalance/index.js';
+import { qualityLine, monitorStep } from './monitor.js';
+import { openClosing, archiveClosed } from './closing.js';
+import { adoptOutcomes, draftArtifacts } from './adopt.js';
 
 export const MIGRATIONS_DIR = (() => { try { return fileURLToPath(new URL('./migrations/', import.meta.url)); } catch { return null; } })();
-export const DEFAULTS = { portfolio_cap: null, initiation_threshold: 0.6, require_readiness: true, status_period_h: 168 };
+export const DEFAULTS = { portfolio_cap: null, initiation_threshold: 0.6, require_readiness: true, status_period_h: 168, auto_start: true, max_gap_items_open: 25, default_capacity: 0 };
 const cfg = (c) => ({ ...DEFAULTS, ...(c || {}) });
 const HOUR = 3600e3;
 const filled = (v) => (Array.isArray(v) ? v.length > 0 : v !== null && v !== undefined && String(v).trim() !== '');
@@ -25,6 +29,7 @@ export function selectMode(a = {}) {
 // ---- US-15-R03, R13: the mode changes cadence and artifact weight only. Every catalog artifact is required in every mode. ----
 const CHARTER = ['objective', 'definition_of_done', 'definition_of_done_probe', 'primary_metric', 'guard_metrics', 'cap', 'authority_limits', 'manager_role'];
 const FORMS = {
+  'A-PLN-1': { all: ['in_scope', 'out_of_scope', 'requirements'] },        // what is in, what is out, each requirement testable and (G2) mapped to an item
   'A-INI-1': { all: ['want_verbatim', 'for_whom', 'first_outcomes', 'constraints'] },
   'A-INI-2': { all: CHARTER },                                             // a one-page charter still has every field
   'A-INI-6': { all: ['mode', 'reason'] },
@@ -51,6 +56,11 @@ export function checkForm(mode, kind, content) {
   const problems = [];
   if (!spec.fields.length && !Object.values(c).some(filled)) problems.push('the artifact has no content');
   if (kind === 'A-INI-2' && filled(c.definition_of_done_probe)) { try { assertReadOnly(c.definition_of_done_probe); } catch (e) { problems.push(`definition of done is not a runnable probe: ${e.message}`); } }
+  if (kind === 'A-PLN-1' && Array.isArray(c.requirements)) {
+    c.requirements.forEach((r, i) => { if (!filled(r?.id) || !filled(r?.text)) problems.push(`requirement ${i + 1} lacks an id or its text`); });
+    const ids = c.requirements.map(r => r?.id).filter(filled);
+    if (new Set(ids).size !== ids.length) problems.push('two requirements share an id');
+  }
   if (kind === 'A-PLN-4' && Array.isArray(c.roadmap)) {
     if (c.roadmap.length > 5) problems.push('more than five roadmap features');
     c.roadmap.forEach((r, i) => { const m = ['size', 'goal', 'user', 'success_metric', 'closing_probe'].filter(f => !filled(r?.[f])); if (m.length) problems.push(`roadmap feature ${i + 1} lacks ${m.join(', ')}`); });
@@ -96,34 +106,61 @@ export async function startProject(db, p, { config } = {}) {
   return { started: true, mode, reason, overridden: Boolean(overridden) };
 }
 
-// ---- Gate extras, then the kernel gate (US-15-R04) ----
-// G1: the charter's definition of done is a probe another agent can run, and the readiness score (US-SPEC-16, a port)
-//     is at least the initiation threshold. A score that cannot be read is not a pass.
+// ---- Gate conditions beyond the artifacts (US-15-R04, R17, R20) ----
+// They are registered with the kernel (core/kernel/lifecycle.js registerGateExtra), so advancePhase runs them whichever call reaches it.
+// G1: the charter's definition of done is a probe another agent can run, and the readiness score (US-SPEC-16, a port) is at least the
+//     initiation threshold. A score that cannot be read is not a pass.
+// G2: every requirement of A-PLN-1 maps to at least one item of the project with a closing probe, and every item of the project has an
+//     owner role and a trigger that is null or names an item that exists.
 // G3: every deliverable's closing probe was passed by an agent other than its producer; no iteration lacks its retrospective.
-export async function advance(db, projectId, to, { readiness = null, config, now = Date.now() } = {}) {
-  const c = cfg(config), reasons = [];
-  if (to === 'planning') {
-    const ch = await first(db, `SELECT content FROM lifecycle_artifact_content WHERE project_id = ? AND kind = 'A-INI-2'`, projectId);
-    let probe = null; try { probe = JSON.parse(ch?.content || '{}').definition_of_done_probe ?? null; } catch { probe = null; }
-    try { assertReadOnly(probe); } catch { reasons.push(['charter-probe', 'project-manager', "the charter's definition of done is not a probe a different agent can run"]); }
-    if (c.require_readiness) {
-      let score = null; try { const r = readiness ? await readiness(projectId) : null; score = typeof r === 'number' ? r : (r?.score ?? null); } catch { score = null; }
-      if (score === null) reasons.push(['readiness', 'project-manager', 'the readiness score could not be read']);
-      else if (score < c.initiation_threshold) reasons.push(['readiness', 'project-manager', `readiness ${score.toFixed(2)} is under the initiation threshold ${c.initiation_threshold}`]);
+const slug = (x) => String(x).replace(/[^A-Za-z0-9._-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60) || 'x';
+registerGateExtra('G1', 'charter-probe', async (db, projectId) => {
+  const ch = await first(db, `SELECT content FROM lifecycle_artifact_content WHERE project_id = ? AND kind = 'A-INI-2'`, projectId);
+  let probe = null; try { probe = JSON.parse(ch?.content || '{}').definition_of_done_probe ?? null; } catch { probe = null; }
+  try { assertReadOnly(probe); } catch { return [['charter-probe', 'project-manager', "the charter's definition of done is not a probe a different agent can run"]]; }
+  return [];
+});
+registerGateExtra('G1', 'readiness', async (db, projectId, opts = {}) => {
+  const c = cfg(opts.config);
+  if (!c.require_readiness) return [];
+  if (!opts.readiness && opts.filing) return [];          // the tick's own gap filing: an unwired port is not a gap anything can close (advancing still needs it)
+  let score = null; try { const r = opts.readiness ? await opts.readiness(projectId) : null; score = typeof r === 'number' ? r : (r?.score ?? null); } catch { score = null; }
+  if (score === null) return [['readiness', 'project-manager', 'the readiness score could not be read']];
+  if (score < c.initiation_threshold) return [['readiness', 'project-manager', `readiness ${score.toFixed(2)} is under the initiation threshold ${c.initiation_threshold}`]];
+  return [];
+});
+registerGateExtra('G2', 'requirement-map', async (db, projectId) => {
+  const row = await first(db, `SELECT content FROM lifecycle_artifact_content WHERE project_id = ? AND kind = 'A-PLN-1'`, projectId);
+  let reqs = []; try { const c = JSON.parse(row?.content || '{}'); reqs = Array.isArray(c.requirements) ? c.requirements : []; } catch { reqs = []; }
+  const out = [];
+  if (!reqs.length) out.push(['requirement-map', 'product-manager', 'A-PLN-1 lists no requirement to map to an item and a probe']);
+  for (const r of reqs) {
+    const ids = Array.isArray(r?.items) ? r.items : [];
+    if (!ids.length) { out.push([`map-${slug(r?.id)}`, 'product-manager', `requirement ${r?.id} maps to no item`]); continue; }
+    for (const id of ids) {
+      const it = await first(db, `SELECT id, closing_probe FROM items WHERE id = ? AND project = ? AND id NOT LIKE 'GATE-%'`, id, projectId);
+      if (!it) out.push([`map-${slug(r?.id)}-${slug(id)}`, 'product-manager', `requirement ${r?.id} names item ${id}, which is not an item of ${projectId}`]);
+      else if (!filled(it.closing_probe)) out.push([`probe-${slug(r?.id)}-${slug(id)}`, 'project-manager', `item ${id} of requirement ${r?.id} has no closing probe`]);
     }
   }
-  if (to === 'closed') {
-    const d = await all(db, `SELECT id FROM lifecycle_deliverables WHERE project_id = ? AND (probe_passed IS NULL OR probe_passed = 0)`, projectId);
-    if (d.length) reasons.push(['deliverable-probes', 'reviewer', `${d.length} deliverable(s) have no passed closing probe: ${d.map(x => x.id).join(', ')}`]);
-    const it = await all(db, `SELECT n FROM lifecycle_iterations WHERE project_id = ? AND retro_at IS NULL`, projectId);
-    if (it.length) reasons.push(['retrospective', 'project-manager', `iteration(s) ${it.map(x => x.n).join(', ')} have no retrospective`]);
+  for (const it of await all(db, `SELECT id, owner_role, trigger_on FROM items WHERE project = ? AND id NOT LIKE 'GATE-%' ORDER BY id`, projectId)) {
+    if (!filled(it.owner_role)) out.push([`owner-${slug(it.id)}`, 'project-manager', `item ${it.id} has no owner role`]);
+    if (filled(it.trigger_on) && !(await first(db, `SELECT 1 AS x FROM items WHERE id = ?`, it.trigger_on))) out.push([`trigger-${slug(it.id)}`, 'project-manager', `item ${it.id} is triggered by ${it.trigger_on}, which does not exist`]);
   }
-  if (reasons.length) { // unmet conditions are items for their owners, not errors (T15-1)
-    const filed = [];
-    for (const [slug, owner, text] of reasons) { const id = `GATE-${projectId}-${to}-${slug}`; if (await ensureItem(db, { id, title: text, owner_role: owner, project: projectId, done_check: text, closing_probe: `project ${projectId} enters ${to}`, priority: 20 })) filed.push(id); }
-    return { ok: false, reasons: reasons.map(r => r[2]), filed };
-  }
-  return advancePhase(db, projectId, to, { now });
+  return out;
+});
+registerGateExtra('G3', 'deliverable-probes', async (db, projectId) => {
+  const d = await all(db, `SELECT id FROM lifecycle_deliverables WHERE project_id = ? AND (probe_passed IS NULL OR probe_passed = 0)`, projectId);
+  return d.length ? [['deliverable-probes', 'reviewer', `${d.length} deliverable(s) have no passed closing probe: ${d.map(x => x.id).join(', ')}`]] : [];
+});
+registerGateExtra('G3', 'retrospective', async (db, projectId) => {
+  const it = await all(db, `SELECT n FROM lifecycle_iterations WHERE project_id = ? AND retro_at IS NULL`, projectId);
+  return it.length ? [['retrospective', 'project-manager', `iteration(s) ${it.map(x => x.n).join(', ')} have no retrospective`]] : [];
+});
+
+// The kernel's advancePhase runs these conditions and then its own gate; this is the same call with the ports named (US-15-R04, R20).
+export async function advance(db, projectId, to, { readiness = null, config, now = Date.now() } = {}) {
+  return advancePhase(db, projectId, to, { readiness, config, now });
 }
 
 // ---- US-15-R08: deliverables ----
@@ -198,6 +235,23 @@ export async function setCommunicationPlan(db, projectId, period_h, now = Date.n
   await run(db, `INSERT INTO lifecycle_comm_plans (project_id, period_h, at) VALUES (?,?,?) ON CONFLICT(project_id) DO UPDATE SET period_h = excluded.period_h, at = excluded.at`, projectId, period_h, iso(now));
 }
 const SCOPE_SQL = `(i.project = ? OR i.project = ?)`;
+// A-MON-2, US-15-R19: items past their SLA, by the bands core/flowbalance uses (priority 0 is p0, 1 to 10 is p1, the rest the default), and capacity.
+const slaDays = (priority) => (priority <= 0 ? FLOW.sla_days.p0 : priority <= 10 ? FLOW.sla_days.p1 : FLOW.sla_days.default);
+export async function itemsLate(db, { project_id, program = project_id, now = Date.now() }) {
+  const out = [];
+  for (const i of await all(db, `SELECT i.id, i.priority, i.created_at FROM items i WHERE ${SCOPE_SQL} AND i.id NOT LIKE 'GATE-%' AND i.status NOT IN ('done','superseded','cancelled') ORDER BY i.created_at, i.id`, project_id, program)) {
+    const age = (now - parseIso(i.created_at)) / (24 * HOUR), sla = slaDays(i.priority);
+    if (age > sla) out.push({ id: i.id, age_days: Math.round(age * 10) / 10, sla_days: sla });
+  }
+  return out;
+}
+// Capacity is the planned units against the project's items in flight (claimed or dispatched since the last report); unplanned is unmeasured, never 'within'.
+export async function capacityVariance(db, { project_id, program = project_id, since }) {
+  const planned = (await first(db, `SELECT capacity FROM lifecycle_capacity WHERE project_id = ?`, project_id))?.capacity ?? null;
+  const n = (await first(db, `SELECT COUNT(DISTINCT i.id) AS n FROM items i WHERE ${SCOPE_SQL} AND i.id NOT LIKE 'GATE-%' AND (i.id IN (SELECT item_id FROM claims) OR i.id IN (SELECT item_id FROM dispatches WHERE item_id IS NOT NULL AND at > ?))`, project_id, program, since)).n;
+  const verdict = planned === null || planned <= 0 ? 'unmeasured' : n > planned ? 'over' : n < planned ? 'under' : 'within';
+  return { planned: planned === null || planned <= 0 ? null : planned, in_flight: n, verdict };
+}
 export async function produceStatusReport(db, { project_id, now = Date.now() }) {
   const p = await first(db, `SELECT * FROM kernel_projects WHERE id = ?`, project_id);
   if (!p) throw new Error('unknown project');
@@ -220,15 +274,19 @@ export async function produceStatusReport(db, { project_id, now = Date.now() }) 
   // A-MON-2: predicted versus actual for each prediction; an open one past its due time is late
   const variance = decisions.map(d => ({ id: d.id, predicted: d.prediction, actual: d.observed ?? null,
     verdict: d.status === 'open' ? (parseIso(d.due_at) <= now ? 'late: not scored' : 'pending') : (d.outcome || d.status) }));
+  const quality = await first(db, `SELECT rework_rate, defects_escaped, probe_pass_rate FROM lifecycle_quality WHERE project_id = ? ORDER BY id DESC LIMIT 1`, project_id);
+  const late = await itemsLate(db, { project_id, program: prog, now });
+  const cap = await capacityVariance(db, { project_id, program: prog, since: last });
   const decidedNew = decisions.filter(d => d.status !== 'open').length;
   const text = [
     `Happened: ${doneN} item(s) done since ${last}; phase ${p.current_phase} (${p.delivery_mode}).`,
     `Decided: ${decisions.length} decision(s) on record, ${decidedNew} scored; ${variance.filter(v => /^(kept|matched)/.test(v.verdict)).length} as predicted, ${variance.filter(v => /^(missed|reverted|blocked|unmeasured|late)/.test(v.verdict)).length} not.`,
     `Next: ${next.length ? next.map(n => n.id).join(', ') : 'nothing is ready'}.`,
-    `Open: ${openN} item(s), ${blockedN} blocked, ${crs} change request(s) pending; metrics ${metrics.map(m => `${m.id}=${m.value ?? 'unmeasured'} (${m.op} ${m.target}: ${m.state})`).join(', ') || 'none registered'}.`,
+    `Open: ${openN} item(s), ${blockedN} blocked, ${crs} change request(s) pending; ${late.length} item(s) past their SLA, capacity ${cap.verdict}; ${qualityLine(quality)}; metrics ${metrics.map(m => `${m.id}=${m.value ?? 'unmeasured'} (${m.op} ${m.target}: ${m.state})`).join(', ') || 'none registered'}.`,
   ].join('\n');
   const r = await run(db, `INSERT INTO lifecycle_status_reports (project_id, text, metrics, variance, at) VALUES (?,?,?,?,?)`, project_id, text, JSON.stringify(metrics), JSON.stringify(variance), iso(now));
-  return { id: r.meta.last_row_id, text, metrics, variance };
+  await run(db, `INSERT INTO lifecycle_variance (report_id, items_late, capacity_planned, capacity_in_flight, capacity_verdict) VALUES (?,?,?,?,?)`, r.meta.last_row_id, JSON.stringify(late), cap.planned, cap.in_flight, cap.verdict);
+  return { id: r.meta.last_row_id, text, metrics, variance, items_late: late, capacity: cap };
 }
 // Projects whose last report is older than their communication plan's period (default: weekly) get one now.
 export async function refreshStatusReports(db, { now = Date.now(), config } = {}) {
@@ -243,10 +301,10 @@ export async function refreshStatusReports(db, { now = Date.now(), config } = {}
 // ---- US-15-R12, T15-4: the scope gate ----
 // The default rules restate the out-of-scope table of SCOPE.md. config.scope_rules replaces them.
 export const SCOPE_RULES = [
-  { rule: 'business-plan', pack: 'business-plan', why: 'a business plan, financial model, pitch or funding application is a different product', re: /\b(business plan|financial model|pitch deck|investor pitch|funding application|grant application)\b/i },
-  { rule: 'legal-filing', pack: 'legal', why: 'filing a legal instrument needs an identity-bound signature', re: /\b(file|register)\b.{0,40}\b(trademark|patent|incorporation|legal (document|instrument))\b|\bpatent application\b/i },
+  { rule: 'business-plan', pack: 'business-plan', why: 'a business plan, financial model, pitch or funding application is a different product', re: /\b(business plan|financial model|pitch deck|investor pitch|funding application|funding round|grant application|fundrais\w*|investors?)\b/i },
+  { rule: 'legal-filing', pack: 'legal', why: 'filing a legal instrument needs an identity-bound signature', re: /\b(file|register)\b.{0,40}\b(trademark|patent|incorporation|legal (document|instrument))\b|\bpatent( application)?\b|\btrademark\b|\bcopyright (filing|registration)\b/i },
   { rule: 'advice', pack: 'advice', why: 'legal, tax, investment and medical advice are not what the system is designed or tested for', re: /\b(legal|tax|investment|medical) advice\b/i },
-  { rule: 'marketing', pack: 'outreach', why: 'outbound contact with other people needs consent and a policy of its own', re: /\b(marketing campaign|run (the |our |my )?(marketing|sales|outreach)|cold (email|outreach)|social media (account|campaign|posts?))\b/i },
+  { rule: 'marketing', pack: 'outreach', why: 'outbound contact with other people needs consent and a policy of its own', re: /\b(marketing campaign|ad campaign|run (the |our |my )?(marketing|sales|outreach)|cold (email|outreach)|social media (account|campaign|posts?))\b/i },
   { rule: 'money', pack: 'payments', why: 'hiring, paying, contracting and moving money are irreversible and identity-bound', re: /\b(hire (a|an|the)\b|pay (the|an?|our)\b.{0,30}\b(invoice|contractor|vendor)|wire (the )?money|sign (the|a) contract)\b/i },
   { rule: 'research', pack: 'research', why: 'research and paper writing for the person is a separate product', re: /\b(write (a|the|my) (research )?paper|literature review|do (the |my )?research)\b/i },
 ];
@@ -255,8 +313,18 @@ export function classifyScope(text, { rules = SCOPE_RULES } = {}) {
   return r ? { in_scope: false, rule: r.rule, pack: r.pack, why: r.why } : { in_scope: true };
 }
 // Enabling a pack is a recorded decision with a revert path (SCOPE.md change control). It releases what the gate held.
-export async function decidePack(db, { pack, enabled, reason, revert_path, decided_by, now = Date.now() }) {
+// ports.packs (core/packs createPacks shape, supplied by the host): enable(id, { by, cardText }) -> { ok, reason?, decision_id? }, disable(id).
+// With it, enabling a pack is the pack host's decision as well as this record: a refusal (card_text_mismatch, an unknown pack) leaves
+// every request held and says why, and the host's decision id is written into this decision's reason (US-15-R21).
+export async function decidePack(db, { pack, enabled, reason, revert_path, decided_by, card_text = null, now = Date.now() }, { packs = null } = {}) {
   for (const [k, v] of Object.entries({ pack, reason, revert_path, decided_by })) if (!filled(v)) throw new Error(`a pack decision records ${k}`);
+  if (packs) {
+    if (enabled && typeof packs.enable === 'function') {
+      const r = await packs.enable(pack, { by: decided_by, cardText: card_text });
+      if (!r || r.ok === false) return { released: [], refused: r?.reason || 'the pack host refused', pack };
+      if (r.decision_id !== undefined && r.decision_id !== null) reason = `${reason} (pack host decision ${r.decision_id})`;
+    } else if (!enabled && typeof packs.disable === 'function') await packs.disable(pack);
+  }
   await run(db, `INSERT INTO lifecycle_scope_decisions (pack, enabled, reason, revert_path, decided_by, at) VALUES (?,?,?,?,?,?)
       ON CONFLICT(pack) DO UPDATE SET enabled=excluded.enabled, reason=excluded.reason, revert_path=excluded.revert_path, decided_by=excluded.decided_by, at=excluded.at`, pack, enabled ? 1 : 0, reason, revert_path, decided_by, iso(now));
   const released = [];
@@ -270,11 +338,12 @@ export async function decidePack(db, { pack, enabled, reason, revert_path, decid
 }
 // Intake: an in-scope request becomes an item; an out-of-scope one becomes a scope-gate entry with its answer and no item.
 // request.pack lets an upstream classifier name the pack directly.
-export async function requestWork(db, q, { config } = {}) {
+export async function requestWork(db, q, { config, packs = null } = {}) {
   if (!filled(q.id) || !filled(q.text)) throw new Error('a request has an id and text');
   const now = q.now ?? Date.now();
   const s = q.pack ? { in_scope: false, rule: 'tagged', pack: q.pack, why: `it is the work of the ${q.pack} pack` } : classifyScope(q.text, { rules: cfg(config).scope_rules || SCOPE_RULES });
-  const enabled = !s.in_scope && (await first(db, `SELECT enabled FROM lifecycle_scope_decisions WHERE pack = ?`, s.pack))?.enabled === 1;
+  const enabled = !s.in_scope && ((await first(db, `SELECT enabled FROM lifecycle_scope_decisions WHERE pack = ?`, s.pack))?.enabled === 1
+    || Boolean(packs && typeof packs.isEnabled === 'function' && await packs.isEnabled(s.pack)));
   if (s.in_scope || enabled) {
     await ensureItem(db, { id: q.id, title: q.text, kind: 'work', owner_role: q.owner_role || 'project-manager', project: q.project_id, priority: q.priority ?? 50, done_check: q.done_check || 'the request is delivered and verified', closing_probe: q.closing_probe });
     return { accepted: true, item_id: q.id, pack: enabled ? s.pack : null };
@@ -284,11 +353,41 @@ export async function requestWork(db, q, { config } = {}) {
   return { accepted: false, scope_gate_id: r.meta.last_row_id, pack: s.pack, answer };
 }
 
-// Tick step for the composition root (spec s7, M&C): refresh the status reports that are due.
-export function lifecycleStep() {
+// Tick step for the composition root (spec s7). ports (all optional): readiness(project) -> number | { score } (core/elicit), readback(project) ->
+// the person's answers for drafting, packs (the pack host of core/packs). Order: adopt the deployment's outcomes, draft initiation artifacts
+// from answers, file the gate gaps (the artifact conditions always, the registered conditions too), refresh status reports, monitor risks,
+// quality and compliance, open closing when every outcome has a disposition, archive what closed. Each part reports in the tick notes.
+export function lifecycleStep(ports = {}) {
   return { name: 'lifecycle_gates', run: async (db, ctx) => {
     if (ctx.config?.lifecycle?.enabled === false) { ctx.notes?.push('lifecycle: off'); return; }
-    const n = await refreshStatusReports(db, { now: typeof ctx.now === 'number' ? ctx.now : Date.now(), config: ctx.config?.lifecycle });
-    ctx.notes?.push(`lifecycle: ${n.length} status report(s)`);
+    const now = typeof ctx.now === 'number' ? ctx.now : Date.now(), conf = ctx.config?.lifecycle || {}, c = cfg(conf);
+    const adopted = await adoptOutcomes(db, { now, config: conf });
+    if (ports.readback) {
+      for (const p of await all(db, `SELECT id FROM kernel_projects WHERE current_phase = 'initiating' AND id NOT IN (SELECT project_id FROM artifacts WHERE kind = 'A-INI-1') ORDER BY id`)) {
+        let rows = null; try { rows = await ports.readback(p.id); } catch { rows = null; }
+        if (rows?.readback?.length || Array.isArray(rows) && rows.length) await draftArtifacts(db, { project_id: p.id, readback: Array.isArray(rows) ? rows : rows.readback, fields: Array.isArray(rows) ? {} : rows.fields || {}, now });
+      }
+    }
+    const openGate = (await first(db, `SELECT COUNT(*) AS n FROM items WHERE id LIKE 'GATE-%' AND status NOT IN ('done','superseded','cancelled')`)).n;
+    const gaps = openGate >= c.max_gap_items_open ? [] : await lifecycleGaps(db, { extras: true, filing: true, readiness: ports.readiness, config: conf, now });
+    const reports = await refreshStatusReports(db, { now, config: conf });
+    const mon = await monitorStep(db, { now, config: conf });
+    const closing = await openClosing(db, { now });
+    const archived = await archiveClosed(db, { now });
+    ctx.notes?.push(`lifecycle: ${reports.length} status report(s)${adopted.adopted?.length ? `, adopted ${adopted.adopted.join(' ')}` : ''}${gaps.length ? `, ${gaps.length} gate item(s)` : ''}${mon.triggered.length ? `, ${mon.triggered.length} risk(s) triggered` : ''}${closing.length ? `, closing ${closing.join(' ')}` : ''}${archived.length ? `, archived ${archived.join(' ')}` : ''}`);
   } };
 }
+
+// US-15-R10, R15: what a deployed account shows about the lifecycle, from its own tables, read-only; a count it cannot answer is null.
+export async function lifecycleProbe(db, { now = Date.now() } = {}) {
+  const n = async (sql, ...a) => { try { return (await first(db, sql, ...a))?.n ?? null; } catch { return null; } };
+  const last = await (async () => { try { return (await first(db, `SELECT MAX(at) AS at FROM lifecycle_status_reports`))?.at ?? null; } catch { return null; } })();
+  const byPhase = {};
+  try { for (const r of await all(db, `SELECT current_phase AS phase, COUNT(*) AS n FROM kernel_projects GROUP BY current_phase ORDER BY current_phase`)) byPhase[r.phase] = r.n; } catch { /* no projects table: nothing to report */ }
+  return { projects: Object.values(byPhase).reduce((a, b) => a + b, 0), by_phase: byPhase, status_report_age_h: last ? Math.round((now - parseIso(last)) / HOUR * 10) / 10 : null,
+    open_gate_items: await n(`SELECT COUNT(*) AS n FROM items WHERE id LIKE 'GATE-%' AND status NOT IN ('done','superseded','cancelled')`), archived: await n(`SELECT COUNT(*) AS n FROM lifecycle_archive`) };
+}
+
+export * from './monitor.js';
+export * from './closing.js';
+export * from './adopt.js';

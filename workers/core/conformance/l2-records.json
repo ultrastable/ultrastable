@@ -1,11 +1,12 @@
 {
-  "about": "US-SPEC-01 section 4.2: the L2 records and the seed tables that hold them. The specification's column names are illustrative and the roles of the tables are normative (US-00-R06), so this file is the published mapping. l1.test.js applies every module migration and fails if a table named here is missing. A record with no seed table is listed under missing with the reason.",
+  "about": "US-SPEC-01 section 4.2: the L2 records and the seed tables that hold them. The specification's column names are illustrative and the roles of the tables are normative (US-00-R06), so this file is the published mapping. l1.test.js applies every module migration and fails if a table named here is missing. A record with no seed table is listed under missing with the reason; one the router carries as configuration is under mapped_by_config; the platform kernel's own tables are under seed.",
   "records": {
     "management_personas": ["staff_personas"],
     "program_charters": ["kernel_programs"],
     "program_risk_now": ["kernel_risk_snapshot"],
     "portfolio_allocations": ["kernel_allocations"],
     "program_focus": ["kernel_focus"],
+    "program_focus_log": ["kernel_focus_log"],
     "issue_priority_scores": ["staff_priority_scores"],
     "queue_pulls": ["claims_pulls"],
     "persona_actions": ["staff_actions"],
@@ -30,7 +31,20 @@
     "model_admission": ["router_calibration", "router_gate_records"]
   },
   "missing": {
-    "program_focus_log": "kernel_focus holds the current focus set with the tick that wrote it; no table keeps the history of earlier sets",
-    "model_task_matrix": "the model for each kind of task is configuration read by core/router (router.rungs and providers), not a stored table"
+    "model_task_matrix": "the model for each kind of task is configuration read by core/router (router.rungs and providers), not a stored table; mapped_by_config names the configuration and the table that logs each call"
+  },
+  "mapped_by_config": {
+    "model_task_matrix": {"config": "core/router/router.js reads config.rungs and config.providers (each provider names its models)", "log": ["router_calls"], "log_columns": ["kind", "rung_requested", "rung_used", "provider", "model"]}
+  },
+  "seed": {
+    "about": "The seed (seed/worker, the platform kernel) keeps some of these records in its own schema. Applied by l1.test.js when ../seed/worker/migrations exists; a record absent here is not claimed for the seed.",
+    "records": {
+      "decision_log": ["decision_log"],
+      "decision_predictions": ["predictions"],
+      "metric_registry": ["metrics", "objectives"],
+      "metric_triggers": ["metrics"],
+      "human_actions": ["gate_cards"],
+      "work_claims": ["claims"]
+    }
   }
 }
