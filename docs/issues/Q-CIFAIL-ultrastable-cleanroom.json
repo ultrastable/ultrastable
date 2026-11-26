@@ -1,0 +1,11 @@
+{
+  "id": "Q-CIFAIL-ultrastable-cleanroom",
+  "title": "Q-CIFAIL-ultrastable-cleanroom: cleanroom is failing in ultrastable/ultrastable",
+  "body": "**Owner:** staff\n**Trigger:** every executor run and every ciwatch run\n**Done check:** cmd:python3 -m foundation ciwatch --probe ultrastable/ultrastable cleanroom\n**Status:** open\n\nCIWATCH-1: workflow `cleanroom` in ultrastable/ultrastable is red on its default branch (failure, 2026-11-26T13:44:21Z): https://github.com/ultrastable/ultrastable/actions/runs/45832063508\n\nFix the root cause in the repository where the defect lives; do not skip or weaken the check. Failed log tail:\n\n```\ncleanroom\tFail loudly when a capability did not come up\t\ufeff2026-11-26T13:44:44.1544014Z ##[group]Run python3 -c \"import json;r=json.load(open('ops/cleanroom/latest.json'));print('findings:', r['findings'])\"\ncleanroom\tFail loudly when a capability did not come up\t2026-11-26T13:44:44.1544475Z ^[[36;1mpython3 -c \"import json;r=json.load(open('ops/cleanroom/latest.json'));print('findings:', r['findings'])\"^[[0m\ncleanroom\tFail loudly when a capability did not come up\t2026-11-26T13:44:44.1544739Z ^[[36;1mexit 1^[[0m\ncleanroom\tFail loudly when a capability did not come up\t2026-11-26T13:44:44.1560717Z shell: /usr/bin/bash -e {0}\ncleanroom\tFail loudly when a capability did not come up\t2026-11-26T13:44:44.1560858Z ##[endgroup]\ncleanroom\tFail loudly when a capability did not come up\t2026-11-26T13:44:44.1716415Z findings: ['boot']\ncleanroom\tFail loudly when a capability did not come up\t2026-11-26T13:44:44.1744611Z ##[error]Process completed with exit code 1.\n```",
+  "labels": [
+    "role:staff",
+    "ci-failure"
+  ],
+  "milestone": "Now",
+  "workstream": "Reliability"
+}
