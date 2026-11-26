@@ -165,6 +165,108 @@
    "item": null,
    "reopened": 0,
    "settled_at": "2026-11-24T17:38:47Z"
+  },
+  "3477ae4eee": {
+   "id": "3477ae4eee",
+   "kind": "stale_entry",
+   "subject": "entries:briefs",
+   "area": "ledger",
+   "advocate": "research-publisher",
+   "severity": "act",
+   "evidence": "4 of 4 briefs untouched for 7+ days; oldest ledger/briefs/child-survival-SLB.md (7.2 d)",
+   "prediction": "untouched briefs fall below 1 within 7 days",
+   "files": [
+    "ledger/briefs/child-survival-SLB.md",
+    "ledger/briefs/child-survival-STP.md",
+    "ledger/briefs/child-survival-SYR.md"
+   ],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-26T16:51:39Z",
+   "last_seen": "2026-11-26T16:51:39Z",
+   "runs": 1,
+   "item": "Q-TEMPORAL-3477ae4eee",
+   "reopened": 0
+  },
+  "4cc57de317": {
+   "id": "4cc57de317",
+   "kind": "hotspot",
+   "subject": "file:ledger/grow.json",
+   "area": "ledger",
+   "advocate": "research-publisher",
+   "severity": "watch",
+   "evidence": "ledger/grow.json edited 18 times in 3 days (outside generated and ledger paths)",
+   "prediction": "ledger/grow.json is edited at most 5 times in 3 days within 7 days",
+   "files": [
+    "ledger/grow.json"
+   ],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-26T16:51:39Z",
+   "last_seen": "2026-11-26T16:51:39Z",
+   "runs": 1,
+   "item": null,
+   "reopened": 0
+  },
+  "795b3d70a0": {
+   "id": "795b3d70a0",
+   "kind": "hotspot",
+   "subject": "file:ledger/impact.json",
+   "area": "ledger",
+   "advocate": "research-publisher",
+   "severity": "watch",
+   "evidence": "ledger/impact.json edited 13 times in 3 days (outside generated and ledger paths)",
+   "prediction": "ledger/impact.json is edited at most 5 times in 3 days within 7 days",
+   "files": [
+    "ledger/impact.json"
+   ],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-26T16:51:39Z",
+   "last_seen": "2026-11-26T16:51:39Z",
+   "runs": 1,
+   "item": null,
+   "reopened": 0
+  },
+  "1df82563c8": {
+   "id": "1df82563c8",
+   "kind": "hotspot",
+   "subject": "file:ledger/impl-evidence.json",
+   "area": "ledger",
+   "advocate": "research-publisher",
+   "severity": "watch",
+   "evidence": "ledger/impl-evidence.json edited 14 times in 3 days (outside generated and ledger paths)",
+   "prediction": "ledger/impl-evidence.json is edited at most 5 times in 3 days within 7 days",
+   "files": [
+    "ledger/impl-evidence.json"
+   ],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-26T16:51:39Z",
+   "last_seen": "2026-11-26T16:51:39Z",
+   "runs": 1,
+   "item": null,
+   "reopened": 0
+  },
+  "71a641dfbb": {
+   "id": "71a641dfbb",
+   "kind": "hotspot",
+   "subject": "file:worker/src/implementability.js",
+   "area": "worker",
+   "advocate": "operations",
+   "severity": "watch",
+   "evidence": "worker/src/implementability.js edited 10 times in 3 days (outside generated and ledger paths)",
+   "prediction": "worker/src/implementability.js is edited at most 5 times in 3 days within 7 days",
+   "files": [
+    "worker/src/implementability.js"
+   ],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-26T16:51:39Z",
+   "last_seen": "2026-11-26T16:51:39Z",
+   "runs": 1,
+   "item": null,
+   "reopened": 0
   }
  },
  "settled": [

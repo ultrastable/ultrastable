@@ -1,26 +1,8 @@
 [
  {
-  "id": "Q-TEMPORAL-73e9f6599f",
-  "title": "Q-TEMPORAL-73e9f6599f: hotspot: file:upstream.json",
-  "body": "Temporal loop finding (hotspot) in root: upstream.json edited 16 times in 3 days (outside generated and ledger paths). Seen in 4 runs since 2026-11-21T11:56:24Z. Advocate: product-manager.\n\nFind why this keeps being edited (a flaky generator, an unstable spec, a loop that rewrites its own output) and fix the cause with a test or guard. Do not slow the work down; stop the churn.\n\nFiles: upstream.json.\n\nPrediction: upstream.json is edited at most 5 times in 3 days within 7 days.\n\nThis item closes when the finding no longer holds (`python3 -m foundation temporal --settled 73e9f6599f` recomputes it from the repository's own history).",
-  "labels": [
-   "temporal",
-   "agent-task"
-  ]
- },
- {
-  "id": "Q-TEMPORAL-5f09f22b3f",
-  "title": "Q-TEMPORAL-5f09f22b3f: hotspot: file:worker/src/pages.js",
-  "body": "Temporal loop finding (hotspot) in worker: worker/src/pages.js edited 15 times in 3 days (outside generated and ledger paths). Seen in 4 runs since 2026-11-21T11:56:24Z. Advocate: operations.\n\nFind why this keeps being edited (a flaky generator, an unstable spec, a loop that rewrites its own output) and fix the cause with a test or guard. Do not slow the work down; stop the churn.\n\nFiles: worker/src/pages.js.\n\nPrediction: worker/src/pages.js is edited at most 5 times in 3 days within 7 days.\n\nThis item closes when the finding no longer holds (`python3 -m foundation temporal --settled 5f09f22b3f` recomputes it from the repository's own history).",
-  "labels": [
-   "temporal",
-   "agent-task"
-  ]
- },
- {
-  "id": "Q-TEMPORAL-2822daa6f2",
-  "title": "Q-TEMPORAL-2822daa6f2: hotspot: file:worker/src/site.js",
-  "body": "Temporal loop finding (hotspot) in worker: worker/src/site.js edited 15 times in 3 days (outside generated and ledger paths). Seen in 4 runs since 2026-11-21T11:56:24Z. Advocate: operations.\n\nFind why this keeps being edited (a flaky generator, an unstable spec, a loop that rewrites its own output) and fix the cause with a test or guard. Do not slow the work down; stop the churn.\n\nFiles: worker/src/site.js.\n\nPrediction: worker/src/site.js is edited at most 5 times in 3 days within 7 days.\n\nThis item closes when the finding no longer holds (`python3 -m foundation temporal --settled 2822daa6f2` recomputes it from the repository's own history).",
+  "id": "Q-TEMPORAL-3477ae4eee",
+  "title": "Q-TEMPORAL-3477ae4eee: stale entry: entries:briefs",
+  "body": "Temporal loop finding (stale_entry) in ledger: 4 of 4 briefs untouched for 7+ days; oldest ledger/briefs/child-survival-SLB.md (7.2 d). Seen in 1 runs since 2026-11-26T16:51:39Z. Advocate: research-publisher.\n\nReview the named entries: update each from its source, or close it with a recorded disposition (superseded, fixed, backlogged with owner and trigger). Never leave it silent.\n\nFiles: ledger/briefs/child-survival-SLB.md, ledger/briefs/child-survival-STP.md, ledger/briefs/child-survival-SYR.md.\n\nPrediction: untouched briefs fall below 1 within 7 days.\n\nThis item closes when the finding no longer holds (`python3 -m foundation temporal --settled 3477ae4eee` recomputes it from the repository's own history).",
   "labels": [
    "temporal",
    "agent-task"
