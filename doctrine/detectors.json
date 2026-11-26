@@ -1051,6 +1051,22 @@
       "root_cause": "a system's feed is unreadable or its newest entries are empty, cut off, templated or repeated",
       "owner": "product-manager",
       "remedy": "Fix the generator in that system's repository so each entry is whole and distinct; never loosen the thresholds"
+    },
+    {
+      "id": "code-agent-ladder",
+      "failure_mode": "fm-code-ladder-dead",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "ladderwatch",
+        "--check"
+      ],
+      "timeout": 60,
+      "root_cause": "no code-agent rung returns an answer (credential without the permission, provider answering 200 with no body), so the executor ships nothing while its job and the static model-routes check read green",
+      "owner": "operations",
+      "remedy": "Read the rung errors ladderwatch prints, fix the route (site AI binding, model endpoint) and add a test; never relax the threshold."
     }
   ]
 }

@@ -804,6 +804,18 @@
       "status": "controlled",
       "cadence_ticks": 1,
       "probe": "grep:tests/foundation/test_contentdrift.py::def test_drifted_feed_fails"
+    },
+    {
+      "id": "fm-code-ladder-dead",
+      "trigger": "every rung of the code-agent ladder errors (HTTP 401, 200 with a non-JSON body)",
+      "symptom": "executor runs fail and items are shelved with 'every code agent rung failed' while clocks read green",
+      "blast_radius": "all self-originated change; k_self; every second-loop step",
+      "detection": "python3 -m foundation ladderwatch --check",
+      "root_cause": "the site's CF_DEPLOY_TOKEN has no Workers AI permission, so /__internal/cf answered 401; GitHub Models answered 200 OK text/plain to the Actions token",
+      "remediation": "site/deployer.js serves ai/run through the AI binding (AI-BINDING-1); dispose no longer shelves an item for a dead ladder",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:foundation/ladderwatch.py::def read"
     }
   ],
   "controls": [
