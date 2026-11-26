@@ -5974,6 +5974,15 @@
    "body": "Specs 01, 02, 03, 04, 05 and 08 described a seven-step tick and cited workers/core only, while seed/worker/src/tick.js ran 19 steps with tenant rows, a migration ledger, the in-tick doer, the manager register and metric probes. The specs now describe the seed tick as the reference, each new behaviour has a requirement ID appended at the end of its numbering, and the seed migration runner refuses a file that drops a table or column without a copy in the same atomic file (US-01-R13).",
    "probe": "grep:seed/worker/src/migrate.js::export function unbackedDrops",
    "session": "session_0156nqDufLi3JgDJf3gVw7Fh"
+  },
+  {
+   "id": "decision-2026-11-26-ledger-dedup-1-pathfinder-ledger-records-outcome-changes-onl",
+   "kind": "decision",
+   "date": "2026-11-26",
+   "title": "LEDGER-DEDUP-1: pathfinder ledger records outcome changes only",
+   "body": "Each watchdog pass re-appended identical route attempts (32736 rows, 6.2MB). record() now appends only on an outcome change; compacted to 477 rows; pathfinder --check unchanged.",
+   "probe": "grep:foundation/pathfinder.py::LEDGER-DEDUP-1",
+   "session": "session_0156nqDukk9P9sEvpAwpKe2W"
   }
  ]
 }
