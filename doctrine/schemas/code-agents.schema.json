@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/code-agents.schema.json",
+  "title": "code-agents (doctrine/code-agents.json)",
+  "description": "Contract for doctrine/code-agents.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "adapters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "family": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          },
+          "roles": {
+            "type": "array"
+          },
+          "route": {
+            "type": "string"
+          },
+          "secrets": {
+            "type": "array"
+          }
+        }
+      }
+    },
+    "routing": {
+      "type": "object",
+      "properties": {
+        "author_order": {
+          "type": "string"
+        },
+        "ensemble": {
+          "type": "object"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "adapters",
+    "routing"
+  ]
+}

@@ -50,6 +50,28 @@ def reaches_account(env=os.environ, api=None) -> dict:
         return {"state": "unmeasured", "expires": None, "error": type(e).__name__}
 
 
+def admin_app(env=os.environ, site=None, opener=urllib.request.urlopen, repo="ultrastable/ultrastable") -> dict:
+    """APP-CRED-WATCH-1: {'state': ok|invalid|unmeasured}: can the tick Worker's administration App still read an org repository (the route tenant
+    repositories, visitor apps and repo settings depend on). A dry repo-settings read through the site Worker; nothing is written."""
+    base = (site or env.get("TARGET_SITE") or SITE).rstrip("/")
+    try:
+        body = json.dumps({"op": "repo-settings", "repo": repo, "dry": True}).encode()
+        req = urllib.request.Request(base + "/__internal/launches", method="POST", data=body,
+                                     headers={"authorization": "Bearer " + oidc(env, opener), "content-type": "application/json", "user-agent": UA})
+        try:
+            with opener(req, timeout=60) as r:
+                j = json.loads(r.read() or b"{}")
+        except urllib.error.HTTPError as e:
+            j = json.loads(e.read() or b"{}") if e.code in (400, 409) else {"http": e.code}
+        if j.get("ok"):
+            return {"state": "ok", "expires": None}
+        if str(j.get("waiting_on", "")).startswith("admin-app"):
+            return {"state": "invalid", "expires": None, "error": str(j.get("error", ""))[:100]}
+        return {"state": "unmeasured", "expires": None, "error": str(j.get("error") or j.get("http") or "no answer")[:100]}
+    except Exception as e:  # a probe failure is a result, never a crash of the watchdog
+        return {"state": "unmeasured", "expires": None, "error": type(e).__name__}
+
+
 TICK = "https://ultrastable-tick.ultrastable.workers.dev"
 
 

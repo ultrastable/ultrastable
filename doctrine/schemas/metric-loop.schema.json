@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/metric-loop.schema.json",
+  "title": "metric-loop (doctrine/metric-loop.json)",
+  "description": "Contract for doctrine/metric-loop.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "efficacy_days": {
+      "type": "number"
+    },
+    "min_move_share": {
+      "type": "number"
+    },
+    "metrics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "levers": {
+            "type": "array"
+          },
+          "op": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "string"
+          },
+          "reader": {
+            "type": "string"
+          },
+          "threshold": {
+            "type": "number"
+          },
+          "why": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "efficacy_days",
+    "metrics",
+    "min_move_share",
+    "version"
+  ]
+}

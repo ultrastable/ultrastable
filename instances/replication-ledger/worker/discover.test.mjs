@@ -129,3 +129,19 @@ test("the watchdog's restart route runs a beat only when the last one is old", a
   const r2 = await (await worker.fetch(new Request("https://x/pulse/watch", { method: "POST" }), env, {})).json();
   assert.match(r2.skipped, /recent/);
 });
+
+test("with OpenAlex refusing every call and no key, a beat still files attempts and findings from the mirror and the keyless routes", async () => {
+  const refuse = async url => url.startsWith("https://api.openalex.org/") ? { ok: false, status: 429, headers: new Headers(), text: async () => "Insufficient budget. This request has no API key" }
+    : url.startsWith("https://api.crossref.org/works/") ? { ok: false, status: 404, json: async () => ({}) }
+    : { ok: true, status: 200, json: async () => ({ resultList: { result: [] }, message: { items: [] }, data: [] }) };
+  const mirror = { findings: { "ego-depletion": { doi: "10.1037/0022-3514.74.5.1252", openalex: EGO, cited_by_count: 5000, works: [
+      { id: "https://openalex.org/W2", doi: "https://doi.org/10.9999/new-rep", title: "A new multilab test of ego depletion", publication_year: 2026, authors: ["Ann Lee"], venue: "J Rep", abstract: REP }] } },
+    discovered: [{ id: "pratfall-advantage", field: "psychology", name: "The pratfall advantage", claim: ORIG_ABS, claim_quoted: true, original: { doi: "10.9999/pratfall" }, discovered: true, replications: [] }] };
+  const env = { DB: d1() };
+  const r = await beat(env, { fetchImpl: refuse, mirror, wait: async () => {}, now: "2026-11-25T16:00:00.000Z" });
+  assert.equal(r.findings, 1); assert.equal(r.search, "openalex-mirror");
+  assert.ok(r.routes["openalex-mirror"] >= 1);
+  const { ledger } = await load(env);
+  assert.ok(ledger.findings.find(f => f.id === "ego-depletion").replications.some(a => a.machine && a.cite.doi === "10.9999/new-rep"));
+  assert.ok(ledger.findings.some(f => f.id === "pratfall-advantage" && f.via_route === "openalex-mirror"));
+});

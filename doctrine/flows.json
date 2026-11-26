@@ -14,7 +14,10 @@
     "ext.cf_analytics": "Cloudflare GraphQL analytics: D1 rows read and Workers AI neurons per day (doctrine/cost.json budgets)",
     "ext.unlearn_adults": "coaches and parents using Unlearn: they log curiosities and answer the 7 and 14 day follow-ups (instances/unlearn; no child data in phase 1)",
     "ext.unlearn_readers": "readers of the Unlearn encyclopedia: their anonymous guesses and 'did this change your view' taps per entry (no identifier stored)",
-    "ext.unlearn_literature": "new systematic reviews and DOI records published on Europe PMC and Crossref, read by the Unlearn evidence step"
+    "ext.unlearn_literature": "new systematic reviews and DOI records published on Europe PMC and Crossref, read by the Unlearn evidence step",
+    "ext.ledger_literature": "replication papers and their citation records published on OpenAlex, read from a GitHub runner by the Replication Ledger's OpenAlex mirror (OpenAlex refuses the Worker without a key)",
+    "ext.supply_chain": "OpenSSF Scorecard results and the SPDX SBOM GitHub's dependency graph exports for this repository (read weekly by supply-chain.yml)",
+    "ext.config_files": "configuration and ledger files that any worker or person commits to the repositories (read by openstd.yml against doctrine/open-standards.json)"
   },
   "flows": {
     "qnfo-sauce": {
@@ -315,6 +318,8 @@
       ],
       "feedback": "a detector that keeps firing escalates and files its own redesign",
       "bindings": [
+        "CLOUDFLARE_ACCOUNT_ID",
+        "CLOUDFLARE_API_TOKEN",
         "LANE_PAT"
       ]
     },
@@ -2484,6 +2489,30 @@
         "ORG_ADMIN_TOKEN"
       ]
     },
+    "fleet-map": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        },
+        {
+          "signal": "fleet.drift",
+          "via": "file:ops/fleet-map.json"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "fleet.drift",
+          "via": "file:ops/fleet-map.json"
+        },
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "each daily reading of every copy against its source is recorded; a copy that is not equal files Q-FLEETMAP-<repo>, and the next reading closes the item or keeps it open, so a sync that stopped working shows within a day",
+      "bindings": []
+    },
     "improve": {
       "inflows": [
         {
@@ -2521,6 +2550,84 @@
       "bindings": [
         "LANE_PAT"
       ]
+    },
+    "replication-ledger-openalex": {
+      "inflows": [
+        {
+          "signal": "ledger.literature",
+          "via": "https:openalex"
+        },
+        {
+          "signal": "ledger.mirror",
+          "via": "repo:instances/replication-ledger/worker/data/openalex.json"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "ledger.mirror",
+          "via": "repo:instances/replication-ledger/worker/data/openalex.json"
+        }
+      ],
+      "feedback": "each run reads the mirror already on main and rewrites it only when OpenAlex's answer changed; the ledger Worker's beat reads the deployed mirror when OpenAlex refuses it and files attempts under the verbatim-quote guard, the findings it adds are listed by /api/findings and become the next run's questions, and the live /health generated_at is compared with main's so a mirror that did not reach the Worker is redeployed",
+      "bindings": []
+    },
+    "managers": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "feedback": "a manager with no loop, code, clock or probe fails managers --check on the change that caused it; a switched-on manager with no runtime row is hired by the next tick's reconcile step, and one that stays missing or stopped fails the detector managers-live, which files Q-AUDIT-managers-live for the executor",
+      "bindings": []
+    },
+    "supply-chain": {
+      "inflows": [
+        {
+          "signal": "supplychain.reading",
+          "via": "http:github-api"
+        },
+        {
+          "signal": "main.merged",
+          "via": "github:push"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "feedback": "each Scorecard check under the floor and each package outside the licence policy is filed as a Q-STD-SC-* item; the fix lands, the next weekly reading is the item's closing probe, so a check that recovers closes its item and one that does not stays on the executor's queue",
+      "bindings": []
+    },
+    "openstd": {
+      "inflows": [
+        {
+          "signal": "config.files",
+          "via": "git:main"
+        },
+        {
+          "signal": "cloudevent.recorded",
+          "via": "git:ops/openstd/events.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "cloudevent.recorded",
+          "via": "git:ops/openstd/events.jsonl"
+        }
+      ],
+      "feedback": "each drain shrinks the baseline and the next check fails on any file the drain missed; a baseline that stops shrinking files a Q-STD item through the failure-mode audit",
+      "bindings": [
+        "LANE_PAT"
+      ]
     }
   },
   "implicit_producers": {
@@ -2533,7 +2640,10 @@
     "loop.registry": "ext.loop_registry",
     "unlearn.followups": "ext.unlearn_adults",
     "unlearn.reader_taps": "ext.unlearn_readers",
-    "unlearn.literature": "ext.unlearn_literature"
+    "unlearn.literature": "ext.unlearn_literature",
+    "ledger.literature": "ext.ledger_literature",
+    "supplychain.reading": "ext.supply_chain",
+    "config.files": "ext.config_files"
   },
   "pending": []
 }

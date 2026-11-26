@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/branchsweep.schema.json",
+  "title": "branchsweep (doctrine/branchsweep.json)",
+  "description": "Contract for doctrine/branchsweep.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "state_branches": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "state_prefixes": {
+      "type": "array"
+    },
+    "gate": {
+      "type": "array",
+      "items": {
+        "type": "array"
+      }
+    },
+    "port_owner": {
+      "type": "string"
+    },
+    "rejected": {
+      "type": "object",
+      "properties": {
+        "worker/q-tick-deploy": {
+          "type": "string"
+        },
+        "worker/git-in-cloudflare-1": {
+          "type": "string"
+        },
+        "worker/port-exec-1": {
+          "type": "string"
+        },
+        "parked/claude/sync-dot-dirs": {
+          "type": "string"
+        }
+      }
+    },
+    "max_deleted_lines": {
+      "type": "number"
+    },
+    "held": {
+      "type": "object",
+      "properties": {
+        "agent/Q-GROW-AGENT-DIRECTORIES-q-grow-agent-directories-grow-5-prepare": {
+          "type": "string"
+        }
+      }
+    },
+    "min_idle_hours": {
+      "type": "number"
+    },
+    "fleet_repos": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "budget_seconds": {
+      "type": "number"
+    },
+    "carried": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": "string"
+        },
+        "min_share": {
+          "type": "number"
+        },
+        "max_missing_lines": {
+          "type": "number"
+        },
+        "residue_prefixes": {
+          "type": "array"
+        },
+        "residue_suffixes": {
+          "type": "array"
+        }
+      }
+    },
+    "branch_cleanup": {
+      "type": "object",
+      "properties": {
+        "rule": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        },
+        "run_by": {
+          "type": "string"
+        },
+        "probe": {
+          "type": "string"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "branch_cleanup",
+    "budget_seconds",
+    "carried",
+    "fleet_repos",
+    "gate",
+    "held",
+    "max_deleted_lines",
+    "min_idle_hours",
+    "port_owner",
+    "rejected",
+    "state_branches",
+    "state_prefixes"
+  ]
+}

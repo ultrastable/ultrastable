@@ -1,0 +1,142 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/fleet-map.schema.json",
+  "title": "fleet-map (doctrine/fleet-map.json)",
+  "description": "Contract for doctrine/fleet-map.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "org": {
+      "type": "string"
+    },
+    "layers": {
+      "type": "object",
+      "properties": {
+        "platform": {
+          "type": "string"
+        },
+        "template": {
+          "type": "string"
+        },
+        "seeded-system": {
+          "type": "string"
+        },
+        "tenant": {
+          "type": "string"
+        },
+        "admin": {
+          "type": "string"
+        },
+        "org-profile": {
+          "type": "string"
+        }
+      }
+    },
+    "template_contents": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": "string"
+        },
+        "belongs": {
+          "type": "array"
+        },
+        "keep": {
+          "type": "array"
+        },
+        "never": {
+          "type": "array"
+        }
+      }
+    },
+    "session_repos": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": "string"
+        },
+        "repos": {
+          "type": "array"
+        }
+      }
+    },
+    "repos": {
+      "type": "object",
+      "properties": {
+        "ultrastable/ultrastable": {
+          "type": "object"
+        },
+        "ultrastable/seed": {
+          "type": "object"
+        },
+        "ultrastable/second-tenant": {
+          "type": "object"
+        },
+        "ultrastable/ops": {
+          "type": "object"
+        },
+        "ultrastable/.github": {
+          "type": "object"
+        },
+        "ultrastable/practical-solutions": {
+          "type": "object"
+        },
+        "ultrastable/unlearn": {
+          "type": "object"
+        },
+        "ultrastable/what-works": {
+          "type": "object"
+        },
+        "ultrastable/replication-ledger": {
+          "type": "object"
+        },
+        "ultrastable/base-rates": {
+          "type": "object"
+        },
+        "ultrastable/did-it-work": {
+          "type": "object"
+        },
+        "ultrastable/open-questions": {
+          "type": "object"
+        },
+        "ultrastable/workers": {
+          "type": "object"
+        },
+        "ultrastable/spec": {
+          "type": "object"
+        },
+        "ultrastable/license": {
+          "type": "object"
+        },
+        "ultrastable/spinoffs": {
+          "type": "object"
+        }
+      }
+    },
+    "identity": {
+      "type": "object",
+      "properties": {
+        "_doc": {
+          "type": "string"
+        },
+        "files": {
+          "type": "array"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "identity",
+    "layers",
+    "org",
+    "repos",
+    "session_repos",
+    "template_contents"
+  ]
+}

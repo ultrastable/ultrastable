@@ -18,6 +18,11 @@
    "optional": true
   },
   {
+   "name": "GITHUB_ADMIN_APP",
+   "state": "ok",
+   "expires": null
+  },
+  {
    "name": "domain-ultrastable.io",
    "state": "ok",
    "expires": "2027-11-10"

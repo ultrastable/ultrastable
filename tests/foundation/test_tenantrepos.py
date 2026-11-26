@@ -85,6 +85,7 @@ class TenantRepos(unittest.TestCase):
         self.assertTrue(any(line.startswith("rewrote import") for line in out))
         self.assertIn('"type": "module"', (d / "package.json").read_text())
         self.assertIn("Unlearn", (d / "AGENTS.md").read_text())
+        self.assertTrue(any(line == "wrote .github/workflows/ci.yml" for line in out), "the one scaffold writes the rest (TENANT-STANDARD-1)")
 
     def test_behind_compares_tenant_main_with_the_last_deployed_commit(self):
         reg = {"org": "o", "tenants": {"a": {"repo": "o/a", "state": "moved", "worker": "w-a"}}}

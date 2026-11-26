@@ -13,6 +13,6 @@
   "practical-solutions": { "state": "built", "engine": "seed/worker/src/knowledge.js", "vendor": "vendor/seed/knowledge.js", "code": "ultrastable/practical-solutions worker/src/kg.js", "probe": "https://tenant-ps-web.ultrastable.workers.dev/api/graph/health" },
   "unlearn": { "state": "built", "engine": "seed/worker/src/knowledge.js", "vendor": "vendor/ultrastable/knowledge.js", "code": "ultrastable/unlearn worker/graph.js", "page": "/graph", "probe": "https://unlearn.ultrastable.org/api/graph/health" },
   "what-works": { "state": "built", "item": "Q-KG-what-works", "repo": "ultrastable/what-works", "probe": "https://what-works.ultrastable.org/api/graph" },
-  "replication-ledger": { "state": "built", "engine": "seed/worker/src/knowledge.js", "vendor": "worker/vendor/knowledge.js", "code": "instances/replication-ledger/worker/graph.js", "probe": "https://replication-ledger.ultrastable.org/api/graph/health" }
+  "replication-ledger": { "state": "built", "engine": "seed/worker/src/knowledge.js", "vendor": "worker/vendor/knowledge.js", "code": "ultrastable/replication-ledger worker/graph.js", "probe": "https://replication-ledger.ultrastable.org/api/graph/health" }
  }
 }

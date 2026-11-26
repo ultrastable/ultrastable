@@ -149,6 +149,13 @@ def drift(core: Path, inst: Path) -> dict:
             "pinned": lock["core"]["version"], "core": c["version"], "local_edits": sorted(local_edits), "missing": sorted(missing)}
 
 
+def _older_core_version(core: Path, kernel_root: str, rel: str, dst: Path) -> bool:
+    """FLEET-MAP-1: a system filled by a plain copy of seed/ has no lock, so every kernel file the core later changed read as a local edit and
+    the weekly sync updated nothing. A file that equals an older version of the same core file was never edited here and is safe to replace."""
+    from . import fleetmap
+    return fleetmap.blob_sha(dst.read_bytes()) in fleetmap.history_blobs(core, f"{kernel_root}/{rel}" if kernel_root else rel)
+
+
 def sync(core: Path, inst: Path, apply: bool = False, force_adopt: bool = False) -> dict:
     """Flow down. Files the instance edited since the last sync are conflicts: kept as they are and reported as upstream candidates."""
     c = json.loads((core / CONTRACT).read_text())
@@ -168,7 +175,7 @@ def sync(core: Path, inst: Path, apply: bool = False, force_adopt: bool = False)
             conflicts.append(rel)
             new_digests[rel] = locked  # stays a recorded local edit
             continue
-        elif locked is None and not force_adopt:
+        elif locked is None and not force_adopt and not _older_core_version(core, c["kernel_root"], rel, dst):
             conflicts.append(rel)  # adoption never overwrites an existing file
             continue
         else:

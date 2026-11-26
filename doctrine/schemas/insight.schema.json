@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/insight.schema.json",
+  "title": "insight (doctrine/insight.json)",
+  "description": "Contract for doctrine/insight.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "window_days": {
+      "type": "number"
+    },
+    "rise_min_views": {
+      "type": "number"
+    },
+    "rise_ratio": {
+      "type": "number"
+    },
+    "fade_ratio": {
+      "type": "number"
+    },
+    "external_pull_min": {
+      "type": "number"
+    },
+    "max_actions_per_day": {
+      "type": "number"
+    },
+    "cooldown_days": {
+      "type": "number"
+    },
+    "settle_after_days": {
+      "type": "number"
+    },
+    "hold_ratio": {
+      "type": "number"
+    },
+    "fade_hold_ratio": {
+      "type": "number"
+    },
+    "knob": {
+      "type": "object",
+      "properties": {
+        "min": {
+          "type": "number"
+        },
+        "max": {
+          "type": "number"
+        },
+        "raise": {
+          "type": "number"
+        },
+        "lower": {
+          "type": "number"
+        },
+        "min_settled": {
+          "type": "number"
+        },
+        "raise_below": {
+          "type": "number"
+        },
+        "lower_above": {
+          "type": "number"
+        }
+      }
+    },
+    "ignore_paths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "account": {
+          "type": "string"
+        },
+        "db": {
+          "type": "string"
+        }
+      }
+    },
+    "item": {
+      "type": "object",
+      "properties": {
+        "labels": {
+          "type": "array"
+        },
+        "workstream": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "cooldown_days",
+    "external_pull_min",
+    "fade_hold_ratio",
+    "fade_ratio",
+    "hold_ratio",
+    "ignore_paths",
+    "item",
+    "knob",
+    "max_actions_per_day",
+    "rise_min_views",
+    "rise_ratio",
+    "settle_after_days",
+    "source",
+    "version",
+    "window_days"
+  ]
+}

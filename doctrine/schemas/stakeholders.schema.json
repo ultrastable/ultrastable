@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/stakeholders.schema.json",
+  "title": "stakeholders (doctrine/stakeholders.json)",
+  "description": "Contract for doctrine/stakeholders.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "audiences": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "cta": {
+            "type": "object"
+          },
+          "domain": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "nav": {
+            "type": "string"
+          },
+          "needs": {
+            "type": "string"
+          },
+          "path": {
+            "type": "array"
+          },
+          "promise": {
+            "type": "string"
+          },
+          "stories": {
+            "type": "array"
+          }
+        }
+      }
+    },
+    "showcases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "domain": {
+            "type": "string"
+          },
+          "home": {
+            "type": "string"
+          },
+          "homeLabel": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "learned": {
+            "type": "string"
+          },
+          "links": {
+            "type": "array"
+          },
+          "loop": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "problem": {
+            "type": "string"
+          },
+          "results": {
+            "type": "array"
+          },
+          "status": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "tag": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "domains": {
+      "type": "object",
+      "properties": {
+        "io": {
+          "type": "object"
+        },
+        "org": {
+          "type": "object"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "audiences",
+    "domains",
+    "showcases"
+  ]
+}

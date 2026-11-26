@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/bootproof.schema.json",
+  "title": "bootproof (doctrine/bootproof.json)",
+  "description": "Contract for doctrine/bootproof.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_": {
+      "type": "string"
+    },
+    "secrets": {
+      "type": "object",
+      "properties": {
+        "CLOUDFLARE_ACCOUNT_ID": {
+          "type": "object"
+        },
+        "CLOUDFLARE_API_TOKEN": {
+          "type": "object"
+        },
+        "DASHBOARD_URL": {
+          "type": "object"
+        },
+        "FLEET_TOKEN": {
+          "type": "object"
+        },
+        "LANE_PAT": {
+          "type": "object"
+        },
+        "ORG_ADMIN_TOKEN": {
+          "type": "object"
+        },
+        "OUTREACH_SEND_TOKEN": {
+          "type": "object"
+        },
+        "OUTREACH_SEND_URL": {
+          "type": "object"
+        }
+      }
+    },
+    "wrangler_filled_elsewhere": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "migration_duplicates_grandfathered": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "_grandfather": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_",
+    "_grandfather",
+    "migration_duplicates_grandfathered",
+    "secrets",
+    "wrangler_filled_elsewhere"
+  ]
+}

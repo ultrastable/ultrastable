@@ -31,7 +31,7 @@ const STOPPED = { ok: false, status: 0, json: null, stopped: true };
 
 export async function gh(f, token, method, path, body, budget = null, ua = 'ultrastable-lane') {
   if (budget && !budget.take()) return STOPPED;
-  const r = await f(API + path, {
+  const r = await ghFetch(f, API + path, {
     method, headers: { authorization: 'Bearer ' + token, accept: 'application/vnd.github+json', 'user-agent': ua, 'content-type': 'application/json' },
     body: body ? JSON.stringify(body) : undefined,
   });
@@ -57,9 +57,15 @@ async function appendEvidence(f, token, repo, row, budget = null) {
 // (#433 merged 20 s after `checks` failed on an orphan document). A failed Actions job with a failed step really ran: it holds the PR. A failed job
 // with no steps never started (minutes exhausted), and only then does the Worker's diff gate decide. An unreadable answer holds: unknown is not green.
 import { notGreen } from './greenguard.js';  // GREEN-GUARD-1
+import { ghFetch, mergedAnyway } from './ghfetch.js';  // GH-RETRY-1
 export async function realRed(f, token, repo, sha, budget = null) {
   const runs = await gh(f, token, 'GET', `/repos/${repo}/actions/runs?head_sha=${sha}&per_page=30`, undefined, budget);
   if (!runs.ok) return `runs ${runs.status}`;
+  // MERGE-RUNNING-1: #2222 was merged on the worker gate while its `checks` run was still running, and that run then failed: main went red.
+  // Runs that are really running (started within the hour, not stuck in a queue Actions minutes will never serve) are waited for.
+  const now = Date.now();
+  const live = (runs.json.workflow_runs || []).find(r => r.status !== 'completed' && r.name !== 'lane' && now - Date.parse(r.run_started_at || r.created_at || 0) < 3600e3);
+  if (live) return `${live.name || 'run'} still running`;
   for (const run of (runs.json.workflow_runs || []).filter(r => r.conclusion === 'failure')) {
     const jobs = await gh(f, token, 'GET', `/repos/${repo}/actions/runs/${run.id}/jobs?per_page=30`, undefined, budget);
     if (!jobs.ok) return `jobs ${jobs.status}`;
@@ -96,6 +102,7 @@ export async function runLane({ token, repos = [], fetch: f = fetch, issueWorkfl
         if (ready && d.mergeable_state === 'clean') { const hold = await notGreen(f, token, repo, d.head.sha, (ff, t, m, path) => gh(ff, t, m, path, undefined, budget)); if (hold) { out.held.push(`${repo}#${pr.number} ${hold}`); continue; } }  // GREEN-GUARD-1
         if (!ready) { out.held.push(`${repo}#${pr.number} ${d && d.mergeable_state}`); continue; }
         const m = await gh(f, token, 'PUT', `/repos/${repo}/pulls/${pr.number}/merge`, { merge_method: 'squash' }, budget);
+        if (!m.ok && !m.stopped && await mergedAnyway((mm, pp) => gh(f, token, mm, pp, undefined, budget), repo, pr.number, m.status)) m.ok = true;  // GH-RETRY-1
         (m.ok ? out.merged : out.errors).push(m.ok ? `${repo}#${pr.number}` : `${repo}#${pr.number} merge ${m.status}`);
         if (m.ok && evidenceRepo === repo) { // ZERO-MINUTES-1 probe: the Worker merged this with no lane run on Actions
           try { await appendEvidence(f, token, repo, { at: new Date().toISOString(), pr: pr.number, sha: (m.json && m.json.sha) || null, host: 'cloudflare-worker', via: zeroActions ? 'worker-gate' : 'clean' }); }

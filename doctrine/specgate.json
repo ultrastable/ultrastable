@@ -1,0 +1,32 @@
+{
+ "_doc": "SPEC-GATE-1 (Rowan, 2026-11-25): items an agent cannot misread. baseline is shrink-only: ids filed before the gate; a new open item must pass foundation/specgate.py.",
+ "id": "specgate",
+ "baseline": [
+  "OL-PR-2223",
+  "OL-PR-2225",
+  "OL-PR-2227",
+  "OL-PR-2228",
+  "Q-CIFAIL-mergeaudit-2222",
+  "Q-IMPROVE-fe-vitals-beacon",
+  "Q-IMPROVE-impact-page",
+  "Q-IMPROVE-plus-executor-verdicts",
+  "Q-IMPROVE-plus-seed-improve",
+  "Q-ISSUE-practical-solutions-223",
+  "Q-ISSUE-practical-solutions-224",
+  "Q-ISSUE-ultrastable-2106",
+  "Q-RES-knowledge-graph-2026-K1",
+  "Q-RLEDGER-BEAT",
+  "Q-RLEDGER-VERIFY",
+  "Q-SAYDO-rules-DATAGRAPH-1",
+  "Q-SEED-replication-ledger",
+  "Q-SMOKE-io-freshness",
+  "Q-SYNC-DRIFT-practical-solutions",
+  "Q-ULTRA-access-check-uptime-3",
+  "Q-ULTRA-air-quality-uptime-3",
+  "Q-ULTRA-blindspot-uptime-3",
+  "Q-ULTRA-country-snapshot-uptime-3",
+  "Q-ULTRA-free-tier-meter-uptime-3",
+  "Q-ULTRA-numbers-board-uptime-3",
+  "Q-ULTRA-portfolio-board-uptime-3"
+ ]
+}

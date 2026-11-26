@@ -19,6 +19,7 @@ import { executeStep, claimsReleasedUnworked24h } from './doer.js';
 import { pulseStep, tickCadenceMin } from './pulse.js';
 import { ignitionStep } from './ignition.js';
 import { ensureSchema as ensureCredentialSchema } from './auth/store.js';  // CONNECTOR-HEALTH-1
+import { hireStep, isOff } from './managers.js';  // MANAGERS-1: the register hires; an off manager is not dispatched
 import { OWN_SQL, tenantOf } from './tenant.js';  // Q-TENANT-row-isolation: a runtime acts only on rows with tenant_id NULL (own) or its own slug
 
 const TERMINAL = ['done', 'superseded', 'cancelled'];
@@ -67,12 +68,25 @@ export const METRICS = {
   // An objective with no probe-backed target metric is not instrumented; the agents do not yet know how to tell whether they are winning.
   objectives_without_probe: (db) => first(db,
     `SELECT COUNT(*) AS n FROM objectives o WHERE o.tenant_id IS NULL AND NOT EXISTS (SELECT 1 FROM metrics m WHERE m.tenant_id IS NULL AND m.objective_id = o.id AND m.kind = 'target' AND m.source IN ('builtin','sql','http'))`).then(r => r.n),
+  // ADMIT-1 red team (2026-11-25): nothing watched D1 growth; a database that reaches its size limit refuses every write and the whole loop stops.
+  // The share of the free plan's per-database limit this database uses, from D1's own size_after (PRAGMA page_count on a SQLite shim). Unreadable is
+  // NaN, which the measure step counts as a breach, never as a healthy 0.
+  db_size_share: (db) => dbSizeBytes(db).then(b => (Number.isFinite(b) && b > 0 ? Math.round(1000 * b / DB_LIMIT_BYTES) / 1000 : NaN)),
   metrics_in_breach: (db) => first(db, `SELECT COUNT(*) AS n FROM metrics WHERE breached = 1 AND tenant_id IS NULL`).then(r => r.n),
   claims_released_unworked_24h: claimsReleasedUnworked24h,  // DOER-1 (workers#173): target 0
   silent_drops_7d: (db, now) => first(db,
     `SELECT COUNT(*) AS n FROM outcomes WHERE result='silent_drop' AND at >= ?`,
     iso(new Date(now - 7 * 86400e3))).then(r => r.n),
 };
+
+export const DB_LIMIT_BYTES = 500e6;  // D1 per-database limit on the Workers Free plan (10 GB on Paid); the smaller one, so the guard holds on either
+export async function dbSizeBytes(db) {
+  const r = await db.prepare('SELECT 1 AS n').all().catch(() => null);
+  const m = Number(r && r.meta && r.meta.size_after);
+  if (Number.isFinite(m) && m > 0) return m;
+  try { const c = await db.prepare('PRAGMA page_count').first(), z = await db.prepare('PRAGMA page_size').first(); return Number(c && c.page_count) * Number(z && z.page_size); }
+  catch (e) { return NaN; }  // allow-silent: no reading is NaN, a breach in measure, never a pass
+}
 
 export function reliability(successes, outcomes, trust) {
   const w = trust.prior_weight, b = trust.baseline;
@@ -142,6 +156,7 @@ export const LIVENESS = [
   ['M-no-drops', 'silent drops in the last 7 days', 'silent_drops_7d', '<=', 0, 0, 'portfolio-manager', 'An item left the active set with no disposition. Find it and give it one.'],
   ['M-pace', 'share of loop runs in 24 hours that returned work (idle runs are not progress)', 'beats_productive_share_24h', '>=', 0.05, 24, 'operations', 'Most loop runs return nothing. Lengthen the cadence of idle loops and shorten productive ones (core/pace plan).'],
   ['M-cost', 'largest share of a free daily limit used today (1 = the whole free day)', 'free_tier_peak_share', '<=', 0.8, 0, 'operations', 'A free daily limit is nearly spent. Lengthen idle loops (pace.json) and cut the heaviest reader before the plan sheds work.'],
+  ['M-storage', 'share of the per-database size limit this D1 uses (1 = full: every write refused)', 'db_size_share', '<=', 0.6, 0, 'operations', 'The database is past 60% of its size limit. Check retention (autonomy/retention.json), seal and prune the audit chain, and move bulk history to R2 before writes are refused.'],
   ['M-instrumented', 'objectives without a probe-backed target metric', 'objectives_without_probe', '<=', 0, 1, 'product-manager', 'Insert a target metric with a builtin, sql or http probe for the objective.'],
 ];
 
@@ -164,6 +179,7 @@ export const STEPS = {
     const r = await run(db, `UPDATE items SET status='ready', updated_at=?
       WHERE status='open' AND ${OWN_SQL()} AND (trigger_on IS NULL OR trigger_on IN (SELECT id FROM items WHERE status='done' AND ${OWN_SQL()}))`, ctx.nowIso, T, T);
     ctx.notes.push(`reconciled: ${drops.length} reopened, ${r.meta?.changes ?? 0} became ready`);
+    await hireStep(db, ctx);  // MANAGERS-1: every manager that is on in the register has a runtime row before dispatch
   },
 
   // Claims with no heartbeat for claim_ttl_minutes are released so work never stalls.
@@ -378,6 +394,7 @@ export const STEPS = {
     let n = 0;
     for (const role of roles) {
       if (ctx.wake !== role.role && ctx.tickId % Math.max(1, role.tick_every) !== 0) continue;  // an event wakes its role out of turn
+      if (isOff(ctx.config.managers, role.role)) continue;  // MANAGERS-1: switched off by this system's register, with its reason
       const wip = await first(db, `SELECT COUNT(*) AS n FROM claims WHERE agent=? AND ${OWN_SQL()}`, role.id, tenantOf(ctx));
       if (wip.n >= ctx.config.max_wip_per_role) continue;
       const item = await pickForRole(db, role, ctx.config.criticality, (ctx.config.pace || {}).rank, tenantOf(ctx));  // CRITICALITY-LOOP-1: raising items first while k_eff is under k_min

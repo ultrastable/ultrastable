@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/knobs.schema.json",
+  "title": "knobs (doctrine/knobs.json)",
+  "description": "Contract for doctrine/knobs.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "min_days_between_changes": {
+      "type": "number"
+    },
+    "review_after_days": {
+      "type": "number"
+    },
+    "knobs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "keep_if": {
+            "type": "string"
+          },
+          "max": {
+            "type": "number"
+          },
+          "metric": {
+            "type": "string"
+          },
+          "min": {
+            "type": "number"
+          },
+          "owner": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "step": {
+            "type": "number"
+          },
+          "what": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "knobs",
+    "min_days_between_changes",
+    "review_after_days",
+    "version"
+  ]
+}

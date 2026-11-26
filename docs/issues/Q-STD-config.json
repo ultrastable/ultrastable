@@ -1,0 +1,11 @@
+{
+  "id": "Q-STD-config",
+  "title": "Q-STD-config: Add per-file JSON Schemas to drained configs",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -m foundation openstd --probe config-json-schema\n**Status:** open\n\nOPEN-STANDARDS-1 (Rowan, 2026-11-25): the daily openstd workflow adds the base $schema to baseline configs; replace the base schema with a strict per-file schema for the ten most-read configs, validated by the check.\n\nsize: M\n**Out of scope:** new formats not in doctrine/open-standards.json.\n\nPrediction: open_standards_adopted_rows >= 10 within 168 h\n\n**Closing probe:** python3 -m foundation openstd --check passes and the registry row for config-json-schema reads adopted with evidence files that exist.\n",
+  "labels": [
+    "p2",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Executor queue"
+}

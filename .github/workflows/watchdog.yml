@@ -51,7 +51,7 @@ jobs:
       - name: Projected unattended runway against the one-year target (RUNWAY-1)
         run: python3 -m foundation runway --run --apply --changed-file "$RUNNER_TEMP/changed"
       - name: Ultrastability tick (a stall is a second-order event)
-        run: python3 -m foundation ultrastability --tick --apply
+        run: python3 -m foundation ultrastability --tick --apply && python3 -m foundation ultrastability --data --apply
       - name: Record
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
@@ -63,5 +63,5 @@ jobs:
           if [ -f ops/balance-held.jsonl ]; then git add ops/balance-held.jsonl; fi
           # YEAR-SIM-1, SAY-DO-1, TRAJECTORY-1: the runway step writes these ledgers; land whichever exist so the next run reads its own history
           YS=""; for f in ops/yearsim.json ops/yearsim.jsonl site/yearsim-data.js ops/saydo.json ops/saydo.jsonl site/saydo-data.js ops/trajectory.json ops/trajectory.jsonl site/trajectory-data.js; do [ -f "$f" ] && YS="$YS $f"; done
-          git add $YS ops/resilience.jsonl ops/ultrastability.jsonl ops/credwatch.json ops/runway.json ops/paths/attempts.jsonl docs/issues NEEDS-YOU.md foundation/data/needs-you.json doctrine/point-and-click.json
-          python3 scripts/land_data.py "watchdog: clock probe (RESILIENCE-1)" $YS ops/resilience.jsonl ops/ultrastability.jsonl ops/credwatch.json ops/runway.json ops/paths/attempts.jsonl docs/issues NEEDS-YOU.md foundation/data/needs-you.json doctrine/point-and-click.json  # MAINWRITER-FALLBACK-1: main writer first, then a pull request
+          git add $YS ops/resilience.jsonl ops/ultrastability.jsonl site/ultrastability-data.js doctrine/ultrastability.json ops/credwatch.json ops/runway.json ops/paths/attempts.jsonl docs/issues NEEDS-YOU.md foundation/data/needs-you.json doctrine/point-and-click.json
+          python3 scripts/land_data.py "watchdog: clock probe (RESILIENCE-1)" $YS ops/resilience.jsonl ops/ultrastability.jsonl site/ultrastability-data.js doctrine/ultrastability.json ops/credwatch.json ops/runway.json ops/paths/attempts.jsonl docs/issues NEEDS-YOU.md foundation/data/needs-you.json doctrine/point-and-click.json  # MAINWRITER-FALLBACK-1: main writer first, then a pull request

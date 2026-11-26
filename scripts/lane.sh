@@ -131,6 +131,8 @@ lane: held on a High finding. SERVER-OWNS-LOOPS: the server lands a superseding 
     case "$out" in *workflow*) gh pr edit "$n" -R "$repo" --add-label needs-pat >/dev/null 2>&1;; esac
   fi
 done
+# PR-BOUND-1: a PR the pass above could not merge or repair is closed past its bound (branch kept), so none waits for hours.
+python3 -m foundation prbound --apply || echo "prbound failed (rc $?)"
 echo "lane: needs-pat merged=$wf_merged waiting=$wf_waiting credential=$wf_source"
 # SERVER-OWNS-LOOPS: adopt what is still open and not mergeable and commit the queue items to main, so the executor sees them on its next run
 # (it starts from every finished lane). Runs only inside the lane workflow, or where LANE_ADOPT=1 is set by another server-side host.

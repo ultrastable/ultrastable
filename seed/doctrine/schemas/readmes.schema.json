@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/seed/doctrine/readmes.schema.json",
+  "title": "readmes (seed/doctrine/readmes.json)",
+  "description": "Contract for seed/doctrine/readmes.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "site_host": {
+      "type": "string"
+    },
+    "site_globs": {
+      "type": "array"
+    },
+    "documents": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "documents",
+    "site_globs",
+    "site_host"
+  ]
+}

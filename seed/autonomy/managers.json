@@ -1,0 +1,157 @@
+{
+ "_doc": "MANAGERS-1: the one register of managers a system runs. Every system made from the seed carries this file; the tick's reconcile step (worker/src/managers.js) hires every manager that is on and has no runtime row, the dispatch step skips a manager that is off, and the bootstrap hires from the same list. A deployment with different needs changes `switch` only: {\"<manager id>\": {\"state\": \"off\", \"reason\": \"...\"}}. A core manager cannot be switched off; an off switch needs a reason; with no switch every manager is on, which is the safe default (an idle manager costs one small read per tick; a missing manager leaves its items undispatched). tick_every and count equal seed/ultrastable.json roles (checked by `python3 -m foundation managers --check` on the platform). Ultrastable is the foundation for any autonomous system.",
+ "marker": "MANAGERS-1",
+ "version": 1,
+ "beat": {
+  "tick_s": 600,
+  "late_factor": 3,
+  "stopped_factor": 12
+ },
+ "managers": [
+  {
+   "id": "portfolio-manager",
+   "core": true,
+   "default": "on",
+   "tick_every": 6,
+   "count": 1,
+   "for": "allocation across every project; the tick heartbeat. Every system has one."
+  },
+  {
+   "id": "project-manager",
+   "core": true,
+   "default": "on",
+   "tick_every": 1,
+   "count": "per_outcome",
+   "for": "delivery of one outcome: triage, done checks, closing items."
+  },
+  {
+   "id": "product-manager",
+   "core": true,
+   "default": "on",
+   "tick_every": 3,
+   "count": "per_outcome",
+   "for": "the backlog a bare idea does not come with: growth, measures, scouting, improvement items."
+  },
+  {
+   "id": "staff",
+   "core": true,
+   "default": "on",
+   "tick_every": 1,
+   "count": "pool",
+   "for": "execution of claimed items."
+  },
+  {
+   "id": "reviewer",
+   "core": true,
+   "default": "on",
+   "tick_every": 1,
+   "count": "pool",
+   "for": "independent verification of every claimed result."
+  },
+  {
+   "id": "operations",
+   "core": true,
+   "default": "on",
+   "tick_every": 1,
+   "count": 1,
+   "for": "the tick, workflows, budgets, deploys and settings."
+  },
+  {
+   "id": "funding-manager",
+   "core": false,
+   "default": "on",
+   "tick_every": 6,
+   "count": 1,
+   "for": "funding registry and applications. Switch off for a system whose owner pays its running cost and seeks no funding."
+  },
+  {
+   "id": "outreach-manager",
+   "core": false,
+   "default": "on",
+   "tick_every": 3,
+   "count": 1,
+   "for": "introducing the work to organizations. Switch off for a private or personal system with no public audience."
+  },
+  {
+   "id": "outreach-coordinator",
+   "core": false,
+   "default": "on",
+   "tick_every": 1,
+   "count": 1,
+   "for": "the outreach calendar and the social queue. Switch off together with the outreach manager."
+  },
+  {
+   "id": "research-publisher",
+   "core": false,
+   "default": "on",
+   "tick_every": 6,
+   "count": 1,
+   "for": "research and white papers. Switch off for a system that publishes no findings."
+  },
+  {
+   "id": "marketing-manager",
+   "core": false,
+   "default": "on",
+   "tick_every": 6,
+   "count": 1,
+   "for": "story, site copy, search and social presence. Switch off for a system with no public front end to promote."
+  },
+  {
+   "id": "legal-ip-manager",
+   "core": false,
+   "default": "on",
+   "tick_every": 12,
+   "count": 1,
+   "for": "licence, notices and third-party licence compliance. Switch off only for a system that ships no code or content to others."
+  },
+  {
+   "id": "customer-success",
+   "core": false,
+   "default": "on",
+   "tick_every": 3,
+   "count": 1,
+   "for": "onboarding and support intake. Switch off for a system with one user who is its owner."
+  },
+  {
+   "id": "org-designer",
+   "core": true,
+   "default": "on",
+   "tick_every": 12,
+   "count": 1,
+   "for": "which managers this system runs: keeps this register true and hires what is switched on."
+  },
+  {
+   "id": "program-manager",
+   "core": true,
+   "default": "on",
+   "tick_every": 4,
+   "count": 1,
+   "for": "sequencing across projects under the portfolio constraint; deploy-raising and cost-cutting work first when k is under its floor."
+  },
+  {
+   "id": "infrastructure-manager",
+   "core": true,
+   "default": "on",
+   "tick_every": 2,
+   "count": 1,
+   "for": "hosting resources, bindings, cost budgets and deploys."
+  },
+  {
+   "id": "design-manager",
+   "core": false,
+   "default": "on",
+   "tick_every": 6,
+   "count": 1,
+   "for": "the design language and its experiments. Switch off for a system with no user interface."
+  },
+  {
+   "id": "uiux-manager",
+   "core": false,
+   "default": "on",
+   "tick_every": 6,
+   "count": 1,
+   "for": "the audited front end and its user paths. Switch off for a system with no user interface."
+  }
+ ],
+ "switch": {}
+}

@@ -132,6 +132,65 @@ test("story: the platform cannot finish the repository; the app is still live an
   assert.equal(l.state, "handed-over", "the pass after the credential is connected creates, files and hands over"); assert.equal(l.waiting_on, null);
 });
 
+// The failure branches a visitor can meet. Each must end in plain words with the system still acting: none is a dead end, none hands them a task.
+const DEV_WORDS = /terminal|command line|api key|token|secret|wrangler|git clone|credential|admin-app|code-app|gate |HTTP \d|upload:|workflow|exceeded|quota/i;
+test("story: the host has no room for the app's own system; the page stays live, it says so plainly and the next pass finishes", async () => {
+  const w = await world(), { id, cookie } = await submit(w, IDEA);
+  let room = false;
+  const deploySeed = async (list) => list.map((x) => (room ? { live_ok: true, modules: 40, url: "https://ultrastable-seed-" + x.slug + ".ultrastable.workers.dev" } : { live_ok: false, error: "upload: [{\"code\":10037,\"message\":\"You have exceeded the limit of 100 Workers\"}]" }));
+  const pass = () => L.run({ site: w.internal, deploySeed, cfg, base, log() {} });
+  let out = await pass();
+  assert.match(out[0].error, /exceeded the limit/, "the platform's own record keeps what Cloudflare answered");
+  let l = await (await w.call("/s/" + id + "/launch")).json();
+  assert.equal(l.system, null); assert.ok(l.waiting_on && !DEV_WORDS.test(l.waiting_on), "plain words: " + l.waiting_on); assert.match(l.waiting_on, /tried again|try again/); assert.equal(l.manual_steps, 0);
+  const page = await (await w.call("/s/" + id + "/own", { headers: { cookie } })).text();
+  assert.ok(page.includes("Your app is live") && !/exceeded|10037|upload:/.test(page));
+  assert.equal((await w.call("/s/" + id)).status, 200, "the page they made is still served");
+  room = true; out = await pass();
+  l = await (await w.call("/s/" + id + "/launch")).json();
+  assert.ok(l.system && !out[0].error && l.waiting_on === null, "the pass after room frees up deploys it with nobody asking");
+});
+test("story: every place is taken, or GitHub refuses; what the visitor can read never carries backend words", async () => {
+  const w = await world({ admin: false }), { id } = await submit(w, IDEA);
+  await w.pass();
+  const l = await (await w.call("/s/" + id + "/launch")).json();
+  assert.equal(l.state, "waiting"); assert.ok(l.waiting_on && !DEV_WORDS.test(l.waiting_on), l.waiting_on); assert.match(l.waiting_on, /try again every day/);
+  const { plainWaiting } = await import("./graduate.js");
+  for (const raw of ["all 20 places for hosted apps are taken; the next one frees up when an app is handed over or retired", "the platform cannot finish the repository yet: code-app-scope (gate visitor-app-repos)", "a step failed on our side and is retried on the next run", "anything new the launcher may write"]) {
+    const say = plainWaiting(raw); assert.ok(say && !DEV_WORDS.test(say) && /do not need to do anything/.test(say), raw + " -> " + say);
+  }
+});
+test("story: the model is unavailable when they type the idea; the idea is kept and the page is built later with nobody typing it again", async () => {
+  const w = await world(); let up = false; const good = w.env.AI.run;
+  w.env.AI = { run: async (...a) => { if (!up) throw new Error("model unavailable"); return good(...a); } };
+  const r = await w.call("/api/idea", { method: "POST", body: form({ idea: IDEA, profile: "{}" }), headers: { accept: "application/json" } }), { id } = await r.json();
+  let st; for (let i = 0; i < 5; i++) st = (await (await w.call("/s/" + id + "/status")).json()).state;
+  assert.equal(st, "ready", "a first build always yields a page: with no model, a draft from the visitor's own words");
+  const first = await (await w.call("/s/" + id)).text();
+  assert.match(first, /first draft of this site/);
+  assert.ok(!DEV_WORDS.test(first.replace(/<[^>]+>/g, " ")), "the draft says nothing in developer words");
+  // nobody comes back: the daily launcher queues it again and reads its status once, which builds it
+  up = true;
+  const out = await L.run({ site: w.internal, deploySeed: async () => [], cfg, base, log() {}, poke: async (x) => { await w.call("/s/" + x + "/status"); } });
+  assert.match(out[0].steps[0], /queued again/);
+  assert.equal((await (await w.call("/s/" + id + "/status")).json()).state, "ready");
+  assert.match(await (await w.call("/s/" + id)).text(), /Policy atlas/);
+  // and when they do come back to the draft after a while, the visit itself builds the full page
+  const w2 = await world(); w2.env.AI = { run: async () => { throw new Error("model unavailable"); } };
+  const id2 = (await (await w2.call("/api/idea", { method: "POST", body: form({ idea: IDEA, profile: "{}" }), headers: { accept: "application/json" } })).json()).id;
+  for (let i = 0; i < 5; i++) await w2.call("/s/" + id2 + "/status");
+  assert.equal(w2.m.get("state:" + id2), "ready"); assert.ok(w2.m.get("draft:" + id2), "the page is the draft, and marked as one");
+  w2.m.set("since:" + id2, String(Date.now() - 3600e3)); w2.env.AI = { run: good };
+  for (let i = 0; i < 3; i++) await w2.call("/s/" + id2 + "/make");
+  assert.equal(w2.m.get("state:" + id2), "ready"); assert.ok(!w2.m.get("draft:" + id2), "the draft was replaced by the built page");
+  assert.match(await (await w2.call("/s/" + id2)).text(), /Policy atlas/);
+});
+test("story: taking it over needs no GitHub knowledge; saying nothing keeps the app theirs and looked after", async () => {
+  const w = await world(), { id, cookie } = await submit(w, IDEA); await w.pass();
+  const page = (await (await w.call("/s/" + id + "/own", { headers: { cookie } })).text());
+  assert.match(page, /This is optional: with no GitHub name the app stays yours at this address/);
+  assert.match(page, /There is no code for you to write and no password to keep/);
+});
 test("story: the code app does not cover the new repository; it is created once, named as the thing waited on, and finished later", async () => {
   const w = await world({ covers: false }), { id } = await submit(w, IDEA);
   const out = await w.pass(); assert.equal(out[0].waiting_on, "code-app-scope"); assert.equal(w.repos.size, 1);
@@ -160,6 +219,20 @@ test("story: the app's own system ships to its own repository with a token only 
   assert.equal(t.ok, true); assert.equal(t.token, "scoped:" + l.repo.split("/")[1], "one hour, one repository");
   const r = await w.ghFetch("https://api.github.com/repos/" + l.repo + "/contents/app/notes.md", { method: "PUT", headers: { authorization: "Bearer code-token" }, body: JSON.stringify({ content: Buffer.from("x").toString("base64") }) });
   assert.equal(r.status, 201);
+});
+
+test("story: a standing seed gets a token for its own repository and no other, with nobody connecting anything", async () => {
+  const { seedRepoOf } = await import("./deployer.js"), w = await world();
+  assert.equal(seedRepoOf("ultrastable-seed-second-tenant"), "ultrastable/second-tenant");
+  for (const n of ["ultrastable-seed-ultrastable", "ultrastable-seed-ops", "ultrastable-seed-app-0123456789", "ultrastable-site"]) assert.equal(seedRepoOf(n), null, n);
+  const ask = (repo, key) => w.env.TICK.fetch(new Request("https://tick.internal/host/app-token", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ repo, key }) }));
+  const own = "ultrastable/second-tenant", r = await ask(own, await siteHostKey(w.KEY, own));
+  assert.equal(r.status, 200); assert.equal((await r.json()).token, "scoped:second-tenant");
+  assert.equal((await ask("ultrastable/ultrastable", await siteHostKey(w.KEY, "ultrastable/ultrastable"))).status, 404, "never a core repository");
+  assert.equal((await ask("ultrastable/unlearn", await siteHostKey(w.KEY, own))).status, 404, "a seed's key opens only its own repository");
+  const inst = JSON.parse(readFileSync(new URL("../instances/second-tenant/instance.json", import.meta.url), "utf8"));
+  assert.equal(inst.repos.canonical, own, "the manifest names the seed's own repository, so deploy-seed binds the route");
+  assert.match(readFileSync(new URL("../deploy/deploy-seed.mjs", import.meta.url), "utf8"), /ai: true, host_repo: ownRepo\(slug\)/);
 });
 
 test("story: more ideas arrive than there are places; nobody is dropped and nothing is deployed past the limit", async () => {

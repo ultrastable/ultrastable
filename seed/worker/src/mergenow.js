@@ -11,6 +11,7 @@
 // Every call is counted against the invocation's subrequest budget (Workers Free: 50 per invocation).
 import { notGreen } from './greenguard.js';
 import { GENERATED } from './generated.js';
+import { ghFetch, mergedAnyway } from './ghfetch.js';  // GH-RETRY-1
 
 const API = 'https://api.github.com';
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
@@ -20,7 +21,7 @@ export function makeGh(f, token, cap = 40) {
   const gh = async (method, path, body) => {
     if (calls >= cap) return { ok: false, status: 0, json: null, stopped: true };
     calls++;
-    const r = await f(API + path, { method, headers: { authorization: 'Bearer ' + token, accept: 'application/vnd.github+json', 'user-agent': 'ultrastable-mergenow', 'content-type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
+    const r = await ghFetch(f, API + path, { method, headers: { authorization: 'Bearer ' + token, accept: 'application/vnd.github+json', 'user-agent': 'ultrastable-mergenow', 'content-type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
     const t = await r.text(); let json = null; try { json = t ? JSON.parse(t) : null; } catch { json = t; }
     return { ok: r.ok, status: r.status, json };
   };
@@ -126,6 +127,7 @@ export async function mergeNow({ token, repo, numbers = null, fetch: f = fetch, 
     const hold = await notGreen(f, token, repo, d.head.sha, (ff, t, m, path) => gh(m, path));  // GREEN-GUARD-1
     if (hold) { out.held.push(`${tag} ${hold}`); continue; }
     const m = await gh('PUT', `/repos/${repo}/pulls/${n}/merge`, { merge_method: 'squash', sha: d.head.sha });
+    if (!m.ok && !m.stopped && await mergedAnyway(gh, repo, n, m.status)) m.ok = true;  // GH-RETRY-1
     (m.ok ? out.merged : out.errors).push(m.ok ? tag : `${tag} merge ${m.status} ${(m.json && m.json.message || '').slice(0, 80)}`);
   }
   out.calls = gh.calls();

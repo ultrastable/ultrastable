@@ -2,7 +2,7 @@
 // Cron fires runTick; GET /health shows the last tick's four-line report.
 // Standard issue: first-party web analytics (analytics/analytics.js): /a.js beacon, /a/e collector, GET /api/analytics (bearer ANALYTICS_TOKEN).
 import { paced } from './pace.js';
-import { discoverRoute, heartbeat as directoryHeartbeat } from './discover.js';  // DISCOVER-1
+import { footerHtml, discoverRoute, seedStatements, seedJsonLd, heartbeat as directoryHeartbeat } from './discover.js';  // DISCOVER-1
 import { withKnobs, readGoals, registerTenant, reportReadings, knobValues } from './goals.js';  // GOALS-1
 import { tune } from './roi.js';  // BOUNDARIES-1
 import { runTick, lastTickForHealth, METRICS, ensureItem } from './tick.js';
@@ -66,6 +66,7 @@ import { createHosts, cloudflareHost, githubActionsHost, gcpHost, reporting, onP
 import { beat, watch, readPulse, failed, HEAVY_CADENCE_MIN } from './pulse.js';
 import { decide, healthView, readState } from './cutover.js';
 import { handleAppHost } from './apprepos.js';
+import { reconcileVisibility, pulseTenants } from './declared.js';  // DECLARED-LIVE-1
 import { readIgnition } from './ignition.js';
 import { loopHealth } from './critloop.js';
 import { routeEvent, verifySignature, EVENT_TABLE } from './events.js';
@@ -113,7 +114,7 @@ export default {
     const cut = await decide(env.DB, env, { githubOk }).catch(e => ({ run: (env.SLOT || 'primary') !== 'standby', notes: ['cutover check failed: ' + String(e && e.message).slice(0, 160)] }));
     await beat(env.DB, 'cutover', async () => ({ run: cut.run, slot: cut.slot, epoch: cut.epoch, promoted: Boolean(cut.promoted), notes: cut.notes })).catch(e => console.error('cutover beat', e && e.message));
     if (!cut.run) { if (env.SLOT === 'standby' || cut.slot !== 'primary') ctx.waitUntil(refreshDue(env.DB, env).catch(() => null)); return; }
-    ctx.waitUntil(directoryHeartbeat(env, config).then(r => { if (r.sent) console.log('directory heartbeat', r.status); }).catch(e => console.error('directory heartbeat', e && e.message)));  // DISCOVER-1: daily, opt-out-able
+    ctx.waitUntil(directoryHeartbeat(env, config).then(r => { if (r.sent) console.log('directory heartbeat', r.status, r.why || ''); if (r.stateError) console.error('directory registration state', r.stateError); }).catch(e => console.error('directory heartbeat', e && e.message)));  // DISCOVER-1: daily and from birth (BOOT-4), opt-out-able
     const gov = await aiFor(env);
     if (gov.state) console.log('budget', JSON.stringify({ mode: gov.state.mode, why: gov.state.why, neurons_today: Math.round(gov.state.usage.ai_neurons_today), cap: gov.state.allowance.ai_neurons_day }));
     const caps = capsFor(planOf(config, env));  // PLAN-1: paid plan, 1,000 planned subrequests and no rotation
@@ -155,6 +156,10 @@ export default {
       await b('progress', () => progressStep({ db: env.DB, config, token, ensureItem }));  // PROGRESS-1: release cadence monitor; a slow system has its producers dispatched, a stalled one files STALL-<system>
       await b('freshness', () => watchFreshness({ token, repo: main, siteUrl: env.PUBLIC_ORIGIN || 'https://ultrastable.io' }));  // LIVE-FRESH-2: a stale published snapshot re-dispatches its own publisher
       if (new Date().getUTCMinutes() % 30 < 10) await b('tenant-deploy', () => watchTenantDeploys({ token, repo: main }));  // TENANT-DEPLOY-1: a tenant repository's merge ships within the hour (twice an hour, ~4 subrequests)
+      if (new Date().getUTCMinutes() < 10) {  // DECLARED-LIVE-1: hourly, from this one cron
+        await b('tenant-pulse', async () => { const r = await pulseTenants({ targets: config.tenant_pulse || [] }); await declaredItems(env.DB, 'PULSE', r.failed, (config.tenant_pulse || []).map(x => x.id)); return r; });  // every tenant back end has a second route to run besides its own cron
+        await b('repo-visibility', async () => { const a = await getToken(env.DB, env, tenant, 'github-admin').catch(() => null); const r = await reconcileVisibility({ token: a && a.ok ? a.token : '', repos: config.repo_visibility || [] }); await declaredItems(env.DB, 'VIS', r.status === 'drift' ? r.drift.filter(d => !r.fixed.some(f => d.startsWith(f + ':'))) : [], (config.repo_visibility || []).map(x => x.repo)); return r; });  // declared visibility wins over drift
+      }
       step('executor', async () => { const r = await runExecutor({ ...env, TENANT: env.TENANT || config.org_slug, AI: gov.ai || undefined, GITHUB_DISPATCH_TOKEN: token || env.GITHUB_DISPATCH_TOKEN, GITHUB_REPO: env.GITHUB_REPO || repos[0] }); await noteExecutor(env.DB, r); return r; });
       step('gate', async () => { const g = await runGate({ token, repos }); await gateCard(env.DB, g, { origin: env.PUBLIC_ORIGIN || '' }); return g; });  // ZERO-MINUTES-1, Q-GATE-403
       const ghBudget = githubBudget(env.GITHUB_CALLS_PER_TICK || config.github_calls_per_tick);  // GITHUB-BUDGET-1: one GitHub call budget for the lane and the handoffs of this tick (default 40)
@@ -331,7 +336,7 @@ export default {
     }
     if (url.pathname === '/' && request.method === 'GET' && env.PUBLIC_HEALTH_ONLY === '1') {  // FULLSTACK-1: a health-only system still has a public front end
       let last; try { last = await lastTickForHealth(env.DB); } catch (e) { return d1Unavailable(e); }
-      return publicPage({ name: config.org_slug, last, ignition: await readIgnition(env.DB).catch(() => null) });
+      return publicPage({ name: config.org_slug, last, ignition: await readIgnition(env.DB).catch(() => null), footer: footerHtml(env, config), statements: seedStatements(env, config, url), head: seedJsonLd(env, config, url) });
     }
     if (url.pathname === '/health') {
       if (halted(config, env)) return Response.json({ ok: true, halted: true, org: config.org_slug, why: 'HALT-1: the owner stopped every loop; pages keep serving' });
@@ -396,3 +401,14 @@ function presence(env) {
 
 const lastTick = db => db.prepare(
   `SELECT id, started_at, finished_at, steps_completed, steps_total, report, errors FROM tick_runs ORDER BY id DESC LIMIT 1`).first();
+
+// DECLARED-LIVE-1: one item per failing target, closed by the next reading that finds it in order. Lines start with "<id>:".
+async function declaredItems(db, prefix, failing, all) {
+  const bad = new Map(failing.map(l => [String(l).split(':')[0], String(l)]));
+  for (const id of all) {
+    const item = `${prefix}-${String(id).replace(/[^A-Za-z0-9-]+/g, '-')}`;
+    if (bad.has(id)) await ensureItem(db, { id: item, kind: 'fix', owner_role: 'operations', priority: 1, title: `${prefix === 'PULSE' ? 'Tenant back end did not answer its hourly pulse' : 'Repository visibility drifted from its declaration'}: ${bad.get(id)}`.slice(0, 400),
+      done_check: `the next ${prefix === 'PULSE' ? 'tenant-pulse' : 'repo-visibility'} pass reads ${id} in order`, closing_probe: `declared:${prefix}:${id}` }).catch(e => console.error('declared item', e && e.message));
+    else await db.prepare(`UPDATE items SET status='done', disposition=?, updated_at=? WHERE id=? AND status NOT IN ('done','superseded','cancelled')`).bind(`probe green: declared:${prefix}:${id}`, new Date().toISOString(), item).run().catch(() => null);
+  }
+}

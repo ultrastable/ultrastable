@@ -1,0 +1,133 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/claim-code.schema.json",
+ "title": "Claim to code bindings (WORDS-MATCH-CODE-1)",
+ "type": "object",
+ "required": [
+  "id",
+  "rule",
+  "owner",
+  "scan_globs",
+  "skip",
+  "min_len",
+  "claim_patterns",
+  "claims",
+  "baseline",
+  "closing_probe"
+ ],
+ "properties": {
+  "rule": {
+   "type": "string",
+   "minLength": 1
+  },
+  "id": {
+   "type": "string",
+   "pattern": "^[A-Z][A-Z0-9-]+-\\d+$"
+  },
+  "owner": {
+   "type": "string",
+   "minLength": 1
+  },
+  "scan_globs": {
+   "type": "array",
+   "items": {
+    "type": "string",
+    "minLength": 1
+   },
+   "minItems": 1
+  },
+  "skip": {
+   "type": "array",
+   "items": {
+    "type": "string",
+    "minLength": 1
+   }
+  },
+  "min_len": {
+   "type": "integer",
+   "minimum": 1
+  },
+  "claim_patterns": {
+   "type": "array",
+   "items": {
+    "type": "string",
+    "minLength": 1
+   },
+   "minItems": 1
+  },
+  "claims": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "id",
+     "source",
+     "quote",
+     "probe"
+    ],
+    "properties": {
+     "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9.-]*$"
+     },
+     "source": {
+      "type": "string",
+      "minLength": 1
+     },
+     "quote": {
+      "type": "string",
+      "minLength": 1
+     },
+     "probe": {
+      "type": "object",
+      "required": [
+       "file",
+       "contains"
+      ],
+      "properties": {
+       "file": {
+        "type": "string",
+        "minLength": 1
+       },
+       "contains": {
+        "type": "string",
+        "minLength": 1
+       }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+       "^_": true
+      }
+     }
+    },
+    "additionalProperties": false,
+    "patternProperties": {
+     "^_": true
+    }
+   }
+  },
+  "baseline": {
+   "type": "array",
+   "items": {
+    "type": "string",
+    "minLength": 1
+   },
+   "uniqueItems": true
+  },
+  "closing_probe": {
+   "type": "string",
+   "minLength": 1
+  },
+  "skip_reasons": {
+   "type": "object",
+   "additionalProperties": {
+    "type": "string",
+    "minLength": 1
+   }
+  }
+ },
+ "additionalProperties": false,
+ "patternProperties": {
+  "^_": true
+ }
+}

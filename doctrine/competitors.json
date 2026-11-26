@@ -5,30 +5,279 @@
  "cadence_days": 7,
  "max_experiments_per_run": 3,
  "stall_days": 21,
- "metric_for": {"mcp-server": "agent_hits_7d", "idea-to-deploy": "pilot_page_views_7d", "existing-repo-adoption": "pageviews_7d", "default": "pageviews_7d"},
+ "metric_for": {
+  "mcp-server": "agent_hits_7d",
+  "idea-to-deploy": "pilot_page_views_7d",
+  "existing-repo-adoption": "pageviews_7d",
+  "default": "pageviews_7d"
+ },
  "capabilities": [
-  {"id": "scheduled-agents", "what": "agents that run on a schedule or trigger with no person present", "component": "loops-autonomy", "rx": "\\b(schedul\\w+|cron|routines?|recurring)\\b", "ours": "file:.github/workflows/scout.yml"},
-  {"id": "autonomous-pr", "what": "agent opens, checks and merges its own pull request", "component": "code-repo", "rx": "\\b(pull requests?|open(s|ed)? a PR|auto-?merge)\\b", "ours": "grep:ops/executor-log.jsonl::\"result\": \"pr-opened\"", "gap": "executor-merged-pr"},
-  {"id": "multi-agent-roles", "what": "named sub-agents or roles with separate scopes", "component": "agents-roles", "rx": "\\b(sub-?agents?|multi-agent|custom agents?|agent teams?)\\b", "ours": "file:agents/roles/product-manager.md"},
-  {"id": "sandboxed-execution", "what": "code runs in an isolated sandbox", "component": "trust-permissions", "rx": "\\bsandbox\\w*", "ours": "file:doctrine/boundary.json"},
-  {"id": "spend-budgets", "what": "spend or usage limits per agent, user or group", "component": "trust-permissions", "rx": "\\b(budgets?|spend limits?|usage limits?|cost caps?)\\b", "ours": "file:seed/autonomy/policy.json"},
-  {"id": "permission-guardrails", "what": "permission modes, allowlists and guardrails on agent actions", "component": "trust-permissions", "rx": "\\b(permissions?|allowlist\\w*|guardrails?)\\b", "ours": "file:agents/autonomy-policy.json"},
-  {"id": "cross-model-review", "what": "a second model reviews or re-scores the first", "component": "verification", "rx": "\\b(code review|second model|cross-model|reviewer model|review agent)\\b", "ours": "file:foundation/rescore.py", "gap": "cross-model-rescoring"},
-  {"id": "mcp-server", "what": "exposes or consumes tools over the Model Context Protocol", "component": "agents-roles", "rx": "\\bMCP\\b", "ours": "grep:site/agentic.js::/mcp"},
-  {"id": "idea-to-deploy", "what": "plain-language prompt to a deployed app", "component": "idea-intake", "rx": "\\b(deploy\\w*|one-click|publish\\w*)\\b", "ours": "grep:site/worker.js::async function build"},
-  {"id": "existing-repo-adoption", "what": "works on an existing repository or codebase", "component": "code-repo", "rx": "\\b(existing (repo\\w*|codebase)|import\\w* (a |your )?(repo\\w*|github)|your repo\\w*)\\b", "ours": "file:foundation/adopt.py", "gap": "adopt-existing-repo"},
-  {"id": "self-hostable", "what": "can be run in the customer's own account", "component": "portability", "rx": "\\b(self-host\\w*|open[- ]source|your own (cloud|account|infrastructure))\\b", "ours": "file:docs/FOUNDATION.md"},
-  {"id": "observability", "what": "traces, logs and telemetry of agent runs", "component": "operations", "rx": "\\b(traces?|observability|telemetry|audit logs?)\\b", "ours": "file:seed/analytics/analytics.js"},
-  {"id": "other-cloud", "what": "runs on more than one cloud", "component": "portability", "rx": "\\b(AWS|GCP|Azure|multi-cloud|Vercel)\\b", "ours": "file:docs/bootstrapping/other-cloud-proof.json", "gap": "other-cloud-proof"}
+  {
+   "id": "scheduled-agents",
+   "what": "agents that run on a schedule or trigger with no person present",
+   "component": "loops-autonomy",
+   "rx": "\\b(schedul\\w+|cron|routines?|recurring)\\b",
+   "ours": "file:.github/workflows/scout.yml"
+  },
+  {
+   "id": "autonomous-pr",
+   "what": "agent opens, checks and merges its own pull request",
+   "component": "code-repo",
+   "rx": "\\b(pull requests?|open(s|ed)? a PR|auto-?merge)\\b",
+   "ours": "grep:ops/executor-log.jsonl::\"result\": \"pr-opened\"",
+   "gap": "executor-merged-pr"
+  },
+  {
+   "id": "multi-agent-roles",
+   "what": "named sub-agents or roles with separate scopes",
+   "component": "agents-roles",
+   "rx": "\\b(sub-?agents?|multi-agent|custom agents?|agent teams?)\\b",
+   "ours": "file:agents/roles/product-manager.md"
+  },
+  {
+   "id": "sandboxed-execution",
+   "what": "code runs in an isolated sandbox",
+   "component": "trust-permissions",
+   "rx": "\\bsandbox\\w*",
+   "ours": "file:doctrine/boundary.json"
+  },
+  {
+   "id": "spend-budgets",
+   "what": "spend or usage limits per agent, user or group",
+   "component": "trust-permissions",
+   "rx": "\\b(budgets?|spend limits?|usage limits?|cost caps?)\\b",
+   "ours": "file:seed/autonomy/policy.json"
+  },
+  {
+   "id": "permission-guardrails",
+   "what": "permission modes, allowlists and guardrails on agent actions",
+   "component": "trust-permissions",
+   "rx": "\\b(permissions?|allowlist\\w*|guardrails?)\\b",
+   "ours": "file:agents/autonomy-policy.json"
+  },
+  {
+   "id": "cross-model-review",
+   "what": "a second model reviews or re-scores the first",
+   "component": "verification",
+   "rx": "\\b(code review|second model|cross-model|reviewer model|review agent)\\b",
+   "ours": "file:foundation/rescore.py",
+   "gap": "cross-model-rescoring"
+  },
+  {
+   "id": "mcp-server",
+   "what": "exposes or consumes tools over the Model Context Protocol",
+   "component": "agents-roles",
+   "rx": "\\bMCP\\b",
+   "ours": "grep:site/agentic.js::/mcp"
+  },
+  {
+   "id": "idea-to-deploy",
+   "what": "plain-language prompt to a deployed app",
+   "component": "idea-intake",
+   "rx": "\\b(deploy\\w*|one-click|publish\\w*)\\b",
+   "ours": "grep:site/worker.js::async function build"
+  },
+  {
+   "id": "existing-repo-adoption",
+   "what": "works on an existing repository or codebase",
+   "component": "code-repo",
+   "rx": "\\b(existing (repo\\w*|codebase)|import\\w* (a |your )?(repo\\w*|github)|your repo\\w*)\\b",
+   "ours": "file:foundation/adopt.py",
+   "gap": "adopt-existing-repo"
+  },
+  {
+   "id": "self-hostable",
+   "what": "can be run in the customer's own account",
+   "component": "portability",
+   "rx": "\\b(self-host\\w*|open[- ]source|your own (cloud|account|infrastructure))\\b",
+   "ours": "file:docs/FOUNDATION.md"
+  },
+  {
+   "id": "observability",
+   "what": "traces, logs and telemetry of agent runs",
+   "component": "operations",
+   "rx": "\\b(traces?|observability|telemetry|audit logs?)\\b",
+   "ours": "file:seed/analytics/analytics.js"
+  },
+  {
+   "id": "other-cloud",
+   "what": "runs on more than one cloud",
+   "component": "portability",
+   "rx": "\\b(AWS|GCP|Azure|multi-cloud|Vercel)\\b",
+   "ours": "file:docs/bootstrapping/other-cloud-proof.json",
+   "gap": "other-cloud-proof"
+  }
  ],
  "competitors": [
-  {"id": "github-copilot-agent", "name": "GitHub Copilot coding agent", "sources": [{"url": "https://docs.github.com/copilot/concepts/coding-agent/about-copilot-coding-agent", "kind": "page"}]},
-  {"id": "claude-code", "name": "Claude Code (routines and releases)", "sources": [{"url": "https://code.claude.com/docs/en/routines.md", "kind": "page"}, {"url": "https://github.com/anthropics/claude-code/releases.atom", "kind": "atom"}]},
-  {"id": "cloudflare-vibesdk", "name": "Cloudflare VibeSDK", "sources": [{"url": "https://blog.cloudflare.com/deploy-your-own-ai-vibe-coding-platform/", "kind": "page"}]},
-  {"id": "app-builders", "name": "Lovable, Bolt.new, v0, Replit, Base44", "sources": [{"url": "https://www.ionos.com/digitalguide/websites/web-development/best-ai-app-builder.md", "kind": "page"}]},
-  {"id": "factory", "name": "Factory", "sources": [{"url": "https://factory.com/news/factory-is-ga", "kind": "page"}]},
-  {"id": "openai-codex", "name": "OpenAI Codex", "sources": [{"url": "https://github.com/openai/codex/releases.atom", "kind": "atom"}]},
-  {"id": "openhands", "name": "OpenHands", "sources": [{"url": "https://github.com/All-Hands-AI/OpenHands/releases.atom", "kind": "atom"}]},
-  {"id": "langgraph", "name": "LangGraph", "sources": [{"url": "https://github.com/langchain-ai/langgraph/releases.atom", "kind": "atom"}]}
- ]
+  {
+   "id": "github-copilot-agent",
+   "name": "GitHub Copilot coding agent",
+   "sources": [
+    {
+     "url": "https://docs.github.com/copilot/concepts/coding-agent/about-copilot-coding-agent",
+     "kind": "page"
+    }
+   ],
+   "plug_in": {
+    "role": "executor",
+    "status": "staged",
+    "cost": "needs a Copilot seat on the org",
+    "default": "own executor on free models",
+    "probe": "grep:foundation/agents.py::copilot",
+    "source": "https://docs.github.com/copilot/concepts/coding-agent/about-copilot-coding-agent"
+   }
+  },
+  {
+   "id": "claude-code",
+   "name": "Claude Code (routines and releases)",
+   "sources": [
+    {
+     "url": "https://code.claude.com/docs/en/routines.md",
+     "kind": "page"
+    },
+    {
+     "url": "https://github.com/anthropics/claude-code/releases.atom",
+     "kind": "atom"
+    }
+   ]
+  },
+  {
+   "id": "cloudflare-vibesdk",
+   "name": "Cloudflare VibeSDK",
+   "sources": [
+    {
+     "url": "https://blog.cloudflare.com/deploy-your-own-ai-vibe-coding-platform/",
+     "kind": "page"
+    }
+   ]
+  },
+  {
+   "id": "app-builders",
+   "name": "Lovable, Bolt.new, v0, Replit, Base44",
+   "sources": [
+    {
+     "url": "https://www.ionos.com/digitalguide/websites/web-development/best-ai-app-builder.md",
+     "kind": "page"
+    }
+   ]
+  },
+  {
+   "id": "factory",
+   "name": "Factory",
+   "sources": [
+    {
+     "url": "https://factory.com/news/factory-is-ga",
+     "kind": "page"
+    }
+   ]
+  },
+  {
+   "id": "openai-codex",
+   "name": "OpenAI Codex",
+   "sources": [
+    {
+     "url": "https://github.com/openai/codex/releases.atom",
+     "kind": "atom"
+    }
+   ]
+  },
+  {
+   "id": "openhands",
+   "name": "OpenHands",
+   "sources": [
+    {
+     "url": "https://github.com/All-Hands-AI/OpenHands/releases.atom",
+     "kind": "atom"
+    }
+   ]
+  },
+  {
+   "id": "langgraph",
+   "name": "LangGraph",
+   "sources": [
+    {
+     "url": "https://github.com/langchain-ai/langgraph/releases.atom",
+     "kind": "atom"
+    }
+   ]
+  },
+  {
+   "id": "greptile",
+   "name": "Greptile",
+   "sources": [
+    {
+     "url": "https://www.greptile.com/",
+     "kind": "page"
+    },
+    {
+     "url": "https://www.greptile.com/open-source",
+     "kind": "page"
+    }
+   ],
+   "plug_in": {
+    "role": "reviewer",
+    "status": "staged",
+    "cost": "paid per seat; free program is for open-source projects, and our repos are source-available, not OSI open source, so we likely do not qualify",
+    "default": "in-repo reviewer and red-team checks in the merge lane",
+    "probe": "grep:.github/workflows/checks.yml::greptile",
+    "source": "https://www.greptile.com/open-source"
+   }
+  },
+  {
+   "id": "coderabbit",
+   "name": "CodeRabbit",
+   "sources": [
+    {
+     "url": "https://docs.coderabbit.ai/management/plans",
+     "kind": "page"
+    }
+   ],
+   "plug_in": {
+    "role": "reviewer",
+    "status": "staged",
+    "cost": "free Pro plan is offered to open-source projects; eligibility for a source-available licence is unconfirmed",
+    "default": "in-repo reviewer and red-team checks in the merge lane",
+    "probe": "file:.coderabbit.yaml",
+    "source": "https://docs.coderabbit.ai/management/plans"
+   }
+  },
+  {
+   "id": "devin",
+   "name": "Devin (Cognition)",
+   "sources": [
+    {
+     "url": "https://www.cognition.ai/blog/new-self-serve-plans-for-devin",
+     "kind": "page"
+    }
+   ],
+   "plug_in": {
+    "role": "executor",
+    "status": "declined",
+    "cost": "paid self-serve plans; no free tier found",
+    "default": "own executor on free models",
+    "probe": "grep:foundation/agents.py::devin",
+    "source": "https://www.cognition.ai/blog/new-self-serve-plans-for-devin",
+    "reason": "no free tier; revisit when one exists"
+   }
+  },
+  {
+   "id": "pr-agent",
+   "name": "PR-Agent (open source, self-hosted)",
+   "sources": [
+    {
+     "url": "https://github.com/The-PR-Agent/pr-agent",
+     "kind": "page"
+    }
+   ],
+   "plug_in": {
+    "role": "reviewer",
+    "status": "staged",
+    "cost": "self-hosted as a GitHub Action, no licence condition on the repo it reviews; model calls can run on GitHub Models through the built-in token",
+    "default": "in-repo reviewer and red-team checks in the merge lane",
+    "probe": "grep:.github/workflows/checks.yml::pr-agent",
+    "source": "https://github.blog/ai-and-ml/llms/solving-the-inference-problem-for-open-source-ai-projects-with-github-models/"
+   }
+  }
+ ],
+ "_plug_in_doc": "BORROW-1 (Rowan, 2026-11-26): where a competitor does one step better than we do, plug it in as a worker instead of rebuilding it. A competitor's plug_in names the role it would fill, its status (staged until an account exists, live once a probe shows it running, declined with a reason), the default in effect meanwhile (always our own worker, so nothing waits) and a file:/grep: probe that passes only when it is wired in. Free tiers only, or cost inside the soft daily throttle. rnd --check validates every row."
 }

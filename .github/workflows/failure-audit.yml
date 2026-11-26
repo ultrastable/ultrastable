@@ -1,6 +1,6 @@
 name: failure-audit
 # FAILURE-AUDIT-1 + FAILURE-RESOLVE-1: the system audits its own failure modes and hands every finding to its own queue. Daily only; the primary clock is the Cloudflare tick.
-# budget: ~9 min x 30 per month
+# budget: ~10 min x 30 per month, plus ~25 min on Sundays for the shifted-clock test run (REDTEAM-1)
 # trigger: daily and dispatch; failure modes drift over days, so a faster event buys nothing
 # free-alternative: run `python3 -m foundation failure_audit --run` from a cloud-hosted agent session or the Cloudflare cron worker
 # Runs doctrine/detectors.json on main's own files. The append-only ledger (ops/failure-audit.jsonl) lives on branch audit-evidence, which the next
@@ -13,6 +13,8 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
+  actions: write  # SILENT-FAIL-1: the actions-stuck detector approves or dispatches runs stuck at action_required; DRIFT-GUARD-1: dg-triggers dispatches a workflow whose matching push on main started no run
+  issues: read
   pull-requests: write  # scripts/land_data.py falls back to a pull request when the main writer is refused
   id-token: write  # MAIN-WRITER-1: tools/push_main.py presents the run's OIDC token
 concurrency:
@@ -22,7 +24,7 @@ jobs:
   audit:
     if: ${{ vars.HALT != '1' }}  # HALT-1: the owner's halt (repository variable HALT=1) stops every job
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -46,20 +48,33 @@ jobs:
           fi
       - name: Mine every failure record; register new modes, escalate recurrence (FAILMINE-1)
         run: python3 -m foundation failmine --run --apply
+      - name: Red-team the system's own blind spots against production (REDTEAM-1); Sundays also shift the clock to find date bombs
+        env:
+          REDTEAM_LIVE: "1"
+          GH_TOKEN: ${{ secrets.LANE_PAT || github.token }}  # the lane's token reads the private ops repository; the run's own token reads only this one
+        run: |
+          if [ "$(date -u +%u)" = "7" ]; then python3 -m foundation redteam --run --apply --chaos; else python3 -m foundation redteam --run --apply; fi
       - run: python3 -m foundation failure_audit --run
         continue-on-error: true
+        env:  # DRIFT-GUARD-1: the live detectors (visibility, crons, accounts, triggers) read with these; without them they report unmeasured
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       - name: Ledger to the evidence branch
         run: |
           git config user.name "ultrastable-audit"
           git config user.email "actions@users.noreply.github.com"
-          git add ops/failure-audit.jsonl
-          if git diff --cached --quiet; then echo "no ledger change"; else
-            git commit -q -m "failure-audit: ledger"
-            git push -q origin HEAD:refs/heads/audit-evidence --force
-            git reset -q --mixed HEAD~1
+          # SILENT-FAIL-1 root cause: the evidence commit used to sit on top of main, so any change to a workflow file on main made the push look like a workflow
+          # update, which a GitHub App token refuses (run 45694466342). The commit now holds only the ledger, built with plumbing: no workflow file can ride along.
+          if [ -f ops/failure-audit.jsonl ]; then
+            blob=$(git hash-object -w ops/failure-audit.jsonl)
+            sub=$(printf '100644 blob %s\tfailure-audit.jsonl\n' "$blob" | git mktree)
+            tree=$(printf '040000 tree %s\tops\n' "$sub" | git mktree)
+            commit=$(git commit-tree "$tree" -m "failure-audit: ledger")
+            git push -q origin "$commit:refs/heads/audit-evidence" --force
           fi
       - name: Findings to main, where the executor takes them
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
         run: |
-          python3 scripts/land_data.py "failure-audit: file and close failure-mode items (FAILURE-RESOLVE-1)" docs/issues ops/failure-audit-state.json ops/failmine.json site/failmine-data.js doctrine/registers.json doctrine/detectors.json
+          python3 scripts/land_data.py "failure-audit: file and close failure-mode items (FAILURE-RESOLVE-1)" docs/issues ops/fleet-contract.json ops/failure-audit-state.json ops/failmine.json site/failmine-data.js doctrine/registers.json doctrine/detectors.json

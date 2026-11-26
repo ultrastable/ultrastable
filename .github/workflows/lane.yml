@@ -43,6 +43,11 @@ jobs:
           LANE_APP_PRIVATE_KEY: ${{ secrets.LANE_APP_PRIVATE_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: bash scripts/lane.sh
+      - name: Every push workflow a merge touched runs (POSTMERGE-DISPATCH-1; GITHUB_TOKEN merges fire no push events)
+        if: ${{ !cancelled() }}
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+        run: python3 scripts/postmerge_dispatch.py --apply
       - name: No green PR stays open (LANE-WATCH-1)
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}

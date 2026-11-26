@@ -1,7 +1,7 @@
 {
- "at": "2026-11-25T20:05:47Z",
- "gaps": 5,
- "match_share": 0.99,
+ "at": "2026-11-26T06:36:41Z",
+ "gaps": 7,
+ "match_share": 0.987,
  "sources": {
   "changes": [
    {
@@ -156,14 +156,14 @@
     "drift": 0,
     "id": "claims-total",
     "ok": true,
-    "total": 388
+    "total": 425
    }
   ],
   "loops": [
    {
-    "detail": "0 of 91 second-order steps kept in 14 days",
+    "detail": "0 of 108 second-order steps kept in 14 days",
     "id": "second-loop-kept",
-    "judged": 91,
+    "judged": 108,
     "kept": 0,
     "ok": false
    }
@@ -516,6 +516,15 @@
     "unmeasured": []
    },
    {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "ADMIT-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
     "checks": 2,
     "external": [],
     "failing": [],
@@ -546,6 +555,89 @@
     "checks": 1,
     "external": [],
     "failing": [],
+    "id": "REPO-STANDARD-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "MANAGERS-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "FLEET-MAP-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "CLONE-PATH-1",
+    "missing": [
+     "org/owner-status.json"
+    ],
+    "ok": false,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "RULE-REFS-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 2,
+    "external": [],
+    "failing": [],
+    "id": "STANDARDS-FIRST-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "TENANT-STANDARD-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "LIVE-LINKS-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "FLEET-CONTRACT-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
     "id": "DECISIONS-1",
     "missing": [],
     "ok": true,
@@ -563,7 +655,7 @@
    {
     "checks": 0,
     "external": [
-     "tools/connect.mjs"
+     "tools/connections.mjs"
     ],
     "failing": [],
     "id": "CONNECT-1",
@@ -682,6 +774,69 @@
     "unmeasured": []
    },
    {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "REDTEAM-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "COLLISION-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "BLINDSPOT-RED-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "COLDSTART-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "WORK-NOT-PULSE-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "BOOT-ACCEPT-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "SYSTEM-SPEC-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
     "checks": 1,
     "external": [],
     "failing": [],
@@ -697,6 +852,36 @@
     "id": "CLOSED-LOOP-1",
     "missing": [],
     "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "NO-FABRICATION-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "SPEC-GATE-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 2,
+    "external": [],
+    "failing": [],
+    "id": "STANDARDS-1",
+    "missing": [
+     "worker/linked.js",
+     "ops/supply-chain.json"
+    ],
+    "ok": false,
     "unmeasured": []
    },
    {
@@ -837,7 +1022,7 @@
     "checks": 1,
     "external": [],
     "failing": [
-     "python3 -m foundation dispose --check: an open item is 78.5 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+     "python3 -m foundation dispose --check: an open item is 89.0 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
     ],
     "id": "DISPOSE-1",
     "missing": [],
@@ -910,20 +1095,20 @@
   },
   "claims": {
    "gaps": 0,
-   "total": 388
+   "total": 425
   },
   "loops": {
    "gaps": 1,
    "total": 1
   },
   "rules": {
-   "gaps": 2,
-   "total": 78
+   "gaps": 4,
+   "total": 98
   },
   "year": {
    "gaps": 1,
    "total": 2
   }
  },
- "total": 485
+ "total": 542
 }

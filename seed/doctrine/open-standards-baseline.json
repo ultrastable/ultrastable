@@ -1,0 +1,7 @@
+{
+  "$schema": "../schemas/doctrine.schema.json",
+  "_doc": "OPEN-STANDARDS-1 shrink-only baseline: files that predate the standard. Drain it; never add to it.",
+  "config": [],
+  "ledgers": [],
+  "extensions": []
+}

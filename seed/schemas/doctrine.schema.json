@@ -1,0 +1,7 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine.schema.json",
+  "title": "Ultrastable configuration or doctrine file (base contract)",
+  "description": "Every config file declares this (or a stricter schema) through its own $schema key. Stricter per-file schemas extend it.",
+  "type": "object"
+}

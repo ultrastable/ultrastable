@@ -1,0 +1,254 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/clocks.schema.json",
+ "title": "Loop clocks (CLOCKWORK-1)",
+ "type": "object",
+ "required": [
+  "_doc",
+  "version",
+  "account_id",
+  "clocks",
+  "chain",
+  "stages",
+  "escalation",
+  "catchup",
+  "settlement"
+ ],
+ "properties": {
+  "_doc": {
+   "type": "string",
+   "minLength": 1
+  },
+  "version": {
+   "type": "string",
+   "pattern": "^\\d+\\.\\d+\\.\\d+$"
+  },
+  "account_id": {
+   "type": "string",
+   "pattern": "^[0-9a-f]{32}$"
+  },
+  "clocks": {
+   "type": "array",
+   "items": {
+    "oneOf": [
+     {
+      "type": "object",
+      "required": [
+       "id",
+       "what",
+       "source",
+       "workflow",
+       "expected_interval_s",
+       "periodic"
+      ],
+      "properties": {
+       "id": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9-]*$"
+       },
+       "what": {
+        "type": "string",
+        "minLength": 1
+       },
+       "source": {
+        "const": "workflow"
+       },
+       "workflow": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9-]*$"
+       },
+       "expected_interval_s": {
+        "type": "integer",
+        "minimum": 60
+       },
+       "periodic": {
+        "type": "boolean"
+       },
+       "idle_when_no_work": {
+        "type": "boolean"
+       },
+       "event_driven": {
+        "type": "boolean"
+       }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+       "^_": true
+      }
+     },
+     {
+      "type": "object",
+      "required": [
+       "id",
+       "what",
+       "source",
+       "d1_id",
+       "table",
+       "column",
+       "expected_interval_s",
+       "periodic",
+       "replicas",
+       "health_urls"
+      ],
+      "properties": {
+       "id": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9-]*$"
+       },
+       "what": {
+        "type": "string",
+        "minLength": 1
+       },
+       "source": {
+        "const": "d1"
+       },
+       "d1_id": {
+        "type": "string",
+        "pattern": "^[0-9a-f-]{36}$"
+       },
+       "table": {
+        "type": "string",
+        "pattern": "^[a-z_]+$"
+       },
+       "column": {
+        "type": "string",
+        "pattern": "^[a-z_]+$"
+       },
+       "expected_interval_s": {
+        "type": "integer",
+        "minimum": 60
+       },
+       "periodic": {
+        "type": "boolean"
+       },
+       "replicas": {
+        "type": "array",
+        "items": {
+         "type": "object"
+        }
+       },
+       "health_urls": {
+        "type": "array",
+        "items": {
+         "type": "string",
+         "pattern": "^https://[^\\s]+$"
+        }
+       }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+       "^_": true
+      }
+     }
+    ]
+   },
+   "minItems": 1
+  },
+  "chain": {
+   "type": "object",
+   "required": [
+    "workflow",
+    "max_runs_per_day",
+    "backoff_after_failures"
+   ],
+   "properties": {
+    "workflow": {
+     "type": "string",
+     "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "max_runs_per_day": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "backoff_after_failures": {
+     "type": "integer",
+     "minimum": 1
+    }
+   }
+  },
+  "stages": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "id",
+     "what",
+     "source",
+     "sla_s"
+    ],
+    "properties": {
+     "what": {
+      "type": "string",
+      "minLength": 1
+     },
+     "source": {
+      "type": "string",
+      "minLength": 1
+     },
+     "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+     },
+     "sla_s": {
+      "type": "integer",
+      "minimum": 1
+     }
+    }
+   }
+  },
+  "escalation": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "missed",
+     "action",
+     "what"
+    ],
+    "properties": {
+     "action": {
+      "type": "string",
+      "minLength": 1
+     },
+     "what": {
+      "type": "string",
+      "minLength": 1
+     },
+     "missed": {
+      "type": "integer",
+      "minimum": 1
+     }
+    }
+   }
+  },
+  "catchup": {
+   "type": "object"
+  },
+  "settlement": {
+   "type": "object",
+   "required": [
+    "sla_hours",
+    "names",
+    "close_comment"
+   ],
+   "properties": {
+    "close_comment": {
+     "type": "string",
+     "minLength": 1
+    },
+    "sla_hours": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "names": {
+     "type": "array",
+     "items": {
+      "type": "string",
+      "minLength": 1
+     },
+     "minItems": 1
+    }
+   }
+  }
+ }
+}

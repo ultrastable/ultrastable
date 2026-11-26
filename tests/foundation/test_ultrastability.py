@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
-import json, shutil, sys, unittest
+import json, shutil, sys, tempfile, unittest
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _repo import scratch  # removed when the test ends
@@ -17,6 +17,10 @@ class T(unittest.TestCase):
         (self.d / "docs/issues").mkdir(parents=True)
         for f in ("doctrine/ultrastability.json", "doctrine/clocks.json", "doctrine/spinoff.json", "doctrine/priorities.json"):
             shutil.copy(REPO / f, self.d / f)
+        # SECOND-LOOP-2: the live loop tunes its own patience and settle window; the mechanism tests pin the values they were written for
+        doc = json.loads((self.d / "doctrine/ultrastability.json").read_text())
+        doc["patience_ticks"], doc["settle_ticks"] = 2, 3
+        (self.d / "doctrine/ultrastability.json").write_text(json.dumps(doc))
         (self.d / "ops").mkdir()
 
     def runs(self):
@@ -212,3 +216,82 @@ class UptimeUserAgent(unittest.TestCase):
             self.assertEqual(U._get("https://x.example/health"), 1.0)
         self.assertTrue(seen["ua"] and "urllib" not in seen["ua"].lower())
 
+
+
+class SecondLoop2(unittest.TestCase):
+    """SECOND-LOOP-2 and SPEC-GATE-1: the slow loop measured on itself, sensor faults held, items that cannot be misread."""
+
+    def test_common_mode_holds_identical_tenant_faults(self):
+        v = {"id": "uptime", "min": 0.99, "max": 1.0}
+        t = [(f"a{i}:uptime", v, 0.0) for i in range(4)] + [("p", {"id": "spend", "min": 0, "max": 1}, 2.0)]
+        self.assertEqual(u.common_mode(t), {f"a{i}:uptime" for i in range(4)})
+        t[0] = ("a0:uptime", v, 0.5)
+        self.assertEqual(u.common_mode(t), set())
+
+    def test_specgate_parts(self):
+        from foundation import specgate
+        good = ("**Done check:** cmd:python3 -m foundation x\n**Prediction:** spec.quality >= 0.9 within 72 h\n"
+                "**Out of scope:** bounds\n**Closing probe:** `python3 -m foundation x`")
+        self.assertEqual(specgate.missing(good), [])
+        self.assertEqual(set(specgate.missing("**Done check:** looks fine")), {"done", "predict", "scope", "proof"})
+
+    def test_second_loop_items_pass_the_gate(self):
+        from foundation import specgate
+        v = {"id": "spec_quality", "reading": "spec.quality", "min": 0.9, "max": None, "why": "w", "name": "n"}
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / "docs/issues").mkdir(parents=True)
+            iid = u._item(d, {"item_prefix": "Q-ULTRA"}, "spec_quality", v, 0, {"kind": "item", "what": "x", "labels": [], "workstream": "U"}, 0.0)
+            body = json.loads((Path(d) / "docs/issues" / (iid + ".json")).read_text())["body"]
+        self.assertEqual(specgate.missing(body), [])
+
+    def test_readiness_is_a_product(self):
+        c = u.load(REPO)
+        ids = [v["id"] for v in c["scopes"]["platform"]["variables"]]
+        last = {i: {"value": 1, "ok": True} for i in ids}
+        last["unattended_horizon"] = {"value": 730, "ok": True}
+        last["second_loop_keep_rate"] = {"value": 1.0, "ok": True}
+        self.assertEqual(u.readiness(REPO, last)["score"], 100)
+        last["second_loop_keep_rate"] = {"value": None, "ok": False}
+        self.assertLess(u.readiness(REPO, last)["score"], 100)
+
+
+class Lessons(unittest.TestCase):
+    """LESSONS-1: every lesson resolves to enforcing code or an open, spec-complete item."""
+
+    def test_repo_lessons_hold(self):
+        from foundation import lessons
+        self.assertEqual(lessons.check(REPO), [])
+
+    def test_unbound_lesson_fails(self):
+        from foundation import lessons
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / "doctrine").mkdir()
+            (Path(d) / "docs/issues").mkdir(parents=True)
+            (Path(d) / "doctrine/lessons.json").write_text(json.dumps({"lessons": [{"id": "x", "lesson": "l", "enforced_by": []}]}))
+            self.assertIn("x: bound to nothing and names no item", lessons.report(d)["errors"])
+
+    def test_a_shelved_item_still_tracks_its_lesson_and_a_fixed_one_without_enforcement_does_not(self):
+        from foundation import lessons
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / "doctrine").mkdir()
+            (Path(d) / "docs/issues").mkdir(parents=True)
+            (Path(d) / "doctrine/lessons.json").write_text(json.dumps({"lessons": [{"id": "x", "lesson": "l", "enforced_by": [], "item": "Q-LESSON-x"}]}))
+            item = Path(d) / "docs/issues/Q-LESSON-x.json"
+            for status, disp, held in (("open", "", True), ("closed", "**Disposition:** shelved (executor-failed, t, DISPOSE-1)", True),
+                                       ("closed", "**Disposition:** gate (owner-only, t, DISPOSE-1)", True), ("closed", "**Disposition:** fixed", False), ("closed", "", False)):
+                item.write_text(json.dumps({"id": "Q-LESSON-x", "body": f"**Status:** {status}\n\n{disp}\n"}))
+                errs = [e for e in lessons.report(d)["errors"] if "missing or closed" in e]
+                self.assertEqual(errs == [], held, (status, disp))
+
+
+class SettleProgress(unittest.TestCase):
+    """SETTLE-PROGRESS-1: a step that closes part of the gap is kept, a step that does nothing is still undone."""
+
+    def test_partial_progress_kept(self):
+        from foundation import ultrastability as u
+        c, v = {"settle_ticks": 3, "min_progress": 0.1}, {"min": 0.5, "max": None}
+        step = {"kind": "param", "value": 0.1}
+        self.assertEqual(u.settle_verdict(".", c, step, False, 3, v, 0.3), "kept")
+        self.assertEqual(u.settle_verdict(".", c, step, False, 3, v, 0.1), "reverted")
+        self.assertIsNone(u.settle_verdict(".", c, step, False, 1, v, 0.3))
+        self.assertEqual(u.settle_verdict(".", c, {"kind": "param", "value": None}, False, 3, v, 0.3), "reverted")

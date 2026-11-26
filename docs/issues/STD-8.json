@@ -1,0 +1,12 @@
+{
+  "id": "STD-8",
+  "title": "STD-8: adopt OpenSLO definitions for loop clocks",
+  "body": "**Owner:** staff\n**Trigger:** STANDARDS-1 audit 2026-11-25: `openslo` is planned in seed/standards/standards.json\n**Done check:** cmd:python3 -m foundation standards --check && python3 -c \"import json,sys;e=[x for x in json.load(open('seed/standards/standards.json'))['entries'] if x['id']=='openslo'][0];sys.exit(e['support'] not in ('supported','partial'))\"\n**Status:** closed\n\nOpenSLO definitions for loop clocks. Each clock's expected interval and the liveness targets become SLO objects any SLO tool can evaluate, generated from doctrine/clocks.json.\n\nLands in `foundation/clock.py` (and its seed twin so every system inherits it). Move the register entry `openslo` to supported with `how` paths and a passing test in the same change; replace the home-grown format, do not add a second one.\n\n**Closing probe:** `python3 -m foundation standards --probe openslo`\n**Prediction:** standards_supported >= 45 within 336 h\n**Out of scope:** adopting a standard nothing in the system reads; a parallel format kept beside the old one.\n\n**Disposition:** shelved (ttl, 2026-11-26T04:13:20Z, DISPOSE-1)\n\n**Evidence:** open 6.0 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "labels": [
+    "role:staff",
+    "ws:platform",
+    "standards"
+  ],
+  "milestone": "Next",
+  "workstream": "Platform"
+}

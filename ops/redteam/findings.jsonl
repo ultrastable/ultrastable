@@ -1,0 +1,9 @@
+{"at": "2026-11-25T19:00:00Z", "id": "owner:dry-queue", "found_by": "owner", "status": "open", "cls": "starved", "detector": "redteam:starved", "what": "work queue ran dry with nothing flagging it"}
+{"at": "2026-11-25T19:00:00Z", "id": "owner:date-pinned-test", "found_by": "owner", "status": "open", "cls": "timebomb", "detector": "redteam:timebomb", "what": "a date-pinned test froze the merge lane"}
+{"at": "2026-11-25T19:00:00Z", "id": "owner:live-zero", "found_by": "owner", "status": "open", "cls": "vacuous", "detector": "redteam:vacuous", "what": "/live showed 0 and read as fine"}
+{"at": "2026-11-25T19:00:00Z", "id": "owner:stale-prs-branches", "found_by": "owner", "status": "open", "cls": "stale", "detector": "redteam:stale", "what": "stale PRs and branches sat open"}
+{"at": "2026-11-25T19:00:00Z", "id": "owner:papers-not-posted", "found_by": "owner", "status": "open", "cls": "unscored", "detector": "redteam:unscored", "what": "papers never posted or indexed; their prediction measured nothing"}
+{"at": "2026-11-25T19:00:00Z", "id": "owner:frozen-pages", "found_by": "owner", "status": "open", "cls": "stale", "detector": "static-content", "what": "pages stopped changing"}
+{"at": "2026-11-25T19:00:00Z", "id": "owner:dead-seed-sync", "found_by": "owner", "status": "open", "cls": "stale", "detector": "redteam:stale", "what": "seed sync stopped with no alarm"}
+{"at": "2026-11-25T19:00:00Z", "id": "owner:invented-tables", "found_by": "owner", "status": "open", "cls": "vacuous", "detector": "redteam:vacuous", "what": "result tables read met on no data"}
+{"at": "2026-11-25T19:00:00Z", "id": "owner:missing-org-credential", "found_by": "owner", "status": "open", "cls": "credential", "detector": "redteam:credential", "what": "org credential missing"}

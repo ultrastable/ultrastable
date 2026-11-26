@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/seed/autonomy/goals.schema.json",
+  "title": "goals (seed/autonomy/goals.json)",
+  "description": "Contract for seed/autonomy/goals.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "control": {
+      "type": "object",
+      "properties": {
+        "stale_days": {
+          "type": "number"
+        },
+        "achieve_after": {
+          "type": "number"
+        },
+        "max_adjust_per_run": {
+          "type": "number"
+        },
+        "max_stretch_per_day": {
+          "type": "number"
+        }
+      }
+    },
+    "goals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "deadline": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "level": {
+            "type": "string"
+          },
+          "op": {
+            "type": "string"
+          },
+          "parent_id": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "spec": {
+            "type": "string"
+          },
+          "statement": {
+            "type": "string"
+          },
+          "target": {
+            "type": "number"
+          },
+          "unit": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "knobs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "cooldown_h": {
+            "type": "number"
+          },
+          "effect": {
+            "type": "number"
+          },
+          "goal_id": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "max": {
+            "type": "number"
+          },
+          "min": {
+            "type": "number"
+          },
+          "review_h": {
+            "type": "number"
+          },
+          "step": {
+            "type": "number"
+          },
+          "value": {
+            "type": "number"
+          },
+          "what": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "tenant_feeds": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "control",
+    "goals",
+    "knobs",
+    "tenant_feeds"
+  ]
+}

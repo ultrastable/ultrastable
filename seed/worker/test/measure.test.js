@@ -83,13 +83,15 @@ test('TENANT-1: a runtime measures only its own tenant; another tenant\'s metric
   assert.equal(db.raw.prepare("SELECT COUNT(*) AS n FROM items WHERE id='BREACH-M-foreign'").get().n, 0, 'and files nothing in this runtime');
 });
 
-test('LIVE-1: PUBLIC_HEALTH_ONLY exposes GET /health, the public page at / (FULLSTACK-1) and the signed webhook, and nothing else', async () => {
+test('LIVE-1: PUBLIC_HEALTH_ONLY exposes GET /health, the public page at / (FULLSTACK-1), the signed webhook and the COLDSTART-1 public reads, and nothing else', async () => {
   const { hiddenByHealthOnly: hidden } = await import('../src/visibility.js');
   const on = { PUBLIC_HEALTH_ONLY: '1' };
   assert.equal(hidden(on, 'GET', '/health'), false);
   assert.equal(hidden(on, 'POST', '/hook/github'), false);
   assert.equal(hidden(on, 'GET', '/'), false);
   for (const [m, p] of [['POST', '/'], ['GET', '/now'], ['GET', '/api/analytics'], ['GET', '/mcp'], ['GET', '/llms.txt'], ['POST', '/mcp'], ['POST', '/health'], ['GET', '/hook/github']]) assert.equal(hidden(on, m, p), true, m + ' ' + p);
+  for (const p of ['/.well-known/ultrastable.json', '/claims.json', '/social-queue.json', '/api/graph']) { assert.equal(hidden(on, 'GET', p), false, p + ' is part of the fleet contract'); assert.equal(hidden(on, 'POST', p), true); }
+  assert.equal(hidden(on, 'GET', '/api/graph/node'), false, 'COLDSTART-1: the graph read side is public; without the owner bearer it serves counts and declared public kinds only');
   assert.equal(hidden({}, 'GET', '/'), false, 'off by default: customers keep their full surface');
 });
 

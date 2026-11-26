@@ -99,6 +99,11 @@ jobs:
             if [ "$srv" = "has-history" ]; then echo "$repo already has history; left as it is"; continue; fi
             echo "::add-mask::$srv"
             d="$(mktemp -d)"; cp -a seed/. "$d/"
+            # FLEET-MAP-1: record what the kernel was at the fill (ultrastable.lock.json), so the system's weekly platform-sync can tell a kernel
+            # file the core changed from one the system edited; without it the sync treated every change as a local edit and updated nothing
+            python3 -m foundation upstream sync --instance "$d" --apply >/dev/null
+            # LIVE-LINKS-1 / SYSTEM-MANIFEST-1: the system's manifest identity, README, publiccode.yml and citation are its own, rendered from its manifest, not copies of the template's
+            python3 -m foundation fleetmap --adopt "$d" --id "$id"
             git -C "$d" init -q -b main; git -C "$d" add -A
             git -C "$d" -c user.name="ultrastable" -c user.email="ultrastable@users.noreply.github.com" commit -q -m "Start from the Ultrastable seed (FULLSTACK-1)"
             if git -C "$d" push -q "https://x-access-token:${srv}@github.com/${repo}.git" "HEAD:refs/heads/main"; then echo "filled $repo from seed/"; continue; fi
@@ -109,6 +114,11 @@ jobs:
             if git -C "$d" push -q "https://x-access-token:${srv}@github.com/${repo}.git" "HEAD:refs/heads/main"; then echo "filled $repo from seed/ without workflows"; else echo "::error::could not fill $repo"; fail=1; fi
           done < <(jq -r --slurpfile s doctrine/seed-deploys.json '.systems | to_entries[] | select(.key as $k | $s[0].seeds | index($k)) | select(.value.repo) | "\(.key) \(.value.repo)"' doctrine/full-stack.json)
           exit $fail
+      - name: Every repository, the ones just created included, is on the one standard (REPO-STANDARD-1)
+        # Merge rules, security and the main ruleset went on when the tick Worker created the repository; this adds the computed description,
+        # homepage (where it runs) and topics the same hour, through the administration app. A refusal is red and names the repository.
+        if: ${{ !cancelled() }}
+        run: python3 -m foundation repostd --apply
       - name: Launch what visitors asked for, and walk a test idea through the front door (LAUNCH-PATH-1)
         # Someone with no code agent typed an idea at ultrastable.io. This deploys its own system, gives it a repository from the seed, files the
         # owner's plain-words requests there and invites the owner when they asked. The test idea fails the job on any step a visitor would have to do.
@@ -128,3 +138,18 @@ jobs:
         # Fetches each system's front end and back end. Red when a part is missing or does not answer; the missing part's queue item is the fix.
         if: always()
         run: python3 -m foundation fullstack --live
+      - name: Every tenant repository meets the tenant standard (TENANT-STANDARD-1)
+        # Clones each registered tenant's main (public, no credential) and reads it against doctrine/tenant-standard.json, the README's Live URL
+        # against the registries included. Red names the repository and the missing part; the fix is `tenantstd --scaffold` on that repository.
+        if: ${{ !cancelled() }}
+        run: python3 -m foundation tenantstd --live
+      - name: Every system's knowledge graph is built and fresh (DATAGRAPH-LIVE-1)
+        if: ${{ !cancelled() }}
+        run: python3 -m foundation datagraph --live
+      - name: Every system serves the fleet contract and backs every statement both ways (FLEET-CONTRACT-1)
+        # Fetches each system's surfaces, each statement's page and endpoint, and every /api link its pages carry. Red names the system, the direction and the route.
+        if: always()
+        run: python3 -m foundation fleetcontract --live
+      - name: Every repository's README links the address its code runs at (LIVE-LINKS-1)
+        if: always()
+        run: python3 -m foundation livelinks --live
